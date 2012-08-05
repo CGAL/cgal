@@ -641,7 +641,7 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_from_left_vertex
       Halfedge_handle
       (this->m_top_traits->locate_around_boundary_vertex (&(*v), cv.base(),
                                                           ARR_MAX_END, bx, by));
-    bool            dummy;
+    bool dummy;
 
     return (_insert_at_vertices (cv, r_prev, prev, sc, dummy));
   }
@@ -707,48 +707,23 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_at_vertices
      Halfedge_handle prev1,
      Halfedge_handle prev2,
      Subcurve* ,
-     bool &new_face_created)
-{
-  bool        prev1_before_prev2 = true;
-
-  if (this->m_arr_access.are_on_same_inner_component(prev1, prev2))
-  {
-    // If prev1 and prev2 are on different components, the insertion of the
-    // new curve does not generate a new face, so the way we send these
-    // halfedge pointers to the auxiliary function _insert_at_vertices() does
-    // not matter.
-    // However, in our case, where the two halfedges are reachable from one
-    // another and are located on the same hole, a new face will be created
-    // and form a hole inside their current incident face. In this case we
-    // have to arrange prev1 and prev2 so that the new face (hole) will be
-    // incident to the correct halfedge, directed from prev1's target to
-    // prev2's target.
-    // To do this, we check whether prev1 lies inside the new face we are
-    // about to create (or alternatively, whether prev2 does not lie inside
-    // this new face).
-    const unsigned int  dist1 =
-      this->m_arr_access.halfedge_distance (prev1, prev2);
-    const unsigned int  dist2 =
-      this->m_arr_access.halfedge_distance (prev2, prev1);
-
-    prev1_before_prev2 = (dist1 > dist2) ?
-      (this->m_arr_access.defines_outer_ccb_of_new_face (prev1, prev2, cv.base())) :
-      (! this->m_arr_access.defines_outer_ccb_of_new_face (prev2, prev1, cv.base()));
-  }
+     bool &new_face_created) {
+  
+  bool prev1_on_outer_ccb_and_not_prev2 = true;
 
   // Perform the insertion.
   new_face_created = false;
-  Halfedge_handle  new_he = (prev1_before_prev2) ?
-    this->m_arr_access.insert_at_vertices_ex (cv.base(),
-                                              prev1,
-                                              prev2,
-                                              LARGER,
-                                              new_face_created) :
-    this->m_arr_access.insert_at_vertices_ex (cv.base(),
-                                              prev2,
-                                              prev1,
-                                              SMALLER,
-                                              new_face_created);
+  Halfedge_handle  new_he = this->m_arr_access.insert_at_vertices_ex (cv.base(),
+                                                                      prev1,
+                                                                      prev2,
+                                                                      LARGER,
+                                                                      new_face_created,
+                                                                      prev1_on_outer_ccb_and_not_prev2,
+                                                                      true /* this allows to swap prev1/prev2
+                                                                              which is done by checking local
+                                                                              minima, which is cheaper than
+                                                                              comparing lengths */
+                                                                      );
 
   if (new_face_created)
   {
@@ -762,7 +737,7 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_at_vertices
   // Return a handle to the new halfedge directed from prev1's target to
   // prev2's target. Note that this may be the twin halfedge of the one
   // returned by _insert_at_vertices();
-  if (! prev1_before_prev2)
+  if (!prev1_on_outer_ccb_and_not_prev2)
     new_he = new_he->twin();
 
   return (new_he);

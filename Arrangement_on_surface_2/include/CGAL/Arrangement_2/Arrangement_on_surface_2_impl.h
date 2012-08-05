@@ -387,10 +387,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     new_he = _insert_from_vertex(cv, fict_prev1, v2, SMALLER);
   else {
     // Both vertices are inserted using their predecessor halfedges.
-    // Note that in this case we may create a new face.
 
-    bool        new_face_created = false;
-  
     // This is a bug fix and we could not think of a better one. 
     // In case the inserted curve has two vertical asymptotes at the top 
     // it happens that fict_prev1 is split by the max end and becomes the 
@@ -400,12 +397,17 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     // Note that this only happens at the top. At the bottom everything 
     // goes fine since the insertion order is reverted with respect to the 
     // orientation of the edges. 
+    // TODO EBEB 2012-08-05 evaluate this bugfix again
     if (fict_prev1 == fict_prev2)
       fict_prev1 = fict_prev1->next();
 
+    // Note that in this case we may create a new face.
+    bool new_face_created = false;
+    bool dummy_prev1_on_outer_ccb_and_not_prev2;
     new_he = _insert_at_vertices(cv, fict_prev1, fict_prev2, SMALLER,
-                                 new_face_created);
-  
+                                 new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2);
+    // TODO EBEB 2012-08-05 is order of two boundary-edge really irrelevant?
+
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
       _relocate_in_new_face(new_he);
@@ -529,8 +531,11 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    new_he =
-      _insert_at_vertices(cv, prev1, fict_prev2, SMALLER, new_face_created);
+    bool dummy_prev1_on_outer_ccb_and_not_prev2;
+    new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
+                                 new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2);
+    // TODO EBEB 2012-08-05 is order of two boundary-edge really irrelevant?
+
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
       _relocate_in_new_face(new_he);
@@ -611,10 +616,11 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
   else {
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
-    bool        new_face_created = false;
-
-    new_he =
-      _insert_at_vertices(cv, prev1, fict_prev2, SMALLER, new_face_created);
+    bool new_face_created = false;
+    bool dummy_prev1_on_outer_ccb_and_not_prev2 = true;
+    new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
+                                 new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2);
+    // TODO EBEB 2012-08-05 is order of two boundary-edge really irrelevant?
   
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -733,9 +739,11 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
+    bool dummy_prev1_on_outer_ccb_and_not_prev2;
     new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
-                                 new_face_created);
-  
+                                 new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2);
+      // TODO EBEB 2012-08-05 is order of two boundary-edge really irrelevant?
+
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
       _relocate_in_new_face(new_he);
@@ -817,10 +825,11 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
+    bool dummy_prev1_on_outer_ccb_and_not_prev2 = true;
+    new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
+                                 dummy_prev1_on_outer_ccb_and_not_prev2, new_face_created);
+    // TODO EBEB 2012-08-05 is order of two boundary-edge really irrelevant?
 
-    new_he =
-      _insert_at_vertices(cv, prev2, fict_prev1, LARGER, new_face_created);
-  
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
       _relocate_in_new_face(new_he);
@@ -1351,12 +1360,15 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   // Check if e1 and e2 are on the same connected component.
   DHalfedge* p_prev1 = _halfedge(prev1);
   DHalfedge* p_prev2 = _halfedge(prev2);
+
+  // TODO EBEB 2012-08-05 rename to 'swap_halfedges'
+  bool prev1_on_outer_ccb_and_not_prev2 = true;
+
+#if 0
   DInner_ccb* hole1 =
     (p_prev1->is_on_inner_ccb()) ? p_prev1->inner_ccb() : NULL;
   DInner_ccb* hole2 =
     (p_prev2->is_on_inner_ccb()) ? p_prev2->inner_ccb() : NULL;
-
-  bool prev1_on_outer_ccb_and_not_prev2 = true;
 
   if ((hole1 == hole2) && (hole1 != NULL)) {
     // If prev1 and prev2 are on different components, the insertion of the
@@ -1423,6 +1435,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
          );
     }
 #else
+    // TODO EBEB 2012-08-05 this is old code to be deleted
     Comparison_result path_res = _compare_induced_path_length(p_prev1, p_prev2);
     prev1_on_outer_ccb_and_not_prev2 = 
       ((path_res == LARGER) ?
@@ -1439,12 +1452,20 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     res = CGAL::opposite(res);
 
   // Perform the insertion.
+  // Note that in this case we may create a new face.
   bool new_face_created = false;
+  bool dummy_prev1_on_outer_ccb_and_not_prev2;
   DHalfedge* new_he = (prev1_on_outer_ccb_and_not_prev2) ?
     // TODO EBEB 2012-07-27 forward signs1/2 of ccbs to _insert_at_vertices to simplify 
     // the implementation of face_split_after_edge_insertion and boundaries_of_same_face
-    _insert_at_vertices(cv, p_prev1, p_prev2, res, new_face_created) :
-    _insert_at_vertices(cv, p_prev2, p_prev1, res, new_face_created);
+    _insert_at_vertices(cv, p_prev1, p_prev2, res, new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2) :
+    _insert_at_vertices(cv, p_prev2, p_prev1, res, new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2);
+#else
+  // Note that in this case we may create a new face.
+  bool new_face_created = false;
+  DHalfedge* new_he = _insert_at_vertices(cv, p_prev1, p_prev2, res,
+                                          new_face_created, prev1_on_outer_ccb_and_not_prev2);
+#endif
 
   if (new_face_created)
     // In case a new face has been created (pointed by the new halfedge we
@@ -2620,7 +2641,9 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _insert_at_vertices(const X_monotone_curve_2& cv,
                     DHalfedge* prev1, DHalfedge* prev2,
                     Comparison_result cmp,
-                    bool& new_face)
+                    bool& new_face,
+                    bool& prev1_on_outer_ccb_and_not_prev2,
+                    bool allow_swap /* = true */)
 {
   // the function adds he1 and he2 in this way:
   //    ----prev1---> ( --he2--> ) ---p2next--->
@@ -2632,6 +2655,82 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   CGAL_precondition(prev2 != NULL);
   CGAL_precondition(prev1 != prev2); 
 
+  // default values for signs
+  std::pair< CGAL::Sign, CGAL::Sign > signs1(CGAL::ZERO, CGAL::ZERO);
+  std::pair< CGAL::Sign, CGAL::Sign > signs2(CGAL::ZERO, CGAL::ZERO);
+
+  // Comment: This also checks which is the 'cheaper' (previously the 'shorter') way
+  //          to insert the curve. Now cheaper means checking less local minima! 
+  if (allow_swap) {
+
+    // TODO 2012-08-05 reuse hole1/hole2 later, or keep it local here?
+    DInner_ccb* hole1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : NULL;
+    DInner_ccb* hole2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : NULL;
+    
+    if ((hole1 == hole2) && (hole1 != NULL)) {
+      
+      // EBEB 2012-07-26 the following code enables optimizations:
+      // - avoid length-test
+      // - search only local minima to find leftmost vertex
+      // - re-use of signs of ccbs
+      Arr_halfedge_direction cv_dir1 = 
+        (cmp == CGAL::SMALLER ? CGAL::ARR_LEFT_TO_RIGHT : CGAL::ARR_RIGHT_TO_LEFT);
+      std::list< std::pair< const DHalfedge*, int > > local_mins1;
+      signs1 = _compute_signs_and_local_minima(prev1, 
+                                               cv, cv_dir1, 
+                                               prev2->next(), 
+                                               std::front_inserter(local_mins1));
+      
+      Arr_halfedge_direction cv_dir2 = 
+        (cmp == CGAL::SMALLER ? CGAL::ARR_RIGHT_TO_LEFT : CGAL::ARR_LEFT_TO_RIGHT);
+      std::list< std::pair< const DHalfedge*, int > > local_mins2;
+      signs2 = _compute_signs_and_local_minima(prev2,
+                                               cv, cv_dir2, 
+                                               prev1->next(), 
+                                               std::front_inserter(local_mins2));
+      
+      std::cout << "signs1.x: " << signs1.first << std::endl;
+      std::cout << "signs1.y: " << signs1.second << std::endl;
+      std::cout << "signs2.x: " << signs2.first << std::endl;
+      std::cout << "signs2.y: " << signs2.second << std::endl;
+      std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
+      std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
+      
+      if (!m_topol_traits.let_me_decide_the_outer_ccb(signs1, signs2, 
+                                                      /* prev1_on .. will be set if true is returned */
+                                                      prev1_on_outer_ccb_and_not_prev2)) {
+        // COMMENT: The previous solution needed O(min(length1, length2)) steps to determine
+        //          which path is shorter and the search for the leftmost vertex on a path
+        //          needs O(#local_mins) geometric comparison.
+        //          This solution saves the initial loop to determine the shorter path and 
+        //          will only need O(min(#local_mins1, #local_mins2)) geometric comparisons 
+        //          to determine the leftmost vertex on a path.
+        bool cond = (local_mins1.size() > 0 && (local_mins1.size() < local_mins2.size()));
+        prev1_on_outer_ccb_and_not_prev2 = 
+          (cond ?
+           (  _defines_outer_ccb_of_new_face(prev1, cv, cv_dir1, prev2->next(), 
+                                             local_mins1.begin(), local_mins1.end()))
+           :
+           (! _defines_outer_ccb_of_new_face(prev2, cv, cv_dir2, prev1->next(), 
+                                             local_mins2.begin(), local_mins2.end()))
+           );
+      }
+      
+      if (!prev1_on_outer_ccb_and_not_prev2) {
+        std::swap(prev1, prev2);
+        cmp = CGAL::opposite(cmp);
+        std::swap(signs1, signs2);
+        std::swap(local_mins1, local_mins2);
+      }
+    }
+    // EBEB: For now, local_mins1/2 are local to this pre-check
+    // Idea: Use it later, however, this spoils uses of _insert_at_vertices
+    //       where allow_swap = false
+    //       On the other hand: this would allow to set representative
+    //       halfedge of ccbs to point to minimal vertex
+
+  } // allow_keep
+  
   // Get the vertices that match cv's endpoints.
   DVertex* v1 = prev1->vertex();
   DVertex* v2 = prev2->vertex();
@@ -2732,10 +2831,16 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   bool         is_split_face_contained = false;
 
   if ((ic1 != NULL) && (ic1 == ic2)) {
-    std::pair<bool, bool> res = 
-      // TODO EBEB 2012-07-30 replace with signs
-      m_topol_traits.face_split_after_edge_insertion(signs1, signs2);
-
+    
+#if 0
+    // THIS IS NEW CODE
+    // TODO EBEB start here
+    std::pair<bool, bool> res =
+      m_topol_traits.face_split_after_edge_insertion(signs2, signs2);
+#else
+    std::pair<bool, bool> res =
+      m_topol_traits.face_split_after_edge_insertion(prev1, prev2, cv);
+#endif
     split_new_face = res.first;
     is_split_face_contained = res.second;
 
@@ -3180,8 +3285,8 @@ _relocate_inner_ccbs_in_new_face(DHalfedge* new_he)
                                   (*ic_it)->vertex()->point(),
                                   (*ic_it)->vertex()))
     {
-      // We increment the itrator before moving the inner CCB, because this
-      // operation invalidates the iterator.
+      // We store the current iterator which get then incremented before it gets moved, 
+      // as the move operation invalidates the iterator.
       ic_to_move = ic_it;
       ++ic_it;
       

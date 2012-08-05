@@ -414,12 +414,16 @@ public:
                                          Halfedge_handle prev1, 
                                          Halfedge_handle prev2,
                                          Comparison_result res,
-                                         bool& new_face)
+                                         bool& new_face,
+                                         bool& prev1_on_outer_ccb_and_not_prev2,
+                                         bool allow_swap = true)
   {
     DHalfedge*  he = p_arr->_insert_at_vertices (cv,
                                                  p_arr->_halfedge (prev1),
                                                  p_arr->_halfedge (prev2),
-                                                 res, new_face);
+                                                 res, 
+                                                 new_face, prev1_on_outer_ccb_and_not_prev2,
+                                                 allow_swap);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));

@@ -742,14 +742,31 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
     m_helper.swap_predecessors (this->current_event());
 #endif
 
+  // Comment: In some topologies swap_preds is always false,
+  //          thus we use 'false' to disallow swapping 
+  //          such that the compiler can optimize awy the
+  //          computation of signs and local/global minima
+  //          that now takes place inside _insert_at_vertices
+  // TODO EBEB 2012-08-06 check whether signs are not needed
+  // it seems that swap_pred is either false or
+  //   event->parameter_space_in_x() == CGAL::ARR_INTERIOR &&
+  //   event->parameter_space_in_y() == CGAL::ARR_TOP_BOUNDARY
+  // if not oblivious! But I have the feeling that signs are needed!
+
+  bool check_prev1_on_outer_ccb_and_not_prev2 = true;
   res = (! swap_preds) ?
     // usually prev1 is outer of new split face (it it exists)
-    m_arr_access.insert_at_vertices_ex (_curve(cv), prev1, prev2,
-                                        LARGER, new_face_created) :
+    // order is determined by top-traits helper!
+    // "false" disallows swapping of prev1/preve2! ...
+    m_arr_access.insert_at_vertices_ex (_curve(cv), prev1, prev2, LARGER, 
+                                        new_face_created, check_prev1_on_outer_ccb_and_not_prev2, false) :
     // if swapping prev2 will become outer of new split face (it it exists)
-    m_arr_access.insert_at_vertices_ex (_curve(cv), prev2, prev1,
-                                        SMALLER, new_face_created);
+    m_arr_access.insert_at_vertices_ex (_curve(cv), prev2, prev1, SMALLER, 
+                                        new_face_created, check_prev1_on_outer_ccb_and_not_prev2, false);
   
+  // ... thus the value should now have changed
+  CGAL_assertion(check_prev1_on_outer_ccb_and_not_prev2);
+
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
   if (sc->has_halfedge_indices())
