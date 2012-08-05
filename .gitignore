@@ -80,11 +80,11 @@ CGAL_ImageIO/examples/CGALimageIO/convert_raw_image_to_inr
 CGAL_ImageIO/examples/CGALimageIO/makefile
 CGAL_ImageIO/examples/CGALimageIO/test_imageio
 CGAL_ImageIO/src/CGAL_ImageIO/Makefile
-CGAL_ImageIO/test/CGALimageIO/*.exe
-CGAL_ImageIO/test/CGALimageIO/*.sln
-CGAL_ImageIO/test/CGALimageIO/*.vcproj
-CGAL_ImageIO/test/CGALimageIO/Makefile
-CGAL_ImageIO/test/CGALimageIO/test_trilinear_interpolation
+CGAL_ImageIO/test/CGAL_ImageIO/*.exe
+CGAL_ImageIO/test/CGAL_ImageIO/*.sln
+CGAL_ImageIO/test/CGAL_ImageIO/*.vcproj
+CGAL_ImageIO/test/CGAL_ImageIO/Makefile
+CGAL_ImageIO/test/CGAL_ImageIO/test_trilinear_interpolation
 Circular_kernel_3/demo/Circular_kernel_3/*.exe
 Circular_kernel_3/demo/Circular_kernel_3/*.sln
 Circular_kernel_3/demo/Circular_kernel_3/*.vcproj
