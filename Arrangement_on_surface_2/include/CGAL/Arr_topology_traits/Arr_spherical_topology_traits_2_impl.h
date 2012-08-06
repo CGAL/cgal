@@ -487,7 +487,7 @@ bool
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
                             std::pair< CGAL::Sign, CGAL::Sign> signs2,
-                            bool& prev1_on_outer_ccb_and_not_prev2) const {
+                            bool& swap_predecessors) const {
   
     CGAL_precondition(signs1.second == CGAL::ZERO); // no perimetric in top-bottom for first loop
     CGAL_precondition(signs2.second == CGAL::ZERO); // no perimetric in top-bottom for second loop
@@ -495,7 +495,7 @@ let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
     // choose prev1 to define outer ccb of new face if it is a non-perimetric loop,
     // otherwise choose prev2
     // TODO what if both are non-zero?
-    prev1_on_outer_ccb_and_not_prev2 = (signs1.first == CGAL::ZERO);
+    swap_predecessors = !(signs1.first == CGAL::ZERO);
 
     // but only if the at least one of the loops is perimetric, otherwise return false
     // to let leftmost-vertex decide which becomes part of the new outer ccb

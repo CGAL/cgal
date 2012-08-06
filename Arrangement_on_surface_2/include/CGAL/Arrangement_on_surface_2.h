@@ -1874,6 +1874,8 @@ protected:
    * \param res The comparison result of the points associated with prev1's
    *            target vertex and prev2's target vertex.
    * \param new_face Output - whether a new face has been created.
+   * \param swapped_predecessors Output - whether roles of prev1 and prev2 have been switched
+   * \param allow_swap_of_predecessors - set to false if no swapping should take place at all
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve directed from prev1's target to prev2's target.
    *         In case a new face has been created, it is given as the incident
@@ -1883,8 +1885,8 @@ protected:
                                  DHalfedge* prev1, DHalfedge* prev2,
                                  Comparison_result res, 
                                  bool& new_face,
-                                 bool& prev1_on_outer_ccb_and_not_prev2,
-                                 bool allow_swap = true);
+                                 bool& swapped_predecessors,
+                                 bool allow_swap_of_predecessors = true);
 
   /*!
    * Relocate all inner CCBs and isolated vertices to their proper position,

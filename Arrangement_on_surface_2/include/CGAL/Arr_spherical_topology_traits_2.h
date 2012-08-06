@@ -520,10 +520,19 @@ public:
                                           Arr_parameter_space ps_x,
                                           Arr_parameter_space ps_y);
 
+  /*! Determines whether the function should decide on swapping the predecssor
+   * halfedges that imply two ccb (and whose signs are given here).
+   * If true, swap_predecessors will be correctly set. If false,
+   * generic way of searching for lexicographically minimal point and checking
+   * its incident halfedges will do the job to decide on swapping
+   * \param signs1 signs of first implied ccb in x- and y-direction
+   * \param signs2 signs of second implied ccb in x- and y-direction
+   * \param swap_predecessors Output swap predeccesors or not;
+   *        set correctly only if true is returned
+   */
   bool let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
                                    std::pair< CGAL::Sign, CGAL::Sign> signs2,
-                                   bool& prev1_on_outer_ccb_and_not_prev2) const;
-
+                                   bool& swap_predecessors) const;
 
   /*! Given two predecessor halfedges that belong to the same inner CCB of
    * a face, determine what happens when we insert an edge connecting the

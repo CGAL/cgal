@@ -405,6 +405,8 @@ public:
    * \param res The comparsion result between the points associated with the
    *            target vertex of prev and the target vertex of prev2.
    * \param new_face Output - whether a new face has been created.
+   * \param swapped_predecessors Output - whether roles of prev1 and prev2 have been switched
+   * \param allow_swap_of_predecessors - set to false if no swapping should take place at all
    * \return A handle for one of the halfedges corresponding to the inserted
    *         curve directed from prev1's target to prev2's target.
    *         In case a new face has been created, it is given as the incident
@@ -415,15 +417,15 @@ public:
                                          Halfedge_handle prev2,
                                          Comparison_result res,
                                          bool& new_face,
-                                         bool& prev1_on_outer_ccb_and_not_prev2,
-                                         bool allow_swap = true)
+                                         bool& swapped_predecessors,
+                                         bool allow_swap_of_predecessors = true)
   {
     DHalfedge*  he = p_arr->_insert_at_vertices (cv,
                                                  p_arr->_halfedge (prev1),
                                                  p_arr->_halfedge (prev2),
                                                  res, 
-                                                 new_face, prev1_on_outer_ccb_and_not_prev2,
-                                                 allow_swap);
+                                                 new_face, swapped_predecessors,
+                                                 allow_swap_of_predecessors);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));

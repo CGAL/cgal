@@ -709,16 +709,16 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_at_vertices
      Subcurve* ,
      bool &new_face_created) {
   
-  bool prev1_on_outer_ccb_and_not_prev2 = true;
 
   // Perform the insertion.
   new_face_created = false;
+  bool swapped_predecessors = false;
   Halfedge_handle  new_he = this->m_arr_access.insert_at_vertices_ex (cv.base(),
                                                                       prev1,
                                                                       prev2,
                                                                       LARGER,
                                                                       new_face_created,
-                                                                      prev1_on_outer_ccb_and_not_prev2,
+                                                                      swapped_predecessors,
                                                                       true /* this allows to swap prev1/prev2
                                                                               which is done by checking local
                                                                               minima, which is cheaper than
@@ -737,7 +737,7 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_at_vertices
   // Return a handle to the new halfedge directed from prev1's target to
   // prev2's target. Note that this may be the twin halfedge of the one
   // returned by _insert_at_vertices();
-  if (!prev1_on_outer_ccb_and_not_prev2)
+  if (swapped_predecessors)
     new_he = new_he->twin();
 
   return (new_he);

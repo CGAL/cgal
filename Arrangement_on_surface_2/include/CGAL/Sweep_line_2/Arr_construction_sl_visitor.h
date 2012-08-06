@@ -753,19 +753,19 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   //   event->parameter_space_in_y() == CGAL::ARR_TOP_BOUNDARY
   // if not oblivious! But I have the feeling that signs are needed!
 
-  bool check_prev1_on_outer_ccb_and_not_prev2 = true;
+  bool check_swapped_predecessors = true;
   res = (! swap_preds) ?
     // usually prev1 is outer of new split face (it it exists)
     // order is determined by top-traits helper!
     // "false" disallows swapping of prev1/preve2! ...
     m_arr_access.insert_at_vertices_ex (_curve(cv), prev1, prev2, LARGER, 
-                                        new_face_created, check_prev1_on_outer_ccb_and_not_prev2, false) :
+                                        new_face_created, check_swapped_predecessors, false) :
     // if swapping prev2 will become outer of new split face (it it exists)
     m_arr_access.insert_at_vertices_ex (_curve(cv), prev2, prev1, SMALLER, 
-                                        new_face_created, check_prev1_on_outer_ccb_and_not_prev2, false);
+                                        new_face_created, check_swapped_predecessors, false);
   
   // ... thus the value should now have changed
-  CGAL_assertion(check_prev1_on_outer_ccb_and_not_prev2);
+  CGAL_assertion(!check_swapped_predecessors);
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.

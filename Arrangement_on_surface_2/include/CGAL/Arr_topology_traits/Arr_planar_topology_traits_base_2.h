@@ -160,13 +160,45 @@ public:
     return;
   }
 
-  // TODO document
+  /*! Determines whether the function should decide on swapping the predecssor
+   * halfedges that imply two ccb (and whose signs are given here).
+   * If true, swap_predecessors will be correctly set. If false,
+   * generic way of searching for lexicographically minimal point and checking
+   * its incident halfedges will do the job to decide on swapping
+   * \param signs1 signs of first implied ccb in x- and y-direction
+   * \param signs2 signs of second implied ccb in x- and y-direction
+   * \param swap_predecessors Output swap predeccesors or not;
+   *        set correctly only if true is returned
+   */
   bool let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
                                    std::pair< CGAL::Sign, CGAL::Sign> signs2,
-                                   bool& prev1_on_outer_ccb_and_not_prev2) const {
-    prev1_on_outer_ccb_and_not_prev2 = false;
+                                   bool& swap_predecessors) const {
+    swap_predecessors = false;
     return false;
   }
+
+
+  // TODO EBEB 2012-07-30 document new face_split_after_edge_insertion
+  /*!
+   * Given two predecessor halfedges that belong to the same inner CCB of
+   * a face, determine what happens when we insert an edge connecting the
+   * target vertices of the two edges.
+   * \param prev1 The first predecessor halfedge.
+   * \param prev2 The second predecessor halfedge.
+   * \param cv The curve to be inserted
+   * \pre The two halfedges belong to the same inner CCB.
+   * \return A pair indicating whether the insertion will cause the face
+   *         to split (the first flag), and if so - whether the split face
+   *         will form a hole in the original face.
+   */
+  std::pair<bool, bool>
+  face_split_after_edge_insertion(std::pair< CGAL::Sign, CGAL::Sign > CGAL_precondition_code(signs1),
+                                  std::pair< CGAL::Sign, CGAL::Sign > CGAL_precondition_code(signs2)) const {
+    // In case of a planar topology, connecting two vertices on the same
+    // inner CCB closes a new face that becomes a hole in the original face:
+    return (std::make_pair (true, true));
+  }
+
 
 
   /*!

@@ -397,16 +397,18 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     // Note that this only happens at the top. At the bottom everything 
     // goes fine since the insertion order is reverted with respect to the 
     // orientation of the edges. 
-    // TODO EBEB 2012-08-05 evaluate this bugfix again
+    // TODO EBEB 2012-08-05 evaluate this bugfix again,
+    //   check, in particular, whether needed in other "insert_..." functions, too
+    //   or whether it should be delayed to "_insert_at_vertices"?
     if (fict_prev1 == fict_prev2)
       fict_prev1 = fict_prev1->next();
 
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    bool dummy_prev1_on_outer_ccb_and_not_prev2;
+    bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, fict_prev1, fict_prev2, SMALLER,
-                                 new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2);
-    // TODO EBEB 2012-08-05 is order of two boundary-edge really irrelevant?
+                                 new_face_created, dummy_swapped_predecessors);
+    // TODO EBEB 2012-08-05 is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -531,10 +533,10 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    bool dummy_prev1_on_outer_ccb_and_not_prev2;
+    bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
-                                 new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2);
-    // TODO EBEB 2012-08-05 is order of two boundary-edge really irrelevant?
+                                 new_face_created, dummy_swapped_predecessors);
+    // TODO EBEB 2012-08-05 is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -617,10 +619,10 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    bool dummy_prev1_on_outer_ccb_and_not_prev2 = true;
+    bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
-                                 new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2);
-    // TODO EBEB 2012-08-05 is order of two boundary-edge really irrelevant?
+                                 new_face_created, dummy_swapped_predecessors);
+    // TODO EBEB 2012-08-05 is order of the two boundary-edges really irrelevant here?
   
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -739,10 +741,10 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    bool dummy_prev1_on_outer_ccb_and_not_prev2;
+    bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
-                                 new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2);
-      // TODO EBEB 2012-08-05 is order of two boundary-edge really irrelevant?
+                                 new_face_created, dummy_swapped_predecessors);
+    // TODO EBEB 2012-08-05 is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -825,10 +827,10 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    bool dummy_prev1_on_outer_ccb_and_not_prev2 = true;
+    bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
-                                 dummy_prev1_on_outer_ccb_and_not_prev2, new_face_created);
-    // TODO EBEB 2012-08-05 is order of two boundary-edge really irrelevant?
+                                 new_face_created, dummy_swapped_predecessors);
+    // TODO EBEB 2012-08-05 is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -1361,111 +1363,11 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   DHalfedge* p_prev1 = _halfedge(prev1);
   DHalfedge* p_prev2 = _halfedge(prev2);
 
-  // TODO EBEB 2012-08-05 rename to 'swap_halfedges'
-  bool prev1_on_outer_ccb_and_not_prev2 = true;
-
-#if 0
-  DInner_ccb* hole1 =
-    (p_prev1->is_on_inner_ccb()) ? p_prev1->inner_ccb() : NULL;
-  DInner_ccb* hole2 =
-    (p_prev2->is_on_inner_ccb()) ? p_prev2->inner_ccb() : NULL;
-
-  if ((hole1 == hole2) && (hole1 != NULL)) {
-    // If prev1 and prev2 are on different components, the insertion of the
-    // new curve does not generate a new face, so the way we send these
-    // halfedge pointers to the auxiliary function _insert_at_vertices() does
-    // not matter.
-    // However, in our case, where the two halfedges are reachable from one
-    // another and are located on the same hole, a new face will be created
-    // and form a hole inside their current incident face. In this case we
-    // have to arrange prev1 and prev2 so that the new face (hole) will be
-    // incident to the correct halfedge, directed from prev1's target to
-    // prev2's target.
-    // To do this, we use the topology traits to determine whether prev1 lies
-    // inside the new face we are about to create (or alternatively, whether
-    // prev2 does not lie inside this new face).
-
-#if 1 
-    // EBEB 2012-07-26 the following code enables optimizations:
-    // - avoid length-test
-    // - search only local minima to find leftmost vertex
-    // - re-use of signs of ccbs
-    Arr_halfedge_direction cv_dir1 = 
-      (res == CGAL::SMALLER ? CGAL::ARR_LEFT_TO_RIGHT : CGAL::ARR_RIGHT_TO_LEFT);
-    std::list< std::pair< const DHalfedge*, int > > local_mins1;
-    std::pair< CGAL::Sign, CGAL::Sign > signs1 = 
-      _compute_signs_and_local_minima(p_prev1, 
-                                      cv, cv_dir1, 
-                                      p_prev2->next(), 
-                                      std::front_inserter(local_mins1));
-
-    Arr_halfedge_direction cv_dir2 = 
-      (res == CGAL::SMALLER ? CGAL::ARR_RIGHT_TO_LEFT : CGAL::ARR_LEFT_TO_RIGHT);
-    std::list< std::pair< const DHalfedge*, int > > local_mins2;
-    std::pair< CGAL::Sign, CGAL::Sign > signs2 = 
-      _compute_signs_and_local_minima(p_prev2,
-                                      cv, cv_dir2, 
-                                      p_prev1->next(), 
-                                      std::front_inserter(local_mins2));
-    
-    std::cout << "signs1.x: " << signs1.first << std::endl;
-    std::cout << "signs1.y: " << signs1.second << std::endl;
-    std::cout << "signs2.x: " << signs2.first << std::endl;
-    std::cout << "signs2.y: " << signs2.second << std::endl;
-    std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
-    std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
-
-    if (!m_topol_traits.let_me_decide_the_outer_ccb(signs1, signs2, 
-                                                    /* prev1_on .. will be set if true is returned */
-                                                    prev1_on_outer_ccb_and_not_prev2)) {
-      // COMMENT: The previous solution needed O(min(length1, length2)) steps to determine
-      //          which path is shorter and the search for the leftmost vertex on a path
-      //          needs O(#local_mins) geometric comparison.
-      //          This solution saves the initial loop to determine the shorter path and 
-      //          will only need O(min(#local_mins1, #local_mins2)) geometric comparisons 
-      //          to determine the leftmost vertex on a path.
-      bool cond = (local_mins1.size() > 0 && (local_mins1.size() < local_mins2.size()));
-      prev1_on_outer_ccb_and_not_prev2 = 
-        (cond ?
-         (  _defines_outer_ccb_of_new_face(p_prev1, cv, cv_dir1, p_prev2->next(), 
-                                           local_mins1.begin(), local_mins1.end()))
-         :
-         (! _defines_outer_ccb_of_new_face(p_prev2, cv, cv_dir2, p_prev1->next(), 
-                                           local_mins2.begin(), local_mins2.end()))
-         );
-    }
-#else
-    // TODO EBEB 2012-08-05 this is old code to be deleted
-    Comparison_result path_res = _compare_induced_path_length(p_prev1, p_prev2);
-    prev1_on_outer_ccb_and_not_prev2 = 
-      ((path_res == LARGER) ?
-       (  _defines_outer_ccb_of_new_face(p_prev1, p_prev2, cv)) :
-       (! _defines_outer_ccb_of_new_face(p_prev2, p_prev1, cv))
-       );
-#endif
-  }
-
-  // We already have the comparsion result of the target vertices of prev1
-  // and prev2. If however we swap the order of the halfedges, we take the
-  // opposite comparison result.
-  if (! prev1_on_outer_ccb_and_not_prev2)
-    res = CGAL::opposite(res);
-
-  // Perform the insertion.
   // Note that in this case we may create a new face.
   bool new_face_created = false;
-  bool dummy_prev1_on_outer_ccb_and_not_prev2;
-  DHalfedge* new_he = (prev1_on_outer_ccb_and_not_prev2) ?
-    // TODO EBEB 2012-07-27 forward signs1/2 of ccbs to _insert_at_vertices to simplify 
-    // the implementation of face_split_after_edge_insertion and boundaries_of_same_face
-    _insert_at_vertices(cv, p_prev1, p_prev2, res, new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2) :
-    _insert_at_vertices(cv, p_prev2, p_prev1, res, new_face_created, dummy_prev1_on_outer_ccb_and_not_prev2);
-#else
-  // Note that in this case we may create a new face.
-  bool new_face_created = false;
+  bool swapped_predecessors = false;
   DHalfedge* new_he = _insert_at_vertices(cv, p_prev1, p_prev2, res,
-                                          new_face_created, prev1_on_outer_ccb_and_not_prev2);
-#endif
+                                          new_face_created, swapped_predecessors);
 
   if (new_face_created)
     // In case a new face has been created (pointed by the new halfedge we
@@ -1477,7 +1379,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   // Return a handle to the new halfedge directed from prev1's target to
   // prev2's target. Note that this may be the twin halfedge of the one
   // returned by _insert_at_vertices();
-  if (! prev1_on_outer_ccb_and_not_prev2)
+  if (swapped_predecessors)
     new_he = new_he->opposite();
 
   return (Halfedge_handle(new_he));
@@ -2636,24 +2538,26 @@ _insert_from_vertex(const X_monotone_curve_2& cv,
 template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DHalfedge*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-  // TODO EBEB 2012-07-27 change signature to (cv, cv_dir, prev1, prev2, new_face) + ccbs-signs
+  // TODO EBEB 2012-07-27 change signature to (prev1, cv, cv_dir, prev2, new_face, swapped_predecessors, allow_swap_of_predecessors)
   //                      and similar for other _insert... functions
 _insert_at_vertices(const X_monotone_curve_2& cv,
                     DHalfedge* prev1, DHalfedge* prev2,
                     Comparison_result cmp,
                     bool& new_face,
-                    bool& prev1_on_outer_ccb_and_not_prev2,
-                    bool allow_swap /* = true */)
+                    bool& swapped_predecessors,
+                    bool allow_swap_of_predecessors /* = true */)
 {
   // the function adds he1 and he2 in this way:
   //    ----prev1---> ( --he2--> ) ---p2next--->
   //                  o ===cv=== 0
   //    <---p1next--- ( <--he1-- ) <---prev2----
-  // TODO EBEB 2012-07-27 change to he_to => cv,cv_dir => he_from?
 
   CGAL_precondition(prev1 != NULL);
   CGAL_precondition(prev2 != NULL);
   CGAL_precondition(prev1 != prev2); 
+
+  // in general we do not swap ... 
+  swapped_predecessors = false;
 
   // default values for signs
   std::pair< CGAL::Sign, CGAL::Sign > signs1(CGAL::ZERO, CGAL::ZERO);
@@ -2661,13 +2565,16 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 
   // Comment: This also checks which is the 'cheaper' (previously the 'shorter') way
   //          to insert the curve. Now cheaper means checking less local minima! 
-  if (allow_swap) {
+  if (allow_swap_of_predecessors) {
+
+    bool swap_predecessors = false;
 
     // TODO 2012-08-05 reuse hole1/hole2 later, or keep it local here?
     DInner_ccb* hole1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : NULL;
     DInner_ccb* hole2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : NULL;
     
     if ((hole1 == hole2) && (hole1 != NULL)) {
+      // .. only in this special case, we have to check wether swapping should take place
       
       // EBEB 2012-07-26 the following code enables optimizations:
       // - avoid length-test
@@ -2697,8 +2604,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
       std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
       
       if (!m_topol_traits.let_me_decide_the_outer_ccb(signs1, signs2, 
-                                                      /* prev1_on .. will be set if true is returned */
-                                                      prev1_on_outer_ccb_and_not_prev2)) {
+                                                      /* swap_predecessors will be set if true is returned */
+                                                      swap_predecessors)) {
         // COMMENT: The previous solution needed O(min(length1, length2)) steps to determine
         //          which path is shorter and the search for the leftmost vertex on a path
         //          needs O(#local_mins) geometric comparison.
@@ -2706,8 +2613,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
         //          will only need O(min(#local_mins1, #local_mins2)) geometric comparisons 
         //          to determine the leftmost vertex on a path.
         bool cond = (local_mins1.size() > 0 && (local_mins1.size() < local_mins2.size()));
-        prev1_on_outer_ccb_and_not_prev2 = 
-          (cond ?
+        swap_predecessors = 
+          !(cond ?
            (  _defines_outer_ccb_of_new_face(prev1, cv, cv_dir1, prev2->next(), 
                                              local_mins1.begin(), local_mins1.end()))
            :
@@ -2716,20 +2623,25 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
            );
       }
       
-      if (!prev1_on_outer_ccb_and_not_prev2) {
+      // perform the swap
+      if (swap_predecessors) {
         std::swap(prev1, prev2);
         cmp = CGAL::opposite(cmp);
         std::swap(signs1, signs2);
         std::swap(local_mins1, local_mins2);
+        
+        // and store the value
+        swapped_predecessors = true;
       }
     }
+
     // EBEB: For now, local_mins1/2 are local to this pre-check
     // Idea: Use it later, however, this spoils uses of _insert_at_vertices
     //       where allow_swap = false
     //       On the other hand: this would allow to set representative
     //       halfedge of ccbs to point to minimal vertex
 
-  } // allow_keep
+  } // allow_swap_of_predecessors
   
   // Get the vertices that match cv's endpoints.
   DVertex* v1 = prev1->vertex();
