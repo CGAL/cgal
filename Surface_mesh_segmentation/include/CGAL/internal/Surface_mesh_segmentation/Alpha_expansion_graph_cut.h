@@ -9,6 +9,7 @@
 #include <boost/math/distributions/normal.hpp>
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 
 namespace CGAL
@@ -19,10 +20,10 @@ namespace internal
 class Alpha_expansion_graph_cut
 {
 public:
-  typedef boost::adjacency_list_traits<boost::listS, boost::vecS, boost::directedS>
+  typedef boost::adjacency_list_traits<boost::vecS, boost::vecS, boost::directedS>
   Adjacency_list_traits;
 
-  typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS,
+  typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
           // 4 vertex properties (nested)
           boost::property<boost::vertex_index_t, int,
           boost::property<boost::vertex_color_t, boost::default_color_type,
@@ -43,12 +44,13 @@ public:
   typedef Traits::vertex_iterator Vertex_iterator;
   typedef Traits::edge_iterator Edge_iterator;
 
-  Alpha_expansion_graph_cut(std::vector<std::pair<int, int> >& edges,
-                            const std::vector<double>& edge_weights,
-                            const std::vector<std::vector<double> >& probability_matrix,
-                            std::vector<int>& labels, double* result = NULL) {
-    double min_cut = apply_alpha_expansion_2(edges, edge_weights,
-                     probability_matrix, labels);
+  Alpha_expansion_graph_cut(
+    std::vector<std::pair<int, int> >& edges,
+    const std::vector<double>& edge_weights,
+    const std::vector<std::vector<double> >& probability_matrix,
+    std::vector<int>& labels, double* result = NULL) {
+    double min_cut = apply_alpha_expansion(edges, edge_weights, probability_matrix,
+                                           labels);
     if(result != NULL) {
       *result = min_cut;
     }
@@ -79,6 +81,37 @@ public:
                                const std::vector<double>& edge_weights,
                                const std::vector<std::vector<double> >& probability_matrix,
                                std::vector<int>& labels) {
+    std::ofstream log_file("log_file.txt");
+
+    // logging input
+    log_file << "edges: " << std::endl;
+    for(std::vector<std::pair<int, int> >::const_iterator edge_it = edges.begin();
+        edge_it != edges.end();
+        ++edge_it) {
+      log_file << edge_it->first << " " << edge_it->second << std::endl;
+    }
+    log_file << "edge weights: " << std::endl;
+    for(std::vector<double>::const_iterator w_it = edge_weights.begin();
+        w_it != edge_weights.end(); ++w_it) {
+      log_file << (*w_it) << std::endl;
+    }
+    log_file << "prob matrix: " << std::endl;
+    for(std::vector< std::vector<double> >::const_iterator v_it =
+          probability_matrix.begin();
+        v_it != probability_matrix.end(); ++v_it) {
+      for(std::vector<double>::const_iterator p_it = v_it->begin();
+          p_it != v_it->end(); ++p_it) {
+        log_file << (*p_it) << " ";
+      }
+      log_file << std::endl;
+    }
+    log_file << "labels-input:" << std::endl;
+    for(std::vector<int>::const_iterator l_it = labels.begin();
+        l_it != labels.end(); ++l_it) {
+      log_file << (*l_it) << std::endl;
+    }
+
+    ////////////////////////////////////////////////////////////
     int number_of_clusters = probability_matrix.size();
     double min_cut = (std::numeric_limits<double>::max)();
     bool success;
@@ -86,7 +119,7 @@ public:
     gt.start();
     do {
       success = false;
-      for(int alpha = number_of_clusters; alpha > -1; --alpha) {
+      for(int alpha = 0; alpha < number_of_clusters; ++alpha) {
         Timer t;
         t.start();
         Graph graph;
@@ -114,7 +147,7 @@ public:
           add_edge_and_reverse(cluster_source, new_vertex, source_weight, 0.0, graph);
           add_edge_and_reverse(new_vertex, cluster_sink, sink_weight, 0.0, graph);
         }
-        std::cout << "vertex time: " << t.time() << std::endl;
+        //std::cout << "vertex time: " << t.time() << std::endl;
         t.reset();
         // For E-Smooth
         // add edge between every vertex,
@@ -140,15 +173,16 @@ public:
             add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, graph);
           }
         }
-        std::cout << "edge time: " << t.time() << std::endl;
+        //std::cout << "edge time: " << t.time() << std::endl;
         t.reset();
         double flow = boost::boykov_kolmogorov_max_flow(graph, cluster_source,
                       cluster_sink);
-        std::cout << "flow time: " << t.time() << std::endl;
+        //std::cout << "flow time: " << t.time() << std::endl;
         if(min_cut - flow < flow * 1e-10) {
           continue;
         }
-        std::cout << "prev flow: " << min_cut << " new flow: " << flow << std::endl;
+
+        log_file << "prev flow: " << min_cut << " new flow: " << flow << std::endl;
         min_cut = flow;
         success = true;
         //update labeling
@@ -163,7 +197,13 @@ public:
 
       }
     } while(success);
-    std::cout << "tot time: " << gt.time() <<  std::endl;
+    log_file << "labels-output:" << std::endl;
+    for(std::vector<int>::const_iterator l_it = labels.begin();
+        l_it != labels.end(); ++l_it) {
+      log_file << (*l_it) << std::endl;
+    }
+
+    std::cout << "Graph-cut time: " << gt.time() <<  std::endl;
     return min_cut;
   }
 
@@ -288,10 +328,6 @@ public:
         Timer t;
         t.start();
         Graph graph(edges.begin(), edges.end(), labels.size()+2, edges.size());
-#if 0
-        graph.m_vertices.reserve(edges.size() + labels.size()); //not documented!
-        // in order to see effect of pre-allocation of vector with maximum size
-#endif
         std::cout << "vertex time: " << t.time() << std::endl;
 
 

@@ -62,7 +62,7 @@ namespace CGAL
 template <
 class Polyhedron,
       class FacetIndexMap =
-      boost::associative_property_map<std::map<typename Polyhedron::Facet_const_iterator, int> >
+      boost::associative_property_map<std::map<typename Polyhedron::Facet_const_handle, int> >
       >
 class Surface_mesh_segmentation
 {
@@ -75,8 +75,10 @@ public:
   typedef typename Kernel::Point_3    Point;
 
   typedef typename Polyhedron::Edge_const_iterator     Edge_const_iterator;
+  typedef typename Polyhedron::Halfedge_const_handle   Edge_const_handle;
   typedef typename Polyhedron::Halfedge_const_iterator Halfedge_const_iterator;
   typedef typename Polyhedron::Facet_const_iterator    Facet_const_iterator;
+  typedef typename Polyhedron::Facet_const_handle      Facet_const_handle;
   typedef typename Polyhedron::Vertex_const_iterator   Vertex_const_iterator;
 
   typedef internal::SDF_calculation<Polyhedron> SDF_calculation;
@@ -89,7 +91,7 @@ public: // going to be protected !
   const Polyhedron& mesh;
 
   FacetIndexMap facet_index_map;
-  std::map<Facet_const_iterator, int> facet_index_map_internal;
+  std::map<Facet_const_handle, int> facet_index_map_internal;
 
   std::vector<double> sdf_values;
   std::vector<int>    centers;
@@ -154,7 +156,7 @@ public:
     SEG_DEBUG(t.start())
     //read_sdf_values("D:/dino.txt");
     //return;
-    typedef std::map<Facet_const_iterator, double> internal_map;
+    typedef std::map<Facet_const_handle, double> internal_map;
     internal_map facet_value_map_internal;
     boost::associative_property_map<internal_map> sdf_pmap(
       facet_value_map_internal);
@@ -276,18 +278,18 @@ public:
     }
   }
 ///////////////////////////////////////////////////////////////////
-  double get_sdf_value_of_facet(Facet_const_iterator facet) const {
+  double get_sdf_value_of_facet(Facet_const_handle facet) const {
     return sdf_values[boost::get(facet_index_map, facet)];
   }
 
-  int get_segment_id_of_facet(Facet_const_iterator facet) {
+  int get_segment_id_of_facet(Facet_const_handle facet) {
     return segments[boost::get(facet_index_map, facet)];
   }
 
 protected:
-  double calculate_dihedral_angle_of_edge(Edge_const_iterator& edge) const {
-    Facet_const_iterator f1 = edge->facet();
-    Facet_const_iterator f2 = edge->opposite()->facet();
+  double calculate_dihedral_angle_of_edge(Edge_const_handle& edge) const {
+    Facet_const_handle f1 = edge->facet();
+    Facet_const_handle f2 = edge->opposite()->facet();
 
     const Point& f2_v1 = f2->halfedge()->vertex()->point();
     const Point& f2_v2 = f2->halfedge()->next()->vertex()->point();
@@ -321,7 +323,7 @@ protected:
     return angle;
   }
 
-  double calculate_dihedral_angle_of_edge_2(Edge_const_iterator& edge) const {
+  double calculate_dihedral_angle_of_edge_2(Edge_const_handle& edge) const {
     const Point& a = edge->vertex()->point();
     const Point& b = edge->prev()->vertex()->point();
     const Point& c = edge->next()->vertex()->point();
@@ -337,8 +339,8 @@ protected:
     }
     return angle;
 
-    //Facet_const_iterator f1 = edge->facet();
-    //Facet_const_iterator f2 = edge->opposite()->facet();
+    //Facet_const_handle f1 = edge->facet();
+    //Facet_const_handle f2 = edge->opposite()->facet();
     //
     //const Point& f2_v1 = f2->halfedge()->vertex()->point();
     //const Point& f2_v2 = f2->halfedge()->next()->vertex()->point();
@@ -429,13 +431,13 @@ protected:
       std::vector<double> smoothed_sdf_values(mesh.size_of_facets());
       for(Facet_const_iterator facet_it = mesh.facets_begin();
           facet_it != mesh.facets_end(); ++facet_it) {
-        std::map<Facet_const_iterator, int> neighbors;
+        std::map<Facet_const_handle, int> neighbors;
         get_neighbors_by_vertex(facet_it, neighbors, window_size);
 
         double total_sdf_value = 0.0;
         double total_weight = 0.0;
-        for(typename std::map<Facet_const_iterator, int>::iterator it =
-              neighbors.begin(); it != neighbors.end(); ++it) {
+        for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
+            it != neighbors.end(); ++it) {
           double weight =  exp(-0.5 * (std::pow(it->second / (window_size/2.0),
                                                 2))); // window_size => 2*sigma
           total_sdf_value += get(sdf_values, it->first) * weight;
@@ -457,11 +459,11 @@ protected:
       for(Facet_const_iterator facet_it = mesh.facets_begin();
           facet_it != mesh.facets_end(); ++facet_it) {
         //Find neighbors and put their sdf values into a list
-        std::map<Facet_const_iterator, int> neighbors;
+        std::map<Facet_const_handle, int> neighbors;
         get_neighbors_by_vertex(facet_it, neighbors, window_size);
         std::vector<double> sdf_of_neighbors;
-        for(typename std::map<Facet_const_iterator, int>::iterator it =
-              neighbors.begin(); it != neighbors.end(); ++it) {
+        for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
+            it != neighbors.end(); ++it) {
           sdf_of_neighbors.push_back(get(sdf_values, it->first));
         }
         // Find median.
@@ -496,23 +498,23 @@ protected:
       for(Facet_const_iterator facet_it = mesh.facets_begin();
           facet_it != mesh.facets_end(); ++facet_it) {
         //Facet_handle facet = facet_it;
-        std::map<Facet_const_iterator, int> neighbors;
+        std::map<Facet_const_handle, int> neighbors;
         get_neighbors_by_vertex(facet_it, neighbors, window_size);
 
         double total_sdf_value = 0.0, total_weight = 0.0;
         double current_sdf_value = get(sdf_values, facet_it);
         // calculate deviation for range weighting.
         double deviation = 0.0;
-        for(typename std::map<Facet_const_iterator, int>::iterator it =
-              neighbors.begin(); it != neighbors.end(); ++it) {
+        for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
+            it != neighbors.end(); ++it) {
           deviation += std::pow(get(sdf_values, it->first) - current_sdf_value, 2);
         }
         deviation = std::sqrt(deviation / neighbors.size());
         if(deviation == 0.0) {
           deviation = std::numeric_limits<double>::epsilon();  //this might happen
         }
-        for(typename std::map<Facet_const_iterator, int>::iterator it =
-              neighbors.begin(); it != neighbors.end(); ++it) {
+        for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
+            it != neighbors.end(); ++it) {
           double spatial_weight =  exp(-0.5 * (std::pow(it->second / (window_size/2.0),
                                                2))); // window_size => 2*sigma
           double domain_weight  =  exp(-0.5 * (std::pow( (get(sdf_values,
@@ -527,9 +529,9 @@ protected:
     }
   }
 
-  void get_neighbors_by_edge(Facet_const_iterator& facet,
-                             std::map<Facet_const_iterator, int>& neighbors, int max_level) {
-    typedef std::pair<Facet_const_iterator, int> facet_level_pair;
+  void get_neighbors_by_edge(Facet_const_handle& facet,
+                             std::map<Facet_const_handle, int>& neighbors, int max_level) {
+    typedef std::pair<Facet_const_handle, int> facet_level_pair;
     std::queue<facet_level_pair> facet_queue;
     facet_queue.push(facet_level_pair(facet, 0));
     while(!facet_queue.empty()) {
@@ -547,16 +549,16 @@ protected:
     }
   }
 
-  void get_neighbors_by_vertex(Facet_const_iterator& facet,
-                               std::map<Facet_const_iterator, int>& neighbors, int max_level) {
-    typedef std::pair<Facet_const_iterator, int> facet_level_pair;
+  void get_neighbors_by_vertex(Facet_const_handle& facet,
+                               std::map<Facet_const_handle, int>& neighbors, int max_level) {
+    typedef std::pair<Facet_const_handle, int> facet_level_pair;
     std::queue<facet_level_pair> facet_queue;
     facet_queue.push(facet_level_pair(facet, 0));
     while(!facet_queue.empty()) {
       const facet_level_pair& pair = facet_queue.front();
       bool inserted = neighbors.insert(pair).second;
       if(inserted && pair.second < max_level) {
-        Facet_const_iterator facet = pair.first;
+        Facet_const_handle facet = pair.first;
         Halfedge_const_iterator edge = facet->halfedge();
         do { // loop on three vertices of the facet
           Vertex_const_iterator vertex = edge->vertex();
@@ -650,13 +652,13 @@ protected:
     }
   }
 
-  void depth_first_traversal(Facet_const_iterator& facet, int segment_id) {
+  void depth_first_traversal(Facet_const_handle& facet, int segment_id) {
     get(segments, facet) = segment_id;
     typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
       facet->facet_begin();
     double total_neighbor_sdf = 0.0;
     do {
-      Facet_const_iterator neighbor = facet_circulator->opposite()->facet();
+      Facet_const_handle neighbor = facet_circulator->opposite()->facet();
       if(get(segments, neighbor) == -1
           && get(centers, facet) == get(centers, neighbor)) {
         depth_first_traversal(neighbor, segment_id);
@@ -667,7 +669,7 @@ protected:
 
 
   template<class T>
-  T& get(std::vector<T>& data, const Facet_const_iterator& facet) {
+  T& get(std::vector<T>& data, const Facet_const_handle& facet) {
     return data[ boost::get(facet_index_map, facet) ];
   }
 
@@ -707,7 +709,7 @@ public:
     //{
     //    int center_id;
     //    input >> center_id;
-    //    centers.insert(std::pair<Facet_const_iterator, int>(facet_it, center_id));
+    //    centers.insert(std::pair<Facet_const_handle, int>(facet_it, center_id));
     //    if(center_id > max_center) { max_center = center_id; }
     //}
     //number_of_centers = max_center + 1;

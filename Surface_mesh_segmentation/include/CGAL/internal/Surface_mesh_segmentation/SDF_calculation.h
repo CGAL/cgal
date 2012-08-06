@@ -25,12 +25,12 @@ namespace CGAL
 namespace internal
 {
 
-template <
-class Polyhedron
->
+/**
+ * @class Resposable for calculating Shape Diameter Function over surface of the mesh.
+ */
+template <class Polyhedron>
 class SDF_calculation
 {
-public:
 
 //type definitions
 protected:
@@ -40,7 +40,8 @@ protected:
   typedef typename Kernel::Vector_3   Vector;
   typedef typename Kernel::Point_3    Point;
 
-  typedef typename Polyhedron::Facet_const_iterator    Facet_const_iterator;
+  typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
+  typedef typename Polyhedron::Facet_const_handle   Facet_const_handle;
 
   typedef typename Kernel::Ray_3     Ray;
   typedef typename Kernel::Plane_3   Plane;
@@ -54,11 +55,11 @@ protected:
   typedef typename Tree::Primitive_id
   Primitive_id;
 
-  /*Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = weight (angle with cone-normal). */
+  // Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = weight (angle with cone-normal).
   typedef boost::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
 
-//Member variables
+// member variables
 protected:
   double cone_angle;
   int    number_of_rays;
@@ -70,11 +71,24 @@ protected:
   double multiplier_for_segment;
 
 public:
+  /**
+   * Saves parameters to member variables.
+   * @param cone_angle opening angle for cone
+   * @param number_of_rays picked ray count from cone for each facet
+   */
   SDF_calculation(double cone_angle, int number_of_rays)
-    : cone_angle(cone_angle), number_of_rays(number_of_rays),
-      use_minimum_segment(false), multiplier_for_segment(1) {
+    : cone_angle(cone_angle),
+      number_of_rays(number_of_rays),
+      use_minimum_segment(false),
+      multiplier_for_segment(1) {
   }
 
+  /**
+   * Calculates SDF values for each facet, and stores them in `sdf_values`.
+   * @pre parameter `mesh` should consist of triangles.
+   * @param mesh polyhedron that SDF values are calculated on.
+   * @param[out] sdf_values `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type.
+   */
   template < class FacetValueMap >
   void calculate_sdf_values(const Polyhedron& mesh, FacetValueMap sdf_values) {
     int sparse_ray_count = number_of_rays;
@@ -93,8 +107,15 @@ public:
   }
 
 protected:
-  double calculate_sdf_value_of_facet(Facet_const_iterator& facet,
-                                      const Tree& tree, const Disk_samples_list& samples) const {
+  /**
+   * Calculates SDF value for parameter `facet`.
+   * @param facet.
+   * @param tree AABB tree which includes polyhedron.
+   * @param samples sampled points from a unit-disk which are corresponds to rays picked from cone.
+   * @return calculated SDF value.
+   */
+  double calculate_sdf_value_of_facet(Facet_const_handle& facet, const Tree& tree,
+                                      const Disk_samples_list& samples) const {
     const Point& p1 = facet->halfedge()->vertex()->point();
     const Point& p2 = facet->halfedge()->next()->vertex()->point();
     const Point& p3 = facet->halfedge()->prev()->vertex()->point();
@@ -188,7 +209,7 @@ protected:
     double sdf_result, acceptance_rate;
     boost::tie(sdf_result, acceptance_rate) =
       remove_outliers_and_calculate_sdf_value(ray_distances, ray_weights);
-
+    // If after outlier removal accepted rays are below threshold, we cast more rays.
     if(acceptance_rate > CGAL_ACCEPTANCE_RATE_THRESHOLD
         || samples.size() == disk_samples_dense.size()) {
       return sdf_result;
@@ -196,13 +217,21 @@ protected:
     return calculate_sdf_value_of_facet(facet, tree, disk_samples_dense);
   }
 
-  template <class Query> //Query can be templated for just Ray and Segment types.
+  /**
+   * Finds closest intersection for parameter `query`.
+   * @param query `Kernel::Segment_3` or `Kernel::Ray_3` type query.
+   * @param tree AABB tree which includes polyhedron.
+   * @param facet skipping parent facet
+   * (since numerical limitations on both center calculation and intersection test, query might intersect with related facet)
+   * @return tuple of:
+   *   - get<0> bool   : true if any intersection is found
+   *   - get<1> bool   : true if intersection is acceptable (i.e. accute angle with surface normal)
+   *   - get<2> double : distance between ray/segment origin and intersection point (0.0 if get<0> or get<1> is false)
+   */
+  template <class Query> // Query can be templated for just Ray and Segment types.
   boost::tuple<bool, bool, double> cast_and_return_minimum(
-    const Query& query, const Tree& tree, Facet_const_iterator& facet) const {
-    // get<0> : if any intersection is found then true
-    // get<1> : if found intersection is acceptable (i.e. accute angle with surface normal) then true
-    // get<2> : distance between ray/segment origin and intersection point.
-    boost::tuple<bool, bool, double> min_distance(false, false, 0);
+    const Query& query, const Tree& tree, Facet_const_handle& facet) const {
+    boost::tuple<bool, bool, double> min_distance(false, false, 0.0);
     std::list<Object_and_primitive_id> intersections;
 #if 1
     //SL: the difference with all_intersections is that in the traversal traits, we do do_intersect before calling intersection.
@@ -259,7 +288,7 @@ protected:
   template <class Query> //Query can be templated for just Ray and Segment types.
   boost::tuple<bool, bool, double> cast_and_return_minimum_use_closest (
     const Query& ray, const Tree& tree,
-    Facet_const_iterator& facet) const {
+    Facet_const_handle& facet) const {
     // get<0> : if any intersection is found then true
     // get<1> : if found intersection is acceptable (i.e. accute angle with surface normal) then true
     // get<2> : distance between ray/segment origin and intersection point.
@@ -304,6 +333,13 @@ protected:
     return min_distance;
   }
 
+  /**
+   * Removes outliers by filtering .
+   * @param facet.
+   * @param tree AABB tree which includes polyhedron.
+   * @param samples sampled points from a unit-disk which are corresponds to rays picked from cone.
+   * @return calculated SDF value.
+   */
   boost::tuple<double, double> remove_outliers_and_calculate_sdf_value(
     std::vector<double>& ray_distances,
     std::vector<double>& ray_weights) const {
