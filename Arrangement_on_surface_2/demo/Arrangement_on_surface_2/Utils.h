@@ -493,11 +493,13 @@ public:
         return res;
     }
 
+#if 0
     Root_of_2 operator() ( const X_monotone_curve_2& curve, const Root_of_2& x )
     {
         FT approx( CGAL::to_double( x ) );
         return this->operator()( curve, approx );
     }
+#endif
 
 protected:
     Traits traits;
@@ -645,6 +647,7 @@ public:
     typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename CircularKernel::Point_2 Non_arc_point_2;
     typedef typename ArrTraits::Point_2 Arc_point_2;
+    typedef typename CircularKernel::FT FT;
     typedef typename CircularKernel::Root_of_2 Root_of_2;
     typedef typename CircularKernel::Root_for_circles_2_2 Root_for_circles_2_2;
 
@@ -667,8 +670,9 @@ public:
         if ( this->compare_x_2( pLeft, pMin ) == CGAL::LARGER )
         {
             Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
-            Root_of_2 y1 = compute_y_at_x( curve, pLeft.x( ) );
-            Root_for_circles_2_2 intersectionPoint( pLeft.x( ), y1 );
+            FT x_approx( CGAL::to_double( pLeft.x( ) ) );
+            Root_of_2 y1 = compute_y_at_x( curve, x_approx );
+            Root_for_circles_2_2 intersectionPoint( x_approx, y1 );
             Arc_point_2 splitPoint( intersectionPoint );
             this->split_2( curve, splitPoint, unusedTrimmings, subcurve );
         }
@@ -680,8 +684,9 @@ public:
         if ( this->compare_x_2( pRight, pMax ) == CGAL::SMALLER )
         {
             Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
-            Root_of_2 y2 = compute_y_at_x( subcurve, pRight.x( ) );
-            Root_for_circles_2_2 intersectionPoint( pRight.x( ), y2 );
+            FT x_approx( CGAL::to_double( pRight.x( ) ) );
+            Root_of_2 y2 = compute_y_at_x( subcurve, x_approx );
+            Root_for_circles_2_2 intersectionPoint( x_approx, y2 );
             Arc_point_2 splitPoint( intersectionPoint );
             this->split_2( subcurve, splitPoint, finalSubcurve, unusedTrimmings );
         }

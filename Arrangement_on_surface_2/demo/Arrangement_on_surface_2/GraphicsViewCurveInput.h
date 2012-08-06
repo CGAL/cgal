@@ -645,6 +645,8 @@ public:
     typedef typename Traits::Point_2 Point_2;
     typedef Point_2 Arc_point_2;
     typedef typename CircularKernel::Point_2 Non_arc_point_2;
+    typedef typename CircularKernel::Circle_2 Circle_2;
+    typedef typename CircularKernel::Circular_arc_2 Circular_arc_2;
     typedef CircularKernel Kernel;
 
     GraphicsViewCurveInput( QObject* parent ):
@@ -671,8 +673,38 @@ protected:
             Kernel ker;
             if ( ! ker.collinear_2_object()( pp1, pp2, pp3 ) )
             {
-                Curve_2 res( pp1, pp2, pp3 );
-                emit generate( CGAL::make_object( res ) );
+                Circle_2 circle( pp1, pp2, pp3 );
+                Circular_arc_2 arc( circle, pp1, pp3 );
+                //Circular_arc_2 arc2( circle, pp1, pp3 );
+                std::vector< CGAL::Object > subarcs;
+                CGAL::make_x_monotone( arc, std::back_inserter( subarcs ) );
+                typename CircularKernel::Has_on_2 has_on;
+                bool isOn = false;
+                for ( int i = 0; i < subarcs.size( ); ++i )
+                {
+                    Circular_arc_2 subarc;
+                    if ( CGAL::assign( subarc, subarcs[ i ] ) )
+                    {
+                        if ( has_on( subarc, pp2 ) )
+                        {
+                            isOn = true;
+                            break;
+                        }
+                    }
+                }
+
+                if ( isOn )
+                {
+                    Curve_2 res( circle, pp1, pp3 );
+                    std::cout << res << std::endl;
+                    emit generate( CGAL::make_object( res ) );
+                }
+                else
+                {
+                    Curve_2 res( circle, pp3, pp1 );
+                    std::cout << res << std::endl;
+                    emit generate( CGAL::make_object( res ) );
+                }
             }
             else
             {
