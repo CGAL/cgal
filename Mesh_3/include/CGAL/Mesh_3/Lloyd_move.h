@@ -377,8 +377,8 @@ private:
     typename Gt::Compute_area_3 area = 
       Gt().compute_area_3_object();
     
-    // Vertex current location
-    const Point_3& vertex_location = v->point();
+    // Vertex current position
+    const Point_3& vertex_position = v->point();
     
     // Use as reference point to triangulate
     const Point_3& a = *first++;
@@ -391,7 +391,7 @@ private:
     FT density = density_2d<true>(triangle_centroid, v, sizing_field);
     
     FT sum_masses = density * area(a,*b,c);
-    Vector_3 move = sum_masses * vector(vertex_location, triangle_centroid);
+    Vector_3 move = sum_masses * vector(vertex_position, triangle_centroid);
     
     b = &c;
     
@@ -404,7 +404,7 @@ private:
       FT density = density_2d<false>(triangle_centroid, v, sizing_field);
       FT mass = density * area(a,*b,c);
       
-      move = move + mass * vector(vertex_location, triangle_centroid);
+      move = move + mass * vector(vertex_position, triangle_centroid);
       sum_masses += mass;
       
       // Go one step forward
