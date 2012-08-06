@@ -1766,7 +1766,7 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
   std::cout << "signs1.x: " << signs1.first << std::endl;
   std::cout << "signs1.y: " << signs1.second << std::endl;
   std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
-  
+
   bool is_perimetric1 = signs1.first || signs1.second; // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
 
   const DHalfedge* he_min1 = he1; // initialize with first candidate
@@ -2545,8 +2545,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                     Comparison_result cmp,
                     bool& new_face,
                     bool& swapped_predecessors,
-                    bool allow_swap_of_predecessors /* = true */)
-{
+                    bool allow_swap_of_predecessors /* = true */) {
   // the function adds he1 and he2 in this way:
   //    ----prev1---> ( --he2--> ) ---p2next--->
   //                  o ===cv=== 0
@@ -2558,7 +2557,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 
   // Set the direction of the halfedges: res indicates the direction of he2,
   // as it is the comparison result between its source and target.
-  // TODO cv_dir will become part of signature
+  // TODO EBEB 2012-08-06 cv_dir will become part of signature
   Arr_halfedge_direction cv_dir =
     (cmp == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
   
@@ -2575,7 +2574,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 
     bool swap_predecessors = false;
 
-    // TODO 2012-08-05 reuse hole1/hole2 later, or keep it local here?
+    // TODO EBEB 2012-08-05 reuse hole1/hole2 later, or keep it local here?
     DInner_ccb* hole1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : NULL;
     DInner_ccb* hole2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : NULL;
     
@@ -2600,14 +2599,15 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                                cv, cv_dir2, 
                                                prev1->next(), 
                                                std::front_inserter(local_mins2));
-      
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs1.x: " << signs1.first << std::endl;
       std::cout << "signs1.y: " << signs1.second << std::endl;
       std::cout << "signs2.x: " << signs2.first << std::endl;
       std::cout << "signs2.y: " << signs2.second << std::endl;
       std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
       std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
-      
+#endif
+
       if (!m_topol_traits.let_me_decide_the_outer_ccb(signs1, signs2, 
                                                       /* swap_predecessors will be set if true is returned */
                                                       swap_predecessors)) {
@@ -2750,15 +2750,13 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 
   if ((ic1 != NULL) && (ic1 == ic2)) {
     
-#if 0
-    // THIS IS NEW CODE
-    // TODO EBEB start here
+    // EBEB 2012-08-06: This is new code. It relies on the (computed) signs and replaces
+    // to trace the ccb again (in particular for torical arrangements)
+    // TODO EBEB 2012-08-06: Check what to do here, when allow_swap_of_predecessors = false and thus
+    // signs1 and signs2 set to DEFAULT (=ZERO) values.
     std::pair<bool, bool> res =
-      m_topol_traits.face_split_after_edge_insertion(signs2, signs2);
-#else
-    std::pair<bool, bool> res =
-      m_topol_traits.face_split_after_edge_insertion(prev1, prev2, cv);
-#endif
+      m_topol_traits.face_split_after_edge_insertion(signs1, signs2);
+
     split_new_face = res.first;
     is_split_face_contained = res.second;
 

@@ -534,27 +534,20 @@ public:
                                    std::pair< CGAL::Sign, CGAL::Sign> signs2,
                                    bool& swap_predecessors) const;
 
-  /*! Given two predecessor halfedges that belong to the same inner CCB of
-   * a face, determine what happens when we insert an edge connecting the
-   * target vertices of the two edges.
-   * \param prev1 The first predecessor halfedge.
-   * \param prev2 The second predecessor halfedge.
-   * \param cv The curve to be inserted
-   * \pre The two halfedges belong to the same inner CCB.
+
+  /*!
+   * Given signs of two ccbs that show up when splitting upon insertion of 
+   * curve into two, determine what happens to the face(s).
+   * \param signs1 signs in x and y of the first implied ccb
+   * \param signs2 signs in x and y of the secondd implied ccb
    * \return A pair indicating whether the insertion will cause the face
    *         to split (the first flag), and if so - whether the split face
    *         will form a hole in the original face.
    */
   std::pair<bool, bool>
-  face_split_after_edge_insertion(const Halfedge * prev1,
-                                  const Halfedge * prev2,
-                                  const X_monotone_curve_2 & /*cv*/) const
-  {
-    CGAL_precondition(prev1->is_on_inner_ccb());
-    CGAL_precondition(prev2->is_on_inner_ccb());
-    CGAL_precondition(prev1->inner_ccb() == prev2->inner_ccb());
-
-    // In case of a planar topology, connecting two vertices on the same
+  face_split_after_edge_insertion(std::pair< CGAL::Sign, CGAL::Sign > CGAL_precondition_code(signs1),
+                                  std::pair< CGAL::Sign, CGAL::Sign > CGAL_precondition_code(signs2)) const {
+    // In case of a spherical topology, connecting two vertices on the same
     // inner CCB closes a new face that becomes a hole in the original face:
     return (std::make_pair(true, true));
   }
