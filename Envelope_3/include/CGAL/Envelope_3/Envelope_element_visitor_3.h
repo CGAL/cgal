@@ -1646,12 +1646,17 @@ protected:
               if (n_faces_closed == 1 &&
                   map_orig_to_copied_halfedges.is_defined(hh->next()))
               {
+                bool dummy_swapped_predecessors;
                 copied_new_he = to_accessor.insert_at_vertices_ex
                   (current_cv,
                    copied_prev_he,
                    copied_prev_v2,
                    HE_COMP_RES(hh),
-                   new_face);
+                   new_face,
+                   dummy_swapped_predecessors);
+                // TODO EBEB 2012-08-06 do we have to care if order has been swapped,
+                // or do we have to disallow swapping?
+
                 CGAL_assertion(new_face);
               }
               else
@@ -1670,19 +1675,24 @@ protected:
             {
               // should always flip the side of the edge, because the face
               // that we close is never the copied face, even in strane
-              // situations like this: (two faces thouch in vertex)
+              // situations like this: (two faces touch in a vertex)
               //     ------         |\  /|
               //     | |\ |         | \/ |
               //     | | \|         | /\ |
               //     ---            |/  \|
               //
               //
+              bool dummy_swapped_predecessors;
               copied_new_he =
                 to_accessor.insert_at_vertices_ex(current_cv,
                                                   copied_prev_v2,
                                                   copied_prev_he,
                                                   HE_COMP_RES(hh->twin()),
-                                                  new_face);
+                                                  new_face,
+                                                  dummy_swapped_predecessors);
+              // TODO EBEB 2012-08-06 do we have to care if order has been swapped,
+              // or do we have to disallow swapping?
+              
               CGAL_assertion(new_face);
               copied_new_he = copied_new_he->twin();
             }
@@ -2349,11 +2359,15 @@ protected:
         Halfedge_handle big_prev2 = map_halfedges[prev2];
 
         bool new_face;
+        bool dummy_swapped_predecessors;
         Halfedge_handle new_he =
           big_arr_accessor.insert_at_vertices_ex(he->curve(),
                                                  big_prev1, big_prev2,
                                                  HE_COMP_RES(he),
-                                                 new_face);
+                                                 new_face,
+                                                 dummy_swapped_predecessors);
+        // TODO EBEB 2012-08-06 do we have to care if order has been swapped,
+        // or do we have to disallow swapping?
 
         // new_he should be directed as he
         CGAL_assertion(map_vertices.is_defined(he->source()) &&
