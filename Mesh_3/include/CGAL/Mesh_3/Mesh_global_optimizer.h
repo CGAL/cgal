@@ -120,8 +120,8 @@ public:
    */
   void unfreeze_all();
 #endif  
-  
- /**
+
+  /**
   * collects all vertices of the triangulation in moving_vertices
   * (even the frozen ones)
   */
@@ -211,7 +211,7 @@ private:
   typedef std::list<FT> FT_list;
   FT_list big_moves_;
 #endif
-  
+
 #ifdef CGAL_FREEZE_VERTICES
   bool do_freeze_;
   mutable unsigned int nb_frozen_points_;
@@ -221,7 +221,6 @@ private:
   mutable FT sum_moves_;
 #endif
 };
-  
   
   
 template <typename C3T3, typename Md, typename Mf, typename V_>
@@ -253,7 +252,7 @@ Mesh_global_optimizer(C3T3& c3t3,
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
 , sum_moves_(0)
-#endif
+#endif // CGAL_MESH_3_OPTIMIZER_VERBOSE
 {
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   std::cerr << "Fill sizing field...";
@@ -297,11 +296,11 @@ operator()(int nb_iterations, Visitor visitor)
 
   unsigned int initial_vertices_nb = moving_vertices.size();
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-  double step_begin = running_time_.time(); 
+  double step_begin = running_time_.time();
   std::cerr << "Running " << Mf::name() << "-smoothing (" 
     << initial_vertices_nb << " vertices)" << std::endl;
 #endif //CGAL_MESH_3_OPTIMIZER_VERBOSE
-  
+
   // Initialize big moves (stores the largest moves)
   big_moves_.clear();
   big_moves_size_ = 
@@ -374,7 +373,7 @@ operator()(int nb_iterations, Visitor visitor)
   if ( nb_frozen_points_ == initial_vertices_nb )
     std::cerr << "All vertices frozen" << std::endl;
   else
-#endif 
+#endif
   if ( check_convergence() )
     std::cerr << "Convergence reached" << std::endl;
     
@@ -386,13 +385,13 @@ operator()(int nb_iterations, Visitor visitor)
   if ( nb_frozen_points_ == initial_vertices_nb )
     return ALL_VERTICES_FROZEN;
   else
-#endif 
+#endif
   if ( is_time_limit_reached() )
     return TIME_LIMIT_REACHED;
-  
+ 
   else if ( check_convergence() )
     return CONVERGENCE_REACHED;
-  
+ 
   return MAX_ITERATION_NUMBER_REACHED;
 }
 
@@ -429,14 +428,15 @@ unfreeze_all()
 }
 #endif
 
+
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Moves_vector
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
-compute_moves(/*const*/ Moving_vertices_set& moving_vertices)
+compute_moves(/*const */Moving_vertices_set& moving_vertices)
 {
   typename Gt::Construct_translated_point_3 translate =
     Gt().construct_translated_point_3_object();
-  
+
   // Store new location of points which have to move
   Moves_vector moves;
   moves.reserve(moving_vertices.size());
@@ -453,7 +453,8 @@ compute_moves(/*const*/ Moving_vertices_set& moving_vertices)
   for ( ; vit != moving_vertices.end() ; )
   {
     Vector_3 move = compute_move(*vit);
-    if ( CGAL::NULL_VECTOR != move )
+    
+	if ( CGAL::NULL_VECTOR != move )
     {
       Point_3 new_position = translate((*vit)->point(),move);
       moves.push_back(std::make_pair(*vit,new_position));
@@ -587,24 +588,23 @@ update_mesh(const Moves_vector& moves,
        ++it )
   {
     const Vertex_handle& v = it->first;
-    const Point_3& new_position = it->second;   
+    const Point_3& new_position = it->second;
     // Get size at new position
     if ( Sizing_field::is_vertex_update_needed )
     {
-      FT size = sizing_field_(new_position,v);
-    
+      FT size = sizing_field_(new_position,v);   
+      
       // Move point
 #if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
       Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
 #else
       Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells);
-#endif            
+#endif       
       // Restore size in meshing_info data
       new_v->set_meshing_info(size);
     }
     else
     {
-      // Move point
       // Move point
 #if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
       Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
@@ -640,7 +640,7 @@ update_mesh(const Moves_vector& moves,
   visitor.after_rebuild_restricted_delaunay();
 }
 
-  
+
 template <typename C3T3, typename Md, typename Mf, typename V_>
 void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
