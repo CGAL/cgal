@@ -51,7 +51,7 @@ DEF SNAP Snapshot {
   quality 98
   sequence FALSE
   dirName "."
-  fileName "test07"
+  fileName "test13"
 }
 
 Transform {
@@ -96,7 +96,7 @@ Transform {
 		aosVertexPointSize 6
 		aosIsolatedVertexStyle "disc"
 #	        insertionStrategy "increment"
-		aosMarkedEdgeIndex 7
+		aosMarkedEdgeIndex 1
 		aosMarkedEdgeRadius 0.03
 		coord DEF COORD ExactCoordinate {
 		  ratPoint [0 0 -1, 1 -1 0, -1 -1 0, 0 -1 -1]
