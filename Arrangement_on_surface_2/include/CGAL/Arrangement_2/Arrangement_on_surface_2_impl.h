@@ -2419,9 +2419,9 @@ _insert_in_face_interior(const X_monotone_curve_2& cv,
 
   // Set the direction of the halfedges: res indicates the direction of he2,
   // as it is the comparison result between its source (v1) and target (v2).
-  const Arr_halfedge_direction dir =
+  const Arr_halfedge_direction cv_dir =
     (res == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
-  he2->set_direction(dir);
+  he2->set_direction(cv_dir);
 
   // Create a handle to the new halfedge pointing at the curve target.
   Halfedge_handle hh(he2);
@@ -2517,9 +2517,9 @@ _insert_from_vertex(const X_monotone_curve_2& cv,
 
   // Set the direction of the halfedges: res indicates the direction of he2,
   // as it is the comparison result between its source and target (v).
-  const Arr_halfedge_direction   dir =
+  const Arr_halfedge_direction cv_dir =
     (cmp == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
-  he2->set_direction(dir);
+  he2->set_direction(cv_dir);
 
   // Notify the observers that we have created a new edge.
   _notify_after_create_edge(Halfedge_handle(he2));
@@ -2556,6 +2556,12 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   CGAL_precondition(prev2 != NULL);
   CGAL_precondition(prev1 != prev2); 
 
+  // Set the direction of the halfedges: res indicates the direction of he2,
+  // as it is the comparison result between its source and target.
+  // TODO cv_dir will become part of signature
+  Arr_halfedge_direction cv_dir =
+    (cmp == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+  
   // in general we do not swap ... 
   swapped_predecessors = false;
 
@@ -2580,8 +2586,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
       // - avoid length-test
       // - search only local minima to find leftmost vertex
       // - re-use of signs of ccbs
-      Arr_halfedge_direction cv_dir1 = 
-        (cmp == CGAL::SMALLER ? CGAL::ARR_LEFT_TO_RIGHT : CGAL::ARR_RIGHT_TO_LEFT);
+      Arr_halfedge_direction cv_dir1 = cv_dir;
       std::list< std::pair< const DHalfedge*, int > > local_mins1;
       signs1 = _compute_signs_and_local_minima(prev1, 
                                                cv, cv_dir1, 
@@ -2589,7 +2594,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                                std::front_inserter(local_mins1));
       
       Arr_halfedge_direction cv_dir2 = 
-        (cmp == CGAL::SMALLER ? CGAL::ARR_RIGHT_TO_LEFT : CGAL::ARR_LEFT_TO_RIGHT);
+        (cv_dir == ARR_LEFT_TO_RIGHT ? CGAL::ARR_RIGHT_TO_LEFT : CGAL::ARR_LEFT_TO_RIGHT);
       std::list< std::pair< const DHalfedge*, int > > local_mins2;
       signs2 = _compute_signs_and_local_minima(prev2,
                                                cv, cv_dir2, 
@@ -2626,7 +2631,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
       // perform the swap
       if (swap_predecessors) {
         std::swap(prev1, prev2);
-        cmp = CGAL::opposite(cmp);
+        cv_dir = (cv_dir == ARR_LEFT_TO_RIGHT ? CGAL::ARR_RIGHT_TO_LEFT : CGAL::ARR_LEFT_TO_RIGHT);
         std::swap(signs1, signs2);
         std::swap(local_mins1, local_mins2);
         
@@ -2670,7 +2675,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   std::cout << "pref2: " << (prev2->is_on_inner_ccb() ? 
                              prev2->inner_ccb()->face() :
                              prev2->outer_ccb()->face()) << std::endl;
-  std::cout << "cmp  : " << cmp << std::endl;
+  std::cout << "cmp   : " << cmp << std::endl;
+  std::cout << "cv_dir: " << cv_dir << std::endl;
 #endif
 
   // Get the components containing the two previous halfedges and the incident
@@ -2782,11 +2788,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   prev1->set_next(he2);
   prev2->set_next(he1);
 
-  // Set the direction of the halfedges: res indicates the direction of he2,
-  // as it is the comparison result between its source and target.
-  const Arr_halfedge_direction   dir =
-    (cmp == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
-  he2->set_direction(dir);
+  he2->set_direction(cv_dir);
 
   // Check the various cases of insertion (in the design document: the
   // various sub-cases of case 3 in the insertion procedure).
