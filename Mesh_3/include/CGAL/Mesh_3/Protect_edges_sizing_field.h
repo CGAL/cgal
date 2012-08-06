@@ -1,4 +1,5 @@
 // Copyright (c) 2009-2010 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2010-2011 GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -28,6 +29,7 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Mesh_3/io_signature.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -126,7 +128,7 @@ private:
   /// Insert point p as a curve segment point, using querying the sizing field to
   /// get the weight.
   Vertex_handle insert_curve_point(const Bare_point& p, const Index& p_index);
-
+  
   /// Insert point p as a curve segment point, with a given weight.
   Vertex_handle insert_curve_point(const Bare_point& p, const Index& p_index,
                                    const Weight weight);
@@ -180,11 +182,11 @@ private:
   /// an edge of the complex
   bool non_adjacent_but_intersect(const Vertex_handle& va,
                                   const Vertex_handle& vb) const;
-
+  
   /// Returns true if balls of \c va and \c vb intersect
   bool do_balls_intersect(const Vertex_handle& va,
                           const Vertex_handle& vb) const;
-
+  
   /// Change size of the ball of vertex \c v.
   Vertex_handle change_ball_size(const Vertex_handle& v, const FT size,
                                  const bool special_ball = false);
@@ -276,8 +278,8 @@ private:
   {
     return CGAL::sqrt(v->point().weight());
   }
-  
-    /// Test if a given vertex is a special protecting ball
+
+  /// Test if a given vertex is a special protecting ball
   /// A special ball is a protecting ball whose radius is set to the
   /// minimal radius. Such a ball can exceptionally intersect a ball that
   /// is on a different curve. Special balls are marked with special values
@@ -372,7 +374,7 @@ operator()(const bool refine)
 #endif
     CGAL_assertion(c3t3_.is_valid());
   }
-
+  
   // debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
 
 #ifdef CGAL_MESH_3_VERBOSE
@@ -495,9 +497,11 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   std::cerr  << index << std::endl;
   if(v == Vertex_handle()) std::cerr << "  HIDDEN!\n";
   std::cerr << "The weight was " << w << std::endl;
-#endif
-  
-  c3t3_.set_dimension(v,dim);
+#endif // PROTECTION_DEBUG
+
+  c3t3_.set_dimension(v, dim);
+  if(special_ball)
+    set_special(v);
   c3t3_.set_index(v,index);
   
   unchecked_vertices_.insert(v);
@@ -521,11 +525,11 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
   typename Gt::Compute_squared_distance_3 sq_distance =
     tr.geom_traits().compute_squared_distance_3_object();
   
-  bool add_handle_to_unchecked = false;/// add or not the new vertex to
+  bool add_handle_to_unchecked = false; /// add or not the new vertex to
                                         /// the set 'unchecked_vertices'
   bool insert_a_special_ball = false; /// will be passed to the function
                                       /// this->insert_point
-    
+  
   if ( tr.dimension() > 2 ) 
   {
     // Check that new point will not be inside a power sphere
@@ -694,7 +698,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
   if( w < minimal_weight_) {
     w = minimal_weight_;
     insert_a_special_ball = true;
-  }  
+  }
   Vertex_handle v = insert_point(p,w,dim,index, insert_a_special_ball);
   if ( add_handle_to_unchecked ) { unchecked_vertices_.insert(v); }
   
@@ -885,7 +889,7 @@ insert_balls(const Vertex_handle& vp,
   
   int n = static_cast<int>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
   // if( minimal_weight_ != 0 && n == 0 ) return;
-  
+
 #ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
   // This block tries not to apply the general rule that the size of
   // protecting balls is a linear interpolation of the size of protecting
@@ -929,7 +933,7 @@ insert_balls(const Vertex_handle& vp,
   }
 #endif // not CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
 
-    FT r = (sq - sp) / FT(n+1);
+  FT r = (sq - sp) / FT(n+1);
 
 #ifdef PROTECTION_DEBUG
   std::cerr << "  n=" << n
@@ -941,7 +945,7 @@ insert_balls(const Vertex_handle& vp,
   FT D = sp*FT(n+1) + FT((n+1)*(n+2)) / FT(2) * r ;
   
   FT dleft_frac = d / D;
-  
+
   // Initialize step sizes
   FT step_size = sp + r;
   FT norm_step_size = dleft_frac * step_size;
@@ -1103,6 +1107,8 @@ bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 {
+  typedef typename Gt::Sphere_3 Sphere_3;
+    
   typename Gt::Construct_sphere_3 sphere = 
     c3t3_.triangulation().geom_traits().construct_sphere_3_object();
     
@@ -1164,7 +1170,7 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
   
   // Change v size
   c3t3_.triangulation().remove(v);
-   
+ 
   CGAL_assertion_code(Tr& tr = c3t3_.triangulation());
   CGAL_assertion_code(Cell_handle ch = tr.locate(p));
   CGAL_assertion_code(std::vector<Vertex_handle> hidden_vertices);
@@ -1176,7 +1182,7 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
   CGAL_assertion(hidden_vertices.empty());
 
   CGAL_assertion( (! special_ball) || is_special(new_v) ); 
-
+  
   // TODO: ensure that this condition is always satisfied (Pedro's code ?)
   CGAL_assertion(v==new_v);
   //new_v->set_meshing_info(size*size);
@@ -1278,7 +1284,7 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, OutputIterator out)
 #ifdef PROTECTION_DEBUG
   std::cerr <<  "to_repopulate.size()=" << to_repopulate.size() << "\n";
 #endif // PROTECTION_DEBUG  
-  
+
   // Check whether a complete circle has been discovered or not
   if (   to_repopulate.size() == 1
       || to_repopulate.front() != to_repopulate.back() )
