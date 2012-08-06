@@ -150,7 +150,10 @@ public:
 // Use these two functions together
   void calculate_sdf_values(double cone_angle = CGAL_DEFAULT_CONE_ANGLE,
                             int number_of_ray = CGAL_DEFAULT_NUMBER_OF_RAYS) {
-
+    SEG_DEBUG(Timer t)
+    SEG_DEBUG(t.start())
+    //read_sdf_values("D:/dino.txt");
+    //return;
     typedef std::map<Facet_const_iterator, double> internal_map;
     internal_map facet_value_map_internal;
     boost::associative_property_map<internal_map> sdf_pmap(
@@ -164,10 +167,13 @@ public:
         facet_it != mesh.facets_end(); ++facet_it) {
       get(sdf_values, facet_it) = boost::get(sdf_pmap, facet_it);
     }
-
+    SEG_DEBUG(std::cerr <<"SDF computation time: " << t.time() << std::endl)
+    SEG_DEBUG(t.reset())
     check_zero_sdf_values();
     smooth_sdf_values_with_bilateral();
     normalize_sdf_values();
+    SEG_DEBUG(std::cerr <<"Normalization and smoothing time: " << t.time() <<
+              std::endl)
   }
 
   void partition(int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
@@ -372,8 +378,9 @@ protected:
     std::pair<fv_iterator, fv_iterator> min_max_pair =
       min_max_element(sdf_values.begin(), sdf_values.end());
 
-    double max_value = *min_max_pair.second, min_value = *min_max_pair.first;
-    double max_min_dif = max_value - min_value;
+    const double max_value = *min_max_pair.second;
+    const double min_value = *min_max_pair.first;
+    const double max_min_dif = max_value - min_value;
     for(fv_iterator it = sdf_values.begin(); it != sdf_values.end(); ++it) {
       double linear_normalized = (*it - min_value) / max_min_dif;
       double log_normalized = log(linear_normalized * CGAL_NORMALIZATION_ALPHA + 1) /
@@ -387,8 +394,9 @@ protected:
     std::pair<fv_iterator, fv_iterator> min_max_pair =
       min_max_element(sdf_values.begin(), sdf_values.end());
 
-    double max_value = *min_max_pair.second, min_value = *min_max_pair.first;
-    double max_min_dif = max_value - min_value;
+    const double max_value = *min_max_pair.second;
+    const double min_value = *min_max_pair.first;
+    const double max_min_dif = max_value - min_value;
     for(fv_iterator it = sdf_values.begin(); it != sdf_values.end(); ++it) {
       *it = (*it - min_value) / max_min_dif;
     }
@@ -554,7 +562,7 @@ protected:
           Vertex_const_iterator vertex = edge->vertex();
           typename Facet::Halfedge_around_vertex_const_circulator vertex_circulator =
             vertex->vertex_begin();
-          do { // for each vertex loop on neighbor vertices
+          do { // for each vertex loop on incoming edges (through those edges loop on neighbor facets which includes the vertex)
             facet_queue.push(facet_level_pair(vertex_circulator->facet(), pair.second + 1));
           } while(++vertex_circulator != vertex->vertex_begin());
         } while((edge = edge->next()) != facet->halfedge());
@@ -602,8 +610,6 @@ protected:
         it_i != probabilities.end(); ++it_i) {
       for(std::vector<double>::iterator it = it_i->begin(); it != it_i->end(); ++it) {
         double probability = (std::max)(*it, epsilon);
-        //probability += epsilon;
-        //probability = (std::min)(probability, 1.0);
         probability = -log(probability);
         *it = (std::max)(probability, std::numeric_limits<double>::epsilon());
       }

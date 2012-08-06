@@ -236,7 +236,10 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize(
         {
             double sdf_value = segmentation.get_sdf_value_of_facet(facet_const_it); 
             int gray_color = static_cast<int>(255 * sdf_value);
-            color_vector.push_back(QColor(gray_color, gray_color, gray_color));
+            QColor rgb_color(gray_color, gray_color, gray_color);
+            //QColor rgb_color(255, gray_color, 255-gray_color);
+            //QColor rgb_color = QColor::fromHsvF(sdf_value, 0.8, 0.8);
+            color_vector.push_back(rgb_color);
             facet_it->set_patch_id(patch_id++);
                   
         }
@@ -248,6 +251,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize(
         }        
     }
     if(!sdf) {
+        std::cerr << "Number of segments: " << patch_id + 1 << std::endl; 
         compute_color_map(item->color(), patch_id + 1, 
                       std::back_inserter(color_vector));
         //color_vector =  std::vector<QColor>(patch_id+1); 

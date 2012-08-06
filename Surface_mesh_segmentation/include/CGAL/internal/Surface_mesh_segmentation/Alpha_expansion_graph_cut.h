@@ -86,7 +86,7 @@ public:
     gt.start();
     do {
       success = false;
-      for(int alpha = 0; alpha < number_of_clusters; ++alpha) {
+      for(int alpha = number_of_clusters; alpha > -1; --alpha) {
         Timer t;
         t.start();
         Graph graph;
@@ -205,7 +205,7 @@ public:
           add_edge_and_reverse(new_vertex, cluster_sink, sink_weight, 0.0, graph);
         }
         total_time += t.time();
-        std::cout << "vertex time: " << t.time() << std::endl;
+        //std::cout << "vertex time: " << t.time() << std::endl;
         t.reset();
         // For E-Smooth
         // add edge between every vertex,
@@ -232,19 +232,19 @@ public:
           }
         }
         total_time += t.time();
-        std::cout << "edge time: " << t.time() << std::endl;
+        //std::cout << "edge time: " << t.time() << std::endl;
         t.reset();
 
         double flow = boost::boykov_kolmogorov_max_flow(graph, cluster_source,
                       cluster_sink);
 
         total_time += t.time();
-        std::cout << "flow time: " << t.time() << std::endl;
+        //std::cout << "flow time: " << t.time() << std::endl;
         t.reset();
         if(min_cut - flow < flow * 1e-10) {
           continue;
         }
-        std::cout << "prev flow: " << min_cut << " new flow: " << flow << std::endl;
+        //std::cout << "prev flow: " << min_cut << " new flow: " << flow << std::endl;
         min_cut = flow;
         success = true;
         //update labeling
@@ -257,11 +257,11 @@ public:
             labels[vertex_i] = alpha;
           }
         }
-        std::cout << "label time: " << t.time() << std::endl;
+        //std::cout << "label time: " << t.time() << std::endl;
         t.reset();
       }
     } while(success);
-    std::cout << "tot time: " << gt.time() << " " << total_time <<  std::endl;
+    std::cout << "Graph-cut time: " << gt.time() << std::endl;
     return min_cut;
   }
 
