@@ -464,10 +464,10 @@ compute_moves(/*const*/ Moving_vertices_set& moving_vertices)
 #endif //CGAL_IMPROVE_FREEZE
     ++vit;
 
-//#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
-//    if(oldv->frozen())
-//      moving_vertices.erase(oldv);
-//#endif //CGAL_IMPROVE_FREEZE
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+    if(oldv->frozen())
+      moving_vertices.erase(oldv);
+#endif //CGAL_IMPROVE_FREEZE
         
     // Stop if time_limit_ is reached
     if ( is_time_limit_reached() )
@@ -587,16 +587,6 @@ update_mesh(const Moves_vector& moves,
        ++it )
   {
     const Vertex_handle& v = it->first;
-#ifdef CGAL_FREEZE_VERTICES
-    if(do_freeze_ && v->frozen())
-    {
-#ifdef CGAL_IMPROVE_FREEZE
-      moving_vertices.erase(v);
-#endif //CGAL_IMPROVE_FREEZE
-      continue;
-    }
-#endif
-
     const Point_3& new_position = it->second;   
     // Get size at new position
     if ( Sizing_field::is_vertex_update_needed )
