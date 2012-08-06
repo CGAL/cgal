@@ -18,7 +18,7 @@ namespace internal
 {
 
 /**
- * K-means clustering algorithm.
+ * @brief K-means clustering algorithm.
  * @see K_means_point, K_means_center
  */
 class K_means_clustering
@@ -26,7 +26,7 @@ class K_means_clustering
 // Nested classes
 protected:
   /**
-   * Represents centers in k-means algorithm.
+   * @brief Represents centers in k-means algorithm.
    * @see K_means_point, K_means_clustering
    */
   class K_means_center
@@ -65,7 +65,7 @@ protected:
   };
 
   /**
-   * Represents points in k-means algorithm.
+   * @brief Represents points in k-means algorithm.
    * @see K_means_center, K_means_clustering
    */
   class K_means_point
@@ -83,9 +83,9 @@ protected:
      */
     bool calculate_new_center(std::vector<K_means_center>& centers) {
       int new_center_id = 0;
-      double min_distance = std::fabs(centers[0].mean - data);
+      double min_distance = std::abs(centers[0].mean - data);
       for(std::size_t i = 1; i < centers.size(); ++i) {
-        double new_distance = std::fabs(centers[i].mean - data);
+        double new_distance = std::abs(centers[i].mean - data);
         if(new_distance < min_distance) {
           new_center_id = i;
           min_distance = new_distance;
