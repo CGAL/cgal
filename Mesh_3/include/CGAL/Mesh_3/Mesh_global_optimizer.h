@@ -454,7 +454,7 @@ compute_moves(/*const */Moving_vertices_set& moving_vertices)
   {
     Vector_3 move = compute_move(*vit);
     
-	if ( CGAL::NULL_VECTOR != move )
+    if ( CGAL::NULL_VECTOR != move )
     {
       Point_3 new_position = translate((*vit)->point(),move);
       moves.push_back(std::make_pair(*vit,new_position));
