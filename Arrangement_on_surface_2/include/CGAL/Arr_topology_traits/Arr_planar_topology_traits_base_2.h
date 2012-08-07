@@ -251,48 +251,6 @@ public:
   }
 
   /*!
-   * Given two predecessor halfedges that will be used for inserting a
-   * new halfedge pair (prev1 will be the predecessor of the halfedge he1,
-   * and prev2 will be the predecessor of its twin he2), such that the
-   * insertion will create a new perimetric face that forms a hole inside
-   * an existing perimetric face, determine whether he1 will be incident to
-   * this new face.
-   * \param prev1 The first predecessor halfedge.
-   * \param prev2 The second predecessor halfedge.
-   * \param cv The x-monotone curve we use to connect prev1's target and
-   *           prev2's target vertex.
-   * \pre prev1 and prev2 belong to the same inner connected component.
-   * \return true if he1 (and prev1) lies in the interior of the face we
-   *         are about to create, false otherwise - in which case he2
-   *         (and prev2) must be incident to this new face.
-   */
-  bool is_on_new_perimetric_face_boundary (const Halfedge *,
-                                           const Halfedge *,
-                                           const X_monotone_curve_2&) const
-  {
-    // We can never have perimetric faces in a planar topology:
-    CGAL_error();
-    return (false);
-  }
-
-  /*!
-   * Determine whether the two halfedges, belonging to different outer CCBs,
-   * belong to the outer boundary of the same face.
-   * \param e1 The first halfedge.
-   * \param e2 The second halfedge.
-   * \return Whether the two halfedge belong to the outer boundary of the same
-   *         face.
-   */
-  bool boundaries_of_same_face (const Halfedge *,
-                                const Halfedge *) const
-  {
-    // This predicate is only used for case 3.3.2 of the insertion process,
-    // therefore it should never be invoked in the planar case.
-    CGAL_error();
-    return (false);
-  }
-
-  /*!
    * Determine whether the given point lies in the interior of the given face.
    * \param f The face.
    * \param p The query point.

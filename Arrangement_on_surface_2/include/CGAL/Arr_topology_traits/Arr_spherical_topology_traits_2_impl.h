@@ -494,8 +494,10 @@ let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
 
     // choose prev1 to define outer ccb of new face if it is a non-perimetric loop,
     // otherwise choose prev2
-    // TODO what if both are non-zero?
-    swap_predecessors = !(signs1.first == CGAL::ZERO);
+    // TODO what if both are non-zero? does it occur?
+    // TODO EBEB 2012-08-07 check whether negative/positive has a "geometric" interpretation
+    // TODO EBEB check this!!!!
+    swap_predecessors = (signs1.first != CGAL::POSITIVE);
 
     // but only if the at least one of the loops is perimetric, otherwise return false
     // to let leftmost-vertex decide which becomes part of the new outer ccb
@@ -863,92 +865,6 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
           first->inner_ccb()->face() : first->outer_ccb()->face());
 }
 
-/*! \brief determines whether prev1 will be incident to the newly created face
- * (which will become a hole in the other face), as the result of an insertion
- * of a new halfedge
- */
-template <class GeomTraits, class Dcel>
-bool
-Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
-is_on_new_perimetric_face_boundary(const Halfedge* prev1,
-                                   const Halfedge* prev2,
-                                   const X_monotone_curve_2& xc, 
-                                   bool try_other_way) const
-{
-  /*! We need to maintain the variant that the face that contains everything,
-   * and has no outer CCB's, also contains the north pole. In the degenerate
-   * case, where the north pole coincides with a vertex, the face that
-   * contains everythin is incident to the north pole.
-   * We count the number of times that path from prev1 to prev2 crosses the
-   * discontinuity arc from left and from right, that is from
-   * ARR_LEFT_BOUNDARY to ARR_RIGHT_BOUNDARY, and the number of times it
-   * crosses the other way around.
-   */
-#if 0
-  std::cout << std::endl;
-  std::cout << "prev1: "
-            << prev1->opposite()->vertex()->point() << ", "
-            << prev1->vertex()->point() << std::endl;
-  std::cout << "prev2: "
-            << prev2->opposite()->vertex()->point() << ", "
-            << prev2->vertex()->point() << std::endl;
-#endif
-  int counter = 0;
-  typename Traits_adaptor_2::Parameter_space_in_x_2 ps_x_op =
-    m_traits->parameter_space_in_x_2_object();
-
-  // Start with the next of prev1:
-  const Halfedge* curr = prev1->next();
-  // Save its src condition
-  Arr_curve_end curr_src_ind;
-  Arr_curve_end curr_trg_ind;
-  if (curr->direction() == ARR_LEFT_TO_RIGHT) {
-    curr_src_ind = ARR_MIN_END;
-    curr_trg_ind = ARR_MAX_END;
-  } else {
-    curr_src_ind = ARR_MAX_END;
-    curr_trg_ind = ARR_MIN_END;
-  }
-  Arr_parameter_space first_src_ps = ps_x_op(curr->curve(), curr_src_ind);
-  Arr_parameter_space curr_trg_ps = ps_x_op(curr->curve(), curr_trg_ind);  
-  while (curr != prev2) {
-    const Halfedge * next = curr->next();
-    Arr_curve_end next_src_ind;
-    Arr_curve_end next_trg_ind;
-    if (next->direction() == ARR_LEFT_TO_RIGHT) {
-      next_src_ind = ARR_MIN_END;
-      next_trg_ind = ARR_MAX_END;
-    } else {
-      next_src_ind = ARR_MAX_END;
-      next_trg_ind = ARR_MIN_END;
-    }
-    Arr_parameter_space next_src_ps = ps_x_op(next->curve(), next_src_ind);
-    Arr_parameter_space next_trg_ps = ps_x_op(next->curve(), next_trg_ind);
-    if (curr_trg_ps != next_src_ps) {
-      if (curr_trg_ps == ARR_RIGHT_BOUNDARY) ++counter;
-      else --counter;
-    }
-    curr = next;
-    curr_trg_ps = next_trg_ps;
-  }
-  Arr_parameter_space last_trg_ps = curr_trg_ps;
-  if (last_trg_ps != first_src_ps) {
-    if (last_trg_ps == ARR_RIGHT_BOUNDARY) ++counter;
-    else if (last_trg_ps == ARR_LEFT_BOUNDARY) --counter;
-    else if (first_src_ps == ARR_LEFT_BOUNDARY) ++counter;
-    else if (first_src_ps == ARR_RIGHT_BOUNDARY) --counter;
-  }
-
-  // a temporary fix in case that if we traverse from prev1 to prev2 then
-  // we get a perimetric curve but from prev2 to prev1 we don't get a perimetric
-  // curve. We try the other way if we don't get a perimetric curve.
-  if (try_other_way && (counter != -1 && counter != 1))
-    return is_on_new_perimetric_face_boundary(prev2, prev1, xc, false);
-
-  // Path must be perimetric:
-  CGAL_assertion(counter == -1 || counter == 1);
-  return (counter == 1);
-}
 
 } //namespace CGAL
 
