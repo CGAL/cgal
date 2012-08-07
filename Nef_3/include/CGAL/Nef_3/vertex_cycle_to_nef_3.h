@@ -106,7 +106,7 @@ template<typename Items,
  public:
   Index_matcher() {}
   template<typename Handle> 
-    void set_index(Handle h, Edge e) {}
+  void set_index(Handle /*h*/, Edge /*e*/) {}
 };
 
 template<typename Edge, typename CompareEdges> 

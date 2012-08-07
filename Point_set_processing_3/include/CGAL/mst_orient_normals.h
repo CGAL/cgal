@@ -28,6 +28,7 @@
 #include <CGAL/Index_property_map.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/Testsuite/use.h>
 
 #include <iterator>
 #include <list>
@@ -417,6 +418,11 @@ create_mst_graph(
     const Riemannian_graph<ForwardIterator>& riemannian_graph, ///< graph connecting each vertex to its knn
     ForwardIterator source_point) ///< source point (with an oriented normal)
 {
+    // prevents warnings
+    CGAL_USE(point_pmap);
+    CGAL_USE(k);
+    CGAL_USE(kernel);
+
     // Bring private stuff to scope
     using namespace internal;
 

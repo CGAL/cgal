@@ -76,7 +76,7 @@ private:
 template <typename Tr>
 std::ostream&
 operator<<(std::ostream& os, 
-           const typename Surface_mesh_default_criteria_3<Tr>::Quality& q)
+           const typename Surface_mesh_default_criteria_3<Tr>::Quality& /*q*/)
 {
   return os << "q";
 }
