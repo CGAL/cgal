@@ -376,7 +376,8 @@ class C3T3_helpers
   typedef Vertex_set Moving_vertices_set;
 #endif //CGAL_IMPROVE_FREEZE
 
-
+  
+private:
   // Facet_boundary stores the boundary of surface facets
   typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
   typedef std::pair<Surface_patch_index, Index> Facet_topology_description;
@@ -397,7 +398,7 @@ public:
     : c3t3_(c3t3)
     , tr_(c3t3.triangulation())
     , domain_(domain) { }
-  
+ 
   /**
    * @brief tries to move \c old_vertex to \c new_position in the mesh
    * @param new_position the new position of \c old_vertex
@@ -405,7 +406,7 @@ public:
    * @param criterion the criterion which will be used to verify the new 
    *    position is ok. c3t3 minimal value of new criterion shall not decrease.
    * @param modified_vertices contains the vertices incident to cells which 
-   *    may have been impacted by reposition
+   *    may have been impacted by relocation
    * @return a pair which contains:
    *    - a bool which is \c true if the move has been done.
    *    - a Vertex_handle which is always filled and may be the new vertex (if
@@ -498,7 +499,7 @@ public:
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells);
-  
+
 #if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
@@ -1840,8 +1841,8 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // because of move ?
   for ( typename std::set<std::pair<Vertex_handle, Surface_patch_index> >
           ::iterator it = vertex_to_proj.begin() ;
-       it != vertex_to_proj.end() ;
-       ++it )
+        it != vertex_to_proj.end() ;
+        ++it )
   {
     Point_3 new_pos = project_on_surface((it->first)->point(),it->first,it->second);
 
@@ -1949,7 +1950,7 @@ move_point(const Vertex_handle& old_vertex,
                                   deleted_cells);
   }
 }
-  
+
 #if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
@@ -2010,7 +2011,8 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                                 deleted_cells);
   return nv;
 }
-  
+
+
 template <typename C3T3, typename MD>
 template < typename ConflictCellsInputIterator,
            typename OutdatedCellsOutputIterator,
@@ -2159,7 +2161,7 @@ move_point_topo_change(const Vertex_handle& old_vertex,
 #ifdef CGAL_FREEZE_VERTICES
   bool frozen = old_vertex->frozen();
 #endif
-  
+
   // insert new point
   Vertex_handle new_vertex = tr_.insert(new_position,old_vertex->cell());
   // If new_position is hidden, return default constructed handle
@@ -2231,7 +2233,7 @@ project_on_surface_aux(const Point_3& p,
 
   typename MD::Construct_intersection construct_intersection =
     domain_.construct_intersection_object();
-    
+  
   const FT sq_dist = sq_distance(p,ref_point);
   const FT sq_proj_length = sq_length(projection_vector);
   
