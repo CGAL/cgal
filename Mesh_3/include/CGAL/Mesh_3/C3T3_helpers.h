@@ -500,7 +500,7 @@ public:
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells);
 
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells_set,
@@ -1160,7 +1160,7 @@ private:
   
   //  TODO: write get_facets so that it uses update_facets with a FacetUpdater that calls push_back
 
-#ifdef CGAL_MESH_3_GET_FACETS_USING_INTRUSIVE_LIST
+#if defined(CGAL_MESH_3_GET_FACETS_USING_INTRUSIVE_LIST) && defined(CGAL_INTRUSIVE_LIST)
   template <typename ForwardIterator>
   Facet_vector get_facets(ForwardIterator first_cell,
                           ForwardIterator last_cell) const
@@ -1951,7 +1951,7 @@ move_point(const Vertex_handle& old_vertex,
   }
 }
 
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
