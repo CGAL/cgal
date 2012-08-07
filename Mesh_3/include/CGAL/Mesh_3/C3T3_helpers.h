@@ -320,11 +320,9 @@ public:
     return f == Type_handle();
   }
   
-  //  This seems to make no sense, but instead of collecting into a vector
-  //  and removing later, we remove directly on the fly
   void push_back(Type_handle ch)
   {
-    erase(ch);
+    insert(ch);
   }
 
 private:
@@ -997,7 +995,12 @@ private:
                            const Point_3& new_position,
                            OutdatedCellsOutputIterator outdated_cells,
                            DeletedCellsOutputIterator deleted_cells);
-  
+
+  Vertex_handle 
+  move_point_topo_change(const Vertex_handle& old_vertex,
+                         const Point_3& new_position,
+                         Outdated_cell_set& outdated_cells_set);
+
   template < typename OutdatedCellsOutputIterator,
              typename DeletedCellsOutputIterator >
   Vertex_handle
@@ -1867,51 +1870,24 @@ C3T3_helpers<C3T3,MD>::
 move_point(const Vertex_handle& old_vertex,
            const Point_3& new_position,
            Outdated_cell_set& outdated_cells_set)
-{
-  // std::cerr << "C3T3_helpers::move_point[v1](" 
-  //           << (void*)(&*old_vertex) << " = " << old_vertex->point()
-  //           << " , " << new_position << ")\n";
-  Cell_vector outdated_cells;
-#ifdef CGAL_INTRUSIVE_LIST
-  Outdated_cell_set& deleted_cells = outdated_cells_set; // its .push_back(Cell_handle) method erases
-#else
-  Cell_vector deleted_cells;
-#endif //CGAL_INTRUSIVE_LIST
-  
-  Vertex_handle new_vertex =
-    move_point(old_vertex,
-               new_position,
-               std::back_inserter(outdated_cells),
-               std::back_inserter(deleted_cells));//#ifdef CGAL_INTRUSIVE_LIST : erases from set
-
-#ifdef CGAL_INTRUSIVE_LIST
-  //deleted_cells already erased by back_inserter above!
-  //  for(Cell_vector::iterator it = deleted_cells.begin(); it!= deleted_cells.end(); ++it){
-  //  outdated_cells_set.erase(*it);
-  //  }
-  for(typename Cell_vector::iterator it = outdated_cells.begin();
-      it != outdated_cells.end(); ++it)
+{ 
+  Cell_vector incident_cells;
+  incident_cells.reserve(64);
+  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
+  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
   {
-    outdated_cells_set.insert(*it);
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
+                                                  incident_cells.end()))
+    {
+      ch->invalidate_circumcenter();
+    }
+    std::copy(incident_cells.begin(),incident_cells.end(), std::back_inserter(outdated_cells_set));
+    return move_point_no_topo_change(old_vertex, new_position);
   }
-#else
-  // Get Cell_set::erase and Cell_set::insert function pointers
-  namespace bl = boost::lambda;
-  typename Cell_set::size_type (Cell_set::*erase_cell)
-    (const typename Cell_set::key_type&) = &Cell_set::erase;
-  
-  std::pair<typename Cell_set::iterator,bool> (Cell_set::*insert_cell)
-    (const typename Cell_set::value_type&) = &Cell_set::insert;
-
-  // Update outdated_cells_set
-  std::for_each(deleted_cells.begin(),deleted_cells.end(),
-                bl::bind(erase_cell, &outdated_cells_set, bl::_1) );
-  
-  std::for_each(outdated_cells.begin(),outdated_cells.end(),
-                bl::bind(insert_cell, &outdated_cells_set, bl::_1) );
-#endif
-
-  return new_vertex;
+  else
+  {
+    return move_point_topo_change(old_vertex, new_position, outdated_cells_set);
+  }
 }  
 
 
@@ -1960,27 +1936,72 @@ move_point(const Vertex_handle& old_vertex,
            Outdated_cell_set& outdated_cells_set, 
            Moving_vertices_set& moving_vertices)
 {
+  Cell_vector incident_cells;
+  incident_cells.reserve(64);
+  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
+  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
+  {
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
+                                                  incident_cells.end()))
+    {
+      ch->invalidate_circumcenter();
+    }
+    std::copy(incident_cells.begin(),incident_cells.end(), std::back_inserter(outdated_cells_set));
+    return move_point_no_topo_change(old_vertex, new_position);
+  }
+  else
+  {
+    moving_vertices.erase(old_vertex);
+
+    Vertex_handle new_vertex = move_point_topo_change(old_vertex, new_position, outdated_cells_set);
+
+    moving_vertices.insert(new_vertex);
+    return new_vertex;
+  }  
+}  
+#endif
+
+template <typename C3T3, typename MD>
+typename C3T3_helpers<C3T3,MD>::Vertex_handle 
+C3T3_helpers<C3T3,MD>:: 
+move_point_topo_change(const Vertex_handle& old_vertex,
+                       const Point_3& new_position,
+                       Outdated_cell_set& outdated_cells_set)
+{
+  Cell_set insertion_conflict_cells;
+  Cell_set removal_conflict_cells;
+  Facet_vector insertion_conflict_boundary;
+  insertion_conflict_boundary.reserve(64);
+  
+  get_conflict_zone_topo_change(old_vertex, new_position,
+                                std::inserter(insertion_conflict_cells,insertion_conflict_cells.end()),
+                                std::back_inserter(insertion_conflict_boundary),
+                                std::inserter(removal_conflict_cells, removal_conflict_cells.end()));
+
+  for(typename Cell_set::iterator it = insertion_conflict_cells.begin();
+      it != insertion_conflict_cells.end(); ++it)
+      outdated_cells_set.erase(*it);
+  for(typename Cell_set::iterator it = removal_conflict_cells.begin();
+      it != removal_conflict_cells.end(); ++it)
+      outdated_cells_set.erase(*it);
+
   Cell_vector outdated_cells;
-  Outdated_cell_set& deleted_cells = outdated_cells_set; // its .push_back(Cell_handle) method erases
-
-  moving_vertices.erase(old_vertex);//jane: a swap should be done lower in move_point
-
-  Vertex_handle new_vertex =
-    move_point(old_vertex,
-               new_position,
-               std::back_inserter(outdated_cells),
-               std::back_inserter(deleted_cells));//erases them from set
-
-  moving_vertices.insert(new_vertex);//jane: a swap should be done lower in move_point
+  Vertex_handle nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
+                                insertion_conflict_boundary[0],
+                                insertion_conflict_cells.begin(),
+                                insertion_conflict_cells.end(),
+                                removal_conflict_cells.begin(),
+                                removal_conflict_cells.end(),
+                                std::back_inserter(outdated_cells),
+                                CGAL::Emptyset_iterator()); // deleted_cells
 
   for(typename Cell_vector::iterator it = outdated_cells.begin();
       it != outdated_cells.end(); ++it)
-    outdated_cells_set.insert(*it);
-
-  return new_vertex;
-}  
-#endif
+      outdated_cells_set.insert(*it);
   
+  return nv;
+}
+
 template <typename C3T3, typename MD>
 template <typename OutdatedCellsOutputIterator,
           typename DeletedCellsOutputIterator>
@@ -2028,7 +2049,8 @@ move_point_topo_change_conflict_zone_known(
     ConflictCellsInputIterator removal_conflict_cells_begin,//ordered
     ConflictCellsInputIterator removal_conflict_cells_end,    
     OutdatedCellsOutputIterator outdated_cells,
-    DeletedCellsOutputIterator deleted_cells)
+    DeletedCellsOutputIterator deleted_cells)//warning : this should not be an iterator to Intrusive_list
+                                             //o.w. deleted_cells will point to null pointer or so and crash
 {
   Point_3 old_position = old_vertex->point();
   // make one set with conflict zone  
@@ -2040,12 +2062,7 @@ move_point_topo_change_conflict_zone_known(
   // Remove conflict zone cells from c3t3 (they will be deleted by insert/remove)
   remove_cells_and_facets_from_c3t3(conflict_zone.begin(), conflict_zone.end());
 
-#ifdef CGAL_INTRUSIVE_LIST
-  // here, the cells still exist and we want to remove on the fly from the deleted_cells
-  std::copy(conflict_zone.begin(), conflict_zone.end(), deleted_cells);
-#endif
-
-// Start Move point // Insert new_vertex, remove old_vertex
+  // Start Move point // Insert new_vertex, remove old_vertex
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertice_index = c3t3_.index(old_vertex);
   FT meshing_info = old_vertex->meshing_info();
@@ -2085,11 +2102,8 @@ move_point_topo_change_conflict_zone_known(
   std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
 
   // Fill deleted_cells
-#ifndef CGAL_INTRUSIVE_LIST
-  // this is moved higher up so that we can remove in the inplace list 
   if(! boost::is_same<DeletedCellsOutputIterator,CGAL::Emptyset_iterator>::value)
     std::copy(conflict_zone.begin(), conflict_zone.end(), deleted_cells);
-#endif
 
   return new_vertex;
 }
