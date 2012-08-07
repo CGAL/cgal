@@ -98,6 +98,7 @@ public: // going to be protected !
   std::vector<int>    segments;
 // member functions
   bool is_pmmap_custom;
+  std::ofstream log_file;
 public:
   Surface_mesh_segmentation(const Polyhedron& mesh)
     : mesh(mesh), facet_index_map(facet_index_map_internal),
@@ -183,6 +184,7 @@ public:
 
   void partition(int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
                  double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA) {
+    log_file.open("log_file.txt");
     // soft clustering using GMM-fitting initialized with k-means
     internal::Expectation_maximization fitter(number_of_centers, sdf_values,
         internal::Expectation_maximization::K_MEANS_INITIALIZATION, 1);
@@ -206,7 +208,7 @@ public:
     centers = labels;
     // assign a segment id for each facet
     assign_segments();
-
+    log_file.close();
   }
 ///////////////////////////////////////////////////////////////////
 // Use these two functions together
@@ -326,13 +328,14 @@ protected:
     return angle;
   }
 
-  double calculate_dihedral_angle_of_edge_2(Edge_const_handle& edge) const {
+  double calculate_dihedral_angle_of_edge_2(Edge_const_handle& edge) {
     const Point& a = edge->vertex()->point();
     const Point& b = edge->prev()->vertex()->point();
     const Point& c = edge->next()->vertex()->point();
     const Point& d = edge->opposite()->next()->vertex()->point();
     // As far as I check: if, say, dihedral angle is 5, this returns 175,
     // if dihedral angle is -5, this returns -175.
+    // Another words this function returns angle between planes.
     double n_angle = Mesh_3::dihedral_angle(a, b, c, d) / 180.0;
     bool concave = n_angle > 0;
     double angle = 1 + ((concave ? -1 : +1) * n_angle);
@@ -340,6 +343,8 @@ protected:
     if(!concave) {
       angle *= CGAL_CONVEX_FACTOR;
     }
+    log_file << "v2: " << angle << std::endl;
+    log_file << "v1: " << calculate_dihedral_angle_of_edge(edge) << std::endl;
     return angle;
 
     //Facet_const_handle f1 = edge->facet();
@@ -622,23 +627,27 @@ protected:
   }
 
   void calculate_and_log_normalize_dihedral_angles(double smoothing_lambda,
-      std::vector<std::pair<int, int> >& edges,
-      std::vector<double>& edge_weights) const {
+      std::vector<std::pair<int, int> >& edges, std::vector<double>& edge_weights) {
     const double epsilon = 1e-5;
     //edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
     for(Edge_const_iterator edge_it = mesh.edges_begin();
         edge_it != mesh.edges_end(); ++edge_it) {
-      int index_f1 = boost::get(facet_index_map, edge_it->facet());
-      int index_f2 = boost::get(facet_index_map, edge_it->opposite()->facet());
+      const int index_f1 = boost::get(facet_index_map, edge_it->facet());
+      const int index_f2 = boost::get(facet_index_map, edge_it->opposite()->facet());
       edges.push_back(std::pair<int, int>(index_f1, index_f2));
 
-      double angle = calculate_dihedral_angle_of_edge(edge_it);
+      double angle = calculate_dihedral_angle_of_edge_2(edge_it);
+      log_file << "angle received: " << angle << std::endl;
       if(angle < epsilon) {
         angle = epsilon;
       }
+      log_file << "angle after < epsilon-check: " << angle << std::endl;
       angle = -log(angle);
+      log_file << "angle after minus-log: " << angle << std::endl;
       angle = (std::max)(angle, std::numeric_limits<double>::epsilon());
+      log_file << "angle after > epsilon-check: " << angle << std::endl;
       angle *= smoothing_lambda;
+      log_file << "angle after multiplied by lambda: " << angle << std::endl;
       edge_weights.push_back(angle);
     }
   }
