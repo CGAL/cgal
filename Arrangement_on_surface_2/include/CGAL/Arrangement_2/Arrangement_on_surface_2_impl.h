@@ -1767,27 +1767,31 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
   std::cout << "signs1.y: " << signs1.second << std::endl;
   std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
 
-  bool is_perimetric1 = signs1.first || signs1.second; // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
+  // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
+  bool is_perimetric1 = signs1.first || signs1.second;
 
   const DHalfedge* he_min1 = he1; // initialize with first candidate
   Arr_parameter_space ps_x_min1 = ARR_INTERIOR;
   Arr_parameter_space ps_y_min1 = ARR_INTERIOR;
   int index_min1 = 0;
 
-  // check all reported local minima
+  // Check all reported local minima
   // IDEA EBEB 2012-07-29 maintain a tree to determine min in log(n) time
-  for (typename std::list< std::pair< const DHalfedge*, int > >::iterator lm_it = local_mins1.begin(); 
-       lm_it != local_mins1.end(); lm_it++) {
-    
+  typename std::list< std::pair< const DHalfedge*, int > >::iterator lm_it;
+  for (lm_it = local_mins1.begin(); lm_it != local_mins1.end(); lm_it++) {
     const DHalfedge* he = lm_it->first;
     int index = lm_it->second;
 
-    Arr_parameter_space ps_x_he_min = parameter_space_in_x(he->curve(), ARR_MIN_END);
-    Arr_parameter_space ps_y_he_min = parameter_space_in_y(he->curve(), ARR_MIN_END);
+    Arr_parameter_space ps_x_he_min =
+      parameter_space_in_x(he->curve(), ARR_MIN_END);
+    Arr_parameter_space ps_y_he_min =
+      parameter_space_in_y(he->curve(), ARR_MIN_END);
 
     if ((he_min1 == NULL) || (index < index_min1) ||
         ((index == index_min1) &&
-         _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min1, ps_x_min1, ps_y_min1))) {
+         _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min1,
+                     ps_x_min1, ps_y_min1)))
+    {
       index_min1 = index;
       ps_x_min1 = ps_x_he_min;
       ps_y_min1 = ps_y_he_min;
@@ -1803,8 +1807,9 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
   std::cout << "signs2.x: " << signs2.first << std::endl;
   std::cout << "signs2.y: " << signs2.second << std::endl;
   std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
-  
-  bool is_perimetric2 = signs2.first || signs2.second; // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
+
+  // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
+  bool is_perimetric2 = signs2.first || signs2.second;
 
   const DHalfedge* he_min2 = he2; // initialize with first candidate
   Arr_parameter_space ps_x_min2 = ARR_INTERIOR;
@@ -1812,18 +1817,19 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
   int index_min2 = 0;
 
   // check all reported local minima
-  for (typename std::list< std::pair< const DHalfedge*, int > >::iterator lm_it = local_mins2.begin(); 
-       lm_it != local_mins2.end(); lm_it++) {
-    
+  for (lm_it = local_mins2.begin(); lm_it != local_mins2.end(); lm_it++) {
     const DHalfedge* he = lm_it->first;
     int index = lm_it->second;
 
-    Arr_parameter_space ps_x_he_min = parameter_space_in_x(he->curve(), ARR_MIN_END);
-    Arr_parameter_space ps_y_he_min = parameter_space_in_y(he->curve(), ARR_MIN_END);
-
+    Arr_parameter_space ps_x_he_min =
+      parameter_space_in_x(he->curve(), ARR_MIN_END);
+    Arr_parameter_space ps_y_he_min =
+      parameter_space_in_y(he->curve(), ARR_MIN_END);
     if ((he_min2 == NULL) || (index < index_min2) ||
         ((index == index_min2) &&
-         _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min2, ps_x_min2, ps_y_min2))) {
+         _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min2,
+                     ps_x_min2, ps_y_min2)))
+    {
       index_min2 = index;
       ps_x_min2 = ps_x_he_min;
       ps_y_min2 = ps_y_he_min;
@@ -3805,6 +3811,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   //           << " => " << he_after->vertex()->point() << std::endl;
   // std::cout << "he_before: " << he_before->opposite()->vertex()->point()
   //           << " => " << he_before->vertex()->point() << std::endl;
+  // std::cout << "cv: " << cv << std::endl;
 
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
@@ -3930,7 +3937,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   // Move to the halfedge.
   he = he->next();
 
-  do {
+  while (he->next() != he_after) {
     // Get the boundary conditions of the current vertex.
     ps_x = ps_x_save;
     ps_y = ps_y_save;
@@ -4035,7 +4042,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
     
     // Move to the halfedge.
     he = he->next();
-  } while (he->next() != he_after);
+  }
 
   // Get the boundary conditions of the current vertex.
   ps_x = ps_x_save;
@@ -4135,12 +4142,10 @@ _is_smaller(const DHalfedge* he1,
 {
   // std::cout << "he1: " << he1->opposite()->vertex()->point() << " => "
   //           << he1->vertex()->point() << std::endl;
-  // std::cout << "index1: " << index1
-  //           << ", ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
-  // std::cout << "he2: " << he->opposite()->vertex()->point() << " => "
-  //           << he->vertex()->point() << std::endl;
-  // std::cout << "ind2: " << index
-  //           << ", ps_x2: " << ps_x << ", ps_y2: " << ps_y << std::endl;
+  // std::cout << "ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
+  // std::cout << "he2: " << he2->opposite()->vertex()->point() << " => "
+  //           << he2->vertex()->point() << std::endl;
+  // std::cout << "ps_x2: " << ps_x2 << ", ps_y2: " << ps_y2 << std::endl;
   
   if (ps_x2 == ARR_INTERIOR) {
     if (ps_x1 == ARR_INTERIOR) {
@@ -4651,7 +4656,8 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
                                const X_monotone_curve_2& cv,
                                Arr_halfedge_direction cv_dir,
                                const DHalfedge* he_away,
-                               InputIterator lm_begin, InputIterator lm_end) const
+                               InputIterator lm_begin,
+                               InputIterator lm_end) const
   // Comment: This is how the situation looks
   //    ----to--->  >>cv_dir>>  ---away--->
   //               o ===cv=== 0
@@ -4708,8 +4714,10 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     if (he_to->direction() == ARR_RIGHT_TO_LEFT) {
       // initialize with target of to-edge (and to-edge)
 
-      Arr_parameter_space ps_x_he_to_min = parameter_space_in_x(he_to->curve(), ARR_MIN_END);
-      Arr_parameter_space ps_y_he_to_min = parameter_space_in_y(he_to->curve(), ARR_MIN_END);
+      Arr_parameter_space ps_x_he_to_min =
+        parameter_space_in_x(he_to->curve(), ARR_MIN_END);
+      Arr_parameter_space ps_y_he_to_min =
+        parameter_space_in_y(he_to->curve(), ARR_MIN_END);
       cv_min = &(he_to->curve());
       ps_x_min = ps_x_he_to_min;
       ps_y_min = ps_y_he_to_min;
@@ -4725,8 +4733,10 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     const DHalfedge* he = lm_it->first;
     int index = lm_it->second;
 
-    Arr_parameter_space ps_x_he_min = parameter_space_in_x(he->curve(), ARR_MIN_END);
-    Arr_parameter_space ps_y_he_min = parameter_space_in_y(he->curve(), ARR_MIN_END);
+    Arr_parameter_space ps_x_he_min =
+      parameter_space_in_x(he->curve(), ARR_MIN_END);
+    Arr_parameter_space ps_y_he_min =
+      parameter_space_in_y(he->curve(), ARR_MIN_END);
 
     // Efi:
     // compare_y_at_x_right_2() could happen at the boundary. In this case
@@ -4749,7 +4759,9 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
           ((v_min == he->vertex()) &&
            (compare_y_at_x_right_2(he->curve(), *cv_min, v_min->point()) ==
             SMALLER)) ||
-          _is_smaller(he->curve(), ps_x_he_min, ps_y_he_min, *cv_min, ps_x_min, ps_y_min)))) {
+          _is_smaller(he->curve(), ps_x_he_min, ps_y_he_min, *cv_min,
+                      ps_x_min, ps_y_min))))
+    {
       index_min = index;
       cv_min = &(he->curve());
       ps_x_min = ps_x_he_min;
