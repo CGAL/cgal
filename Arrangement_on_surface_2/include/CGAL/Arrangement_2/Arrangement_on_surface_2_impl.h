@@ -41,10 +41,6 @@
 
 #include <CGAL/function_objects.h> 
 
-#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-#include <CGAL/Arr_topology_traits/Sign_of_path.h>
-#endif
-
 namespace CGAL {
 
 //-----------------------------------------------------------------------------
@@ -2421,7 +2417,6 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   DVertex* v2 = prev2->vertex();
   
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-  typedef internal::Sign_of_path< GeomTraits, TopTraits > Sign_of_path;
   
   std::cout << "Aos_2: _insert_at_vertices (internal)" << std::endl;
   
@@ -2522,6 +2517,11 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
     // to trace the ccb again (in particular for torical arrangements)
     // TODO EBEB 2012-08-06: Check what to do here, when allow_swap_of_predecessors = false and thus
     // signs1 and signs2 set to DEFAULT (=ZERO) values.
+    // swapping is currently only disabled when _insert_at_vertices is called from
+    // Arr_construction_sl_visitor, which however uses the 'swap_predecessors' member of the
+    // topology traits' construction helper. So it's questionable whether we can combine the 
+    // light-weigth swap information with the slightly more expensive sign computations,
+    // to keep efficient translated code after compile-time.
     std::pair<bool, bool> res =
       m_topol_traits.face_split_after_edge_insertion(signs1, signs2);
 
@@ -2748,8 +2748,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                        prev1->inner_ccb()->face() :
                                        prev1->outer_ccb()->face())
               << std::endl;
-    Sign_of_path sign_of_path(topology_traits());
-    //std::cout << "prev1sign: " << sign_of_path(prev1, prev1) << std::endl;
+    std::cout << "signs1: " << signs1.first  << "," << signs1.second << std::endl;
 #endif
 
     // Check whether the two previous halfedges lie on the same innder CCB
@@ -2759,6 +2758,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
     if (ic1 != NULL) {
       // In this case (3.3) we have two distinguish two sub-cases.
       if (is_split_face_contained) {
+        // Comment: This is true for all non-identification topologies
+
         // The halfedges prev1 and prev2 belong to the same inner component
         // (hole) inside the face f, such that the new edge creates a new
         // face that is contained in f (case 3.3.1).
@@ -2779,12 +2780,13 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                            prev2->inner_ccb()->face() :
                                            prev2->outer_ccb()->face())
                   << std::endl;
-        Sign_of_path sign_of_path(topology_traits());
-        //std::cout << "prev2sign: " << sign_of_path(prev2, prev2) << std::endl;
+        std::cout << "signs2: " << signs2.first  << "," << signs2.second << std::endl;
 #endif
 
       }
       else {
+        // Comment: This case can only occur in identification topologies
+
         // The new face we have created should be adjacent to the existing
         // face (case 3.3.2).
         is_hole = false;
@@ -2811,8 +2813,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                            prev2->inner_ccb()->face() :
                                            prev2->outer_ccb()->face())
                   << std::endl;
-        Sign_of_path sign_of_path(topology_traits());
-        //std::cout << "prev2sign: " << sign_of_path(prev2, prev2) << std::endl;
+        std::cout << "signs2: " << signs2.first  << "," << signs2.second << std::endl;
 #endif
         
         // Notify the observers that we have added an outer CCB to f.
@@ -2827,19 +2828,29 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
           // Use the topology traits to determine whether the representative
           // of the current outer CCB should belong to the same face as he2
           // (which is on the outer boundary of the new face).
-          if ((*oc_it != he1) &&
-              // TODO EBEB 2012-07-30 replace with signs
-              m_topol_traits.boundaries_of_same_face(*oc_it, he2))
-          {
-            // We increment the itrator before moving the outer CCB, because
-            // this operation invalidates the iterator.
-            oc_to_move = oc_it;
-            ++oc_it;
-
-            _move_outer_ccb(f, new_f, *oc_to_move);
+          bool increment = true;
+          if (*oc_it != he1) {
+            // he1 is supposed to be a perimetric path and so all of the oc_its, 
+            // we only have to detect which one. We do so by comparing signs of ccbs:
+            std::list< std::pair< const DHalfedge*, int > > dummy_local_mins_oc;
+            std::pair< CGAL::Sign, CGAL::Sign > signs_oc =
+              _compute_signs_and_local_minima(*oc_it, std::front_inserter(dummy_local_mins_oc));
+            
+            // TODO EBEB 2012-07-30 use signs_oc
+            if (m_topol_traits.boundaries_of_same_face(*oc_it, he2)) {
+              // We increment the itrator before moving the outer CCB, because
+              // this operation invalidates the iterator.
+              increment = false;
+              oc_to_move = oc_it;
+              ++oc_it;
+              
+              _move_outer_ccb(f, new_f, *oc_to_move);
+            }
           }
-          else
+          
+          if (increment) {
             ++oc_it;
+          }
         }
       }
     }
