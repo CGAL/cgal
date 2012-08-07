@@ -3245,6 +3245,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
                                 const DHalfedge* he_away,
                                 OutputIterator local_mins_it) const
 {
+  // TODO EBEB 2012-08-07 compile parts of code only if identification(s) take place
+
   // std::cout << "he_to: " << he_to->opposite()->vertex()->point()
   //           << " => " << he_to->vertex()->point() << std::endl;
   // std::cout << "cv: " << cv << std::endl;
@@ -3400,7 +3402,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compute_signs_and_local_minima(const DHalfedge* he_ccb,
                                 OutputIterator local_mins_it) const {
 
-  std::cout << "he_ccb: " << he_ccb << std::endl;
+  // TODO EBEB 2012-08-07 compile parts of code only if identification(s) take place
 
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
@@ -3952,17 +3954,17 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
   std::list< std::pair< const DHalfedge*, int > > local_mins1;
   std::pair< CGAL::Sign, CGAL::Sign > signs1(CGAL::ZERO, CGAL::ZERO);
-
-  std::cout << "signs1.x: " << signs1.first << std::endl;
-  std::cout << "signs1.y: " << signs1.second << std::endl;
-  std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
+  
+  //std::cout << "signs1.x: " << signs1.first << std::endl;
+  //std::cout << "signs1.y: " << signs1.second << std::endl;
+  //std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
   
   std::list< std::pair< const DHalfedge*, int > > local_mins2;
   std::pair< CGAL::Sign, CGAL::Sign > signs2(CGAL::ZERO, CGAL::ZERO);
   
-  std::cout << "signs2.x: " << signs2.first << std::endl;
-  std::cout << "signs2.y: " << signs2.second << std::endl;
-  std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
+  //std::cout << "signs2.x: " << signs2.first << std::endl;
+  //std::cout << "signs2.y: " << signs2.second << std::endl;
+  //std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
 
   if ((he1->next() == he2) || (he2->next() == he1)) {
     // The removal of he1 (and its twin halfedge) form an "antenna", and we do not need signs later
