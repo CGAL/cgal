@@ -179,7 +179,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   typedef Polyhedron_                                Polyhedron;
   typedef typename Polyhedron::Facet::Plane_3        Plane;
   typedef typename Polyhedron::Traits::Kernel        Kernel;
-  typedef typename SNC_structure::SNC_decorator      SNC_decorator;
   typedef typename SNC_structure::SM_decorator       SM_decorator;
   typedef typename SNC_structure::Vertex_handle      Vertex_handle;
   typedef typename SNC_structure::SVertex_handle     SVertex_handle;
@@ -187,7 +186,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   typedef typename SNC_structure::SFace_handle       SFace_handle;
   typedef typename SNC_structure::Point_3            Point_3;
   typedef typename SNC_structure::Sphere_point       Sphere_point;
-  typedef typename SNC_structure::Sphere_segment     Sphere_segment;
   typedef typename SNC_structure::Sphere_circle      Sphere_circle;
 
   typedef typename Polyhedron::Halfedge_around_vertex_const_circulator

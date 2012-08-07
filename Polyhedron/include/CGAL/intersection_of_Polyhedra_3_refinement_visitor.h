@@ -492,8 +492,6 @@ void sew_2_marked_darts( Combinatorial_map_3& final_map,
                          const std::pair<int,int>& indices,
                          const std::pair<bool,int>& polyline_info)
 {
-  typedef boost::optional<typename Combinatorial_map_3::Dart_handle> O_Dart_handle;
-
   CGAL_precondition( dart_1->is_free(2) );
   CGAL_precondition( dart_2->is_free(2) );
   CGAL_precondition( final_map.is_marked(dart_1,mark_index) );
@@ -1836,7 +1834,6 @@ public:
       typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
       typedef ::CGAL::Union_find<Facet_const_handle> UF;
       typedef typename UF::handle UF_handle;
-      typedef typename UF::iterator UF_iterator;
       typedef std::map<Facet_const_handle,std::list<Facet_const_handle>,internal::Compare_handle_ptr<Polyhedron> > Result;
       typedef std::map<Facet_const_handle,UF_handle,internal::Compare_handle_ptr<Polyhedron> > Facet_to_handle_map;
       

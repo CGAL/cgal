@@ -1,4 +1,4 @@
-function (collect_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
+function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
   # IMPORTANT: First delete all_files.cpp
   if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp)
     file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp)
@@ -6,7 +6,7 @@ function (collect_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
 
   # THEN collect *.cpp
   foreach (package ${CGAL_CONFIGURED_PACKAGES} )
-    file(GLOB CGAL_LIBRARY_SOURCE_FILES_TMP ${package}/src/${LIBRARY_DIR_NAME}/*.cpp)
+    file(GLOB CGAL_LIBRARY_SOURCE_FILES_TMP ${package}/src/${LIBRARY_NAME}/*.cpp)
     list(APPEND CGAL_LIBRARY_SOURCE_FILES ${CGAL_LIBRARY_SOURCE_FILES_TMP})
   endforeach()
 
@@ -76,8 +76,8 @@ function (collect_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
 endfunction()
 
 function( configure_component DIR COMPONENT )
-  option( WITH_CGAL_${COMPONENT} "Enable CGAL component ${COMPONENT}" ON)
-  if ( WITH_CGAL_${COMPONENT})
+  option( WITH_${COMPONENT} "Enable CGAL component ${COMPONENT}" ON)
+  if ( WITH_${COMPONENT})
     add_subdirectory( ${DIR} ${COMPONENT} )
   endif()
 endfunction()
@@ -113,41 +113,38 @@ add_subdirectory(CGAL)
 set(CGAL_CONFIGURED_LIBRARIES "" PARENT_SCOPE)
  
 foreach(package ${CGAL_CONFIGURED_PACKAGES}) 
-  file(GLOB CONFIGURED_LIBS_IN_PACKAGE ${package}/src/CGAL*/CMakeLists.txt)
+  file(GLOB CONFIGURED_LIBS_IN_PACKAGE ${package}/src/CGAL_*/CMakeLists.txt)
   foreach (libconfigfile ${CONFIGURED_LIBS_IN_PACKAGE})
     string(REPLACE "${package}/src/" "" libconfigfile ${libconfigfile})
-    string(REPLACE "//CMakeLists.txt" "" CGAL_CONFIGURED_LIBRARY_SUBDIR ${libconfigfile})
-    if (NOT ${CGAL_CONFIGURED_LIBRARY_SUBDIR} STREQUAL "CGAL")
+    string(REPLACE "//CMakeLists.txt" "" CGAL_CONFIGURED_LIBRARY_NAME ${libconfigfile})
+    if (NOT ${CGAL_CONFIGURED_LIBRARY_NAME} STREQUAL "CGAL")
 
-      string(REPLACE "CGAL" "" CGAL_CONFIGURED_LIBRARY_NAME ${CGAL_CONFIGURED_LIBRARY_SUBDIR})
-
-      message(STATUS "Sources for CGAL component library '${CGAL_CONFIGURED_LIBRARY_NAME}' detected")
+     message(STATUS "Sources for CGAL component library '${CGAL_CONFIGURED_LIBRARY_NAME}' detected")
       list(APPEND CGAL_CONFIGURED_LIBRARIES ${CGAL_CONFIGURED_LIBRARY_NAME})
       #message(STATUS "Library config detected: ${CGAL_CONFIGURED_LIBRARIES}")
 
-      cache_set(CGAL_${CGAL_CONFIGURED_LIBRARY_NAME}_LIBRARY                  "" )
-
-      cache_set(CGAL_${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_DEFINITIONS    "" )
-      cache_set(CGAL_${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS   "" )
-      cache_set(CGAL_${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES      "" )
-      cache_set(CGAL_${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES_DIRS "" ) 
+      cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_LIBRARY                  "" )
+      cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_DEFINITIONS    "" )
+      cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS   "" )
+      cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES      "" )
+      cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES_DIRS "" ) 
 
       if (${CGAL_CONFIGURED_LIBRARY_NAME} STREQUAL "Core") 
         if (NOT CGAL_NO_CORE)
-          configure_component( ${package}/src/${CGAL_CONFIGURED_LIBRARY_SUBDIR} ${CGAL_CONFIGURED_LIBRARY_NAME})
+          configure_component( ${package}/src/${CGAL_CONFIGURED_LIBRARY_NAME} ${CGAL_CONFIGURED_LIBRARY_NAME})
         else(NOT CGAL_NO_CORE)
           message( STATUS "CGAL_Core is not being configured (missing GMP, or 64bit architecture).")
         endif(NOT CGAL_NO_CORE)
       else()
-        configure_component( ${package}/src/${CGAL_CONFIGURED_LIBRARY_SUBDIR} ${CGAL_CONFIGURED_LIBRARY_NAME})
+        configure_component( ${package}/src/${CGAL_CONFIGURED_LIBRARY_NAME} ${CGAL_CONFIGURED_LIBRARY_NAME})
       endif()
 
-     cache_get(CGAL_${CGAL_CONFIGURED_LIBRARY_NAME}_LIBRARY)
+     cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_LIBRARY)
 
-     cache_get(CGAL_${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_DEFINITIONS   )
-     cache_get(CGAL_${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS  )
-     cache_get(CGAL_${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES     )
-     cache_get(CGAL_${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES_DIRS) 
+     cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_DEFINITIONS   )
+     cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS  )
+     cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES     )
+     cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES_DIRS) 
 
     else() 
  

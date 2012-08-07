@@ -5,7 +5,7 @@ if ( TAUCS_FOUND AND NOT TAUCS_SETUP )
 
   message( STATUS "UseTAUCS" )
   message( STATUS "TAUCS include:     ${TAUCS_INCLUDE_DIR}" )
-  include_directories ( ${TAUCS_INCLUDE_DIR} )
+  include_directories ( SYSTEM ${TAUCS_INCLUDE_DIR} )
 
   message( STATUS "TAUCS definitions: ${TAUCS_DEFINITIONS}" )
   add_definitions( ${TAUCS_DEFINITIONS} "-DCGAL_USE_TAUCS" )

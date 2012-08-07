@@ -133,7 +133,7 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud); // CHECK THIS!
+    return (m != Gouraud && m!=PointsPlusNormals); // CHECK THIS!
   }
 
   void draw() const {
@@ -288,8 +288,6 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   if(!pMesh) return 0;
 
   // remesh
-
-  typedef Tr::Geom_traits GT;
 
   // Set mesh criteria
   Facet_criteria facet_criteria(angle, sizing, approx); // angle, size, approximation

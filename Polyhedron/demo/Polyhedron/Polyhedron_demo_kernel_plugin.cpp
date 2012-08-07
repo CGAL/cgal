@@ -36,6 +36,11 @@ public:
   QStringList actionsNames() const {
     return QStringList() << "actionKernel";
   }
+
+  bool applicable() const { 
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+  }
+
 public slots:
   void on_actionKernel_triggered();
 

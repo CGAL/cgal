@@ -1,10 +1,39 @@
 #include "MainWindow.h"
 #include <QApplication>
+#include <QMessageBox>
 #include <CGAL/Qt/resources.h>
+#include <stdexcept>
+
+class Polyhedron_demo : public QApplication
+{
+public:
+  Polyhedron_demo(int& argc, char **argv) : QApplication(argc, argv) {}
+
+  bool notify(QObject* receiver, QEvent* event)
+  {
+    try {
+      return QApplication::notify(receiver, event);
+    } catch (std::exception &e) {
+      // find the mainwindow to spawn an error message
+      Q_FOREACH (QWidget *widget, QApplication::topLevelWidgets()) {
+        if(MainWindow* mw = qobject_cast<MainWindow*>(widget)) {
+          QMessageBox::critical(
+            mw,
+            tr("Unhandled exception"),
+            e.what());
+          break;
+        }
+      }
+    } catch (...) {
+      qFatal("Unknown exception encountered. Aborting.");
+    }
+    return false;
+  }
+};
 
 int main(int argc, char **argv)
 {
-  QApplication app(argc, argv);
+  Polyhedron_demo app(argc, argv);
   app.setOrganizationDomain("geometryfactory.com");
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Polyhedron_3 demo");
@@ -29,7 +58,7 @@ int main(int argc, char **argv)
     mainWindow.enableScriptDebugger();
     args.removeAt(0);
   }
-  mainWindow.open("autostart.js", true);
+  mainWindow.load_script(QFileInfo("autostart.js"));
 #endif
   Q_FOREACH(QString filename, args) {
     mainWindow.open(filename);

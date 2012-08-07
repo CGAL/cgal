@@ -104,7 +104,7 @@ public:
     pt = vertex->point();
   }
   //
-  void border_node(Halfedge_handle edge, Point& ept, Point& vpt){
+  void border_node(Halfedge_handle edge, Point& ept, Point& /*vpt*/){
     edge_node(edge, ept);
   }
 };
@@ -279,7 +279,7 @@ public:
 
 public:
   //
-  void corner_node(Halfedge_handle edge, Point& pt) {};
+  void corner_node(Halfedge_handle /*edge*/, Point& /*pt*/) {};
 };
 
 

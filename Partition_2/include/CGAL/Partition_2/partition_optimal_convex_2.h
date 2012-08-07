@@ -205,7 +205,6 @@ bool collinearly_visible(unsigned int edge_num1, unsigned int e_num,
                          const Polygon& polygon,
                          const Traits& traits)
 {
-   typedef typename Polygon::size_type                   size_type;
    typedef typename Traits::Orientation_2                Orientation_2;
    Orientation_2 orientation = traits.orientation_2_object();
 
@@ -447,7 +446,6 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
 {
     typedef typename Polygon::size_type                   size_type;
 
-    typedef typename Polygon::iterator                    Vertex_iterator;
     typedef Vertex_visibility_graph_2<Traits>             Vis_graph;
     typedef typename Traits::Point_2                      Point_2;
     typedef std::pair<Point_2, Point_2>                   Point_pair;

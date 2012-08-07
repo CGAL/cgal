@@ -346,7 +346,8 @@ EOF
     IFS=':'
     for boost_component in $BOOST_COMPONENTS; do
       BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
-      echo "link_libraries( \${Boost_${BOOST_COMPONENT}_LIBRARY} )"
+      echo "add_definitions( \"-DCGAL_USE_BOOST_${BOOST_COMPONENT}\" )"
+      echo "list(APPEND CGAL_3RD_PARTY_LIBRARIES \${Boost_${BOOST_COMPONENT}_LIBRARY} )"
     done
     IFS=$OLDIFS
 
@@ -411,7 +412,7 @@ EOF
   
   include_directories( ${QT3_INCLUDE_DIR} )
 
-  link_libraries( ${QT3_LIBRARIES} )
+  list(APPEND CGAL_3RD_PARTY_LIBRARIES ${QT3_LIBRARIES} )
 
 endif()
 
@@ -610,7 +611,7 @@ usage()
   echo "Usage: `basename $0` [-s source] [-c cgal-component1:cgal-component2:...] [-b boost-component1:boost-component2:...] [-p] [-o options_file='`pwd`/cgal_cmake_options:$HOME/.cgal_cmake_options_rc'] [-v] [-h]" >&2
   echo >&2
   echo "  -s source If this parameter is given the script will create one single executable for 'source' with all source files; otherwise it creates one executable for each main'ed source." >&2
-  echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','imageIO','Qt3','Qt4' ('benchmark', 'symbolic')." >&2
+  echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','ImageIO','Qt3','Qt4' ('benchmark', 'symbolic')." >&2
   echo "  boost_componentX - must be a valid boost component, like 'filesystem', 'program_options'." >&2
   echo "  -p use all of CGAL's preconfigured libraries" >&2
   echo "  -o options_file - file with PACKAGE, DIRECTORY, CGAL_COMPONENT, and BOOST_COMPONENT directives" >&2

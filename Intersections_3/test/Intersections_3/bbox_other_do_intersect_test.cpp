@@ -62,7 +62,7 @@ template <class T>
 bool test_aux(const T& t,
               const std::string& name,
               const CGAL::Bbox_3& bbox,
-              bool expected, bool exact_predicates = false)
+              bool expected, bool /*exact_predicates*/ = false)
 {
   bool b = CGAL::do_intersect(t,bbox);
   
@@ -660,7 +660,7 @@ bool test(bool exact_kernel = false)
 }
 
 template <typename K>
-bool test_kernel(bool exact_predicates = true, K k = K())
+bool test_kernel(bool exact_predicates = true, K /*k*/ = K())
 {
   bool b = test<K>(exact_predicates) &&
     intensive_test<K>(exact_predicates);

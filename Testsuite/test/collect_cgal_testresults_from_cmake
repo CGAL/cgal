@@ -44,7 +44,7 @@ print_testresult()
       # grep -E means "extended regular expressions".
       # All those three options are in the Single Unix Specification version 3
 
-      # The extended regular expression '[^a-zA-Z_,]warning matches any
+      # The extended regular expression '[^a-zA-Z_,:-]warning matches any
       # string "warning" preceded with a letter that is not a letter or '_'
       # or ',' or ':'. That avoids some false positives such as
       # '-read_only_relocs,warning' or '-D_CRT_SECURE_NO_WARNINGS', or
@@ -276,8 +276,8 @@ output_main_logs
 
 parse_flags_and_third_party_choices
 
-parse_lib_building_results "libCGALCore"    "CGAL_Core"    
 parse_lib_building_results "libCGAL"        "CGAL"    
+parse_lib_building_results "libCGALCore"    "CGAL_Core"    
 parse_lib_building_results "libCGALimageIO" "CGAL_ImageIO" 
 parse_lib_building_results "libCGALQt"      "CGAL_Qt3"
 parse_lib_building_results "libCGALQt4"     "CGAL_Qt4"

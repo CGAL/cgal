@@ -343,7 +343,7 @@ class No_rebind_facet_pmap
   typedef unsigned int size_type;
   
 public:
-  No_rebind_facet_pmap(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+  No_rebind_facet_pmap(const C3T3& c3t3, const Cell_pmap& /*cell_pmap*/)
     : r_c3t3_(c3t3) {}
 
   int surface_index(const Facet& f) const
@@ -376,7 +376,7 @@ class No_rebind_facet_pmap_first
   typedef unsigned int size_type;
   
 public:
-  No_rebind_facet_pmap_first(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+  No_rebind_facet_pmap_first(const C3T3& c3t3, const Cell_pmap& /*cell_pmap*/)
     : r_c3t3_(c3t3) {}
   
   int surface_index(const Facet& f) const
@@ -410,7 +410,7 @@ class No_rebind_facet_pmap_second
   typedef unsigned int size_type;
   
 public:
-  No_rebind_facet_pmap_second(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+  No_rebind_facet_pmap_second(const C3T3& c3t3, const Cell_pmap& /*cell_pmap*/)
   : r_c3t3_(c3t3) {}
   
   int surface_index(const Facet& f) const

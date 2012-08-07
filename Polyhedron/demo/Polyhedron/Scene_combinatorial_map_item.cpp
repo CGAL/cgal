@@ -17,7 +17,6 @@ Scene_combinatorial_map_item* Scene_combinatorial_map_item::clone() const{return
 Kernel::Vector_3 Scene_combinatorial_map_item::compute_face_normal(Combinatorial_map_3::Dart_const_handle adart) const
 {
   typedef Combinatorial_map_3::Dart_of_orbit_const_range<1> Dart_in_facet_range;
-  typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
   Vector_3 normal = CGAL::NULL_VECTOR;
   
