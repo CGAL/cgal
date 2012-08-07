@@ -1629,7 +1629,23 @@ protected:
                                                  const DHalfedge* e2) const;
 
 
-  // TODO EBEB 2012-07-28 document _compute_signs_and_local_minima
+  /*!
+   * Compute the signs (in left/right and bottom/top) of a path
+   * induced by the sequence he_to=>cv,cv_dir=>he_away, and reports
+   * as side-effect the halfedges pointing to local minima copied
+   * to an outputiterator.
+   * \param he_to The predecessor halfedge.
+   * \param cv The x-monotone curve we use to connect he_to's target and
+   *           he_away's source vertex.
+   * \param cv_dir the direction of the curve between he_to and he_away
+   * \param he_away The succcessor halfedge.
+   * \param local_mins_it the outputiterator 
+   * (value_type = std::pair< DHalfedge*, int >, where the int denotes the
+   * index) to report the halfedges pointing to local minima (<-shaped situation)
+   * \return A pair of signs for the induced path (ZERO if non-perimetric,
+   * POSITIVE if perimetric ccb is oriented in positive direction, 
+   * NEGATIVE if perimetric ccb is oriented in negative direction).
+   */
   template <typename OutputIterator>
   std::pair< CGAL::Sign, CGAL::Sign > 
   _compute_signs_and_local_minima(const DHalfedge* he_to,
@@ -1638,7 +1654,19 @@ protected:
                                   const DHalfedge* he_away,
                                   OutputIterator local_mins_it) const;
 
-  // TODO EBEB 2012-07-28 document _compute_signs_and_local_minima
+  /*!
+   * Compute the signs (in left/right and bottom/top) of a closed path
+   * represented by a given halfedge, and reports
+   * as side-effect the halfedges pointing to local minima copied
+   * to an outputiterator.
+   * \param he The representative halfedge.
+   * \param local_mins_it the outputiterator 
+   * (value_type = std::pair< DHalfedge*, int >, where the int denotes the
+   * index) to report the halfedges pointing to local minima (<-shaped situation)
+   * \return A pair of signs for the induced path (ZERO if non-perimetric,
+   * POSITIVE if perimetric ccb is oriented in positive direction, 
+   * NEGATIVE if perimetric ccb is oriented in negative direction).
+   */
   template <typename OutputIterator>
   std::pair< CGAL::Sign, CGAL::Sign > 
   _compute_signs_and_local_minima(const DHalfedge* he_ccb,
