@@ -2830,14 +2830,28 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
           // (which is on the outer boundary of the new face).
           bool increment = true;
           if (*oc_it != he1) {
-            // he1 is supposed to be a perimetric path and so all of the oc_its, 
+
+            // he2 is supposed to be a perimetric path and so all of the oc_its, 
             // we only have to detect which one. We do so by comparing signs of ccbs:
             std::list< std::pair< const DHalfedge*, int > > dummy_local_mins_oc;
             std::pair< CGAL::Sign, CGAL::Sign > signs_oc =
               _compute_signs_and_local_minima(*oc_it, std::front_inserter(dummy_local_mins_oc));
             
-            // TODO EBEB 2012-07-30 use signs_oc
-            if (m_topol_traits.boundaries_of_same_face(*oc_it, he2)) {
+            bool move = false;
+            
+            // TODO EBEB 2012-08-07 this either compares signs in left-right direction OR
+            // signs in bottom-top direction, which will probably not work for torus!
+            if (signs2.first != CGAL::ZERO && signs_oc.first != CGAL::ZERO) {
+              if (signs2.first != signs_oc.first) {
+                move = true;
+              }
+            } else if (signs2.second != CGAL::ZERO && signs_oc.second != CGAL::ZERO) {
+              if (signs2.second != signs_oc.second) {
+                move = true;
+              }
+            }
+            
+            if (move) {
               // We increment the itrator before moving the outer CCB, because
               // this operation invalidates the iterator.
               increment = false;
