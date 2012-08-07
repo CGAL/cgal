@@ -1721,257 +1721,19 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::
 remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
 {
   // std::cout << "remove_edge " << e->curve() << std::endl;
-  
+
+  // Comment EBEB 2012-08-06: this has become a simple forwarding function
+  // the intelligence of wether to swap he with he->opposite()
+  // has been moved to _remove_edge itself, as additional computed 
+  // data is reused there
+
   CGAL_precondition_msg(! e->is_fictitious(),
                         "The edge must be a valid one.");
 
   DHalfedge* he1 = _halfedge(e);
-  DHalfedge* he2 = he1->opposite();
-  DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : NULL;
-  DOuter_ccb* oc1 = (ic1 == NULL) ? he1->outer_ccb() : NULL;
-  DFace* f1 = (ic1 != NULL) ? ic1->face() : oc1->face();
-  DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
-  DOuter_ccb* oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
-  DFace* f2 = (ic2 != NULL) ? ic2->face() : oc2->face();
-
-  if ((f1 != f2) || (he1->next() == he2) || (he2->next() == he1)) {
-    // Either the removal of he1 (and its twin halfedge) will cause the two
-    // incident faces to merge, or these two halfedges form an "antenna".
-    // In either case, it does not matter which halfedge we send to the
-    // auxiliary function _remove_edge().
-    DFace* f = _remove_edge(he1, remove_source, remove_target);
-    return Face_handle(f);
-  }
-
-  // In this case one of the following can happen: (a) a new hole will be
-  // created by the removal of the edge (case 3.2.1 of the removal
-  // procedure), or (b) an outer CCB will be split into two (case 3.2.2).
-  // We begin by locating the leftmost vertex along the path from he1 to its
-  // twin he2 and the leftmost vertex point along the path from the twin to
-  // he1 (both paths do not include he1 and he2 themselves).
-#if 1
-  // EBEB 2012-07-26 the following code enables optimizations:
-  // - compute perimetricy without geometric predicates
-  // - compute global min from local mimima
-
-  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
-    m_geom_traits->parameter_space_in_x_2_object(); 
-  typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
-    m_geom_traits->parameter_space_in_y_2_object(); 
-
-  std::list< std::pair< const DHalfedge*, int > > local_mins1;
-  std::pair< CGAL::Sign, CGAL::Sign > signs1 =
-    _compute_signs_and_local_minima(he1, std::front_inserter(local_mins1));
-
-  std::cout << "signs1.x: " << signs1.first << std::endl;
-  std::cout << "signs1.y: " << signs1.second << std::endl;
-  std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
-
-  // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
-  bool is_perimetric1 = signs1.first || signs1.second;
-
-  const DHalfedge* he_min1 = he1; // initialize with first candidate
-  Arr_parameter_space ps_x_min1 = ARR_INTERIOR;
-  Arr_parameter_space ps_y_min1 = ARR_INTERIOR;
-  int index_min1 = 0;
-
-  // Check all reported local minima
-  // IDEA EBEB 2012-07-29 maintain a tree to determine min in log(n) time
-  typename std::list< std::pair< const DHalfedge*, int > >::iterator lm_it;
-  for (lm_it = local_mins1.begin(); lm_it != local_mins1.end(); lm_it++) {
-    const DHalfedge* he = lm_it->first;
-    int index = lm_it->second;
-
-    Arr_parameter_space ps_x_he_min =
-      parameter_space_in_x(he->curve(), ARR_MIN_END);
-    Arr_parameter_space ps_y_he_min =
-      parameter_space_in_y(he->curve(), ARR_MIN_END);
-
-    if ((he_min1 == NULL) || (index < index_min1) ||
-        ((index == index_min1) &&
-         _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min1,
-                     ps_x_min1, ps_y_min1)))
-    {
-      index_min1 = index;
-      ps_x_min1 = ps_x_he_min;
-      ps_y_min1 = ps_y_he_min;
-      he_min1 = he;
-      std::cout << "set global min1 to he: " << he->curve() << std::endl;
-    }
-  }
-
-  std::list< std::pair< const DHalfedge*, int > > local_mins2;
-  std::pair< CGAL::Sign, CGAL::Sign > signs2 =
-    _compute_signs_and_local_minima(he2, std::front_inserter(local_mins2));
-
-  std::cout << "signs2.x: " << signs2.first << std::endl;
-  std::cout << "signs2.y: " << signs2.second << std::endl;
-  std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
-
-  // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
-  bool is_perimetric2 = signs2.first || signs2.second;
-
-  const DHalfedge* he_min2 = he2; // initialize with first candidate
-  Arr_parameter_space ps_x_min2 = ARR_INTERIOR;
-  Arr_parameter_space ps_y_min2 = ARR_INTERIOR;
-  int index_min2 = 0;
-
-  // check all reported local minima
-  for (lm_it = local_mins2.begin(); lm_it != local_mins2.end(); lm_it++) {
-    const DHalfedge* he = lm_it->first;
-    int index = lm_it->second;
-
-    Arr_parameter_space ps_x_he_min =
-      parameter_space_in_x(he->curve(), ARR_MIN_END);
-    Arr_parameter_space ps_y_he_min =
-      parameter_space_in_y(he->curve(), ARR_MIN_END);
-    if ((he_min2 == NULL) || (index < index_min2) ||
-        ((index == index_min2) &&
-         _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min2,
-                     ps_x_min2, ps_y_min2)))
-    {
-      index_min2 = index;
-      ps_x_min2 = ps_x_he_min;
-      ps_y_min2 = ps_y_he_min;
-      he_min2 = he;
-      std::cout << "set global min2 to he: " << he->curve() << std::endl;
-    }
-  }
-
-#else
-
-  int index_min1;
-  Arr_parameter_space ps_x_min1, ps_y_min1;
-  bool is_perimetric1;
-  const DHalfedge* he_min1 = 
-    _find_leftmost_vertex_on_closed_loop(he1, ps_x_min1, ps_y_min1,
-                                         index_min1, is_perimetric1);
-  int index_min2;
-  Arr_parameter_space ps_x_min2, ps_y_min2;
-  bool is_perimetric2;
-  const DHalfedge* he_min2 = 
-    _find_leftmost_vertex_on_closed_loop(he2, ps_x_min2, ps_y_min2,
-                                         index_min2, is_perimetric2);
-#endif
-
-  // std::cout << std::endl
-  //           << "index 1: " << index_min1
-  //           << ", ps_x_min1: " << ps_x_min1
-  //           << ", ps_y_min1: " << ps_y_min1
-  //           << ", is_perimetric1: " << is_perimetric1
-  //           << std::endl;
-
-  // std::cout << "index 2: " << index_min2
-  //           << ", ps_x_min2: " << ps_x_min2
-  //           << ", ps_y_min2: " << ps_y_min2
-  //           << ", is_perimetric2: " << is_perimetric2
-  //           << std::endl;
-
-  if (is_perimetric1 || is_perimetric2) {
-    DFace* f =
-      // We are in case (a) and he1 is directed to the new hole to be created.
-      (! is_perimetric1) ? _remove_edge(he1, remove_source, remove_target) :
-      // We are in case (a) and he2 is directed to the new hole to be created. 
-      ((! is_perimetric2) ? _remove_edge(he2, remove_target, remove_source) :
-       // Both paths are perimetric; thus, we are in case (b).
-       _remove_edge(he1, remove_source, remove_target));
-
-    return Face_handle(f);
-  }
-
-  CGAL_assertion(he_min1 != NULL);
-
-  const DVertex* v_min1 = he_min1->vertex();
-  //std::cout << "min v 1: " << v_min1->point() << std::endl;
-
-  CGAL_assertion(he_min2 != NULL);
-
-  const DVertex* v_min2 = he_min2->vertex();
-  //std::cout << "min v 2: " << v_min2->point() << std::endl;
-  
-  bool interior1 = ((ps_x_min1 == ARR_INTERIOR) && (ps_y_min1 == ARR_INTERIOR));
-  bool interior2 = ((ps_x_min2 == ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR));
-
-  // Both paths from he1 to he2 and back from he2 to he1 are not
-  // perimetric, so we are in case (a). As we want to determine which
-  // halfedge points to the new hole to be created (he1 or he2),
-  // we have to compare the two leftmost vertices lexicographically,
-  // first by the indices then by x and y. v_min2 lies to the left of
-  // v_min1 if and only if he1 points at the hole we are about to create.
-  //
-  //         +---------------------+
-  //         |                     |
-  //         |   he1    +----+     |
-  //         +--------->+    |     |
-  //         |          +----+     |
-  //         |      v_min1         |
-  //         |                     |
-  //  v_min2 +---------------------+
-  //
-  // Note that if one of the paths we have examined ends at a boundary
-  // side of the parameter space (and only of the paths may end at a
-  // boundary side of the parameter space), then the other path becomes
-  // a hole in a face bounded by the parameter-space boundary.
-
-
-  // TODO EBEB 2012-07-27 ... forward signs of ccbs to _remove_edge to simplify 
-  // the implementation of hole_creation_after_edge_removal
-
-#if 1
-  // TODO EBEB 2012-07-25 the following "line" is very hard to pare by a human-being
-  DFace* f = (index_min1 > index_min2) ?
-    _remove_edge(he1, remove_source, remove_target) :
-    ((index_min1 < index_min2) ?
-     _remove_edge(he2, remove_target, remove_source) :
-     ((interior1 && interior2) ?
-      ((m_geom_traits->compare_xy_2_object()
-        (v_min1->point(), v_min2->point()) == LARGER) ?
-       _remove_edge(he1, remove_source, remove_target) :
-       _remove_edge(he2, remove_target, remove_source)) :
-      (((ps_x_min1 == ARR_INTERIOR) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
-       _remove_edge(he1, remove_source, remove_target) :
-       (((ps_x_min1 == ARR_LEFT_BOUNDARY) && (ps_x_min2 == ARR_INTERIOR)) ?
-        _remove_edge(he2, remove_target, remove_source) :
-        (((ps_x_min1 == ARR_LEFT_BOUNDARY) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
-         ((m_geom_traits->compare_y_on_boundary_2_object()
-           (v_min1->point(), v_min2->point()) == LARGER) ?
-          _remove_edge(he1, remove_source, remove_target) :
-          _remove_edge(he2, remove_target, remove_source)) :
-         (((ps_y_min1 != ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR)) ?
-          ((m_geom_traits->compare_x_on_boundary_2_object()
-            (v_min2->point(), he_min1->curve(), ARR_MIN_END) == SMALLER) ?
-           _remove_edge(he1, remove_source, remove_target) :
-           _remove_edge(he2, remove_target, remove_source)) :
-          (((ps_y_min1 == ARR_INTERIOR) && (ps_y_min2 != ARR_INTERIOR)) ?
-           ((m_geom_traits->compare_x_on_boundary_2_object()
-             (v_min1->point(), he_min2->curve(), ARR_MIN_END) == LARGER) ?
-            _remove_edge(he1, remove_source, remove_target) :
-            _remove_edge(he2, remove_target, remove_source)) :
-           ((m_geom_traits->compare_x_on_boundary_2_object()
-             (he_min1->curve(), ARR_MIN_END,
-              he_min2->curve(), ARR_MIN_END) == LARGER) ?
-            _remove_edge(he1, remove_source, remove_target) :
-            _remove_edge(he2, remove_target, remove_source)))))))));
-#else
-  // this is a try to simplify to just have a call for 
-  //    _remove_edge(he1, remove_source, remove_target)
-  // and a call for
-  //    _remove_edge(he2, remove_target, remove_target)
-  DFace* f = NULL;
-  if ((index_min1 > index_min2) || 
-      ((interior1 && interior2) && ((m_geom_traits->compare_xy_2_object()(v_min1->point(), v_min2->point()) == LARGER))) ||
-      (ps_x_min1 == ARR_INTERIOR) ||
-      ((ps_x_min2 == ARR_LEFT_BOUNDARY) && ((m_geom_traits->compare_y_on_boundary_2_object()(v_min1->point(), v_min2->point()) == LARGER))) ||
-      ((ps_y_min1 != ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR) && (m_geom_traits->compare_x_on_boundary_2_object()(v_min2->point(), he_min1->curve(), ARR_MIN_END) == SMALLER)) ||
-      ((ps_y_min1 == ARR_INTERIOR) && (ps_y_min2 != ARR_INTERIOR) && (m_geom_traits->compare_x_on_boundary_2_object()(v_min1->point(), he_min2->curve(), ARR_MIN_END) == LARGER)) ||
-      (m_geom_traits->compare_x_on_boundary_2_object()(he_min1->curve(), ARR_MIN_END, he_min2->curve(), ARR_MIN_END) == LARGER)
-      ) {
-    f = _remove_edge(he1, remove_source, remove_target);
-  } else {
-    f = _remove_edge(he2, remove_target, remove_source);
-  }
-#endif
+  DFace* f = _remove_edge(he1, remove_source, remove_target);
   return Face_handle(f);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -3772,8 +3534,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_ccb,
     }
 
     he = he->next();
-    CGAL_assertion(he != he_ccb);
-  } while (he != he_ccb->opposite());
+  } while (he != he_ccb->opposite() /* one loooong ccb */ && 
+           he != he_ccb             /* two distinct ccbs */);
     
   // Return the leftmost vertex and its x_index (with respect to he_before).
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
@@ -4953,6 +4715,227 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
   DOuter_ccb* oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
   DFace* f2 = (oc2 != NULL) ? oc2->face() : ic2->face();
+
+  bool swap_he_he_opposite = false;
+
+  // first compute signs of ccbs for he1 and he (and local_mins as side-effect)
+
+  std::list< std::pair< const DHalfedge*, int > > local_mins1;
+  std::pair< CGAL::Sign, CGAL::Sign > signs1(CGAL::ZERO, CGAL::ZERO);
+
+  std::cout << "signs1.x: " << signs1.first << std::endl;
+  std::cout << "signs1.y: " << signs1.second << std::endl;
+  std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
+  
+  std::list< std::pair< const DHalfedge*, int > > local_mins2;
+  std::pair< CGAL::Sign, CGAL::Sign > signs2(CGAL::ZERO, CGAL::ZERO);
+  
+  std::cout << "signs2.x: " << signs2.first << std::endl;
+  std::cout << "signs2.y: " << signs2.second << std::endl;
+  std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
+
+  if ((he1->next() == he2) || (he2->next() == he1)) {
+    // The removal of he1 (and its twin halfedge) form an "antenna", and we do not need signs later
+    // -> No swapping
+
+  } else {
+
+    signs1 = _compute_signs_and_local_minima(he1, std::front_inserter(local_mins1));
+    signs2 = _compute_signs_and_local_minima(he2, std::front_inserter(local_mins2));
+    // Comments: signs1/2 are used later again, probably for hole_creation_after_edge_removed
+
+    if (f1 != f2) {
+      // The removal of he1 (and its twin halfedge) will cause the two
+      // incident faces to merge/
+      // -> No swapping
+      
+    } else {
+      
+      // In this case one of the following can happen: (a) a new hole will be
+      // created by the removal of the edge (case 3.2.1 of the removal
+      // procedure), or (b) an outer CCB will be split into two (case 3.2.2).
+      // We begin by locating the leftmost vertex along the path from he1 to its
+      // twin he2 and the leftmost vertex point along the path from the twin to
+      // he1 (both paths do not include he1 and he2 themselves).
+      
+      // EBEB 2012-07-26 the following code enables optimizations:
+      // - compute perimetricy without geometric predicates
+      // - compute global min from local mimima
+      
+      typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+        m_geom_traits->parameter_space_in_x_2_object(); 
+      typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+        m_geom_traits->parameter_space_in_y_2_object(); 
+      
+      bool is_perimetric1 = signs1.first || signs1.second; // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
+      
+      const DHalfedge* he_min1 = he1; // initialize with first candidate
+      Arr_parameter_space ps_x_min1 = ARR_INTERIOR;
+      Arr_parameter_space ps_y_min1 = ARR_INTERIOR;
+      int index_min1 = 0;
+      
+      // check all reported local minima
+      // IDEA EBEB 2012-07-29 maintain a tree to determine min in log(n) time
+      for (typename std::list< std::pair< const DHalfedge*, int > >::iterator lm_it = local_mins1.begin(); 
+           lm_it != local_mins1.end(); lm_it++) {
+        
+        const DHalfedge* he = lm_it->first;
+        int index = lm_it->second;
+        
+        Arr_parameter_space ps_x_he_min = parameter_space_in_x(he->curve(), ARR_MIN_END);
+        Arr_parameter_space ps_y_he_min = parameter_space_in_y(he->curve(), ARR_MIN_END);
+        
+        if ((he_min1 == NULL) || (index < index_min1) ||
+            ((index == index_min1) &&
+             _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min1, ps_x_min1, ps_y_min1))) {
+          index_min1 = index;
+          ps_x_min1 = ps_x_he_min;
+          ps_y_min1 = ps_y_he_min;
+          he_min1 = he;
+          std::cout << "set global min1 to he: " << he->curve() << std::endl;
+        }
+      }
+      
+      bool is_perimetric2 = signs2.first || signs2.second; // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
+      
+      const DHalfedge* he_min2 = he2; // initialize with first candidate
+      Arr_parameter_space ps_x_min2 = ARR_INTERIOR;
+      Arr_parameter_space ps_y_min2 = ARR_INTERIOR;
+      int index_min2 = 0;
+      
+      // check all reported local minima
+      for (typename std::list< std::pair< const DHalfedge*, int > >::iterator lm_it = local_mins2.begin(); 
+           lm_it != local_mins2.end(); lm_it++) {
+        
+        const DHalfedge* he = lm_it->first;
+        int index = lm_it->second;
+        
+        Arr_parameter_space ps_x_he_min = parameter_space_in_x(he->curve(), ARR_MIN_END);
+        Arr_parameter_space ps_y_he_min = parameter_space_in_y(he->curve(), ARR_MIN_END);
+        
+        if ((he_min2 == NULL) || (index < index_min2) ||
+            ((index == index_min2) &&
+             _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min2, ps_x_min2, ps_y_min2))) {
+          index_min2 = index;
+          ps_x_min2 = ps_x_he_min;
+          ps_y_min2 = ps_y_he_min;
+          he_min2 = he;
+          std::cout << "set global min2 to he: " << he->curve() << std::endl;
+        }
+      }
+      
+      // std::cout << std::endl
+      //           << "index 1: " << index_min1
+      //           << ", ps_x_min1: " << ps_x_min1
+      //           << ", ps_y_min1: " << ps_y_min1
+      //           << ", is_perimetric1: " << is_perimetric1
+      //           << std::endl;
+      
+      // std::cout << "index 2: " << index_min2
+      //           << ", ps_x_min2: " << ps_x_min2
+      //           << ", ps_y_min2: " << ps_y_min2
+      //           << ", is_perimetric2: " << is_perimetric2
+      //           << std::endl;
+      
+      if (is_perimetric1 || is_perimetric2) {
+#if 0 // this is old cold
+        swap_he_he_opposite = // We are in case (a) and he1 is directed to the new hole to be created.
+          (! is_perimetric1) ? false :
+          // We are in case (a) and he2 is directed to the new hole to be created. 
+          ((! is_perimetric2) ? true :
+           // Both paths are perimetric; thus, we are in case (b).
+           false);
+#else // THIS IS NEW CODE 2012-08-06 which is much easier to read
+        swap_he_he_opposite = !is_perimetric2;
+#endif
+      } else {
+        
+        CGAL_assertion(he_min1 != NULL);
+        
+        const DVertex* v_min1 = he_min1->vertex();
+        //std::cout << "min v 1: " << v_min1->point() << std::endl;
+        
+        CGAL_assertion(he_min2 != NULL);
+        
+        const DVertex* v_min2 = he_min2->vertex();
+        //std::cout << "min v 2: " << v_min2->point() << std::endl;
+        
+        bool interior1 = ((ps_x_min1 == ARR_INTERIOR) && (ps_y_min1 == ARR_INTERIOR));
+        bool interior2 = ((ps_x_min2 == ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR));
+        
+        // Both paths from he1 to he2 and back from he2 to he1 are not
+        // perimetric, so we are in case (a). As we want to determine which
+        // halfedge points to the new hole to be created (he1 or he2),
+        // we have to compare the two leftmost vertices lexicographically,
+        // first by the indices then by x and y. v_min2 lies to the left of
+        // v_min1 if and only if he1 points at the hole we are about to create.
+        //
+        //         +---------------------+
+        //         |                     |
+        //         |   he1    +----+     |
+        //         +--------->+    |     |
+        //         |          +----+     |
+        //         |      v_min1         |
+        //         |                     |
+        //  v_min2 +---------------------+
+        //
+        // Note that if one of the paths we have examined ends at a boundary
+        // side of the parameter space (and only of the paths may end at a
+        // boundary side of the parameter space), then the other path becomes
+        // a hole in a face bounded by the parameter-space boundary.
+        
+        // TODO EBEB 2012-07-25 the following "line" is very hard to pare by a human-being;
+        // replace by a simple if that only checks the 'true' cases
+        swap_he_he_opposite = (index_min1 > index_min2) ?
+          false :
+          ((index_min1 < index_min2) ?
+           true :
+           ((interior1 && interior2) ?
+            ((m_geom_traits->compare_xy_2_object()
+              (v_min1->point(), v_min2->point()) == LARGER) ?
+             false :
+             true) :
+            (((ps_x_min1 == ARR_INTERIOR) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
+             false :
+             (((ps_x_min1 == ARR_LEFT_BOUNDARY) && (ps_x_min2 == ARR_INTERIOR)) ?
+              true :
+              (((ps_x_min1 == ARR_LEFT_BOUNDARY) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
+               ((m_geom_traits->compare_y_on_boundary_2_object()
+                 (v_min1->point(), v_min2->point()) == LARGER) ?
+                false :
+                true) :
+               (((ps_y_min1 != ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR)) ?
+                ((m_geom_traits->compare_x_on_boundary_2_object()
+                  (v_min2->point(), he_min1->curve(), ARR_MIN_END) == SMALLER) ?
+                 false :
+                 true) :
+                (((ps_y_min1 == ARR_INTERIOR) && (ps_y_min2 != ARR_INTERIOR)) ?
+                 ((m_geom_traits->compare_x_on_boundary_2_object()
+                   (v_min1->point(), he_min2->curve(), ARR_MIN_END) == LARGER) ?
+                  false :
+                  true) :
+                 ((m_geom_traits->compare_x_on_boundary_2_object()
+                   (he_min1->curve(), ARR_MIN_END,
+                    he_min2->curve(), ARR_MIN_END) == LARGER) ?
+                  false :
+                  true))))))));
+      }
+    }
+    
+    // swapping?
+    if (swap_he_he_opposite) {
+      // swap all entries
+      std::swap(he1, he2);
+      std::swap(ic1, ic2);
+      std::swap(oc1, oc2);
+      std::swap(f1 , f2);
+      // not needed below here std::swap(local_mins1, local_mins2);
+      std::swap(signs1, signs2);
+    }
+    
+  }
+  // now the real removal starts
+    
   DHalfedge* prev1 = NULL;
   DHalfedge* prev2 = NULL;
 
@@ -5248,6 +5231,21 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         // We have to split the outer CCB into two outer components
         // (case 3.2.2), such that the number of outer CCBs of the face is
         // incremented.
+        //
+        //    +----------------------------+
+        //    |                            |
+        //    |            prev1           |
+        //    +<........+<.................|
+        //    |         |                  |
+        //    |         |                  |
+        //    |         |                  |
+        //    |         |                  |
+        //    |  prev2  |                  |
+        //    +........>+..................|
+        //    |                            |
+        //    +----------------------------+
+        //
+
         // First we notify the observers that we are about to split an outer
         // component.
         _notify_before_split_outer_ccb(Face_handle(f1),
@@ -5341,6 +5339,8 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     return f1;
   }
 
+  CGAL_assertion(f1 != f2);
+
   // The two incident faces are not the same - in this case, the edge we are
   // about to delete separates these two faces. We therefore have to delete
   // one of these faces and merge it with the other face.
@@ -5365,7 +5365,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       // TODO EBEB 2012-07-30 replace with signs
     if (m_topol_traits.hole_creation_after_edge_removal(he1)) {
       // We have to remove the outer CCBs of f1 and f2 that he1 and he2 lie
-      // on, and create a new hole in the merged face (case 3.4.1).
+      // on, and create a new hole in the merged face (case 3.4.2).
       // We first remove the outer CCB oc1 from f1, and inform the observers
       // on doing so.
       _notify_before_remove_outer_ccb(Face_handle(f1),
@@ -5390,7 +5390,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       add_inner_ccb = true;
     }
     else {
-      // f1 and f2 are two adjacent faces (case 3.4.2), so we simply merge
+      // f1 and f2 are two adjacent faces (case 3.4.1), so we simply merge
       // them.
       // We first set the connected component of f2's outer-boundary halfedges
       // to be the same as f1's outer component.
@@ -5606,6 +5606,8 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
   // Return the merged face.
   return f1;
+
+  // TODO EBEB 2012-08-06 it seems that a torus case is missing
 }
 
 //-----------------------------------------------------------------------------
