@@ -3971,6 +3971,8 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
 #if 0
   std::cout << "before swap" << std::endl;
+  std::cout << "he1c: " << he1->curve() <<  ", " << he1->direction() << std::endl;
+  std::cout << "he1c: " << he2->curve() <<  ", " << he2->direction() << std::endl;
   std::cout << "he1: " << he1 << std::endl;
   std::cout << "he2: " << he2 << std::endl;
   std::cout << "ic1: " << ic1 << std::endl;
@@ -4131,12 +4133,14 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         CGAL_assertion(he_min1 != NULL);
         
         const DVertex* v_min1 = he_min1->vertex();
-        //std::cout << "min v 1: " << v_min1->point() << std::endl;
+        // std::cout << "v_min1: " << v_min1->point() << std::endl;
+        // std::cout << "index_min1: " << index_min1 << std::endl;
         
         CGAL_assertion(he_min2 != NULL);
         
         const DVertex* v_min2 = he_min2->vertex();
-        //std::cout << "min v 2: " << v_min2->point() << std::endl;
+        // std::cout << "v_min2: " << v_min2->point() << std::endl;
+        // std::cout << "index_min2: " << index_min2 << std::endl;
         
         bool interior1 = ((ps_x_min1 == ARR_INTERIOR) && (ps_y_min1 == ARR_INTERIOR));
         bool interior2 = ((ps_x_min2 == ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR));
@@ -4215,6 +4219,8 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
 #if 0
   std::cout << "after swap" << std::endl;
+  std::cout << "he1c: " << he1->curve() <<  ", " << he1->direction() << std::endl;
+  std::cout << "he1c: " << he2->curve() <<  ", " << he2->direction() << std::endl;
   std::cout << "he1: " << he1 << std::endl;
   std::cout << "he2: " << he2 << std::endl;
   std::cout << "ic1: " << ic1 << std::endl;
