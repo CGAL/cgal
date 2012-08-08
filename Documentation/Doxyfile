@@ -129,7 +129,7 @@ INLINE_INHERITED_MEMB  = NO
 # path before files name in the file list and in the header files. If set
 # to NO the shortest path that makes the file name unique will be used.
 
-FULL_PATH_NAMES        = NO
+FULL_PATH_NAMES        = YES
 
 # If the FULL_PATH_NAMES tag is set to YES then the STRIP_FROM_PATH tag
 # can be used to strip a user-defined part of the path. Stripping is
@@ -212,7 +212,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cpp=<I>C++</I>" \
                          "cpp11=*C++11*" \
                          "CC=*C++*" \
-                         "cgalexample{1}=<br><b>File</b> \1 \include \1" \
+                         "cgalexample{1}=<br><b>File</b> \ref \1 \include \1" \
                          "cgalbib{1}=\par \"BibTeX\" \cite \1" \
                          "license{1}=\par \"License\" \1" \
                          "models=\xrefitem modelss \"Models\" \"Models\"" \
@@ -224,14 +224,14 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "advancedend=" \
                          "debug=\xrefitem debugs \"Debug\" \"Debug\""
 
-ALIASES += "PkgDescriptionBegin{1}=<table cellpadding=\"2\" cellspacing=\"0\"><tr><td colspan=\"2\"><h2>\1</h2></td></tr><tr>"
+ALIASES += "PkgDescriptionBegin{2}=<table cellpadding=\"2\" cellspacing=\"0\"><tr><td colspan=\"2\"><h2><a href=\"../../CGAL.CGAL.\2/html/index.html\">\1</a></h2></td></tr><tr>"
 ALIASES += "PkgPicture{1}=<td rowspan=\"2\">\image html \1 \"\" </td>"
 ALIASES += "PkgAuthor{1}=<td>\author \1"
 ALIASES += "PkgAuthors{1}=\authors \1"
 ALIASES += "PkgDesc{1}=\par \"Description\" \1"
 ALIASES += "PkgSince{1}=\since \cgal \1"
-ALIASES += "PkgUserManual{1}=\ref \1 \"User Manual\""
 ALIASES += "PkgDescriptionEnd=</td></tr></table>"
+ALIASES += "footnote{1}=\note \1"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding
@@ -314,7 +314,7 @@ SIP_SUPPORT            = NO
 # setting a simple type. If this is not the case, or you want to show the
 # methods anyway, you should set this option to NO.
 
-IDL_PROPERTY_SUPPORT   = YES
+IDL_PROPERTY_SUPPORT   = NO
 
 # If member grouping is used in the documentation and the DISTRIBUTE_GROUP_DOC
 # tag is set to YES, then doxygen will reuse the documentation of the first
@@ -735,7 +735,8 @@ EXCLUDE_SYMBOLS        =
 # and *.h) to filter out the source-files in the directories. If left
 # blank all files are included.
 
-EXAMPLE_PATTERNS       = *.cpp
+EXAMPLE_PATTERNS       = *.cpp \
+                         *.h
 
 # If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be
 # searched for input files to be used with the \include or \dontinclude
@@ -1579,7 +1580,7 @@ MSCGEN_PATH            =
 # inheritance and usage relations if the target is undocumented
 # or is not a class.
 
-HIDE_UNDOC_RELATIONS   = YES
+HIDE_UNDOC_RELATIONS   = NO
 
 # If you set the HAVE_DOT tag to YES then doxygen will assume the dot tool is
 # available from the path. This tool is part of Graphviz, a graph visualization

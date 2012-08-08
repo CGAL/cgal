@@ -15,7 +15,7 @@
 
 \cgalbib{ cgal:hkpw-se-12 }
 
-\license{ \ref licensesLGPL LGPL }
+\license{ \ref licensesLGPL }
 \par Resources:
     \ref stl_ext_user "User Manual"
   </td>

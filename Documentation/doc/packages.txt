@@ -1,0 +1,148 @@
+/*!
+
+\page packages Packages
+
+\tableofcontents
+
+\section general_introduction I General Introduction
+
+1. \ref introduction
+2. \ref preliminaries
+3. \ref installation
+
+\section PartAlgebraicFoundations II Arithmetic and Algebra
+
+\package_listing{Algebraic_foundations}
+\package_listing{NumberTypeSupport}
+\package_listing{Modular_arithmetic}
+\package_listing{Polynomial}
+\package_listing{Algebraic_kernel_d}
+
+
+\section PartCombinatorialAlgorithms III Combinatorial Algorithms
+
+\package_listing{Matrix_search}
+\package_listing{QP_solver}
+
+\section PartKernels IV Geometry Kernels
+
+\package_listing{Kernel_23}
+\package_listing{Kernel_d}
+\package_listing{Circular_kernel_2}
+\package_listing{Circular_kernel_3}
+
+\section PartConvexHullAlgorithms V Convex Hull Algorithms
+
+\package_listing{Convex_hull_2}
+\package_listing{Convex_hull_3}
+\package_listing{Convex_hull_d}
+
+
+\section PartPolygons VI Polygons
+
+\package_listing{Polygon}
+\package_listing{Boolean_set_operations_2}
+\package_listing{Nef_2}
+\package_listing{Nef_S2}
+\package_listing{Partition_2}
+\package_listing{Straight_skeleton_2}
+\package_listing{Minkowski_sum_2}
+
+
+\section PartPolyhedra VII Cell Complexes and Polyhedra
+
+\package_listing{Polyhedron}
+\package_listing{HalfedgeDS}
+\package_listing{Combinatorial_map}
+\package_listing{Linear_cell_complex}
+\package_listing{Nef_3}
+\package_listing{Convex_decomposition_3}
+\package_listing{Minkowski_sum_3}
+
+
+\section PartArrangements VIII Arrangements
+
+\package_listing{Arrangement_on_surface_2}
+\package_listing{Sweep_line_2}
+\package_listing{Snap_rounding_2}
+
+\package_listing{Envelope_2}
+\package_listing{Envelope_3}
+
+\section PartTriangulationsAndDelaunayTriangulations IX Triangulations and Delaunay Triangulations
+
+\package_listing{Triangulation_2}
+\package_listing{TDS_2}
+\package_listing{Triangulation_3}
+\package_listing{TriangulationDS_3}
+\package_listing{Periodic_3_triangulation_3}
+\package_listing{Alpha_shapes_2}
+\package_listing{Alpha_shapes_3}
+
+\section PartVoronoiDiagrams X Voronoi Diagrams
+
+\package_listing{Segment_Delaunay_graph_2}
+\package_listing{Apollonius_graph_2}
+\package_listing{Voronoi_diagram_2}
+
+\section PartMeshing XI Mesh Generation
+
+\package_listing{Mesh_2}
+\package_listing{Surface_mesher}
+\package_listing{Surface_reconstruction_points_3}
+\package_listing{Skin_surface_3}
+\package_listing{Mesh_3}
+
+\section PartGeometryProcessing XII Geometry Processing
+
+\package_listing{Subdivision_method_3}
+\package_listing{Surface_mesh_simplification}
+\package_listing{Surface_mesh_parameterization}
+\package_listing{Stream_lines_2}
+\package_listing{Ridges_3}
+\package_listing{Jet_fitting_3}
+\package_listing{Point_set_processing_3}
+
+\section PartSearchStructures XIII Spatial Searching and Sorting
+
+\package_listing{Point_set_2}
+\package_listing{Interval_skip_list}
+\package_listing{Spatial_searching}
+\package_listing{SearchStructures}
+\package_listing{Box_intersection_d}
+\package_listing{AABB_tree}
+\package_listing{Spatial_sorting}
+
+\section PartGeometricOptimization XIV Geometric Optimization
+
+\package_listing{Bounding_volumes}
+\package_listing{Inscribed_areas}
+\package_listing{Polytope_distance_d}
+\package_listing{Principal_component_analysis}
+
+\section PartInterpolation XV Interpolation
+
+\package_listing{Interpolation}
+
+\section PartKineticDataStructures XVI Kinetic Data Structures
+
+\package_listing{Kinetic_data_structures}
+\package_listing{Kinetic_framework}
+
+\section PartSupportLibrary XVII Support Library
+
+\package_listing{STL_Extension}
+\package_listing{BGL}
+\package_listing{Property_map}
+\package_listing{Circulator}
+\package_listing{Generator}
+\package_listing{Miscellany}
+\package_listing{IOstream}
+
+\section PartVisualization XVIII Visualization
+
+\package_listing{Geomview}
+\package_listing{GraphicsView}
+\package_listing{CGAL_ipelets}
+
+*/

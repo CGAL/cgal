@@ -1568,6 +1568,7 @@ Documentation/doc/Installation.txt -text
 Documentation/doc/Introduction.txt -text
 Documentation/doc/Preliminaries.txt -text
 Documentation/doc/main.txt -text
+Documentation/doc/packages.txt -text
 Documentation/doxyassist.xml -text svneol=unset#application/xml
 Documentation/footer.html -text
 Documentation/header.html -text
