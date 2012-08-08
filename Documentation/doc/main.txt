@@ -6,8 +6,6 @@
 
 \attention See something? Fix it.
 
-\ref installation
-
 The goal of the CGAL Open Source Project is to provide easy access to
 efficient and reliable geometric algorithms in the form of a C++
 library. CGAL is used in various areas needing geometric computation,
@@ -51,5 +49,6 @@ CGAL is distributed under a dual-license scheme. CGAL can be used
 together with Open Source software free of charge. Using CGAL in other
 contexts can be done by obtaining a commercial license from
 GeometryFactory. For more details see the License page.
+
 
 */

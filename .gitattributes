@@ -1572,6 +1572,7 @@ Documentation/doc/packages.txt -text
 Documentation/doxyassist.xml -text svneol=unset#application/xml
 Documentation/footer.html -text
 Documentation/header.html -text
+Documentation/jquery.footnotes.min.js -text
 Documentation/stylesheet.css -text
 Documentation/txt_filter.sh -text
 Envelope_2/doc_tex/Envelope_2/fig/Envelope_2.png -text
