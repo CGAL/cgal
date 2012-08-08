@@ -122,7 +122,9 @@ void Viewer::keyPressEvent(QKeyEvent* e)
       return;
     }
   }
-  QGLViewer::keyPressEvent(e);
+  //forward the event to the scene (item handling of the event)
+  if (! d->scene->keyPressEvent(e) )
+    QGLViewer::keyPressEvent(e);
 }
 
 void Viewer::turnCameraBy180Degres() {

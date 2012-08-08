@@ -62,7 +62,7 @@ public:
   template <typename Sizing_field>
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const Sizing_field& radius_bound,
-                       typename Sizing_field::FT dummy = 0)
+                       typename Sizing_field::FT /*dummy*/ = 0)
   { 
     init_radius(radius_bound);
 

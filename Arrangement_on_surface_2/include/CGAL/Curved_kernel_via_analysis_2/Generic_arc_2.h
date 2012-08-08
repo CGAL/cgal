@@ -279,7 +279,7 @@ public:
 
 template <class SweepCurvesAdaptor_2, class Rep_>
 std::ostream& operator << (std::ostream& os,
-    const Generic_arc_2<SweepCurvesAdaptor_2, Rep_>& arc) {
+                           const Generic_arc_2<SweepCurvesAdaptor_2, Rep_>& arc) {
 
     os << arc.id() << "@";
     if(arc.is_degenerate())
@@ -291,7 +291,7 @@ std::ostream& operator << (std::ostream& os,
 
 template <class SweepCurvesAdaptor_2, class Rep_>
 std::istream& operator >> (std::istream& is,
-    Generic_arc_2<SweepCurvesAdaptor_2, Rep_>& arc) {
+                           Generic_arc_2<SweepCurvesAdaptor_2, Rep_>& /* arc */) {
 
     std::cerr << "bogus >> call for generic_arc\n";
     return is;

@@ -1135,8 +1135,8 @@ public:
     }
 
     Comparison_result comp_x_on_bnd(const Point_2&,
-                                    const X_monotone_curve_2& xcv,
-                                    Arr_curve_end ce,
+                                    const X_monotone_curve_2& /* xcv */,
+                                    Arr_curve_end /* ce */,
                                     Arr_use_dummy_tag) const
     {
       CGAL_error();
@@ -1153,10 +1153,10 @@ public:
       return m_base->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2);
     }
 
-    Comparison_result comp_x_on_bnd(const X_monotone_curve_2&
-                                    xcv1, Arr_curve_end ce1,
-                                    const X_monotone_curve_2& xcv2,
-                                    Arr_curve_end ce2,
+    Comparison_result comp_x_on_bnd(const X_monotone_curve_2& /* xcv1 */,
+                                    Arr_curve_end /* ce1 */,
+                                    const X_monotone_curve_2& /* xcv2 */,
+                                    Arr_curve_end /* ce2 */,
                                     Arr_use_dummy_tag) const
     {
       CGAL_error();

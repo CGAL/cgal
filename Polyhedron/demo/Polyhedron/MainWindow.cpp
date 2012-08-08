@@ -21,6 +21,11 @@
 #include <QColorDialog>
 #include <QClipboard>
 #include <QCloseEvent>
+#include <QInputDialog>
+#include <QTreeView>
+#include <QMap>
+
+#include <stdexcept>
 
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
@@ -109,8 +114,13 @@ MainWindow::MainWindow(QWidget* parent)
   ui = new Ui::MainWindow;
   ui->setupUi(this);
 
+  // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
+#if !defined(QT_SCRIPT_LIB)
+  ui->menuBar->removeAction(ui->actionLoad_Script);
+#endif
+  
   // Save some pointers from ui, for latter use.
-  treeView = ui->treeView;
+  sceneView = ui->sceneView;
   viewer = ui->viewer;
 
   // do not save the state of the viewer (anoying)
@@ -119,23 +129,23 @@ MainWindow::MainWindow(QWidget* parent)
   // setup scene
   scene = new Scene(this);
   viewer->setScene(scene);
-  treeView->setModel(scene);
+  sceneView->setModel(scene);
 
-  // setup the treeview: delegation and columns sizing...
-  treeView->setItemDelegate(new SceneDelegate(this));
+  // setup the sceneview: delegation and columns sizing...
+  sceneView->setItemDelegate(new SceneDelegate(this));
 
-  treeView->header()->setStretchLastSection(false);
-  treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  treeView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
-  treeView->header()->setResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
-  treeView->header()->setResizeMode(Scene::ABColumn, QHeaderView::Fixed);
-  treeView->header()->setResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
+  sceneView->header()->setStretchLastSection(false);
+  sceneView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+  sceneView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+  sceneView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
+  sceneView->header()->setResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
+  sceneView->header()->setResizeMode(Scene::ABColumn, QHeaderView::Fixed);
+  sceneView->header()->setResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
 
-  treeView->resizeColumnToContents(Scene::ColorColumn);
-  treeView->resizeColumnToContents(Scene::RenderingModeColumn);
-  treeView->resizeColumnToContents(Scene::ABColumn);
-  treeView->resizeColumnToContents(Scene::VisibleColumn);
+  sceneView->resizeColumnToContents(Scene::ColorColumn);
+  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
+  sceneView->resizeColumnToContents(Scene::ABColumn);
+  sceneView->resizeColumnToContents(Scene::VisibleColumn);
 
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
@@ -160,20 +170,20 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(updated_bbox()),
           this, SLOT(updateViewerBBox()));
 
-  connect(treeView->selectionModel(), 
+  connect(sceneView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateInfo()));
 
-  connect(treeView->selectionModel(), 
+  connect(sceneView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateDisplayInfo()));
 
-  connect(treeView->selectionModel(), 
+  connect(sceneView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
 
-  treeView->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(treeView, SIGNAL(customContextMenuRequested(const QPoint & )),
+  sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
           this, SLOT(showSceneContextMenu(const QPoint &)));
 
   connect(viewer, SIGNAL(selected(int)),
@@ -302,11 +312,37 @@ MainWindow::MainWindow(QWidget* parent)
   }
   // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
 #endif
+
+  // setup menu filtering
+  connect(ui->menuOperations, SIGNAL(aboutToShow()), this, SLOT(filterOperations()));
 }
+
+void MainWindow::filterOperations()
+{
+  Q_FOREACH(const PluginNamePair& p, plugins) {
+    if(p.first->applicable()) {
+      Q_FOREACH(QAction* action, p.first->actions()) {
+        action->setVisible(true);
+      }
+    } else {
+      Q_FOREACH(QAction* action, p.first->actions()) {
+        action->setVisible(false);
+      }
+    }
+  }
+
+  // do a pass over all menus in Operations and hide them when they are empty
+  Q_FOREACH(QAction* action, ui->menuOperations->actions()) {
+    if(QMenu* menu = action->menu()) {
+      action->setVisible(!(menu->isEmpty()));
+    }
+  }
+}
+
 
 #ifdef QT_SCRIPT_LIB
 void MainWindow::evaluate_script(QString script,
-                                 const QString& filename,
+                                 const QString& /*filename*/,
                                  const bool quiet) {
   QScriptValue value = script_engine->evaluate(script);
   if(script_engine->hasUncaughtException()) {
@@ -349,6 +385,12 @@ void MainWindow::enableScriptDebugger(bool b /* = true */)
   // If we are here, then the debugger is not available
   this->error(tr("Your version of Qt is too old, and for that reason"
                  "the Qt Script Debugger is not available."));
+}
+
+namespace {
+bool actionsByName(QAction* x, QAction* y) {
+  return x->text() < y->text();
+}
 }
 
 void MainWindow::loadPlugins()
@@ -395,11 +437,21 @@ void MainWindow::loadPlugins()
       }
     }
   }
+
+  // sort the operations menu by name
+  QList<QAction*> actions = ui->menuOperations->actions();
+  qSort(actions.begin(), actions.end(), actionsByName);
+  ui->menuOperations->clear();
+  ui->menuOperations->addActions(actions);
 }
 
-bool MainWindow::hasPlugin(QString pluginName)
+
+bool MainWindow::hasPlugin(const QString& pluginName) const
 {
-  return plugins.contains(pluginName);
+  Q_FOREACH(const PluginNamePair& p, plugins) {
+    if(p.second == pluginName) return true;
+  }
+  return false;
 }
 
 bool MainWindow::initPlugin(QObject* obj)
@@ -410,7 +462,7 @@ bool MainWindow::initPlugin(QObject* obj)
   if(plugin) {
     // Call plugin's init() method
     plugin->init(this, this->scene, this);
-    plugins << obj->objectName();
+    plugins << qMakePair(plugin, obj->objectName());
 #ifdef QT_SCRIPT_LIB
     QScriptValue objectValue = 
       script_engine->newQObject(obj);
@@ -437,8 +489,6 @@ bool MainWindow::initIOPlugin(QObject* obj)
   Polyhedron_demo_io_plugin_interface* plugin =
     qobject_cast<Polyhedron_demo_io_plugin_interface*>(obj);
   if(plugin) {
-//     std::cerr << "I/O plugin\n";
-    plugins << obj->objectName();
     io_plugins << plugin;
     return true;
   }
@@ -562,7 +612,7 @@ void MainWindow::updateViewerBBox()
 void MainWindow::reload_item() {
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(!sender_action) return;
-
+  
   bool ok;
   int item_index = sender_action->data().toInt(&ok);
   QObject* item_object = scene->item(item_index);
@@ -578,50 +628,49 @@ void MainWindow::reload_item() {
               << "that is not a Scene_item*\n";
     return;
   }
+
   QString filename = item->property("source filename").toString();
-  if(filename.isEmpty()) {
+  QString loader_name = item->property("loader_name").toString();
+  if(filename.isEmpty() || loader_name.isEmpty()) {
     std::cerr << "Cannot reload item: "
-              << "the item has not filename attached\n";
+              << "the item has no \"source filename\" or no \"loader_name\" attached attached\n";
     return;
   }
+
+  Polyhedron_demo_io_plugin_interface* fileloader = find_loader(loader_name);
   QFileInfo fileinfo(filename);
-  if(! (fileinfo.isFile() && fileinfo.isReadable()) ) {
-    std::cerr << "Cannot reload item: "
-              << "cannot read file " << qPrintable(filename) << " \n";
-    return;
-  }
-  Scene_item* new_item = load_item(fileinfo);
-  if(!new_item) {
-    std::cerr << "Cannot reload item: "
-              << "file " << qPrintable(filename) << " is not an item\n";
-    return;
-  }
+
+  Scene_item* new_item = load_item(fileinfo, fileloader);
+
   new_item->setName(item->name());
   new_item->setColor(item->color());
   new_item->setRenderingMode(item->renderingMode());
   new_item->setVisible(item->visible());
-  new_item->setProperty("source filename", item->property("source filename"));
   new_item->changed();
   scene->replaceItem(item_index, new_item);
   delete item;
 }
 
-Scene_item* MainWindow::load_item(QFileInfo fileinfo) const {
-  Scene_item* item = 0;
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, 
-            io_plugins)
-  {
-    if(plugin->canLoad()) {
-      item = plugin->load(fileinfo);
-      if(item) break; // go out of the loop
+Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& loader_name) const {
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, 
+            io_plugins) {
+    if(io_plugin->name() == loader_name) {
+      return io_plugin;
     }
   }
-  return item;
+  throw std::invalid_argument(QString("No loader found with the name %1 available")
+                              .arg(loader_name).toStdString()) ;
 }
 
-void MainWindow::open(QString filename, bool no_popup)
+void MainWindow::open(QString filename)
 {
+  QFileInfo fileinfo(filename);
+  QString filename_striped=fileinfo.fileName();
+
 #ifdef QT_SCRIPT_LIB
+  // Handles the loading of script file from the command line arguments,
+  // and the special command line arguments that start with "javascript:"
+  // or "qtscript:"
   QString program;
   if(filename.startsWith("javascript:")) {
     program=filename.right(filename.size() - 11);
@@ -630,9 +679,8 @@ void MainWindow::open(QString filename, bool no_popup)
     program=filename.right(filename.size() - 9);
   }
   if(filename.endsWith(".js")) {
-    QFile script_file(filename);
-    script_file.open(QIODevice::ReadOnly);
-    program = script_file.readAll();
+    load_script(fileinfo);
+    return;
   }
   if(!program.isEmpty())
   {
@@ -647,44 +695,110 @@ void MainWindow::open(QString filename, bool no_popup)
   }
 #endif
 
-  QFileInfo fileinfo(filename);
-  Scene_item* item = 0;
-  if(fileinfo.isFile() && fileinfo.isReadable()) {
-    item = load_item(fileinfo);
-    if(item) {
-      Scene::Item_id index = scene->addItem(item);
-      item->setProperty("source filename", fileinfo.absoluteFilePath());
-      QSettings settings;
-      settings.setValue("OFF open directory",
-                        fileinfo.absoluteDir().absolutePath());
-      this->addToRecentFiles(filename);
-      selectSceneItem(index);
-    }
-    else {
-      if(no_popup) return;
-      QMessageBox::critical(this,
-                            tr("Cannot open file"),
-                            tr("File %1 has not a known file format.")
-                            .arg(filename));
+  if ( !fileinfo.exists() ){
+    QMessageBox::warning(this,
+                         tr("Cannot open file"),
+                         tr("File %1 does not exist.")
+                         .arg(filename));
+    return;
+  }
+
+  //match all filters between ()
+  QRegExp all_filters_rx("\\((.*)\\)");
+  
+  // collect all io_plugins and offer them to load if the file extension match one name filter
+  // also collect all available plugin in case of a no extension match
+  QStringList selected_items;
+  QStringList all_items;
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
+    all_items << io_plugin->name();
+    QStringList split_filters = io_plugin->nameFilters().split(";;");
+    bool stop=false;
+    Q_FOREACH(const QString& filter, split_filters) {
+      //extract filters
+      if ( all_filters_rx.indexIn(filter)!=-1 ){
+        Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
+          QRegExp rx(pattern);
+          rx.setPatternSyntax(QRegExp::Wildcard);
+          if ( rx.exactMatch(filename_striped) ){
+            selected_items << io_plugin->name();
+            stop=true;
+            break;
+          }
+        }
+        if (stop) break;
+      }
     }
   }
-  else {
-    if(no_popup) return;
-    QMessageBox::critical(this,
-                          tr("Cannot open file"),
-                          tr("File %1 is not a readable file.")
-                          .arg(filename));
+  
+  bool ok;
+  QString loader_name;
+
+  switch( selected_items.size() )
+  {
+    case 1:
+      loader_name=selected_items.first();
+      ok=true;
+      break;
+    case 0:
+      loader_name=QInputDialog::getItem(this, tr("Select a loader"), tr("Available loaders for %1 :").arg(fileinfo.fileName()), all_items, 0, false, &ok);
+      break;
+    default:
+      loader_name=QInputDialog::getItem(this, tr("Select a loader"), tr("Available loaders for %1 :").arg(fileinfo.fileName()), selected_items, 0, false, &ok);
   }
+  
+  if(!ok || loader_name.isEmpty()) { return; }
+  
+  Scene_item* scene_item = load_item(fileinfo, find_loader(loader_name));
+  selectSceneItem(scene->addItem(scene_item));
+}
+
+bool MainWindow::open(QString filename, QString loader_name) {
+  QFileInfo fileinfo(filename); 
+  Scene_item* item;
+  try {
+    item = load_item(fileinfo, find_loader(loader_name));
+  }
+  catch(std::logic_error e) {
+    std::cerr << e.what() << std::endl;
+    return false;
+  }
+  selectSceneItem(scene->addItem(item));
+  return true;
+}
+
+
+Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface* loader) {
+  Scene_item* item = NULL;
+  if(!fileinfo.isFile() || !fileinfo.isReadable()) {
+    throw std::invalid_argument(QString("File %1 is not a readable file.")
+                                .arg(fileinfo.absoluteFilePath()).toStdString());
+  }
+
+  item = loader->load(fileinfo);
+  if(!item) {
+    throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
+                           .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
+  }
+
+  item->setProperty("source filename", fileinfo.absoluteFilePath());
+  item->setProperty("loader_name", loader->name());
+  return item;
 }
 
 void MainWindow::selectSceneItem(int i)
 {
-  if(i < 0) return;
-  if(i >= scene->numberOfEntries()) return;
-
-  treeView->selectionModel()->select(scene->createSelection(i),
-                                     QItemSelectionModel::ClearAndSelect);
+  if(i < 0 || i >= scene->numberOfEntries()) {
+    sceneView->selectionModel()->clearSelection();
+    updateInfo();
+    updateDisplayInfo();
+  }
+  else {
+    sceneView->selectionModel()->select(scene->createSelection(i),
+                                       QItemSelectionModel::ClearAndSelect);
+  }
 }
+
 
 void MainWindow::showSelectedPoint(double x, double y, double z)
 {
@@ -701,27 +815,27 @@ void MainWindow::unSelectSceneItem(int i)
 
 void MainWindow::addSceneItemInSelection(int i)
 {
-  treeView->selectionModel()->select(scene->createSelection(i),
+  sceneView->selectionModel()->select(scene->createSelection(i),
                                      QItemSelectionModel::Select);
   scene->itemChanged(i);
 }
 
 void MainWindow::removeSceneItemFromSelection(int i)
 {
-  treeView->selectionModel()->select(scene->createSelection(i),
+  sceneView->selectionModel()->select(scene->createSelection(i),
                                      QItemSelectionModel::Deselect);
   scene->itemChanged(i);
 }
 
 void MainWindow::selectAll()
 {
-  treeView->selectionModel()->select(scene->createSelectionAll(), 
+  sceneView->selectionModel()->select(scene->createSelectionAll(), 
                                      QItemSelectionModel::ClearAndSelect);
 }
 
 int MainWindow::getSelectedSceneItemIndex() const
 {
-  QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
+  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
   if(selectedRows.size() != 1)
     return -1;
   else
@@ -730,7 +844,7 @@ int MainWindow::getSelectedSceneItemIndex() const
 
 QList<int> MainWindow::getSelectedSceneItemIndices() const
 {
-  QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
+  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
   QList<int> result;
   Q_FOREACH(QModelIndex index, selectedRows) {
     result << index.row();
@@ -802,8 +916,8 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
   if(!sender) return;
 
   int index = -1;
-  if(sender == treeView) {
-    QModelIndex modelIndex = treeView->indexAt(p);
+  if(sender == sceneView) {
+    QModelIndex modelIndex = sceneView->indexAt(p);
     if(!modelIndex.isValid()) return;
 
     index = modelIndex.row();
@@ -867,39 +981,93 @@ void MainWindow::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
+bool MainWindow::load_script(QString filename)
+{
+  QFileInfo fileinfo(filename);
+  return load_script(fileinfo);
+}
+
+bool MainWindow::load_script(QFileInfo info)
+{
+#if defined(QT_SCRIPT_LIB)
+  QString program;
+  QString filename = info.absoluteFilePath();
+  QFile script_file(filename);
+  script_file.open(QIODevice::ReadOnly);
+  program = script_file.readAll();
+  if(!program.isEmpty())
+  {
+    QTextStream(stderr) 
+      << "Execution of script \"" 
+      << filename << "\"\n";
+    evaluate_script(program, filename);
+    return true;
+  }
+#endif
+  return false;
+}
+
+void MainWindow::on_actionLoad_Script_triggered() 
+{
+#if defined(QT_SCRIPT_LIB)
+  QString filename = QFileDialog::getOpenFileName(
+    this,
+    tr("Select a script to run..."),
+    ".",
+    "QTScripts (*.js);;All Files (*)");
+
+  load_script(QFileInfo(filename));
+#endif
+}
+
 void MainWindow::on_actionLoad_triggered()
 {
   QStringList filters;
+  // we need to special case our way out of this
+  filters << "All Files (*)";
+
   QStringList extensions;
+
+  typedef QMap<QString, Polyhedron_demo_io_plugin_interface*> FilterPluginMap;
+  FilterPluginMap filterPluginMap;
+  
   Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
-    if(plugin->canLoad()) {
-      Q_FOREACH(QString filter, plugin->nameFilters()) {
-        if(!filter.isEmpty()) {
-          QRegExp re1("\\((.+)\\)");
-          if(re1.indexIn(filter) != -1) {
-            QString filter_extensions = re1.cap(1);
-            extensions += filter_extensions.simplified().split(" ");
-          }
-          filters << filter;
-        }
+    QStringList split_filters = plugin->nameFilters().split(";;");
+    Q_FOREACH(const QString& filter, split_filters) {
+      FilterPluginMap::iterator it = filterPluginMap.find(filter);
+      if(it != filterPluginMap.end()) {
+        qDebug() << "Duplicate Filter: " << it.value();
+        qDebug() << "This filter will not be available.";
+      } else {
+        filterPluginMap[filter] = plugin;
       }
+      filters << filter;
     }
   }
-  QStringList sorted_extensions = extensions.toSet().toList();
-  filters << tr("All files (*)");
-  filters.push_front(QString("All know files (%1)")
-                     .arg(sorted_extensions.join(" ")));
 
-  QSettings settings;
-  QString directory = settings.value("OFF open directory",
-                                     QDir::current().dirName()).toString();
-  QStringList filenames = 
-    QFileDialog::getOpenFileNames(this,
-                                  tr("Open File..."),
-                                  directory,
-                                  filters.join(";;"));
-  if(!filenames.isEmpty()) {
-    Q_FOREACH(QString filename, filenames) {
+
+  QFileDialog dialog(this);
+  dialog.setNameFilters(filters);
+  if(dialog.exec() != QDialog::Accepted) { return; }
+  
+  FilterPluginMap::iterator it = 
+    filterPluginMap.find(dialog.selectedNameFilter());
+  
+  Polyhedron_demo_io_plugin_interface* selectedPlugin = NULL;
+
+  if(it != filterPluginMap.end()) {
+    selectedPlugin = it.value();
+  }
+
+  Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
+    Scene_item* item = NULL;
+    if(selectedPlugin) {
+      QFileInfo info(filename);
+      item = load_item(info, selectedPlugin);
+      Scene::Item_id index = scene->addItem(item);
+      selectSceneItem(index);
+      this->addToRecentFiles(filename);
+    } else {
       open(filename);
     }
   }
@@ -907,7 +1075,7 @@ void MainWindow::on_actionLoad_triggered()
 
 void MainWindow::on_actionSaveAs_triggered()
 {
-  QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
+  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
   if(selectedRows.size() != 1)
     return;
   Scene_item* item = scene->item(getSelectedSceneItemIndex());
@@ -973,7 +1141,7 @@ void MainWindow::on_actionDuplicate_triggered()
 
 void MainWindow::on_actionShowHide_triggered()
 {
-  Q_FOREACH(QModelIndex index, treeView->selectionModel()->selectedRows())
+  Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
     int i = index.row();
     Scene_item* item = scene->item(i);

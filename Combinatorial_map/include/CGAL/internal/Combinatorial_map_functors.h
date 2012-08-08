@@ -444,6 +444,28 @@ namespace CGAL {
       }
     };
 
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+    template<typename Dart_handle, typename ... Betas>
+    struct Beta_functor;
+    
+    template<typename Dart_handle, typename ... Betas>
+    struct Beta_functor<Dart_handle, int, Betas...>
+    {
+      static Dart_handle run(Dart_handle ADart, int B, Betas... betas)
+      { return Beta_functor<Dart_handle, Betas...>::run(ADart->beta(B), betas...); }
+    };
+    
+    template<typename Dart_handle>
+    struct Beta_functor<Dart_handle, int>
+    {
+      static Dart_handle run(Dart_handle ADart, int B)
+      {
+        CGAL_assertion( ADart!=NULL );
+        return ADart->beta(B);
+      }
+    };
+#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+ 
   } // namespace internal
 } // namespace CGAL
 

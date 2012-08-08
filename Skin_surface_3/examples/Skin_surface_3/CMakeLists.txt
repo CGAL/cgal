@@ -36,7 +36,7 @@ if (CGAL_FOUND)
   
   find_package(ESBTL)
   if(ESBTL_FOUND)
-    include( ${ESBTL_USE_FILE} )
+    include_directories( ${ESBTL_INCLUDE_DIR} )
     create_single_source_cgal_program( "skin_surface_pdb_reader.cpp" )    
   else(ESBTL_FOUND)
     message(STATUS "NOTICE: skin_surface_pdb_reader.cpp requires ESBTL library, and will not be compiled.")  

@@ -161,9 +161,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   typedef Matrix_cell< PaddedMatrix >               Cell;
   typedef std::vector< Cell >                       Cell_container;
   typedef typename Cell_container::iterator         Cell_iterator;
-  typedef typename Cell_container::reverse_iterator Cell_reverse_iterator;
-  
-  typedef typename Cell_container::size_type size_type ;
+  // typedef typename Cell_container::reverse_iterator Cell_reverse_iterator;
   
   Cell_container active_cells;
   

@@ -62,7 +62,7 @@ endif(QT4_FOUND)
 
 
 # Eigen is now used by default
-find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (NOT EIGEN3_FOUND)
   # Find LAPACK (optional), for curvatures estimation
   find_package(LAPACK)
@@ -116,13 +116,17 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_automoc(Scene.cpp
               Scene_item.cpp
               Scene_plane_item.cpp
+              Scene_combinatorial_map_item.cpp 
               Scene_polygon_soup_item.cpp 
               Scene_polyhedron_item.cpp
+              Scene_polyhedron_transform_item.cpp
+              Scene_polylines_item.cpp
               Scene_edit_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
               Show_point_dialog.cpp
+              Scene_points_with_normal_item.cpp
               )
 
   # AUXILIARY LIBRARIES
@@ -163,6 +167,18 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
   target_link_libraries(scene_polyhedron_item demo_framework)
 
+  add_library(scene_polyhedron_transform_item SHARED
+    Scene_polyhedron_transform_item.cpp Scene_polyhedron_transform_item.moc)
+  target_link_libraries(scene_polyhedron_transform_item demo_framework scene_polyhedron_item)
+
+  add_library(scene_combinatorial_map_item SHARED
+    Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
+  target_link_libraries(scene_combinatorial_map_item demo_framework scene_polyhedron_item)
+
+  add_library(scene_polylines_item SHARED
+    Scene_polylines_item.cpp Scene_polylines_item.moc)
+  target_link_libraries(scene_polylines_item demo_framework)
+
   add_library(scene_edit_polyhedron_item SHARED
     Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
@@ -181,6 +197,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_nef_polyhedron_item.cpp Scene_nef_polyhedron_item.moc
     Scene_nef_rendering.cpp)
   target_link_libraries(scene_nef_polyhedron_item demo_framework scene_polyhedron_item)
+
+  add_library(scene_points_with_normal_item SHARED
+    Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
+  target_link_libraries(scene_points_with_normal_item demo_framework)
 
   foreach( lib 
       demo_framework
@@ -288,17 +308,29 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
   target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item)
 
+  polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin)
+  target_link_libraries(xyz_plugin scene_points_with_normal_item)
+
+  polyhedron_demo_plugin(nef_io_plugin Polyhedron_demo_io_nef_plugin)
+  target_link_libraries(nef_io_plugin  scene_nef_polyhedron_item)
+
+  polyhedron_demo_plugin(polylines_io_plugin Polyhedron_demo_polylines_io_plugin)
+  target_link_libraries(polylines_io_plugin scene_polylines_item)
+
   polyhedron_demo_plugin(orient_soup_plugin Polyhedron_demo_orient_soup_plugin)
   target_link_libraries(orient_soup_plugin scene_polygon_soup_item scene_polyhedron_item)
 
   polyhedron_demo_plugin(triangulate_facets_plugin Polyhedron_demo_triangulate_facets_plugin)
   target_link_libraries(triangulate_facets_plugin scene_polyhedron_item)
 
-  polyhedron_demo_plugin(off_to_nef_plugin Polyhedron_demo_off_to_nef_plugin EXCLUDE_FROM_ALL)
+  polyhedron_demo_plugin(off_to_nef_plugin Polyhedron_demo_off_to_nef_plugin)
   target_link_libraries(off_to_nef_plugin scene_nef_polyhedron_item)
 
+  polyhedron_demo_plugin(off_to_xyz_plugin Polyhedron_demo_off_to_xyz_plugin)
+  target_link_libraries(off_to_xyz_plugin scene_points_with_normal_item)
+
   polyhedron_demo_plugin(convex_hull_plugin Polyhedron_demo_convex_hull_plugin)
-  target_link_libraries(convex_hull_plugin scene_polyhedron_item)
+  target_link_libraries(convex_hull_plugin scene_polyhedron_item scene_points_with_normal_item)
 
   polyhedron_demo_plugin(kernel_plugin Polyhedron_demo_kernel_plugin)
   target_link_libraries(kernel_plugin scene_polyhedron_item)
@@ -309,7 +341,38 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
+  else(EIGEN3_FOUND OR TAUCS_FOUND)
+    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Parameterization will not be available.")
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
+  
+  if(TAUCS_FOUND OR EIGEN3_FOUND)
+    qt4_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
+    polyhedron_demo_plugin(poisson_plugin Polyhedron_demo_poisson_plugin Polyhedron_demo_poisson_plugin_impl.cpp ${poissonUI_FILES})
+    target_link_libraries(poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
+  else(TAUCS_FOUND OR EIGEN3_FOUND)
+    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Poisson reconstruction will not be available.")
+  endif(TAUCS_FOUND OR EIGEN3_FOUND)
+  
+  
+  # Link with BLAS and LAPACK only (optional), for Jet Fitting
+  if (NOT EIGEN3_FOUND AND LAPACK_FOUND)
+    include( ${LAPACK_USE_FILE} )
+  endif()
+  
+  if(EIGEN3_FOUND OR LAPACK_FOUND)
+    qt4_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
+    polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
+    target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
+    
+    polyhedron_demo_plugin(point_set_smoothing_plugin Polyhedron_demo_point_set_smoothing_plugin)
+    target_link_libraries(point_set_smoothing_plugin scene_points_with_normal_item)
+
+    polyhedron_demo_plugin(point_set_average_spacing_plugin Polyhedron_demo_point_set_average_spacing_plugin)
+    target_link_libraries(point_set_average_spacing_plugin scene_points_with_normal_item)
+    
+  else(EIGEN3_FOUND OR LAPACK_FOUND)
+    message(STATUS "NOTICE: Nor Eigen 3.1 (or greater) nor LAPACK library were found. Normal estimation and smoothing will not be available.")
+  endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
   target_link_libraries(self_intersection_plugin scene_polyhedron_item)
@@ -323,6 +386,15 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(nef_plugin Polyhedron_demo_nef_plugin)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)
 
+  polyhedron_demo_plugin(intersection_plugin Polyhedron_demo_intersection_plugin)
+  target_link_libraries(intersection_plugin  scene_polyhedron_item scene_polylines_item)
+
+  polyhedron_demo_plugin(transform_polyhedron_plugin Polyhedron_demo_transform_polyhedron_plugin)
+  target_link_libraries(transform_polyhedron_plugin  scene_polyhedron_item scene_polyhedron_transform_item)
+
+  polyhedron_demo_plugin(corefinement_plugin Polyhedron_demo_corefinement_plugin)
+  target_link_libraries(corefinement_plugin  scene_polyhedron_item scene_combinatorial_map_item scene_polylines_item)
+
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
 
   polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin)
@@ -330,6 +402,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
+  
+  qt4_wrap_ui(point_set_simplificationUI_FILES Polyhedron_demo_point_set_simplification_plugin.ui)
+  polyhedron_demo_plugin(point_set_simplification_plugin Polyhedron_demo_point_set_simplification_plugin ${point_set_simplificationUI_FILES})
+  target_link_libraries(point_set_simplification_plugin scene_points_with_normal_item)
+
+  qt4_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
+  polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
+  target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 

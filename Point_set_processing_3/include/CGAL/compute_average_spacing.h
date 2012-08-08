@@ -56,8 +56,6 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
   // basic geometric types
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Plane_3 Plane;
-  typedef typename Kernel::Vector_3 Vector;
 
   // types for K nearest neighbors search
   typedef Search_traits_3<Kernel> Tree_traits;

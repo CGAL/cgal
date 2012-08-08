@@ -87,7 +87,7 @@ export QGLVIEWERROOT
 COLLECT_DEMOS_BINARIES=y
 export COLLECT_DEMOS_BINARIES
 
-source /cygdrive/c/cgal/RSCube/setup-rs-32
+source /cygdrive/c/cgal/RS-3.1/setup-rs-32
 
 BOOST_LIBRARYDIR='C:/cgal/boost-release-branch/stage/lib'
 BOOST_INCLUDEDIR='C:/cgal/boost-release-branch'

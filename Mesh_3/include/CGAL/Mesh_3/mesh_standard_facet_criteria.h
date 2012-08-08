@@ -397,7 +397,6 @@ protected:
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Cell_handle Cell_handle;
-    typedef typename Tr::Vertex::Index Index;
 
     const Cell_handle& ch = f.first;
     const int i = f.second;

@@ -12,7 +12,7 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-find_package(CGAL COMPONENTS Qt4 Core)
+find_package(CGAL COMPONENTS Qt4 Core GMP MPFR)
 
 include(${CGAL_USE_FILE})
 
@@ -21,7 +21,7 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-find_package(Qt4)
+#find_package(Qt4)
 
 include_directories (BEFORE ../../include)
 
@@ -44,10 +44,14 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
   # use the Qt MOC preprocessor on classes that derives from QObject
   qt4_generate_moc( Polygon_2.cpp "${CMAKE_CURRENT_BINARY_DIR}/Polygon_2.moc" )
 
+#  add_library( CGAL SHARED IMPORTED ) 
+#  SET_PROPERTY(TARGET CGAL PROPERTY IMPORTED_LOCATION ${CGAL_LIBRARY} )
+
   # The executable itself.
   add_executable  ( Polygon_2 Polygon_2.cpp Polygon_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polygon_2 )
+
 
   # Link with Qt libraries
   target_link_libraries( Polygon_2 ${QT_LIBRARIES} )

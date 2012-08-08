@@ -185,7 +185,6 @@ namespace CGAL {
                 const typename SK::Circular_arc_3 & ca, 
 	        OutputIterator res)
     {
-      typedef typename SK::Point_3 Point_3;
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef std::vector<CGAL::Object> solutions_container;
       typedef std::pair<Circular_arc_point_3, unsigned> Solution;
