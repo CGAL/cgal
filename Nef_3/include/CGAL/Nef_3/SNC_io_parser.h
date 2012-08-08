@@ -712,7 +712,6 @@ class Geometry_io<Cartesian_tag, Kernel> {
     void print_point(std::ostream& out, const CGAL::Point_3<R> p) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
-    typedef typename NV::iterator NV_iter;
 
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
@@ -745,7 +744,6 @@ class Geometry_io<Cartesian_tag, Kernel> {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef typename FracTraits::Numerator_type NumType;
     typedef std::vector<NumType> NV;
-    typedef typename NV::iterator NV_iter;
 
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
@@ -774,7 +772,6 @@ class Geometry_io<Cartesian_tag, Kernel> {
   void print_plane(std::ostream& out, const CGAL::Plane_3<R> p) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
-    typedef typename NV::iterator NV_iter;
 
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;

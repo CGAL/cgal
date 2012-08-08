@@ -627,7 +627,7 @@
   </action>
   <action name="actionLoad_Script">
    <property name="text">
-    <string>Load Script</string>
+    <string>Load &amp;Script</string>
    </property>
   </action>
  </widget>

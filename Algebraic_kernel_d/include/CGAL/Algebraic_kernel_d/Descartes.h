@@ -264,7 +264,6 @@ public:
 private:
     void intern_decompose( Polynomial P_, ::CGAL::Tag_true){
         typename FT_poly::Decompose decompose;
-        typedef typename FT_poly::Numerator_type Numerator_poly;
         typename FT_poly::Numerator_type NumP;
         typename FT_poly::Denominator_type dummy;
  

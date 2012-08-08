@@ -739,7 +739,6 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const Line_2& l1, const Line_2& l2) const
     {
-      typedef typename K::RT RT;
       if (l1.is_horizontal())
 	return l2.is_vertical() ?
 	  SMALLER : CGAL_NTS sign(l2.a()) * CGAL_NTS sign(l2.b());
@@ -1047,7 +1046,6 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()( const Point_2& p, const Line_2& h) const
     {
-      typedef typename K::RT RT;
       CGAL_kernel_precondition( ! h.is_vertical() );
       typename K::Oriented_side ors = h.oriented_side( p );
       if ( h.b() < 0 )

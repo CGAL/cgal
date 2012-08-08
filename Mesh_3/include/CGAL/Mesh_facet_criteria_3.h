@@ -79,7 +79,7 @@ public:
                         const FT& distance_bound,
                         const Mesh_facet_topology topology = 
                           FACET_VERTICES_ON_SURFACE,
-                        typename Sizing_field::FT dummy = 0)
+                        typename Sizing_field::FT /*dummy*/ = 0)
   {
     if ( FT(0) != angle_bound )
       init_aspect(angle_bound);

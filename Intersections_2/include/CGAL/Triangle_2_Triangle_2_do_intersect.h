@@ -76,7 +76,8 @@ bool intersection_test_edge(const typename K::Point_2 *  P1,
 			    const typename K::Point_2 *  Q1, 
 			    const typename K::Point_2 *  R1,
 			    const typename K::Point_2 *  P2, 
-			    const typename K::Point_2 *  Q2, 
+			    const typename K::Point_2 *
+                              CGAL_kernel_precondition_code(Q2),
 			    const typename K::Point_2 *  R2,
 			    const K & k ){
   

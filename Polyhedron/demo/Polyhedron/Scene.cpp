@@ -259,7 +259,8 @@ Scene::draw_aux(bool with_names)
         if(index == selected_item)
           CGALglcolor(item.color().lighter(120));
         else
-          CGALglcolor(item.color());          
+          CGALglcolor(item.color());
+        item.draw_edges();
         }
       }
       if(with_names) {

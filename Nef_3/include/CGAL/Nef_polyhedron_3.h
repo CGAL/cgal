@@ -1839,7 +1839,7 @@ protected:
 
   /*{\Moperations 3 1 }*/
 
-  bool contains(Object_handle h) const
+  bool contains(Object_handle /*h*/) const
   /*{\Mop  returns true iff the object |h| is contained in the set
   represented by |\Mvar|.}*/
     // { SNC_point_locator PL(snc()); return PL.mark(h);} 

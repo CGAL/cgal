@@ -4,7 +4,7 @@
 if ( MKL_FOUND AND NOT CGAL_MKL_SETUP )
 
   message( STATUS "MKL include:     ${MKL_INCLUDE_DIR}" )
-  include_directories ( ${MKL_INCLUDE_DIR} )
+  include_directories ( SYSTEM ${MKL_INCLUDE_DIR} )
 
   message( STATUS "MKL definitions: ${MKL_DEFINITIONS}" )
   add_definitions( ${MKL_DEFINITIONS} )

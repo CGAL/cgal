@@ -97,8 +97,6 @@ assemble_covariance_matrix_3(InputIterator first,
                              const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT          FT;
-  typedef typename K::Point_3     Point;
-  typedef typename K::Vector_3    Vector;
   typedef typename K::Triangle_3  Triangle;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
@@ -176,8 +174,6 @@ assemble_covariance_matrix_3(InputIterator first,
                              const CGAL::Dimension_tag<3>&)
 {
   typedef typename K::FT          FT;
-  typedef typename K::Point_3     Point;
-  typedef typename K::Vector_3    Vector;
   typedef typename K::Iso_cuboid_3    Iso_cuboid;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
@@ -263,8 +259,6 @@ assemble_covariance_matrix_3(InputIterator first,
                              const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT FT;
-  typedef typename K::Point_3 Point;
-  typedef typename K::Vector_3 Vector;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
@@ -358,8 +352,6 @@ assemble_covariance_matrix_3(InputIterator first,
                              const CGAL::Dimension_tag<3>&)
 {
   typedef typename K::FT          FT;
-  typedef typename K::Point_3     Point;
-  typedef typename K::Vector_3    Vector;
   typedef typename K::Sphere_3  Sphere;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
@@ -442,8 +434,6 @@ assemble_covariance_matrix_3(InputIterator first,
                              const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT          FT;
-  typedef typename K::Point_3     Point;
-  typedef typename K::Vector_3    Vector;
   typedef typename K::Sphere_3  Sphere;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
@@ -528,8 +518,6 @@ assemble_covariance_matrix_3(InputIterator first,
                              const CGAL::Dimension_tag<3>&)
 {
   typedef typename K::FT          FT;
-  typedef typename K::Point_3     Point;
-  typedef typename K::Vector_3    Vector;
   typedef typename K::Tetrahedron_3  Tetrahedron;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
@@ -615,8 +603,6 @@ assemble_covariance_matrix_3(InputIterator first,
                              const CGAL::Dimension_tag<1>&)
 {
   typedef typename K::FT          FT;
-  typedef typename K::Point_3     Point;
-  typedef typename K::Vector_3    Vector;
   typedef typename K::Segment_3  Segment;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
@@ -694,7 +680,6 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
                 const K& )                          // kernel
 {
   typedef typename K::FT       FT;
-  typedef typename K::Point_3  Point;
   typedef typename K::Plane_3  Plane;
   typedef typename K::Vector_3 Vector;
 
@@ -736,7 +721,6 @@ fitting_line_3(const typename K::FT covariance[6], // covariance matrix
                const K&)                           // kernel
 {
   typedef typename K::FT       FT;
-  typedef typename K::Point_3  Point;
   typedef typename K::Line_3   Line;
   typedef typename K::Vector_3 Vector;
 

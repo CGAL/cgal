@@ -38,7 +38,6 @@ inline
 Polynomial<NT> gcd_utcf_UFD(
         Polynomial<NT> p1, Polynomial<NT> p2
 ) {
-    typedef CGAL::Polynomial_traits_d<Polynomial<NT> > PT;
     // implemented using the subresultant algorithm for gcd computation
     // see [Cohen, 1993], algorithm 3.3.1
     // handle trivial cases
