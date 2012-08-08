@@ -4165,7 +4165,11 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         // side of the parameter space (and only of the paths may end at a
         // boundary side of the parameter space), then the other path becomes
         // a hole in a face bounded by the parameter-space boundary.
+
+        // TODO EBEB 2012-08-08 indices are not correct wrt TWO ccbs, only with respect to one!
         
+
+
         // TODO EBEB 2012-07-25 the following "line" is very hard to pare by a human-being;
         // replace by a simple if that only checks the 'true' cases
         swap_he1_he2 = (index_min1 > index_min2) ?
