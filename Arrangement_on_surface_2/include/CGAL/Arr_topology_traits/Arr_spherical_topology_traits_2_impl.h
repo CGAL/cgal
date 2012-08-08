@@ -495,9 +495,8 @@ let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
     // choose prev1 to define outer ccb of new face if it is a non-perimetric loop,
     // otherwise choose prev2
     // TODO what if both are non-zero? does it occur?
-    // TODO EBEB 2012-08-07 check whether negative/positive has a "geometric" interpretation
     // TODO EBEB check this!!!!
-    swap_predecessors = (signs1.first != CGAL::POSITIVE);
+    swap_predecessors = (signs2.first != CGAL::POSITIVE);
 
     // but only if the at least one of the loops is perimetric, otherwise return false
     // to let leftmost-vertex decide which becomes part of the new outer ccb
