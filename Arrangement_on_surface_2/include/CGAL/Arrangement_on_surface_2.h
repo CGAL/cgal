@@ -1660,6 +1660,7 @@ protected:
    * as side-effect the halfedges pointing to local minima copied
    * to an outputiterator.
    * \param he The representative halfedge.
+   TODO
    * \param local_mins_it the outputiterator 
    * (value_type = std::pair< DHalfedge*, int >, where the int denotes the
    * index) to report the halfedges pointing to local minima (<-shaped situation)
@@ -1670,7 +1671,8 @@ protected:
   template <typename OutputIterator>
   std::pair< CGAL::Sign, CGAL::Sign > 
   _compute_signs_and_local_minima(const DHalfedge* he_ccb,
-                                  OutputIterator local_mins_it) const;
+                                  OutputIterator local_mins_it,
+                                  bool end_is_anchor_opposite = false) const;
 
 
   /*!
