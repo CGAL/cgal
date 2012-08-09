@@ -33,9 +33,9 @@
 #include "_test_cls_iso_rectangle_new_2.h"
 #include "_test_cls_circle_new_2.h"
 
-#include <CGAL/use.h>
+#include <CGAL/Testsuite/use.h>
 
-using CGAL::use;
+using CGAL::internal::use;
 
 template <class R>
 bool
