@@ -6,6 +6,8 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpzf.h>
 #include <CGAL/Gmpfr.h>
+#endif
+#ifdef CGAL_USE_MPFI
 #include <CGAL/Gmpfi.h>
 #endif
 #ifdef CGAL_USE_CORE
@@ -60,9 +62,11 @@ int main(){
   check<CGAL::Gmpz>();
   check<CGAL::Gmpq>();
   check<CGAL::Gmpfr>();
-  check<CGAL::Gmpfi>();
   check<CGAL::Quotient<CGAL::Gmpz> >();
   check<CGAL::Lazy_exact_nt<CGAL::Gmpq> >();
+#endif
+#ifdef CGAL_USE_MPFI
+  check<CGAL::Gmpfi>();
 #endif
 #ifdef CGAL_USE_CORE
   check<CORE::BigInt>();
