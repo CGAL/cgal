@@ -1,6 +1,6 @@
 /*!
 
-\page seceditorial_board Editorial Board\anchor chapsubmission
+\page chapsubmission Editorial Board
 
 The editorial board is in charge of approving the inclusion of new packages
 in the library.  This means that they assure that new contributions

@@ -287,16 +287,15 @@ up-to-date version of this list.
 
 <DT><B><TT>CGAL_CFG_NO_TMPL_IN_TMPL_PARAM</TT></B><DD> 
 
-    Nested templates in template parameter, such as ``<TT>template <
-    template <class T> class A></TT>'' are not supported by any compiler.
-  This flag is set if they are not supported.
-
+    Nested templates in template parameter, such as `template <
+    template <class T> class A>` are not supported by any compiler.
+    This flag is set if they are not supported.
 </DL>
 
 \subsection secworkaround_macros Macros connected to workarounds/compilers 
 
 Some macros are defined according to certain workaround flags. This is
-done to avoid some <TT>#ifdef</TT>s in our actual code.
+done to avoid some `#ifdef`s in our actual code.
 
 <DL>
 <DT><B><TT>CGAL_LITTLE_ENDIAN</TT></B><DD> set, iff
@@ -342,7 +341,7 @@ must be defined in the body of the class.
 
 <DT><B><B>Function parameter matching</B></B><DD>
 
-The function parameter matching capacities of Visual \cppare rather limited. 
+The function parameter matching capacities of Visual \cpp are rather limited. 
 Failures occur when your function `bar` is like
 \code{.cpp}
   bar(std::some_iterator<std::some_container<T>>....) ...

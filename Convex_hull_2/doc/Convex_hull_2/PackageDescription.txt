@@ -1,0 +1,45 @@
+/// \defgroup PkgConvexHull2 2D Convex Hulls and Extreme Points 
+
+/// \defgroup PkgConvexHull2Concepts Concepts
+/// \ingroup PkgConvexHull2
+
+/// \defgroup PkgConvexHull2Traits Traits Classes
+/// \ingroup PkgConvexHull2
+
+/// \defgroup PkgConvexHull2Functions Convex Hull Functions
+/// \ingroup PkgConvexHull2
+
+/// \defgroup PkgConvexHull2Convexity Convexity Checking
+/// \ingroup PkgConvexHull2
+
+/// \defgroup PkgConvexHull2Subsequence Hull Subsequence Functions
+/// \ingroup PkgConvexHull2
+
+/// \defgroup PkgConvexHull2Extreme Extreme Point Functions
+/// \ingroup PkgConvexHull2
+
+/*!
+\addtogroup PkgConvexHull2
+\todo check generated documentation
+\PkgDescriptionBegin{2D Convex Hulls and Extreme Points}
+\PkgPicture{Convex_hull_2/fig/convex_hull.png}
+\PkgAuthor{Susan Hert and Stefan Schirra}
+\PkgDesc{This package provides functions for computing convex hulls in two dimensions as well as functions for checking if sets of points are strongly convex are not. There are also a number of functions described for computing particular extreme points and subsequences of hull points, such as the lower and upper hull of a set of points.}
+\PkgSince{1.0}
+\cgalbib{ cgal:hs-chep2-12 }
+\license{ \ref licensesGPL }
+\PkgDescriptionEnd
+
+Assertions
+==========
+
+The assertion flags for the convex hull and extreme point algorithms
+use `CH` in their names (<I>e.g.</I>, `CGAL_CH_NO_POSTCONDITIONS`).
+For the convex hull algorithms, the postcondition
+check tests only convexity (if not disabled), but not containment of the
+input points in the polygon or polyhedron defined by the output points.
+The latter is considered an expensive checking and can be enabled by
+defining `CGAL_CH_CHECK_EXPENSIVE`.
+
+*/
+

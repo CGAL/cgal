@@ -1,0 +1,453 @@
+/*! \example sum_triangles.cpp */
+/*! \example sum_by_decomposition.cpp */
+/*! \example sum_with_holes.cpp */
+/*! \example approx_offset.cpp */
+/*! \example exact_offset.cpp */
+/*! \example exact_inset.cpp */
+
+namespace CGAL {
+/*!
+
+\mainpage 2D Minkowski Sums
+
+\anchor chapter_Minkowski_sum_2
+
+\authors Ron Wein
+
+\section mink_secintro Introduction 
+
+Given two sets \f$ A,B \in \mathbb{R}^d\f$, their <I>Minkowski sum</I>,
+denoted by \f$ A \oplus B\f$, is the set \f$ \left\{ a + b ~|~ a \in
+A, b \in B \right\}\f$. Minkowski sums are used in many applications,
+such as motion planning and computer-aided design and
+manufacturing. This package contains functions for computing planar
+Minkowski sums of two polygons (namely \f$ A\f$ and \f$ B\f$ are two closed
+polygons in \f$ \mathbb{R}^2\f$), and for a polygon and a disc (an operation
+also known as <I>offsetting</I> or <I>dilating</I> a polygon).
+
+\section mink_secsum_poly Computing the Minkowski Sum of Two Polygons 
+
+Computing the Minkowski sum of two convex polygons \f$ P\f$ and \f$ Q\f$ with
+\f$ m\f$ and \f$ n\f$ vertices respectively is very easy, as \f$ P \oplus Q\f$ is a
+convex polygon bounded by copies of the \f$ m + n\f$ edges, and these edges
+are sorted by the angle they form with the \f$ x\f$-axis. As the two
+input polygons are convex, their edges are already sorted by the
+angle they form with the \f$ x\f$-axis. The Minkowski sum can therefore be
+computed in \f$ O(m + n)\f$ time, by starting from two bottommost vertices
+in \f$ P\f$ and in \f$ Q\f$ and performing "merge sort" on the edges.
+
+<center>
+\anchor mink_figonecyc
+<table>
+<tr>
+<td>\image html onecyc_in.gif </td>
+<td>\image html onecyc_out.gif </td>
+</tr>
+</table>
+<B>
+Computing the convolution of a convex polygon and a non-convex polygon
+(left). The convolution consists of a single self-intersecting cycle,
+drawn as a sequence of arrows (right). The winding number associated
+with each face of the arrangement induced by the segments forming the
+cycle appears in dashed circles. The Minkowski sum of the two polygons
+is shaded.
+</B>
+</center>
+
+If the polygons are not convex, it is possible to use one of the following
+approaches:
+<DL>
+<DT><B>Decomposition:</B><DD>
+We decompose \f$ P\f$ and \f$ Q\f$ into convex sub-polygons, namely we obtain two
+sets of convex polygons \f$ P_1, \ldots, P_k\f$ and \f$ Q_1, \ldots, Q_\ell\f$ such
+that \f$ \bigcup_{i = 1}^{k}{P_i} = P\f$ and \f$ \bigcup_{i = j}^{\ell}{Q_j} = Q\f$.
+We then calculate the pairwise sums \f$ S_{ij} = P_i \oplus Q_j\f$ using the
+simple procedure described above, and compute the union \f$ P \oplus Q =
+\bigcup_{ij}{S_{ij}}\f$.
+
+This approach relies on a decomposition strategy that computes the convex
+decomposition of the input polygons and its performance depends on the
+quality of the decomposition.
+<DT><B>Convolution:</B><DD>
+Let us denote the vertices of the input polygons by
+\f$ P = \left( p_0, \ldots, p_{m-1} \right)\f$ and
+\f$ Q = \left( q_0, \ldots, q_{n-1} \right)\f$. We assume that both \f$ P\f$ and \f$ Q\f$
+have positive orientations (i.e. their boundaries wind in a counterclockwise
+order around their interiors) and compute the convolution of the two polygon
+boundaries. The <I>convolution</I> of these two polygons \cite grs-kfcg-83,
+denoted \f$ P * Q\f$, is a collection of line segments of the form
+\f$ [p_i + q_j, p_{i+1} + q_j]\f$, \footnote{Throughout this chapter, we increment 
+or decrement an index of a vertex modulo the size of the polygon.}
+where the vector \f$ {\mathbf{p_i p_{i+1}}}\f$
+lies between \f$ {\mathbf{q_{j-1} q_j}}\f$ and \f$ {\mathbf{q_j
+q_{j+1}}}\f$, \footnote{We say that a vector \f$ {\mathbf v}\f$ lies between 
+two vectors \f$ {\mathbf u}\f$ and \f$ {\mathbf w}\f$ if we reach \f$ {\mathbf v}\f$ strictly before reaching \f$ {\mathbf w}\f$ if we move all three vectors to the origin and rotate \f$ {\mathbf u}\f$ counterclockwise. Note that this also covers the case where \f$ {\mathbf u}\f$ has the same direction as \f$ {\mathbf v}\f$.} and
+- symmetrically - of segments of the form \f$ [p_i + q_j, p_i + q_{j+1}]\f$,
+where the vector \f$ {\mathbf{q_j q_{j+1}}}\f$ lies between
+\f$ {\mathbf{p_{i-1} p_i}}\f$ and \f$ {\mathbf{p_i p_{i+1}}}\f$.
+
+The segments of the convolution form a number of closed (not
+necessarily simple) polygonal curves called <I>convolution
+cycles</I>. The Minkowski sum \f$ P \oplus Q\f$ is the set of points
+having a non-zero winding number with respect to the cycles
+of \f$ P * Q\f$. \footnote{Informally speaking, the winding number of a point \f$ p \in\mathbb{R}^2\f$ with respect to some planar curve \f$ \gamma\f$ is an integer number counting how many times does \f$ \gamma\f$ wind in a counterclockwise direction around \f$ p\f$.} See Figure \ref mink_figonecyc 
+for an illustration.
+
+The number of segments in the convolution of two polygons is usually
+smaller than the number of segments that constitute the boundaries of the
+sub-sums \f$ S_{ij}\f$ when using the decomposition approach. As both approaches
+construct the arrangement of these segments and extract the sum from this
+arrangement, computing Minkowski sum using the convolution approach usually
+generates a smaller intermediate arrangement, hence it is faster and
+consumes less space.
+</DL>
+
+\subsection mink_ssecsum_conv Computing Minkowski Sum using Convolutions 
+
+The function `minkowski_sum_2 (P, Q)` accepts two simple polygons \f$ P\f$
+and \f$ Q\f$, represented using the `Polygon_2<Kernel,Container>`
+class-template and uses the convolution method in order to compute and
+return their Minkowski sum \f$ S = P \oplus Q\f$.
+
+As the input polygons may not be convex, their Minkowski sum may not be
+simply connected and contain polygonal holes; see for example
+Figure \ref mink_figonecyc . \f$ S\f$ is therefore an instance of the
+`Polygon_with_holes_2<Kernel,Container>` class-template, defined in the
+Boolean Set-Operations package: The outer boundary of \f$ S\f$ is a polygon that
+can be accessed using `S.outer_boundary()`, and its polygonal holes 
+are given by the range `[S.holes_begin(), S.holes_end())` (where \f$ S\f$
+contains `S.number_of_holes()` holes in its interior).
+
+
+<center>
+\anchor mink_figsum_tri
+\image html sum_triangles.gif
+<b>Computing the Minkowski sum of two triangles, as done in the example program \ref sum_triangles.cpp.</b>
+</center>
+
+The following example program constructs the Minkowski sum of two triangles,
+as depicted in Figure \ref mink_figsum_tri . The result in this case is
+a convex hexagon. This program, as other example programs in this chapter,
+includes the auxiliary header file `ms_rational_nt.h` which defines
+`Number_type` as either `Gmpq` or `Quotient<MP_Float>`,
+depending on whether the <span class="textsc">Gmp</span> library is installed or not.
+The file `print_util.h` includes auxiliary functions for printing polygons.
+
+\cgalexample{sum_triangles.cpp}
+
+
+\anchor mink_figsum_holes
+\image html tight.gif
+<center>
+
+<B>Computing the Minkowski sum of two non-convex polygons \f$ P\f$ and \f$ Q\f$, as done in the example programs \ref sum_with_holes.cpp and \ref sum_by_decomposition.cpp.</B>
+</center>
+
+In the following program we compute the Minkowski sum of two polygons
+that are read from an input file. In this case, the sum is not simple
+and contains four holes, as illustrated in Figure \ref mink_figsum_holes .
+Note that this example uses the predefined \cgal kernel with exact
+constructions. In general, instantiating polygons with this kernel yields
+the fastest running times for Minkowski-sum computations.
+
+\cgalexample{sum_with_holes.cpp}
+
+\subsection mink_ssecdecomp Decomposition Strategies 
+
+In order to compute Minkowski sums using the decomposition method, it is
+possible to call the function `minkowski_sum_2 (P, Q, decomp)`, where
+`decomp` is an instance of a class that models the concept
+`PolygonConvexDecomposition_2`, namely it should provide a method named
+`decompose()` that receives a planar polygon and returns a range
+of convex polygons that represents its convex decomposition.
+
+The Minkowski-sum package includes four models of the concept
+`PolygonConvexDecomposition_2`. The first three are classes that wrap
+the decomposition functions included in the Planar Polygon Partitioning
+package, while the fourth is an implementation of a decomposition algorithm
+introduced in \cite cgal:afh-pdecm-02. The convex decompositions that it
+creates usually yield efficient running times for Minkowski sum computations:
+<UL>
+<LI>The class `Optimal_convex_decomposition<Kernel>` uses the
+dynamic-programming algorithm of Greene \cite g-dpcp-83 for computing an
+optimal decomposition of a polygon into a minimal number of convex
+sub-polygons. The main drawback of this strategy is that it runs in \f$ O(n^4)\f$
+time and \f$ O(n^3)\f$ in the worst case,where \f$ n\f$ is the number of vertices in
+the input polygon.
+<LI>The class `Hertel_Mehlhorn_convex_decomposition<Kernel>` implements the
+approximation algorithm suggested by Hertel and Mehlhorn \cite hm-ftsp-83,
+which triangulates the input polygon and proceeds by throwing away
+unnecessary triangulation edges.
+This algorithm requires \f$ O(n)\f$ time and space and guarantees that
+the number of sub-polygons it generates is not more than four
+times the optimum.
+<LI>The class `Greene_convex_decomposition<Kernel>` is an implementation of
+Greene's approximation algorithm \cite g-dpcp-83, which computes a
+convex decomposition of the polygon based on its partitioning into
+\f$ y\f$-monotone polygons. This algorithm runs in \f$ O(n \log n)\f$ time
+and \f$ O(n)\f$ space, and has the same approximation guarantee as
+Hertel and Mehlhorn's algorithm.
+<LI>The class `Small_side_angle_bisector_convex_decomposition<Kernel>` uses
+a heuristic improvement to the angle-bisector decomposition method
+suggested by Chazelle and Dobkin \cite cd-ocd-85, which runs in
+\f$ O(n^2)\f$ time. It starts by examining each pair of reflex vertices
+in the input polygon such that the entire interior of the diagonal
+connecting these vertices is contained in the polygon. Out of all
+available pairs, the vertices \f$ p_i\f$ and \f$ p_j\f$ are selected such
+that the number of reflex vertices from \f$ p_i\f$ to \f$ p_j\f$ (or from
+\f$ p_j\f$ to \f$ p_i\f$) is minimal. The polygon is split by the diagonal
+\f$ p_i p_j\f$ and we continue recursively on both resulting
+sub-polygons. In case it is not possible to eliminate two reflex
+vertices at once any more, each reflex vertex is eliminated by a
+diagonal that is closest to the angle bisector emanating from this
+vertex.
+</UL>
+
+The following example demonstrates the computation of the Minkowski sum
+of the same input polygons as used in \ref sum_with_holes.cpp (as
+depicted in Figure \ref mink_figsum_holes), using the small-side
+angle-bisector decomposition strategy:
+
+\cgalexample{sum_by_decomposition.cpp}
+
+\section mink_secoffset Offsetting a Polygon 
+
+The operation of computing the Minkowski sum \f$ P \oplus B_r\f$ of a
+polygon \f$ P\f$ with \f$ b_r\f$, a disc of radius \f$ r\f$ centered at the origin,
+is widely known as <I>offsetting</I> the polygon \f$ P\f$ by a radius \f$ r\f$.
+
+<center>
+\anchor mink_figpgn_offset
+<table>
+<tr>
+<td>\image html convex_offset.gif</td>
+<td>\image html offset_decomp.gif</td>
+<td>\image html offset_conv.gif</td>
+
+<tr align="center"><td>(a)</td><td>(b)</td><td>(c)</td></tr>
+</table>
+<B>(a) Offsetting a convex polygon. (b) Computing the offset of a non-convex polygon by decomposing it to convex sub-polygons. (c) Offsetting a non-convex polygon by computing its convolution with a disc. The convolution cycle induces an arrangement with three faces, whose winding numbers are shown enclosed in dashed circles.</B>
+</center>
+
+
+Let \f$ P = \left( p_0, \ldots, p_{n - 1} \right)\f$ be the polygon vertices,
+ordered in a counterclockwise orientation around its interior. 
+If \f$ P\f$ is a convex polygon the offset is easily computed by
+shifting each polygon edge by \f$ r\f$ away from the polygon, namely to
+the right side of the edge. As a result we obtain a collection of
+\f$ n\f$ disconnected <I>offset edges</I>. Each pair of adjacent offset
+edges, induced by \f$ p_{i-1} p_i\f$ and \f$ p_i p_{i+1}\f$, are connected
+by a circular arc of radius \f$ r\f$, whose supporting circle is
+centered at \f$ p_i\f$. The angle that defines such a circular arc
+equals \f$ 180^{\circ} - \angle (p_{i-1}, p_i, p_{i+1})\f$; see
+Figure \ref mink_figpgn_offset (a) for an illustration. The running
+time of this simple process is of course linear with respect to
+the size of the polygon.
+
+If \f$ P\f$ is not convex, its offset can be obtained by decomposing it
+to convex sub-polygons \f$ P_1, \ldots P_m\f$ such that
+\f$ \bigcup_{i=1}^{m}{P_i} = P\f$, computing the offset of each
+sub-polygon and finally calculating the union of these sub-offsets
+(see Figure \ref mink_figpgn_offset (b)). However, as was the case with
+the Minkowski sum of a pair of polygons, here it is also more
+efficient to compute the <I>convolution cycle</I> of the polygon
+with the disc \f$ B_r\f$, \footnote{As the disc is convex, it is guaranteed 
+that the convolution curve is comprised of a single cycle.} which can be
+constructed by applying the process described in the previous
+paragraph. The only difference is that a circular arc induced by a
+reflex vertex \f$ p_i\f$ is defined by an angle \f$ 540^{\circ} - \angle
+(p_{i-1}, p_i, p_{i+1})\f$; see Figure \ref mink_figpgn_offset (c) for an
+illustration. We finally compute the winding numbers of the faces of the
+arrangement induced by the convolution cycle to obtain the offset
+polygon.
+
+\subsection mink_ssecapprox_offset Approximating the Offset with a Guaranteed Error-Bound 
+
+Let us assume that we are given a counterclockwise-oriented polygon
+\f$ P = \left( p_0, \ldots, p_{n-1} \right)\f$, whose vertices all have rational
+coordinates (i.e., for each vertex \f$ p_i = (x_i, y_i)\f$ we have
+\f$ x_i, y_i \in {\mathbb Q}\f$, and we wish to compute its Minkowski sum with a
+disc of radius \f$ r\f$, where \f$ r\f$ is also a rational number. The boundary of this
+sum is comprised of line segments and circular arcs, where:
+<UL>
+<LI>Each circular arc is supported by a circle of radius \f$ r\f$ centered at one
+of the polygon vertices. The equation of this circle is \f$ (x - x_i)^2 +
+(y - y_i)^2 = r^2\f$, and has only rational coefficients.
+<LI>Each line segment is supported by a line parallel to one of the polygon
+edges \f$ p_i p_{i+1}\f$, which lies at distance \f$ r\f$ from this edge. If we 
+denote the supporting line of \f$ p_i p_{i+1}\f$ by \f$ ax + by + c = 0\f$, where
+\f$ a, b, c \in {\mathbb Q}\f$, then the offset edge is supported by the line
+\f$ ax + by + (c + \ell\cdot r) = 0\f$, where \f$ \ell\f$ is the length of the edge
+\f$ p_i p_{i+1}\f$ and is in general <I>not</I> a rational number. The line segments
+that comprise the offset boundaries therefore cannot be represented as segments
+of lines with rational coefficients.
+We mention that the locus of all points that lie at distance \f$ r\f$ from the
+line \f$ ax + by + c = 0\f$ is given by:
+\f[ \frac{(ax + by + c)^2}{a^2 + b^2} = r^2 \ . \f]
+Thus, the linear offset edges are segments of curves of an algebraic curve
+of degree 2 (a conic curve) with rational coefficients. This curve is
+actually a pair of the parallel lines \f$ ax + by + (c \pm \ell\cdot r) = 0\f$.
+In Section \ref mink_ssecexact_offset we use this representation to
+construct the offset polygon in an exact manner using the traits class for
+conic arcs.
+</UL>
+
+\anchor mink_figapprox_offset
+\image html approx_offset.gif 
+
+<center><b>Approximating the offset edge \f$ o_1 o_2\f$ induced by the
+polygon edge \f$ p_1 p_2\f$ by two line segments \f$ o'_1 q'\f$ and
+\f$ q' o'_2\f$. </b></center>
+
+The class-template `Gps_circle_segment_traits_2<Kernel>`, included in
+the Boolean Set-Operations package is used for representing general polygons
+whose edges are circular arcs or line segments, and for applying set operations
+(e.g. intersection, union, etc.) on such general polygon. It should be
+instantiated with a geometric kernel that employs exact rational arithmetic,
+such that the curves that comprise the polygon edges should be arcs of
+circles with rational coefficients or segments of lines with rational
+coefficients. As in our case the line segments do not satisfy this requirement,
+we apply a simple approximation scheme, such that each irrational line
+segment is approximated by two rational segments:
+<OL>
+<LI>Consider the example depicted in Figure \ref mink_figapprox_offset , where
+the exact offset edge \f$ o_1 o_2\f$ is obtained by shifting the polygon edge
+\f$ p_1 p_2\f$ by a vector whose length is \f$ r\f$ that form an angle \f$ \phi\f$ with the
+\f$ x\f$-axis. We select two points \f$ o'_1\f$ and \f$ o'_2\f$ with rational coordinates
+on the two circles centered at \f$ p_1\f$ and \f$ p_2\f$, respectively. These points
+are selected such that if we denote the angle that the vector 
+\f$ {\mathbf{p_j o_j}}\f$
+forms with the \f$ x\f$-axis by \f$ \phi'_j\f$ (for \f$ j = 1, 2\f$), we have
+\f$ \phi'_1 < \phi < \phi'_2\f$.
+<LI>We construct two tangents to the two circles at \f$ o'_1\f$ and \f$ o'_2\f$,
+respectively. The tangent lines have rational coefficients.
+<LI>We compute the intersection point of the two tangents, denoted \f$ q'\f$.
+The two line segments \f$ o'_1 q'\f$ and \f$ q' o'_2\f$ approximate the original
+offset edge \f$ o_1 o_2\f$.
+</OL>
+
+The function `approximated_offset_2 (P, r, eps)` accepts a polygon
+\f$ P\f$, an offset radius \f$ r\f$ and \f$ \varepsilon > 0\f$. It constructs an
+approximation for the offset of \f$ P\f$ by the radius \f$ r\f$ using the procedure
+explained above. Furthermore, it is guaranteed that the approximation error,
+namely the distance of the point \f$ q'\f$ from \f$ o_1 o_2\f$ is bounded by
+\f$ \varepsilon\f$. Using this function, we are capable of working with the
+`Gps_circle_segment_traits_2<Kernel>` class, which considerably
+speeds up the (approximate) construction of the offset polygon and the
+application of set operations on such polygons. The function returns an
+object of the nested type
+`Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2` representing
+the approximated offset polygon (recall that if \f$ P\f$ is not convex, its
+offset may not be simple and may contain holes, whose boundary is also comprised
+of line segments and circular arcs).
+
+<center>
+\anchor mink_figex_offset
+\image html ex_offset.gif
+
+<b>The offset computation performed by the example programs
+\ref approx_offset.cpp and \ref exact_offset.cpp.
+The input polygon is shaded and the boundary of its
+offset is drawn in a thick black line.</b></center>
+
+The following example demonstrates the construction of an approximated
+offset of a non-convex polygon, as depicted in
+Figure \ref mink_figex_offset. Note that we use a geometric kernel
+parameterized with a filtered rational number-type. Using filtering
+considerably speeds up the construction of the offset.
+
+\cgalexample{approx_offset.cpp}
+
+\subsection mink_ssecexact_offset Computing the Exact Offset 
+
+As we previously mentioned, it is possible to represent offset polygons
+in an exact manner, if we treat their edges as arcs of conic curves with
+rational coefficients. The function `offset_polygon_2 (P, r, traits)`
+computes the offset of the polygon \f$ P\f$ by a rational radius \f$ r\f$ in an
+exact manner. The `traits` parameter should be an instance of an
+arrangement-traits class that is capable of handling conic arcs in an
+exact manner; using the `Arr_conic_traits_2` class with the number
+types provided by the <span class="textsc">Core</span> library is the preferred option.
+The function returns an object of the nested type
+`Gps_traits_2<ArrConicTraits>::Polygons_with_holes_2` (see the
+documentation of the Boolean Set-Operations package for more details
+on the traits-class adapter `Gps_traits_2`), which represented the
+exact offset polygon.
+
+The following example demonstrates the construction of the offset of
+the same polygon that serves as an input for the example program \ref
+approx_offset.cpp, presented in the previous subsection (see also
+Figure \ref mink_figex_offset).  Note that the resulting polygon is
+smaller than the one generated by the approximated-offset function
+(recall that each irrational line segment in this case is approximated
+by two rational line segments), but the offset computation is
+considerably slower:
+
+\cgalexample{exact_offset.cpp}
+
+\advanced Both functions `approximated_offset_2()` and `offset_polygon_2()`
+also have overloaded versions that accept a decomposition strategy
+and use the polygon-decomposition approach to compute (or approximate)
+the offset. These functions are less efficient than their counterparts
+that employ the convolution approach, and are only included in the package
+for the sake of completeness.
+
+\subsection mink_ssecinner_offset Computing Inner Offsets 
+
+An operation closely related to the offset computation, is obtaining the
+<I>inner offset</I> of a polygon, or <I>insetting</I> it by a given radius.
+The inset of a polygon \f$ P\f$ with radius \f$ r\f$ is the set of points iside \f$ P\f$
+whose distance from the polygon boundary, denoted \f$ \partial P\f$, is at least
+\f$ r\f$ - namely: \f$ \{ p \in P \;|\; {\rm dist}(p, \partial P) \geq r \}\f$.
+Note that the resulting set may not be connected in case \f$ P\f$ is a non-convex
+polygon that has some narrow components, and thus is characterized by a
+(possibly empty) set of polygons whose edges are line segments and circular
+arcs of radius \f$ r\f$.
+
+The offset can be computed using the convolution method if we traverse the
+polygon in a <I>clockwise</I> orientation (and not in <I>counterclockwise</I>
+orientation, as done in case of ofsetting a polygon).
+As in case of the offset functions, the Minkowski-sum package contains two
+functions for insetting a simple polygon:
+
+The function `approximated_inset_2 (P, r, eps, oi)` accepts a polygon
+\f$ P\f$, an inset radius \f$ r\f$ and \f$ \varepsilon > 0\f$. It constructs an
+approximation for the inset of \f$ P\f$ by the radius \f$ r\f$, with the approximation
+error bounded by \f$ \varepsilon\f$. The function returns its output via the
+output iterator `oi`, whose value-type must be
+`Gps_circle_segment_traits_2<Kernel>::Polygon_2` representing
+the polygons that approximates the inset polygon.
+
+\cgalexample{approx_inset.cpp}
+
+Similarly, the function `inset_polygon_2 (P, r, traits, oi)` computes
+the exact inset of \f$ P\f$ with radius \f$ r\f$, and returns its output via the given
+output iterator `oi`. The `traits` parameter should be an instance of
+an arrangement-traits class that is capable of handling conic arcs in an
+exact manner, whereas `oi`'s value-type must be
+`Gps_traits_2<ArrConicTraits>::Polygons_2`.
+
+\cgalexample{exact_inset.cpp}
+
+\advanced Unlike the offset functions, there are no overloaded versions of the inset
+functions that use convex polygon decomposition to compute insets, as this
+method cannot be easily generalized for inset computations.
+
+In this context let us mention that there exist overloaded versions of the
+functions `approximated_offset_2 (P, r, eps)` and
+`offset_polygon_2 (P, r, traits)` that accept a <I>polygon with holes</I>
+\f$ P\f$ and computed its offset. This ofset is obtain by taking the outer offset
+of \f$ P\f$'s outer boundary, and computing the inner offsets of \f$ P\f$'s holes.
+The former polygon defines the output boundary of \f$ P \oplus B_r\f$, and the latter
+define the holes within the result.
+
+# Acknowledgements #
+
+Andreas Fabri and Laurent Rineau helped tracing and solving several bugs in
+the approximated offset function. They have also suggested a few algorithmic
+improvements that made their way into version 3.4, yielding a faster approximation
+scheme.
+
+*/ 
+} /* namespace CGAL */
+

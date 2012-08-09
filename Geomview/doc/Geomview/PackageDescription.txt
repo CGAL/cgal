@@ -1,0 +1,18 @@
+
+
+/// \defgroup PkgGeomview Geomview
+/// \defgroup PkgGeomviewConcepts Concepts
+/// \ingroup PkgGeomview
+/*!
+\addtogroup PkgGeomview
+\todo check generated documentation
+\PkgDescriptionBegin{Geomview}
+\PkgPicture{geomview.gif}
+\PkgAuthor{Andreas Fabri  and Sylvain Pion}
+\PkgDesc{This package implements an interface to Geomview, an interactive 3D viewing program,  originally developed at the Geometry Center in Minneapolis.}
+\PkgSince{2.0}
+\cgalbib{ cgal:fp-gv-12 }
+\license{ \ref licensesLGPL }
+\PkgDescriptionEnd
+*/
+

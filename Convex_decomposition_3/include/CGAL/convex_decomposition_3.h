@@ -31,8 +31,38 @@
 #include <CGAL/Convex_decomposition_3/Edge_sorter.h>
 #include <CGAL/Convex_decomposition_3/is_reflex_sedge.h>
 
+/*! 
+  \file convex_decomposition_3.h 
+*/
+
+
 namespace CGAL {
 
+/*!
+\ingroup PkgConvexDecomposition3
+
+The function `convex_decomposition_3` inserts additional facets 
+into the given `Nef_polyhedron_3` \f$ N\f$, such that each bounded 
+marked volume (the outer volume is unbouned) is subdivided into convex 
+pieces. The modified polyhedron represents a decomposition into 
+\f$ O(r^2)\f$ convex pieces, where \f$ r\f$ is the number of edges that have two 
+adjacent facets that span an angle of more than 180 degrees with 
+respect to the interior of the polyhedron. 
+
+The worst-case running time of our implementation is 
+\f$ O(n^2r^4\sqrt[3]{nr^2}\log{(nr)})\f$, where \f$ n\f$ is the complexity of 
+the polyhedron (the complexity of a `Nef_polyhedron_3` is the sum 
+of its `Vertices`, `Halfedges` and `SHalfedges`) and \f$ r\f$ 
+is the number of reflex edges. 
+
+\pre The polyhedron \f$ N\f$ is bounded. Otherwise, the outer volume is ignored. 
+
+\post If the polyhedron \f$ N\f$ is non-convex, it is modified to represent the 
+convex decomposition. If \f$ N\f$ is convex, it is not modified. 
+
+\sa `CGAL::Nef_polyhedron_3<Traits>` 
+
+*/
 template<typename Nef_polyhedron>
 void convex_decomposition_3(Nef_polyhedron& N) 
 {

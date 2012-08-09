@@ -1,0 +1,17 @@
+
+
+/// \defgroup PkgConvexHullD dD Convex Hulls and Delaunay Triangulations
+/// \defgroup PkgConvexHullDConcepts Concepts
+/// \ingroup PkgConvexHullD
+/*!
+\addtogroup PkgConvexHullD
+\todo check generated documentation
+\PkgDescriptionBegin{dD Convex Hulls and Delaunay Triangulations}
+\PkgAuthor{Susan Hert  and Michael Seel}
+\PkgDesc{This package provides functions for computing convex hulls and Delaunay triangulations in \f$ d\f$-dimensional Euclidean space.}
+\PkgSince{2.3}
+\cgalbib{ cgal:hs-chdt3-12 }
+\license{ \ref licensesGPL }
+\PkgDescriptionEnd
+*/
+

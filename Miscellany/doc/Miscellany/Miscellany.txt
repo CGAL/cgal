@@ -1,0 +1,103 @@
+
+namespace CGAL {
+/*!
+
+\mainpage Profiling tools, Hash Map, Union-find, Modifiers
+
+\anchor chapMiscellany
+\authors Lutz Kettner, Sylvain Pion, and Michael Seel
+
+# Timers #
+
+\cgal provides classes for measuring the user process time and the real time.
+The class `CGAL::Timer` is the version for the user process time and
+the class `CGAL::Real\_timer` is the version for the real time.
+
+Instantiations of both classes are objects with a state. The state is
+either <I>running/</I> or it is <I>stopped</I>. The state of an object
+`t` is controlled
+with `t.start()` and `t.stop()` . The timer counts the
+time elapsed since its creation or last reset. It counts only the time
+where it is in the running state. The time information is given in seconds.
+The timer counts also the number of intervals it was running, i.e. it 
+counts the number of calls of the `start()` member function since the 
+last reset. If the reset occurs while the timer is running it counts as the
+first interval.
+
+# Memory Size #
+
+\cgal provides access to the memory size used by the program with the
+`CGAL::Memory_sizer` class. Both the virtual memory size and the
+resident size are available (the resident size does not account for
+swapped out memory nor for the memory which is not yet paged-in).
+
+# Profiling #
+
+\cgal provides a way to count the number of times a given line of code
+is executed during the execution of a program. Such
+`CGAL::Profile_counter` counters can be added at critical place in the
+code, and at the end of the execution of a program, the count is printed on
+`std::cerr`. A macro `CGAL_PROFILER` can be used to conveniently place
+these counters anywhere. They are disabled by default and activated by the
+global macro `CGAL_PROFILE`.
+
+# Unique Hash Map #
+
+The class `Unique_hash_map` implements an injective mapping between
+a set of unique keys and a set of data values. This is implemented using
+a chained hashing scheme and access operations take \f$ O(1)\f$ expected time.
+Such a mapping is useful, for example, when keys are pointers, 
+handles, iterators or circulators that refer to unique memory locations.
+In this case, the default hash function is `Handle_hash_function`.
+
+# Union-find #
+
+\cgal also provides a class `Union_find` that implements a partition
+of values into disjoint sets. This is implemented with union by rank and
+path compression. The running time for \f$ m\f$ set operations on \f$ n\f$ elements
+is \f$ O(n\alpha(m,n))\f$ where \f$ \alpha(m,n)\f$ is the extremely slowly growing
+inverse of Ackermann's function.
+
+# Protected Access to Internal Representations #
+
+High level data structures typically maintain integrity of an internal
+data representation, which they protect from the user. A minimal while
+complete interface of the data structure allows manipulations in the
+domain of valid representations. Additional operations might benefit
+from being allowed to access the internal data representation
+directly. An example are intermediate steps within an algorithm where
+the internal representation would be invalid. We present a general
+method to accomplish access in a safe manner, such that the high level
+data structures can guarantee validity after the possibly compromising
+algorithm has finished its work. An example are polyhedral surfaces in
+the Basic Library, where a construction process like for
+a file scanner could be performed more efficiently on the internal
+halfedge data structure than by using the high-level Euler operators
+of the polyhedron.
+
+\anchor figureModifierDesign
+\image html modifier_small.gif "Class diagram for the modifier. It illustrates the safe access to an internal representation through an high-level interface."
+
+The solution provided here is inspired by the strategy
+pattern \cite cgal:ghjv-dpero-95, though it serves a different intent, see
+Figure \ref figureModifierDesign . The abstract base class
+`Modifier_base<R>` declares a pure virtual member function
+`operator()` that accepts a single reference parameter of the
+internal representation type. The member function `delegate()` of
+the high-level interface calls this `operator()` with its internal
+representation. An actual modifier implements this virtual function,
+thus gaining access to the internal representation. Once, the modifier
+has finished its work, the member function `delegate()` is back in
+control and can check the validity of the internal representation.
+Summarizing, a user can implement and apply arbitrary functions based
+on the internal representation and keeps the benefit if a protected
+high-level interface. User provided modifiers must in any case return
+a valid internal representation or the checker in the high-level
+interface is allowed (and supposed) to abort the program. The
+indirection via the virtual function invocation is negligible for
+operations that consists of more than a pointer update or integer
+addition.
+
+*/ 
+} /* namespace CGAL */
+

@@ -1,0 +1,254 @@
+
+namespace CGAL {
+/*!
+
+\mainpage Envelopes of Surfaces in 3D
+
+\anchor chapterEnvelope_3
+
+\authors Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman
+
+# Introduction #
+
+A continuous surface \f$ S\f$ in \f$ {\mathbb R}^3\f$ is called <I>\f$ xy\f$-monotone</I>,
+if every line parallel to the \f$ z\f$-axis intersects it at a single point
+at most. For example, the sphere \f$ x^2 + y^2 + z^2 = 1\f$ is <I>not</I>
+\f$ xy\f$-monotone as the \f$ z\f$-axis intersects it at \f$ (0, 0, -1)\f$ and at
+\f$ (0, 0, 1)\f$; however, if we use the \f$ xy\f$-plane to split it to an
+upper hemisphere and a lower hemisphere, these two hemispheres are
+\f$ xy\f$-monotone.
+
+An \f$ xy\f$-monotone surface can therefore be represented as a
+bivariate function \f$ z = S(x,y)\f$, defined over some continuous range
+\f$ R_S \subseteq {\mathbb R}^2\f$. Given a set 
+\f$ {\cal S} = \{ S_1, S_2, \ldots, S_n \}\f$ of \f$ xy\f$-monotone surfaces,
+their <I>lower envelope</I> is defined
+as the point-wise minimum of all surfaces. Namely, the lower envelope
+of the set \f$ {\cal S}\f$ can be defined as the following function:
+\f{eqnarray*}{
+{\cal L}_{{\cal S}} (x,y) = \min_{1 \leq k \leq n}{\overline{S}_k (x,y)} \ ,
+\f}
+where we define \f$\overline{S}_k(x,y) = S_k(x,y)\f$ for \f$(x,y) \in R_{S_k}\f$, and 
+\f$\overline{S}_k(x,y) = \infty\f$ otherwise.
+
+Similarly, the <I>upper envelope</I> of \f${\cal S}\f$ is the point-wise maximum of
+the \f$xy\f$-monotone surfaces in the set:
+\f{eqnarray*}{
+{\cal U}_{{\cal S}} (x,y) = \max_{1 \leq k \leq n}{\underline{S}_k (x,y)} \ ,
+\f}
+where in this case \f$ \underline{S}_k(x,y) = -\infty\f$ for \f$ (x,y) \not\in
+R_{S_k}\f$.
+
+Given a set of \f$ xy\f$-monotone surfaces \f$ {\cal S}\f$, the <I>minimization
+diagram</I> of \f$ {\cal S}\f$ is a subdivision of the \f$ xy\f$-plane into cells,
+such that the identity of the surfaces that induce the lower diagram
+over a specific cell of the subdivision (be it a face, an edge, or
+a vertex) is the same. In non-degenerate situation, a face is
+induced by a single surface (or by no surfaces at all, if there are
+no \f$ xy\f$-monotone surfaces defined over it), an edge is induced by a 
+single surface and corresponds to its projected boundary, or by two 
+surfaces and corresponds to their projected intersection curve, and
+a vertex is induced by a single surface and corresponds to its projected 
+boundary point, or by three surfaces and corresponds to their projected 
+intersection point. The <I>maximization diagram</I> is symmetrically 
+defined for upper envelopes. In the rest of this chapter, we refer to 
+both these diagrams as <I>envelope diagrams</I>.
+
+It is easy to see that an envelope diagram is no more than a planar
+arrangement (see Chapter \ref chapterArrangement_on_surface_2 ), represented
+using an extended <span class="textsc">Dcel</span> structure, such that every <span class="textsc">Dcel</span>
+record (namely each face, halfedge and vertex) stores an additional
+container of it originators: the \f$ xy\f$-monotone surfaces that induce
+this feature.
+
+Lower and upper envelopes can be efficiently computed using a
+divide-and-conquer approach. First note that the envelope diagram for
+a single \f$ xy\f$-monotone curve \f$ S_k\f$ is trivial to compute: we project
+the boundary of its range of definition \f$ R_{S_k}\f$ onto the \f$ xy\f$-plane,
+and label the faces it induces accordingly. Given a set \f$ {\cal D}\f$
+of (non necessarily \f$ xy\f$-monotone) surfaces in \f$ {\mathbb R}^3\f$, we subdivide
+each surface into a finite number of weakly \f$ xy\f$-monotone 
+surfaces, \footnote{We consider <I>vertical</I> surfaces, namely patches 
+of planes that are perpendicular to the \f$ xy\f$-plane, as <I>weakly</I> 
+\f$ xy\f$-monotone, to handle degenerate inputs properly.}
+and obtain the set \f$ {\cal S}\f$. Then, we split the set into two
+disjoint subsets \f$ {\cal S}_1\f$ and \f$ {\cal S}_2\f$, and we
+compute their envelope diagrams recursively.  Finally, we merge the
+diagrams, and we do this by overlaying them and then applying some
+post-processing on the resulting diagram. The post-processing stage is
+non-trivial and involves the projection of intersection curves onto
+the \f$ xy\f$-plane - see \cite cgal:m-rgece-06 for more details.
+
+# The Envelope-Traits Concept #
+
+The implementation of the envelope-computation algorithm is generic and
+can handle arbitrary surfaces. It is parameterized with a traits class,
+which defines the geometry of surfaces it handles, and supports all
+the necessary functionality on these surfaces, and on their projections 
+onto the \f$ xy\f$-plane. The traits class must model the 
+`EnvelopeTraits_3` concept, the details of which are given below.
+
+As the representation of envelope diagrams is based on 2D
+arrangements, and the envelop-computation algorithm employs overlay
+of planar arrangements, the `EnvelopeTraits_3` refines the
+`ArrangementXMonotoneTraits_2` concept. Namely, a model of this 
+concept must define the planar types `Point_2` and 
+`X_monotone_curve_2` and support basic operations on them, as 
+listed in Section \ref arr_sectraits . Moreover, it must define the 
+spacial types `Surface_3` and `Xy_monotone_surface_3` (in practice,
+these two types may be the same). Any model of the envelope-traits
+concept must also support the following operations on these spacial
+types:
+
+<CENTER>
+\anchor env3_figcomp_over
+<TABLE border="0">
+<TR>
+<TD>
+\image html compare_over_point.gif ""
+</TD>
+<TD>
+\image html compare_over_curve.gif ""
+</TD>
+</TR>
+<TR align="center"><TD>(a)</TD><TD>(b)</TD></TR>
+</TABLE>
+
+<B>(a) The spheres \f$ S_1\f$ and \f$ S_2\f$ have only one
+two-dimensional point \f$ p\f$ in their common \f$ xy\f$-definition
+range. They do not necessarily intersect over this point, and the
+envelope-construction algorithm needs to determine their relative \f$
+z\f$-order over \f$ p\f$. (b) The \f$ z\f$-order of the surfaces \f$
+S_1\f$ and \f$ S_2\f$ should be determined over the \f$ x\f$-monotone
+curve \f$ c\f$. The comparison is performed over the <I>interior</I>
+of \f$ c\f$, excluding its endpoints.</B>
+</CENTER>
+
+
+<UL>
+<LI>Subdivide a given surface into continuous \f$ xy\f$-monotone
+surfaces. It is possible to disregard \f$ xy\f$-monotone surfaces
+that do not contribute to the surface envelope at this stage
+(for example, if we are given a sphere, it is possible to return
+just its lower hemisphere if we are interested in the lower
+envelope; the upper hemisphere is obviously redundant).
+<LI>Given an \f$ xy\f$-monotone surface \f$ S\f$, construct all planar
+curves that form the boundary of the vertical projection \f$ S\f$'s
+boundary onto the \f$ xy\f$-plane.
+
+This operation is used at the bottom of the recursion to build the
+minimization diagram of a single \f$ xy\f$-monotone surface.
+<LI>Construct all geometric entities that comprise the projection
+(onto the \f$ xy\f$-plane) of the intersection between two \f$ xy\f$-monotone
+surfaces \f$ S_1\f$ and \f$ S_2\f$. These entities may be:
+<UL>
+<LI>A planar curve, which is the projection of an 3D intersection
+curve of \f$ S_1\f$ and \f$ S_2\f$ (for example, the intersection curve
+between two spheres is a 3D circle, which becomes an ellipse when
+projected onto the \f$ xy\f$-plane).
+In many cases it is also possible to indicate the multiplicity of
+the intersection: if it is odd, the two surfaces intersect
+transversely and change their relative \f$ z\f$-positions on either
+side of the intersection curve; if it the multiplicity is even,
+they maintain their relative \f$ z\f$-position.
+Providing the multiplicity information is optional. When provided,
+it is used by the algorithm to determine the relative order of \f$ S_1\f$
+and \f$ S_2\f$ on one side of their intersection curve when their order
+on the other side of that curve is known, thus improving the
+performance of the algorithm.
+<LI>A point, induces by the projection of a tangency point
+of \f$ S_1\f$ and \f$ S_2\f$, <I>or</I> by the projection of a vertical
+intersection curve onto the \f$ xy\f$-plane.
+</UL>
+Needless to say, the set of intersection entities may be empty in
+case \f$ S_1\f$ and \f$ S_2\f$ do not intersect.
+<LI>Given two \f$ xy\f$-monotone surfaces \f$ S_1\f$ and \f$ S_2\f$, and a
+planar point \f$ p = (x_0,y_0)\f$ that lies in their common \f$ xy\f$-definition
+range, determine the \f$ z\f$-order of \f$ S_1\f$ and \f$ S_2\f$ over \f$ p\f$,
+namely compare \f$ S_1(x_0,y_0)\f$ and \f$ S_2(x_0,y_0)\f$.
+This operation is used only in degenerate situations, in order to
+determine the surface inducing the envelope over a vertex (see
+Figure \ref env3_figcomp_over (a) for an illustration of a situation
+when this operation is used).
+<LI>Given two \f$ xy\f$-monotone surfaces \f$ S_1\f$ and \f$ S_2\f$, and a
+planar \f$ x\f$-monotone curve \f$ c\f$, which is a part of their projected
+intersection, determine the \f$ z\f$-order of \f$ S_1\f$ and \f$ S_2\f$ immediately
+above (or, similarly, immediately below) the curve \f$ c\f$. Note that \f$ c\f$
+is a planar \f$ x\f$-monotone curve, and we refer to the region above
+(or below) it in the <I>plane</I>. If \f$ c\f$ is a vertical curve, we regard
+the region to its left as lying above it, and the region to its right
+as lying below it.
+
+This operation is used by the algorithm to determine the surface that
+induce the envelope over a face incident to \f$ c\f$.
+<LI>Given two \f$ xy\f$-monotone surfaces \f$ S_1\f$ and \f$ S_2\f$, and a
+planar \f$ x\f$-monotone curve \f$ c\f$, which fully lies in their common
+\f$ xy\f$-definition range, and such that \f$ S_1\f$ and \f$ S_2\f$ do not intersect
+over the interior of \f$ c\f$, determine the relative \f$ z\f$-order of \f$ s_1\f$
+and \f$ s_2\f$ over the interior of \f$ c\f$. Namely, we compare \f$ S_1(x_0,y_0)\f$
+and \f$ S_2(x_0,y_0)\f$ for some point \f$ (x_0, y_0)\f$ on \f$ c\f$.
+
+This operation is used by the algorithm to determine which surface
+induce the envelope over an edge associated with the \f$ x\f$-monotone
+curve \f$ c\f$, or of a face incident to \f$ c\f$, in situations where the
+previous predicate cannot be used, as \f$ c\f$ is <I>not</I> an intersection
+curve of \f$ S_1\f$ and \f$ S_2\f$ (see Figure \ref env3_figcomp_over (b) for
+an illustration of a situation where this operation is used).
+</UL>
+
+The package currently contains a traits class for named
+`Env_triangle_traits_3<Kenrel>` handling 3D triangles, and another
+named `Env_sphere_traits_3<ConicTraits>` for 3D spheres, based
+on geometric operations on conic curves (ellipses). In addition, the
+package includes a traits-class decorator that enables users to attach
+external (non-geometric) data to surfaces. The usage of the various
+traits classes is demonstrated in the next section.
+
+# Examples #
+
+## Example for Envelope of Triangles ##
+
+<CENTER>
+\anchor env3_figex_tri
+<TABLE border="0">
+<TR>
+<TD>\image html ex_triangles.gif</TD>
+<TD>\image html ex_tri_le.gif</TD>
+<TD>\image html ex_tri_ue.gif</TD>
+<TR ALIGN="center"><TD>(a)</TD><TD>(b)</TD><TD>(c)</TD></TR>
+</TABLE>
+<B>(a) Two triangles in \f$ {\mathbb R}^3\f$, as given in `envelope_triangles.cpp`. (b) Their lower envelope. (c) Their upper envelope.</B>
+</CENTER>
+
+The following example shows how to use the envelope-traits class
+for 3D triangles and how to traverse the envelope diagram. It
+constructs the lower and upper envelopes of the two triangles,
+as depicted in Figure \ref env3_figex_tri (a) and prints the
+triangles that induce each face and each edge in the output diagrams.
+For convenience, we use the traits-class decorator
+`Env_surface_data_traits_3` to label the triangles. When
+printing the diagrams, we just output the labels of the triangles:
+
+\cgalexample{Envelope_3/envelope_triangles.cpp}
+
+## Example for Envelope of Spheres ##
+
+The next example demonstrates how to instantiate and use the
+envelope-traits class for spheres, based on the
+`Arr_conic_traits_2` class that handles the projected intersecion
+curves. The program reads a set of spheres from an input file and
+constructs their lower envelope:
+
+\cgalexample{Envelope_3/envelope_spheres.cpp}
+
+## Example for Envelope of Planes ##
+
+The next example demonstrates how to instantiate and use the
+envelope-traits class for planes, based on the
+`Arr_linear_traits_2` class that handles infinite linear objects such as lines and rays.
+
+\cgalexample{Envelope_3/envelope_planes.cpp}
+
+*/ 
+} /* namespace CGAL */
+

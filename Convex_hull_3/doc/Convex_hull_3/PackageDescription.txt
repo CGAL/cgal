@@ -1,0 +1,35 @@
+/// \defgroup PkgConvexHull3 3D Convex Hulls
+
+/// \defgroup PkgConvexHull3Concepts Concepts
+/// \ingroup PkgConvexHull3
+
+/// \defgroup PkgConvexHull3Traits Traits Classes
+/// \ingroup PkgConvexHull3
+
+/// \defgroup PkgConvexHull3Functions Convex Hull Functions 
+/// \ingroup PkgConvexHull3
+
+/*!
+\addtogroup PkgConvexHull3
+\todo check generated documentation
+\PkgDescriptionBegin{3D Convex Hulls}
+\PkgPicture{Convex_hull_3/fig/bunny.png}
+\PkgAuthor{Susan Hert  and Stefan Schirra}
+\PkgDesc{This package provides functions  for computing convex hulls in three dimensions as well as functions for checking if sets of points are strongly convex or not. One can compute the convex hull of a set of points in three dimensions in one of three ways: using a static algorithm, using an incremental construction algorithm, or using a triangulation to get a fully dynamic computation.}
+\PkgSince{1.1}
+\cgalbib{ cgal:hs-ch3-12 }
+\license{ \ref licensesGPL }
+\PkgDescriptionEnd
+
+Assertions 
+--------------
+
+The assertion flags for the convex hull and extreme point algorithms
+use `CH` in their names (<I>e.g.</I>, `CGAL_CH_NO_POSTCONDITIONS`).
+For the convex hull algorithms, the postcondition
+check tests only convexity (if not disabled), but not containment of the
+input points in the polygon or polyhedron defined by the output points.
+The latter is considered an expensive checking and can be enabled by
+defining `CGAL_CH_CHECK_EXPENSIVE`.
+
+*/

@@ -1,0 +1,25 @@
+
+
+/// \defgroup PkgEnvelope3 3D Envelopes
+/// \defgroup PkgEnvelope3Concepts Concepts
+/// \ingroup PkgEnvelope3
+/*!
+\addtogroup PkgEnvelope3
+\todo check generated documentation
+\PkgDescriptionBegin{3D Envelopes}
+\PkgPicture{Envelope_3/fig/Envelope_3.png}
+\PkgAuthor{Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman}
+\PkgDesc{This package consits of functions that compute the lower (or upper) envelope of a set of arbitrary surfaces in 3D. The output is represented as an 2D envelope diagram, namely a planar subdivision such that the identity of the surfaces that induce the envelope over each diagram cell is unique.}
+\PkgSince{3.3}
+\cgalbib{ cgal:mwz-e3-12 }
+\license{ \ref licensesGPL }
+\PkgDescriptionEnd
+
+This package consists of functions that compute the lower (or upper)
+envelope of a set of arbitrary surfaces in 3D. The output is
+represented as an 2D envelope diagram  -  a planar subdivision such
+that the identity of the surfaces that induce the envelope over each
+diagram cell is unique.
+
+*/
+

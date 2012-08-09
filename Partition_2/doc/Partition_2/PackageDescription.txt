@@ -1,0 +1,31 @@
+
+
+/// \defgroup PkgPolygonPartitioning2 2D Polygon Partitioning 
+/// \defgroup PkgPolygonPartitioning2Concepts Concepts
+/// \ingroup PkgPolygonPartitioning2
+/*!
+\addtogroup PkgPolygonPartitioning2
+\todo check generated documentation
+\PkgDescriptionBegin{2D Polygon Partitioning}
+\PkgPicture{Partition_2/fig/teaser-small.png}
+\PkgAuthor{Susan Hert}
+\PkgDesc{This package provides functions for partitioning polygons in monotone or convex polygons. The algorithms can produce results with the minimal number of polygons, as well as approximations which have no more than four  times the optimal number of convex pieces but they differ in  their runtime complexities.}
+\PkgSince{2.3}
+\cgalbib{ cgal:h-pp2-12 }
+\license{ \ref licensesGPL }
+\PkgDescriptionEnd
+
+The assertion flags for this package use `PARTITION` in their names
+(<I>e.g.</I>, `CGAL_PARTITION_NO_POSTCONDITIONS`).
+The precondition checks for the planar polygon partitioning functions
+are: counterclockwise ordering of the input vertices and simplicity of the 
+polygon these vertices represent.
+
+The postcondition checks are: simplicity, counterclockwise orientation,
+and convexity (or \f$ y\f$-monotonicity) of the partition polygons
+and validity of the partition (<I>i.e.</I>, the partition polygons are 
+nonoverlapping and the union of these polygons is the same as the
+original polygon).
+
+*/
+

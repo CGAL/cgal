@@ -1,0 +1,34 @@
+/// \defgroup PkgPointSet2 2D Range and Neighbor Search
+/// \defgroup PkgPointSet2Concepts Concepts
+/// \ingroup PkgPointSet2
+
+/// \defgroup PkgPointSet2RangeSearch Range Search
+/// \ingroup PkgPointSet2
+
+/*!
+\addtogroup PkgPointSet2
+\todo check generated documentation
+\PkgDescriptionBegin{2D Range and Neighbor Search}
+\PkgPicture{Point_set_2/fig/point_set.png}
+\PkgAuthor{Matthias B&auml;sken}
+\PkgDesc{This package supports circular, triangular, and isorectangular range search queries as well as (k) nearest neighbor search queries on 2D point sets. In contrast to the spatial searching package, this package uses a  Delaunay triangulation as underlying data structure.}
+\PkgSince{2.1}
+\cgalbib{ cgal:b-ss2-12 }
+\license{ \ref licensesGPL }
+\PkgDescriptionEnd
+
+The two dimensional point set is a class for geometric queries.  It
+supports circular, triangular and iso rectangular range searches and
+nearest neighbor searches.  The point set is inherited from the \cgal
+Delaunay triangulation data type.  That means that it is a dynamic
+data structure supporting the insertion and deletion of points.
+
+This package also provides function template versions of the range
+search and nearest neighbor query operations. They all have to be
+templated by the type of a \cgal Delaunay triangulation and provide
+functionality similar to the corresponding member functions of the
+point set class.
+
+
+*/
+

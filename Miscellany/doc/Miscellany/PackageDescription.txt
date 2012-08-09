@@ -1,0 +1,31 @@
+
+
+/// \defgroup PkgProfilingTools Profiling tools, Hash Map, Union-find, Modifiers 
+/// \defgroup PkgProfilingToolsConcepts Concepts
+/// \ingroup PkgProfilingTools
+/*!
+\addtogroup PkgProfilingTools
+\todo check generated documentation
+\PkgDescriptionBegin{Profiling tools\, Hash Map\, Union-find\, Modifiers}
+\PkgPicture{stopwatch.png}
+\PkgAuthor{Lutz Kettner, Sylvain Pion, and Michael Seel}
+\PkgDesc{This package provides classes for profiling time and memory consumption,  a hash map, a union find data structure and a modifier.}
+\PkgSince{3.2}
+\cgalbib{ cgal:kps-pthum-12 }
+\license{ \ref licensesLGPL }
+\PkgDescriptionEnd
+
+
+This chapter decribes classes for measuring user process time and real time
+as well as the memory size. It also provides a profile counter tool.
+
+A hash map `CGAL::Unique_hash_map` is offered that is specialized
+on unique hash values of type `std::size_t`, i.e., it is
+particularly useful for pointers, handles, iterators, and circulators
+as key values.
+
+Furthermore, a union-find data structure and the modifier base class
+is documented.
+
+*/
+

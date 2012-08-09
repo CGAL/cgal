@@ -286,7 +286,7 @@ The following items can be seen as recommendations
 in contrast to the rules of previous paragraph.
 
 <UL>
-<LI>Use <TT>#define</TT> sparingly.
+<LI>Use `#define` sparingly.
 <LI>Do not rename the base types of \cpp using `t`ypedef.
 <LI>When using an overloaded call, always give the exact match. Use
   explicit casting if necessary.

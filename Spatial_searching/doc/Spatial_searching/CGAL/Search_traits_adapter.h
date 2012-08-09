@@ -1,0 +1,154 @@
+namespace CGAL {
+
+/*!
+\ingroup DistanceClasses
+
+A class that uses a point property map to adapt a distance class to work on a 
+key as point type. 
+When using `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
+in a nearest neighbor search algorithm, this class must be used as distance. 
+
+Parameters 
+-------------- 
+
+`Key` is a type that is associated to a point of type `Base_distance::Point_d`. 
+
+`PointPropertyMap` is a model of <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</A> 
+with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`. 
+
+`Base_distance` is a model of either `GeneralDistance` or `OrthogonalDistance`. 
+
+\models ::GeneralDistance if Base_distance is a model of ::GeneralDistance
+\models ::OrthogonalDistance if Base_distance is a model of ::OrthogonalDistance
+
+\sa `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
+
+*/
+template< typename Key, typename PointPropertyMap, typename Base_distance >
+class Distance_for_point_adapter : Base_distance {
+public:
+
+/// \name Types 
+/// @{
+
+/*! 
+
+*/ 
+Base_distance::FT FT; 
+
+/*! 
+
+*/ 
+Key Point_d; 
+
+/*! 
+
+*/ 
+Base_distance::Query_item Query_item; 
+
+/// @} 
+
+/// \name Creation 
+/// @{
+
+/*! 
+Constructor initializing the class to `base` and setting the point property map of the class to `ppmap`. 
+*/ 
+Distance_for_point_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const Base_distance& base=Base_distance()); 
+
+/// @} 
+
+/// \name Operations 
+/// @{
+
+/*! 
+Returns the point property map. 
+*/ 
+const PointPropertyMap& point_property_map() const; 
+
+/// @}
+
+}; /* end Distance_for_point_adapter */
+} /* end namespace CGAL */
+
+namespace CGAL {
+
+/*!
+\ingroup SearchTraitsClasses
+
+The class `Search_traits_adapter` can be used as a template parameter of the kd tree 
+and the search classes. When using this traits class in a nearest neighbor search algorithm, the class 
+`Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>` 
+must be used as distance. 
+
+Parameters 
+-------------- 
+
+`Key` is a type that is associated to a point of type `Base_distance::Point_d`. 
+
+`PointPropertyMap` is a model of <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</A> 
+with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`. 
+
+`BaseTraits` is a model of either `SearchTraits` or `RangeSearchTraits`. 
+
+\models ::SearchTraits if BaseTraits` is a model of ::SearchTraits.
+\models ::RangeSearchTraits if BaseTraits is a model of ::RangeSearchTraits.
+
+\sa `Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>` 
+\sa `Search_traits_2<Kernel>` 
+\sa `Search_traits_3<Kernel>` 
+\sa `Search_traits_d<Kernel>` 
+\sa `Search_traits<Point,CartesianConstIterator,ConstructCartesianConstIterator` 
+
+*/
+template< typename Key, typename PointPropertyMap, typename BaseTraits >
+class Search_traits_adapter : public BaseTraits {
+public:
+
+/// \name Types 
+/// @{
+
+/*! 
+
+*/ 
+Key Point_d; 
+
+/*! 
+
+*/ 
+BaseTraits::FT FT; 
+
+/*! 
+
+*/ 
+BaseTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d; 
+
+/*! 
+
+*/ 
+BaseTraits Base; 
+
+/// @} 
+
+/// \name Creation 
+/// @{
+
+/*! 
+Constructor initializing the class to `base` and setting the point property map of the class to `ppmap`. 
+*/ 
+Search_traits_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const BaseTraits& base=BaseTraits()); 
+
+/// @} 
+
+/// \name Operations 
+/// @{
+
+/*! 
+Returns the point property map. 
+*/ 
+const PointPropertyMap& point_property_map() const; 
+
+/// @}
+
+}; /* end Search_traits_adapter */
+} /* end namespace CGAL */
