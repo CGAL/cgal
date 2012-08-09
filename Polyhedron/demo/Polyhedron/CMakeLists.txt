@@ -82,7 +82,8 @@ endif()
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
-  find_package(Boost)
+  set(Boost_USE_MULTITHREADED      ON)
+  find_package(Boost COMPONENTS thread system)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -126,8 +127,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
               Show_point_dialog.cpp
-              Scene_points_with_normal_item.cpp
-              )
+              Scene_points_with_normal_item.cpp)
 
   # AUXILIARY LIBRARIES
 
@@ -144,6 +144,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   target_link_libraries(demo_framework
     ${QGLVIEWER_LIBRARIES}
+    ${QT_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     )
@@ -152,55 +153,45 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_plane_item.cpp Scene_plane_item.moc)
   target_link_libraries(scene_basic_objects 
     demo_framework
+    ${CGAL_LIBRARIES}
     ${QGLVIEWER_LIBRARIES}
+    ${QT_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     )
 
-  add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES} )
+  add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
+  target_link_libraries(point_dialog ${QT_LIBRARIES})
 
-  add_library(scene_c2t3_item SHARED
-    Scene_c2t3_item.cpp Scene_c2t3_item.moc)
-  target_link_libraries(scene_c2t3_item demo_framework)
+  macro(add_item item_name)
+    add_library(${item_name} SHARED ${ARGN})
+    target_link_libraries(${item_name} demo_framework ${QT_LIBRARIES} ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
+  endmacro(add_item)
 
-  add_library(scene_polyhedron_item SHARED
-    Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
-  target_link_libraries(scene_polyhedron_item demo_framework)
+  add_item(scene_c2t3_item Scene_c2t3_item.cpp Scene_c2t3_item.moc)
+  add_item(scene_polyhedron_item Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
+  add_item(scene_polyhedron_transform_item Scene_polyhedron_transform_item.cpp Scene_polyhedron_transform_item.moc)
+  # special
+  target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
-  add_library(scene_polyhedron_transform_item SHARED
-    Scene_polyhedron_transform_item.cpp Scene_polyhedron_transform_item.moc)
-  target_link_libraries(scene_polyhedron_transform_item demo_framework scene_polyhedron_item)
+  add_item(scene_combinatorial_map_item Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
 
-  add_library(scene_combinatorial_map_item SHARED
-    Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
-  target_link_libraries(scene_combinatorial_map_item demo_framework scene_polyhedron_item)
+  add_item(scene_polylines_item Scene_polylines_item.cpp Scene_polylines_item.moc)
 
-  add_library(scene_polylines_item SHARED
-    Scene_polylines_item.cpp Scene_polylines_item.moc)
-  target_link_libraries(scene_polylines_item demo_framework)
-
-  add_library(scene_edit_polyhedron_item SHARED
-    Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
-  target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
+  add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
+  # special
+  target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item)
 
   if(EIGEN3_FOUND OR TAUCS_FOUND)
-  add_library(scene_textured_polyhedron_item SHARED
-    Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
-  target_link_libraries(scene_textured_polyhedron_item demo_framework)
+    add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
 
-  add_library(scene_polygon_soup_item SHARED
-    Scene_polygon_soup_item.cpp Scene_polygon_soup_item.moc)
-  target_link_libraries(scene_polygon_soup_item demo_framework scene_polyhedron_item)
-
-  add_library(scene_nef_polyhedron_item SHARED
-    Scene_nef_polyhedron_item.cpp Scene_nef_polyhedron_item.moc
+  add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp Scene_polygon_soup_item.moc)
+  target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
+  add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp Scene_nef_polyhedron_item.moc
     Scene_nef_rendering.cpp)
-  target_link_libraries(scene_nef_polyhedron_item demo_framework scene_polyhedron_item)
-
-  add_library(scene_points_with_normal_item SHARED
-    Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
-  target_link_libraries(scene_points_with_normal_item demo_framework)
+  target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
+  add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
 
   foreach( lib 
       demo_framework
