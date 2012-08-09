@@ -66,7 +66,7 @@ public:
 private:
   Kernel::Vector_3 compute_face_normal(Combinatorial_map_3::Dart_const_handle adart) const;
   Scene_interface* last_known_scene;
-  int volume_to_display;
+  std::size_t volume_to_display;
   QAction* exportSelectedVolume;
   void* address_of_A;
   template <class Predicate> void export_as_polyhedron(Predicate,const QString&) const;

@@ -83,7 +83,7 @@ private:
   mutable Point m_barycenter; // point set's barycenter
   mutable FT m_diameter_standard_deviation; // point set's standard deviation
 
-  unsigned int m_nb_selected_points; // number of selected points
+  std::size_t m_nb_selected_points; // number of selected points
 
   bool m_radii_are_uptodate;
 
@@ -108,7 +108,7 @@ public:
   /// @endcond
 
   /// Gets the number of selected points.
-  unsigned int nb_selected_points() const { return m_nb_selected_points; }
+  std::size_t nb_selected_points() const { return m_nb_selected_points; }
 
   /// Mark a point as selected/not selected.
   void select(UI_point* point, bool is_selected = true)
@@ -346,7 +346,7 @@ private:
     FT sq_radius = 0;
     for (Point_const_iterator it = begin(); it != end(); it++)
         sq_radius += sqd(*it, m_barycenter);
-    sq_radius /= size();
+    sq_radius /= FT(size());
     m_diameter_standard_deviation = CGAL::sqrt(sq_radius);
 
     m_bounding_box_is_valid = true;

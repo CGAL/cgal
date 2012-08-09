@@ -103,7 +103,7 @@ private:
 namespace {
   void CGALglcolor(QColor c)
   {
-    ::glColor4f(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
+    ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
   }
 }
 
@@ -311,7 +311,7 @@ Scene_item* cgal_code_remesh(QWidget* parent,
                                   triangulation.dimension() < 3 );
         n = triangulation.number_of_vertices())
     {
-      const int pos = CGAL::default_random.get_int(0, polyhedron_points.size());
+      const int pos = CGAL::default_random.get_int(0, (int)polyhedron_points.size());
       triangulation.insert(polyhedron_points[pos]);
     }
   }

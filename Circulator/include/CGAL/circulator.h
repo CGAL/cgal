@@ -30,7 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <CGAL/circulator_bases.h>
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 // These are name redefinitions for backwards compatibility
 // with the pre iterator-traits style adaptors.
