@@ -1,0 +1,34 @@
+/*!
+
+\page seceditorial_board Editorial Board\anchor chapsubmission
+
+The editorial board is in charge of approving the inclusion of new packages
+in the library.  This means that they assure that new contributions
+<UL>
+   <LI>are in keeping with the philosophy of \cgal (Chapter  \ref chapintro );
+   <LI>are generic and fit seamlessly with other parts of the library;
+   <LI>satisfy the coding conventions of \cgal (Chapter  \ref chapcode_format );
+   <LI>carefully and efficiently treat robustness issues
+         (Chapter  \ref chaprobustness );
+   <LI>are designed in a flexible, extensible, and easy-to-use fashion;
+   <LI>and are designed to be technically feasible for the platforms
+         supported by \cgal.
+</UL>
+
+Software specifications and implementations should be submitted to the
+editorial board for approval. The process is described in the 
+<A HREF="http://www.cgal.org/review_process_rules.html">submission
+  and review rules</A>.
+
+One should write a specification for a new package
+and submit it to the editorial board.
+Ideally, this should be done before implementation of the package: This
+ensures that time is not wasted in fixing code that may later be changed
+due to the recommendations of the board.
+Only after approval by the board will packages be included in new
+public releases and then only if they pass the test suite, of course.
+
+The current list of members of the editorial board can be found on the 
+<A HREF="http://www.cgal.org/people.html">web site</A>.
+
+*/

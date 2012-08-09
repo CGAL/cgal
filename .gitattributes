@@ -1563,10 +1563,37 @@ Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#
 Documentation/Doxyfile -text
 Documentation/DoxygenLayout.xml -text
 Documentation/cgal_manual.bib -text
+Documentation/doc/Developer_manual/Chapter_checks.txt -text
+Documentation/doc/Developer_manual/Chapter_code_format.txt -text
+Documentation/doc/Developer_manual/Chapter_debugging.txt -text
+Documentation/doc/Developer_manual/Chapter_handles.txt -text
+Documentation/doc/Developer_manual/Chapter_information_sources.txt -text
+Documentation/doc/Developer_manual/Chapter_intro.txt -text
+Documentation/doc/Developer_manual/Chapter_iterators_and_circulators.txt -text
+Documentation/doc/Developer_manual/Chapter_kernels.txt -text
+Documentation/doc/Developer_manual/Chapter_memory_management.txt -text
+Documentation/doc/Developer_manual/Chapter_namespaces.txt -text
+Documentation/doc/Developer_manual/Chapter_objects.txt -text
+Documentation/doc/Developer_manual/Chapter_portability.txt -text
+Documentation/doc/Developer_manual/Chapter_robustness.txt -text
+Documentation/doc/Developer_manual/Chapter_submission_process.txt -text
+Documentation/doc/Developer_manual/Chapter_traits_classes.txt -text
+Documentation/doc/Developer_manual/developer_manual.txt -text
 Documentation/doc/General.txt -text
 Documentation/doc/Installation.txt -text
 Documentation/doc/Introduction.txt -text
 Documentation/doc/Preliminaries.txt -text
+Documentation/doc/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
+Documentation/doc/fig/Object.gif -text svneol=unset#image/gif
+Documentation/doc/fig/background.gif -text svneol=unset#image/gif
+Documentation/doc/fig/cgal_small.gif -text svneol=unset#image/gif
+Documentation/doc/fig/generic_cgal.gif -text svneol=unset#image/gif
+Documentation/doc/fig/handle_allocate.gif -text svneol=unset#image/gif
+Documentation/doc/fig/handle_rep.gif -text svneol=unset#image/gif
+Documentation/doc/fig/homogeneous_ipoint.gif -text svneol=unset#image/gif
+Documentation/doc/fig/homogeneous_orientation.gif -text svneol=unset#image/gif
+Documentation/doc/fig/reference_counting.gif -text svneol=unset#image/gif
+Documentation/doc/fig/use_real.gif -text svneol=unset#image/gif
 Documentation/doc/main.txt -text
 Documentation/doc/packages.txt -text
 Documentation/doxyassist.xml -text svneol=unset#application/xml

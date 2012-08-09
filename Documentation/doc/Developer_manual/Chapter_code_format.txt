@@ -1,0 +1,417 @@
+/*! 
+
+\page chapcode_format Coding Conventions
+
+\author Sven Sch&ouml;nherr
+
+We do not want to impose very strict coding rules on the developers.
+What is most important is to follow the \cgal naming scheme
+described in the next section. However, there are some programming conventions
+(Section  \ref secprogramming_conventions ) that should be adhered to,
+rules for the code format
+(Section  \ref seccode_format ), and a mandatory heading for each
+source file (Section  \ref secfile_header )
+
+\section secnaming_scheme Naming scheme 
+
+The \cgal naming scheme is intended to help the user
+use the library and the developer develop the
+library. The rules are simple and easy to remember. Where appropriate,
+they aim for similarity with the names used in the \stl. Deviations from the
+given rules should be avoided; however, exceptions are possible if
+there are <I>convincing</I> reasons.
+
+## General rules ##
+
+<UL>
+<LI>Words in the names of everything except concepts should be separated by
+    underscores. For example, one would use `function_name` and
+    `Class_name` instead of `functionName` or `Classname`.
+<LI>Words in the names of concepts (<I>e.g.</I>, template parameters)
+      should be separated using capital letters.  The only use of underscores
+      in concept names is before the dimension suffix.  For example, one
+      should use a name such as ConvexHullTraits_2 for the concept
+      in contrast to `Convex_hull_traits_2` for the name of the class that
+      is a model of this concept.  This different naming scheme for concepts
+      and classes was adopted mainly for two reasons (a) it is consistent with
+      the \stl (cf. InputIterator) and (b) it avoids name clashes between
+      concepts and classes that would require one or the other to have a
+      rather contrived name.
+<LI>Abbreviations of words are to be avoided
+      (<I>e.g.</I>, use
+      `Triangulation` instead of `Tri`).  The only exceptions
+      might be standard geometric abbreviations (such as "CH" for "convex
+      hull") and standard data structure abbreviations (such as "DS" for
+      "data structure").  Unfortunately, the long names that result from
+      the absence of abbreviations are known to cause problems with some
+      compilers.
+<LI>Names of constants are uppercase (<I>e.g.</I>, `ORIGIN`).
+      <LI>The first word of a class or enumeration name should be capitalized
+      (<I>e.g.</I>, `Quotient`, `Orientation`).
+<LI>Function names are in lowercase
+      (<I>e.g.</I>, `is_zero`).
+<LI>Boolean function names should begin with a verb.  For example, use
+      `is_empty` instead of simply `empty` and
+      `has_on_bounded_side` instead of `on_bounded_side`.
+<LI>Names of macros should begin with the prefix `CGAL_`.
+      
+</UL>
+
+## Geometric objects ##
+
+<UL>
+<LI>All geometric objects have the dimension as a suffix (<I>e.g.</I>, `Vector_2`
+      and `Plane_3`).
+     <B>Exception:</B> For \f$ d\f$-dimensional objects there may be a dynamic
+     and a static version. The former has the suffix `_d`
+     (<I>e.g.</I>, `Point_d`), while the latter has the dimension as the first
+     template parameter (<I>e.g.</I>, `Point<d>`).
+</UL>
+
+## Geometric data structures and algorithms ##
+
+<UL>
+<LI>Names for geometric data structures and algorithms should follow
+      the "spirit" of the rules given so far, <I>e.g.</I> a data structure for
+      triangulations in the plane is named `Triangulation_2`, and a
+      convex hull algorithm in 3-space is named `convex_hull_3`.
+<LI>Member functions realizing predicates should start with `is_` or
+      `has_`, <I>e.g.</I> the data structure `Min_ellipse_2` has member
+      functions `is_empty` and `has_on_bounded_side`.
+<LI>Access to data structures is given via iterators and
+      circulators (Chapter  \ref chapiterators_and_circulators ).
+      For iterators and functions
+      returning them we extend
+      the \stl names with a prefix describing the items to be accessed.
+      For example, the functions `vertices_begin` and `vertices_end`
+      return a `Vertex_iterator`. (Note that we use the name of the items
+      in singular for the iterator type name and in plural for the functions
+      returning the iterator.) Names related to circulators are handled
+      similarly, using the suffix `_circulator`. For example, the
+      function `edges_circulator` returns an `Edge_circulator`.
+</UL>
+
+## Kernel traits ##
+
+All types in the kernel concept are functor types. We distinguish the
+following four categories:
+<OL>
+<LI><B>generalized predicates</B>, that is, standard predicates
+  returning a Boolean value as well as functions such as
+  `orientation()` that return an enumeration type (values from a
+  finite discrete set).
+<LI><B>construction objects</B>, which replace constructors in the
+  kernel,
+<LI><B>constructive procedures</B> and
+<LI><B>functors replacing operators</B>.
+</OL>
+
+As detailed below, the names of
+these functors reflect the actions performed by calls to
+`operator()`.  This naming scheme was chosen instead of one in
+which the computed object determines the name because this latter
+naming scheme is more natural for functions that compute values where
+the function call can be seen as a name for the object returned
+instead of functors that simply maintain data associated with the
+computation.  It was also noted that the naming of functions and
+functors is not consistent, either in \cgal or in the \stl (In some
+cases the action performed by a function determines its name (<I>e.g.</I>,
+`multiply()`) while in others the result of the action determines
+the name (<I>e.g.</I>, `product()`).), so achieving complete consistency
+with an existing naming scheme is not possible.
+
+Here are the naming rules:
+<UL>
+<LI>All names in the kernel traits have the dimension as a suffix.
+      This is necessary because in some cases (<I>e.g.</I>, the `Orientation_2`
+      object) the absence of the suffix would cause a name conflict with
+      an existing type or class (<I>e.g.</I>, the enumeration type `Orientation`).
+    <LI>The names of generalized predicates are determined by their
+      results.  Furthermore, names are as much as possible consistent
+      with the current kernel and the \stl. So, for example, we have
+      objects like `Has_on_bounded_side_2`, `Is_degenerate_2`,
+      and `Is_horizontal_2`.  According to the current kernel we
+      also have `Left_turn_2`.  For reasons of consistency with
+      \stl, all "less-than"-objects start with `Less_`,
+      <I>e.g.</I>, `Less_xy_2`.  Further examples are
+      `Less_distance_to_point_2` and
+      `Less_distance_to_line_2`. However, we have `Equal_2`,
+      whereas the corresponding \stl functor is called
+      `equal_to`. Here, we give our dimension rule higher
+      priority.
+    <LI>The names of construction objects (category 2 above) follow
+      the pattern `Construct_type_d`, where <TT>type_d</TT>
+      is the type constructed, <I>e.g.</I>, `Construct_point_2` and
+      `Construct_line_2`.  The `operator()` of these functor
+      classes is overloaded.  This reduces the number of names to
+      remember drastically, while replacing one of the constructions
+      gets more complicated, but is still possible.
+    <LI>Functors in category 3 above can be further subdivided into
+      two classes:
+      <UL>
+         <LI>constructive procedures that construct objects whose types are
+               known <I>a priori</I>
+         <LI>procedures that construct objects whose types are not known
+               <I>a priori</I>
+      </UL>
+
+      The names of functors in the first class also start with
+      `Construct_` whenever a geometric object is constructed,
+      otherwise they start with `Compute_`.  Here, real numbers
+      are not considered to be 1-dimensional geometric objects.  For
+      example, on the one hand we have
+      `Construct_perpendicular_vector_2`,
+      `Construct_midpoint_3`, `Construct_circumcenter_d`,
+      `Construct_bisector_2`, and `Construct_point_on_3`,
+      while on the other hand there are `Compute_area_2` and
+      `Compute_squared_length_3`.
+
+      For the second class, the names of the objects describe the (generic)
+      action, <I>e.g.</I> `Intersect_2`.
+<LI>The equality operator (`operator==()`) is replaced by function
+      objects with names of the form `Equal_k`, where <TT>k</TT> is
+      the dimension number (<I>i.e.</I>, 2, 3, or `d`).
+      For replacing arithmetic operators, we might also provide `Add_2`,
+      `Subtract_2`, `Multiply_2`, and `Divide_2`. (As mentioned
+      above, the action determines the name, not the result.) We think
+      that these objects are not really needed.  They are likely to be
+      part of primitive operations that have a corresponding function
+      object in the traits.
+</UL>
+
+In addition, for each functor the kernel traits class has a member
+function that returns an instance of this functor.  The name of this
+function should be the (uncapitalized) name of the
+functor followed by the suffix `_object`.For example, the function that returns an instance of the
+`Less_xy_2` functor is called `less_xy_2_object`.
+
+## File names ##
+
+<UL>
+<LI>File names should be chosen in the "spirit" of the naming rules given
+      above.
+<LI>If a single geometric object, data structure, or algorithm is provided
+      in a single file, its name (and its capitalization) should be used for
+      the file name. For
+      example, the file `Triangulation_2.h` contains the data structure
+      `Triangulation\_2`.
+<LI>If a file does not contain a single class, its name should not begin
+      with a capital letter.
+<LI>No two files should have the same names even when capitalization is
+      ignored.  This is to prevent overwriting of files on operating systems
+      where file names are not case sensitive.  A package that contains
+      file names that are the same as files already in the release will be
+      rejected by the submission script.
+<LI>The names of files should not contain any characters not allowed by
+      all the platforms the library supports.  In particular, it should not
+      contain the characters ':', '*', or ' '.
+<LI>Internal header files - which are not documented to the user - should
+      have <TT>/internal/</TT> as a directory higher up in their hierarchy.
+      For example <TT>CGAL/internal/foo.h</TT> or
+      <TT>CGAL/Package/internal/predicates/my_pred.h</TT>.
+</UL>
+
+\section secprogramming_conventions Programming conventions 
+
+The first list of items are meant as rules, <I>i.e.</I>, you should follow them.
+
+- Give typedefs for all template arguments of a class that may be
+  accessed later from outside the class.
+  The template parameter is a concept and should follow the concept naming
+  scheme outlines in the previous section.  As a general rule, the typedef
+  should identify the template parameter with a type of the same name that
+  follows the naming convention of types.  For example
+  \code{.cpp}
+  template < class GeometricTraits_2 >
+  class Something {
+  public:
+  typedef GeometricTraits_2 Geometric_traits_2;
+  };
+  \endcode
+  For one-word template arguments, the template parameter name should be
+  followed by an underscore.  (Note that using a preceding
+  underscore is not allowed according to the \cpp standard; all such names
+  are reserved.)
+  \code{.cpp}
+  template < class Arg_ >
+  class Something {
+  public:
+  typedef  Arg_  Arg;
+  };
+  \endcode
+- Use `const` when a call by reference argument is not modified, e.g. `int f( const A& a)`.
+- Use `const` to indicate that a member function does not
+  modify the object to which it is applied,
+  <I>e.g.</I>, `class A { int f( void) const; };`. This should also be
+  done when it is only conceptually `const`.
+  This means that the member function `f()` is `c`onst as seen from
+  the outside, but internally it may modify some data members
+  that are declared `m`utable. An example
+  is the caching of results from expensive computations.  For more
+  information about conceptually `c`onst functions and mutable data
+  members see \cite cgal:m-ec-97.
+- Prefer \cpp-style to C-style casts, <I>e.g.</I>, use `static_cast<double>( i)` instead of `(`double)i.
+- Protect header files against multiple inclusion, <I>e.g.</I> the file <TT>This_is_an_example.h</TT> should begin/end with
+  \code{.cpp}
+  #ifndef CGAL_THIS_IS_AN_EXAMPLE_H
+  #define CGAL_THIS_IS_AN_EXAMPLE_H
+  ...
+  #endif // CGAL_THIS_IS_AN_EXAMPLE_H
+  \endcode
+- Support the
+  <A HREF="http://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</A>
+  protocol whenever your functors have more than one return type
+  otherwise provide a `result_type` member typedef.
+  An example for this is a C++03 style `identity` functor:
+  \code{.cpp}
+        struct Identity {
+          template<typename T>
+          T& operator()(T& t) { return t; }
+          template<typename T>
+          const T& operator()(const T& t) { return t; }
+          template<typename>
+          struct result;
+          template<typename F, typename T>
+          struct result<F(T&)> {
+            typedef T& type;
+          };
+          template<typename F, typename T>
+          struct result<F(const T&)> {
+            typedef const T& type;
+          };
+        };
+  \endcode
+
+The following items can be seen as recommendations
+in contrast to the rules of previous paragraph.
+
+<UL>
+<LI>Use <TT>#define</TT> sparingly.
+<LI>Do not rename the base types of \cpp using `t`ypedef.
+<LI>When using an overloaded call, always give the exact match. Use
+  explicit casting if necessary.
+<LI>Do not call global functions unqualified, that is, always
+  specify explicitly the namespace where the function is defined.
+<LI>Do not give private types or typedefs a name likely to be used as
+  a public interface by an other class, <I>e.g.</I> prefer `Point_3_`
+  to `Point_3` (in general, add an underscore as suffix). The reason for this convention is that
+  <A HREF="https://lists-sop.inria.fr/sympa/arc/cgal-develop/2010-10/msg00118.html">SFINAE
+  does not extend to access control</A> (meaning that the existence of a
+  private type can break overloading for other classes).
+</UL>
+
+\section seccode_format Code format 
+
+<UL>
+<LI>Use indentation with at least two spaces extra per level.
+<LI>Write only one statement per line.
+<LI>Use \cpp-style comments, <I>e.g.</I>, `//` some comment.
+</UL>
+
+\section secfile_header File header 
+
+Each \cgal source file must start with a heading that allows for an easy
+identification of the file.  The file header contains:
+<UL>
+<LI>a copyright notice, specifying all the years during which the file has
+been written or modified, as well as the owner(s) (typically the institutions
+employing the authors) of this work,
+<LI>the corresponding license (at the moment, only LGPLv3+ and GPLv3+
+are allowed in \cgal), and a pointer to the file containing its text in the
+\cgal distribution,
+<LI>a disclaimer notice,
+<LI>then, there are 2 keywords, which are automatically expanded by SVN
+(there are options in SVN to suppress these expansions if you need):
+<UL>
+<LI>\$URL: \$ : the name of the source file in the repository, it also
+helps figuring out which package the file comes from,
+<LI>\$Id: \$ : the SVN revision number of the file, the date of this revision,
+and the author of the last commit.
+</UL>
+<LI>Then the authors of (non-negligible parts of) this file are listed, with
+optional affiliation or e-mail address.
+</UL>
+
+For example and demo programs, the inclusion of the copyright notice is not
+necessary as this will get in the way if the program is included in the
+documentation.  However, these files should always contain the name of
+the file relative to the <TT>CGAL_HOME</TT> directory
+(<I>e.g.</I>, <TT>examples/Convex_hull_3/convex_hull_3.cpp</TT>)
+so the file can be located when seen out of context (<I>e.g.</I>, in the documentation
+or from the demos web page).
+
+For the test-suite and the documentation source, these are not distributed at
+the moment, so there is no policy for now.
+
+## GPL version ##
+
+Here follows what this gives for a file under the GPL :
+
+\code{.cpp}
+// Copyright (c) 1999,2000,2001,2002  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: svn+ssh://pmoeller@scm.gforge.inria.fr/svn/cgal/branches/features/doxy-port-pmoeller/Developers_manual/doc_tex/Developers_manual/code_format.tex $
+// $Id: code_format.tex 70968 2012-08-02 12:55:15Z pmoeller $
+// 
+//
+// Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//                 Sylvain Pion
+\endcode
+
+## LGPL version ##
+
+Here follows what this gives for a file under the LGPL :
+
+\code{.cpp}
+// Copyright (c) 2000,2001,2002,2003  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: svn+ssh://pmoeller@scm.gforge.inria.fr/svn/cgal/branches/features/doxy-port-pmoeller/Developers_manual/doc_tex/Developers_manual/code_format.tex $
+// $Id: code_format.tex 70968 2012-08-02 12:55:15Z pmoeller $
+// 
+//
+// Author(s)     : Herve Bronnimann, Sylvain Pion
+\endcode
+
+\section seccode_format_doc_req_and_rec Requirements and recommendations 
+
+Requirements:
+<UL>
+   <LI>Follow the naming schemes outlined above.
+   <LI>Provide typedefs of template arguments as necessary to make the
+         template parameters accessible elsewhere.
+   <LI>Label member function and parameters with `const` where 
+         appropriate
+   <LI>Use \cpp-style type casts.
+   <LI>Protect header files from multiple inclusions.
+   <LI>Obey the code format rules outlined above.
+   <LI>Provide a header for each submitted file in the proper format.
+</UL>
+
+*/

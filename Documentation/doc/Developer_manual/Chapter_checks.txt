@@ -1,0 +1,226 @@
+/*!
+
+\page chapchecks Checks: Pre- and Postconditions, Assertions, and Warnings
+
+\author Sven Sch&ouml;nherr (<TT>sven@inf.ethz.ch</TT>)
+
+Much of the \cgal code contains checks.  Some are there to check if
+the code behaves correctly, others check if the user calls routines in
+an acceptable manner. We describe the different categories of checks
+(Section  \ref secchecks_categories), the usage of checks
+(Section  \ref secchecks_using), and a more selective means of controlling
+checks (Section  \ref secchecks_controlling). Finally, a statement
+about exception handling is given
+(Section  \ref secexception_handling).
+
+It is forbidden to call `std::abort`, `std::exit`
+or `assert` directly from \cgal, as these do not allow the user code to
+react after the error (application processes are killed).
+Thus, the default behavior of all checks is to throw exceptions for reporting
+failures.
+
+\section secchecks_categories Categories of checks 
+
+There are five types of checks.
+<UL>
+<LI><B>Preconditions</B>
+      check if a routine has been called in a proper fashion and the input
+      adheres to the specifications given by the author of the function.
+      If a precondition fails, it is the responsibility of the caller
+      (usually the user of the library) to fix the problem.
+<LI><B>Postconditions</B>
+      check if a routine does what it promises
+      to do.  If a postcondition fails it is the fault of this routine, so
+      the author of the code is responsible.
+<LI><B>Assertions</B>
+      are other checks that do not fit in the above
+      two categories, <I>e.g.</I> they can be used to check invariants.
+<LI><B>Warnings</B>
+      are checks for which it is not so severe if they fail.
+<LI><B>Static assertions</B>
+      are compile-time assertions, used <I>e.g.</I> to verify the values of compile-time
+      constants or compare types for (in)equality.
+</UL>
+
+The according macro names all have the format `CGAL_<check_type>` where
+`<check_type>` can be one of
+<UL>
+ <LI>`precondition`
+ <LI>`postcondition`
+ <LI>`assertion`
+ <LI>`warning`
+ <LI>`static_assertion`
+</UL>
+
+Failures of the first three types are errors and lead to a halt of the
+program, failures of the last one only lead to a warning.  Checks of
+four categories can be marked with one or both of the following
+attributes:
+<UL>
+<LI><B>Expensive</B>
+
+      checks take considerable time to compute.
+      "Considerable" is an imprecise phrase.  Checks that add less than 10
+      percent to the execution time of their routine are not expensive.
+      Checks that can double the execution time are. Somewhere in between
+      lies the border line.
+<LI><B>Exactness</B>
+
+      checks rely on exact arithmetic. For example,
+      if the intersection of two lines is computed, the postcondition of
+      this routine may state that the intersection point lies on both
+      lines.  However, if the computation is done with `double`s as
+      the number type, this may not be the case, due to roundoff errors.
+</UL>
+By definition, static assertions are both inexpensive and unaffected by precision
+management. Thus, the categories do not apply for static assertions.
+
+The format is one of
+<UL>
+ <LI>`CGAL_<check_type>`
+ <LI>`CGAL_expensive_<check_type>`
+ <LI>`CGAL_exactness_<check_type>`
+ <LI>`CGAL_expensive_exactness_<check_type>`
+</UL>
+
+By default, all standard checks (without any attribute) are enabled,
+while expensive and exactness checks are disabled. How this can be
+changed and how checks are actually used in the code are described in
+the next section.
+
+Additionally, we provide macros `CGAL_error()` and `CGAL_error_msg(MSG_TEXT)`
+which are equivalent to always-failing assertions. However,
+they cannot be disabled.
+
+\section secchecks_using Using checks 
+
+The checks are implemented as preprocessor macros;
+
+<I>i.e.</I>, `CGAL_<check_type>(<Cond>)` realizes a check of type `<check_type>`
+that asserts the condition `<Cond>`. For example,
+\code{.cpp}
+  CGAL_precondition( first != last);
+\endcode
+checks the precondition that a given iterator range is not empty. If
+the check fails, an error message similar to
+\code{.cpp}
+  CGAL error: precondition violation!
+  Expr: first != last
+  File: <file name>
+  Line: <source code line>
+\endcode
+is written to the standard error stream and the program is aborted. If
+an additional explanation should be given to the user,
+macros `CGAL_<check_type>_msg(<Cond>,<Msg>)` can be used. The text in
+`<Msg>` is just appended to the failure message given above.
+
+In case a check is more complicated and the computation does not fit
+into a single statement, the additional code can be encapsulated using
+`CGAL_<check_type>_code(<Code>)`.  This has the advantage that the
+computation is not done if the corresponding category is disabled.  For
+an example, suppose an algorithm computes a convex polygon. Thus we
+want to check the postcondition that the polygon is indeed convex,
+which we consider an expensive check. The code would look like this.
+\code{.cpp}
+  CGAL_expensive_postcondition_code( bool is_convex; )
+  CGAL_expensive_postcondition_code( /* compute convexity */ )
+  CGAL_expensive_postcondition_code( /* ... */ )
+  CGAL_expensive_postcondition_msg ( is_convex, \
+                                     "The computed polygon is NOT convex!" );
+\endcode
+
+As already mentioned above, the standard checks are enabled by
+default.  This can be changed through the use of compile-time flags.
+
+By setting the flag `CGAL_NO_<CHECK_TYPE>` all checks of type
+`<CHECK_TYPE>` are disabled, <I>e.g.</I> adding `-DCGAL_NO_ASSERTIONS`
+to the compiler call switches off all checks for static and dynamic assertions.
+To disable all checks in the library, the flag `CGAL_NDEBUG` can be set.
+Note that the standard flag `NDEBUG` sets `CGAL_NDEBUG`,
+but it also affects the `assert` macro.
+
+To enable expensive and exactness checks, respectively, the compile-time
+flags `CGAL_CHECK_EXPENSIVE`
+
+and `CGAL_CHECK_EXACTNESS`
+
+have to be supplied. However, exactness checks should only be turned on if
+the computation is done with some exact number type.
+
+\section secchecks_controlling Controlling checks at a finer granularity 
+
+The macros and related compile-time flags described so far all operate
+on the whole library. Sometimes the user may want to have a more
+selective control.  \cgal offers the possibility to turn checks on
+and off on a per-package basis. Therefore a package-specific term is
+inserted in the macro names directly after the \cgal prefix,
+<I>e.g.</I>, `CGAL_kernel_assertion(<Cond>)`. Similarly, the uppercase
+term is used for the compile-time flags;
+<I>e.g.</I>, `CGAL_KERNEL_NO_WARNINGS` switches off the warnings
+in <I>only</I> the kernel. Other packages have their own specific
+terms as documented in the corresponding chapters of the
+reference manual.
+
+For a new package you will first have to create a suitable header file
+with all macro definitions.  This is done with the shell script
+<TT>cgal_create_assertions.sh</TT>, to be found in the in the
+<TT>scripts</TT> directory.
+
+The following command will create a file <TT>optimisation_assertions.h</TT>:
+
+<CENTER>
+  <TT>sh cgal_create_assertions.sh optimisation</TT>
+
+</CENTER>
+
+You should place the generated file in the proper directory (and possibly
+rename it).  Then you can use the checks in the following fashion.
+
+\code{.cpp}
+ #include <CGAL/optimisation\_assertions.h>
+
+ void optimisation\_foo( int i)
+ {
+   CGAL_optimisation_precondition_msg( i == 42, "Only 42 allowed!");
+   // ...
+ }
+\endcode
+
+The documentation of your new package has to name the term chosen to be
+part of the package-specific macros in
+order to enable the user to selectively turn off and on the checks of
+your package. For example, in the documentation of the optimisation
+package you can find a sentence similar to the following.
+<BLOCKQUOTE>
+  The optimisation code uses the term OPTIMISATION for the checks;
+  <I>e.g.</I>, setting the compile time flag
+  `CGAL_OPTIMISATION_NO_PRECONDITIONS` switches off precondition
+  checking in the optimisation code.
+</BLOCKQUOTE>
+
+\section secexception_handling Exception handling 
+
+Some parts of the library use exceptions, but there is no general specific
+policy concerning exception handling in \cgal.  It is nevertheless good to
+target exception safety, as much as possible.  Good references on exception
+safety are: Appendix E of \cite cgal:s-cpl-97 (also available at
+<A HREF="http://www.research.att.com/~bs/3rd_safe0.html"><TT>http://www.research.att.com/~bs/3rd_safe0.html</TT></A>),
+and \cite cgal:a-esgc-98 (also available at
+<A HREF="http://www.boost.org/more/generic_exception_safety.html"><TT>http://www.boost.org/more/generic_exception_safety.html</TT></A>).
+
+\section secchecks_req_and_rec Requirements and recommendations 
+
+Requirements:
+<UL>
+   <LI>Write pre- and postcondition checkers for your functions wherever
+         possible.
+   <LI>Use the \cgal preprocessor macros (Sections  \ref secchecks_using 
+         and  \ref secchecks_controlling )
+         exclusively throughout your code (instead of,
+         for example, the `assert` macro or the `std::abort` or
+         `std::exit` functions) for all checks
+         to assure that all \cgal invariant tests can be handled in a uniform
+         way.
+</UL>
+
+*/

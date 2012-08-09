@@ -4,13 +4,7 @@
 
 \tableofcontents
 
-\section general_introduction I General Introduction
-
-1. \ref introduction
-2. \ref preliminaries
-3. \ref installation
-
-\section PartAlgebraicFoundations II Arithmetic and Algebra
+\section PartAlgebraicFoundations Arithmetic and Algebra
 
 \package_listing{Algebraic_foundations}
 \package_listing{NumberTypeSupport}
@@ -19,26 +13,26 @@
 \package_listing{Algebraic_kernel_d}
 
 
-\section PartCombinatorialAlgorithms III Combinatorial Algorithms
+\section PartCombinatorialAlgorithms Combinatorial Algorithms
 
 \package_listing{Matrix_search}
 \package_listing{QP_solver}
 
-\section PartKernels IV Geometry Kernels
+\section PartKernels Geometry Kernels
 
 \package_listing{Kernel_23}
 \package_listing{Kernel_d}
 \package_listing{Circular_kernel_2}
 \package_listing{Circular_kernel_3}
 
-\section PartConvexHullAlgorithms V Convex Hull Algorithms
+\section PartConvexHullAlgorithms Convex Hull Algorithms
 
 \package_listing{Convex_hull_2}
 \package_listing{Convex_hull_3}
 \package_listing{Convex_hull_d}
 
 
-\section PartPolygons VI Polygons
+\section PartPolygons Polygons
 
 \package_listing{Polygon}
 \package_listing{Boolean_set_operations_2}
@@ -49,7 +43,7 @@
 \package_listing{Minkowski_sum_2}
 
 
-\section PartPolyhedra VII Cell Complexes and Polyhedra
+\section PartPolyhedra Cell Complexes and Polyhedra
 
 \package_listing{Polyhedron}
 \package_listing{HalfedgeDS}
@@ -60,7 +54,7 @@
 \package_listing{Minkowski_sum_3}
 
 
-\section PartArrangements VIII Arrangements
+\section PartArrangements Arrangements
 
 \package_listing{Arrangement_on_surface_2}
 \package_listing{Sweep_line_2}
@@ -69,7 +63,7 @@
 \package_listing{Envelope_2}
 \package_listing{Envelope_3}
 
-\section PartTriangulationsAndDelaunayTriangulations IX Triangulations and Delaunay Triangulations
+\section PartTriangulationsAndDelaunayTriangulations Triangulations and Delaunay Triangulations
 
 \package_listing{Triangulation_2}
 \package_listing{TDS_2}
@@ -79,13 +73,13 @@
 \package_listing{Alpha_shapes_2}
 \package_listing{Alpha_shapes_3}
 
-\section PartVoronoiDiagrams X Voronoi Diagrams
+\section PartVoronoiDiagrams Voronoi Diagrams
 
 \package_listing{Segment_Delaunay_graph_2}
 \package_listing{Apollonius_graph_2}
 \package_listing{Voronoi_diagram_2}
 
-\section PartMeshing XI Mesh Generation
+\section PartMeshing Mesh Generation
 
 \package_listing{Mesh_2}
 \package_listing{Surface_mesher}
@@ -93,7 +87,7 @@
 \package_listing{Skin_surface_3}
 \package_listing{Mesh_3}
 
-\section PartGeometryProcessing XII Geometry Processing
+\section PartGeometryProcessing Geometry Processing
 
 \package_listing{Subdivision_method_3}
 \package_listing{Surface_mesh_simplification}
@@ -103,7 +97,7 @@
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_processing_3}
 
-\section PartSearchStructures XIII Spatial Searching and Sorting
+\section PartSearchStructures Spatial Searching and Sorting
 
 \package_listing{Point_set_2}
 \package_listing{Interval_skip_list}
@@ -113,23 +107,23 @@
 \package_listing{AABB_tree}
 \package_listing{Spatial_sorting}
 
-\section PartGeometricOptimization XIV Geometric Optimization
+\section PartGeometricOptimization Geometric Optimization
 
 \package_listing{Bounding_volumes}
 \package_listing{Inscribed_areas}
 \package_listing{Polytope_distance_d}
 \package_listing{Principal_component_analysis}
 
-\section PartInterpolation XV Interpolation
+\section PartInterpolation Interpolation
 
 \package_listing{Interpolation}
 
-\section PartKineticDataStructures XVI Kinetic Data Structures
+\section PartKineticDataStructures Kinetic Data Structures
 
 \package_listing{Kinetic_data_structures}
 \package_listing{Kinetic_framework}
 
-\section PartSupportLibrary XVII Support Library
+\section PartSupportLibrary Support Library
 
 \package_listing{STL_Extension}
 \package_listing{BGL}
@@ -139,7 +133,7 @@
 \package_listing{Miscellany}
 \package_listing{IOstream}
 
-\section PartVisualization XVIII Visualization
+\section PartVisualization Visualization
 
 \package_listing{Geomview}
 \package_listing{GraphicsView}

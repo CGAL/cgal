@@ -1,0 +1,117 @@
+/*!
+
+\page chapkernels Geometry Kernels
+
+\authors Olivier Devillers (<TT>olivier.devillers@inria.fr</TT>)
+\authors Marc Glisse (<TT>marc.glisse@inria.fr</TT>)
+\authors Stefan Schirra
+
+The layer of geometry kernels provides
+basic geometric entities of constant size\footnote{In dimension \f$ d\f$, an entity of size \f$ O(d)\f$ is considered to be of constant size.} and
+primitive operations on them. Each entity is provided as both a
+stand-alone class, which is parameterized by a kernel class, and as a
+type in the kernel class. Each operation in the kernel is provided via
+a functor class\footnote{A class which defines a member `operator()`.} in the  kernel
+class and also as either a member function or a global function.
+See \cite hhkps-aegk-01 for more details about this design.
+Ideally, if the kernel provides all the primitives required, you can
+use any kernel as a traits class directly with your algorithm or data
+structure; see also Chapter  \ref chaptraits_classes . If you need
+primitives not provided by the kernel (yet), please read
+Section  \ref secNewKernelTraits  below.
+
+\section secdifferent_kernels Different kernels 
+
+\cgal provides different kernels, they can differ by internal
+representation of objects (e.g.  cartesian versus  homogeneous) 
+or provide different functionalities (e.g. circular kernel).
+When creating a new package, the authors have to specify clearly
+the requirements needed by the kernel used.
+For example they can specify the needs with respect to the arithmetic.
+
+The authors may specify a targeted kernel in the list of predefined
+kernels
+(e.g.  `Exact_predicates_inexact_constructions_kernel`).
+
+\subsection secCartesianHomogeneousComputation Cartesian versus homogeneous   computation 
+
+Point coordinates can be represented in a homogeneous or cartesian
+way.
+The developer of a package can keep in mind that cartesian will be
+usually more space consuming, while homogeneous can be interesting if
+exact rational computations are needed.
+In any way, a package has to work with both representations.
+
+Since \cgal uses homogeneous representation for affine geometry  and not
+for projective geometry, the homogenizing coordinate  is non zero.
+The cartesian 
+representation corresponding to an homogeneous point
+\f$ (x_0,x_1,...,x_d,w)\f$ is
+\f$ (x_0/w,x_1/w,...,x_d/w)\f$. Hence, homogeneous representation is not unique;
+\f$ (\alpha x,\alpha y,\alpha z,\alpha w)\f$ is an alternative
+representation to \f$ (x,y,z,w)\f$  for any \f$ \alpha\neq 0\f$. 
+Internally, \cgal always maintains a non-negative homogenizing coordinate.
+
+# Kernel design and conventions #
+
+Each kernel object is provided as both a stand-alone class, which is 
+parameterized by a kernel class (`Geo_object_D<K>`), and as a type 
+in the kernel class (`K::Geo_object_D`).  While the former use may
+be more natural for users not interested in the flexibility of the kernel
+(and is compatible with the original kernel design \cite fgkss-dccga-00), the
+latter syntax should be used in all code distributed with the library
+as it allows types in the kernel to be easily exchanged and modified.
+Similarly, each operation and construction in the kernel is provided via 
+a function object class in the 
+kernel class and also as either a member function or a global function; 
+developers should use the function object classes to gain access to the
+functionality.  See \cite hhkps-aegk-01 for more details about this 
+design and how it is accomplished.
+
+The classes for the geometric objects in the kernel have a 
+standardized interface.
+<UL>
+<LI>All classes (currently only in dimensions 2 and 3) have a `bbox()` member function computing a bounding box.
+<LI>All classes have a `transform(Aff_transformation_d t)` member function
+to compute the object transformed by `t`.  
+<LI>Oriented \f$ d-1\f$ dimensional objects\footnote{Note that the dimension of an object might depend on its use. A line in the plane has dimension \f$ d-1\f$. As a halfspace, it has dimension \f$ d\f$.} provide member functions
+`has_on_positive_side(Point_d)`, `has_on_boundary(Point_d)`, 
+and `has_on_negative_side(Point_d)`. Furthermore, there is a member
+function `oriented_side(Point_d)` returning an object of type
+`CGAL::Oriented_side`.
+<LI>Full-dimensional bounded objects provide member functions
+`has_on_bounded_side(Point_d)`, `has_on_boundary(Point_d)`, 
+and `has_on_unbounded_side(Point_d)`. Furthermore, there is a member
+function `bounded_side(Point_d)` returning an object of type
+`CGAL::Bounded_side`.
+<LI>Oriented objects have a member function `opposite()` returning
+the same object with opposite orientation.
+</UL>
+
+# Number-type based predicates #
+
+For a number of predicates, there are versions that operate on
+the coordinates directly, not on the geometric objects. These
+number-type based predicates ease re-use with non-<em>CGAL</em> types.
+
+\section secNewKernelTraits Missing functionality 
+
+ 
+Kernel traits should avoid 
+redundant functionality, or if similar functionality is implemented
+with a different API, then one should really implement the
+functionality and the others call that one.
+
+Whenever you need a predicate that is not present in the current kernel
+traits, you should first try to re-use the available predicates (you
+might rewrite the code or implement the new predicate using existing ones).
+If this is not feasible (especially for efficiency reasons), we have to 
+decide on adding the new predicate to the kernel traits. 
+If the new predicate is not too special, it will be added. 
+Otherwise you cannot use the kernel as a traits class, but have
+to use additional traits.
+
+See Section  \ref secCartesianHomogeneousComputation  on how to derive the
+homogeneous version of a predicate from the Cartesian version.
+
+*/
