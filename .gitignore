@@ -29,6 +29,8 @@ AABB_tree/test/AABB_tree/aabb_naive_vs_tree_distance_segment_test
 AABB_tree/test/AABB_tree/aabb_projection_triangle_test
 AABB_tree/test/AABB_tree/aabb_projection_triangle_test.vcproj
 AABB_tree/test/AABB_tree/cgal_test_with_cmake
+Algebraic_kernel_d/test/Algebraic_kernel_d/cgal_test_with_cmake
+Algebraic_kernel_d/test/Algebraic_kernel_d/rs_isolator
 Alpha_shapes_2/demo/Alpha_shapes_2/*.exe
 Alpha_shapes_2/demo/Alpha_shapes_2/*.vcproj
 Alpha_shapes_2/demo/Alpha_shapes_2/Makefile
@@ -53,6 +55,11 @@ Apollonius_graph_2/demo/Apollonius_graph_2/*.exe
 Apollonius_graph_2/demo/Apollonius_graph_2/*.vcproj
 Apollonius_graph_2/demo/Apollonius_graph_2/Makefile
 Apollonius_graph_2/demo/Apollonius_graph_2/apollonius_graph_2
+Arithmetic_kernel/test/Arithmetic_kernel/Arithmetic_kernel
+Arithmetic_kernel/test/Arithmetic_kernel/CORE_arithmetic_kernel
+Arithmetic_kernel/test/Arithmetic_kernel/GMP_arithmetic_kernel
+Arithmetic_kernel/test/Arithmetic_kernel/Get_arithmetic_kernel
+Arithmetic_kernel/test/Arithmetic_kernel/LEDA_arithmetic_kernel
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Bezier_curves
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/CMakeLists.txt
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/dual_lines
@@ -158,6 +165,10 @@ GraphicsView/src/CGAL_Qt4/*.so
 GraphicsView/src/CGAL_Qt4/Makefile
 GraphicsView/src/CGAL_Qt4/moc_*.cxx
 GraphicsView/src/CGAL_Qt4/qrc_*.cxx
+HalfedgeDS/test/HalfedgeDS/CMakeLists.txt
+HalfedgeDS/test/HalfedgeDS/cgal_test_with_cmake
+HalfedgeDS/test/HalfedgeDS/test_hds
+HalfedgeDS/test/HalfedgeDS/test_hds_decorator
 Installation/auxiliary/gdb/python/CGAL/__init__.pyc
 Installation/auxiliary/gdb/python/CGAL/printers.pyc
 Installation/auxiliary/gdb/test
@@ -165,6 +176,7 @@ Installation/cmake/modules/*.tmp
 Installation/test/Installation/cgal_test
 Installation/test/Installation/deprecation_warning
 Interpolation/demo/Interpolation/cgal_test_with_cmake
+Intersections_2/test/Intersections_2/CMakeLists.txt
 Intersections_3/test/Intersections_3/CMakeLists.txt
 Intersections_3/test/Intersections_3/bbox_other_do_intersect_test
 Intersections_3/test/Intersections_3/cgal_test_with_cmake
@@ -935,6 +947,7 @@ Polyhedron/demo/Polyhedron/ui_*.h
 Polyhedron/test/Polyhedron/*.kdev*
 Polyhedron/test/Polyhedron/CMakeLists.txt
 Polyhedron/test/Polyhedron/Makefile
+Polyhedron/test/Polyhedron/cgal_test_with_cmake
 Polyhedron/test/Polyhedron/test_polyhedron
 Polynomial/doc_html
 Polynomial/doc_pdf
