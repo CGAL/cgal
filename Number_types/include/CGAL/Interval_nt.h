@@ -75,7 +75,7 @@ public:
     : _inf(i), _sup(i) {}
 
   Interval_nt(long long i)
-    : _inf(i), _sup(i)
+    : _inf((double)i), _sup((double)i)
   {
     // gcc ignores -frounding-math when converting integers to floats.
 #ifdef __GNUC__
@@ -87,7 +87,7 @@ public:
   }
 
   Interval_nt(unsigned long long i)
-    : _inf(i), _sup(i)
+    : _inf((double)i), _sup((double)i)
   {
 #ifdef __GNUC__
     unsigned long long safe = 1ULL << 52; // Use numeric_limits?
