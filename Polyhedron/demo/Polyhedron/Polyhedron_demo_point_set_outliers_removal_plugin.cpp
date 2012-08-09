@@ -94,7 +94,7 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
                             nb_neighbors,
                             removed_percentage);
 
-    int nb_points_to_remove = std::distance(first_point_to_remove, points->end());
+    std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Simplification: " << nb_points_to_remove << " point(s) are selected ("
                                     << task_timer.time() << " seconds, "
