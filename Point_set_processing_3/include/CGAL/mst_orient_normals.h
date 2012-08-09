@@ -28,7 +28,7 @@
 #include <CGAL/Index_property_map.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/point_set_processing_assertions.h>
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 #include <iterator>
 #include <list>

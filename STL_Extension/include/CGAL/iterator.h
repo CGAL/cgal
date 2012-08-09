@@ -29,7 +29,7 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/assertions.h>
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 #include <vector>
 #include <map>
 #include <boost/type_traits.hpp>
