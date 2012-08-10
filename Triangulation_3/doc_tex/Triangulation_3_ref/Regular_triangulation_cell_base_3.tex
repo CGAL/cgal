@@ -21,6 +21,8 @@ The class \ccRefName\ is a model of the concept
 \ccc{RegularTriangulationCellBase_3}. It is the default face base class
 of regular triangulations.
 
+
+
 \ccInclude{CGAL/Regular_triangulation_cell_base_3.h}
 
 
@@ -40,10 +42,41 @@ instantiated by
 \ccInheritsFrom
 \ccc{Cb}
 
+\ccCreationVariable{c}
+
+ \ccAccessFunctions
+{\bf Circumcenters and weighted circumcenters}.
+As a model of the concept \ccc{RegularTriangulationCellBase_3} which
+refines \ccc{TriangulationCellBase_3}, the class \ccRefName\  provides a
+\ccc{circumcenter()} member fonction. In this model, we have choosen to
+override  the \ccc{circumcenter()} member fonction
+of the base class so that it returns
+ the {\bf weighted circumcenter} of the cell,  computed 
+ by the \ccc{ConstructWeightedCircumcenter} constructor of the traits class.
+In this way,  a class for the cells of regular triangulations with
+cached weighted circumcenters can be  simply obtained by plugging 
+\ccRefName\ in the second template parameter of 
+\ccc{CGAL::Triangulation_cell_base_with_circumcenter_3<RegularTriangulationTraits_3, CellBase_3>}.
+
+\ccMethod{Traits_3::Point_3& circumcenter(
+  const Traits_3&gt = Traits_3()) const;}
+{Returns the weighted circumcenter of the cell.}
+
+Be carefull that, thought the returned point is a
+\ccc{Traits::Point_3}
+which is supposed to be a \ccc{Traits::Weighted_point_3},
+the radius of the  weighted circumcenter is not supposed to be
+computed
+by the constructor  \ccc{ConstructWeightedCircumcenter} of the traits
+class
+so that the weight of the returned point is zero.
+
+
 \ccSeeAlso
 \ccc{RegularTriangulationCellBase_3} \\
 \ccc{RegularTriangulationTraits_3} \\
-\ccc{CGAL::Regular_triangulation_3<Traits,Tds>}
+\ccc{CGAL::Regular_triangulation_3<Traits,Tds>}\\
+\ccc{CGAL::Triangulation_cell_base_with_circumcenter_3<RegularTriangulationTraits_3, CellBase_3> }
 
 
 \end{ccRefClass}
