@@ -41,7 +41,7 @@
 #define CGAL_DEFAULT_NUMBER_OF_CLUSTERS 5
 #define CGAL_DEFAULT_SMOOTHING_LAMBDA 23.0
 #define CGAL_DEFAULT_CONE_ANGLE (2.0 / 3.0) * CGAL_PI
-#define CGAL_DEFAULT_NUMBER_OF_RAYS 25
+#define CGAL_DEFAULT_NUMBER_OF_RAYS 15
 //IOY: these are going to be removed at the end (no CGAL_ pref)
 #define ACTIVATE_SEGMENTATION_DEBUG
 #ifdef ACTIVATE_SEGMENTATION_DEBUG
@@ -56,8 +56,16 @@ namespace CGAL
 {
 
 /**
- * It is a connector class which uses soft clustering and graph cut in order to segment meshes.
- * All preprocessing and postprocessing issues are handled here.
+ * @brief Main entry point for mesh segmentation algorithm.
+ * It is a connector class which uses
+ *   - `SDF_calculation` for calculating sdf values
+ *   - `Expectation_maximization` for soft clustering
+ *   - `Alpha_expansion_graph_cut` for hard clustering
+ * Other than being a connector it is responsable for preprocess and postprocess on intermadiate data, which are:
+ *   - log-normalizing probabilities received from soft clustering
+ *   - log-normalizing and calculating dihedral-angle based weights for edges
+ *   - smoothing and log-normalizing sdf values received from sdf calculation
+ *   - assigning segment-id for each facet after hard clustering
  */
 template <
 class Polyhedron,
@@ -291,6 +299,7 @@ public:
 
 protected:
   double calculate_dihedral_angle_of_edge(Edge_const_handle& edge) const {
+    CGAL_precondition(!edge->is_border_edge());
     Facet_const_handle f1 = edge->facet();
     Facet_const_handle f2 = edge->opposite()->facet();
 
@@ -327,6 +336,7 @@ protected:
   }
 
   double calculate_dihedral_angle_of_edge_2(Edge_const_handle& edge) const {
+    CGAL_precondition(!edge->is_border_edge());
     const Point& a = edge->vertex()->point();
     const Point& b = edge->prev()->vertex()->point();
     const Point& c = edge->next()->vertex()->point();
@@ -416,7 +426,9 @@ protected:
         facet_it->facet_begin();
       double total_neighbor_sdf = 0.0;
       do {
-        total_neighbor_sdf += get(sdf_values, facet_circulator->opposite()->facet());
+        if(!facet_circulator->opposite()->is_border()) {
+          total_neighbor_sdf += get(sdf_values, facet_circulator->opposite()->facet());
+        }
       } while( ++facet_circulator !=  facet_it->facet_begin());
 
       total_neighbor_sdf /= 3.0;
@@ -464,7 +476,7 @@ protected:
           facet_it != mesh.facets_end(); ++facet_it) {
         //Find neighbors and put their sdf values into a list
         std::map<Facet_const_handle, int> neighbors;
-        get_neighbors_by_vertex(facet_it, neighbors, window_size);
+        get_neighbors_by_edge(facet_it, window_size, neighbors);
         std::vector<double> sdf_of_neighbors;
         for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
             it != neighbors.end(); ++it) {
@@ -501,7 +513,7 @@ protected:
           facet_it != mesh.facets_end(); ++facet_it) {
         //Facet_handle facet = facet_it;
         std::map<Facet_const_handle, int> neighbors;
-        get_neighbors_by_edge(facet_it, neighbors, window_size);
+        get_neighbors_by_edge(facet_it, window_size, neighbors);
 
         double total_sdf_value = 0.0, total_weight = 0.0;
         double current_sdf_value = get(sdf_values, facet_it);
@@ -543,8 +555,14 @@ protected:
     return static_cast<int>(facet_sqrt) + 1;
   }
 
-  void get_neighbors_by_edge(Facet_const_handle& facet,
-                             std::map<Facet_const_handle, int>& neighbors, int max_level) {
+  /**
+   * Breadth-first search on facets, by treating facets, which share a common edge, are 1-level neighbors.
+   * @param facet root facet
+   * @param max_level maximum distance (number of edges) between root facet and visited facet
+   * @param[out] neighbors visited facets and their distances to root facet
+   */
+  void get_neighbors_by_edge(Facet_const_handle& facet, int max_level,
+                             std::map<Facet_const_handle, int>& neighbors) {
     typedef std::pair<Facet_const_handle, int> facet_level_pair;
     std::queue<facet_level_pair> facet_queue;
     facet_queue.push(facet_level_pair(facet, 0));
@@ -555,14 +573,22 @@ protected:
         typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
           pair.first->facet_begin();
         do {
-          facet_queue.push(facet_level_pair(facet_circulator->opposite()->facet(),
-                                            pair.second + 1));
+          if(!facet_circulator->opposite()->is_border()) {
+            facet_queue.push(facet_level_pair(facet_circulator->opposite()->facet(),
+                                              pair.second + 1));
+          }
         } while(++facet_circulator != pair.first->facet_begin());
       }
       facet_queue.pop();
     }
   }
 
+  /**
+   * Breadth-first search on facets, by treating facets, which share a common vertex, are 1-level neighbors.
+   * @param facet root facet
+   * @param max_level maximum distance (number of edges) between root facet and visited facet
+   * @param[out] neighbors visited facets and their distances to root facet
+   */
   void get_neighbors_by_vertex(Facet_const_handle& facet,
                                std::map<Facet_const_handle, int>& neighbors, int max_level) {
     typedef std::pair<Facet_const_handle, int> facet_level_pair;
@@ -579,7 +605,9 @@ protected:
           typename Facet::Halfedge_around_vertex_const_circulator vertex_circulator =
             vertex->vertex_begin();
           do { // for each vertex loop on incoming edges (through those edges loop on neighbor facets which includes the vertex)
-            facet_queue.push(facet_level_pair(vertex_circulator->facet(), pair.second + 1));
+            if(!vertex_circulator->is_border()) {
+              facet_queue.push(facet_level_pair(vertex_circulator->facet(), pair.second + 1));
+            }
           } while(++vertex_circulator != vertex->vertex_begin());
         } while((edge = edge->next()) != facet->halfedge());
       }
@@ -587,6 +615,12 @@ protected:
     }
   }
 
+  /**
+   * Finds facets which have zero sdf values.
+   * Sdf values on these facets are assigned to average sdf value of its neighbors.
+   * If still there is any facet which has no sdf value, assigns minimum sdf value to it.
+   * This is meaningful since (being an outlier) zero sdf values might effect normalization & log extremely.
+   */
   void check_zero_sdf_values() {
     // If there is any facet which has no sdf value, assign average sdf value of its neighbors
     for(Facet_const_iterator facet_it = mesh.facets_begin();
@@ -596,7 +630,9 @@ protected:
           facet_it->facet_begin();
         double total_neighbor_sdf = 0.0;
         do {
-          total_neighbor_sdf += get(sdf_values, facet_circulator->opposite()->facet());
+          if(!facet_circulator->opposite()->is_border()) {
+            total_neighbor_sdf += get(sdf_values, facet_circulator->opposite()->facet());
+          }
         } while( ++facet_circulator !=  facet_it->facet_begin());
         get(sdf_values, facet_it) = total_neighbor_sdf / 3.0;
       }
@@ -619,19 +655,32 @@ protected:
     }
   }
 
+  /**
+   * Receives probability-matrix with probabilities betwen [0-1], and returns log-normalized probabilities
+   * which are suitable to use in graph-cut.
+   * @param[in][out] probabilities probability matrix in [center][facet] order
+   */
   void log_normalize_probability_matrix(std::vector<std::vector<double> >&
                                         probabilities) const {
     const double epsilon = 1e-5;
     for(std::vector<std::vector<double> >::iterator it_i = probabilities.begin();
         it_i != probabilities.end(); ++it_i) {
       for(std::vector<double>::iterator it = it_i->begin(); it != it_i->end(); ++it) {
-        double probability = (std::max)(*it, epsilon);
+        double probability = (std::max)(*it,
+                                        epsilon); // give any facet a little probability to be in any cluster
         probability = -log(probability);
-        *it = (std::max)(probability, std::numeric_limits<double>::epsilon());
+        *it = (std::max)(probability,
+                         std::numeric_limits<double>::epsilon()); // zero values are not accepted in max-flow
       }
     }
   }
 
+  /**
+   * Calculates dihedral-angle based weight for each edge which is not a border edge.
+   * @param smoothing_lambda a factor for each weight (weight *= smoothing_lambda).
+   * @param edges list of pair of facet-ids
+   * @param edge_weights calculated weight for each edge in @a edges
+   */
   void calculate_and_log_normalize_dihedral_angles(double smoothing_lambda,
       std::vector<std::pair<int, int> >& edges,
       std::vector<double>& edge_weights) const {
@@ -639,6 +688,9 @@ protected:
     //edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
     for(Edge_const_iterator edge_it = mesh.edges_begin();
         edge_it != mesh.edges_end(); ++edge_it) {
+      if(edge_it->is_border_edge()) {
+        continue;  // if edge does not contain two neighbor facets then do not include it in graph-cut
+      }
       const int index_f1 = boost::get(facet_index_map, edge_it->facet());
       const int index_f2 = boost::get(facet_index_map, edge_it->opposite()->facet());
       edges.push_back(std::pair<int, int>(index_f1, index_f2));
@@ -655,34 +707,53 @@ protected:
     }
   }
 
+  /**
+   * Assigns a segment-id to each facet.
+   * Segment is a connected set of facets which are placed under same cluster (after graph-cut).
+   */
   void assign_segments() {
     segments = std::vector<int>(mesh.size_of_facets(), -1);
     int segment_id = 0;
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
-      if(get(segments, facet_it) == -1) {
-        depth_first_traversal(facet_it, segment_id);
-        segment_id++;
+      if(get(segments, facet_it) == -1) { // not visited by depth_first_traversal
+        depth_first_traversal(facet_it, segment_id++);
       }
     }
   }
 
+  /**
+   * Depth-first traverse all connected facets which has same cluster with @a facet.
+   * Each visited facet assigned to @a segment_id.
+   * @param facet root facet
+   * @param segment_id segment-id of root facet
+   */
   void depth_first_traversal(Facet_const_handle& facet, int segment_id) {
     get(segments, facet) = segment_id;
     typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
       facet->facet_begin();
     double total_neighbor_sdf = 0.0;
     do {
+      if(facet_circulator->opposite()->is_border()) {
+        continue;  // no facet to traversal
+      }
       Facet_const_handle neighbor = facet_circulator->opposite()->facet();
-      if(get(segments, neighbor) == -1
-          && get(centers, facet) == get(centers, neighbor)) {
+
+      bool not_visited_before = get(segments, neighbor) == -1;
+      bool under_same_cluster = get(centers, facet) == get(centers, neighbor);
+
+      if(not_visited_before && under_same_cluster) {
         depth_first_traversal(neighbor, segment_id);
       }
     } while( ++facet_circulator !=  facet->facet_begin());
   }
 
-
-
+  /**
+   * Every assosiated data with facets are stored using vectors.
+   * These data are reached using facet-ids which are received by facet_index_map property-map.
+   * @param data associated data vector with facets
+   * @param facet key to reach associated data
+   */
   template<class T>
   T& get(std::vector<T>& data, const Facet_const_handle& facet) {
     return data[ boost::get(facet_index_map, facet) ];
@@ -691,6 +762,7 @@ protected:
   double gaussian_function(double value, double deviation) {
     return exp(-0.5 * (std::pow(value / deviation, 2)));
   }
+
 public:
   /**
    * Going to be removed
