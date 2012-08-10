@@ -79,7 +79,7 @@ protected:
     /**
      * Finds closest center and adds itself to the closest center's mean.
      * @param centers available centers
-     * @return true if #center_id is changed (i.e. previous center is changed)
+     * @return true if #center_id is changed (i.e. new center != previous center)
      */
     bool calculate_new_center(std::vector<K_means_center>& centers) {
       int new_center_id = 0;
@@ -155,11 +155,8 @@ protected:
     centers.clear();
     for(int i = 0; i < number_of_centers; ++i) {
       double initial_mean = points[rand() % points.size()].data;
-      K_means_center new_center(initial_mean);
-      if(is_already_center(new_center)) {
+      if(!make_center(initial_mean)) {
         --i;
-      } else {
-        centers.push_back(new_center);
       }
     }
   }
@@ -178,7 +175,7 @@ protected:
     // say, distance_square -> [ 0.1, 0.2, 0.3, 0.4, ... ]
     // then corresponding distance_square_cumulative -> [ 0.1, 0.3, 0.6, 1, ...]
     double initial_mean = points[rand() % points.size()].data;
-    centers.push_back(K_means_center(initial_mean));
+    make_center(initial_mean);
 
     for(int i = 1; i < number_of_centers; ++i) {
       double cumulative_distance_square = 0.0;
@@ -193,15 +190,12 @@ protected:
 
       double random_ds = (rand() / static_cast<double>(RAND_MAX)) *
                          (distance_square_cumulative.back());
-      int selection_index = lower_bound(distance_square_cumulative.begin(),
-                                        distance_square_cumulative.end(), random_ds)
+      int selection_index = std::lower_bound(distance_square_cumulative.begin(),
+                                             distance_square_cumulative.end(), random_ds)
                             - distance_square_cumulative.begin();
       double initial_mean = points[selection_index].data;
-      K_means_center new_center(initial_mean);
-      if(is_already_center(new_center)) {
+      if(!make_center(initial_mean)) {
         --i;
-      } else {
-        centers.push_back(new_center);
       }
     }
   }
@@ -221,6 +215,19 @@ protected:
     return false;
   }
 
+  /**
+   * Adds @a value as a center if it is not previously added
+   * @param value to become a center
+   * @return true if center addition is succesful
+   */
+  bool make_center(double value) {
+    K_means_center new_center(value);
+    if(is_already_center(new_center)) {
+      return false;
+    }
+    centers.push_back(new_center);
+    return true;
+  }
   /**
    * Main entry point for k-means algorithm.
    * Iterates until convergence occurs (i.e. no point changes its center) or maximum iteration limit is reached.

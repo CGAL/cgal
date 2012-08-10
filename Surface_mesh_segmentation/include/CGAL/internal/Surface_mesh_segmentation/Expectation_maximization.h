@@ -103,7 +103,7 @@ public:
   Expectation_maximization() { }
   /**
    * Constructs structures and runs the algorithm.
-   * EM algorithm is repeated number_of_run times, and the result which has maximum likelihood is kept.
+   * EM algorithm is repeated @a number_of_run times, and the result which has maximum likelihood is kept.
    * @param number_of_centers
    * @param data
    * @param init_type initialization type for random center selection
@@ -244,13 +244,9 @@ protected:
     for(int i = 0; i < number_of_centers; ++i) {
       int random_index = rand() % points.size();
       double initial_mean = points[random_index];
-      Gaussian_center new_center(initial_mean, initial_deviation,
-                                 initial_mixing_coefficient);
       // if same point is choosen as a center twice, algorithm will not work
-      if(is_already_center(new_center)) {
+      if(!make_center(initial_mean, initial_deviation, initial_mixing_coefficient)) {
         --i;
-      } else {
-        centers.push_back(new_center);
       }
     }
     calculate_initial_deviations();
@@ -273,8 +269,7 @@ protected:
     // say, distance_square -> [ 0.1, 0.2, 0.3, 0.4, ... ]
     // then corresponding distance_square_cumulative -> [ 0.1, 0.3, 0.6, 1, ...]
     double initial_mean = points[rand() % points.size()];
-    centers.push_back(Gaussian_center(initial_mean, initial_deviation,
-                                      initial_mixing_coefficient));
+    make_center(initial_mean, initial_deviation, initial_mixing_coefficient);
 
     for(int i = 1; i < number_of_centers; ++i) {
       double cumulative_distance_square = 0.0;
@@ -289,17 +284,13 @@ protected:
 
       double random_ds = (rand() / static_cast<double>(RAND_MAX)) *
                          (distance_square_cumulative.back());
-      int selection_index = lower_bound(distance_square_cumulative.begin(),
-                                        distance_square_cumulative.end(), random_ds)
+      int selection_index = std::lower_bound(distance_square_cumulative.begin(),
+                                             distance_square_cumulative.end(), random_ds)
                             - distance_square_cumulative.begin();
       double initial_mean = points[selection_index];
-      Gaussian_center new_center(initial_mean, initial_deviation,
-                                 initial_mixing_coefficient);
       // if same point is choosen as a center twice, algorithm will not work
-      if(is_already_center(new_center)) {
+      if(!make_center(initial_mean, initial_deviation, initial_mixing_coefficient)) {
         --i;
-      } else {
-        centers.push_back(new_center);
       }
     }
     calculate_initial_deviations();
@@ -356,6 +347,21 @@ protected:
     return false;
   }
 
+  /**
+   * Adds @a value as a center if it is not previously added
+   * @param mean
+   * @param deviation
+   * @param mixing_coefficient
+   * @return true if center addition is succesful
+   */
+  bool make_center(double mean, double deviation, double mixing_coefficient) {
+    Gaussian_center new_center(mean, deviation, mixing_coefficient);
+    if(is_already_center(new_center)) {
+      return false;
+    }
+    centers.push_back(new_center);
+    return true;
+  }
   //Main steps of EM algorithm
 
   /**
