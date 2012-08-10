@@ -274,7 +274,7 @@ std::istream &operator>>(std::istream &is, Color& col)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
-    col = Color(r,g,b);
+    col = Color((unsigned char)r,(unsigned char)g,(unsigned char)b);
     return is;
 }
 

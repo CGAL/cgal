@@ -228,7 +228,7 @@ public:
 
     //! constructor of Residue, from long 
     Residue(long n){
-        x_= RES_reduce(n);
+        x_= RES_reduce((double)n);
     }
    
     //! Access operator for x, \c const 

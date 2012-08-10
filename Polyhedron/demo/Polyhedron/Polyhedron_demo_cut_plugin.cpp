@@ -233,7 +233,7 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
 
   // Hide polyhedrons and call cut() (avoid that nothing shows up until user
   // decides to move the plane item)
-  for(size_t i = 0, end = scene->numberOfEntries(); i < end; ++i) {
+  for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
     Scene_item* item = scene->item(i);
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
     if ( NULL != poly_item )
@@ -261,7 +261,7 @@ void Polyhedron_demo_cut_plugin::cut() {
   edges_item->edges.clear();
   QTime time;
   time.start();
-  for(size_t i = 0, end = scene->numberOfEntries(); i < end; ++i) {
+  for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
     Scene_item* item = scene->item(i);
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
     if(!poly_item) continue;
