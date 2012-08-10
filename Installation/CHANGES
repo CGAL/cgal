@@ -6,8 +6,11 @@ Release date:
 
 * Installation
 
-  - CGAL-4.1 no longer supports the Intel Compiler version 11.0. The Intel
-    Compiler version 12.1 is supported instead.
+  - Additional supported platforms:
+
+      - The Apple Clang compiler versions 3.1 and 3.2 are now supported on
+        Mac OS X.
+
 
   - Improved configuration for essential and optional external third party
     software
