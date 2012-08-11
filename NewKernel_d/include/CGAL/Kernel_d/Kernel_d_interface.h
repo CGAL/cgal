@@ -23,6 +23,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Base::template Functor<Less_or_equal_lexicographically_tag>::type Less_or_equal_lexicographically_d;
 	// FIXME: and vectors?
 	typedef typename Base::template Functor<Orientation_of_points_tag>::type Orientation_d;
+	typedef typename Base::template Functor<Less_point_cartesian_coordinate_tag>::type Less_coordinate_d;
 	typedef typename Base::template Functor<Point_dimension_tag>::type Point_dimension_d;
 	typedef typename Base::template Functor<Side_of_oriented_sphere_tag>::type Side_of_oriented_sphere_d;
 	typedef typename Base::template Functor<Contained_in_affine_hull_tag>::type Contained_in_affine_hull_d;
@@ -34,6 +35,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Base::template Functor<Construct_ttag<Point_tag> >::type Construct_point_d;
 	typedef typename Base::template Functor<Construct_ttag<Vector_tag> >::type Construct_vector_d;
 	typedef typename Base::template Functor<Construct_ttag<Segment_tag> >::type Construct_segment_d;
+	typedef typename Base::template Functor<Midpoint_tag>::type Midpoint_d;
 	struct Component_accessor_d : private Store_kernel<R_> {
 	  CGAL_FUNCTOR_INIT_STORE(Component_accessor_d)
 	  typedef typename Base::Point Point;
@@ -77,6 +79,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Equal_d equal_d_object()const{ return Equal_d(*this); }
 	Less_lexicographically_d less_lexicographically_d_object()const{ return Less_lexicographically_d(*this); }
 	Less_or_equal_lexicographically_d less_or_equal_lexicographically_d_object()const{ return Less_or_equal_lexicographically_d(*this); }
+	Less_coordinate_d less_coordinate_d_object()const{ return Less_coordinate_d(*this); }
 	Orientation_d orientation_d_object()const{ return Orientation_d(*this); }
 	Point_dimension_d point_dimension_d_object()const{ return Point_dimension_d(*this); }
 	Side_of_oriented_sphere_d side_of_oriented_sphere_d_object()const{ return Side_of_oriented_sphere_d(*this); }
@@ -86,8 +89,12 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	In_flat_side_of_oriented_sphere_d in_flat_side_of_oriented_sphere_d_object()const{ return In_flat_side_of_oriented_sphere_d(*this); }
 	Point_to_vector_d point_to_vector_d_object()const{ return Point_to_vector_d(*this); }
 	Vector_to_point_d vector_to_point_d_object()const{ return Vector_to_point_d(*this); }
+	Midpoint_d midpoint_d_object()const{ return Midpoint_d(*this); }
 	Component_accessor_d component_accessor_d_object()const{ return Component_accessor_d(*this); }
 	Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object()const{ return Construct_cartesian_const_iterator_d(*this); }
+	Construct_point_d construct_point_d_object()const{ return Construct_point_d(*this); }
+	Construct_vector_d construct_vector_d_object()const{ return Construct_vector_d(*this); }
+	Construct_segment_d construct_segment_d_object()const{ return Construct_segment_d(*this); }
 };
 }
 
