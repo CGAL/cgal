@@ -11,6 +11,7 @@ namespace CGAL {
 template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef Base_ Base;
 	typedef Kernel_d_interface<Base> Kernel;
+	typedef Kernel R_; // for the macros
 	typedef typename Base::Flat_orientation Flat_orientation_d;
 	typedef typename Base::Point Point_d;
 	typedef typename Base::Vector Vector_d;
@@ -41,10 +42,30 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	    return this->kernel().compute_coordinate_d_object()(p);
 	  }
 	  RT homogeneous(Point const&p, int i){
+	    throw "not implemented yet";
+	    return 0;
 	    // FIXME
-	    return this->kernel().compute_coordinate_d_object()(p);
+	    //return this->kernel().compute_coordinate_d_object()(p);
 	  }
 	};
+	struct Construct_cartesian_const_iterator_d : private Store_kernel<Kernel_d_interface> {
+	  CGAL_FUNCTOR_INIT_STORE(Construct_cartesian_const_iterator_d)
+	  typedef typename Base::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
+	  typedef typename Base::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CVI;
+	  typedef typename CGAL::decay<typename boost::result_of<CPI(Point_d,CGAL::Begin_tag)>::type>::type result_type;
+	  // Kernel_d requires a common iterator type for points and vectors
+	  // TODO: provide this mixed functor in preKernel?
+	  CGAL_static_assertion((boost::is_same<typename CGAL::decay<typename boost::result_of<CVI(Vector_d,CGAL::Begin_tag)>::type>::type, result_type>::value));
+	  template <class Tag>
+	  result_type operator()(Point_d const&p, Tag t)const{
+	    return CPI(this->kernel())(p,t);
+	  }
+	  template <class Tag>
+	  result_type operator()(Vector_d const&v, Tag t)const{
+	    return CVI(this->kernel())(v,t);
+	  }
+	};
+	typedef typename Construct_cartesian_const_iterator_d::result_type Cartesian_const_iterator_d;
 
 
 	Compute_coordinate_d compute_coordinate_d_object()const{ return Compute_coordinate_d(*this); }
@@ -62,6 +83,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Point_to_vector_d point_to_vector_d_object()const{ return Point_to_vector_d(*this); }
 	Vector_to_point_d vector_to_point_d_object()const{ return Vector_to_point_d(*this); }
 	Component_accessor_d component_accessor_d_object()const{ return Component_accessor_d(*this); }
+	Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object()const{ return Construct_cartesian_const_iterator_d(*this); }
 };
 }
 
