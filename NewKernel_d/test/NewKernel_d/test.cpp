@@ -64,21 +64,12 @@ typedef CGAL::Cartesian_wrap<K3> KK;
 #endif
 
 template<class Ker>
-void test(){
-#if 0
+void test2(){
   typedef Ker K1;
-  typedef typename K1::Type<CGAL::Point_tag>::type P;
-  typedef typename K1::Iterator<CGAL::Point_cartesian_const_iterator_tag>::type CI;
-  typedef typename K1::Type<CGAL::Vector_tag>::type V;
-  typedef typename K1::Type<CGAL::Segment_tag>::type S;
-#elif 1
-  //typedef CGAL::Define_kernel_types<Ker> K1;
-  typedef Ker K1;
-  typedef typename K1::Point P;
-  //typedef typename K1::Point_cartesian_const_iterator CI;
-  typedef typename K1::Vector V;
-  typedef typename K1::Segment S;
-#endif
+  typedef typename K1::Point_d P;
+  typedef typename K1::Cartesian_const_iterator_d CI;
+  typedef typename K1::Vector_d V;
+  typedef typename K1::Segment_d S;
 
 #if 1
 #define Kinit (k)
@@ -87,15 +78,14 @@ void test(){
 #endif
 
   //typedef K1::Construct_point CP;
-  typedef typename K1::template Functor<CGAL::Construct_ttag<CGAL::Point_tag> >::type CP;
-  typedef typename K1::template Functor<CGAL::Construct_ttag<CGAL::Vector_tag> >::type CV;
-  typedef typename K1::template Functor<CGAL::Construct_ttag<CGAL::Segment_tag> >::type CS;
+  typedef typename K1::Construct_point_d CP;
+  typedef typename K1::Construct_vector_d CV;
+  typedef typename K1::Construct_segment_d CS;
   typedef typename K1::template Functor<CGAL::Segment_extremity_tag>::type CSE;
-  typedef typename K1::template Functor<CGAL::Construct_ttag<CGAL::Point_cartesian_const_iterator_tag> >::type CCI;
-  typedef typename K1::template Functor<CGAL::Orientation_of_points_tag>::type PO;
-  typedef typename K1::template Functor<CGAL::Side_of_oriented_sphere_tag>::type SOS;
-  typedef typename K1::template Functor<CGAL::Compute_point_cartesian_coordinate_tag>::type CC;
-  typedef typename CGAL::decay<typename boost::result_of<CCI(P,CGAL::Begin_tag)>::type>::type CI;
+  typedef typename K1::Construct_cartesian_const_iterator_d CCI;
+  typedef typename K1::Orientation_d PO;
+  typedef typename K1::Side_of_oriented_sphere_d SOS;
+  typedef typename K1::Compute_coordinate_d CC;
 
   USE_TYPE(V);
   USE_TYPE(CV);
@@ -126,5 +116,5 @@ void test(){
   std::cout << sos(&tab[0],tab+4) << std::endl;
 }
 int main(){
-  test<KK>();
+  test2<CGAL::Kernel_d_interface<KK> >();
 }

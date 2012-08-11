@@ -11,16 +11,17 @@ namespace CGAL {
 template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef Base_ Base;
 	typedef Kernel_d_interface<Base> Kernel;
-	typedef Kernel R_; // for the macros
+	typedef Base_ R_; // for the macros
 	typedef typename Base::Flat_orientation Flat_orientation_d;
 	typedef typename Base::Point Point_d;
 	typedef typename Base::Vector Vector_d;
-	//typedef typename Base::Segment Segment_d;
+	typedef typename Base::Segment Segment_d;
 	typedef typename Base::template Functor<Compute_point_cartesian_coordinate_tag>::type Compute_coordinate_d;
 	typedef typename Base::template Functor<Compare_lexicographically_tag>::type Compare_lexicographically_d;
 	typedef typename Base::template Functor<Equal_points_tag>::type Equal_d;
 	typedef typename Base::template Functor<Less_lexicographically_tag>::type Less_lexicographically_d;
 	typedef typename Base::template Functor<Less_or_equal_lexicographically_tag>::type Less_or_equal_lexicographically_d;
+	// FIXME: and vectors?
 	typedef typename Base::template Functor<Orientation_of_points_tag>::type Orientation_d;
 	typedef typename Base::template Functor<Point_dimension_tag>::type Point_dimension_d;
 	typedef typename Base::template Functor<Side_of_oriented_sphere_tag>::type Side_of_oriented_sphere_d;
@@ -30,7 +31,10 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Base::template Functor<In_flat_side_of_oriented_sphere_tag>::type In_flat_side_of_oriented_sphere_d;
 	typedef typename Base::template Functor<Point_to_vector_tag>::type Point_to_vector_d;
 	typedef typename Base::template Functor<Vector_to_point_tag>::type Vector_to_point_d;
-	struct Component_accessor_d : private Store_kernel<Kernel_d_interface> {
+	typedef typename Base::template Functor<Construct_ttag<Point_tag> >::type Construct_point_d;
+	typedef typename Base::template Functor<Construct_ttag<Vector_tag> >::type Construct_vector_d;
+	typedef typename Base::template Functor<Construct_ttag<Segment_tag> >::type Construct_segment_d;
+	struct Component_accessor_d : private Store_kernel<R_> {
 	  CGAL_FUNCTOR_INIT_STORE(Component_accessor_d)
 	  typedef typename Base::Point Point;
 	  typedef typename Base::RT RT;
@@ -48,7 +52,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	    //return this->kernel().compute_coordinate_d_object()(p);
 	  }
 	};
-	struct Construct_cartesian_const_iterator_d : private Store_kernel<Kernel_d_interface> {
+	struct Construct_cartesian_const_iterator_d : private Store_kernel<R_> {
 	  CGAL_FUNCTOR_INIT_STORE(Construct_cartesian_const_iterator_d)
 	  typedef typename Base::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
 	  typedef typename Base::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CVI;
