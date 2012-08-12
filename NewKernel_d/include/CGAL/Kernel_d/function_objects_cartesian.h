@@ -136,6 +136,7 @@ template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : priv
 	result_type operator()(Iter f, Iter e)const{ \
 		Point const&x=*f; \
 		BOOST_PP_REPEAT(N,VAR3,) \
+		CGAL_assertion(++f==e); \
 		return operator()(x,BOOST_PP_ENUM_PARAMS(N,p)); \
 	} \
 };

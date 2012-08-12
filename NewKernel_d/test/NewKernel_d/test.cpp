@@ -72,9 +72,9 @@ void test2(){
   typedef typename K1::Segment_d S;
 
 #if 1
-#define Kinit (k)
+#define Kinit(f) =k.f()
 #else
-#define Kinit
+#define Kinit(f)
 #endif
 
   //typedef K1::Construct_point CP;
@@ -90,13 +90,13 @@ void test2(){
   USE_TYPE(V);
   USE_TYPE(CV);
   Ker k;
-  CP cp Kinit;
-  CCI ci Kinit;
-  CC cc Kinit;
-  PO po Kinit;
-  CS cs Kinit;
-  CSE cse Kinit;
-  SOS sos Kinit;
+  CP cp Kinit(construct_point_d_object);
+  CCI ci Kinit(construct_cartesian_const_iterator_d_object);
+  CC cc Kinit(compute_coordinate_d_object);
+  PO po Kinit(orientation_d_object);
+  CS cs Kinit(construct_segment_d_object);
+  CSE cse (k);
+  SOS sos Kinit(side_of_oriented_sphere_d_object);
   P a=cp(3,4);
   P b=cp(5,6,7);
   int rr[]={3,5,2};

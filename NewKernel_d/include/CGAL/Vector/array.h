@@ -136,7 +136,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
 	static Vector_const_iterator vector_end(Vector const&a){
 		return &a[0]+d_; // Don't know the real size
 	}
-	static unsigned size_of_vector(Vector const&a){
+	static unsigned size_of_vector(Vector const&){
 		return d_; // Don't know the real size
 	}
 
