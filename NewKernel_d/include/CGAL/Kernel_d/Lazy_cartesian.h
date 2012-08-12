@@ -115,6 +115,8 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
     typedef typename Exact_kernel::Kernel_tag Kernel_tag;
     typedef typename Exact_kernel::Default_ambient_dimension Default_ambient_dimension;
     typedef typename Exact_kernel::Max_ambient_dimension Max_ambient_dimension;
+    typedef typename Exact_kernel::Flat_orientation Flat_orientation;
+    // Check that Approximate_kernel agrees with all that...
 
     typedef typename Same_uncertainty_nt<bool, FT>::type
 	    Boolean;
