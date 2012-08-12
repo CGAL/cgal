@@ -41,6 +41,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Arr_algebraic_segment_traits_2.h>
 
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
 #include <CGAL/Arr_simple_point_location.h>
@@ -300,6 +301,11 @@ typedef CGAL::Arr_walk_along_line_point_location<Arc_arr>
 typedef CGAL::Arr_landmarks_point_location<Arc_arr>
   Arc_landmarks_point_location;
 #endif
+
+typedef Nt_traits::Integer Coefficient;
+typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > Alg_seg_traits;
+typedef Dcel< Alg_seg_traits > Alg_seg_dcel;
+typedef CGAL::Arrangement_with_history_2< Alg_seg_traits, Alg_seg_dcel > Alg_seg_arr;
 
 template <class Arrangement_>
 class My_observer : public CGAL::Arr_observer<Arrangement_>

@@ -108,3 +108,5 @@ target_link_libraries( arrangement_2b
     ${CGAL_3RD_PARTY_LIBRARIES}
     ${QT_LIBRARIES}
 )
+
+add_subdirectory( tests )

@@ -415,6 +415,10 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/forms.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/overlay_functor.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/qt_layer.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/qt_layer.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/tests/CMakeLists.txt -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/tests/Test.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/tests/TestAlgebraic.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/tests/TestRayPL.cpp -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Arrangement_2.png -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.pdf -text svneol=unset#application/pdf

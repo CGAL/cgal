@@ -4,6 +4,7 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_circular_arc_traits_2.h>
+#include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Qt/Converter.h>
 #include <QGraphicsSceneMouseEvent>
@@ -122,27 +123,47 @@ public:
     typedef typename ArrTraits::Point_2 Point_2;
 };
 
+template < class Coefficient_ >
+class ArrTraitsAdaptor< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
+{
+public:
+    typedef Coefficient_ Coefficient;
+    typedef typename CGAL::Arr_algebraic_segment_traits_2< Coefficient > ArrTraits;
+    typedef typename ArrTraits::Point_2 Point_2; // CKvA_2
+    //typedef typename ArrTraits::CKvA_2 Kernel;
+};
+
 template < class ArrTraits >
 class Compute_squared_distance_2_base : public QGraphicsSceneMixin
 {
 public:
     typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
     typedef typename Kernel::FT FT;
+    typedef CGAL::Cartesian< double > CoordKernel;
 
 public: // ctors
     Compute_squared_distance_2_base( )
     { }
 
 public: // methods
+#if 0
     template < class T1, class T2 >
     FT
     operator() ( const T1& t1, const T2& t2 ) const
     {
         return this->squared_distance( t1, t2 );
     }
+#endif
+
+    template < class T1, class T2 >
+    double operator() ( const T1& t1, const T2& t2 )
+    {
+        return this->squaredDistance( t1, t2 );
+    }
 
 protected: // fields
     typename Kernel::Compute_squared_distance_2 squared_distance;
+    CoordKernel::Compute_squared_distance_2 squaredDistance;
 };
 
 template < class ArrTraits >
@@ -162,13 +183,13 @@ public:
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
-    FT operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
+    double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
     {
         Point_2 p1 = c.source( );
         Point_2 p2 = c.target( );
         Segment_2 seg( p1, p2 );
 
-        return this->squared_distance( p, seg );
+        return CGAL::to_double( this->squared_distance( p, seg ) );
     }
 };
 
@@ -187,26 +208,28 @@ public:
     typedef typename Kernel::Line_2 Line_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
-    FT operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
+    double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
     {
         Segment_2 seg;
         Ray_2 ray;
         Line_2 line;
+        FT res;
         if ( c.is_segment( ) )
         {
             seg = c.segment( );
-            return this->squared_distance( p, seg );
+            res = this->squared_distance( p, seg );
         }
         else if ( c.is_ray( ) )
         {
             ray = c.ray( );
-            return this->squared_distance( p, ray );
+            res = this->squared_distance( p, ray );
         }
         else // ( c.is_line( ) )
         {
             line = c.line( );
-            return this->squared_distance( p, line );
+            res = this->squared_distance( p, line );
         }
+        return CGAL::to_double( res );
     }
 };
 
@@ -225,7 +248,7 @@ public:
     typedef typename Curve_2::const_iterator Curve_const_iterator;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
-    FT operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
+    double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
     {
         Curve_const_iterator ps = c.begin();
         Curve_const_iterator pt = ps; pt++;
@@ -247,7 +270,7 @@ public:
             ps++; pt++;
         }
 
-        return min_dist;
+        return CGAL::to_double( min_dist );
     }
 };
 
@@ -266,12 +289,13 @@ public: // typedefs
     typedef typename Kernel::FT FT;
 
 public: // methods
-    FT operator() ( const Point_2& p, const X_monotone_curve_2& c )
+    double operator() ( const Point_2& p, const X_monotone_curve_2& c )
     {
         // TODO: implement it correctly
         Non_arc_point_2 center = c.center( );
         Non_arc_point_2 pp( CGAL::to_double(p.x()), CGAL::to_double(p.y()) );
-        return CGAL::squared_distance( pp, center );
+        FT res = CGAL::squared_distance( pp, center );
+        return CGAL::to_double( res );
     }
 };
 
@@ -291,7 +315,7 @@ public:
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
 public: // methods
-    FT operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
+    double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
     {
         // Get the co-ordinates of the curve's source and target.
         double sx = CGAL::to_double( c.source( ).x( ) ),
@@ -305,7 +329,8 @@ public: // methods
             Point_2 pt = c.target( );
             Segment_2 seg( ps, pt );
 
-            return CGAL::squared_distance( p, seg );
+            FT res = CGAL::squared_distance( p, seg );
+            return CGAL::to_double( res );
         }
         else
         {
@@ -359,7 +384,7 @@ public: // methods
                 p_next++;
             } while ( p_next != end_pts );
 
-            return min_dist;
+            return CGAL::to_double( min_dist );
         }
     }
 };
@@ -776,6 +801,7 @@ protected:
 };
 
 
+// FIXME: return Traits::Point_2 instead of Kernel::Point_2
 template < class K_ >
 class SnapStrategy : public QGraphicsSceneMixin
 {
@@ -1108,6 +1134,18 @@ protected: // member fields
     Point_location_strategy pointLocationStrategy;
 
 }; // class Find_nearest_edge
+
+#if 0
+template < class Arr_, class Coefficient_ >
+class Find_nearest_edge< Arr_, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >: public Find_nearest_edge_base
+{
+public:
+    Halfedge_const_handle operator()( const Point_2& queryPt )
+    {
+
+    }
+};
+#endif
 
 template < class Arr_, class Kernel_ >
 class Find_nearest_edge< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > >: public Find_nearest_edge_base

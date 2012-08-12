@@ -751,6 +751,32 @@ public: // methods
     }
 };
 
+template < class Coefficient_ >
+class ArrangementPainterOstream< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >:
+    public ArrangementPainterOstreamBase< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
+{
+public:
+    typedef Coefficient_ Coefficient;
+    typedef typename CGAL::Arr_algebraic_segment_traits_2< Coefficient > Traits;
+    typedef ArrangementPainterOstreamBase< Traits > Superclass;
+    typedef typename Traits::Point_2 Point_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+
+    ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
+    {
+        std::cout << "paint curve stub (alg traits)" << std::endl;
+        return *this;
+    }
+
+    template < class T >
+    ArrangementPainterOstream& operator<<( const T& p )
+    {
+        (*(static_cast< Superclass* >(this)) << p);
+        return *this;
+    }
+};
+
+
 } // namespace Qt
 } // namespace CGAL
 #endif // CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H

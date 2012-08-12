@@ -654,6 +654,10 @@ on_actionNewTab_triggered( )
         {
             this->makeTab( CIRCULAR_ARC_TRAITS );
         }
+        else if ( id == ALGEBRAIC_TRAITS )
+        {
+            std::cout << "makeTab for algebraic traits stub" << std::endl;
+        }
         else
         {
             std::cout << "Sorry, this trait is not yet supported" << std::endl;

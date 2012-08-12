@@ -726,6 +726,13 @@ protected:
     std::vector< Point_2 > points;
 }; // class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
 
+template < class Coefficient_ >
+class GraphicsViewCurveInput< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >:
+    public GraphicsViewCurveInputBase
+{
+
+};
+
 } // namespace Qt
 } // namespace CGAL
 #endif // CGAL_QT_GRAPHICS_VIEW_SEGMENT_INPUT_H
