@@ -483,7 +483,6 @@ protected:
           sdf_of_neighbors.push_back(get(sdf_values, it->first));
         }
         // Find median.
-        double median_sdf = 0.0;
         int half_neighbor_count = sdf_of_neighbors.size() / 2;
         std::nth_element(sdf_of_neighbors.begin(),
                          sdf_of_neighbors.begin() + half_neighbor_count, sdf_of_neighbors.end());
