@@ -76,7 +76,7 @@ protected:
 
     Arrangement* arrangement;
     SnapToArrangementVertexStrategy< Arrangement > snapToVertexStrategy;
-    SnapToGridStrategy< Kernel > snapToGridStrategy;
+    SnapToGridStrategy< typename Arrangement::Geometry_traits_2 > snapToGridStrategy;
 }; // class ArrangementCurveInputCallback
 
 #endif // ARRANGEMENT_SEGMENT_INPUT_CALLBACK_H

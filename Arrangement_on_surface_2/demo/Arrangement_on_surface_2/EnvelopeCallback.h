@@ -141,6 +141,7 @@ updateEnvelope( bool lower, TTraits traits )
         CGAL::upper_envelope_x_monotone_2( curves.begin( ), curves.end( ), diagram );
     }
 
+    return;
     typename Diagram_1::Edge_const_handle e = diagram.leftmost( );
     typename Diagram_1::Vertex_const_handle v;
     QRectF clipRect = this->viewportRect( );

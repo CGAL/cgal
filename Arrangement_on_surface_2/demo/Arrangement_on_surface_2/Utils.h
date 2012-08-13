@@ -74,6 +74,13 @@ struct Supports_landmarks< Arr_, true >
     typedef CGAL::Arr_landmarks_point_location< Arr_ > LandmarksType;
 };
 
+/**
+Support for new ArrTraits should specify types:
+
+* Kernel
+* Point_2 - the point type used in the particular arrangement
+* Coordinate_1 - the coordinate type used by the point type
+*/
 template < class ArrTraits >
 class ArrTraitsAdaptor
 { };
@@ -137,8 +144,6 @@ template < class ArrTraits >
 class Compute_squared_distance_2_base : public QGraphicsSceneMixin
 {
 public:
-    typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
-    typedef typename Kernel::FT FT;
     typedef CGAL::Cartesian< double > CoordKernel;
 
 public: // ctors
@@ -146,14 +151,6 @@ public: // ctors
     { }
 
 public: // methods
-#if 0
-    template < class T1, class T2 >
-    FT
-    operator() ( const T1& t1, const T2& t2 ) const
-    {
-        return this->squared_distance( t1, t2 );
-    }
-#endif
 
     template < class T1, class T2 >
     double operator() ( const T1& t1, const T2& t2 )
@@ -417,13 +414,12 @@ protected:
     template < class TTraits >
     FT operator() ( const X_monotone_curve_2& curve, const FT& x, TTraits traits_, CGAL::Arr_oblivious_side_tag )
     {
-        std::cout << "A" << std::endl;
         typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
             traits_.construct_x_monotone_curve_2_object( );
         FT res( 0 );
         CGAL::Bbox_2 clipRect = curve.bbox( );
-        Point_2 p1c1( x, FT( clipRect.ymin( ) ) ); // clicked point
-        Point_2 p2c1( x, FT( clipRect.ymax( ) ) ); // upper bounding box
+        Point_2 p1c1( x, FT( clipRect.ymin( ) - 1 ) ); // clicked point
+        Point_2 p2c1( x, FT( clipRect.ymax( ) + 1 ) ); // upper bounding box
 
         const X_monotone_curve_2 verticalLine =
             construct_x_monotone_curve_2( p1c1, p2c1 );
@@ -444,7 +440,6 @@ protected:
     template < class TTraits >
     FT operator() ( const X_monotone_curve_2& curve, const FT& x, TTraits traits_, CGAL::Arr_open_side_tag )
     {
-        std::cout << "B" << std::endl;
         typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
             traits_.construct_x_monotone_curve_2_object( );
         FT res( 0 );
@@ -500,8 +495,8 @@ public:
     {
         Root_of_2 res( 0 );
         CGAL::Bbox_2 clipRect = curve.bbox( );
-        Point_2 p1c1( x, FT( clipRect.ymin( ) ) ); // clicked point
-        Point_2 p2c1( x, FT( clipRect.ymax( ) ) ); // upper bounding box
+        Point_2 p1c1( x, FT( clipRect.ymin( ) - 1 ) ); // clicked point
+        Point_2 p2c1( x, FT( clipRect.ymax( ) + 1 ) ); // upper bounding box
         Line_arc_2 verticalLine( Segment_2( p1c1, p2c1 ) );
 
         CGAL::Object o;
@@ -551,8 +546,8 @@ public:
     typedef typename ArrTraits::Compare_x_2 Compare_x_2;
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_2 Point_2;
-    typedef typename Kernel::Line_2 Line_2;
-    typedef typename Kernel::Compute_y_at_x_2 Compute_y_at_x_2;
+    //typedef typename Kernel::Line_2 Line_2;
+    //typedef typename Kernel::Compute_y_at_x_2 Compute_y_at_x_2;
 
     Construct_x_monotone_subcurve_2( ):
         intersect_2( this->traits.intersect_2_object( ) ),
@@ -802,12 +797,12 @@ protected:
 
 
 // FIXME: return Traits::Point_2 instead of Kernel::Point_2
-template < class K_ >
+template < class ArrTraits >
 class SnapStrategy : public QGraphicsSceneMixin
 {
 public:
-    typedef K_ Kernel;
-    typedef typename Kernel::Point_2 Point_2;
+    //typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
+    typedef typename ArrTraits::Point_2 Point_2;
 
     virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event ) = 0;
 
@@ -815,20 +810,21 @@ protected:
     SnapStrategy( QGraphicsScene* scene_ );
 }; // class SnapStrategy
 
-template < class K_ >
-SnapStrategy< K_ >::
+template < class ArrTraits >
+SnapStrategy< ArrTraits >::
 SnapStrategy( QGraphicsScene* scene_ )
 { 
     this->scene = scene_;
 }
 
-template < class K_ >
-class SnapToGridStrategy : public SnapStrategy< K_ >
+template < class ArrTraits >
+class SnapToGridStrategy : public SnapStrategy< ArrTraits >
 {
 public:
-    typedef K_ Kernel;
-    typedef typename Kernel::Point_2 Point_2;
-    typedef SnapStrategy< Kernel > Superclass;
+    typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
+    typedef typename ArrTraits::Point_2 Point_2;
+    typedef typename Kernel::Point_2 Kernel_point_2;
+    typedef SnapStrategy< ArrTraits > Superclass;
 
     SnapToGridStrategy( ):
         Superclass( NULL ),
@@ -842,11 +838,18 @@ public:
 
     Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
     {
+        return this->snapPoint( event, ArrTraits( ) );
+    }
+
+    template < class TTraits >
+    Point_2 snapPoint( QGraphicsSceneMouseEvent* event, TTraits traits )
+    {
         QPointF clickedPoint = event->scenePos( );
         QRectF viewportRect = this->viewportRect( );
         if ( viewportRect == QRectF( ) )
         {
-            return this->convert( event->scenePos( ) );
+            Kernel_point_2 res = this->convert( event->scenePos( ) );
+            return Point_2( CGAL::to_double(res.x( )), CGAL::to_double(res.y()) );
         }
 
         qreal d( this->gridSize / 2.0 );
@@ -872,7 +875,48 @@ public:
                 break;
             }
         }
-        return this->convert( QPointF( x, y ) );
+        //return this->convert( QPointF( x, y ) );
+        Point_2 res( x, y );
+        return res;
+    }
+
+    template < class CircularKernel >
+    Point_2 snapPoint( QGraphicsSceneMouseEvent* event, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+    {
+        QPointF clickedPoint = event->scenePos( );
+        QRectF viewportRect = this->viewportRect( );
+        if ( viewportRect == QRectF( ) )
+        {
+            Kernel_point_2 res = this->convert( event->scenePos( ) );
+            return Point_2( res );
+        }
+
+        qreal d( this->gridSize / 2.0 );
+        int left = int( viewportRect.left( ) ) - (int( viewportRect.left( ) ) % this->gridSize);
+        int right = int( viewportRect.right( ) ) + (this->gridSize - int( viewportRect.right( ) ) % this->gridSize);
+        int x = clickedPoint.x( );
+        int y = clickedPoint.y( );
+        for ( int i = left - this->gridSize; i <= right; i += this->gridSize )
+        {
+            if ( i - d <= clickedPoint.x( ) && clickedPoint.x( ) <= i + d )
+            {
+                x = i;
+                break;
+            }
+        }
+        int top = int( viewportRect.top( ) ) - (int( viewportRect.top( ) ) % this->gridSize);
+        int bottom = int( viewportRect.bottom( ) ) + (this->gridSize - int( viewportRect.bottom( ) ) % this->gridSize);
+        for ( int i = top - this->gridSize; i <= bottom; i += this->gridSize )
+        {
+            if ( i - d <= clickedPoint.y( ) && clickedPoint.y( ) <= i + d )
+            {
+                y = i;
+                break;
+            }
+        }
+        //return this->convert( QPointF( x, y ) );
+        Kernel_point_2 res( x, y );
+        return Point_2( res );
     }
 
     void setGridSize( int size )
@@ -887,17 +931,18 @@ protected:
 
 template < class Arr_ >
 class SnapToArrangementVertexStrategy:
-    public SnapStrategy< typename ArrTraitsAdaptor< typename Arr_::Geometry_traits_2 >::Kernel >
+    public SnapStrategy< typename Arr_::Geometry_traits_2 >
 {
 public:
     typedef Arr_ Arrangement;
     typedef typename Arrangement::Geometry_traits_2 Traits;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-    typedef SnapStrategy< Kernel > Superclass;
+    typedef SnapStrategy< Traits > Superclass;
     typedef typename Arrangement::Vertex_iterator Vertex_iterator;
     typedef typename Kernel::Compute_squared_distance_2 Compute_squared_distance_2;
     typedef typename Kernel::FT FT;
-    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Traits::Point_2 Point_2;
+    typedef typename Kernel::Point_2 Kernel_point_2;
 
     SnapToArrangementVertexStrategy( ):
         Superclass( NULL ),
@@ -911,14 +956,14 @@ public:
 
     Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
     {
-        Point_2 clickedPoint = this->convert( event->scenePos( ) );
+        Kernel_point_2 clickedPoint = this->convert( event->scenePos( ) );
         return this->snapPoint( clickedPoint, Traits( ) );
     }
 
     template < class TTraits >
-    Point_2 snapPoint( const Point_2& clickedPoint, TTraits traits )
+    Point_2 snapPoint( const Kernel_point_2& clickedPoint, TTraits traits )
     {
-        Point_2 closestPoint = clickedPoint;
+        Point_2 closestPoint( CGAL::to_double(clickedPoint.x()), CGAL::to_double(clickedPoint.y()) );
         bool first = true;
         FT minDist( 0 );
         QRectF viewportRect = this->viewportRect( );
@@ -932,7 +977,8 @@ public:
                 vit != this->arrangement->vertices_end( ); ++vit )
         {
             Point_2 point = vit->point( );
-            FT dist = this->compute_squared_distance_2( clickedPoint, point );
+            Kernel_point_2 thisPoint( CGAL::to_double(point.x()), CGAL::to_double(point.y()) );
+            FT dist = this->compute_squared_distance_2( clickedPoint, thisPoint );
             if ( first || ( dist < minDist ) )
             {
                 first = false;
@@ -951,12 +997,13 @@ public:
     }
 
     template < class CircularKernel >
-    Point_2 snapPoint( const Point_2& clickedPoint, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+    Point_2 snapPoint( const Kernel_point_2& clickedPoint, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
     {
-        typedef Point_2 Non_arc_point_2;
+        typedef Kernel_point_2 Non_arc_point_2;
         typedef typename CircularKernel::Circular_arc_point_2 Arc_point_2;
 
-        Non_arc_point_2 closestPoint = clickedPoint;
+        Non_arc_point_2 closestKernelPoint = clickedPoint;
+        Arc_point_2 closestPoint( closestKernelPoint );
         bool first = true;
         FT minDist( 0 );
         QRectF viewportRect = this->viewportRect( );
@@ -976,7 +1023,8 @@ public:
             {
                 first = false;
                 minDist = dist;
-                closestPoint = point2;
+                //closestPoint = point2;
+                closestPoint = point;
             }
         }
         if ( ! first && minDist < maxDist )

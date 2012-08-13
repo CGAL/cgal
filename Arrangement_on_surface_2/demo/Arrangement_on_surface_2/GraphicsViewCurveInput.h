@@ -100,6 +100,10 @@ protected:
             {
                 this->scene->removeItem( &( this->segmentGuide ) );
             }
+            if ( traits.compare_xy_2_object()( this->p1, this->p2 ) == CGAL::EQUAL )
+            {
+                return;
+            }
             Curve_2 res( this->p1, this->p2 );
             emit generate( CGAL::make_object( res ) );
         }
@@ -112,6 +116,7 @@ protected:
         return clickedPoint;
     }
 
+    Traits traits;
     Converter< Kernel > convert;
     Point_2 p1;
     Point_2 p2;

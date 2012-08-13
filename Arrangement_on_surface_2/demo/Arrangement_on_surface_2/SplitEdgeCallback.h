@@ -83,7 +83,7 @@ protected:
     Intersect_2 intersectCurves;
     Equal_2 areEqual;
     SnapToArrangementVertexStrategy< Arrangement > snapToVertexStrategy;
-    SnapToGridStrategy< Kernel > snapToGridStrategy;
+    SnapToGridStrategy< typename Arrangement::Geometry_traits_2 > snapToGridStrategy;
 }; // class SplitEdgeCallback
 
 template < class Arr_ >
