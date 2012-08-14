@@ -22,7 +22,6 @@ endmacro()
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 set( IPE_VERSION "AUTODETECT" CACHE STRING "The version of Ipe. Only 6 and 7 are supported.")
-set ( IPELET_INSTALL_DIR ${IPELET_INSTALL_DIR}   CACHE STRING "The folder where ipelets will be installed, relative to CMAKE_INSTALL_PREFIX" )
 
 find_package(CGAL QUIET COMPONENTS Core IPE)
 
@@ -64,10 +63,11 @@ if ( CGAL_FOUND )
       if (WITH_IPE_7)
         remove_leading_zero(IPE_MINOR_VERSION_1)
         remove_leading_zero(IPE_MINOR_VERSION_2)
-        set(INSTALL_PATHS ${INSTALL_PATHS} "${IPE_LIBRARY_DIR}/ipe/7.${IPE_MINOR_VERSION_1}.${IPE_MINOR_VERSION_2}/ipelets/")
+        set(INSTALL_PATHS "${IPE_LIBRARY_DIR}/ipe/7.${IPE_MINOR_VERSION_1}.${IPE_MINOR_VERSION_2}/ipelets/")
         find_path(IPELET_INSTALL_DIR 
                       NAMES libgoodies.lua goodies.lua
                       PATHS ${INSTALL_PATHS}
+                      DOC "The folder where ipelets will be installed"
                       ENV IPELETPATH
                      )
       else()
@@ -108,11 +108,14 @@ if ( CGAL_FOUND )
     set(CGAL_IPELETS ${CGAL_IPELETS} skeleton)
     set(CGAL_IPELETS ${CGAL_IPELETS} triangulation)
 
+    if ( IPELET_INSTALL_DIR )
+      message(STATUS "Set Ipelets install dir: ${IPELET_INSTALL_DIR}")
+    endif()
+
     foreach(IPELET ${CGAL_IPELETS})
       add_library(CGAL_${IPELET} MODULE ${IPELET}.cpp)
       add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_${IPELET})
       if ( IPELET_INSTALL_DIR )
-        message(STATUS "Set Ipelets install dir: ${IPELET_INSTALL_DIR}")
         install(TARGETS CGAL_${IPELET} DESTINATION ${IPELET_INSTALL_DIR})
         if (WITH_IPE_7)
           install(FILES ./lua/libCGAL_${IPELET}.lua DESTINATION ${IPELET_INSTALL_DIR}) #only for ipe 7
