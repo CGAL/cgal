@@ -55,7 +55,7 @@ public:
    * @param[out] samples sampled points from disk, each point is tuple of:
    *   - get<0> = coordinate-x
    *   - get<1> = coordinate-y
-   *   - get<2> = weight (proportional to distance from origin (another words angle between cone-normal)).
+   *   - get<2> = weight (proportional to angle between cone-normal)
    */
   void sample(int number_of_points, double cone_angle,
               Disk_samples_list& samples) {
@@ -68,8 +68,8 @@ public:
       double Q = i * golden_ratio * CGAL_PI;
       double R = std::sqrt(static_cast<double>(i) / number_of_points);
       double angle = atan(R / length_of_normal);
-      angle =  exp(-0.5 * (std::pow(angle / angle_st_dev, 2))); // weight
-      samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), angle));
+      double weight =  exp(-0.5 * (std::pow(angle / angle_st_dev, 2))); // weight
+      samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), weight));
     }
 #else
     const double custom_power = 8.0 / 8.0;
@@ -122,7 +122,7 @@ public:
    * @param[out] samples sampled points from disk, each point is tuple of:
    *   - get<0> = coordinate-x
    *   - get<1> = coordinate-y
-   *   - get<2> = weight (proportional to distance from origin (another words angle between cone-normal)).
+   *   - get<2> = weight (proportional to angle between cone-normal)
    *
    * NOTE:
    * Returned samples size = floor( sqrt (number_of_points) ) ^ 2
@@ -142,7 +142,7 @@ public:
         double R = w1;
         double Q = 2 * w2 * CGAL_PI;
         double angle = atan(R / length_of_normal);
-        double weight =  exp(-0.5 * (pow(angle / angle_st_dev, 2)));
+        double weight = exp(-0.5 * (pow(angle / angle_st_dev, 2)));
         samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), weight));
       }
   }
@@ -185,7 +185,7 @@ public:
    * @param[out] samples sampled points from disk, each point is tuple of:
    *   - get<0> = coordinate-x
    *   - get<1> = coordinate-y
-   *   - get<2> = weight (proportional to distance from origin (another words angle between cone-normal)).
+   *   - get<2> = weight (proportional to angle between cone-normal)
    *
    * NOTE:
    * Returned samples size = floor( sqrt (number_of_points) ) ^ 2
@@ -226,7 +226,7 @@ public:
         }
         Q *= (CGAL_PI / 4.0);
         double angle = atan(R / length_of_normal);
-        double weight =  exp(-0.5 * (pow(angle / angle_st_dev, 2)));
+        double weight = exp(-0.5 * (pow(angle / angle_st_dev, 2)));
         samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), weight));
       }
   }

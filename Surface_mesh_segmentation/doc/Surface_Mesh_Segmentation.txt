@@ -1,0 +1,61 @@
+namespace CGAL {
+/*!
+\mainpage Surface Mesh Segmentation
+
+\authors -
+ 
+# Introduction #
+Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. 
+
+# Overview of the Segmentation Process #
+The segmentation algorithm consists of three major parts. 
+
+## Shape Diameter Function ##
+First part is computation of Shape Diameter Function (SDF), which represents a connection between the surface and its volume. More precisely, SDF is a scalar-valued function defined on the surface which measures the corresponding local volume.
+
+Basically, SDF for a surface is computed by processing each facets, which comprise the surface, one by one. For a given facet, SDF value computation begins with casting several rays sampled from a cone which is constructed using centroid of the facet as apex and inward-normal of the facet as axis. Then using casted rays (which intuitively correspond to sampling for local volume), resulting SDF value is calculated by first applying outlier removal and then taking weighted average of ray distances.
+
+After calculating SDF values for each facet, bilateral smoothing (an edge-preserving filtering technique) is applied on SDF values. The purpose of edge-preserving smoothing is keeping SDF edges (fast changes on SDF values) in-place without blurring, since they are good candidates for segment boundaries.
+
+## Soft Clustering ##
+Second part consists of applying soft clustering on SDF values. For this purpose, SDF values are first clustered using k-means clustering algorithm which is initialized with k-means++ (an algorithm for choosing random seeds for clusters) and run multiple times. Among these runs, we choose clustering result that has minimum with-in cluster error and use it to initialize expectation maximization algorithm for fitting Gaussian mixture models.
+
+Note that there is no direct relation between number of clusters (parameter for soft clustering) and number of segments (disconnected components). Intuitively, number of clusters represents level of segmentation by clustering facets, which have close SDF values, together without considering their connectivity. For example, for a human model, 2 clusters might result in clustering 4 legs and head of the model into one cluster, and remaining parts into another cluster. However, note that large number of clusters likely to result in detailed segmentation of mesh with large number of segments.
+
+At the end of this part, we have soft clustering result which is a matrix that contains probability values for each facet to each cluster. These probability values are used in graph-cut part.
+
+## Graph-Cut ##
+For hard clustering, which gives us the final partitioning of the mesh, an energy function that combines probability matrix and boundary properties is minimized. The aim of this function is while trying to assign facets to their most probable clusters it also tries to minimize cost of boundary edges by considering their concavity and dihedral-angle (i.e. concave edges with large dihedral angles are considered to be less costly which means that they are good candidates for segment boundaries).
+
+Energy function that is minimized using alpha-expansion graph cut algorithm is:
+
+  <table border="0"> 
+  <tr> 
+	 <td>
+		\f$ E(\bar{x}) = \sum\limits_{f \in F} e_1(f, x_f) + \lambda \sum\limits_{ \{f,g\} \in N} e_2(x_f, x_g) \f$
+
+		\f$ e_1(f, x_f) = -log(max(P(f|x_f), \epsilon)) \f$
+
+		\f$ e_2(x_f, x_g) = 
+		\left \{ 
+		\begin{array}{rl}
+			-log(\theta(f,g)/\pi) &\mbox{ $x_f \ne x_g$} \\
+			0 &\mbox{ $x_f = x_g$}
+		\end{array}
+		\right \} \f$
+	 </td> 
+     <td>	 
+where:
+  - \f$F\f$ represents set of facets, 
+  - \f$N\f$ represents set of pairs of neighbor facets,
+  - \f$x_f\f$ is assigned cluster to facet \f$f\f$, 
+  - \f$P(f|x_p)\f$ is probability of assigning facet \f$f\f$ to cluster \f$x_p\f$, 
+  - \f$\theta(f,g)\f$ is dihedral angle between facets \f$f\f$, and \f$g\f$.
+	 </td> 
+  </tr> 
+  </table> 
+
+# API #
+\cgalexample{Surface_mesh_segmentation/segmentation_example.cpp}
+*/ 
+} /* namespace CGAL */

@@ -348,7 +348,7 @@ protected:
   }
 
   /**
-   * Adds @a value as a center if it is not previously added
+   * Adds parameters as a center if it is not previously added
    * @param mean
    * @param deviation
    * @param mixing_coefficient

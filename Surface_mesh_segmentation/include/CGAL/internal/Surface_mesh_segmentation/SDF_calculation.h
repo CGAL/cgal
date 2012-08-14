@@ -5,7 +5,6 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/internal/Surface_mesh_segmentation/AABB_traversal_traits.h>
-#include <CGAL/internal/Surface_mesh_segmentation/AABB_const_polyhedron_triangle_primitive.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Disk_sampling.h>
 #include <map>
 #include <vector>
@@ -333,7 +332,7 @@ protected:
   }
 
   /**
-   * Removes outliers by using median as mean and filtering rays which don't fall into `CGAL_ST_DEV_MULTIPLIER` standard deviation.
+   * Removes outliers by using median as mean and filtering rays which don't fall into `CGAL_ST_DEV_MULTIPLIER` * standard deviation.
    * @param ray_distances distances associated to casted rays
    * @param ray_weights weights associated to casted rays
    * @return tuple of:
