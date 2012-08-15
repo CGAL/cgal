@@ -9,7 +9,7 @@ namespace CGAL {
 \image html elephant_sdf_partition.png "Elephant model: SDF values & Segmentation (Going to be changed-improved)"
 
 # Introduction #
-Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. Main areas which might utilize mesh segmentation can be listed as modelling, rigging and texturing, shape retrieval, deformation.
+Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. Main areas which might utilize mesh segmentation include, but not limited to, modelling, rigging and texturing, shape retrieval, and deformation.
 
 The algorithm presented here is based on [reference to paper] which introduces Shape Diameter Function that represents a connection between the surface and its volume. Being a pose-invariant and volume-based feature, SDF can be computed for each facet on the surface. Using SDF values, the mesh is first soft clustered by grouping facets that have close SDF values together. These clusters are then refined by graph-cut algorithm which also considers surface-based features like dihedral-angle and concavity. 
 
