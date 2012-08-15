@@ -16,7 +16,7 @@ template<class R_> struct Construct_aff_transformation {
   typedef R_ R;
   typedef typename R::Aff_transformation result_type;
 #ifdef CGAL_CXX0X
-  template<class..T>
+  template<class...T>
   result_type operator()(T&&...)const{return result_type();}
 #else
   result_type operator()()const{

@@ -1,5 +1,5 @@
-#ifndef CGAL_KD_TYPE_SPHERE_H
-#define CGAL_KD_TYPE_SPHERE_H
+#ifndef CGAL_KD_TYPE_HYPERPLANE_H
+#define CGAL_KD_TYPE_HYPERPLANE_H
 #include <CGAL/store_kernel.h>
 namespace CGAL {
 template <class R_> class Hyperplane {

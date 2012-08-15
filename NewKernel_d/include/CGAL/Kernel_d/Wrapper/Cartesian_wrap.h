@@ -7,6 +7,7 @@
 #include <CGAL/Kernel_d/Wrapper/Point_d.h>
 #include <CGAL/Kernel_d/Wrapper/Vector_d.h>
 #include <CGAL/Kernel_d/Wrapper/Segment_d.h>
+#include <CGAL/Kernel_d/Wrapper/Sphere_d.h>
 
 #include <CGAL/Kernel_d/Wrapper/Point_rc_d.h>
 #include <CGAL/Kernel_d/Wrapper/Vector_rc_d.h>
@@ -84,6 +85,7 @@ struct Cartesian_wrap : public Base_
 
 #define CGAL_Kernel_obj(X,Y) \
     typedef X##_d<Cartesian_wrap> X;
+#define CGAL_Kernel_obj3(X,Y)
 
     //CGAL_Kernel_obj(Segment,segment)
 	    //TODO: use Object_list, intersected with the list of objects that do have a wrapper available.

@@ -31,10 +31,16 @@
 #ifndef CGAL_Kernel_obj2
 #  define CGAL_Kernel_obj2(X,Y) CGAL_Kernel_obj(X,Y)
 #endif
+#ifndef CGAL_Kernel_obj3
+#  define CGAL_Kernel_obj3(X,Y) CGAL_Kernel_obj2(X,Y)
+#endif
 
 CGAL_Kernel_obj1(Vector,vector)
 CGAL_Kernel_obj1(Point,point)
 CGAL_Kernel_obj2(Segment,segment)
+CGAL_Kernel_obj2(Sphere,sphere)
+CGAL_Kernel_obj3(Hyperplane,hyperplane)
+CGAL_Kernel_obj3(Aff_transformation,aff_transformation)
 
 CGAL_Kernel_cons1(Construct_point_cartesian_const_iterator,
 		  construct_point_cartesian_const_iterator_object)
@@ -113,3 +119,4 @@ CGAL_Kernel_pred(Construct_flat_orientation,
 #undef CGAL_Kernel_obj
 #undef CGAL_Kernel_obj1
 #undef CGAL_Kernel_obj2
+#undef CGAL_Kernel_obj3

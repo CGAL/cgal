@@ -16,6 +16,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Base::Point Point_d;
 	typedef typename Base::Vector Vector_d;
 	typedef typename Base::Segment Segment_d;
+	typedef typename Base::Sphere Sphere_d;
+	typedef typename Base::Hyperplane Hyperplane_d;
 	typedef typename Base::template Functor<Compute_point_cartesian_coordinate_tag>::type Compute_coordinate_d;
 	typedef typename Base::template Functor<Compare_lexicographically_tag>::type Compare_lexicographically_d;
 	typedef typename Base::template Functor<Equal_points_tag>::type Equal_d;
@@ -35,6 +37,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Base::template Functor<Construct_ttag<Point_tag> >::type Construct_point_d;
 	typedef typename Base::template Functor<Construct_ttag<Vector_tag> >::type Construct_vector_d;
 	typedef typename Base::template Functor<Construct_ttag<Segment_tag> >::type Construct_segment_d;
+	typedef typename Base::template Functor<Construct_ttag<Sphere_tag> >::type Construct_sphere_d;
+	typedef typename Base::template Functor<Construct_ttag<Hyperplane_tag> >::type Construct_hyperplane_d;
 	typedef typename Base::template Functor<Midpoint_tag>::type Midpoint_d;
 	struct Component_accessor_d : private Store_kernel<R_> {
 	  CGAL_FUNCTOR_INIT_STORE(Component_accessor_d)
@@ -95,6 +99,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Construct_point_d construct_point_d_object()const{ return Construct_point_d(*this); }
 	Construct_vector_d construct_vector_d_object()const{ return Construct_vector_d(*this); }
 	Construct_segment_d construct_segment_d_object()const{ return Construct_segment_d(*this); }
+	Construct_sphere_d construct_sphere_d_object()const{ return Construct_sphere_d(*this); }
+	Construct_hyperplane_d construct_hyperplane_d_object()const{ return Construct_hyperplane_d(*this); }
 };
 }
 
