@@ -85,7 +85,7 @@ struct Cartesian_wrap : public Base_
 #define CGAL_Kernel_obj(X,Y) \
     typedef X##_d<Cartesian_wrap> X;
 
-    CGAL_Kernel_obj(Segment,segment)
+    //CGAL_Kernel_obj(Segment,segment)
 	    //TODO: use Object_list, intersected with the list of objects that do have a wrapper available.
 #include <CGAL/Kernel_d/interface_macros.h>
 

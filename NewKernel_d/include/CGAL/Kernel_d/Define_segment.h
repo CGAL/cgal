@@ -57,7 +57,7 @@ struct Define_segment : public Base_ {
 	typedef Define_segment<Base_,Derived_> Self;
 	typedef typename Default::Get<Derived_,Self>::type Derived;
 
-	typedef SegmentCd<Derived> Segment;
+	typedef CGAL::Segment<Derived> Segment;
 	typedef typename Base::Object_list::template add<Segment_tag>::type Object_list;
 
 	// TODO: forward the second Functor argument (like fast, no_filter)

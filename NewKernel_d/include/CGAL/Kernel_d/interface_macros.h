@@ -34,7 +34,7 @@
 
 CGAL_Kernel_obj1(Vector,vector)
 CGAL_Kernel_obj1(Point,point)
-//CGAL_Kernel_obj2(Segment,segment)
+CGAL_Kernel_obj2(Segment,segment)
 
 CGAL_Kernel_cons1(Construct_point_cartesian_const_iterator,
 		  construct_point_cartesian_const_iterator_object)
@@ -56,8 +56,8 @@ CGAL_Kernel_cons2(Midpoint,
 		  midpoint_object)
 //CGAL_Kernel_cons2(Construct_segment,
 //		  construct_segment_object)
-//CGAL_Kernel_cons2(Segment_extremity,
-//		  segment_extremity_object)
+CGAL_Kernel_cons2(Segment_extremity,
+		  segment_extremity_object)
 
 CGAL_Kernel_comp1(Compute_point_cartesian_coordinate,
 		  compute_point_cartesian_coordinate_object)

@@ -3,6 +3,7 @@
 
 #include <CGAL/Kernel_d/function_objects_cartesian.h>
 #include <CGAL/Kernel_d/Cartesian_per_dimension.h>
+#include <CGAL/Kernel_d/Define_segment.h>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -45,9 +46,9 @@ template<class R_,class Derived_> struct Cartesian_define_all_functors
 template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_complete_types 
 : public R_
 {
-#if 0
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_types>::type Derived;
+#if 0
 	template <class T,class=void> struct Type : Read_tag_type<Kernel_base,T> {};
 #define CGAL_Kernel_obj2(X,Y) \
 	template <class D> struct Type<X##_tag,D> { \
@@ -58,8 +59,11 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 	};
 	//FIXME: move away from Type<>
 	//Implement by chaining things like Define_segment?
-#include <CGAL/Kernel_d/interface_macros.h>
 #endif
+	//FIXME: needs to be conditional!!!
+#define CGAL_Kernel_obj2(X,Y) \
+	typedef CGAL::X<Derived> X;
+#include <CGAL/Kernel_d/interface_macros.h>
 };
 
 

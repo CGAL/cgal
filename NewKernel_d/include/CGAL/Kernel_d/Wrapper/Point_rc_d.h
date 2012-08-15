@@ -2,6 +2,7 @@
 #define CGAL_WRAPPER_POINT_RC_D_H
 
 #include <CGAL/Origin.h>
+#include <CGAL/Handle_for.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
 #include <boost/static_assert.hpp>

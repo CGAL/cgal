@@ -1,4 +1,5 @@
 #define BOOST_RESULT_OF_USE_DECLTYPE 1
+#include <CGAL/Epick_d.h>
 #include <typeinfo>
 #include <CGAL/myeigen.h>
 #include <CGAL/Kernel_d/Cartesian_base.h>
@@ -117,4 +118,5 @@ void test2(){
 }
 int main(){
   test2<CGAL::Kernel_d_interface<KK> >();
+  test2<CGAL::Epick_d<2> >();
 }
