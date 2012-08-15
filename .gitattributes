@@ -4083,6 +4083,7 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suit
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suite.sh eol=lf
 Surface_mesh_segmentation/doc/Doxyfile -text
 Surface_mesh_segmentation/doc/Surface_Mesh_Segmentation.txt -text
+Surface_mesh_segmentation/doc/fig/elephant_sdf_partition.png -text
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/CMakeLists.txt -text
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/camel.off -text
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/segmentation_example.cpp -text
