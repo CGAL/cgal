@@ -63,7 +63,8 @@ where:
   </table> 
 
 # API #
-\cgalexample{Surface_mesh_segmentation/segmentation_example.cpp}
+\example{Surface_mesh_segmentation/segmentation_example.cpp}
+
 
 # Extra: (ideas to append) #
 Talk about effect of "number of rays" on SDF values, by providing RSME and average error ?
