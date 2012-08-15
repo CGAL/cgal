@@ -9,9 +9,11 @@ namespace CGAL {
 \image html elephant_sdf_partition.png "Elephant model: SDF values & Segmentation (Going to be changed-improved)"
 
 # Introduction #
-Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. Main areas which might utilize mesh segmentation include, but not limited to, modelling, rigging and texturing, shape retrieval, and deformation.
+Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. Main areas which might utilize mesh segmentation include, but not limited to, modelling, rigging and texturing, shape-retrieval, and deformation.
 
 The algorithm presented here is based on [reference to paper] which introduces Shape Diameter Function that represents a connection between the surface and its volume. Being a pose-invariant and volume-based feature, SDF can be computed for each facet on the surface. Using SDF values, the mesh is first soft clustered by grouping facets that have close SDF values together. These clusters are then refined by graph-cut algorithm which also considers surface-based features like dihedral-angle and concavity. 
+
+From API perspective, the user can access two main output of the algorithm: SDF values and segmentation of the mesh. SDF values might be useful for some other purposes than segmentation such as skeletonization, and part-retrieval.
 
 # Overview of the Segmentation Process #
 The segmentation algorithm consists of three major parts. 
@@ -63,7 +65,11 @@ where:
   </table> 
 
 # API #
-\example{Surface_mesh_segmentation/segmentation_example.cpp}
+The SDF computation and segmentation algorithms are implemented as free template functions.
+
+##SDF Computation##
+
+\include Surface_mesh_segmentation/sdf_computation_example.cpp
 
 
 # Extra: (ideas to append) #

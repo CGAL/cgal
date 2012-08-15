@@ -75,6 +75,34 @@ class Polyhedron,
       >
 class Surface_mesh_segmentation
 {
+protected:
+  /**
+   * An adaptor for Lvalue property-map. It stores a pointer to vector for underlying data-structure,
+   * and also stores another property-map which maps `key` to vector index.
+   */
+  template<typename Polyhedron, typename ValueType, typename FacetIdPropertyMap>
+  struct Polyhedron_property_map_for_facet
+      : public boost::put_get_helper<ValueType&,
+        Polyhedron_property_map_for_facet<Polyhedron, ValueType, FacetIdPropertyMap> > {
+  public:
+    typedef typename Polyhedron::Facet_const_handle key_type;
+    typedef ValueType value_type;
+    typedef value_type& reference;
+    typedef boost::writable_property_map_tag category;
+
+    Polyhedron_property_map_for_facet() : internal_vector(NULL) { }
+    Polyhedron_property_map_for_facet(std::vector<ValueType>* internal_vector,
+                                      FacetIdPropertyMap facet_id_map)
+      : internal_vector(internal_vector), facet_id_map(facet_id_map)  { }
+
+    reference operator[](key_type key) const {
+      return (*internal_vector)[facet_id_map[key]];
+    }
+  private:
+    std::vector<ValueType>* internal_vector;
+    FacetIdPropertyMap facet_id_map;
+  };
+
 //type definitions
 public:
   typedef typename Polyhedron::Traits Kernel;
@@ -117,7 +145,7 @@ public:
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end();
         ++facet_it, ++facet_index) {
-      boost::put(facet_index_map, facet_it, facet_index);
+      facet_index_map[facet_it] = facet_index;
     }
   }
 
@@ -156,7 +184,7 @@ public:
       for(Facet_const_iterator facet_it = mesh.facets_begin();
           facet_it != mesh.facets_end();
           ++facet_it, ++facet_index) {
-        boost::put(facet_index_map, facet_it, facet_index);
+        facet_index_map[facet_it] = facet_index;
       }
     }
   }
@@ -168,19 +196,13 @@ public:
     SEG_DEBUG(t.start())
     //read_sdf_values("D:/dino.txt");
     //return;
-    typedef std::map<Facet_const_handle, double> internal_map;
-    internal_map facet_value_map_internal;
-    boost::associative_property_map<internal_map> sdf_pmap(
-      facet_value_map_internal);
+
+    sdf_values = std::vector<double>(mesh.size_of_facets());
+    Polyhedron_property_map_for_facet<Polyhedron, double, FacetIndexMap>
+    sdf_pmap(&sdf_values, facet_index_map);
 
     SDF_calculation().calculate_sdf_values(cone_angle, number_of_ray, mesh,
                                            sdf_pmap);
-
-    sdf_values = std::vector<double>(mesh.size_of_facets());
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      get(sdf_values, facet_it) = boost::get(sdf_pmap, facet_it);
-    }
 
     SEG_DEBUG(std::cerr << "SDF computation time: " << t.time() << std::endl)
     SEG_DEBUG(t.reset())
@@ -195,6 +217,8 @@ public:
 
   void partition(int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
                  double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA) {
+    SEG_DEBUG(Timer t)
+    SEG_DEBUG(t.start())
     // soft clustering using GMM-fitting initialized with k-means
     internal::Expectation_maximization fitter(number_of_centers, sdf_values,
         internal::Expectation_maximization::K_MEANS_INITIALIZATION, 1);
@@ -205,6 +229,9 @@ public:
     std::vector<std::vector<double> > probability_matrix;
     fitter.fill_with_probabilities(probability_matrix);
     log_normalize_probability_matrix(probability_matrix);
+
+    SEG_DEBUG(std::cerr <<"Soft clustering time: " << t.time() << std::endl)
+    t.reset();
 
     // calculating edge weights
     std::vector<std::pair<int, int> > edges;
@@ -228,14 +255,12 @@ public:
     SEG_DEBUG(Timer t)
     SEG_DEBUG(t.start())
 
-    SDF_calculation().calculate_sdf_values(cone_angle, number_of_rays, mesh,
-                                           sdf_pmap);
-
     sdf_values = std::vector<double>(mesh.size_of_facets());
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      get(sdf_values, facet_it) = boost::get(sdf_pmap, facet_it);
-    }
+    Polyhedron_property_map_for_facet<Polyhedron, double, FacetIndexMap>
+    sdf_pmap_internal(&sdf_values, facet_index_map);
+
+    SDF_calculation().calculate_sdf_values(cone_angle, number_of_rays, mesh,
+                                           sdf_pmap_internal);
 
     SEG_DEBUG(std::cout << t.time() << std::endl)
 
@@ -245,7 +270,7 @@ public:
 
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
-      boost::put(sdf_pmap, facet_it, get(sdf_values, facet_it));
+      sdf_pmap[facet_it] = get(sdf_values, facet_it));
     }
 
     SEG_DEBUG(std::cout << t.time() << std::endl)
@@ -258,7 +283,7 @@ public:
     sdf_values = std::vector<double>(mesh.size_of_facets());
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
-      get(sdf_values, facet_it) = boost::get(sdf_pmap, facet_it);
+      get(sdf_values, facet_it) = sdf_pmap[facet_it];
     }
 
     // log normalize sdf values
@@ -288,16 +313,16 @@ public:
     assign_segments();
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
-      boost::put(segment_pmap, facet_it, get(segments, facet_it));
+      segment_pmap[facet_it] = get(segments, facet_it);
     }
   }
 ///////////////////////////////////////////////////////////////////
   double get_sdf_value_of_facet(Facet_const_handle facet) const {
-    return sdf_values[boost::get(facet_index_map, facet)];
+    return sdf_values[facet_index_map[facet]];
   }
 
   int get_segment_id_of_facet(Facet_const_handle facet) const {
-    return segments[boost::get(facet_index_map, facet)];
+    return segments[facet_index_map[facet]];
   }
 
 protected:
@@ -693,7 +718,7 @@ protected:
   /**
    * Receives probability-matrix with probabilities betwen [0-1], and returns log-normalized probabilities
    * which are suitable to use in graph-cut.
-   * @param[in][out] probabilities probability matrix in [center][facet] order
+   * @param[in, out] probabilities probability matrix in [center][facet] order
    */
   void log_normalize_probability_matrix(std::vector<std::vector<double> >&
                                         probabilities) const {
@@ -713,7 +738,7 @@ protected:
   /**
    * Calculates dihedral-angle based weight for each edge which is not a border edge.
    * @param smoothing_lambda a factor for each weight (weight *= smoothing_lambda).
-   * @param[out] edges list of pair of facet-ids
+   * @param[out] edges list of pair of neighbor facet ids
    * @param[out] edge_weights calculated weight for each edge in @a edges
    */
   void calculate_and_log_normalize_dihedral_angles(double smoothing_lambda,
@@ -726,8 +751,8 @@ protected:
       if(edge_it->is_border_edge()) {
         continue;  // if edge does not contain two neighbor facets then do not include it in graph-cut
       }
-      const int index_f1 = boost::get(facet_index_map, edge_it->facet());
-      const int index_f2 = boost::get(facet_index_map, edge_it->opposite()->facet());
+      const int index_f1 = facet_index_map[edge_it->facet()];
+      const int index_f2 = facet_index_map[edge_it->opposite()->facet()];
       edges.push_back(std::pair<int, int>(index_f1, index_f2));
 
       double angle = calculate_dihedral_angle_of_edge_2(edge_it);
@@ -791,7 +816,7 @@ protected:
    */
   template<class T>
   T& get(std::vector<T>& data, const Facet_const_handle& facet) {
-    return data[ boost::get(facet_index_map, facet) ];
+    return data[ facet_index_map[facet] ];
   }
 
   /**

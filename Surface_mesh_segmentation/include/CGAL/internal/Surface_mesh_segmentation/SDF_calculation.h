@@ -23,6 +23,17 @@ namespace internal
 
 /**
  * @brief Resposable for calculating Shape Diameter Function over surface of the mesh.
+ * Usage:
+ * @code
+ *  Polyhedron mesh;
+ *  // template parameters:
+ *  // Polyhedron is the type of the mesh.
+ *  // Vogel_disk_sampling is sampling method for rays from cone. (for other methods (or for writing your own method) check Disk_sampling.h)
+ *
+ *  SDF_calculation<Polyhedron, Vogel_disk_sampling>().
+ *      calculate_sdf_values(120.0, 25, mesh, sdf_values);
+ * @endcode
+ * @see Disk_sampling.h
  */
 template <class Polyhedron, class DiskSampling = Vogel_disk_sampling>
 class SDF_calculation
@@ -97,7 +108,7 @@ public:
       CGAL_precondition(facet_it->is_triangle()); //Mesh should contain triangles.
 
       double sdf = calculate_sdf_value_of_facet(facet_it, tree, disk_samples_sparse);
-      boost::put(sdf_values, facet_it, sdf);
+      sdf_values[facet_it] = sdf;
     }
   }
 

@@ -107,7 +107,7 @@ public:
    * @param number_of_centers
    * @param data
    * @param init_type initialization type for random center selection
-   * @param number_of_run number of times to repeat EM algorithm
+   * @param number_of_runs number of times to repeat EM algorithm
    * @param threshold minimum allowed improvement on likelihood between iterations
    * @param maximum_iteration number of maximum iteration in a single EM algorithm call
    */
