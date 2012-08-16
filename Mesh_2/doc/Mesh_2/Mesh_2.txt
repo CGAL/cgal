@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\page user_chapter_2D_Meshes 2D Conforming Triangulations and Meshes
+\mainpage 2D Conforming Triangulations and Meshes
 \author Laurent Rineau
 
 This package implements Shewchuk's algorithm \cite s-mgdsa-00 to construct

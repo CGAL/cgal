@@ -254,7 +254,7 @@ selection mark without spoiling the correctness of the Minkowski sum.
 The function `minkowski_sum_3()` should be used with the
 ::Exact_predicates_exact_constructions_kernel, which often is
 the most efficient choice and allows floating-point input. Consult
-Section \anchor sectionNef_3IO for more details.
+Section \ref sectionNef_3IO for more details.
 
 The following example code illustrates the usage of the function
 `minkowski_sum_3()`. Note that either input polyhedra will be

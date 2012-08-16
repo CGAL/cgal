@@ -112,7 +112,7 @@ Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits.h 
 Algebraic_foundations/doc/Algebraic_foundations/Concepts/RingNumberType.h -text
 Algebraic_foundations/doc/Algebraic_foundations/Concepts/UniqueFactorizationDomain.h -text
 Algebraic_foundations/doc/Algebraic_foundations/Concepts/Unique_factorization_domain_tag.h -text
-Algebraic_foundations/doc/Algebraic_foundations/PkgDescription.txt -text
+Algebraic_foundations/doc/Algebraic_foundations/PackageDescription.txt -text
 Algebraic_foundations/doc/Algebraic_foundations/fig/AlgebraicConceptHierarchy.gif -text svneol=unset#image/gif
 Algebraic_foundations/doc/Algebraic_foundations/fig/Algebraic_foundations2.png -text svneol=unset#image/png
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations.png -text
@@ -3285,10 +3285,12 @@ Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#image/gif
 Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#image/gif
 Modular_arithmetic/doc/Modular_arithmetic/CGAL/Modular_traits.h -text
 Modular_arithmetic/doc/Modular_arithmetic/CGAL/Residue.h -text
+Modular_arithmetic/doc/Modular_arithmetic/Concepts/ModularTraits--ModularImage.h -text
+Modular_arithmetic/doc/Modular_arithmetic/Concepts/ModularTraits--ModularImageRepresentative.h -text
 Modular_arithmetic/doc/Modular_arithmetic/Concepts/ModularTraits.h -text
 Modular_arithmetic/doc/Modular_arithmetic/Concepts/Modularizable.h -text
 Modular_arithmetic/doc/Modular_arithmetic/Modular_arithmetic.txt -text
-Modular_arithmetic/doc/Modular_arithmetic/PkgDescription.txt -text
+Modular_arithmetic/doc/Modular_arithmetic/PackageDescription.txt -text
 Modular_arithmetic/doc/Modular_arithmetic/fig/Modular_arithmetic.png -text svneol=unset#image/png
 Modular_arithmetic/doc_tex/Modular_arithmetic/Modular_arithmetic.png -text
 Modular_arithmetic/doc_tex/Modular_arithmetic/PkgDescription.tex -text
