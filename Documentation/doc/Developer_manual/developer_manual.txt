@@ -15,7 +15,7 @@
 - \subpage chaprobustness
 - \subpage chapportability
 - \subpage chapdebugging
-- \subpage seceditorial_board
+- \subpage chapsubmission
 - \subpage chapinfo
 
 */

@@ -957,7 +957,7 @@ dl
 }
 
 /* dl.note, dl.warning, dl.attention, dl.pre, dl.post, dl.invariant, dl.deprecated, dl.todo, dl.test, dl.bug */
-dl.section
+dl.section, dl.asModelss, dl.debugs, dl.modelss, dl.refiness
 {
 	margin-left: 0px;
 	padding-left: 0px;
@@ -1198,24 +1198,3 @@ tr.heading h2 {
     display:inline;
   }
 }
-
-/* CGAL Customizations */
-
-dl.debugs
-{
-        margin-left: 0px;
-        padding-left: 0px;
-}
-
-dl.modelss
-{
-        margin-left: 0px;
-        padding-left: 0px;
-}
-
-dl.refiness
-{
-        margin-left: 0px;
-        padding-left: 0px;
-}
-

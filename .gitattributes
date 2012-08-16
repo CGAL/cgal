@@ -1664,12 +1664,12 @@ Documentation/doc/fig/reference_counting.gif -text svneol=unset#image/gif
 Documentation/doc/fig/use_real.gif -text svneol=unset#image/gif
 Documentation/doc/main.txt -text
 Documentation/doc/packages.txt -text
-Documentation/doxyassist.xml -text svneol=unset#application/xml
+Documentation/doxyassist.xml -text
 Documentation/footer.html -text
 Documentation/header.html -text
 Documentation/jquery.footnotes.min.js -text
+Documentation/pkglist_filter.sh -text
 Documentation/stylesheet.css -text
-Documentation/txt_filter.sh -text
 Envelope_2/doc/Envelope_2/CGAL/Envelope_diagram_1.h -text
 Envelope_2/doc/Envelope_2/CGAL/envelope_2.h -text
 Envelope_2/doc/Envelope_2/Concepts/EnvelopeDiagramEdge.h -text

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The main tag provides the version (1.0 only for now). The type attribute
-     is not required, and defaults to "generic". To use a different project handler,
-     change its type. The "name" attribute defines the name of your configuration.
-     Note: you must define and use the "http://simply-life.net/doxyassist/project.xsd"
-     namespace for the XML file to be processed properly.  -->
+is not required, and defaults to "generic". To use a different project handler,
+change its type. The "name" attribute defines the name of your configuration.
+Note: you must define and use the "http://simply-life.net/doxyassist/project.xsd"
+namespace for the XML file to be processed properly.  -->
 <DoxyAssist xmlns="http://simply-life.net/doxyassist/doxyassist.xsd"
             xmlns:da="http://simply-life.net/doxyassist/doxyassist.xsd"
             version="1.0" type="generic" name="My DoxyAssist Project">
@@ -14,7 +14,431 @@
 
   <projects>
     <project>
-      <!-- The main CGAL project containing the package list and complete reference documentation -->
+      <namespace>CGAL</namespace>
+      <name>CGAL</name>
+      <!-- The version number of the documentation -->
+      <version>4.1</version>
+      <versionSpecific>false</versionSpecific>
+      <output>./output</output>
+      <logDirectory>./log</logDirectory>
+      
+      <doxygen>
+        <list name="TAGFILES" append="true">
+          <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+        </list>
+      </doxygen>
+      
+      <!-- subprojects -->
+      <project>
+        <name>STL_Extension</name>
+        <input>../STL_Extension/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../STL_Extension/doc/STL_Extension/</string>
+          <string name="STRIP_FROM_INC_PATH">../STL_Extension/doc/STL_Extension/</string>
+          <string name="GENERATE_TAGFILE">./tags/STL_Extension.tag</string>
+          <string name="IMAGE_PATH">../STL_Extension/doc/STL_Extension/fig</string>
+          <string name="EXAMPLE_PATH">../STL_Extension/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Mesh_2</name>
+        <input>../Mesh_2/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Mesh_2/doc/Mesh_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Mesh_2/doc/Mesh_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Mesh_2.tag</string>
+          <string name="IMAGE_PATH">../Mesh_2/doc/Mesh_2/fig</string>
+          <string name="EXAMPLE_PATH">../Mesh_2/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Mesh_3</name>
+        <input>../Mesh_3/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Mesh_3/doc/Mesh_3/</string>
+          <string name="STRIP_FROM_INC_PATH">../Mesh_3/doc/Mesh_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Mesh_3.tag</string>
+          <string name="IMAGE_PATH">../Mesh_3/doc/Mesh_3/fig</string>
+          <string name="EXAMPLE_PATH">../Mesh_3/examples</string>
+          
+          <list name="HTML_EXTRA_FILES" append="true">
+            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain.jpg</item>
+            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_3.jpg</item>
+            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_4.jpg</item>
+            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_5.jpg</item>
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Algebraic_foundations</name>
+        <input>../Algebraic_foundations/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Algebraic_foundations/doc/Algebraic_foundations/</string>
+          <string name="STRIP_FROM_INC_PATH">../Algebraic_foundations/doc/Algebraic_foundations/</string>
+          <string name="GENERATE_TAGFILE">./tags/Algebraic_foundations.tag</string>
+          <string name="IMAGE_PATH">../Algebraic_foundations/doc/Algebraic_foundations/fig</string>
+          <string name="EXAMPLE_PATH">../Algebraic_foundations/examples</string>
+          <string name="TAGFILES">
+            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+          </string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>HalfedgeDS</name>
+        <input>../HalfedgeDS/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../HalfedgeDS/doc/HalfedgeDS/</string>
+          <string name="STRIP_FROM_INC_PATH">../HalfedgeDS/doc/HalfedgeDS/</string>
+          <string name="GENERATE_TAGFILE">./tags/HalfedgeDS.tag</string>
+          <string name="EXAMPLE_PATH">../HalfedgeDS/examples</string>
+          <string name="IMAGE_PATH">../HalfedgeDS/doc/HalfedgeDS/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Convex_hull_2</name>
+        <input>../Convex_hull_2/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Convex_hull_2/doc/Convex_hull_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Convex_hull_2/doc/Convex_hull_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Convex_hull_2.tag</string>
+          <string name="EXAMPLE_PATH">../Convex_hull_2/examples</string>
+          <string name="IMAGE_PATH">../Convex_hull_2/doc/Convex_hull_2/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Convex_hull_3</name>
+        <input>../Convex_hull_3/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Convex_hull_3/doc/Convex_hull_3/</string>
+          <string name="STRIP_FROM_INC_PATH">../Convex_hull_3/doc/Convex_hull_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Convex_hull_3.tag</string>
+          <string name="EXAMPLE_PATH">../Convex_hull_3/examples</string>
+          <string name="IMAGE_PATH">../Convex_hull_3/doc/Convex_hull_3/fig</string>
+          <list name="TAGFILES" append="false">
+            <item name="TAGFILES">./tags/Convex_hull_2.tag=../../CGAL.CGAL.Convex_hull_2/html</item>
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Convex_hull_d</name>
+        <input>../Convex_hull_d/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Convex_hull_d/doc/Convex_hull_d/</string>
+          <string name="STRIP_FROM_INC_PATH">../Convex_hull_d/doc/Convex_hull_d/</string>
+          <string name="GENERATE_TAGFILE">./tags/Convex_hull_d.tag</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Straight_skeleton_2</name>
+        <input>../Straight_skeleton_2/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Straight_skeleton_2.tag</string>
+          <string name="EXAMPLE_PATH">../Straight_skeleton_2/examples</string>
+          <string name="IMAGE_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/fig</string>
+          <list name="TAGFILES" append="true">
+            <item name="TAGFILES">./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Partition_2</name>
+        <input>../Partition_2/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Partition_2/doc/Partition_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Partition_2/doc/Partition_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Partition_2.tag</string>
+          <string name="EXAMPLE_PATH">../Partition_2/examples</string>
+          <string name="IMAGE_PATH">../Partition_2/doc/Partition_2/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Convex_decomposition_3</name>
+        <input>../Convex_decomposition_3/include</input>
+        <input>../Convex_decomposition_3/doc/Convex_decomposition_3</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Convex_decomposition_3/include</string>
+          <string name="GENERATE_TAGFILE">./tags/Convex_decomposition_3.tag</string>
+          <string name="EXAMPLE_PATH">../Convex_decomposition_3/examples</string>
+          <string name="IMAGE_PATH">../Convex_decomposition_3/doc/Convex_decomposition_3/fig</string>
+          <bool name="EXTRACT_ALL">false</bool>
+          <bool name="HIDE_UNDOC_CLASSES">true</bool>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Point_set_2</name>
+        <input>../Point_set_2/doc/Point_set_2</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Point_set_2/doc/Point_set_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Point_set_2.tag</string>
+          <string name="EXAMPLE_PATH">../Point_set_2/examples</string>
+          <string name="IMAGE_PATH">../Point_set_2/doc/Point_set_2/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Interval_skip_list</name>
+        <input>../Interval_skip_list/doc/Interval_skip_list</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Interval_skip_list/doc/Interval_skip_list/</string>
+          <string name="GENERATE_TAGFILE">./tags/Interval_skip_list.tag</string>
+          <string name="EXAMPLE_PATH">../Interval_skip_list/examples</string>
+          <string name="IMAGE_PATH">../Interval_skip_list/doc/Interval_skip_list/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Envelope_2</name>
+        <input>../Envelope_2/doc/Envelope_2</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Envelope_2/doc/Envelope_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Envelope_2.tag</string>
+          <string name="EXAMPLE_PATH">../Envelope_2/examples</string>
+          <string name="IMAGE_PATH">../Envelope_2/doc/Envelope_2/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Envelope_3</name>
+        <input>../Envelope_3/doc/Envelope_3</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Envelope_3/doc/Envelope_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Envelope_3.tag</string>
+          <string name="EXAMPLE_PATH">../Envelope_3/examples</string>
+          <string name="IMAGE_PATH">../Envelope_3/doc/Envelope_3/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Minkowski_sum_2</name>
+        <input>../Minkowski_sum_2/doc/Minkowski_sum_2</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Minkowski_sum_2/doc/Minkowski_sum_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Minkowski_sum_2.tag</string>
+          <string name="EXAMPLE_PATH">../Minkowski_sum_2/examples</string>
+          <string name="IMAGE_PATH">../Minkowski_sum_2/doc/Minkowski_sum_2/fig</string>
+          <list name="TAGFILES" append="false">
+            <item>./tags/Polygon.tag=../../CGAL.CGAL.Polygon/html</item>
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Minkowski_sum_3</name>
+        <input>../Minkowski_sum_3/doc/Minkowski_sum_3</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Minkowski_sum_3/doc/Minkowski_sum_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Minkowski_sum_3.tag</string>
+          <string name="EXAMPLE_PATH">../Minkowski_sum_3/examples</string>
+          <string name="IMAGE_PATH">../Minkowski_sum_3/doc/Minkowski_sum_3/fig</string>
+          <list name="TAGFILES" append="false">
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Generator</name>
+        <input>../Generator/doc/Generator</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Generator/doc/Generator/</string>
+          <string name="GENERATE_TAGFILE">./tags/Generator.tag</string>
+          <string name="EXAMPLE_PATH">../Generator/examples</string>
+          <string name="IMAGE_PATH">../Generator/doc/Generator/fig</string>
+          <list name="TAGFILES" append="false">
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Geomview</name>
+        <input>../Geomview/doc/Geomview</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Geomview/doc/Geomview/</string>
+          <string name="GENERATE_TAGFILE">./tags/Geomview.tag</string>
+          <string name="EXAMPLE_PATH">../Geomview/demo</string>
+          <list name="TAGFILES" append="false">
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Spatial_searching</name>
+        <input>../Spatial_searching/doc/Spatial_searching</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Spatial_searching/doc/Spatial_searching/</string>
+          <string name="GENERATE_TAGFILE">./tags/Spatial_searching.tag</string>
+          <string name="EXAMPLE_PATH">../Spatial_searching/examples</string>
+          <list name="TAGFILES" append="false">
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Box_intersection_d</name>
+        <input>../Box_intersection_d/doc/Box_intersection_d</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Box_intersection_d/doc/Box_intersection_d/</string>
+          <string name="GENERATE_TAGFILE">./tags/Box_intersection_d.tag</string>
+          <string name="EXAMPLE_PATH">../Box_intersection_d/examples</string>
+          <string name="IMAGE_PATH">../Box_intersection_d/doc/Box_intersection_d/fig</string>
+          <list name="TAGFILES" append="false">
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>GraphicsView</name>
+        <input>../GraphicsView/doc/GraphicsView</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../GraphicsView/doc/GraphicsView/</string>
+          <string name="STRIP_FROM_INC_PATH">../GraphicsView/doc/GraphicsView/</string>
+          <string name="GENERATE_TAGFILE">./tags/GraphicsView.tag</string>
+          <string name="EXAMPLE_PATH">../GraphicsView/examples</string>
+          <string name="IMAGE_PATH">../GraphicsView/doc/GraphicsView/fig</string>
+          <list name="TAGFILES" append="false">
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Miscellany</name>
+        <input>../Miscellany/doc/Miscellany</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Miscellany/doc/Miscellany/</string>
+          <string name="STRIP_FROM_INC_PATH">../Miscellany/doc/Miscellany/</string>
+          <string name="GENERATE_TAGFILE">./tags/Miscellany.tag</string>
+          <string name="EXAMPLE_PATH">../Miscellany/examples</string>
+          <string name="IMAGE_PATH">../Miscellany/doc/Miscellany/fig</string>
+          <list name="TAGFILES" append="false">
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Polytope_distance_d</name>
+        <input>../Polytope_distance_d/doc/Polytope_distance_d</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Polytope_distance_d/doc/Polytope_distance_d/</string>
+          <string name="STRIP_FROM_INC_PATH">../Polytope_distance_d/doc/Polytope_distance_d/</string>
+          <string name="GENERATE_TAGFILE">./tags/Polytope_distance_d.tag</string>
+          <list name="EXAMPLE_PATH" append="false">
+            <item>../Polytope_distance_d/examples</item>
+            <item>../Width_3/examples</item>
+            <item>../Matrix_search/examples</item>
+          </list>
+          <string name="IMAGE_PATH">../Polytope_distance_d/doc/Polytope_distance_d/fig</string>
+          <list name="TAGFILES" append="false">
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Bounding_volumes</name>
+        <input>../Bounding_volumes/doc/Bounding_volumes</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Bounding_volumes/doc/Bounding_volumes/</string>
+          <string name="STRIP_FROM_INC_PATH">../Bounding_volumes/doc/Bounding_volumes/</string>
+          <string name="GENERATE_TAGFILE">./tags/Bounding_volumes.tag</string>
+          <list name="EXAMPLE_PATH" append="false">
+            <item>../Min_quadrilateral_2/examples</item>
+            <item>../Min_circle_2/examples</item>
+            <item>../Min_ellipse_2/examples</item>
+            <item>../Min_sphere_d/examples</item>
+            <item>../Approximate_min_ellipsoid_d/examples</item>
+          </list>
+          <string name="IMAGE_PATH">../Bounding_volumes/doc/Bounding_volumes/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Snap_rounding_2</name>
+        <input>../Snap_rounding_2/doc/Snap_rounding_2</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Snap_rounding_2/doc/Snap_rounding_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Snap_rounding_2/doc/Snap_rounding_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Snap_rounding_2.tag</string>
+          <string name="IMAGE_PATH">../Snap_rounding_2/doc/Snap_rounding_2/fig</string>
+          <string name="EXAMPLE_PATH">../Snap_rounding_2/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Skin_surface_3</name>
+        <input>../Skin_surface_3/doc/Skin_surface_3</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Skin_surface_3/doc/Skin_surface_3/</string>
+          <string name="STRIP_FROM_INC_PATH">../Skin_surface_3/doc/Skin_surface_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Skin_surface_3.tag</string>
+          <string name="IMAGE_PATH">../Skin_surface_3/doc/Skin_surface_3/fig</string>
+          <string name="EXAMPLE_PATH">../Skin_surface_3/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Modular_arithmetic</name>
+        <input>../Modular_arithmetic/doc/Modular_arithmetic</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Modular_arithmetic/doc/Modular_arithmetic/</string>
+          <string name="STRIP_FROM_INC_PATH">../Modular_arithmetic/doc/Modular_arithmetic/</string>
+          <string name="GENERATE_TAGFILE">./tags/Modular_arithmetic.tag</string>
+          <string name="IMAGE_PATH">../Modular_arithmetic/doc/Modular_arithmetic/fig</string>
+          <string name="EXAMPLE_PATH">../Modular_arithmetic/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Alpha_shapes_2</name>
+        <input>../Alpha_shapes_2/doc/Alpha_shapes_2</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Alpha_shapes_2/doc/Alpha_shapes_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Alpha_shapes_2/doc/Alpha_shapes_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Alpha_shapes_2.tag</string>
+          <string name="IMAGE_PATH">../Alpha_shapes_2/doc/Alpha_shapes_2/fig</string>
+          <string name="EXAMPLE_PATH">../Alpha_shapes_2/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Alpha_shapes_3</name>
+        <input>../Alpha_shapes_3/doc/Alpha_shapes_3</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Alpha_shapes_3/doc/Alpha_shapes_3/</string>
+          <string name="STRIP_FROM_INC_PATH">../Alpha_shapes_3/doc/Alpha_shapes_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Alpha_shapes_3.tag</string>
+          <string name="IMAGE_PATH">../Alpha_shapes_3/doc/Alpha_shapes_3/fig</string>
+          <string name="EXAMPLE_PATH">../Alpha_shapes_3/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Principal_component_analysis</name>
+        <input>../Principal_component_analysis/doc/Principal_component_analysis</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Principal_component_analysis/doc/Principal_component_analysis/</string>
+          <string name="STRIP_FROM_INC_PATH">../Principal_component_analysis/doc/Principal_component_analysis/</string>
+          <string name="GENERATE_TAGFILE">./tags/Principal_component_analysis.tag</string>
+          <string name="IMAGE_PATH">../Principal_component_analysis/doc/Principal_component_analysis/fig</string>
+          <string name="EXAMPLE_PATH">../Principal_component_analysis/examples</string>
+        </doxygen>
+      </project>
+      <!-- subprojects end -->
+    </project>
+
+    <!-- The main CGAL project containing the package list and complete reference documentation -->
+    <project>
+      <namespace>CGAL</namespace>
       <name>CGAL</name>
       <!-- The version number of the documentation -->
       <version>4.1</version>
@@ -22,9 +446,6 @@
       <input>./doc</input>
       <output>./output</output>
       <logDirectory>./log</logDirectory>
-
-      <namespace>CGAL</namespace>
-
       <doxygen>
         <!-- this project also generates a tag file with all basic STL
              Concepts, and some general manual pages -->
@@ -32,14 +453,14 @@
         <string name="EXAMPLE_PATH">../Convex_hull_2/examples</string>
 
         <list name="FILTER_PATTERNS" append="false">
-          <item>*.txt=./txt_filter.sh</item>
+          <item>*.txt=./pkglist_filter.sh</item>
         </list>
-        
         <list name="IMAGE_PATH" append="false">
           <item>./doc/fig</item>
           <item>../STL_Extension/doc/STL_Extension/fig</item>
           <item>../Mesh_2/doc/Mesh_2/fig</item>
           <item>../Mesh_3/doc/Mesh_3/fig</item>
+          <item>../Algebraic_foundations/doc/Algebraic_foundations/fig</item>
           <item>../HalfedgeDS/doc/HalfedgeDS/fig</item>
           <item>../Convex_hull_2/doc/Convex_hull_2/fig</item>
           <item>../Convex_hull_3/doc/Convex_hull_3/fig</item>
@@ -53,403 +474,57 @@
           <item>../Envelope_3/doc/Envelope_3/fig</item>
           <item>../Minkowski_sum_2/doc/Minkowski_sum_2/fig</item>
           <item>../Minkowski_sum_3/doc/Minkowski_sum_3/fig</item>
+          <item>../Generator/doc/Generator/fig</item>
+          <item>../Geomview/doc/Geomview/fig</item>
+          <item>../Spatial_searching/doc/Spatial_searching/fig</item>
           <item>../Box_intersection_d/doc/Box_intersection_d/fig</item>
+          <item>../GraphicsView/doc/GraphicsView/fig</item>
+          <item>../Miscellany/doc/Miscellany/fig</item>
+          <item>../Polytope_distance_d/doc/Polytope_distance_d/fig</item>
+          <item>../Bounding_volumes/doc/Bounding_volumes/fig</item>
+          <item>../Snap_rounding_2/doc/Snap_rounding_2/fig</item>
+          <item>../Skin_surface_3/doc/Skin_surface_3/fig</item>
+          <item>../Modular_arithmetic/doc/Modular_arithmetic/fig</item>
+          <item>../Alpha_shapes_2/doc/Alpha_shapes_2/fig</item>
+          <item>../Alpha_shapes_3/doc/Alpha_shapes_3/fig</item>
+          <item>../Principal_component_analysis/doc/Principal_component_analysis/fig</item>
         </list>
-
         <list name="TAGFILES" append="false">
           <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL_Extension/html</item>
           <item>./tags/Mesh_2.tag=../../CGAL.CGAL.Mesh_2/html</item>
           <item>./tags/Mesh_3.tag=../../CGAL.CGAL.Mesh_3/html</item>
+          <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic_foundations/html</item>
           <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
           <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.Convex_hull_2/html</item>
           <item>./tags/Convex_hull_3.tag=../../CGAL.CGAL.Convex_hull_3/html</item>
           <item>./tags/Convex_hull_d.tag=../../CGAL.CGAL.Convex_hull_d/html</item>
           <item>./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.Straight_skeleton_2/html</item>
           <item>./tags/Partition_2.tag=../../CGAL.CGAL.Partition_2/html</item>
+          <item>./tags/Convex_decomposition_3.tag=../../CGAL.CGAL.Convex_decomposition_3/html</item>
+          <item>./tags/Point_set_2.tag=../../CGAL.CGAL.Point_set_2/html</item>
+          <item>./tags/Interval_skip_list.tag=../../CGAL.CGAL.Interval_skip_list/html</item>
+          <item>./tags/Envelope_2.tag=../../CGAL.CGAL.Envelope_2/html</item>
+          <!-- <item>./tags/Envelope_3.tag=../../CGAL.CGAL.Envelope_3/html</item> -->
+          <item>./tags/Minkowski_sum_2.tag=../../CGAL.CGAL.Minkowski_sum_2/html</item>
+          <item>./tags/Minkowski_sum_3.tag=../../CGAL.CGAL.Minkowski_sum_3/html</item>
+          <item>./tags/Generator.tag=../../CGAL.CGAL.Generator/html</item>
+          <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
+          <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.Spatial_searching/html</item>
+          <item>./tags/Box_intersection_d.tag=../../CGAL.CGAL.Box_intersection_d/html</item>
+          <item>./tags/GraphicsView.tag=../../CGAL.CGAL.GraphicsView/html</item>
+          <item>./tags/Miscellany.tag=../../CGAL.CGAL.Miscellany/html</item>
+          <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Polytope_distance_d/html</item>
+          <item>./tags/Bounding_volumes.tag=../../CGAL.CGAL.Bounding_volumes/html</item>
+          <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.Snap_rounding_2/html</item>
+          <item>./tags/Skin_surface_3.tag=../../CGAL.CGAL.Skin_surface_3/html</item>
+          <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular_arithmetic/html</item>
+          <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.Alpha_shapes_2/html</item>
+          <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.Alpha_shapes_3/html</item>
+          <item>./tags/Principal_component_analysis.tag=../../CGAL.CGAL.Principal_component_analysis/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>
       </doxygen>
-
-      <!-- subprojects -->
-
-      <project>
-        <name>Kernel 23</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Kernel_23/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../Kernel_23/doc/Kernel_23/</string>
-          <string name="STRIP_FROM_INC_PATH">../Kernel_23/doc/Kernel_23/</string>
-          <string name="GENERATE_TAGFILE">./tags/Kernel_23.tag</string>
-          <string name="EXAMPLE_PATH">../Kernel_23/examples</string>
-          <string name="IMAGE_PATH">../Kernel_23/doc/Kernel_23/fig</string>
-          <string name="TAGFILES"></string>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Algebraic_foundations</name>
-        <namespace>CGAL</namespace>
-        <input>../Algebraic_foundations/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../Algebraic_foundations/doc/Algebraic_foundations/</string>
-          <string name="STRIP_FROM_INC_PATH">../Algebraic_foundations/doc/Algebraic_foundations/</string>
-          <string name="GENERATE_TAGFILE">./tags/Algebraic_foundations.tag</string>
-          <string name="IMAGE_PATH">../Algebraic_foundations/doc/Algebraic_foundations/fig</string>
-          <string name="EXAMPLE_PATH">../Algebraic_foundations/examples</string>
-          <string name="TAGFILES">
-            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
-          </string>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>STL_Extension</name>
-        <namespace>CGAL</namespace>
-        <input>../STL_Extension/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../STL_Extension/doc/STL_Extension/</string>
-          <string name="STRIP_FROM_INC_PATH">../STL_Extension/doc/STL_Extension/</string>
-          <string name="GENERATE_TAGFILE">./tags/STL_Extension.tag</string>
-          <string name="IMAGE_PATH">../STL_Extension/doc/STL_Extension/fig</string>
-          <string name="EXAMPLE_PATH">../STL_Extension/examples</string>
-          <string name="TAGFILES"></string>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Mesh_2</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Mesh_2/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../Mesh_2/doc/Mesh_2/</string>
-          <string name="STRIP_FROM_INC_PATH">../Mesh_2/doc/Mesh_2/</string>
-          <string name="GENERATE_TAGFILE">./tags/Mesh_2.tag</string>
-          <string name="IMAGE_PATH">../Mesh_2/doc/Mesh_2/fig</string>
-          <string name="EXAMPLE_PATH">../Mesh_2/examples</string>
-          <string name="TAGFILES"></string>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Mesh_3</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Mesh_3/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../Mesh_3/doc/Mesh_3/</string>
-          <string name="STRIP_FROM_INC_PATH">../Mesh_3/doc/Mesh_3/</string>
-          <string name="GENERATE_TAGFILE">./tags/Mesh_3.tag</string>
-          <string name="IMAGE_PATH">../Mesh_3/doc/Mesh_3/fig</string>
-          <string name="EXAMPLE_PATH">../Mesh_3/examples</string>
-          <string name="TAGFILES"></string>
-          <bool name="ALLEXTERNALS">false</bool>
-          <list name="HTML_EXTRA_FILES" append="true">
-            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain.jpg</item>
-            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_3.jpg</item>
-            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_4.jpg</item>
-            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_5.jpg</item>
-          </list>
-        </doxygen>
-      </project>
-
-
-      <project>
-        <name>HalfedgeDS</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../HalfedgeDS/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../HalfedgeDS/doc/HalfedgeDS/</string>
-          <string name="STRIP_FROM_INC_PATH">../HalfedgeDS/doc/HalfedgeDS/</string>
-          <string name="GENERATE_TAGFILE">./tags/HalfedgeDS.tag</string>
-          <string name="EXAMPLE_PATH">../HalfedgeDS/examples</string>
-          <string name="IMAGE_PATH">../HalfedgeDS/doc/HalfedgeDS/fig</string>
-          <string name="TAGFILES"></string>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Convex_hull_2</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Convex_hull_2/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../Convex_hull_2/doc/Convex_hull_2/</string>
-          <string name="STRIP_FROM_INC_PATH">../Convex_hull_2/doc/Convex_hull_2/</string>
-          <string name="GENERATE_TAGFILE">./tags/Convex_hull_2.tag</string>
-          <string name="EXAMPLE_PATH">../Convex_hull_2/examples</string>
-          <string name="IMAGE_PATH">../Convex_hull_2/doc/Convex_hull_2/fig</string>
-          <string name="TAGFILES"></string>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Convex_hull_3</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Convex_hull_3/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../Convex_hull_3/doc/Convex_hull_3/</string>
-          <string name="STRIP_FROM_INC_PATH">../Convex_hull_3/doc/Convex_hull_3/</string>
-          <string name="GENERATE_TAGFILE">./tags/Convex_hull_3.tag</string>
-          <string name="EXAMPLE_PATH">../Convex_hull_3/examples</string>
-          <string name="IMAGE_PATH">../Convex_hull_3/doc/Convex_hull_3/fig</string>
-          
-          <list name="TAGFILES" append="false">
-            <item name="TAGFILES">./tags/Manual.tag=../../CGAL.CGAL/html</item>
-            <item name="TAGFILES">./tags/Convex_hull_2.tag=../../CGAL.CGAL.Convex_hull_2/html</item>
-          </list>
-
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Convex_hull_d</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Convex_hull_d/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../Convex_hull_d/doc/Convex_hull_d/</string>
-          <string name="STRIP_FROM_INC_PATH">../Convex_hull_d/doc/Convex_hull_d/</string>
-          <string name="GENERATE_TAGFILE">./tags/Convex_hull_d.tag</string>
-          <list name="TAGFILES" append="false">
-            <item name="TAGFILES">./tags/Manual.tag=../../CGAL.CGAL/html</item>
-          </list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Straight_skeleton_2</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Straight_skeleton_2/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/</string>
-          <string name="STRIP_FROM_INC_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/</string>
-          <string name="GENERATE_TAGFILE">./tags/Straight_skeleton_2.tag</string>
-          <string name="EXAMPLE_PATH">../Straight_skeleton_2/examples</string>
-          <string name="IMAGE_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/fig</string>
-          <list name="TAGFILES" append="false">
-            <item name="TAGFILES">./tags/Manual.tag=../../CGAL.CGAL/html</item>
-            <item name="TAGFILES">./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
-          </list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Partition_2</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Partition_2/doc</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../Partition_2/doc/Partition_2/</string>
-          <string name="STRIP_FROM_INC_PATH">../Partition_2/doc/Partition_2/</string>
-          <string name="GENERATE_TAGFILE">./tags/Partition_2.tag</string>
-          <string name="EXAMPLE_PATH">../Partition_2/examples</string>
-          <string name="IMAGE_PATH">../Partition_2/doc/Partition_2/fig</string>
-          <list name="TAGFILES" append="false"></list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Convex_decomposition_3</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Convex_decomposition_3/include</input>
-        <input>../Convex_decomposition_3/doc/Convex_decomposition_3</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Convex_decomposition_3/include</string>
-          <string name="GENERATE_TAGFILE">./tags/Convex_decomposition_3.tag</string>
-          <string name="EXAMPLE_PATH">../Convex_decomposition_3/examples</string>
-          <string name="IMAGE_PATH">../Convex_decomposition_3/doc/Convex_decomposition_3/fig</string>
-          <list name="TAGFILES" append="false"></list>
-          <bool name="ALLEXTERNALS">false</bool>
-          <bool name="EXTRACT_ALL">false</bool>
-          <bool name="HIDE_UNDOC_CLASSES">true</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Point_set_2</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Point_set_2/doc/Point_set_2</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Point_set_2/doc/Point_set_2/</string>
-          <string name="GENERATE_TAGFILE">./tags/Point_set_2.tag</string>
-          <string name="EXAMPLE_PATH">../Point_set_2/examples</string>
-          <string name="IMAGE_PATH">../Point_set_2/doc/Point_set_2/fig</string>
-          <list name="TAGFILES" append="false"></list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Interval_skip_list</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Interval_skip_list/doc/Interval_skip_list</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Interval_skip_list/doc/Interval_skip_list/</string>
-          <string name="GENERATE_TAGFILE">./tags/Interval_skip_list.tag</string>
-          <string name="EXAMPLE_PATH">../Interval_skip_list/examples</string>
-          <string name="IMAGE_PATH">../Interval_skip_list/doc/Interval_skip_list/fig</string>
-          <list name="TAGFILES" append="false"></list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Envelope_2</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Envelope_2/doc/Envelope_2</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Envelope_2/doc/Envelope_2/</string>
-          <string name="GENERATE_TAGFILE">./tags/Envelope_2.tag</string>
-          <string name="EXAMPLE_PATH">../Envelope_2/examples</string>
-          <string name="IMAGE_PATH">../Envelope_2/doc/Envelope_2/fig</string>
-          <list name="TAGFILES" append="false"></list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Envelope_3</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Envelope_3/doc/Envelope_3</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Envelope_3/doc/Envelope_3/</string>
-          <string name="GENERATE_TAGFILE">./tags/Envelope_3.tag</string>
-          <string name="EXAMPLE_PATH">../Envelope_3/examples</string>
-          <string name="IMAGE_PATH">../Envelope_3/doc/Envelope_3/fig</string>
-          <list name="TAGFILES" append="false"></list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Minkowski_sum_2</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Minkowski_sum_2/doc/Minkowski_sum_2</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Minkowski_sum_2/doc/Minkowski_sum_2/</string>
-          <string name="GENERATE_TAGFILE">./tags/Minkowski_sum_2.tag</string>
-          <string name="EXAMPLE_PATH">../Minkowski_sum_2/examples</string>
-          <string name="IMAGE_PATH">../Minkowski_sum_2/doc/Minkowski_sum_2/fig</string>
-          <list name="TAGFILES" append="false">
-            <item>./tags/Polygon.tag=../../CGAL.CGAL.Polygon/html</item>
-          </list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Minkowski_sum_3</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Minkowski_sum_3/doc/Minkowski_sum_3</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Minkowski_sum_3/doc/Minkowski_sum_3/</string>
-          <string name="GENERATE_TAGFILE">./tags/Minkowski_sum_3.tag</string>
-          <string name="EXAMPLE_PATH">../Minkowski_sum_3/examples</string>
-          <string name="IMAGE_PATH">../Minkowski_sum_3/doc/Minkowski_sum_3/fig</string>
-          <list name="TAGFILES" append="false">
-          </list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Generator</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Generator/doc/Generator</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Generator/doc/Generator/</string>
-          <string name="GENERATE_TAGFILE">./tags/Generator.tag</string>
-          <string name="EXAMPLE_PATH">../Generator/examples</string>
-          <string name="IMAGE_PATH">../Generator/doc/Generator/fig</string>
-          <list name="TAGFILES" append="false">
-          </list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Geomview</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Geomview/doc/Geomview</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Geomview/doc/Geomview/</string>
-          <string name="GENERATE_TAGFILE">./tags/Geomview.tag</string>
-          <string name="EXAMPLE_PATH">../Geomview/demo</string>
-          <list name="TAGFILES" append="false">
-          </list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Spatial_searching</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Spatial_searching/doc/Spatial_searching</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Spatial_searching/doc/Spatial_searching/</string>
-          <string name="GENERATE_TAGFILE">./tags/Spatial_searching.tag</string>
-          <string name="EXAMPLE_PATH">../Spatial_searching/examples</string>
-          <list name="TAGFILES" append="false">
-          </list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Box_intersection_d</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Box_intersection_d/doc/Box_intersection_d</input>
-        <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Box_intersection_d/doc/Box_intersection_d/</string>
-          <string name="GENERATE_TAGFILE">./tags/Box_intersection_d.tag</string>
-          <string name="EXAMPLE_PATH">../Box_intersection_d/examples</string>
-          <string name="IMAGE_PATH">../Box_intersection_d/doc/Box_intersection_d/fig</string>
-          <list name="TAGFILES" append="false">
-          </list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>GraphicsView</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../GraphicsView/doc/GraphicsView</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../GraphicsView/doc/GraphicsView/</string>
-          <string name="STRIP_FROM_INC_PATH">../GraphicsView/doc/GraphicsView/</string>
-          <string name="GENERATE_TAGFILE">./tags/GraphicsView.tag</string>
-          <string name="EXAMPLE_PATH">../GraphicsView/examples</string>
-          <string name="IMAGE_PATH">../GraphicsView/doc/GraphicsView/fig</string>
-          <list name="TAGFILES" append="false">
-          </list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <project>
-        <name>Miscellany</name>
-        <versionSpecific>false</versionSpecific>
-        <input>../Miscellany/doc/Miscellany</input>
-        <doxygen>
-          <string name="STRIP_FROM_PATH">../Miscellany/doc/Miscellany/</string>
-          <string name="STRIP_FROM_INC_PATH">../Miscellany/doc/Miscellany/</string>
-          <string name="GENERATE_TAGFILE">./tags/Miscellany.tag</string>
-          <string name="EXAMPLE_PATH">../Miscellany/examples</string>
-          <string name="IMAGE_PATH">../Miscellany/doc/Miscellany/fig</string>
-          <list name="TAGFILES" append="false">
-          </list>
-          <bool name="ALLEXTERNALS">false</bool>
-        </doxygen>
-      </project>
-
-      <!-- subprojects end -->
     </project>
   </projects>
 </DoxyAssist>
