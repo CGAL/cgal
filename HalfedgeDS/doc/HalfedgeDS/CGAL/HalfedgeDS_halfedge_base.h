@@ -7,7 +7,7 @@ The class `HalfedgeDS_halfedge_base` is a model of the `HalfedgeDSHalfedge`
 concept. `Refs` is an instantiation of a `HalfedgeDS`. 
 The full declaration states four template parameters: 
 
-<TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
+<TABLE border="0"><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 
 <span class="mbox"></span> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
