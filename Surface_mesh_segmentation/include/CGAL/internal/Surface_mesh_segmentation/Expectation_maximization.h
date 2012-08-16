@@ -84,7 +84,11 @@ protected:
   };
 public:
   /** Types of algorithms for random center selection. */
-  enum Initialization_types { RANDOM_INITIALIZATION, PLUS_INITIALIZATION, K_MEANS_INITIALIZATION };
+  enum Initialization_types {
+    RANDOM_INITIALIZATION, /**< place initial centers randomly */
+    PLUS_INITIALIZATION,   /**< place initial centers using k-means++ algorithm */
+    K_MEANS_INITIALIZATION /**< run k-means clustering and use result of it as initial center positions */
+  };
 
   double final_likelihood;
 protected:

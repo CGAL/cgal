@@ -1,6 +1,9 @@
 #ifndef CGAL_SURFACE_MESH_SEGMENTATION_DISK_SAMPLING_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_DISK_SAMPLING_H
-
+/**
+ * @file Disk_sampling.h
+ * This file contains 3 sampling methods, which can be used as a template parameter for `SDF_calculation<Polyhedron, DiskSampling>`.
+ */
 #include <CGAL/number_type_basic.h>
 
 #include <boost/tuple/tuple.hpp>
@@ -40,6 +43,7 @@ namespace internal
 // Uniform //                                  // Custom power (biased to center) //
 /**
  * @brief Uses Vogel's method to sample points from unit-disk.
+ * @see Disk_sampling.h
  */
 class Vogel_disk_sampling
 {
@@ -47,7 +51,6 @@ protected:
   typedef boost::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
 public:
-  Vogel_disk_sampling() { }
   /**
    * Samples points from unit-disk.
    * @param number_of_points number of points to be picked
@@ -57,8 +60,8 @@ public:
    *   - get<1> = coordinate-y
    *   - get<2> = weight (proportional to angle between cone-normal)
    */
-  void sample(int number_of_points, double cone_angle,
-              Disk_samples_list& samples) {
+  void operator()(int number_of_points, double cone_angle,
+                  Disk_samples_list& samples) const {
     const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
     const double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
     const double golden_ratio = 3.0 - std::sqrt(5.0);
@@ -108,13 +111,15 @@ public:
 //                          *                          //
 //                          *                          //
 /////////////////////////////////////////////////////////
+/**
+ * @brief Uses polar mapping to sample points from unit-disk.
+ */
 class Polar_disk_sampling
 {
 protected:
   typedef boost::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
 public:
-  Polar_disk_sampling() { }
   /**
    * Samples points from unit-disk.
    * @param number_of_points number of points to be picked
@@ -127,8 +132,8 @@ public:
    * NOTE:
    * Returned samples size = floor( sqrt (number_of_points) ) ^ 2
    */
-  void sample(int number_of_points, double cone_angle,
-              Disk_samples_list& samples) {
+  void operator()(int number_of_points, double cone_angle,
+                  Disk_samples_list& samples) const {
     const int number_of_points_sqrt = static_cast<int>(std::sqrt(
                                         static_cast<double>(number_of_points)));
     const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
@@ -171,13 +176,15 @@ public:
 //              *                       *              //
 //                   *   *     *   *                   //
 /////////////////////////////////////////////////////////
+/**
+ * @brief Uses concentric mapping to sample points from unit-disk.
+ */
 class Concentric_disk_sampling
 {
 protected:
   typedef boost::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
 public:
-  Concentric_disk_sampling() { }
   /**
    * Samples points from unit-disk.
    * @param number_of_points number of points to be picked
@@ -190,8 +197,8 @@ public:
    * NOTE:
    * Returned samples size = floor( sqrt (number_of_points) ) ^ 2
    */
-  void sample(int number_of_points, double cone_angle,
-              Disk_samples_list& samples) {
+  void operator()(int number_of_points, double cone_angle,
+                  Disk_samples_list& samples) const {
     const int number_of_points_sqrt = static_cast<int>(std::sqrt(
                                         static_cast<double>(number_of_points)));
     const double length_of_normal = 1.0 / tan(cone_angle / 2.0);

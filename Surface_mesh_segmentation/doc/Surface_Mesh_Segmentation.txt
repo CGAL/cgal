@@ -4,7 +4,7 @@ namespace CGAL {
 
 \authors -
 
-\anchor figchbimba
+\anchor elephant_sdf_partition
 \image latex elephant_sdf_partition.png "Elephant model: SDF values & Segmentation" width=12cm
 \image html elephant_sdf_partition.png "Elephant model: SDF values & Segmentation (Going to be changed-improved)"
 
@@ -65,10 +65,12 @@ where:
   </table> 
 
 # API #
-The SDF computation and segmentation algorithms are implemented as free template functions.
-
+The SDF computation and segmentation algorithms are implemented as free template functions in the API.
+ 
 ##SDF Computation##
+The function CGAL::sdf_values_computation provides an implementation to SDF computation for a given CGAL Polyhedron. Computed SDF values are smoothed using bilateral filtering and linearly normalized between [0-1].  
 
+###Examples####
 \include Surface_mesh_segmentation/sdf_computation_example.cpp
 
 

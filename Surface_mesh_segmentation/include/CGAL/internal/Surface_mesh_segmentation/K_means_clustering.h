@@ -101,7 +101,10 @@ protected:
 
 public:
   /** Types of algorithms for random center selection. */
-  enum Initialization_types { RANDOM_INITIALIZATION, PLUS_INITIALIZATION };
+  enum Initialization_types {
+    RANDOM_INITIALIZATION, /**< place initial centers randomly */
+    PLUS_INITIALIZATION    /**< place initial centers using k-means++ algorithm */
+  };
 
 protected:
   std::vector<K_means_center> centers;

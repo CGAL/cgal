@@ -1,20 +1,23 @@
 #ifndef CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H
-/** \file mesh_segmentation.h
- * A brief file description.
- * A more elaborated file description.
+/**
+ * @file mesh_segmentation.h
+ * The API for mesh segmentation which contains free template functions.
  */
 #include <CGAL/Surface_mesh_segmentation.h>
 
-#define CGAL_DEFAULT_CONE_ANGLE (2.0 / 3.0) * CGAL_PI
-#define CGAL_DEFAULT_NUMBER_OF_RAYS 25
+#define CGAL_DEFAULT_CONE_ANGLE (2.0 / 3.0) * CGAL_PI /**< Default cone opening angle for ray picking */
+#define CGAL_DEFAULT_NUMBER_OF_RAYS 25                /**< Default number of rays for ray picking */
 #define CGAL_DEFAULT_NUMBER_OF_CLUSTERS 5
 #define CGAL_DEFAULT_SMOOTHING_LAMBDA 23.0
 
+/** CGAL */
 namespace CGAL
 {
-/**
- * Free template function for SDF computation.
+
+/*!
+ * @brief Free template function for SDF computation.
+ * Returned SDF values are smoothed by bilateral filtering and linearly normalized between [0-1].
  * @param polyhedron CGAL Polyhedron on which SDF is computed
  * @param[out] sdf_values Writable Property-Map with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @param cone_angle opening angle for cone
