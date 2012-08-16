@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     CGAL::sdf_values_computation(mesh, sdf_property_map);
 	
     // create a property-map for segment-ids (it is an adaptor for this case)
-    typedef std::map<Polyhedron::Facet_const_iterator, int> Facet_int_map;
+    typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
     Facet_int_map internal_segment_map;
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
 	
@@ -49,5 +49,4 @@ int main(int argc, char **argv)
     // This feature becomes important when we want to segment the mesh several times with different parameters.
     CGAL::surface_mesh_segmentation_from_sdf_values(
 	mesh, sdf_property_map, segment_property_map, number_of_levels, smoothing_lambda);
-
 }

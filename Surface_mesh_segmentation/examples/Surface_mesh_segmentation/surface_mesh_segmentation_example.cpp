@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     std::ifstream(argv[1]) >> mesh;
 
     // create a property-map for segment-ids (it is an adaptor for this case)
-    typedef std::map<Polyhedron::Facet_const_iterator, int> Facet_int_map;
+    typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
     Facet_int_map internal_segment_map;
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
 	
@@ -33,5 +33,4 @@ int main(int argc, char **argv)
     {
         std::cout << segment_property_map[facet_it] << std::endl;                                 
     }
-
 }

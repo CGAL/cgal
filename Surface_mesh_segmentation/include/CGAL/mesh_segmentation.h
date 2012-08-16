@@ -89,9 +89,15 @@ void surface_mesh_segmentation(const Polyhedron& polyhedron,
                                double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA)
 {
 
-  Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
-  algorithm.calculate_sdf_values(cone_angle, number_of_rays);
-  algorithm.partition(segment_ids, number_of_levels, smoothing_lambda);
+  typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
+  Facet_double_map internal_sdf_map;
+  boost::associative_property_map<Facet_double_map> sdf_property_map(
+    internal_sdf_map);
+
+  sdf_values_computation(polyhedron, sdf_property_map, cone_angle,
+                         number_of_rays);
+  surface_mesh_segmentation_from_sdf_values(
+    polyhedron, sdf_property_map, segment_ids, number_of_levels, smoothing_lambda);
 }
 
 }//namespace CGAL

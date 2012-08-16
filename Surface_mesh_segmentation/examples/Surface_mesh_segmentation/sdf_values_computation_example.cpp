@@ -50,5 +50,4 @@ int main(int argc, char **argv)
     {
         std::cout << sdf_property_map[facet_it] - sdf_property_map_2[facet_it] << std::endl;                                 
     }
-
 }
