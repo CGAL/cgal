@@ -295,6 +295,7 @@ This behavior can be changed by means of the following function.
 The parameter should have one of the following values.
 
 `enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE, THROW_EXCEPTION };`
+
 The `THROW_EXCEPTION` value is the default, which throws an exception.
 
 If the `EXIT` value is set, the program will stop and return a value
