@@ -1,2 +1,4 @@
-Algorithm for computing the (squared) distance between two convex polytopes
-in arbitrary dimension
+Algorithm for computing the (squared) distance between two convex
+polytopes in arbitrary dimension and algorithm to determine the width
+of a three dimensional point set, that is two parallel supporting
+planes are computed having minimum distance.
