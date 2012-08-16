@@ -201,12 +201,12 @@ typedef Hidden_type Hidden_sites_iterator;
 
 /*! 
 Creates an 
-Apollonius graph using `gt` as geometric traits. 
+Apollonius graph `ag` using `gt` as geometric traits. 
 */ 
 Apollonius_graph_2(Gt gt=Gt()); 
 
 /*! 
-Creates an Apollonius graph using `gt` as 
+Creates an Apollonius graph `ag` using `gt` as 
 geometric traits and inserts all sites in the range 
 [`first`, `beyond`). 
 \pre `Input_iterator` must be a model of `InputIterator`. The value type of `Input_iterator` must be `Site_2`. 
@@ -594,7 +594,7 @@ void remove(Vertex_handle v);
 
 /// @} 
 
-/// \name Nearest neighbor location 
+/// \name Nearest Neighbor Location 
 /// @{
 
 /*! 
@@ -619,7 +619,7 @@ Vertex_handle vnear);
 
 /// @} 
 
-/// \name Access to the dual 
+/// \name Access to the Dual 
 /// The `Apollonius_graph_2` class provides access to the duals of the
 /// faces of the graph. The dual of a face of the Apollonius graph is
 /// a site. If the originating face is infinite, its dual is a site
@@ -735,7 +735,7 @@ Apollonius_graph_2<Gt,Agds> ag);
 
 /// @} 
 
-/// \name Validity check 
+/// \name Validity Check 
 /// @{
 
 /*! 
