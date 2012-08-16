@@ -81,8 +81,7 @@ or decrement an index of a vertex modulo the size of the polygon.}
 where the vector \f$ {\mathbf{p_i p_{i+1}}}\f$
 lies between \f$ {\mathbf{q_{j-1} q_j}}\f$ and \f$ {\mathbf{q_j
 q_{j+1}}}\f$, \footnote{We say that a vector \f$ {\mathbf v}\f$ lies between 
-two vectors \f$ {\mathbf u}\f$ and \f$ {\mathbf w}\f$ if we reach \f$ {\mathbf v}\f$ strictly before reaching \f$ {\mathbf w}\f$ if we move all three vectors to the origin and rotate \f$ {\mathbf u}\f$ counterclockwise. Note that this also covers the case where \f$ {\mathbf u}\f$ has the same direction as \f$ {\mathbf v}\f$.} and
-- symmetrically - of segments of the form \f$ [p_i + q_j, p_i + q_{j+1}]\f$,
+two vectors \f$ {\mathbf u}\f$ and \f$ {\mathbf w}\f$ if we reach \f$ {\mathbf v}\f$ strictly before reaching \f$ {\mathbf w}\f$ if we move all three vectors to the origin and rotate \f$ {\mathbf u}\f$ counterclockwise. Note that this also covers the case where \f$ {\mathbf u}\f$ has the same direction as \f$ {\mathbf v}\f$.} and, symmetrically, of segments of the form \f$ [p_i + q_j, p_i + q_{j+1}]\f$,
 where the vector \f$ {\mathbf{q_j q_{j+1}}}\f$ lies between
 \f$ {\mathbf{p_{i-1} p_i}}\f$ and \f$ {\mathbf{p_i p_{i+1}}}\f$.
 
@@ -111,7 +110,7 @@ return their Minkowski sum \f$ S = P \oplus Q\f$.
 
 As the input polygons may not be convex, their Minkowski sum may not be
 simply connected and contain polygonal holes; see for example
-Figure \ref mink_figonecyc . \f$ S\f$ is therefore an instance of the
+Figure \ref mink_figonecyc. \f$ S\f$ is therefore an instance of the
 `Polygon_with_holes_2<Kernel,Container>` class-template, defined in the
 Boolean Set-Operations package: The outer boundary of \f$ S\f$ is a polygon that
 can be accessed using `S.outer_boundary()`, and its polygonal holes 
@@ -145,7 +144,7 @@ The file `print_util.h` includes auxiliary functions for printing polygons.
 
 In the following program we compute the Minkowski sum of two polygons
 that are read from an input file. In this case, the sum is not simple
-and contains four holes, as illustrated in Figure \ref mink_figsum_holes .
+and contains four holes, as illustrated in Figure \ref mink_figsum_holes.
 Note that this example uses the predefined \cgal kernel with exact
 constructions. In general, instantiating polygons with this kernel yields
 the fastest running times for Minkowski-sum computations.
