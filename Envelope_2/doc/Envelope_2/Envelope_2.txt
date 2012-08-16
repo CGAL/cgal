@@ -150,7 +150,7 @@ subcurves.
 
 The following example demonstrates how to compute and traverse the
 minimization diagram of line segments, as illustrated in
-Figure \ref env2_figmin_diag . We use the curve-data traits
+Figure \ref env2_figmin_diag. We use the curve-data traits
 instantiated by the `Arr_segment_traits_2` class, in order to
 attach a label (a `char` in this case) to each input segment.
 We use these labels when we print the minimization diagram.
