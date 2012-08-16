@@ -12,12 +12,12 @@ parameter determines whether to apply ISR or SR.
 The fourth parameter denotes the pixel size \f$ w\f$. The plane will be 
 tiled with square pixels of width \f$ w\f$ such that the origin is the 
 center of a pixel. The sixth parameter denotes the output 
-representation. If the value of the sixth parameter is <I>true/</I> 
+representation. If the value of the sixth parameter is <I>true</I> 
 then the centers of pixels constitute the integer grid, and hence the 
 vertices of the output polylines will be integers. For example, the 
 coordinates of the center of the pixel to the right of the pixel 
 containing the origin will be \f$ (1,0)\f$ regardless of the pixel width. 
-If the value of the sixth parameter is <I>false/</I>, then the centers 
+If the value of the sixth parameter is <I>false</I>, then the centers 
 of hot pixels (and hence the vertices of the output polylines) will 
 bear their original coordinates, which may not necessarily be 
 integers. In the latter case, the coordinates of the center of the 
@@ -39,12 +39,12 @@ details and experimental results are given in \cite cgal:hp-isr-02.
 
 Given a finite collection \f$ \S\f$ of segments in the plane, the 
 arrangement of \f$ \S\f$ denoted \f$ \A(\S)\f$ is the subdivision of the plane 
-into vertices, edges, and faces induced by \f$ \S\f$. A <I>vertex/</I> of the arrangement is either a segment endpoint or 
+into vertices, edges, and faces induced by \f$ \S\f$. A <I>vertex</I> of the arrangement is either a segment endpoint or 
 the intersection of two segments. Given an arrangement of segments 
 whose vertices are represented with arbitrary-precision coordinates, 
 SR proceeds as follows. We tile the plane 
 with a grid of unit squares, <I>pixels</I>, each centered at a point 
-with integer coordinates. A pixel is <I>hot/</I> if it contains a 
+with integer coordinates. A pixel is <I>hot</I> if it contains a 
 vertex of the arrangement. Each vertex of the arrangement is replaced 
 by the center of the hot pixel containing it and each edge \f$ e\f$ is 
 replaced by the polygonal chain through the centers of the hot pixels 
