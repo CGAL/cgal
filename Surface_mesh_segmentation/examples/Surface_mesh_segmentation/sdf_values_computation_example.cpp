@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     std::ifstream(argv[1]) >> mesh;
 
     // create a property-map (it is an adaptor for this case)
-    typedef std::map<Polyhedron::Facet_const_iterator, double> Facet_double_map;
+    typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
     Facet_double_map internal_map;
     boost::associative_property_map<Facet_double_map> sdf_property_map(internal_map);
 

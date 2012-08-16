@@ -22,8 +22,9 @@ namespace internal
 {
 
 /**
- * @brief Resposable for calculating Shape Diameter Function over surface of the mesh.
+ * @brief Responsible for calculating Shape Diameter Function over surface of the mesh.
  * Usage:
+ *
  * @code
  *  // template parameters
  *  // Polyhedron          : CGAL Polyhedron (type of the mesh)
@@ -36,6 +37,7 @@ namespace internal
  *  SDF_calculation<Polyhedron, Vogel_disk_sampling>().
  *      calculate_sdf_values(120.0, 25, mesh, sdf_values);
  * @endcode
+ *
  * @see Disk_sampling.h
  */
 template <class Polyhedron, class DiskSampling = Vogel_disk_sampling>

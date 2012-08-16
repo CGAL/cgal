@@ -29,7 +29,7 @@ After calculating SDF values for each facet, bilateral smoothing (an edge-preser
 ## Soft Clustering ##
 Second part consists of applying soft clustering on SDF values. For this purpose, SDF values are first clustered using k-means clustering algorithm which is initialized with k-means++ (an algorithm for choosing random seeds for clusters) and run multiple times. Among these runs, we choose clustering result that has minimum with-in cluster error and use it to initialize expectation maximization algorithm for fitting Gaussian mixture models.
 
-Note that there is no direct relation between number of clusters (parameter for soft clustering) and number of segments (disconnected components). Intuitively, number of clusters represents level of segmentation by clustering facets, which have close SDF values, together without considering their connectivity. For example, for a human model, 2 clusters might result in clustering 4 legs and head of the model into one cluster, and remaining parts into another cluster. However, note that large number of clusters likely to result in detailed segmentation of mesh with large number of segments.
+Note that there is no direct relation between number of clusters (parameter for soft clustering) and number of segments (disconnected components). Intuitively, number of clusters represents level of segmentation by clustering facets, which have close SDF values, together without considering their connectivity. For example, for a human model, 2 clusters might result in clustering 4 legs and head of the model into one cluster, and remaining parts into another cluster. However, large number of clusters likely to result in detailed segmentation of the mesh with large number of segments.
 
 At the end of this part, we have soft clustering result which is a matrix that contains probability values for each facet to each cluster. These probability values are used in graph-cut part.
 
@@ -65,17 +65,35 @@ where:
   </table> 
 
 # API #
-The SDF computation and segmentation algorithms are implemented as free template functions in the API.
+The SDF computation and segmentation algorithms are implemented as free template functions. The API provides three functions listed below:
+	- CGAL::sdf_values_computation :computes SDF values.
+	- CGAL::surface_mesh_segmentation_from_sdf_values : computes mesh segmentation from SDF values.
+	- CGAL::surface_mesh_segmentation : computes SDF values and mesh segmentation in one go (i.e. combines two functions listed above).	
  
 ##SDF Computation##
-The function CGAL::sdf_values_computation provides an implementation to SDF computation for a given CGAL Polyhedron. Computed SDF values are smoothed using bilateral filtering and linearly normalized between [0-1].  
+The function CGAL::sdf_values_computation provides an implementation to SDF computation for a given `CGAL Polyhedron`. After computation, following postprocesses are applied:
+  - Facets with no SDF values (i.e. zero) are assigned to average SDF value of its neighbors. If still there is any facet which has no SDF value, minimum SDF value greater than zero is assigned to it.
+  - Smoothed with bilateral filtering.
+  - Linearly normalized between [0-1].
 
 ###Examples####
-\include Surface_mesh_segmentation/sdf_computation_example.cpp
+\include Surface_mesh_segmentation/sdf_values_computation_example.cpp
 
+##Surface Mesh Segmentation##
+The function CGAL::surface_mesh_segmentation_from_sdf_values implements surface mesh segmentation algorithm. By taking SDF values and segmentation parameters as input, a map which contains a segment-id (between [0, number of segments -1]) for each facet is provided as output. Formally, a segment is set of connected facets which are placed under same cluster after graph-cut. 
+
+###Examples###
+\include Surface_mesh_segmentation/surface_mesh_segmentation_from_sdf_values_example.cpp
+
+The function CGAL::surface_mesh_segmentation combines two functions explained above by computing SDF values and segmenting the mesh in one go. Note that for segmenting the mesh several times with different parameters (i.e. number of levels, and smoothing lambda), it is wise to first compute SDF values using CGAL::sdf_values_computation, and then call CGAL::surface_mesh_segmentation_from_sdf_values with same SDF values.
+
+###Examples###
+\include Surface_mesh_segmentation/surface_mesh_segmentation_example.cpp
 
 # Extra: (ideas to append) #
 Talk about effect of "number of rays" on SDF values, by providing RSME and average error ?
+
+Talk about effect of "number of levels" on segmentation results ? giving a few screen shot.
 
 Talk about pose-invariant feature of segmentation by giving a few screen shots from "benchmark" models (same models with different poses) ?
 
