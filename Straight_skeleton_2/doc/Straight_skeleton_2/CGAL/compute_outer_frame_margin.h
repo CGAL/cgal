@@ -5,22 +5,6 @@ namespace CGAL {
 
 The function `compute_outer_frame_margin` computes the separation required between a polygon and the outer frame used to obtain an exterior skeleton suitable for the computation of outer offset polygons at a given distance. 
 
-The default traits class `Default_traits` is an instance of the 
-class `Polygon_offset_builder_traits_2<Kernel>` parameterized on 
-the kernel in which the type `InputIterator::value_type` is defined. 
-
-Requirements 
--------------- 
-
-<OL> 
-<LI>`InputIterator::value_type` 
-is equivalent to `Traits::Point_2`. 
-<LI>`Traits` must be a model for `PolygonOffsetBuilderTraits_2` 
-</OL> 
-
-\sa `PolygonOffsetBuilderTraits_2` 
-\sa `CGAL::Polygon_offset_builder_traits_2<Kernel>` 
-
 Given a non-degenerate strictly-simple 2D polygon whose vertices are passed 
 in the range [`first`,`beyond`), calculates the largest euclidean distance
 `d` between each input vertex and its corresponding offset vertex at
@@ -46,6 +30,23 @@ If the result is <I>absent</I>, any attempt to construct an exterior offset poly
 
 \pre offset \f$ >\f$ 0.
 \pre The range [`first`,`beyond`) contains the vertices of a non-degenerate strictly-simple 2D polygon.
+
+The default traits class `Default_traits` is an instance of the 
+class `Polygon_offset_builder_traits_2<Kernel>` parameterized on 
+the kernel in which the type `InputIterator::value_type` is defined. 
+
+Requirements 
+-------------- 
+
+<OL> 
+<LI>`InputIterator::value_type` 
+is equivalent to `Traits::Point_2`. 
+<LI>`Traits` must be a model for `PolygonOffsetBuilderTraits_2` 
+</OL> 
+
+\sa `PolygonOffsetBuilderTraits_2` 
+\sa `CGAL::Polygon_offset_builder_traits_2<Kernel>` 
+
 
 */
 template <class InputIterator, class Traits>

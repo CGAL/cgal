@@ -3,7 +3,13 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2
 
-The function `arrange_offset_polygons_2` arranges the sequence of `Polygon_2` objects obtained by `create_offset_polygons_2` into `Polygon_with_holes_2` objects by determining geometric parent-hole relationships using a simple algorithm based on the particular characteristics of offset polygons. This function should not be used to arrange arbitrary polygons into polygons with holes unless they meet the requirements specified below. 
+The function `arrange_offset_polygons_2` arranges the sequence of `Polygon_2` objects obtained by `create_offset_polygons_2` into `Polygon_with_holes_2` objects by determining geometric parent-hole relationships using a simple algorithm based on the particular characteristics of offset polygons. 
+
+The function determines parent-hole relationships among the polygons given by `[begin,end]` creating 
+`boost::shared_ptr< Polygon_with_holes_2<K> >` objects added to the output sequence given `out`.
+A `CLOCKWISE` oriented polygon \f$ H\f$ is a hole of a `COUNTERCLOCKWISE` polygon \f$ P\f$, iff at least one vertex of \f$ H\f$ is `ON_BOUNDED_SIDE` of \f$ P\f$.
+
+This function should not be used to arrange arbitrary polygons into polygons with holes unless they meet the requirements specified below. 
 
 Requirements 
 -------------- 
@@ -22,10 +28,6 @@ bounded or unbounded side of \f$ Q\f$ (but not both).
 
 \sa `create_exterior_straight_skeleton_2` 
 \sa `Straight_skeleton_builder_2<Gt,Ss>` 
-
-determines parent-hole relationships among the polygons given by `[begin,end]` creating 
-`boost::shared_ptr< Polygon_with_holes_2<K> >` objects added to the output sequence given `out`.
-A `CLOCKWISE` oriented polygon \f$ H\f$ is a hole of a `COUNTERCLOCKWISE` polygon \f$ P\f$, iff at least one vertex of \f$ H\f$ is `ON_BOUNDED_SIDE` of \f$ P\f$.
 
 */
 template<class K, class InputPolygonPtrIterator, class OutputPolygonWithHolesPtrIterator>
