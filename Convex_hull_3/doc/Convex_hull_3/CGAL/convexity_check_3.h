@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgConvexHull3
+\ingroup PkgConvexityChecking
 
 The function `is_strongly_convex_3` determines if the vertices of a given polyhedron 
 represents a strongly convex set of points or not. A set of points is said 

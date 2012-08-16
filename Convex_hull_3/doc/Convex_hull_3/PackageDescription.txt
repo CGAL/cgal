@@ -9,6 +9,9 @@
 /// \defgroup PkgConvexHull3Functions Convex Hull Functions 
 /// \ingroup PkgConvexHull3
 
+/// \defgroup PkgConvexityChecking Convexity Checking
+/// \ingroup PkgConvexHull3
+
 /*!
 \addtogroup PkgConvexHull3
 \todo check generated documentation
