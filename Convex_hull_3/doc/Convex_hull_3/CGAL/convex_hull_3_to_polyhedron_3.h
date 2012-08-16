@@ -6,6 +6,11 @@ namespace CGAL {
 The function `convex_hull_3_to_polyhedron_3` fills a polyhedron with the convex hull 
 of a set of 3D points contained in a 3D triangulation of \cgal. 
 
+The polyhedron `P` is cleared and the convex hull of the set of 3D points is stored in `P`.
+The plane equations of each face are not computed.
+
+\pre `T.dimension()`==3.
+
 Requirements 
 -------------- 
 
@@ -17,9 +22,8 @@ This function requires the following:
 
 \sa `CGAL::convex_hull_3` 
 
-The polyhedron `P` is cleared and the convex hull of the set of 3D points is stored in `P`.
-The plane equations of each face are not computed.
-\pre `T.dimension()`==3.
+
+
 
 */
 

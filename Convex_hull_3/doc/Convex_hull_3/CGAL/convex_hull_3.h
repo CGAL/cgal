@@ -80,8 +80,6 @@ void convex_hull_3(InputIterator first, InputIterator last, Polyhedron_3& P, con
 a triangle, or a polyhedron, is stored in `ch_object`. When
 the result is a polyhedron, the plane equations of each face are not computed.
 
-The overload #convex_hull_3(InputIterator first, InputIterator last, Polyhedron_3& P, const Traits& ch_traits)
-
 */
 
 template <class InputIterator, class Traits>
