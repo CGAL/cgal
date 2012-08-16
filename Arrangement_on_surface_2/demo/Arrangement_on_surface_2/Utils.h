@@ -77,9 +77,11 @@ struct Supports_landmarks< Arr_, true >
 /**
 Support for new ArrTraits should specify types:
 
-* Kernel
+* Kernel - a not-necessarily-exact kernel to represent the arrangement
+  graphically. We'll use the Point_2 type provided by this kernel for computing
+  distances 
 * Point_2 - the point type used in the particular arrangement
-* Coordinate_1 - the coordinate type used by the point type
+* CoordinateType - the coordinate type used by the point type
 */
 template < class ArrTraits >
 class ArrTraitsAdaptor
@@ -92,6 +94,7 @@ public:
     typedef Kernel_ Kernel;
     typedef CGAL::Arr_segment_traits_2< Kernel > ArrTraits;
     typedef typename ArrTraits::Point_2 Point_2;
+    typedef typename Kernel::FT CoordinateType;
 };
 
 template < class Kernel_ >
@@ -101,6 +104,7 @@ public:
     typedef Kernel_ Kernel;
     typedef CGAL::Arr_linear_traits_2< Kernel > ArrTraits;
     typedef typename ArrTraits::Point_2 Point_2;
+    typedef typename Kernel::FT CoordinateType;
 };
 
 template < class SegmentTraits >
@@ -110,6 +114,7 @@ public:
     typedef CGAL::Arr_polyline_traits_2< SegmentTraits > ArrTraits;
     typedef typename SegmentTraits::Kernel Kernel;
     typedef typename ArrTraits::Point_2 Point_2;
+    typedef typename Kernel::FT CoordinateType;
 };
 
 template < class CircularKernel >
@@ -119,6 +124,7 @@ public:
     typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > ArrTraits;
     typedef CircularKernel Kernel;
     typedef typename ArrTraits::Point_2 Point_2;
+    typedef typename Kernel::Root_of_2 CoordinateType;
 };
 
 template < class RatKernel, class AlgKernel, class NtTraits >
@@ -128,6 +134,7 @@ public:
     typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > ArrTraits;
     typedef AlgKernel Kernel;
     typedef typename ArrTraits::Point_2 Point_2;
+    typedef typename Kernel::FT CoordinateType;
 };
 
 template < class Coefficient_ >
@@ -137,6 +144,8 @@ public:
     typedef Coefficient_ Coefficient;
     typedef typename CGAL::Arr_algebraic_segment_traits_2< Coefficient > ArrTraits;
     typedef typename ArrTraits::Point_2 Point_2; // CKvA_2
+    typedef typename ArrTraits::Algebraic_real_1 CoordinateType;
+    typedef CGAL::Cartesian< typename ArrTraits::Bound > Kernel;
     //typedef typename ArrTraits::CKvA_2 Kernel;
 };
 
@@ -144,7 +153,7 @@ template < class ArrTraits >
 class Compute_squared_distance_2_base : public QGraphicsSceneMixin
 {
 public:
-    typedef CGAL::Cartesian< double > CoordKernel;
+    typedef CGAL::Cartesian< double > InexactKernel;
 
 public: // ctors
     Compute_squared_distance_2_base( )
@@ -160,7 +169,7 @@ public: // methods
 
 protected: // fields
     typename Kernel::Compute_squared_distance_2 squared_distance;
-    CoordKernel::Compute_squared_distance_2 squaredDistance;
+    InexactKernel::Compute_squared_distance_2 squaredDistance;
 };
 
 template < class ArrTraits >
@@ -386,13 +395,34 @@ public: // methods
     }
 };
 
+template < class Coefficient_ >
+class Compute_squared_distance_2< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > > :
+    public Compute_squared_distance_2_base< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
+{
+public:
+    typedef Coefficient_ Coefficient;
+    typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > Traits;
+    typedef typename Traits::Bound FT; // unused
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+
+public:
+    double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
+    {
+        double res = 0.0;
+        return res;
+    }
+};
+
 template < class ArrTraits >
 class Arr_compute_y_at_x_2 : public QGraphicsSceneMixin
 {
 public:
     typedef ArrTraits Traits;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-    typedef typename Kernel::FT FT;
+    typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
+    //typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_2 Point_2;
     typedef typename Kernel::Line_2 Line_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
@@ -404,7 +434,7 @@ public:
         intersectCurves( this->traits.intersect_2_object( ) )
     { }
 
-    FT operator() ( const X_monotone_curve_2& curve, const FT& x )
+    CoordinateType operator() ( const X_monotone_curve_2& curve, const CoordinateType& x )
     {
         typename Traits::Left_side_category category;
         return this->operator()( curve, x, this->traits, category );
@@ -412,14 +442,14 @@ public:
 
 protected:
     template < class TTraits >
-    FT operator() ( const X_monotone_curve_2& curve, const FT& x, TTraits traits_, CGAL::Arr_oblivious_side_tag )
+    CoordinateType operator() ( const X_monotone_curve_2& curve, const CoordinateType& x, TTraits traits_, CGAL::Arr_oblivious_side_tag )
     {
         typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
             traits_.construct_x_monotone_curve_2_object( );
-        FT res( 0 );
+        CoordinateType res( 0 );
         CGAL::Bbox_2 clipRect = curve.bbox( );
-        Point_2 p1c1( x, FT( clipRect.ymin( ) - 1 ) ); // clicked point
-        Point_2 p2c1( x, FT( clipRect.ymax( ) + 1 ) ); // upper bounding box
+        Point_2 p1c1( x, CoordinateType( clipRect.ymin( ) - 1 ) ); // clicked point
+        Point_2 p2c1( x, CoordinateType( clipRect.ymax( ) + 1 ) ); // upper bounding box
 
         const X_monotone_curve_2 verticalLine =
             construct_x_monotone_curve_2( p1c1, p2c1 );
@@ -438,16 +468,16 @@ protected:
     }
 
     template < class TTraits >
-    FT operator() ( const X_monotone_curve_2& curve, const FT& x, TTraits traits_, CGAL::Arr_open_side_tag )
+    CoordinateType operator() ( const X_monotone_curve_2& curve, const CoordinateType& x, TTraits traits_, CGAL::Arr_open_side_tag )
     {
         typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
             traits_.construct_x_monotone_curve_2_object( );
-        FT res( 0 );
+        CoordinateType res( 0 );
         QRectF clipRect = this->viewportRect( );
         Line_2 line = curve.supporting_line( );
         // FIXME: get a better bounding box for an unbounded segment
-        Point_2 p1c1( x, FT( -10000000 ) ); // clicked point
-        Point_2 p2c1( x, FT(  10000000 ) ); // upper bounding box
+        Point_2 p1c1( x, CoordinateType( -10000000 ) ); // clicked point
+        Point_2 p2c1( x, CoordinateType(  10000000 ) ); // upper bounding box
 
         const X_monotone_curve_2 verticalLine =
             construct_x_monotone_curve_2( p1c1, p2c1 );
@@ -513,17 +543,57 @@ public:
         return res;
     }
 
-#if 0
+    // FIXME: inexact projection
     Root_of_2 operator() ( const X_monotone_curve_2& curve, const Root_of_2& x )
     {
         FT approx( CGAL::to_double( x ) );
         return this->operator()( curve, approx );
     }
-#endif
 
 protected:
     Traits traits;
     Intersect_2 intersectCurves;
+};
+
+template < class Coefficient_ >
+class Arr_compute_y_at_x_2< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > > : public QGraphicsSceneMixin
+{
+public:
+    typedef Coefficient_ Coefficient;
+    typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > Traits;
+    typedef typename Traits::Algebraic_real_1 CoordinateType;
+    typedef typename Traits::Point_2 Point_2;
+    typedef typename Traits::Intersect_2 Intersect_2;
+    typedef typename Traits::Multiplicity Multiplicity;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+
+    CoordinateType operator() ( const X_monotone_curve_2& curve, const CoordinateType& x )
+    {
+        CGAL::Object o;
+        CGAL::Oneset_iterator< CGAL::Object > oi( o );
+        Intersect_2 intersect = traits.intersect_2_object( );
+        X_monotone_curve_2 c2 = this->makeVerticalLine( x );
+        intersect( curve, c2, oi );
+        std::pair< Point_2, Multiplicity > res;
+        CGAL::assign( res, o ); // TODO: handle failure case
+        return res.first.y( );
+    }
+
+protected:
+    X_monotone_curve_2 makeVerticalLine( const CoordinateType& x )
+    {
+        typename Traits::Construct_point_2 constructPoint =
+            traits.construct_point_2_object( );
+        typename Traits::Construct_x_monotone_segment_2 constructSegment = 
+            traits.construct_x_monotone_segment_2_object( );
+
+        std::vector< X_monotone_curve_2 > curves;
+        Point_2 p1 = constructPoint( x, CoordinateType( -1000000 ) );
+        Point_2 p2 = constructPoint( x, CoordinateType( +1000000 ) );
+        constructSegment( p1, p2, std::back_inserter( curves ) );
+        return curves[ 0 ]; // by construction, there is one curve in curves
+    }
+    Traits traits;
 };
 
 #undef SUBCURVE_1
@@ -538,14 +608,13 @@ public:
     typedef typename ArrTraits::Split_2 Split_2;
     typedef typename ArrTraits::Intersect_2 Intersect_2;
     typedef typename ArrTraits::Multiplicity Multiplicity;
-#ifdef SUBCURVE_1
-    typedef typename ArrTraits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
-#endif
     typedef typename ArrTraits::Construct_min_vertex_2 Construct_min_vertex_2;
     typedef typename ArrTraits::Construct_max_vertex_2 Construct_max_vertex_2;
     typedef typename ArrTraits::Compare_x_2 Compare_x_2;
     typedef typename Kernel::FT FT;
-    typedef typename Kernel::Point_2 Point_2;
+    typedef typename ArrTraitsAdaptor< ArrTraits >::CoordinateType CoordinateType;
+    typedef typename ArrTraits::Point_2 Point_2;
+    typedef typename Kernel::Point_2 Kernel_point_2;
     //typedef typename Kernel::Line_2 Line_2;
     //typedef typename Kernel::Compute_y_at_x_2 Compute_y_at_x_2;
 
@@ -553,9 +622,6 @@ public:
         intersect_2( this->traits.intersect_2_object( ) ),
         split_2( this->traits.split_2_object( ) ),
         compare_x_2( this->traits.compare_x_2_object( ) ),
-#ifdef SUBCURVE_1
-        construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
-#endif
         construct_min_vertex_2( this->traits.construct_min_vertex_2_object( ) ),
         construct_max_vertex_2( this->traits.construct_max_vertex_2_object( ) )
     { }
@@ -575,32 +641,9 @@ public:
         X_monotone_curve_2 finalSubcurve;
         if ( this->compare_x_2( pLeft, pMin ) == CGAL::LARGER )
         {
-#ifndef SUBCURVE_1
-            Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
-            FT y1 = compute_y_at_x( curve, pLeft.x( ) );
+            CoordinateType y1 = this->compute_y_at_x( curve, pLeft.x( ) );
             Point_2 splitPoint( pLeft.x( ), y1 );
             this->split_2( curve, splitPoint, unusedTrimmings, subcurve );
-#endif
-            // FIXME: handle vertical lines properly
-#ifdef SUBCURVE_1
-            CGAL::Bbox_2 c_bbox = curve.bbox( );
-            FT splitLineYMin( c_bbox.ymin( ) - 1.0 );
-            FT splitLineYMax( c_bbox.ymax( ) + 1.0 );
-            Point_2 splitLinePBottom( pLeft.x( ), splitLineYMin );
-            Point_2 splitLinePTop( pLeft.x( ), splitLineYMax );
-            X_monotone_curve_2 splitLine = 
-                this->construct_x_monotone_curve_2( splitLinePBottom, splitLinePTop );
-            CGAL::Object res;
-            CGAL::Oneset_iterator< CGAL::Object > oi( res );
-            this->intersect_2( splitLine, curve, oi );
-            std::pair< Point_2, Multiplicity > pair;
-
-            if ( CGAL::assign( pair, res ) )
-            {
-                Point_2 splitPoint = pair.first;
-                this->split_2( curve, splitPoint, unusedTrimmings, subcurve );
-            }
-#endif
         }
         else
         {
@@ -609,30 +652,9 @@ public:
 
         if ( this->compare_x_2( pRight, pMax ) == CGAL::SMALLER )
         {
-#ifndef SUBCURVE_1
-            Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
-            FT y2 = compute_y_at_x( subcurve, pRight.x( ) );
+            CoordinateType y2 = this->compute_y_at_x( subcurve, pRight.x( ) );
             Point_2 splitPoint( pRight.x( ), y2 );
             this->split_2( subcurve, splitPoint, finalSubcurve, unusedTrimmings );
-#else
-            CGAL::Bbox_2 c_bbox = subcurve.bbox( );
-            FT splitLineYMin( c_bbox.ymin( ) - 1.0 );
-            FT splitLineYMax( c_bbox.ymax( ) + 1.0 );
-            Point_2 splitLinePBottom( pRight.x( ), splitLineYMin );
-            Point_2 splitLinePTop( pRight.x( ), splitLineYMax );
-            X_monotone_curve_2 splitLine =
-                this->construct_x_monotone_curve_2( splitLinePBottom, splitLinePTop );
-            CGAL::Object res;
-            CGAL::Oneset_iterator< CGAL::Object > oi( res );
-            this->intersect_2( splitLine, subcurve, oi );
-            std::pair< Point_2, Multiplicity > pair;
-            if ( CGAL::assign( pair, res ) )
-            {
-                Point_2 splitPoint = pair.first;
-                //return X_monotone_curve_2( splitLinePBottom, splitPoint );
-                this->split_2( subcurve, splitPoint, finalSubcurve, unusedTrimmings );
-            }
-#endif
         }
         else
         {
@@ -647,9 +669,7 @@ protected:
     Intersect_2 intersect_2;
     Split_2 split_2;
     Compare_x_2 compare_x_2;
-#ifdef SUBCURVE_1
-    Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
-#endif
+    Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
     Construct_min_vertex_2 construct_min_vertex_2;
     Construct_max_vertex_2 construct_max_vertex_2;
 }; // class Construct_x_monotone_subcurve_2
@@ -795,6 +815,28 @@ protected:
     Construct_x_monotone_subcurve_2< CGAL::Arr_segment_traits_2< Kernel_ > > constructSubsegment;
 };
 
+template < class Coefficient_ >
+class Construct_x_monotone_subcurve_2< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
+{
+public: // typedefs
+    typedef Coefficient_ Coefficient;
+    typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > ArrTraits;
+    typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
+    typedef typename ArrTraits::Point_2 Point_2;
+    //typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Segment_2 Segment_2;
+
+public: // methods
+    // curve can be unbounded. if curve is unbounded to the left, pLeft is a point on the left edge of viewport.
+    X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve, const Point_2& pLeft, const Point_2& pRight )
+    {
+        // TODO: trim the algebraic curve
+        return curve;
+    }
+
+protected:
+};
 
 // FIXME: return Traits::Point_2 instead of Kernel::Point_2
 template < class ArrTraits >
@@ -847,7 +889,7 @@ public:
         QPointF clickedPoint = event->scenePos( );
         QRectF viewportRect = this->viewportRect( );
         if ( viewportRect == QRectF( ) )
-        {
+        { // fallback case; we usually shouldn't end up here
             Kernel_point_2 res = this->convert( event->scenePos( ) );
             return Point_2( CGAL::to_double(res.x( )), CGAL::to_double(res.y()) );
         }
@@ -963,13 +1005,14 @@ public:
     template < class TTraits >
     Point_2 snapPoint( const Kernel_point_2& clickedPoint, TTraits traits )
     {
+        Point_2 initialPoint( CGAL::to_double(clickedPoint.x()), CGAL::to_double(clickedPoint.y()) );
         Point_2 closestPoint( CGAL::to_double(clickedPoint.x()), CGAL::to_double(clickedPoint.y()) );
         bool first = true;
         FT minDist( 0 );
         QRectF viewportRect = this->viewportRect( );
         if ( viewportRect == QRectF( ) )
         {
-            return clickedPoint;
+            return initialPoint;
         }
 
         FT maxDist( ( viewportRect.right( ) - viewportRect.left( ) ) / 4.0 );
@@ -992,7 +1035,7 @@ public:
         }
         else
         {
-            return clickedPoint;
+            return initialPoint;
         }
     }
 
@@ -1048,6 +1091,53 @@ protected:
     CGAL::Qt::Converter< Kernel > convert;
 }; // class SnapToArrangementVertexStrategy
 
+/**
+Converts between Kernel points and Arrangement points.
+
+The conversion is not necessarily exact.
+*/
+template < class ArrTraits >
+class Arr_construct_point_2
+{
+    typedef typename ArrTraits::Point_2 Point_2;
+    typedef typename ArrTraitsAdaptor< ArrTraits >::CoordinateType CoordinateType;
+    typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
+    typedef typename Kernel::Point_2 Kernel_point_2;
+
+public:
+    Point_2 operator()( const Kernel_point_2& pt )
+    {
+        return (*this)( pt.x(), pt.y() );
+    }
+
+    template < class T >
+    Point_2 operator()( const T& x, const T& y )
+    {
+        return (*this)( x, y, ArrTraits( ) );
+    }
+
+protected:
+    template < class T, class TTraits >
+    Point_2 operator()( const T& x, const T& y, TTraits traits )
+    {
+        CoordinateType xx( x );
+        CoordinateType yy( y );
+        Point_2 res( xx, yy );
+        return res;
+    }
+
+    template < class T, class CircularKernel >
+    Point_2 operator()( const T& x, const T& y, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+    {
+        typedef typename CircularKernel::Root_for_circles_2_2 Root_for_circles_2_2;
+        CoordinateType xx( x );
+        CoordinateType yy( y );
+        Root_for_circles_2_2 p( xx, yy );
+        Point_2 res( p );
+        return res;
+    }
+};
+
 class Find_nearest_edge_base : public QGraphicsSceneMixin
 { };
 
@@ -1080,12 +1170,13 @@ public: // constructors
 public: // member methods
     Halfedge_const_handle operator()( const Point_2& queryPt )
     {
-        CGAL::Object pointLocationResult = this->pointLocationStrategy.locate( queryPt );
+        typename ArrTraits::Point_2 pt = this->toArrPoint( queryPt );
+        CGAL::Object pointLocationResult = this->pointLocationStrategy.locate( pt );
         Face_const_handle face = this->getFace( pointLocationResult );
         bool first = 1;
         X_monotone_curve_2 closestCurve;
         Halfedge_const_handle closestEdge;
-        FT minDist( 0 );
+        double minDist( 0 );
 
         if ( ! face->is_unbounded( ) )
         { // it is an interior face so it has a ccb
@@ -1093,7 +1184,7 @@ public: // member methods
             do
             {
                 X_monotone_curve_2 curve = cc->curve( );
-                FT dist = this->pointCurveDistance( queryPt, curve );
+                double dist = this->pointCurveDistance( queryPt, curve );
                 if ( first || dist < minDist )
                 {
                     first = 0;
@@ -1115,7 +1206,7 @@ public: // member methods
                 }
 
                 X_monotone_curve_2 curve = cc->curve( );
-                FT dist = this->pointCurveDistance( queryPt, curve );
+                double dist = this->pointCurveDistance( queryPt, curve );
                 if ( first || dist < minDist )
                 {
                     first = 0;
@@ -1135,7 +1226,7 @@ public: // member methods
             do
             {
                 X_monotone_curve_2 curve = cc->curve( );
-                FT dist = this->pointCurveDistance( queryPt, curve );
+                double dist = this->pointCurveDistance( queryPt, curve );
                 if ( first || dist < minDist )
                 {
                     first = 0;
@@ -1180,6 +1271,7 @@ protected: // member fields
     Arrangement* arr;
     Point_curve_distance pointCurveDistance;
     Point_location_strategy pointLocationStrategy;
+    Arr_construct_point_2< ArrTraits > toArrPoint;
 
 }; // class Find_nearest_edge
 
@@ -1229,7 +1321,7 @@ public: // member methods
         bool first = 1;
         X_monotone_curve_2 closestCurve;
         Halfedge_const_handle closestEdge;
-        FT minDist( 0 );
+        double minDist( 0 );
 
         if ( ! face->is_unbounded( ) )
         { // it is an interior face so it has a ccb
@@ -1237,7 +1329,7 @@ public: // member methods
             do
             {
                 X_monotone_curve_2 curve = cc->curve( );
-                FT dist = this->pointCurveDistance( queryPt, curve );
+                double dist = this->pointCurveDistance( queryPt, curve );
                 if ( first || dist < minDist )
                 {
                     first = 0;
@@ -1258,7 +1350,7 @@ public: // member methods
                 }
 
                 X_monotone_curve_2 curve = cc->curve( );
-                FT dist = this->pointCurveDistance( queryPt, curve );
+                double dist = this->pointCurveDistance( queryPt, curve );
                 if ( first || dist < minDist )
                 {
                     first = 0;
@@ -1276,7 +1368,7 @@ public: // member methods
             do
             {
                 X_monotone_curve_2 curve = cc->curve( );
-                FT dist = this->pointCurveDistance( queryPt, curve );
+                double dist = this->pointCurveDistance( queryPt, curve );
                 if ( first || dist < minDist )
                 {
                     first = 0;
@@ -1316,6 +1408,8 @@ protected: // member fields
     Point_curve_distance pointCurveDistance;
     Point_location_strategy pointLocationStrategy;
 }; // class Find_nearest_edge
+
+
 
 
 #endif // CGAL_ARRANGEMENTS_DEMO_UTILS_H

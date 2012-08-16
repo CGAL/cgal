@@ -28,7 +28,7 @@ public:
     typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-    typedef typename Kernel::Point_2 Point;
+    typedef typename Kernel::Point_2 Kernel_point_2;
     typedef typename Kernel::Segment_2 Segment;
 
     MergeEdgeCallback( Arrangement* arr_, QObject* parent_ );
@@ -163,7 +163,7 @@ getNearestMergeableCurve( QGraphicsSceneMouseEvent* event )
 {
     // find the nearest curve to the cursor that is adjacent to a curve that
     // can be merged with it
-    Point p = this->convert( event->scenePos( ) );
+    Kernel_point_2 p = this->convert( event->scenePos( ) );
     double minDist = 0.0;
     bool noneFound = true;
     Halfedge_iterator nearestHei;
@@ -209,7 +209,7 @@ getNearestMergeableCurve( Halfedge_handle h, QGraphicsSceneMouseEvent* event )
 {
     // find the nearest curve to the cursor that is adjacent to a curve that
     // can be merged with it
-    Point p = this->convert( event->scenePos( ) );
+    Kernel_point_2 p = this->convert( event->scenePos( ) );
     Halfedge_handle h1 = h->prev( );
     Halfedge_handle h2 = h->next( );
     Vertex_iterator source = h->source( );

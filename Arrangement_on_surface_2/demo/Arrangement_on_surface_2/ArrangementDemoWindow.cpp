@@ -58,6 +58,7 @@ makeTab( TraitsType tt )
     Conic_arr* conic_arr;
     Lin_arr* lin_arr;
     Arc_arr* arc_arr;
+    Alg_seg_arr* alg_seg_arr;
     CGAL::Object arr;
 
     switch ( tt )
@@ -92,6 +93,12 @@ makeTab( TraitsType tt )
         demoTab = new ArrangementDemoTab< Arc_arr >( arc_arr, 0 );
         arr = CGAL::make_object( arc_arr );
         tabLabel = QString( "%1 - Circular Arc" ).arg( tabLabelCounter++ );
+        break;
+    case ALGEBRAIC_TRAITS:
+        alg_seg_arr = new Alg_seg_arr;
+        demoTab = new ArrangementDemoTab< Alg_seg_arr >( alg_seg_arr, 0 );
+        arr = CGAL::make_object( alg_seg_arr );
+        tabLabel = QString( "%1 - Algebraic" ).arg( tabLabelCounter++ );
         break;
 
     }
@@ -656,7 +663,7 @@ on_actionNewTab_triggered( )
         }
         else if ( id == ALGEBRAIC_TRAITS )
         {
-            std::cout << "makeTab for algebraic traits stub" << std::endl;
+            this->makeTab( ALGEBRAIC_TRAITS );
         }
         else
         {

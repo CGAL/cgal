@@ -762,6 +762,12 @@ public:
     typedef typename Traits::Point_2 Point_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
+public: // constructors
+    ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
+        Superclass( p, clippingRectangle )
+    { }
+
+public: // methods
     ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
     {
         std::cout << "paint curve stub (alg traits)" << std::endl;

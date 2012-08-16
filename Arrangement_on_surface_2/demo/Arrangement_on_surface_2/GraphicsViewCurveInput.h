@@ -736,6 +736,11 @@ class GraphicsViewCurveInput< CGAL::Arr_algebraic_segment_traits_2< Coefficient_
     public GraphicsViewCurveInputBase
 {
 
+public:
+    GraphicsViewCurveInput( QObject* parent ):
+        GraphicsViewCurveInputBase( parent )
+    { }
+
 };
 
 } // namespace Qt

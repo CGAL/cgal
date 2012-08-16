@@ -57,7 +57,9 @@ public:
     typedef typename Traits::Intersect_2 Intersect_2;
     typedef typename Traits::Multiplicity Multiplicity;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-    typedef typename Kernel::Point_2 Point_2;
+    typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
+    typedef typename Kernel::Point_2 Kernel_point_2;
+    typedef typename Traits::Point_2 Point_2;
     typedef std::pair< typename Traits::Point_2, Multiplicity > IntersectionResult;
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::FT FT;
@@ -77,8 +79,8 @@ protected:
     void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
     void highlightPointLocation( QGraphicsSceneMouseEvent *event );
     Face_const_handle getFace( const CGAL::Object& o );
-    CGAL::Object rayShootUp( const Point_2& point );
-    CGAL::Object rayShootDown( const Point_2& point );
+    CGAL::Object rayShootUp( const Kernel_point_2& point );
+    CGAL::Object rayShootDown( const Kernel_point_2& point );
 
     using Superclass::scene;
     using Superclass::shootingUp;
@@ -90,7 +92,8 @@ protected:
     CGAL::Object pointLocationStrategy;
     CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;
     QGraphicsLineItem* activeRay;
-    Point_2 queryPt;
+    Kernel_point_2 queryPt;
+    Arr_construct_point_2< Traits > toArrPoint;
 }; // class VerticalRayShootCallback
 
 template < class Arr_ >
@@ -193,7 +196,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
     Vertex_const_handle vertex;
     if ( CGAL::assign( unboundedFace, pointLocationResult ) )
     {
-        Point_2 p2( FT( this->queryPt.x( ) ), y2 );
+        Kernel_point_2 p2( FT( this->queryPt.x( ) ), y2 );
         Segment_2 lineSegment( this->queryPt, p2 );
         QLineF qLineSegment = this->convert( lineSegment );
         this->activeRay->setLine( qLineSegment );
@@ -205,48 +208,13 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
         // draw a ray from the clicked point to the hit curve
         Arr_compute_y_at_x_2< Traits > compute_y_at_x_2;
         compute_y_at_x_2.setScene( this->getScene( ) );
-        double yApprox = CGAL::to_double( compute_y_at_x_2( halfedge->curve( ), this->queryPt.x( ) ) );
+        CoordinateType x( this->queryPt.x( ) );
+        double yApprox = CGAL::to_double( compute_y_at_x_2( halfedge->curve( ), x ) );
         FT yInt( yApprox );
-        Point_2 p2( this->queryPt.x( ), yInt );
+        Kernel_point_2 p2( this->queryPt.x( ), yInt );
         Segment_2 seg( this->queryPt, p2 );
         QLineF qseg = this->convert( seg );
         this->activeRay->setLine( qseg );
-
-#if 0
-        Point_2 p1c1( p1.x( ), p1.y( ) );
-        Point_2 p2c1( p1.x( ), y2 );
-        //std::cout << "p1.x( ): " << p1.x( ) << std::endl;
-        //std::cout << "y2: " << y2 << std::endl;
-        const X_monotone_curve_2 c1 =
-            this->construct_x_monotone_curve_2( p1c1, p2c1 );
-        const X_monotone_curve_2 c2 = halfedge->curve( );
-
-        CGAL::Object res;
-        CGAL::Oneset_iterator< CGAL::Object > oi( res );
-        //std::vector< CGAL::Object > ress;
-
-        this->intersectCurves( c1, c2, oi );
-        //this->intersectCurves( c1, c2, std::back_inserter( ress ) );
-        //std::cout << "num intersections: " << ress.size( ) << std::endl;
-        //typedef typename 
-        //std::pair< Point_2, Multiplicity > pair;
-        IntersectionResult pair;
-        if ( CGAL::assign( pair, res ) )
-        {
-            //std::cout << "bound to IntersectionResult" << std::endl;
-            Point_2 p2 = pair.first;
-            Segment_2 lineSegment( p1, p2 );
-            QLineF qLineSegment = this->convert( lineSegment );
-            this->activeRay->setLine( qLineSegment );
-        }
-        else
-        {
-            Point_2 p2 = pair.first;
-            Segment_2 lineSegment( p1, p2c1 );
-            QLineF qLineSegment = this->convert( lineSegment );
-            this->activeRay->setLine( qLineSegment );
-        }
-#endif
     }
     else if ( CGAL::assign( vertex, pointLocationResult ) )
     {
@@ -254,86 +222,6 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
     }
 
     emit modelChanged( );
-#if 0
-    {
-        Face_const_handle ubf;
-        if (CGAL::assign(ubf, obj))
-        {
-            CGAL_assertion(ubf->is_unbounded());
-            //relevant_face_color = unbounded_face_color() as initialized          
-            up = Coord_point(pl_draw.x() , y_max());
-            static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, up);
-        }
-        // we shoot something
-        else
-        {
-            Halfedge_const_handle he;
-            if (CGAL::assign(he, obj))
-            {
-                Point_2 p1c1(pl_point.x() , y_max() * m_tab_traits.COORD_SCALE);
-                Point_2 p2c1(pl_point.x() , pl_point.y());
-                const X_monotone_curve_2 c1 =
-                    m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
-                const X_monotone_curve_2 c2 = he->curve();
-
-                CGAL::Object             res;
-                CGAL::Oneset_iterator<CGAL::Object> oi(res);
-
-                m_traits.intersect_2_object()(c1, c2, oi);
-                std::pair<Point_2,Multiplicity> p1;
-                if (CGAL::assign(p1, res))
-                {
-                    Coord_type y1 =
-                        CGAL::to_double(p1.first.y())/ m_tab_traits.COORD_SCALE;
-                    up = Coord_point(pl_draw.x(), y1);
-                }
-                else
-                {
-                    up = pl_draw;
-                }
-                relevant_face_color = he->face()->color();				
-                /*choose color to mark the edge that differs from the current 
-                  edge_color, the background, and the relevant face color*/				
-                setCorrectColor(relevant_face_color);				 
-                m_tab_traits.draw_xcurve(this , he->curve() );
-            }
-            else
-            {
-                Vertex_const_handle v;
-                CGAL_assertion(CGAL::assign(v, obj));
-                CGAL::assign(v, obj);
-                up = Coord_point(CGAL::to_double(v->point().x()) /
-                        m_tab_traits.COORD_SCALE,
-                        CGAL::to_double(v->point().y()) /
-                        m_tab_traits.COORD_SCALE);
-
-                //locate face that arrow will be drawn in, and retrieve its color 
-                CGAL::Object obj1 = locate(temp_p);
-                Face_const_handle f1 = get_face(obj1);
-                relevant_face_color=f1->color();
-
-                /*choose color to mark the vertice so that it differs from the 
-                  edge_color, the background, and the relevant_face_color*/				
-                setCorrectColor(relevant_face_color);				     
-                static_cast<CGAL::Qt_widget&>(*this) << up;
-            }
-        }
-
-        //select arrow color that differs from the color of the face it is in
-        setCorrectColor(relevant_face_color);        
-
-        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
-        static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,up);
-
-        // draw an arrow that points to 'up' point
-        int x = this->x_pixel(CGAL::to_double(up.x()));
-        int y = this->y_pixel(CGAL::to_double(up.y()));
-
-        this->get_painter().drawLine(x-7 , y+7 , x , y);
-        this->get_painter().drawLine(x+7 , y+7 , x , y);
-        static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
-    }
-#endif
 }
 
 template < class Arr_ >
@@ -361,13 +249,16 @@ getFace( const CGAL::Object& obj )
 template < class Arr_ >
 CGAL::Object
 VerticalRayShootCallback< Arr_ >::
-rayShootUp( const Point_2& point )
+rayShootUp( const Kernel_point_2& pt )
 {
     CGAL::Object pointLocationResult;
     WalkAlongLinePointLocationStrategy* walkStrategy;
     TrapezoidPointLocationStrategy* trapezoidStrategy;
     SimplePointLocationStrategy* simpleStrategy;
     LandmarksPointLocationStrategy* landmarksStrategy;
+
+    Point_2 point = this->toArrPoint( pt );
+
     if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
     {
         pointLocationResult = walkStrategy->ray_shoot_up( point );
@@ -392,13 +283,16 @@ rayShootUp( const Point_2& point )
 template < class Arr_ >
 CGAL::Object
 VerticalRayShootCallback< Arr_ >::
-rayShootDown( const Point_2& point )
+rayShootDown( const Kernel_point_2& pt )
 {
     CGAL::Object pointLocationResult;
     WalkAlongLinePointLocationStrategy* walkStrategy;
     TrapezoidPointLocationStrategy* trapezoidStrategy;
     SimplePointLocationStrategy* simpleStrategy;
     LandmarksPointLocationStrategy* landmarksStrategy;
+
+    Point_2 point = this->toArrPoint( pt );
+
     if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
     {
         pointLocationResult = walkStrategy->ray_shoot_down( point );
@@ -419,6 +313,5 @@ rayShootDown( const Point_2& point )
     }
     return pointLocationResult;
 }
-
 
 #endif // VERTICAL_RAY_SHOOT_CALLBACK_H

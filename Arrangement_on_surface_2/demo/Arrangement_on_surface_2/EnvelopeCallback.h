@@ -32,7 +32,8 @@ public:
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     //typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Point_2 Kernel_point_2;
+    typedef typename Traits::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::Ray_2 Ray_2;
     typedef typename Kernel::Line_2 Line_2;
@@ -141,7 +142,6 @@ updateEnvelope( bool lower, TTraits traits )
         CGAL::upper_envelope_x_monotone_2( curves.begin( ), curves.end( ), diagram );
     }
 
-    return;
     typename Diagram_1::Edge_const_handle e = diagram.leftmost( );
     typename Diagram_1::Vertex_const_handle v;
     QRectF clipRect = this->viewportRect( );
@@ -196,7 +196,7 @@ void
 EnvelopeCallback< Arr_, Traits >::
 updateEnvelope( bool lower, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
 {
-    typedef Point_2 Non_arc_point_2;
+    typedef Kernel_point_2 Non_arc_point_2;
     typedef typename Traits::Point_2 Arc_point_2;
     CGAL::Qt::CurveGraphicsItem< Traits >* envelopeToUpdate;
     if ( lower )

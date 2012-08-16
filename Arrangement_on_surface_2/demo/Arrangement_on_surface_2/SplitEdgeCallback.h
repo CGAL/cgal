@@ -46,6 +46,7 @@ public:
     typedef typename Traits::Equal_2 Equal_2;
     typedef typename Traits::Multiplicity Multiplicity;
     typedef typename ArrTraitsAdaptor< Traits >::Point_2 Point_2;
+    typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::FT FT;
 
@@ -58,13 +59,19 @@ public:
 protected:
     void mousePressEvent( QGraphicsSceneMouseEvent *event );
     void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
+
     virtual Point_2 snapPoint( QGraphicsSceneMouseEvent *event );
+    template < class TTraits >
+    Point_2 snapPoint( QGraphicsSceneMouseEvent *event, TTraits traits );
+    template < class CircularKernel >
+    Point_2 snapPoint( QGraphicsSceneMouseEvent* event, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
 
     template < class TTraits >
     void splitEdges( const Point_2& pt, TTraits traits );
-
     template < class CircularKernel >
     void splitEdges( const Point_2& pt, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
+    template < class Coefficient_ >
+    void splitEdges( const Point_2& pt, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
 
     template < class TTraits >
     void updateGuide( const Point_2& pt, TTraits traits );
@@ -198,22 +205,21 @@ splitEdges( const Point_2& clickedPoint, CGAL::Arr_circular_arc_traits_2< Circul
 }
 
 template < class Arr_ >
+template < class Coefficient_ >
+void
+SplitEdgeCallback< Arr_ >::
+splitEdges( const Point_2& clickedPoint, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
+{
+    std::cout << "Algebraic segment split edges stub" << std::endl;
+}
+
+template < class Arr_ >
 void 
 SplitEdgeCallback< Arr_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
     Point_2 clickedPoint = this->snapPoint( event );
     this->updateGuide( clickedPoint, this->traits );
-#if 0
-    if ( this->hasFirstPoint )
-    { // provide visual feedback for where the split line is
-        Point_2 currentPoint = clickedPoint;
-        Segment_2 currentSegment( this->p1, currentPoint );
-        QLineF qSegment = this->convert( currentSegment );
-        this->segmentGuide.setLine( qSegment );
-        emit modelChanged( );
-    }
-#endif
 }
 
 template < class Arr_ >
@@ -225,7 +231,9 @@ updateGuide( const Point_2& clickedPoint, TTraits traits )
     if ( this->hasFirstPoint )
     { // provide visual feedback for where the split line is
         Point_2 currentPoint = clickedPoint;
-        Segment_2 currentSegment( this->p1, currentPoint );
+        typename Kernel::Point_2 pt1( CGAL::to_double( this->p1.x( ) ), CGAL::to_double( this->p1.y( ) ) );
+        typename Kernel::Point_2 pt2( CGAL::to_double( currentPoint.x( ) ), CGAL::to_double( currentPoint.y( ) ) );
+        Segment_2 currentSegment( pt1, pt2 );
         QLineF qSegment = this->convert( currentSegment );
         this->segmentGuide.setLine( qSegment );
         emit modelChanged( );
@@ -255,6 +263,15 @@ typename SplitEdgeCallback< Arr_ >::Point_2
 SplitEdgeCallback< Arr_ >::
 snapPoint( QGraphicsSceneMouseEvent* event )
 {
+    return this->snapPoint( event, Traits( ) );
+}
+
+template < class Arr_ >
+template < class TTraits >
+typename SplitEdgeCallback< Arr_ >::Point_2
+SplitEdgeCallback< Arr_ >::
+snapPoint( QGraphicsSceneMouseEvent *event, TTraits traits )
+{
     if ( this->snapToGridEnabled )
     {
         return this->snapToGridStrategy.snapPoint( event );
@@ -264,8 +281,32 @@ snapPoint( QGraphicsSceneMouseEvent* event )
         return this->snapToVertexStrategy.snapPoint( event );
     }
     else
+    { // fallback "analog" selection
+        typename Kernel::Point_2 pt = this->convert( event->scenePos( ) );
+        CoordinateType x( pt.x( ) );
+        CoordinateType y( pt.y( ) );
+        return Point_2( x, y );
+    }
+}
+
+template < class Arr_ >
+template < class CircularKernel >
+typename SplitEdgeCallback< Arr_ >::Point_2
+SplitEdgeCallback< Arr_ >::
+snapPoint( QGraphicsSceneMouseEvent* event, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+{
+    if ( this->snapToGridEnabled )
     {
-        return this->convert( event->scenePos( ) );
+        return this->snapToGridStrategy.snapPoint( event );
+    }
+    if ( this->snappingEnabled )
+    {
+        return this->snapToVertexStrategy.snapPoint( event );
+    }
+    else
+    { // fallback "analog" selection
+        typename Kernel::Point_2 pt = this->convert( event->scenePos( ) );
+        return Point_2( pt );
     }
 }
 

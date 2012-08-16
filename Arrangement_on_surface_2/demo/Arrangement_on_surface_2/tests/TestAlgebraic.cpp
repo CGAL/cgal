@@ -41,7 +41,7 @@ X_monotone_curve_2 makeVerticalLine( Bound x )
         traits.construct_x_monotone_segment_2_object( );
 
     std::vector< X_monotone_curve_2 > curves;
-    Point_2 p1 = constructPoint( x, Bound( -10000 ) );
+    Point_2 p1 = constructPoint( Algebraic_real_1(x), Algebraic_real_1(Bound( -10000 )) );
     Point_2 p2 = constructPoint( x, Bound( +10000 ) );
     constructSegment( p1, p2, std::back_inserter( curves ) );
     return curves[ 0 ];
@@ -52,6 +52,7 @@ typedef Kernel::Point_2 Kernel_point_2;
 
 int main( )
 {
+    Algebraic_real_1 real( 1 );
     //CGAL::Qt::Converter< Algebraic_kernel_d_2 > testConverter;
     //CGAL::Qt::Converter< CKvA_2 > testConverter;
     

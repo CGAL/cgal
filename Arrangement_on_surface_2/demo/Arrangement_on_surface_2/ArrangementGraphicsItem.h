@@ -75,8 +75,9 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
     typedef typename Arrangement::Edge_iterator Edge_iterator;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-    typedef typename Kernel::Point_2 Point_2;
-    typedef typename Kernel::Segment_2 Segment_2;
+    typedef typename Kernel::Point_2 Kernel_point_2;
+    typedef typename Traits::Point_2 Point_2;
+    //typedef typename Kernel::Segment_2 Segment_2;
 
 public:
     ArrangementGraphicsItem( Arrangement* t_ );
@@ -89,12 +90,17 @@ public:
 protected:
     template < class TTraits >
     void paint( QPainter* painter, TTraits traits );
-
     template < class CircularKernel >
     void paint( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
+    template < class Coefficient_ >
+    void paint( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
 
     //void cacheCurveBoundingRects( );
     void updateBoundingBox( );
+    template < class TTraits >
+    void updateBoundingBox( TTraits traits );
+    template < class Coefficient_ >
+    void updateBoundingBox( CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
 
     Arrangement* arr;
     ArrangementPainterOstream< Traits > painterostream;
@@ -131,23 +137,6 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::paint(QPainter *painter,
                                     QWidget * /*widget*/)
 {
     this->paint( painter, ArrTraits( ) );
-#if 0
-    painter->setPen( this->verticesPen );
-    this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
-    this->painterostream.setScene( this->scene );
-
-    for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
-    {
-        Point_2 pt = it->point( );
-        this->painterostream << pt;
-    }
-    painter->setPen( this->edgesPen );
-    for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
-    {
-        X_monotone_curve_2 curve = it->curve( );
-        this->painterostream << curve;
-    }
-#endif
 }
 
 template < class Arr_, class ArrTraits >
@@ -162,7 +151,8 @@ paint( QPainter* painter, TTraits traits )
 
     for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
     {
-        Point_2 pt = it->point( );
+        Point_2 p = it->point( );
+        Kernel_point_2 pt( p.x( ), p.y( ) );
         this->painterostream << pt;
     }
     painter->setPen( this->edgesPen );
@@ -179,7 +169,7 @@ void
 ArrangementGraphicsItem< Arr_, ArrTraits >::
 paint( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
 {
-    typedef Point_2 Non_arc_point_2;
+    typedef Kernel_point_2 Non_arc_point_2;
     typedef typename Traits::Point_2 Arc_point_2;
 
     painter->setPen( this->verticesPen );
@@ -200,11 +190,45 @@ paint( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > trai
     }
 }
 
+template < class Arr_, class ArrTraits >
+template < class Coefficient_ >
+void
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+paint( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
+{
+    painter->setPen( this->verticesPen );
+    this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
+    this->painterostream.setScene( this->scene );
+
+    for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
+    {
+        Point_2 p = it->point( );
+        std::pair< double, double > approx = p.to_double( );
+        Kernel_point_2 pt( approx.first, approx.second );
+        this->painterostream << pt;
+    }
+    painter->setPen( this->edgesPen );
+    for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
+    {
+        X_monotone_curve_2 curve = it->curve( );
+        this->painterostream << curve;
+    }
+}
+
+
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template < class Arr_, class ArrTraits >
 void 
 ArrangementGraphicsItem< Arr_, ArrTraits >::updateBoundingBox( )
+{
+    this->updateBoundingBox( ArrTraits( ) );
+}
+
+template < class Arr_, class ArrTraits >
+template < class TTraits >
+void 
+ArrangementGraphicsItem< Arr_, ArrTraits >::updateBoundingBox( TTraits traits )
 {
     this->prepareGeometryChange( );
     if ( this->arr->number_of_vertices( ) == 0 )
@@ -232,6 +256,41 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::updateBoundingBox( )
 }
 
 template < class Arr_, class ArrTraits >
+template < class Coefficient_ >
+void
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+updateBoundingBox( CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
+{
+    this->prepareGeometryChange( );
+    if ( this->arr->number_of_vertices( ) == 0 )
+    {
+        this->bb = Bbox_2( 0, 0, 0, 0 );
+        this->bb_initialized = false;
+        return;
+    }
+    else
+    {
+        std::pair< double, double > approx = this->arr->vertices_begin( )->point( ).to_double( );
+        this->bb = CGAL::Bbox_2( approx.first, approx.second, approx.first, approx.second );
+        this->bb_initialized = true;
+    }
+    typename Traits::Make_x_monotone_2 make_x_monotone_2 = traits.make_x_monotone_2_object( );
+    for ( Curve_iterator it = this->arr->curves_begin( );
+        it != this->arr->curves_end( );
+        ++it )
+    {
+        std::vector< CGAL::Object > cvs;
+        make_x_monotone_2( *it, std::back_inserter( cvs ) );
+        for ( int i = 0 ; i < cvs.size( ); ++i )
+        {
+            X_monotone_curve_2 cv;
+            CGAL::assign( cv, cvs[ i ] );
+            this->bb = this->bb + cv.bbox( );
+        }
+    }
+}
+
+template < class Arr_, class ArrTraits >
 void 
 ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
 {
@@ -248,7 +307,6 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
 }
 
 /**
- * Why is this not being used?
 Specialized methods:
     updateBoundingBox
 */
