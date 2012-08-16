@@ -13,7 +13,7 @@ typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 typedef Kernel::Vector_3 Vector_3;
 typedef Kernel::Aff_transformation_3 Aff_transformation_3;
 
-int main(int argc, char** argv) {
+int main(int, char**) {
     Polyhedron P1;
     Polyhedron P2;
     Polyhedron P3;

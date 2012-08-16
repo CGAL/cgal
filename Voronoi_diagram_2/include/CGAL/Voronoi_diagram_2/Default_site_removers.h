@@ -105,7 +105,7 @@ class Default_caching_site_remover<AT,Null_functor>
 {
 public:
   Default_caching_site_remover() {}
-  template<typename T> Default_caching_site_remover(T t) {}
+  template<typename T> Default_caching_site_remover(T /*t*/) {}
 };
 
 //===========================================================================

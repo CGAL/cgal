@@ -7,9 +7,8 @@
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Random.h>
+#include <CGAL/Testsuite/use.h>
 
-template < typename T >
-void use(const T&) {}
 
 struct Node_1
 : public CGAL::Compact_container_base
@@ -52,16 +51,16 @@ void test(const Cont &)
   // Testing if all types are provided.
 
   typename Cont::value_type              t0;
-  typename Cont::reference               t1 = t0;      use(t1);
-  typename Cont::const_reference         t2 = t0;      use(t2);
+  typename Cont::reference               t1 = t0;      CGAL_USE(t1);
+  typename Cont::const_reference         t2 = t0;      CGAL_USE(t2);
   typename Cont::pointer                 t3 = &t0;
-  typename Cont::const_pointer           t4 = &t0;     use(t4);
-  typename Cont::size_type               t5 = 0;       use(t5);
-  typename Cont::difference_type         t6 = t3-t3;   use(t6);
-  typename Cont::iterator                t7;           use(t7);
-  typename Cont::const_iterator          t8;           use(t8);
-  typename Cont::reverse_iterator        t9;           use(t9);
-  typename Cont::const_reverse_iterator  t10;          use(t10);
+  typename Cont::const_pointer           t4 = &t0;     CGAL_USE(t4);
+  typename Cont::size_type               t5 = 0;       CGAL_USE(t5);
+  typename Cont::difference_type         t6 = t3-t3;   CGAL_USE(t6);
+  typename Cont::iterator                t7;           CGAL_USE(t7);
+  typename Cont::const_iterator          t8;           CGAL_USE(t8);
+  typename Cont::reverse_iterator        t9;           CGAL_USE(t9);
+  typename Cont::const_reverse_iterator  t10;          CGAL_USE(t10);
   typename Cont::allocator_type          t15;
 
   std::cout << "Testing empty containers." << std::endl;
@@ -82,7 +81,7 @@ void test(const Cont &)
   c8.insert(c0.rbegin(), c0.rend());
 
   // test conversion iterator-> const_iterator.
-  typename Cont::const_iterator t16 = c5.begin();  use(t16);
+  typename Cont::const_iterator t16 = c5.begin();  CGAL_USE(t16);
   assert(t16 == c5.begin());
 
   assert(c0 == c1);

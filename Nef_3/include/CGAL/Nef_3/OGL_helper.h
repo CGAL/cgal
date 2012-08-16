@@ -178,10 +178,10 @@ namespace OGL {
     { return static_cast<double*>(normal_); }
 
     void new_facet_cycle()
-    { fc_ends_.push_back(coords_.size()); }
+    { fc_ends_.push_back((unsigned)coords_.size()); }
     
     unsigned number_of_facet_cycles() const
-    { return fc_ends_.size(); }
+    { return (unsigned)fc_ends_.size(); }
 
     Coord_iterator facet_cycle_begin(unsigned i) 
     { CGAL_assertion(i<number_of_facet_cycles());

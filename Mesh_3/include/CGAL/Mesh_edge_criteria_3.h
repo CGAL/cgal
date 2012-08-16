@@ -112,7 +112,7 @@ public:
   // as int.
   template < typename Sizing_field >
   Mesh_edge_criteria_3(const Sizing_field& size,
-                       typename Sizing_field::FT dummy = 0 )
+                       typename Sizing_field::FT /*dummy*/ = 0 )
   {
     CGAL_static_assertion((boost::is_same<typename Sizing_field::FT,
                                           FT>::value));

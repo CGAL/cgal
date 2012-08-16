@@ -101,7 +101,7 @@ namespace parameters {
   
   template < typename MeshDomain >
   inline internal::Features_options
-  features(const MeshDomain& domain)
+  features(const MeshDomain& /*domain*/)
   {
     typedef typename internal::Domain_features_generator<
       MeshDomain,

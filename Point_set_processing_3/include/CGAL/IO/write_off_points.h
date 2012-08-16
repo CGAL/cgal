@@ -81,7 +81,7 @@ write_off_points_and_normals(
   }
 
   // Write header
-  const int num_input_points = std::distance(first, beyond);
+  const std::size_t num_input_points = std::distance(first, beyond);
   stream << "NOFF" << std::endl;
   stream << num_input_points << " 0 0" << std::endl;
 
@@ -180,7 +180,7 @@ write_off_points(
   }
 
   // Write header
-  const int num_input_points = std::distance(first, beyond);
+  const std::size_t num_input_points = std::distance(first, beyond);
   stream << "OFF" << std::endl;
   stream << num_input_points << " 0 0" << std::endl;
 

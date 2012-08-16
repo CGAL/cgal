@@ -578,7 +578,12 @@ cache_set(CGAL_3RD_PARTY_LIBRARIES      "" )
 cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" ) 
 
 # default is on, but some use-cases need to set it to off, e.g., debian packages
-option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" ON)
+## Laurent Rineau: hide this variable. Currently the configuration fails if
+## it is set to false. (2012/08/16)
+#option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" ON)
+set( CGAL_ENABLE_PRECONFIG ON CACHE INTERNAL "Select to allow to use all preconfigured external libraries")
+
+
 # additional info: some header files in CGAL add additional code if
 # certain optional libs are installed, and some examples/tests rely on
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
@@ -768,21 +773,26 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-# Set CGAL_LIBRARY_NAME, CGAL_Qt3_LIBRARY_NAME and so on. Those variables
-# are the name of CGAL libraries, without the path. Used in the generation
-# of the installed CGALConfig.cmake
-get_filename_component(CGAL_LIBRARY_NAME "${CGAL_LIBRARY}" NAME)
-hide_variable(CGAL_LIBRARY_NAME)
-foreach(lib ${CGAL_CONFIGURED_LIBRARIES})
-  get_filename_component(CGAL_${lib}_LIBRARY_NAME "${CGAL_${lib}_LIBRARY}" NAME)
-  hide_variable(CGAL_${lib}_LIBRARY_NAME)
-endforeach()
-
 # fake to simplify loop
 set(CGAL_CGAL_LIBRARY ${CGAL_LIBRARY})
 hide_variable(CGAL_CGAL_LIBRARY)
-set(CGAL_CGAL_LIBRARY_NAME ${CGAL_LIBRARY_NAME})
-hide_variable(CGAL_CGAL_LIBRARY_NAME)
+
+# Set CGAL_INSTALLED_LIBRARY, CGAL_INSTALLED_Qt3_LIBRARY and so on. Those
+# variables are the path to the libraries installed by the install
+# target. Used in the generation of the installed CGALConfig.cmake
+foreach(lib ${CGAL_CONFIGURED_LIBRARIES} CGAL) # note the added fake 'CGAL'
+  if(CGAL_${lib}_LIBRARY)
+    get_filename_component(lib_name "${CGAL_${lib}_LIBRARY}" NAME)
+    set(CGAL_INSTALLED_${lib}_LIBRARY "${CMAKE_INSTALL_PREFIX}/${CGAL_INSTALL_LIB_DIR}/${lib_name}")
+  else()
+    set(CGAL_INSTALLED_${lib}_LIBRARY "")
+  endif()
+  hide_variable(CGAL_INSTALLED_${lib}_LIBRARY)
+endforeach()
+
+# set back from the fake
+set(CGAL_INSTALLED_LIBRARY  ${CGAL_INSTALLED_CGAL_LIBRARY})
+hide_variable(CGAL_INSTALLED_LIBRARY)
 
 create_CGALconfig_files()
 
@@ -889,6 +899,7 @@ if ( NOT RUNNING_CGAL_AUTO_TEST )
 
   add_programs(examples examples OFF )
   add_programs(demo     demos    OFF )
+  add_programs(test     tests    OFF )
   
 endif()
 

@@ -817,8 +817,8 @@ private:
       Point_hider &hider, Vertex_handle vh = Vertex_handle());
 
   template <class Point_iterator, class Offset_iterator>
-  void periodic_sort(Point_iterator p_begin, Point_iterator p_end,
-      Offset_iterator o_begin, Offset_iterator o_end) const {
+  void periodic_sort(Point_iterator /*p_begin*/, Point_iterator /*p_end*/,
+                     Offset_iterator /*o_begin*/, Offset_iterator /*o_end*/) const {
     std::cout << "Periodic_sort not yet implemented" << std::endl;
   }
 

@@ -20,15 +20,9 @@
 #ifndef CGAL_TESTSUITE_USE_H
 #define CGAL_TESTSUITE_USE_H
 
-namespace CGAL { namespace internal {
+// This is a wrapper file, for backward compatibility.
+// The macro CGAL_USE is now defined in <CGAL/use.h>
 
-template < typename T > inline
-void use(const T&) {}
-
-} }
-
-// CGAL_USE() is a macro which aims at removing "variable is unused" warnings.
-
-#define CGAL_USE(x) ::CGAL::internal::use(x)
+#include <CGAL/use.h>
 
 #endif // CGAL_TESTSUITE_USE_H

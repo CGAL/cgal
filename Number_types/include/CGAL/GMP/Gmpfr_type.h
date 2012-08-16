@@ -1082,6 +1082,11 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                 mant=10*mant+(c-'0');
                 c=is.get();
         }
+
+        // set the correct sign of the mantissa
+        if(neg_mant)
+                mant=-mant;
+
         is.putback(c);
         gmpz_eat_white_space(is);
 
