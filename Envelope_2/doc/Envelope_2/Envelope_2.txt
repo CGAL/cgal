@@ -102,7 +102,7 @@ The important property of this subdivision is that the identity of
 the curves that induce the lower envelope (or the upper envelope)
 over each cell is fixed.
 
-The Figure \ref env2_figmin_diag figure shows the lower envelope of a set of
+Figure \ref env2_figmin_diag shows the lower envelope of a set of
 eight line segments, and sketches the structure of their minimization
 diagram. Each diagram vertex \f$ v\f$ is associated with a point \f$
 p_v\f$ on the envelope, which corresponds to either a curve endpoint
@@ -153,7 +153,7 @@ minimization diagram of line segments, as illustrated in
 Figure \ref env2_figmin_diag . We use the curve-data traits
 instantiated by the `Arr_segment_traits_2` class, in order to
 attach a label (a `char` in this case) to each input segment.
-We use these labels when we print the minimization diagram:
+We use these labels when we print the minimization diagram.
 
 \cgalexample{Envelope_2/envelope_segments.cpp}
 
@@ -176,7 +176,7 @@ e.g., [\cite Section 11.4 for more details.
 Note that the leftmost edge of the minimization diagram is associated
 with the same line as the rightmost edge of the maximization diagram,
 and vice-verse. We can therefore skip the rightmost edges of both
-diagrams:
+diagrams.
 
 \cgalexample{Envelope_2/convex_hull.cpp}
 
@@ -190,7 +190,7 @@ We use the `Arr_circle_segment_traits_2` class to construct the
 lower and the upper envelopes of a set of four circles, as depicted
 in Figure \ref env2_figex_circ. Note that unlike the two previous
 examples, here our curves are not \f$ x\f$-monotone, so we use the functions
-that compute envelopes of arbitrary curves:
+that compute envelopes of arbitrary curves.
 
 \cgalexample{Envelope_2/envelope_circles.cpp}
 
