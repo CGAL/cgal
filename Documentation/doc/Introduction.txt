@@ -34,7 +34,7 @@ This manual is organized in several parts covering the many domains
 of computational geometry. Each part consists of several chapters,
 and each chapter is split into a *user manual*  and a *reference
 manual*. The user manual gives the general idea and comes with examples.
-The reference manual presents the **Api** of the various classes
+The reference manual presents the \sc{Api} of the various classes
 and functions.
 
 The manual has a table of contents, and an index, as well as a package overview,
