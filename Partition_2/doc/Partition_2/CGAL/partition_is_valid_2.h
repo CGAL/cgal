@@ -6,18 +6,17 @@ namespace CGAL {
 \brief determines if the polygons in the range [`poly_first`, `poly_beyond`)
 define a valid convex partition of the polygon defined by the points in the 
 range [`point_first`, `point_beyond`). 
+A convex partition is valid if the 
+polygons do not overlap, the union of the polygons is the same as the original 
+polygon given by the sequence of points, and if each partition polygon is 
+convex. 
 The function returns `true` iff the partition is valid and otherwise
 returns `false`.
 
 \pre The points in the range [`point_first`, `point_beyond`) define a simple, counterclockwise-oriented polygon.
 
-Function that determines if a given set of polygons represents 
-a valid convex partitioning for a given sequence of points that represent a 
-simple, counterclockwise-oriented polygon. 
-A convex partition is valid if the 
-polygons do not overlap, the union of the polygons is the same as the original 
-polygon given by the sequence of points, and if each partition polygon is 
-convex. 
+
+
 
 Requirements 
 -------------- 
@@ -76,15 +75,11 @@ namespace CGAL {
 \brief returns `true` iff the polygons in the range [`poly_first`, 
 `poly_beyond`) define a valid partition of the polygon defined by the 
 points in the range [`point_first`, `point_beyond`) and 
-`false` otherwise. 
-Each polygon must also satisfy the property 
-tested by `Traits::Is_valid()`. 
-
-Function that determines if a given set of polygons represents 
-a valid partition for a given sequence of points that 
-define a simple, counterclockwise-oriented polygon. A valid partition is one in 
+`false` otherwise. A valid partition is one in 
 which the polygons are nonoverlapping and the union of the polygons is the 
 same as the original polygon. 
+Each polygon must also satisfy the property 
+tested by `Traits::Is_valid()`. 
 
 \pre Points in the range [`point_first`, `point_beyond`) define a simple, counterclockwise-oriented polygon.
 
@@ -143,19 +138,17 @@ namespace CGAL {
 \ingroup PkgPolygonPartitioning2
 
 \brief determines if the polygons in the range [`poly_first`, `poly_beyond`)
-define a valid \f$ y\f$-monotone partition of the polygon represented by the points 
+define a valid \f$ y\f$-monotone partition of the simple, counterclockwise-oriented polygon represented by the points 
 in the range [`point_first`, `point_beyond`). 
-The function returns `true` iff the partition is valid and otherwise
-returns false.
-
-Function that determines if a given set of polygons represents 
-a valid \f$ y\f$-monotone partitioning for a given sequence of points that 
-define a simple, counterclockwise-oriented polygon. 
 A valid partition is one in 
 which the polygons are nonoverlapping and the union of the polygons is the 
 same as the original polygon and each polygon is \f$ y\f$-monotone 
 
-\pre Points in the range [`point_first`, `point_beyond`) define a simple, counterclockwise-oriented polygon.
+\pre P
+The function returns `true` iff the partition is valid and otherwise
+returns false.
+
+
 
 Requirements 
 -------------- 

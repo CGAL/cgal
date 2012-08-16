@@ -9,9 +9,7 @@ counterclockwise-oriented partition polygons are written to the
 sequence starting at position `result`. The past-the-end iterator for
 the resulting sequence of polygons is returned.  
 
-Function that produces a set of 
-convex polygons that represent a partitioning of a polygon defined 
-on a sequence of points. The number of convex polygons produced is 
+The number of convex polygons produced is 
 no more than four times the minimal number. 
 
 \pre The points in the range [`first`, `beyond`) define a simple
@@ -80,14 +78,13 @@ namespace CGAL {
 \brief computes a partition of the polygon defined 
 by the points in the range [`first`, `beyond`) into convex 
 polygons. The counterclockwise-oriented partition polygons are written to
-the sequence starting at position `result`. The past-the-end iterator for 
-the resulting sequence of polygons is returned.
-
-Function that produces a set of 
-convex polygons that represent a partitioning of a polygon defined 
-on a sequence of points. 
+the sequence starting at position `result`. 
 The number of convex polygons produced is 
 no more than four times the minimal number. 
+The past-the-end iterator for 
+the resulting sequence of polygons is returned.
+
+
 
 \pre The points in the range [`first`, `beyond`) define a simple, counterclockwise-oriented polygon.
 
@@ -158,12 +155,12 @@ namespace CGAL {
 \brief computes a partition of the polygon defined
 by the points in the range [`first`, `beyond`) into convex
 polygons. The counterclockwise-oriented partition polygons are written to
-the sequence starting at position `result`. The past-the-end iterator for
+the sequence starting at position `result`. 
+The number of convex polygons produced is minimal. 
+The past-the-end iterator for
 the resulting sequence of polygons is returned.
 
-Function that produces a set of convex polygons 
-that represent a partitioning of a polygon defined on a sequence of 
-points. The number of convex polygons produced is minimal. 
+
 
 \pre The points in the range [`first`, `beyond`) define a simple, counterclockwise-oriented polygon.
 
@@ -240,8 +237,6 @@ the resulting sequence of polygons is returned.
 
 \pre The points in the range [`first`, `beyond`) define a simple, counterclockwise-oriented polygon.
 
-Function that produces a set of \f$ y\f$-monotone polygons that 
-represent a partitioning of a polygon defined on a sequence of points. 
 
 Requirements 
 -------------- 

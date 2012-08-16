@@ -6,7 +6,7 @@ namespace CGAL {
 Function for testing the \f$ y\f$-monotonicity of a sequence of points. 
 
 Determines if the sequence of points in the range 
-[`first`, `beyond`) define a \f$ y\f$-monotone 
+[`first`, `beyond`) defines a \f$ y\f$-monotone 
 polygon or not. If so, the function returns `true`, otherwise it
 returns `false`. 
 
