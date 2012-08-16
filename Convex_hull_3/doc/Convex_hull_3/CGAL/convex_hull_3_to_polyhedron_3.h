@@ -4,14 +4,14 @@ namespace CGAL {
 \ingroup PkgConvexHull3Functions
 
 The function `convex_hull_3_to_polyhedron_3` fills a polyhedron with the convex hull 
-of a set of 3D points contained into a 3D triangulation of \cgal. 
+of a set of 3D points contained in a 3D triangulation of \cgal. 
 
 Requirements 
 -------------- 
 
 This function requires the following: 
 <OL> 
-<LI>`Triangulation_3` is a CGAL 3D triangulation. 
+<LI>`Triangulation_3` is a \cgal\ 3D triangulation. 
 <LI>`Polyhedron_3` is an instantiation of `CGAL::Polyhedron_3<Traits>`. 
 </OL> 
 

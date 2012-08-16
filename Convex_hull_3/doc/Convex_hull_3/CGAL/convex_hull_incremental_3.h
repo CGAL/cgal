@@ -3,8 +3,12 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull3Functions
 
-The function `convex_hull_incremental_3` computes the convex hull polyhedron from a set 
-of given three-dimensional points. 
+computes the convex hull polyhedron 
+of the three-dimensional points in the range [`first`,`beyond`)
+and assigns it to `P`. If `test_correctness` is set to
+`true`, the tests described in \cite mnssssu-cgpvg-96 are
+used to determine the correctness of the resulting polyhedron.
+
 
 This function is provided for completeness and educational 
 purposes. When an efficient incremental implementation is needed, 
@@ -48,11 +52,7 @@ points chosen uniformly in a sphere of radius 100.
 
 \cgalexample{Convex_hull_3/incremental_hull_3.cpp} 
 
-computes the convex hull polyhedron 
-of the points in the range [`first`,`beyond`)
-and assigns it to `P`. If `test_correctness` is set to
-`true`, the tests described in \cite mnssssu-cgpvg-96 are
-used to determine the correctness of the resulting polyhedron.
+
 
 */
 template <class InputIterator, class Polyhedron>
