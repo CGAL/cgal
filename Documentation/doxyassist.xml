@@ -26,6 +26,7 @@ namespace for the XML file to be processed properly.  -->
         <list name="TAGFILES" append="true">
           <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
         </list>
+        <string name="LAYOUT_FILE">DoxygenLayoutPackage.xml</string>
       </doxygen>
       
       <!-- subprojects -->
@@ -433,6 +434,38 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Principal_component_analysis/examples</string>
         </doxygen>
       </project>
+
+      <project>
+        <name>CGAL_ipelets</name>
+        <input>../CGAL_ipelets/doc/CGAL_ipelets</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../CGAL_ipelets/doc/CGAL_ipelets/</string>
+          <string name="STRIP_FROM_INC_PATH">../CGAL_ipelets/doc/CGAL_ipelets/</string>
+          <string name="GENERATE_TAGFILE">./tags/CGAL_ipelets.tag</string>
+          <string name="IMAGE_PATH">../CGAL_ipelets/doc/CGAL_ipelets/fig</string>
+          <string name="EXAMPLE_PATH">../CGAL_ipelets/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Apollonius_graph_2</name>
+        <input>../Apollonius_graph_2/doc/Apollonius_graph_2</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Apollonius_graph_2/doc/Apollonius_graph_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Apollonius_graph_2/doc/Apollonius_graph_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Apollonius_graph_2.tag</string>
+          <string name="IMAGE_PATH">../Apollonius_graph_2/doc/Apollonius_graph_2/fig</string>
+          <string name="EXAMPLE_PATH">../Apollonius_graph_2/examples</string>
+          <list name="HTML_EXTRA_FILES" append="true">
+            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-left_vertex.gif</item>
+            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-right_vertex.gif</item>
+            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-no_conflict.gif</item>
+            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-entire_edge.gif</item>
+            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-interior.gif</item>
+            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-both_vertices.gif</item>
+          </list>
+        </doxygen>
+      </project>
       <!-- subprojects end -->
     </project>
 
@@ -440,15 +473,12 @@ namespace for the XML file to be processed properly.  -->
     <project>
       <namespace>CGAL</namespace>
       <name>CGAL</name>
-      <!-- The version number of the documentation -->
       <version>4.1</version>
       <versionSpecific>false</versionSpecific>
       <input>./doc</input>
       <output>./output</output>
       <logDirectory>./log</logDirectory>
       <doxygen>
-        <!-- this project also generates a tag file with all basic STL
-             Concepts, and some general manual pages -->
         <string name="GENERATE_TAGFILE">./tags/Manual.tag</string>
         <string name="EXAMPLE_PATH">../Convex_hull_2/examples</string>
 
@@ -488,6 +518,8 @@ namespace for the XML file to be processed properly.  -->
           <item>../Alpha_shapes_2/doc/Alpha_shapes_2/fig</item>
           <item>../Alpha_shapes_3/doc/Alpha_shapes_3/fig</item>
           <item>../Principal_component_analysis/doc/Principal_component_analysis/fig</item>
+          <item>../CGAL_ipelets/doc/CGAL_ipelets/fig</item>
+          <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig</item>
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL_Extension/html</item>
@@ -504,7 +536,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Point_set_2.tag=../../CGAL.CGAL.Point_set_2/html</item>
           <item>./tags/Interval_skip_list.tag=../../CGAL.CGAL.Interval_skip_list/html</item>
           <item>./tags/Envelope_2.tag=../../CGAL.CGAL.Envelope_2/html</item>
-          <!-- <item>./tags/Envelope_3.tag=../../CGAL.CGAL.Envelope_3/html</item> -->
+          <item>./tags/Envelope_3.tag=../../CGAL.CGAL.Envelope_3/html</item>
           <item>./tags/Minkowski_sum_2.tag=../../CGAL.CGAL.Minkowski_sum_2/html</item>
           <item>./tags/Minkowski_sum_3.tag=../../CGAL.CGAL.Minkowski_sum_3/html</item>
           <item>./tags/Generator.tag=../../CGAL.CGAL.Generator/html</item>
@@ -521,6 +553,8 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.Alpha_shapes_2/html</item>
           <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.Alpha_shapes_3/html</item>
           <item>./tags/Principal_component_analysis.tag=../../CGAL.CGAL.Principal_component_analysis/html</item>
+          <item>./tags/CGAL_ipelets.tag=../../CGAL.CGAL.CGAL_ipelets/html</item>
+          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius_graph_2/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>
