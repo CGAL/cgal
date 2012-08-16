@@ -3,6 +3,30 @@ namespace CGAL {
 /*!
 \ingroup PkgSnapRounding2
 
+The first two parameters denote the first and after-the-last iterators 
+of the input segments. The third parameter is a reference to a 
+container of the output polylines. Since a polyline is composed of a 
+sequence of points, a polyline is a container itself. The fifth 
+parameter determines whether to apply ISR or SR. 
+
+The fourth parameter denotes the pixel size \f$ w\f$. The plane will be 
+tiled with square pixels of width \f$ w\f$ such that the origin is the 
+center of a pixel. The sixth parameter denotes the output 
+representation. If the value of the sixth parameter is <I>true/</I> 
+then the centers of pixels constitute the integer grid, and hence the 
+vertices of the output polylines will be integers. For example, the 
+coordinates of the center of the pixel to the right of the pixel 
+containing the origin will be \f$ (1,0)\f$ regardless of the pixel width. 
+If the value of the sixth parameter is <I>false/</I>, then the centers 
+of hot pixels (and hence the vertices of the output polylines) will 
+bear their original coordinates, which may not necessarily be 
+integers. In the latter case, the coordinates of the center of the 
+pixel to the right of the pixel containing the origin, for example, 
+will be \f$ (w,0)\f$. 
+
+The seventh (and last) parameter is briefly described next; for a 
+detailed description see \cite cgal:hp-isr-02. 
+
 Snap Rounding (SR, for short) is a well known method for converting 
 arbitrary-precision arrangements of segments into a fixed-precision 
 representation \cite gght-srlse-97, \cite gm-rad-98, \cite h-psifp-99. In 
@@ -37,29 +61,7 @@ details on ISR see \cite cgal:hp-isr-02.
 The traits used here must support (arbitrary-precision) rational number type as 
 this is a basic requirement of SR. 
 
-The first two parameters denote the first and after-the-last iterators 
-of the input segments. The third parameter is a reference to a 
-container of the output polylines. Since a polyline is composed of a 
-sequence of points, a polyline is a container itself. The fifth 
-parameter determines whether to apply ISR or SR. 
 
-The fourth parameter denotes the pixel size \f$ w\f$. The plane will be 
-tiled with square pixels of width \f$ w\f$ such that the origin is the 
-center of a pixel. The sixth parameter denotes the output 
-representation. If the value of the sixth parameter is <I>true/</I> 
-then the centers of pixels constitute the integer grid, and hence the 
-vertices of the output polylines will be integers. For example, the 
-coordinates of the center of the pixel to the right of the pixel 
-containing the origin will be \f$ (1,0)\f$ regardless of the pixel width. 
-If the value of the sixth parameter is <I>false/</I>, then the centers 
-of hot pixels (and hence the vertices of the output polylines) will 
-bear their original coordinates, which may not necessarily be 
-integers. In the latter case, the coordinates of the center of the 
-pixel to the right of the pixel containing the origin, for example, 
-will be \f$ (w,0)\f$. 
-
-The seventh (and last) parameter is briefly described next; for a 
-detailed description see \cite cgal:hp-isr-02. 
 
 \pre <I>pixel_size</I> must have a positive value and <I>number_of_kd_trees</I> must be a positive integer. 
 

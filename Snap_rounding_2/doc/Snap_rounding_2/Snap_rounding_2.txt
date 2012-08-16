@@ -25,14 +25,14 @@ details and experimental results are given in \cite cgal:hp-isr-02.
 
 Given a finite collection \f$ \S\f$ of segments in the plane, the
 arrangement of \f$ \S\f$ denoted \f$ \A(\S)\f$ is the subdivision of the plane
-into vertices, edges, and faces induced by \f$ \S\f$. A <I>vertex/</I> of the arrangement is either a segment endpoint or
+into vertices, edges, and faces induced by \f$ \S\f$. A <I>vertex</I> of the arrangement is either a segment endpoint or
 the intersection of two segments. Given an arrangement of segments
 whose vertices are represented with arbitrary-precision coordinates,
 the SR procedure
 `snap_rounding_2<Traits,InputIterator,OutputContainer>`
 proceeds as follows. We tile the plane
 with a grid of unit squares, <I>pixels</I>, each centered at a point
-with integer coordinates. A pixel is <I>hot/</I> if it contains a
+with integer coordinates. A pixel is <I>hot</I> if it contains a
 vertex of the arrangement. Each vertex of the arrangement is replaced
 by the center of the hot pixel containing it and each edge \f$ e\f$ is
 replaced by the polygonal chain through the centers of the hot pixels
