@@ -118,7 +118,8 @@ Halfedge_handle create_segment();
 removes the first vertex if vertices are supported. 
 
 Requirement 
--------------- `Supports_removal` \f$ \equiv\f$ 
+-------------- 
+`Supports_removal` \f$ \equiv\f$ 
 `CGAL::Tag_true`. 
 */ 
 void vertices_pop_front(); 
