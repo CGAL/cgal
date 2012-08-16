@@ -267,6 +267,19 @@ Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_real_root_isolator
 Algebraic_kernel_d/test/Algebraic_kernel_d/rs_isolator.cpp -text
 Alpha_shapes_2/demo/Alpha_shapes_2/data/m30f.jpg -text svneol=unset#image/jpeg
 Alpha_shapes_2/demo/Alpha_shapes_2/qt3/help/index.html svneol=native#text/html
+Alpha_shapes_2/doc/Alpha_shapes_2/Alpha_shapes_2.txt -text
+Alpha_shapes_2/doc/Alpha_shapes_2/CGAL/Alpha_shape_2.h -text
+Alpha_shapes_2/doc/Alpha_shapes_2/CGAL/Alpha_shape_face_base_2.h -text
+Alpha_shapes_2/doc/Alpha_shapes_2/CGAL/Alpha_shape_vertex_base_2.h -text
+Alpha_shapes_2/doc/Alpha_shapes_2/CGAL/Weighted_alpha_shape_euclidean_traits_2.h -text
+Alpha_shapes_2/doc/Alpha_shapes_2/Concepts/AlphaShapeFace_2.h -text
+Alpha_shapes_2/doc/Alpha_shapes_2/Concepts/AlphaShapeTraits_2.h -text
+Alpha_shapes_2/doc/Alpha_shapes_2/Concepts/AlphaShapeVertex_2.h -text
+Alpha_shapes_2/doc/Alpha_shapes_2/PackageDescription.txt -text
+Alpha_shapes_2/doc/Alpha_shapes_2/Unsupported/Alpha_shape_2-Dt-ExactAlphaComparisonTag-.h -text svneol=unset#application/octet-stream
+Alpha_shapes_2/doc/Alpha_shapes_2/fig/alpha-detail.png -text svneol=unset#image/png
+Alpha_shapes_2/doc/Alpha_shapes_2/fig/alphashape.pdf -text svneol=unset#application/pdf
+Alpha_shapes_2/doc/Alpha_shapes_2/fig/alphashape.png -text svneol=unset#image/png
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alpha-detail.png -text
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#application/pdf
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.png -text
@@ -275,6 +288,30 @@ Alpha_shapes_2/test/Alpha_shapes_2/data/fin3 -text
 Alpha_shapes_2/test/Alpha_shapes_2/test_alpha_projection_traits.cpp -text
 Alpha_shapes_3/demo/Alpha_shapes_3/Alpha_shape_3.qrc -text
 Alpha_shapes_3/demo/Alpha_shapes_3/MainWindow.ui -text
+Alpha_shapes_3/doc/Alpha_shapes_3/Alpha_shapes_3.txt -text
+Alpha_shapes_3/doc/Alpha_shapes_3/CGAL/Alpha_shape_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/CGAL/Alpha_shape_cell_base_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/CGAL/Alpha_shape_vertex_base_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/CGAL/Fixed_alpha_shape_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/CGAL/Fixed_alpha_shape_cell_base_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/CGAL/Fixed_alpha_shape_vertex_base_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/CGAL/Weighted_alpha_shape_euclidean_traits_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/AlphaShapeCell_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/AlphaShapeTraits_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/AlphaShapeVertex_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/FixedAlphaShapeCell_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/FixedAlphaShapeTraits_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/FixedAlphaShapeVertex_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/FixedWeightedAlphaShapeTraits_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/WeightedAlphaShapeTraits_3.h -text
+Alpha_shapes_3/doc/Alpha_shapes_3/PackageDescription.txt -text
+Alpha_shapes_3/doc/Alpha_shapes_3/fig/alpha_shapes_3_large.png -text svneol=unset#image/png
+Alpha_shapes_3/doc/Alpha_shapes_3/fig/alpha_shapes_3_small.png -text svneol=unset#image/png
+Alpha_shapes_3/doc/Alpha_shapes_3/fig/alphashape.gif -text svneol=unset#image/gif
+Alpha_shapes_3/doc/Alpha_shapes_3/fig/alphashape.pdf -text svneol=unset#application/pdf
+Alpha_shapes_3/doc/Alpha_shapes_3/fig/classif.pdf -text svneol=unset#application/pdf
+Alpha_shapes_3/doc/Alpha_shapes_3/fig/classif.png -text svneol=unset#image/png
+Alpha_shapes_3/doc/Alpha_shapes_3/fig/gen-reg-ex.png -text svneol=unset#image/png
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alpha_shapes_3_large.png -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alpha_shapes_3_small.png -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.gif -text svneol=unset#image/gif
@@ -302,6 +339,45 @@ Alpha_shapes_3/test/Alpha_shapes_3/data/small-exp.in -text
 Alpha_shapes_3/test/Alpha_shapes_3/data/small.in -text
 Alpha_shapes_3/test/Alpha_shapes_3/test_fixed_alpha_shape_3.cmd -text
 Alpha_shapes_3/test/Alpha_shapes_3/test_fixed_alpha_shape_3.cpp -text
+Apollonius_graph_2/doc/Apollonius_graph_2/Apollonius_graph_2.txt -text
+Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_graph_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_graph_filtered_traits_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_graph_hierarchy_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_graph_hierarchy_vertex_base_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_graph_traits_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_graph_vertex_base_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_site_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/Classified.txt -text svneol=unset#application/octet-stream
+Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusGraphDataStructure_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusGraphHierarchyVertexBase_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusGraphTraits_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusGraphVertexBase_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusSite_2.h -text
+Apollonius_graph_2/doc/Apollonius_graph_2/PackageDescription.txt -text
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/CircleVoronoi.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/CircleVoronoiLarge.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-both_vertices.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-both_vertices_bw.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-entire_edge.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-entire_edge_bw.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-interior.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-interior_bw.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-left_vertex.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-left_vertex_bw.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-no_conflict.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-no_conflict_bw.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-right_vertex.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-right_vertex_bw.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-false.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-false_bw.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-true.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-true_bw.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_diagram.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_diagram_bw.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_graph.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_graph_bw.png -text svneol=unset#image/png
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/insert_degree_2.gif -text svneol=unset#image/gif
+Apollonius_graph_2/doc/Apollonius_graph_2/fig/insert_degree_2.png -text svneol=unset#image/png
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices.gif -text svneol=unset#image/gif
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices_bw.png -text svneol=unset#image/png
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-entire_edge.gif -text svneol=unset#image/gif
@@ -1284,6 +1360,46 @@ Boolean_set_operations_2/test/Boolean_set_operations_2/test_agg_op.cmd eol=lf
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_bop.cmd eol=lf
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_connect_holes.cpp -text
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_polygon_validation.cpp -text
+Bounding_volumes/doc/Bounding_volumes/Bounding_volumes.txt -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Approximate_min_ellipsoid_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Approximate_min_ellipsoid_d_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Approximate_min_ellipsoid_d_traits_3.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Approximate_min_ellipsoid_d_traits_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_annulus_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_circle_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_circle_2_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_ellipse_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_ellipse_2_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_quadrilateral_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_annulus_d_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_annulus_d_traits_3.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_annulus_d_traits_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_points_d_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_points_d_traits_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_spheres_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_spheres_d_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_spheres_d_traits_3.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_spheres_d_traits_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/min_quadrilateral_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/rectangular_p_center_2.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/ApproximateMinEllipsoid_d_Traits_d.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/Circle.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/Ellipse.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/MinCircle2Traits.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/MinEllipse2Traits.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/MinQuadrilateralTraits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/MinSphereAnnulusDTraits.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/MinSphereOfSpheresTraits.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/RectangularPCenterTraits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/PackageDescription.txt -text
+Bounding_volumes/doc/Bounding_volumes/fig/annulus.gif -text svneol=unset#image/gif
+Bounding_volumes/doc/Bounding_volumes/fig/annulus.pdf -text svneol=unset#application/pdf
+Bounding_volumes/doc/Bounding_volumes/fig/ball.gif -text svneol=unset#image/gif
+Bounding_volumes/doc/Bounding_volumes/fig/ball.pdf -text svneol=unset#application/pdf
+Bounding_volumes/doc/Bounding_volumes/fig/minCircle.png -text svneol=unset#image/png
+Bounding_volumes/doc/Bounding_volumes/fig/pcenter.gif -text svneol=unset#image/gif
+Bounding_volumes/doc/Bounding_volumes/fig/pcenter.pdf -text svneol=unset#application/pdf
 Box_intersection_d/doc/Box_intersection_d/Box_intersection_d.txt -text
 Box_intersection_d/doc/Box_intersection_d/CGAL/Box_intersection_d/Box_d.h -text
 Box_intersection_d/doc/Box_intersection_d/CGAL/Box_intersection_d/Box_traits_d.h -text
@@ -1338,6 +1454,13 @@ CGAL_ipelets/demo/CGAL_ipelets/pca.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/simple_triangulation.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/skeleton.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/triangulation.cpp -text
+CGAL_ipelets/doc/CGAL_ipelets/CGAL/CGAL_Ipelet_base.h -text
+CGAL_ipelets/doc/CGAL_ipelets/CGAL_ipelets.txt -text
+CGAL_ipelets/doc/CGAL_ipelets/Classified.txt -text svneol=unset#application/octet-stream
+CGAL_ipelets/doc/CGAL_ipelets/PackageDescription.txt -text
+CGAL_ipelets/doc/CGAL_ipelets/fig/example.png -text svneol=unset#image/png
+CGAL_ipelets/doc/CGAL_ipelets/fig/ipeico.jpg -text svneol=unset#image/jpeg
+CGAL_ipelets/doc/CGAL_ipelets/fig/ipelarge.jpg -text svneol=unset#image/jpeg
 CGAL_ipelets/doc_tex/CGAL_ipelets/PkgDescription.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets_def.tex -text
@@ -2150,6 +2273,23 @@ Interval_support/test/Interval_support/convert_to_bfi.cpp -text
 Jet_fitting_3/clean_tree.csh eol=lf
 Jet_fitting_3/demo/Jet_fitting_3/README_visu -text
 Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
+Jet_fitting_3/doc/Jet_fitting_3/CGAL/Eigen_svd.h -text
+Jet_fitting_3/doc/Jet_fitting_3/CGAL/Lapack/Linear_algebra_lapack.h -text
+Jet_fitting_3/doc/Jet_fitting_3/CGAL/Monge_via_jet_fitting.h -text
+Jet_fitting_3/doc/Jet_fitting_3/Concepts/DataKernel.h -text
+Jet_fitting_3/doc/Jet_fitting_3/Concepts/LocalKernel.h -text
+Jet_fitting_3/doc/Jet_fitting_3/Concepts/SvdTraits.h -text
+Jet_fitting_3/doc/Jet_fitting_3/Jet_fitting_3.txt -text
+Jet_fitting_3/doc/Jet_fitting_3/PackageDescription.txt -text
+Jet_fitting_3/doc/Jet_fitting_3/fig/DavidDetail.png -text svneol=unset#image/png
+Jet_fitting_3/doc/Jet_fitting_3/fig/david-dirmaxkmin-jpg-white-back.png -text svneol=unset#image/png
+Jet_fitting_3/doc/Jet_fitting_3/fig/david-dirmaxkmin-small.png -text svneol=unset#image/png
+Jet_fitting_3/doc/Jet_fitting_3/fig/david-dirmaxkmin-white-back.jpg -text svneol=unset#image/jpeg
+Jet_fitting_3/doc/Jet_fitting_3/fig/jet_fitting_basis.gif -text svneol=unset#image/gif
+Jet_fitting_3/doc/Jet_fitting_3/fig/jet_fitting_basis.pdf -text svneol=unset#application/pdf
+Jet_fitting_3/doc/Jet_fitting_3/fig/ppal_curv_poly2x2+y2.jpg -text svneol=unset#image/jpeg
+Jet_fitting_3/doc/Jet_fitting_3/fig/template_dependence.jpg -text svneol=unset#image/jpeg
+Jet_fitting_3/doc/Jet_fitting_3/fig/template_dependence.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/doc_tex/AIDE -text
 Jet_fitting_3/doc_tex/Jet_fitting_3/DavidDetail.png -text
 Jet_fitting_3/doc_tex/Jet_fitting_3/Maple_formula.mw -text svneol=unset#application/octet-stream
@@ -3843,6 +3983,22 @@ Polynomial/test/Polynomial/Polynomial_type_generator.cpp -text
 Polynomial/test/Polynomial/polynomial_utils.cpp -text
 Polynomial/test/Polynomial/sturm_habicht_sequence.cpp -text
 Polynomial/test/Polynomial/subresultants.cpp -text
+Polytope_distance_d/doc/Polytope_distance_d/CGAL/Polytope_distance_d.h -text
+Polytope_distance_d/doc/Polytope_distance_d/CGAL/Polytope_distance_d_traits_2.h -text
+Polytope_distance_d/doc/Polytope_distance_d/CGAL/Polytope_distance_d_traits_3.h -text
+Polytope_distance_d/doc/Polytope_distance_d/CGAL/Polytope_distance_d_traits_d.h -text
+Polytope_distance_d/doc/Polytope_distance_d/CGAL/Width_3.h -text
+Polytope_distance_d/doc/Polytope_distance_d/CGAL/Width_default_traits_3.h -text
+Polytope_distance_d/doc/Polytope_distance_d/CGAL/all_furthest_neighbors_2.h -text
+Polytope_distance_d/doc/Polytope_distance_d/Classified.txt -text svneol=unset#application/octet-stream
+Polytope_distance_d/doc/Polytope_distance_d/Concepts/AllFurthestNeighborsTraits_2.h -text
+Polytope_distance_d/doc/Polytope_distance_d/Concepts/PolytopeDistanceDTraits.h -text
+Polytope_distance_d/doc/Polytope_distance_d/Concepts/WidthTraits_3.h -text
+Polytope_distance_d/doc/Polytope_distance_d/PackageDescription.txt -text
+Polytope_distance_d/doc/Polytope_distance_d/Polytope_distance_d.txt -text
+Polytope_distance_d/doc/Polytope_distance_d/fig/dist.png -text svneol=unset#image/png
+Polytope_distance_d/doc/Polytope_distance_d/fig/polydist.gif -text svneol=unset#image/gif
+Polytope_distance_d/doc/Polytope_distance_d/fig/polydist.pdf -text svneol=unset#application/pdf
 Polytope_distance_d/doc_tex/Polytope_distance_d/dist.png -text
 Polytope_distance_d/doc_tex/Polytope_distance_d/polydist.gif -text svneol=unset#image/gif
 Polytope_distance_d/doc_tex/Polytope_distance_d/polydist.pdf -text svneol=unset#application/pdf
@@ -4141,6 +4297,22 @@ Segment_Delaunay_graph_2/test/Segment_Delaunay_graph_2/data/sitesx.Gmpq.cin -tex
 Segment_Delaunay_graph_2/test/Segment_Delaunay_graph_2/data/sitesx.cin -text
 Segment_Delaunay_graph_2/test/Segment_Delaunay_graph_2/data/sitesxx.Gmpq.cin -text
 Segment_Delaunay_graph_2/test/Segment_Delaunay_graph_2/data/sitesxx.cin -text
+Skin_surface_3/doc/Skin_surface_3/CGAL/Skin_surface_3.h -text
+Skin_surface_3/doc/Skin_surface_3/CGAL/Skin_surface_traits_3.h -text
+Skin_surface_3/doc/Skin_surface_3/CGAL/Union_of_balls_3.h -text
+Skin_surface_3/doc/Skin_surface_3/CGAL/make_skin_surface_mesh_3.h -text
+Skin_surface_3/doc/Skin_surface_3/CGAL/mesh_skin_surface_3.h -text
+Skin_surface_3/doc/Skin_surface_3/CGAL/subdivide_skin_surface_mesh_3.h -text
+Skin_surface_3/doc/Skin_surface_3/Concepts/SkinSurfaceTraits_3.h -text
+Skin_surface_3/doc/Skin_surface_3/Concepts/SkinSurface_3.h -text
+Skin_surface_3/doc/Skin_surface_3/PackageDescription.txt -text
+Skin_surface_3/doc/Skin_surface_3/Skin_surface_3.txt -text
+Skin_surface_3/doc/Skin_surface_3/fig/convexTwoPoints.png -text svneol=unset#image/png
+Skin_surface_3/doc/Skin_surface_3/fig/large.png -text svneol=unset#image/png
+Skin_surface_3/doc/Skin_surface_3/fig/marching.png -text svneol=unset#image/png
+Skin_surface_3/doc/Skin_surface_3/fig/molecule.png -text svneol=unset#image/png
+Skin_surface_3/doc/Skin_surface_3/fig/skinTwoPoints.png -text svneol=unset#image/png
+Skin_surface_3/doc/Skin_surface_3/fig/small.png -text svneol=unset#image/png
 Skin_surface_3/doc_tex/Skin_surface_3/convexTwoPoints.png -text svneol=unset#image/png
 Skin_surface_3/doc_tex/Skin_surface_3/large.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/marching.png -text svneol=unset#image/png
@@ -4172,6 +4344,17 @@ Skin_surface_3/test/Skin_surface_3/degenerate_test_exact.cpp -text
 Skin_surface_3/test/Skin_surface_3/union_of_balls_test.cpp -text
 Skin_surface_3/test/Skin_surface_3/union_of_balls_test_exact.cpp -text
 Snap_rounding_2/demo/Snap_rounding_2/Qt3/help/index.html svneol=native#text/html
+Snap_rounding_2/doc/Snap_rounding_2/CGAL/Snap_rounding_2.h -text
+Snap_rounding_2/doc/Snap_rounding_2/CGAL/Snap_rounding_traits_2.h -text
+Snap_rounding_2/doc/Snap_rounding_2/Concepts/SnapRoundingTraits_2.h -text
+Snap_rounding_2/doc/Snap_rounding_2/PackageDescription.txt -text
+Snap_rounding_2/doc/Snap_rounding_2/Snap_rounding_2.txt -text
+Snap_rounding_2/doc/Snap_rounding_2/fig/isr_vs_sr.gif -text svneol=unset#image/gif
+Snap_rounding_2/doc/Snap_rounding_2/fig/isr_vs_sr.pdf -text svneol=unset#application/pdf
+Snap_rounding_2/doc/Snap_rounding_2/fig/snap-detail.png -text svneol=unset#image/png
+Snap_rounding_2/doc/Snap_rounding_2/fig/snap.png -text svneol=unset#image/png
+Snap_rounding_2/doc/Snap_rounding_2/fig/sr1.gif -text svneol=unset#image/gif
+Snap_rounding_2/doc/Snap_rounding_2/fig/sr1.pdf -text svneol=unset#application/pdf
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#image/gif
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.pdf -text svneol=unset#application/pdf
 Snap_rounding_2/doc_tex/Snap_rounding_2/snap-detail.png -text

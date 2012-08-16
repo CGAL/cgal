@@ -1,0 +1,71 @@
+
+namespace CGAL {
+
+/*!
+\ingroup PkgBoundingVolumes
+
+The class `Min_circle_2_traits_2` is a traits class for `Min_circle_2<Traits>` 
+using the two-dimensional \cgal kernel. 
+
+Requirements 
+-------------- 
+
+The template parameter `K` is a model for `Kernel`. 
+
+\models ::MinCircle2Traits 
+
+\sa `CGAL::Min_circle_2<Traits>` 
+\sa `MinCircle2Traits` 
+
+*/
+template< typename K >
+class Min_circle_2_traits_2 {
+public:
+
+/// \name Types 
+/// @{
+
+/*! 
+typedef to `K::Point_2`. 
+*/ 
+typedef Hidden_type Point ; 
+
+/*! 
+internal type. 
+*/ 
+typedef Hidden_type Circle; 
+
+/// @} 
+
+/// \name Creation 
+/// @{
+
+/*! 
+default constructor. 
+*/ 
+Min_circle_2_traits_2( ); 
+
+/*! 
+copy constructor. 
+*/ 
+Min_circle_2_traits_2( 
+const Min_circle_2_traits_2<K>&); 
+
+/// @} 
+
+/// \name Operations 
+/// @{
+
+/*! 
+
+returns `CGAL::orientation( p, q, r)`. 
+*/ 
+CGAL::Orientation 
+orientation( const Point& p, 
+const Point& q, 
+const Point& r) const; 
+
+/// @}
+
+}; /* end Min_circle_2_traits_2 */
+} /* end namespace CGAL */

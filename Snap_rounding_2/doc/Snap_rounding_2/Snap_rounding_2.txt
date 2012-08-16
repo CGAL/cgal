@@ -1,0 +1,133 @@
+
+namespace CGAL {
+/*!
+
+\mainpage 2D Snap Rounding
+
+\authors Eli Packer
+
+# Introduction #
+
+Snap Rounding (SR, for short) is a well known method for converting
+arbitrary-precision arrangements of segments into a fixed-precision
+representation \cite gght-srlse-97, gm-rad-98, h-psifp-99. In
+the study of robust geometric computing, it can be classified
+as a finite precision approximation technique. Iterated Snap Rounding
+(ISR, for short) is a modification of SR in which each vertex is at least
+half-the-width-of-a-pixel away from any non-incident edge
+\cite cgal:hp-isr-02. This package supports both methods. Algorithmic
+details and experimental results are given in \cite cgal:hp-isr-02.
+
+\anchor figsr1
+\image html sr1.gif "An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)"
+
+# What is Snap Rounding/Iterated Snap Rounding #
+
+Given a finite collection \f$ \S\f$ of segments in the plane, the
+arrangement of \f$ \S\f$ denoted \f$ \A(\S)\f$ is the subdivision of the plane
+into vertices, edges, and faces induced by \f$ \S\f$. A <I>vertex/</I> of the arrangement is either a segment endpoint or
+the intersection of two segments. Given an arrangement of segments
+whose vertices are represented with arbitrary-precision coordinates,
+the SR procedure
+`snap_rounding_2<Traits,InputIterator,OutputContainer>`
+proceeds as follows. We tile the plane
+with a grid of unit squares, <I>pixels</I>, each centered at a point
+with integer coordinates. A pixel is <I>hot/</I> if it contains a
+vertex of the arrangement. Each vertex of the arrangement is replaced
+by the center of the hot pixel containing it and each edge \f$ e\f$ is
+replaced by the polygonal chain through the centers of the hot pixels
+met by \f$ e\f$, in the same order as they are met by \f$ e\f$. 
+Figure \ref figsr1 demonstrates the results of SR.
+
+In a snap-rounded arrangement, the distance between a vertex and
+a non-incident edge can be extremely small compared with the width of a
+pixel in the grid used for rounding. ISR
+is a modification of SR which makes a vertex and a
+non-incident edge well separated (the distance between each is at least
+half-the-width-of-a-pixel). However, the guaranteed quality of the
+approximation in ISR degrades. Figure \ref figisr_vs_sr depicts
+the results of SR and ISR on the same input.
+Conceptually, the ISR procedure is equivalent to repeated application
+of SR, namely we apply SR to the original set of segments, then we use
+the output of SR as input to another round of SR and so on until all the
+vertices are well separated from non-incident edges. Algorithmically
+we operate differently, as this repeated application of SR would have
+resulted in an efficient overall process. The algorithmic details are
+given in \cite cgal:hp-isr-02.
+
+# Terms and Software Design #
+
+Our package supports both schemes, implementing the algorithm
+described in \cite cgal:hp-isr-02.
+Although the paper only describes an algorithm for ISR,
+it is easy to derive an algorithm for SR, by performing only
+the first rounding level for each segment.
+
+The input to the program is a set \f$ S\f$ of \f$ n\f$ segments,
+\f$ S=\{s_1,\ldots,s_n\}\f$ and the output is a set \f$ G\f$ of \f$ n\f$ polylines,
+with a polyline \f$ g_i\f$ for each input segments \f$ s_i\f$. An input segment
+is given by the coordinates of its endpoints. An output polyline is
+given by the ordered set of vertices \f$ v_0,\ldots,v_k\f$ along the polyline.
+The polyline consists of the segments
+\f$ (v_0v_1),\ldots,(v_{k-1}v_k)\f$.
+
+There are three template parameters: `Traits` is the underlying geometry,
+i.e., the number type used and the coordinate representation.
+`InputIterator` is the type of the iterators that point to the first
+and after-the-last elements of the input. Finally, `OutputContainer` is the
+type of the output container.
+
+Since the algorithm requires kernel functionalities such as the rounding to the
+center of a pixel, a special traits class must be provided. The precise
+description of the requirements is given by the concept
+`SnapRoundingTraits_2`. The class `Snap_rounding_traits_2` is a model of
+this concept.
+
+\anchor figisr_vs_sr
+\image html isr_vs_sr.gif "An arrangement of segments before (a), after SR (b) and ISR (c) (hot pixels are shaded)."
+
+# Four Line Segment Example #
+
+The following example generates an ISR representation
+of an arrangement of four line segments. In particular it produces
+a list of points that are the vertices of the resulting polylines in a plane
+tiled with one-unit square pixels.
+
+\cgalexample{snap_rounding.cpp}
+
+This program generates four polylines, one for each input segment. The exact
+output follows:
+
+\verbatim
+Polyline number 1:
+(0/4:0/4)
+(12/4:12/4)
+(20/4:20/4)
+(28/4:28/4)
+(40/4:40/4)
+Polyline number 2:
+(0/4:40/4)
+(12/4:28/4)
+(20/4:20/4)
+(28/4:12/4)
+(40/4:0/4)
+Polyline number 3:
+(12/4:0/4)
+(12/4:12/4)
+(12/4:28/4)
+(12/4:40/4)
+Polyline number 4:
+(28/4:0/4)
+(28/4:12/4)
+(28/4:28/4)
+(28/4:40/4)
+\endverbatim
+
+The package is supplied with a graphical demo program that opens a window,
+allows the user to edit segments dynamically, applies a selected
+snap-rounding procedures, and displays the result onto the same window
+(see `<CGAL_ROOT>/demo/Snap_rounding_2/demo.cpp`).
+
+*/ 
+} /* namespace CGAL */
+

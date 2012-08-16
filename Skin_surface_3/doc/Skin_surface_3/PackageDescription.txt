@@ -1,0 +1,24 @@
+/// \defgroup PkgSkinSurface3 3D Skin Surface Meshing 
+/// \defgroup PkgSkinSurface3Concepts Concepts
+/// \ingroup PkgSkinSurface3
+
+/*!
+\addtogroup PkgSkinSurface3
+\todo check generated documentation
+\PkgDescriptionBegin{3D Skin Surface Meshing }
+\PkgPicture{small.png}
+\PkgAuthor{Nico Kruithof}
+\PkgDesc{This package allows to build a triangular mesh of a skin surface.     Skin surfaces are used for modeling large molecules in biological     computing. The surface is defined by a set of balls, representing     the atoms of the molecule, and a shrink factor that determines the     size of the smooth patches gluing the balls together.      The construction of a triangular mesh of a smooth skin surface is     often necessary for further analysis and for fast visualization.     This package provides functions to construct a triangular mesh     approximating the skin surface from a set of balls and a shrink     factor. It also contains code to subdivide the mesh efficiently.     }
+\PkgSince{3.3}
+\cgalbib{ cgal:k-ssm3-12 }
+\license{ \ref licensesGPL }
+\PkgDescriptionEnd
+
+Skin surfaces form a class of tangent continuous surfaces defined by a
+set of balls and a scalar called the shrink factor. The skin surface
+package constructs an triangular mesh isotopic to the skin surface,
+using the algorithm described in \cite cgal:kv-mssct-05. The mesh is
+stored in a `CGAL::Polyhedron_3`.
+
+*/
+
