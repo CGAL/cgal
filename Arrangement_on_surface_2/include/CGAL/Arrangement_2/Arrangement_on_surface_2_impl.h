@@ -212,8 +212,7 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::assign(const Self& arr)
   if (m_own_traits && m_geom_traits != NULL)
     delete m_geom_traits;
 
-  m_geom_traits = (arr.m_own_traits) ?
-    new Traits_adaptor_2 : arr.m_geom_traits;
+  m_geom_traits = (arr.m_own_traits) ? new Traits_adaptor_2 : arr.m_geom_traits;
   m_own_traits = arr.m_own_traits;
 
   // Notify the observers that the assignment has been performed.
@@ -324,7 +323,6 @@ typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Halfedge_handle
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
 {
-
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "Aos_2: insert_in_face_interior (interface)" << std::endl;
   std::cout << "cv   : " << cv << std::endl;
@@ -365,7 +363,6 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     // right end.
     _place_and_set_curve_end(p_f, cv, ARR_MAX_END, ps_x2, ps_y2, &fict_prev2);
 
-
   // Create the edge connecting the two vertices (note we know v1 is 
   // lexicographically smaller than v2).
   DHalfedge* new_he;
@@ -394,8 +391,8 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     // goes fine since the insertion order is reverted with respect to the 
     // orientation of the edges. 
     // TODO EBEB 2012-08-05 evaluate this bugfix again,
-    //   check, in particular, whether needed in other "insert_..." functions, too
-    //   or whether it should be delayed to "_insert_at_vertices"?
+    //   check, in particular, whether needed in other "insert_..." functions, 
+    //   too or whether it should be delayed to "_insert_at_vertices"?
     if (fict_prev1 == fict_prev2)
       fict_prev1 = fict_prev1->next();
 
@@ -404,7 +401,8 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, fict_prev1, fict_prev2, SMALLER,
                                  new_face_created, dummy_swapped_predecessors);
-    // TODO EBEB 2012-08-05 is order of the two boundary-edges really irrelevant here?
+    // TODO EBEB 2012-08-05
+    // is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -515,8 +513,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
   if (v2 == NULL)
     // Locate the DCEL features that will be used for inserting the curve's
     // right end.
-    v2 = _place_and_set_curve_end(f1, cv, ARR_MAX_END, ps_x2, ps_y2,
-                                  &fict_prev2);
+    v2 =
+      _place_and_set_curve_end(f1, cv, ARR_MAX_END, ps_x2, ps_y2, &fict_prev2);
   
   // Perform the insertion (note that we know that prev1->vertex is smaller
   // than v2).
@@ -532,7 +530,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
                                  new_face_created, dummy_swapped_predecessors);
-    // TODO EBEB 2012-08-05 is order of the two boundary-edges really irrelevant here?
+    // TODO EBEB 2012-08-05
+    // is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -618,7 +617,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
                                  new_face_created, dummy_swapped_predecessors);
-    // TODO EBEB 2012-08-05 is order of the two boundary-edges really irrelevant here?
+    // TODO EBEB 2012-08-05
+    // is order of the two boundary-edges really irrelevant here?
   
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -723,8 +723,8 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
   if (v1 == NULL)
     // Locate the DCEL features that will be used for inserting the curve's
     // left end.
-    v1 = _place_and_set_curve_end(f2, cv, ARR_MIN_END, ps_x1, ps_y1,
-                                  &fict_prev1);
+    v1 =
+      _place_and_set_curve_end(f2, cv, ARR_MIN_END, ps_x1, ps_y1, &fict_prev1);
 
   // Perform the insertion (note that we know that prev2->vertex is larger
   // than v1).
@@ -740,7 +740,8 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
                                  new_face_created, dummy_swapped_predecessors);
-    // TODO EBEB 2012-08-05 is order of the two boundary-edges really irrelevant here?
+    // TODO EBEB 2012-08-05
+    // is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -763,7 +764,6 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::
 insert_from_right_vertex(const X_monotone_curve_2& cv,
                          Halfedge_handle prev)
 {
-
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "Aos_2: insert_from_right_vertexs (interface)" << std::endl;
   std::cout << "cv   : " << cv << std::endl;
@@ -826,7 +826,8 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
                                  new_face_created, dummy_swapped_predecessors);
-    // TODO EBEB 2012-08-05 is order of the two boundary-edges really irrelevant here?
+    // TODO EBEB 2012-08-05
+    // is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
@@ -1362,8 +1363,9 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   // Note that in this case we may create a new face.
   bool new_face_created = false;
   bool swapped_predecessors = false;
-  DHalfedge* new_he = _insert_at_vertices(cv, p_prev1, p_prev2, res,
-                                          new_face_created, swapped_predecessors);
+  DHalfedge* new_he =
+    _insert_at_vertices(cv, p_prev1, p_prev2, res, new_face_created,
+                        swapped_predecessors);
 
   if (new_face_created)
     // In case a new face has been created (pointed by the new halfedge we
@@ -2302,14 +2304,17 @@ _insert_from_vertex(const X_monotone_curve_2& cv,
 template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DHalfedge*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-  // TODO EBEB 2012-07-27 change signature to (prev1, cv, cv_dir, prev2, new_face, swapped_predecessors, allow_swap_of_predecessors)
-  //                      and similar for other _insert... functions
+// TODO EBEB 2012-07-27
+// change signature to (prev1, cv, cv_dir, prev2, new_face,
+//                      swapped_predecessors, allow_swap_of_predecessors)
+// and similar for other _insert... functions
 _insert_at_vertices(const X_monotone_curve_2& cv,
                     DHalfedge* prev1, DHalfedge* prev2,
                     Comparison_result cmp,
                     bool& new_face,
                     bool& swapped_predecessors,
-                    bool allow_swap_of_predecessors /* = true */) {
+                    bool allow_swap_of_predecessors /* = true */)
+{
   // the function adds he1 and he2 in this way:
   //    ----prev1---> ( --he2--> ) ---p2next--->
   //                  o ===cv=== 0
@@ -2332,8 +2337,9 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   std::pair< CGAL::Sign, CGAL::Sign > signs1(CGAL::ZERO, CGAL::ZERO);
   std::pair< CGAL::Sign, CGAL::Sign > signs2(CGAL::ZERO, CGAL::ZERO);
 
-  // Comment: This also checks which is the 'cheaper' (previously the 'shorter') way
-  //          to insert the curve. Now cheaper means checking less local minima! 
+  // Comment: This also checks which is the 'cheaper' (previously the
+  //          'shorter') way to insert the curve. Now cheaper means checking
+  //          less local minima! 
   if (allow_swap_of_predecessors) {
 
     bool swap_predecessors = false;
@@ -2343,26 +2349,25 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
     DInner_ccb* hole2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : NULL;
     
     if ((hole1 == hole2) && (hole1 != NULL)) {
-      // .. only in this special case, we have to check wether swapping should take place
+      // .. only in this special case, we have to check wether swapping should
+      // take place
       
       // EBEB 2012-07-26 the following code enables optimizations:
       // - avoid length-test
       // - search only local minima to find leftmost vertex
       // - re-use of signs of ccbs
       Arr_halfedge_direction cv_dir1 = cv_dir;
-      std::list< std::pair< const DHalfedge*, int > > local_mins1;
-      signs1 = _compute_signs_and_local_minima(prev1, 
-                                               cv, cv_dir1, 
-                                               prev2->next(), 
-                                               std::front_inserter(local_mins1));
+      std::list<std::pair<const DHalfedge*, int> > local_mins1;
+      signs1 =
+        _compute_signs_and_local_minima(prev1, cv, cv_dir1, prev2->next(), 
+                                        std::front_inserter(local_mins1));
       
-      Arr_halfedge_direction cv_dir2 = 
-        (cv_dir == ARR_LEFT_TO_RIGHT ? CGAL::ARR_RIGHT_TO_LEFT : CGAL::ARR_LEFT_TO_RIGHT);
+      Arr_halfedge_direction cv_dir2 = (cv_dir == ARR_LEFT_TO_RIGHT) ?
+        CGAL::ARR_RIGHT_TO_LEFT : CGAL::ARR_LEFT_TO_RIGHT;
       std::list< std::pair< const DHalfedge*, int > > local_mins2;
-      signs2 = _compute_signs_and_local_minima(prev2,
-                                               cv, cv_dir2, 
-                                               prev1->next(), 
-                                               std::front_inserter(local_mins2));
+      signs2 =
+        _compute_signs_and_local_minima(prev2, cv, cv_dir2, prev1->next(), 
+                                        std::front_inserter(local_mins2));
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs1.x: " << signs1.first << std::endl;
       std::cout << "signs1.y: " << signs1.second << std::endl;
@@ -2373,29 +2378,32 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 #endif
 
       if (!m_topol_traits.let_me_decide_the_outer_ccb(signs1, signs2, 
-                                                      /* swap_predecessors will be set if true is returned */
-                                                      swap_predecessors)) {
-        // COMMENT: The previous solution needed O(min(length1, length2)) steps to determine
-        //          which path is shorter and the search for the leftmost vertex on a path
-        //          needs O(#local_mins) geometric comparison.
-        //          This solution saves the initial loop to determine the shorter path and 
-        //          will only need O(min(#local_mins1, #local_mins2)) geometric comparisons 
-        //          to determine the leftmost vertex on a path.
-        bool cond = (local_mins1.size() > 0 && (local_mins1.size() < local_mins2.size()));
-        swap_predecessors = 
+                                                      swap_predecessors))
+      {
+        // COMMENT: The previous solution needed O(min(length1, length2)) steps
+        //          to determine which path is shorter and the search for the
+        //          leftmost vertex on a path needs O(#local_mins) geometric
+        //          comparison. This solution saves the initial loop to
+        //          determine the shorter path and will only need O(min(#local
+        //          _mins1, #local_mins2)) geometric comparisons to determine
+        //          the leftmost vertex on a path.
+        bool cond = ((local_mins1.size() > 0) &&
+                     (local_mins1.size() < local_mins2.size()));
+        swap_predecessors =
           !(cond ?
-           (  _defines_outer_ccb_of_new_face(prev1, cv, cv_dir1, prev2->next(), 
-                                             local_mins1.begin(), local_mins1.end()))
-           :
-           (! _defines_outer_ccb_of_new_face(prev2, cv, cv_dir2, prev1->next(), 
-                                             local_mins2.begin(), local_mins2.end()))
-           );
+            (  _defines_outer_ccb_of_new_face(prev1, cv, cv_dir1, prev2->next(),
+                                              local_mins1.begin(),
+                                              local_mins1.end())) :
+            (! _defines_outer_ccb_of_new_face(prev2, cv, cv_dir2, prev1->next(),
+                                              local_mins2.begin(),
+                                              local_mins2.end())));
       }
       
       // perform the swap
       if (swap_predecessors) {
         std::swap(prev1, prev2);
-        cv_dir = (cv_dir == ARR_LEFT_TO_RIGHT ? CGAL::ARR_RIGHT_TO_LEFT : CGAL::ARR_LEFT_TO_RIGHT);
+        cv_dir = (cv_dir == ARR_LEFT_TO_RIGHT) ?
+          CGAL::ARR_RIGHT_TO_LEFT : CGAL::ARR_LEFT_TO_RIGHT;
         std::swap(signs1, signs2);
         std::swap(local_mins1, local_mins2);
         
@@ -2417,7 +2425,6 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   DVertex* v2 = prev2->vertex();
   
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-  
   std::cout << "Aos_2: _insert_at_vertices (internal)" << std::endl;
   
   std::cout << "cv   : " << cv << std::endl;
@@ -2429,11 +2436,10 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   std::cout << "pref: " << (prev1->is_on_inner_ccb() ? 
                             prev1->inner_ccb()->face() :
                             prev1->outer_ccb()->face()) << std::endl;
-  if (!prev2->has_null_curve()) {
+  if (!prev2->has_null_curve())
     std::cout << "prev2: " << prev2->curve() << std::endl;
-  } else {
+  else
     std::cout << "prev2: fictitious" << std::endl;
-  }
   std::cout << "dir 2: " << prev2->direction() << std::endl;
   std::cout << "pref2: " << (prev2->is_on_inner_ccb() ? 
                              prev2->inner_ccb()->face() :
@@ -2513,15 +2519,18 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 
   if ((ic1 != NULL) && (ic1 == ic2)) {
     
-    // EBEB 2012-08-06: This is new code. It relies on the (computed) signs and replaces
-    // to trace the ccb again (in particular for torical arrangements)
-    // TODO EBEB 2012-08-06: Check what to do here, when allow_swap_of_predecessors = false and thus
+    // EBEB 2012-08-06:
+    // This is new code. It relies on the (computed) signs and replaces to
+    // trace the ccb again (in particular for torical arrangements)
+    // TODO EBEB 2012-08-06:
+    // Check what to do here, when allow_swap_of_predecessors = false and thus
     // signs1 and signs2 set to DEFAULT (=ZERO) values.
-    // swapping is currently only disabled when _insert_at_vertices is called from
-    // Arr_construction_sl_visitor, which however uses the 'swap_predecessors' member of the
-    // topology traits' construction helper. So it's questionable whether we can combine the 
-    // light-weigth swap information with the slightly more expensive sign computations,
-    // to keep efficient translated code after compile-time.
+    // swapping is currently only disabled when _insert_at_vertices is called
+    // from Arr_construction_sl_visitor, which however uses the
+    // 'swap_predecessors' member of the topology traits' construction helper.
+    // So it's questionable whether we can combine the light-weigth swap
+    // information with the slightly more expensive sign computations, to keep
+    // efficient translated code after compile-time.
     std::pair<bool, bool> res =
       m_topol_traits.face_split_after_edge_insertion(signs1, signs2);
 
@@ -2748,7 +2757,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                        prev1->inner_ccb()->face() :
                                        prev1->outer_ccb()->face())
               << std::endl;
-    std::cout << "signs1: " << signs1.first  << "," << signs1.second << std::endl;
+    std::cout << "signs1: " << signs1.first  << "," << signs1.second
+              << std::endl;
 #endif
 
     // Check whether the two previous halfedges lie on the same innder CCB
@@ -2780,9 +2790,9 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                            prev2->inner_ccb()->face() :
                                            prev2->outer_ccb()->face())
                   << std::endl;
-        std::cout << "signs2: " << signs2.first  << "," << signs2.second << std::endl;
+        std::cout << "signs2: " << signs2.first  << "," << signs2.second
+                  << std::endl;
 #endif
-
       }
       else {
         // Comment: This case can only occur in identification topologies
@@ -2813,7 +2823,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                            prev2->inner_ccb()->face() :
                                            prev2->outer_ccb()->face())
                   << std::endl;
-        std::cout << "signs2: " << signs2.first  << "," << signs2.second << std::endl;
+        std::cout << "signs2: " << signs2.first  << "," << signs2.second
+                  << std::endl;
 #endif
         
         // Notify the observers that we have added an outer CCB to f.
@@ -2831,26 +2842,32 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
           bool increment = true;
           if (*oc_it != he1) {
 
-            // he2 is supposed to be a perimetric path and so all of the oc_its, 
-            // we only have to detect which one. We do so by comparing signs of ccbs:
-            std::list< std::pair< const DHalfedge*, int > > dummy_local_mins_oc;
-            // IDEA EBEB 2012-07-28 store signs of CCB with CCB in DCEL and use them here
+            // he2 is supposed to be a perimetric path and so all of the oc_its,
+            // we only have to detect which one. We do so by comparing signs of
+            // ccbs:
+            std::list< std::pair< const DHalfedge*, int > > dummy;
+            // IDEA EBEB 2012-07-28
+            // store signs of CCB with CCB in DCEL and use them here
             std::pair< CGAL::Sign, CGAL::Sign > signs_oc =
-              // *oc_it is already closed, so we do a full round (default = false)
-              _compute_signs_and_local_minima(*oc_it, std::front_inserter(dummy_local_mins_oc));
+              // *oc_it is already closed, so we do a full round
+              // (default = false)
+              _compute_signs_and_local_minima(*oc_it,
+                                              std::front_inserter(dummy));
             
             bool move = false;
            
-            // TODO EBEB 2012-08-07 this either compares signs in left-right direction OR
-            // signs in bottom-top direction, which will probably not work for torus!
+            // TODO EBEB 2012-08-07 this either compares signs in left-right
+            // direction OR signs in bottom-top direction, which will probably
+            // not work for torus!
             if (signs2.first != CGAL::ZERO && signs_oc.first != CGAL::ZERO) {
-              if (signs2.first != signs_oc.first) {
+              if (signs2.first != signs_oc.first)
                 move = true;
-              }
-            } else if (signs2.second != CGAL::ZERO && signs_oc.second != CGAL::ZERO) {
-              if (signs2.second != signs_oc.second) {
+            }
+            else if ((signs2.second != CGAL::ZERO) &&
+                     (signs_oc.second != CGAL::ZERO))
+            {
+              if (signs2.second != signs_oc.second)
                 move = true;
-              }
             }
             
             if (move) {
@@ -3006,8 +3023,8 @@ _relocate_inner_ccbs_in_new_face(DHalfedge* new_he)
                                   (*ic_it)->vertex()->point(),
                                   (*ic_it)->vertex()))
     {
-      // We store the current iterator which get then incremented before it gets moved, 
-      // as the move operation invalidates the iterator.
+      // We store the current iterator which get then incremented before it
+      // gets moved, as the move operation invalidates the iterator.
       ic_to_move = ic_it;
       ++ic_it;
       
@@ -3261,7 +3278,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
                                 const DHalfedge* he_away,
                                 OutputIterator local_mins_it) const
 {
-  // TODO EBEB 2012-08-07 compile parts of code only if identification(s) take place
+  // TODO EBEB 2012-08-07
+  // compile parts of code only if identification(s) take place
 
   // std::cout << "he_to: " << he_to->opposite()->vertex()->point()
   //           << " => " << he_to->vertex()->point() << std::endl;
@@ -3286,23 +3304,34 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   int y_index = 0;
 
   // Obtain the parameter space pair of cv.
-  Arr_curve_end cv_to_end = (cv_dir == ARR_LEFT_TO_RIGHT ? ARR_MIN_END : ARR_MAX_END);
+  Arr_curve_end cv_to_end =
+    (cv_dir == ARR_LEFT_TO_RIGHT) ? ARR_MIN_END : ARR_MAX_END;
   Arr_parameter_space ps_x_cv_to = parameter_space_in_x(cv, cv_to_end);
   Arr_parameter_space ps_y_cv_to = parameter_space_in_y(cv, cv_to_end);
-  Arr_curve_end cv_away_end = (cv_dir == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
+  Arr_curve_end cv_away_end =
+    (cv_dir == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
   Arr_parameter_space ps_x_cv_away = parameter_space_in_x(cv, cv_away_end);
   Arr_parameter_space ps_y_cv_away = parameter_space_in_y(cv, cv_away_end);
 
   // Obtain the parameter space pair of he_to and he_away
-  Arr_curve_end he_to_tgt_end = (he_to->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
-  Arr_parameter_space ps_x_he_to = parameter_space_in_x(he_to->curve(), he_to_tgt_end);
-  Arr_parameter_space ps_y_he_to = parameter_space_in_y(he_to->curve(), he_to_tgt_end);
-  Arr_curve_end he_away_src_end = (he_away->direction() == ARR_LEFT_TO_RIGHT ? ARR_MIN_END : ARR_MAX_END);
-  Arr_parameter_space ps_x_he_away = parameter_space_in_x(he_away->curve(), he_away_src_end);
-  Arr_parameter_space ps_y_he_away = parameter_space_in_y(he_away->curve(), he_away_src_end);
-  Arr_curve_end he_away_tgt_end = (he_away->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
-  Arr_parameter_space ps_x_he_away_tgt = parameter_space_in_x(he_away->curve(), he_away_tgt_end);
-  Arr_parameter_space ps_y_he_away_tgt = parameter_space_in_y(he_away->curve(), he_away_tgt_end);
+  Arr_curve_end he_to_tgt_end =
+    (he_to->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
+  Arr_parameter_space ps_x_he_to =
+    parameter_space_in_x(he_to->curve(), he_to_tgt_end);
+  Arr_parameter_space ps_y_he_to =
+    parameter_space_in_y(he_to->curve(), he_to_tgt_end);
+  Arr_curve_end he_away_src_end =
+    (he_away->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MIN_END : ARR_MAX_END;
+  Arr_parameter_space ps_x_he_away =
+    parameter_space_in_x(he_away->curve(), he_away_src_end);
+  Arr_parameter_space ps_y_he_away =
+    parameter_space_in_y(he_away->curve(), he_away_src_end);
+  Arr_curve_end he_away_tgt_end =
+    (he_away->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
+  Arr_parameter_space ps_x_he_away_tgt =
+    parameter_space_in_x(he_away->curve(), he_away_tgt_end);
+  Arr_parameter_space ps_y_he_away_tgt =
+    parameter_space_in_y(he_away->curve(), he_away_tgt_end);
 
   Arr_parameter_space ps_x_curr, ps_y_curr;
   Arr_parameter_space ps_x_next, ps_y_next;
@@ -3313,13 +3342,13 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   bool away_handled = false;
   
   while (he != he_to) { // two dummy iterators for links at to-cv and cv-away
-
     if (!to_handled) {
       ps_x_curr = ps_x_he_to;
       ps_y_curr = ps_y_he_to;
       ps_x_next = ps_x_cv_to;
       ps_y_next = ps_y_cv_to;
-    } else if (!away_handled) {
+    }
+    else if (!away_handled) {
       ps_x_curr = ps_x_cv_away;
       ps_y_curr = ps_y_cv_away;
       ps_x_next = ps_x_he_away;
@@ -3329,10 +3358,14 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
     } else {
       ps_x_curr = ps_x_save;
       ps_y_curr = ps_y_save;
-      Arr_curve_end he_next_src_end = (he->next()->direction() == ARR_LEFT_TO_RIGHT ? ARR_MIN_END : ARR_MAX_END);
+      Arr_curve_end he_next_src_end =
+        (he->next()->direction() == ARR_LEFT_TO_RIGHT) ?
+        ARR_MIN_END : ARR_MAX_END;
       ps_x_next = parameter_space_in_x(he->next()->curve(), he_next_src_end);
       ps_y_next = parameter_space_in_y(he->next()->curve(), he_next_src_end);
-      Arr_curve_end he_next_tgt_end = (he->next()->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
+      Arr_curve_end he_next_tgt_end =
+        (he->next()->direction() == ARR_LEFT_TO_RIGHT) ?
+        ARR_MAX_END : ARR_MIN_END;
       ps_x_save = parameter_space_in_x(he->next()->curve(), he_next_tgt_end);
       ps_y_save = parameter_space_in_y(he->next()->curve(), he_next_tgt_end);
     }
@@ -3346,11 +3379,13 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
       // If the halfedge is directed from right to left and its successor is
       // directed from left to right, the target vertex might be the smallest:
       if ((he->direction() == ARR_RIGHT_TO_LEFT) &&
-          (he->next()->direction() == ARR_LEFT_TO_RIGHT)) {
+          (he->next()->direction() == ARR_LEFT_TO_RIGHT))
+      {
         // Update the left lowest halfedge incident to the leftmost vertex.
         // Note that we may visit the leftmost vertex several times.
         
-        // store he (and implicitly he->next) as halfedge pointing to a local minimum
+        // store he (and implicitly he->next) as halfedge pointing to a local
+        // minimum
         *local_mins_it++  = std::make_pair(he, x_index);
       }
     }
@@ -3371,7 +3406,9 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
                      is_identified(Right_side_category()));
       --x_index; // in "negative" u-direction
     }
-    else if ((ps_x_curr == ARR_RIGHT_BOUNDARY) && (ps_x_next == ARR_LEFT_BOUNDARY)) {
+    else if ((ps_x_curr == ARR_RIGHT_BOUNDARY) &&
+             (ps_x_next == ARR_LEFT_BOUNDARY))
+    {
       CGAL_assertion(is_identified(Left_side_category()) && 
                      is_identified(Right_side_category()));
       ++x_index; // in "positive" u-direction
@@ -3383,7 +3420,9 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
                      is_identified(Top_side_category()));
       --y_index;// in "negative" v-direction
     }
-    else if ((ps_y_curr == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)) {
+    else if ((ps_y_curr == ARR_TOP_BOUNDARY) &&
+             (ps_y_next == ARR_BOTTOM_BOUNDARY))
+    {
       CGAL_assertion(is_identified(Bottom_side_category()) &&
                      is_identified(Top_side_category()));
       ++y_index; // in "positive" v-direction
@@ -3404,7 +3443,6 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
 
-
 // TODO info
 template <typename GeomTraits, typename TopTraits>
 template <typename OutputIterator>
@@ -3412,9 +3450,10 @@ std::pair< CGAL::Sign, CGAL::Sign >
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compute_signs_and_local_minima(const DHalfedge* he_anchor, 
                                 OutputIterator local_mins_it,
-                                bool end_is_anchor_opposite /* = false */) const {
-
-  // TODO EBEB 2012-08-07 compile parts of code only if identification(s) take place
+                                bool end_is_anchor_opposite /* = false */) const
+{
+  // TODO EBEB 2012-08-07
+  // compile parts of code only if identification(s) take place
 
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
@@ -3438,30 +3477,35 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
 
   // init with edges at first link
   // assuming that he_anchor has been removed
-  const DHalfedge* he_curr = (end_is_anchor_opposite ? he_anchor->opposite()->prev() : he_anchor);
+  const DHalfedge* he_curr =
+    end_is_anchor_opposite ? he_anchor->opposite()->prev() : he_anchor;
   CGAL_assertion(! he_curr->has_null_curve());
   const DHalfedge* he_next = he_anchor->next();
   // init edge where loop should end
-  const DHalfedge* he_end = (end_is_anchor_opposite ? he_anchor->opposite() : he_anchor);
+  const DHalfedge* he_end =
+    end_is_anchor_opposite ? he_anchor->opposite() : he_anchor;
   
   // obtain the parameter space pair of he_curr
-  Arr_curve_end he_curr_tgt_end = (he_curr->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
-  Arr_parameter_space ps_x_save = parameter_space_in_x(he_curr->curve(), he_curr_tgt_end);
-  Arr_parameter_space ps_y_save = parameter_space_in_y(he_curr->curve(), he_curr_tgt_end);
+  Arr_curve_end he_curr_tgt_end =
+    (he_curr->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
+  Arr_parameter_space ps_x_save =
+    parameter_space_in_x(he_curr->curve(), he_curr_tgt_end);
+  Arr_parameter_space ps_y_save =
+    parameter_space_in_y(he_curr->curve(), he_curr_tgt_end);
 
   Arr_parameter_space ps_x_curr, ps_y_curr;
   Arr_parameter_space ps_x_next, ps_y_next;
   
   // start loop
-
-  do { 
-
+  do {
     ps_x_curr = ps_x_save;
     ps_y_curr = ps_y_save;
-    Arr_curve_end he_next_src_end = (he_next->direction() == ARR_LEFT_TO_RIGHT ? ARR_MIN_END : ARR_MAX_END);
+    Arr_curve_end he_next_src_end =
+      (he_next->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MIN_END : ARR_MAX_END;
     ps_x_next = parameter_space_in_x(he_next->curve(), he_next_src_end);
     ps_y_next = parameter_space_in_y(he_next->curve(), he_next_src_end);
-    Arr_curve_end he_next_tgt_end = (he_next->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
+    Arr_curve_end he_next_tgt_end =
+      (he_next->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
     ps_x_save = parameter_space_in_x(he_next->curve(), he_next_tgt_end);
     ps_y_save = parameter_space_in_y(he_next->curve(), he_next_tgt_end);
 
@@ -3472,13 +3516,14 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
     // If the halfedge is directed from right to left and its successor is
     // directed from left to right, the target vertex might be the smallest:
     if ((he_curr->direction() == ARR_RIGHT_TO_LEFT) &&
-        (he_next->direction() == ARR_LEFT_TO_RIGHT)) {
-      
+        (he_next->direction() == ARR_LEFT_TO_RIGHT))
+    {
       // Update the left lowest halfedge incident to the leftmost vertex.
       // Note that we may visit the leftmost vertex several times.
       
-      //std::cout << "hit" << std::endl;
-      // store he (and implicitly he->next) as halfedge pointing to a local minimum
+      // std::cout << "hit" << std::endl;
+      // store he (and implicitly he->next) as halfedge pointing to a local
+      // minimum
       *local_mins_it++  = std::make_pair(he_curr, x_index);
     }
     
@@ -3498,7 +3543,9 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
                      is_identified(Right_side_category()));
       --x_index; // in "negative" u-direction
     }
-    else if ((ps_x_curr == ARR_RIGHT_BOUNDARY) && (ps_x_next == ARR_LEFT_BOUNDARY)) {
+    else if ((ps_x_curr == ARR_RIGHT_BOUNDARY) &&
+             (ps_x_next == ARR_LEFT_BOUNDARY))
+    {
       CGAL_assertion(is_identified(Left_side_category()) && 
                      is_identified(Right_side_category()));
       ++x_index; // in "positive" u-direction
@@ -3510,7 +3557,9 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
                      is_identified(Top_side_category()));
       --y_index; // in "negative" v-direction
     }
-    else if ((ps_y_curr == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)) {
+    else if ((ps_y_curr == ARR_TOP_BOUNDARY) &&
+             (ps_y_next == ARR_BOTTOM_BOUNDARY))
+    {
       CGAL_assertion(is_identified(Bottom_side_category()) &&
                      is_identified(Top_side_category()));
       ++y_index; // in "positive" v-direction
@@ -3698,7 +3747,8 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   // also the lowest halfedge incident to this vertex we encountered during
   // our traversal).
 
-  // this implements search for leftmost vertex using local minima (plus cv's ends)
+  // this implements search for leftmost vertex using local minima (plus cv's
+  // ends)
   typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
     m_geom_traits->parameter_space_in_x_2_object(); 
   typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
@@ -3758,7 +3808,8 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     // we need to compare_y_near_boundary()
   
     // If the following condition is met, the vertex is indeed the smallest:
-    // The current x_index is smaller than the x_index of the smallest recorded, or
+    // The current x_index is smaller than the x_index of the smallest
+    // recorded, or
     // The current x_index is equivalent to the recorded x_index, and
     //   - No smallest has bin recorded so far, or
     //   - The current target vertex and the recorded vertex are the same and
@@ -3787,7 +3838,6 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     }
   }
 
-
   // some output:
 #if 1
   std::cout << "v_min: ";
@@ -3812,7 +3862,8 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
 
   // Now note that the curves of leftmost edge and its successor are defined
   // to the right of the smallest vertex. We compare them to the right of this
-  // point to determine whether he_to (the curve) and he_away are inside the hole to be created or not.
+  // point to determine whether he_to (the curve) and he_away are inside the
+  // hole to be created or not.
   const X_monotone_curve_2* p_cv_curr;
   const X_monotone_curve_2* p_cv_next;
 
@@ -3971,8 +4022,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
 #if 0
   std::cout << "before swap" << std::endl;
-  std::cout << "he1c: " << he1->curve() <<  ", " << he1->direction() << std::endl;
-  std::cout << "he1c: " << he2->curve() <<  ", " << he2->direction() << std::endl;
+  std::cout << "he1c: " << he1->curve() <<  ", " << he1->direction()
+            << std::endl;
+  std::cout << "he1c: " << he2->curve() <<  ", " << he2->direction()
+            << std::endl;
   std::cout << "he1: " << he1 << std::endl;
   std::cout << "he2: " << he2 << std::endl;
   std::cout << "ic1: " << ic1 << std::endl;
@@ -3994,11 +4047,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   std::pair< CGAL::Sign, CGAL::Sign > signs2(CGAL::ZERO, CGAL::ZERO);
   
   if ((he1->next() == he2) || (he2->next() == he1)) {
-    // The removal of he1 (and its twin halfedge) form an "antenna", and we do not need signs later
-    // -> No swapping
-
-  } else {
-
+    // The removal of he1 (and its twin halfedge) form an "antenna", and we do
+    // not need signs later -> No swapping
+  }
+  else {
     // if f1 == f2 (same_face-case), then we consider two loops that occur
     // when he1 and he2 get removedl;
     // if f1 != f2, then he1 and he2 seperated the two faces that will be merged
@@ -4008,27 +4060,29 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
     bool end_is_anchor_opposite = (f1 == f2);
 
-    signs1 = _compute_signs_and_local_minima(he1, std::front_inserter(local_mins1),
+    signs1 = _compute_signs_and_local_minima(he1,
+                                             std::front_inserter(local_mins1),
                                              end_is_anchor_opposite);
     std::cout << "signs1.x: " << signs1.first << std::endl;
     std::cout << "signs1.y: " << signs1.second << std::endl;
     std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
 
-    signs2 = _compute_signs_and_local_minima(he2, std::front_inserter(local_mins2),
+    signs2 = _compute_signs_and_local_minima(he2,
+                                             std::front_inserter(local_mins2),
                                              end_is_anchor_opposite);
     std::cout << "signs2.x: " << signs2.first << std::endl;
     std::cout << "signs2.y: " << signs2.second << std::endl;
     std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
-    // Comments: signs1/2 are used later again, probably for hole_creation_after_edge_removed
+    // Comments: signs1/2 are used later again, probably for
+    // hole_creation_after_edge_removed
 
     
     if (f1 != f2) {
       // The removal of he1 (and its twin halfedge) will cause the two
       // incident faces to merge/
       // -> No swapping
-      
-    } else {
-      
+    }
+    else {
       // In this case one of the following can happen: (a) a new hole will be
       // created by the removal of the edge (case 3.2.1 of the removal
       // procedure), or (b) an outer CCB will be split into two (case 3.2.2).
@@ -4045,7 +4099,9 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
         m_geom_traits->parameter_space_in_y_2_object(); 
       
-      bool is_perimetric1 = signs1.first || signs1.second; // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
+      bool is_perimetric1 = signs1.first || signs1.second;
+      // TODO EBEB 2012-07-29
+      // is this the right for torus, or let TopTraits decide?
 
       const DHalfedge* he_min1 = NULL;
       Arr_parameter_space ps_x_min1 = CGAL::ARR_INTERIOR;
@@ -4054,18 +4110,21 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       
       // check all reported local minima
       // IDEA EBEB 2012-07-29 maintain a tree to determine min in log(n) time
-      for (typename std::list< std::pair< const DHalfedge*, int > >::iterator lm_it = local_mins1.begin(); 
-           lm_it != local_mins1.end(); lm_it++) {
+      typename std::list<std::pair<const DHalfedge*, int> >::iterator lm_it;
+      for (lm_it = local_mins1.begin(); lm_it != local_mins1.end(); ++lm_it) {
+        const DHalfedge* he = lm_it->first;
+        const int index = lm_it->second;
         
-        const DHalfedge* he    = lm_it->first;
-        const int        index = lm_it->second;
-        
-        const Arr_parameter_space ps_x_he_min = parameter_space_in_x(he->curve(), ARR_MIN_END);
-        const Arr_parameter_space ps_y_he_min = parameter_space_in_y(he->curve(), ARR_MIN_END);
+        const Arr_parameter_space ps_x_he_min =
+          parameter_space_in_x(he->curve(), ARR_MIN_END);
+        const Arr_parameter_space ps_y_he_min =
+          parameter_space_in_y(he->curve(), ARR_MIN_END);
         
         if ((he_min1 == NULL) || (index < index_min1) ||
             ((index == index_min1) &&
-             _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min1, ps_x_min1, ps_y_min1))) {
+             _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min1,
+                         ps_x_min1, ps_y_min1)))
+        {
           index_min1 = index;
           ps_x_min1 = ps_x_he_min;
           ps_y_min1 = ps_y_he_min;
@@ -4074,7 +4133,9 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         }
       }
       
-      bool is_perimetric2 = signs2.first || signs2.second; // TODO EBEB 2012-07-29 is this the right for torus, or let TopTraits decide?
+      bool is_perimetric2 = signs2.first || signs2.second;
+      // TODO EBEB 2012-07-29
+      // is this the right for torus, or let TopTraits decide?
       
       const DHalfedge* he_min2 = NULL;
       Arr_parameter_space ps_x_min2 = CGAL::ARR_INTERIOR;
@@ -4082,18 +4143,19 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       int index_min2 = 0;
       
       // check all reported local minima
-      for (typename std::list< std::pair< const DHalfedge*, int > >::iterator lm_it = local_mins2.begin(); 
-           lm_it != local_mins2.end(); lm_it++) {
+      for (lm_it = local_mins2.begin(); lm_it != local_mins2.end(); lm_it++) {
+        const DHalfedge* he = lm_it->first;
+        const int index = lm_it->second;
         
-        const DHalfedge* he    = lm_it->first;
-        const int        index = lm_it->second;
-        
-        const Arr_parameter_space ps_x_he_min = parameter_space_in_x(he->curve(), ARR_MIN_END);
-        const Arr_parameter_space ps_y_he_min = parameter_space_in_y(he->curve(), ARR_MIN_END);
+        const Arr_parameter_space ps_x_he_min =
+          parameter_space_in_x(he->curve(), ARR_MIN_END);
+        const Arr_parameter_space ps_y_he_min =
+          parameter_space_in_y(he->curve(), ARR_MIN_END);
         
         if ((he_min2 == NULL) || (index < index_min2) ||
             ((index == index_min2) &&
-             _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min2, ps_x_min2, ps_y_min2))) {
+             _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min2,
+                         ps_x_min2, ps_y_min2))) {
           index_min2 = index;
           ps_x_min2 = ps_x_he_min;
           ps_y_min2 = ps_y_he_min;
@@ -4119,17 +4181,19 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       
       if (is_perimetric1 || is_perimetric2) {
 #if 1 // this is old code
-        swap_he1_he2 = // We are in case (a) and he1 is directed to the new hole to be created.
+        swap_he1_he2 =
           (! is_perimetric1) ? false :
-          // We are in case (a) and he2 is directed to the new hole to be created. 
-          ((! is_perimetric2) ? true :
-           // Both paths are perimetric; thus, we are in case (b).
-           false);
+          ((! is_perimetric2) ? true : false);
+          // We are in case (a) and he1 is directed to the new hole to be
+          // created or
+          // We are in case (a) and he2 is directed to the new hole to be
+          // created. 
+        // Both paths are perimetric; thus, we are in case (b).
 #else // THIS IS NEW CODE 2012-08-06 which is much easier to read
         swap_he1_he2 = !is_perimetric2;
 #endif
-      } else {
-        
+      }
+      else {  
         CGAL_assertion(he_min1 != NULL);
         
         const DVertex* v_min1 = he_min1->vertex();
@@ -4142,8 +4206,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         // std::cout << "v_min2: " << v_min2->point() << std::endl;
         // std::cout << "index_min2: " << index_min2 << std::endl;
         
-        bool interior1 = ((ps_x_min1 == ARR_INTERIOR) && (ps_y_min1 == ARR_INTERIOR));
-        bool interior2 = ((ps_x_min2 == ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR));
+        bool interior1 =
+          ((ps_x_min1 == ARR_INTERIOR) && (ps_y_min1 == ARR_INTERIOR));
+        bool interior2 =
+          ((ps_x_min2 == ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR));
         
         // Both paths from he1 to he2 and back from he2 to he1 are not
         // perimetric, so we are in case (a). As we want to determine which
@@ -4166,45 +4232,39 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         // boundary side of the parameter space), then the other path becomes
         // a hole in a face bounded by the parameter-space boundary.
 
-        // TODO EBEB 2012-08-08 indices are not correct wrt TWO ccbs, only with respect to one!
-        
+        // TODO EBEB 2012-08-08
+        // indices are not correct wrt TWO ccbs, only with respect to one!
 
-
-        // TODO EBEB 2012-07-25 the following "line" is very hard to pare by a human-being;
+        // TODO EBEB 2012-07-25
+        // the following "line" is very hard to pare by a human-being;
         // replace by a simple if that only checks the 'true' cases
-        swap_he1_he2 = (index_min1 > index_min2) ?
-          false :
-          ((index_min1 < index_min2) ?
-           true :
+        swap_he1_he2 = (index_min1 > index_min2) ? false :
+          ((index_min1 < index_min2) ? true :
            ((interior1 && interior2) ?
             ((m_geom_traits->compare_xy_2_object()
-              (v_min1->point(), v_min2->point()) == LARGER) ?
-             false :
-             true) :
+              (v_min1->point(), v_min2->point()) == LARGER) ? false : true) :
             (((ps_x_min1 == ARR_INTERIOR) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
              false :
-             (((ps_x_min1 == ARR_LEFT_BOUNDARY) && (ps_x_min2 == ARR_INTERIOR)) ?
+             (((ps_x_min1 == ARR_LEFT_BOUNDARY) &&
+               (ps_x_min2 == ARR_INTERIOR)) ?
               true :
-              (((ps_x_min1 == ARR_LEFT_BOUNDARY) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
+              (((ps_x_min1 == ARR_LEFT_BOUNDARY) &&
+                (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
                ((m_geom_traits->compare_y_on_boundary_2_object()
                  (v_min1->point(), v_min2->point()) == LARGER) ?
-                false :
-                true) :
+                false : true) :
                (((ps_y_min1 != ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR)) ?
                 ((m_geom_traits->compare_x_on_boundary_2_object()
                   (v_min2->point(), he_min1->curve(), ARR_MIN_END) == SMALLER) ?
-                 false :
-                 true) :
+                 false : true) :
                 (((ps_y_min1 == ARR_INTERIOR) && (ps_y_min2 != ARR_INTERIOR)) ?
                  ((m_geom_traits->compare_x_on_boundary_2_object()
                    (v_min1->point(), he_min2->curve(), ARR_MIN_END) == LARGER) ?
-                  false :
-                  true) :
+                  false : true) :
                  ((m_geom_traits->compare_x_on_boundary_2_object()
                    (he_min1->curve(), ARR_MIN_END,
                     he_min2->curve(), ARR_MIN_END) == LARGER) ?
-                  false :
-                  true))))))));
+                  false : true))))))));
       }
     }
     
@@ -4223,8 +4283,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
 #if 0
   std::cout << "after swap" << std::endl;
-  std::cout << "he1c: " << he1->curve() <<  ", " << he1->direction() << std::endl;
-  std::cout << "he1c: " << he2->curve() <<  ", " << he2->direction() << std::endl;
+  std::cout << "he1c: " << he1->curve() <<  ", " << he1->direction()
+            << std::endl;
+  std::cout << "he1c: " << he2->curve() <<  ", " << he2->direction()
+            << std::endl;
   std::cout << "he1: " << he1 << std::endl;
   std::cout << "he2: " << he2 << std::endl;
   std::cout << "ic1: " << ic1 << std::endl;
