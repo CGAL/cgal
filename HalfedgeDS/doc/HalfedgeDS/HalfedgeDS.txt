@@ -54,8 +54,6 @@ the old implementation.
 
 # Software Design #
 
-CONVERROR TexOnly treat with care
-
 \anchor figureHalfedgeDSDesign
 \image latex hds_design "Responsibilities of the different layers in the halfedge data-structure design." width=0.7
 \image html hds_design_col.gif "Responsibilities of the different layers in the halfedge data-structure design."
