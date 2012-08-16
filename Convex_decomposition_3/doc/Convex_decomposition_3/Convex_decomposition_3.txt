@@ -78,14 +78,14 @@ not the polyhedron itself.
 When `convex_decomposition_3` resolved all reflex edges, the
 selected sub-volumes have become convex. Each of them is represented
 by a separate volume item and can therefore be traversed
-separately \ref subsectionNef_3ShellExploration . Another possibility
+separately \ref subsectionNef_3ShellExploration. Another possibility
 of accessing the convex pieces is to convert them into separate Nef
 polyhedra, as illustrated by the example code given below.
 
 Note that due to the restriction to bounded polyhedra, the use of
 extended kernels is unnecessary and expensive. We therefore do not
 support the use of extended kernels in the convex decomposition 
-(see Chapter \ref chapterNef3 ).
+(see Chapter \ref chapterNef3).
 
 \cgalexample{Convex_decomposition_3/list_of_convex_parts.cpp}
 
