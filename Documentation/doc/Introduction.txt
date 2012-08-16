@@ -58,7 +58,7 @@ In this section we will take a closer look at three \cgal example
 programs, all of them computing the 2D convex hull of a set of points.
 
 
-Points in a built-in array
+Points in a Built-in Array
 --------------------------
 
 In the first example we have an array of five points.
@@ -85,7 +85,7 @@ point written, so the pointer difference tells us how
 many points are on the convex hull. 
  
 
-Points in a STL vector
+Points in a STL Vector
 ----------------------
 
 In the second example we replace the built-in array
@@ -153,7 +153,7 @@ Further Reading
 ===============
 
 We also recommend the standard text books by
-Josuttis \cite cgal:j-csl-99 , or Austern \cite cgal:a-gps-98 for the
+Josuttis \cite cgal:j-csl-99, or Austern \cite cgal:a-gps-98 for the
 \stl and its notion of *concepts* and *models*.
 
 Other resources for \cgal are the tutorials at
