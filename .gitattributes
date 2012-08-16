@@ -1234,8 +1234,8 @@ Bounding_volumes/package_info/Bounding_volumes/copyright -text
 Bounding_volumes/package_info/Bounding_volumes/description.txt -text
 Bounding_volumes/package_info/Bounding_volumes/license.txt -text
 Bounding_volumes/package_info/Bounding_volumes/maintainer -text
-Bounding_volumes/test/Min_circle_2/test_Min_circle.cmd eol=lf
-Bounding_volumes/test/Min_ellipse_2/test_Min_ellipse_2.cmd eol=lf
+Bounding_volumes/test/Bounding_volumes/test_Min_circle.cmd eol=lf
+Bounding_volumes/test/Bounding_volumes/test_Min_ellipse_2.cmd eol=lf
 Bounding_volumes/test_extensive/stability/maple/balls-on-boundary-2.mws -text svneol=unset#application/octet-stream
 Bounding_volumes/test_extensive/stability/maple/balls-on-boundary-3.mws -text svneol=unset#application/octet-stream
 Bounding_volumes/web/Approximate_min_ellipsoid_d/boundingbox.mw -text svneol=native#application/octet-stream
