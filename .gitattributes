@@ -263,7 +263,6 @@ Apollonius_graph_2/doc_tex/Apollonius_graph_2/fig/CircleVoronoiLarge.png -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text svneol=unset#application/octet-stream
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#image/gif
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#image/png
-Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#application/octet-stream
 Arithmetic_kernel/include/CGAL/CORE_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/GMP_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/LEDA_arithmetic_kernel.h -text
@@ -1220,6 +1219,29 @@ Boolean_set_operations_2/test/Boolean_set_operations_2/test_agg_op.cmd eol=lf
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_bop.cmd eol=lf
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_connect_holes.cpp -text
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_polygon_validation.cpp -text
+Bounding_volumes/demo/Min_circle_2/help/index.html svneol=native#text/html
+Bounding_volumes/demo/Min_ellipse_2/help/index.html svneol=native#text/html
+Bounding_volumes/demo/Min_quadrilateral_2/Min_quadrilateral_2/help/index.html svneol=native#text/html
+Bounding_volumes/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
+Bounding_volumes/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf
+Bounding_volumes/doc_tex/Bounding_volumes/ball.gif -text svneol=unset#image/gif
+Bounding_volumes/doc_tex/Bounding_volumes/ball.pdf -text svneol=unset#application/pdf
+Bounding_volumes/doc_tex/Bounding_volumes/minCircle.png -text
+Bounding_volumes/doc_tex/Bounding_volumes/pcenter.gif -text svneol=unset#image/gif
+Bounding_volumes/doc_tex/Bounding_volumes/pcenter.pdf -text svneol=unset#application/pdf
+Bounding_volumes/dont_submit -text
+Bounding_volumes/package_info/Bounding_volumes/copyright -text
+Bounding_volumes/package_info/Bounding_volumes/description.txt -text
+Bounding_volumes/package_info/Bounding_volumes/license.txt -text
+Bounding_volumes/package_info/Bounding_volumes/maintainer -text
+Bounding_volumes/test/Min_circle_2/test_Min_circle.cmd eol=lf
+Bounding_volumes/test/Min_ellipse_2/test_Min_ellipse_2.cmd eol=lf
+Bounding_volumes/test_extensive/stability/maple/balls-on-boundary-2.mws -text svneol=unset#application/octet-stream
+Bounding_volumes/test_extensive/stability/maple/balls-on-boundary-3.mws -text svneol=unset#application/octet-stream
+Bounding_volumes/web/Approximate_min_ellipsoid_d/boundingbox.mw -text svneol=native#application/octet-stream
+Bounding_volumes/web/Min_sphere_of_spheres_d/figs/heuristic/excess.xfig -text svneol=unset#application/octet-stream
+Bounding_volumes/web/Min_sphere_of_spheres_d/figs/mbex/mbex.xfig -text svneol=unset#application/octet-stream
+Bounding_volumes/web/Min_sphere_of_spheres_d/figs/pivot/cex.xfig -text svneol=unset#application/octet-stream
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.gif -text svneol=unset#image/gif
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.pdf -text svneol=unset#application/pdf
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters-small.gif -text svneol=unset#image/gif
@@ -2747,16 +2769,6 @@ Mesh_3/stylesheet.css svneol=native#text/css
 Mesh_3/test/Mesh_3/data/cube.off -text svneol=unset#application/octet-stream
 Mesh_3/test/Mesh_3/data/liver.inr.gz -text
 Mesh_3/test/Mesh_3/data/sphere.off -text svneol=unset#application/octet-stream
-Min_circle_2/demo/Min_circle_2/help/index.html svneol=native#text/html
-Min_circle_2/test/Min_circle_2/test_Min_circle.cmd eol=lf
-Min_ellipse_2/demo/Min_ellipse_2/help/index.html svneol=native#text/html
-Min_ellipse_2/test/Min_ellipse_2/test_Min_ellipse_2.cmd eol=lf
-Min_quadrilateral_2/demo/Min_quadrilateral_2/help/index.html svneol=native#text/html
-Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-2.mws -text svneol=unset#application/octet-stream
-Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-3.mws -text svneol=unset#application/octet-stream
-Min_sphere_of_spheres_d/web/figs/heuristic/excess.xfig -text svneol=unset#application/octet-stream
-Min_sphere_of_spheres_d/web/figs/mbex/mbex.xfig -text svneol=unset#application/octet-stream
-Min_sphere_of_spheres_d/web/figs/pivot/cex.xfig -text svneol=unset#application/octet-stream
 Minkowski_sum_2/benchmark/Minkowski_sum_2/print_utils.h -text
 Minkowski_sum_2/benchmark/Minkowski_sum_2/sum_by_decomposition.cpp -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/Minkowski_sum_2.png -text
@@ -3019,13 +3031,6 @@ Number_types/test/Number_types/Gmpfr.cpp -text
 Number_types/test/Number_types/Gmpfr_bug.cpp -text
 Number_types/test/Number_types/include/CGAL/Test/test_root_of_2_traits.h -text
 Number_types/test/Number_types/include/CGAL/_test_io.h -text
-Optimisation_doc/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Bounding_volumes/ball.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Bounding_volumes/ball.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Bounding_volumes/minCircle.png -text
-Optimisation_doc/doc_tex/Bounding_volumes/pcenter.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Bounding_volumes/pcenter.pdf -text svneol=unset#application/pdf
 Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.pdf -text svneol=unset#application/pdf
 Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.gif -text svneol=unset#image/gif
