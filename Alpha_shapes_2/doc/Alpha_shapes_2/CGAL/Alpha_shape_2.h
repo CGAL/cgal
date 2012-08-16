@@ -63,7 +63,7 @@ use binary search.
 `A.number_of_solid_components` performs a graph traversal and takes time 
 linear in the number of faces of the underlying triangulation. 
 `A.find_optimal_alpha` uses binary search and takes time 
-\f$ O(\mbox{ \em n } \log{\mbox{ \em n } })\f$, where \f$ n\f$ is the number of points. 
+\f$ O(n \log n)\f$, where \f$ n\f$ is the number of points. 
 
 */
 template< typename Dt, typename ExactAlphaComparisonTag >
