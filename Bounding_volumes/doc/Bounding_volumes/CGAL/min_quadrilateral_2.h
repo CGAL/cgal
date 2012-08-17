@@ -79,8 +79,8 @@ namespace CGAL {
 The function computes a minimum area enclosing rectangle 
 \f$ R(P)\f$ of a given convex point set \f$ P\f$. Note that \f$ R(P)\f$ is not 
 necessarily axis-parallel, and it is in general not unique. The focus 
-on convex sets is no restriction, since any rectangle enclosing \f$ P\f$ 
-- as a convex set - contains the convex hull of \f$ P\f$. For general 
+on convex sets is no restriction, since any rectangle enclosing 
+\f$ P\f$ - as a convex set - contains the convex hull of \f$ P\f$. For general 
 point sets one has to compute the convex hull as a preprocessing step. 
 
 computes a minimum area enclosing rectangle of the point set described 
