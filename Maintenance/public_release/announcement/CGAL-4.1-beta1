@@ -9,7 +9,7 @@ a solid ground to report bugs that need to be tackled before the
 release of the final version of CGAL 4.1 mid-September.
 
 
-Besides fixes to existing packages, the following has being changed since
+Besides fixes to existing packages, the following has changed since
 CGAL 4.1:
 
  o New compiler support
