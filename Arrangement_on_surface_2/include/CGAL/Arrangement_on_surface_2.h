@@ -1628,6 +1628,12 @@ protected:
   Comparison_result _compare_induced_path_length(const DHalfedge* e1,
                                                  const DHalfedge* e2) const;
 
+  /*
+   */
+  void
+  _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
+                   Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
+                   int& x_index, int& y_index) const;
 
   /*!
    * Compute the signs (in left/right and bottom/top) of a path
@@ -1641,13 +1647,14 @@ protected:
    * \param he_away The succcessor halfedge.
    * \param local_mins_it the outputiterator 
    * (value_type = std::pair< DHalfedge*, int >, where the int denotes the
-   * index) to report the halfedges pointing to local minima (<-shaped situation)
+   * index) to report the halfedges pointing to local minima (<-shaped
+   * situation)
    * \return A pair of signs for the induced path (ZERO if non-perimetric,
    * POSITIVE if perimetric ccb is oriented in positive direction, 
    * NEGATIVE if perimetric ccb is oriented in negative direction).
    */
   template <typename OutputIterator>
-  std::pair< CGAL::Sign, CGAL::Sign > 
+  std::pair<CGAL::Sign, CGAL::Sign>
   _compute_signs_and_local_minima(const DHalfedge* he_to,
                                   const X_monotone_curve_2& cv,
                                   Arr_halfedge_direction cv_dir,
