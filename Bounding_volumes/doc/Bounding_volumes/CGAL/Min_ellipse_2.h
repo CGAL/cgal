@@ -40,7 +40,7 @@ Implementation
 
 We implement the incremental algorithm of Welzl, with move-to-front 
 heuristic \cite w-sedbe-91a, using the primitives as described 
-in \cite gs-epsee-97,cgal:gs-seefe-97a. The whole implementation is described 
+in \cite gs-epsee-97, \cite cgal:gs-seefe-97a. The whole implementation is described 
 in \cite cgal:gs-seeeg-98. 
 
 If randomization is 

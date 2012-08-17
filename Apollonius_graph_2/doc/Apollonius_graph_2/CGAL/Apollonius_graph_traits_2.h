@@ -18,7 +18,7 @@ evaluation of signs of ring-type expressions, i.e., expressions
 involving only additions, subtractions and multiplications. The 
 default value for `Method_tag` is `CGAL::Ring_tag`. 
 The way the predicates are evaluated is discussed in 
-\cite cgal:ke-ppawv-02,cgal:ke-rctac-03. 
+\cite cgal:ke-ppawv-02, \cite cgal:ke-rctac-03. 
 
 \models ::ApolloniusGraphTraits_2 
 

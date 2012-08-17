@@ -31,7 +31,7 @@ rehashing when set to the number of expected elements in the map.
 The design is derived from the \stl `hash_map` and the \leda type 
 `map`. Its specialization on insertion only and unique hash values 
 allow for a more time- and space-efficient implementation, see also 
-[\cite Chapter 5. This implementation makes also use 
+[\cite mn-lpcgc-00 Chapter 5. This implementation makes also use 
 of sentinels that lead to defined keys that have not been inserted. 
 
 */

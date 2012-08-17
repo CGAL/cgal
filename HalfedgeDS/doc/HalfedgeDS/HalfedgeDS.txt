@@ -32,7 +32,7 @@ structure is meant as an implementation layer. See for example the
 
 The data structure provided here is also known as the
 FE-structure \cite w-ebdss-85, as
-halfedges \cite m-ism-88,cgal:bfh-mgedm-95 or as the doubly connected edge
+halfedges \cite m-ism-88, \cite cgal:bfh-mgedm-95 or as the doubly connected edge
 list (DCEL) \cite bkos-cgaa-97, although the original reference for
 the DCEL \cite mp-fitcp-78 describes a different data structure. The
 halfedge data structure can also be seen as one of the variants of the
@@ -100,21 +100,22 @@ There are two different models for the `HalfedgeDS` concept available,
 `HalfedgeDS_list` and `HalfedgeDS_vector`, and more might come.
 Therefore we have kept their interface small and factored out common
 functionality into separate helper classes, `HalfedgeDS_decorator`,
-`HalfedgeDS_const_decorator`, and `HalfedgeDS_items_decorator`,
-which are not shown in Figure \ref figureHalfedgeDSDesign ,
-but would be placed at the side of the `HalfedgeDS`
-since they broaden that interface but do not hide it. These helper
-classes contain operations that are useful to implement the operations
-in the next layer, for example, the polyhedron. They add, for example,
-the Euler operations and partial operations from which further Euler
-operations can be built, such as inserting an edge into the ring of
-edges at a vertex. Furthermore, the helper classes contain adaptive
-functionality. For example, if the `prev()` member function is
-not provided for halfedges, the `find_prev()` member function of
-a helper class searches in the positive direction along the face for
-the previous halfedge. But if the `prev()` member function is
-provided, the `find_prev()` member function simply calls it. This
-distinction is resolved at compile time with a technique called <I>compile-time tags</I>, similar to iterator tags in \cite cgal:sl-stl-95.
+`HalfedgeDS_const_decorator`, and `HalfedgeDS_items_decorator`, which
+are not shown in Figure \ref figureHalfedgeDSDesign , but would be
+placed at the side of the `HalfedgeDS` since they broaden that
+interface but do not hide it. These helper classes contain operations
+that are useful to implement the operations in the next layer, for
+example, the polyhedron. They add, for example, the Euler operations
+and partial operations from which further Euler operations can be
+built, such as inserting an edge into the ring of edges at a
+vertex. Furthermore, the helper classes contain adaptive
+functionality. For example, if the `prev()` member function is not
+provided for halfedges, the `find_prev()` member function of a helper
+class searches in the positive direction along the face for the
+previous halfedge. But if the `prev()` member function is provided,
+the `find_prev()` member function simply calls it. This distinction is
+resolved at compile time with a technique called <I>compile-time
+tags</I>, similar to iterator tags in \cite cgal:sl-stl-95.
 
 The `Polyhedron_3` as an example for the third layer adds the
 geometric interpretation, provides an easy-to-use interface of

@@ -45,7 +45,7 @@ namespace CGAL {
 /// Implementation 
 /// -------------- 
 /// The implementation uses an algorithm by 
-/// Frederickson and Johnson\cite fj-fkppc-83 \cite fj-gsrsm-84 and runs in 
+/// Frederickson and Johnson \cite fj-fkppc-83 \cite fj-gsrsm-84 and runs in 
 /// \f$ \mathcal{O}(n \cdot k + f \cdot \log (n \cdot k))\f$, where \f$ n\f$ is 
 /// the number of input matrices, \f$ k\f$ denotes the maximal dimension of 
 /// any input matrix and \f$ f\f$ the time needed for one feasibility test. 

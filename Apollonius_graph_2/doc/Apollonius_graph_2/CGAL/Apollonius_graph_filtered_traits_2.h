@@ -28,7 +28,7 @@ whereas the second one requires the exact evaluation of signs of
 ring-type expressions, i.e., expressions involving only additions, 
 subtractions and multiplications. 
 The way the predicates are evaluated is discussed in 
-\cite cgal:ke-ppawv-02,cgal:ke-rctac-03. 
+\cite cgal:ke-ppawv-02, \cite cgal:ke-rctac-03. 
 
 The default values for the template parameters are as follows: 
 `CM = CGAL::Ring_tag`, 

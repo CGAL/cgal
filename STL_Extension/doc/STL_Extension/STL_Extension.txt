@@ -7,7 +7,7 @@ namespace CGAL {
 
 \cgal is designed in the spirit of the generic programming paradigm
 to work together with the Standard Template Library (\stl)
-\cite cgal:ansi-is14882-98,cgal:a-gps-98. This chapter documents non-geometric
+\cite cgal:ansi-is14882-98, \cite cgal:a-gps-98. This chapter documents non-geometric
 \stl-like components that are not provided in the \stl standard but
 in \cgal: a doubly-connected list managing items in place (where
 inserted items are not copied), a compact container, a multi-set class that
@@ -72,7 +72,7 @@ probably be useful for other kinds of graphs as well.
 
 The class `Multiset<Type,Compare,Allocator>` represents a
 multi-set of elements of type `Type`, represented as a red-black tree
-(see [\cite Chapter 13 for an excellent introduction to red-black
+(see \cite clrs-ia-01 for an excellent introduction to red-black
 trees). It differs from the \stl's `multiset` class-template mainly due
 to the fact that it is parameterized by a comparison functor `Compare`
 that returns the three-valued `Comparison_result` (namely it returns

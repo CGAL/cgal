@@ -45,14 +45,14 @@ for instance in terms of sizing field
 or with respect to some user customized quality criteria.
 
 The meshing engine used in this mesh generator
-is based on Delaunay refinement \cite c-gqmgc-93, r-draq2d-95, s-tmgdr-98.
+is based on Delaunay refinement \cite c-gqmgc-93, \cite r-draq2d-95, \cite s-tmgdr-98.
 It uses the notion of restricted Delaunay triangulation
 to approximate \f$ 1\f$-dimensional curve segments and surface patches \cite cgal:bo-pgsms-05.
 Before the refinement, a mechanism of protecting balls is set up on \f$ 1\f$-dimensional features, if any,
 to ensure a fair representation
 of those features in the mesh, and also to guarantee the termination of the refinement process,
 whatever may be the input geometry, in particular whatever small angles
-the boundary and subdivision surface patches may form \cite cgal:cdl-pdma-07,cgal:cdr-drpsc-07.
+the boundary and subdivision surface patches may form \cite cgal:cdl-pdma-07, \cite cgal:cdr-drpsc-07.
 The Delaunay refinement is followed by a mesh optimization phase
 to remove slivers and provide a good quality mesh.
 
@@ -186,7 +186,7 @@ the corresponding points are inserted into the Delaunay triangulation
 from the start.
 
 If the domain has \f$ 1\f$-dimensional exposed features,
-the method of protecting balls \cite cgal:cdr-drpsc-07, cgal:cdl-pdma-07
+the method of protecting balls \cite cgal:cdr-drpsc-07, \cite cgal:cdl-pdma-07
 is used to achieve an accurate representation of those features in the mesh
 and to guarantee that the refinement process terminates
 whatever may be the dihedral angles formed by input surface patches incident to a
@@ -240,7 +240,7 @@ a perturber and an exuder.
 The Lloyd and odt-smoother are global optimizers
 moving the mesh vertices to minimize 
 a mesh energy. Those optimizers are described respectively in 
-\cite cgal:dfg-cvtaa-99t, cgal:dw-tmgob-02 and in \cite cgal::c-mssbo-04,cgal:acyd-vtm-05.
+\cite cgal:dfg-cvtaa-99t, \cite cgal:dw-tmgob-02 and in \cite cgal::c-mssbo-04, \cite cgal:acyd-vtm-05.
 In both cases the mesh energy
 is the `L1` error resulting from the interpolation 
 of the function \f$ f(x) =x^2\f$ by a piecewise linear function.
@@ -996,8 +996,8 @@ the boundary and subdivision surface patches,
 was pioneered by Cheng et al. \cite cgal:cdr-drpsc-07 and further experimented by Dey, Levine et al.
 \cite cgal:cdl-pdma-07.
 The optimization phase involves global optimization processes, a perturbation process
-and a sliver exudation process. The global optimizers are based on Lloyd smoothing \cite cgal:dfg-cvtaa-99t, cgal:dw-tmgob-02
-and odt smoothing \cite cgal::c-mssbo-04,cgal:acyd-vtm-05, where odt means
+and a sliver exudation process. The global optimizers are based on Lloyd smoothing \cite cgal:dfg-cvtaa-99t, \cite cgal:dw-tmgob-02
+and odt smoothing \cite cgal::c-mssbo-04, \cite cgal:acyd-vtm-05, where odt means
 <I>optimal Delaunay triangulation</I>. The perturbation process 
 is mainly based on the work of Tournois \cite cgal:t-om-09
 and Tournois et al. \cite cgal:twad-iropitmg-09,
@@ -1024,7 +1024,7 @@ and appeared first in release 3.6 of \cgal.
 
 In collaboration with Laurent Rineau, Stéphane also added demos and examples.
 After some experiments on medical imaging data performed by
-Dobrina Boltcheva et al. \cite cgal:byb-mgmmi-09, cgal:-byb-fpdmgmmi-09, the handling
+Dobrina Boltcheva et al. \cite cgal:byb-mgmmi-09, \cite cgal:-byb-fpdmgmmi-09, the handling
 of \f$ 1\f$-dimensional features was worked out by Laurent Rineau, Stéphane Tayeb
 and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
 

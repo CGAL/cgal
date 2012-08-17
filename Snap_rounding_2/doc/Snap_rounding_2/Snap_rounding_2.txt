@@ -12,7 +12,7 @@ namespace CGAL {
 
 Snap Rounding (SR, for short) is a well known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
-representation \cite gght-srlse-97, gm-rad-98, h-psifp-99. In
+representation \cite gght-srlse-97, \cite gm-rad-98, \cite h-psifp-99. In
 the study of robust geometric computing, it can be classified
 as a finite precision approximation technique. Iterated Snap Rounding
 (ISR, for short) is a modification of SR in which each vertex is at least

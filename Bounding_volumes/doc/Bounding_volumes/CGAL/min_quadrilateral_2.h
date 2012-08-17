@@ -47,7 +47,7 @@ Implementation
 
 We use a rotating caliper 
 algorithm 
-\cite stvwe-mepa-95,v-fmep-90 with worst case running time linear 
+\cite stvwe-mepa-95, \cite v-fmep-90 with worst case running time linear 
 in the number of input points. 
 
 Example 

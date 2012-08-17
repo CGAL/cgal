@@ -89,21 +89,20 @@ The two principle function calls utilizing all default arguments look
 as follows:
 
 \code{.cpp}
-template< class RandomAccessIterator, class Callback >
-void box_intersection_d(
-RandomAccessIterator begin, RandomAccessIterator end,
-Callback callback);
+#include <CGAL/box_intersection_d.h>
 
+template< class RandomAccessIterator, class Callback >
+void box_intersection_d(RandomAccessIterator begin, 
+                        RandomAccessIterator end,
+                        Callback callback);
 
 template< class RandomAccessIterator1, 
-class RandomAccessIterator2, 
-class Callback >
-void box_intersection_d(
-RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
-RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
-Callback callback);
+          class RandomAccessIterator2, 
+          class Callback >
+void box_intersection_d(RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
+                        RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
+                        Callback callback);
 \endcode
-
 
 Additional parameters to the functions calls are a <I>cutoff/</I>
 value to adjust performance trade-offs, and a <I>topology/</I> parameter
@@ -143,48 +142,28 @@ The function signatures for the bipartite case look as follows. The
 signatures for the complete case with the `box_self_intersection_d`
 function look the same except for the single iterator range.
 
-CONVINCLUDED:CGAL/box_intersection_d.h
+\code{.cpp}
+#include CGAL/box_intersection_d.h
 
-END:REF
-
-/*!
-\ingroup PkgBoxIntersectionD
-SPLICE DOC HERE
-
-*/
 template< class RandomAccessIterator1, 
-class RandomAccessIterator2, 
-class Callback >
-void box_intersection_d(
-RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
-RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
-Callback callback,
-std::ptrdiff_t cutoff = 10,
-Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
-Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE);
+          class RandomAccessIterator2, 
+          class Callback >
+void box_intersection_d(RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
+                        RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
+                        Callback callback, std::ptrdiff_t cutoff = 10,
+                        Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
+                        Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE);
 
-BEGIN:REF
-
-END:REF
-
-/*!
-\ingroup PkgBoxIntersectionD
-SPLICE DOC HERE
-
-*/
 template< class RandomAccessIterator1,
-class RandomAccessIterator2,
-class Callback, class BoxTraits >
-void box_intersection_d(
-RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
-RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
-Callback callback,
-BoxTraits box_traits,
-std::ptrdiff cutoff = 10,
-Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
-Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE);
-
-BEGIN:REF
+          class RandomAccessIterator2,
+          class Callback, class BoxTraits >
+void box_intersection_d(RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
+                        RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
+                        Callback callback, BoxTraits box_traits,
+                        std::ptrdiff cutoff = 10,
+                        Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
+                        Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE);
+\endcode
 
 \section secboxintersectminimal Minimal Example for Intersecting Boxes 
 
@@ -307,7 +286,7 @@ just converting from the `double` to the `float`
 representation incurs rounding that needs to be controlled properly,
 otherwise the box might shrink and one might miss intersections.
 
-\section secboxintersparams Example Using the <I>topology</I> and the <I>cutoff</I> Parameters 
+\section secboxintersparams Example Using the topology and the cutoff Parameters 
 
 Boxes can be interpreted by the box intersection algorithm as closed
 or as half-open boxes, see also Section \ref secboxintersdef . Closed

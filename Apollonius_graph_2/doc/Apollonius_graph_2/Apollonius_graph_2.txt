@@ -244,7 +244,7 @@ The predicates required for the computation of the Apollonius graph
 are rather complicated. It is not the purpose of this document to
 discuss them in detail. The interested reader may refer to the papers
 by Karavelas and Emiris for the details
-\cite cgal:ke-ppawv-02,cgal:ke-rctac-03. However, we would like to give a brief
+\cite cgal:ke-ppawv-02, \cite cgal:ke-rctac-03. However, we would like to give a brief
 overview of what they 
 compute. There are several predicates needed by this algorithm. We
 will discuss the most important/complicated ones. It turns out that

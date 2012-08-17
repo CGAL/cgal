@@ -10,7 +10,7 @@ namespace CGAL {
 
 An instance `s` of the parametrized data type `Multiset` is a 
 multi-set of elements of type `Type`, represented as a red-black tree 
-(see [\cite Chapter 13 for an excellent introduction to red-black 
+(see [\cite clrs-ia-01 Chapter 13 for an excellent introduction to red-black 
 trees). 
 The main difference between `Multiset` and \stl's `multiset` is that 
 the latter uses a less-than functor with a Boolean return type, while our 

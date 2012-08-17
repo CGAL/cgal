@@ -78,9 +78,9 @@ achieved approximation ratio \f$ 1+\epsilon'\f$ can be queried using
 </UL> 
 
 The ellipsoid \f$ {\cal E}\f$ computed by the algorithm satisfies the inclusions 
-\f[ 
 \anchor eqapproximate_min_ellipsoid_incl 
-\frac{1}{(1+\epsilon')d} \mathcalE \subseteq (P) \subseteq \mathcalE 
+\f[ 
+\frac{1}{(1+\epsilon')d} {\cal E} \subseteq \mathop{\rm conv}\nolimits(P) \subseteq {\cal E}
 \f] 
 where \f$ f {\cal E}\f$ denotes the ellipsoid \f$ {\cal E}\f$ scaled by the 
 factor \f$ f\in\R^+\f$ with respect to its center, and where \f$ \mathop{\rm 

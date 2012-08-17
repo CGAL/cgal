@@ -11,7 +11,7 @@ classes built on top of the halfedge data structure.
 
 The data structure defined here is known as the 
 FE-structure \cite w-ebdss-85, as 
-halfedges \cite m-ism-88,cgal:bfh-mgedm-95 or as the doubly connected edge 
+halfedges \cite m-ism-88, \cite cgal:bfh-mgedm-95 or as the doubly connected edge 
 list (DCEL) \cite bkos-cgaa-97, although the original reference for 
 the DCEL \cite mp-fitcp-78 describes a different data structure. The 
 halfedge data structure can also be seen as one of the variants of the 

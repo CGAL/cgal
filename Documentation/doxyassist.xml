@@ -55,6 +55,18 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>Jet_fitting_3</name>
+        <input>../Jet_fitting_3/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Jet_fitting_3/doc/Jet_fitting_3/</string>
+          <string name="STRIP_FROM_INC_PATH">../Jet_fitting_3/doc/Jet_fitting_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Jet_fitting_3.tag</string>
+          <string name="IMAGE_PATH">../Jet_fitting_3/doc/Jet_fitting_3/fig</string>
+          <string name="EXAMPLE_PATH">../Jet_fitting_3/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
         <name>Mesh_3</name>
         <input>../Mesh_3/doc</input>
         <doxygen>
@@ -466,6 +478,31 @@ namespace for the XML file to be processed properly.  -->
           </list>
         </doxygen>
       </project>
+
+      <project>
+        <name>Circulator</name>
+        <input>../Circulator/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Circulator/doc/Circulator/</string>
+          <string name="STRIP_FROM_INC_PATH">../Circulator/doc/Circulator/</string>
+          <string name="GENERATE_TAGFILE">./tags/Circulator.tag</string>
+          <string name="IMAGE_PATH">../Circulator/doc/Circulator/fig</string>
+          <string name="EXAMPLE_PATH">../Circulator/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Nef_2</name>
+        <input>../Nef_2/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Nef_2/doc/Nef_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Nef_2/doc/Nef_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Nef_2.tag</string>
+          <string name="IMAGE_PATH">../Nef_2/doc/Nef_2/fig</string>
+          <string name="EXAMPLE_PATH">../Nef_2/examples</string>
+        </doxygen>
+      </project>
+
       <!-- subprojects end -->
     </project>
 
@@ -487,74 +524,80 @@ namespace for the XML file to be processed properly.  -->
         </list>
         <list name="IMAGE_PATH" append="false">
           <item>./doc/fig</item>
-          <item>../STL_Extension/doc/STL_Extension/fig</item>
-          <item>../Mesh_2/doc/Mesh_2/fig</item>
-          <item>../Mesh_3/doc/Mesh_3/fig</item>
           <item>../Algebraic_foundations/doc/Algebraic_foundations/fig</item>
-          <item>../HalfedgeDS/doc/HalfedgeDS/fig</item>
+          <item>../Alpha_shapes_2/doc/Alpha_shapes_2/fig</item>
+          <item>../Alpha_shapes_3/doc/Alpha_shapes_3/fig</item>
+          <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig</item>
+          <item>../Bounding_volumes/doc/Bounding_volumes/fig</item>
+          <item>../Box_intersection_d/doc/Box_intersection_d/fig</item>
+          <item>../CGAL_ipelets/doc/CGAL_ipelets/fig</item>
+          <item>../Circulator/doc/Circulator/fig</item>
+          <item>../Convex_decomposition_3/doc/Convex_decomposition_3/fig</item>
           <item>../Convex_hull_2/doc/Convex_hull_2/fig</item>
           <item>../Convex_hull_3/doc/Convex_hull_3/fig</item>
           <item>../Convex_hull_d/doc/Convex_hull_d/fig</item>
-          <item>../Straight_skeleton_2/doc/Straight_skeleton_2/fig</item>
-          <item>../Partition_2/doc/Partition_2/fig</item>
-          <item>../Convex_decomposition_3/doc/Convex_decomposition_3/fig</item>
-          <item>../Point_set_2/doc/Point_set_2/fig</item>
-          <item>../Interval_skip_list/doc/Interval_skip_list/fig</item>
           <item>../Envelope_2/doc/Envelope_2/fig</item>
           <item>../Envelope_3/doc/Envelope_3/fig</item>
-          <item>../Minkowski_sum_2/doc/Minkowski_sum_2/fig</item>
-          <item>../Minkowski_sum_3/doc/Minkowski_sum_3/fig</item>
           <item>../Generator/doc/Generator/fig</item>
           <item>../Geomview/doc/Geomview/fig</item>
-          <item>../Spatial_searching/doc/Spatial_searching/fig</item>
-          <item>../Box_intersection_d/doc/Box_intersection_d/fig</item>
           <item>../GraphicsView/doc/GraphicsView/fig</item>
+          <item>../HalfedgeDS/doc/HalfedgeDS/fig</item>
+          <item>../Interval_skip_list/doc/Interval_skip_list/fig</item>
+          <item>../Nef_2/doc/Nef_2/fig</item>
+          <item>../Mesh_2/doc/Mesh_2/fig</item>
+          <item>../Mesh_3/doc/Mesh_3/fig</item>
+          <item>../Jet_fitting_3/doc/Jet_fitting_3/fig</item>
+          <item>../Minkowski_sum_2/doc/Minkowski_sum_2/fig</item>
+          <item>../Minkowski_sum_3/doc/Minkowski_sum_3/fig</item>
           <item>../Miscellany/doc/Miscellany/fig</item>
-          <item>../Polytope_distance_d/doc/Polytope_distance_d/fig</item>
-          <item>../Bounding_volumes/doc/Bounding_volumes/fig</item>
-          <item>../Snap_rounding_2/doc/Snap_rounding_2/fig</item>
-          <item>../Skin_surface_3/doc/Skin_surface_3/fig</item>
           <item>../Modular_arithmetic/doc/Modular_arithmetic/fig</item>
-          <item>../Alpha_shapes_2/doc/Alpha_shapes_2/fig</item>
-          <item>../Alpha_shapes_3/doc/Alpha_shapes_3/fig</item>
+          <item>../Partition_2/doc/Partition_2/fig</item>
+          <item>../Point_set_2/doc/Point_set_2/fig</item>
+          <item>../Polytope_distance_d/doc/Polytope_distance_d/fig</item>
           <item>../Principal_component_analysis/doc/Principal_component_analysis/fig</item>
-          <item>../CGAL_ipelets/doc/CGAL_ipelets/fig</item>
-          <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig</item>
+          <item>../STL_Extension/doc/STL_Extension/fig</item>
+          <item>../Skin_surface_3/doc/Skin_surface_3/fig</item>
+          <item>../Snap_rounding_2/doc/Snap_rounding_2/fig</item>
+          <item>../Spatial_searching/doc/Spatial_searching/fig</item>
+          <item>../Straight_skeleton_2/doc/Straight_skeleton_2/fig</item>
         </list>
         <list name="TAGFILES" append="false">
-          <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL_Extension/html</item>
-          <item>./tags/Mesh_2.tag=../../CGAL.CGAL.Mesh_2/html</item>
-          <item>./tags/Mesh_3.tag=../../CGAL.CGAL.Mesh_3/html</item>
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic_foundations/html</item>
-          <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
+          <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.Alpha_shapes_2/html</item>
+          <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.Alpha_shapes_3/html</item>
+          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius_graph_2/html</item>
+          <item>./tags/Bounding_volumes.tag=../../CGAL.CGAL.Bounding_volumes/html</item>
+          <item>./tags/Box_intersection_d.tag=../../CGAL.CGAL.Box_intersection_d/html</item>
+          <item>./tags/CGAL_ipelets.tag=../../CGAL.CGAL.CGAL_ipelets/html</item>
+          <item>./tags/Circulator.tag=../../CGAL.CGAL.Circulator/html</item>
+          <item>./tags/Convex_decomposition_3.tag=../../CGAL.CGAL.Convex_decomposition_3/html</item>
           <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.Convex_hull_2/html</item>
           <item>./tags/Convex_hull_3.tag=../../CGAL.CGAL.Convex_hull_3/html</item>
           <item>./tags/Convex_hull_d.tag=../../CGAL.CGAL.Convex_hull_d/html</item>
-          <item>./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.Straight_skeleton_2/html</item>
-          <item>./tags/Partition_2.tag=../../CGAL.CGAL.Partition_2/html</item>
-          <item>./tags/Convex_decomposition_3.tag=../../CGAL.CGAL.Convex_decomposition_3/html</item>
-          <item>./tags/Point_set_2.tag=../../CGAL.CGAL.Point_set_2/html</item>
-          <item>./tags/Interval_skip_list.tag=../../CGAL.CGAL.Interval_skip_list/html</item>
           <item>./tags/Envelope_2.tag=../../CGAL.CGAL.Envelope_2/html</item>
           <item>./tags/Envelope_3.tag=../../CGAL.CGAL.Envelope_3/html</item>
-          <item>./tags/Minkowski_sum_2.tag=../../CGAL.CGAL.Minkowski_sum_2/html</item>
-          <item>./tags/Minkowski_sum_3.tag=../../CGAL.CGAL.Minkowski_sum_3/html</item>
           <item>./tags/Generator.tag=../../CGAL.CGAL.Generator/html</item>
           <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
-          <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.Spatial_searching/html</item>
-          <item>./tags/Box_intersection_d.tag=../../CGAL.CGAL.Box_intersection_d/html</item>
           <item>./tags/GraphicsView.tag=../../CGAL.CGAL.GraphicsView/html</item>
+          <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
+          <item>./tags/Interval_skip_list.tag=../../CGAL.CGAL.Interval_skip_list/html</item>
+          <item>./tags/Nef_2.tag=../../CGAL.CGAL.Nef_2/html</item>
+          <item>./tags/Mesh_2.tag=../../CGAL.CGAL.Mesh_2/html</item>
+          <item>./tags/Mesh_3.tag=../../CGAL.CGAL.Mesh_3/html</item>
+          <item>./tags/Jet_fitting_3.tag=../../CGAL.CGAL.Jet_fitting_3/html</item>
+          <item>./tags/Minkowski_sum_2.tag=../../CGAL.CGAL.Minkowski_sum_2/html</item>
+          <item>./tags/Minkowski_sum_3.tag=../../CGAL.CGAL.Minkowski_sum_3/html</item>
           <item>./tags/Miscellany.tag=../../CGAL.CGAL.Miscellany/html</item>
-          <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Polytope_distance_d/html</item>
-          <item>./tags/Bounding_volumes.tag=../../CGAL.CGAL.Bounding_volumes/html</item>
-          <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.Snap_rounding_2/html</item>
-          <item>./tags/Skin_surface_3.tag=../../CGAL.CGAL.Skin_surface_3/html</item>
           <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular_arithmetic/html</item>
-          <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.Alpha_shapes_2/html</item>
-          <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.Alpha_shapes_3/html</item>
+          <item>./tags/Partition_2.tag=../../CGAL.CGAL.Partition_2/html</item>
+          <item>./tags/Point_set_2.tag=../../CGAL.CGAL.Point_set_2/html</item>
+          <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Polytope_distance_d/html</item>
           <item>./tags/Principal_component_analysis.tag=../../CGAL.CGAL.Principal_component_analysis/html</item>
-          <item>./tags/CGAL_ipelets.tag=../../CGAL.CGAL.CGAL_ipelets/html</item>
-          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius_graph_2/html</item>
+          <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL_Extension/html</item>
+          <item>./tags/Skin_surface_3.tag=../../CGAL.CGAL.Skin_surface_3/html</item>
+          <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.Snap_rounding_2/html</item>
+          <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.Spatial_searching/html</item>
+          <item>./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.Straight_skeleton_2/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>
