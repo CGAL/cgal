@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     }
 
     int number_of_levels = 4;       // use 4 clusters in soft clustering
-    double smoothing_lambda = 20.0; // importance of surface features 
+    double smoothing_lambda = 0.3;  // importance of surface features, between [0,1]
 
     // Note that we can use same sdf values (sdf_property_map) over and over again for segmentation.
     // This feature becomes important when we want to segment the mesh several times with different parameters.

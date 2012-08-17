@@ -9,7 +9,7 @@
 #define CGAL_DEFAULT_CONE_ANGLE (2.0 / 3.0) * CGAL_PI /**< Default opening angle for cone */
 #define CGAL_DEFAULT_NUMBER_OF_RAYS 25                /**< Default number of rays picked from cone for each facet */
 #define CGAL_DEFAULT_NUMBER_OF_LEVELS 5               /**< Default number of clusters for soft clustering */
-#define CGAL_DEFAULT_SMOOTHING_LAMBDA 23.0            /**< Default factor which indicates importance of surface features in energy minization*/
+#define CGAL_DEFAULT_SMOOTHING_LAMBDA 0.46            /**< Default factor which indicates importance of surface features in energy minization*/
 
 /** CGAL */
 namespace CGAL
@@ -50,7 +50,7 @@ void sdf_values_computation(const Polyhedron& polyhedron,
  * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @param[out] segment_ids `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @param number_of_levels number of clusters for soft clustering
- * @param smoothing_lambda factor which indicates importance of surface features in energy minimization
+ * @param smoothing_lambda factor in the interval [0,1] which indicates the importance of surface features in energy minimization
  */
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap>
 void surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
@@ -59,6 +59,9 @@ void surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
     int number_of_levels = CGAL_DEFAULT_NUMBER_OF_LEVELS,
     double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA)
 {
+  smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
+                                smoothing_lambda)); // clip into [0-1]
+
   Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
   algorithm.partition(sdf_values, segment_ids, number_of_levels,
                       smoothing_lambda);
@@ -78,7 +81,7 @@ void surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
  * @param cone_angle opening angle for cone, expressed in radians
  * @param number_of_rays number of rays picked from cone for each facet
  * @param number_of_levels number of clusters for soft clustering
- * @param smoothing_lambda factor which indicates importance of surface features in energy minimization
+ * @param smoothing_lambda factor in the interval [0,1] which indicates the importance of surface features in energy minimization
  */
 template <class Polyhedron, class SegmentPropertyMap>
 void surface_mesh_segmentation(const Polyhedron& polyhedron,
@@ -88,6 +91,8 @@ void surface_mesh_segmentation(const Polyhedron& polyhedron,
                                int number_of_levels = CGAL_DEFAULT_NUMBER_OF_LEVELS,
                                double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA)
 {
+  smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
+                                smoothing_lambda)); // clip into [0-1]
 
   typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
   Facet_double_map internal_sdf_map;

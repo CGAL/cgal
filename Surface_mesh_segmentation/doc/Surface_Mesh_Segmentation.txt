@@ -13,7 +13,7 @@ Mesh segmentation is the process of partitioning a mesh into smaller and meaning
 
 The algorithm presented here is based on [reference to paper] which introduces Shape Diameter Function that represents a connection between the surface and its volume. Being a pose-invariant and volume-based feature, SDF can be computed for each facet on the surface. Using SDF values, the mesh is first soft clustered by grouping facets that have close SDF values together. These clusters are then refined by graph-cut algorithm which also considers surface-based features like dihedral-angle and concavity. 
 
-From API perspective, the user can access two main output of the algorithm: SDF values and segmentation of the mesh. SDF values might be useful for some other purposes than segmentation such as skeletonization, and part-retrieval.
+From the API perspective, the user can access two main outputs of the algorithm: SDF values and segmentation of the mesh. SDF values might be useful for some other purposes than segmentation such as skeletonization, and part-retrieval.
 
 # Overview of the Segmentation Process #
 The segmentation algorithm consists of three major parts. 
@@ -34,7 +34,7 @@ Note that there is no direct relation between number of clusters (parameter for 
 At the end of this part, we have soft clustering result which is a matrix that contains probability values for each facet to each cluster. These probability values are used in graph-cut part.
 
 ## Graph-Cut ##
-For hard clustering, which gives us the final partitioning of the mesh, an energy function that combines probability matrix and boundary properties is minimized. The aim of this function is while trying to assign facets to their most probable clusters it also tries to minimize cost of boundary edges by considering their concavity and dihedral-angle (i.e. concave edges with large dihedral angles are considered to be less costly which means that they are good candidates for segment boundaries).
+For hard clustering, which gives us the final partitioning of the mesh, an energy function that combines probability matrix and boundary properties is minimized. The aim of energy function is while trying to assign facets to their most probable clusters, it is also trying to minimize cost of boundary edges by considering their concavity and dihedral-angle (concave edges with large dihedral angles are considered to be less costly, which means that they are good candidates for segment boundaries).
 
 Energy function that is minimized using alpha-expansion graph cut algorithm is:
 
@@ -64,9 +64,11 @@ where:
   </tr> 
   </table> 
 
+Having facets assigned to corresponding clusters, segments are determined by giving a unique id to each set of connected facets which are placed under same cluster.
+
 # API #
 The SDF computation and segmentation algorithms are implemented as free template functions. The API provides three functions listed below:
-	- CGAL::sdf_values_computation :computes SDF values.
+	- CGAL::sdf_values_computation : computes SDF values.
 	- CGAL::surface_mesh_segmentation_from_sdf_values : computes mesh segmentation from SDF values.
 	- CGAL::surface_mesh_segmentation : computes SDF values and mesh segmentation in one go (i.e. combines two functions listed above).	
  
