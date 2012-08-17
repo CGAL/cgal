@@ -7,7 +7,7 @@ namespace CGAL {
 This package implements Shewchuk's algorithm \cite s-mgdsa-00 to construct
 conforming triangulations and 2D meshes. Conforming triangulations will be
 described in Section \ref secMesh_2_conforming_triangulation and
-meshes in Section \ref secMesh_2_meshes .
+meshes in Section \ref secMesh_2_meshes.
 
 \section secMesh_2_conforming_triangulation Conforming Triangulations 
 
@@ -86,9 +86,9 @@ printed.
 
 \cgalexample{Mesh_2/conforming.cpp}
 
-See figures \ref Conformexampleconform ,
-\ref ConformexampleconformDelaunay 
-and \ref ConformexampleconformGabriel .
+See figures \ref Conformexampleconform,
+\ref ConformexampleconformDelaunay, 
+and \ref ConformexampleconformGabriel.
 
 \anchor Conformexampleconform
 \image latex example-conform "Initial triangulation." width=8cm

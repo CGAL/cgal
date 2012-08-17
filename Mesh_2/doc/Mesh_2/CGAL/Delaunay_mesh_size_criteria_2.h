@@ -36,7 +36,7 @@ public:
 
 /*! 
 Default 
-constructor. \f$ B=\sqrt{2}\f$. No bound on size 
+constructor. \f$ B=\sqrt{2}\f$. No bound on size.
 */ 
 Delaunay_mesh_size_criteria_2(); 
 
