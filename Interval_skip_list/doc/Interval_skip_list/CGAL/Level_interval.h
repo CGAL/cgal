@@ -11,7 +11,7 @@ Requirements
 
 The `value_type` of `FaceHandle` must be `Face`, which must have a 
 nested type `Vertex`, which must have a nested type `Point`, 
-whose `Kernel_traits<Point>Kernel` must have a nested type `FT`. 
+whose `Kernel_traits<Point>::Kernel` must have a nested type `FT`. 
 These requirements are fulfilled, if one uses a <span class="textsc">Cgal</span> triangulation 
 and a <span class="textsc">Cgal</span> kernel. 
 
