@@ -135,7 +135,7 @@ which is a template method with an output iterator and a model of the
 concept `FuzzyQueryItem` as `CGAL::Fuzzy_iso_box_d` 
 or `CGAL::Fuzzy_sphere_d`. 
 For range searching of large data sets the user may set the parameter `bucket_size` 
-used in building the \f$ k\f$-\f$ d\f$ tree to a large value (e.g. 100), 
+used in building the \f$k\f$-\f$d\f$ tree to a large value (e.g. 100), 
 because in general the query time will be less then using the default value.
 
 \section Spatial_SearchingSplitting_rule_section Splitting Rules 
@@ -224,7 +224,7 @@ using a \f$ d\f$-dimensional iso-rectangle as an query object. Approximate
 range searching is illustrated by the fourth example. The fifth
 example illustrates k neighbor searching for a user defined point
 class. The last example shows how to choose another splitting rule in the
-\f$ k\f$-\f$ d\f$ tree that is used as search tree.
+\f$k\f$-\f$d\f$ tree that is used as search tree.
 
 ## Example for K Neighbor Searching ##
 
@@ -269,7 +269,7 @@ with the query, and obtain the result of the search as iterator range.
 
 This example program illustrates approximate range querying for
 4-dimensional fuzzy iso-rectangles and spheres using homogeneous
-coordinates. The range queries are member functions of the \f$ k\f$-\f$ d\f$ 
+coordinates. The range queries are member functions of the \f$k\f$-\f$d\f$ 
 tree class.
 
 \cgalexample{fuzzy_range_query.cpp}
@@ -335,19 +335,19 @@ splitting rule, needed to set the maximal allowed bucket size.
 
 \subsection Kd_tree_subsection The k-d tree 
 
-Bentley \cite b-mbstu-75 introduced the \f$ k\f$-\f$ d\f$ tree as a
-generalization of the binary search tree in higher dimensions. \f$ k\f$-\f$ d\f$
+Bentley \cite b-mbstu-75 introduced the \f$k\f$-\f$d\f$ tree as a
+generalization of the binary search tree in higher dimensions. \f$k\f$-\f$d\f$
 trees hierarchically decompose space into a relatively small number of
 rectangles such that no rectangle contains too many input objects.
-For our purposes, a <I>rectangle</I> in real \f$ d\f$ dimensional space,
+For our purposes, a <I>rectangle</I> in real \f$d\f$ dimensional space,
 \f$ \R^d\f$, is the product of \f$ d\f$ closed intervals on the coordinate axes.
-\f$ k\f$-\f$ d\f$ trees are obtained by partitioning point sets in \f$ \R^d\f$ using
+\f$k\f$-\f$d\f$ trees are obtained by partitioning point sets in \f$ \R^d\f$ using
 (\f$ d\f$-1)-dimensional hyperplanes. Each node in the tree is split into
 two children by one such separating hyperplane. Several splitting
 rules (see Section \ref Spatial_SearchingSplitting_rule_section can
 be used to compute a separating (\f$ d\f$-1)-dimensional hyperplane.
 
-Each internal node of the \f$ k\f$-\f$ d\f$ tree is associated with a rectangle
+Each internal node of the \f$k\f$-\f$d\f$ tree is associated with a rectangle
 and a hyperplane orthogonal to one of the coordinate axis, which
 splits the rectangle into two parts. Therefore, such a hyperplane,
 defined by a splitting dimension and a splitting value, is called a
