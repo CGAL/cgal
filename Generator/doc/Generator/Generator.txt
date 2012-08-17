@@ -31,8 +31,8 @@ on a circle (`Random_points_on_circle_2`),
 on a segment (`Random_points_on_segment`),
 and on a square (`Random_points_on_square_2`).
 For generating grid points we provide three functions,
-`points_on_segment_2`,
-`points_on_square_grid_2` that write to output iterators and
+`points_on_segment_2()`,
+`points_on_square_grid_2()` that write to output iterators and
 an input iterator `Points_on_segment_2`.
 
 For 3D points, input iterators are provided for random points uniformly 
@@ -48,13 +48,13 @@ distributed in a \f$ d\f$-dimensional cube (`Random_points_in_cube_d`)
 or \f$ d\f$-dimensional ball (`Random_points_in_ball_d`) or on the boundary of a 
 sphere (`Random_points_on_sphere_d`).
 For generating grid points, we provide the function 
-`points_on_grid_d` that writes to
+`points_on_grid_d()` that writes to
 an output iterator.
 
 We also provide two functions for generating more complex geometric objects.
-The function `random_convex_set_2` computes a random convex planar
+The function `random_convex_set_2()` computes a random convex planar
 point set of a given size where the points are drawn from a specific
-domain and `random_polygon_2` generates a random simple polygon from
+domain and `random_polygon_2()` generates a random simple polygon from
 points drawn from a specific domain.
 
 ## Random Perturbations ##
@@ -63,7 +63,7 @@ Degenerate input sets like grid points can be randomly perturbed by a
 small amount to produce <I>quasi</I>-degenerate test sets. This
 challenges numerical stability of algorithms using inexact arithmetic and
 exact predicates to compute the sign of expressions slightly off from zero.
-For this the function `perturb_points_2` is provided.
+For this the function `perturb_points_2()` is provided.
 
 ## Adding Degeneracies ##
 
@@ -75,7 +75,7 @@ a point set.
 
 ## Support Functions and Classes for Generators ##
 
-The function `random_selection` chooses \f$ n\f$ items at random from a random
+The function `random_selection()` chooses \f$ n\f$ items at random from a random
 access iterator range which is useful to produce degenerate input data
 sets with multiple entries of identical items.
 
