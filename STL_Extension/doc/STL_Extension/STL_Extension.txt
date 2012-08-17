@@ -126,7 +126,7 @@ filtered by `Filtered_predicate`, know about it.
 
 It can also be used in other contexts as well, as it is a general tool.
 
-# Complexity tags and policies #
+# Complexity Tags and Policies #
 
 Some data structures and algorithms can be implemented with different
 complexity trade-offs between memory usage and time complexity. \cgal provides
@@ -144,7 +144,7 @@ it. This is however possible only at the end of the list. `CGAL::Default`
 provides a simple mechanism that performs something equivalent anywhere in the
 sequence.
 
-# C++ 11 wrappers #
+# C++ 11 Wrappers #
 
 Wrappers for the classes `array` and `tuple` which, based on
 availability, either use the version of <I>Boost</I> or the one
