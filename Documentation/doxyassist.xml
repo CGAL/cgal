@@ -332,7 +332,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Miscellany/doc/Miscellany/</string>
           <string name="STRIP_FROM_INC_PATH">../Miscellany/doc/Miscellany/</string>
           <string name="GENERATE_TAGFILE">./tags/Miscellany.tag</string>
-          <string name="EXAMPLE_PATH">../Miscellany/examples</string>
+          <string name="EXAMPLE_PATH">../Profiling_tools/examples</string>
           <string name="IMAGE_PATH">../Miscellany/doc/Miscellany/fig</string>
           <list name="TAGFILES" append="false">
           </list>
@@ -503,6 +503,24 @@ namespace for the XML file to be processed properly.  -->
         </doxygen>
       </project>
 
+      <project>
+        <name>Nef_3</name>
+        <input>../Nef_3/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Nef_3/doc/Nef_3/</string>
+          <string name="STRIP_FROM_INC_PATH">../Nef_3/doc/Nef_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Nef_3.tag</string>
+          <string name="IMAGE_PATH">../Nef_3/doc/Nef_3/fig</string>
+          <list name="EXAMPLE_PATH" append="false">
+            <item>../Nef_3/examples</item>
+            <item>../Nef_3/demo</item>
+          </list>
+
+
+        </doxygen>
+      </project>
+
+
       <!-- subprojects end -->
     </project>
 
@@ -544,6 +562,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../HalfedgeDS/doc/HalfedgeDS/fig</item>
           <item>../Interval_skip_list/doc/Interval_skip_list/fig</item>
           <item>../Nef_2/doc/Nef_2/fig</item>
+          <item>../Nef_3/doc/Nef_3/fig</item>
           <item>../Mesh_2/doc/Mesh_2/fig</item>
           <item>../Mesh_3/doc/Mesh_3/fig</item>
           <item>../Jet_fitting_3/doc/Jet_fitting_3/fig</item>
@@ -582,6 +601,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
           <item>./tags/Interval_skip_list.tag=../../CGAL.CGAL.Interval_skip_list/html</item>
           <item>./tags/Nef_2.tag=../../CGAL.CGAL.Nef_2/html</item>
+          <item>./tags/Nef_3.tag=../../CGAL.CGAL.Nef_3/html</item>
           <item>./tags/Mesh_2.tag=../../CGAL.CGAL.Mesh_2/html</item>
           <item>./tags/Mesh_3.tag=../../CGAL.CGAL.Mesh_3/html</item>
           <item>./tags/Jet_fitting_3.tag=../../CGAL.CGAL.Jet_fitting_3/html</item>
