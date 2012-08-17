@@ -1198,3 +1198,7 @@ tr.heading h2 {
     display:inline;
   }
 }
+
+.textsc {
+    font-variant: small-caps;
+}
