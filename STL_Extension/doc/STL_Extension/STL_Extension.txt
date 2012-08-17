@@ -39,7 +39,7 @@ This used to simplify mutually pointed data structures like a halfedge
 data structure for planar maps or polyhedral surfaces (the current design
 does not need this anymore). The usual iterators are also available.
 
-# Compact Container #
+# %Compact Container #
 
 The class `Compact_container<T, Allocator>` is an \stl like container
 which provides a very compact storage for its elements. It achieves this goal

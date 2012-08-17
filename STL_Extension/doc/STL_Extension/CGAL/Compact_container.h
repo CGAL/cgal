@@ -612,19 +612,16 @@ void clear();
 /// The following functions are mostly helpful for efficient debugging, since 
 /// their complexity is \f$ O(\sqrt{c.capacity()})\f$. 
 /// @{ 
-/*! 
-returns whether `pos` is in the range [`c`.`begin()`, `c`.`end()`] 
-(`c`.`end()` included). 
-*/ 
+
+/*!
+ * returns whether `pos` is in the range [`c`.\ `begin()`, `c`.\ `end()`] \(`c`.\ `end()` included\).
+ */ 
 bool owns(const_iterator pos); 
 
-/*! 
-returns whether `pos` is in the range [`c`.`begin()`, `c`.`end()`) 
-(`c`.`end()` excluded). 
-*/ 
+/*!
+ * returns whether `pos` is in the range [`c`.\ `begin()`, `c`.\ `end()`) \(`c`.\ `end()` excluded\). 
+ */ 
 bool owns_dereferencable(const_iterator pos); 
-
-
 
 /// @} 
 
