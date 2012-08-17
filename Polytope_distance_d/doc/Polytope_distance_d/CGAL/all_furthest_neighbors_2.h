@@ -27,8 +27,8 @@ traits class.
 <LI>If `t` is specified explicitly, `Traits` is a model 
 for `AllFurthestNeighborsTraits_2`. 
 <LI>Value type of `RandomAccessIterator` is 
-`Traits::Point_2` or - if `t` is not specified explicitly 
-- `K::Point_2` where `K` is a model for `Kernel`. 
+`Traits::Point_2` or - if `t` is not specified explicitly  -
+`K::Point_2` where `K` is a model for `Kernel`. 
 <LI>`OutputIterator` accepts `int` as value type. 
 </OL> 
 
