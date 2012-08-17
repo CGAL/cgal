@@ -9,17 +9,16 @@ line of code is executed during the execution of a program, and print this
 number at the end of the execution of the program. Such counters can be added 
 at critical places in the code, and at the end of the execution of a program, 
 the count is printed on `std::cerr`, together with an identification 
-string passed to the constructor. The macro `CGAL_PROFILER` can be 
+string passed to the constructor. The macro ::CGAL_PROFILER can be 
 used to conveniently place these counters anywhere. They are disabled by 
-default and activated by the global macro `CGAL_PROFILE`. 
+default and activated by the global macro ::CGAL_PROFILE. 
 
 Operations 
 -------------- 
 
-`\#define CGAL_PROFILER(MSG)` 
 If `CGAL_PROFILE` is not defined, then `CGAL_PROFILER` is defined 
-to an empty statement. Otherwise, it is defined to `static 
-CGAL::Profile_counter tmp(MSG); ++tmp;`. 
+to an empty statement. Otherwise, it is defined to 
+`static CGAL::Profile_counter tmp(MSG); ++tmp;`. 
 
 \cgalexample{Profile_counter.cpp} 
 
@@ -65,4 +64,19 @@ void operator++();
 /// @}
 
 }; /* end Profile_counter */
+
 } /* end namespace CGAL */
+
+/*!
+ * Macro to enable and disable profiling statements.
+ * \relates CGAL::Profile_counter
+ */
+#define CGAL_PROFILE
+
+/*!
+ * Profiling macro that uses CGAL::Profile_counter.
+ * 
+ * \relates CGAL::Profile_counter
+ */
+#define CGAL_PROFILER(MSG)
+
