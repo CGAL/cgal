@@ -1,0 +1,215 @@
+namespace CGAL {
+/*!
+
+\mainpage Handles, Ranges and Circulators
+\anchor chapterCirculators
+
+\authors Olivier Devillers, Lutz Kettner, Sylvain Pion, Michael Seel, and Mariette Yvinec
+
+# Handles #
+
+Most data structures in \cgal use the concept of `Handle` in their user
+interface to refer to the elements they store. This concept describes what is
+sometimes called a trivial iterator. A `Handle` is akeen to a pointer to
+an object providing the dereference operator `operator*()` and member
+access `operator->()` but no increment or decrement operators like
+iterators. A `Handle` is intended to be used whenever the referenced
+object is not part of a logical sequence.
+
+<b>Model for a handle</b> A simple pointer `T*`, an iterator or a circulator with value type
+`T`, are also handles.
+
+# Ranges #
+
+Most data structures in \cgal use the concept of an iterator range. The
+`Range` and `ConstRange` concepts encapsulate the access to the first
+and the past-the-end iterators of an iterator range. STL containers are models
+of `Range`. The Boost.Range library provides good support around this
+concept as well.
+
+# Circulators # {#circulatorsCirculators}
+
+An introduction to the concept of circulators is given here. A couple
+of adaptors are presented that convert between iterators and
+circulators. Some useful functions for circulators follow. This
+chapter concludes with a discussion of the design decisions taken. For
+the full description of the circulator requirements, the provided base
+classes, the circulator tags, and the support for generic algorithms
+that work for iterators as well as for circulators please refer to the
+reference pages. Note that circulators are not part of \stl, but of \cgal.
+
+## Introduction ## {#sectionIntroduction}
+
+The concept of iterators in \stl is tailored for linear
+sequences \cite cgal:ansi-is14882-98, \cite cgal:ms-strg-96. In contrast, circular
+sequences occur naturally in many combinatorial and geometric
+structures. Examples are polyhedral surfaces and planar maps, where
+the edges emanating from a vertex or the edges around a facet form a
+circular sequence.
+
+Since circular sequences do not allow for efficient iterators, we have
+introduced the new concept of <I>circulators</I>. They share most of
+the requirements of iterators, while the main difference is the lack
+of a past-the-end position in the sequence. Appropriate adaptors are
+provided between iterators and circulators to integrate circulators
+smoothly into the framework of \stl. An example of a generic <TT>contains</TT> function illustrates the use of circulators. As usual for
+circular structures, a <TT>do</TT>-<TT>while</TT> loop is preferable, such
+that for the specific input, <TT>c == d</TT>, all elements in the
+sequence are reached.
+
+\code{.cpp}
+template <class Circulator, class T>
+bool contains( Circulator c, Circulator d, const T& value) {
+if (c != 0) {
+do {
+if (*c == value)
+return true;
+} while (++c != d);
+}
+return false;
+}
+\endcode
+
+Three circulator categories are defined: forward, bidirectional and
+random-access circulators. Given a circulator <TT>c</TT>, the operation
+<TT>*c</TT> denotes the item the circulator refers to. The operation <TT>++c</TT> advances the circulator by one item and <TT>-c</TT> steps a
+bidirectional circulator one item backwards. For random-access
+circulators <TT>c+n</TT> advances the circulator <TT>n</TT> steps. Two
+circulators can be compared for equality.
+
+Circulators have a different notion of reachability and ranges than
+iterators. A circulator <TT>d</TT> is called <I>reachable/</I> from a
+circulator <TT>c</TT> if <TT>c</TT> can be made equal to <TT>d</TT> with
+finitely many applications of the operator <TT>++</TT>. Due to the
+circularity of the sequence this is always true if both circulators
+refer to items of the same sequence. In particular, <TT>c</TT> is always
+reachable from <TT>c</TT>. Given two circulators <TT>c</TT> and <TT>d</TT>, the
+range <TT>[c,d)</TT> denotes all circulators obtained by starting with
+<TT>c</TT> and advancing <TT>c</TT> until <TT>d</TT> is reached, but does not
+include <TT>d</TT>, for <TT>d</TT> \f$ \neq\f$ <TT>c</TT>. So far it is the same
+range definition as for iterators. The difference lies in the use of
+<TT>[c,c)</TT> to denote all items in the circular sequence, whereas for
+an iterator <TT>i</TT> the range <TT>[i,i)</TT> denotes the empty range. As
+long as <TT>c != d</TT> the range <TT>[c,d)</TT> behaves like an iterator
+range and could be used in \stl algorithms. For circulators however,
+an additional test <TT>c == NULL</TT> is required that returns true if
+and only if the circular sequence is empty. As for
+\cpp, we recommend the use of 0 instead of <TT>NULL</TT>.
+
+Besides the conceptual cleanness, the main reason for inventing a new
+concept with a similar intent as iterators is efficiency. An iterator
+is supposed to be a light-weight object - merely a pointer and a
+single indirection to advance the iterator. Although iterators could
+be written for circular sequences, we do not know of an efficient
+solution. The missing past-the-end situation in circular sequences can
+be solved with an arbitrary sentinel in the cyclic order, but this
+would destroy the natural symmetry in the structure (which is in
+itself a bad idea) and additional bookkeeping in the items and
+checking in the iterator advance method reduces efficiency. Another
+solution may use more bookkeeping in the iterator, e.g. with a start
+item, a current item, and a kind of winding-number that is zero for
+the <TT>begin()</TT>-iterator and one for the past-the-end
+situation\footnote{This is currently implemented as the adaptor class which provides a pair of iterators for a given circulator.}. We have introduced the concept of circulators
+that allows light-weight implementations and the \cgal support
+library provides adaptor classes that convert between iterators and
+circulators (with the corresponding penalty in efficiency), so as to
+integrate this new concept into the framework of \stl.
+
+A serious design problem is the slight change of the semantic for
+circulator ranges as compared to iterator ranges. Since this semantic
+is defined by the intuitive operators <TT>++</TT> and <TT>==</TT>, which we
+would like to keep for circulators as well, circulator ranges can be
+used in \stl algorithms. This is in itself a useful feature, if there
+would not be the definition of a full range \f$ \left[c, c\right)\f$ that
+an \stl algorithm will treat as an empty range. However, the
+likelihood of a mistake may be overestimated, since for a container
+<TT>C</TT> supporting circulators there is no <TT>end()</TT> member
+function, and an expression such as <TT>std::sort( C.begin(),
+C.end())</TT> will fail. It is easy to distinguish iterators and
+circulators at compile time, which allows for generic algorithms
+supporting both as arguments. It is also possible to protect
+algorithms against inappropriate arguments using the same technique,
+see the reference pages for circulators, specifically the
+`Assert_iterator` and `is_empty_range` functions.
+
+\anchor sectionCirculatorWarning
+\attention Please note that the definition of a range is different
+from that of iterators. An interface of a data structure must declare
+whether it works with iterators, circulators, or both. \stl 
+algorithms always specify only iterators in their interfaces. A range
+\f$ \left[c, d\right)\f$ of circulators used in an interface for iterators
+will work as expected as long as \f$ c\; !\!= d\f$. A range \f$ \left[c,
+c\right)\f$ will be interpreted as the empty range like for iterators,
+which is different than the full range that it should denote for
+circulators.
+
+## Adaptors Between Iterators and Circulators ## {#sectionCirculatorAdaptor}
+
+Algorithms working on iterator ranges can not be applied to circulator
+ranges in full generality, only to subranges (see the warning in
+Section \ref sectionCirculatorWarning). The following adaptors
+convert circulators to iterators and vice versa (with the unavoidable
+space and time penalty) to reestablish this generality.
+
+\code{.cpp}
+#include CGAL/circulator.h
+\endcode
+
+<TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+`Container_from_circulator` 
+<TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+container-like class with iterators built from a circulator
+<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+`Circulator_from_iterator` 
+<TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+circulator over a range of two iterators
+<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+`Circulator_from_container` 
+<TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+circulator for a container
+</TABLE>
+
+The following example applies the generic <TT>std::reverse()</TT> algorithm 
+from \stl to a sequence given by a bidirectional circulator <TT>c</TT>.
+It uses the `Container_from_circulator` adaptor.
+
+\code{.cpp}
+Circulator c; // c must be at least bidirectional.
+CGAL::Container_from_circulator<Circulator> container(c);
+std::reverse( container.begin(), container.end());
+\endcode
+
+Another example defines a circulator `c` for a vector of
+`int`'s. However, since there are no elements in the vector, the
+circulator denotes an empty sequence. If there were elements in the
+vector, the circulator would implement a random access modulus the
+size of the sequence.
+
+\code{.cpp}
+std::vector<int> v;
+typedef CGAL::Circulator_from_iterator< 
+std::vector<int>::iterator > Circulator;
+Circulator c( v.begin(), v.end());
+\endcode
+
+## Functions on Circulators ## {#sectionCirculatorFunctions}
+
+A few functions deal with circulators and circulator ranges. The type
+`C` denotes a circulator. The type `IC` denotes either a circulator
+or an iterator. More on algorithms that work with circulators as well with
+iterators can be found in the reference pages.
+
+\code{.cpp}
+#include <CGAL/circulator.h>
+\endcode
+
+\code{.cpp}
+circulator_size(C c); // size of the sequence reachable by `c`
+circulator_distance(C c, C d); // number of elements in the range [c, d)
+iterator_distance(IC ic1, IC ic2); // number of elements in the range [ic2, ic1)
+is_empty_range( IC ic1, IC ic2); // test the range [ic2, ic1) for emptiness
+\endcode
+
+*/ 
+} /* namespace CGAL */
+

@@ -1518,6 +1518,15 @@ Circular_kernel_3/test/Circular_kernel_3/test_Lazy_Spherical_kernel.cpp -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_spherical_kernel_basics.cpp -text
 Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_basics.cpp -text
 Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_with_core.cpp -text
+Circulator/doc/Circulator/CGAL/circulator.h -text
+Circulator/doc/Circulator/CGAL/circulator_bases.h -text
+Circulator/doc/Circulator/Circulator.txt -text
+Circulator/doc/Circulator/Concepts/Circulator.h -text
+Circulator/doc/Circulator/Concepts/ConstRange.h -text
+Circulator/doc/Circulator/Concepts/Handle.h -text
+Circulator/doc/Circulator/Concepts/Range.h -text
+Circulator/doc/Circulator/PackageDescription.txt -text
+Circulator/doc/Circulator/fig/circulator.png -text svneol=unset#image/png
 Circulator/doc_tex/Circulator/circulator.png -text
 Combinatorial_map/doc_tex/Combinatorial_map/Combinatorial_map.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map/PkgDescription.tex -text

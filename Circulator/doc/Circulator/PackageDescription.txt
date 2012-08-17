@@ -1,0 +1,38 @@
+/// \defgroup PkgHandlesAndCirculators Handles and Circulators
+/// \defgroup PkgHandlesAndCirculatorsConcepts Concepts
+/// \ingroup PkgHandlesAndCirculators
+
+/*!
+\addtogroup PkgHandlesAndCirculators
+\todo check generated documentation
+\PkgDescriptionBegin{Handles and Circulators}
+\PkgPicture{circulator.png}
+\PkgAuthor{Olivier Devillers, Lutz Kettner, Sylvain Pion, Michael Seel, and Mariette Yvinec}
+\PkgDesc{This package descibes handles and circulators. They are related to iterators. Handles allow to dereference but neither to increment nor to decrement. Circulators have no notion of past-the-end, and they are used in \cgal whenever we have cyclic stuctures. }
+\PkgSince{1.0}
+\cgalbib{ cgal:dksy-hc-12 }
+\license{ \ref licensesLGPL }
+\PkgDescriptionEnd
+
+The concept of iterators in the \stl is tailored for linear sequences.
+
+\cgal extends this in several directions.  First, it supports the notion
+of `Handle` (also sometimes refered to as the trivial iterator) which is
+used to document that no traversal operation is needed, only reference to an
+element.  It also uses the `Range` and `ConstRange` concepts which
+encapsulates the access to both the first and the past-the-end iterators of an
+iterator range.
+
+Besides linear sequences, circular sequences also occur naturally in many combinatorial
+and geometric structures. Examples are polyhedral surfaces and planar
+maps, where the edges emanating from a vertex or the edges around a
+facet form a circular sequence.
+
+We provide several functions, classes and macros to assist in working
+with circulators: distance computation, adaptor classes converting
+between circulators and iterators, base classes to ease the implementation
+of circulators, and support for generic algorithms that work with
+circulators as well as with iterators.
+
+*/
+
