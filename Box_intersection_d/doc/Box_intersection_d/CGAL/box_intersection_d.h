@@ -221,8 +221,6 @@ namespace CGAL {
   `Box_handle` corresponds to the iterator value type of
   `ForwardIterator1`.
 
-  Foobar.
-
   See \ref box_intersection_all_pairs_d.
 */
 template< class ForwardIterator1, 
