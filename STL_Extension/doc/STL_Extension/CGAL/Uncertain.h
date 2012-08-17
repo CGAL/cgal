@@ -253,7 +253,7 @@ template <class T>
 Uncertain<bool> operator!=(T u, Uncertain<T> v); 
 
 /*!
-\name Overloaded operators for Uncertain<bool>
+\name Overloaded Operators for Uncertain<bool>
 
 The overloaded operators and functions are defined as preserving the set-inclusion property. 
 Similarly to interval arithmetic, the returned range is guaranteed to contain 
@@ -378,7 +378,7 @@ Uncertain<bool> operator&(bool u, Uncertain<bool> v);
 
 /// @}
 
-/// \name Overloaded operators and functions for `Uncertain<enum T>` only 
+/// \name Overloaded Operators and Functions for `Uncertain<enum T>` only 
 /// @{
 
 /*! 

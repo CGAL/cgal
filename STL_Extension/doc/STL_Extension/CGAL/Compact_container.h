@@ -408,7 +408,7 @@ const_reverse_iterator rend() const;
 /// \name Access Member Functions 
 /// @{ 
 /*! 
-returns an iterator which points to `value`; 
+returns an iterator which points to `value`. 
 */ 
 iterator iterator_to(reference value) const; 
 
@@ -420,7 +420,7 @@ iterator iterator_to(reference value) const;
 /// \name Access Member Functions 
 /// @{ 
 /*! 
-returns an iterator which points to `value`; 
+returns an iterator which points to `value`. 
 */ 
 const_iterator iterator_to(const_reference value) const; 
 
