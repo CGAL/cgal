@@ -53,7 +53,7 @@ Constructor that inserts the iterator range `[first, last)` in the interval skip
 \pre The `value_type` of `first` and `last` is `Interval`. 
 */ 
 template < class InputIterator > 
-Alpha_shape_2( 
+Interval_skip_list( 
 InputIterator first, 
 InputIterator last); 
 
