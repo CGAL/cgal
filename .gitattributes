@@ -3480,6 +3480,21 @@ Nef_2/demo/Nef_2/xpms/newopen.pcx -text
 Nef_2/demo/Nef_2/xpms/newpoly.pcx -text
 Nef_2/demo/Nef_2/xpms/union.pcx -text
 Nef_2/demo/Nef_2/xpms/union.xpm svneol=native#unset
+Nef_2/doc/Nef_2/CGAL/Extended_cartesian.h -text
+Nef_2/doc/Nef_2/CGAL/Extended_homogeneous.h -text
+Nef_2/doc/Nef_2/CGAL/Filtered_extended_homogeneous.h -text
+Nef_2/doc/Nef_2/CGAL/Nef_polyhedron_2.h -text
+Nef_2/doc/Nef_2/Classified.txt -text
+Nef_2/doc/Nef_2/Concepts/ExtendedKernelTraits_2.h -text
+Nef_2/doc/Nef_2/Nef_2.txt -text
+Nef_2/doc/Nef_2/PackageDescription.txt -text
+Nef_2/doc/Nef_2/fig/complex-teaser.png -text svneol=unset#image/png
+Nef_2/doc/Nef_2/fig/complex.gif -text svneol=unset#image/gif
+Nef_2/doc/Nef_2/fig/complex.pdf -text svneol=unset#application/pdf
+Nef_2/doc/Nef_2/fig/extsegs.gif -text svneol=unset#image/gif
+Nef_2/doc/Nef_2/fig/extsegs.pdf -text svneol=unset#application/pdf
+Nef_2/doc/Nef_2/fig/halfplane.gif -text svneol=unset#image/gif
+Nef_2/doc/Nef_2/fig/halfplane.pdf -text svneol=unset#application/pdf
 Nef_2/doc_tex/Nef_2/complex-teaser.png -text
 Nef_2/doc_tex/Nef_2/complex.gif -text svneol=unset#image/gif
 Nef_2/doc_tex/Nef_2/complex.pdf -text svneol=unset#application/pdf
@@ -3496,6 +3511,35 @@ Nef_3/Visual_hull/Nef_3/octahedron.off -text svneol=unset#application/octet-stre
 Nef_3/demo/Nef_3/CMakeLists.txt -text
 Nef_3/demo/Nef_3/cube.off -text svneol=unset#application/octet-stream
 Nef_3/demo/Nef_3/mpi.vsh -text
+Nef_3/doc/Nef_3/CGAL/IO/Nef_polyhedron_iostream_3.h -text
+Nef_3/doc/Nef_3/CGAL/IO/Qt_widget_Nef_3.h -text
+Nef_3/doc/Nef_3/CGAL/Nef_nary_union_3.h -text
+Nef_3/doc/Nef_3/CGAL/Nef_polyhedron_3.h -text
+Nef_3/doc/Nef_3/CGAL/OFF_to_nef_3.h -text
+Nef_3/doc/Nef_3/Nef_3.txt -text
+Nef_3/doc/Nef_3/PackageDescription.txt -text
+Nef_3/doc/Nef_3/fig/closeup.gif -text svneol=unset#image/gif
+Nef_3/doc/Nef_3/fig/closeup.pdf -text svneol=unset#application/pdf
+Nef_3/doc/Nef_3/fig/nef_example.gif -text svneol=unset#image/gif
+Nef_3/doc/Nef_3/fig/nef_example.pdf -text svneol=unset#application/pdf
+Nef_3/doc/Nef_3/fig/nef_non_manifold3a.gif -text svneol=unset#image/gif
+Nef_3/doc/Nef_3/fig/nef_non_manifold3a.pdf -text svneol=unset#application/pdf
+Nef_3/doc/Nef_3/fig/nef_pyramids.gif -text svneol=unset#image/gif
+Nef_3/doc/Nef_3/fig/nef_pyramids.pdf -text svneol=unset#application/pdf
+Nef_3/doc/Nef_3/fig/shalfedge.gif -text svneol=unset#image/gif
+Nef_3/doc/Nef_3/fig/shalfedge.pdf -text svneol=unset#application/pdf
+Nef_3/doc/Nef_3/fig/shalfloopB.gif -text svneol=unset#image/gif
+Nef_3/doc/Nef_3/fig/shalfloopB.pdf -text svneol=unset#application/pdf
+Nef_3/doc/Nef_3/fig/shells.gif -text svneol=unset#image/gif
+Nef_3/doc/Nef_3/fig/shells.pdf -text svneol=unset#application/pdf
+Nef_3/doc/Nef_3/fig/snc.gif -text svneol=unset#image/gif
+Nef_3/doc/Nef_3/fig/snc.pdf -text svneol=unset#application/pdf
+Nef_3/doc/Nef_3/fig/sphere_map.pdf -text svneol=unset#application/pdf
+Nef_3/doc/Nef_3/fig/sphere_map.png -text svneol=unset#image/png
+Nef_3/doc/Nef_3/fig/teaser.png -text svneol=unset#image/png
+Nef_3/doc/Nef_3/fig/visualization_SNC.gif -text svneol=unset#image/gif
+Nef_3/doc/Nef_3/fig/visualization_SNC.pdf -text svneol=unset#application/pdf
+Nef_3/doc/Nef_3/fig/visualization_SNC.png -text svneol=unset#image/png
 Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/closeup.pdf -text svneol=unset#application/pdf
 Nef_3/doc_tex/Nef_3/fig/nef_example.gif -text svneol=unset#image/gif
