@@ -2361,14 +2361,14 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
       std::list<std::pair<const DHalfedge*, int> > local_mins1;
       signs1 =
         _compute_signs_and_local_minima(prev1, cv, cv_dir1, prev2->next(), 
-                                        std::front_inserter(local_mins1));
+                                        std::back_inserter(local_mins1));
       
       Arr_halfedge_direction cv_dir2 = (cv_dir == ARR_LEFT_TO_RIGHT) ?
         CGAL::ARR_RIGHT_TO_LEFT : CGAL::ARR_LEFT_TO_RIGHT;
       std::list< std::pair< const DHalfedge*, int > > local_mins2;
       signs2 =
         _compute_signs_and_local_minima(prev2, cv, cv_dir2, prev1->next(), 
-                                        std::front_inserter(local_mins2));
+                                        std::back_inserter(local_mins2));
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs1.x: " << signs1.first << std::endl;
       std::cout << "signs1.y: " << signs1.second << std::endl;
@@ -3324,6 +3324,10 @@ _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
 // he_to=>cv,cv_dir=>he_away is a subsequence of one of the resulting
 // ones. The function is also called for a tuple indicating the other
 // ccb.
+// EFEF the above does not reflect the code.
+// The OutputIterator must be a back inserter, if one needs to be certain
+// that if NULL is a local minimum, it is inserted first. No other local
+// minima can be NULL.
 template <typename GeomTraits, typename TopTraits>
 template <typename OutputIterator>
 std::pair< CGAL::Sign, CGAL::Sign > 
@@ -3677,12 +3681,10 @@ _is_smaller(const X_monotone_curve_2& cv1,
             const X_monotone_curve_2& cv2, 
             Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const
 {
-  // std::cout << "cv1: " << cv1 << ", ce1: " << ce1 << std::endl;
-  // std::cout << "index1: " << index1
-  //           << ", ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
-  // std::cout << "cv2: " << cv2 << ", ce2: " << ce2 << std::endl;
-  // std::cout << "index2: " << index2
-  //           << ", ps_x2: " << ps_x2 << ", ps_y2: " << ps_y2 << std::endl;
+  // std::cout << "cv1: " << cv1 << std::endl;
+  // std::cout << ", ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
+  // std::cout << "cv2: " << cv2 << std::endl;
+  // std::cout << ", ps_x2: " << ps_x2 << ", ps_y2: " << ps_y2 << std::endl;
 
   typename Geometry_traits_2::Construct_min_vertex_2 min_vertex =
     m_geom_traits->construct_min_vertex_2_object();
