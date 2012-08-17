@@ -6,7 +6,9 @@ namespace CGAL {
 
 \authors Eli Packer
 
-# Introduction #
+# Introduction # 
+
+<span style="display:none">\f$ \def\A{{\cal A}} \f$ \f$ \def\S{{\cal S}} \f$</span>
 
 Snap Rounding (SR, for short) is a well known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
