@@ -203,9 +203,10 @@ paint( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > t
     for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
     {
         Point_2 p = it->point( );
-        std::pair< double, double > approx = p.to_double( );
-        Kernel_point_2 pt( approx.first, approx.second );
-        this->painterostream << pt;
+        //std::pair< double, double > approx = p.to_double( );
+        //Kernel_point_2 pt( approx.first, approx.second );
+        //this->painterostream << pt;
+        this->painterostream << p;
     }
     painter->setPen( this->edgesPen );
     for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
@@ -214,7 +215,6 @@ paint( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > t
         this->painterostream << curve;
     }
 }
-
 
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView

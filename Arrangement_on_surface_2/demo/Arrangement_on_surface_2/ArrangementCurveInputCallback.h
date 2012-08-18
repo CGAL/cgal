@@ -19,7 +19,9 @@ public:
     typedef CGAL::Qt::GraphicsViewCurveInput< Traits > Superclass;
     typedef typename Arrangement::Vertex_iterator Vertex_iterator;
     typedef typename Traits::Curve_2 Curve_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
+    typedef typename Kernel::Point_2 Kernel_point_2;
     typedef typename ArrTraitsAdaptor< Traits >::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::FT FT;
@@ -37,10 +39,19 @@ public:
     void processInput( CGAL::Object o )
     {
         Curve_2 curve;
+        X_monotone_curve_2 xcurve;
         if ( CGAL::assign( curve, o ) )
         {
             CGAL::insert( *( this->arrangement ), curve );
         }
+#if 0
+        else if ( CGAL::assign( xcurve, o ) )
+        {
+            std::vector< X_monotone_curve_2 > box;
+            box.push_back( xcurve );
+            CGAL::insert( *( this->arrangement ), box.begin( ), box.end( ) );
+        }
+#endif
     
         emit CGAL::Qt::GraphicsViewInput::modelChanged( );
     }
@@ -70,13 +81,16 @@ protected:
         }
         else
         {
-            return this->convert( event->scenePos( ) );
+            Kernel_point_2 p = this->convert( event->scenePos( ) );
+            Point_2 res = this->toArrPoint( p );
+            return res;
         }
     }
 
     Arrangement* arrangement;
     SnapToArrangementVertexStrategy< Arrangement > snapToVertexStrategy;
     SnapToGridStrategy< typename Arrangement::Geometry_traits_2 > snapToGridStrategy;
+    Arr_construct_point_2< Traits > toArrPoint;
 }; // class ArrangementCurveInputCallback
 
 #endif // ARRANGEMENT_SEGMENT_INPUT_CALLBACK_H

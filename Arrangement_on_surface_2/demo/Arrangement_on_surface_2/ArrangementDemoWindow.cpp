@@ -568,6 +568,7 @@ on_actionOpen_triggered( )
     Seg_arr* seg;
     Pol_arr* pol;
     Conic_arr* conic;
+    Alg_seg_arr* alg;
     if ( CGAL::assign( seg, arr ) )
     {
         typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Seg_arr > > ArrFormatter;
@@ -611,6 +612,17 @@ on_actionOpen_triggered( )
         CGAL::insert( *conic, curve_list.begin(), curve_list.end() );
         tab->setArrangement( conic );
         //QMessageBox::information( this, "Oops", "Reading conic arrangement not supported" );
+    }
+    else if ( CGAL::assign( alg, arr ) )
+    {
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Alg_seg_arr > > ArrFormatter;
+        typedef ArrangementDemoTab< Alg_seg_arr > TabType;
+
+        ArrFormatter arrFormatter;
+        CGAL::read( *alg, ifs, arrFormatter );
+        this->arrangements[ index ] = CGAL::make_object( alg );
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+        tab->setArrangement( alg );
     }
     ifs.close( );
 

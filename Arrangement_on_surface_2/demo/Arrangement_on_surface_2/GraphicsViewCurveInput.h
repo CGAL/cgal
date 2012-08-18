@@ -735,12 +735,77 @@ template < class Coefficient_ >
 class GraphicsViewCurveInput< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >:
     public GraphicsViewCurveInputBase
 {
+    typedef Coefficient_ Coefficent;
+    typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > Traits;
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
+    typedef Traits::Point_2 Point_2;
+    typedef Kernel::Point_2 Kernel_point_2;
+    typedef Kernel::Segment_2 Segment_2;
 
 public:
     GraphicsViewCurveInput( QObject* parent ):
-        GraphicsViewCurveInputBase( parent )
+        GraphicsViewCurveInputBase( parent ),
+        second( false )
     { }
 
+public:
+    void mousePressEvent( QGraphicsSceneMouseEvent* event )
+    {
+        if ( ! this->second )
+        {
+            this->second = true;
+            this->p1 = this->snapPoint( event );
+            QPointF pt = event->scenePos( );
+            this->segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+            if ( this->scene != NULL )
+            {
+                this->scene->addItem( &( this->segmentGuide ) );
+            }
+        }
+        else
+        {
+            this->second = false;
+            Point_2 p2 = this->snapPoint( event );
+            if ( this->scene != NULL )
+            {
+                this->scene->removeItem( &( this->segmentGuide ) );
+            }
+            if ( traits.compare_xy_2_object()( this->p1, p2 ) == CGAL::EQUAL )
+            {
+                return;
+            }
+            std::cout << "Algebraic traits curve insert stub" << std::endl;
+        }
+    }
+
+    void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+    {
+        if ( this->second )
+        {
+            Kernel_point_2 clickedPoint = this->convert( event->scenePos( ) );
+            std::pair< double, double > pp1 = this->p1.to_double( );
+            QPointF qp1( pp1.first, pp1.second );
+            Kernel_point_2 firstPoint = this->convert( qp1 );
+            Segment_2 segment( firstPoint, clickedPoint );
+            QLineF qSegment = this->convert( segment );
+            this->segmentGuide.setLine( qSegment );
+        }
+    }
+
+    virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
+    {
+        Kernel_point_2 pt = this->convert( event->scenePos( ) );
+        Point_2 res = this->toArrPoint( pt );
+        return res;
+    }
+    
+protected:
+    Traits traits;
+    Converter< Kernel > convert;
+    Arr_construct_point_2< Traits > toArrPoint;
+    Point_2 p1;
+    bool second;
+    QGraphicsLineItem segmentGuide;
 };
 
 } // namespace Qt

@@ -364,6 +364,7 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Utils.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayShootCallback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayShootCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/arrangement_2b.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/algebraic/alg_circle.arr -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/big_circ_arcs.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/circles_21.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/polyline/ps_circs.dat -text
