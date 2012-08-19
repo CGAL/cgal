@@ -35,7 +35,7 @@ template <class Base_,class R_> struct Orientation_of_points_2 : private Store_k
 			}
 		};
 	};
-	template<class Iter> result_type operator()(Iter f, Iter e)const{
+	template<class Iter> result_type operator()(Iter f, Iter CGAL_assertion_code(e))const{
 		CC c(this->kernel());
 		Point const& A=*f;
 		Point const& B=*++f;

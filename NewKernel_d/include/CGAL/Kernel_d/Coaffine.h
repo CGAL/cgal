@@ -13,6 +13,33 @@ struct Flat_orientation {
 	std::vector<int> rest;
 };
 
+// For debugging purposes
+inline std::ostream& operator<< (std::ostream& o, Flat_orientation const& f) {
+  o << "Proj: ";
+  for(std::vector<int>::const_iterator i=f.proj.begin();
+      i!=f.proj.end(); ++i)
+    o << *i << ' ';
+  o << "\nRest: ";
+  for(std::vector<int>::const_iterator i=f.rest.begin();
+      i!=f.rest.end(); ++i)
+    o << *i << ' ';
+  return o << '\n';
+}
+
+namespace internal {
+namespace coaffine {
+template<class Mat>
+inline void debug_matrix(std::ostream& o, Mat const&mat) {
+  for(int i=0;i<mat.rows();++i){
+  for(int j=0;j<mat.cols();++j){
+    o<<mat(i,j)<<' ';
+  }
+  o<<'\n';
+  }
+}
+}
+}
+
 template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_flat_orientation)
 	typedef R_ R;
@@ -32,7 +59,7 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 		PD pd (this->kernel());
 		CCC ccc (this->kernel());
 		int dim = pd(*f);
-		Matrix coord (dim+1, dim+1); // use distance(f,e)?
+		Matrix coord (dim+1, dim+1); // use distance(f,e)? This matrix doesn't need to be square.
 		int col = 0;
 		Flat_orientation o;
 		std::vector<int>& proj=o.proj;
@@ -51,7 +78,8 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 				m(i,j) = coord(i, proj[j]);
 			// Try to complete with any other coordinate
 			// TODO: iterate on rest by the end, or use a (forward_)list.
-			for(std::vector<int>::iterator it=rest.begin();it!=rest.end();++it) {
+			for(std::vector<int>::iterator it=rest.begin();;++it) {
+				CGAL_assertion(it!=rest.end());
 				for(int i=0; i<d; ++i) m(i,d-1) = coord(i, *it);
 				if(LA::sign_of_determinant(m)!=0) {
 					proj.push_back(*it);
@@ -59,7 +87,6 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 					break;
 				}
 			}
-			//CGAL_assertion(it!=rest.end());
 		}
 		std::sort(proj.begin(),proj.end());
 		return o;

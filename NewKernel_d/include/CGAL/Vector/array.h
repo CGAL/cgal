@@ -45,7 +45,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 
 		struct Iterator {
 			template<typename Iter>
-				Vector operator()(unsigned d,Iter const& f,Iter const& e) const {
+				Vector operator()(unsigned CGAL_assertion_code(d),Iter const& f,Iter const& e) const {
 					CGAL_assertion(d==std::distance(f,e));
 					CGAL_assertion(d<=d_);
 					//TODO: optimize for forward iterators

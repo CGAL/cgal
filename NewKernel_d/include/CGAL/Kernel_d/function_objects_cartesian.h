@@ -106,7 +106,7 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 		auto const&p=*f;
 		return help2(Dimension_tag<N-1>(),++f,e,std::forward<U>(u)...,p);
 	}
-	template<class Iter,class...U> result_type help2(Dimension_tag<0>, Iter f, Iter const&e, U&&...u)const{
+	template<class Iter,class...U> result_type help2(Dimension_tag<0>, Iter CGAL_assertion_code(f), Iter const& CGAL_assertion_code(e), U&&...u)const{
 		CGAL_assertion(f==e);
 		return operator()(std::forward<U>(u)...);
 	}
@@ -133,7 +133,7 @@ template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : priv
 		return sign_of_determinant(BOOST_PP_ENUM(N,VAR2,N)); \
 	} \
 	template<class Iter> \
-	result_type operator()(Iter f, Iter e)const{ \
+	result_type operator()(Iter f, Iter CGAL_assertion_code(e))const{ \
 		Point const&x=*f; \
 		BOOST_PP_REPEAT(N,VAR3,) \
 		CGAL_assertion(++f==e); \
