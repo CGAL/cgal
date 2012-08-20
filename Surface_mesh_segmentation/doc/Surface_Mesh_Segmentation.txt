@@ -9,7 +9,7 @@ namespace CGAL {
 \image html elephant_sdf_partition.png "Elephant model: SDF values & Segmentation (Going to be changed-improved)"
 
 # Introduction #
-Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. Main areas which might utilize mesh segmentation include, but not limited to, modelling, rigging and texturing, shape-retrieval, and deformation.
+Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. Main areas which might utilize mesh segmentation include, but not limited to, modeling, rigging and texturing, shape-retrieval, and deformation.
 
 The algorithm presented here is based on \cite shapira2008consistent which introduces Shape Diameter Function that represents a connection between the surface and its volume. Being a pose-invariant and volume-based feature, SDF can be computed for each facet on the surface. Using SDF values, the mesh is first soft clustered by grouping facets that have close SDF values together. These clusters are then refined by graph-cut algorithm which also considers surface-based features like dihedral-angle and concavity. 
 
@@ -20,7 +20,7 @@ The segmentation algorithm consists of three major parts: Shape Diameter Functio
 
 ## Shape Diameter Function ##
 First part is computation of Shape Diameter Function (SDF), which represents a connection between the surface and its volume. More precisely, SDF is a scalar-valued function defined on the surface which measures the corresponding local volume.
-The main handiness of SDF is being able to distinguish thick and thin parts of the mesh by bringing in a volume-based feature to the surface. Another key feature of SDF is its pose-invariant nature, which means that SDF values for a mesh remains largely uneffected after changes of pose.
+The main handiness of SDF is being able to distinguish thick and thin parts of the mesh by bringing in a volume-based feature to the surface. Another key feature of SDF is its pose-invariant nature, which means that SDF values for a mesh remains largely unaffected after changes of pose.
 
 Basically, SDF for a surface is computed by processing each facets, which comprise the surface, one by one. For a given facet, SDF value computation begins with casting several rays sampled from a cone which is constructed using centroid of the facet as apex and inward-normal of the facet as axis. Then using casted rays (which intuitively correspond to sampling for local volume), resulting SDF value is calculated by first applying outlier removal and then taking weighted average of ray distances.
 
