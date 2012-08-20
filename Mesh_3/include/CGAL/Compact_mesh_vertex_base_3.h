@@ -69,13 +69,10 @@ public:
     , meshing_info_(0)
     , dimension_(-1)
     , cache_validity(false)
-#ifdef CGAL_FREEZE_VERTICES
-    , frozen_(false) 
-#endif
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
     , previous_intrusive_()
-#endif //CGAL_FREEZE_VERTICES
+#endif //CGAL_INTRUSIVE_LIST
   {}
 
   // Default copy constructor and assignment operator are ok
@@ -112,11 +109,6 @@ public:
   const FT& meshing_info() const { return meshing_info_; }
   void set_meshing_info(const FT& value) { meshing_info_ = value; }
 
-#ifdef CGAL_FREEZE_VERTICES
-  // Accessors to frozen private data
-  const bool& frozen() const { return frozen_; }
-  void set_frozen(const bool& fr) { frozen_ = fr; }
-#endif
 #ifdef CGAL_INTRUSIVE_LIST
   Vertex_handle next_intrusive() const { return next_intrusive_; }
   Vertex_handle& next_intrusive() { return next_intrusive_; }
@@ -176,11 +168,6 @@ private:
   // that contains me. Negative values are a marker for special vertices.
   short dimension_;
   bool cache_validity;
-  // sets if I am frozen (not allowed to move anymore for global optimizers) 
-  // (set to true when my move is too small compared to sq_freeze_ratio_)
-#ifdef CGAL_FREEZE_VERTICES
-  bool frozen_;
-#endif
 #ifdef CGAL_INTRUSIVE_LIST
   Vertex_handle next_intrusive_;
   Vertex_handle previous_intrusive_;

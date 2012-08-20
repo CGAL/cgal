@@ -66,10 +66,7 @@ public:
   Mesh_vertex_base_3() : Surface_mesh_vertex_base_3<GT, Vb>()
                        , index_()
                        , dimension_(-1)
-                       , meshing_info_(0) 
-#ifdef CGAL_FREEZE_VERTICES
-                       , frozen_(false) 
-#endif //CGAL_FREEZE_VERTICES
+                       , meshing_info_(0)
   {}
 
   // Default copy constructor and assignment operator are ok
@@ -106,12 +103,6 @@ public:
   const FT& meshing_info() const { return meshing_info_; }
   void set_meshing_info(const FT& value) { meshing_info_ = value; }
 
-#ifdef CGAL_FREEZE_VERTICES
-  // Accessors to frozen private data
-  const bool& frozen() const { return frozen_; }
-  void set_frozen(const bool& fr) { frozen_ = fr; }
-#endif // CGAL_FREEZE_VERTICES
-
   static
   std::string io_signature()
   {
@@ -120,7 +111,6 @@ public:
       Get_io_signature<int>()() + "+" +
       Get_io_signature<Index>()();
   }
-
 private:
   // Index of the lowest dimensional face of the input 3D complex
   // that contains me
@@ -130,11 +120,6 @@ private:
   int dimension_;
   // Stores info needed by optimizers
   FT meshing_info_;
-#ifdef CGAL_FREEZE_VERTICES
-  // sets if I am frozen (not allowed to move anymore for global optimizers) 
-  // (set to true when my move is too small compared to sq_freeze_ratio_)
-  bool frozen_;
-#endif // CGAL_FREEZE_VERTICES
 };  // end class Mesh_vertex_base_3
 
 template<class GT,

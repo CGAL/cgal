@@ -114,13 +114,6 @@ public:
   Mesh_optimization_return_code operator()(int nb_iterations,
                                            Visitor v = Visitor());
 
-#ifdef CGAL_FREEZE_VERTICES
-  /**
-   * resets everything about frozen vertices
-   */
-  void unfreeze_all();
-#endif  
-
   /**
   * collects all vertices of the triangulation in moving_vertices
   * (even the frozen ones)
@@ -139,6 +132,8 @@ private:
   
   /**
    * Returns the move for vertex \c v
+   * warning : this function should be called only on moving vertices
+   *           even for frozen vertices, it could return a non-zero vector
    */
   Vector_3 compute_move(const Vertex_handle& v);
   
@@ -277,12 +272,6 @@ operator()(int nb_iterations, Visitor visitor)
   running_time_.reset();
   running_time_.start();
 
-  // unfreeze everything : needed if the user wants to 
-  // run a global optimization after another
-#ifdef CGAL_FREEZE_VERTICES
-  unfreeze_all();
-#endif
-
   // Fill set containing moving vertices
   // first, take them all
 #ifdef  CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR
@@ -294,7 +283,7 @@ operator()(int nb_iterations, Visitor visitor)
   collect_all_vertices(moving_vertices);
 #endif
 
-  unsigned int initial_vertices_nb = moving_vertices.size();
+  std::size_t initial_vertices_nb = moving_vertices.size();
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   double step_begin = running_time_.time();
   std::cerr << "Running " << Mf::name() << "-smoothing (" 
@@ -329,10 +318,10 @@ operator()(int nb_iterations, Visitor visitor)
     // Update mesh with those moves
     update_mesh(moves, moving_vertices, visitor);
     visitor.end_of_iteration(i);
-    
+   
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
     unsigned int moving_vertices_size = moving_vertices.size();
-    
+   
 #ifdef CGAL_FREEZE_VERTICES
     std::cerr << boost::format("\r             \r"
       "end iteration %1% (%2% frozen), %3% / %4%, last step:%5$.2fs, step avg:%6$.2fs, avg large move:%7$.3f ")
@@ -353,7 +342,7 @@ operator()(int nb_iterations, Visitor visitor)
     % (running_time_.time() / (i+1))
     % sum_moves_;
 #endif
-    
+
     step_begin = running_time_.time();
 #endif
 
@@ -405,30 +394,6 @@ collect_all_vertices(Moving_vertices_set& moving_vertices)
     moving_vertices.insert(vit); 
 }
 
-
-#ifdef CGAL_FREEZE_VERTICES
-template <typename C3T3, typename Md, typename Mf, typename V_>
-void 
-Mesh_global_optimizer<C3T3,Md,Mf,V_>::
-unfreeze_all()
-{
-#ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-  std::cerr << "Unfreeze all...";
-  CGAL::Timer timer;
-  timer.start();
-  double t = timer.time();
-#endif
-  nb_frozen_points_ = 0;
-  if(do_freeze_)
-    helper_.unfreeze_all_vertices();
-
-#ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-  std::cerr << " done ("<< (timer.time() - t) << " sec).";
-#endif
-}
-#endif
-
-
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Moves_vector
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
@@ -437,7 +402,7 @@ compute_moves(/*const */Moving_vertices_set& moving_vertices)
   typename Gt::Construct_translated_point_3 translate =
     Gt().construct_translated_point_3_object();
 
-  // Store new location of points which have to move
+  // Store new position of points which have to move
   Moves_vector moves;
   moves.reserve(moving_vertices.size());
   
@@ -452,24 +417,20 @@ compute_moves(/*const */Moving_vertices_set& moving_vertices)
   typename Moving_vertices_set::iterator vit = moving_vertices.begin();
   for ( ; vit != moving_vertices.end() ; )
   {
-    Vector_3 move = compute_move(*vit);
-    
-    if ( CGAL::NULL_VECTOR != move )
-    {
-      Point_3 new_position = translate((*vit)->point(),move);
-      moves.push_back(std::make_pair(*vit,new_position));
-    }
-
-#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
     Vertex_handle oldv = *vit;
-#endif //CGAL_IMPROVE_FREEZE
+    Vector_3 move = compute_move(oldv);
     ++vit;
+    
+	if ( CGAL::NULL_VECTOR != move )
+    {
+      Point_3 new_position = translate(oldv->point(),move);
+      moves.push_back(std::make_pair(oldv,new_position));
+    }
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+  	else // CGAL::NULL_VECTOR == move
+	  moving_vertices.erase(oldv);
+#endif
 
-#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
-    if(oldv->frozen())
-      moving_vertices.erase(oldv);
-#endif //CGAL_IMPROVE_FREEZE
-        
     // Stop if time_limit_ is reached
     if ( is_time_limit_reached() )
       break;
@@ -485,10 +446,6 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Vector_3
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 compute_move(const Vertex_handle& v)
 {    
-#ifdef CGAL_FREEZE_VERTICES
-  if(do_freeze_ && v->frozen())
-    return CGAL::NULL_VECTOR;
-#endif
   typename Gt::Compute_squared_length_3 sq_length =
     Gt().compute_squared_length_3_object();
   
@@ -522,8 +479,6 @@ compute_move(const Vertex_handle& v)
   if ( local_move_sq_ratio < sq_freeze_ratio_ )
   {
 #ifdef CGAL_FREEZE_VERTICES
-    if(do_freeze_)
-      v->set_frozen(true);
     nb_frozen_points_++;
 #endif
     return CGAL::NULL_VECTOR;

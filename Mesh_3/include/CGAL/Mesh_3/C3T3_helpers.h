@@ -319,6 +319,16 @@ public:
     }
     return f == Type_handle();
   }
+
+  bool contains(Type_handle th) const
+  {
+    if(th->next_intrusive() == Type_handle())
+    {
+      assert(th->previous_intrusive() == Type_handle());
+      return true;
+    }
+    else return false;
+  }
   
   void push_back(Type_handle ch)
   {
@@ -1462,20 +1472,7 @@ private:
                   bl::bind(&Cell::reset_cache_validity, *bl::_1) );
   }
   
-public:
-#ifdef CGAL_FREEZE_VERTICES
-  /**
-  * Unfreeze all vertices of the triangulation for global optimizers
-  */
-  void unfreeze_all_vertices()
-  {
-    for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
-        vit != tr_.finite_vertices_end();
-        vit++)
-      vit->set_frozen(false);
-  }
-#endif
-  
+
 private:
   // -----------------------------------
   // Private data
@@ -1732,11 +1729,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     {
       for ( int i=0 ; i<4 ; ++i )
       {
-#ifdef CGAL_FREEZE_VERTICES
-          Vertex_handle vi = cell->vertex(i);
-          if(!vi->frozen())
-#endif //CGAL_FREEZE_VERTICES
-            moving_vertices.insert(cell->vertex(i)); 
+	  	moving_vertices.insert(cell->vertex(i)); 
       }
     }
 #endif //CGAL_IMPROVE_FREEZE
@@ -1802,11 +1795,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
     {
       for ( int i=0 ; i<4 ; ++i )
       {
-#ifdef CGAL_FREEZE_VERTICES
-        Vertex_handle vi = cell->vertex(i);
-        if(!vi->frozen())
-#endif //CGAL_FREEZE_VERTICES
-          moving_vertices.insert(cell->vertex(i)); 
+      	moving_vertices.insert(cell->vertex(i)); 
       }
     }
 #endif //!defined(CGAL_IMPROVE_FREEZE)
@@ -2061,13 +2050,14 @@ move_point_topo_change_conflict_zone_known(
 
   // Remove conflict zone cells from c3t3 (they will be deleted by insert/remove)
   remove_cells_and_facets_from_c3t3(conflict_zone.begin(), conflict_zone.end());
-
-  // Start Move point // Insert new_vertex, remove old_vertex
+ 
+// Start Move point // Insert new_vertex, remove old_vertex
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertice_index = c3t3_.index(old_vertex);
   FT meshing_info = old_vertex->meshing_info();
-#ifdef CGAL_FREEZE_VERTICES
-  bool frozen = old_vertex->frozen();
+#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+  Vertex_handle next = old_vertex->next_intrusive();
+  Vertex_handle prev = old_vertex->previous_intrusive();
 #endif
 
   // insert new point
@@ -2089,12 +2079,14 @@ move_point_topo_change_conflict_zone_known(
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertice_index);
   new_vertex->set_meshing_info(meshing_info);
-#ifdef CGAL_FREEZE_VERTICES
-  new_vertex->set_frozen(frozen);
+#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+  new_vertex->next_intrusive() = next;
+  new_vertex->previous_intrusive() = prev;
 #endif
   // End Move point
 
   //// Fill outdated_cells
+  // Get conflict zone in new triangulation and set cells outdated
   Cell_vector new_conflict_cells;
   new_conflict_cells.reserve(64);
   get_conflict_zone_topo_change(new_vertex, old_position,
@@ -2107,7 +2099,6 @@ move_point_topo_change_conflict_zone_known(
 
   return new_vertex;
 }
-
 
 template <typename C3T3, typename MD>
 template < typename ConflictCellsInputIterator,
@@ -2172,8 +2163,9 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertice_index = c3t3_.index(old_vertex);
   FT meshing_info = old_vertex->meshing_info();
-#ifdef CGAL_FREEZE_VERTICES
-  bool frozen = old_vertex->frozen();
+#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+  Vertex_handle next = old_vertex->next_intrusive();
+  Vertex_handle prev = old_vertex->previous_intrusive();
 #endif
 
   // insert new point
@@ -2186,9 +2178,11 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertice_index);
   new_vertex->set_meshing_info(meshing_info);
-#ifdef CGAL_FREEZE_VERTICES
-  new_vertex->set_frozen(frozen);
+#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+  new_vertex->next_intrusive() = next;
+  new_vertex->previous_intrusive() = prev;
 #endif
+
   return new_vertex;
 }
   
