@@ -4338,6 +4338,33 @@ SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.pdf -text svneol=unset
 SearchStructures/examples/RangeSegmentTrees/software_design_rgs.cpp -text
 Segment_Delaunay_graph_2/benchmark/Segment_Delaunay_graph_2/data/norway.cin -text
 Segment_Delaunay_graph_2/benchmark/Segment_Delaunay_graph_2/double.cpp -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_filtered_traits_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_hierarchy_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_hierarchy_vertex_base_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_site_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_storage_site_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_traits_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_vertex_base_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Classified.txt -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGraphDataStructure_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGraphHierarchyVertexBase_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGraphSite_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGraphStorageSite_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGraphTraits_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGraphVertexBase_2.h -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/PackageDescription.txt -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Segment_Delaunay_graph_2.txt -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/norway.png -text svneol=unset#image/png
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/sdg-join_split.gif -text svneol=unset#image/gif
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/sdg-join_split.pdf -text svneol=unset#application/pdf
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/sdg-rep.gif -text svneol=unset#image/gif
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/sdg-rep.pdf -text svneol=unset#application/pdf
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/svd-strongly-bw.gif -text svneol=unset#image/gif
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/svd-strongly-bw.pdf -text svneol=unset#application/pdf
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/svd-weakly-bw.jpg -text svneol=unset#image/jpeg
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/svd-weakly-bw.pdf -text svneol=unset#application/pdf
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/svd.png -text svneol=unset#image/png
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/fig/norway.png -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/fig/svd.png -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.fig -text svneol=unset#application/octet-stream

@@ -1,0 +1,18 @@
+
+
+/// \defgroup PkgSegmentDelaunayGraph2 2D Segment Delaunay Graphs 
+/// \defgroup PkgSegmentDelaunayGraph2Concepts Concepts
+/// \ingroup PkgSegmentDelaunayGraph2
+/*!
+\addtogroup PkgSegmentDelaunayGraph2
+\todo check generated documentation
+\PkgDescriptionBegin{2D Segment Delaunay Graphs }
+\PkgPicture{svd.png}
+\PkgAuthor{Menelaos Karavelas}
+\PkgDesc{An algorithm for computing the dual of a Voronoi diagram of a set       of segments under the Euclidean metric. It is a generalization of the       standard Voronoi diagram for points.  The algorithms provided are       dynamic.}
+\PkgSince{3.1}
+\cgalbib{ cgal:k-sdg2-12 }
+\license{ \ref licensesGPL }
+\PkgDescriptionEnd
+*/
+
