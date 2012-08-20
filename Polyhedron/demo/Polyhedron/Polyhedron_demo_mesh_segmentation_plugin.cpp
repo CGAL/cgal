@@ -7,7 +7,7 @@
 #include "Scene.h"
 #include "Color_map.h"
 
-#include <CGAL/Surface_mesh_segmentation.h>
+#include <CGAL/internal/Surface_mesh_segmentation/Surface_mesh_segmentation.h>
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
@@ -29,7 +29,7 @@ class Polyhedron_demo_mesh_segmentation_plugin :
     Q_OBJECT
         Q_INTERFACES(Polyhedron_demo_plugin_interface)
 private:
-    typedef CGAL::Surface_mesh_segmentation<Polyhedron> Segmentation;
+    typedef CGAL::internal::Surface_mesh_segmentation<Polyhedron> Segmentation;
     typedef std::map<Scene_polyhedron_item*, Segmentation> Item_functor_map;
 public:
 
