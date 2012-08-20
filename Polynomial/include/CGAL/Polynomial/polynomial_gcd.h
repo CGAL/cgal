@@ -46,8 +46,7 @@
 #include <CGAL/Polynomial/polynomial_gcd_implementations.h>
 #include <CGAL/polynomial_utils.h>
 
-//#undef LiS_HAVE_NTL
-#ifdef LiS_HAVE_NTL
+#ifdef CGAL_USE_NTL
 #include <CGAL/Polynomial/polynomial_gcd_ntl.h>
 #endif
 
