@@ -21,7 +21,7 @@ an extended kernel. It is also recommended to use the \cgal stream modifier
 
 */
 template <class Traits>
-istream& operator>>( istream& in, CGAL::Nef_polyhedron_3<Traits>& N);
+istream& operator>>( std::istream& in, CGAL::Nef_polyhedron_3<Traits>& N);
 
 /*!
 
@@ -54,7 +54,7 @@ input operator of each of these types can read the output.
 
 */
 template <class Traits>
-ostream& operator<<( ostream& out, CGAL::Nef_polyhedron_3<Traits>& N);
+ostream& operator<<( std::ostream& out, CGAL::Nef_polyhedron_3<Traits>& N);
 
 } /* namespace CGAL */
 

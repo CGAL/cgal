@@ -22,11 +22,11 @@ In solid modeling, two major representation schemes are used:
 representations</I> (B-rep). Both have inherent strengths and
 weaknesses, see \cite cgal:h-gsmi-89 for a discussion.
 
-In CSG a solid is represented as a set-theoretic boolean combination
+In CSG a solid is represented as a set-theoretic Boolean combination
 of primitive solid objects, such as blocks, prisms, cylinders, or
-toruses. The boolean operations are not evaluated, instead, objects
+toruses. The Boolean operations are not evaluated, instead, objects
 are represented implicitly with a tree structure; leaves represent
-primitive objects and interior nodes represent boolean operations or
+primitive objects and interior nodes represent Boolean operations or
 rigid motions, e.g., translation and rotation. Algorithms on such a
 CSG-tree first evaluate properties on the primitive objects and
 propagate the results using the tree structure.
@@ -40,19 +40,19 @@ choice of the primitive solids. A B-rep is usually limited by the
 choice for the geometry of the supporting curves for edges and the
 supporting surfaces for surface patches, and, in addition, the
 connectivity structure that is allowed. In particular, a B-rep is not
-always closed under boolean set operations. As an example, the class
+always closed under Boolean set operations. As an example, the class
 of orientable 2-manifold objects is a popular and well understood
 class of surfaces commonly used for B-reps. They can be represented
 and manipulated efficiently, the data structures are compact in
 storage size, and many algorithms are simple. On the other side, this
-object class is not closed under boolean set operations, as many
+object class is not closed under Boolean set operations, as many
 examples can illustrate, such as the Figure shown above that can be
-generated using boolean set operations on cubes. The vertices bounding
+generated using Boolean set operations on cubes. The vertices bounding
 the tunnel, or the edge connecting the "roof" with the cube are
 non-manifold situations.
 
 In our implementation of Nef polyhedra in 3D, we offer a B-rep data
-structure that is closed under boolean operations and with all their
+structure that is closed under Boolean operations and with all their
 generality. Starting from halfspaces (and also directly from oriented
 2-manifolds), we can work with set union, set intersection, set
 difference, set complement, interior, exterior, boundary, closure, and
@@ -238,7 +238,7 @@ a cube has an unbounded outer volume, but its boundary remains bounded.
 
 Using a boundary representation, it is convenient (conceptually and in
 our implementation) to consider bounded Nef polyhedra only. Bounded
-Nef polyhedra are also closed under boolean set operations. However, one
+Nef polyhedra are also closed under Boolean set operations. However, one
 needs to start with bounded primitives; the conceptually nice
 halfspaces cannot be used. Instead, we offer a construction from oriented
 2-manifolds represented in a `CGAL::Polyhedron_3`, see
@@ -274,7 +274,7 @@ polynomial), and runtime performance.
 
 \section sectoinRegularized Regularized Set Operations 
 
-Since manifolds are not closed under boolean operations, Requicha
+Since manifolds are not closed under Boolean operations, Requicha
 proposes to use <I>regularized set operations</I> \cite cgal:km-st-76,
 cgal:r-rrstm-80. A set is <I>regular</I>, if it equals the closure
 of its interior. A regularized set operation is defined as the 
@@ -341,7 +341,7 @@ operators are therefore trivial to implement.
 ## Point Set Operations ##
 
 As explained in the introduction, Nef polyhedra are closed under all
-boolean set operations. The class `Nef_polyhedron_3` provides
+Boolean set operations. The class `Nef_polyhedron_3` provides
 functions and operators for the most common ones: complement
 (`operator!`), union (`operator+`), difference
 (`operator-`), intersection (`operator*`) and symmetric
@@ -363,8 +363,7 @@ rotated and scaled. The usage is shown in the following example:
 
 \cgalexample{transformation.cpp}
 
-## The Interface between <TT>Polyhedron_3</TT> and 
-<TT>Nef_polyhedron_3</TT> ##
+## The Interface between %Polyhedron_3 and %Nef_polyhedron_3 ##
 
 \anchor subsectionNef_3Polyhedron
 
@@ -539,7 +538,7 @@ which is a polymorphic handle type representing any handle type, no
 matter if it is mutable or const. For further usage of the result,
 the `Object_handle` has to be casted to the concrete handle type.
 The `CGAL::assign` function performs such a cast. It returns a
-boolean that reports the success or the failure of of the cast.
+Boolean that reports the success or the failure of of the cast.
 Looking at the possible return values of the `locate` function,
 the `Object_handle` can represent a `Vertex_const_handle`, a
 `Halfedge_const_handle`, a `Halffacet_handle`, or a
