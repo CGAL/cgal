@@ -45,10 +45,10 @@ translating the coordinate system. Such a translation does not change
 the shape of the Minkowski sum; it only translates the Minkowski sum
 by the same vector.
 
-This package provides a function `minkowski_sum_3` that computes
+This package provides a function `::minkowski_sum_3` that computes
 the Minkowski sum of two Nef polyhedra. We do not support arbitrary
 Nef polyhedra, yet. The restrictions are discussed in detail in
-Section \ref sectionMinkowskiSum_3Restrictions .
+Section \ref sectionMinkowskiSum_3Restrictions.
 
 # Decomposition Method #
 
@@ -74,9 +74,9 @@ give the running times of some Minkowski sum computations. They were
 computed with \cgal 3.3 on a machine with a 2.4 GHz AMD Opteron
 processor and 4 GB RAM. The code was compiled with
 g++ 3.2 and compiler options -O2. The
-`Nef\_polyhedron\_3` class was instantiated with the geometric
+`Nef_polyhedron_3` class was instantiated with the geometric
 kernel `Homogeneous<leda_integer>`. The Minkowski sum of the spoon
-and the star is illustrated in Figure \ref figspoonStar .
+and the star is illustrated in Figure \ref figspoonStar.
 
 <CENTER>
 <TABLE CELLSPACING=5 >
@@ -167,7 +167,7 @@ ball2
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=7><HR>
 </TABLE>
 
-<B>Performance of the function `minkowski_sum_3()`.</B>
+<B>Performance of the function `::minkowski_sum_3`.</B>
 
 </CENTER>
 
@@ -206,7 +206,7 @@ polyhedron and therefore selected, but in case of the open unit cube
 \f$ [0,1)^3\f$ they are unselected. Each item has its own selection mark,
 which allows the correct representation of Nef polyhedra, which are
 closed under Boolean and topological operations. Details can be found
-in the chapter on 3D Boolean operations on Nef polyhedra \ref chapterNef3 .
+in the chapter on 3D Boolean operations on Nef polyhedra \ref chapterNef3.
 
 The use of `Nef_polyhedron_3` allows many scenarios beyond the
 Minkowski sum of two solids. First, they can model the input and the
@@ -251,13 +251,13 @@ selection mark without spoiling the correctness of the Minkowski sum.
 
 # Usage #
 
-The function `minkowski_sum_3()` should be used with the
-::Exact_predicates_exact_constructions_kernel, which often is
+The function `::minkowski_sum_3` should be used with the
+`::Exact_predicates_exact_constructions_kernel`, which often is
 the most efficient choice and allows floating-point input. Consult
 Section \ref sectionNef_3IO for more details.
 
 The following example code illustrates the usage of the function
-`minkowski_sum_3()`. Note that either input polyhedra will be
+`::minkowski_sum_3`. Note that either input polyhedra will be
 modified by the function if it is non-convex. So, if they are needed
 further on, they need to be copied, first. The copying is not done by
 the function itself to keep the memory usage as small as possible.
@@ -268,12 +268,12 @@ the function itself to keep the memory usage as small as possible.
 
 \image html glide.gif "The region swept by a star that moves along a polygonal path."
 
-With the function `minkowski_sum_3()` it is also possible to realize
+With the function `::minkowski_sum_3` it is also possible to realize
 other interesting geometric operations like the glide operation, which
 computes the point set swept by a polyhedron that moves along a
 polygonal path. The following example shows how to construct a
 polygonal path and then compute the glide operation by calling the
-function `minkowski_sum_3()`.
+function `::minkowski_sum_3`.
 
 \cgalexample{glide.cpp}
 
