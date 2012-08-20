@@ -794,6 +794,10 @@ on_actionOverlay_triggered( )
             Conic_arr* conic_arr2;
             Lin_arr* lin_arr;
             Lin_arr* lin_arr2;
+            Arc_arr* arc_arr;
+            Arc_arr* arc_arr2;
+            Alg_seg_arr* alg_arr;
+            Alg_seg_arr* alg_arr2;
             if ( CGAL::assign( seg_arr, arrs[ 0 ] ) && CGAL::assign( seg_arr2, arrs[ 1 ] ) )
             {
                 this->makeOverlayTab( seg_arr, seg_arr2 );
@@ -810,7 +814,14 @@ on_actionOverlay_triggered( )
             {
                 this->makeOverlayTab( lin_arr, lin_arr2 );
             }
-
+            if ( CGAL::assign( arc_arr, arrs[ 0 ] ) && CGAL::assign( arc_arr2, arrs[ 1 ] ) )
+            {
+                this->makeOverlayTab( arc_arr, arc_arr2 );
+            }
+            if ( CGAL::assign( alg_arr, arrs[ 0 ] ) && CGAL::assign( alg_arr2, arrs[ 1 ] ) )
+            {
+                this->makeOverlayTab( alg_arr, alg_arr2 );
+            }
 
     #if 0
             if ( CGAL::assign( conic_arr, arrs[ 0 ] ) || CGAL::assign( conic_arr, arrs[ 1 ] ) )

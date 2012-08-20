@@ -33,6 +33,8 @@ OverlayDialog( ArrangementDemoWindow* parent, Qt::WindowFlags f ):
         Pol_arr* pol;
         Conic_arr* conic;
         Lin_arr* lin;
+        Arc_arr* arc;
+        Alg_seg_arr* alg;
         if ( CGAL::assign( seg, arrangements[ i ] ) )
         {
             icon.addFile(QString::fromUtf8(":/icons/green_icon.xpm"), QSize(), QIcon::Normal, QIcon::Off);
@@ -48,6 +50,14 @@ OverlayDialog( ArrangementDemoWindow* parent, Qt::WindowFlags f ):
         else if ( CGAL::assign( lin, arrangements[ i ] ) )
         {
             icon.addFile(QString::fromUtf8(":/icons/blue_icon.xpm"), QSize(), QIcon::Normal, QIcon::Off);
+        }
+        else if ( CGAL::assign( arc, arrangements[ i ] ) )
+        {
+            icon.addFile(QString::fromUtf8(":/icons/green_icon.xpm"), QSize(), QIcon::Normal, QIcon::Off);
+        }
+        else if ( CGAL::assign( alg, arrangements[ i ] ) )
+        {
+            icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(), QIcon::Normal, QIcon::Off);
         }
         item->setIcon( icon );
     }
@@ -128,6 +138,8 @@ restrictSelection( QListWidgetItem* item )
     Pol_arr* pol;
     Conic_arr* conic;
     Lin_arr* lin;
+    Arc_arr* arc;
+    Alg_seg_arr* alg;
     if ( CGAL::assign( seg, o ) )
     {
         for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
@@ -192,6 +204,44 @@ restrictSelection( QListWidgetItem* item )
             QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
             CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
             bool enabled = CGAL::assign( lin, o2 );
+            Qt::ItemFlags flags = otherItem->flags( );
+            if ( ! enabled )
+            {
+                flags &= ~( Qt::ItemIsEnabled );
+            }
+            else
+            {
+                flags |= Qt::ItemIsEnabled;
+            }
+            otherItem->setFlags( flags );
+        }
+    }
+    else if ( CGAL::assign( arc, o ) )
+    {
+        for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+        {
+            QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+            CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+            bool enabled = CGAL::assign( arc, o2 );
+            Qt::ItemFlags flags = otherItem->flags( );
+            if ( ! enabled )
+            {
+                flags &= ~( Qt::ItemIsEnabled );
+            }
+            else
+            {
+                flags |= Qt::ItemIsEnabled;
+            }
+            otherItem->setFlags( flags );
+        }
+    }
+    else if ( CGAL::assign( alg, o ) )
+    {
+        for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+        {
+            QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+            CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+            bool enabled = CGAL::assign( alg, o2 );
             Qt::ItemFlags flags = otherItem->flags( );
             if ( ! enabled )
             {
