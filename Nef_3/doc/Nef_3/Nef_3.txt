@@ -464,7 +464,7 @@ shalfedge belongs to a single shell. The figure below illustrates the
 notion of a shell. It shows a Nef polyhedron with two volumes and
 three shells.
 
-\image html shells.fig
+\image html shells.gif
 
 The first volume is the outer volume and the second volume is the
 interior of the cube. The first shell is the whole surface of the left
