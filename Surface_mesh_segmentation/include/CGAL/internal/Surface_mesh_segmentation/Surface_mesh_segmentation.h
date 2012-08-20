@@ -169,10 +169,10 @@ public:
 // points to std::map instance which exists in copied object (rhs).
   Surface_mesh_segmentation(const
                             Surface_mesh_segmentation<Polyhedron, FacetIndexMap>& rhs):
-    mesh(rhs.mesh), sdf_values(rhs.sdf_values), centers(rhs.centers),
-    segments(rhs.segments),
-    is_pmmap_custom(rhs.is_pmmap_custom),
-    facet_index_map_internal(rhs.facet_index_map_internal) {
+    mesh(rhs.mesh), facet_index_map_internal(rhs.facet_index_map_internal),
+    sdf_values(rhs.sdf_values),
+    centers(rhs.centers), segments(rhs.segments),
+    is_pmmap_custom(rhs.is_pmmap_custom) {
     if(!is_pmmap_custom) {
       facet_index_map = FacetIndexMap(facet_index_map_internal);
     }
