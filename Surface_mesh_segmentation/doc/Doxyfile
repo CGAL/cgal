@@ -85,7 +85,7 @@ SHOW_FILES             = YES
 SHOW_NAMESPACES        = YES
 FILE_VERSION_FILTER    =
 LAYOUT_FILE            =
-CITE_BIB_FILES         = ref.bib
+CITE_BIB_FILES         = ../../Manual/doc_tex/Manual/geom.bib
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
 #---------------------------------------------------------------------------

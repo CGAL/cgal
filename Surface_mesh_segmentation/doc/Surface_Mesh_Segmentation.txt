@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 \mainpage Surface Mesh Segmentation
 
-\authors -
+\author İlker O. Yaz
 
 \anchor elephant_sdf_partition
 \image latex elephant_sdf_partition.png "Elephant model: SDF values & Segmentation" width=12cm
@@ -91,6 +91,10 @@ The function CGAL::surface_mesh_segmentation combines two functions explained ab
 
 ###Examples###
 \include Surface_mesh_segmentation/surface_mesh_segmentation_example.cpp
+
+# Implementation history#
+The initial implementation of this package is the result of the work of the author during the 2012 season
+of the Google Summer of Code.
 
 # Extra: (ideas to append) #
 Talk about effect of "number of rays" on SDF values, by providing RSME and average error ?
