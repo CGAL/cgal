@@ -15,8 +15,5 @@
 \license{ \ref licensesGPL  "GPL" }
 \PkgDescriptionEnd
 
-Planar Nef Polyhedra are whatever can be constructed with a finite number of
-Boolean operations on halfspaces. See the main page for a detailed
-introduction.
 */
 
