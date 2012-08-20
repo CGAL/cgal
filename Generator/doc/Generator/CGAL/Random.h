@@ -106,7 +106,8 @@ double upper = 1.0);
 
 returns a random `IntType` from the interval 
 \f$ [\mbox{lower,upper}]\f$. `IntType` can be an integral type 
-as `int`, `std::ptrdiff_t`, `std::size_t`,etc. <B>Warning: In contrast to `get_int` this function may return `upper`. </B> 
+as `int`, `std::ptrdiff_t`, `std::size_t`,etc. 
+\warning In contrast to `get_int` this function may return `upper`.
 */ 
 template <typename IntType> IntType uniform_smallint( IntType lower=0, IntType upper=9); 
 
@@ -114,7 +115,8 @@ template <typename IntType> IntType uniform_smallint( IntType lower=0, IntType u
 
 returns a random `IntType` from the interval 
 \f$ [\mbox{lower,upper}]\f$. `IntType` can be an integral type 
-as `int`, `std::ptrdiff_t`, `std::size_t`,etc. <B>Warning: In contrast to `get_int` this function may return `upper`. </B> 
+as `int`, `std::ptrdiff_t`, `std::size_t`,etc. 
+\warning In contrast to `get_int` this function may return `upper`.
 */ 
 template <typename IntType> IntType uniform_int( IntType lower=0, IntType upper=9); 
 

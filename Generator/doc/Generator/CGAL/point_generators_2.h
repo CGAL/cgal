@@ -11,25 +11,21 @@ are needed from `rnd` for each point.
 The function `perturb_points_2` perturbs each point in a given range of points by 
 a random amount. 
 
-Requirements 
--------------- 
+###Requires ###
+- `Creator` must be a function object accepting two 
+  `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
+  `(x,y)` of type `P`. 
+ Predefined implementations for these creators like the default are  
+ described in Section \ref sectionCreatorFunctionObjects. 
 
-<UL> 
-<LI>`Creator` must be a function object accepting two 
-`double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
-`(x,y)` of type `P`. 
+- The `value_type` of the `ForwardIterator` must be assignable 
+  to `P`. 
+- `P` is equal to the `value_type` of the 
+  `ForwardIterator` when using the default initializer. 
+- The expressions `to_double((*first).x())` and 
+  `to_double((*first).y())` must result in the respective 
+  coordinate values. 
 
-Predefined implementations for these creators like the default are 
-described in Section \ref sectionCreatorFunctionObjects . 
-
-<LI>The `value_type` of the `ForwardIterator` must be assignable 
-to `P`. 
-<LI>`P` is equal to the `value_type` of the 
-`ForwardIterator` when using the default initializer. 
-<LI>The expressions `to_double((*first).x())` and 
-`to_double((*first).y())` must result in the respective 
-coordinate values. 
-</UL> 
 
 \sa `CGAL::points_on_segment_2` 
 \sa `CGAL::points_on_square_grid_2` 
@@ -51,7 +47,7 @@ namespace CGAL {
 \ingroup PkgGenerators
 
 creates \f$ n\f$ points equally spaced on the segment from \f$ p\f$ to \f$ q\f$,
-i.e. \f$ \forall i: 0 \le i < n: o[i] := \frac{n-i-1}{n-1}\, p +
+i.e.\ \f$ \forall i: 0 \le i < n: o[i] := \frac{n-i-1}{n-1}\, p +
 \frac{i}{n-1}\, q\f$. Returns the value of \f$ o\f$ after inserting
 the \f$ n\f$ points.
 
@@ -81,20 +77,19 @@ the \f$ n\f$ points.
 The function `points_on_square_grid_2` generates a given number of points on a square 
 grid whose size is determined by the number of points to be generated. 
 
-Requirements 
--------------- 
 
-<UL> 
-<LI>`Creator` must be a function object accepting two 
-`double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
-`(x,y)` of type `P`. Predefined implementations for these 
-creators like the default can be found in 
-Section \ref sectionCreatorFunctionObjects . 
-<LI>The `OutputIterator` must accept values of type `P`. If the 
-`OutputIterator` has a `value_type` the default 
-initializer of the `creator` can be used. `P` is set to 
-the `value_type` in this case. 
-</UL> 
+###Requires###
+
+- `Creator` must be a function object accepting two 
+  `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
+  `(x,y)` of type `P`. Predefined implementations for these 
+  creators like the default can be found in 
+  Section \ref sectionCreatorFunctionObjects. 
+- The `OutputIterator` must accept values of type `P`. If the 
+  `OutputIterator` has a `value_type` the default 
+  initializer of the `creator` can be used. `P` is set to 
+  the `value_type` in this case. 
+
 
 \sa `CGAL::perturb_points_2` 
 \sa `CGAL::points_on_segment_2` 
@@ -123,22 +118,19 @@ in the range \f$ [first,last)\f$.
 Three random numbers are needed from `rnd` for each point.
 Returns the value of `first2` after inserting the \f$ n\f$ points.
 
-Requirements 
--------------- 
+###Requires ###
 
-<UL> 
-<LI>`Creator` must be a function object accepting two 
-`double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
-`(x,y)` of type `P`. Predefined implementations for these 
-creators like the default can be found in 
-Section \ref sectionCreatorFunctionObjects . 
-<LI>The `value_type` of the `RandomAccessIterator` must be 
-assignable to `P`. `P` is equal to the `value_type` of the 
-`RandomAccessIterator` when using the default initializer. 
-<LI>The expressions `to_double((*first).x())` and 
-`to_double((*first).y())` must result in the respective 
-coordinate values. 
-</UL> 
+- `Creator` must be a function object accepting two 
+  `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
+  `(x,y)` of type `P`. Predefined implementations for these 
+  creators like the default can be found in 
+  Section \ref sectionCreatorFunctionObjects. 
+- The `value_type` of the `RandomAccessIterator` must be 
+  assignable to `P`. `P` is equal to the `value_type` of the 
+  `RandomAccessIterator` when using the default initializer. 
+- The expressions `to_double((*first).x())` and 
+  `to_double((*first).y())` must result in the respective 
+  coordinate values. 
 
 \sa `CGAL::perturb_points_2` 
 \sa `CGAL::points_on_segment_2` 
@@ -218,7 +210,7 @@ typedef const Point_2& reference;
 /*! 
 \f$ g\f$ is an input iterator creating points of type `Point_2` uniformly 
 distributed in the open disc with radius \f$ r\f$, 
-i.e. \f$ |*g| < r\f$ . Two random numbers are needed from 
+i.e.\ \f$ |*g| < r\f$. Two random numbers are needed from 
 `rnd` for each point. 
 
 */ 
@@ -292,8 +284,8 @@ typedef const Point_2& reference;
 /*! 
 \f$ g\f$ is an input iterator creating points of type `Point_2` uniformly 
 distributed in the half-open square with side length \f$ 2 a\f$, centered 
-at the origin, i.e. \f$ \forall p = *g: -a \le p.x() < a\f$ and 
-\f$ -a \le p.y() < a\f$ . 
+at the origin, i.e.\ \f$ \forall p = *g: -a \le p.x() < a\f$ and 
+\f$ -a \le p.y() < a\f$. 
 Two random numbers are needed from `rnd` for each point. 
 
 */ 
@@ -371,7 +363,7 @@ typedef const Point_2& reference;
 /*! 
 \f$ g\f$ is an input iterator creating points of type `Point_2` uniformly 
 distributed on the circle with radius \f$ r\f$, 
-i.e. \f$ |*g| == r\f$ . A single random number is needed from 
+i.e.\ \f$ |*g| == r\f$. A single random number is needed from 
 `rnd` for each point. 
 
 */ 
@@ -445,7 +437,7 @@ typedef const Point_2& reference;
 /*! 
 \f$ g\f$ is an input iterator creating points of type `Point_2` uniformly 
 distributed on the segment from \f$ p\f$ to \f$ q\f$ (excluding \f$ q\f$), 
-i.e. \f$ *g == (1-\lambda)\, p + \lambda q\f$ where \f$ 0 \le\lambda< 1\f$ . 
+i.e.\ \f$ *g == (1-\lambda)\, p + \lambda q\f$ where \f$ 0 \le\lambda< 1\f$. 
 A single random number is needed from `rnd` for each point. 
 \require The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$. 
 */ 
@@ -519,9 +511,9 @@ typedef const Point_2& reference;
 /*! 
 \f$ g\f$ is an input iterator creating points of type `Point_2` uniformly 
 distributed on the boundary of the square with side length \f$ 2 a\f$, 
-centered at the origin, i.e. \f$ \forall p = *g:\f$ one 
+centered at the origin, i.e.\ \f$ \forall p = *g:\f$ one 
 coordinate is either \f$ a\f$ or \f$ -a\f$ and for the 
-other coordinate \f$ c\f$ holds \f$ -a \le c < a\f$ . 
+other coordinate \f$ c\f$ holds \f$ -a \le c < a\f$. 
 A single random number is needed from `rnd` for each point. 
 
 */ 
@@ -612,7 +604,7 @@ std::size_t n, std::size_t i = 0);
 
 /*! 
 returns the range in which the point 
-coordinates lie, i.e. \f$ \forall x: |x| \leq\f$ `range()` and 
+coordinates lie, i.e.\ \f$ \forall x: |x| \leq\f$ `range()` and 
 \f$ \forall y: |y| \leq\f$`range()` 
 */ 
 double range(); 

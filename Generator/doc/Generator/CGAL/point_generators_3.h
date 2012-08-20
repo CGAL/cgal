@@ -11,24 +11,21 @@ inserting the \f$ n\f$ points.
 The function `points_on_cube_grid_3` generates a given number of points on a cubic 
 grid whose size is determined by the number of points to be generated. 
 
-Requirements 
--------------- 
+###Requires###
+- `Creator` must be a function object accepting three 
+  `double` values \f$ x\f$, \f$ y\f$, and \f$ z\f$ and returning an initialized 
+  point `(x,y,z)` of type `P`. Predefined implementations for 
+  these creators like the default can be found in 
+  Section \ref sectionCreatorFunctionObjects . 
+- The `OutputIterator` must accept values of type `P`. If the 
+  `OutputIterator` has a `value_type` the default 
+  initializer of the `creator` can be used. `P` is set to 
+  the `value_type` in this case. 
 
-<UL> 
-<LI>`Creator` must be a function object accepting three 
-`double` values \f$ x\f$, \f$ y\f$, and \f$ z\f$ and returning an initialized 
-point `(x,y,z)` of type `P`. Predefined implementations for 
-these creators like the default can be found in 
-Section \ref sectionCreatorFunctionObjects . 
-<LI>The `OutputIterator` must accept values of type `P`. If the 
-`OutputIterator` has a `value_type` the default 
-initializer of the `creator` can be used. `P` is set to 
-the `value_type` in this case. 
-</UL> 
 
-`CGAL::points_on_square_grid_2` 
+\sa `CGAL::points_on_square_grid_2` 
 
-`CGAL::random_selection` 
+\sa `CGAL::random_selection` 
 
 */
 template <class OutputIterator, Creator creator>

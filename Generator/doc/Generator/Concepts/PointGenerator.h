@@ -36,7 +36,7 @@ typedef Hidden_type value_type;
 /// @{
 
 /*! 
-return an absolute bound for 
+returns an absolute bound for 
 the coordinates of all generated points. 
 */ 
 double range() const; 
