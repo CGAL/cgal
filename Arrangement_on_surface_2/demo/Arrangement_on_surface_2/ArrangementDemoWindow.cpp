@@ -112,6 +112,10 @@ makeTab( TraitsType tt )
     this->lastTabIndex = this->ui->tabWidget->currentIndex( );
     this->ui->tabWidget->setCurrentWidget( demoTab );
 
+    this->resetCallbackState( this->ui->tabWidget->currentIndex( ) );
+    this->removeCallback( this->ui->tabWidget->currentIndex( ) );
+    this->updateMode( this->modeGroup->checkedAction( ) );
+
     return demoTab;
 }
 
@@ -320,7 +324,17 @@ removeCallback( int tabIndex )
     QGraphicsView* activeView = activeTab->getView( );
     QAction* activeMode = this->activeModes[ tabIndex ];
 
+    activeScene->removeEventFilter( activeTab->getCurveInputCallback( ) );
+    activeView->setDragMode( QGraphicsView::NoDrag );
+    activeScene->removeEventFilter( activeTab->getDeleteCurveCallback( ) );
+    activeScene->removeEventFilter( activeTab->getPointLocationCallback( ) );
+    activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
+    activeScene->removeEventFilter( activeTab->getMergeEdgeCallback( ) );
+    activeScene->removeEventFilter( activeTab->getSplitEdgeCallback( ) );
+    activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
+
     // unhook the old active mode
+#if 0
     if ( activeMode == this->ui->actionInsert )
     {
         activeScene->removeEventFilter( activeTab->getCurveInputCallback( ) );
@@ -353,6 +367,7 @@ removeCallback( int tabIndex )
     {
         activeScene->removeEventFilter( activeTab->getSplitEdgeCallback( ) );
     }
+#endif
 }
 
 void
