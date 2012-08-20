@@ -217,7 +217,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "license{1}=\par \"License\" \1" \
                          "models=\xrefitem modelss \"Models\" \"Models\"" \
                          "refines=\xrefitem refiness \"Refines\" \"Refines\"" \
-                         "require=\par Requires:\n" \
+                         "requires=\xrefitem requiress \"Requires\" \"Requires\"" \        
                          "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\"" \
                          "advanced=\attention" \
                          "advancedbegin=" \
