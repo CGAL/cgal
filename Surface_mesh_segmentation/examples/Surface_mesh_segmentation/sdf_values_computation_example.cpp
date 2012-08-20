@@ -1,23 +1,31 @@
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-
-#include <CGAL/mesh_segmentation.h>
-
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/mesh_segmentation.h>
 
 #include <boost/property_map/property_map.hpp>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
+#include <iostream>
+#include <fstream>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main(int argc, char **argv)
 {
+    if (argc !=2){
+      std::cerr << "Usage: " << argv[0] << " input.off\n";
+      return 1;
+    }
+  
     // create and read Polyhedron
-    Polyhedron mesh; 	
-    std::ifstream(argv[1]) >> mesh;
+    Polyhedron mesh;
+    std::ifstream input(argv[1]);
+    
+    if ( !input || !(input >> mesh) || mesh.empty() ){
+      std::cerr << argv[1] << " is not a valid off file.\n";
+      return 1;
+    }
 
     // create a property-map (it is an adaptor for this case)
     typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
