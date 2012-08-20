@@ -3,20 +3,15 @@ namespace CGAL {
 /*!
 \ingroup PkgPolygonPartitioning2
 
-Function for testing the \f$ y\f$-monotonicity of a sequence of points. 
-
-Determines if the sequence of points in the range 
+determines if the sequence of points in the range 
 [`first`, `beyond`) defines a \f$ y\f$-monotone 
 polygon or not. If so, the function returns `true`, otherwise it
 returns `false`. 
 
-Requirements 
--------------- 
+###Requires ###
 
-<OL> 
-<LI>`Traits` is a model of the concept `IsYMonotoneTraits_2`. 
-<LI>`InputIterator::value_type` should be `Traits::Point_2`. 
-</OL> 
+- `Traits` is a model of the concept `IsYMonotoneTraits_2`. 
+- `InputIterator::value_type` should be `Traits::Point_2`. 
 
 The default traits class `Default_traits` is the kernel in which the 
 type `InputIterator::value_type` is defined. 

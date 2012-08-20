@@ -18,18 +18,15 @@ returns `false`.
 
 
 
-Requirements 
--------------- 
+###Requires ###
 
-<OL> 
-<LI>`Traits` is a model of the concept 
-`ConvexPartitionIsValidTraits_2`. 
-<LI>`InputIterator::value_type` should be `Traits::Point_2`, 
-which should also be the type of the points stored in an object 
-of type `Traits::Polygon_2`. 
-<LI>`ForwardIterator::value_type` should be 
-`Traits::Polygon_2`. 
-</OL> 
+- `Traits` is a model of the concept 
+  `ConvexPartitionIsValidTraits_2`. 
+- `InputIterator::value_type` should be `Traits::Point_2`, 
+  which should also be the type of the points stored in an object 
+  of type `Traits::Polygon_2`. 
+-`ForwardIterator::value_type` should be `Traits::Polygon_2`. 
+
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
 with the representation type determined by `InputIterator::value_type`. 
@@ -43,7 +40,7 @@ with the representation type determined by `InputIterator::value_type`.
 Implementation 
 -------------- 
 
-This function calls `partition_is_valid_2` using the function object 
+This function calls `::partition_is_valid_2` using the function object 
 `Is_convex_2` to determine the convexity of each partition polygon. 
 Thus the time required by this function is \f$ O(n \log n + e \log e)\f$ where 
 \f$ n\f$ is the total number of vertices in the partition polygons and \f$ e\f$ the 
@@ -83,20 +80,17 @@ tested by `Traits::Is_valid()`.
 
 \pre Points in the range [`point_first`, `point_beyond`) define a simple, counterclockwise-oriented polygon.
 
-Requirements 
--------------- 
+###Requires###
 
-<OL> 
-<LI>`Traits` is a model of the concept 
-`PartitionIsValidTraits_2` and the 
-concept defining the requirements for the validity test 
-implemented by `Traits::Is_valid()`. 
-<LI>`InputIterator::value_type` should be `Traits::Point_2`, 
-which should also be the type of the points stored in an object 
-of type `Traits::Polygon_2`. 
-<LI>`ForwardIterator::value_type` should be 
-`Traits::Polygon_2`. 
-</OL> 
+- `Traits` is a model of the concept 
+  `PartitionIsValidTraits_2` and the 
+  concept defining the requirements for the validity test 
+  implemented by `Traits::Is_valid()`. 
+- `InputIterator::value_type` should be `Traits::Point_2`, 
+  which should also be the type of the points stored in an object 
+  of type `Traits::Polygon_2`. 
+- `ForwardIterator::value_type` should be 
+  `Traits::Polygon_2`. 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
 with the representation type determined by `InputIterator::value_type`. 
@@ -150,18 +144,15 @@ returns false.
 
 
 
-Requirements 
--------------- 
+###Requires###
 
-<OL> 
-<LI>`Traits` is a model of the concept 
-`YMonotonePartitionIsValidTraits_2`. 
-<LI>`InputIterator::value_type` should be `Traits::Point_2`, 
-which should also be the type of the points stored in an object 
-of type `Traits::Polygon_2`. 
-<LI>`ForwardIterator::value_type` should be 
-`Traits::Polygon_2`. 
-</OL> 
+- `Traits` is a model of the concept 
+  `YMonotonePartitionIsValidTraits_2`. 
+- `InputIterator::value_type` should be `Traits::Point_2`, 
+  which should also be the type of the points stored in an object 
+  of type `Traits::Polygon_2`. 
+- `ForwardIterator::value_type` should be 
+  `Traits::Polygon_2`. 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
 with the representation type determined by `InputIterator::value_type`. 
@@ -174,7 +165,7 @@ with the representation type determined by `InputIterator::value_type`.
 Implementation 
 -------------- 
 
-This function uses the function `partition_is_valid_2` together with 
+This function uses the function `::partition_is_valid_2` together with 
 the function object `Is_y_monotone_2` to determine if each polygon 
 is \f$ y\f$-monotone or not. Thus the time required is \f$ O(n \log n + e \log e)\f$ 
 where \f$ n\f$ is the total number of vertices of the partition polygons and 
