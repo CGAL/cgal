@@ -17,8 +17,8 @@
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Filters.h>
-//#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
-#include "Alpha_expansion_graph_cut.h"
+#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
+//#include "Alpha_expansion_graph_cut.h"
 #include <CGAL/internal/Surface_mesh_segmentation/SDF_calculation.h>
 
 #include <CGAL/utility.h>
