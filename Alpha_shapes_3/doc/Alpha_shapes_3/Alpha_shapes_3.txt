@@ -146,7 +146,7 @@ such that the alpha shape satisfies the following two properties
 (i) all data points are either on the boundary or in the interior 
 of the regularized version of the alpha shape (no singular faces). 
 
-(ii) The number of components is equal or less than a given number .<BR>
+(ii) The number of components is equal or less than a given number.
 
 The current implementation is static, that is after its construction
 points cannot be inserted or removed.

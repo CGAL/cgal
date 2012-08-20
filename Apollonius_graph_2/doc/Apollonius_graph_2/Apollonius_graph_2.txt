@@ -10,9 +10,9 @@ namespace CGAL {
 
 This chapter describes the two-dimensional Apollonius graph
 of \cgal. We start with a few definitions in 
-Section \ref secapollonius2definitions .
+Section \ref secapollonius2definitions.
 The software design of the 2D Apollonius graph package is described 
-in Section \ref secapollonius2design .
+in Section \ref secapollonius2design.
 In Section \ref secapollonius2traits we discuss the geometric
 traits of the 2D Apollonius graph package and in Section
 \ref secapollonius2hierarchy the Apollonius graph hierarchy, a data

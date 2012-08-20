@@ -224,7 +224,7 @@ In addition, the class `Monge_via_jet_fitting` stores
 
 This concept provides the types for the input sample points, together
 with \f$ 3d\f$ vectors and a number type. It is used as template for the
-class `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>` . Typically, one can use
+class `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. Typically, one can use
 `CGAL::Cartesian<double>`.
 
 ## Template parameter <TT>LocalKernel</TT> ##

@@ -42,7 +42,7 @@ The convex hull class is parameterized by a traits class that provides
 model <I>e.g.</I>, `Homogeneous<RT>` or `Cartesian<FT>` for use 
 with `Convex_hull_d`, where the dimension is fixed to three.
 The validity of the computed convex hull can be checked using the
-member function `is_valid`, which implements the algorithm
+member function `::is_valid`, which implements the algorithm
 of Mehlhorn <I>et al.</I>\cite mnssssu-cgpvg-96 to determine if
 the vertices of a given polytope constitute a strongly convex point
 set or not.

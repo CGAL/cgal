@@ -66,10 +66,10 @@ polyhedron and therefore selected, but in case of the open unit cube
 which allows the correct representation of Nef polyhedra, which are
 closed under Boolean and topological operations. Details can be found
 in the chapter on 3D Boolean operations on Nef
-polyhedra \ref chapterNef3 .
+polyhedra \ref chapterNef3.
 
 Usually, an instance of `Nef_polyhedron_3` does not contain any
-redundant items. However, the function `convex_decomposition_3`
+redundant items. However, the function `::convex_decomposition_3`
 subdivides selected volumes of a given `Nef_polyhedron_3` by
 selected facets. These additional facets are therefore redundant,
 i.e., their insertion alters the representation of the polyhedron, but

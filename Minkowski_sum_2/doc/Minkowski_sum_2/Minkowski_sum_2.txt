@@ -125,7 +125,7 @@ contains `S.number_of_holes()` holes in its interior).
 </center>
 
 The following example program constructs the Minkowski sum of two triangles,
-as depicted in Figure \ref mink_figsum_tri . The result in this case is
+as depicted in Figure \ref mink_figsum_tri. The result in this case is
 a convex hexagon. This program, as other example programs in this chapter,
 includes the auxiliary header file `ms_rational_nt.h` which defines
 `Number_type` as either `Gmpq` or `Quotient<MP_Float>`,

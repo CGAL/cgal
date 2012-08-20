@@ -192,7 +192,7 @@ Convex_hull_d<R>(int d, R Kernel = R());
 /// @{
 
 /*!
-returns the dimension of ambient space
+returns the dimension of ambient space.
 */
 int dimension() ;
 

@@ -10,7 +10,7 @@ and the plane equations of each face are not computed.
 \pre There are at least four points in the range 
 [`first`, `last`) not all of which are collinear.
 
-The function `convex_hull_3` computes the convex hull of a given set of 
+The function `::convex_hull_3` computes the convex hull of a given set of 
 three-dimensional points 
 Two versions of this function 
 are available. The first can be used when it is known that the result 
@@ -44,7 +44,7 @@ and for the second, it is required that
 For both versions, if the kernel `R` of the points determined by `InputIterator::value_type` 
 is a kernel with exact predicates but inexact constructions 
 (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type), 
-then the default traits class of `convex_hull_3` is `Convex_hull_traits_3<R>`, and `R` otherwise. 
+then the default traits class of `::convex_hull_3` is `Convex_hull_traits_3<R>`, and `R` otherwise. 
 
 \sa `CGAL::convex_hull_incremental_3` 
 \sa `CGAL::ch_eddy` 
@@ -62,7 +62,7 @@ Example
 The following program computes the convex hull of a set of 250 random 
 points chosen from a sphere of radius 100. It then determines if the resulting 
 hull is a segment or a polyhedron. Notice that the traits class is not 
-necessary in the call to `convex_hull_3` but is used in the definition 
+necessary in the call to `::convex_hull_3` but is used in the definition 
 of `Polyhedron_3`. 
 
 \cgalexample{Convex_hull_3/quickhull_3.cpp} 

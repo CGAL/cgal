@@ -165,7 +165,7 @@ concepts `Field` and `RealEmbeddable`, while
 `RingNumberType` combines `IntegralDomainWithoutDivision` and
 `RealEmbeddable`. Algebraically, the real number types do not form
 distinct structures and are therefore not listed in the concept
-hierarchy of Figure  \ref figConceptHierarchyOfAlgebraicStructures .
+hierarchy of Figure  \ref figConceptHierarchyOfAlgebraicStructures.
 
 # Interoperability #
 

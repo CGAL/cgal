@@ -16,7 +16,7 @@ the class `CGAL::Real\_timer` is the version for the real time.
 Instantiations of both classes are objects with a state. The state is
 either <I>running/</I> or it is <I>stopped</I>. The state of an object
 `t` is controlled
-with `t.start()` and `t.stop()` . The timer counts the
+with `t.start()` and `t.stop()`. The timer counts the
 time elapsed since its creation or last reset. It counts only the time
 where it is in the running state. The time information is given in seconds.
 The timer counts also the number of intervals it was running, i.e. it 
@@ -80,7 +80,7 @@ of the polyhedron.
 
 The solution provided here is inspired by the strategy
 pattern \cite cgal:ghjv-dpero-95, though it serves a different intent, see
-Figure \ref figureModifierDesign . The abstract base class
+Figure \ref figureModifierDesign. The abstract base class
 `Modifier_base<R>` declares a pure virtual member function
 `operator()` that accepts a single reference parameter of the
 internal representation type. The member function `delegate()` of

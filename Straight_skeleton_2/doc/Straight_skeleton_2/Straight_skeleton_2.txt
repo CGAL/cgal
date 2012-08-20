@@ -398,7 +398,7 @@ Therefore, the `Exact_predicates_inexact_constructions_kernel` should be used.
 
 \cgalexample{Straight_skeleton_2/Low_level_API.cpp}
 
-## Exterior Skeletons and Exterior Offset contours ##
+## Exterior Skeletons and Exterior Offset Contours ##
 
 This \cgal package can only construct the straight skeleton and offset contours in the <I>interior</I> of a polygon with holes. However, constructing exterior skeletons and exterior offsets is possible:
 

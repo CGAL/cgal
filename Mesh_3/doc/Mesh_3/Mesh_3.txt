@@ -316,12 +316,12 @@ parameters::internal::Perturb_options perturb = parameters::perturb(),
 parameters::internal::Exude_options exude = parameters::exude()); 
 \endcode
 
-The function `make_mesh_3` generates from scratch a mesh
+The function `::make_mesh_3` generates from scratch a mesh
 of the input domain, while
-the function `refine_mesh_3` refines
+the function `::refine_mesh_3` refines
 an existing mesh of the input domain. Note that as the protection
 of 0- and 1-dimensional features does not rely on Delaunay 
-refinement, the function `refine_mesh_3` has no parameter
+refinement, the function `r::efine_mesh_3` has no parameter
 to preserve features.
 
 ## The data structure ##
@@ -499,8 +499,8 @@ appropriate values of these types:
 These parameters are optional and can be passed in any order.
 If one parameter is not passed the default value is used. By default,
 only the perturber and the exuder are activated.
-Note that whatever may be the optimization processes activated by `make_mesh_3`
-or `refine_mesh_3`,
+Note that whatever may be the optimization processes activated by `::make_mesh_3`
+or `::refine_mesh_3`,
 they are always launched in the order that is a suborder 
 of the following:
 `odt smoother`, `Lloyd smoother`, `perturber` and 
@@ -590,7 +590,7 @@ where each subdomain corresponds to a specific tissue.
 In the following example, the image is read from the file
 `liner.inr.gz` which is encoded in the format of the library Inrimage
 `http://inrimage.gforge.inria.fr/`.
-The resulting mesh is shown in Figure \ref figureliver_3d_image_mesh .
+The resulting mesh is shown in Figure \ref figureliver_3d_image_mesh.
 
 \cgalexample{Mesh_3/mesh_3D_image.cpp}
 
@@ -657,7 +657,7 @@ domain. We add by hand the intersection of the spheres as a sharp feature.
 \anchor Mesh_3_subsection_examples_optimization
 
 In the previous examples, the mesh generation is launched through a call
-`make_mesh_3(domain,criteria)` with a minimal number of parameters. In such cases, 
+`::make_mesh_3(domain,criteria)` with a minimal number of parameters. In such cases, 
 the default optimization strategy is applied: after the Delaunay refinement process
 two optimization steps are performed, a perturbation and a sliver exudation.
 The following examples show how to disable default optimization steps 
@@ -671,10 +671,10 @@ a perturbation phase which is launched with no time bound
 and an objective of 10 degrees for the minimum dihedral angle
 of the mesh.
 The example shows two ways of achieving the same result. The first way
-issues a single call to `make_mesh_3` with the required optimization 
-process activated and tuned. In the second way, `make_mesh_3` is first called
+issues a single call to `::make_mesh_3` with the required optimization 
+process activated and tuned. In the second way, `::make_mesh_3` is first called
 without any optimization process and the resulting mesh is next optimized
-through a call to `perturb_mesh_3` with tuned parameters.
+through a call to `::perturb_mesh_3` with tuned parameters.
 
 \cgalexample{Mesh_3/mesh_optimization_example.cpp}
 

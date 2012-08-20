@@ -18,9 +18,9 @@ generators and second deterministic point generators. Most random
 point generators and a few deterministic point generators are provided
 as input iterators. The input iterators model an infinite sequence of
 points. The function `CGAL::cpp0x::copy_n()` can be used to copy a
-finite sequence; see Section \ref sectionCopyN . The iterator adaptor
+finite sequence; see Section \ref sectionCopyN. The iterator adaptor
 `Counting_iterator` can be used to create finite iterator
-ranges; see Section \ref sectionCountingIterator .
+ranges; see Section \ref sectionCountingIterator.
 Other generators are provided as functions that write to output
 iterators. Further functions add degeneracies or random perturbations.
 
@@ -40,7 +40,7 @@ distributed in a sphere (`Random_points_in_sphere_3`)
 or cube (`Random_points_in_cube_3`) or on the boundary of a sphere
 (`Random_points_on_sphere_3`).
 For generating 3D grid points, we provide the function 
-`points_on_cube_grid_3` that writes to
+`::points_on_cube_grid_3` that writes to
 an output iterator.
 
 For higher dimensions, input iterators are provided for random points uniformly 

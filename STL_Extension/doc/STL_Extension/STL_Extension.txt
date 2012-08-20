@@ -15,7 +15,7 @@ uses three-valued comparisons and offers additional functionality,
 generic algorithms, iterators, functor adaptors for binding and swapping
 arguments and for composition, functors for projection and creation and
 adaptor classes around iterators and circulators. See also circulators in
-Chapter \ref chapterCirculators . A class storing polymorphic objects
+Chapter \ref chapterCirculators. A class storing polymorphic objects
 is also provided, as well as a class to manage the uncertainty of some values.
 Finally, tags and policy classes to specify complexity trade-offs of data-structures,
 and a class which helps specifying that the default types in template

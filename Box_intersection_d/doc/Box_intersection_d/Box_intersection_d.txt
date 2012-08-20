@@ -289,7 +289,7 @@ otherwise the box might shrink and one might miss intersections.
 \section secboxintersparams Example Using the topology and the cutoff Parameters 
 
 Boxes can be interpreted by the box intersection algorithm as closed
-or as half-open boxes, see also Section \ref secboxintersdef . Closed
+or as half-open boxes, see also Section \ref secboxintersdef. Closed
 boxes support zero-width boxes and they can intersect at their
 boundaries, while half-open boxes always have a positive volume and
 they only intersect iff their interiors overlap. The choice between
@@ -304,7 +304,7 @@ parameter and its two values:
 The example program uses a two-dimensional box with `int`
 coordinates and `id`-numbers that are by default explicitly
 stored. We create the same boxes as in the minimal example in
-Section \ref secboxintersectminimal . We create a \f$ 3 \times 3\f$ grid
+Section \ref secboxintersectminimal. We create a \f$ 3 \times 3\f$ grid
 of `boxes`, and two boxes for the `query` sequence, namely the
 box at the center and the box from the upper-right corner of the grid.
 
@@ -379,7 +379,7 @@ box intersection is reported to an empty dummy callback.
 For each box set, a near-optimal cutoff parameter is determined using
 an adaptive approximation. The runtime required for streaming is
 compared against usual scanning. Results on a Xeon 2.4GHz with 4GB
-main memory can be seen in Figure \ref fig_benchmark . For a small
+main memory can be seen in Figure \ref fig_benchmark. For a small
 number of boxes, pure scanning is still faster than streaming with
 optimal cutoff, which would just delegate the box sets to the scanning
 algorithm. As there are more and more boxes, the overhead becomes less
