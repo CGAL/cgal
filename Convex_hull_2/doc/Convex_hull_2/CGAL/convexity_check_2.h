@@ -3,8 +3,12 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Convexity
 
-The function `is_ccw_strongly_convex_2` determines if a given sequence of points defines 
+The function `::is_ccw_strongly_convex_2` determines if a given sequence of points defines 
 a counterclockwise-oriented, strongly convex polygon. 
+It returns `true`, iff the point elements in 
+[`first`,`beyond`)
+form a counterclockwise-oriented strongly convex polygon.
+
 A set of points is said to be strongly convex 
 if it consists of only extreme points 
 (<I>i.e.</I>, vertices of the convex hull). 
@@ -32,9 +36,7 @@ Implementation
 
 The algorithm requires \f$ O(n)\f$ time for a set of \f$ n\f$ input points. 
 
-returns `true`, iff the point elements in 
-[`first`,`beyond`)
-form a counterclockwise-oriented strongly convex polygon.
+
 
 */
 template <class ForwardIterator, class Traits>
@@ -51,12 +53,14 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Convexity
 
-The function `is_cw_strongly_convex_2` determines if a given sequence of points defines 
+The function `::is_cw_strongly_convex_2` determines if a given sequence of points defines 
 a clockwise-oriented, strongly convex polygon. 
+It returns `true`, iff the point elements in 
+[`first`,`beyond`)
+form a clockwise-oriented strongly convex polygon.
+
 A set of points is said to be strongly convex 
-
 <A NAME="Index_anchor_76"></A> 
-
 if it consists of only extreme points 
 (<I>i.e.</I>, vertices of the convex hull). 
 
@@ -83,9 +87,7 @@ Implementation
 
 The algorithm requires \f$ O(n)\f$ time for a set of \f$ n\f$ input points. 
 
-returns `true`, iff the point elements in 
-[`first`,`beyond`)
-form a clockwise-oriented strongly convex polygon.
+
 
 */
 template <class ForwardIterator, class Traits>

@@ -3,9 +3,13 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Functions
 
-The function `ch_akl_toussaint` generates the counterclockwise sequence of extreme 
-points from a given set of input points. 
-
+generates the counterclockwise sequence of extreme points
+of the points in the range [`first`,`beyond`).
+The resulting sequence is placed starting at position
+`result`, and the past-the-end iterator for the resulting
+sequence is returned. It is not specified at which point the
+cyclic sequence of extreme points is cut into a linear sequence.
+\pre The source range [`first`,`beyond`) does not contain `result`.
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
 
@@ -42,13 +46,7 @@ This function uses the algorithm of Akl and
 Toussaint \cite at-fcha-78 that requires \f$ O(n \log n)\f$ time for \f$ n\f$ input 
 points. 
 
-generates the counterclockwise sequence of extreme points
-of the points in the range [`first`,`beyond`).
-The resulting sequence is placed starting at position
-`result`, and the past-the-end iterator for the resulting
-sequence is returned. It is not specified at which point the
-cyclic sequence of extreme points is cut into a linear sequence.
-\pre The source range [`first`,`beyond`) does not contain `result`.
+
 */
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator

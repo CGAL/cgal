@@ -3,8 +3,14 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Functions
 
-The function `ch_graham_andrew` generates the counterclockwise sequence of extreme 
-points from a given set of input points. 
+generates the counterclockwise sequence of extreme points
+of the points in the range [`first`,`beyond`).
+The resulting sequence is placed starting at position
+`result`, and the past-the-end iterator for the resulting
+sequence is returned. It is not specified at which point the
+cyclic sequence of extreme points is cut into a linear sequence.
+\pre The source range [`first`,`beyond`) does not contain `result`.
+
 
 The default traits class `Default_traits` is the kernel in which the 
 type `InputIterator::value_type` is defined. 
@@ -45,13 +51,7 @@ scan algorithm \cite a-aeach-79 and follows the presentation of Mehlhorn
 \cite m-mdscg-84. This algorithm requires \f$ O(n \log n)\f$ time 
 in the worst case for \f$ n\f$ input points. 
 
-generates the counterclockwise sequence of extreme points
-of the points in the range [`first`,`beyond`).
-The resulting sequence is placed starting at position
-`result`, and the past-the-end iterator for the resulting
-sequence is returned. It is not specified at which point the
-cyclic sequence of extreme points is cut into a linear sequence.
-\pre The source range [`first`,`beyond`) does not contain `result`.
+
 */
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
@@ -67,7 +67,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `ch_graham_andrew_scan` generates the counterclockwise sequence of extreme 
+The function `::ch_graham_andrew_scan` generates the counterclockwise sequence of extreme 
 points from a given set of input points that are not left of the line defined 
 by the first and last points in this sequence. 
 
@@ -98,13 +98,13 @@ Implementation
 -------------- 
 
 The function uses Andrew's 
-variant of the Graham scan algorithm \cite a-aeach-79 . This algorithm 
+variant of the Graham scan algorithm \cite a-aeach-79. This algorithm 
 requires \f$ O(n \log n)\f$ time in the worst case for \f$ n\f$ input points. 
 
 Example 
 -------------- 
 
-In the following example `ch_graham_andrew_scan()` is used to 
+In the following example `::ch_graham_andrew_scan` is used to 
 realize Anderson's variant \cite a-readc-78 of the Graham Scan 
 \cite g-eadch-72. The points are sorted counterclockwise around the leftmost 
 point using the `Less_rotate_ccw_2` predicate, as defined in 

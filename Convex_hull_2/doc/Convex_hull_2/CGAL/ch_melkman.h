@@ -3,8 +3,12 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Functions
 
-The function `ch_melkman` computes the counterclockwise sequence of 
-extreme points of a sequence of points that forms a simple polyline or polygon. 
+generates the counterclockwise sequence of extreme points
+of the points in the range [`first`, `beyond`). 
+The resulting sequence is placed starting at
+position `result`, and the past-the-end iterator for
+the resulting sequence is returned.
+\pre The source range [`first`,`beyond`) corresponds to a simple polyline. [`first`,`beyond`) does not contain `result`.
 
 The default traits class `Default_traits` is the kernel in which the 
 type `InputIterator::value_type` is defined. 
@@ -40,12 +44,7 @@ Implementation
 It uses an implementation of Melkman's algorithm \cite m-olcch-87. 
 Running time of this is linear.
 
-generates the counterclockwise sequence of extreme points
-of the points in the range [`first`, `beyond`). 
-The resulting sequence is placed starting at
-position `result`, and the past-the-end iterator for
-the resulting sequence is returned.
-\pre The source range [`first`,`beyond`) corresponds to a simple polyline. [`first`,`beyond`) does not contain `result`.
+
 */
 template <class InputIterator, class OutputIterator>
 OutputIterator
