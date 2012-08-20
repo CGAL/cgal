@@ -3,7 +3,7 @@
 \cgalconcept
 
 The requirements of the facet type of a polyhedron to be built by the 
-function `::convex_hull_3`. 
+function `CGAL::::convex_hull_3`. 
 
 \hasModel CGAL::Polyhedron_3<Traits>::Facet 
 
