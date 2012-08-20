@@ -4,6 +4,8 @@
 namespace CGAL
 {
 
+/// @cond CGAL_DOCUMENT_INTERNAL
+
 /**
  * @class Closest_intersection_traits
  * Not a generic implementation !!
@@ -212,6 +214,9 @@ template<typename AABBTraits, typename Query, typename Output_iterator>
 long Listing_intersection_traits_ray_or_segment_triangle<AABBTraits, Query, Output_iterator>::true_inter_counter(
   0);
 #endif
+
+/// @endcond
+
 } //namespace CGAL
 #undef TRAITS_USE_COUNTER
 #endif
