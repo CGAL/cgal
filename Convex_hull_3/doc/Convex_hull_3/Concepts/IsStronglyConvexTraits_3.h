@@ -3,8 +3,8 @@
 \cgalconcept
 
 Requirements of the traits class used by the function 
-`is_strongly_convex_3`, which is used for postcondition checking 
-by `convex_hull_3`. 
+`::is_strongly_convex_3`, which is used for postcondition checking 
+by `::convex_hull_3`. 
 
 \hasModel CGAL::Convex_hull_traits_3<R> 
 \hasModel All kernels of CGAL 

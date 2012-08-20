@@ -3,7 +3,7 @@
 \cgalconcept
 
 The requirements of the vertex type of the polyhedron to be built by the 
-function `convex_hull_3`. 
+function `::convex_hull_3`. 
 
 \hasModel CGAL::Polyhedron_3<Traits>::Vertex
 
