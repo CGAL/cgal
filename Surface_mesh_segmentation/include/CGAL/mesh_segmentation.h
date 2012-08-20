@@ -34,7 +34,7 @@ void sdf_values_computation(const Polyhedron& polyhedron,
                             double cone_angle = CGAL_DEFAULT_CONE_ANGLE,
                             int number_of_rays = CGAL_DEFAULT_NUMBER_OF_RAYS)
 {
-  Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
+  internal::Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
   algorithm.calculate_sdf_values(sdf_values, cone_angle, number_of_rays);
 }
 
@@ -63,7 +63,7 @@ void surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
   smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                 smoothing_lambda)); // clip into [0-1]
 
-  Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
+  internal::Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
   algorithm.partition(sdf_values, segment_ids, number_of_levels,
                       smoothing_lambda);
 }
@@ -95,7 +95,8 @@ void surface_mesh_segmentation(const Polyhedron& polyhedron,
   smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                 smoothing_lambda)); // clip into [0-1]
 
-  typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
+  typedef std::map<typename Polyhedron::Facet_const_handle, double>
+  Facet_double_map;
   Facet_double_map internal_sdf_map;
   boost::associative_property_map<Facet_double_map> sdf_property_map(
     internal_sdf_map);

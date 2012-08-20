@@ -87,12 +87,13 @@ private:
    * An adaptor for Lvalue property-map. It stores a pointer to vector for underlying data-structure,
    * and also stores another property-map which maps each `key` to vector index.
    */
-  template<class Polyhedron, class ValueType, class FacetIdPropertyMap>
+  template<class Any_polyhedron, class ValueType, class FacetIdPropertyMap>
   struct Polyhedron_property_map_for_facet
       : public boost::put_get_helper<ValueType&,
-        Polyhedron_property_map_for_facet<Polyhedron, ValueType, FacetIdPropertyMap> > {
+        Polyhedron_property_map_for_facet<Any_polyhedron, ValueType, FacetIdPropertyMap>
+        > {
   public:
-    typedef typename Polyhedron::Facet_const_handle key_type;
+    typedef typename Any_polyhedron::Facet_const_handle key_type;
     typedef ValueType value_type;
     typedef value_type& reference;
     typedef boost::writable_property_map_tag category;
@@ -125,7 +126,7 @@ public:
   typedef typename Polyhedron::Facet_const_handle      Facet_const_handle;
   typedef typename Polyhedron::Vertex_const_iterator   Vertex_const_iterator;
 
-  typedef SDF_calculation<Polyhedron> SDF_calculation;
+  typedef SDF_calculation<Polyhedron> SDF_calculation_class;
 
 private:
   typedef typename Kernel::Plane_3   Plane;
@@ -209,8 +210,8 @@ public:
     Polyhedron_property_map_for_facet<Polyhedron, double, FacetIndexMap>
     sdf_pmap(&sdf_values, facet_index_map);
 
-    SDF_calculation().calculate_sdf_values(mesh, sdf_pmap, cone_angle,
-                                           number_of_ray);
+    SDF_calculation_class().calculate_sdf_values(mesh, sdf_pmap, cone_angle,
+        number_of_ray);
 
     SEG_DEBUG(std::cerr << "SDF computation time: " << t.time() << std::endl)
     SEG_DEBUG(t.reset())
@@ -271,8 +272,8 @@ public:
     Polyhedron_property_map_for_facet<Polyhedron, double, FacetIndexMap>
     sdf_pmap_internal(&sdf_values, facet_index_map);
 
-    SDF_calculation().calculate_sdf_values(mesh, sdf_pmap_internal, cone_angle,
-                                           number_of_rays);
+    SDF_calculation_class().calculate_sdf_values(mesh, sdf_pmap_internal,
+        cone_angle, number_of_rays);
 
     SEG_DEBUG(std::cout << t.time() << std::endl)
 
