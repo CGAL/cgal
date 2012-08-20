@@ -60,6 +60,7 @@ paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widge
     painter->setPen( QPen( ::Qt::red, 0. ) );
     QRectF clippingRectangle = this->viewportRect( );
     this->painterOstream = ArrangementPainterOstream< Traits >( painter, clippingRectangle );
+    this->painterOstream.setScene( this->getScene( ) );
     for ( int i = 0; i < this->curves.size( ); ++i )
     {
         X_monotone_curve_2 curve = this->curves[ i ];

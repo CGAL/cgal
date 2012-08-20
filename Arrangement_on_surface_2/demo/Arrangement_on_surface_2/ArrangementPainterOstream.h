@@ -773,7 +773,7 @@ public: // constructors
 public: // methods
     ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
     {
-        std::cout << "paint curve stub (alg traits)" << std::endl;
+        //std::cout << "paint curve stub (alg traits)" << std::endl;
         typedef Curve_renderer_facade<CKvA_2> Facade;
         typedef std::pair< int, int > Coord_2;
         typedef std::vector< Coord_2 > Coord_vec_2;
@@ -826,6 +826,7 @@ public: // methods
                 vit++;
                 coord = QPoint( vit->first, vit->second );
                 qpt = view->mapToScene( coord );
+                //std::cout << vit->first << " " << vit->second << std::endl;
             }
             this->qp->drawPath( path );
 
@@ -854,7 +855,7 @@ public: // methods
     {
         typedef Curve_renderer_facade<CKvA_2> Facade;
         std::pair< int, int > coord;
-        std::cout << "draw point stub" << std::endl;
+        //std::cout << "draw point stub" << std::endl;
 
         this->setupFacade( );
 
@@ -863,7 +864,7 @@ public: // methods
         }
         else
         {
-            std::cout << coord.first << " " << coord.second << std::endl;
+            //std::cout << coord.first << " " << coord.second << std::endl;
             QPoint coords( coord.first, coord.second );
             QGraphicsView* view = this->scene->views( ).first( );
             QPointF qpt = view->mapToScene( coords );

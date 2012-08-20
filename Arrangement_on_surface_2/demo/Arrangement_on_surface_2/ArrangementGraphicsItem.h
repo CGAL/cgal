@@ -197,7 +197,16 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::
 paint( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
 {
     painter->setPen( this->verticesPen );
-    this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
+    QRectF clipRect = this->boundingRect( );
+    if ( std::isinf(clipRect.left( )) || 
+        std::isinf(clipRect.right( )) || 
+        std::isinf(clipRect.top( )) || 
+        std::isinf(clipRect.bottom( )) )
+    {
+        clipRect = this->getViewportRect( );
+    }
+
+    this->painterostream = ArrangementPainterOstream< Traits >( painter, clipRect );
     this->painterostream.setScene( this->scene );
 
     for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
@@ -270,8 +279,9 @@ updateBoundingBox( CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
     }
     else
     {
-        std::pair< double, double > approx = this->arr->vertices_begin( )->point( ).to_double( );
-        this->bb = CGAL::Bbox_2( approx.first, approx.second, approx.first, approx.second );
+        //std::pair< double, double > approx = this->arr->vertices_begin( )->point( ).to_double( );
+        //this->bb = CGAL::Bbox_2( approx.first, approx.second, approx.first, approx.second );
+        this->bb = CGAL::Bbox_2( 0, 0, 0, 0 );
         this->bb_initialized = true;
     }
     typename Traits::Make_x_monotone_2 make_x_monotone_2 = traits.make_x_monotone_2_object( );

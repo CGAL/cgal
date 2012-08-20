@@ -74,6 +74,9 @@ protected:
     template < class CircularKernel >
     void updateEnvelope( bool lower, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
 
+    template < class Coefficient_ >
+    void updateEnvelope( bool lower, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
+
     Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
     Arrangement* arr;
     CGAL::Qt::CurveGraphicsItem< Traits >* lowerEnvelope;
@@ -272,6 +275,14 @@ updateEnvelope( bool lower, CGAL::Arr_circular_arc_traits_2< CircularKernel > tr
     envelopeToUpdate->modelChanged( );
 }
 
+template < class Arr_, class Traits >
+template < class Coefficient_ >
+void
+EnvelopeCallback< Arr_, Traits >::
+updateEnvelope( bool lower, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
+{
+    std::cout << "alg seg envelope stub" << std::endl;
+}
 
 template < class Arr_, class Traits >
 void

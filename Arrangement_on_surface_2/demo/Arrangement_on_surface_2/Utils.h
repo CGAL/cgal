@@ -440,6 +440,11 @@ public:
         return this->operator()( curve, x, this->traits, category );
     }
 
+    double approx( const X_monotone_curve_2& curve, const CoordinateType& x )
+    {
+        return CGAL::to_double( (*this)( curve, x ) );
+    }
+
 protected:
     template < class TTraits >
     CoordinateType operator() ( const X_monotone_curve_2& curve, const CoordinateType& x, TTraits traits_, CGAL::Arr_oblivious_side_tag )
@@ -495,6 +500,7 @@ protected:
         return res;
     }
 
+
 protected:
     Traits traits;
     Intersect_2 intersectCurves;
@@ -543,11 +549,21 @@ public:
         return res;
     }
 
+    double approx( const X_monotone_curve_2& curve, const FT& x )
+    {
+        return CGAL::to_double( (*this)( curve, x ) );
+    }
+
     // FIXME: inexact projection
     Root_of_2 operator() ( const X_monotone_curve_2& curve, const Root_of_2& x )
     {
         FT approx( CGAL::to_double( x ) );
         return this->operator()( curve, approx );
+    }
+
+    double approx( const X_monotone_curve_2& curve, const Root_of_2& x )
+    {
+        return CGAL::to_double( (*this)( curve, x ) );
     }
 
 protected:
@@ -575,8 +591,39 @@ public:
         X_monotone_curve_2 c2 = this->makeVerticalLine( x );
         intersect( curve, c2, oi );
         std::pair< Point_2, Multiplicity > res;
-        CGAL::assign( res, o ); // TODO: handle failure case
-        return res.first.y( );
+        if ( CGAL::assign( res, o ) ) // TODO: handle failure case
+        {
+            Point_2 p = res.first;
+            std::cout << "approx y: " << p.to_double( ).second << std::endl;
+            CoordinateType coord = p.y( );
+            return coord;
+        }
+        else
+        {
+            std::cout << "Warning: vertical projection failed" << std::endl;
+            return CoordinateType( 0 );
+        }
+    }
+
+    double approx( const X_monotone_curve_2& curve, const CoordinateType& x )
+    {
+        CGAL::Object o;
+        CGAL::Oneset_iterator< CGAL::Object > oi( o );
+        Intersect_2 intersect = traits.intersect_2_object( );
+        X_monotone_curve_2 c2 = this->makeVerticalLine( x );
+        intersect( curve, c2, oi );
+        std::pair< Point_2, Multiplicity > res;
+        if ( CGAL::assign( res, o ) ) // TODO: handle failure case
+        {
+            Point_2 p = res.first;
+            std::pair< double, double > tmp = p.to_double();
+            return tmp.second;
+        }
+        else
+        {
+            std::cout << "Warning: vertical projection failed" << std::endl;
+            return 0;
+        }
     }
 
 protected:

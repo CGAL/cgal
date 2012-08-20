@@ -209,7 +209,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
         Arr_compute_y_at_x_2< Traits > compute_y_at_x_2;
         compute_y_at_x_2.setScene( this->getScene( ) );
         CoordinateType x( this->queryPt.x( ) );
-        double yApprox = CGAL::to_double( compute_y_at_x_2( halfedge->curve( ), x ) );
+        double yApprox = CGAL::to_double( compute_y_at_x_2.approx( halfedge->curve( ), x ) );
         FT yInt( yApprox );
         Kernel_point_2 p2( this->queryPt.x( ), yInt );
         Segment_2 seg( this->queryPt, p2 );

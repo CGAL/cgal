@@ -631,11 +631,23 @@ on_actionOpen_triggered( )
     QRectF bb = agi->boundingRect( );
     QGraphicsView* view = currentTab->getView( );
     std::cout << bb.left( ) << " " << bb.bottom( ) << ", " << bb.right( ) << " " << bb.top( ) << std::endl;
+    if ( std::isinf(bb.left( )) || 
+        std::isinf(bb.right( )) || 
+        std::isinf(bb.top( )) || 
+        std::isinf(bb.bottom( )) )
+    {
+        std::cout << "unbounded; using default bb" << std::endl;
+        bb = QRectF( -100, -100, 200, 200 );
+        view->setSceneRect( bb );
+    }
+    else
+    {
+        view->fitInView( bb, ::Qt::KeepAspectRatio );
+        view->setSceneRect( bb );
+    }
 #if 0
     view->centerOn( bb.center( ) );
 #endif
-    view->fitInView( bb, ::Qt::KeepAspectRatio );
-    view->setSceneRect( bb );
 }
 
 void 
