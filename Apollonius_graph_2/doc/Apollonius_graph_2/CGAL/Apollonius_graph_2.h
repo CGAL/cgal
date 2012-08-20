@@ -16,9 +16,31 @@ The second template argument defaults to
 Traversal of the Apollonius graph 
 -------------- 
 
-An Apollonius graph can be seen as a container of faces and vertices. 
-Therefore the Apollonius graph provides several iterators and circulators 
-that allow to traverse it (completely or partially). 
+An Apollonius graph can be seen as a container of faces and vertices.
+Therefore the Apollonius graph provides several iterators and
+circulators that allow to traverse it (completely or partially).
+
+Traversal of the Convex Hull 
+----------------------------
+
+Applied on the `infinite_vertex` the `incident_*` functions allow to
+visit the vertices on the convex hull and the infinite edges and
+faces. Note that a counterclockwise traversal of the vertices adjacent
+to the `infinite_vertex` is a clockwise traversal of the convex hull.
+
+\code{.cpp}
+CGAL::Apollonius_graph_2<Gt, Agds> ag;
+CGAL::Apollonius_graph_2<Gt, Agds>::Face f;
+
+ag.incident_vertices(ag.infinite_vertex()); 
+ag.incident_vertices(ag.infinite_vertex(), f); 
+
+ag.incident_faces(ag.infinite_vertex()); 
+ag.incident_faces(ag.infinite_vertex(), f); 
+
+ag.incident_edges(ag.infinite_vertex()); 
+ag.incident_edges(ag.infinite_vertex(), f); 
+\endcode
 
 \sa `DelaunayGraph_2` 
 \sa `ApolloniusGraphTraits_2` 
@@ -467,49 +489,6 @@ in counterclockwise order around `v`.
 \pre Face `f` is incident to vertex `v`. 
 */ 
 Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f); 
-
-/// @} 
-
-/// \name Traversal of the Convex Hull 
-/// Applied on the `infinite_vertex` the above functions allow to
-/// visit the vertices on the convex hull and the infinite edges and
-/// faces. Note that a counterclockwise traversal of the vertices
-/// adjacent to the `infinite_vertex` is a clockwise traversal of the
-/// convex hull.
-/// @{
-
-/*! 
-
-*/ 
-Vertex_circulator incident_vertices(ag.infinite_vertex()); 
-
-/*! 
-
-*/ 
-Vertex_circulator incident_vertices(ag.infinite_vertex(), 
-Face_handle f); 
-
-/*! 
-
-*/ 
-Face_circulator incident_faces(ag.infinite_vertex()); 
-
-/*! 
-
-*/ 
-Face_circulator incident_faces(ag.infinite_vertex(), 
-Face_handle f); 
-
-/*! 
-
-*/ 
-Edge_circulator incident_edges(ag.infinite_vertex()); 
-
-/*! 
-
-*/ 
-Edge_circulator incident_edges(ag.infinite_vertex(), 
-Face_handle f); 
 
 /// @} 
 
