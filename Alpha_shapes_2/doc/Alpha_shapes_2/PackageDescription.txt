@@ -11,7 +11,7 @@
 \PkgDesc{This package offers  a data structure encoding the whole family of alpha-complexes related to a given 2D Delaunay or regular triangulation. In particular, the data structure allows to retrieve   the alpha-complex for any alpha value, the whole spectrum of critical alpha values and a filtration on the triangulation faces (this filtration is based on the first  alpha value for which each face is included on the alpha-complex).}
 \PkgSince{2.1}
 \cgalbib{ cgal:d-as2-12 }
-\license{ \ref licensesGPL }
+\license{ \ref licensesGPL  "GPL" }
 \PkgDescriptionEnd
 
 This chapter presents a framework for alpha shapes. The description is based on

@@ -9,7 +9,7 @@
 \PkgDesc{This packages provides a function for decomposing a bounded polyhedron into convex sub-polyhedra. The decomposition yields \f$ O(r^2)\f$ convex pieces, where \f$ r\f$ is the number of edges, whose adjacent facets form an angle of more than 180 degrees with respect to the polyhedron's interior. This bound is worst-case optimal. }
 \PkgSince{3.5}
 \cgalbib{ cgal:h-emspe-12 }
-\license{ \ref licensesGPL }
+\license{ \ref licensesGPL  "GPL" }
 \PkgDescriptionEnd
 */
 

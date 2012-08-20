@@ -12,7 +12,7 @@
 \PkgDesc{An efficient algorithm for finding all intersecting pairs for large numbers of iso-oriented boxes, in order to apply a user defined callback on them.  Typically these boxes will be bounding boxes of more complicated geometries. The algorithm is useful for (self-) intersection tests of surfaces etc. }
 \PkgSince{3.1}
 \cgalbib{ cgal:kmz-isiobd-12 }
-\license{ \ref licensesGPL }
+\license{ \ref licensesGPL  "GPL" }
 \PkgDescriptionEnd
 */
 

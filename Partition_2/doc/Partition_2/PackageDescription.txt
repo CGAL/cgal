@@ -12,7 +12,7 @@
 \PkgDesc{This package provides functions for partitioning polygons in monotone or convex polygons. The algorithms can produce results with the minimal number of polygons, as well as approximations which have no more than four  times the optimal number of convex pieces but they differ in  their runtime complexities.}
 \PkgSince{2.3}
 \cgalbib{ cgal:h-pp2-12 }
-\license{ \ref licensesGPL }
+\license{ \ref licensesGPL  "GPL" }
 \PkgDescriptionEnd
 
 The assertion flags for this package use `PARTITION` in their names

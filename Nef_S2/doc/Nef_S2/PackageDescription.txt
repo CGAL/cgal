@@ -12,7 +12,7 @@
 \PkgDesc{This package offers the equivalent to 2D Nef Polygons in the plane.  Here halfplanes correspond to half spheres delimited by great circles. }
 \PkgSince{3.1}
 \cgalbib{ cgal:hk-bonpes2-12 }
-\license{ \ref licensesGPL }
+\license{ \ref licensesGPL  "GPL"}
 \PkgDescriptionEnd
 
 Nef polyhedra are defined as a subset of the d-dimensional space obtained by

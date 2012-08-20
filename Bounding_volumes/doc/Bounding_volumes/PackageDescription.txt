@@ -12,7 +12,7 @@
 \PkgDesc{This package     provides algorithms for computing optimal bounding volumes of     point sets. In d-dimensional space, the smallest enclosing sphere,     ellipsoid (approximate), and annulus can be computed. In     3-dimensional space, the smallest enclosing strip is available as     well, and in 2-dimensional space, there are algorithms for a number     of additional volumes (rectangles, parallelograms, \f$ k=2,3,4\f$     axis-aligned rectangles). The smallest enclosing     sphere algorithm can also be applied to a set of      d-dimensional spheres.}
 \PkgSince{1.1}
 \cgalbib{ cgal:fghhs-bv-12 }
-\license{ \ref licensesGPL }
+\license{ \ref licensesGPL  "GPL" }
 \PkgDescriptionEnd
 
 The optimization code uses infix `OPTIMISATION` in the assertions,
