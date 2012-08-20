@@ -50,30 +50,30 @@ class need not be specified and defaults to types and operations defined
 in the kernel in which the input point type is defined.
 
 Given a sequence of \f$ n\f$ input points with \f$ h\f$ extreme points,
-the function `convex_hull_2()` uses either the output-sensitive \f$ O(n h)\f$ algorithm of Bykat \cite b-chfsp-78
+the function `::convex_hull_2` uses either the output-sensitive \f$ O(n h)\f$ algorithm of Bykat \cite b-chfsp-78
 (a non-recursive version of the quickhull \cite bdh-qach-96 algorithm) or the algorithm of Akl and Toussaint, which requires \f$ O(n \log n)\f$ time
 in the worst case. The algorithm chosen depends on the kind of 
 iterator used to specify the input points. These two algorithms are
-also available via the functions `ch_bykat()` and `ch_akl_toussaint()`,
+also available via the functions `::ch_bykat` and `::ch_akl_toussaint`,
 respectively. Also available are 
 the \f$ O(n \log n)\f$ Graham-Andrew scan algorithm \cite a-aeach-79, \cite m-mdscg-84 
-(`ch_graham_andrew()`), 
+(`::ch_graham_andrew`), 
 the \f$ O(n h)\f$ Jarvis march algorithm \cite j-ichfs-73
-(`ch_jarvis()`),
+(`::ch_jarvis`),
 and Eddy's \f$ O(n h)\f$ algorithm \cite e-nchap-77
-(`ch_eddy()`), which corresponds to the 
+(`::ch_eddy`), which corresponds to the 
 two-dimensional version of the quickhull algorithm.
 The linear-time algorithm of Melkman for producing the convex hull of 
 simple polygonal chains (or polygons) is available through the function
-`ch_melkman()`. 
+`::ch_melkman`. 
 
 # Example using Graham-Andrew's Algorithm #
 
 In the following example a convex hull is constructed from point data read 
 from standard input using `Graham_Andrew` algorithm. The resulting convex 
 polygon is shown at the standard output console. The same results could be 
-achieved by substituting the function `ch_graham_andrew()` by other 
-function like `ch_bykat()`.
+achieved by substituting the function `::ch_graham_andrew` by other 
+function like `::ch_bykat`.
 
 \cgalexample{Convex_hull_2/ch_from_cin_to_cout.cpp}
 
@@ -83,7 +83,7 @@ In addition to the functions for producing convex hulls, there are a
 number of functions for computing sets and sequences of points related
 to the convex hull. 
 
-The functions `lower_hull_points_2()` and `upper_hull_points_2()`
+The functions `::lower_hull_points_2` and `::upper_hull_points_2`
 provide the computation of the counterclockwise 
 sequence of extreme points on the lower hull and upper hull,
 respectively. The algorithm used in these functions is
@@ -92,13 +92,13 @@ which has worst-case running time of \f$ O(n \log n)\f$.
 
 There are also functions available for computing certain subsequences 
 of the sequence of extreme points on the convex hull. The function
-`ch_jarvis_march()` generates the counterclockwise ordered subsequence of
+`::ch_jarvis_march` generates the counterclockwise ordered subsequence of
 extreme points between a given pair of points and
-`ch_graham_andrew_scan()` computes the sorted sequence of extreme points that are
+`::ch_graham_andrew_scan` computes the sorted sequence of extreme points that are
 not left of the line defined by the first and last input points.
 
-Finally, a set of functions (`ch_nswe_point()`, `ch_ns_point()`, 
-`ch_we_point()`, `ch_n_point()`, `ch_s_point()`, `ch_w_point()`, `ch_e_point()`)
+Finally, a set of functions (`::ch_nswe_point`, `::ch_ns_point`, 
+`::ch_we_point`, `::ch_n_point`, `::ch_s_point`, `::ch_w_point`, `::ch_e_point`)
 is provided for computing extreme points of a 
 2D point set in the coordinate directions. 
 
@@ -121,7 +121,7 @@ points projected into each of the three coordinate planes.
 
 # Convexity Checking #
 
-The functions `is_ccw_strongly_convex_2()` and `is_cw_strongly_convex_2()`
+The functions `::is_ccw_strongly_convex_2` and `::is_cw_strongly_convex_2`
 check whether a given sequence of 2D points forms a (counter)clockwise strongly
 convex polygon. These are used in postcondition
 testing of the two-dimensional convex hull functions.
