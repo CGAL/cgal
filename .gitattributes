@@ -3614,6 +3614,20 @@ Nef_3/test/Nef_3/data/star.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/wrongly_oriented_cube.off -text
 Nef_3/test/Nef_3/nary.cpp -text
 Nef_3/test/Nef_3/nef_union_error_llvm.cpp -text
+Nef_S2/doc/Nef_S2/CGAL/IO/Qt_widget_Nef_S2.h -text
+Nef_S2/doc/Nef_S2/CGAL/Nef_polyhedron_S2.h -text
+Nef_S2/doc/Nef_S2/Nef_S2.txt -text
+Nef_S2/doc/Nef_S2/PackageDescription.txt -text
+Nef_S2/doc/Nef_S2/fig/complex.gif -text svneol=unset#image/gif
+Nef_S2/doc/Nef_S2/fig/complex.pdf -text svneol=unset#application/pdf
+Nef_S2/doc/Nef_S2/fig/halfspace.gif -text svneol=unset#image/gif
+Nef_S2/doc/Nef_S2/fig/halfspace.pdf -text svneol=unset#application/pdf
+Nef_S2/doc/Nef_S2/fig/shalfedge.gif -text svneol=unset#image/gif
+Nef_S2/doc/Nef_S2/fig/shalfedge.pdf -text svneol=unset#application/pdf
+Nef_S2/doc/Nef_S2/fig/shalfloopB.gif -text svneol=unset#image/gif
+Nef_S2/doc/Nef_S2/fig/shalfloopB.pdf -text svneol=unset#application/pdf
+Nef_S2/doc/Nef_S2/fig/teaser-small.png -text svneol=unset#image/png
+Nef_S2/doc/Nef_S2/fig/teaser.png -text svneol=unset#image/png
 Nef_S2/doc_tex/Nef_S2/fig/complex.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2/fig/complex.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2/fig/halfspace.gif -text svneol=unset#image/gif

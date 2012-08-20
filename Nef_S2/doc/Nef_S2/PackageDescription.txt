@@ -1,0 +1,47 @@
+
+
+/// \defgroup PkgNefS2 2D Boolean Operations on Nef Polygons Embedded on the Sphere 
+/// \defgroup PkgNefS2Concepts Concepts
+/// \ingroup PkgNefS2
+/*!
+\addtogroup PkgNefS2
+\todo check generated documentation
+\PkgDescriptionBegin{2D Boolean Operations on Nef Polygons Embedded on the Sphere }
+\PkgPicture{teaser-small.png}
+\PkgAuthor{Peter Hachenberger  and Lutz Kettner}
+\PkgDesc{This package offers the equivalent to 2D Nef Polygons in the plane.  Here halfplanes correspond to half spheres delimited by great circles. }
+\PkgSince{3.1}
+\cgalbib{ cgal:hk-bonpes2-12 }
+\license{ \ref licensesGPL }
+\PkgDescriptionEnd
+
+Nef polyhedra are defined as a subset of the d-dimensional space obtained by
+a finite number of set complement and set intersection operations on
+halfspaces.
+
+Due to the fact that all other binary set operations like union,
+difference and symmetric difference can be reduced to intersection and
+complement calculations, Nef polyhedra are also closed under those
+operations. Also, Nef polyhedra are closed under topological unary 
+set operations. Given a Nef polyhedron one can determine its interior, its
+boundary, and its closure.
+
+Additionally, a d-dimensional Nef polyhedron has the property, that its boundary
+is a (d-1)-dimensional Nef polyhedron. This property can be used as a way to
+represent 3-dimensional Nef polyhedra by means of planar Nef polyhedra.
+This is done by intersecting the neighborhood of a vertex in a 3D Nef polyhedron
+with an \f$ \epsilon\f$-sphere. The result is a planar Nef polyhedron embedded
+on the sphere.
+
+The intersection of a halfspace going through the center of the \f$ \epsilon\f$-sphere,
+with the \f$ \epsilon\f$-sphere, results in a halfsphere which is bounded by
+a great circle. A binary operation of two halfspheres cuts the great circles
+into great arcs.
+
+The incidence structure of planar Nef polyhedra can be reused. The
+items are denoted as \em svertex, \em shalfedge and \em sface,
+analogous to their counterparts in `Nef_polyhedron_2`. Additionally,
+there is the <I>shalfloop</I> representing the great circles.
+
+*/
+
