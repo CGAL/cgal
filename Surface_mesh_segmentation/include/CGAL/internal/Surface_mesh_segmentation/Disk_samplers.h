@@ -50,7 +50,10 @@ class Vogel_disk_sampling
 private:
   typedef boost::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
+
+  bool uniform;
 public:
+  Vogel_disk_sampling() : uniform(false) { }
   /**
    * Samples points from unit-disk.
    * @param number_of_points number of points to be picked
@@ -62,27 +65,27 @@ public:
    */
   void operator()(int number_of_points, double cone_angle,
                   Disk_samples_list& samples) const {
-    const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
-    const double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
     const double golden_ratio = 3.0 - std::sqrt(5.0);
 
-#if 0
-    for(int i = 0; i < number_of_points; ++i) {
-      double Q = i * golden_ratio * CGAL_PI;
-      double R = std::sqrt(static_cast<double>(i) / number_of_points);
-      double angle = atan(R / length_of_normal);
-      double weight =  exp(-0.5 * (std::pow(angle / angle_st_dev, 2))); // weight
-      samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), weight));
+    if(uniform) {
+      const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
+      const double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
+      for(int i = 0; i < number_of_points; ++i) {
+        double Q = i * golden_ratio * CGAL_PI;
+        double R = std::sqrt(static_cast<double>(i) / number_of_points);
+        double angle = atan(R / length_of_normal);
+        double weight =  exp(-0.5 * (std::pow(angle / angle_st_dev, 2))); // weight
+        samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), weight));
+      }
+    } else {
+      const double custom_power = 8.0 / 8.0;
+      for(int i = 0; i < number_of_points; ++i) {
+        double Q = i * golden_ratio * CGAL_PI;
+        double R = std::pow(static_cast<double>(i) / number_of_points, custom_power);
+        // use uniform weigths, since we already give importance to locations that are close to center.
+        samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), 1.0));
+      }
     }
-#else
-    const double custom_power = 8.0 / 8.0;
-    for(int i = 0; i < number_of_points; ++i) {
-      double Q = i * golden_ratio * CGAL_PI;
-      double R = std::pow(static_cast<double>(i) / number_of_points, custom_power);
-      // use uniform weigths, since we already give importance to locations that are close to center.
-      samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), 1.0));
-    }
-#endif
   }
 };
 

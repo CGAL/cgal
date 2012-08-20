@@ -129,7 +129,8 @@ public:
                      int number_of_run = CGAL_DEFAULT_NUMBER_OF_RUN,
                      int maximum_iteration = CGAL_DEFAULT_MAXIMUM_ITERATION)
     :
-    points(data.begin(), data.end()), maximum_iteration(maximum_iteration) {
+    points(data.begin(), data.end()), maximum_iteration(maximum_iteration),
+    init_type(init_type) {
     srand(CGAL_DEFAULT_SEED); //(static_cast<unsigned int>(time(NULL)))
     calculate_clustering_with_multiple_run(number_of_centers, number_of_run);
     sort(centers.begin(), centers.end());

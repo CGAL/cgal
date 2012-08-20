@@ -632,7 +632,6 @@ private:
     get(segments, facet) = segment_id;
     typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
       facet->facet_begin();
-    double total_neighbor_sdf = 0.0;
     do {
       if(facet_circulator->opposite()->is_border()) {
         continue;  // no facet to traversal

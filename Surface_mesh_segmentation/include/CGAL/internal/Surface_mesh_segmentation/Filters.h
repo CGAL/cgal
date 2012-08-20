@@ -18,6 +18,9 @@ namespace internal
 template<class Polyhedron>
 class Neighbor_selector_by_edge;
 
+template<class Polyhedron>
+class Neighbor_selector_by_vertex;
+
 /** Applies bilateral filtering on values which are associated with polyhedron facets. */
 template <class Polyhedron, class NeighborSelector = Neighbor_selector_by_edge<Polyhedron> >
 class Bilateral_filtering
@@ -81,9 +84,6 @@ private:
     return exp(-0.5 * (std::pow(value / deviation, 2)));
   }
 };
-
-template<class Polyhedron>
-class Neighbor_selector_by_vertex;
 
 /** Applies median filtering on values which are associated with polyhedron facets. */
 template <class Polyhedron, class NeighborSelector = Neighbor_selector_by_vertex<Polyhedron> >

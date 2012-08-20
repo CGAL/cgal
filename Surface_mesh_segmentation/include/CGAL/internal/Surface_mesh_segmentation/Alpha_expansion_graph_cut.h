@@ -306,39 +306,40 @@ private:
     return min_cut;
   }
 
-  double apply_alpha_expansion_3(std::vector<std::pair<int, int> >& edges,
-                                 const std::vector<double>& edge_weights,
-                                 const std::vector<std::vector<double> >& probability_matrix,
-                                 std::vector<int>& labels) {
-    int number_of_clusters = probability_matrix.size();
-    double min_cut = (std::numeric_limits<double>::max)();
-    bool success;
-    Timer gt;
-    gt.start();
-    int cluster_source = labels.size();
-    int cluster_sink = labels.size() + 1;
-    for(std::size_t vertex_i = 0; vertex_i <  probability_matrix[0].size();
-        ++vertex_i) {
-      edges.push_back(std::pair<int, int>(vertex_i, cluster_source));
-      edges.push_back(std::pair<int, int>(vertex_i, cluster_sink));
-    }
-    int static_edge_count = edges.size();
-    do {
-      success = false;
-      for(int alpha = 0; alpha < number_of_clusters; ++alpha) {
-        Timer t;
-        t.start();
-        Graph graph(edges.begin(), edges.end(), labels.size()+2, edges.size());
-        std::cout << "vertex time: " << t.time() << std::endl;
-
-
-
-
-      }
-    } while(success);
-    std::cout << "tot time: " << gt.time() <<  std::endl;
-    return min_cut;
-  }
+  // double apply_alpha_expansion_3(std::vector<std::pair<int, int> >& edges,
+  //    const std::vector<double>& edge_weights, const std::vector<std::vector<double> >& probability_matrix,
+  //    std::vector<int>& labels)
+  //{
+  //    int number_of_clusters = probability_matrix.size();
+  //    double min_cut = (std::numeric_limits<double>::max)();
+  //    bool success;
+  //    Timer gt;
+  //    gt.start();
+  //    int cluster_source = labels.size();
+  //    int cluster_sink = labels.size() + 1;
+  //    for(std::size_t vertex_i = 0; vertex_i <  probability_matrix[0].size(); ++vertex_i)
+  //    {
+  //        edges.push_back(std::pair<int, int>(vertex_i, cluster_source));
+  //        edges.push_back(std::pair<int, int>(vertex_i, cluster_sink));
+  //    }
+  //    int static_edge_count = edges.size();
+  //    do {
+  //        success = false;
+  //        for(int alpha = 0; alpha < number_of_clusters; ++alpha)
+  //        {
+  //            Timer t;
+  //            t.start();
+  //            Graph graph(edges.begin(), edges.end(), labels.size()+2, edges.size());
+  //            std::cout << "vertex time: " << t.time() << std::endl;
+  //
+  //
+  //
+  //
+  //        }
+  //    } while(success);
+  //    std::cout << "tot time: " << gt.time() <<  std::endl;
+  //    return min_cut;
+  //}
 };
 }//namespace internal
 }//namespace CGAL
