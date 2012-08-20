@@ -42,7 +42,7 @@ namespace internal
  */
 class Expectation_maximization
 {
-protected:
+private:
   /**
    * @brief Represents centers in Expectation Maximization algorithm.
    * @see Expectation_maximization
@@ -91,15 +91,14 @@ public:
   };
 
   double final_likelihood;
-protected:
-  std::vector<Gaussian_center> centers;
-  std::vector<double>  points;
+private:
+  std::vector<Gaussian_center>      centers;
+  std::vector<double>               points;
+  std::vector<std::vector<double> > responsibility_matrix;
 
   double threshold;
   int    maximum_iteration;
 
-  std::vector<std::vector<double> > responsibility_matrix;
-  unsigned int seed; /**< Seed for random initializations */
   Initialization_types init_type;
 
 public:
@@ -126,8 +125,7 @@ public:
     init_type(init_type),
     responsibility_matrix(std::vector<std::vector<double> >(number_of_centers,
                           std::vector<double>(points.size()))),
-    final_likelihood(-(std::numeric_limits<double>::max)()),
-    seed(CGAL_DEFAULT_SEED) {
+    final_likelihood(-(std::numeric_limits<double>::max)()) {
     // For initialization with k-means, with one run
     if(init_type == K_MEANS_INITIALIZATION) {
       K_means_clustering k_means(number_of_centers, data);
@@ -139,7 +137,7 @@ public:
     }
     // For initialization with random center selection, with multiple run
     else {
-      srand(seed);
+      srand(CGAL_DEFAULT_SEED);
       calculate_clustering_with_multiple_run(number_of_centers, number_of_runs);
     }
     sort(centers.begin(), centers.end());
@@ -187,29 +185,7 @@ public:
     }
   }
 
-  /** Going to be removed */
-  double calculate_distortion() {
-    double distortion = 0.0;
-
-    for(std::vector<double>::iterator it = points.begin(); it!= points.end();
-        ++it) {
-      int closest_center = 0;
-      double min_distance = std::abs(centers[0].mean - *it);
-      for(std::size_t i = 1; i < centers.size(); ++i) {
-        double distance = std::abs(centers[i].mean - *it);
-        if(distance < min_distance) {
-          min_distance = distance;
-          closest_center = i;
-        }
-      }
-      double distance = (centers[closest_center].mean - *it) /
-                        centers[closest_center].deviation;
-      distortion += distance * distance;
-    }
-    return std::sqrt(distortion / points.size());
-  }
-
-protected:
+private:
   /**
    * Calculates deviation for each center.
    * Initial deviation for a center is equal to deviation of the points whose closest center is the current center.
@@ -286,9 +262,9 @@ protected:
         distance_square_cumulative[j] = cumulative_distance_square;
       }
 
-      double random_ds = (rand() / static_cast<double>(RAND_MAX)) *
-                         (distance_square_cumulative.back());
-      int selection_index = std::lower_bound(distance_square_cumulative.begin(),
+      double zero_one = rand() / (RAND_MAX + 1.0); // [0,1) random number
+      double random_ds =  zero_one * (distance_square_cumulative.back());
+      int selection_index = std::upper_bound(distance_square_cumulative.begin(),
                                              distance_square_cumulative.end(), random_ds)
                             - distance_square_cumulative.begin();
       double initial_mean = points[selection_index];

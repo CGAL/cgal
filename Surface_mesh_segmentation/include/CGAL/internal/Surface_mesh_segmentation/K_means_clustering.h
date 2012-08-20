@@ -24,7 +24,7 @@ namespace internal
 class K_means_clustering
 {
 // Nested classes
-protected:
+private:
   /**
    * @brief Represents centers in k-means algorithm.
    * @see K_means_point, K_means_clustering
@@ -33,7 +33,7 @@ protected:
   {
   public:
     double mean; /**< Mean of the center */
-  protected:
+  private:
     double new_mean;
     int    new_number_of_points;
 
@@ -106,12 +106,11 @@ public:
     PLUS_INITIALIZATION    /**< place initial centers using k-means++ algorithm */
   };
 
-protected:
+private:
   std::vector<K_means_center> centers;
   std::vector<K_means_point>  points;
   int  maximum_iteration;
 
-  unsigned int seed; /**< Seed for random initializations */
   Initialization_types init_type;
 
 public:
@@ -130,9 +129,8 @@ public:
                      int number_of_run = CGAL_DEFAULT_NUMBER_OF_RUN,
                      int maximum_iteration = CGAL_DEFAULT_MAXIMUM_ITERATION)
     :
-    points(data.begin(), data.end()), maximum_iteration(maximum_iteration),
-    seed(CGAL_DEFAULT_SEED) { //seed(static_cast<unsigned int>(time(NULL)))
-    srand(seed);
+    points(data.begin(), data.end()), maximum_iteration(maximum_iteration) {
+    srand(CGAL_DEFAULT_SEED); //(static_cast<unsigned int>(time(NULL)))
     calculate_clustering_with_multiple_run(number_of_centers, number_of_run);
     sort(centers.begin(), centers.end());
   }
@@ -149,7 +147,7 @@ public:
     }
   }
 
-protected:
+private:
   /**
    * Initializes centers by choosing random points from data.
    * @param number_of_centers
@@ -190,10 +188,9 @@ protected:
         cumulative_distance_square += distance_square[j];
         distance_square_cumulative[j] = cumulative_distance_square;
       }
-
-      double random_ds = (rand() / static_cast<double>(RAND_MAX)) *
-                         (distance_square_cumulative.back());
-      int selection_index = std::lower_bound(distance_square_cumulative.begin(),
+      double zero_one = rand() / (RAND_MAX + 1.0); // [0,1) random number
+      double random_ds =  zero_one * (distance_square_cumulative.back());
+      int selection_index = std::upper_bound(distance_square_cumulative.begin(),
                                              distance_square_cumulative.end(), random_ds)
                             - distance_square_cumulative.begin();
       double initial_mean = points[selection_index].data;

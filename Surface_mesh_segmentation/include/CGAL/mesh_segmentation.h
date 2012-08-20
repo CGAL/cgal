@@ -4,12 +4,12 @@
  * @file mesh_segmentation.h
  * The API which contains free template functions for SDF computation and mesh segmentation.
  */
-#include <CGAL/Surface_mesh_segmentation.h>
+#include <CGAL/internal/Surface_mesh_segmentation/Surface_mesh_segmentation.h>
 
 #define CGAL_DEFAULT_CONE_ANGLE (2.0 / 3.0) * CGAL_PI /**< Default opening angle for cone */
 #define CGAL_DEFAULT_NUMBER_OF_RAYS 25                /**< Default number of rays picked from cone for each facet */
 #define CGAL_DEFAULT_NUMBER_OF_LEVELS 5               /**< Default number of clusters for soft clustering */
-#define CGAL_DEFAULT_SMOOTHING_LAMBDA 0.46            /**< Default factor which indicates importance of surface features in energy minization*/
+#define CGAL_DEFAULT_SMOOTHING_LAMBDA 0.23            /**< Default factor which indicates importance of surface features in energy minization */
 
 /** CGAL */
 namespace CGAL
@@ -22,7 +22,8 @@ namespace CGAL
  * If still there is any facet which has no SDF value, minimum SDF value greater than zero is assigned to it.
  *  - Smoothed with bilateral filtering.
  *  - Linearly normalized between [0-1].
- * @param polyhedron `CGAL Polyhedron` on which SDF is computed
+ *
+ * @param polyhedron `CGAL Polyhedron` on which SDF values are computed
  * @param[out] sdf_values `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @param cone_angle opening angle for cone, expressed in radians
  * @param number_of_rays number of rays picked from cone for each facet

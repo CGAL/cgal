@@ -1,8 +1,8 @@
-#ifndef CGAL_SURFACE_MESH_SEGMENTATION_DISK_SAMPLING_H
-#define CGAL_SURFACE_MESH_SEGMENTATION_DISK_SAMPLING_H
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_DISK_SAMPLERS_H
+#define CGAL_SURFACE_MESH_SEGMENTATION_DISK_SAMPLERS_H
 /**
- * @file Disk_sampling.h
- * This file contains 3 sampling methods, which can be used as a template parameter for `SDF_calculation<Polyhedron, DiskSampling>`.
+ * @file Disk_samplers.h
+ * This file contains 3 sampling methods, which can be used as a template parameter for SDF_calculation.
  */
 #include <CGAL/number_type_basic.h>
 
@@ -43,11 +43,11 @@ namespace internal
 // Uniform //                                  // Custom power (biased to center) //
 /**
  * @brief Uses Vogel's method to sample points from unit-disk.
- * @see Disk_sampling.h
+ * @see Disk_samplers.h, SDF_calculation
  */
 class Vogel_disk_sampling
 {
-protected:
+private:
   typedef boost::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
 public:
@@ -116,7 +116,7 @@ public:
  */
 class Polar_disk_sampling
 {
-protected:
+private:
   typedef boost::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
 public:
@@ -181,7 +181,7 @@ public:
  */
 class Concentric_disk_sampling
 {
-protected:
+private:
   typedef boost::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
 public:
@@ -242,4 +242,4 @@ public:
 }//namespace internal
 }//namespace CGAL
 #undef CGAL_ANGLE_ST_DEV_DIVIDER
-#endif //CGAL_SURFACE_MESH_SEGMENTATION_DISK_SAMPLING_H
+#endif //CGAL_SURFACE_MESH_SEGMENTATION_DISK_SAMPLERS_H

@@ -16,8 +16,9 @@
 
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
-#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
-//#include "Alpha_expansion_graph_cut.h"
+#include <CGAL/internal/Surface_mesh_segmentation/Filters.h>
+//#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
+#include "Alpha_expansion_graph_cut.h"
 #include <CGAL/internal/Surface_mesh_segmentation/SDF_calculation.h>
 
 #include <CGAL/utility.h>
@@ -58,15 +59,16 @@
 
 namespace CGAL
 {
-
+namespace internal
+{
 /**
  * @brief Main entry point for mesh segmentation algorithm.
- * It is a connector class which uses
- *   - `SDF_calculation` for calculating sdf values
- *   - `Expectation_maximization` for soft clustering
- *   - `Alpha_expansion_graph_cut` for hard clustering
+ * It is a connector class which uses:
+ *   -  SDF_calculation for calculating sdf values
+ *   -  Expectation_maximization for soft clustering
+ *   -  Alpha_expansion_graph_cut for hard clustering
  *
- * Other than being a connector it is responsable for preprocess and postprocess on intermadiate data, which are:
+ * Other than being a connector, it is also responsable for preprocess and postprocess on intermadiate data, which are:
  *   - log-normalizing probabilities received from soft clustering
  *   - log-normalizing and calculating dihedral-angle based weights for edges
  *   - smoothing and log-normalizing sdf values received from sdf calculation
@@ -75,14 +77,15 @@ namespace CGAL
 template <
 class Polyhedron,
       class FacetIndexMap =
-      boost::associative_property_map<std::map<typename Polyhedron::Facet_const_handle, int> >
+      boost::associative_property_map<std::map<typename Polyhedron::Facet_const_handle, int> >,
+      class Filter = Bilateral_filtering<Polyhedron>
       >
 class Surface_mesh_segmentation
 {
-protected:
+private:
   /**
    * An adaptor for Lvalue property-map. It stores a pointer to vector for underlying data-structure,
-   * and also stores another property-map which maps `key` to vector index.
+   * and also stores another property-map which maps each `key` to vector index.
    */
   template<class Polyhedron, class ValueType, class FacetIdPropertyMap>
   struct Polyhedron_property_map_for_facet
@@ -122,13 +125,13 @@ public:
   typedef typename Polyhedron::Facet_const_handle      Facet_const_handle;
   typedef typename Polyhedron::Vertex_const_iterator   Vertex_const_iterator;
 
-  typedef internal::SDF_calculation<Polyhedron> SDF_calculation;
+  typedef SDF_calculation<Polyhedron> SDF_calculation;
 
-protected:
+private:
   typedef typename Kernel::Plane_3   Plane;
 
 // member variables
-public: // going to be protected !
+public: // going to be private !
   const Polyhedron& mesh;
 
   FacetIndexMap
@@ -138,9 +141,10 @@ public: // going to be protected !
   std::vector<double> sdf_values;
   std::vector<int>    centers;
   std::vector<int>    segments;
-// member functions
+
   bool is_pmmap_custom;
-  //std::ofstream log_file;
+
+// member functions
 public:
   Surface_mesh_segmentation(const Polyhedron& mesh)
     : mesh(mesh), facet_index_map(facet_index_map_internal),
@@ -205,14 +209,14 @@ public:
     Polyhedron_property_map_for_facet<Polyhedron, double, FacetIndexMap>
     sdf_pmap(&sdf_values, facet_index_map);
 
-    SDF_calculation().calculate_sdf_values(cone_angle, number_of_ray, mesh,
-                                           sdf_pmap);
+    SDF_calculation().calculate_sdf_values(mesh, sdf_pmap, cone_angle,
+                                           number_of_ray);
 
     SEG_DEBUG(std::cerr << "SDF computation time: " << t.time() << std::endl)
     SEG_DEBUG(t.reset())
 
     check_zero_sdf_values();
-    smooth_sdf_values_with_bilateral();
+    smooth_sdf_values();
     normalize_sdf_values();
 
     SEG_DEBUG(std::cerr <<"Normalization and smoothing time: " << t.time() <<
@@ -229,8 +233,8 @@ public:
     SEG_DEBUG(Timer t)
     SEG_DEBUG(t.start())
     // soft clustering using GMM-fitting initialized with k-means
-    internal::Expectation_maximization fitter(number_of_centers, sdf_values,
-        internal::Expectation_maximization::K_MEANS_INITIALIZATION, 1);
+    Expectation_maximization fitter(number_of_centers, sdf_values,
+                                    Expectation_maximization::K_MEANS_INITIALIZATION, 1);
 
     std::vector<int> labels;
     fitter.fill_with_center_ids(labels);
@@ -249,8 +253,7 @@ public:
         edge_weights);
 
     // apply graph cut
-    internal::Alpha_expansion_graph_cut(edges, edge_weights, probability_matrix,
-                                        labels);
+    Alpha_expansion_graph_cut(edges, edge_weights, probability_matrix, labels);
     centers = labels;
     // assign a segment id for each facet
     assign_segments();
@@ -268,13 +271,13 @@ public:
     Polyhedron_property_map_for_facet<Polyhedron, double, FacetIndexMap>
     sdf_pmap_internal(&sdf_values, facet_index_map);
 
-    SDF_calculation().calculate_sdf_values(cone_angle, number_of_rays, mesh,
-                                           sdf_pmap_internal);
+    SDF_calculation().calculate_sdf_values(mesh, sdf_pmap_internal, cone_angle,
+                                           number_of_rays);
 
     SEG_DEBUG(std::cout << t.time() << std::endl)
 
     check_zero_sdf_values();
-    smooth_sdf_values_with_bilateral();
+    smooth_sdf_values();
     linear_normalize_sdf_values();
 
     for(Facet_const_iterator facet_it = mesh.facets_begin();
@@ -303,8 +306,8 @@ public:
     // log normalize sdf values
     normalize_sdf_values();
     // soft clustering using GMM-fitting initialized with k-means
-    internal::Expectation_maximization fitter(number_of_centers, sdf_values,
-        internal::Expectation_maximization::K_MEANS_INITIALIZATION, 1);
+    Expectation_maximization fitter(number_of_centers, sdf_values,
+                                    Expectation_maximization::K_MEANS_INITIALIZATION, 1);
 
     std::vector<int> labels;
     fitter.fill_with_center_ids(labels);
@@ -320,8 +323,7 @@ public:
         edge_weights);
 
     // apply graph cut
-    internal::Alpha_expansion_graph_cut(edges, edge_weights, probability_matrix,
-                                        labels);
+    Alpha_expansion_graph_cut(edges, edge_weights, probability_matrix, labels);
     centers = labels;
     // assign a segment id for each facet
     assign_segments();
@@ -339,7 +341,7 @@ public:
     return segments[facet_index_map[facet]];
   }
 
-protected:
+private:
   /**
    * Going to be removed
    */
@@ -478,139 +480,23 @@ protected:
   }
 
   /**
-   * Going to be removed
-   */
-  void smooth_sdf_values() {
-    std::vector<double> smoothed_sdf_values(mesh.size_of_facets());
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
-        facet_it->facet_begin();
-      double total_neighbor_sdf = 0.0;
-      do {
-        if(!facet_circulator->opposite()->is_border()) {
-          total_neighbor_sdf += get(sdf_values, facet_circulator->opposite()->facet());
-        }
-      } while( ++facet_circulator !=  facet_it->facet_begin());
-
-      total_neighbor_sdf /= 3.0;
-      get(smoothed_sdf_values, facet_it) = (get(sdf_values,
-                                            facet_it) + total_neighbor_sdf) / 2.0;
-    }
-    sdf_values = smoothed_sdf_values;
-  }
-
-  /**
-   * Going to be removed
-   */
-  void smooth_sdf_values_with_gaussian() {
-    // take neighbors, use weighted average of neighbors as filtered result. (for weights use gaussian kernel with sigma = window_size/2)
-    const int window_size = get_window_size();
-    const int iteration = 1;
-
-    for(int i = 0; i < iteration; ++i) {
-      std::vector<double> smoothed_sdf_values(mesh.size_of_facets());
-      for(Facet_const_iterator facet_it = mesh.facets_begin();
-          facet_it != mesh.facets_end(); ++facet_it) {
-        std::map<Facet_const_handle, int> neighbors;
-        get_neighbors_by_vertex(facet_it, neighbors, window_size);
-
-        double total_sdf_value = 0.0;
-        double total_weight = 0.0;
-        for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
-            it != neighbors.end(); ++it) {
-          double weight = gaussian_function(it->second,
-                                            window_size/2.0); // window_size => 2*sigma
-          total_sdf_value += get(sdf_values, it->first) * weight;
-          total_weight += weight;
-        }
-        get(smoothed_sdf_values, facet_it) = total_sdf_value / total_weight;
-      }
-      sdf_values = smoothed_sdf_values;
-    }
-  }
-
-  /**
-   * Going to be removed
-   */
-  void smooth_sdf_values_with_median() {
-    // take neighbors, use median sdf_value as filtered one.
-    const int window_size = get_window_size();
-    const int iteration = 1;
-
-    for(int i = 0; i < iteration; ++i) {
-      std::vector<double> smoothed_sdf_values(mesh.size_of_facets());;
-      for(Facet_const_iterator facet_it = mesh.facets_begin();
-          facet_it != mesh.facets_end(); ++facet_it) {
-        //Find neighbors and put their sdf values into a list
-        std::map<Facet_const_handle, int> neighbors;
-        get_neighbors_by_edge(facet_it, window_size, neighbors);
-        std::vector<double> sdf_of_neighbors;
-        for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
-            it != neighbors.end(); ++it) {
-          sdf_of_neighbors.push_back(get(sdf_values, it->first));
-        }
-        // Find median.
-        int half_neighbor_count = sdf_of_neighbors.size() / 2;
-        std::nth_element(sdf_of_neighbors.begin(),
-                         sdf_of_neighbors.begin() + half_neighbor_count, sdf_of_neighbors.end());
-        double median_sdf = sdf_of_neighbors[half_neighbor_count];
-        if( half_neighbor_count % 2 == 0) {
-          median_sdf += *std::max_element(sdf_of_neighbors.begin(),
-                                          sdf_of_neighbors.begin() + half_neighbor_count);
-          median_sdf /= 2;
-        }
-        get(smoothed_sdf_values, facet_it) = median_sdf;
-      }
-      sdf_values = smoothed_sdf_values;
-    }
-  }
-
-  /**
-   * Bilateral smoothing for sdf values.
+   * Smoothing sdf values.
    * Takes neighbors using `get_window_size()`, and assigns weighted average of neighbors as filtered result.
    * For weighting two weights are multiplied:
    *   - spatial: over geodesic distances (number of edges)
    *   - domain : over sdf value distances
    */
-  void smooth_sdf_values_with_bilateral() {
-    const int window_size = get_window_size();
-    const int iteration = 1;
+  void smooth_sdf_values() {
+    typedef Polyhedron_property_map_for_facet<Polyhedron, double, FacetIndexMap>
+    Facet_vector_map;
 
-    for(int i = 0; i < iteration; ++i) {
-      std::vector<double> smoothed_sdf_values(mesh.size_of_facets());
-      for(Facet_const_iterator facet_it = mesh.facets_begin();
-          facet_it != mesh.facets_end(); ++facet_it) {
-        std::map<Facet_const_handle, int> neighbors;
-        get_neighbors_by_edge(facet_it, window_size, neighbors);
+    Facet_vector_map sdf_input(&sdf_values, facet_index_map);
 
-        double total_sdf_value = 0.0, total_weight = 0.0;
-        double current_sdf_value = get(sdf_values, facet_it);
-        // calculate deviation for range weighting.
-        double deviation = 0.0;
-        for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
-            it != neighbors.end(); ++it) {
-          deviation += std::pow(get(sdf_values, it->first) - current_sdf_value, 2);
-        }
-        deviation = std::sqrt(deviation / neighbors.size());
-        if(deviation == 0.0) {
-          deviation = std::numeric_limits<double>::epsilon();  //this might happen
-        }
-        for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
-            it != neighbors.end(); ++it) {
-          double spatial_weight = gaussian_function(it->second,
-                                  window_size / 2.0); // window_size => 2*sigma
-          double domain_weight = gaussian_function(get(sdf_values,
-                                 it->first) -  current_sdf_value, 1.5 * deviation);
-          double weight = spatial_weight * domain_weight;
+    std::vector<double> smoothed_sdf(mesh.size_of_facets());
+    Facet_vector_map sdf_output(&smoothed_sdf, facet_index_map);
 
-          total_sdf_value += get(sdf_values, it->first) * weight;
-          total_weight += weight;
-        }
-        get(smoothed_sdf_values, facet_it) = total_sdf_value / total_weight;
-      }
-      sdf_values = smoothed_sdf_values;
-    }
+    Filter()(mesh, get_window_size(), sdf_input, sdf_output);
+    sdf_values = smoothed_sdf;
   }
 
   /**
@@ -626,66 +512,6 @@ protected:
 
     double facet_sqrt = std::sqrt(mesh.size_of_facets() / 2000.0);
     return static_cast<int>(facet_sqrt) + 1;
-  }
-
-  /**
-   * Breadth-first search on facets, by treating facets, which share a common edge, are 1-level neighbors.
-   * @param facet root facet
-   * @param max_level maximum distance (number of edges) between root facet and visited facet
-   * @param[out] neighbors visited facets and their distances to root facet
-   */
-  void get_neighbors_by_edge(Facet_const_handle& facet, int max_level,
-                             std::map<Facet_const_handle, int>& neighbors) {
-    typedef std::pair<Facet_const_handle, int> facet_level_pair;
-    std::queue<facet_level_pair> facet_queue;
-    facet_queue.push(facet_level_pair(facet, 0));
-    while(!facet_queue.empty()) {
-      const facet_level_pair& pair = facet_queue.front();
-      bool inserted = neighbors.insert(pair).second;
-      if(inserted && pair.second < max_level) {
-        typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
-          pair.first->facet_begin();
-        do {
-          if(!facet_circulator->opposite()->is_border()) {
-            facet_queue.push(facet_level_pair(facet_circulator->opposite()->facet(),
-                                              pair.second + 1));
-          }
-        } while(++facet_circulator != pair.first->facet_begin());
-      }
-      facet_queue.pop();
-    }
-  }
-
-  /**
-   * Breadth-first search on facets, by treating facets, which share a common vertex, are 1-level neighbors.
-   * @param facet root facet
-   * @param max_level maximum distance (number of edges) between root facet and visited facet
-   * @param[out] neighbors visited facets and their distances to root facet
-   */
-  void get_neighbors_by_vertex(Facet_const_handle& facet,
-                               std::map<Facet_const_handle, int>& neighbors, int max_level) {
-    typedef std::pair<Facet_const_handle, int> facet_level_pair;
-    std::queue<facet_level_pair> facet_queue;
-    facet_queue.push(facet_level_pair(facet, 0));
-    while(!facet_queue.empty()) {
-      const facet_level_pair& pair = facet_queue.front();
-      bool inserted = neighbors.insert(pair).second;
-      if(inserted && pair.second < max_level) {
-        Facet_const_handle facet = pair.first;
-        Halfedge_const_iterator edge = facet->halfedge();
-        do { // loop on three vertices of the facet
-          Vertex_const_iterator vertex = edge->vertex();
-          typename Facet::Halfedge_around_vertex_const_circulator vertex_circulator =
-            vertex->vertex_begin();
-          do { // for each vertex loop on incoming edges (through those edges loop on neighbor facets which includes the vertex)
-            if(!vertex_circulator->is_border()) {
-              facet_queue.push(facet_level_pair(vertex_circulator->facet(), pair.second + 1));
-            }
-          } while(++vertex_circulator != vertex->vertex_begin());
-        } while((edge = edge->next()) != facet->halfedge());
-      }
-      facet_queue.pop();
-    }
   }
 
   /**
@@ -832,12 +658,7 @@ protected:
     return data[ facet_index_map[facet] ];
   }
 
-  /**
-   * Gauissian function for weighting.
-   */
-  double gaussian_function(double value, double deviation) {
-    return exp(-0.5 * (std::pow(value / deviation, 2)));
-  }
+
 
 public:
   /**
@@ -1006,6 +827,7 @@ public:
 #endif
   }
 };
+}//namespace internal
 } //namespace CGAL
 
 #undef CGAL_NORMALIZATION_ALPHA
