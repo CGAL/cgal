@@ -61,7 +61,6 @@ qt4_wrap_ui( arrangement_2b_uis
     NewTabDialog.ui
     OverlayDialog.ui
     ArrangementDemoPropertiesDialog.ui
-    Test.ui
 )
 qt4_wrap_cpp( arrangement_2b_mocs
     ArrangementDemoWindow.h
