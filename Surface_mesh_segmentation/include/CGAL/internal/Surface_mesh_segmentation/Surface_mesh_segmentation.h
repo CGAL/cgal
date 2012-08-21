@@ -85,6 +85,8 @@ class Polyhedron,
       >
 class Surface_mesh_segmentation
 {
+  typedef Surface_mesh_segmentation<Polyhedron, GraphCut, FacetIndexMap, Filter>
+  Self;
 private:
   /**
    * An adaptor for Lvalue property-map. It stores a pointer to vector for underlying data-structure,
@@ -170,8 +172,7 @@ public:
 // It stores a pointer to std::map instance which is a member variable.
 // So default copy constructor is not working since copied property-map adaptor still
 // points to std::map instance which exists in copied object (rhs).
-  Surface_mesh_segmentation(const
-                            Surface_mesh_segmentation<Polyhedron, FacetIndexMap>& rhs):
+  Surface_mesh_segmentation(const Self& rhs):
     mesh(rhs.mesh), facet_index_map_internal(rhs.facet_index_map_internal),
     sdf_values(rhs.sdf_values),
     centers(rhs.centers), segments(rhs.segments),
@@ -184,8 +185,7 @@ public:
 // Use another copy of polyhedron but also copy the state of rhs.
 // Main difference between copy constructor is rhs.mesh is NOT equal to this->mesh.
 // So we cannot copy facet_index_map_internal since facet_iterators of 'this' is different than rhs.
-  Surface_mesh_segmentation(const Polyhedron& mesh,
-                            const Surface_mesh_segmentation<Polyhedron, FacetIndexMap>& rhs)
+  Surface_mesh_segmentation(const Polyhedron& mesh, const Self& rhs)
     : mesh(mesh), sdf_values(rhs.sdf_values), centers(rhs.centers),
       segments(rhs.segments),
       is_pmmap_custom(rhs.is_pmmap_custom) {
