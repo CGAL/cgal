@@ -481,6 +481,11 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_zoomin.bmp -te
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_zoomout.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/lower_env_xpm.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/upper_env_xpm.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/doc/Sweep_line_2/CGAL/Sweep_line_2_algorithms.h -text
+Arrangement_on_surface_2/doc/Sweep_line_2/PackageDescription.txt -text
+Arrangement_on_surface_2/doc/Sweep_line_2/Sweep_line_2.txt -text
+Arrangement_on_surface_2/doc/Sweep_line_2/fig/Curve_intersections_2.png -text svneol=unset#image/png
+Arrangement_on_surface_2/doc/Sweep_line_2/fig/sl_simple.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Arrangement_2.png -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.pdf -text svneol=unset#application/pdf
