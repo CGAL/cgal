@@ -40,7 +40,8 @@ reader may want to refer to the paper by Karavelas
 \cite cgal:k-reisv-04 for the general idea as well as the details of
 the algorithm implemented.
 
-<b>Definitions.</b> Before describing the details of the
+##Definitions##
+Before describing the details of the
 implementation we make a brief introduction to the theory of segment
 Delaunay graphs and segment Voronoi diagrams.  The segment Voronoi
 diagram is defined over a set of non-intersecting sites, which can
@@ -140,7 +141,7 @@ no real meaning. What has real meaning is the set of sites that
 correspond to cells of the Voronoi diagram and this is the set of
 output sites.
 
-<b>Degenerate Dimensions.</b>
+##Degenerate Dimensions##
 
 The dimension of the segment Delaunay graph is in general 2. The
 exceptions to this rule are as follows:
@@ -160,14 +161,14 @@ The 2D segment Delaunay graph class
 follows the design of the triangulation package of \cgal. It is
 parametrized by two arguments:
 <UL>
-<LI>the <B>geometric traits</B> class. It provides the basic
+<LI>the *geometric traits* class. It provides the basic
 geometric objects involved in the algorithm, such as sites, points
 etc. It also provides the geometric predicates for the computation
 of the segment Delaunay graph, as well as some basic constructions
 that can be used, for example, to visualize the diagram.
 The geometric traits for the segment Delaunay graph will be
 discussed in more detail in the next section.
-<LI>the <B>segment Delaunay graph data structure</B>. This is
+<LI>the *segment Delaunay graph data structure*. This is
 essentially the same as the Apollonius graph data structure (discussed
 in Chapter \ref secapollonius2design), augmented with some
 additional operations that are specific to segment Voronoi
@@ -180,7 +181,7 @@ for the corresponding template parameter is provided, so the user
 does not need to specify it.
 </UL>
 
-<b>Strongly Intersecting Sites and their Representation.</b>
+##Strongly Intersecting Sites and their Representation##
 
 As we have mentioned above, the segment Delaunay graph package of
 \cgal is designed to support the computation of the segment Voronoi
@@ -259,7 +260,7 @@ supporting segment of \f$ s_1q_1\f$), \f$ t_2\f$ (it defines \f$ s_1\f$ along wi
 \anchor figsdg2siterep
 \image html sdg-rep.gif
 
-<center<b>
+<center><b>
 Site representation. The point \f$ s_1\f$ is represented by the four
 points \f$ p_1\f$, \f$ q_1\f$, \f$ p_2\f$ and \f$ q_2\f$. The segment
 \f$ p_1s_1\f$ is represented by the points \f$ p_1\f$, \f$ q_1\f$, \f$
@@ -269,7 +270,7 @@ segment \f$ s_1s_2\f$ is represented by the six points: \f$ p_1\f$,
 \f$ q_1\f$, \f$ p_2\f$, \f$ q_2\f$, \f$ p_3\f$ and \f$ q_3\f$. The
 remaining (non-input) points and segments in the figure are
 represented similarly.
-</center></b>
+</b></center>
 
 The five different presentations, two for points (coordinates; two
 input segments) and three for segments (two input points; two input
@@ -307,7 +308,7 @@ to be represented by up to 6 handles (which are very lightweight
 objects) instead of 6 points, which are, compared to handles of
 course, very heavy objects.
 
-<b>Optimizing Memory Allocation.</b>
+##Optimizing Memory Allocation##
 
 There are applications where we know beforehand that the input
 consists of only weakly intersecting sites. In these cases the site
@@ -358,7 +359,7 @@ of the size of the input. What we want to focus in the remainder of
 this section are the different kinds of filtering techniques that we
 have employed in our implementation.
 
-<b>Geometric Filtering.</b>
+##Geometric Filtering##
 
 Our representation of sites is coupled very naturally, with what we
 call <I>geometric filtering</I>. The technique
@@ -405,7 +406,7 @@ classes:
 `Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` and
 `Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`.
 
-<b>Arithmetic Filtering.</b>
+Arithmetic Filtering##
 
 As mentioned above, performing computations with exact arithmetic
 can be very costly. For this reason we have devoted considerable
