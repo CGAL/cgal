@@ -1269,7 +1269,7 @@ SHalfloop_const_handle shalfloop() const;
 /*! 
 returns true iff `c1` and `c2` are equal as unoriented 
 circles. 
-\relates Sphere_circle 
+\relates Nef_polyhedron_S2::Sphere_circle 
 */ 
 bool equal_as_sets(const Nef_polyhedron_S2<Traits>::Sphere_circle c1, 
                    const Nef_polyhedron_S2<Traits>::Sphere_circle c2);
