@@ -254,7 +254,7 @@ public:
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Point_2<R>& p);
+operator<<(Geomview_stream& gs, const Point_2<R>& p);
 
 /// \addtogroup GeomviewOutput Output Operators for CGAL Kernel Classes 
 /// \ingroup PkgGeomview
@@ -268,7 +268,7 @@ operator<<(Geomview_stream& G, const Point_2<R>& p);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Point_3<R>& p);
+operator<<(Geomview_stream& gs, const Point_3<R>& p);
 
 /*!
   Inserts the segment `s` into the stream `gs`.
@@ -276,7 +276,7 @@ operator<<(Geomview_stream& G, const Point_3<R>& p);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Segment_2<R>& s);
+operator<<(Geomview_stream& gs, const Segment_2<R>& s);
 
 /*!
   Inserts the segment `s` into the stream `gs`.
@@ -284,7 +284,7 @@ operator<<(Geomview_stream& G, const Segment_2<R>& s);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Segment_3<R>& s);
+operator<<(Geomview_stream& gs, const Segment_3<R>& s);
 
 /*!
   Inserts the ray `r` into the stream `gs`.
@@ -292,7 +292,7 @@ operator<<(Geomview_stream& G, const Segment_3<R>& s);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Ray_2<R>& r);
+operator<<(Geomview_stream& gs, const Ray_2<R>& r);
 
 /*!
   Inserts the ray `r` into the stream `gs`.
@@ -300,7 +300,7 @@ operator<<(Geomview_stream& G, const Ray_2<R>& r);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Ray_3<R>& r);
+operator<<(Geomview_stream& gs, const Ray_3<R>& r);
 
 /*!
   Inserts the line `l` into the stream `gs`.
@@ -308,7 +308,7 @@ operator<<(Geomview_stream& G, const Ray_3<R>& r);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Line_2<R>& l);
+operator<<(Geomview_stream& gs, const Line_2<R>& l);
 
 /*!
   Inserts the line `l` into the stream `gs`.
@@ -316,7 +316,7 @@ operator<<(Geomview_stream& G, const Line_2<R>& l);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Line_3<R>& l);
+operator<<(Geomview_stream& gs, const Line_3<R>& l);
 
 /*!
   Inserts the triangle `t` into the stream `gs`.
@@ -324,7 +324,7 @@ operator<<(Geomview_stream& G, const Line_3<R>& l);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Triangle_2<R>& t);
+operator<<(Geomview_stream& gs, const Triangle_2<R>& t);
 
 /*!
   Inserts the triangle `t` into the stream `gs`.
@@ -332,7 +332,7 @@ operator<<(Geomview_stream& G, const Triangle_2<R>& t);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Triangle_3<R>& t);
+operator<<(Geomview_stream& gs, const Triangle_3<R>& t);
 
 /*!
   Inserts the tetrahedron `t` into the stream `gs`.
@@ -340,7 +340,7 @@ operator<<(Geomview_stream& G, const Triangle_3<R>& t);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Tetrahedron_3<R>& t);
+operator<<(Geomview_stream& gs, const Tetrahedron_3<R>& t);
 
 /*!
   Inserts the sphere `s` into the stream `gs`.
@@ -348,35 +348,35 @@ operator<<(Geomview_stream& G, const Tetrahedron_3<R>& t);
 */
 template <class R>
 Geomview_stream&
-operator<<(Geomview_stream& G, const Sphere_3<R>& s);
+operator<<(Geomview_stream& gs, const Sphere_3<R>& s);
 
 /*!
   Inserts the bounding box `b` into the stream `gs`.
   \relates Geomview_stream
 */
 Geomview_stream&
-operator<<(Geomview_stream& G, const Bbox_2& b);
+operator<<(Geomview_stream& gs, const Bbox_2& b);
 
 /*!
   Inserts the bounding box `b` into the stream `gs`.
   \relates Geomview_stream
 */
 Geomview_stream&
-operator<<(Geomview_stream& G, const Bbox_3& b);
+operator<<(Geomview_stream& gs, const Bbox_3& b);
 
 /*!
   Inserts the bounding box `b` into the stream `gs`.
   \relates Geomview_stream
 */
 Geomview_stream&
-operator<<(Geomview_stream& G, const Bbox_3& b);
+operator<<(Geomview_stream& gs, const Bbox_3& b);
 
 /*!
   Inserts the bounding box `b` into the stream `gs`.
   \relates Geomview_stream
 */
 Geomview_stream&
-operator<<(Geomview_stream& G, const Bbox_3& b);
+operator<<(Geomview_stream& gs, const Bbox_3& b);
 
 /// @}
 
@@ -394,7 +394,7 @@ operator<<(Geomview_stream& G, const Bbox_3& b);
 */
 template <class R>
 Geomview_stream&
-operator>>(Geomview_stream& G, Point_3<R>& p);
+operator>>(Geomview_stream& gs, Point_3<R>& p);
 
 /// @}
 

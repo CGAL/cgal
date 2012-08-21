@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage Geomview
-
+\anchor ChapterGeomview
 \authors Andreas Fabri and Sylvain Pion
 
 # Definition #
