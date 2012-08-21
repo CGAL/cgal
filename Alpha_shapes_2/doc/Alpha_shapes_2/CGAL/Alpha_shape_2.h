@@ -43,7 +43,7 @@ the inherited functions. At the moment, only the static version is implemented.
 I/O 
 -------------- 
 
-The I/O operators are defined for `iostream`. The format for the iostream 
+The I/O operators are defined for `std::iostream`. The format for the iostream 
 is an internal format. 
 
 Implementation 
@@ -75,7 +75,7 @@ public:
 
 /*! 
 the alpha shape traits type. 
-it has to derive from a triangulation traits class. For example `Dt::Point` is a Point class.
+it has to derive from a triangulation traits class. For example `Dt::Point` is a point class.
 */ 
 typedef Hidden_type Gt; 
 
@@ -302,7 +302,7 @@ classify(Vertex_handle v, const FT& alpha = get_alpha()) const;
 
 /// @} 
 
-/// \name Traversal of the \f$ \alpha\f$-Values 
+/// \name Traversal of the alpha-Values 
 /// @{
 
 /*! 
@@ -368,7 +368,7 @@ Inserts the alpha shape `A` for the current \f$ \alpha\f$-value into the stream 
 \pre The insert operator must be defined for `Point`. 
 \relates Alpha_shape_2 
 */ 
-ostream& operator<<(ostream& os, 
+  ostream& operator<<(std::ostream& os, 
 const Alpha_shape_2<Dt>& A); 
 
 /// @}

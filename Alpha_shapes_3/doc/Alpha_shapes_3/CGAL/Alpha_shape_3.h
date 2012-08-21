@@ -65,7 +65,7 @@ public:
 
 /*! 
 the alpha shape traits type. 
-It has to derive from a triangulation traits class. For example `Dt::Point` is a Point class.
+It has to derive from a triangulation traits class. For example `Dt::Point` is a point class.
 */ 
 typedef Hidden_type Gt; 
 
@@ -344,7 +344,7 @@ OutputIterator filtration(OutputIterator it);
 
 /// @} 
 
-/// \name Traversal of the \f$ \alpha\f$-Values 
+/// \name Traversal of the alpha-Values 
 /// @{
 
 /*! 
@@ -414,7 +414,7 @@ Defined in \ref CGAL/IO/io.h
 \pre The insert operator must be defined for `Point`. 
 \relates Alpha_shape_3 
 */ 
-ostream& operator<<(ostream& os, 
+  ostream& operator<<(std::ostream& os, 
 const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A); 
 
 /*! 
