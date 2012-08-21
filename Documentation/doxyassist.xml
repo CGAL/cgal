@@ -93,6 +93,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Algebraic_foundations.tag</string>
           <string name="IMAGE_PATH">../Algebraic_foundations/doc/Algebraic_foundations/fig</string>
           <string name="EXAMPLE_PATH">../Algebraic_foundations/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.Kernel_23/html</item>
+          </list>
         </doxygen>
       </project>
 
