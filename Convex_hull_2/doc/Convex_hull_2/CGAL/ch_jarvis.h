@@ -93,8 +93,8 @@ functions that return instances of these types:
 Implementation 
 -------------- 
 
-The function uses the Jarvis march (gift-wrapping) algorithm \cite
-j-ichfs-73. This algorithm requires \f$ O(n h)\f$ time in the worst
+The function uses the Jarvis march (gift-wrapping) algorithm \cite j-ichfs-73. 
+This algorithm requires \f$ O(n h)\f$ time in the worst
 case for \f$ n\f$ input points with \f$ h\f$ extreme points.
 
 generates the counterclockwise subsequence of
