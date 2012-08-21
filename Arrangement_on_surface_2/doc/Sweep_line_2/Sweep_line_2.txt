@@ -1,6 +1,3 @@
-
-\page I1_ChapterSweepLine 2D Intersection of Curves
-
 namespace CGAL {
 /*!
 
