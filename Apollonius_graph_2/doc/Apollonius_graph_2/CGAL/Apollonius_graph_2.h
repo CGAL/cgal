@@ -13,7 +13,7 @@ The second template argument defaults to
 `CGAL::Triangulation_data_structure_2< CGAL::Apollonius_graph_vertex_base_2<Gt,true>, CGAL::Triangulation_face_base_2<Gt> >`.
 \models ::DelaunayGraph_2 
 
-Traversal of the Apollonius graph 
+Traversal of the Apollonius Graph 
 -------------- 
 
 An Apollonius graph can be seen as a container of faces and vertices.
@@ -399,7 +399,7 @@ All_faces_iterator all_faces_end();
 
 /// @} 
 
-/// \name Site iterators 
+/// \name Site Iterators 
 /// The following iterators allow respectively to visit all sites, the
 /// visible sites and the hidden sites. These iterators are
 /// non-mutable, bidirectional and their value type is `Site_2`. They

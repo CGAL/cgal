@@ -146,7 +146,7 @@ void remove(Vertex_handle v);
 
 /// @} 
 
-/// \name Nearest neighbor location 
+/// \name Nearest Neighbor Location 
 /// @{
 
 /*! 
@@ -202,7 +202,7 @@ std::istream& operator>>(std::istream& is, Apollonius_graph_hierarchy_2<Gt,Agds>
 
 /// @} 
 
-/// \name Validity check 
+/// \name Validity Check 
 /// @{
 
 /*! 
