@@ -1290,6 +1290,63 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL/Qt/GpsCircleSegmentGraphicsItem.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL/Qt/GraphicsViewCircularPolygonInput.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/typedefs.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Boolean_set_operations_2.txt -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/Boolean_set_operations_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/Boolean_set_operations_2/Gps_default_dcel.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/General_polygon_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/General_polygon_set_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/General_polygon_with_holes_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/Gps_circle_segment_traits_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/Gps_segment_traits_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/Gps_traits_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/Polygon_set_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/Polygon_with_holes_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/connect_holes.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Classified.txt -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/ArrDirectionalTraits--AreMergeable_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/ArrDirectionalTraits--CompareEndpointsXy_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/ArrDirectionalTraits--ConstructOpposite_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/ArrDirectionalTraits--Intersect_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/ArrDirectionalTraits--Merge_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/ArrDirectionalTraits--Split_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/ArrangementDirectionalXMonotoneTraits_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/GeneralPolygonSetDcel.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/GeneralPolygonSetDcelFace.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/GeneralPolygonSetTraits_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/GeneralPolygonWithHoles_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/GeneralPolygon_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/GpsTraitsGeneralPolygonWithHoles_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/GpsTraitsGeneralPolygon_2.h -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/PackageDescription.txt -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/Boolean_set_operations_2.png -text svneol=unset#image/png
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/circles_rects.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/conic_arcs.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/conic_arcs.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/disks.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/disks.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/general_polygon.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/general_polygon.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/general_polygon_with_holes.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/general_polygon_with_holes.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/non_strictly_simple.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/non_strictly_simple.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/sequence.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/sequence.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/simple.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/simple.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/simpleDefsExamples.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/simpleDefsExamples.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/symm_diff.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/symm_diff.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/teaser.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/teaser.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/tnr_m_g.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/tnr_m_g.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/triangles.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/triangles.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/unique.gif -text svneol=unset#image/gif
+Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/unique.pdf -text svneol=unset#application/pdf
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/bso_def.tex -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/Boolean_set_operations_2.png -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#image/gif

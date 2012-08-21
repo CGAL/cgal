@@ -1,0 +1,24 @@
+/// \defgroup PkgBooleanSetOperations2 2D Regularized Boolean Set-Operations
+/// \defgroup PkgBooleanSetOperations2Concepts Concepts
+/// \ingroup PkgBooleanSetOperations2
+
+/*!
+\addtogroup PkgBooleanSetOperations2
+\todo check generated documentation
+\PkgDescriptionBegin{2D Regularized Boolean Set-Operations}
+\PkgPicture{Boolean_set_operations_2.png}
+\PkgAuthor{}
+\PkgDesc{This package consists of the implementation of Boolean set-operations on point sets bounded by weakly x-monotone curves in 2-dimensional Euclidean space. In particular, it contains the implementation of regularized Boolean set-operations, intersection predicates, and point containment predicates.}
+\PkgSince{3.2}
+\cgalbib{ cgal:fwzh-rbso2-12 }
+\license{ \ref licensesGPL "GPL" }
+\PkgDescriptionEnd
+
+This package consists of the implementation of Boolean set-operations
+on point sets bounded by \f$ x\f$-monotone curves in 2-dimensional
+Euclidean space. In particular, it contains the implementation of
+regularized Boolean set-operations, intersection predicates, and point
+containment predicates.
+
+*/
+
