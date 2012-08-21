@@ -40,6 +40,10 @@
 #define CGAL_NEF_DEBUG 19
 #include <CGAL/Nef_2/debug.h>
 
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
+
 namespace CGAL {
 
 template <typename Map>
@@ -155,7 +159,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   enum {NO_SNC, WITH_SNC};
 
  public:
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
+  #else
+  typedef boost::any GenPtr;
+  #endif
 
   SNC_decorator() : Base(), sncp_() {}
   SNC_decorator(SNC_structure& W) 

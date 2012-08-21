@@ -32,6 +32,7 @@
 #include <list>
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
 
 void test_massive_insert_and_erase();
 void test_iterators();

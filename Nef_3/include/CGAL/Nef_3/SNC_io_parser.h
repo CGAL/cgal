@@ -39,6 +39,10 @@
 #define CGAL_NEF_DEBUG 293
 #include <CGAL/Nef_2/debug.h>
 
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
+
 namespace CGAL {
 
 template<typename T>
@@ -708,7 +712,6 @@ class Geometry_io<Cartesian_tag, Kernel> {
     void print_point(std::ostream& out, const CGAL::Point_3<R> p) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
-    typedef typename NV::iterator NV_iter;
 
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
@@ -741,7 +744,6 @@ class Geometry_io<Cartesian_tag, Kernel> {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef typename FracTraits::Numerator_type NumType;
     typedef std::vector<NumType> NV;
-    typedef typename NV::iterator NV_iter;
 
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
@@ -770,7 +772,6 @@ class Geometry_io<Cartesian_tag, Kernel> {
   void print_plane(std::ostream& out, const CGAL::Plane_3<R> p) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
-    typedef typename NV::iterator NV_iter;
 
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
@@ -889,7 +890,11 @@ public:
   typedef typename Infi_box::Standard_vector Standard_vector;
   typedef typename Infi_box::Standard_plane  Standard_plane;
 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
+  #else
+  typedef boost::any GenPtr;
+  #endif
 
   using Base::visit_shell_objects;
 

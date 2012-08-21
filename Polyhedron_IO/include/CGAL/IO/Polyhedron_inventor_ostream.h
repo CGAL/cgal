@@ -30,9 +30,7 @@ namespace CGAL {
 
 template < class Traits,
            class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class HDS, class Alloc>
 Inventor_ostream_base&
 operator<<( Inventor_ostream_base& out, 

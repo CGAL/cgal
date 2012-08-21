@@ -21,7 +21,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/mo
 include_directories (BEFORE . include ../../include)
 
 # Find CGAL
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET COMPONENTS Core Eigen3 MPFI )
 
 if ( CGAL_FOUND )
 
@@ -54,36 +54,25 @@ if ( CGAL_FOUND )
   ADD_DEFINITIONS( "-DDEBUG_TRACE" ) # turn on traces
 
 
-  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
-  if (NOT EIGEN3_FOUND)
-    find_package(TAUCS)
-    if(TAUCS_FOUND)
-      include( ${TAUCS_USE_FILE} )
-    endif(TAUCS_FOUND)
-  else()
+#  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+  if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
   endif()
+  
+  find_package(TAUCS)
+  if(TAUCS_FOUND)
+    include( ${TAUCS_USE_FILE} )
+  endif(TAUCS_FOUND)
   
   if (EIGEN3_FOUND OR TAUCS_FOUND)
     # Executables that require Eigen 3 or TAUCS
     create_single_source_cgal_program( "poisson_reconstruction_example.cpp" )
+    create_single_source_cgal_program( "poisson_reconstruction.cpp" )
   else()
-    message(STATUS "NOTICE: Example poisson_reconstruction_example.cpp needs Eigen 3.1 (or greater) or the TAUCS library and will not be compiled.")
+    message(STATUS "NOTICE: The examples needs Eigen 3.1 (or greater) or the TAUCS library and will not be compiled.")
   endif()
 
   
-  if (EIGEN3_FOUND)
-    # Link with BLAS, LAPACK and TAUCS (optional)
-    find_package(TAUCS)
-  endif()
-  if(TAUCS_FOUND)
-    include( ${TAUCS_USE_FILE} )
-    # Executables that require TAUCS
-    create_single_source_cgal_program( "poisson_reconstruction.cpp" )
-  else(TAUCS_FOUND)
-    message(STATUS "NOTICE: Some of the executables in this directory need the TAUCS library and will not be compiled.")
-  endif(TAUCS_FOUND)
-
 else()
 
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")

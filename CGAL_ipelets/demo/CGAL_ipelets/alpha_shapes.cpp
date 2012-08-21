@@ -74,7 +74,7 @@ void ASphapeIpelet::protected_run(int fn)
   
   
   
-  Iso_rectangle_2 bbox=read_active_objects(
+  read_active_objects(
     CGAL::dispatch_or_drop_output<Point_2,Circle_2>(std::back_inserter(pt_list),
                                                     std::back_inserter(cir_list))
   );

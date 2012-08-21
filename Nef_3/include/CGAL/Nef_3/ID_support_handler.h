@@ -46,7 +46,7 @@ class ID_support_handler {
 
   int get_hash(int) { return 0; }
   template<typename Handle> void initialize_hash(Handle /*h*/) {}
-  void initialize_hash(int i) {}
+  void initialize_hash(int /*i*/) {}
   void handle_support(SVertex_handle , 
 		      SHalfedge_const_handle ,
 		      SHalfedge_const_handle ) {} 

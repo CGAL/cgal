@@ -32,6 +32,10 @@
 #define CGAL_NEF_DEBUG 7
 #include <CGAL/Nef_2/debug.h>
 
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
+
 namespace CGAL {
 
 template <typename Iter, typename Move>
@@ -132,8 +136,13 @@ typedef typename Traits::Mark   Mark;
 /*{\Mtypemember All objects (vertices, edges, faces) are attributed by a 
 |Mark| object.}*/
 typedef size_t Size_type;
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 /*{\Mtypemember The size type.}*/
 typedef void*  GenPtr;
+#else
+typedef boost::any GenPtr;
+#endif
+
 
 
 typedef typename HDS::Vertex                  Vertex; 
@@ -403,7 +412,11 @@ std::string PE(HH e)
 { std::ostringstream os;
   if (e==HH()) return "nil";
   os << "[" << PV(e->opposite()->vertex()) << ","
-            << PV(e->vertex()) << " " << e->info() << "]";
+            << PV(e->vertex()) << " " 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  << e->info()
+  #endif
+  << "]";
   return os.str();
 }
 
@@ -419,8 +432,6 @@ check_integrity_and_topological_planarity(bool faces) const
     EI(halfedges_begin(),halfedges_end(),'e');
   Object_index<Face_const_iterator> 
     FI(faces_begin(),faces_end(),'f');
-  typedef Halfedge_around_vertex_const_circulator hvc_circulator;
-  typedef Halfedge_around_face_const_circulator   hfc_circulator;
   Vertex_const_handle vit, vend = phds->vertices_end();
   int iso_vert_num=0;
   /* check the source links of out edges and count isolated vertices */

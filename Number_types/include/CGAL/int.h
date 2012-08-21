@@ -251,6 +251,16 @@ template<> class Algebraic_structure_traits< short int >
 template <> class Real_embeddable_traits< short int >
   : public INTERN_RET::Real_embeddable_traits_base< short int , CGAL::Tag_true > {};
 
+// unsigned int
+
+template <> class Real_embeddable_traits< unsigned int >
+   : public INTERN_RET::Real_embeddable_traits_base< unsigned int , CGAL::Tag_true > {};
+
+// unsigned long
+
+template <> class Real_embeddable_traits< unsigned long >
+   : public INTERN_RET::Real_embeddable_traits_base< unsigned long , CGAL::Tag_true > {};
+
 // Note : "long long" support is in <CGAL/long_long.h>
 
 } //namespace CGAL

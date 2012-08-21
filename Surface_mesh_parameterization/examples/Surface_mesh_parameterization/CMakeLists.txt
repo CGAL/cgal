@@ -69,10 +69,8 @@ if ( CGAL_FOUND )
       message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
     endif()
     add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-    if ( NOT CGAL_AUTO_LINK_ENABLED )
-      link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
-    endif()
-  endif()
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
+ endif()
 
   # Executables that do *not* use TAUCS
   create_single_source_cgal_program( "Authalic_parameterization.cpp" )
@@ -82,7 +80,7 @@ if ( CGAL_FOUND )
 
 
   # use either Eigen or TAUCS BLAS/LAPACK
-  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
   endif()

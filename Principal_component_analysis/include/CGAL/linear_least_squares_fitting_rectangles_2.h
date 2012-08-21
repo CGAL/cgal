@@ -54,12 +54,10 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename K::FT       FT;
   typedef typename K::Line_2   Line;
-  typedef typename K::Point_2  Point;
   typedef typename K::Vector_2 Vector;
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
-  typedef typename K::Segment_2         Segment_2;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);

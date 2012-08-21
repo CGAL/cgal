@@ -137,9 +137,9 @@ namespace CGAL {
       }
 
       template <typename OutputIteratorPoints>
-      OutputIteratorPoints operator() (const Surface_3& surface,
+      OutputIteratorPoints operator() (const Surface_3& /* surface */,
 	OutputIteratorPoints out,
-	int n) const
+	int /* n */) const
       {
 	// std::cout << "AABB_polyhedral_oracle: empty initial point set" << std::endl;
 	return out;

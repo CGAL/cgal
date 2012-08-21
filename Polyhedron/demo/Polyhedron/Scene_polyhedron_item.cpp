@@ -62,7 +62,8 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     poly(new Polyhedron),
     show_only_feature_edges_m(false),
     facet_picking_m(false),
-    erase_next_picked_facet_m(false)
+    erase_next_picked_facet_m(false),
+    plugin_has_set_color_vector_m(false)
 {
   //init();
 }
@@ -72,7 +73,8 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     poly(p),
     show_only_feature_edges_m(false),
     facet_picking_m(false),
-    erase_next_picked_facet_m(false)
+    erase_next_picked_facet_m(false),
+    plugin_has_set_color_vector_m(false)
 {
   init();
 }
@@ -82,7 +84,8 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     poly(new Polyhedron(p)),
     show_only_feature_edges_m(false),
     facet_picking_m(false),
-    erase_next_picked_facet_m(false)
+    erase_next_picked_facet_m(false),
+    plugin_has_set_color_vector_m(false)
 {
   init();
 }
@@ -108,17 +111,20 @@ init()
 {
   typedef Polyhedron::Facet_iterator Facet_iterator;
   
-  // Fill indices map and get max subdomain value
-  int max = 0;
-  for(Facet_iterator fit = poly->facets_begin(), end = poly->facets_end() ;
-      fit != end; ++fit)
+  if ( !plugin_has_set_color_vector_m )
   {
-    max = (std::max)(max, fit->patch_id());
+    // Fill indices map and get max subdomain value
+    int max = 0;
+    for(Facet_iterator fit = poly->facets_begin(), end = poly->facets_end() ;
+        fit != end; ++fit)
+    {
+      max = (std::max)(max, fit->patch_id());
+    }
+    
+    colors_.clear();
+    compute_color_map(this->color(), max + 1, 
+                      std::back_inserter(colors_));
   }
-  
-  colors_.clear();
-  compute_color_map(this->color(), max + 1, 
-                    std::back_inserter(colors_));
 }
 
 
@@ -325,8 +331,6 @@ Scene_polyhedron_item::select(double orig_x,
       if(closest != intersections.end()) {
         const Kernel::Point_3* closest_point = 
           CGAL::object_cast<Kernel::Point_3>(&closest->first);
-        Kernel::Compare_squared_distance_3 comp_sq_dist = 
-          Kernel().compare_squared_distance_3_object();
 
         for(Intersections::iterator 
               it = boost::next(intersections.begin()),
@@ -391,6 +395,34 @@ Scene_polyhedron_item::select(double orig_x,
     }
   }
   Base::select(orig_x, orig_y, orig_z, dir_x, dir_y, dir_z);
+}
+
+void Scene_polyhedron_item::update_vertex_indices()
+{
+  std::size_t id=0;
+  for (Polyhedron::Vertex_iterator vit = polyhedron()->vertices_begin(), 
+                                   vit_end = polyhedron()->vertices_end(); vit != vit_end; ++vit)
+  {
+    vit->id()=id++;
+  }
+}
+void Scene_polyhedron_item::update_facet_indices()
+{
+  std::size_t id=0;
+  for (Polyhedron::Facet_iterator  fit = polyhedron()->facets_begin(), 
+                                   fit_end = polyhedron()->facets_end(); fit != fit_end; ++fit)
+  {
+    fit->id()=id++;
+  }  
+}
+void Scene_polyhedron_item::update_halfedge_indices()
+{
+  std::size_t id=0;
+  for (Polyhedron::Halfedge_iterator hit = polyhedron()->halfedges_begin(), 
+                                     hit_end = polyhedron()->halfedges_end(); hit != hit_end; ++hit)
+  {
+    hit->id()=id++;
+  }
 }
 
 #include "Scene_polyhedron_item.moc"

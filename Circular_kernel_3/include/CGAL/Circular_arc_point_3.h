@@ -197,18 +197,15 @@ public:
 
       
       
-  typename Qualified_result_of<typename R::Compute_circular_x_3,Circular_arc_point_3>::type
-  //const Root_of_2 &
+  typename boost::result_of<typename R::Compute_circular_x_3(Circular_arc_point_3)>::type
   x() const
   { return typename R::Compute_circular_x_3()(*this);}
 
-  typename Qualified_result_of<typename R::Compute_circular_y_3,Circular_arc_point_3>::type
-  //const Root_of_2 &
+  typename boost::result_of<typename R::Compute_circular_y_3(Circular_arc_point_3)>::type
   y() const
   { return typename R::Compute_circular_y_3()(*this);}
 
-  typename Qualified_result_of<typename R::Compute_circular_z_3,Circular_arc_point_3>::type
-  //const Root_of_2 &
+  typename boost::result_of<typename R::Compute_circular_z_3(Circular_arc_point_3)>::type
   z() const
   { return typename R::Compute_circular_z_3()(*this);}
 
@@ -228,7 +225,6 @@ public:
   std::istream &
   operator>>(std::istream & is, Circular_arc_point_3<SK> &p)
   {
-    typedef typename SK::Root_of_2               Root_of_2;
     typedef typename SK::Root_for_spheres_2_3    Root_for_spheres_2_3;
     
     Root_for_spheres_2_3 r;

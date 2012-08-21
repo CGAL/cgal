@@ -40,7 +40,7 @@ typedef Tr::Point Point_3;
 namespace {
   void CGALglcolor(QColor c)
   {
-    ::glColor4f(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
+    ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
   }
 }
 
@@ -133,7 +133,7 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud); // CHECK THIS!
+    return (m != Gouraud && m!=PointsPlusNormals); // CHECK THIS!
   }
 
   void draw() const {
@@ -289,8 +289,6 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   // remesh
 
-  typedef Tr::Geom_traits GT;
-
   // Set mesh criteria
   Facet_criteria facet_criteria(angle, sizing, approx); // angle, size, approximation
   Cell_criteria cell_criteria(4, tets_sizing); // radius-edge ratio, size
@@ -320,9 +318,9 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
     std::ofstream medit_out("out.mesh");
     new_item->c3t3().output_to_medit(medit_out);
     const Scene_item::Bbox& bbox = new_item->bbox();
-    new_item->setPosition((bbox.xmin + bbox.xmax)/2.f,
-                          (bbox.ymin + bbox.ymax)/2.f,
-                          (bbox.zmin + bbox.zmax)/2.f);
+    new_item->setPosition((float)(bbox.xmin + bbox.xmax)/2.f,
+                          (float)(bbox.ymin + bbox.ymax)/2.f,
+                          (float)(bbox.zmin + bbox.zmax)/2.f);
     return new_item;
   }
   else {

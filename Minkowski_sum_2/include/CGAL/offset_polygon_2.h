@@ -150,7 +150,6 @@ inset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
 {
   typedef Exact_offset_base_2<ConicTraits, Container>        Base;
   typedef Offset_by_convolution_2<Base>                      Exact_offset_2;
-  typedef typename Exact_offset_2::Offset_polygon_2          Offset_polygon_2;
 
   Base                                               base;
   Exact_offset_2                                     exact_offset (base);

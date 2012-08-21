@@ -1660,7 +1660,6 @@ struct Construct_innermost_coefficient_const_iterator_range
       typedef std::iterator_traits<Input_iterator> ITT;
       typedef typename ITT::value_type value_type;
       typedef Coercion_traits<value_type, Innermost_coefficient_type> CT; 
-      typedef typename CT::Type Type; 
       
       typename PTC::Substitute_homogeneous subsh; 
       

@@ -36,7 +36,7 @@ int main()
 #include <fstream>
 #include <unistd.h> // for sleep()
 
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
+#include <CGAL/Projection_traits_xy_3.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -50,7 +50,7 @@ int main()
 typedef CGAL::Cartesian<double>  K;
 
 typedef K::Point_2 Point2;
-typedef CGAL::Triangulation_euclidean_traits_xy_3<K> Gt3;
+typedef CGAL::Projection_traits_xy_3<K> Gt3;
 typedef Gt3::Point Point3;
 
 typedef CGAL::Delaunay_triangulation_2<K>   Delaunay;

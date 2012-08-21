@@ -61,7 +61,6 @@ removal.
 \ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
 
-
 \ccImplementation
 
 Currently, \ccRefName\ is derived from \ccc{CGAL::HalfedgeDS_list<Traits>}.
@@ -69,25 +68,6 @@ The copy constructor and the assignment operator need $O(n)$ time with
 $n$ the total number of vertices, halfedges, and faces. The former 
 suboptimal implementation with an $O(n \log n)$ runtime has been replaced
 with a faster implementation based on hashing for the pointer lookup.
-
-Due to a workaround for the flag \ccc{CGAL_CFG_NO_TMPL_IN_TMPL_PARAM},
-a halfedge data structure cannot be instantiated directly. For the
-\ccRefName\ a macro simplifies its direct use. However, when using a
-halfedge data structure as an argument for another class template,
-the class template name \ccc{HalfedgeDS_default} must be used, not 
-the macro.
-
-\begin{ccExampleCode}
-// The macro definition.
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default
-#else
-    #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default::HDS
-#endif
-
-// The direct instantiation of the default HalfedgeDS given a Traits class.
-typedef CGAL_HALFEDGEDS_DEFAULT<Traits> HDS;
-\end{ccExampleCode}
 
 \end{ccRefClass}
 

@@ -58,7 +58,6 @@ namespace CGAL {
     has_on(const typename SK::Line_3 &a, 
            const typename SK::Circular_arc_point_3 &p)
     { 
-      typedef typename SK::Algebraic_kernel Algebraic_kernel;
       typedef typename SK::Polynomials_for_line_3 Equation;
       Equation equation = get_equation<SK>(a);
       return p.rep().coordinates().is_on_line(equation);

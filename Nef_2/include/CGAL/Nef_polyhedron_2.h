@@ -234,7 +234,7 @@ protected:
     }
 
     bool 
-    operator()(Halfedge_handle e, const Tag_false& ) const
+    operator()(Halfedge_handle /*e*/, const Tag_false& ) const
     { 
       return false;
     }

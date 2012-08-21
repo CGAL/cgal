@@ -20,10 +20,10 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
   find_package(Boost REQUIRED program_options)
-  
-  include_directories(${Boost_INCLUDE_DIRS})
-  link_libraries(${Boost_LIBRARIES})
-
+  include_directories(${Boost_PROGRAM_OPTIONS_INCLUDE_DIR})
+  add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
+  list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
+ 
   include( CGAL_CreateSingleSourceCGALProgram )
 
   include_directories (BEFORE ../../include)

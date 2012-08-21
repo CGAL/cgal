@@ -38,7 +38,7 @@
 
 namespace CGAL {
 
-namespace cpp0x {
+namespace cpp11 {
 #ifndef CGAL_CFG_NO_CPP0X_NEXT_PREV
   using std::next;
   using std::prev;
@@ -54,7 +54,9 @@ namespace cpp0x {
     return boost::prior(x, n);
   }
 #endif
-}
+} // namespace cpp11
+
+namespace cpp0x = cpp11;
 
 // copy_n is usually in the STL as well, but not in the official
 // standard. We provide our own copy_n.  It is planned for C++0x. 
@@ -91,13 +93,16 @@ OutputIterator copy_n( InputIterator first, Size n, OutputIterator result )
 }
 #endif // CGAL_CFG_NO_CPP0X_COPY_N
 
-namespace cpp0x {
+namespace cpp11 {
 #ifndef CGAL_CFG_NO_CPP0X_COPY_N
   using std::copy_n;
 #else
   using CGAL::copy_n;
 #endif
-} // cpp0x
+} // cpp11
+
+namespace cpp0x = cpp11;
+
 
 // Not documented
 template <class T> inline

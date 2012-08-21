@@ -501,7 +501,7 @@ check_convergence() const
   sum_moves_ = sum/big_moves_.size();
 #endif
   
-  return ( sum/big_moves_.size() < convergence_ratio_ );
+  return ( sum/FT(big_moves_.size()) < convergence_ratio_ );
 }
   
   

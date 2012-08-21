@@ -570,7 +570,7 @@ begin_surface( std::size_t v, std::size_t f, std::size_t h, int mode) {
         // not know the number of facets that are holes and we do not
         // know the genus of the surface. So we add 12 and a factor of
         // 5 percent.
-        h = int((v + f - 2 + 12) * 2.1);
+      h = (std::size_t)((double)(v + f - 2 + 12) * 2.1);
     }
     hds.reserve( hds.size_of_vertices()  + v,
                  hds.size_of_halfedges() + h,

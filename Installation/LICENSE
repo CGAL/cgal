@@ -27,9 +27,9 @@ Distributed along with CGAL (for the users' convenience), but not part of
 CGAL, are the following third-party libraries, available under their own
 licenses:
 
-- CORE, in the directories "include/CGAL/CORE" and "src/CGALCore", is
+- CORE, in the directories "include/CGAL/CORE" and "src/CGAL_Core", is
   licensed under the LGPL (see LICENSE.LGPL).
-- ImageIO, in the directory "src/CGALimageIO", is licensed under the LGPL
+- ImageIO, in the directory "src/CGAL_ImageIO", is licensed under the LGPL
   (see LICENSE.LGPL).
 - OpenNL, in the directory "include/CGAL/OpenNL", is licensed under the LGPL
   (see LICENSE.LGPL).

@@ -36,7 +36,7 @@ PS_demo_off_plugin::load(QFileInfo fileinfo) {
   // Check extension (quietly)
   std::string extension = fileinfo.suffix().toUtf8().data();
   if (extension != "off" && extension != "OFF")
-    return false;
+    return NULL;
 
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8().data());

@@ -18,7 +18,7 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   # use either Eigen or BLAS/LAPACK
-  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (NOT EIGEN3_FOUND)
     find_package(LAPACK)
     if(LAPACK_FOUND)
@@ -39,14 +39,10 @@ if ( CGAL_FOUND )
         message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
       endif()
       add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-      if ( NOT CGAL_AUTO_LINK_ENABLED )
-        link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
-      endif()
-    endif()
+      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
+   endif()
 
-    add_executable(Compute_Ridges_Umbilics Compute_Ridges_Umbilics.cpp PolyhedralSurf.cpp)
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS Compute_Ridges_Umbilics )
-    target_link_libraries(Compute_Ridges_Umbilics ${CGAL_LIBRARIES})
+   create_single_source_cgal_program( Compute_Ridges_Umbilics.cpp PolyhedralSurf.cpp)
 
   else(EIGEN3_FOUND OR LAPACK_FOUND)
 
