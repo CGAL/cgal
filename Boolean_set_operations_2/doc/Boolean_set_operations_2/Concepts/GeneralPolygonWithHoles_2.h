@@ -25,7 +25,7 @@ public:
 
 /*! 
 the general-polygon type used to 
-represent the outer boundary and each hole. Must Model the `GeneralPolygon_2` Concept. 
+represent the outer boundary and each hole. Must model the `GeneralPolygon_2` concept. 
 */ 
 typedef Hidden_type General_polygon_2; 
 

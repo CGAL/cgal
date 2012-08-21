@@ -14,11 +14,7 @@
 \license{ \ref licensesGPL "GPL" }
 \PkgDescriptionEnd
 
-This package consists of the implementation of Boolean set-operations
-on point sets bounded by \f$ x\f$-monotone curves in 2-dimensional
-Euclidean space. In particular, it contains the implementation of
-regularized Boolean set-operations, intersection predicates, and point
-containment predicates.
+
 
 */
 

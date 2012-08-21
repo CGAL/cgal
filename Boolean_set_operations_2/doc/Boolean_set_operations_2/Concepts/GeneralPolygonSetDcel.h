@@ -11,8 +11,8 @@ represent an edge.
 
 A model of the `GeneralPolygonSetDcel` concept must provide the following types and 
 operations. (In addition to the requirements here, the local types 
-`Vertex`,`Halfedge`, `Face` 
-`Hole` and `Isolated_vertex` 
+`Vertex`,`Halfedge`, `Face`, 
+`Hole`, and `Isolated_vertex` 
 must be models of the concepts 
 `ArrangementDcelVertex`, 
 `ArrangementDcelHalfedge`, 

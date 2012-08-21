@@ -7,10 +7,10 @@ namespace CGAL {
 The class `Polygon_set_2` represents sets of linear polygons with holes. 
 The first two template parameters (`Kernel` and `Container`) 
 are used to instantiate the type `CGAL::Polygon_2<Kernel,Container>`. 
-This type is used to represents the outer boundary of every set member 
+This type is used to represent the outer boundary of every set member 
 and the boundaries of all holes of every set member. 
 
-The third template parameter `Dcel` should be instantiated with a 
+The third template parameter `Dcel` must be instantiated with a 
 model of the concept `GeneralPolygonSetDcel`. It is instantiated 
 by default with the type `Gps_default_dcel<Traits>`. You can override 
 this default, with a different <span class="textsc">Dcel</span> class, typically an extension 
