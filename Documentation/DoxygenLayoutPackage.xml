@@ -2,14 +2,13 @@
   <!-- Navigation index tabs for HTML output -->
   <navindex>
     <tab type="mainpage" visible="yes" title=""/>
-    <tab type="user" url="../../CGAL.CGAL/html/packages.html" title="Packages"/>
-    <tab type="pages" visible="yes" title="" intro=""/>
+    <!-- <tab type="user" url="@ref packagemodule" title="Reference"/> -->
     <tab type="modules" visible="yes" title="" intro=""/>
+    <tab type="pages" visible="yes" title="" intro=""/>
     <tab type="namespaces" visible="yes" title="">
       <tab type="namespacelist" visible="yes" title="" intro=""/>
       <tab type="namespacemembers" visible="yes" title="" intro=""/>
     </tab>
-
     <tab type="classes" visible="yes" title="">
       <tab type="classlist" visible="yes" title="" intro=""/>
       <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/>
@@ -21,6 +20,7 @@
       <tab type="globals" visible="yes" title="" intro=""/>
     </tab>
     <tab type="examples" visible="yes" title="" intro=""/>  
+    <tab type="user" url="../../CGAL.CGAL/html/packages.html" title="Packages"/>
   </navindex>
 
   <!-- Layout definition for a class page -->

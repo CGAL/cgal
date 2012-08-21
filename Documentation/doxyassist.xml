@@ -31,7 +31,7 @@ namespace for the XML file to be processed properly.  -->
           <item>PkgDescriptionBegin{1}=&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;</item>
         </list>
       </doxygen>
-      
+
       <!-- subprojects -->
       <project>
         <name>STL_Extension</name>
@@ -295,8 +295,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_INC_PATH">../Geomview/doc/Geomview/</string>
           <string name="GENERATE_TAGFILE">./tags/Geomview.tag</string>
           <string name="EXAMPLE_PATH">../Geomview/demo</string>
-          <list name="TAGFILES" append="true">
-          </list>
+          <string name="IMAGE_PATH">../Geomview/doc/Geomview/fig</string>
         </doxygen>
       </project>
 
@@ -560,6 +559,18 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>Sweep_line_2</name>
+        <input>../Arrangement_on_surface_2/doc/Sweep_line_2</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Arrangement_on_surface_2/doc/Sweep_line_2</string>
+          <string name="STRIP_FROM_INC_PATH">../Sweep_line_2/doc/Nef_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Sweep_line_2.tag</string>
+          <string name="IMAGE_PATH">../Arrangement_on_surface_2/doc/Sweep_line_2/fig</string>
+          <string name="EXAMPLE_PATH">../Arrangement_on_surface_2/examples</string>
+        </doxygen>
+      </project>
+
+      <project>
         <name>Nef_3</name>
         <input>../Nef_3/doc</input>
         <doxygen>
@@ -586,6 +597,7 @@ namespace for the XML file to be processed properly.  -->
       <output>./output</output>
       <logDirectory>./log</logDirectory>
       <doxygen>
+        <string name="LAYOUT_FILE">DoxygenLayout.xml</string>
         <string name="GENERATE_TAGFILE">./tags/Manual.tag</string>
         <string name="EXAMPLE_PATH">../Convex_hull_2/examples</string>
 
@@ -630,6 +642,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../STL_Extension/doc/STL_Extension/fig</item>
           <item>../Skin_surface_3/doc/Skin_surface_3/fig</item>
           <item>../Snap_rounding_2/doc/Snap_rounding_2/fig</item>
+          <item>../Arrangement_on_surface_2/doc/Sweep_line_2/fig</item>
           <item>../Spatial_searching/doc/Spatial_searching/fig</item>
           <item>../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig</item>
           <item>../Straight_skeleton_2/doc/Straight_skeleton_2/fig</item>
@@ -670,6 +683,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Principal_component_analysis.tag=../../CGAL.CGAL.Principal_component_analysis/html</item>
           <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL_Extension/html</item>
           <item>./tags/Skin_surface_3.tag=../../CGAL.CGAL.Skin_surface_3/html</item>
+          <item>./tags/Sweep_line_2.tag=../../CGAL.CGAL.Sweep_line_2/html</item>
           <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.Snap_rounding_2/html</item>
           <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.Spatial_searching/html</item>
           <item>./tags/Segment_Delaunay_graph_2.tag=../../CGAL.CGAL.Segment_Delaunay_graph_2/html</item>
