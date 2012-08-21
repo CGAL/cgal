@@ -3,7 +3,7 @@
 
 /**
  * @file Filters.h
- * This file contains 2 filtering methods, which can be used as a template parameter for Surface_mesh_segmentation.
+ * @brief This file contains 2 filtering methods, which can be used as a template parameter for CGAL::internal::Surface_mesh_segmentation.
  */
 #include <vector>
 #include <map>
@@ -21,14 +21,14 @@ class Neighbor_selector_by_edge;
 template<class Polyhedron>
 class Neighbor_selector_by_vertex;
 
-/** Applies bilateral filtering on values which are associated with polyhedron facets. */
+/** @brief Applies bilateral filtering on values which are associated with polyhedron facets. */
 template <class Polyhedron, class NeighborSelector = Neighbor_selector_by_edge<Polyhedron> >
 class Bilateral_filtering
 {
 public:
   /**
    * Bilateral filtering for values associated with facets.
-   * Takes neighbors in @a window_size, and assigns weighted average of neighbors as filtered result.
+   * For each facet, takes neighbors in @a window_size, and assigns weighted average of neighbor values as filtered result.
    * For weighting two weights are multiplied:
    *   - spatial: over geodesic distances (number of edges)
    *   - domain : over value distances
@@ -36,6 +36,8 @@ public:
    * @param window_size range of effective neighbors
    * @param values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
    * @param smoothed_values `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   *
+   * Warning: do not use same parameter for @a values and @a smoothed_values since @a values must stay still during iteration.
    */
   template<class InputPropertyMap, class OutputPropertyMap>
   void operator()(const Polyhedron& mesh,
@@ -85,19 +87,21 @@ private:
   }
 };
 
-/** Applies median filtering on values which are associated with polyhedron facets. */
+/** @brief Applies median filtering on values which are associated with polyhedron facets. */
 template <class Polyhedron, class NeighborSelector = Neighbor_selector_by_vertex<Polyhedron> >
 class Median_filtering
 {
 public:
   /**
    * Median filtering for values associated with facets.
-   * Takes neighbors in @a window_size, and assigns median of values of neighbors as filtered result.
+   * For each facet, takes neighbors in @a window_size, and assigns median of values of neighbors as filtered result.
    *
    * @param mesh `CGAL Polyhedron` on which @a values are defined
    * @param window_size range of effective neighbors
    * @param values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
    * @param smoothed_values `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   *
+   * Warning: do not use same parameter for @a values and @a smoothed_values since @a values must stay still during iteration.
    */
   template<class InputPropertyMap, class OutputPropertyMap>
   void operator()(const Polyhedron& mesh,
@@ -109,7 +113,7 @@ public:
 
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
-      //Find neighbors and put their sdf values into a list
+      //Find neighbors and put their values into a list
       std::map<Facet_const_handle, int> neighbors;
       NeighborSelector()(facet_it, window_size, neighbors);
 
@@ -123,7 +127,7 @@ public:
       std::nth_element(neighbor_values.begin(),
                        neighbor_values.begin() + half_neighbor_count, neighbor_values.end());
       double median_sdf = neighbor_values[half_neighbor_count];
-      if( half_neighbor_count % 2 == 0) {
+      if(half_neighbor_count % 2 == 0) {
         median_sdf += *std::max_element(neighbor_values.begin(),
                                         neighbor_values.begin() + half_neighbor_count);
         median_sdf /= 2;
@@ -134,7 +138,7 @@ public:
 };
 
 
-/** Gathers neighbors of a facet for a given window range. @see Bilateral_filtering, Median_filtering */
+/** @brief Gathers neighbors of a facet for a given window range. @see Bilateral_filtering, Median_filtering */
 template<class Polyhedron>
 class Neighbor_selector_by_edge
 {
@@ -146,7 +150,7 @@ public:
   /**
    * Breadth-first traversal on facets by treating facets, which share a common edge, are 1-level neighbors.
    * @param facet root facet
-   * @param max_level maximum distance (number of levels) between root facet and visited facet
+   * @param max_level maximum allowed distance (number of levels) between root facet and visited facet
    * @param[out] neighbors visited facets and their distances to root facet
    */
   void operator()(Facet_const_handle& facet, int max_level,
@@ -172,7 +176,7 @@ public:
   }
 };
 
-/** Gathers neighbors of a facet for a given window range. @see Bilateral_filtering, Median_filtering */
+/** @brief Gathers neighbors of a facet for a given window range. @see Bilateral_filtering, Median_filtering */
 template<class Polyhedron>
 class Neighbor_selector_by_vertex
 {
@@ -186,7 +190,7 @@ public:
   /**
    * Breadth-first traversal on facets by treating facets, which share a common vertex, are 1-level neighbors.
    * @param facet root facet
-   * @param max_level maximum distance (number of levels) between root facet and visited facet
+   * @param max_level maximum allowed distance (number of levels) between root facet and visited facet
    * @param[out] neighbors visited facets and their distances to root facet
    */
   void operator()(Facet_const_handle& facet, int max_level,

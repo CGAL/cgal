@@ -61,9 +61,9 @@ private:
     }
     /**
      * Probability density function (pdf).
-     * Note that result is not devided to sqrt(2*pi), since it does not effect EM algorithm.
+     * Note that result is not devided to \f$ \sqrt {2\pi}  \f$ , since it does not effect EM algorithm.
      * @param x data
-     * @return pdf result (without dividing sqrt(2*pi))
+     * @return pdf result (without dividing \f$ \sqrt {2\pi}  \f$)
      */
     double probability(double x) const {
       double e_over = -0.5 * std::pow((x - mean) / deviation, 2);
@@ -83,7 +83,7 @@ private:
     }
   };
 public:
-  /** Types of algorithms for random center selection. */
+  /** Options for initial center placement. */
   enum Initialization_types {
     RANDOM_INITIALIZATION, /**< place initial centers randomly */
     PLUS_INITIALIZATION,   /**< place initial centers using k-means++ algorithm */
@@ -106,13 +106,16 @@ public:
   Expectation_maximization() { }
   /**
    * Constructs structures and runs the algorithm.
-   * EM algorithm is repeated @a number_of_run times, and the result which has maximum likelihood is kept.
+   *
+   * If @a init_type is either RANDOM_INITIALIZATION or PLUS_INITIALIZATION,
+   * then EM algorithm is repeated @a number_of_runs times, and the result which has maximum likelihood is kept.
+   * Otherwise (i.e. init_type is K_MEANS_INITIALIZATION) EM algorithm is just run one time.
    * @param number_of_centers
    * @param data
-   * @param init_type initialization type for random center selection
+   * @param init_type option for initial center placement.
    * @param number_of_runs number of times to repeat EM algorithm
    * @param threshold minimum allowed improvement on likelihood between iterations
-   * @param maximum_iteration number of maximum iteration in a single EM algorithm call
+   * @param maximum_iteration maximum allowed iteration in a single EM algorithm call
    */
   Expectation_maximization(int number_of_centers,
                            const std::vector<double>& data,
@@ -145,7 +148,7 @@ public:
 
   /**
    * Fills data_center by the id of the center which has maximum responsibility.
-   * @param[out] data_centers should be empty
+   * @param[out] data_centers
    */
   void fill_with_center_ids(std::vector<int>& data_centers) {
     data_centers.reserve(points.size());
@@ -167,7 +170,7 @@ public:
 
   /**
    * Fills probabilities[center][point] by responsibility of the center on the point.
-   * @param[out] probabilities should be empty
+   * @param[out] probabilities
    */
   void fill_with_probabilities(std::vector<std::vector<double> >& probabilities) {
     probabilities = std::vector<std::vector<double> >
@@ -188,7 +191,7 @@ public:
 private:
   /**
    * Calculates deviation for each center.
-   * Initial deviation for a center is equal to deviation of the points whose closest center is the current center.
+   * Initial deviation of a center is equal to deviation of the points whose closest center is the current center.
    */
   void calculate_initial_deviations() {
     std::vector<int> member_count(centers.size(), 0);
@@ -346,7 +349,7 @@ private:
 
   /**
    * Corresponds to M step.
-   * Recalculates parameters of the centers according to current responsibility matrix.
+   * Recalculates parameters of the centers using current responsibility matrix.
    */
   void calculate_parameters() {
     for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
@@ -374,7 +377,7 @@ private:
 
   /**
    * Corresponds to both E step and likelihood step.
-   * Calculates log-likelihood, and responsibility matrix according to current center parameters.
+   * Calculates log-likelihood, and responsibility matrix using current center parameters.
    * @return log-likelihood
    */
   double calculate_likelihood() {
@@ -442,7 +445,7 @@ private:
   }
 
   /**
-   * Calls calculate_clustering() `number_of_run` times,
+   * Calls calculate_clustering() @a number_of_run times,
    * and keeps the result which has maximum likelihood.
    * @param number_of_centers
    * @param number_of_run
@@ -463,28 +466,6 @@ private:
       }
     }
     centers = max_centers;
-  }
-
-  /** Going to be removed */
-  void write_random_centers(const char* file_name) {
-    //std::ofstream output(file_name, std::ios_base::app);
-    std::ofstream output(file_name);
-    for(std::vector<Gaussian_center>::iterator center_it = centers.begin();
-        center_it != centers.end(); ++center_it) {
-      output << center_it->mean << std::endl;
-    }
-    output.close();
-  }
-
-  /** Going to be removed */
-  void write_center_parameters(const char* file_name) {
-    //std::ofstream output(file_name, std::ios_base::app);
-    std::ofstream output(file_name);
-    for(std::vector<Gaussian_center>::iterator center_it = centers.begin();
-        center_it != centers.end(); ++center_it) {
-      output << "mean: " << center_it->mean << " dev: " << center_it->deviation
-             << " mix: " << center_it->mixing_coefficient << std::endl;
-    }
   }
 };
 }//namespace internal

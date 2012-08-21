@@ -2,7 +2,7 @@
 #define CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H
 /**
  * @file mesh_segmentation.h
- * The API which contains free template functions for SDF computation and mesh segmentation.
+ * @brief The API which contains free template functions for SDF computation and mesh segmentation.
  */
 #include <CGAL/internal/Surface_mesh_segmentation/Surface_mesh_segmentation.h>
 
@@ -17,6 +17,7 @@ namespace CGAL
 
 /*!
  * @brief Free template function for SDF computation.
+ *
  * After computation of SDF, applied postprocesses are as follows:
  *  - Facets with no SDF values (i.e. zero) are assigned to average SDF value of its neighbors.
  * If still there is any facet which has no SDF value, minimum SDF value greater than zero is assigned to it.
@@ -40,6 +41,7 @@ void sdf_values_computation(const Polyhedron& polyhedron,
 
 /*!
  * @brief Free template function for surface mesh segmentation.
+ *
  * By taking SDF values and segmentation parameters as input, a map which contains a segment-id
  * (between [0, number of segments -1]) for each facet is provided as output.
  * Formally, a segment is set of connected facets which are placed under same cluster after graph-cut.
@@ -70,6 +72,7 @@ void surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
 
 /*!
  * @brief Free template function for SDF computation and mesh segmentation.
+ *
  * Basically this function combines CGAL::sdf_values_computation and
  * CGAL::surface_mesh_segmentation_from_sdf_values functions by computing SDF values and segmenting the mesh in one go.
  *
@@ -95,8 +98,7 @@ void surface_mesh_segmentation(const Polyhedron& polyhedron,
   smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                 smoothing_lambda)); // clip into [0-1]
 
-  typedef std::map<typename Polyhedron::Facet_const_handle, double>
-  Facet_double_map;
+  typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
   Facet_double_map internal_sdf_map;
   boost::associative_property_map<Facet_double_map> sdf_property_map(
     internal_sdf_map);

@@ -2,7 +2,7 @@
 #define CGAL_SURFACE_MESH_SEGMENTATION_DISK_SAMPLERS_H
 /**
  * @file Disk_samplers.h
- * This file contains 3 sampling methods, which can be used as a template parameter for SDF_calculation.
+ * @brief This file contains 3 sampling methods, which can be used as a template parameter for CGAL::internal::SDF_calculation.
  */
 #include <CGAL/number_type_basic.h>
 
@@ -78,7 +78,9 @@ public:
         samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), weight));
       }
     } else {
-      const double custom_power = 8.0 / 8.0;
+      const double custom_power = 8.0 /
+                                  8.0; // it determines how much sampling is biased to center
+      // for uniform result one can use 0.5 (i.e. sqrt)
       for(int i = 0; i < number_of_points; ++i) {
         double Q = i * golden_ratio * CGAL_PI;
         double R = std::pow(static_cast<double>(i) / number_of_points, custom_power);
@@ -132,8 +134,8 @@ public:
    *   - get<1> = coordinate-y
    *   - get<2> = weight (proportional to angle between cone-normal)
    *
-   * NOTE:
-   * Returned samples size = floor( sqrt (number_of_points) ) ^ 2
+   * Note:
+   * Returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
    */
   void operator()(int number_of_points, double cone_angle,
                   Disk_samples_list& samples) const {
@@ -197,8 +199,8 @@ public:
    *   - get<1> = coordinate-y
    *   - get<2> = weight (proportional to angle between cone-normal)
    *
-   * NOTE:
-   * Returned samples size = floor( sqrt (number_of_points) ) ^ 2
+   * Note:
+   * Returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
    */
   void operator()(int number_of_points, double cone_angle,
                   Disk_samples_list& samples) const {

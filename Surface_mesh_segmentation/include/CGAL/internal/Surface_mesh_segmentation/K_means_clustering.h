@@ -121,7 +121,7 @@ public:
    * @param data
    * @param init_type initialization type for random center selection
    * @param number_of_run number of times to repeat k-means algorithm
-   * @param maximum_iteration number of maximum iteration in a single k-means algorithm call
+   * @param maximum_iteration maximum allowed iteration in a single k-means algorithm call
    */
   K_means_clustering(int number_of_centers,
                      const std::vector<double>& data,
@@ -138,7 +138,7 @@ public:
 
   /**
    * Fills data_center by the id of the closest center for each point.
-   * @param[out] data_centers should be empty
+   * @param[out] data_centers
    */
   void fill_with_center_ids(std::vector<int>& data_centers) {
     data_centers.reserve(points.size());
@@ -253,7 +253,7 @@ private:
   }
 
   /**
-   * Calls calculate_clustering() number_of_run times,
+   * Calls calculate_clustering() @a number_of_run times,
    * and keeps the result which has minimum within cluster error.
    * @param number_of_centers
    * @param number_of_run

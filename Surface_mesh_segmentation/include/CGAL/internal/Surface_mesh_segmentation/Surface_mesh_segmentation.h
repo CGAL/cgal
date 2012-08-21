@@ -17,8 +17,9 @@
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Filters.h>
-#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
 //#include "Alpha_expansion_graph_cut.h"
+#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
+
 #include <CGAL/internal/Surface_mesh_segmentation/SDF_calculation.h>
 
 #include <CGAL/utility.h>
@@ -63,19 +64,21 @@ namespace internal
 {
 /**
  * @brief Main entry point for mesh segmentation algorithm.
+ *
  * It is a connector class which uses:
  *   -  SDF_calculation for calculating sdf values
  *   -  Expectation_maximization for soft clustering
- *   -  Alpha_expansion_graph_cut for hard clustering
+ *   -  An implementation of alpha-expansion graph cut for hard clustering (Alpha_expansion_graph_cut.h)
  *
  * Other than being a connector, it is also responsable for preprocess and postprocess on intermadiate data, which are:
  *   - log-normalizing probabilities received from soft clustering
  *   - log-normalizing and calculating dihedral-angle based weights for edges
- *   - smoothing and log-normalizing sdf values received from sdf calculation
+ *   - smoothing and log-normalizing sdf values received from sdf calculation (Filters.h)
  *   - assigning segment-id for each facet after hard clustering
  */
 template <
 class Polyhedron,
+      class GraphCut = Alpha_expansion_graph_cut_boost,
       class FacetIndexMap =
       boost::associative_property_map<std::map<typename Polyhedron::Facet_const_handle, int> >,
       class Filter = Bilateral_filtering<Polyhedron>
@@ -87,13 +90,13 @@ private:
    * An adaptor for Lvalue property-map. It stores a pointer to vector for underlying data-structure,
    * and also stores another property-map which maps each `key` to vector index.
    */
-  template<class Any_polyhedron, class ValueType, class FacetIdPropertyMap>
+  template<class AnyPolyhedron, class ValueType, class FacetIdPropertyMap>
   struct Polyhedron_property_map_for_facet
       : public boost::put_get_helper<ValueType&,
-        Polyhedron_property_map_for_facet<Any_polyhedron, ValueType, FacetIdPropertyMap>
+        Polyhedron_property_map_for_facet<AnyPolyhedron, ValueType, FacetIdPropertyMap>
         > {
   public:
-    typedef typename Any_polyhedron::Facet_const_handle key_type;
+    typedef typename AnyPolyhedron::Facet_const_handle key_type;
     typedef ValueType value_type;
     typedef value_type& reference;
     typedef boost::writable_property_map_tag category;
@@ -217,7 +220,7 @@ public:
     SEG_DEBUG(t.reset())
 
     check_zero_sdf_values();
-    smooth_sdf_values();
+    //smooth_sdf_values();
     normalize_sdf_values();
 
     SEG_DEBUG(std::cerr <<"Normalization and smoothing time: " << t.time() <<
@@ -254,7 +257,7 @@ public:
         edge_weights);
 
     // apply graph cut
-    Alpha_expansion_graph_cut(edges, edge_weights, probability_matrix, labels);
+    GraphCut()(edges, edge_weights, probability_matrix, labels);
     centers = labels;
     // assign a segment id for each facet
     assign_segments();
@@ -324,7 +327,7 @@ public:
         edge_weights);
 
     // apply graph cut
-    Alpha_expansion_graph_cut(edges, edge_weights, probability_matrix, labels);
+    GraphCut()(edges, edge_weights, probability_matrix, labels);
     centers = labels;
     // assign a segment id for each facet
     assign_segments();
