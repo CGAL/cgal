@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage 3D Convex Hulls 
-
+\anchor chapconvexhull3
 \authors Susan Hert and Stefan Schirra
 
 \anchor figchbimba

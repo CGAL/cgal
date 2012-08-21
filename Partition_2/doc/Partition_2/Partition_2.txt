@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Polygon Partitioning
-
+\anchor chappolygonpartition
 \authors Susan Hert
 
 \section secpartition_2_intro Introduction 

@@ -5,7 +5,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Segment Delaunay Graphs 
-
+\anchor chaptersegdel2
 \authors Menelaos Karavelas
 
 This chapter describes the two-dimensional segment Delaunay graph

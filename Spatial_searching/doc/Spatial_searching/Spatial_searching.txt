@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage dD Spatial Searching
-
+\anchor ChapterUserSpatialSearching
 \authors Hans Tangelder and Andreas Fabri
 
 # Introduction #

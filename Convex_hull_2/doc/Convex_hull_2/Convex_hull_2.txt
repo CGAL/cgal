@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Convex Hulls and Extreme Points 
-
+\anchor chapconvexhull2
 \authors Susan Hert and Stefan Schirra
 
 # Introduction #

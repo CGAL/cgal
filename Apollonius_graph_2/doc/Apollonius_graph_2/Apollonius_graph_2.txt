@@ -5,7 +5,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Apollonius Graphs (Delaunay Graphs of Disks)
-
+\anchor chapterapollonius2
 \authors Menelaos Karavelas and Mariette Yvinec
 
 This chapter describes the two-dimensional Apollonius graph

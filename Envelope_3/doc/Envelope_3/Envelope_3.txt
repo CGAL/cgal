@@ -4,7 +4,7 @@ namespace CGAL {
 
 \mainpage Envelopes of Surfaces in 3D
 
-\anchor chapterEnvelope_3
+\anchor chapterEnvelope3
 
 \authors Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman
 

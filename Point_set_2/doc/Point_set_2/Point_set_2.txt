@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Range and Neighbor Search
-
+\anchor chapterPointset2
 \authors Matthias B&auml;sken
 
 # Introduction #

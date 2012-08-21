@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage STL Extensions for CGAL
+\anchor chapterStlExtensions
 \author Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein
 
 \cgal is designed in the spirit of the generic programming paradigm

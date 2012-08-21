@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage Interval Skip List
-
+\anchor ChapterIntervalskiplist
 \authors Andreas Fabri
 
 # Definition #

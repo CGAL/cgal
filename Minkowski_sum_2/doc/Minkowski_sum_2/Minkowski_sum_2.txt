@@ -10,7 +10,7 @@ namespace CGAL {
 
 \mainpage 2D Minkowski Sums
 
-\anchor chapter_Minkowski_sum_2
+\anchor chapterMinkowskisum2
 
 \authors Ron Wein
 

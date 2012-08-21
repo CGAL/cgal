@@ -4,7 +4,7 @@ namespace CGAL {
 
 \mainpage Envelopes of Curves in 2D
 
-\anchor chapter_Envelope_2
+\anchor chapterEnvelope2
 
 \authors Ron Wein
 
