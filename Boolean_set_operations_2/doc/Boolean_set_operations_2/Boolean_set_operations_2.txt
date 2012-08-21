@@ -336,7 +336,7 @@ output polygons to its associated container.
 \subsection bso_sssecex_simple_bops Example - Joining and Intersecting Simple Polygons 
 
 The following example demonstrates the usage of the free functions
-`join()` and `intersect()` for computing the union and the
+`join()` and `intersection()` for computing the union and the
 intersection of the two simple polygons depicted in
 Figure \ref figsimple (b). The example uses the auxiliary function
 `print_polygon_with_holes()` listed above, which is located in
@@ -534,7 +534,7 @@ Our package provides the free overloaded functions `join()` and
 of a range of input polygons. There is no restriction on the polygons in the
 range - naturally, they may intersect each other.
 The package provides the overloaded free function 
-`do_intersect(begin, end)` that determines whether the polygons in the
+\ref do_intersect "do_intersect(begin, end)" that determines whether the polygons in the
 range defined by the two input iterators `[begin, end)` intersect.
 
 The class `General_polygon_set_2` also provides equivalent member
