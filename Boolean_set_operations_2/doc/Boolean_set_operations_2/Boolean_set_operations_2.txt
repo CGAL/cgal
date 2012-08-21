@@ -62,19 +62,9 @@ can be arbitrary weakly \f$ x\f$-monotone curves.
 
 \section bso_secbso_def Terms and Definitions 
 
-<CENTER>
-
 \anchor figsimpleDefsExamples
-CONVERROR HtmlOnly needs treatment
-<P>
+\image html simpleDefsExamples.gif "Examples of polygons. (a) A simple polygon. (b) A relatively simple polygon (c) A polygon that is neither simple nor relatively simple."
 
-<center>
-<img src="./fig/simpleDefsExamples.gif" border=0 alt="Example Polygons">
-</center>
-CONVERROR EndHtmlOnly
-CAPTION Examples of polygons. (a) A simple polygon. (b) A relatively simple polygon (c) A polygon that is neither simple nor relatively simple 
-
-</CENTER>
 
 <UL>
 
