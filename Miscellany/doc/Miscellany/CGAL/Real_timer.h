@@ -6,12 +6,12 @@ namespace CGAL {
 
 The class `Real_timer` is a timer class for measuring real time. 
 A timer `t` of type `Real_timer` is an object with a state. It is 
-either <I>running/</I> or it is <I>stopped</I>. The state is controlled 
-with `t.start()` and `t.stop()`. The timer counts the 
+either *running* or it is *stopped*. The state is controlled 
+with `Real_timer::start()` and `Real_timer::stop()`. The timer counts the 
 time elapsed since its creation or last reset. It counts only the time 
 where it is in the running state. The time information is given in seconds. 
 The timer counts also the number of intervals it was running, i.e. it 
-counts the number of calls of the `start()` member function since the 
+counts the number of calls of the `Real_timer::start()` member function since the 
 last reset. If the reset occures while the timer is running it counts as the 
 first interval. 
 
@@ -35,7 +35,7 @@ public:
 /// @{
 
 /*! 
-state is <I>stopped.</I> 
+state is *stopped*. 
 */ 
 Real_timer(); 
 
@@ -45,12 +45,12 @@ Real_timer();
 /// @{
 
 /*! 
-\pre state is <I>stopped</I>. 
+\pre state is *stopped*. 
 */ 
 void start(); 
 
 /*! 
-\pre state is <I>running</I>. 
+\pre state is *running*. 
 */ 
 void stop (); 
 
