@@ -8,8 +8,8 @@ namespace CGAL {
 Refines the constrained Delaunay triangulation `t` into a
 conforming Delaunay triangulation. After a call to this function,
 all edges of `t` are Delaunay edges. 
-\require The template parameter `CDT` should be a model of the concept `ConstrainedDelaunayTriangulation_2`.
-\require The geometric traits class of into the constrained Delaunay triangulation must be a model of `ConformingDelaunayTriangulationTraits_2`.
+\requires The template parameter `CDT` should be a model of the concept `ConstrainedDelaunayTriangulation_2`.
+\requires The geometric traits class of into the constrained Delaunay triangulation must be a model of `ConformingDelaunayTriangulationTraits_2`.
 */
 template<class CDT> void make_conforming_Delaunay_2 (CDT &t); 
 
@@ -27,8 +27,8 @@ conforming Gabriel triangulation. After a call to this function, all
 constrained edges of `t` have the <I>Gabriel property</I>: the
 circle that has \f$ e\f$ as diameter does not contain any vertex from
 the triangulation. 
-\require The template parameter `CDT` should be a model of the concept `ConstrainedDelaunayTriangulation_2`.
-\require The geometric traits class of the constrained Delaunay triangulation must be a model of `ConformingDelaunayTriangulationTraits_2`.
+\requires The template parameter `CDT` should be a model of the concept `ConstrainedDelaunayTriangulation_2`.
+\requires The geometric traits class of the constrained Delaunay triangulation must be a model of `ConformingDelaunayTriangulationTraits_2`.
 */
 template<class CDT> void make_conforming_Gabriel_2 (CDT &t); 
 
