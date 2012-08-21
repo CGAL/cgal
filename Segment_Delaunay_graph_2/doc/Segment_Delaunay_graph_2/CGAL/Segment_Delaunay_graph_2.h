@@ -14,7 +14,7 @@ which must be a model of `SegmentDelaunayGraphDataStructure_2`.
 The second template argument defaults to 
 `CGAL::Triangulation_data_structure_2< CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>, CGAL::Triangulation_face_base_2<Gt> >`. 
 
-Traversal of the segment Delaunay graph 
+Traversal of the Segment Delaunay Graph 
 -------------- 
 
 A segment Delaunay graph can be seen as a container of faces and 
@@ -414,7 +414,7 @@ All_faces_iterator all_faces_end();
 
 /// @} 
 
-/// \name Site iterators 
+/// \name Site Iterators 
 /// The following iterators allow respectively to visit all
 /// sites. These iterators are non-mutable, bidirectional and their
 /// value type is `Site_2`. They are all invalidated by any change in
