@@ -3555,43 +3555,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
       *local_mins_it++  = std::make_pair(he_curr, x_index);
     }
     
-    // If we cross the identification curve in x, then we must update the
-    // x_index. Note that a crossing takes place in the following cases:
-    //                .                                  .
-    //                .                                  .
-    //                .                                  .
-    //                . v    he                   he     . v
-    //       <-------(.)<---------             -------->(.)------->
-    //                .                                  .
-    //       (BEFORE) .    (AFTER)              (BEFORE) .  (AFTER)
-    //       x_index-1.    x_index              x_index  .  x_index+1
-    //
-    if ((ps_x_curr == ARR_LEFT_BOUNDARY) && (ps_x_next == ARR_RIGHT_BOUNDARY)) {
-      CGAL_assertion(is_identified(Left_side_category()) && 
-                     is_identified(Right_side_category()));
-      --x_index; // in "negative" u-direction
-    }
-    else if ((ps_x_curr == ARR_RIGHT_BOUNDARY) &&
-             (ps_x_next == ARR_LEFT_BOUNDARY))
-    {
-      CGAL_assertion(is_identified(Left_side_category()) && 
-                     is_identified(Right_side_category()));
-      ++x_index; // in "positive" u-direction
-    }
-
-    // Check if we cross the identification curve in y.
-    if ((ps_y_curr == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) {
-      CGAL_assertion(is_identified(Bottom_side_category()) &&
-                     is_identified(Top_side_category()));
-      --y_index; // in "negative" v-direction
-    }
-    else if ((ps_y_curr == ARR_TOP_BOUNDARY) &&
-             (ps_y_next == ARR_BOTTOM_BOUNDARY))
-    {
-      CGAL_assertion(is_identified(Bottom_side_category()) &&
-                     is_identified(Top_side_category()));
-      ++y_index; // in "positive" v-direction
-    }
+    _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
+                     x_index, y_index);
 
     // iterate
     he_curr = he_next;
@@ -4266,11 +4231,28 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         // boundary side of the parameter space), then the other path becomes
         // a hole in a face bounded by the parameter-space boundary.
 
-        // TODO EBEB 2012-08-08
-        // indices are not correct wrt TWO ccbs, only with respect to one!
+        // TODO EBEB 2012-08-22 check whether this fix is correct
+        // EBEB 2012-08-22 the 'start' of the two loops might lie
+        // on different sides of the identification, which is only
+        // problematic when either he1 or he2 points to the 
+        // identification. In these cases, we have to adapt the indices:
+        Arr_curve_end he1_tgt_end = (he1->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
+        Arr_parameter_space ps_x_he1_tgt = parameter_space_in_x(he1->curve(), he1_tgt_end);
+        
+        if (ps_x_he1_tgt == ARR_RIGHT_BOUNDARY) {
+          index_min2 =- 1;
+        }
+        
+        Arr_curve_end he2_tgt_end = (he2->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
+        Arr_parameter_space ps_x_he2_tgt = parameter_space_in_x(he2->curve(), he2_tgt_end);
+
+        if (ps_x_he2_tgt == ARR_RIGHT_BOUNDARY) {
+          index_min1 =- 1;
+        }
 
         // TODO EBEB 2012-07-25
         // the following "line" is very hard to pare by a human-being;
+
         // replace by a simple if that only checks the 'true' cases
         swap_he1_he2 = (index_min1 > index_min2) ? false :
           ((index_min1 < index_min2) ? true :
