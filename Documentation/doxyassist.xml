@@ -11,7 +11,6 @@ namespace for the XML file to be processed properly.  -->
     <!-- we need to consider to migrate all settings here, although
          that might make upgrading less pleasant -->
   </doxygen>
-
   <projects>
     <project>
       <namespace>CGAL</namespace>
@@ -94,9 +93,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Algebraic_foundations.tag</string>
           <string name="IMAGE_PATH">../Algebraic_foundations/doc/Algebraic_foundations/fig</string>
           <string name="EXAMPLE_PATH">../Algebraic_foundations/examples</string>
-          <string name="TAGFILES">
-            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
-          </string>
         </doxygen>
       </project>
 
@@ -133,8 +129,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Convex_hull_3.tag</string>
           <string name="EXAMPLE_PATH">../Convex_hull_3/examples</string>
           <string name="IMAGE_PATH">../Convex_hull_3/doc/Convex_hull_3/fig</string>
-          <list name="TAGFILES" append="false">
-            <item name="TAGFILES">./tags/Convex_hull_2.tag=../../CGAL.CGAL.Convex_hull_2/html</item>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.Convex_hull_2/html</item>
           </list>
         </doxygen>
       </project>
@@ -159,7 +155,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Straight_skeleton_2/examples</string>
           <string name="IMAGE_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/fig</string>
           <list name="TAGFILES" append="true">
-            <item name="TAGFILES">./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
+            <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
           </list>
         </doxygen>
       </project>
@@ -182,11 +178,20 @@ namespace for the XML file to be processed properly.  -->
         <input>../Convex_decomposition_3/doc/Convex_decomposition_3</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Convex_decomposition_3/include</string>
+          <string name="STRIP_FROM_PATH">../Convex_decomposition_3/include</string>
           <string name="GENERATE_TAGFILE">./tags/Convex_decomposition_3.tag</string>
           <string name="EXAMPLE_PATH">../Convex_decomposition_3/examples</string>
           <string name="IMAGE_PATH">../Convex_decomposition_3/doc/Convex_decomposition_3/fig</string>
           <bool name="EXTRACT_ALL">false</bool>
           <bool name="HIDE_UNDOC_CLASSES">true</bool>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Nef_3.tag=../../CGAL.CGAL.Nef_3/html</item>
+          </list>
+          <list name="HTML_EXTRA_FILES" append="true">
+            <item>../Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes.gif</item>
+            <item>../Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes_cylindrical.gif</item>
+            <item>../Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes_vertical.gif</item>
+          </list>
         </doxygen>
       </project>
 
@@ -242,7 +247,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Minkowski_sum_2.tag</string>
           <string name="EXAMPLE_PATH">../Minkowski_sum_2/examples</string>
           <string name="IMAGE_PATH">../Minkowski_sum_2/doc/Minkowski_sum_2/fig</string>
-          <list name="TAGFILES" append="false">
+          <list name="TAGFILES" append="true">
             <item>./tags/Polygon.tag=../../CGAL.CGAL.Polygon/html</item>
           </list>
         </doxygen>
@@ -256,7 +261,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Minkowski_sum_3.tag</string>
           <string name="EXAMPLE_PATH">../Minkowski_sum_3/examples</string>
           <string name="IMAGE_PATH">../Minkowski_sum_3/doc/Minkowski_sum_3/fig</string>
-          <list name="TAGFILES" append="false">
+          <list name="TAGFILES" append="true">
+            <item>./tags/Nef_3.tag=../../CGAL.CGAL.Nef_3/html</item>
           </list>
         </doxygen>
       </project>
@@ -269,7 +275,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Generator.tag</string>
           <string name="EXAMPLE_PATH">../Generator/examples</string>
           <string name="IMAGE_PATH">../Generator/doc/Generator/fig</string>
-          <list name="TAGFILES" append="false">
+          <list name="TAGFILES" append="true">
+            <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL_Extension/html</item>
           </list>
         </doxygen>
       </project>
@@ -281,7 +288,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_INC_PATH">../Geomview/doc/Geomview/</string>
           <string name="GENERATE_TAGFILE">./tags/Geomview.tag</string>
           <string name="EXAMPLE_PATH">../Geomview/demo</string>
-          <list name="TAGFILES" append="false">
+          <list name="TAGFILES" append="true">
           </list>
         </doxygen>
       </project>
@@ -293,7 +300,26 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_INC_PATH">../Spatial_searching/doc/Spatial_searching/</string>
           <string name="GENERATE_TAGFILE">./tags/Spatial_searching.tag</string>
           <string name="EXAMPLE_PATH">../Spatial_searching/examples</string>
-          <list name="TAGFILES" append="false">
+          <list name="TAGFILES" append="true">
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Segment_Delaunay_graph_2</name>
+        <input>../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Segment_Delaunay_graph_2.tag</string>
+          <string name="EXAMPLE_PATH">../Segment_Delaunay_graph_2/examples</string>
+          <string name="IMAGE_PATH">../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic_foundations/html</item>
+            <item>./tags/TDS_2.tag=../../CGAL.CGAL.TDS_2/html</item>
+            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius_graph_2/html</item>
+            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius_graph_2/html</item>
+            <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.Voronoi_diagram_2/html</item>
           </list>
         </doxygen>
       </project>
@@ -306,7 +332,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Box_intersection_d.tag</string>
           <string name="EXAMPLE_PATH">../Box_intersection_d/examples</string>
           <string name="IMAGE_PATH">../Box_intersection_d/doc/Box_intersection_d/fig</string>
-          <list name="TAGFILES" append="false">
+          <list name="TAGFILES" append="true">
           </list>
         </doxygen>
       </project>
@@ -320,7 +346,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/GraphicsView.tag</string>
           <string name="EXAMPLE_PATH">../GraphicsView/examples</string>
           <string name="IMAGE_PATH">../GraphicsView/doc/GraphicsView/fig</string>
-          <list name="TAGFILES" append="false">
+          <list name="TAGFILES" append="true">
           </list>
         </doxygen>
       </project>
@@ -334,7 +360,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Miscellany.tag</string>
           <string name="EXAMPLE_PATH">../Profiling_tools/examples</string>
           <string name="IMAGE_PATH">../Miscellany/doc/Miscellany/fig</string>
-          <list name="TAGFILES" append="false">
+          <list name="TAGFILES" append="true">
           </list>
         </doxygen>
       </project>
@@ -346,13 +372,13 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Polytope_distance_d/doc/Polytope_distance_d/</string>
           <string name="STRIP_FROM_INC_PATH">../Polytope_distance_d/doc/Polytope_distance_d/</string>
           <string name="GENERATE_TAGFILE">./tags/Polytope_distance_d.tag</string>
-          <list name="EXAMPLE_PATH" append="false">
+          <list name="EXAMPLE_PATH" append="true">
             <item>../Polytope_distance_d/examples</item>
             <item>../Width_3/examples</item>
             <item>../Matrix_search/examples</item>
           </list>
           <string name="IMAGE_PATH">../Polytope_distance_d/doc/Polytope_distance_d/fig</string>
-          <list name="TAGFILES" append="false">
+          <list name="TAGFILES" append="true">
           </list>
         </doxygen>
       </project>
@@ -364,7 +390,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Bounding_volumes/doc/Bounding_volumes/</string>
           <string name="STRIP_FROM_INC_PATH">../Bounding_volumes/doc/Bounding_volumes/</string>
           <string name="GENERATE_TAGFILE">./tags/Bounding_volumes.tag</string>
-          <list name="EXAMPLE_PATH" append="false">
+          <list name="EXAMPLE_PATH" append="true">
             <item>../Min_quadrilateral_2/examples</item>
             <item>../Min_circle_2/examples</item>
             <item>../Min_ellipse_2/examples</item>
@@ -476,6 +502,10 @@ namespace for the XML file to be processed properly.  -->
             <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-interior.gif</item>
             <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-both_vertices.gif</item>
           </list>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.Voronoi_diagram_2/html</item>
+            <item>./tags/TDS_2.tag=../../CGAL.CGAL.TDS_2/html</item>
+          </list>
         </doxygen>
       </project>
 
@@ -504,6 +534,25 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>Nef_S2</name>
+        <input>../Nef_S2/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Nef_S2/doc/Nef_S2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Nef_S2/doc/Nef_S2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Nef_S2.tag</string>
+          <string name="IMAGE_PATH">../Nef_S2/doc/Nef_S2/fig</string>
+          <list name="EXAMPLE_PATH" append="true">
+            <item>../Nef_S2/examples</item>
+            <item>../Nef_S2/demo</item>
+          </list>
+          <list name="HTML_EXTRA_FILES" append="true">
+            <item>../Nef_S2/doc/Nef_S2/fig/halfspace.gif</item>
+            <item>../Nef_S2/doc/Nef_S2/fig/complex.gif</item>
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
         <name>Nef_3</name>
         <input>../Nef_3/doc</input>
         <doxygen>
@@ -511,16 +560,12 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_INC_PATH">../Nef_3/doc/Nef_3/</string>
           <string name="GENERATE_TAGFILE">./tags/Nef_3.tag</string>
           <string name="IMAGE_PATH">../Nef_3/doc/Nef_3/fig</string>
-          <list name="EXAMPLE_PATH" append="false">
+          <list name="EXAMPLE_PATH" append="true">
             <item>../Nef_3/examples</item>
             <item>../Nef_3/demo</item>
           </list>
-
-
         </doxygen>
       </project>
-
-
       <!-- subprojects end -->
     </project>
 
@@ -562,6 +607,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../HalfedgeDS/doc/HalfedgeDS/fig</item>
           <item>../Interval_skip_list/doc/Interval_skip_list/fig</item>
           <item>../Nef_2/doc/Nef_2/fig</item>
+          <item>../Nef_2/doc/Nef_S2/fig</item>
           <item>../Nef_3/doc/Nef_3/fig</item>
           <item>../Mesh_2/doc/Mesh_2/fig</item>
           <item>../Mesh_3/doc/Mesh_3/fig</item>
@@ -578,6 +624,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Skin_surface_3/doc/Skin_surface_3/fig</item>
           <item>../Snap_rounding_2/doc/Snap_rounding_2/fig</item>
           <item>../Spatial_searching/doc/Spatial_searching/fig</item>
+          <item>../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig</item>
           <item>../Straight_skeleton_2/doc/Straight_skeleton_2/fig</item>
         </list>
         <list name="TAGFILES" append="false">
@@ -601,6 +648,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
           <item>./tags/Interval_skip_list.tag=../../CGAL.CGAL.Interval_skip_list/html</item>
           <item>./tags/Nef_2.tag=../../CGAL.CGAL.Nef_2/html</item>
+          <item>./tags/Nef_S2.tag=../../CGAL.CGAL.Nef_S2/html</item>
           <item>./tags/Nef_3.tag=../../CGAL.CGAL.Nef_3/html</item>
           <item>./tags/Mesh_2.tag=../../CGAL.CGAL.Mesh_2/html</item>
           <item>./tags/Mesh_3.tag=../../CGAL.CGAL.Mesh_3/html</item>
@@ -617,6 +665,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Skin_surface_3.tag=../../CGAL.CGAL.Skin_surface_3/html</item>
           <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.Snap_rounding_2/html</item>
           <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.Spatial_searching/html</item>
+          <item>./tags/Segment_Delaunay_graph_2.tag=../../CGAL.CGAL.Segment_Delaunay_graph_2/html</item>
           <item>./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.Straight_skeleton_2/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>

@@ -36,6 +36,7 @@
 */
 
 
+/// The CGAL namespace.
 namespace CGAL {
 
 /*!

@@ -27,9 +27,15 @@ optimal \cite c-cpplb-84.
 \image latex two_cubes "" width=0.245 
 \image latex two_cubes_cylindrical "" width=0.25 
 \image latex two_cubes_vertical "" width=0.27
-\image html two_cubes.gif ""
-\image html /two_cubes_cylindrical.gif ""
-\image html /two_cubes_vertical.gif ""
+
+\htmlonly
+<center>
+<img src="two_cubes.gif" border=0 alt="decomposition example" width=250>&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="two_cubes_cylindrical.gif" border=0 alt="decomposition after first step" width=250>&nbsp;&nbsp;&nbsp;
+<img src="two_cubes_vertical.gif" border=0 alt="final decomposition" width=250>
+</center>
+\endhtmlonly
+
 <CENTER><B>
 Vertical decomposition based on the insertion of vertical facets
 (viewed from the top). Left: Non-convex polyhedron. Middle:
@@ -75,7 +81,7 @@ selected facets. These additional facets are therefore redundant,
 i.e., their insertion alters the representation of the polyhedron, but
 not the polyhedron itself.
 
-When `convex_decomposition_3` resolved all reflex edges, the
+When `::convex_decomposition_3` resolved all reflex edges, the
 selected sub-volumes have become convex. Each of them is represented
 by a separate volume item and can therefore be traversed
 separately \ref subsectionNef_3ShellExploration. Another possibility
