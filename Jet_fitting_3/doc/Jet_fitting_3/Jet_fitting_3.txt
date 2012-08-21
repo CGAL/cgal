@@ -292,7 +292,9 @@ Figs.
 provide illustrations of principal directions of curvature.
 
 \anchor figjet3figellipticparaboloid
-\image html ppal_curv_poly2x2+y2.jpg "Principal directions of curvature and normals at vertices of a mesh of the graph of the function \f$ f(x,y)=2x^2+y^2\f$."
+\image html ppal_curv_poly2x2+y2.jpg 
+
+<center><b>Principal directions of curvature and normals at vertices of a mesh of the graph of the function \f$ f(x,y)=2x^2+y^2\f$.</b></center>
 
 # Mathematical and Algorithmic Details #
 
