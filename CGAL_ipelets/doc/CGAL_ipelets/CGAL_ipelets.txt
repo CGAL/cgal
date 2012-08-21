@@ -5,7 +5,7 @@ namespace CGAL {
 /*!
 
 \mainpage CGAL Ipelets 
-
+\anchor chapcgalipelets
 \authors S&eacute;bastien Loriot and Sylvain Pion
 
 # Introduction #
