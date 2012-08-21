@@ -98,13 +98,13 @@ Box_d(NT lo[D], NT hi[D]);
 
 /*! 
 constructs from bbox 
-\require \f$ D=2\f$ and `NT`\f$ \equiv\f$`double`. 
+\requires \f$ D=2\f$ and `NT`\f$ \equiv\f$`double`. 
 */ 
 Box_d( const Bbox_2& bbox); 
 
 /*! 
 constructs from bbox 
-\require \f$ D=3\f$ and `NT`\f$ \equiv\f$`double`. 
+\requires \f$ D=3\f$ and `NT`\f$ \equiv\f$`double`. 
 */ 
 Box_d( const Bbox_3& bbox); 
 
@@ -140,7 +140,7 @@ static int dimension();
 returns a unique box id, see the 
 `IdPolicy` template parameter above for the different 
 choices. 
-\require `IdPolicy`\f$ \neq\f$`ID_NONE` 
+\requires `IdPolicy`\f$ \neq\f$`ID_NONE` 
 */ 
 std::size_t id(); 
 
@@ -158,13 +158,13 @@ NT max_coord(int d) const;
 
 /*! 
 returns the bounding box 
-\require \f$ D=2\f$ and `NT`\f$ \equiv\f$`double` 
+\requires \f$ D=2\f$ and `NT`\f$ \equiv\f$`double` 
 */ 
 const Bbox_2& bbox() const; 
 
 /*! 
 returns the bounding box 
-\require \f$ D=3\f$ and `NT`\f$ \equiv\f$`double` 
+\requires \f$ D=3\f$ and `NT`\f$ \equiv\f$`double` 
 */ 
 const Bbox_3& bbox() const; 
 
