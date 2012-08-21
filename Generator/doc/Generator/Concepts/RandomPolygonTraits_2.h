@@ -22,8 +22,7 @@ public:
 /// @{
 
 /*! 
-The coordinate type of the points of the polygon 
-(<I>i.e.</I>, a field type) 
+The coordinate type of the points of the polygon.
 */ 
 typedef Hidden_type FT; 
 
