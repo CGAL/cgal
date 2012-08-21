@@ -134,7 +134,7 @@ std::ostream& stream = std::cout);
 initializes `poly_dist` to \f$ pd(P,Q)\f$ with \f$ P\f$ and \f$ Q\f$ being the 
 sets of points in the range [`p_first`,`p_last`) and 
 [`q_first`,`q_last`), respectively. 
-\require The value type of `InputIterator1` and `InputIterator2` is `Point`. 
+\requires The value type of `InputIterator1` and `InputIterator2` is `Point`. 
 \pre All points have the same dimension. 
 
 \attention If `verbose` is set to \f$ 1\f$, \f$ 2\f$, or
@@ -273,7 +273,7 @@ Support_point_index_iterator support_points_q_indices_end( ) const;
 /*! 
 
 returns the realizing point of \f$ P\f$. 
-\require An implicit conversion from `ET` to `RT` is available. 
+\requires An implicit conversion from `ET` to `RT` is available. 
 \pre \f$ pd(P,Q)\f$ is finite. 
 */ 
 Point realizing_point_p( ) const; 
@@ -281,7 +281,7 @@ Point realizing_point_p( ) const;
 /*! 
 
 returns the realizing point of \f$ Q\f$. 
-\require An implicit conversion from `ET` to `RT` is available. 
+\requires An implicit conversion from `ET` to `RT` is available. 
 \pre \f$ pd(P,Q)\f$ is finite. 
 */ 
 Point realizing_point_q( ) const; 
@@ -289,7 +289,7 @@ Point realizing_point_q( ) const;
 /*! 
 
 returns the squared distance of `poly_dist`, i.e. \f$ (pd(P,Q))^2\f$. 
-\require An implicit conversion from `ET` to `RT` is available. 
+\requires An implicit conversion from `ET` to `RT` is available. 
 \pre \f$ pd(P,Q)\f$ is finite. 
 */ 
 FT squared_distance( ) const; 
@@ -394,7 +394,7 @@ void clear( );
 sets `poly_dist` to \f$ pd(P,Q)\f$ with \f$ P\f$ and \f$ Q\f$ being the sets of 
 points in the ranges [`p_first`,`p_last`) and 
 [`q_first`,`q_last`), respectively. 
-\require The value type of `InputIterator1` and `InputIterator2` is `Point`. 
+\requires The value type of `InputIterator1` and `InputIterator2` is `Point`. 
 \pre All points have the same dimension. 
 */ 
 template < class InputIterator1, class InputIterator2 > 
@@ -407,7 +407,7 @@ InputIterator2 q_last );
 
 sets `poly_dist` to \f$ pd(P,Q)\f$ with \f$ P\f$ being the set of points 
 in the range [`p_first`,`p_last`) (\f$ Q\f$ remains unchanged). 
-\require The value type of `InputIterator` is `Point`. 
+\requires The value type of `InputIterator` is `Point`. 
 \pre All points in \f$ P\f$ have dimension `poly_dist``.ambient_dimension()` if \f$ Q\f$ is not empty. 
 */ 
 template < class InputIterator > 
@@ -418,7 +418,7 @@ InputIterator p_last );
 
 sets `poly_dist` to \f$ pd(P,Q)\f$ with \f$ Q\f$ being the set of points 
 in the range [`q_first`,`q_last`) (\f$ P\f$ remains unchanged). 
-\require The value type of `InputIterator` is `Point`. 
+\requires The value type of `InputIterator` is `Point`. 
 \pre All points in \f$ Q\f$ have dimension `poly_dist``.ambient_dimension()` if \f$ P\f$ is not empty. 
 */ 
 template < class InputIterator > 
@@ -444,7 +444,7 @@ void insert_q( const Point& q);
 inserts the points in the range [`p_first`,`p_last`) 
 and [`q_first`,`q_last`) into \f$ P\f$ and \f$ Q\f$, respectively, 
 and recomputes the (squared) distance. 
-\require The value type of `InputIterator1` and `InputIterator2` is `Point`. 
+\requires The value type of `InputIterator1` and `InputIterator2` is `Point`. 
 \pre All points have the same dimension. If `poly_dist` is not \f$ pd(\emptyset, \emptyset)\f$, this dimension must be equal to `poly_dist``.ambient_dimension()`. 
 */ 
 template < class InputIterator1, class InputIterator2 > 
@@ -457,7 +457,7 @@ InputIterator2 q_last );
 
 inserts the points in the range [`p_first`,`p_last`) into 
 \f$ P\f$ and recomputes the (squared) distance (\f$ Q\f$ remains unchanged). 
-\require The value type of `InputIterator` is `Point`. 
+\requires The value type of `InputIterator` is `Point`. 
 \pre All points have the same dimension. If `poly_dist` is not empty, this dimension must be equal to `poly_dist``.ambient_dimension()`. 
 */ 
 template < class InputIterator > 
@@ -468,7 +468,7 @@ InputIterator p_last );
 
 inserts the points in the range [`q_first`,`q_last`) into 
 \f$ Q\f$ and recomputes the (squared) distance (\f$ P\f$ remains unchanged). 
-\require The value type of `InputIterator` is `Point`. 
+\requires The value type of `InputIterator` is `Point`. 
 \pre All points have the same dimension. If `poly_dist` is not empty, this dimension must be equal to `poly_dist``.ambient_dimension()`. 
 */ 
 template < class InputIterator > 
@@ -516,7 +516,7 @@ const Traits& traits( ) const;
 /*! 
 
 writes `poly_dist` to output stream `os`. 
-\require The output operator is defined for `Point_d`. 
+\requires The output operator is defined for `Point_d`. 
 \relates Polytope_distance_d 
 */ 
 std::ostream& 
@@ -525,7 +525,7 @@ operator << ( std::ostream& os, const Polytope_distance_d<Traits>& poly_dist);
 /*! 
 
 reads `poly_dist` from input stream `is`. 
-\require The input operator is defined for `Point_d`. 
+\requires The input operator is defined for `Point_d`. 
 \relates Polytope_distance_d 
 */ 
 std::istream& 

@@ -23,7 +23,8 @@ can be omitted if `RandomAccessIterator` refers to a point type
 from a `Kernel`. In this case, the kernel is used as default 
 traits class. 
 
-\require <OL> 
+***Requires***
+<OL> 
 <LI>If `t` is specified explicitly, `Traits` is a model 
 for `AllFurthestNeighborsTraits_2`. 
 <LI>Value type of `RandomAccessIterator` is 
@@ -38,8 +39,8 @@ for `AllFurthestNeighborsTraits_2`.
 Implementation 
 -------------- 
 
-The implementation uses monotone matrix search \cite
-akmsw-gamsa-87. Its runtime complexity is linear in the number of
+The implementation uses monotone matrix search \cite akmsw-gamsa-87. 
+Its runtime complexity is linear in the number of
 vertices of \f$ P\f$.
 
 Example 
