@@ -287,7 +287,7 @@ optimization processes.
 
 \anchor Mesh_3_section_interface
 
-## The global Functions ##
+## The Global Functions ##
 
 A 3D mesh generation process is launched through a call
 to one of the two following functions:
@@ -657,7 +657,7 @@ domain. We add by hand the intersection of the spheres as a sharp feature.
 \anchor Mesh_3_subsection_examples_optimization
 
 In the previous examples, the mesh generation is launched through a call
-`::make_mesh_3(domain,criteria)` with a minimal number of parameters. In such cases, 
+`::make_mesh_3` with a minimal number of parameters. In such cases, 
 the default optimization strategy is applied: after the Delaunay refinement process
 two optimization steps are performed, a perturbation and a sliver exudation.
 The following examples show how to disable default optimization steps 
