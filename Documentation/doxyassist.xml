@@ -11,6 +11,7 @@ namespace for the XML file to be processed properly.  -->
     <!-- we need to consider to migrate all settings here, although
          that might make upgrading less pleasant -->
   </doxygen>
+
   <projects>
     <project>
       <namespace>CGAL</namespace>
@@ -26,6 +27,9 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
         </list>
         <string name="LAYOUT_FILE">DoxygenLayoutPackage.xml</string>
+        <list name="ALIASES" append="true">
+          <item>PkgDescriptionBegin{1}=&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;</item>
+        </list>
       </doxygen>
       
       <!-- subprojects -->
@@ -673,6 +677,9 @@ namespace for the XML file to be processed properly.  -->
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>
+        <list name="ALIASES" append="true">
+          <item>PkgDescriptionBegin{2}=&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&lt;h2&gt;&lt;a href=&quot;../../CGAL.CGAL.\2/html/index.html&quot;&gt;\1&lt;/a&gt;&lt;/h2&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;</item>
+        </list>
       </doxygen>
     </project>
   </projects>

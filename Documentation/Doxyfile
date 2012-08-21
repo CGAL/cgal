@@ -215,16 +215,16 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalexample{1}=<br><b>File</b> \ref \1 \include \1" \
                          "cgalbib{1}=\par \"BibTeX\" \cite \1" \
                          "license{1}=\par \"License\" \1" \
-                         "models=\xrefitem modelss \"Models\" \"Models\"" \
-                         "refines=\xrefitem refiness \"Refines\" \"Refines\"" \
-                         "requires=\xrefitem requiress \"Requires\" \"Requires\"" \        
-                         "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\"" \
                          "advanced=\attention" \
                          "advancedbegin=" \
-                         "advancedend=" \
-                         "debug=\xrefitem debugs \"Debug\" \"Debug\""
+                         "advancedend="
 
-ALIASES += "PkgDescriptionBegin{2}=<table cellpadding=\"2\" cellspacing=\"0\"><tr><td colspan=\"2\"><h2><a href=\"../../CGAL.CGAL.\2/html/index.html\">\1</a></h2></td></tr><tr>"
+ALIASES += "refines=\xrefitem refiness \"Refines\" \"Refines\""
+ALIASES += "requires=\xrefitem requiress \"Requires\" \"Requires\""
+ALIASES += "models=\xrefitem modelss \"Models\" \"Models\""
+ALIASES += "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\""
+ALIASES += "debug=\xrefitem debugs \"Debug\" \"Debug\""
+
 ALIASES += "PkgPicture{1}=<td rowspan=\"2\">\image html \1 \"\" </td>"
 ALIASES += "PkgAuthor{1}=<td>\author \1"
 ALIASES += "PkgAuthors{1}=\authors \1"
