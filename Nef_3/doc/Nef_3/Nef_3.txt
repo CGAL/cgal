@@ -5,6 +5,7 @@ namespace CGAL {
 /*!
 
 \mainpage 3D Boolean Operations on Nef Polyhedra
+\anchor chapterNef3
 
 <span style="display:none">
 \f$
