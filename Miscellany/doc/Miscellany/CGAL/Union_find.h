@@ -107,7 +107,8 @@ handle push_back(const T& x) ;
 
 /*! 
 insert 
-the range of values referenced by `[first,beyond)`. \require value type of `Forward_iterator` is `T`. 
+the range of values referenced by `[first,beyond)`. 
+\requires value type of `Forward_iterator` is `T`. 
 */ 
 template <class Forward_iterator> void 
 insert(Forward_iterator first, Forward_iterator beyond) ; 
