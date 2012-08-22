@@ -5226,6 +5226,94 @@ Triangulation_2/doc/TDS_2/fig/join_split.gif -text svneol=unset#image/gif
 Triangulation_2/doc/TDS_2/fig/rep_bis.gif -text svneol=unset#image/gif
 Triangulation_2/doc/TDS_2/fig/tds-insert_degree_2.gif -text svneol=unset#image/gif
 Triangulation_2/doc/TDS_2/fig/threelevels2.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/CGAL/Constrained_Delaunay_triangulation_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Constrained_triangulation_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Constrained_triangulation_face_base_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Constrained_triangulation_plus_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Delaunay_triangulation_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Regular_triangulation_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Regular_triangulation_euclidean_traits_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Regular_triangulation_face_base_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Regular_triangulation_filtered_traits_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Regular_triangulation_vertex_base_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Triangulation_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Triangulation_euclidean_traits_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Triangulation_euclidean_traits_xy_3.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Triangulation_face_base_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Triangulation_face_base_with_info_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Triangulation_hierarchy_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Triangulation_vertex_base_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Triangulation_vertex_base_with_info_2.h -text
+Triangulation_2/doc/Triangulation_2/CGAL/Weighted_point.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/ConstrainedDelaunayTriangulationTraits_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/ConstrainedTriangulationFaceBase_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/ConstrainedTriangulationTraits_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/DelaunayTriangulationTraits_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/RegularTriangulationFaceBase_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/RegularTriangulationTraits_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/RegularTriangulationVertexBase_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/TriangulationFaceBase_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/TriangulationHierarchyVertexBase_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/TriangulationTraits_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/TriangulationVertexBaseWithInfo_2.h -text
+Triangulation_2/doc/Triangulation_2/Concepts/TriangulationVertexBase_2.h -text
+Triangulation_2/doc/Triangulation_2/PackageDescription.txt -text
+Triangulation_2/doc/Triangulation_2/Triangulation_2.txt -text
+Triangulation_2/doc/Triangulation_2/fig/Flip.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/Three.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/cdt2d-big.png -text svneol=unset#image/png
+Triangulation_2/doc/Triangulation_2/fig/cdt2d-small.png -text svneol=unset#image/png
+Triangulation_2/doc/Triangulation_2/fig/constraints.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/constraints.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/cropped_voronoi.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/cropped_voronoi.png -text svneol=unset#image/png
+Triangulation_2/doc/Triangulation_2/fig/del_poisson.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/del_poisson.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/derivation_tree.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/derivation_tree.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/dt1.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/dt1.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/dt2.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/flip.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/incident_fc.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/infinite.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/infinite.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/infinite_vertex.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/infinite_vertex.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/insert1.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/insert1.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/insert2.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/insert2.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/insert3.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/insert3.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/join_split.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/join_split.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/neighbors.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/neighbors.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/poisson.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/poisson.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/remove.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/remove.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/rep_bis.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/rep_bis.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/tds-dim_down.eps -text svneol=unset#application/postscript
+Triangulation_2/doc/Triangulation_2/fig/tds-dim_down.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/tds-dim_down.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/tds-dim_down.png -text svneol=unset#image/png
+Triangulation_2/doc/Triangulation_2/fig/tds-insert_degree_2.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/tds-insert_degree_2.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/tds_small.png -text svneol=unset#image/png
+Triangulation_2/doc/Triangulation_2/fig/threelevels.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/threelevels.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/threelevels2.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/threelevels2.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/tr1.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/tr1.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/tri_domain.pdf -text svneol=unset#application/pdf
+Triangulation_2/doc/Triangulation_2/fig/tri_domain.png -text svneol=unset#image/png
+Triangulation_2/doc/Triangulation_2/fig/valid1.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/walk.gif -text svneol=unset#image/gif
+Triangulation_2/doc/Triangulation_2/fig/walk.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/TDS_2/Flip.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/Three.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/flip.ltex -text svneol=unset#application/octet-stream

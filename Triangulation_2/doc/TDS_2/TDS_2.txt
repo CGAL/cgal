@@ -2,8 +2,8 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Triangulation Data Structure
-
 \anchor Chapter_2D_Triangulation_Data_Structure
+
 \authors Sylvain Pion and Mariette Yvinec
 
 \section TDS_2D_Definition Definition 
