@@ -50,33 +50,36 @@ int main(int argc, char **argv)
         std::cerr << argv[1] << " is not a valid off file.\n";
         return 1;
     }
-	// assign id field for each facet	
-	int facet_id = 0;
-    for(Polyhedron::Facet_iterator facet_it = mesh.facets_begin(); facet_it != mesh.facets_end(); 
-        ++facet_it, ++facet_id)
+
+    // assign id field for each facet	
+    int facet_id = 0;
+    for(Polyhedron::Facet_iterator facet_it = mesh.facets_begin(); 
+	facet_it != mesh.facets_end(); ++facet_it, ++facet_id)
     {
         facet_it->id() = facet_id;
     }
+
     // create a property-map for sdf values
-	std::vector<double> sdf_values(mesh.size_of_facets()); 
-	Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_property_map(&sdf_values);
+    std::vector<double> sdf_values(mesh.size_of_facets()); 
+    Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_property_map(&sdf_values);
 
     CGAL::sdf_values_computation(mesh, sdf_property_map);
-	// access sdf values (with constant-complexity) either via sdf_values or sdf_property_map
-	for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
-		facet_it != mesh.facets_end(); ++facet_it)
+    // access sdf values (with constant-complexity) either via sdf_values or sdf_property_map
+    for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
+	facet_it != mesh.facets_end(); ++facet_it)
     {
-		std::cout << (sdf_property_map[facet_it] == sdf_values[facet_it->id()]) << std::endl;
-	}
+	std::cout << (sdf_property_map[facet_it] == sdf_values[facet_it->id()]) << std::endl;
+    }
+
     // create a property-map for segment-ids 
-	std::vector<double> segment_ids(mesh.size_of_facets()); 
-	Polyhedron_with_id_to_vector_property_map<Polyhedron, double> segment_property_map(&segment_ids);
+    std::vector<double> segment_ids(mesh.size_of_facets()); 
+    Polyhedron_with_id_to_vector_property_map<Polyhedron, double> segment_property_map(&segment_ids);
 
     CGAL::surface_mesh_segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 
     // access segment-ids (with constant-complexity) either via segment_ids or segment_property_map
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
-		facet_it != mesh.facets_end(); ++facet_it)   
+	facet_it != mesh.facets_end(); ++facet_it)   
     {
         std::cout << (segment_property_map[facet_it] == segment_ids[facet_it->id()]) << std::endl;                                
     }

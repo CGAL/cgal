@@ -14,8 +14,8 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 int main(int argc, char **argv)
 {
     if (argc !=2){
-		std::cerr << "Usage: " << argv[0] << " input.off\n";
-		return 1;
+	std::cerr << "Usage: " << argv[0] << " input.off\n";
+	return 1;
     }
   
     // create and read Polyhedron
@@ -23,8 +23,8 @@ int main(int argc, char **argv)
     std::ifstream input(argv[1]);
     
     if ( !input || !(input >> mesh) || mesh.empty() ){
-		std::cerr << argv[1] << " is not a valid off file.\n";
-		return 1;
+	std::cerr << argv[1] << " is not a valid off file.\n";
+	return 1;
     }
 
     // create a property-map for segment-ids (it is an adaptor for this case)
@@ -33,8 +33,9 @@ int main(int argc, char **argv)
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
 	
     // calculate SDF values and segment the mesh using default parameters.
-    CGAL::surface_mesh_segmentation(mesh, segment_property_map);
+    int number_of_segments = CGAL::surface_mesh_segmentation(mesh, segment_property_map);
 
+    std::cout << "Number of segments: " << number_of_segments << std::endl;
     // print segment-ids
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
         facet_it != mesh.facets_end(); ++facet_it)   

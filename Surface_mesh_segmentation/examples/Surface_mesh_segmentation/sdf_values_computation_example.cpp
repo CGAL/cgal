@@ -14,8 +14,8 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 int main(int argc, char **argv)
 {
     if (argc !=2){
-		std::cerr << "Usage: " << argv[0] << " input.off\n";
-		return 1;
+	std::cerr << "Usage: " << argv[0] << " input.off\n";
+	return 1;
     }
   
     // create and read Polyhedron
@@ -23,8 +23,8 @@ int main(int argc, char **argv)
     std::ifstream input(argv[1]);
     
     if ( !input || !(input >> mesh) || mesh.empty() ){
-		std::cerr << argv[1] << " is not a valid off file.\n";
-		return 1;
+	std::cerr << argv[1] << " is not a valid off file.\n";
+	return 1;
     }
 
     // create a property-map (it is an adaptor for this case)
@@ -34,8 +34,8 @@ int main(int argc, char **argv)
 
     // compute sdf values using default parameters for number of rays, and cone angle
     std::pair<double, double> min_max_sdf = CGAL::sdf_values_computation(mesh, sdf_property_map);
-	// print minimum & maximum sdf values
-	std::cout << "minimum sdf: " << pair.first << " maximum sdf: " << pair.second << std::endl;
+    // print minimum & maximum sdf values
+    std::cout << "minimum sdf: " << pair.first << " maximum sdf: " << pair.second << std::endl;
     // print sdf values
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
         facet_it != mesh.facets_end(); ++facet_it)   

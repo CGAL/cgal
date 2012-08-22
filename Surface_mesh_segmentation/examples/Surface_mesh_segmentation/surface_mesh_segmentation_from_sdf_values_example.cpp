@@ -44,12 +44,12 @@ int main(int argc, char **argv)
     // segment the mesh using default parameters for number of levels, and smoothing lambda	
     int number_of_segments = CGAL::surface_mesh_segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 	
-	std::cout << "Number of segments: " << number_of_segments << std::endl;
+    std::cout << "Number of segments: " << number_of_segments << std::endl;
     // print segment-ids
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
         facet_it != mesh.facets_end(); ++facet_it)   
     {
-		// ids are between [0, number_of_segments -1]
+	// ids are between [0, number_of_segments -1]
         std::cout << segment_property_map[facet_it] << std::endl;                                 
     }
 
