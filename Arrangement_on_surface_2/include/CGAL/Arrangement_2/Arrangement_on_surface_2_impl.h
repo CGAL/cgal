@@ -3826,9 +3826,9 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
         ((index == index_min) &&
          ((v_min == he->vertex()) &&
           (compare_y_at_x_right_2(he->curve(), *cv_min, v_min->point()) ==
-           SMALLER)) ||
+           SMALLER))) ||
          _is_smaller(he->curve(), ps_x_he_min, ps_y_he_min,
-                     *cv_min, ps_x_min, ps_y_min)))
+                     *cv_min, ps_x_min, ps_y_min))
     {
       index_min = index;
       cv_min = &(he->curve());
