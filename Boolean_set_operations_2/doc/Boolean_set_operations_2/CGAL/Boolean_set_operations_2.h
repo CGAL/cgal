@@ -5,32 +5,17 @@ namespace CGAL {
 \ingroup PkgBooleanSetOperations2
 \anchor ref_bso_complement 
 
-Each one of these functions computes the complement of a given 
-polygon `pgn`, and stores the resulting polygon with holes in 
-`res`. 
+The `complement` function is overloaded. Depending on the
+type of polygon `pgn` the complement is either a single (general) polygon with 
+holes, or several (general) poylgons with holes. In the latter case 
+the `complement function` writes them into an output iterator 
+`oi`.
 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td></tr> 
-</table> 
-</div> 
+\param pgn The input polygon for the `complement` function. It may be of the type
+`Polygon_2`, `General_polygon_2`, `Polygon_with_holes_2`, or
+`General_polygon_with_holes_2`.
 
-Each one of these functions computes the complement of a given 
-polygon `pgn`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
 
 \sa `CGAL::do_intersect` 
 \sa `CGAL::intersection` 
@@ -39,12 +24,30 @@ holes into an output container through a given output iterator
 \sa `CGAL::symmetric_difference` 
 */
 /// @{
+
+/*!
+ writes the complement of the polygon `pgn` into the  polygon with holes `res`.
+ */
 template <class Kernel, class Container>
 void complement(const Polygon_2<Kernel, Container> & pgn, Polygon_with_holes_2<Kernel, Container> & res);
+
+/*!
+  writes the complement of the general polygon `pgn` into the  general polygon with holes `res`.
+ */
 template <class Traits>
 void complement(const General_polygon_2<Traits> & pgn, General_polygon_with_holes_2<Traits> & res);
+
+/*!
+  writes the complement of the polygon with holes `pgn` into the  output iterator `oi`.
+  The value type of `oi` is `Polygon_with_holes_2`.
+ */
 template <class Traits, class OutputIterator>
 OutputIterator complement(const Polygon_with_holes_2<Kernel, Container> & pgn, OutputIterator oi);
+
+/*!
+  writes the complement of the general polygon with holes `pgn` into the  output iterator `oi`.
+  The value type of `oi` is `General_polygon_with_holes_2`.
+ */
 template <class Traits, class OutputIterator>
 OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<Traits> > & pgn, OutputIterator oi);
 /// @}
@@ -54,7 +57,9 @@ OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<T
 namespace CGAL {
 
 /*!
+\addtogroup boolean_difference Difference Functions
 \ingroup PkgBooleanSetOperations2
+\anchor ref_bso_difference 
 
 Each one of these functions computes the difference between two given 
 polygons `p1` and `p2`, and inserts the resulting polygons 
@@ -63,10 +68,19 @@ The value type of the `OutputIterator` is either
 `Polygon_with_holes_2` or 
 `General_polygon_with_holes_2`. 
 
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
+The signature of the function is
+\code
+  OutputIterator 
+  difference(const Type1 & p1, const Type2 & p2, OutputIterator oi);
+\endcode
+
+###Parameters###
+
+The types of the paramters of the `difference` function are any of the following combinations.
+
+<div align="left"> 
 <table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
+<tr><th> Type1</th><th>Type2</th></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
 <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
@@ -77,7 +91,6 @@ CONVERROR HtmlOnly needs treatment
 <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
 </table> 
 </div> 
-CONVERROR EndHtmlOnly 
 
 \sa `CGAL::do_intersect` 
 \sa `CGAL::intersection` 
@@ -86,303 +99,83 @@ CONVERROR EndHtmlOnly
 
 */
 
-OutputIterator difference(const Type1 & p1, const Type2 & p2,
-OutputIterator oi);
+
+/// @{
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the difference between two given 
-polygons `p1` and `p2`, and inserts the resulting polygons 
-with holes into an output container through the output iterator `oi`. 
-The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the difference of the polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `Polygon_with_holes_2`.
+ */
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator difference(const Polygon_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2,
-OutputIterator oi);
+                          const Polygon_2<Kernel, Container> & p2,
+                          OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the difference between two given 
-polygons `p1` and `p2`, and inserts the resulting polygons 
-with holes into an output container through the output iterator `oi`. 
-The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the difference of the polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `Polygon_with_holes_2`.
+ */
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator difference(const Polygon_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel,Container> & p2,
-OutputIterator oi);
+                          const Polygon_with_holes_2<Kernel,Container> & p2,
+                          OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the difference between two given 
-polygons `p1` and `p2`, and inserts the resulting polygons 
-with holes into an output container through the output iterator `oi`. 
-The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the difference of the polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `Polygon_with_holes_2`.
+ */
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator difference(const Polygon_with_holes_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2,
-OutputIterator oi);
+                          const Polygon_2<Kernel, Container> & p2,
+                          OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the difference between two given 
-polygons `p1` and `p2`, and inserts the resulting polygons 
-with holes into an output container through the output iterator `oi`. 
-The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the difference of the polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `Polygon_with_holes_2`.
+ */
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator difference(const Polygon_with_holes_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel, Container> & p2,
-OutputIterator oi);
+                          const Polygon_with_holes_2<Kernel, Container> & p2,
+                          OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the difference between two given 
-polygons `p1` and `p2`, and inserts the resulting polygons 
-with holes into an output container through the output iterator `oi`. 
-The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the difference of the general polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `General_polygon_with_holes_2`.
+ */
 template <class Traits, class OutputIterator>
 OutputIterator difference(const General_polygon_2<Traits> & p1,
-const General_polygon_2<Traits> & p2,
-OutputIterator oi);
+                          const General_polygon_2<Traits> & p2,
+                          OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the difference between two given 
-polygons `p1` and `p2`, and inserts the resulting polygons 
-with holes into an output container through the output iterator `oi`. 
-The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the difference of the general polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `General_polygon_with_holes_2`.
+ */
 template <class Traits, class OutputIterator>
 OutputIterator difference(const General_polygon_with_holes_2<General_polygon_2<Traits> > & p1,
-const General_polygon_2<Traits> & p2,
-OutputIterator oi);
+                          const General_polygon_2<Traits> & p2,
+                          OutputIterator oi);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the difference between two given 
-polygons `p1` and `p2`, and inserts the resulting polygons 
-with holes into an output container through the output iterator `oi`. 
-The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the difference of the general polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `General_polygon_with_holes_2`.
+ */
 template <class Traits, class OutputIterator>
 OutputIterator difference(const General_polygon_2<Traits> & p1,
-const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
-OutputIterator oi);
+                          const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
+                          OutputIterator oi);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the difference between two given 
-polygons `p1` and `p2`, and inserts the resulting polygons 
-with holes into an output container through the output iterator `oi`. 
-The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the difference of the general polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `General_polygon_with_holes_2`.
+ */
 template <class Polygon, class OutputIterator>
 OutputIterator difference(const General_polygon_with_holes_2<Polygon> & p1,
-const General_polygon_with_holes_2<Polygon> & p2);
+                          const General_polygon_with_holes_2<Polygon> & p2,
+                          OutputIterator oi);
+/// @}
 
 } /* namespace CGAL */
 

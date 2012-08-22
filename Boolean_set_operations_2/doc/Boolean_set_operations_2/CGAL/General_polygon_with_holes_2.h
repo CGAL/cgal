@@ -41,7 +41,7 @@ by the number of holes, and for each hole, the number of curves on its
 outer boundary is followed by the curves themselves in clockwise
 order.
 
-\relate General_polygon_with_holes_2
+\relates General_polygon_with_holes_2
 */
 template <class Polygon>
 std::istream& operator>>(std::istream& in, CGAL::General_polygon_with_holes_2<Polygon>& P);
@@ -65,7 +65,7 @@ is exported, and for each hole, the number of curves on its outer
 boundary is exported followed by the curves themselves in clockwise
 order.
 
-\relate General_polygon_with_holes_2
+\relates General_polygon_with_holes_2
 */
 template <class Polygon>
 std::ostream& operator<<(std::ostream& out, CGAL::General_polygon_with_holes_2<Polygon>& P);

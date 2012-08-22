@@ -92,7 +92,7 @@ by the points themselves in counterclockwise order, followed by the number of ho
 and for each hole, the number of points of the outer boundary is followed 
 by the points themselves in clockwise order.
 
-\relate General_polygon_2
+\relates General_polygon_2
 */
 template <class ArrTraits>
 std::istream& operator>>(std::istream& in, CGAL::General_polygon_2<ArrTraits>& P);
@@ -113,7 +113,7 @@ comments.
 The number of curves of the outer boundary is exported followed by the
 curves themselves in counterclockwise order.
 
-\relate General_polygon_2
+\relates General_polygon_2
 */
 template <class ArrTraits>
 std::ostream& operator<<(std::ostream& out, CGAL::General_polygon_2<ArrTraits>& P);
