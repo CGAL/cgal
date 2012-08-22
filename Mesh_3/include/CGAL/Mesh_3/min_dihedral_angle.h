@@ -91,8 +91,6 @@ minimum_dihedral_angle(
 {
   typedef typename K::FT FT;
 
-  typename K::Compute_squared_distance_3 sq_distance = 
-    k.compute_squared_distance_3_object();
   typename K::Compute_determinant_3 determinant = 
     k.compute_determinant_3_object();
   typename K::Construct_cross_product_vector_3 cp =

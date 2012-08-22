@@ -110,19 +110,19 @@ private:
     PVertex()
     : vertex_handle_()
     , incident_sliver_nb_(0)
+    , min_value_(SliverCriterion::max_value)
     , try_nb_(0)
     , p_perturbation_(NULL)
     , id_() 
-    , min_value_(SliverCriterion::max_value)
     { }
 
     PVertex(const Vertex_handle& vh, id_type id)
     : vertex_handle_(vh)
     , incident_sliver_nb_(0)
+    , min_value_(SliverCriterion::max_value)
     , try_nb_(0)
     , p_perturbation_(NULL)
     , id_(id) 
-    , min_value_(SliverCriterion::max_value)
     { }
     
     /// Associated vertex

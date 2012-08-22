@@ -511,9 +511,6 @@ private:
     typename Gt::Construct_vector_3 vector =
       Gt().construct_vector_3_object();
     
-    typename Gt::Construct_tetrahedron_3 tetrahedron =
-      Gt().construct_tetrahedron_3_object();
-    
     Cell_circulator current_cell = tr.incident_cells(edge);
     Cell_circulator done = current_cell;
     

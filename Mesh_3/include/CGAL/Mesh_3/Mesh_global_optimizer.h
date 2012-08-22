@@ -238,12 +238,14 @@ Mesh_global_optimizer(C3T3& c3t3,
 , sizing_field_(c3t3.triangulation())
 , time_limit_(-1)
 , running_time_()
+
+, big_moves_size_(0)
+, big_moves_()
+
 #ifdef CGAL_FREEZE_VERTICES
 , do_freeze_(do_freeze)
 , nb_frozen_points_(0)
 #endif // CGAL_FREEZE_VERTICES
-
-, big_moves_size_(0)
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
 , sum_moves_(0)
@@ -562,9 +564,9 @@ update_mesh(const Moves_vector& moves,
     {
       // Move point
 #if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
-      Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
+      helper_.move_point(v, new_position, outdated_cells, moving_vertices);
 #else
-      Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells);
+      helper_.move_point(v, new_position, outdated_cells);
 #endif 
     }
     

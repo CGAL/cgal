@@ -626,7 +626,6 @@ private:
       int i=0;
       for ( ; i<4 ; ++i ){
         if ( tr_.is_infinite(cell->vertex(i)) ){         
-          Cell_handle n = cell->neighbor(i);
           *out_++ = canonical_facet(cell,i);
           return;
         }
