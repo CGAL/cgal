@@ -3747,43 +3747,6 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
     m_geom_traits->compare_y_at_x_right_2_object();  
 
-  // int index_min = 0;
-  // const X_monotone_curve_2* cv_min = NULL;
-  // Arr_parameter_space ps_x_min = ARR_INTERIOR, ps_y_min = ARR_INTERIOR;
-  // const DHalfedge* he_min = NULL;
-  // const DVertex* v_min = NULL;
-
-  // if (cv_dir == ARR_RIGHT_TO_LEFT) {
-  //   if (he_away->direction() == ARR_LEFT_TO_RIGHT) {
-  //     // initialize with minimal endpoint of curve (he_min = null)
-
-  //     Arr_parameter_space ps_x_cv_min = parameter_space_in_x(cv, ARR_MIN_END);
-  //     Arr_parameter_space ps_y_cv_min = parameter_space_in_y(cv, ARR_MIN_END);
-  //     cv_min = &cv;
-  //     ps_x_min = ps_x_cv_min;
-  //     ps_y_min = ps_y_cv_min;
-  //     v_min = he_away->opposite()->vertex();
-  //     std::cout << "set global min to cv (min)" << std::endl;
-  //   }
-  // }
-  // else {
-  //   CGAL_assertion(cv_dir == ARR_LEFT_TO_RIGHT);
-  //   if (he_to->direction() == ARR_RIGHT_TO_LEFT) {
-  //     // initialize with target of to-edge (and to-edge)
-
-  //     Arr_parameter_space ps_x_he_to_min =
-  //       parameter_space_in_x(he_to->curve(), ARR_MIN_END);
-  //     Arr_parameter_space ps_y_he_to_min =
-  //       parameter_space_in_y(he_to->curve(), ARR_MIN_END);
-  //     cv_min = &(he_to->curve());
-  //     ps_x_min = ps_x_he_to_min;
-  //     ps_y_min = ps_y_he_to_min;
-  //     he_min = he_to;
-  //     v_min = he_to->vertex();
-  //     std::cout << "set global min to he_to" << std::endl;
-  //   }
-  // }
-
   // check all reported local minima
   InputIterator lm_it = lm_begin;
 
