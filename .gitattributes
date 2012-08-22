@@ -5213,6 +5213,19 @@ Triangulation_2/demo/Triangulation_2/qt3/help/input_line_layer.gif -text svneol=
 Triangulation_2/demo/Triangulation_2/qt3/help/input_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/qt3/help/movedelete_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/qt3/help/rindex.html svneol=native#text/html
+Triangulation_2/doc/TDS_2/CGAL/Triangulation_data_structure_2.h -text
+Triangulation_2/doc/TDS_2/CGAL/Triangulation_ds_face_base_2.h -text
+Triangulation_2/doc/TDS_2/CGAL/Triangulation_ds_vertex_base_2.h -text
+Triangulation_2/doc/TDS_2/Concepts/TriangulationDSFaceBase_2.h -text
+Triangulation_2/doc/TDS_2/Concepts/TriangulationDSVertexBase_2.h -text
+Triangulation_2/doc/TDS_2/Concepts/TriangulationDataStructure_2.h -text
+Triangulation_2/doc/TDS_2/PackageDescription.txt -text
+Triangulation_2/doc/TDS_2/TDS_2.txt -text
+Triangulation_2/doc/TDS_2/fig/Three.gif -text svneol=unset#image/gif
+Triangulation_2/doc/TDS_2/fig/join_split.gif -text svneol=unset#image/gif
+Triangulation_2/doc/TDS_2/fig/rep_bis.gif -text svneol=unset#image/gif
+Triangulation_2/doc/TDS_2/fig/tds-insert_degree_2.gif -text svneol=unset#image/gif
+Triangulation_2/doc/TDS_2/fig/threelevels2.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/Flip.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/Three.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/flip.ltex -text svneol=unset#application/octet-stream
