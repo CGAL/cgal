@@ -578,11 +578,7 @@ cache_set(CGAL_3RD_PARTY_LIBRARIES      "" )
 cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" ) 
 
 # default is on, but some use-cases need to set it to off, e.g., debian packages
-## Laurent Rineau: hide this variable. Currently the configuration fails if
-## it is set to false. (2012/08/16)
-#option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" ON)
-set( CGAL_ENABLE_PRECONFIG ON CACHE INTERNAL "Select to allow to use all preconfigured external libraries")
-
+option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" ON)
 
 # additional info: some header files in CGAL add additional code if
 # certain optional libs are installed, and some examples/tests rely on
@@ -646,6 +642,7 @@ add_config_flag( CGAL_USE_LEDA )
 add_config_flag( CGAL_USE_MPFI )
 add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
+
 add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
 if (NOT ${WITH_CGAL_Core}) 
