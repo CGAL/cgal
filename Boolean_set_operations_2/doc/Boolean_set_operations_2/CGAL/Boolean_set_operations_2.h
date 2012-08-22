@@ -70,8 +70,7 @@ The value type of the `OutputIterator` is either
 
 The signature of the function is
 \code
-  OutputIterator 
-  difference(const Type1 & p1, const Type2 & p2, OutputIterator oi);
+  OutputIterator difference(const Type1 & p1, const Type2 & p2, OutputIterator oi);
 \endcode
 
 ###Parameters###
@@ -102,10 +101,7 @@ The types of the paramters of the `difference` function are any of the following
 
 /// @{
 
-/*!
- writes the difference of the polygons `p1` and `p2` into the output iterator `oi`.
- The value type of `oi` is `Polygon_with_holes_2`.
- */
+
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator difference(const Polygon_2<Kernel, Container> & p1,
                           const Polygon_2<Kernel, Container> & p2,
@@ -182,16 +178,25 @@ OutputIterator difference(const General_polygon_with_holes_2<Polygon> & p1,
 namespace CGAL {
 
 /*!
+\addtogroup boolean_do_intersect Intersection Testing Functions
 \ingroup PkgBooleanSetOperations2
+\anchor ref_bso_do_intersect 
 
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
+Each one of these functions computes if the interior of two given 
+polygons `p1` and `p2` intersect. 
 
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
+The signature of the function is
+\code
+  bool do_intersect(const Type1 & p1, const Type2 & p2);
+\endcode
+
+###Parameters###
+
+The types of the paramters of the `do_intersect` function are any of the following combinations.
+
+<div align="left"> 
 <table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
+<tr><th> Type1 </th><th>Type2</th></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
 <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
@@ -202,16 +207,7 @@ CONVERROR HtmlOnly needs treatment
 <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
 </table> 
 </div> 
-CONVERROR EndHtmlOnly 
 
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
 
 \sa `CGAL::intersection` 
 \sa `CGAL::join` 
@@ -219,435 +215,96 @@ their interior, and `false` otherwise.
 \sa `CGAL::symmetric_difference` 
 
 */
-bool do_intersect(const Type1 & p1, const Type2 & p2);
+
+/// @{
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
-
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+  returns `true` if the polygons `p1` and `p2` intersect in their interior.
+ */
 template <class Kernel, class Container>
 bool do_intersect(const Polygon_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2);
+                  const Polygon_2<Kernel, Container> & p2);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
-
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+  returns `true` if the polygons `p1` and `p2` intersect in their interior.
+ */
 template <class Kernel, class Container>
 bool do_intersect(const Polygon_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel, Container> & p2);
+                  const Polygon_with_holes_2<Kernel, Container> & p2);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
-
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+  returns `true` if the polygons `p1` and `p2` intersect in their interior.
+  returns `true` if the interior of polygons `p1` and `p2` intersect.
+ */
 template <class Kernel, class Container>
 bool do_intersect(const Polygon_with_holes_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2);
+                  const Polygon_2<Kernel, Container> & p2);
 
 /*!
-\ingroup PkgBooleanSetOperations2
+  returns `true` if the polygons `p1` and `p2` intersect in their interior.
 
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
-
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ */
 template <class Kernel, class Container>
 bool do_intersect(const Polygon_with_holes_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel, Container> & p2);
+                  const Polygon_with_holes_2<Kernel, Container> & p2);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
-
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+  returns `true` if the general polygons `p1` and `p2` intersect in their interior.
+ */
 template <class Traits>
 bool do_intersect(const General_polygon_2<Traits> & p1,
-const General_polygon_2<Traits> & p2);
-
+                  const General_polygon_2<Traits> & p2);
+  
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
-
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+  returns `true` if the general polygons `p1` and `p2` intersect in their interior.
+ */
 template <class Traits>
 bool do_intersect(const General_polygon_2<Traits> & p1,
-const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2);
+                  const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
-
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+  returns `true` if the general polygons `p1` and `p2` intersect in their interior.
+ */
 template <class Traits>
 bool do_intersect(const General_polygon_with_holes_2<General_polygon_2<Traits> > & p1,
-const General_polygon_2<Traits> & p2);
+                  const General_polygon_2<Traits> & p2);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
-
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+  returns `true` if the general polygons `p1` and `p2` intersect in their interior.
+ */
 template <class Polygon>
 bool do_intersect(const General_polygon_with_holes_2<Polygon> & p1,
-const General_polygon_with_holes_2<Polygon> & p2);
+                  const General_polygon_with_holes_2<Polygon> & p2);
 
-/*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
-
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+  /*!
+    returns `true`, if the set of general polygons (or general 
+    polygons with holes) in the given range intersect in their interior, 
+    and `false` otherwise. (The value type of the input iterator is 
+    used to distinguish between the two). 
+  */
 template <class InputIterator>
 bool do_intersect(InputIterator begin, InputIterator end);
 
-/*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions return `true`, if the two given polygons 
-`p1` and `p2` intersect in their interior, and `false` 
-otherwise. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Returns `true`, if the set of general polygons (or general 
-polygons with holes) in the given range intersect in their interior, 
-and `false` otherwise. (The value type of the input iterator is 
-used to distinguish between the two). 
-
-Returns `true`, if the set of general polygons and general 
-polygons with holes in the given two ranges respectively intersect in 
-their interior, and `false` otherwise. 
-
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+  /*!
+    returns `true`, if the set of general polygons and general 
+    polygons with holes in the given two ranges respectively intersect in 
+    their interior, and `false` otherwise. 
+  */
 template <class InputIterator1, class InputIterator2>
 bool do_intersect(InputIterator1 pgn_begin1,
-InputIterator1 pgn_end1,
-InputIterator2 pgn_begin2,
-InputIterator2 pgn_end2);
-
+                  InputIterator1 pgn_end1,
+                  InputIterator2 pgn_begin2,
+                  InputIterator2 pgn_end2);
+/// @}
 } /* namespace CGAL */
 
 namespace CGAL {
 
 /*!
+\addtogroup boolean_intersection Intersection Functions
 \ingroup PkgBooleanSetOperations2
+\anchor ref_bso_intersection
 
 Each one of these functions computes the intersection of two given 
 polygons `p1` and `p2`, inserts the resulting polygons with 
@@ -656,10 +313,21 @@ holes into an output container through a given output iterator
 `OutputIterator` is either `Polygon_with_holes_2` or 
 `General_polygon_with_holes_2`. 
 
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
+
+The signature of the function is
+\code
+  OutputIterator intersection(const Type1 & p1, const Type2 & p2, OutputIterator oi);
+\endcode
+
+
+###Parameters###
+
+The types of the paramters of the `intersection` function are any of the following combinations.
+
+
+<div align="left"> 
 <table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
+<tr><th> Type1</th><th> Type2</th></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
 <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
@@ -670,22 +338,7 @@ CONVERROR HtmlOnly needs treatment
 <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
 </table> 
 </div> 
-CONVERROR EndHtmlOnly 
 
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
 
 \sa `CGAL::do_intersect` 
 \sa `CGAL::join` 
@@ -694,522 +347,107 @@ returned. The value type of the `OutputIterator` is
 
 */
 
+
+/// @{
+
+/*!
+ writes the intersection of the polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `Polygon_with_holes_2`.
+ */
 OutputIterator intersection(const Type1 & p1, const Type2 & p2,
-OutputIterator oi);
+                            OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the intersection of the polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `Polygon_with_holes_2`.
+ */
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator intersection(const Polygon_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2,
-OutputIterator oi);
+                            const Polygon_2<Kernel, Container> & p2,
+                            OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the intersection of the polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `Polygon_with_holes_2`.
+ */
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator intersection(const Polygon_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel, Container> & p2,
-OutputIterator oi);
+                            const Polygon_with_holes_2<Kernel, Container> & p2,
+                            OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the intersection of the polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `Polygon_with_holes_2`.
+ */
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2,
-OutputIterator oi);
+                            const Polygon_2<Kernel, Container> & p2,
+                            OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the intersection of the polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `Polygon_with_holes_2`.
+ */
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel, Container> & p2,
-OutputIterator oi);
+                            const Polygon_with_holes_2<Kernel, Container> & p2,
+                            OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the intersection of the general polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `General_polygon_with_holes_2`.
+ */
 template <class Traits, class OutputIterator>
 OutputIterator intersection(const General_polygon_2<Traits> & p1,
 const General_polygon_2<Traits> & p2,
 OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the intersection of the general polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `General_polygon_with_holes_2`.
+ */
 template <class Traits, class OutputIterator>
 OutputIterator intersection(const General_polygon_with_holes_2<General_polygon_2<Traits> > & p1,
-const General_polygon_2<Traits> & p2,
-OutputIterator oi);
+                            const General_polygon_2<Traits> & p2,
+                            OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the intersection of the general polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `General_polygon_with_holes_2`.
+ */
 template <class Traits, class OutputIterator>
 OutputIterator intersection(const General_polygon_2<Traits> & p1,
-const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
-OutputIterator oi);
+                            const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
+                            OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the intersection of the general polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `General_polygon_with_holes_2`.
+ */
 template <class Polygon, class OutputIterator>
 OutputIterator intersection(const General_polygon_with_holes_2<Polygon> & p1,
-const General_polygon_with_holes_2<Polygon> & p2,
-OutputIterator oi);
+                            const General_polygon_with_holes_2<Polygon> & p2,
+                            OutputIterator oi);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
+  computes the intersection of the general polygons (or general polygons with 
+  holes) in the given range. (The value type of the input iterator is 
+  used to distinguish between the two.) The result, represented by a set 
+  of general polygon with holes, is written into the output iterator `oi`. 
+  The output iterator is returned. The value type of the `OutputIterator` is 
+  `Traits::Polygon_with_holes_2`. 
 */
 template <class InputIterator, class OutputIterator>
 OutputIterator intersection(InputIterator begin, InputIterator end,
-OutputIterator oi);
+                            OutputIterator oi);
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the intersection of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the intersection of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
+  computes the intersection of the general polygons and general polygons 
+  with holes in the given two ranges. The result, represented by a set 
+  of general polygon with holes, is written into the output iterator `oi`. 
+  The output iterator is returned. The value type of the `OutputIterator` is 
+  `Traits::Polygon_with_holes_2`. 
 */
 template <class InputIterator1, class InputIterator2,
 class OutputIterator>
@@ -1219,22 +457,35 @@ InputIterator2 pgn_begin2,
 InputIterator2 pgn_end2,
 OutputIterator oi);
 
+/// @}
+
 } /* namespace CGAL */
 
 namespace CGAL {
 
 /*!
+\addtogroup boolean_join Union Functions
 \ingroup PkgBooleanSetOperations2
+\anchor ref_bso_union
 
 Each one of these functions computes the union of two given polygons 
 `p1` and `p2`. If the two given polygons overlap, it returns 
 `true`, and places the resulting polygon in `p`. Otherwise, it 
 returns `false`. 
 
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
+
+The signature of the function is
+\code
+  bool join(const Type1 & p1, const Type2 & p2, General_polygon_with_holes_2 & res);
+\endcode
+
+###Parameters###
+
+The types of the paramters of the `join` function are any of the following combinations.
+
+<div align="left"> 
 <table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
+<tr><th> Type1</th><th> Type2</th></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
 <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
@@ -1245,22 +496,6 @@ CONVERROR HtmlOnly needs treatment
 <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
 </table> 
 </div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
 
 \sa `CGAL::do_intersect` 
 \sa `CGAL::intersection` 
@@ -1269,515 +504,123 @@ returned. The value type of the `OutputIterator` is
 
 */
 
-bool join(const Type1 & p1, const Type2 & p2,
-General_polygon_with_holes_2 & p);
+/// @{
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the union of the polygons `p1` and `p2` into the polygon with holes `res`.
+ Returns `true` if the two given polygons overlap.
+ */
 template <class Kernel, class Container>
 bool join(const Polygon_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2,
-General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & p);
+          const Polygon_2<Kernel, Container> & p2,
+          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the union of the polygons `p1` and `p2` into the polygon with holes `res`.
+ Returns `true` if the two given polygons overlap.
+ */
 template <class Kernel, class Container>
 bool join(const Polygon_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel,Container> & p2,
-General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & p);
+          const Polygon_with_holes_2<Kernel,Container> & p2,
+          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the union of the polygons `p1` and `p2` into the polygon with holes `res`.
+ Returns `true` if the two given polygons overlap.
+ */
 template <class Kernel, class Container>
 bool join(const Polygon_with_holes_2<Kernel, Container> & p2,
-const Polygon_2<Kernel, Container> & p1,
-General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & p);
+          const Polygon_2<Kernel, Container> & p1,
+          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the union of the polygons `p1` and `p2` into the polygon with holes `res`.
+ Returns `true` if the two given polygons overlap.
+ */
 template <class Kernel, class Container>
 bool join(const Polygon_with_holes_2<Kernel, Container> & p2,
-const Polygon_with_holes_2<Kernel, Container> & p1,
-General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & p);
+          const Polygon_with_holes_2<Kernel, Container> & p1,
+          General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & res);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the union of the general polygons `p1` and `p2` into the polygon with holes `res`.
+ Returns `true` if the two given polygons overlap.
+ */
 template <class Traits>
 bool join(const General_polygon_2<Traits> & p1,
-const General_polygon_2<Traits> & p2,
-General_polygon_with_holes_2<General_polygon_2<Traits> > & p);
+          const General_polygon_2<Traits> & p2,
+          General_polygon_with_holes_2<General_polygon_2<Traits> > & res);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the union of the polygons `p1` and `p2` into the polygon with holes `res`.
+ Returns `true` if the two given polygons overlap.
+ */
 template <class Traits>
 bool join(const General_polygon_2<Traits> & p1,
-const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
-General_polygon_with_holes_2<General_polygon_2<Traits> > & p);
+          const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
+          General_polygon_with_holes_2<General_polygon_2<Traits> > & res);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the union of the general polygons `p1` and `p2` into the polygon with holes `res`.
+ Returns `true` if the two given polygons overlap.
+ */
 template <class Traits>
 bool join(const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
-const General_polygon_2<Traits> & p1,
-General_polygon_with_holes_2<General_polygon_2<Traits> > & p);
+          const General_polygon_2<Traits> & p1,
+          General_polygon_with_holes_2<General_polygon_2<Traits> > & res);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+ writes the union of the general polygons `p1` and `p2` into the polygon with holes `res`.
+ Returns `true` if the two given polygons overlap.
+ */
 template <class Polygon>
 bool join(const General_polygon_with_holes_2<Polygon> & p1,
-const General_polygon_with_holes_2<Polygon> & p2,
-Traits::Polygon_with_holes_2 & p);
+          const General_polygon_with_holes_2<Polygon> & p2,
+          Traits::Polygon_with_holes_2 & res);
+
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
+  computes the union of the general polygons (or general polygons with 
+  holes) in the given range. (The value type of the input iterator is 
+  used to distinguish between the two.) The result, represented by a set 
+  of general polygon with holes, is written into the output iterator `oi`. 
+  The output iterator is 
+  returned. The value type of the `OutputIterator` is 
+  `Traits::Polygon_with_holes_2`. 
 */
 template <class InputIterator, class OutputIterator>
 OutputIterator join(InputIterator begin, InputIterator end,
 OutputIterator oi);
 
-/*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the union of the general polygons (or general polygons with 
-holes) in the given range. (The value type of the input iterator is 
-used to distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+  /*!
+    computes the union of the general polygons and general polygons 
+    with holes in the given two ranges. The result, represented by a set 
+    of general polygon with holes, is written into the output iterator `oi`. 
+    The output iterator is 
+    returned. The value type of the `OutputIterator` is 
+    `Traits::Polygon_with_holes_2`. 
+  */
 template <class InputIterator1, class InputIterator2,
 class OutputIterator>
 OutputIterator join(InputIterator1 pgn_begin1, InputIterator1 pgn_end1,
 InputIterator2 pgn_begin2, InputIterator2 pgn_end2,
 OutputIterator oi);
 
+/// @}
 } /* namespace CGAL */
 
 namespace CGAL {
-
 /*!
+\addtogroup boolean_oriented_side Oriented Side Functions
 \ingroup PkgBooleanSetOperations2
+\anchor ref_bso_oriented_side
 
 Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
 given polygons `p1` and `p2` intersect in their interior, 
@@ -1785,10 +628,18 @@ given polygons `p1` and `p2` intersect in their interior,
 all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect 
 only in their boundaries. 
 
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
+The signature of the function is
+\code
+  Oriented_side oriented_side(const Type1 & p1, const Type2 & p2);
+\endcode
+
+###Parameters###
+
+The types of the paramters of the `oriented_side` function are any of the following combinations.
+
+<div align="left"> 
 <table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
+<tr><th>Type1</th><th>Type2</th></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
 <tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
@@ -1799,269 +650,54 @@ CONVERROR HtmlOnly needs treatment
 <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
 </table> 
 </div> 
-CONVERROR EndHtmlOnly 
 
 \sa `CGAL::do_intersect` 
 
 */
-Oriented_side oriented_side(const Type1 & p1, const Type2 & p2);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
-given polygons `p1` and `p2` intersect in their interior, 
-`ON_NEGATIVE_SIDE` if `p1` and `p2` do not intersect at 
-all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect 
-only in their boundaries. 
+/// @{
 
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-
-*/
 template <class Kernel, class Container>
 Oriented_side oriented_side(const Polygon_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2);
+                            const Polygon_2<Kernel, Container> & p2);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
-given polygons `p1` and `p2` intersect in their interior, 
-`ON_NEGATIVE_SIDE` if `p1` and `p2` do not intersect at 
-all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect 
-only in their boundaries. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-
-*/
 template <class Kernel, class Container>
 Oriented_side oriented_side(const Polygon_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel, Container> & p2);
+                            const Polygon_with_holes_2<Kernel, Container> & p2);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
-given polygons `p1` and `p2` intersect in their interior, 
-`ON_NEGATIVE_SIDE` if `p1` and `p2` do not intersect at 
-all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect 
-only in their boundaries. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-
-*/
 template <class Kernel, class Container>
 Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2);
+                            const Polygon_2<Kernel, Container> & p2);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
-given polygons `p1` and `p2` intersect in their interior, 
-`ON_NEGATIVE_SIDE` if `p1` and `p2` do not intersect at 
-all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect 
-only in their boundaries. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-
-*/
 template <class Kernel, class Container>
 Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel, Container> & p2);
+                            const Polygon_with_holes_2<Kernel, Container> & p2);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
-given polygons `p1` and `p2` intersect in their interior, 
-`ON_NEGATIVE_SIDE` if `p1` and `p2` do not intersect at 
-all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect 
-only in their boundaries. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-
-*/
 template <class Traits>
 Oriented_side oriented_side(const General_polygon_2<Traits> & p1,
-const General_polygon_2<Traits> & p2);
+                            const General_polygon_2<Traits> & p2);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
-given polygons `p1` and `p2` intersect in their interior, 
-`ON_NEGATIVE_SIDE` if `p1` and `p2` do not intersect at 
-all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect 
-only in their boundaries. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-
-*/
 template <class Traits>
 Oriented_side oriented_side(const General_polygon_2<Traits> & p1,
-const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2);
+                            const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
-given polygons `p1` and `p2` intersect in their interior, 
-`ON_NEGATIVE_SIDE` if `p1` and `p2` do not intersect at 
-all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect 
-only in their boundaries. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-
-*/
 template <class Traits>
 Oriented_side oriented_side(const General_polygon_with_holes_2<General_polygon_2<Traits> > & p1,
-const General_polygon_2<Traits> & p2);
+                            const General_polygon_2<Traits> & p2);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
-given polygons `p1` and `p2` intersect in their interior, 
-`ON_NEGATIVE_SIDE` if `p1` and `p2` do not intersect at 
-all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect 
-only in their boundaries. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-
-*/
 template <class Polygon>
 Oriented_side oriented_side(const General_polygon_with_holes_2<Polygon> & p1,
-const General_polygon_with_holes_2<Polygon> & p2);
+                            const General_polygon_with_holes_2<Polygon> & p2);
 
+/// @}
 } /* namespace CGAL */
 
 namespace CGAL {
