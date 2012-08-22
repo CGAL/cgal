@@ -1,6 +1,7 @@
 namespace CGAL {
 
 /*!
+\addtogroup boolean_complement Complement Functions
 \ingroup PkgBooleanSetOperations2
 \anchor ref_bso_complement 
 
@@ -8,7 +9,6 @@ Each one of these functions computes the complement of a given
 polygon `pgn`, and stores the resulting polygon with holes in 
 `res`. 
 
-CONVERROR HtmlOnly needs treatment 
 <div align="center"> 
 <table cellpadding=3 border="1"> 
 <tr><th> Arg type</th></tr> 
@@ -16,7 +16,6 @@ CONVERROR HtmlOnly needs treatment
 <tr><td valign="center">General_polygon_2</td></tr> 
 </table> 
 </div> 
-CONVERROR EndHtmlOnly 
 
 Each one of these functions computes the complement of a given 
 polygon `pgn`, inserts the resulting polygons with 
@@ -25,7 +24,6 @@ holes into an output container through a given output iterator
 `OutputIterator` is either `Polygon_with_holes_2` or 
 `General_polygon_with_holes_2`. 
 
-CONVERROR HtmlOnly needs treatment 
 <div align="center"> 
 <table cellpadding=3 border="1"> 
 <tr><th> Arg type</th></tr> 
@@ -33,245 +31,23 @@ CONVERROR HtmlOnly needs treatment
 <tr><td valign="center">General_polygon_with_holes_2</td></tr> 
 </table> 
 </div> 
-CONVERROR EndHtmlOnly 
 
 \sa `CGAL::do_intersect` 
 \sa `CGAL::intersection` 
 \sa `CGAL::join` 
 \sa `CGAL::difference` 
 \sa `CGAL::symmetric_difference` 
-
 */
-void complement(const Type & pgn, Type & res);
-
-/*!
-\ingroup PkgBooleanSetOperations2
-\anchor ref_bso_complement 
-
-Each one of these functions computes the complement of a given 
-polygon `pgn`, and stores the resulting polygon with holes in 
-`res`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Each one of these functions computes the complement of a given 
-polygon `pgn`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
-
-OutputIterator complement(const Type & pgn, OutputIterator oi);
-
-/*!
-\ingroup PkgBooleanSetOperations2
-\anchor ref_bso_complement 
-
-Each one of these functions computes the complement of a given 
-polygon `pgn`, and stores the resulting polygon with holes in 
-`res`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Each one of these functions computes the complement of a given 
-polygon `pgn`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+/// @{
 template <class Kernel, class Container>
-void complement(const Polygon_2<Kernel, Container> & pgn,
-Polygon_with_holes_2<Kernel, Container> & res);
-
-/*!
-\ingroup PkgBooleanSetOperations2
-\anchor ref_bso_complement 
-
-Each one of these functions computes the complement of a given 
-polygon `pgn`, and stores the resulting polygon with holes in 
-`res`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Each one of these functions computes the complement of a given 
-polygon `pgn`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+void complement(const Polygon_2<Kernel, Container> & pgn, Polygon_with_holes_2<Kernel, Container> & res);
 template <class Traits>
-void complement(const General_polygon_2<Traits> & pgn,
-General_polygon_with_holes_2<Traits> & res);
-
-/*!
-\ingroup PkgBooleanSetOperations2
-\anchor ref_bso_complement 
-
-Each one of these functions computes the complement of a given 
-polygon `pgn`, and stores the resulting polygon with holes in 
-`res`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Each one of these functions computes the complement of a given 
-polygon `pgn`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+void complement(const General_polygon_2<Traits> & pgn, General_polygon_with_holes_2<Traits> & res);
 template <class Traits, class OutputIterator>
-OutputIterator complement(const Polygon_with_holes_2<Kernel, Container> & pgn,
-OutputIterator oi);
-
-/*!
-\ingroup PkgBooleanSetOperations2
-\anchor ref_bso_complement 
-
-Each one of these functions computes the complement of a given 
-polygon `pgn`, and stores the resulting polygon with holes in 
-`res`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Each one of these functions computes the complement of a given 
-polygon `pgn`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg type</th></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
-
-*/
+OutputIterator complement(const Polygon_with_holes_2<Kernel, Container> & pgn, OutputIterator oi);
 template <class Traits, class OutputIterator>
-OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<Traits> > & pgn,
-OutputIterator oi);
+OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<Traits> > & pgn, OutputIterator oi);
+/// @}
 
 } /* namespace CGAL */
 
