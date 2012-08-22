@@ -222,6 +222,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
 ALIASES += "refines=\xrefitem refiness \"Refines\" \"Refines\""
 ALIASES += "requires=\xrefitem requiress \"Requires\" \"Requires\""
 ALIASES += "models=\xrefitem modelss \"Models\" \"Models\""
+ALIASES += "generalizes=\xrefitem generalizess \"Generalizes\" \"Generalizes\""
 ALIASES += "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\""
 ALIASES += "debug=\xrefitem debugs \"Debug\" \"Debug\""
 
