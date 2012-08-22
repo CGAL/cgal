@@ -183,10 +183,15 @@ void test3(){
   P x[]={cp(2,2,3),cp(2,2,0),cp(1,2,1)};
   FO fo2=cfo(&x[0],x+3);
   std::cout << fo2;
-  P y[]={cp(0,2,4),cp(3,1,2),cp(3,3,6)};
+  P y[]={cp(0,2,4),cp(3,1,2),cp(3,3,6),cp(0,4,8)};
   FO fo3=cfo(&y[0],y+3);
   assert(fo3.rest.size()==1 && fo3.rest[0]!=3);
   std::cout << fo3;
+  CGAL::Orientation base=ifo(fo3,&y[0],y+3);
+  assert(ifo(fo3,y+1,y+4)==base);
+  P yy[]={y[1],y[3],y[0],y[2]};
+  assert(ifo(fo3,yy+0,yy+3)==base);
+  assert(ifo(fo3,yy+1,yy+4)==base);
 }
 
 int main(){

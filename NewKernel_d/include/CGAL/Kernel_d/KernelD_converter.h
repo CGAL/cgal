@@ -138,6 +138,7 @@ typename typeset_intersection<typename K1::Object_list, typename K2::Object_list
 	Null_vector operator()(Null_vector const&v)const{return v;}
 	FT2 operator()(FT1 const&x)const{return c(x);}
 	//RT2 operator()(typename First_if_different<RT1,FT1>::Type const&x)const{return cr(x);}
+	typename K2::Flat_orientation const& operator()(typename K1::Flat_orientation const&o)const{return o;} // Both kernels should have the same, returning a reference should warn if not.
 
 	template<class It>
 	transforming_iterator<Final_,typename boost::enable_if<is_iterator<It>,It>::type>

@@ -45,17 +45,21 @@ namespace CGAL {
     template<class X> struct contains :
       boost::mpl::if_<boost::is_same<H,X>,boost::true_type,typename tail::template contains<X> >::type
     {};
-    template<class X,class=void> struct add :
+    template<class X,class=void> struct add;
       //boost::mpl::if_<boost::is_same<H,X>,typeset,typeset<X,typeset> >::type
-      typeset<H,typename tail::template add<X>::type>
-    {};
-    template<class V> struct add<H,V> : typeset {};
   };
   template<> struct typeset<> {
     typedef typeset type;
     template<class X> struct contains : boost::false_type {};
     template<class X> struct add : typeset<X> {};
   };
+
+  template<class H,class T>
+    template<class X,class>
+    struct typeset<H,T>::add : typeset<H,typename T::template add<X>::type> {};
+  template<class H,class T>
+    template<class V>
+    struct typeset<H,T>::add<H,V> : typeset<H,T> {};
 #endif
 
   template<class T1, class T2> struct typeset_union_ :
