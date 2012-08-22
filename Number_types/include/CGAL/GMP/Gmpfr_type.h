@@ -996,25 +996,25 @@ std::pair<std::pair<double,double>,long> Gmpfr::to_interval_exp()const{
 
 inline
 std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
+        if(this->is_zero())
+                return std::make_pair(Gmpz(0),long(0));
 
-  if(this->is_zero())
-    return std::make_pair(Gmpz(0),long(0));
+        Gmpz z;
+        long e=CGAL_GMPFR_GET_Z_2EXP(z.mpz(),this->fr());
 
-  Gmpz z;
-  long e=CGAL_GMPFR_GET_Z_2EXP(z.mpz(),this->fr());
+        long zeros=mpz_scan1(z.mpz(),0);
+        CGAL_assertion(z==(z>>zeros)<<zeros);
+        z>>=zeros;
+        CGAL_assertion(z%2!=0);
+        e+=zeros;
 
-  long zeros = mpz_scan1(z.mpz(),0);
-  CGAL_assertion(z==(z>>zeros)<<zeros);
-  z >>= zeros;
-  CGAL_assertion(z%2!=0);
-  e +=  zeros;
+        CGAL_postcondition_code(if(e>=0))
+        CGAL_postcondition(
+                (*this)==(Gmpfr(z,z.bit_size())*CGAL::ipower(Gmpfr(2),e)));
+        CGAL_postcondition_code(else)
+        CGAL_postcondition(((*this)*(Gmpz(1)<<(-e)))==z);
 
-  CGAL_postcondition_code(if (e >= 0))
-    CGAL_postcondition( (*this) == (Gmpfr(z) * CGAL::ipower(Gmpfr(2),e)) );
-  CGAL_postcondition_code(else)
-    CGAL_postcondition( ( (*this) * (Gmpz(1)<<(-e)) ) == z );
-
-  return std::make_pair(z,e);
+        return std::make_pair(z,e);
 }
 
 
