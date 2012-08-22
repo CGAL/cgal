@@ -39,8 +39,6 @@ std::istream& operator>>(std::istream& in, CGAL::Polygon_with_holes_2<Kernel, Co
 
 
 /*!
-\ingroup PkgBooleanSetOperations2
-
 This operator exports a polygon with holes to the output stream `out`.
 
 An ASCII and a binary format exist. The format can be selected with

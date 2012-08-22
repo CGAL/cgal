@@ -100,8 +100,10 @@ The types of the paramters of the `difference` function are any of the following
 
 
 /// @{
-
-
+/*!
+ writes the difference of the polygons `p1` and `p2` into the output iterator `oi`.
+ The value type of `oi` is `Polygon_with_holes_2`.
+ */
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator difference(const Polygon_2<Kernel, Container> & p1,
                           const Polygon_2<Kernel, Container> & p2,
@@ -703,7 +705,9 @@ Oriented_side oriented_side(const General_polygon_with_holes_2<Polygon> & p1,
 namespace CGAL {
 
 /*!
+\addtogroup boolean_symmetric_difference Symmetric Difference Functions
 \ingroup PkgBooleanSetOperations2
+\anchor ref_bso_symmetric_difference 
 
 Each one of these functions computes the symmetric difference between 
 two given polygons `p1` and `p2`, and inserts the resulting 
@@ -712,8 +716,16 @@ iterator `oi`. The value type of the `OutputIterator` is either
 `Polygon_with_holes_2` or 
 `General_polygon_with_holes_2`. 
 
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
+The signature of the function is
+\code
+  OutputIterator symmetric_difference(const Type1 & p1, const Type2 & p2, OutputIterator oi);
+\endcode
+
+###Parameters###
+
+The types of the paramters of the `symmetric_difference` function are any of the following combinations.
+
+<div align="left"> 
 <table cellpadding=3 border="1"> 
 <tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
 <tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
@@ -726,25 +738,7 @@ CONVERROR HtmlOnly needs treatment
 <tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
 </table> 
 </div> 
-CONVERROR EndHtmlOnly 
 
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
 
 \sa `CGAL::do_intersect` 
 \sa `CGAL::intersection` 
@@ -753,566 +747,95 @@ the `OutputIterator` is `Traits::Polygon_with_holes_2`.
 
 */
 
-OutputIterator intersection(const Type1 & p1, const Type2 & p2,
-OutputIterator oi);
+/// @{
 
-/*!
-\ingroup PkgBooleanSetOperations2
+OutputIterator symmetric_difference(const Type1 & p1, const Type2 & p2,
+                                    OutputIterator oi);
 
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
 
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-
-*/
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator symmetric_difference(const Polygon_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2,
-OutputIterator oi);
+                                    const Polygon_2<Kernel, Container> & p2,
+                                    OutputIterator oi);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-
-*/
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator 
 symmetric_difference(const Polygon_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel, Container> & p2,
-OutputIterator oi);
+                     const Polygon_with_holes_2<Kernel, Container> & p2,
+                     OutputIterator oi);
 
-/*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-
-*/
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator 
 symmetric_difference(const Polygon_with_holes_2<Kernel, Container> & p1,
-const Polygon_2<Kernel, Container> & p2,
-OutputIterator oi);
+                     const Polygon_2<Kernel, Container> & p2,
+                     OutputIterator oi);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-
-*/
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator 
 symmetric_difference(const Polygon_with_holes_2<Kernel, Container> & p1,
-const Polygon_with_holes_2<Kernel, Container> & p2,
-OutputIterator oi);
+                     const Polygon_with_holes_2<Kernel, Container> & p2,
+                     OutputIterator oi);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-
-*/
 template <class Traits, class OutputIterator>
 OutputIterator symmetric_difference(const General_polygon_2<Traits> & p1,
-const General_polygon_2<Traits> & p2,
-OutputIterator oi);
+                                    const General_polygon_2<Traits> & p2,
+                                    OutputIterator oi);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-
-*/
 template <class Traits, class OutputIterator>
 OutputIterator 
 symmetric_difference(const General_polygon_with_holes_2<General_polygon_2<Traits> > & p1,
-const General_polygon_2<Traits> & p2,
-OutputIterator oi);
+                     const General_polygon_2<Traits> & p2,
+                     OutputIterator oi);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-
-*/
 template <class Traits, class OutputIterator>
 OutputIterator 
 symmetric_difference(const General_polygon_2<Traits> & p1,
-const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
-OutputIterator oi);
+                     const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
+                     OutputIterator oi);
 
-/*!
-\ingroup PkgBooleanSetOperations2
 
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-
-*/
 template <class Polygon, class OutputIterator>
 OutputIterator 
 symmetric_difference(const General_polygon_with_holes_2<Polygon> & p1,
-const General_polygon_with_holes_2<Polygon> & p2,
-OutputIterator oi);
+                     const General_polygon_with_holes_2<Polygon> & p2,
+                     OutputIterator oi);
 
-/*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-
-*/
+  /*!
+    computes the symmetric difference of the general polygons (or general 
+    polygons with holes) in the given range. A point is contained in the 
+    symmetric difference, if and only if it is contained in odd number of 
+    input polygons. (The value type of the input iterator is used to 
+    distinguish between the two.) The result, represented by a set 
+    of general polygon with holes, is inserted into an output container 
+    through a given output iterator `oi`. The output iterator is 
+    returned. The value type of the `OutputIterator` is 
+    `Traits::Polygon_with_holes_2`. 
+  */
 template <class InputIterator, class OutputIterator>
 OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
-OutputIterator oi);
+                                    OutputIterator oi);
 
-/*!
-\ingroup PkgBooleanSetOperations2
-
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
-
-CONVERROR HtmlOnly needs treatment 
-<div align="center"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
-CONVERROR EndHtmlOnly 
-
-Computes the symmetric difference of the general polygons (or general 
-polygons with holes) in the given range. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. (The value type of the input iterator is used to 
-distinguish between the two.) The result, represented by a set 
-of general polygon with holes, is inserted into an output container 
-through a given output iterator `oi`. The output iterator is 
-returned. The value type of the `OutputIterator` is 
-`Traits::Polygon_with_holes_2`. 
-
-Computes the union of the general polygons and general polygons 
-with holes in the given two ranges. A point is contained in the 
-symmetric difference, if and only if it is contained in odd number of 
-input polygons. The result, represented by a set of general polygon with 
-holes, is inserted into an output container through a given output 
-iterator `oi`. The output iterator is returned. The value type of 
-the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-
-*/
-template <class InputIterator1, class InputIterator2,
-class OutputIterator>
+  /*!
+    computes the symmetric difference of the general polygons and general polygons 
+    with holes in the given two ranges. A point is contained in the 
+    symmetric difference, if and only if it is contained in odd number of 
+    input polygons. The result, represented by a set of general polygon with 
+    holes, is inserted into an output container through a given output 
+    iterator `oi`. The output iterator is returned. The value type of 
+    the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
+  */
+template <class InputIterator1, class InputIterator2, class OutputIterator>
 OutputIterator symmetric_difference(InputIterator1 pgn_begin1, 
-InputIterator1 pgn_end1,
-InputIterator2 pgn_begin2, 
-InputIterator2 pgn_end2,
-OutputIterator oi);
+                                    InputIterator1 pgn_end1,
+                                    InputIterator2 pgn_begin2, 
+                                    InputIterator2 pgn_end2,
+                                    OutputIterator oi);
+/// @}
 
 } /* namespace CGAL */
 

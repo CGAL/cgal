@@ -1,6 +1,7 @@
 namespace CGAL {
 
 /*!
+\addtogroup boolean_connect_holes Functions on Polygon with Holes
 \ingroup PkgBooleanSetOperations2
 \anchor ref_bso_connect_holes 
 
@@ -17,11 +18,13 @@ of `oi` is `Kernel::Point_2`.
 \pre The input polygon with holes `pwh` is bounded (namely it has a valid outer boundary). 
 
 */
+
+/// @{
 template <class Kernel, class Container,
 class OutputIterator>
 OutputIterator
 connect_holes(const Polygon_with_holes_2<Kernel,Container>& pwh,
-OutputIterator oi);
-
+              OutputIterator oi);
+/// @}
 } /* namespace CGAL */
 
