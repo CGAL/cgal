@@ -90,6 +90,7 @@ void test2(){
   typedef typename K1::Construct_flat_orientation_d CFO;
   typedef typename K1::In_flat_orientation_d IFO;
   typedef typename K1::In_flat_side_of_oriented_sphere_d IFSOS;
+  typedef typename K1::Contained_in_affine_hull_d CAH;
 
   USE_TYPE(V);
   USE_TYPE(CV);
@@ -105,6 +106,7 @@ void test2(){
   CFO cfo Kinit(construct_flat_orientation_d_object);
   IFO ifo Kinit(in_flat_orientation_d_object);
   IFSOS ifsos Kinit(in_flat_side_of_oriented_sphere_d_object);
+  CAH cah Kinit(contained_in_affine_hull_d_object);
   P a=cp(3,4);
   P b=cp(5,6,7);
   int rr[]={3,5,2};
@@ -145,6 +147,7 @@ void test3(){
   typedef typename K1::Construct_flat_orientation_d CFO;
   typedef typename K1::In_flat_orientation_d IFO;
   typedef typename K1::In_flat_side_of_oriented_sphere_d IFSOS;
+  typedef typename K1::Contained_in_affine_hull_d CAH;
 
   USE_TYPE(V);
   USE_TYPE(CV);
@@ -160,6 +163,7 @@ void test3(){
   CFO cfo Kinit(construct_flat_orientation_d_object);
   IFO ifo Kinit(in_flat_orientation_d_object);
   IFSOS ifsos Kinit(in_flat_side_of_oriented_sphere_d_object);
+  CAH cah Kinit(contained_in_affine_hull_d_object);
   P a=cp(2,3,4);
   P b=cp(5,6,7,8);
   int rr[]={3,5,2,3};
@@ -204,6 +208,8 @@ void test3(){
   std::cout << sos(buf+0,buf+5) << ' ';
   buf[1]=yy[1];buf[2]=yy[2];buf[3]=yy[3];buf[4]=yy[0];
   std::cout << sos(buf+0,buf+5) << '\n';
+  assert(cah(y+0,y+3,y[3]));
+  assert(!cah(y+0,y+3,buf[0]));
 }
 
 int main(){

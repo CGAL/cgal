@@ -98,12 +98,14 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
         typedef R_ R;
         typedef typename R_::FT FT;
         typedef typename R::Point Point;
-        typedef typename R::Orientation result_type;
+        typedef typename R::Boolean result_type;
 	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type CCC;
 	typedef typename R::template Functor<Point_dimension_tag>::type PD;
-	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
-	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
-	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
+	//typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
+	//typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
+	//typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
+	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type Dplusone;
+	typedef typename R::LA::template Rebind_dimension<Dynamic_dimension_tag,Dplusone>::Other LA;
 	typedef typename LA::Square_matrix Matrix;
 
 	// mostly copied from Construct_flat_orientation. TODO: dedup this code.
