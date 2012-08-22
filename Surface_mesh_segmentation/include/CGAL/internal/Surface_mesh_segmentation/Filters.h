@@ -34,19 +34,16 @@ public:
    *   - domain : over value distances
    * @param mesh `CGAL Polyhedron` on which @a values are defined
    * @param window_size range of effective neighbors
-   * @param values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   * @param smoothed_values `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   *
-   * Warning: do not use same parameter for @a values and @a smoothed_values since @a values must stay still during iteration.
+   * @param[in, out] values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
    */
-  template<class InputPropertyMap, class OutputPropertyMap>
+  template<class ValuePropertyMap>
   void operator()(const Polyhedron& mesh,
                   int window_size,
-                  InputPropertyMap values,
-                  OutputPropertyMap smoothed_values) const {
+                  ValuePropertyMap values) const {
     typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
     typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
-
+    std::vector<double> smoothed_values; // holds smoothed values
+    smoothed_values.reserve(mesh.size_of_facets());
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
       std::map<Facet_const_handle, int> neighbors;
@@ -77,7 +74,14 @@ public:
         total_sdf_value += values[it->first] * weight;
         total_weight += weight;
       }
-      smoothed_values[facet_it] = total_sdf_value / total_weight;
+      smoothed_values.push_back(total_sdf_value / total_weight);
+    }
+    // put smoothed values back again to values pmap.
+    std::size_t index = 0;
+    for(Facet_const_iterator facet_it = mesh.facets_begin();
+        facet_it != mesh.facets_end();
+        ++facet_it, ++index) {
+      values[facet_it] = smoothed_values[index];
     }
   }
 private:
@@ -98,19 +102,16 @@ public:
    *
    * @param mesh `CGAL Polyhedron` on which @a values are defined
    * @param window_size range of effective neighbors
-   * @param values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   * @param smoothed_values `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   *
-   * Warning: do not use same parameter for @a values and @a smoothed_values since @a values must stay still during iteration.
+   * @param[in, out] values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
    */
-  template<class InputPropertyMap, class OutputPropertyMap>
+  template<class ValuePropertyMap>
   void operator()(const Polyhedron& mesh,
                   int window_size,
-                  InputPropertyMap values,
-                  OutputPropertyMap smoothed_values) const {
+                  ValuePropertyMap values) const {
     typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
     typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
-
+    std::vector<double> smoothed_values;
+    smoothed_values.reserve(mesh.size_of_facets());
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
       //Find neighbors and put their values into a list
@@ -132,7 +133,14 @@ public:
                                         neighbor_values.begin() + half_neighbor_count);
         median_sdf /= 2;
       }
-      smoothed_values[facet_it] = median_sdf;
+      smoothed_values.push_back(total_sdf_value / total_weight);
+    }
+    // put smoothed values back again to values pmap.
+    std::size_t index = 0;
+    for(Facet_const_iterator facet_it = mesh.facets_begin();
+        facet_it != mesh.facets_end();
+        ++facet_it, ++index) {
+      values[facet_it] = smoothed_values[index];
     }
   }
 };

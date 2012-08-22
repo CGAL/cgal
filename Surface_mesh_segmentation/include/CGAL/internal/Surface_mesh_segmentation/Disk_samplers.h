@@ -74,7 +74,7 @@ public:
         double Q = i * golden_ratio * CGAL_PI;
         double R = std::sqrt(static_cast<double>(i) / number_of_points);
         double angle = atan(R / length_of_normal);
-        double weight =  exp(-0.5 * (std::pow(angle / angle_st_dev, 2))); // weight
+        double weight =  exp(-0.5 * (std::pow(angle / angle_st_dev, 2)));
         samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), weight));
       }
     } else {

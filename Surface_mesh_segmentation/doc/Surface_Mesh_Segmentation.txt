@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 \mainpage Surface Mesh Segmentation
 
-\author İlker O. Yaz
+\author Ilker O. Yaz
 
 \anchor elephant_sdf_partition
 \image latex elephant_sdf_partition.png "Elephant model: SDF values & Segmentation" width=12cm
@@ -13,25 +13,25 @@ Mesh segmentation is the process of partitioning a mesh into smaller and meaning
 
 This package provides an implementation of the algorithm presented in \cite shapira2008consistent. It relies on the Shape Diameter Function (SDF) which provides an estimate of the local volume diameter for each facet of the mesh.
 
-The segmentation algorithm first computes the SDF values for each facets and does a soft clustering of facets with similar SDF values.
+The segmentation algorithm first computes SDF values for each facets and does a soft clustering of facets with similar SDF values.
 These clusters are then refined using a graph-cut algorithm which also considers surface-based features such as dihedral-angle and concavity. 
 
-The API gives access to both the SDF values and the segmentation of the mesh. That way an alternative implementation of SDF values can be directly plug into the segmentation algorithm.
+The API gives access to both SDF values and the segmentation of the mesh. That way an alternative implementation of the SDF can be directly plug into the segmentation algorithm.
 
 # Overview of the Segmentation Process #
 The segmentation algorithm consists of three major parts: Shape Diameter Function (SDF), soft clustering, and graph-cut for hard clustering.
 
 ## Shape Diameter Function ##
-The Shape Diameter Function (SDF) provides a connection between the surface and its volume. More precisely, SDF is a scalar-valued function defined on the surface which measures the corresponding local volume diameter.
-The main handiness of SDF is being able to distinguish thick and thin parts of the mesh by bringing in a volume-based feature to the surface. Another key feature of SDF is its pose-invariant nature, which means that SDF values for a me
-remains largely unaffected after changes of pose. (TODO: benchmark picture)
+The Shape Diameter Function (SDF) provides a connection between the surface and its volume. More precisely, the SDF is a scalar-valued function defined on the surface which measures the corresponding local volume diameter.
+The main handiness of the SDF is being able to distinguish thick and thin parts of the mesh by bringing in a volume-based feature to the surface. Another key feature of the SDF is its pose-invariant nature, which means that SDF values remains largely unaffected after changes of pose. 
+(TODO: benchmark picture)
 
-The SDF over a surface is computed by processing each facets one by one. For a given facet, SDF value computation begins with casting several rays sampled from a cone which
+The SDF over a surface is computed by processing each facets one by one. For a given facet, the SDF value computation begins with casting several rays sampled from a cone which
 is constructed using the centroid of the facet as apex and inward-normal of the facet as axis. Using these casted rays (which intuitively correspond to sampling for local volume),
 the SDF value is calculated by first applying outlier removal and then taking weighted average of casted ray lengths.
 
 After calculating SDF values for each facet, bilateral smoothing (an edge-preserving filtering technique) is applied. The purpose of edge-preserving smoothing is keeping SDF edges (fast changes on SDF values) 
-in-place without blurring, since they are good candidates for segment boundaries. (TODO: I don't get the last sentense)
+in-place without blurring, since they are good candidates for segment boundaries. (TODO: I don't get the last sentense) (change this sentence)
 
 ## Soft Clustering ##
 The soft clustering on computed SDF values consists in first grouping facets using k-means clustering algorithm which is initialized with k-means++
@@ -85,22 +85,22 @@ to make this geometric criteria more or less prevalent.
 
 # API #
 This package provides three functions:
-	- CGAL::sdf_values_computation : computes the SDF values as described in the original paper.
+	- CGAL::sdf_values_computation : computes SDF values as described in the original paper.
 	- CGAL::surface_mesh_segmentation_from_sdf_values : computes the mesh segmentation from SDF values.
 	- CGAL::surface_mesh_segmentation : computes SDF values and mesh segmentation in one go (i.e. combines two functions listed above).	
  
-##SDF Computation##
+##The SDF Computation##
 The function CGAL::sdf_values_computation provides an implementation of the SDF computation for a given `CGAL Polyhedron`. After computation, the following post-processing steps are applied:
   - Facets with no SDF values (i.e. zero) are assigned to average SDF value of its neighbors. If still there is any facet which has no SDF value, minimum SDF value greater than zero is assigned to it. (TODO: Does this appends in case there are holes in the mesh?)
   - Smoothed with bilateral filtering.
   - Linearly normalized between [0,1].
-The output is a property map which associate the SDF value to each facet.
+The output is a property map which associates every facet with its SDF value.
 ###Examples####
 \include Surface_mesh_segmentation/sdf_values_computation_example.cpp
 
 ##Surface Mesh Segmentation##
 The function CGAL::surface_mesh_segmentation_from_sdf_values computes a segmentation of the mesh using provided SDF values.
-The output is a property map which associate a segment-id (an integer between [0, number of segments -1]) to each facet. Formally, a segment is a set of connected facets which are placed under same cluster after graph-cut. 
+The output is a property map which associates a segment-id (an integer between [0, number of segments -1]) to each facet. Formally, a segment is a set of connected facets which are placed under same cluster after graph-cut. 
 
 ###Examples###
 \include Surface_mesh_segmentation/surface_mesh_segmentation_from_sdf_values_example.cpp
@@ -115,12 +115,14 @@ The initial implementation of this package is the result of the work of the auth
 of the Google Summer of Code.
 
 # Extra: (ideas to append) #
-- Talk about effect of "number of rays" on SDF values, by providing RSME and average error ?
-- Talk about effect of "number of levels" on segmentation results ? giving a few screen shot.
-- Talk about pose-invariant feature of segmentation by giving a few screen shots from "benchmark" models (same models with different poses) ?
-- SL: I would take one example and use a Facet type with an id to avoid using a map (see BGL/examples/BGL_polyhedron_3/kruskal_with_stored_id.cpp for an example of Polyhedron instantiation)
+- Talk about effect of "number of rays" on SDF values, by providing RSME and average error ? (for now drop)
+- Talk about effect of "number of levels" on segmentation results ? giving a few screen shot. (put a picture in TODO)
+- Talk about pose-invariant feature of segmentation by giving a few screen shots from "benchmark" models (same models with different poses) ? (segmentation not sdf screen-shot)
+- SL: I would take one example and use a Facet type with an id to avoid using a map (see BGL/examples/BGL_polyhedron_3/kruskal_with_stored_id.cpp for an example of Polyhedron instantiation) (use vector pmap)
 - SL: should we offer a way to get sdf without normalization? or that least return the max of the sdf so that the sdf is the value in [0,1] x that number?
+(return pairs)
 - TODO: you do not talk about the limitation of the input mesh (triangulated, manifold, self-intersections, close, holes ...)
+(is_pure_triangle precond in ref manual & in user manual talk about triangulated possible with small holes etc)
 - TODO: there is nothing about the traits class and operations used. Is AABB_tree the only thing you use?
 */ 
 } /* namespace CGAL */

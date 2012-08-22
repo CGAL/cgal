@@ -14,8 +14,8 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 int main(int argc, char **argv)
 {
     if (argc !=2){
-      std::cerr << "Usage: " << argv[0] << " input.off\n";
-      return 1;
+		std::cerr << "Usage: " << argv[0] << " input.off\n";
+		return 1;
     }
   
     // create and read Polyhedron
@@ -23,8 +23,8 @@ int main(int argc, char **argv)
     std::ifstream input(argv[1]);
     
     if ( !input || !(input >> mesh) || mesh.empty() ){
-      std::cerr << argv[1] << " is not a valid off file.\n";
-      return 1;
+		std::cerr << argv[1] << " is not a valid off file.\n";
+		return 1;
     }
 
     // create a property-map for segment-ids (it is an adaptor for this case)

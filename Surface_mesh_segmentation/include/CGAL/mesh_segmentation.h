@@ -25,34 +25,38 @@ namespace CGAL
  * @param[out] sdf_values <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @param cone_angle opening angle for cone, expressed in radians
  * @param number_of_rays number of rays picked from cone for each facet
+ * @return pair of minimum and maximum SDF values before linear normalization
  */
 template <class Polyhedron, class SDFPropertyMap>
-void sdf_values_computation(const Polyhedron& polyhedron,
-                            SDFPropertyMap sdf_values,
-                            double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                            int number_of_rays = 25)
+std::pair<double, double>
+sdf_values_computation(const Polyhedron& polyhedron,
+                       SDFPropertyMap sdf_values,
+                       double cone_angle = 2.0 / 3.0 * CGAL_PI,
+                       int number_of_rays = 25)
 {
   internal::Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
-  algorithm.calculate_sdf_values(sdf_values, cone_angle, number_of_rays);
+  return algorithm.calculate_sdf_values(sdf_values, cone_angle, number_of_rays);
 }
 
 /*!
- * @brief Function computing the segmentation of a surface mesh given a SDF value per facet.
+ * @brief Function computing the segmentation of a surface mesh given an SDF value per facet.
  *
- * This function fills a property map which associate a segment-id (between [0, number of segments -1]) to each facet.
+ * This function fills a property map which associates a segment-id (between [0, number of segments -1]) to each facet.
  * Formally, a segment is a set of connected facets which are placed under same cluster.
  *
  * Note that there is no direct relation between the parameter @a number_of_levels
- * and the number of segments. However, a large number of levels is likely to result in detailed segmentation of the mesh with a large number of segments.
+ * and the number of segments. However, a large number of levels is likely to result in detailed segmentation of the mesh with large number of segments.
  *
  * @param polyhedron `CGAL Polyhedron` on which segmentation is applied
  * @param sdf_values <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">`ReadablePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
- * @param[out] segment_ids <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/WritablePropertyMap.html">`WritablePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
+ * @param[out] segment_ids <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @param number_of_levels number of clusters for soft clustering
  * @param smoothing_lambda factor in the interval [0,1] which indicates the importance of surface features in energy minimization
+ * @return number of segments
  */
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap>
-void surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
+int
+surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
     SDFPropertyMap sdf_values,
     SegmentPropertyMap segment_ids,
     int number_of_levels = 5,
@@ -62,8 +66,8 @@ void surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
                                 smoothing_lambda)); // clip into [0-1]
 
   internal::Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
-  algorithm.partition(sdf_values, segment_ids, number_of_levels,
-                      smoothing_lambda);
+  return algorithm.partition(sdf_values, segment_ids, number_of_levels,
+                             smoothing_lambda);
 }
 
 /*!
@@ -77,19 +81,20 @@ void surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
  * and then call CGAL::surface_mesh_segmentation_from_sdf_values with the same SDF values.
  *
  * @param polyhedron `CGAL Polyhedron` on which segmentation is applied
- * @param[out] segment_ids <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/WritablePropertyMap.html">`WritablePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
- * @param cone_angle opening angle for cone, expressed in radians
+ * @param[out] segment_ids <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @param number_of_rays number of rays picked from cone for each facet
  * @param number_of_levels number of clusters for soft clustering
  * @param smoothing_lambda factor in the interval [0,1] which indicates the importance of surface features in energy minimization
+ * @return number of segments
  */
 template <class Polyhedron, class SegmentPropertyMap>
-void surface_mesh_segmentation(const Polyhedron& polyhedron,
-                               SegmentPropertyMap segment_ids,
-                               double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                               int number_of_rays = 25,
-                               int number_of_levels = 5,
-                               double smoothing_lambda = 0.23)
+int
+surface_mesh_segmentation(const Polyhedron& polyhedron,
+                          SegmentPropertyMap segment_ids,
+                          double cone_angle = 2.0 / 3.0 * CGAL_PI,
+                          int number_of_rays = 25,
+                          int number_of_levels = 5,
+                          double smoothing_lambda = 0.23)
 {
   smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                 smoothing_lambda)); // clip into [0-1]
@@ -102,8 +107,8 @@ void surface_mesh_segmentation(const Polyhedron& polyhedron,
 
   sdf_values_computation(polyhedron, sdf_property_map, cone_angle,
                          number_of_rays);
-  surface_mesh_segmentation_from_sdf_values(
-    polyhedron, sdf_property_map, segment_ids, number_of_levels, smoothing_lambda);
+  return surface_mesh_segmentation_from_sdf_values(
+           polyhedron, sdf_property_map, segment_ids, number_of_levels, smoothing_lambda);
 }
 
 }//namespace CGAL

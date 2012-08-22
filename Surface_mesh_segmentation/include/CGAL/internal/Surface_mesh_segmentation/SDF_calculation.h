@@ -109,7 +109,7 @@ public:
     Tree tree(mesh.facets_begin(), mesh.facets_end());
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
-      CGAL_precondition(facet_it->is_triangle()); //Mesh should contain triangles.
+      //CGAL_precondition(facet_it->is_triangle()); //Mesh should contain triangles.
 
       double sdf = calculate_sdf_value_of_facet(facet_it, tree, disk_samples_sparse);
       sdf_values[facet_it] = sdf;
