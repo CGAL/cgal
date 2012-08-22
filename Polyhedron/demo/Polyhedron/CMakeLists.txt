@@ -3,12 +3,10 @@
 project( Polyhedron )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 #option(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL "In the Polyhedron demo, enable " OFF)
@@ -301,14 +299,20 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
   target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item)
 
-  polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin)
-  target_link_libraries(xyz_plugin scene_points_with_normal_item)
-
   polyhedron_demo_plugin(nef_io_plugin Polyhedron_demo_io_nef_plugin)
   target_link_libraries(nef_io_plugin  scene_nef_polyhedron_item)
 
   polyhedron_demo_plugin(polylines_io_plugin Polyhedron_demo_polylines_io_plugin)
   target_link_libraries(polylines_io_plugin scene_polylines_item)
+
+  polyhedron_demo_plugin(gocad_plugin Polyhedron_demo_gocad_plugin)
+  target_link_libraries(gocad_plugin scene_polyhedron_item)
+
+  polyhedron_demo_plugin(stl_plugin Polyhedron_demo_stl_plugin)
+  target_link_libraries(stl_plugin scene_polyhedron_item)
+
+  polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin)
+  target_link_libraries(xyz_plugin scene_points_with_normal_item)
 
   polyhedron_demo_plugin(orient_soup_plugin Polyhedron_demo_orient_soup_plugin)
   target_link_libraries(orient_soup_plugin scene_polygon_soup_item scene_polyhedron_item)

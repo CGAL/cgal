@@ -51,7 +51,7 @@
 #include<CGAL/leda_integer.h>
 #endif
 
-#ifdef LiS_HAVE_CORE
+#ifdef CGAL_USE_CORE
 #include<CGAL/CORE_BigInt.h>
 #endif
 
