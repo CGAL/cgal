@@ -808,7 +808,7 @@ symmetric_difference(const General_polygon_with_holes_2<Polygon> & p1,
   /*!
     computes the symmetric difference of the general polygons (or general 
     polygons with holes) in the given range. A point is contained in the 
-    symmetric difference, if and only if it is contained in odd number of 
+    symmetric difference, if and only if it is contained in an odd number of 
     input polygons. (The value type of the input iterator is used to 
     distinguish between the two.) The result, represented by a set 
     of general polygon with holes, is inserted into an output container 
@@ -823,7 +823,7 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
   /*!
     computes the symmetric difference of the general polygons and general polygons 
     with holes in the given two ranges. A point is contained in the 
-    symmetric difference, if and only if it is contained in odd number of 
+    symmetric difference, if and only if it is contained in an odd number of 
     input polygons. The result, represented by a set of general polygon with 
     holes, is inserted into an output container through a given output 
     iterator `oi`. The output iterator is returned. The value type of 
