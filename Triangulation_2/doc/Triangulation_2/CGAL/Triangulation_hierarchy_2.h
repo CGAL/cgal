@@ -48,7 +48,7 @@ to take care of updating the data structure.
 
 Be careful that I/O operations are not overloaded. 
 Writing a `Triangulation_hierarchy_2` into a file 
-writes only the lowest level triangulation and drop the hierarchy 
+writes only the lowest level triangulation and drops the hierarchy 
 and reading it from a file results in a triangulation 
 whose efficiency will be that of an ordinary triangulation. 
 

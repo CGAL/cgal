@@ -502,7 +502,7 @@ to answer nearest neighbor queries
 and member functions to construct the elements (vertices and edges)
 of the dual Voronoi diagram.
 
-HEADING:Geometric traits 
+Geometric Traits 
 --------------
 
 The geometric traits has to be a model of the concept
@@ -542,7 +542,7 @@ except that they do not fulfill
 the requirements for the duality functions and nearest vertex
 queries.
 
-HEADING:Implementation 
+Implementation 
 --------------
 
 The insertion of a new point in the Delaunay triangulation
@@ -600,7 +600,7 @@ and counts the number of finite edges and the number of rays
 of this diagram
 \cgalexample{voronoi.cpp}
 
-\subsection Subsection_2D_Triangulations_Cropped_Voronoi Example: Print Voronoi Diagram Edges Restricted to a rectangle 
+\subsection Subsection_2D_Triangulations_Cropped_Voronoi Example: Print Voronoi Diagram Edges Restricted to a Rectangle 
 
 The following code computes the Delaunay triangulation of a set of points and prints the Voronoi edges 
 restricted to a given rectangle.
@@ -877,7 +877,7 @@ which refines the concept `TriangulationTraits_2`
 providing additional function object types
 to compute the intersection of two segments.
 
-## The Base Face of a Constrained Triangulation ##
+## The Face %Base Class of a Constrained Triangulation ##
 
 The information about constrained edges is stored in the 
 faces of the triangulation. The base face of a Constrained Triangulation
@@ -974,7 +974,7 @@ to provide function objects to compute constraints intersections.
 Then the geometric traits has to be at the same time a model
 of the concept `ConstrainedTriangulationTraits_2`.
 
-## The Face Base Class ##
+## The Face %Base Class ##
 
 Information about the status (constrained or not)
 of the edges of the triangulation has to be stored
@@ -1205,7 +1205,7 @@ data structure.
 
 \cgalexample{adding_handles.cpp}
 
-## Setting Information While Inserting a Range of Points ##
+## Setting Information While Inserting a %Range of Points ##
 
 The most efficient method to insert (weighted) points in a
 Delaunay (or regular) triangulation is to provide an iterator

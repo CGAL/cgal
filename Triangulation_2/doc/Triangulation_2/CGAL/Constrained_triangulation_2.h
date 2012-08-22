@@ -160,7 +160,7 @@ Constrained_triangulation_2& ct1);
 /*! 
 A templated constructor which introduces and builds 
 a constrained triangulation with constrained edges in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
+\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
 \pre The `value_type` of `first` and `last` is `Constraint`. 
 */ 
 template<class InputIterator> Constrained_triangulation_2( 
@@ -197,7 +197,7 @@ OutputItEdges out) const;
 
 /// @} 
 
-/// \name Insertion and removal 
+/// \name Insertion and Removal 
 /// @{
 
 /*! 
@@ -210,7 +210,7 @@ Vertex_handle insert(Point p, Face_handle f = Face_handle() );
 /*! 
 Same as above except that the location of the point 
 `p` to be inserted is assumed to be given by 
-`(lt,loc,i).` 
+`(lt,loc,i)`. 
 */ 
 Vertex_handle 
 insert(const Point& p, 
@@ -224,7 +224,7 @@ Vertex_handle push_back(const Point& p);
 
 /*! 
 Inserts the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
+\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
 Returns the number of inserted points. 
 \pre The `value_type` of `first` and `last` is `Point`. 
 */ 

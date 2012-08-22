@@ -232,7 +232,7 @@ Vertex_handle push_back(const Point& p);
 
 /*! 
 inserts the weighted points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
+\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
 It returns the difference of the number of vertices between after and 
 before the insertions (it may be negative due to hidden points). 
 Note that this function is not guaranteed to insert the weighted points 
@@ -247,7 +247,7 @@ insert(InputIterator first, InputIterator last);
 /*! 
 
 inserts the weighted points in the iterator range \f$ \left[\right.\f$`first`, 
-`last`\f$ \left.\right)\f$. 
+`last`\f$\left.\right)\f$. 
 It returns the difference of the number of vertices between after and 
 before the insertions (it may be negative due to hidden points). 
 Note that this function is not guaranteed to insert the weighted points 
@@ -446,7 +446,7 @@ points corresponding to the vertices of face `f`.
 Point weighted_circumcenter(const Face_handle &f) const; 
 
 /*! 
-same as weighted_circumcenter 
+same as weighted_circumcenter.
 */ 
 Point dual(const Face_handle &f) const; 
 
@@ -483,7 +483,7 @@ Stream& draw_dual(Stream & ps);
 
 /*! 
 Returns the power test of `p` with respect to the 
-power circle associated with `f` 
+power circle associated with `f`.
 */ 
 Oriented_side 
 power_test(Face_handle f, 

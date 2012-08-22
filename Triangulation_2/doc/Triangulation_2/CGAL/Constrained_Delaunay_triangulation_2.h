@@ -128,7 +128,7 @@ Constrained_Delaunay_triangulation_2& cdt1);
 /*! 
 A templated constructor which introduces and builds 
 a constrained triangulation with constrained edges in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
+\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
 \pre The `value_type` of `first` and `last` is `Constraint`. 
 */ 
 template<class InputIterator> Constrained_triangulation_2( 
@@ -168,7 +168,7 @@ Vertex_handle push_back(const Point& p);
 
 /*! 
 Inserts the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
+\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
 Returns the number of inserted points. 
 \pre The `value_type` of `first` and `last` is `Point`. 
 */ 
@@ -177,7 +177,7 @@ std::ptrdiff_t
 insert(InputIterator first, InputIterator last); 
 
 /*! 
-Inserts segment ab as a constrained edge in the triangulation. 
+Inserts segment `ab` as a constrained edge in the triangulation. 
 */ 
 void insert_constraint(Point a, Point b); 
 

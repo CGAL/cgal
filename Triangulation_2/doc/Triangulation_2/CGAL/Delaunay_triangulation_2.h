@@ -51,7 +51,7 @@ When dealing with a large triangulations, the user is advised to
 encapsulate the Delaunay triangulation class into a triangulation
 hierarchy, which means to use the class
 `Triangulation_hierarchy_2<Tr>` with the template parameter
-instantiated with `Delaunay_triangulation_2` . The triangulation
+instantiated with `Delaunay_triangulation_2`. The triangulation
 hierarchy will then offer the same functionalities but be much more
 for efficient for locations and insertions.
 
@@ -133,8 +133,8 @@ Vertex_handle insert(const Point& p, Face_handle f=Face_handle());
 
 /*! 
 inserts a point `p`, the location of which is supposed to be 
-given by `(lt,loc,li)`, see the description of member function 
-`locate` in class `Triangulation_2<Traits,Tds>`. 
+given by `(lt,loc,li)`. See the description of member function 
+`Triangulation_2::locate`. 
 */ 
 Vertex_handle insert(const Point& p, Locate_type& lt, 
 Face_handle loc, int li ); 
@@ -146,7 +146,7 @@ Vertex_handle push_back(const Point& p);
 
 /*! 
 inserts the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
+\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
 Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
 following the order of `PointInputIterator`, as `spatial_sort` 
@@ -160,7 +160,7 @@ insert(PointInputIterator first, PointInputIterator last);
 /*! 
 
 inserts the points in the iterator range \f$ \left[\right.\f$`first`, 
-`last`\f$ \left.\right)\f$. Returns the number of inserted points. 
+`last`\f$\left.\right)\f$. Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
 following the order of `PointWithInfoInputIterator`, as `spatial_sort` 
 is used to improve efficiency. 
@@ -265,7 +265,7 @@ Face_handle start) const;
 
 /// @} 
 
-/// \name Voronoi diagram 
+/// \name Voronoi Diagram 
 /// The following member functions provide the elements of the dual
 /// Voronoi diagram.
 /// @{

@@ -54,7 +54,7 @@ the triangulation base class.
 typedef Tr Triangulation; 
 
 /*! 
-the intersection tag.s 
+the intersection tag.
 */ 
 typedef Itag Intersection_tag; 
 
@@ -114,7 +114,7 @@ typedef Context_iterator;
 /// @{
 
 /*! 
-Introduces an empty triangulation. 
+Introduces an empty triangulation `ctp`.
 */ 
 Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits()); 
 
@@ -134,7 +134,7 @@ const Geom_traits& t = Geom_traits());
 /*! 
 Introduces and builds a constrained triangulation 
 from the constraints in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
+\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
 \pre The `value_type` of `first` and `last` is `Constraint`. 
 
 */ 
@@ -192,7 +192,7 @@ Vertex_handle push_back(const Point& p);
 
 /*! 
 Inserts the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
+\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
 Returns the number of inserted points. 
 \pre The `value_type` of `first` and `last` is `Point`. 
 */ 
@@ -253,7 +253,7 @@ Subconstraint_iterator subconstraints_end() const;
 
 /*! 
 Returns the number of constraints enclosing the sub-constraint 
-`(va,vb).` 
+`(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 int number_of_enclosing_constraints(Vertex_handle va, 
@@ -269,7 +269,7 @@ Context context(Vertex_handle va, Vertex_handle vb);
 /*! 
 Returns an iterator pointing on the first `Context` 
 of the sequence of `Contexts` 
-corresponding to the constraints enclosing the sub-constraint`(va,vb).` 
+corresponding to the constraints enclosing the sub-constraint`(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 Context_iterator contexts_begin(Vertex_handle va, 
@@ -278,7 +278,7 @@ Vertex_handle vb);
 /*! 
 Returns an iterator past the last `Context` 
 of the sequence of `Contexts` 
-corresponding to the constraints enclosing the `(va,vb).` 
+corresponding to the constraints enclosing the `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 Context_iterator contexts_end(Vertex_handle va, 
@@ -286,7 +286,7 @@ Vertex_handle vb);
 
 /*! 
 Returns an iterator on the first vertex on the constraint 
-`(va,vb)` 
+`(va,vb)`.
 \pre `va` and `vb` refer to the vertices of an input constraint. 
 */ 
 Vertices_in_constraint_iterator 
@@ -294,7 +294,7 @@ vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb);
 
 /*! 
 Returns an iterator past the last vertex on the constraint 
-`(va,vb)` 
+`(va,vb)`.
 \pre `va` and `vb` refer to the vertices of an input constraints. 
 */ 
 Vertices_in_constraint_iterator 

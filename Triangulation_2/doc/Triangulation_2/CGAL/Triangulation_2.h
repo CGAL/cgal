@@ -191,17 +191,17 @@ the triangulation data structure type.
 typedef Tds Triangulation_data_structure; 
 
 /*! 
-the point type 
+the point type.
 */ 
 typedef Traits::Point_2 Point; 
 
 /*! 
-the segment type 
+the segment type.
 */ 
 typedef Traits::Segment_2 Segment; 
 
 /*! 
-the triangle type 
+the triangle type.
 */ 
 typedef Traits::Triangle_2 Triangle; 
 
@@ -221,12 +221,12 @@ the edge type.
 typedef Tds::Edge Edge; 
 
 /*! 
-Size type (an unsigned integral type) 
+Size type (an unsigned integral type).
 */ 
 typedef Tds::size_type size_type; 
 
 /*! 
-Difference type (a signed integral type) 
+Difference type (a signed integral type).
 */ 
 typedef Tds::difference_type difference_type; 
 
@@ -258,12 +258,12 @@ typedef Tds::difference_type difference_type;
 /// the triangulation.
 
 /*! 
-handle to a vertex 
+handle to a vertex.
 */ 
 typedef Tds::Vertex_handle Vertex_handle; 
 
 /*! 
-handle to a face 
+handle to a face.
 */ 
 typedef Tds::Face_handle Face_handle; 
 
@@ -273,12 +273,12 @@ iterator over all faces.
 typedef Tds::Face_iterator All_faces_iterator; 
 
 /*! 
-iterator over all edges 
+iterator over all edges.
 */ 
 typedef Tds::Edge_iterator All_edges_iterator; 
 
 /*! 
-iterator over all vertices 
+iterator over all vertices.
 */ 
 typedef Tds::Vertex_iterator All_vertices_iterator; 
 
@@ -294,8 +294,7 @@ typedef Hidden_type Finite_edges_iterator
 ; 
 
 /*! 
-iterator over finite 
-vertices. 
+iterator over finite vertices. 
 */ 
 typedef Hidden_type Finite_vertices_iterator; 
 
@@ -681,7 +680,7 @@ Vertex_handle push_back(const Point& p);
 
 /*! 
 Inserts the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
+\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
 Returns the number of inserted points. 
 \pre The `value_type` of `InputIterator` is `Point`. 
 */ 
@@ -1000,7 +999,7 @@ Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f) ;
 
 /// @} 
 
-/// \name Traversal between adjacent faces 
+/// \name Traversal Between Adjacent Faces 
 /// @{
 
 /*! 
