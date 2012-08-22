@@ -209,7 +209,7 @@ namespace for the XML file to be processed properly.  -->
         </doxygen>
       </project>
 
-      <!-- <project> -->
+      <project>
         <name>Convex_decomposition_3</name>
         <input>../Convex_decomposition_3/include</input>
         <input>../Convex_decomposition_3/doc/Convex_decomposition_3</input>
