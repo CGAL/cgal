@@ -3180,6 +3180,7 @@ Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#application/pdf
 Polygon/doc_tex/Polygon/pgn_algos.xml svneol=native#text/xml
 Polygon/doc_tex/Polygon/polygon.png -text
+Polyhedron/demo/Polyhedron/Camera_positions_list.ui -text
 Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_corefinement_plugin.cpp -text
