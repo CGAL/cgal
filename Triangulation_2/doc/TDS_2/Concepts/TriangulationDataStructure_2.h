@@ -183,8 +183,8 @@ vertex.
 The concept `TriangulationDataStructure_2::Face` describes the types used to store the faces 
 face class of a 
 `TriangulationDataStructure_2`. 
-A `TriangulationDataStructure_2::Face` stores three pointers to its three vertices 
-and three pointers to its three neighbors. 
+A `TriangulationDataStructure_2::Face` stores three handles to its three vertices 
+and three handles to its three neighbors. 
 The vertices are indexed 0,1, and 2 in counterclockwise order. 
 The neighbor indexed \f$ i\f$ lies 
 opposite to vertex i. 
@@ -297,22 +297,22 @@ sets neighbor `i` to be `n`.
 void set_neighbor(int i, Face_handle n); 
 
 /*! 
-sets the vertices pointers to `NULL`. 
+sets the vertex handles to `NULL`. 
 */ 
 void set_vertices(); 
 
 /*! 
-sets the vertices pointers. 
+sets the vertex handles. 
 */ 
 void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2); 
 
 /*! 
-sets the neighbors pointers to `NULL`. 
+sets the neighbors handles to `NULL`. 
 */ 
 void set_neighbors();
 
 /*! 
-sets the neighbors pointers. 
+sets the neighbors handles. 
 */ 
 void set_neighbors(Face_handle n0, 
 Face_handle n1, 
@@ -430,7 +430,7 @@ typedef std::pair<Face_handle,int> Edge;
 /// A face circulator is invalidated by any modification of the face it 
 /// points to. An edge circulator is invalidated by any modification of 
 /// anyone of the two faces incident to the edge pointed to. A vertex 
-/// circulator that turns around vertex `v` and that has as value a pointer 
+/// circulator that turns around vertex `v` and that has as value a handle 
 /// to vertex `w`, is invalidated by any modification of anyone of the two 
 /// faces incident to `v` and `w`.
 
@@ -486,7 +486,7 @@ TriangulationDataStructure_2& tds1);
 /*! 
 Assignment. All the vertices and faces of `tds1` are duplicated 
 in `tds` . Former faces and vertices of `tds` , if any, are 
-deleted 
+deleted.
 */ 
 TriangulationDataStructure_2& operator=( const 
 TriangulationDataStructure_2& tds1); 
@@ -602,7 +602,7 @@ Vertex_handle v3)
 const; 
 
 /*! 
-as above. In addition, if `true` is returned, fr is a pointer 
+as above. In addition, if `true` is returned, `fr` is a handle 
 to the face with `v1`, `v2` and `v3` 
 as vertices. 
 */ 
@@ -616,7 +616,7 @@ Face_handle &fr) const;
 /// @{
 
 /*! 
-visits all faces 
+visits all faces.
 */ 
 Face_iterator faces_begin() const; 
 
@@ -626,7 +626,7 @@ Face_iterator faces_begin() const;
 Face_iterator faces_end() const; 
 
 /*! 
-visits all vertices 
+visits all vertices.
 */ 
 Vertex_iterator vertices_begin() const; 
 
@@ -636,7 +636,7 @@ Vertex_iterator vertices_begin() const;
 Vertex_iterator vertices_end() const; 
 
 /*! 
-visits all edges 
+visits all edges.
 */ 
 Edge_iterator edges_begin() const; 
 
@@ -696,20 +696,20 @@ void flip(Face_handle f, int i);
 
 /*! 
 creates the first 
-vertex and returns a pointer to it. 
+vertex and returns a handle to it. 
 */ 
 Vertex_handle insert_first(); 
 
 /*! 
 creates the second 
-vertex and returns a pointer to it. 
+vertex and returns a handle to it. 
 */ 
 Vertex_handle insert_second(); 
 
 /*! 
 adds a 
 vertex `v` splitting 
-edge `i` of face `f`. Return a pointer to `v`. 
+edge `i` of face `f`. Return a handle to `v`. 
 */ 
 Vertex_handle insert_in_edge(Face_handle f, int i); 
 
@@ -717,7 +717,7 @@ Vertex_handle insert_in_edge(Face_handle f, int i);
 adds a vertex 
 `v` splitting face 
 `f` in three. %Face `f` is modified, 
-two new faces are created. Return a pointer to `v` 
+two new faces are created. Return a handle to `v` 
 */ 
 Vertex_handle insert_in_face(Face_handle f); 
 
@@ -791,7 +791,7 @@ void dim_down(Face_handle f, int i);
 
 /*! 
 creates a new vertex `v` and use it to star the hole 
-whose boundary is described by the sequence of edges `[edge_begin, edge_end)`. Returns a pointer to the vertex. 
+whose boundary is described by the sequence of edges `[edge_begin, edge_end)`. Returns a handle to the vertex. 
 */ 
 template< class EdgeIt> 
 Vertex_handle star_hole(EdgeIt edge_begin,EdgeIt edge_end); 
@@ -917,7 +917,7 @@ is output first or skipped if `skip_first` is true.
 void file_output( ostream& os, Vertex_handle v = Vertex_handle(), bool skip_first=false); 
 
 /*! 
-inputs `tds` from file and returns a pointer to the first input vertex. 
+inputs `tds` from file and returns a handle to the first input vertex. 
 If `skip_first` is true, it is assumed that the first 
 vertex has been omitted when output. 
 */ 
