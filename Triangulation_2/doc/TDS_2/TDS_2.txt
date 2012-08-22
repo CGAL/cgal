@@ -40,10 +40,10 @@ The three vertices of a face are indexed with 0, 1 and 2.
 The neighbors of a face are also 
 indexed with 0,1,2 in such a way that the neighbor indexed by `i`
 is opposite to the vertex with the same index.
-See Figure \ref 2D_TDS_Fig_neighbors1, 
+See Figure \ref TDS_2D_Fig_neighbors1, 
 the functions `ccw(i)`
 and `cw(i)` shown on this figure
-compute respectively \f$ i+1\f$ and \f$ i-1\f$ modulo 3
+compute respectively \f$ i+1\f$ and \f$ i-1\f$ modulo 3.
 
 Each edge has two implicit representations: the edge
 of a face `f` which is opposed to the vertex indexed `i`,
@@ -133,8 +133,7 @@ to perform the following combinatorial transformation of the triangulation:
 <LI>addition of a new vertex splitting a given face 
 see Figure \ref TDS_2D_Fig_insertion,
 <LI>addition of a new vertex splitting a given edge,
-<LI>addition of a new vertex raising by one the dimension of a degenerate
-- lower dimensional triangulation, 
+<LI>addition of a new vertex raising by one the dimension of a degenerate - lower dimensional triangulation, 
 <LI>removal of a vertex incident to three faces, 
 <LI>removal of a vertex lowering the dimension of the triangulation
 </UL>
@@ -152,7 +151,7 @@ as a default triangulation data structure.
 
 In order to provide flexibility, the default triangulation data
 structure is templated by two parameters 
-which stands respectively for a vertex base class and a face base
+which stand respectively for a vertex base class and a face base
 class.
 The concept 
 `TriangulationDSVertexBase_2` and 
@@ -241,7 +240,7 @@ typedef Vertex_base<TDS2> Other;
 \endcode
 
 Imagine an analog `Face_base` class.
-The triangulation data structure is then instantiate as follows :
+The triangulation data structure is then instantiate as follows:
 
 \code{.cpp}
 

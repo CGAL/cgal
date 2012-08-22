@@ -22,9 +22,9 @@ and to its three adjacent faces.
 Each vertex gives access to one of its incident faces 
 and through that face to the circular list of its incident faces. 
 
-The three vertices of a face are indexed with 0, 1 and 2. 
+The three vertices of a face are indexed with 0, 1, and 2. 
 The neighbors of a face are also 
-indexed with 0,1,2 in such a way that the neighbor indexed by `i` 
+indexed with 0, 1, and 2 in such a way that the neighbor indexed by `i` 
 is opposite to the vertex with the same index. 
 
 Each edge has two implicit representations : the edge 
@@ -84,7 +84,7 @@ The concept `TriangulationDataStructure_2::Vertex` describes the type used by a
 `TriangulationDataStructure_2` to store the vertices. 
 
 Some of the requirements listed below are of geometric nature 
-and are <I>optional</I> 
+and are *optional* 
 when using the triangulation data structure class alone. 
 They became required when the triangulation data structure is plugged 
 into a triangulation. 
@@ -413,15 +413,27 @@ typedef std::pair<Face_handle,int> Edge;
 
 /// @}
 
-/// \name Iterators
-/// The following iterators allow one to visit all the vertices, edges
+/// \name Iterators and Circulators
+///
+/// The iterators allow one to visit all the vertices, edges
 /// and faces of a triangulation data structure. They are all
-/// bidirectional, non-mutable iterators. The following circulators
+/// bidirectional, non-mutable iterators. 
+///
+/// The circulators
 /// allow to visit all the edges or faces incident to a given vertex
-/// and all the vertices adjacent to a given vertex. They are all
-/// bidirectional and non mutable. Iterators and circulators are
+/// and all the vertices adjacent to a given vertex. 
+///
+/// They are all bidirectional and non mutable. Iterators and circulators are
 /// convertible to the corresponding handles, thus they can be passed
 /// directly as argument to the functions expecting a handle.
+///
+/// A face circulator is invalidated by any modification of the face it 
+/// points to. An edge circulator is invalidated by any modification of 
+/// anyone of the two faces incident to the edge pointed to. A vertex 
+/// circulator that turns around vertex `v` and that has as value a pointer 
+/// to vertex `w`, is invalidated by any modification of anyone of the two 
+/// faces incident to `v` and `w`.
+
 /// @{
 
 
@@ -461,7 +473,7 @@ typedef Hidden_type Vertex_circulator;
 /// @{
 
 /*! 
-default constructor. 
+Default constructor of `tds`. 
 */ 
 TriangulationDataStructure_2(); 
 
@@ -506,17 +518,17 @@ void clear();
 /// @{
 
 /*! 
-  \advanced returns the dimension of the triangulation. 
+  \advanced returns the dimension of the triangulation data structure. 
 */ 
 int dimension() const; 
 
 /*! 
-returns the number of vertices in the data structure. 
+returns the number of vertices in the triangulation data structure. 
 */ 
 size_type number_of_vertices() const; 
 
 /*! 
-returns the number of two dimensional faces in the data structure. 
+returns the number of two dimensional faces in the triangulation data structure. 
 */ 
 size_type number_of_faces() const ; 
 
@@ -527,8 +539,8 @@ size_type number_of_edges() const;
 
 /*! 
 returns the number of full dimensional faces, 
-i.e. faces of dimension equal to the dimension 
-of the triangulation. This is the actual 
+i.e.\ faces of dimension equal to the dimension 
+of the triangulation data structure. This is the actual 
 number of faces stored in the triangulation data structure. 
 */ 
 size_type number_of_full_dim_faces() const; 
@@ -549,20 +561,20 @@ void set_dimension (int n);
 /// @{
 
 /*! 
-returns true if 
+returns `true` if 
 `v` is a vertex of `tds`. 
 */ 
 bool is_vertex(Vertex_handle v) const; 
 
 /*! 
-tests whether `(fh,i)` is an edge of `tds`. Answers `false` when 
+returns `true` if `(fh,i)` is an edge of `tds`. Returns `false` when 
 `dimension()` \f$ <1\f$ . 
 */ 
 bool is_edge(Face_handle fh, int i) const; 
 
 /*! 
-returns true if 
-`va vb` is an edge of `tds`. 
+returns `true` if 
+`(va, vb)` is an edge of `tds`. 
 */ 
 bool is_edge(Vertex_handle va, Vertex_handle vb) const; 
 
@@ -570,19 +582,19 @@ bool is_edge(Vertex_handle va, Vertex_handle vb) const;
 as previous. In addition, if true is returned 
 `fr` and `i` are set such that the pair `(fr,i)` 
 is the description 
-of the ordered edge `va vb`. 
+of the ordered edge `(va, vb)`. 
 */ 
 bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle &fr, 
 int &i) const; 
 
 /*! 
-tests whether `fh` is a face of `tds`. Answers `false` when 
+returns `true` if `fh` is a face of `tds`. Returns `false` when 
 `dimension()` \f$ <2\f$ . 
 */ 
 bool is_face(Face_handle fh) const; 
 
 /*! 
-`true` if there is a face having `v1`, `v2` and`v3` 
+`true` if there is a face having `v1`, `v2`, and `v3` 
 as vertices. 
 */ 
 bool is_face(Vertex_handle v1, Vertex_handle v2, 
@@ -599,8 +611,8 @@ Face_handle &fr) const;
 
 /// @} 
 
-/// \name Traversing the triangulation 
-CONVERROR Check if this needs to be spread\n/// Three circulator classes allow to traverse the edges or faces incident to a vertex or the vertices adjacent to this vertex.. A face circulator is invalidated by any modification of the face it points to. An edge circulator is invalidated by any modification of anyone of the two faces incident to the edge pointed to. A vertex circulator that turns around vertex `v` and that has as value a pointer to vertex `w`, is invalidated by any modification of anyone of the two faces incident to `v` and `w`.
+/// \name Traversing the Triangulation 
+
 /// @{
 
 /*! 
@@ -670,13 +682,15 @@ Edge mirror_edge(Edge e) const;
 /// @} 
 
 /// \name Modifiers 
-CONVERROR Check if this needs to be spread\n/// The following modifier member functions guarantee the combinatorial validity of the resulting triangulation. CAPTION Flip. \anchor I1_fig_flip CONVERROR HtmlOnly needs treatment <CENTER> <img border=0 src="Flip.gif" align=middle alt="Flip"> </CENTER> CONVERROR EndHtmlOnly CONVERROR HtmlOnly needs treatment <CENTER> <img border=0 src="Three.gif" align=middle alt="Insertion"> </CENTER> CONVERROR EndHtmlOnly The following operation, <TT>dim_down</TT>, is necessary when the displacement of a vertex decreases the dimension of the triangulation. CAPTION From a two-dimensional data structure to a one-dimensional data structure. \anchor figtdsdim_down_2 CONVERROR HtmlOnly needs treatment <CENTER> <img border=0 border=0 height="200" src="./tds-dim_down.png" align=middle alt="From a two-dimensional data structure to a one-dimensional data structure."> </CENTER> CONVERROR EndHtmlOnly CONVERROR ADVANCED The following modifiers are required for convenience of the advanced user. They do not guarantee the combinatorial validity of the resulting triangulation.
+
 /// @{
 
 /*! 
 exchanges the edge incident to 
 `f` and `f->neighbor(i)` with the other 
 diagonal of the quadrilateral formed by `f` and `f->neighbor(i)`. 
+
+\image html Flip.gif "Flip"
 */ 
 void flip(Face_handle f, int i); 
 
@@ -702,18 +716,18 @@ Vertex_handle insert_in_edge(Face_handle f, int i);
 /*! 
 adds a vertex 
 `v` splitting face 
-`f` in three. Face `f` is modified, 
+`f` in three. %Face `f` is modified, 
 two new faces are created. Return a pointer to `v` 
 */ 
 Vertex_handle insert_in_face(Face_handle f); 
 
 /*! 
 adds 
-a vertex `v`, increasing by one the dimension of the triangulation. 
-Vertex `v` and the existing vertex `w` are linked to all 
-the vertices of the triangulation. 
+a vertex `v`, increasing by one the dimension of the triangulation data structure. 
+%Vertex `v` and the existing vertex `w` are linked to all 
+the vertices of the triangulation data structure. 
 The Boolean `orient` decides the final orientation of all 
-faces. A pointer to vertex `v` is returned. 
+faces. A handle to vertex `v` is returned. 
 
 */ 
 Vertex_handle insert_dim_up(Vertex_handle w, bool 
@@ -724,7 +738,9 @@ removes a vertex of degree 3. Two of the incident faces are destroyed,
 the third one is modified. 
 If parameter `f` is specified, it has to be a face incident to `v` 
 and will be the modified face. 
-\pre Vertex `v` is a finite vertex with degree 3 and, if specified, face `f` is incident to `v`. 
+\pre %Vertex `v` is a finite vertex with degree 3 and, if specified, face `f` is incident to `v`. 
+
+\image html Three.gif "Insertion"
 */ 
 void remove_degree_3(Vertex_handle v, Face *f=NULL); 
 
@@ -741,34 +757,48 @@ void remove_first(Vertex_handle v);
 
 /*! 
 removes vertex `v` incident to all other vertices 
-and decreases by one the dimension of the triangulation. 
+and decreases by one the dimension of the triangulation data structure. 
 \pre If the dimension is 2, the number of vertices is more than 3, if the dimension is 1, the number of vertices is 2. 
 */ 
 void remove_dim_down(Vertex_handle v); 
 
 /*! 
+must be called when the displacement of a vertex decreases the dimension of the triangulation data structure.
+
 The link of a vertex \f$ v\f$ is formed by the edges disjoint from \f$ v\f$ 
 that are included in the faces incident to \f$ v\f$. 
 When the link of `v = f->vertex(i)` contains all the other vertices 
-of the two-dimensional triangulation data-structure (\f$ \mathbb{S}^2\f$), `dim_down` crushes the two-dimensional 
+of the two-dimensional triangulation data structure (\f$ \mathbb{S}^2\f$), `dim_down` crushes the two-dimensional 
 data-structure (\f$ \mathbb{S}^2\f$) onto the one-dimensional data structure (\f$ \mathbb{S}^1\f$) formed by the link of `v` 
 augmented with the vertex `v` itself; this one is placed on the edge `(f, i)`
 (see Fig. \ref figtdsdim_down_2). 
 \pre `dimension()` must be equal to `2`, the degree of `f->vertex(i)` must be equal to the total number of vertices minus 1. 
 
+\anchor figtdsdim_down_2
+\image html tds-dim_down.png "From a two-dimensional data structure to a one-dimensional data structure."
+
 */
 void dim_down(Face_handle f, int i); 
 
+/// @} 
+
+/// \name Advanced Modifiers 
+/// The following modifiers are required for convenience of the advanced user. 
+/// They do not guarantee the combinatorial validity of the resulting triangulation data structure.
+
+/// @{
+
+
 /*! 
 creates a new vertex `v` and use it to star the hole 
-whose boundary is described by the sequence of edges `[edge_begin, edge_end[`. Returns a pointer to the vertex. 
+whose boundary is described by the sequence of edges `[edge_begin, edge_end)`. Returns a pointer to the vertex. 
 */ 
 template< class EdgeIt> 
 Vertex_handle star_hole(EdgeIt edge_begin,EdgeIt edge_end); 
 
 /*! 
 same as above, except that, to build the new faces, the algorithm 
-first recycles faces in the sequence `[face_begin, face_end[` and create new ones when the sequence is exhausted. 
+first recycles faces in the sequence `[face_begin, face_end)` and create new ones when the sequence is exhausted. 
 */ 
 template< class EdgeIt, class FaceIt> 
 Vertex_handle star_hole(EdgeIt edge_begin, 
@@ -778,7 +808,7 @@ FaceIt face_end);
 
 /*! 
 uses vertex v to star the hole 
-whose boundary is described by the sequence of edges`[edge_begin, edge_end[`. 
+whose boundary is described by the sequence of edges `[edge_begin, edge_end)`. 
 
 */ 
 template< class EdgeIt> 
@@ -868,14 +898,14 @@ int cw(int i) const;
 
 /*! 
 checks the combinatorial validity of the 
-triangulation: call the `is_valid()` member function for each vertex and 
+triangulation data structure: call the `is_valid()` member function for each vertex and 
 each face, checks the number of vertices and the Euler relation 
 between numbers of vertices, faces and edges. 
 */ 
 bool is_valid(); 
 
 /*! 
-Returns the degree of `v` in the triangulation. 
+Returns the degree of `v` in the triangulation data structure. 
 */ 
 size_type degree(Vertex_handle v) const; 
 
@@ -894,7 +924,7 @@ vertex has been omitted when output.
 Vertex_handle file_input( istream& is, bool skip_first=false); 
 
 /*! 
-reads a combinatorial triangulation from `is` and assigns it to `tds` 
+reads a combinatorial triangulation data structure from `is` and assigns it to `tds`.
 */ 
 istream& operator>> (istream& is, TriangulationDataStructure_3 & tds); 
 
