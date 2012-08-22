@@ -192,6 +192,18 @@ void test3(){
   P yy[]={y[1],y[3],y[0],y[2]};
   assert(ifo(fo3,yy+0,yy+3)==base);
   assert(ifo(fo3,yy+1,yy+4)==base);
+  std::cout << ifsos(fo3,y+0,y+3,y[3]) << ' ';
+  std::cout << ifsos(fo3,y+1,y+4,y[0]) << ' ';
+  std::cout << ifsos(fo3,yy+0,yy+3,yy[3]) << ' ';
+  std::cout << ifsos(fo3,yy+1,yy+4,yy[0]) << '\n';
+  P buf[]={cp(100,900,0),y[0],y[1],y[2],y[3]};
+  std::cout << sos(buf+0,buf+5) << ' ';
+  buf[1]=y[1];buf[2]=y[2];buf[3]=y[3];buf[4]=y[0];
+  std::cout << sos(buf+0,buf+5) << ' ';
+  buf[1]=yy[0];buf[2]=yy[1];buf[3]=yy[2];buf[4]=yy[3];
+  std::cout << sos(buf+0,buf+5) << ' ';
+  buf[1]=yy[1];buf[2]=yy[2];buf[3]=yy[3];buf[4]=yy[0];
+  std::cout << sos(buf+0,buf+5) << '\n';
 }
 
 int main(){
