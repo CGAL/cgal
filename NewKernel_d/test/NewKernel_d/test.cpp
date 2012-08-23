@@ -175,7 +175,7 @@ void test3(){
   USE_TYPE(CV);
   USE_TYPE(FO);
   Ker k
-#if 0
+#if 1
     (3)
 #endif
     ;
