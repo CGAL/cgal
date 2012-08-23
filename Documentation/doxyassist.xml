@@ -206,6 +206,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Kernel_23.tag</string>
           <string name="EXAMPLE_PATH">../Kernel_23/examples</string>
           <string name="IMAGE_PATH">../Kernel_23/doc/Kernel_23/fig</string>
+          <bool name="SORT_GROUP_NAMES">true</bool>
         </doxygen>
       </project>
 
