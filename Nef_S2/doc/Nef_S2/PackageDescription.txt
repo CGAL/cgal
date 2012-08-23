@@ -7,7 +7,7 @@
 \addtogroup PkgNefS2
 \todo check generated documentation
 \PkgDescriptionBegin{2D Boolean Operations on Nef Polygons Embedded on the Sphere }
-\PkgPicture{teaser-small.png}
+\PkgPicture{Nef_S2-teaser-small.png}
 \PkgAuthor{Peter Hachenberger  and Lutz Kettner}
 \PkgDesc{This package offers the equivalent to 2D Nef Polygons in the plane.  Here halfplanes correspond to half spheres delimited by great circles. }
 \PkgSince{3.1}
