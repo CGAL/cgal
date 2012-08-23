@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes3
 
 An object of the class `Direction_3` is a vector in the three-dimensional 
 vector space \f$ \R^3\f$ where we forget about their length. They can be 
@@ -46,7 +46,7 @@ Direction_3(const Segment_3<Kernel> &s);
 
 /*! 
 introduces a direction `d` initialized with the direction 
-from the origin to the point with Cartesian coordinates \f$ (x, y, z)\f$. 
+from the origin to the point with %Cartesian coordinates \f$ (x, y, z)\f$. 
 */ 
 Direction_3(const Kernel::RT &x, const Kernel::RT &y, const Kernel::RT &z); 
 

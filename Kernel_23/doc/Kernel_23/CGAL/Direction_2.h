@@ -1,6 +1,6 @@
 namespace CGAL {
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes2
 
 An object of the class `Direction_2` is a vector in the two-dimensional 
 vector space \f$ \R^2\f$ where we forget about its length. They can be 
@@ -46,7 +46,7 @@ Direction_2(const Segment_2<Kernel> &s);
 
 /*! 
 introduces a direction `d` passing through the origin 
-and the point with Cartesian coordinates \f$ (x, y)\f$. 
+and the point with %Cartesian coordinates \f$ (x, y)\f$. 
 */ 
 Direction_2(const Kernel::RT &x, const Kernel::RT &y); 
 

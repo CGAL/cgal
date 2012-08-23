@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes2
 
 An object of the class `Point_2` is a point in the two-dimensional 
 Euclidean plane \f$ \E^2\f$. 
@@ -22,7 +22,7 @@ Example
 -------------- 
 
 The following declaration creates two points with 
-Cartesian double coordinates. 
+%Cartesian double coordinates. 
 
 <PRE> 
 
@@ -50,7 +50,7 @@ public:
 
 /*! 
 An iterator for enumerating the 
-Cartesian coordinates of a point. 
+%Cartesian coordinates of a point. 
 */ 
 typedef Hidden_type Cartesian_const_iterator; 
 
@@ -60,7 +60,7 @@ typedef Hidden_type Cartesian_const_iterator;
 /// @{
 
 /*! 
-introduces a variable `p` with Cartesian coordinates 
+introduces a variable `p` with %Cartesian coordinates 
 \f$ (0,0)\f$. 
 */ 
 Point_2(const Origin &ORIGIN); 
@@ -107,7 +107,7 @@ bool operator!=(const Point_2<Kernel> &q) const;
 
 /// \name Coordinate Access
 /// There are two sets of coordinate access functions, namely to the
-/// homogeneous and to the Cartesian coordinates. They can be used
+/// homogeneous and to the %Cartesian coordinates. They can be used
 /// independently from the chosen kernel model. Note that you do not
 /// loose information with the homogeneous representation, because the
 /// `FieldNumberType` is a quotient.
@@ -129,12 +129,12 @@ returns the homogenizing coordinate.
 Kernel::RT hw() const; 
 
 /*! 
-returns the Cartesian \f$ x\f$ coordinate, that is \f$ hx/hw\f$. 
+returns the %Cartesian \f$ x\f$ coordinate, that is \f$ hx/hw\f$. 
 */ 
 Kernel::FT x() const; 
 
 /*! 
-returns the Cartesian \f$ y\f$ coordinate, that is \f$ hy/hw\f$. 
+returns the %Cartesian \f$ y\f$ coordinate, that is \f$ hy/hw\f$. 
 */ 
 Kernel::FT y() const; 
 
@@ -142,7 +142,7 @@ Kernel::FT y() const;
 
 /// \name Convenience Operations
 /// The following operations are for convenience and for compatibility
-/// with higher dimensional points. Again they come in a Cartesian and
+/// with higher dimensional points. Again they come in a %Cartesian and
 /// in a homogeneous flavor.
 /// @{
 
@@ -153,7 +153,7 @@ returns the i'th homogeneous coordinate of `p`, starting with 0.
 Kernel::RT homogeneous(int i) const; 
 
 /*! 
-returns the i'th Cartesian coordinate of `p`, starting with 0. 
+returns the i'th %Cartesian coordinate of `p`, starting with 0. 
 \pre \f$ 0\leq i \leq1\f$. 
 */ 
 Kernel::FT cartesian(int i) const; 
@@ -165,7 +165,7 @@ returns `cartesian(i)`.
 Kernel::FT operator[](int i) const; 
 
 /*! 
-returns an iterator to the Cartesian coordinates 
+returns an iterator to the %Cartesian coordinates 
 of `p`, starting with the 0th coordinate. 
 */ 
 Cartesian_const_iterator cartesian_begin() const; 

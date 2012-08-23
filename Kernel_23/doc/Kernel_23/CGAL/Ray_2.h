@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes2
 
 An object `r` of the data type `Ray_2` is a directed 
 straight ray in the two-dimensional Euclidean plane \f$ \E^2\f$. It starts 

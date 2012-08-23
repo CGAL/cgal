@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes2
 
 An object of type `Circle_2` is a circle in the 
 two-dimensional Euclidean plane \f$ \E^2\f$. The circle is oriented, i.e. 

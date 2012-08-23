@@ -1,16 +1,16 @@
 namespace CGAL {
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes2
 
 An object `l` of the data type `Line_2` is a directed 
 straight line in the two-dimensional Euclidean plane \f$ \E^2\f$. It is 
-defined by the set of points with Cartesian coordinates \f$ (x,y)\f$ 
+defined by the set of points with %Cartesian coordinates \f$ (x,y)\f$ 
 that satisfy the equation 
 
 \f[ l:\; a\, x +b\, y +c = 0. \f]
 
 The line splits \f$ \E^2\f$ in a <I>positive</I> and a <I>negative</I> 
-side. A point \f$ p\f$ with Cartesian coordinates 
+side. A point \f$ p\f$ with %Cartesian coordinates 
 \f$ (px, py)\f$ is on the positive side of `l`, iff 
 \f$ a\, px + b\, py +c > 0\f$, it is 
 on the negative side of `l`, iff 
@@ -20,9 +20,9 @@ The positive side is to the left of `l`.
 Example 
 -------------- 
 
-Let us first define two Cartesian two-dimensional points in the Euclidean 
+Let us first define two %Cartesian two-dimensional points in the Euclidean 
 plane \f$ \E^2\f$. Their 
-dimension and the fact that they are Cartesian is expressed by 
+dimension and the fact that they are %Cartesian is expressed by 
 the suffix `_2` and the representation type `Cartesian`. 
 
 \code
@@ -46,7 +46,7 @@ public:
 /// @{
 
 /*! 
-introduces a line `l` with the line equation in Cartesian 
+introduces a line `l` with the line equation in %Cartesian 
 coordinates \f$ ax +by +c = 0\f$. 
 */ 
 Line_2(const Kernel::RT &a, const Kernel::RT &b, const Kernel::RT &c); 

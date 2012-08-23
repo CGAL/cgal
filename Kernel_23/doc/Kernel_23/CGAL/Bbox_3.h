@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes3
 
 An object `b` of the class `Bbox_3` is a bounding 
 box in the three-dimensional Euclidean space \f$ \E^3\f$. 

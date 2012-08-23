@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes3
 
 An object of type `Circle_3` is a circle in the 
 three-dimensional Euclidean space \f$ \E^3\f$. Note that the 

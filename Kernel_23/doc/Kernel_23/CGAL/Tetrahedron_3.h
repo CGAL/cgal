@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes3
 
 An object \f$ t\f$ of the class `Tetrahedron_3` is an oriented 
 tetrahedron in the three-dimensional Euclidean space \f$ \E^3\f$. 

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes3
 
 An object of the class `Vector_3` is a vector in the three-dimensional 
 vector space \f$ \R^3\f$. Geometrically spoken a vector is the difference 
@@ -26,7 +26,7 @@ public:
 
 /*! 
 An iterator for enumerating the 
-Cartesian coordinates of a vector. 
+%Cartesian coordinates of a vector. 
 */ 
 typedef Hidden_type Cartesian_const_iterator; 
 
@@ -102,7 +102,7 @@ bool operator!=(const Vector_3<Kernel> &w) const;
 
 /// \name Coordinate Access
 /// There are two sets of coordinate access functions, namely to the
-/// homogeneous and to the Cartesian coordinates. They can be used
+/// homogeneous and to the %Cartesian coordinates. They can be used
 /// independently from the chosen kernel model. Note that you do not
 /// loose information with the homogeneous representation, because the
 /// `FieldNumberType` is a quotient.
@@ -147,7 +147,7 @@ Kernel::FT z() const;
 
 /// \name Convenience Operations
 /// The following operations are for convenience and for compatibility
-/// with higher dimensional vectors. Again they come in a Cartesian
+/// with higher dimensional vectors. Again they come in a %Cartesian
 /// and homogeneous flavor.
 /// @{
 
@@ -158,7 +158,7 @@ returns the i'th homogeneous coordinate of `v`, starting with 0.
 Kernel::RT homogeneous(int i) const; 
 
 /*! 
-returns the i'th Cartesian coordinate of `v`, starting at 0. 
+returns the i'th %Cartesian coordinate of `v`, starting at 0. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Kernel::FT cartesian(int i) const; 
@@ -170,13 +170,13 @@ returns `cartesian(i)`.
 Kernel::FT operator[](int i) const; 
 
 /*! 
-returns an iterator to the Cartesian coordinates 
+returns an iterator to the %Cartesian coordinates 
 of `v`, starting with the 0th coordinate. 
 */ 
 Cartesian_const_iterator cartesian_begin() const; 
 
 /*! 
-returns an off the end iterator to the Cartesian 
+returns an off the end iterator to the %Cartesian 
 coordinates of `v`. 
 */ 
 Cartesian_const_iterator cartesian_end() const; 

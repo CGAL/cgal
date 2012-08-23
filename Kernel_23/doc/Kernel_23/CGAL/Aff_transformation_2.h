@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes2
 
 The class `Aff_transformation_2` represents two-dimensional affine transformations. 
 The general form of an affine transformation is based on a homogeneous 

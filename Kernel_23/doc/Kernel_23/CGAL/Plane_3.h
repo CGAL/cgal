@@ -1,16 +1,16 @@
 namespace CGAL {
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes3
 
 An object `h` of the data type `Plane_3` is an oriented 
 plane in the three-dimensional Euclidean space \f$ \E^3\f$. It is defined 
-by the set of points with Cartesian coordinates \f$ (x,y,z)\f$ that satisfy 
+by the set of points with %Cartesian coordinates \f$ (x,y,z)\f$ that satisfy 
 the plane equation 
 
 \f[h :\;  a\, x +b\, y +c\, z + d = 0.\f]
 
 The plane splits \f$ \E^3\f$ in a <I>positive</I> and a <I>negative side</I>. 
-A point \f$ p\f$ with Cartesian coordinates \f$ (px, py, pz)\f$ is on the 
+A point \f$ p\f$ with %Cartesian coordinates \f$ (px, py, pz)\f$ is on the 
 positive side of `h`, iff \f$ a\, px +b\, py +c\, pz + d > 0\f$. 
 It is on the negative side, iff \f$ a\, px +b\, py\, +c\, pz + d < 0\f$. 
 

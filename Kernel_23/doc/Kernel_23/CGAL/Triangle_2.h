@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes2
 
 An object \f$ t\f$ of the class `Triangle_2` is a triangle 
 in the two-dimensional Euclidean plane \f$ \E^2\f$. 

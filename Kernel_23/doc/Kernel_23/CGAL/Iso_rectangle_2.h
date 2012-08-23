@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes2
 
 An object \f$ s\f$ of the data type `Iso_rectangle_2` is a 
 rectangle in the Euclidean plane \f$ \E^2\f$ with sides parallel to the \f$ x\f$ and 
@@ -125,14 +125,14 @@ returns the \f$ y\f$ coordinate of upper right vertex of `r`.
 Kernel::FT ymax() const; 
 
 /*! 
-returns the \f$ i\f$'th Cartesian coordinate of the 
+returns the \f$ i\f$'th %Cartesian coordinate of the 
 lower left vertex of `r`. 
 \pre \f$ 0 \leq i \leq1\f$. 
 */ 
 Kernel::FT min_coord(int i) const; 
 
 /*! 
-returns the \f$ i\f$'th Cartesian coordinate of the 
+returns the \f$ i\f$'th %Cartesian coordinate of the 
 upper right vertex of `r`. 
 \pre \f$ 0 \leq i \leq1\f$. 
 */ 

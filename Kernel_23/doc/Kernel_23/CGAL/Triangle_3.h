@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes3
 
 An object \f$ t\f$ of the class `Triangle_3` is a triangle in 
 the three-dimensional Euclidean space \f$ \E^3\f$. As the triangle is not 

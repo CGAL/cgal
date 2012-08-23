@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes3
 
 An object `l` of the data type `Line_3` is a directed 
 straight line in the three-dimensional Euclidean space \f$ \E^3\f$. 

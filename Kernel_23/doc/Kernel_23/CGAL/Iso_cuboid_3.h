@@ -1,6 +1,6 @@
 namespace CGAL {
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes3
 
 An object \f$ s\f$ of the data type `Iso_cuboid_3` is a 
 cuboid in the Euclidean space \f$ \E^3\f$ with edges parallel to the \f$ x\f$, 
@@ -8,7 +8,7 @@ cuboid in the Euclidean space \f$ \E^3\f$ with edges parallel to the \f$ x\f$,
 
 Although they are represented in a canonical form by only two 
 vertices, namely the lexicographically smallest and largest vertex 
-with respect to Cartesian \f$ xyz\f$ coordinates, we provide 
+with respect to %Cartesian \f$ xyz\f$ coordinates, we provide 
 functions for "accessing" the other vertices as well. 
 
 Iso-oriented cuboids and bounding boxes are quite similar. The 
@@ -110,50 +110,50 @@ returns the largest vertex of `c` (= `vertex(7)`).
 Point_3<Kernel> max() const; 
 
 /*! 
-returns smallest Cartesian 
+returns smallest %Cartesian 
 \f$ x\f$-coordinate in `c`. 
 */ 
 Kernel::FT xmin() const; 
 
 /*! 
-returns smallest Cartesian 
+returns smallest %Cartesian 
 \f$ y\f$-coordinate in `c`. 
 */ 
 Kernel::FT ymin() const; 
 
 /*! 
-returns smallest Cartesian 
+returns smallest %Cartesian 
 \f$ z\f$-coordinate in `c`. 
 */ 
 Kernel::FT zmin() const; 
 
 /*! 
-returns largest Cartesian 
+returns largest %Cartesian 
 \f$ x\f$-coordinate in `c`. 
 */ 
 Kernel::FT xmax() const; 
 
 /*! 
-returns largest Cartesian 
+returns largest %Cartesian 
 \f$ y\f$-coordinate in `c`. 
 */ 
 Kernel::FT ymax() const; 
 
 /*! 
-returns largest Cartesian 
+returns largest %Cartesian 
 \f$ z\f$-coordinate in `c`. 
 */ 
 Kernel::FT zmax() const; 
 
 /*! 
-returns \f$ i\f$-th Cartesian coordinate of 
+returns \f$ i\f$-th %Cartesian coordinate of 
 the smallest vertex of `c`. 
 \pre \f$ 0 \leq i \leq2\f$. 
 */ 
 Kernel::FT min_coord(int i) const; 
 
 /*! 
-returns \f$ i\f$-th Cartesian coordinate of 
+returns \f$ i\f$-th %Cartesian coordinate of 
 the largest vertex of `c`. 
 \pre \f$ 0 \leq i \leq2\f$. 
 */ 
