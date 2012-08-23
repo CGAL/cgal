@@ -109,9 +109,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Algebraic_foundations.tag</string>
           <string name="IMAGE_PATH">../Algebraic_foundations/doc/Algebraic_foundations/fig</string>
           <string name="EXAMPLE_PATH">../Algebraic_foundations/examples</string>
-          <list name="TAGFILES" append="true">
-            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.Kernel_23/html</item>
-          </list>
         </doxygen>
       </project>
 
@@ -153,7 +150,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Convex_hull_3/doc/Convex_hull_3/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.Convex_hull_2/html</item>
-            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.Kernel_23/html</item>
             <item>./tags/Triangulation_23.tag=../../CGAL.CGAL.Triangulation_3/html</item>
             <item>./tags/Convex_hull_d.tag=../../CGAL.CGAL.Convex_hull_d/html</item>
           </list>
@@ -208,6 +204,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Kernel_23/examples</string>
           <string name="IMAGE_PATH">../Kernel_23/doc/Kernel_23/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
+          <list name="TAGFILES" append="false">
+            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+          </list>
         </doxygen>
       </project>
 
@@ -256,9 +255,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Interval_skip_list.tag</string>
           <string name="EXAMPLE_PATH">../Interval_skip_list/examples</string>
           <string name="IMAGE_PATH">../Interval_skip_list/doc/Interval_skip_list/fig</string>
-           <list name="TAGFILES" append="true">
-            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.Kernel_23/html</item>
-          </list>
         </doxygen>
       </project>
 
@@ -311,7 +307,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Minkowski_sum_3/examples</string>
           <string name="IMAGE_PATH">../Minkowski_sum_3/doc/Minkowski_sum_3/fig</string>
           <list name="TAGFILES" append="true">
-            <item>./tags/Kernel_3.tag=../../CGAL.CGAL.Kernel_23/html</item>
             <item>./tags/Nef_3.tag=../../CGAL.CGAL.Nef_3/html</item>
             <item>./tags/Convex_decomposition_3.tag=../../CGAL.CGAL.Convex_decomposition_3/html</item>
           </list>
@@ -328,7 +323,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Generator/doc/Generator/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL_Extension/html</item>
-            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.Kernel_23/html</item>
           </list>
         </doxygen>
       </project>
@@ -806,6 +800,7 @@ namespace for the XML file to be processed properly.  -->
         <list name="ALIASES" append="true">
           <item>PkgDescriptionBegin{2}=&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&lt;h2&gt;&lt;a href=&quot;../../CGAL.CGAL.\2/html/index.html&quot;&gt;\1&lt;/a&gt;&lt;/h2&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;</item>
         </list>
+
       </doxygen>
     </project>
   </projects>

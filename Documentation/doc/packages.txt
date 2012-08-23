@@ -4,14 +4,23 @@
 
 \tableofcontents
 
+\htmlonly
+<style type="text/css">
+h1 {
+	font-size: 150%;
+    background-color: #EEEDF2;
+}
+</style>
+\endhtmlonly
+
 \section PartAlgebraicFoundations Arithmetic and Algebra
+
 
 \package_listing{Algebraic_foundations}
 \package_listing{NumberTypeSupport}
 \package_listing{Modular_arithmetic}
 \package_listing{Polynomial}
 \package_listing{Algebraic_kernel_d}
-
 
 \section PartCombinatorialAlgorithms Combinatorial Algorithms
 
@@ -27,12 +36,13 @@
 
 \section PartConvexHullAlgorithms Convex Hull Algorithms
 
+
 \package_listing{Convex_hull_2}
 \package_listing{Convex_hull_3}
 \package_listing{Convex_hull_d}
 
-
 \section PartPolygons Polygons
+
 
 \package_listing{Polygon}
 \package_listing{Boolean_set_operations_2}
