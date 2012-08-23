@@ -2374,6 +2374,74 @@ Jet_fitting_3/doc_tex/Jet_fitting_3_ref/Eigen_svd.tex -text
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text svneol=unset#image/jpeg
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
+Kernel_23/doc/Kernel_23/CGAL/Aff_transformation_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Aff_transformation_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Bbox_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Bbox_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Cartesian.h -text
+Kernel_23/doc/Kernel_23/CGAL/Cartesian_converter.h -text
+Kernel_23/doc/Kernel_23/CGAL/Circle_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Circle_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Dimension.h -text
+Kernel_23/doc/Kernel_23/CGAL/Direction_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Direction_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Exact_predicates_exact_constructions_kernel.h -text
+Kernel_23/doc/Kernel_23/CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h -text
+Kernel_23/doc/Kernel_23/CGAL/Exact_predicates_inexact_constructions_kernel.h -text
+Kernel_23/doc/Kernel_23/CGAL/Filtered_kernel.h -text
+Kernel_23/doc/Kernel_23/CGAL/Filtered_predicate.h -text
+Kernel_23/doc/Kernel_23/CGAL/Homogeneous.h -text
+Kernel_23/doc/Kernel_23/CGAL/Homogeneous_converter.h -text
+Kernel_23/doc/Kernel_23/CGAL/Iso_cuboid_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Iso_rectangle_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Kernel_traits.h -text
+Kernel_23/doc/Kernel_23/CGAL/Line_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Line_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Origin.h -text
+Kernel_23/doc/Kernel_23/CGAL/Plane_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Point_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Point_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Projection_traits_xy_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Ray_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Ray_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Segment_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Segment_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Simple_cartesian.h -text
+Kernel_23/doc/Kernel_23/CGAL/Simple_homogeneous.h -text
+Kernel_23/doc/Kernel_23/CGAL/Sphere_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Tetrahedron_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Triangle_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Triangle_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/Vector_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/Vector_3.h -text
+Kernel_23/doc/Kernel_23/CGAL/aff_transformation_tags.h -text
+Kernel_23/doc/Kernel_23/CGAL/cartesian_homogeneous_conversion.h -text
+Kernel_23/doc/Kernel_23/CGAL/enum.h -text
+Kernel_23/doc/Kernel_23/CGAL/global_functions.h -text
+Kernel_23/doc/Kernel_23/CGAL/intersections.h -text
+Kernel_23/doc/Kernel_23/CGAL/rational_rotation.h -text
+Kernel_23/doc/Kernel_23/CGAL/squared_distance_2.h -text
+Kernel_23/doc/Kernel_23/CGAL/squared_distance_3.h -text
+Kernel_23/doc/Kernel_23/Concepts/Kernel.h -text
+Kernel_23/doc/Kernel_23/Kernel_23.txt -text
+Kernel_23/doc/Kernel_23/PackageDescription.txt -text
+Kernel_23/doc/Kernel_23/fig/IsoCuboid.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/IsoCuboid.pdf -text svneol=unset#application/pdf
+Kernel_23/doc/Kernel_23/fig/arrlinthree.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/arrlintwo.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/arrthree.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/arrthree2.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/arrtwo.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/arrtwo2.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/compare1.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/compare1.pdf -text svneol=unset#application/pdf
+Kernel_23/doc/Kernel_23/fig/compare2.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/compare2.pdf -text svneol=unset#application/pdf
+Kernel_23/doc/Kernel_23/fig/compare_x_at_y.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/compare_x_at_y.pdf -text svneol=unset#application/pdf
+Kernel_23/doc/Kernel_23/fig/pointSegmentTriangle.png -text svneol=unset#image/png
+Kernel_23/doc/Kernel_23/fig/transvecthree.gif -text svneol=unset#image/gif
+Kernel_23/doc/Kernel_23/fig/transvectwo.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23/fig/pointSegmentTriangle.png -text
 Kernel_23/doc_tex/Kernel_23_ref/Kernel_ConstructRadicalLine_2.tex -text
 Kernel_23/doc_tex/Kernel_23_ref/compare_lexicographically.tex -text

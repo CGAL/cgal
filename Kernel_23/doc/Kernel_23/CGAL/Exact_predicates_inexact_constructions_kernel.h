@@ -1,0 +1,31 @@
+
+namespace CGAL {
+
+/*!
+\ingroup kernel_predef
+
+A typedef to a kernel which has the following properties: 
+
+<UL> 
+<LI>It uses Cartesian representation. 
+<LI>It supports constructions of points from <TT>double</TT> Cartesian 
+coordinates. 
+<LI>It provides exact geometric predicates, but inexact geometric 
+constructions. 
+</UL> 
+
+\models ::Kernel 
+
+\sa `CGAL::Exact_predicates_exact_constructions_kernel` 
+\sa `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` 
+\sa `CGAL::Cartesian` 
+
+*/
+
+class Exact_predicates_inexact_constructions_kernel {
+public:
+
+/// @}
+
+}; /* end Exact_predicates_inexact_constructions_kernel */
+} /* end namespace CGAL */

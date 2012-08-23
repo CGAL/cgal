@@ -1,0 +1,30 @@
+
+
+/// \defgroup PkgKernel23 2D and 3D Linear Geometry Kernel
+
+/// \defgroup PkgKernel23Concepts Concepts
+/// \ingroup PkgKernel23
+
+/// \defgroup PkgKernel23ConceptsGeomObject Kernel Geometric Object Concepts
+/// \ingroup PkgKernel23Concepts
+
+/// \defgroup PkgKernel23ConceptsFunctionObjects Kernel Function Object Concepts
+/// \ingroup PkgKernel23Concepts
+
+/// \defgroup kernel_predef Predefined Kernels
+/// \ingroup PkgKernel23
+/// Kernels that come with \cgal
+
+/*!
+\addtogroup PkgKernel23
+\todo check generated documentation
+\PkgDescriptionBegin{2D and 3D Linear Geometry Kernel}
+\PkgPicture{pointSegmentTriangle.png}
+\PkgAuthor{Herv&eacute; Br&ouml;nnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra}
+\PkgDesc{This package contains kernels each containing objects of  constant size, such as point, vector, direction, line, ray, segment, circle as well as predicates and constructions for these objects. The kernels mainly differ in the way they handle robustness issues.}
+\PkgSince{0.9}
+\cgalbib{ cgal:bfghhkps-lgk23-12 }
+\license{ Label \ref licensesLGPL "LGPL" }
+\PkgDescriptionEnd
+*/
+
