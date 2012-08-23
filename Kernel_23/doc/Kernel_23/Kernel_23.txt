@@ -1,12 +1,12 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D and 3D Geometry Kernel 
+\mainpage 2D and 3D Geometry %Kernel 
 \anchor chapterkernel23
 
 \authors Herv&eacute; Br&ouml;nnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra
 
-# Introduction #
+# Introduction # {#kernel_intro}
 
 \cgal, the *Computational Geometry Algorithms Library*, is written in 
 \cpp and consists of three major parts.
@@ -75,7 +75,7 @@ and storage space.
 See the dedicated chapter
 for more details on number types and their capabilities and performance.
 
-# %Kernel Representations #
+# Kernel Representations # {#kernel_rep}
 
 Our object of study is the \f$ d\f$-dimensional affine Euclidean space. 
 Here we are mainly concerned with cases \f$ d=2\f$ and \f$ d=3\f$.
@@ -566,7 +566,7 @@ For the above test, the recommended way to get the result is to use
 If several tests are to be made with the same
 plane, it pays off to construct the plane and to use `oriented_side(p)`.
 
-\section sectionextensiblekernel Extensible Kernel 
+# Extensible Kernel # {#sectionextensiblekernel}
 
 This manual section describe how users can plug user defined
 geometric classes in existing \cgal kernels. This is best
@@ -647,7 +647,7 @@ access.
 As we enforce type equality between `MyKernel::Point_2` and `Point_2<MyKernel>`,
 the constructor with the color as third argument is not available.
 
-\section sectionprojectiontraits Projection Traits Classes 
+# Projection Traits Classes # {#sectionprojectiontraits}
 
 It is sometimes useful to apply 2D algorithms to the projection of 3D points on
 a plane. Examples are
