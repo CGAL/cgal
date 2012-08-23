@@ -2193,6 +2193,7 @@ HalfedgeDS/doc/HalfedgeDS/Concepts/HalfedgeDSItems.h -text
 HalfedgeDS/doc/HalfedgeDS/Concepts/HalfedgeDSVertex.h -text
 HalfedgeDS/doc/HalfedgeDS/HalfedgeDS.txt -text
 HalfedgeDS/doc/HalfedgeDS/PackageDescription.txt -text
+HalfedgeDS/doc/HalfedgeDS/fig/HalfedgeDS-teaser-small.gif -text svneol=unset#image/gif
 HalfedgeDS/doc/HalfedgeDS/fig/euler_center.gif -text svneol=unset#image/gif
 HalfedgeDS/doc/HalfedgeDS/fig/euler_center.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc/HalfedgeDS/fig/euler_face.gif -text svneol=unset#image/gif
@@ -2210,7 +2211,6 @@ HalfedgeDS/doc/HalfedgeDS/fig/hds_optional.pdf -text svneol=unset#application/pd
 HalfedgeDS/doc/HalfedgeDS/fig/hds_optional_small.gif -text svneol=unset#image/gif
 HalfedgeDS/doc/HalfedgeDS/fig/loop.gif -text svneol=unset#image/gif
 HalfedgeDS/doc/HalfedgeDS/fig/loop.pdf -text svneol=unset#application/pdf
-HalfedgeDS/doc/HalfedgeDS/fig/teaser-small.gif -text svneol=unset#image/gif
 HalfedgeDS/doc/HalfedgeDS/unline -text
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.pdf -text svneol=unset#application/pdf
