@@ -362,8 +362,8 @@ class Gmpfr:
                 _fun(fr(),x._member,_gmp_rnd(r)); \
         } \
         Gmpfr(const _class &x,Gmpfr::Precision_type p){ \
-                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
-                mpfr_init2(fr(),p); \
+                CGAL_assertion(p<=MPFR_PREC_MAX); \
+                mpfr_init2(fr(),MPFR_PREC_MIN<p?p:MPFR_PREC_MIN); \
                 _fun(fr(),x._member,mpfr_get_default_rounding_mode()); \
         } \
         Gmpfr(const _class &x){ \
