@@ -6,7 +6,7 @@
 /*!
 \addtogroup PkgSegmentDelaunayGraph2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Segment Delaunay Graphs }
+\PkgDescriptionBegin{2D Segment Delaunay Graphs}
 \PkgPicture{svd.png}
 \PkgAuthor{Menelaos Karavelas}
 \PkgDesc{An algorithm for computing the dual of a Voronoi diagram of a set       of segments under the Euclidean metric. It is a generalization of the       standard Voronoi diagram for points.  The algorithms provided are       dynamic.}

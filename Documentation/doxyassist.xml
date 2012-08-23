@@ -25,6 +25,7 @@ namespace for the XML file to be processed properly.  -->
       <doxygen>
         <list name="TAGFILES" append="true">
           <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+          <item>./tags/Kernel_23.tag=../../CGAL.CGAL2D-and-3D-Linear-Geometry-Kernel/html</item>
         </list>
         <string name="LAYOUT_FILE">DoxygenLayoutPackage.xml</string>
         <list name="ALIASES" append="true">
@@ -34,9 +35,10 @@ namespace for the XML file to be processed properly.  -->
 
       <!-- subprojects -->
       <project>
-        <name>STL_Extension</name>
+        <name>STL Extensions for CGAL</name>
         <input>../STL_Extension/doc</input>
         <doxygen>
+          <string name="OUTPUT_DIRECTORY">./output/CGAL.CGAL.STL_Extension/</string>
           <string name="STRIP_FROM_PATH">../STL_Extension/doc/STL_Extension/</string>
           <string name="STRIP_FROM_INC_PATH">../STL_Extension/doc/STL_Extension/</string>
           <string name="GENERATE_TAGFILE">./tags/STL_Extension.tag</string>
@@ -46,7 +48,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Mesh_2</name>
+        <name>2D Conforming Triangulations and Meshes</name>
         <input>../Mesh_2/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Mesh_2/doc/Mesh_2/</string>
@@ -61,7 +63,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Jet_fitting_3</name>
+        <name>Estimation of Local Differential Properties of Point-Sampled Surfaces</name>
         <input>../Jet_fitting_3/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Jet_fitting_3/doc/Jet_fitting_3/</string>
@@ -76,7 +78,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Mesh_3</name>
+        <name>3D Mesh Generation</name>
         <input>../Mesh_3/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Mesh_3/doc/Mesh_3/</string>
@@ -92,7 +94,6 @@ namespace for the XML file to be processed properly.  -->
             <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_5.jpg</item>
           </list>
           <list name="TAGFILES" append="true">
-            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.Kernel_23/html</item>
             <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.Triangulation_3/html</item>
             <item>./tags/Surface_mesher.tag=../../CGAL.CGAL.Surface_mesher/html</item>
           </list>
@@ -100,7 +101,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Algebraic_foundations</name>
+        <name>Algebraic Foundations</name>
         <input>../Algebraic_foundations/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Algebraic_foundations/doc/Algebraic_foundations/</string>
@@ -115,7 +116,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>HalfedgeDS</name>
+        <name>Halfedge Data Structures</name>
         <input>../HalfedgeDS/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../HalfedgeDS/doc/HalfedgeDS/</string>
@@ -130,7 +131,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Convex_hull_2</name>
+        <name>2D Convex Hulls and Extreme Points</name>
         <input>../Convex_hull_2/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Convex_hull_2/doc/Convex_hull_2/</string>
@@ -142,7 +143,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Convex_hull_3</name>
+        <name>3D Convex Hulls</name>
         <input>../Convex_hull_3/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Convex_hull_3/doc/Convex_hull_3/</string>
@@ -160,7 +161,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Convex_hull_d</name>
+        <name>dD Convex Hulls and Delaunay Triangulations</name>
         <input>../Convex_hull_d/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Convex_hull_d/doc/Convex_hull_d/</string>
@@ -170,7 +171,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Straight_skeleton_2</name>
+        <name>2D Straight Skeleton and Polygon Offsetting</name>
         <input>../Straight_skeleton_2/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/</string>
@@ -185,7 +186,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Partition_2</name>
+        <name>2D Polygon Partitioning</name>
         <input>../Partition_2/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Partition_2/doc/Partition_2/</string>
@@ -197,7 +198,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Kernel_23</name>
+        <name>2D and 3D Linear Geometry Kernel</name>
         <input>../Kernel_23/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Kernel_23/doc/Kernel_23/</string>
@@ -211,7 +212,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Convex_decomposition_3</name>
+        <name>Convex Decomposition of Polyhedra</name>
         <input>../Convex_decomposition_3/include</input>
         <input>../Convex_decomposition_3/doc/Convex_decomposition_3</input>
         <doxygen>
@@ -234,7 +235,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Point_set_2</name>
+        <name>2D Range and Neighbor Search</name>
         <input>../Point_set_2/doc/Point_set_2</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Point_set_2/doc/Point_set_2/</string>
@@ -248,7 +249,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Interval_skip_list</name>
+        <name>Interval Skip List</name>
         <input>../Interval_skip_list/doc/Interval_skip_list</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Interval_skip_list/doc/Interval_skip_list/</string>
@@ -262,7 +263,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Envelope_2</name>
+        <name>2D Envelopes</name>
         <input>../Envelope_2/doc/Envelope_2</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Envelope_2/doc/Envelope_2/</string>
@@ -273,7 +274,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Envelope_3</name>
+        <name>3D Envelopes</name>
         <input>../Envelope_3/doc/Envelope_3</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Envelope_3/doc/Envelope_3/</string>
@@ -287,7 +288,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Minkowski_sum_2</name>
+        <name>2D Minkowski Sums</name>
         <input>../Minkowski_sum_2/doc/Minkowski_sum_2</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Minkowski_sum_2/doc/Minkowski_sum_2/</string>
@@ -302,7 +303,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Minkowski_sum_3</name>
+        <name>3D Minkowski Sum of Polyhedra</name>
         <input>../Minkowski_sum_3/doc/Minkowski_sum_3</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Minkowski_sum_3/doc/Minkowski_sum_3/</string>
@@ -318,7 +319,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Generator</name>
+        <name>Geometric Object Generators</name>
         <input>../Generator/doc/Generator</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Generator/doc/Generator/</string>
@@ -344,7 +345,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Spatial_searching</name>
+        <name>dD Spatial Searching</name>
         <input>../Spatial_searching/doc/Spatial_searching</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Spatial_searching/doc/Spatial_searching/</string>
@@ -356,7 +357,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Segment_Delaunay_graph_2</name>
+        <name>2D Segment Delaunay Graphs</name>
         <input>../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/</string>
@@ -368,14 +369,13 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic_foundations/html</item>
             <item>./tags/TDS_2.tag=../../CGAL.CGAL.TDS_2/html</item>
             <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius_graph_2/html</item>
-            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius_graph_2/html</item>
             <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.Voronoi_diagram_2/html</item>
           </list>
         </doxygen>
       </project>
 
       <project>
-        <name>Box_intersection_d</name>
+        <name>Intersecting Sequences of dD Iso-oriented Boxes</name>
         <input>../Box_intersection_d/doc/Box_intersection_d</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Box_intersection_d/doc/Box_intersection_d/</string>
@@ -388,7 +388,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>GraphicsView</name>
+        <name>CGAL and the Qt Graphics View Framework</name>
         <input>../GraphicsView/doc/GraphicsView</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../GraphicsView/doc/GraphicsView/</string>
@@ -402,7 +402,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Miscellany</name>
+        <name>Profiling Tools</name>
         <input>../Miscellany/doc/Miscellany</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Miscellany/doc/Miscellany/</string>
@@ -416,7 +416,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Polytope_distance_d</name>
+        <name>Optimal Distances</name>
         <input>../Polytope_distance_d/doc/Polytope_distance_d</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Polytope_distance_d/doc/Polytope_distance_d/</string>
@@ -434,7 +434,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Bounding_volumes</name>
+        <name>Bounding Volumes</name>
         <input>../Bounding_volumes/doc/Bounding_volumes</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Bounding_volumes/doc/Bounding_volumes/</string>
@@ -452,7 +452,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Snap_rounding_2</name>
+        <name>2D Snap Rounding</name>
         <input>../Snap_rounding_2/doc/Snap_rounding_2</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Snap_rounding_2/doc/Snap_rounding_2/</string>
@@ -464,7 +464,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Skin_surface_3</name>
+        <name>3D Skin Surface Meshing</name>
         <input>../Skin_surface_3/doc/Skin_surface_3</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Skin_surface_3/doc/Skin_surface_3/</string>
@@ -479,7 +479,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Modular_arithmetic</name>
+        <name>Modular Arithmetic</name>
         <input>../Modular_arithmetic/doc/Modular_arithmetic</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Modular_arithmetic/doc/Modular_arithmetic/</string>
@@ -491,7 +491,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Alpha_shapes_2</name>
+        <name>2D Alpha Shapes</name>
         <input>../Alpha_shapes_2/doc/Alpha_shapes_2</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Alpha_shapes_2/doc/Alpha_shapes_2/</string>
@@ -506,7 +506,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Alpha_shapes_3</name>
+        <name>3D Alpha Shapes</name>
         <input>../Alpha_shapes_3/doc/Alpha_shapes_3</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Alpha_shapes_3/doc/Alpha_shapes_3/</string>
@@ -521,7 +521,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Principal_component_analysis</name>
+        <name>Principal Component Analysis</name>
         <input>../Principal_component_analysis/doc/Principal_component_analysis</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Principal_component_analysis/doc/Principal_component_analysis/</string>
@@ -533,7 +533,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>CGAL_ipelets</name>
+        <name>CGAL Ipelets</name>
         <input>../CGAL_ipelets/doc/CGAL_ipelets</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../CGAL_ipelets/doc/CGAL_ipelets/</string>
@@ -545,7 +545,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Apollonius_graph_2</name>
+        <name>2D Apollonius Graphs</name>
         <input>../Apollonius_graph_2/doc/Apollonius_graph_2</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Apollonius_graph_2/doc/Apollonius_graph_2/</string>
@@ -570,7 +570,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Circulator</name>
+        <name>Handles and Circulators</name>
         <input>../Circulator/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Circulator/doc/Circulator/</string>
@@ -582,7 +582,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Nef_2</name>
+        <name>2D Boolean Operations on Nef Polygons</name>
         <input>../Nef_2/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Nef_2/doc/Nef_2/</string>
@@ -594,7 +594,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Nef_S2</name>
+        <name>2D Boolean Operations on Nef Polygons Embedded on the Sphere</name>
         <input>../Nef_S2/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Nef_S2/doc/Nef_S2/</string>
@@ -613,7 +613,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Sweep_line_2</name>
+        <name>2D Intersection of Curves</name>
         <input>../Arrangement_on_surface_2/doc/Sweep_line_2</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Arrangement_on_surface_2/doc/Sweep_line_2</string>
@@ -628,7 +628,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Boolean_set_operations_2</name>
+        <name>2D Regularized Boolean Set-Operations</name>
         <input>../Boolean_set_operations_2/doc/Boolean_set_operations_2</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Boolean_set_operations_2/doc/Boolean_set_operations_2</string>
@@ -640,7 +640,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>TDS_2</name>
+        <name>2D Triangulation Data Structure</name>
         <input>../Triangulation_2/doc/TDS_2</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Triangulation_2/doc/TDS_2</string>
@@ -659,7 +659,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Triangulation_2</name>
+        <name>2D Triangulation</name>
         <input>../Triangulation_2/doc/Triangulation_2</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Triangulation_2/doc/Triangulation_2</string>
@@ -675,7 +675,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Nef_3</name>
+        <name>3D Boolean Operations on Nef Polyhedra</name>
         <input>../Nef_3/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Nef_3/doc/Nef_3/</string>
@@ -688,7 +688,7 @@ namespace for the XML file to be processed properly.  -->
           </list>
         </doxygen>
       </project>
-      subprojects end
+    <!-- subprojects end -->
     </project>
     
     <!-- The main CGAL project containing the package list and complete reference documentation -->
@@ -756,50 +756,50 @@ namespace for the XML file to be processed properly.  -->
           <item>../Straight_skeleton_2/doc/Straight_skeleton_2/fig</item>
         </list>
         <list name="TAGFILES" append="false">
-          <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic_foundations/html</item>
-          <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.Alpha_shapes_2/html</item>
-          <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.Alpha_shapes_3/html</item>
-          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius_graph_2/html</item>
-          <item>./tags/Bounding_volumes.tag=../../CGAL.CGAL.Bounding_volumes/html</item>
-          <item>./tags/Box_intersection_d.tag=../../CGAL.CGAL.Box_intersection_d/html</item>
-          <item>./tags/CGAL_ipelets.tag=../../CGAL.CGAL.CGAL_ipelets/html</item>
-          <item>./tags/Circulator.tag=../../CGAL.CGAL.Circulator/html</item>
-          <item>./tags/Convex_decomposition_3.tag=../../CGAL.CGAL.Convex_decomposition_3/html</item>
-          <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.Convex_hull_2/html</item>
-          <item>./tags/Convex_hull_3.tag=../../CGAL.CGAL.Convex_hull_3/html</item>
-          <item>./tags/Convex_hull_d.tag=../../CGAL.CGAL.Convex_hull_d/html</item>
-          <item>./tags/Envelope_2.tag=../../CGAL.CGAL.Envelope_2/html</item>
-          <item>./tags/Envelope_3.tag=../../CGAL.CGAL.Envelope_3/html</item>
-          <item>./tags/Generator.tag=../../CGAL.CGAL.Generator/html</item>
+          <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
+          <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.2D-Alpha-Shapes/html</item>
+          <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.3D-Alpha-Shapes/html</item>
+          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius-Graphs/html</item>
+          <item>./tags/Bounding_volumes.tag=../../CGAL.CGAL.Bounding-Volumes/html</item>
+          <item>./tags/Box_intersection_d.tag=../../CGAL.CGAL.Intersecting-Sequences-of-dD-Iso-oriented-Boxes/html</item>
+          <item>./tags/CGAL_ipelets.tag=../../CGAL.CGAL.CGAL-Ipelets/html</item>
+          <item>./tags/Circulator.tag=../../CGAL.CGAL.Handles-And-Circulators/html</item>
+          <item>./tags/Convex_decomposition_3.tag=../../CGAL.CGAL.Convex-Decomposition-of-Polyhedra/html</item>
+          <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.2D-Convex-Hulls-and-Extreme-Points/html</item>
+          <item>./tags/Convex_hull_3.tag=../../CGAL.CGAL.3D-Convex-Hulls/html</item>
+          <item>./tags/Convex_hull_d.tag=../../CGAL.CGAL.dD-Convex-Hulls-and-Delaunay-Triangulations/html</item>
+          <item>./tags/Envelope_2.tag=../../CGAL.CGAL.2D-Envelopes/html</item>
+          <item>./tags/Envelope_3.tag=../../CGAL.CGAL.3D-Envelopes/html</item>
+          <item>./tags/Generator.tag=../../CGAL.CGAL.Geometric-Object-Generators/html</item>
           <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
-          <item>./tags/GraphicsView.tag=../../CGAL.CGAL.GraphicsView/html</item>
-          <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
-          <item>./tags/Interval_skip_list.tag=../../CGAL.CGAL.Interval_skip_list/html</item>
-          <item>./tags/Nef_2.tag=../../CGAL.CGAL.Nef_2/html</item>
-          <item>./tags/Nef_S2.tag=../../CGAL.CGAL.Nef_S2/html</item>
-          <item>./tags/Nef_3.tag=../../CGAL.CGAL.Nef_3/html</item>
-          <item>./tags/Mesh_2.tag=../../CGAL.CGAL.Mesh_2/html</item>
-          <item>./tags/Mesh_3.tag=../../CGAL.CGAL.Mesh_3/html</item>
-          <item>./tags/Jet_fitting_3.tag=../../CGAL.CGAL.Jet_fitting_3/html</item>
-          <item>./tags/Minkowski_sum_2.tag=../../CGAL.CGAL.Minkowski_sum_2/html</item>
-          <item>./tags/Minkowski_sum_3.tag=../../CGAL.CGAL.Minkowski_sum_3/html</item>
-          <item>./tags/Miscellany.tag=../../CGAL.CGAL.Miscellany/html</item>
-          <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular_arithmetic/html</item>
-          <item>./tags/Partition_2.tag=../../CGAL.CGAL.Partition_2/html</item>
-          <item>./tags/Kernel_23.tag=../../CGAL.CGAL.Kernel_23/html</item>
-          <item>./tags/Point_set_2.tag=../../CGAL.CGAL.Point_set_2/html</item>
-          <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Polytope_distance_d/html</item>
-          <item>./tags/Principal_component_analysis.tag=../../CGAL.CGAL.Principal_component_analysis/html</item>
-          <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL_Extension/html</item>
-          <item>./tags/Skin_surface_3.tag=../../CGAL.CGAL.Skin_surface_3/html</item>
-          <item>./tags/Sweep_line_2.tag=../../CGAL.CGAL.Sweep_line_2/html</item>
-          <item>./tags/Boolean_set_operations_2.tag=../../CGAL.CGAL.Boolean_set_operations_2/html</item>
-          <item>./tags/TDS_2.tag=../../CGAL.CGAL.TDS_2/html</item>
-          <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.Triangulation_2/html</item>
-          <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.Snap_rounding_2/html</item>
-          <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.Spatial_searching/html</item>
-          <item>./tags/Segment_Delaunay_graph_2.tag=../../CGAL.CGAL.Segment_Delaunay_graph_2/html</item>
-          <item>./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.Straight_skeleton_2/html</item>
+          <item>./tags/GraphicsView.tag=../../CGAL.CGAL.CGAL-and-the-Qt-Graphics-View-Framework/html</item>
+          <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.Halfedge-Data-Structures/html</item>
+          <item>./tags/Interval_skip_list.tag=../../CGAL.CGAL.Interval-Skip-List/html</item>
+          <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
+          <item>./tags/Nef_S2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons-Embedded-on-the-Sphere/html</item>
+          <item>./tags/Nef_3.tag=../../CGAL.CGAL.3D-Boolean-Operations-on-Nef-Polyhedra/html</item>
+          <item>./tags/Mesh_2.tag=../../CGAL.CGAL.2D-Conforming-Triangulations-and-Meshes/html</item>
+          <item>./tags/Mesh_3.tag=../../CGAL.CGAL.3D-Mesh-Generation/html</item>
+          <item>./tags/Jet_fitting_3.tag=../../CGAL.CGAL.Estimation-of-Local-Differential-Properties-of-Point-Sampled-Surfaces/html</item>
+          <item>./tags/Minkowski_sum_2.tag=../../CGAL.CGAL.2D-Minkowski-Sums/html</item>
+          <item>./tags/Minkowski_sum_3.tag=../../CGAL.CGAL.3D-Minkowski-Sum-of-Polyhedra/html</item>
+          <item>./tags/Miscellany.tag=../../CGAL.CGAL.Profiling-Tools/html</item>
+          <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular-Arithmetic/html</item>
+          <item>./tags/Partition_2.tag=../../CGAL.CGAL.2D-Polygon-Partitioning/html</item>
+          <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
+          <item>./tags/Point_set_2.tag=../../CGAL.CGAL.2D-Range-and-Neighbor-Search/html</item>
+          <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
+          <item>./tags/Principal_component_analysis.tag=../../CGAL.CGAL.Principal-Component-Analysis/html</item>
+          <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
+          <item>./tags/Skin_surface_3.tag=../../CGAL.CGAL.3D-Skin-Surface-Meshing/html</item>
+          <item>./tags/Sweep_line_2.tag=../../CGAL.CGAL.2D-Intersection-of-Curves/html</item>
+          <item>./tags/Boolean_set_operations_2.tag=../../CGAL.CGAL.2D-Regularized-Boolean-Set-Operations/html</item>
+          <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
+          <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+          <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.2D-Snap-Rounding/html</item>
+          <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.dD-Spatial-Searching/html</item>
+          <item>./tags/Segment_Delaunay_graph_2.tag=../../CGAL.CGAL.2D-Segment-Delaunay-Graphs/html</item>
+          <item>./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.2D-Straight-Skeleton-and-Polygon-Offsetting/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>
