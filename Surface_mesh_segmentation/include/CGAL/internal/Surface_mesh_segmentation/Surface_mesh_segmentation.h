@@ -420,7 +420,8 @@ private:
     }
     // If still there is any facet which has no sdf value, assign minimum sdf value.
     // This is meaningful since (being an outlier) 0 sdf values might effect normalization & log extremely.
-    for(std::vector<Facet_const_handle>::iterator it = still_zero_facets.begin();
+    for(typename std::vector<Facet_const_handle>::iterator it =
+          still_zero_facets.begin();
         it != still_zero_facets.end(); ++it) {
       sdf_values[*it] = min_sdf;
     }
