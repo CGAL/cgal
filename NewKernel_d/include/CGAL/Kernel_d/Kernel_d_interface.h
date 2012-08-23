@@ -89,6 +89,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	  }
 	};
 	typedef typename Construct_cartesian_const_iterator_d::result_type Cartesian_const_iterator_d;
+	typedef typename Base::template Functor<Squared_distance_tag>::type Squared_distance_d;
 	//typedef typename Base::template Functor<Affine_rank_tag>::type Affine_rank_d;
 	//typedef typename Base::template Functor<Affinely_independent_tag>::type Affinely_independent_d;
 	//typedef typename Base::template Functor<Contained_in_linear_hull_tag>::type Contained_in_linear_hull_d;
@@ -100,7 +101,6 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	//typedef typename Base::template Functor<Side_of_bounded_sphere_tag>::type Side_of_bounded_sphere_d;
 
 	//typedef typename Base::template Functor<Center_of_sphere_tag>::type Center_of_sphere_d;
-	//typedef typename Base::template Functor<Squared_distance_tag>::type Squared_distance_d;
 	//typedef typename Base::template Functor<Value_at_tag>::type Value_at_d;
 	//typedef typename Base::template Functor<Point_of_sphere_tag>::type Point_of_sphere_d;
 	//typedef typename Base::template Functor<Orthogonal_vector_tag>::type Orthogonal_vector_d;
@@ -132,6 +132,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Construct_segment_d construct_segment_d_object()const{ return Construct_segment_d(*this); }
 	Construct_sphere_d construct_sphere_d_object()const{ return Construct_sphere_d(*this); }
 	Construct_hyperplane_d construct_hyperplane_d_object()const{ return Construct_hyperplane_d(*this); }
+	Squared_distance_d squared_distance_d_object()const{ return Squared_distance_d(*this); }
 	//Construct_direction_d construct_direction_d_object()const{ return Construct_direction_d(*this); }
 	//Construct_line_d construct_line_d_object()const{ return Construct_line_d(*this); }
 	//Construct_ray_d construct_ray_d_object()const{ return Construct_ray_d(*this); }
