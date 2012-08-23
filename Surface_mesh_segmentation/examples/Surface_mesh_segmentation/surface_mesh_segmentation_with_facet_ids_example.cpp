@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
 	facet_it != mesh.facets_end(); ++facet_it)
     {
-	std::cout << (sdf_property_map[facet_it] == sdf_values[facet_it->id()]) << std::endl;
+        std::cout << (sdf_property_map[facet_it] == sdf_values[facet_it->id()]) << std::endl;
     }
 
     // create a property-map for segment-ids 

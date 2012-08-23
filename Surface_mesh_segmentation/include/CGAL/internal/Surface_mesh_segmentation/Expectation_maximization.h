@@ -417,8 +417,8 @@ private:
     // M-step
     calculate_parameters();
 
-    // Likelihood step
-    return calculate_likelihood(); // calculates likelihood and refreshes responsibility matrix,
+    // Likelihood step and also E-step for next iteration
+    return calculate_likelihood(); // calculates likelihood and -also- refreshes responsibility matrix,
     // so that we do not have to calculate it in next iteration.
   }
 

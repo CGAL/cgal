@@ -264,7 +264,6 @@ private:
     std::vector<K_means_center> min_centers;
     double error = (std::numeric_limits<double>::max)();
     while(number_of_run-- > 0) {
-      clear_center_ids();
       init_type == RANDOM_INITIALIZATION ? initiate_centers_randomly(
         number_of_centers)
       : initiate_centers_plus_plus(number_of_centers);
@@ -292,13 +291,6 @@ private:
       sum += std::pow(centers[point_it->center_id].mean - point_it->data, 2);
     }
     return sum;
-  }
-
-  void clear_center_ids() {
-    for(std::vector<K_means_point>::iterator point_it = points.begin();
-        point_it != points.end(); ++point_it) {
-      point_it->center_id = -1;
-    }
   }
 };
 }//namespace internal

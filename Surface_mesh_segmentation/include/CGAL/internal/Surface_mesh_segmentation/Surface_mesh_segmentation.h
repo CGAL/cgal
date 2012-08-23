@@ -326,6 +326,8 @@ private:
   /**
    * Normalize sdf values using function:
    * normalized_sdf = log( alpha * ( current_sdf - min_sdf ) / ( max_sdf - min_sdf ) + 1 ) / log( alpha + 1 )
+   * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @param[out] normalized_sdf_values normalized values stored in facet iteration order
    */
   template<class SDFPropertyMap>
   void log_normalize_sdf_values(SDFPropertyMap sdf_values,

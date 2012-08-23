@@ -4085,6 +4085,8 @@ Surface_mesh_segmentation/TODO -text
 Surface_mesh_segmentation/doc/Doxyfile -text
 Surface_mesh_segmentation/doc/Surface_Mesh_Segmentation.txt -text
 Surface_mesh_segmentation/doc/fig/elephant_sdf_partition.png -text
+Surface_mesh_segmentation/doc/fig/pose_changes.png -text
+Surface_mesh_segmentation/doc/fig/pose_changes_low.png -text
 Surface_mesh_segmentation/examples/Surface_mesh_segmentation/camel.off -text
 Surface_mesh_segmentation/examples/Surface_mesh_segmentation/sdf_values_computation_example.cmd -text
 Surface_mesh_segmentation/examples/Surface_mesh_segmentation/sdf_values_computation_example.cpp -text
