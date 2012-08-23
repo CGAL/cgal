@@ -258,7 +258,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
      
     colorize_segmentation(pair->first, segment_pmap);
     pair->first->setName(tr("(Segmentation-%1-%2)").arg(number_of_clusters).arg(smoothness));   
-    //pair->first->changed();
+    pair->first->changed();
     if(create_new_item)
     {         
         index = scene->addItem(pair->first);
