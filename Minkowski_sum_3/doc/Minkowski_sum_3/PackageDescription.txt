@@ -5,7 +5,7 @@
 \addtogroup PkgMinkowskiSum3
 \todo check generated documentation
 \PkgDescriptionBegin{3D Minkowski Sum of Polyhedra}
-\PkgPicture{Minkowski_sum_3/fig/teaser.png}
+\PkgPicture{Minkowski_sum_3/fig/Minkowski_sum_3_teaser.png}
 \PkgAuthor{Peter Hachenberger}
 \PkgDesc{This package provides a function, which computes the Minkowski sum of two point sets in \f$ \mathbb{R}^3\f$. These point sets may consist of isolated vertices, isolated edges, surfaces with convex facets without holes, and open and closed solids. Thus, it is possible to compute the configuration space of translational robots (even in tight passage scenarios) as well as several graphics operations, like for instance the glide operation, which computes the point set swept by a polyhedron that moves along a polygonal line.}
 \PkgSince{3.5}
