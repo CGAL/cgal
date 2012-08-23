@@ -6,24 +6,25 @@
 #include <CGAL/Kernel_d/Cartesian_LA_base.h>
 
 namespace CGAL {
-
-template < typename FT_, typename Dim_, typename Derived_=Default>
-struct Cartesian_base_d : public
-Cartesian_complete_predicates<
-Cartesian_complete_constructors<
-Cartesian_complete_computes<
-Cartesian_complete_types<
-Cartesian_LA_base_d<
-		    FT_, Dim_
->, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type
->, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type
->, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type
->, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type
+#define CGAL_BASE \
+Cartesian_complete_predicates< \
+Cartesian_complete_constructors< \
+Cartesian_complete_computes< \
+Cartesian_complete_types< \
+Cartesian_LA_base_d< \
+		    FT_, Dim_ \
+>, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type \
+>, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type \
+>, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type \
+>, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type \
 >
+template < typename FT_, typename Dim_, typename Derived_=Default>
+struct Cartesian_base_d : public CGAL_BASE
 {
     CGAL_CONSTEXPR Cartesian_base_d(){}
-    CGAL_CONSTEXPR Cartesian_base_d(int d):Dimension_base<Dim_>(d){}
+    CGAL_CONSTEXPR Cartesian_base_d(int d):CGAL_BASE(d){}
 };
+#undef CGAL_BASE
 
 } //namespace CGAL
 

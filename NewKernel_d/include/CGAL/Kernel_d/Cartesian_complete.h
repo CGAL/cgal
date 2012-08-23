@@ -49,6 +49,9 @@ template<class R_,class Derived_> struct Cartesian_define_all_functors
 template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_complete_types 
 : public R_
 {
+  CGAL_CONSTEXPR Cartesian_complete_types(){}
+  CGAL_CONSTEXPR Cartesian_complete_types(int d):R_(d){}
+
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_types>::type Derived;
 #if 0
@@ -73,6 +76,9 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_complete_constructors 
 : public R_
 {
+  CGAL_CONSTEXPR Cartesian_complete_constructors(){}
+  CGAL_CONSTEXPR Cartesian_complete_constructors(int d):R_(d){}
+
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_constructors>::type Derived;
 	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :
@@ -89,6 +95,9 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_complete_predicates 
 : public R_
 {
+  CGAL_CONSTEXPR Cartesian_complete_predicates(){}
+  CGAL_CONSTEXPR Cartesian_complete_predicates(int d):R_(d){}
+
 	// TODO: this doesn't look like the right place for this typedef...
 	typedef CartesianDKernelFunctors::Flat_orientation Flat_orientation;
 
@@ -108,6 +117,9 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_complete_computes 
 : public R_
 {
+  CGAL_CONSTEXPR Cartesian_complete_computes(){}
+  CGAL_CONSTEXPR Cartesian_complete_computes(int d):R_(d){}
+
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_computes>::type Derived;
 	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :

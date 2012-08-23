@@ -91,11 +91,17 @@ void test2(){
   typedef typename K1::In_flat_orientation_d IFO;
   typedef typename K1::In_flat_side_of_oriented_sphere_d IFSOS;
   typedef typename K1::Contained_in_affine_hull_d CAH;
+  typedef typename K1::Compare_lexicographically_d CL;
 
   USE_TYPE(V);
   USE_TYPE(CV);
   USE_TYPE(FO);
-  Ker k;
+  USE_TYPE(CL);
+  Ker k
+#if 0
+    (2)
+#endif
+    ;
   CP cp Kinit(construct_point_d_object);
   CCI ci Kinit(construct_cartesian_const_iterator_d_object);
   CC cc Kinit(compute_coordinate_d_object);
@@ -148,14 +154,20 @@ void test3(){
   typedef typename K1::In_flat_orientation_d IFO;
   typedef typename K1::In_flat_side_of_oriented_sphere_d IFSOS;
   typedef typename K1::Contained_in_affine_hull_d CAH;
+  typedef typename K1::Compare_lexicographically_d CL;
 
   USE_TYPE(V);
   USE_TYPE(CV);
   USE_TYPE(FO);
-  Ker k;
+  Ker k
+#if 0
+    (3)
+#endif
+    ;
   CP cp Kinit(construct_point_d_object);
   CCI ci Kinit(construct_cartesian_const_iterator_d_object);
   CC cc Kinit(compute_coordinate_d_object);
+  CL cl Kinit(compare_lexicographically_d_object);
   PO po Kinit(orientation_d_object);
   CS cs Kinit(construct_segment_d_object);
   CSE cse (k);
@@ -210,6 +222,8 @@ void test3(){
   std::cout << sos(buf+0,buf+5) << '\n';
   assert(cah(y+0,y+3,y[3]));
   assert(!cah(y+0,y+3,buf[0]));
+  assert(cl(a,a)==CGAL::EQUAL);
+  assert(cl(a,b)==CGAL::LARGER);
 }
 
 int main(){
