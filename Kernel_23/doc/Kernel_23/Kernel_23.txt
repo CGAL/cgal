@@ -8,7 +8,7 @@ namespace CGAL {
 
 # Introduction #
 
-\cgal, the <I>Computational Geometry Algorithms Library</I>, is written in 
+\cgal, the *Computational Geometry Algorithms Library*, is written in 
 \cpp and consists of three major parts.
 The first part is the kernel, which consists of constant-size non-modifiable 
 geometric primitive objects and operations on these objects. 
@@ -75,30 +75,30 @@ and storage space.
 See the dedicated chapter
 for more details on number types and their capabilities and performance.
 
-# Kernel Representations #
+# %Kernel Representations #
 
 Our object of study is the \f$ d\f$-dimensional affine Euclidean space. 
 Here we are mainly concerned with cases \f$ d=2\f$ and \f$ d=3\f$.
 Objects in that space are sets of points. A common way to represent 
-the points is the use of Cartesian coordinates,
+the points is the use of %Cartesian coordinates,
 which assumes a reference frame (an origin and \f$ d\f$ orthogonal axes).
 In that framework, a point is represented by a \f$ d\f$-tuple
 \f$ (c_0,c_1,\ldots,c_{d-1})\f$,
 and so are vectors in the underlying linear space. Each point is 
-represented uniquely by such Cartesian coordinates.
+represented uniquely by such %Cartesian coordinates.
 Another way to represent points is by homogeneous coordinates. In that
 framework, a point is represented by a \f$ (d+1)\f$-tuple
 \f$ (h_0,h_1,\ldots,h_d)\f$.
 Via the formulae \f$ c_i = h_i/h_d\f$,
-the corresponding point with Cartesian coordinates
+the corresponding point with %Cartesian coordinates
 \f$ (c_0,c_1,\ldots,c_{d-1})\f$
 can be computed. Note that homogeneous coordinates are not unique. 
 For \f$ \lambda\ne 0\f$, the tuples \f$ (h_0,h_1,\ldots,h_d)\f$ and 
 \f$ (\lambda\cdot h_0,\lambda\cdot h_1,\ldots,\lambda\cdot h_d)\f$
 represent the same point.
-For a point with Cartesian coordinates \f$ (c_0,c_1,\ldots,c_{d-1})\f$ a
+For a point with %Cartesian coordinates \f$ (c_0,c_1,\ldots,c_{d-1})\f$ a
 possible homogeneous representation is \f$ (c_0,c_1,\ldots,c_{d-1},1)\f$.
-Homogeneous coordinates in fact allow to represent 
+%Homogeneous coordinates in fact allow to represent 
 objects in a more general space, the projective space
 \f$ \mathbb{P}^d\f$.
 In \cgal, we do not compute in projective geometry. Rather, we use 
@@ -117,10 +117,10 @@ kernel concept. For all kernel objects types, the types
 `Kernel::Type` are identical.
 
 \cgal offers four families of concrete models for the concept Kernel,
-two based on the Cartesian representation of
+two based on the %Cartesian representation of
 points and two based on the homogeneous representation of points. The
 interface of the kernel objects is designed such that it works well
-with both Cartesian and homogeneous
+with both %Cartesian and homogeneous
 representation. For example, points in 2D have a constructor with
 three arguments as well (the three homogeneous coordinates of the
 point). The common interfaces parameterized with a kernel class allow
@@ -131,7 +131,7 @@ A user can choose the number type used to represent the coordinates.
 For reasons that will become evident later, a kernel class provides
 two typenames for number types, namely `Kernel::FT` and `Kernel::RT`.
 The type `Kernel::FT` must fulfill the
-requirements on what is called a <I>FieldNumberType</I> in \cgal. This
+requirements on what is called a `FieldNumberType` in \cgal. This
 roughly means that `Kernel::FT` is a type for which operations
 \f$ +\f$, \f$ -\f$, \f$ *\f$ and \f$ /\f$ are defined with semantics (approximately)
 corresponding to those of a field in a mathematical sense. Note that,
@@ -140,21 +140,21 @@ requirements on a field type, since `int`s correspond to elements
 of a ring rather than a field, especially operation \f$ /\f$ is not the
 inverse of \f$ *\f$. The requirements on the type `Kernel::RT` are
 weaker. This type must fulfill the requirements on what is called a
-<I>RingNumberType</I> in \cgal. This roughly means that
+`RingNumberType` in \cgal. This roughly means that
 `Kernel::RT` is a type for which operations \f$ +\f$, \f$ -\f$, \f$ *\f$ are
 defined with semantics (approximately) corresponding to those of a
 ring in a mathematical sense. 
 
-## Cartesian Kernels ##
+## %Cartesian %Kernels ##
 
 With `Cartesian<FieldNumberType>` you can choose a
-Cartesian representation of coordinates. When you
-choose Cartesian representation you have to
+%Cartesian representation of coordinates. When you
+choose %Cartesian representation you have to
 declare at the same time the type of the coordinates. A number type
 used with the `Cartesian` representation class should be a
 FieldNumberType as described above. As mentioned above, the built-in
 type `int` is not a FieldNumberType. However, for some
-computations with Cartesian representation, no
+computations with %Cartesian representation, no
 division operation is needed, i.e., a `RingNumberType` is sufficient in
 this case. With `Cartesian<FieldNumberType>`, both
 `Cartesian<FieldNumberType>::FT` and
@@ -164,7 +164,7 @@ this case. With `Cartesian<FieldNumberType>`, both
 `Cartesian<FieldNumberType>` uses reference counting internally to
 save copying costs. \cgal also provides
 `Simple_cartesian<FieldNumberType>`, a kernel that uses
-Cartesian representation but no reference
+%Cartesian representation but no reference
 counting. Debugging is easier with
 `Simple_cartesian<FieldNumberType>`, since the coordinates are
 stored within the class and hence direct access to the coordinates is
@@ -177,18 +177,18 @@ less efficient than `Cartesian<FieldNumberType>`. Again, in
 
 ## Homogeneous Kernels ##
 
-Homogeneous coordinates permit to avoid division operations in
+%Homogeneous coordinates permit to avoid division operations in
 numerical computations, since the additional coordinate can serve as a
 common denominator. Avoiding divisions can be useful for exact
 geometric computation. With `Homogeneous<RingNumberType>` you can
 choose a homogeneous representation for the coordinates of the kernel
-objects. As for the Cartesian representation, one
+objects. As for the %Cartesian representation, one
 has to declare the type used to store the coordinates. Since the
 homogeneous representation does not use divisions, the number type
 associated with a homogeneous representation class must be a model for
 the weaker concept `RingNumberType` only. However, some operations
 provided by this kernel involve divisions, for example computing
-squared distances or Cartesian coordinates. To
+squared distances or %Cartesian coordinates. To
 keep the requirements on the number type parameter of
 `Homogeneous` low, the number type
 `Quotient<RingNumberType>` is used for operations that require
@@ -219,22 +219,22 @@ less efficient than `Homogeneous<RingNumberType>`. Again, in
 ## Naming Conventions ##
 
 The use of kernel classes not only avoids problems, it also makes all
-\cgal classes very uniform. They <B>always</B> consist of:
+\cgal classes very uniform. They always consist of:
 <OL>
 
-<LI>The <I>capitalized base name</I> of the geometric object, such as 
+<LI>The *capitalized base name* of the geometric object, such as 
 `Point`, `Segment`, or `Triangle`.
 
-<LI>An <I>underscore</I> followed by the <I>dimension</I> of the object, 
+<LI>An *underscore* followed by the *dimension* of the object, 
 for example \f$ \_2\f$, \f$ \_3\f$, or \f$ \_d\f$.
 
-<LI>A <I>kernel class</I> as parameter, which itself is
+<LI>A *kernel class* as parameter, which itself is
 parameterized with a number type, such as
 `Cartesian<double>` or
 `Homogeneous<leda_integer>`.
 </OL>
 
-## Kernel as a Traits Class ##
+## %Kernel as a Traits Class ##
 
 Algorithms and data structures in the basic library of \cgal are
 parameterized by a traits class that subsumes the objects on which the
@@ -247,14 +247,14 @@ algorithm. In some other cases, the algorithms or data structures
 needs more than is provided by the kernel concept. In these cases, a
 kernel can not be used as a traits class.
 
-## Choosing a Kernel and Predefined Kernels ##
+## Choosing a %Kernel and Predefined Kernels ##
 
-If you start with integral Cartesian coordinates,
+If you start with integral %Cartesian coordinates,
 many geometric computations will involve integral numerical values
 only. Especially, this is true for geometric computations that
 evaluate only predicates, which are tantamount to determinant
 computations. Examples are triangulation of point sets and convex hull
-computation. In this case, the Cartesian
+computation. In this case, the %Cartesian
 representation is probably the first choice, even with a ring type.
 You might use limited precision integer types like `int` or
 `long`, use `double` to present your integers (they have more
@@ -266,9 +266,9 @@ arise due to overflow.
 
 If new points are to be constructed, for example the
 intersection point of two lines, computation of
-Cartesian coordinates usually involves divisions.
+%Cartesian coordinates usually involves divisions.
 Hence, one needs to use a `FieldNumberType` with
-Cartesian representation, or alternatively, switch
+%Cartesian representation, or alternatively, switch
 to homogeneous representation. The type `double` is a - though
 imprecise - model for `FieldNumberType`. You can also put any
 `RingNumberType` into the `Quotient` adaptor to get a field type
@@ -286,14 +286,14 @@ type <TT>double</TT>, because they need speed and can live with
 approximate results, or even algorithms that, from time to time,
 crash or compute incorrect results due to accumulated rounding errors.
 
-<b>Predefined kernels.</b>
+###Predefined Kernels###
 
 For the user's convenience, \cgal provides 3 typedefs to generally useful
 kernels.
 
 <UL>
-<LI>They are all Cartesian kernels.
-<LI>They all support constructions of points from <TT>double</TT> Cartesian
+<LI>They are all %Cartesian kernels.
+<LI>They all support constructions of points from <TT>double</TT> %Cartesian
 coordinates.
 <LI>All these 3 kernels provide exact geometric predicates.
 <LI>They handle geometric constructions differently:
@@ -305,7 +305,7 @@ same as `Exact_predicates_exact_constructions_kernel`, but the
 number type it provides
 (`Exact_predicates_exact_constructions_kernel_with_sqrt::FT`)
 supports the square root operation exactly
-\footnote{Currently it requires having either LEDA or CORE installed}.
+\footnote{Currently it requires having either LEDA or CORE installed.}.
 <LI>`Exact_predicates_inexact_constructions_kernel`: provides exact
 geometric predicates, but geometric constructions may be inexact due to
 round-off errors. It is however enough for most \cgal algorithms, and
@@ -319,10 +319,10 @@ faster than both `Exact_predicates_exact_constructions_kernel` and
 ## Points and Vectors ##
 
 In \cgal, we strictly distinguish between points, vectors and directions.
-A <I>point</I> is a point in the Euclidean space
-\f$ \E^d\f$, a <I>vector</I> is the difference of two points \f$ p_2\f$, \f$ p_1\f$
+A *point* is a point in the Euclidean space
+\f$ \E^d\f$, a *vector* is the difference of two points \f$ p_2\f$, \f$ p_1\f$
 and denotes the direction and the distance from \f$ p_1\f$ to \f$ p_2\f$ in the
-vector space \f$ \R^d\f$, and a <I>direction</I> is a vector where we forget
+vector space \f$ \R^d\f$, and a *direction* is a vector where we forget
 about its length.
 They are different mathematical concepts. For example, they behave
 different under affine transformations and an addition of two
@@ -346,7 +346,7 @@ assert( p == q );
 
 In order to obtain the point corresponding to a vector \f$ v\f$ you simply
 have to add \f$ v\f$ to `ORIGIN`. If you want to determine 
-the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can write\footnote{you might call `midpoint(p_1,p_2)` instead}
+the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can write\footnote{you might call `midpoint(p_1,p_2)` instead.}
 
 \code{.cpp}
 q = p_1 + (p_2 - p_1) / 2.0;
@@ -437,7 +437,7 @@ function objects (provided by a kernel class).
 \cgal provides predicates for the orientation of point 
 sets (`orientation`, `leftturn`, `rightturn`, `collinear`,
 `coplanar`), for comparing points according to some given order, 
-especially for comparing Cartesian coordinates
+especially for comparing %Cartesian coordinates
 (e.g. `lexicographically_xy_smaller`), in-circle and in-sphere tests,
 and predicates to compare distances.
 
@@ -503,8 +503,8 @@ encapsulation mechanism requires the use of
 efficient way, which is now discouraged, used to be to
 use the `assign` function).
 
-HEADING:Example 
---------------
+Example 
+-------
 
 In the following example, the object class is used as return value for the 
 intersection computation, as there are possibly different return values.
@@ -604,7 +604,7 @@ have to provide the following functor.
 
 \cgalexample{MyConstruct_bbox_2.h}
 
-Things are similar for random access to the Cartesian
+Things are similar for random access to the %Cartesian
 coordinates of a point. As the coordinates are stored
 in an array of `doubles` we can use `double*` as
 random access iterator.
@@ -658,7 +658,7 @@ or orientation of polygons.
 For this purpose \cgal provides several projection traits classes,
 which are a model of traits class concepts of 2D triangulations,
 2D polygon and 2D convex hull traits classes. The projection traits classes 
-are listed in the "<I>Is Model for the Concepts</I>" sections of the concepts. 
+are listed in the "Is Model for the Concepts" sections of the concepts. 
 
 # Design and Implementation History #
 
@@ -681,7 +681,7 @@ a draft specification to Stefan Schirra.
 The resulting draft specification was intentionally modeled on \cgal's 
 precursors \protocgal and \plageo as well as on the geometric part of \leda.
 The specification already featured coexistence of 
-Cartesian and 
+%Cartesian and 
 homogeneous representation of point/vector data and parameterization 
 by number type(s).
 During the discussion of the draft a kernel design group was formed. 
@@ -691,7 +691,7 @@ The work of the kernel design group led to significant changes and
 improvements of the original design, e.g. the strong separation between
 points and vectors. Probably the most important enhancement was the design 
 of a common superstructure for the previously uncoupled 
-Cartesian and
+%Cartesian and
 homogeneous representations. One can say, that the kernel was designed
 by this group.
 The kernel was later revised based on suggestions by Herv&eacute; Br&ouml;nnimann,
@@ -702,7 +702,7 @@ of the \cgal-project (<span class="textsc">esprit ltr iv</span> project number 2
 Since then many more people contributed to the evolution of the kernel
 through discussions on the \cgal mailing lists.
 The implementation based on 
-Cartesian representation was (initially) provided 
+%Cartesian representation was (initially) provided 
 by Andreas Fabri, the homogeneous representation (initially) by Stefan Schirra.
 Intersection and distance computations were implemented by Geert-Jan Giezeman.
 Further work has been done by Susan Hert on the overall maintenance of the
