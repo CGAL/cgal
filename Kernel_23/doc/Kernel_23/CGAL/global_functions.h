@@ -2542,7 +2542,7 @@ const Point_3<Kernel> &q);
 /// @}
 
 
-/// \addtogroup bool z_equal bool z_equal
+/// \addtogroup z_equal z_equal
 /// \ingroup PkgKernel23
 
 /// \sa `CGAL::compare_z` 
