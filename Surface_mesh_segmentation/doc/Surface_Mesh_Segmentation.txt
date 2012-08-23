@@ -95,25 +95,28 @@ The function CGAL::sdf_values_computation provides an implementation of the SDF 
   
 The outputs are a property map which associates every facet with its SDF value, and pair of minimum and maximum SDF values before linear normalization.
 
-###Examples####
+###Example####
 \include Surface_mesh_segmentation/sdf_values_computation_example.cpp
 
 ##Surface Mesh Segmentation##
 The function CGAL::surface_mesh_segmentation_from_sdf_values computes a segmentation of the mesh using provided SDF values.
 The output is a property map which associates a segment-id (an integer between [0, number of segments -1]) to each facet. Formally, a segment is a set of connected facets which are placed under same cluster after graph-cut. 
 
-###Examples###
+###Example###
 \include Surface_mesh_segmentation/surface_mesh_segmentation_from_sdf_values_example.cpp
 
-The function CGAL::surface_mesh_segmentation combines the two aforementionned functions. Note that for segmenting the mesh several times with different parameters (i.e. number of levels, and smoothing lambda), it is wise to first compute SDF values using CGAL::sdf_values_computation, and then call CGAL::surface_mesh_segmentation_from_sdf_values with same SDF values.
+The function CGAL::surface_mesh_segmentation combines the two aforementionned functions. Note that for segmenting the mesh several times with different parameters (i.e. number of levels, and smoothing lambda),
+it is wise to first compute SDF values using CGAL::sdf_values_computation, and then call CGAL::surface_mesh_segmentation_from_sdf_values with same SDF values.
 
-###Examples###
+###Example###
 \include Surface_mesh_segmentation/surface_mesh_segmentation_example.cpp
 
-##More Examples##
-One can see that in previous examples we use `std::map` as an underlying data structure to create adaptors for Boost Propery Map. In this example, we use a custom implementation (i.e. model) of <a href="http://www.boost.org/doc/libs/1_51_0/libs/property_map/doc/LvaluePropertyMap.html">`boost::LvaluePropertyMap`</a> concept. The main purpose of this new model is decreasing the complexity of accessing associated data with facets from logaritmic to constant. In order to accomplish that, we also use enriched polyhedron whose facets support an extra field called @a id which can be used for mapping facets directly to data indices.
+##Using a polyhedron with an id per facet##
+The previous examples use a `std::map` as propery maps for storing the sdf values and the segmentation results. This example uses
+a polyhedron type with a facet type having an extra id field together with a vector as underlying data structure in the property maps.
+The main advantage is to decrease the complexity of accessing associated data with facets from logaritmic to constant. 
 
-###Examples###
+###Example###
 \include Surface_mesh_segmentation/surface_mesh_segmentation_with_facet_ids_example.cpp
 
  
@@ -135,5 +138,6 @@ of the Google Summer of Code.
 
 --------------------------------------------------------------------------------------------------------------
 - IOY: It would be nice if we can shorten "examples" code sections (actually I search around whether there is any functionality in doxygen for generating collapsable/expandable sections (so that we can collapse unrelated part by default like includes or polyhedron creation/read), but couldn't find one.)
+ - SL: I don't like the idea of removing include files as this hide what need to be included. To me the length of example is OK.
 */ 
 } /* namespace CGAL */

@@ -12,9 +12,8 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron;
 
-// Custom implementation of LvaluePropertyMap.
-// It uses std::vector as underlying data structure, and associates data with facets
-// by using id field of facets as indices for data.
+// Property map using the fact that each facet is assigned an integer
+// to store associated information into a vector
 template<class PolyhedronWithId, class ValueType>
 struct Polyhedron_with_id_to_vector_property_map
     : public boost::put_get_helper<ValueType&,
@@ -72,8 +71,8 @@ int main(int argc, char **argv)
     }
 
     // create a property-map for segment-ids 
-    std::vector<double> segment_ids(mesh.size_of_facets()); 
-    Polyhedron_with_id_to_vector_property_map<Polyhedron, double> segment_property_map(&segment_ids);
+    std::vector<unsigned> segment_ids(mesh.size_of_facets()); 
+    Polyhedron_with_id_to_vector_property_map<Polyhedron, unsigned> segment_property_map(&segment_ids);
 
     CGAL::surface_mesh_segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 
