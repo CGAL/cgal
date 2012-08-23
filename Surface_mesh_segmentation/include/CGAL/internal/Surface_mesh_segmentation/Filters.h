@@ -133,7 +133,7 @@ public:
                                         neighbor_values.begin() + half_neighbor_count);
         median_sdf /= 2;
       }
-      smoothed_values.push_back(total_sdf_value / total_weight);
+      smoothed_values.push_back(median_sdf);
     }
     // put smoothed values back again to values pmap.
     std::size_t index = 0;
