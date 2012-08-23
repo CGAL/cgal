@@ -7,8 +7,7 @@ namespace CGAL {
 \anchor user_chapter_2D_Triangulations
 \authors Mariette Yvinec
 
-\image html tr1.gif
-\image html dt1.gif
+\image html tr1dt1.png
 
 This chapter describes the two dimensional triangulations
 of \cgal. 
@@ -20,7 +19,7 @@ Section \ref Section_2D_Triangulations_Software_Design presents
 the overall software
 design of the 2D triangulations package. 
 The next sections present the different two dimensional triangulations classes
-available in \cgal : 
+available in \cgal: 
 basic triangulations (section \ref Section_2D_Triangulations_Basic),
 Delaunay triangulations
 (Section \ref Section_2D_Triangulations_Delaunay),
@@ -47,7 +46,7 @@ and vertices.
 \section Section_2D_Triangulations_Definitions Definitions 
 
 A two dimensional triangulation can be roughly described as a set \f$ T\f$
-of triangular facets such that :
+of triangular facets such that:
 
 - two facets either are disjoint or share a lower dimensional
 face (edge or vertex).
@@ -309,7 +308,7 @@ The vertices and faces of the triangulations are accessed through
 `handles`,
 `iterators` and `circulators`.
 A handle is a model of the concept `Handle` which basically
-offers the two dereference operators `*` and `->` .
+offers the two dereference operators `*` and `->`.
 A circulator is a type devoted to visit circular sequences.
 Handles are used whenever the accessed element 
 is not part of a sequence.
@@ -838,7 +837,7 @@ object of the class `Constrained_triangulation_2<Traits,Tds,Itag>`.
 The third parameter `Itag` is the intersection tag
 which serves to choose how intersecting constraints
 are dealt with. This parameter has to be instantiated
-by one of the following classes :
+by one of the following classes:
 `CGAL::No_intersection_tag` when input constraints do not
 intersect 
 
@@ -895,14 +894,8 @@ derives from the class
 and adds three Boolean data members to store the status of its edges.
 
 \anchor Triangulation_2D_Fig_constrained
-\image html poisson.gif
-\image html del_poisson.gif
-<center><b>
-Constrained and Constrained Delaunay triangulation: the constraining
-edges are the green edges, a constrained triangulation is shown on the
-left, the constrained Delaunay triangulation with two examples of
-circumcircles is shown on the right.
-</b></center>
+\image html poisson_del_poisson.png "Constrained and Constrained Delaunay triangulation: the constraining edges are the green edges, a constrained triangulation is shown on the left, the constrained Delaunay triangulation with two examples of circumcircles is shown on the right."
+
 
 \section Section_2D_Triangulations_Constrained_Delaunay Constrained Delaunay Triangulations 
 
@@ -941,7 +934,7 @@ As in the case of constraints triangulation, the third parameter
 `Itag` is the intersection tag
 and serves to choose how intersecting constraints
 are dealt with. It can be instantiated with one of the following
-class : `CGAL::No_intersection_tag`,
+classes: `CGAL::No_intersection_tag`,
 `CGAL::Exact_predicates_tag`,
 `CGAL::Exact_intersections_tag` 
 (see Section \ref Section_2D_Triangulations_Constrained.
@@ -1243,7 +1236,7 @@ is dereferenced only once per point during the insertion.
 
 The code of this package is the result of a long development
 process. Here follows a tentative list of people
-who added their stone to this package :
+who added their stone to this package:
 Jean-Daniel Boissonnat, Herv&eacute; Br&ouml;nnimann, 
 Olivier Devillers, Andreas Fabri, Fr&eacute;d&eacute;ric Fichel,
 Julia Fl&ouml;totto, Monique Teillaud and Mariette Yvinec.

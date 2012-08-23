@@ -1155,7 +1155,7 @@ of `f`.
 
 Many of the classes in the triangulation package 
 inherit from `Triangulation_cw_ccw_2`. This is for instance the case for 
-`CGAL::Triangulation_2<Traits,Tds>::Face`. 
+`CGAL::Triangulation_2::Face`. 
 Thus, for example the neighbor 
 `neighbor(cw(i))` of a face `f` is 
 the 
@@ -1167,7 +1167,7 @@ of `f`.
 
 \image html neighbors.gif "Vertices and neighbors."
 
-\sa `CGAL::Triangulation_2<Traits,Tds>` 
+\sa `CGAL::Triangulation_2` 
 \sa `CGAL::TriangulationDSFace_2` 
 
 */
