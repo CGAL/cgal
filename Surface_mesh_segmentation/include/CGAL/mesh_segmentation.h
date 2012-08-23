@@ -25,7 +25,7 @@ namespace CGAL
  * @param[out] sdf_values <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @param cone_angle opening angle for cone, expressed in radians
  * @param number_of_rays number of rays picked from cone for each facet
- * @return pair of minimum and maximum SDF values before linear normalization
+ * @return the minimum and maximum SDF values before linear normalization
  */
 template <class Polyhedron, class SDFPropertyMap>
 std::pair<double, double>
