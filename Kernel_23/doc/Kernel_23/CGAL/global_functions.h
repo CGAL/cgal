@@ -815,11 +815,6 @@ Depending on which \cgal kernel is used,
 different versions of this global function are available. This is
 described below.
 
-<b>With the basic 2D and 3D Kernel</b> (see Chapter \ref chapterkernel23)
-
-\anchor figcompare_x
-\image html compare1.gif 
-
 \sa `CGAL::compare_xy` 
 \sa `CGAL::compare_xyz` 
 \sa `CGAL::compare_x_at_y` 
@@ -829,6 +824,14 @@ described below.
 \sa `CGAL::compare_z` 
 */
 /// @{
+
+/*!
+\name With the basic 2D and 3D Kernel
+\anchor figcompare_x
+\image html compare1.gif 
+*/
+/// @{
+
 /*!
 compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
 */
@@ -867,6 +870,8 @@ Comparison_result compare_x(const Line_2<Kernel> &l1,
                                         const Line_2<Kernel> &l2,
                                         const Line_2<Kernel> &h1,
                                         const Line_2<Kernel> &h2);
+
+/// @}
 
 /*!
 \name With the 2D Circular Kernel
@@ -2051,8 +2056,7 @@ Point_3<Kernel> operator-(const Point_3<Kernel> &p, const Vector_3<Kernel> &v);
 /// @{
 
 /*!
-returns the point obtained by translating `p` by 
-vector `v`.
+returns the point obtained by translating `p` by vector `v`.
 */
 Point_2<Kernel> operator+(const Point_2<Kernel> &p,
 const Vector_2<Kernel> &v);
@@ -2066,7 +2070,7 @@ const Vector_3<Kernel> &v);
 
 /// @}
 
-/// \addtogroup operatormult operator
+/// \addtogroup operatormult operator\*
 /// \ingroup PkgKernel23
 /// \sa `CGAL::operator+` 
 /// \sa `CGAL::operator-` 

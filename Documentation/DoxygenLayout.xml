@@ -1,16 +1,17 @@
 <doxygenlayout version="1.0">
   <!-- Navigation index tabs for HTML output -->
   <navindex>
-    <tab type="mainpage" visible="yes" title=""/>
-    <tab type="user" url="@ref packages" title="Packages"/>
-    <tab type="pages" visible="yes" title="" intro=""/>
+    <tab type="mainpage" visible="yes" title="CGAL"/>
+    <tab type="user" url="@ref general_intro" title="General Introduction"/>
+    <tab type="user" url="@ref packages" title="Package Overview"/>
+    <tab type="pages" visible="no" title="" intro=""/>
     <tab type="modules" visible="yes" title="" intro=""/>
-    <tab type="namespaces" visible="yes" title="">
+    <tab type="namespaces" visible="no" title="">
       <tab type="namespacelist" visible="yes" title="" intro=""/>
       <tab type="namespacemembers" visible="yes" title="" intro=""/>
     </tab>
 
-    <tab type="classes" visible="yes" title="">
+    <tab type="classes" visible="yes" title="Class Index">
       <tab type="classlist" visible="yes" title="" intro=""/>
       <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/>
       <tab type="hierarchy" visible="yes" title="" intro=""/>

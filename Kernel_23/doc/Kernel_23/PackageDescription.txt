@@ -24,7 +24,7 @@
 \PkgDesc{This package contains kernels each containing objects of  constant size, such as point, vector, direction, line, ray, segment, circle as well as predicates and constructions for these objects. The kernels mainly differ in the way they handle robustness issues.}
 \PkgSince{0.9}
 \cgalbib{ cgal:bfghhkps-lgk23-12 }
-\license{ Label \ref licensesLGPL "LGPL" }
+\license{ \ref licensesLGPL "LGPL" }
 \PkgDescriptionEnd
 */
 

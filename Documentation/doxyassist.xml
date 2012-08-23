@@ -688,9 +688,9 @@ namespace for the XML file to be processed properly.  -->
           </list>
         </doxygen>
       </project>
-      <!-- subprojects end -->
+      subprojects end
     </project>
-
+    
     <!-- The main CGAL project containing the package list and complete reference documentation -->
     <project>
       <namespace>CGAL</namespace>

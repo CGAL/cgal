@@ -1,3 +1,4 @@
+namespace CGAL {
 /*!
 \ingroup PkgKernel23
 
@@ -24,17 +25,15 @@ plane \f$ \E^2\f$. Their
 dimension and the fact that they are Cartesian is expressed by 
 the suffix `_2` and the representation type `Cartesian`. 
 
-<PRE>[cccbegin] 
-
+\code
 Point_2< Cartesian<double> > p(1.0,1.0), q(4.0,7.0); 
-</PRE> 
+\endcode
 
 To define a line \f$ l\f$ we write: 
 
-<PRE> 
-
+\code
 Line_2< Cartesian<double> > l(p,q); 
-</PRE> 
+\endcode
 
 \sa `Kernel::Line_2` 
 

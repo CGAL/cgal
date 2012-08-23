@@ -219,9 +219,10 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "advancedbegin=" \
                          "advancedend="
 
+ALIASES += "advanced=\xrefitem advanceds \"Advanced\" \"Advanced\""
 ALIASES += "refines=\xrefitem refiness \"Refines\" \"Refines\""
 ALIASES += "requires=\xrefitem requiress \"Requires\" \"Requires\""
-ALIASES += "models=\xrefitem modelss \"Models\" \"Models\""
+ALIASES += "models=\xrefitem modelss \"Is Model Of\" \"Is Model Of\""
 ALIASES += "generalizes=\xrefitem generalizess \"Generalizes\" \"Generalizes\""
 ALIASES += "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\""
 ALIASES += "debug=\xrefitem debugs \"Debug\" \"Debug\""
@@ -536,7 +537,7 @@ SORT_GROUP_NAMES       = NO
 # Note: This option applies only to the class list, not to the
 # alphabetical list.
 
-SORT_BY_SCOPE_NAME     = NO
+SORT_BY_SCOPE_NAME     = YES
 
 # If the STRICT_PROTO_MATCHING option is enabled and doxygen fails to
 # do proper type resolution of all parameters of a function it will reject a
@@ -721,7 +722,7 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS       = */Unsupported/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -836,7 +837,7 @@ USE_HTAGS              = NO
 # will generate a verbatim copy of the header file for each class for
 # which an include is specified. Set to NO to disable this.
 
-VERBATIM_HEADERS       = YES
+VERBATIM_HEADERS       = NO
 
 #---------------------------------------------------------------------------
 # configuration options related to the alphabetical class index

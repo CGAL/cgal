@@ -6,10 +6,10 @@
 
 \attention See something? Fix it.
 
-CGAL
+%CGAL
 ====
 
-The goal of the CGAL Open Source Project is to provide easy access to
+The goal of the %CGAL Open Source Project is to provide easy access to
 efficient and reliable geometric algorithms in the form of a C++
 library. CGAL is used in various areas needing geometric computation,
 such as: computer graphics, scientific visualization, computer aided
@@ -18,7 +18,7 @@ biology, medical imaging, robotics and motion planning, mesh
 generation, numerical methods... More on the projects using CGAL web
 page.
 
-The Computational Geometry Algorithms Library (CGAL), offers data
+The Computational Geometry Algorithms Library (%CGAL), offers data
 structures and algorithms like triangulations (2D constrained
 triangulations and Delaunay triangulations in 2D and 3D, periodic
 triangulations in 3D), Voronoi diagrams (for 2D and 3D points, 2D
@@ -40,29 +40,28 @@ structures.
 
 All these data structures and algorithms operate on geometric objects
 like points and segments, and perform geometric tests on them. These
-objects and predicates are regrouped in CGAL Kernels.
+objects and predicates are regrouped in %CGAL Kernels.
 
 Finally, the Support Library offers geometric object generators and
 spatial sorting functions, as well as a matrix search framework and a
 solver for linear and quadratic programs. It further offers interfaces
 to third party software such as the GUI libraries Qt, Geomview, and
-the Boost Graph Library.  License
+the Boost Graph Library.
 
-CGAL is distributed under a dual-license scheme. CGAL can be used
-together with Open Source software free of charge. Using CGAL in other
-contexts can be done by obtaining a commercial license from
-GeometryFactory. For more details see the License page.
+%CGAL is distributed under a dual-license scheme. %CGAL can be used
+together with Open Source software free of charge. Using %CGAL in
+other contexts can be done by obtaining a commercial license from
+[GeometryFactory](http://www.geometryfactory.com). For more details
+see the \ref licenseIssues License page.
+*/
 
-General Introduction
-====================
+/*!
+
+\page general_intro General Introducion
 
 - \subpage introduction
 - \subpage preliminaries
 - \subpage installation
-
-Developers Manual
-=================
-
 - \subpage dev_manual
 
 */
