@@ -30,7 +30,7 @@ e.g., we did not introduce concepts for such basic structures as <I>groups</I> o
 exceptional structures as <I>skew fields</I>.
 
 \anchor figConceptHierarchyOfAlgebraicStructures
-\image html fig/AlgebraicConceptHierarchy.gif Concept Hierarchy of Algebraic Structures
+\image html fig/AlgebraicConceptHierarchy.gif Concept hierarchy of algebraic structures
 
 Figure  \ref figConceptHierarchyOfAlgebraicStructures  shows the refinement 
 relationship of the algebraic structure concepts. 
