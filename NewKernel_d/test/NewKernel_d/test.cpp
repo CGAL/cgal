@@ -132,6 +132,21 @@ void test2(){
   std::cout << sos(&tab[0],tab+4) << std::endl;
 }
 
+template<class CP> struct Construct_point3_helper {
+  CP const& cp;
+  Construct_point3_helper(CP const& x) : cp(x) {}
+  template<class T1,class T2,class T3>
+  typename CP::result_type operator()(T1 const&t1, T2 const&t2, T3 const&t3)const{
+    double tab[]={(double)t1,(double)t2,(double)t3};
+    return cp(tab+0,tab+3);
+  }
+  template<class T1,class T2,class T3,class T4>
+  typename CP::result_type operator()(T1 const&t1, T2 const&t2, T3 const&t3, T4 const&t4)const{
+    double tab[]={(double)t1,(double)t2,(double)t3};
+    return cp(tab+0,tab+3,t4);
+  }
+};
+
 template<class Ker>
 void test3(){
   typedef Ker K1;
@@ -142,7 +157,7 @@ void test3(){
   typedef typename K1::Flat_orientation_d FO;
 
   //typedef K1::Construct_point CP;
-  typedef typename K1::Construct_point_d CP;
+  typedef typename K1::Construct_point_d CP_;
   typedef typename K1::Construct_vector_d CV;
   typedef typename K1::Construct_segment_d CS;
   typedef typename K1::template Functor<CGAL::Segment_extremity_tag>::type CSE;
@@ -164,7 +179,8 @@ void test3(){
     (3)
 #endif
     ;
-  CP cp Kinit(construct_point_d_object);
+  CP_ cp_ Kinit(construct_point_d_object);
+  typename boost::conditional<boost::is_same<typename Ker::Default_ambient_dimension,CGAL::Dynamic_dimension_tag>::value,Construct_point3_helper<CP_>,CP_>::type cp(cp_);
   CCI ci Kinit(construct_cartesian_const_iterator_d_object);
   CC cc Kinit(compute_coordinate_d_object);
   CL cl Kinit(compare_lexicographically_d_object);
@@ -180,8 +196,8 @@ void test3(){
   P b=cp(5,6,7,8);
   int rr[]={3,5,2,3};
   int* r=rr;
-  P c=cp(r,r+3);
-  P d=cp(r,r+4,CGAL::Homogeneous_tag());
+  P c=cp_(r,r+3);
+  P d=cp_(r,r+4,CGAL::Homogeneous_tag());
   S s=cs(c,d);
   std::cout << cc(a,1) << std::endl;
   std::cout << cc(b,2) << std::endl;
@@ -230,4 +246,5 @@ int main(){
   test2<CGAL::Kernel_d_interface<KK> >();
   test2<CGAL::Epick_d<2> >();
   test3<CGAL::Epick_d<3> >();
+  test3<CGAL::Epick_d<CGAL::UNKNOWN_DIMENSION> >();
 }

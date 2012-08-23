@@ -20,7 +20,7 @@
 namespace CGAL {
 
 template < typename FT_, typename Dim_,
-#if 1
+#if 0
 	 typename Vec_=Array_vector<FT_, Dim_>,
 #else
 	 typename Vec_=LA_eigen<FT_, Dim_>,
