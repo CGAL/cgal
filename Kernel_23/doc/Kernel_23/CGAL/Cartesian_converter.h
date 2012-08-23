@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes
 
 `Cartesian_converter`converts objects from the kernel traits `K1` to 
 the kernel traits `K2` using `Converter` to do the conversion. 

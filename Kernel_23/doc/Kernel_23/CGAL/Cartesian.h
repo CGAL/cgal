@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes
 
 A model for `Kernel` that uses Cartesian coordinates to represent the 
 geometric objects. In order for `Cartesian` to model Euclidean geometry 

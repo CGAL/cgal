@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes3
 
 An object \f$ s\f$ of the data type `Segment_3` is a directed 
 straight line segment in the three-dimensional Euclidean space \f$ \E^3\f$, i.e. a 

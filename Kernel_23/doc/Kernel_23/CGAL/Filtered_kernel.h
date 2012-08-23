@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes
 
 `Filtered_kernel_adaptor` is a kernel that uses the filtering technique 
 \cite cgal:bbp-iayed-01 to obtain a kernel with exact and efficient 

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes
 
 The class `Kernel_traits` provides access to the kernel model to 
 which the argument type `T` belongs. (Provided `T` belongs to 

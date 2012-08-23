@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes
 
 The class `Projection_traits_xy_3` is an adapter to apply 2D algorithms to the projections of 3D data on the `xy`-plane. 
 

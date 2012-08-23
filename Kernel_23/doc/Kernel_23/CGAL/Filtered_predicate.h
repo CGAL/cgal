@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes
 
 `Filtered_predicate`is an adaptor for predicate function objects that allows 
 one to produce efficient and exact predicates. It is used to build 

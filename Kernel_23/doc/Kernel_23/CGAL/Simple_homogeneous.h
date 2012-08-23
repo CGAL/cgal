@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes
 
 A model for a `Kernel` using homogeneous coordinates to represent the 
 geometric objects. In order for `Simple_homogeneous` to model Euclidean geometry 

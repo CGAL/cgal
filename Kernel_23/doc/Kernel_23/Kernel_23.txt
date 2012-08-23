@@ -175,7 +175,7 @@ less efficient than `Cartesian<FieldNumberType>`. Again, in
 `Simple_cartesian<FieldNumberType>::RT` are mapped to
 `FieldNumberType`.
 
-## Homogeneous Kernels ##
+## %Homogeneous Kernels ##
 
 %Homogeneous coordinates permit to avoid division operations in
 numerical computations, since the additional coordinate can serve as a

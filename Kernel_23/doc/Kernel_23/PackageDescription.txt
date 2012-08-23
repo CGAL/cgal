@@ -15,11 +15,15 @@
 /// \ingroup PkgKernel23
 /// Kernels that come with \cgal
 
-/// \defgroup kernel_classes2 2D Kernel Classes 
+/// \defgroup kernel_classes2 2D Kernel Objects 
 /// \ingroup PkgKernel23
 
-/// \defgroup kernel_classes3 3D Kernel Classes 
+/// \defgroup kernel_classes3 3D Kernel Objects 
 /// \ingroup PkgKernel23
+
+/// \defgroup kernel_classes Kernel Classes 
+/// \ingroup PkgKernel23
+
 
 
 
