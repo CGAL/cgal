@@ -354,9 +354,9 @@ private:
    *   - get<0> double : outlier removed and averaged sdf value
    *   - get<1> double : ratio of (not outlier ray count) / (total ray count)
    */
-  boost::tuple<double, double> remove_outliers_and_calculate_sdf_value(
-    std::vector<double>& ray_distances,
-    std::vector<double>& ray_weights) const {
+  boost::tuple<double, double>
+  remove_outliers_and_calculate_sdf_value(std::vector<double>& ray_distances,
+                                          std::vector<double>& ray_weights) const {
     int accepted_ray_count = ray_distances.size();
     if(accepted_ray_count == 0)      {
       return 0.0;

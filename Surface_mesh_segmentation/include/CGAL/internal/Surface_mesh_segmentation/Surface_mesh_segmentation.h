@@ -75,7 +75,7 @@ class Polyhedron,
       class GraphCut = Alpha_expansion_graph_cut_boost,
       class FacetIndexMap =
       boost::associative_property_map<std::map<typename Polyhedron::Facet_const_handle, int> >,
-      class Filter = Bilateral_filtering<Polyhedron>
+      class Filter = Median_filtering<Polyhedron>
       >
 class Surface_mesh_segmentation
 {
@@ -524,7 +524,6 @@ private:
         continue;  // no facet to traversal
       }
       Facet_const_handle neighbor = facet_circulator->opposite()->facet();
-
       if(prev_segment_id == segments[neighbor]) {
         depth_first_traversal(neighbor, segment_id, segments);
       }
