@@ -162,9 +162,10 @@ struct Solve_RS_1{
             }
         }
         for(int i=0;i<nr;++i){
-            *res++=std::make_pair(*new Algebraic(x[i],p,i,m[i],
-                                                 i?x[i-1]:NULL,
-                                                 i==nr-1?NULL:x[i+1]),
+            *res++=std::make_pair(*new Algebraic(x[i],p,i,m[i]
+                                                 //,i?x[i-1]:NULL,
+                                                 //i==nr-1?NULL:x[i+1]
+                                                 ),
                                   m[i]);
         }
         free(m);
@@ -191,9 +192,10 @@ struct Solve_RS_1{
             m=0;    // we won't calculate multiplicities
         }
         for(int i=0;i<nr;++i)
-            *res++=*new Algebraic(x[i],p,i,m,
-                            i?x[i-1]:NULL,
-                            i==nr-1?NULL:x[i+1]);
+            *res++=*new Algebraic(x[i],p,i,m
+                            //,i?x[i-1]:NULL,
+                            //i==nr-1?NULL:x[i+1]
+                            );
         free(x);
         return res;
     }
@@ -283,7 +285,9 @@ struct Construct_alg_1{
         mpfi_init(i);
         mpfr_set(&i->left,l.fr(),GMP_RNDD);
         mpfr_set(&i->right,u.fr(),GMP_RNDU);
-        return Algebraic(i,convert()(p),0,0,NULL,NULL);
+        return Algebraic(i,convert()(p),0,0
+                         //,NULL,NULL
+                        );
     }
 };  // Construct_alg_1
 

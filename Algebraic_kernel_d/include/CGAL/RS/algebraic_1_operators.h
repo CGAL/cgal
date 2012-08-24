@@ -35,8 +35,6 @@ Algebraic_1 Algebraic_1::operator-()const{
                                              pol().minusx(),
                                              nr(),
                                              mult(),
-                                             NULL,
-                                             NULL,
                                              -lefteval());
         return *inverse;
 }
