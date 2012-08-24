@@ -98,3 +98,4 @@ Triangle_3<Kernel> transform(const Aff_transformation_3<Kernel> &at) const;
 /// @}
 
 }; /* end Triangle_3 */
+} /* end namespace CGAL */
