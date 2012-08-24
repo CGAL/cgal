@@ -7,7 +7,7 @@ namespace CGAL {
 Depending on which \cgal kernel is used, different versions of this
 global function are available.
 
-## With the basic 2D and 3D Kernel ##
+## With the 2D and 3D Linear %Kernel ##
 
 See Chapter \ref chapterkernel23
 
@@ -132,7 +132,7 @@ Example
 --------------
 
 The following example demonstrates the most common use of 
-`intersection` routines with the basic 2D and 3D Kernels.
+`intersection` routines with the 2D and 3D Linear %Kernel.
 
 \code
 #include <CGAL/intersections.h>
@@ -159,7 +159,7 @@ chaptersphericalkernel.
 \sa `CGAL::do_intersect` 
 \sa `CGAL::Object` 
 
-## With the basic 2D and 3D Kernel ##
+## With the 2D and 3D Linear %Kernel ##
 See Chapter  \ref chapterkernel23
 */
 /// @{
@@ -180,275 +180,177 @@ following:
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
-<TR> <TH> type A </TH>
- <TH> type B </TH>
- <TH> return type </TH>
+<TR> <TH> Type1 </TH>
+ <TH> Type2 </TH>
+ <TH> Return Type:  Object<Type> </TH>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
     <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Iso_rectangle_2</TD></TR>
-      </TABLE></TD>
+    <TD>Iso_rectangle_2</TD>
 </TR>
 
 <TR>
     <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
     <TD VALIGN="CENTER" > Line_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
     <TD VALIGN="CENTER" > Ray_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
     <TD VALIGN="CENTER" > Segment_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
     <TD VALIGN="CENTER" > Triangle_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-	<TR><TD>Triangle_2</TD></TR>
-  <TR><TD>std::vector&lt;Point_2&gt;</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2, or Triangle_2, or std::vector&lt;Point_2&gt;</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_2 </TD>
     <TD VALIGN="CENTER" > Line_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Line_2</TD></TR>
-        </TABLE></TD>
+    <TD>Point_2, or Line_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_2 </TD>
     <TD VALIGN="CENTER" > Ray_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Ray_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Ray_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_2 </TD>
     <TD VALIGN="CENTER" > Segment_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_2 </TD>
     <TD VALIGN="CENTER" > Triangle_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Ray_2 </TD>
     <TD VALIGN="CENTER" > Ray_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-	<TR><TD>Ray_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2, or Ray_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Ray_2 </TD>
     <TD VALIGN="CENTER" > Segment_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Ray_2 </TD>
     <TD VALIGN="CENTER" > Triangle_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Segment_2 </TD>
     <TD VALIGN="CENTER" > Segment_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Segment_2 </TD>
     <TD VALIGN="CENTER" > Triangle_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Triangle_2 </TD>
     <TD VALIGN="CENTER" > Triangle_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-	<TR><TD>Triangle_2</TD></TR>
-	<TR><TD>std::vector&lt;Point_2&gt;</TD></TR>
-      </TABLE></TD>
+    <TD>Point_2, or Segment_2, or Triangle_2, or std::vector&lt;Point_2&gt;</TD>
+</TR>
+
+</TABLE>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR> <TH> Type1 </TH>
+ <TH> Type2 </TH>
+ <TH> Return Type: Object<Type> </TH>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_3 </TD>
     <TD VALIGN="CENTER" > Line_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Line_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Line_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_3 </TD>
     <TD VALIGN="CENTER" > Plane_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Line_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Line_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_3 </TD>
     <TD VALIGN="CENTER" > Ray_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Ray_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Ray_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_3 </TD>
     <TD VALIGN="CENTER" > Segment_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Segment_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_3 </TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Segment_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Plane_3 </TD>
     <TD VALIGN="CENTER" > Plane_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Line_3</TD></TR>
-	<TR><TD>Plane_3</TD></TR>
-        </TABLE></TD>
+    <TD>Line_3, or Plane_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Plane_3 </TD>
     <TD VALIGN="CENTER" > Ray_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Ray_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Ray_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Plane_3 </TD>
     <TD VALIGN="CENTER" > Segment_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Segment_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Plane_3 </TD>
     <TD VALIGN="CENTER" > Sphere_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Circle_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Circle_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Plane_3 </TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Segment_3</TD></TR>
-	<TR><TD>Triangle_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Segment_3, or Triangle_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Ray_3 </TD>
     <TD VALIGN="CENTER" > Ray_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Ray_3</TD></TR>
-        <TR><TD>Segment_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Ray_3, or Segment_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Ray_3 </TD>
     <TD VALIGN="CENTER" > Segment_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Segment_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Ray_3 </TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
-p    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Segment_3</TD></TR>
-        </TABLE></TD>
+p    <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Segment_3 </TD>
     <TD VALIGN="CENTER" > Segment_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Segment_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Segment_3 </TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Segment_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Sphere_3 </TD>
     <TD VALIGN="CENTER" > Sphere_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Circle_3</TD></TR>
-	<TR><TD>Sphere_3</TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Circle_3, or Sphere_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_3</TD></TR>
-	<TR><TD>Segment_3</TD></TR>
-	<TR><TD>Triangle_3</TD></TR>
-	<TR><TD>std::vector &lt; Point_3  &gt; </TD></TR>
-        </TABLE></TD>
+    <TD>Point_3, or Segment_3, or Triangle_3, or std::vector &lt; Point_3  &gt;</TD>
 </TR>
 </TABLE>
 </DIV>

@@ -75,7 +75,7 @@ and storage space.
 See the dedicated chapter
 for more details on number types and their capabilities and performance.
 
-# Kernel Representations # {#kernel_rep}
+# %Kernel Representations # {#kernel_rep}
 
 Our object of study is the \f$ d\f$-dimensional affine Euclidean space. 
 Here we are mainly concerned with cases \f$ d=2\f$ and \f$ d=3\f$.
@@ -101,7 +101,7 @@ possible homogeneous representation is \f$ (c_0,c_1,\ldots,c_{d-1},1)\f$.
 %Homogeneous coordinates in fact allow to represent 
 objects in a more general space, the projective space
 \f$ \mathbb{P}^d\f$.
-In \cgal, we do not compute in projective geometry. Rather, we use 
+In \cgal we do not compute in projective geometry. Rather, we use 
 homogeneous coordinates to avoid division operations,
 since the additional coordinate can serve as a common denominator.
 
@@ -314,11 +314,11 @@ faster than both `Exact_predicates_exact_constructions_kernel` and
 </UL>
 </UL>
 
-# Kernel Geometry #
+# %Kernel Geometry #
 
 ## Points and Vectors ##
 
-In \cgal, we strictly distinguish between points, vectors and directions.
+In \cgal we strictly distinguish between points, vectors and directions.
 A *point* is a point in the Euclidean space
 \f$ \E^d\f$, a *vector* is the difference of two points \f$ p_2\f$, \f$ p_1\f$
 and denotes the direction and the distance from \f$ p_1\f$ to \f$ p_2\f$ in the
