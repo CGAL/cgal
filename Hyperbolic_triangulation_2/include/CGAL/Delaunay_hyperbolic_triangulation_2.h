@@ -69,7 +69,7 @@ public:
   }
   
 private:
-  // a face is invisible if a circumscribing circle intersects the circle at infinity
+  // a face is invisible if its circumscribing circle intersects the circle at infinity
   bool _is_finite_invisible;
   
   // defined only if the face is finite and invisible
@@ -208,13 +208,12 @@ public:
   {
     size_type n = this->number_of_vertices();
     
-    std::vector<Point> points (first, last);
-    spatial_sort (points.begin(), points.end(), geom_traits());
+    spatial_sort(first, last, geom_traits());
     Face_handle f;
-    for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
-         p != end; ++p)
-      f = insert (*p, f)->face();
-    
+    while(first != last) {
+      f = insert (*first++, f)->face();
+    }
+  
     return this->number_of_vertices() - n;
   }
   
@@ -303,7 +302,7 @@ private:
     return is_finite_invisible(e.first, e.second);
   }
   
-  // Depth-first search (dfs) and marking of the finite invisible faces.
+  // Depth-first search (dfs) and marking the finite invisible faces.
   void mark_faces() const
   {
     if(this->dimension() <= 1) return;
@@ -315,18 +314,18 @@ private:
     std::stack<Face_handle> backtrack;
     
     // start from a face with infinite vertex
-    Face_handle start = Base::infinite_face();
+    Face_handle current = Base::infinite_face();
     
     // mark it as visited
-    visited_faces.insert(start);
+    visited_faces.insert(current);
     
-    // put the element whom neighbors we are going to explore.
-    backtrack.push(start);
+    // put the element whose neighbors we are going to explore.
+    backtrack.push(current);
     
     // test whether a face is finite invisible or not
     Mark_face test(*this);
     
-    Face_handle current, next;
+    Face_handle next;
     Face_info face_info;
     
     while(!backtrack.empty()) {
@@ -398,15 +397,16 @@ private:
     // TODO: think of it
     if(this->dimension() <= 1) return;
     
+    Mark_face test(*this);
+    
     Face_handle f = v->face();
-    Face_handle next;
+    Face_handle start(f), next;
     int i;
-    Face_handle start(f);
     do {
       i = f->index(v);
       next = f->neighbor(ccw(i));  // turn ccw around v
       
-      mark_face(f);
+      mark_face(f, test);
       
       f = next;
     } while(next != start);
@@ -416,9 +416,6 @@ private:
   template<class Mark_face_test>
   void mark_face(const Face_handle& f, const Mark_face_test& test) const
   {
-    if(has_infinite_vertex(f)) {
-      return;
-    }
     f->info() = test(f);
   }
   
@@ -427,6 +424,152 @@ private:
     Mark_face test(*this);
     mark_face(f, test);
   }
+  
+  class Is_hyperbolic
+  {
+  public:
+    Is_hyperbolic()
+    {
+    }
+    
+    bool operator() (const Face_handle& f) const
+    {
+      typedef typename Gt::Vector_3 Vector_3;
+      
+      Point p0 = f->vertex(0)->point();
+      Point p1 = f->vertex(1)->point();
+      Point p2 = f->vertex(2)->point();
+      
+      Vector_3 v0 = Vector_3(p0.x()*p0.x() + p0.y()*p0.y(), 
+                                                 p1.x()*p1.x() + p1.y()*p1.y(), 
+                                                 p2.x()*p2.x() + p2.y()*p2.y());
+      
+      Vector_3 v1 = Vector_3(p0.x(), p1.x(), p2.x());
+      Vector_3 v2 = Vector_3(p0.y(), p1.y(), p2.y());
+      Vector_3 v3 = Vector_3(FT(1), FT(1), FT(1));
+      
+      FT dt0 = CGAL::determinant(v0, v1, v3);
+      FT dt1 = CGAL::determinant(v0, v2, v3);
+      FT dt2 = CGAL::determinant(v0 - v3, v1, v2);
+      
+      return dt0*dt0 + dt1*dt1 - dt2*dt2 < 0;
+    }
+    
+    // assume f is "non-hyperbolic"
+    bool operator() (const Face_handle& f, int i) const
+    {
+      typedef typename Gt::Vector_2 Vector_2;
+      typedef typename Gt::Vector_3 Vector_3;
+      typedef typename Gt::Point_3 Point_3;
+      
+      Point p0 = f->vertex(cw(i))->point();
+      Point p1 = f->vertex(ccw(i))->point();
+      Point q0 = f->vertex(i)->point();
+      
+      FT p0p0 = p0.x()*p0.x() + p0.y()*p0.y();
+      FT p1p1 = p1.x()*p1.x() + p1.y()*p1.y();
+      FT q0q0 = q0.x()*q0.x() + q0.y()*q0.y();
+      
+      Vector_3 v0 = Vector_3(2*p0.x(), 2*p1.x(), 2*q0.x());
+      Vector_3 v1 = Vector_3(2*p0.y(), 2*p1.y(), 2*q0.y());
+      Vector_3 v2 = Vector_3(FT(-1), FT(-1), FT(-1));
+      Vector_3 v = Vector_3(p0p0, p1p1, q0q0);
+      
+      FT x = CGAL::determinant(v, v1, v2);
+      FT y = CGAL::determinant(v0, v, v2);
+      FT z = CGAL::determinant(v0, v1, v);
+      
+      FT t = CGAL::determinant(v0, v1, v2);
+      
+      Point_3 A = Point_3(x/t, y/t, z/t);
+      
+      Vector_3 norm_p0(2*p0.x(), 2*p0.y(), FT(-1));
+      Vector_3 norm_p1(2*p1.x(), 2*p1.y(), FT(-1));
+      Vector_3 norm_q0(2*q0.x(), 2*q0.y(), FT(-1));
+      
+      Vector_3 main_direction = CGAL::cross_product(norm_p0, norm_p1);
+      
+      if(main_direction * norm_q0 > 0) {
+        main_direction = -main_direction;
+      }
+      //std::cout << "direction " << main_direction << std::endl;
+      
+      Vector_3 temp = Vector_3(-q0.x(), -q0.y(), 1 - q0q0);
+      assert(temp * norm_q0 < 0);
+      
+      FT k = (1 + A.z())/(2*main_direction.z());
+      if (k < 0) {
+        k = -k;
+      }
+      
+      Point_3 B = Point_3();
+      if(A.z() + main_direction.z() < -1) {
+        B = A + k*main_direction;
+      } else {
+        B = A + main_direction;
+      }
+      
+      Point phiA = Point((2.0*A.x())/(1.0 + A.z()), (2.0*A.y())/(1.0 + A.z()));
+      Point phiB = Point((2.0*B.x())/(1.0 + B.z()), (2.0*B.y())/(1.0 + B.z()));
+      
+      Vector_2 phiAB = Vector_2(phiA, phiB);
+      Vector_2 phiOA = Vector_2(Point(0, 0), phiA);
+      
+      return phiAB*phiOA < 0;
+    }
+    
+    // assume the incident faces are "non-hyperbolic"
+    bool operator() (const Edge& e) const
+    {
+      typedef typename Gt::Vector_2 Vector_2;
+      typedef typename Gt::Vector_3 Vector_3;
+      
+      // endpoints of the edge
+      Point p0 = e.first->vertex(cw(e.second))->point();
+      Point p1 = e.first->vertex(ccw(e.second))->point();
+      
+      Point q0 = e.first->vertex(e.second)->point();
+      // neighbor of e.first
+      Face_handle f = e.first->neighbor(e.second);
+      int ind = f->index(e.first);
+      Point q1 = f->vertex(ind);
+      
+      Vector_3 v0 = Vector_3(p0.x()*p0.x() + p0.y()*p0.y(), 
+                             p1.x()*p1.x() + p1.y()*p1.y(), 
+                             q0.x()*q0.x() + q0.y()*q0.y());
+      
+      Vector_3 v1 = Vector_3(2*p0.y(), 2*p1.y(), 2*q0.y());
+      Vector_3 v2 = Vector_3(2*p0.x(), 2*p1.x(), 2*q0.x());
+      Vector_3 v3 = Vector_3(FT(-1), FT(-1), FT(-1));
+      
+      FT dt0 = CGAL::determinant(v0, v1, v3);
+      FT dt1 = CGAL::determinant(v2, v0, v3);
+      
+      FT m11 = p0.x() * (p1.x()*p1.x() + p1.y()*p1.y() - 2) - p1.x() * (p0.x()*p0.x() + p0.y()*p0.y() - 2); 
+      FT m12 = p0.y() * (p1.x()*p1.x() + p1.y()*p1.y() - 2) - p1.y() * (p0.x()*p0.x() + p0.y()*p0.y() - 2); 
+      
+      Vector_3 v4 = Vector_3(p0.x()*p0.x() + p0.y()*p0.y(), 
+                             p1.x()*p1.x() + p1.y()*p1.y(), 
+                             q1.x()*q1.x() + q1.y()*q1.y());
+      
+      Vector_3 v5 = Vector_3(2*p0.y(), 2*p1.y(), 2*q1.y());
+      Vector_3 v6 = Vector_3(2*p0.x(), 2*p1.x(), 2*q1.x());
+      Vector_3 v7 = Vector_3(FT(-1), FT(-1), FT(-1));
+      
+      FT dt3 = CGAL::determinant(v4, v5, v7);
+      FT dt4 = CGAL::determinant(v6, v4, v7);
+      
+      FT big_dt0 = CGAL::determinant(Vector_2(dt0, m11), Vector_2(dt1, m12));
+      FT big_dt1 = CGAL::determinant(Vector_2(dt3, m11), Vector_2(dt4, m12));
+      
+      assert(big_dt0 == 0 || big_dt1 == 0);
+      return (big_dt0 > 0 && big_dt1 > 0) || (big_dt0 < 0 && big_dt1 < 0);
+    }
+    
+  private:
+    Is_hyperbolic(const Is_hyperbolic&);
+    Is_hyperbolic& operator= (const Is_hyperbolic&);
+  };
   
   class Mark_face
   {
@@ -444,12 +587,10 @@ private:
         return info;
       }
       
-      construct_circumscribing_circle(f);
-      
-      if (intersection_with_circle_at_infinity()) {
+      if(Is_hyperbolic()(f) == false) {
         
         info.set_finite_invisible(true);
-        info.set_invisible_edge(find_invisible_edge(f));
+        info.set_invisible_edge(find_invisible_edge_2(f));
         
         return info;
       }
@@ -458,24 +599,6 @@ private:
     }
     
   private:
-    
-    void construct_circumscribing_circle(const Face_handle& f) const
-    {
-      //assert(_tr.has_infinite_vertex(f));
-      
-      Point p1 = f->vertex(0)->point();
-      Point p2 = f->vertex(1)->point();
-      Point p3 = f->vertex(2)->point();
-      
-      _circle = Circle_2(p1, p2, p3);
-    }
-    
-    bool intersection_with_circle_at_infinity() const
-    {
-      const Circle_2& unit_circle = _tr.geom_traits().unit_circle();
-      
-      return CGAL::do_intersect(unit_circle, _circle);
-    }
     
     // assume that the circumscribing circle of a given face intersects
     // the circle at infinity
@@ -491,6 +614,7 @@ private:
       Point p1 = f->vertex(1)->point();
       Point p2 = f->vertex(2)->point();
       
+      _circle = Circle_2(p0, p1, p2);
       Point c = _circle.center();
       
       Direction_2 d0(p0.x()-c.x(), p0.y()-c.y());
@@ -508,6 +632,18 @@ private:
       }
       
       return 1;
+    }
+    
+    unsigned char find_invisible_edge_2(const Face_handle& f) const
+    {
+      
+      if( Is_hyperbolic()(f, 0) == false ) {
+        return 0;
+      }
+      if( Is_hyperbolic()(f, 1) == false ) {
+        return 1;
+      };
+      return 2;
     }
     
     Mark_face(const Mark_face&);
