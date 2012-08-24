@@ -29,9 +29,9 @@ squared radius `squared_radius` and orientation
 `ori`. 
 \pre `ori` \f$ \neq\f$ `COLLINEAR`, and further, `squared_radius` \f$ \geq\f$ 0. 
 */ 
-Circle_2( Point_2<Kernel> const& center, 
-Kernel::FT const& squared_radius, 
-Orientation const& ori = COUNTERCLOCKWISE); 
+Circle_2(const Point_2<Kernel> &center, 
+const Kernel::FT &squared_radius, 
+const Orientation &ori = COUNTERCLOCKWISE); 
 
 /*! 
 
@@ -42,9 +42,9 @@ the circle is the orientation of the point triple `p`,
 `q`, `r`. 
 \pre `p`, `q`, and `r` are not collinear. 
 */ 
-Circle_2( Point_2<Kernel> const& p, 
-Point_2<Kernel> const& q, 
-Point_2<Kernel> const& r); 
+Circle_2(const Point_2<Kernel> &p, 
+const Point_2<Kernel> &q, 
+const Point_2<Kernel> &r); 
 
 /*! 
 
@@ -53,10 +53,9 @@ It is initialized to the circle with diameter \f$ \overline{pq}\f$
 and orientation `ori`. 
 \pre `ori` \f$ \neq\f$ `COLLINEAR`. 
 */ 
-Circle_2( Point_2<Kernel> const& p, 
-Point_2<Kernel> const& q, 
-Orientation const& ori 
-= COUNTERCLOCKWISE); 
+Circle_2( const Point_2<Kernel> &p, 
+const Point_2<Kernel> &q, 
+const Orientation &ori = COUNTERCLOCKWISE); 
 
 /*! 
 
@@ -66,9 +65,8 @@ radius zero and orientation `ori`.
 \pre `ori` \f$ \neq\f$ `COLLINEAR`. 
 \post `c`.`is_degenerate()` = `true`. 
 */ 
-Circle_2( Point_2<Kernel> const& center, 
-Orientation const& ori 
-= COUNTERCLOCKWISE); 
+Circle_2( const Point_2<Kernel> &center, 
+          const Orientation &ori = COUNTERCLOCKWISE); 
 
 /// @} 
 
@@ -79,19 +77,19 @@ Orientation const& ori
 
 returns the center of `c`. 
 */ 
-Point_2<Kernel> const& center( ) const; 
+const Point_2<Kernel> &center( ) const; 
 
 /*! 
 
 returns the squared radius of `c`. 
 */ 
-Kernel::FT const& squared_radius( ) const; 
+const Kernel::FT& squared_radius( ) const; 
 
 /*! 
 
 returns the orientation of `c`. 
 */ 
-Orientation const& orientation( ) const; 
+Orientation orientation( ) const; 
 
 /*! 
 
@@ -99,13 +97,13 @@ returns `true`, iff `c` and `circle2` are equal,
 i.e. if they have the same center, same squared radius and 
 same orientation. 
 */ 
-bool operator == ( Circle_2<Kernel> const& circle2) const; 
+bool operator == ( const Circle_2<Kernel>& circle2) const; 
 
 /*! 
 
 returns `true`, iff `c` and `circle2` are not equal. 
 */ 
-bool operator != ( Circle_2<Kernel> const& circle2) const; 
+bool operator != ( const Circle_2<Kernel> & circle2) const; 
 
 /// @} 
 
@@ -127,7 +125,7 @@ positive side, or properly on the negative side
 of `c`, resp. 
 */ 
 Oriented_side 
-oriented_side( Point_2<Kernel> const& p) const; 
+oriented_side( const Point_2<Kernel> &p) const; 
 
 /*! 
 
@@ -137,7 +135,7 @@ iff `p` lies properly inside, on the boundary, or properly
 outside of `c`, resp. 
 */ 
 Bounded_side 
-bounded_side( Point_2<Kernel> const& p) const; 
+bounded_side( const Point_2<Kernel> &p) const; 
 
 /*! 
 

@@ -29,9 +29,9 @@ squared radius `squared_radius` and orientation
 `orientation`. 
 \pre `orientation` \f$ \neq\f$ `COPLANAR`, and furthermore, `squared_radius` \f$ \geq\f$ 0. 
 */ 
-Sphere_3( Point_3<Kernel> const& center, 
-Kernel::FT const& squared_radius, 
-Orientation const& orientation = COUNTERCLOCKWISE); 
+Sphere_3( const Point_3<Kernel> & center, 
+          const Kernel::FT & squared_radius, 
+          const Orientation & orientation = COUNTERCLOCKWISE); 
 
 /*! 
 
@@ -42,10 +42,10 @@ the sphere is the orientation of the point quadruple `p`,
 `q`, `r`, `s`. 
 \pre `p`, `q`, `r`, and `s` are not coplanar. 
 */ 
-Sphere_3( Point_3<Kernel> const& p, 
-Point_3<Kernel> const& q, 
-Point_3<Kernel> const& r, 
-Point_3<Kernel> const& s); 
+Sphere_3( const Point_3<Kernel> & p, 
+const Point_3<Kernel> & q, 
+const Point_3<Kernel> & r, 
+const Point_3<Kernel> & s); 
 
 /*! 
 
@@ -54,9 +54,9 @@ It is initialized to the smallest sphere which passes through
 the points `p`, `q`, and `r`. The orientation of 
 the sphere is `o`. \pre `o` is not `COPLANAR`. 
 */ 
-Sphere_3( Point_3<Kernel> const& p, 
-Point_3<Kernel> const& q, 
-Point_3<Kernel> const& r, 
+Sphere_3( const Point_3<Kernel> & p, 
+const Point_3<Kernel> & q, 
+const Point_3<Kernel> & r, 
 const Orientation& o = COUNTERCLOCKWISE); 
 
 /*! 
@@ -66,8 +66,8 @@ It is initialized to the smallest sphere which passes through
 the points `p` and `q`. The orientation of 
 the sphere is `o`. \pre `o` is not `COPLANAR`. 
 */ 
-Sphere_3( Point_3<Kernel> const& p, 
-Point_3<Kernel> const& q, 
+Sphere_3( const Point_3<Kernel> & p, 
+const Point_3<Kernel> & q, 
 const Orientation& o = COUNTERCLOCKWISE); 
 
 /*! 
@@ -78,15 +78,15 @@ radius zero and orientation `orientation`.
 \pre `orientation` \f$ \neq\f$ `COPLANAR`. 
 \post `c`.`is_degenerate()` = `true`. 
 */ 
-Sphere_3( Point_3<Kernel> const& center, 
-Orientation const& orientation = COUNTERCLOCKWISE); 
+Sphere_3( const Point_3<Kernel> & center, 
+          const Orientation& orientation = COUNTERCLOCKWISE); 
 
 /*! 
 
 introduces a variable `c` of type `Sphere_3`. 
 It is initialized to the diametral sphere of the circle. 
 */ 
-Sphere_3( Circle_3<Kernel> const& c ); 
+Sphere_3( const Circle_3<Kernel> & c ); 
 
 /// @} 
 
@@ -97,7 +97,7 @@ Sphere_3( Circle_3<Kernel> const& c );
 
 returns the center of `c`. 
 */ 
-Point_3<Kernel> const& center( ) const; 
+const Point_3<Kernel> & center( ) const; 
 
 /*! 
 
@@ -117,13 +117,13 @@ returns `true`, iff `c` and `sphere2` are equal,
 i.e. if they have the same center, same squared radius and 
 same orientation. 
 */ 
-bool operator == ( Sphere_3<Kernel> const& sphere2) const; 
+bool operator == ( const Sphere_3<Kernel> & sphere2) const; 
 
 /*! 
 
 returns `true`, iff `c` and `sphere2` are not equal. 
 */ 
-bool operator != ( Sphere_3<Kernel> const& sphere2) const; 
+bool operator != (  const Sphere_3<Kernel> & sphere2) const; 
 
 /// @} 
 
@@ -145,7 +145,7 @@ positive side, or properly on the negative side
 of `c`, resp. 
 */ 
 Oriented_side 
-oriented_side( Point_3<Kernel> const& p) const; 
+oriented_side( const Point_3<Kernel> & p) const; 
 
 /*! 
 
@@ -155,7 +155,7 @@ iff `p` lies properly inside, on the boundary, or properly
 outside of `c`, resp. 
 */ 
 Bounded_side 
-bounded_side( Point_3<Kernel> const& p) const; 
+bounded_side( const Point_3<Kernel> & p) const; 
 
 /*! 
 

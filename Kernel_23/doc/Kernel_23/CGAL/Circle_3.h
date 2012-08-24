@@ -23,9 +23,9 @@ It is initialized to the circle of center `center` and
 squared radius `sq_r` in plane `plane`. 
 \pre `center` lies in `plane` and 		`sq_r` \f$ \geq\f$ 0. 
 */ 
-Circle_3(Point_3<Kernel> const& center, 
-Kernel::FT const& sq_r, 
-Plane_3<Kernel> const& plane); 
+Circle_3(const Point_3<Kernel> &center, 
+         const Kernel::FT &sq_r, 
+         const Plane_3<Kernel> & plane); 
 
 /*! 
 introduces a variable `c` of type `Circle_3`. 
@@ -34,25 +34,25 @@ squared radius `sq_r` in a plane normal to
 the vector `n`. 
 \pre `sq_r` \f$ \geq\f$ 0. 
 */ 
-Circle_3(Point_3<Kernel> const& center, 
-Kernel::FT const& sq_r, 
-Vector_3<Kernel> const& n); 
+Circle_3(const Point_3<Kernel> & center, 
+         const Kernel::FT & sq_r, 
+         const Vector_3<Kernel> & n); 
 
 /*! 
 introduces a variable `c` of type `Circle_3`. 
 It is initialized to the circle passing through the three points. 
 \pre The three points are not collinear. 
 */ 
-Circle_3(Point_3<Kernel> const& p, 
-Point_3<Kernel> const& q, Point_3<Kernel> const& r); 
+Circle_3(const Point_3<Kernel> & p, 
+         const Point_3<Kernel> & q, const Point_3<Kernel> & r); 
 
 /*! 
 introduces a variable `c` of type `Circle_3`. 
 It is initialized to the circle along which the two spheres intersect. 
 \pre The two spheres intersect along a circle. 
 */ 
-Circle_3(Sphere_3<Kernel> const& sphere1, 
-Sphere_3<Kernel> const& sphere2); 
+Circle_3(const Sphere_3<Kernel> & sphere1, 
+         const Sphere_3<Kernel> & sphere2); 
 
 /*! 
 introduces a variable `c` of type `Circle_3`. 
@@ -60,8 +60,8 @@ It is initialized to the circle along which the sphere and the
 plane intersect. 
 \pre The sphere and the plane intersect along a circle. 
 */ 
-Circle_3(Sphere_3<Kernel> const& sphere, 
-Plane_3<Kernel> const& plane); 
+  Circle_3(constSphere_3<Kernel> & sphere, 
+           const Plane_3<Kernel> & plane); 
 
 /*! 
 introduces a variable `c` of type `Circle_3`. 
@@ -69,8 +69,8 @@ It is initialized to the circle along which the sphere and the
 plane intersect. 
 \pre The sphere and the plane intersect along a circle. 
 */ 
-Circle_3(Plane_3<Kernel> const& plane, 
-Sphere_3<Kernel> const& sphere); 
+Circle_3(const Plane_3<Kernel> & plane, 
+         const Sphere_3<Kernel> & sphere); 
 
 /// @} 
 
@@ -81,25 +81,25 @@ Sphere_3<Kernel> const& sphere);
 
 returns the center of `c`. 
 */ 
-Point_3<Kernel> const& center( ) const; 
+const Point_3<Kernel> & center( ) const; 
 
 /*! 
 
 returns the squared radius of `c`. 
 */ 
-Kernel::FT const& squared_radius( ) const; 
+const Kernel::FT & squared_radius( ) const; 
 
 /*! 
 
 returns the supporting plane of `c`. 
 */ 
-Plane_3<Kernel> const& supporting_plane( ) const; 
+const Plane_3<Kernel> & supporting_plane( ) const; 
 
 /*! 
 
 returns the diametral sphere of `c`. 
 */ 
-Sphere_3<Kernel> const& diametral_sphere( ) const; 
+const Sphere_3<Kernel> & diametral_sphere( ) const; 
 
 /*! 
 
@@ -111,19 +111,19 @@ Kernel::FT const& area_divided_by_pi( ) const;
 
 returns an approximation of the area of `c`. 
 */ 
-double const& approximate_area( ) const; 
+double approximate_area( ) const; 
 
 /*! 
 
 returns the squared length of `c`, divided by \f$ \pi^2\f$. 
 */ 
-Kernel::FT const& squared_length_divided_by_pi_square( ) const; 
+Kernel::FT squared_length_divided_by_pi_square( ) const; 
 
 /*! 
 
 returns an approximation of the squared length (i.e. perimeter) of `c`. 
 */ 
-double const& approximate_squared_length( ) const; 
+double approximate_squared_length( ) const; 
 
 /// @} 
 
@@ -133,7 +133,7 @@ double const& approximate_squared_length( ) const;
 /*! 
 
 */ 
-bool has_on(Point_3<Kernel> const& p) const; 
+bool has_on(const Point_3<Kernel> & p) const; 
 
 /// @} 
 
@@ -156,14 +156,14 @@ i.e. if they have the same center, the same squared radius
 and the same supporting plane. 
 \relates Circle_3 
 */ 
-bool operator == (Circle_3<Kernel> const& c1, 
+bool operator == (const Circle_3<Kernel>& c1, 
 Circle_3<Kernel> const& c2); 
 
 /*! 
 
 \relates Circle_3 
 */ 
-bool operator != (Circle_3<Kernel> const& c1, 
+bool operator != (const Circle_3<Kernel> & c1, 
 Circle_3<Kernel> const& c2); 
 
 } /* end namespace CGAL */
