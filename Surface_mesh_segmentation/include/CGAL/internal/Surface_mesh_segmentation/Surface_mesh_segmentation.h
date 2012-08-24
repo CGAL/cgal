@@ -37,12 +37,6 @@
 #include <utility>
 #include <queue>
 #include <map>
-//AF: macros must be prefixed with "CGAL_"
-//IOY: done
-#define CGAL_DEFAULT_NUMBER_OF_CLUSTERS 5
-#define CGAL_DEFAULT_SMOOTHING_LAMBDA 0.23
-#define CGAL_DEFAULT_CONE_ANGLE (2.0 / 3.0) * CGAL_PI
-#define CGAL_DEFAULT_NUMBER_OF_RAYS 25
 
 #define CGAL_NORMALIZATION_ALPHA 5.0
 #define CGAL_CONVEX_FACTOR 0.08
@@ -150,9 +144,8 @@ public:
 // Use these two functions together
   template <class SDFPropertyMap>
   std::pair<double, double>
-  calculate_sdf_values(SDFPropertyMap sdf_pmap,
-                       double cone_angle = CGAL_DEFAULT_CONE_ANGLE,
-                       int number_of_rays = CGAL_DEFAULT_NUMBER_OF_RAYS) {
+  calculate_sdf_values(SDFPropertyMap sdf_pmap, double cone_angle,
+                       int number_of_rays) {
     SEG_DEBUG(Timer t)
     SEG_DEBUG(t.start())
 
@@ -172,8 +165,8 @@ public:
 
   template <class FacetSegmentMap, class SDFPropertyMap>
   int partition(SDFPropertyMap sdf_pmap, FacetSegmentMap segment_pmap,
-                int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
-                double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA) {
+                int number_of_centers,
+                double smoothing_lambda) {
     smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                   smoothing_lambda)); // clip into [0-1]
     smoothing_lambda *=
@@ -208,6 +201,7 @@ public:
       segment_pmap[facet_it] = *label_it;
     }
     // assign a segment id for each facet
+    // return number_of_centers;
     int number_of_segments = assign_segments(number_of_centers, segment_pmap);
     std::cout << "ne : " <<number_of_segments << std::endl;
     return number_of_segments;
@@ -492,7 +486,7 @@ private:
    * Function takes a map which contains a cluster-id per facet. It then fills the map with segment-ids by giving a unique id to each
    * set of connected facets which are placed under same cluster.
    * @param number_of_clusters cluster-ids in @a segments should be between [0, number_of_clusters -1]
-   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type.
+   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type.
    */
   template<class SegmentPropertyMap>
   int assign_segments(int number_of_clusters, SegmentPropertyMap segments) {
@@ -542,10 +536,7 @@ private:
 
 #undef CGAL_NORMALIZATION_ALPHA
 #undef CGAL_CONVEX_FACTOR
-#undef CGAL_DEFAULT_NUMBER_OF_CLUSTERS
-#undef CGAL_DEFAULT_SMOOTHING_LAMBDA
-#undef CGAL_DEFAULT_CONE_ANGLE
-#undef CGAL_DEFAULT_NUMBER_OF_RAYS
+#undef CGAL_SMOOTHING_LAMBDA_MULTIPLIER
 
 #ifdef SEG_DEBUG
 #undef SEG_DEBUG
