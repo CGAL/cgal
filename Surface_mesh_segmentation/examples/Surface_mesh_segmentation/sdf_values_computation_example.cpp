@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     // compute sdf values using default parameters for number of rays, and cone angle
     std::pair<double, double> min_max_sdf = CGAL::sdf_values_computation(mesh, sdf_property_map);
     // print minimum & maximum sdf values
-    std::cout << "minimum sdf: " << pair.first << " maximum sdf: " << pair.second << std::endl;
+    std::cout << "minimum sdf: " << min_max_sdf.first << " maximum sdf: " << min_max_sdf.second << std::endl;
     // print sdf values
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
         facet_it != mesh.facets_end(); ++facet_it)   
