@@ -50,6 +50,9 @@ namespace CGAL {
     typedef typename R::Line_2      Line_2;
     typedef typename R::Ray_2       Ray_2;
     
+    typedef typename R::Vector_3    Vector_3;
+    typedef typename R::Point_3     Point_3;
+    
     typedef typename R::Less_x_2                   Less_x_2;
     typedef typename R::Less_y_2                   Less_y_2;
     typedef typename R::Compare_x_2                Compare_x_2;
