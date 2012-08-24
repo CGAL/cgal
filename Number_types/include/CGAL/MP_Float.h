@@ -878,6 +878,28 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, MP_Float)
 
 } //namespace CGAL
 
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<CGAL::MP_Float>
+  {
+    typedef CGAL::MP_Float Real;
+    typedef CGAL::Quotient<CGAL::MP_Float> NonInteger;
+    typedef CGAL::MP_Float Nested;
+
+    enum {
+      IsInteger = 1, // Is this lie right?
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 40,
+      MulCost = 40
+    };
+  };
+}
+#endif
+
 #include <CGAL/MP_Float_impl.h>
 
 //specialization for Get_arithmetic_kernel

@@ -134,6 +134,28 @@ public:
 
 } //namespace CGAL
 
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<CGAL::Gmpq>
+  {
+    typedef CGAL::Gmpq Real;
+    typedef CGAL::Gmpq NonInteger;
+    typedef CGAL::Gmpq Nested;
+
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 150,
+      MulCost = 100
+    };
+  };
+}
+#endif
+
 //since types are included by Gmp_coercion_traits.h:
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
