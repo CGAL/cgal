@@ -3,7 +3,7 @@ namespace CGAL {
 
 /// \defgroup kernel_dimension Dimension Handling
 /// \ingroup PkgKernel23
-/// Tools to handle the dimension of a Kernel.
+/// Tools to handle the dimension of a kernel.
 /// @{
 
 /*!

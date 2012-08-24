@@ -4,7 +4,7 @@ namespace CGAL {
 \addtogroup kernel_conversion Cartesian/Homogenous Conversion
 \ingroup PkgKernel23
 
-Functions to convert between Cartesian and Homogeneous Kernels.
+Functions to convert between %Cartesian and homogeneous kernels.
 
 \sa `CGAL::Cartesian<FieldNumberType>` 
 \sa `CGAL::Cartesian_converter<K1, K2, NTConverter>` 
@@ -17,8 +17,8 @@ Functions to convert between Cartesian and Homogeneous Kernels.
 
 /*!
 
-converts 2d point `cp` with Cartesian representation 
-into a 2d point with homogeneous representation with the same
+converts 2D point `cp` with %Cartesian representation 
+into a 2D point with homogeneous representation with the same
 number type.
 
 
@@ -28,8 +28,8 @@ cartesian_to_homogeneous(const Point_2< Cartesian<RT> >& cp);
 
 /*!
 
-converts 3d point `cp` with Cartesian representation 
-into a 3d point with homogeneous representation with the same
+converts 3D point `cp` with %Cartesian representation 
+into a 3D point with homogeneous representation with the same
 number type.
 */
 Point_3< Homogeneous<RT> >
@@ -38,8 +38,8 @@ cartesian_to_homogeneous(const Point_3< Cartesian<RT> >& cp);
 
 /*!
 
-converts 2d point `hp` with homogeneous representation 
-into a 2d point with Cartesian representation with the same
+converts 2D point `hp` with homogeneous representation 
+into a 2D point with %Cartesian representation with the same
 number type.
 
 */
@@ -48,8 +48,8 @@ homogeneous_to_cartesian(const Point_2< Homogeneous<FT> >& hp);
 
 /*!
 
-converts 3d point `hp` with homogeneous representation 
-into a 3d point with Cartesian representation with the same
+converts 3D point `hp` with homogeneous representation 
+into a 3D point with %Cartesian representation with the same
 number type.
 */
 Point_3< Cartesian<FT> >
@@ -58,8 +58,8 @@ homogeneous_to_cartesian(const Point_3< Homogeneous<FT> >& hp);
 
 /*!
 
-converts the 2d point `hp` with homogeneous representation 
-with number type `RT` into a 2d point with Cartesian 
+converts the 2D point `hp` with homogeneous representation 
+with number type `RT` into a 2D point with %Cartesian 
 representation with number type `Quotient<RT>`.
 */
 Point_2< Cartesian<Quotient<RT> > >
@@ -67,8 +67,8 @@ homogeneous_to_quotient_cartesian(const Point_2<Homogeneous<RT> >& hp);
 
 /*!
 
-converts the 3d point `hp` with homogeneous representation 
-with number type `RT` into a 3d point with Cartesian 
+converts the 3D point `hp` with homogeneous representation 
+with number type `RT` into a 3D point with %Cartesian 
 representation with number type `Quotient<RT>`.
 */
 Point_3< Cartesian<Quotient<RT> > >
@@ -77,8 +77,8 @@ homogeneous_to_quotient_cartesian(const Point_3<Homogeneous<RT> >& hp);
 
 /*!
 
-converts 2d point `cp` with Cartesian representation 
-with number type `Quotient<RT>` into a 2d point 
+converts 2D point `cp` with %Cartesian representation 
+with number type `Quotient<RT>` into a 2D point 
 with homogeneous representation with number type `RT`.
 */
 Point_2< Homogeneous<RT> >
@@ -87,8 +87,8 @@ const Point_2< Cartesian< Quotient<RT> > >& cp);
 
 /*!
 
-converts 3d point `cp` with Cartesian representation 
-with number type `Quotient<RT>` into a 3d point 
+converts 3D point `cp` with %Cartesian representation 
+with number type `Quotient<RT>` into a 3D point 
 with homogeneous representation with number type `RT`.
 
 */
