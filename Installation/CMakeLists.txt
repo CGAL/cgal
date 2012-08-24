@@ -13,12 +13,10 @@ else()
 endif()
 
 # Tested version:
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 #--------------------------------------------------------------------------------------------------
@@ -579,6 +577,7 @@ cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" )
 
 # default is on, but some use-cases need to set it to off, e.g., debian packages
 option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" ON)
+
 # additional info: some header files in CGAL add additional code if
 # certain optional libs are installed, and some examples/tests rely on
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
@@ -641,6 +640,7 @@ add_config_flag( CGAL_USE_LEDA )
 add_config_flag( CGAL_USE_MPFI )
 add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
+
 add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
 if (NOT ${WITH_CGAL_Core}) 
@@ -894,6 +894,7 @@ if ( NOT RUNNING_CGAL_AUTO_TEST )
 
   add_programs(examples examples OFF )
   add_programs(demo     demos    OFF )
+  add_programs(test     tests    OFF )
   
 endif()
 

@@ -97,8 +97,8 @@ std::istream& operator>>(std::istream &is,Algebraic_1 &a){
                       *(new RS_polynomial_1(pol)),      // polynomial
                       nr,               // number of root
                       mult,             // multiplicity
-                      (mpfi_ptr)NULL,   // previous root
-                      (mpfi_ptr)NULL,   // next root
+                      //(mpfi_ptr)NULL,   // previous root
+                      //(mpfi_ptr)NULL,   // next root
                       (CGAL::Sign)eval);// evaluation on the left bound
         goto is_ret;
 is_fail_ret:

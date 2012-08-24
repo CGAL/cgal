@@ -10,7 +10,7 @@
 struct Polygon_soup;
 class Scene_polyhedron_item;
 
-class SCENE_POLYGON_SOUP_EXPORT Scene_polygon_soup_item 
+class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
   : public Scene_item_with_display_list 
 {
   Q_OBJECT

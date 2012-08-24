@@ -2200,8 +2200,8 @@ Maintenance/infrastructure/renoir.geometryfactory.com/.autocgalrc -text
 Maintenance/infrastructure/renoir.geometryfactory.com/boost/compile-boost -text
 Maintenance/infrastructure/renoir.geometryfactory.com/boost/user-config.jam -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/setup-common -text
-Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.1-with-g++-4.6.3-STL_F16-strict-ansi/setup -text
-Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.1-with-g++-4.6.3-STL_F16/setup -text
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16-strict-ansi/setup -text
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-13.0beta-with-g++-4.6.3-STL_F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/setup -text
@@ -2236,6 +2236,7 @@ Maintenance/public_release/announcement/CGAL-4.0 -text
 Maintenance/public_release/announcement/CGAL-4.0-beta1 -text
 Maintenance/public_release/announcement/CGAL-4.0.1 -text
 Maintenance/public_release/announcement/CGAL-4.0.2 -text
+Maintenance/public_release/announcement/CGAL-4.1-beta1 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
 Maintenance/release_building/BUGFIX_NUMBER -text
@@ -3179,6 +3180,7 @@ Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#application/pdf
 Polygon/doc_tex/Polygon/pgn_algos.xml svneol=native#text/xml
 Polygon/doc_tex/Polygon/polygon.png -text
+Polyhedron/demo/Polyhedron/Camera_positions_list.ui -text
 Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_corefinement_plugin.cpp -text

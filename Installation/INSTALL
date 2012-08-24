@@ -105,11 +105,23 @@ CGAL packages, some are only needed for demos.
        https://gforge.inria.fr/frs/download.php/24628/taucs_full.tgz
        or automatically downloaded with CGAL-x.y-Setup.exe on Windows.
 
+     - MPFI
+       Required by the package:
+       o Algebraic Kernel
+       https://gforge.inria.fr/projects/mpfi/ 
+       (or shipped with RS http://vegas.loria.fr/rs/)
+
      - RS (root isolation)
        Required by the package:
-       Algebraic Kernel
+       o Algebraic Kernel
        http://vegas.loria.fr/rs/
 
+     - NTL (Number Type Theory)
+       Optional for the packages:
+       o Polynomial
+       o Algebraic Kernel
+       http://www.shoup.net/ntl/
+ 
    * Miscellaneous
 
      - zlib         
