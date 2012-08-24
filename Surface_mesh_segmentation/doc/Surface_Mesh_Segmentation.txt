@@ -6,7 +6,8 @@ namespace CGAL {
 
 \anchor elephant_sdf_partition
 \image latex elephant_sdf_partition.png "Elephant model: SDF values & Segmentation" width=12cm
-\image html elephant_sdf_partition.png "Elephant model: SDF values & Segmentation (Going to be changed-improved)"
+\image html elephant_sdf_partition.png "Elephant model: SDF values & Segmentation using 5 initial clusters" 
+[\b TODO: update color scheme of segmentation]
 
 # Introduction #
 Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. The application domain is wide and includes, but is not limited to modeling, rigging and texturing, shape-retrieval, and deformation.
@@ -30,17 +31,19 @@ is constructed using the centroid of the facet as apex and inward-normal of the 
 the SDF value is calculated by first applying outlier removal and then taking weighted average of ray lengths.
 
 After calculating SDF values for each facet, bilateral smoothing (an edge-preserving filtering technique) is applied. The purpose of edge-preserving smoothing is keeping SDF edges (fast changes on SDF values) 
-in-place without blurring, since they are good candidates for segment boundaries. (TODO: I don't get the last sentense) (change this sentence)
+in-place without blurring, since they are good candidates for segment boundaries.
 
 \image latex pose_changes_low.png "Effect of pose changes on segmentation" width=12cm
 \image html pose_changes_low.png "Effect of pose changes on segmentation"
+[\b TODO: update color scheme of segmentation and assign the same color to each part]
 
 ## Soft Clustering ##
 The soft clustering on computed SDF values consists in first grouping facets using k-means clustering algorithm which is initialized with k-means++
 (an algorithm for choosing random seeds for clusters) and run multiple times. Among these runs, we choose clustering result that has minimum with-in
 cluster error and use it to initialize expectation maximization algorithm for fitting Gaussian mixture models.
 
-Note that there is no direct relation between number of clusters (parameter for soft clustering) and number of segments (disconnected components). Intuitively, number of clusters represents level of segmentation by clustering facets, which have close SDF values, together without considering their connectivity. For example, for a human model, 2 clusters might result in clustering 4 legs and head of the model into one cluster, and remaining parts into another cluster (TODO: use the elephant or add an example showing that). However, large number of clusters likely to result in detailed segmentation of the mesh with large number of segments.
+Note that there is no direct relation between number of clusters (parameter for soft clustering) and number of segments (disconnected components). Intuitively, number of clusters represents level of segmentation by clustering facets, which have close SDF values, together without considering their connectivity. For example, for a human model, 2 clusters might result in clustering 4 legs and head of the model into one cluster, and remaining parts into another cluster 
+[\b TODO: use the elephant or add another example illustrating that]. However, large number of clusters likely to result in detailed segmentation of the mesh with large number of segments.
 
 The output of this step is a matrix that contains probability values for each facet to belong to each cluster. These probability values are used as input in the graph-cut step than follows.
 
@@ -89,7 +92,7 @@ This package provides three functions:
  
 ##The SDF Computation##
 The function CGAL::sdf_values_computation provides an implementation of the SDF computation for a given `CGAL Polyhedron`. After computation, the following post-processing steps are applied:
-  - Facets with no SDF values (i.e. zero) are assigned to average SDF value of its neighbors. If still there is any facet which has no SDF value, minimum SDF value greater than zero is assigned to it. (TODO: Does this appends in case there are holes in the mesh?)
+  - Facets with no SDF values (i.e. zero) are assigned to average SDF value of its neighbors. If still there is any facet which has no SDF value, minimum SDF value greater than zero is assigned to it.
   - Smoothed with bilateral filtering.
   - Linearly normalized between [0,1].
   
@@ -126,18 +129,8 @@ The initial implementation of this package is the result of the work of the auth
 of the Google Summer of Code.
 
 # Extra: (ideas to append) #
-- Talk about effect of "number of rays" on SDF values, by providing RSME and average error ? (for now drop)
-- Talk about effect of "number of levels" on segmentation results ? giving a few screen shot. (put a picture in TODO)
-- Talk about pose-invariant feature of segmentation by giving a few screen shots from "benchmark" models (same models with different poses) ? (segmentation not sdf screen-shot)
-- SL: I would take one example and use a Facet type with an id to avoid using a map (see BGL/examples/BGL_polyhedron_3/kruskal_with_stored_id.cpp for an example of Polyhedron instantiation) (use vector pmap)
-- SL: should we offer a way to get sdf without normalization? or that least return the max of the sdf so that the sdf is the value in [0,1] x that number?
-(return pairs)
 - TODO: you do not talk about the limitation of the input mesh (triangulated, manifold, self-intersections, close, holes ...)
 (is_pure_triangle precond in ref manual & in user manual talk about triangulated possible with small holes etc)
-- TODO: there is nothing about the traits class and operations used. Is AABB_tree the only thing you use?
 
---------------------------------------------------------------------------------------------------------------
-- IOY: It would be nice if we can shorten "examples" code sections (actually I search around whether there is any functionality in doxygen for generating collapsable/expandable sections (so that we can collapse unrelated part by default like includes or polyhedron creation/read), but couldn't find one.)
- - SL: I don't like the idea of removing include files as this hide what need to be included. To me the length of example is OK.
 */ 
 } /* namespace CGAL */
