@@ -51,7 +51,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes
 
 `Filtered_kernel` is a kernel that uses the filtering technique based 
 on interval arithmetic from \cite cgal:bbp-iayed-01 to achieve 

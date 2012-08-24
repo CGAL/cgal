@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_classes2
 
 An object of the class `Vector_2` is a vector in the two-dimensional 
 vector space \f$ \R^2\f$. Geometrically spoken, a vector is the difference 
