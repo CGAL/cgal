@@ -724,7 +724,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../HalfedgeDS/doc/HalfedgeDS/fig</item>
           <item>../Interval_skip_list/doc/Interval_skip_list/fig</item>
           <item>../Nef_2/doc/Nef_2/fig</item>
-          <item>../Nef_2/doc/Nef_S2/fig</item>
+          <item>../Nef_S2/doc/Nef_S2/fig</item>
           <item>../Nef_3/doc/Nef_3/fig</item>
           <item>../Mesh_2/doc/Mesh_2/fig</item>
           <item>../Mesh_3/doc/Mesh_3/fig</item>
