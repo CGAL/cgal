@@ -903,7 +903,7 @@ Comparison_result
 /// @}
 
 /*!
-\name With the 3D Spherical Kernel
+\name compare_x with the 3D Spherical Kernel
 
 See Chapter \ref chaptersphericalkernel.
 
@@ -930,8 +930,8 @@ compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
 Comparison_result 
   compare_x(const Circular_arc_point_3<SphericalKernel> &p,
             const Point_3<SphericalKernel> &q);
-/// @}
 
+/// @}
 /// @}
 
 /*!
@@ -1223,7 +1223,7 @@ compare_y_at_x(const Circular_arc_point_2<CircularKernel> &p,
 \ingroup PkgKernel23
 
 Depending on which \cgal kernel is used, different versions of this
-global function are available. This is described below.
+global function are available.
 
 \sa `CGAL::compare_xy` 
 \sa `CGAL::compare_xyz` 
@@ -1232,16 +1232,18 @@ global function are available. This is described below.
 \sa `CGAL::compare_yx` 
 \sa `CGAL::compare_y_at_x` 
 \sa `CGAL::compare_z` 
+*/
+/// @{
 
-<b>With the basic 2D and 3D Kernel</b>
-(see Chapter  \ref chapterkernel23)
+/*!
+\addtogroup compary_y_linear With the 2D and 3D Linear Kernel
+See Chapter \ref chapterkernel23
 
 \anchor figcompare13
 \image html compare1.gif
 
 */
 /// @{
-
 /*!
   compares Cartesian \f$ y\f$-coordinates of \f$ p\f$ and \f$ q\f$.
 */
@@ -1254,11 +1256,9 @@ Comparison_result compare_y(const Point_3<Kernel> &p,
                             const Point_3<Kernel> &q);
 
 /*!
-
   compares the \f$ y\f$-coordinates of \f$ p\f$ and the intersection of lines
   \f$ l1\f$ and \f$ l2\f$.
   See Figure \ref figcompare13 (a).
-
 */
 Comparison_result compare_y(const Point_2<Kernel> &p,
                             const Line_2<Kernel> &l1,
@@ -1282,9 +1282,11 @@ Comparison_result compare_y(const Line_2<Kernel> &l1,
                             const Line_2<Kernel> &h1,
                             const Line_2<Kernel> &h2);
 
+/// @}
+
 /*!
-\name With the 2D Circular Kernel
-See Chapter  \ref chaptercircularkernel.
+\addtogroup compare_y_circular With the 2D Circular Kernel
+See Chapter \ref chaptercircularkernel.
 
 \code
 #include <CGAL/global_functions_circular_kernel_2.h>
@@ -1312,7 +1314,7 @@ compare_y(const Circular_arc_point_2<CircularKernel> &p,
 /// @}
 
 /*!
-\name With the 3D Circular Kernel
+\addtogroup compare_y_spherical With the 3D Spherical Kernel
 See Chapter \ref chaptersphericalkernel.
 
 \code
@@ -1478,7 +1480,7 @@ compare_yx(const Point_2<Kernel>& p, const Point_2<Kernel>& q);
 /// @}
 
 
-/// \addtogroup bool coplanar bool coplanar
+/// \addtogroup coplanar coplanar
 /// \ingroup PkgKernel23
 /// \sa `CGAL::coplanar_orientation` 
 /// \sa `CGAL::coplanar_side_of_bounded_circle` 
