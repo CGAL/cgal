@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\addtogroup do_intersect do_intersect
+\addtogroup do_intersect_linear do_intersect
 \ingroup PkgKernel23
 
 Depending on which \cgal kernel is used, different versions of this
@@ -45,7 +45,7 @@ Also, `Type1` and `Type2` can be respectively of types
 - `Plane_3<Kernel>` and `Sphere_3<Kernel>` (or the contrary)
 - `Sphere_3<Kernel>` and `Sphere_3<Kernel>`.
 
-## With the 2D Circular Kernel ##
+## With the 2D Circular %Kernel ##
 
 See Chapter \ref chaptercircularkernel
 
@@ -128,6 +128,22 @@ bool do_intersect(Type1 obj1, Type2 obj2, Type3 obj3);
 Depending on which \cgal kernel is used, different versions of this
 global function are available.
 
+/// @{
+
+/*!
+\addtogroup intersection_linear With the 2D and 3D linear kernel.
+
+
+
+\sa `CGAL::do_intersect` 
+\sa `CGAL::Object` 
+
+
+## With the 2D and 3D Linear %Kernel ##
+See Chapter  \ref chapterkernel23
+*/
+/// @{
+
 Example 
 --------------
 
@@ -156,13 +172,6 @@ Circular %Kernel and the 3D Spherical %Kernel are presented respectively
 in Chapters \ref chaptercircularkernel and \ref
 chaptersphericalkernel.
 
-\sa `CGAL::do_intersect` 
-\sa `CGAL::Object` 
-
-## With the 2D and 3D Linear %Kernel ##
-See Chapter  \ref chapterkernel23
-*/
-/// @{
 
 /*!
 Two objects `obj1` and `obj2` intersect if there is a point `p` that
@@ -365,9 +374,10 @@ Object intersection(const Plane_3<Kernel>& pl1,
                     const Plane_3<Kernel>& pl2,
                     const Plane_3<Kernel>& pl3);
 
+/// @}
 
 /*!
-\name With the 2D Circular Kernel
+\addtogroup intersection_circular With the 2D Circular %Kernel
 
 See Chapter \ref chaptercircularkernel
 
@@ -421,7 +431,7 @@ intersection(const Type1 &obj1, const Type2 &obj2,
 /// @}
 
 /*!
-\name With the 3D Circular Kernel
+\addtogroup intersection_spherical With the 3D Spherical %Kernel
 
 See Chapter \ref chaptersphericalkernel
 
@@ -510,4 +520,6 @@ intersection(const Type1 &obj1, const Type2 &obj2, const Type3 &obj3,
 
 /// @}
 
+
+/// @}
 }

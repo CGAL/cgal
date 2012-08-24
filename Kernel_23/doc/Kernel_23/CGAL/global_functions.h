@@ -615,7 +615,7 @@ const Point_3<Kernel>& r);
 
 
 
-/// \addtogroup compare_lexicographically compare_lexicographically
+/// \addtogroup compare_lexicographically_linear compare_lexicographically
 /// \ingroup PkgKernel23
 /// @{
 
@@ -826,7 +826,7 @@ described below.
 /// @{
 
 /*!
-\name With the basic 2D and 3D Kernel
+\addtogroup compare_x_linear With the 2D and 3D linear kernel.
 \anchor figcompare_x
 \image html compare1.gif 
 */
@@ -874,7 +874,7 @@ Comparison_result compare_x(const Line_2<Kernel> &l1,
 /// @}
 
 /*!
-\name With the 2D Circular Kernel
+\addtogroup compare_x_circular With the 2D Circular Kernel
 
 See Chapter \ref chaptercircularkernel.
 
@@ -903,7 +903,7 @@ Comparison_result
 /// @}
 
 /*!
-\name compare_x with the 3D Spherical Kernel
+\addtogroup compare_y_spherical With the 3D Spherical Kernel
 
 See Chapter \ref chaptersphericalkernel.
 
@@ -949,24 +949,25 @@ global function are available. This is described below.
 \sa `CGAL::compare_y_at_x` 
 \sa `CGAL::compare_z` 
 
-<b>With the basic 2D and 3D Kernel</b> (see Chapter \ref chapterkernel23)
+*/
+/// @{
+
+/*!
+\addtogroup compare_xy_linear With the 2D and 3D linear kernel.
 
 */
 /// @{
 
 /*!
-
 Compares the Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ xy\f$ order: first 
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared.
-
 */
 Comparison_result
 compare_xy(const Point_2<Kernel>& p, const Point_2<Kernel>& q);
 
 /*!
-
 Compares the Cartesian coordinates of points `p` and `q`
 lexicographically in \f$ xy\f$ order: first \f$ x\f$-coordinates are
 compared, if they are equal, \f$ y\f$-coordinates are compared.
@@ -975,8 +976,11 @@ compared, if they are equal, \f$ y\f$-coordinates are compared.
 Comparison_result
 compare_xy(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
 
+/// @}
+
 /*!
-\name With the 2D Circular Kernel
+\addtogroup compare_xy_circular With the 3D Circular Kernel
+
 See Chapter \ref chaptercircularkernel.
 
 \code
@@ -1008,7 +1012,7 @@ compare_xy(const Circular_arc_point_2<CircularKernel> &p,
 /// @}
 
 /*!
-\name With the 3D Spherical Kernel
+\addtogroup compare_xy_spherical With the 3D Spherical Kernel
 See Chapter \ref chaptersphericalkernel.
 
 \code
@@ -1362,6 +1366,11 @@ global function are available. This is described below.
 /// @{
 
 /*!
+\addtogroup compare_xyz_linear With the 2D and 3D linear kernel.
+*/
+/// @{
+
+/*!
 Compares the Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ xyz\f$ order: first 
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
@@ -1371,8 +1380,10 @@ are compared, and if both \f$ x\f$- and \f$ y\f$- coordinate are equal,
 Comparison_result
 compare_xyz(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
 
+/// @}
+
 /*!
-\name With the 3D Spherical Kernel
+\addtogroup compare_xyz_spherical with the 3D Spherical Kernel
 See Chapter \ref chaptersphericalkernel
 
 \code

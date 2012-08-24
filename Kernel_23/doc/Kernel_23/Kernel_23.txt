@@ -75,7 +75,7 @@ and storage space.
 See the dedicated chapter
 for more details on number types and their capabilities and performance.
 
-# %Kernel Representations # {#kernel_rep}
+# Kernel Representations # {#kernel_rep}
 
 Our object of study is the \f$ d\f$-dimensional affine Euclidean space. 
 Here we are mainly concerned with cases \f$ d=2\f$ and \f$ d=3\f$.
@@ -145,7 +145,7 @@ weaker. This type must fulfill the requirements on what is called a
 defined with semantics (approximately) corresponding to those of a
 ring in a mathematical sense. 
 
-## %Cartesian %Kernels ##
+## %Cartesian Kernels ##
 
 With `Cartesian<FieldNumberType>` you can choose a
 %Cartesian representation of coordinates. When you
@@ -355,7 +355,7 @@ q = p_1 + (p_2 - p_1) / 2.0;
 Note that these constructions do not involve any performance overhead for 
 the conversion with the currently available representation classes.
 
-## Kernel Objects ##
+## %Kernel Objects ##
 
 Besides points (`Point_2<Kernel>`, `Point_3<Kernel>`, `Point_d<Kernel>`), 
 vectors (`Vector_2<Kernel>`, `Vector_3<Kernel>`), and 
