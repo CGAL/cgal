@@ -75,7 +75,7 @@ class Polyhedron,
       class GraphCut = Alpha_expansion_graph_cut_boost,
       class FacetIndexMap =
       boost::associative_property_map<std::map<typename Polyhedron::Facet_const_handle, int> >,
-      class Filter = Median_filtering<Polyhedron>
+      class Filter = Bilateral_filtering<Polyhedron>
       >
 class Surface_mesh_segmentation
 {
@@ -139,6 +139,7 @@ public:
    */
   Surface_mesh_segmentation(const Polyhedron& mesh)
     : mesh(mesh) {
+    CGAL_precondition(mesh.is_pure_triangle());
   }
 
 // Use these two functions together
@@ -201,9 +202,10 @@ public:
       segment_pmap[facet_it] = *label_it;
     }
     // assign a segment id for each facet
-    // return number_of_centers;
-    int number_of_segments = assign_segments(number_of_centers, segment_pmap);
-    std::cout << "ne : " <<number_of_segments << std::endl;
+    //return number_of_centers;
+    int number_of_segments = assign_segments(number_of_centers, sdf_pmap,
+                             segment_pmap);
+    //std::cout << "ne : " <<number_of_segments << std::endl;
     return number_of_segments;
   }
 
@@ -473,6 +475,13 @@ private:
     }
   }
 
+  template<class Pair>
+  struct Sort_pairs_with_second {
+    bool operator() (const Pair& pair_1, const Pair& pair_2) const {
+      return pair_1.second < pair_2.second;
+    }
+  };
+
 /////////////////////////////////////
 //  0 0 1 1 0 0      0 0 2 2 4 4   //
 //  0 0 1 1 0 0      0 0 2 2 4 4   //
@@ -484,24 +493,51 @@ private:
    *   -Cluster is a set of facet which can be connected or disconnected.
    *   -Segment is a connected set of facets which are placed under same cluster (after graph-cut).
    * Function takes a map which contains a cluster-id per facet. It then fills the map with segment-ids by giving a unique id to each
-   * set of connected facets which are placed under same cluster.
+   * set of connected facets which are placed under same cluster. Note that returned segment-ids are ordered by average sdf value of segment ascen.
+   *
    * @param number_of_clusters cluster-ids in @a segments should be between [0, number_of_clusters -1]
+   * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
    * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type.
+   * @return number of segments
    */
-  template<class SegmentPropertyMap>
-  int assign_segments(int number_of_clusters, SegmentPropertyMap segments) {
+  template<class SegmentPropertyMap, class SDFProperyMap>
+  int assign_segments(int number_of_clusters, SDFProperyMap sdf_values,
+                      SegmentPropertyMap segments) {
     int segment_id = number_of_clusters;
+    std::vector<std::pair<int, double> > segments_with_average_sdf_values;
+
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
       if(segments[facet_it] <
           number_of_clusters) { // not visited by depth_first_traversal
-        depth_first_traversal(facet_it, segment_id++, segments);
+        std::pair<double, int> sdf_facet_count_pair = depth_first_traversal(facet_it,
+            segment_id, sdf_values, segments);
+        double average_sdf_value_for_segment = sdf_facet_count_pair.first /
+                                               sdf_facet_count_pair.second;
+        segments_with_average_sdf_values.push_back(std::pair<int, double>(segment_id,
+            average_sdf_value_for_segment));
+        ++segment_id;
       }
     }
-
+    // sort segments according to their average sdf value
+    sort(segments_with_average_sdf_values.begin(),
+         segments_with_average_sdf_values.end(),
+         Sort_pairs_with_second<std::pair<int, double> >());
+    // map each segment-id to its new sorted index
+    std::vector<int> segment_id_to_sorted_id_map(
+      segments_with_average_sdf_values.size());
+    for(std::size_t index = 0; index < segments_with_average_sdf_values.size();
+        ++index) {
+      int segment_id = segments_with_average_sdf_values[index].first -
+                       number_of_clusters;
+      segment_id_to_sorted_id_map[segment_id] = index;
+    }
+    // make one-pass on facets. First make segment-id zero based by subtracting number_of_clusters
+    //                        . Then place its sorted index to pmap
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
-      segments[facet_it] = segments[facet_it] - number_of_clusters;
+      int segment_id = segments[facet_it] - number_of_clusters;
+      segments[facet_it] = segment_id_to_sorted_id_map[segment_id];
     }
     return segment_id - number_of_clusters;
   }
@@ -511,12 +547,18 @@ private:
    * Each visited facet assigned to @a segment_id.
    * @param facet root facet
    * @param segment_id segment-id of root facet
+   * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type.
+   * @return pair of first: accumulated sdf values of visited facets, second: number of visited facets
    */
-  template<class SegmentPropertyMap>
-  void depth_first_traversal(Facet_const_handle& facet, int segment_id,
-                             SegmentPropertyMap segments) {
+  template<class SegmentPropertyMap, class SDFProperyMap>
+  std::pair<double, int>
+  depth_first_traversal(Facet_const_handle& facet, int segment_id,
+                        SDFProperyMap sdf_values, SegmentPropertyMap segments) {
     int prev_segment_id = segments[facet];
     segments[facet] = segment_id;
+    std::pair<double, int> sdf_facet_count_pair(sdf_values[facet], 1);
+
     typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
       facet->facet_begin();
     do {
@@ -525,10 +567,16 @@ private:
       }
       Facet_const_handle neighbor = facet_circulator->opposite()->facet();
       if(prev_segment_id == segments[neighbor]) {
-        depth_first_traversal(neighbor, segment_id, segments);
+        const std::pair<double, int>& total_pair = depth_first_traversal(neighbor,
+            segment_id, sdf_values, segments);
+        sdf_facet_count_pair.first += total_pair.first;
+        sdf_facet_count_pair.second += total_pair.second;
       }
     } while( ++facet_circulator !=  facet->facet_begin());
+
+    return sdf_facet_count_pair;
   }
+
 };
 }//namespace internal
 } //namespace CGAL

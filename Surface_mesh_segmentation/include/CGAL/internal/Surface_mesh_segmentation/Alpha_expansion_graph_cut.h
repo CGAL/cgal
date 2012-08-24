@@ -76,7 +76,7 @@ private:
 
   typedef boost::adjacency_list<boost::vecS, boost::listS, boost::directedS,
           // 4 vertex properties
-          boost::property<boost::vertex_index_t, int,
+          boost::property<boost::vertex_index_t, std::size_t,
           boost::property<boost::vertex_color_t, boost::default_color_type,
           boost::property<boost::vertex_distance_t, double,
           boost::property<boost::vertex_predecessor_t, Adjacency_list_traits::edge_descriptor >
@@ -121,7 +121,7 @@ private:
 
 public:
 
-  double operator()(std::vector<std::pair<int, int> >& edges,
+  double operator()(const std::vector<std::pair<int, int> >& edges,
                     const std::vector<double>& edge_weights,
                     const std::vector<std::vector<double> >& probability_matrix,
                     std::vector<int>& labels) const {
@@ -222,7 +222,7 @@ private:
 
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
           // 4 vertex properties
-          boost::property<boost::vertex_index_t, int,
+          boost::property<boost::vertex_index_t, std::size_t,
           boost::property<boost::vertex_color_t, boost::default_color_type,
           boost::property<boost::vertex_distance_t, double,
           boost::property<boost::vertex_predecessor_t, Adjacency_list_traits::edge_descriptor >
@@ -264,7 +264,7 @@ private:
 
 public:
 
-  double operator()(std::vector<std::pair<int, int> >& edges,
+  double operator()(const std::vector<std::pair<int, int> >& edges,
                     const std::vector<double>& edge_weights,
                     const std::vector<std::vector<double> >& probability_matrix,
                     std::vector<int>& labels) const {
@@ -350,7 +350,7 @@ public:
 class Alpha_expansion_graph_cut_boykov_kolmogorov
 {
 public:
-  double operator()(std::vector<std::pair<int, int> >& edges,
+  double operator()(const std::vector<std::pair<int, int> >& edges,
                     const std::vector<double>& edge_weights,
                     const std::vector<std::vector<double> >& probability_matrix,
                     std::vector<int>& labels) const {
