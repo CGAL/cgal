@@ -1,15 +1,15 @@
 namespace CGAL {
 
 /*!
-\addtogroup do_intersect_linear do_intersect
+\addtogroup do_intersect_linear do_intersect (Linear Kernel)
 \ingroup PkgKernel23
 
-Depending on which \cgal kernel is used, different versions of this
+\details Depending on which \cgal kernel is used, different versions of this
 global function are available.
 
 ## With the 2D and 3D Linear %Kernel ##
 
-See Chapter \ref chapterkernel23
+\details See Chapter \ref chapterkernel23
 
 \code
 #include <CGAL/intersections.h>
@@ -47,7 +47,7 @@ Also, `Type1` and `Type2` can be respectively of types
 
 ## With the 2D Circular %Kernel ##
 
-See Chapter \ref chaptercircularkernel
+\details See Chapter \ref chaptercircularkernel
 
 \code
 #include <CGAL/Circular_kernel_intersections.h>
@@ -68,7 +68,7 @@ Chapter  \ref chaptercircularkernel.
 
 ## With the 3D Spherical Kernel ## 
 
-See Chapter \ref chaptersphericalkernel
+\details See Chapter \ref chaptersphericalkernel
 
 \code
 #include <CGAL/Spherical_kernel_intersections.h>
@@ -125,13 +125,13 @@ bool do_intersect(Type1 obj1, Type2 obj2, Type3 obj3);
 \addtogroup intersection intersection
 \ingroup PkgKernel23
 
-Depending on which \cgal kernel is used, different versions of this
+\details Depending on which \cgal kernel is used, different versions of this
 global function are available.
 
 /// @{
 
 /*!
-\addtogroup intersection_linear With the 2D and 3D linear kernel.
+\addtogroup intersection_linear intersection (Linear Kernel)
 
 
 
@@ -140,7 +140,8 @@ global function are available.
 
 
 ## With the 2D and 3D Linear %Kernel ##
-See Chapter  \ref chapterkernel23
+
+\details See Chapter  \ref chapterkernel23
 */
 /// @{
 
@@ -377,9 +378,9 @@ Object intersection(const Plane_3<Kernel>& pl1,
 /// @}
 
 /*!
-\addtogroup intersection_circular With the 2D Circular %Kernel
+\addtogroup intersection_circular intersection (Circular Kernel)
 
-See Chapter \ref chaptercircularkernel
+\details See Chapter \ref chaptercircularkernel
 
 \code
 #include <CGAL/Circular_kernel_intersections.h>
@@ -408,7 +409,7 @@ where `Type1` and `Type2` can both be either
 - `Circle_2<CircularKernel>` or
 - `Circular_arc_2<CircularKernel>`
 
-Depending on the types `Type1` and `Type2`, these elements can be assigned to
+\details Depending on the types `Type1` and `Type2`, these elements can be assigned to
 
 - `std::pair<Circular_arc_point_2<CircularKernel>, unsigned>`,
   where the unsigned integer is the multiplicity of the corresponding
@@ -431,9 +432,9 @@ intersection(const Type1 &obj1, const Type2 &obj2,
 /// @}
 
 /*!
-\addtogroup intersection_spherical With the 3D Spherical %Kernel
+\addtogroup intersection_spherical intersection (Spherical Kernel)
 
-See Chapter \ref chaptersphericalkernel
+\details See Chapter \ref chaptersphericalkernel
 
 \code
 #include <CGAL/Spherical_kernel_intersections.h>

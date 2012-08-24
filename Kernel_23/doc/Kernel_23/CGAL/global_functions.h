@@ -615,7 +615,7 @@ const Point_3<Kernel>& r);
 
 
 
-/// \addtogroup compare_lexicographically_linear compare_lexicographically
+/// \addtogroup compare_lexicographically_linear compare_lexicographically (Linear Kernel)
 /// \ingroup PkgKernel23
 /// @{
 
@@ -811,7 +811,7 @@ const typename Kernel::FT& sr);
 \addtogroup compare_x compare_x
 \ingroup PkgKernel23
 
-Depending on which \cgal kernel is used,
+\details Depending on which \cgal kernel is used,
 different versions of this global function are available. This is
 described below.
 
@@ -826,7 +826,7 @@ described below.
 /// @{
 
 /*!
-\addtogroup compare_x_linear With the 2D and 3D linear kernel.
+\addtogroup compare_x_linear compare_x (Linear Kernel)
 \anchor figcompare_x
 \image html compare1.gif 
 */
@@ -874,9 +874,9 @@ Comparison_result compare_x(const Line_2<Kernel> &l1,
 /// @}
 
 /*!
-\addtogroup compare_x_circular With the 2D Circular Kernel
+\addtogroup compare_x_circular compare_x (Circular Kernel)
 
-See Chapter \ref chaptercircularkernel.
+\details See Chapter \ref chaptercircularkernel.
 
 \code
 #include <CGALCGAL/global_functions_circular_kernel_2.h>
@@ -903,9 +903,9 @@ Comparison_result
 /// @}
 
 /*!
-\addtogroup compare_y_spherical With the 3D Spherical Kernel
+\addtogroup compare_x_spherical compare_x (Spherical Kernel)
 
-See Chapter \ref chaptersphericalkernel.
+\details See Chapter \ref chaptersphericalkernel.
 
 \code
 #include <CGAL/global_functions_spherical_kernel_3.h>
@@ -938,8 +938,8 @@ Comparison_result
 \addtogroup compare_xy compare_xy
 \ingroup PkgKernel23
 
-Depending on which \cgal kernel is used, different versions of this
-global function are available. This is described below.
+\details Depending on which \cgal kernel is used, different versions of this
+global function are available. 
 
 \sa `CGAL::compare_xyz` 
 \sa `CGAL::compare_x` 
@@ -953,7 +953,7 @@ global function are available. This is described below.
 /// @{
 
 /*!
-\addtogroup compare_xy_linear With the 2D and 3D linear kernel.
+\addtogroup compare_xy_linear compare_xy (Linear Kernel)
 
 */
 /// @{
@@ -979,9 +979,9 @@ compare_xy(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
 /// @}
 
 /*!
-\addtogroup compare_xy_circular With the 3D Circular Kernel
+\addtogroup compare_xy_circular compare_xy (Circular Kernel)
 
-See Chapter \ref chaptercircularkernel.
+\details See Chapter \ref chaptercircularkernel.
 
 \code
 #include <CGAL/global_functions_circular_kernel_2.h>
@@ -1012,8 +1012,9 @@ compare_xy(const Circular_arc_point_2<CircularKernel> &p,
 /// @}
 
 /*!
-\addtogroup compare_xy_spherical With the 3D Spherical Kernel
-See Chapter \ref chaptersphericalkernel.
+\addtogroup compare_xy_spherical compare_xy (Spherical Kernel)
+
+\details See Chapter \ref chaptersphericalkernel.
 
 \code
 #include <CGAL/global_functions_spherical_kernel_3.h>
@@ -1226,7 +1227,7 @@ compare_y_at_x(const Circular_arc_point_2<CircularKernel> &p,
 \addtogroup compare_y compare_y
 \ingroup PkgKernel23
 
-Depending on which \cgal kernel is used, different versions of this
+\details Depending on which \cgal kernel is used, different versions of this
 global function are available.
 
 \sa `CGAL::compare_xy` 
@@ -1240,8 +1241,9 @@ global function are available.
 /// @{
 
 /*!
-\addtogroup compary_y_linear With the 2D and 3D Linear Kernel
-See Chapter \ref chapterkernel23
+\addtogroup compary_y_linear compare_y (Linear Kernel)
+
+\details See Chapter \ref chapterkernel23
 
 \anchor figcompare13
 \image html compare1.gif
@@ -1289,16 +1291,17 @@ Comparison_result compare_y(const Line_2<Kernel> &l1,
 /// @}
 
 /*!
-\addtogroup compare_y_circular With the 2D Circular Kernel
-See Chapter \ref chaptercircularkernel.
+\addtogroup compare_y_circular compare_y (Circular Kernel)
+
+\details See Chapter \ref chaptercircularkernel.
 
 \code
 #include <CGAL/global_functions_circular_kernel_2.h>
 \endcode
 
-If this kernel is used, in addition to the function and the
-combination of 2D types described above, another version of the function
-is provided.
+If the circular kernel is used, in addition to the function and the
+combination of 2D types of the linear kernel the following overloaded
+versions are provided.
 */
 /// @{
 /*!
@@ -1318,8 +1321,9 @@ compare_y(const Circular_arc_point_2<CircularKernel> &p,
 /// @}
 
 /*!
-\addtogroup compare_y_spherical With the 3D Spherical Kernel
-See Chapter \ref chaptersphericalkernel.
+\addtogroup compare_y_spherical compare_y (Spherical Kernel)
+
+\details See Chapter \ref chaptersphericalkernel.
 
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>
@@ -1351,8 +1355,8 @@ Comparison_result
 \addtogroup compare_xyz compare_xyz
 \ingroup PkgKernel23
 
-Depending on which \cgal kernel is used, different versions of this
-global function are available. This is described below.
+\details Depending on which \cgal kernel is used, different versions of this
+global function are available.
 
 \sa `CGAL::compare_xy` 
 \sa `CGAL::compare_x` 
@@ -1366,7 +1370,7 @@ global function are available. This is described below.
 /// @{
 
 /*!
-\addtogroup compare_xyz_linear With the 2D and 3D linear kernel.
+\addtogroup compare_xyz_linear compare_xyz (Linear Kernel)
 */
 /// @{
 
@@ -1383,8 +1387,9 @@ compare_xyz(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
 /// @}
 
 /*!
-\addtogroup compare_xyz_spherical with the 3D Spherical Kernel
-See Chapter \ref chaptersphericalkernel
+\addtogroup compare_xyz_spherical compare_xyz (Spherical Kernel)
+
+\details See Chapter \ref chaptersphericalkernel
 
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>
@@ -1418,7 +1423,7 @@ const Point_3<SphericalKernel> &q);
 \addtogroup compare_z compare_z
 \ingroup PkgKernel23
 
-Depending on which \cgal kernel is used, 
+\details Depending on which \cgal kernel is used, 
 different versions of this global function are available. This is 
 described below. 
 
@@ -1439,7 +1444,8 @@ Comparison_result compare_z(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
 
 /*!
 \name With the 3D Spherical Kernel
-See Chapter \ref chaptersphericalkernel
+
+\details See Chapter \ref chaptersphericalkernel
 
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>
