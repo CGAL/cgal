@@ -13,7 +13,7 @@ meshing domain or not.
 
 \refines ::ConstrainedTriangulationFaceBase_2 
 
-\hasModel Delaunay_mesh_face_base_2<Traits, Fb> 
+\hasModel `CGAL::Delaunay_mesh_face_base_2<Traits, Fb>` 
 
 
 */

@@ -37,8 +37,8 @@ comparable</I> as the meshing algorithm will order bad triangles by quality,
 to split those with smallest quality first. The predicate `Is_bad` 
 computes the quality of the triangle as a by-product. 
 
-\hasModel Delaunay_mesh_criteria_2<CDT> 
-\hasModel Delaunay_mesh_size_criteria_2<CDT> 
+\hasModel `CGAL::Delaunay_mesh_criteria_2<CDT>`
+\hasModel `CGAL::Delaunay_mesh_size_criteria_2<CDT>`
 
 
 */
