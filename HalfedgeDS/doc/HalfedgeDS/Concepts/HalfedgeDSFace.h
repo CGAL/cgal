@@ -21,8 +21,8 @@ halfedge data structure they must be derived from a base class `Base`
 where the modifying member functions are still public. (The protection 
 can be bypassed by the user, but not by accident.) 
 
-\hasModel CGAL::HalfedgeDS_face_base<Refs> 
-\hasModel CGAL::HalfedgeDS_face_min_base<Refs> 
+\hasModel `CGAL::HalfedgeDS_face_base<Refs>` 
+\hasModel `CGAL::HalfedgeDS_face_min_base<Refs>` 
 
 \sa `HalfedgeDS<Traits,Items,Alloc>` 
 \sa `HalfedgeDSItems` 
