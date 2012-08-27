@@ -21,8 +21,8 @@ The concept `ConstrainedDelaunayTriangulationTraits_2` refines both the concept
 
 \hasModel All \cgal Kernels
 \hasModel `CGAL::Projection_traits_xy_3<K>` 
-\hasModel `CGAL::Projection_traits_xz_3<K>` 
 \hasModel `CGAL::Projection_traits_yz_3<K>` 
+\hasModel `CGAL::Projection_traits_zx_3<K>` 
 
 
 \sa `TriangulationTraits_2` 
