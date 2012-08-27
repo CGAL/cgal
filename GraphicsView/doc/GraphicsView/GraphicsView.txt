@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage CGAL and the Qt Graphics View Framework
+\mainpage %CGAL and the %Qt Graphics View Framework
 \anchor chapterQGraphicsView
 \authors Andreas Fabri and Laurent Rineau
 
