@@ -151,16 +151,16 @@ Alpha_shape_3(FT alpha = 0,
 Mode m = REGULARIZED); 
 
 /*! 
-Build an alpha shape of mode `m` 
+Build an alpha shape `A` of mode `m` 
 from the triangulation `dt`. 
-Be careful that this operation destroys the triangulation. 
+\attention This operation destroys the triangulation `dt`. 
 */ 
 Alpha_shape_3(Dt& dt, 
 FT alpha = 0, 
 Mode m = REGULARIZED); 
 
 /*! 
-Build an alpha shape data structure in mode `m` 
+Build an alpha shape data structure `A` in mode `m` 
 for the points in the range 
 \f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$ and 
 set the current alpha value to `alpha`. 
@@ -179,7 +179,7 @@ Mode m = REGULARIZED);
 /// @{
 
 /*! 
-Initialize the alpha shape data structure 
+Initialize the alpha shape data structure `A`
 for points in the range 
 \f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
 Returns the number of data points inserted in the underlying 

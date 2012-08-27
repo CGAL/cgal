@@ -149,9 +149,9 @@ Alpha_shape_2(FT alpha = 0,
 Mode m = GENERAL); 
 
 /*! 
-Builds an alpha shape of mode `m` from the triangulation `dt` 
+Builds an alpha shape `A` of mode `m` from the triangulation `dt` 
 for a positive \f$ \alpha\f$-value `alpha`. 
-Be careful that this operation destroys the triangulation. 
+\attention This operation destroys the triangulation. 
 \pre `alpha` \f$ \geq~0\f$. 
 */ 
 Alpha_shape_2( 
