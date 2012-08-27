@@ -13,7 +13,7 @@ by storing handles to points instead of points.
 \refines ::CopyConstructible 
 \refines ::Assignable 
 
-\hasModel CGAL::Segment_Delaunay_graph_storage_site_2<Gt> 
+\hasModel `CGAL::Segment_Delaunay_graph_storage_site_2<Gt>` 
 
 \sa `SegmentDelaunayGraphTraits_2` 
 \sa `CGAL::Segment_Delaunay_graph_site_2<K>` 

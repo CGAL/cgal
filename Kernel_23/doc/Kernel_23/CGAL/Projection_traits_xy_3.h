@@ -29,7 +29,6 @@ and predicates defined in `K`.
 \models ::TriangulationTraits_2 
 \models ::DelaunayTriangulationTraits_2 
 \models ::ConstrainedTriangulationTraits_2 
-\models ::PolygonTraits_2 
 \models ::ConvexHullTraits_2 
 
 */

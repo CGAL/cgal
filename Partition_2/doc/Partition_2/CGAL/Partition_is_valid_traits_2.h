@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPolygonPartitioning2
 
-Class that derives a traits class for `partition_is_valid_2` from 
+Class that derives a traits class for `::partition_is_valid_2` from 
 a given traits class by defining the validity testing function object 
 in terms of a supplied template parameter. 
 

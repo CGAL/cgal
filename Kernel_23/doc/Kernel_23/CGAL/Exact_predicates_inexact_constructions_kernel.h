@@ -7,8 +7,8 @@ namespace CGAL {
 A typedef to a kernel which has the following properties: 
 
 <UL> 
-<LI>It uses Cartesian representation. 
-<LI>It supports constructions of points from <TT>double</TT> Cartesian 
+<LI>It uses %Cartesian representation. 
+<LI>It supports constructions of points from `double` %Cartesian 
 coordinates. 
 <LI>It provides exact geometric predicates, but inexact geometric 
 constructions. 

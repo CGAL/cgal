@@ -15,11 +15,11 @@ The former replace constructors of the kernel classes and constructive
 procedures in the kernel. There are also function objects replacing operators, 
 especially for equality testing. 
 
-\hasModel CGAL::Cartesian<FieldNumberType> 
-\hasModel CGAL::Homogeneous<RingNumberType> 
-\hasModel CGAL::Simple_cartesian<FieldNumberType> 
-\hasModel CGAL::Simple_homogeneous<RingNumberType> 
-\hasModel CGAL::Filtered_kernel<CK> 
+\hasModel `CGAL::Cartesian<FieldNumberType>` 
+\hasModel `CGAL::Homogeneous<RingNumberType>`
+\hasModel `CGAL::Simple_cartesian<FieldNumberType>` 
+\hasModel `CGAL::Simple_homogeneous<RingNumberType>` 
+\hasModel `CGAL::Filtered_kernel<CK>`
 \hasModel CGAL::Exact_predicates_exact_constructions_kernel 
 \hasModel CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt 
 \hasModel CGAL::Exact_predicates_inexact_constructions_kernel 

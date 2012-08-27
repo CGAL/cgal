@@ -16,9 +16,9 @@ predicates on those primitives.
 \refines ::SweepLineTraits_2
 \refines An instance of this concept is used as the traits class for the `CGAL::Sweep_line_2::get_intersection_points()` operation. The requirements listed below are induced by components of the `CGAL::snap_rounding_2` function other than the call to `CGAL::Sweep_line_2::get_intersection_points()`. Naturally, some of them may already be listed in `SweepLineTraits_2`. 
 
-\hasModel CGAL::Snap_rounding_traits 
+\hasModel `CGAL::Snap_rounding_traits<Kernel>` 
 
-\sa `CGAL::Snap_rounding_2<Traits>` 
+\sa `CGAL::Snap_rounding_2<Kernel>` 
 
 */
 

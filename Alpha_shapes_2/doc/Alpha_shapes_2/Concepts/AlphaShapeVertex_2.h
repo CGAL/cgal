@@ -5,6 +5,7 @@
 
 \refines ::TriangulationVertexBase_2. 
 
+\hasModel `CGAL::Alpha_shape_vertex_base_2`
 */
 class AlphaShapeVertex_2 {
 public:
