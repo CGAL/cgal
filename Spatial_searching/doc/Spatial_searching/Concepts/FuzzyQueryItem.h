@@ -4,8 +4,8 @@
 
 The concept `FuzzyQueryItem` describes the requirements for fuzzy \f$ d\f$-dimensional spatial objects. 
 
-\hasModel CGAL::Fuzzy_sphere<Traits>
-\hasModel CGAL::Fuzzy_iso_box<Traits> 
+\hasModel `CGAL::Fuzzy_sphere<Traits>`
+\hasModel `CGAL::Fuzzy_iso_box<Traits>` 
 
 */
 

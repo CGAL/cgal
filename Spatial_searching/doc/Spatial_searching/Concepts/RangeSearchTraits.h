@@ -8,10 +8,10 @@ range search queries in a model of `SpatialTree`.
 
 \refines ::SearchTraits 
 
-\hasModel CGAL::Cartesian_d<FT> 
-\hasModel CGAL::Homogeneous_d<RT> 
-\hasModel CGAL::Search_traits_2<Kernel> 
-\hasModel CGAL::Search_traits_3<Kernel> 
+\hasModel `CGAL::Cartesian_d<FT>` 
+\hasModel `CGAL::Homogeneous_d<RT>` 
+\hasModel `CGAL::Search_traits_2<Kernel>` 
+\hasModel `CGAL::Search_traits_3<Kernel>` 
 
 \sa `SearchTraits` 
 \sa `CGAL::Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
