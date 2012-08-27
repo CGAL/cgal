@@ -7,7 +7,7 @@ used with the function `y_monotone_partition_2`.
 
 \refines ::PartitionTraits_2 
 
-\hasModel CGAL::Partition_traits_2<R> 
+\hasModel `CGAL::Partition_traits_2<R>` 
 
 */
 
