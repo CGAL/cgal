@@ -10,7 +10,7 @@ requirements for the sites of a segment Delaunay graph.
 \refines ::CopyConstructible 
 \refines ::Assignable 
 
-\hasModel CGAL::Segment_Delaunay_graph_site_2<K> 
+\hasModel `CGAL::Segment_Delaunay_graph_site_2<K>` 
 
 \sa `SegmentDelaunayGraphTraits_2` 
 \sa `CGAL::Segment_Delaunay_graph_site_2<K>` 
