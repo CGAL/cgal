@@ -29,7 +29,7 @@ of a surface facet, the center of its biggest Delaunay surface ball.
 
 \refines ::RegularTriangulationCellBase_3 
 
-\hasModel `Mesh_cell_base_3<MD,Gt,Cb>` 
+\hasModel `CGAL::Mesh_cell_base_3<MD,Gt,Cb>` 
 
 \sa `CGAL::make_mesh_3` 
 \sa `MeshDomain_3` 

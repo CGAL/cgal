@@ -14,7 +14,7 @@ that describes the requirements, in terms of sizing, for the discretization of t
 
 \refines ::MeshDomain_3 
 
-\hasModel Mesh_criteria_3<Tr> 
+\hasModel` CGAL::Mesh_criteria_3<Tr>`
 
 \sa `MeshCriteria_3` 
 \sa `MeshEdgeCriteria_3` 

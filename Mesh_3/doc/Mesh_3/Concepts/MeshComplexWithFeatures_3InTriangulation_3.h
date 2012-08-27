@@ -48,7 +48,7 @@ of the input complex.
 
 \refines ::MeshComplex_3InTriangulation_3 
 
-\hasModel `Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>`
+\hasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>`
 
 \sa `MeshComplex_3InTriangulation_3` 
 \sa `MeshDomainWithFeatures_3` 

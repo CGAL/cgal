@@ -29,9 +29,9 @@ A segment, ray or line is said to intersect properly the domain boundary
 if it includes points which are strictly inside 
 and strictly outside the domain (resp. the subdomain). 
 
-\hasModel `Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>` 
-\hasModel `Implicit_mesh_domain_3<Function,BGT>` 
-\hasModel `Labeled_image_mesh_domain_3<Image,BGT>` 
+\hasModel `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>` 
+\hasModel `CGAL::Implicit_mesh_domain_3<Function,BGT>` 
+\hasModel `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` 
 
 \sa `MeshVertexBase_3` 
 \sa `MeshCellBase_3` 
