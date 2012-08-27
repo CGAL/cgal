@@ -51,7 +51,7 @@ it is also possible to use a key of type `Type` and to employ the default
 functions. The first function operates on `s` and accepts a second 
 set `s`', such that the maximum element in `s` is not greater than 
 the minimal element in `s`', and concatenates `s`' to `s`. The 
-second function splits `s` into two sets,one containing all the 
+second function splits `s` into two sets, one containing all the 
 elements that are less than a given key, and the other contains all 
 elements greater than (or equal to) this key. 
 
