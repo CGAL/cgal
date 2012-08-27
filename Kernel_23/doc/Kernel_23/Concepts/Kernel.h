@@ -20,9 +20,9 @@ especially for equality testing.
 \hasModel `CGAL::Simple_cartesian<FieldNumberType>` 
 \hasModel `CGAL::Simple_homogeneous<RingNumberType>` 
 \hasModel `CGAL::Filtered_kernel<CK>`
-\hasModel CGAL::Exact_predicates_exact_constructions_kernel 
-\hasModel CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt 
-\hasModel CGAL::Exact_predicates_inexact_constructions_kernel 
+\hasModel `CGAL::Exact_predicates_exact_constructions_kernel` 
+\hasModel `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` 
+\hasModel `CGAL::Exact_predicates_inexact_constructions_kernel`
 
 \sa `Kernel_d` 
 
