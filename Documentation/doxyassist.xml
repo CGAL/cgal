@@ -508,7 +508,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Alpha_shapes_3/doc/Alpha_shapes_3/fig</string>
           <string name="EXAMPLE_PATH">../Alpha_shapes_3/examples</string>
           <list name="TAGFILES" append="true">
-            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
           </list>
         </doxygen>
       </project>
@@ -534,6 +534,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/CGAL_ipelets.tag</string>
           <string name="IMAGE_PATH">../CGAL_ipelets/doc/CGAL_ipelets/fig</string>
           <string name="EXAMPLE_PATH">../CGAL_ipelets/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
+          </list>
         </doxygen>
       </project>
 
