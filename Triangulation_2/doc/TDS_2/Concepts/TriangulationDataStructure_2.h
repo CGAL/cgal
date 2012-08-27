@@ -65,7 +65,7 @@ the rank of this item in the output order.
 When dimension \f$ <\f$ 2, the same information is output 
 for faces of maximal dimension instead of faces. 
 
-\hasModel CGAL::Triangulation_data_structure_2<Vb,Fb> 
+\hasModel `CGAL::Triangulation_data_structure_2<Vb,Fb>` 
 
 \sa `TriangulationDataStructure_2::Face` 
 \sa `TriangulationDataStructure_2::Vertex` 

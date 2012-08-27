@@ -11,10 +11,10 @@ triangulation and some function object types for the required
 predicates on those primitives.
 
 \hasModel All the \cgal Kernels 
-\hasModel CGAL::Triangulation_euclidean_traits_2<K> 
-\hasModel CGAL::Projection_traits_xy_3<K> 
-\hasModel CGAL::Projection_traits_yz_3<K> 
-\hasModel CGAL::Projection_traits_zx_3<K> 
+\hasModel `CGAL::Triangulation_euclidean_traits_2<K>`
+\hasModel `CGAL::Projection_traits_xy_3<K>`
+\hasModel `CGAL::Projection_traits_yz_3<K>`
+\hasModel `CGAL::Projection_traits_zx_3<K>`
 
 \sa `CGAL::Triangulation_2<Traits,Tds>` 
 

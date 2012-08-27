@@ -14,9 +14,9 @@ next and previous level triangulations.
 
 \refines ::TriangulationVertexBase_2 
 
-\hasModel CGAL::Triangulation_hierarchy_vertex_base_2<Vb> 
+\hasModel `CGAL::Triangulation_hierarchy_vertex_base_2<Vb>` 
 
-\sa `Triangulation_hierarchy_2<Tr>` 
+\sa `CGAL::Triangulation_hierarchy_2<Tr>` 
 
 */
 

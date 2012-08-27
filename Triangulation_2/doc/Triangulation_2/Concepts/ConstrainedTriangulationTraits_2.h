@@ -20,9 +20,9 @@ to compute the squared distance between a point and a line
 \refines ::TriangulationTraits_2 
 
 \hasModel All \cgal Kernels
-\hasModel CGAL::Projection_traits_xy_3<K> 
-\hasModel CGAL::Projection_traits_yz_3<K> 
-\hasModel CGAL::Projection_traits_zx_3<K> 
+\hasModel `CGAL::Projection_traits_xy_3<K>` 
+\hasModel `CGAL::Projection_traits_yz_3<K>` 
+\hasModel `CGAL::Projection_traits_zx_3<K>` 
 
 \sa `TriangulationTraits_2` 
 \sa `ConstrainedDelaunayTriangulationTraits_2` 

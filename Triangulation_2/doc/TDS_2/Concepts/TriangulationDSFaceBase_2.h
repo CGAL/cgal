@@ -46,16 +46,16 @@ that the `Triangulation_data_structure_2`
 actually uses as a base class for the class 
 `Triangulation_data_structure_2::Face`. 
 
-\hasModel CGAL::Triangulation_ds_face_base_2<Tds> 
-\hasModel CGAL::Triangulation_face_base_2<Traits,Fb> 
-\hasModel CGAL::Regular_triangulation_face_base_2<Traits,Fb> 
-\hasModel CGAL::Constrained_triangulation_face_base_2<Traits,Fb> 
-\hasModel CGAL::Triangulation_face_base_with_info_2<Info,Traits,Fb> 
+\hasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
+\hasModel `CGAL::Triangulation_face_base_2<Traits,Fb>` 
+\hasModel `CGAL::Regular_triangulation_face_base_2<Traits,Fb>` 
+\hasModel `CGAL::Constrained_triangulation_face_base_2<Traits,Fb>` 
+\hasModel `CGAL::Triangulation_face_base_with_info_2<Info,Traits,Fb>` 
 
 \sa `TriangulationDSVertexBase_2` 
 \sa `TriangulationDataStructure_2::Face` 
 \sa `TriangulationFaceBase_2` 
-\sa `Triangulation_data_structure_2<Vb,Fb>` 
+\sa `CGAL::Triangulation_data_structure_2<Vb,Fb>` 
 
 */
 

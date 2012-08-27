@@ -20,14 +20,14 @@ The concept `ConstrainedDelaunayTriangulationTraits_2` refines both the concept
 \refines ::ConstrainedTriangulationTraits_2 
 
 \hasModel All \cgal Kernels
-\hasModel Triangulation_euclidean_traits_xy<K> 
-\hasModel Triangulation_euclidean_traits_yz<K> 
-\hasModel Triangulation_euclidean_traits_xz<K> 
+\hasModel `CGAL::Triangulation_euclidean_traits_xy<K>` 
+\hasModel `CGAL::Triangulation_euclidean_traits_yz<K>` 
+\hasModel `CGAL::Triangulation_euclidean_traits_xz<K>` 
 
 \sa `TriangulationTraits_2` 
 \sa `ConstrainedTriangulationTraits_2` 
-\sa `Constrained_triangulation_2<Gt,Tds,Itag>` 
-\sa `Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>` 
+\sa `CGAL::Constrained_triangulation_2<Gt,Tds,Itag>` 
+\sa `CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>` 
 
 */
 

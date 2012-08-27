@@ -44,17 +44,17 @@ of `Triangulation_data_structure_2::Vertex`.
 
 \refines ::TriangulationDataStructure_2::Vertex 
 
-\hasModel CGAL::Triangulation_ds_vertex_base_2<Tds> 
-\hasModel CGAL::Triangulation_vertex_base_2<Traits,Vb> 
-\hasModel CGAL::Regular_triangulation_vertex_base_2<Traits,Vb> 
-\hasModel CGAL::Triangulation_hierarchy_vertex_base_2<Vb> 
-\hasModel CGAL::Triangulation_vertex_base_with_info_2<Info,Traits,vb> 
+\hasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>`
+\hasModel `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
+\hasModel `CGAL::Regular_triangulation_vertex_base_2<Traits,Vb>`
+\hasModel `CGAL::Triangulation_hierarchy_vertex_base_2<Vb>`
+\hasModel `CGAL::Triangulation_vertex_base_with_info_2<Info,Traits,Vb>`
 
 \sa `TriangulationVertexBase_2` 
 \sa `TriangulationDSFaceBase_2` 
 \sa `TriangulationFaceBase_2` 
 \sa `TriangulationDataStructure_2::Vertex` 
-\sa `Triangulation_data_structure_2<Vb,Fb>` 
+\sa `CGAL::Triangulation_data_structure_2<Vb,Fb>` 
 
 */
 

@@ -27,9 +27,9 @@ required if calls to
 
 The following traits classes provide everything except types and member 
 functions required for the dual Voronoi diagram: 
-\hasModel CGAL::Projection_traits_xy_3<K> 
-\hasModel CGAL::Projection_traits_yz_3<K> 
-\hasModel CGAL::Projection_traits_zx_3<K> 
+\hasModel `CGAL::Projection_traits_xy_3<K>` 
+\hasModel `CGAL::Projection_traits_yz_3<K>` 
+\hasModel `CGAL::Projection_traits_zx_3<K>` 
 
 \sa `TriangulationTraits_2` 
 */

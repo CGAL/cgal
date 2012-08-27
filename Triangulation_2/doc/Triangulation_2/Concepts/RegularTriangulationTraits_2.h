@@ -19,8 +19,8 @@ of Delaunay triangulations.
 
 \refines ::TriangulationTraits_2 
 
-\hasModel CGAL::Regular_triangulation_traits_2<Rep> 
-\hasModel CGAL::Regular_triangulation_filtered_traits_2<FK> 
+\hasModel `CGAL::Regular_triangulation_traits_2<Rep>` 
+\hasModel `CGAL::Regular_triangulation_filtered_traits_2<FK>` 
 
 \sa `TriangulationTraits_2` 
 \sa `CGAL::Regular_triangulation_2<Traits,Tds>` 

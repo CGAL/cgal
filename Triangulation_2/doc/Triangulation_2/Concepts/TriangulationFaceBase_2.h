@@ -17,7 +17,7 @@ and only provided for symmetry with the vertex case.
 
 \refines ::TriangulationDSFaceBase_2 
 
-\hasModel CGAL::Triangulation_face_base_2<Traits> 
+\hasModel `CGAL::Triangulation_face_base_2<Traits>` 
 
 \sa `TriangulationVertexBase_2` 
 \sa `CGAL::Triangulation_face_base_2<Traits>` 

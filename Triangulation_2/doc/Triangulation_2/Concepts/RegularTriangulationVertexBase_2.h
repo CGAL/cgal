@@ -35,7 +35,7 @@ vertex of the triangulation or a hidden vertex.
 
 \refines ::TriangulationVertexBase_2 
 
-\hasModel CGAL::Regular_triangulation_vertex_base_2 
+\hasModel `CGAL::Regular_triangulation_vertex_base_2` 
 
 \sa `TriangulationVertexBase_2` 
 \sa `CGAL::Regular_triangulation_vertex_base_2` 

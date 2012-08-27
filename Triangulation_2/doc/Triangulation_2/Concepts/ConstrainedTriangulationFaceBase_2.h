@@ -20,7 +20,7 @@ Types
 
 Defines the same types as the `TriangulationFaceBase_2` concept 
 
-\hasModel CGAL::Constrained_triangulation_face_base_2<Traits> 
+\hasModel `CGAL::Constrained_triangulation_face_base_2<Traits>` 
 
 \sa `TriangulationFaceBase_2` 
 \sa `CGAL::Constrained_triangulation_2<Traits,Tds>` 

@@ -8,7 +8,7 @@ and provides an additional information storage.
 
 \refines ::TriangulationVertexBase_2 
 
-\hasModel CGAL::Triangulation_vertex_base_with_info_2 
+\hasModel `CGAL::Triangulation_vertex_base_with_info_2`
 
 */
 

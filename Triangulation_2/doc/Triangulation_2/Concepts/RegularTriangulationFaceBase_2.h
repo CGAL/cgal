@@ -34,7 +34,7 @@ in the face a list to store hidden vertices.
 
 \refines ::TriangulationFaceBase_2 
 
-\hasModel CGAL::Regular_triangulation_face_base_2 
+\hasModel `CGAL::Regular_triangulation_face_base_2` 
 
 \sa `TriangulationFaceBase_2` 
 \sa `RegularTriangulationVertexBase_2` 
