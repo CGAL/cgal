@@ -12,7 +12,7 @@ metric for regular triangulation.
 \refines ::TriangulationTraits_2 
 
 \hasModel Kernel
-\hasModel ::Projection_traits_xy_3<K> 
+\hasModel `CGAL::Projection_traits_xy_3<K>` 
 
 */
 

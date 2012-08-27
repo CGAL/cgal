@@ -5,6 +5,8 @@
 
 \refines ::TriangulationFaceBase_2. 
 
+\hasModel `CGAL::Alpha_shape_face_base_2`
+
 */
 
 class AlphaShapeFace_2 {

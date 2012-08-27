@@ -14,7 +14,7 @@ In addition to the requirements described in the concept
 Regular triangulation plugged in a basic alpha shapes provides the
 following.
 
-\hasModel CGAL::Regular_triangulation_euclidean_traits_3<K> 
+\hasModel `CGAL::Regular_triangulation_euclidean_traits_3<K>` 
 
 */
 

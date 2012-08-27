@@ -13,7 +13,7 @@ In addition to the requirements described in the concept
 Regular triangulation plugged in a weighted alpha shape with fixed
 alpha value provides the following.
 
-\hasModel CGAL::Regular_triangulation_euclidean_traits_3<K>
+\hasModel `CGAL::Regular_triangulation_euclidean_traits_3<K>`
 
 */
 

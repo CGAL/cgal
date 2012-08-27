@@ -7,6 +7,8 @@ This concept describes the requirements for the base vertex of a alpha shape wit
 
 \refines ::TriangulationVertexBase_3. 
 
+
+\hasModel `CGAL::Fixed_alpha_shape_vertex_base_3`
 */
 
 class FixedAlphaShapeVertex_3 {

@@ -15,13 +15,13 @@ Delaunay triangulation plugged in a basic alpha shapes provides the
 following.
 
 \hasModel All `CGAL` kernels. 
-\hasModel CGAL::Exact_predicates_inexact_constructions_kernel (recommended) 
-\hasModel CGAL::Exact_predicates_exact_constructions_kernel 
-\hasModel CGAL::Filtered_kernel 
-\hasModel CGAL::Cartesian 
-\hasModel CGAL::Simple_cartesian 
-\hasModel CGAL::Homogeneous 
-\hasModel CGAL::Simple_homogeneous 
+\hasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended) 
+\hasModel `CGAL::Exact_predicates_exact_constructions_kernel` 
+\hasModel `CGAL::Filtered_kernel` 
+\hasModel `CGAL::Cartesian` 
+\hasModel `CGAL::Simple_cartesian` 
+\hasModel `CGAL::Homogeneous` 
+\hasModel `CGAL::Simple_homogeneous`
 
 */
 

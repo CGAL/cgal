@@ -7,6 +7,8 @@ This concept describes the requirements for the base cell of a alpha shape with 
 
 \refines ::TriangulationCellBase_3. 
 
+\hasModel `CGAL::Fixed_alpha_shape_cell_base_3`
+
 */
 
 class FixedAlphaShapeCell_3 {
