@@ -4,9 +4,9 @@
 \cgalconcept
 
 The concept `TriangulationDSFaceBase_2` describes the requirements for 
-the base face of a `Triangulation_data_structure_2<Vb,Fb>`. 
+the base face of a `CGAL::Triangulation_data_structure_2<Vb,Fb>`. 
 
-Note that if the `Triangulation_data_structure_2` 
+Note that if the `CGAL::Triangulation_data_structure_2` 
 is plugged into a triangulation class, 
 the face base class may have additional geometric 
 requirements depending on the triangulation class. 
@@ -19,20 +19,20 @@ on its three vertices and on the three neighboring faces.
 The vertices and neighbors are indexed 0,1 and 2. 
 Neighbor \f$ i\f$ lies opposite to vertex \f$ i\f$. 
 
-Since the `Triangulation_data_structure_2` is the class 
+Since the `CGAL::Triangulation_data_structure_2` is the class 
 which defines the handle 
 types, the face base class has to be somehow 
 parameterized by the triangulation 
-data structure. But since the `Triangulation_data_structure_2` 
+data structure. But since the `CGAL::Triangulation_data_structure_2` 
 itself is parameterized by the face and vertex 
 base classes, there is a cycle in the definition of these classes. 
 In order 
 to break the cycle, the base classes for faces and vertices 
 which are plugged in to instantiate a 
-`Triangulation_data_structure_2` 
+`CGAL::Triangulation_data_structure_2` 
 use a `void` as triangulation 
 data structure parameter. Then, 
-the `Triangulation_data_structure_2` 
+the `CGAL::Triangulation_data_structure_2` 
 uses a <I>rebind</I> mechanism (similar to the one specified in 
 `std::allocator`) in order to plug itself 
 as parameter in the face and vertex base classes. 
@@ -42,7 +42,7 @@ itself provides
 the subtype `Rebind_TDS<TDS2>::Other` 
 which is the <I>rebound</I> version of the base class. 
 This <I>rebound</I> base class is the class 
-that the `Triangulation_data_structure_2` 
+that the `CGAL::Triangulation_data_structure_2` 
 actually uses as a base class for the class 
 `Triangulation_data_structure_2::Face`. 
 
@@ -70,9 +70,9 @@ public:
 /*! 
 This nested template class has to define a type `Other` which is the 
 <I>rebound</I> face base, where the 
-`Triangulation_data_structure_2` is actually plugged in. 
+`CGAL::Triangulation_data_structure_2` is actually plugged in. 
 This type `Other` will be the actual base 
-of the class `Triangulation_data_structure_2::Face`. 
+of the class `CGAL::Triangulation_data_structure_2::Face`. 
 */ 
 typedef Hidden_type 
 template <typename TDS2> 
@@ -255,7 +255,7 @@ bool is_valid(bool verbose = false) const;
 
 /// \name Various 
 /// These member functions are required by
-/// `Triangulation_data_structure_2` because it uses
+/// `CGAL::Triangulation_data_structure_2` because it uses
 /// `Compact_container` to store its faces. See the documentation of
 /// `Compact_container` for the exact requirements.
 /// @{

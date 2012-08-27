@@ -6,7 +6,7 @@
 The concept `TriangulationDSVertexBase_2` describes the requirements for the 
 vertex base class of a `Triangulation_data_structure_2<Vb,Fb>`. 
 
-Note that if the `Triangulation_data_structure_2` 
+Note that if the `CGAL::Triangulation_data_structure_2` 
 is plugged into a triangulation class, 
 the vertex base class has additional geometric 
 requirements depending on the triangulation class. 
@@ -15,11 +15,11 @@ At the base level,
 provides access to one of its incident 
 face through a `Face_handle`. 
 
-Since the `Triangulation_data_structure_2` is the class 
+Since the `CGAL::Triangulation_data_structure_2` is the class 
 which defines the handle 
 types, the vertex base class has to be somehow 
 parameterized by the triangulation 
-data structure. But since the `Triangulation_data_structure_2` 
+data structure. But since the `CGAL::Triangulation_data_structure_2` 
 itself is parameterized by the face and vertex 
 base classes, there is a cycle in the definition of these classes. 
 In order 
@@ -28,7 +28,7 @@ which are plugged in to instantiate a
 `Triangulation_data_structure_2` 
 use a `void` as triangulation 
 data structure parameter. Then, 
-the `Triangulation_data_structure_2` 
+the `CGAL::Triangulation_data_structure_2` 
 uses a <I>rebind</I> mechanism (similar to the one specified in 
 `std::allocator`) in order to plug itself 
 as parameter in the face and vertex base classes. 
@@ -38,9 +38,9 @@ itself provides
 the subtype `Rebind_TDS<TDS2>::Other` 
 which is the <I>rebound</I> version of the base class. 
 This <I>rebound</I> base class is the class 
-that the `Triangulation_data_structure_2` 
+that the `CGAL::Triangulation_data_structure_2` 
 actually uses as a base class for the class 
-of `Triangulation_data_structure_2::Vertex`. 
+of `CGAL::Triangulation_data_structure_2::Vertex`. 
 
 \refines ::TriangulationDataStructure_2::Vertex 
 
@@ -68,9 +68,9 @@ public:
 /*! 
 This nested template class has to define a type `Other` which is the 
 <I>rebound</I> vertex base , where the actual 
-`Triangulation_data_structure_2` is plugged in. 
+`CGAL::Triangulation_data_structure_2` is plugged in. 
 This type `Other` will be the actual base 
-of the class `Triangulation_data_structure_2::Vertex`. 
+of the class `CGAL::Triangulation_data_structure_2::Vertex`. 
 */ 
 typedef Hidden_type 
 template <typename TDS2> 
@@ -110,9 +110,9 @@ TriangulationDSVertexBase_2(Face_handle f);
 
 /// \name Various 
 /// These member functions are required by
-/// `Triangulation_data_structure_2` because it uses
-/// `Compact_container` to store its faces. See the documentation of
-/// `Compact_container` for the exact requirements.
+/// `CGAL::Triangulation_data_structure_2` because it uses
+/// `CGAL::Compact_container` to store its faces. See the documentation of
+/// `CGAL::Compact_container` for the exact requirements.
 /// @{
 
 /*! 

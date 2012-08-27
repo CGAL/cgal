@@ -96,7 +96,7 @@ In order to obtain new vertices or destruct unused vertices, the user must
 call the `create_vertex()` and `delete_vertex()` methods of the 
 triangulation data structure. 
 
-\hasModel CGAL::Triangulation_ds_vertex_2<Vb,Fb> 
+\hasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>` 
 
 \sa `TriangulationDataStructure_2` 
 \sa `TriangulationDataStructure_2::Face` 
@@ -212,6 +212,8 @@ The methods `create_face` and
 `delete_face()` 
 have to be used to 
 define new faces and to delete non longer used faces. 
+
+ \hasModel `Triangulation_ds_face_base_2<Tds>`
 
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationDataStructure_2::Vertex`
