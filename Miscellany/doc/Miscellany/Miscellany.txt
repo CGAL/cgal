@@ -14,7 +14,7 @@ The class `CGAL::Timer` is the version for the user process time and
 the class `CGAL::Real\_timer` is the version for the real time.
 
 Instantiations of both classes are objects with a state. The state is
-either <I>running/</I> or it is <I>stopped</I>. The state of an object
+either <I>running</I> or it is <I>stopped</I>. The state of an object
 `t` is controlled
 with `t.start()` and `t.stop()`. The timer counts the
 time elapsed since its creation or last reset. It counts only the time

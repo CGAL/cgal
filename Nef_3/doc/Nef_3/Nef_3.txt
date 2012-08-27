@@ -199,7 +199,7 @@ to its corresponding oriented edge and to its oriented facet.
 We can identify an edge-use with an oriented <I>sedge</I> in the 
 sphere map, or, in the special case also with an
 <I>sloop</I>. Without mentioning it explicitly in the
-remainder, all references to <I>sedge/</I> can also refer to
+remainder, all references to <I>sedge</I> can also refer to
 <I>sloop</I>.
 <DT><B>facets:</B><DD>
 We store oriented facets as boundary cycles of oriented 

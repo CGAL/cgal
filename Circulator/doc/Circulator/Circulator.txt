@@ -78,7 +78,7 @@ circulators <TT>c+n</TT> advances the circulator <TT>n</TT> steps. Two
 circulators can be compared for equality.
 
 Circulators have a different notion of reachability and ranges than
-iterators. A circulator <TT>d</TT> is called <I>reachable/</I> from a
+iterators. A circulator <TT>d</TT> is called <I>reachable</I> from a
 circulator <TT>c</TT> if <TT>c</TT> can be made equal to <TT>d</TT> with
 finitely many applications of the operator <TT>++</TT>. Due to the
 circularity of the sequence this is always true if both circulators
