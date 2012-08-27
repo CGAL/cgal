@@ -16,7 +16,7 @@ with `CGAL::Triangulation_vertex_base_3<Traits>`.
 
 */
 template< typename Traits, typename Vb >
-class Fixed_alpha_shape_vertex_base_3 : public Vv {
+class Fixed_alpha_shape_vertex_base_3 : public Vb {
 public:
 
 /// @}
