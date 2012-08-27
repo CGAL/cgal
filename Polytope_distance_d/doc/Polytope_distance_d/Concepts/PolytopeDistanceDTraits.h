@@ -6,9 +6,9 @@
 This concept defines the requirements for traits classes of \f$ d\f$-dimensional 
 optimisation algorithms. 
 
-\hasModel CGAL::Polytope_distance_d_traits_2<K,ET,NT> 
-\hasModel CGAL::Polytope_distance_d_traits_3<K,ET,NT> 
-\hasModel CGAL::Polytope_distance_d_traits_d<K,ET,NT> 
+\hasModel `CGAL::Polytope_distance_d_traits_2<K,ET,NT>`
+\hasModel `CGAL::Polytope_distance_d_traits_3<K,ET,NT>`
+\hasModel `CGAL::Polytope_distance_d_traits_d<K,ET,NT>`
 
 \sa `CGAL::Polytope_distance_d<Traits>` 
 
@@ -26,7 +26,7 @@ point type used to represent the input points.
 typedef Hidden_type Point_d; 
 
 /*! 
-compile time tag to distinguish between Cartesian and homogeneous 
+compile time tag to distinguish between %Cartesian and homogeneous 
 representation of the input points. `Rep_tag` has to be either 
 `CGAL::``Cartesian_tag` or 
 `CGAL::``Homogeneous_tag`. 
@@ -43,7 +43,7 @@ typedef Hidden_type RT;
 number type used to return either the squared radius of the smallest 
 enclosing sphere or annulus, or the squared distance of the polytopes. 
 `FT` has to be either `RT` or `CGAL::``Quotient<RT>` if 
-the input points have Cartesian or homogeneous representation, 
+the input points have %Cartesian or homogeneous representation, 
 respectively (cf. `Rep_tag`). 
 */ 
 typedef Hidden_type FT; 

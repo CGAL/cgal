@@ -7,10 +7,10 @@ The concept `AllFurthestNeighborsTraits_2` defines types and operations
 needed to compute all furthest neighbors for the vertices of a 
 convex polygon using the function `all_furthest_neighbors_2`. 
 
-\hasModel CGAL::Cartesian<FieldNumberType>
-\hasModel CGAL::Homogeneous<RingNumberType>
-\hasModel CGAL::Simple_cartesian<FieldNumberType>
-\hasModel CGAL::Simple_homogeneous<RingNumberType>
+\hasModel `CGAL::Cartesian<FieldNumberType>`
+\hasModel `CGAL::Homogeneous<RingNumberType>`
+\hasModel `CGAL::Simple_cartesian<FieldNumberType>`
+\hasModel `CGAL::Simple_homogeneous<RingNumberType>`
 
 \sa `CGAL::all_furthest_neighbors_2` 
 

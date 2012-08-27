@@ -6,9 +6,9 @@
 A model of concept `MinSphereOfSpheresTraits` must provide the 
 following constants, types, predicates and operations. 
 
-\hasModel CGAL::Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm> 
-\hasModel CGAL::Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm> 
-\hasModel CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm> 
+\hasModel `CGAL::Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>` 
+\hasModel `CGAL::Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>` 
+\hasModel `CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>` 
 
 */
 
@@ -103,7 +103,7 @@ Sphere& s);
 
 /*! 
 
-returns an iterator referring to the first of the `D` Cartesian 
+returns an iterator referring to the first of the `D` %Cartesian 
 coordinates of the center of `s`. 
 */ 
 Cartesian_const_iterator center_cartesian_begin(const Sphere& s); 

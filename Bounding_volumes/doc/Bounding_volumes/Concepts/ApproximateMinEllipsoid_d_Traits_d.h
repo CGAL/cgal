@@ -10,9 +10,9 @@ This concept defines the requirements for traits classes of
 \refines ::CopyConstructible 
 \refines ::Assignable 
 
-\hasModel CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET> 
-\hasModel CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET> 
-\hasModel CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET> 
+\hasModel `CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>` 
+\hasModel `CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET>` 
+\hasModel `CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>` 
 
 \sa `CGAL::Min_ellipse_2<Traits>` 
 
@@ -54,7 +54,7 @@ typedef Hidden_type Point;
 /*! 
 Model for the STL concept 
 `RandomAccessIterator` whose value type must be convertible to 
-`double`. This type is used to iterate over the Cartesian 
+`double`. This type is used to iterate over the %Cartesian 
 coordinates of an instance of type `Point`, see 
 `cartesian_begin()` below. 
 */ 
