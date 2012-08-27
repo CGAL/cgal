@@ -21,7 +21,7 @@ namespace CGAL
  *  - Smoothed with bilateral filtering.
  *  - Linearly normalized between [0,1].
  *
- * @pre parameter @a polyhedron should consist of triangles.
+ * @pre @a polyhedron.is_pure_triangle()
  * @param polyhedron `CGAL Polyhedron` on which SDF values are computed
  * @param[out] sdf_values <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @param cone_angle opening angle for cone, expressed in radians
@@ -48,7 +48,7 @@ sdf_values_computation(const Polyhedron& polyhedron,
  * Note that there is no direct relation between the parameter @a number_of_levels
  * and number of segments. However, large number of clusters likely to result in detailed segmentation of the mesh with large number of segments.
  *
- * @pre parameter @a polyhedron should consist of triangles.
+ * @pre @a polyhedron.is_pure_triangle()
  * @param polyhedron `CGAL Polyhedron` on which segmentation is applied
  * @param sdf_values <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">`ReadablePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @param[out] segment_ids <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
@@ -82,7 +82,7 @@ surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
  * it is wise to first compute SDF values using CGAL::sdf_values_computation,
  * and then call CGAL::surface_mesh_segmentation_from_sdf_values with the same SDF values.
  *
- * @pre parameter @a polyhedron should consist of triangles.
+ * @pre @a polyhedron.is_pure_triangle()
  * @param polyhedron `CGAL Polyhedron` on which segmentation is applied
  * @param[out] segment_ids <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @param number_of_rays number of rays picked from cone for each facet

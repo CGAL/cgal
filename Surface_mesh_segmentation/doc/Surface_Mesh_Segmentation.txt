@@ -13,7 +13,7 @@ Mesh segmentation is the process of partitioning a mesh into smaller and meaning
 but is not limited to modeling, rigging and texturing, shape-retrieval, and deformation.
 
 This package provides an implementation of the algorithm presented in \cite shapira2008consistent. It relies on the Shape Diameter Function (SDF) which
-provides an estimate of the local volume diameter for each facet of the mesh. For given SDF values, the segmentation algorithm first applies soft clustering on
+provides an estimate of the local volume diameter for each facet of the mesh. Given SDF values, the segmentation algorithm first applies soft clustering on
 facets. These clusters are then refined using a graph-cut algorithm which also considers surface-based features such as dihedral-angle and concavity. 
 
 The API gives access to both the SDF computation and segmentation for a given triangulated mesh. 
@@ -30,12 +30,12 @@ Another key feature of the SDF is its pose-invariant nature, which means that SD
 
 The SDF over a surface is computed by processing each facets one by one. For a given facet, the SDF value computation begins with casting
 several rays sampled from a cone which is constructed using the centroid of the facet as apex and inward-normal of the facet as axis. 
-Using these casted rays (which intuitively correspond to sampling for local volume), 
+Using these casted rays (which intuitively correspond to a local volume sampling), 
 the SDF value is calculated by first applying outlier removal and then taking weighted average of ray lengths.
 
 After calculating SDF values for each facet, bilateral smoothing (an edge-preserving filtering technique) is applied. 
 The purpose of edge-preserving smoothing is removing noise while keeping fast changes on SDF values in-place without smoothing,
-since they are natural candidates for segment boundaries. (TODO: I don't get the last sentense) (IOY: I changed the sentence)
+since they are natural candidates for segment boundaries.
 
 \anchor Figure-2
 \image latex pose_changes_low.png "Figure 2: Effect of pose changes on segmentation." width=12cm
@@ -46,17 +46,17 @@ The soft clustering on computed SDF values first groups facets using k-means clu
 (an algorithm for choosing random seeds for clusters) and run multiple times. Among these runs, we choose clustering result that has minimum with-in
 cluster error and use it to initialize expectation maximization algorithm for fitting Gaussian mixture models.
 
-Note that there is no direct relation between number of clusters (parameter for soft clustering) and number of segments (disconnected components). 
-Intuitively, number of clusters represents level of segmentation by clustering facets, which have close SDF values, 
-together without considering their connectivity.  However, large number of clusters likely to result in detailed segmentation of the mesh 
-with large number of segments \ref Figure-3.
+Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the number of segments (disconnected components). 
+Intuitively, the number of clusters represents the number of levels of a segmentation by clustering facets which have close SDF values
+without considering their connectivity.  However, a large number of clusters is likely to result in detailed segmentation of the mesh 
+with a large number of segments \ref Figure-3.
 
 The output of this step is a matrix that contains probability values for each facet to belong to each cluster. 
-These probability values are used as input in the graph-cut step than follows.
+These probability values are used as input in the graph-cut step that follows.
 
 \anchor Figure-3
-\image latex effect_of_levels.png "Figure 3: Effect of number of clusters on segmentation. Number of clusters (i.e. levels) are 4, 3, and 2 respectively." width=12cm
-\image html effect_of_levels.png "Figure 3: Effect of number of clusters on segmentation. Number of clusters (i.e. levels) are 4, 3, and 2 respectively."
+\image latex effect_of_levels.png "Figure 3: Effect of the number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively." width=12cm
+\image html effect_of_levels.png "Figure 3: Effect of the number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively."
 
 ## Graph-Cut ##
 The final hard clustering, which gives the final partitioning of the mesh, is obtained by minimizing an energy function. 
@@ -85,9 +85,9 @@ where:
   - \f$N\f$ is the set of pairs of neighbor facets,
   - \f$x_f\f$ is the cluster assigned to facet \f$f\f$, 
   - \f$P(f|x_p)\f$ is the probability of assigning facet \f$f\f$ to cluster \f$x_p\f$, 
-  - \f$\theta(f,g)\f$ is the dihedral angle between neighbor facets \f$f\f$, and \f$g\f$.
-  - \f$\epsilon\f$ is the minimal probability threshold
-  - \f$\lambda \in [0,1]\f$ is a smoothness parameter 
+  - \f$\theta(f,g)\f$ is the dihedral angle between neighbor facets \f$f\f$, and \f$g\f$,
+  - \f$\epsilon\f$ is the minimal probability threshold,
+  - \f$\lambda \in [0,1]\f$ is a smoothness parameter.
 	 </td> 
   </tr> 
   </table> 
@@ -102,8 +102,12 @@ This package provides three functions:
 	- CGAL::surface_mesh_segmentation_from_sdf_values : computes the mesh segmentation from SDF values.
 	- CGAL::surface_mesh_segmentation : computes SDF values and mesh segmentation in one go (i.e. combines two functions listed above).	
 
-Note that all these functions are applicable on triangulated and manifold polyhedrons with or without boundaries. 
-However a polyhedron with large holes is likely to result in unreliable SDF values, and therefore unreliable segmentation.
+These functions expects a manifold triangulated polyhedron without boundary as input. Note that the current implementation is working with
+polyhedron with boundaries, but considering how the SDF value are computed, using a polyhedron with large holes is likely to result in 
+meaningless SDF values, and therefore unreliable segmentation.
+
+The current implementation of the computation of the SDF values is based on the AABB_tree package. 
+This operation is robust when the AABBTraits model provides has exact predicates.
 	
 ##The SDF Computation##
 The function CGAL::sdf_values_computation provides an implementation of the SDF computation for a given `CGAL Polyhedron`. 
@@ -128,7 +132,7 @@ Formally, a segment is a set of connected facets which are placed under same clu
 
 The function CGAL::surface_mesh_segmentation combines the two aforementionned functions. 
 Note that for segmenting the mesh several times with different parameters (i.e. number of levels, and smoothing lambda), 
-it is wise to first compute SDF values using CGAL::sdf_values_computation, and then call CGAL::surface_mesh_segmentation_from_sdf_values with same SDF values.
+it is wise to first compute the SDF values using CGAL::sdf_values_computation, and then call CGAL::surface_mesh_segmentation_from_sdf_values with the same SDF values.
 
 ###Example###
 \include Surface_mesh_segmentation/surface_mesh_segmentation_example.cpp
