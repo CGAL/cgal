@@ -1861,6 +1861,7 @@ Documentation/doc/packages.txt -text
 Documentation/doxyassist.xml -text
 Documentation/footer.html -text
 Documentation/header.html -text
+Documentation/how_to_cite_cgal.bib -text
 Documentation/jquery.footnotes.min.js -text
 Documentation/pkglist_filter.sh -text
 Documentation/stylesheet.css -text
