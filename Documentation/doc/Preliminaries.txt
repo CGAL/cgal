@@ -106,7 +106,7 @@ code relies on deprecated features.
 
 \deprecated Such functionality is identified this way in the manual.
 
-Namespace CGAL
+Namespace %CGAL
 ==============
 
 All names introduced by \cgal, especially those documented in these
