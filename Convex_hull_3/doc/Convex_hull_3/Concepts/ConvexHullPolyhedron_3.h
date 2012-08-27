@@ -5,7 +5,7 @@
 The requirements of the polyhedron type to be built by the 
 function `CGAL::convex_hull_3`. 
 
-\hasModel CGAL::Polyhedron_3<Traits> 
+\hasModel `CGAL::Polyhedron_3<Traits>` 
 
 */
 class ConvexHullPolyhedron_3 {

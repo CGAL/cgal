@@ -5,7 +5,7 @@
 Requirements of the traits class to be used with the function 
 `CGAL::convex_hull_3`. 
 
-\hasModel CGAL::Convex_hull_traits_3<R> 
+\hasModel `CGAL::Convex_hull_traits_3<R>` 
 \hasModel All kernels of CGAL 
 
 */
