@@ -3545,7 +3545,6 @@ Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics.sln eol=crlf
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#application/octet-stream
 Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
-Robustness/demo/Robustness/help/index.html svneol=native#text/html
 STL_Extension/benchmark/copy_n_benchmark/CMakeLists.txt -text
 STL_Extension/benchmark/copy_n_benchmark/copy_n_benchmark.cpp -text
 STL_Extension/benchmark/copy_n_benchmark/copy_n_use_case_benchmark.cpp -text
