@@ -141,16 +141,16 @@ int main(int argc, char * argv[])
   // get subcurves w/o overlapping
   CurveList curves_no_overlap_list_out;
   CGAL::compute_subcurves(curves.begin(),
-                      curves.end(),
-                      std::back_inserter(curves_no_overlap_list_out));
+                          curves.end(),
+                          std::back_inserter(curves_no_overlap_list_out));
 
 
   // get subcurves w/ overlapping
   CurveList curves_with_overlap_list_out;
   CGAL::compute_subcurves(curves.begin(),
-                      curves.end(),
-                      std::back_inserter(curves_with_overlap_list_out),
-                      true);
+                          curves.end(),
+                          std::back_inserter(curves_with_overlap_list_out),
+                          true);
 
   /*std::copy(curves_no_overlap_list_out.begin(),
             curves_no_overlap_list_out.end(),
@@ -168,18 +168,19 @@ int main(int argc, char * argv[])
   // get intersection points (with endpoints)
   PointList points_with_ends_list_out;
   CGAL::compute_intersection_points(curves.begin(),
-                                curves.end(), 
-			                          std::back_inserter(points_with_ends_list_out),
-                                true);
+                                    curves.end(), 
+                                    std::back_inserter(points_with_ends_list_out),
+                                    true);
 
 
   // get intersection points w/o end points
   PointList points_without_ends_list_out;
   CGAL::compute_intersection_points(curves.begin(),
-                                curves.end(), 
-			                          std::back_inserter(points_without_ends_list_out),
-                                false);
-  std::cout << points_without_ends_list_out.size() << " points_without_ends_list_out(size)\n";
+                                    curves.end(), 
+                                    std::back_inserter(points_without_ends_list_out),
+                                    false);
+  std::cout << points_without_ends_list_out.size()
+            << " points_without_ends_list_out(size)\n";
 
   // check the do_curves_intersecting method
   bool do_intersect_out = 
@@ -203,19 +204,19 @@ int main(int argc, char * argv[])
   ReadCurveListRational(inp, curves_with_overlap_list);
 
   if ( !compare_lists(curves_no_overlap_list_out, 
-			     curves_no_overlap_list, tr) )
+                      curves_no_overlap_list, tr) )
     return -1;
 
   if ( !compare_lists(curves_with_overlap_list_out, 
-			     curves_with_overlap_list, tr) )
+                      curves_with_overlap_list, tr) )
     return -1;
 
   if ( !compare_lists(points_with_ends_list_out, 
-			     points_with_ends_list, tr))
+                      points_with_ends_list, tr))
     return -1;
 
   if ( !compare_lists(points_without_ends_list_out, 
-			     points_without_ends_list, tr))
+                      points_without_ends_list, tr))
     return -1;
 
   bool do_intersect = false;
@@ -231,7 +232,7 @@ int main(int argc, char * argv[])
   return 0;
 }
 
-void ReadCurveList(std::ifstream &inp, CurveList &clist)
+void ReadCurveList(std::ifstream& inp, CurveList& clist)
 {
   int count;
   inp >> count;
@@ -251,7 +252,7 @@ void ReadCurveList(std::ifstream &inp, CurveList &clist)
   }
 }
 
-void ReadCurveListRational(std::ifstream &inp, CurveList &clist)
+void ReadCurveListRational(std::ifstream& inp, CurveList& clist)
 {
   int count;
   inp >> count;

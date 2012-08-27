@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -65,7 +65,7 @@ public:
 
 
     // Copy constructor
-    Arr_algebraic_segment_traits_2 (const  Self& s) { /* No state...*/}
+    Arr_algebraic_segment_traits_2 (const  Self& /* s */) { /* No state...*/}
 
     // Assignement operator
     const Self& operator= (const Self& s)
@@ -312,21 +312,29 @@ public:
                 segs.push_back(it_seg.trim(start.get(),end.get()));
             }
             if(left_on_arc && (!right_on_arc)) {
-                if(!it_seg.is_finite(CGAL::ARR_MAX_END) || 
-                   !equal(start.get(),right(it_seg))) {
-                    X_monotone_curve_2 split1,split2;
-                    it_seg.split(start.get(),split1,split2);
-                    segs.push_back(split2);
+                if(!it_seg.is_finite(CGAL::ARR_MAX_END) ||
+                     !equal(start.get(),right(it_seg))) {
+                  if(it_seg.is_finite(CGAL::ARR_MIN_END) && equal(start.get(),left(it_seg))) {
+                        segs.push_back(it_seg);
+                    } else {
+                        X_monotone_curve_2 split1,split2;
+                        it_seg.split(start.get(),split1,split2);
+                        segs.push_back(split2);
+                    }
                 }
             }
             if((!left_on_arc) && right_on_arc) {
                 if(!it_seg.is_finite(CGAL::ARR_MIN_END) ||
                    ! equal(left(it_seg),end.get())) {
-                    X_monotone_curve_2 split1,split2;
-                    it_seg.split(end.get(),split1,split2);
-                    segs.push_back(split1);
+                    if(it_seg.is_finite(CGAL::ARR_MAX_END) && equal(end.get(),right(it_seg))) {
+                        segs.push_back(it_seg);
+                    } else {
+                        X_monotone_curve_2 split1,split2;
+                        it_seg.split(end.get(),split1,split2);
+                        segs.push_back(split1);
+                    }
                 }
-            }
+            } 
             if( (!left_on_arc) && (!right_on_arc)) {
                 segs.push_back(it_seg);
             }
@@ -521,7 +529,7 @@ public:
 			     Polynomial_1(term_at_y_int));
 	    Curve_2 curve=this->_ckva()->kernel().construct_curve_2_object()
 	      (pol);
-	    std::cout << curve << std::endl;
+            
 	    CGAL_assertion(this->_ckva()->is_on_2_object()(p,curve));
 	    CGAL_assertion(this->_ckva()->is_on_2_object()(q,curve));
 	    return this->operator()(curve,p,q,out);

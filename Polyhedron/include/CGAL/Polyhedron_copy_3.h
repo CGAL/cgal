@@ -1,9 +1,10 @@
 // Copyright (c) 1997  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -48,7 +49,7 @@ Polyhedron_copy_3<Poly,HDS>:: operator()( HDS& target) {
     typedef typename Poly::Vertex_const_iterator  Vertex_const_iterator;
     typedef typename Poly::Facet_const_iterator   Facet_const_iterator;
     typedef Inverse_index< Vertex_const_iterator> Index;
-    typedef typename HDS::Point                   Point;
+    typedef typename HDS::Vertex::Point                   Point;
 
     target.clear();
     Polyhedron_incremental_builder_3<HDS> B( target);

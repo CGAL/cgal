@@ -1,9 +1,10 @@
 // Copyright (c) 2003-2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -92,33 +93,25 @@ public:
      : RLine_arc_2(a)
    {}
 
-  typename Qualified_result_of
-  <typename R::Construct_circular_source_vertex_2,Line_arc_2>::type
-    //const Circular_arc_point_2 & 
+  typename boost::result_of< typename R::Construct_circular_source_vertex_2(Line_arc_2)>::type
     source() const
   {
         return typename R::Construct_circular_source_vertex_2()(*this);
   }
 
-  typename Qualified_result_of
-  <typename R::Construct_circular_target_vertex_2,Line_arc_2>::type
-  //const Circular_arc_point_2 & 
+  typename boost::result_of< typename R::Construct_circular_target_vertex_2(Line_arc_2)>::type
     target() const
   {
         return typename R::Construct_circular_target_vertex_2()(*this);
   }
 
-  typename Qualified_result_of
-  <typename R::Construct_circular_min_vertex_2,Line_arc_2>::type
-  //const Circular_arc_point_2 & left() const
+  typename boost::result_of< typename R::Construct_circular_min_vertex_2(Line_arc_2)>::type
   left() const
   {
         return typename R::Construct_circular_min_vertex_2()(*this);
   }
 
-  typename Qualified_result_of
-  <typename R::Construct_circular_max_vertex_2,Line_arc_2>::type
-  //const Circular_arc_point_2 & right() const
+  typename boost::result_of< typename R::Construct_circular_max_vertex_2(Line_arc_2)>::type
   right() const
   {
         return typename R::Construct_circular_max_vertex_2()(*this);

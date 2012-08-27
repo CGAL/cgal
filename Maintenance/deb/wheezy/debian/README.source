@@ -1,7 +1,11 @@
-README.source
--------------
+normalize-audio for Debian
+--------------------------
 
-The package uses dpatch to manage patches to the original source.
-See /usr/share/doc/dpatch/README.source.gz for details.
+This package uses quilt to manage all modifications to the upstream source.
+Changes are stored in the source package as diffs in debian/patches and
+applied during the build.
 
- -- Joachim Reichel <reichel@debian.org>  Mon, 28 Sep 2009 21:19:03 +0200
+See /usr/share/doc/quilt/README.source for a detailed explanation.
+
+ -- Joachim Reichel <joachim.reichel@gmx.de>  Sun, 15 Jan 2012 14:38:04 +0100
+

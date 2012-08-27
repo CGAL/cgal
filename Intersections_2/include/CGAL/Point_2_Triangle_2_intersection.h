@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -81,7 +81,6 @@ template <class K>
 typename Point_2_Triangle_2_pair<K>::Intersection_results
 Point_2_Triangle_2_pair<K>::intersection_type() const
 {
-    typedef typename K::Line_2 line_t;
     if (_known)
         return _result;
 // The non const this pointer is used to cast away const.
@@ -93,6 +92,7 @@ Point_2_Triangle_2_pair<K>::intersection_type() const
     }
     return _result;
 /*
+    typedef typename K::Line_2 line_t;
     line_t l(_trian->vertex(0), _trian->vertex(1));
     if (l.has_on_positive_side(_trian->vertex(2))) {
         for (int i=0; i<3; i++) {

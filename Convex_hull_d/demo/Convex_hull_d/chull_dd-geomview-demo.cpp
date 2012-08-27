@@ -1,9 +1,10 @@
 // Copyright (c) 2001, 2002, 2004  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -17,7 +18,12 @@
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
-#include <CGAL/basic.h>
+#include <iostream>
+#include <string>
+#include <cstdlib>
+
+#if !defined(_MSC_VER)
+
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/Convex_hull_d.h>
 #include <CGAL/random_selection.h>
@@ -26,11 +32,6 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_d_to_polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
-#include <iostream>
-#include <string>
-#include <cstdlib>
-
-#if !defined(_MSC_VER)
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>

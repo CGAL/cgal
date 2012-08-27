@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -181,21 +181,12 @@ public:
     }
 };
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 template < class Traits_, class HalfedgeDSItems, 
            class Alloc = CGAL_ALLOCATOR(int)>
 class HalfedgeDS_list
     : public HalfedgeDS_list_types<Traits_, HalfedgeDSItems, Alloc> {
 public:
     typedef HalfedgeDS_list<Traits_, HalfedgeDSItems, Alloc> Self;
-#else
-struct HalfedgeDS_list {
-template < class Traits_, class HalfedgeDSItems, 
-           class Alloc = CGAL_ALLOCATOR(int)>
-class HDS : public HalfedgeDS_list_types<Traits_, HalfedgeDSItems, Alloc> {
-public:
-    typedef HDS<Traits_, HalfedgeDSItems, Alloc> Self;
-#endif
 public:
     typedef HalfedgeDS_list_types<Traits_, HalfedgeDSItems, Alloc> Types;
     typedef typename Types::Traits                     Traits;
@@ -374,7 +365,6 @@ private:
     }
 
 public:
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     HalfedgeDS_list()
         : nb_border_halfedges(0), nb_border_edges(0) {}
         // the empty polyhedron `P'.
@@ -389,13 +379,6 @@ public:
     ~HalfedgeDS_list() { clear(); }
 
     HalfedgeDS_list( const Self& hds)
-#else
-    HDS() : nb_border_halfedges(0), nb_border_edges(0) {}
-    HDS( size_type, size_type, size_type)
-          : nb_border_halfedges(0), nb_border_edges(0) {}
-    ~HDS() { clear(); }
-    HDS( const Self& hds)
-#endif // CGAL_CFG_NO_TMPL_IN_TMPL_PARAM //
     :  vertices( hds.vertices),
        //halfedges( hds.halfedges),
        faces( hds.faces),
@@ -688,9 +671,6 @@ public:
         border_halfedges = i;
     }
 };
-#ifdef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-};
-#endif
 
 
 //  #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM

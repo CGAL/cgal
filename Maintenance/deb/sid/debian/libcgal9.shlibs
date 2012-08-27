@@ -1,0 +1,4 @@
+libCGAL 9 libcgal9
+libCGAL_Core 9 libcgal9
+libCGAL_ImageIO 9 libcgal9
+libCGAL_Qt4 9 libcgal9

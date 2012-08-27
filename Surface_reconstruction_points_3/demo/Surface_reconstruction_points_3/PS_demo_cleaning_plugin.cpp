@@ -51,7 +51,7 @@ class Point_set_demo_outlier_removal_dialog : public QDialog, private Ui::Outlie
 {
   Q_OBJECT
   public:
-    Point_set_demo_outlier_removal_dialog(QWidget */*parent*/ = 0)
+    Point_set_demo_outlier_removal_dialog(QWidget * /*parent*/ = 0)
     {
       setupUi(this);
     }

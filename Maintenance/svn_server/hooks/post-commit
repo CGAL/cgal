@@ -38,4 +38,12 @@ REV="$2"
 # Mail notification customized for CGAL
 /home/groups/cgal/hooks/cgal-commit-email.pl "$REPOS" "$REV" -h users.gforge.inria.fr cgal-commits@lists.gforge.inria.fr
 #/home/groups/cgal/hooks/cgal-commit-email.pl "$REPOS" "$REV" -h users.gforge.inria.fr Laurent.Rineau@geometryfactory.com
+#/home/groups/cgal/hooks/cgal-commit-email.pl "$REPOS" "$REV" -h users.gforge.inria.fr sebastien.loriot@cgal.org
 
+# Add that exit to workaround the fact that 
+# GForge adds lines automatically to post-commit
+exit 0
+
+#begin added by svncommitemail
+/usr/lib/subversion/hook-scripts/commit-email.pl "$REPOS" "$REV" -h users.gforge.inria.fr cgal-commits@lists.gforge.inria.fr 
+#end added by svncommitemail

@@ -117,5 +117,3 @@ unless src_package_root.empty? || tgt_build_root.empty? then
 else
   RDoc::usage
 end
-
-     

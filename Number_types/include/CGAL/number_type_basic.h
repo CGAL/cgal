@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -79,9 +79,10 @@
 #include <CGAL/float.h>
 #include <CGAL/double.h>
 #include <CGAL/long_double.h>
-#include <CGAL/int.h>
 
-#include <CGAL/Interval_nt.h> // needed by To_interval(long double)
+#include <CGAL/Interval_nt.h> // needed by To_interval(long double), To_interval(long), To_interval(long long)
+
+#include <CGAL/int.h>
 #ifdef CGAL_USE_LONG_LONG
 #include <CGAL/long_long.h>
 #endif

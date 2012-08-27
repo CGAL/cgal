@@ -970,7 +970,7 @@ triangulation algorithm.
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Point_2.h>
 #include "Affine_geometry.h"
-#undef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+
 #include <CGAL/Nef_2/HalfedgeDS_default.h>
 #include <CGAL/Nef_2/HDS_items.h>
 #include <CGAL/Nef_2/PM_decorator.h>

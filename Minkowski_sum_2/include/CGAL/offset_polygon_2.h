@@ -1,9 +1,10 @@
 // Copyright (c) 2006  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -149,7 +150,6 @@ inset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
 {
   typedef Exact_offset_base_2<ConicTraits, Container>        Base;
   typedef Offset_by_convolution_2<Base>                      Exact_offset_2;
-  typedef typename Exact_offset_2::Offset_polygon_2          Offset_polygon_2;
 
   Base                                               base;
   Exact_offset_2                                     exact_offset (base);

@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -70,6 +70,46 @@ public:
 
   Interval_nt(int i)
     : _inf(i), _sup(i) {}
+
+  Interval_nt(unsigned i)
+    : _inf(i), _sup(i) {}
+
+  Interval_nt(long long i)
+    : _inf((double)i), _sup((double)i)
+  {
+    // gcc ignores -frounding-math when converting integers to floats.
+#ifdef __GNUC__
+    long long safe = 1LL << 52; // Use numeric_limits?
+    bool exact = ((long long)_inf == i) || (i <= safe && i >= -safe);
+    if (!(__builtin_constant_p(exact) && exact))
+#endif
+      *this += smallest();
+  }
+
+  Interval_nt(unsigned long long i)
+    : _inf((double)i), _sup((double)i)
+  {
+#ifdef __GNUC__
+    unsigned long long safe = 1ULL << 52; // Use numeric_limits?
+    bool exact = ((unsigned long long)_inf == i) || (i <= safe);
+    if (!(__builtin_constant_p(exact) && exact))
+#endif
+      *this += smallest();
+  }
+
+  Interval_nt(long i)
+  {
+    *this = (sizeof(int)==sizeof(long)) ?
+      Interval_nt((int)i) :
+      Interval_nt((long long)i);
+  }
+
+  Interval_nt(unsigned long i)
+  {
+    *this = (sizeof(int)==sizeof(long)) ?
+      Interval_nt((unsigned)i) :
+      Interval_nt((unsigned long long)i);
+  }
 
   Interval_nt(double d)
     : _inf(d), _sup(d) { CGAL_assertion(is_finite(d)); }
@@ -158,7 +198,7 @@ private:
       typename Interval_nt<>::Internal_protector P;
       CGAL_assertion_msg(-CGAL_IA_MUL(-1.1, 10.1) != CGAL_IA_MUL(1.1, 10.1),
                          "Wrong rounding: did you forget the  -frounding-math  option if you use GCC (or  -fp-model strict  for Intel)?");
-      CGAL_assertion_msg(-CGAL_IA_DIV(-1, 10) != CGAL_IA_DIV(1, 10),
+      CGAL_assertion_msg(-CGAL_IA_DIV(-1., 10) != CGAL_IA_DIV(1., 10),
                          "Wrong rounding: did you forget the  -frounding-math  option if you use GCC (or  -fp-model strict  for Intel)?");
     }
   };
@@ -1374,5 +1414,28 @@ public:
 };
 
 } //namespace CGAL
+
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<bool b> struct NumTraits<CGAL::Interval_nt<b> >
+  {
+    typedef CGAL::Interval_nt<b> Real;
+    typedef CGAL::Interval_nt<b> NonInteger;
+    typedef CGAL::Interval_nt<b> Nested;
+
+    // Costs could depend on b.
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 0,
+      ReadCost = 2,
+      AddCost = 2,
+      MulCost = 10
+    };
+  };
+}
+#endif
 
 #endif // CGAL_INTERVAL_NT_H

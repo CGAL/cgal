@@ -1,9 +1,10 @@
 // Copyright (c) 1999  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -89,7 +90,6 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
                          const Traits& ch_traits)
 {
   typedef  typename Traits::Less_xy_2      Less_xy;
-  typedef  typename Traits::Left_turn_2    Left_turn;
   typedef  typename Traits::Equal_2        Equal_2;  
 
   Less_xy  smaller_xy    = ch_traits.less_xy_2_object();

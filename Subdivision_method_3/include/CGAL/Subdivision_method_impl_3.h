@@ -4,8 +4,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -41,11 +41,6 @@ namespace Subdivision_method_3 {
   template <class Poly, template <typename> class Mask>
   void PQQ_1step(Poly& p, Mask<Poly> mask) {
     typedef Polyhedron_decorator_3<Poly>           PD;
-
-    typedef typename Poly::Halfedge_data_structure HDS;
-    typedef typename Poly::Vertex                  Vertex;
-    typedef typename Poly::Halfedge                Halfedge;
-    typedef typename Poly::Facet                   Facet;
 
     typedef typename Poly::Vertex_handle           Vertex_handle;
     typedef typename Poly::Halfedge_handle         Halfedge_handle;
@@ -168,8 +163,6 @@ namespace Subdivision_method_3 {
 
     typedef Polyhedron_decorator_3<Poly>           PD;
 
-    typedef typename Poly::Halfedge_data_structure HDS;
-    typedef typename Poly::Vertex                  Vertex;
     typedef typename Poly::Halfedge                Halfedge;
     typedef typename Poly::Facet                   Facet;
 
@@ -278,8 +271,6 @@ namespace Subdivision_method_3 {
 
     typedef Polyhedron_decorator_3<Poly>           PD;
 
-    typedef typename Poly::Halfedge_data_structure HDS;
-    typedef typename Poly::Vertex                  Vertex;
     typedef typename Poly::Halfedge                Halfedge;
     typedef typename Poly::Facet                   Facet;
 
@@ -288,7 +279,6 @@ namespace Subdivision_method_3 {
     typedef typename Poly::Facet_handle            Facet_handle;
 
     typedef typename Poly::Vertex_iterator         Vertex_iterator;
-    typedef typename Poly::Halfedge_iterator       Halfedge_iterator;
     typedef typename Poly::Edge_iterator           Edge_iterator;
     typedef typename Poly::Facet_iterator          Facet_iterator;
 
@@ -487,26 +477,15 @@ namespace Subdivision_method_3 {
   template <class Poly, template <typename> class Mask>
   void Sqrt3_1step(Poly& p, Mask<Poly> mask) {
 
-    typedef Polyhedron_decorator_3<Poly>           PD;
-
-    typedef typename Poly::Halfedge_data_structure HDS;
     typedef typename Poly::Vertex                  Vertex;
     typedef typename Poly::Halfedge                Halfedge;
     typedef typename Poly::Facet                   Facet;
 
-    typedef typename Poly::Vertex_handle           Vertex_handle;
     typedef typename Poly::Halfedge_handle         Halfedge_handle;
-    typedef typename Poly::Facet_handle            Facet_handle;
 
     typedef typename Poly::Vertex_iterator         Vertex_iterator;
-    typedef typename Poly::Halfedge_iterator       Halfedge_iterator;
     typedef typename Poly::Edge_iterator           Edge_iterator;
     typedef typename Poly::Facet_iterator          Facet_iterator;
-
-    typedef typename Poly::Halfedge_around_facet_circulator  
-      Halfedge_around_facet_circulator;
-    typedef typename Poly::Halfedge_around_vertex_circulator 
-      Halfedge_around_vertex_circulator;
 
     typedef typename Poly::Traits                  Traits;
     typedef typename Traits::Kernel                Kernel;

@@ -1,9 +1,10 @@
 // Copyright (c) 2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -47,7 +48,80 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       return Base::operator()(p,q);
     }
     #endif
-    
+
+
+    void
+    msvc_workaround(double& max1, double& max2, double& max3, double& max4, double& max5, double&  RT_tmp_result, 
+                    double px, double  py, double  pz, double  pwt, 
+                    double qx, double  qy, double  qz, double  qwt, 
+                    double  rx, double  ry, double  rz, double  rwt, 
+                    double  sx, double  sy, double  sz, double  swt, 
+                    double  tx, double  ty, double  tz, double  twt) const
+    {
+      double dpx = (px - tx);
+      double dpy = (py - ty);
+      double dpz = (pz - tz);
+      double twt_pwt = (twt - pwt);
+      double dpt = (((square( dpx ) + square( dpy )) + square( dpz )) + twt_pwt);
+      double dqx = (qx - tx);
+      double dqy = (qy - ty);
+      double dqz = (qz - tz);
+      double twt_qwt = (twt - qwt);
+      double dqt = (((square( dqx ) + square( dqy )) + square( dqz )) + twt_qwt);
+      double drx = (rx - tx);
+      double dry = (ry - ty);
+      double drz = (rz - tz);
+      double twt_rwt = (twt - rwt);
+      double drt = (((square( drx ) + square( dry )) + square( drz )) + twt_rwt);
+      double dsx = (sx - tx);
+      double dsy = (sy - ty);
+      double dsz = (sz - tz);
+      double twt_swt = (twt - swt);
+      double dst = (((square( dsx ) + square( dsy )) + square( dsz )) + twt_swt);
+
+      //        double 
+      RT_tmp_result = CGAL::determinant( dpx, dpy, dpz, dpt, dqx, dqy, dqz, dqt, drx, dry, drz, drt, dsx, dsy, dsz, dst );
+
+      //        double
+      max2 = CGAL::abs(dpx);
+     
+
+      double adqx = CGAL::abs(dqx);
+      double adqy = CGAL::abs(dqy);
+      double adqz = CGAL::abs(dqz);
+
+      double adrx = CGAL::abs(drx);
+      double adry = CGAL::abs(dry);
+      double adrz = CGAL::abs(drz);
+
+      double adsx = CGAL::abs(dsx);
+      double adsy = CGAL::abs(dsy);
+      double adsz = CGAL::abs(dsz);
+
+      double atwt_qwt = CGAL::abs(twt_qwt);
+      double atwt_rwt = CGAL::abs(twt_rwt);
+      double atwt_swt = CGAL::abs(twt_swt);
+
+      if( (max2 < adqx) ) max2 = adqx;
+      if( (max2 < adrx) ) max2 = adrx;
+      if( (max2 < adsx) ) max2 = adsx;
+      max1 = max2; 
+      max3 = CGAL::abs(dpy);
+      if( (max3 < adqy) ) max3 = adqy;
+      if( (max3 < adry) ) max3 = adry;
+      if( (max3 < adsy) ) max3 = adsy;
+      if( (max1 < max3) )      max1 = max3;
+      max4 = CGAL::abs(dpz);
+      if( (max4 < adqz) ) max4 = adqz;
+      if( (max4 < adrz) ) max4 = adrz;
+      if( (max4 < adsz) ) max4 = adsz;
+      if( (max1 < max4) )      max1 = max4;
+      max5 = CGAL::abs(twt_pwt);
+      if( (max5 < atwt_qwt) ) max5 = atwt_qwt;
+      if( (max5 < atwt_rwt) ) max5 = atwt_rwt;
+      if( (max5 < atwt_swt) ) max5 = atwt_swt;
+    }    
+
     
     result_type operator() ( const Weighted_point_3 & p,
                              const Weighted_point_3 & q,
@@ -70,8 +144,21 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
           fit_in_double(t.z(), tz) && fit_in_double(t.weight(), twt) 
         )
       {
-        CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-        
+        CGAL_BRANCH_PROFILER_BRANCH_1(tmp);        
+
+        // We split the operator as we get an ICE with VC9 and VC10 
+        // when we compile 64 bit code 
+#if defined (BOOST_MSVC) && defined ( _WIN64)
+        double max1,max2,max3,max4,max5;
+        double RT_tmp_result;
+        msvc_workaround(max1,max2,max3,max4,max5, RT_tmp_result,
+                        px, py, pz, pwt, 
+                        qx, qy, qz, qwt, 
+                        rx, ry, rz, rwt, 
+                        sx, sy, sz, swt, 
+                        tx, ty, tz, twt);
+
+#else
         double dpx = (px - tx);
         double dpy = (py - ty);
         double dpz = (pz - tz);
@@ -92,8 +179,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         double dsz = (sz - tz);
         double twt_swt = (twt - swt);
         double dst = (((square( dsx ) + square( dsy )) + square( dsz )) + twt_swt);
-        result_type int_tmp_result;
-        double eps;
+
         double RT_tmp_result = CGAL::determinant( dpx, dpy, dpz, dpt, dqx, dqy, dqz, dqt, drx, dry, drz, drt, dsx, dsy, dsz, dst );
 
         
@@ -132,10 +218,9 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         if( (max5 < atwt_qwt) ) max5 = atwt_qwt;
         if( (max5 < atwt_rwt) ) max5 = atwt_rwt;
         if( (max5 < atwt_swt) ) max5 = atwt_swt;
-        double lower_bound_1;
-        double upper_bound_1;
-        lower_bound_1 = max1;
-        upper_bound_1 = max1;
+#endif
+        double lower_bound_1 = max1;
+        double upper_bound_1 = max1;
         if( (max2 < lower_bound_1) ) lower_bound_1 = max2;
         if( (max3 < lower_bound_1) ) lower_bound_1 = max3;
         if( (max4 < lower_bound_1) ) lower_bound_1 = max4;
@@ -153,7 +238,12 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,s,t);
             } 
-            eps = (1.67106803095990471147e-13 * (((max2 * max3) * max4) * CGAL::max BOOST_PREVENT_MACRO_SUBSTITUTION( max5, (max1 * max1) )));
+
+            result_type int_tmp_result;
+
+            double eps = (1.67106803095990471147e-13 * (((max2 * max3) * max4) * (CGAL::max) ( max5, (max1 * max1) )));
+
+
             if( (RT_tmp_result > eps) )
             {
                 int_tmp_result = NEGATIVE;
@@ -170,8 +260,8 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                   return Base::operator()(p,q,r,s,t);
                 } 
             } 
+            return int_tmp_result;
         } 
-        return int_tmp_result;
       }
       else
         return Base::operator()(p,q,r,s,t);
@@ -264,7 +354,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,t);
             } 
-            eps = (3.04426660386257731823e-14 * ((max2 * max3) * CGAL::max BOOST_PREVENT_MACRO_SUBSTITUTION( max4, (max1 * max1) )));
+            double eps = (3.04426660386257731823e-14 * ((max2 * max3) * (CGAL::max)( max4, (max1 * max1) )));
             if( (RT_tmp_result > eps) )
             {
                 int_tmp_result = 1;
@@ -317,7 +407,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,r,t);
                 } 
-                eps = (8.88720573725927976811e-16 * (max5 * max6));
+                double eps = (8.88720573725927976811e-16 * (max5 * max6));
                 if( (double_tmp_result > eps) ) int_tmp_result_FFWKCAA = 1;
                 else 
                 {
@@ -354,7 +444,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,t);
             } 
-            eps = (3.04426660386257731823e-14 * ((max2 * max7) * CGAL::max BOOST_PREVENT_MACRO_SUBSTITUTION( max4, (max1 * max1) )));
+            eps = (3.04426660386257731823e-14 * ((max2 * max7) * (CGAL::max)( max4, (max1 * max1) )));
             if( (RT_tmp_result_3SPBwDj > eps) )
             {
                 int_tmp_result_k60Ocge = 1;
@@ -442,7 +532,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,t);
             } 
-            eps = (3.04426660386257731823e-14 * ((max3 * max7) * CGAL::max BOOST_PREVENT_MACRO_SUBSTITUTION( max4, (max1 * max1) )));
+            eps = (3.04426660386257731823e-14 * ((max3 * max7) * (CGAL::max)( max4, (max1 * max1) )));
             if( (RT_tmp_result_feLwnHn > eps) )
             {
                 int_tmp_result_AvrrXBP = 1;
@@ -582,7 +672,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,t);
                 } 
-                eps = (6.88858782307641768480e-15 * (max2 * CGAL::max BOOST_PREVENT_MACRO_SUBSTITUTION( max3, (max1 * max1) )));
+                eps = (6.88858782307641768480e-15 * (max2 * (CGAL::max)( max3, (max1 * max1) )));
                 if( (double_tmp_result > eps) )
                 {
                     int_tmp_result = 1;
@@ -625,7 +715,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                 CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                 return Base::operator()(p,q,t);
               } 
-              eps = (6.88858782307641768480e-15 * (max4 * CGAL::max BOOST_PREVENT_MACRO_SUBSTITUTION( max3, (max1 * max1) )));
+              eps = (6.88858782307641768480e-15 * (max4 * (CGAL::max)( max3, (max1 * max1) )));
               if( (double_tmp_result_k60Ocge > eps) )
               {
                   int_tmp_result_FFWKCAA = 1;
@@ -668,7 +758,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,t);
             } 
-            eps = (6.88858782307641768480e-15 * (max5 * CGAL::max BOOST_PREVENT_MACRO_SUBSTITUTION( max3, (max1 * max1) )));
+            eps = (6.88858782307641768480e-15 * (max5 * (CGAL::max)( max3, (max1 * max1) )));
             if( (double_tmp_result_k3Lzf6g > eps) )
             {
                 int_tmp_result_3SPBwDj = 1;

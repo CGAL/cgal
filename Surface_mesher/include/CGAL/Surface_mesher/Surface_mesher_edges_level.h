@@ -1,9 +1,10 @@
 // Copyright (c) 2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -94,12 +95,8 @@ namespace Surface_mesher {
     typedef typename Tr::Cell_handle Cell_handle;
     typedef typename GT::Point_3 Point_3;
     typedef typename GT::Triangle_3 Triangle_3;
-    typedef typename GT::Sphere_3 Sphere_3;
-    typedef typename GT::Ray_3 Ray_3;
-    typedef typename GT::Line_3 Line_3;
     typedef typename GT::Vector_3 Vector_3;
     typedef typename GT::FT FT;
-    typedef typename Surface_mesh_traits::Surface_3 Surface_3;
     typedef typename Surface_mesh_traits::Intersection_point Intersection_point;
 
     typename GT::Construct_midpoint_3 midpoint = 

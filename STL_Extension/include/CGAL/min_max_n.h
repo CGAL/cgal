@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -70,6 +70,10 @@ min_n(const T& t0, const T& t1, const T& t2, const T& t3, const T& t4,
       const T& t5, const T& t6, const T& t7)
 { return (std::min)(t0, min_n(t1, t2, t3, t4, t5, t6, t7)); }
 
+
+template<typename T> inline
+const T&
+max_n(const T& t) { return t; }
 
 template < typename T > inline
 const T&

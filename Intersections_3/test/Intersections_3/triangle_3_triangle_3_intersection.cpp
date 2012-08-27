@@ -12,7 +12,7 @@ typedef CGAL::Cartesian<NT> Kernel;
 typedef Kernel::Triangle_3  Triangle;
 typedef Kernel::Point_3     Point;
 typedef Kernel::Segment_3   Segment;
-typedef std::vector<Point>    Polygon;
+typedef std::vector<Point>    Polygon2;
 
 void test_coplanar_triangles(){
   CGAL::Object obj;
@@ -162,29 +162,29 @@ void test_coplanar_triangles(){
   t1=Triangle( Point(0,0,0),Point(1,0,0),Point(0.5,1.5,0) );
   t2=Triangle( Point(0,1,0),Point(1,1,0),Point(0.5,-0.5,0) );
   obj=CGAL::intersection(t1,t2);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)!=NULL);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)->size()==6);
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)!=NULL);
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)->size()==6);
   obj=CGAL::intersection(t2,t1);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)!=NULL);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)->size()==6);  
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)!=NULL);
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)->size()==6);  
   //intersection of two triangle corners
   t1=Triangle( Point(0,0,0),Point(1,0,0),Point(0.5,1,0) );
   t2=Triangle( Point(0,1,0),Point(1,1,0),Point(0.5,0,0) );
   obj=CGAL::intersection(t1,t2);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)!=NULL);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)->size()==4);
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)!=NULL);
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)->size()==4);
   obj=CGAL::intersection(t2,t1);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)!=NULL);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)->size()==4);  
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)!=NULL);
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)->size()==4);  
   //t2 pierces two edges of t1
   t1=Triangle( Point(0,0,0),Point(1,0,0),Point(0,1,0) );
   t2=Triangle( Point(-0.1,0.1,0),Point(-0.1,0.2,0),Point(0.5,0.8,0) );
   obj=CGAL::intersection(t1,t2);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)!=NULL);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)->size()==4);
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)!=NULL);
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)->size()==4);
   obj=CGAL::intersection(t2,t1);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)!=NULL);
-  CGAL_assertion(CGAL::object_cast<Polygon>(&obj)->size()==4);  
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)!=NULL);
+  CGAL_assertion(CGAL::object_cast<Polygon2>(&obj)->size()==4);  
 //Intersection is empty
   t1=Triangle( Point(0,0,0),Point(0,1,0),Point(1,0,0) );
   t2=Triangle( Point(-0.1,-0.1,0),Point(-0.1,-0.9,0),Point(-1,-0.1,0) );

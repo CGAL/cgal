@@ -1,9 +1,10 @@
 // Copyright (c) 2004   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -374,9 +375,9 @@ power_productC3(
 
 template < class RT , class We>
 void
-radical_axisC3(const RT &px, const RT &py, const RT &pz, const We &pw,
-	       const RT &qx, const RT &qy, const RT &qz, const We &qw,
-	       const RT &rx, const RT &ry, const RT &rz, const We &rw,
+radical_axisC3(const RT &px, const RT &py, const RT &pz, const We & /* pw */,
+	       const RT &qx, const RT &qy, const RT &qz, const We & /* qw */,
+	       const RT &rx, const RT &ry, const RT &rz, const We & /* rw */,
 	       RT &a, RT &b, RT& c )
 {
   RT dqx=qx-px, dqy=qy-py, dqz=qz-pz, drx=rx-px, dry=ry-py, drz=rz-pz;

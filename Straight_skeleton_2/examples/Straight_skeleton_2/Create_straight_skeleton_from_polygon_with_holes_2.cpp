@@ -9,7 +9,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
 typedef K::Point_2                    Point ;
-typedef CGAL::Polygon_2<K>            Polygon ;
+typedef CGAL::Polygon_2<K>            Polygon_2 ;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes ;
 typedef CGAL::Straight_skeleton_2<K>  Ss ;
 
@@ -18,7 +18,7 @@ typedef boost::shared_ptr<Ss> SsPtr ;
 
 int main()
 {
-  Polygon outer ;
+  Polygon_2 outer ;
   
   outer.push_back( Point(-1,-1) ) ;
   outer.push_back( Point(0,-12) ) ;
@@ -29,7 +29,7 @@ int main()
   outer.push_back( Point(-1,1) ) ;
   outer.push_back( Point(-12,0) ) ;
   
-  Polygon hole ;
+  Polygon_2 hole ;
   
   hole.push_back( Point(-1,0) ) ;
   hole.push_back( Point(0,1 ) ) ;

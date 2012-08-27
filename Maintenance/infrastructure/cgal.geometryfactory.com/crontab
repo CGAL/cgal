@@ -15,15 +15,14 @@
 
 # Create internal release
 # The script also updates the manual tools.
-# "next" + candidates
-0 21  *  *  Mon,Wed,Fri                cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
-#  - on trunk
-0 21  *  *  Sat                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/trunk --public --do-it
-#  - from branch 3.8
-0 21  *  *  Tue,Thu,Sun                cd $HOME/CGAL/create_internal_release-3.8-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.8-branch --public --do-it
 
-# A test that does not work
-#30 21 * * * grep 'conflicts with' $HOME/CGAL/create_internal_release/create_release.log.`date '+%Y-%m-%d'`* --no-filename
+# "next" alone
+0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/next --public --do-it
+# "next" + candidates
+0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
+# from branch 4.1
+0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release-4.1-branch && $HOME/bin/create_release $HOME/CGAL/CGAL-4.1-branch --public --do-it
+
 
 # Try to launch the test suite, every 10mn, from 21:00 to 22:50
 */10 21-22 * * * $HOME/CGAL/Scripts/developer_scripts/autotest_cgal_with_cmake
@@ -34,8 +33,25 @@
 # Dump the crontab to SVN every hour at minute 18
 18 * * * * $HOME/bin/dump_crontab
 
-# Old stuff
+
+####################################
+#             Old stuff
+####################################
+
 #  - from branch 3.4
 #0 21 * * Sat cd $HOME/CGAL/create_internal_release-3.4-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.4-branch --public --do-it
 #  - from branch 3.7
 #0 21  *  *  Fri                       cd $HOME/CGAL/create_internal_release-3.7-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.7-branch --public --do-it
+#  - from branch 3.9
+#0 21  *  *  Sat                cd $HOME/CGAL/create_internal_release-3.9-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.9-branch --public --do-it
+#  - from branch 4.0
+#0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release-4.0-branch && $HOME/bin/create_release $HOME/CGAL/CGAL-4.0-branch --public --do-it
+#  - on trunk
+#0 21  *  *  Sat                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/trunk --public --do-it
+
+# Check the links of http://www.cgal.org/projects.html every sunday at 17:42
+#42 17 * * Sun   linklint -host www.cgal.org -http /projects.html -net -no_anchors -quiet -silent -error
+
+# A test that does not work
+#30 21 * * * grep 'conflicts with' $HOME/CGAL/create_internal_release/create_release.log.`date '+%Y-%m-%d'`* --no-filename
+

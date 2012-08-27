@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -133,18 +133,17 @@ public:
     mpq_set_d(mpq(), d);
   }
 
-  Gmpq(Gmpfr f)
+  Gmpq(const Gmpfr &f)
   {
     std::pair<Gmpz,long> intexp=f.to_integer_exp();
-    mpq_set_z(mpq(),intexp.first.mpz());
-    if(intexp.second>0){
-            mpz_mul_2exp(mpq_numref(mpq()),
-                         mpq_numref(mpq()),
-                         (unsigned long)intexp.second);
+    if(intexp.second<0){
+            mpz_set(mpq_numref(mpq()),intexp.first.mpz());
+            mpz_ui_pow_ui(mpq_denref(mpq()),2,-intexp.second);
     }else{
-            mpz_mul_2exp(mpq_denref(mpq()),
-                         mpq_denref(mpq()),
-                         (unsigned long)(-intexp.second));
+            mpz_mul_2exp(mpq_numref(mpq()),
+                         intexp.first.mpz(),
+                         (unsigned long)intexp.second);
+            mpz_set_ui(mpq_denref(mpq()),1);
     }
     // mpq_canonicalize is needed only when the numerator is odd and not zero
     if(mpz_tstbit(intexp.first.mpz(),0)==0 && mpz_sgn(intexp.first.mpz())!=0)

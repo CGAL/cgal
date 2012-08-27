@@ -5,6 +5,8 @@
 #include <CGAL/Nef_S2/Sphere_segment.h>
 #include <CGAL/Convex_decomposition_3/is_reflex_sedge.h>
 
+#include <cassert>
+
 template<typename Kernel>
 class Test_SNC {
 

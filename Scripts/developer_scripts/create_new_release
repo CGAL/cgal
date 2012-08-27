@@ -241,7 +241,7 @@ if [ -n "$DO_TAG" ]; then
     if [ -n "$NO_TESTSUITE" ]; then
         TAG_MSG_EXTRA=" (no testsuite)"
     fi
-    svn cp -m "Internal release tag for $release_name$TAG_MSG_EXTRA" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name
+    svn cp -m "Internal release tag for $release_name$TAG_MSG_EXTRA (automated commit)" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name
 fi
 
 # Build the SRPM

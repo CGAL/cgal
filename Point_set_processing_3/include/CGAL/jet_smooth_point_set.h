@@ -1,9 +1,10 @@
 // Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -130,7 +131,7 @@ jet_smooth_point_set(
   InputIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map InputIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
-  const Kernel& kernel, ///< geometric traits.
+  const Kernel& /*kernel*/, ///< geometric traits.
   unsigned int degree_fitting = 2,
   unsigned int degree_monge = 2)
 {

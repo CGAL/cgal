@@ -22,6 +22,7 @@ private:
   typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag, Point> Pdv_base;
 
   Set_of_indices indices;
+  std::size_t mID;
 public:
   int nb_of_feature_edges;
 
@@ -42,8 +43,11 @@ public:
     return indices;
   }
 
-  Polyhedron_demo_vertex() : Pdv_base(), nb_of_feature_edges(0) {}
-  Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), nb_of_feature_edges(0) {}
+  std::size_t& id()       { return mID; }
+  std::size_t  id() const { return mID; }
+  
+  Polyhedron_demo_vertex() : Pdv_base(), mID(-1), nb_of_feature_edges(0) {}
+  Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), mID(-1), nb_of_feature_edges(0) {}
 };
 
 template <class Refs, class Tprev, class Tvertex, class Tface>
@@ -52,10 +56,11 @@ class Polyhedron_demo_halfedge :
 {
 private:
   bool feature_edge;
+  std::size_t mID;
 public:
 
   Polyhedron_demo_halfedge() 
-    : feature_edge(false) {};
+    : feature_edge(false), mID(-1) {};
 
   bool is_feature_edge() const {
     return feature_edge;
@@ -65,6 +70,10 @@ public:
     feature_edge = b;
     this->opposite()->feature_edge = b;
   }
+  
+  std::size_t& id()       { return mID; }
+  std::size_t  id() const { return mID; }
+
 };
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
@@ -73,11 +82,12 @@ class Polyhedron_demo_face :
 {
 private:
   Patch_id_ patch_id_;
+  std::size_t mID;
 public:
   typedef Patch_id_ Patch_id;
   
   Polyhedron_demo_face() 
-    : patch_id_(1) {}
+    : patch_id_(1), mID(-1) {}
   
   int patch_id() const {
     return patch_id_;
@@ -86,6 +96,10 @@ public:
   void set_patch_id(const int i) {
     patch_id_ = i;
   }
+  
+  std::size_t& id()       { return mID; }
+  std::size_t  id() const { return mID; }
+
 };
 
 template <typename Patch_id>

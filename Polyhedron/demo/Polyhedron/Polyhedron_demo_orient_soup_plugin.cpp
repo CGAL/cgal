@@ -22,6 +22,15 @@ public:
   void init(QMainWindow* mainWindow,
             Scene_interface* scene_interface,
             Messages_interface* m);
+
+  bool applicable() const {
+    Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices()) {
+      if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
+        return true;
+    }
+    return false;
+  }
+
   QList<QAction*> actions() const;
 
 public slots:

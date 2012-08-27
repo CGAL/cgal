@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -26,6 +26,13 @@
 #include <fstream>
 #include <ios>
 
+#if defined(BOOST_MSVC)
+// Disable the warning about dll-interface needed for std::ofstream members
+// of Log::State.
+#  pragma warning(push)
+#  pragma warning(disable:4251)
+#endif
+
 namespace CGAL {
 
 class Log
@@ -35,7 +42,7 @@ public:
   
   enum Target {COUT, FILE, DEVNULL};
 private:
-  struct State {
+  struct CGAL_EXPORT State {
     Target target_;
     Level level_;
     std::ofstream fstream_;
@@ -52,7 +59,7 @@ private:
       output_maple_=true;
     }
   };
-  static State state_;
+  CGAL_EXPORT static State state_;
 public:
   // The different types of logs supported
   /*  MAPLE is a log which should be able to be fed directly in to
@@ -151,4 +158,11 @@ struct Set_log_state{
 };
 
 } //namespace CGAL
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
 #endif
+
+#endif
+
+

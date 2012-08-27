@@ -1,9 +1,10 @@
 // Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -56,7 +57,6 @@ namespace CGAL {
   template <class AK>
   bool intersect(const typename AK::Polynomial_1_3 & p1, 
                  const typename AK::Polynomial_1_3 & p2) {
-    typedef typename AK::Polynomial_1_3 Polynomial_1_3;
     typedef typename AK::RT RT;
 
     CGAL_kernel_precondition(!(same_solutions<RT>(p1,p2)));
@@ -75,7 +75,6 @@ namespace CGAL {
   line_from_2_planes(const typename AK::Polynomial_1_3 & p1, 
                      const typename AK::Polynomial_1_3 & p2) 
   {
-    typedef typename AK::Polynomial_1_3 Polynomial_1_3;
     typedef typename AK::Polynomials_for_line_3 Polynomials_for_line_3;
     typedef typename AK::FT FT;
     CGAL_kernel_precondition(intersect<AK>(p1,p2));
@@ -111,7 +110,6 @@ namespace CGAL {
   inline
   bool intersect(const typename AK::Polynomial_for_spheres_2_3 & s1, 
                  const typename AK::Polynomial_for_spheres_2_3 & s2) {
-    typedef typename AK::Polynomial_1_3 Polynomial_1_3;
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
     
@@ -144,7 +142,6 @@ namespace CGAL {
   inline
   bool tangent(const typename AK::Polynomial_for_spheres_2_3 & s1, 
                  const typename AK::Polynomial_for_spheres_2_3 & s2) {
-    typedef typename AK::Polynomial_1_3 Polynomial_1_3;
     typedef typename AK::RT RT;
     typedef typename AK::Root_of_2 Root_of_2;
     
@@ -334,7 +331,6 @@ namespace CGAL {
 	 OutputIterator res )
   {
     typedef typename AK::RT RT;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     typedef typename AK::Polynomials_for_line_3 Polynomials_for_line_3;
     // we put as a precondition that the polynomial for spheres represents
     // a sphere and not an isolated point or an empty_space
@@ -518,11 +514,9 @@ template < class AK, class OutputIterator >
 	   const typename AK::Polynomials_for_line_3 & l,
 	   OutputIterator res )
   {
-    typedef typename AK::RT RT;
     typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
     typedef typename AK::Polynomial_1_3 Polynomial_1_3;
-    typedef typename AK::Polynomials_for_line_3 Polynomials_for_line_3;
     const Polynomial_for_spheres_2_3 &s1 = e1.first;
     const Polynomial_1_3 &p1 = e1.second;
 

@@ -1,10 +1,12 @@
+// Copyright (c) 2005-2008  Inria Loria (France).
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
- * License version 2.1 as published by the Free Software Foundation
+ * License as published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -45,22 +47,22 @@ public:
     typedef typename VECTOR::CoeffType CoeffType ;
 
     /** y <- y + a*x  */
-    static void axpy(CoeffType a, const VectorType& x, VectorType& y) {
+    static void axpy(CoeffType /*a*/, const VectorType& /*x*/, VectorType& /*y*/) {
         CGAL_error();
     }
 
     /** x <- a*x */
-    static void scal(CoeffType a, VectorType& x) {
+    static void scal(CoeffType /*a*/, VectorType& /*x*/) {
         CGAL_error();
     }
 
     /** y <- x */
-    static void copy(const VectorType& x, VectorType& y) {
+    static void copy(const VectorType& /*x*/, VectorType& /*y*/) {
         CGAL_error();
     }
 
     /** returns x^t * y */
-    static CoeffType dot(const VectorType& x, const VectorType& y) {
+    static CoeffType dot(const VectorType& /*x*/, const VectorType& /*y*/) {
         CGAL_error();
     }
 } ;

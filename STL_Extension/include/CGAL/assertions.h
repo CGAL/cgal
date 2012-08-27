@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -41,12 +41,13 @@ namespace CGAL {
 // =====================
 // failure functions
 // -----------------
-void assertion_fail      ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
-void precondition_fail   ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
-void postcondition_fail  ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
+CGAL_EXPORT void assertion_fail      ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
+CGAL_EXPORT void precondition_fail   ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
+CGAL_EXPORT void postcondition_fail  ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
 
 // warning function
 // ----------------
+CGAL_EXPORT
 void warning_fail( const char*, const char*, int, const char* = "");
 
 
@@ -79,35 +80,56 @@ inline bool possibly(Uncertain<bool> c);
 #  define CGAL_assertion(EX) (static_cast<void>(0))
 #  define CGAL_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_assertion_code(CODE)
-#  define CGAL_static_assertion(EX) 
-#  define CGAL_static_assertion_msg(EX,MSG) 
-#else
+#else // no CGAL_NO_ASSERTIONS
 #  define CGAL_assertion(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_assertion_msg(EX,MSG) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_assertion_code(CODE) CODE
+#endif // no CGAL_NO_ASSERTIONS
 
 #ifndef CGAL_CFG_NO_CPP0X_STATIC_ASSERT
 
-#  define CGAL_static_assertion(EX) \
-   static_assert(EX, #EX)
+#  if defined(CGAL_NO_ASSERTIONS)
 
-#  define CGAL_static_assertion_msg(EX,MSG) \
-   static_assert(EX, MSG)
+#    define CGAL_static_assertion(EX) \
+     static_assert(true, "")
 
-#else
+#    define CGAL_static_assertion_msg(EX,MSG) \
+     static_assert(true, "")
 
-#  define CGAL_static_assertion(EX) \
-   BOOST_STATIC_ASSERT(EX)
+#  else // no CGAL_NO_ASSERTIONS
+
+#    define CGAL_static_assertion(EX) \
+     static_assert(EX, #EX)
+
+#    define CGAL_static_assertion_msg(EX,MSG) \
+     static_assert(EX, MSG)
+
+#  endif // no CGAL_NO_ASSERTIONS
+
+#else // if CGAL_CFG_NO_CPP0X_STATIC_ASSERT is true
+
+#  if defined(CGAL_NO_ASSERTIONS)
+
+#    define CGAL_static_assertion(EX) \
+     BOOST_STATIC_ASSERT(true)
   
-#  define CGAL_static_assertion_msg(EX,MSG) \
-   BOOST_STATIC_ASSERT(EX)
+#    define CGAL_static_assertion_msg(EX,MSG) \
+     BOOST_STATIC_ASSERT(true)
 
-#endif
+#  else // no CGAL_NO_ASSERTIONS
+
+#    define CGAL_static_assertion(EX) \
+     BOOST_STATIC_ASSERT(EX)
   
-#endif // CGAL_NO_ASSERTIONS
+#    define CGAL_static_assertion_msg(EX,MSG) \
+     BOOST_STATIC_ASSERT(EX)
 
+#  endif // no CGAL_NO_ASSERTIONS
+
+#endif // if CGAL_CFG_NO_CPP0X_STATIC_ASSERT is true
+  
 #if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))

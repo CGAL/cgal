@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -111,7 +111,18 @@ template<> class Algebraic_structure_traits< long int >
 };
 
 template <> class Real_embeddable_traits< long int >
-  : public INTERN_RET::Real_embeddable_traits_base< long int , CGAL::Tag_true > {};
+  : public INTERN_RET::Real_embeddable_traits_base< long int , CGAL::Tag_true > {
+public:
+
+    class To_interval
+      : public std::unary_function< Type, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Type& x ) const {
+          return Interval_nt<true>(x).pair();
+        }
+    };
+};
+
 
 /*! \ingroup CGAL_Modular_traits_spec
   \brief Specialization of CGAL::Modular_traits for \c long.
@@ -250,6 +261,26 @@ template<> class Algebraic_structure_traits< short int >
 
 template <> class Real_embeddable_traits< short int >
   : public INTERN_RET::Real_embeddable_traits_base< short int , CGAL::Tag_true > {};
+
+// unsigned int
+
+template <> class Real_embeddable_traits< unsigned int >
+   : public INTERN_RET::Real_embeddable_traits_base< unsigned int , CGAL::Tag_true > {};
+
+// unsigned long
+
+template <> class Real_embeddable_traits< unsigned long >
+   : public INTERN_RET::Real_embeddable_traits_base< unsigned long , CGAL::Tag_true > {
+public:
+
+    class To_interval
+      : public std::unary_function< Type, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Type& x ) const {
+          return Interval_nt<true>(x).pair();
+        }
+    };
+};
 
 // Note : "long long" support is in <CGAL/long_long.h>
 

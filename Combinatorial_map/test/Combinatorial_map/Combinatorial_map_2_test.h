@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -252,7 +252,7 @@ void test2D()
 	( map, map.first_dart(), mark);
 
         nbc = 0;
-        for ( typename Map::template One_dart_per_incident_cell_range<0,3>::iterator 
+        for ( typename Map::template One_dart_per_incident_cell_range<0,3, Map::dimension>::iterator 
 		it1 ( map, map.first_dart() ); it1.cont(); ++it1 )
         {
             ++nbc;
@@ -431,7 +431,7 @@ void test2D()
 
     std::vector<Dart_handle> V;
     {
-      for ( typename Map::template Dart_of_cell_range<0>::iterator it =
+      for ( typename Map::template Dart_of_cell_range<0, Map::dimension>::iterator it =
 	      map.template darts_of_cell<0>( d1 ).begin();
 	    it != map.template darts_of_cell<0>( d1 ).end(); ++it )
             V.push_back ( it );

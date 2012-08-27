@@ -3,6 +3,7 @@
 
 #include <CGAL_demo/Viewer_config.h>
 #include <QGLViewer/qglviewer.h>
+#include <QPoint>
 
 // forward declarations
 class QWidget;
@@ -28,6 +29,7 @@ public:
 
 signals:
   void selected(int);
+  void pointSelected(QPoint);
 
 public slots:
   void setAntiAliasing(bool b);

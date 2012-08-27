@@ -6,6 +6,7 @@
 #include <fstream>
 #include <QObject>
 #include <QFileDialog>
+#include <CGAL/glu.h>
 
 class Scene : public QObject
 {

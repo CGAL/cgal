@@ -2,9 +2,10 @@
 // Copyright (c) 2010       GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -295,9 +296,6 @@ public:
   {
     typedef typename Cluster_map::const_iterator Iterator;
     typedef std::pair<Iterator, Iterator> Range;
-    typedef typename Range::first_type Clusters_iterator;
-    typedef Pair_get_first<typename Cluster_vertices_map::value_type>
-      Get_first;
 
     Range range = cluster_map.equal_range(vh);
     Iterator first = range.first;

@@ -1,9 +1,10 @@
 // Copyright (c) 1998  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -27,6 +28,7 @@
 #include "_test_cls_circulator.h"
 
 #include <CGAL/Random.h>
+#include <CGAL/Testsuite/use.h>
 
 template <class Triangulation, class Container>
 bool check_all_are_finite(Triangulation* tr, const Container& cont) 
@@ -638,6 +640,7 @@ _test_cls_triangulation_3(const Triangulation &)
       TAI1.insert_and_give_new_cells(
                                      Point(x, x, x), 
                                      std::back_inserter(lis_tai1));
+    CGAL_USE(taiv);
     assert(TAI1.is_valid());
     assert(TAI1.dimension() == 1);
     assert(lis_tai1.size() == 2);
@@ -667,6 +670,7 @@ _test_cls_triangulation_3(const Triangulation &)
       TAI1.insert_and_give_new_cells(
                                      Point(x, y, 0), 
                                      std::back_inserter(lis_tai1));
+    CGAL_USE(taiv);
     assert(TAI1.is_valid());
     assert(TAI1.dimension() == 2);
     while(!lis_tai1.empty())
@@ -696,6 +700,7 @@ _test_cls_triangulation_3(const Triangulation &)
       TAI1.insert_and_give_new_cells(
                                      Point(x, y, z), 
                                      std::back_inserter(lis_tai1));
+    CGAL_USE(taiv);
     assert(TAI1.is_valid());
     assert(TAI1.dimension() == 3);
     while(!lis_tai1.empty())

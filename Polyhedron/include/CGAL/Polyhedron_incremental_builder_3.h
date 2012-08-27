@@ -1,9 +1,10 @@
 // Copyright (c) 1997  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -569,7 +570,7 @@ begin_surface( std::size_t v, std::size_t f, std::size_t h, int mode) {
         // not know the number of facets that are holes and we do not
         // know the genus of the surface. So we add 12 and a factor of
         // 5 percent.
-        h = int((v + f - 2 + 12) * 2.1);
+      h = (std::size_t)((double)(v + f - 2 + 12) * 2.1);
     }
     hds.reserve( hds.size_of_vertices()  + v,
                  hds.size_of_halfedges() + h,

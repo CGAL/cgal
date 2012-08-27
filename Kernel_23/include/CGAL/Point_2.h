@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -85,26 +85,26 @@ public:
     : RPoint_2(typename R::Construct_point_2()(Return_base_tag(), hx, hy, hw))
   {}
 
-  typename Qualified_result_of<typename R::Compute_x_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_x_2(Point_2)>::type
   x() const
   {
     return typename R::Compute_x_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_y_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_y_2(Point_2)>::type
   y() const
   {
     return typename R::Compute_y_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_x_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_x_2(Point_2)>::type
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  typename Qualified_result_of<typename R::Compute_x_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_x_2(Point_2)>::type
   operator[](int i) const
   {
       return cartesian(i);
@@ -122,19 +122,19 @@ public:
 
 
 
-  typename Qualified_result_of<typename R::Compute_hx_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_hx_2(Point_2)>::type
   hx() const
   {
     return typename R::Compute_hx_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hy_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_hy_2(Point_2)>::type
   hy() const
   {
     return typename R::Compute_hy_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hw_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_hw_2(Point_2)>::type
   hw() const
   {
     return typename R::Compute_hw_2()(*this);
@@ -145,7 +145,7 @@ public:
       return 2;
   }
 
-  typename Qualified_result_of<typename R::Compute_hx_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_hx_2(Point_2)>::type
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );

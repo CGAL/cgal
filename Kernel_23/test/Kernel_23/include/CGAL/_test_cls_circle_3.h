@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -46,9 +46,7 @@ void _test_bounding_box_construct(const K &k)
   typedef typename K::Construct_circle_3               Construct_circle_3;
   typedef CGAL::Bbox_3                                 Bbox_3;
 
-  Intersect_3 theIntersect_3 = k.intersect_3_object();
   Construct_circle_3 theConstruct_circle_3 = k.construct_circle_3_object();
-  Construct_bbox_3 theConstruct_bbox_3 = k.construct_bbox_3_object();
 
   std::cout << "Testing the bbox of Circle_3..." << std::endl;
 
@@ -89,8 +87,7 @@ void _test_circle_construct(const K &k) {
 
   Equal_3 theEqual_3 = k.equal_3_object();
   Construct_circle_3 theConstruct_circle_3 = k.construct_circle_3_object();
-	Compute_squared_distance_3 squared_distance = k.compute_squared_distance_3_object();
-  Collinear_3 collinear = k.collinear_3_object();
+  Compute_squared_distance_3 squared_distance = k.compute_squared_distance_3_object();
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);

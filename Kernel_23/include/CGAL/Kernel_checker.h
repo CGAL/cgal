@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -236,7 +236,7 @@ public:
 
 struct dont_check_equal {
   template < typename T1, typename T2 >
-  bool operator()(const T1 &t1, const T2 &t2) const
+  bool operator()(const T1 & /* t1 */, const T2 &/*t2*/) const
   { return true; }
   template < typename T >
   bool operator()(const T &t1, const T &t2) const

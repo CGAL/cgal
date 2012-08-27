@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -138,7 +139,9 @@ class Infimaximal_box {
     return NT(1);
   }
 
-  static void compute_min_max(const Plane_3& , NT orth_coords[3], int& /* min */, int& /* max */) { }
+  static void compute_min_max(const Plane_3& , NT orth_coords[3], int& /* min */, int& /* max */) { 
+    (void)orth_coords;
+  }
 
   static Point_3 scale_infibox_vertex(const Point_3& ) {
     return Point_3();
@@ -162,7 +165,7 @@ class Infimaximal_box {
     return std::list<Point_3>();
   }
 
-  static typename std::list<Point_3>::const_iterator segment_on_side(int side_of_point, 
+  static typename std::list<Point_3>::const_iterator segment_on_side(int /*side_of_point*/, 
 							      const std::list<Point_3>& segs) {  
     return segs.begin();
   }

@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -113,25 +113,25 @@ public:
     return Direction_3(a(), b(), c());
   }
 
-  typename Qualified_result_of<typename R::Compute_a_3, Plane_3>::type
+  typename boost::result_of<typename R::Compute_a_3( Plane_3)>::type
   a() const
   {
     return R().compute_a_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_b_3, Plane_3>::type
+  typename boost::result_of<typename R::Compute_b_3( Plane_3)>::type
   b() const
   {
     return R().compute_b_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_c_3, Plane_3>::type
+  typename boost::result_of<typename R::Compute_c_3( Plane_3)>::type
   c() const
   {
     return R().compute_c_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_d_3, Plane_3>::type
+  typename boost::result_of<typename R::Compute_d_3( Plane_3)>::type
   d() const
   {
     return R().compute_d_3_object()(*this);

@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2000  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1384,18 +1385,10 @@ class Width_3 {
   void width_3_convex(InputPolyhedron &P) {
     DEBUGMSG(WIDTH_3_CONVEX,"\nBegin WIDTH_3_CONVEX");
     typedef CGAL::Width_3_internal::Data_access<InputPolyhedron,Traits> DA;
-    typedef typename DA::Polyhedron Polyhedron;
-    typedef typename DA::Vertex Vertex;
-    typedef typename DA::Facet Facet;
-    typedef typename DA::Halfedge Halfedge;
     typedef typename DA::Facet_handle Facet_handle;
     typedef typename DA::Vertex_handle Vertex_handle;
     typedef typename DA::Halfedge_handle Halfedge_handle;
-    typedef typename DA::PolyPoint PolyPoint;
-    typedef typename DA::Plane Plane;
-    typedef typename DA::Halfedge_iterator Halfedge_iterator;
     typedef typename DA::Vertex_iterator Vertex_iterator;
-    typedef typename DA::Facet_iterator Facet_iterator;
     //Ensure that Polyhedron has at least one vertex
     CGAL_assertion_msg(P.size_of_vertices()>2,
          "Can not compute width of a 0, 1 or 2-vertex polyhedron");

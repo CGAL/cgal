@@ -3,6 +3,7 @@
 #include "Nef_type.h"
 #include <CGAL/Nef_S2/OGL_base_object.h>
 #include <CGAL/Nef_3/OGL_helper.h>
+#include <CGAL/glu.h>
 
 #include <QList>
 
@@ -167,6 +168,7 @@ void gl_render_nef_edges(Nef_polyhedron *p)
 	end = p->halfedges_end();
       e != end; ++e)
   {
+    if (e->is_twin()) continue;
     const Nef_polyhedron::Vertex_const_handle& s = e->source();
     const Nef_polyhedron::Vertex_const_handle& t = e->twin()->source();
     const Nef_polyhedron::Point_3& a = s->point();

@@ -35,6 +35,8 @@ public:
   MainWindow(QWidget* parent = 0);
   ~MainWindow();
 
+  Viewer* getViewer() { return viewer; }
+        
 public slots:
   void updateViewerBBox();
   void open(QString filename);

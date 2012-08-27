@@ -1,9 +1,10 @@
 // Copyright (c) 2005,2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -127,18 +128,14 @@ protected:
 
     // Create N random landmarks. If N was not given to the constructor,
     // set it to be the number of vertices in the arrangement.
-    CGAL::Random     random;
-    double           px, py;
-    unsigned int     i;
-
     if (num_landmarks == 0)
       num_landmarks = arr->number_of_vertices();
 
-    for (i = 0; i < num_landmarks; i++) 
-    {
-      px = random.get_double(x_min, x_max);
-      py = random.get_double(y_min, y_max);
-      points.push_back (Point_2 (px, py)); 
+    CGAL::Random random;
+    for (unsigned int i = 0; i < num_landmarks; ++i) {
+      double px = (x_min == x_max) ? x_min : random.get_double(x_min, x_max);
+      double py = (y_min == y_max) ? y_min : random.get_double(y_min, y_max);
+      points.push_back(Point_2 (px, py)); 
     }
   }
 

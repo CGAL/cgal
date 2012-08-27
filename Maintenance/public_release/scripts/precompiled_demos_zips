@@ -44,6 +44,9 @@ pushd L1_Voronoi_diagram_2_Demo;        zip ../l1_voronoi_diagram_2.zip *;      
 pushd Snap_rounding_2_Demo;             zip ../snap_rounding_2.zip *;                popd
 pushd Spatial_searching_2_Demo;         zip ../spatial_searching.zip *;              popd
 
+# CGAL-4.0
+pushd Linear_cell_complex_Demo;         zip ../linear_cell_complex_3.zip *;          popd
+
 # check
 echo CHECK now
 for f in *zip; do unzip -qql $f; done | awk '{print $4}' >| done

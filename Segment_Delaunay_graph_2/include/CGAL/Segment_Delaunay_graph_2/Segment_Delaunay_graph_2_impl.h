@@ -1,9 +1,10 @@
 // Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -762,7 +763,8 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	Storage_site_2 ssvp = vp->storage_site();
 	Storage_site_2 sss = split_storage_site(ss, ssvp, true);
 
-	Storage_site_2 sss1 = split_storage_site(ss, ssvp, false);
+	/*Storage_site_2 sss1 =*/
+  split_storage_site(ss, ssvp, false);
 	// merge the info of the second (common) subsegment
 	//	merge_info(vv, sss);
 	// merge the info of the (common) splitting endpoint

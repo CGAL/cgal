@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -213,7 +214,6 @@ void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
              const Curve& c, const PointLocation& pl,
 	     typename PointLocation::Point_2*)
 {
-  typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
   typedef typename TopTraits::Zone_insertion_visitor       Zone_visitor;
   
   Zone_visitor visitor;
@@ -1183,7 +1183,6 @@ bool is_valid (const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>   Arr;
   typedef GeomTraits                                        Geometry_traits_2;
-  typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2    X_monotone_curve_2;
   
   // Define the sweep-line types:
@@ -1199,8 +1198,6 @@ bool is_valid (const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   typedef typename Arr::Vertex_const_handle           Vertex_const_handle;
   typedef typename Arr::Isolated_vertex_const_iterator
                                        Isolated_vertex_const_iterator;
-  typedef typename Arr::Ccb_halfedge_const_circulator 
-                                       Ccb_halfedge_const_circulator;
   typedef typename Arr::Halfedge_around_vertex_const_circulator 
                                        Halfedge_around_vertex_const_circulator;
   
@@ -1453,9 +1450,6 @@ OutputIterator zone (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                      const typename GeomTraits::X_monotone_curve_2& c,
                      OutputIterator oi)
 {
-  typedef Arrangement_on_surface_2<GeomTraits, TopTraits>
-    Arrangement_on_surface_2;
-
   // Create a default point-location object and use it to insert the curve.
   typename TopTraits::Default_point_location_strategy    def_pl (arr);
 
@@ -1584,9 +1578,6 @@ template <class GeomTraits, class TopTraits, class Curve>
 bool do_intersect (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
                    const Curve& c)
 {
-  typedef Arrangement_on_surface_2<GeomTraits, TopTraits>
-    Arrangement_on_surface_2;
-
   // Create a default point-location object and use it to insert the curve.
   typename TopTraits::Default_point_location_strategy    def_pl (arr);
   

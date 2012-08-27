@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -98,19 +98,19 @@ public:
     return R().construct_perpendicular_direction_2_object()(*this,o);
   }
 
-  typename Qualified_result_of<typename R::Compute_dx_2, Direction_2>::type
+  typename boost::result_of<typename R::Compute_dx_2( Direction_2)>::type
   dx() const
   {
     return R().compute_dx_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_dy_2, Direction_2>::type
+  typename boost::result_of<typename R::Compute_dy_2( Direction_2)>::type
   dy() const
   {
     return R().compute_dy_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_dx_2, Direction_2>::type
+  typename boost::result_of<typename R::Compute_dx_2( Direction_2)>::type
   delta(int i) const
   {
     CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );

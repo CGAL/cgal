@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -33,7 +33,7 @@ namespace CGAL {
 
 // Info structure for OFF file headers
 // ===================================
-class File_header_OFF : public File_header_extended_OFF {
+class CGAL_EXPORT File_header_OFF : public File_header_extended_OFF {
 private:
     // Publicly accessible file informations.
     std::size_t  n_vertices;
@@ -110,10 +110,10 @@ public:
 };
 
 // Write header.
-std::ostream& operator<<( std::ostream& out, const File_header_OFF& h);
+CGAL_EXPORT std::ostream& operator<<( std::ostream& out, const File_header_OFF& h);
 
 // Scan header. Marks streams badbit if not in SKEL format nor in OFF.
-std::istream& operator>>( std::istream& in, File_header_OFF& h);
+CGAL_EXPORT std::istream& operator>>( std::istream& in, File_header_OFF& h);
 
 } //namespace CGAL
 #endif // CGAL_IO_FILE_HEADER_OFF_H //

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -796,8 +796,6 @@ private:
         CGAL_precondition(x.is_rational());
         Bound r = x.rational();
 
-        typedef typename CGAL::Fraction_traits<Poly_coer_1> FT;
-        
         int k = degree_of_local_gcd(event_indices(i).fg,x);
         Polynomial_2 sres = subresultants(k);
         
@@ -1957,7 +1955,7 @@ create_slice_from_slice_info(size_type id,
         switch(it->first) {
         case(CGAL::internal::FIRST_CURVE): {
             if(event_flag) {
-                arc_container.push_back(std::make_pair(0,it->second));
+                arc_container.push_back(Arc_pair(0,it->second));
             } else {
                 int_container.push_back(0);
             }
@@ -1965,7 +1963,7 @@ create_slice_from_slice_info(size_type id,
         }
         case(CGAL::internal::SECOND_CURVE): {
             if(event_flag) {
-                arc_container.push_back(std::make_pair(1,it->second));
+                arc_container.push_back(Arc_pair(1,it->second));
             } else {
                 int_container.push_back(1);
             }
@@ -1973,7 +1971,7 @@ create_slice_from_slice_info(size_type id,
         }
         case(CGAL::internal::INTERSECTION): {
             CGAL_assertion(event_flag);
-            arc_container.push_back(std::make_pair(2,it->second));
+            arc_container.push_back(Arc_pair(2,it->second));
             break;
         }
         case(CGAL::internal::CANDIDATE): {

@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 #
-# author:  Geert-Jan Giezeman
+# first author:  Geert-Jan Giezeman
+# recent maintainer: Laurent Rineau (2009-2011)
 #
 # This script creates a WWW page with a table of test suite results.
 #
@@ -37,6 +38,31 @@ my %test_directories = ();
 my @testresults;
 my $testresult_dir=cwd()."/TESTRESULTS";
 
+# Inspired from
+# http://cpansearch.perl.org/src/EDAVIS/Sort-Versions-1.5/Versions.pm
+sub sort_releases($$)
+{
+    # Take arguments in revert order: one wants to sort from the recent to
+    # the old releases.
+    my $b = $_[0];
+    my $a = $_[1];
+
+    my @A = ($a =~ /\d+|Ic?/g);
+    my @B = ($b =~ /\d+|Ic?/g);
+
+    while(@A and @B) {
+        my $av = shift(@A);
+        my $bv = shift(@B);
+
+        if( $av =~ /^\d+$/ and $bv =~ /^\d+$/ ) {
+            if($av == $bv) { next; } 
+            else {  return $av <=> $bv; }
+        } else {
+            return $av cmp $bv
+        }
+    }
+    return @A <=> @B;
+}
 
 sub write_selects()
 {
@@ -49,7 +75,7 @@ sub write_selects()
     print OUTPUTV "<table><tr>\n";
     print OUTPUTV "  <th>All releases (<a href=\"${test_results_url}\">last one</a>)</th>\n";
     my $count = 0;
-    foreach $_ (sort {$b cmp $a} (keys %releases)) {
+    foreach $_ (sort sort_releases (keys %releases)) {
         print OUTPUTV "  <th>CGAL-$_</th>\n";
         $count++ > 3 && last;
     }
@@ -57,7 +83,7 @@ sub write_selects()
     print OUTPUTV "<tr>\n";
     write_select("sel", ".*");
     $count = 0;
-    foreach $_ (sort {$b cmp $a} (keys %releases)) {
+    foreach $_ (sort sort_releases (keys %releases)) {
         write_select("sel" . $count, $_);
         $count++ > 3 && last;
     }
@@ -72,16 +98,7 @@ sub write_select()
   print OUTPUTV "  <td><select id=\"$id\" onchange=\"sel=document.getElementById(\'$id\'); top.location.href=sel.options[sel.selectedIndex].value\">\n";
 
   print OUTPUTV '<option value="">', "</option>\n";
-  foreach $_ (sort { $a =~ /results-([^I]*)(|-Ic?-(.*))\.shtml/;
-                     my ($maj_a, $min_a) = ($1, $2 ? $3 : "9999");
-		     # public releases are given minor 9999.
-		     $b =~ /results-([^I]*)(|-Ic?-(.*))\.shtml/;
-                     my ($maj_b, $min_b) = ($1, $2 ? $3 : "9999");
-		     # We sort major numbers alphabetically,
-		     # and minors numerically.
-		     return ($maj_a eq $maj_b) ? ($min_b <=> $min_a)
-		                               : ($maj_b cmp $maj_a);
-                   } (glob("results-*.shtml"))) {
+  foreach $_ (sort sort_releases (glob("results-*.shtml"))) {
       $_ =~ /results-${pattern}(-.*|)\.shtml/ || next;
       my $ctime = (stat($_))[10];
       my $date = time2str('%a %Y/%m/%d', $ctime);

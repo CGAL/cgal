@@ -1,9 +1,10 @@
 // Copyright (c) 2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -204,7 +205,6 @@ bool collinearly_visible(unsigned int edge_num1, unsigned int e_num,
                          const Polygon& polygon,
                          const Traits& traits)
 {
-   typedef typename Polygon::size_type                   size_type;
    typedef typename Traits::Orientation_2                Orientation_2;
    Orientation_2 orientation = traits.orientation_2_object();
 
@@ -446,7 +446,6 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
 {
     typedef typename Polygon::size_type                   size_type;
 
-    typedef typename Polygon::iterator                    Vertex_iterator;
     typedef Vertex_visibility_graph_2<Traits>             Vis_graph;
     typedef typename Traits::Point_2                      Point_2;
     typedef std::pair<Point_2, Point_2>                   Point_pair;

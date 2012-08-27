@@ -2,3 +2,4 @@ cmake/modules/CGAL_CreateSingleSourceCGALProgramQt4.cmake
 changes.html
 cgal.css
 html2textrc
+update_CHANGES

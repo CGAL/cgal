@@ -1,9 +1,10 @@
 // Copyright (c) 2003-2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -156,7 +157,6 @@ namespace CircularFunctors {
     if(A2.supporting_line().is_vertical())
       return CGAL::SMALLER;
     
-    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef typename CK::Polynomial_1_2       Polynomial_1_2;
     typedef typename CK::Root_of_2            Root_of_2;
 
@@ -417,8 +417,7 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
     typedef typename CK::Line_arc_2               Line_arc_2;
     typedef typename CK::Point_2                  Point_2;
-    typedef typename CK::Root_of_2                Root_of_2;
-    typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
+    // typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
 
 #ifdef CGAL_CK_EXPLOIT_IDENTITY
     bool a1s_a2s = a1.source().equal_ref(a2.source());
@@ -756,8 +755,6 @@ namespace CircularFunctors {
     typedef typename CK::Line_arc_2               Line_arc_2;
     typedef typename CK::Point_2                  Point_2;
     typedef typename CK::Line_2                   Line_2;
-    typedef typename CK::Root_of_2                Root_of_2;
-    typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
 
     if(LinearFunctors::non_oriented_equal<CK>(l, la.supporting_line())) {
       *res++ = make_object(la);
@@ -783,7 +780,6 @@ namespace CircularFunctors {
   {
     typedef typename CK::Circular_arc_2 Circular_arc_2;
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-    typedef typename CK::Line_2 Line_2;
     typedef std::vector<CGAL::Object > solutions_container;
 
     solutions_container solutions;

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -170,7 +170,6 @@ template <class T, class G>
 void Qt_moving_points_2<T,G>::draw() const
 {
   //std::cout << "Drawing mpt MPT\n";
-  typedef typename Traits::Static_kernel::Point_2 P2;
   typedef typename Traits::Static_kernel::Circle_2 C;
   typedef typename Traits::Kinetic_kernel::Is_constant IC;
   IC ic = traits_.kinetic_kernel_object().is_constant_object();
@@ -191,6 +190,7 @@ void Qt_moving_points_2<T,G>::draw() const
   } else {
     w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(ptsz_/8, 1)) << CGAL::LineWidth(1);
   }
+  // typedef typename Traits::Static_kernel::Point_2 P2;
   //out << C(P2(0,0), 2) << C(P2(0,0), 1);
   //out << CGAL::BackgroundColor(CGAL::Color(125,125,125));
   

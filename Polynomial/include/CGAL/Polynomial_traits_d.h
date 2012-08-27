@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -840,7 +840,7 @@ public:
       int result = 0;
       for(int i = 0; i <= degree(p) ; i++){
         if( ! CGAL::is_zero( p[i]) )
-          result = std::max(result , total_degree(p[i]) + i );
+          result = (std::max)(result , total_degree(p[i]) + i );
       } 
       return result;
     }
@@ -1660,7 +1660,6 @@ struct Construct_innermost_coefficient_const_iterator_range
       typedef std::iterator_traits<Input_iterator> ITT;
       typedef typename ITT::value_type value_type;
       typedef Coercion_traits<value_type, Innermost_coefficient_type> CT; 
-      typedef typename CT::Type Type; 
       
       typename PTC::Substitute_homogeneous subsh; 
       

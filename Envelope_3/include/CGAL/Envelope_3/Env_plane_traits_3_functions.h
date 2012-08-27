@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -30,9 +31,6 @@ Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
                                           const typename K::Line_2  &l,
                                           const K& k)
 {
-  typedef typename K::Vector_2   Vector_2;
-  typedef typename K::Point_2    Point_2;
-  typedef typename K::Ray_2      Ray_2;
   typedef typename K::Line_3     Line_3;
   typedef typename K::Line_2     Line_2;
   typedef typename K::Plane_3    Plane_3;
@@ -91,7 +89,6 @@ typename K::Line_2 project_xy(const typename K::Line_3& l,
   typedef typename K::Vector_2   Vector_2;
   typedef typename K::Point_3    Point_3;
   typedef typename K::Point_2    Point_2;
-  typedef typename K::Ray_2      Ray_2;
 
   Vector_3 vec3 = k.construct_vector_3_object()(l);
   Vector_2 vec2(vec3.x(), vec3.y());
@@ -156,10 +153,8 @@ Object ray_under_linear_constraint(const typename K::Ray_2&  ray,
                                    const K& k)
 {
   typedef typename K::Ray_2         Ray_2;
-  typedef typename K::Line_2        Line_2;
   typedef typename K::Vector_2      Vector_2;
   typedef typename K::Point_2       Point_2;
-  typedef typename K::Segment_2     Segment_2;
 
   const Point_2& s = k.construct_point_on_2_object()(ray, 0);
   Oriented_side side = k.oriented_side_2_object()(l, s);

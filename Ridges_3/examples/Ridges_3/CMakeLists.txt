@@ -2,12 +2,10 @@
 project( Ridges_3_example )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 find_package(CGAL QUIET )
@@ -17,12 +15,19 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  # Link with BLAS and LAPACK (required)
-  find_package(LAPACK)
-  if(LAPACK_FOUND)
-
-    include( ${LAPACK_USE_FILE} )
-
+  # use either Eigen or BLAS/LAPACK
+  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+  if (NOT EIGEN3_FOUND)
+    find_package(LAPACK)
+    if(LAPACK_FOUND)
+      include( ${LAPACK_USE_FILE} )
+    endif(LAPACK_FOUND)
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+  
+  
+  if(EIGEN3_FOUND OR LAPACK_FOUND)
     # Link with Boost.ProgramOptions (optional)
     find_package(Boost QUIET COMPONENTS program_options)
     if(Boost_PROGRAM_OPTIONS_FOUND)
@@ -32,20 +37,16 @@ if ( CGAL_FOUND )
         message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
       endif()
       add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-      if ( NOT CGAL_AUTO_LINK_ENABLED )
-        link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
-      endif()
-    endif()
+      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
+   endif()
 
-    add_executable(Compute_Ridges_Umbilics Compute_Ridges_Umbilics.cpp PolyhedralSurf.cpp)
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS Compute_Ridges_Umbilics )
-    target_link_libraries(Compute_Ridges_Umbilics ${CGAL_LIBRARIES})
+   create_single_source_cgal_program( Compute_Ridges_Umbilics.cpp PolyhedralSurf.cpp)
 
-  else(LAPACK_FOUND)
+  else(EIGEN3_FOUND OR LAPACK_FOUND)
 
-    message(STATUS "NOTICE: This program requires LAPACK, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
 
-  endif(LAPACK_FOUND)
+  endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
 else()
   

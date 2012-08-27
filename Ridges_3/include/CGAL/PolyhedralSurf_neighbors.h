@@ -1,9 +1,10 @@
 // Copyright (c) 2007  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -148,7 +149,6 @@ compute_one_ring(const Vertex_const_handle v,
 		 std::list<Halfedge_const_handle> &contour,
 		 FT &OneRingSize)
 {
-  typedef typename std::list<Halfedge_const_handle>::const_iterator list_it;
   vertex_neigh.push_back(v);
   Halfedge_around_vertex_const_circulator he_circ = v->vertex_begin(), 
                                     he_end = he_circ;

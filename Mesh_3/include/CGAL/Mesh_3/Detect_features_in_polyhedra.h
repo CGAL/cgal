@@ -1,9 +1,10 @@
 // Copyright (c) 2010 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -58,14 +59,16 @@ public:
 public:
   Detect_features_in_polyhedra() : current_surface_index_(1) {}
   
-  void detect_sharp_edges(Polyhedron& polyhedron, FT angle_in_deg = FT(60)) const;
+  void detect_sharp_edges(Polyhedron& polyhedron,
+                          FT angle_in_deg = FT(60)) const;
   void detect_surface_patches(Polyhedron& polyhedron);
   void detect_vertices_incident_patches(Polyhedron& p);
   
 private:
   Vector_3 facet_normal(const Facet_handle& f) const;
   bool is_sharp(const Halfedge_handle& he, FT cos_angle) const;
-  void flood(Facet& f, const int index, Facet_handle_set& unsorted_faces) const;
+  void flood(Facet& f, const int index,
+             Facet_handle_set& unsorted_faces) const;
   
 private:
   // Stores the current surface index (usefull to detect different patches
@@ -196,8 +199,6 @@ bool
 Detect_features_in_polyhedra<P_>::
 is_sharp(const Halfedge_handle& he, FT cos_angle) const
 {
-  typedef typename Geom_traits::FT FT;
-  
   Facet_handle f1 = he->facet();
   Facet_handle f2 = he->opposite()->facet();
   if(f1 == NULL || f2 == NULL)

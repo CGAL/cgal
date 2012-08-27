@@ -231,7 +231,7 @@
   </action>
   <action name="actionMaximumAreaKGon">
    <property name="text">
-    <string>Maximum Area K-gon</string>
+    <string>Maximum Area Triangle</string>
    </property>
   </action>
  </widget>

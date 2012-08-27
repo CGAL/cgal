@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -43,7 +43,6 @@ t3r3_intersection_coplanar_aux(const typename K::Point_3& p,
   // preconditions:
   //   + p,v,a,b are coplanar
 
-  typedef typename K::Point_3 Point_3;
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::FT FT;
 
@@ -569,6 +568,15 @@ intersection(const typename K::Triangle_3  &t,
 
   CGAL_error();
   return Object();
+}
+
+template <class K>
+Object
+intersection(const typename K::Ray_3 &r,
+             const typename K::Triangle_3  &t,
+             const K& k)
+{
+  return intersection(t, r, k);
 }
 
 } // end namespace internal

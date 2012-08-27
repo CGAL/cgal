@@ -1,9 +1,10 @@
 // Copyright (c) 2005-2008  INRIA (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -26,6 +27,7 @@
 #include <CGAL/Taucs_fix.h>
 #include <CGAL/assertions.h>
 
+#include <cstring>
 #include <vector>
 
 namespace CGAL {
@@ -321,9 +323,9 @@ public:
               int nb_elements = m_columns[col].size(); // Number of non null elements of the column
 
               // Fast copy of column indices and values
-              memcpy(&m_matrix->rowind[first_index], &m_columns[col].m_indices[0], nb_elements*sizeof(int));
+	      std::memcpy(&m_matrix->rowind[first_index], &m_columns[col].m_indices[0], nb_elements*sizeof(int));
               T* taucs_values = (T*) m_matrix->values.v;
-              memcpy(&taucs_values[first_index], &m_columns[col].m_values[0],  nb_elements*sizeof(T));
+	      std::memcpy(&taucs_values[first_index], &m_columns[col].m_values[0],  nb_elements*sizeof(T));
 
               // Start of next column will be:
               m_matrix->colptr[col+1] = first_index + nb_elements;

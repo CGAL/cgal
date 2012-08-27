@@ -1,9 +1,10 @@
 // Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -38,7 +39,6 @@ namespace CGAL {
 	   const typename AK::Polynomial_1_3 & e3,
 	 OutputIterator res )
   {
-    typedef typename AK::RT RT;
     typedef typename AK::FT FT;
     typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     CGAL_kernel_precondition(!(same_solutions<FT>(e1,e2) || same_solutions<FT>(e1,e3) ||

@@ -67,7 +67,7 @@ private:
                                tr("Enter number of random points"),
                                100,
                                0,
-                               std::numeric_limits<int>::max(),
+                               (std::numeric_limits<int>::max)(),
                                1,
                                &ok);
 
@@ -247,7 +247,7 @@ MainWindow::on_actionGenerateSegmentFans_triggered()
   PG p2( Point_2( 250,-250), Point_2( 250,250),50);
   Segm_iterator  t1( p1, p2);                     // Segment generator.
   Count_iterator t1_begin( t1);                   // Finite range.
-  Count_iterator t1_end( 50);
+  Count_iterator t1_end(t1, 50);
   std::copy( t1_begin, t1_end, std::back_inserter(segments));
   
   // A vertical like fan.
@@ -255,7 +255,7 @@ MainWindow::on_actionGenerateSegmentFans_triggered()
   PG p4( Point_2(-250, 250), Point_2( 250, 250),50);
   Segm_iterator  t2( p3, p4);
   Count_iterator t2_begin( t2);
-  Count_iterator t2_end( 50);
+  Count_iterator t2_end(t2, 50);
   std::copy( t2_begin, t2_end, std::back_inserter(segments));
 
   emit(changed());
@@ -271,6 +271,7 @@ MainWindow::clear()
 
 
 #include "Generator_2.moc"
+#include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
 {
@@ -282,10 +283,8 @@ int main(int argc, char **argv)
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
+  CGAL_QT4_INIT_RESOURCES;
   Q_INIT_RESOURCE(Generator_2);
-  Q_INIT_RESOURCE(Input);
-  Q_INIT_RESOURCE(CGAL);
 
   MainWindow mainWindow;
   mainWindow.show();

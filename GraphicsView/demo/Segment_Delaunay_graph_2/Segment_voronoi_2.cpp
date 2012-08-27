@@ -300,7 +300,7 @@ MainWindow::loadEdgConstraints(QString fileName)
   int n;
   ifs >> n;
   
-  K::Point_2 p,q, qold;
+  K::Point_2 p,q, qold(0,0); // Initialize qold, as otherwise some g++ issue a unjustified warning
 
   SVD::Vertex_handle vp, vq, vqold;
   while(ifs >> p) {
@@ -365,6 +365,7 @@ MainWindow::saveConstraints(QString /*fileName*/)
 
 
 #include "Segment_voronoi_2.moc"
+#include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
 {
@@ -376,10 +377,7 @@ int main(int argc, char **argv)
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
-  Q_INIT_RESOURCE(Triangulation_2);
-  Q_INIT_RESOURCE(Input);
-  Q_INIT_RESOURCE(CGAL);
+  CGAL_QT4_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

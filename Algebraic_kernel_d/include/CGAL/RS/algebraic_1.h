@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -40,12 +40,9 @@ public:
         RS_polynomial_1 *_poly;
         int _nr;
         int _mult;
-        mpfi_ptr _prev,_next;
         mutable Sign _lefteval;
 
-        Algebraic_1_rep():
-                _poly(NULL),_nr(-1),_mult(-1),
-                _prev(NULL),_next(NULL),_lefteval(ZERO){}
+        Algebraic_1_rep():_poly(NULL),_nr(-1),_mult(-1),_lefteval(ZERO){}
         ~Algebraic_1_rep(){}
 
 private:
@@ -80,17 +77,16 @@ public:
         Algebraic_1(mpfi_srcptr,
                     const RS_polynomial_1&,
                     int,
-                    int,
-                    mpfi_ptr,
-                    mpfi_ptr);
+                    int
+                    //,mpfi_ptr,mpfi_ptr
+                    );
 
         // the another interesting variant
         Algebraic_1(mpfi_srcptr,
                     const RS_polynomial_1&,
                     int,
                     int,
-                    mpfi_ptr,
-                    mpfi_ptr,
+                    //mpfi_ptr,mpfi_ptr,
                     CGAL::Sign);
 
         // functions related to the member data
@@ -109,12 +105,8 @@ public:
         void set_nr(int);
         void set_mult(int);
         void set_prec(mp_prec_t);
-        void set_prev(mpfi_ptr);
-        void set_next(mpfi_ptr);
         void set_lefteval(Sign)const;
         mp_prec_t get_prec()const;
-        mpfi_ptr prev()const;
-        mpfi_ptr next()const;
         Sign lefteval()const;
         mpfr_srcptr left()const;
         mpfr_srcptr right()const;

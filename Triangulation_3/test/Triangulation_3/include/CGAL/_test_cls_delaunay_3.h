@@ -1,9 +1,10 @@
 // Copyright (c) 1998-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -32,6 +33,7 @@
 #include "_test_remove_cluster.h"
 
 #include <CGAL/Random.h>
+#include <CGAL/Testsuite/use.h>
 
 // Accessory set of functions to differentiate between
 // Delaunay::nearest_vertex[_in_cell] and
@@ -896,6 +898,7 @@ _test_cls_delaunay_3(const Triangulation &)
   {
     Cell_handle c = T4.finite_cells_begin();
     Point p = T4.dual(c);
+    (void)p;
     Facet f = Facet(c, 2);
     CGAL::Object o = T4.dual(f);
     o = T4.dual(f.first, f.second);
@@ -1072,6 +1075,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(TM_0.dimension() == 1);
 
   Vertex_handle tmv5 = TM_0.insert(Point(0,2,0));
+  CGAL_USE(tmv5);
   Vertex_handle tmv6 = TM_0.insert(Point(1,0,0));
   assert(TM_0.dimension() == 3);
 

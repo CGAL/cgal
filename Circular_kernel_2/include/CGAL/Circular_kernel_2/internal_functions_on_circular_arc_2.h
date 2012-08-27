@@ -1,9 +1,10 @@
 // Copyright (c) 2003-2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -226,11 +227,11 @@ namespace CircularFunctors {
     //CGAL_kernel_precondition (A1.is_x_monotone());
     //CGAL_kernel_precondition (A2.is_x_monotone());
 
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+    // intersection found on the map
     typedef std::vector<CGAL::Object> solutions_container; 
     typedef typename CK::Circular_arc_2 Circular_arc_2; 
 
-#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
-    // intersection found on the map
     solutions_container early_sols;
     if(Circular_arc_2::template find_intersection< solutions_container >
       (A1,A2,early_sols)) {
@@ -1056,9 +1057,6 @@ template < class CK, class OutputIterator >
 		   OutputIterator res )
   {
     typedef typename CK::Circular_arc_2           Circular_arc_2;
-    typedef typename CK::Circle_2                 Circle_2;
-    typedef typename CK::FT                       FT;
-    typedef typename CK::Point_2                  Point_2;
     typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
     typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
 
@@ -1319,9 +1317,6 @@ template < class CK, class OutputIterator >
 		            OutputIterator res )
   {
     typedef typename CK::Circular_arc_2           Circular_arc_2;
-    typedef typename CK::Circle_2                 Circle_2;
-    typedef typename CK::FT                       FT;
-    typedef typename CK::Point_2                  Point_2;
     typedef std::pair<CGAL::Object,bool >         S_pair;
 
 
@@ -1540,8 +1535,6 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
   CGAL::Bbox_2 circular_arc_bbox
   ( const typename CK::Kernel_base::Circular_arc_2 & a)
   {	
-    typedef typename CK::Root_of_2 	   Root_of_2;
-    typedef typename CK::FT 		   FT;
     typedef CGAL::Interval_nt<false>::Protector IntervalProtector;
     typedef CGAL::Interval_nt<false> Interval; 
 

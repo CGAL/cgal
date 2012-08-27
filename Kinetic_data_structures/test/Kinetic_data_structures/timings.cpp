@@ -1,4 +1,8 @@
+#include <CGAL/config.h>
 #define NDEBUG
+// NDEBUG is defined after <CGAL/config.h> is included, to workaround the
+// check of the testsuite that NDEBUG is not defined.
+
 //#define CGAL_CHECK_EXPENSIVE
 //#define CGAL_CHECK_EXACTNESS
 

@@ -136,6 +136,10 @@ if  ${MAKE_CMD} -f Makefile help | grep "tanglecube_function_plugin" > /dev/null
   compile_and_run tanglecube_function_plugin
   NEED_CLEAN=y
 fi
+if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_demo_volume_planes_plugin" > /dev/null; then
+  compile_and_run mesh_3_demo_volume_planes_plugin
+  NEED_CLEAN=y
+fi
 fi
 
 

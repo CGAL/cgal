@@ -3,12 +3,10 @@
 project( Point_set_processing_3_test )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 # Require packages new or improved since CGAL 3.4
@@ -54,21 +52,28 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "analysis_test.cpp" )
   create_single_source_cgal_program( "remove_outliers_test.cpp" )
 
-  # Link with BLAS and LAPACK (optional)
-  find_package(LAPACK)
-  if(LAPACK_FOUND)
-
-    include( ${LAPACK_USE_FILE} )
-
-    # Executables that require BLAS and LAPACK
+  # Use Eigen or BLAS and LAPACK (optional)
+  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+  if (NOT EIGEN3_FOUND)
+    find_package(LAPACK)
+    if(LAPACK_FOUND)
+      include( ${LAPACK_USE_FILE} )
+    endif(LAPACK_FOUND)
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+  
+  
+  if(EIGEN3_FOUND OR LAPACK_FOUND)
+    # Executables that require Eigen or BLAS and LAPACK
     create_single_source_cgal_program( "normal_estimation_test.cpp" )
     create_single_source_cgal_program( "smoothing_test.cpp" )
 
-  else(LAPACK_FOUND)
+  else(EIGEN3_FOUND OR LAPACK_FOUND)
 
-    message(STATUS "NOTICE: Some of the executables in this directory need the LAPACK library and will not be compiled.")
+    message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
 
-  endif(LAPACK_FOUND)
+  endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
 else()
 

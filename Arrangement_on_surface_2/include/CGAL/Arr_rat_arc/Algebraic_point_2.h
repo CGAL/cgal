@@ -1,9 +1,10 @@
 // Copyright (c) 2011 Tel-Aviv University (Israel), INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -191,16 +192,19 @@ public:
     if(_rational_function.sign_at(_x_coordinate)==CGAL::ZERO)
       return std::make_pair(Bound(0),Bound(0));
     
-    
     typename BFI_traits::Set_precision       set_precision;
     typename BFI_polynomial_traits::Evaluate evaluate;
+    
+    typedef typename BFI_traits::Bound    BF;
+
     long precision = 16;
-    Rational error_bound = CGAL::ipower(Rational(1,2),r);
-    while (true)
-    {
+    set_precision(precision);
+    BF eps = CGAL::ipower(BF(1)/2,r);
+    
+    while (true){      
       set_precision(precision);
       BFI x_bfi(convert_to_bfi(_x_coordinate));
-
+      
       BFI_polynomial
         numer_bfi(convert_to_bfi_extended(_rational_function.numer()));
       BFI_polynomial
@@ -212,11 +216,14 @@ public:
       if (CGAL::zero_in(y_denom_bfi) == false)
       {
         BFI y_bfi(y_numer_bfi/y_denom_bfi);
-        if (CGAL::compare(CGAL::width(y_bfi),
-                          Rational(CGAL::lower(CGAL::abs(y_bfi))) * error_bound )
+       
+        if (CGAL::compare( 
+                CGAL::width(y_bfi),
+                CGAL::lower(CGAL::abs(y_bfi)) * eps)
             == SMALLER)
-          return std::make_pair(Bound(CGAL::lower(y_bfi)),
-                                Bound(CGAL::upper(y_bfi)));
+          return std::make_pair(
+              Bound(CGAL::lower(y_bfi)),
+              Bound(CGAL::upper(y_bfi)));
       }
       else precision*=2;
     }
@@ -257,7 +264,10 @@ private:
   {
     typename BFI_traits::Set_precision       set_precision;
     typename BFI_polynomial_traits::Evaluate evaluate;
-    Rational error_bound = CGAL::ipower(Rational(1,2),a);
+    
+    typedef typename BFI_traits::Bound             BF;
+    
+    BF eps = CGAL::ipower(BF(1)/2,a);
     while (true)
     {
       set_precision(precision);
@@ -272,9 +282,11 @@ private:
       if (CGAL::zero_in(y_denom_bfi) == false)
       {
         BFI y_bfi(y_numer_bfi/y_denom_bfi);
-        if (Bound(CGAL::width(y_bfi)) < error_bound )
-          return std::make_pair(Bound(CGAL::lower(y_bfi)),
-                                Bound(CGAL::upper(y_bfi)) );
+        if (CGAL::width(y_bfi) < eps )
+          return std::make_pair(
+              Bound(CGAL::lower(y_bfi)),
+              Bound(CGAL::upper(y_bfi)));
+       
       }
       else precision*=2;
     }

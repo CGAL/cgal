@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -97,16 +97,6 @@ void Algebraic_1::set_prec(mp_prec_t p){
 }
 
 inline
-void Algebraic_1::set_prev(mpfi_ptr p){
-        ptr()->_prev=p;
-}
-
-inline
-void Algebraic_1::set_next(mpfi_ptr n){
-        ptr()->_next=n;
-}
-
-inline
 void Algebraic_1::set_lefteval(Sign s)const{
         Ptr()->_lefteval=s;
 }
@@ -124,16 +114,6 @@ mpfr_srcptr Algebraic_1::left()const{
 inline
 mpfr_srcptr Algebraic_1::right()const{
         return &(mpfi()->right);
-}
-
-inline
-mpfi_ptr Algebraic_1::prev()const{
-        return ptr()->_prev;
-}
-
-inline
-mpfi_ptr Algebraic_1::next()const{
-        return ptr()->_next;
 }
 
 inline

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -17,7 +17,7 @@
 //
 //
 // Author(s)     : Michael Kerber   <mkerber@mpi-inf.mpg.de>
-//                 Dominik Hlse    <dominik.huelse@gmx.de>
+//                 Dominik Huelse    <dominik.huelse@gmx.de>
 //                 Michael Hemmer   <hemmer@informatik.uni-mainz.de>   
 // ============================================================================
 
@@ -30,9 +30,9 @@
 
 #include <CGAL/basic.h>
 
-#ifndef LiS_HAVE_NTL
+#ifndef CGAL_USE_NTL
 #warning This header file needs NTL installed in order to work properly.
-#else // LiS_HAVE_NTL
+#else // CGAL_USE_NTL
 
 #ifndef CGAL_USE_NTL_MODULAR_GCD
 #define CGAL_USE_NTL_MODULAR_GCD 1
@@ -51,7 +51,7 @@
 #include<CGAL/leda_integer.h>
 #endif
 
-#ifdef LiS_HAVE_CORE
+#ifdef CGAL_USE_CORE
 #include<CGAL/CORE_BigInt.h>
 #endif
 
@@ -105,9 +105,8 @@ void ntl_to_polynomial(const NTL::ZZX& q,PolyInt& p) {
 template<typename NT> Polynomial<NT>
 inline
 modular_NTL_gcd_for_univariate_integer_polynomials
-(Polynomial<NT> p1,
-        Polynomial<NT> p2) {     
-//    std::cout<<" NTL GCD"<<std::endl;
+  (Polynomial<NT> p1, Polynomial<NT> p2) {     
+  //    std::cout<<" NTL GCD"<<std::endl;
     
     NTL::ZZX q1,q2,h;   
     Polynomial<NT> g;
@@ -132,8 +131,8 @@ modular_NTL_gcd_for_univariate_integer_polynomials
 template <> 
 inline
 CGAL::Polynomial<leda::integer>
-gcd_utcf(const CGAL::Polynomial<leda::integer>& p1,
-            const CGAL::Polynomial<leda::integer>& p2) {
+gcd_utcf_(const CGAL::Polynomial<leda::integer>& p1,
+          const CGAL::Polynomial<leda::integer>& p2) {
     CGAL::Polynomial<leda::integer> gcd = 
         internal::modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
     return CGAL::canonicalize(gcd);
@@ -141,29 +140,29 @@ gcd_utcf(const CGAL::Polynomial<leda::integer>& p1,
 template <> 
 inline
 CGAL::Polynomial<leda::integer>
-gcd(const CGAL::Polynomial<leda::integer>& p1,
-        const CGAL::Polynomial<leda::integer>& p2) {
+gcd_(const CGAL::Polynomial<leda::integer>& p1,
+     const CGAL::Polynomial<leda::integer>& p2) {
     return internal::modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
 }
 #endif // CGAL_USE_LEDA
 
-#ifdef LiS_HAVE_CORE
+#ifdef CGAL_USE_CORE
 template <> 
 inline
 Polynomial<CORE::BigInt>
-gcd_utcf(const Polynomial<CORE::BigInt>& p1,
-        const Polynomial<CORE::BigInt>& p2) {
+gcd_utcf_(const Polynomial<CORE::BigInt>& p1,
+          const Polynomial<CORE::BigInt>& p2) {
     Polynomial<CORE::BigInt> gcd = modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
     return CGAL::canonicalize(gcd);
 }
 template <> 
 inline
 Polynomial<CORE::BigInt>
-gcd(const Polynomial<CORE::BigInt>& p1,
-        const Polynomial<CORE::BigInt>& p2) {
+gcd_(const Polynomial<CORE::BigInt>& p1,
+    const Polynomial<CORE::BigInt>& p2) {
     return modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
 }
-#endif //LiS_HAVE_CORE
+#endif //CGAL_USE_CORE
 
 //#endif //CGAL_USE_INTERNAL_MODULAR_GCD 
 
@@ -174,7 +173,7 @@ gcd(const Polynomial<CORE::BigInt>& p1,
 
 #endif // CGAL_USE_NTL_MODULAR_GCD
 
-#endif // LiS_HAVE_NTL
+#endif // CGAL_USE_NTL
 
 #endif // CGAL_POLYNOMIAL_GCD_NTL_H
 

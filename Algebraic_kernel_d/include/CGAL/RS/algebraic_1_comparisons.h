@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -25,11 +25,19 @@
 
 namespace CGAL{
 
+#if CGAL_USE_RS3
 inline
 bool operator<(const Algebraic_1 &n1,const Algebraic_1 &n2){
         typedef CGAL::Rsgcd_1  Gcd;
         return(CGAL::RS_COMPARE::compare_1<Gcd>(n1,n2)==SMALLER);
 }
+#else
+inline
+bool operator<(const Algebraic_1 &n1,const Algebraic_1 &n2){
+        typedef CGAL::Cgalgcd_1  Gcd;
+        return(CGAL::RS_COMPARE::compare_1<Gcd>(n1,n2)==SMALLER);
+}
+#endif
 
 inline
 bool operator==(const Algebraic_1 &n1,const Algebraic_1 &n2){

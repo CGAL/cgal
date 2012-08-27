@@ -4,12 +4,10 @@
 project (Triangulation_2)
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 find_package(CGAL COMPONENTS Qt4)
@@ -22,13 +20,13 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
 
-find_package(Qt4)
+#find_package(Qt4)
+
 include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
-  include_directories (BEFORE ../../../Number_types/include)
+include_directories (BEFORE ../../../Number_types/include)
 
-  include_directories (BEFORE ../../../Triangulation_2/include)
-
+include_directories (BEFORE ../../../Triangulation_2/include)
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -267,10 +267,12 @@ public:
     {
       if (! is_extended_)
           return CGAL_NTS to_interval(a0_);
-      CGAL::Interval_nt<false>::Protector p;
+      
       const CGAL::Interval_nt<false>&  a0_int = CGAL_NTS to_interval(a0_);
       const CGAL::Interval_nt<false>&  a1_int = CGAL_NTS to_interval(a1_);
       const CGAL::Interval_nt<false>&  root_int = CGAL_NTS to_interval(root_);
+
+      CGAL::Interval_nt<false>::Protector p;
       const CGAL::Interval_nt<false>&  x_int = 
           a0_int + (a1_int * CGAL::sqrt(root_int));
 

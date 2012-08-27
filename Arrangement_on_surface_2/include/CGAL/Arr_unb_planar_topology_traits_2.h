@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -316,7 +317,7 @@ public:
                              Sweep_line_non_intersecting_insertion_visitor;
 
   template <class OutputIterator_>
-  struct Sweep_line_bacthed_point_location_visitor :
+  struct Sweep_line_batched_point_location_visitor :
     public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
   {
     typedef OutputIterator_                                   Output_iterator;
@@ -327,7 +328,7 @@ public:
     typedef typename Base::Event                              Event;
     typedef typename Base::Subcurve                           Subcurve;
 
-    Sweep_line_bacthed_point_location_visitor (const Arr *arr,
+    Sweep_line_batched_point_location_visitor (const Arr *arr,
                                                Output_iterator *oi) :
       Base (arr, oi)
     {}

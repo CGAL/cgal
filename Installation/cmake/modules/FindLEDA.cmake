@@ -83,5 +83,6 @@ endif()
 
 if ( LEDA_INCLUDE_DIR AND LEDA_LIBRARIES)
   set(LEDA_FOUND TRUE)
+  set(LEDA_USE_FILE "CGAL_UseLEDA")
 endif()
   

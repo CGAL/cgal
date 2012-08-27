@@ -3,8 +3,10 @@
 \ccDefinition
 
 The template function \ccRefName\ returns an double approximation of a number. 
-The function is guaranteed to be well defined in case the argument type 
+The function is defined if the argument type 
 is a model of the \ccc{RealEmbeddable} concept. 
+
+Remark: In order to control the quality of approximation one has to resort to methods that are specific to NT. There are no general guarantees whatsoever.
 
 \ccInclude{CGAL/number_utils.h}
 

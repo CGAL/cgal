@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -264,8 +264,6 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
 //    typedef CORE::BigFloat BF; 
 // else       
     typedef CORE::BigFloat BF; 
-    typedef CORE::BigFloat BFI; 
-    typedef CORE::BigInt Integer;
     BF xr;
    
     CORE::BigInt m = x.m();
@@ -522,5 +520,28 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
 #include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
+
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<CORE::BigFloat>
+  {
+    typedef CORE::BigFloat Real;
+    typedef CORE::BigFloat NonInteger;
+    typedef CORE::BigFloat Nested;
+
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 60,
+      MulCost = 60
+    };
+  };
+}
+#endif
 
 #endif // CGAL_CORE_BIGFLOAT_H

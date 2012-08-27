@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -120,8 +120,8 @@ void _cut_off(Pointlist_2_<K> &list,
             last->next = newrec;
             newrec->side = ON_ORIENTED_BOUNDARY;
             Line_2_Line_2_pair<K> linepair(&cutter,  &l);
-            typename Line_2_Line_2_pair<K>::Intersection_results isr;
-            isr = linepair.intersection_type();
+            CGAL_kernel_assertion_code(typename Line_2_Line_2_pair<K>::Intersection_results isr =)
+            linepair.intersection_type();
             CGAL_kernel_assertion(isr == Line_2_Line_2_pair<K>::POINT);
             newrec->point = linepair.intersection_point();
         }

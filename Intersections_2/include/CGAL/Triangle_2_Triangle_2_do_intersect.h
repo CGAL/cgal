@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -76,7 +76,8 @@ bool intersection_test_edge(const typename K::Point_2 *  P1,
 			    const typename K::Point_2 *  Q1, 
 			    const typename K::Point_2 *  R1,
 			    const typename K::Point_2 *  P2, 
-			    const typename K::Point_2 *  Q2, 
+			    const typename K::Point_2 *
+                              CGAL_kernel_precondition_code(Q2),
 			    const typename K::Point_2 *  R2,
 			    const K & k ){
   

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <list>
+#include <cassert>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Weighted_point.h>

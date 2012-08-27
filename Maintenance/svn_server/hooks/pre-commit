@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # PRE-COMMIT HOOK
 #
@@ -56,6 +56,13 @@ $SVNLOOK log -t "$TXN" "$REPOS" | /usr/bin/perl -e 'while(<>) { /[a-zA-Z0-9]/ &&
 if [[ $? != 0 ]]; then
     echo "" >&2
     echo "Invalid commit message" >&2
+    exit 1
+fi
+
+# Freeze trunk
+if $SVNLOOK dirs-changed -t "$TXN" "$REPOS" | grep -qE '^trunk'; then
+    echo "" >&2
+    echo "trunk is now read-only!" >&2
     exit 1
 fi
 

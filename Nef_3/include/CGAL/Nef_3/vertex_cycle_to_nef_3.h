@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -105,7 +106,7 @@ template<typename Items,
  public:
   Index_matcher() {}
   template<typename Handle> 
-    void set_index(Handle h, Edge e) {}
+  void set_index(Handle /*h*/, Edge /*e*/) {}
 };
 
 template<typename Edge, typename CompareEdges> 
@@ -157,16 +158,10 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
    typedef typename SNC_structure::SHalfedge_handle   SHalfedge_handle;
    typedef typename SNC_structure::SFace_handle       SFace_handle;
 
-   typedef typename SNC_structure::Kernel Kernel;
-   typedef typename SNC_structure::Point_3 Point_3;
    typedef typename std::pair<CTP_vertex*, CTP_vertex*> Point_pair;
    typedef Compare_cpte<CTP_vertex> Compare_edge;
 
-   typedef CGAL::SNC_point_locator_by_spatial_subdivision
-           <CGAL::SNC_decorator<SNC_structure> >    Point_locator;
-
    typedef typename SNC_structure::Items               Items;
-   typedef CGAL::SNC_constructor<Items, SNC_structure> SNC_constructor;
 
    // declarations and defaults
    II v_it, v_pred_it;

@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Cell_attribute_with_point.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Linear_cell_complex
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefClass}{Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>}
+
+\ccInclude{CGAL/Cell_attribute_with_point.h}
+
+\ccDefinition
+  
+The class \ccRefName\ represents an attribute containing a point and
+containing an information when \ccc{Info_} is different from void.
+This class can typically be used to associate a point to each 0-cell
+of a combinatorial map. 
+
+\ccIsModel
+\ccRefConceptPage{CellAttributeWithPoint}
+
+\ccInheritsFrom
+\ccRefIdfierPage{CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>}
+
+\ccParameters
+\ccc{LCC} must be an instantiation of \ccc{Linear_cell_complex} class,\\
+\ccc{Info_} is the type of the information contained in the attribute, \ccc{void} for no information, \\
+\ccc{Tag} is \ccc{Tag_true} to enable the storage of a
+   \ccc{Dart_handle} of the associated cell, \ccc{Tag_false} otherwise,\\
+\ccc{OnMerge} is a functor called when two attributes are merged,  \\
+\ccc{OnSplit} is a functor called when one attribute is split in two. 
+
+   By default, \ccc{OnMerge} and \ccc{OnSplit} are equal to
+   \ccc{Null_functor}; \ccc{Tag} is equal to
+   \ccc{Tag_true}; and \ccc{Info_} is equal to \ccc{void}.
+
+\ccTypes
+\ccThree{typedef LCC::Dart_const_handle;}{}{}
+\ccTypedef{typedef LCC::Point Point;}{}
+\ccGlue
+\ccTypedef{typedef LCC::Dart_handle Dart_handle;}{}
+\ccGlue
+\ccTypedef{typedef LCC::Dart_const_handle Dart_const_handle;}{}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Linear_cell_complex<d,d2,LCCTraits,CMItems,Alloc>}\\
+\ccRefIdfierPage{CGAL::Linear_cell_complex_min_items<d>}\\
+\ccRefIdfierPage{CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>}
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

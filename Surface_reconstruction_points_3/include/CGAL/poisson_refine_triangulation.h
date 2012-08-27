@@ -1,9 +1,10 @@
 // Copyright (c) 2007-2008  INRIA (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -204,11 +205,6 @@ unsigned int poisson_refine_triangulation(
 
   // Convergence is guaranteed if radius_edge_ratio_bound >= 1.0
   CGAL_surface_reconstruction_points_precondition(radius_edge_ratio_bound >= 1.0);
-
-  // Basic geometric types
-  typedef typename Tr::Geom_traits Gt;
-  typedef typename Gt::FT FT;
-  typedef typename Gt::Point_3 Point;
 
   // Mesher_level types
   typedef Poisson_mesh_cell_criteria_3<Tr> Tets_criteria;

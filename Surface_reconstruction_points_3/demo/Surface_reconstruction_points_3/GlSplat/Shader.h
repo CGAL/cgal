@@ -18,6 +18,7 @@
 #define _GLSPLAT_Shader_h_
 
 #include <GL/glew.h>
+#include <CGAL/glu.h>
 
 #ifndef NDEBUG
     #define GL_TEST_ERR\

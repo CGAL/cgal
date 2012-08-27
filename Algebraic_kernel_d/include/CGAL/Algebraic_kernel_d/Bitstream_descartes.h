@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1051,7 +1051,7 @@ public:
    * of the isolated polynomial
    *
    */
-  virtual bool is_certainly_simple_root(int i) const {
+  virtual bool is_certainly_simple_root(int /* i */) const {
     return false;
   }
         
@@ -1060,7 +1060,7 @@ public:
    * of the isolated polynomial
    *
    */
-  virtual bool is_certainly_multiple_root(int i) const {
+  virtual bool is_certainly_multiple_root(int /* i */) const {
     return false;
   }
 
@@ -1230,7 +1230,7 @@ public:
    * has at most one multiple root over the complex numbers, the roots are
    * certainly isolated with success.
    */
-  Bitstream_descartes(M_k_descartes_tag ,
+  Bitstream_descartes(M_k_descartes_tag /* t */,
                       Polynomial f,int m,int k,
                       Bitstream_descartes_rndl_tree_traits traits
                       = Bitstream_descartes_rndl_tree_traits(),
@@ -1244,7 +1244,7 @@ public:
   }
 
 
-  Bitstream_descartes(M_k_descartes_tag t,
+  Bitstream_descartes(M_k_descartes_tag /* t */,
                       Polynomial f,int m,int k,
                       Bitstream_tree tree,
                       Bitstream_descartes_rndl_tree_traits traits
@@ -1299,7 +1299,7 @@ public:
    *
    */
   template<typename InputIterator>
-  Bitstream_descartes(Vert_line_adapter_descartes_tag t,
+  Bitstream_descartes(Vert_line_adapter_descartes_tag /* t */,
                       InputIterator begin,
                       InputIterator end,
                       Bitstream_descartes_rndl_tree_traits traits)

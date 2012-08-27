@@ -1,7 +1,5 @@
 #include <CGAL/Cartesian.h>
-
 #include <CGAL/Monge_via_jet_fitting.h>
-#include <CGAL/Lapack/Linear_algebra_lapack.h>
 
 #include <fstream>
 #include <cassert>

@@ -21,6 +21,13 @@ public:
   QStringList actionsNames() const {
     return QStringList() << "actionInsideOut";
   }
+
+  bool applicable() const { 
+    const Scene_interface::Item_id index = scene->mainSelectionIndex();
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(index)) 
+      || qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+  }
+
 public slots:
   void on_actionInsideOut_triggered();
 

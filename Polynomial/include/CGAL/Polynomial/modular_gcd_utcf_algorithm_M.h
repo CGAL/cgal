@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -66,10 +66,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     timer_init.start();
 #endif
     typedef Polynomial<NT> Poly;
-    typedef Polynomial_traits_d<Poly> PT;
 
-    typedef typename PT::Innermost_coefficient_type IC;
-    
     // will paly the role of content
     typedef typename CGAL::Scalar_factor_traits<Poly>::Scalar  Scalar;
 
@@ -115,7 +112,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     int n = 0; // number of lucky primes 
     int degree_F1 = F1.degree();
     int degree_F2 = F2.degree();
-    int degree_e = std::min(degree_F1,degree_F2);
+    int degree_e = (std::min)(degree_F1,degree_F2);
 
     MScalar mg_;
     MPoly   mF1,mF2,mG_;

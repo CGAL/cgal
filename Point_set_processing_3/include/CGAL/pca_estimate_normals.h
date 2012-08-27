@@ -1,9 +1,10 @@
 // Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -61,7 +62,6 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Plane_3  Plane;
-  typedef typename Kernel::Vector_3 Vector;
 
   // types for K nearest neighbors search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -129,7 +129,7 @@ pca_estimate_normals(
   PointPMap point_pmap, ///< property map InputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
   unsigned int k, ///< number of neighbors.
-  const Kernel& kernel) ///< geometric traits.
+  const Kernel& /*kernel*/) ///< geometric traits.
 {
   CGAL_TRACE("Calls pca_estimate_normals()\n");
 

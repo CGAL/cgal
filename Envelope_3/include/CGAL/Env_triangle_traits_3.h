@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -45,12 +46,12 @@ public:
   typedef Arr_segment_traits_2<Kernel_>             Traits_2;
   typedef typename Traits_2::Point_2                Point_2;
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
+  typedef typename Traits_2::Multiplicity           Multiplicity;
 
   typedef Kernel_                                   Kernel;
   typedef Env_triangle_traits_3<Kernel>             Self;
 
   typedef typename Kernel::Point_3                  Point_3;
-  typedef unsigned int                              Multiplicity;
 
   /*!
    * \class Representation of a 3d triangle with cached data.

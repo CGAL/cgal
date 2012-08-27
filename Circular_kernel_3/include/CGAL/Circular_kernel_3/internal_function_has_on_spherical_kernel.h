@@ -1,9 +1,10 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -57,7 +58,6 @@ namespace CGAL {
     has_on(const typename SK::Line_3 &a, 
            const typename SK::Circular_arc_point_3 &p)
     { 
-      typedef typename SK::Algebraic_kernel Algebraic_kernel;
       typedef typename SK::Polynomials_for_line_3 Equation;
       Equation equation = get_equation<SK>(a);
       return p.rep().coordinates().is_on_line(equation);

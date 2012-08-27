@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -86,13 +86,13 @@ public:
     : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, l)) {}
 
 
-  typename Qualified_result_of<typename R_::Construct_source_2, Ray_2>::type
+  typename boost::result_of<typename R_::Construct_source_2( Ray_2)>::type
   source() const
   {
     return R().construct_source_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R_::Construct_second_point_2, Ray_2>::type
+  typename boost::result_of<typename R_::Construct_second_point_2( Ray_2)>::type
   second_point() const
   {
     return R().construct_second_point_2_object()(*this);
@@ -116,7 +116,7 @@ public:
   }
 
 
-  typename Qualified_result_of<typename R_::Construct_source_2, Ray_2, int >::type
+  typename boost::result_of<typename R_::Construct_source_2( Ray_2 )>::type
   start() const
   {
     return source();

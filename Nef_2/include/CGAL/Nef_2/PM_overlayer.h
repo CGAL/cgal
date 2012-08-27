@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,7 +25,11 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
+#else
+#include <boost/any.hpp>
+#endif
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 13
 #include <CGAL/Nef_2/debug.h>
@@ -48,7 +53,11 @@ struct PMO_from_segs {
 
   Vertex_handle new_vertex(const Point& p)
   { Vertex_handle v = G.new_vertex(p); 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     geninfo<Halfedge_handle>::create(G.info(v));
+    #else
+    G.info(v)=Halfedge_handle();
+    #endif
     return v;
   }
 
@@ -77,15 +86,32 @@ struct PMO_from_segs {
   { D.ending_segment(v,it); }
 
   void halfedge_below(Vertex_handle v, Halfedge_handle e) const
-  { geninfo<Halfedge_handle>::access(G.info(v)) = e; }
+  { 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<Halfedge_handle>::access(G.info(v)) = e;
+    #else
+    *boost::any_cast<Halfedge_handle>(&G.info(v)) = e;
+    #endif
+  }
 
   Halfedge_handle halfedge_below(Vertex_handle v) const
-  { return geninfo<Halfedge_handle>::access(G.info(v)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    return geninfo<Halfedge_handle>::access(G.info(v)); 
+    #else
+    return 
+      boost::any_cast<Halfedge_handle>(G.info(v)); 
+    #endif
+  }
 
   void clear_temporary_vertex_info() const
   { Vertex_handle v;
     for(v = G.vertices_begin(); v!= G.vertices_end(); ++v)
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       geninfo<Halfedge_handle>::clear(G.info(v));
+    #else
+      G.info(v)=boost::any();
+    #endif
   }
 
 
@@ -633,13 +659,32 @@ struct vertex_info {
 };
 
 void assoc_info(Vertex_handle v) const
-{ geninfo<vertex_info>::create(info(v)); }
+{
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  geninfo<vertex_info>::create(info(v));
+  #else
+  info(v)=vertex_info();
+  #endif
+}
 
 void discard_info(Vertex_handle v) const
-{ geninfo<vertex_info>::clear(info(v)); }
+{
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  geninfo<vertex_info>::clear(info(v)); 
+  #else
+  info(v)=boost::any();
+  #endif
+}
 
 vertex_info& ginfo(Vertex_handle v) const
-{ return geninfo<vertex_info>::access(info(v)); }
+{
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  return geninfo<vertex_info>::access(info(v)); 
+  #else
+  return 
+    *boost::any_cast<vertex_info>(&info(v)); 
+  #endif
+}
 
 Mark& mark(Vertex_handle v, int i) const
 { return ginfo(v).m[i]; }
@@ -666,15 +711,36 @@ struct halfedge_info {
 };
 
 void assoc_info(Halfedge_handle e)  const
-{ geninfo<halfedge_info>::create(info(e)); 
-  geninfo<halfedge_info>::create(info(twin(e))); }
+{ 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  geninfo<halfedge_info>::create(info(e)); 
+  geninfo<halfedge_info>::create(info(twin(e)));
+  #else
+  info(e)=halfedge_info();
+  info(twin(e))=halfedge_info();
+  #endif
+}
 
 void discard_info(Halfedge_handle e)  const
-{ geninfo<halfedge_info>::clear(info(e)); 
-  geninfo<halfedge_info>::clear(info(twin(e))); }
+{ 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  geninfo<halfedge_info>::clear(info(e)); 
+  geninfo<halfedge_info>::clear(info(twin(e)));
+  #else
+  info(e)=boost::any();
+  info(twin(e))=boost::any();
+  #endif
+}
 
 halfedge_info& ginfo(Halfedge_handle e)  const
-{ return geninfo<halfedge_info>::access(info(e)); }
+{
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  return geninfo<halfedge_info>::access(info(e));
+  #else
+  return 
+    *boost::any_cast<halfedge_info>(&info(e));
+  #endif
+}
 
 Mark& mark(Halfedge_handle e, int i)  const
 // uedge information we store in the smaller one 
@@ -701,13 +767,32 @@ struct face_info {
 };
 
 void assoc_info(Face_handle f)  const
-{ geninfo<face_info>::create(info(f)); }
+{ 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  geninfo<face_info>::create(info(f)); 
+  #else
+  info(f)=face_info();
+  #endif
+}
 
 void discard_info(Face_handle f)  const
-{ geninfo<face_info>::clear(info(f)); }
+{ 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  geninfo<face_info>::clear(info(f)); 
+  #else
+  info(f)=boost::any();
+  #endif
+}
 
 face_info& ginfo(Face_handle f)  const
-{ return geninfo<face_info>::access(info(f)); }
+{ 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  return geninfo<face_info>::access(info(f)); 
+  #else
+  return 
+    *boost::any_cast<face_info>(&info(f)); 
+  #endif
+}
 
 Mark& mark(Face_handle f, int i)  const
 { return ginfo(f).m[i]; }
@@ -815,7 +900,7 @@ void create_face_objects_pl(const Below_info& D) const
     MinimalHalfedge.push_back(e_min); ++i;
   }
 
-  Face_handle f_outer = this->new_face();
+  (void)/* Face_handle f_outer = */ this->new_face();
   for (int j=0; j<i; ++j) {
     Halfedge_handle e = MinimalHalfedge[j];
       CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));

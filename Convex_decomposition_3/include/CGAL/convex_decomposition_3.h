@@ -1,9 +1,10 @@
 // Copyright (c) 2005-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -36,17 +37,13 @@ template<typename Nef_polyhedron>
 void convex_decomposition_3(Nef_polyhedron& N) 
 {
   typedef typename Nef_polyhedron::SNC_structure  SNC_structure;
-  typedef typename SNC_structure::Vertex_handle Vertex_handle;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
-  typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
-  typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator;
   typedef typename Nef_polyhedron::Point_3            Point_3;
   typedef typename Nef_polyhedron::Vector_3           Vector_3;
   typedef typename Nef_polyhedron::Sphere_point   Sphere_point;
   typedef typename Nef_polyhedron::FT FT;
 
   typedef typename CGAL::Single_wall_creator<Nef_polyhedron>  Single_wall;
-  typedef typename CGAL::Single_wall_creator2<Nef_polyhedron> Single_wall2;
   typedef typename CGAL::YVertical_wall_builder<Nef_polyhedron> YVertical_wall_builder;
   typedef typename CGAL::Reflex_vertex_searcher<Nef_polyhedron>  Reflex_vertex_searcher;
   typedef typename CGAL::Ray_hit_generator2<Nef_polyhedron> Ray_hit2;
@@ -97,7 +94,7 @@ void convex_decomposition_3(Nef_polyhedron& N)
     }  
   }
   
-  int i=0;
+  // int i=0;
   for(nrei=res.negative_redges_begin(); nrei!=res.negative_redges_end(); ++nrei) {
     Halfedge_handle e = (*nrei);
     if(e->point().hx() > 0)
@@ -137,7 +134,7 @@ void convex_decomposition_3(Nef_polyhedron& N)
     }
   }
   
-  i=0;
+  // i=0;
   for(prei=res2.positive_redges_begin(); prei!=res2.positive_redges_end(); ++prei) {
     Halfedge_handle e = (*prei);
     Single_wall W(e,Vector_3(1,0,0));

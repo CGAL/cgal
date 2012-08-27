@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -78,16 +78,13 @@ public:
                          t.transform(this->vertex(3)));
   }
 
-  // FIXME TODO : Why doesn't Qrt work here ???
-  //typename Qualified_result_of<typename R::Construct_vertex_3, Tetrahedron_3, int>::type
-  Point_3
+  typename boost::result_of<typename R::Construct_vertex_3( Tetrahedron_3, int)>::type
   vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this,i);
   }
 
-  //typename Qualified_result_of<typename R::Construct_vertex_3, Tetrahedron_3, int>::type
-  Point_3
+  typename boost::result_of<typename R::Construct_vertex_3( Tetrahedron_3, int)>::type
   operator[](int i) const
   {
     return vertex(i);
@@ -139,7 +136,7 @@ public:
     return R().has_on_unbounded_side_3_object()(*this, p);
   }
 
-  typename Qualified_result_of<typename R::Compute_volume_3, Tetrahedron_3>::type
+  typename boost::result_of<typename R::Compute_volume_3( Tetrahedron_3)>::type
   volume() const
   {
     return R().compute_volume_3_object()(*this);

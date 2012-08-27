@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -19,13 +19,18 @@
 #ifndef CGAL_RS_POLYNOMIAL_1_UTILS_H
 #define CGAL_RS_POLYNOMIAL_1_UTILS_H
 
+#include <CGAL/basic.h>
 #include <gmp.h>
-#include <rs3_fncts.h>
 #include <CGAL/RS/polynomial_1.h>
 #include <CGAL/RS/polynomial_converter.h>
 #include <CGAL/RS/solve_1.h>
-#include <CGAL/RS/ugcd.h>
+#ifdef CGAL_RS_USE_UGCD
+#include <CGAL/RS/ugcd/ugcd.h>
+#endif
 #include <rs_exports.h>
+#ifdef CGAL_USE_RS3
+#include <rs3_fncts.h>
+#endif
 
 namespace CGAL{
 
@@ -64,6 +69,7 @@ public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
     }
 };
 
+#ifdef CGAL_RS_USE_UGCD
 // my modular gcd algorithm
 struct Modgcd_1:
 public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
@@ -85,6 +91,7 @@ public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
         return *result;
     }
 };
+#endif // CGAL_RS_USE_UGCD
 
 // Cont()(c,u) stores in c the gcd of the coefficients of u
 struct Cont:

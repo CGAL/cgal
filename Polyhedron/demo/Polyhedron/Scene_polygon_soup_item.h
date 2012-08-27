@@ -10,7 +10,7 @@
 struct Polygon_soup;
 class Scene_polyhedron_item;
 
-class SCENE_POLYGON_SOUP_EXPORT Scene_polygon_soup_item 
+class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
   : public Scene_item_with_display_list 
 {
   Q_OBJECT
@@ -26,7 +26,7 @@ public:
   QString toolTip() const;
 
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud; } // CHECK THIS!
+  virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=Gouraud && m!=PointsPlusNormals); } // CHECK THIS!
   // OpenGL drawing in a display list
   void direct_draw() const;
   void draw_points() const;

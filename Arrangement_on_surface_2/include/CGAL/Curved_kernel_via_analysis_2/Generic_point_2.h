@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -200,7 +200,7 @@ public:
 
 template <class SweepCurvesAdaptor_2, class Rep_>
 std::ostream& operator << (std::ostream& os,
-    const Generic_point_2<SweepCurvesAdaptor_2, Rep_>& pt) {
+                           const Generic_point_2<SweepCurvesAdaptor_2, Rep_>& pt) {
 
     os << pt.id() << "@";
     if(pt.is_finite())
@@ -213,7 +213,7 @@ std::ostream& operator << (std::ostream& os,
 
 template <class SweepCurvesAdaptor_2, class Rep_>
 std::istream& operator >> (std::istream& is,
-    Generic_point_2<SweepCurvesAdaptor_2, Rep_>& pt) {
+                           Generic_point_2<SweepCurvesAdaptor_2, Rep_>& /* pt */) {
 
     std::cerr << "bogus >> call for generic_point\n";
     return is;

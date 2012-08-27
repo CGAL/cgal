@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -37,6 +38,10 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 293
 #include <CGAL/Nef_2/debug.h>
+
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
 
 namespace CGAL {
 
@@ -707,7 +712,6 @@ class Geometry_io<Cartesian_tag, Kernel> {
     void print_point(std::ostream& out, const CGAL::Point_3<R> p) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
-    typedef typename NV::iterator NV_iter;
 
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
@@ -740,7 +744,6 @@ class Geometry_io<Cartesian_tag, Kernel> {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef typename FracTraits::Numerator_type NumType;
     typedef std::vector<NumType> NV;
-    typedef typename NV::iterator NV_iter;
 
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
@@ -769,7 +772,6 @@ class Geometry_io<Cartesian_tag, Kernel> {
   void print_plane(std::ostream& out, const CGAL::Plane_3<R> p) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
-    typedef typename NV::iterator NV_iter;
 
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
@@ -888,7 +890,11 @@ public:
   typedef typename Infi_box::Standard_vector Standard_vector;
   typedef typename Infi_box::Standard_plane  Standard_plane;
 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
+  #else
+  typedef boost::any GenPtr;
+  #endif
 
   using Base::visit_shell_objects;
 

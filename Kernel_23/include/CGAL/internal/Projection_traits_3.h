@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2010  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -20,7 +21,7 @@
 #ifndef CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 #define CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Segment_3.h>
@@ -147,6 +148,13 @@ public:
     {
       return CGAL::side_of_bounded_circle(project(p),project(q),project(r),project(s) );
     }
+
+    CGAL::Bounded_side operator() (const Point &p, 
+				  const Point &q,
+				  const Point &r) const
+    {
+      return CGAL::side_of_bounded_circle(project(p),project(q),project(r));
+    }
 };
 
 template <class R,int dim>
@@ -217,6 +225,13 @@ public:
     return Point_2(x(p),y(p));
   }
 
+  FT alpha(const Point_2& p, const Point_2& source, const Point_2& target) const
+  {
+    FT dx = target.x() - source.x();
+    FT dy = target.y() - source.y();
+    return (CGAL::abs(dx)>CGAL::abs(dy)) ? ( p.x()-source.x() ) / dx : (p.y()-source.y() ) / dy;
+  }
+
   Object operator()(const Segment_3& s1, const Segment_3& s2) const
   {
     Point_2 s1_source = project(s1.source());
@@ -236,15 +251,15 @@ public:
       const Segment_2* si=CGAL::object_cast<Segment_2>(&o);
       if (si==NULL) return Object();
       FT src[3],tgt[3];
-      tgt[dim] = src[dim] = FT(0); //the third coordinate is the midpoint between the points on s1 and s2
-
-      FT z1 = s1.source()[dim] + ( si->source().x()-s1_source.x() ) / (s1_target.x() - s1_source.x()) * ( s1.target()[dim] - s1.source()[dim] );
-      FT z2 = s2.source()[dim] + ( si->source().x()-s2_source.x() ) / (s2_target.x() - s2_source.x()) * ( s2.target()[dim] - s2.source()[dim] );
+      //the third coordinate is the midpoint between the points on s1 and s2
+      FT z1 = s1.source()[dim] + ( alpha(si->source(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
+      FT z2 = s2.source()[dim] + ( alpha(si->source(), s2_source, s2_target) * ( s2.target()[dim] - s2.source()[dim] ));
       src[dim] = (z1+z2) / FT(2);
 
 
-      z1 = s1.source()[dim] + ( si->target().x()-s1_source.x() ) / (s1_target.x() - s1_source.x()) * ( s1.target()[dim] - s1.source()[dim] );
-      z2 = s2.source()[dim] + ( si->target().x()-s2_source.x() ) / (s2_target.x() - s2_source.x()) * ( s2.target()[dim] - s2.source()[dim] );
+      z1 = s1.source()[dim] + ( alpha(si->target(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
+      z2 = s2.source()[dim] + ( alpha(si->target(), s2_source, s2_target) * ( s2.target()[dim] - s2.source()[dim] ));
+
       tgt[dim] = (z1+z2) / FT(2);
 
 
@@ -256,8 +271,8 @@ public:
     }
     FT coords[3];
     //compute the third coordinate of the projected intersection point onto 3D segments
-    FT z1 = s1.source()[dim] + ( pi->x()-s1_source.x() ) / (s1_target.x() - s1_source.x()) * ( s1.target()[dim] - s1.source()[dim] );
-    FT z2 = s2.source()[dim] + ( pi->x()-s2_source.x() ) / (s2_target.x() - s2_source.x()) * ( s2.target()[dim] - s2.source()[dim] );
+    FT z1 = s1.source()[dim] + ( alpha(*pi, s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
+    FT z2 = s2.source()[dim] + ( alpha(*pi, s2_source, s2_target) * ( s2.target()[dim] - s2.source()[dim] ));
 
     coords[dim] = (z1+z2) / FT(2);
     coords[Projector<R,dim>::x_index] = pi->x();
@@ -326,6 +341,37 @@ public:
   }
 };
 
+template <class R, int dim>
+class Compute_squared_radius_projected
+{
+  typedef typename R::Point_3   Point_3; 
+  typedef typename R::Point_2   Point_2;
+
+  typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+  
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p),y(p));
+  }
+
+  
+public:
+  typename R::FT operator() (const Point_3& p1,const Point_3& p2,const Point_3& p3) const
+  {
+    return R().compute_squared_radius_2_object() ( project(p1),project(p2),project(p3) );
+  }
+  typename R::FT operator() (const Point_3& p1,const Point_3& p2) const
+  {
+    return R().compute_squared_radius_2_object() ( project(p1),project(p2) );
+  }
+
+  typename R::FT operator() (const Point_3& p1) const
+  {
+    return R().compute_squared_radius_2_object() ( project(p1) );
+  }
+};
+
 template < class R, int dim >
 class Projection_traits_3 {
 public:
@@ -347,10 +393,10 @@ public:
   typedef Compare_distance_projected_3<Rp,dim>                Compare_distance_2;
   typedef Squared_distance_projected_3<Rp,dim>                Compute_squared_distance_2;
   typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
+  typedef Compute_squared_radius_projected<Rp,dim>            Compute_squared_radius_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
-  typedef typename Rp::Compute_squared_radius_3               Compute_squared_radius_2;
 
   struct Less_xy_2 {
     typedef bool result_type;

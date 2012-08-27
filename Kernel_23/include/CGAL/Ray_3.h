@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -105,25 +105,25 @@ public:
   bool        collinear_has_on(const Point_3 &p) const;
 */
 
-  Point_3 point(int i) const // TODO : use Qrt
+  typename boost::result_of<typename R::Construct_point_on_3(Ray_3, int)>::type
+  point(int i) const // TODO : use Qrt
   {
     return R().construct_point_on_3_object()(*this, i);
   }
 
-  // FIXME : Use Qrt
-  //typename Qualified_result_of<typename R_::Construct_source_3, Ray_3 >::type
-  Point_3
+  typename boost::result_of<typename R::Construct_source_3(Ray_3)>::type
   source() const
   {
     return R().construct_source_3_object()(*this);
   }
 
-  Point_3 second_point() const // TODO : use Qrt
+  typename boost::result_of<typename R::Construct_second_point_3(Ray_3)>::type
+  second_point() const
   {
     return R().construct_second_point_3_object()(*this);
   }
 
-  Point_3 // FIXME : Use Qrt
+  typename boost::result_of<typename R::Construct_source_3(Ray_3)>::type
   start() const
   {
     return source();

@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -104,8 +105,8 @@ public:
 		    SECORNER, RIGHTFRAME, NECORNER };
   /*{\Xenum a type descriptor for extended points.}*/
 
-  Point_2 epoint(const Standard_FT& m1, const Standard_FT& n1, 
-		 const Standard_FT& m2, const Standard_FT& n2) const
+  Point_2 epoint(const Standard_FT& /*m1*/, const Standard_FT& /*n1*/, 
+		 const Standard_FT& /*m2*/, const Standard_FT& /*n2*/) const
   { 
     CGAL_error_msg( "Bounded_kernel::epoint(..) should not be called");
     return Point_2(); 
@@ -129,7 +130,7 @@ public:
   Point_2 
   construct_point(const Standard_point_2& , 
 		  const Standard_point_2& , 
-		  Point_type& t) const
+		  Point_type& /*t*/) const
   {
     CGAL_error_msg( "Bounded_kernel::construct_point(Point,Point) should not be called");
     return Point_2();
@@ -158,21 +159,21 @@ public:
   }
 
   Point_2 
-  construct_opposite_point(const Standard_line_2& l) const
+  construct_opposite_point(const Standard_line_2& /*l*/) const
   { 
     CGAL_error_msg( "Bounded_kernel::construct_opposite_point(..) should not be called");
     return Point_2();
   }
 
   Point_type 
-  type(const Point_2& p) const
+  type(const Point_2& /*p*/) const
   {
     return STANDARD;
   }
 
 
   bool 
-  is_standard(const Point_2& p) const
+  is_standard(const Point_2& /*p*/) const
   { 
     return true;  
   }
@@ -184,14 +185,14 @@ public:
   }
 
   Standard_line_2 
-  standard_line(const Point_2& p) const
+  standard_line(const Point_2& /*p*/) const
   { 
     CGAL_error_msg( "Bounded_kernel::standard_line(..) should not be called");
     return Standard_line_2();
   }
 
   Standard_ray_2
-  standard_ray(const Point_2& p) const
+  standard_ray(const Point_2& /*p*/) const
   { 
     CGAL_error_msg( "Bounded_kernel::standard_ray(..) should not be called");
     return Standard_ray_2();

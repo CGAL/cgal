@@ -46,23 +46,30 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass}{Alpha_shape_cell_base_3<Traits,Fb>}
+\begin{ccRefClass}{Alpha_shape_cell_base_3<Traits,Fb,ExactAlphaComparisonTag,WeightedTag>}
 
 \ccDefinition
 
 The class \ccRefName\ is the default  model for the concept
 \ccc{AlphaShapeCell_3}.
 
-The class has two parameters. The traits class \ccc{Traits}
-provides the number type for alpha values.
+The class has four parameters. The traits class \ccc{Traits} is the one that is provided
+to the \ccc{Alpha_shape_3} class.
 The second parameter \ccc{Fb} is a base class instantiated by default
-with \ccc{CGAL::Triangulation_cell_base_3<Traits>}. 
+with \ccc{CGAL::Triangulation_cell_base_3<Traits>}.
+The third parameter \ccc{ExactAlphaComparisonTag} is a tag that, when set to
+\ccc{CGAL::Tag_true}, triggers exact comparisons between alpha values. See the description
+provided in the documentation of \ccc{Alpha_shape_3} for more details. The default value is \ccc{CGAL::Tag_false}.
+The fourth parameter \ccc{WeightedTag} is used only if \ccc{ExactAlphaComparisonTag} is \ccc{CGAL::Tag_true}. It 
+must be \ccc{CGAL::Tag_true} if the underlying triangulation of the alpha shape to be used is a regular triangulation
+and \ccc{CGAL::Tag_false} otherwise. The default is \ccc{CGAL::Tag_false}.
+
 
 
 \ccInclude{CGAL/Alpha_shape_cell_base_3.h}
 
 \ccIsModel
-\ccc{AlphaShapeCellBase_3}
+\ccc{AlphaShapeCell_3}
 
 \ccInheritsFrom
 

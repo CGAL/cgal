@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1749,7 +1750,6 @@ public:
 
       if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
         // The underlying planes are the same
-        Equal_2 equal = kernel->equal_2_object();
         Counterclockwise_in_between_2 ccib =
           kernel->counterclockwise_in_between_2_object();
         typename Traits::Clockwise_in_between_2 cib =
@@ -2419,7 +2419,6 @@ public:
     }
 
     // None of the enpoints coincide with a pole:
-    typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
     Direction_2 s = Traits::project_xy(source);
     Direction_2 t = Traits::project_xy(target);
 

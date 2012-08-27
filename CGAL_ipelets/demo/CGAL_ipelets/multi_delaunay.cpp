@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -119,7 +119,6 @@ void MdelaunayIpelet::protected_run(int fn)
         //WE MAY COUNT SEVERAL TIME SAME TRIANGLE WITH THE FOLLOWING METHOD
         //iterate over adjacent point in the regular triangulation and compute a new wpoint for those having one commun parent from delaunay
         for (RegularI::Finite_edges_iterator it=rti.finite_edges_begin();it!=rti.finite_edges_end();++it){
-          VertexI ff=it->first->vertex(Delaunay::cw(it->second));
           Point_2 pt0_ori0=it->first->vertex(Delaunay::cw(it->second))->info().front();
           Point_2 pt0_ori1=it->first->vertex(Delaunay::cw(it->second))->info().back();
           Point_2 pt1_ori0=it->first->vertex(Delaunay::ccw(it->second))->info().front();

@@ -1,9 +1,10 @@
 // Copyright (c) 1998, 2001, 2003  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -206,7 +207,7 @@ public: // some internal methods
 		
   template <class OutputItCells>
   Vertex_handle insert_and_give_new_cells(const Point& p,
-                                          OutputItCells fit,
+                                          OutputItCells /* fit */,
                                           Vertex_handle hint)
   {
     return insert_and_give_new_cells(p, hint == Vertex_handle() ? 

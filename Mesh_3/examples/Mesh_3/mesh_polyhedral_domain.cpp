@@ -38,7 +38,7 @@ int main()
   
   // Mesh criteria (no cell_size set)
   Mesh_criteria criteria(facet_angle=25, facet_size=0.15, facet_distance=0.008,
-                         cell_radius_edge=3);
+                         cell_radius_edge_ratio=3);
   
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
@@ -48,8 +48,8 @@ int main()
   c3t3.output_to_medit(medit_file);
   medit_file.close();
 
-  // Set tetrahedron size (keep cell_radius_edge), ignore facets
-  Mesh_criteria new_criteria(cell_radius_edge=3, cell_size=0.03);
+  // Set tetrahedron size (keep cell_radius_edge_ratio), ignore facets
+  Mesh_criteria new_criteria(cell_radius_edge_ratio=3, cell_size=0.03);
 
   // Mesh refinement
   CGAL::refine_mesh_3(c3t3, domain, new_criteria);

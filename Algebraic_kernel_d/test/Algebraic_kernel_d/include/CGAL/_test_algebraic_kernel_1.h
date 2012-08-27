@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -208,7 +208,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     typedef  std::vector<std::pair<Algebraic_real_1,unsigned int> > ROOTS;
     ROOTS roots;
     Polynomial_1 p1 = (x-1)*(x-2)*(x-2);
-    std::back_insert_iterator<ROOTS> biit =
+    // std::back_insert_iterator<ROOTS> biit =
       solve_1(p1,std::back_inserter(roots));
     Algebraic_real_1 ar = roots[1].first;
     Polynomial_1 p2 = compute_polynomial_1(ar);
@@ -355,25 +355,21 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     ss>>CGAL::iformat(alg2);			\
     assert(alg1==alg2)
     
-    
-    const typename Algebraic_kernel_d_1::Construct_algebraic_real_1 construct_algreal_1 =
-      ak_1.construct_algebraic_real_1_object();
-
     Algebraic_real_1 alg1,alg2;
     std::stringstream ss;
     CGAL::set_ascii_mode(ss);         
     
     // test construction from int, Coefficient and Bound
-    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(int(2)));
-    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(Coefficient(2)));
-    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(Bound(2)));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(int(2)));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(Coefficient(2)));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(Bound(2)));
     
   // construction by index
     Polynomial_1 x = CGAL::shift(Polynomial_1(1),1); // the monom x
-    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(x*x-2,1));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(x*x-2,1));
     
     // construction by isolating interval
-    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(x*x-2,Bound(0),Bound(2)));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(x*x-2,Bound(0),Bound(2)));
 #undef CGAL_TEST_ALGEBRAIC_REAL_IO
   }
 }

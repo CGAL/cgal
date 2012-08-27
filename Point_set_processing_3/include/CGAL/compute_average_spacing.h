@@ -1,9 +1,10 @@
 // Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -55,8 +56,6 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
   // basic geometric types
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Plane_3 Plane;
-  typedef typename Kernel::Vector_3 Vector;
 
   // types for K nearest neighbors search
   typedef Search_traits_3<Kernel> Tree_traits;

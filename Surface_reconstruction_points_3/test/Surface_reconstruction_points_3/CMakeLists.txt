@@ -3,12 +3,10 @@
 project( Surface_reconstruction_points_3_test )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 # Require packages new or improved since CGAL 3.5 beta 1
@@ -52,20 +50,26 @@ if ( CGAL_FOUND )
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" ) # turn on traces
 
-  # Link with BLAS, LAPACK and TAUCS (optional)
-  find_package(TAUCS)
-  if(TAUCS_FOUND)
+  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+  if (NOT EIGEN3_FOUND)
+    find_package(TAUCS)
+    if(TAUCS_FOUND)
+      include( ${TAUCS_USE_FILE} )
+    endif(TAUCS_FOUND)
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
 
-    include( ${TAUCS_USE_FILE} )
+  if(EIGEN3_FOUND OR TAUCS_FOUND)
 
-    # Executables that require TAUCS (thus BLAS and LAPACK)
+    # Executables that require Eigen 3.1 or TAUCS (thus BLAS and LAPACK)
     create_single_source_cgal_program( "poisson_reconstruction_test.cpp" )
 
-  else(TAUCS_FOUND)
+  else()
 
-    message(STATUS "NOTICE: Some of the executables in this directory need the TAUCS library and will not be compiled.")
+    message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) or the TAUCS library and will not be compiled.")
 
-  endif(TAUCS_FOUND)
+  endif()
 
 else()
 

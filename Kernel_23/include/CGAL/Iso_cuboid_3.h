@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -90,75 +90,67 @@ public:
    : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), min_hx, min_hy, min_hz,
 					     max_hx, max_hy, max_hz)) {}
 
-// TODO FIXME : why is Qrt not working here ?
-// TODO       : the Cartesian and Homogeneous functors should be split here
-//              given that the Qrt differs.
-//              (or is the Homogeneous optimization simply not worth it ?)
-  //typename Qualified_result_of<typename R::Construct_min_vertex_3, Iso_cuboid_3 >::type
-  Point_3
+  typename boost::result_of<typename R::Construct_min_vertex_3( Iso_cuboid_3 )>::type
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
     return R().construct_min_vertex_3_object()(*this);
   }
 
-  //typename Qualified_result_of<typename R::Construct_max_vertex_3, Iso_cuboid_3 >::type
-  Point_3
+  typename boost::result_of<typename R::Construct_max_vertex_3( Iso_cuboid_3 )>::type
   max BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
     return R().construct_max_vertex_3_object()(*this);
   }
 
-  //typename Qualified_result_of<typename R::Construct_vertex_3, Iso_cuboid_3 >::type
-  Point_3
+  typename boost::result_of<typename R::Construct_vertex_3( Iso_cuboid_3, int )>::type
   vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this,i);
   }
 
-  //typename Qualified_result_of<typename R::Construct_vertex_3, Iso_cuboid_3 >::type
-  Point_3
+  typename boost::result_of<typename R::Construct_vertex_3( Iso_cuboid_3, int )>::type
   operator[](int i) const
   {
     return R().construct_vertex_3_object()(*this,i);
   }
 
-  typename Qualified_result_of<typename R::Compute_xmin_3, Iso_cuboid_3 >::type
+  typename boost::result_of<typename R::Compute_xmin_3( Iso_cuboid_3 )>::type
   xmin() const
   {
     return R().compute_xmin_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_xmax_3, Iso_cuboid_3 >::type
+  typename boost::result_of<typename R::Compute_xmax_3( Iso_cuboid_3 )>::type
   xmax() const
   {
     return R().compute_xmax_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_ymin_3, Iso_cuboid_3 >::type
+  typename boost::result_of<typename R::Compute_ymin_3( Iso_cuboid_3 )>::type
   ymin() const
   {
     return R().compute_ymin_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_ymax_3, Iso_cuboid_3 >::type
+  typename boost::result_of<typename R::Compute_ymax_3( Iso_cuboid_3 )>::type
   ymax() const
   {
     return R().compute_ymax_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_zmin_3, Iso_cuboid_3 >::type
+  typename boost::result_of<typename R::Compute_zmin_3( Iso_cuboid_3 )>::type
   zmin() const
   {
     return R().compute_zmin_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_zmax_3, Iso_cuboid_3 >::type
+  typename boost::result_of<typename R::Compute_zmax_3( Iso_cuboid_3 )>::type
   zmax() const
   {
     return R().compute_zmax_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_xmin_3, Iso_cuboid_3 >::type
+  typename boost::result_of<typename R::Compute_xmin_3( Iso_cuboid_3 )>::type
   min_coord(int i) const
   {
     CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
@@ -170,7 +162,7 @@ public:
        return zmin();
   }
 
-  typename Qualified_result_of<typename R::Compute_xmax_3, Iso_cuboid_3 >::type
+  typename boost::result_of<typename R::Compute_xmax_3( Iso_cuboid_3 )>::type
   max_coord(int i) const
   {
     CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
@@ -218,7 +210,7 @@ public:
     return R().is_degenerate_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_volume_3, Iso_cuboid_3 >::type
+  typename boost::result_of<typename R::Compute_volume_3( Iso_cuboid_3 )>::type
   volume() const
   {
     return R().compute_volume_3_object()(*this);

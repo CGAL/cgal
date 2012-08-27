@@ -1,9 +1,10 @@
 // Copyright (c) 2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -66,7 +67,7 @@ protected:
   // Data members:
 
   //! The topology-traits class
-  Topology_traits * m_top_traits;
+  Topology_traits* m_top_traits;
 
   //! An arrangement accessor
   Arr_accessor<Arrangement_2> m_arr_access;
@@ -79,11 +80,11 @@ protected:
 
   //! A pointer to a map of halfedges to indices lists
   // (stored in the visitor class)
-  Halfedge_indices_map * m_he_ind_map_p;
+  Halfedge_indices_map* m_he_ind_map_p;
 
 public:
   /*! Constructor. */
-  Arr_spherical_construction_helper(Arrangement_2 * arr) :
+  Arr_spherical_construction_helper(Arrangement_2* arr) :
     m_top_traits(arr->topology_traits()),
     m_arr_access(*arr),
     m_he_ind_map_p(NULL)
@@ -105,7 +106,7 @@ public:
   /*! A notification invoked before the sweep-line starts handling the given
    * event.
    */
-  virtual void before_handle_event(Event * event)
+  virtual void before_handle_event(Event* event)
   {
     // Act according to the boundary type:
     Arr_parameter_space ps_x = event->parameter_space_in_x();
@@ -127,16 +128,13 @@ public:
 
       // Check whether we have a vertex that corresponds to the south pole.
       // If not, we create one.
-      if (m_top_traits->south_pole() == NULL)
-      {
+      if (m_top_traits->south_pole() == NULL) {
         Vertex_handle v =
-            m_arr_access.create_boundary_vertex (xc, ind, ps_x, ps_y);
+            m_arr_access.create_boundary_vertex(xc, ind, ps_x, ps_y);
         event->set_vertex_handle(v);
       }
       else
-      {
-        event->set_vertex_handle(Vertex_handle (m_top_traits->south_pole()));
-      }
+        event->set_vertex_handle(Vertex_handle(m_top_traits->south_pole()));
       return;
     }
 
@@ -157,10 +155,9 @@ public:
 
       // Check whether we have a vertex that corresponds to the north pole.
       // If not, we create one.
-      if (m_top_traits->north_pole() == NULL)
-      {
+      if (m_top_traits->north_pole() == NULL) {
         Vertex_handle v = 
-            m_arr_access.create_boundary_vertex (xc, ind, ps_x, ps_y);
+            m_arr_access.create_boundary_vertex(xc, ind, ps_x, ps_y);
         event->set_vertex_handle(v);
 
         // Since this is the first event corresponding to the north pole,
@@ -172,58 +169,50 @@ public:
         // to later move them to another face.
         m_subcurves_at_nf.clear();
       }
-      else
-      {
-        event->set_vertex_handle(Vertex_handle (m_top_traits->north_pole()));
+      else {
+        event->set_vertex_handle(Vertex_handle(m_top_traits->north_pole()));
 
-        DHalfedge * dprev =
+        DHalfedge* dprev =
           m_top_traits->locate_around_boundary_vertex(m_top_traits->
                                                       north_pole(), xc, ind,
                                                       ps_x, ps_y);
 
-        if (dprev != NULL)
-        {
+        if (dprev != NULL) {
           Halfedge_handle prev = Halfedge_handle(dprev);
           event->set_halfedge_handle(prev);
           
           // Associate all curve indices of subcurves that "see" the top face
           // from below with the left portion of the twin of the predecessor.
           if (m_he_ind_map_p != NULL) {
-            Indices_list & list_ref = (*m_he_ind_map_p)[prev->twin()];
+            Indices_list& list_ref = (*m_he_ind_map_p)[prev->twin()];
             list_ref.splice(list_ref.end(), m_subcurves_at_nf);
           }
           else
-          {
             m_subcurves_at_nf.clear();
-          }
           CGAL_assertion(m_subcurves_at_nf.empty());
         }
         return;
       }
-
       return;
     }
 
     if (ps_x == ARR_LEFT_BOUNDARY) {
       // The event has only right curves.
       CGAL_assertion(event->number_of_left_curves() == 0 &&
-                     event->number_of_right_curves() == 1);
+                     event->number_of_right_curves() >= 1);
       const X_monotone_curve_2 & xc =
         (*(event->right_curves_begin()))->last_curve();
-      DVertex * v = m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
+      DVertex* v = m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
 
       // Check whether a corresponding vertex already exists on the line
       // of discontinuity. If not, create one now.
-      if (v == NULL)
-      {
+      if (v == NULL) {
         Vertex_handle vh =  
-          m_arr_access.create_boundary_vertex (xc, ARR_MIN_END, ps_x, ps_y);
+          m_arr_access.create_boundary_vertex(xc, ARR_MIN_END, ps_x, ps_y);
         event->set_vertex_handle(vh);
       }
       else
-      {
         event->set_vertex_handle(Vertex_handle(v));
-      }
       return;
     }
 
@@ -237,39 +226,33 @@ public:
 
       // Check whether a corresponding vertex already exists on the line
       // of discontinuity. If not, create one now.
-      if (v == NULL)
-      {
+      if (v == NULL) {
         Vertex_handle vh = 
-          m_arr_access.create_boundary_vertex (xc, ARR_MAX_END, ps_x, ps_y);
+          m_arr_access.create_boundary_vertex(xc, ARR_MAX_END, ps_x, ps_y);
         event->set_vertex_handle(vh);
       }
       else
-      {
         event->set_vertex_handle(Vertex_handle(v));
-      }
       return;
     }
   }
 
   /*! A notification invoked when a new subcurve is created. */
-  virtual void add_subcurve(Halfedge_handle he, Subcurve * sc) { return; }
+  virtual void add_subcurve(Halfedge_handle he, Subcurve* sc) { return; }
 
   /*! Collect a subcurve index that does not see any status-line from below.
    */
   void add_subcurve_in_top_face(unsigned int index)
-  {
-    m_subcurves_at_nf.push_back(index);
-    return;
-  }
+  { m_subcurves_at_nf.push_back(index); }
 
   /*! A notification invoked before the given event it deallocated. */
-  void before_deallocate_event(Event * event) { return; }
+  void before_deallocate_event(Event* event) { return; }
   //@} 
   
   /*! Set the map that maps each halfedge to the list of subcurve indices
    * that "see" the halfedge from below.
    */
-  void set_halfedge_indices_map(Halfedge_indices_map & table)
+  void set_halfedge_indices_map(Halfedge_indices_map& table)
   {
     m_he_ind_map_p = &table;
     return;
@@ -278,7 +261,7 @@ public:
   /*! Determine if we should swap the order of predecessor halfedges when
    * calling insert_at_vertices_ex() .
    */
-  bool swap_predecessors (Event * event) const
+  bool swap_predecessors(Event* event) const
   {
     // If we insert an edge whose right end lies on the north pole, we have
     // to flip the order of predecessor halfegdes.

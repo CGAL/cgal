@@ -9,6 +9,7 @@
 #include <qgl.h>
 #include <QtCore/qglobal.h>
 #include <CGAL/gl.h>
+#include <CGAL/glu.h>
 
 class SCENE_C2T3_ITEM_EXPORT Scene_c2t3_item : public Scene_item
 {
@@ -73,7 +74,7 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud); // CHECK THIS!
+    return (m != Gouraud && m!=PointsPlusNormals); // CHECK THIS!
   }
 
   void draw() const {

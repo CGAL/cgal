@@ -4,8 +4,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -56,16 +56,16 @@ class Residue:
     boost::ordered_field_operators2< Residue, int > >{
     
 public:
-    typedef Residue Self;
-    typedef Residue NT;
-
+  typedef Residue Self;
+  typedef Residue NT;
+  
 private:
-    static const double  CST_CUT; 
-
+  CGAL_EXPORT static const double  CST_CUT; 
+  
 #ifdef CGAL_HAS_THREADS
-  static boost::thread_specific_ptr<int>    prime_int_;
-  static boost::thread_specific_ptr<double> prime_;
-  static boost::thread_specific_ptr<double> prime_inv_;
+  CGAL_EXPORT static boost::thread_specific_ptr<int>    prime_int_;
+  CGAL_EXPORT static boost::thread_specific_ptr<double> prime_;
+  CGAL_EXPORT static boost::thread_specific_ptr<double> prime_inv_;
   
   static void init_class_for_thread(){
     CGAL_precondition(prime_int_.get() == NULL); 
@@ -94,9 +94,9 @@ private:
     return *prime_inv_.get();
   }
 #else
-  static int prime_int;
-  static double prime;
-  static double prime_inv;
+  CGAL_EXPORT  static int prime_int;
+  CGAL_EXPORT  static double prime;
+  CGAL_EXPORT  static double prime_inv;
   static int get_prime_int(){ return prime_int;}
   static double get_prime()    { return prime;}
   static double get_prime_inv(){ return prime_inv;}  
@@ -228,7 +228,7 @@ public:
 
     //! constructor of Residue, from long 
     Residue(long n){
-        x_= RES_reduce(n);
+        x_= RES_reduce((double)n);
     }
    
     //! Access operator for x, \c const 
@@ -306,14 +306,13 @@ inline std::ostream& operator << (std::ostream& os, const Residue& p) {
 }
 
 inline std::istream& operator >> (std::istream& is, Residue& p) {
-    typedef Residue RES;
     char ch;
     int prime;
 
     is >> p.x();
     is >> ch;    // read the %
     is >> prime; // read the prime
-    CGAL_precondition(prime==RES::get_current_prime());
+    CGAL_precondition(prime==Residue::get_current_prime());
     return is;
 }
 

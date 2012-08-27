@@ -1,14 +1,12 @@
 #ifndef GLSPLAT_CONFIG_H
 #define GLSPLAT_CONFIG_H
 
-#ifdef WIN32
-  #ifdef gl_splat_EXPORTS
-    #define GLSPLAT_EXPORT __declspec(dllexport)
-  #else
-    #define GLSPLAT_EXPORT __declspec(dllimport)
-  #endif
-#else // if not Windows
-    #define GLSPLAT_EXPORT
+#include <CGAL/export/helpers.h>
+
+#ifdef gl_splat_EXPORTS
+  #define GLSPLAT_EXPORT CGAL_DLL_EXPORT
+#else
+  #define GLSPLAT_EXPORT CGAL_DLL_IMPORT
 #endif
 
 #endif // GLSPLAT_CONFIG_H

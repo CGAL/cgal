@@ -3,47 +3,38 @@
 
 find_package( GMP REQUIRED )
 
-if( NOT GMP_FOUND )
+if( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
-  message( ERROR "NTL requires GMP" )
+  message( FATAL_ERROR "NTL requires GMP" )
   set( NTL_FOUND FALSE )
 
-else( NOT GMP_FOUND )
+else( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
   include( CGAL_VersionUtils )
+
+  get_dependency_version( GMP )
 
   IS_VERSION_LESS("${GMP_VERSION}" "3.1.1" _IS_GMP_VERSION_TOO_LOW)
 
   if( _IS_GMP_VERSION_TOO_LOW )
 
-    message( ERROR, "NTL needs GMP>=3.1.1. Your GMP version is ${CGAL_GMP_VERSION}." )
+    message( FATAL_ERROR, "NTL needs GMP>=3.1.1. Your GMP version is ${GMP_VERSION}." )
 
   else( _IS_GMP_VERSION_TOO_LOW )
 
     find_path(NTL_INCLUDE_DIR
-              NAMES NTL/ZZX.h
-              PATHS ENV NTL_INC_DIR
+              NAMES NTL/ZZ.h
+              HINTS
+              $ENV{NTL_INC_DIR}
               DOC "The directory containing the NTL include files"
-              NO_DEFAULT_PATH
              )
 
     find_library(NTL_LIBRARY
                  NAMES ntl
-                 PATHS ENV NTL_LIB_DIR
+                 HINTS
+                 $ENV{NTL_LIB_DIR}
                  DOC "Path to the NTL library"
-                 NO_DEFAULT_PATH
                 )
-
-    # TODO if NTL_INC_DIR is given you should not search in default path
-
-#    find_library(NTL_LIBRARY
-#                 NAMES ntl
-#                 PATHS ENV NTL_LIB_DIR
-#                 DOC "Path to the NTL library"
-#                )
-
-#    message( STATUS "NTL_INCLUDE_DIR = '${NTL_INCLUDE_DIR}'" )
-#    message( STATUS "NTL_LIBRARY = '${NTL_LIBRARY}'" )
 
     if ( NTL_INCLUDE_DIR AND NTL_LIBRARY ) 
       
@@ -80,7 +71,7 @@ else( NOT GMP_FOUND )
 
       get_filename_component(NTL_LIBRARIES_DIR ${NTL_LIBRARIES} PATH CACHE )
 
-      include(CGAL_FindPackageHandleStandardArgs)
+      include(FindPackageHandleStandardArgs)
 
       find_package_handle_standard_args( NTL
                                          DEFAULT_MSG
@@ -96,10 +87,9 @@ else( NOT GMP_FOUND )
 
   endif( _IS_GMP_VERSION_TOO_LOW )
 
-endif( NOT GMP_FOUND )
+endif( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
 if ( NTL_FOUND )
-  set( NTL_USE_FILE "CGAL_UseNTL" )
 #  if ( NOT NTL_FIND_QUIETLY )
 #    message(STATUS "Found NTL: ${NTL_LIBRARY}")
 #  endif (NOT NTL_FIND_QUIETLY )

@@ -1,9 +1,10 @@
 // Copyright (c) 2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -134,7 +135,6 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    typedef Triangulation_indirect_traits_2<Circulator, Traits>  Gt;
 
    typedef Constrained_triangulation_2<Gt>             Constrained_tri_2;
-   typedef typename Constrained_tri_2::Edge_iterator   Edge_iterator;
    typedef typename Constrained_tri_2::Edge_circulator Edge_circulator;
    typedef typename Constrained_tri_2::Vertex_iterator Tri_vertex_iterator;
    typedef typename Constrained_tri_2::Vertex_handle   Vertex_handle;

@@ -1,4 +1,5 @@
 #include "Viewer.h"
+#include <CGAL/glu.h>
 
 using namespace std;
 

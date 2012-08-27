@@ -1,9 +1,10 @@
 // Copyright (c) 2005,2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -46,7 +47,7 @@ template < class Traits>
 std::ostream& operator<<(
 			 std::ostream &out,const Trapezoidal_decomposition_2<Traits>& td)
 {
-  return write(out,td.data_structure(),td.get_traits());
+  return write(out,td.dag_root(),td.get_traits());
 }
 
 template < class Traits>
@@ -58,14 +59,16 @@ std::ostream& write(std::ostream &out,const Td_X_trapezoid<Traits>& t,
   typedef X_trapezoid* pointer;
   bool pad=false;
 
+  //MICHAL: this may fail for inactive trapezoids
+
   out << "(";
-  if (!t.is_left_unbounded()) out << t.left(); else out << "-oo";
+  if (!t.is_on_left_boundary()) out << t.left(); else out << "-oo"; //MICHAL: this may fail for removed point
   out << ",";
-  if (!t.is_right_unbounded()) out << t.right(); else out << "+oo";
+  if (!t.is_on_right_boundary()) out << t.right(); else out << "+oo";
   out << "," << std::flush;
-  if (!t.is_bottom_unbounded()) out << t.bottom(); else out << "-oo";
+  if (!t.is_on_bottom_boundary()) out << t.bottom(); else out << "-oo";
   out << ",";
-  if (!t.is_top_unbounded()) out << t.top(); else out << "+oo";
+  if (!t.is_on_top_boundary()) out << t.top(); else out << "+oo";
   out << ",neighbours(" << std::flush;
 	
   // debug neighbours equivalence relation
@@ -75,11 +78,11 @@ std::ostream& write(std::ostream &out,const Td_X_trapezoid<Traits>& t,
   X_trapezoid* value[] =
     {
       0,
-      (X_trapezoid*)CGAL_TRAPEZOIDAL_DECOMPOSITION_2_DELETE_SIGNATURE,
-      t.left_bottom_neighbour(),
-      t.left_top_neighbour(),
-      t.right_bottom_neighbour(),
-      t.right_top_neighbour()
+      (X_trapezoid*)CGAL_TD_DELETE_SIGNATURE,
+      t.lb(),
+      t.lt(),
+      t.rb(),
+      t.rt()
     };
   typedef char debug_string[256];
   debug_string name[]=
@@ -113,32 +116,32 @@ std::ostream& write(std::ostream &out,const Td_X_trapezoid<Traits>& t,
       else pad=true;
       out << name[j];
       // identify neighbours
-      if (traits.is_degenerate_point(t) && value[j])
+      if (traits.is_td_vertex(t) && value[j])
 	out << "=" << value[j]->top();
     }
   out << ")" << std::flush;
 	
   if (t.is_active())
     {
-      if (!traits.is_degenerate(t))
+      if (traits.is_td_trapezoid(t))
 	{
 	  if (t.is_unbounded())
 	    {
 	      out << ",U=";
-	      if (t.is_left_unbounded())   out << ")";
-	      if (t.is_bottom_unbounded()) {
-		if (t.is_top_unbounded())    
+	      if (t.is_on_left_boundary())   out << ")";
+	      if (t.is_on_bottom_boundary()) {
+		if (t.is_on_top_boundary())    
 		  out << "/\\/";
 		else 
 		  out << "/\\";
 	      }
-	      else if (t.is_top_unbounded())    out << "\\/";
-	      if (t.is_right_unbounded())  out << "(";
+	      else if (t.is_on_top_boundary())    out << "\\/";
+	      if (t.is_on_right_boundary())  out << "(";
 	    }
 	  else
 	    out << ",T";
 	}
-      else if (traits.is_degenerate_curve(t))
+      else if (traits.is_td_edge(t))
 	out << ",C";
       else // if (t.is_degenerate_point())
 	out << ",P";
@@ -169,14 +172,16 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
   typedef X_trapezoid* pointer;
   Traits traits;
 
+  //MICHAL: this may fail for inactive trapezoids
+
   out << "(";
-  if (!t.is_left_unbounded()) out << t.left(); else out << "-oo";
+  if (!t.is_on_left_boundary()) out << t.left(); else out << "-oo";
   out << ",";
-  if (!t.is_right_unbounded()) out << t.right(); else out << "+oo";
+  if (!t.is_on_right_boundary()) out << t.right(); else out << "+oo";
   out << "," << std::flush;
-  if (!t.is_bottom_unbounded()) out << t.bottom(); else out << "-oo";
+  if (!t.is_on_bottom_boundary()) out << t.bottom(); else out << "-oo";
   out << ",";
-  if (!t.is_top_unbounded()) out << t.top(); else out << "+oo";
+  if (!t.is_on_top_boundary()) out << t.top(); else out << "+oo";
   out << ",neighbours(" << std::flush;
 	
   // debug neighbours equivalence relation
@@ -186,11 +191,11 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
   X_trapezoid* value[] =
     {
       0,
-      (X_trapezoid*)CGAL_TRAPEZOIDAL_DECOMPOSITION_2_DELETE_SIGNATURE,
-      t.left_bottom_neighbour(),
-      t.left_top_neighbour(),
-      t.right_bottom_neighbour(),
-      t.right_top_neighbour()
+      (X_trapezoid*)CGAL_TD_DELETE_SIGNATURE,
+      t.lb(),
+      t.lt(),
+      t.rb(),
+      t.rt()
     };
   typedef char debug_string[256];
   debug_string name[]=
@@ -222,7 +227,7 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
     {
       out << name[j];
       // identify neighbours
-      if (traits.is_degenerate_point(t) && value[j])
+      if (traits.is_td_vertex(t) && value[j])
 	out << "=" << value[j]->top();
       out << " ";
     }
@@ -230,24 +235,24 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
 	
   if (t.is_active())
     {
-      if (!traits.is_degenerate(t))
+      if (traits.is_td_trapezoid(t))
 	{
 	  if (t.is_unbounded())
 	    {
 	      out << ",U";
-	      if (t.is_left_unbounded())
+	      if (t.is_on_left_boundary())
 		out << (char) 174;
-	      if (t.is_bottom_unbounded())
+	      if (t.is_on_bottom_boundary())
 		out << (char) 25;
-	      if (t.is_top_unbounded())
+	      if (t.is_on_top_boundary())
 		out << (char) 24;
-	      if (t.is_right_unbounded())
+	      if (t.is_on_right_boundary())
 		out << (char) 175;
 	    }
 	  else
 	    out << ",T";
 	}
-      else if (traits.is_degenerate_curve(t))
+      else if (traits.is_td_edge(t))
 	out << ",C";
       else // if (t.is_degenerate_point())
 	out << ",P";

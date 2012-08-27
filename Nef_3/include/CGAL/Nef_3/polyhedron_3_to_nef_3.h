@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -178,7 +179,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   typedef Polyhedron_                                Polyhedron;
   typedef typename Polyhedron::Facet::Plane_3        Plane;
   typedef typename Polyhedron::Traits::Kernel        Kernel;
-  typedef typename SNC_structure::SNC_decorator      SNC_decorator;
   typedef typename SNC_structure::SM_decorator       SM_decorator;
   typedef typename SNC_structure::Vertex_handle      Vertex_handle;
   typedef typename SNC_structure::SVertex_handle     SVertex_handle;
@@ -186,7 +186,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   typedef typename SNC_structure::SFace_handle       SFace_handle;
   typedef typename SNC_structure::Point_3            Point_3;
   typedef typename SNC_structure::Sphere_point       Sphere_point;
-  typedef typename SNC_structure::Sphere_segment     Sphere_segment;
   typedef typename SNC_structure::Sphere_circle      Sphere_circle;
 
   typedef typename Polyhedron::Halfedge_around_vertex_const_circulator

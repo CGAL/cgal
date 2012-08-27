@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -35,6 +36,9 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 67
 #include <CGAL/Nef_2/debug.h>
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
 
 namespace CGAL {
 
@@ -73,7 +77,12 @@ typedef typename Map::Mark   Mark;
 typedef size_t Size_type;
 /*{\Mtypemember size type.}*/
 
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 typedef void*  GenPtr;
+#else
+typedef boost::any GenPtr;
+#endif
+
 
 // typedef typename Map::Constructor_const_parameter Constructor_parameter;
 typedef typename Map::SVertex_const_handle SVertex_const_handle;
@@ -285,8 +294,6 @@ check_integrity_and_topological_planarity(bool faces) const
     EI(shalfedges_begin(),shalfedges_end(),'e');
   Object_index<SFace_const_iterator> 
     FI(sfaces_begin(),sfaces_end(),'f');
-  typedef SHalfedge_around_svertex_const_circulator hvc_circulator;
-  typedef SHalfedge_around_sface_const_circulator   hfc_circulator;
   SVertex_const_handle v;
   int iso_vert_num=0;
   /* check the source links of out edges and count isolated vertices */

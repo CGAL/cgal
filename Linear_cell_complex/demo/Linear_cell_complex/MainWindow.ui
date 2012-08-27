@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>635</width>
+    <height>504</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CGAL 3D Linear Cell Complex</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout">
+    <item>
+     <layout class="QHBoxLayout"/>
+    </item>
+    <item>
+     <widget class="Viewer" name="viewer" native="true"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>635</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionImportOFF"/>
+    <addaction name="actionAddOFF"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport3DTDS"/>
+    <addaction name="actionCompute_Voronoi_3D"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuOperations">
+    <property name="title">
+     <string>&amp;Operations</string>
+    </property>
+    <addaction name="actionTriangulate_all_facets"/>
+    <addaction name="actionSew3_same_facets"/>
+    <addaction name="actionUnsew3_all"/>
+    <addaction name="actionMerge_all_volumes"/>
+    <addaction name="actionRemove_filled_volumes"/>
+    <addaction name="separator"/>
+    <addaction name="actionSubdivide"/>
+    <addaction name="actionSubdivide_pqq"/>
+    <addaction name="actionClose_volume"/>
+    <addaction name="actionDual_3"/>
+   </widget>
+   <widget class="QMenu" name="menuCreations">
+    <property name="title">
+     <string>&amp;Creations</string>
+    </property>
+    <addaction name="actionCreate_cube"/>
+    <addaction name="actionCreate3Cubes"/>
+    <addaction name="actionCreate2Volumes"/>
+    <addaction name="actionCreate_mesh"/>
+    <addaction name="actionCreate_Menger_Sponge"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionExtend_filled_volumes"/>
+    <addaction name="actionExtend_hidden_volumes"/>
+    <addaction name="separator"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuCreations"/>
+   <addaction name="menuOperations"/>
+   <addaction name="menuView"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionImportOFF">
+   <property name="text">
+    <string>&amp;Import OFF</string>
+   </property>
+  </action>
+  <action name="actionAddOFF">
+   <property name="text">
+    <string>Add &amp;OFF</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionSubdivide">
+   <property name="text">
+    <string>&amp;Subdivide all volumes</string>
+   </property>
+  </action>
+  <action name="actionSubdivide_pqq">
+   <property name="text">
+    <string>&amp;Subdivide all volumes - by Pqq</string>
+   </property>
+  </action>
+  <action name="actionCreate3Cubes">
+   <property name="text">
+    <string>Create &amp;3 cubes</string>
+   </property>
+  </action>
+  <action name="actionImport3DTDS">
+   <property name="text">
+    <string>Import 3D&amp;TS</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>&amp;Clear</string>
+   </property>
+  </action>
+  <action name="actionCreate2Volumes">
+   <property name="text">
+    <string>Create &amp;2 volumes</string>
+   </property>
+  </action>
+  <action name="actionDual_3">
+   <property name="text">
+    <string>&amp;Dual</string>
+   </property>
+  </action>
+  <action name="actionClose_volume">
+   <property name="text">
+    <string>&amp;Close all volumes</string>
+   </property>
+  </action>
+  <action name="actionCreate_cube">
+   <property name="text">
+    <string>Create &amp;cube</string>
+   </property>
+  </action>
+  <action name="actionSew3_same_facets">
+   <property name="text">
+    <string>S&amp;ew3 all same facets</string>
+   </property>
+  </action>
+  <action name="actionCreate_mesh">
+   <property name="text">
+    <string>Create &amp;mesh</string>
+   </property>
+  </action>
+  <action name="actionCreate_Menger_Sponge">
+   <property name="text">
+    <string>Create Menger Sponge</string>
+   </property>
+  </action>
+  <action name="actionRemove_filled_volumes">
+   <property name="text">
+    <string>&amp;Remove volumes</string>
+   </property>
+  </action>
+  <action name="actionTriangulate_all_facets">
+   <property name="text">
+    <string>&amp;Triangulate facets</string>
+   </property>
+  </action>
+  <action name="actionUnsew3_all">
+   <property name="text">
+    <string>&amp;Unsew3 volumes</string>
+   </property>
+  </action>
+  <action name="actionVolume_list">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Volume list</string>
+   </property>
+  </action>
+  <action name="actionExtend_filled_volumes">
+   <property name="text">
+    <string>Extend &amp;filled volumes</string>
+   </property>
+  </action>
+  <action name="actionExtend_hidden_volumes">
+   <property name="text">
+    <string>Extend &amp;hidden volumes</string>
+   </property>
+  </action>
+  <action name="actionCompute_Voronoi_3D">
+   <property name="text">
+    <string>Compute Voronoi 3D</string>
+   </property>
+  </action>
+  <action name="actionMerge_all_volumes">
+   <property name="text">
+    <string>&amp;Merge volumes</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Viewer</class>
+   <extends>QWidget</extends>
+   <header>Viewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

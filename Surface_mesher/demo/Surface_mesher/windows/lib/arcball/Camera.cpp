@@ -11,6 +11,7 @@
 #include "stdafx.h"
 #include "Camera.h"
 #include <math.h>
+#include <CGAL/glu.h>
 
 
 //////////////////////////////////////////////

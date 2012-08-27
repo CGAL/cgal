@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -99,7 +99,7 @@ Ray_2_Ray_2_pair<K>::intersection_type() const
         return _result;
     case Line_2_Line_2_pair<K>::LINE:
         {
-        typedef typename K::RT RT;
+        //typedef typename K::RT RT;
         const typename K::Vector_2 &dir1 = _ray1->direction().to_vector();
         const typename K::Vector_2 &dir2 = _ray2->direction().to_vector();
         if (CGAL_NTS abs(dir1.x()) > CGAL_NTS abs(dir1.y())) {

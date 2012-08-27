@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -593,8 +593,9 @@ public:
      * lexicographic order of endpoints is ensured automatically, hence no
      * special handling is required
      */
-    result_type operator()(const Arc_2& cv, const Point_2& p,
-                                          const Point_2& q) const {
+    result_type operator()(const Arc_2& cv, 
+                           const Point_2& /* p */,
+                           const Point_2& /* q */) const {
         SCA_CERR("\n\nWARNING!! New_endpoints_opposite_2: cv: " << cv <<
             "\n p: " << p << "\n q: " << q << std::endl);
         CGAL_error_msg("New_endpoints_opposite_2 deprecated and must not be \

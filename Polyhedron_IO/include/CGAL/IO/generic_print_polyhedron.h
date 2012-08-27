@@ -1,9 +1,10 @@
 // Copyright (c) 1997  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -32,7 +33,6 @@ generic_print_polyhedron( std::ostream&     out,
                           const Polyhedron& P,
                           Writer&           writer) {
     // writes P to `out' in the format provided by `writer'.
-    typedef typename Polyhedron::Vertex                                 Vertex;
     typedef typename Polyhedron::Vertex_const_iterator                  VCI;
     typedef typename Polyhedron::Facet_const_iterator                   FCI;
     typedef typename Polyhedron::Halfedge_around_facet_const_circulator HFCC;

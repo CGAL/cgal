@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -27,6 +27,11 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
+// Workaround for a bug in Boost, that checks WIN64 instead of _WIN64
+//   https://svn.boost.org/trac/boost/ticket/5519
+#if defined(_WIN64) && ! defined(WIN64)
+#  define WIN64
+#endif
 
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
 // Mimic users including this file which defines min max macros
@@ -34,8 +39,21 @@
 #include <windows.h>
 #endif
 
+#if defined(CGAL_TEST_SUITE) && defined(NDEBUG)
+#  error The test-suite needs no NDEBUG defined
+#endif // CGAL_TEST_SUITE and NDEBUG
+
+// Workaround to the following bug:
+//   https://bugreports.qt.nokia.com/browse/QTBUG-22829
+#ifdef Q_MOC_RUN
+// When Qt moc runs on CGAL files, do not process
+// <boost/type_traits/has_operator.hpp>
+#  define BOOST_TT_HAS_OPERATOR_HPP_INCLUDED
+#endif
+
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
 #include <boost/config.hpp>
+#include <boost/version.hpp>
 
 #include <CGAL/version.h>
 
@@ -46,12 +64,67 @@
 #include <CGAL/compiler_config.h>
 
 //----------------------------------------------------------------------//
-//  Enable C++0x features with GCC -std=c++0x (even when not specified at build time)
+//  Support for DLL on Windows (CGAL_EXPORT macro)
 //----------------------------------------------------------------------//
 
-#if defined __GNUC__ && defined __GXX_EXPERIMENTAL_CXX0X__
-#  include <CGAL/internal/gcc_cpp0x.h>
+#include <CGAL/export/CGAL.h>
+
+//----------------------------------------------------------------------//
+//  Detect features at compile-time. Some macros have only been
+//  introduced as of Boost 1.40. In that case, we simply say that the
+//  feature is not available, even if that is wrong.
+//  ----------------------------------------------------------------------//
+
+#if defined(BOOST_NO_0X_HDR_ARRAY) || BOOST_VERSION < 104000
+#define CGAL_CFG_NO_CPP0X_ARRAY 1
 #endif
+#if defined(BOOST_NO_DECLTYPE)
+#define CGAL_CFG_NO_CPP0X_DECLTYPE 1
+#endif
+#if defined(BOOST_NO_DELETED_FUNCTIONS) || defined(BOOST_NO_DEFAULTED_FUNCTIONS)
+#define CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS 1
+#endif
+#if defined(BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS)
+#define CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES 1
+#endif
+#if defined(BOOST_NO_INITIALIZER_LISTS)
+#define CGAL_CFG_NO_CPP0X_INITIALIZER_LISTS 1
+#endif
+#if defined(_MSC_VER) && _MSC_VER <= 1600
+#define CGAL_CFG_NO_CPP0X_ISFINITE 1
+#endif
+#if defined(BOOST_NO_LONG_LONG)
+#define CGAL_CFG_NO_CPP0X_LONG_LONG 1
+#endif
+#if defined(BOOST_NO_LAMBDAS) || BOOST_VERSION < 104000
+#define CGAL_CFG_NO_CPP0X_LAMBDAS 1
+#endif
+#if defined(BOOST_NO_RVALUE_REFERENCES)
+#define CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE 1
+#endif
+#if defined(BOOST_NO_STATIC_ASSERT)
+#define CGAL_CFG_NO_CPP0X_STATIC_ASSERT 1
+#endif
+#if defined(BOOST_NO_0X_HDR_TUPLE) || (BOOST_VERSION < 104000)
+#define CGAL_CFG_NO_CPP0X_TUPLE 1
+#endif
+#if defined(BOOST_NO_VARIADIC_TEMPLATES)
+#define CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES 1
+#endif
+#if !defined(BOOST_HAS_TR1_ARRAY)
+#define CGAL_CFG_NO_TR1_ARRAY 1
+#endif
+#if !defined(BOOST_HAS_TR1_TUPLE)
+#define CGAL_CFG_NO_TR1_TUPLE 1
+#endif
+#if !defined(__GNUC__)
+#define CGAL_CFG_NO_STATEMENT_EXPRESSIONS 1
+#endif
+#if __cplusplus < 201103L && !(_MSC_VER >= 1600)
+#define CGAL_CFG_NO_CPP0X_COPY_N 1
+#define CGAL_CFG_NO_CPP0X_NEXT_PREV 1
+#endif
+
 
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it
@@ -150,11 +223,6 @@
 #  ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
 #    error "CGAL does not support SunPRO with the old Rogue Wave STL: use STLPort."
 #  endif
-
-// Sun CC has an issue with templates that means overloading
-// Qualified_result_of does not work so well.
-#  define CGAL_CFG_DONT_OVERLOAD_TOO_MUCH 1
-
 #endif
 
 #ifdef __SUNPRO_CC

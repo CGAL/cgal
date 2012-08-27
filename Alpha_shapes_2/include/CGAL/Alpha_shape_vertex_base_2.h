@@ -1,9 +1,10 @@
-// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997, 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -22,28 +23,31 @@
 
 #include <utility>
 #include <CGAL/Triangulation_vertex_base_2.h>
+#include <CGAL/internal/Lazy_alpha_nt_2.h>
 
 //-------------------------------------------------------------------
 namespace CGAL {
 //-------------------------------------------------------------------
 
-template <class Gt, class Vb = Triangulation_vertex_base_2<Gt> >
-class Alpha_shape_vertex_base_2 : public Vb
+template <class Gt, class Vb_ = Default, class ExactAlphaComparisonTag = Tag_false >
+class Alpha_shape_vertex_base_2 : public Default::Get<Vb_, Triangulation_vertex_base_2<Gt> >::type
 {
+  typedef typename Default::Get<Vb_, Triangulation_vertex_base_2<Gt> >::type Vb;
   typedef typename Vb::Triangulation_data_structure  TDS;
 public:
   typedef TDS                             Triangulation_data_structure;
   typedef typename TDS::Vertex_handle     Vertex_handle;
   typedef typename TDS::Face_handle       Face_handle;
 
-  typedef typename Gt::FT                Coord_type;
-  typedef std::pair< Coord_type, Coord_type >    Interval2;
+  typedef typename internal::Alpha_nt_selector_2<Gt,ExactAlphaComparisonTag>::Type_of_alpha Type_of_alpha;
+  typedef Type_of_alpha FT;
+  typedef std::pair< Type_of_alpha, Type_of_alpha >    Interval2;
   typedef typename Vb::Point                   Point;
 
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other    Vb2;
-    typedef Alpha_shape_vertex_base_2 <Gt,Vb2>         Other;
+    typedef Alpha_shape_vertex_base_2 <Gt,Vb2,ExactAlphaComparisonTag>         Other;
   };
 private:
   Interval2 I;

@@ -1,0 +1,71 @@
+/* Copyright (c) 2005,2006  Stanford University (USA).
+ * All rights reserved.
+ *
+ * This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * Licensees holding a valid commercial license may use this file in
+ * accordance with the commercial license agreement provided with the software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * $URL$
+ * $Id$
+ *
+ * Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
+ */
+
+/* XPM */
+static const char * reverse_xpm[] = {
+"27 27 21 1",
+" 	c None",
+".	c #000000",
+"+	c #101010",
+"@	c #404040",
+"#	c #8A8A8A",
+"$	c #272727",
+"%	c #ADADAD",
+"&	c #9D9D9D",
+"*	c #060606",
+"=	c #C1C1C1",
+"-	c #454545",
+";	c #B1B1B1",
+">	c #C0C0C0",
+",	c #5A5A5A",
+"'	c #656565",
+")	c #2D2D2D",
+"!	c #0B0B0B",
+"~	c #4D4D4D",
+"{	c #CCCCCC",
+"]	c #1B1B1B",
+"^	c #999999",
+"                           ",
+"                           ",
+"                           ",
+"                           ",
+"     ...........+@#        ",
+"     ..............$%      ",
+"     ................&     ",
+"     ................*=    ",
+"     .................-    ",
+"     ..................;   ",
+"                >,.....'   ",
+"                  ,....)   ",
+"                  >....!   ",
+"                   .....   ",
+"                  >....!   ",
+"         ~        ,....)   ",
+"       {~.      >,.....'   ",
+"      {]...............;   ",
+"     ^]...............-    ",
+"    ^................*=    ",
+"    ^................&     ",
+"     ^]............$%      ",
+"      {]........+@#        ",
+"       {~.                 ",
+"         ~                 ",
+"                           ",
+"                           "};

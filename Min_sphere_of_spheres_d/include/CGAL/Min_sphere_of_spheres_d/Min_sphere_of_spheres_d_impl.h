@@ -1,9 +1,10 @@
 // Copyright (c) 1997  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -63,7 +64,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   template<class Traits>
   void Min_sphere_of_spheres_d<Traits>::update(LP_algorithm) {
     using namespace Min_sphere_of_spheres_d_impl;
-    const int n = l.size();
+    const int n = (int)l.size();
     int i, k = n;
     do {
       CGAL_MINIBALL_ASSERT(k>=e && e>=0);
@@ -223,7 +224,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
   template<class Traits>
   void Min_sphere_of_spheres_d<Traits>::update(Farthest_first_heuristic) {
-    const int n = l.size();
+    const int n = (int)l.size();
     int i = e;
     CGAL_MINIBALL_ASSERT(e <= n);
   

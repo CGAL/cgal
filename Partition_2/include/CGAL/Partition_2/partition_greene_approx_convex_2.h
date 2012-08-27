@@ -1,9 +1,10 @@
 // Copyright (c) 2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -360,7 +361,6 @@ void change_top_chain(Polygon& polygon,
          {
             std::copy(new_point_ref, stack.before_front(), 
                       std::back_inserter(new_polygon));
-            typedef typename Polygon::iterator iterator;
             erase_vertices(top_chain.front(), stack.front(), polygon,
                            update_required);
             top_chain.push_front(stack.front());
@@ -800,7 +800,6 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
 {
    if (first == beyond) return result;
 
-   typedef typename Traits::Point_2                          Point_2;
    typedef typename Traits::Polygon_2                        Polygon_2;
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -31,6 +31,8 @@
 #include <boost/iterator/transform_iterator.hpp> // for Root_of functor
 #include <CGAL/assertions.h>
 #include <boost/operators.hpp>
+#include <boost/type_traits.hpp>
+#include <boost/mpl/logical.hpp>
 
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Handle.h>
@@ -121,13 +123,16 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
 };
 
 // double constant
-template <typename ET>
+template <typename ET, typename X>
 struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
 {
-  Lazy_exact_Cst (double d)
-      : Lazy_exact_nt_rep<ET>(d) {}
+  Lazy_exact_Cst (X x)
+      : Lazy_exact_nt_rep<ET>(x), cste(x) {}
 
-  void update_exact() const { this->et = new ET(this->approx().inf()); }
+  void update_exact() const { this->et = new ET(cste); }
+
+  private:
+  X cste;
 };
 
 // Exact constant
@@ -341,14 +346,12 @@ public :
   Lazy_exact_nt (Self_rep *r)
     : Base(r) {}
 
-  Lazy_exact_nt (const CGAL_int(ET) & i)
-    : Base(new Lazy_exact_Int_Cst<ET>(i)) {}
-
-  Lazy_exact_nt (unsigned i)
-    : Base(new Lazy_exact_Cst<ET>(i)){}
-
-  Lazy_exact_nt (const CGAL_double(ET) & d)
-    : Base(new Lazy_exact_Cst<ET>(d)){}
+  // Also check that ET and AT are constructible from T?
+  template<class T>
+  Lazy_exact_nt (T i, typename boost::enable_if<boost::mpl::and_<
+      boost::mpl::or_<boost::is_arithmetic<T>, boost::is_enum<T> >,
+      boost::mpl::not_<boost::is_same<T,ET> > >,void*>::type=0)
+    : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
   Lazy_exact_nt (const ET & e)
     : Base(new Lazy_exact_Ex_Cst<ET>(e)){}
@@ -1369,5 +1372,28 @@ class Modular_traits<Lazy_exact_nt<ET> >
 #undef CGAL_To_interval
 
 } //namespace CGAL
+
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<typename ET> struct NumTraits<CGAL::Lazy_exact_nt<ET> >
+  {
+    typedef CGAL::Lazy_exact_nt<ET> Real;
+    // typedef CGAL::Lazy_exact_nt<ET> NonInteger;
+    typedef CGAL::Lazy_exact_nt<typename NumTraits<ET>::NonInteger> NonInteger;
+    typedef CGAL::Lazy_exact_nt<ET> Nested;
+
+    enum {
+      IsInteger = NumTraits<ET>::IsInteger,
+      IsSigned = NumTraits<ET>::IsSigned,
+      IsComplex = NumTraits<ET>::IsComplex,
+      RequireInitialization = 1,
+      ReadCost = 8,
+      AddCost = 30,
+      MulCost = 30
+    };
+  };
+}
+#endif
 
 #endif // CGAL_LAZY_EXACT_NT_H

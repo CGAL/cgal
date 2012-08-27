@@ -1,0 +1,2 @@
+Solver_interface: contains classes to interface third party linear algebra solvers
+to CGAL (such as Eigen for example)

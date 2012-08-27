@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -60,8 +60,8 @@ public:
         static Scalar scalar_factor(const NT& a, Field_tag) {
             return (a == NT(0)) ? NT(0) : NT(1);
         }
-        static Scalar scalar_factor(const NT& a, 
-                                    const Scalar& d,
+        static Scalar scalar_factor(const NT& /* a */, 
+                                    const Scalar& /* d */,
                                     Integral_domain_tag) {
             return Scalar(1);
         }

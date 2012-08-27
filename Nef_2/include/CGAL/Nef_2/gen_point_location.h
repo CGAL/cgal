@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -32,7 +33,12 @@
 #include <list>
 #include <vector>
 #include <map>
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
+#else
+#include <boost/any.hpp>
+#endif
+
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 17
@@ -55,7 +61,11 @@ class GenericLocation {
   point location. It can store a node or an edge of a graph or the special
   value |nil| which is used to signal that no node or edge could be found.
 }*/
-  typedef void* GenPtr;
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  typedef void*  GenPtr;
+  #else
+  typedef boost::any GenPtr;
+  #endif
 public:
 /*{\Mtypes}*/ 
   enum Type { NIL, NODE, EDGE };
@@ -84,7 +94,12 @@ public:
       if (type != NODE) 
         CGAL_LEDA_SCOPE::error_handler(1, "Location: not convertible to node");
   #endif
+      #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       return geninfo<Node>::const_access(value);
+      #else
+      return 
+        *boost::any_cast<Node>(&value);
+      #endif
     }
     /*{\Mconversion converts |\Mvar| into a node.\\
        \precond |\Mvar| represents a node.}*/
@@ -95,7 +110,12 @@ public:
       if (type != EDGE) 
         CGAL_LEDA_SCOPE::error_handler(1, "Location: not convertible to edge");
   #endif
+      #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       return geninfo<Edge>::const_access(value);
+      #else
+      return 
+        *boost::any_cast<Edge>(&value);
+      #endif
     }
     /*{\Mconversion converts |\Mvar| into an edge.\\
        \precond |\Mvar| represents an edge.}*/
@@ -124,20 +144,33 @@ public:
     void init() { type = NIL; }
     void init(Node n) 
     { type = NODE; 
+      #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       geninfo<Node>::create(value); 
-      geninfo<Node>::access(value) = n; 
+      geninfo<Node>::access(value) = n;
+      #else
+      value=n;
+      #endif
     }
     void init(Edge e) 
     { type = EDGE; 
+      #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       geninfo<Edge>::create(value); 
-      geninfo<Edge>::access(value) = e; 
+      geninfo<Edge>::access(value) = e;
+      #else
+      value=e;
+      #endif
     }
 
     void clear()
     { 
       switch(type) {
+      #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
        case NODE: geninfo<Node>::clear(value); break;
        case EDGE: geninfo<Edge>::clear(value); break;
+      #else
+       case NODE: value=boost::any(); break;
+       case EDGE: value=boost::any(); break;
+      #endif
        case NIL: break;
       }
     }
@@ -147,10 +180,18 @@ public:
       type = L.type;
       switch(type) {
        case NODE: 
-         geninfo<Node>::access(value) = geninfo<Node>::const_access(L.value); 
+        #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+         geninfo<Node>::access(value) = geninfo<Node>::const_access(L.value);
+        #else
+         *boost_any_cast<Node>(&value) = boost::any_cast<Node>(L.value);
+        #endif
          break;
        case EDGE: 
+        #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
          geninfo<Edge>::access(value) = geninfo<Edge>::const_access(L.value);
+        #else
+         *boost::any_cast<Edge>(&value) = boost::any_cast<Edge>(L.value);
+        #endif
          break;
        case NIL: break;
       }

@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -55,7 +56,7 @@ void make_x_monotone (CurveInputIter begin, CurveInputIter end,
                       const Traits * tr)
 {
   // Split the input curves into x-monotone objects.
-  unsigned int         num_of_curves = std::distance(begin, end);
+  std::size_t          num_of_curves = std::distance(begin, end);
   std::vector<Object>  object_vec;
   CurveInputIter       iter;
 
@@ -131,9 +132,6 @@ void prepare_for_sweep (Arrangement& arr,
                         PointOutIter iso_points,
                         const ExTraits * /* ex_tr */)
 {
-  typedef typename Arrangement::X_monotone_curve_2    X_monotone_curve_2;
-  typedef typename Arrangement::Point_2               Point_2;
-
   typedef typename Arrangement::Vertex_iterator       Vertex_iterator;
   typedef typename Arrangement::Edge_iterator         Edge_iterator;
   typedef typename Arrangement::Vertex_handle         Vertex_handle;

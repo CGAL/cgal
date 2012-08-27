@@ -1,9 +1,10 @@
 // Copyright (c) 2005-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -71,11 +72,11 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
 			  Reflex_vertex_map& vm) 
       : dir(dir_in), vertex_map(vm) {}
     
-    void visit(Vertex_handle v) const {}
-    void visit(Halfedge_handle e) const {}
-    void visit(Halffacet_handle f) const {}
-    void visit(SHalfloop_handle sl) const {}
-    void visit(SFace_handle sf) const {}
+    void visit(Vertex_handle /*v*/) const {}
+    void visit(Halfedge_handle /*e*/) const {}
+    void visit(Halffacet_handle /*f*/) const {}
+    void visit(SHalfloop_handle /*sl*/) const {}
+    void visit(SFace_handle /*sf*/) const {}
     void visit(SHalfedge_handle se) const {
       //      if(vertex_map[se->source()->source()]==3) return;
       int isrse = is_reflex_sedge<SNC_structure>(se, dir);

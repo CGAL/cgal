@@ -31,7 +31,7 @@ int main()
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=5, facet_distance=1.5,
-                         cell_radius_edge=2, cell_size=7);
+                         cell_radius_edge_ratio=2, cell_size=7);
 
   // Mesh generation and optimization in one call (sliver_bound is the
   // targeted dihedral angle in degree)

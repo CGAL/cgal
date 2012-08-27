@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -162,7 +163,7 @@ public:
     m_is_lower = ((type == ENVELOPE_LOWER) ? true : false);
   }
 
-  Envelope_divide_and_conquer_3(const Traits * geom_traits,
+  Envelope_divide_and_conquer_3(const Traits* geom_traits,
                                 Envelope_type type = ENVELOPE_LOWER)
   {
     // Set the traits.
@@ -190,7 +191,7 @@ public:
   // dividor
   template <class SurfaceIterator>
   void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
-                             Minimization_diagram_2 &result)
+                             Minimization_diagram_2& result)
   {
     Envelope_3::Arbitrary_dividor dividor;
     construct_lu_envelope(begin, end, result, dividor);
@@ -200,7 +201,7 @@ public:
   // compute the envelope of surfaces in 3D using the given set dividor
   template <class SurfaceIterator, class SetDividor>
   void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end, 
-                             Minimization_diagram_2 &result,
+                             Minimization_diagram_2& result,
                              SetDividor& dividor)
   {
     if (begin == end)
@@ -227,7 +228,7 @@ public:
   template <class SurfaceIterator>
   void construct_envelope_xy_monotone(SurfaceIterator begin,
                                       SurfaceIterator end,
-                                      Minimization_diagram_2 &result)
+                                      Minimization_diagram_2& result)
   {
     Envelope_3::Arbitrary_dividor dividor;
     construct_envelope_xy_monotone(begin, end, result, dividor);
@@ -238,7 +239,7 @@ public:
   template <class SurfaceIterator, class SetDividor>
   void construct_envelope_xy_monotone(SurfaceIterator begin,
                                       SurfaceIterator end,
-                                      Minimization_diagram_2 &result,
+                                      Minimization_diagram_2& result,
                                       SetDividor& dividor)
   {
     if (begin == end)
@@ -250,7 +251,7 @@ public:
   }
 
   /*! Access the traits object. */
-  const Traits * get_traits() const
+  const Traits* get_traits() const
   {
     return m_geom_traits;
   }
@@ -266,7 +267,7 @@ protected:
   template <class SurfaceIterator, class SetDividor>
   void construct_lu_envelope_xy_monotones(SurfaceIterator begin,
                                           SurfaceIterator end,
-                                          Minimization_diagram_2 &result,
+                                          Minimization_diagram_2& result,
                                           SetDividor& dividor)
   {
     if (begin == end)
@@ -323,8 +324,8 @@ protected:
     if (boundary.empty())
     {
       //one infinite surface
-      CGAL_assertion_msg (result.number_of_faces() == 1,
-                          "In the beginning there should be only one face");
+      CGAL_assertion_msg(result.number_of_faces() == 1,
+                         "In the beginning there should be only one face");
       result.faces_begin()->set_data(surf);
       return;
     }
@@ -538,16 +539,16 @@ public:
     // efficiency gain by the conclusion mechanism of
     // compare_distance_to_envelope results
     // Create a mapping of result faces to indices.
-    CGAL::Arr_face_index_map<Minimization_diagram_2> index_map (result);
+    CGAL::Arr_face_index_map<Minimization_diagram_2> index_map(result);
 
     // Perform breadth-first search from the unbounded face, and use the BFS
     // visitor to associate each arrangement face with its discover time.
     Faces_order_bfs_visitor<CGAL::Arr_face_index_map<Minimization_diagram_2> >
       bfs_visitor(index_map, faces_to_split, this);
     Face_handle first_face = result.faces_begin();
-    /*if (result.number_of_faces() > 1)
-      first_face = ++(result.faces_begin());
-    */
+    /* if (result.number_of_faces() > 1)
+     *   first_face = ++(result.faces_begin());
+     */
 
     boost::breadth_first_search(Dual_Minimization_diagram_2(result),
                                 first_face,
@@ -674,19 +675,15 @@ protected:
     // and split the face
     typename std::list<Face_handle>::iterator li;
     for (li = faces_to_split.begin(); li != faces_to_split.end(); ++li)
-    {
-     
       resolver->resolve(*li, result);
-    
-    }
     faces_to_split.clear();
   }
 
   template <class InputIterator>
-  bool is_equal_data(const InputIterator & begin1,
-                     const InputIterator & end1,
-                     const InputIterator & begin2,
-                     const InputIterator & end2)
+  bool is_equal_data(const InputIterator& begin1,
+                     const InputIterator& end1,
+                     const InputIterator& begin2,
+                     const InputIterator& end2)
   {
     // insert the input data objects into a set
     std::set<Xy_monotone_surface_3> first(begin1, end1);
@@ -700,10 +697,10 @@ protected:
 
   // todo: should remove the uses of this method from this class
   template <class InputIterator>
-  bool has_equal_data(const InputIterator & begin1,
-                      const InputIterator & end1,
-                      const InputIterator & begin2,
-                      const InputIterator & end2)
+  bool has_equal_data(const InputIterator& begin1,
+                      const InputIterator& end1,
+                      const InputIterator& begin2,
+                      const InputIterator& end2)
   {
     // insert the input data objects into a set
     std::set<Xy_monotone_surface_3> first(begin1, end1);
@@ -738,11 +735,8 @@ protected:
     for (; hi != result.halfedges_end(); ++hi, ++hi)
     {
       Halfedge_handle hh = hi;
-
       if (can_remove_edge(hh))
-      {
         edges.push_back(hh);
-      }
     }
     
     for (typename std::list<Halfedge_handle>::iterator ci = edges.begin();
@@ -751,8 +745,9 @@ protected:
       // if the endpoints become isolated after the removal we need to remove
       // them if they have the same data as the edge
       Halfedge_handle h = *ci;
-      Vertex_handle src = h->source(), trg = h->target();
-      Face_handle h_face = h->face();
+      Vertex_handle src = h->source();
+      Vertex_handle trg = h->target();
+      CGAL_assertion_code(Face_handle h_face = h->face());
       bool remove_src = can_remove_edge_target(h->twin());
       bool remove_trg = can_remove_edge_target(h);
       bool src_is_equal_0 = (h->twin()->get_is_equal_aux_data_in_face(0) &&
@@ -980,11 +975,11 @@ protected:
     CGAL_assertion(he1 != he2);
     CGAL_assertion(he1->is_decision_set() && he2->is_decision_set());
     
-    /*if (vh->get_is_fake())
-    {
-      CGAL_assertion(he1->get_decision() == he2->get_decision());
-      return true;
-    }*/
+    /* if (vh->get_is_fake()) {
+     *   CGAL_assertion(he1->get_decision() == he2->get_decision());
+     *   return true;
+     * }
+     */
     
     CGAL_assertion(vh->is_decision_set());
     // if the decision done on the vertex and its incident halfedges are
@@ -1111,12 +1106,14 @@ protected:
         (1, he1->twin()->get_has_equal_aux_data_in_target_and_face(1));
 
       // order of halfedges for merge doesn't matter
-      Halfedge_handle new_edge = result.merge_edge(he1, he2 ,c);
-
+#if !defined(CGAL_NO_ASSERTIONS)
+      Halfedge_handle new_edge =
+#endif
+      result.merge_edge(he1, he2 ,c);
       CGAL_assertion(new_edge->is_decision_set());
 
       CGAL_expensive_assertion_msg(result.is_valid(), 
-                         "after remove vertex result is not valid");
+                                   "after remove vertex result is not valid");
     }
 
     // remove isolated vertices
@@ -1167,16 +1164,12 @@ protected:
     // vertices
     Vertex_iterator vi = result.vertices_begin();
     for (; vi != result.vertices_end(); ++vi)
-    {
       update_envelope_surfaces_by_decision(vi);
-    }
     
     // edges
     Halfedge_iterator hi = result.halfedges_begin();
     for (; hi != result.halfedges_end(); ++hi)
-    {
       update_envelope_surfaces_by_decision(hi);
-    }
     
     // faces
     Face_iterator fi = result.faces_begin();
@@ -1512,9 +1505,9 @@ protected:
     for (; vi != result.vertices_end(); ++vi)
     {
       Vertex_handle vh = vi;
-      /*if (vh->get_is_fake())
-        continue;
-      */
+      /* if (vh->get_is_fake())
+       *   continue;
+       */
 
       all_ok &= (vh->get_aux_is_set(0));
       CGAL_assertion_msg(all_ok, "aux source (0) not set over vertex");
@@ -1529,7 +1522,7 @@ protected:
     {
       Halfedge_handle hh = hi;
      /* if (hh->get_is_fake())
-      * continue;
+      *   continue;
       */
 
       all_ok &= (hh->get_aux_is_set(0));
@@ -1646,12 +1639,12 @@ protected:
       CGAL_assertion(base != NULL);
     }
 
-    /*virtual void before_split_edge (Halfedge_handle e,
-                                    Vertex_handle v,
-                                    const X_monotone_curve_2& c1,
-                                    const X_monotone_curve_2& c2)
-    {
-    }*/
+    /* virtual void before_split_edge (Halfedge_handle e,
+     *                                 Vertex_handle v,
+     *                                 const X_monotone_curve_2& c1,
+     *                                 const X_monotone_curve_2& c2)
+     * {}
+     */
 
     virtual void after_split_edge(Halfedge_handle he1, Halfedge_handle he2)
     {
@@ -1755,8 +1748,9 @@ protected:
       new_he->twin()->set_has_equal_aux_data_in_target_and_face
         (1, org_he->twin()->get_has_equal_aux_data_in_face(1));
     }
+
   protected:
-    Self *base;
+    Self* base;
   };
 
 #ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
@@ -1774,16 +1768,16 @@ protected:
                                                    Overlay_2>::Self Self;
 
   protected:
-    const IndexMap          *index_map; // Mapping vertices to indices
+    const IndexMap* index_map;          // Mapping vertices to indices
     std::list<Face_handle>& faces;      // The ordered faces list
-    Self                    *base;
+    Self* base;
 
   public:
 
     // Constructor.
     Faces_order_bfs_visitor(const IndexMap& imap, std::list<Face_handle>& f,
                             Self* b) :
-      index_map (&imap),
+      index_map(&imap),
       faces(f),
       base(b)
     {
@@ -1793,7 +1787,7 @@ protected:
     // Write the discover time for a given vertex.
     template <typename Vertex, typename Graph>
 
-    void discover_vertex (Vertex fh, const Graph& )
+    void discover_vertex(Vertex fh, const Graph&)
     {
       // first we check if we can set the decision immediately
       // if a surface of one map doesn't exist, then we set the second surface
@@ -1817,10 +1811,10 @@ protected:
 #endif
   
 protected:
-  Envelope_resolver         *resolver;
-  const Traits * m_geom_traits;
+  Envelope_resolver* resolver;
+  const Traits* m_geom_traits;
   bool m_own_traits; 
-  bool                      m_is_lower;
+  bool m_is_lower;
 };
 
 } //namespace CGAL

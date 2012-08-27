@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -25,7 +25,7 @@
 namespace CGAL {
 
   template < unsigned int d_, class Refs,
-	     class Items_, class Alloc_ >
+             class Items_, class Alloc_ >
   class Combinatorial_map_base;
 
   /** @file Cell_attribute.h
@@ -60,21 +60,28 @@ namespace CGAL {
 
   /// Cell_attribute_without_info
   template <class Refs, class Tag=Tag_true,
-	    class OnMerge=Null_functor, 
-	    class OnSplit=Null_functor>
+            class OnMerge=Null_functor, 
+            class OnSplit=Null_functor>
   class Cell_attribute_without_info;
 
   // Cell_attribute_without_info without dart support.
   template <class Refs, class OnMerge, class OnSplit>
   class Cell_attribute_without_info<Refs, Tag_false, 
-				    OnMerge, OnSplit>
+                                    OnMerge, OnSplit>
   {
     template < unsigned int d_, class Refs_,
-	       class Items_, class Alloc_ >
+               class Items_, class Alloc_ >
     friend class Combinatorial_map_base;
     
     template <int d, typename Refs_>
     friend struct Dart;
+
+    template < unsigned int d_, class Refs_,
+	       class Items_, class Alloc_ >
+    friend class Generalized_map_base;
+    
+    template <int d, typename Refs_>
+    friend struct GMap_dart;
 
     template <class T, class Alloc_>
     friend class Compact_container;
@@ -156,14 +163,21 @@ namespace CGAL {
    */
   template <class Refs, class OnMerge, class OnSplit>
   class Cell_attribute_without_info<Refs, Tag_true, 
-				    OnMerge, OnSplit>
+                                    OnMerge, OnSplit>
   {
     template < unsigned int d_, class Refs_,
-	       class Items_, class Alloc_ >
+               class Items_, class Alloc_ >
     friend class Combinatorial_map_base;
-    
+
     template <int d, typename Refs_>
     friend struct Dart;
+
+    template < unsigned int d_, class Refs_,
+	       class Items_, class Alloc_ >
+    friend class Generalized_map_base;
+
+    template <int d, typename Refs_>
+    friend struct GMap_dart;
 
     template <class T, class Alloc_>
     friend class Compact_container;
@@ -199,7 +213,7 @@ namespace CGAL {
   protected:
     /// Contructor without parameter.
     Cell_attribute_without_info() : mdart(NULL),
-      mrefcounting(0)
+                                    mrefcounting(0)
     {}
 
     /// Copy contructor.
@@ -245,20 +259,20 @@ namespace CGAL {
   /// Cell associated with an attribute, with or without info depending 
   /// if Info==void.
   template <class Refs, class Info_=void, class Tag_=Tag_true, 
-	    class OnMerge=Null_functor, 
-	    class OnSplit=Null_functor>
+            class OnMerge=Null_functor, 
+            class OnSplit=Null_functor>
   class Cell_attribute;
   
   /// Specialization when Info==void.
   template <class Refs, class Tag_, 
-	    class OnMerge, class OnSplit>
+            class OnMerge, class OnSplit>
   class Cell_attribute<Refs, void, Tag_, 
-		       OnSplit, OnMerge> : 
+                       OnSplit, OnMerge> : 
     public Cell_attribute_without_info<Refs, Tag_, 
-				       OnSplit, OnMerge>
+                                       OnSplit, OnMerge>
   {
     template < unsigned int d_, class Refs_,
-	       class Items_, class Alloc_ >
+               class Items_, class Alloc_ >
     friend class Combinatorial_map_base;
     
     template <class T, class Alloc_>
@@ -276,14 +290,14 @@ namespace CGAL {
 
   /// Specialization when Info!=void.
   template <class Refs, class Info_, class Tag_,
-	    class OnMerge, class OnSplit>
+            class OnMerge, class OnSplit>
   class Cell_attribute :
     public Cell_attribute_without_info<Refs, Tag_,
-				       OnMerge, OnSplit>,
+                                       OnMerge, OnSplit>,
     public Info_for_cell_attribute<Info_>
   {
     template < unsigned int d_, class Refs_,
-	       class Items_, class Alloc_ >
+               class Items_, class Alloc_ >
     friend class Combinatorial_map_base;
     
     template <class T, class Alloc_>

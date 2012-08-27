@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -268,12 +268,16 @@ public:
     Algebraic_real_1 y() const {
 
         typedef std::vector< Algebraic_real_1 > Roots;
-        typedef typename Curve_analysis_2::Status_line_1 Key;
-        typedef Roots Data;
-        typedef std::map< Key, Data, CGAL::Handle_id_less_than< Key > > 
-            Y_root_map;
+        // EBEB 2012-07-05 deactivated map for y-roots for not being used
+        // typedef typename Curve_analysis_2::Status_line_1 Key;
+        // EBEB 2012-07-05 deactivated map for y-roots for not being used
+        // typedef Roots Data;
+        // EBEB 2012-07-05 deactivated map for y-roots for not being used
+        //        typedef std::map< Key, Data, CGAL::Handle_id_less_than< Key > > 
+        //    Y_root_map;
         
-        static Y_root_map y_root_map;
+        // EBEB 2012-07-05 deactivated map for y-roots for not being used
+        //static Y_root_map y_root_map;
 
         if (!this->ptr()->_m_y) {
             
@@ -287,8 +291,9 @@ public:
             typename Curve_analysis_2::Status_line_1 line =
                 curve().status_line_at_exact_x(x());
             
-            typename Y_root_map::iterator yit = 
-                y_root_map.find(line);
+            // EBEB 2012-07-05 deactivated map for y-roots for not being used
+            //typename Y_root_map::iterator yit = 
+            //    y_root_map.find(line);
 
             // TODO: Cache resultant computation
             // exacus-related code shouldn't be used here

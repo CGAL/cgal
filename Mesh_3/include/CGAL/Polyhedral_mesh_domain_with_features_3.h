@@ -1,9 +1,10 @@
 // Copyright (c) 2009-2010 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -112,7 +113,8 @@ private:
 };  // end class Polyhedral_mesh_domain_with_features_3
 
 
-template < typename GT_, typename P_, typename TA_, typename Tag_, typename E_tag_>
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const Polyhedron& p)
   : Base()
@@ -121,7 +123,8 @@ Polyhedral_mesh_domain_with_features_3(const Polyhedron& p)
   this->add_primitives(polyhedron_);
 }
 
-template < typename GT_, typename P_, typename TA_, typename Tag_, typename E_tag_>
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const std::string& filename)
   : Base()
@@ -134,7 +137,8 @@ Polyhedral_mesh_domain_with_features_3(const std::string& filename)
 }
 
 
-template < typename GT_, typename P_, typename TA_, typename Tag_, typename E_tag_>
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
 void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 detect_features(FT angle_in_degree)
@@ -144,8 +148,9 @@ detect_features(FT angle_in_degree)
   
   // Get polylines
   typedef std::vector<Point_3> Bare_polyline;
-  typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_segment_index,
-    Bare_polyline > Polyline;
+  typedef Mesh_3::Polyline_with_context<Surface_patch_index,
+                                        Curve_segment_index,
+                                        Bare_polyline > Polyline;
   
   std::vector<Polyline> polylines;
   typedef std::back_insert_iterator<std::vector<Polyline> > Output_iterator;

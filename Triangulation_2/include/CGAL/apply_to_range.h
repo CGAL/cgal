@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -35,8 +35,6 @@ void apply_to_range(const Tr &t,
 {
   if (t.dimension()<2) return;
   typedef typename Tr::Point         POINT;
-  typedef typename Tr::Segment       SEGMENT;
-  typedef typename Tr::Triangle      TRIANGLE;
   typedef typename Tr::Face_handle   hFACE;
   typedef typename Tr::Vertex_handle hVERTEX;
   typedef typename Tr::Line_face_circulator      LFC;

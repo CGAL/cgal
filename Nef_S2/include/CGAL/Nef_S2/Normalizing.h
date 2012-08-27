@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -290,8 +291,7 @@ class Normalizing<Cartesian_tag> {
     typedef typename R::FT FT;
     typedef Fraction_traits<FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
-    typedef typename NV::iterator NV_iter;
-    
+
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
     typename FracTraits::Decompose decomposer; 

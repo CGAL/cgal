@@ -1,9 +1,10 @@
 // Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -57,6 +58,8 @@ public:
   typedef typename Splitter::Separator Separator;
   typedef typename std::vector<Point_d>::const_iterator iterator;
   typedef typename std::vector<Point_d>::const_iterator const_iterator;
+  
+  typedef typename std::vector<Point_d>::size_type size_type;
 
 private:
   SearchTraits traits_;
@@ -341,7 +344,7 @@ public:
     return pts.end();
   }
 
-  int 
+  size_type 
   size() const 
   {
     return pts.size();

@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -97,8 +97,8 @@ std::istream& operator>>(std::istream &is,Algebraic_1 &a){
                       *(new RS_polynomial_1(pol)),      // polynomial
                       nr,               // number of root
                       mult,             // multiplicity
-                      (mpfi_ptr)NULL,   // previous root
-                      (mpfi_ptr)NULL,   // next root
+                      //(mpfi_ptr)NULL,   // previous root
+                      //(mpfi_ptr)NULL,   // next root
                       (CGAL::Sign)eval);// evaluation on the left bound
         goto is_ret;
 is_fail_ret:

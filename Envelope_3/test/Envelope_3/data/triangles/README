@@ -1,0 +1,2 @@
+test13.cin - this tests a bug fixed by Ophir on May 2011 in Envelope_3/Envelope_element_visitor_3.h.
+In Ophir words: "for some reason, if the intersection between to surfaces on an overlay edge is a points, which is also the source of this edge, the code decides that this is an overlap, and so, the edges are equal (where they are not)."

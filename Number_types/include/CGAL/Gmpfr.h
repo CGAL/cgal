@@ -2,8 +2,8 @@
 // 
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 // 
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -155,7 +155,30 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
 
 }
 
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<CGAL::Gmpfr>
+  {
+    typedef CGAL::Gmpfr Real;
+    typedef CGAL::Gmpfr NonInteger;
+    typedef CGAL::Gmpfr Nested;
+
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 50,
+      MulCost = 50
+    };
+  };
+}
+#endif
+
 #include <CGAL/GMP/Gmpfr_type.h>
+#include <CGAL/GMP_arithmetic_kernel.h>
 
 #endif  // CGAL_GMPFR_H
 

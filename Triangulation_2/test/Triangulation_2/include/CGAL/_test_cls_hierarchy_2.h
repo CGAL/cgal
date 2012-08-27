@@ -135,6 +135,8 @@ _test_cls_hierarchy_2()
   h.remove_constraint(v[3],v[4]);
   // h.print();
 
+  for(int i=0; i <10; i++) { delete v[i];}
+  
   return;
 }
 

@@ -1,9 +1,10 @@
 // Copyright (c) 2001  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -526,7 +527,6 @@ find_hot_pixels_and_create_kd_trees(NT pixel_size,
   typedef std::pair<Point_2, Hot_pixel *>               Point_hot_pixel_pair;
   typedef typename std::list<Segment_data>::iterator    Segment_data_iter;
   typedef std::list<Segment_2>                          Segment_list;
-  typedef typename Segment_list::iterator               Segment_iter;
   typedef typename std::list<Point_2>::const_iterator   Point_const_iter;
     
   typedef typename Traits::Construct_segment_2  Construct_segment_2;

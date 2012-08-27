@@ -1,8 +1,9 @@
 // Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -234,9 +235,7 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
                                                                )
 {
   typedef typename K::FT FT ;
-  
-  typedef Trisegment_2<K> Trisegment_2 ;
-  
+
   typedef Rational<FT>       Rational ;
   typedef Quotient<FT>       Quotient ;
   typedef optional<Rational> Optional_rational ;
@@ -360,7 +359,6 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
   
   typedef Point_2     <K> Point_2 ;
   typedef Line_2      <K> Line_2 ;
-  typedef Trisegment_2<K> Trisegment_2 ;
   
   Uncertain<Oriented_side> rResult = Uncertain<Oriented_side>::indeterminate();
   
@@ -479,9 +477,6 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
   typedef typename K::FT FT ;
   
   typedef Point_2<K> Point_2 ;
-  typedef Line_2<K>  Line_2 ;
-  
-  typedef Trisegment_2<K> Trisegment_2 ;
   
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;

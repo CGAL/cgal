@@ -2,9 +2,10 @@
 // Copyright (c) 2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -342,7 +343,7 @@ class No_rebind_facet_pmap
   typedef unsigned int size_type;
   
 public:
-  No_rebind_facet_pmap(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+  No_rebind_facet_pmap(const C3T3& c3t3, const Cell_pmap& /*cell_pmap*/)
     : r_c3t3_(c3t3) {}
 
   int surface_index(const Facet& f) const
@@ -375,7 +376,7 @@ class No_rebind_facet_pmap_first
   typedef unsigned int size_type;
   
 public:
-  No_rebind_facet_pmap_first(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+  No_rebind_facet_pmap_first(const C3T3& c3t3, const Cell_pmap& /*cell_pmap*/)
     : r_c3t3_(c3t3) {}
   
   int surface_index(const Facet& f) const
@@ -409,7 +410,7 @@ class No_rebind_facet_pmap_second
   typedef unsigned int size_type;
   
 public:
-  No_rebind_facet_pmap_second(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+  No_rebind_facet_pmap_second(const C3T3& c3t3, const Cell_pmap& /*cell_pmap*/)
   : r_c3t3_(c3t3) {}
   
   int surface_index(const Facet& f) const

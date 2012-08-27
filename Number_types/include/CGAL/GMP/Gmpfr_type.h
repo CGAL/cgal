@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -255,7 +255,7 @@ class Gmpfr:
                 }
         }
 
-        Gmpfr(Gmpzf f,
+        Gmpfr(const Gmpzf &f,
               std::float_round_style r,
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
@@ -264,7 +264,7 @@ class Gmpfr:
                 mpfr_mul_2si(fr(),fr(),f.exp(),_gmp_rnd(r));
         }
 
-        Gmpfr(Gmpzf f,Gmpfr::Precision_type p){
+        Gmpfr(const Gmpzf &f,Gmpfr::Precision_type p){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),f.man(),mpfr_get_default_rounding_mode());
@@ -274,7 +274,7 @@ class Gmpfr:
                              mpfr_get_default_rounding_mode());
         }
 
-        Gmpfr(Gmpzf f){
+        Gmpfr(const Gmpzf &f){
                 mpfr_init2(fr(),
                            static_cast<Gmpfr::Precision_type>(
                                    mpz_sizeinbase(f.man(),2)<MPFR_PREC_MIN?
@@ -288,7 +288,7 @@ class Gmpfr:
                 CGAL_assertion_msg(inexact==0,"inexact conversion from Gmpzf");
         }
 
-        Gmpfr(std::pair<Gmpz,long> intexp,
+        Gmpfr(const std::pair<Gmpz,long> &intexp,
               std::float_round_style r=Gmpfr::get_default_rndmode(),
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
@@ -297,7 +297,7 @@ class Gmpfr:
                 mpfr_mul_2si(fr(),fr(),intexp.second,_gmp_rnd(r));
         }
 
-        Gmpfr(std::pair<Gmpz,long> intexp,Gmpfr::Precision_type p){
+        Gmpfr(const std::pair<Gmpz,long> &intexp,Gmpfr::Precision_type p){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),
@@ -362,8 +362,8 @@ class Gmpfr:
                 _fun(fr(),x._member,_gmp_rnd(r)); \
         } \
         Gmpfr(const _class &x,Gmpfr::Precision_type p){ \
-                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
-                mpfr_init2(fr(),p); \
+                CGAL_assertion(p<=MPFR_PREC_MAX); \
+                mpfr_init2(fr(),MPFR_PREC_MIN<p?p:MPFR_PREC_MIN); \
                 _fun(fr(),x._member,mpfr_get_default_rounding_mode()); \
         } \
         Gmpfr(const _class &x){ \
@@ -996,25 +996,25 @@ std::pair<std::pair<double,double>,long> Gmpfr::to_interval_exp()const{
 
 inline
 std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
+        if(this->is_zero())
+                return std::make_pair(Gmpz(0),long(0));
 
-  if(this->is_zero())
-    return std::make_pair(Gmpz(0),long(0));
+        Gmpz z;
+        long e=CGAL_GMPFR_GET_Z_2EXP(z.mpz(),this->fr());
 
-  Gmpz z;
-  long e=CGAL_GMPFR_GET_Z_2EXP(z.mpz(),this->fr());
+        long zeros=mpz_scan1(z.mpz(),0);
+        CGAL_assertion(z==(z>>zeros)<<zeros);
+        z>>=zeros;
+        CGAL_assertion(z%2!=0);
+        e+=zeros;
 
-  long zeros = mpz_scan1(z.mpz(),0);
-  CGAL_assertion(z==(z>>zeros)<<zeros);
-  z >>= zeros;
-  CGAL_assertion(z%2!=0);
-  e +=  zeros;
+        CGAL_postcondition_code(if(e>=0))
+        CGAL_postcondition(
+                (*this)==(Gmpfr(z,z.bit_size())*CGAL::ipower(Gmpfr(2),e)));
+        CGAL_postcondition_code(else)
+        CGAL_postcondition(((*this)*(Gmpz(1)<<(-e)))==z);
 
-  CGAL_postcondition_code(if (e >= 0))
-    CGAL_postcondition( (*this) == (Gmpfr(z) * CGAL::ipower(Gmpfr(2),e)) );
-  CGAL_postcondition_code(else)
-    CGAL_postcondition( ( (*this) * (Gmpz(1)<<(-e)) ) == z );
-
-  return std::make_pair(z,e);
+        return std::make_pair(z,e);
 }
 
 
@@ -1082,6 +1082,11 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                 mant=10*mant+(c-'0');
                 c=is.get();
         }
+
+        // set the correct sign of the mantissa
+        if(neg_mant)
+                mant=-mant;
+
         is.putback(c);
         gmpz_eat_white_space(is);
 
@@ -1155,9 +1160,49 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
                 return os<<"nan";
         if(a.is_inf())
                 return os<<(a<0?"-inf":"+inf");
-        std::pair<Gmpz,long> ie=a.to_integer_exp();
-        os<<ie.first<<'e'<<ie.second;
-        return os;
+        // The rest of the function was written by George Tzoumas.
+        if (!is_pretty(os)) {
+                std::pair<Gmpz,long> ie=a.to_integer_exp();
+                os << ie.first << 'e' << ie.second;
+                return os;
+        } else {
+                // human-readable format
+                mpfr_exp_t expptr;
+                char *str = mpfr_get_str(NULL, &expptr, 10, 0, a.fr(),
+                                mpfr_get_default_rounding_mode());
+                if (str == NULL) return os << "@err@";
+                std::string s(str);
+                mpfr_free_str(str);
+                int i = 0;
+                size_t n = s.length();
+                size_t k = 0;
+                while (k < n && s[n-k-1] == '0') k++; // count trailing zeros
+                if (k == n) return os << "0";
+                else if (k) {
+                        s.erase(n-k, k);  // remove trailing zeros
+                        n = s.length();
+                }
+                bool exp = false;
+                if(s[0] == '-') { os << "-"; i++; n--; } // sign
+                if (expptr < -5) {              // .125e-99
+                        s.insert(i, 1, '.'); exp = true;
+                } else if (expptr < 0) {
+                        s.insert(i, -expptr, '0');  // .00000125 -- .0125
+                        s.insert(i, 1, '.');
+                // The following cast of expptr is done for avoiding some
+                // compiler warnings. The cast is exact, because we know
+                // expptr is not negative here.
+                } else if ((size_t)expptr < n) {        // .125 -- 12.5
+                        s.insert(i+expptr, 1, '.');
+                } else if (expptr - n <= 5) {   // 125 -- 12500000
+                        s.append(expptr - n, '0');
+                } else {                        // .125e99
+                        s.insert(i, 1, '.'); exp = true;
+                }
+                os << s.substr(i);
+                if (exp) os << "e" << expptr;
+                return os;
+        }
 }
 
 // comparisons

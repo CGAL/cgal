@@ -2,9 +2,10 @@
 // Copyright (c) 2008       GeometryFactory (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -41,6 +42,19 @@ private:
   const C2t3& c2t3;
   typedef CGAL::Modifier_base<typename Polyhedron::HalfedgeDS> Base;
 
+  template <class IBuilder, class Vertex_handle>
+  int get_vertex_index(IBuilder& builder, Vertex_handle vh, std::map<Vertex_handle, int>& V, int& inum)
+  {
+    typedef typename std::map<Vertex_handle, int>::iterator map_iterator;
+    std::pair<map_iterator,bool> insert_res = V.insert( std::make_pair(vh,inum) );
+    if ( insert_res.second ){
+      typename Tr::Point p = static_cast<typename Tr::Point>(vh->point());
+      builder.add_vertex(p);
+      ++inum;
+    }
+    return insert_res.first->second;
+  }
+
 public:
   Complex_2_in_triangulation_3_polyhedron_builder(const C2t3& c2t3)
     : Base(), c2t3(c2t3)
@@ -63,16 +77,6 @@ public:
 			  number_of_facets);
     {
       // Finite vertices coordinates.
-      std::map<Vertex_handle, int> V;
-      int inum = 0;
-      for(Finite_vertices_iterator vit = tr.finite_vertices_begin();
-	  vit != tr.finite_vertices_end();
-	  ++vit)
-      {
-	V[vit] = inum++;
-	Point p = static_cast<Point>(vit->point());
-	builder.add_vertex(p);
-      }
       Finite_facets_iterator fit = tr.finite_facets_begin();
       std::set<Facet> oriented_set;
       std::stack<Facet> stack;
@@ -134,6 +138,10 @@ public:
       const Vector Z(0, 0, 1);
       bool regular_orientation = (Z * normal >= 0);
 
+      //used to set indices of vertices
+      std::map<Vertex_handle, int> V;
+      int inum = 0;
+      
       for(typename std::set<Facet>::const_iterator fit =
 	    oriented_set.begin();
 	  fit != oriented_set.end();
@@ -142,8 +150,9 @@ public:
 	int indices[3];
 	int index = 0;
 	for (int i=0; i<3; i++)
-	  indices[index++] =
-	    V[fit->first->vertex(tr.vertex_triple_index(fit->second, i))];
+	  indices[index++] = get_vertex_index(
+            builder, fit->first->vertex(tr.vertex_triple_index(fit->second, i)), V, inum
+          );
 	builder.begin_facet();
 	  builder.add_vertex_to_facet(indices[0]);
 	  builder.add_vertex_to_facet(regular_orientation ? indices[1] : indices[2]);

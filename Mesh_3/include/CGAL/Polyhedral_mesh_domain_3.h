@@ -2,9 +2,10 @@
 // Copyright (c) 2011 GeometryFactory Sarl (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -70,7 +71,7 @@ struct Surface_patch_index_generator
   typedef Surface_patch_index                         type;
   
   template < typename Primitive_id >
-  Surface_patch_index operator()(const Primitive_id& primitive_id)
+  Surface_patch_index operator()(const Primitive_id&)
   { return Surface_patch_index(0,1); }
 };
   
@@ -202,6 +203,10 @@ public:
             TriangleAccessor().triangles_end(p)),
       bounding_tree_(&tree_) // the bounding tree is tree_
   { 
+    if(!p.is_pure_triangle()) {
+      std::cerr << "Your input polyhedron must be triangulated!\n";
+      CGAL_error_msg("Your input polyhedron must be triangulated!");
+    }
   }
 
   Polyhedral_mesh_domain_3(const Polyhedron& p,
@@ -549,9 +554,6 @@ Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
 Construct_initial_points::operator()(OutputIterator pts,
                                      const int n) const
 {
-  typedef boost::optional<typename AABB_tree_::Object_and_primitive_id>
-                                                            AABB_intersection;
-  
   typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
   typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
   

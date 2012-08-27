@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -52,6 +52,8 @@
 #define CGAL_INTERVAL_TRAITS_H
 
 #include <CGAL/basic.h>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
@@ -192,16 +194,27 @@ proper_subset(Interval interval1, Interval interval2) {
 
 
 // Set operations, functions returing Interval
+//the enable_if is need for MSVC as it is not able to eliminate
+//the function if Interval_traits<Interval>::Intersection has no result_type
+//(like Null_functor)
 template<typename Interval> inline 
 typename Interval_traits<Interval>::Intersection::result_type
-intersection(Interval interval1, Interval interval2) {
+intersection(Interval interval1, Interval interval2, typename boost::enable_if<
+                                                       boost::is_same<
+                                                          typename Interval_traits<Interval>::Is_interval,
+                                                          Tag_true > >::type* = NULL
+) {
     typename Interval_traits<Interval>::Intersection intersection;
     return intersection(interval1, interval2);
 }
 
 template<typename Interval> inline 
 typename Interval_traits<Interval>::Hull::result_type
-hull(Interval interval1, Interval interval2) {
+hull(Interval interval1, Interval interval2, typename boost::enable_if<
+                                                       boost::is_same<
+                                                          typename Interval_traits<Interval>::Is_interval,
+                                                          Tag_true > >::type* = NULL) 
+{
     typename Interval_traits<Interval>::Hull hull;
     return hull(interval1, interval2);
 }

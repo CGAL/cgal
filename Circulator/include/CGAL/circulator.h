@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -30,6 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <CGAL/circulator_bases.h>
+#include <CGAL/use.h>
 
 // These are name redefinitions for backwards compatibility
 // with the pre iterator-traits style adaptors.
@@ -743,6 +744,7 @@ public:
 // OPERATIONS
 
     bool operator==( Nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == NULL);
         return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
     }
@@ -876,6 +878,7 @@ public:
 // OPERATIONS
 
     bool operator==( Nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == NULL);
         return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
     }
@@ -1028,6 +1031,7 @@ public:
 // OPERATIONS
 
     bool operator==( Nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == NULL);
         return empty;
     }

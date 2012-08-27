@@ -1,9 +1,10 @@
 // Copyright (c) 2005,2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -539,7 +540,7 @@ private:
   }
 
   /*! Find the given object in the given bucket. */
-  Bucket_iterator _find_in_bucket (int index,
+  Bucket_iterator _find_in_bucket (std::size_t index,
                                    const value_type& val) const
   {
     Bucket&             my_bucket = const_cast<Bucket&>(buckets[index]);

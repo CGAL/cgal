@@ -1,9 +1,10 @@
 // Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -76,8 +77,8 @@ public:
  public:
   // these "constructors" are defined in order to conform with the
   // specs; they will produce a run-time error if used
-  static Self construct_site_2(const Point_2& p1, const Point_2& p2,
-			       const Point_2& q1, const Point_2& q2) {
+  static Self construct_site_2(const Point_2& /*p1*/, const Point_2& /*p2*/,
+			       const Point_2& /*q1*/, const Point_2& /*q2*/) {
     no_constructor_support();
     return Self();
   }
@@ -124,12 +125,12 @@ public:
   // the following four methods do not really make any sense but have
   // been added in order for this class to be a model of the
   // SegmentDelaunayGraphSite_2 concept.
-  const Point_2& source_of_supporting_site(unsigned int i) const {
+  const Point_2& source_of_supporting_site(unsigned int /*i*/) const {
     CGAL_precondition( is_point() && !is_input() );
     return p_[0];
   }
 
-  const Point_2& target_of_supporting_site(unsigned int i) const {
+  const Point_2& target_of_supporting_site(unsigned int /*i*/) const {
     CGAL_precondition( is_point() && !is_input() );
     return p_[0];
   }

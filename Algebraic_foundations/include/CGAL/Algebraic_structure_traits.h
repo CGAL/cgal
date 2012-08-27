@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -482,13 +482,13 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
     : public std::binary_function< Type, Type, bool > { 
   public:
     bool operator()( const Type& CGAL_precondition_code(x), const Type& /* y */) const {
-      typedef Algebraic_structure_traits<Type> AST;
+      CGAL_precondition_code( typedef Algebraic_structure_traits<Type> AST);
       CGAL_precondition( typename AST::Is_zero()(x) == false );
       return true;
     } 
     // second operator computing q
     bool operator()( const Type& x, const Type& y, Type& q) const {
-      typedef Algebraic_structure_traits<Type> AST;
+      CGAL_precondition_code(typedef Algebraic_structure_traits<Type> AST);
       CGAL_precondition( typename AST::Is_zero()(x) == false );
       q = y/x;
       return true;

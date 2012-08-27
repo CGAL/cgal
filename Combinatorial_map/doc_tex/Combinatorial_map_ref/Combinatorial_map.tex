@@ -8,7 +8,7 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Combinatorial_map<d,Items,Alloc>}
+\begin{ccRefClass}{Combinatorial_map<d,CMItems,Alloc>}
 \ccRefLabel{CGAL::Combinatorial_map}
 
 \ccInclude{CGAL/Combinatorial_map.h}
@@ -25,19 +25,19 @@ Darts and non void attributes are stored in memory using
 
 \ccParameters
 \ccc{d} an integer for the dimension of the map.\\
-\ccc{Items} must be a model of the \ccc{CombinatorialMapItems} concept. \\
+\ccc{CMItems} must be a model of the \ccc{CombinatorialMapItems} concept. \\
 \ccc{Alloc} has to match the standard allocator requirements. The  \ccc{rebind} mechanism from 
 \ccc{Alloc} will be used to create appropriate allocators internally with value type \ccc{Dart}.
 
 There are two default template arguments:
-\ccc{Combinatorial_map_min_items<d>} for \ccc{Items} and
+\ccc{Combinatorial_map_min_items<d>} for \ccc{CMItems} and
 \ccc{CGAL_ALLOCATOR(int)} from the \ccc{<CGAL/memory.h>} header file for \ccc{Alloc}.
 
 \ccTypes
-\ccThree{typedef Combinatorial_map<d,Items,Alloc>}{}{}
-\ccTypedef{typedef Combinatorial_map<d,Items,Alloc> Self;}{}
+\ccThree{typedef Combinatorial_map<d,CMItems,Alloc>}{}{}
+\ccTypedef{typedef Combinatorial_map<d,CMItems,Alloc> Self;}{}
 \ccGlue
-\ccTypedef{typedef Items::Dart_wrapper<Self>::Dart Dart;}{}
+\ccTypedef{typedef CMItems::Dart_wrapper<Self>::Dart Dart;}{}
 
 \ccHeading{Complexity}
 

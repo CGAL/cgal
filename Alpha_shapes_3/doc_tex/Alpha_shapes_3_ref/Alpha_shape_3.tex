@@ -46,22 +46,24 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass} {Alpha_shape_3<Dt>}
+\begin{ccRefClass} {Alpha_shape_3<Dt,ExactAlphaComparisonTag>}
 
 \ccDefinition
 
 The class \ccClassTemplateName\ represents the family of
 alpha shapes of points in the 3D space for {\em all} real
 $\alpha$. It maintains an  underlying triangulation 
-of the class \ccc{Dt} which
-represents connectivity and order among its faces. Each
-$k$-dimensional face of the \ccc{Dt} is associated with
-an interval that specifies for which values of $\alpha$ the face
-belongs to the alpha shape. 
+of the class \ccc{Dt}. Each k-dimensional face of Dt is associated with an
+interval that specifies for which values of alpha the face belongs to the alpha shape.
+The second template parameter \ccc{ExactAlphaComparisonTag} is a tag that, when set to
+\ccc{CGAL::Tag_true}, triggers exact comparisons between alpha values. This is useful
+when the Delaunay triangulation is instantiated with an exact predicates inexact constructions
+kernel. By default the \ccc{ExactAlphaComparisonTag} is set to \ccc{CGAL::Tag_false} as it induces a small
+overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions,
+the tag \ccc{ExactAlphaComparisonTag} is not taken into account if \ccc{Dt::Geom_traits::FT} is not a floating point number type.
 
 Note that this class is at the same time used for {\em basic} and
 for {\em weighted} Alpha Shapes\ccIndexMainItem[C]{Weighted_alpha_shapes_3}.
-
 
 \ccInclude{CGAL/Alpha_shape_3.h}
 
@@ -82,7 +84,21 @@ the inherited functions. At the moment, only the static version is implemented.
 it has to derive from a triangulation traits class.  
 For example \ccc{Dt::Point} is a Point class. 
 
-\ccTypedef{typedef Gt::FT FT;}{the number type of alpha values.}
+\ccNestedType{FT}{the number type of alpha values. \\
+In case \ccc{ExactAlphaComparisonTag} is \ccc{CGAL::Tag_false}, it is {Gt::FT}.\\
+In case \ccc{ExactAlphaComparisonTag} is \ccc{CGAL::Tag_true}, it is a number type
+allowing filtered exact comparisons (that is, interval arithmetic is first used before
+resorting to exact arithmetic).\\
+Access to the interval containing the exact value is provided through the function
+\ccc{FT::Approximate_nt approx() const} where \ccc{FT::Approximate_nt} is \ccc{Interval_nt<Protected>}
+with \ccc{Protected=true}.\\
+Access to the exact value is provided through the function 
+\ccc{FT::Exact_nt exact() const} where \ccc{FT::Exact_nt} depends on the configuration of CGAL 
+(it is \ccc{CGAL::Gmpq} if \ccc{gmp} is available and \ccc{CGAL::Quotient<CGAL::MP_Float>} otherwise).\\
+It must be noted that an object of type \ccc{FT} is valid as long as the alpha shapes class that creates
+it is valid and has not been modified.
+For convenience, classical comparison operators are provided for the type \ccc{FT}.
+}
 
 \ccNestedType{size_type}{The size type.}
 
@@ -143,7 +159,7 @@ current alpha value to \ccc{alpha} and the mode to \ccc{m}.}
 	Mode m = REGULARIZED);}
 {Build an alpha shape of mode \ccc{m} 
 from the triangulation \ccc{dt}. 
-Be careful that this operation destroy the triangulation.}
+Be careful that this operation destroys the triangulation.}
 
 \ccConstructor{template < class InputIterator >
 		Alpha_shape_3(
@@ -373,7 +389,7 @@ is an internal format.
 \ccInclude{CGAL/IO/io.h}
 
 \ccFunction{ostream& operator<<(ostream& os,
-                  const Alpha_shape_3<Dt>& A);}
+                  const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);}
 {Inserts the alpha shape \ccVar\ for the current alpha value into the stream \ccc{os}.
 \ccPrecond The insert operator must be defined for \ccc{Point}.}
 
@@ -382,7 +398,7 @@ is an internal format.
 \ccInclude{CGAL/IO/alpha_shape_geomview_ostream_3.h}
 
 \ccFunction{Geomview_stream& operator<<(Geomview_stream& W,
-                         	const Alpha_shape_3<Dt>& A);}
+                         	const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);}
 {Inserts the alpha shape \ccVar\ for the current alpha value into the Geomview stream \ccc{W}.
 \ccPrecond The insert operator must be defined for \ccc{GT::Point} and \ccc{GT::Triangle}.}
 

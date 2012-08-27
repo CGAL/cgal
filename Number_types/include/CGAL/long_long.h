@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -69,11 +69,21 @@ template <> class Real_embeddable_traits< long long int >
       : public std::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-          Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-          Interval_nt<false> approx ((double) x);
-          FPU_set_cw(CGAL_FE_UPWARD);
-          approx += Interval_nt<false>::smallest();
-          return approx.pair();
+          return Interval_nt<true>(x).pair();
+        }
+    };
+};
+
+// unsigned long long
+template <> class Real_embeddable_traits< unsigned long long >
+  : public INTERN_RET::Real_embeddable_traits_base< unsigned long long , CGAL::Tag_true > {
+  public:
+
+    class To_interval
+      : public std::unary_function< Type, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Type& x ) const {
+          return Interval_nt<true>(x).pair();
         }
     };
 };

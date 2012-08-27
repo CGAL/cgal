@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="/cgal/help" >
+    <file>about_Linear_cell_complex_3.html</file>
+  </qresource>
+</RCC>

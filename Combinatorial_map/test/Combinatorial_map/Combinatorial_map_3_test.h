@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1002,6 +1002,8 @@ template<class Map>
   d2 = make_combinatorial_hexahedron(map);
   map.template sew<3>(d1,d2);   
   d3 = d1->beta(2);
+  d4 = map.beta(d1, 1,3,1,2);
+  CGAL_assertion(d4==d1->beta(1)->beta(3)->beta(1)->beta(2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "remove facet4: " << flush; CGAL::remove_cell<Map,2>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -1012,8 +1014,8 @@ template<class Map>
   map.clear(); v.clear();    
     
   cout << "***************************** TEST INSERT FACET 3D DONE."
-       << endl;
-
+       << endl;  
+  
   /*
   cout << "***************************** TEST EDGE CONTRACTION 3D:"
        << endl;

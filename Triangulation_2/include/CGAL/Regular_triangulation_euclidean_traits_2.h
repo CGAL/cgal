@@ -1,9 +1,10 @@
 // Copyright (c) 1997   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -179,8 +180,8 @@ compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 		       const Bare_point& r, Homogeneous_tag)
 {
   typedef typename Kernel_traits<Bare_point>::Kernel::RT  RT;
-  return compare_power_distanceH2(p.hx(), p.hy(), p.hw(), FT(p.weight()),
-				  q.hx(), q.hy(), q.hw(), FT(q.weight()),
+  return compare_power_distanceH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
+				  q.hx(), q.hy(), q.hw(), RT(q.weight()),
 				  r.hx(), r.hy(), r.hw());
 }
 
@@ -305,7 +306,6 @@ typename Kernel_traits<Bare_point>::Kernel::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
 	     const Weighted_point<Bare_point, Weight> &t)
 {
-  typedef typename Kernel_traits<Bare_point>::Kernel::RT  RT;
   Comparison_result r = compare(p.weight(), t.weight());
   if(r == LARGER)    return ON_NEGATIVE_SIDE;
   else if (r == SMALLER) return ON_POSITIVE_SIDE;
