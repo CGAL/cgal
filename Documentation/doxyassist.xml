@@ -645,7 +645,7 @@ namespace for the XML file to be processed properly.  -->
           </list>
           <string name="EXAMPLE_PATH">../Triangulation_2/examples</string>
           <list name="TAGFILES" append="true">
-
+            <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
           </list>
         </doxygen>
