@@ -60,7 +60,7 @@ These probability values are used as input in the graph-cut step that follows.
 
 ## Graph-Cut ##
 The final hard clustering, which gives the final partitioning of the mesh, is obtained by minimizing an energy function. 
-This energy function combines the aforementionned probability matrix and geometric surface features.
+This energy function combines the aforementioned probability matrix and geometric surface features.
 
 The expression of energy function that is minimized using alpha-expansion graph cut algorithm is the following:
 
@@ -130,7 +130,7 @@ Formally, a segment is a set of connected facets which are placed under same clu
 ###Example###
 \include Surface_mesh_segmentation/surface_mesh_segmentation_from_sdf_values_example.cpp
 
-The function CGAL::surface_mesh_segmentation combines the two aforementionned functions. 
+The function CGAL::surface_mesh_segmentation combines the two aforementioned functions. 
 Note that for segmenting the mesh several times with different parameters (i.e. number of levels, and smoothing lambda), 
 it is wise to first compute the SDF values using CGAL::sdf_values_computation, and then call CGAL::surface_mesh_segmentation_from_sdf_values with the same SDF values.
 
@@ -138,9 +138,9 @@ it is wise to first compute the SDF values using CGAL::sdf_values_computation, a
 \include Surface_mesh_segmentation/surface_mesh_segmentation_example.cpp
 
 ##Using a polyhedron with an id per facet##
-The previous examples use a `std::map` as propery maps for storing the sdf values and the segmentation results. This example uses
+The previous examples use a `std::map` as property maps for storing the sdf values and the segmentation results. This example uses
 a polyhedron type with a facet type having an extra id field together with a vector as underlying data structure in the property maps.
-The main advantage is to decrease the complexity of accessing associated data with facets from logaritmic to constant. 
+The main advantage is to decrease the complexity of accessing associated data with facets from logarithmic to constant. 
 
 ###Example###
 \include Surface_mesh_segmentation/surface_mesh_segmentation_with_facet_ids_example.cpp
