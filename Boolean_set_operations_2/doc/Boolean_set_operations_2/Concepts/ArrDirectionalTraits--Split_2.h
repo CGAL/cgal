@@ -3,7 +3,7 @@
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalconcept
 
-\refines ::Functor 
+\refines ::AdaptableUnaryFunctor 
 
 \hasModel `ArrangementDirectionalXMonotoneTraits_2::Split_2` 
 

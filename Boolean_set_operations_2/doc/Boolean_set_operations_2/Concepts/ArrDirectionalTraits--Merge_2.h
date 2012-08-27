@@ -3,7 +3,7 @@
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalconcept
 
-\refines ::Functor 
+\refines ::AdaptableBinaryFunctor 
 
 \hasModel `ArrangementDirectionalXMonotoneTraits_2::Merge_2` 
 
