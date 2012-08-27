@@ -21,11 +21,12 @@ namespace CGAL
  *  - Smoothed with bilateral filtering.
  *  - Linearly normalized between [0,1].
  *
+ * @pre parameter @a polyhedron should consist of triangles.
  * @param polyhedron `CGAL Polyhedron` on which SDF values are computed
  * @param[out] sdf_values <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @param cone_angle opening angle for cone, expressed in radians
  * @param number_of_rays number of rays picked from cone for each facet
- * @return the minimum and maximum SDF values before linear normalization
+ * @return minimum and maximum SDF values before linear normalization
  */
 template <class Polyhedron, class SDFPropertyMap>
 std::pair<double, double>
@@ -35,7 +36,7 @@ sdf_values_computation(const Polyhedron& polyhedron,
                        int number_of_rays = 25)
 {
   internal::Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
-  return algorithm.calculate_sdf_values(sdf_values, cone_angle, number_of_rays);
+  return algorithm.calculate_sdf_values(cone_angle, number_of_rays, sdf_values);
 }
 
 /*!
@@ -45,8 +46,9 @@ sdf_values_computation(const Polyhedron& polyhedron,
  * Formally, a segment is a set of connected facets which are placed under same cluster.
  *
  * Note that there is no direct relation between the parameter @a number_of_levels
- * and the number of segments. However, a large number of levels is likely to result in detailed segmentation of the mesh with large number of segments.
+ * and number of segments. However, large number of clusters likely to result in detailed segmentation of the mesh with large number of segments.
  *
+ * @pre parameter @a polyhedron should consist of triangles.
  * @param polyhedron `CGAL Polyhedron` on which segmentation is applied
  * @param sdf_values <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">`ReadablePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @param[out] segment_ids <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
@@ -60,14 +62,14 @@ surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
     SDFPropertyMap sdf_values,
     SegmentPropertyMap segment_ids,
     int number_of_levels = 5,
-    double smoothing_lambda = 0.23)
+    double smoothing_lambda = 0.26)
 {
   smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                 smoothing_lambda)); // clip into [0-1]
 
   internal::Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
-  return algorithm.partition(sdf_values, segment_ids, number_of_levels,
-                             smoothing_lambda);
+  return algorithm.partition(number_of_levels, smoothing_lambda, sdf_values,
+                             segment_ids);
 }
 
 /*!
@@ -80,6 +82,7 @@ surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
  * it is wise to first compute SDF values using CGAL::sdf_values_computation,
  * and then call CGAL::surface_mesh_segmentation_from_sdf_values with the same SDF values.
  *
+ * @pre parameter @a polyhedron should consist of triangles.
  * @param polyhedron `CGAL Polyhedron` on which segmentation is applied
  * @param[out] segment_ids <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @param number_of_rays number of rays picked from cone for each facet
@@ -94,7 +97,7 @@ surface_mesh_segmentation(const Polyhedron& polyhedron,
                           double cone_angle = 2.0 / 3.0 * CGAL_PI,
                           int number_of_rays = 25,
                           int number_of_levels = 5,
-                          double smoothing_lambda = 0.23)
+                          double smoothing_lambda = 0.26)
 {
   smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                 smoothing_lambda)); // clip into [0-1]

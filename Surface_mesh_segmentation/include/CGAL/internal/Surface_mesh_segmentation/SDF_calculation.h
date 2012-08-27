@@ -23,21 +23,6 @@ namespace internal
 
 /**
  * @brief Responsible for calculating Shape Diameter Function over surface of the mesh.
- *
- * Usage:
- * @code
- *  // template parameters
- *  // Polyhedron          : CGAL Polyhedron (type of the mesh)
- *  // Vogel_disk_sampling : Functor type which samples rays from cone (for other functors, or for writing your own method, check Disk_samplers.h)
- *
- *  // function parameters
- *  // mesh       : CGAL Polyhedron to calculate SDF
- *  // sdf_values : Writable Property-Map where results are stored
- *
- *  SDF_calculation<Polyhedron, Vogel_disk_sampling>().
- *      calculate_sdf_values(mesh, sdf_values, (2.0 / 3.0) * CGAL_PI, 25);
- * @endcode
- *
  * @see Disk_samplers.h
  */
 template <class Polyhedron, class DiskSampling = Vogel_disk_sampling>
@@ -92,25 +77,24 @@ public:
    * Calculates SDF values for each facet, and stores them in @a sdf_values. Note that sdf values are neither smoothed nor normalized.
    * @pre parameter @a mesh should consist of triangles.
    * @param mesh `CGAL Polyhedron` on which SDF values are computed
-   * @param[out] sdf_values `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
    * @param cone_angle opening angle for cone, expressed in radians
    * @param number_of_rays number of rays picked from cone for each facet
+   * @param[out] sdf_values `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
    */
   template <class FacetValueMap>
-  void calculate_sdf_values(const Polyhedron& mesh, FacetValueMap sdf_values,
-                            double cone_angle, int number_of_rays) {
+  void calculate_sdf_values(const Polyhedron& mesh, double cone_angle,
+                            int number_of_rays, FacetValueMap sdf_values) {
     this->cone_angle = cone_angle;
 
     const int sparse_ray_count = number_of_rays;
     const int dense_ray_count = sparse_ray_count * 2;
+
     DiskSampling()(sparse_ray_count, cone_angle, disk_samples_sparse);
     DiskSampling()(dense_ray_count, cone_angle, disk_samples_dense);
 
     Tree tree(mesh.facets_begin(), mesh.facets_end());
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
-      //CGAL_precondition(facet_it->is_triangle()); //Mesh should contain triangles.
-
       double sdf = calculate_sdf_value_of_facet(facet_it, tree, disk_samples_sparse);
       sdf_values[facet_it] = sdf;
     }

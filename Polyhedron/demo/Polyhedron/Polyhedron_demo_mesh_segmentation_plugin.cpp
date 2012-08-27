@@ -112,7 +112,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::init_color_map_sdf()
     for(int i = 0; i <= 255; ++i)
     {
         if(i > 128 && i <= 192) { r = static_cast<int>( ((i - 128) / (192.0 - 128)) * 255 ); }        
-        if(i > 0 && i <= 64)    { g = static_cast<int>( ((i) / (64.0)) * 255 ); }
+        if(i > 0 && i <= 98)    { g = static_cast<int>( ((i) / (98.0)) * 255 ); }
         if(i > 191 && i <=255)  { g = 255 - static_cast<int>( ((i - 191) / (255.0 - 191)) * 255 ); }
         if(i > 64 && i <= 127)  { b = 255 - static_cast<int>( ((i - 64) / (127.0 - 64)) * 255 ); }
         color_map_sdf[i] = QColor(r, g, b);        
@@ -139,9 +139,8 @@ void Polyhedron_demo_mesh_segmentation_plugin::init_color_map_segmentation()
     color_map_segmentation.push_back(QColor("#5c3566"));
     */
     
-    
-    color_map_segmentation.push_back(QColor( 87, 87, 87)); 
     color_map_segmentation.push_back(QColor( 173, 35, 35)); 
+    color_map_segmentation.push_back(QColor( 87, 87, 87));     
     color_map_segmentation.push_back(QColor( 42, 75, 215)); 
     color_map_segmentation.push_back(QColor( 29, 105, 20)); 
     color_map_segmentation.push_back(QColor( 129, 74, 25)); 
@@ -387,7 +386,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
     }
     for(int i = 0; i <= max_segment; ++i)   
     {
-        QColor aColor = color_map_segmentation[i % color_map_segmentation.size()]; 
+        QColor aColor = color_map_segmentation[(max_segment - i) % color_map_segmentation.size()]; 
         color_vector.push_back(aColor);     
     }    
 }

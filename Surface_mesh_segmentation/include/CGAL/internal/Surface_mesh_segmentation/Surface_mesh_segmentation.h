@@ -145,13 +145,13 @@ public:
 // Use these two functions together
   template <class SDFPropertyMap>
   std::pair<double, double>
-  calculate_sdf_values(SDFPropertyMap sdf_pmap, double cone_angle,
-                       int number_of_rays) {
+  calculate_sdf_values(double cone_angle,
+                       int number_of_rays, SDFPropertyMap sdf_pmap) {
     SEG_DEBUG(Timer t)
     SEG_DEBUG(t.start())
 
-    SDF_calculation_class().calculate_sdf_values(mesh, sdf_pmap, cone_angle,
-        number_of_rays);
+    SDF_calculation_class().calculate_sdf_values(mesh, cone_angle, number_of_rays,
+        sdf_pmap);
 
     SEG_DEBUG(std::cout << t.time() << std::endl)
 
@@ -165,9 +165,8 @@ public:
   }
 
   template <class FacetSegmentMap, class SDFPropertyMap>
-  int partition(SDFPropertyMap sdf_pmap, FacetSegmentMap segment_pmap,
-                int number_of_centers,
-                double smoothing_lambda) {
+  int partition(int number_of_centers, double smoothing_lambda,
+                SDFPropertyMap sdf_pmap, FacetSegmentMap segment_pmap) {
     smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                   smoothing_lambda)); // clip into [0-1]
     smoothing_lambda *=
