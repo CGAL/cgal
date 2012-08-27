@@ -149,9 +149,5 @@ The main advantage is to decrease the complexity of accessing associated data wi
 The initial implementation of this package is the result of the work of the author during the 2012 season
 of the Google Summer of Code.
 
-# Extra: (ideas to append) #
-- TODO (Done): you do not talk about the limitation of the input mesh (triangulated, manifold, self-intersections, close, holes ...)
-(is_pure_triangle precond in ref manual & in user manual talk about triangulated possible with small holes etc)
-
 */ 
 } /* namespace CGAL */
