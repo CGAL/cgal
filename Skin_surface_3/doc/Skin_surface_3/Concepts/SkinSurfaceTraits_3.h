@@ -10,7 +10,7 @@ polyhedral mesh approximating a skin surface
 
 \refines ::RegularTriangulationTraits_3 
 
-\hasModel CGAL::Skin_surface_traits_3<K> 
+\hasModel `CGAL::Skin_surface_traits_3<K>` 
 
 \sa `CGAL::Skin_surface_3<SkinSurfaceTraits_3>` 
 \sa `CGAL::Skin_surface_traits_3<K>` 
