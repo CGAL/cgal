@@ -12,8 +12,8 @@ and corners according to their respective dimensions 3,2,1 and 0.
 
 \refines ::MeshDomain_3 
 
-\hasModel Mesh_domain_with_polyline_features_3<MeshDomain_3> 
-\hasModel Polyhedral_mesh_domain_with_features_3<IGT> 
+\hasModel `Mesh_domain_with_polyline_features_3<MeshDomain_3>`
+\hasModel `Polyhedral_mesh_domain_with_features_3<IGT>`
 
 \sa `MeshDomain_3` 
 

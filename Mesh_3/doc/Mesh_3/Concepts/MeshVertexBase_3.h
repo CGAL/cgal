@@ -18,7 +18,7 @@ and to an index characteristic of this face.
 \refines ::RegularTriangulationVertexBase_3 
 \refines ::SurfaceMeshVertexBase_3 
 
-\hasModel Mesh_vertex_base_3<MD,Gt,Vb> 
+\hasModel `Mesh_vertex_base_3<MD,Gt,Vb>` 
 
 \sa `CGAL::make_mesh_3` 
 \sa `CGAL::refine_mesh_3` 
