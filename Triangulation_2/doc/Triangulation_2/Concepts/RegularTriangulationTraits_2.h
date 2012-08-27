@@ -19,7 +19,7 @@ of Delaunay triangulations.
 
 \refines ::TriangulationTraits_2 
 
-\hasModel `CGAL::Regular_triangulation_traits_2<Rep>` 
+\hasModel `CGAL::Regular_triangulation_euclidean_traits_2<K,Weight>` 
 \hasModel `CGAL::Regular_triangulation_filtered_traits_2<FK>` 
 
 \sa `TriangulationTraits_2` 
