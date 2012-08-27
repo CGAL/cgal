@@ -1579,7 +1579,6 @@ update_mesh_topo_change(const Point_3& new_position,
   //           << "update_mesh_topo_change("<< new_position << ",\n"
   //           << "                        " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
-#ifdef CGAL_MESH_3_USE_NEW_MOVE_POINT_TOPO_CHANGE
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
   Facet_vector insertion_conflict_boundary;
@@ -1597,16 +1596,6 @@ update_mesh_topo_change(const Point_3& new_position,
   std::set_union(insertion_conflict_cells.begin(), insertion_conflict_cells.end(),
                  removal_conflict_cells.begin(), removal_conflict_cells.end(),
                  std::back_inserter(conflict_cells)); 
-#else
-  Cell_vector conflict_cells;
-  conflict_cells.reserve(64);
-  get_conflict_zone_topo_change(old_vertex, new_position,
-                                std::back_inserter(conflict_cells));
-  // May happen in case of new_position is located on a vertex
-  if ( conflict_cells.empty() )
-    return std::make_pair(false,old_vertex);
-  
-#endif
   
   FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
   Point_3 old_position = old_vertex->point();
@@ -1616,7 +1605,6 @@ update_mesh_topo_change(const Point_3& new_position,
   
   Cell_vector outdated_cells;
   outdated_cells.reserve(64);
-#ifdef CGAL_MESH_3_USE_NEW_MOVE_POINT_TOPO_CHANGE
     Vertex_handle new_vertex = 
         move_point_topo_change_conflict_zone_known(old_vertex, new_position,
                                                     insertion_conflict_boundary[0],
@@ -1626,15 +1614,6 @@ update_mesh_topo_change(const Point_3& new_position,
                                                     removal_conflict_cells.end(),
                                                     std::back_inserter(outdated_cells),
                                                     CGAL::Emptyset_iterator());
-#else
-  Vertex_handle new_vertex = 
-    move_point_topo_change_conflict_zone_known(old_vertex,
-                                               new_position,
-                                               conflict_cells.begin(),
-                                               conflict_cells.end(),
-                                               std::back_inserter(outdated_cells),
-                                               CGAL::Emptyset_iterator());
-#endif  
   // If nothing changed, return
   if ( old_position == new_vertex->point() ) 
   {

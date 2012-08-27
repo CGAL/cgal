@@ -46,7 +46,6 @@
 # define FORCE_STRUCTURAL_FILTERING
 
 //experimental
-#  define CGAL_MESH_3_USE_NEW_MOVE_POINT_TOPO_CHANGE
 #  define CGAL_FASTER_BUILD_QUEUE
 
 //should not be used
