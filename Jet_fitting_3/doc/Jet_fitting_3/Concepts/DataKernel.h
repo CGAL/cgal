@@ -6,7 +6,7 @@
 The concept `DataKernel` describes the set of requirements to be 
 fulfilled by any class used to instantiate first template parameter of 
 the class 
-`Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>`. 
+`CGAL::Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>`. 
 
 Operations 
 -------------- 
@@ -14,7 +14,8 @@ Operations
 Only constructors (from 3 scalars and copy constructors) and access 
 methods to coordinates `x()`, `y()`, `z()` are needed. 
 
-\hasModel CGAL::Cartesian<FieldNumberType> 
+\hasModel `CGAL::Cartesian<FieldNumberType>` 
+\hasModel `CGAL::Simple_cartesian<FieldNumberType>` 
 
 \sa ::LocalKernel
 

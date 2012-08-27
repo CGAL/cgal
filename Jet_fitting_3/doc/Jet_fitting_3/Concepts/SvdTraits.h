@@ -5,10 +5,10 @@
   The concept `SvdTraits` describes the set of requirements to be 
   fulfilled by any class used to instantiate the third template 
   parameter of the class 
-  `Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>`. 
+  `CGAL::Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>`. 
 
   It describes the linear algebra types and algorithms needed by the 
-  class `Monge_via_jet_fitting`. 
+  class `CGAL::Monge_via_jet_fitting`. 
 
   Requirements 
   -------------- 
@@ -16,8 +16,8 @@
   The scalar type, `SvdTraits::FT`, must be the same as that of 
   the `LocalKernel` concept : `LocalKernel::FT`. 
 
-  \hasModel `Eigen_svd`
-  \hasModel `Lapack_svd`
+  \hasModel `CGAL::Eigen_svd`
+  \hasModel `CGAL::Lapack_svd`
 
   \sa `LocalKernel` 
 
