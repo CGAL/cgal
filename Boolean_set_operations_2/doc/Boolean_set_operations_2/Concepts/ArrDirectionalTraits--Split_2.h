@@ -5,7 +5,7 @@
 
 \refines ::Functor 
 
-\hasModel ArrangementDirectionalXMonotoneTraits_2::Split_2 
+\hasModel `ArrangementDirectionalXMonotoneTraits_2::Split_2` 
 
 */
 

@@ -5,7 +5,7 @@
 
 \refines ::Functor 
 
-\hasModel ArrangementDirectionalXMonotoneTraits_2::ConstructOpposite_2 
+\hasModel `ArrangementDirectionalXMonotoneTraits_2::ConstructOpposite_2` 
 
 */
 

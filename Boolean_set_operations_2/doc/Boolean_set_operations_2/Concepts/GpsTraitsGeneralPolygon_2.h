@@ -11,8 +11,8 @@ A model of this concept represents a simple general polygon.
 
 \generalizes ::GeneralPolygon_2 
 
-\hasModel GeneralPolygonSetTraits_2::Polygon_2 
-\hasModel CGAL::Polygon_2<PolygonTraits_2, Container> 
+\hasModel `GeneralPolygonSetTraits_2::Polygon_2` 
+\hasModel `CGAL::Polygon_2<PolygonTraits_2, Container>` 
 
 \sa `GeneralPolygon_2` 
 

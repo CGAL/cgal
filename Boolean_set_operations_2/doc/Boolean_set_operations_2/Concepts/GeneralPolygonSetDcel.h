@@ -24,10 +24,10 @@ respectively.)
 Notice that this concept differs from the concept `ArrangemenDcel` 
 only in the type `Face`. 
 
-\hasModel Arr_dcel_base<V,H,F> 
-\hasModel Arr_default_dcel<Traits> 
-\hasModel Arr_face_extended_dcel<Traits,FData,V,H,F> 
-\hasModel Arr_extended_dcel<Traits,VData,HData,FData,V,H,F> 
+\hasModel `CGAL::Arr_dcel_base<V,H,F>` 
+\hasModel `CGAL::Arr_default_dcel<Traits>` 
+\hasModel `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>` 
+\hasModel `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>` 
 
 \sa `ArrangementDcelVertex` 
 \sa `ArrangementDcelHalfedge` 

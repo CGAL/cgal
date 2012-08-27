@@ -16,13 +16,13 @@ as its <I>source</I> and the other as its <I>target</I>.
 
 \refines ::ArrangementXMonotoneTraits_2 
 
-\hasModel CGAL::Arr_segment_traits_2<Kernel> 
-\hasModel CGAL::Arr_non_caching_segment_traits_2<Kernel> 
-\hasModel CGAL::Arr_circle_segment_traits_2<Kernel> 
-\hasModel CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits> 
-\hasModel CGAL::Arr_rational_function_traits_2<AlgKernel,NtTraits> 
-\hasModel CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits> 
-\hasModel CGAL::Arr_algebraic_segment_traits_2<Coefficient> 
+\hasModel `CGAL::Arr_segment_traits_2<Kernel>` 
+\hasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>` 
+\hasModel `CGAL::Arr_circle_segment_traits_2<Kernel>` 
+\hasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>` 
+\hasModel `CGAL::Arr_rational_function_traits_2<AlgKernel,NtTraits>` 
+\hasModel `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>` 
+\hasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>` 
 
 \sa `ArrangementXMonotoneTraits_2` 
 

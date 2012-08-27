@@ -10,10 +10,10 @@ concept requires the ability to access the general polygon that
 represents the outer boundary and the general polygons that represent 
 the holes. 
 
-\hasModel CGAL::General_polygon_with_holes_2<General_polygon> 
-\hasModel CGAL::Polygon_with_holes_2<Kernel,Container> 
-\hasModel CGAL::Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2 
-\hasModel CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>::Polygon_with_holes_2 
+\hasModel `CGAL::General_polygon_with_holes_2<General_polygon>`
+\hasModel `CGAL::Polygon_with_holes_2<Kernel,Container>`
+\hasModel `CGAL::Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2`
+\hasModel `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>::Polygon_with_holes_2` 
 
 */
 

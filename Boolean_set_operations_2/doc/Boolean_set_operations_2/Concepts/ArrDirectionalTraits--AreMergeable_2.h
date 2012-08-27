@@ -5,7 +5,7 @@
 
 \refines ::Functor 
 
-\hasModel ArrangementDirectionalXMonotoneTraits_2::Are_mergeable_2 
+\hasModel `ArrangementDirectionalXMonotoneTraits_2::Are_mergeable_2` 
 
 */
 
