@@ -30,7 +30,7 @@ supporting
 
 In these searching problems a set \f$ P\f$ of data points in
 \f$ d\f$-dimensional space is given. The points can be represented by
-Cartesian coordinates or homogeneous coordinates. These points are
+%Cartesian coordinates or homogeneous coordinates. These points are
 preprocessed into a tree data structure, so that given any
 query item \f$ q\f$ the points of \f$ P\f$ can be browsed efficiently. The
 approximate spatial searching package is designed for data sets that
@@ -256,7 +256,7 @@ iterator category, that is one can make only one pass over the data.
 ## Example for General Neighbor Searching ##
 
 This example program illustrates approximate nearest and furthest
-neighbor searching using 4-dimensional Cartesian coordinates. Five
+neighbor searching using 4-dimensional %Cartesian coordinates. Five
 approximate nearest neighbors of the query rectangle
 \f$ [0.1,0.2]^4\f$ are computed. Because the query object is a rectangle
 we cannot use the Orthogonal neighbor search. As in the previous 
@@ -284,7 +284,7 @@ points class.
 \cgalexample{Point.h}
 
 We have put the glue layer in this file as well, that is a class that allows to 
-iterate over the Cartesian coordinates of the point, and a class to construct
+iterate over the %Cartesian coordinates of the point, and a class to construct
 such an iterator for a point. We next need a distance class
 \cgalexample{Distance.h}
 
