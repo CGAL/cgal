@@ -146,14 +146,12 @@ returns `true`, iff `ellipse` is degenerate, i.e. if
 bool  is_degenerate( ) const;
 
 
-    /// \name I/O 
-    /// @{
-
-The following I/O operator is only needed, if the corresponding I/O
-operator of `Min_ellipse_2` is used.
+/// \name I/O 
+/// The following I/O operator is only needed, if the corresponding I/O
+/// operator of `Min_ellipse_2` is used.
+/// @{
 
 /*!
-\ingroup PkgBoundingVolumes
 writes `ellipse` to output stream `os`.
 
 \note Only need , if the corresponding I/O
@@ -161,4 +159,7 @@ operator of `Min_ellipse_2` is used.
 
 */
 ostream& operator<<(ostream& os, const Ellipse& ellipse);
+
+/// @}
+
 };

@@ -194,11 +194,13 @@ construct_iso_rectangle_2_above_right_point_2_object() const;
 
 /// @}
 
+};
+
 /*!
 \ingroup PkgBoundingVolumes
 
 The function `rectangular_p_center_2` computes rectilinear 
-\f$ p\f$-centers of a planar point set, i.e. a set of \f$ p\f$ points such 
+\f$ p\f$-centers of a planar point set, i.e.\ a set of \f$ p\f$ points such 
 that the maximum minimal \f$ L_{\infty}\f$-distance between both sets is 
 minimized. 
 
@@ -265,9 +267,7 @@ and computes its two-centers.
 */
 template < class ForwardIterator, class
 OutputIterator, class FT, class Traits > OutputIterator
-rectangular_p_center_2(ForwardIterator f, ForwardIterator l,
-OutputIterator o, FT& r, int p, const Traits& t =
-Default_traits);
-
+rectangular_p_center_2(ForwardIterator f, ForwardIterator l, OutputIterator o, 
+                       FT& r, int p, const Traits& t = Default_traits);
 } /* namespace CGAL */
 

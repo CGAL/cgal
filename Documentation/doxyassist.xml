@@ -439,6 +439,7 @@ namespace for the XML file to be processed properly.  -->
             <item>../Min_ellipse_2/examples</item>
             <item>../Min_sphere_d/examples</item>
             <item>../Approximate_min_ellipsoid_d/examples</item>
+            <item>../Matrix_search/examples</item>
           </list>
           <string name="IMAGE_PATH">../Bounding_volumes/doc/Bounding_volumes/fig</string>
         </doxygen>
