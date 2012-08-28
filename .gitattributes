@@ -1824,7 +1824,8 @@ Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#
 Documentation/Doxyfile -text
 Documentation/DoxygenLayout.xml -text
 Documentation/DoxygenLayoutPackage.xml -text
-Documentation/cgal_manual.bib -text
+Documentation/biblio/cgal_manual.bib -text
+Documentation/biblio/makebiblio -text
 Documentation/cgal_stylesheet.css -text
 Documentation/doc/Developer_manual/Chapter_checks.txt -text
 Documentation/doc/Developer_manual/Chapter_code_format.txt -text

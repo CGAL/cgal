@@ -203,7 +203,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cpp11=*C++11*" \
                          "CC=*C++*" \
                          "cgalexample{1}=<br><b>File</b> \ref \1 \include \1" \
-                         "cgalbib{1}=\par \"BibTeX\" \cite \1" \
+                         "cgalbib{1}=\par \"BibTeX\" \cite \1b" \
                          "license{1}=\par \"License\" \1" \
                          "advanced=\attention" \
                          "beginadvanced=" \
@@ -632,9 +632,8 @@ LAYOUT_FILE            = DoxygenLayout.xml
 # of the bibliography can be controlled using LATEX_BIB_STYLE. To use this
 # feature you need bibtex and perl available in the search path.
 
-CITE_BIB_FILES         = cgal_manual.bib \
-                         how_to_cite_cgal.bib \
-                         geom.bib
+CITE_BIB_FILES         = ./biblio/cgal_manual.bib \
+                         ./biblio/geom.bib
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
@@ -918,7 +917,7 @@ HTML_STYLESHEET        = stylesheet.css
 # files. In the HTML_STYLESHEET file, use the file name only. Also note that
 # the files will be copied as-is; there are no commands or markers available.
 
-HTML_EXTRA_FILES       = jquery.footnotes.min.js
+HTML_EXTRA_FILES       = 
 
 HTML_EXTRA_STYLESHEET  = cgal_stylesheet.css
 
