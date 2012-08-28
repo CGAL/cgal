@@ -1825,6 +1825,7 @@ Documentation/Doxyfile -text
 Documentation/DoxygenLayout.xml -text
 Documentation/DoxygenLayoutPackage.xml -text
 Documentation/cgal_manual.bib -text
+Documentation/cgal_stylesheet.css -text
 Documentation/doc/Developer_manual/Chapter_checks.txt -text
 Documentation/doc/Developer_manual/Chapter_code_format.txt -text
 Documentation/doc/Developer_manual/Chapter_debugging.txt -text

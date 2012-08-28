@@ -19,7 +19,20 @@ $generatedby &#160;<a href="http://www.doxygen.org/index.html">
 <!--END !GENERATE_TREEVIEW-->
 <script type="text/javascript"> 
   <!-- 
-       $(document).ready(function() { $("body").footnotes(); }); 
+    $(document).ready(function() { 
+      $("body").footnotes();
+      var toc = $("#autotoc").append('<ul></ul>');
+      if(toc) {
+        toc = toc.find('ul');
+        $("h1, h2, h3").each(function(i) {
+          var current = $(this);
+          var levelTag = current[0].tagName.charAt(1);
+          current.attr("id", "title" + i);
+          toc.append("<li class='level" + levelTag + "'><a id='link" + i + "' href='#title" +
+            i + "' title='" + current.prop("tagName") + "'>" + current.text() + "</a></li>");
+        });
+      }
+    });
 // --> 
 </script>
 </body>

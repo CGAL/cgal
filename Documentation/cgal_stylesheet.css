@@ -1,0 +1,35 @@
+/* cgal autotoc */
+
+/* div#autotoc li { */
+/*         background: url("bdwn.png") no-repeat scroll 0 5px transparent; */
+/*         font: 10px/1.2 Verdana,DejaVu Sans,Geneva,sans-serif; */
+/*         margin-top: 5px; */
+/*         padding-left: 10px; */
+/*         padding-top: 2px; */
+/* } */
+
+/* div#autotoc ul { */
+/*         list-style: none outside none; */
+/*         border: medium none; */
+/*         padding: 0px; */
+/* }        */
+
+/* div#autotoc li.toclevel1 { */
+/*         margin-left: 0px; */
+/* } */
+
+/* div#autotoc li.toclevel2 { */
+/*         margin-left: 15px; */
+/* } */
+
+/* div#autotoc li.toclevel3 { */
+/*         margin-left: 30px; */
+/* } */
+
+.textsc {
+    font-variant: small-caps;
+}
+
+#projectnumber {
+    display: none;
+}
