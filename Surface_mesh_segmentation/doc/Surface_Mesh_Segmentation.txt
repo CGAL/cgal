@@ -106,7 +106,7 @@ These functions expects a manifold triangulated polyhedron without boundary as i
 polyhedron with boundaries, but considering how the SDF value are computed, using a polyhedron with large holes is likely to result in 
 meaningless SDF values, and therefore unreliable segmentation.
 
-The current implementation of the computation of the SDF values is based on the AABB_tree package. 
+The current implementation of the computation of the SDF values is relies on the AABB_tree package. 
 This operation is robust when the AABBTraits model provides has exact predicates.
 	
 ##The SDF Computation##

@@ -4,10 +4,6 @@
  * @file Disk_samplers.h
  * @brief This file contains 3 sampling methods, which can be used as a template parameter for CGAL::internal::SDF_calculation.
  */
-#include <CGAL/number_type_basic.h>
-
-#include <boost/tuple/tuple.hpp>
-#include <vector>
 #include <cmath>
 
 #define CGAL_ANGLE_ST_DEV_DIVIDER 3.0
@@ -43,29 +39,29 @@ namespace internal
 // Uniform //                                  // Custom power (biased to center) //
 /**
  * @brief Uses Vogel's method to sample points from unit-disk.
+ *
+ * Template parameter @a Tuple should have a constructor which takes 3 double parameters.
  * @see Disk_samplers.h, SDF_calculation
  */
+template<class Tuple>
 class Vogel_disk_sampling
 {
-private:
-  bool uniform;
-
 public:
-  Vogel_disk_sampling() : uniform(false) { }
   /**
    * Samples points from unit-disk.
    * @param number_of_points number of points to be picked
    * @param cone_angle opening angle of cone (might be necessary for weighting)
-   * @param[out] samples sampled points from disk, each point is tuple of:
-   *   - get<0> = coordinate-x
-   *   - get<1> = coordinate-y
-   *   - get<2> = weight (proportional to angle between cone-normal)
+   * @param[out] out_it sampled points from disk, each point is tuple of:
+   *   - first = coordinate-x
+   *   - second = coordinate-y
+   *   - third = weight (proportional to angle between cone-normal)
+   * @param uniform if false custom power will be used and sampled points will be biased to center
    */
-  void operator()(int number_of_points, double cone_angle,
-                  std::vector<boost::tuple<double, double, double> >& samples) const {
-    typedef boost::tuple<double, double, double> Disk_sample;
-    typedef std::vector<Disk_sample>             Disk_samples_list;
-
+  template<class OutputIterator>
+  void operator()(int number_of_points,
+                  double cone_angle,
+                  OutputIterator out_it,
+                  bool uniform = false) const {
     const double golden_ratio = 3.0 - std::sqrt(5.0);
 
     if(uniform) {
@@ -76,7 +72,7 @@ public:
         double R = std::sqrt(static_cast<double>(i) / number_of_points);
         double angle = atan(R / length_of_normal);
         double weight =  exp(-0.5 * (std::pow(angle / angle_st_dev, 2)));
-        samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), weight));
+        *out_it++ = Tuple(R * cos(Q), R * sin(Q), weight);
       }
     } else {
       const double custom_power = 8.0 /
@@ -86,7 +82,7 @@ public:
         double Q = i * golden_ratio * CGAL_PI;
         double R = std::pow(static_cast<double>(i) / number_of_points, custom_power);
         // use uniform weigths, since we already give importance to locations that are close to center.
-        samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), 1.0));
+        *out_it++ = Tuple(R * cos(Q), R * sin(Q), 1.0);
       }
     }
   }
@@ -119,7 +115,10 @@ public:
 /////////////////////////////////////////////////////////
 /**
  * @brief Uses polar mapping to sample points from unit-disk.
+ *
+ * Template parameter @a Tuple should have a constructor which takes 3 double parameters.
  */
+template<class Tuple>
 class Polar_disk_sampling
 {
 public:
@@ -127,19 +126,18 @@ public:
    * Samples points from unit-disk.
    * @param number_of_points number of points to be picked
    * @param cone_angle opening angle of cone (might be necessary for weighting)
-   * @param[out] samples sampled points from disk, each point is tuple of:
-   *   - get<0> = coordinate-x
-   *   - get<1> = coordinate-y
-   *   - get<2> = weight (proportional to angle between cone-normal)
+   * @param[out] out_it sampled points from disk, each point is tuple of:
+   *   - first = coordinate-x
+   *   - second = coordinate-y
+   *   - third = weight (proportional to angle between cone-normal)
    *
    * Note:
    * Returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
    */
-  void operator()(int number_of_points, double cone_angle,
-                  std::vector<boost::tuple<double, double, double> >& samples) const {
-    typedef boost::tuple<double, double, double> Disk_sample;
-    typedef std::vector<Disk_sample>             Disk_samples_list;
-
+  template<class OutputIterator>
+  void operator()(int number_of_points,
+                  double cone_angle,
+                  OutputIterator out_it) const {
     const int number_of_points_sqrt = static_cast<int>(std::sqrt(
                                         static_cast<double>(number_of_points)));
     const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
@@ -154,7 +152,7 @@ public:
         double Q = 2 * w2 * CGAL_PI;
         double angle = atan(R / length_of_normal);
         double weight = exp(-0.5 * (pow(angle / angle_st_dev, 2)));
-        samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), weight));
+        *out_it++ = Tuple(R * cos(Q), R * sin(Q), weight);
       }
   }
 };
@@ -184,7 +182,10 @@ public:
 /////////////////////////////////////////////////////////
 /**
  * @brief Uses concentric mapping to sample points from unit-disk.
+ *
+ * Template parameter @a Tuple should have a constructor which takes 3 double parameters.
  */
+template<class Tuple>
 class Concentric_disk_sampling
 {
 public:
@@ -192,19 +193,18 @@ public:
    * Samples points from unit-disk.
    * @param number_of_points number of points to be picked
    * @param cone_angle opening angle of cone (might be necessary for weighting)
-   * @param[out] samples sampled points from disk, each point is tuple of:
-   *   - get<0> = coordinate-x
-   *   - get<1> = coordinate-y
-   *   - get<2> = weight (proportional to angle between cone-normal)
+   * @param[out] out_it sampled points from disk, each point is tuple of:
+   *   - first = coordinate-x
+   *   - second = coordinate-y
+   *   - third = weight (proportional to angle between cone-normal)
    *
    * Note:
    * Returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
    */
-  void operator()(int number_of_points, double cone_angle,
-                  std::vector<boost::tuple<double, double, double> >& samples) const {
-    typedef boost::tuple<double, double, double> Disk_sample;
-    typedef std::vector<Disk_sample>             Disk_samples_list;
-
+  template<class OutputIterator>
+  void operator()(int number_of_points,
+                  double cone_angle,
+                  OutputIterator out_it) const {
     const int number_of_points_sqrt = static_cast<int>(std::sqrt(
                                         static_cast<double>(number_of_points)));
     const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
@@ -240,7 +240,7 @@ public:
         Q *= (CGAL_PI / 4.0);
         double angle = atan(R / length_of_normal);
         double weight = exp(-0.5 * (pow(angle / angle_st_dev, 2)));
-        samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), weight));
+        *out_it++ = Tuple(R * cos(Q), R * sin(Q), weight);
       }
   }
 };

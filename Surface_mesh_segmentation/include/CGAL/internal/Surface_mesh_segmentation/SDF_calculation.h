@@ -6,12 +6,11 @@
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/internal/Surface_mesh_segmentation/AABB_traversal_traits.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Disk_samplers.h>
-#include <map>
 #include <vector>
 #include <algorithm>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/property_map/property_map.hpp>
+#include <boost/optional.hpp>
 
 #define CGAL_ACCEPTANCE_RATE_THRESHOLD 0.5
 #define CGAL_ST_DEV_MULTIPLIER 0.75
@@ -25,10 +24,9 @@ namespace internal
  * @brief Responsible for calculating Shape Diameter Function over surface of the mesh.
  * @see Disk_samplers.h
  */
-template <class Polyhedron, class DiskSampling = Vogel_disk_sampling>
+template <class Polyhedron, class DiskSampling = Vogel_disk_sampling<boost::tuple<double, double, double> > >
 class SDF_calculation
 {
-
 //type definitions
 private:
   typedef typename Polyhedron::Traits Kernel;
@@ -89,13 +87,17 @@ public:
     const int sparse_ray_count = number_of_rays;
     const int dense_ray_count = sparse_ray_count * 2;
 
-    DiskSampling()(sparse_ray_count, cone_angle, disk_samples_sparse);
-    DiskSampling()(dense_ray_count, cone_angle, disk_samples_dense);
+    DiskSampling()(sparse_ray_count, cone_angle,
+                   std::back_inserter(disk_samples_sparse));
+    DiskSampling()(dense_ray_count, cone_angle,
+                   std::back_inserter(disk_samples_dense));
 
     Tree tree(mesh.facets_begin(), mesh.facets_end());
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
       double sdf = calculate_sdf_value_of_facet(facet_it, tree, disk_samples_sparse);
+      // Note that calculate_sdf_value_of_facet call itself again with disk_samples_dense if
+      // number of accepted rays after outlier removal is below CGAL_ACCEPTANCE_RATE_THRESHOLD
       sdf_values[facet_it] = sdf;
     }
   }
@@ -246,7 +248,7 @@ private:
           intersections.begin();
         op_it != intersections.end() ; ++op_it) {
       Object object = op_it->first;
-      Primitive_id id     = op_it->second;
+      Primitive_id id = op_it->second;
       if(id == facet) {
         continue;  //Since center is located on related facet, we should skip it if there is an intersection with it.
       }
@@ -377,7 +379,7 @@ private:
       st_dev += dif * dif;
     }
     st_dev = std::sqrt(st_dev / accepted_ray_count);
-    /* Calculate sdf, accept rays : ray_dist - median < st dev */
+    /* Calculate sdf, accept rays if ray_dist - median < st dev */
     int not_outlier_count = 0;
     w_it = ray_weights.begin();
     for(std::vector<double>::iterator dist_it = ray_distances.begin();

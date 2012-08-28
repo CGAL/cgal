@@ -54,7 +54,6 @@ public:
       NeighborSelector()(facet_it, window_size,
                          neighbors); // gather neighbors in the window
 
-      double total_sdf_value = 0.0, total_weight = 0.0;
       double current_sdf_value = values[facet_it];
       // calculate deviation for range weighting.
       double deviation = 0.0;
@@ -69,6 +68,8 @@ public:
         smoothed_values.push_back(current_sdf_value);
         continue;
       }
+      // smooth
+      double total_sdf_value = 0.0, total_weight = 0.0;
       for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
           it != neighbors.end(); ++it) {
         double spatial_weight = gaussian_function(it->second,
@@ -170,7 +171,8 @@ public:
    * @param max_level maximum allowed distance (number of levels) between root facet and visited facet
    * @param[out] neighbors visited facets and their distances to root facet
    */
-  void operator()(Facet_const_handle& facet, int max_level,
+  void operator()(Facet_const_handle& facet,
+                  int max_level,
                   std::map<Facet_const_handle, int>& neighbors) const {
     typedef std::pair<Facet_const_handle, int> Facet_level_pair;
     std::queue<Facet_level_pair> facet_queue;
@@ -210,7 +212,8 @@ public:
    * @param max_level maximum allowed distance (number of levels) between root facet and visited facet
    * @param[out] neighbors visited facets and their distances to root facet
    */
-  void operator()(Facet_const_handle& facet, int max_level,
+  void operator()(Facet_const_handle& facet,
+                  int max_level,
                   std::map<Facet_const_handle, int>& neighbors) const {
     typedef std::pair<Facet_const_handle, int> Facet_level_pair;
     std::queue<Facet_level_pair> facet_queue;

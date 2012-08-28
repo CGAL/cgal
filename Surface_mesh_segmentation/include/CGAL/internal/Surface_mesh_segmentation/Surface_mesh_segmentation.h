@@ -1,56 +1,24 @@
 #ifndef CGAL_SURFACE_MESH_SEGMENTATION_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_H
-/* NEED TO BE DONE
- * About implementation:
- * +) I am not using BGL, as far as I checked there is a progress on BGL redesign
- *    (https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/BGL) which introduces some features
- *    for face-based traversal / manipulation by FaceGraphs
- * +) Deciding on which parameters will be taken from user
- *
- * About paper (and correctness / efficiency etc.):
- * +) Weighting ray distances with inverse of their angles: not sure how to weight exactly
- * +) Anisotropic smoothing: have no idea what it is exactly, should read some material (google search is not enough)
- * +) Deciding how to generate rays in cone: for now using "polar angle" and "accept-reject (square)" and "concentric mapping" techniques
- */
-
 
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
-#include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Filters.h>
-//#include "Alpha_expansion_graph_cut.h"
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
-
 #include <CGAL/internal/Surface_mesh_segmentation/SDF_calculation.h>
 
-#include <CGAL/utility.h>
-#include <CGAL/Timer.h>
 #include <CGAL/Mesh_3/dihedral_angle_3.h>
 
-#include <boost/optional.hpp>
 #include <boost/property_map/property_map.hpp>
 
-#include <iostream>
-#include <fstream>
 #include <cmath>
 #include <vector>
 #include <algorithm>
 #include <utility>
-#include <queue>
 #include <map>
 
 #define CGAL_NORMALIZATION_ALPHA 5.0
 #define CGAL_CONVEX_FACTOR 0.08
 #define CGAL_SMOOTHING_LAMBDA_MULTIPLIER 100.0
-
-//IOY: these are going to be removed at the end (no CGAL_ pref)
-#define ACTIVATE_SEGMENTATION_DEBUG
-#ifdef ACTIVATE_SEGMENTATION_DEBUG
-#define SEG_DEBUG(x) x;
-#else
-#define SEG_DEBUG(x)
-#endif
-// If defined then profile function becomes active, and called from constructor.
-//#define SEGMENTATION_PROFILE
 
 namespace CGAL
 {
@@ -79,45 +47,14 @@ class Polyhedron,
       >
 class Surface_mesh_segmentation
 {
-private:
-  /**
-   * An adaptor for Lvalue property-map. It stores a pointer to vector for underlying data-structure,
-   * and also stores another property-map which maps each `key` to vector index.
-   */
-  template<class AnyPolyhedron, class ValueType, class FacetIdPropertyMap>
-  struct Polyhedron_property_map_for_facet
-      : public boost::put_get_helper<ValueType&,
-        Polyhedron_property_map_for_facet<AnyPolyhedron, ValueType, FacetIdPropertyMap>
-        > {
-  public:
-    typedef typename AnyPolyhedron::Facet_const_handle key_type;
-    typedef ValueType value_type;
-    typedef value_type& reference;
-    typedef boost::writable_property_map_tag category;
-
-    Polyhedron_property_map_for_facet() : internal_vector(NULL) { }
-    Polyhedron_property_map_for_facet(std::vector<ValueType>* internal_vector,
-                                      FacetIdPropertyMap facet_id_map)
-      : internal_vector(internal_vector), facet_id_map(facet_id_map)  { }
-
-    reference operator[](key_type key) const {
-      return (*internal_vector)[facet_id_map[key]];
-    }
-  private:
-    std::vector<ValueType>* internal_vector;
-    FacetIdPropertyMap facet_id_map;
-  };
-
 //type definitions
 public:
   typedef typename Polyhedron::Facet_const_handle      Facet_const_handle;
+
 private:
   typedef typename Polyhedron::Traits Kernel;
-  typedef typename Polyhedron::Facet  Facet;
-  typedef typename Polyhedron::Facet  Vertex;
-  typedef typename Kernel::Vector_3   Vector;
   typedef typename Kernel::Point_3    Point;
-  typedef typename Kernel::Plane_3   Plane;
+  typedef typename Polyhedron::Facet  Facet;
 
   typedef typename Polyhedron::Edge_const_iterator     Edge_const_iterator;
   typedef typename Polyhedron::Halfedge_const_handle   Edge_const_handle;
@@ -134,7 +71,7 @@ private:
 // member functions
 public:
   /**
-   * @pre parameter @a mesh should consist of triangles.
+   * @pre @a polyhedron.is_pure_triangle()
    * @param mesh `CGAL Polyhedron` on which other functions operate.
    */
   Surface_mesh_segmentation(const Polyhedron& mesh)
@@ -145,22 +82,17 @@ public:
 // Use these two functions together
   template <class SDFPropertyMap>
   std::pair<double, double>
-  calculate_sdf_values(double cone_angle,
-                       int number_of_rays, SDFPropertyMap sdf_pmap) {
-    SEG_DEBUG(Timer t)
-    SEG_DEBUG(t.start())
-
+  calculate_sdf_values(double cone_angle, int number_of_rays,
+                       SDFPropertyMap sdf_pmap) {
+    // calculate sdf values
     SDF_calculation_class().calculate_sdf_values(mesh, cone_angle, number_of_rays,
         sdf_pmap);
-
-    SEG_DEBUG(std::cout << t.time() << std::endl)
-
+    // apply post-processing steps
     check_zero_sdf_values(sdf_pmap);
     Filter()(mesh, get_window_size(), sdf_pmap);
     std::pair<double, double> min_max_sdf_values = linear_normalize_sdf_values(
           sdf_pmap);
-
-    SEG_DEBUG(std::cout << t.time() << std::endl)
+    // return minimum and maximum sdf values before normalization
     return min_max_sdf_values;
   }
 
@@ -175,6 +107,7 @@ public:
     // log normalize sdf values
     std::vector<double> sdf_values;
     log_normalize_sdf_values(sdf_pmap, sdf_values);
+
     // soft clustering using GMM-fitting initialized with k-means
     Expectation_maximization fitter(number_of_centers, sdf_values,
                                     Expectation_maximization::K_MEANS_INITIALIZATION, 1);
@@ -201,53 +134,12 @@ public:
       segment_pmap[facet_it] = *label_it;
     }
     // assign a segment id for each facet
-    //return number_of_centers;
     int number_of_segments = assign_segments(number_of_centers, sdf_pmap,
                              segment_pmap);
-    //std::cout << "ne : " <<number_of_segments << std::endl;
     return number_of_segments;
   }
 
 private:
-  /**
-   * Going to be removed
-   */
-  double calculate_dihedral_angle_of_edge(Edge_const_handle& edge) const {
-    CGAL_precondition(!edge->is_border_edge());
-    Facet_const_handle f1 = edge->facet();
-    Facet_const_handle f2 = edge->opposite()->facet();
-
-    const Point& f2_v1 = f2->halfedge()->vertex()->point();
-    const Point& f2_v2 = f2->halfedge()->next()->vertex()->point();
-    const Point& f2_v3 = f2->halfedge()->prev()->vertex()->point();
-    /*
-     * As far as I see from results, segment boundaries are occurred in 'concave valleys'.
-     * There is no such thing written (clearly) in the paper but should we just penalize 'concave' edges (not convex edges) ?
-     * Actually that is what I understood from 'positive dihedral angle'.
-     */
-    const Point& unshared_point_on_f1 = edge->next()->vertex()->point();
-    Plane p2(f2_v1, f2_v2, f2_v3);
-    bool concave = p2.has_on_positive_side(unshared_point_on_f1);
-
-    const Point& f1_v1 = f1->halfedge()->vertex()->point();
-    const Point& f1_v2 = f1->halfedge()->next()->vertex()->point();
-    const Point& f1_v3 = f1->halfedge()->prev()->vertex()->point();
-    Vector f1_normal = unit_normal(f1_v1, f1_v2, f1_v3);
-    Vector f2_normal = unit_normal(f2_v1, f2_v2, f2_v3);
-
-    double dot = f1_normal * f2_normal;
-    if(dot > 1.0)       {
-      dot = 1.0;
-    } else if(dot < -1.0) {
-      dot = -1.0;
-    }
-    double angle = acos(dot) / CGAL_PI; // [0-1] normalize
-
-    if(!concave) {
-      angle *= CGAL_CONVEX_FACTOR;
-    }
-    return angle;
-  }
 
   /**
    * Calculates dihedral angle between facets and normalize them between [0-1] from [0 - 2*pi].
@@ -256,7 +148,7 @@ private:
    * @param edge whose dihedral angle is computed using incident facets
    * @return computed dihedral angle
    */
-  double calculate_dihedral_angle_of_edge_2(Edge_const_handle& edge) const {
+  double calculate_dihedral_angle_of_edge(Edge_const_handle& edge) const {
     CGAL_precondition(!edge->is_border_edge());
     const Point& a = edge->vertex()->point();
     const Point& b = edge->prev()->vertex()->point();
@@ -265,7 +157,8 @@ private:
     // As far as I check: if, say, dihedral angle is 5, this returns 175,
     // if dihedral angle is -5, this returns -175.
     // Another words this function returns angle between planes.
-    double n_angle = Mesh_3::dihedral_angle(a, b, c, d) / 180.0;
+    double n_angle = Mesh_3::dihedral_angle(a, b, c, d);
+    n_angle /= 180.0;
     bool concave = n_angle > 0;
     double angle = 1 + ((concave ? -1 : +1) * n_angle);
 
@@ -273,41 +166,6 @@ private:
       angle *= CGAL_CONVEX_FACTOR;
     }
     return angle;
-
-    //Facet_const_handle f1 = edge->facet();
-    //Facet_const_handle f2 = edge->opposite()->facet();
-    //
-    //const Point& f2_v1 = f2->halfedge()->vertex()->point();
-    //const Point& f2_v2 = f2->halfedge()->next()->vertex()->point();
-    //const Point& f2_v3 = f2->halfedge()->prev()->vertex()->point();
-    ///*
-    // * As far as I see from results, segment boundaries are occurred in 'concave valleys'.
-    // * There is no such thing written (clearly) in the paper but should we just penalize 'concave' edges (not convex edges) ?
-    // * Actually that is what I understood from 'positive dihedral angle'.
-    // */
-    //const Point& unshared_point_on_f1 = edge->next()->vertex()->point();
-    //Plane p2(f2_v1, f2_v2, f2_v3);
-    //bool concave = p2.has_on_positive_side(unshared_point_on_f1);
-    ////std::cout << n_angle << std::endl;
-    ////if(!concave) { return epsilon; } // So no penalties for convex dihedral angle ? Not sure...
-
-    //const Point& f1_v1 = f1->halfedge()->vertex()->point();
-    //const Point& f1_v2 = f1->halfedge()->next()->vertex()->point();
-    //const Point& f1_v3 = f1->halfedge()->prev()->vertex()->point();
-    //Vector f1_normal = unit_normal(f1_v1, f1_v2, f1_v3);
-    //Vector f2_normal = unit_normal(f2_v1, f2_v2, f2_v3);
-    //
-    //double dot = f1_normal * f2_normal;
-    //if(dot > 1.0)       { dot = 1.0;  }
-    //else if(dot < -1.0) { dot = -1.0; }
-    //double angle = acos(dot) / CGAL_PI; // [0-1] normalize
-    //std::cout << angle << " " << n_angle << " " << (concave ? "concave": "convex") << std::endl;
-    //if(std::abs(angle - folded_angle) > 1e-6)
-    //{
-    //
-    //}
-    //if(angle < epsilon) { angle = epsilon; }
-    //return angle;
   }
 
   /**
@@ -315,6 +173,7 @@ private:
    * normalized_sdf = log( alpha * ( current_sdf - min_sdf ) / ( max_sdf - min_sdf ) + 1 ) / log( alpha + 1 )
    * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
    * @param[out] normalized_sdf_values normalized values stored in facet iteration order
+   * Important note: @a sdf_values should contain linearly normalized values between [0-1]
    */
   template<class SDFPropertyMap>
   void log_normalize_sdf_values(SDFPropertyMap sdf_values,
@@ -330,6 +189,8 @@ private:
 
   /**
    * Normalize sdf values between [0-1].
+   * @param sdf_values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @return minimum and maximum SDF values before normalization
    */
   template<class SDFPropertyMap>
   std::pair<double, double> linear_normalize_sdf_values(SDFPropertyMap
@@ -361,7 +222,6 @@ private:
    *  - ...
    */
   int get_window_size() {
-
     double facet_sqrt = std::sqrt(mesh.size_of_facets() / 2000.0);
     return static_cast<int>(facet_sqrt) + 1;
   }
@@ -426,10 +286,10 @@ private:
         it_i != probabilities.end(); ++it_i) {
       for(std::vector<double>::iterator it = it_i->begin(); it != it_i->end(); ++it) {
         double probability = (std::max)(*it,
-                                        epsilon); // give any facet a little probability to be in any cluster
+                                        epsilon); // give every facet a little probability to be in any cluster
         probability = -log(probability);
-        *it = (std::max)(probability,
-                         std::numeric_limits<double>::epsilon()); // zero values are not accepted in max-flow
+        *it = (std::max)(probability, std::numeric_limits<double>::epsilon());
+        // zero values are not accepted in max-flow as weights for edges which connects some vertex with Source or Sink (in boost::boykov..)
       }
     }
   }
@@ -443,6 +303,10 @@ private:
   void calculate_and_log_normalize_dihedral_angles(double smoothing_lambda,
       std::vector<std::pair<int, int> >& edges,
       std::vector<double>& edge_weights) const {
+    // associate each facet with an id
+    // important note: ids should be compatible with iteration order of facets:
+    // [0 <- facet_begin(),...., size_of_facets() -1 <- facet_end()]
+    // Why ? it is send to graph cut algorithm where other data associated with facets are also sorted according to iteration order.
     std::map<Facet_const_handle, int> facet_index_map;
     int facet_index = 0;
     for(Facet_const_iterator facet_it = mesh.facets_begin();
@@ -452,7 +316,7 @@ private:
     }
 
     const double epsilon = 1e-5;
-    //edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
+    // edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
     for(Edge_const_iterator edge_it = mesh.edges_begin();
         edge_it != mesh.edges_end(); ++edge_it) {
       if(edge_it->is_border_edge()) {
@@ -462,7 +326,7 @@ private:
       const int index_f2 = facet_index_map[edge_it->opposite()->facet()];
       edges.push_back(std::pair<int, int>(index_f1, index_f2));
 
-      double angle = calculate_dihedral_angle_of_edge_2(edge_it);
+      double angle = calculate_dihedral_angle_of_edge(edge_it);
 
       if(angle < epsilon) {
         angle = epsilon;
@@ -502,6 +366,7 @@ private:
   template<class SegmentPropertyMap, class SDFProperyMap>
   int assign_segments(int number_of_clusters, SDFProperyMap sdf_values,
                       SegmentPropertyMap segments) {
+    // assign a segment-id to each facet
     int segment_id = number_of_clusters;
     std::vector<std::pair<int, double> > segments_with_average_sdf_values;
 
@@ -511,6 +376,7 @@ private:
           number_of_clusters) { // not visited by depth_first_traversal
         std::pair<double, int> sdf_facet_count_pair = depth_first_traversal(facet_it,
             segment_id, sdf_values, segments);
+
         double average_sdf_value_for_segment = sdf_facet_count_pair.first /
                                                sdf_facet_count_pair.second;
         segments_with_average_sdf_values.push_back(std::pair<int, double>(segment_id,

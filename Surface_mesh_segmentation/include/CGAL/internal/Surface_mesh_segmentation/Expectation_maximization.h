@@ -1,35 +1,17 @@
 #ifndef CGAL_SURFACE_MESH_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
-/* NEED TO BE DONE */
-/* About implementation:
- * + There are a lot of parameters (with default values) and initialization types,
- * so I am planning to use whether 'Named Parameter Idiom' or Boost Parameter Library...
- *
- */
 
 #include <vector>
 #include <cmath>
 #include <algorithm>
-#include <ctime>
-#include <cstdlib>
 #include <limits>
-#include <fstream>
-#include <iostream>
 
-#include <CGAL/assertions.h>
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 
 #define CGAL_DEFAULT_MAXIMUM_ITERATION 15
 #define CGAL_DEFAULT_THRESHOLD 1e-3
 #define CGAL_DEFAULT_NUMBER_OF_RUN 20
 #define CGAL_DEFAULT_SEED 1340818006
-
-#define ACTIVATE_SEGMENTATION_EM_DEBUG
-#ifdef ACTIVATE_SEGMENTATION_EM_DEBUG
-#define SEG_DEBUG(x) x;
-#else
-#define SEG_DEBUG(x)
-#endif
 
 namespace CGAL
 {
@@ -102,8 +84,6 @@ private:
   Initialization_types init_type;
 
 public:
-  /** Going to be removed */
-  Expectation_maximization() { }
   /**
    * Constructs structures and runs the algorithm.
    *
@@ -124,11 +104,11 @@ public:
                            double threshold = CGAL_DEFAULT_THRESHOLD,
                            int maximum_iteration = CGAL_DEFAULT_MAXIMUM_ITERATION )
     :
+    points(data), init_type(init_type), threshold(threshold),
+    maximum_iteration(maximum_iteration),
     final_likelihood(-(std::numeric_limits<double>::max)()),
-    points(data), responsibility_matrix(std::vector<std::vector<double> >
-                                        (number_of_centers, std::vector<double>(points.size()))),
-    threshold(threshold), maximum_iteration(maximum_iteration),
-    init_type(init_type) {
+    responsibility_matrix(std::vector<std::vector<double> >(number_of_centers,
+                          std::vector<double>(points.size()))) {
     // For initialization with k-means, with one run
     if(init_type == K_MEANS_INITIALIZATION) {
       K_means_clustering k_means(number_of_centers, data);
@@ -210,7 +190,7 @@ private:
       centers[closest_center].deviation += min_distance * min_distance;
     }
     for(std::size_t i = 0; i < centers.size(); ++i) {
-      // There shouldn't be such case, unless same point is selected as a center twice (it is checked!)
+      // There shouldn't be such case, unless same point is selected as a center twice (and it is also checked!)
       CGAL_assertion(member_count[i] != 0);
       centers[i].deviation = std::sqrt(centers[i].deviation / member_count[i]);
     }
@@ -361,6 +341,7 @@ private:
         total_membership += membership;
       }
       new_mean /= total_membership;
+
       // Calculate new deviation
       double new_deviation = 0.0;
       for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
@@ -368,6 +349,7 @@ private:
         new_deviation += membership * std::pow(points[point_i] - new_mean, 2);
       }
       new_deviation = std::sqrt(new_deviation/total_membership);
+
       // Assign new parameters
       centers[center_i].mixing_coefficient = total_membership / points.size();
       centers[center_i].deviation = new_deviation;

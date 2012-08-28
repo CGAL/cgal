@@ -5,15 +5,14 @@
  * @brief This file contains 3 graph-cut algorithms, which can be used as a template parameter for CGAL::internal::Surface_mesh_segmentation.
  *
  * Main differences between implementations are underlying max-flow algorithm and graph type (i.e. results are the same, performance differs).
+ *
+ * Also algorithms can be used by their-own for applying alpha-expansion graph-cut on any graph.
  */
 #include <CGAL/assertions.h>
-#include <CGAL/Timer.h>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/boykov_kolmogorov_max_flow.hpp>
 
-#include <iostream>
-#include <fstream>
 #include <vector>
 
 //#define CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
@@ -95,8 +94,14 @@ private:
   typedef Traits::edge_descriptor   Edge_descriptor;
   typedef Traits::edge_iterator     Edge_iterator;
 
-  /*
-   * Helper method
+  /**
+   * It adds two directional edge between @a v1 and @a v2
+   * @param v1 first vertex
+   * @param v2 second vertex
+   * @param w1 weight for edge from v1 to v2 (v1->v2)
+   * @param w2 weight for edge from v2 to v1 (v2->v1)
+   * @graph to be added
+   * @return pair of added edges, first: v1->v2 and second: v2->v1
    */
   boost::tuple<Edge_descriptor, Edge_descriptor>
   add_edge_and_reverse(Vertex_descriptor& v1, Vertex_descriptor& v2, double w1,
@@ -120,15 +125,20 @@ private:
   }
 
 public:
-
+  /**
+   * Applies alpha-expansion graph-cut for energy minimization.
+   * @param edges contains incident vertex-id pairs for each edge (vertex-ids should be between [0, number of vertices -1])
+   * @param edge_weights contains weights for each edge in @a edges (correspondence according to order)
+   * @param probability_matrix contains responsibility of the center on the vertex probability[center][vertex]
+   * @param[in, out] labels as input it contains initial labeling of vertices (i.e. a center-id between [0, number of centers -1]),
+   * and as output it returns final labeling of vertices
+   */
   double operator()(const std::vector<std::pair<int, int> >& edges,
                     const std::vector<double>& edge_weights,
                     const std::vector<std::vector<double> >& probability_matrix,
                     std::vector<int>& labels) const {
     double min_cut = (std::numeric_limits<double>::max)();
     bool success;
-    Timer gt;
-    gt.start();
     do {
       success = false;
       int alpha = 0;
@@ -189,11 +199,9 @@ public:
 
         double flow = boost::boykov_kolmogorov_max_flow(graph, cluster_source,
                       cluster_sink);
-
         if(min_cut - flow < flow * 1e-10) {
           continue;
         }
-        std::cout << "prev flow: " << min_cut << " new flow: " << flow << std::endl;
 
         min_cut = flow;
         success = true;
@@ -209,11 +217,16 @@ public:
 
       }
     } while(success);
-    std::cout << "Graph-cut time: " << gt.time() <<  std::endl;
     return min_cut;
   }
 };
 
+/**
+ * @brief Implements alpha-expansion graph cut algorithm.
+ *
+ * For representing graph, it uses adjacency_list with OutEdgeList = vecS, VertexList = vecS.
+ * Also preallocates vertex-list by using maximum possible number of nodes.
+ */
 class Alpha_expansion_graph_cut_boost_with_preallocate
 {
 private:
@@ -241,6 +254,15 @@ private:
   typedef Traits::edge_descriptor   Edge_descriptor;
   typedef Traits::edge_iterator     Edge_iterator;
 
+  /**
+   * It adds two directional edge between @a v1 and @a v2
+   * @param v1 first vertex
+   * @param v2 second vertex
+   * @param w1 weight for edge from v1 to v2 (v1->v2)
+   * @param w2 weight for edge from v2 to v1 (v2->v1)
+   * @graph to be added
+   * @return pair of added edges, first: v1->v2 and second: v2->v1
+   */
   boost::tuple<Edge_descriptor, Edge_descriptor>
   add_edge_and_reverse(Vertex_descriptor& v1, Vertex_descriptor& v2, double w1,
                        double w2, Graph& graph) const {
@@ -263,14 +285,18 @@ private:
   }
 
 public:
-
+  /**
+   * Applies alpha-expansion graph-cut for energy minimization.
+   * @param edges contains incident vertex-id pairs for each edge (vertex-ids should be between [0, number of vertices -1])
+   * @param edge_weights contains weights for each edge in @a edges (correspondence according to order)
+   * @param probability_matrix contains responsibility of the center on the vertex probability[center][vertex]
+   * @param[in, out] labels as input it contains initial labeling of vertices (i.e. a center-id between [0, number of centers -1]),
+   * and as output it returns final labeling of vertices
+   */
   double operator()(const std::vector<std::pair<int, int> >& edges,
                     const std::vector<double>& edge_weights,
                     const std::vector<std::vector<double> >& probability_matrix,
                     std::vector<int>& labels) const {
-    Timer gt;
-    gt.start();
-
     double min_cut = (std::numeric_limits<double>::max)();
     bool success;
     do {
@@ -339,25 +365,34 @@ public:
         }
       } // end of for loop on labels
     } while(success);
-
-    std::cout << "Graph-cut time: " << gt.time() <<  std::endl;
     return min_cut;
   }
 };
 
 #ifdef CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
-
+/**
+ * @brief Implements alpha-expansion graph cut algorithm.
+ *
+ * For underlying max-flow algorithm, it uses the MAXFLOW software implemented by Boykov & Kolmogorov.
+ *  Also no pre-allocation is made.
+ */
 class Alpha_expansion_graph_cut_boykov_kolmogorov
 {
 public:
+  /**
+   * Applies alpha-expansion graph-cut for energy minimization.
+   * @param edges contains incident vertex-id pairs for each edge (vertex-ids should be between [0, number of vertices -1])
+   * @param edge_weights contains weights for each edge in @a edges (correspondence according to order)
+   * @param probability_matrix contains responsibility of the center on the vertex probability[center][vertex]
+   * @param[in, out] labels as input it contains initial labeling of vertices (i.e. a center-id between [0, number of centers -1]),
+   * and as output it returns final labeling of vertices
+   */
   double operator()(const std::vector<std::pair<int, int> >& edges,
                     const std::vector<double>& edge_weights,
                     const std::vector<std::vector<double> >& probability_matrix,
                     std::vector<int>& labels) const {
     double min_cut = (std::numeric_limits<double>::max)();
     bool success;
-    Timer gt;
-    gt.start();
     do {
       success = false;
       int alpha = 0;
@@ -410,7 +445,7 @@ public:
         if(min_cut - flow < flow * 1e-10) {
           continue;
         }
-        std::cout << "prev flow: " << min_cut << " new flow: " << flow << std::endl;
+
         min_cut = flow;
         success = true;
         //update labeling
@@ -422,8 +457,6 @@ public:
         }
       }
     } while(success);
-
-    std::cout << "Graph-cut time: " << gt.time() <<  std::endl;
     return min_cut;
   }
 };
