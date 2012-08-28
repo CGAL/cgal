@@ -500,7 +500,7 @@ arrangement. Similarly, it is also possible to aggregately compute the
 intersection \f$ \bigcap_{i=1}^{m}{P_i}\f$ of a set of input polygons.
 
 Our package provides the free overloaded functions `join()` and
-`intersect()` that aggregately compute the union and the intersection
+`intersection()` that aggregately compute the union and the intersection
 of a range of input polygons. There is no restriction on the polygons in the
 range - naturally, they may intersect each other.
 The package provides the overloaded free function 
