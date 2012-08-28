@@ -121,8 +121,8 @@ private:
 
     Plane plane(center, normal);
     Vector v1 = plane.base1(), v2 = plane.base2();
-    v1 = v1 / sqrt(v1.squared_length());
-    v2 = v2 / sqrt(v2.squared_length());
+    v1 = v1 / CGAL::sqrt(v1.squared_length());
+    v2 = v2 / CGAL::sqrt(v2.squared_length());
 
     //arrange_center_orientation(plane, normal, center);
 
@@ -328,7 +328,7 @@ private:
       return min_distance;
     }
     min_distance.get<1>() = true;
-    min_distance.get<2>() = sqrt(min_i_ray.squared_length());
+    min_distance.get<2>() = CGAL::sqrt(min_i_ray.squared_length());
     return min_distance;
   }
 
