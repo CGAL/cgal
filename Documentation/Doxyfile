@@ -275,7 +275,7 @@ EXTENSION_MAPPING      =
 # prevented in individual cases by by putting a % sign in front of the word or
 # globally by setting AUTOLINK_SUPPORT to NO.
 
-AUTOLINK_SUPPORT       = NO
+AUTOLINK_SUPPORT       = YES
 
 # If MARKDOWN_SUPPORT is enabled (the default) then doxygen pre-processes all
 # comments according to the Markdown format, which allows for more readable
