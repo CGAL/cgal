@@ -49,8 +49,11 @@
 // to disable new features
 //#  define CGAL_TDS_3_NOT_JUST_INCIDENT_CELLS
 
-//should not be used
+//should not be used 
 //#define CGAL_MESH_3_OLD_MINIMUM_DIHEDRAL_ANGLE
+
+//experimental
+//#define CGAL_MESH_3_PROTECTION_NON_LINEAR
 
 //#  define CGAL_POLYHEDRAL_MESH_DOMAIN_USE_GRID
 #endif // CGAL_MESH_3_USE_NEW_CODE_2011
