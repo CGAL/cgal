@@ -23,8 +23,8 @@ Figure \ref figteaser shows simple examples of such operations.
 
 Ordinary Boolean set-operations, which distinguish between the
 interior and the boundary of a polygon, are not implemented within this
-package. The `Nef_2` package supports these operations for (linear)
-polygons; see Chapter \ref chapnef_2.
+package. The Chapter \ref chapnef_2 "2D Nef Polygons` supports these operations for (linear)
+polygons.
 
 In the rest of this chapter we use, unless otherwise stated, the
 traditional notation to denote regularized operations; e.g., \f$ P \cap Q\f$

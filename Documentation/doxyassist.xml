@@ -631,6 +631,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Boolean_set_operations_2.tag</string>
           <string name="IMAGE_PATH">../Boolean_set_operations_2/doc/Boolean_set_operations_2/fig</string>
           <string name="EXAMPLE_PATH">../Boolean_set_operations_2/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
+          </list>
         </doxygen>
       </project>
 
