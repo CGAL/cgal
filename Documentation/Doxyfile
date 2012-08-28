@@ -100,17 +100,7 @@ REPEAT_BRIEF           = YES
 # "The $name file" "is" "provides" "specifies" "contains"
 # "represents" "a" "an" "the"
 
-ABBREVIATE_BRIEF       = "The $name class" \
-                         "The $name widget" \
-                         "The $name file" \
-                         is \
-                         provides \
-                         specifies \
-                         contains \
-                         represents \
-                         a \
-                         an \
-                         the
+ABBREVIATE_BRIEF       = 
 
 # If the ALWAYS_DETAILED_SEC and REPEAT_BRIEF tags are both set to YES then
 # Doxygen will generate a detailed section even if there is only a brief
@@ -216,8 +206,8 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalbib{1}=\par \"BibTeX\" \cite \1" \
                          "license{1}=\par \"License\" \1" \
                          "advanced=\attention" \
-                         "advancedbegin=" \
-                         "advancedend="
+                         "beginadvanced=" \
+                         "endadvanced="
 
 ALIASES += "advanced=\xrefitem advanceds \"Advanced\" \"Advanced\""
 ALIASES += "refines=\xrefitem refiness \"Refines\" \"Refines\""
@@ -279,6 +269,13 @@ OPTIMIZE_OUTPUT_VHDL   = NO
 # you also need to set FILE_PATTERNS otherwise the files are not read by doxygen.
 
 EXTENSION_MAPPING      =
+
+# When enabled doxygen tries to link words that correspond to documented classes,
+# or namespaces to their corresponding documentation. Such a link can be
+# prevented in individual cases by by putting a % sign in front of the word or
+# globally by setting AUTOLINK_SUPPORT to NO.
+
+AUTOLINK_SUPPORT       = NO
 
 # If MARKDOWN_SUPPORT is enabled (the default) then doxygen pre-processes all
 # comments according to the Markdown format, which allows for more readable
@@ -634,6 +631,7 @@ LAYOUT_FILE            = DoxygenLayout.xml
 # feature you need bibtex and perl available in the search path.
 
 CITE_BIB_FILES         = cgal_manual.bib \
+                         how_to_cite_cgal.bib \
                          geom.bib
 
 #---------------------------------------------------------------------------
