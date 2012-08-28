@@ -36,7 +36,7 @@ typedef std::size_t size_type;
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Memory_sizer(); 
 

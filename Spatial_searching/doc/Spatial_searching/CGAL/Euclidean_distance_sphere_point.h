@@ -48,7 +48,7 @@ Traits::Sphere_d Sphere_d;
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Euclidean_distance_sphere_point(Traits t=Traits()); 
 

@@ -44,7 +44,7 @@ typedef Hidden_type const_iterator;
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Interval_skip_list(); 
 

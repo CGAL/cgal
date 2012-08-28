@@ -49,7 +49,7 @@ Traits::Iso_box_d Query_item;
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Manhattan_distance_iso_box_point(Traits t=Traits()); 
 

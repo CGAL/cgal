@@ -38,7 +38,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Apollonius_graph_traits_2<K,Method_tag>(); 
 

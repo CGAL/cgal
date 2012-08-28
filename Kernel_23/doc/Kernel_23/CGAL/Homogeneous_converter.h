@@ -35,7 +35,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Homogeneous_converter<>(); 
 

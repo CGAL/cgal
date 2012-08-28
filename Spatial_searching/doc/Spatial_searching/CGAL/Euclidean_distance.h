@@ -47,7 +47,7 @@ Point_d Query_item;
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Euclidean_distance(Traits t=Traits()); 
 

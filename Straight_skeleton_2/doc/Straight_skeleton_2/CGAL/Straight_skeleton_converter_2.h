@@ -72,7 +72,7 @@ ItemsCvt Items_converter;
 /// @{
 
 /*! 
-Default constructor 
+%Default constructor .
 */ 
 Straight_skeleton_converter_2( Items_converter const& c ); 
 
@@ -122,7 +122,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Straight_skeleton_items_converter_2<>(); 
 

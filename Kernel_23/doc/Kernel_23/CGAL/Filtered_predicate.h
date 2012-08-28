@@ -53,7 +53,7 @@ typedef FP::result_type result_type;
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Filtered_predicate<EP, FP, C2E, C2F>(); 
 

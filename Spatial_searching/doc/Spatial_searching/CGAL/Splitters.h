@@ -48,7 +48,7 @@ Traits::FT FT;
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Fair(); 
 
@@ -97,7 +97,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Median_of_max_spread(); 
 
@@ -145,7 +145,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Median_of_rectangle(); 
 
@@ -192,7 +192,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Midpoint_of_max_spread(); 
 
@@ -238,7 +238,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Midpoint_of_rectangle_spread(); 
 

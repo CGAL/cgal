@@ -35,7 +35,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Apollonius_graph_bertex_base_2(); 
 

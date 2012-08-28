@@ -38,7 +38,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Cartesian_converter<>(); 
 

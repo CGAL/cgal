@@ -26,7 +26,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Apollonius_graph_hierarchy_vertex_base_2(); 
 

@@ -108,7 +108,7 @@ typedef Hidden_type Point_2;
 /// @{
 
 /*! 
-Default constructs the builder class. 
+%Default constructs the builder class. 
 */ 
 StraightSkeletonBuilder_2(); 
 

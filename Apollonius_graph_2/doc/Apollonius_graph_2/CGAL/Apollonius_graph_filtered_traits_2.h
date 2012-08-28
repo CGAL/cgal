@@ -55,8 +55,7 @@ public:
 /// @{
 
 /*! 
-Default 
-constructor. 
+%Default constructor. 
 */ 
 Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>(); 
 

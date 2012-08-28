@@ -23,7 +23,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Interval_skip_list_interval(); 
 

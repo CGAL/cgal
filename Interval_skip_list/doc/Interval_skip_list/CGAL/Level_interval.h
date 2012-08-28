@@ -36,7 +36,7 @@ typedef FT Value;
 /// @{
 
 /*! 
-Default constructor. 
+%Default constructor. 
 */ 
 Level_interval(); 
 
