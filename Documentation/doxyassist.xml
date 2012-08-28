@@ -361,7 +361,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
-            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius-Graphs/html</item>
+            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs/html</item>
             <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.Voronoi_diagram_2/html</item>
           </list>
         </doxygen>
@@ -716,7 +716,6 @@ namespace for the XML file to be processed properly.  -->
           <item>../Convex_decomposition_3/doc/Convex_decomposition_3/fig</item>
           <item>../Convex_hull_2/doc/Convex_hull_2/fig</item>
           <item>../Convex_hull_3/doc/Convex_hull_3/fig</item>
-          <item>../Convex_hull_d/doc/Convex_hull_d/fig</item>
           <item>../Envelope_2/doc/Envelope_2/fig</item>
           <item>../Envelope_3/doc/Envelope_3/fig</item>
           <item>../Generator/doc/Generator/fig</item>
@@ -754,7 +753,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
           <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.2D-Alpha-Shapes/html</item>
           <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.3D-Alpha-Shapes/html</item>
-          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.Apollonius-Graphs/html</item>
+          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs/html</item>
           <item>./tags/Bounding_volumes.tag=../../CGAL.CGAL.Bounding-Volumes/html</item>
           <item>./tags/Box_intersection_d.tag=../../CGAL.CGAL.Intersecting-Sequences-of-dD-Iso-oriented-Boxes/html</item>
           <item>./tags/CGAL_ipelets.tag=../../CGAL.CGAL.CGAL-Ipelets/html</item>
