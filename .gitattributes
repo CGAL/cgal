@@ -3250,10 +3250,13 @@ Mesh_2/doc/Mesh_2/Mesh_2.txt -text
 Mesh_2/doc/Mesh_2/PackageDescription.txt -text
 Mesh_2/doc/Mesh_2/fig/delaunaymesh-small.png -text svneol=unset#image/png
 Mesh_2/doc/Mesh_2/fig/delaunaymesh-teaser.png -text svneol=unset#image/png
+Mesh_2/doc/Mesh_2/fig/domain-domain-mesh.png -text svneol=unset#image/png
 Mesh_2/doc/Mesh_2/fig/domain-mesh.png -text svneol=unset#image/png
+Mesh_2/doc/Mesh_2/fig/domain-seeds-domain-seeds-mesh.png -text svneol=unset#image/png
 Mesh_2/doc/Mesh_2/fig/domain-seeds-mesh.png -text svneol=unset#image/png
 Mesh_2/doc/Mesh_2/fig/domain-seeds.png -text svneol=unset#image/png
 Mesh_2/doc/Mesh_2/fig/domain.png -text svneol=unset#image/png
+Mesh_2/doc/Mesh_2/fig/example-conform-Delaunay-Gabriel.png -text svneol=unset#image/png
 Mesh_2/doc/Mesh_2/fig/example-conform-Delaunay.png -text svneol=unset#image/png
 Mesh_2/doc/Mesh_2/fig/example-conform-Gabriel.png -text svneol=unset#image/png
 Mesh_2/doc/Mesh_2/fig/example-conform.png -text svneol=unset#image/png
