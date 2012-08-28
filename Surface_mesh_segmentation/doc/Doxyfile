@@ -30,6 +30,9 @@ ALIASES                += property_tag="<a href=\"http://www.boost.org/libs/grap
 ALIASES                += bgl="<EM>BGL</EM>"
 ALIASES                += cgal="<EM>CGAL</EM>"
 ALIASES                += bgllink{1}="<a href=\"http://www.boost.org/libs/graph/doc/\1.html\">\1</a>"
+ALIASES += "refines=\xrefitem refiness \"Refines\" \"Refines\""
+ALIASES += "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\""
+
 TCL_SUBST              =
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
