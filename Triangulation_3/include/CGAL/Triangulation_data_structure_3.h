@@ -868,11 +868,11 @@ public:
   OutputIterator
   incident_cells(Vertex_handle v, OutputIterator cells, Filter f = Filter()) const
   {
-#ifdef CGAL_JUST_INCIDENT_CELLS
-    return visit_just_incident_cells<Cell_extractor<OutputIterator, Filter>,
+#ifdef CGAL_TDS_3_NOT_JUST_INCIDENT_CELLS
+    return visit_incident_cells<Cell_extractor<OutputIterator, Filter>,
       OutputIterator>(v, cells, f);
 #else
-    return visit_incident_cells<Cell_extractor<OutputIterator, Filter>,
+    return visit_just_incident_cells<Cell_extractor<OutputIterator, Filter>,
       OutputIterator>(v, cells, f);
 #endif
   }
