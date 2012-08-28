@@ -17,7 +17,7 @@ the plane, we keep track of the order of curves intersecting it.
 This order changes at a finite number of <I>event points</I>, such that
 we only have to calculate the intersection points
 between two curves when they become contiguous. For more details on the
-<I>sweep-line algorithm</I> see, for example, [\cite bkos-cgaa-00 Chapter 2.
+<I>sweep-line algorithm</I> see, for example, \cite bkos-cgaa-00,  Chapter 2.
 
 This chapter describes three functions implemented using the sweep-line
 algorithm: given a collection of input curves, compute all intersection points,
