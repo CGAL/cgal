@@ -104,11 +104,11 @@ public:
                            double threshold = CGAL_DEFAULT_THRESHOLD,
                            int maximum_iteration = CGAL_DEFAULT_MAXIMUM_ITERATION )
     :
-    points(data), init_type(init_type), threshold(threshold),
-    maximum_iteration(maximum_iteration),
-    final_likelihood(-(std::numeric_limits<double>::max)()),
+    final_likelihood(-(std::numeric_limits<double>::max)()), points(data),
     responsibility_matrix(std::vector<std::vector<double> >(number_of_centers,
-                          std::vector<double>(points.size()))) {
+                          std::vector<double>(points.size()))),
+    threshold(threshold), maximum_iteration(maximum_iteration),
+    init_type(init_type) {
     // For initialization with k-means, with one run
     if(init_type == K_MEANS_INITIALIZATION) {
       K_means_clustering k_means(number_of_centers, data);
