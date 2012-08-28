@@ -9,7 +9,7 @@
 \PkgAuthor{Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein}
 \PkgDesc{\cgal is designed in the spirit of the generic programming paradigm to work together with the Standard Template Library (\stl). This package provides  non-geometric \stl-like algorithms and datastructures that are not provided in  the \stl standard but in \cgal}
 \PkgSince{1.0}
-\cgalbib{ cgal:hkpw-se-12 }
+\cgalbib{cgal:hkpw-se}
 \license{ \ref licensesLGPL  "LGPL" }
 \PkgDescriptionEnd
 */

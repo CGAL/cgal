@@ -8,10 +8,11 @@ namespace for the XML file to be processed properly.  -->
             xmlns:da="http://simply-life.net/doxyassist/doxyassist.xsd"
             version="1.0" type="generic" name="My DoxyAssist Project">
   <doxygen doxyfile="Doxyfile">
-    <!-- we need to consider to migrate all settings here, although
-         that might make upgrading less pleasant -->
+    <list name="HTML_EXTRA_FILES" append="true">
+      <item>jquery.footnotes.min.js</item>
+    </list>
   </doxygen>
-
+  
   <projects>
     <project>
       <namespace>CGAL</namespace>
@@ -691,9 +692,14 @@ namespace for the XML file to be processed properly.  -->
       <version>4.1</version>
       <versionSpecific>false</versionSpecific>
       <input>./doc</input>
+      <input>./biblio/how_to_cite_cgal.txt</input>
       <output>./output</output>
       <logDirectory>./log</logDirectory>
       <doxygen>
+        <list name="HTML_EXTRA_FILES" append="true">
+          <item>./biblio/how_to_cite.html</item>
+        </list>
+
         <string name="LAYOUT_FILE">DoxygenLayout.xml</string>
         <string name="GENERATE_TAGFILE">./tags/Manual.tag</string>
         <string name="EXAMPLE_PATH">../Convex_hull_2/examples</string>

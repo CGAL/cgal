@@ -11,7 +11,7 @@
 \PkgAuthor{Lutz Kettner, Sylvain Pion, and Michael Seel}
 \PkgDesc{This package provides classes for profiling time and memory consumption,  a hash map, a union find data structure and a modifier.}
 \PkgSince{3.2}
-\cgalbib{ cgal:kps-pthum-12 }
+\cgalbib{cgal:kps-pthum}
 \license{ \ref licensesLGPL  "LGPL" }
 \PkgDescriptionEnd
 

@@ -9,7 +9,7 @@
 \PkgAuthor{Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr}
 \PkgDesc{This package provides algorithms for computing the distance between the convex hulls of two point sets in d-dimensional space, without explicitely constructing the convex hulls.   It further provides an algorithm to compute the width of a point set, and the furthest point for each vertex of a convex polygon. }
 \PkgSince{1.1}
-\cgalbib{ cgal:fghhs-od-12 }
+\cgalbib{cgal:fghhs-od}
 \license{ \ref licensesGPL  "GPL" }
 \PkgDescriptionEnd
 

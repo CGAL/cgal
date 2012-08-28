@@ -11,7 +11,7 @@
 \PkgAuthor{S&eacute;bastien Loriot and Sylvain Pion}
 \PkgDesc{This package provides  a generic framework to easily write ipelets (plug-in's) using \cgal for the the Ipe extensible drawing editor.}
 \PkgSince{3.5}
-\cgalbib{ cgal:lp-gi-12 }
+\cgalbib{cgal:lp-gi}
 \license{ \ref licensesLGPL  "LGPL" }
 \PkgDescriptionEnd
 */

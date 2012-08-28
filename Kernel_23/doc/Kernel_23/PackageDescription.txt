@@ -35,7 +35,7 @@
 \PkgAuthor{Herv&eacute; Br&ouml;nnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra}
 \PkgDesc{This package contains kernels each containing objects of  constant size, such as point, vector, direction, line, ray, segment, circle as well as predicates and constructions for these objects. The kernels mainly differ in the way they handle robustness issues.}
 \PkgSince{0.9}
-\cgalbib{ cgal:bfghhkps-lgk23-12 }
+\cgalbib{cgal:bfghhkps-lgk23}
 \license{ \ref licensesLGPL "LGPL" }
 \PkgDescriptionEnd
 */

@@ -28,8 +28,5 @@ and only provided for symmetry with the vertex case.
 
 class TriangulationFaceBase_2 {
 public:
-
-/// @}
-
 }; /* end TriangulationFaceBase_2 */
 

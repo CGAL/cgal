@@ -11,7 +11,7 @@
 \PkgAuthor{Andreas Fabri  and Laurent Rineau}
 \PkgDesc{This package provides classes for displaying \cgal objects  and data structures in the <A HREF="http://doc.qt.nokia.com/latest/graphicsview.html">Qt 4 Graphics View Framework</A>.}
 \PkgSince{3.4}
-\cgalbib{ cgal:fr-cqgvf-12 }
+\cgalbib{cgal:fr-cqgvf}
 \license{ \ref licensesGPL  "GPL" }
 \PkgDescriptionEnd
 

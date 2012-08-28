@@ -10,7 +10,7 @@
 \PkgAuthor{Efi Fogel, Ophir Setter, Ron Wein, Guy Zucker, Baruch Zukerman, and Dan Halperin}
 \PkgDesc{This package consists of the implementation of Boolean set-operations on point sets bounded by weakly x-monotone curves in 2-dimensional Euclidean space. In particular, it contains the implementation of regularized Boolean set-operations, intersection predicates, and point containment predicates.}
 \PkgSince{3.2}
-\cgalbib{ cgal:fwzh-rbso2-12 }
+\cgalbib{cgal:fwzh-rbso2}
 \license{ \ref licensesGPL "GPL" }
 \PkgDescriptionEnd
 

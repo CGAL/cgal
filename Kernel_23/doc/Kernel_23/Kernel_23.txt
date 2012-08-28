@@ -4,6 +4,8 @@ namespace CGAL {
 \mainpage 2D and 3D Geometry %Kernel 
 \anchor chapterkernel23
 
+\autotoc
+
 \authors Herv&eacute; Br&ouml;nnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra
 
 # Introduction # {#kernel_intro}

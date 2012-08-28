@@ -11,7 +11,7 @@
 \PkgAuthor{Lutz Kettner, Andreas Meyer, and Afra Zomorodian}
 \PkgDesc{An efficient algorithm for finding all intersecting pairs for large numbers of iso-oriented boxes, in order to apply a user defined callback on them.  Typically these boxes will be bounding boxes of more complicated geometries. The algorithm is useful for (self-) intersection tests of surfaces etc. }
 \PkgSince{3.1}
-\cgalbib{ cgal:kmz-isiobd-12 }
+\cgalbib{cgal:kmz-isiobd}
 \license{ \ref licensesGPL  "GPL" }
 \PkgDescriptionEnd
 */

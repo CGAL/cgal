@@ -11,7 +11,7 @@
 \PkgAuthor{Peter Hachenberger  and Lutz Kettner}
 \PkgDesc{This package offers the equivalent to 2D Nef Polygons in the plane. Here halfplanes correspond to half spheres delimited by great circles.}
 \PkgSince{3.1}
-\cgalbib{ cgal:hk-bonpes2-12 }
+\cgalbib{cgal:hk-bonpes2}
 \license{ \ref licensesGPL  "GPL"}
 \PkgDescriptionEnd
 
