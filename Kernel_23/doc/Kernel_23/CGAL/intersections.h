@@ -100,6 +100,7 @@ as the set of all points `p` that are part of both `obj1` and `obj2`.
 Note that for objects like triangles and polygons that enclose a
 bounded region, this region is part of the object.
 */
+template <typename Type1, typename Type2>
 bool do_intersect(Type1 obj1, Type2 obj2);
 
 /*!
@@ -115,6 +116,7 @@ checks whether `obj1`, `obj2` and `obj3` intersect.
 \attention Only available with a SphericalKernel.
 
 */
+  template <typename Type1, typename Type2, typename Type3>
 bool do_intersect(Type1 obj1, Type2 obj2, Type3 obj3);
 
 
@@ -422,7 +424,7 @@ where `Type1` and `Type2` can both be either
   `Circle_2<CircularKernel>` in case of two equal input lines or circles.
 
 */
-template < class OutputIterator >
+template < typename Type1, typename Type2, typename OutputIterator >
 OutputIterator
 intersection(const Type1 &obj1, const Type2 &obj2,
              OutputIterator intersections);
@@ -483,7 +485,7 @@ and depending on the types `SphericalType1` and `SphericalType2`, the computed
 - `Line_arc_3<SphericalKernel>` in case of an overlap of two 
   line segments. 
 */
-template < class OutputIterator >
+template < typename SphericalType1, typename SphericalType1,  typename OutputIterator >
 OutputIterator
 intersection(const SphericalType1 &obj1, const SphericalType2 &obj2,
              OutputIterator intersections);
@@ -513,7 +515,7 @@ assigned to
   `Type3` are equal, and if the three objets `obj1` and `obj2` 
   and `obj3` are equal.
 */
-template < class OutputIterator >
+template < typename Type1, typename Type2, typename OutputIterator >
 OutputIterator
 intersection(const Type1 &obj1, const Type2 &obj2, const Type3 &obj3,
              OutputIterator intersections);

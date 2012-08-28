@@ -45,6 +45,7 @@ following:
 \sa `CGAL::has_smaller_signed_distance_to_line`
 \sa `CGAL::has_smaller_signed_distance_to_plane` 
 */
+template <typename Kernel>
 Kernel::FT squared_distance(Type1<Kernel> obj1, Type2<Kernel> obj2);
 /// @}
 }
