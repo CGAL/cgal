@@ -200,12 +200,7 @@ private:
   CGAL::Timer running_time_;
   
   std::size_t big_moves_size_;
-#ifdef CGAL_BIG_MOVES_SET
   std::set<FT> big_moves_;
-#else
-  typedef std::list<FT> FT_list;
-  FT_list big_moves_;
-#endif
 
 #ifdef CGAL_FREEZE_VERTICES
   bool do_freeze_;
@@ -296,9 +291,6 @@ operator()(int nb_iterations, Visitor visitor)
   big_moves_.clear();
   big_moves_size_ = 
     (std::max)(std::size_t(1), std::size_t(moving_vertices.size()/500));
-#ifndef CGAL_BIG_MOVES_SET
-  big_moves_.resize(big_moves_size_, FT(0));
-#endif
   
   // Iterate
   int i = -1;
@@ -409,11 +401,7 @@ compute_moves(/*const */Moving_vertices_set& moving_vertices)
   moves.reserve(moving_vertices.size());
   
   // reset worst_move list
-#ifdef CGAL_BIG_MOVES_SET
   big_moves_.clear();    
-#else
-  std::fill(big_moves_.begin(),big_moves_.end(),FT(0));
-#endif
   
   // Get move for each moving vertex
   typename Moving_vertices_set::iterator vit = moving_vertices.begin();
@@ -498,8 +486,6 @@ void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 update_big_moves(const FT& new_sq_move)
 {  
-#ifdef CGAL_BIG_MOVES_SET
-
   if (big_moves_.size() < big_moves_size_ )
     big_moves_.insert(new_sq_move);
   else 
@@ -511,21 +497,6 @@ update_big_moves(const FT& new_sq_move)
       big_moves_.insert(new_sq_move);
     }
   }
-#else
-  namespace bl = boost::lambda;
-  
-  if ( new_sq_move > big_moves_.back() )
-  {
-    // Remove last value, the smallest
-    big_moves_.pop_back();
-    
-    // Insert value at the right place
-    typename FT_list::iterator pos = 
-      std::find_if(big_moves_.begin(), big_moves_.end(), bl::_1 < new_sq_move );
-    
-    big_moves_.insert(pos, new_sq_move);
-  }
-#endif
 }
   
   
@@ -627,11 +598,7 @@ check_convergence() const
   namespace bl = boost::lambda;
   
   FT sum(0);
-#ifdef CGAL_BIG_MOVES_SET
   for( typename std::set<FT>::const_iterator
-#else
-  for ( typename FT_list::const_iterator
-#endif
        it = big_moves_.begin(), end = big_moves_.end() ; it != end ; ++it )
   {
     sum += CGAL::sqrt(*it);
