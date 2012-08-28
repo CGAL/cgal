@@ -406,7 +406,7 @@ Boolean set-operations come in two flavors: for example, `S.join(P, Q)`
 computes the union of \f$ P\f$ and \f$ Q\f$ and assigned the result to \f$ S\f$, while
 `S.join(P)` performs the operation \f$ S \longleftarrow S \cup P\f$.
 Similarly, `S.complement(P)` sets \f$ S\f$ to be the complement of \f$ P\f$,
-while \f$ S.complement()\f$ simply negates the set \f$ S\f$.
+while `S.complement()` simply negates the set \f$ S\f$.
 
 \subsection bso_sssecsequence A Sequence of Set Operations 
 
