@@ -6,8 +6,6 @@ namespace CGAL {
 \anchor chapconvexhulld
 \authors Susan Hert and Michael Seel
 
-\ref packages Packages!
-
 # Introduction #
 
 A subset \f$ S \subseteq \R^d\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
