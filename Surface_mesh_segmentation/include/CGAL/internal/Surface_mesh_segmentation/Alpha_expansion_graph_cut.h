@@ -95,7 +95,7 @@ private:
   typedef Traits::edge_iterator     Edge_iterator;
 
   /**
-   * It adds two directional edge between @a v1 and @a v2
+   * Adds two directional edges between @a v1 and @a v2
    * @param v1 first vertex
    * @param v2 second vertex
    * @param w1 weight for edge from v1 to v2 (v1->v2)
@@ -255,7 +255,7 @@ private:
   typedef Traits::edge_iterator     Edge_iterator;
 
   /**
-   * It adds two directional edge between @a v1 and @a v2
+   * Adds two directional edges between @a v1 and @a v2
    * @param v1 first vertex
    * @param v2 second vertex
    * @param w1 weight for edge from v1 to v2 (v1->v2)
