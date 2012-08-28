@@ -128,13 +128,6 @@ a.qindexHL {
         color: #ffffff;
 }
 
-a.el {
-	font-weight: bold;
-}
-
-a.elRef {
-}
-
 a.code, a.code:visited {
 	color: #4665A2; 
 }
@@ -1201,4 +1194,8 @@ tr.heading h2 {
 
 .textsc {
     font-variant: small-caps;
+}
+
+#projectnumber {
+    display: none;
 }
