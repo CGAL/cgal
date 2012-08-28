@@ -535,9 +535,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/CGAL_ipelets.tag</string>
           <string name="IMAGE_PATH">../CGAL_ipelets/doc/CGAL_ipelets/fig</string>
           <string name="EXAMPLE_PATH">../CGAL_ipelets/examples</string>
-          <list name="TAGFILES" append="true">
-            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
-          </list>
         </doxygen>
       </project>
 
@@ -801,7 +798,6 @@ namespace for the XML file to be processed properly.  -->
         <list name="ALIASES" append="true">
           <item>PkgDescriptionBegin{2}=&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&lt;h2&gt;&lt;a href=&quot;../../CGAL.CGAL.\2/html/index.html&quot;&gt;\1&lt;/a&gt;&lt;/h2&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;</item>
         </list>
-
       </doxygen>
     </project>
   </projects>
