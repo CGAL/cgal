@@ -44,7 +44,7 @@ Kernel::Iso_rectangle_2 Iso_box_d;
 /*! 
 Sphere type. 
 */ 
-Kernel::Sphere_2 Sphere_d; 
+Kernel::Circle_2 Sphere_d; 
 
 /*! 
 An iterator over the Cartesian coordinates. 
