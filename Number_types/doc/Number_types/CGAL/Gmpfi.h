@@ -193,9 +193,15 @@ appropriate error flag.
 std::pair<std::pair<double,double>,long> to_interval_exp()const; 
 
 /// @} 
+/*! \name Comparisons 
 
-/// \name Comparisons 
-CONVERROR Check if this needs to be spread\n/// The semantics of the comparison operators is the same than on `Interval_nt<Protected>`. The result of the comparison is always an `Uncertain<bool>` (this type is convertible to `bool`, but may throw an exception). If compared intervals have no common points, the result is `true` or `false`; otherwise, `Uncertain<bool>::indeterminate()` will be returned. In the same way, we can explain the semantics of `Uncertain<Comparison_result>` and `Uncertain<Sign>`. With the semantics described above, this class provides comparisons between `Gmpfi` and `Gmpfi`, `Gmpfr`, `long`, `unsigned long`, `int`, `double`, `Gmpz` and `Gmpq`. Comparison operators <TT>==</TT>, <TT>!=</TT>, <TT>></TT>, <TT><</TT>, <TT>>=</TT> and <TT><=</TT> are overloaded. The class provides also functions to test efficiently some special kinds of comparisons:
+The semantics of the comparison operators is the same than on `Interval_nt<Protected>`. The result of the comparison is always an `Uncertain<bool>` (this type is convertible to `bool`, but may throw an exception). If compared intervals have no common points, the result is `true` or `false`; otherwise, `Uncertain<bool>::indeterminate()` will be returned. 
+
+In the same way, we can explain the semantics of `Uncertain<Comparison_result>` and `Uncertain<Sign>`. With the semantics described above, this class provides comparisons between `Gmpfi` and `Gmpfi`, `Gmpfr`, `long`, `unsigned long`, `int`, `double`, `Gmpz` and `Gmpq`. Comparison operators `==`, `!=`, `>`, `<`, `>=` and `<=` are overloaded. 
+
+The class provides also functions to test efficiently some special kinds of comparisons:
+*/
+
 /// @{
 
 /*! 
