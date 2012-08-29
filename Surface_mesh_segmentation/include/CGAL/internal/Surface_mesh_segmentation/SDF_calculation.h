@@ -72,6 +72,7 @@ private:
 
   typename SGT::Angle_3 angle_functor;
   typename SGT::Construct_scaled_vector_3 scale_functor;
+  typename SGT::Construct_sum_of_vectors  sum_functor;
 public:
   /**
    * Assign default values to member variables.
@@ -154,9 +155,9 @@ private:
         sample_it != samples.end(); ++sample_it) {
       bool is_intersected, intersection_is_acute;
       double min_distance;
-      Vector disk_vector = scale_functor(v1, sample_it->get<0>()) + scale_functor(v2,
-                           sample_it->get<1>());
-      Vector ray_direction = normal + disk_vector;
+      Vector disk_vector = sum_functor(scale_functor(v1, sample_it->get<0>()),
+                                       scale_functor(v2, sample_it->get<1>()));
+      Vector ray_direction = sum_functor(normal, disk_vector);
       //output << center << std::endl;
       //std::cout << center << std::endl;
       //output << ray_direction << std::endl;
@@ -183,7 +184,8 @@ private:
         ray_direction = scale_functor(ray_direction,
                                       (*segment_distance * multiplier_for_segment));
 
-        Segment segment(center, operator+(center, ray_direction));
+        Segment segment(center, operator+(center,
+                                          ray_direction)); // IOY Traits
         boost::tie(is_intersected, intersection_is_acute,
                    min_distance) = cast_and_return_minimum(segment, tree, facet);
         if(!is_intersected) { //no intersection is found
@@ -270,7 +272,7 @@ private:
         continue;  // Continue in case of segment.
       }
 
-      Vector i_ray = (query.source() - *i_point);
+      Vector i_ray = (query.source() - *i_point); // IOY Traits
       double new_distance = i_ray.squared_length();
       if(!min_distance.get<0>() || new_distance < min_distance.get<2>()) {
         min_distance.get<2>() = new_distance;
@@ -289,7 +291,7 @@ private:
     Vector min_normal = scale_functor(normal(min_v1, min_v2, min_v3), -1.0);
 
     if(angle_functor(ORIGIN + min_i_ray, Point(ORIGIN),
-                     ORIGIN + min_normal) != ACUTE) {
+                     ORIGIN + min_normal) != ACUTE) { // IOY Traits
       return min_distance;
     }
     min_distance.get<1>() = true; // founded intersection is acceptable.
@@ -331,7 +333,7 @@ private:
       return min_distance;
     }
 
-    Vector min_i_ray = ray.source() - *i_point;
+    Vector min_i_ray = ray.source() - *i_point; // IOY Traits
     const Point& min_v1 = min_id->halfedge()->vertex()->point();
     const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
     const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
