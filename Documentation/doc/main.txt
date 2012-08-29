@@ -40,9 +40,9 @@ structures.
 
 All these data structures and algorithms operate on geometric objects
 like points and segments, and perform geometric tests on them. These
-objects and predicates are regrouped in %CGAL Kernels.
+objects and predicates are regrouped in \ref PartKernels "CGAL Kernels".
 
-Finally, the Support Library offers geometric object generators and
+Finally, the \ref PartSupportLibrary "Support Library" offers geometric object generators and
 spatial sorting functions, as well as a matrix search framework and a
 solver for linear and quadratic programs. It further offers interfaces
 to third party software such as the GUI libraries Qt, Geomview, and
