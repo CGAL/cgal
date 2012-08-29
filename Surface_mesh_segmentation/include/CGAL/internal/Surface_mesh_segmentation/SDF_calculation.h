@@ -33,21 +33,24 @@ class SDF_calculation
 {
 //type definitions
 private:
+  typedef SegmentationGeomTraits SGT;
+
+  typedef typename SGT::Vector_3   Vector;
+  typedef typename SGT::Point_3    Point;
+  typedef typename SGT::Ray_3      Ray;
+  typedef typename SGT::Plane_3    Plane;
+  typedef typename SGT::Segment_3  Segment;
+
   typedef typename Polyhedron::Traits Kernel;
   typedef typename Polyhedron::Facet  Facet;
   typedef typename Polyhedron::Facet  Vertex;
-  typedef typename Kernel::Vector_3   Vector;
-  typedef typename Kernel::Point_3    Point;
 
   typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
   typedef typename Polyhedron::Facet_const_handle   Facet_const_handle;
 
-  typedef typename Kernel::Ray_3     Ray;
-  typedef typename Kernel::Plane_3   Plane;
-  typedef typename Kernel::Segment_3 Segment;
 
-  typedef AABB_const_polyhedron_triangle_primitive<Kernel, Polyhedron> Primitive;
-  typedef typename CGAL::AABB_tree<AABB_traits<Kernel, Primitive> >    Tree;
+  typedef AABB_const_polyhedron_triangle_primitive<SGT, Polyhedron> Primitive;
+  typedef typename CGAL::AABB_tree<AABB_traits<SGT, Primitive> >    Tree;
   typedef typename Tree::Object_and_primitive_id
   Object_and_primitive_id;
   typedef typename Tree::Primitive_id
@@ -66,6 +69,8 @@ private:
 
   bool use_minimum_segment;
   double multiplier_for_segment;
+
+  typename SGT::Angle_3 angle_functor;
 
 public:
   /**
@@ -280,7 +285,8 @@ private:
     const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
     Vector min_normal = normal(min_v1, min_v2, min_v3) * -1.0;
 
-    if(angle(ORIGIN + min_i_ray, Point(ORIGIN), ORIGIN + min_normal) != ACUTE) {
+    if(angle_functor(ORIGIN + min_i_ray, Point(ORIGIN),
+                     ORIGIN + min_normal) != ACUTE) {
       return min_distance;
     }
     min_distance.get<1>() = true; // founded intersection is acceptable.
@@ -328,7 +334,8 @@ private:
     const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
     Vector min_normal = normal(min_v1, min_v2, min_v3) * -1.0;
 
-    if(angle(ORIGIN + min_i_ray, Point(ORIGIN), ORIGIN + min_normal) != ACUTE) {
+    if(angle_functor(ORIGIN + min_i_ray, Point(ORIGIN),
+                     ORIGIN + min_normal) != ACUTE) {
       return min_distance;
     }
     min_distance.get<1>() = true;
