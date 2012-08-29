@@ -5,6 +5,7 @@
  * @brief This file contains 3 sampling methods, which can be used as a template parameter for CGAL::internal::SDF_calculation.
  */
 #include <cmath>
+#include <CGAL/number_type_basic.h>
 
 #define CGAL_ANGLE_ST_DEV_DIVIDER 3.0
 
@@ -40,10 +41,10 @@ namespace internal
 /**
  * @brief Uses Vogel's method to sample points from unit-disk.
  *
- * Template parameter @a Tuple should have a constructor which takes 3 double parameters.
+ * @tparam Tuple should have a constructor which takes 3 double parameters.
  * @see Disk_samplers.h, SDF_calculation
  */
-template<class Tuple>
+template<class Tuple, bool uniform = false>
 class Vogel_disk_sampling
 {
 public:
@@ -60,8 +61,7 @@ public:
   template<class OutputIterator>
   void operator()(int number_of_points,
                   double cone_angle,
-                  OutputIterator out_it,
-                  bool uniform = false) const {
+                  OutputIterator out_it) const {
     const double golden_ratio = 3.0 - std::sqrt(5.0);
 
     if(uniform) {
@@ -116,7 +116,7 @@ public:
 /**
  * @brief Uses polar mapping to sample points from unit-disk.
  *
- * Template parameter @a Tuple should have a constructor which takes 3 double parameters.
+ * @tparam Tuple should have a constructor which takes 3 double parameters.
  */
 template<class Tuple>
 class Polar_disk_sampling
@@ -183,7 +183,7 @@ public:
 /**
  * @brief Uses concentric mapping to sample points from unit-disk.
  *
- * Template parameter @a Tuple should have a constructor which takes 3 double parameters.
+ * @tparam Tuple should have a constructor which takes 3 double parameters.
  */
 template<class Tuple>
 class Concentric_disk_sampling
@@ -208,7 +208,8 @@ public:
     const int number_of_points_sqrt = static_cast<int>(std::sqrt(
                                         static_cast<double>(number_of_points)));
     const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
-    const double fraction = 2.0 / (number_of_points_sqrt -1);
+    const double fraction = (number_of_points_sqrt == 1) ? 0.0
+                            : 2.0 / (number_of_points_sqrt -1);
     // use cone_angle / 3 as one standard deviation while weighting.
     const double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
 

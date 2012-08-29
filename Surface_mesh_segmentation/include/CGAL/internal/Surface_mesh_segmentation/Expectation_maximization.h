@@ -7,10 +7,12 @@
 #include <limits>
 
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
+#include <CGAL/assertions.h>
 
-#define CGAL_DEFAULT_MAXIMUM_ITERATION 15
+#define CGAL_DEFAULT_MAXIMUM_ITERATION 10
+#define CGAL_DEFAULT_NUMBER_OF_RUN 15
 #define CGAL_DEFAULT_THRESHOLD 1e-3
-#define CGAL_DEFAULT_NUMBER_OF_RUN 20
+
 #define CGAL_DEFAULT_SEED 1340818006
 
 namespace CGAL

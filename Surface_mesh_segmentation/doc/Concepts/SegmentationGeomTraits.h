@@ -17,7 +17,7 @@ public:
 /// \name Number type
 /// @{
 /*! 
-A number type model of FieldWithSqrt (double or float is recommanded)
+A number type model of FieldWithSqrt (double or float is recommended)
 */ 
 typedef Hidden_type NT;
 /// @}

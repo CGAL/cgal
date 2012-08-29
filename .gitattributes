@@ -4109,6 +4109,13 @@ Surface_mesh_segmentation/include/CGAL/mesh_segmentation.h -text
 Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/copyright -text
 Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/license.txt -text
 Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/maintainer -text
+Surface_mesh_segmentation/test/Surface_mesh_segmentation/Disk_samplers_test.cpp -text
+Surface_mesh_segmentation/test/Surface_mesh_segmentation/Expectation_maximization_test.cpp -text
+Surface_mesh_segmentation/test/Surface_mesh_segmentation/Filters_test.cpp -text
+Surface_mesh_segmentation/test/Surface_mesh_segmentation/K_means_clustering_test.cpp -text
+Surface_mesh_segmentation/test/Surface_mesh_segmentation/Utils.h -text
+Surface_mesh_segmentation/test/Surface_mesh_segmentation/data/cactus.off -text
+Surface_mesh_segmentation/test/Surface_mesh_segmentation/mesh_segmentation_test.cpp -text
 Surface_mesh_simplification/doc_tex/OLD[!!-~]Surface_mesh_simplification.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.jpg -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#application/pdf

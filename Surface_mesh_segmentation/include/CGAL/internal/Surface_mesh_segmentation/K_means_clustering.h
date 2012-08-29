@@ -142,6 +142,8 @@ public:
     data_centers.reserve(points.size());
     for(std::vector<K_means_point>::iterator point_it = points.begin();
         point_it != points.end(); ++point_it) {
+      point_it->calculate_new_center(
+        centers); // just refind closest center (incase order of centers are changed etc)
       data_centers.push_back(point_it->center_id);
     }
   }
