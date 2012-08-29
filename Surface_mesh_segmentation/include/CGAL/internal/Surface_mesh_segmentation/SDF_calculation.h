@@ -70,9 +70,11 @@ private:
   bool use_minimum_segment;
   double multiplier_for_segment;
 
-  typename SGT::Angle_3 angle_functor;
-  typename SGT::Construct_scaled_vector_3 scale_functor;
-  typename SGT::Construct_sum_of_vectors  sum_functor;
+  typename SGT::Angle_3                     angle_functor;
+  typename SGT::Construct_scaled_vector_3   scale_functor;
+  typename SGT::Construct_sum_of_vectors_3  sum_functor;
+  typename SGT::Construct_normal_3          normal_functor;
+  typename SGT::Construct_unit_normal_3     unit_normal_functor;
 public:
   /**
    * Assign default values to member variables.
@@ -127,7 +129,8 @@ private:
     const Point& p2 = facet->halfedge()->next()->vertex()->point();
     const Point& p3 = facet->halfedge()->prev()->vertex()->point();
     Point center  = centroid(p1, p2, p3);
-    Vector normal = unit_normal(p2, p1, p3); //Assuming triangles are CCW oriented.
+    Vector normal = unit_normal_functor(p2, p1,
+                                        p3); //Assuming triangles are CCW oriented.
 
     Plane plane(center, normal);
     Vector v1 = plane.base1(), v2 = plane.base2();
@@ -288,7 +291,7 @@ private:
     const Point& min_v1 = min_id->halfedge()->vertex()->point();
     const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
     const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
-    Vector min_normal = scale_functor(normal(min_v1, min_v2, min_v3), -1.0);
+    Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
 
     if(angle_functor(ORIGIN + min_i_ray, Point(ORIGIN),
                      ORIGIN + min_normal) != ACUTE) { // IOY Traits
@@ -337,7 +340,7 @@ private:
     const Point& min_v1 = min_id->halfedge()->vertex()->point();
     const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
     const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
-    Vector min_normal = scale_functor(normal(min_v1, min_v2, min_v3), -1.0);
+    Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
 
     if(angle_functor(ORIGIN + min_i_ray, Point(ORIGIN),
                      ORIGIN + min_normal) != ACUTE) {
