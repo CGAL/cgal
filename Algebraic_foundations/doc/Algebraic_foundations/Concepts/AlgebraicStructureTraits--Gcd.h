@@ -9,7 +9,7 @@ The greatest common divisor (\f$ gcd\f$) of ring elements \f$ x\f$ and \f$ y\f$ 
 ring element \f$ d\f$ (up to a unit) with the property that any common divisor of 
 \f$ x\f$ and \f$ y\f$ also divides \f$ d\f$. (In other words: \f$ d\f$ is the greatest lower bound 
 of \f$ x\f$ and \f$ y\f$ in the partial order of divisibility.) We demand the \f$ gcd\f$ to be 
-unit-normal (i.e. have unit part 1). 
+unit-normal (i.e.\ have unit part 1). 
 
 \f$ gcd(0,0)\f$ is defined as \f$ 0\f$, since \f$ 0\f$ is the greatest element with respect 
 to the partial order of divisibility. This is because an element \f$ a \in R\f$ is said to divide \f$ b \in R\f$, iff \f$ \exists r \in R\f$ such that \f$ a \cdot r = b\f$. 

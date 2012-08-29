@@ -7,7 +7,7 @@
 
 Integral division (a.k.a. exact division or division without remainder) maps 
 ring elements \f$ (x,y)\f$ to ring element \f$ z\f$ such that \f$ x = yz\f$ if such a \f$ z\f$ 
-exists (i.e. if \f$ x\f$ is divisible by \f$ y\f$). Otherwise the effect of invoking 
+exists (i.e.\ if \f$ x\f$ is divisible by \f$ y\f$). Otherwise the effect of invoking 
 this operation is undefined. Since the ring represented is an integral domain, 
 \f$ z\f$ is uniquely defined if it exists. 
 

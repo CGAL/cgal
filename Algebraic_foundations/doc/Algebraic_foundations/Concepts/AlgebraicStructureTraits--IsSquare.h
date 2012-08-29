@@ -44,7 +44,7 @@ typedef Hidden_type second_argument;
 /// @{
 
 /*! 
-returns <TT>true</TT> in case \f$ x\f$ is a square, i.e. \f$ x = y*y\f$. 
+returns <TT>true</TT> in case \f$ x\f$ is a square, i.e.\ \f$ x = y*y\f$. 
 \post \f$ unit\_part(y) == 1\f$. 
 
 */ 

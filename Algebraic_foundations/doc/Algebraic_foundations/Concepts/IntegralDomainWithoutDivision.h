@@ -6,7 +6,7 @@
 This is the most basic concept for algebraic structures considered within CGAL. 
 
 A model `IntegralDomainWithoutDivision` represents an integral domain, 
-i.e. commutative ring with 0, 1, +, * and unity free of zero divisors. 
+i.e.\ commutative ring with 0, 1, +, * and unity free of zero divisors. 
 
 <B>Note:</B> A model is not required to offer the always well defined integral division. 
 
