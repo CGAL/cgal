@@ -302,11 +302,13 @@ public:
                               C3t3& c3t3,
                               const Mesh_domain& oracle,
                               const Criteria& criteria,
-                              int mesh_topology)
+                              int mesh_topology,
+                              std::size_t maximal_number_of_vertices)
     : Base(triangulation,
            c3t3,
            oracle,
-           criteria)
+           criteria,
+           maximal_number_of_vertices)
     , m_manifold_info_initialized(false)
     , m_bad_vertices_initialized(false)
     , m_with_manifold_criterion((mesh_topology & MANIFOLD_WITH_BOUNDARY) != 0)
@@ -430,6 +432,13 @@ public:
     if(Base::no_longer_element_to_refine_impl())
     {
       if(!m_with_manifold_criterion) return true;
+
+      if(this->m_maximal_number_of_vertices_ !=0 &&
+         this->r_tr_.number_of_vertices() >=
+         this->m_maximal_number_of_vertices_)
+      {
+        return true;
+      }
 
       // Note: with Parallel_tag, `m_bad_vertices` and `m_bad_edges`
       // are always empty.
