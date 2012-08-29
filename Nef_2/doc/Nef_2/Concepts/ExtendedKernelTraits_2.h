@@ -38,9 +38,9 @@ functionality for changing between standard affine and extended
 geometry. At the same time it provides extensible geometric primitives 
 on the extended geometric objects. 
 
-\hasModel CGAL::Extended_cartesian<FT> 
-\hasModel CGAL::Extended_homogeneous<RT> 
-\hasModel CGAL::Filtered_extended_homogeneous<RT> 
+\hasModel `CGAL::Extended_cartesian<FT>`
+\hasModel `CGAL::Extended_homogeneous<RT>`
+\hasModel `CGAL::Filtered_extended_homogeneous<RT>`
 
 */
 
