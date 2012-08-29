@@ -1,0 +1,46 @@
+/// \defgroup PkgNumberTypes Number Types
+
+/// \defgroup PkgNumberTypesConcepts Concepts
+/// \ingroup PkgNumberTypes
+
+/// \defgroup nt_builtin Built-in types
+/// \ingroup PkgNumberTypes
+
+/// \defgroup nt_core CORE
+/// \ingroup PkgNumberTypes
+
+/// \defgroup nt_leda LEDA
+/// \ingroup PkgNumberTypes
+
+/// \defgroup nt_gmp GMP
+/// \ingroup PkgNumberTypes
+
+/// \defgroup nt_cgal CGAL Number Types
+/// \ingroup PkgNumberTypes
+
+/// \defgroup nt_cgal CGAL Number Types
+/// \ingroup PkgNumberTypes
+
+/// \defgroup nt_rrational Relates Rational
+/// \ingroup PkgNumberTypes
+
+/// \defgroup nt_ralgebraic Relates Algebraic Extensions
+/// \ingroup PkgNumberTypes
+
+/// \defgroup nt_util Utilities
+/// \ingroup PkgNumberTypes
+
+
+/*!
+\addtogroup PkgNumberTypes
+\todo check generated documentation
+\PkgDescriptionBegin{Number Types}
+\PkgPicture{illustration.png}
+\PkgAuthor{Michael Hemmer, Susan Hert, Sylvain Pion, and Stefan Schirra}
+\PkgDesc{This package provides number type concepts as well as number type classes and wrapper classes for third party number type libraries. }
+\PkgSince{1.0}
+\cgalbib{cgal:hhkps-nt}
+\license{\ref licensesLGPL "LGPL" }
+\PkgDescriptionEnd
+*/
+
