@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2VertexFaceClasses
 
 The class `Triangulation_vertex_base_2` is the default model for the concept 
 `TriangulationVertexBase_2`. 

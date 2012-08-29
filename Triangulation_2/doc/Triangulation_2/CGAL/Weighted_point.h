@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2Miscellaneous
 
 The class `Weighted_point` provides a type associating 
 a point type `Pt` with a weight type `Wt`. 

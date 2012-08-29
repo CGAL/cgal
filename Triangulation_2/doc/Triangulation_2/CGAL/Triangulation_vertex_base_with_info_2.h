@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2VertexFaceClasses
 
 The class `Triangulation_vertex_base_with_info_2` is designed to be used as a base vertex class 
 of a triangulation. It provides an easy way to add some user defined information in vertices. 

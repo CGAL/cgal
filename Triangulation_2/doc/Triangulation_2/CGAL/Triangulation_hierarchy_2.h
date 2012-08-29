@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TriangulationClasses
 
 The class `Triangulation_hierarchy_2` implements a triangulation augmented with 
 a data structure which allows fast point location queries. 
@@ -70,7 +70,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2VertexFaceClasses
 
 The class `Triangulation_hierarchy_vertex_base_2` is designed to be used as a vertex base class 
 of a triangulation plugged into a 

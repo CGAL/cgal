@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TriangulationClasses
 
 The class `Constrained_triangulation_plus_2` 
 implements a constrained triangulation 

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TriangulationClasses
 
 The class `Regular_triangulation_2` 
 is designed to maintain the 

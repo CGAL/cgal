@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TraitsClasses
 
 The functionality of this class has been generalized to other packages than 2D triangulations. 
 The more general class `Projection_traits_xy_3` can be found in the 2D and 3D Linear Geometric Kernel. 

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2VertexFaceClasses
 
 The class `Triangulation_face_base_with_info_2` is a model of the concept 
 `TriangulationFaceBase_2` to be plugged into the 

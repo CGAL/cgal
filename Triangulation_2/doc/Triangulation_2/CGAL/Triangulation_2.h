@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TriangulationClasses
 
 The class `Triangulation_2` is the basic class 
 designed to handle triangulations 
@@ -52,9 +52,9 @@ indexed with 0,1,2 in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index. 
 
 The triangulation class 
-offer two functions `int cw(int i)` and 
+offers two functions `int cw(int i)` and 
 `int ccw(int i)` 
-which given the index of a vertex in a face 
+which, given the index of a vertex in a face,
 compute the index of the next vertex of the same face 
 in clockwise 
 or counterclockwise order. 
@@ -1134,12 +1134,12 @@ const Triangulation_2<Traits,Tds>& T);
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2Miscellaneous
 
 The class `Triangulation_cw_ccw_2` 
-offer two functions `int cw(int i)` and 
+offers two functions `int cw(int i)` and 
 `int ccw(int i)` 
-which given the index of a vertex in a face 
+which, given the index of a vertex in a face, 
 compute the index of the next vertex of the same face 
 in clockwise 
 or counterclockwise order. 

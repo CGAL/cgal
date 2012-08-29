@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TraitsClasses
 
 The class `Regular_triangulation_filtered_traits_2` is designed as a traits class for the 
 class `Regular_triangulation_2<RegularTriangulationTraits_2,TriangulationDataStructure_2>`. 

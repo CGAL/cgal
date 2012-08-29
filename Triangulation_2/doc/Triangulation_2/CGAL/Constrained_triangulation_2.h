@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TriangulationClasses
 
 A constrained triangulation is a triangulation of a set of points 
 which has to include among its edges 

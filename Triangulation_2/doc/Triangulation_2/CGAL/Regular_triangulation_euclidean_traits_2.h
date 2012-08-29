@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TraitsClasses
 
 `Regular_triangulation_euclidean_traits_2` is a model for the concept `RegularTriangulationTraits_2` 
 This traits class is templated by a kernel class `K` 

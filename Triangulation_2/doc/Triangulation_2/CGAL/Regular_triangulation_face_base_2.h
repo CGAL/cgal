@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2VertexFaceClasses
 
 The class `Regular_triangulation_face_base_2` is a model of the concept 
 `RegularTriangulationFaceBase_2`. It is the default face base class 

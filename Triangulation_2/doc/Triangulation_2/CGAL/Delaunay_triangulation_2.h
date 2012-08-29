@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TriangulationClasses
 
 The class `Delaunay_triangulation_2` is designed to represent 
 the Delaunay triangulation of a set of points in a plane. 

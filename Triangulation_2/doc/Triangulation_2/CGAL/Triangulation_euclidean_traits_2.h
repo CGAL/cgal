@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TraitsClasses
 
 The class `Triangulation_euclidean_traits_2` can be used to instantiate the geometric traits 
 class of basic and Delaunay triangulations. 

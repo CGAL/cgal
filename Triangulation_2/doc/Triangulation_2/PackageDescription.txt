@@ -1,6 +1,21 @@
 /// \defgroup PkgTriangulation2 2D Triangulation 
 /// \defgroup PkgTriangulation2Concepts Concepts
 /// \ingroup PkgTriangulation2
+
+/// \defgroup PkgTriangulation2TriangulationClasses Triangulation Classes
+/// \ingroup PkgTriangulation2
+
+
+/// \defgroup PkgTriangulation2TraitsClasses Traits Classes
+/// \ingroup PkgTriangulation2
+
+/// \defgroup PkgTriangulation2VertexFaceClasses Vertex and Face Classes
+/// \ingroup PkgTriangulation2
+
+
+/// \defgroup PkgTriangulation2Miscellaneous Miscellaneous
+/// \ingroup PkgTriangulation2
+
 /*!
 \addtogroup PkgTriangulation2
 \todo check generated documentation

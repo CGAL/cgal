@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation2
+\ingroup PkgTriangulation2TriangulationClasses
 
 A constrained Delaunay triangulation is a triangulation with 
 constrained edges which tries to be as much Delaunay as possible. 
