@@ -51,8 +51,9 @@ public:
   typedef typename Polyhedron::Facet_const_handle      Facet_const_handle;
 
 private:
-  typedef typename Polyhedron::Traits Kernel;
-  typedef typename Kernel::Point_3    Point;
+  //typedef typename Polyhedron::Traits Kernel;
+  typedef typename SegmentationGeomTraits::Point_3 Point;
+
   typedef typename Polyhedron::Facet  Facet;
 
   typedef typename Polyhedron::Edge_const_iterator     Edge_const_iterator;
