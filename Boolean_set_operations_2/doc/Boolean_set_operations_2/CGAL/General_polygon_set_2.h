@@ -92,7 +92,7 @@ typedef Hidden_type Arrangement_2;
 /// @{
 
 /*! 
-constructs an empty set of polygons represented by an empty arrangement. 
+constructs an empty set of polygons `gps` represented by an empty arrangement. 
 */ 
 General_polygon_set_2<Traits>(); 
 
@@ -102,18 +102,18 @@ copy constructor.
 General_polygon_set_2<Traits>(const Self & other); 
 
 /*! 
-constructs an empty set of polygons that uses the given 
+constructs an empty set of polygons  `gps` that uses the given 
 `traits` instance for performing the geometric operations. 
 */ 
 General_polygon_set_2<Traits>(Traits & traits); 
 
 /*! 
-constructs a set of polygons that consists of the single polygon `pgn`. 
+constructs a set of polygons  `gps` that consists of the single polygon `pgn`. 
 */ 
 General_polygon_set_2<Traits>(const Polygon_2 & pgn); 
 
 /*! 
-constructs a set of polygons that consists of the single polygon with 
+constructs a set of polygons  `gps` that consists of the single polygon with 
 holes `pgn_with_holes`. 
 */ 
 General_polygon_set_2<Traits>(const Polygon_with_holes_2 & pgn_with_holes); 
@@ -217,7 +217,8 @@ void complement(const Polygon_set_2 & other);
 /// @} 
 
 /// \name Univariate Operations 
-CONVERROR Check if this needs to be spread\n/// In the following univariate and bivariate methods the result is placed in `gps` after it is cleared.
+
+In the following univariate and bivariate methods the result is placed in `gps` after it is cleared.
 /// @{
 
 /*! 
@@ -338,7 +339,7 @@ InputIterator2 pgn_with_holes_end);
 /// @} 
 
 /// \name Bivariate Operations 
-CONVERROR Check if this needs to be spread\n/// The following bivariate function replace `gps` with the result.
+/// The following bivariate function replace `gps` with the result.
 /// @{
 
 /*! 
