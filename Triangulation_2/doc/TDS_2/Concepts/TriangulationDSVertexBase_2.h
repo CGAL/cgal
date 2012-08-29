@@ -72,9 +72,8 @@ This nested template class has to define a type `Other` which is the
 This type `Other` will be the actual base 
 of the class `CGAL::Triangulation_data_structure_2::Vertex`. 
 */ 
-typedef Hidden_type 
 template <typename TDS2> 
-struct Rebind_TDS; 
+struct Rebind_TDS {};
 
 /*! 
 

@@ -395,7 +395,8 @@ data structure that only changes the vertex type. It has to define a type
 `Other` which is a <I>rebound</I> triangulation data structure, that is, the 
 one whose `TriangulationDSVertexBase_2` will be `Vb2`. 
 */ 
-typedef Hidden_type template <typename Vb2> struct Rebind_vertex; 
+template <typename Vb2> 
+struct Rebind_vertex {};
 
 /*! 
 This nested template class allows to get the type of a triangulation 
@@ -403,7 +404,8 @@ data structure that only changes the face type. It has to define a type
 `Other` which is a <I>rebound</I> triangulation data structure, that is, the 
 one whose `TriangulationDSFaceBase_2` will be `Fb2`. 
 */ 
-typedef Hidden_type template <typename Fb2> struct Rebind_face; 
+template <typename Fb2> 
+struct Rebind_face {};
 
 /*! 
 The edge type. 
