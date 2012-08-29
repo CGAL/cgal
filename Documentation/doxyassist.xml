@@ -49,6 +49,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../STL_Extension/doc/STL_Extension/fig</string>
           <string name="EXAMPLE_PATH">../STL_Extension/examples</string>
         </doxygen>
+        <list name="TAGFILES" append="false">
+          <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+        </list>
       </project>
 
       <project>
@@ -109,6 +112,10 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Algebraic_foundations.tag</string>
           <string name="IMAGE_PATH">../Algebraic_foundations/doc/Algebraic_foundations/fig</string>
           <string name="EXAMPLE_PATH">../Algebraic_foundations/examples</string>
+          <list name="TAGFILES" append="false">
+            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+            <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
+          </list>
         </doxygen>
       </project>
 
@@ -573,6 +580,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Circulator.tag</string>
           <string name="IMAGE_PATH">../Circulator/doc/Circulator/fig</string>
           <string name="EXAMPLE_PATH">../Circulator/examples</string>
+      <list name="TAGFILES" append="false">
+      </list>
         </doxygen>
       </project>
 
@@ -701,6 +710,9 @@ namespace for the XML file to be processed properly.  -->
       <doxygen>
         <list name="HTML_EXTRA_FILES" append="true">
           <item>./biblio/how_to_cite.html</item>
+        </list>
+        <list name="EXCLUDE_PATTERNS" append="true">
+          <item>*/doc/Developer_manual/*</item>
         </list>
 
         <string name="LAYOUT_FILE">DoxygenLayout.xml</string>
