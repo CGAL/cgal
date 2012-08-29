@@ -62,6 +62,5 @@ see the \ref licenseIssues License page.
 - \subpage introduction
 - \subpage preliminaries
 - \subpage installation
-- \subpage dev_manual
 
 */
