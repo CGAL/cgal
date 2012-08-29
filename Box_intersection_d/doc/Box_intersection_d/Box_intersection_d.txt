@@ -67,11 +67,11 @@ intersecting boxes is reported only once. Note that boxes with equal
 
 The box intersection algorithm comes in two flavors: One algorithm
 works on a single sequence of boxes and computes all pairwise
-intersections, which is called the <I>complete/</I> case, and used,
+intersections, which is called the <I>complete</I> case, and used,
 for example, in the self-intersection test. The other algorithm works
 on two sequences of boxes and computes the pairwise intersections
 between boxes from the first sequence with boxes from the second
-sequence, which is called the <I>bipartite/</I> case. For each
+sequence, which is called the <I>bipartite</I> case. For each
 pairwise intersection found a callback function is called with two
 arguments; the first argument is a box from the first sequence and the
 second argument a box from the second sequence. In the complete case,
@@ -104,8 +104,8 @@ void box_intersection_d(RandomAccessIterator1 begin1, RandomAccessIterator1 end1
                         Callback callback);
 \endcode
 
-Additional parameters to the functions calls are a <I>cutoff/</I>
-value to adjust performance trade-offs, and a <I>topology/</I> parameter
+Additional parameters to the functions calls are a <I>cutoff</I>
+value to adjust performance trade-offs, and a <I>topology</I> parameter
 selecting between topologically closed boxes (the default) and
 topologically half-open boxes.
 
@@ -114,7 +114,7 @@ depending on the size of a box it can be faster to copy the boxes, or
 to work with pointers to boxes and copy only pointers. We offer
 automatic support for both options. To simplify the description, let us
 call the `value_type` of the iterator ranges <I>box handle</I>.
-The <I>box handle/</I> can either be our box type itself or a
+The <I>box handle</I> can either be our box type itself or a
 pointer (or const pointer) to the box type; these choices represent
 both options from above.
 

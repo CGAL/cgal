@@ -32,7 +32,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. \f$ B=\sqrt{2}\f$. 
+%Default constructor with bound \f$ B=\sqrt{2}\f$. 
 */ 
 Delaunay_mesh_criteria_2(); 
 
