@@ -11,11 +11,11 @@
 
 The goal of the \cgal Open Source Project is to provide easy access to
 efficient and reliable geometric algorithms in the form of a C++
-library. CGAL is used in various areas needing geometric computation,
+library. %CGAL is used in various areas needing geometric computation,
 such as: computer graphics, scientific visualization, computer aided
 design and modeling, geographic information systems, molecular
 biology, medical imaging, robotics and motion planning, mesh
-generation, numerical methods... More on the projects using CGAL web
+generation, numerical methods... More on the projects using %CGAL web
 page.
 
 The Computational Geometry Algorithms Library (%CGAL), offers data
