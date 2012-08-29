@@ -91,17 +91,17 @@ NT denominator() const;
 }; /* end Quotient */
 
 /*! 
-writes `q` to ostream `out` in format "<TT>n/d</TT>", where 
-<TT>n</TT>\f$ ==\f$`q.numerator()` and <TT>d</TT>\f$ ==\f$`q.denominator()`. 
+writes `q` to ostream `out` in format `n/d`, where 
+`n`\f$ ==\f$`q.numerator()` and `d`\f$ ==\f$`q.denominator()`. 
 \relates Quotient 
 */ 
 std::ostream& operator<<(std::ostream& out, const Quotient<NT>& q); 
 
 /*! 
 reads `q` from istream `in`. Expected format is 
-"<TT>n/d</TT>", where <TT>n</TT> and <TT>d</TT> are of type `NT`. 
-A single <TT>n</TT> which is not followed by a <TT>/</TT> is also 
-accepted and interpreted as <TT>n/1</TT>. 
+`n/d`, where `n` and `d` are of type `NT`. 
+A single `n` which is not followed by a `/` is also 
+accepted and interpreted as `n/1`. 
 \relates Quotient 
 */ 
 std::istream& operator>>(std::istream& in, Quotient<NT>& q); 
