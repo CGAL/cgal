@@ -127,25 +127,16 @@ bool do_intersect(Type1 obj1, Type2 obj2, Type3 obj3);
 \addtogroup intersection intersection
 \ingroup PkgKernel23
 
+\brief 
 \details Depending on which \cgal kernel is used, different versions of this
 global function are available.
-
+*/
 /// @{
 
 /*!
 \addtogroup intersection_linear intersection (Linear Kernel)
 
-
-
-\sa `CGAL::do_intersect` 
-\sa `CGAL::Object` 
-
-
-## With the 2D and 3D Linear %Kernel ##
-
-\details See Chapter  \ref chapterkernel23
-*/
-/// @{
+\brief
 
 Example 
 --------------
@@ -175,6 +166,13 @@ Circular %Kernel and the 3D Spherical %Kernel are presented respectively
 in Chapters \ref chaptercircularkernel and \ref
 chaptersphericalkernel.
 
+
+\sa `CGAL::do_intersect` 
+\sa `CGAL::Object` 
+
+\details See Chapter  \ref chapterkernel23
+*/
+/// @{
 
 /*!
 Two objects `obj1` and `obj2` intersect if there is a point `p` that
