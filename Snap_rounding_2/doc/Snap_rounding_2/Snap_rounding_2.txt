@@ -4,6 +4,7 @@ namespace CGAL {
 
 \mainpage 2D Snap Rounding
 \anchor chapterSnapRounding
+\autotoc
 \authors Eli Packer
 
 # Introduction # 

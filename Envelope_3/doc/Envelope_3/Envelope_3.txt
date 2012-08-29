@@ -6,6 +6,7 @@ namespace CGAL {
 
 \anchor chapterEnvelope3
 
+\autotoc
 \authors Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman
 
 # Introduction #

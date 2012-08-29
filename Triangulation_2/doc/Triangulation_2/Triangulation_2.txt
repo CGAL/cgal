@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 2D Triangulations
 \anchor Chapter_2D_Triangulations
 
-\anchor user_chapter_2D_Triangulations
+\autotoc
 \authors Mariette Yvinec
 
 \image html tr1dt1.png

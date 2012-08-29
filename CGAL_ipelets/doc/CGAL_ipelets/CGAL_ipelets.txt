@@ -6,6 +6,7 @@ namespace CGAL {
 
 \mainpage CGAL Ipelets 
 \anchor chapcgalipelets
+\autotoc
 \authors S&eacute;bastien Loriot and Sylvain Pion
 
 # Introduction #

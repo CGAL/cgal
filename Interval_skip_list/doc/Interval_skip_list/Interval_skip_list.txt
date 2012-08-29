@@ -4,6 +4,7 @@ namespace CGAL {
 
 \mainpage Interval Skip List
 \anchor ChapterIntervalskiplist
+\autotoc
 \authors Andreas Fabri
 
 # Definition #

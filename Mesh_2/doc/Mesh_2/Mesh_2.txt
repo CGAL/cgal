@@ -3,6 +3,7 @@ namespace CGAL {
 
 \mainpage 2D Conforming Triangulations and Meshes
 \anchor userchapter2DMeshes
+\autotoc
 \author Laurent Rineau
 
 This package implements Shewchuk's algorithm \cite s-mgdsa-00 to construct

@@ -5,6 +5,7 @@ namespace CGAL {
 \mainpage Profiling Tools, Hash Map, Union-find, Modifiers
 
 \anchor chapMiscellany
+\autotoc
 \authors Lutz Kettner, Sylvain Pion, and Michael Seel
 
 # Timers #

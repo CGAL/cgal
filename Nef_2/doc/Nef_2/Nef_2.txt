@@ -6,6 +6,7 @@ namespace CGAL {
 
 \mainpage 2D Boolean Operations on Nef Polygons
 \anchor chapnef2
+\autotoc
 \authors Michael Seel
 
 # Introduction #

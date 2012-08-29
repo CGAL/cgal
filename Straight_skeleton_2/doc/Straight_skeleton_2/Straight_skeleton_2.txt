@@ -4,6 +4,7 @@ namespace CGAL {
 
 \mainpage 2D Straight Skeleton and Polygon Offsetting 
 \anchor chapterstraightskeleton2
+\autotoc
 \authors Fernando Cacciola
 
 # Definitions #

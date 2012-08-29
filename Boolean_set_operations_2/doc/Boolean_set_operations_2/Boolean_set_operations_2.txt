@@ -8,6 +8,7 @@ namespace CGAL {
 
 \anchor chapter_Boolean_set_operations_2
 
+\autotoc
 \authors Efi Fogel, Ophir Setter, Ron Wein, Guy Zucker, Baruch Zukerman, and Dan Halperin
 
 \section bso_secintro Introduction 

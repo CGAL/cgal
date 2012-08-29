@@ -55,6 +55,23 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>3D Fast Intersection and Distance Computation</name>
+        <input>../AABB_tree/doc</input>
+        <input>../AABB_tree/include</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../AABB_tree/doc/AABB_tree/</string>
+          <string name="STRIP_FROM_INC_PATH">../AABB_tree/include</string>
+          <string name="GENERATE_TAGFILE">./tags/AABB_tree.tag</string>
+          <string name="IMAGE_PATH">../AABB_tree/doc/AABB_tree/fig</string>
+          <string name="EXAMPLE_PATH">../AABB_tree/examples</string>
+          <bool name="EXTRACT_ALL">false</bool>
+          <bool name="HIDE_UNDOC_MEMBERS">true</bool>
+          <bool name="HIDE_UNDOC_CLASSES">true</bool>
+          <bool name="SHOW_INCLUDE_FILES">false</bool>
+        </doxygen>
+      </project>
+
+      <project>
         <name>2D Conforming Triangulations and Meshes</name>
         <input>../Mesh_2/doc</input>
         <doxygen>
@@ -743,6 +760,7 @@ namespace for the XML file to be processed properly.  -->
         <list name="IMAGE_PATH" append="false">
           <item>./doc/fig</item>
           <item>../Algebraic_foundations/doc/Algebraic_foundations/fig</item>
+          <item>../AABB_tree/doc/AABB_tree/fig</item>
           <item>../Number_types/doc/Number_types/fig</item>
           <item>../Alpha_shapes_2/doc/Alpha_shapes_2/fig</item>
           <item>../Alpha_shapes_3/doc/Alpha_shapes_3/fig</item>
@@ -789,6 +807,7 @@ namespace for the XML file to be processed properly.  -->
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
+          <item>./tags/AABB_tree.tag=../../CGAL.CGAL.3D-Fast-Intersection-and-Distance-Computation/html</item>
           <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.2D-Alpha-Shapes/html</item>
           <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.3D-Alpha-Shapes/html</item>

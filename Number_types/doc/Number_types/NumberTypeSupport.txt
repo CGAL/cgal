@@ -7,6 +7,7 @@ namespace CGAL {
 \mainpage Number Types
 \anchor Numbertype
 
+\autotoc
 \authors Michael Hemmer, Susan Hert, Sylvain Pion, and Stefan Schirra
 
 # Introduction #

@@ -4,6 +4,7 @@ namespace CGAL {
 
 \mainpage 2D Alpha Shapes
 \anchor I1ChapterAlphashapes2D
+\autotoc
 \authors Tran Kai Frank Da
 
 \image html alphashape.png 

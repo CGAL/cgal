@@ -10,6 +10,7 @@ namespace CGAL {
 \( \newcommand{\dabs}[1]{{\parallel\! #1 \!\parallel}} \)
 \endhtmlonly
 
+\autotoc
 \authors Nico Kruithof
 
 \image html molecule.png ""

@@ -5,7 +5,8 @@ namespace CGAL {
 \mainpage 3D Mesh Generation
 \anchor userchaptermesh3
 
-\tableofcontents
+\autotoc
+\authors Pierre Alliez, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
 
 \anchor figuremultilabel_mesher
 \image latex multilabel_mesher height=9cm "Cut-view of a multi-domain 3D mesh generated from a segmented image."

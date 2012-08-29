@@ -69,7 +69,7 @@ Envelope_diagram_2 (EnvTraits *traits);
 
 /// @} 
 
-  class Vertex : public Base::Vertex {
+  class Vertex : public Arrangement_2<EnvTraits>::Vertex {
   public:
     /// \name Access Functions 
     /// @{
@@ -99,7 +99,7 @@ Envelope_diagram_2 (EnvTraits *traits);
     /// @}
   };
 
-  class Halfedge : public Base::Halfedge {
+  class Halfedge : public Arrangement_2<EnvTraits>::Halfedge {
   public:
     /// \name Access Functions 
     /// @{
@@ -128,7 +128,7 @@ Envelope_diagram_2 (EnvTraits *traits);
     /// @}
   };
 
-  class Face : public Base::Face {
+  class Face : public Arrangement_2<EnvTraits>::Face {
   public:
     /// \name Access Functions 
     /// @{

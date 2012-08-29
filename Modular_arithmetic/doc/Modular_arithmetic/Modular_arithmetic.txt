@@ -4,6 +4,7 @@ namespace CGAL {
 
 \mainpage Modular Arithmetic
 \anchor chapmodulararithmetic
+\autotoc
 \authors Michael Hemmer and Sylvain Pion
 
 # Introduction #

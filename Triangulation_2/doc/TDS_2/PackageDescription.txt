@@ -26,7 +26,7 @@ sub-concepts `TriangulationDataStructure_2::Face` and
 
 To ensure all the flexibility of the triangulation classes,
 described and in Section \ref Section_2D_Triangulations_Flexibility of
-Chapter \ref user_chapter_2D_Triangulations, the model
+Chapter \ref Chapter_2D_Triangulations, the model
 `CGAL::Triangulation_data_structure_2<Vb,Fb>` has two template
 parameters.  The class `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 derives its `Vertex` and `Face` types from the two template parameters

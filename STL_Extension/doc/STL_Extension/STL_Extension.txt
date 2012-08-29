@@ -4,7 +4,8 @@ namespace CGAL {
 
 \mainpage STL Extensions for CGAL
 \anchor chapterStlExtensions
-\author Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein
+\autotoc
+\authors Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein
 
 \cgal is designed in the spirit of the generic programming paradigm
 to work together with the Standard Template Library (\stl)

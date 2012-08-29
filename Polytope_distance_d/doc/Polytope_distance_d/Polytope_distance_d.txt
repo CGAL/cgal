@@ -4,6 +4,7 @@ namespace CGAL {
 
 \mainpage Optimal Distances 
 \anchor chapOptimalDistances
+\autotoc
 \authors Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr
 
 This chapter describes how to compute the distance between the convex

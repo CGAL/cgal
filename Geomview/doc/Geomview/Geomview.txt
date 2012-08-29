@@ -4,6 +4,7 @@ namespace CGAL {
 
 \mainpage Geomview
 \anchor ChapterGeomview
+\autotoc
 \authors Andreas Fabri and Sylvain Pion
 
 # Definition #

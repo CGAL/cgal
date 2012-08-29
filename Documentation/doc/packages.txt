@@ -18,7 +18,7 @@ h1 {
 <a name="Pkg:AlgebraicFoundations"></a>
 \package_listing{Algebraic_foundations}
 <a name="Pkg:NumberTypes"></a>
-\package_listing{NumberTypeSupport}
+\package_listing{Number_types}
 <a name="Pkg:ModularArithmetic"></a>
 \package_listing{Modular_arithmetic}
 <a name="Pkg:Polynomial"></a>

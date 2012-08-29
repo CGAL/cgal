@@ -6,6 +6,7 @@ namespace CGAL {
 
 \anchor chapterEnvelope2
 
+\autotoc
 \authors Ron Wein
 
 \anchor figteaser

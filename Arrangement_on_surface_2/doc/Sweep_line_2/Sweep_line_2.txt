@@ -4,6 +4,7 @@ namespace CGAL {
 \mainpage 2D Intersection of Curves
 \anchor I1_ChapterSweepLine
 
+\autotoc
 \authors Baruch Zukerman, Ron Wein, and Efi Fogel
 
 # Introduction #

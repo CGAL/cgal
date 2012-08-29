@@ -6,6 +6,7 @@ namespace CGAL {
 
 \tableofcontents
 
+\autotoc
 \authors Pierre Alliez, Stephane Tayeb, and Camille Wormser
 
 \section aabb_tree_introduction Introduction

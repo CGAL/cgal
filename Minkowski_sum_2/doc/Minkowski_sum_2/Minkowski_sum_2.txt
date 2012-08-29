@@ -12,7 +12,8 @@ namespace CGAL {
 
 \anchor chapterMinkowskisum2
 
-\authors Ron Wein
+\autotoc
+\author Ron Wein
 
 \section mink_secintro Introduction 
 

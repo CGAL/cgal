@@ -4,6 +4,7 @@ namespace CGAL {
 
 \mainpage dD Convex Hulls and Delaunay Triangulations 
 \anchor chapconvexhulld
+\autotoc
 \authors Susan Hert and Michael Seel
 
 # Introduction #

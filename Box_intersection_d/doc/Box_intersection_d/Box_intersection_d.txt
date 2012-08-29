@@ -4,6 +4,7 @@ namespace CGAL {
 
 \mainpage Intersecting Sequences of dD Iso-oriented Boxes
 \anchor chapterBoxIntersection
+\autotoc
 \authors Lutz Kettner, Andreas Meyer, and Afra Zomorodian
 
 # Introduction #

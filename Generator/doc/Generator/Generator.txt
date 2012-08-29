@@ -4,8 +4,8 @@ namespace CGAL {
 
 \mainpage Geometric Object Generators
 \anchor chapterGenerators
-\authors Olivier Devillers, Susan Hert, Michael
-Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr 
+\autotoc
+\authors Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr 
 
 # Introduction #
 
