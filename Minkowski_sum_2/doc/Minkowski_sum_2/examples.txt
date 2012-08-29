@@ -1,0 +1,9 @@
+/*!
+\example approx_inset.cpp
+\example approx_offset.cpp
+\example exact_inset.cpp
+\example exact_offset.cpp
+\example sum_by_decomposition.cpp
+\example sum_triangles.cpp
+\example sum_with_holes.cpp
+*/

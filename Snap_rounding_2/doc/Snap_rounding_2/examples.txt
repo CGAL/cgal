@@ -1,0 +1,4 @@
+/*!
+\example snap_rounding.cpp
+\example snap_rounding_to_integer.cpp
+*/

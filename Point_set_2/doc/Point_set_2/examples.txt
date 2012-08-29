@@ -1,0 +1,4 @@
+/*!
+\example nearest_neighbor.cpp
+\example range_search.cpp
+*/

@@ -1033,4 +1033,3 @@ and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
 
 */ 
 } /* namespace CGAL */
-

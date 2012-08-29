@@ -1,0 +1,20 @@
+/*!
+\example comparison.cpp
+\example complex_construction.cpp
+\example exploration_SM.cpp
+\example extended_kernel.cpp
+\example handling_double_coordinates.cpp
+\example interface_polyhedron.cpp
+\example nef_3_construction.cpp
+\example nef_3_point_location.cpp
+\example nef_3_simple.cpp
+\example nefIO.cpp
+\example offIO.cpp
+\example point_set_operations.cpp
+\example polygon_construction.cpp
+\example polyline_construction.cpp
+\example set_operations.cpp
+\example shell_exploration.cpp
+\example topological_operations.cpp
+\example transformation.cpp
+*/

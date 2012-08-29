@@ -1,0 +1,8 @@
+/*!
+\example ex_alpha_shapes_3.cpp
+\example ex_alpha_shapes_exact_alpha.cpp
+\example ex_alpha_shapes_with_fast_location_3.cpp
+\example ex_fixed_weighted_alpha_shapes_3.cpp
+\example ex_periodic_alpha_shapes_3.cpp
+\example ex_weighted_alpha_shapes_3.cpp
+*/

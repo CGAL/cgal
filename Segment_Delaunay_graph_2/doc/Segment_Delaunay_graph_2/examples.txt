@@ -1,0 +1,7 @@
+/*!
+\example sdg-count-sites.cpp
+\example sdg-filtered-traits.cpp
+\example sdg-info-set.cpp
+\example sdg-red-blue-info.cpp
+\example sdg-voronoi-edges.cpp
+*/

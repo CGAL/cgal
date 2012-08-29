@@ -16,6 +16,7 @@ AABB_tree/doc/AABB_tree/Concepts/AABBPrimitive.h -text
 AABB_tree/doc/AABB_tree/Concepts/AABBTraits.h -text
 AABB_tree/doc/AABB_tree/PackageDescription.txt -text
 AABB_tree/doc/AABB_tree/aabb_tree.txt -text
+AABB_tree/doc/AABB_tree/examples.txt -text
 AABB_tree/doc/AABB_tree/fig/anchor.png -text svneol=unset#image/png
 AABB_tree/doc/AABB_tree/fig/bench.png -text svneol=unset#image/png
 AABB_tree/doc/AABB_tree/fig/bench.xls -text svneol=unset#application/msword
@@ -113,6 +114,7 @@ Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits.h 
 Algebraic_foundations/doc/Algebraic_foundations/Concepts/RingNumberType.h -text
 Algebraic_foundations/doc/Algebraic_foundations/Concepts/UniqueFactorizationDomain.h -text
 Algebraic_foundations/doc/Algebraic_foundations/PackageDescription.txt -text
+Algebraic_foundations/doc/Algebraic_foundations/examples.txt -text
 Algebraic_foundations/doc/Algebraic_foundations/fig/AlgebraicConceptHierarchy.gif -text svneol=unset#image/gif
 Algebraic_foundations/doc/Algebraic_foundations/fig/AlgebraicConceptHierarchy.pdf -text svneol=unset#application/pdf
 Algebraic_foundations/doc/Algebraic_foundations/fig/Algebraic_foundations.png -text svneol=unset#image/png
@@ -342,6 +344,7 @@ Alpha_shapes_2/doc/Alpha_shapes_2/Concepts/AlphaShapeTraits_2.h -text
 Alpha_shapes_2/doc/Alpha_shapes_2/Concepts/AlphaShapeVertex_2.h -text
 Alpha_shapes_2/doc/Alpha_shapes_2/PackageDescription.txt -text
 Alpha_shapes_2/doc/Alpha_shapes_2/Unsupported/Alpha_shape_2-Dt-ExactAlphaComparisonTag-.h -text svneol=unset#application/octet-stream
+Alpha_shapes_2/doc/Alpha_shapes_2/examples.txt -text
 Alpha_shapes_2/doc/Alpha_shapes_2/fig/alpha-detail.png -text svneol=unset#image/png
 Alpha_shapes_2/doc/Alpha_shapes_2/fig/alphashape.pdf -text svneol=unset#application/pdf
 Alpha_shapes_2/doc/Alpha_shapes_2/fig/alphashape.png -text svneol=unset#image/png
@@ -370,6 +373,7 @@ Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/FixedAlphaShapeVertex_3.h -text
 Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/FixedWeightedAlphaShapeTraits_3.h -text
 Alpha_shapes_3/doc/Alpha_shapes_3/Concepts/WeightedAlphaShapeTraits_3.h -text
 Alpha_shapes_3/doc/Alpha_shapes_3/PackageDescription.txt -text
+Alpha_shapes_3/doc/Alpha_shapes_3/examples.txt -text
 Alpha_shapes_3/doc/Alpha_shapes_3/fig/alpha_shapes_3_large.png -text svneol=unset#image/png
 Alpha_shapes_3/doc/Alpha_shapes_3/fig/alpha_shapes_3_small.png -text svneol=unset#image/png
 Alpha_shapes_3/doc/Alpha_shapes_3/fig/alphashape.gif -text svneol=unset#image/gif
@@ -419,6 +423,7 @@ Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusGraphTraits_2.h -te
 Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusGraphVertexBase_2.h -text
 Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusSite_2.h -text
 Apollonius_graph_2/doc/Apollonius_graph_2/PackageDescription.txt -text
+Apollonius_graph_2/doc/Apollonius_graph_2/examples.txt -text
 Apollonius_graph_2/doc/Apollonius_graph_2/fig/CircleVoronoi.png -text svneol=unset#image/png
 Apollonius_graph_2/doc/Apollonius_graph_2/fig/CircleVoronoiLarge.png -text svneol=unset#image/png
 Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-both_vertices.gif -text svneol=unset#image/gif
@@ -1383,6 +1388,7 @@ Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/GeneralPolygon_2.
 Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/GpsTraitsGeneralPolygonWithHoles_2.h -text
 Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/GpsTraitsGeneralPolygon_2.h -text
 Boolean_set_operations_2/doc/Boolean_set_operations_2/PackageDescription.txt -text
+Boolean_set_operations_2/doc/Boolean_set_operations_2/examples.txt -text
 Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/Boolean_set_operations_2.png -text svneol=unset#image/png
 Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/circles_rects.pdf -text svneol=unset#application/pdf
@@ -1535,6 +1541,7 @@ Box_intersection_d/doc/Box_intersection_d/CGAL/box_intersection_d.h -text
 Box_intersection_d/doc/Box_intersection_d/Concepts/BoxIntersectionBox_d.h -text
 Box_intersection_d/doc/Box_intersection_d/Concepts/BoxIntersectionTraits_d.h -text
 Box_intersection_d/doc/Box_intersection_d/PackageDescription.txt -text
+Box_intersection_d/doc/Box_intersection_d/examples.txt -text
 Box_intersection_d/doc/Box_intersection_d/fig/benchmark.gif -text svneol=unset#image/gif
 Box_intersection_d/doc/Box_intersection_d/fig/benchmark.pdf -text svneol=unset#application/pdf
 Box_intersection_d/doc/Box_intersection_d/fig/box_inters-small.gif -text svneol=unset#image/gif
@@ -1585,6 +1592,7 @@ CGAL_ipelets/doc/CGAL_ipelets/CGAL/CGAL_Ipelet_base.h -text
 CGAL_ipelets/doc/CGAL_ipelets/CGAL_ipelets.txt -text
 CGAL_ipelets/doc/CGAL_ipelets/Classified.txt -text svneol=unset#application/octet-stream
 CGAL_ipelets/doc/CGAL_ipelets/PackageDescription.txt -text
+CGAL_ipelets/doc/CGAL_ipelets/examples.txt -text
 CGAL_ipelets/doc/CGAL_ipelets/fig/example.png -text svneol=unset#image/png
 CGAL_ipelets/doc/CGAL_ipelets/fig/ipeico.jpg -text svneol=unset#image/jpeg
 CGAL_ipelets/doc/CGAL_ipelets/fig/ipelarge.jpg -text svneol=unset#image/jpeg
@@ -1653,6 +1661,7 @@ Circulator/doc/Circulator/Concepts/ConstRange.h -text
 Circulator/doc/Circulator/Concepts/Handle.h -text
 Circulator/doc/Circulator/Concepts/Range.h -text
 Circulator/doc/Circulator/PackageDescription.txt -text
+Circulator/doc/Circulator/examples.txt -text
 Circulator/doc/Circulator/fig/circulator.png -text svneol=unset#image/png
 Circulator/doc_tex/Circulator/circulator.png -text
 Combinatorial_map/doc_tex/Combinatorial_map/Combinatorial_map.tex -text
@@ -1785,6 +1794,7 @@ Combinatorial_map/test/Combinatorial_map/Combinatorial_map_test.cpp -text
 Convex_decomposition_3/demo/Convex_decomposition_3/star.nef3 -text
 Convex_decomposition_3/doc/Convex_decomposition_3/Convex_decomposition_3.txt -text
 Convex_decomposition_3/doc/Convex_decomposition_3/PackageDescription.txt -text
+Convex_decomposition_3/doc/Convex_decomposition_3/examples.txt -text
 Convex_decomposition_3/doc/Convex_decomposition_3/fig/Convex_decomposition_3-teaser.png -text svneol=unset#image/png
 Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes.gif -text svneol=unset#image/gif
 Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes.pdf -text svneol=unset#application/pdf
@@ -1825,6 +1835,7 @@ Convex_hull_2/doc/Convex_hull_2/CGAL/convexity_check_2.h -text
 Convex_hull_2/doc/Convex_hull_2/Concepts/ConvexHullTraits_2.h -text
 Convex_hull_2/doc/Convex_hull_2/Convex_hull_2.txt -text
 Convex_hull_2/doc/Convex_hull_2/PackageDescription.txt -text
+Convex_hull_2/doc/Convex_hull_2/examples.txt -text
 Convex_hull_2/doc/Convex_hull_2/fig/convex_hull.png -text svneol=unset#image/png
 Convex_hull_2/doc/Convex_hull_2/fig/saarhull.png -text svneol=unset#image/png
 Convex_hull_2/doc_tex/Convex_hull_2/convex_hull.png -text
@@ -1848,6 +1859,7 @@ Convex_hull_3/doc/Convex_hull_3/Concepts/ConvexHullTraits_3.h -text
 Convex_hull_3/doc/Convex_hull_3/Concepts/IsStronglyConvexTraits_3.h -text
 Convex_hull_3/doc/Convex_hull_3/Convex_hull_3.txt -text
 Convex_hull_3/doc/Convex_hull_3/PackageDescription.txt -text
+Convex_hull_3/doc/Convex_hull_3/examples.txt -text
 Convex_hull_3/doc/Convex_hull_3/fig/bunny.png -text svneol=unset#image/png
 Convex_hull_3/doc/Convex_hull_3/fig/chull_bimba.png -text svneol=unset#image/png
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.png -text
@@ -1941,6 +1953,7 @@ Envelope_2/doc/Envelope_2/Concepts/EnvelopeDiagramVertex.h -text
 Envelope_2/doc/Envelope_2/Concepts/EnvelopeDiagram_1.h -text
 Envelope_2/doc/Envelope_2/Envelope_2.txt -text
 Envelope_2/doc/Envelope_2/PackageDescription.txt -text
+Envelope_2/doc/Envelope_2/examples.txt -text
 Envelope_2/doc/Envelope_2/fig/Envelope_2.png -text svneol=unset#image/png
 Envelope_2/doc/Envelope_2/fig/ex_circle.gif -text svneol=unset#image/gif
 Envelope_2/doc/Envelope_2/fig/ex_circle.pdf -text svneol=unset#application/pdf
@@ -1976,6 +1989,7 @@ Envelope_3/doc/Envelope_3/CGAL/envelope_3.h -text
 Envelope_3/doc/Envelope_3/Concepts/EnvelopeTraits_3.h -text
 Envelope_3/doc/Envelope_3/Envelope_3.txt -text
 Envelope_3/doc/Envelope_3/PackageDescription.txt -text
+Envelope_3/doc/Envelope_3/examples.txt -text
 Envelope_3/doc/Envelope_3/fig/Envelope_3.png -text svneol=unset#image/png
 Envelope_3/doc/Envelope_3/fig/compare_over_curve.gif -text svneol=unset#image/gif
 Envelope_3/doc/Envelope_3/fig/compare_over_curve.pdf -text svneol=unset#application/pdf
@@ -2085,6 +2099,7 @@ Generator/doc/Generator/Concepts/RandomConvexSetTraits_2.h -text
 Generator/doc/Generator/Concepts/RandomPolygonTraits_2.h -text
 Generator/doc/Generator/Generator.txt -text
 Generator/doc/Generator/PackageDescription.txt -text
+Generator/doc/Generator/examples.txt -text
 Generator/doc/Generator/fig/Segment_generator_prog1.png -text svneol=unset#image/png
 Generator/doc/Generator/fig/Segment_generator_prog2.png -text svneol=unset#image/png
 Generator/doc/Generator/fig/dice.png -text svneol=unset#image/png
@@ -2262,6 +2277,7 @@ HalfedgeDS/doc/HalfedgeDS/Concepts/HalfedgeDSItems.h -text
 HalfedgeDS/doc/HalfedgeDS/Concepts/HalfedgeDSVertex.h -text
 HalfedgeDS/doc/HalfedgeDS/HalfedgeDS.txt -text
 HalfedgeDS/doc/HalfedgeDS/PackageDescription.txt -text
+HalfedgeDS/doc/HalfedgeDS/examples.txt -text
 HalfedgeDS/doc/HalfedgeDS/fig/HalfedgeDS-teaser-small.gif -text svneol=unset#image/gif
 HalfedgeDS/doc/HalfedgeDS/fig/euler_center.gif -text svneol=unset#image/gif
 HalfedgeDS/doc/HalfedgeDS/fig/euler_center.pdf -text svneol=unset#application/pdf
@@ -2400,6 +2416,7 @@ Interval_skip_list/doc/Interval_skip_list/CGAL/Level_interval.h -text
 Interval_skip_list/doc/Interval_skip_list/Concepts/Interval.h -text
 Interval_skip_list/doc/Interval_skip_list/Interval_skip_list.txt -text
 Interval_skip_list/doc/Interval_skip_list/PackageDescription.txt -text
+Interval_skip_list/doc/Interval_skip_list/examples.txt -text
 Interval_skip_list/doc/Interval_skip_list/fig/query.png -text svneol=unset#image/png
 Interval_skip_list/doc_tex/Interval_skip_list/query.png -text
 Interval_skip_list/examples/Interval_skip_list/terrain.pts -text
@@ -2421,6 +2438,7 @@ Jet_fitting_3/doc/Jet_fitting_3/Concepts/LocalKernel.h -text
 Jet_fitting_3/doc/Jet_fitting_3/Concepts/SvdTraits.h -text
 Jet_fitting_3/doc/Jet_fitting_3/Jet_fitting_3.txt -text
 Jet_fitting_3/doc/Jet_fitting_3/PackageDescription.txt -text
+Jet_fitting_3/doc/Jet_fitting_3/examples.txt -text
 Jet_fitting_3/doc/Jet_fitting_3/fig/DavidDetail.png -text svneol=unset#image/png
 Jet_fitting_3/doc/Jet_fitting_3/fig/david-dirmaxkmin-jpg-white-back.png -text svneol=unset#image/png
 Jet_fitting_3/doc/Jet_fitting_3/fig/david-dirmaxkmin-small.png -text svneol=unset#image/png
@@ -2494,6 +2512,7 @@ Kernel_23/doc/Kernel_23/CGAL/squared_distance_3.h -text
 Kernel_23/doc/Kernel_23/Concepts/Kernel.h -text
 Kernel_23/doc/Kernel_23/Kernel_23.txt -text
 Kernel_23/doc/Kernel_23/PackageDescription.txt -text
+Kernel_23/doc/Kernel_23/examples.txt -text
 Kernel_23/doc/Kernel_23/fig/IsoCuboid.gif -text svneol=unset#image/gif
 Kernel_23/doc/Kernel_23/fig/IsoCuboid.pdf -text svneol=unset#application/pdf
 Kernel_23/doc/Kernel_23/fig/arrlinthree.gif -text svneol=unset#image/gif
@@ -3316,6 +3335,7 @@ Mesh_2/doc/Mesh_2/Concepts/DelaunayMeshTraits_2.h -text
 Mesh_2/doc/Mesh_2/Concepts/MeshingCriteria_2.h -text
 Mesh_2/doc/Mesh_2/Mesh_2.txt -text
 Mesh_2/doc/Mesh_2/PackageDescription.txt -text
+Mesh_2/doc/Mesh_2/examples.txt -text
 Mesh_2/doc/Mesh_2/fig/delaunaymesh-small.png -text svneol=unset#image/png
 Mesh_2/doc/Mesh_2/fig/delaunaymesh-teaser.png -text svneol=unset#image/png
 Mesh_2/doc/Mesh_2/fig/domain-domain-mesh.png -text svneol=unset#image/png
@@ -3422,6 +3442,7 @@ Mesh_3/doc/Mesh_3/Concepts/MeshVertexBase_3.h -text
 Mesh_3/doc/Mesh_3/Concepts/TriangleAccessor_3.h -text
 Mesh_3/doc/Mesh_3/Mesh_3.txt -text
 Mesh_3/doc/Mesh_3/PackageDescription.txt -text
+Mesh_3/doc/Mesh_3/examples.txt -text
 Mesh_3/doc/Mesh_3/fig/bench_3d.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc/Mesh_3/fig/bench_polyhedral.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc/Mesh_3/fig/dihedral_angle_distribution.png -text svneol=unset#image/png
@@ -3510,6 +3531,7 @@ Minkowski_sum_2/doc/Minkowski_sum_2/CGAL/offset_polygon_2.h -text
 Minkowski_sum_2/doc/Minkowski_sum_2/Concepts/PolygonConvexDecomposition_2.h -text
 Minkowski_sum_2/doc/Minkowski_sum_2/Minkowski_sum_2.txt -text
 Minkowski_sum_2/doc/Minkowski_sum_2/PackageDescription.txt -text
+Minkowski_sum_2/doc/Minkowski_sum_2/examples.txt -text
 Minkowski_sum_2/doc/Minkowski_sum_2/fig/Minkowski_sum_2.png -text svneol=unset#image/png
 Minkowski_sum_2/doc/Minkowski_sum_2/fig/approx_offset.gif -text svneol=unset#image/gif
 Minkowski_sum_2/doc/Minkowski_sum_2/fig/approx_offset.pdf -text svneol=unset#application/pdf
@@ -3591,6 +3613,7 @@ Minkowski_sum_2/test/Minkowski_sum_2/test_exact_offset.cmd -text
 Minkowski_sum_3/doc/Minkowski_sum_3/CGAL/minkowski_sum_3.h -text
 Minkowski_sum_3/doc/Minkowski_sum_3/Minkowski_sum_3.txt -text
 Minkowski_sum_3/doc/Minkowski_sum_3/PackageDescription.txt -text
+Minkowski_sum_3/doc/Minkowski_sum_3/examples.txt -text
 Minkowski_sum_3/doc/Minkowski_sum_3/fig/Minkowski_sum_3_teaser.png -text svneol=unset#image/png
 Minkowski_sum_3/doc/Minkowski_sum_3/fig/decomposition_method.gif -text svneol=unset#image/gif
 Minkowski_sum_3/doc/Minkowski_sum_3/fig/decomposition_method.pdf -text svneol=unset#application/pdf
@@ -3642,6 +3665,7 @@ Modular_arithmetic/doc/Modular_arithmetic/Concepts/ModularTraits.h -text
 Modular_arithmetic/doc/Modular_arithmetic/Concepts/Modularizable.h -text
 Modular_arithmetic/doc/Modular_arithmetic/Modular_arithmetic.txt -text
 Modular_arithmetic/doc/Modular_arithmetic/PackageDescription.txt -text
+Modular_arithmetic/doc/Modular_arithmetic/examples.txt -text
 Modular_arithmetic/doc/Modular_arithmetic/fig/Modular_arithmetic.png -text svneol=unset#image/png
 Modular_arithmetic/doc_tex/Modular_arithmetic/Modular_arithmetic.png -text
 Modular_arithmetic/doc_tex/Modular_arithmetic/PkgDescription.tex -text
@@ -3699,6 +3723,7 @@ Nef_2/doc/Nef_2/Classified.txt -text
 Nef_2/doc/Nef_2/Concepts/ExtendedKernelTraits_2.h -text
 Nef_2/doc/Nef_2/Nef_2.txt -text
 Nef_2/doc/Nef_2/PackageDescription.txt -text
+Nef_2/doc/Nef_2/examples.txt -text
 Nef_2/doc/Nef_2/fig/complex-teaser.png -text svneol=unset#image/png
 Nef_2/doc/Nef_2/fig/complex.gif -text svneol=unset#image/gif
 Nef_2/doc/Nef_2/fig/complex.pdf -text svneol=unset#application/pdf
@@ -3729,6 +3754,7 @@ Nef_3/doc/Nef_3/CGAL/Nef_polyhedron_3.h -text
 Nef_3/doc/Nef_3/CGAL/OFF_to_nef_3.h -text
 Nef_3/doc/Nef_3/Nef_3.txt -text
 Nef_3/doc/Nef_3/PackageDescription.txt -text
+Nef_3/doc/Nef_3/examples.txt -text
 Nef_3/doc/Nef_3/fig/Nef_3-teaser.png -text svneol=unset#image/png
 Nef_3/doc/Nef_3/fig/closeup.gif -text svneol=unset#image/gif
 Nef_3/doc/Nef_3/fig/closeup.pdf -text svneol=unset#application/pdf
@@ -3820,6 +3846,7 @@ Nef_S2/doc/Nef_S2/CGAL/IO/Qt_widget_Nef_S2.h -text
 Nef_S2/doc/Nef_S2/CGAL/Nef_polyhedron_S2.h -text
 Nef_S2/doc/Nef_S2/Nef_S2.txt -text
 Nef_S2/doc/Nef_S2/PackageDescription.txt -text
+Nef_S2/doc/Nef_S2/examples.txt -text
 Nef_S2/doc/Nef_S2/fig/Nef_S2-teaser-small.png -text svneol=unset#image/png
 Nef_S2/doc/Nef_S2/fig/complex.gif -text svneol=unset#image/gif
 Nef_S2/doc/Nef_S2/fig/complex.pdf -text svneol=unset#application/pdf
@@ -3948,6 +3975,7 @@ Partition_2/doc/Partition_2/Concepts/YMonotonePartitionIsValidTraits_2.h -text
 Partition_2/doc/Partition_2/Concepts/YMonotonePartitionTraits_2.h -text
 Partition_2/doc/Partition_2/PackageDescription.txt -text
 Partition_2/doc/Partition_2/Partition_2.txt -text
+Partition_2/doc/Partition_2/examples.txt -text
 Partition_2/doc/Partition_2/fig/Idar-Oberstein_appx_cvx.gif -text svneol=unset#image/gif
 Partition_2/doc/Partition_2/fig/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#application/pdf
 Partition_2/doc/Partition_2/fig/Partition_2-teaser-small.png -text svneol=unset#image/png
@@ -4068,6 +4096,7 @@ Point_set_2/doc/Point_set_2/CGAL/range_search_delaunay_2.h -text
 Point_set_2/doc/Point_set_2/Concepts/PointSetTraits.h -text
 Point_set_2/doc/Point_set_2/PackageDescription.txt -text
 Point_set_2/doc/Point_set_2/Point_set_2.txt -text
+Point_set_2/doc/Point_set_2/examples.txt -text
 Point_set_2/doc/Point_set_2/fig/point_set.png -text svneol=unset#image/png
 Point_set_2/doc_tex/Point_set_2/point_set.png -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/Point_set_processing_images.ppt -text svneol=unset#application/vnd.ms-powerpoint
@@ -4303,6 +4332,7 @@ Polytope_distance_d/doc/Polytope_distance_d/Concepts/PolytopeDistanceDTraits.h -
 Polytope_distance_d/doc/Polytope_distance_d/Concepts/WidthTraits_3.h -text
 Polytope_distance_d/doc/Polytope_distance_d/PackageDescription.txt -text
 Polytope_distance_d/doc/Polytope_distance_d/Polytope_distance_d.txt -text
+Polytope_distance_d/doc/Polytope_distance_d/examples.txt -text
 Polytope_distance_d/doc/Polytope_distance_d/fig/dist.png -text svneol=unset#image/png
 Polytope_distance_d/doc/Polytope_distance_d/fig/polydist.gif -text svneol=unset#image/gif
 Polytope_distance_d/doc/Polytope_distance_d/fig/polydist.pdf -text svneol=unset#application/pdf
@@ -4510,6 +4540,7 @@ STL_Extension/doc/STL_Extension/CGAL/utility.h -text
 STL_Extension/doc/STL_Extension/Concepts/Projection_object.h -text
 STL_Extension/doc/STL_Extension/PackageDescription.txt -text
 STL_Extension/doc/STL_Extension/STL_Extension.txt -text
+STL_Extension/doc/STL_Extension/examples.txt -text
 STL_Extension/doc/STL_Extension/fig/plusplus.png -text svneol=unset#image/png
 STL_Extension/doc_tex/STL_Extension/plusplus.png -text
 STL_Extension/include/CGAL/internal/boost/array_binary_tree.hpp -text
@@ -4595,6 +4626,7 @@ Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGr
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGraphVertexBase_2.h -text
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/PackageDescription.txt -text
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Segment_Delaunay_graph_2.txt -text
+Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/examples.txt -text
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/norway.png -text svneol=unset#image/png
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/sdg-join_split.gif -text svneol=unset#image/gif
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/sdg-join_split.pdf -text svneol=unset#application/pdf
@@ -4641,6 +4673,7 @@ Skin_surface_3/doc/Skin_surface_3/Concepts/SkinSurfaceTraits_3.h -text
 Skin_surface_3/doc/Skin_surface_3/Concepts/SkinSurface_3.h -text
 Skin_surface_3/doc/Skin_surface_3/PackageDescription.txt -text
 Skin_surface_3/doc/Skin_surface_3/Skin_surface_3.txt -text
+Skin_surface_3/doc/Skin_surface_3/examples.txt -text
 Skin_surface_3/doc/Skin_surface_3/fig/convexTwoPoints.png -text svneol=unset#image/png
 Skin_surface_3/doc/Skin_surface_3/fig/large.png -text svneol=unset#image/png
 Skin_surface_3/doc/Skin_surface_3/fig/marching.png -text svneol=unset#image/png
@@ -4683,6 +4716,7 @@ Snap_rounding_2/doc/Snap_rounding_2/CGAL/Snap_rounding_traits_2.h -text
 Snap_rounding_2/doc/Snap_rounding_2/Concepts/SnapRoundingTraits_2.h -text
 Snap_rounding_2/doc/Snap_rounding_2/PackageDescription.txt -text
 Snap_rounding_2/doc/Snap_rounding_2/Snap_rounding_2.txt -text
+Snap_rounding_2/doc/Snap_rounding_2/examples.txt -text
 Snap_rounding_2/doc/Snap_rounding_2/fig/isr_vs_sr.gif -text svneol=unset#image/gif
 Snap_rounding_2/doc/Snap_rounding_2/fig/isr_vs_sr.pdf -text svneol=unset#application/pdf
 Snap_rounding_2/doc/Snap_rounding_2/fig/snap-detail.png -text svneol=unset#image/png
@@ -4741,6 +4775,7 @@ Spatial_searching/doc/Spatial_searching/Concepts/SpatialTree.h -text
 Spatial_searching/doc/Spatial_searching/Concepts/Splitter.h -text
 Spatial_searching/doc/Spatial_searching/PackageDescription.txt -text
 Spatial_searching/doc/Spatial_searching/Spatial_searching.txt -text
+Spatial_searching/doc/Spatial_searching/examples.txt -text
 Spatial_searching/doc/Spatial_searching/fig/Fig1.gif -text svneol=unset#image/gif
 Spatial_searching/doc/Spatial_searching/fig/windowQuery.png -text svneol=unset#image/png
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#image/gif
@@ -4828,6 +4863,7 @@ Straight_skeleton_2/doc/Straight_skeleton_2/Concepts/StraightSkeleton_2.h -text
 Straight_skeleton_2/doc/Straight_skeleton_2/Concepts/VertexContainer_2.h -text
 Straight_skeleton_2/doc/Straight_skeleton_2/PackageDescription.txt -text
 Straight_skeleton_2/doc/Straight_skeleton_2/Straight_skeleton_2.txt -text
+Straight_skeleton_2/doc/Straight_skeleton_2/examples.txt -text
 Straight_skeleton_2/doc/Straight_skeleton_2/fig/StraightSkeleton.png -text svneol=unset#image/png
 Straight_skeleton_2/doc/Straight_skeleton_2/fig/StraightSkeletonTeaser.png -text svneol=unset#image/png
 Straight_skeleton_2/doc/Straight_skeleton_2/fig/complex_offset.pdf -text svneol=unset#application/pdf
@@ -5437,6 +5473,7 @@ Triangulation_2/doc/Triangulation_2/Concepts/TriangulationVertexBaseWithInfo_2.h
 Triangulation_2/doc/Triangulation_2/Concepts/TriangulationVertexBase_2.h -text
 Triangulation_2/doc/Triangulation_2/PackageDescription.txt -text
 Triangulation_2/doc/Triangulation_2/Triangulation_2.txt -text
+Triangulation_2/doc/Triangulation_2/examples.txt -text
 Triangulation_2/doc/Triangulation_2/fig/Flip.gif -text svneol=unset#image/gif
 Triangulation_2/doc/Triangulation_2/fig/Three.gif -text svneol=unset#image/gif
 Triangulation_2/doc/Triangulation_2/fig/cdt2d-big.png -text svneol=unset#image/png
