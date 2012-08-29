@@ -71,7 +71,7 @@ private:
   double multiplier_for_segment;
 
   typename SGT::Angle_3 angle_functor;
-
+  typename SGT::Construct_scaled_vector_3 scale_functor;
 public:
   /**
    * Assign default values to member variables.
@@ -130,8 +130,8 @@ private:
 
     Plane plane(center, normal);
     Vector v1 = plane.base1(), v2 = plane.base2();
-    v1 = v1 / CGAL::sqrt(v1.squared_length());
-    v2 = v2 / CGAL::sqrt(v2.squared_length());
+    v1 = scale_functor(v1, 1.0 / CGAL::sqrt(v1.squared_length()));
+    v2 = scale_functor(v2, 1.0 / CGAL::sqrt(v2.squared_length()));
 
     //arrange_center_orientation(plane, normal, center);
 
@@ -140,7 +140,7 @@ private:
     ray_weights.reserve(samples.size());
 
     const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
-    normal = normal * length_of_normal;
+    normal = scale_functor(normal, length_of_normal);
     // stores segment length,
     // making it too large might cause a non-filtered bboxes in traversal,
     // making it too small might cause a miss and consecutive ray casting.
@@ -154,7 +154,8 @@ private:
         sample_it != samples.end(); ++sample_it) {
       bool is_intersected, intersection_is_acute;
       double min_distance;
-      Vector disk_vector = v1 * sample_it->get<0>() + v2 * sample_it->get<1>();
+      Vector disk_vector = scale_functor(v1, sample_it->get<0>()) + scale_functor(v2,
+                           sample_it->get<1>());
       Vector ray_direction = normal + disk_vector;
       //output << center << std::endl;
       //std::cout << center << std::endl;
@@ -177,8 +178,10 @@ private:
         }
         segment_distance = min_distance; //first assignment of the segment_distance
       } else { // use segment_distance to limit rays as segments
-        ray_direction =  ray_direction / std::sqrt(ray_direction.squared_length());
-        ray_direction = ray_direction * (*segment_distance * multiplier_for_segment);
+        ray_direction =  scale_functor(ray_direction,
+                                       1.0 / CGAL::sqrt(ray_direction.squared_length()));
+        ray_direction = scale_functor(ray_direction,
+                                      (*segment_distance * multiplier_for_segment));
 
         Segment segment(center, operator+(center, ray_direction));
         boost::tie(is_intersected, intersection_is_acute,
@@ -283,7 +286,7 @@ private:
     const Point& min_v1 = min_id->halfedge()->vertex()->point();
     const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
     const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
-    Vector min_normal = normal(min_v1, min_v2, min_v3) * -1.0;
+    Vector min_normal = scale_functor(normal(min_v1, min_v2, min_v3), -1.0);
 
     if(angle_functor(ORIGIN + min_i_ray, Point(ORIGIN),
                      ORIGIN + min_normal) != ACUTE) {
@@ -332,7 +335,7 @@ private:
     const Point& min_v1 = min_id->halfedge()->vertex()->point();
     const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
     const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
-    Vector min_normal = normal(min_v1, min_v2, min_v3) * -1.0;
+    Vector min_normal = scale_functor(normal(min_v1, min_v2, min_v3), -1.0);
 
     if(angle_functor(ORIGIN + min_i_ray, Point(ORIGIN),
                      ORIGIN + min_normal) != ACUTE) {
