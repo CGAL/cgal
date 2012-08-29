@@ -44,7 +44,8 @@ sdf_values_computation(const Polyhedron& polyhedron,
                        double cone_angle = 2.0 / 3.0 * CGAL_PI,
                        int number_of_rays = 25)
 {
-  internal::Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
+  internal::Surface_mesh_segmentation<Polyhedron, GeomTraits> algorithm(
+    polyhedron);
   return algorithm.calculate_sdf_values(cone_angle, number_of_rays, sdf_values);
 }
 
@@ -86,7 +87,8 @@ surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
   smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                 smoothing_lambda)); // clip into [0-1]
 
-  internal::Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
+  internal::Surface_mesh_segmentation<Polyhedron, GeomTraits> algorithm(
+    polyhedron);
   return algorithm.partition(number_of_levels, smoothing_lambda, sdf_values,
                              segment_ids);
 }
@@ -135,10 +137,10 @@ surface_mesh_segmentation(const Polyhedron& polyhedron,
   boost::associative_property_map<Facet_double_map> sdf_property_map(
     internal_sdf_map);
 
-  sdf_values_computation(polyhedron, sdf_property_map, cone_angle,
-                         number_of_rays);
-  return surface_mesh_segmentation_from_sdf_values(
-           polyhedron, sdf_property_map, segment_ids, number_of_levels, smoothing_lambda);
+  sdf_values_computation<Polyhedron, boost::associative_property_map<Facet_double_map>, GeomTraits>
+  (polyhedron, sdf_property_map, cone_angle, number_of_rays);
+  return surface_mesh_segmentation_from_sdf_values<Polyhedron, boost::associative_property_map<Facet_double_map>, SegmentPropertyMap, GeomTraits>
+         (polyhedron, sdf_property_map, segment_ids, number_of_levels, smoothing_lambda);
 }
 
 

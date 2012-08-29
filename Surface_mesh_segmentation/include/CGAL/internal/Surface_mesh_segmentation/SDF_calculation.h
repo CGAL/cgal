@@ -24,7 +24,11 @@ namespace internal
  * @brief Responsible for calculating Shape Diameter Function over surface of the mesh.
  * @see Disk_samplers.h
  */
-template <class Polyhedron, class DiskSampling = Vogel_disk_sampling<boost::tuple<double, double, double> > >
+template <
+class Polyhedron,
+      class SegmentationGeomTraits,
+      class DiskSampling = Vogel_disk_sampling<boost::tuple<double, double, double> >
+      >
 class SDF_calculation
 {
 //type definitions

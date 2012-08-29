@@ -40,9 +40,8 @@ namespace internal
  */
 template <
 class Polyhedron,
+      class SegmentationGeomTraits,
       class GraphCut = Alpha_expansion_graph_cut_boost,
-      class FacetIndexMap =
-      boost::associative_property_map<std::map<typename Polyhedron::Facet_const_handle, int> >,
       class Filter = Bilateral_filtering<Polyhedron>
       >
 class Surface_mesh_segmentation
@@ -62,7 +61,8 @@ private:
   typedef typename Polyhedron::Facet_const_iterator    Facet_const_iterator;
   typedef typename Polyhedron::Vertex_const_iterator   Vertex_const_iterator;
 
-  typedef SDF_calculation<Polyhedron> SDF_calculation_class;
+  typedef SDF_calculation<Polyhedron, SegmentationGeomTraits>
+  SDF_calculation_class;
 
 // member variables
 private:
