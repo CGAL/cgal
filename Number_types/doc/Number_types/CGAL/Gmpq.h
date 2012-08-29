@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup nt_gmp
 
-\anchor Gmpq 
-
 An object of the class `Gmpq` is an arbitrary precision rational 
 number based on the <span class="textsc">Gnu</span> Multiple Precision Arithmetic Library. 
 

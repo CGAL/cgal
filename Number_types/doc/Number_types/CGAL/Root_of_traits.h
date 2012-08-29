@@ -16,10 +16,10 @@ Multiplicities are not reported.
 \pre \f$ a\neq0\f$ or \f$ b\neq0\f$.
 
 \sa ::RootOf_2 
-\sa ::CGAL::Root_of_traits<RT> 
+\sa `CGAL::Root_of_traits<RT>` 
 \sa ::CGAL::make_root_of_2<RT> 
 \sa ::CGAL::make_sqrt<RT> 
-\sa ::CGAL::Sqrt_extension<NT,ROOT> 
+\sa `CGAL::Sqrt_extension<NT,ROOT>`
 
 */
 template <typename RT, typename OutputIterator>
@@ -43,10 +43,10 @@ Returns the smallest real root of the polynomial \f$ aX^2+bX+c\f$ if
 \pre The polynomial has at least one real root.
 
 \sa ::RootOf_2 
-\sa ::CGAL::Root_of_traits<RT> 
+\sa `CGAL::Root_of_traits<RT>`
 \sa ::CGAL::make_sqrt<RT> 
 \sa ::CGAL::compute_roots_of_2<RT,OutputIterator> 
-\sa ::CGAL::Sqrt_extension<NT,ROOT> 
+\sa `CGAL::Sqrt_extension<NT,ROOT>`
 */
 template <typename RT>
 Root_of_traits<RT>::Root_of_2
@@ -65,10 +65,10 @@ Constructs the number \f$ \alpha+ \beta\sqrt{\gamma}\f$.
 
 
 \sa ::RootOf_2 
-\sa ::CGAL::Root_of_traits<RT> 
+\sa `CGAL::Root_of_traits<RT>`
 \sa ::CGAL::make_sqrt<RT> 
 \sa ::CGAL::compute_roots_of_2<RT,OutputIterator> 
-\sa ::CGAL::Sqrt_extension<NT,ROOT> 
+\sa `CGAL::Sqrt_extension<NT,ROOT>`
 */
 template <typename RT>
 Root_of_traits<RT>::Root_of_2
@@ -91,7 +91,7 @@ can represent algebraic extensions of degree \f$ 2\f$.
 
 \sa ::RootOf_2 
 \sa ::CGAL::make_root_of_2<RT> 
-\sa ::CGAL::Root_of_traits<RT> 
+\sa `CGAL::Root_of_traits<RT>` 
 */
 template <typename RT> Root_of_traits<RT>::Root_of_2 make_sqrt(const RT& x);
 

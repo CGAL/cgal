@@ -18,7 +18,7 @@ requirements on number types.
 
 */
 
-class CORE::BigRat {
+class BigRat {
 }; /* end CORE::BigRat */
 }/* end namespace CORE */
 } /* end namespace CGAL */

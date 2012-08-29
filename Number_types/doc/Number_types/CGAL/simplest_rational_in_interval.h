@@ -18,6 +18,7 @@ See Knuth, "Seminumerical algorithms", page 654, answer to exercise
 \sa Rational CGAL::to_rational<Rational>(double d)
 
 */
+template <typename Rational>
 Rational simplest_rational_in_interval(double d1, double d2);
 
 } /* namespace CGAL */

@@ -109,7 +109,7 @@ In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as 
 */
 template< typename NT, typename ROOT, 
           typename DifferentExtensionComparable = Tag_false, 
-          typename FilterPredicates` = Tag_false>
+          typename FilterPredicates = Tag_false>
 class Sqrt_extension {
 public:
 

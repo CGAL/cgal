@@ -9,6 +9,7 @@ The function `is_valid` returns whether the argument is valid.
 \sa CGAL::Is_valid 
 
 */
+template <typename T>
 bool is_valid(const T& x);
 
 } /* namespace CGAL */
@@ -23,6 +24,7 @@ The function `max` returns the larger of two values.
 \sa CGAL::Max
 
 */
+template <typename T>
 T max(const T& x, const T& y);
 
 } /* namespace CGAL */
@@ -37,6 +39,7 @@ The function `min` returns the smaller of two values.
 \sa CGAL::Min 
 
 */
+template <typename T>
 T min(const T& x, const T& y);
 
 } /* namespace CGAL */

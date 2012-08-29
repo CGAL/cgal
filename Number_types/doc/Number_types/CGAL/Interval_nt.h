@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup nt_cgal
 
-\anchor interval 
-
 This section describes briefly what interval arithmetic is, its implementation 
 in \cgal, and its possible use by geometric programs. 
 The main reason for having interval arithmetic in \cgal is its integration 

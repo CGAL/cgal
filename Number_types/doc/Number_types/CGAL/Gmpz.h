@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup nt_gmp
 
-\anchor Gmpz 
-
 An object of the class `Gmpz` is an arbitrary precision integer 
 based on the <span class="textsc">Gnu</span> Multiple Precision Arithmetic Library. 
 

@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup nt_gmp
 
-\anchor Gmpzf 
-
 This is an multiple-precision floating-point type; it can represent 
 numbers of the form \f$ m*2^e\f$, where \f$ m\f$ is an arbitrary precision integer 
 based on the <span class="textsc">Gnu</span> Multiple Precision Arithmetic Library, and \f$ e\f$ 

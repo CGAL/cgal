@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup nt_cgal
 
-\anchor Quotient 
-
 An object of the class `Quotient<NT>` is an element of the 
 field of quotients of the integral domain type `NT`. 
 If `NT` behaves like an integer, `Quotient<NT>` 

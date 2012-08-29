@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup nt_gmp
 
-\anchor Gmpfi 
-
 An object of the class `Gmpfi` is a closed interval, with endpoints 
 represented as `Gmpfr` floating-point numbers. An interval can have 
 finite or infinite endpoints and its meaning is straightforward. It can 

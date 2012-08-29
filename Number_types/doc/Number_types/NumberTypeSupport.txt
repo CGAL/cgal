@@ -45,7 +45,7 @@ With floating point arithmetic,
 roundoff errors may cause the answer of the check to be `false`. 
 With the built-in integer types overflow might occur.
 
-# Number Types Provided by CGAL #
+# Number Types Provided by %CGAL #
 
 \anchor cgalnt
 
@@ -69,7 +69,7 @@ approximate value to perform computations it can be faster than `NT`.
 
 A number type for doing interval arithmetic, `Interval_nt`, is provided.
 This number type helps in doing arithmetic filtering in many places such
-as `Filtered_predicate`.
+as `CGAL::Filtered_predicate`.
 
 `CGAL::Sqrt_extension` is a number type that allows to represent algebraic
 numbers of degree 2 as well as nested forms. A generic function
@@ -153,7 +153,7 @@ The files <TT>CGAL/leda_integer.h</TT>, <TT>CGAL/leda_rational.h</TT>,
 necessary functions to make these classes compliant to the \cgal number type
 requirements.
 
-# Number Types Provided by CORE #
+# Number Types Provided by %CORE #
 
 \anchor corent
 
