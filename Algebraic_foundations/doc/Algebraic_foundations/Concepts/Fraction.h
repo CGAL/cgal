@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsFractionsConcepts
 \cgalconcept
 
 A type is considered as a `Fraction`, if there is a reasonable way to 

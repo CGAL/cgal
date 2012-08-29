@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalconcept
 
 `AdaptableBinaryFunction` providing the k-th root. 

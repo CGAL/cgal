@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsFractionsConcepts
 \cgalconcept
 
 A model of `FractionTraits` is associated with a type `Type`. 
@@ -55,7 +55,7 @@ typedef Hidden_type Denominator_type;
 
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsFractionsConcepts
 \cgalconcept
 
 Functor decomposing a `Fraction` into its numerator and denominator. 
@@ -85,7 +85,7 @@ FractionTraits::Denominator_type & d);
 }; /* end FractionTraits::Decompose */
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsFractionsConcepts
 \cgalconcept
 
 `AdaptableBinaryFunction`, returns the fraction of its arguments. 
@@ -136,7 +136,7 @@ result_type operator()(first_argument_type n, second_argument_type d);
 
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsFractionsConcepts
 \cgalconcept
 
 `AdaptableBinaryFunction`, finds great common factor of denominators. 

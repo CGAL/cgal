@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsRealNumberTypesConcepts
 \cgalconcept
 
 The concept `FieldNumberType` combines the requirements of the concepts 

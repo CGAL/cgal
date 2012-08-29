@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalconcept
 
 This `AdaptableUnaryFunction` may simplify a given object. 

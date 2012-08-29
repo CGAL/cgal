@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsInteroperabilityConcepts
 \cgalconcept
 
 Two types `A` and `B` are a model of the `ExplicitInteroperable` 

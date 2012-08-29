@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalconcept
 
 A model of `EuclideanRing` represents an euclidean ring (or Euclidean domain). 

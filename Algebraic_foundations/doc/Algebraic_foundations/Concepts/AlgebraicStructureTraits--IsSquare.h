@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalconcept
 
 `AdaptableBinaryFunction` that computes whether the first argument is a square. 

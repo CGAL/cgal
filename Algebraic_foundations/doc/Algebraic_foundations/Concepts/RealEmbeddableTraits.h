@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsRealEmbeddableConcepts
 \cgalconcept
 
 A model of `RealEmbeddableTraits` is associated to a number type 

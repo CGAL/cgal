@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsRealEmbeddableConcepts
 \cgalconcept
 
 A model of this concepts represents numbers that are embeddable on the real 

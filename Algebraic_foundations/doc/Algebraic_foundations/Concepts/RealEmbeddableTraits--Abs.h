@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsRealEmbeddableConcepts
 \cgalconcept
 
 `AdaptableUnaryFunction` computes the absolute value of a number. 

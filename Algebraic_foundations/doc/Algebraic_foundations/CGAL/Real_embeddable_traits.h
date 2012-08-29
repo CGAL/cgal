@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsRealEmbeddable
 
 An instance of `Real_embeddable_traits` is a model of `RealEmbeddableTraits`, where <span class="textsc">T</span> is the associated type. 
 

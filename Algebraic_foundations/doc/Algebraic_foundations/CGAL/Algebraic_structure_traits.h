@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
 An instance of `Algebraic_structure_traits` is a model of `AlgebraicStructureTraits`, where <span class="textsc">T</span> is the associated type. 
 
@@ -17,7 +17,7 @@ class Algebraic_structure_traits {
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
 \anchor Euclidean_ring_tag 
 
@@ -36,7 +36,7 @@ class Euclidean_ring_tag : public Unique_factorization_domain_tag {
 }; /* end Euclidean_ring_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
 \anchor Field_tag 
 
@@ -54,7 +54,7 @@ class Field_tag : public Integral_domain_tag {
 }; /* end Field_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
 \anchor Field_with_kth_root_tag 
 
@@ -90,7 +90,7 @@ class Field_with_root_of_tag : public Field_with_kth_root_tag {
 }; /* end Field_with_root_of_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
 \anchor Field_with_sqrt_tag 
 
@@ -108,7 +108,7 @@ class Field_with_sqrt_tag : public Field_tag {
 }; /* end Field_with_sqrt_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
 \anchor Integral_domain_tag 
 
@@ -126,7 +126,7 @@ class Integral_domain_tag : public Integral_domain_without_division_tag {
 }; /* end Integral_domain_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
 \anchor Integral_domain_without_division_tag 
 
@@ -143,7 +143,7 @@ class Integral_domain_without_division_tag {
 }; /* end Integral_domain_without_division_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
 \anchor Unique_factorization_domain_tag 
 

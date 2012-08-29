@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsRealNumberTypesConcepts
 \cgalconcept
 
 The concept `RingNumberType` combines the requirements of the concepts 

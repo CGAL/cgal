@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsMiscellaneousConcepts
 \cgalconcept
 
 A model of the concept `FromDoubleConstructible` is required 
