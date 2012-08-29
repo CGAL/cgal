@@ -70,11 +70,12 @@ private:
   bool use_minimum_segment;
   double multiplier_for_segment;
 
-  typename SGT::Angle_3                     angle_functor;
-  typename SGT::Construct_scaled_vector_3   scale_functor;
-  typename SGT::Construct_sum_of_vectors_3  sum_functor;
-  typename SGT::Construct_normal_3          normal_functor;
-  typename SGT::Construct_unit_normal_3     unit_normal_functor;
+  typename SGT::Angle_3                         angle_functor;
+  typename SGT::Construct_scaled_vector_3       scale_functor;
+  typename SGT::Construct_sum_of_vectors_3      sum_functor;
+  typename SGT::Construct_normal_3              normal_functor;
+  typename SGT::Construct_unit_normal_3         unit_normal_functor;
+  typename SGT::Construct_translated_point_3    translated_point_functor;
 public:
   /**
    * Assign default values to member variables.
@@ -187,8 +188,7 @@ private:
         ray_direction = scale_functor(ray_direction,
                                       (*segment_distance * multiplier_for_segment));
 
-        Segment segment(center, operator+(center,
-                                          ray_direction)); // IOY Traits
+        Segment segment(center, translated_point_functor(center, ray_direction));
         boost::tie(is_intersected, intersection_is_acute,
                    min_distance) = cast_and_return_minimum(segment, tree, facet);
         if(!is_intersected) { //no intersection is found
@@ -293,8 +293,9 @@ private:
     const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
     Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
 
-    if(angle_functor(ORIGIN + min_i_ray, Point(ORIGIN),
-                     ORIGIN + min_normal) != ACUTE) { // IOY Traits
+    if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),
+                     Point(ORIGIN),
+                     translated_point_functor(Point(ORIGIN), min_normal)) != ACUTE) {
       return min_distance;
     }
     min_distance.get<1>() = true; // founded intersection is acceptable.
@@ -342,8 +343,9 @@ private:
     const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
     Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
 
-    if(angle_functor(ORIGIN + min_i_ray, Point(ORIGIN),
-                     ORIGIN + min_normal) != ACUTE) {
+    if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),
+                     Point(ORIGIN),
+                     translated_point_functor(Point(ORIGIN), min_normal)) != ACUTE) {
       return min_distance;
     }
     min_distance.get<1>() = true;
