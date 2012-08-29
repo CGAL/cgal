@@ -120,6 +120,24 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>Number Types</name>
+        <input>../Number_types/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Number_types/doc/Number_types/</string>
+          <string name="STRIP_FROM_INC_PATH">../Number_types/doc/Number_types/</string>
+          <string name="GENERATE_TAGFILE">./tags/Number_types.tag</string>
+          <string name="IMAGE_PATH">../Number_types/doc/Number_types/fig</string>
+          <string name="EXAMPLE_PATH">../Number_types/examples</string>
+          <list name="TAGFILES" append="false">
+            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+            <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
+            <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
+          </list>
+        </doxygen>
+      </project>
+
+
+      <project>
         <name>Halfedge Data Structures</name>
         <input>../HalfedgeDS/doc</input>
         <doxygen>
@@ -725,6 +743,7 @@ namespace for the XML file to be processed properly.  -->
         <list name="IMAGE_PATH" append="false">
           <item>./doc/fig</item>
           <item>../Algebraic_foundations/doc/Algebraic_foundations/fig</item>
+          <item>../Number_types/doc/Number_types/fig</item>
           <item>../Alpha_shapes_2/doc/Alpha_shapes_2/fig</item>
           <item>../Alpha_shapes_3/doc/Alpha_shapes_3/fig</item>
           <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig</item>
@@ -770,6 +789,7 @@ namespace for the XML file to be processed properly.  -->
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
+          <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.2D-Alpha-Shapes/html</item>
           <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.3D-Alpha-Shapes/html</item>
           <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs/html</item>
