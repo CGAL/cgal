@@ -276,7 +276,7 @@ private:
         continue;  // Continue in case of segment.
       }
 
-      Vector i_ray = (query.source() - *i_point); // IOY Traits
+      Vector i_ray(*i_point, query.source());
       double new_distance = i_ray.squared_length();
       if(!min_distance.get<0>() || new_distance < min_distance.get<2>()) {
         min_distance.get<2>() = new_distance;
@@ -338,10 +338,11 @@ private:
       return min_distance;
     }
 
-    Vector min_i_ray = ray.source() - *i_point; // IOY Traits
+    Vector min_i_ray(*i_point, ray.source());
     const Point& min_v1 = min_id->halfedge()->vertex()->point();
     const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
     const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
+
     Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
 
     if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),
