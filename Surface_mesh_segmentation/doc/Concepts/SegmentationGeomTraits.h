@@ -90,6 +90,11 @@ Function object model of Kernel::ConstructSumOfVectors_3 for the aforementioned 
 */
 typedef Hidden_type Construct_sum_of_vectors_3;
 
+/*! 
+Function object model of Kernel::ComputeApproximatedDihedralAngle_3 for the aforementioned geometric types.
+*/
+typedef Hidden_type Compute_approximated_dihedral_angle_3;
+
 /// @}
 
 }; /* end SegmentationGeomTraits */
