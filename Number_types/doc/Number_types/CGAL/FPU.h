@@ -4,6 +4,8 @@ namespace CGAL {
 /*!
 \ingroup nt_util
 
+\brief The class `Protect_FPU_rounding` allows to reduce the number of rounding mode changes when evaluating sequences of interval arithmetic operations.
+
 \anchor protect_fpu_rouding 
 
 Floating-point arithmetic, as specified by the IEEE-754 standard, allows to use 
@@ -92,6 +94,12 @@ namespace CGAL {
 /*!
 \ingroup nt_util
 
+\brief The class `Set_ieee_double_precision` provides a mechanism to set 
+the correct 53 bits precision for a block of code. It does so by having 
+a default constructor that sets a particular mode on the FPU which corrects 
+the problem, and have its destructor reset the mode to its previous state. 
+
+\details 
 \anchor set_ieee_double_precision 
 
 The IEEE754 standard specifies that the precision of double precision 
@@ -109,10 +117,7 @@ variables are kept in registers), for example numerical floating-point
 values get computed with slightly different results. Finally, it affects code 
 that carefully makes use of cancellation properties, like `Residue`. 
 
-The class `Set_ieee_double_precision` provides a mechanism to set 
-the correct 53 bits precision for a block of code. It does so by having 
-a default constructor that sets a particular mode on the FPU which corrects 
-the problem, and have its destructor reset the mode to its previous state. 
+
 
 If the platform is not affected by the excess precision problem, this class becomes an empty class doing nothing. 
 
