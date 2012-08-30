@@ -41,7 +41,11 @@ namespace internal
 template <
 class Polyhedron,
       class SegmentationGeomTraits,
+#ifdef CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
+      class GraphCut = Alpha_expansion_graph_cut_boykov_kolmogorov,
+#else
       class GraphCut = Alpha_expansion_graph_cut_boost,
+#endif
       class Filter = Bilateral_filtering<Polyhedron>
       >
 class Surface_mesh_segmentation

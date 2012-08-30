@@ -4105,6 +4105,7 @@ Surface_mesh_segmentation/include/CGAL/internal/Surface_mesh_segmentation/Filter
 Surface_mesh_segmentation/include/CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h -text
 Surface_mesh_segmentation/include/CGAL/internal/Surface_mesh_segmentation/SDF_calculation.h -text
 Surface_mesh_segmentation/include/CGAL/internal/Surface_mesh_segmentation/Surface_mesh_segmentation.h -text
+Surface_mesh_segmentation/include/CGAL/internal/auxiliary/graph.h -text
 Surface_mesh_segmentation/include/CGAL/mesh_segmentation.h -text
 Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/copyright -text
 Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/license.txt -text
