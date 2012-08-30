@@ -1,6 +1,6 @@
 /*!
 
-\mainpage
+\mainpage %CGAL - Computational Geometry Algorithms Library
 
 \attention PRELIMINARY 
 
@@ -44,7 +44,7 @@ The manual has a package overview, gives a short paragraph what the package is a
 it has, and on which other packages it depends. It further provides
 links to precompiled demo programs for the Windows platform.
 
-The manual further has an index, as well as a search box in the uper right of
+The manual further has a class index, as well as a search box in the upper right of
 each page.
 The scope of the search box is the package you currently look at and the 
 packages it depends on, or  it is the whole manual when you are in
