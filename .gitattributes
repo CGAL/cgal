@@ -1879,6 +1879,7 @@ Convex_hull_d/doc/Convex_hull_d/Concepts/DelaunayLiftedTraits_d.h -text
 Convex_hull_d/doc/Convex_hull_d/Concepts/DelaunayTraits_d.h -text
 Convex_hull_d/doc/Convex_hull_d/Convex_hull_d.txt -text
 Convex_hull_d/doc/Convex_hull_d/PackageDescription.txt -text
+Convex_hull_d/doc/Convex_hull_d/fig/convex_hull_d-teaser.png -text svneol=unset#image/png
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.png -text svneol=unset#image/png
 Developers_manual/doc_tex/Developers_manual/fig/Object.gif -text svneol=unset#image/gif
