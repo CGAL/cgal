@@ -24,16 +24,10 @@
 #include <CGAL/config.h>
 
 
-// Use recent optimisations of Mesh_3, unless the following macro is
-// defined.
-#ifndef CGAL_MESH_3_USE_OLD_CODE
-#  define CGAL_MESH_3_USE_NEW_CODE_2011
-#endif // not CGAL_MESH_3_USE_NEW_CODE_2011
-#ifdef CGAL_MESH_3_USE_NEW_CODE_2011
+// Use optimisations of Mesh_3
 #  define CGAL_COMPACT_MESH_VERTEX_CELL
 #  define CGAL_FREEZE_VERTICES
 #  define CGAL_IMPROVE_FREEZE
-//#  define CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
 #  define CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
 #  define CGAL_INTRUSIVE_LIST
 #  define CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR
@@ -45,17 +39,16 @@
 //experimental
 #  define CGAL_FASTER_BUILD_QUEUE
 
-// to disable new features
+// to disable new features :
 //#  define CGAL_TDS_3_NOT_JUST_INCIDENT_CELLS
 
-//should not be used 
+//should not be used
 //#define CGAL_MESH_3_OLD_MINIMUM_DIHEDRAL_ANGLE
 
 //experimental
 //#define CGAL_MESH_3_PROTECTION_NON_LINEAR
-
-//#  define CGAL_POLYHEDRAL_MESH_DOMAIN_USE_GRID
-#endif // CGAL_MESH_3_USE_NEW_CODE_2011
+//#define CGAL_POLYHEDRAL_MESH_DOMAIN_USE_GRID
+//#define CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
 
 
 // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
