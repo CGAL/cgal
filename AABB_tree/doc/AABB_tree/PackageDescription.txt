@@ -7,7 +7,7 @@
 \addtogroup PkgAABB_tree
 \todo check generated documentation
 \PkgDescriptionBegin{3D Fast Intersection and Distance Computation}
-\PkgPicture{teaser.png}
+\PkgPicture{aabb_teaser.png}
 \PkgAuthor{Pierre Alliez, St&eacute;phane Tayeb, Camille Wormser}
 \PkgDesc{The AABB (axis-aligned bounding box) tree component offers a static data structure and algorithms to perform efficient intersection and distance queries on sets of finite 3D geometric objects.}
 \PkgSince{1.0}

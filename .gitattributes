@@ -17,11 +17,11 @@ AABB_tree/doc/AABB_tree/Concepts/AABBTraits.h -text
 AABB_tree/doc/AABB_tree/PackageDescription.txt -text
 AABB_tree/doc/AABB_tree/aabb_tree.txt -text
 AABB_tree/doc/AABB_tree/examples.txt -text
+AABB_tree/doc/AABB_tree/fig/aabb_teaser.png -text svneol=unset#image/png
 AABB_tree/doc/AABB_tree/fig/anchor.png -text svneol=unset#image/png
 AABB_tree/doc/AABB_tree/fig/bench.png -text svneol=unset#image/png
 AABB_tree/doc/AABB_tree/fig/bench.xls -text svneol=unset#application/msword
 AABB_tree/doc/AABB_tree/fig/teaser-thumb.png -text svneol=unset#image/png
-AABB_tree/doc/AABB_tree/fig/teaser.png -text svneol=unset#image/png
 AABB_tree/doc/AABB_tree/fig/teaser.ppt -text svneol=unset#application/msword
 AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
 AABB_tree/doc_tex/AABB_tree/details.tex -text
