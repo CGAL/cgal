@@ -1,6 +1,6 @@
 /*!
-\example conforming.cpp
-\example mesh_class.cpp
-\example mesh_global.cpp
-\example mesh_with_seeds.cpp
+\example Mesh_2/conforming.cpp
+\example Mesh_2/mesh_class.cpp
+\example Mesh_2/mesh_global.cpp
+\example Mesh_2/mesh_with_seeds.cpp
 */
