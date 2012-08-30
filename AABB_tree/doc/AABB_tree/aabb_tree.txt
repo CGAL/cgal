@@ -108,8 +108,6 @@ the squared distance from a point query.
 
 \cgalexample{examples/AABB_tree/AABB_triangle_3_example.cpp}
 
-\include AABB_triangle_3_example.cpp
-
 \subsection aabb_tree_examples_2 Tree of Polyhedron Triangle Facets for Intersection Queries
 
  In the following example the AABB primitive wraps a facet handle of a
