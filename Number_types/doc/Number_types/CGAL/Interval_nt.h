@@ -165,7 +165,7 @@ Interval_nt(std::pair<double, double> p);
 /// @} 
 
 /// \name Operations 
-CONVERROR Check if this needs to be spread\n/// All functions required by a class to be considered as a \cgal number type (see \ref Numbertype) are present, as well as the utility functions, sometimes with a particular semantic which is described below. There are also a few additional functions. The comparison operators (\f$ <\f$, \f$ >\f$, \f$ <=\f$, \f$ >=\f$, \f$ ==\f$, \f$ !=\f$, `sign()` and `compare()`) have the following semantic: it is the intuitive one when for all couples of values in both intervals, the comparison is identical (case of non-overlapping intervals). This can be expressed by the following formula (\f$ x\f$ and \f$ y\f$ are real, \f$ X\f$ and \f$ Y\f$ are intervals, \f$ \mathcal{OP}\f$ is a comparison operator): \f[ \left(\forall x \in X, \forall y \in Y, (x\ \mathcal{OP}\ y) = true\right) \Rightarrow (X\ \mathcal{OP}\ Y) = true \f] and \f[ \left(\forall x \in X, \forall y \in Y, (x\ \mathcal{OP}\ y) = false\right) \Rightarrow (X\ \mathcal{OP}\ Y) =false \f] Otherwise, the comparison is not safe, and we specify this by returning a type encoding this uncertainty, namely using `Uncertain<bool>` or `Uncertain<Sign>`, which can be probed for uncertainty explicitly, and which has a conversion to the normal type (e.g. `bool`) which throws an exception when the conversion is not certain. Note that each failed conversion increments a profiling counter (see `CGAL_PROFILE`), and then throws the exception of type `unsafe_comparison`. CONVERROR ADVANCED
+/// All functions required by a class to be considered as a \cgal number type (see \ref Numbertype) are present, as well as the utility functions, sometimes with a particular semantic which is described below. There are also a few additional functions. 
 /// @{
 
 /*! 
@@ -210,8 +210,28 @@ typedef Interval_nt<false> Interval_nt_advanced;
 
 /// @} 
 
-/// \name Implementation 
-CONVERROR Check if this needs to be spread\n/// The operations on `Interval_nt` with the default parameter `true`, are automatically protected against rounding modes, and are thus slower than those on `Interval_nt_advanced`, but easier to use. Users that need performance are encouraged to use `Interval_nt_advanced` instead. Changing the rounding mode affects all floating point computations, and might cause problems with parts of your code, or external libraries (even \cgal), that expect the rounding mode to be the default (round to the nearest). We provide two interfaces to change the rounding mode. The first one is to use a protector object whose default constructor and destructor will take care of changing the rounding mode. The protector is implemented using `Protect_FPU_rounding`. The second one is the following detailed set of functions : The macros `CGAL_FE_TONEAREST`, `CGAL_FE_TOWARDZERO`, `CGAL_FE_UPWARD` and `CGAL_FE_DOWNWARD` are the values corresponding to the rounding modes.
+/*! \name Implementation 
+
+The operations on `Interval_nt` with the default parameter `true`, are
+automatically protected against rounding modes, and are thus slower
+than those on `Interval_nt_advanced`, but easier to use. Users that
+need performance are encouraged to use `Interval_nt_advanced`
+instead. Changing the rounding mode affects all floating point
+computations, and might cause problems with parts of your code, or
+external libraries (even \cgal), that expect the rounding mode to be
+the default (round to the nearest). 
+
+We provide two interfaces to
+change the rounding mode. The first one is to use a protector object
+whose default constructor and destructor will take care of changing
+the rounding mode. The protector is implemented using
+`Protect_FPU_rounding`. The second one is the following set of
+functions. The macros `CGAL_FE_TONEAREST`, `CGAL_FE_TOWARDZERO`,
+`CGAL_FE_UPWARD` and `CGAL_FE_DOWNWARD` are the values corresponding
+to the rounding modes.
+
+*/
+
 /// @{
 
 /*! 
@@ -238,6 +258,12 @@ middle of the interval, as a double approximation of the interval.
 \relates Interval_nt 
 */ 
 double to_double(Interval_nt I); 
+
+  /*! \name Comparisons
+The comparison operators (\f$ <\f$, \f$ >\f$, \f$ <=\f$, \f$ >=\f$, \f$ ==\f$, \f$ !=\f$, `sign()` and `compare()`) have the following semantic: it is the intuitive one when for all couples of values in both intervals, the comparison is identical (case of non-overlapping intervals). This can be expressed by the following formula (\f$ x\f$ and \f$ y\f$ are real, \f$ X\f$ and \f$ Y\f$ are intervals, \f$ \mathcal{OP}\f$ is a comparison operator): \f[ \left(\forall x \in X, \forall y \in Y, (x\ \mathcal{OP}\ y) = true\right) \Rightarrow (X\ \mathcal{OP}\ Y) = true \f] and \f[ \left(\forall x \in X, \forall y \in Y, (x\ \mathcal{OP}\ y) = false\right) \Rightarrow (X\ \mathcal{OP}\ Y) =false \f] Otherwise, the comparison is not safe, and we specify this by returning a type encoding this uncertainty, namely using `Uncertain<bool>` or `Uncertain<Sign>`, which can be probed for uncertainty explicitly, and which has a conversion to the normal type (e.g. `bool`) which throws an exception when the conversion is not certain. Note that each failed conversion increments a profiling counter (see `CGAL_PROFILE`), and then throws the exception of type `unsafe_comparison`.
+   */
+
+ /// @{
 
 /*! 
 
@@ -281,6 +307,7 @@ Uncertain<bool> operator!=(Interval_nt i, Interval_nt j);
 Uncertain<Comparison_result> 
 compare(Interval_nt i, Interval_nt j); 
 
+ /// @}
 
 /*! 
 \relates Interval_nt 
