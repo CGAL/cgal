@@ -78,13 +78,11 @@ Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_UPWARD);
 
 /// @}
 
-}; /* end Protect_FPU_rounding */
 
 /*! 
 The rounding mode is restored to the saved value. 
-\relates Protect_FPU_rounding 
 */ 
-void Protect_FPU_rounding(); 
+~Protect_FPU_rounding(); 
 
 } /* end namespace CGAL */
 
