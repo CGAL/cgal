@@ -1,0 +1,37 @@
+/// \defgroup PkgTDS3 3D Triangulation Data Structure 
+/// \defgroup PkgTDS3Concepts Concepts
+/// \ingroup PkgTDS3
+/*!
+\addtogroup PkgTDS3
+\todo check generated documentation
+\PkgDescriptionBegin{3D Triangulation Data Structure }
+\PkgPicture{tds3_small.png}
+\PkgAuthor{Sylvain Pion  and Monique Teillaud}
+\PkgDesc{This package provides a data structure to store a three-dimensional triangulation that has the topology of a three-dimensional sphere.  The package acts as a container for the vertices  and cells of the triangulation  and provides basic  combinatorial operations on the triangulation.}
+\PkgSince{2.1}
+\cgalbib{cgal:pt-tds3}
+\license{\ref licensesGPL "GPL"}
+\PkgDescriptionEnd
+
+The triangulation data structure is able to represent a
+triangulation of a topological sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$, for 
+\f$ d \in \{-1,0,1,2,3\}\f$. (See  \ref TDS3secintro.)
+
+The vertex class of a 3D-triangulation data structure must define
+a number of types and operations. 
+The requirements that are of geometric nature are required only when
+the triangulation data structure is used as a layer for the geometric
+triangulation classes. (See Section  \ref TDS3secdesign.)
+
+The cell class of a triangulation data structure stores
+four handles to its four vertices and four handles to its four
+neighbors. The vertices are indexed 0, 1, 2, and 3 in a consistent order.
+The neighbor indexed \f$ i\f$ lies opposite to vertex `i`.
+
+In degenerate dimensions, cells are used to store faces of maximal
+dimension: in dimension 2, each cell represents only one
+facet of index 3, and 3 edges \f$ (0,1)\f$, \f$ (1,2)\f$ and \f$ (2,0)\f$; in
+dimension 1, each cell represents one edge \f$ (0,1)\f$. (See 
+Section  \ref TDS3secintro.)
+*/
+

@@ -5692,6 +5692,33 @@ Triangulation_3/demo/Triangulation_3/icons/stereo.png -text
 Triangulation_3/demo/Triangulation_3/icons/stop.jpeg -text
 Triangulation_3/demo/Triangulation_3/typedefs.h -text
 Triangulation_3/demo/Triangulation_3_Geomview_demos/CMakeLists.txt -text
+Triangulation_3/doc/TDS_3/CGAL/Triangulation_data_structure_3.h -text
+Triangulation_3/doc/TDS_3/CGAL/Triangulation_ds_cell_base_3.h -text
+Triangulation_3/doc/TDS_3/CGAL/Triangulation_ds_vertex_base_3.h -text
+Triangulation_3/doc/TDS_3/CGAL/Triangulation_utils_3.h -text
+Triangulation_3/doc/TDS_3/Classified.txt -text
+Triangulation_3/doc/TDS_3/Concepts/TriangulationDSCellBase_3.h -text
+Triangulation_3/doc/TDS_3/Concepts/TriangulationDSVertexBase_3.h -text
+Triangulation_3/doc/TDS_3/Concepts/TriangulationDataStructure_3.h -text
+Triangulation_3/doc/TDS_3/PackageDescription.txt -text
+Triangulation_3/doc/TDS_3/TriangulationDS_3.txt -text
+Triangulation_3/doc/TDS_3/fig/comborient.gif -text svneol=unset#image/gif
+Triangulation_3/doc/TDS_3/fig/comborient.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc/TDS_3/fig/design_tds.gif -text svneol=unset#image/gif
+Triangulation_3/doc/TDS_3/fig/design_tds.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc/TDS_3/fig/flips.gif -text svneol=unset#image/gif
+Triangulation_3/doc/TDS_3/fig/flips.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc/TDS_3/fig/tds-dim_down.png -text svneol=unset#image/png
+Triangulation_3/doc/TDS_3/fig/topo-insert_outside_affine_hull.gif -text svneol=unset#image/gif
+Triangulation_3/doc/TDS_3/fig/topo-insert_outside_affine_hull.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc/TDS_3/fig/topo-simplex2.gif -text svneol=unset#image/gif
+Triangulation_3/doc/TDS_3/fig/topo-simplex2.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc/TDS_3/fig/topo-simplex3.gif -text svneol=unset#image/gif
+Triangulation_3/doc/TDS_3/fig/topo-simplex3.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc/TDS_3/fig/topo-simplex4.gif -text svneol=unset#image/gif
+Triangulation_3/doc/TDS_3/fig/topo-simplex4.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc/TDS_3/fig/utils.gif -text svneol=unset#image/gif
+Triangulation_3/doc/TDS_3/fig/utils.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.xml svneol=native#text/xml

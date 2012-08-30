@@ -1,0 +1,125 @@
+
+\authors Sylvain Pion  and Monique Teillaud
+
+# Classified Reference Pages #
+
+## Concepts ##
+
+`TriangulationDataStructure_3`
+
+`TriangulationDataStructure_3::Cell` 
+
+`TriangulationDataStructure_3::Vertex`
+
+`TriangulationDSCellBase_3` 
+
+`TriangulationDSVertexBase_3`
+
+## Classes ##
+
+\ref ::CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>
+
+This class is a model for the concept of the 3D-triangulation data
+structure `TriangulationDataStructure_3`.
+It is templated by base classes for vertices and cells.
+
+\cgal provides base vertex classes and base cell classes:
+
+\ref ::CGAL::Triangulation_ds_cell_base_3<>
+
+\ref ::CGAL::Triangulation_ds_vertex_base_3<>
+
+\ref ::CGAL::Triangulation_cell_base_3<TriangulationTraits_3, TriangulationDSCellBase_3>
+
+\ref ::CGAL::Triangulation_vertex_base_3<TriangulationTraits_3, TriangulationDSVertexBase_3>
+
+\ref ::CGAL::Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>
+
+## Helper Classes ##
+
+\ref ::CGAL::Triangulation_utils_3
+
+It defines operations on the indices of vertices and neighbors within
+a cell of a triangulation.
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+   
+  
+  
+  
+  
+  
+    
+
