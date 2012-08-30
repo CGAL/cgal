@@ -218,7 +218,7 @@ returns the `i`-th support point of `min_circle`. Between two
 modifying operations (see below) any call to 
 `min_circle.support_point(i)` with the same `i` returns 
 the same point. 
-\pre \f$ 0 \leq i< \mbox{\ccVar\ccc{.number_of_support_points()}}\f$. 
+\pre \f$ 0 \leq i< \f$ `min_circle.number_of_support_points()`. 
 */ 
 const Point& support_point( int i) const; 
 

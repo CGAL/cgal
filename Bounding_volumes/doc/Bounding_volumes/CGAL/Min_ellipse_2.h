@@ -231,7 +231,7 @@ returns the `i`-th support point of `min_ellipse`. Between two
 modifying operations (see below) any call to 
 `min_ellipse.support_point(i)` with the same `i` returns 
 the same point. 
-\pre \f$ 0 \leq i< \mbox{\ccVar\ccc{.number_of_support_points()}}\f$. 
+\pre \f$ 0 \leq i<\f$ `min_ellipse.number_of_support_points().
 */ 
 const Point& support_point( int i) const; 
 
