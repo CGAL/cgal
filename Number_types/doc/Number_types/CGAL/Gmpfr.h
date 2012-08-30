@@ -99,7 +99,7 @@ Copy constructor. The copied object inherits the precision of
 Gmpfr(const Gmpfr& n); 
 
 /*! 
-Creates `Gmpfr`, initialized with the value of `si`. 
+Creates a `Gmpfr`, initialized with the value of `si`. 
 */ 
 Gmpfr(long si); 
 
@@ -153,8 +153,16 @@ static Precision_type set_default_precision(Precision_type p);
 
 /// @} 
 
-/// \name Operations 
-CONVERROR Check if this needs to be spread\n/// Each Gmpfr object has a precision associated to it. The precision is the amount of bits needed to represent the mantissa. <span class="textsc">Mpfr</span> has a default precision value, which can be controlled by static functions of the Gmpfr class (in practice, this default value is a variable local to each execution thread). There are also functions to get and set the precision of each Gmpfr object. <span class="textsc">Mpfr</span> provides some flags to know whether performed operations were exact or not, or they incurred in overflow or underflow, if the exponent is out of range, or the result was `NaN` (not-a-number). One can clear the flags before a set of operations and inspect them afterward, in order to see if something unexpected happened during the operations. The static functions used to handle flags are: Arithmetic operators `+` , `-` , and `/` are overloaded, but special care must be taken when applying them. The precision of an operation between two `Gmpfr`s is defined as the maximum of the operands precision and the default precision. The second operand of the former operations can be a `Gmpfr`, `int`, `long`, `unsigned`, `unsigned long`, or `Gmpz`. The precision of an operation between a `Gmpfr` and a number of another type is defined as the maximum between the number's precision and the default precision. To specify the rounding mode and/or the precision to perform an operation, this class provides the four static functions `add`, `sub`, `mul` and `div`. Only one of them is shown here, since their interfaces are similar: When the precision is not specified in this family of functions, it is defined as in the overloaded operators. When the rounding mode is not specified, the default is used. Other arithmetic functions provided by the class are:
+/*! \name Controlling the Precision 
+
+Each Gmpfr object has a precision associated to it. The precision is
+the amount of bits needed to represent the mantissa. <span
+class="textsc">Mpfr</span> has a default precision value, which can be
+controlled by static functions of the Gmpfr class (in practice, this
+default value is a variable local to each execution thread). There are
+also functions to get and set the precision of each Gmpfr object.
+*/
+
 /// @{
 
 /*! 
@@ -179,6 +187,20 @@ the old one.
 */ 
 static std::float_round_style set_default_rndmode(std::float_round_style r); 
 
+  /// @}
+
+/*! \name Flags
+
+\sc{Mpfr} provides some flags to know whether
+performed operations were exact or not, or they incurred in overflow
+or underflow, if the exponent is out of range, or the result was `NaN`
+(not-a-number). One can clear the flags before a set of operations and
+inspect them afterward, in order to see if something unexpected
+happened during the operations. The static functions used to handle
+flags are:
+*/
+
+/// @{
 /*! 
 Clears all the flags set by <span class="textsc">Mpfr</span>(they are not cleared 
 automatically). 
@@ -213,7 +235,27 @@ one of the operands of a comparison is `NaN`.
 */ 
 static bool erange_flag(); 
 
-/*! 
+/// @}
+
+/*! \name Arithmetic Operations
+
+ Arithmetic operators `+` , `-` , and `/` are overloaded, but special
+ care must be taken when applying them. The precision of an operation
+ between two `Gmpfr`s is defined as the maximum of the operands
+ precision and the default precision. The second operand of the former
+ operations can be a `Gmpfr`, `int`, `long`, `unsigned`, `unsigned
+ long`, or `Gmpz`. The precision of an operation between a `Gmpfr` and
+ a number of another type is defined as the maximum between the
+ number's precision and the default precision. To specify the rounding
+ mode and/or the precision to perform an operation, this class
+ provides the four static functions `add`, `sub`, `mul` and
+ `div`. Only one of them is shown here, since their interfaces are
+ similar: When the precision is not specified in this family of
+ functions, it is defined as in the overloaded operators. When the
+ rounding mode is not specified, the default is used.
+*/
+
+/// @{
 
 */ 
 static Gmpfr add (const Gmpfr &a,const Gmpfr &b); 
@@ -288,7 +330,7 @@ std::pair<double,long> to_double_exp
 (std::float_round_style r=get_default_rndmode()); 
 
 /*! 
-Returns \f$ ((m,M),e) \f$ such that \f$ m \times2^e \le\ccVar\le M \times2^e \f$. If `f` is `NaN` or infinity, then 
+Returns \f$ ((m,M),e) \f$ such that \f$ m \times2^e \le f \le M \times2^e \f$. If `f` is `NaN` or infinity, then 
 the corresponding doubles are returned, leaving the exponent 
 undefined and setting the appropriate error flag. 
 */ 
@@ -296,7 +338,7 @@ std::pair<std::pair<double,double>,long> to_interval_exp();
 
 /*! 
 Returns a pair of integers \f$ (m,e) \f$, such that 
-\f$ \ccVar= m \times2^e \f$. Note that the returned value of \f$ m\f$ 
+\f$ f = m \times2^e \f$. Note that the returned value of \f$ m\f$ 
 is not necessarily the smallest possible value of \f$ m\f$ (that is, 
 it might be that \f$ 2|m\f$). 
 */ 
