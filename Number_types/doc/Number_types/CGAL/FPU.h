@@ -76,14 +76,15 @@ which can be any of `CGAL_FE_TONEAREST`, `CGAL_FE_TOWARDZERO`,
 Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_UPWARD); 
 
 
-/// @}
-
 
 /*! 
 The rounding mode is restored to the saved value. 
 */ 
 ~Protect_FPU_rounding(); 
 
+/// @}
+
+}; // end class
 } /* end namespace CGAL */
 
 namespace CGAL {
