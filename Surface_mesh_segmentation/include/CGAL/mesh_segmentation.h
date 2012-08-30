@@ -31,6 +31,7 @@ namespace CGAL
  * @param[out] sdf_values the sdf value of each facet
  * @param cone_angle opening angle for cone, expressed in radians
  * @param number_of_rays number of rays picked from cone for each facet
+ * @param traits traits object
  * @return minimum and maximum SDF values before linear normalization
  */
 template <class Polyhedron, class SDFPropertyMap, class GeomTraits
@@ -42,10 +43,11 @@ std::pair<double, double>
 sdf_values_computation(const Polyhedron& polyhedron,
                        SDFPropertyMap sdf_values,
                        double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                       int number_of_rays = 25)
+                       int number_of_rays = 25,
+                       GeomTraits traits = GeomTraits())
 {
   internal::Surface_mesh_segmentation<Polyhedron, GeomTraits> algorithm(
-    polyhedron);
+    polyhedron, traits);
   return algorithm.calculate_sdf_values(cone_angle, number_of_rays, sdf_values);
 }
 
@@ -69,6 +71,7 @@ sdf_values_computation(const Polyhedron& polyhedron,
  * @param[out] segment_ids the segment id of each facet
  * @param number_of_levels number of clusters for soft clustering
  * @param smoothing_lambda factor in the interval [0,1] which indicates the importance of surface features in energy minimization
+ * @param traits traits object
  * @return number of segments
  */
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap,
@@ -82,13 +85,14 @@ surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
     SDFPropertyMap sdf_values,
     SegmentPropertyMap segment_ids,
     int number_of_levels = 5,
-    double smoothing_lambda = 0.26)
+    double smoothing_lambda = 0.26,
+    GeomTraits traits = GeomTraits())
 {
   smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                 smoothing_lambda)); // clip into [0-1]
 
   internal::Surface_mesh_segmentation<Polyhedron, GeomTraits> algorithm(
-    polyhedron);
+    polyhedron, traits);
   return algorithm.partition(number_of_levels, smoothing_lambda, sdf_values,
                              segment_ids);
 }
@@ -113,6 +117,7 @@ surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
  * @param number_of_rays number of rays picked from cone for each facet
  * @param number_of_levels number of clusters for soft clustering
  * @param smoothing_lambda factor in the interval [0,1] which indicates the importance of surface features in energy minimization
+ * @param traits traits object
  * @return number of segments
  */
 template < class Polyhedron, class SegmentPropertyMap, class GeomTraits
@@ -126,7 +131,8 @@ surface_mesh_segmentation(const Polyhedron& polyhedron,
                           double cone_angle = 2.0 / 3.0 * CGAL_PI,
                           int number_of_rays = 25,
                           int number_of_levels = 5,
-                          double smoothing_lambda = 0.26)
+                          double smoothing_lambda = 0.26,
+                          GeomTraits traits = GeomTraits())
 {
   smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
                                 smoothing_lambda)); // clip into [0-1]
@@ -138,9 +144,10 @@ surface_mesh_segmentation(const Polyhedron& polyhedron,
     internal_sdf_map);
 
   sdf_values_computation<Polyhedron, boost::associative_property_map<Facet_double_map>, GeomTraits>
-  (polyhedron, sdf_property_map, cone_angle, number_of_rays);
+  (polyhedron, sdf_property_map, cone_angle, number_of_rays, traits);
   return surface_mesh_segmentation_from_sdf_values<Polyhedron, boost::associative_property_map<Facet_double_map>, SegmentPropertyMap, GeomTraits>
-         (polyhedron, sdf_property_map, segment_ids, number_of_levels, smoothing_lambda);
+         (polyhedron, sdf_property_map, segment_ids, number_of_levels, smoothing_lambda,
+          traits);
 }
 
 
@@ -150,10 +157,11 @@ std::pair<double, double>
 sdf_values_computation(const Polyhedron& polyhedron,
                        SDFPropertyMap sdf_values,
                        double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                       int number_of_rays = 25)
+                       int number_of_rays = 25,
+                       typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
   return sdf_values_computation<Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
-         (polyhedron, sdf_values, cone_angle, number_of_rays);
+         (polyhedron, sdf_values, cone_angle, number_of_rays, traits);
 }
 
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap>
@@ -162,24 +170,27 @@ surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
     SDFPropertyMap sdf_values,
     SegmentPropertyMap segment_ids,
     int number_of_levels = 5,
-    double smoothing_lambda = 0.26)
+    double smoothing_lambda = 0.26,
+    typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
   return surface_mesh_segmentation_from_sdf_values<Polyhedron, SDFPropertyMap, SegmentPropertyMap, typename Polyhedron::Traits>
-         (polyhedron, sdf_values, segment_ids, number_of_levels, smoothing_lambda);
+         (polyhedron, sdf_values, segment_ids, number_of_levels, smoothing_lambda,
+          traits);
 }
 
-template < class Polyhedron, class SegmentPropertyMap>
+template <class Polyhedron, class SegmentPropertyMap>
 int
 surface_mesh_segmentation(const Polyhedron& polyhedron,
                           SegmentPropertyMap segment_ids,
                           double cone_angle = 2.0 / 3.0 * CGAL_PI,
                           int number_of_rays = 25,
                           int number_of_levels = 5,
-                          double smoothing_lambda = 0.26)
+                          double smoothing_lambda = 0.26,
+                          typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
   return surface_mesh_segmentation<Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_levels,
-          smoothing_lambda);
+          smoothing_lambda, traits);
 }
 #endif
 

@@ -69,6 +69,7 @@ private:
 
   bool use_minimum_segment;
   double multiplier_for_segment;
+  SGT traits;
 
   typename SGT::Angle_3                         angle_functor;
   typename SGT::Construct_scaled_vector_3       scale_functor;
@@ -81,8 +82,15 @@ public:
   /**
    * Assign default values to member variables.
    */
-  SDF_calculation()
-    : use_minimum_segment(false), multiplier_for_segment(1) {
+  SDF_calculation(SGT traits)
+    : traits(traits), use_minimum_segment(false), multiplier_for_segment(1),
+      angle_functor(traits.angle_3_object()),
+      scale_functor(traits.construct_scaled_vector_3_object()),
+      sum_functor(traits.construct_sum_of_vectors_3_object()),
+      normal_functor(traits.construct_normal_3_object()),
+      unit_normal_functor(traits.construct_unit_normal_3_object()),
+      translated_point_functor(traits.construct_translated_point_3_object()),
+      centroid_functor(traits.construct_centroid_3_object()) {
   }
 
   /**
