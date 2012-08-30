@@ -115,6 +115,8 @@ the correct 53 bits precision for a block of code. It does so by having
 a default constructor that sets a particular mode on the FPU which corrects 
 the problem, and have its destructor reset the mode to its previous state. 
 
+If the platform is not affected by the excess precision problem, this class becomes an empty class doing nothing. 
+
 Note that nothing can be done for the excess range of the exponent, which 
 affects underflow and overflow cases, fortunately less frequent. 
 
@@ -141,8 +143,8 @@ restoring operation when the `Set_ieee_double_precision` object is
 destroyed. Therefore, for this configuration, some explicit code has to be 
 added if you care about the state being restored. 
 
-\sa ::CGAL::Protect_FPU_rounding<Protected> 
-\sa ::CGAL::Residue 
+\sa `CGAL::Protect_FPU_rounding<Protected>`
+\sa `CGAL::Residue` 
 
 */
 
@@ -150,7 +152,7 @@ class Set_ieee_double_precision {
 public:
 
 /// \name Creation 
-CONVERROR Check if this needs to be spread\n/// If the platform is not affected by the excess precision problem, this class becomes an empty class doing nothing. Also note that the following free function is also provided that does the same thing as the default constructor of `Set_ieee_double_precision` except that it does not perform the save and restore of the previous state.
+
 /// @{
 
 /*! 
@@ -159,19 +161,22 @@ Note that the rounding mode is set to the nearest in the same process.
 */ 
 Set_ieee_double_precision(); 
 
-CONVERROR: ccFunction inside class or concept, try to relate 
 /*! 
 The precision and rounding modes are reset to the values they held before the 
 constructor was called. 
-\relates Set_ieee_double_precision 
 */ 
-void Set_ieee_double_precision(); 
+~Set_ieee_double_precision(); 
 
-CONVERROR: ccFunction inside class or concept, try to relate 
+}; /* end Set_ieee_double_precision */
+
+
 /*! 
 
 Sets the precision of operations on double to 53bits. 
 Note that the rounding mode is set to the nearest in the same process. 
+
+The function does the same thing as the default constructor of `Set_ieee_double_precision` 
+except that it does not perform the save and restore of the previous state.
 
 \relates Set_ieee_double_precision 
 */ 
@@ -179,5 +184,5 @@ void force_ieee_double_precision();
 
 /// @}
 
-}; /* end Set_ieee_double_precision */
+
 } /* end namespace CGAL */
