@@ -5,7 +5,7 @@
  * @file Filters.h
  * @brief This file contains 2 filtering methods, which can be used as a template parameter for CGAL::internal::Surface_mesh_segmentation.
  *
- * Also filtering methods can be used by their-own for smoothing associated values to `CGAL Polyhedron`.
+ * Also filtering methods can be used by their-own for smoothing associated values with `CGAL Polyhedron` facets.
  */
 #include <vector>
 #include <map>

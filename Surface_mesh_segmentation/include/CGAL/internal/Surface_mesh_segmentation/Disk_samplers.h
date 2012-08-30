@@ -42,6 +42,7 @@ namespace internal
  * @brief Uses Vogel's method to sample points from unit-disk.
  *
  * @tparam Tuple should have a constructor which takes 3 double parameters.
+ * @tparam uniform indicates how sampling occurs (uniform or biased to center)
  * @see Disk_samplers.h, SDF_calculation
  */
 template<class Tuple, bool uniform = false>
@@ -53,10 +54,9 @@ public:
    * @param number_of_points number of points to be picked
    * @param cone_angle opening angle of cone (might be necessary for weighting)
    * @param[out] out_it sampled points from disk, each point is tuple of:
-   *   - first = coordinate-x
-   *   - second = coordinate-y
-   *   - third = weight (proportional to angle between cone-normal)
-   * @param uniform if false custom power will be used and sampled points will be biased to center
+   *   - coordinate-x
+   *   - coordinate-y
+   *   - weight (proportional to angle between cone-normal)
    */
   template<class OutputIterator>
   void operator()(int number_of_points,
@@ -127,12 +127,11 @@ public:
    * @param number_of_points number of points to be picked
    * @param cone_angle opening angle of cone (might be necessary for weighting)
    * @param[out] out_it sampled points from disk, each point is tuple of:
-   *   - first = coordinate-x
-   *   - second = coordinate-y
-   *   - third = weight (proportional to angle between cone-normal)
+   *   - coordinate-x
+   *   - coordinate-y
+   *   - weight (proportional to angle between cone-normal)
    *
-   * Note:
-   * Returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
+   * Note: returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
    */
   template<class OutputIterator>
   void operator()(int number_of_points,
@@ -194,12 +193,11 @@ public:
    * @param number_of_points number of points to be picked
    * @param cone_angle opening angle of cone (might be necessary for weighting)
    * @param[out] out_it sampled points from disk, each point is tuple of:
-   *   - first = coordinate-x
-   *   - second = coordinate-y
-   *   - third = weight (proportional to angle between cone-normal)
+   *   - coordinate-x
+   *   - coordinate-y
+   *   - weight (proportional to angle between cone-normal)
    *
-   * Note:
-   * Returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
+   * Note: returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
    */
   template<class OutputIterator>
   void operator()(int number_of_points,

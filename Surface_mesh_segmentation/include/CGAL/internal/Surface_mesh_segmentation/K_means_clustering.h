@@ -142,8 +142,7 @@ public:
     data_centers.reserve(points.size());
     for(std::vector<K_means_point>::iterator point_it = points.begin();
         point_it != points.end(); ++point_it) {
-      point_it->calculate_new_center(
-        centers); // just refind closest center (incase order of centers are changed etc)
+      point_it->calculate_new_center(centers); // find closest center
       data_centers.push_back(point_it->center_id);
     }
   }
@@ -274,18 +273,16 @@ private:
         min_centers = centers;
       }
     }
-    // By saving points (min_points) also, we can get rid of this part
-    // But since centers are already converged this step will require one iteration
-    // If it stopped since maximum_iteration is reached then this step will take some time
+    // Note that current center-ids in points are not valid.
+    // But they are recalculated when asked (in fill_with_center_ids())
     centers = min_centers;
-    calculate_clustering();
   }
 
   /**
    * Sum of squared distances between each point and the closest center to it.
    */
   double within_cluster_sum_of_squares() const {
-    double sum = 0;
+    double sum = 0.0;
     for(std::vector<K_means_point>::const_iterator point_it = points.begin();
         point_it != points.end(); ++point_it) {
       sum += std::pow(centers[point_it->center_id].mean - point_it->data, 2);

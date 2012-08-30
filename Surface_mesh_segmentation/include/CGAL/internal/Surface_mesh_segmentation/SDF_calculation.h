@@ -22,24 +22,26 @@ namespace internal
 
 /**
  * @brief Responsible for calculating Shape Diameter Function over surface of the mesh.
- * @see Disk_samplers.h
+ *
+ * @tparam Polyhedron a CGAL polyhedron
+ * @tparam GeomTraits a model of SegmentationGeomTraits
+ * @tparam DiskSampling chosen sampling method from Disk_samplers.h
  */
 template <
 class Polyhedron,
-      class SegmentationGeomTraits,
+      class GeomTraits,
       class DiskSampling = Vogel_disk_sampling<boost::tuple<double, double, double> >
       >
 class SDF_calculation
 {
 //type definitions
 private:
-  typedef SegmentationGeomTraits SGT;
 
-  typedef typename SGT::Vector_3   Vector;
-  typedef typename SGT::Point_3    Point;
-  typedef typename SGT::Ray_3      Ray;
-  typedef typename SGT::Plane_3    Plane;
-  typedef typename SGT::Segment_3  Segment;
+  typedef typename GeomTraits::Vector_3   Vector;
+  typedef typename GeomTraits::Point_3    Point;
+  typedef typename GeomTraits::Ray_3      Ray;
+  typedef typename GeomTraits::Plane_3    Plane;
+  typedef typename GeomTraits::Segment_3  Segment;
 
   typedef typename Polyhedron::Traits Kernel;
   typedef typename Polyhedron::Facet  Facet;
@@ -49,8 +51,9 @@ private:
   typedef typename Polyhedron::Facet_const_handle   Facet_const_handle;
 
 
-  typedef AABB_const_polyhedron_triangle_primitive<SGT, Polyhedron> Primitive;
-  typedef typename CGAL::AABB_tree<AABB_traits<SGT, Primitive> >    Tree;
+  typedef AABB_const_polyhedron_triangle_primitive<GeomTraits, Polyhedron>
+  Primitive;
+  typedef typename CGAL::AABB_tree<AABB_traits<GeomTraits, Primitive> >    Tree;
   typedef typename Tree::Object_and_primitive_id
   Object_and_primitive_id;
   typedef typename Tree::Primitive_id
@@ -69,20 +72,20 @@ private:
 
   bool use_minimum_segment;
   double multiplier_for_segment;
-  SGT traits;
+  GeomTraits traits;
 
-  typename SGT::Angle_3                         angle_functor;
-  typename SGT::Construct_scaled_vector_3       scale_functor;
-  typename SGT::Construct_sum_of_vectors_3      sum_functor;
-  typename SGT::Construct_normal_3              normal_functor;
-  typename SGT::Construct_unit_normal_3         unit_normal_functor;
-  typename SGT::Construct_translated_point_3    translated_point_functor;
-  typename SGT::Construct_centroid_3            centroid_functor;
+  typename GeomTraits::Angle_3                         angle_functor;
+  typename GeomTraits::Construct_scaled_vector_3       scale_functor;
+  typename GeomTraits::Construct_sum_of_vectors_3      sum_functor;
+  typename GeomTraits::Construct_normal_3              normal_functor;
+  typename GeomTraits::Construct_unit_normal_3         unit_normal_functor;
+  typename GeomTraits::Construct_translated_point_3    translated_point_functor;
+  typename GeomTraits::Construct_centroid_3            centroid_functor;
 public:
   /**
    * Assign default values to member variables.
    */
-  SDF_calculation(SGT traits)
+  SDF_calculation(GeomTraits traits)
     : traits(traits), use_minimum_segment(false), multiplier_for_segment(1),
       angle_functor(traits.angle_3_object()),
       scale_functor(traits.construct_scaled_vector_3_object()),
@@ -95,7 +98,6 @@ public:
 
   /**
    * Calculates SDF values for each facet, and stores them in @a sdf_values. Note that sdf values are neither smoothed nor normalized.
-   * @pre parameter @a mesh should consist of triangles.
    * @param mesh `CGAL Polyhedron` on which SDF values are computed
    * @param cone_angle opening angle for cone, expressed in radians
    * @param number_of_rays number of rays picked from cone for each facet
@@ -134,7 +136,6 @@ private:
    */
   double calculate_sdf_value_of_facet(Facet_const_handle& facet, const Tree& tree,
                                       const Disk_samples_list& samples) const {
-    //ofstream output("rays.txt", ios::app);
     const Point& p1 = facet->halfedge()->vertex()->point();
     const Point& p2 = facet->halfedge()->next()->vertex()->point();
     const Point& p3 = facet->halfedge()->prev()->vertex()->point();
@@ -171,9 +172,7 @@ private:
       Vector disk_vector = sum_functor(scale_functor(v1, sample_it->get<0>()),
                                        scale_functor(v2, sample_it->get<1>()));
       Vector ray_direction = sum_functor(normal, disk_vector);
-      //output << center << std::endl;
-      //std::cout << center << std::endl;
-      //output << ray_direction << std::endl;
+
 #ifdef SHOOT_ONLY_RAYS
       Ray ray(center, ray_direction);
       boost::tie(is_intersected, intersection_is_acute,
@@ -214,6 +213,7 @@ private:
           !intersection_is_acute) { // intersection is found, but it is not acceptable (so, do not continue ray-segment casting)
           continue;
         }
+
 
         if(use_minimum_segment) {
           if(min_distance <

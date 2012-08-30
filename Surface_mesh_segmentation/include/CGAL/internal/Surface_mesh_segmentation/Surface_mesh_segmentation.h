@@ -30,17 +30,22 @@ namespace internal
  * It is a connector class which uses:
  *   -  SDF_calculation for calculating sdf values
  *   -  Expectation_maximization for soft clustering
- *   -  An implementation of alpha-expansion graph cut for hard clustering (Alpha_expansion_graph_cut.h)
+ *   -  An implementation of alpha-expansion graph cut for hard clustering
  *
  * Other than being a connector, it is also responsable for preprocess and postprocess on intermadiate data, which are:
  *   - log-normalizing probabilities received from soft clustering
  *   - log-normalizing and calculating dihedral-angle based weights for edges
  *   - smoothing and log-normalizing sdf values received from sdf calculation (Filters.h)
  *   - assigning segment-id for each facet after hard clustering
+ *
+ * @tparam Polyhedron a CGAL polyhedron
+ * @tparam GeomTraits a model of SegmentationGeomTraits
+ * @tparam GraphCut chosen graph-cut implementation from Alpha_expansion_graph_cut.h
+ * @tparam Filter chosen filtering method from Filters.h
  */
 template <
 class Polyhedron,
-      class SegmentationGeomTraits,
+      class GeomTraits,
 #ifdef CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
       class GraphCut = Alpha_expansion_graph_cut_boykov_kolmogorov,
 #else
@@ -56,7 +61,7 @@ public:
 
 private:
   //typedef typename Polyhedron::Traits Kernel;
-  typedef typename SegmentationGeomTraits::Point_3 Point;
+  typedef typename GeomTraits::Point_3 Point;
 
   typedef typename Polyhedron::Facet  Facet;
 
@@ -66,20 +71,19 @@ private:
   typedef typename Polyhedron::Facet_const_iterator    Facet_const_iterator;
   typedef typename Polyhedron::Vertex_const_iterator   Vertex_const_iterator;
 
-  typedef SDF_calculation<Polyhedron, SegmentationGeomTraits>
-  SDF_calculation_class;
+  typedef SDF_calculation<Polyhedron, GeomTraits> SDF_calculation_class;
 
 // member variables
 private:
   const Polyhedron& mesh;
-  SegmentationGeomTraits traits;
+  GeomTraits traits;
 // member functions
 public:
   /**
    * @pre @a polyhedron.is_pure_triangle()
    * @param mesh `CGAL Polyhedron` on which other functions operate.
    */
-  Surface_mesh_segmentation(const Polyhedron& mesh, SegmentationGeomTraits traits)
+  Surface_mesh_segmentation(const Polyhedron& mesh, GeomTraits traits)
     : mesh(mesh), traits(traits) {
     CGAL_precondition(mesh.is_pure_triangle());
   }
