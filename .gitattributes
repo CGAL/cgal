@@ -5696,7 +5696,6 @@ Triangulation_3/doc/TDS_3/CGAL/Triangulation_data_structure_3.h -text
 Triangulation_3/doc/TDS_3/CGAL/Triangulation_ds_cell_base_3.h -text
 Triangulation_3/doc/TDS_3/CGAL/Triangulation_ds_vertex_base_3.h -text
 Triangulation_3/doc/TDS_3/CGAL/Triangulation_utils_3.h -text
-Triangulation_3/doc/TDS_3/Classified.txt -text
 Triangulation_3/doc/TDS_3/Concepts/TriangulationDSCellBase_3.h -text
 Triangulation_3/doc/TDS_3/Concepts/TriangulationDSVertexBase_3.h -text
 Triangulation_3/doc/TDS_3/Concepts/TriangulationDataStructure_3.h -text
