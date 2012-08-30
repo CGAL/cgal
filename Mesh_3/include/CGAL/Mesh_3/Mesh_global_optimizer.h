@@ -314,28 +314,16 @@ operator()(int nb_iterations, Visitor visitor)
     visitor.end_of_iteration(i);
    
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-    unsigned int moving_vertices_size = moving_vertices.size();
-   
-#ifdef CGAL_FREEZE_VERTICES
+    unsigned int moving_vertices_size = moving_vertices.size();   
     std::cerr << boost::format("\r             \r"
-      "end iteration %1% (%2% frozen), %3% / %4%, last step:%5$.2fs, step avg:%6$.2fs, avg large move:%7$.3f ")
-    % (i+1)
-    % nb_frozen_points_ 
-    % moving_vertices_size
-    % initial_vertices_nb
-    % (running_time_.time() - step_begin)
-    % (running_time_.time() / (i+1))
-    % sum_moves_;
-#else
-    std::cerr << boost::format("\r             \r"
-      "end iteration %1%, %2% / %3%, last step:%4$.2fs, step avg:%5$.2fs, avg large move:%6$.3f ")
+      "end iter.%1%, %2% / %3%, last step:%4$.2fs, step avg:%5$.2fs, avg big moves:%6$.3f ")
     % (i+1)
     % moving_vertices_size
     % initial_vertices_nb
     % (running_time_.time() - step_begin)
     % (running_time_.time() / (i+1))
-    % sum_moves_;
-#endif
+    % sum_moves_
+    << std::endl;
 
     step_begin = running_time_.time();
 #endif
