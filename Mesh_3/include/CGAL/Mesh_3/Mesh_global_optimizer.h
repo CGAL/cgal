@@ -292,6 +292,11 @@ operator()(int nb_iterations, Visitor visitor)
   big_moves_size_ = 
     (std::max)(std::size_t(1), std::size_t(moving_vertices.size()/500));
   
+#ifdef CGAL_FREEZE_VERTICES
+  std::size_t nb_vertices_moved = -1;
+  bool convergence_stop = false;
+#endif
+
   // Iterate
   int i = -1;
   while ( ++i < nb_iterations && ! is_time_limit_reached() )
@@ -299,12 +304,26 @@ operator()(int nb_iterations, Visitor visitor)
 #ifdef CGAL_FREEZE_VERTICES
     if(!do_freeze_) 
       nb_frozen_points_ = 0;
+    nb_vertices_moved = moving_vertices.size();
 #endif
 
     // Compute move for each vertex
     Moves_vector moves = compute_moves(moving_vertices);
     visitor.after_compute_moves();
-    
+
+#ifdef CGAL_FREEZE_VERTICES
+    //Pb with Freeze : sometimes a few vertices continue moving indefinitely
+    //if the nb of moving vertices is < 1% of total nb AND does not decrease
+    if(nb_vertices_moved < 0.01 * initial_vertices_nb
+      && nb_vertices_moved == moving_vertices.size())
+    { 
+      // we should stop because we are 
+      // probably entering an infinite instable loop
+      convergence_stop = true;
+      break;
+    }
+#endif
+
     // Stop if time_limit is reached
     if ( is_time_limit_reached() )
       break;
@@ -324,7 +343,6 @@ operator()(int nb_iterations, Visitor visitor)
     % (running_time_.time() / (i+1))
     % sum_moves_
     << std::endl;
-
     step_begin = running_time_.time();
 #endif
 
@@ -334,15 +352,15 @@ operator()(int nb_iterations, Visitor visitor)
 #endif //CGAL_FREEZE_VERTICES
     if(check_convergence())
       break;
-  }
-  
+  }  
   running_time_.stop();
   
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-  std::cerr << std::endl;
 #ifdef CGAL_FREEZE_VERTICES
   if ( nb_frozen_points_ == initial_vertices_nb )
     std::cerr << "All vertices frozen" << std::endl;
+  else if ( convergence_stop )
+    std::cerr << "Can't improve anymore" << std::endl;
   else
 #endif
   if ( is_time_limit_reached() )
@@ -351,7 +369,7 @@ operator()(int nb_iterations, Visitor visitor)
     std::cerr << "Convergence reached" << std::endl;
   else if( i >= nb_iterations )
     std::cerr << "Max iteration number reached" << std::endl;
-    
+     
   std::cerr << "Total optimization time: " << running_time_.time()
             << "s" << std::endl << std::endl;
 #endif
@@ -359,6 +377,8 @@ operator()(int nb_iterations, Visitor visitor)
 #ifdef CGAL_FREEZE_VERTICES
   if ( nb_frozen_points_ == initial_vertices_nb )
     return ALL_VERTICES_FROZEN;
+  else if ( convergence_stop )
+    return CANT_IMPROVE_ANYMORE;
   else
 #endif
   if ( is_time_limit_reached() )
