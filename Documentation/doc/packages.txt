@@ -111,7 +111,7 @@ h1 {
 <a name="Pkg:Triangulation3"></a>
 \package_listing{Triangulation_3}
 <a name="Pkg:TDS3"></a>
-\package_listing{TriangulationDS_3}
+\package_listing{Triangulation_3/TDS_3}
 <a name="Pkg:Periodic3Triangulation3"></a>
 \package_listing{Periodic_3_triangulation_3}
 <a name="Pkg:AlphaShape2"></a>
