@@ -96,7 +96,7 @@ Precision_type p=get_default_precision());
 /// @} 
 
 /// \name Operations 
-CONVERROR Check if this needs to be spread\n/// Arithmetic operators <TT>+</TT>, <TT>-</TT>, and <TT>/</TT> are overloaded, but special care must be taken when applying them. The precision of an operation between two `Gmpfi`s is defined as the maximum of the operands precision and the default precision. The second operand of the former operations can be a <TT>Gmpfi</TT>, <TT>Gmpfr</TT>, <TT>int</TT>, <TT>long</TT>, <TT>unsigned</TT>, <TT>unsigned long</TT>, <TT>Gmpz</TT> or <TT>Gmpq</TT>. The precision of an operation between a `Gmpfi` and a number of another type is defined as the `Gmpfi`'s precision (even when operating with a <TT>Gmpfr</TT>). To specify the rounding mode and/or the precision to perform an operation, this class provides the four static functions <TT>add</TT>, <TT>sub</TT>, <TT>mul</TT> and <TT>div</TT>. Only one of them is shown here, since their interfaces are similar: When the precision is not specified in this family of functions, it is defined as in the overloaded operators. Other arithmetic functions provided by the class are:
+
 /// @{
 
 /*! 
@@ -132,11 +132,30 @@ Returns the value of the number, rounded with precision `p`.
 */ 
 Gmpfi round(Precision_type p)const; 
 
-CONVERROR: ccFunction inside class or concept, try to relate 
-/*! 
+/// @} 
 
-\relates Gmpfi 
-*/ 
+/*! \name Arithmetic Operations 
+
+ 
+Arithmetic operators `+`, `-`, and `/` are overloaded, but special
+care must be taken when applying them.  The precision of an operation
+between two `Gmpfi`s is defined as the maximum of the operands
+precision and the default precision.
+
+The second operand of the former operations can be a `Gmpfi`, `Gmpfr`,
+`int`, `long`, `unsigned`, `unsigned long`, `Gmpz` or `Gmpq`. The
+precision of an operation between a `Gmpfi` and a number of another
+type is defined as the `Gmpfi`'s precision (even when operating with a
+`Gmpfr`).
+
+To specify the rounding mode and/or the precision to perform an
+operation, this class provides the four static functions `add`, `sub`,
+`mul` and `div`. Only one of them is shown here, since their
+interfaces are similar: When the precision is not specified in this
+family of functions, it is defined as in the overloaded operators.
+*/
+ 
+/// @{
 static Gmpfi add (const Gmpfi &a,const Gmpfi &b,Precision_type p=0); 
 
 /*! 

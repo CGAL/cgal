@@ -3,8 +3,7 @@ namespace CGAL {
 /*!
 \ingroup nt_ralgebraic
 
-An instance of this class represents an extension of the type `NT` by 
-<B>one</B> square root of the type `ROOT`. 
+An instance of this class represents an extension of the type `NT` by *one* square root of the type `ROOT`. 
 
 `NT` is required to be constructible from `ROOT`. 
 
@@ -22,8 +21,9 @@ Arithmetic operations among different extensions, say \f$ \Z[\sqrt{a}]\f$
 and \f$ \Z[\sqrt{b}]\f$, are not supported. 
 The result would be in \f$ \Z[\sqrt{a},\sqrt{b}]\f$, which is not 
 representable by `Sqrt_extension<Integer,Integer>`. 
-<B>The user is responsible to check that arithmetic operations 
-are carried out for elements from the same extensions only.</B> 
+
+\attention The user is responsible to check that arithmetic operations are carried out for elements from the same extensions only.
+
 This is not tested by `Sqrt_extension` for efficiency reasons. 
 A violation of the precondition leads to undefined behavior. 
 Be aware that for efficiency reasons the given \f$ root\f$ is stored as it is given to 
@@ -81,7 +81,7 @@ The extension of a `UniqueFactorizationDomain` or
 `EuclideanRing` is just an `IntegralDomain`, since the extension in general destroys the unique factorization property. For instance consider \f$ \Z[\sqrt{10}]\f$, the extension of \f$ \Z\f$ by \f$ \sqrt{10}\f$: in \f$ \Z[\sqrt{10}]\f$ the element 10 has two different factorizations \f$ \sqrt{10} \cdot \sqrt{10}\f$ and \f$ 2 \cdot 5\f$. In particular, the factorization is not unique. 
 
 If `NT` is a model of `RealEmbeddable` the type `Sqrt_extension` is also considered as `RealEmbeddable`. However, by default it is not allowed to compare values from different extensions for efficiency reasons. In case such a comparison becomes necessary, use the member function compare with the according Boolean flag. 
-If such a comparison is a very frequent case, override the default of `DifferentExtensionComparable` by giving `::CGAL::Tag_true` as third template parameter. This effects the behavior of compare functions as well as the compare operators. 
+If such a comparison is a very frequent case, override the default of `DifferentExtensionComparable` by giving `CGAL::Tag_true` as third template parameter. This effects the behavior of compare functions as well as the compare operators. 
 
 The fourth template argument, `FilterPredicates`, triggers an internal filter that may speed up comparisons and sign computations. In case `FilterPredicates` is set to `CGAL::Tag_true` the type first computes a double interval containing the represented number and tries to perform the comparison or sign computation using this interval. Once computed, this interval is stored by the corresponding `Sqrt_extension` object for further usage. Note that this internal filter is switched off by default, since it may conflict with other filtering methods, such as `CGAL::Lazy_exact_nt<Sqrt_extension>`. 
 
@@ -117,7 +117,7 @@ public:
 /// @{
 
 /*! 
-Introduces an variable initialized with 0. 
+Introduces a variable `ext` initialized with 0. 
 */ 
 Sqrt_extension (); 
 
@@ -127,12 +127,12 @@ Copy constructor.
 Sqrt_extension (const Sqrt_extension& x); 
 
 /*! 
-Introduces an variable initialized with \f$ i\f$. 
+Introduces a variable `ext` initialized with \f$ i\f$. 
 */ 
 Sqrt_extension (const int &i); 
 
 /*! 
-Introduces an variable initialized with \f$ x\f$. 
+Introduces a variable `ext` initialized with \f$ x\f$. 
 */ 
 Sqrt_extension (const NT &x); 
 
