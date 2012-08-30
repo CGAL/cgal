@@ -236,7 +236,7 @@ div.groupHeader {
 
 div.groupText {
 	margin-left: 16px;
-	font-style: italic;
+	/* font-style: italic; */
 }
 
 body {
