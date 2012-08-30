@@ -6,7 +6,7 @@ Note: you must define and use the "http://simply-life.net/doxyassist/project.xsd
 namespace for the XML file to be processed properly.  -->
 <DoxyAssist xmlns="http://simply-life.net/doxyassist/doxyassist.xsd"
             xmlns:da="http://simply-life.net/doxyassist/doxyassist.xsd"
-            version="1.0" type="generic" name="My DoxyAssist Project">
+            version="1.0" type="generic" name="CGAL Documentation">
   <doxygen doxyfile="Doxyfile">
     <list name="HTML_EXTRA_FILES" append="true">
       <item>jquery.footnotes.min.js</item>
@@ -120,6 +120,9 @@ namespace for the XML file to be processed properly.  -->
             <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_3.jpg</item>
             <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_4.jpg</item>
             <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_5.jpg</item>
+          </list>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
           </list>
         </doxygen>
       </project>
@@ -434,7 +437,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../GraphicsView/doc/GraphicsView/</string>
           <string name="STRIP_FROM_INC_PATH">../GraphicsView/doc/GraphicsView/</string>
           <string name="GENERATE_TAGFILE">./tags/GraphicsView.tag</string>
-          <string name="EXAMPLE_PATH">../GraphicsView/examples</string>
+          <!-- The path ../GraphicsView/examples does not exist currently. -->
+          <!-- <string name="EXAMPLE_PATH">../GraphicsView/examples</string> -->
           <string name="IMAGE_PATH">../GraphicsView/doc/GraphicsView/fig</string>
           <list name="TAGFILES" append="true">
           </list>
