@@ -1,60 +1,12 @@
 /*!
 
-\page introduction Introduction
+\page introduction Hello World
 
-\author CGAL Editorial Board
+\author %CGAL Editorial Board
 
-The goal of the \cgal Open Source Project is to provide *easy access
-to efficient and reliable geometric algorithms* in the form of a C++
-library.
+The goal of this chapter is to get a first idea of the look and feal of a program that uses CGAL.
 
-The Computational Geometry Algorithms Library offers data structures
-and algorithms like triangulations, Voronoi diagrams, Boolean
-operations on polygons and on polyhedra, arrangements of curves, mesh
-generation, geometry processing, convex hull algorithms, to name just
-a few.
-
-
-All these data structures and algorithms operate on geometric objects
-like points and segments, and perform geometric tests on them.
-These objects and predicates are regrouped in \cgal *Kernels*.
-
-
-Finally, the \cgal *Support Library* offers geometric object
-generators and spatial sorting functions, as well as a matrix search
-framework and a solver for linear and quadratic programs.  It further
-offers interfaces to third party software such as the *Gui* libraries
-Qt, Geomview, and the Boost Graph Library.
-
-
-Organization of the Manual
-==========================
-
-This manual is organized in several parts covering the many domains
-of computational geometry. Each part consists of several chapters,
-and each chapter is split into a *user manual*  and a *reference
-manual*. The user manual gives the general idea and comes with examples.
-The reference manual presents the \sc{Api} of the various classes
-and functions.
-
-The manual has a table of contents, and an index, as well as a package overview,
-which gives a short paragraph what the package is about, what license
-it has, and on which other packages it depends. It further provides
-links to precompiled demo programs for the Windows platform.
-
-Demos and Examples
-==================
-
-In the distribution of the library  you find the two directories *demo*
-and *examples*. They contain subdirectories for the \cgal packages.  
-The demos use third party libraries for the graphical user interface. The 
-examples don't have this dependency and most examples are refered to in the 
-user manual.
-
-Hello World
-===========
-
-In this section we will take a closer look at three \cgal example
+We will take a closer look at three \cgal example
 programs, all of them computing the 2D convex hull of a set of points.
 
 

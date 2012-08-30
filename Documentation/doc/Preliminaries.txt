@@ -2,7 +2,7 @@
 
 \page preliminaries Preliminaries
 
-\author CGAL Editorial Board
+\author %CGAL Editorial Board
 
 This chapter lists the licenses
 under which the \cgal datastructures and algorithms are distributed.

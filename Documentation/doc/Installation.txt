@@ -2,7 +2,7 @@
 
 \page installation Installation
 
-\author CGAL Editorial Board
+\author %CGAL Editorial Board
 
 \attention NOT PORTED YET
 

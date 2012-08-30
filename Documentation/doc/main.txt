@@ -2,12 +2,9 @@
 
 \mainpage
 
-\attention PRELIMINARY
+\attention PRELIMINARY 
 
-\attention See something? Fix it.
-
-%CGAL
-====
+\attention See something? Fix it! Follow instructions at: https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/Doxygen
 
 The goal of the \cgal Open Source Project is to provide easy access to
 efficient and reliable geometric algorithms in the form of a C++
@@ -15,28 +12,13 @@ library. %CGAL is used in various areas needing geometric computation,
 such as: computer graphics, scientific visualization, computer aided
 design and modeling, geographic information systems, molecular
 biology, medical imaging, robotics and motion planning, mesh
-generation, numerical methods... More on the projects using %CGAL web
-page.
+generation, numerical methods... More on the [Projects Using %CGAL](http://www.cgal.org/projects.html) web page. 
 
-The Computational Geometry Algorithms Library (%CGAL), offers data
-structures and algorithms like triangulations (2D constrained
-triangulations and Delaunay triangulations in 2D and 3D, periodic
-triangulations in 3D), Voronoi diagrams (for 2D and 3D points, 2D
-additively weighted Voronoi diagrams, and segment Voronoi diagrams),
-polygons (Boolean operations, offsets, straight skeleton), polyhedra
-(Boolean operations), arrangements of curves and their applications
-(2D and 3D envelopes, Minkowski sums), mesh generation (2D Delaunay
-mesh generation and 3D surface and volume mesh generation, skin
-surfaces), geometry processing (surface mesh simplification,
-subdivision and parameterization, as well as estimation of local
-differential properties, and approximation of ridges and umbilics),
-alpha shapes, convex hull algorithms (in 2D, 3D and dD), search
-structures (kd trees for nearest neighbor search, and range and
-segment trees), interpolation (natural neighbor interpolation and
-placement of streamlines), shape analysis, fitting, and distances
-(smallest enclosing sphere of points or spheres, smallest enclosing
-ellipsoid of points, principal component analysis), and kinetic data
-structures.
+The Computational Geometry Algorithms Library offers data structures
+and algorithms like triangulations, Voronoi diagrams, Boolean
+operations on polygons and on polyhedra, arrangements of curves, mesh
+generation, geometry processing, convex hull algorithms, to name just
+a few.
 
 All these data structures and algorithms operate on geometric objects
 like points and segments, and perform geometric tests on them. These
@@ -48,16 +30,48 @@ solver for linear and quadratic programs. It further offers interfaces
 to third party software such as the GUI libraries Qt, Geomview, and
 the Boost Graph Library.
 
+Organization of the Manual
+==========================
+
+This manual is organized in several parts covering the many domains
+of computational geometry. Each part consists of several chapters,
+and each chapter is split into a *user manual*  and a *reference
+manual*. The user manual gives the general idea and comes with examples.
+The reference manual presents the \sc{Api} of the various classes
+and functions.
+
+The manual has a package overview, gives a short paragraph what the package is about, what license
+it has, and on which other packages it depends. It further provides
+links to precompiled demo programs for the Windows platform.
+
+The manual further has an index, as well as a search box in the uper right of
+each page.
+The scope of the search box is the package you currently look at and the 
+packages it depends on, or  it is the whole manual when you are in
+a top level page such as the package overview.
+
+
+Demos and Examples
+==================
+
+In the distribution of the library  you find the two directories *demo*
+and *examples*. They contain subdirectories for the \cgal packages.  
+The demos use third party libraries for the graphical user interface. The 
+examples don't have this dependency and most examples are refered to in the 
+user manual.
+
+License
+=======
 %CGAL is distributed under a dual-license scheme. %CGAL can be used
 together with Open Source software free of charge. Using %CGAL in
 other contexts can be done by obtaining a commercial license from
 [GeometryFactory](http://www.geometryfactory.com). For more details
-see the \ref licenseIssues License page.
+see the \ref licenseIssues "License" page.
 */
 
 /*!
 
-\page general_intro General Introducion
+\page general_intro Getting Started
 
 - \subpage introduction
 - \subpage preliminaries
