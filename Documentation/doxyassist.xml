@@ -741,6 +741,22 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>3D Triangulation</name>
+        <input>../Triangulation_3/doc/Triangulation_3</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Triangulation_3/doc/Triangulation_3</string>
+          <string name="STRIP_FROM_INC_PATH">../Triangulation_3/doc/Triangulation_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Triangulation_3.tag</string>
+          <string name="IMAGE_PATH">../Triangulation_3/doc/Triangulation_3/fig</string>
+          <string name="EXAMPLE_PATH">../Triangulation_3/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/TDS_3.tag=../../CGAL.CGAL.3D-Triangulation-Data-Structure/html</item>
+          </list>
+        </doxygen>
+      </project>
+
+
+      <project>
         <name>3D Boolean Operations on Nef Polyhedra</name>
         <input>../Nef_3/doc</input>
         <doxygen>
@@ -874,6 +890,8 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Boolean_set_operations_2.tag=../../CGAL.CGAL.2D-Regularized-Boolean-Set-Operations/html</item>
           <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
           <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+          <item>./tags/TDS_3.tag=../../CGAL.CGAL.3D-Triangulation-Data-Structure/html</item>
+          <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
           <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.2D-Snap-Rounding/html</item>
           <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.dD-Spatial-Searching/html</item>
           <item>./tags/Segment_Delaunay_graph_2.tag=../../CGAL.CGAL.2D-Segment-Delaunay-Graphs/html</item>
