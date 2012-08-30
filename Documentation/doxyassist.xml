@@ -68,6 +68,9 @@ namespace for the XML file to be processed properly.  -->
           <bool name="HIDE_UNDOC_MEMBERS">true</bool>
           <bool name="HIDE_UNDOC_CLASSES">true</bool>
           <bool name="SHOW_INCLUDE_FILES">false</bool>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Box_intersection_d.tag=../../CGAL.CGAL.Intersecting-Sequences-of-dD-Iso-oriented-Boxes/html</item>
+          </list>
         </doxygen>
       </project>
 
