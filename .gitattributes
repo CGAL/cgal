@@ -343,7 +343,6 @@ Alpha_shapes_2/doc/Alpha_shapes_2/Concepts/AlphaShapeFace_2.h -text
 Alpha_shapes_2/doc/Alpha_shapes_2/Concepts/AlphaShapeTraits_2.h -text
 Alpha_shapes_2/doc/Alpha_shapes_2/Concepts/AlphaShapeVertex_2.h -text
 Alpha_shapes_2/doc/Alpha_shapes_2/PackageDescription.txt -text
-Alpha_shapes_2/doc/Alpha_shapes_2/Unsupported/Alpha_shape_2-Dt-ExactAlphaComparisonTag-.h -text svneol=unset#application/octet-stream
 Alpha_shapes_2/doc/Alpha_shapes_2/examples.txt -text
 Alpha_shapes_2/doc/Alpha_shapes_2/fig/alpha-detail.png -text svneol=unset#image/png
 Alpha_shapes_2/doc/Alpha_shapes_2/fig/alphashape.pdf -text svneol=unset#application/pdf
