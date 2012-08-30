@@ -8,16 +8,13 @@ The class `Weighted_alpha_shape_euclidean_traits_2` is the default model for the
 `AlphaShapeTraits_2` for the regular version of Alpha Shapes. 
 `K` must be a kernel. 
 
-\refines ::Regular_triangulation_euclidean_traits_2<K, typename K::FT> 
-
 \models ::AlphaShapeTraits_2 
 
 */
 template< typename K >
-class Weighted_alpha_shape_euclidean_traits_2 {
+class Weighted_alpha_shape_euclidean_traits_2 :
+    public Regular_triangulation_euclidean_traits_2<K, typename K::FT> {
 public:
-
-/// @}
 
 }; /* end Weighted_alpha_shape_euclidean_traits_2 */
 } /* end namespace CGAL */
