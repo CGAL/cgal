@@ -1,3 +1,7 @@
 .textsc {
     font-variant: small-caps;
 }
+
+#projectnumber {
+    display: none;
+}

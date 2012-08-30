@@ -1908,6 +1908,7 @@ Documentation/biblio/cgal_manual.bib -text
 Documentation/biblio/how_to_cite.html -text
 Documentation/biblio/how_to_cite_cgal.txt -text
 Documentation/biblio/makebiblio -text
+Documentation/cgal_package_stylesheet.css -text
 Documentation/cgal_stylesheet.css -text
 Documentation/doc/Developer_manual/Chapter_checks.txt -text
 Documentation/doc/Developer_manual/Chapter_code_format.txt -text
