@@ -90,7 +90,7 @@ example see the demo programs in the directory `demo/Nef_2`.
 
 By recursively composing binary and unary operations one can end with
 a very complex rectilinear structure. To explore that structure there
-is a data type `Nef_polyhedron_2<T>::Explorer` that allows
+is a data type `Nef_polyhedron_2::Explorer` that allows
 read-only exploration of the rectilinear structure. To understand its
 usability we need more knowledge about the representation of Nef
 polyhedra.

@@ -94,12 +94,12 @@ See Figure \ref Conformexampleconform
 
 \image html example-conform-Delaunay-Gabriel.png "Initial triangulation and the corresponding Delaunay and Gabriel triangulation."
 
-\image latex example-conform "Initial triangulation." width=8cm
+\image latex example-conform.png "Initial triangulation." width=8cm
 \anchor ConformexampleconformDelaunay
-\image latex example-conform-Delaunay "The corresponding conforming Delaunay triangulation." width=8cm
+\image latex example-conform-Delaunay.png "The corresponding conforming Delaunay triangulation." width=8cm
 
 \anchor ConformexampleconformGabriel
-\image latex example-conform-Gabriel "The corresponding conforming Gabriel triangulation." width=8cm
+\image latex example-conform-Gabriel.png "The corresponding conforming Gabriel triangulation." width=8cm
 
 \section secMesh_2_meshes Meshes 
 
@@ -127,7 +127,7 @@ See Figure \ref Domain for an example of a domain
 defined without using seed points, and a possible mesh of it. 
 
 \anchor Domain
-\image latex domain-domain-mesh "A domain defined without seed points and the generated mesh." width=8cm
+\image latex domain-domain-mesh.png "A domain defined without seed points and the generated mesh." width=8cm
 \image html domain-domain-mesh.png "A domain defined without seed points and the generated mesh."
 
 
@@ -143,7 +143,7 @@ two holes are triangulated but not meshed.
 
 
 \anchor Domainseeds
-\image latex domain-seeds-domain-seeds-mesh "A domain with two seeds points defining holes and the generated mesh." width=8cm
+\image latex domain-seeds-domain-seeds-mesh.png "A domain with two seeds points defining holes and the generated mesh." width=8cm
 \image html domain-seeds-domain-seeds-mesh.png "A domain with two seeds points defining holes and the generated mesh."
 
 \subsection secMesh_2_criteria Shape and Size Criteria 
