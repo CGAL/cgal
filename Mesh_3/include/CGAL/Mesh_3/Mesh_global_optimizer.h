@@ -345,8 +345,12 @@ operator()(int nb_iterations, Visitor visitor)
     std::cerr << "All vertices frozen" << std::endl;
   else
 #endif
-  if ( check_convergence() )
+  if ( is_time_limit_reached() )
+    std::cerr << "Time limit reached" << std::endl;
+  else if ( check_convergence() )
     std::cerr << "Convergence reached" << std::endl;
+  else if( i >= nb_iterations )
+    std::cerr << "Max iteration number reached" << std::endl;
     
   std::cerr << "Total optimization time: " << running_time_.time()
             << "s" << std::endl << std::endl;
