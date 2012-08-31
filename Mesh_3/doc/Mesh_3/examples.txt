@@ -1,17 +1,17 @@
 /*!
-\example implicit_functions.cpp
-\example mesh_3D_image.cpp
-\example mesh_3D_image_variable_size.cpp
-\example mesh_implicit_domains.cpp
-\example mesh_implicit_ellipsoid.cpp
-\example mesh_implicit_sphere.cpp
-\example mesh_implicit_sphere_variable_size.cpp
-\example mesh_optimization_example.cpp
-\example mesh_optimization_lloyd_example.cpp
-\example mesh_polyhedral_domain.cpp
-\example mesh_polyhedral_domain_with_features.cpp
-\example mesh_polyhedral_edge_tolerance_region.cpp
-\example mesh_polyhedral_implicit_function.cpp
-\example mesh_polyhedral_surface_tolerance_region.cpp
-\example mesh_two_implicit_spheres_with_balls.cpp
+\example Mesh_3/implicit_functions.cpp
+\example Mesh_3/mesh_3D_image.cpp
+\example Mesh_3/mesh_3D_image_variable_size.cpp
+\example Mesh_3/mesh_implicit_domains.cpp
+\example Mesh_3/mesh_implicit_ellipsoid.cpp
+\example Mesh_3/mesh_implicit_sphere.cpp
+\example Mesh_3/mesh_implicit_sphere_variable_size.cpp
+\example Mesh_3/mesh_optimization_example.cpp
+\example Mesh_3/mesh_optimization_lloyd_example.cpp
+\example Mesh_3/mesh_polyhedral_domain.cpp
+\example Mesh_3/mesh_polyhedral_domain_with_features.cpp
+\example Mesh_3/mesh_polyhedral_edge_tolerance_region.cpp
+\example Mesh_3/mesh_polyhedral_implicit_function.cpp
+\example Mesh_3/mesh_polyhedral_surface_tolerance_region.cpp
+\example Mesh_3/mesh_two_implicit_spheres_with_balls.cpp
 */
