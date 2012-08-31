@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Functions
 
 The function `refine_mesh_3` is a 3D 
 mesh generator. It produces simplicial meshes which discretize 
@@ -152,7 +152,7 @@ parameters::internal::Exude_options exude = parameters::exude());
 namespace parameters {
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::exude` allows the user to trigger a call to `exude_mesh_3` in the 
 `make_mesh_3` and `refine_mesh_3` mesh generation functions. 
@@ -188,7 +188,7 @@ parameters::internal::Exude_options exude(
   double parameters::sliver_bound = 0);
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::features` provides a value of internal type `Features` 
 to specify if \f$ 0\f$ and \f$ 1\f$-dimensional features have to be taken into account. 
@@ -215,7 +215,7 @@ template <class MeshDomain_3>
 Features features(MeshDomain_3 domain);
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::lloyd` allows the user to trigger a call of 
 `lloyd_optimize_mesh_3` in the mesh generation functions 
@@ -254,7 +254,7 @@ double parameters::convergence = 0.02,
 double parameters::freeze_bound = 0.01);
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::no_exude` allows the user to tell the mesh generation functions 
 `make_mesh_3` and `refine_mesh_3` that no exudation must be done. 
@@ -278,7 +278,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_exude());
 parameters::internal::Exude_options no_exude();
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::no_features` allows the user to prevent the handling 
 of \f$ 0\f$ and \f$ 1\f$ dimensional features. This is useful when the 
@@ -298,7 +298,7 @@ to take into account \f$ 0\f$ and \f$ 1\f$-dimensional input features.
 Features no_features();
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::no_lloyd` allows the user to tell the mesh generation functions 
 `make_mesh_3` and `refine_mesh_3` that no lloyd optimization must be done. 
@@ -322,7 +322,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_lloyd());
 parameters::internal::Lloyd_options no_lloyd();
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::no_odt` allows the user to tell the mesh generation functions 
 `make_mesh_3` and `refine_mesh_3` that no odt optimization must be done. 
@@ -346,7 +346,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_odt());
 parameters::internal::Odt_options no_odt();
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::no_perturb` allows the user to tell mesh generation global functions 
 `make_mesh_3` and `refine_mesh_3` that no perturbation must be done. 
@@ -375,7 +375,7 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_perturb());
 parameters::internal::Perturb_options no_perturb();
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::odt` allows the user to trigger a call to 
 `odt_optimize_mesh_3` in 
@@ -414,7 +414,7 @@ double parameters::convergence = 0.02,
 double parameters::freeze_bound = 0.01);
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Parameters
 
 The function `parameters::perturb` allows the user to trigger a call to 
 `perturb_mesh_3` in 

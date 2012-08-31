@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Functions
 
 The function `perturb_mesh_3` is a mesh optimizer that 
 improves the quality of a Delaunay mesh 

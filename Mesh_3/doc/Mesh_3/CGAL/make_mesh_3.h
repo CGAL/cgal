@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Functions
 
 The function `make_mesh_3` is a 3D 
 mesh generator. It produces simplicial meshes which discretize 

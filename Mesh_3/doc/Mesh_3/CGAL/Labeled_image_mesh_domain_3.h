@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Domains
 
 The class `Labeled_image_mesh_domain_3` implements a domain described by a 3D labeled image. A 3D 
 labeled image is a grid of voxels, where each voxel is associated with an index 

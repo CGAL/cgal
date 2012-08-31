@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3MeshClasses
 
 The class `Mesh_triangulation_3` provides a default triangulation to be used as the 3D 
 triangulation of a mesh generation process. 

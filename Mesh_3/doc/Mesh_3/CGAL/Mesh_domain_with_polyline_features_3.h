@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Domains
 
 The class `Mesh_domain_with_polyline_features_3` is designed to allow the user 
 to add some 0- and 1-dimensional 

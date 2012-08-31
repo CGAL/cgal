@@ -3,6 +3,27 @@
 /// \defgroup PkgMesh_3Concepts Concepts
 /// \ingroup PkgMesh_3
 
+/// \defgroup PkgMesh_3SecondaryConcepts Secondary Concepts
+/// \ingroup PkgMesh_3
+
+
+
+/// \defgroup PkgMesh_3MeshClasses Mesh Classes
+/// \ingroup PkgMesh_3
+
+
+/// \defgroup PkgMesh_3Domains Domains
+/// \ingroup PkgMesh_3
+
+/// \defgroup PkgMesh_3Functions Mesh Generation Functions
+/// \ingroup PkgMesh_3
+
+
+/// \defgroup PkgMesh_3Parameters Parameter Functions
+/// \ingroup PkgMesh_3
+
+
+
 /*!
 \addtogroup PkgMesh_3
 \todo check generated documentation

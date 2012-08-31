@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Domains
 
 The class `Implicit_mesh_domain_3` implements a domain whose bounding surface is 
 described 
