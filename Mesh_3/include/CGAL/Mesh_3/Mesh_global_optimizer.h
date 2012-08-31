@@ -331,7 +331,7 @@ operator()(int nb_iterations, Visitor visitor)
     // Update mesh with those moves
     update_mesh(moves, moving_vertices, visitor);
     visitor.end_of_iteration(i);
-   
+
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
     unsigned int moving_vertices_size = moving_vertices.size();   
     std::cerr << boost::format("\r             \r"
@@ -423,21 +423,23 @@ compute_moves(/*const */Moving_vertices_set& moving_vertices)
     Vector_3 move = compute_move(oldv);
     ++vit;
     
-	if ( CGAL::NULL_VECTOR != move )
+	  if ( CGAL::NULL_VECTOR != move )
     {
       Point_3 new_position = translate(oldv->point(),move);
       moves.push_back(std::make_pair(oldv,new_position));
     }
 #if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
   	else // CGAL::NULL_VECTOR == move
-	  moving_vertices.erase(oldv);
+    {
+      moving_vertices.erase(oldv);
+    }
 #endif
 
     // Stop if time_limit_ is reached
     if ( is_time_limit_reached() )
       break;
   }   
-  
+
   return moves;
 }
   
