@@ -1848,7 +1848,8 @@ move_point(const Vertex_handle& old_vertex,
     {
       ch->invalidate_circumcenter();
     }
-    std::copy(incident_cells.begin(),incident_cells.end(), std::back_inserter(outdated_cells_set));
+    std::copy(incident_cells.begin(),incident_cells.end(), 
+      std::inserter(outdated_cells_set, outdated_cells_set.end()));
     return move_point_no_topo_change(old_vertex, new_position);
   }
   else
