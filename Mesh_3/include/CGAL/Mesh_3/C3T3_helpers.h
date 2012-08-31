@@ -508,7 +508,7 @@ public:
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells);
 
-#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells_set,
@@ -1895,7 +1895,7 @@ move_point(const Vertex_handle& old_vertex,
   }
 }
 
-#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
@@ -1914,7 +1914,8 @@ move_point(const Vertex_handle& old_vertex,
     {
       ch->invalidate_circumcenter();
     }
-    std::copy(incident_cells.begin(),incident_cells.end(), std::back_inserter(outdated_cells_set));
+    std::copy(incident_cells.begin(),incident_cells.end(), 
+      std::inserter(outdated_cells_set, outdated_cells_set.end()));
     return move_point_no_topo_change(old_vertex, new_position);
   }
   else

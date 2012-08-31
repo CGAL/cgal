@@ -537,7 +537,7 @@ update_mesh(const Moves_vector& moves,
       FT size = sizing_field_(new_position,v);   
       
       // Move point
-#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
       Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
 #else
       Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells);
@@ -548,7 +548,7 @@ update_mesh(const Moves_vector& moves,
     else
     {
       // Move point
-#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
       helper_.move_point(v, new_position, outdated_cells, moving_vertices);
 #else
       helper_.move_point(v, new_position, outdated_cells);
