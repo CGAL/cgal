@@ -956,8 +956,12 @@ public:
       get_cell_from_element(derived().extract_element_from_container_value(ce))
         ->get_localization_id(),
 # endif
-      *m_empty_root_task,
-      circumcenter_of_element(derived().extract_element_from_container_value(ce))
+      *m_empty_root_task
+      // NOTE: if you uncomment this line (Load_based_worksharing_ds), the element may
+      // be a zombie at this point => thus, it may be "infinite" and cause an assertion error
+      // in debug mode when computing the circumcenter
+      //, circumcenter_of_element(derived().extract_element_from_container_value(ce)
+      )
     );
   }
 #endif

@@ -667,8 +667,8 @@ public:
     // We don't need it.
   }
 
-  template <typename P3, typename Func, typename Quality>
-  void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task, const P3 &point)
+  template <typename Func, typename Quality>
+  void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task)
   {
     WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
     WorkBatch &workbuffer = m_tls_work_buffers.local();
@@ -771,13 +771,12 @@ public:
     m_num_ids = num_ids;
   }
 
-  template <typename P3, typename Func, typename Quality>
+  template <typename Func, typename Quality>
   void enqueue_work(
     Func f,
     const Quality &quality,
     int localization_id,
-    tbb::task &parent_task,
-    const P3 &)
+    tbb::task &parent_task)
   {
     WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
 
@@ -902,13 +901,12 @@ public:
     m_mutexes_for_work_buffers.resize(num_ids);
   }
 
-  template <typename P3, typename Func, typename Quality>
+  template <typename Func, typename Quality>
   void enqueue_work(
     Func f,
     const Quality &quality,
     int localization_id,
-    tbb::task &parent_task,
-    const P3 &)
+    tbb::task &parent_task)
   {
     WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
 
