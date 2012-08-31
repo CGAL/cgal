@@ -11,7 +11,7 @@
 #include <CGAL/Kernel_d/Dimension_base.h>
 #include <CGAL/Kernel_d/Cartesian_LA_functors.h>
 #include <CGAL/Vector/array.h>
-#ifdef CGAL_USE_EIGEN
+#ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/LA_eigen/LA.h>
 #else
 #include <CGAL/LA_default/LA.h>

@@ -23,13 +23,13 @@
 #include <CGAL/basic.h>
 #include <CGAL/Kernel_traits.h>
 #include <limits>
-#ifdef CGAL_USE_EIGEN
+#ifdef CGAL_EIGEN3_ENABLED
 #include <Eigen/Core>
 #endif
 
 namespace CGAL {
 
-#ifdef CGAL_USE_EIGEN
+#ifdef CGAL_EIGEN3_ENABLED
 const int UNKNOWN_DIMENSION=Eigen::Dynamic;
 #else
 const int UNKNOWN_DIMENSION=std::numeric_limits<int>::max();
@@ -107,7 +107,7 @@ template<int d1,int d2>struct Product_dimension<Dimension_tag<d1>,Dimension_tag<
         typedef Dimension_tag<d1*d2> type;
 };
 
-#ifdef CGAL_USE_EIGEN
+#ifdef CGAL_EIGEN3_ENABLED
 // Convert to Eigen's notion of dimension
 template <class Dim_> struct Eigen_dimension {
 	enum { value=Eigen::Dynamic };

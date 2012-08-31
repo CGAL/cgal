@@ -1,7 +1,7 @@
 #ifndef CGAL_LA_EIGEN_H
 #define CGAL_LA_EIGEN_H
 
-#ifndef CGAL_USE_EIGEN
+#ifndef CGAL_EIGEN3_ENABLED
 #error Requires Eigen
 #endif
 #include <boost/type_traits/is_arithmetic.hpp>
