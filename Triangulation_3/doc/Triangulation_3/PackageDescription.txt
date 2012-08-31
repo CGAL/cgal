@@ -3,6 +3,23 @@
 /// \defgroup PkgTriangulation3 3D Triangulations
 /// \defgroup PkgTriangulation3Concepts Concepts
 /// \ingroup PkgTriangulation3
+
+
+/// \defgroup PkgTriangulation3TriangulationClasses Triangulation Classes
+/// \ingroup PkgTriangulation3
+
+
+/// \defgroup PkgTriangulation3TraitsClasses Traits Classes
+/// \ingroup PkgTriangulation3
+
+/// \defgroup PkgTriangulation3VertexFaceClasses Vertex and Face Classes
+/// \ingroup PkgTriangulation3
+
+
+/// \defgroup PkgTriangulation3Miscellaneous Miscellaneous
+/// \ingroup PkgTriangulation3
+
+
 /*!
 \addtogroup PkgTriangulation3
 \todo check generated documentation

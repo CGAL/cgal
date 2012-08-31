@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3
+\ingroup PkgTriangulation3TraitsClasses
 
 \deprecated This class is deprecated since \cgal 3.6. 
 The class `CGAL::Regular_triangulation_euclidean_traits_3` should be used instead. 

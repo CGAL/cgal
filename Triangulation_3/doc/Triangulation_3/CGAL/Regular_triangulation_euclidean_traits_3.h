@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3
+\ingroup PkgTriangulation3TraitsClasses
 
 The class `Regular_triangulation_euclidean_traits_3` is designed as a default traits class for the 
 class `Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>`. 

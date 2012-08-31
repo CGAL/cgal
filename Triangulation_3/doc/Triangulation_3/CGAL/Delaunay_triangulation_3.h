@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3
+\ingroup PkgTriangulation3TriangulationClasses
 
 The class `Delaunay_triangulation_3` represents a three-dimensional 
 Delaunay triangulation. 
@@ -49,13 +49,20 @@ class Delaunay_triangulation_3 :
 public:
 
 /// \name Types 
-CONVERROR Check if this needs to be spread\n/// In addition to those inherited, the following types are defined, for use by the construction of the Voronoi diagram:
+
 /// @{
 
 /*! 
 
 */ 
 typedef LocationPolicy Location_policy; 
+
+/// @}
+
+/*! \name
+In addition to those inherited, the following types are defined, for use by the construction of the Voronoi diagram:
+*/
+/// @{
 
 /*! 
 
@@ -105,7 +112,7 @@ const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3());
 /// @} 
 
 /// \name Insertion 
-CONVERROR Check if this needs to be spread\n/// The following methods overload the corresponding methods of triangulations to ensure the empty sphere property of Delaunay triangulations. In the degenerate case when there are co-spherical points, the Delaunay triangulation is known not to be uniquely defined. In this case, \cgal chooses a particular Delaunay triangulation using a symbolic perturbation scheme \cite cgal:dt-pvr3d-03. The following method allows one to insert several points. It returns the number of inserted points.
+
 /// @{
 
 /*! 
@@ -184,8 +191,23 @@ Vertex_handle move(Vertex_handle v, const Point & p);
 
 /// @} 
 
-/// \name Removal 
-CONVERROR Check if this needs to be spread\n/// When a vertex `v` is removed from a triangulation, all the cells incident to `v` must be removed, and the polyhedral region consisting of all the tetrahedra that are incident to `v` must be re-triangulated. So, the problem reduces to triangulating a polyhedral region, while preserving its boundary, or to compute a <I>constrained</I> triangulation. This is known to be sometimes impossible: the Sch&ouml;nhardt polyhedron cannot be triangulated \cite cgal:s-cgehd-98. However, when dealing with Delaunay triangulations, the case of such polyhedra that cannot be re-triangulated cannot happen, so \cgal proposes a vertex removal. If, due to some point removals, the size of the Delaunay triangulation decreases drastically, it might be interesting to defragment the `CGAL::Compact_container` (used by the `Triangulation_data_structure_3`).
+/*! \name Removal 
+
+When a vertex `v` is removed from a triangulation, all the cells
+incident to `v` must be removed, and the polyhedral region consisting
+of all the tetrahedra that are incident to `v` must be
+re-triangulated. So, the problem reduces to triangulating a polyhedral
+region, while preserving its boundary, or to compute a
+*constrained* triangulation. This is known to be sometimes
+impossible: the Sch&ouml;nhardt polyhedron cannot be triangulated
+\cite cgal:s-cgehd-98. However, when dealing with Delaunay
+triangulations, the case of such polyhedra that cannot be
+re-triangulated cannot happen, so \cgal proposes a vertex removal. 
+
+If,due to some point removals, the size of the Delaunay triangulation
+decreases drastically, it might be interesting to defragment the
+`CGAL::Compact_container` (used by the `Triangulation_data_structure_3`).
+*/
 /// @{
 
 /*! 
@@ -216,7 +238,7 @@ int remove_cluster(InputIterator first, InputIterator beyond);
 /// @} 
 
 /// \name Queries 
-CONVERROR Check if this needs to be spread\n/// A point `p` is said to be in conflict with a cell `c` in dimension 3 (resp. a facet `f` in dimension 2) iff `dt`.`side_of_sphere(c, p)` (resp. `dt`.`side_of_circle(f, p)`) returns `ON_BOUNDED_SIDE`. The set of cells (resp. facets in dimension 2) which are in conflict with `p` is connected, and it forms a hole. A face (cell, facet or edge) is said to be a Gabriel face iff its smallest circumscribing sphere do not enclose any vertex of the triangulation. Any Gabriel face belongs to the Delaunay triangulation, but the reciprocal is not true. The following member functions test the Gabriel property of Delaunay faces.
+
 /// @{
 
 /*! 
@@ -295,6 +317,16 @@ nearest to \f$ p\f$.
 Vertex_handle nearest_vertex_in_cell(Point p, 
 Cell_handle c); 
 
+
+/// @}
+
+/*! \name
+A point `p` is said to be in conflict with a cell `c` in dimension 3 (resp. a facet `f` in dimension 2) iff `dt`.`side_of_sphere(c, p)` (resp. `dt`.`side_of_circle(f, p)`) returns `ON_BOUNDED_SIDE`. The set of cells (resp. facets in dimension 2) which are in conflict with `p` is connected, and it forms a hole.
+*/
+/// @{
+
+
+
 /*! 
 Computes the conflict hole induced by `p`. The starting cell 
 (resp. facet) `c` must be in conflict. Then this function returns 
@@ -370,6 +402,14 @@ OutputIterator
 vertices_on_conflict_zone_boundary(Point p, Cell_handle c, 
 OutputIterator res); 
 
+
+/// @}
+
+/*! \name
+A face (cell, facet or edge) is said to be a Gabriel face iff its smallest circumscribing sphere do not enclose any vertex of the triangulation. Any Gabriel face belongs to the Delaunay triangulation, but the reciprocal is not true. The following member functions test the Gabriel property of Delaunay faces.
+*/
+/// @{
+
 /*! 
 
 */ 
@@ -392,8 +432,9 @@ bool is_Gabriel(const Edge& e);
 
 /// @} 
 
-/// \name Voronoi diagram 
-CONVERROR Check if this needs to be spread\n/// \cgal offers several functionalities to display the Voronoi diagram of a set of points in 3D. Note that the user should use a kernel with exact constructions in order to guarantee the computation of the Voronoi diagram (as opposed to computing the triangulation only, which requires only exact predicates). CONVERROR DEBUG
+/*! \name Voronoi Diagram 
+ \cgal offers several functionalities to display the Voronoi diagram of a set of points in 3D. Note that the user should use a kernel with exact constructions in order to guarantee the computation of the Voronoi diagram (as opposed to computing the triangulation only, which requires only exact predicates).
+*/
 /// @{
 
 /*! 
@@ -432,7 +473,7 @@ template <class Stream> Stream & draw_dual(Stream & os);
 /// @} 
 
 /// \name Checking 
-CONVERROR Check if this needs to be spread\n/// These methods are mainly a debugging help for the users of advanced features.
+/// These methods are mainly a debugging help for the users of advanced features.
 /// @{
 
 /*! 

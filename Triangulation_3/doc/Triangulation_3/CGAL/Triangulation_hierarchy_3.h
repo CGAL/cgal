@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3
+\ingroup PkgTriangulation3TriangulationClasses
 
 \deprecated This class is deprecated since \cgal 3.6. Its
 functionality has been replaced by the use of the `Fast_location` tag

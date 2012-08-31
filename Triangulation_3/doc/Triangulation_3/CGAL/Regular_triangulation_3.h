@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3
+\ingroup PkgTriangulation3TriangulationClasses
 
 Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \R^3\f$. Let 
 \f$ {p}^{(w)}=(p,w_p), p\in\R^3, w_p\in\R\f$ and 
@@ -84,8 +84,9 @@ const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3());
 
 /// @} 
 
-/// \name Insertion 
-CONVERROR Check if this needs to be spread\n/// The following methods, which already exist in `Triangulation_3`, are overloaded to ensure the property that all power spheres are regular. The following method allows one to insert several points. The following methods, which already exist in `Triangulation_3`, are overloaded to ensure that hidden points are well created and maintained.
+/*!\name Insertion 
+The following methods, which already exist in `Triangulation_3`, are overloaded to ensure the property that all power spheres are regular. The following method allows one to insert several points. 
+*/
 /// @{
 
 /*! 
@@ -157,6 +158,15 @@ template < class WeightedPointWithInfoInputIterator >
 std::ptrdiff_t 
 insert(WeightedPointWithInfoInputIterator first, WeightedPointWithInfoInputIterator last); 
 
+
+
+/// @}
+
+/*! \name
+The following methods, which already exist in `Triangulation_3`, are overloaded to ensure that hidden points are well created and maintained.
+*/
+/// @{
+
 /*! 
 Creates a new vertex by starring a hole. It takes an iterator range 
 [`cell_begin`; `cell_end`[ of `Cell_handle`s which specifies 
@@ -198,8 +208,12 @@ void remove(Vertex_handle v);
 
 /// @} 
 
-/// \name Queries 
-CONVERROR Check if this needs to be spread\n/// Let us remark that \f[ \Pi({p}^{(w)}-{z}^{(w)}) > 0 \f] is equivalent to <CENTER>`p` lies outside the sphere with center `z` and radius \f$ \sqrt{w_p^2+w_z^2}\f$.</CENTER> This remark helps provide an intuition about the following predicates. CAPTION side_of_power_circle. \anchor Triangulation3figsidedim2 CONVERROR HtmlOnly needs treatment <CENTER> <img border=0 src="./sidedim2.gif" align=middle alt="side_of_power_circle"> </CENTER> CONVERROR EndHtmlOnly A weighted point `p` is said to be in conflict with a cell `c` in dimension 3 (resp. with a facet `f` in dimension 2) if it has a negative power distance to the power sphere of `c` (resp. to the power circle of `f`). The set of cells (resp. facets in dimension 2) which are in conflict with `p` is connected. In the weighted setting, a face (cell, facet, edge or vertex) is said to be a Gabriel face iff the smallest sphere orthogonal to the weighted points associated to its vertices, has a positive power product with the weighted point of any other vertex of the triangulation. Any weighted Gabriel face belongs to the regular triangulation, but the reciprocal is not true. The following member functions test the Gabriel property of the faces of the regular triangulation.
+/*! \name Queries 
+Let us remark that \f$ \Pi({p}^{(w)}-{z}^{(w)}) > 0 \f$ is equivalent to `p` lies outside the sphere with center `z` and radius \f$ \sqrt{w_p^2+w_z^2}\f$. This remark helps provide an intuition about the following predicates.
+
+\image html  sidedim2.gif side_of_power_circle
+*/
+
 /// @{
 
 /*! 
@@ -331,25 +345,30 @@ with respect to the power distance.
 Vertex_handle nearest_power_vertex_in_cell(Weighted_point p, 
 Cell_handle c); 
 
+
+/// @}
+
+/*! \name
+
+A weighted point `p` is said to be in conflict with a cell `c` in dimension 3 (resp.\ with a facet `f` in dimension 2) if it has a negative power distance to the power sphere of `c` (resp.\ to the power circle of `f`).\ The set of cells (resp.\ facets in dimension 2) which are in conflict with `p` is connected. 
+*/
+/// @{
+
 /*! 
+
 Compute the conflicts with `p`. 
-The starting cell 
-(resp. facet) `c` must be in conflict with `p`. 
-Then this function returns 
-respectively in the output iterators: 
 
-- `cit`: the cells (resp. facets) in conflict with `p`. 
+@param p     The query point.
+@param c     The starting cell.
+@param cit  The cells (resp. facets) in conflict with `p`. 
+@param bfit The facets (resp. edges) on the boundary of the conflict zone, that is, the facets  (resp.\ edges) `(t, i)` where the cell (resp.. facet) `t` is in conflict, but `t->neighbor(i)` is not. 
+@param ifit The facets (resp.\ edges) inside the conflict zone, that facets incident to two cells (resp.\ facets) in conflict. 
 
-- `bfit`: the facets (resp. edges) on the boundary of the 
-conflict zone, that is, the facets 
-(resp. edges) `(t, i)` where the cell (resp. facet) `t` is in 
-conflict, but `t->neighbor(i)` is not. 
-
-- `ifit`: the facets (resp. edges) inside the conflict zone, 
-that facets incident to two cells (resp facets) in conflict. 
-
-Returns the `Triple` composed of the resulting output iterators. 
+\pre  The starting cell (resp.\ facet) `c` must be in conflict with `p`. 
 \pre `rt`.`dimension()` \f$ \geq2\f$, and `c` is in conflict with `p`. 
+
+\return the `Triple` composed of the resulting output iterators. 
+
 
 */ 
 template <class OutputIteratorBoundaryFacets, 
@@ -397,6 +416,14 @@ OutputIterator
 vertices_inside_conflict_zone(Weighted_point p, Cell_handle c, 
 OutputIterator res); 
 
+
+/// @}
+
+/*! \name
+In the weighted setting, a face (cell, facet, edge or vertex) is said to be a Gabriel face iff the smallest sphere orthogonal to the weighted points associated to its vertices, has a positive power product with the weighted point of any other vertex of the triangulation. Any weighted Gabriel face belongs to the regular triangulation, but the reciprocal is not true. The following member functions test the Gabriel property of the faces of the regular triangulation.
+*/
+/// @{
+
 /*! 
 
 */ 
@@ -424,8 +451,9 @@ bool is_Gabriel(Vertex_handle v);
 
 /// @} 
 
-/// \name Power diagram 
-CONVERROR Check if this needs to be spread\n/// \cgal offers several functionalities to display the Power diagram of a set of points in 3D. Note that the user should use a kernel with exact constructions in order to guarantee the computation of the Voronoi diagram (as opposed to computing the triangulation only, which requires only exact predicates). CONVERROR DEBUG
+/*! \name Power Diagram 
+\cgal offers several functionalities to display the power diagram of a set of points in 3D. Note that the user should use a kernel with exact constructions in order to guarantee the computation of the Voronoi diagram (as opposed to computing the triangulation only, which requires only exact predicates).
+*/
 /// @{
 
 /*! 

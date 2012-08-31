@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3
+\ingroup PkgTriangulation3VertexFaceClasses
 
 \deprecated This class is deprecated since \cgal 3.6. Its functionality is now 
 transparently added when using the `Fast_location` tag as the 

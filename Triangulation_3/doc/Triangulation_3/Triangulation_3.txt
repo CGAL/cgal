@@ -49,7 +49,7 @@ indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index.
 
 \anchor Triangulation3figorient
-\image html orient "Orientation of a cell (3-dimensional case)."
+\image html orient.gif "Orientation of a cell (3-dimensional case)."
 
 As in the underlying combinatorial triangulation (see
 Chapter \ref chapterTDS3), edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces)
@@ -430,7 +430,7 @@ as the following example shows.
 
 \cgalexample{adding_handles_3.cpp}
 
-## Setting Information While Inserting a Range of Points ##
+## Setting Information While Inserting a %Range of Points ##
 
 The most efficient method to insert (weighted) points in a
 Delaunay (or regular) triangulation is to provide an iterator
@@ -443,21 +443,21 @@ doing the same operation: set an unsigned integer as the information
 of each vertex. The value of this unsigned integer is the initial order
 of the corresponding point given in the range.
 
-## Using an Iterator Over Pairs ##
+## Using an %Iterator Over Pairs ##
 
 Each point and its information are gathered into a pair. We provide
 the constructor of the triangulation (which is calling the `insert` function)
 with a range of such pairs.
 \cgalexample{info_insert_with_pair_iterator.cpp}
 
-## Using the Boost Zip Iterator ##
+## Using the Boost Zip %Iterator ##
 
 Information and points are in separate containers. We use
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
 \cgalexample{info_insert_with_zip_iterator.cpp}
 
-## Using the Boost Transform Iterator ##
+## Using the Boost Transform %Iterator ##
 
 We define a functor `Auto_count` used together with
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
@@ -467,7 +467,7 @@ is dereferenced only once per point during the insertion.
 
 \subsection Triangulation3secsimplex The Simplex Class 
 
-The triangulation defines a `Simplex` class that represents a
+The triangulation defines a `Triangulation_3::Simplex` class that represents a
 simplex (vertex, edge, facet or cell). This example demonstrates how
 simplices can be stored in a set.
 
@@ -477,8 +477,7 @@ simplices can be stored in a set.
 
 \cgalexample{fast_location_3.cpp}
 
-## Finding the Cells in Conflict with a Point in a Delaunay
-Triangulation ##
+## Finding the Cells in Conflict with a Point in a Delaunay Triangulation ##
 
 \cgalexample{find_conflicts_3.cpp}
 
@@ -804,7 +803,7 @@ points, as measured empirically using `Memory_sizer` for large triangulations
 CAPTION Memory usage in bytes per point for large data sets. 
 \anchor Triangulation3figmemory
 
-## Variability Depending on the Data Sets and the Kernel ##
+## Variability Depending on the Data Sets and the %Kernel ##
 
 Besides the complexity of the Delaunay triangulation that varies with the
 distribution of the points, another critical aspect affects the efficiency :
@@ -880,7 +879,7 @@ also be found in \cite cgal:dp-eegpd-03.
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>Handle</B> 
+<B>%Handle</B> 
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 #points 

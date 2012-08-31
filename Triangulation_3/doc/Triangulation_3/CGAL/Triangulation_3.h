@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3
+\ingroup PkgTriangulation3TriangulationClasses
 
 The class `Triangulation_3` represents a 3-dimensional tetrahedralization 
 of points. 
@@ -42,7 +42,7 @@ public:
 public:
 
 /// \name Types 
-CONVERROR Check if this needs to be spread\n/// The class `Triangulation_3` defines the following types: Only vertices (\f$ 0\f$-faces) and cells (\f$ 3\f$-faces) are stored. Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly represented and thus there are no corresponding classes (see Section \ref Triangulation3secintro). The vertices and faces of the triangulations are accessed through `handles`, `iterators` and `circulators`. A handle is a model of the `Handle` concept, and supports the two dereference operators and `operator->`. A circulator is a model of the concept `Circulator`. Iterators and circulators are bidirectional and non-mutable. The edges and facets of the triangulation can also be visited through iterators and circulators which are bidirectional and non-mutable. Iterators and circulators are convertible to the corresponding handles, thus the user can pass them directly as arguments to the functions. The triangulation class also defines the following enum type to specify which case occurs when locating a point in the triangulation.
+/// The class `Triangulation_3` defines the following types:   
 /// @{
 
 /*! 
@@ -75,6 +75,14 @@ typedef TriangulationTraits_3::Triangle_3 Triangle;
 */ 
 typedef TriangulationTraits_3::Tetrahedron_3 Tetrahedron; 
 
+/// @}
+
+/*! \name
+Only vertices (\f$ 0\f$-faces) and cells (\f$ 3\f$-faces) are stored. Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly represented and thus there are no corresponding classes (see Section \ref Triangulation3secintro).
+   */
+
+/// @{
+
 /*! 
 
 */ 
@@ -94,6 +102,24 @@ typedef TriangulationDataStructure_3::Facet Facet;
 
 */ 
 typedef TriangulationDataStructure_3::Edge Edge; 
+
+
+/// @}
+
+/*! \name 
+
+The vertices and faces of the triangulations are accessed through
+`handles`, `iterators` and `circulators`. A handle is a model of the
+`Handle` concept, and supports the two dereference operators and
+`operator->`. A circulator is a model of the concept
+`Circulator`. Iterators and circulators are bidirectional and
+non-mutable. The edges and facets of the triangulation can also be
+visited through iterators and circulators which are bidirectional and
+non-mutable. Iterators and circulators are convertible to the
+corresponding handles, thus the user can pass them directly as
+arguments to the functions.  
+*/
+/// @{
 
 /*! 
 handle to a vertex 
@@ -177,7 +203,7 @@ circulator over all facets incident to a given edge
 typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator; 
 
 /*! 
-
+specifies which case occurs when performing point locating in the triangulation.
 */ 
 enum Locate_type {VERTEX=0, EDGE, FACET, CELL, OUTSIDE_CONVEX_HULL, 
 OUTSIDE_AFFINE_HULL}; 
@@ -264,17 +290,12 @@ Returns a const reference to the triangulation data structure.
 */ 
 const TriangulationDataStructure_3 & tds() const; 
 
-/// @} 
-
-/// \name Non const access 
-/// \attention The responsibility of keeping a valid triangulation belongs to the
-/// user when using advanced operations allowing a direct manipulation
-/// of the `tds`. 
-/// @{
 
 /*! 
 Returns a reference to the triangulation data structure. 
 \advanced This method is mainly a help for users implementing their own triangulation algorithms.
+
+\advanced The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
 */ 
 TriangulationDataStructure_3 & tds(); 
 
@@ -305,8 +326,8 @@ Cell_handle infinite_cell() const;
 
 /// @} 
 
-/// \name Non-constant-time access functions 
-CONVERROR Check if this needs to be spread\n/// As previously said, the triangulation is a collection of cells that are either infinite or represent a finite tetrahedra, where an infinite cell is a cell incident to the infinite vertex. Similarly we call an edge (resp. facet) `infinite` if it is incident to the infinite vertex.
+/// \name Non-Constant-Time Access Functions 
+/// As previously said, the triangulation is a collection of cells that are either infinite or represent a finite tetrahedra, where an infinite cell is a cell incident to the infinite vertex. Similarly we call an edge (resp. facet) `infinite` if it is incident to the infinite vertex.
 /// @{
 
 /*! 
@@ -336,7 +357,7 @@ size_type number_of_finite_edges() const;
 
 /// @} 
 
-/// \name Geometric access functions 
+/// \name Geometric Access Functions 
 /// @{
 
 /*! 
@@ -428,7 +449,7 @@ bool is_infinite(const Edge & e) const;
 /// @} 
 
 /// \name Queries 
-CONVERROR Check if this needs to be spread\n/// There is a method `has_vertex` in the cell class. The analogous methods for facets are defined here. The following three methods test whether two facets have the same vertices.
+
 /// @{
 
 /*! 
@@ -489,6 +510,12 @@ bool is_cell(Vertex_handle u, Vertex_handle v,
 Vertex_handle w, Vertex_handle x, 
 Cell_handle & c) const; 
 
+/// @}
+
+/*! \name
+There is a method `has_vertex` in the cell class. The analogous methods for facets are defined here. 
+*/
+/// @{
 /*! 
 If `v` is a vertex of `f`, then `j` is the index of 
 `v` in the cell `f.first`, and the method returns `true`. 
@@ -514,6 +541,13 @@ index of the vertex.
 */ 
 bool has_vertex(Cell_handle c, int i, Vertex_handle v) const; 
 
+/// @}
+
+/*! \name
+The following three methods test whether two facets have the same vertices. 
+ */
+
+/// @{
 /*! 
 
 */ 
@@ -531,8 +565,8 @@ bool are_equal(const Facet & f, Cell_handle n, int j) const;
 
 /// @} 
 
-/// \name Point location 
-CONVERROR Check if this needs to be spread\n/// The class `Triangulation_3` provides two functions to locate a given point with respect to a triangulation. It provides also functions to test if a given point is inside a finite face or not. Note that the class `Delaunay_triangulation_3` also provides a `nearest_vertex()` function.
+/// \name Point Location 
+/// The class `Triangulation_3` provides two functions to locate a given point with respect to a triangulation. It provides also functions to test if a given point is inside a finite face or not. Note that the class `Delaunay_triangulation_3` also provides a `nearest_vertex()` function.
 /// @{
 
 /*! 
@@ -686,8 +720,27 @@ Locate_type & lt, int & li) const;
 
 /// @} 
 
-/// \name Flips 
-CONVERROR Check if this needs to be spread\n/// Two kinds of flips exist for a three-dimensional triangulation. They are reciprocal. To be flipped, an edge must be incident to three tetrahedra. During the flip, these three tetrahedra disappear and two tetrahedra appear. Figure \ref Triangulation3figflips(left) shows the edge that is flipped as bold dashed, and one of its three incident facets is shaded. On the right, the facet shared by the two new tetrahedra is shaded. Flips are possible only under the following conditions: - the edge or facet to be flipped is not on the boundary of the convex hull of the triangulation - the five points involved are in convex position. CAPTION Flips. \anchor Triangulation3figflips CONVERROR HtmlOnly needs treatment <CENTER> <img border=0 src="./flips.gif" align=middle alt="Flips"> </CENTER> CONVERROR EndHtmlOnly The following methods guarantee the validity of the resulting 3D triangulation. <I>Flips for a 2d triangulation are not implemented yet</I>
+/*! \name Flips 
+
+Two kinds of flips exist for a three-dimensional triangulation. They
+are reciprocal. To be flipped, an edge must be incident to three
+tetrahedra. During the flip, these three tetrahedra disappear and two
+tetrahedra appear. Figure \ref Triangulation3figflips (left) shows the
+edge that is flipped as bold dashed, and one of its three incident
+facets is shaded. On the right, the facet shared by the two new
+tetrahedra is shaded. Flips are possible only under the following
+conditions: - the edge or facet to be flipped is not on the boundary
+of the convex hull of the triangulation - the five points involved are
+in convex position. 
+
+\anchor Triangulation3figflips
+\image html flips.gif "Flips"
+
+The following methods guarantee the validity of the resulting 3D
+triangulation. Flips for a 2d triangulation are not implemented yet.
+
+*/
+
 /// @{
 
 /*! 
@@ -741,7 +794,8 @@ void flip_flippable(Cell_handle c, int i);
 /// @} 
 
 /// \name Insertions 
-CONVERROR Check if this needs to be spread\n/// The following operations are guaranteed to lead to a valid triangulation when they are applied on a valid triangulation. The previous methods are sufficient to build a whole triangulation. We also provide some other methods that can be used instead of `insert(p)` when the place where the new point `p` must be inserted is already known. They are also guaranteed to lead to a valid triangulation when they are applied on a valid triangulation. CAPTION `insert_outside_convex_hull` (2-dimensional case). \anchor Triangulation3figinsert_outside_convex_hull CONVERROR HtmlOnly needs treatment <CENTER> <img border=0 src="./insert_outside_convex_hull.gif" align=middle alt="insert_outside_convex_hull} (2-dimensional case)"> </CENTER> CONVERROR EndHtmlOnly CAPTION `insert_outside_affine_hull` (2-dimensional case). \anchor Triangulation3figinsert_outside_affine_hull CONVERROR HtmlOnly needs treatment <CENTER> <img border=0 src="./insert_outside_affine_hull.gif" align=middle alt="insert_outside_affine_hull} (2-dimensional case)"> </CENTER> CONVERROR EndHtmlOnly
+/// The following operations are guaranteed to lead to a valid triangulation when they are applied on a valid triangulation.
+
 /// @{
 
 /*! 
@@ -798,6 +852,17 @@ template < class InputIterator >
 std::ptrdiff_t 
 insert(InputIterator first, InputIterator last); 
 
+
+/// @} 
+
+/*! \name 
+We also provide some other methods that can be used instead of
+`Triangulatation_3::insert()` when the place where the new point must
+be inserted is already known. They are also guaranteed to lead to a
+valid triangulation when they are applied on a valid triangulation.
+*/
+
+// @{
 /*! 
 Inserts point `p` in cell `c`. Cell `c` is split into 4 
 tetrahedra. 
@@ -830,7 +895,7 @@ dimension 1, the edge is split into 2 edges.
 Vertex_handle insert_in_edge(const Point & p, const Edge & e); 
 
 /*! 
-As above, inserts `p` in edge \f$ (\ccc{i}, \ccc{j})\f$ of `c`. 
+As above, inserts `p` in edge \f$ (i, j)\f$ of `c`. 
 \pre As above and \f$ i\neq j\f$. Moreover \f$ i,j \in\{0,1,2,3\}\f$ in dimension 3, \f$ i,j \in\{0,1,2\}\f$ in dimension 2, \f$ i,j \in\{0,1\}\f$ in dimension 1. 
 */ 
 Vertex_handle insert_in_edge(Point p, Cell_handle c, int i, int j); 
@@ -842,6 +907,9 @@ Links `p` to all points in the triangulation that are visible from
 `p`. Updates consequently the infinite faces. See 
 Figure \ref Triangulation3figinsert_outside_convex_hull. 
 \pre `t`.`dimension()` \f$ >0\f$, `c`, and the \f$ k\f$-face represented by `c` is infinite and contains `t`. 
+
+\anchor Triangulation3figinsert_outside_convex_hull
+\image html insert_outside_convex_hull.gif "insert_outside_convex_hull() (2-dimensional case)"
 */ 
 Vertex_handle insert_outside_convex_hull(const Point & p, 
 Cell_handle c); 
@@ -855,6 +923,9 @@ hull. See Figure \ref Triangulation3figinsert_outside_affine_hull.
 This method can be used to insert the first point in an empty 
 triangulation. 
 \pre `t`.`dimension()` \f$ <3\f$ and `p` lies outside the affine hull of the points. 
+
+\anchor Triangulation3figinsert_outside_affine_hull
+\image html insert_outside_affine_hull.gif "insert_outside_affine_hull() (2-dimensional case)"
 */ 
 Vertex_handle insert_outside_affine_hull(const Point & p); 
 
@@ -889,8 +960,9 @@ Cell_handle begin, int i, Vertex_handle newv);
 
 /// @} 
 
-/// \name Cell, Face, Edge and Vertex Iterators 
-CONVERROR Check if this needs to be spread\n/// The following iterators allow the user to visit cells, facets, edges and vertices of the triangulation. These iterators are non-mutable, bidirectional and their value types are respectively `Cell`, `Facet`, `Edge` and `Vertex`. They are all invalidated by any change in the triangulation.
+/*! \name Cell, Face, Edge and Vertex Iterators 
+The following iterators allow the user to visit cells, facets, edges and vertices of the triangulation. These iterators are non-mutable, bidirectional and their value types are respectively `Cell`, `Facet`, `Edge` and `Vertex`. They are all invalidated by any change in the triangulation.
+*/
 /// @{
 
 /*! 
@@ -1000,8 +1072,9 @@ Point_iterator points_end() const;
 
 /// @} 
 
-/// \name Cell and Facet Circulators 
-CONVERROR Check if this needs to be spread\n/// The following circulators respectively visit all cells or all facets incident to a given edge. They are non-mutable and bidirectional. They are invalidated by any modification of one of the cells traversed. The following circulators on facets are defined only in dimension 3, though facets are defined also in dimension 2: there are only two facets sharing an edge in dimension 2. HEADING:Traversal of the incident cells, facets and edges, and the adjacent
+/*!\name Cell and Facet Circulators 
+The following circulators respectively visit all cells or all facets incident to a given edge. They are non-mutable and bidirectional. They are invalidated by any modification of one of the cells traversed.  
+*/
 /// @{
 
 /*! 
@@ -1026,7 +1099,13 @@ As above for edge `(i,j)` of `c`.
 */ 
 Cell_circulator incident_cells(Cell_handle c, int i, int j, 
 Cell_handle start) const; 
+  /// @}
 
+/*! \\name
+The following circulators on facets are defined only in dimension 3, though facets are defined also in dimension 2: there are only two facets sharing an edge in dimension 2.
+*/
+
+/// @{
 /*! 
 Starts at an arbitrary facet incident to `e`. 
 \pre `t`.`dimension()` \f$ =3\f$ 
@@ -1064,10 +1143,10 @@ Cell_handle start, int f) const;
 
 /// @} 
 
-/// \name Traversal of the incident cells, facets and edges, and the adjacent 
+/// \name Traversal of the Incident Cells, Facets and Edges, and the Adjacent Vertices of a Given Vertex
 /// @{
 
-vertices of a given vertex 
+
 /*! 
 Copies the `Cell_handle`s of all cells incident to `v` to the output 
 iterator `cells`. 
@@ -1078,7 +1157,6 @@ template <class OutputIterator>
 OutputIterator 
 incident_cells(Vertex_handle v, OutputIterator cells) const; 
 
-vertices of a given vertex 
 /*! 
 Copies the `Cell_handle`s of all finite cells incident to `v` to the output 
 iterator `cells`. 
@@ -1089,7 +1167,6 @@ template <class OutputIterator>
 OutputIterator 
 finite_incident_cells(Vertex_handle v, OutputIterator cells) const; 
 
-vertices of a given vertex 
 /*! 
 Copies all `Facet`s incident to `v` to the output iterator 
 `facets`. 
@@ -1100,7 +1177,6 @@ template <class OutputIterator>
 OutputIterator 
 incident_facets(Vertex_handle v, OutputIterator facets) const; 
 
-vertices of a given vertex 
 /*! 
 Copies all finite `Facet`s incident to `v` to the output iterator 
 `facets`. 
@@ -1111,7 +1187,6 @@ template <class OutputIterator>
 OutputIterator 
 finite_incident_facets(Vertex_handle v, OutputIterator facets) const; 
 
-vertices of a given vertex 
 /*! 
 Copies all `Edge`s incident to `v` to the 
 output iterator `edges`. Returns the resulting output iterator. 
@@ -1121,7 +1196,6 @@ template <class OutputIterator>
 OutputIterator 
 incident_edges(Vertex_handle v, OutputIterator edges) const; 
 
-vertices of a given vertex 
 /*! 
 Copies all finite `Edge`s incident to `v` to the 
 output iterator `edges`. Returns the resulting output iterator. 
@@ -1131,7 +1205,6 @@ template <class OutputIterator>
 OutputIterator 
 finite_incident_edges(Vertex_handle v, OutputIterator edges) const; 
 
-vertices of a given vertex 
 /*! 
 Copies the `Vertex_handle`s of all vertices adjacent to `v` to the 
 output iterator `vertices`. If `t`.`dimension()` \f$ <0\f$, then do 
@@ -1142,7 +1215,6 @@ template <class OutputIterator>
 OutputIterator 
 adjacent_vertices(Vertex_handle v, OutputIterator vertices) const; 
 
-vertices of a given vertex 
 /*! 
 Copies the `Vertex_handle`s of all finite vertices adjacent to `v` to the 
 output iterator `vertices`. If `t`.`dimension()` \f$ <0\f$, then do 
@@ -1153,7 +1225,6 @@ template <class OutputIterator>
 OutputIterator 
 finite_adjacent_vertices(Vertex_handle v, OutputIterator vertices) const; 
 
-vertices of a given vertex 
 /*! 
 Returns the degree of a vertex, that is, the number of incident vertices. 
 The infinite vertex is counted. 
@@ -1163,7 +1234,7 @@ size_type degree(Vertex_handle v) const;
 
 /// @} 
 
-/// \name Traversal between adjacent cells 
+/// \name Traversal Between Adjacent Cells 
 /// @{
 
 /*! 

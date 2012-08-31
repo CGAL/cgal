@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3
+\ingroup PkgTriangulation3VertexFaceClasses
 
 The class `Triangulation_cell_base_with_circumcenter_3` is a model of the 
 concept `TriangulationCellBase_3`, the base cell of a 3D-triangulation. 
