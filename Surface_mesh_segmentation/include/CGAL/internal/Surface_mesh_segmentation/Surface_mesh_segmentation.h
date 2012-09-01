@@ -383,13 +383,11 @@ private:
         facet_it != mesh.facets_end(); ++facet_it) {
       if(segments[facet_it] <
           number_of_clusters) { // not visited by depth_first_traversal
-        std::pair<double, int> sdf_facet_count_pair = depth_first_traversal(facet_it,
-            segment_id, sdf_values, segments);
+        double average_sdf_value = breadth_first_traversal(facet_it, segment_id,
+                                   sdf_values, segments);
 
-        double average_sdf_value_for_segment = sdf_facet_count_pair.first /
-                                               sdf_facet_count_pair.second;
         segments_with_average_sdf_values.push_back(std::pair<int, double>(segment_id,
-            average_sdf_value_for_segment));
+            average_sdf_value));
         ++segment_id;
       }
     }
@@ -417,38 +415,50 @@ private:
   }
 
   /**
-   * Depth-first traverse all connected facets which has same cluster with @a facet.
+   * Breadth-first traverse all connected facets which has same cluster with @a facet.
    * Each visited facet assigned to @a segment_id.
    * @param facet root facet
    * @param segment_id segment-id of root facet
    * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
    * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type.
-   * @return pair of first: accumulated sdf values of visited facets, second: number of visited facets
+   * @return average sdf value for segment
    */
   template<class SegmentPropertyMap, class SDFProperyMap>
-  std::pair<double, int>
-  depth_first_traversal(Facet_const_handle& facet, int segment_id,
-                        SDFProperyMap sdf_values, SegmentPropertyMap segments) {
-    int prev_segment_id = segments[facet];
-    segments[facet] = segment_id;
-    std::pair<double, int> sdf_facet_count_pair(sdf_values[facet], 1);
+  double
+  breadth_first_traversal(Facet_const_handle& root, int segment_id,
+                          SDFProperyMap sdf_values, SegmentPropertyMap segments) {
+    std::queue<Facet_const_handle> facet_queue;
+    facet_queue.push(root);
 
-    typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
-      facet->facet_begin();
-    do {
-      if(facet_circulator->opposite()->is_border()) {
-        continue;  // no facet to traversal
-      }
-      Facet_const_handle neighbor = facet_circulator->opposite()->facet();
-      if(prev_segment_id == segments[neighbor]) {
-        const std::pair<double, int>& total_pair = depth_first_traversal(neighbor,
-            segment_id, sdf_values, segments);
-        sdf_facet_count_pair.first += total_pair.first;
-        sdf_facet_count_pair.second += total_pair.second;
-      }
-    } while( ++facet_circulator !=  facet->facet_begin());
+    int prev_segment_id = segments[root];
+    segments[root] = segment_id;
 
-    return sdf_facet_count_pair;
+    double total_sdf_value = sdf_values[root];
+    int    visited_facet_count = 1;
+
+    while(!facet_queue.empty()) {
+      const Facet_const_handle& facet = facet_queue.front();
+
+      typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
+        facet->facet_begin();
+      do {
+        if(facet_circulator->opposite()->is_border()) {
+          continue;  // no facet to traversal
+        }
+        Facet_const_handle neighbor = facet_circulator->opposite()->facet();
+        if(prev_segment_id == segments[neighbor]) {
+          segments[neighbor] = segment_id;
+          facet_queue.push(neighbor);
+
+          total_sdf_value += sdf_values[neighbor];
+          ++visited_facet_count;
+        }
+      } while( ++facet_circulator !=  facet->facet_begin());
+
+      facet_queue.pop();
+    }
+
+    return total_sdf_value / visited_facet_count;
   }
 
 };
@@ -458,8 +468,4 @@ private:
 #undef CGAL_NORMALIZATION_ALPHA
 #undef CGAL_CONVEX_FACTOR
 #undef CGAL_SMOOTHING_LAMBDA_MULTIPLIER
-
-#ifdef SEG_DEBUG
-#undef SEG_DEBUG
-#endif
 #endif //CGAL_SURFACE_MESH_SEGMENTATION_H

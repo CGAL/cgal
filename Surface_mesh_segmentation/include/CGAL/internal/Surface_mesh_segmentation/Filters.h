@@ -54,8 +54,8 @@ public:
       NeighborSelector()(facet_it, window_size,
                          neighbors); // gather neighbors in the window
 
-      double current_sdf_value = values[facet_it];
       // calculate deviation for range weighting.
+      double current_sdf_value = values[facet_it];
       double deviation = 0.0;
       for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
           it != neighbors.end(); ++it) {
@@ -155,7 +155,6 @@ public:
   }
 };
 
-
 /** @brief Gathers neighbors of a facet for a given window range. @see Bilateral_filtering, Median_filtering */
 template<class Polyhedron>
 class Neighbor_selector_by_edge
@@ -175,21 +174,29 @@ public:
                   int max_level,
                   std::map<Facet_const_handle, int>& neighbors) const {
     typedef std::pair<Facet_const_handle, int> Facet_level_pair;
+
     std::queue<Facet_level_pair> facet_queue;
     facet_queue.push(Facet_level_pair(facet, 0));
+    neighbors.insert(facet_queue.front());
+
     while(!facet_queue.empty()) {
       const Facet_level_pair& pair = facet_queue.front();
-      bool inserted = neighbors.insert(pair).second;
-      if(inserted && pair.second < max_level) {
-        Halfedge_around_facet_const_circulator facet_circulator =
-          pair.first->facet_begin();
-        do {
-          if(!facet_circulator->opposite()->is_border()) {
-            facet_queue.push(Facet_level_pair(facet_circulator->opposite()->facet(),
-                                              pair.second + 1));
-          }
-        } while(++facet_circulator != pair.first->facet_begin());
-      }
+
+      Halfedge_around_facet_const_circulator facet_circulator =
+        pair.first->facet_begin();
+      do {
+        if(!facet_circulator->opposite()->is_border()) {
+          Facet_level_pair new_pair(facet_circulator->opposite()->facet(),
+                                    pair.second + 1);
+          if(neighbors.insert(new_pair).second
+              && new_pair.second < max_level) { // first insert new_pair to map
+            // if insertion is OK, then check its level
+            facet_queue.push(
+              new_pair);                                      // if its level is equal to max_level do not put it in
+          }                                                                    // queue since we do not want to traverse its childs
+        }
+      } while(++facet_circulator != pair.first->facet_begin());
+
       facet_queue.pop();
     }
   }
@@ -218,23 +225,30 @@ public:
     typedef std::pair<Facet_const_handle, int> Facet_level_pair;
     std::queue<Facet_level_pair> facet_queue;
     facet_queue.push(Facet_level_pair(facet, 0));
+    neighbors.insert(facet_queue.front());
     while(!facet_queue.empty()) {
       const Facet_level_pair& pair = facet_queue.front();
-      bool inserted = neighbors.insert(pair).second;
-      if(inserted && pair.second < max_level) {
-        Facet_const_handle facet = pair.first;
-        Halfedge_const_iterator edge = facet->halfedge();
-        do { // loop on three vertices of the facet
-          Vertex_const_iterator vertex = edge->vertex();
-          Halfedge_around_vertex_const_circulator vertex_circulator =
-            vertex->vertex_begin();
-          do { // for each vertex loop on incoming edges (through those edges loop on neighbor facets which includes the vertex)
-            if(!vertex_circulator->is_border()) {
-              facet_queue.push(Facet_level_pair(vertex_circulator->facet(), pair.second + 1));
-            }
-          } while(++vertex_circulator != vertex->vertex_begin());
-        } while((edge = edge->next()) != facet->halfedge());
-      }
+
+      Facet_const_handle facet_front = pair.first;
+      Halfedge_const_iterator edge = facet_front->halfedge();
+      do { // loop on three vertices of the facet
+        Vertex_const_iterator vertex = edge->vertex();
+        Halfedge_around_vertex_const_circulator vertex_circulator =
+          vertex->vertex_begin();
+        do { // for each vertex loop on incoming edges (through those edges loop on neighbor facets which includes the vertex)
+          if(!vertex_circulator->is_border()) {
+            Facet_level_pair new_pair(facet_circulator->opposite()->facet(),
+                                      pair.second + 1);
+            if(neighbors.insert(new_pair).second
+                && new_pair.second < max_level) { // first insert new_pair to map
+              // if insertion is OK, then check its level
+              facet_queue.push(
+                new_pair);                                      // if its level is equal to max_level do not put it in
+            }                                                                    // queue since we do not want to traverse its childs
+          }
+        } while(++vertex_circulator != vertex->vertex_begin());
+      } while((edge = edge->next()) != facet_front->halfedge());
+
       facet_queue.pop();
     }
   }
