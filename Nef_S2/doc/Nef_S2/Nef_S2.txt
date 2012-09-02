@@ -55,12 +55,12 @@ incidences are illustrated in the figure above.
 # Restricted Spherical Geometry #
 
 We introduce geometric objects that are part of the spherical surface
-\f$ S_2\f$ and operations on them. We define types `Sphere_point`,
-`Sphere_circle`, `Sphere_segment`, and `Sphere_direction`.
-`Sphere_point`s are points on \f$ S_2\f$, `Sphere_circle`s are
-oriented great circles of \f$ S_2\f$, `Sphere_segment`s are oriented
-parts of `Sphere_circles` bounded by a pair of
-`Sphere_point`s, and `Sphere_direction`s are directions that
+\f$ S_2\f$ and operations on them. We define types `Nef_polyhedron_S2::Sphere_point`,
+`Nef_polyhedron_S2::Sphere_circle`, `Nef_polyhedron_S2::Sphere_segment`, and `Nef_polyhedron_S2::Sphere_direction`.
+`Nef_polyhedron_S2::Sphere_point`s are points on \f$ S_2\f$, `Nef_polyhedron_S2::Sphere_circle`s are
+oriented great circles of \f$ S_2\f$, `Nef_polyhedron_S2::Sphere_segment`s are oriented
+parts of `Nef_polyhedron_S2::Sphere_circles` bounded by a pair of
+`Nef_polyhedron_S2::Sphere_point`s, and `Nef_polyhedron_S2::Sphere_direction`s are directions that
 are part of great circles. (a direction is usually defined to be a
 vector without length, that floats around in its underlying space and
 can be used to specify a movement at any point of the underlying
@@ -85,11 +85,11 @@ qualified as being positively or negatively oriented.
 
 ## First Example ##
 
-In this first example `Nef_polyhedron_S2` is parametrized with a CGAL
+In this first example `Nef_polyhedron_S2` is parametrized with a %CGAL
 Kernel as traits class. The types comprising the spherical geometry can be
 retrieved from the type `Nef_polyhedron_S2<Traits>` as is done in the example 
 with the type
-`Sphere_circle`. Then three Nef polyhedra are created: \f$ N1\f$ is a halfsphere
+`Nef_polyhedron_S2::Sphere_circle`. Then three Nef polyhedra are created: \f$ N1\f$ is a halfsphere
 including the boundary, \f$ N2\f$ is another halfsphere without the boundary, and 
 \f$ N3\f$ is the intersection of \f$ N1\f$ and \f$ N2\f$.
 
@@ -100,7 +100,7 @@ including the boundary, \f$ N2\f$ is another halfsphere without the boundary, an
 Th example shows the different types of constructors: \f$ N1\f$ is the complete
 sphere, \f$ N2\f$ is a halfsphere which includes the boundary, \f$ N3\f$ is created
 with the copy constructor, \f$ N4\f$ is created as an arrangement of a set
-of `Sphere_segments`, and \f$ N5\f$ is created as the empty set.
+of `Nef_polyhedron_S2::Sphere_segment`s, and \f$ N5\f$ is created as the empty set.
 
 The example also shows the use of unary set operations, binary operations, 
 and binary predicates: \f$ N3\f$ is defined as the complement of \f$ N2\f$, \f$ N1\f$ is
@@ -126,10 +126,10 @@ it is.
 
 The macro `CGAL_forall_sface_cycles_of` is equivalent to a for-loop
 on the range `[sf->sface_cycles_begin(), sf->sface_cycles_end())`. An 
-`SFace_cycle_const_iterator` either represents a `SVertex_const_handle`,
-a `SHalfede_const_handle` or a `SHalfloop_const_handle`. In order
+`Nef_polyhedron_S2::SFace_cycle_const_iterator` either represents a `Nef_polyhedron_S2::SVertex_const_handle`,
+a `Nef_polyhedron_S2::SHalfede_const_handle` or a `Nef_polyhedron_S2::SHalfloop_const_handle`. In order
 to find out which handle type is represented, the functions
-`is_svertex()`, `is_shafledge()` and `is_shalfloop()` are provided.
+`Nef_polyhedron_S2::is_svertex()`, `Nef_polyhedron_S2::is_shafledge()` and `Nef_polyhedron_S2::is_shalfloop()` are provided.
 Afterwards the iterator can be casted to the proper handle type.
 
 \cgalexample{nef_s2_exploration.cpp}
@@ -139,10 +139,10 @@ Afterwards the iterator can be casted to the proper handle type.
 Using the `locate` function, it is possible to retrive an item at a
 certain location on the sphere. In the following example, the item at 
 location `Sphere_point(1,0,0)` in a random `Nef_polyhedron_S2` is 
-retrieved. `locate` returns an instance of type `Object_handle`, which
+retrieved. `locate` returns an instance of type `Nef_polyhedron_S2::Object_handle`, which
 is a container for any handle type. Here, it either a 
-`SVertex_const_handle`, a `SHalfedge_const_handle`, 
-a `SHafloop_const_handle` or a `SFace_const_handle`. The function 
+`Nef_polyhedron_S2::SVertex_const_handle`, a `Nef_polyhedron_S2::SHalfedge_const_handle`, 
+a `Nef_polyhedron_S2::SHafloop_const_handle` or a `Nef_polyhedron_S2::SFace_const_handle`. The function 
 `CGAL::assign` performs the cast operation and returns a boolean which
 indicates whether the cast was successful or not.
 
