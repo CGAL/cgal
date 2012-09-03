@@ -189,41 +189,39 @@ public:
       if(pos != Type_handle()){
         if(pos == b){
           pos = Type_handle(); // past the end
-		}else {
+		    }else {
           pos = pos->next_intrusive();
-		}
+		    }
       }
       return *this;
     }
 
- iterator operator++(int)
+    iterator operator++(int)
     {
       iterator tmp(*this);
       ++(*this);
       return tmp;
     }
 
-  bool operator==(const iterator& i) const
+    bool operator==(const iterator& i) const
     { 
       return pos == i.pos;
     }
-
-
-  bool operator!=(const iterator& i) const
+    
+    bool operator!=(const iterator& i) const
     {
       return !(*this == i);
     }
 
-  reference operator*() const
+    reference operator*() const
     {
       return pos;
     }
 
-  pointer operator->() const
+    pointer operator->() const
     {
       return pos;
     }
-
   }; // struct iterator
 
 
@@ -257,6 +255,22 @@ public:
   Type_handle& back()
   {
     return b;
+  }
+
+  iterator insert(iterator position, 
+                  const Type_handle& ch)
+  {
+    assert( (ch->next_intrusive() == Type_handle() && ch->previous_intrusive() == Type_handle()) || 
+            (ch->next_intrusive() != Type_handle() && ch->previous_intrusive() != Type_handle()) );
+    assert(is_valid());
+    
+    if(ch->next_intrusive() != Type_handle()){
+      return iterator(ch->next_intrusive()/*first*/, ch/*last*/);
+    }
+    else{
+      insert(ch);
+      return iterator(ch->next_intrusive()/*first*/, ch/*last*/);
+    }
   }
 
   void insert(Type_handle ch)
