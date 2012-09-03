@@ -392,11 +392,11 @@ class C3T3_helpers
   typedef Cell_set  Outdated_cell_set;
 #endif //CGAL_INTRUSIVE_LIST
 
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES) && defined(CGAL_INTRUSIVE_LIST)
+#if defined(CGAL_FREEZE_VERTICES) && defined(CGAL_INTRUSIVE_LIST)
   typedef Intrusive_list<Vertex_handle>  Moving_vertices_set;
 #else
   typedef Vertex_set Moving_vertices_set;
-#endif //CGAL_IMPROVE_FREEZE
+#endif 
 
   
 private:
@@ -522,7 +522,7 @@ public:
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells);
 
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#ifdef CGAL_FREEZE_VERTICES
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells_set,
@@ -1714,17 +1714,6 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     const Cell_handle& cell = *first_cell++;
     c3t3_.remove_from_complex(cell);
     updater(cell);
-
-    // Update moving_vertices
-#ifndef CGAL_IMPROVE_FREEZE
-    if ( c3t3_.is_in_complex(cell) )
-    {
-      for ( int i=0 ; i<4 ; ++i )
-      {
-	  	moving_vertices.insert(cell->vertex(i)); 
-      }
-    }
-#endif //CGAL_IMPROVE_FREEZE
   }
 
   // Get facets (returns each canonical facet only once)
@@ -1748,7 +1737,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
 
     if ( new_pos != Point_3() )
     {   
-      //CGAL_IMPROVE_FREEZE needs 'erase' to be done before the vertex is actually destroyed
+      //CGAL_FREEZE_VERTICES needs 'erase' to be done before the vertex is actually destroyed
       // Update moving vertices (it becomes new_vertex)
       moving_vertices.erase(*it);
     
@@ -1780,17 +1769,6 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
     const Cell_handle& cell = *first_cell++;
     c3t3_.remove_from_complex(cell);
     updater(cell);
-    
-    // Update moving_vertices
-#ifndef CGAL_IMPROVE_FREEZE
-    if ( c3t3_.is_in_complex(cell) )
-    {
-      for ( int i=0 ; i<4 ; ++i )
-      {
-      	moving_vertices.insert(cell->vertex(i)); 
-      }
-    }
-#endif //!defined(CGAL_IMPROVE_FREEZE)
   }
   
   // Updates facets
@@ -1832,7 +1810,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
 
     if ( new_pos != Point_3() )
     {
-      //CGAL_IMPROVE_FREEZE needs 'erase' to be done before the vertex is actually destroyed
+      //CGAL_FREEZE_VERTICES needs 'erase' to be done before the vertex is actually destroyed
       // Update moving vertices (it becomes new_vertex)
       moving_vertices.erase(it->first);
 
@@ -1909,7 +1887,7 @@ move_point(const Vertex_handle& old_vertex,
   }
 }
 
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#ifdef CGAL_FREEZE_VERTICES
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
@@ -2049,7 +2027,7 @@ move_point_topo_change_conflict_zone_known(
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertice_index = c3t3_.index(old_vertex);
   FT meshing_info = old_vertex->meshing_info();
-#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_FREEZE_VERTICES)
   Vertex_handle next = old_vertex->next_intrusive();
   Vertex_handle prev = old_vertex->previous_intrusive();
 #endif
@@ -2073,7 +2051,7 @@ move_point_topo_change_conflict_zone_known(
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertice_index);
   new_vertex->set_meshing_info(meshing_info);
-#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_FREEZE_VERTICES)
   new_vertex->next_intrusive() = next;
   new_vertex->previous_intrusive() = prev;
 #endif
@@ -2157,7 +2135,7 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertice_index = c3t3_.index(old_vertex);
   FT meshing_info = old_vertex->meshing_info();
-#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_FREEZE_VERTICES)
   Vertex_handle next = old_vertex->next_intrusive();
   Vertex_handle prev = old_vertex->previous_intrusive();
 #endif
@@ -2172,7 +2150,7 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertice_index);
   new_vertex->set_meshing_info(meshing_info);
-#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#if defined(CGAL_INTRUSIVE_LIST) && defined(CGAL_FREEZE_VERTICES)
   new_vertex->next_intrusive() = next;
   new_vertex->previous_intrusive() = prev;
 #endif

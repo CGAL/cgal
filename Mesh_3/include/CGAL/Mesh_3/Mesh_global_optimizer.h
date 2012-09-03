@@ -75,7 +75,7 @@ class Mesh_global_optimizer
   typedef std::set<Cell_handle>         Outdated_cell_set;
 #endif //CGAL_INTRUSIVE_LIST
 
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES) && defined(CGAL_INTRUSIVE_LIST)
+#if defined(CGAL_FREEZE_VERTICES) && defined(CGAL_INTRUSIVE_LIST)
   typedef Intrusive_list<Vertex_handle>  Moving_vertices_set;
 #else
   typedef Vertex_set Moving_vertices_set;
@@ -428,7 +428,7 @@ compute_moves(/*const */Moving_vertices_set& moving_vertices)
       Point_3 new_position = translate(oldv->point(),move);
       moves.push_back(std::make_pair(oldv,new_position));
     }
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#ifdef CGAL_FREEZE_VERTICES
   	else // CGAL::NULL_VECTOR == move
     {
       moving_vertices.erase(oldv);
@@ -537,7 +537,7 @@ update_mesh(const Moves_vector& moves,
       FT size = sizing_field_(new_position,v);   
       
       // Move point
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#ifdef CGAL_FREEZE_VERTICES
       Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
 #else
       Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells);
@@ -548,7 +548,7 @@ update_mesh(const Moves_vector& moves,
     else
     {
       // Move point
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
+#ifdef CGAL_FREEZE_VERTICES
       helper_.move_point(v, new_position, outdated_cells, moving_vertices);
 #else
       helper_.move_point(v, new_position, outdated_cells);
@@ -563,10 +563,6 @@ update_mesh(const Moves_vector& moves,
   visitor.after_move_points();
   
   // Update c3t3
-#ifndef CGAL_IMPROVE_FREEZE
-  moving_vertices.clear();
-#endif 
-
 #ifdef CGAL_INTRUSIVE_LIST
   // AF:  rebuild_restricted_delaunay does more cell insertion/removal
   //      which clashes with our inplace list 
