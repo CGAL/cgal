@@ -198,7 +198,7 @@ an illustration of a situation where this operation is used).
 </UL>
 
 The package currently contains a traits class for named
-`Env_triangle_traits_3<Kenrel>` handling 3D triangles, and another
+`Env_triangle_traits_3<Kernel>` handling 3D triangles, and another
 named `Env_sphere_traits_3<ConicTraits>` for 3D spheres, based
 on geometric operations on conic curves (ellipses). In addition, the
 package includes a traits-class decorator that enables users to attach
