@@ -14,6 +14,7 @@
 
 namespace CGAL
 {
+/// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal
 {
 
@@ -254,5 +255,6 @@ public:
   }
 };
 }//namespace internal
+/// @endcond
 }//namespace CGAL
 #endif //CGAL_SURFACE_MESH_SEGMENTATION_FILTERS_H

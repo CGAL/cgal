@@ -22,6 +22,7 @@
 
 namespace CGAL
 {
+/// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal
 {
 /**
@@ -463,6 +464,7 @@ private:
 
 };
 }//namespace internal
+/// @endcond
 } //namespace CGAL
 
 #undef CGAL_NORMALIZATION_ALPHA

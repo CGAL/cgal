@@ -31,6 +31,7 @@
 
 namespace CGAL
 {
+/// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal
 {
 
@@ -483,5 +484,6 @@ public:
 };
 #endif //CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 }//namespace internal
+/// @endcond
 }//namespace CGAL
 #endif //CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
