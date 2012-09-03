@@ -23,6 +23,7 @@ cgal-web-admin = CGAL Web Admin <cgal-editorial-board@sophia.inria.fr>
 cggaurav = Gaurav Chandrashekar <gauravc@nus.edu.sg>
 cjamin = Clément Jamin <clement.jamin@inria.fr>
 cvs2svn = CVS2SVN tool <cgal-develop@sophia.inria.fr>
+cwerner = Claudia Werner <claudia.werner@inria.fr>
 cwormser = Camille Wormser <cwormser@inf.ethz.ch>
 danha = Dan Halperin <danha@post.tau.ac.il>
 dave = David Millman <David.Millman@sophia.inria.fr>
