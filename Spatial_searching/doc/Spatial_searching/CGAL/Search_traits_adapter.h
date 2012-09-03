@@ -91,8 +91,8 @@ with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`.
 
 `BaseTraits` is a model of either `SearchTraits` or `RangeSearchTraits`. 
 
-\models ::SearchTraits if BaseTraits` is a model of ::SearchTraits.
-\models ::RangeSearchTraits if BaseTraits is a model of ::RangeSearchTraits.
+\models ::SearchTraits if `BaseTraits` is a model of ::SearchTraits.
+\models ::RangeSearchTraits if `BaseTraits` is a model of ::RangeSearchTraits.
 
 \sa `Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>` 
 \sa `Search_traits_2<Kernel>` 

@@ -133,8 +133,8 @@ range searching the fuzziness parameter \f$ \epsilon\f$ is set to zero.
 
 The class `Kd_tree` implements range searching in the method `search`,
 which is a template method with an output iterator and a model of the
-concept `FuzzyQueryItem` as `CGAL::Fuzzy_iso_box_d` 
-or `CGAL::Fuzzy_sphere_d`. 
+concept `FuzzyQueryItem` as `CGAL::Fuzzy_iso_box` 
+or `CGAL::Fuzzy_sphere`. 
 For range searching of large data sets the user may set the parameter `bucket_size` 
 used in building the \f$k\f$-\f$d\f$ tree to a large value (e.g. 100), 
 because in general the query time will be less then using the default value.
