@@ -214,9 +214,9 @@ The user has several ways to add his own data in the vertex and cell base classe
 and `Triangulation_cell_base_with_info_3`, which allow to add one data member
 of a user provided type, and give access to it.
 <LI> derive his own classes from the default base classes
-`Triangulation_ds_vertex_base`, and `Triangulation_ds_cell_base` (or
+`Triangulation_ds_vertex_base_3`, and `Triangulation_ds_cell_base_3` (or
 the geometric versions typically used by the geometric layer,
-`Triangulation_vertex_base`, and `Triangulation_cell_base`).
+`Triangulation_vertex_base_3`, and `Triangulation_cell_base_3`).
 <LI> write his own base classes following the requirements given by the
 concepts `TriangulationCellBase_3` and `TriangulationVertexBase_3`
 .
