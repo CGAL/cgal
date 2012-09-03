@@ -96,7 +96,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2
 
-`Straight_skeleton_items_converter_2`is a model of the `StraightSkeletonItemsConverter_2` concept 
+`Straight_skeleton_items_converter_2` is a model of the `StraightSkeletonItemsConverter_2` concept 
 
 The first and second template parameters are the target and source straight skeleton types, resp. 
 
