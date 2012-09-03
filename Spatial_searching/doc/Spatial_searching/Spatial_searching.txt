@@ -362,7 +362,7 @@ tree, not in the internal nodes.
 
 Friedmann, Bentley and Finkel \cite fbf-afbml-77 described the
 standard search algorithm to find the \f$ k\f$th nearest neighbor by
-searching a \f$ k\f$-\f$ d\f$ tree recursively.
+searching a \f$ k\f$-\f$d\f$ tree recursively.
 
 When encountering a node of the tree, the algorithm first visits the
 child that is closest to the query point. On return, if the rectangle

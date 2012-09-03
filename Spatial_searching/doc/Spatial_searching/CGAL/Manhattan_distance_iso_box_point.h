@@ -8,7 +8,7 @@ the `GeneralDistance` concept
 for the Manhattan distance (\f$ l_1\f$ metric) 
 between a \f$ d\f$-dimensional iso-box and a \f$ d\f$-dimensional point 
 and the Manhattan distance between a \f$ d\f$-dimensional iso-box 
-and a \f$ d\f$-dimensional iso-box defined as a \f$ k\f$-\f$ d\f$ tree rectangle. 
+and a \f$ d\f$-dimensional iso-box defined as a \f$ k\f$-\f$d\f$ tree rectangle. 
 
 Parameters 
 -------------- 
