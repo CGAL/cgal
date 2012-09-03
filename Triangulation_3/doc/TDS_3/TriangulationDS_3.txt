@@ -155,7 +155,7 @@ other words, if we embed the triangulation in \f$ \R^3\f$, then the fourth
 vertices \f$ v_3^1\f$ and \f$ v_3^2\f$ of \f$ c_1\f$ and \f$ c_2\f$ see the common facet
 in opposite orientations. See Figure \ref TDS3figcomborient.
 
-The set <BIG><BIG>\f$ \sigma\f$</BIG></BIG>\f$ _4\f$ of permutations of
+The set \f$ \sigma\f$\f$ _4\f$ of permutations of
 \f$ (0,1,2,3)\f$ has cardinality 24, and the set of positive permutations
 \f$ A_4\f$ has cardinality 12. Thus, for a given orientation, there
 are up to 12 different orderings of the four vertices of a cell. Note
