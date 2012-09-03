@@ -128,7 +128,7 @@ private:
   /**
    * Returns moves for vertices of set \c moving_vertices
    */
-  Moves_vector compute_moves(/*const*/ Moving_vertices_set& moving_vertices);
+  Moves_vector compute_moves(Moving_vertices_set& moving_vertices);
   
   /**
    * Returns the move for vertex \c v
@@ -304,7 +304,8 @@ operator()(int nb_iterations, Visitor visitor)
 #ifdef CGAL_FREEZE_VERTICES
     if(!do_freeze_) 
       nb_frozen_points_ = 0;
-    nb_vertices_moved = moving_vertices.size();
+    else
+      nb_vertices_moved = moving_vertices.size();
 #endif
 
     // Compute move for each vertex
@@ -314,7 +315,8 @@ operator()(int nb_iterations, Visitor visitor)
 #ifdef CGAL_FREEZE_VERTICES
     //Pb with Freeze : sometimes a few vertices continue moving indefinitely
     //if the nb of moving vertices is < 1% of total nb AND does not decrease
-    if(nb_vertices_moved < 0.01 * initial_vertices_nb
+    if(do_freeze_ 
+      && nb_vertices_moved < 0.005 * initial_vertices_nb
       && nb_vertices_moved == moving_vertices.size())
     { 
       // we should stop because we are 
@@ -403,7 +405,7 @@ collect_all_vertices(Moving_vertices_set& moving_vertices)
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Moves_vector
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
-compute_moves(/*const */Moving_vertices_set& moving_vertices)
+compute_moves(Moving_vertices_set& moving_vertices)
 {
   typename Gt::Construct_translated_point_3 translate =
     Gt().construct_translated_point_3_object();
@@ -431,7 +433,8 @@ compute_moves(/*const */Moving_vertices_set& moving_vertices)
 #ifdef CGAL_FREEZE_VERTICES
   	else // CGAL::NULL_VECTOR == move
     {
-      moving_vertices.erase(oldv);
+      if(do_freeze_)
+        moving_vertices.erase(oldv);
     }
 #endif
 
@@ -537,22 +540,14 @@ update_mesh(const Moves_vector& moves,
       FT size = sizing_field_(new_position,v);   
       
       // Move point
-#ifdef CGAL_FREEZE_VERTICES
       Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
-#else
-      Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells);
-#endif       
+
       // Restore size in meshing_info data
       new_v->set_meshing_info(size);
     }
-    else
+    else // Move point
     {
-      // Move point
-#ifdef CGAL_FREEZE_VERTICES
       helper_.move_point(v, new_position, outdated_cells, moving_vertices);
-#else
-      helper_.move_point(v, new_position, outdated_cells);
-#endif 
     }
     
     // Stop if time_limit_ is reached, here we can't return without rebuilding

@@ -517,17 +517,12 @@ public:
   /**
    * Moves \c old_vertex to \c new_position
    * Stores the cells which have to be updated in \c outdated_cells
+   * Updates the Vertex_handle old_vertex to its new value in \c moving_vertices
    */
-  Vertex_handle move_point(const Vertex_handle& old_vertex,
-                           const Point_3& new_position,
-                           Outdated_cell_set& outdated_cells);
-
-#ifdef CGAL_FREEZE_VERTICES
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells_set,
                            Moving_vertices_set& moving_vertices);
-#endif
 
   /**
    * Outputs to out the sliver (wrt \c criterion and \c sliver_bound) incident
@@ -1822,34 +1817,6 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   }
 }
 
-  
-template <typename C3T3, typename MD>
-typename C3T3_helpers<C3T3,MD>::Vertex_handle 
-C3T3_helpers<C3T3,MD>:: 
-move_point(const Vertex_handle& old_vertex,
-           const Point_3& new_position,
-           Outdated_cell_set& outdated_cells_set)
-{ 
-  Cell_vector incident_cells;
-  incident_cells.reserve(64);
-  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
-  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
-  {
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
-                                                  incident_cells.end()))
-    {
-      ch->invalidate_circumcenter();
-    }
-    std::copy(incident_cells.begin(),incident_cells.end(), 
-      std::inserter(outdated_cells_set, outdated_cells_set.end()));
-    return move_point_no_topo_change(old_vertex, new_position);
-  }
-  else
-  {
-    return move_point_topo_change(old_vertex, new_position, outdated_cells_set);
-  }
-}  
-
 
 template <typename C3T3, typename MD>
 template <typename OutdatedCellsOutputIterator,
@@ -1887,7 +1854,6 @@ move_point(const Vertex_handle& old_vertex,
   }
 }
 
-#ifdef CGAL_FREEZE_VERTICES
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
@@ -1920,7 +1886,6 @@ move_point(const Vertex_handle& old_vertex,
     return new_vertex;
   }  
 }  
-#endif
 
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 

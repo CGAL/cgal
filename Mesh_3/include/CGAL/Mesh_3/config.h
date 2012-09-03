@@ -23,7 +23,7 @@
 
 #include <CGAL/config.h>
 
-//#define CGAL_MESH_3_VERBOSE
+#define CGAL_MESH_3_VERBOSE
 
 // Use optimisations of Mesh_3
 #  define CGAL_COMPACT_MESH_VERTEX_CELL
