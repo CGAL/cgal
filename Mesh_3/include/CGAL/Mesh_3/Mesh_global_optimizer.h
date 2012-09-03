@@ -75,7 +75,7 @@ class Mesh_global_optimizer
   typedef std::set<Cell_handle>         Outdated_cell_set;
 #endif //CGAL_INTRUSIVE_LIST
 
-#if defined(CGAL_FREEZE_VERTICES) && defined(CGAL_INTRUSIVE_LIST)
+#ifdef CGAL_INTRUSIVE_LIST
   typedef Intrusive_list<Vertex_handle>  Moving_vertices_set;
 #else
   typedef Vertex_set Moving_vertices_set;
@@ -100,9 +100,7 @@ public:
   Mesh_global_optimizer(C3T3& c3t3,
                         const MeshDomain& domain,
                         const FT& freeze_ratio,
-#ifdef CGAL_FREEZE_VERTICES
                         const bool do_freeze,
-#endif
                         const FT& convergence_ratio,
                         const MoveFunction move_function = MoveFunction());
   
@@ -202,10 +200,8 @@ private:
   std::size_t big_moves_size_;
   std::set<FT> big_moves_;
 
-#ifdef CGAL_FREEZE_VERTICES
   bool do_freeze_;
   mutable unsigned int nb_frozen_points_;
-#endif
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   mutable FT sum_moves_;
@@ -218,9 +214,7 @@ Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 Mesh_global_optimizer(C3T3& c3t3,
                       const Md& domain,
                       const FT& freeze_ratio,
-#ifdef CGAL_FREEZE_VERTICES
                       const bool do_freeze,
-#endif
                       const FT& convergence_ratio,
                       const Mf move_function)
 : c3t3_(c3t3)
@@ -237,10 +231,8 @@ Mesh_global_optimizer(C3T3& c3t3,
 , big_moves_size_(0)
 , big_moves_()
 
-#ifdef CGAL_FREEZE_VERTICES
 , do_freeze_(do_freeze)
 , nb_frozen_points_(0)
-#endif // CGAL_FREEZE_VERTICES
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
 , sum_moves_(0)
@@ -292,27 +284,22 @@ operator()(int nb_iterations, Visitor visitor)
   big_moves_size_ = 
     (std::max)(std::size_t(1), std::size_t(moving_vertices.size()/500));
   
-#ifdef CGAL_FREEZE_VERTICES
   std::size_t nb_vertices_moved = -1;
   bool convergence_stop = false;
-#endif
 
   // Iterate
   int i = -1;
   while ( ++i < nb_iterations && ! is_time_limit_reached() )
   {
-#ifdef CGAL_FREEZE_VERTICES
     if(!do_freeze_) 
       nb_frozen_points_ = 0;
     else
       nb_vertices_moved = moving_vertices.size();
-#endif
 
     // Compute move for each vertex
     Moves_vector moves = compute_moves(moving_vertices);
     visitor.after_compute_moves();
 
-#ifdef CGAL_FREEZE_VERTICES
     //Pb with Freeze : sometimes a few vertices continue moving indefinitely
     //if the nb of moving vertices is < 1% of total nb AND does not decrease
     if(do_freeze_ 
@@ -324,7 +311,6 @@ operator()(int nb_iterations, Visitor visitor)
       convergence_stop = true;
       break;
     }
-#endif
 
     // Stop if time_limit is reached
     if ( is_time_limit_reached() )
@@ -348,24 +334,20 @@ operator()(int nb_iterations, Visitor visitor)
     step_begin = running_time_.time();
 #endif
 
-#ifdef CGAL_FREEZE_VERTICES
-    if (nb_frozen_points_ == initial_vertices_nb )
+    if (do_freeze_ && nb_frozen_points_ == initial_vertices_nb )
       break;
-#endif //CGAL_FREEZE_VERTICES
+
     if(check_convergence())
       break;
   }  
   running_time_.stop();
   
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-#ifdef CGAL_FREEZE_VERTICES
-  if ( nb_frozen_points_ == initial_vertices_nb )
+  if ( do_freeze_ && nb_frozen_points_ == initial_vertices_nb )
     std::cerr << "All vertices frozen" << std::endl;
-  else if ( convergence_stop )
+  else if ( do_freeze_ && convergence_stop )
     std::cerr << "Can't improve anymore" << std::endl;
-  else
-#endif
-  if ( is_time_limit_reached() )
+  else if ( is_time_limit_reached() )
     std::cerr << "Time limit reached" << std::endl;
   else if ( check_convergence() )
     std::cerr << "Convergence reached" << std::endl;
@@ -376,14 +358,13 @@ operator()(int nb_iterations, Visitor visitor)
             << "s" << std::endl << std::endl;
 #endif
 
-#ifdef CGAL_FREEZE_VERTICES
-  if ( nb_frozen_points_ == initial_vertices_nb )
+  if ( do_freeze_ && nb_frozen_points_ == initial_vertices_nb )
     return ALL_VERTICES_FROZEN;
-  else if ( convergence_stop )
+  
+  else if ( do_freeze_ && convergence_stop )
     return CANT_IMPROVE_ANYMORE;
-  else
-#endif
-  if ( is_time_limit_reached() )
+  
+  else if ( is_time_limit_reached() )
     return TIME_LIMIT_REACHED;
  
   else if ( check_convergence() )
@@ -430,13 +411,11 @@ compute_moves(Moving_vertices_set& moving_vertices)
       Point_3 new_position = translate(oldv->point(),move);
       moves.push_back(std::make_pair(oldv,new_position));
     }
-#ifdef CGAL_FREEZE_VERTICES
   	else // CGAL::NULL_VECTOR == move
     {
       if(do_freeze_)
         moving_vertices.erase(oldv);
     }
-#endif
 
     // Stop if time_limit_ is reached
     if ( is_time_limit_reached() )
@@ -485,9 +464,7 @@ compute_move(const Vertex_handle& v)
   // Move point only if displacement is big enough w.r.t local size
   if ( local_move_sq_ratio < sq_freeze_ratio_ )
   {
-#ifdef CGAL_FREEZE_VERTICES
     nb_frozen_points_++;
-#endif
     return CGAL::NULL_VECTOR;
   }
   

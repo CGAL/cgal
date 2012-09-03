@@ -62,9 +62,7 @@ BOOST_PARAMETER_NAME( criteria )
 BOOST_PARAMETER_NAME( (time_limit, tag) time_limit_ )
 BOOST_PARAMETER_NAME( (sliver_bound, tag) sliver_bound_)
 BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
-#ifdef CGAL_FREEZE_VERTICES
 BOOST_PARAMETER_NAME( (do_freeze, tag) do_freeze_)
-#endif
 BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
 BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
 

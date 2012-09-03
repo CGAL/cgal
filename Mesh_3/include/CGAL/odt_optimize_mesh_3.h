@@ -35,7 +35,6 @@
 
 namespace CGAL {
   
-#ifdef CGAL_FREEZE_VERTICES
 BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
   odt_optimize_mesh_3,
@@ -48,28 +47,11 @@ BOOST_PARAMETER_FUNCTION(
     (freeze_bound_, *, parameters::default_values::odt_freeze_ratio )
     (do_freeze_, *, parameters::default_values::do_freeze ))
 )
-#else
-BOOST_PARAMETER_FUNCTION(
-  (Mesh_optimization_return_code),
-  odt_optimize_mesh_3,
-  parameters::tag,
-  (required (in_out(c3t3),*) (domain,*) )
-  (optional
-    (time_limit_, *, 0 )
-    (max_iteration_number_, *, 0 )
-    (convergence_, *, parameters::default_values::odt_convergence_ratio )
-    (freeze_bound_, *, parameters::default_values::odt_freeze_ratio )
-  )
-)
-#endif
 {
   return odt_optimize_mesh_3_impl(c3t3, domain,
                                   time_limit_, max_iteration_number_,
                                   convergence_, freeze_bound_
-#ifdef CGAL_FREEZE_VERTICES
-                                  , do_freeze_
-#endif
-                                  );
+                                  , do_freeze_ );
 } 
 
 
@@ -81,11 +63,8 @@ odt_optimize_mesh_3_impl(C3T3& c3t3,
                          const double time_limit,
                          std::size_t max_iteration_number,
                          const double convergence,
-                         const double freeze_ratio
-#ifdef CGAL_FREEZE_VERTICES 
-                         , const bool do_freeze
-#endif
-                         )
+                         const double freeze_ratio,
+                         const bool do_freeze )
 {
   typedef typename C3T3::Triangulation  Tr;
   
@@ -99,9 +78,7 @@ odt_optimize_mesh_3_impl(C3T3& c3t3,
   Odt_optimizer opt(c3t3,
                     domain,
                     freeze_ratio,
-#ifdef CGAL_FREEZE_VERTICES
                     do_freeze,
-#endif
                     convergence);
   
   // Set max time
