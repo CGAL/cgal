@@ -38,9 +38,7 @@ is a polygon whose vertices \f$ v_1, \ldots, v_n\f$ can be divided into two chai
 intersects either chain at most once. For producing a \f$ y\f$-monotone partition 
 of a given polygon, the sweep-line algorithm 
 presented in \cite bkos-cgaa-97 is implemented by the function
-`::y_monotone_partition_2`
-. 
-This algorithm runs in \f$ O(n \log n)\f$ time and requires \f$ O(n)\f$ space.
+`::y_monotone_partition_2`. This algorithm runs in \f$ O(n \log n)\f$ time and requires \f$ O(n)\f$ space.
 This algorithm does not guarantee a bound on the number of polygons 
 produced with respect to the optimal number.
 
@@ -50,7 +48,6 @@ which determines if a sequence of points in 2D defines a \f$ y\f$-monotone
 polygon or not. For examples of the use of these functions, see the
 corresponding reference pages.
 
-\image html approximate_optimal_vs_optimal.png "Examples of an approximate optimal convex partition (left) and an optimal convex partition (right)."
 
 \section secpartition_2_convex Convex Partitioning 
 
@@ -63,6 +60,8 @@ monotone partition. These two functions both guarantee that they will produce
 no more than four times the optimal number of convex pieces but they differ in 
 their runtime complexities. Though the triangulation-based approximation
 algorithm often results in fewer convex pieces, this is not always the case.
+
+\image html approximate_optimal_vs_optimal.png "Examples of an approximate optimal convex partition (left) and an optimal convex partition (right)."
 
 An optimal convex partition can be produced using the function `::optimal_convex_partition_2`.
 
