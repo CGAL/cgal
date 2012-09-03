@@ -614,6 +614,7 @@ public:
 
   Halfedge_around_vertex_circulator
   incident_halfedges(const Vertex_handle& v, const Halfedge_handle& he) const {
+    internal::use(v);
     CGAL_precondition( he->target() == v );
     return Halfedge_around_vertex_circulator(*he);
   }

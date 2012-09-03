@@ -115,7 +115,8 @@ private:
 };  // end class Polyhedral_mesh_domain_with_features_3
 
 
-template < typename GT_, typename P_, typename TA_, typename Tag_, typename E_tag_>
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const Polyhedron& p)
   : Base()
@@ -124,7 +125,8 @@ Polyhedral_mesh_domain_with_features_3(const Polyhedron& p)
   this->add_primitives(polyhedron_);
 }
 
-template < typename GT_, typename P_, typename TA_, typename Tag_, typename E_tag_>
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const std::string& filename)
   : Base()
@@ -137,7 +139,8 @@ Polyhedral_mesh_domain_with_features_3(const std::string& filename)
 }
 
 
-template < typename GT_, typename P_, typename TA_, typename Tag_, typename E_tag_>
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
 void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 detect_features(FT angle_in_degree)
@@ -147,8 +150,9 @@ detect_features(FT angle_in_degree)
   
   // Get polylines
   typedef std::vector<Point_3> Bare_polyline;
-  typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_segment_index,
-    Bare_polyline > Polyline;
+  typedef Mesh_3::Polyline_with_context<Surface_patch_index,
+                                        Curve_segment_index,
+                                        Bare_polyline > Polyline;
   
   std::vector<Polyline> polylines;
   typedef std::back_insert_iterator<std::vector<Polyline> > Output_iterator;

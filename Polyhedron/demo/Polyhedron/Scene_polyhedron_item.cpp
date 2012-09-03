@@ -377,6 +377,7 @@ Scene_polyhedron_item::select(double orig_x,
                 nearest_v = v;
               }
             }
+            std::cerr << "Selected vertex: " << v->point() << std::endl;
             emit selected_vertex((void*)(&*nearest_v));
           }
           

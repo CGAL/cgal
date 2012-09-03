@@ -853,4 +853,26 @@ public:
 
 } //namespace CGAL
 
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<class NT> struct NumTraits<CGAL::Quotient<NT> >
+  {
+    typedef CGAL::Quotient<NT> Real;
+    typedef CGAL::Quotient<NT> NonInteger;
+    typedef CGAL::Quotient<NT> Nested;
+
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = NumTraits<NT>::RequireInitialization,
+      ReadCost = 2*NumTraits<NT>::ReadCost,
+      AddCost = 150,
+      MulCost = 100
+    };
+  };
+}
+#endif
+
 #endif  // CGAL_QUOTIENT_H

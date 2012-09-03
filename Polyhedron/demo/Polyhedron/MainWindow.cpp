@@ -198,8 +198,11 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
-  connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
-          this, SLOT(showSceneContextMenu(const QPoint &)));
+
+  // The contextMenuPolicy of infoLabel is now the default one, so that one
+  // can easily copy-paste its text.
+  // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
+  //         this, SLOT(showSceneContextMenu(const QPoint &)));
 
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer->camera(), SLOT(interpolateToFitScene()));
@@ -211,9 +214,6 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(ui->actionDraw_two_sides, SIGNAL(toggled(bool)),
           viewer, SLOT(setTwoSides(bool)));
-
-  // enable anti-aliasing by default
-  // ui->actionAntiAliasing->setChecked(true);
 
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
@@ -342,9 +342,9 @@ void MainWindow::filterOperations()
 
 #ifdef QT_SCRIPT_LIB
 void MainWindow::evaluate_script(QString script,
-                                 const QString& /*filename*/,
+                                 const QString& filename,
                                  const bool quiet) {
-  QScriptValue value = script_engine->evaluate(script);
+  QScriptValue value = script_engine->evaluate(script, filename);
   if(script_engine->hasUncaughtException()) {
     QTextStream err(stderr);
     err << "Qt Script exception:\n"
@@ -383,7 +383,7 @@ void MainWindow::enableScriptDebugger(bool b /* = true */)
 #  endif
 #endif
   // If we are here, then the debugger is not available
-  this->error(tr("Your version of Qt is too old, and for that reason"
+  this->error(tr("Your version of Qt is too old, and for that reason "
                  "the Qt Script Debugger is not available."));
 }
 
@@ -461,6 +461,7 @@ bool MainWindow::initPlugin(QObject* obj)
     qobject_cast<Polyhedron_demo_plugin_interface*>(obj);
   if(plugin) {
     // Call plugin's init() method
+    obj->setParent(this);
     plugin->init(this, this->scene, this);
     plugins << qMakePair(plugin, obj->objectName());
 #ifdef QT_SCRIPT_LIB
@@ -628,7 +629,6 @@ void MainWindow::reload_item() {
               << "that is not a Scene_item*\n";
     return;
   }
-
   QString filename = item->property("source filename").toString();
   QString loader_name = item->property("loader_name").toString();
   if(filename.isEmpty() || loader_name.isEmpty()) {
@@ -775,7 +775,9 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
                                 .arg(fileinfo.absoluteFilePath()).toStdString());
   }
 
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   item = loader->load(fileinfo);
+  QApplication::restoreOverrideCursor();
   if(!item) {
     throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
                            .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
@@ -961,12 +963,22 @@ void MainWindow::updateDisplayInfo() {
 
 void MainWindow::readSettings()
 {
+  {
+    QSettings settings;
+    // enable anti-aliasing 
+    ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
+  }
   this->readState("MainWindow", Size|State);
 }
 
 void MainWindow::writeSettings()
 {
   this->writeState("MainWindow");
+  {
+    QSettings settings;
+    settings.setValue("antialiasing", 
+                      ui->actionAntiAliasing->isChecked());
+  }
   std::cerr << "Write setting... done.\n";
 }
 

@@ -3190,6 +3190,7 @@ Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#application/pdf
 Polygon/doc_tex/Polygon/pgn_algos.xml svneol=native#text/xml
 Polygon/doc_tex/Polygon/polygon.png -text
+Polyhedron/demo/Polyhedron/Camera_positions_list.ui -text
 Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_corefinement_plugin.cpp -text
@@ -3554,7 +3555,6 @@ Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics.sln eol=crlf
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#application/octet-stream
 Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
-Robustness/demo/Robustness/help/index.html svneol=native#text/html
 STL_Extension/benchmark/copy_n_benchmark/CMakeLists.txt -text
 STL_Extension/benchmark/copy_n_benchmark/copy_n_benchmark.cpp -text
 STL_Extension/benchmark/copy_n_benchmark/copy_n_use_case_benchmark.cpp -text
