@@ -119,7 +119,7 @@ iso-rectangles. It does not require the use of extended nodes in the
 spatial tree and supports incremental neighbor searching and distance
 browsing for queries defined by points or spatial objects.
 
-## Range Searching ##
+## %Range Searching ##
 
 <I>Exact range searching</I> and <I>approximate range searching</I> is
 supported using exact or fuzzy \f$ d\f$-dimensional objects enclosing a
@@ -260,13 +260,13 @@ This example program illustrates approximate nearest and furthest
 neighbor searching using 4-dimensional %Cartesian coordinates. Five
 approximate nearest neighbors of the query rectangle
 \f$ [0.1,0.2]^4\f$ are computed. Because the query object is a rectangle
-we cannot use the Orthogonal neighbor search. As in the previous 
+we cannot use the orthogonal neighbor search. As in the previous 
 examples we first initialize a search tree, create the search object
 with the query, and obtain the result of the search as iterator range.
 
 \cgalexample{general_neighbor_searching.cpp}
 
-## Example for a Range Query ##
+## Example for a %Range Query ##
 
 This example program illustrates approximate range querying for
 4-dimensional fuzzy iso-rectangles and spheres using homogeneous
