@@ -775,7 +775,9 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
                                 .arg(fileinfo.absoluteFilePath()).toStdString());
   }
 
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   item = loader->load(fileinfo);
+  QApplication::restoreOverrideCursor();
   if(!item) {
     throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
                            .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
