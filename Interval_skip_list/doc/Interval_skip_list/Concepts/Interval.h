@@ -9,8 +9,8 @@ The concept does not specify, whether the interval is open or
 closed. It is up to the implementer of a model for this concept 
 to define that. 
 
-\hasModel CGAL::Interval_skip_list_interval<Value> 
-\hasModel CGAL::Face_interval 
+\hasModel `CGAL::Interval_skip_list_interval<Value>`
+\hasModel `CGAL::Level_interval` 
 
 \sa `Interval_skip_list` 
 
@@ -53,7 +53,7 @@ returns the upper bound.
 Value sup() const; 
 
 /*! 
-returns `true`, iff `in` contains `v`. 
+returns `true`, iff the interval contains `v`. 
 */ 
 bool contains(const Value& v) const; 
 

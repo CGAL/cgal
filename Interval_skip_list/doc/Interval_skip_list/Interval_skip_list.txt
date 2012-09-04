@@ -30,7 +30,7 @@ We give two examples. The first one uses a basic interval class. In
 the second example we create an interval skip list for the \f$ z\f$-ranges
 of the faces of a terrain, allowing to answer level queries.
 
-## First Example with Simple Interval ##
+## First Example with Simple %Interval ##
 
 The first example reads two numbers `n` and `d` from `std::cin`.
 It creates `n` intervals of length `d` with the left endpoint at `n`.
