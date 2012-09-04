@@ -29,6 +29,7 @@
 namespace po = boost::program_options;
 
 #include <iostream>
+#include <fstream>
 
 // class Concurrent_mesher_config
 /// Singleton containing config
