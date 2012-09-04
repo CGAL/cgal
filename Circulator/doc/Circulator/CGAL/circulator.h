@@ -6,7 +6,7 @@ namespace CGAL {
 Each of the following assertions, applicable to an iterator
 or a circulator or both,
 checks at compile time if its argument
-is of the kind stated in the assertions name, i.e. a circulator, an
+is of the kind stated in the assertions name, i.e.\ a circulator, an
 iterator, or a particular category of either an iterator or
 a circulator. Note that neither input nor output circulators exists.
 
@@ -25,7 +25,7 @@ void Assert_circulator( const C &c);
 Each of the following assertions, applicable to an iterator
 or a circulator or both,
 checks at compile time if its argument
-is of the kind stated in the assertions name, i.e. a circulator, an
+is of the kind stated in the assertions name, i.e.\ a circulator, an
 iterator, or a particular category of either an iterator or
 a circulator. Note that neither input nor output circulators exists.
 
@@ -44,7 +44,7 @@ void Assert_iterator( const I &i);
 Each of the following assertions, applicable to an iterator
 or a circulator or both,
 checks at compile time if its argument
-is of the kind stated in the assertions name, i.e. a circulator, an
+is of the kind stated in the assertions name, i.e.\ a circulator, an
 iterator, or a particular category of either an iterator or
 a circulator. Note that neither input nor output circulators exists.
 
@@ -63,7 +63,7 @@ void Assert_circulator_or_iterator(const IC& i);
 Each of the following assertions, applicable to an iterator
 or a circulator or both,
 checks at compile time if its argument
-is of the kind stated in the assertions name, i.e. a circulator, an
+is of the kind stated in the assertions name, i.e.\ a circulator, an
 iterator, or a particular category of either an iterator or
 a circulator. Note that neither input nor output circulators exists.
 
@@ -82,7 +82,7 @@ void Assert_input_category( const I &i);
 Each of the following assertions, applicable to an iterator
 or a circulator or both,
 checks at compile time if its argument
-is of the kind stated in the assertions name, i.e. a circulator, an
+is of the kind stated in the assertions name, i.e.\ a circulator, an
 iterator, or a particular category of either an iterator or
 a circulator. Note that neither input nor output circulators exists.
 
@@ -101,7 +101,7 @@ void Assert_output_category( const I &i);
 Each of the following assertions, applicable to an iterator
 or a circulator or both,
 checks at compile time if its argument
-is of the kind stated in the assertions name, i.e. a circulator, an
+is of the kind stated in the assertions name, i.e.\ a circulator, an
 iterator, or a particular category of either an iterator or
 a circulator. Note that neither input nor output circulators exists.
 
@@ -120,7 +120,7 @@ void Assert_forward_category( const IC &ic);
 Each of the following assertions, applicable to an iterator
 or a circulator or both,
 checks at compile time if its argument
-is of the kind stated in the assertions name, i.e. a circulator, an
+is of the kind stated in the assertions name, i.e.\ a circulator, an
 iterator, or a particular category of either an iterator or
 a circulator. Note that neither input nor output circulators exists.
 
@@ -139,7 +139,7 @@ void Assert_bidirectional_category( const IC &ic);
 Each of the following assertions, applicable to an iterator
 or a circulator or both,
 checks at compile time if its argument
-is of the kind stated in the assertions name, i.e. a circulator, an
+is of the kind stated in the assertions name, i.e.\ a circulator, an
 iterator, or a particular category of either an iterator or
 a circulator. Note that neither input nor output circulators exists.
 
@@ -189,7 +189,7 @@ category. The corresponding non-mutable circulator is called
 `Const_circulator_from_container<C>`.
 
 The container type `C` is supposed to conform to the \stl
-requirements for container (i.e. to have a `begin()` and an
+requirements for container (i.e.\ to have a `begin()` and an
 `end()` iterator as well as the local types
 `reference`, `const_reference`, `value_type`,
 `size_type`, and `difference_type`).
@@ -237,7 +237,7 @@ Circulator_from_container();
 
 /*!
 a circulator `c` initialized to refer to the first element in
-`container`, i.e. `container.begin()`.
+`container`, i.e.\ `container.begin()`.
 The circulator `c` refers to an empty sequence if the
 `container` is empty.
 
@@ -384,12 +384,12 @@ type `Circulator_tag` if the iterator category of the argument
 `Iterator_tag`.
 
 The local type `iterator_category` gives the corresponding
-iterator category for circulators, i.e. one of
+iterator category for circulators, i.e.\ one of
 `forward_iterator_tag`, `bidirectional_iterator_tag`, or
 `random_access_iterator_tag`.
 
 The local type `circulator_category` gives the corresponding
-circulator category for iterators, i.e. one of
+circulator category for iterators, i.e.\ one of
 `Forward_circulator_tag`, `Bidirectional_circulator_tag`, or
 `Random_access_circulator_tag`.
 
@@ -455,7 +455,7 @@ namespace CGAL {
 \ingroup PkgHandlesAndCirculators
 
 The adaptor `Container_from_circulator` is a class that converts any
-circulator type `C` to a kind of container class, i.e. a class
+circulator type `C` to a kind of container class, i.e.\ a class
 that provides an `iterator` and a `const_iterator`
 type and two member functions - `begin()` and `end()`
 - that return the appropriate iterators. By analogy to \stl container classes these member functions return a const iterator in
@@ -761,11 +761,11 @@ iterators or circulators,  a backwards loop macro
 `CGAL_For_all_backwards( i, j)` exists that decrements `j` until
 it reaches `i`.
 
-\sa `iterator_distance`
-\sa `is_empty_range`
-\sa `Circulator_tag`
-\sa `Circulator_traits`
-\sa `Assert_circulator_or_iterator`
+\sa `CGAL::iterator_distance`
+\sa `CGAL::is_empty_range`
+\sa `CGAL::Circulator_tag`
+\sa `CGAL::Circulator_traits`
+\sa `CGAL::Assert_circulator_or_iterator`
 \sa `Circulator`
 
 */

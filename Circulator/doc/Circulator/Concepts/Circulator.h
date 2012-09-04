@@ -281,13 +281,13 @@ incident edge.
 
 template <class Circulator, class T> 
 bool contains( Circulator c, Circulator d, const T& value) { 
-if (c != 0) { 
-do { 
-if (*c == value) 
-return true; 
-} while (++c != d); 
-} 
-return false; 
+  if (c != 0) { 
+    do { 
+      if (*c == value) 
+        return true; 
+    } while (++c != d); 
+  } 
+  return false; 
 } 
 
 \endcode 
