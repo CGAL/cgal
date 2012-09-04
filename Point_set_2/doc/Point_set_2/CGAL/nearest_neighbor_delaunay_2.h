@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgPointSet2
 
-computes a handle to a vertex \f$ w\f$ of `delau` that is closest to \f$ v\f$.
-If \f$ v\f$ is the only vertex in `delau`, `NULL` is returned. 
+computes a handle to a vertex ` w` of `delau` that is closest to ` v`.
+If ` v` is the only vertex in `delau`, `NULL` is returned. 
 
 Requirements 
 -------------- 
@@ -30,7 +30,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPointSet2
 
-computes the \f$ k\f$ nearest neighbors of \f$ p\f$ in `delau`, and places the
+computes the `k` nearest neighbors of `p` in `delau`, and places the
 handles to the corresponding vertices as a sequence of objects of type
 Vertex_handle in a container of value type of `res`
 which points to the first object in the sequence. The function
@@ -68,7 +68,7 @@ OutputIterator nearest_neighbors(Dt& delau, const Dt::Point& p, Dt::size_type k,
 /*!
 \ingroup PkgPointSet2
 
-computes the \f$ k\f$ nearest neighbors of \f$ v\f$ (including \f$ v\f$) in `delau`, and places them as a sequence of objects of type
+computes the `k` nearest neighbors of `v` (including `v`) in `delau`, and places them as a sequence of objects of type
 Vertex_handle in a container of value type of `res`
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end

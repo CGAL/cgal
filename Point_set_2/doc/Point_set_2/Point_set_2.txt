@@ -27,7 +27,7 @@ operation.
 Examples are Voronoi diagrams for answering nearest neighbor
 searches, range trees for orthogonal range queries, partition trees
 for more general range queries, hierarchical triangulations for point
-location and segment trees for intersection queries \f$ \dots \f$.
+location and segment trees for intersection queries.
 
 In many applications, different types of queries have to be
 performed on the same set of objects. A naive approach to this

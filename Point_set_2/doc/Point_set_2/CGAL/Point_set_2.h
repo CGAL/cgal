@@ -76,7 +76,7 @@ Point_set_2();
 
 /*! 
 creates a `Point_set_2` `PS` of the points in the range 
-[\f$ first\f$,\f$ last\f$). 
+[` first`,` last`). 
 */ 
 template<class InputIterator> 
 Point_set_2(InputIterator first, InputIterator last); 
@@ -87,27 +87,27 @@ Point_set_2(InputIterator first, InputIterator last);
 /// @{
 
 /*! 
-if `PS` contains a vertex \f$ v\f$ with \f$ |pos(v)| = p\f$ 
-the result is a handle to \f$ v\f$ otherwise the result is `NULL`. 
+if `PS` contains a vertex ` v` with \f$ |pos(v)| = p\f$ 
+the result is a handle to ` v` otherwise the result is `NULL`. 
 */ 
 Vertex\_handle lookup(Point p); 
 
 /*! 
-computes a handle to a vertex \f$ v\f$ of `PS` that is closest to \f$ p\f$. 
+computes a handle to a vertex ` v` of `PS` that is closest to ` p`. 
 If `PS` is empty, `NULL` is returned. 
 
 */ 
 Vertex\_handle nearest_neighbor(Point p); 
 
 /*! 
-computes a handle to a vertex \f$ w\f$ of `PS` that is closest to \f$ v\f$. 
-If \f$ v\f$ is the only vertex in `PS` , `NULL` is returned. 
+computes a handle to a vertex ` w` of `PS` that is closest to ` v`. 
+If ` v` is the only vertex in `PS` , `NULL` is returned. 
 
 */ 
 Vertex\_handle nearest_neighbor(Vertex_handle v); 
 
 /*! 
-computes the \f$ k\f$ nearest neighbors of \f$ p\f$ in `PS`, and places the 
+computes the ` k` nearest neighbors of ` p` in `PS`, and places the 
 handles to the corresponding vertices as a sequence of objects of type 
 Vertex_handle in a container of value type of `res` 
 which points to the first object in the sequence. The function 
@@ -118,7 +118,7 @@ template<class OutputIterator>
 OutputIterator nearest_neighbors(Point p, size_type k, OutputIterator res); 
 
 /*! 
-computes the \f$ k\f$ nearest neighbors of \f$ v\f$, and places them as a sequence of objects of type 
+computes the ` k` nearest neighbors of ` v`, and places them as a sequence of objects of type 
 Vertex_handle in a container of value type of `res` 
 which points to the first object in the sequence. The function 
 returns an output iterator pointing to the position beyond the end 
@@ -128,7 +128,7 @@ template<class OutputIterator>
 OutputIterator nearest_neighbors(Vertex_handle v, size_type k,OutputIterator res); 
 
 /*! 
-computes handles to all vertices contained in the closure of disk \f$ C\f$. 
+computes handles to all vertices contained in the closure of disk ` C`. 
 The computed vertex handles will be placed as a sequence of objects in a container of value type 
 of `res` 
 which points to the first object in the sequence. The function 
@@ -140,9 +140,9 @@ template<class OutputIterator>
 OutputIterator range_search(const Circle& C, OutputIterator res); 
 
 /*! 
-computes handles to all vertices contained in the closure of the triangle \f$ (a,b,c)\f$. 
+computes handles to all vertices contained in the closure of the triangle ` (a,b,c)`. 
 
-\pre \f$ a\f$, \f$ b\f$, and \f$ c\f$ must not be collinear. 
+\pre ` a`, ` b`, and ` c` must not be collinear. 
 The computed vertex handles will be placed as a sequence of objects in a container of value type 
 of `res` 
 which points to the first object in the sequence. The function 
@@ -154,9 +154,9 @@ template<class OutputIterator>
 OutputIterator range_search(const Point& a, const Point& b, const Point& c,OutputIterator res); 
 
 /*! 
-computes handles to all vertices contained in the closure of the iso-rectangle \f$ (a1,b1,c1,d1)\f$. 
+computes handles to all vertices contained in the closure of the iso-rectangle ` (a1,b1,c1,d1)`. 
 
-\pre \f$ a1\f$ is the upper left point, \f$ b1\f$ the lower left, \f$ c1\f$ the lower right and \f$ d1\f$ the upper right point of the iso rectangle. 
+\pre ` a1` is the upper left point, ` b1` the lower left, ` c1` the lower right and ` d1` the upper right point of the iso rectangle. 
 The computed vertex handles will be placed as a sequence of objects in a container of value type 
 of `res` 
 which points to the first object in the sequence. The function 
