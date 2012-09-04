@@ -80,21 +80,21 @@ but a useful set of tests is defined with the following levels:
 The number of halfedges is even. All pointers except 
 the vertex pointer and the face pointer for border halfedges are 
 unequal to their respective default construction value. For all 
-halfedges \f$ h\f$: The opposite halfedge is different from \f$ h\f$ and the 
-opposite of the opposite is equal to \f$ h\f$. The next of the previous 
-halfedge is equal to \f$ h\f$. For all vertices \f$ v\f$: the incident vertex 
-of the incident halfedge of \f$ v\f$ is equal to \f$ v\f$. The halfedges 
-around \f$ v\f$ starting with the incident halfedge of \f$ v\f$ form a cycle. 
-For all faces \f$ f\f$: the incident face of the incident halfedge of \f$ f\f$ 
-is equal to \f$ f\f$. The halfedges around \f$ f\f$ starting with the incident 
-halfedge of \f$ f\f$ form a cycle. Redundancies among internal variables 
+halfedges `h`: The opposite halfedge is different from `h` and the 
+opposite of the opposite is equal to `h`. The next of the previous 
+halfedge is equal to `h`. For all vertices``v`: the incident vertex 
+of the incident halfedge of`v` is equal to`v`. The halfedges 
+around`v` starting with the incident halfedge of`v` form a cycle. 
+For all faces `f`: the incident face of the incident halfedge of `f` 
+is equal to `f`. The halfedges around `f` starting with the incident 
+halfedge of `f` form a cycle. Redundancies among internal variables 
 are tested, e.g., that iterators enumerate as many items as the 
 related size value indicates. 
 <DT><B>Level 1</B><DD> 
-All tests of level 0. For all halfedges \f$ h\f$: The 
-incident vertex of \f$ h\f$ exists and is equal to the incident vertex of 
+All tests of level 0. For all halfedges `h`: The 
+incident vertex of `h` exists and is equal to the incident vertex of 
 the opposite of the next halfedge. The incident face (or hole) of 
-\f$ h\f$ is equal to the incident face (or hole) of the next halfedge. 
+`h` is equal to the incident face (or hole) of the next halfedge. 
 <DT><B>Level 2</B><DD> 
 All tests of level 1. The sum of all halfedges that can 
 be reached through the vertices must be equal to the number of all 

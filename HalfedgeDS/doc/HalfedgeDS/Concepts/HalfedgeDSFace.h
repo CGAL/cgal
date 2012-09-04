@@ -121,7 +121,7 @@ Halfedge_const_handle halfedge() const;
 
 /*! 
 
-sets incident halfedge to \f$ h\f$. 
+sets incident halfedge to `h`. 
 */ 
 void set_halfedge( Halfedge_handle h); 
 

@@ -147,7 +147,7 @@ Halfedge_const_handle opposite() const;
 
 /*! 
 
-sets opposite halfedge to \f$ h\f$. 
+sets opposite halfedge to `h`. 
 */ 
 void set_opposite( Halfedge_handle h); 
 
@@ -163,7 +163,7 @@ Halfedge_const_handle next() const;
 
 /*! 
 
-sets next halfedge to \f$ h\f$. 
+sets next halfedge to `h`. 
 */ 
 void set_next( Halfedge_handle h); 
 
@@ -188,7 +188,7 @@ the previous halfedge around the face.
 Halfedge_const_handle prev() const; 
 /*! 
 
-sets prev halfedge to \f$ h\f$. 
+sets prev halfedge to `h`. 
 */ 
 void set_prev( Halfedge_handle h); 
 
@@ -208,7 +208,7 @@ the incident vertex of `h`.
 Vertex_const_handle vertex() const; 
 /*! 
 
-sets incident vertex to \f$ v\f$. 
+sets incident vertex to `v`. 
 */ 
 void set_vertex( Vertex_handle v); 
 
@@ -230,7 +230,7 @@ Face_const_handle face() const;
 
 /*! 
 
-sets incident face to \f$ f\f$. 
+sets incident face to `f`. 
 */ 
 void set_face( Face_handle f); 
 

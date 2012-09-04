@@ -69,7 +69,7 @@ default constructor.
 HalfedgeDS_vertex_base(); 
 
 /*! 
-initialized with point \f$ p\f$. 
+initialized with point `p`. 
 */ 
 HalfedgeDS_vertex_base( const Point& p); 
 

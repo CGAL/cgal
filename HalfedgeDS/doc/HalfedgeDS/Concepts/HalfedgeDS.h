@@ -309,7 +309,7 @@ empty halfedge data structure.
 HalfedgeDS(); 
 
 /*! 
-storage reserved for \f$ v\f$ vertices, \f$ h\f$ halfedges, and \f$ f\f$ faces. 
+storage reserved for `v` vertices, `h` halfedges, and `f` faces. 
 */ 
 HalfedgeDS( size_type v, size_type h, size_type f); 
 
@@ -325,7 +325,7 @@ HalfedgeDS<Traits,Items,Alloc>&
 operator=( const HalfedgeDS<Traits,Items,Alloc>& hds2); 
 
 /*! 
-reserves storage for \f$ v\f$ vertices, \f$ h\f$ halfedges, and \f$ f\f$ faces. 
+reserves storage for `v` vertices, `h` halfedges, and `f` faces. 
 If all capacities are already greater or equal than the requested sizes 
 nothing happens. Otherwise, `hds` will be resized and all handles, 
 iterators and circulators invalidate. \pre If resizing is necessary `hds` contains no dangling handles. 
@@ -422,26 +422,26 @@ faces respectively.
 /// @{
 
 /*! 
-appends a copy of \f$ v\f$ to `hds`. Returns a handle of the new vertex. 
+appends a copy of `v` to `hds`. Returns a handle of the new vertex. 
 */ 
 Vertex_handle vertices_push_back( const Vertex& v); 
 
 /*! 
-appends a copy of \f$ h\f$ and a copy of \f$ g\f$ to `hds` and makes them 
-opposite to each other. Returns a handle of the copy of \f$ h\f$. 
+appends a copy of `h` and a copy of `g` to `hds` and makes them 
+opposite to each other. Returns a handle of the copy of `h`. 
 */ 
 Halfedge_handle edges_push_back( const Halfedge& h, 
 const Halfedge& g); 
 
 /*! 
-appends a copy of \f$ h\f$ and a copy of \f$ h->opposite()\f$ to `hds` and 
-makes them opposite to each other. Returns a handle of the copy of \f$ h\f$. 
+appends a copy of `h` and a copy of `h->opposite()` to `hds` and 
+makes them opposite to each other. Returns a handle of the copy of `h`. 
 \pre `h->opposite()` denotes a halfedge. 
 */ 
 Halfedge_handle edges_push_back( const Halfedge& h); 
 
 /*! 
-appends a copy of \f$ f\f$ to `hds`. Returns a handle of the new face. 
+appends a copy of `f` to `hds`. Returns a handle of the new face. 
 */ 
 Face_handle faces_push_back( const Face& f); 
 
@@ -471,14 +471,14 @@ void vertices_pop_back();
 
 /*! 
 
-removes the vertex \f$ v\f$ if vertices are supported and 
+removes the vertex `v` if vertices are supported and 
 `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void vertices_erase( Vertex_handle v); 
 
 /*! 
 
-removes the range of vertices \f$ [first,last)\f$ if vertices 
+removes the range of vertices `[first,last)` if vertices 
 are supported and `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void vertices_erase( Vertex_handle first, Vertex_handle last); 
@@ -498,14 +498,14 @@ void edges_pop_back();
 
 /*! 
 
-removes the pair of halfedges \f$ h\f$ and `h->opposite()` 
+removes the pair of halfedges `h` and `h->opposite()` 
 if `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void edges_erase( Halfedge_handle h); 
 
 /*! 
 
-removes the range of edges \f$ [first},last)\f$ if 
+removes the range of edges `[first},last)` if 
 `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void edges_erase( Halfedge_handle first, Halfedge_handle last); 
@@ -525,14 +525,14 @@ void faces_pop_back();
 
 /*! 
 
-removes the face \f$ f\f$ if faces are supported and 
+removes the face `f` if faces are supported and 
 `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void faces_erase( Face_handle f); 
 
 /*! 
 
-removes the range of faces \f$ [first,last)\f$ if faces are 
+removes the range of faces `[first,last)` if faces are 
 supported and `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void faces_erase( Face_handle first, Face_handle last); 

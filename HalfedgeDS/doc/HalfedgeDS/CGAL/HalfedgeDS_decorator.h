@@ -73,14 +73,14 @@ HalfedgeDS_decorator( HDS& hds);
 
 /*! 
 
-appends a copy of \f$ v\f$ to `hds` if vertices are supported. 
+appends a copy of `v` to `hds` if vertices are supported. 
 Returns a handle of the new vertex, or `Vertex_handle()` otherwise. 
 */ 
 Vertex_handle vertices_push_back( const Vertex& v); 
 
 /*! 
 
-appends a copy of \f$ f\f$ to `hds` if faces are supported. 
+appends a copy of `f` to `hds` if faces are supported. 
 Returns a handle of the new face, or `Face_handle()` otherwise. 
 */ 
 Face_handle faces_push_back( const Face& f); 
@@ -132,7 +132,7 @@ void vertices_pop_back();
 
 /*! 
 
-removes the vertex \f$ v\f$ if vertices are supported. 
+removes the vertex `v` if vertices are supported. 
 
 Requirement 
 -------------- 
@@ -143,7 +143,7 @@ void vertices_erase( Vertex_handle v);
 
 /*! 
 
-removes the range \f$ [first,last)\f$ if vertices 
+removes the range `[first,last)` if vertices 
 are supported. 
 Requirement 
 -------------- 
@@ -169,7 +169,7 @@ void faces_pop_back();
 
 /*! 
 
-removes the face \f$ f\f$ if faces are supported. 
+removes the face `f` if faces are supported. 
 
 Requirement 
 -------------- 
@@ -179,7 +179,7 @@ void faces_erase( Face_handle f);
 
 /*! 
 
-removes the range \f$ [first,last)\f$ if faces are 
+removes the range `[first,last)` if faces are 
 supported. 
 Requirement 
 -------------- 
@@ -204,7 +204,7 @@ void erase_face( Halfedge_handle h);
 
 /*! 
 removes the vertices, halfedges, and faces that belong to the 
-connected component of \f$ h\f$. \pre For all halfedges \f$ g\f$ in the connected component `g.next() != Halfedge_handle()`. 
+connected component of `h`. \pre For all halfedges `g` in the connected component `g.next() != Halfedge_handle()`. 
 
 Requirement 
 -------------- 
@@ -245,7 +245,7 @@ Returns `h`.
 Halfedge_handle fill_hole( Halfedge_handle h); 
 
 /*! 
-fills the hole incident to `h` with a copy of face \f$ f\f$. 
+fills the hole incident to `h` with a copy of face `f`. 
 Returns `h`. 
 \pre `h != Halfedge_handle()` and `h->is_border()`. 
 */ 
@@ -253,22 +253,22 @@ Halfedge_handle fill_hole( Halfedge_handle h, const Face& f);
 
 /*! 
 extends the surface with a new face from `hds` into the hole 
-incident to \f$ h\f$ and \f$ g\f$. It creates a new edge connecting the vertex 
-denoted by \f$ g\f$ with the vertex denoted by \f$ h\f$ and fills this separated 
+incident to `h` and `g`. It creates a new edge connecting the vertex 
+denoted by `g` with the vertex denoted by `h` and fills this separated 
 part of the hole with a new face, such that the new face is incident 
-to \f$ g\f$. Returns the new halfedge that is incident to the new face. 
-\pre `h != Halfedge_handle()`, `g != Halfedge_handle()`, `h->is_border()`, `g->is_border()` and \f$ g\f$ can be reached along the hole starting with \f$ h\f$. 
+to `g`. Returns the new halfedge that is incident to the new face. 
+\pre `h != Halfedge_handle()`, `g != Halfedge_handle()`, `h->is_border()`, `g->is_border()` and `g` can be reached along the hole starting with `h`. 
 */ 
 Halfedge_handle add_face_to_border( Halfedge_handle h, 
 Halfedge_handle g); 
 
 /*! 
-extends the surface with a copy of face \f$ f\f$ into the hole 
-incident to \f$ h\f$ and \f$ g\f$. It creates a new edge connecting the tip of 
-\f$ g\f$ with the tip of \f$ h\f$ and fills this separated part of the hole with a 
-copy of face \f$ f\f$, such that the new face is incident to \f$ g\f$. Returns 
+extends the surface with a copy of face `f` into the hole 
+incident to `h` and `g`. It creates a new edge connecting the tip of 
+`g` with the tip of `h` and fills this separated part of the hole with a 
+copy of face `f`, such that the new face is incident to `g`. Returns 
 the new halfedge that is incident to the new face. 
-\pre `h != Halfedge_handle()`, `g != Halfedge_handle()`, `h->is_border()`, `g->is_border()` and \f$ g\f$ can be reached along the hole starting with \f$ h\f$. 
+\pre `h != Halfedge_handle()`, `g != Halfedge_handle()`, `h->is_border()`, `g->is_border()` and `g` can be reached along the hole starting with `h`. 
 */ 
 Halfedge_handle add_face_to_border( Halfedge_handle h, 
 Halfedge_handle g, 
@@ -283,7 +283,7 @@ Note that well known graph operations are also captured with these
 Euler operators, for example an edge contraction is equal to a 
 `join_vertex()` operation, or an edge removal to `join_face()`. 
 
-Given a halfedge data structure `hds` and a halfedge handle \f$ h\f$ 
+Given a halfedge data structure `hds` and a halfedge handle `h` 
 four special applications of the Euler operators are worth mentioning: 
 `split_vertex(h,h)` results in an antenna emanating from the tip 
 of `h`; `split_vertex(h,h->next()->opposite())` results in an edge 
@@ -310,10 +310,10 @@ to the distance from `h` to `g` around the face.
 Halfedge_handle split_face( Halfedge_handle h, Halfedge_handle g); 
 
 /*! 
-joins the two faces incident to \f$ h\f$. The face incident to 
+joins the two faces incident to `h`. The face incident to 
 `h->opposite()` gets removed from `hds`. Both faces might be 
-holes. Returns the predecessor of \f$ h\f$ around the face. The invariant 
-`join_face( split_face( h, g))` returns \f$ h\f$ and keeps 
+holes. Returns the predecessor of `h` around the face. The invariant 
+`join_face( split_face( h, g))` returns `h` and keeps 
 the data structure unchanged. The time is proportional to the size 
 of the face removed and the time to compute `h->prev()`. 
 
@@ -342,10 +342,10 @@ to the distance from `h` to `g` around the vertex.
 Halfedge_handle split_vertex( Halfedge_handle h, Halfedge_handle g); 
 
 /*! 
-joins the two vertices incident to \f$ h\f$. The vertex denoted by 
+joins the two vertices incident to `h`. The vertex denoted by 
 `h->opposite()` gets removed by `hds`. Returns the predecessor of 
-\f$ h\f$ around the vertex, i.e., `h->opposite()->prev()`. The invariant 
-`join_vertex( split_vertex( h, g))` returns \f$ h\f$ 
+`h` around the vertex, i.e., `h->opposite()->prev()`. The invariant 
+`join_vertex( split_vertex( h, g))` returns `h` 
 and keeps the polyhedron unchanged. 
 The time is proportional to the degree of the vertex removed and 
 the time to compute `h->prev()` and `h->opposite()->prev()`. 
@@ -398,14 +398,14 @@ Requirement
 Halfedge_handle erase_center_vertex( Halfedge_handle g); 
 
 /*! 
-cuts the halfedge data structure into two parts along the cycle \f$ (h,i,j)\f$. 
+cuts the halfedge data structure into two parts along the cycle `(h,i,j)`. 
 Three new vertices (one copy for each vertex in the cycle) and three 
 new halfedges (one copy for each halfedge in the cycle), and two new 
-triangles are created. \f$ h,i,j\f$ will be incident to the first new triangle. 
+triangles are created. `h,i,j` will be incident to the first new triangle. 
 The return value will be the halfedge incident to the second new triangle 
 which is the copy of `h-opposite()`. 
 
-\pre \f$ h,i,j\f$ denote distinct, consecutive vertices of the halfedge 
+\pre `h,i,j` denote distinct, consecutive vertices of the halfedge 
 data structure and form a cycle: i.e., `h->vertex() == i->opposite()->vertex()`, 
 \f$\ldots\f$ , `j->vertex() == h->opposite()->vertex()`. 
 
@@ -418,12 +418,12 @@ Halfedge_handle i,
 Halfedge_handle j); 
 
 /*! 
-glues the boundary of the two faces denoted by \f$ h\f$ and \f$ g\f$ together 
-and returns \f$ h\f$. Both faces and the vertices along the face denoted 
-by \f$ g\f$ gets removed. Both faces may be holes. The invariant 
-`join_loop( h, split_loop( h, i, j))` returns \f$ h\f$ and keeps the 
+glues the boundary of the two faces denoted by `h` and `g` together 
+and returns `h`. Both faces and the vertices along the face denoted 
+by `g` gets removed. Both faces may be holes. The invariant 
+`join_loop( h, split_loop( h, i, j))` returns `h` and keeps the 
 data structure unchanged. 
-\pre The faces denoted by \f$ h\f$ and \f$ g\f$ are different and have equal degree (i.e., number of edges). 
+\pre The faces denoted by `h` and `g` are different and have equal degree (i.e., number of edges). 
 
 Requirement 
 -------------- 

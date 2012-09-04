@@ -217,14 +217,14 @@ example for the vector-based data structure.
 
 \advancedend
 
-## Example Using the Halfedge Iterator ##
+## Example Using the Halfedge %Iterator ##
 
 Two edges are created in the default halfedge data structure.
 The halfedge iterator is used to count the halfedges.
 
 \cgalexample{HalfedgeDS/hds_prog_halfedge_iterator.cpp}
 
-## Example for an Adapter to Build an Edge Iterator ##
+## Example for an Adapter to Build an Edge %Iterator ##
 
 Three edges are created in the default halfedge data structure.
 The adapter `N_step_adaptor` is used to declare the edge
