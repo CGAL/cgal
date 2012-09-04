@@ -7,7 +7,7 @@ namespace CGAL {
 \authors Marc Pouget and Fr&eacute;d&eacute;ric Cazals
 
 \anchor figjet3figdavid
-\image html david-dirmaxkmin-white-back.jpg 
+\image html david-dirmaxkmin-white-back.jpg width=400px
 <center>
 <div class="caption">Principal directions associated with \f$ k_{max}\f$ scaled by \f$ k_{min}\f$.</div>
 </center>
@@ -293,7 +293,7 @@ Figs.
 provide illustrations of principal directions of curvature.
 
 \anchor figjet3figellipticparaboloid
-\image html ppal_curv_poly2x2+y2.jpg 
+\image html ppal_curv_poly2x2+y2.jpg "" width=600px
 
 <center><b>Principal directions of curvature and normals at vertices of a mesh of the graph of the function \f$ f(x,y)=2x^2+y^2\f$.</b></center>
 
