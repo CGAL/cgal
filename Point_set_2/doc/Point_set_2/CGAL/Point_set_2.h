@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPointSet2
 
-An instance \f$ PS\f$ of the data type `Point_set_2` is a <I>Delaunay Triangulation</I> 
+An instance `PS` of the data type `Point_set_2` is a <I>Delaunay Triangulation</I> 
 of its vertex set. The class `Point_set_2` is inherited from the \cgal Delaunay triangulation, 
 and provides additional nearest neighbor query operations and range searching operations. 
 
@@ -87,21 +87,21 @@ Point_set_2(InputIterator first, InputIterator last);
 /// @{
 
 /*! 
-if `PS` contains a Vertex \f$ v\f$ with \f$ |pos(v)| = p\f$ 
-the result is a handle to \f$ v\f$ otherwise the result is \f$ NULL\f$. 
+if `PS` contains a vertex \f$ v\f$ with \f$ |pos(v)| = p\f$ 
+the result is a handle to \f$ v\f$ otherwise the result is `NULL`. 
 */ 
 Vertex\_handle lookup(Point p); 
 
 /*! 
 computes a handle to a vertex \f$ v\f$ of `PS` that is closest to \f$ p\f$. 
-If `PS` is empty, \f$ NULL\f$ is returned. 
+If `PS` is empty, `NULL` is returned. 
 
 */ 
 Vertex\_handle nearest_neighbor(Point p); 
 
 /*! 
 computes a handle to a vertex \f$ w\f$ of `PS` that is closest to \f$ v\f$. 
-If \f$ v\f$ is the only vertex in `PS` , \f$ NULL\f$ is returned. 
+If \f$ v\f$ is the only vertex in `PS` , `NULL` is returned. 
 
 */ 
 Vertex\_handle nearest_neighbor(Vertex_handle v); 

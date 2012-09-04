@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Range and Neighbor Search
+\mainpage 2D %Range and Neighbor Search
 \anchor chapterPointset2
 \autotoc
 \authors Matthias B&auml;sken
@@ -67,11 +67,11 @@ The `CGAL::Point_set_2` class supports the following kinds of queries:
 </UL>
 For details about the running times see \cite mn-lpcgc-00.
 
-# Example: Range Search #
+# Example: %Range Search #
 
 The following example program demonstrates the various range search operations
 of the two dimensional point set.
-First we construct a two dimensional point set \f$ PSet\f$ and initialize it with a few points.
+First we construct a two dimensional point set `PSet` and initialize it with a few points.
 Then we perform circular, triangular and isorectangular range search operations on the
 point set.
 

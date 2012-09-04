@@ -23,11 +23,11 @@ namespace CGAL {
 
 computes handles to all vertices contained in the closure of disk \f$ C\f$.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
-of \f$ res\f$
+of `res`
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence.
-\f$ delau\f$ is the \cgal Delaunay triangulation on which we perform the range search operation.
+`delau`$ is the \cgal Delaunay triangulation on which we perform the range search operation.
 
 Requirements 
 -------------- 
@@ -59,11 +59,11 @@ computes handles to all vertices contained in the closure of the triangle \f$ (a
 
 \pre \f$ a\f$, \f$ b\f$, and \f$ c\f$ must not be collinear. 
 The computed vertex handles will be placed as a sequence of objects in a container of value type
-of \f$ res\f$
+of `res`
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence. 
-\f$ delau\f$ is the \cgal Delaunay triangulation on which we perform the range search operation.
+`delau` is the \cgal Delaunay triangulation on which we perform the range search operation.
 
 Requirements 
 -------------- 
@@ -96,10 +96,10 @@ computes handles to all vertices contained in the closure of the iso-rectangle \
 
 \pre \f$ a\f$ is the upper left point, \f$ b\f$ the lower left, \f$ c\f$ the lower right and \f$ d\f$ the upper right point of the iso rectangle.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
-of \f$ res\f$
+of `res`
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
-of the sequence. \f$ delau\f$ is the \cgal Delaunay triangulation on which we perform the range search operation.
+of the sequence. `delau` is the \cgal Delaunay triangulation on which we perform the range search operation.
 
 Requirements 
 -------------- 
@@ -129,12 +129,12 @@ OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, c
 
 computes handles to all vertices contained in the closure of disk \f$ C\f$.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
-of \f$ res\f$
+of `res`
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence.
-\f$ delau\f$ is the \cgal Delaunay triangulation on that we perform the range search operation.
-\f$ pred\f$ controls the search operation. If \f$ return\_if\_succeded\f$ is \f$ true\f$, we will end the search
+`delau` is the \cgal Delaunay triangulation on that we perform the range search operation.
+` pred` controls the search operation. If `return_if_succeded` is `true`, we will end the search
 after the first success of the predicate, otherwise we will continue till the search is finished.
 
 Requirements 
@@ -148,10 +148,10 @@ Requirements of `Pred`:
 <LI>`bool operator()(const Point&);` 
 </UL> 
 The `operator()` is used for testing the current point in the search operation. 
-If this operator returns \f$ true\f$ and \f$ return\_if\_succeded\f$ is \f$ true\f$, the range search will stop. 
-Otherwise the range search operation will continue. Member function \f$ set\_result\f$ can be used to 
-store the result of the range search in the function object. The result will be \f$ true\f$ if the last 
-call to the `operator()` of the predicate returned \f$ true\f$, \f$ false\f$ otherwise. 
+If this operator returns `true` and `return_if_succeded` is `true`, the range search will stop. 
+Otherwise the range search operation will continue. Member function `set_result` can be used to 
+store the result of the range search in the function object. The result will be `true` if the last 
+call to the `operator()` of the predicate returned `true`, `false` otherwise. 
 
 */
 template<class Dt, class Circle, class OutputIterator, class Pred>
@@ -165,12 +165,12 @@ computes handles to all vertices contained in the closure of the triangle \f$ (a
 
 \pre \f$ a\f$, \f$ b\f$, and \f$ c\f$ must not be collinear.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
-of \f$ res\f$
+of `res`
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence. 
-\f$ delau\f$ is the \cgal Delaunay triangulation on which we perform the range search operation.
-\f$ pred\f$ controls the search operation. If \f$ return\_if\_succeded\f$ is \f$ true\f$, we will end the search
+`delau` is the \cgal Delaunay triangulation on which we perform the range search operation.
+`pred` controls the search operation. If `return_if_succeded` is `true`, we will end the search
 after the first success of the predicate, otherwise we will continue till the search is finished.
 
 Requirements 
@@ -192,11 +192,11 @@ computes handles to all vertices contained in the closure of the iso-rectangle \
 
 \pre \f$ a\f$ is the upper left point, \f$ b\f$ the lower left, \f$ c\f$ the lower right and \f$ d\f$ the upper right point of the iso rectangle.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
-of \f$ res\f$
+of `res`
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
-of the sequence. \f$ delau\f$ is the \cgal Delaunay triangulation on which we perform the range search operation.
-\f$ pred\f$ controls the search operation. If \f$ return\_if\_succeded\f$ is \f$ true\f$, we will end the search
+of the sequence. `delau` is the \cgal Delaunay triangulation on which we perform the range search operation.
+`pred` controls the search operation. If `return_if_succeded` is `true`, we will end the search
 after the first success of the predicate, otherwise we will continue till the search is finished.
 
 Requirements 
