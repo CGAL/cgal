@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgPointSet2
 
-computes a handle to a vertex ` w` of `delau` that is closest to ` v`.
-If ` v` is the only vertex in `delau`, `NULL` is returned. 
+computes a handle to a vertex `w` of `delau` that is closest to `v`.
+If `v` is the only vertex in `delau`, `NULL` is returned. 
 
 Requirements 
 -------------- 

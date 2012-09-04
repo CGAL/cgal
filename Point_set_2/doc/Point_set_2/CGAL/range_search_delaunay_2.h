@@ -15,13 +15,13 @@ namespace CGAL {
  *
  * They get a user-defined object that has to control the range
  * search operation.  This way one can for instance stop the search,
- * when ` n` points were found.
+ * when `n` points were found.
  */
 
 /*!
 \ingroup PkgPointSet2RangeSearch
 
-computes handles to all vertices contained in the closure of disk ` C`.
+computes handles to all vertices contained in the closure of disk `C`.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
 of `res`
 which points to the first object in the sequence. The function
@@ -55,9 +55,9 @@ OutputIterator range_search(Dt& delau, const Circle& C, OutputIterator res);
 /*!
 \ingroup PkgPointSet2RangeSearch
 
-computes handles to all vertices contained in the closure of the triangle ` (a,b,c)`.
+computes handles to all vertices contained in the closure of the triangle `(a,b,c)`.
 
-\pre ` a`, ` b`, and ` c` must not be collinear. 
+\pre `a`, `b`, and `c` must not be collinear. 
 The computed vertex handles will be placed as a sequence of objects in a container of value type
 of `res`
 which points to the first object in the sequence. The function
@@ -92,9 +92,9 @@ const Dt::Point& c,OutputIterator res);
 /*!
 \ingroup PkgPointSet2RangeSearch
 
-computes handles to all vertices contained in the closure of the iso-rectangle ` (a,b,c,d)`.
+computes handles to all vertices contained in the closure of the iso-rectangle `(a,b,c,d)`.
 
-\pre ` a` is the upper left point, ` b` the lower left, ` c` the lower right and ` d` the upper right point of the iso rectangle.
+\pre `a` is the upper left point, `b` the lower left, `c` the lower right and `d` the upper right point of the iso rectangle.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
 of `res`
 which points to the first object in the sequence. The function
@@ -127,7 +127,7 @@ OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, c
 /*!
 \ingroup PkgPointSet2RangeSearch
 
-computes handles to all vertices contained in the closure of disk ` C`.
+computes handles to all vertices contained in the closure of disk `C`.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
 of `res`
 which points to the first object in the sequence. The function
@@ -161,9 +161,9 @@ Pred& pred, bool return_if_succeded);
 /*!
 \ingroup PkgPointSet2RangeSearch
 
-computes handles to all vertices contained in the closure of the triangle ` (a,b,c)`.
+computes handles to all vertices contained in the closure of the triangle `(a,b,c)`.
 
-\pre ` a`, ` b`, and ` c` must not be collinear.
+\pre `a`, `b`, and `c` must not be collinear.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
 of `res`
 which points to the first object in the sequence. The function
@@ -188,7 +188,7 @@ const Dt::Point& c,OutputIterator res, Pred& pred, bool return_if_succeded);
 /*!
 \ingroup PkgPointSet2RangeSearch
 
-computes handles to all vertices contained in the closure of the iso-rectangle ` (a,b,c,d)`.
+computes handles to all vertices contained in the closure of the iso-rectangle `(a,b,c,d)`.
 
 \pre `a` is the upper left point, `b` the lower left, `c` the lower right and `d` the upper right point of the iso rectangle.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
