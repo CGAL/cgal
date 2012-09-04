@@ -45,9 +45,7 @@ namespace CGAL {
    * hierarchy of axis-aligned bounding boxes (an AABB tree) from a set
    * of 3D geometric objects, and can receive intersection and distance
    * queries, provided that the corresponding predicates are
-   * implemented in the traits class \c AT. The template parameter
-   * \c AT stands for a traits class which must be a model of the
-   * concept \ref AABBTraits.
+   * implemented in the traits class AABBTraits.
    *
    * \sa \ref AABBTraits
    * \sa \ref AABBPrimitive
@@ -188,14 +186,14 @@ public:
 		/// Returns `true`, iff the query intersects at least one of
 		/// the input primitives. Type `Query` must be a type for
 		/// which `do_intersect` predicates are
-		/// defined in the `AT` class.
+		/// defined in the traits class AABBTraits.
 		template<typename Query>
 		bool do_intersect(const Query& query) const;
 
     /// Returns the number of primitives intersected by the
     /// query. Type `Query` must be a type for which
     /// `do_intersect` predicates are defined
-    /// in the `AT` class.
+    /// in the traits class AABBTraits.
 		template<typename Query>
 		size_type number_of_intersected_primitives(const Query& query) const;
 
@@ -204,7 +202,7 @@ public:
     /// and is hence faster than the function `all_intersections`
     /// function below. Type `Query` must be a type for which
     /// `do_intersect` predicates are defined
-    /// in the `AT` class.
+    /// in the traits class AABBTraits.
 		template<typename Query, typename OutputIterator>
 		OutputIterator all_intersected_primitives(const Query& query, OutputIterator out) const;
 
@@ -216,7 +214,7 @@ public:
     /// closest from the source point of a ray query. Type `Query`
     /// must be a type for which
     /// `do_intersect` predicates are defined
-    /// in the `AT` class.
+    /// in the traits class AABBTraits.
 		template <typename Query>
 		boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
     
@@ -229,7 +227,7 @@ public:
     /// the query and input data, as objects of type
     /// `Object_and_primitive_id`. Type `Query` must be a type
     /// for which `do_intersect` predicates
-    /// and intersections are defined in the `AT` class.
+    /// and intersections are defined in the traits class AABBTraits.
 		template<typename Query, typename OutputIterator>
 		OutputIterator all_intersections(const Query& query, OutputIterator out) const;
 
@@ -240,7 +238,7 @@ public:
     /// the primitive returned is not necessarily the closest from the
     /// source point of a ray query. Type `Query` must be a type
     /// for which `do_intersect` predicates
-    /// and intersections are defined in the `AT` class.
+    /// and intersections are defined in the traits class AABBTraits.
 		template <typename Query>
 		boost::optional<Object_and_primitive_id> any_intersection(const Query& query) const;
 
