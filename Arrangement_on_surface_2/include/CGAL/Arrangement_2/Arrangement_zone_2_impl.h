@@ -1222,7 +1222,6 @@ _zone_in_face (Face_handle face, bool on_boundary)
       // Obtain the halfedge with the correct direction (which should be the
       // predecessor of sub_cv1 if we split the edge around this vertex).
       right_v = invalid_v;
-
       right_he = _direct_intersecting_edge_to_left (sub_cv1, intersect_he);
     }
 
@@ -1318,7 +1317,7 @@ _zone_in_face (Face_handle face, bool on_boundary)
       }
     }
 
-    // The visitor has created an edge that corresponds to sub_cv1 and instered
+    // The visitor has created an edge that corresponds to sub_cv1 and inserted
     // it into the arrangement. In this case, left_pt should be associated
     // with the target vertex of the new halfedge.
     CGAL_assertion
