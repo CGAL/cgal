@@ -7,7 +7,7 @@ The class `HalfedgeDS_vector` is a model for the `HalfedgeDS` concept.
 `HalfedgeDS_vector` is a vector-based representation with random 
 access iterators that does not support removal. 
 
-\models ::HalfedgeDS<Traits,Items,Alloc> 
+\models `HalfedgeDS<Traits,Items,Alloc>`
 
 \sa `CGAL::HalfedgeDS_default` 
 \sa `CGAL::HalfedgeDS_list` 

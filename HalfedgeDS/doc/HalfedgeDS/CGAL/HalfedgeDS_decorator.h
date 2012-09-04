@@ -36,19 +36,19 @@ Euler operator `split_vertex()` for a simplified polyhedron class.
 
 template <class Traits> 
 namespace CGAL { 
-class Polyhedron { 
-typedef HalfedgeDS_default<Traits> HDS; 
-HDS hds; 
-public: 
-// ... 
-Halfedge_handle split_vertex( Halfedge_handle h, Halfedge_handle g) { 
-HalfedgeDS_decorator<HDS> D(hds); 
-// Stricter preconditions than for HalfedgeDS only. 
-CGAL_precondition( D.get_vertex(h) == D.get_vertex(g)); 
-CGAL_precondition( h != g); 
-return D.split_vertex( h, g); 
-} 
-}; 
+  class Polyhedron { 
+    typedef HalfedgeDS_default<Traits> HDS; 
+    HDS hds; 
+  public: 
+    // ... 
+    Halfedge_handle split_vertex( Halfedge_handle h, Halfedge_handle g) { 
+      HalfedgeDS_decorator<HDS> D(hds); 
+      // Stricter preconditions than for HalfedgeDS only. 
+      CGAL_precondition( D.get_vertex(h) == D.get_vertex(g)); 
+      CGAL_precondition( h != g); 
+      return D.split_vertex( h, g); 
+    } 
+  }; 
 } 
 
 \endcode 

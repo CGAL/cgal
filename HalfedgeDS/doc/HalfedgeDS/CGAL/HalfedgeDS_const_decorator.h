@@ -35,21 +35,22 @@ for polyhedral surfaces.
 \code{.cpp} 
 
 namespace CGAL { 
-template <class Traits> 
-class Polyhedron { 
-typedef HalfedgeDS_default<Traits> HDS; 
-HDS hds; 
-public: 
-// ... 
-bool is_valid( bool verb = false, int level = 0) const { 
-Verbose_ostream verr(verb); 
-verr << "begin Polyhedron::is_valid( verb=true, level = " << level 
-<< "):" << std::endl; 
-HalfedgeDS_const_decorator<HDS> decorator(hds); 
-bool valid = decorator.is_valid( verb, level + 3); 
-// further checks ... 
-} 
-}; 
+  template <class Traits> 
+  class Polyhedron { 
+    typedef HalfedgeDS_default<Traits> HDS; 
+    HDS hds; 
+  public: 
+    // ... 
+    bool 
+    is_valid( bool verb = false, int level = 0) const { 
+      Verbose_ostream verr(verb); 
+      verr << "begin Polyhedron::is_valid( verb=true, level = " << level << "):" 
+           << std::endl; 
+      HalfedgeDS_const_decorator<HDS> decorator(hds); 
+      bool valid = decorator.is_valid( verb, level + 3); 
+      // further checks ... 
+    } 
+  }; 
 } 
 
 \endcode 
