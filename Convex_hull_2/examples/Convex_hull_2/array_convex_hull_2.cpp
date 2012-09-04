@@ -1,3 +1,7 @@
+/*!
+\file array_convex_hull_2.cpp
+Example for a the convex hull algorithm reading and writing points from and to a built-in array.
+*/ 
 #include <iostream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/convex_hull_2.h>
