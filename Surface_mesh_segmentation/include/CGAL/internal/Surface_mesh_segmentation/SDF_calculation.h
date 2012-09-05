@@ -135,7 +135,7 @@ private:
    * @param samples sampled points from a unit-disk which are corresponds to rays picked from cone
    * @return calculated SDF value
    */
-  double calculate_sdf_value_of_facet(Facet_const_handle& facet, const Tree& tree,
+  double calculate_sdf_value_of_facet(Facet_const_handle facet, const Tree& tree,
                                       const Disk_samples_list& samples) const {
     const Point& p1 = facet->halfedge()->vertex()->point();
     const Point& p2 = facet->halfedge()->next()->vertex()->point();
@@ -151,9 +151,8 @@ private:
 
     //arrange_center_orientation(plane, normal, center);
 
-    std::vector<double> ray_distances, ray_weights;
+    std::vector<std::pair<double, double> > ray_distances;
     ray_distances.reserve(samples.size());
-    ray_weights.reserve(samples.size());
 
     const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
     normal = scale_functor(normal, length_of_normal);
@@ -229,12 +228,11 @@ private:
         }
       }
 #endif
-      ray_weights.push_back(sample_it->get<2>());
-      ray_distances.push_back(min_distance);
+      ray_distances.push_back(std::make_pair(min_distance, sample_it->get<2>()));
     }
     double sdf_result, acceptance_rate;
     boost::tie(sdf_result, acceptance_rate) =
-      remove_outliers_and_calculate_sdf_value(ray_distances, ray_weights);
+      remove_outliers_and_calculate_sdf_value(ray_distances);
     // If after outlier removal accepted rays are below threshold, we cast more rays.
     if(acceptance_rate > CGAL_ACCEPTANCE_RATE_THRESHOLD
         || samples.size() == disk_samples_dense.size()) {
@@ -256,7 +254,7 @@ private:
    */
   template <class Query> // Query can be templated for just Ray and Segment types.
   boost::tuple<bool, bool, double> cast_and_return_minimum(
-    const Query& query, const Tree& tree, Facet_const_handle& facet) const {
+    const Query& query, const Tree& tree, Facet_const_handle facet) const {
     boost::tuple<bool, bool, double> min_distance(false, false, 0.0);
     std::list<Object_and_primitive_id> intersections;
 #if 1
@@ -316,7 +314,7 @@ private:
   template <class Query> //Query can be templated for just Ray and Segment types.
   boost::tuple<bool, bool, double> cast_and_return_minimum_use_closest (
     const Query& ray, const Tree& tree,
-    Facet_const_handle& facet) const {
+    Facet_const_handle facet) const {
     // get<0> : if any intersection is found then true
     // get<1> : if found intersection is acceptable (i.e. accute angle with surface normal) then true
     // get<2> : distance between ray/segment origin and intersection point.
@@ -366,62 +364,63 @@ private:
 
   /**
    * Removes outliers by using median as mean and filtering rays which don't fall into `CGAL_ST_DEV_MULTIPLIER` * standard deviation.
-   * @param ray_distances distances associated to casted rays
-   * @param ray_weights weights associated to casted rays
+   * @param ray_distances contains distance & weight pairs for each ray
    * @return tuple of:
    *   - get<0> double : outlier removed and averaged sdf value
    *   - get<1> double : ratio of (not outlier ray count) / (total ray count)
    */
   boost::tuple<double, double>
-  remove_outliers_and_calculate_sdf_value(std::vector<double>& ray_distances,
-                                          std::vector<double>& ray_weights) const {
+  remove_outliers_and_calculate_sdf_value(std::vector<std::pair<double, double> >&
+                                          ray_distances) const {
+    // pair first -> distance, second -> weight
+    typedef std::vector<std::pair<double, double> > Pairs_vector;
+
     int accepted_ray_count = ray_distances.size();
     if(accepted_ray_count == 0)      {
       return 0.0;
     } else if(accepted_ray_count == 1) {
-      return ray_distances[0];
+      return ray_distances[0].first;
     }
-    /* local variables */
-    double total_weights = 0.0, total_distance = 0.0;
-    double median_sdf = 0.0, mean_sdf = 0.0, st_dev = 0.0;
+
     /* Calculate mean sdf */
-    std::vector<double>::iterator w_it = ray_weights.begin();
-    for(std::vector<double>::iterator dist_it = ray_distances.begin();
-        dist_it != ray_distances.end();
-        ++dist_it, ++w_it) {
-      total_distance += (*dist_it) * (*w_it);
-      total_weights += (*w_it);
+    double total_weights = 0.0, total_distance = 0.0;
+    for(Pairs_vector::iterator it = ray_distances.begin();
+        it != ray_distances.end(); ++it) {
+      total_distance += it->first * it->second;
+      total_weights +=  it->second;
     }
-    mean_sdf = total_distance / total_weights;
+    double mean_sdf = total_distance / total_weights;
     total_weights = total_distance = 0.0;
+
     /* Calculate median sdf */
     int half_ray_count = accepted_ray_count / 2;
     std::nth_element(ray_distances.begin(), ray_distances.begin() + half_ray_count,
                      ray_distances.end());
-    median_sdf = ray_distances[half_ray_count];
+    double median_sdf = ray_distances[half_ray_count].first;
     if( accepted_ray_count % 2 == 0) {
-      median_sdf += *std::max_element(ray_distances.begin(),
-                                      ray_distances.begin() + half_ray_count);
+      median_sdf += std::max_element(ray_distances.begin(),
+                                     ray_distances.begin() + half_ray_count)->first;
       median_sdf /= 2.0;
     }
+
     /* Calculate st dev using mean_sdf as mean */
-    for(std::vector<double>::iterator dist_it = ray_distances.begin();
-        dist_it != ray_distances.end(); ++dist_it) {
-      double dif = (*dist_it) - mean_sdf;
+    double st_dev = 0.0;
+    for(Pairs_vector::iterator it = ray_distances.begin();
+        it != ray_distances.end(); ++it) {
+      double dif = it->first - mean_sdf;
       st_dev += dif * dif;
     }
     st_dev = std::sqrt(st_dev / accepted_ray_count);
+
     /* Calculate sdf, accept rays if ray_dist - median < st dev */
     int not_outlier_count = 0;
-    w_it = ray_weights.begin();
-    for(std::vector<double>::iterator dist_it = ray_distances.begin();
-        dist_it != ray_distances.end();
-        ++dist_it, ++w_it) {
-      if(std::abs((*dist_it) - median_sdf) > (st_dev * CGAL_ST_DEV_MULTIPLIER)) {
+    for(Pairs_vector::iterator it = ray_distances.begin();
+        it != ray_distances.end(); ++it) {
+      if(std::abs(it->first - median_sdf) > (st_dev * CGAL_ST_DEV_MULTIPLIER)) {
         continue;
       }
-      total_distance += (*dist_it) * (*w_it);
-      total_weights += (*w_it);
+      total_distance += it->first * it->second;
+      total_weights += it->second;
       not_outlier_count++;
     }
     double sdf_res;
@@ -430,9 +429,10 @@ private:
     } else                      {
       sdf_res = total_distance / total_weights;
     }
+
     double acceptance_rate = not_outlier_count / static_cast<double>
                              (accepted_ray_count);
-    return boost::tuple<double, double>(sdf_res, acceptance_rate);
+    return boost::make_tuple(sdf_res, acceptance_rate);
   }
 
   /**

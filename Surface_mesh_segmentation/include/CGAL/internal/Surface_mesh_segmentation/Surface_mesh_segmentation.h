@@ -67,7 +67,7 @@ private:
   typedef typename Polyhedron::Facet  Facet;
 
   typedef typename Polyhedron::Edge_const_iterator     Edge_const_iterator;
-  typedef typename Polyhedron::Halfedge_const_handle   Edge_const_handle;
+  typedef typename Polyhedron::Halfedge_const_handle   Halfedge_const_handle;
   typedef typename Polyhedron::Halfedge_const_iterator Halfedge_const_iterator;
   typedef typename Polyhedron::Facet_const_iterator    Facet_const_iterator;
   typedef typename Polyhedron::Vertex_const_iterator   Vertex_const_iterator;
@@ -158,7 +158,7 @@ private:
    * @param edge whose dihedral angle is computed using incident facets
    * @return computed dihedral angle
    */
-  double calculate_dihedral_angle_of_edge(Edge_const_handle& edge) const {
+  double calculate_dihedral_angle_of_edge(Halfedge_const_handle edge) const {
     CGAL_precondition(!edge->is_border_edge());
     const Point& a = edge->vertex()->point();
     const Point& b = edge->prev()->vertex()->point();
@@ -218,7 +218,7 @@ private:
         facet_it != mesh.facets_end(); ++facet_it) {
       sdf_values[facet_it] = (sdf_values[facet_it] - min_sdf) / max_min_dif;
     }
-    return std::pair<double, double>(min_sdf, max_sdf);
+    return std::make_pair(min_sdf, max_sdf);
   }
 
 
@@ -334,7 +334,7 @@ private:
       }
       const int index_f1 = facet_index_map[edge_it->facet()];
       const int index_f2 = facet_index_map[edge_it->opposite()->facet()];
-      edges.push_back(std::pair<int, int>(index_f1, index_f2));
+      edges.push_back(std::make_pair(index_f1, index_f2));
 
       double angle = calculate_dihedral_angle_of_edge(edge_it);
 
@@ -387,7 +387,7 @@ private:
         double average_sdf_value = breadth_first_traversal(facet_it, segment_id,
                                    sdf_values, segments);
 
-        segments_with_average_sdf_values.push_back(std::pair<int, double>(segment_id,
+        segments_with_average_sdf_values.push_back(std::make_pair(segment_id,
             average_sdf_value));
         ++segment_id;
       }
@@ -426,7 +426,7 @@ private:
    */
   template<class SegmentPropertyMap, class SDFProperyMap>
   double
-  breadth_first_traversal(Facet_const_handle& root, int segment_id,
+  breadth_first_traversal(Facet_const_handle root, int segment_id,
                           SDFProperyMap sdf_values, SegmentPropertyMap segments) {
     std::queue<Facet_const_handle> facet_queue;
     facet_queue.push(root);
@@ -438,7 +438,7 @@ private:
     int    visited_facet_count = 1;
 
     while(!facet_queue.empty()) {
-      const Facet_const_handle& facet = facet_queue.front();
+      Facet_const_handle facet = facet_queue.front();
 
       typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
         facet->facet_begin();

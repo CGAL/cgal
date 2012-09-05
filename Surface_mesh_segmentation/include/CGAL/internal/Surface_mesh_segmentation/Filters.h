@@ -171,7 +171,7 @@ public:
    * @param max_level maximum allowed distance (number of levels) between root facet and visited facet
    * @param[out] neighbors visited facets and their distances to root facet
    */
-  void operator()(Facet_const_handle& facet,
+  void operator()(Facet_const_handle facet,
                   int max_level,
                   std::map<Facet_const_handle, int>& neighbors) const {
     typedef std::pair<Facet_const_handle, int> Facet_level_pair;
@@ -220,7 +220,7 @@ public:
    * @param max_level maximum allowed distance (number of levels) between root facet and visited facet
    * @param[out] neighbors visited facets and their distances to root facet
    */
-  void operator()(Facet_const_handle& facet,
+  void operator()(Facet_const_handle facet,
                   int max_level,
                   std::map<Facet_const_handle, int>& neighbors) const {
     typedef std::pair<Facet_const_handle, int> Facet_level_pair;
