@@ -1,11 +1,20 @@
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
 #include <vector>
 #include <limits>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;
-typedef std::vector<Point_3> Polyline_3;
+typedef CGAL::Polyhedron_3<K> Polyhedron;
+typedef Polyhedron::Vertex_handle Vertex_handle;
+typedef Polyhedron::Halfedge_handle Halfedge_handle;
+typedef Polyhedron::Vertex_iterator Vertex_iterator;
+typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
+typedef Polyhedron::Halfedge_around_facet_circulator  Halfedge_around_facet_circulator;
+
+typedef std::vector<Halfedge_handle> Polyline_3;
 
 
 struct Weight {
@@ -42,7 +51,7 @@ bool operator<(const Weight& w1, const Weight& w2)
 Weight
 sigma(const Polyline_3& P, int i, int j, int k)
 {
-  return Weight(0, sqrt(CGAL::squared_area(P[i], P[j], P[k])));
+  return Weight(0, sqrt(CGAL::squared_area(P[i]->vertex()->point(), P[j]->vertex()->point(), P[k]->vertex()->point())));
 }
 
 
@@ -77,7 +86,7 @@ void trace(const Polyline_3& P, const std::vector<int>& lambda)
   trace(P, lambda, 0, n-1, facets);
   std::cout << "OFF\n" << n << " " << facets.size()/3 << " 0" << std::endl;
   for (int i =0; i < n; i++){
-    std::cout << P[i] << std::endl;
+    std::cout << P[i]->vertex()->point() << std::endl;
   }
   for(int i = 0; i < facets.size();){
     std::cout << "3 " << facets[i] << " " << facets[i+1] << " " << facets[i+2] << std::endl;
@@ -89,7 +98,7 @@ void trace(const Polyline_3& P, const std::vector<int>& lambda)
 void fill(const Polyline_3& P)
 {
   //  std::cerr << "n = " << P.size() << std::endl;
-  int n = P.size() -1; // because the first and last point are equal
+  int n = P.size() - 1; // because the first and last point are equal
   std::vector<Weight> W(n*n,Weight(0,0));
   std::vector<int> lambda(n*n,-1);
 
@@ -124,14 +133,19 @@ void fill(const Polyline_3& P)
 
 int main()
 {
-  int n;
   Polyline_3 P;
-  Point_3 p;
-  std::cin >> n;
-  P.reserve(n);
-  while(n--){
-    std::cin >> p;
-    P.push_back(p);
+  Polyhedron poly;
+  std::cin >> poly;
+
+  for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
+    if(it->is_border()){
+      Halfedge_around_facet_circulator circ(it), done(circ);
+      do{
+        P.push_back(circ);
+      }while (++circ != done);
+      P.push_back(circ);
+      break;
+    }
   }
   fill(P);
 
