@@ -152,9 +152,13 @@ void
 Mesh_function<D_>::
 launch()
 {
+#ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+  CGAL::default_random = CGAL::Random(0);
+#endif
+
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
-  domain_->construct_initial_points_object()(std::back_inserter(initial_points),20);
+  domain_->construct_initial_points_object()(std::back_inserter(initial_points));
   
   // Insert points and set their index and dimension
   for ( Ipv_iterator it = initial_points.begin() ;
@@ -199,10 +203,6 @@ launch()
   // Ensure c3t3 is ok (usefull if process has been stop by the user)
   mesher_->fix_c3t3();
   
-#ifdef CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
-  mesher_->display_number_of_bad_elements();
-#endif
-
 #ifdef WIN32
   QSound::play("Ding.wav"); // CJTODO TEMP
 #endif
