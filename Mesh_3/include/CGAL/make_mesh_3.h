@@ -139,6 +139,10 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria)
   typedef typename Initial_points_vector::iterator Ipv_iterator;
   typedef typename C3T3::Vertex_handle Vertex_handle;
   
+#ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+  CGAL::default_random = CGAL::Random(0);
+#endif
+
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
   domain.construct_initial_points_object()(std::back_inserter(initial_points));
@@ -183,11 +187,66 @@ init_c3t3_with_features(C3T3& c3t3,
 {
   typedef typename MeshCriteria::Edge_criteria Edge_criteria;
   typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
-    
+
   CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field>     
     protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()));
   
   protect_edges(true);
+  //init_c3t3(c3t3, domain, criteria); // CJTODO TEMP ellipsoid: faut-il mettre ça? voir mon mail du 29/06/2012:
+  /* "Par ailleurs, il semble que lorsqu'on active les sharp features, le
+      mailleur commence par les ajouter au C3T3, et si le maillage est de
+      dimension 3 après ces ajouts, il s'arrête là et commence à raffiner.
+      Ce qui veut dire qu'il ne lance aucun rayon. Donc si je ne me trompe
+      pas, si le domaine a deux composantes distinctes dont une seule
+      possède des sharp features, il n'y a aucune chance que l'autre
+      composante soit maillée" */
+  
+  // <<< CJTODO TEMP TEST ellipsoid
+  /*typedef typename C3T3::Vertex_handle Vertex_handle;
+  typedef typename MeshDomain::Point_3 Point_3;
+  Vertex_handle v = c3t3.triangulation().insert(Point_3(0.7, 0., 0.));
+  if ( v != Vertex_handle() )
+  {
+    std::cerr << "**************** 1 ************ " << std::endl;
+    c3t3.set_dimension(v,2); // by construction, points are on surface
+    c3t3.set_index(v, 1);
+  }
+  v = c3t3.triangulation().insert(Point_3(-0.7, 0., 0.)); // CJTODO TEMP
+  if ( v != Vertex_handle() )
+  {
+    std::cerr << "**************** 2 ************ " << std::endl;
+    c3t3.set_dimension(v,2); // by construction, points are on surface
+    c3t3.set_index(v, 1);
+  }
+  v = c3t3.triangulation().insert(Point_3(0., 0.5, 0.)); // CJTODO TEMP
+  if ( v != Vertex_handle() )
+  {
+    std::cerr << "**************** 3 ************ " << std::endl;
+    c3t3.set_dimension(v,2); // by construction, points are on surface
+    c3t3.set_index(v, 1);
+  }
+  v = c3t3.triangulation().insert(Point_3(0., -0.5, 0.)); // CJTODO TEMP
+  if ( v != Vertex_handle() )
+  {
+    std::cerr << "**************** 4 ************ " << std::endl;
+    c3t3.set_dimension(v,2); // by construction, points are on surface
+    c3t3.set_index(v, 1);
+  }
+  v = c3t3.triangulation().insert(Point_3(0., 0., 0.1)); // CJTODO TEMP
+  if ( v != Vertex_handle() )
+  {
+    std::cerr << "**************** 5 ************ " << std::endl;
+    c3t3.set_dimension(v,2); // by construction, points are on surface
+    c3t3.set_index(v, 1);
+  }
+  v = c3t3.triangulation().insert(Point_3(0., 0., -0.1)); // CJTODO TEMP
+  if ( v != Vertex_handle() )
+  {
+    std::cerr << "**************** 6 ************ " << std::endl;
+    c3t3.set_dimension(v,2); // by construction, points are on surface
+    c3t3.set_index(v, 1);
+  }*/
+  // >>> CJTODO TEMP TEST ellipsoid
 }
   
 
