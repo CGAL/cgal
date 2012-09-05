@@ -323,15 +323,15 @@ public:
   //------------------
 
   // VORONOI FEATURES FROM DELAUNAY FEATURES
-  Halfedge_handle dual(Delaunay_edge& e) const {
+  Halfedge_handle dual(const Delaunay_edge& e) const {
     return Halfedge_handle( Halfedge(this, e.first, e.second) );
   }
 
-  Face_handle dual(Delaunay_vertex_handle& v) const {
+  Face_handle dual(Delaunay_vertex_handle v) const {
     return Face_handle( Face(this, v) );
   }
 
-  Vertex_handle dual(Delaunay_face_handle& f) const {
+  Vertex_handle dual(Delaunay_face_handle f) const {
     return Vertex_handle( Vertex(this, f) );
   }
 
