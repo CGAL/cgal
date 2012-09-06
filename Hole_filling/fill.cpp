@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Mesh_3/dihedral_angle_3.h>
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -47,13 +48,47 @@ bool operator<(const Weight& w1, const Weight& w2)
 
 
 
-
 Weight
 sigma(const Polyline_3& P, int i, int j, int k)
 {
-  return Weight(0, sqrt(CGAL::squared_area(P[i]->vertex()->point(), P[j]->vertex()->point(), P[k]->vertex()->point())));
+  assert(i+1 ==j);
+  assert(j+1 ==k);
+  const Point_3& p = P[i]->opposite()->vertex()->point();
+  const Point_3& q = P[j]->opposite()->vertex()->point();
+  const Point_3& r = P[k]->opposite()->vertex()->point();
+  // The CGAL::dihedral angle is measured between the oriented triangles, that is it goes from [-pi, pi]
+  // What we need is the angle between the normals of the triangles between [0, pi]
+  double ang1 = 180 - CGAL::abs(CGAL::Mesh_3::dihedral_angle(p,q,r,P[i]->opposite()->next()->vertex()->point()));
+  double ang2 = 180 - CGAL::abs(CGAL::Mesh_3::dihedral_angle(q,r,p, P[j]->opposite()->next()->vertex()->point()));
+  // std::cerr << "ang1 = " << ang1 << std::endl;
+  // std::cerr << "ang2 = " << ang2 << std::endl;
+  return Weight((std::max)(ang1, ang2), sqrt(CGAL::squared_area(p,q,r)));
 }
 
+
+ Weight
+sigma(const Polyline_3& P, int i, int m, int k, const std::vector<int>& lambda)
+{
+  // std::cerr << "sigma2" << std::endl;
+  int n = P.size() -1; // because the first and last point are equal
+  const Point_3& pi = P[i]->opposite()->vertex()->point();
+  const Point_3& pm = P[m]->opposite()->vertex()->point();
+  const Point_3& pk = P[k]->opposite()->vertex()->point();
+  // std::cerr << "lambda[" << i << "," << m << "] = " << lambda[i*n+m] << std::endl; 
+  // std::cerr << "lambda[" << m << "," << k << "] = " << lambda[m*n+k] << std::endl; 
+  double ang1=0, ang2=0;
+  if(lambda[i*n+m] != -1){
+    const Point_3& pim = P[lambda[i*n+m]]->vertex()->point();
+    ang1 = 180 - CGAL::abs(CGAL::Mesh_3::dihedral_angle(pi,pm,pk,pim));
+  }
+  if(lambda[m*n+k] != -1){
+    const Point_3& pmk = P[lambda[m*n+k]]->vertex()->point();
+    ang2 = 180 - CGAL::abs(CGAL::Mesh_3::dihedral_angle(pm,pk,pi, pmk));
+  }
+  // std::cerr << "sigma 2 ang1 = " << ang1 << std::endl;
+  // std::cerr << "sigma 2 ang2 = " << ang2 << std::endl;
+  return Weight((std::max)(ang1, ang2), sqrt(CGAL::squared_area(pi,pm,pk)));
+}
 
 
 void trace(const Polyline_3& P, const std::vector<int>& lambda, int i, int k, std::vector<int>& facets)
@@ -102,30 +137,29 @@ void fill(const Polyline_3& P)
   std::vector<Weight> W(n*n,Weight(0,0));
   std::vector<int> lambda(n*n,-1);
 
-  for(int i=0; i < n-2; ++i){
+  for(int i=0; i < n-1; ++i){ // in the papers it is j < n-2
       W[i*n + (i+2)] = sigma(P, i, i+1, i+2);
+      lambda[i*n + (i+2)] = i+1;
   }
 
   for(int j = 3; j< n; ++j){ // in the papers it is j < n-1
     for(int i=0; i<n-j; ++i){
       int k = i+j;
-      //      std::cerr << "i = " << i <<  "  j = " << j << "  k = " << k << std::endl;
+      //std::cerr << "i = " << i <<  "  j = " << j << "  k = " << k << std::endl;
       int m_min = 0;
       Weight w_min((std::numeric_limits<double>::max)(), (std::numeric_limits<double>::max)());
       for(int m = i+1; m<k; ++m){
-        Weight w = W[i*n + m] + W[m*n + k] + sigma(P,i,m,k);
+        //std::cerr << "m = " << m  << std::endl;
+        Weight w = W[i*n + m] + W[m*n + k] + sigma(P,i,m,k, lambda);
         if(w < w_min){
           w_min = w;
           m_min = m;
-          //          std::cerr << "w_min = " << w_min;
-          //          std::cerr << "   m_min = " << m_min << std::endl;
         }
       }
       W[i*n+k] = w_min;
       lambda[i*n+k] = m_min;
     }
   }
-  //  std::cerr << "weight: " <<  W[n-1] << std::endl;
   trace(P, lambda);
 }
 
