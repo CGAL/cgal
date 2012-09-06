@@ -88,15 +88,69 @@ namespace CGAL {
     /** Create a vertex attribute.
      * @return an handle on the new attribute.
      */
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+    template<typename... Args>
+    Vertex_attribute_handle create_vertex_attribute(const Args&... args)
+    { return Base::template create_attribute<0>(args...); }
+#else
     Vertex_attribute_handle create_vertex_attribute()
     { return Base::template create_attribute<0>(); }
 
-    /** Create a vertex attribute associated with a point.
-     * @param point the point to associated with the dart.
-     * @return an handle on the new attribute.
-     */
-    Vertex_attribute_handle create_vertex_attribute(const Point& apoint)
-    { return Base::template create_attribute<0>(apoint); }
+    template<typename T1>
+    Vertex_attribute_handle create_vertex_attribute(const T1& t1)
+    { return Base::template create_attribute<0>(t1); }
+
+    template<typename T1, typename T2>
+    Vertex_attribute_handle create_vertex_attribute
+    (const T1& t1, const T2 &t2)
+    { return Base::template create_attribute<0>(t1, t2); }
+
+    template<typename T1, typename T2, typename T3>
+    Vertex_attribute_handle create_vertex_attribute
+    (const T1& t1, const T2 &t2, const T3 &t3)
+    { return Base::template create_attribute<0>(t1, t2, t3); }
+
+    template<typename T1, typename T2, typename T3, typename T4>
+    Vertex_attribute_handle create_vertex_attribute
+    (const T1& t1, const T2 &t2, const T3 &t3, const T4 &t4)
+    { return Base::template create_attribute<0>(t1, t2, t3, t4); }
+
+    template<typename T1, typename T2, typename T3, typename T4, typename T5>
+    Vertex_attribute_handle create_vertex_attribute
+    (const T1& t1, const T2 &t2, const T3 &t3, const T4 &t4,
+     const T5 &t5)
+    { return Base::template create_attribute<0>(t1, t2, t3, t4, t5); }
+
+    template<typename T1, typename T2, typename T3, typename T4, typename T5,
+             typename T6>
+    Vertex_attribute_handle create_vertex_attribute
+    (const T1& t1, const T2 &t2, const T3 &t3, const T4 &t4,
+     const T5 &t5, const T6 &t6)
+    { return Base::template create_attribute<0>(t1, t2, t3, t4, t5, t6); }
+
+    template<typename T1, typename T2, typename T3, typename T4, typename T5,
+             typename T6, typename T7>
+    Vertex_attribute_handle create_vertex_attribute
+    (const T1& t1, const T2 &t2, const T3 &t3, const T4 &t4,
+     const T5 &t5, const T6 &t6, const T7 &t7)
+    { return Base::template create_attribute<0>(t1, t2, t3, t4, t5, t6, t7); }
+
+  template<typename T1, typename T2, typename T3, typename T4, typename T5,
+             typename T6, typename T7, typename T8>
+    Vertex_attribute_handle create_vertex_attribute
+    (const T1& t1, const T2 &t2, const T3 &t3, const T4 &t4,
+     const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
+    { return Base::template create_attribute<0>(t1, t2, t3, t4, t5, t6, t7,
+                                                t8); }
+
+  template<typename T1, typename T2, typename T3, typename T4, typename T5,
+           typename T6, typename T7, typename T8, typename T9>
+  Vertex_attribute_handle create_vertex_attribute
+    (const T1& t1, const T2 &t2, const T3 &t3, const T4 &t4,
+     const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8, const T9 &t9)
+    { return Base::template create_attribute<0>(t1, t2, t3, t4, t5, t6, t7,
+                                                t8, t9); }
+#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES    
 
     /**
      * Create a new dart associated with an handle through an attribute.
