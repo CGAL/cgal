@@ -36,7 +36,8 @@ namespace po = boost::program_options;
 // BENCHMARK GENERAL PARAMETERS
 // ==========================================================================
 
-//#define MESH_3_WITH_FEATURES
+#define MESH_3_WITH_FEATURES
+#define MESH_3_BENCHMARK_EXPORT_TO_MAYA
 
 // ==========================================================================
 // MESH_3 GENERAL PARAMETERS
@@ -47,6 +48,9 @@ namespace po = boost::program_options;
 //#define CGAL_MESH_3_VERY_VERBOSE
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+
+#define MESH_3_PROFILING
+//#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
 
 const int FACET_ANGLE     = 25;
 const double FACET_APPROX = 0.0068;
@@ -149,10 +153,6 @@ const int TET_SHAPE       = 3;
 # define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
 #endif // CONCURRENT_MESH_3
-
-
-#define MESH_3_PROFILING
-//#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
 
 // ==========================================================================
 // ==========================================================================
@@ -277,6 +277,10 @@ protected:
 
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
+
+#ifdef MESH_3_WITH_FEATURES
+# include <CGAL/Mesh_polyhedron_3.h>
+#endif
 
 // basic types from kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -546,10 +550,12 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 {
   // Domain
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-  typedef CGAL::Polyhedron_3<K> Polyhedron;
+  
 #ifdef MESH_3_WITH_FEATURES
+  typedef CGAL::Mesh_polyhedron_3<Kernel>::type Polyhedron;
   typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 #else
+  typedef CGAL::Polyhedron_3<K> Polyhedron;
   typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Mesh_domain;
 #endif
 
@@ -564,10 +570,6 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   // Criteria
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-#ifdef MESH_3_WITH_FEATURES
-  Mesh_domain domain(input_filename);
-  domain.detect_features(150);
-#else
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input(input_filename.c_str());
@@ -580,6 +582,9 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 
   // Create domain
   Mesh_domain domain(polyhedron);
+
+#ifdef MESH_3_WITH_FEATURES
+  domain.detect_features(150);
 #endif
 
   Mesh_parameters params;
@@ -615,6 +620,10 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
 
+#ifdef MESH_3_BENCHMARK_EXPORT_TO_MAYA
+  c3t3.output_to_maya(std::ofstream(input_filename + ".maya"), true);
+#endif
+
   return true;
 }
 
@@ -643,7 +652,7 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
 
   // Create domain
 	Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
-  Mesh_domain domain(func, bounding_sphere);
+  Mesh_domain domain(func, bounding_sphere, 1e-7);
 
 #ifdef MESH_3_WITH_FEATURES
 	// Add 12 feature creases
@@ -844,7 +853,7 @@ int main()
 #endif
 
             std::cerr << std::endl << "Refinement #" << i << "..." << std::endl;
-
+            
             display_info(num_threads);
 
             if (input == "Klein_function")
