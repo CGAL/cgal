@@ -1424,6 +1424,8 @@ namespace Eigen {
     typedef CGAL::Interval_nt<b> NonInteger;
     typedef CGAL::Interval_nt<b> Nested;
 
+    static inline Real epsilon() { return 0; }
+
     // Costs could depend on b.
     enum {
       IsInteger = 0,

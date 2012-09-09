@@ -41,34 +41,29 @@ namespace CGAL {
 template<typename GeomTraits, typename AABB_primitive>
 class AABB_traits
 {
+  typedef typename CGAL::Object Object;
 public:
   typedef AABB_traits<GeomTraits, AABB_primitive> AT;
   /// AABBTraits concept types
-  typedef typename CGAL::Bbox_3 Bounding_box;
-  typedef typename CGAL::Object Object;
-
-  typedef AABB_primitive Primitive;
-  typedef typename AABB_primitive::Datum Datum;
-
-  typedef typename GeomTraits::Point_3 Point;
-
-  typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
-  typedef typename std::pair<Point,typename Primitive::Id> Point_and_primitive_id;
-
-  // types for search tree
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename GeomTraits::Sphere_3 Sphere_3;
+  typedef AABB_primitive Primitive;
+  typedef typename CGAL::Bbox_3 Bounding_box;
+  typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
+  typedef typename std::pair<Point_3,typename Primitive::Id> Point_and_primitive_id;
+
+  /// additionnal types for the search tree, required by the RangeSearchTraits concept
+  /// (This is not documented for now in the AABBTraits concept, which is a bug)
   typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename GeomTraits::Sphere_3 Sphere_3;
+  typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3; 
+  typedef typename GeomTraits::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_3;
   typedef typename GeomTraits::Construct_center_3 Construct_center_3;
-  typedef typename GeomTraits::Construct_iso_cuboid_3 Construct_iso_cuboid_3;
-  typedef typename GeomTraits::Construct_min_vertex_3 Construct_min_vertex_3;
-  typedef typename GeomTraits::Construct_max_vertex_3 Construct_max_vertex_3;
   typedef typename GeomTraits::Compute_squared_radius_3 Compute_squared_radius_3;
-  typedef typename GeomTraits::Compute_squared_distance_3 Compute_squared_distance_3;
-  typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
-  typedef typename GeomTraits::Construct_cartesian_const_iterator_3
-                     Construct_cartesian_const_iterator_3;
+  typedef typename GeomTraits::Construct_min_vertex_3 Construct_min_vertex_3;
+  typedef typename GeomTraits::Construct_max_vertex_3 Construct_max_vertex_3;  
+  typedef typename GeomTraits::Construct_iso_cuboid_3 Construct_iso_cuboid_3;
+  
 
   /// Constructor
   AABB_traits() { };
@@ -76,7 +71,9 @@ public:
   /// Non-virtual Destructor
   ~AABB_traits() { };
 
-
+  typedef typename GeomTraits::Compute_squared_distance_3 Squared_distance;
+  Squared_distance squared_distance_object() const { return GeomTraits().compute_squared_distance_3_object(); }
+  
   /// 
   /**
    * @brief Sorts [first,beyond[
@@ -180,7 +177,7 @@ Intersection intersection_object() {return Intersection();}
 
   // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {
-      typedef typename AT::Point Point;
+      typedef typename AT::Point_3 Point;
       typedef typename AT::Primitive Primitive;
   public:
       Point operator()(const Point& p, const Primitive& pr, const Point& bound) const
@@ -194,7 +191,7 @@ Intersection intersection_object() {return Intersection();}
   // do_intersect to something like does_contain (this is what we compute,
   // this is not the same do_intersect as the spherical kernel)
   class Compare_distance {
-      typedef typename AT::Point Point;
+      typedef typename AT::Point_3 Point;
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:

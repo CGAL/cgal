@@ -887,6 +887,8 @@ namespace Eigen {
     typedef CGAL::Quotient<CGAL::MP_Float> NonInteger;
     typedef CGAL::MP_Float Nested;
 
+    static inline Real epsilon() { return 0; }
+
     enum {
       IsInteger = 1, // Is this lie right?
       IsSigned = 1,

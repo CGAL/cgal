@@ -85,7 +85,7 @@ class Face
 
     // the edge circulator gives edges that have v_ as their target
     Delaunay_edge_circulator ec = vda_->dual().incident_edges(v_);
-    Delaunay_edge_circulator ec_start = ec;
+    CGAL_assertion_code( Delaunay_edge_circulator ec_start = ec );
 
     // if I want to return also infinite edges replace the test in
     // the while loop by the following test (i.e., should omit the
