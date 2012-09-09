@@ -87,6 +87,17 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	  result_type operator()(Vector_d const&v, Tag t)const{
 	    return CVI(this->kernel())(v,t);
 	  }
+
+	  template <class Obj>
+	  result_type operator()(Obj const&o)const{
+	    return operator()(o, Begin_tag());
+	  }
+	  result_type operator()(Point_d const&p, int)const{
+	    return operator()(p, End_tag());
+	  }
+	  result_type operator()(Vector_d const&v, int)const{
+	    return operator()(v, End_tag());
+	  }
 	};
 	typedef typename Construct_cartesian_const_iterator_d::result_type Cartesian_const_iterator_d;
 	typedef typename Base::template Functor<Squared_distance_tag>::type Squared_distance_d;

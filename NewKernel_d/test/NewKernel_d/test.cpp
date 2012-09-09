@@ -124,7 +124,7 @@ void test2(){
   std::cout << cc(b,1) << std::endl;
   std::cout << cc(cse(s,0),1) << std::endl;
   std::cout << cc(cse(s,1),1) << std::endl;
-  for(CI i=ci(a,CGAL::Begin_tag());i!=ci(a,CGAL::End_tag());++i)
+  for(CI i=ci(a);i!=ci(a,0);++i)
     std::cout << *i << ' ';
   std::cout << '\n';
   P tab[]={a,b,c,d};
@@ -203,7 +203,7 @@ void test3(){
   std::cout << cc(b,2) << std::endl;
   std::cout << cc(cse(s,0),1) << std::endl;
   std::cout << cc(cse(s,1),2) << std::endl;
-  for(CI i=ci(a,CGAL::Begin_tag());i!=ci(a,CGAL::End_tag());++i)
+  for(CI i=ci(a);i!=ci(a,0);++i)
     std::cout << *i << ' ';
   std::cout << '\n';
   P e=cp(-2,3,0);
