@@ -1750,6 +1750,7 @@ Hole_filling/data/U.off -text svneol=unset#application/octet-stream
 Hole_filling/data/object-fill.off -text svneol=unset#application/octet-stream
 Hole_filling/data/object.off -text svneol=unset#application/octet-stream
 Hole_filling/data/object.poly -text svneol=unset#application/octet-stream
+Hole_filling/mech-holes-shark.off -text svneol=unset#application/octet-stream
 Installation/INSTALL -text
 Installation/LICENSE.BSL -text
 Installation/LICENSE.FREE_USE -text
