@@ -55,7 +55,6 @@ public:
     {
         return Base::neighbors_[i]->vertex(mirror_index(i));
     }
-    // FIXME: rename to switch_vertices
     void swap_vertices(const int d1, const int d2)
     {
         Base::swap_vertices(d1, d2);

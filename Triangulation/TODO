@@ -1,10 +1,21 @@
 
 --------------------------------------------------
-Problems to be solved from the reviews (beginning 2012)
+Problems to be solved from Sam's reading (september 2012)
 --------------------------------------------------
 
-Substitute iterator : it seems to be comparing the point directly, instead of
-comparing the iterator. That look like a big performance killer.
+*) Substitute iterator : it seems to be comparing the point directly, instead
+of comparing the iterator. That look like a big performance killer.
+
+*) I have marked with 'FIXME' all the lines where the code assumes, or seems to
+assume that the vertex at infinity is at index 0 in the full cell. The code is
+still working because the vertex at infinity is indeed at index 0, but this is
+no more a requirement from the documentation, so that the code (Tr.h and
+Delaunay_tr.h) should be changed. OR, we re-document 0 as the index of the
+vertex at infinity.
+
+--------------------------------------------------
+Problems to be solved from the reviews (beginning 2012)
+--------------------------------------------------
 
 example delaunay  does not execute properly
 
