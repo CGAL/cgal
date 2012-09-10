@@ -1,6 +1,7 @@
 /*!
 
 \page preliminaries Preliminaries
+\autotoc
 
 \author %CGAL Editorial Board
 
