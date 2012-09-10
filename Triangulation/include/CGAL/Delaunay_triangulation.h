@@ -464,9 +464,12 @@ Delaunay_triangulation<DCTraits, TDS>
                 tds().associate_vertex_with_full_cell(*it, v_idx, infinite_vertex());
                 if( v_idx != 0 )
                 {
-                    // we must put the infinite vertex at index 0
+                    // we must put the infinite vertex at index 0.
+                    // OK, now with the new convention that the infinite vertex
+                    // does not have to be at index 0, this is not necessary,
+                    // but still, I prefer to keep this piece of code here. [-- Samuel Hornus]
                     (*it)->swap_vertices(0, v_idx);
-                    // FIXME: are we sure this preseves the positive orientation of the full_cell ?
+                    // Now, we preserve the positive orientation of the full_cell
                     (*it)->swap_vertices(current_dimension() - 1, current_dimension());
                 }
             }
@@ -654,6 +657,7 @@ Delaunay_triangulation<DCTraits, TDS>
     side_of_oriented_subsphere_predicate() = geom_traits().side_of_oriented_subsphere_d_object();
     if( 1 <= current_dimension() )
     {
+        // FIXME: infinite vertex is NOT at index 0 a priori.
         Full_cell_handle s = infinite_vertex()->full_cell()->neighbor(0);
         Orientation o = orientation(s);
         CGAL_assertion( ZERO != o );
@@ -713,6 +717,7 @@ Delaunay_triangulation<DCTraits, TDS>
     v->set_point(p);
     if( current_dimension() >= 1 )
     {
+        // FIXME: infinite vertex is NOT at index 0 a priori.
         Full_cell_handle s = infinite_vertex()->full_cell()->neighbor(0);
         Orientation o = orientation(s);
         CGAL_assertion( ZERO != o );

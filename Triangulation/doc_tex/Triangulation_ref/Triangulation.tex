@@ -328,7 +328,13 @@ the triangulation:
 
 \ccMethod{Full_cell_handle locate(const Point & query,
 Full_cell_handle hint = Full_cell_handle()) const;}
-{If the point \ccc{query} lies in the interior of a bounded (finite) full cell of \ccVar,
+{The optional argument \ccc{hint} is used as a starting place for the search.\\
+If the \ccc{query} point lies outside the affine hull of the points (which can
+happen when \ccVar.\ccc{current_dimension() < }
+\ccVar.\ccc{maximal_dimension()}) or if there is no finite vertex yet in the
+triangulation, then \textit{locate} returns a default constructed
+\ccc{Full_cell_handle()}.\\
+If the point \ccc{query} lies in the interior of a bounded (finite) full cell of \ccVar,
 the latter full cell is returned.\\
 If \ccc{query} lies on the boundary of some finite full cells, one of them
 is returned.\\
@@ -336,8 +342,7 @@ Let $d=$\ccVar.\ccc{current_dimension()}. If the point \ccc{query} lies
 outside the convex hull of the points, an infinite full cell with vertices $\{
 p_1, p_2, \ldots, p_d, \infty\}$ is returned such that the full cell $(p_1, p_2,
 \ldots, p_d, query)$ is positively oriented (the rest of the triangulation lies
-on the other side of facet $(p_1, p_2, \ldots, p_d)$).\\
-The optional argument \ccc{hint} is used as a starting place for the search.}
+on the other side of facet $(p_1, p_2, \ldots, p_d)$).}
 
 \ccMethod{Full_cell_handle locate(const Point & query, Vertex_handle hint)
 const;}
@@ -346,12 +351,11 @@ const;}
 \ccMethod{Full_cell_handle locate(const Point & query, Locate_type & loc_type,
 Face & f, Facet & ft, Full_cell_handle hint = Full_cell_handle()) const;}
 {The optional argument \ccc{hint} is used as a starting place for the
-search.\\ If the \ccc{query} point lies outside the affine hull of the points,
-which can happen when \ccVar.\ccc{current_dimension() < }
-\ccVar.\ccc{maximal_dimension()}, \ccc{loc_type} is set to
-\ccc{OUTSIDE_AFFINE_HULL}, and the returned full cell has no meaning. As a
-particular case, if there is no finite vertex yet in the triangulation,
-\ccc{loc_type} is set to \ccc{OUTSIDE_AFFINE_HULL} and \textit{locate} returns
+search.\\ If the \ccc{query} point lies outside the affine hull of the points
+(which can happen when \ccVar.\ccc{current_dimension() < }
+\ccVar.\ccc{maximal_dimension()}) or if there is no finite vertex yet in the
+triangulation, then \ccc{loc_type} is set to
+\ccc{OUTSIDE_AFFINE_HULL}, and \textit{locate} returns
 \ccc{Full_cell_handle()}.\\ If the \ccc{query} point lies inside the affine hull
 of the points, a $k$-face that contains \ccc{query} {in its relative
 interior} is returned. (If the $k$-face is finite, it is
@@ -376,7 +380,9 @@ the \ccc{query} point is returned. \end{itemize}}
 \ccMethod{Full_cell_handle
           locate(const Point & query, Locate_type & loc_type,
                  Face & f, Vertex_handle hint) const;}
-{Same as above but \ccc{hint}, the starting place for the search is a vertex.}
+{Same as above but \ccc{hint}, the starting place for the search, is a vertex.
+The parameter \ccc{hint} is ignored if it is a default constructed
+\ccc{Vertex_handle()}.}
 
 \ccHeading{Removal} % - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
