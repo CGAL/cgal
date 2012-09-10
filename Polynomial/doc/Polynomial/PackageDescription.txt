@@ -1,0 +1,16 @@
+/// \defgroup PkgPolynomial Polynomial 
+/// \defgroup PkgPolynomialConcepts Concepts
+/// \ingroup PkgPolynomial
+/*!
+\addtogroup PkgPolynomial
+\todo check generated documentation
+\PkgDescriptionBegin{Polynomial}
+\PkgPicture{Polynomial.png}
+\PkgAuthor{Michael Hemmer}
+\PkgDesc{This package introduces a concept for univariate and multivariate  polynomials in \f$ d\f$ variables. Though the concept is written for an arbitrary  number of variables, the number of variables is considered as fixed for a  particular model of this concept.}
+\PkgSince{3.3}
+\cgalbib{cgal:h-p}
+\license{\ref licensesLGPL "LGPL"}
+\PkgDescriptionEnd
+*/
+
