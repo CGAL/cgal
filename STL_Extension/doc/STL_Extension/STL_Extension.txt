@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage STL Extensions for CGAL
+\mainpage STL Extensions for %CGAL
 \anchor chapterStlExtensions
 \autotoc
 \authors Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein
@@ -70,7 +70,7 @@ This container has been developed in order to efficiently handle large data
 structures like the triangulation and halfedge data structures. It can
 probably be useful for other kinds of graphs as well.
 
-# Multiset with Extended Functionality #
+# %Multiset with Extended Functionality #
 
 The class `Multiset<Type,Compare,Allocator>` represents a
 multi-set of elements of type `Type`, represented as a red-black tree
@@ -100,7 +100,7 @@ looking up keys whose type may differ from `Type`, as long as users supply
 a comparison functor `CompareKey`, between the keys and set elements;
 and catenating and splitting sets.
 
-# Polymorphic Object #
+# Polymorphic %Object #
 
 The class `Object` can store an object of whatever other type.
 It can be used by a function to return objects of different types.
@@ -138,7 +138,7 @@ these tags and allows to specify the complexity of point location (currently in
 `Delaunay_triangulation_3` only). Convenient typedefs `Fast_location`
 and `Compact_location` are also provided.
 
-# Default Arguments in Template Parameter Lists #
+# %Default Arguments in Template Parameter Lists #
 
 In \cpp, it is possible to specify defaults at the end of a template parameter
 list. Specifying that one wishes to use the default is simply done by omitting
