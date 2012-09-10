@@ -129,40 +129,52 @@ void trace(const Polyline_3& P, const std::vector<int>& lambda)
 
 
 
-Halfedge_handle trace(const Polyline_3& P, const std::vector<int>& lambda, int i, int k, Polyhedron& poly)
+Halfedge_handle trace(const Polyline_3& P, const std::vector<int>& lambda, int i, int k, Polyhedron& poly, bool last = true)
 {
+
   Halfedge_handle h, g;
   int n = P.size() -1; // because the first and last point are equal
   if(i+2 == k){
-    return poly.add_facet_to_border(P[i]->prev(), P[i+1])->opposite();
+    if(last){
+      return poly.fill_hole(P[i+1]);
+    } else {
+      return poly.add_facet_to_border(P[i]->prev(), P[i+1])->opposite();
+    }
   } else {
     int la = lambda[i*n + k];
     if(la != i+1){
-      h = trace(P, lambda, i, la, poly);
+      h = trace(P, lambda, i, la, poly, false);
     } else {
       h = P[i];
     }
     if(la != k-1){
-      g = trace(P, lambda, la, k, poly);
+      g = trace(P, lambda, la, k, poly, false);
     } else {
       g = P[la];
     }
-    return poly.add_facet_to_border(h->prev(), g)->opposite();
+    if(last){
+      return poly.fill_hole(g);
+    } else {
+      return poly.add_facet_to_border(h->prev(), g)->opposite();
+    }
   }
 }
 
 
-void trace(const Polyline_3& P, const std::vector<int>& lambda, Polyhedron& poly)
-{
-  std::cout.precision(20);
-  int n = P.size() -1; // because the first and last point are equal
-  trace(P, lambda, 0, n-1, poly);
-  std::cout << poly << std::endl;
-}
 
 
-void fill(const Polyline_3& P,  Polyhedron& poly)
+void fill(Polyhedron& poly, Halfedge_handle it)
 {
+  if(! it->is_border()){
+    return;
+  }
+  Polyline_3 P;
+  Halfedge_around_facet_circulator circ(it), done(circ);
+  do{
+    P.push_back(circ);
+  } while (++circ != done);
+  P.push_back(circ);
+
   int n = P.size() - 1; // because the first and last point are equal
   std::vector<Weight> W(n*n,Weight(0,0));
   std::vector<int> lambda(n*n,-1);
@@ -188,28 +200,25 @@ void fill(const Polyline_3& P,  Polyhedron& poly)
       lambda[i*n+k] = m_min;
     }
   }
-  trace(P, lambda, poly);
+  trace(P, lambda, 0, n-1, poly);
 }
 
 
 
 int main()
 {
-  Polyline_3 P;
   Polyhedron poly;
   std::cin >> poly;
 
+  int H = 20;
   for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
     if(it->is_border()){
-      Halfedge_around_facet_circulator circ(it), done(circ);
-      do{
-        P.push_back(circ);
-      }while (++circ != done);
-      P.push_back(circ);
-      break;
+      fill(poly, it);
     }
   }
-  fill(P, poly);
+  std::cout.precision(20);
+  std::cout << poly << std::endl;
+
   std::cerr << "done" << std::endl;
   return 0;
 }
