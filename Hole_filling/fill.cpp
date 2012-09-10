@@ -99,12 +99,13 @@ void trace(const Polyline_3& P, const std::vector<int>& lambda, int i, int k, st
     if(la != i+1){
       trace(P, lambda, i, la, facets);
     }
-    facets.push_back(i%n);
-    facets.push_back(la%n);
-    facets.push_back(k%n);
     if(la != k-1){
       trace(P, lambda, la, k, facets);
     }
+
+    facets.push_back(i%n);
+    facets.push_back(la%n);
+    facets.push_back(k%n);
   }
 }
 
@@ -115,6 +116,7 @@ void trace(const Polyline_3& P, const std::vector<int>& lambda)
   int n = P.size() -1; // because the first and last point are equal
   std::vector<int> facets;
   trace(P, lambda, 0, n-1, facets);
+
   std::cout << "OFF\n" << n << " " << facets.size()/3 << " 0" << std::endl;
   for (int i =0; i < n; i++){
     std::cout << P[i]->opposite()->vertex()->point() << std::endl;
@@ -126,7 +128,40 @@ void trace(const Polyline_3& P, const std::vector<int>& lambda)
 }
 
 
-void fill(const Polyline_3& P)
+
+Halfedge_handle trace(const Polyline_3& P, const std::vector<int>& lambda, int i, int k, Polyhedron& poly)
+{
+  Halfedge_handle h, g;
+  int n = P.size() -1; // because the first and last point are equal
+  if(i+2 == k){
+    return poly.add_facet_to_border(P[i]->prev(), P[i+1])->opposite();
+  } else {
+    int la = lambda[i*n + k];
+    if(la != i+1){
+      h = trace(P, lambda, i, la, poly);
+    } else {
+      h = P[i];
+    }
+    if(la != k-1){
+      g = trace(P, lambda, la, k, poly);
+    } else {
+      g = P[la];
+    }
+    return poly.add_facet_to_border(h->prev(), g)->opposite();
+  }
+}
+
+
+void trace(const Polyline_3& P, const std::vector<int>& lambda, Polyhedron& poly)
+{
+  std::cout.precision(20);
+  int n = P.size() -1; // because the first and last point are equal
+  trace(P, lambda, 0, n-1, poly);
+  std::cout << poly << std::endl;
+}
+
+
+void fill(const Polyline_3& P,  Polyhedron& poly)
 {
   int n = P.size() - 1; // because the first and last point are equal
   std::vector<Weight> W(n*n,Weight(0,0));
@@ -153,7 +188,7 @@ void fill(const Polyline_3& P)
       lambda[i*n+k] = m_min;
     }
   }
-  trace(P, lambda);
+  trace(P, lambda, poly);
 }
 
 
@@ -174,7 +209,7 @@ int main()
       break;
     }
   }
-  fill(P);
+  fill(P, poly);
   std::cerr << "done" << std::endl;
   return 0;
 }
