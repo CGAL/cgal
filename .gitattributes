@@ -4538,6 +4538,7 @@ STL_Extension/doc/STL_Extension/CGAL/algorithm.h -text
 STL_Extension/doc/STL_Extension/CGAL/array.h -text
 STL_Extension/doc/STL_Extension/CGAL/function_objects.h -text
 STL_Extension/doc/STL_Extension/CGAL/iterator.h -text
+STL_Extension/doc/STL_Extension/CGAL/memory.h -text
 STL_Extension/doc/STL_Extension/CGAL/tags.h -text
 STL_Extension/doc/STL_Extension/CGAL/tuple.h -text
 STL_Extension/doc/STL_Extension/CGAL/utility.h -text
