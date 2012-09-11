@@ -235,7 +235,7 @@ const FT&
 get_alpha(void) const; 
 
 /*! 
-Returns the \f$ n\f$-th alpha-value, sorted in an increasing order. 
+Returns the `n`-th \f$ alpha\f$-value, sorted in an increasing order. 
 \pre `n` < number of alphas. 
 */ 
 const FT& get_nth_alpha(int n) const; 
