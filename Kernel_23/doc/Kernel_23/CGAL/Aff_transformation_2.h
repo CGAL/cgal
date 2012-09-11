@@ -168,7 +168,6 @@ introduces a general linear transformation
                  m_{10} & m_{11} & 0\\
                   0     &  0     & hw
               \end{array}\right)\)}\f$
-
 i.e.\ there is no translational part. 
 */ 
 Aff_transformation_2( 
@@ -250,7 +249,7 @@ Aff_transformation_2<Kernel> inverse() const;
 
 /*! 
 returns `true`, if the transformation is not reflecting, 
-i.e. the determinant of the involved linear transformation is 
+i.e.\ the determinant of the involved linear transformation is 
 non-negative. 
 */ 
 bool is_even() const; 

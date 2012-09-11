@@ -181,7 +181,7 @@ Aff_transformation_3<Kernel> inverse() const;
 
 /*! 
 returns `true`, if the transformation is not reflecting, 
-i.e. the determinant of the involved linear transformation is 
+i.e.\ the determinant of the involved linear transformation is 
 non-negative. 
 */ 
 bool is_even() const; 
