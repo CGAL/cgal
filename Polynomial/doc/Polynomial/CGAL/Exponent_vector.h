@@ -21,8 +21,8 @@ the lexicographic order starts the comparison at the last entry.
 This reflects the fact that the last entry corresponds to the 
 outermost variable of a multivariate polynomial. 
 
-\models ::Random Access Container 
-\models ::Back Insertion Sequence 
+\models ::RandomAccessContainer 
+\models ::BackInsertionSequence 
 \models ::DefaultConstructible 
 \models ::Assignable 
 \models ::CopyConstructible 

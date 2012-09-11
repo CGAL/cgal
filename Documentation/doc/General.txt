@@ -19,6 +19,10 @@ class ForwardIterator {};
 class RandomAccessIterator {};
 class BidirectionalIterator {};
 
+
+class RandomAccessContainer {};
+class BackInsertionSequence {};
+
 /*!
 This specifies that the actual type exposed through a `typedef` is
 implementation specific. It can only be treated through the concepts
