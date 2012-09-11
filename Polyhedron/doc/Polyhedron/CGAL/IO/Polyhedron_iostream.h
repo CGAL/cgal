@@ -19,7 +19,7 @@ format automatically and can read both.
 
 \sa \ref ::CGAL::Polyhedron_3<Traits> 
 \sa \ref ::CGAL::Polyhedron_incremental_builder_3<HDS> 
-CONVERROR \sa operator\<\<
+\sa operator<<(std::ostream&, CGAL::Polyhedron_3<PolyhedronTraits_3>&)
 
 
 Implementation 
@@ -33,8 +33,34 @@ polyhedral surface.
 
 */
 template <class PolyhedronTraits_3>
-istream& operator>>( istream& in,
-CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
+std::istream& operator>>( std::istream& in, CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
+
+/*!
+\ingroup PkgPolyhedron
+
+This operator writes the polyhedral surface \f$P\f$ to the output
+stream out using the Object File Format, OFF, with file extension
+<TT>.off</TT>, which is also understood by GeomView \cite cgal:p-gmgv16-96. The
+output is in ASCII format. From the polyhedral surface, only the point
+coordinates and facets are written. Neither normal vectors nor color
+attributes are used.
+
+For OFF an ASCII and a binary format exist. The format can be selected
+with the \cgal modifiers for streams, ::set_ascii_mode and
+set_binary_mode respectively. The modifier ::set_pretty_mode can be used
+to allow for (a few) structuring comments in the output. Otherwise,
+the output would be free of comments. The default for writing is ASCII
+without comments.
+
+\sa \ref ::CGAL::Polyhedron_3<Traits> 
+\sa \ref ::CGAL::Polyhedron_incremental_builder_3<HDS> 
+\sa operator>>(std::istream&, CGAL::Polyhedron_3<PolyhedronTraits_3>&)
+
+*/
+template <class PolyhedronTraits_3>
+std::ostream& operator<<( std::ostream& out, CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 } /* namespace CGAL */
+
+
 
