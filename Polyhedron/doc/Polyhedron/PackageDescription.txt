@@ -1,0 +1,34 @@
+/// \defgroup PkgPolyhedron 3D Polyhedral Surface 
+/// \defgroup PkgPolyhedronConcepts Concepts
+/// \ingroup PkgPolyhedron
+/*!
+\addtogroup PkgPolyhedron
+\todo check generated documentation
+\PkgDescriptionBegin{3D Polyhedral Surface}
+\PkgPicture{teaser-small.gif}
+\PkgAuthor{Lutz Kettner}
+\PkgDesc{Polyhedral surfaces in three dimensions are composed of vertices, edges, facets and an incidence relationship on them. The organization beneath is a halfedge data structure, which restricts the class of representable surfaces to orientable 2-manifolds - with and without boundary. If the surface is closed we call it a polyhedron.}
+\PkgSince{1.0}
+\cgalbib{cgal:k-ps}
+\license{\ref licensesGPL "GPL"}
+\PkgDescriptionEnd
+
+Polyhedral surfaces in three dimensions are composed of vertices,
+edges, facets and an incidence relationship on them. The organization
+beneath is a halfedge data structure, which restricts the class of
+representable surfaces to orientable 2-manifolds - with and without
+boundary. If the surface is closed we call it a <I>polyhedron</I>.
+
+The polyhedral surface is realized as a container class managing
+vertices, halfedges, facets with their incidences, and maintaining the
+combinatorial integrity of them. Its local types for the vertices,
+halfedges and facets are documented separately.  A default traits
+class, a default items class and an incremental builder conclude the
+references. The polyhedral surface is based on the highly flexible
+design of the halfedge data structure, see the reference for
+`HalfedgeDS` in Chapter  \ref chapterHalfedgeDSRef
+or \cite k-ugpdd-99, but the default instantiation of the polyhedral
+surface can be used without knowing the halfedge data structure.
+
+*/
+

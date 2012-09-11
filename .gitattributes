@@ -4206,6 +4206,44 @@ Polyhedron/demo/Polyhedron/resources/minus.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/plus.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/simplification.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/texture.h -text
+Polyhedron/doc/Polyhedron/CGAL/IO/Polyhedron_iostream.h -text
+Polyhedron/doc/Polyhedron/CGAL/Polyhedron_3.h -text
+Polyhedron/doc/Polyhedron/CGAL/Polyhedron_incremental_builder_3.h -text
+Polyhedron/doc/Polyhedron/CGAL/Polyhedron_items_3.h -text
+Polyhedron/doc/Polyhedron/CGAL/Polyhedron_min_items_3.h -text
+Polyhedron/doc/Polyhedron/CGAL/Polyhedron_traits_3.h -text
+Polyhedron/doc/Polyhedron/CGAL/Polyhedron_traits_with_normals_3.h -text
+Polyhedron/doc/Polyhedron/Concepts/PolyhedronItems_3.h -text
+Polyhedron/doc/Polyhedron/Concepts/PolyhedronTraits_3.h -text
+Polyhedron/doc/Polyhedron/PackageDescription.txt -text
+Polyhedron/doc/Polyhedron/Polyhedron.txt -text
+Polyhedron/doc/Polyhedron/fig/add_facet.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/add_facet1.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/add_facet2.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/euler.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/euler_center.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/euler_center.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/euler_facet.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/euler_facet.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/euler_loop.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/euler_loop.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/euler_vertex.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/euler_vertex.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/halfedge.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/halfedge.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/halfedge_small.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/make_cube.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/make_cube.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/poly_optional.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/poly_optional.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/poly_optional_small.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/shark.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/shark.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/subdiv.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/subdiv.pdf -text svneol=unset#application/pdf
+Polyhedron/doc/Polyhedron/fig/subdiv_small.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/teaser-small.gif -text svneol=unset#image/gif
+Polyhedron/doc/Polyhedron/fig/teaser.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text svneol=unset#application/postscript
