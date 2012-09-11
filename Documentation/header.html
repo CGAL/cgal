@@ -11,6 +11,44 @@
 <script type="text/javascript" src="$relpath$jquery.footnotes.min.js"></script>
 $treeview
 $search
+<!-- set-up footnote generation and autotoc -->
+<script type="text/javascript"> 
+    $(document).ready(function() { 
+      $("body").footnotes();
+      var toc = $("#autotoc").append('<ul></ul>');
+      if(toc) {
+        toc = toc.find('ul');
+        $("h1, h2, h3").each(function(i) {
+          var current = $(this);
+          var levelTag = current[0].tagName.charAt(1);
+          current.attr("id", "title" + i);
+          toc.append("<li class='level" + levelTag + "'><a id='link" + i + "' href='#title" +
+            i + "' title='" + current.prop("tagName") + "'>" + current.text() + "</a></li>");
+        });
+      }
+      <!-- trigger a resize event -->
+      $(window).resize();
+    });
+</script>
+<!-- hack around a bug in resize.js. The original resizeHeight is not
+considering margins or borders when calculating the div heights. Our
+ready hook is run after the original resize. We fixup the footer
+variable and then do our thing.  -->
+<script type="text/javascript"> 
+   $(document).ready(function () { 
+      footer = $("#footer");
+      resizeHeight = function() {
+      var headerHeight = header.outerHeight(true);
+      var footerHeight = footer.outerHeight(true);
+      var windowHeight = $(window).outerHeight(true) - headerHeight - footerHeight;
+      content.css({height:windowHeight + "px"});
+      navtree.css({height:windowHeight + "px"});
+      sidenav.css({height:windowHeight + "px",top: headerHeight+"px"});
+    }
+    $(window).resize(resizeHeight);
+    $(window).resize();
+   });
+</script>
 
 <script type="text/javascript"
    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
@@ -22,10 +60,24 @@ $extrastylesheet
 <body>
 <span style="display:none">\( \newcommand{\E}{\mathrm{E}} \) \( \newcommand{\A}{\mathrm{A}} \)
 \( \newcommand{\R}{\mathrm{R}} \) \( \newcommand{\N}{\mathrm{N}} \) \( \newcommand{\Q}{\mathrm{Q}} \) \( \newcommand{\Z}{\mathrm{Z}} \)
+\(
+\def\ccSum #1#2#3{
+  \sum_{#1}^{#2}{#3}
+}
+
+\def\ccProd #1#2#3{
+  \sum_{#1}^{#2}{#3}
+}\)
 </span>
 
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
-
+<div id="back-nav">
+  <ul>
+    <li><a href="../../CGAL.CGAL/html/index.html">Home</a></li>
+    <li><a href="../../CGAL.CGAL/html/packages.html">Package Overview</a></li>
+    <li><a href="../../CGAL.CGAL/html/how_to_cite_cgal.html">Acknowledging CGAL</a></li>
+  </ul>
+</div>
 <!--BEGIN TITLEAREA-->
 <div id="titlearea">
 <table cellspacing="0" cellpadding="0">

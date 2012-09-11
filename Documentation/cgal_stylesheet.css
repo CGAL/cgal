@@ -1,3 +1,29 @@
 .textsc {
     font-variant: small-caps;
 }
+
+#projectnumber {
+    display: none;
+    font: 100%;
+}
+
+#back-nav {
+}
+
+#back-nav h2 {
+    display: inline;
+}
+
+#back-nav ul
+{
+    margin: 0;
+    padding-top: 0.5em;
+    padding-left: 0.5em;
+}
+
+#back-nav li
+{
+display: inline;
+list-style-type: none;
+padding-right: 20px;
+}

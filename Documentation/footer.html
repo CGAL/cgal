@@ -1,7 +1,9 @@
 <!-- start footer part -->
+<div id="footer">
 <ol id="autoFootnotes0" class="footnotesList"></ol>
 <!--BEGIN GENERATE_TREEVIEW-->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+
   <ul>
     $navpath
     <li class="footer">$generatedby
@@ -17,23 +19,6 @@ $generatedby &#160;<a href="http://www.doxygen.org/index.html">
 </a> $doxygenversion
 </small></address>
 <!--END !GENERATE_TREEVIEW-->
-<script type="text/javascript"> 
-  <!-- 
-    $(document).ready(function() { 
-      $("body").footnotes();
-      var toc = $("#autotoc").append('<ul></ul>');
-      if(toc) {
-        toc = toc.find('ul');
-        $("h1, h2, h3").each(function(i) {
-          var current = $(this);
-          var levelTag = current[0].tagName.charAt(1);
-          current.attr("id", "title" + i);
-          toc.append("<li class='level" + levelTag + "'><a id='link" + i + "' href='#title" +
-            i + "' title='" + current.prop("tagName") + "'>" + current.text() + "</a></li>");
-        });
-      }
-    });
-// --> 
-</script>
+</div>
 </body>
 </html>

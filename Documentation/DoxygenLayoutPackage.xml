@@ -1,10 +1,7 @@
 <doxygenlayout version="1.0">
   <!-- Navigation index tabs for HTML output -->
   <navindex>
-    <tab type="user" url="../../CGAL.CGAL/html/index.html" title="CGAL"/>
-    <tab type="user" url="../../CGAL.CGAL/html/packages.html" title="Package Overview"/>
     <tab type="mainpage" visible="yes" title="User Manual"/>
-    <!-- <tab type="user" url="@ref packagemodule" title="Reference"/> -->
     <tab type="modules" visible="yes" title="Reference Manual" intro=" "/>
     <tab type="pages" visible="yes" title="" intro=""/>
     <tab type="classes" visible="yes" title="">

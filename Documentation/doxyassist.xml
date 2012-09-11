@@ -8,6 +8,9 @@ namespace for the XML file to be processed properly.  -->
             xmlns:da="http://simply-life.net/doxyassist/doxyassist.xsd"
             version="1.0" type="generic" name="CGAL Documentation">
   <doxygen doxyfile="Doxyfile">
+    <bool name="GENERATE_TREEVIEW">true</bool>
+    <bool name="DISABLE_INDEX">true</bool>
+
     <list name="HTML_EXTRA_FILES" append="true">
       <item>jquery.footnotes.min.js</item>
     </list>
@@ -139,7 +142,20 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="false">
             <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
             <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Polynomial</name>
+        <input>../Polynomial/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Polynomial/doc/Polynomial/</string>
+          <string name="STRIP_FROM_INC_PATH">../Polynomial/doc/Polynomial/</string>
+          <string name="GENERATE_TAGFILE">./tags/Polynomial.tag</string>
+          <string name="IMAGE_PATH">../Polynomial/doc/Polynomial/fig</string>
+          <string name="EXAMPLE_PATH">../Polynomial/examples</string>
         </doxygen>
       </project>
 
@@ -329,6 +345,7 @@ namespace for the XML file to be processed properly.  -->
         <input>../Envelope_3/doc/Envelope_3</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Envelope_3/doc/Envelope_3/</string>
+          <string name="STRIP_FROM_PATH">../Envelope_3/doc/Envelope_3/</string>
           <string name="GENERATE_TAGFILE">./tags/Envelope_3.tag</string>
           <string name="EXAMPLE_PATH">../Envelope_3/examples</string>
           <string name="IMAGE_PATH">../Envelope_3/doc/Envelope_3/fig</string>
@@ -839,6 +856,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Kernel_23/doc/Kernel_23/fig</item>
           <item>../Point_set_2/doc/Point_set_2/fig</item>
           <item>../Polytope_distance_d/doc/Polytope_distance_d/fig</item>
+          <item>../Polynomial/doc/Polynomial/fig</item>
           <item>../Principal_component_analysis/doc/Principal_component_analysis/fig</item>
           <item>../STL_Extension/doc/STL_Extension/fig</item>
           <item>../Skin_surface_3/doc/Skin_surface_3/fig</item>
@@ -888,6 +906,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Partition_2.tag=../../CGAL.CGAL.2D-Polygon-Partitioning/html</item>
           <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
           <item>./tags/Point_set_2.tag=../../CGAL.CGAL.2D-Range-and-Neighbor-Search/html</item>
+          <item>./tags/Polynomial.tag=../../CGAL.CGAL.Polynomial/html</item>
           <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
           <item>./tags/Principal_component_analysis.tag=../../CGAL.CGAL.Principal-Component-Analysis/html</item>
           <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>

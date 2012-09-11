@@ -375,6 +375,7 @@ a.footnoteBackref, a.footnoteLink {
 }
 
 ol.footnotesList {
+        margin: 0;
 	font-size: 0.8em;
 	padding-top: 5px;
 }
