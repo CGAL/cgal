@@ -218,10 +218,10 @@ that only the polyhedron can guarantee.
 
 \cgalexample{polyhedron_prog_vector.cpp}
 
-## Example with Circulator Writing Object File Format (OFF) ##
+## Example with %Circulator Writing %Object File Format (OFF) ##
 
 We create a tetrahedron and write it to `std::cout` using the
-Object File Format (OFF) \cite cgal:p-gmgv16-96. This example makes use
+%Object File Format (OFF) \cite cgal:p-gmgv16-96. This example makes use
 of \stl algorithms (`std::copy`, `std::distance`), \stl `std::ostream_iterator`, and \cgal circulators. The polyhedral
 surface provides convenient circulators for the counterclockwise
 circular sequence of halfedges around a facet and the clockwise

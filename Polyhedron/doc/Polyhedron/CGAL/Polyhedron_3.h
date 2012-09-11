@@ -13,9 +13,9 @@ namespace CGAL {
   between two endpoints. Facets are planar polygons without holes 
   defined by the circular sequence of halfedges along their boundary. 
   The polyhedral surface itself can have holes. The halfedges 
-  along the boundary of a hole are called <I>border halfedges/</I> and 
-  have no incident facet. An edge is a <I>border edge/</I> if one of 
-  its halfedges is a border halfedge. A surface is <I>closed/</I> if it 
+  along the boundary of a hole are called <I>border halfedges</I> and 
+  have no incident facet. An edge is a <I>border edge</I> if one of 
+  its halfedges is a border halfedge. A surface is <I>closed</I> if it 
   contains no border halfedges. A closed surface is a boundary 
   representation for polyhedra in three dimensions. The convention is 
   that the halfedges are oriented counterclockwise around facets as seen 
@@ -66,28 +66,14 @@ namespace CGAL {
   The full template declaration of `Polyhedron_3` states four 
   template parameters: 
 
-  <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-
-  `template <` 
-  <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-  `class PolyhedronTraits_3,` 
-  <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-
-  <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-  `class PolyhedronItems_3 = CGAL::Polyhedron_items_3,` 
-  <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-
-  <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-  `template < class T, class I>` 
-  `class HalfedgeDS = CGAL::HalfedgeDS_default,` 
-  <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-
-  <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-  `class Alloc = CGAL_ALLOCATOR(int)>` 
-  <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-  `class Polyhedron_3;` 
-
-  </TABLE> 
+\code{.cpp}
+template < class PolyhedronTraits_3,
+           class PolyhedronItems_3 = CGAL::Polyhedron_items_3,
+           template < class T, class I>` 
+           class HalfedgeDS = CGAL::HalfedgeDS_default,
+           class Alloc = CGAL_ALLOCATOR(int) >
+class Polyhedron_3;
+\endcode
 
   The first parameter requires a model of the `PolyhedronTraits_3` 
   concept as argument, for example `CGAL::Polyhedron_traits_3`. The 
@@ -103,16 +89,16 @@ namespace CGAL {
   provided with the macro `CGAL_ALLOCATOR(int)` from the 
   `<CGAL/memory.h>` header file. 
 
-  \sa \ref ::CGAL::Polyhedron_3<Traits>::Vertex 
-  \sa \ref ::CGAL::Polyhedron_3<Traits>::Halfedge 
-  \sa \ref ::CGAL::Polyhedron_3<Traits>::Facet 
+  \sa `CGAL::Polyhedron_3::Vertex` 
+  \sa `CGAL::Polyhedron_3::Halfedge` 
+  \sa `CGAL::Polyhedron_3::Facet` 
   \sa `PolyhedronTraits_3` 
-  \sa \ref ::CGAL::Polyhedron_traits_3<Kernel> 
+  \sa `CGAL::Polyhedron_traits_3<Kernel>` 
   \sa `PolyhedronItems_3` 
-  \sa \ref ::CGAL::Polyhedron_items_3 
+  \sa `CGAL::Polyhedron_items_3` 
   \sa `HalfedgeDS` 
-  \sa \ref ::CGAL::HalfedgeDS_default 
-  \sa \ref ::CGAL::Polyhedron_incremental_builder_3<HDS> 
+  \sa `CGAL::HalfedgeDS_default` 
+  \sa `CGAL::Polyhedron_incremental_builder_3<HDS>` 
   \sa `CGAL::Modifier_base`. 
 
   Example 
@@ -131,9 +117,7 @@ public:
   /*!
     \ingroup PkgPolyhedron
 
-    Figure \ref figurePolyOptionalMethods 
-    depicts the relationship between a halfedge and its incident 
-    halfedges, vertices, and facets. A halfedge is an oriented edge 
+    A halfedge is an oriented edge 
     between two vertices. It is always paired with a halfedge pointing in 
     the opposite direction. The `opposite()` member function returns 
     this halfedge of opposite orientation. If a halfedge is incident to a 
@@ -169,9 +153,9 @@ public:
     polyhedron with the `Items` template argument provides a member 
     function `prev()`, otherwise they are of the forward category. 
 
-    \sa \ref ::CGAL::Polyhedron_3<Traits>::Vertex 
-    \sa \ref ::CGAL::Polyhedron_3<Traits>::Facet 
-    \sa \ref ::CGAL::Polyhedron_3<Traits> 
+    \sa `CGAL::Polyhedron_3::Vertex` 
+    \sa `CGAL::Polyhedron_3::Facet` 
+    \sa `CGAL::Polyhedron_3<Traits> 
 
     Implementation 
     -------------- 
@@ -406,7 +390,7 @@ public:
 
     /// @} 
 
-    /// \name Operations available if `Supports_halfedge_vertex` \f$ \equiv\f$ `CGAL::Tag_true` 
+    /// \name Operations available if Supports_halfedge_vertex is CGAL::Tag_true 
     /// @{
 
     /*! 
@@ -421,7 +405,7 @@ public:
 
     /// @} 
 
-    /// \name Operations available if `Supports_halfedge_facet` \f$ \equiv\f$ `CGAL::Tag_true` 
+    /// \name Operations available if Supports_halfedge_facet is CGAL::Tag_true 
     /// @{
 
     /*! 
@@ -457,9 +441,9 @@ public:
     -------------- 
 
     Operations available if `Supports_facet_halfedge` \f$ \equiv\f$ 
-    \sa \ref ::CGAL::Polyhedron_3<Traits>::Vertex 
-    \sa \ref ::CGAL::Polyhedron_3<Traits>::Halfedge 
-    \sa \ref ::CGAL::Polyhedron_3<Traits> 
+    \sa `CGAL::Polyhedron_3::Vertex` 
+    \sa `CGAL::Polyhedron_3::Halfedge` 
+    \sa `CGAL::Polyhedron_3<Traits>` 
 
   */
 
@@ -544,7 +528,7 @@ public:
 
     /// @} 
 
-    /// \name Operations available if `Supports_facet_plane` \f$ \equiv\f$ `CGAL::Tag_true` 
+    /// \name Operations available if Supports_facet_plane is CGAL::Tag_true 
     /// @{
 
     /*! 
@@ -559,7 +543,7 @@ public:
 
     /// @} 
 
-    /// \name Operations available if `Supports_facet_halfedge` \f$ \equiv\f$ `CGAL::Tag_true`
+    /// \name Operations available if Supports_facet_halfedge is CGAL::Tag_true
     /// @{
 
 
@@ -626,9 +610,9 @@ public:
     argument provides a member function `prev()`, otherwise it is 
     of the forward category. 
 
-    \sa \ref ::CGAL::Polyhedron_3<Traits>::Halfedge 
-    \sa \ref ::CGAL::Polyhedron_3<Traits>::Facet 
-    \sa \ref ::CGAL::Polyhedron_3<Traits> 
+    \sa `CGAL::Polyhedron_3::Halfedge` 
+    \sa `CGAL::Polyhedron_3::Facet`
+    \sa `CGAL::Polyhedron_3<Traits> 
 
   */
   class Vertex {
@@ -722,7 +706,7 @@ public:
 
     /// @} 
 
-    /// \name Operations available if `Supports_vertex_point` \f$ \equiv\f$ `CGAL::Tag_true` 
+    /// \name Operations available if Supports_vertex_point is CGAL::Tag_true 
     /// @{
 
     /*! 
@@ -737,7 +721,7 @@ public:
 
     /// @} 
 
-    /// \name Operations available if `Supports_vertex_halfedge` \f$ \equiv\f$ `CGAL::Tag_true` 
+    /// \name Operations available if Supports_vertex_halfedge is  CGAL::Tag_true 
     /// @{
 
     /*! 
@@ -1513,7 +1497,7 @@ public:
     \name Operations with Border Halfedges 
 
     \advanced Halfedges incident to a hole are called <I>border
-    halfedges</I>. An halfedge is a <I>border edge/</I> if itself or its
+    halfedges</I>. An halfedge is a <I>border edge</I> if itself or its
     opposite halfedge are border halfedges. The only requirement to work
     with border halfedges is that the `Halfedge` class provides a member
     function `is_border()` returning a `bool`. Usually, the halfedge data
