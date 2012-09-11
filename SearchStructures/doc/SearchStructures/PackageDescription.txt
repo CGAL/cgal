@@ -1,0 +1,24 @@
+/// \defgroup PkgRangeSegmentTreesD dD Range and Segment Trees 
+/// \defgroup PkgRangeSegmentTreesDConcepts Concepts
+/// \ingroup PkgRangeSegmentTreesD
+/*!
+\addtogroup PkgRangeSegmentTreesD
+\todo check generated documentation
+\PkgDescriptionBegin{dD Range and Segment Trees}
+\PkgPicture{segment_tree.png}
+\PkgAuthor{Gabriele Neyer}
+\PkgDesc{Range and segment trees allow to perform window queries on point sets, and to enumerate all ranges enclosing a query point. The provided data structures  are static and they are optimized for fast queries.}
+\PkgSince{0.9}
+\cgalbib{cgal:n-rstd}
+\license{\ref licensesGPL "GPL"}
+\PkgDescriptionEnd
+
+This chapter presents the \cgal range tree and  segment tree data structures.
+
+The range tree is theoretically superior to the \f$ Kd\f$-tree, but the
+latter often seems to perform better.
+However, the range tree as implemented in \cgal is more flexible than the
+\f$ Kd\f$-tree implementation, in that it enables to layer together range trees
+and segment trees in the same data structure.
+*/
+

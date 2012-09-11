@@ -340,6 +340,17 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>dD Range and Segment Trees</name>
+        <input>../SearchStructures/doc/SearchStructures</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../SearchStructures/doc/SearchStructures/</string>
+          <string name="GENERATE_TAGFILE">./tags/SearchStructures.tag</string>
+          <string name="EXAMPLE_PATH">../SearchStructures/examples</string>
+          <string name="IMAGE_PATH">../SearchStructures/doc/SearchStructures/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
         <name>Interval Skip List</name>
         <input>../Interval_skip_list/doc/Interval_skip_list</input>
         <doxygen>
@@ -886,6 +897,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Partition_2/doc/Partition_2/fig</item>
           <item>../Kernel_23/doc/Kernel_23/fig</item>
           <item>../Point_set_2/doc/Point_set_2/fig</item>
+          <item>../SearchStructures/doc/SearchStructures/fig</item>
           <item>../Polytope_distance_d/doc/Polytope_distance_d/fig</item>
           <item>../Polynomial/doc/Polynomial/fig</item>
           <item>../Principal_component_analysis/doc/Principal_component_analysis/fig</item>
@@ -938,6 +950,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Partition_2.tag=../../CGAL.CGAL.2D-Polygon-Partitioning/html</item>
           <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
           <item>./tags/Point_set_2.tag=../../CGAL.CGAL.2D-Range-and-Neighbor-Search/html</item>
+          <item>./tags/SearchStructures.tag=../../CGAL.CGAL.dD-Range-and-Segment-Trees/html</item>
           <item>./tags/Polynomial.tag=../../CGAL.CGAL.Polynomial/html</item>
           <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
           <item>./tags/Principal_component_analysis.tag=../../CGAL.CGAL.Principal-Component-Analysis/html</item>

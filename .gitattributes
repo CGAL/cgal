@@ -4693,6 +4693,33 @@ Scripts/developer_scripts/update_git_svn_clone -text
 Scripts/scripts/cgal_create_CMakeLists -text
 Scripts/scripts/cgal_create_assertions.sh eol=lf
 Scripts/scripts/cgal_create_cmake_script -text
+SearchStructures/doc/SearchStructures/CGAL/Range_segment_tree_traits.h -text
+SearchStructures/doc/SearchStructures/CGAL/Range_tree_d.h -text
+SearchStructures/doc/SearchStructures/CGAL/Range_tree_k.h -text
+SearchStructures/doc/SearchStructures/CGAL/Segment_tree_d.h -text
+SearchStructures/doc/SearchStructures/CGAL/Segment_tree_k.h -text
+SearchStructures/doc/SearchStructures/CGAL/Tree_base.h -text
+SearchStructures/doc/SearchStructures/CGAL/Tree_traits.h -text
+SearchStructures/doc/SearchStructures/Concepts/RangeSegmentTreeTraits_k.h -text
+SearchStructures/doc/SearchStructures/Concepts/Sublayer.h -text
+SearchStructures/doc/SearchStructures/PackageDescription.txt -text
+SearchStructures/doc/SearchStructures/SearchStructures.txt -text
+SearchStructures/doc/SearchStructures/fig/d-range.gif -text svneol=unset#image/gif
+SearchStructures/doc/SearchStructures/fig/d-range.pdf -text svneol=unset#application/pdf
+SearchStructures/doc/SearchStructures/fig/d-segment.gif -text svneol=unset#image/gif
+SearchStructures/doc/SearchStructures/fig/d-segment.pdf -text svneol=unset#application/pdf
+SearchStructures/doc/SearchStructures/fig/range2.gif -text svneol=unset#image/gif
+SearchStructures/doc/SearchStructures/fig/range2.pdf -text svneol=unset#application/pdf
+SearchStructures/doc/SearchStructures/fig/rangesegmentdesign.pdf -text svneol=unset#application/pdf
+SearchStructures/doc/SearchStructures/fig/rsd.gif -text svneol=unset#image/gif
+SearchStructures/doc/SearchStructures/fig/rsd.pdf -text svneol=unset#application/pdf
+SearchStructures/doc/SearchStructures/fig/segment2.gif -text svneol=unset#image/gif
+SearchStructures/doc/SearchStructures/fig/segment2.pdf -text svneol=unset#application/pdf
+SearchStructures/doc/SearchStructures/fig/segment_ex2.gif -text svneol=unset#image/gif
+SearchStructures/doc/SearchStructures/fig/segment_ex2.pdf -text svneol=unset#application/pdf
+SearchStructures/doc/SearchStructures/fig/segment_ex4.gif -text svneol=unset#image/gif
+SearchStructures/doc/SearchStructures/fig/segment_ex4.pdf -text svneol=unset#application/pdf
+SearchStructures/doc/SearchStructures/fig/segment_tree.png -text svneol=unset#image/png
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#image/gif
 SearchStructures/doc_tex/SearchStructures/d-range.pdf -text svneol=unset#application/pdf
 SearchStructures/doc_tex/SearchStructures/d-segment.gif -text svneol=unset#image/gif
