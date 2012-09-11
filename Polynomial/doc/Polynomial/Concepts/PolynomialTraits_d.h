@@ -81,7 +81,8 @@ This nested template class has to define a type `Other` which is a model
 of the concept `PolynomialTraits_d`, where `d` is the number of 
 variables and `T` the `Innermost_coefficient_type`. 
 */ 
-typedef Hidden_type template <typename T, int d> struct Rebind; 
+template <typename T, int d>
+struct Rebind {};
 
 /// @} 
 
