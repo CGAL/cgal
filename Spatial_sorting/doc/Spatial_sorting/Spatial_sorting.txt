@@ -1,0 +1,182 @@
+
+\page chapspatial_sorting Spatial Sorting 
+
+namespace CGAL {
+/*!
+
+\mainpage Spatial Sorting 
+\anchor chapspatial_sorting
+
+\authors Christophe Delage and Olivier Devillers
+
+# Introduction #
+
+Many geometric algorithms implemented in \cgal are incremental, and thus their
+speed is dependent on the order of insertion. This package provides sorting
+algorithms that may considerably improve running times of such
+algorithms.
+
+The rationale is to sort objects along a space-filling curve 
+so that two
+objects close geometrically will be close in the insertion order with high
+probability. That way, parts of a data structure that will be looked at during
+an insertion will probably have been looked at in a recent insertion, and thus
+probably will be in cache memory instead of main memory.
+As another side-effect, these sorting functions usually improve memory locality
+of the data structures produced by incremental algorithms, sometimes leading to
+speed ups in other algorithm using these data structures.
+
+Some algorithms have a good complexity under randomized hypotheses which
+contradicts the idea of sorting the input using any sorting criterion.
+In such a case, it is possible to introduce just a bit of randomness 
+to be able to combine the good randomized complexity and the
+good effects of locality \cite acr-icb-03.
+
+The predicates used by this package are comparisons between coordinates,
+thus there is no robustness issue involved here, for example to choose the
+arithmetic of the kernel.
+
+\section sechilbert_sorting Hilbert Sorting 
+
+In 2D, one can construct a space filling curve, that is a mapping \f$ f\f$ of \f$ [0,1]\f$
+to the unit square \f$ [0,1]^2\f$, such that \f$ f(0)=(0,0)\f$ and \f$ f(1)=(1,0)\f$ 
+in the following way:
+the unit square is subdivided in four such that
+
+<BLOCKQUOTE>
+\f$ f([0,\frac{1}{4}])=[0,\frac{1}{2}]^2\f$, 
+\f$ f([\frac{1}{4},\frac{1}{2}])=[0,\frac{1}{2}]\times[\frac{1}{2},1]\f$,
+\f$ f([\frac{1}{2},\frac{3}{4}])=[\frac{1}{2},1]^2\f$,
+and 
+\f$ f([\frac{3}{4},1])=[\frac{1}{2},1]\times[0,\frac{1}{2}].\f$
+
+\f$ f(\frac{1}{4})=(0,\frac{1}{2})\f$
+
+\f$ f(\frac{1}{2})=(\frac{1}{2},\frac{1}{2})\f$, and
+\f$ f(\frac{3}{4})=(1,\frac{1}{2})\f$.
+</BLOCKQUOTE>
+
+Then each square is subdivided in the same way recursively.
+Figure \ref Spatial_sorting_fig_Hilbert8 illustrates this process.
+
+\anchor Spatial_sorting_fig_Hilbert8
+\image html Hilbert8.gif "Hilbert mapping"
+
+Now given a set of 2D points, they can be sorted in the order they have on such
+a space filling curve as illustrated in Figure \ref Spatial_sorting_fig_Hilbert_middle :
+
+\anchor Spatial_sorting_fig_Hilbert_middle
+\image html Hilbert-middle.gif "Hilbert sort with middle policy"
+
+## Examples ##
+
+The code to use Hilbert sort is as simple as the following example:
+
+\cgalexample{hilbert.cpp}
+
+If instead of subdividing the square in a fixed way at its middle point,
+as above, we subdivide it
+by splitting at the median point (in \f$ x\f$ or \f$ y\f$ directions alternating),
+we construct a 2-d tree adapted to the point set. This tree can be visited in a
+similar manner and we get also a suitable ordering of the points
+(see Figure \ref Spatial_sorting_fig_Hilbert_median).
+
+\anchor Spatial_sorting_fig_Hilbert_median
+\image html Hilbert-median.gif "Hilbert sort with median policy"
+
+
+\cgal provides Hilbert sorting for points in 2D, 3D and higher dimensions,
+in the middle and the median policies.
+
+The middle policy is easier to analyze, and is interesting in practice
+for well distributed set of points in small dimension (if the number
+of points is really smaller than \f$ 2^d\f$).
+The median policy should be prefered for high dimension or if 
+the point set distribution is not regular (or unknown).
+Since the median policy cannot be much worse than the middle
+policy, while the converse can happen, the median policy is the
+default behavior.
+Most theoretical results are using the middle policy
+\cite acr-icb-03, \cite b-aahsf-71, \cite bg-sfche-89,pb-scpts-89.
+
+This other example illustrates the use of the two different policies
+
+\cgalexample{hilbert_policies.cpp}
+
+\section secspatial_sorting Spatial Sorting 
+
+Hilbert sort cannot be used directly before feeding a randomized algorithm.
+Thus, the trick is to organize the point set in random buckets of increasing
+sizes, Hilbert sort being used only inside a bucket.
+
+It has been proved, in the context of Delaunay triangulation, that
+such an order provides enough randomness to combine the advantages of a random
+order and a space filling curve order \cite acr-icb-03.
+
+\cgal provides spatial sorting for points in 2D, 3D and higher dimensions,
+with the middle and the median policies for Hilbert sort in the buckets.
+
+## Basic Example ##
+
+The following example shows that, on particular input, spatial sort
+runs much faster than a bad order or than Hilbert sort (below results
+with release mode compilation on a 1.8GHz processor).
+\code{.sh}
+$ ./small_example_delaunay_2 
+10000 points on a parabola
+Delaunay without spatial sort... done in 6.33443 seconds.
+Delaunay with median hilbert sort... done in 0.822975 seconds.
+Delaunay with median spatial sort... done in 0.022415 seconds.
+\endcode
+
+\cgalexample{small_example_delaunay_2.cpp}
+
+## Using Your Own Point Type ##
+
+If you want to sort points of your own point type,
+you only have to provide functors that compare
+the `x` and `y` coordinates of your points. Note that in case you simply want
+to associate an extra information to your point you might consider the example of Section
+\ref secsort_any_type_2
+as an alternative.
+
+\cgalexample{myPoint.cpp}
+
+## Sorting Arbitrary Types ##
+
+\anchor secsort_any_type
+The spatial sorting traits class provides a point type and
+functors for comparing, for example, the `x`-coordinates
+of two points.
+If you want to sort something else than just points, for example
+a sequence of tuples containing a point, or a sequence of indices
+in a vector of points, you need another level of indirection.
+We provide the spatial sorting traits class adapters which are templated by
+another spatial sorting traits class, and a 
+<A HREF="http://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
+which allows to obtain a point from whatever you want to sort.
+
+The following examples illustrate the usage of these traits class adapters.
+
+## Sorting Using Pairs of Points and Integers ##
+
+\anchor secsort_any_type_2
+In this example program, the sorted sequence of points is retrieved 
+using a vector of pairs of points and integers.
+\cgalexample{sp_sort_using_property_map_2.cpp}
+
+## Sorting Using Indices of Points ##
+
+In this example program, the sorted sequence of points is retrieved 
+using the indices of the points in a vector of points.
+\cgalexample{sp_sort_using_property_map_3.cpp}
+
+## Sorting Using Indices of Pairs of Points and Integers ##
+
+In this example program, the sorted sequence of points is retrieved 
+using the indices of the points in a vector of pairs of points and integers.
+\cgalexample{sp_sort_using_property_map_d.cpp}
+
+*/ 
+} /* namespace CGAL */
+

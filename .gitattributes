@@ -4861,6 +4861,29 @@ Spatial_searching/include/CGAL/internal/K_neighbor_search.h -text
 Spatial_searching/include/CGAL/internal/bounded_priority_queue.h -text
 Spatial_searching/test/Spatial_searching/Compare_methods.cpp -text
 Spatial_searching/test/Spatial_searching/Point_with_info.h -text
+Spatial_sorting/doc/Spatial_sorting/CGAL/Hilbert_policy_tags.h -text
+Spatial_sorting/doc/Spatial_sorting/CGAL/Hilbert_sort_2.h -text
+Spatial_sorting/doc/Spatial_sorting/CGAL/Hilbert_sort_3.h -text
+Spatial_sorting/doc/Spatial_sorting/CGAL/Hilbert_sort_d.h -text
+Spatial_sorting/doc/Spatial_sorting/CGAL/Multiscale_sort.h -text
+Spatial_sorting/doc/Spatial_sorting/CGAL/Spatial_sort_traits_adapter_2.h -text
+Spatial_sorting/doc/Spatial_sorting/CGAL/Spatial_sort_traits_adapter_3.h -text
+Spatial_sorting/doc/Spatial_sorting/CGAL/Spatial_sort_traits_adapter_d.h -text
+Spatial_sorting/doc/Spatial_sorting/CGAL/hilbert_sort.h -text
+Spatial_sorting/doc/Spatial_sorting/CGAL/spatial_sort.h -text
+Spatial_sorting/doc/Spatial_sorting/Concepts/SpatialSortingTraits_2.h -text
+Spatial_sorting/doc/Spatial_sorting/Concepts/SpatialSortingTraits_3.h -text
+Spatial_sorting/doc/Spatial_sorting/Concepts/SpatialSortingTraits_d.h -text
+Spatial_sorting/doc/Spatial_sorting/PackageDescription.txt -text
+Spatial_sorting/doc/Spatial_sorting/Spatial_sorting.txt -text
+Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-median.gif -text svneol=unset#image/gif
+Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-median.pdf -text svneol=unset#application/pdf
+Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-middle.gif -text svneol=unset#image/gif
+Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-middle.pdf -text svneol=unset#application/pdf
+Spatial_sorting/doc/Spatial_sorting/fig/Hilbert8.gif -text svneol=unset#image/gif
+Spatial_sorting/doc/Spatial_sorting/fig/Hilbert8.pdf -text svneol=unset#application/pdf
+Spatial_sorting/doc/Spatial_sorting/fig/hilbert.png -text svneol=unset#image/png
+Spatial_sorting/doc/Spatial_sorting/fig/hilbertLarge.jpg -text svneol=unset#image/jpeg
 Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-median.gif -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-median.pdf -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-middle.gif -text

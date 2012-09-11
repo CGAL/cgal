@@ -408,14 +408,25 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>Spatial Sorting</name>
+        <input>../Spatial_sorting/doc/Spatial_sorting</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Spatial_sorting/doc/Spatial_sorting/</string>
+          <string name="STRIP_FROM_PATH">../Spatial_sorting/doc/Spatial_sorting/</string>
+          <string name="GENERATE_TAGFILE">./tags/Spatial_sorting.tag</string>
+          <string name="IMAGE_PATH">../Spatial_sorting/doc/Spatial_sorting/fig</string>
+          <string name="EXAMPLE_PATH">../Spatial_sorting/examples</string>
+        </doxygen>
+      </project>
+
+
+      <project>
         <name>dD Spatial Searching</name>
         <input>../Spatial_searching/doc/Spatial_searching</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Spatial_searching/doc/Spatial_searching/</string>
           <string name="GENERATE_TAGFILE">./tags/Spatial_searching.tag</string>
           <string name="EXAMPLE_PATH">../Spatial_searching/examples</string>
-          <list name="TAGFILES" append="true">
-          </list>
         </doxygen>
       </project>
 
@@ -868,6 +879,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Triangulation_3/doc/TDS_3/fig</item>
           <item>../Triangulation_3/doc/Triangulation_3/fig</item>
           <item>../Spatial_searching/doc/Spatial_searching/fig</item>
+          <item>../Spatial_sorting/doc/Spatial_sorting/fig</item>
           <item>../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig</item>
           <item>../Straight_skeleton_2/doc/Straight_skeleton_2/fig</item>
         </list>
@@ -919,6 +931,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
           <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.2D-Snap-Rounding/html</item>
           <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.dD-Spatial-Searching/html</item>
+          <item>./tags/Spatial_sorting.tag=../../CGAL.CGAL.Spatial-Sorting/html</item>
           <item>./tags/Segment_Delaunay_graph_2.tag=../../CGAL.CGAL.2D-Segment-Delaunay-Graphs/html</item>
           <item>./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.2D-Straight-Skeleton-and-Polygon-Offsetting/html</item>
         </list>
