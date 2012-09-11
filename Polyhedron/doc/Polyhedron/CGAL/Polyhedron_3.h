@@ -155,7 +155,7 @@ public:
 
     \sa `CGAL::Polyhedron_3::Vertex` 
     \sa `CGAL::Polyhedron_3::Facet` 
-    \sa `CGAL::Polyhedron_3<Traits> 
+    \sa `CGAL::Polyhedron_3<Traits>`
 
     Implementation 
     -------------- 
@@ -612,7 +612,7 @@ public:
 
     \sa `CGAL::Polyhedron_3::Halfedge` 
     \sa `CGAL::Polyhedron_3::Facet`
-    \sa `CGAL::Polyhedron_3<Traits> 
+    \sa `CGAL::Polyhedron_3<Traits>` 
 
   */
   class Vertex {

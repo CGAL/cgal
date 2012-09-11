@@ -17,8 +17,8 @@ it suitable for kernels with local state.
 Implementation 
 -------------- 
 
-Since the `PolyhedronTraits_3` concept is a subset of the 3D 
-kernel concept, this class just forwards the relevant types and access 
+Since the `PolyhedronTraits_3` concept is a subset of the 
+concept Kernel, this class just forwards the relevant types and access 
 member functions from its template argument. However, it is useful 
 for testing sufficiency of requirements. 
 
@@ -26,7 +26,7 @@ Example
 -------------- 
 
 Instantiation of a polyhedral surface with the 
-Cartesian kernel based on double coordinates. 
+%Cartesian kernel based on double coordinates. 
 
 \cgalexample{polyhedron_prog_simple.cpp} 
 
