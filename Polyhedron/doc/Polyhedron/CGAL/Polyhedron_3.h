@@ -967,7 +967,7 @@ public:
 
   /*! 
     a polyhedron `P` with storage reserved 
-    for \f$ v\f$ vertices, \f$ h\f$ halfedges, and \f$ f\f$ facets. The 
+    for `v` vertices, `h` halfedges, and `f` facets. The 
     reservation sizes are a hint for optimizing storage 
     allocation. 
   */ 
@@ -976,7 +976,7 @@ public:
 
   /*! 
     reserve storage 
-    for \f$ v\f$ vertices, \f$ h\f$ halfedges, and \f$ f\f$ facets. The 
+    for `v` vertices, `h` halfedges, and `f` facets. The 
     reservation sizes are a hint for optimizing storage 
     allocation. If the `capacity` is already greater 
     than the requested size nothing happens. If the 
@@ -994,11 +994,11 @@ public:
   /*! 
 
     a tetrahedron is added to the polyhedral surface with its 
-    vertices initialized to \f$ p_1, p_2, p_3\f$, and \f$ p_4\f$. Returns that 
+    vertices initialized to `p1`, `p2`, `p3`, and `p_4`. Returns that 
     halfedge of the tetrahedron which incident vertex is initialized 
-    to \f$ p_1\f$. The incident vertex of the next halfedge is \f$ p_2\f$, 
-    and the vertex thereafter is \f$ p_3\f$. 
-    The remaining fourth vertex is initialized to \f$ p_4\f$. 
+    to `p1`. The incident vertex of the next halfedge is `p2, 
+    and the vertex thereafter is `p3`. 
+    The remaining fourth vertex is initialized to `p4`. 
   */ 
   Halfedge_handle make_tetrahedron(const Point& p1, 
                                    const Point& p2, 
@@ -1015,10 +1015,10 @@ public:
   /*! 
 
     a triangle with border edges is added to the polyhedral surface with its 
-    vertices initialized to \f$ p_1, p_2\f$, and \f$ p_3\f$. Returns that 
+    vertices initialized to `p1`, `p2`, and `p3`. Returns that 
     non-border halfedge of the triangle which incident vertex is initialized 
-    to \f$ p_1\f$. The incident vertex of the next halfedge is \f$ p_2\f$, 
-    and the vertex thereafter is \f$ p_3\f$. 
+    to `p1`. The incident vertex of the next halfedge is `p2`, 
+    and the vertex thereafter is `p3`. 
   */ 
   Halfedge_handle make_triangle(const Point& p1, 
                                 const Point& p2, 
@@ -1183,13 +1183,13 @@ public:
 
   /*! 
     `true` 
-    iff the connected component denoted by \f$ h\f$ is a triangle. 
+    iff the connected component denoted by `h` is a triangle. 
   */ 
   bool is_triangle( Halfedge_const_handle h) const; 
 
   /*! 
     `true` 
-    iff the connected component denoted by \f$ h\f$ is a tetrahedron. 
+    iff the connected component denoted by `h` is a tetrahedron. 
   */ 
   bool is_tetrahedron( Halfedge_const_handle h) const; 
 
@@ -1222,13 +1222,13 @@ public:
                                Halfedge_handle g); 
 
   /*! 
-    joins the two facets incident to \f$ h\f$. The facet incident to 
+    joins the two facets incident to `h`. The facet incident to 
     `h->opposite()` gets removed. Both facets might be 
-    holes. Returns the predecessor of \f$ h\f$ around the facet. The invariant 
-    `join_facet( split_facet( h, g))` returns \f$ h\f$ and keeps 
+    holes. Returns the predecessor of `h` around the facet. The invariant 
+    `join_facet( split_facet( h, g))` returns `h` and keeps 
     the polyhedron unchanged. The time is proportional to the size of the 
     facet removed and the time to compute `h->prev()`. 
-    \pre The degree of both vertices incident to \f$ h\f$ is at least three (no antennas). 
+    \pre The degree of both vertices incident to `h` is at least three (no antennas). 
 
     Requirement 
     -------------- 
@@ -1270,14 +1270,14 @@ public:
                                 Halfedge_handle g); 
 
   /*! 
-    joins the two vertices incident to \f$ h\f$. The vertex denoted by 
+    joins the two vertices incident to `h`. The vertex denoted by 
     `h->opposite()` gets removed. Returns the predecessor of 
-    \f$ h\f$ around the vertex, i.e., `h->opposite()->prev()`. 
+    `h` around the vertex, i.e., `h->opposite()->prev()`. 
     The invariant `join_vertex( split_vertex( h, g))` returns 
-    \f$ h\f$ and keeps the polyhedron unchanged. 
+    `h` and keeps the polyhedron unchanged. 
     The time is proportional to the degree of the vertex removed and 
     the time to compute `h->prev()` and `h->opposite()->prev()`. 
-    \pre The size of both facets incident to \f$ h\f$ is at least four (no multi-edges). 
+    \pre The size of both facets incident to `h` is at least four (no multi-edges). 
 
     Requirement 
     -------------- 
@@ -1303,9 +1303,9 @@ public:
   Halfedge_handle split_edge( Halfedge_handle h); 
 
   /*! 
-    performs an edge flip. It returns \f$ h\f$ after rotating the edge \f$ h\f$ one 
+    performs an edge flip. It returns `h` after rotating the edge `h` one 
     vertex in the direction of the face orientation. 
-    \pre `h != Halfedge_handle()` and both facets incident to \f$ h\f$ are triangles. 
+    \pre `h != Halfedge_handle()` and both facets incident to `h` are triangles. 
   */ 
   Halfedge_handle flip_edge( Halfedge_handle h); 
 
@@ -1349,14 +1349,14 @@ public:
   /// @{
 
   /*! 
-    cuts the polyhedron into two parts along the cycle \f$ (h,i,j)\f$ (edge `j` 
+    cuts the polyhedron into two parts along the cycle `(h,i,j)` (edge `j` 
     runs on the backside of the three dimensional figure above). 
     Three new vertices (one copy for each vertex in the cycle) and three 
     new halfedges (one copy for each halfedge in the cycle), and two new 
-    triangles are created. \f$ h,i,j\f$ will be incident to the first new triangle. 
+    triangles are created. `h,i,j` will be incident to the first new triangle. 
     The return value will be the halfedge incident to the second new triangle 
     which is the copy of `h-opposite()`. 
-    \pre \f$ h,i,j\f$ denote distinct, consecutive vertices of the polyhedron and form a cycle: i.e., `h->vertex() == i->opposite()->vertex()`, \f$ \ldots\f$ , `j->vertex() == h->opposite()->vertex()`. The six facets incident to \f$ h,i,j\f$ are all distinct. 
+    \pre `h`, `i`, `j` denote distinct, consecutive vertices of the polyhedron and form a cycle: i.e., `h->vertex() == i->opposite()->vertex()`, \f$ \ldots\f$ , `j->vertex() == h->opposite()->vertex()`. The six facets incident to `(h,i,j)` are all distinct. 
 
     \image html euler_loop.gif 
   */ 
@@ -1365,12 +1365,12 @@ public:
                               Halfedge_handle j); 
 
   /*! 
-    glues the boundary of the two facets denoted by \f$ h\f$ and \f$ g\f$ together 
-    and returns \f$ h\f$. Both facets and the vertices along the facet denoted 
-    by \f$ g\f$ gets removed. Both facets may be holes. The invariant 
-    `join_loop( h, split_loop( h, i, j))` returns \f$ h\f$ and keeps the 
+    glues the boundary of the two facets denoted by `h` and `g` together 
+    and returns `h`. Both facets and the vertices along the facet denoted 
+    by `g` gets removed. Both facets may be holes. The invariant 
+    `join_loop( h, split_loop( h, i, j))` returns `h` and keeps the 
     polyhedron unchanged. 
-    \pre The facets denoted by \f$ h\f$ and \f$ g\f$ are different and have equal degree (i.e., number of edges). 
+    \pre The facets denoted by `h` and `g` are different and have equal degree (i.e., number of edges). 
 
     Requirement 
     -------------- 
@@ -1390,8 +1390,8 @@ public:
   /// @{
 
   /*! 
-    removes the incident facet of \f$ h\f$ and changes all halfedges incident 
-    to the facet into border edges. Returns \f$ h\f$. 
+    removes the incident facet of `h` and changes all halfedges incident 
+    to the facet into border edges. Returns `h`. 
     See `erase_facet(h)` for a more generalized variant. 
     \pre None of the incident halfedges of the facet is a border edge. 
 
@@ -1406,19 +1406,19 @@ public:
   /*! 
 
     fills a hole with a newly created facet. Makes all border halfedges 
-    of the hole denoted by \f$ h\f$ incident to the new facet. Returns \f$ h\f$. 
+    of the hole denoted by `h` incident to the new facet. Returns `h`. 
     \pre `h.is_border()`. 
   */ 
   Halfedge_handle fill_hole( Halfedge_handle h); 
 
   /*! 
-    creates a new facet within the hole incident to \f$ h\f$ 
-    and \f$ g\f$ by connecting the tip of \f$ g\f$ with the tip of \f$ h\f$ 
+    creates a new facet within the hole incident to `h` 
+    and `g` by connecting the tip of `g` with the tip of `h` 
     with two new halfedges and a new vertex and filling this separated 
     part of the hole with a new facet, such that the new facet is 
-    incident to \f$ g\f$. Returns the halfedge of the new edge that is 
+    incident to `g`. Returns the halfedge of the new edge that is 
     incident to the new facet and the new vertex. 
-    \pre `h->is_border()`, `g->is_border()`, `h != g`, and \f$ g\f$ can be reached along the same hole starting with \f$ h\f$. 
+    \pre `h->is_border()`, `g->is_border()`, `h != g`, and `g` can be reached along the same hole starting with `h`. 
 
     \image html add_facet1.gif
   */ 
@@ -1426,12 +1426,12 @@ public:
     Halfedge_handle h, Halfedge_handle g); 
 
   /*! 
-    creates a new facet within the hole incident to \f$ h\f$ and \f$ g\f$ by 
-    connecting the vertex denoted by \f$ g\f$ with the vertex denoted by \f$ h\f$ 
+    creates a new facet within the hole incident to `h` and `g` by 
+    connecting the vertex denoted by `g` with the vertex denoted by `h` 
     with a new halfedge and filling this separated part of the hole with 
-    a new facet, such that the new facet is incident to \f$ g\f$. 
+    a new facet, such that the new facet is incident to `g`. 
     Returns the halfedge of the new edge that is incident to the new facet. 
-    \pre `h->is_border()`, `g->is_border()`, `h != g`, `h->next() != g`, and \f$ g\f$ can be reached along the same hole starting with \f$ h\f$. 
+    \pre `h->is_border()`, `g->is_border()`, `h != g`, `h->next() != g`, and `g` can be reached along the same hole starting with `h`. 
 
     \image html add_facet2.gif
 
@@ -1445,7 +1445,7 @@ public:
   /// @{
 
   /*! 
-    removes the incident facet of \f$ h\f$ and changes all halfedges incident 
+    removes the incident facet of `h` and changes all halfedges incident 
     to the facet into border edges or removes them from the 
     polyhedral surface if they were already border edges. 
     If this creates isolated vertices they get removed as well. 
@@ -1464,7 +1464,7 @@ public:
 
   /*! 
     removes the vertices, halfedges, and facets that belong to the 
-    connected component of \f$ h\f$. 
+    connected component of `h`. 
 
     Requirement 
     -------------- 
@@ -1594,7 +1594,7 @@ public:
   bool normalized_border_is_valid( bool verbose = false) const; 
 
   /*!  
-    \advanced calls the `operator()` of the modifier \f$ m\f$. See
+    \advanced calls the `operator()` of the modifier `m`. See
     `CGAL::Modifier_base` for a description of modifier design and its
     usage.
     \pre The polyhedral surface must be valid when the modifier returns from execution. 

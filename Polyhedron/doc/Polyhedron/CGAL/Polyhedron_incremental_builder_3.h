@@ -133,14 +133,14 @@ To build a polyhedral surface, the following regular expression gives
 the correct and allowed order and nesting of method calls from this
 section:
 
-<I> begin_surface \f$ (\f$add_vertex \f$ |\f$ \f$ (\f$begin_facet add_vertex_to_facet\f$ end_facet/\f$ end_surface </I>
+\code begin_surface ( add_vertex  | ( begin_facet  add_vertex_to_facet  end_facet ) ) end_surface
 */
 /// @{
 
 /*! 
-starts the construction. \f$ v\f$ is the number of new vertices 
-to expect, \f$ f\f$ the number of new facets, and \f$ h\f$ the number of 
-new halfedges. If \f$ h\f$ is unspecified (`== 0`) it is estimated using 
+starts the construction. `v` is the number of new vertices 
+to expect, `f` the number of new facets, and `h` the number of 
+new halfedges. If `h` is unspecified (`== 0`) it is estimated using 
 Euler's equation (plus 5% for the so far unknown holes and genus of 
 the object). These values are used to reserve space in the 
 halfedge data structure `hds`. If the representation supports 
@@ -159,7 +159,7 @@ int mode = RELATIVE_INDEXING);
 
 /*! 
 
-adds a new vertex for \f$ p\f$ and returns its handle. 
+adds a new vertex for `p` and returns its handle. 
 */ 
 Vertex_handle add_vertex( const Point_3& p); 
 
@@ -171,7 +171,7 @@ Facet_handle begin_facet();
 
 /*! 
 adds a vertex with 
-index \f$ i\f$ to the current facet. The first point added with 
+index  `i` to the current facet. The first point added with 
 `add_vertex()` has the index 0 if `mode` was set to 
 `RELATIVE_INDEXING`, otherwise the first vertex in the 
 referenced `hds` has the index 0. 
@@ -218,8 +218,8 @@ bool test_facet( InputIterator first, InputIterator beyond);
 
 /*! 
 
-returns handle for the vertex of index \f$ i\f$, or `Vertex_handle` if 
-there is no \f$ i\f$-th vertex. 
+returns handle for the vertex of index `i`, or `Vertex_handle` if 
+there is no `i`-th vertex. 
 */ 
 Vertex_handle vertex( std::size_t i); 
 

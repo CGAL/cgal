@@ -12,7 +12,7 @@ it suitable for kernels with local state.
 
 \models ::PolyhedronTraits_3 
 
-\sa \ref ::CGAL::Polyhedron_traits_with_normals_3<Kernel> 
+\sa `CGAL::Polyhedron_traits_with_normals_3<Kernel>`
 
 Implementation 
 -------------- 

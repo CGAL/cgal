@@ -45,8 +45,8 @@ between two endpoints. Facets are planar polygons without
 holes. Facets are defined by the circular sequence of halfedges along
 their boundary. The polyhedral surface itself can have holes (with at
 least two facets surrounding it since a single facet cannot have a
-hole). The halfedges along the boundary of a hole are called <I>border halfedges/</I> and have no incident facet. An edge is a <I>border edge/</I> if one of its halfedges is a border halfedge. A
-surface is <I>closed/</I> if it contains no border halfedges. A closed
+hole). The halfedges along the boundary of a hole are called <I>border halfedges</I> and have no incident facet. An edge is a <I>border edge</I> if one of its halfedges is a border halfedge. A
+surface is <I>closed</I> if it contains no border halfedges. A closed
 surface is a boundary representation for polyhedra in three
 dimensions. The convention is that the halfedges are oriented
 counterclockwise around facets as seen from the outside of the
@@ -137,7 +137,7 @@ the tip of `h`, and so on. The output of the program will be
 \cgalexample{polyhedron_prog_tetra.cpp}
 
 The polyhedron offers a point iterator for convenience. The above
-<TT>for</TT> loop simplifies to a single statement by using
+`for` loop simplifies to a single statement by using
 `std::copy` and the ostream iterator adaptor.
 
 \code{.cpp}
@@ -149,9 +149,9 @@ std::ostream_iterator<Point_3>(std::cout,"\n"));
 
 ## Example for Affine Transformation ##
 
-An affine transformation \f$ A\f$ can act as a functor transforming points
+An affine transformation `A` can act as a functor transforming points
 and a point iterator is conveniently defined for polyhedral surfaces.
-So, assuming we want only the point coordinates of a polyhedron \f$ P\f$
+So, assuming we want only the point coordinates of a polyhedron `P`
 transformed, `std::transform` does the job in a single line.
 
 \code{.cpp}
@@ -168,11 +168,11 @@ compute plane equations.
 
 This example computes the plane equations of a polyhedral surface.
 The actual computation is implemented in the
-<TT>compute_plane_equations</TT> function. Depending on the arithmetic
+`compute_plane_equations` function. Depending on the arithmetic
 (exact/inexact) and the shape of the facets (convex/non-convex)
 different methods are useful. We assume here strictly convex facets
 and exact arithmetic. In our example a homogeneous representation with
-<TT>int</TT> coordinates is sufficient. The four plane equations of the
+`int` coordinates is sufficient. The four plane equations of the
 tetrahedron are the output of the program.
 
 \cgalexample{polyhedron_prog_planes.cpp}
@@ -360,13 +360,13 @@ CGAL::HalfedgeDS_default> Polyhedron;
 
 to a vector based representation of the underlying halfedge data
 structure. Now we want to look a bit closer at the second template argument,
-<TT>Polyhedron_items_3</TT>, that specifies what kind of vertex, 
+`Polyhedron_items_3`, that specifies what kind of vertex, 
 halfedge, and facet is used. The implementation of 
-<TT>Polyhedron_items_3</TT> looks a bit involved with nested 
+`Polyhedron_items_3` looks a bit involved with nested 
 wrapper class templates. But ignoring this technicality, what remains
-are three local typedefs that define the <TT>Vertex</TT>, the
-<TT>Halfedge</TT>, and the <TT>Face</TT> for the polyhedral surface.
-Note that we use here <TT>Face</TT> instead of facet. Face is the term
+are three local typedefs that define the `Vertex`, the
+Halfedge`, and the `Face` for the polyhedral surface.
+Note that we use here `Face` instead of facet. Face is the term
 used for the halfedge data structure. Only the top layer of the
 polyhedral surface gives alias names renaming face to facet.
 
@@ -396,8 +396,8 @@ If we look up in the reference manual the definitions of the three
 classes used in the typedefs, we will see the confirmation that the
 default polyhedron uses all supported incidences, a point in the
 vertex class, and a plane equation in the face class. Note how the
-wrapper class provides two template parameters, <TT>Refs</TT>, which
-we discuss a bit later, and <TT>Traits</TT>, which is the geometric
+wrapper class provides two template parameters, `Refs`, which
+we discuss a bit later, and `Traits`, which is the geometric
 traits class used by the polyhedral surface and which provides us here
 with the types for the point and the plane equation.
 
@@ -439,11 +439,11 @@ typedef My_face<Refs> Face;
 
 When we use our new items class with the polyhedral surface, our new
 face class is used in the halfedge data structure and the color
-attribute is available in the type <TT>Polyhedron::Facet</TT>. However,
-<TT>Polyhedron::Facet</TT> is not the same type as our local face 
-typedef for <TT>My_face</TT>, but it is derived therefrom. Thus,
+attribute is available in the type `Polyhedron::Facet`. However,
+`Polyhedron::Facet` is not the same type as our local face 
+typedef for `My_face`, but it is derived therefrom. Thus,
 everything that we put in the local face type except constructors is
-then available in the <TT>Polyhedron::Facet</TT> type. For more
+then available in the `Polyhedron::Facet` type. For more
 details, see the Chapter \ref chapterHalfedgeDS on the halfedge data
 structure design.
 
@@ -452,13 +452,13 @@ the color attribute can be accessed once it is defined.
 
 \cgalexample{polyhedron_prog_color.cpp}
 
-We come back to the first template parameter, <TT>Refs</TT>, of the
+We come back to the first template parameter, `Refs`, of the
 wrapper classes. This parameter provides us with local types that
 allow us to make further references between vertices, halfedges, and
 facets, which have not already been prepared for in the current
-design. These local types are <TT>Vertex_handle</TT>,
-<TT>Halfedge_handle</TT>, <TT>Face_handle</TT>, and there respective
-<TT> \f$ \ldots\f$ _const_handle</TT>. We add now a new vertex reference to a
+design. These local types are  `Vertex_handle`,
+`Halfedge_handle`, `Face_handle`, and there respective
+\f$ \ldots\f$ `_const_handle`. We add now a new vertex reference to a
 face class as follows. Encapsulation and access functions could be
 added for a more thorough design, but we omit that here for the sake
 of brevity. The integration of the face class with the items class

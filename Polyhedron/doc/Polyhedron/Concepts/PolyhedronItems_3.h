@@ -17,12 +17,12 @@ polyhedral surface renames faces to facets.
 \hasModel `CGAL::Polyhedron_items_3`
 \hasModel `CGAL::Polyhedron_min_items_3`
 
-\sa \ref ::CGAL::Polyhedron_3<Traits> 
+\sa `CGAL::Polyhedron_3<Traits>`
 \sa `HalfedgeDSItems` 
-\sa \ref ::CGAL::HalfedgeDS_items_2 
-\sa \ref ::CGAL::HalfedgeDS_vertex_base<Refs> 
-\sa \ref ::CGAL::HalfedgeDS_halfedge_base<Refs> 
-\sa \ref ::CGAL::HalfedgeDS_face_base<Refs> 
+\sa `CGAL::HalfedgeDS_items_2` 
+\sa `CGAL::HalfedgeDS_vertex_base<Refs>` 
+\sa `CGAL::HalfedgeDS_halfedge_base<Refs>` 
+\sa `CGAL::HalfedgeDS_face_base<Refs>` 
 
 Example 
 -------------- 
@@ -63,7 +63,7 @@ class PolyhedronItems_3 {
 public:
   class Vertex {
   public:
-    /// \name Types in Polyhedronitems_3::Vertex_wrapper<Refs,Traits>::Vertex
+    /// \name Types in PolyhedronItems_3::Vertex_wrapper<Refs,Traits>::Vertex
     /// @{
 
     /// point type stored in vertices. A `HalfedgeDS
@@ -84,7 +84,7 @@ public:
   class Face {
   public:
     /*!
-      \name Types in Polyhedronitems_3::Vertex_wrapper<Refs,Traits>::Face
+      \name Types in PolyhedronItems_3::Vertex_wrapper<Refs,Traits>::Face
       Types for (optionally) associated geometry in faces. If it is not
       supported the respective type has to be defined, although it can be
       an arbitrary dummy type, such as `void*` or `Tag_false`.

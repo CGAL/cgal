@@ -13,10 +13,10 @@ halfedge.
 
 \models \ref ::PolyhedronItems_3 
 
-\sa \ref ::CGAL::Polyhedron_3<Traits> 
-\sa \ref ::CGAL::Polyhedron_min_items_3 
-\sa \ref ::CGAL::HalfedgeDS_min_items 
-\sa \ref ::CGAL::HalfedgeDS_items_2 
+\sa `CGAL::Polyhedron_3<Traits>` 
+\sa `CGAL::Polyhedron_min_items_3` 
+\sa `CGAL::HalfedgeDS_min_items` 
+\sa `CGAL::HalfedgeDS_items_2` 
 
 Example 
 -------------- 
