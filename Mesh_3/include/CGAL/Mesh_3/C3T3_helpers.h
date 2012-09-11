@@ -2377,8 +2377,9 @@ new_incident_slivers(const Vertex_handle& v,
 {
   typedef SliverCriterion Sc;
   typedef Filter<OutputIterator,Cell_handle,Is_sliver<Sc> > F;
-  F f(out, 
-      Is_sliver<Sc>(c3t3_,criterion,sliver_bound));
+  
+  Is_sliver<Sc> i_s(c3t3_, criterion, sliver_bound);
+  F f(out, i_s);
   tr_.incident_cells(v,boost::make_function_output_iterator(f));
 
   return f.out;

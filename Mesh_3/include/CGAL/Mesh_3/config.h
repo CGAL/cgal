@@ -23,7 +23,7 @@
 
 #include <CGAL/config.h>
 
-#define CGAL_MESH_3_VERBOSE
+//#define CGAL_MESH_3_VERBOSE
 
 // Use optimisations of Mesh_3
 #  define CGAL_COMPACT_MESH_VERTEX_CELL
@@ -34,6 +34,7 @@
 #  define CGAL_MESH_3_GET_FACETS_USING_INTRUSIVE_LIST
 #  define CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
 #  define FORCE_STRUCTURAL_FILTERING
+#  define CGAL_NEW_INCIDENT_SLIVERS
 
 //experimental
 #  define CGAL_FASTER_BUILD_QUEUE
