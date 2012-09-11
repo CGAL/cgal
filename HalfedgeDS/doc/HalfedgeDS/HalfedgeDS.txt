@@ -162,7 +162,7 @@ vertices or faces are stored. The data structure represents an <I>undirected gra
 
 \cgalexample{HalfedgeDS/hds_prog_graph.cpp}
 
-## The Default with a Vector Instead of a List ##
+## The %Default with a Vector Instead of a List ##
 
 The default halfedge data structure uses a list internally and the
 maximal base classes. We change the list to a vector representation
@@ -183,7 +183,7 @@ member variable `color`.
 
 \cgalexample{HalfedgeDS/hds_prog_color.cpp}
 
-## Example Defining a More Compact Halfedge ##
+## Example Defining a More %Compact Halfedge ##
 
 \advancedbegin
 
