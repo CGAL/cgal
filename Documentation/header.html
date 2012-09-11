@@ -11,6 +11,18 @@
 <script type="text/javascript" src="$relpath$jquery.footnotes.min.js"></script>
 $treeview
 $search
+
+<!-- don't use the doxygen include style to specify config parameters  -->
+<script src="$relpath$../../MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<!-- use the mathjax cdn -->
+<!-- <script  -->
+<!--    type="text/javascript"  -->
+<!--    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> -->
+<!-- </script> -->
+
+
+
 <!-- set-up footnote generation and autotoc -->
 <script type="text/javascript"> 
     $(document).ready(function() { 
@@ -49,11 +61,6 @@ variable and then do our thing.  -->
     $(window).resize();
    });
 </script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
 <link href="stylesheet.css" rel="stylesheet" type="text/css" />
 $extrastylesheet
 </head>
