@@ -31,7 +31,7 @@ is possible to select a certain variable.
 
 \sa  \ref ::Polynomial_d 
 
-\hasModel CGAL::Polynomial_traits_d<Polynomial_d> 
+\hasModel `CGAL::Polynomial_traits_d<Polynomial_d>`
 
 */
 
