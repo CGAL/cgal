@@ -292,6 +292,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Interpolation/examples</string>
           <string name="IMAGE_PATH">../Interpolation/doc/Interpolation/fig</string>
           <list name="TAGFILES" append="true">
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>   
             <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
           </list>
         </doxygen>
