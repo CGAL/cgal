@@ -232,13 +232,18 @@ bool relax(Polyhedron& poly, std::set<Facet_handle>& facets)
   int flips = 0;
   std::list<Halfedge_handle> interior_edges;
   for(std::set<Facet_handle>::iterator it = facets.begin(); it!= facets.end(); ++it){
-    Halfedge_handle h = (*it)->halfedge();
-    Halfedge_handle oh = h->opposite();
-    if(facets.find(oh->face()) != facets.end()){
-      // it's an interior edge
-      interior_edges.push_back((h < oh) ? h : oh );
-    }
+    Halfedge_around_facet_circulator  circ = (*it)->facet_begin(), done(circ);
+    do {
+      Halfedge_handle h = circ;
+      Halfedge_handle oh = h->opposite();
+      if(facets.find(oh->face()) != facets.end()){
+        // it's an interior edge
+        interior_edges.push_back((h < oh) ? h : oh );
+      }
+      ++circ;
+    } while(circ != done);
   }
+  std::cerr << "Test " << interior_edges.size() << " edges " << std::endl;
   for(std::list<Halfedge_handle>::iterator it = interior_edges.begin();
       it != interior_edges.end();
       ++it){
