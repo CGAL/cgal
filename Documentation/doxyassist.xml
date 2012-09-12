@@ -158,6 +158,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Polynomial/examples</string>
           <list name="TAGFILES" append="false">
             <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular-Arithmetic/html</item>
+          <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
           </list>
         </doxygen>
       </project>
