@@ -155,7 +155,7 @@ triangle query and the closest point from a point query.
 
 The AABB tree is a static data structure, but it allows to insert
 primitives, and will internally rebuild triggered by the first query,
-or because the user calls the ``AABB_tree::build` method.  The following
+or because the user calls the `AABB_tree::build` method.  The following
 example illustrates this for two polyhedral surfaces.
 
 \include AABB_insertion_example.cpp
@@ -342,7 +342,7 @@ query and location of query in space.
   intersection. Within each of these functions the ones which call
   only intersection tests (`AABB_tree::do_intersect()`,
   `AABB_tree::number_of_intersected_primitives()`,
-  `AABB_tree::any_intersected_primitive()`, ``AABB_tree::all_intersected_primitives()`) are
+  `AABB_tree::any_intersected_primitive()`, `AABB_tree::all_intersected_primitives()`) are
   faster than the ones which explicitly construct the intersections
   (`AABB_tree::any_intersection()` and `AABB_tree::all_intersections()`).
 
