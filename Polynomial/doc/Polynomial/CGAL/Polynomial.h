@@ -54,49 +54,16 @@ the coefficient sequence does not contain leading zero coefficients
 (where leading means at the high-degree end), with the exception that 
 the zero polynomial is represented by a single zero coefficient. 
 
-<TABLE CELLSPACING=5 > 
-<TR> 
-<TD ALIGN=LEFT NOWRAP> 
 \models ::Polynomial_d 
-<TR> 
-<TD ALIGN=LEFT NOWRAP> 
-\models ::Assignable 
-<TR> 
-<TD ALIGN=LEFT NOWRAP> 
-\models ::CopyConstructible 
-<TR> 
-<TD ALIGN=LEFT NOWRAP> 
-\models ::DefaultConstructible 
-<TR> 
-<TD ALIGN=LEFT NOWRAP> 
-\models ::EqualityComparable 
-<TR> 
-<TD ALIGN=LEFT NOWRAP> 
-\models ::ImplicitInteroperable 
-<TD ALIGN=LEFT NOWRAP> 
-with int 
-<TR> 
-<TD ALIGN=LEFT NOWRAP> 
-\models ::ImplicitInteroperable 
-<TD ALIGN=LEFT NOWRAP> 
-with Coeff 
-<TR> 
-<TD ALIGN=LEFT NOWRAP> 
-\models ::Fraction 
-<TD ALIGN=LEFT NOWRAP> 
-if \models ::Coeff is model of \models ::Fraction 
-<TR> 
-<TD ALIGN=LEFT NOWRAP> 
-\models ::LessThanComparable 
-<TD ALIGN=LEFT NOWRAP> 
-if \models ::Coeff is model of \models ::LessThanComparable 
-<TR> 
-<TD ALIGN=LEFT NOWRAP> 
-\models ::Modularizable 
-<TD ALIGN=LEFT NOWRAP> 
-if `Coeff` is model of `Modularizable`. 
-</TABLE> 
-
+\models `Assignable`
+\models `CopyConstructible`
+\models `DefaultConstructible`
+\models `EqualityComparable`
+\models ImplicitInteroperable with int 
+\models ImplicitInteroperable with Coeff 
+\models Fraction if Coeff is model of ::Fraction 
+\models LessThanComparable if Coeff is model of LessThanComparable 
+\models Modularizable if `Coeff` is model of `Modularizable`
 */
 template< typename Coeff >
 class Polynomial {

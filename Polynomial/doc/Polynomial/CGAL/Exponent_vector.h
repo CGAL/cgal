@@ -33,7 +33,6 @@ outermost variable of a multivariate polynomial.
 \sa \ref ::PolynomialTraits_d 
 
 */
-
 class Exponent_vector {
 public:
 

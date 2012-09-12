@@ -19,7 +19,7 @@ algebraic structure of ::Innermost_coefficient_type:
 
 
 
-::Innermost_coefficient_type     | ::Polynomial_d 
+Innermost_coefficient_type       | %Polynomial_d 
 ---------------------------------|--------------------------------
 ::IntegralDomainWithoutDivision  | ::IntegralDomainWithoutDivision 
 ::IntegralDomain                 | ::IntegralDomain 
