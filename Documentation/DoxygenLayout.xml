@@ -2,7 +2,13 @@
   <!-- Navigation index tabs for HTML output -->
   <navindex>
     <tab type="mainpage" visible="yes" title=""/>
-    <tab type="user" url="@ref general_intro" title="Getting Started"/>
+
+    <tab type="usergroup" url="@ref general_intro" title="Getting Started">
+      <tab type="user" url="@ref introduction" title="Hello World"/>
+      <tab type="user" url="@ref preliminaries" title="Preliminaries"/>
+      <tab type="user" url="@ref installation" title="Installation"/>
+    </tab>
+    
     <tab type="user" url="@ref packages" title="Package Overview"/>
     <tab type="pages" visible="no" title="" intro=""/>
     <tab type="modules" visible="yes" title="" intro=""/>
@@ -17,10 +23,14 @@
       <tab type="hierarchy" visible="yes" title="" intro=""/>
       <tab type="classmembers" visible="yes" title="" intro=""/>
     </tab>
-    <tab type="files" visible="yes" title="">
+
+    <tab type="filelist" visible="yes" title="" intro=""/>
+    
+    <tab type="files" visible="no" title="">
       <tab type="filelist" visible="yes" title="" intro=""/>
       <tab type="globals" visible="yes" title="" intro=""/>
     </tab>
+
     <tab type="examples" visible="yes" title="" intro=""/>  
     <tab type="user" url="@ref how_to_cite_cgal" title="Acknowledging CGAL"/>
   </navindex>

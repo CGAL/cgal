@@ -191,7 +191,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../HalfedgeDS/examples</string>
           <string name="IMAGE_PATH">../HalfedgeDS/doc/HalfedgeDS/fig</string>
           <list name="TAGFILES" append="true">
-            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.Polyhedron/html</item>
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
           </list>
         </doxygen>
       </project>
@@ -900,6 +900,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Point_set_2/doc/Point_set_2/fig</item>
           <item>../SearchStructures/doc/SearchStructures/fig</item>
           <item>../Polytope_distance_d/doc/Polytope_distance_d/fig</item>
+          <item>../Polyhedron/doc/Polyhedron/fig</item>
           <item>../Polynomial/doc/Polynomial/fig</item>
           <item>../Principal_component_analysis/doc/Principal_component_analysis/fig</item>
           <item>../STL_Extension/doc/STL_Extension/fig</item>
@@ -952,6 +953,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
           <item>./tags/Point_set_2.tag=../../CGAL.CGAL.2D-Range-and-Neighbor-Search/html</item>
           <item>./tags/SearchStructures.tag=../../CGAL.CGAL.dD-Range-and-Segment-Trees/html</item>
+          <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
           <item>./tags/Polynomial.tag=../../CGAL.CGAL.Polynomial/html</item>
           <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
           <item>./tags/Principal_component_analysis.tag=../../CGAL.CGAL.Principal-Component-Analysis/html</item>
