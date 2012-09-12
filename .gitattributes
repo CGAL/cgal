@@ -4466,6 +4466,18 @@ Principal_component_analysis/demo/Principal_component_analysis/data/cylinder.off
 Principal_component_analysis/demo/Principal_component_analysis/data/cylinder_locally_refined.off -text
 Principal_component_analysis/demo/Principal_component_analysis/data/ellipsoid.off -text
 Principal_component_analysis/demo/Principal_component_analysis/resources/about.html svneol=native#text/html
+Principal_component_analysis/doc/Principal_component_analysis/CGAL/barycenter.h -text
+Principal_component_analysis/doc/Principal_component_analysis/CGAL/bounding_box.h -text
+Principal_component_analysis/doc/Principal_component_analysis/CGAL/centroid.h -text
+Principal_component_analysis/doc/Principal_component_analysis/CGAL/linear_least_squares_fitting_2.h -text
+Principal_component_analysis/doc/Principal_component_analysis/CGAL/linear_least_squares_fitting_3.h -text
+Principal_component_analysis/doc/Principal_component_analysis/Classified.txt -text
+Principal_component_analysis/doc/Principal_component_analysis/PackageDescription.txt -text
+Principal_component_analysis/doc/Principal_component_analysis/Principal_component_analysis.txt -text
+Principal_component_analysis/doc/Principal_component_analysis/fig/fit.jpg -text svneol=unset#image/jpeg
+Principal_component_analysis/doc/Principal_component_analysis/fig/fit.png -text svneol=unset#image/png
+Principal_component_analysis/doc/Principal_component_analysis/fig/teaserLeastSquaresFitting-large.png -text svneol=unset#image/png
+Principal_component_analysis/doc/Principal_component_analysis/fig/teaserLeastSquaresFitting.png -text svneol=unset#image/png
 Principal_component_analysis/doc_tex/Principal_component_analysis/examples.tex -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.jpg -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text svneol=unset#image/png

@@ -156,9 +156,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Polynomial.tag</string>
           <string name="IMAGE_PATH">../Polynomial/doc/Polynomial/fig</string>
           <string name="EXAMPLE_PATH">../Polynomial/examples</string>
-          <list name="TAGFILES" append="false">
+          <list name="TAGFILES" append="true">
             <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular-Arithmetic/html</item>
-          <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
           </list>
         </doxygen>
       </project>
@@ -239,6 +238,7 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.2D-Convex-Hulls-and-Extreme-Points/html</item>
             <item>./tags/Triangulation_23.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
             <item>./tags/Convex_hull_d.tag=../../CGAL.CGAL.dD-Convex-Hulls-and-Delaunay-Triangulations/html</item>
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface</item>
           </list>
         </doxygen>
       </project>
@@ -279,6 +279,21 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Partition_2.tag</string>
           <string name="EXAMPLE_PATH">../Partition_2/examples</string>
           <string name="IMAGE_PATH">../Partition_2/doc/Partition_2/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>2D and Surface Function Interpolation</name>
+        <input>../Interpolation/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Interpolation/doc/Interpolation/</string>
+          <string name="STRIP_FROM_INC_PATH">../Interpolation/doc/Interpolation/</string>
+          <string name="GENERATE_TAGFILE">./tags/Interpolation.tag</string>
+          <string name="EXAMPLE_PATH">../Interpolation/examples</string>
+          <string name="IMAGE_PATH">../Interpolation/doc/Interpolation/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+          </list>
         </doxygen>
       </project>
 
@@ -896,6 +911,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Miscellany/doc/Miscellany/fig</item>
           <item>../Modular_arithmetic/doc/Modular_arithmetic/fig</item>
           <item>../Partition_2/doc/Partition_2/fig</item>
+          <item>../Interpolation/doc/Interpolation/fig</item>
           <item>../Kernel_23/doc/Kernel_23/fig</item>
           <item>../Point_set_2/doc/Point_set_2/fig</item>
           <item>../SearchStructures/doc/SearchStructures/fig</item>
@@ -950,6 +966,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Miscellany.tag=../../CGAL.CGAL.Profiling-Tools/html</item>
           <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular-Arithmetic/html</item>
           <item>./tags/Partition_2.tag=../../CGAL.CGAL.2D-Polygon-Partitioning/html</item>
+          <item>./tags/Interpolation.tag=../../CGAL.CGAL.2D-and-Surface-Function-Interpolation</item>
           <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
           <item>./tags/Point_set_2.tag=../../CGAL.CGAL.2D-Range-and-Neighbor-Search/html</item>
           <item>./tags/SearchStructures.tag=../../CGAL.CGAL.dD-Range-and-Segment-Trees/html</item>
