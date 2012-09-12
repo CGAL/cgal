@@ -4217,6 +4217,7 @@ Polyhedron/doc/Polyhedron/Concepts/PolyhedronItems_3.h -text
 Polyhedron/doc/Polyhedron/Concepts/PolyhedronTraits_3.h -text
 Polyhedron/doc/Polyhedron/PackageDescription.txt -text
 Polyhedron/doc/Polyhedron/Polyhedron.txt -text
+Polyhedron/doc/Polyhedron/fig/Polyhedron-teaser-small.gif -text svneol=unset#image/gif
 Polyhedron/doc/Polyhedron/fig/add_facet.pdf -text svneol=unset#application/pdf
 Polyhedron/doc/Polyhedron/fig/add_facet1.gif -text svneol=unset#image/gif
 Polyhedron/doc/Polyhedron/fig/add_facet2.gif -text svneol=unset#image/gif
@@ -4242,7 +4243,6 @@ Polyhedron/doc/Polyhedron/fig/shark.pdf -text svneol=unset#application/pdf
 Polyhedron/doc/Polyhedron/fig/subdiv.gif -text svneol=unset#image/gif
 Polyhedron/doc/Polyhedron/fig/subdiv.pdf -text svneol=unset#application/pdf
 Polyhedron/doc/Polyhedron/fig/subdiv_small.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/teaser-small.gif -text svneol=unset#image/gif
 Polyhedron/doc/Polyhedron/fig/teaser.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text svneol=unset#application/postscript
