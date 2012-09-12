@@ -7,10 +7,10 @@ The function `sibson_gradient_fitting` is parameterized by a
 traits class that defines the primitives used by the algorithm. The 
 concept `GradientFittingTraits` defines this common set of requirements. 
 
-\hasModel CGAL::Interpolation_gradient_fitting_traits_2<K> 
+\hasModel `CGAL::Interpolation_gradient_fitting_traits_2<K>` 
 
 \sa `InterpolationTraits` 
-\sa CGAL::Interpolation_traits_2<K> 
+\sa `CGAL::Interpolation_traits_2<K>` 
 \sa CGAL::sibson_gradient_fitting 
 \sa CGAL::sibson_c1_interpolation 
 \sa CGAL::farin_c1_interpolation 

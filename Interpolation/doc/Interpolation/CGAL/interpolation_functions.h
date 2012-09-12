@@ -63,8 +63,8 @@ std::pair< Data_type, bool> operator()(const Key_type& p);
 \ingroup PkgInterpolation2Interpolation
 
 generates the interpolated function value
-computed by Farin's interpolant \cite f-sodt-90. See also
-`sibson_c1_interpolation`. \pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
+computed by Farin's interpolant \cite f-sodt-90.
+\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
 \pre The range \f$ \left[\right.\f$ `first`, `beyond`\f$ \left.\right)\f$ contains either one or more than three element
 The function `farin_c1_interpolation` interpolates the function values and the 
 gradients that are provided by functors using the method described in \cite f-sodt-90. 
@@ -74,7 +74,7 @@ Parameters
 
 `RandomAccessIterator::value_type` is a pair 
 associating a point to a (non-normalized) barycentric coordinate. See 
-`sibson_c1_interpolation` for the other parameters. 
+`CGALL::sibson_c1_interpolation` for the other parameters. 
 
 Requirements 
 -------------- 
@@ -83,11 +83,11 @@ Same requirements as for `sibson_c1_interpolation` only the
 iterator must provide random access and `Traits::FT` does not need 
 to provide the square root operation. 
 
-\sa CGAL::Data_access<Map> 
+\sa `CGAL::Data_access<Map>` 
 \sa CGAL::linear_interpolation 
 \sa CGAL::sibson_c1_interpolation 
 \sa CGAL::sibson_gradient_fitting 
-\sa CGAL::Interpolation_traits_2<K> 
+\sa `CGAL::Interpolation_traits_2<K>`
 \sa CGAL::natural_neighbor_coordinates_2 
 \sa CGAL::regular_neighbor_coordinates_2 
 \sa CGAL::surface_neighbor_coordinates_3 
@@ -143,7 +143,7 @@ point type as `key_type` and the function value type as
 `mapped_type`. 
 </OL> 
 
-\sa CGAL::Data_access<Map> 
+\sa `CGAL::Data_access<Map>` 
 \sa CGAL::natural_neighbor_coordinates_2 
 \sa CGAL::regular_neighbor_coordinates_2 
 \sa CGAL::surface_neighbor_coordinates_3 
@@ -184,11 +184,11 @@ to provide the square root operation.
 
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 
-\sa CGAL::Data_access<Map> 
+\sa `CGAL::Data_access<Map>` 
 \sa CGAL::sibson_gradient_fitting 
 \sa CGAL::linear_interpolation 
-\sa CGAL::Interpolation_traits_2<K> 
-\sa CGAL::Interpolation_gradient_fitting_traits_2<K> 
+\sa `CGAL::Interpolation_traits_2<K>` 
+\sa `CGAL::Interpolation_gradient_fitting_traits_2<K>` 
 \sa CGAL::natural_neighbor_coordinates_2 
 \sa CGAL::regular_neighbor_coordinates_2 
 \sa CGAL::surface_neighbor_coordinates_3 
@@ -268,11 +268,11 @@ the square root operation `sqrt()`.
 
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 
-\sa CGAL::Data_access<Map> 
+\sa `CGAL::Data_access<Map>` 
 \sa CGAL::sibson_gradient_fitting 
 \sa CGAL::linear_interpolation 
-\sa CGAL::Interpolation_traits_2<K> 
-\sa CGAL::Interpolation_gradient_fitting_traits_2<K> 
+\sa `CGAL::Interpolation_traits_2<K>` 
+\sa `CGAL::Interpolation_gradient_fitting_traits_2<K>` 
 \sa CGAL::natural_neighbor_coordinates_2 
 \sa CGAL::regular_neighbor_coordinates_2 
 \sa CGAL::surface_neighbor_coordinates_3 

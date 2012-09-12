@@ -104,7 +104,7 @@ to Voronoi diagrams as well as with respect to power diagrams (only
 In addition, the package provides functions to compute natural
 neighbor coordinates on well sampled point set surfaces. See
 Section \ref secsurface and the reference page
-`surface_neighbor_coordinates_3` for further information.
+`CGAL::surface_neighbor_coordinates_3` for further information.
 
 ## Implementation ##
 
@@ -199,7 +199,7 @@ upon the computation of regular neighbor coordinates with respect to
 the regular triangulation that is dual to \f$ {\rm Vor}(\mathcal{P}) \cap
 \mathcal{T}_x\f$, the intersection of \f$ \mathcal{T}_x\f$ and the Voronoi
 diagram of \f$ \mathcal{P}\f$, via the function
-`regular_neighbor_coordinates_2`.
+`CGAL::regular_neighbor_coordinates_2`.
 
 Of course, we might introduce all data points \f$ \mathcal{P}\f$ into this
 regular triangulation. However, this is not necessary because we are
@@ -334,7 +334,7 @@ of \f$ \mathbf{p_i}\f$ with respect to \f$ \mathbf{p_i}\f$ associated to
 
 \cgal provides functions to approximate the gradients of all data
 points that are inside the convex hull. There is one function for each
-type of natural neighbor coordinate (i.e. `natural_neighbor_coordinates_2`, `regular_neighbor_coordinates_2`).
+type of natural neighbor coordinate (i.e. `CGAL::natural_neighbor_coordinates_2`, `CGAL::regular_neighbor_coordinates_2`).
 
 \subsection subsecinterpol_examples Example for Linear Interpolation 
 

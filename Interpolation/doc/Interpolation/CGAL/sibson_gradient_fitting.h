@@ -34,7 +34,7 @@ provide a multiplication and addition operation with the type
 \sa CGAL::sibson_c1_interpolation 
 \sa CGAL::farin_c1_interpolation 
 \sa CGAL::quadratic_interpolation 
-\sa CGAL::Interpolation_gradient_fitting_traits_2<K> 
+\sa `CGAL::Interpolation_gradient_fitting_traits_2<K>`
 \sa CGAL::natural_neighbor_coordinates_2 
 \sa CGAL::regular_neighbor_coordinates_2 
 \sa CGAL::surface_neighbor_coordinates_3 
@@ -69,7 +69,7 @@ Functor f, const Traits& traits);
 /*!
 estimates the function gradients at all vertices of `dt` that lie
 inside the convex hull using the coordinates computed by the
-function `natural_neighbor_coordinates_2`.
+function `CGAL::natural_neighbor_coordinates_2`.
 `OutputIterator::value_type` is a pair associating a point to a
 vector. The sequence of point/gradient pairs computed by this
 function is placed starting at `out`. The function returns an
@@ -84,7 +84,7 @@ dt, OutputIterator out, Functor f, const Traits& traits);
 /*!
 estimates the function gradients at all vertices of `rt` that lie
 inside the convex hull using the coordinates computed by the
-function `regular_neighbor_coordinates_2`.
+function `CGAL::regular_neighbor_coordinates_2`.
 `OutputIterator::value_type` is a pair associating a point to a
 vector. The sequence of point/gradient pairs computed by this
 function is placed starting at `out`. The function returns an

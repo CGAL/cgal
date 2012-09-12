@@ -14,7 +14,7 @@ and in \cite bf-lcss-02,\cite cgal:f-csapc-03. The query
 point `p` needs to lie inside the convex hull of the projection of 
 the sample points onto the tangent plane at `p`. 
 
-The functions \t surface_neighbor_coordinates_certified_3 return, in
+The functions `surface_neighbor_coordinates_certified_3` return, in
 addition, a second Boolean value (the fourth value of the quadruple)
 that certifies whether or not, the Voronoi cell of `p` can be affected
 by points that lie outside the input range, i.e. outside the ball
@@ -48,7 +48,7 @@ Implementation
 This functions construct the regular triangulation of the input points 
 instantiated with `Voronoi_intersection_2_traits_3<Kernel>` or `ITraits` if provided. 
 They return the result of the function call 
-`regular_neighbor_coordinates_2` 
+`CGAL::regular_neighbor_coordinates_2` 
 with the regular triangulation and `p` as arguments. 
 
 */

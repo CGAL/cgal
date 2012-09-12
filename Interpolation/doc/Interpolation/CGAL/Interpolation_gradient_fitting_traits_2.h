@@ -16,7 +16,7 @@ is templated by a kernel class `K`.
 
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 
-\sa CGAL::Interpolation_traits_2<K> 
+\sa `CGAL::Interpolation_traits_2<K>` 
 
 */
 template< typename K >
