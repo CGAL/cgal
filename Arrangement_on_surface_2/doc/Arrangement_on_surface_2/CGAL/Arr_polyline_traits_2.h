@@ -26,7 +26,6 @@ own risk.
 
 \models ::ArrangementTraits_2 
 \models ::ArrangementLandmarkTraits_2 
-CONVERRORIsModel: CONVERROR 2 nested classes missing 
 
 \sa `Arr_segment_traits_2<Kernel>` 
 \sa `Arr_non_caching_segment_traits_2<Kernel>` 

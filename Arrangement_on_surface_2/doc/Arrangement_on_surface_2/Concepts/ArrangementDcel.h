@@ -20,10 +20,10 @@ must be models of the concepts
 `ArrangementDcelHole`, and 
 `ArrangementDcelIsolatedVertex` respectively.) 
 
-\hasModel Arr_dcel_base<V,H,F> 
-\hasModel Arr_default_dcel<Traits> 
-\hasModel Arr_face_extended_dcel<Traits,FData,V,H,F> 
-\hasModel Arr_extended_dcel<Traits,VData,HData,FData,V,H,F> 
+\hasModel `CGAL::Arr_dcel_base<V,H,F>` 
+\hasModel `CGAL::Arr_default_dcel<Traits>` 
+\hasModel `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>` 
+\hasModel `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>` 
 
 \sa `ArrangementDcelVertex` 
 \sa `ArrangementDcelHalfedge` 

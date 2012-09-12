@@ -15,11 +15,11 @@ recommended to define the approximated number type as the built-in
 
 \refines ::ArrangementTraits_2 
 
-\hasModel CGAL::Arr_non_caching_segment_traits_2<Kernel> 
-\hasModel CGAL::Arr_segment_traits_2<Kernel> 
-\hasModel CGAL::Arr_linear_traits_2<Kernel> 
-\hasModel CGAL::Arr_polyline_traits_2<SegmentTraits> 
-\hasModel CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits> 
+\hasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>` 
+\hasModel `CGAL::Arr_segment_traits_2<Kernel>` 
+\hasModel `CGAL::Arr_linear_traits_2<Kernel>` 
+\hasModel `CGAL::Arr_polyline_traits_2<SegmentTraits>` 
+\hasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>` 
 
 \sa `ArrangementTraits_2` 
 

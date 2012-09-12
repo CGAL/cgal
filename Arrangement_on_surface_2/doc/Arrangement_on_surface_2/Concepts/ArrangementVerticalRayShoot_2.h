@@ -17,10 +17,10 @@ envelope) of the arrangement, so that the vertical ray emanating from it
 may go to infinity without hitting any arrangement feature on its way. In this 
 case the unbounded face is returned. 
 
-\hasModel Arr_naive_point_location<Arrangement> 
-\hasModel Arr_walk_along_a_line_point_location<Arrangement> 
-\hasModel Arr_trapezoid_ric_point_location<Arrangement> 
-\hasModel Arr_landmarks_point_location<Arrangement,Generator> 
+\hasModel `CGAL::Arr_naive_point_location<Arrangement>` 
+\hasModel `CGAL::Arr_walk_along_a_line_point_location<Arrangement>` 
+\hasModel `CGAL::Arr_trapezoid_ric_point_location<Arrangement>` 
+\hasModel `CGAL::Arr_landmarks_point_location<Arrangement,Generator>` 
 
 */
 

@@ -17,17 +17,14 @@ must be instantiated with models of the concepts
 and `ArrangementDcelFace` respectively. 
 
 \models ::ArrangementDcel 
-CONVERRORIsModel: CONVERROR 3 nested classes missing 
 
 */
 template< typename V, typename H, typename F >
 class Arr_dcel_base {
 public:
 
-/// @}
 
 /*!
-
 
 The basic <span class="textsc">Dcel</span> face type. Serves as a basis class for an extended 
 face record with auxiliary data fields. 

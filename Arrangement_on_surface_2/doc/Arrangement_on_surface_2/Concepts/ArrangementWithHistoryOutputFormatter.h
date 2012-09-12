@@ -9,7 +9,7 @@ specific format.
 
 \refines ::ArrangementOutputFormatter 
 
-\hasModel Arr_with_history_text_formatter<ArrFormatter> 
+\hasModel `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
 
 */
 

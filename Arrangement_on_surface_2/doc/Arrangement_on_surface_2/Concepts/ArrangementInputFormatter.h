@@ -6,9 +6,9 @@
 A model for the `ArrangementInputFormatter` concept supports a set of functions that enable 
 reading an arrangement from an input stream using a specific format. 
 
-\hasModel Arr_text_formatter<Arrangement> 
-\hasModel Arr_face_extended_text_formatter<Arrangement> 
-\hasModel Arr_extended_dcel_text_formatter<Arrangement> 
+\hasModel `CGAL::Arr_text_formatter<Arrangement>` 
+\hasModel `CGAL::Arr_face_extended_text_formatter<Arrangement>` 
+\hasModel `CGAL::Arr_extended_dcel_text_formatter<Arrangement>` 
 
 */
 

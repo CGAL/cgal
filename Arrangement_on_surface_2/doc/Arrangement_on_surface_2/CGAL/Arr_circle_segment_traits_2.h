@@ -43,15 +43,7 @@ supports the merging of curves of opposite directions.
 template< typename Kernel >
 class Arr_circle_segment_traits_2 {
 
-
-/// \name Types 
-/// @{
-
-
-/// @}
-
 /*! 
-
 The `Curve_2` class nested within the traits class can represent 
 arbitrary circular arcs, full circles and line segments and support their 
 construction in various ways. 

@@ -10,10 +10,10 @@ it returns the arrangement cell containing it. In the general case, the
 query point is contained inside an arrangement face, but in degenerate 
 situations it may lie on an edge or coincide with an arrangement vertex. 
 
-\hasModel Arr_naive_point_location<Arrangement> 
-\hasModel Arr_walk_along_a_line_point_location<Arrangement> 
-\hasModel Arr_trapezoid_ric_point_location<Arrangement> 
-\hasModel Arr_landmarks_point_location<Arrangement,Generator> 
+\hasModel `CGAL::Arr_naive_point_location<Arrangement>` 
+\hasModel `CGAL::Arr_walk_along_line_point_location<Arrangement>` 
+\hasModel `CGAL::Arr_trapezoid_ric_point_location<Arrangement>` 
+\hasModel `CGAL::Arr_landmarks_point_location<Arrangement,Generator>` 
 
 */
 

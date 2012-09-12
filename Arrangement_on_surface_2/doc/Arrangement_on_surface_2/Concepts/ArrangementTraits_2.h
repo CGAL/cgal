@@ -30,20 +30,20 @@ that accept such curves, such as `intsert()`.
 
 \refines ::ArrangementXMonotoneTraits_2 
 
-\hasModel CGAL::Arr_segment_traits_2<Kernel> 
-\hasModel CGAL::Arr_non_caching_segment_traits_2<Kernel> 
-\hasModel CGAL::Arr_linear_traits_2<Kernel> 
-\hasModel CGAL::Arr_polyline_traits_2<SegmentTraits> 
-\hasModel CGAL::Arr_circle_segment_traits_2<Kernel> 
-\hasModel CGAL::Arr_line_arc_traits_2<CircularKernel> 
-\hasModel CGAL::Arr_circular_arc_traits_2<CircularKernel> 
-\hasModel CGAL::Arr_circular_line_arc_traits_2<CircularKernel> 
-\hasModel CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits> 
-\hasModel CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1> 
-\hasModel CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits> 
-\hasModel CGAL::Arr_algebraic_segment_traits_2<Coefficient> 
-\hasModel CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv> 
-\hasModel CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data> 
+\hasModel `CGAL::Arr_segment_traits_2<Kernel>`
+\hasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
+\hasModel `CGAL::Arr_linear_traits_2<Kernel>`
+\hasModel `CGAL::Arr_polyline_traits_2<SegmentTraits>`
+\hasModel `CGAL::Arr_circle_segment_traits_2<Kernel>`
+\hasModel `CGAL::Arr_line_arc_traits_2<CircularKernel>`
+\hasModel `CGAL::Arr_circular_arc_traits_2<CircularKernel>`
+\hasModel `CGAL::Arr_circular_line_arc_traits_2<CircularKernel>`
+\hasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
+\hasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
+\hasModel `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
+\hasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
+\hasModel `CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>`
+\hasModel `CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>`
 
 \sa `ArrangementBasicTraits_2` 
 \sa `ArrangementXMonotoneTraits_2` 
