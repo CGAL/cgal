@@ -1,18 +1,13 @@
 namespace CGAL {
 
 /*!
+\defgroup PkgPrincipalComponentAnalysisDLLSF3 linear_least_square_fitting_3
 \ingroup PkgPrincipalComponentAnalysisD
 
-\brief computes the best fitting 3D line of a 3D object set in the
-range [`first`,`beyond`). The value returned is a fitting quality
-between \f$ 0\f$ and \f$ 1\f$, where \f$ 0\f$ means that the variance
-is the same along any line contained within the best fitting plane,
-and \f$ 1\f$ means that the variance is null orthogonally to the best
-fitting line (hence the fit is perfect).
-
-Function `linear_least_squares_fitting_3` computes the best fitting 3D
-line or plane (in the least squares sense) of a set of 3D objects such
-as points, segments, triangles, spheres, balls, cuboids or tetrahedra.
+The function `linear_least_squares_fitting_3` computes the best
+fitting 3D line or plane (in the least squares sense) of a set of 3D
+objects such as points, segments, triangles, spheres, balls, cuboids
+or tetrahedra.
 
 The best fitting linear sub-space (here line or plane) minimizes the
 sum of squared distances from all points comprising these objects to
@@ -40,6 +35,17 @@ property. A best fitting plane is uniquely determined as soon as the
 smallest eigenvalue is different from the two others, otherwise all
 planes going through the best fitting line share the same fitting
 property.
+
+*/
+/// @{
+
+/*!
+\brief computes the best fitting 3D line of a 3D object set in the
+range [`first`,`beyond`). The value returned is a fitting quality
+between \f$ 0\f$ and \f$ 1\f$, where \f$ 0\f$ means that the variance
+is the same along any line contained within the best fitting plane,
+and \f$ 1\f$ means that the variance is null orthogonally to the best
+fitting line (hence the fit is perfect).
 
 The tag `tag` identifies the dimension to be considered from the
 objects. For point sets it should be 0. For segment sets it could be 1
@@ -83,8 +89,6 @@ const Tag& tag,
 const K& k);
 
 /*!
-\ingroup PkgPrincipalComponentAnalysisD
-
 \brief computes the best fitting 3D plane of a 3D object set in the
 range [`first`,`beyond`). The value returned is a fitting quality
 between \f$ 0\f$ and \f$ 1\f$, where \f$ 0\f$ means that the variance
@@ -119,6 +123,8 @@ typename K::Plane_3& plane,
 typename K::Point_3& centroid, 
 const Tag& tag,
 const K& k);
+
+/// @}
 
 } /* namespace CGAL */
 

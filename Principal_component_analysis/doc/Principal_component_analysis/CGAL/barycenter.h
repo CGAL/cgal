@@ -1,24 +1,26 @@
 namespace CGAL {
 
 /*!
+\defgroup PkgPrincipalComponentAnalysisDBary barycenter
 \ingroup PkgPrincipalComponentAnalysisD
-
-\brief computes the barycenter of a non-empty set of 2D weighted points.
 
 The function `barycenter` computes the barycenter (weighted center of
 mass) of a set of 2D or 3D weighted points. The weight associated to
 each point is specified using a `std::pair` storing the point and its
 weight.
 
-The user can also optionally pass an explicit kernel, in case the
-default, based on `Kernel_traits` is not sufficient.  The dimension is
-also deduced automatically.
+There is a set of overloaded `barycenter` functions for 2D and 3D
+weighted points. The user can also optionally pass an explicit kernel,
+in case the default, based on `Kernel_traits` is not sufficient. The
+dimension is also deduced automatically.
 
 \sa `CGAL::centroid` 
+*/
+/// @{
 
-
-`K` is
-`Kernel_traits<std::iterator_traits<InputIterator>::value_type::first_type>::Kernel`.
+/*!
+computes the barycenter of a non-empty set of 2D weighted points.
+`K` is `Kernel_traits<std::iterator_traits<InputIterator>::value_type::first_type>::Kernel`.
 The value type must be `std::pair<K::Point_2, K::FT>`.
 
 \pre first != beyond, and the sum of the weights is non-zero. 
@@ -28,20 +30,7 @@ K::Point_2
 barycenter(InputIterator first, InputIterator beyond);
 
 /*!
-\ingroup PkgPrincipalComponentAnalysisD
-
-\brief computes the barycenter of a non-empty set of 2D weighted points.
-
-The function `barycenter` computes the barycenter (weighted center of
-mass) of a set of 2D or 3D weighted points. The weight associated to
-each point is specified using a `std::pair` storing the point and its
-weight.
-
-The user can also optionally pass an explicit kernel, in case the
-default, based on `Kernel_traits` is not sufficient.  The dimension is
-also deduced automatically.
-
-\sa `CGAL::centroid` 
+computes the barycenter of a non-empty set of 2D weighted points.
 
 The value type must be `std::pair<K::Point_2, K::FT>`.
 
@@ -52,24 +41,9 @@ K::Point_2
 barycenter(InputIterator first, InputIterator beyond, const K & k);
 
 /*!
-\ingroup PkgPrincipalComponentAnalysisD
+computes the barycenter of a non-empty set of 3D weighted points.
 
-\brief computes the barycenter of a non-empty set of 3D weighted points.
-
-The function `barycenter` computes the barycenter (weighted center of
-mass) of a set of 2D or 3D weighted points. The weight associated to
-each point is specified using a `std::pair` storing the point and its
-weight.
-
-The user can also optionally pass an explicit kernel, in case the
-default, based on `Kernel_traits` is not sufficient.  The dimension is
-also deduced automatically.
-
-\sa `CGAL::centroid` 
-
-
-`K` is
-`Kernel_traits<std::iterator_traits<InputIterator>::value_type::first_type>::Kernel`.
+`K` is `Kernel_traits<std::iterator_traits<InputIterator>::value_type::first_type>::Kernel`.
 The value type must be `std::pair<K::Point_3, K::FT>`.
 
 \pre first != beyond, and the sum of the weights is non-zero. 
@@ -79,20 +53,7 @@ K::Point_3
 barycenter(InputIterator first, InputIterator beyond);
 
 /*!
-\ingroup PkgPrincipalComponentAnalysisD
-
-\brief computes the barycenter of a non-empty set of 3D weighted points.
-
-The function `barycenter` computes the barycenter (weighted center of
-mass) of a set of 2D or 3D weighted points. The weight associated to
-each point is specified using a `std::pair` storing the point and its
-weight.
-
-The user can also optionally pass an explicit kernel, in case the
-default, based on `Kernel_traits` is not sufficient.  The dimension is
-also deduced automatically.
-
-\sa `CGAL::centroid` 
+computes the barycenter of a non-empty set of 3D weighted points.
 
 The value type must be `std::pair<K::Point_3, K::FT>`.
 
@@ -102,5 +63,6 @@ template < typename InputIterator, typename K >
 K::Point_3
 barycenter(InputIterator first, InputIterator beyond, const K & k);
 
+/// @}
 } /* namespace CGAL */
 
