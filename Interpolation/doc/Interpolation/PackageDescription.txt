@@ -1,0 +1,42 @@
+/// \defgroup PkgInterpolation2 2D and Surface Function Interpolation
+
+/// \defgroup PkgInterpolation2Concepts Concepts
+/// \ingroup PkgInterpolation2
+
+/// \defgroup PkgInterpolation2Interpolation Interpolation Functions
+/// \ingroup PkgInterpolation2
+
+/// \defgroup PkgInterpolation2NatNeighbor Natural neighbor coordinate computation
+/// \ingroup PkgInterpolation2
+
+/// \defgroup PkgInterpolation2SurfaceNeighbor Surface neighbor and surface neighbor coordinate computation
+/// \ingroup PkgInterpolation2
+
+
+/*!
+\addtogroup PkgInterpolation2
+\todo check generated documentation
+\PkgDescriptionBegin{2D and Surface Function Interpolation}
+\PkgPicture{interpolation.png}
+\PkgAuthor{Julia Fl&ouml;totto}
+\PkgDesc{This package implements different methods for scattered data interpolation: Given measures of a function on a set of discrete data points, the task is to interpolate this function on an arbitrary query point. The package further offers functions for natural neighbor interpolation.}
+\PkgSince{3.1}
+\cgalbib{cgal:f-i}
+\license{\ref licensesGPL "GPL"}
+\PkgDescriptionEnd
+
+Scattered data interpolation solves the following problem: given
+measures of a function on a set of discrete data points, the task is
+to interpolate this function on an arbitrary query point.
+
+If the function is a linear function and given barycentric coordinates
+that allow to express the query point as the convex combination of
+some data points, the function can be exactly interpolated. If the
+function gradients are known, we can exactly interpolate quadratic
+functions given barycentric coordinates. Any further properties of
+these interpolation functions depend on the properties of the
+barycentric coordinates. They are provided in this package under the
+name `linear_interpolation` and
+`quadratic_interpolation`.
+*/
+
