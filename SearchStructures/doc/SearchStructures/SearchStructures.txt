@@ -408,13 +408,12 @@ of the parent vertex of \f$ v\f$.
 A \f$ d\f$-dimensional segment tree can be used to solve the following problems:
 <UL>
 <LI>Determine all \f$ d\f$-dimensional intervals that contain a
-\f$ d\f$-dimensional point. This query type is called ``inverse
-range query''.
+\f$ d\f$-dimensional point. This query type is called *inverse range query*.
 <LI>Determine all \f$ d\f$-dimensional intervals that enclose a
 given \f$ d\f$-dimensional interval
-(`enclosing_query`).
+(*enclosing query*).
 <LI>Determine all \f$ d\f$-dimensional intervals that partially overlap or are
-contained in a given \f$ d\f$-dimensional interval (`window_query`).
+contained in a given \f$ d\f$-dimensional interval (*window query*).
 </UL>
 
 An example of a one-dimensional segment tree and an example
