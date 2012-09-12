@@ -162,7 +162,7 @@ functions are non trivial.
 
 The design concept is illustrated in the figure below.
 
-\image html rsd.gif 
+\image html rsd.gif Design of the range and segment tree data structure. The symbol triangle means that the lower class is derived from the upper class.
 
 E.g. in order to define a two dimensional multilayer tree, which
 consists of a range tree in the first dimension and a segment
@@ -290,26 +290,12 @@ interval (`window_query`).
 
 The pictures below show a two-dimensional and a \f$d\f$-dimensional range tree.
 
-<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=650>
-<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=50% NOWRAP COLSPAN=2>
-<A NAME="User:fig:range.eps"><img border=0 src="./range2.gif" alt="A two-dimensional range tree"></A>
-</TD>
-<A NAME="User:fig:d-range.eps"><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%><img border=0 src="./d-range.gif" alt="A d-dimensional range tree"></A>
-</TD></TR></TABLE>
-<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=650>
-<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=45% COLSPAN=2>
-A two-dimensional range tree. The
-tree is a binary search tree on the first dimension. Each
-sublayer tree of a vertex <span class="math">v</span> is a binary search tree on the
-second
-dimension. The data items in a sublayer tree of <span class="math">v</span> are
-all data items of the subtree of <span class="math">v</span>
-</TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50%>
-A d-dimensional range tree. For
-each layer of the tree, one
-sublayer tree is illustrated.
-</TD></TR>
-</TABLE>
+\image html range2.gif "A two and a d-dimensional range tree."
+
+The 2-dimensional tree is a binary search tree on the first dimension. Each sublayer tree of a vertex `v`  is a binary search tree on the second dimension. The data items in a sublayer tree of `v` are all data items of the subtree of `v`.
+
+For the d-dimensional range tree, the figure shows one sublayer tree for each
+layer of the tree.
 
 The tree can be built in \f$ O(n\log^{d-1} n)\f$ time and
 needs \f$ O(n\log^{d-1} n)\f$ space. The \f$ d\f$-dimensional points that lie in the
@@ -317,7 +303,7 @@ needs \f$ O(n\log^{d-1} n)\f$ space. The \f$ d\f$-dimensional points that lie in
 where \f$ n\f$ is the total number of points and \f$ k\f$ is the number of
 reported points. 
 
-\subsection secrange_tree_ex Example for Range Tree on Map-like Data 
+\subsection secrange_tree_ex Example for %Range Tree on Map-like Data 
 
 The following example program uses the predefined `Range_tree_2` data structure together with the predefined traits
 class `Range_tree_map_traits_2` which has two template
@@ -434,32 +420,19 @@ contained in a given \f$ d\f$-dimensional interval (`window_query`).
 An example of a one-dimensional segment tree and an example
 of a two-dimensional segment tree are shown below.
 
-<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=650>
-<TR>
-<A NAME="User:fig:segment2.eps"></A>
-<TD ALIGN=LEFT VALIGN=TOP WIDTH=50% NOWRAP COLSPAN=2>
-<img border=0 src="./segment2.gif" alt="A one-dimensional segment
-tree">
-</TD>
-<A NAME="User:fig:d-segment.eps"></A>
-<TD ALIGN=LEFT VALIGN=TOP WIDTH=50%><img border=0
-src="./d-segment.gif" alt="A d-dimensional segment tree">
-</TD></TR></TABLE>
+\image html segment2.gif "A one and a two dimensional segment tree"
 
-<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH=650>
-<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=50% COLSPAN=2>
-A one-dimensional segment
-tree. The segments and the corresponding elementary intervals
+For the one-dimensional segment
+tree the segments and the corresponding elementary intervals
 are shown below the tree. The arcs from the nodes point to
 their subsets.
-</TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=45%>
-A two-dimensional segment
-tree. The first layer of the tree is built according to the
+
+For the two-dimensional segment
+tree we see that the first layer of the tree is built according to the
 elementary intervals of the first dimension. Each
-sublayer tree of a vertex <span class="math">v</span> is a segment tree according to
-the second dimension of all data items of <span class="math">v</span>.
-</TD></TR>
-</TABLE>
+sublayer tree of a vertex `v` is a segment tree according to
+the second dimension of all data items of `v`.
+
 
 The tree can be built in \f$ O(n\log^{d} n)\f$ time and
 needs \f$ O(n\log^{d} n)\f$ space.

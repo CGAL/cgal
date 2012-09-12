@@ -1,6 +1,13 @@
 /// \defgroup PkgRangeSegmentTreesD dD Range and Segment Trees 
 /// \defgroup PkgRangeSegmentTreesDConcepts Concepts
 /// \ingroup PkgRangeSegmentTreesD
+
+/// \defgroup PkgRangeSegmentTreesDTraitsClasses Traits Classes
+/// \ingroup PkgRangeSegmentTreesD
+
+/// \defgroup PkgRangeSegmentTreesDSearchStructure Search Structures
+/// \ingroup PkgRangeSegmentTreesD
+
 /*!
 \addtogroup PkgRangeSegmentTreesD
 \todo check generated documentation

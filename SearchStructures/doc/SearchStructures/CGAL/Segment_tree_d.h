@@ -2,7 +2,9 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgRangeSegmentTreesD
+\ingroup PkgRangeSegmentTreesDSearchStructure
+
+\brief  A \f$ d\f$-dimensional segment tree stores  \f$ d\f$-dimensional intervals and can be used to find all intervals that enclose, partially overlap, or contain a query interval, which may be a point.
 
 Implementation 
 -------------- 
