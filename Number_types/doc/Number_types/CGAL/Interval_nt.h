@@ -143,9 +143,9 @@ typedef Hidden_type Protector;
 /// @{
 
 /*! 
-introduces the interval [`i`;`i`]. 
+introduces a small interval containing \a i (possibly a point).
 */ 
-Interval_nt(int i); 
+Interval_nt(long long i); 
 
 /*! 
 introduces the interval [`d`;`d`]. 

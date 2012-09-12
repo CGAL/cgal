@@ -5,7 +5,7 @@ if ( BLAS_FOUND AND NOT BLAS_SETUP )
 
   message( STATUS "UseBLAS" )
   message( STATUS "BLAS include:     ${BLAS_INCLUDE_DIR}" )
-  include_directories ( ${BLAS_INCLUDE_DIR} )
+  include_directories ( SYSTEM ${BLAS_INCLUDE_DIR} )
 
   message( STATUS "BLAS definitions: ${BLAS_DEFINITIONS}" )
   add_definitions( ${BLAS_DEFINITIONS} )

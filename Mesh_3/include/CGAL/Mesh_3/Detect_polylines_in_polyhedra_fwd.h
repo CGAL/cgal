@@ -27,7 +27,9 @@ namespace CGAL { namespace Mesh_3 {
 template <typename Polyhedron>
 struct Detect_polylines;
 
-template <typename Polyhedron, typename Polyline, typename Polylines_output_iterator>
+template <typename Polyhedron,
+          typename Polyline_and_context,
+          typename Polylines_output_iterator>
 Polylines_output_iterator
 detect_polylines(Polyhedron* pMesh, 
                  Polylines_output_iterator out_it);

@@ -101,7 +101,7 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
             ? POINT :  NO_INTERSECTION;
         return _result;
     case Line_2_Line_2_pair<K>::LINE: {
-        typedef typename K::RT RT;
+        //typedef typename K::RT RT;
         const typename K::Point_2 &start1 = _seg->source();
         const typename K::Point_2 &end1 = _seg->target();
         const typename K::Point_2 &start2 = _ray->source();

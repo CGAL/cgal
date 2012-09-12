@@ -1551,6 +1551,7 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters-small.gif -text svn
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.gif -text svneol=unset#image/gif
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=unset#application/pdf
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
+CGAL_ImageIO/src/CGAL_ImageIO/CMakeLists.txt -text
 CGAL_ipelets/TODO -text
 CGAL_ipelets/demo/CGAL_ipelets/CMakeLists.txt -text
 CGAL_ipelets/demo/CGAL_ipelets/alpha_shapes.cpp -text
@@ -1610,7 +1611,6 @@ CGAL_ipelets/include/CGAL/CGAL_Ipelet_base_v6.h -text
 CGAL_ipelets/include/CGAL/CGAL_Ipelet_base_v7.h -text
 CGAL_ipelets/include/CGAL/grabbers.h -text
 CGAL_ipelets/package_info/CGAL_ipelets/maintainer -text
-CGALimageIO/src/CGALImageIO/CMakeLists.txt -text
 Circular_kernel_2/benchmark/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/benchmark/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/benchmark/readme.pdf -text svneol=unset#application/pdf
@@ -2257,7 +2257,7 @@ GraphicsView/doc_tex/GraphicsView/full.png -text
 GraphicsView/doc_tex/GraphicsView/uml-design.graphml -text
 GraphicsView/doc_tex/GraphicsView/uml-design.pdf -text
 GraphicsView/doc_tex/GraphicsView/uml-design.png -text
-GraphicsView/src/CGALQt4/GraphicsView.qtmoc.cmake -text
+GraphicsView/src/CGAL_Qt4/GraphicsView.qtmoc.cmake -text
 HalfedgeDS/doc/HalfedgeDS/CGAL/HalfedgeDS_const_decorator.h -text
 HalfedgeDS/doc/HalfedgeDS/CGAL/HalfedgeDS_decorator.h -text
 HalfedgeDS/doc/HalfedgeDS/CGAL/HalfedgeDS_default.h -text
@@ -2646,8 +2646,8 @@ Kinetic_data_structures/include/CGAL/Kinetic/Inexact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/Regular_triangulation_CORE_exact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/listeners.h -text
 Kinetic_data_structures/include/CGAL/Tools/utility_macros.h -text
-Kinetic_data_structures/src/CGALQt3/Kinetic_data_structures.qtmoc.cmake -text
-Kinetic_data_structures/src/CGALQt3/Kinetic_print.xpm -text
+Kinetic_data_structures/src/CGAL_Qt3/Kinetic_data_structures.qtmoc.cmake -text
+Kinetic_data_structures/src/CGAL_Qt3/Kinetic_print.xpm -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=1,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3,n -text
@@ -2886,6 +2886,7 @@ Maintenance/infrastructure/renoir.geometryfactory.com/boost/user-config.jam -tex
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/setup-common -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16-strict-ansi/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16/setup -text
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-13.0beta-with-g++-4.6.3-STL_F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/setup -text
@@ -2919,13 +2920,13 @@ Maintenance/public_release/announcement/CGAL-4.0 -text
 Maintenance/public_release/announcement/CGAL-4.0-beta1 -text
 Maintenance/public_release/announcement/CGAL-4.0.1 -text
 Maintenance/public_release/announcement/CGAL-4.0.2 -text
+Maintenance/public_release/announcement/CGAL-4.1-beta1 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
 Maintenance/release_building/BUGFIX_NUMBER -text
 Maintenance/release_building/MAJOR_NUMBER -text
 Maintenance/release_building/MINOR_NUMBER -text
 Maintenance/release_building/global_dont_submit -text
-Maintenance/release_building/public_release_name -text
 Maintenance/svn_server/hooks/Mail/Sender.pm -text
 Maintenance/svn_server/hooks/Mail/Sender/CType/Ext.pm -text
 Maintenance/svn_server/hooks/check-capabilities.pl -text
@@ -3889,7 +3890,7 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Nef_S2/include/CGAL/IO/Nef_polyhedron_iostream_S2.h -text
-Nef_S2/src/CGALQt3/Nef_S2.qtmoc.cmake -text
+Nef_S2/src/CGAL_Qt3/Nef_S2.qtmoc.cmake -text
 Number_types/doc/Number_types/CGAL/CORE_BigFloat.h -text
 Number_types/doc/Number_types/CGAL/CORE_BigInt.h -text
 Number_types/doc/Number_types/CGAL/CORE_BigRat.h -text
@@ -4158,9 +4159,11 @@ Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#application/pdf
 Polygon/doc_tex/Polygon/pgn_algos.xml svneol=native#text/xml
 Polygon/doc_tex/Polygon/polygon.png -text
+Polyhedron/demo/Polyhedron/Camera_positions_list.ui -text
 Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_corefinement_plugin.cpp -text
+Polyhedron/demo/Polyhedron/Polyhedron_demo_io_nef_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_normal_estimation_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_normal_estimation_plugin.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_off_to_xyz_plugin.cpp -text
@@ -4169,10 +4172,14 @@ Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_outliers_removal_plugin.ui 
 Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_simplification_plugin.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_smoothing_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_poisson_plugin.ui -text
+Polyhedron/demo/Polyhedron/Polyhedron_demo_transform_polyhedron_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Remeshing_dialog.ui -text
 Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item.cpp -text
 Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item.h -text
 Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item_config.h -text
+Polyhedron/demo/Polyhedron/Scene_polyhedron_transform_item.cpp -text
+Polyhedron/demo/Polyhedron/Scene_polyhedron_transform_item.h -text
+Polyhedron/demo/Polyhedron/Scene_polyhedron_transform_item_config.h -text
 Polyhedron/demo/Polyhedron/Show_point_dialog.ui -text
 Polyhedron/demo/Polyhedron/cgal_test_with_cmake eol=lf
 Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
@@ -4631,8 +4638,8 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#application/
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#image/png
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
-Qt_widget/src/CGALQt3/CMakeLists.txt -text
-Qt_widget/src/CGALQt3/Qt_widget.qtmoc.cmake -text
+Qt_widget/src/CGAL_Qt3/CMakeLists.txt -text
+Qt_widget/src/CGAL_Qt3/Qt_widget.qtmoc.cmake -text
 Ridges_3/doc_tex/Ridges_3/RidgesMechPartDetail.png -text
 Ridges_3/doc_tex/Ridges_3/david_crest.jpg -text
 Ridges_3/doc_tex/Ridges_3/david_crest_small.png -text svneol=unset#image/png
@@ -4648,7 +4655,6 @@ Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics.sln eol=crlf
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#application/octet-stream
 Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
-Robustness/demo/Robustness/help/index.html svneol=native#text/html
 STL_Extension/benchmark/copy_n_benchmark/CMakeLists.txt -text
 STL_Extension/benchmark/copy_n_benchmark/copy_n_benchmark.cpp -text
 STL_Extension/benchmark/copy_n_benchmark/copy_n_use_case_benchmark.cpp -text
@@ -4704,6 +4710,7 @@ Scripts/developer_scripts/create_cgal_test -text
 Scripts/developer_scripts/create_cgal_test_with_cmake -text
 Scripts/developer_scripts/create_demos_zip_files.sh -text
 Scripts/developer_scripts/create_macosx_installer -text
+Scripts/developer_scripts/detect_files_with_mixed_eol_styles -text
 Scripts/developer_scripts/detect_packages_licenses -text
 Scripts/developer_scripts/licensecheck -text
 Scripts/developer_scripts/list_package_files.rb -text
@@ -5311,6 +5318,8 @@ Stream_lines_2/doc_tex/Stream_lines_2/streamlines-small.jpg -text svneol=unset#i
 Stream_lines_2/doc_tex/Stream_lines_2/streamlines-teaser.jpg -text svneol=unset#image/jpeg
 Stream_lines_2/test/Stream_lines_2/data/datap.tri.cin -text
 Stream_lines_2/test/Stream_lines_2/data/datav.tri.cin -text
+Stream_support/doc_tex/IOstream/io.png -text
+Stream_support/test/Stream_support/data/io.cin -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/CCSubdivision.png -text svneol=unset#image/png
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.fig -text svneol=unset#application/octet-stream
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.gif -text svneol=unset#image/gif
@@ -6069,8 +6078,6 @@ Triangulation_3/test/Triangulation_3/include/CGAL/_test_remove_cluster.h -text
 Triangulation_3/test/Triangulation_3/test_regular_insert_range_with_info.cpp -text
 Triangulation_3/test/Triangulation_3/test_static_filters.cpp -text
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
-iostream/doc_tex/IOstream/io.png -text
-iostream/test/iostream/data/io.cin -text
 wininst/developer_scripts/CGAL.bmp -text svneol=unset#image/bmp
 wininst/developer_scripts/DumpLogToFile.nsh -text
 wininst/developer_scripts/EnvVarUpdate.nsh -text

@@ -117,12 +117,11 @@ public slots:
       CGAL_assertion(pMesh->is_valid(false, 3));
 
       scene->itemChanged(item);
-
+      // default cursor
+      QApplication::restoreOverrideCursor();
     } // end of if(item)
 
     } // end of the loop on the selected items
-    // default cursor
-    QApplication::restoreOverrideCursor();
   }
   
 private:

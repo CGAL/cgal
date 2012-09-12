@@ -131,7 +131,7 @@ MainWindow::MainWindow(QWidget* parent)
   viewer->setScene(scene);
   sceneView->setModel(scene);
 
-  // setup the treeview: delegation and columns sizing...
+  // setup the sceneview: delegation and columns sizing...
   sceneView->setItemDelegate(new SceneDelegate(this));
 
   sceneView->header()->setStretchLastSection(false);
@@ -198,8 +198,11 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
-  connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
-          this, SLOT(showSceneContextMenu(const QPoint &)));
+
+  // The contextMenuPolicy of infoLabel is now the default one, so that one
+  // can easily copy-paste its text.
+  // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
+  //         this, SLOT(showSceneContextMenu(const QPoint &)));
 
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer->camera(), SLOT(interpolateToFitScene()));
@@ -211,9 +214,6 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(ui->actionDraw_two_sides, SIGNAL(toggled(bool)),
           viewer, SLOT(setTwoSides(bool)));
-
-  // enable anti-aliasing by default
-  // ui->actionAntiAliasing->setChecked(true);
 
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
@@ -342,9 +342,9 @@ void MainWindow::filterOperations()
 
 #ifdef QT_SCRIPT_LIB
 void MainWindow::evaluate_script(QString script,
-                                 const QString& /*filename*/,
+                                 const QString& filename,
                                  const bool quiet) {
-  QScriptValue value = script_engine->evaluate(script);
+  QScriptValue value = script_engine->evaluate(script, filename);
   if(script_engine->hasUncaughtException()) {
     QTextStream err(stderr);
     err << "Qt Script exception:\n"
@@ -383,7 +383,7 @@ void MainWindow::enableScriptDebugger(bool b /* = true */)
 #  endif
 #endif
   // If we are here, then the debugger is not available
-  this->error(tr("Your version of Qt is too old, and for that reason"
+  this->error(tr("Your version of Qt is too old, and for that reason "
                  "the Qt Script Debugger is not available."));
 }
 
@@ -461,6 +461,7 @@ bool MainWindow::initPlugin(QObject* obj)
     qobject_cast<Polyhedron_demo_plugin_interface*>(obj);
   if(plugin) {
     // Call plugin's init() method
+    obj->setParent(this);
     plugin->init(this, this->scene, this);
     plugins << qMakePair(plugin, obj->objectName());
 #ifdef QT_SCRIPT_LIB
@@ -628,7 +629,6 @@ void MainWindow::reload_item() {
               << "that is not a Scene_item*\n";
     return;
   }
-
   QString filename = item->property("source filename").toString();
   QString loader_name = item->property("loader_name").toString();
   if(filename.isEmpty() || loader_name.isEmpty()) {
@@ -665,9 +665,46 @@ Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& load
 void MainWindow::open(QString filename)
 {
   QFileInfo fileinfo(filename);
-  QString suffix=fileinfo.suffix();
-  QRegExp extension_rx(tr("\\(\\*.(%1)\\)").arg(suffix));//match (*.XXX) where XXX is the extension of the input file
-  QRegExp allfiles_rx("\\(\\*?\\.?(\\*)\\)"); //match (*) and (*.*)
+  QString filename_striped=fileinfo.fileName();
+
+#ifdef QT_SCRIPT_LIB
+  // Handles the loading of script file from the command line arguments,
+  // and the special command line arguments that start with "javascript:"
+  // or "qtscript:"
+  QString program;
+  if(filename.startsWith("javascript:")) {
+    program=filename.right(filename.size() - 11);
+  }
+  if(filename.startsWith("qtscript:")) {
+    program=filename.right(filename.size() - 9);
+  }
+  if(filename.endsWith(".js")) {
+    load_script(fileinfo);
+    return;
+  }
+  if(!program.isEmpty())
+  {
+    {
+      QTextStream(stderr) << "Execution of script \"" 
+                          << filename << "\"\n";
+                          // << filename << "\", with following content:\n"
+                          // << program;
+    }
+    evaluate_script(program, filename);
+    return;
+  }
+#endif
+
+  if ( !fileinfo.exists() ){
+    QMessageBox::warning(this,
+                         tr("Cannot open file"),
+                         tr("File %1 does not exist.")
+                         .arg(filename));
+    return;
+  }
+
+  //match all filters between ()
+  QRegExp all_filters_rx("\\((.*)\\)");
   
   // collect all io_plugins and offer them to load if the file extension match one name filter
   // also collect all available plugin in case of a no extension match
@@ -676,10 +713,20 @@ void MainWindow::open(QString filename)
   Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
     all_items << io_plugin->name();
     QStringList split_filters = io_plugin->nameFilters().split(";;");
+    bool stop=false;
     Q_FOREACH(const QString& filter, split_filters) {
-      if ( extension_rx.indexIn(filter) !=-1 || allfiles_rx.indexIn(filter) !=-1 ){
-        selected_items << io_plugin->name();
-        break;
+      //extract filters
+      if ( all_filters_rx.indexIn(filter)!=-1 ){
+        Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
+          QRegExp rx(pattern);
+          rx.setPatternSyntax(QRegExp::Wildcard);
+          if ( rx.exactMatch(filename_striped) ){
+            selected_items << io_plugin->name();
+            stop=true;
+            break;
+          }
+        }
+        if (stop) break;
       }
     }
   }
@@ -702,9 +749,24 @@ void MainWindow::open(QString filename)
   
   if(!ok || loader_name.isEmpty()) { return; }
   
-  Scene_item* scene_item = load_item(filename, find_loader(loader_name));
+  Scene_item* scene_item = load_item(fileinfo, find_loader(loader_name));
   selectSceneItem(scene->addItem(scene_item));
 }
+
+bool MainWindow::open(QString filename, QString loader_name) {
+  QFileInfo fileinfo(filename); 
+  Scene_item* item;
+  try {
+    item = load_item(fileinfo, find_loader(loader_name));
+  }
+  catch(std::logic_error e) {
+    std::cerr << e.what() << std::endl;
+    return false;
+  }
+  selectSceneItem(scene->addItem(item));
+  return true;
+}
+
 
 Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface* loader) {
   Scene_item* item = NULL;
@@ -713,7 +775,9 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
                                 .arg(fileinfo.absoluteFilePath()).toStdString());
   }
 
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   item = loader->load(fileinfo);
+  QApplication::restoreOverrideCursor();
   if(!item) {
     throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
                            .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
@@ -726,12 +790,17 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
 
 void MainWindow::selectSceneItem(int i)
 {
-  if(i < 0) return;
-  if(i >= scene->numberOfEntries()) return;
-
-  sceneView->selectionModel()->select(scene->createSelection(i),
-                                     QItemSelectionModel::ClearAndSelect);
+  if(i < 0 || i >= scene->numberOfEntries()) {
+    sceneView->selectionModel()->clearSelection();
+    updateInfo();
+    updateDisplayInfo();
+  }
+  else {
+    sceneView->selectionModel()->select(scene->createSelection(i),
+                                       QItemSelectionModel::ClearAndSelect);
+  }
 }
+
 
 void MainWindow::showSelectedPoint(double x, double y, double z)
 {
@@ -894,12 +963,22 @@ void MainWindow::updateDisplayInfo() {
 
 void MainWindow::readSettings()
 {
+  {
+    QSettings settings;
+    // enable anti-aliasing 
+    ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
+  }
   this->readState("MainWindow", Size|State);
 }
 
 void MainWindow::writeSettings()
 {
   this->writeState("MainWindow");
+  {
+    QSettings settings;
+    settings.setValue("antialiasing", 
+                      ui->actionAntiAliasing->isChecked());
+  }
   std::cerr << "Write setting... done.\n";
 }
 
@@ -914,7 +993,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
-void MainWindow::load_script(QFileInfo info)
+bool MainWindow::load_script(QString filename)
+{
+  QFileInfo fileinfo(filename);
+  return load_script(fileinfo);
+}
+
+bool MainWindow::load_script(QFileInfo info)
 {
 #if defined(QT_SCRIPT_LIB)
   QString program;
@@ -928,14 +1013,16 @@ void MainWindow::load_script(QFileInfo info)
       << "Execution of script \"" 
       << filename << "\"\n";
     evaluate_script(program, filename);
+    return true;
   }
 #endif
+  return false;
 }
 
 void MainWindow::on_actionLoad_Script_triggered() 
 {
 #if defined(QT_SCRIPT_LIB)
-  QString filename = QFileDialog::getSaveFileName(
+  QString filename = QFileDialog::getOpenFileName(
     this,
     tr("Select a script to run..."),
     ".",

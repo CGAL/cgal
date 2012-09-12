@@ -615,7 +615,6 @@ std::ostream& operator << ( std::ostream& os, const ConicCPA2<_PT,_DA>& c)
 template< class _PT, class _DA>
 std::istream& operator >> ( std::istream& is, ConicCPA2<_PT,_DA>& c)
 {
-    typedef           ConicCPA2<_PT,_DA>  Conic;
     typedef  typename _DA::FT                  FT;
 
     FT  r, s, t, u, v, w;

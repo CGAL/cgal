@@ -21,7 +21,7 @@ if( RS_FOUND AND NOT RS_SETUP )
       endif( IS_OLD_GXX )
     endif( APPLE AND CMAKE_COMPILER_IS_GNUCXX )
 
-    include_directories ( ${RS_INCLUDE_DIR} )
+    include_directories ( SYSTEM ${RS_INCLUDE_DIR} )
     add_definitions( ${RS_DEFINITIONS} "-DCGAL_USE_RS" )
     link_libraries( ${RS_LIBRARIES} )
 

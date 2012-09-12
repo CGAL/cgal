@@ -498,7 +498,6 @@ public:
   Vertex_handle create_from_plane(const Plane_3& pl, const Point_3& p, 
 				  const Mark& bnd, 
 				  const Mark& in, const Mark& out) const {
-    typedef typename CGAL::SNC_const_decorator<SNC_structure> SNC_const_decorator;
     Vertex_handle v = this->sncp()->new_vertex( p, bnd);
     v->point() = p;
     Sphere_circle c(pl); // circle through origin parallel to h

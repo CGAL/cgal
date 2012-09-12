@@ -12,6 +12,8 @@ if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
   
+  include( CGAL_CreateSingleSourceCGALProgram )
+
   find_package(Qt3-patched QUIET )
   # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
   # that it can be used together with FindQt4: all its variables are prefixed
@@ -27,28 +29,26 @@ if ( CGAL_FOUND )
   
     include_directories( ${QT3_INCLUDE_DIR} )
 
-    # Link the executables to CGAL and third-party libraries
-    link_libraries(${QT3_LIBRARIES} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-
-    add_executable(delaunay_triangulation_2 
+    create_single_source_cgal_program(
       delaunay_triangulation_2.cpp
       triangulation_2_edit_vertex.cpp 
       delaunay_triangulation_2_toolbar.cpp 
       delaunay_triangulation_2_toolbar_layers.cpp)
-  
-    add_executable(regular_triangulation_2
+    
+
+    create_single_source_cgal_program(
       regular_triangulation_2.cpp
       triangulation_2_edit_vertex.cpp
       regular_triangulation_2_toolbar.cpp
       regular_triangulation_2_toolbar_layers.cpp)
     
-    add_executable(constrained_delaunay_triangulation_2
+    create_single_source_cgal_program(
       constrained_delaunay_triangulation_2.cpp 
       constrained_delaunay_triangulation_2_toolbar.cpp 
       constrained_delaunay_triangulation_2_toolbar_layers.cpp)
               
-    add_executable(constrained constrained.cpp)
-  
+    create_single_source_cgal_program(constrained.cpp)
+
   else()
   
     message(STATUS "NOTICE: This demo requires Qt3 and the CGAL Qt3 library, and will not be compiled.")

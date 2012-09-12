@@ -62,7 +62,6 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Plane_3  Plane;
-  typedef typename Kernel::Vector_3 Vector;
 
   // types for K nearest neighbors search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;

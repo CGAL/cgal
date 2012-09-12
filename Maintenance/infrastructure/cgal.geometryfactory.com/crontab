@@ -16,17 +16,12 @@
 # Create internal release
 # The script also updates the manual tools.
 
-
-# SPECIAL TEST: test Script-improve_create_cmake-eric instead of next
-#0 21 * * Tue,Wed,Thu,Fri   cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/Script-improve_create_cmake-eric $HOME/CGAL/candidate-packages --public --do-it
-
-
 # "next" alone
 0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/next --public --do-it
 # "next" + candidates
 0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
-#  - from branch 4.0
-0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release-4.0-branch && $HOME/bin/create_release $HOME/CGAL/CGAL-4.0-branch --public --do-it
+# from branch 4.1
+0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release-4.1-branch && $HOME/bin/create_release $HOME/CGAL/CGAL-4.1-branch --public --do-it
 
 
 # Try to launch the test suite, every 10mn, from 21:00 to 22:50
@@ -49,6 +44,8 @@
 #0 21  *  *  Fri                       cd $HOME/CGAL/create_internal_release-3.7-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.7-branch --public --do-it
 #  - from branch 3.9
 #0 21  *  *  Sat                cd $HOME/CGAL/create_internal_release-3.9-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.9-branch --public --do-it
+#  - from branch 4.0
+#0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release-4.0-branch && $HOME/bin/create_release $HOME/CGAL/CGAL-4.0-branch --public --do-it
 #  - on trunk
 #0 21  *  *  Sat                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/trunk --public --do-it
 

@@ -865,7 +865,6 @@ rectangular_3_center_2_type2(
   using std::pair;
 
   typedef typename Operations::Point                       Point;
-  typedef typename Operations::Distance                 Distance;
   typedef pair< RandomAccessIterator, RandomAccessIterator >  IP;
 
   typename Operations::Construct_iso_rectangle_2

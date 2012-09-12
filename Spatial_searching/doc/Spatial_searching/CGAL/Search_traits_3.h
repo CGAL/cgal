@@ -60,6 +60,12 @@ has as argument a `Point_d` and an `int`.
 */ 
 Kernel::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_d; 
 
+/*!
+Functor with operator to construct 
+the iso box from two points.
+*/
+Kernel::Construct_iso_cuboid_3 Construct_iso_box_d;
+
 /*! 
 Functor with operator to construct 
 the center of an object of type `Sphere_d`. 

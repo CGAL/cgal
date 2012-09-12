@@ -244,7 +244,7 @@ primal(const Edge e) const
 {
   typedef typename Geom_traits::Segment_2  Segment;
   typedef typename Geom_traits::Ray_2      Ray;
-  typedef CGAL::Hyperbola_segment_2<Gt>    Hyperbola_segment;
+  // typedef CGAL::Hyperbola_segment_2<Gt>    Hyperbola_segment;
   typedef CGAL::Parabola_segment_2<Gt>     Parabola_segment;
   //  typedef typename Geom_traits::Hyperbola_segment_2  Hyperbola_segment;
   //  typedef typename Geom_traits::Parabola_segment_2   Parabola_segment;

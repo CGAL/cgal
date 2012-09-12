@@ -17,7 +17,6 @@ Scene_combinatorial_map_item* Scene_combinatorial_map_item::clone() const{return
 Kernel::Vector_3 Scene_combinatorial_map_item::compute_face_normal(Combinatorial_map_3::Dart_const_handle adart) const
 {
   typedef Combinatorial_map_3::Dart_of_orbit_const_range<1> Dart_in_facet_range;
-  typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
   Vector_3 normal = CGAL::NULL_VECTOR;
   
@@ -89,14 +88,14 @@ void Scene_combinatorial_map_item::export_as_polyhedron(Predicate pred,const QSt
 struct Select_volume{
   static const bool only_one_run=true;
   static const bool swap_orientation=false;
-  Select_volume(int i):volume_to_select(i),index(0){}
+  Select_volume(std::size_t i):volume_to_select(i),index(0){}
   template <class Dart_handle>
   bool operator() (Dart_handle){
     return ++index==volume_to_select;
   }
 private:
-  int volume_to_select;
-  int index;
+  std::size_t volume_to_select;
+  std::size_t index;
 };
 
 void Scene_combinatorial_map_item::export_current_volume_as_polyhedron() const {
@@ -228,7 +227,7 @@ void Scene_combinatorial_map_item::direct_draw() const {
   typedef Combinatorial_map_3::Dart_of_orbit_const_range<1> Dart_in_facet_range;
   Volume_dart_range dart_per_volume_range = combinatorial_map().one_dart_per_cell<3>();
   
-  int index = 0;
+  std::size_t index = 0;
   for (Volume_dart_range::const_iterator vit=dart_per_volume_range.begin();vit!=dart_per_volume_range.end();++vit)
   {
     if (++index!=volume_to_display && volume_to_display!=0) continue;

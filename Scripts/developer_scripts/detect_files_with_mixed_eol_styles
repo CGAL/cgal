@@ -1,0 +1,3 @@
+#/bin/bash
+
+grep -lE '[^'`printf '\r'`']$' $(ack -l "`printf '\r'`\$" ${@:-.})

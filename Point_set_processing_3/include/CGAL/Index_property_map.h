@@ -126,7 +126,7 @@ class Index_property_map<Iter,
 public:
   // Property maps' required types
   typedef boost::readable_property_map_tag  category;
-  typedef unsigned int                      value_type;
+  typedef std::size_t                       value_type;
   typedef value_type                        reference;
   typedef Iter                              key_type;
 

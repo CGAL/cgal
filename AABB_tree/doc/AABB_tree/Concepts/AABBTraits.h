@@ -85,11 +85,13 @@ A functor object to compute the bounding box of a set of primitives. Provides th
 */ 
 typedef Hidden_type Compute_bbox; 
 
-/*! 
-A functor object to specify the direction along which the bounding box should be split: 
-`Axis operator()(const Bounding_box& bbox);` which returns the direction used for splitting `bbox`. It is usually the axis aligned with the longest edge of `bbox`. 
-*/ 
-typedef Hidden_type Splitting_direction; 
+
+// remove as not used any where in the code:
+// A functor object to specify the direction along which the bounding box should be split: 
+// `Axis operator()(const Bounding_box& bbox);` which returns the
+// direction used for splitting `bbox`. It is usually the axis aligned
+// with the longest edge of `bbox`.
+// typedef Hidden_type Splitting_direction; 
 
 /// @}
 
@@ -131,8 +133,8 @@ A functor object to compute closest point from the query on a primitive. Provide
 typedef Hidden_type Closest_point; 
 
 /*! 
-A functor object to compute the squared distance between the query and a point. Provides the operator: 
-`FT operator()(const Query& query, const Point_3 & p);` which returns the squared distance between `query` and `p`. 
+A functor object to compute the squared distance between two points. Provides the operator: 
+`FT operator()(const Point& query, const Point_3 & p);` which returns the squared distance between `p` and `q`. 
 */ 
 typedef Hidden_type Squared_distance; 
 
@@ -180,6 +182,12 @@ Compare_distance compare_distance_object();
 Returns the closest point constructor. 
 */ 
 Closest_point closest_point_object(); 
+
+/*! 
+Returns the squared distance functor.
+*/ 
+Squared_distance squared_distance_object(); 
+
 
 /// @}
 

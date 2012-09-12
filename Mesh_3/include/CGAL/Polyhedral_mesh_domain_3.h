@@ -554,9 +554,6 @@ Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
 Construct_initial_points::operator()(OutputIterator pts,
                                      const int n) const
 {
-  typedef boost::optional<typename AABB_tree_::Object_and_primitive_id>
-                                                            AABB_intersection;
-  
   typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
   typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
   

@@ -63,8 +63,11 @@ namespace CGAL {
 
     /// Number type returned by the distance queries.
 		typedef typename AABBTraits::FT FT;
+
+
     /// Type of 3D point.
-		typedef typename AABBTraits::Point Point;
+		typedef typename AABBTraits::Point_3 Point;
+
     /// Type of input primitive.
 		typedef typename AABBTraits::Primitive Primitive;
     /// Type of bounding box.
@@ -708,7 +711,7 @@ public:
 		const Point& hint) const
 	{
 		const Point closest = this->closest_point(query, hint);
-		return typename Tr::Compute_squared_distance_3()(query, closest);
+		return Tr().squared_distance_object()(query, closest);
 	}
 
 	// squared distance without user-specified hint
@@ -717,7 +720,7 @@ public:
 		AABB_tree<Tr>::squared_distance(const Point& query) const
 	{
 		const Point closest = this->closest_point(query);
-		return typename Tr::Compute_squared_distance_3()(query, closest);
+		return Tr().squared_distance_object()(query, closest);
 	}
 
 	// closest point with user-specified hint

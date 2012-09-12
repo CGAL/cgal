@@ -361,7 +361,6 @@ void change_top_chain(Polygon& polygon,
          {
             std::copy(new_point_ref, stack.before_front(), 
                       std::back_inserter(new_polygon));
-            typedef typename Polygon::iterator iterator;
             erase_vertices(top_chain.front(), stack.front(), polygon,
                            update_required);
             top_chain.push_front(stack.front());
@@ -801,7 +800,6 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
 {
    if (first == beyond) return result;
 
-   typedef typename Traits::Point_2                          Point_2;
    typedef typename Traits::Polygon_2                        Polygon_2;
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \

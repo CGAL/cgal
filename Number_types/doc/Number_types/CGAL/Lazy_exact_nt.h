@@ -50,15 +50,9 @@ introduces an uninitialized variable `m`.
 Lazy_exact_nt(); 
 
 /*! 
-introduces the integral value `i`. 
+introduces the value \a x, of any builtin arithmetic type (`int`, `double`, etc) (works only if `NT` has a constructor from this type too).
 */ 
-Lazy_exact_nt(int i); 
-
-/*! 
-introduces the floating point value `d` (works only if `NT` has a 
-constructor from a double too). 
-*/ 
-Lazy_exact_nt(double d); 
+Lazy_exact_nt(builtin i); 
 
 /*! 
 introduces the value `n`. 

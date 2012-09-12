@@ -18,11 +18,6 @@ public:
 /// @{
 
 /*! 
-Bounding box type. 
-*/ 
-typedef Hidden_type Bbox_3; 
-
-/*! 
 Sphere type, that should be consistent with the distance function chosen for the distance queries, namely the `Squared_distance_3` functor. 
 */ 
 typedef Hidden_type Sphere_3; 
@@ -73,6 +68,13 @@ A functor object to compute the squared radius of a sphere. Provides the operato
 */ 
 typedef Hidden_type Compute_squared_radius_3; 
 
+/*!
+A functor object to compute the squared distance between two points. Provides the operator:
+`FT operator()(const Point_3& p, const Point_3& q);}` which returns the squared distance between \a p and \a q.
+*/
+typedef Hidden_type Compute_squared_distance_3;
+
+
 /// @} 
 
 /// \name Operations 
@@ -107,6 +109,11 @@ Has_on_bounded_side_3 has_on_bounded_side_3_object();
 Returns the squared radius functor. 
 */ 
 Compute_squared_radius_3 compute_squared_radius_3_object(); 
+
+/*!
+Returns the squared distance functor.
+*/
+Compute_squared_distance_3 compute_squared_distance_3_object();
 
 /// @}
 

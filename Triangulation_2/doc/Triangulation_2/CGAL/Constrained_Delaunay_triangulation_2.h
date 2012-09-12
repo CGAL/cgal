@@ -35,16 +35,12 @@ following :
 `CGAL::No_intersection_tag` if intersections of 
 input constraints are disallowed, 
 
-`CGAL::Exact_predicates_tag` allows intersections between input 
-constraints 
-and is to be used when the traits 
-class 
-provides exact predicates but approximate constructions of the 
-intersection points. 
-`CGAL::Exact_intersections_tag` allows intersections between input 
-constraints 
-and is to be used in conjunction 
-with an exact arithmetic type. 
+`CGAL::Exact_predicates_tag` allows intersections between input
+constraints and is to be used when the traits class provides exact
+predicates but approximate constructions of the intersection points,
+`CGAL::Exact_intersections_tag` allows intersections between input
+constraints and is to be used in conjunction with an exact arithmetic
+type.
 
 The template parameters `Tds` 
 has to be instantiate with a model of `TriangulationDataStructure_2`. 

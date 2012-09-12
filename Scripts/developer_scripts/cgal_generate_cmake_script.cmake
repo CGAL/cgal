@@ -280,7 +280,8 @@ if ( NOT ${BOOST_COMPONENTS} STREQUAL "")
   file(APPEND CMakeLists.txt "# Boost linking\n" )
 
   foreach (BOOST_COMPONENT ${BOOST_COMPONENTS})
-    file(APPEND CMakeLists.txt "link_libraries( \${Boost_${BOOST_COMPONENT}_LIBRARY} )\n")
+    file(APPEND CMakeLists.txt "add_definitions( \"-DCGAL_USE_BOOST_${BOOST_COMPONENT}\" )")
+    file(APPEND CMakeLists.txt "list(APPEND CGAL_3RD_PARTY_LIBRARIES \${Boost_${BOOST_COMPONENT}_LIBRARY} )\n")
   endforeach()
 
   file(APPEND CMakeLists.txt "\n")

@@ -196,23 +196,16 @@ The provided value is a default value that triggers the representation
 of corners and curve segments in the mesh when the domain is a model 
 of `MeshDomainWithFeatures_3`. 
 
-Provides a `Features` value such that 
+Provides a `Features_options` value such that 
 \f$ 0\f$ and \f$ 1\f$-dimensional input features are taken into account 
 if domain is a model of the refined concept `MeshDomainWithFeatures_3`. 
 
-Parameters 
--------------- 
-
-The template parameter `MeshDomain_3` is required to be a model 
-of `MeshDomain_3` or `MeshDomainWithFeatures_3`. 
-
-\sa `CGAL::make_mesh_3`, 
-\sa `CGAL::refine_mesh_3`, 
-\sa `CGAL::parameters::no_features`. 
+\sa `CGAL::make_mesh_3`
+\sa `CGAL::refine_mesh_3`
+\sa `CGAL::parameters::no_features`
 
 */
-template <class MeshDomain_3>
-Features features(MeshDomain_3 domain);
+parameters::interal::Features_options features(MeshDomain_3 domain);
 
 /*!
 \ingroup PkgMesh_3Parameters
@@ -287,7 +280,7 @@ and the user does not want corners and curve segments
 to be accurately represented 
 in the mesh. 
 
-Return a `Features` value that prevents the mesh generator 
+Return a `Features_options` value that prevents the mesh generator 
 to take into account \f$ 0\f$ and \f$ 1\f$-dimensional input features. 
 
 \sa `CGAL::make_mesh_3`, 
@@ -295,7 +288,7 @@ to take into account \f$ 0\f$ and \f$ 1\f$-dimensional input features.
 \sa `CGAL::parameters::features`. 
 
 */
-Features no_features();
+parameters::internal::Features_options no_features();
 
 /*!
 \ingroup PkgMesh_3Parameters
