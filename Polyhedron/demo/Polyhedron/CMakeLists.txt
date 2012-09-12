@@ -3,12 +3,10 @@
 project( Polyhedron )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 #option(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL "In the Polyhedron demo, enable " OFF)
@@ -82,7 +80,8 @@ endif()
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
-  find_package(Boost)
+  set(Boost_USE_MULTITHREADED      ON)
+  find_package(Boost COMPONENTS thread system)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -100,6 +99,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt4_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
+  qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
 
   include(AddFileDependencies)
 
@@ -126,8 +126,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
               Show_point_dialog.cpp
+              Camera_positions_list.cpp
               Scene_points_with_normal_item.cpp
               )
+
 
   # AUXILIARY LIBRARIES
 
@@ -144,6 +146,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   target_link_libraries(demo_framework
     ${QGLVIEWER_LIBRARIES}
+    ${QT_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     )
@@ -152,55 +155,47 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_plane_item.cpp Scene_plane_item.moc)
   target_link_libraries(scene_basic_objects 
     demo_framework
+    ${CGAL_LIBRARIES}
     ${QGLVIEWER_LIBRARIES}
+    ${QT_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     )
 
-  add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES} )
+  add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
+  target_link_libraries(point_dialog ${QT_LIBRARIES})
 
-  add_library(scene_c2t3_item SHARED
-    Scene_c2t3_item.cpp Scene_c2t3_item.moc)
-  target_link_libraries(scene_c2t3_item demo_framework)
+  macro(add_item item_name)
+    add_library(${item_name} SHARED ${ARGN})
+    target_link_libraries(${item_name} demo_framework ${QT_LIBRARIES} ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
+  endmacro(add_item)
 
-  add_library(scene_polyhedron_item SHARED
-    Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
-  target_link_libraries(scene_polyhedron_item demo_framework)
+  add_item(scene_c2t3_item Scene_c2t3_item.cpp Scene_c2t3_item.moc)
+  add_item(scene_polyhedron_item Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
+  add_item(scene_polyhedron_transform_item Scene_polyhedron_transform_item.cpp Scene_polyhedron_transform_item.moc)
+  # special
+  target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
-  add_library(scene_polyhedron_transform_item SHARED
-    Scene_polyhedron_transform_item.cpp Scene_polyhedron_transform_item.moc)
-  target_link_libraries(scene_polyhedron_transform_item demo_framework scene_polyhedron_item)
+  add_item(scene_combinatorial_map_item Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
+  # special
+  target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
 
-  add_library(scene_combinatorial_map_item SHARED
-    Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
-  target_link_libraries(scene_combinatorial_map_item demo_framework scene_polyhedron_item)
+  add_item(scene_polylines_item Scene_polylines_item.cpp Scene_polylines_item.moc)
 
-  add_library(scene_polylines_item SHARED
-    Scene_polylines_item.cpp Scene_polylines_item.moc)
-  target_link_libraries(scene_polylines_item demo_framework)
-
-  add_library(scene_edit_polyhedron_item SHARED
-    Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
-  target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
+  add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
+  # special
+  target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item)
 
   if(EIGEN3_FOUND OR TAUCS_FOUND)
-  add_library(scene_textured_polyhedron_item SHARED
-    Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
-  target_link_libraries(scene_textured_polyhedron_item demo_framework)
+    add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
 
-  add_library(scene_polygon_soup_item SHARED
-    Scene_polygon_soup_item.cpp Scene_polygon_soup_item.moc)
-  target_link_libraries(scene_polygon_soup_item demo_framework scene_polyhedron_item)
-
-  add_library(scene_nef_polyhedron_item SHARED
-    Scene_nef_polyhedron_item.cpp Scene_nef_polyhedron_item.moc
+  add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp Scene_polygon_soup_item.moc)
+  target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
+  add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp Scene_nef_polyhedron_item.moc
     Scene_nef_rendering.cpp)
-  target_link_libraries(scene_nef_polyhedron_item demo_framework scene_polyhedron_item)
-
-  add_library(scene_points_with_normal_item SHARED
-    Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
-  target_link_libraries(scene_points_with_normal_item demo_framework)
+  target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
+  add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
 
   foreach( lib 
       demo_framework
@@ -292,6 +287,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp Polyhedron_demo_remeshing_plugin_cgal_code.moc ${remeshingUI_FILES})
   target_link_libraries(remeshing_plugin scene_polyhedron_item scene_polygon_soup_item scene_c2t3_item)
 
+  polyhedron_demo_plugin(camera_positions_plugin 
+    Polyhedron_demo_camera_positions_plugin
+    Camera_positions_list 
+    Camera_positions_list.moc
+    ${cameraUI_FILES})
+
+  target_link_libraries( camera_positions_plugin ${QGLVIEWER_LIBRARIES} )
+
   if ( Boost_VERSION GREATER 103400 )
     qt4_generate_moc( "Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Scene_c3t3_item.moc" )
 
@@ -308,14 +311,20 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
   target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item)
 
-  polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin)
-  target_link_libraries(xyz_plugin scene_points_with_normal_item)
-
   polyhedron_demo_plugin(nef_io_plugin Polyhedron_demo_io_nef_plugin)
   target_link_libraries(nef_io_plugin  scene_nef_polyhedron_item)
 
   polyhedron_demo_plugin(polylines_io_plugin Polyhedron_demo_polylines_io_plugin)
   target_link_libraries(polylines_io_plugin scene_polylines_item)
+
+  polyhedron_demo_plugin(gocad_plugin Polyhedron_demo_gocad_plugin)
+  target_link_libraries(gocad_plugin scene_polyhedron_item)
+
+  polyhedron_demo_plugin(stl_plugin Polyhedron_demo_stl_plugin)
+  target_link_libraries(stl_plugin scene_polyhedron_item)
+
+  polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin)
+  target_link_libraries(xyz_plugin scene_points_with_normal_item)
 
   polyhedron_demo_plugin(orient_soup_plugin Polyhedron_demo_orient_soup_plugin)
   target_link_libraries(orient_soup_plugin scene_polygon_soup_item scene_polyhedron_item)
@@ -330,7 +339,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(off_to_xyz_plugin scene_points_with_normal_item)
 
   polyhedron_demo_plugin(convex_hull_plugin Polyhedron_demo_convex_hull_plugin)
-  target_link_libraries(convex_hull_plugin scene_polyhedron_item scene_points_with_normal_item)
+  target_link_libraries(convex_hull_plugin scene_polyhedron_item scene_points_with_normal_item scene_polylines_item)
 
   polyhedron_demo_plugin(kernel_plugin Polyhedron_demo_kernel_plugin)
   target_link_libraries(kernel_plugin scene_polyhedron_item)

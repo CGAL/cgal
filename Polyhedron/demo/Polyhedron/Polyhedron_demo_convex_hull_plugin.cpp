@@ -5,6 +5,7 @@
 
 #include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
+#include "Scene_polylines_item.h"
 #include "Polyhedron_type.h"
 
 #include "Polyhedron_demo_plugin_helper.h"
@@ -28,6 +29,7 @@ public:
   bool applicable() const {
     return 
       qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
+      qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
@@ -47,7 +49,10 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
   Scene_points_with_normal_item* pts_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
   
-  if(poly_item || pts_item)
+  Scene_polylines_item* lines_item = 
+    qobject_cast<Scene_polylines_item*>(scene->item(index));
+  
+  if(poly_item || pts_item || lines_item)
   {
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -63,7 +68,23 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
       CGAL::convex_hull_3(pMesh->points_begin(),pMesh->points_end(),*pConvex_hull);
     }
     else{
-      CGAL::convex_hull_3(pts_item->point_set()->begin(),pts_item->point_set()->end(),*pConvex_hull);
+      if (pts_item)
+        CGAL::convex_hull_3(pts_item->point_set()->begin(),pts_item->point_set()->end(),*pConvex_hull);
+      else{
+        std::size_t nb_points=0;
+        for(std::list<std::vector<Kernel::Point_3> >::const_iterator it = lines_item->polylines.begin();
+            it != lines_item->polylines.end();
+            ++it)  nb_points+=it->size()-1;
+
+        std::vector<Kernel::Point_3> all_points;
+        all_points.reserve( nb_points );
+
+        for(std::list<std::vector<Kernel::Point_3> >::const_iterator it = lines_item->polylines.begin();
+            it != lines_item->polylines.end();
+            ++it)  std::copy(it->begin(), CGAL::cpp11::prev(it->end()),std::back_inserter( all_points ) );
+        
+        CGAL::convex_hull_3(all_points.begin(),all_points.end(),*pConvex_hull);
+      }
     }
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 

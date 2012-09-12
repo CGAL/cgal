@@ -4,12 +4,10 @@
 project( Surface_mesh_parameterization_example )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 # Require packages new or improved since CGAL 3.4
@@ -69,10 +67,8 @@ if ( CGAL_FOUND )
       message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
     endif()
     add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-    if ( NOT CGAL_AUTO_LINK_ENABLED )
-      link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
-    endif()
-  endif()
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
+ endif()
 
   # Executables that do *not* use TAUCS
   create_single_source_cgal_program( "Authalic_parameterization.cpp" )

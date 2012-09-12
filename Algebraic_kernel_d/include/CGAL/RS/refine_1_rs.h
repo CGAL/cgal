@@ -29,13 +29,32 @@ namespace RS3{
 
 inline void refine_1(const CGAL::Algebraic_1 &a,unsigned int s=10000){
         CGAL_precondition(a.inf()<=a.sup());
-        rs3_refine_u_root((mpfi_ptr)a.mpfi(),
-                          a.pol().get_coefs(),
-                          a.pol().get_degree(),
-                          mpfi_get_prec(a.mpfi())+s,
-                          0,
-                          0);
-        CGAL_assertion(a.inf()<=a.sup());
+        // If the precision of the endpoints is not enough for the desired
+        // refinement, allocate a new mpfi and swap later the result.
+        if(mpfr_get_prec(&((mpfi_ptr)(a.mpfi()))->left)<s+2||
+           mpfr_get_prec(&((mpfi_ptr)(a.mpfi()))->right)<s+2){
+                mpfi_t n;
+                mpfi_init2(n,s+2);
+                mpfi_set(n,a.mpfi());
+                rs3_refine_u_root(n,
+                                a.pol().get_coefs(),
+                                a.pol().get_degree(),
+                                s+1,
+                                0,
+                                0);
+                mpfi_swap(n,(mpfi_ptr)a.mpfi());
+                // It is not possible to clear the original mpfi because it
+                // could be allocated inside RS memory.
+                // TODO: clear the mpfi except the first time it is refined
+        }else{
+                rs3_refine_u_root((mpfi_ptr)a.mpfi(),
+                                a.pol().get_coefs(),
+                                a.pol().get_degree(),
+                                s+1,
+                                0,
+                                0);
+        }
+        CGAL_postcondition(a.inf()<=a.sup());
 }
 
 } // namespace RS3

@@ -1,7 +1,7 @@
 function(create_single_source_cgal_program firstfile )
 
   if(NOT IS_ABSOLUTE "${firstfile}")
-    set(file "${CMAKE_CURRENT_SOURCE_DIR}/${firstfile}")
+    set(firstfile "${CMAKE_CURRENT_SOURCE_DIR}/${firstfile}")
   endif()
 
   if(EXISTS "${firstfile}")

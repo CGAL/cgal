@@ -207,7 +207,8 @@ int main(){
   CGAL::Gmpzf f;
   mpfr_set_inf(plus_infinity.fr(),1);
   mpfr_set_inf(minus_infinity.fr(),-1);
-  _TEST("I/O int",(CGAL::test_io<NT,int>(2145338339));)
+  _TEST("I/O positive int",(CGAL::test_io<NT,int>(2145338339));)
+  _TEST("I/O negative int",(CGAL::test_io<NT,int>(-25295236));)
   _TEST("I/O double",(CGAL::test_io<NT,double>(.2147483647));)
   _TEST("I/O +inf",(CGAL::test_io<NT,NT>(plus_infinity));)
   _TEST("I/O -inf",(CGAL::test_io<NT,NT>(minus_infinity));)

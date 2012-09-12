@@ -24,6 +24,7 @@ public:
           break;
         }
       }
+      QApplication::restoreOverrideCursor();
     } catch (...) {
       qFatal("Unknown exception encountered. Aborting.");
     }

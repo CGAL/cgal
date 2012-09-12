@@ -46,7 +46,7 @@ namespace QP_functions_detail {
   // type of LinearInequalitySystem must be convertible to ET
   template <class Ar, class ET>
   bool has_linearly_independent_equations 
-  (const Ar& ar, const ET& dummy) {
+  (const Ar& ar, const ET& /*dummy*/) {
     // we solve the following auxiliary LP, using exact type ET:
     // --------
     // min 0

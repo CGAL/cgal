@@ -23,10 +23,10 @@
 #ifndef CGAL__TEST_CLS_OBJECT_H
 #define CGAL__TEST_CLS_OBJECT_H
 
-#include <CGAL/use.h>
+#include <CGAL/Testsuite/use.h>
 #include <cassert>
 
-using CGAL::use;
+using CGAL::internal::use;
 
 // Test that we can derive from Object.
  
