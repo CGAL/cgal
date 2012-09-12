@@ -23,7 +23,6 @@ of the \f$ x\f$-monotone curve that represents the overlap.
 
 \models ::ArrangementTraits_2 
 
-CONVERROR 1 missing nested class 
 */
 template< typename Traits, typename Data >
 class Arr_consolidated_curve_data_traits_2 
@@ -62,6 +61,110 @@ a non-mutable iterator for the data objects in the data container.
 typedef Hidden_type typedef Data_iterator; 
 
 /// @}
+
+
+/*!
+
+
+The `Data_container` class nested within the consolidated 
+curve-data traits and associated with the `Traits::X_monotone_curve_2` 
+type is maintained as a list with unique data objects. This representation is 
+simple and efficient in terms of memory consumption. It also requires that 
+the `Data` class supports only the equality operator. Note however that 
+most set operations require linear time. 
+
+*/
+class Data_container {
+public:
+
+/// \name Creation 
+/// @{
+
+/*! 
+default constructor. 
+*/ 
+Data_container (); 
+
+/*! 
+constructs set containing a single `data` object. 
+*/ 
+Data_container (const Data& data); 
+
+/// @} 
+
+/// \name Access Functions 
+/// @{
+
+/*! 
+returns the number of data objects in the set. 
+*/ 
+std::size_t size () const; 
+
+/*! 
+returns an iterator pointing to the first data object. 
+*/ 
+Data_iterator begin () const; 
+
+/*! 
+returns a past-the-end iterator for the data objects. 
+*/ 
+Data_iterator end () const; 
+
+/*! 
+returns the first data object inserted into the set. 
+\pre The number of data objects is not \f$ 0\f$. 
+*/ 
+const Data& front () const; 
+
+/*! 
+returns the last data object inserted into the set. 
+\pre The number of data objects is not \f$ 0\f$. 
+*/ 
+const Data& back () const; 
+
+/// @} 
+
+/// \name Predicates 
+/// @{
+
+/*! 
+check if the two sets contain the same data objects (regardless of order). 
+*/ 
+bool operator== (const Data_container& other) const; 
+
+/*! 
+find the given `data` object in the set and returns an iterator 
+for this object, or `end()` if it is not found. 
+*/ 
+Data_iterator find (const Data& data); 
+
+/// @} 
+
+/// \name Modifiers 
+/// @{
+
+/*! 
+inserts the given `data` object into the set. Returns `true` on 
+success, or `false` if the set already contains the object. 
+*/ 
+bool insert (const Data& data); 
+
+/*! 
+erases the given `data` object from the set. Returns `true` on 
+success, or `false` if the set does not contain the object. 
+*/ 
+bool erase (const Data& data); 
+
+/*! 
+clears the set. 
+*/ 
+void clear (); 
+
+/// @}
+
+}; /* end Arr_consolidated_curve_data_traits_2::Data_container */
+
+
 
 }; /* end Arr_consolidated_curve_data_traits_2 */
 } /* end namespace CGAL */
