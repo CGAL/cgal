@@ -5635,6 +5635,41 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/pyramid.of
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test.cmd eol=lf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suite.bat eol=crlf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suite.sh eol=lf
+Surface_mesh_simplification/doc/Surface_mesh_simplification/CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_cost.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_cost.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/CGAL/Surface_mesh_simplification/edge_collapse.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/Classified.txt -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/Concepts/EdgeCollapsableMesh.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/Concepts/EdgeCollapseSimplificationVisitor.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/Concepts/EdgeProfile.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/Concepts/GetCost.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/Concepts/GetPlacement.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/Concepts/StopPredicate.h -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/PackageDescription.txt -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/Surface_mesh_simplification.txt -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.jpg -text svneol=unset#image/jpeg
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse1.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse1.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse2.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse2.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse3.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse3.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse4.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse4.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/collapse0.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/collapse0.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/collapse1.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/collapse1.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/detail.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/general_collapse.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/general_collapse.png -text svneol=unset#image/png
 Surface_mesh_simplification/doc_tex/OLD[!!-~]Surface_mesh_simplification.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.jpg -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#application/pdf

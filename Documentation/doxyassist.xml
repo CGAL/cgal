@@ -253,6 +253,20 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>Triangulated Surface Mesh Simplification</name>
+        <input>../Surface_mesh_simplification/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Surface_mesh_simplification/doc/Surface_mesh_simplification/</string>
+          <string name="STRIP_FROM_INC_PATH">../Surface_mesh_simplification/doc/Surface_mesh_simplification/</string>
+          <string name="GENERATE_TAGFILE">./tags/Surface_mesh_simplification.tag</string>
+          <string name="EXAMPLE_PATH">../Surface_mesh_simplification/examples</string>
+          <string name="IMAGE_PATH">../Surface_mesh_simplification/doc/Surface_mesh_simplification/fig</string>
+        </doxygen>
+      </project>
+
+
+
+      <project>
         <name>3D Convex Hulls</name>
         <input>../Convex_hull_3/doc</input>
         <doxygen>
@@ -975,6 +989,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig</item>
           <item>../Straight_skeleton_2/doc/Straight_skeleton_2/fig</item>
           <item>../Voronoi_diagram_2/doc/Voronoi_diagram_2/fig</item>
+          <item>../Surface_mesh_simplification/doc/Surface_mesh_simplification/fig</item>
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
@@ -1033,6 +1048,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Segment_Delaunay_graph_2.tag=../../CGAL.CGAL.2D-Segment-Delaunay-Graphs/html</item>
           <item>./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.2D-Straight-Skeleton-and-Polygon-Offsetting/html</item>
           <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.2D-Voronoi-Diagram-Adaptor/html</item>
+          <item>./tags/Surface_mesh_simplification.tag=../../CGAL.CGAL.Triangulated-Surface-Mesh-Simplification/html</item>
         </list>
         <string name="HTML_EXTRA_STYLESHEET">cgal_stylesheet.css</string>
         <bool name="ALLEXTERNALS">true</bool>
