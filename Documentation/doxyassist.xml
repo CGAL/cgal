@@ -300,7 +300,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Convex_hull_3/doc/Convex_hull_3/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.2D-Convex-Hulls-and-Extreme-Points/html</item>
-            <item>./tags/Triangulation_23.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
             <item>./tags/Convex_hull_d.tag=../../CGAL.CGAL.dD-Convex-Hulls-and-Delaunay-Triangulations/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface</item>
           </list>
