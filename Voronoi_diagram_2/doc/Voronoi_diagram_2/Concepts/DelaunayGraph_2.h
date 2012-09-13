@@ -19,13 +19,13 @@ iterators and circulators that allow to traverse it (completely or
 partially). All iterators and circulators must be convertible to the 
 corresponding handles. 
 
-\hasModel CGAL::Delaunay_triangulation_2<Traits,Tds> 
-\hasModel CGAL::Regular_triangulation_2<Traits,Tds> 
+\hasModel `CGAL::Delaunay_triangulation_2<Traits,Tds>` 
+\hasModel `CGAL::Regular_triangulation_2<Traits,Tds>` 
 \hasModel `CGAL::Triangulation_hierarchy_2<Tr>` provided that `Tr` is a model of `DelaunayGraph_2` 
-\hasModel CGAL::Segment_Delaunay_graph_2<Gt,DS> 
-\hasModel CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS> 
-\hasModel CGAL::Apollonius_graph_2<Gt,Agds> 
-\hasModel CGAL::Apollonius_graph_hierarchy_2<Gt,Agds> 
+\hasModel `CGAL::Segment_Delaunay_graph_2<Gt,DS>` 
+\hasModel `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>` 
+\hasModel `CGAL::Apollonius_graph_2<Gt,Agds>` 
+\hasModel `CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>` 
 
 \sa `AdaptationTraits_2` 
 \sa `AdaptationPolicy_2` 

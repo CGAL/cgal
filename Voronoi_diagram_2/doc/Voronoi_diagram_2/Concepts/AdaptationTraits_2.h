@@ -11,10 +11,10 @@ tag is provided for determining whether this functor is defined or not.
 
 \refines ::DefaultConstructible, \refines ::CopyConstructible, \refines ::Assignable 
 
-\hasModel CGAL::Apollonius_graph_adaptation_traits_2<AG2> 
-\hasModel CGAL::Delaunay_triangulation_adaptation_traits_2<DT2> 
-\hasModel CGAL::Regular_triangulation_adaptation_traits_2<RT2> 
-\hasModel CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2> 
+\hasModel `CGAL::Apollonius_graph_adaptation_traits_2<AG2>`
+\hasModel `CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>`
+\hasModel `CGAL::Regular_triangulation_adaptation_traits_2<RT2>`
+\hasModel `CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>`
 
 \sa `DelaunayGraph_2` 
 \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 
