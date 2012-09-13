@@ -6303,6 +6303,24 @@ Triangulation_3/include/CGAL/internal/info_check.h -text
 Triangulation_3/test/Triangulation_3/include/CGAL/_test_remove_cluster.h -text
 Triangulation_3/test/Triangulation_3/test_regular_insert_range_with_info.cpp -text
 Triangulation_3/test/Triangulation_3/test_static_filters.cpp -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Apollonius_graph_adaptation_policies_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Apollonius_graph_adaptation_traits_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Delaunay_triangulation_adaptation_policies_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Delaunay_triangulation_adaptation_traits_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Identity_policy_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Regular_triangulation_adaptation_policies_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Regular_triangulation_adaptation_traits_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Segment_Delaunay_graph_adaptation_policies_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Segment_Delaunay_graph_adaptation_traits_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Voronoi_diagram_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/Classified.txt -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/Concepts/AdaptationPolicy_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/Concepts/AdaptationTraits_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/Concepts/DelaunayGraph_2.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/PackageDescription.txt -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/Unsupported/NOINCLUDE.h -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/Voronoi_diagram_2.txt -text
+Voronoi_diagram_2/doc/Voronoi_diagram_2/fig/voronoi.png -text svneol=unset#image/png
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
 wininst/developer_scripts/CGAL.bmp -text svneol=unset#image/bmp
 wininst/developer_scripts/DumpLogToFile.nsh -text
