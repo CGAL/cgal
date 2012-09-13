@@ -85,30 +85,32 @@ disabled.
 */ 
 typedef Hidden_type Attributes; 
 
-/*! 
-Type of <I>i</I>-attributes, a model of `CellAttribute` concept. 
-`Attribute_type<i>::type::Dart_handle` is equal to `Dart_handle`, and 
-`Attribute_type<i>::type::Dart_const_handle` is equal to `Dart_const_handle`. 
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> and <I>i</I>-attributes are non void. 
-*/ 
 template<unsigned int i> 
-struct Attribute_type;
-
-/*! 
-Handle to <I>i</I>-attributes, equal to `Dart::Attribute_handle<i>::type`. 
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> and <I>i</I>-attributes are non void. 
-*/ 
-template<unsigned int i> 
-struct Attribute_handle {
+struct Attribute_type {
+  /*! 
+  Type of <I>i</I>-attributes, a model of `CellAttribute` concept. 
+  `Attribute_type<i>::type::Dart_handle` is equal to `Dart_handle`, and 
+  `Attribute_type<i>::type::Dart_const_handle` is equal to `Dart_const_handle`. 
+  \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> and <I>i</I>-attributes are non void. 
+  */ 
   typedef Hidden_type type;
 };
 
-/*! 
-Const handle to <I>i</I>-attributes, equal to `Dart::Attribute_const_handle<i>::type`. 
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> and <I>i</I>-attributes are non void. 
-*/ 
 template<unsigned int i> 
-Attribute_const_handle {
+struct Attribute_handle {
+  /*! 
+  Handle to <I>i</I>-attributes, equal to `Dart::Attribute_handle<i>::type`. 
+  \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> and <I>i</I>-attributes are non void. 
+  */ 
+  typedef Hidden_type type;
+};
+
+template<unsigned int i> 
+struct Attribute_const_handle {
+  /*! 
+  Const handle to <I>i</I>-attributes, equal to `Dart::Attribute_const_handle<i>::type`. 
+  \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> and <I>i</I>-attributes are non void. 
+  */ 
   typedef Hidden_type type;
 };
 
