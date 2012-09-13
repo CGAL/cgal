@@ -560,11 +560,11 @@ void clear();
 /// @} 
 
 /*! \name Operations with Border Halfedges 
-\advanced The following notion of <I>border halfedges/</I> is particular useful 
+\advanced The following notion of <I>border halfedges</I> is particular useful 
 where the halfedge data structure is used to model surfaces with 
 boundary, i.e., surfaces with missing faces or open regions. Halfedges 
 incident to an open region are called <I>border halfedges</I>. A 
-halfedge is a <I>border edge/</I> if the halfedge itself or its 
+halfedge is a <I>border edge</I> if the halfedge itself or its 
 opposite halfedge is a border halfedge. The only requirement to work 
 with border halfedges is that the 
 `Halfedge` class provides a member function `is_border()` 

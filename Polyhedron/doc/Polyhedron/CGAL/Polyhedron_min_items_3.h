@@ -8,7 +8,7 @@ The class `Polyhedron_min_items_3` is a minimal model of the
 `PolyhedronItems_3` concept. It provides definitions for vertices 
 containing points, halfedges, and faces. The polyhedron traits class 
 must provide the respective type for the point. Vertices and facets 
-both do <I>not/</I> contain a halfedge handle to an incident 
+both do <I>not</I> contain a halfedge handle to an incident 
 halfedge. 
 
 \models \ref ::PolyhedronItems_3 

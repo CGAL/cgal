@@ -11,7 +11,7 @@ particular, iterator traits are now assumed and required.
 Iterators in the \stl were tailored for linear sequences. The
 specialization for circular data structures leads to slightly
 different requirements which we will summarize in the
-<I>circulators/</I> concept. The main difference is that a circular
+<I>circulators</I> concept. The main difference is that a circular
 data structure has no natural past-the-end value. As a consequence, a
 container supporting circulators will not have an
 <TT>end()</TT>-member function. The semantic of a circulator range

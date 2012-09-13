@@ -109,7 +109,7 @@ Halfedge_handle create_segment();
 /// @} 
 
 /// \name Removal of Elements 
-/// The following member functions do <I>not/</I> update affected 
+/// The following member functions do <I>not</I> update affected 
 /// incidence relations except if mentioned otherwise. 
 /// @{
 

@@ -84,7 +84,7 @@ namespace CGAL {
   to work with pointers to boxes and copy only pointers. We offer 
   automatic support for both options. To simplify the description, let 
   us call the `value_type` of the iterators <I>box handle</I>. The 
-  <I>box handle/</I> can either be our box type itself or a pointer (or 
+  <I>box handle</I> can either be our box type itself or a pointer (or 
   const pointer) to the box type. 
 
   A \f$ d\f$-dimensional iso-oriented box is defined as the 
@@ -427,7 +427,7 @@ namespace CGAL {
   box it can be faster to copy the boxes, or to work with pointers to 
   boxes and copy only pointers. We offer automatic support for both 
   options. To simplify the description, let us call the `value_type` 
-  of the iterators <I>box handle</I>. The <I>box handle/</I> can 
+  of the iterators <I>box handle</I>. The <I>box handle</I> can 
   either be our box type itself or a pointer (or const pointer) to the 
   box type. 
 
