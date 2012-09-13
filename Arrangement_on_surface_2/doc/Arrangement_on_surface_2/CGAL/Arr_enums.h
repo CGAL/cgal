@@ -14,10 +14,10 @@ enum Arr_curve_end { ARR_MIN_END, ARR_MAX_END };
   \ingroup PkgArrangement2
 
   The enumeration `Arr_halfedge_direction` is defined by
-  `CGAL::Arrangement_2<Traits,Dcel>::Halfedge` to specify
+  `CGAL::Arrangement_2::Halfedge` to specify
   the direction of the halfedge.
   
-  \sa `CGAL::Arrangement_2<Traits,Dcel>::Halfedge`
+  \sa `CGAL::Arrangement_2::Halfedge`
 */
 enum Arr_halfedge_direction { ARR_LEFT_TO_RIGHT, ARR_RIGHT_TO_LEFT };
 
