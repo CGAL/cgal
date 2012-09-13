@@ -70,7 +70,7 @@ public:
 
   Intrusive_list(const Intrusive_list& rhs)
   {
-    assert(false);
+    CGAL_assertion(false);
   }
 
 #ifdef CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR
@@ -260,9 +260,9 @@ public:
   iterator insert(iterator position, 
                   const Type_handle& ch)
   {
-    assert( (ch->next_intrusive() == Type_handle() && ch->previous_intrusive() == Type_handle()) || 
+    CGAL_assertion( (ch->next_intrusive() == Type_handle() && ch->previous_intrusive() == Type_handle()) || 
             (ch->next_intrusive() != Type_handle() && ch->previous_intrusive() != Type_handle()) );
-    assert(is_valid());
+    CGAL_expensive_assertion(is_valid());
     
     if(ch->next_intrusive() != Type_handle()){
       return iterator(ch->next_intrusive()/*first*/, ch/*last*/);
@@ -275,9 +275,9 @@ public:
 
   void insert(Type_handle ch)
   {
-    assert( (ch->next_intrusive() == Type_handle() && ch->previous_intrusive() == Type_handle()) || 
+    CGAL_assertion( (ch->next_intrusive() == Type_handle() && ch->previous_intrusive() == Type_handle()) || 
             (ch->next_intrusive() != Type_handle() && ch->previous_intrusive() != Type_handle()) );
-    assert(is_valid());
+    CGAL_expensive_assertion(is_valid());
     
     if(ch->next_intrusive() != Type_handle()){
       return;
@@ -297,15 +297,15 @@ public:
 
   void erase(Type_handle ch)
   {
-    assert( (ch->next_intrusive() == Type_handle() && ch->previous_intrusive() == Type_handle()) || 
+    CGAL_assertion( (ch->next_intrusive() == Type_handle() && ch->previous_intrusive() == Type_handle()) || 
             (ch->next_intrusive() != Type_handle() && ch->previous_intrusive() != Type_handle()) );
-    assert(is_valid());
+    CGAL_expensive_assertion(is_valid());
     if(ch->next_intrusive() == Type_handle()){
       return;
     }
     if(f == b){ // only 1 element in the list
-      assert(f == ch);
-      assert(n == 1);
+      CGAL_assertion(f == ch);
+      CGAL_assertion(n == 1);
       
       f = b = Type_handle();
     } else {
@@ -320,16 +320,16 @@ public:
       n->previous_intrusive() = p;
     }
     ch->next_intrusive() = ch->previous_intrusive() = Type_handle();
-    assert(ch->next_intrusive() == Type_handle());
-    assert(ch->previous_intrusive() == Type_handle());
+    CGAL_assertion(ch->next_intrusive() == Type_handle());
+    CGAL_assertion(ch->previous_intrusive() == Type_handle());
     n--;
   }
 
   bool empty() const
   {
     if(f == Type_handle()){
-      assert(b == Type_handle());
-      assert(n == 0);
+      CGAL_assertion(b == Type_handle());
+      CGAL_assertion(n == 0);
     }
     return f == Type_handle();
   }
@@ -338,7 +338,7 @@ public:
   {
     if(th->next_intrusive() == Type_handle())
     {
-      assert(th->previous_intrusive() == Type_handle());
+      CGAL_assertion(th->previous_intrusive() == Type_handle());
       return true;
     }
     else return false;
