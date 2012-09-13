@@ -26,6 +26,7 @@ $search
 <!-- set-up footnote generation and autotoc -->
 <script type="text/javascript"> 
     $(document).ready(function() { 
+      $("#doc-content").append('<ol id="autoFootnotes0" class="footnotesList"></ol>');
       $("body").footnotes();
       var toc = $("#autotoc").append('<ul></ul>');
       if(toc) {
