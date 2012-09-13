@@ -972,8 +972,7 @@ edge, we first need to cast away its "constness".
 namespace CGAL {
 
 /*!
-  \defgroup PkgArrangement2Insert insert
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangement2Insert insert
   The function `insert` inserts one or more curves or \f$ x\f$-monotone curves
   into a given arrangement, where no restrictions are imposed on the inserted
   curves. If an inserted curve is not \f$ x\f$-monotone curve, it is subdivided
@@ -1045,7 +1044,7 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 /// @}
 
 /*!
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangement2Funcs
 
   The function `do_intersect` checks if a given curve or \f$ x\f$-monotone 
   curve intersects an existing arrangement's edges or vertices. 
@@ -1092,7 +1091,7 @@ bool do_intersect (
 
 
 /*!
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangement2Funcs
 
   The function `insert_non_intersecting_curve` inserts a given \f$ x\f$-monotone curve into a given 
   arrangement, where the interior of the given curve is disjoint from all 
@@ -1131,7 +1130,7 @@ insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
 
 
 /*!
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangement2Funcs
 
   The function `insert_non_intersecting_curves` inserts a set of \f$ x\f$-monotone curves in a given 
   range into a given arrangement. The insertion is performed in an aggregated 
@@ -1155,7 +1154,7 @@ void insert_non_intersecting_curves(Arrangement_2<Traits,Dcel>& arr,
 
 
 /*!
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangement2Funcs
 
   The function `insert_point` inserts a given point into a given arrangement. 
   It uses a given point-location object to locate the given 
@@ -1194,7 +1193,7 @@ insert_point (Arrangement_2<Traits,Dcel>& arr,
 
 
 /*!
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangement2Funcs
 
   The function `is_valid` checks the validity of a given arrangement. 
 
@@ -1219,7 +1218,7 @@ bool is_valid (const Arrangement_2<Traits, Dcel>& arr);
 
 
 /*!
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangement2Funcs
 
   The function `remove_edge` removes an edge given by one of the twin halfedges 
   that forms it, from a given arrangement. Once the edge is removed, if the 
@@ -1252,7 +1251,7 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
 
 
 /*!
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangement2Funcs
 
   The function `remove_vertex` attempts to removed a given vertex from a given 
   arrangement. The vertex can be removed if it is either an isolated vertex, 
@@ -1278,7 +1277,7 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
                     typename Arrangement_2<Traits,Dcel>::Vertex_handle v);
 
 /*!
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangement2Funcs
 
   The function `zone` compute the zone of the given \f$ x\f$-monotone 
   curve in the existing arrangement. Meaning, it output the 
