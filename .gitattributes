@@ -5566,6 +5566,14 @@ Stream_lines_2/doc_tex/Stream_lines_2/streamlines-small.jpg -text svneol=unset#i
 Stream_lines_2/doc_tex/Stream_lines_2/streamlines-teaser.jpg -text svneol=unset#image/jpeg
 Stream_lines_2/test/Stream_lines_2/data/datap.tri.cin -text
 Stream_lines_2/test/Stream_lines_2/data/datav.tri.cin -text
+Stream_support/doc/IOstream/CGAL/IO/Color.h -text
+Stream_support/doc/IOstream/CGAL/IO/Istream_iterator.h -text
+Stream_support/doc/IOstream/CGAL/IO/Ostream_iterator.h -text
+Stream_support/doc/IOstream/CGAL/IO/Verbose_ostream.h -text
+Stream_support/doc/IOstream/CGAL/IO/io.h -text
+Stream_support/doc/IOstream/IOstream.txt -text
+Stream_support/doc/IOstream/PackageDescription.txt -text
+Stream_support/doc/IOstream/fig/io.png -text svneol=unset#image/png
 Stream_support/doc_tex/IOstream/io.png -text
 Stream_support/test/Stream_support/data/io.cin -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/CCSubdivision.png -text svneol=unset#image/png

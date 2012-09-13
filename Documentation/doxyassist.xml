@@ -276,6 +276,18 @@ namespace for the XML file to be processed properly.  -->
         </doxygen>
       </project>
 
+      <project>
+        <name>IO Streams</name>
+        <input>../Stream_support/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Stream_support/doc/IOstream/</string>
+          <string name="STRIP_FROM_INC_PATH">../Stream_support/doc/IOstream/</string>
+          <string name="GENERATE_TAGFILE">./tags/IOstream.tag</string>
+          <string name="EXAMPLE_PATH">../Stream_support/examples</string>
+          <string name="IMAGE_PATH">../Stream_support/doc/IOstream/fig</string>
+        </doxygen>
+      </project>
+
 
       <project>
         <name>3D Convex Hulls</name>
@@ -1002,6 +1014,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Voronoi_diagram_2/doc/Voronoi_diagram_2/fig</item>
           <item>../Surface_mesh_simplification/doc/Surface_mesh_simplification/fig</item>
           <item>../Stream_lines_2/doc/Stream_lines_2/fig</item>
+          <item>../Stream_support/doc/IOstream/fig</item>
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
@@ -1062,6 +1075,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.2D-Voronoi-Diagram-Adaptor/html</item>
           <item>./tags/Surface_mesh_simplification.tag=../../CGAL.CGAL.Triangulated-Surface-Mesh-Simplification/html</item>
           <item>./tags/Stream_lines_2.tag=../../CGAL.CGAL.2D Placement-of-Streamlines/html</item>
+          <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
         </list>
         <string name="HTML_EXTRA_STYLESHEET">cgal_stylesheet.css</string>
         <bool name="ALLEXTERNALS">true</bool>

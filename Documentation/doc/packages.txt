@@ -213,7 +213,7 @@ h1 {
 <a name="Pkg:ProfilingTools"></a>
 \package_listing{Miscellany}
 <a name="Pkg:IOstreams"></a>
-\package_listing{IOstream}
+\package_listing{Stream_support/IOstream}
 
 \section PartVisualization Visualization
 
