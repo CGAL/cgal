@@ -1,6 +1,6 @@
 namespace CGAL { 
 /*!
-\ingroup PkgMesh_3
+\ingroup PkgMesh_3Enum
 
 The enum `Mesh_optimization_return_code` is the output of the global
 mesh optimization functions. This output corresponds to mesh

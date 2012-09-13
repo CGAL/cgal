@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh_3SecondaryConcepts
 \cgalconcept
 
 The concept `TriangleAccessor_3` represents an accessor to a triangulated polyhedral 

@@ -24,6 +24,10 @@
 
 
 
+/// \defgroup PkgMesh_3Enum Enumerations
+/// \ingroup PkgMesh_3
+
+
 /*!
 \addtogroup PkgMesh_3
 \todo check generated documentation
