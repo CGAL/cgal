@@ -747,8 +747,20 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Arrangement_on_surface_2/doc/Sweep_line_2/fig</string>
           <string name="EXAMPLE_PATH">../Arrangement_on_surface_2/examples</string>
           <list name="TAGFILES" append="true">
-            <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.Arrangement_on_surface_2/html</item>
+            <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
           </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>2D Arrangements</name>
+        <input>../Arrangement_on_surface_2/doc/Arrangement_on_surface_2</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Arrangement_on_surface_2/doc/Arrangement_on_surface_2</string>
+          <string name="STRIP_FROM_INC_PATH">../Arrangement_on_surface_2/doc/Arrangement_on_surface_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Arrangement_on_surface_2.tag</string>
+          <string name="IMAGE_PATH">../Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig</string>
+          <string name="EXAMPLE_PATH">../Arrangement_on_surface_2/examples</string>
         </doxygen>
       </project>
 
@@ -924,6 +936,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Skin_surface_3/doc/Skin_surface_3/fig</item>
           <item>../Snap_rounding_2/doc/Snap_rounding_2/fig</item>
           <item>../Arrangement_on_surface_2/doc/Sweep_line_2/fig</item>
+          <item>../Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig</item>
           <item>../Boolean_set_operations_2/doc/Boolean_set_operations_2/fig</item>
           <item>../Triangulation_2/doc/TDS_2/fig</item>
           <item>../Triangulation_2/doc/Triangulation_2/fig</item>
@@ -978,6 +991,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
           <item>./tags/Skin_surface_3.tag=../../CGAL.CGAL.3D-Skin-Surface-Meshing/html</item>
           <item>./tags/Sweep_line_2.tag=../../CGAL.CGAL.2D-Intersection-of-Curves/html</item>
+          <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
           <item>./tags/Boolean_set_operations_2.tag=../../CGAL.CGAL.2D-Regularized-Boolean-Set-Operations/html</item>
           <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
           <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
