@@ -1820,6 +1820,74 @@ Circulator/doc/Circulator/PackageDescription.txt -text
 Circulator/doc/Circulator/examples.txt -text
 Circulator/doc/Circulator/fig/circulator.png -text svneol=unset#image/png
 Circulator/doc_tex/Circulator/circulator.png -text
+Combinatorial_map/doc/Combinatorial_map/CGAL/Cell_attribute.h -text
+Combinatorial_map/doc/Combinatorial_map/CGAL/Combinatorial_map.h -text
+Combinatorial_map/doc/Combinatorial_map/CGAL/Combinatorial_map_constructors.h -text
+Combinatorial_map/doc/Combinatorial_map/CGAL/Combinatorial_map_min_items.h -text
+Combinatorial_map/doc/Combinatorial_map/CGAL/Combinatorial_map_operations.h -text
+Combinatorial_map/doc/Combinatorial_map/CGAL/Dart.h -text
+Combinatorial_map/doc/Combinatorial_map/Combinatorial_map.txt -text
+Combinatorial_map/doc/Combinatorial_map/Concepts/CellAttribute.h -text
+Combinatorial_map/doc/Combinatorial_map/Concepts/CombinatorialMap.h -text
+Combinatorial_map/doc/Combinatorial_map/Concepts/CombinatorialMapItems.h -text
+Combinatorial_map/doc/Combinatorial_map/Concepts/Dart.h -text
+Combinatorial_map/doc/Combinatorial_map/PackageDescription.txt -text
+Combinatorial_map/doc/Combinatorial_map/examples.txt -text
+Combinatorial_map/doc/Combinatorial_map/fig/Diagramme_class.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/Diagramme_class.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew2.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew2.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte2-3d.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte2-3d.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/insert-edge.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/insert-edge.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/insert-facet.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/insert-facet.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/insert-vertex.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/insert-vertex.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-map.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-map.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-map2d.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-map2d.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-zoom.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-zoom.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-zoom2.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-zoom2.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/logo-cmap-small-v2.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/logo-combinatorial-map-small.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/logo-combinatorial-map.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/map2d-with-attrib.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/map2d-with-attrib.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/object2d-nonmanifold.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/object2d-nonmanifold.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/object2d.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/object2d.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/object3d-nonmanifold.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/object3d-nonmanifold.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/object3d-nonmanifold2.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/object3d-nonmanifold2.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/object3d.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/object3d.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/ope1.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/ope1.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/ope2.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/ope2.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/ope3.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/ope3.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/pb-carte3D.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/pb-carte3D.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/pb2-carte3D.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/pb2-carte3D.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/quasivariete.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/quasivariete.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/quasivarietea.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/quasivarietea.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/triangulation.pdf -text svneol=unset#application/pdf
+Combinatorial_map/doc/Combinatorial_map/fig/triangulation.png -text svneol=unset#image/png
 Combinatorial_map/doc_tex/Combinatorial_map/Combinatorial_map.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map/PkgDescription.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map/fig/Diagramme_class.fig -text

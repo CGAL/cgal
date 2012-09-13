@@ -214,6 +214,22 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>Combinatorial Maps</name>
+        <input>../Combinatorial_map/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Combinatorial_map/doc/Combinatorial_map/</string>
+          <string name="STRIP_FROM_INC_PATH">../Combinatorial_map/doc/Combinatorial_map/</string>
+          <string name="GENERATE_TAGFILE">./tags/Combinatorial_map.tag</string>
+          <string name="EXAMPLE_PATH">../Combinatorial_map/examples</string>
+          <string name="IMAGE_PATH">../Combinatorial_map/doc/Combinatorial_map/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+          </list>
+        </doxygen>
+      </project>
+
+
+      <project>
         <name>2D Convex Hulls and Extreme Points</name>
         <input>../Convex_hull_2/doc</input>
         <doxygen>
@@ -912,6 +928,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Geomview/doc/Geomview/fig</item>
           <item>../GraphicsView/doc/GraphicsView/fig</item>
           <item>../HalfedgeDS/doc/HalfedgeDS/fig</item>
+          <item>../Combinatorial_map/doc/Combinatorial_map/fig</item>
           <item>../Interval_skip_list/doc/Interval_skip_list/fig</item>
           <item>../Nef_2/doc/Nef_2/fig</item>
           <item>../Nef_S2/doc/Nef_S2/fig</item>
@@ -968,6 +985,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
           <item>./tags/GraphicsView.tag=../../CGAL.CGAL.CGAL-and-the-Qt-Graphics-View-Framework/html</item>
           <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.Halfedge-Data-Structures/html</item>
+          <item>./tags/Combinatorial_map.tag=../../CGAL.CGAL.Combinatorial-Maps/html</item>
           <item>./tags/Interval_skip_list.tag=../../CGAL.CGAL.Interval-Skip-List/html</item>
           <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
           <item>./tags/Nef_S2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons-Embedded-on-the-Sphere/html</item>
