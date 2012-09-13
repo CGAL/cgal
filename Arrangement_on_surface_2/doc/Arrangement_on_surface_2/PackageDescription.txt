@@ -14,7 +14,7 @@
 /*!
 \addtogroup PkgArrangement2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Arrangement}
+\PkgDescriptionBegin{2D Arrangements}
 \PkgPicture{Arrangement_2.png}
 \PkgAuthor{Ron Wein, Eric Berberich, Efi Fogel, Dan Halperin, Michael Hemmer, Oren Salzman, and Baruch Zukerman}
 \PkgDesc{This package can be used to construct, maintain, alter, and display arrangements in the plane. Once an arrangement is constructed, the package can be used to obtain results of various queries on the arrangement, such as point location. The package also includes generic implementations of two algorithmic frameworks, that are, computing the zone of an arrangement, and line-sweeping the plane, the arrangements is embedded on. These frameworks are used in turn in the implementations of other operations on arrangements. Computing the overlay of two arrangements, for example, is based on the sweep-line framework.   Arrangements and arrangement components can also be extended to store additional data. An important extension stores the construction history of the arrangement, such that it is possible to obtain the originating curve of an arrangement subcurve.}

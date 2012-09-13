@@ -5,9 +5,8 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Arrangements
-\anchor 
-
 \anchor chapterArrangement_on_surface_2
+\tableofcontents
 
 \authors Ron Wein, Eric Berberich, Efi Fogel, Dan Halperin, Michael Hemmer, Oren Salzman, and Baruch Zukerman
 
@@ -467,15 +466,15 @@ arrangement is known.
 The motivation behind these rather harsh restrictions on the nature of
 the inserted curves is the decoupling of the topological arrangement
 representation from the various algorithms that operate on it. While
-the insertion of an \f$ x\f$-monotone curve whose interior is disjoint from
-all existing arrangement features is quite straightforward (as we show
-next), inserting curves that intersect with the curves already inserted
-into the arrangement is much more complicated and requires the
-application of non-trivial geometric algorithms.
-These insertion operations are therefore implemented as free functions
-that operate on the arrangement and the inserted curve(s); see
-Section \ref arr_secgl_funcs for more details and
-examples.\footnote{You may skip to Section \ref arr_secgl_funcs, and return to this subsection at a later point in time.}
+the insertion of an \f$ x\f$-monotone curve whose interior is disjoint
+from all existing arrangement features is quite straightforward (as we
+show next), inserting curves that intersect with the curves already
+inserted into the arrangement is much more complicated and requires
+the application of non-trivial geometric algorithms.  These insertion
+operations are therefore implemented as free functions that operate on
+the arrangement and the inserted curve(s); see Section \ref arr_secgl_funcs
+for more details and examples.
+\footnote{You may skip to Section \ref arr_secgl_funcs, and return to this subsection at a later point in time.}
 
 \anchor arr_figex_1
 \image html insert.gif
@@ -509,12 +508,12 @@ the two previous cases respectively.) The two following subcases may
 occur:
 <UL>
 <LI>Two disconnected components are merged into a single connected
-component (as is the case with the segment \f$ s_1\f$ in the figure to the
+component (as is the case with the segment \f$s_1\f$ in the figure to the
 left).
 <LI>A new face is created, a face that splits from an existing
 arrangement face. In this case we also have to examine the holes and
 isolated vertices in the existing face and move the relevant ones
-inside the new face (as is the case with the segment \f$ s_2\f$ in the
+inside the new face (as is the case with the segment \f$s_2\f$ in the
 figure to the left).
 </UL>
 </OL>
@@ -1592,12 +1591,10 @@ Summarizing the above, there are four types of arrangement vertices,
 which differ from one another by their location with respect to the
 bounding bounding rectangle:
 <OL>
-
-A vertex, associated with a point in \f$ \real^2\f$ whose
+<LI>A vertex, associated with a point in \f$\R^2\f$ whose
 coordinates are bounded. Such a vertex always lies inside the
 bounding rectangle.
-<LI>\anchor typeunbounded
-A vertex that represents an unbounded end of an \f$ x\f$-monotone curve
+<LI> \anchor typeunbounded A vertex that represents an unbounded end of an \f$ x\f$-monotone curve
 that is defined at \f$ x = -\infty\f$ or at \f$ x = \infty\f$. In case of
 a horizontal line or a curve with a horizontal asymptote, the
 \f$ y\f$-coordinate of the curve end may be finite (see for example the
@@ -1611,17 +1608,16 @@ is defined at \f$ x = -\infty\f$, its left end will be represented by
 a vertex on the left edge of the bounding rectangle, and if it is
 defined at \f$ x = \infty\f$, its right end will be represented by a
 vertex of the right edge).
-<LI>\anchor typeunboundedvertical
-A vertex that represent the unbounded end of a vertical line or of a
+<LI>A \anchor typeunboundedvertical vertex that represent the unbounded end of a vertical line or of a
 curve with a vertical asymptote (finite \f$ x\f$-coordinate and an
 unbounded \f$ y\f$-coordinate). Such a vertex always lies on one of the
 horizontal edges of the bounding rectangle (either the bottom one if
 \f$ y = -\infty\f$, or the top one if \f$ y = \infty\f$). The vertices \f$ v_4\f$ 
 and \f$ v_5\f$ in Figure \ref arr_figunb_dcel are of this type.
-<LI>\anchor typefictitious
-The fictitious vertices that represent the four corners of the
+<LI>The \anchor typefictitious fictitious vertices that represent the four corners of the
 bounding bounding rectangle.
 </OL>
+
 A vertex (at infinity) of Type \ref typeunbounded or
 Type \ref typeunboundedvertical above always has
 three incident edges: one concrete edge that is associated with an
@@ -3463,7 +3459,7 @@ the I/O format. The package contains a template called,
 an arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
 and defines a simple textual input/output format.
 
-## Output <span class="textsc">Qt</span>-widget Stream ##
+## Output Qt-widget Stream ##
 \anchor arr_ssecqt_stream
 You can display the drawings of arrangements in a graphical window
 powered by <span class="textsc">Qt</span> interactively. All you need to do is follow the

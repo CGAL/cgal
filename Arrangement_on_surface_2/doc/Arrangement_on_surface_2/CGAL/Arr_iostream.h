@@ -36,8 +36,6 @@ std::istream& read (Arrangement_2<Traits,Dcel>& arr,
 
 
 /// @}
-}
-
 
 /*!
   \defgroup PkgArrangement2Write write
@@ -82,7 +80,19 @@ topological features of the arrangement are inserted. Auxiliary data
 that may be attached to the <span class="textsc">Dcel</span> features is ignored.
 */
 template<typename Traits, typename Dcel>
-            std::ostream& operator<< (std::ostream& os,
-                                      const Arrangement_2<Traits,Dcel>& arr);
+std::ostream& operator<< (std::ostream& os,
+                          const Arrangement_2<Traits,Dcel>& arr);
+
+
+/*!
+\ingroup PkgArrangement2op_right_shift
+Extracts an arrangement from a given input stream using the input
+format defined by the `Arr_text_formatter` class - that is, only the
+basic geometric and topological features of the arrangement are read
+and no auxiliary data is attached to the Dcel features.
+*/
+template<class Traits, class Dcel>
+std::istream& operator>>(std::istream& is, Arrangement_2<Traits,Dcel>& arr);
+
 
 } /* end namespace CGAL*/

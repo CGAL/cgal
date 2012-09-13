@@ -633,6 +633,7 @@ Arrangement_on_surface_2/doc/Arrangement_on_surface_2/Concepts/ArrangementWithHi
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/Concepts/ArrangementXMonotoneTraits_2.h -text
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/Concepts/OverlayTraits.h -text
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/PackageDescription.txt -text
+Arrangement_on_surface_2/doc/Arrangement_on_surface_2/examples.txt -text
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/Arrangement_2.png -text svneol=unset#image/png
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/Bezier_arr.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/Bezier_arr.pdf -text svneol=unset#application/pdf

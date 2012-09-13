@@ -38,4 +38,11 @@ template<typename Traits, typename Dcel>
 std::ostream& operator<< (std::ostream& os,
                           const Arrangement_with_history_2<Traits,Dcel>& arr);
 
+/*!
+\ingroup PkgArrangement2op_right_shift
+Extracts an arrangement-with-history from a given input stream using
+the default input format.
+*/
+template<class Traits, class Dcel>
+std::istream& operator>>(std::istream& is, Arrangement_with_history_2<Traits,Dcel>& arr);
 }
