@@ -194,7 +194,6 @@ TAB_SIZE               = 4
 # You can put \n's in the value part of an alias to insert newlines.
 
 ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</span>" \
-                         "cgalconcept=" \
                          "cgal=\sc{%CGAL}" \
                          "stl=*STL*" \
                          "leda=*LEDA*" \
@@ -207,6 +206,10 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "advanced=\attention" \
                          "beginadvanced=" \
                          "endadvanced="
+
+# this sets the include file of a concept to a non-existing file and
+# thus removes its include statement
+ALIASES += "cgalconcept=\headerfile \"ConceptCannotBeIncluded.h\" "
 
 # this alias controls linking to the how to cite page, it is also
 # responsible for adding the -YY{a,b} suffix to a cite
