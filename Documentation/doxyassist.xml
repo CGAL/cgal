@@ -264,6 +264,17 @@ namespace for the XML file to be processed properly.  -->
         </doxygen>
       </project>
 
+      <project>
+        <name>2D Placement of Streamlines</name>
+        <input>../Stream_lines_2/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Stream_lines_2/doc/Stream_lines_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Stream_lines_2/doc/Stream_lines_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Stream_lines_2.tag</string>
+          <string name="EXAMPLE_PATH">../Stream_lines_2/examples</string>
+          <string name="IMAGE_PATH">../Stream_lines_2/doc/Stream_lines_2/fig</string>
+        </doxygen>
+      </project>
 
 
       <project>
@@ -990,6 +1001,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Straight_skeleton_2/doc/Straight_skeleton_2/fig</item>
           <item>../Voronoi_diagram_2/doc/Voronoi_diagram_2/fig</item>
           <item>../Surface_mesh_simplification/doc/Surface_mesh_simplification/fig</item>
+          <item>../Stream_lines_2/doc/Stream_lines_2/fig</item>
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
@@ -1049,6 +1061,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.2D-Straight-Skeleton-and-Polygon-Offsetting/html</item>
           <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.2D-Voronoi-Diagram-Adaptor/html</item>
           <item>./tags/Surface_mesh_simplification.tag=../../CGAL.CGAL.Triangulated-Surface-Mesh-Simplification/html</item>
+          <item>./tags/Stream_lines_2.tag=../../CGAL.CGAL.2D Placement-of-Streamlines/html</item>
         </list>
         <string name="HTML_EXTRA_STYLESHEET">cgal_stylesheet.css</string>
         <bool name="ALLEXTERNALS">true</bool>
