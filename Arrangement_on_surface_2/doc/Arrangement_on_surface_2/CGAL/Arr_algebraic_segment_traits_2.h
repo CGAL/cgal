@@ -367,12 +367,12 @@ Curve_2 curve () const;
 /*! 
 returns whether `s` is a vertical segment. 
 */ 
-bool is\_vertical () const; 
+bool is_vertical () const; 
 
 /*! 
 returns whether `s` has a finite endpoint on the left 
 */ 
-bool is\_finite (CGAL::Arr_curve_end ce) const; 
+bool is_finite (CGAL::Arr_curve_end ce) const; 
 
 /*! 
 \pre (The corresponding curve end is finite) 
