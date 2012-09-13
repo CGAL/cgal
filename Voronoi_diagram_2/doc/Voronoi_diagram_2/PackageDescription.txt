@@ -13,5 +13,27 @@
 \cgalbib{cgal:k-vda2}
 \license{\ref licensesGPL "GPL"}
 \PkgDescriptionEnd
-*/
 
+\cgal provides the class `CGAL::Voronoi_diagram_2<DG,AT,AP>` for
+adapting the various (triangulated) Delaunay graphs to Voronoi
+diagrams according to some adaptation policy.
+In particular, the class `CGAL::Voronoi_diagram_2<DG,AT,AP>`
+provides an API for the duals of (triangulated) Delaunay graphs, that
+makes them look like planar subdivisions. The adaptation policy is
+responsible for deciding which edges and faces of these duals should
+be eliminated. This is especially important when, for instance, we
+want to eliminate degenerate features in the Voronoi diagram that are
+the result of the fact that Delaunay graphs are always triangulated
+and are due to degenerate configurations in the generating data.
+
+The three template parameters must be models of the
+`DelaunayGraph_2`, `AdaptationTraits_2` and
+`AdaptationPolicy_2` concepts, respectively.
+The first concept is related to the Delaunay graphs that are to be
+adapted, whereas the second one is responsible for
+manipulating/accessing in a unified way the geometry of a specific
+Voronoi diagram as well as for performing nearest site queries. 
+The third template parameter corresponds to the chosen adaptation
+policy and provides the necessary types and functors needed for
+performing this adaptation.
+*/

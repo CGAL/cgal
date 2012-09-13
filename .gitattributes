@@ -6313,7 +6313,6 @@ Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Regular_triangulation_adaptation_tr
 Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Segment_Delaunay_graph_adaptation_policies_2.h -text
 Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Segment_Delaunay_graph_adaptation_traits_2.h -text
 Voronoi_diagram_2/doc/Voronoi_diagram_2/CGAL/Voronoi_diagram_2.h -text
-Voronoi_diagram_2/doc/Voronoi_diagram_2/Classified.txt -text
 Voronoi_diagram_2/doc/Voronoi_diagram_2/Concepts/AdaptationPolicy_2.h -text
 Voronoi_diagram_2/doc/Voronoi_diagram_2/Concepts/AdaptationTraits_2.h -text
 Voronoi_diagram_2/doc/Voronoi_diagram_2/Concepts/DelaunayGraph_2.h -text
