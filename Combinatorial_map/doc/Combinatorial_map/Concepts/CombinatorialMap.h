@@ -244,7 +244,7 @@ handle <I>dh</I> such that \f$\in\f$`cm.darts()`:
 - `dh->is_free(1)`, or `dh->beta(1)->beta(0)==dh`; 
 - \f$ \forall\f$<I>i</I>, 2\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>: 
   `dh->is_free(i)`, or `dh->beta(i)->beta(i)==dh`; 
-- \f$ \forall\f$<I>i</I>,<I>j</I>, 0\f$ \leq\f$<I>i</I>\f$ <\f$<I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dimension</I> such that <I>j</I>\f$ \geq\f$3: `dh->beta(i)->beta(j)==null_dart_handle` or `dh->beta(i)->beta(j)->beta(i)->beta(j)==dh`;
+- \f$ \forall\f$<I>i</I>,<I>j</I>, 0\f$ \leq\f$<I>i</I>\f$ <\f$<I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dimension</I> such that <I>j</I>\f$ \geq\f$ 3: `dh->beta(i)->beta(j)==null_dart_handle` or `dh->beta(i)->beta(j)->beta(i)->beta(j)==dh`;
 - \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> such that <I>i</I>-attributes are non void: \f$ \forall\f$<I>dh2</I> such that belong to the same <I>i</I>-cell than `dh2->attribute<i>()==dh->attribute<i>()`. 
 */ 
 bool is_valid() const; 
@@ -356,7 +356,7 @@ template<unsigned int i> Attribute_const_range<i>::type & attributes() const;
 
 /*! 
 Returns a range of all the darts of the orbit `<Beta...>(dh)`. 
-\pre `*dh`\f$ \in\f$`cm.darts()` and `Beta...` is a sequence of integers \f$ i_1\f$,\f$ \ldots\f$,\f$ i_k\f$, such that 0\f$ \leq\f$\f$ i_1\f$\f$ <\f$\f$ i_2\f$\f$ <\f$\f$ \ldots\f$\f$ <\f$\f$ i_k\f$\f$ \leq\f$<I>dimension</I>, and (\f$ i_1\f$\f$ \neq\f$0 or \f$ i_2\f$\f$ \neq\f$1). 
+\pre `*dh`\f$ \in\f$`cm.darts()` and `Beta...` is a sequence of integers \f$ i_1\f$,\f$ \ldots\f$,\f$ i_k\f$, such that 0\f$ \leq\f$\f$ i_1\f$\f$ <\f$\f$ i_2\f$\f$ <\f$\f$ \ldots\f$\f$ <\f$\f$ i_k\f$\f$ \leq\f$<I>dimension</I>, and (\f$ i_1\f$\f$ \neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$1). 
 */ 
 template<unsigned int ... Beta> Dart_of_orbit_range darts_of_orbit(Dart_handle dh); 
 
@@ -530,7 +530,7 @@ Links `dh1` and `dh2` by \f$ \beta_i\f$.
 dart not, the non null attribute is associated to the dart having a null attribute. 
 If both darts have an attribute, 
 the attribute of `dh1` is associated to `dh2`. 
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, `*dh1`\f$ \in\f$`cm.darts()`, `*dh2`\f$ \in\f$`cm.darts()` and (<I>i</I>\f$ <\f$2 or `dh1`\f$ \neq\f$`dh2`). 
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, `*dh1`\f$ \in\f$`cm.darts()`, `*dh2`\f$ \in\f$`cm.darts()` and (<I>i</I>\f$ <\f$ 2 or `dh1`\f$ \neq\f$`dh2`). 
 */ 
 template <unsigned int i> void link_beta(Dart_handle dh1, Dart_handle dh2, bool update_attributes=true); 
 

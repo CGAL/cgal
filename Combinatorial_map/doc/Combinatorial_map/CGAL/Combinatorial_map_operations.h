@@ -5,7 +5,7 @@ namespace CGAL {
 
 Inserts a 0-cell in the 1-cell containing `dh`. 
 Returns a handle on one dart belonging to the new 0-cell. 
-\pre `CMap::dimension`\f$ \geq\f$1 and `*dh`\f$ \in\f$`cm.darts()`.
+\pre `CMap::dimension`\f$ \geq\f$ 1 and `*dh`\f$ \in\f$`cm.darts()`.
 
 See example in Figure \ref figinsertvertex.
 
@@ -34,7 +34,7 @@ namespace CGAL {
 Inserts a 0-cell in the 2-cell containing `dh`.
 The 2-cell is split in triangles, one for each initial edge of the facet.
 Returns a handle on one dart belonging to the new 0-cell.
-\pre `CMap::dimension`\f$ \geq\f$2 and `*dh`\f$ \in\f$`cm.darts()`.
+\pre `CMap::dimension`\f$ \geq\f$ 2 and `*dh`\f$ \in\f$`cm.darts()`.
 
 See example in Figure \ref figtriangulate.
 
@@ -128,7 +128,7 @@ namespace CGAL {
 Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell
 being attached only by one of its extremity to the 0-cell containing `dh`.
 Returns a handle on one dart belonging to the new 1-cell.
-\pre `CMap::dimension`\f$ \geq\f$2 and `*dh`\f$ \in\f$`cm.darts()`.
+\pre `CMap::dimension`\f$ \geq\f$ 2 and `*dh`\f$ \in\f$`cm.darts()`.
 
 See example in Figure \ref figinsertedge.
 
@@ -155,7 +155,7 @@ namespace CGAL {
 Returns true iff it is possible to insert a 1-cell in `cm`
 between `dh1` and `dh2`, 
 i.e. if `dh1`\f$ \neq\f$`dh2` and `dh1`\f$ \in\f$\f$ \langle{}\f$\f$ \beta_1\f$\f$ \rangle{}\f$(`dh2`).
-\pre `CMap::dimension`\f$ \geq\f$2, `*dh1`\f$ \in\f$`cm.darts()`, and `*dh2`\f$ \in\f$`cm.darts()`.
+\pre `CMap::dimension`\f$ \geq\f$ 2, `*dh1`\f$ \in\f$`cm.darts()`, and `*dh2`\f$ \in\f$`cm.darts()`.
 
 
 \sa `CGAL::insert_cell_1_in_cell_2<CMap>`
@@ -179,7 +179,7 @@ Returns true iff it is possible to insert a 2-cell in `cm` along the path
 of darts given by the range `[afirst,alast)`. The 2-cell can be inserted 
 iff each couple of consecutive darts of the path <I>a1</I> and <I>a2</I> belong to the 
 same vertex and the same volume, and if the path is closed.
-\pre `CMap::dimension`\f$ \geq\f$3.
+\pre `CMap::dimension`\f$ \geq\f$ 3.
 
 
 \sa `CGAL::insert_cell_2_in_cell_3<CMap,InputIterator>`

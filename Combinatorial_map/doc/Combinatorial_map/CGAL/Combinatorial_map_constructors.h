@@ -6,7 +6,7 @@ namespace CGAL {
 Creates an combinatorial hexahedron (six combinatorial quadrangles linked 
 together by \f$ \beta_2\f$), and adds it in `cm`. 
 Returns a handle on one dart of this combinatorial hexahedron.
-\pre `CMap::dimension`\f$ \geq\f$2.
+\pre `CMap::dimension` \f$\geq\f$ 2.
 
 \sa `CGAL::make_edge<CMap>`
 \sa `CGAL::make_combinatorial_polygon<CMap>`
@@ -26,7 +26,7 @@ namespace CGAL {
 Creates a combinatorial polygon of length `lg` (`lg` darts 
 linked by \f$ \beta_1\f$), and adds it in `cm`. 
 Returns a handle on one dart of this combinatorial polygon.
-\pre `CMap::dimension`\f$ \geq\f$1 and `lg`\f$ >\f$0.
+\pre `CMap::dimension`\f$ \geq\f$ 1 and `lg`\f$ >\f$ 0.
 
 
 \sa `CGAL::make_edge<CMap>`
@@ -64,7 +64,7 @@ namespace CGAL {
 
 Creates an isolated edge (two darts linked by \f$ \beta_2\f$) and adds it in `cm`.
 Returns a handle on one dart of this edge.
-\pre `CMap::dimension`\f$ \geq\f$2.
+\pre `CMap::dimension`\f$ \geq\f$ 2.
 
 \sa `CGAL::make_combinatorial_polygon<CMap>`
 \sa `CGAL::make_combinatorial_tetrahedron<CMap>`

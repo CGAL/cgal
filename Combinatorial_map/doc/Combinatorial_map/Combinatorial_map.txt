@@ -773,7 +773,7 @@ sequence of integers
 each \f$ i_j\f$\f$ \in\f${0, \f$ \ldots\f$ ,<I>d</I>}. 
 These integers must satisfy:
 \f$ i_1\f$\f$ <\f$\f$ i_2\f$\f$ <\f$\f$ \ldots\f$\f$ <\f$\f$ i_k\f$,
-and (\f$ i_1\f$\f$ \neq\f$0 or \f$ i_2\f$\f$ \neq\f$1) 
+and (\f$ i_1\f$\f$ \neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$1) 
 (for example `Dart_of_orbit_range<1,2>` for the orbit
 \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \beta_2\f$\f$ \rangle{}\f$(<I>d0</I>));	
 <LI>`Dart_of_cell_range<i,dim>`: range of all the darts of
@@ -1387,7 +1387,7 @@ Let <I>E</I> be a set, and <I>p</I> a partial permutation on <I>E</I>. An elemen
 \f$ \Rightarrow\f$ <I>p</I>(<I>p</I>(<I>e</I>))=<I>e</I>.
 
 Now we can give the definition of a combinatorial map in any dimension.
-Let <I>d</I>\f$ \geq\f$0. A <I>d</I>-dimensional combinatorial map (or 
+Let <I>d</I>\f$ \geq\f$ 0. A <I>d</I>-dimensional combinatorial map (or 
 <I>d</I>-map) is a (d+1)-tuple <I>M</I>=(<I>D</I>,\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_d\f$) 
 where:
 <OL>
