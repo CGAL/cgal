@@ -7,7 +7,7 @@
 \ccGlobalFunction{template <class InputIterator>
 bool do_curves_intersect (InputIterator curves_begin,
                           InputIterator curves_end);}
-{given a range of curves, check whether there is at least one pair of curves
+{Given a range of curves, check whether there is at least one pair of curves
  that intersect in their interior. The function returns \ccc{true} if such
  a pair is found, and \ccc{false} if all curves are pairwise disjoint in
  their interior. The value-type of \ccc{InputIterator} is a curve type.}
@@ -16,7 +16,7 @@ bool do_curves_intersect (InputIterator curves_begin,
 bool do_curves_intersect (InputIterator curves_begin,
                           InputIterator curves_end,
                           Traits traits = Default_traits());}
-{given a range of curves, check whether there is at least one pair of curves
+{Given a range of curves, check whether there is at least one pair of curves
  that intersect in their interior. The function returns \ccc{true} if such
  a pair is found, and \ccc{false} if all curves are pairwise disjoint in
  their interior. The \ccc{Traits} type must be a model
@@ -26,5 +26,3 @@ bool do_curves_intersect (InputIterator curves_begin,
 \end{ccRefFunction}
 
 \ccRefPageEnd
-
-
