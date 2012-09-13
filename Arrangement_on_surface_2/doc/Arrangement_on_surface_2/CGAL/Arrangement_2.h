@@ -980,7 +980,7 @@ namespace CGAL {
   into \f$ x\f$-monotone subcurves (and perhaps isolated points), which are
   inserted into the arrangement.
 
-  HEADING:Requirements 
+  Requirements 
   --------------
 
   <UL>

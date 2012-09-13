@@ -274,7 +274,7 @@ bool remove_target = true);
 }; /* end Arrangement_with_history_2 */
 
 /*!
-\addtogroup PkgArrangement2Insert
+\ingroup PkgArrangement2Insert
 
 Inserts the given curve `c` into the arrangement with history `arr`,
 and returns a handle to the inserted curve. `c` is subdivided into
@@ -297,16 +297,14 @@ insert (Arrangement_with_history_2<Traits,Dcel>& arr,
         const PointLocation& pl = walk_pl);
 
 /*!
-\addtogroup PkgArrangement2Insert
+\ingroup PkgArrangement2Insert
 Aggregately inserts the curves in the range `[first,last)` into the
 arrangement with history `arr` using the sweep-line framework.
 
 */
 template<class Traits, class Dcel, InputIterator>
-            void insert (Arrangement_with_history_2<Traits,Dcel>& arr,
-                         InputIterator first, InputIterator last);
-
-
+void insert(Arrangement_with_history_2<Traits,Dcel>& arr,
+            InputIterator first, InputIterator last);
 
 
 /*!
