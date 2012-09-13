@@ -8,19 +8,16 @@ The class `Cell_attribute` represents an attribute containing (or not) an inform
 
 \models ::CellAttribute 
 
-Parameters 
--------------- 
 
-`CMap` must be a model of the `CombinatorialMap`. 
+\tparam CMap must be a model of the `CombinatorialMap`. 
 
-`Info_` is the type of the information contained in the attribute. 
+\tparam Info_ is the type of the information contained in the attribute. 
 
-`Tag` is `Tag_true` to enable the storage of a 
-`Dart_handle` of the associated cell, `Tag_false` otherwise. 
+\tparam Tag is `Tag_true` to enable the storage of a `Dart_handle` of the associated cell, `Tag_false` otherwise. 
 
-`OnMerge` is the type of the functor called before two attributes are merged. 
+\tparam OnMerge is the type of the functor called before two attributes are merged. 
 
-`OnSplit` is the type of the functor called after one attribute is split in two. 
+\tparam OnSplit is the type of the functor called after one attribute is split in two. 
 
 By default, `OnMerge` and `OnSplit` are equal to 
 `Null_functor`; `Tag` is equal to 

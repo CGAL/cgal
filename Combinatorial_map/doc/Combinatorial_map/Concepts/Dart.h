@@ -47,9 +47,7 @@ Dart const handle type.
 */ 
 typedef Hidden_type Dart_const_handle; 
 
-/*! 
-  Handle to <I>i</I>-attributes, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
-*/ 
+
 template<unsigned int i> 
 struct Attribute_handle {
   /*! 

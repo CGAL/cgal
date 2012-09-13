@@ -11,22 +11,19 @@ Darts and non void attributes are stored in memory using
 
 \models ::CombinatorialMap 
 
-Parameters 
--------------- 
 
-`d` an integer for the dimension of the map. 
+\tparam d is an integer for the dimension of the map. 
 
-`Items` must be a model of the `CombinatorialMapItems` concept. 
+\tparam Items must be a model of the `CombinatorialMapItems` concept. 
 
-`Alloc` has to match the standard allocator requirements. The `rebind` mechanism from 
-`Alloc` will be used to create appropriate allocators internally with value type `Dart`. 
+\tparam Alloc has to match the standard allocator requirements. The `rebind` mechanism  `Alloc` will be used to create appropriate allocators internally with value type `Dart`. 
 
 There are two default template arguments: 
 `Combinatorial_map_min_items<d>` for `Items` and 
 `CGAL_ALLOCATOR(int)` from the `<CGAL/memory.h>` header file for `Alloc`. 
 
-Complexity 
--------------- 
+##Complexity##
+
 
 The complexity of `sew` and `unsew` is in <I>O</I>(\f$ |\f$<I>S</I>\f$ |\f$\f$ \times\f$\f$ |\f$<I>c</I>\f$ |\f$), <I>S</I> 
 being the set of darts of the orbit 

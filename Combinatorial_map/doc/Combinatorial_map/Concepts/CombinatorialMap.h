@@ -14,7 +14,7 @@ public:
 /// @{
 
 /*! 
-Default constructor. 
+Default constructor creating combinatorial map `cm`. 
 */ 
 CombinatorialMap(); 
 
@@ -67,7 +67,7 @@ static Dart_handle null_dart_handle;
 
 /// @} 
 
-/// \name Types for attributes 
+/// \name Types for Attributes 
 /// @{
 
 /*! 
@@ -114,7 +114,7 @@ Attribute_const_handle {
 
 /// @} 
 
-/// \name Range types 
+/// \name Range Types 
 /// @{
 
 /*! 
@@ -129,21 +129,23 @@ This type is a model of `ConstRange` concept, its iterator type is bidirectional
 */ 
 typedef Hidden_type Dart_const_range; 
 
+
+template<unsigned int i> 
+struct Attribute_range {
 /*! 
 Range of all the <I>i</I>-attributes (which must be non void), with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
 This type is a model of `Range` concept, its iterator type is bidirectional and its value type is `Attribute_type<i>::type`. 
 */ 
-template<unsigned int i> 
-struct Attribute_range {
   typedef Hidden_type type;
 };
 
+
+template<unsigned int i> 
+struct Attribute_const_range {
 /*! 
 Const range of all the <I>i</I>-attributes (which must be non void), with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
 This type is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is `Attribute_type<i>::type`. 
 */ 
-template<unsigned int i> 
-struct Attribute_const_range {
   typedef Hidden_type type;
 };
 
@@ -229,7 +231,7 @@ using One_dart_per_cell_const_range = Hidden_type;
 /// @{
 
 /*! 
-Returns true iff `cm` is empty,\ i.e.\ it contains no dart.
+Returns true iff `cm` is empty, i.e.\ it contains no dart.
 */ 
 bool is_empty() const; 
 
@@ -251,7 +253,7 @@ bool is_valid() const;
 
 /*! 
 Returns true iff `cm` is wihout <I>i</I>-boundary 
-(i.e. there is no `i`-free dart). 
+(i.e.\ there is no `i`-free dart). 
 \pre 1\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
 */ 
 bool is_without_boundary(unsigned int i) const; 
@@ -306,7 +308,7 @@ Dart_const_handle beta(Dart_const_handle dh, int i, int j) const;
 
 /*! 
 Returns true iff `dh1` can be <I>i</I>-sewn with `dh2` by 
-keeping `cm` valid, i.e. if there is 
+keeping `cm` valid, i.e.\ if there is 
 a bijection <I>f</I> between all the darts of the orbit 
 <I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>dh1</I>) and 
 <I>D2</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>dh2</I>) 
@@ -545,7 +547,7 @@ template <unsigned int i> void unlink_beta(Dart_handle dh);
 
 /// @} 
 
-/// \name Boolean marks 
+/// \name Boolean Marks 
 /// @{
 
 /*! 

@@ -16,7 +16,7 @@ The following examples show two possible models of the
 `CombinatorialMapItems` concept: the first one for a 4D 
 combinatorial map without enabled attributes, the second one for a 3D 
 combinatorial map with edge attributes enabled, and associated with a 
-`Cell_attribute` containing an `int`. 
+`CGAL::Cell_attribute` containing an `int`. 
 
 \code{.cpp}
 struct Exemple_Item_4 
@@ -35,7 +35,7 @@ struct Exemple_Item_3
   struct Dart_wrapper 
   { 
     typedef CGAL::Dart<3, CMap> Dart; 
-    typedef Cell_attribute<CMap, int> Edge_attrib; 
+    typedef CGAL::Cell_attribute<CMap, int> Edge_attrib; 
     typedef CGAL::cpp0x::tuple<void,Edge_attrib> Attributes; 
   }; 
 }; 
