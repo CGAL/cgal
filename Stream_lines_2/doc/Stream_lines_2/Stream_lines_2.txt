@@ -90,7 +90,7 @@ and backward.
 ## Second Order Runge-Kutta Integrator ##
 
 \anchor runge_kutta_fig
-\image html runge_kutta_integrator.gif "CAPTION Runge-Kutta second order integrator (The empty circle represents the intermediate point, and the gray disk represents the Euler integrated point)."
+\image html runge_kutta_integrator.gif "Runge-Kutta second order integrator (The empty circle represents the intermediate point, and the gray disk represents the Euler integrated point)."
 
 This method introduces an intermediate point \f$ p'_k\f$ between \f$ p_k\f$ and \f$ p_{k+1}\f$ to increase the
 precision of the computation (see Figure \ref runge_kutta_fig), where:

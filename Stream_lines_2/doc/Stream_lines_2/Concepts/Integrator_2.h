@@ -6,12 +6,12 @@
 The concept `Integrator_2` describes the set of requirements to be 
 fulfilled by any function object used to instantiate the second 
 template parameter of the class 
-`Stream_lines_2<VectorField_2,Integrator_2>`. This concept 
+`CGAL::Stream_lines_2<VectorField_2,Integrator_2>`. This concept 
 provides the operation that integrates a new point from a given point 
 with a predefined step, and according to a specified vector. 
 
-\hasModel CGAL::Euler_integrator_2<VectorField_2> 
-\hasModel CGAL::Runge_kutta_integrator_2<VectorField_2> 
+\hasModel `CGAL::Euler_integrator_2<VectorField_2>`
+\hasModel `CGAL::Runge_kutta_integrator_2<VectorField_2>` 
 
 */
 

@@ -11,20 +11,10 @@ a specified density and gives access to those streamlines via two
 iterators over a container of iterators that provide access to the 
 streamline points. 
 
-Parameters 
--------------- 
 
-The class `Stream_lines_2` has two template parameters. The first parameter 
-`VectorField_2` has to be instantiated by a model of the concept 
-`VectorField_2`. The second parameter is the function object 
-`Integrator_2`, and has to be instantiated by a model of the concept 
-`Integrator_2`. 
-
-Streamline iterators 
--------------- 
-
-The following iterators allow to visit all the streamlines generated 
-by the constructor or the update function. 
+\tparam VectorField_2 has to be instantiated by a model of the concept 
+`VectorField_2`. 
+\tparam  Integrator_2 is a function object and has to be instantiated by a model of the concept `Integrator_2`. 
 
 */
 template< typename VectorField_2, typename Integrator_2 >
@@ -56,9 +46,10 @@ typedef VectorField_2::Vector_2 Vector_2;
 
 /// @}
 
-/// \name
-/// The class `Stream_lines_2` provides also two types for handling
-/// streamlines:
+/// \name Streamline Iterators 
+/// The following iterators allow to visit all the streamlines generated 
+/// by the constructor or the update function. 
+
 /// @{
 
 /*! 
@@ -121,13 +112,13 @@ returns the saturation ratio.
 void get_saturation_ratio(); 
 
 /*! 
-prints the streamlines to an ASCII file : line by line, and point by point. 
+prints the streamlines to an ASCII file: line by line, and point by point. 
 */ 
 void print_stream_lines(std::ofstream & fw); 
 
 /// @} 
 
-/// \name Streamline iterators 
+/// \name Streamline Iterators 
 /// @{
 
 /*! 

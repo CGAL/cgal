@@ -3,13 +3,13 @@ namespace CGAL {
 /*!
 \ingroup PkgPlacementOfStreamlines2
 
-The template parameter `StreamLinesTraits_2` has to be 
-instantiated by a model of the concept `StreamLinesTraits_2`. 
 
 This class provides a 2D vector field specified by a set of sample 
 points defined on a regular grid, with a bilinear interpolation scheme 
-over its cells (i.e. for each point `p` in a cell `c`, the 
+over its cells (i.e.\ for each point `p` in a cell `c`, the 
 vector value is interpolated from the vertices of `c`). 
+
+\tparam StreamLinesTraits_2 has to instantiated by a model of the concept `StreamLinesTraits_2`. 
 
 \models ::VectorField_2 
 

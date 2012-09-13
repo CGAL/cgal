@@ -3,9 +3,9 @@ namespace CGAL {
 /*!
 \ingroup PkgPlacementOfStreamlines2
 
-This class implements the first order Euler integrator. The template parameter 
-`VectorField_2` has to be instantiated by a model of the concept 
-`VectorField_2`. 
+This class implements the first order Euler integrator.
+
+\tparam VectorField_2 has to be instantiated by a model of the concept `VectorField_2`. 
 
 \models ::Integrator_2 
 

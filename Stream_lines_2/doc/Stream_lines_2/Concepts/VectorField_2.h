@@ -6,12 +6,12 @@
 The concept `VectorField_2` describes the set of requirements to be 
 fulfilled by any class used to instantiate the first template 
 parameter of the class 
-`Stream_lines_2<VectorField_2,Integrator_2>`. This concept 
+`CGAL::Stream_lines_2<VectorField_2,Integrator_2>`. This concept 
 provides the types of the geometric primitives used in the placement 
 of streamlines and some functions for answering different queries. 
 
-\hasModel CGAL::Regular_grid_2<StreamLinesTraits_2> 
-\hasModel CGAL::Triangular_field_2<StreamLinesTraits_2> 
+\hasModel `CGAL::Regular_grid_2<StreamLinesTraits_2>` 
+\hasModel `CGAL::Triangular_field_2<StreamLinesTraits_2>` 
 
 */
 

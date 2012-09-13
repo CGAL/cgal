@@ -3,8 +3,9 @@ namespace CGAL {
 /*!
 \ingroup PkgPlacementOfStreamlines2
 
-The template parameter `VectorField_2` has to 
-be instantiated by a model of the concept `VectorField_2`. This class implements the second order Runge-Kutta integrator. 
+This class implements the second order Runge-Kutta integrator. 
+
+\tparam VectorField_2 has to be instantiated by a model of the concept `VectorField_2`. 
 
 \models ::Integrator_2 
 
