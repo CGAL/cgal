@@ -13,30 +13,30 @@ namespace CGAL {
 
 \section arr_secintro Introduction 
 
-Given a set \f$ \calC\f$ of planar curves, the <I>arrangement</I>
-\f$ \calA(\calC)\f$ is the subdivision of the plane into zero-dimensional,
-one-dimensional and two-dimensional cells, called <I>vertices</I>, <I>edges</I> and <I>faces</I>, respectively induced by the curves in \f$ \calC\f$.
+Given a set \f$ \cal C\f$ of planar curves, the <I>arrangement</I>
+\f$ \cal A(\cal C)\f$ is the subdivision of the plane into zero-dimensional,
+one-dimensional and two-dimensional cells, called <I>vertices</I>, <I>edges</I> and <I>faces</I>, respectively induced by the curves in \f$ \cal C\f$.
 Arrangements are ubiquitous in the computational-geometry
 literature and have many applications;
 see, e.g., \cite as-aa-00, \cite cgal:h-a-04.
 
-The curves in \f$ \calC\f$ can intersect each other (a single curve may also
+The curves in \f$ \cal C\f$ can intersect each other (a single curve may also
 be self-intersecting or may be comprised of several disconnected branches)
 and are not necessarily \f$ x\f$-monotone.\footnote{A continuous planar curve \f$ C\f$ is <I>\f$ x\f$-monotone</I> if every vertical line intersects it at most once. For example, a non-vertical line segment is always \f$ x\f$-monotone and so is the graph of any continuous function \f$ y = f(x)\f$. For convenience, we treat vertical line segments as <I>weakly \f$ x\f$-monotone</I>, as there exists a single vertical line that overlaps them. A circle of radius \f$ r\f$ centered at \f$ (x_0, y_0)\f$ is not \f$ x\f$-monotone, as the vertical line \f$ x = x_0\f$ intersects it at \f$ (x_0, y_0 - r)\f$ and at \f$ (x_0, y_0 + r)\f$.}
-We construct a collection \f$ \calC''\f$ of
+We construct a collection \f$ \cal C''\f$ of
 \f$ x\f$-monotone subcurves that are pairwise disjoint in their interiors
-in two steps as follows. First, we decompose each curve in \f$ \calC\f$
+in two steps as follows. First, we decompose each curve in \f$ \cal C\f$
 into maximal \f$ x\f$-monotone subcurves (and possibly isolated points),
-obtaining the collection \f$ \calC'\f$. Note that an \f$ x\f$-monotone curve cannot
-be self-intersecting. Then, we decompose each curve in \f$ \calC'\f$ into
+obtaining the collection \f$ \cal C'\f$. Note that an \f$ x\f$-monotone curve cannot
+be self-intersecting. Then, we decompose each curve in \f$ \cal C'\f$ into
 maximal connected subcurves not intersecting any other
-curve (or point) in \f$ \calC'\f$. The collection \f$ \calC''\f$ may also
-contain isolated points, if the curves of \f$ \calC\f$ contain such
-points. The arrangement induced by the collection \f$ \calC''\f$ can be
+curve (or point) in \f$ \cal C'\f$. The collection \f$ \cal C''\f$ may also
+contain isolated points, if the curves of \f$ \cal C\f$ contain such
+points. The arrangement induced by the collection \f$ \cal C''\f$ can be
 conveniently embedded as a planar graph, whose vertices are associated
 with curve endpoints or with isolated points, and whose edges are
 associated with subcurves. It is easy to see that
-\f$ \calA(\calC) = \calA(\calC'')\f$. This graph can be represented using a
+\f$ \cal A(\cal C) = \cal A(\cal C'')\f$. This graph can be represented using a
 <I>doubly-connected edge list</I> data-structure (\sc{Dcel} for short),
 which consists of containers of vertices, edges and faces and
 maintains the incidence relations among these objects.
@@ -79,7 +79,7 @@ connected faces. Every face can have several holes contained in its
 interior (or no holes at all). In addition, every face may contain
 isolated vertices in its interior. See Figure \ref arr_figseg_dcel
 for an illustration of the various \sc{Dcel} features. For more details
-on the \sc{Dcel} data structure see [\cite bkos-cgaa-00 Chapter 2.
+on the \sc{Dcel} data structure see \cite bkos-cgaa-00 Chapter 2.
 
 \anchor arr_figseg_dcel
 \image html arr_segs.gif
@@ -271,26 +271,27 @@ The following function prints all the neighbors of a given
 arrangement vertex (assuming that the `Point_2` type can be
 inserted into the standard output using the `<<` operator). The
 arrangement type is the same as in the simple example above.
-<PRE>
+
+\code
 void print_neighboring_vertices (Arrangement_2::Vertex_const_handle v)
 {
-if (v->is_isolated()) {
-std::cout << "The vertex (" << v->point() << ") is isolated" << std::endl;
-return;
-}
+  if (v->is_isolated()) {
+    std::cout << "The vertex (" << v->point() << ") is isolated" << std::endl;
+   return;
+  }
 
-Arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
-first = curr = v->incident_halfedges();
+  Arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
+  first = curr = v->incident_halfedges();
 
-std::cout << "The neighbors of the vertex (" << v->point() << ") are:";
-do {
-// Note that the current halfedge is directed from u to v:
-Arrangement_2::Vertex_const_handle u = curr->source();
-std::cout << " (" << u->point() << ")";
-} while (++curr != first);
-std::cout << std::endl;
+  std::cout << "The neighbors of the vertex (" << v->point() << ") are:";
+  do {
+    // Note that the current halfedge is directed from u to v:
+    Arrangement_2::Vertex_const_handle u = curr->source();
+    std::cout << " (" << u->point() << ")";
+  } while (++curr != first);
+  std::cout << std::endl;
 }
-</PRE>
+\endcode
 
 In case of an isolated vertex, it is possible to obtain the face
 that contains this vertex using the `face()` method.
@@ -329,19 +330,20 @@ The function `print_ccb()` listed below prints all \f$ x\f$-monotone
 curves along a given CCB (assuming that the `Point_2` and the
 `X_monotone_curve_2` types can be inserted into the standard output
 using the `<<` operator).
-<PRE>
+
+\code
 void print_ccb (Arrangement_2::Ccb_halfedge_const_circulator circ)
 {
-Ccb_halfedge_const_circulator curr = circ;
-std::cout << "(" << curr->source()->point() << ")";
-do {
-Arrangement_2::Halfedge_const_handle he = curr->handle();
-std::cout << " [" << he->curve() << "] "
-<< "(" << he->target()->point() << ")";
-} while (++curr != circ);
-std::cout << std::endl;
+  Ccb_halfedge_const_circulator curr = circ;
+  std::cout << "(" << curr->source()->point() << ")";
+  do {
+    Arrangement_2::Halfedge_const_handle he = curr->handle();
+    std::cout << " [" << he->curve() << "] "
+              << "(" << he->target()->point() << ")";
+  } while (++curr != circ);
+  std::cout << std::endl;
 }
-</PRE>
+\endcode
 
 \subsection arr_sssectr_face Traversal Methods for an Arrangement Face 
 
@@ -375,68 +377,69 @@ type of this iterator is `Vertex`.
 The function `print_face()` listed below prints the outer and
 inner boundaries of a given face, using the function `print_ccb()`,
 which was introduced in the previous subsection.
-<PRE>
+
+\code
 void print_face (Arrangement_2::Face_const_handle f)
 {
-// Print the outer boundary.
-if (f->is_unbounded())
-std::cout << "Unbounded face. " << std::endl;
-else {
-std::cout << "Outer boundary: ";
-print_ccb (f->outer_ccb());
-}
+  // Print the outer boundary.
+  if (f->is_unbounded())
+    std::cout << "Unbounded face. " << std::endl;
+  else {
+    std::cout << "Outer boundary: ";
+    print_ccb (f->outer_ccb());
+  }
 
-// Print the boundary of each of the holes.
-Arrangement_2::Hole_const_iterator hi;
-int index = 1;
-for (hi = f->holes_begin(); hi != f->holes_end(); ++hi, ++index) {
-std::cout << " Hole #" << index << ": ";
-print_ccb (*hi);
-}
+  // Print the boundary of each of the holes.
+  Arrangement_2::Hole_const_iterator hi;
+  int index = 1;
+  for (hi = f->holes_begin(); hi != f->holes_end(); ++hi, ++index) {
+    std::cout << " Hole #" << index << ": ";
+    print_ccb (*hi);
+  }
 
-// Print the isolated vertices.
-Arrangement_2::Isolated_vertex_const_iterator iv;
-for (iv = f->isolated_vertices_begin(), index = 1;
-iv != f->isolated_vertices_end(); ++iv, ++index)
-{
-std::cout << " Isolated vertex #" << index << ": "
-<< "(" << iv->point() << ")" << std::endl;
+  // Print the isolated vertices.
+  Arrangement_2::Isolated_vertex_const_iterator iv;
+  for (iv = f->isolated_vertices_begin(), index = 1;
+       iv != f->isolated_vertices_end(); ++iv, ++index){
+    std::cout << " Isolated vertex #" << index << ": "
+              << "(" << iv->point() << ")" << std::endl;
+  }
 }
-}
-</PRE>
+\endcode
 
 \subsection arr_sssectr_ex Additional Example 
 
 The function listed below prints the current setting of a given
 arrangement. This concludes the preview of the various traversal
 methods.\footnote{The file `arr_print.h`, which can be found under the examples folder, includes this function and the rest of the functions listed in this section. Over there they are written in a more generic fashion, where the arrangement type serves as a template parameter for these functions, so different instantiations of the `Arrangement_2<Traits,Dcel>` template can be provided to the same function templates.}
-<PRE>
+
+\code
 void print_arrangement (const Arrangement_2& arr)
 {
-// Print the arrangement vertices.
-Vertex_const_iterator vit;
-std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
-for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
-std::cout << "(" << vit->point() << ")";
-if (vit->is_isolated())
-std::cout << " - Isolated." << std::endl;
-else
-std::cout << " - degree " << vit->degree() << std::endl;
-}
+  // Print the arrangement vertices.
+  Vertex_const_iterator vit;
+  std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    std::cout << "(" << vit->point() << ")";
+    if (vit->is_isolated())
+       std::cout << " - Isolated." << std::endl;
+    else
+       std::cout << " - degree " << vit->degree() << std::endl;
+  }
 
-// Print the arrangement edges.
-Edge_const_iterator eit;
-std::cout << arr.number_of_edges() << " edges:" << std::endl;
-for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
-std::cout << "[" << eit->curve() << "]" << std::endl;
+  // Print the arrangement edges.
+  Edge_const_iterator eit;
+  std::cout << arr.number_of_edges() << " edges:" << std::endl;
+  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
+    std::cout << "[" << eit->curve() << "]" << std::endl;
 
-// Print the arrangement faces.
-Face_const_iterator fit;
-std::cout << arr.number_of_faces() << " faces:" << std::endl;
-for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
-print_face (fit);
+  // Print the arrangement faces.
+  Face_const_iterator fit;
+  std::cout << arr.number_of_faces() << " faces:" << std::endl;
+  for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
+    print_face (fit);
 }
-</PRE>
+\endcode 
 
 \subsection arr_ssecmodify Modifying the Arrangement 
 
@@ -451,7 +454,7 @@ rather specialized, as they require a-priori knowledge on the location of
 the inserted curve. Indeed, for most purposes it is more convenient to
 construct an arrangement using the free (global) insertion-functions.
 
-\subsection arr_sssecmf_insert_cv Inserting Non-Intersecting \f$ x\f$-Monotone Curves 
+\subsection arr_sssecmf_insert_cv Inserting Non-Intersecting x-Monotone Curves 
 
 The most important functions that allow users to modify the
 arrangement, and perhaps the most frequently used ones, are the
@@ -805,46 +808,43 @@ to cast the resulting `CGAL::Object` into a handle to an arrangement
 feature. The point-location object `pl` is assumed to be already
 associated with an arrangement:
 
-<PRE>
+\code
 template <class PointLocation>
 void point_location_query
-(const PointLocation& pl,
-const typename PointLocation::Arrangement_on_surface_2::Point_2& q)
+  (const PointLocation& pl,
+   const typename PointLocation::Arrangement_on_surface_2::Point_2& q)
 {
-// Perform the point-location query.
-CGAL::Object obj = pl.locate (q);
+  // Perform the point-location query.
+  CGAL::Object obj = pl.locate (q);
 
-// Print the result.
-typedef typename PointLocation::Arrangement_on_surface_2 Arrangement_on_surface_2;
+  // Print the result.
+  typedef typename PointLocation::Arrangement_on_surface_2 Arrangement_on_surface_2;
 
-typename Arrangement_on_surface_2::Vertex_const_handle v;
-typename Arrangement_on_surface_2::Halfedge_const_handle e;
-typename Arrangement_on_surface_2::Face_const_handle f;
+  typename Arrangement_on_surface_2::Vertex_const_handle v;
+  typename Arrangement_on_surface_2::Halfedge_const_handle e;
+  typename Arrangement_on_surface_2::Face_const_handle f;
 
-std::cout << "The point " << q << " is located ";
-if (CGAL::assign (f, obj)) {
-// q is located inside a face:
-if (f->is_unbounded())
-std::cout << "inside the unbounded face." << std::endl;
-else
-std::cout << "inside a bounded face." << std::endl;
+  std::cout << "The point " << q << " is located ";
+  if (CGAL::assign (f, obj)) {
+    // q is located inside a face:
+    if (f->is_unbounded())
+      std::cout << "inside the unbounded face." << std::endl;
+    else
+      std::cout << "inside a bounded face." << std::endl;
+  } else if (CGAL::assign (e, obj)) {
+    // q is located on an edge:
+    std::cout << "on an edge: " << e->curve() << std::endl;
+  } else if (CGAL::assign (v, obj)) {
+    // q is located on a vertex:
+    if (v->is_isolated())
+      std::cout << "on an isolated vertex: " << v->point() << std::endl;
+    else
+      std::cout << "on a vertex: " << v->point() << std::endl;
+  } else {
+    CGAL_assertion_msg (false, "Invalid object.");
+  }
 }
-else if (CGAL::assign (e, obj)) {
-// q is located on an edge:
-std::cout << "on an edge: " << e->curve() << std::endl;
-}
-else if (CGAL::assign (v, obj)) {
-// q is located on a vertex:
-if (v->is_isolated())
-std::cout << "on an isolated vertex: " << v->point() << std::endl;
-else
-std::cout << "on a vertex: " << v->point() << std::endl;
-}
-else {
-CGAL_assertion_msg (false, "Invalid object.");
-}
-}
-</PRE>
+\endcode
 
 \subsection arr_sssecpl_strat Choosing a Point-Location Strategy 
 
@@ -1007,45 +1007,42 @@ result of the upward vertical ray-shooting operations from a given
 query point. The ray-shooting object `vrs` is assumed to be
 already associated with an arrangement:
 
-<PRE>
+\code
 template <class VerticalRayShoot>
 void vertical_ray_shooting_query
-(const VerticalRayShoot& vrs,
-const typename VerticalRayShoot::Arrangement_on_surface_2::Point_2& q)
+  (const VerticalRayShoot& vrs,
+   const typename VerticalRayShoot::Arrangement_on_surface_2::Point_2& q)
 {
-// Perform the point-location query.
-CGAL::Object obj = vrs.ray_shoot_up (q);
+  // Perform the point-location query.
+  CGAL::Object obj = vrs.ray_shoot_up (q);
 
-// Print the result.
-typedef typename VerticalRayShoot::Arrangement_on_surface_2 Arrangement_on_surface_2;
+  // Print the result.
+  typedef typename VerticalRayShoot::Arrangement_on_surface_2 Arrangement_on_surface_2;
 
-typename Arrangement_on_surface_2::Vertex_const_handle v;
-typename Arrangement_on_surface_2::Halfedge_const_handle e;
-typename Arrangement_on_surface_2::Face_const_handle f;
+  typename Arrangement_on_surface_2::Vertex_const_handle v;
+  typename Arrangement_on_surface_2::Halfedge_const_handle e;
+  typename Arrangement_on_surface_2::Face_const_handle f;
 
-std::cout << "Shooting up from " << q << " : ";
-if (CGAL::assign (e, obj)) {
-// We hit an edge:
-std::cout << "hit an edge: " << e->curve() << std::endl;
-}
-else if (CGAL::assign (v, obj)) {
-// We hit a vertex:
-if (v->is_isolated())
-std::cout << "hit an isolated vertex: " << v->point() << std::endl;
-else
-std::cout << "hit a vertex: " << v->point() << std::endl;
-}
-else if (CGAL::assign (f, obj)) {
-// We did not hit anything:
-CGAL_assertion (f->is_unbounded());
+  std::cout << "Shooting up from " << q << " : ";
+  if (CGAL::assign (e, obj)) {
+    // We hit an edge:
+   std::cout << "hit an edge: " << e->curve() << std::endl;
+  } else if (CGAL::assign (v, obj)) {
+    // We hit a vertex:
+    if (v->is_isolated())
+      std::cout << "hit an isolated vertex: " << v->point() << std::endl;
+    else
+      std::cout << "hit a vertex: " << v->point() << std::endl;
+  } else if (CGAL::assign (f, obj)) {
+    // We did not hit anything:
+    CGAL_assertion (f->is_unbounded());
 
-std::cout << "hit nothing." << std::endl;
+    std::cout << "hit nothing." << std::endl;
+  } else {
+    CGAL_assertion_msg (false, "Invalid object.");
+  }
 }
-else {
-CGAL_assertion_msg (false, "Invalid object.");
-}
-}
-</PRE>
+\endcode
 
 The following program uses the auxiliary function listed above to
 perform vertical ray-shooting queries on an arrangement.
@@ -1147,7 +1144,7 @@ available. Instead of accepting a user-defined point-location
 object, it defines a local instance of the walk point-location
 class and uses it to insert the curve.
 
-\subsection arr_sssecinsert_x_mon Inserting \f$ x\f$-Monotone Curves 
+\subsection arr_sssecinsert_x_mon Inserting x-Monotone Curves 
 
 The `insert_non_intersecting_curve()` function is very
 efficient, but its preconditions on the input curves are still
@@ -1555,12 +1552,12 @@ A \sc{Dcel} representing an arrangement of four lines. Halfedges are drawn as th
 </b></center>
 
 
-Given a set \f$ \calC\f$ of unbounded curves, a simple approach for
-representing the arrangement induced by \f$ \calC\f$ would be to clip the
+Given a set \f$ \cal C\f$ of unbounded curves, a simple approach for
+representing the arrangement induced by \f$ \cal C\f$ would be to clip the
 unbounded curves using an axis-parallel rectangle that contains all
 finite curve endpoints and intersection points between curves in
-\f$ \calC\f$. This process would result in a set \f$ \calC\f$ of bounded curves
-(line segments if \f$ \calC\f$ contains lines and rays), and it would be
+\f$ \cal C\f$. This process would result in a set \f$ \cal C\f$ of bounded curves
+(line segments if \f$ \cal C\f$ contains lines and rays), and it would be
 straightforward to compute the arrangement induced by this set.
 However, we would like to operate directly on the unbounded curves
 without having to preprocess them. Therefore, we use an implicit
@@ -1681,37 +1678,35 @@ unbounded face or the `Halfegde_around_vertex_circulator` of a vertex
 at infinity do traverse fictitious halfedges. For example, it is possible
 to traverse the outer boundaries of the unbounded arrangement edges
 using the following procedure:
-<PRE>
-Arrangement_2::Unbounded_face_const_iterator fit;
-Arrangement_2::Ccb_halfedge_const_circulator first, curr;
-Arrangement_2::Halfedge_const_handle he;
-int k = 1;
 
-for (fit = arr.unbounded_faces_begin();
-fit != arr.unbounded_faces_end(); ++fit, k++)
-{
-std::cout << "Unbounded face no. " << k << ": ";
-curr = first = fit->outer_ccb();
-if (! curr->source()->is_at_infinity())
-std::cout << "(" << curr->source()->point() << ")";
-do
-{
-he = curr;
-if (! he->is_fictitious())
-std::cout << " [" << he->curve() << "] ";
-else
-std::cout << " [ ... ] ";
+\code
+  Arrangement_2::Unbounded_face_const_iterator fit;
+  Arrangement_2::Ccb_halfedge_const_circulator first, curr;
+  Arrangement_2::Halfedge_const_handle he;
+  int k = 1;
 
-if (! he->target()->is_at_infinity())
-std::cout << "(" << he->target()->point() << ")";
+  for (fit = arr.unbounded_faces_begin();
+       fit != arr.unbounded_faces_end(); ++fit, k++) {
+    std::cout << "Unbounded face no. " << k << ": ";
+    curr = first = fit->outer_ccb();
+    if (! curr->source()->is_at_infinity())
+      std::cout << "(" << curr->source()->point() << ")";
+    do {
+      he = curr;
+      if (! he->is_fictitious())
+        std::cout << " [" << he->curve() << "] ";
+      else
+        std::cout << " [ ... ] ";
 
-++curr;
-} while (curr != first);
-std::cout << std::endl;
+      if (! he->target()->is_at_infinity())
+        std::cout << "(" << he->target()->point() << ")";
+
+      ++curr;
+    } while (curr != first);
+    std::cout << std::endl;
 }
-</PRE>
+\endcode
 
-ADVANCED END
 
 \section arr_sectraits Traits Classes 
 
@@ -1804,7 +1799,7 @@ be exact and we can perform them faster than other operations.
 \f$ p_1\f$ and \f$ p_2\f$.
 </DL>
 
-\subsection arr_sssectr_xmon_concept Supporting Intersecting \f$ x\f$-Monotone Curves 
+\subsection arr_sssectr_xmon_concept Supporting Intersecting x-Monotone Curves 
 
 A traits class that models the `ArrangementXMonotoneTraits_2`
 concept, which refines the `ArrangementBasicTraits_2`
@@ -2950,7 +2945,7 @@ extended and store additional data, as they help updating this
 data on-line. See Section \ref arr_secex_dcel for more details
 and examples.
 
-\section arr_secex_dcel Extending the \sc{Dcel} 
+\section arr_secex_dcel Extending the DCEL 
 
 For many applications of the arrangement package it is necessary to
 store additional information (perhaps of non-geometric nature) with
@@ -2974,7 +2969,7 @@ points with vertices and \f$ x\f$-monotone curves with halfedge, but nothing mor
 In this section we show how to use alternative \sc{Dcel} types to extend the 
 desired \sc{Dcel} records.
 
-\subsection arr_ssecex_dcel_face Extending the \sc{Dcel} Faces 
+\subsection arr_ssecex_dcel_face Extending the DCEL Faces 
 
 The `Arr_face_extended_dcel<Traits, FaceData>` class-template
 is used to associate auxiliary data field of type `FaceData` to
@@ -3012,7 +3007,7 @@ segments:\footnote{For simplicity, the particular observer used must be attached
 
 \cgalexample{face_extension.cpp}
 
-\subsection arr_ssecex_dcel_all Extending All \sc{Dcel} Records 
+\subsection arr_ssecex_dcel_all Extending All DCEL Records 
 
 The `Arr_extended_dcel<Traits, VertexData, HalfedgeData, FaceData>`
 class-template is used to associate auxiliary data fields of
@@ -3173,9 +3168,9 @@ face (indexed 1) and a bounded face (indexed 2):
 \section arr_secarr_with_hist Storing the Curve History 
 
 As stated at the beginning of this chapter (Section \ref arr_secintro), 
-when one constructs an arrangement induced by a set \f$ \calC\f$ of arbitrary 
-planar curves, she or he constructs a collection \f$ \calC''\f$ of \f$ x\f$-monotone 
-subcurves of \f$ \calC\f$ that are pairwise disjoint in their interior, and these 
+when one constructs an arrangement induced by a set \f$ \cal C\f$ of arbitrary 
+planar curves, she or he constructs a collection \f$ \cal C''\f$ of \f$ x\f$-monotone 
+subcurves of \f$ \cal C\f$ that are pairwise disjoint in their interior, and these 
 subcurves are associated with the arrangement edges (more precisely, with the 
 \sc{Dcel} halfedges). Doing so, the connection between the originating input 
 curves and the arrangement edges is lost. This loss might be acceptable for 
@@ -3184,7 +3179,7 @@ determine the input curves that give rise to the final subcurves.
 
 The `Arrangement_with_history_2<Traits,Dcel>` class-template extends
 the `Arrangement_2` class by keeping an additional container of input
-curves representing \f$ \calC\f$, and by maintaining a cross-mapping between these
+curves representing \f$ \cal C\f$, and by maintaining a cross-mapping between these
 curves and the arrangement edges they induce. The traits class that is
 used for instantiating the template should be a model of the
 `ArrangementTraits_2` concept (see Section \ref arr_sssecinsert_gen).
@@ -3491,7 +3486,7 @@ The `<<` operator for polylines and conic arcs defined in
 must be explicitly included, to insert polylines and conic arcs
 respectively into `Qt_widget` streams.
 
-\section arr_secbgl Adapting to <span class="textsc">Boost</span> Graphs 
+\section arr_secbgl Adapting to Boost Graphs 
 
 <span class="textsc">Boost</span>\footnote{See also <span class="textsc">Boost</span>'s homepage at: <TT>www.boost.org</TT>.}
 is a collection of portable \cpp libraries that extend the Standard Template Library (<span class="textsc">Stl</span>). The <span class="textsc">Boost</span> Graph Library (<span class="textsc">bgl</span>), which one of the libraries in the collection, offers an
