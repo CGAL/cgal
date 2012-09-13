@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2Concepts
+\ingroup PkgArrangement2ConceptsGeometricObjects
 \cgalconcept
 
 represents a general planar curve. 

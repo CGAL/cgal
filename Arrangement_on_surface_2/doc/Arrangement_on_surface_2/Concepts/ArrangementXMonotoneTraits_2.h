@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2Concepts
+\ingroup PkgArrangement2ConceptsTraits
 \cgalconcept
 
 The concept `ArrangementXMonotoneTraits_2` refines the basic arrangement-traits concept. 

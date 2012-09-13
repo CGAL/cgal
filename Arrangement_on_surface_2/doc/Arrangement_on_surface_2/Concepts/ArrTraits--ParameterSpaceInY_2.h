@@ -1,9 +1,9 @@
 
 /*!
-\ingroup PkgArrangement2Concepts
+\ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
 
- AdaptableBinaryFunction 
+\refines AdaptableBinaryFunction 
 
 \hasModel ArrangementOpenBoundaryTraits_2::Parameter_space_in_y_2 
 

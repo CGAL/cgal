@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2DCEL
 
 The `Arr_extended_dcel` class-template extends the topological-features of the <span class="textsc">Dcel</span> 
 namely the vertex, halfedge, and face types. While it is possible to maintain 
@@ -70,7 +70,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2DCEL
 
 The `Arr_extended_face` class-template extends the face topological-features of the 
 <span class="textsc">Dcel</span>. It is parameterized by a face base-type `FaceBase` and a data type 
@@ -122,7 +122,7 @@ void set_data (const FData & data);
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2DCEL
 
 The `Arr_extended_halfedge` class-template extends the halfedge topological-features of 
 the <span class="textsc">Dcel</span>. It is parameterized by a halfedge base-type `HalfedgeBase` 
@@ -174,7 +174,7 @@ void set_data (const HData & data);
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2DCEL
 
 The `Arr_extended_vertex` class-template extends the vertex 
 topological-features of the <span class="textsc">Dcel</span>. It is parameterized by a 
@@ -227,7 +227,7 @@ void set_data (const VData & data);
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2DCEL
 
 The `Arr_face_extended_dcel` class-template extends the <span class="textsc">Dcel</span> face-records, making it 
 possible to store extra (non-geometric) data with the arrangement faces. 

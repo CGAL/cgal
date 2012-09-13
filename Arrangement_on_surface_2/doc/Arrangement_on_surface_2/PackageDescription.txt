@@ -3,11 +3,53 @@
 /// \defgroup PkgArrangement2Concepts Concepts
 /// \ingroup PkgArrangement2
 
-/// \defgroup PkgArrangement2op_left_shift operator<<
+
+/// \defgroup PkgArrangement2ConceptsDCEL DCEL Concepts
+/// \ingroup PkgArrangement2Concepts
+
+/// \defgroup PkgArrangement2ConceptsGeometricObjects Geometric Object Concepts
+/// \ingroup PkgArrangement2Concepts
+
+/// \defgroup PkgArrangement2ConceptsFunctionObjects Function Object Concepts
+/// \ingroup PkgArrangement2Concepts
+
+/// \defgroup PkgArrangement2ConceptsTraits Traits Concepts
+/// \ingroup PkgArrangement2Concepts
+
+
+/// \defgroup PkgArrangement2TraitsClasses Traits Classes
 /// \ingroup PkgArrangement2
 
-/// \defgroup PkgArrangement2op_right_shift operator>>
+/// \defgroup PkgArrangement2DCEL DCEL
 /// \ingroup PkgArrangement2
+
+
+/// \defgroup PkgArrangement2IO I/O
+/// \ingroup PkgArrangement2
+
+
+/// \defgroup PkgArrangement2op_left_shift operator<<
+/// \ingroup PkgArrangement2IO
+
+/// \defgroup PkgArrangement2op_right_shift operator>>
+/// \ingroup PkgArrangement2IO
+
+
+/// \defgroup PkgArrangement2PointLocation Point Location
+/// \ingroup PkgArrangement2
+
+
+/// \defgroup PkgArrangement2Overlay Overlay
+/// \ingroup PkgArrangement2
+
+
+/// \defgroup PkgArrangement2Tags Tags
+/// \ingroup PkgArrangement2
+
+
+/// \defgroup PkgArrangement2Enums Enumerations
+/// \ingroup PkgArrangement2
+
 
 
 

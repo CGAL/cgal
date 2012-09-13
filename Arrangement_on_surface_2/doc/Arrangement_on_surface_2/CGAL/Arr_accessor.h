@@ -73,8 +73,8 @@ Arr_accessor(Arrangement_2& arr);
 
 /// @} 
 
-/// \name Accessing the notification functions 
-CONVERROR Check if this needs to be spread\n/// CONVERROR ADVANCED
+/// \name Accessing the Notification Functions 
+
 /// @{
 
 /*! 

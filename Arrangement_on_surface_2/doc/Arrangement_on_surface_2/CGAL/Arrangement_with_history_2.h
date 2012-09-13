@@ -30,10 +30,10 @@ The `Arrangement_with_history_2` template has two parameters:
 a model of the `ArrangementTraits_2` concept. The traits 
 class defines the `Curve_2` type, which represents an input curve. 
 It also defines the types of \f$ x\f$-monotone curves and two-dimensional 
-points, namely `X_monotone_curve_2` and `Point_2`, 
+points, namely `ArrangementTraits_2::X_monotone_curve_2` and `ArrangementTraits_2::Point_2`, 
 respectively, and supports basic geometric predicates on them. 
 <LI>The `Dcel` template-parameter should be instantiated with 
-a class that is a model of the `ArranagementDcelWithRebind` concept. The 
+a class that is a model of the `ArrangementDcelWithRebind` concept. The 
 value of this parameter is by default 
 `Arr_default_dcel<Traits>`. 
 </UL> 
@@ -52,7 +52,7 @@ class Arrangement_with_history_2 : public Arrangement_2<Traits,Dcel> {
 public:
 
 /// \name Types 
-CONVERROR Check if this needs to be spread\n/// In addition, the nested types `Vertex`, `Halfedge` and `Face` are defined, as well as all handle, iterator and circulator types, as defined by the `Arrangement_2` class-template .
+
 /// @{
 
 /*! 
@@ -84,6 +84,17 @@ typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2;
 the curve type, as defined by the traits class. 
 */ 
 typedef typename Traits_2::Curve_2 Curve_2; 
+
+
+/// @}
+
+/*! \name
+
+In addition, the nested types `Vertex`, `Halfedge` and `Face` are defined, as well as all handle, iterator and circulator types, as defined by the `Arrangement_2` class-template.
+
+*/
+/// @{
+
 
 /*! 
 a handle for an input curve. 
@@ -154,8 +165,11 @@ void clear ();
 
 /// @} 
 
-/// \name Access Functions 
-CONVERROR Check if this needs to be spread\n/// See the `Arrangement_2` reference pages for the full list. \f$ \bullet\f$ <I>Accessing the Input Curves:</I>
+/*! \name Access Functions for Input Curves
+
+See the `Arrangement_2` reference pages for the full list.
+*/
+
 /// @{
 
 /*! 
@@ -210,8 +224,16 @@ originating_curves_end (Halfedge_handle e) const;
 
 /// @} 
 
-/// \name Modifiers 
-CONVERROR Check if this needs to be spread\n/// See the `Arrangement_2` reference pages for the full list of functions for modifying arrangement vertices. \f$ \bullet\f$ <I>Modifying Arrangement Edges:</I> The following functions override their counterparts in the `Arrangement_2` class, as they also maintain the cross-relationships between the input curves and the edges they induce.
+/*! \name Modifying Arrangement Edges 
+
+The following functions override their counterparts in the
+`Arrangement_2` class, as they also maintain the cross-relationships
+between the input curves and the edges they induce.
+
+See the `Arrangement_2` reference pages for the full list of functions
+for modifying arrangement vertices
+*/
+
 /// @{
 
 /*! 

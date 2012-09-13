@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2TraitsClasses
 
 The class `Arr_circle_segment_traits_2` is a model of the `ArrangementTraits_2` concept 
 and can be used to construct and maintain arrangements of circular arcs 
@@ -43,6 +43,7 @@ supports the merging of curves of opposite directions.
 template< typename Kernel >
 class Arr_circle_segment_traits_2 {
 
+public: 
 /*! 
 The `Curve_2` class nested within the traits class can represent 
 arbitrary circular arcs, full circles and line segments and support their 

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2Tags
 
 The categories `Left_side_category`, `Right_side_category`, 
 `Bottom_side_category`, and `Top_side_category`, 
@@ -27,7 +27,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2Tags
 
 All the four types `Left_side_category`, 
 `Right_side_category`, `Bottom_side_category`, 

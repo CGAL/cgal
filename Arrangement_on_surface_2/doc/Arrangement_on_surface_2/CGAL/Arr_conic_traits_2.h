@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2TraitsClasses
 
 The class `Arr_conic_traits_2` is a model of the `ArrangementTraits_2` concept 
 and can be used to construct and maintain arrangements of bounded segments of 
@@ -223,7 +223,7 @@ const Rational& v2, const Rational& w2);
 /// @} 
 
 /// \name Access Functions 
-CONVERROR Check if this needs to be spread\n/// The six following methods return the coefficients of the supported conic, after their conversion to integer number (represented by the `Integer` type of the `NtTraits` class):
+
 /// @{
 
 /*! 
@@ -256,6 +256,14 @@ indicates whether the arc represents a full conic curve (en ellipse or
 a circle). 
 */ 
 bool is_full_conic() const; 
+
+
+/// @}
+
+/*! \name
+The six following methods return the coefficients of the supported conic, after their conversion to integer number (represented by the `Integer` type of the `NtTraits` class):
+*/
+/// @{
 
 /*! 
 returns the coefficient of \f$ x^2\f$. 

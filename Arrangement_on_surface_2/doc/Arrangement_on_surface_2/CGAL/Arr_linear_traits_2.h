@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgArrangement2
+  \ingroup PkgArrangement2TraitsClasses
 
   The traits class `Arr_linear_traits_2` is a model of the `ArrangementTraits_2` 
   concept that allows for the construction and maintenance of arrangements of 

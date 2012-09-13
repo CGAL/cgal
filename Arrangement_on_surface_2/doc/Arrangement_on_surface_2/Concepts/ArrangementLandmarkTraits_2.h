@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2Concepts
+\ingroup PkgArrangement2ConceptsTraits
 \cgalconcept
 
 The concept `ArrangementLandmarkTraits_2` refines the general traits concept by adding 

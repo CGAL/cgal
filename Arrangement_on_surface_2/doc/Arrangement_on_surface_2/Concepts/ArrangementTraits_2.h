@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2Concepts
+\ingroup PkgArrangement2ConceptsTraits
 \cgalconcept
 
 The concept `ArrangementTraits_2` allows the construction of arrangement 

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2TraitsClasses
 
 The traits class `Arr_polyline_traits_2` is a model of the `ArrangementTraits_2` 
 concept. It handles piecewise linear curves, commonly referred to as 
@@ -35,11 +35,8 @@ template< typename SegmentTraits >
 class Arr_polyline_traits_2 {
 public:
 
-/// @}
 
 /*!
-
-
 The `Curve_2` class nested within the polyline traits is used to 
 represent general continuous piecewise-linear curves (a polyline can be 
 self-intersecting) and support their construction from any range of points. 
@@ -162,9 +159,8 @@ void clear();
 
 }; /* end Arr_polyline_traits_2::Curve_2 */
 
+
 /*!
-
-
 The `X_monotone_curve_2` class nested within the polyline traits is used 
 to represent \f$ x\f$-monotone piecewise linear curves. It inherits from the 
 `Curve_2` type. It has a default constructor and a constructor from a 

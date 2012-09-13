@@ -19,7 +19,7 @@ namespace CGAL {
   <LI>The `Traits` template-parameter should be instantiated with 
   a model of the `ArrangementBasicTraits_2` concept. The traits 
   class defines the types of \f$ x\f$-monotone curves and two-dimensional 
-  points, namely `X_monotone_curve_2` and `Point_2`, 
+  points, namely `ArrangementBasicTraits_2::X_monotone_curve_2` and `ArrangementBasicTraits_2::Point_2`, 
   respectively, and supports basic geometric predicates on them. 
   <LI>The `Dcel` template-parameter should be instantiated with 
   a class that is a model of the `ArrangementDcel` concept. The 
@@ -57,7 +57,7 @@ class Arrangement_2 {
 public:
 
   /// \name Types 
-  CONVERROR Check if this needs to be spread\n/// The following handles, iterators, and circulators all have respective constant counterparts (for example, in addition to `Vertex_iterator` the type `Vertex_const_iterator` is also defined). See \cite cgal:ms-strg-96 for a discussion of constant versus mutable iterator types. The mutable types are assignable to their constant counterparts. `Vertex_iterator`, `Halfedge_iterator`, and `Face_iterator` are equivalent to the respective handle types (namely, `Vertex_handle`, `Halfedge_handle`, and `Face_handle`). Thus, wherever the handles appear in function parameter lists, the respective iterators can be passed as well.
+
   /// @{
 
   /*! 
@@ -91,7 +91,7 @@ public:
   typedef typename Dcel::Size Size; 
 
   /*!
-    \ingroup PkgArrangement2
+    \ingroup PkgArrangement2DCEL
     An object \f$ v\f$ of the class `Vertex` represents an arrangement vertex, 
     that is - a \f$ 0\f$-dimensional cell, associated with a point on the plane. 
   */
@@ -168,7 +168,7 @@ public:
   }; /* end Vertex */
 
   /*!
-    \ingroup PkgArrangement2
+    \ingroup PkgArrangement2DCEL
     An object \f$ e\f$ of the class `Halfedge` represents a halfedge in the 
     arrangement. A halfedge is directed from its <I>source</I> vertex 
     to its <I>target</I> vertex, and has an <I>incident face</I> lying to 
@@ -263,7 +263,7 @@ public:
   }; /* end Halfedge */
 
   /*!
-    \ingroup PkgArrangement2
+    \ingroup PkgArrangement2DCEL
 
     An object of the class `Face` represents an arrangement face, 
     namely, a \f$ 2\f$-dimensional arrangement cell. An arrangement that supports 
@@ -353,6 +353,26 @@ public:
     /// @}
 
   }; /* end Face */
+
+
+/// @}
+
+/*! \name 
+
+The following handles, iterators, and circulators all have respective
+constant counterparts (for example, in addition to `Vertex_iterator`
+the type `Vertex_const_iterator` is also defined). See \cite
+cgal:ms-strg-96 for a discussion of constant versus mutable iterator
+types. The mutable types are assignable to their constant
+counterparts. `Vertex_iterator`, `Halfedge_iterator`, and
+`Face_iterator` are equivalent to the respective handle types (namely,
+`Vertex_handle`, `Halfedge_handle`, and `Face_handle`). Thus, wherever
+the handles appear in function parameter lists, the respective
+iterators can be passed as well.
+
+*/
+/// @{
+
 
   /*! 
     a handle for an arrangement vertex. 
@@ -476,7 +496,7 @@ public:
   /// @} 
 
   /// \name Access Functions 
-  CONVERROR Check if this needs to be spread\n/// All `_begin()` and `_end()` methods listed below also have `const` counterparts, returning constant iterators instead of mutable ones: \f$ \bullet\f$ <I>Accessing the Arrangement Vertices:</I> \f$ \bullet\f$ <I>Accessing the Arrangement Edges:</I> \f$ \bullet\f$ <I>Accessing the Arrangement Faces:</I> CONVERROR ADVANCED
+
   /// @{
 
   /*! 
@@ -490,6 +510,16 @@ public:
     face, with no vertices or edges). 
   */ 
   bool is_empty() const; 
+
+
+/// @}
+
+/*! \name Accessing the Arrangement Vertices
+
+All `_begin()` and `_end()` methods listed below also have `const` counterparts, 
+returning constant iterators instead of mutable ones.
+*/
+/// @{
 
   /*! 
     returns the number of vertices in the arrangement. 
@@ -518,6 +548,16 @@ public:
     does not count them. 
   */ 
   Size number_of_vertices_at_infinity() const; 
+
+
+/// @}
+
+/*! \name Accessing the Arrangement Halfedges
+
+All `_begin()` and `_end()` methods listed below also have `const` counterparts, 
+returning constant iterators instead of mutable ones.
+*/
+/// @{
 
   /*! 
     returns the number of halfedges in the arrangement. 
@@ -549,6 +589,16 @@ public:
     returns the past-the-end iterator of the edges in the arrangement. 
   */ 
   Edge_iterator edges_end(); 
+
+
+/// @}
+
+/*! \name Accessing the Arrangement Faces
+
+All `_begin()` and `_end()` methods listed below also have `const` counterparts, 
+returning constant iterators instead of mutable ones.
+*/
+/// @{
 
   /*! 
     returns a handle for an unbounded face of the arrangement. 
@@ -601,8 +651,17 @@ public:
 
   /// @} 
 
-  /// \name Casting away Constness 
-  CONVERROR Check if this needs to be spread\n/// It is sometime necessary to convert a constant (non-mutable) handle to a mutable handle. For example, the result of a point-location query is a non-mutable handle for the arrangement cell containing the query point. Assume that the query point lies on a edge, so we obtain a `Halfedge_const_handle`; if we wish to use this handle and remove the edge, we first need to cast away its "constness".
+/*! \name Casting Away Constness 
+
+It is sometimes necessary to convert a constant (non-mutable) handle to
+a mutable handle. For example, the result of a point-location query is
+a non-mutable handle for the arrangement cell containing the query
+point. Assume that the query point lies on an edge, so we obtain a
+`Halfedge_const_handle`; if we wish to use this handle and remove the
+edge, we first need to cast away its "constness".
+  
+*/
+
   /// @{
 
   /*! 
@@ -622,8 +681,8 @@ public:
 
   /// @} 
 
-  /// \name Modifiers 
-  CONVERROR Check if this needs to be spread\n/// \f$ \bullet\f$ <I>Specialized Insertion Methods:</I> CONVERROR ADVANCED \f$ \bullet\f$ <I>Modifying Vertices and Edges:</I>
+/// \name Specialized Insertion Methods
+
   /// @{
 
   /*! 
@@ -820,6 +879,13 @@ public:
   Halfedge_handle insert_at_vertices (const X_monotone_curve_2& c, 
                                       Halfedge_handle pred1, 
                                       Halfedge_handle pred2); 
+
+
+/// @}
+
+/// \name Modifying Vertices and Edges
+
+/// @{
 
   /*! 
     sets `p` to be the point associated with the vertex `v`. 

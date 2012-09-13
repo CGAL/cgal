@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2Concepts
+\ingroup PkgArrangement2ConceptsDCEL
 \cgalconcept
 
 A face record in a <span class="textsc">Dcel</span> data structure. A face may either be unbounded, 

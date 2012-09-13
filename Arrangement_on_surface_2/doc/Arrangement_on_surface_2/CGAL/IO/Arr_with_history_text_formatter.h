@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2IO
 
 `Arr_with_history_text_formatter` defines the format of an arrangement in an input or output stream 
 (typically a file stream), thus enabling reading and writing an 

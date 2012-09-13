@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgArrangement2Concepts
+\ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
 
 \refines Functor 

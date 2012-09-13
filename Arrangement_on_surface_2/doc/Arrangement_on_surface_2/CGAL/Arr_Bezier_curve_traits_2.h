@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2TraitsClasses
 
 The traits class `Arr_Bezier_curve_traits_2` is a model of the `ArrangementTraits_2` 
 concept that handles planar B&eacute;zier curves. A planar <I>B&eacute;zier curve</I> 

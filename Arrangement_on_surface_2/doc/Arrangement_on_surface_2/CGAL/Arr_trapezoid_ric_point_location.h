@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2PointLocation
 
 \anchor arr_reftrap_pl 
 
