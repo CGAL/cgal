@@ -273,6 +273,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Stream_lines_2.tag</string>
           <string name="EXAMPLE_PATH">../Stream_lines_2/examples</string>
           <string name="IMAGE_PATH">../Stream_lines_2/doc/Stream_lines_2/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>   
+          </list>
         </doxygen>
       </project>
 
