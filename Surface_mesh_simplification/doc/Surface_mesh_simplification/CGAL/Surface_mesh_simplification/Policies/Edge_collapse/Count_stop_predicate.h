@@ -4,10 +4,10 @@ namespace CGAL {
 /*!
 \ingroup PkgSurfaceMeshSimplification
 
-The class `Surface_mesh_simplification::Count_stop_predicate` provides a model for the `StopPredicate` concept. 
-It has one template argument: the type of surface being simplified, 
-which must be a model of the `EdgeCollapsableMesh` concept. 
-It returns `true` when the number of current edges drops below a certain threshold. 
+The class `Surface_mesh_simplification::Count_stop_predicate` is a model for the `StopPredicate` concept,
+which returns `true` when the number of current edges drops below a certain threshold. 
+ 
+\tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
 \models ::StopPredicate 
 
@@ -32,7 +32,7 @@ Count_stop_predicate<ECM>( size_type threshold );
 /// @{
 
 /*! 
-Returns \f$ (current\_count < threshold)\f$. All other parameters are ignored (but exist since this is a generic policy). 
+Returns `(current_count < threshold)`. All other parameters are ignored (but exist since this is a generic policy). 
 */ 
 bool operator()( FT const& current_cost 
 , Profile const& edge_profile 

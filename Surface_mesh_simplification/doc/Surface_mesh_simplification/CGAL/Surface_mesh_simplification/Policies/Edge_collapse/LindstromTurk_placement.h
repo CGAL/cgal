@@ -9,8 +9,7 @@ It computes the placement, that is, the new position for the remaining vertex af
 a halfedge-collapse, following the Lindstrom-Turk strategy 
 (Section \ref SurfaceMeshSimplificationLindstromTurkStrategy). 
 
-The class `Surface_mesh_simplification::LindstromTurk_placement` has one template argument: the type of surface being simplified. 
-It must be a model of the `EdgeCollapsableMesh` concept. 
+\tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
 \models ::GetPlacement 
 

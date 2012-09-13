@@ -4,10 +4,11 @@ namespace CGAL {
 /*!
 \ingroup PkgSurfaceMeshSimplification
 
-The class `Surface_mesh_simplification::Edge_length_cost` provides a model for the `GetCost` concept. 
-It has one template argument: the type of surface being simplified, 
-which must be a model of the `EdgeCollapsableMesh` concept. 
-It computes the collapse cost as the squared length of the edge. 
+The class `Surface_mesh_simplification::Edge_length_cost` is a model for the `GetCost` concept,
+which computes the collapse cost as the squared length of the edge. 
+
+\tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
+
 
 \models ::GetCost 
 

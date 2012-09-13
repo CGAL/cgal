@@ -8,8 +8,7 @@ The class `Surface_mesh_simplification::LindstromTurk_cost` provides a model for
 It computes the collapse cost following the Lindstrom-Turk strategy 
 (Section \ref SurfaceMeshSimplificationLindstromTurkStrategy) 
 
-The class `Surface_mesh_simplification::LindstromTurk_cost` has one template argument: the type of surface being simplified. 
-It must be a model of the `EdgeCollapsableMesh` concept. 
+\tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
 \models ::GetCost 
 
