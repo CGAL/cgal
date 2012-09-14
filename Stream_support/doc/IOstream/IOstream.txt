@@ -229,8 +229,8 @@ public:
 An object of the class `CGAL::Color` is a color available
 for drawing operations in many \cgal output streams.
 
-Each color is defined by a triple of integers \f$ (r,g,b)\f$ with
-\f$ 0\le r,g,b \le 255\f$, the so-called <I>rgb-value</I> of the color.
+Each color is defined by a triple of integers `(r,g,b)` with
+0 \f$ \le \f$ r,g,b \f$ \le \f$ 255, the so-called <I>rgb-value</I> of the color.
 There are a 11 predefined `Color` constants available:
 `BLACK`, `WHITE`, `GRAY`, `RED`, `GREEN`,
 `DEEPBLUE`, `BLUE`, `PURPLE`, `VIOLET`, `ORANGE`,

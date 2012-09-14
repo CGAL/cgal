@@ -18,7 +18,7 @@ as a sequence of four byte. The format depends on the machine.
  The mode  <span class="textsc">PRETTY</span>
 serves mainly for debugging as the type of the geometric
 object is written, as well as the data defining the object. For example
-for a point at the origin with Cartesian double coordinates, the output
+for a point at the origin with %Cartesian double coordinates, the output
 would be `PointC2(0.0, 0.0)`.  At the moment \cgal does not
 provide input operations for pretty printed data. By default a stream
 is in <span class="textsc">Ascii</span> mode.
@@ -137,7 +137,7 @@ class Input_rep {
 
 The purpose of `Output_rep` is to provide a way to control output formatting that works independently of the object's stream output operator. 
 
-If you dont specialize `Output_rep` for <TT>T</TT>, <TT>T</TT>'s stream output operator is called from within `Output_rep`, by default. If you want another behaviour for your type <TT>T</TT>, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means <span class="textsc">default behaviour</span>. 
+If you dont specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behaviour for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behaviour*. 
 
 Specializations of `Output_rep` should provide the following features: 
 
@@ -151,7 +151,7 @@ std::ostream& operator()( std::ostream& out ) const;
 
 \endcode 
 
-You can also specialize for a formatting tag <TT>F</TT>. 
+You can also specialize for a formatting tag `F`. 
 
 */
 template< typename T, typename F >
@@ -212,7 +212,7 @@ bool is_pretty(std::ios& s);
 /*!
 \ingroup PkgIOstreams
 
-Convenience function to construct an output representation (`Output_rep`) for type <TT>T</TT>. 
+Convenience function to construct an output representation (`Output_rep`) for type `T`. 
 
 Generic IO for type `T`.
 */
@@ -229,7 +229,7 @@ template <class T> Input_rep<T> iformat( const T& t);
 /*!
 \ingroup PkgIOstreams
 
-Convenience function to construct an output representation (`Output_rep`) for type <TT>T</TT>. 
+Convenience function to construct an output representation (`Output_rep`) for type `T`. 
 
 Generic IO for type `T` with formatting tag.
 */

@@ -6,8 +6,8 @@ namespace CGAL {
 
 An object of the class `Color` is a color available 
 for drawing operations in many \cgal output streams. 
-Each color is defined by a triple of unsigned chars \f$ (r,g,b)\f$ with 
-\f$ 0\le r,g,b \le 255\f$, the so-called <I>rgb-value</I> of the color. 
+Each color is defined by a triple of unsigned chars `(r,g,b)` with 
+0 \f$\le\f$ r,g,b \f$ \le \f$ 255, the so-called <I>rgb-value</I> of the color. 
 
 \sa `CGAL::Qt_widget ` 
 \sa `CGAL::Geomview_stream` 
@@ -21,7 +21,7 @@ public:
 /// @{
 
 /*! 
-creates a color with rgb-value \f$ (0,0,0)\f$, i.e. black. 
+creates a color with rgb-value `(0,0,0)`, i.e. black. 
 */ 
 Color(); 
 
