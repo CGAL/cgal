@@ -2124,6 +2124,7 @@ Developers_manual/doc_tex/Developers_manual/fig/reference_counting.gif -text svn
 Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf -text svneol=unset#application/pdf
 Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#application/pdf
+Documentation/Customizations.txt -text
 Documentation/Doxyfile -text
 Documentation/DoxygenLayout.xml -text
 Documentation/DoxygenLayoutPackage.xml -text
