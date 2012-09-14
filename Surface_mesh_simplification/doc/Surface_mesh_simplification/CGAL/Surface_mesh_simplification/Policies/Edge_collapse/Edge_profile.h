@@ -1,10 +1,11 @@
 
 namespace CGAL {
+namespace Surface_mesh_simplification {
 
 /*!
 \ingroup PkgSurfaceMeshSimplification
 
-The class `Surface_mesh_simplification::Edge_profile` provides a model for the `EdgeProfile` concept. 
+The class `Edge_profile` provides a model for the `EdgeProfile` concept. 
 
 \tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
@@ -15,10 +16,11 @@ The class `Surface_mesh_simplification::Edge_profile` provides a model for the `
 
 */
 template< typename ECM >
-class Surface_mesh_simplification::Edge_profile {
+class Edge_profile {
 public:
 
 /// @}
 
 }; /* end Surface_mesh_simplification::Edge_profile */
+} /* namespace Surface_mesh_simplification */
 } /* end namespace CGAL */

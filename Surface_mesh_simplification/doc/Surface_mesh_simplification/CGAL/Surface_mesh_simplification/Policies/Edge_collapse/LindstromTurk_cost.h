@@ -1,10 +1,10 @@
 
 namespace CGAL {
-
+namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplification
 
-The class `Surface_mesh_simplification::LindstromTurk_cost` provides a model for the `GetCost` concept. 
+The class `LindstromTurk_cost` provides a model for the `GetCost` concept. 
 It computes the collapse cost following the Lindstrom-Turk strategy 
 (Section \ref SurfaceMeshSimplificationLindstromTurkStrategy) 
 
@@ -16,7 +16,7 @@ It computes the collapse cost following the Lindstrom-Turk strategy
 
 */
 template< typename ECM >
-class Surface_mesh_simplification::LindstromTurk_cost {
+class LindstromTurk_cost {
 public:
 
 /// \name Creation 
@@ -43,4 +43,5 @@ result_type operator()( Profile const& profile
 /// @}
 
 }; /* end Surface_mesh_simplification::LindstromTurk_cost */
+} /* namespace Surface_mesh_simplification */
 } /* end namespace CGAL */

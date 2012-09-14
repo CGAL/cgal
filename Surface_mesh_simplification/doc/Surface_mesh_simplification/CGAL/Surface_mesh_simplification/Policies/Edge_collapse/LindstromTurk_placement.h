@@ -1,10 +1,11 @@
 
 namespace CGAL {
+namespace Surface_mesh_simplification {
 
 /*!
 \ingroup PkgSurfaceMeshSimplification
 
-The class `Surface_mesh_simplification::LindstromTurk_placement` provides a model for the `GetPlacement` concept. 
+The class `LindstromTurk_placement` provides a model for the `GetPlacement` concept. 
 It computes the placement, that is, the new position for the remaining vertex after 
 a halfedge-collapse, following the Lindstrom-Turk strategy 
 (Section \ref SurfaceMeshSimplificationLindstromTurkStrategy). 
@@ -17,7 +18,7 @@ a halfedge-collapse, following the Lindstrom-Turk strategy
 
 */
 template< typename ECM >
-class Surface_mesh_simplification::LindstromTurk_placement {
+class LindstromTurk_placement {
 public:
 
 /// \name Creation 
@@ -43,4 +44,5 @@ result_type operator()( Profile const& edge_profile ) const;
 /// @}
 
 }; /* end Surface_mesh_simplification::LindstromTurk_placement */
+} /* namespace Surface_mesh_simplification */
 } /* end namespace CGAL */

@@ -1,10 +1,11 @@
 
 namespace CGAL {
+namespace Surface_mesh_simplification {
 
 /*!
 \ingroup PkgSurfaceMeshSimplification
 
-The class `Surface_mesh_simplification::Count_ratio_stop_predicate` is a model for the `StopPredicate` concept
+The class `Count_ratio_stop_predicate` is a model for the `StopPredicate` concept
 which returns `true` when the relation between the initial and current number of edges drops below a certain ratio.  
 
 \tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
@@ -16,7 +17,7 @@ which returns `true` when the relation between the initial and current number of
 
 */
 template< typename ECM >
-class Surface_mesh_simplification::Count_ratio_stop_predicate {
+class Count_ratio_stop_predicate {
 public:
 
 /// \name Creation 
@@ -45,4 +46,5 @@ bool operator()( FT const& current_cost
 /// @}
 
 }; /* end Surface_mesh_simplification::Count_ratio_stop_predicate */
+} /* namespace Surface_mesh_simplification */
 } /* end namespace CGAL */

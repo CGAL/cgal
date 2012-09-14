@@ -1,4 +1,5 @@
 namespace CGAL {
+namespace Surface_mesh_simplification {
 
 /*!
 \ingroup PkgSurfaceMeshSimplification
@@ -8,8 +9,7 @@ the number of edges effectively removed.
 
 The function `Surface_mesh_simplification::edge_collapse` simplifies in-place a triangulated surface mesh by iteratively collapsing edges. 
 
-Non-named parameters 
--------------- 
+## Non-named parameters ##
 
 `surface` is the surface to simplify. 
 It must be a model of the `EdgeCollapsableMesh` concept. 
@@ -17,8 +17,7 @@ It must be a model of the `EdgeCollapsableMesh` concept.
 `should_stop` is the stop-condition policy. 
 It must be a model of the `StopPredicate` concept. 
 
-Named parameters 
--------------- 
+## Named parameters ##
 
 `named_parameters` holds the list of all the additional parameters 
 used by the `edge_collapse` function (including default parameters). 
@@ -136,8 +135,8 @@ simply qualify the <I>first</I>
 \footnote{The second and subsequent named parameters shall not be qualified as they are member functions} 
 named parameter with `CGAL::`, as shown in the examples in the user manual. 
 
-Semantics 
--------------- 
+## Semantics ##
+
 
 The simplification process continues until the `should_stop` policy returns `true` 
 or the surface cannot be simplified any further due to topological constraints. 
@@ -157,5 +156,6 @@ int edge_collapse ( EdgeCollapsableMesh& surface
 , sms_named_params<P,T,R> const& named_parameters
 ) ;
 
+} /* namespace Surface_mesh_simplification */
 } /* namespace CGAL */
 
