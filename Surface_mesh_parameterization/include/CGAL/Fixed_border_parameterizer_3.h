@@ -58,10 +58,9 @@ namespace CGAL {
 /// from the linear systems in order to have a symmetric positive definite
 /// matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 ///
-/// @heading Is Model for the Concepts:
-/// Model of the ParameterizerTraits_3 concept (although you cannot instantiate this class).
+/// \models ParameterizerTraits_3 (although you cannot instantiate this class).
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// Fixed_border_parameterizer_3 class is a
 /// Strategy [GHJV95]: it implements (part of) a strategy of surface parameterization
 /// for models of ParameterizationMesh_3.
@@ -157,10 +156,9 @@ public:
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
-    /// @commentheading Preconditions:
-    /// - 'mesh' must be a surface with one connected component.
-    /// - 'mesh' must be a triangular mesh.
-    /// - The mesh border must be mapped onto a convex polygon.
+    /// \pre 'mesh' must be a surface with one connected component.
+    /// \pre 'mesh' must be a triangular mesh.
+    /// \pre The mesh border must be mapped onto a convex polygon.
     virtual Error_code  parameterize(Adaptor& mesh);
 
 // Protected operations
@@ -175,10 +173,9 @@ protected:
     /// Fill the border vertices' lines in both linear systems:
     /// "u = constant" and "v = constant".
     ///
-    /// @commentheading Preconditions:
-    /// - Vertices must be indexed.
-    /// - A, Bu and Bv must be allocated.
-    /// - Border vertices must be parameterized.
+    /// \pre Vertices must be indexed.
+    /// \pre A, Bu and Bv must be allocated.
+    /// \pre Border vertices must be parameterized.
     void  initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
                                               const Adaptor& mesh);
 
@@ -193,10 +190,9 @@ protected:
     /// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
     /// - compute w_ii = - sum of w_ijs.
     ///
-    /// @commentheading Preconditions:
-    /// - Vertices must be indexed.
-    /// - Vertex i musn't be already parameterized.
-    /// - Line i of A must contain only zeros.
+    /// \pre Vertices must be indexed.
+    /// \pre Vertex i musn't be already parameterized.
+    /// \pre Line i of A must contain only zeros.
     virtual Error_code setup_inner_vertex_relations(Matrix& A,
                                                     Vector& Bu,
                                                     Vector& Bv,

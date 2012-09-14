@@ -55,7 +55,7 @@ namespace CGAL {
 /// using TAUCS solvers family.
 /// The default solver is the Multifrontal Supernodal Cholesky Factorization.
 ///
-/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d concept.
+/// \models SparseLinearAlgebraTraits_d
 
 template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
@@ -90,9 +90,8 @@ public:
     /// Solve the sparse linear system "A*X = B".
     /// Return true on success. The solution is then (1/D) * X.
     ///
-    /// @commentheading Preconditions:
-    /// - A.row_dimension()    == B.dimension().
-    /// - A.column_dimension() == X.dimension().
+    /// \pre A.row_dimension()    == B.dimension().
+    /// \pre A.column_dimension() == X.dimension().
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
@@ -191,7 +190,7 @@ private:
 /// is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems
 /// using TAUCS out-of-core LU factorization.
 ///
-/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d concept.
+/// \models SparseLinearAlgebraTraits_d
 
 template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
@@ -215,9 +214,8 @@ public:
     /// Solve the sparse linear system "A*X = B".
     /// Return true on success. The solution is then (1/D) * X.
     ///
-    /// @commentheading Preconditions:
-    /// - A.row_dimension()    == B.dimension().
-    /// - A.column_dimension() == X.dimension().
+    /// \pre A.row_dimension()    == B.dimension().
+    /// \pre A.column_dimension() == X.dimension().
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
         D = 1;          // TAUCS does not support homogeneous coordinates

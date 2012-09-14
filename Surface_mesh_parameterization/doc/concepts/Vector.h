@@ -20,15 +20,15 @@
 
 namespace SparseLinearAlgebraTraits_d {
 
-
+/// \ingroup PkgSurfaceParameterizationConcepts
+/// \cgalconcept
 /// SparseLinearAlgebraTraits_d::Vector
 /// is a concept of a vector that can be multiplied by a sparse matrix.
 ///
-/// @heading Has Models:
-/// - CGAL::Taucs_vector<T>
-/// - OpenNL::FullVector<T> in OpenNL package
-
-class Vector : public LinearAlgebraTraits_d::Vector
+/// \refines LinearAlgebraTraits_d::Vector
+/// \hasModel CGAL::Taucs_vector<T>
+/// \hasModel OpenNL::FullVector<T> in OpenNL package
+class Vector
 {
 // Public types
 public:
@@ -52,10 +52,62 @@ public:
 
     /// Read/write access to a vector coefficient.
     ///
-    /// @commentheading Precondition: 0 <= row < dimension().
+    /// \pre 0 <= row < dimension().
     NT  operator[] (int row) const;
     NT&  operator[] (int row);
 };
 
+/// \ingroup PkgSurfaceParameterizationConcepts
+/// \cgalconcept
+/// SparseLinearAlgebraTraits_d::Matrix
+/// is a concept of a sparse matrix class.
+///
+/// \refines LinearAlgebraTraits_d::Matrix
+/// \hasModel Taucs_matrix<T>
+/// \hasModel Taucs_symmetric_matrix<T>
+/// \hasModel OpenNL::SparseMatrix<T> in OpenNL package
+class Matrix
+{
+// Public types
+public:
+    typedef xxx NT;
 
-} // namespace SparseLinearAlgebraTraits_d
+// Public operations
+public:
+    /// Create a square matrix initialized with zeros.
+    Matrix(int dimension);
+
+    /// Create a rectangular matrix initialized with zeros.
+    Matrix (int rows, int columns);
+
+    /// Return the matrix number of rows.
+    int  row_dimension () const;
+
+    /// Return the matrix number of columns.
+    int  column_dimension () const;
+
+    /// Read access to a matrix coefficient.
+    ///
+    /// \pre 0 <= row < row_dimension().
+    /// \pre 0 <= column < column_dimension().
+    NT  get_coef (int row, int column) const;
+
+    /// Write access to a matrix coefficient: a_ij <- a_ij + val.
+    ///
+    /// \pre 0 <= row < row_dimension().
+    /// \pre 0 <= column < column_dimension().
+    void add_coef(int row, int column, NT value);
+
+    /// Write access to a matrix coefficient: a_ij <- val.
+    ///
+    /// Optimization:
+    /// - Caller can optimize this call by setting 'new_coef' to true
+    ///   if the coefficient does not already exist in the matrix.
+    ///
+    /// \pre 0 <= i < row_dimension().
+    /// \pre 0 <= j < column_dimension().
+    void set_coef(int row, int column, NT value, bool new_coef = false);
+};
+
+
+}

@@ -19,14 +19,15 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
+/// \ingroup PkgSurfaceParameterizationConcepts
+/// \cgalconcept
 /// ParameterizerTraits_3 is a concept of parameterization object
 /// for a given type of mesh, 'Adaptor', which is a model of the
 /// ParameterizationMesh_3 concept.
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// ParameterizerTraits_3 models are Strategies [GHJV95]: they implement
 /// a strategy of surface parameterization for models of ParameterizationMesh_3.
-
 class ParameterizerTraits_3
 {
 // Public types
@@ -55,9 +56,8 @@ public:
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
-    /// @commentheading Preconditions:
-    /// - 'mesh' must be a surface with one connected component and no hole.
-    /// - 'mesh' must be a triangular mesh.
+    /// \pre 'mesh' must be a surface with one connected component and no hole.
+    /// \pre 'mesh' must be a triangular mesh.
     Error_code  parameterize (Adaptor& mesh);
 };
 

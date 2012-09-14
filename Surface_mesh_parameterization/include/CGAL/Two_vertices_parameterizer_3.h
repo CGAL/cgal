@@ -44,9 +44,9 @@ namespace CGAL {
 /// ParameterizationMesh_3 class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// @heading Is Model for the Concepts: Model of the BorderParameterizer_3 concept.
+/// \models BorderParameterizer_3
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
 /// a strategy of border parameterization for models of ParameterizationMesh_3.
 

@@ -45,17 +45,16 @@ namespace CGAL {
 /// describes the border of a topological disc. This border may be an actual
 /// border of the mesh or a virtual border.
 ///
-/// @heading Is Model for the Concepts:
-/// Model of ParameterizationMesh_3 concept, whose purpose is to allow
-/// the Surface_mesh_parameterization package to access meshes in a uniform manner.
+/// \models ParameterizationMesh_3 concept, whose purpose is to allow
+/// the Surface_mesh_parameterization package to access meshes in a
+/// uniform manner.
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// Parameterization_mesh_patch_3 is a Decorator [GHJV95]: it changes the behavior
 /// of a ParameterizationPatchableMesh_3 3D surface while keeping its
 /// ParameterizationMesh_3 interface.
 ///
-/// @heading Parameters:
-/// @param ParameterizationPatchableMesh_3       3D surface mesh.
+/// @param ParameterizationPatchableMesh_3 3D surface mesh.
 
 template<class ParameterizationPatchableMesh_3>
 class Parameterization_mesh_patch_3
@@ -75,9 +74,7 @@ public:
     typedef ParameterizationPatchableMesh_3 Adaptor;
 
 
-    ////////////////////////////////////////////////////////////////////
-    /// @subheading Types implementing the ParameterizationMesh_3 interface
-    ////////////////////////////////////////////////////////////////////
+    /// \name Types implementing the ParameterizationMesh_3 interface
     /// @{
 
     /// Number type to represent coordinates.
@@ -159,11 +156,10 @@ public:
     /// describes the border of a topological disc. This border may be an actual
     /// border of the mesh or a virtual border.
     ///
-    /// @commentheading Preconditions:
-    /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
+    /// \pre first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
-    /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// - The "seam" is implicitely a loop. The first vertex should *not* be
+    /// \pre The "seam" is given as a container of Adaptor::Vertex_handle elements.
+    /// \pre The "seam" is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
     template<class InputIterator>
     Parameterization_mesh_patch_3(Adaptor& mesh,
@@ -258,9 +254,7 @@ public:
     Adaptor&       get_decorated_mesh()       { return *m_mesh_adaptor; }
     const Adaptor& get_decorated_mesh() const { return *m_mesh_adaptor; }
 
-    ////////////////////////////////////////////////////////////////////
-    /// @subheading Methods implementing the ParameterizationMesh_3 interface
-    ////////////////////////////////////////////////////////////////////
+    /// \name Methods implementing the ParameterizationMesh_3 interface
     /// @{
 
     // MESH INTERFACE
@@ -602,11 +596,10 @@ private:
     /// w.r.t. the first_seam_vertex -> end_seam_vertex border
     /// (outer seam edges are marked BORDER).
     ///
-    /// @commentheading Preconditions:
-    /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
+    /// \pre first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
-    /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// - The "seam" is implicitely a loop. The first vertex should *not* be
+    /// \pre The "seam" is given as a container of Adaptor::Vertex_handle elements.
+    /// \pre The "seam" is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
     template<class InputIterator>
     void set_mesh_seaming(InputIterator first_seam_vertex,
@@ -696,12 +689,11 @@ private:
     /// Set the seaming flag of inner vertices and edges to INNER
     /// by filling the topological disk.
     ///
-    /// @commentheading Preconditions:
-    /// - Inner vertices are marked as OUTER, seam vertices as BORDER.
-    /// - Inner edges are marked as OUTER,
+    /// \pre Inner vertices are marked as OUTER, seam vertices as BORDER.
+    /// \pre Inner edges are marked as OUTER,
     ///   outer seam edges as BORDER, inner seam edges as INNER.
-    /// - pSeedVertex is in the inner region.
-    /// - pSeedVertex != NULL.
+    /// \pre pSeedVertex is in the inner region.
+    /// \pre pSeedVertex != NULL.
     ///
     /// Implementation note:
     /// The seaming status of inner edges is unused, thus this part is not tested.
@@ -748,13 +740,12 @@ private:
 
     // Check that the seam is valid, i.e. that the cut mesh is 2-manifold.
     ///
-    /// @commentheading Preconditions:
-    /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
+    /// \pre first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
-    /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// - The "seam" is implicitely a loop. The first vertex should *not* be
+    /// \pre The "seam" is given as a container of Adaptor::Vertex_handle elements.
+    /// \pre The "seam" is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
-    /// - The seaming flag of all vertices and edges to INNER, BORDER or OUTER
+    /// \pre The seaming flag of all vertices and edges to INNER, BORDER or OUTER
     ///   w.r.t. the first_seam_vertex -> end_seam_vertex border is set
     ///   (outer seam edges are marked BORDER).
     template<class InputIterator>
@@ -843,9 +834,8 @@ private:
 
     /// Create a patch vertex from an adaptor vertex + one of its neighbors.
     ///
-    /// @commentheading Preconditions:
-    /// - adaptor_neighbor is a neighbor of adaptor_vertex.
-    /// - (adaptor_vertex, adaptor_neighbor) must *not* be a seam (non-oriented) edge.
+    /// \pre adaptor_neighbor is a neighbor of adaptor_vertex.
+    /// \pre (adaptor_vertex, adaptor_neighbor) must *not* be a seam (non-oriented) edge.
     Vertex_const_handle get_decorated_vertex_from_inner_edge(
                 typename Adaptor::Vertex_const_handle adaptor_vertex,
                 typename Adaptor::Vertex_const_handle adaptor_neighbor) const
@@ -905,11 +895,10 @@ private:
     /// Create a patch vertex from a border/seam adaptor vertex
     /// + one of its neighbors on the seam.
     ///
-    /// @commentheading Preconditions:
-    /// - adaptor_vertex is a border/seam vertex.
-    /// - [first_cw_neighbor, last_cw_neighbor] defines the range
+    /// \pre adaptor_vertex is a border/seam vertex.
+    /// \pre [first_cw_neighbor, last_cw_neighbor] defines the range
     ///   of the valid neighbors of adaptor_vertex (included) or are NULL.
-    /// - Either first_cw_neighbor or last_cw_neighbor are not NULL.
+    /// \pre Either first_cw_neighbor or last_cw_neighbor are not NULL.
     Vertex_const_handle get_decorated_vertex_from_border_edge(
                 typename Adaptor::Vertex_const_handle adaptor_vertex,
                 typename Adaptor::Vertex_const_handle last_cw_neighbor,

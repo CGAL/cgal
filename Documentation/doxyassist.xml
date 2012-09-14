@@ -79,6 +79,24 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>Planar Parameterization of Triangulated Surface Meshes</name>
+        <input>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization</input>
+        <input>../Surface_mesh_parameterization/doc/concepts</input>
+        <input>../Surface_mesh_parameterization/include</input>
+        <doxygen>
+          <!-- <string name="STRIP_FROM_PATH">../Surface_mesh_parameterization/doc/Surface_mesh_parameterization/</string> -->
+          <string name="STRIP_FROM_INC_PATH">../Surface_mesh_parameterization/include</string>
+          <string name="GENERATE_TAGFILE">./tags/Surface_mesh_parameterization.tag</string>
+          <string name="IMAGE_PATH">../Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig</string>
+          <string name="EXAMPLE_PATH">../Surface_mesh_parameterization/examples</string>
+          <bool name="EXTRACT_ALL">false</bool>
+          <!-- <bool name="HIDE_UNDOC_MEMBERS">true</bool> -->
+          <bool name="HIDE_UNDOC_CLASSES">true</bool>
+          <bool name="SHOW_INCLUDE_FILES">false</bool>
+        </doxygen>
+      </project>
+
+      <project>
         <name>2D Conforming Triangulations and Meshes</name>
         <input>../Mesh_2/doc</input>
         <doxygen>

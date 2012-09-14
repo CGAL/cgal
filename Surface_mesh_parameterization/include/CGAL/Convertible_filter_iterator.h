@@ -44,9 +44,8 @@ class Convertible_filter_iterator
 
 public:
 
-  /// CREATION
-  /// --------
-
+  /// \name Creation
+  /// @{
     Convertible_filter_iterator() {}
     Convertible_filter_iterator(Base base)
         : Base(base) {}
@@ -58,9 +57,10 @@ public:
     Convertible_filter_iterator(const Self& it) : Base(it) {}
     Self& operator=(const Self& it) { Base::operator=(it); return *this; }
 
-  /// OPERATIONS Forward Category
-  /// ---------------------------
+  /// @}
 
+  /// \name Forward Category
+  /// @{
     bool  operator==(Nullptr_t ptr) const { return (const Base&)*this == ptr; }
     bool  operator!=(Nullptr_t ptr) const { return ! (*this == ptr); }
     bool  operator==(const Self& it) const { return (const Base&)*this == it; }
@@ -68,18 +68,23 @@ public:
 
     Self& operator++()     { Base::operator++(); return *this; }
     Self  operator++(int)  { Self tmp(*this); ++(*this); return tmp; }
+  /// @}
 
-  /// OPERATIONS Bidirectional Category
-  /// ---------------------------------
+  /// \name Bidirectional Category
+  /// @{
 
     Self& operator--()     { Base::operator--(); return *this; }
     Self  operator--(int)  { Self tmp(*this); --(*this); return tmp; }
 
-  /// EXTRA CASTS
-  /// -----------
+  /// @}
+
+  /// \name Conversion
+  /// @{
 
     operator Handle()               { return Base::operator->(); }
     operator ConstHandle() const    { return Base::operator->(); }
+
+  /// @}
 };
 
 

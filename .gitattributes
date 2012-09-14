@@ -5615,6 +5615,22 @@ Subdivision_method_3/test/Subdivision_method_3/data/corner_with_hole.off -text s
 Subdivision_method_3/test/Subdivision_method_3/data/corner_with_sharp_edge.off -text svneol=unset#application/octet-stream
 Subdivision_method_3/test/Subdivision_method_3/data/cross.off -text svneol=unset#application/octet-stream
 Subdivision_method_3/test/Subdivision_method_3/data/quint_tris.off -text svneol=unset#application/octet-stream
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/Classified.txt -text
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/PackageDescription.txt -text
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/Surface_mesh_parameterization.txt -text
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/LSCM.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/authalic.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/bimba.jpg -text svneol=unset#image/jpeg
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/bimbaDetail.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/border.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/conformal.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/cut.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/floater.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/introduction.jpg -text svneol=unset#image/jpeg
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/parameterizer_class_diagram.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/parameterizer_class_diagram_simplified.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/parameterizers_class_hierarchy.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/uniform.png -text svneol=unset#image/png
 Surface_mesh_parameterization/doc/specification/param.pdf -text svneol=unset#application/pdf
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/LSCM.png -text svneol=unset#image/png
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/authalic.png -text svneol=unset#image/png

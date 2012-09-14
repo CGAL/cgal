@@ -18,7 +18,8 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
-
+/// \ingroup PkgSurfaceParameterizationConcepts
+/// \cgalconcept
 /// ParameterizationMesh_3 is a concept for a 3D surface mesh.
 /// Its main purpose is to allow the parameterization methods to access meshes in a uniform manner.
 ///
@@ -44,12 +45,10 @@
 /// as parameterization methods deal only with topological disks, ParameterizationMesh_3
 /// defines an interface oriented towards topological disks.
 ///
-/// @heading Has Models:
-/// We provide 2 models of this concept:
-/// - Parameterization_polyhedron_adaptor_3<Polyhedron_3_>
-/// - Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>
+/// \hasModel Parameterization_polyhedron_adaptor_3<Polyhedron_3_>
+/// \hasModel Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// ParameterizationMesh_3 is an Adaptor [GHJV95]: it changes the
 /// interface of a 3D mesh to match the interface expected by the parameterization methods.
 

@@ -19,12 +19,13 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
+/// \ingroup PkgSurfaceParameterizationConcepts
+/// \cgalconcept
 /// The concept SparseLinearAlgebraTraits_d
 /// is used to solve sparse linear systems "A*X = B".
-
-class SparseLinearAlgebraTraits_d : public LinearAlgebraTraits_d
+/// \refines LinearAlgebraTraits_d
+class SparseLinearAlgebraTraits_d
 {
-// Public types
 public:
     typedef xxx Matrix ;
     typedef xxx Vector ;
@@ -38,9 +39,8 @@ public:
     /// Solve the sparse linear system "A*X = B".
     /// Return true on success. The solution is then (1/D) * X.
     ///
-    /// @commentheading Preconditions:
-    /// - A.row_dimension() == B.dimension().
-    /// - A.column_dimension() == X.dimension().
+    /// \pre A.row_dimension() == B.dimension().
+    /// \pre A.column_dimension() == X.dimension().
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D);
 };
 

@@ -44,9 +44,9 @@ namespace CGAL {
 ///   for j neighbor vertex of i based on Floater Mean Value Coordinates parameterization.
 /// - It implements an optimized version of is_one_to_one_mapping().
 ///
-/// @heading Is Model for the Concepts: Model of the ParameterizerTraits_3 concept.
+/// \models ParameterizerTraits_3
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// Mean_value_coordinates_parameterizer_3 class is a
 /// Strategy [GHJV95]: it implements a strategy of surface parameterization
 /// for models of ParameterizationMesh_3.

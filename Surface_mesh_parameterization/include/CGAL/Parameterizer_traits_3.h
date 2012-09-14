@@ -37,10 +37,9 @@ namespace CGAL {
 /// - Parameterizer_traits_3 defines the Error_code list of errors detected by this package
 /// - Parameterizer_traits_3 declares a pure virtual method parameterize()
 ///
-/// @heading Is Model for the Concepts:
-/// Model of the ParameterizerTraits_3 concept (although you cannot instantiate this class).
+/// \models ParameterizerTraits_3 (although you cannot instantiate this class).
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// ParameterizerTraits_3 models are Strategies [GHJV95]: they implement
 /// a strategy of surface parameterization for models of ParameterizationMesh_3.
 
@@ -113,9 +112,8 @@ public:
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
-    /// @commentheading Preconditions:
-    /// - 'mesh' must be a surface with one connected component.
-    /// - 'mesh' must be a triangular mesh.
+    /// \pre 'mesh' must be a surface with one connected component.
+    /// \pre 'mesh' must be a triangular mesh.
     virtual Error_code  parameterize (Adaptor& mesh) = 0;
 
     /// Get message (in English) corresponding to an error code

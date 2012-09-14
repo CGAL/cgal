@@ -48,9 +48,9 @@ namespace CGAL {
 /// onto a convex polygon (only two pinned vertices are needed to ensure a
 /// unique solution), but one-to-one mapping is *not* guaranteed.
 ///
-/// @heading Is Model for the Concepts: Model of the ParameterizerTraits_3 concept.
+/// \models ParameterizerTraits_3
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// LSCM_parameterizer_3 class is a
 /// Strategy [GHJV95]: it implements a strategy of surface parameterization
 /// for models of ParameterizationMesh_3.
@@ -149,9 +149,8 @@ public:
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
-    /// @commentheading Preconditions:
-    /// - 'mesh' must be a surface with one connected component.
-    /// - 'mesh' must be a triangular mesh.
+    /// \pre 'mesh' must be a surface with one connected component.
+    /// \pre 'mesh' must be a triangular mesh.
     virtual Error_code  parameterize(Adaptor& mesh);
 
 // Private operations
@@ -164,10 +163,9 @@ private:
     /// Initialize "A*X = B" linear system after
     /// (at least two) border vertices are parameterized.
     ///
-    /// @commentheading Preconditions:
-    /// - Vertices must be indexed.
-    /// - X and B must be allocated and empty.
-    /// - At least 2 border vertices must be parameterized.
+    /// \pre Vertices must be indexed.
+    /// \pre X and B must be allocated and empty.
+    /// \pre At least 2 border vertices must be parameterized.
     void initialize_system_from_mesh_border(LeastSquaresSolver& solver,
                                             const Adaptor& mesh) ;
 
@@ -179,7 +177,7 @@ private:
 
     /// Create two lines in the linear system per triangle (one for u, one for v).
     ///
-    /// @commentheading Precondition: vertices must be indexed.
+    /// \pre vertices must be indexed.
     Error_code setup_triangle_relations(LeastSquaresSolver& solver,
                                         const Adaptor& mesh,
                                         Facet_const_handle facet) ;

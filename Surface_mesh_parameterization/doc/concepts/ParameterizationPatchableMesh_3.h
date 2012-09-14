@@ -19,6 +19,8 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
+/// \ingroup PkgSurfaceParameterizationConcepts
+/// \cgalconcept
 /// ParameterizationPatchableMesh_3 inherits from concept ParameterizationMesh_3,
 /// thus is a concept of a 3D surface mesh.
 ///
@@ -34,14 +36,13 @@
 /// The main purpose of this feature is to allow the Surface_mesh_parameterization package
 /// to parameterize any 3D surface by decomposing it as a list of topological disks.
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// ParameterizationPatchableMesh_3 is an Adaptor [GHJV95]: it changes the
 /// interface of a 3D mesh to match the interface expected by class Parameterization_mesh_patch_3.
 ///
-/// @heading Has Models:
-/// Adaptator for Polyhedron_3 is provided.
-
-class ParameterizationPatchableMesh_3 : public ParameterizationMesh_3
+/// \refines ParameterizationMesh_3
+/// \hasModel Adaptator for Polyhedron_3 is provided.
+class ParameterizationPatchableMesh_3
 {
 // Public types
 public:
