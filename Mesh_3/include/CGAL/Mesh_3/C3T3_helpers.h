@@ -26,6 +26,7 @@
 #define CGAL_MESH_3_C3T3_HELPERS_H
 
 #include <CGAL/Mesh_3/config.h>
+#include <CGAL/use.h>
 
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
@@ -402,8 +403,12 @@ class C3T3_helpers
 private:
   // Facet_boundary stores the boundary of surface facets
   typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
+#ifdef CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
   typedef std::pair<Surface_patch_index, Index> Facet_topology_description;
   typedef std::set<std::pair<Ordered_edge,Facet_topology_description> >  Facet_boundary;
+#else // not CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
+  typedef std::set<std::pair<Ordered_edge,Surface_patch_index> >  Facet_boundary;
+#endif // not CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
   
   typedef Triangulation_helpers<Tr> Th;
   
@@ -1157,6 +1162,7 @@ private:
                        const Vertex_handle third_vertex,
                        const Surface_patch_index& surface_index) const
   {
+#ifdef CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
     const typename Facet_boundary::value_type x = 
       std::make_pair(edge,
                      std::make_pair(surface_index,
@@ -1168,6 +1174,16 @@ private:
       boundary.erase(boundary_it);
     else
       boundary.insert(x);
+#else // not CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
+    CGAL_USE(third_vertex);
+    typename Facet_boundary::iterator boundary_it =
+      boundary.find(std::make_pair(edge,surface_index));
+    
+    if ( boundary_it != boundary.end() )
+      boundary.erase(boundary_it);
+    else
+      boundary.insert(std::make_pair(edge,surface_index));
+#endif // not CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
   }
   
   /**
