@@ -43,30 +43,27 @@ namespace CGAL {
 
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
-/// The class Fixed_border_parameterizer_3
+/// The class `Fixed_border_parameterizer_3`
 /// is the base class of fixed border parameterization methods (Tutte, Floater, ...).
 ///
 /// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 ///
 /// This class is a pure virtual class, thus cannot be instantiated.
-/// Anyway, it implements most of the parameterization algorithm parameterize().
-/// Subclasses are Strategies [GHJV95] that modify the behavior of this algorithm:
-/// - They provide BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
-///   parameters that make sense.
-/// - They implement compute_w_ij() to compute w_ij = (i, j) coefficient of matrix A
+/// Anyway, it implements most of the parameterization algorithm `parameterize()`.
+/// Subclasses are Strategies that modify the behavior of this algorithm:
+/// - They provide `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
+///   parameters.
+/// - They implement `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i.
-/// - They may implement an optimized version of is_one_to_one_mapping().
+/// - They may implement an optimized version of `is_one_to_one_mapping()`.
 ///
-/// @todo Fixed_border_parameterizer_3 should remove border vertices
+/// @todo `Fixed_border_parameterizer_3` should remove border vertices
 /// from the linear systems in order to have a symmetric positive definite
 /// matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 ///
 /// \models ParameterizerTraits_3 (although you cannot instantiate this class).
 ///
-/// ## Design Pattern ##
-/// Fixed_border_parameterizer_3 class is a
-/// Strategy [GHJV95]: it implements (part of) a strategy of surface parameterization
-/// for models of ParameterizationMesh_3.
+///
 ///
 /// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
 /// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`

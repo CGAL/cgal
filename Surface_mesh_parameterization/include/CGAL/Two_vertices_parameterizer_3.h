@@ -38,20 +38,17 @@ namespace CGAL {
 
 /// \ingroup  PkgSurfaceParameterizationBorder
 ///
-/// The class Two_vertices_parameterizer_3
+/// The class `Two_vertices_parameterizer_3`
 /// parameterizes two extreme vertices of a 3D surface.
 /// This kind of border parameterization is used by free border parameterizations.
 ///
 /// Implementation note:
-/// To simplify the implementation, BorderParameterizer_3 models know only the
-/// ParameterizationMesh_3 class. They do not know the parameterization algorithm
+/// To simplify the implementation, `BorderParameterizer_3` models know only the
+/// `ParameterizationMesh_3` class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
 /// \models BorderParameterizer_3
 ///
-/// ## Design Pattern ##
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3.
 
 template<class ParameterizationMesh_3>      //< 3D surface
 class Two_vertices_parameterizer_3

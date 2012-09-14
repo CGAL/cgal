@@ -40,22 +40,19 @@ namespace CGAL {
 ///
 /// This is the base class of strategies that parameterize the border
 /// of a 3D surface onto a square.
-/// Square_border_parameterizer_3 is a pure virtual class, thus
+/// `Square_border_parameterizer_3` is a pure virtual class, thus
 /// cannot be instantiated.
 ///
 /// It implements most of the algorithm. Subclasses just
-/// have to implement compute_edge_length() to compute a segment's length.
+/// have to implement `compute_edge_length(`) to compute a segment's length.
 ///
 /// Implementation note:
-/// To simplify the implementation, BorderParameterizer_3 models know only the
-/// ParameterizationMesh_3 class. They do not know the parameterization algorithm
+/// To simplify the implementation, `BorderParameterizer_3` models know only the
+/// `ParameterizationMesh_3` class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
 /// \models BorderParameterizer_3 (although you cannot instantiate this class).
 ///
-/// ## Design Pattern ##
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3.
 
 template<class ParameterizationMesh_3>      //< 3D surface
 class Square_border_parameterizer_3
@@ -295,9 +292,6 @@ Square_border_parameterizer_3<Adaptor>::closest_iterator(Adaptor& mesh,
 ///
 /// \models BorderParameterizer_3
 ///
-/// ## Design Pattern ##
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3.
 
 template<class ParameterizationMesh_3>      //< 3D surface
 class Square_border_uniform_parameterizer_3
@@ -378,9 +372,6 @@ protected:
 ///
 /// \models BorderParameterizer_3
 ///
-/// ## Design Pattern ##
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3
 
 template<class ParameterizationMesh_3>      //< 3D surface
 class Square_border_arc_length_parameterizer_3

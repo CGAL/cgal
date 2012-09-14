@@ -47,14 +47,14 @@ namespace CGAL {
 /// describes the border of a topological disc. This border may be an actual
 /// border of the mesh or a virtual border.
 ///
-/// \models ParameterizationMesh_3 concept, whose purpose is to allow
+/// \models `ParameterizationMesh_3` concept, whose purpose is to allow
 /// the Surface_mesh_parameterization package to access meshes in a
 /// uniform manner.
 ///
 /// ## Design Pattern ##
-/// Parameterization_mesh_patch_3 is a Decorator [GHJV95]: it changes the behavior
-/// of a ParameterizationPatchableMesh_3 3D surface while keeping its
-/// ParameterizationMesh_3 interface.
+/// `Parameterization_mesh_patch_3` is a `Decorator`  \cite cgal:ghjv-dpero-95\ : it changes the behavior
+/// of a `ParameterizationPatchableMesh_3` 3D surface while keeping its
+/// `ParameterizationMesh_3` interface.
 ///
 /// @param ParameterizationPatchableMesh_3 3D surface mesh.
 

@@ -31,7 +31,7 @@ namespace CGAL {
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class Discrete_conformal_map_parameterizer_3
-/// implements the Discrete Conformal Map (DCM) parameterization [EDD+95].
+/// implements the *Discrete Conformal Map (DCM)* parameterization \cite cgal:eddhls-maam-95.
 /// This algorithm is also called "Discrete Conformal Parameterization (DCP)",
 /// "Discrete Harmonic Map" or "Fixed Conformal Parameterization" by other authors.
 ///
@@ -39,24 +39,20 @@ namespace CGAL {
 ///
 /// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 ///
-/// This class is a Strategy [GHJV95] called by the main
-/// parameterization algorithm Fixed_border_parameterizer_3::parameterize().
-/// - It provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
+/// This class is used by the main
+/// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()`.
+/// - It provides default `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
 ///   parameters that make sense.
-/// - It implements compute_w_ij() to compute w_ij = (i, j) coefficient of matrix A
+/// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Discrete Conformal Map method.
 ///
 /// \models ParameterizerTraits_3
 ///
-/// ## Design Pattern ##
-/// Discrete_conformal_map_parameterizer_3 class is a
-/// Strategy [GHJV95]: it implements a strategy of surface parameterization
-/// for models of ParameterizationMesh_3.
 ///
 /// \param ParameterizationMesh_3       3D surface mesh.
 /// \param BorderParameterizer_3        Strategy to parameterize the surface border.
 /// \param SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
-///        Note: the system is *not* symmetric because Fixed_border_parameterizer_3
+///        Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
 ///        does not remove (yet) border vertices from the system.
 ///
 /// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`

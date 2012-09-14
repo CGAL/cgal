@@ -37,8 +37,8 @@ namespace CGAL {
 
 /// \ingroup  PkgSurfaceParameterizationMesh
 ///
-/// Parameterization_polyhedron_adaptor_3 is an adaptor class to access to a Polyhedron
-/// 3D mesh using the ParameterizationPatchableMesh_3 interface.
+/// `Parameterization_polyhedron_adaptor_3` is an adaptor class to access to a Polyhedron
+/// 3D mesh using the `ParameterizationPatchableMesh_3` interface.
 /// Among other things, this concept defines the accessor to the (u,v) values
 /// computed by parameterizations methods.
 ///
@@ -47,11 +47,11 @@ namespace CGAL {
 /// For performance reasons, it is recommended to use CGAL data structures
 /// enriched with the proper fields.
 ///
-/// A ParameterizationMesh_3 surface consists of vertices,
+/// A `ParameterizationMesh_3` surface consists of vertices,
 /// facets and an incidence relation on them.
 /// No notion of edge is requested.
 ///
-/// ParameterizationMesh_3 meshes can have any genus, arity or number of components.
+/// `ParameterizationMesh_3` meshes can have any genus, arity or number of components.
 ///
 /// It can have have any number of borders. Its "main border"
 /// will be the mesh's longest border (if there is at least one border).
@@ -60,13 +60,13 @@ namespace CGAL {
 /// "Patches" are a subset of a 3D mesh. "Virtual seams" are the ability
 /// to behave exactly as if the surface was cut following a certain path.
 ///
-/// \models Model of ParameterizationPatchableMesh_3 concept, whose
-/// purpose is to allow the Surface_mesh_parameterization package to
+/// \models Model of `ParameterizationPatchableMesh_3` concept, whose
+/// purpose is to allow the `Surface_mesh_parameterization` package to
 /// access meshes in a uniform manner.
 ///
 /// ## Design Pattern ##
-/// Parameterization_polyhedron_adaptor_3 is an Adaptor [GHJV95]: it changes the
-/// Polyhedron interface to match the ParameterizationPatchableMesh_3 concept.
+/// `Parameterization_polyhedron_adaptor_3` is an *Adaptor*: it changes the
+/// Polyhedron interface to match the `ParameterizationPatchableMesh_3` concept.
 
 template<class Polyhedron_3_>
 class Parameterization_polyhedron_adaptor_3

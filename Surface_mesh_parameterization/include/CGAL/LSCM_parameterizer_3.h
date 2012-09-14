@@ -42,7 +42,7 @@ namespace CGAL {
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class LSCM_parameterizer_3 implements the
-/// Least Squares Conformal Maps (LSCM) parameterization [LPRM02].
+/// *Least Squares Conformal Maps (LSCM)* parameterization  \cite cgal:lprm-lscm-02.
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
@@ -52,10 +52,6 @@ namespace CGAL {
 ///
 /// \models ParameterizerTraits_3
 ///
-/// ## Design Pattern ##
-/// LSCM_parameterizer_3 class is a
-/// Strategy [GHJV95]: it implements a strategy of surface parameterization
-/// for models of ParameterizationMesh_3.
 ///
 /// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
 /// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`

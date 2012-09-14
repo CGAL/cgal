@@ -30,22 +30,22 @@ namespace CGAL {
 
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
-/// The class Parameterizer_traits_3
+/// The class `Parameterizer_traits_3`
 /// is the base class of all parameterization methods.
 /// This class is a pure virtual class, thus cannot be instantiated.
 ///
 /// This class doesn't do much. Its main goal is to ensure that subclasses
-/// will be proper models of the ParameterizerTraits_3 concept:
-/// - Parameterizer_traits_3 defines the Error_code list of errors detected by this package
-/// - Parameterizer_traits_3 declares a pure virtual method parameterize()
+/// will be proper models of the `ParameterizerTraits_3` concept:
+/// - `Parameterizer_traits_3` defines the Error_code list of errors detected by this package
+/// - `Parameterizer_traits_3` declares a pure virtual method parameterize()
 ///
 /// \models ParameterizerTraits_3 (although you cannot instantiate this class).
 ///
 /// ## Design Pattern ##
-/// ParameterizerTraits_3 models are Strategies [GHJV95]: they implement
-/// a strategy of surface parameterization for models of ParameterizationMesh_3.
+/// `ParameterizerTraits_3` models are *Strategies*: they implement
+/// a strategy of surface parameterization for models of `ParameterizationMesh_3`.
 ///
-
+///
 /// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -126,8 +126,8 @@ public:
     /// \pre `mesh` must be a triangular mesh.
     virtual Error_code  parameterize (Adaptor& mesh) = 0;
 
-    /// Get message (in English) corresponding to an error code
-    /// \param error_code The code returned by parameterize()
+    /// Get message corresponding to an error code
+    /// \param error_code The code returned by `parameterize()`
     /// \return           The string describing the error code
     static const char* get_error_message(int error_code)
     {

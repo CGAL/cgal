@@ -29,12 +29,12 @@ namespace CGAL {
 
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
-/// The class Barycentric_mapping_parameterizer_3 implements Tutte Barycentric Mapping algorithm [Tut63].
+/// The class Barycentric_mapping_parameterizer_3 implements Tutte Barycentric Mapping algorithm  \cite t-hdg-63.
 /// This algorithm is also called "Tutte Uniform Weights" by other authors.
 ///
 /// One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 ///
-/// This class is a Strategy [GHJV95] called by the main
+/// This class is used by the main
 /// parameterization algorithm Fixed_border_parameterizer_3::parameterize().
 /// - It provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
 ///   parameters that make sense.
@@ -44,15 +44,11 @@ namespace CGAL {
 ///
 /// \models ParameterizerTraits_3
 ///
-/// ## Design Pattern ##
-/// `Barycentric_mapping_parameterizer_3` class is a
-/// Strategy \cite cgal:ghjv-dpero-95 : it implements a strategy of surface parameterization
-/// for models of `ParameterizationMesh_3`.
 ///
 /// \tparam ParameterizationMesh_3       3D surface mesh.
 /// \tparam BorderParameterizer_3        Strategy to parameterize the surface border.
 /// \tparam SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
-///        Note: the system is *not* symmetric because Fixed_border_parameterizer_3
+///        Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
 ///        does not remove (yet) border vertices from the system.
 
 /*!
