@@ -28,6 +28,8 @@
 namespace CGAL {
 
 
+/// \ingroup  PkgSurfaceParameterizationMethods
+///
 /// The class Discrete_conformal_map_parameterizer_3
 /// implements the Discrete Conformal Map (DCM) parameterization [EDD+95].
 /// This algorithm is also called "Discrete Conformal Parameterization (DCP)",
@@ -51,11 +53,18 @@ namespace CGAL {
 /// Strategy [GHJV95]: it implements a strategy of surface parameterization
 /// for models of ParameterizationMesh_3.
 ///
-/// @param ParameterizationMesh_3       3D surface mesh.
-/// @param BorderParameterizer_3        Strategy to parameterize the surface border.
-/// @param SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
+/// \param ParameterizationMesh_3       3D surface mesh.
+/// \param BorderParameterizer_3        Strategy to parameterize the surface border.
+/// \param SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
 ///        Note: the system is *not* symmetric because Fixed_border_parameterizer_3
 ///        does not remove (yet) border vertices from the system.
+///
+/// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template
 <

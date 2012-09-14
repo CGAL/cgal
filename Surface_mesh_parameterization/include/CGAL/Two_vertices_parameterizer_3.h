@@ -35,6 +35,9 @@ namespace CGAL {
 // Declaration
 //
 
+
+/// \ingroup  PkgSurfaceParameterizationBorder
+///
 /// The class Two_vertices_parameterizer_3
 /// parameterizes two extreme vertices of a 3D surface.
 /// This kind of border parameterization is used by free border parameterizations.

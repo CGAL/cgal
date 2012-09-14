@@ -37,6 +37,8 @@
 namespace CGAL {
 
 
+/// \ingroup  PkgSurfaceParameterizationMesh
+///
 /// Parameterization_mesh_patch_3 is a Decorator class to "virtually" cut a patch
 /// in a ParameterizationPatchableMesh_3 3D surface. Only the patch is exported,
 /// making the 3D surface look like a topological disk.

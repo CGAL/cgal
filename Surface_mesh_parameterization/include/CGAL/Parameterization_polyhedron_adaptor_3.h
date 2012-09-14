@@ -35,6 +35,8 @@
 namespace CGAL {
 
 
+/// \ingroup  PkgSurfaceParameterizationMesh
+///
 /// Parameterization_polyhedron_adaptor_3 is an adaptor class to access to a Polyhedron
 /// 3D mesh using the ParameterizationPatchableMesh_3 interface.
 /// Among other things, this concept defines the accessor to the (u,v) values

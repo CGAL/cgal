@@ -50,6 +50,8 @@
 namespace CGAL {
 
 
+/// \ingroup  PkgSurfaceParameterizationAlgebra
+///
 /// The class Taucs_symmetric_solver_traits
 /// is a traits class for solving symmetric positive definite sparse linear systems
 /// using TAUCS solvers family.
@@ -186,6 +188,8 @@ private:
 };
 
 
+/// \ingroup  PkgSurfaceParameterizationAlgebra
+///
 /// The class Taucs_solver_traits
 /// is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems
 /// using TAUCS out-of-core LU factorization.

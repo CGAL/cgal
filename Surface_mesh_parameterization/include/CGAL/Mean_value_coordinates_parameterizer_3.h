@@ -28,6 +28,8 @@
 namespace CGAL {
 
 
+/// \ingroup  PkgSurfaceParameterizationMethods
+///
 /// The class Mean_value_coordinates_parameterizer_3
 /// implements Floater Mean Value Coordinates parameterization [Flo03].
 /// This method is sometimes called simply "Floater parameterization".
@@ -50,6 +52,13 @@ namespace CGAL {
 /// Mean_value_coordinates_parameterizer_3 class is a
 /// Strategy [GHJV95]: it implements a strategy of surface parameterization
 /// for models of ParameterizationMesh_3.
+///
+/// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}
 
 template
 <

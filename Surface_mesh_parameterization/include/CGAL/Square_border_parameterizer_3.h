@@ -36,6 +36,8 @@ namespace CGAL {
 // Class Square_border_parameterizer_3
 //
 
+/// \ingroup  PkgSurfaceParameterizationBorder
+///
 /// This is the base class of strategies that parameterize the border
 /// of a 3D surface onto a square.
 /// Square_border_parameterizer_3 is a pure virtual class, thus
@@ -281,6 +283,9 @@ Square_border_parameterizer_3<Adaptor>::closest_iterator(Adaptor& mesh,
 // Class Square_border_uniform_parameterizer_3
 //
 
+
+/// \ingroup  PkgSurfaceParameterizationBorder
+///
 /// This class parameterizes the border of a 3D surface onto a square
 /// in a uniform manner: points are equally spaced.
 ///
@@ -361,6 +366,8 @@ protected:
 // Class Square_border_arc_length_parameterizer_3
 //
 
+/// \ingroup  PkgSurfaceParameterizationBorder
+///
 /// This class parameterizes the border of a 3D surface onto a square,
 /// with an arc-length parameterization: (u,v) values are
 /// proportional to the length of border edges.

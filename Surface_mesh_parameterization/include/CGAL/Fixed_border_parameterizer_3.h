@@ -40,6 +40,9 @@ namespace CGAL {
 // Declaration
 // ------------------------------------------------------------------------------------
 
+
+/// \ingroup  PkgSurfaceParameterizationMethods
+///
 /// The class Fixed_border_parameterizer_3
 /// is the base class of fixed border parameterization methods (Tutte, Floater, ...).
 ///
@@ -64,6 +67,13 @@ namespace CGAL {
 /// Fixed_border_parameterizer_3 class is a
 /// Strategy [GHJV95]: it implements (part of) a strategy of surface parameterization
 /// for models of ParameterizationMesh_3.
+///
+/// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template
 <
@@ -151,21 +161,21 @@ public:
 
     // Default copy constructor and operator =() are fine
 
-    /// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
+    /// Compute a one-to-one mapping from a triangular 3D surface mesh
     /// to a piece of the 2D space.
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
-    /// \pre 'mesh' must be a surface with one connected component.
-    /// \pre 'mesh' must be a triangular mesh.
+    /// \pre `mesh` must be a surface with one connected component.
+    /// \pre `mesh` must be a triangular mesh.
     /// \pre The mesh border must be mapped onto a convex polygon.
     virtual Error_code  parameterize(Adaptor& mesh);
 
 // Protected operations
 protected:
     /// Check parameterize() preconditions:
-    /// - 'mesh' must be a surface with one connected component.
-    /// - 'mesh' must be a triangular mesh.
+    /// - `mesh` must be a surface with one connected component.
+    /// - `mesh` must be a triangular mesh.
     /// - The mesh border must be mapped onto a convex polygon.
     virtual Error_code  check_parameterize_preconditions(Adaptor& mesh);
 
@@ -239,14 +249,14 @@ private:
 // Implementation
 // ------------------------------------------------------------------------------------
 
-// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
+// Compute a one-to-one mapping from a triangular 3D surface mesh
 // to a piece of the 2D space.
 // The mapping is linear by pieces (linear in each triangle).
 // The result is the (u,v) pair image of each vertex of the 3D surface.
 //
 // Preconditions:
-// - 'mesh' must be a surface with one connected component.
-// - 'mesh' must be a triangular mesh.
+// - `mesh` must be a surface with one connected component.
+// - `mesh` must be a triangular mesh.
 // - The mesh border must be mapped onto a convex polygon.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
@@ -374,8 +384,8 @@ parameterize(Adaptor& mesh)
 
 
 // Check parameterize() preconditions:
-// - 'mesh' must be a surface with one connected component.
-// - 'mesh' must be a triangular mesh.
+// - `mesh` must be a surface with one connected component.
+// - `mesh` must be a triangular mesh.
 // - The mesh border must be mapped onto a convex polygon.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline

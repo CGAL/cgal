@@ -28,6 +28,8 @@
 namespace CGAL {
 
 
+/// \ingroup  PkgSurfaceParameterizationMethods
+///
 /// The class Parameterizer_traits_3
 /// is the base class of all parameterization methods.
 /// This class is a pure virtual class, thus cannot be instantiated.
@@ -42,6 +44,14 @@ namespace CGAL {
 /// ## Design Pattern ##
 /// ParameterizerTraits_3 models are Strategies [GHJV95]: they implement
 /// a strategy of surface parameterization for models of ParameterizationMesh_3.
+///
+
+/// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template<class ParameterizationMesh_3>       //< 3D surface
 class Parameterizer_traits_3
@@ -107,13 +117,13 @@ public:
 
     // Default constructor, copy constructor and operator =() are fine
 
-    /// Compute a one-to-one mapping from a 3D surface 'mesh'
+    /// Compute a one-to-one mapping from a 3D surface mesh
     /// to a piece of the 2D space.
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
-    /// \pre 'mesh' must be a surface with one connected component.
-    /// \pre 'mesh' must be a triangular mesh.
+    /// \pre `mesh` must be a surface with one connected component.
+    /// \pre `mesh` must be a triangular mesh.
     virtual Error_code  parameterize (Adaptor& mesh) = 0;
 
     /// Get message (in English) corresponding to an error code
