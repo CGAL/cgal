@@ -403,12 +403,8 @@ class C3T3_helpers
 private:
   // Facet_boundary stores the boundary of surface facets
   typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
-#ifdef CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
-  typedef std::pair<Surface_patch_index, Index> Facet_topology_description;
-  typedef std::set<std::pair<Ordered_edge,Facet_topology_description> >  Facet_boundary;
-#else // not CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
-  typedef std::set<std::pair<Ordered_edge,Surface_patch_index> >  Facet_boundary;
-#endif // not CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
+  typedef std::pair<Surface_patch_index, std::pair<int, Index> > Facet_topology_description;
+  typedef std::map<Ordered_edge,Facet_topology_description>  Facet_boundary;
   
   typedef Triangulation_helpers<Tr> Th;
   
@@ -1162,28 +1158,21 @@ private:
                        const Vertex_handle third_vertex,
                        const Surface_patch_index& surface_index) const
   {
-#ifdef CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
     const typename Facet_boundary::value_type x = 
       std::make_pair(edge,
                      std::make_pair(surface_index,
-                                    c3t3_.index(third_vertex)));
+                                    std::make_pair(c3t3_.in_dimension(third_vertex),
+                                                   c3t3_.index(third_vertex)
+                                                   )
+                                    )
+                     );
     typename Facet_boundary::iterator boundary_it =
-      boundary.find(x);
+      boundary.find(edge);
     
     if ( boundary_it != boundary.end() )
       boundary.erase(boundary_it);
     else
       boundary.insert(x);
-#else // not CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
-    CGAL_USE(third_vertex);
-    typename Facet_boundary::iterator boundary_it =
-      boundary.find(std::make_pair(edge,surface_index));
-    
-    if ( boundary_it != boundary.end() )
-      boundary.erase(boundary_it);
-    else
-      boundary.insert(std::make_pair(edge,surface_index));
-#endif // not CGAL_MESH_3_NEW_CHECK_SURFACE_MESH
   }
   
   /**
@@ -1443,7 +1432,6 @@ private:
                           const Facet_boundary& old_boundary) const
   {
     Facet_boundary new_boundary = get_surface_boundary(facets);
-
     return ( old_boundary.size() == new_boundary.size()
             && std::equal(new_boundary.begin(),
                           new_boundary.end(),
