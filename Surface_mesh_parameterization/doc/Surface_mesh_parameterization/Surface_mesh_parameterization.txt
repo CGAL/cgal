@@ -7,6 +7,7 @@ namespace CGAL {
 \mainpage Planar Parameterization of Triangulated Surface Meshes
 
 \anchor chapsurface_mesh_parameterization
+\autotoc
 
 \authors Laurent Saboret, Pierre Alliez and Bruno L&eacute;vy
 
@@ -61,7 +62,7 @@ Texture mapping via Least Squares Conformal Maps parameterization. Top: original
 
 # Basics #
 
-## Default Surface Parameterization ##
+## %Default Surface Parameterization ##
 
 From the user point of view, the simplest entry point to this package
 is the following function:
@@ -105,7 +106,7 @@ to access `CGAL::Polyhedron_3<Traits>`:
 We will see later that `CGAL::parameterize()` can support <I>indirectly</I>
 meshes that are not topological disks.
 
-## Default Parameterization Example ##
+## %Default Parameterization Example ##
 
 `Simple_parameterization.cpp` applies the default parameterization to a
 `CGAL::Polyhedron_3<Traits>` mesh (must be a topological disk).
@@ -113,7 +114,7 @@ Eventually, it extracts the result from halfedges and prints it.
 
 \cgalexample{Simple_parameterization.cpp}
 
-## Enhanced parameterize() function ##
+## Enhanced %parameterize() Function ##
 
 This package provides a second `CGAL::parameterize()` entry point
 where the user can specify a parameterization method:
@@ -132,7 +133,7 @@ Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (Paramet
 
 ## Introduction to the Package Concepts ##
 
-## The ParameterizerTraits_3 concept ##
+## The %ParameterizerTraits_3 Concept ##
 
 This \cgal package implements some of the state-of-the-art
 surface parameterization methods, such as Least Squares Conformal Maps,
@@ -147,7 +148,7 @@ the input mesh type, a border parameterization and a solver:
 \anchor Surface_mesh_parameterizationfigparameterizer_class_diagram_simplified
 \image html parameterizer_class_diagram_simplified.png "A parameterizer UML class diagram (simplified)."
 
-## The BorderParameterizer_3 concept ##
+## The %BorderParameterizer_3 Concept ##
 
 Parameterization methods for
 borders are used as traits classes modifying the behavior of
@@ -156,12 +157,12 @@ They are provided as models of the `BorderParameterizer_3` concept.
 See Sections \ref secBorderParameterizationsforFixedMethods
 and \ref secBorderParameterizationsforFreeMethods.
 
-## The SparseLinearAlgebraTraits_d concept ##
+## The %SparseLinearAlgebraTraits_d Concept ##
 
 This package solves sparse linear systems using solvers which are models
 of `SparseLinearAlgebraTraits_d`. See Section \ref secSparseLinearAlgebra.
 
-## The ParameterizationMesh_3 and ParameterizationPatchableMesh_3 Concepts ##
+## The %ParameterizationMesh_3 and %ParameterizationPatchableMesh_3 Concepts ##
 
 As described in Section \ref secInputMeshforparameterize
 the input meshes handled by `CGAL::parameterize()`
@@ -259,7 +260,7 @@ same for both systems) is asymmetric.
 \anchor Surface_mesh_parameterizationfigfloater
 \image html floater.png "Floater Mean Value Coordinates"
 
-## Discrete Authalic parameterization ##
+## Discrete Authalic Parameterization ##
 
 `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
@@ -670,7 +671,7 @@ and worst case complexity is \f$ O(n^2)\f$ (skinny triangles).
 
 # Software Design #
 
-## Global Function parameterize() ##
+## Global Function %parameterize() ##
 
 This package's entry point is:
 
@@ -768,7 +769,7 @@ with default values adapted to the method.
 \note `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>` is the (pure virtual)
 superclass of all surface parameterization classes.
 
-## Fixed_border_parameterizer_3 Class ##
+## %Fixed_border_parameterizer_3 Class ##
 
 Linear fixed border parameterization algorithms are very close. They mainly
 differ by the energy that they try to minimize, i.e. by the value of the \f$ w_{ij}\f$
@@ -794,7 +795,7 @@ Border Parameterizations are models of the `BorderParameterizer_3` concept.
 To simplify the implementation, `BorderParameterizer_3` models know only the
 `ParameterizationMesh_3` mesh class. They do not know the parameterization algorithm or the sparse linear solver used.
 
-## ParameterizationMesh_3 and ParameterizationPatchableMesh_3 Concepts ##
+## %ParameterizationMesh_3 and %ParameterizationPatchableMesh_3 Concepts ##
 
 All parameterization methods are templated by the kind of mesh they are applied on.
 The mesh type must be a model of `ParameterizationMesh_3`.
@@ -837,7 +838,7 @@ This mainly means that:
 can be set <I>per corner</I> (which is a more general way of saying <I>per half-edge</I>).
 </UL>
 
-## SparseLinearAlgebraTraits_d Concept ##
+## %SparseLinearAlgebraTraits_d Concept ##
 
 This package solves sparse linear systems using solvers which are models
 of `SparseLinearAlgebraTraits_d`.
