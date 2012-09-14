@@ -2,18 +2,18 @@
 
 /// \defgroup PkgMesh_3Concepts Concepts
 /// \ingroup PkgMesh_3
+/// The main concepts of this package.
 
 /// \defgroup PkgMesh_3SecondaryConcepts Secondary Concepts
 /// \ingroup PkgMesh_3
-
-
+/// The concepts in this group are secondary concepts, related to the template parameters of some models of the main concept.
 
 /// \defgroup PkgMesh_3MeshClasses Mesh Classes
 /// \ingroup PkgMesh_3
 
-
 /// \defgroup PkgMesh_3Domains Domains
 /// \ingroup PkgMesh_3
+/// The classes in this group are models of domain concepts and their associated classes.
 
 /// \defgroup PkgMesh_3Functions Mesh Generation Functions
 /// \ingroup PkgMesh_3
