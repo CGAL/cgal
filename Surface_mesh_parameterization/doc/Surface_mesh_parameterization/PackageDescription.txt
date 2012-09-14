@@ -1,7 +1,154 @@
 /// \defgroup PkgSurfaceParameterization Planar Parameterization of Triangulated Surface Meshes
 /// \defgroup PkgSurfaceParameterizationConcepts Concepts
 /// \ingroup PkgSurfaceParameterization
-s
+
+/*! \defgroup PkgSurfaceParameterizationMethods Surface Parameterization Methods
+ \ingroup PkgSurfaceParameterization
+
+This \cgal package implements some of
+the state-of-the-art parameterization methods:
+
+<UL>
+
+<LI>Fixed border:
+
+<UL>
+
+<LI>Tutte Barycentric Mapping \cite t-hdg-63.
+    One-to-one mapping is guaranteed for convex border.
+
+<LI>Floater Mean Value Coordinates \cite cgal:f-mvc-03.
+    One-to-one mapping is guaranteed for convex border.
+
+<LI>Discrete Conformal Map \cite cgal:eddhls-maam-95.
+    Conditionally guaranteed if all weights are positive and border is convex.
+
+<LI>Discrete Authalic parameterization \cite cgal:dma-ipsm-02.
+    Conditionally guaranteed if all weights are positive and border is convex.
+
+</UL>
+
+<LI>Free border:
+
+<UL>
+
+<LI>Least Squares Conformal Maps \cite cgal:lprm-lscm-02.
+
+</UL>
+
+</UL>
+*/
+
+
+/*! \defgroup PkgSurfaceParameterizationBorder Border Parameterization Methods
+    \ingroup PkgSurfaceParameterization
+
+Border parameterization methods define a
+set of constraints (a constraint specifies two (u,v) coordinates for
+each instance of a vertex along the border).
+
+This package implements all common border parameterization methods:
+<UL>
+
+<LI>For fixed border methods:
+
+<UL>
+
+<LI>the user can select a border
+        parameterization among two common methods: uniform or
+        arc-length parameterizations.
+
+<LI>one convex shape specified by:
+
+<UL>
+
+<LI>one shape among a set of standard ones (circle, square).
+
+</UL>
+
+</UL>
+
+<LI>For free border methods: at least two constraints (the pinned
+vertices).
+
+</UL>
+
+
+*/
+
+/*! \defgroup PkgSurfaceParameterizationMesh Mesh
+    \ingroup PkgSurfaceParameterization
+
+The general definition of input meshes handled directly by `CGAL::parameterize()` is:
+
+<UL>
+
+<LI>Model of `ParameterizationMesh_3`.
+
+<LI>Triangulated.
+
+<LI>2-manifold.
+
+<LI>Oriented.
+
+<LI>Homeomorphic to a disc (may have holes).
+
+</UL>
+
+This package provides a model of the `ParameterizationMesh_3` concept
+to access `CGAL::Polyhedron_3<Traits>`: 
+
+`CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
+
+The meshes supported <I>indirectly</I> by the package can be of any genus and
+have any number of connected components. If it is not a topological
+disc, the input mesh has to come with a description of a cutting path (an oriented list of
+vertices) which is the border of a topological disc.  If no cutting path is
+given as input, we assume that the surface border is the longest border already
+in the input mesh (the other borders will be considered as holes).
+
+The `CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>`
+class is responsible for <I>virtually</I> cutting
+a patch in a `ParameterizationPatchableMesh_3` mesh.
+The resulting patch is a topological
+disk (if the input cutting path is correct)
+and provides a `ParameterizationMesh_3` interface. It can be used as
+parameter of `CGAL::parameterize()`.
+
+Note that this way the user is responsible for cutting a closed mesh of
+arbitrary genus (even a topological disc with an intricate seam
+cut), as long as this condition is fulfilled.
+
+The package provides an interface with `CGAL::Polyhedron_3<Traits>`: 
+
+\ref ::CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>
+*/
+
+/*! \defgroup PkgSurfaceParameterizationAlgebra Sparse Linear Algebra
+ \ingroup PkgSurfaceParameterization
+
+Since parameterizing meshes requires
+efficient representation of sparse matrices and efficient iterative or
+direct linear solvers, we provide an interface to several
+sparse linear solvers:
+<UL>
+<LI><span class="textsc">Eigen</span> 3.1 (or greater) is the library recommended by \cgalfor solving sparse systems.
+<LI>OpenNL (authored by Bruno L&eacute;vy) is shipped with \cgaland is the default solver.
+<LI><span class="textsc">Taucs</span> is a direct solver for sparse symmetric matrices.
+    It also includes an out-of-core general solver.
+</UL>
+
+`OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
+
+`OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
+
+ 
+
+*/
+
+/// \defgroup PkgSurfaceParameterizationHelper Helper
+/// \ingroup PkgSurfaceParameterization
+
 /*!
 \addtogroup PkgSurfaceParameterization
 \todo check generated documentation
