@@ -27,3 +27,8 @@ display: inline;
 list-style-type: none;
 padding-right: 20px;
 }
+
+.tparams .paramname {
+        font-weight: bold;
+        vertical-align: top;
+}
