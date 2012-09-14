@@ -37,32 +37,33 @@ The function has four optional parameters which are named parameters
 Therefore, when calling the function, the parameters can be provided in any order 
 provided that the names of the parameters are used 
 (see example at the bottom of this page). 
-<UL> 
-<LI>Parameter `time_limit`, whose name is `parameters::time_limit`, 
+
+
+\param parameters::time_limit 
 is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
 measured using `CGAL::Timer`. 
 The default value is `0` and means that there is no time limit. 
-<LI>Parameter `max_iteration_number`, whose name is 
-`parameters::max_iteration_number`, sets a limit on the 
+
+\param parameters::max_iteration_number sets a limit on the 
 number of performed iterations. The default value of `0` means that there is 
 no limit on the number of performed iterations. 
-<LI>Parameter `convergence`, whose name is 
-`parameters::convergence`, is a stopping criterion based on convergence: 
+
+\param parameters::convergence is a stopping criterion based on convergence: 
 the optimization process is stopped, when at the last iteration, 
 the displacement of any vertex is less than a given percentage of the length 
 the shortest edge incident to that vertex. 
 The parameter `convergence` gives the threshold ratio. 
-<LI>Parameter `freeze_bound`, whose name is `parameters::freeze_bound`, 
+
+\param parameters::freeze_bound
 is designed to reduce running time of each optimization iteration. 
 Any vertex that has 
 a displacement less than a given percentage of the length of its shortest incident edge, is frozen (i.e. is 
 not relocated). The parameter `freeze_bound` gives the threshold ratio. At each iteration, any vertex that 
 moves, unfreezes the neighboring vertices. 
-</UL> 
 
-Return Values 
--------------- 
+
+### Return Values ##
 
 The function `odt_optimize_mesh_3` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
@@ -73,8 +74,7 @@ which is:
 is achieved. 
 </UL> 
 
-Example 
--------------- 
+### Example ##
 
 \code{.cpp} 
 // 100 iterations of Odt-smoothing 

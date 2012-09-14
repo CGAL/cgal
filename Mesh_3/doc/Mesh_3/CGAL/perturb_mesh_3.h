@@ -31,13 +31,14 @@ The function has two optional parameters which are named parameters (we use the 
 Therefore, when calling the function, the parameters can be provided in any order 
 provided that the names of the parameters are used 
 (see example at the bottom of this page). 
-<UL> 
-<LI>Parameter `time_limit` whose name is `parameters::time_limit`, 
+
+\param parameters::time_limit 
 is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
 measured using `CGAL::Timer`. 
 The default value is `0` and means that there is no time limit. 
-<LI>Parameter `sliver_bound`, whose name is `parameters::sliver_bound`, 
+
+\param parameters::sliver_bound 
 is designed to give, in degree, a targeted 
 lower bound on dihedral angles of mesh cells. 
 The function `perturb_mesh_3` runs as long as steps are successful 
@@ -47,10 +48,9 @@ the worst tetrahedron in the mesh has a smallest angle larger than
 The default value is `0` and means that there is no targeted bound: 
 the perturber then runs as long as 
 steps are successful. 
-</UL> 
 
-Return Values 
--------------- 
+
+### Return Values ##
 
 The function `perturb_mesh_3` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
@@ -60,8 +60,7 @@ which is:
 <LI>`CGAL::CANT_IMPROVE_ANYMORE` when the perturbation process stops because the last step is unsuccessful. 
 </UL> 
 
-Example 
--------------- 
+### Example ## 
 
 \code{.cpp} 
 // Perturb until every dihedral angle of the mesh is >= 10 degrees 

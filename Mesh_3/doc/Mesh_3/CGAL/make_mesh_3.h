@@ -49,7 +49,6 @@ is the sole link through which the domain
 to be discretized is known by the mesh generation algorithm. 
 
 
-
 \tparam MeshCriteria has to be a model of the concept 
 `MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3` if the domain has exposed features. 
 The argument `criteria` of 
@@ -62,7 +61,7 @@ In addition, if the domain has features, the argument
 `criteria` provides a sizing field to guide the discretization 
 of \f$ 1\f$-dimensional exposed features. 
 
-The parameter `features` allows 
+\param features allows 
 the user to specify if \f$ 0\f$ and \f$ 1\f$-dimensional features actually have to be 
 taken into account or not 
 when the domain is a model of `MeshDomainWithFeatures_3`. 
@@ -85,29 +84,31 @@ internal types. The package defines two global
 functions for each optimization parameter 
 to generate appropriate value of this parameter. 
 
-<UL> 
-<LI>`parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
-trigger or not a call to `lloyd_optimize_mesh_3` function and to set the 
+\param lloyd  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
+trigger or not a call to `CGAL::lloyd_optimize_mesh_3` function and to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
-`lloyd_optimize_mesh_3` is used for this parameter. 
-<LI>`parameters::odt()` and `parameters::no_odt()` are designed to 
-trigger or not a call to `odt_optimize_mesh_3` function and 
+`CGAL::lloyd_optimize_mesh_3` is used for this parameter. 
+
+\param odt `parameters::odt()` and `parameters::no_odt()` are designed to 
+trigger or not a call to `CGAL::odt_optimize_mesh_3` function and 
 to set the parameters of this optimizer 
 If one parameter is not set, the default value of 
-`odt_optimize_mesh_3` is used for this parameter. 
-<LI>`parameters::perturb()` and `parameters::no_perturb()` are designed to 
-trigger or not a call to `perturb_mesh_3` function and 
-to set the parameters of this optimizer. If one parameter is not set, the default value of 
-`perturb_mesh_3` is used for this parameter, except for the time bound which is set to be 
-equal to the refinement CPU time. 
-<LI>`parameters::exude()` and `parameters::no_exude()` are designed to 
-trigger or not a call to `exude_mesh_3` function and to override to set the 
-parameters of this optimizer. If one parameter is not set, the default value of 
-`exude_mesh_3` is used for this parameter, except for the time bound which is set to be 
-equal to the refinement CPU time. 
-</UL> 
+`CGAL::odt_optimize_mesh_3` is used for this parameter. 
 
-The optimization parameters can be passed in random order. If one parameter 
+\param perturb `parameters::perturb()` and `parameters::no_perturb()` are designed to 
+trigger or not a call to `CGAL::perturb_mesh_3` function and 
+to set the parameters of this optimizer. If one parameter is not set, the default value of 
+`CGAL::perturb_mesh_3` is used for this parameter, except for the time bound which is set to be 
+equal to the refinement CPU time. 
+
+\param exude `parameters::exude()` and `parameters::no_exude()` are designed to 
+trigger or not a call to `CGAL::exude_mesh_3` function and to override to set the 
+parameters of this optimizer. If one parameter is not set, the default value of 
+`CGAL::exude_mesh_3` is used for this parameter, except for the time bound which is set to be 
+equal to the refinement CPU time. 
+
+
+The optimization parameters can be passed in an arbitrary order. If one parameter 
 is not passed, its default value is used. The default values are 
 `no_lloyd()`, `no_odt()`, `perturb()` and `exude()`. 
 
@@ -129,7 +130,7 @@ optimization processes.
 \sa `parameters::features` 
 \sa `parameters::no_features` 
 \sa `exude_mesh_3` 
-\sa `perturb_mesh_3` 
+\sa `perturb_mesh_3`
 \sa `lloyd_optimize_mesh_3` 
 \sa `odt_optimize_mesh_3` 
 \sa `parameters::exude` 

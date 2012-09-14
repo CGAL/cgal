@@ -24,13 +24,13 @@ The function has two optional parameters which are named parameters (we use the 
 Therefore, when calling the function, the parameters can be provided in any order 
 provided that the names of the parameters are used 
 (see example at the bottom of this page). 
-<UL> 
-<LI>Parameter `time_limit`, whose name is `parameters::time_limit`, 
-is used to set up, in seconds, 
+
+\param parameters::time_limit is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
 measured using the `CGAL::Timer` class. 
 The default value is `0` and means that there is no time limit. 
-<LI>Parameter `sliver_bound`, whose name is `parameters::sliver_bound`, 
+
+\param parameters::sliver_bound 
 is designed to give, in degree, a targeted 
 lower bound on dihedral angles of mesh cells. 
 The exudation process considers in turn all the mesh cells 
@@ -42,10 +42,9 @@ The default value is `0` and means that there is no targeted bound :
 the exuder then runs as long as 
 it can improve the smallest dihedral angles of the set of cells 
 incident to some vertices. 
-</UL> 
 
-Return Values 
--------------- 
+
+### Return Values ##
 
 The function `exude_mesh_3` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
@@ -56,8 +55,7 @@ which is:
 the smallest dihedral angle of the set of cells incident to some vertex in the mesh. 
 </UL> 
 
-Example 
--------------- 
+### Example ##
 
 \code{.cpp} 
 // Exude without sliver_bound, using at most 10s CPU time 
