@@ -12,10 +12,8 @@ the quality of the mesh improves.
 
 \pre `time_limit` \f$ \geq\f$ 0 and 0 \f$ \leq\f$ `sliver_bound` \f$ \leq\f$ 180 
 
-Parameters 
--------------- 
 
-Parameter `C3T3` is required to be a model of the concept 
+\tparam  C3T3 is required to be a model of the concept 
 `MeshComplex_3InTriangulation_3`. 
 The argument `c3t3`, passed by 
 reference, provides the initial mesh 
@@ -49,12 +47,12 @@ incident to some vertices.
 Return Values 
 -------------- 
 
-The function `exude_mesh_3` returns a value of type `Mesh_optimization_return_code` 
+The function `exude_mesh_3` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
 <UL> 
-<LI>`BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached. 
-<LI>`TIME_LIMIT_REACHED` when the time limit is reached. 
-<LI>`CANT_IMPROVE_ANYMORE` when exudation process stops because it can no longer improve 
+<LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached. 
+<LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached. 
+<LI>`CGAL::CANT_IMPROVE_ANYMORE` when exudation process stops because it can no longer improve 
 the smallest dihedral angle of the set of cells incident to some vertex in the mesh. 
 </UL> 
 
@@ -62,10 +60,9 @@ Example
 -------------- 
 
 \code{.cpp} 
-
 // Exude without sliver_bound, using at most 10s CPU time 
-exude_mesh_3(c3t3, parameters::time_limit=10); 
-
+exude_mesh_3(c3t3, 
+             parameters::time_limit=10); 
 \endcode 
 
 \sa `CGAL::Mesh_optimization_return_code` 

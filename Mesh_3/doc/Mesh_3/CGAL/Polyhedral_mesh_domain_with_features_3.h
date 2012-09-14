@@ -10,10 +10,8 @@ It is a model of the concept `MeshDomainWithFeatures_3`. It also
 provides a member function to automatically detect sharp features from 
 the input polyhedral surface. 
 
-Parameters 
--------------- 
 
-The parameter `IGT` stands for a geometric traits class providing the types 
+\tparam IGT stands for a geometric traits class providing the types 
 and functors required to implement the intersection tests and intersection computations 
 for polyhedral boundary surfaces. This parameter has to be 
 instantiated with a model of the concept `IntersectionGeometricTraits_3`. 

@@ -8,21 +8,19 @@ a domain whose boundary is a simplicial polyhedral surface.
 This surface must be closed and free of intersection. 
 This class is a model of the concept `MeshDomain_3`. 
 
-Parameters 
--------------- 
 
-The parameter `Polyhedron` stands for the type of the input polyhedral surface. 
+\tparam Polyhedron stands for the type of the input polyhedral surface. 
 The only requirements for this type is that the triangles of the surfaces 
 must be accessible through an object of the class 
 `TriangleAccessor`. 
 
-The parameter `IGT` stands for a geometric traits class 
+\tparam IGT stands for a geometric traits class 
 providing the types and functors required to implement 
 the intersection tests and intersection computations 
 for polyhedral boundary surfaces. This parameter has to be instantiated 
 with a model of the concept `IntersectionGeometricTraits_3`. 
 
-The parameter `TriangleAccessor` provides access to the triangles 
+\tparam TriangleAccessor provides access to the triangles 
 of the input polyhedral 
 surface. It must be a model of the concept 
 `TriangleAccessor_3`. It defaults to 

@@ -10,21 +10,18 @@ The domain to be discretized is assumed to be the domain where
 the function has negative values. 
 This class is a model of the concept `MeshDomain_3`. 
 
-Parameters 
--------------- 
 
-Parameter `BGT` is a geometric traits which provides 
-the basic operations to implement 
-intersection tests and computations 
-through a bisection method. This parameter must be instantiated 
-with a model of the concept `BisectionGeometricTraits_3`. 
-
-Parameter `Function` provides the definition of the function. 
+\tparam Function provides the definition of the function. 
 This parameter stands for a model of the concept 
 `ImplicitFunction` described in the 
 surface mesh generation package. 
 The number types `Function::FT` 
 and `BGT::FT` are required to match. 
+
+\tparam BGT is a geometric traits which provides the basic operations to implement 
+intersection tests and computations 
+through a bisection method. This parameter must be instantiated 
+with a model of the concept `BisectionGeometricTraits_3`. 
 
 The constructor of `Implicit_mesh_domain_3` 
 takes as argument a bounding sphere which is required 

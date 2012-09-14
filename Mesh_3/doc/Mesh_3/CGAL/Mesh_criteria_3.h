@@ -13,10 +13,7 @@ the class `Mesh_criteria_3`
 handles the definition of a sizing field to guide the discretization of 
 1-dimensional features. 
 
-Parameters 
--------------- 
-
-The parameter `Tr` has to be instantiated with the type used for 
+\tparam Tr has to be instantiated with the type used for 
 `C3T3::Triangulation`, 
 where `C3T3` is the model of `MeshComplex_3InTriangulation_3` 
 used in the mesh generation process, 

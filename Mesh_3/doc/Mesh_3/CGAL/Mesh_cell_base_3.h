@@ -7,18 +7,14 @@ The class `Mesh_cell_base_3` is a model of the concept `MeshCellBase_3`.
 It is designed to serve as cell base class for the 3D triangulation 
 used in the 3D mesh generation process. 
 
-Parameters 
--------------- 
-
-The template parameter `MD` provides the types of indices 
-used to identify 
+\tparam MD provides the types of indices used to identify 
 the faces of the input complex. It has to be a model 
 of the concept `MeshDomain_3`. 
 
-The template parameter `Gt` is the geometric traits class. 
+\tparam Gt is the geometric traits class. 
 It has to be a model of the concept `RegularTriangulationTraits_3`. 
 
-The third parameter `Cb` is the cell base class. It has to be a model 
+\tparam Cb is the cell base class. It has to be a model 
 of the concept `RegularTriangulationCellBase_3` and defaults to 
 `Regular_triangulation_cell_base_3<Gt>`. 
 

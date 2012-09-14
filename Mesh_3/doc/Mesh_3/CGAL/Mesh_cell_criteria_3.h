@@ -8,10 +8,7 @@ for the mesh tetrahedra,
 a uniform shape criteria 
 and a sizing field which may be a uniform or variable field. 
 
-Parameters 
--------------- 
-
-The parameter `Tr` must be identical to the nested type 
+\tparam Tr must be identical to the nested type 
 `Triangulation` of the instance used as model of 
 `MeshComplex_3InTriangulation_3`. 
 
@@ -19,7 +16,7 @@ The parameter `Tr` must be identical to the nested type
 
 \sa `MeshCriteria_3` 
 \sa `MeshCellCriteria_3` 
-\sa `Mesh_criteria_3<Tr>` 
+\sa `CGAL::Mesh_criteria_3<Tr>` 
 \sa `CGAL::make_mesh_3` 
 
 */

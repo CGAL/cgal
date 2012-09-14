@@ -11,10 +11,8 @@ template `template<typename Polyhedron, typename K>
 Triangle_accessor_3<Polyhedron, K>`. One may give another partial 
 specialization of this class to handle one's own polyhedron data structure. 
 
-Parameters 
--------------- 
 
-The template parameter `K` is the geometric traits class. 
+\tparam K is the geometric traits class. 
 
 \models ::TriangleAccessor_3 
 

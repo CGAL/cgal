@@ -10,10 +10,7 @@ for the size criterion and/or
 a uniform or variable distance field 
 for the approximation error criterion. 
 
-Parameters 
--------------- 
-
-The parameter `Tr` must be identical to the nested type 
+\tparam Tr must be identical to the nested type 
 `Triangulation` of the instance used as model of 
 `MeshComplex_3InTriangulation_3`. 
 
@@ -22,7 +19,7 @@ The parameter `Tr` must be identical to the nested type
 \sa `CGAL::Mesh_facet_topology` 
 \sa `MeshCriteria_3` 
 \sa `MeshFacetCriteria_3` 
-\sa `Mesh_criteria_3<Tr>` 
+\sa `CGAL::Mesh_criteria_3<Tr>` 
 \sa `MeshDomainField_3` 
 \sa `CGAL::make_mesh_3` 
 

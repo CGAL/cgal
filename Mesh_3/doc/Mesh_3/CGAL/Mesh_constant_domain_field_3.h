@@ -13,11 +13,11 @@ of the domain.
 Parameters 
 -------------- 
 
-The parameter `Gt` is the geometric traits class. It must match the type `Triangulation::Geom_traits`, 
+\tparam Gt is the geometric traits class. It must match the type `Triangulation::Geom_traits`, 
 where `Triangulation` is the nested type of the model of `MeshComplex_3InTriangulation_3` used 
 in the meshing process. 
 
-The parameter `Index` is the type of index of the vertices of the triangulation. 
+\tparam Index is the type of index of the vertices of the triangulation. 
 It must match the type `Index` of the model of `MeshDomain_3` used in the meshing process. 
 
 \models ::MeshDomainField_3 

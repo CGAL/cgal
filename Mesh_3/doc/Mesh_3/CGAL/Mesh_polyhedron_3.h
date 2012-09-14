@@ -8,10 +8,7 @@ as `PolyhedronItems_3` a customized type which adds data to the Vertex, Face and
 Halfedge class. Those data are required to use our sharp features 
 detection algorithm. 
 
-Parameters 
--------------- 
-
-Template parameter `IGT` stands for the geometric traits associated 
+\tparam IGT stands for the geometric traits associated 
 to the meshing process. It should be a model of the two concepts 
 `PolyhedronTraits_3` and `IntersectionGeometricTraits_3`. 
 

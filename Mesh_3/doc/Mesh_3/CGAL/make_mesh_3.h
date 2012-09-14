@@ -29,13 +29,10 @@ The function outputs the mesh to an object which provides iterators to
 traverse the resulting mesh data structure or can be written to a file 
 (see \ref Mesh_3_section_examples ). 
 
-Parameters 
--------------- 
 
-Parameter `C3T3` is required to be a model of 
+\tparam C3T3 is required to be a model of 
 the concept 
 `MeshComplex_3InTriangulation_3`. This is the return type. 
-
 The type `C3T3` is in particular required to provide a nested type 
 `C3T3::Triangulation` for the 3D triangulation 
 embedding the mesh. The vertex and cell base classes of the 
@@ -43,13 +40,27 @@ triangulation `C3T3::Triangulation` are required to be models of the
 concepts `MeshVertexBase_3` and `MeshCellBase_3` 
 respectively. 
 
-Template parameter `MeshDomain_3` is required to be a model of 
+\tparam MeshDomain_3 is required to be a model of 
 the concept `MeshDomain_3`, or of the refined concept 
 `MeshDomainWithFeatures_3` 
 if the domain has corners and curve segments that need to be accurately represented in the mesh. 
 The argument `domain` 
 is the sole link through which the domain 
 to be discretized is known by the mesh generation algorithm. 
+
+
+
+\tparam MeshCriteria has to be a model of the concept 
+`MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3` if the domain has exposed features. 
+The argument `criteria` of 
+type `MeshCriteria` specifies the 
+size and shape requirements for mesh tetrahedra 
+and surface facets. These criteria 
+form the rules which drive the refinement process. All mesh elements 
+satisfy those criteria at the end of the refinement process. 
+In addition, if the domain has features, the argument 
+`criteria` provides a sizing field to guide the discretization 
+of \f$ 1\f$-dimensional exposed features. 
 
 The parameter `features` allows 
 the user to specify if \f$ 0\f$ and \f$ 1\f$-dimensional features actually have to be 
@@ -65,18 +76,6 @@ if parameter `features` is not specified.
 <LI>`parameters::no_features()` prevents the representation 
 of \f$ 0\f$ and \f$ 1\f$-dimensional features in the mesh. 
 </UL> 
-
-The template parameter `MeshCriteria` has to be a model of the concept 
-`MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3` if the domain has exposed features. 
-The argument `criteria` of 
-type `MeshCriteria` specifies the 
-size and shape requirements for mesh tetrahedra 
-and surface facets. These criteria 
-form the rules which drive the refinement process. All mesh elements 
-satisfy those criteria at the end of the refinement process. 
-In addition, if the domain has features, the argument 
-`criteria` provides a sizing field to guide the discretization 
-of \f$ 1\f$-dimensional exposed features. 
 
 The four additional parameters are optimization parameters. 
 They control which optimization processes are performed 

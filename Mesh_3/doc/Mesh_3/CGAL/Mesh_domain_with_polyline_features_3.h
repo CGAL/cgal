@@ -9,10 +9,7 @@ features into any model of the `MeshDomain_3` concept.
 The 1-dimensional features are described as polylines 
 whose endpoints are the added corners. 
 
-Parameters 
--------------- 
-
-The template parameter `MeshDomain_3` is the type 
+\tparam MeshDomain_3 is the type 
 of the domain which should be extended. 
 It has to be a model of the `MeshDomain_3` concept. 
 

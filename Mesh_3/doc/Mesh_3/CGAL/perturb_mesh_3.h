@@ -16,17 +16,14 @@ The perturber exits if this is not the case.
 
 \pre `time_limit` \f$ \geq\f$ 0 and 0 \f$ \leq\f$ `sliver_bound` \f$ \leq\f$ 180 
 
-Parameters 
--------------- 
-
-Parameter `C3T3` is required to be a model of the concept 
+\tparam C3T3 is required to be a model of the concept 
 `MeshComplex_3InTriangulation_3`. 
 The argument `c3t3`, passed by 
 reference, provides the initial mesh 
 and is modified by the algorithm 
 to represent the final optimized mesh. 
 
-Parameter `MeshDomain_3` is required to be a model of the concept 
+\tparam MeshDomain_3 is required to be a model of the concept 
 `MeshDomain_3`. The argument `domain` must be the `MeshDomain_3` 
 object used to create the `c3t3` parameter. 
 
@@ -55,23 +52,23 @@ steps are successful.
 Return Values 
 -------------- 
 
-The function `perturb_mesh_3` returns a value of type `Mesh_optimization_return_code` 
+The function `perturb_mesh_3` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
 <UL> 
-<LI>`BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached. 
-<LI>`TIME_LIMIT_REACHED` when the time limit is reached. 
-<LI>`CANT_IMPROVE_ANYMORE` when the perturbation process stops because the last step is unsuccessful. 
+<LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached. 
+<LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached. 
+<LI>`CGAL::CANT_IMPROVE_ANYMORE` when the perturbation process stops because the last step is unsuccessful. 
 </UL> 
 
 Example 
 -------------- 
 
 \code{.cpp} 
-
 // Perturb until every dihedral angle of the mesh is >= 10 degrees 
 // No time bound is set 
-perturb_mesh_3(c3t3, domain, parameters::sliver_bound=10); 
-
+perturb_mesh_3(c3t3, 
+               domain, 
+               parameters::sliver_bound = 10); 
 \endcode 
 
 \sa `CGAL::Mesh_optimization_return_code` 

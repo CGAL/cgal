@@ -10,7 +10,7 @@ provides a bound for the size criterion.
 
 \sa `MeshEdgeCriteria_3` 
 \sa `MeshCriteria_3` 
-\sa `Mesh_criteria_3<Tr>` 
+\sa `CGAL::Mesh_criteria_3<Tr>` 
 \sa `MeshDomainField_3` 
 
 */

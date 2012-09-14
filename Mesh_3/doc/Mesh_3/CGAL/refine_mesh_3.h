@@ -27,10 +27,13 @@ is further refined afterward.
 
 \attention The function template `refine_mesh_3` may be used to refine a previously 
 computed mesh, e.g.: 
+
 \code{.cpp}
 C3T3 c3t3 = CGAL::make_mesh_3<C3T3>(domain,criteria);
+
 CGAL::refine_mesh_3(c3t3, domain, new_criteria);
 \endcode
+
 Please note that we guarantee the result if and only if the domain does 
 not change from one refinement to the next one. 
 
@@ -170,11 +173,15 @@ Example
 -------------- 
 
 \code{.cpp} 
-
 // Mesh generation with an exudation step 
-C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::exude()); 
-refine_mesh_3(c3t3, domain, criteria, parameters::exude(parameters::time_limit=10)); 
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, 
+                              criteria, 
+                              parameters::exude()); 
 
+refine_mesh_3(c3t3, 
+              domain, 
+              criteria, 
+              parameters::exude(parameters::time_limit=10)); 
 \endcode 
 
 \sa `CGAL::no_exude` 
@@ -205,7 +212,7 @@ if domain is a model of the refined concept `MeshDomainWithFeatures_3`.
 \sa `CGAL::parameters::no_features`
 
 */
-parameters::interal::Features_options features(MeshDomain_3 domain);
+parameters::internal::Features_options features(MeshDomain_3 domain);
 
 /*!
 \ingroup PkgMesh_3Parameters
@@ -227,10 +234,15 @@ Example
 -------------- 
 
 \code{.cpp} 
-
 // Mesh generation with lloyd optimization step 
-C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::lloyd()); 
-refine_mesh_3(c3t3, domain, criteria, parameters::lloyd(parameters::time_limit=10)); 
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, 
+                              criteria, 
+                              parameters::lloyd()); 
+
+refine_mesh_3(c3t3, 
+              domain, 
+              criteria, 
+              parameters::lloyd(parameters::time_limit=10)); 
 
 \endcode 
 
@@ -256,10 +268,10 @@ Example
 -------------- 
 
 \code{.cpp} 
-
 // Mesh generation without exudation 
-C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_exude()); 
-
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, 
+                              criteria, 
+                              parameters::no_exude()); 
 \endcode 
 
 \sa `CGAL::parameters::exude` 
@@ -300,10 +312,10 @@ Example
 -------------- 
 
 \code{.cpp} 
-
 // Mesh generation without lloyd optimization 
-C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_lloyd()); 
-
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, 
+                              criteria, 
+                              parameters::no_lloyd()); 
 \endcode 
 
 \sa `CGAL::parameters::lloyd` 
@@ -324,10 +336,10 @@ Example
 -------------- 
 
 \code{.cpp} 
-
 // Mesh generation without odt optimization 
-C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_odt()); 
-
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, 
+                              criteria, 
+                              parameters::no_odt()); 
 \endcode 
 
 \sa `CGAL::parameters::odt` 
@@ -353,10 +365,10 @@ Example
 -------------- 
 
 \code{.cpp} 
-
 // Mesh generation without perturbation 
-C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_perturb()); 
-
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, 
+                              criteria, 
+                              parameters::no_perturb()); 
 \endcode 
 
 \sa `CGAL::parameters::perturb` 
@@ -387,11 +399,15 @@ Example
 -------------- 
 
 \code{.cpp} 
-
 // Mesh generation with odt optimization step 
-C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::odt()); 
-refine_mesh_3(c3t3, domain, criteria, parameters::odt(parameters::time_limit=10)); 
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, 
+                              criteria, 
+                              parameters::odt()); 
 
+refine_mesh_3(c3t3,
+              domain, 
+              criteria, 
+              parameters::odt(parameters::time_limit=10)); 
 \endcode 
 
 \sa `CGAL::no_odt` 
@@ -426,10 +442,15 @@ Example
 -------------- 
 
 \code{.cpp} 
-
 // Mesh generation with a perturbation step 
-C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::perturb()); 
-refine_mesh_3(c3t3, domain, criteria, parameters::perturb(parameters::time_limit=10)); 
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, 
+                              criteria, 
+                              parameters::perturb()); 
+
+refine_mesh_3(c3t3, 
+              domain, 
+              criteria, 
+              parameters::perturb(parameters::time_limit=10)); 
 
 \endcode 
 

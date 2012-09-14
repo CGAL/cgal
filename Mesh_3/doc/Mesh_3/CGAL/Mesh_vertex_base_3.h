@@ -7,18 +7,16 @@ The class `Mesh_vertex_base_3` is a model of the concept `MeshVertexBase_3`.
 It is designed to serve as vertex base class for the 3D triangulation 
 used in a 3D mesh generation process. 
 
-Parameters 
--------------- 
 
-The template parameter `MD` provides the types of indices 
+\tparam MD provides the types of indices 
 used to identify 
 the faces of the input complex. It must be a model 
 of the concept `MeshDomain_3`. 
 
-The template parameter `Gt` is the geometric traits class. 
+\tparam Gt is the geometric traits class. 
 It must be a model of the concept `RegularTriangulationTraits_3`. 
 
-The third parameter `Vb` is the vertex base class. It has to be a model 
+\tparam Vb is the vertex base class. It has to be a model 
 of the concept `TriangulationVertexBase_3` and defaults to 
 `Triangulation_vertex_base_3<Gt>`. 
 

@@ -10,17 +10,17 @@ generation process.
 This class is a model of the concept 
 `MeshComplexWithFeatures_3InTriangulation_3`. 
 
-Parameters 
--------------- 
 
-The template parameter `Tr` can be instantiated with any 3D 
+\tparam Tr can be instantiated with any 3D 
 regular triangulation of \cgal provided that its 
 vertex and cell base class are models of the concepts 
 `MeshVertexBase_3` and `MeshCellBase_3`, respectively. 
 
-The template parameter `CornerIndex` is the type of the indices for corners and 
-the template parameter `CurveSegmentIndex` is the type of the indices for curves segments. 
-They must match the `Corner_index` and `Curve_segment_index` types of the model 
+\tparam  CornerIndex is the type of the indices for corners. It must match the `Corner_index` of the model 
+of the `MeshDomainWithFeatures_3` concept used for mesh generation. 
+
+\tparam CurveSegmentIndex is the type of the indices for curves segments. 
+It must match the `Curve_segment_index` types of the model 
 of the `MeshDomainWithFeatures_3` concept used for mesh generation. 
 
 Those two last template parameters defaults to `int`, so that they can be ignored 

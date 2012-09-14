@@ -22,17 +22,14 @@ representation of the domain boundaries.
 
 \pre `time_limit` \f$ \geq\f$ 0 and 0 \f$ \leq\f$ `convergence` \f$ \leq\f$ 1 and 0 \f$ \leq\f$ `freeze_bound` \f$ \leq\f$ 1 
 
-Parameters 
--------------- 
-
-Parameter `C3T3` is required to be a model of the concept 
+\tparam C3T3 is required to be a model of the concept 
 `MeshComplex_3InTriangulation_3`. 
 The argument `c3t3`, passed by 
 reference, provides the initial mesh 
 and is modified by the algorithm 
 to represent the final optimized mesh. 
 
-Parameter `MeshDomain_3` is required to be a model of the concept 
+\tparam MeshDomain_3 is required to be a model of the concept 
 `MeshDomain_3`. The argument `domain` must be the `MeshDomain_3` 
 object used to create the `c3t3` parameter. 
 
@@ -67,12 +64,12 @@ moves, unfreezes all its incident vertices.
 Return Values 
 -------------- 
 
-The function `lloyd_optimize_mesh_3` returns a value of type `Mesh_optimization_return_code` 
+The function `lloyd_optimize_mesh_3` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
 <UL> 
-<LI>`TIME_LIMIT_REACHED` when the time limit is reached. 
-<LI>`MAX_ITERATION_NUMBER_REACHED` when `lloyd_optimize_mesh_3` stops because it has performed `max_iteration_number` iterations. 
-<LI>`CONVERGENCE_REACHED` when `lloyd_optimize_mesh_3` stops because the convergence criterion 
+<LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached. 
+<LI>`CGAL::MAX_ITERATION_NUMBER_REACHED` when `lloyd_optimize_mesh_3` stops because it has performed `max_iteration_number` iterations. 
+<LI>`CGAL::CONVERGENCE_REACHED` when `lloyd_optimize_mesh_3` stops because the convergence criterion 
 is achieved. 
 </UL> 
 
@@ -80,11 +77,12 @@ Example
 -------------- 
 
 \code{.cpp} 
-
 // Lloyd-smoothing until convergence reaches 0.01, freezing vertices which 
 // move less than 0.001*shortest_incident_edge_length 
-lloyd_optimize_mesh_3(c3t3, domain, parameters::convergence=0.01, 
-parameters::freeze_bound=0.001); 
+lloyd_optimize_mesh_3(c3t3, 
+                      domain, 
+                      parameters::convergence=0.01, 
+                      parameters::freeze_bound=0.001); 
 
 \endcode 
 

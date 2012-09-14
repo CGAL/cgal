@@ -6,12 +6,9 @@ namespace CGAL {
 The class `Mesh_triangulation_3` provides a default triangulation to be used as the 3D 
 triangulation of a mesh generation process. 
 
-Parameters 
--------------- 
+\tparam MD stands for a model of `MeshDomain_3`. 
 
-Template parameter `MD` stands for a model of `MeshDomain_3`. 
-
-Template parameter `Gt` stands for a model of `RegularTriangulationTraits_3` 
+\tparam Gt stands for a model of `RegularTriangulationTraits_3` 
 and defaults to `Kernel_traits<MD>::Kernel`. 
 
 \sa `CGAL::make_mesh_3` 

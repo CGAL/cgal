@@ -19,14 +19,12 @@ The bisection stops when the query segment is shorter than a given error bound
 length of the diagonal of the bounding box (in world coordinates) and 
 `bound` is the argument passed to the constructor of `Labeled_image_mesh_domain_3`. 
 
-Parameters 
--------------- 
 
-Parameter `Image` is the type of the input image. 
+\tparam Image is the type of the input image. 
 This parameter must be a model of the concept 
 `LabeledImage_3`. 
 
-Parameter `BGT` is a geometric traits class which provides 
+\tparam BGT is a geometric traits class which provides 
 the basic operations to implement 
 intersection tests and intersection computations 
 through a bisection method. This parameter must be instantiated 
