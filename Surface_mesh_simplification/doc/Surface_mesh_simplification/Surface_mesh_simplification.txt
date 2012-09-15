@@ -6,6 +6,7 @@ namespace CGAL {
 
 \mainpage Triangulated Surface Mesh Simplification
 \anchor chaptermeshsimplification
+\autotoc
 
 \authors Fernando Cacciola
 
@@ -247,24 +248,25 @@ When you use named parameters, the ordering is irrelevant, so this: `f(name(n).a
 \code{.cpp}
 
 /*
-surface : the surface to simplify
-stop_predicate : policy indicating when the simplification must finish 
-vertex_index_map(vimap) : property-map giving each vertex a unique integer index 
-edge_index_map(eimap) : property-map giving each edge a unique integer index 
+surface                  : the surface to simplify
+stop_predicate           : policy indicating when the simplification must finish 
+vertex_index_map(vimap)  : property-map giving each vertex a unique integer index 
+edge_index_map(eimap)    : property-map giving each edge a unique integer index 
 edge_is_border_map(ebmap): property-map specifying whether an edge is a border edge or not 
-get_cost(cf) : function object computing the cost of a collapse 
-get_placement(pf) : function object computing the placement for the remaining vertex 
-visitor(vis) : function object tracking the simplification process 
+get_cost(cf)             : function object computing the cost of a collapse 
+get_placement(pf)        : function object computing the placement for the remaining vertex 
+visitor(vis)             : function object tracking the simplification process 
 */
+
 int r = edge_collapse(surface
-,stop_predicate
-,vertex_index_map(vimap)
-.edge_index_map(eimap)
-.edge_is_border_map(ebmap)
-.get_cost(cf)
-.get_placement(pf)
-.visitor(vis)
-);
+                     ,stop_predicate
+                     ,vertex_index_map(vimap)
+                       .edge_index_map(eimap)
+                       .edge_is_border_map(ebmap)
+                       .get_cost(cf)
+                       .get_placement(pf)
+                       .visitor(vis)
+                     );
 
 \endcode
 

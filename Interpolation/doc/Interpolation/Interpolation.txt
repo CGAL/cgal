@@ -6,6 +6,7 @@ namespace CGAL {
 
 \mainpage 2D and Surface Function Interpolation
 \anchor chapinterpolation
+\autotoc
 
 \authors Julia Fl&ouml;totto
 

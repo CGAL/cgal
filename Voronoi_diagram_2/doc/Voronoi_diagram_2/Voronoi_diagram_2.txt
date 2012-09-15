@@ -6,6 +6,7 @@ namespace CGAL {
 
 \mainpage 2D Voronoi Diagram Adaptor
 \anchor chaptervda
+\autotoc
 
 \authors Menelaos Karavelas
 

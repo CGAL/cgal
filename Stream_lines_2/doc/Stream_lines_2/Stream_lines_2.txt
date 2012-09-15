@@ -6,6 +6,7 @@ namespace CGAL {
 
 \mainpage 2D Placement of Streamlines
 \anchor chapterStream_lines_2
+\autotoc
 
 \authors Abdelkrim Mebarki
 

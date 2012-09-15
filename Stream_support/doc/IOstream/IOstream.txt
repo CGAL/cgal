@@ -6,6 +6,7 @@ namespace CGAL {
 
 \mainpage IO Streams
 \anchor Chapter_operator_for_IO_streams
+\autotoc
 
 \authors Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner
 
