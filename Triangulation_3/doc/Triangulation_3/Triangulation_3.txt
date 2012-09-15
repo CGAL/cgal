@@ -6,6 +6,7 @@ namespace CGAL {
 
 \mainpage 3D Triangulations
 \anchor chapterTriangulation3
+\autotoc
 
 \authors Sylvain Pion and Monique Teillaud
 
