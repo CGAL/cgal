@@ -97,6 +97,7 @@ add_executable( arrangement_2b
     PropertyValueDelegate.cpp
     DeleteCurveMode.cpp
     DeleteCurveModeItemEditor.cpp
+    PointsGraphicsItem.cpp
    ${arrangement_2b_mocs}
    ${arrangement_2b_uis}
    ${arrangement_2b_resources}

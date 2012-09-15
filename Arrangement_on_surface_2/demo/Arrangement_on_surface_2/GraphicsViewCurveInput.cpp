@@ -4,14 +4,18 @@
 namespace CGAL {
 namespace Qt {
 
-#if 0
 void 
 GraphicsViewCurveInputBase::
 setScene( QGraphicsScene* scene_ )
 {
-    this->scene = scene_;
+    this->QGraphicsSceneMixin::setScene( scene_ );
+    if ( this->scene != NULL )
+    {
+        this->scene->addItem( &this->pointsGraphicsItem );
+    }
 }
 
+#if 0
 QGraphicsScene* 
 GraphicsViewCurveInputBase::
 getScene( ) const

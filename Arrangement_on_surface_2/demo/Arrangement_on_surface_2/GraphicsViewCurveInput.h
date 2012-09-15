@@ -14,6 +14,7 @@
 #include "Callback.h"
 #include "ISnappable.h"
 #include <CGAL/CORE_algebraic_number_traits.h>
+#include "PointsGraphicsItem.h"
 
 namespace CGAL {
 namespace Qt {
@@ -22,7 +23,11 @@ class GraphicsViewCurveInputBase:
     public GraphicsViewInput, public ISnappable, public QGraphicsSceneMixin
 {
 public:
-    //virtual void setScene( QGraphicsScene* scene_ );
+    /**
+    Add our helper graphics items to the scene.
+    @override
+    */
+    virtual void setScene( QGraphicsScene* scene_ );
     //virtual QGraphicsScene* getScene( ) const;
 
     void setSnappingEnabled( bool b );
@@ -34,9 +39,7 @@ protected:
     virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );
     virtual bool eventFilter( QObject* obj, QEvent* event );
 
-    //QRectF viewportRect( ) const;
-
-    //QGraphicsScene* scene;
+    PointsGraphicsItem pointsGraphicsItem; // shows user specified curve points
     bool snappingEnabled;
     bool snapToGridEnabled;
 
@@ -91,6 +94,7 @@ protected:
             {
                 this->scene->addItem( &( this->segmentGuide ) );
             }
+            this->pointsGraphicsItem.insert( pt );
         }
         else
         {
@@ -104,6 +108,7 @@ protected:
             {
                 return;
             }
+            this->pointsGraphicsItem.clear( );
             Curve_2 res( this->p1, this->p2 );
             emit generate( CGAL::make_object( res ) );
         }
@@ -306,6 +311,7 @@ protected:
     {
         Point_2 clickedPoint = this->snapPoint( event );
         this->points.push_back( clickedPoint );
+        this->pointsGraphicsItem.insert( clickedPoint );
 
         if ( this->points.size( ) == 1 )
         { // first
@@ -362,6 +368,7 @@ protected:
                 Curve_2 res = Curve_2( Rat_segment_2( Rat_point_2( x1, y1 ), Rat_point_2( x2, y2 ) ) );
                 //std::cout << "res is " << ( (res.is_valid( ))? "" : "not ") << "valid" << std::endl;
                 this->points.clear( );
+                this->pointsGraphicsItem.clear( );
 
                 emit generate( CGAL::make_object( res ) );
             }
@@ -382,6 +389,7 @@ protected:
                 Curve_2 res = Curve_2( Rat_circle_2( Rat_point_2( x1, y1 ), sq_rad ) );
 
                 this->points.clear( );
+                this->pointsGraphicsItem.clear( );
                 emit generate( CGAL::make_object( res ) );
             }
             else if ( this->conicType == CONIC_ELLIPSE )
@@ -415,6 +423,7 @@ protected:
 
                 Curve_2 res = Curve_2( r, s, t, u, v, ww );
                 this->points.clear( );
+                this->pointsGraphicsItem.clear( );
                 emit generate( CGAL::make_object( res ) );
             }
             else if ( this->conicType == CONIC_THREE_POINT )
@@ -441,6 +450,7 @@ protected:
                     // TODO: make a valid curve and insert it
 
                     this->points.clear( );
+                    this->pointsGraphicsItem.clear( );
                 }
             }
             else if ( this->conicType == CONIC_FIVE_POINT )
@@ -470,12 +480,14 @@ protected:
                             std::cout << "Oops, points don't specify a valid conic. Try again!" << std::endl;
                         }
                         this->points.clear( );
+                        this->pointsGraphicsItem.clear( );
 
                     } 
                     catch (...)
                     {
                         std::cout << "Oops, points don't specify a valid conic. Try again!" << std::endl;
                         this->points.clear( );
+                        this->pointsGraphicsItem.clear( );
                     }
                 }
             }

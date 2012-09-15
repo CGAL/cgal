@@ -355,6 +355,8 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.ui -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PointLocationCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PointsGraphicsItem.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PointsGraphicsItem.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PropertyValueDelegate.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PropertyValueDelegate.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/SplitEdgeCallback.cpp -text
