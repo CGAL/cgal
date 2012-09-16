@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "Utils.h"
+#include "VerticalRayGraphicsItem.h"
 
 class VerticalRayShootCallbackBase : public CGAL::Qt::Callback
 {
@@ -94,6 +95,7 @@ protected:
     QGraphicsLineItem* activeRay;
     Kernel_point_2 queryPt;
     Arr_construct_point_2< Traits > toArrPoint;
+    VerticalRayGraphicsItem rayGraphicsItem;
 }; // class VerticalRayShootCallback
 
 template < class Arr_ >
@@ -124,6 +126,7 @@ setScene( QGraphicsScene* scene_ )
     {
         this->scene->addItem( this->highlightedCurves );
         this->scene->addItem( this->activeRay );
+        this->scene->addItem( &this->rayGraphicsItem );
     }
 }
 
@@ -142,6 +145,7 @@ VerticalRayShootCallback< Arr_ >::
 reset( )
 {
     this->activeRay->setLine( 0, 0, 0, 0 );
+    this->rayGraphicsItem.reset( );
     this->highlightedCurves->clear( );
     emit modelChanged( );
 }
@@ -199,7 +203,10 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
         Kernel_point_2 p2( FT( this->queryPt.x( ) ), y2 );
         Segment_2 lineSegment( this->queryPt, p2 );
         QLineF qLineSegment = this->convert( lineSegment );
-        this->activeRay->setLine( qLineSegment );
+        //this->activeRay->setLine( qLineSegment );
+        this->rayGraphicsItem.setSource( event->scenePos( ) );
+        this->rayGraphicsItem.setTargetY( CGAL::to_double( y2 ) );
+        this->rayGraphicsItem.setIsInfinite( true );
     }
     else if ( CGAL::assign( halfedge, pointLocationResult ) )
     {
@@ -214,7 +221,10 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
         Kernel_point_2 p2( this->queryPt.x( ), yInt );
         Segment_2 seg( this->queryPt, p2 );
         QLineF qseg = this->convert( seg );
-        this->activeRay->setLine( qseg );
+        //this->activeRay->setLine( qseg );
+        this->rayGraphicsItem.setSource( event->scenePos( ) );
+        this->rayGraphicsItem.setTargetY( CGAL::to_double( yInt ) );
+        this->rayGraphicsItem.setIsInfinite( false );
     }
     else if ( CGAL::assign( vertex, pointLocationResult ) )
     {

@@ -363,6 +363,8 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/SplitEdgeCallback.cpp -te
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/SplitEdgeCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Utils.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Utils.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayGraphicsItem.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayGraphicsItem.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayShootCallback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayShootCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/arrangement_2b.cpp -text

@@ -98,6 +98,7 @@ add_executable( arrangement_2b
     DeleteCurveMode.cpp
     DeleteCurveModeItemEditor.cpp
     PointsGraphicsItem.cpp
+    VerticalRayGraphicsItem.cpp
    ${arrangement_2b_mocs}
    ${arrangement_2b_uis}
    ${arrangement_2b_resources}
