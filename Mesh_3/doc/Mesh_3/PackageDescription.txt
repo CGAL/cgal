@@ -1,6 +1,6 @@
 /// \defgroup PkgMesh_3 3D Mesh Generation 
 
-/// \defgroup PkgMesh_3Concepts Concepts
+/// \defgroup PkgMesh_3Concepts Main Concepts
 /// \ingroup PkgMesh_3
 /// The main concepts of this package.
 
@@ -11,7 +11,7 @@
 /// \defgroup PkgMesh_3MeshClasses Mesh Classes
 /// \ingroup PkgMesh_3
 
-/// \defgroup PkgMesh_3Domains Domains
+/// \defgroup PkgMesh_3Domains Domain Classes
 /// \ingroup PkgMesh_3
 /// The classes in this group are models of domain concepts and their associated classes.
 
