@@ -10,8 +10,7 @@ based on the <span class="textsc">Gnu</span> Multiple Precision Arithmetic Libra
 \models ::EuclideanRing 
 \models ::RealEmbeddable 
 
-Implementation 
--------------- 
+### Implementation ###
 
 `Gmpz`s are reference counted. 
 

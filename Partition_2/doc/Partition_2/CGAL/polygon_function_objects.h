@@ -11,8 +11,7 @@ a convex polygon or not.
 \sa `CGAL::convex_partition_is_valid_2` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This test requires \f$ O(n)\f$ time for a polygon with \f$ n\f$ vertices. 
 
@@ -61,8 +60,7 @@ Function object class that indicates all sequences of points are valid.
 \sa `CGAL::partition_is_valid_2` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This test requires \f$ O(1)\f$ time. 
 
@@ -110,8 +108,7 @@ a \f$ y\f$-monotone polygon or not.
 \sa `CGAL::convex_partition_is_valid_2` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This test requires \f$ O(n)\f$ time for a polygon with \f$ n\f$ vertices. 
 
