@@ -1,0 +1,18 @@
+/// \defgroup PkgCircularKernel2 2D Circular Geometry Kernel 
+
+/// \defgroup PkgCircularKernel2Concepts Concepts
+/// \ingroup PkgCircularKernel2
+
+/*!
+\addtogroup PkgCircularKernel2
+\todo check generated documentation
+\PkgDescriptionBegin{2D Circular Geometry Kernel}
+\PkgPicture{Boolean_operation_detail.png}
+\PkgAuthor{Pedro Machado Manh&atilde;es de Castro, Sylvain Pion, and Monique Teillaud}
+\PkgDesc{This package is an extension of the linear \cgal kernel. It offers functionalities on circles, circular arcs and line segments in the plane.  }
+\PkgSince{3.2}
+\cgalbib{cgal:cpt-cgk2}
+\license{\ref licensesGPL "GPL"}
+\PkgDescriptionEnd
+*/
+
