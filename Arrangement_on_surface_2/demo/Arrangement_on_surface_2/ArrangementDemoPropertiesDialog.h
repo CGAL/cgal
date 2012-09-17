@@ -13,12 +13,21 @@ class ArrangementDemoPropertiesDialog : public QDialog
 {
 Q_OBJECT
 public:
+    // keep this in order with the ui layout
     enum PropertyKey {
         EDGE_COLOR_KEY,
         EDGE_WIDTH_KEY,
         VERTEX_COLOR_KEY,
         VERTEX_RADIUS_KEY,
-        DELETE_CURVE_MODE_KEY
+        ENVELOPE_EDGE_COLOR_KEY,
+        ENVELOPE_EDGE_WIDTH_KEY,
+        ENVELOPE_VERTEX_COLOR_KEY,
+        ENVELOPE_VERTEX_RADIUS_KEY,
+        VERTICAL_RAY_EDGE_COLOR_KEY,
+        VERTICAL_RAY_EDGE_WIDTH_KEY,
+        DELETE_CURVE_MODE_KEY,
+        GRID_SIZE_KEY,
+        GRID_COLOR_KEY
     };
 
     ArrangementDemoPropertiesDialog( ArrangementDemoWindow* parent_ = 0, Qt::WindowFlags f = 0 );

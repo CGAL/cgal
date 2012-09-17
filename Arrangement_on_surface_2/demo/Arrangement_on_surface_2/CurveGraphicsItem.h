@@ -9,6 +9,9 @@
 namespace CGAL {
 namespace Qt {
 
+/**
+Draws selected curves and vertices of an arrangement.
+*/
 template < class ArrTraits >
 class CurveGraphicsItem : public GraphicsItem, public QGraphicsSceneMixin
 {
@@ -18,121 +21,175 @@ public:
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Traits::Curve_2 Curve_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef typename Traits::Point_2 Point_2;
+    typedef typename Kernel::Point_2 Kernel_point_2;
 
 public: // ctors
-    CurveGraphicsItem( );
+    CurveGraphicsItem( ):
+        painterOstream( 0 ),
+        boundingBox( 0, 0, 0, 0 ),
+        boundingBoxInitialized( false ),
+        m_edgeColor( ::Qt::red ),
+        m_edgeWidth( 0 ),
+        m_vertexColor( ::Qt::red ),
+        m_vertexRadius( 3 )
+    {
+        this->setZValue( 4 );
+    }
 
 public: // methods
-    virtual void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget );
-    virtual QRectF boundingRect( ) const;
-    void insert( const X_monotone_curve_2& curve );
-    void clear( );
+    virtual void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
+    {
+        // draw the curves
+        QPen edgesPen( this->m_edgeColor, this->m_edgeWidth );
+        painter->setPen( edgesPen );
+        QRectF clippingRectangle = this->viewportRect( );
+        this->painterOstream = ArrangementPainterOstream< Traits >( painter, clippingRectangle );
+        this->painterOstream.setScene( this->getScene( ) );
+        for ( int i = 0; i < this->curves.size( ); ++i )
+        {
+            X_monotone_curve_2 curve = this->curves[ i ];
+            this->painterOstream << curve;
+        }
+
+        // draw the points
+        QPen verticesPen( this->m_vertexColor, this->m_vertexRadius );
+        painter->setPen( verticesPen );
+        for ( int i = 0; i < this->points.size( ); ++i )
+        {
+            Point_2 arrPoint = this->points[ i ];
+            Kernel_point_2 point( CGAL::to_double( arrPoint.x( ) ), CGAL::to_double( arrPoint.y( ) ) );
+            this->painterOstream << point;
+        }
+    }
+
+    virtual QRectF boundingRect( ) const
+    {
+        QRectF boundingRectangle = this->convert( this->boundingBox );
+        return boundingRectangle;
+    }
+
+    void insert( const X_monotone_curve_2& curve )
+    {
+        this->curves.push_back( curve );
+        
+        this->updateBoundingBox( );
+    }
+
+    void insert( const Point_2& point )
+    {
+        this->points.push_back( point );
+        
+        this->updateBoundingBox( );
+    }
+
+    void clear( )
+    {
+        this->curves.clear( );
+        this->points.clear( );
+
+        this->updateBoundingBox( );
+    }
 
 public slots:
-    void modelChanged( );
+    void modelChanged( )
+    {
+        if ( this->curves.size( ) == 0 )
+        {
+            this->hide( );
+        }
+        else
+        {
+            this->show( );
+        }
+        this->updateBoundingBox( );
+        this->update( );
+    }
+
+    const QColor& edgeColor( ) const
+    {
+        return this->m_edgeColor;
+    }
+
+    void setEdgeColor( const QColor& color )
+    {
+        this->m_edgeColor = color;
+    }
+
+    int edgeWidth( ) const
+    {
+        return this->m_edgeWidth;
+    }
+
+    void setEdgeWidth( int width )
+    {
+        this->m_edgeWidth = width;
+    }
+
+    const QColor& vertexColor( ) const
+    {
+        return this->m_vertexColor;
+    }
+
+    void setVertexColor( const QColor& color )
+    {
+        this->m_vertexColor = color;
+    }
+
+    int vertexRadius( ) const
+    {
+        return this->m_vertexRadius;
+    }
+
+    void setVertexRadius( int radius )
+    {
+        this->m_vertexRadius = radius;
+    }
 
 protected: // methods
-    void updateBoundingBox( );
+    void updateBoundingBox( )
+    {
+        this->prepareGeometryChange( );
+
+        if ( this->curves.size( ) == 0 )
+        {
+            this->boundingBox = Bbox_2( 0, 0, 0, 0 );
+            this->boundingBoxInitialized = false;
+            return;
+        }
+        else
+        {
+            this->boundingBox = this->curves[ 0 ].bbox( );
+            this->boundingBoxInitialized = true;
+        }
+
+        for ( int i = 1; i < this->curves.size( ); ++i )
+        {
+            this->boundingBox = this->boundingBox + this->curves[ i ].bbox( );
+        }
+
+        for ( int i = 0; i < this->points.size( ); ++i )
+        {
+            Point_2 pt = this->points[ i ];
+            Kernel_point_2 point( CGAL::to_double( pt.x( ) ), CGAL::to_double( pt.y( ) ) );
+            this->boundingBox = this->boundingBox + point.bbox( );
+        }
+    }
 
 protected: // fields
     CGAL::Qt::Converter< Kernel > convert;
     ArrangementPainterOstream< Traits > painterOstream;
     std::vector< X_monotone_curve_2 > curves;
+    std::vector< Point_2 > points;
     CGAL::Bbox_2 boundingBox;  
     bool boundingBoxInitialized;
+
+    QColor m_edgeColor;
+    int m_edgeWidth;
+    QColor m_vertexColor;
+    int m_vertexRadius;
+
 }; // class CurveGraphicsItem
-
-template < class ArrTraits >
-CurveGraphicsItem< ArrTraits >::
-CurveGraphicsItem( ):
-    painterOstream( 0 ),
-    boundingBox( 0, 0, 0, 0 ),
-    boundingBoxInitialized( false )
-{
-    this->setZValue( 4 );
-}
-
-template < class ArrTraits >
-void
-CurveGraphicsItem< ArrTraits >::
-paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
-{
-    painter->setPen( QPen( ::Qt::red, 0. ) );
-    QRectF clippingRectangle = this->viewportRect( );
-    this->painterOstream = ArrangementPainterOstream< Traits >( painter, clippingRectangle );
-    this->painterOstream.setScene( this->getScene( ) );
-    for ( int i = 0; i < this->curves.size( ); ++i )
-    {
-        X_monotone_curve_2 curve = this->curves[ i ];
-        this->painterOstream << curve;
-    }
-}
-
-template < class ArrTraits >
-QRectF 
-CurveGraphicsItem< ArrTraits >::
-boundingRect( ) const
-{
-    QRectF boundingRectangle = this->convert( this->boundingBox );
-    return boundingRectangle;
-}
-
-template < class ArrTraits >
-void 
-CurveGraphicsItem< ArrTraits >::
-modelChanged( )
-{
-    if ( this->curves.size( ) == 0 )
-    {
-        this->hide( );
-    }
-    else
-    {
-        this->show( );
-    }
-    this->updateBoundingBox( );
-    this->update( );
-}
-
-template < class ArrTraits >
-void 
-CurveGraphicsItem< ArrTraits >::
-updateBoundingBox( )
-{
-    this->prepareGeometryChange( );
-    if ( this->curves.size( ) == 0 )
-    {
-        this->boundingBox = Bbox_2( 0, 0, 0, 0 );
-        this->boundingBoxInitialized = false;
-        return;
-    }
-    else
-    {
-        this->boundingBox = this->curves[ 0 ].bbox( );
-        this->boundingBoxInitialized = true;
-    }
-
-    for ( int i = 1; i < this->curves.size( ); ++i )
-    {
-        this->boundingBox = this->boundingBox + this->curves[ i ].bbox( );
-    }
-}
-
-template < class ArrTraits >
-void 
-CurveGraphicsItem< ArrTraits >::
-insert( const X_monotone_curve_2& segment )
-{
-    this->curves.push_back( segment );
-}
-
-template < class ArrTraits >
-void 
-CurveGraphicsItem< ArrTraits >::
-clear( )
-{
-    this->curves.clear( );
-}
 
 /**
 Specialization of the base template CurveGraphicsItem:
@@ -148,9 +205,11 @@ public: // typedefs
     typedef Kernel_ Kernel;
     typedef typename Traits::Curve_2 Curve_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef typename Traits::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::Line_2 Line_2;
     typedef typename Kernel::Ray_2 Ray_2;
+    typedef typename Kernel::Point_2 Kernel_point_2;
 
 public: // ctors
     CurveGraphicsItem( ):
@@ -172,16 +231,30 @@ public: // methods
             X_monotone_curve_2 curve = this->curves[ i ];
             this->painterOstream << curve;
         }
+        for ( int i = 0; i < this->points.size( ); ++i )
+        {
+            Point_2 arrPoint = this->points[ i ];
+            Kernel_point_2 point( CGAL::to_double( arrPoint.x( ) ), CGAL::to_double( arrPoint.y( ) ) );
+            this->painterOstream << point;
+        }
     }
 
     void insert( const X_monotone_curve_2& curve )
     {
         this->curves.push_back( curve );
+
+        this->updateBoundingBox( );
+    }
+
+    void insert( const Point_2& point )
+    {
+        this->points.push_back( point );
     }
 
     void clear( )
     {
         this->curves.clear( );
+        this->points.clear( );
     }
 
     QRectF boundingRect( ) const
@@ -216,6 +289,46 @@ public slots:
         }
         this->updateBoundingBox( );
         this->update( );
+    }
+
+    const QColor& edgeColor( ) const
+    {
+        return this->m_edgeColor;
+    }
+
+    void setEdgeColor( const QColor& color )
+    {
+        this->m_edgeColor = color;
+    }
+
+    int edgeWidth( ) const
+    {
+        return this->m_edgeWidth;
+    }
+
+    void setEdgeWidth( int width )
+    {
+        this->m_edgeWidth = width;
+    }
+
+    const QColor& vertexColor( ) const
+    {
+        return this->m_vertexColor;
+    }
+
+    void setVertexColor( const QColor& color )
+    {
+        this->m_vertexColor = color;
+    }
+
+    int vertexRadius( ) const
+    {
+        return this->m_vertexRadius;
+    }
+
+    void setVertexRadius( int radius )
+    {
+        this->m_vertexRadius = radius;
     }
 
 protected: // methods
@@ -292,8 +405,14 @@ protected: // fields
     CGAL::Qt::Converter< Kernel > convert;
     ArrangementPainterOstream< Traits > painterOstream;
     std::vector< X_monotone_curve_2 > curves;
+    std::vector< Point_2 > points;
     CGAL::Bbox_2 boundingBox;  
     bool boundingBoxInitialized;
+
+    QColor m_edgeColor;
+    int m_edgeWidth;
+    QColor m_vertexColor;
+    int m_vertexRadius;
 }; // class CurveGraphicsItem
 
 } // namespace Qt

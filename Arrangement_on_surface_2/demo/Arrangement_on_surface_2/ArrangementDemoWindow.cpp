@@ -951,6 +951,9 @@ on_actionPreferences_triggered( )
         return;
     ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
     CGAL::Qt::ArrangementGraphicsItemBase* agi = currentTab->getArrangementGraphicsItem( );
+    ArrangementDemoGraphicsView* view = currentTab->getView( );
+    EnvelopeCallbackBase* envelopeCallback = currentTab->getEnvelopeCallback( );
+    VerticalRayShootCallbackBase* verticalRayShootCallback = currentTab->getVerticalRayShootCallback( );
     
 #if 0
     QPen vertexPen = agi->getVerticesPen( );
@@ -969,13 +972,29 @@ on_actionPreferences_triggered( )
         unsigned int edgeWidth = qVariantValue< unsigned int >( dialog->property( Dialog::EDGE_WIDTH_KEY ) );
         QColor vertexColor = qVariantValue< QColor >( dialog->property( Dialog::VERTEX_COLOR_KEY ) );
         unsigned int vertexRadius = qVariantValue< unsigned int >( dialog->property( Dialog::VERTEX_RADIUS_KEY ) );
+        QColor envelopeEdgeColor = qVariantValue< QColor >( dialog->property( Dialog::ENVELOPE_EDGE_COLOR_KEY ) );
+        unsigned int envelopeEdgeWidth = qVariantValue< unsigned int >( dialog->property( Dialog::ENVELOPE_EDGE_WIDTH_KEY ) );
+        QColor envelopeVertexColor = qVariantValue< QColor >( dialog->property( Dialog::ENVELOPE_VERTEX_COLOR_KEY ) );
+        unsigned int envelopeVertexRadius = qVariantValue< unsigned int >( dialog->property( Dialog::ENVELOPE_VERTEX_RADIUS_KEY ) );
+        QColor verticalRayEdgeColor = qVariantValue< QColor >( dialog->property( Dialog::VERTICAL_RAY_EDGE_COLOR_KEY ) );
+        unsigned int verticalRayEdgeWidth = qVariantValue< unsigned int >( dialog->property( Dialog::VERTICAL_RAY_EDGE_WIDTH_KEY ) );
         DeleteCurveMode mode = qVariantValue< DeleteCurveMode >( dialog->property( Dialog::DELETE_CURVE_MODE_KEY ) );
+        unsigned int gridSize = qVariantValue< unsigned int >( dialog->property( Dialog::GRID_SIZE_KEY ) );
+        QColor gridColor = qVariantValue< QColor >( dialog->property( Dialog::GRID_COLOR_KEY ) );
 
         QPen edgesPen( QBrush( edgeColor ), edgeWidth );
         QPen verticesPen( QBrush( vertexColor ), vertexRadius );
         agi->setEdgesPen( edgesPen );
         agi->setVerticesPen( verticesPen );
         agi->modelChanged( );
+        view->setGridSize( gridSize );
+        view->setGridColor( gridColor );
+        envelopeCallback->setEnvelopeEdgeColor( envelopeEdgeColor );
+        envelopeCallback->setEnvelopeEdgeWidth( envelopeEdgeWidth );
+        envelopeCallback->setEnvelopeVertexColor( envelopeVertexColor );
+        envelopeCallback->setEnvelopeVertexRadius( envelopeVertexRadius );
+        verticalRayShootCallback->setEdgeColor( verticalRayEdgeColor );
+        verticalRayShootCallback->setEdgeWidth( verticalRayEdgeWidth );
 
 #if 0
         std::cout << edgeColor.name( ).toStdString( ) << std::endl;

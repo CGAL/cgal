@@ -23,6 +23,11 @@ class VerticalRayShootCallbackBase : public CGAL::Qt::Callback
 public:
     void setShootingUp( bool isShootingUp );
 
+    virtual void setEdgeWidth( int width ) = 0;
+    virtual void setEdgeColor( const QColor& color ) = 0;
+    virtual const QColor& edgeColor( ) const = 0;
+    virtual int edgeWidth( ) const = 0;
+
 protected:
     VerticalRayShootCallbackBase( QObject* parent_ );
     using Callback::scene;
@@ -75,6 +80,28 @@ public:
 
     void slotModelChanged( );
 
+    virtual void setEdgeWidth( int width )
+    {
+        this->highlightedCurves->setEdgeWidth( width );
+        this->rayGraphicsItem.setWidth( width );
+    }
+
+    virtual void setEdgeColor( const QColor& color )
+    {
+        this->highlightedCurves->setEdgeColor( color );
+        this->rayGraphicsItem.setColor( color );
+    }
+
+    virtual const QColor& edgeColor( ) const
+    {
+        return this->highlightedCurves->edgeColor( );
+    }
+
+    virtual int edgeWidth( ) const
+    {
+        return this->highlightedCurves->edgeWidth( );
+    }
+
 protected:
     void mousePressEvent( QGraphicsSceneMouseEvent *event );
     void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
@@ -109,6 +136,9 @@ VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ ):
     highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
     activeRay( new QGraphicsLineItem )
 {
+    this->highlightedCurves->setEdgeColor( this->rayGraphicsItem.color( ) );
+    this->highlightedCurves->setVertexColor( this->rayGraphicsItem.color( ) );
+
     QObject::connect( this, SIGNAL( modelChanged( ) ),
         this->highlightedCurves, SLOT( modelChanged( ) ) );
     QObject::connect( this, SIGNAL( modelChanged( ) ),

@@ -9,7 +9,8 @@ VerticalRayGraphicsItem( ):
     m_source( QPointF( ) ), // null point ie. (+0.0, +0.0)
     m_targetY( 0.0 ),
     m_isInfinite( false ),
-    m_rayPen( QPen( ::Qt::black, 3.0 ) )
+    m_color( ::Qt::green ),
+    m_width( 1.0 )
 {
 
 }
@@ -20,6 +21,9 @@ paint( QPainter* painter,
     const QStyleOptionGraphicsItem* option,
     QWidget* widget )
 {
+    QPen rayPen( this->m_color, this->m_width );
+    painter->setPen( rayPen );
+
     if ( this->m_source.isNull( ) && this->m_targetY == 0.0 )
     {
         return;
@@ -135,20 +139,32 @@ setIsInfinite( bool b )
     this->m_isInfinite = b;
 }
 
-const QPen& 
+const QColor&
 VerticalRayGraphicsItem::
-rayPen( ) const
+color( ) const
 {
-    return this->m_rayPen;
+    return this->m_color;
 }
 
 void 
 VerticalRayGraphicsItem::
-setRayPen( const QPen& pen )
+setColor( const QColor& color )
 {
-    this->m_rayPen = pen;
+    this->m_color = color;
+}
 
-    //this->update( ); // do we want to repaint on new pen event?
+int 
+VerticalRayGraphicsItem::
+width( ) const
+{
+    return this->m_width;
+}
+
+void 
+VerticalRayGraphicsItem::
+setWidth( int width )
+{
+    this->m_width = width;
 }
 
 void

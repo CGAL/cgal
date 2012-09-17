@@ -2,6 +2,7 @@
 #define VERTICAL_RAY_GRAPHICS_ITEM_H
 #include <CGAL/Qt/GraphicsItem.h>
 #include <QPen>
+#include <QColor>
 
 /**
 Represents a vertical ray in the scene. The ray doesn't necessarily extend to
@@ -26,8 +27,11 @@ public:
     void setTargetY( double y );
     bool isInfinite( ) const;
     void setIsInfinite( bool b );
-    const QPen& rayPen( ) const;
-    void setRayPen( const QPen& pen );
+
+    const QColor& color( ) const;
+    void setColor( const QColor& color );
+    int width( ) const;
+    void setWidth( int width );
 
     void reset( );
 
@@ -41,6 +45,7 @@ protected:
     QPointF m_source;
     double m_targetY;
     bool m_isInfinite;
-    QPen m_rayPen;
+    QColor m_color;
+    int m_width;
 }; // class VerticalRayGraphicsItem
 #endif // VERTICAL_RAY_GRAPHICS_ITEM_H

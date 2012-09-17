@@ -1,12 +1,14 @@
 #include "ArrangementDemoGraphicsView.h"
 #include <iostream>
 #include <QVarLengthArray>
+#include <QPen>
 
 ArrangementDemoGraphicsView::
 ArrangementDemoGraphicsView( QWidget* parent ):
     QGraphicsView( parent ),
     showGrid( false ),
-    gridSize( 50 )
+    gridSize( 50 ),
+    gridColor( ::Qt::black )
 { }
 
 
@@ -40,11 +42,26 @@ getGridSize( ) const
 
 void
 ArrangementDemoGraphicsView::
+setGridColor( QColor color )
+{
+    this->gridColor = color;
+}
+
+QColor
+ArrangementDemoGraphicsView::
+getGridColor( ) const
+{
+    return this->gridColor;
+}
+
+void
+ArrangementDemoGraphicsView::
 drawForeground( QPainter* painter, const QRectF& rect )
 {
     QRectF viewportRect = this->getViewportRect( );
     if ( this->showGrid )
     {
+        // compute integer-spaced grid lines
         QVarLengthArray< QLineF, 100 > linesX;
         QVarLengthArray< QLineF, 100 > linesY;
         qreal left = int(viewportRect.left()) - (int(viewportRect.left()) % this->gridSize);
@@ -57,8 +74,19 @@ drawForeground( QPainter* painter, const QRectF& rect )
         {
             linesY.append( QLineF( viewportRect.left( ), y, viewportRect.right( ), y ) );
         }
+
+        // set up the painter
+        QPen savePen = painter->pen( );
+        QPen gridPen( savePen );
+        gridPen.setColor( this->gridColor );
+        painter->setPen( gridPen );
+
+        // draw the grid
         painter->drawLines( linesX.data( ), linesX.size( ) );
         painter->drawLines( linesY.data( ), linesY.size( ) );
+
+        // revert the painter
+        painter->setPen( savePen );
     }
 }
 

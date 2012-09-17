@@ -10,6 +10,14 @@
 class EnvelopeCallbackBase : public CGAL::Qt::Callback
 {
 public:
+    virtual void setEnvelopeEdgeColor( const QColor& color ) = 0;
+    virtual const QColor& getEnvelopeEdgeColor( ) const = 0;
+    virtual void setEnvelopeEdgeWidth( int width ) = 0;
+    virtual int getEnvelopeEdgeWidth( ) const = 0;
+    virtual void setEnvelopeVertexColor( const QColor& color ) = 0;
+    virtual const QColor& getEnvelopeVertexColor( ) const = 0;
+    virtual void setEnvelopeVertexRadius( int radius ) = 0;
+    virtual int getEnvelopeVertexRadius( ) const = 0;
 
 public slots:
     virtual void showLowerEnvelope( bool b ) = 0;
@@ -58,6 +66,50 @@ public:
     Slot: Update and redraw the envelopes.
     */
     void slotModelChanged( );
+
+    void setEnvelopeEdgeColor( const QColor& color )
+    {
+        this->lowerEnvelope->setEdgeColor( color );
+        this->upperEnvelope->setEdgeColor( color );
+    }
+
+    const QColor& getEnvelopeEdgeColor( ) const
+    {
+        return this->lowerEnvelope->edgeColor( );
+    }
+
+    void setEnvelopeEdgeWidth( int width )
+    {
+        this->lowerEnvelope->setEdgeWidth( width );
+        this->upperEnvelope->setEdgeWidth( width );
+    }
+
+    int getEnvelopeEdgeWidth( ) const
+    {
+        return this->lowerEnvelope->edgeWidth( );
+    }
+
+    void setEnvelopeVertexColor( const QColor& color )
+    {
+        this->lowerEnvelope->setVertexColor( color );
+        this->upperEnvelope->setVertexColor( color );
+    }
+
+    const QColor& getEnvelopeVertexColor( ) const
+    {
+        return this->lowerEnvelope->vertexColor( );
+    }
+
+    void setEnvelopeVertexRadius( int radius )
+    {
+        this->lowerEnvelope->setVertexRadius( radius );
+        this->upperEnvelope->setVertexRadius( radius );
+    }
+
+    int getEnvelopeVertexRadius( ) const
+    {
+        return this->lowerEnvelope->vertexRadius( );
+    }
 
 //  shouldn't need this here, since it is in the base class Callback
 //    void setScene( QGraphicsScene* scene_ );

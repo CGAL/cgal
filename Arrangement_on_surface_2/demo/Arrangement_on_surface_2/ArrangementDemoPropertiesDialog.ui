@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>488</width>
-    <height>256</height>
+    <height>414</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,7 +50,47 @@
      </row>
      <row>
       <property name="text">
+       <string>Envelope Edge Color</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Envelope Edge Width</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Envelope Vertex Color</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Envelope Vertex Radius</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Vertical Ray Edge Color</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Vertical Ray Edge Width</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
        <string>Delete Curve Mode</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Grid Size</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Grid Color</string>
       </property>
      </row>
      <column>
