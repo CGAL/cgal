@@ -1,0 +1,18 @@
+/// \defgroup PkgRidges_3 Approximation of Ridges and Umbilics on     Triangulated Surface Meshes 
+
+/// \defgroup PkgRidges_3Concepts Concepts
+/// \ingroup PkgRidges_3
+
+/*!
+\addtogroup PkgRidges_3
+\todo check generated documentation
+\PkgDescriptionBegin{Approximation of Ridges and Umbilics on Triangulated Surface Meshes}
+\PkgPicture{RidgesMechPartDetail.png}
+\PkgAuthor{Marc Pouget and Fr&eacute;d&eacute;ric Cazals}
+\PkgDesc{Global features related to curvature extrema encode important informations used in segmentation, registration, matching and surface analysis. Given pointwise estimations of local differential quantities, this package allows the approximation of differential features on a triangulated surface mesh. Such curvature related features are curves: ridges or crests, and points: umbilics.}
+\PkgSince{3.3}
+\cgalbib{cgal:cp-arutsm}
+\license{\ref licensesGPL "GPL"}
+\PkgDescriptionEnd
+*/
+

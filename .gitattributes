@@ -4897,6 +4897,24 @@ Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
 Qt_widget/src/CGAL_Qt3/CMakeLists.txt -text
 Qt_widget/src/CGAL_Qt3/Qt_widget.qtmoc.cmake -text
+Ridges_3/doc/Ridges_3/CGAL/Ridges.h -text
+Ridges_3/doc/Ridges_3/CGAL/Umbilics.h -text
+Ridges_3/doc/Ridges_3/Concepts/TriangulatedSurfaceMesh.h -text
+Ridges_3/doc/Ridges_3/Concepts/Vertex2FTPropertyMap.h -text
+Ridges_3/doc/Ridges_3/Concepts/Vertex2VectorPropertyMap.h -text
+Ridges_3/doc/Ridges_3/PackageDescription.txt -text
+Ridges_3/doc/Ridges_3/Ridges_3.txt -text
+Ridges_3/doc/Ridges_3/fig/RidgesMechPartDetail.png -text svneol=unset#image/png
+Ridges_3/doc/Ridges_3/fig/david_crest.jpg -text svneol=unset#image/jpeg
+Ridges_3/doc/Ridges_3/fig/david_crest_small.png -text svneol=unset#image/png
+Ridges_3/doc/Ridges_3/fig/david_eye_crest.png -text svneol=unset#image/png
+Ridges_3/doc/Ridges_3/fig/ellipsoid_ridges.png -text svneol=unset#image/png
+Ridges_3/doc/Ridges_3/fig/index_umbilic.png -text svneol=unset#image/png
+Ridges_3/doc/Ridges_3/fig/lemon.png -text svneol=unset#image/png
+Ridges_3/doc/Ridges_3/fig/mecanic-sub1_crest-jpg.png -text svneol=unset#image/png
+Ridges_3/doc/Ridges_3/fig/mecanic-sub1_crestTweight1-jpg.png -text svneol=unset#image/png
+Ridges_3/doc/Ridges_3/fig/mecanic-sub1_crestTweight1Tsharp7-jpg.png -text svneol=unset#image/png
+Ridges_3/doc/Ridges_3/fig/star.png -text svneol=unset#image/png
 Ridges_3/doc_tex/Ridges_3/RidgesMechPartDetail.png -text
 Ridges_3/doc_tex/Ridges_3/david_crest.jpg -text
 Ridges_3/doc_tex/Ridges_3/david_crest_small.png -text svneol=unset#image/png
