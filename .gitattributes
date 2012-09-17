@@ -5837,6 +5837,33 @@ Surface_mesher/demo/Surface_mesher/windows/res/idb5.bmp -text svneol=unset#image
 Surface_mesher/demo/Surface_mesher/windows/res/idb6.bmp -text svneol=unset#image/bmp
 Surface_mesher/demo/Surface_mesher/windows/res/idb7.bmp -text svneol=unset#image/bmp
 Surface_mesher/demo/Surface_mesher/windows/res/idb8.bmp -text svneol=unset#image/bmp
+Surface_mesher/doc/Surface_mesher/CGAL/Gray_level_image_3.h -text
+Surface_mesher/doc/Surface_mesher/CGAL/IO/output_surface_facets_to_polyhedron.h -text
+Surface_mesher/doc/Surface_mesher/CGAL/Implicit_surface_3.h -text
+Surface_mesher/doc/Surface_mesher/CGAL/Surface_mesh_cell_base_3.h -text
+Surface_mesher/doc/Surface_mesher/CGAL/Surface_mesh_complex_2_in_triangulation_3.h -text
+Surface_mesher/doc/Surface_mesher/CGAL/Surface_mesh_default_criteria_3.h -text
+Surface_mesher/doc/Surface_mesher/CGAL/Surface_mesh_default_triangulation_3.h -text
+Surface_mesher/doc/Surface_mesher/CGAL/Surface_mesh_traits_generator_3.h -text
+Surface_mesher/doc/Surface_mesher/CGAL/Surface_mesh_vertex_base_3.h -text
+Surface_mesher/doc/Surface_mesher/CGAL/make_surface_mesh.h -text
+Surface_mesher/doc/Surface_mesher/Concepts/ImplicitFunction.h -text
+Surface_mesher/doc/Surface_mesher/Concepts/ImplicitSurfaceTraits_3.h -text
+Surface_mesher/doc/Surface_mesher/Concepts/SurfaceMeshCellBase_3.h -text
+Surface_mesher/doc/Surface_mesher/Concepts/SurfaceMeshComplex_2InTriangulation_3.h -text
+Surface_mesher/doc/Surface_mesher/Concepts/SurfaceMeshFacetsCriteria_3.h -text
+Surface_mesher/doc/Surface_mesher/Concepts/SurfaceMeshTraits_3.h -text
+Surface_mesher/doc/Surface_mesher/Concepts/SurfaceMeshTriangulation_3.h -text
+Surface_mesher/doc/Surface_mesher/Concepts/SurfaceMeshVertexBase_3.h -text
+Surface_mesher/doc/Surface_mesher/Concepts/Surface_3.h -text
+Surface_mesher/doc/Surface_mesher/PackageDescription.txt -text
+Surface_mesher/doc/Surface_mesher/Surface_mesher.txt -text
+Surface_mesher/doc/Surface_mesher/examples.txt -text
+Surface_mesher/doc/Surface_mesher/fig/segmented_head-small.png -text svneol=unset#image/png
+Surface_mesher/doc/Surface_mesher/fig/segmented_head.png -text svneol=unset#image/png
+Surface_mesher/doc/Surface_mesher/fig/skull-surface-small.png -text svneol=unset#image/png
+Surface_mesher/doc/Surface_mesher/fig/skull-surface.png -text svneol=unset#image/png
+Surface_mesher/doc/Surface_mesher/fig/sphere-surface.png -text svneol=unset#image/png
 Surface_mesher/doc_tex/Surface_mesher/segmented_head-small.png -text svneol=unset#image/png
 Surface_mesher/doc_tex/Surface_mesher/segmented_head.png -text svneol=unset#image/png
 Surface_mesher/doc_tex/Surface_mesher/skull-surface-small.png -text svneol=unset#image/png
