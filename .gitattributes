@@ -6588,7 +6588,6 @@ Voronoi_diagram_2/doc/Voronoi_diagram_2/Concepts/AdaptationPolicy_2.h -text
 Voronoi_diagram_2/doc/Voronoi_diagram_2/Concepts/AdaptationTraits_2.h -text
 Voronoi_diagram_2/doc/Voronoi_diagram_2/Concepts/DelaunayGraph_2.h -text
 Voronoi_diagram_2/doc/Voronoi_diagram_2/PackageDescription.txt -text
-Voronoi_diagram_2/doc/Voronoi_diagram_2/Unsupported/NOINCLUDE.h -text
 Voronoi_diagram_2/doc/Voronoi_diagram_2/Voronoi_diagram_2.txt -text
 Voronoi_diagram_2/doc/Voronoi_diagram_2/fig/voronoi.png -text svneol=unset#image/png
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
