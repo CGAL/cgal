@@ -5577,6 +5577,31 @@ Stream_support/doc/IOstream/PackageDescription.txt -text
 Stream_support/doc/IOstream/fig/io.png -text svneol=unset#image/png
 Stream_support/doc_tex/IOstream/io.png -text
 Stream_support/test/Stream_support/data/io.cin -text
+Subdivision_method_3/doc/Subdivision_method_3/CGAL/Subdivision_mask_3.h -text
+Subdivision_method_3/doc/Subdivision_method_3/CGAL/Subdivision_method_3.h -text
+Subdivision_method_3/doc/Subdivision_method_3/Concepts/DQQMask_3.h -text
+Subdivision_method_3/doc/Subdivision_method_3/Concepts/PQQMask_3.h -text
+Subdivision_method_3/doc/Subdivision_method_3/Concepts/PTQMask_3.h -text
+Subdivision_method_3/doc/Subdivision_method_3/Concepts/Sqrt3Mask_3.h -text
+Subdivision_method_3/doc/Subdivision_method_3/PackageDescription.txt -text
+Subdivision_method_3/doc/Subdivision_method_3/Subdivision_method_3.txt -text
+Subdivision_method_3/doc/Subdivision_method_3/fig/CCBorderMask.pdf -text svneol=unset#application/pdf
+Subdivision_method_3/doc/Subdivision_method_3/fig/CCBorderMask.png -text svneol=unset#image/png
+Subdivision_method_3/doc/Subdivision_method_3/fig/CCSubdivision.png -text svneol=unset#image/png
+Subdivision_method_3/doc/Subdivision_method_3/fig/DSCornerMask.pdf -text svneol=unset#application/pdf
+Subdivision_method_3/doc/Subdivision_method_3/fig/DSCornerMask.png -text svneol=unset#image/png
+Subdivision_method_3/doc/Subdivision_method_3/fig/LoopBorderMask.pdf -text svneol=unset#application/pdf
+Subdivision_method_3/doc/Subdivision_method_3/fig/LoopBorderMask.png -text svneol=unset#image/png
+Subdivision_method_3/doc/Subdivision_method_3/fig/PQQStencil.gif -text svneol=unset#image/gif
+Subdivision_method_3/doc/Subdivision_method_3/fig/PQQStencil.pdf -text svneol=unset#application/pdf
+Subdivision_method_3/doc/Subdivision_method_3/fig/RefSchemes.gif -text svneol=unset#image/gif
+Subdivision_method_3/doc/Subdivision_method_3/fig/RefSchemes.pdf -text svneol=unset#application/pdf
+Subdivision_method_3/doc/Subdivision_method_3/fig/cc_mask.gif -text svneol=unset#image/gif
+Subdivision_method_3/doc/Subdivision_method_3/fig/cc_mask.pdf -text svneol=unset#application/pdf
+Subdivision_method_3/doc/Subdivision_method_3/fig/teaser.jpg -text svneol=unset#image/jpeg
+Subdivision_method_3/doc/Subdivision_method_3/fig/teaser.pdf -text svneol=unset#application/pdf
+Subdivision_method_3/doc/Subdivision_method_3/fig/twoheads-detail.png -text svneol=unset#image/png
+Subdivision_method_3/doc/Subdivision_method_3/fig/twoheads.png -text svneol=unset#image/png
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/CCSubdivision.png -text svneol=unset#image/png
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.fig -text svneol=unset#application/octet-stream
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.gif -text svneol=unset#image/gif

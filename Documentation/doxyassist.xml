@@ -299,6 +299,20 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>3D Surface Subdivision Methods</name>
+        <input>../Subdivision_method_3/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Subdivision_method_3/doc/Subdivision_method_3/</string>
+          <string name="STRIP_FROM_INC_PATH">../Subdivision_method_3/doc/Subdivision_method_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Subdivision_method_3.tag</string>
+          <string name="EXAMPLE_PATH">../Subdivision_method_3/examples</string>
+          <string name="IMAGE_PATH">../Subdivision_method_3/doc/Subdivision_method_3/fig</string>
+        </doxygen>
+      </project>
+
+
+
+      <project>
         <name>2D Placement of Streamlines</name>
         <input>../Stream_lines_2/doc</input>
         <doxygen>
@@ -1052,6 +1066,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Straight_skeleton_2/doc/Straight_skeleton_2/fig</item>
           <item>../Voronoi_diagram_2/doc/Voronoi_diagram_2/fig</item>
           <item>../Surface_mesh_simplification/doc/Surface_mesh_simplification/fig</item>
+          <item>../Subdivision_method_3/doc/Subdivision_method_3/fig</item>
           <item>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig</item>
           <item>../Stream_lines_2/doc/Stream_lines_2/fig</item>
           <item>../Stream_support/doc/IOstream/fig</item>
@@ -1115,6 +1130,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.2D-Straight-Skeleton-and-Polygon-Offsetting/html</item>
           <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.2D-Voronoi-Diagram-Adaptor/html</item>
           <item>./tags/Surface_mesh_simplification.tag=../../CGAL.CGAL.Triangulated-Surface-Mesh-Simplification/html</item>
+          <item>./tags/Subdivision_method_3.tag=../../CGAL.CGAL.3D-Surface-Subdivion-Methods/html</item>
           <item>./tags/Stream_lines_2.tag=../../CGAL.CGAL.2D Placement-of-Streamlines/html</item>
           <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
           <item>./tags/Surface_mesh_parameterization.tag=../../CGAL.CGAL.Planar-Parameterization-of-Triangulated-Surface-Meshes</item>
