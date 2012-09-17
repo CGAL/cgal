@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 Concept for arcs of circles. 
@@ -9,7 +9,7 @@ Concept for arcs of circles.
 \refines Assignable
 \refines DefaultConstructible 
 
-\hasModel CGAL::Circular_arc_2<CircularKernel> 
+\hasModel `CGAL::Circular_arc_2<CircularKernel>` 
 
 */
 

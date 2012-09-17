@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 \refines `Kernel::HasOnUnboundedSide_2`

@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 A model `fo` of this type must provide: 
@@ -33,8 +33,8 @@ const CircularKernel::Circular_arc_point_2 &p2);
 /*! 
 Constructs the unique circular arc whose supporting circle is 
 `c`, and whose source is the intersection of `c` 
-and `c1` with index \f$ b_1\f$, and whose target is the intersection 
-of `c` and `c2` of index \f$ b_2\f$, where intersections are 
+and `c1` with index `b1`, and whose target is the intersection 
+of `c` and `c2` of index `b2`, where intersections are 
 ordered lexicographically, and when traversing the circle in 
 counterclockwise direction. 
 \pre `c` intersects both `c1` and `c2`, and the arc defined by the intersections has non-zero length. 

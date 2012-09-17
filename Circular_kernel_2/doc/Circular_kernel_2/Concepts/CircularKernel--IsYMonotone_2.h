@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 An object `fo` of this type must provide: 
@@ -14,7 +14,7 @@ public:
 /// @{
 
 /*! 
-Tests whether the arc is \f$ y\f$-monotone. 
+Tests whether the arc is `y`-monotone. 
 */ 
 bool operator() 
 (const CircularKernel::Circular_arc_2 & c); 

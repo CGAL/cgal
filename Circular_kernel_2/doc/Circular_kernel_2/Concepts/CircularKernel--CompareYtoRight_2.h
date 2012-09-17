@@ -1,10 +1,10 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 An object `fo` of this type must provide operators that compare vertically 
-two arcs on the right side of a common point \f$ p\f$: 
+two arcs on the right side of a common point `p`: 
 
 */
 
@@ -16,7 +16,7 @@ public:
 
 /*! 
 For two circular arcs. 
-\pre \f$ p\f$ must be a common point to \f$ a_1\f$ and \f$ a_2\f$, and \f$ a_1\f$ and \f$ a_2\f$ must be defined to the right of \f$ p\f$. 
+\pre `p` must be a common point to `a1` and `a2`, and `a1` and `a2` must be defined to the right of `p`. 
 */ 
 Comparison_result operator() 
 (const Circular_kernel_2::Circular_arc_2 &a1, 

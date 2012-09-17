@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 A model `fo` of this type must provide: 
@@ -14,8 +14,8 @@ public:
 /// @{
 
 /*! 
-Constructs the \f$ x\f$-minimal vertex of `c`. 
-\pre The arc `c` is \f$ x\f$-monotone. 
+Constructs the `x`-minimal vertex of `c`. 
+\pre The arc `c` is `x`-monotone. 
 */ 
 CircularKernel::Circular_arc_point_2 operator() 
 (const CircularKernel::Circular_arc_2 & c); 

@@ -1,7 +1,25 @@
 /// \defgroup PkgCircularKernel2 2D Circular Geometry Kernel 
 
-/// \defgroup PkgCircularKernel2Concepts Concepts
+
+/// \defgroup PkgCircularKernel2GeometricConcepts Geometric Concepts
 /// \ingroup PkgCircularKernel2
+
+
+/// \defgroup PkgCircularKernel2GeometricClasses Geometric Kernel and Classes
+/// \ingroup PkgCircularKernel2
+
+
+/// \defgroup PkgCircularKernel2GeometricFunctions Geometric Global Functions
+/// \ingroup PkgCircularKernel2
+
+
+/// \defgroup PkgCircularKernel2AlgebraicConcepts Algebraic Concepts
+/// \ingroup PkgCircularKernel2
+
+
+/// \defgroup PkgCircularKernel2AlgebraicClasses Algebraic Kernel and Classes
+/// \ingroup PkgCircularKernel2
+
 
 /*!
 \addtogroup PkgCircularKernel2

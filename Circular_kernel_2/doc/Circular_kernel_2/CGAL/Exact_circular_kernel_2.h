@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricClasses
 
 A typedef to a circular kernel that provides both exact geometric 
 predicates and exact geometric constructions. This kernel uses some 

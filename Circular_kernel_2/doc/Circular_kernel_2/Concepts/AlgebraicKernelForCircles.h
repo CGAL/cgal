@@ -1,13 +1,13 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2AlgebraicConcepts
 \cgalconcept
 
 The `AlgebraicKernelForCircles` concept is meant to provide the 
 curved kernel with all the algebraic functionalities required for the 
 manipulation of circular arcs. 
 
-\hasModel Algebraic_kernel_for_circles_2_2 
+\hasModel `Algebraic_kernel_for_circles_2_2` 
 
 \sa `CircularKernel`
 \sa `CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>`

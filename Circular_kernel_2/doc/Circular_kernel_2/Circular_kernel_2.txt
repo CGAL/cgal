@@ -4,8 +4,9 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Circular Geometry Kernel
+\mainpage 2D Circular Geometry %Kernel
 \anchor chaptercircularkernel
+\autotoc
 
 \authors Pedro Machado Manh&atilde;es de Castro, Sylvain Pion, and Monique Teillaud
 

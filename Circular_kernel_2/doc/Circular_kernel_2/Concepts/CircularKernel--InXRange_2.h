@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 To test whether a point lies in the vertical range of a curve. 
@@ -23,7 +23,7 @@ bool operator()
 const CircularKernel::Circular_arc_point_2 & p); 
 
 /*! 
-For a circular arc. \pre \f$ c\f$ is \f$ x\f$-monotone. 
+For a circular arc. \pre `c` is `x`-monotone. 
 */ 
 bool operator() 
 (const CircularKernel::Circular_arc_2 & c, 

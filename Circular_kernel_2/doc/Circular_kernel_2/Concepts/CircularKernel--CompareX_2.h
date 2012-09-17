@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 \refines `Kernel::CompareX_2`
@@ -19,7 +19,7 @@ public:
 /// @{
 
 /*! 
-Compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$. 
+Compares the `x`-coordinates of `p` and `q`. 
 */ 
 Comparison_result operator() 
 (const CircularKernel::Circular_arc_point_2 &p, 

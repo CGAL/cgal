@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricFunctions
 
 
 Checks whether the point lies in the vertical range defined by the
@@ -12,7 +12,7 @@ has_in_x_range(const Circular_arc_2<CircularKernel> &ca,
 const Circular_arc_point_2<CircularKernel> &p);
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricFunctions
 
 
 Checks whether the point lies in the vertical range defined by the
@@ -24,7 +24,7 @@ const Circular_arc_point_2<CircularKernel> &p);
 
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricFunctions
 
 
 Checks whether the point lies on the circle.
@@ -35,10 +35,10 @@ const Circular_arc_point_2<CircularKernel> &p);
 
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricFunctions
 
 
-Copies in the output iterator the \f$ x\f$-monotone sub-arcs of \f$ ca\f$.
+Copies in the output iterator the `x`-monotone sub-arcs of `ca`.
 */
 template < class OutputIterator >
 OutputIterator
@@ -47,10 +47,10 @@ OutputIterator res);
 
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricFunctions
 
 
-Copies in the output iterator the \f$ xy\f$-monotone sub-arcs of \f$ ca\f$.
+Copies in the output iterator the `xy`-monotone sub-arcs of `ca`.
 */
 template < class OutputIterator >
 OutputIterator
@@ -59,23 +59,23 @@ OutputIterator res);
 
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricFunctions
 
 
-Returns the leftmost (resp. rightmost) point of the circle if \f$ b\f$ is
-`true` (resp. `false`).
+Returns the leftmost (resp.\ rightmost) point of the circle if `b` is
+`true` (resp.\ `false`).
 */
 Circular_arc_point_2<CircularKernel>
 x_extremal_point(const Circle_2<CircularKernel> & c, bool b);
 
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricFunctions
 
 
-Copies in the output iterator the \f$ x\f$-extremal points of the
+Copies in the output iterator the `x`-extremal points of the
 circle. `res` iterates on elements of type
-`Circular_arc_point_2<CircularKernel>`, sorted in \f$ x\f$.
+`Circular_arc_point_2<CircularKernel>`, sorted in `x`.
 */
 template < class OutputIterator >
 OutputIterator
@@ -84,22 +84,22 @@ OutputIterator res);
 
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricFunctions
 
 
-Returns the bottommost (ressp. topmost) point of the circle if \f$ b\f$ is
-`true` (resp. `false`).
+Returns the bottommost (resp.\ topmost) point of the circle if `b` is
+`true` (resp.\ `false`).
 */
 Circular_arc_point_2<CircularKernel>
 y_extremal_point(const Circle_2<CircularKernel> & c, bool b);
 
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricFunctions
 
-Copies in the output iterator the \f$ y\f$-extremal points of the
+Copies in the output iterator the `y`-extremal points of the
 circle. `res` iterates on elements of type
-`Circular_arc_point_2<CircularKernel>`, sorted in \f$ y\f$.
+`Circular_arc_point_2<CircularKernel>`, sorted in `y`.
 */
 template < class OutputIterator >
 OutputIterator
@@ -107,11 +107,11 @@ y_extremal_points(const Circle_2<CircularKernel> & c,
 OutputIterator res);
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricFunctions
 
 
-Compares vertically the two arcs, to the right of the point \f$ p\f$,
-\pre \f$ p\f$ is an intersection point of the arcs, and the arcs are defined to the right of \f$ p\f$.
+Compares vertically the two arcs, to the right of the point `p`,
+\pre `p` is an intersection point of the arcs, and the arcs are defined to the right of `p`.
 */
 CGAL::Comparison_result 
 compare_y_to_right(const Circular_arc_2<CircularKernel> &ca1,

@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2AlgebraicConcepts
 \cgalconcept
 
 Concept to represent 

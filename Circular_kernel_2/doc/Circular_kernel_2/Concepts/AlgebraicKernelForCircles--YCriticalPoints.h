@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2AlgebraicConcepts
 \cgalconcept
 
 \sa `AlgebraicKernelForCircles::XCriticalPoints`
@@ -24,8 +24,8 @@ operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
 OutputIterator res); 
 
 /*! 
-Computes the `y`-critical point with smallest (resp. largest) \f$ y\f$ 
-of polynomial `p` if \f$ b\f$ is `true` (resp. `false`). 
+Computes the `y`-critical point with smallest (resp.\ largest) `y` 
+of polynomial `p` if `b` is `true` (resp.\ `false`). 
 */ 
 template < class OutputIterator > 
 AlgebraicKernelForCircles::Root_for_circles_2_2 

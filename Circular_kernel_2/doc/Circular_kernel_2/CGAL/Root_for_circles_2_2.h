@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2AlgebraicClasses
 
 \models ::AlgebraicKernelForCircles::RootForCircles_2_2 
 

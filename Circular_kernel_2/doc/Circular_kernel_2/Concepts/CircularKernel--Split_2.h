@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 A model `fo` of this type must provide: 
@@ -14,7 +14,7 @@ public:
 /// @{
 
 /*! 
-Splits arc \f$ a\f$ at point \f$ p\f$, which creates arcs \f$ a1\f$ and \f$ a2\f$. 
+Splits arc `a` at point `p`, which creates arcs `a1` and `a2`. 
 \pre The point lies on the input arc. 
 */ 
 void operator() 

@@ -1,10 +1,10 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 An object `fo` of this type must provide two operators that compare 
-a point \f$ p\f$ and an arc \f$ a\f$ on the vertical line passing through \f$ p\f$. 
+a point `p` and an arc `a` on the vertical line passing through `p`. 
 
 */
 
@@ -16,7 +16,7 @@ public:
 
 /*! 
 For a circular arc. 
-\pre The arc \f$ a\f$ must be monotone and \f$ p\f$ must be in the vertical range of \f$ a\f$. 
+\pre The arc `a` must be monotone and `p` must be in the vertical range of `a`. 
 */ 
 Comparison_result operator() 
 (const CircularKernel::Circular_arc_point_2 &p, 

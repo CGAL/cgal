@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricClasses
 
 \models ::CircularKernel::CircularArcPoint_2 
 
@@ -33,12 +33,12 @@ Circular_arc_point_2(const CircularKernel::Root_for_circles_2_2 &r);
 /// @{
 
 /*! 
-\f$ x\f$-coordinate of the point. 
+`x`-coordinate of the point. 
 */ 
 const CircularKernel::Root_of_2 & x(); 
 
 /*! 
-\f$ y\f$-coordinate of the point. 
+`y`-coordinate of the point. 
 */ 
 const CircularKernel::Root_of_2 & y(); 
 
@@ -53,7 +53,7 @@ Bbox_2 bbox() const;
 
 
 /*! 
-Test for equality. Two points are equal, iff their \f$ x\f$ and \f$ y\f$ coordinates are equal. 
+Test for equality. Two points are equal, iff their `x` and `y` coordinates are equal. 
 \relates Circular_arc_point_2 
 */ 
 bool operator==(const Circular_arc_point_2<CircularKernel> &p, const Circular_arc_point_2<CircularKernel> &q); 
@@ -65,27 +65,27 @@ Test for nonequality.
 bool operator!=(const Circular_arc_point_2<CircularKernel> &p, const Circular_arc_point_2<CircularKernel> &q); 
 
 /*! 
-Returns true iff \f$ p\f$ is lexicographically smaller than \f$ q\f$, i.e. either if \f$ p.x() < q.x()\f$ 
-or if \f$ p.x() == q.x()\f$ and \f$ p.y() < q.y()\f$. 
+Returns true iff`p` is lexicographically smaller than `q`, i.e. either if `p.x() < q.x()` 
+or if `p.x() == q.x()` and `p.y() < q.y()`. 
 \relates Circular_arc_point_2 
 */ 
 bool operator<(const Circular_arc_point_2<CircularKernel> &p, const Circular_arc_point_2<CircularKernel> &q); 
 
 /*! 
-Returns true iff \f$ p\f$ is lexicographically greater than \f$ q\f$. \relates Circular_arc_point_2 
+Returns true iff`p` is lexicographically greater than `q`. \relates Circular_arc_point_2 
 */ 
 bool operator>(const Circular_arc_point_2<CircularKernel> &p, 
 const Circular_arc_point_2<CircularKernel> &q); 
 
 /*! 
-Returns true iff \f$ p\f$ is lexicographically smaller than or equal to \f$ q\f$. 
+Returns true iff`p` is lexicographically smaller than or equal to `q`. 
 \relates Circular_arc_point_2 
 */ 
 bool operator<=(const Circular_arc_point_2<CircularKernel> &p, 
 const Circular_arc_point_2<CircularKernel> &q); 
 
 /*! 
-Returns true iff \f$ p\f$ is lexicographically greater than or equal to \f$ q\f$. 
+Returns true iff`p` is lexicographically greater than or equal to `q`. 
 \relates Circular_arc_point_2 
 */ 
 bool operator>=(const Circular_arc_point_2<CircularKernel> &p, 

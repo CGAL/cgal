@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2Concepts
+\ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
 Concept for line segments supported by a line that is a model of 
@@ -11,7 +11,7 @@ Concept for line segments supported by a line that is a model of
 \refines Assignable
 \refines DefaultConstructible 
 
-\hasModel CGAL::Line_arc_2<CircularKernel> 
+\hasModel `CGAL::Line_arc_2<CircularKernel>` 
 
 */
 class CircularKernel::LineArc_2 {

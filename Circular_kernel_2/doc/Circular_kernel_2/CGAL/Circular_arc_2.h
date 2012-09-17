@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgCircularKernel2
+\ingroup PkgCircularKernel2GeometricClasses
 
 \models ::CircularKernel::CircularArc_2 
 
