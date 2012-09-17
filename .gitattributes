@@ -4294,6 +4294,36 @@ Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/icons/pause.png -text svneol=un
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/icons/planar.png -text svneol=unset#image/png
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/icons/play.png -text svneol=unset#image/png
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/icons/step.png -text svneol=unset#image/png
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/CGAL/Periodic_3_Delaunay_triangulation_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/CGAL/Periodic_3_offset_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/CGAL/Periodic_3_triangulation_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/CGAL/Periodic_3_triangulation_ds_cell_base_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/CGAL/Periodic_3_triangulation_ds_vertex_base_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/CGAL/Periodic_3_triangulation_hierarchy_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/CGAL/Periodic_3_triangulation_traits_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/Classified.txt -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/Concepts/Periodic_3DelaunayTriangulationTraits_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/Concepts/Periodic_3Offset_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/Concepts/Periodic_3TriangulationDSCellBase_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/Concepts/Periodic_3TriangulationDSVertexBase_3.h -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/PackageDescription.txt -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/Periodic_3_triangulation_3.txt -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/flips.gif -text svneol=unset#image/gif
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/flips.pdf -text svneol=unset#application/pdf
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_STORED.jpg -text svneol=unset#image/jpeg
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_STORED_COVER_DOMAIN.jpg -text svneol=unset#image/jpeg
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_STORED_COVER_DOMAIN_small.jpg -text svneol=unset#image/jpeg
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_STORED_small.jpg -text svneol=unset#image/jpeg
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_UNIQUE.jpg -text svneol=unset#image/jpeg
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_UNIQUE_COVER_DOMAIN.jpg -text svneol=unset#image/jpeg
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_UNIQUE_COVER_DOMAIN_small.jpg -text svneol=unset#image/jpeg
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_UNIQUE_small.jpg -text svneol=unset#image/jpeg
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/offsets.gif -text svneol=unset#image/gif
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/offsets.pdf -text svneol=unset#application/pdf
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/orient.gif -text svneol=unset#image/gif
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/orient.pdf -text svneol=unset#application/pdf
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/p3Delaunay3.jpg -text svneol=unset#image/jpeg
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/p3Delaunay3_small.jpg -text svneol=unset#image/jpeg
 Periodic_3_triangulation_3/doc_tex/Periodic_3_triangulation_3/offsets.gif -text
 Periodic_3_triangulation_3/doc_tex/Periodic_3_triangulation_3/offsets.pdf -text
 Periodic_3_triangulation_3/doc_tex/Periodic_3_triangulation_3/orient.gif -text svneol=unset#image/gif

@@ -963,6 +963,32 @@ namespace for the XML file to be processed properly.  -->
         </doxygen>
       </project>
 
+      <project>
+        <name>3D Periodic Triangulations</name>
+        <input>../Periodic_3_triangulation_3/doc/</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3</string>
+          <string name="STRIP_FROM_INC_PATH">../Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3</string>
+          <string name="GENERATE_TAGFILE">./tags/Periodic_3_triangulation_3.tag</string>
+          <string name="IMAGE_PATH">../Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig</string>
+          <string name="EXAMPLE_PATH">../Periodic_3_triangulation_3/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/TDS_3.tag=../../CGAL.CGAL.3D-Triangulation-Data-Structure/html</item>
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Approximation of Ridges and Umbilics on Triangulated Surface Meshes</name>
+        <input>../Ridges_3/doc/Ridges_3</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Ridges_3/doc/Ridges_3</string>
+          <string name="STRIP_FROM_INC_PATH">../Ridges_3/doc/Ridges_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Ridges_3.tag</string>
+          <string name="IMAGE_PATH">../Ridges_3/doc/Ridges_3/fig</string>
+          <string name="EXAMPLE_PATH">../Ridges_3/examples</string>
+        </doxygen>
+      </project>
 
       <project>
         <name>3D Boolean Operations on Nef Polyhedra</name>
@@ -1060,6 +1086,8 @@ namespace for the XML file to be processed properly.  -->
           <item>../Triangulation_2/doc/Triangulation_2/fig</item>
           <item>../Triangulation_3/doc/TDS_3/fig</item>
           <item>../Triangulation_3/doc/Triangulation_3/fig</item>
+          <item>../Ridges_3/doc/Ridges_3/fig</item>
+          <item>../Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig</item>
           <item>../Spatial_searching/doc/Spatial_searching/fig</item>
           <item>../Spatial_sorting/doc/Spatial_sorting/fig</item>
           <item>../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig</item>
@@ -1123,6 +1151,8 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
           <item>./tags/TDS_3.tag=../../CGAL.CGAL.3D-Triangulation-Data-Structure/html</item>
           <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+          <item>./tags/Periodic_3_triangulation_3.tag=../../CGAL.CGAL.3D-Periodic-Triangulation/html</item>
+          <item>./tags/Ridges_3.tag=../../CGAL.CGAL.Approximation-of-Ridges-and-Umbilics-on-Triangulated-Surface-Meshes/html</item>
           <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.2D-Snap-Rounding/html</item>
           <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.dD-Spatial-Searching/html</item>
           <item>./tags/Spatial_sorting.tag=../../CGAL.CGAL.Spatial-Sorting/html</item>

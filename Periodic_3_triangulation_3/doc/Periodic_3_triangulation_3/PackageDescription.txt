@@ -1,0 +1,53 @@
+/// \defgroup PkgPeriodic3Triangulation3 3D Periodic Triangulations
+
+/// \defgroup PkgPeriodic3Triangulation3Concepts Concepts
+/// \ingroup PkgPeriodic3Triangulation3
+
+/*!
+\addtogroup PkgPeriodic3Triangulation3
+\todo check generated documentation
+\PkgDescriptionBegin{3D Periodic Triangulations}
+\PkgPicture{p3Delaunay3_small.jpg}
+\PkgAuthor{Manuel Caroli  and Monique Teillaud}
+\PkgDesc{This package allows to build and handle triangulations of point sets in the three dimensional flat torus. Triangulations are built incrementally and can be modified by insertion or removal of vertices. They offer point location facilities. The package provides Delaunay triangulations and offers nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
+\PkgSince{3.5}
+\cgalbib{cgal:ct-pt3}
+\license{\ref licensesGPL "GPL"}
+\PkgDescriptionEnd
+
+The main classes of the 3D Periodic Triangulation package are
+`Periodic_3_triangulation_3` and
+`Periodic_3_Delaunay_triangulation_3`. They contain functionality
+to access triangulations and to run queries on
+them. `Periodic_3_Delaunay_triangulation_3` can construct and
+modify Delaunay triangulations. It takes the geometric traits as well
+as the triangulation data structure as template parameters.
+
+The geometric traits class must be a model of the concept
+`Periodic_3DelaunayTriangulationTraits_3`. It contains all
+predicates and constructions that are needed by the functions in the
+triangulation classes.
+
+The package uses `Triangulation_data_structure_3` to represent the
+triangulation. The cells and vertices need to be models of the
+concepts `Periodic_3TriangulationDSCellBase_3` and
+`Periodic_3TriangulationDSVertexBase_3`, respectively.
+A triangulation is stored as a collection of vertices and cells that
+are linked together through incidence and adjacency relations. Each
+cell gives access to its four incident vertices and to its four
+adjacent cells. Each vertex gives access to one of its incident
+cells.
+
+The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
+orientation, the positive orientation being defined by the orientation
+of the underlying space \f$ \mathbb T_c^3\f$. The neighbors of a cell are
+also indexed with 0, 1, 2, 3 in such a way that the neighbor indexed
+by \f$ i\f$ is opposite to the vertex with the same index. See
+Figure  \ref P3Triangulation3figorient.
+
+In order to be able to specify the tetrahedra that contain vertices
+both inside and outside the original domain we store an additional
+offset information in each vertex of a cell. These offsets are models
+of the concept `Periodic_3Offset_3`.
+*/
+
