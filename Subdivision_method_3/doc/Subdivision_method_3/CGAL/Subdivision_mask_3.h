@@ -9,16 +9,14 @@ whose points contribute to the position of a refined point.
 The geometry mask of a stencil specifies 
 the computation on the nodes of the stencil. 
 `CatmullClark_mask_3` implements the geometry masks of 
-Catmull-Clark subdivision on a `Polyhedron_3<Cartesian>`. 
+Catmull-Clark subdivision on a `CGAL::Polyhedron_3<Cartesian>`. 
+
+\tparam Polyhedron_3 must be a `CGAL::Polyhedron_3`
+instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
 
 \image html CCBorderMask.png
 
-Parameters 
--------------- 
-
-The only parameter requires a `Polyhedron_3` as the argument. The 
-`Polyhedron_3` should be specialized with the `Cartesian` 
-kernel, which defines the `Point_3` for the vertices. 
+\models ::PQQMask
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -86,14 +84,12 @@ the computation on the nodes of the stencil.
 `DooSabin_mask_3` implements the geometry masks of 
 Doo-Sabin subdivision on a `Polyhedron_3<Cartesian>`. 
 
+\tparam Polyhedron_3 must be a `CGAL::Polyhedron_3`
+instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
+
 \image html DSCornerMask.png
 
-Parameters 
--------------- 
-
-The only parameter requires a `Polyhedron_3` as the argument. The 
-`Polyhedron_3` should be specialized with the `Cartesian` 
-kernel, which defines the `Point_3` for the vertices. 
+\models ::DQQMask
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -140,14 +136,12 @@ the computation on the nodes of the stencil.
 `Loop_mask_3` implements the geometry masks of 
 Loop subdivision on a triangulated `Polyhedron_3<Cartesian>`. 
 
+\tparam Polyhedron_3 must be a `CGAL::Polyhedron_3`
+instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
+
 \image html LoopBorderMask.png
 
-Parameters 
--------------- 
-
-The only parameter requires a `Polyhedron_3` as the argument. The 
-`Polyhedron_3` should be specialized with the `Cartesian` 
-kernel, which defines the `Point_3` for the vertices. 
+\models ::PTQMask
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -207,14 +201,12 @@ The geometry mask of a stencil specifies
 the computation on the nodes of the stencil. 
 `Sqrt3_mask_3` implements the geometry masks of 
 \f$ \sqrt{3}\f$ subdivision on a triangulated 
-`Polyhedron_3<Cartesian>`. 
+`CGAL::Polyhedron_3<Cartesian>`. 
 
-Parameters 
--------------- 
+\tparam Polyhedron_3 must be a `CGAL::Polyhedron_3`
+instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
 
-The only parameter requires a `Polyhedron_3` as the argument. The 
-`Polyhedron_3` should be specialized with the `Cartesian` 
-kernel, which defines the `Point_3` for the vertices. 
+\models ::Sqrt3Mask
 
 \sa `CGAL::Subdivision_method_3`
 

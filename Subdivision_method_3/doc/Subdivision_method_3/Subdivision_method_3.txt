@@ -213,9 +213,9 @@ for the PQQ refinement.
 
 template <class Polyhedron_3>
 class PQQ_stencil_3 {
-void facet_node(Facet_handle facet, Point_3& pt);
-void edge_node(Halfedge_handle edge, Point_3& pt);
-void vertex_node(Vertex_handle vertex, Point_3& pt);
+  void facet_node(Facet_handle facet, Point_3& pt);
+  void edge_node(Halfedge_handle edge, Point_3& pt);
+  void vertex_node(Vertex_handle vertex, Point_3& pt);
 };
 
 \endcode
@@ -231,51 +231,53 @@ Catmull-Clark subdivision.
 
 template <class Polyhedron_3>
 class CatmullClark_mask_3 {
-void facet_node(Facet_handle facet, Point_3& pt) {
-Halfedge_around_facet_circulator hcir = facet->facet_begin();
-int n = 0;
-Point_3 p(0,0,0);
-do {
-p = p + (hcir->vertex()->point() - ORIGIN);
-++n;
-} while (++hcir != facet->facet_begin());
-pt = ORIGIN + (p - ORIGIN)/FT(n);
-}
-void edge_node(Halfedge_handle edge, Point_3& pt) {
-Point_3 p1 = edge->vertex()->point();
-Point_3 p2 = edge->opposite()->vertex()->point();
-Point_3 f1, f2;
-facet_node(edge->facet(), f1);
-facet_node(edge->opposite()->facet(), f2);
-pt = Point_3((p1[0]+p2[0]+f1[0]+f2[0])/4,
-(p1[1]+p2[1]+f1[1]+f2[1])/4,
-(p1[2]+p2[2]+f1[2]+f2[2])/4 );
-}
-void vertex_node(Vertex_handle vertex, Point_3& pt) {
-Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
-int n = circulator_size(vcir); 
-
-FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
-Point_3& S = vertex->point();
-
-Point_3 q;
-for (int i = 0; i < n; i++, ++vcir) {
-Point_3& p2 = vcir->opposite()->vertex()->point();
-R[0] += (S[0]+p2[0])/2;
-R[1] += (S[1]+p2[1])/2;
-R[2] += (S[2]+p2[2])/2;
-facet_node(vcir->facet(), q);
-Q[0] += q[0]; 
-Q[1] += q[1]; 
-Q[2] += q[2];
-}
-R[0] /= n; R[1] /= n; R[2] /= n;
-Q[0] /= n; Q[1] /= n; Q[2] /= n;
-
-pt = Point_3((Q[0] + 2*R[0] + S[0]*(n-3))/n,
-(Q[1] + 2*R[1] + S[1]*(n-3))/n,
-(Q[2] + 2*R[2] + S[2]*(n-3))/n );
-}
+  void facet_node(Facet_handle facet, Point_3& pt) {
+    Halfedge_around_facet_circulator hcir = facet->facet_begin();
+    int n = 0;
+    Point_3 p(0,0,0);
+    do {
+      p = p + (hcir->vertex()->point() - ORIGIN);
+      ++n;
+    } while (++hcir != facet->facet_begin());
+    pt = ORIGIN + (p - ORIGIN)/FT(n);
+  }
+  
+  void edge_node(Halfedge_handle edge, Point_3& pt) {
+    Point_3 p1 = edge->vertex()->point();
+    Point_3 p2 = edge->opposite()->vertex()->point();
+    Point_3 f1, f2;
+    facet_node(edge->facet(), f1);
+    facet_node(edge->opposite()->facet(), f2);
+    pt = Point_3((p1[0]+p2[0]+f1[0]+f2[0])/4,
+                 (p1[1]+p2[1]+f1[1]+f2[1])/4,
+                 (p1[2]+p2[2]+f1[2]+f2[2])/4 );
+  }
+  
+  void vertex_node(Vertex_handle vertex, Point_3& pt) {
+    Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
+    int n = circulator_size(vcir); 
+  
+    FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
+    Point_3& S = vertex->point();
+  
+    Point_3 q;
+    for (int i = 0; i < n; i++, ++vcir) {
+      Point_3& p2 = vcir->opposite()->vertex()->point();
+      R[0] += (S[0]+p2[0])/2;
+      R[1] += (S[1]+p2[1])/2;
+      R[2] += (S[2]+p2[2])/2;
+      facet_node(vcir->facet(), q);
+      Q[0] += q[0]; 
+      Q[1] += q[1]; 
+      Q[2] += q[2];
+    }
+    R[0] /= n; R[1] /= n; R[2] /= n;
+    Q[0] /= n; Q[1] /= n; Q[2] /= n;
+  
+    pt = Point_3((Q[0] + 2*R[0] + S[0]*(n-3))/n,
+                 (Q[1] + 2*R[1] + S[1]*(n-3))/n,
+                 (Q[2] + 2*R[2] + S[2]*(n-3))/n );
+  }
 };
 
 \endcode
@@ -408,17 +410,17 @@ of a Catmull-Clark geometry policy is in the Section \ref secCC.
 
 template <class Polyhedron_3>
 class CatmullClark_mask_3 {
-void facet_node(Facet_handle facet, Point_3& pt) {
-Halfedge_around_facet_circulator hcir = facet->facet_begin();
-int n = 0;
-Point_3 p(0,0,0);
-do {
-p = p + (hcir->vertex()->point() - ORIGIN);
-++n;
-} while (++hcir != facet->facet_begin());
-pt = ORIGIN + (p - ORIGIN)/FT(n);
-}
-}
+  void facet_node(Facet_handle facet, Point_3& pt) {
+    Halfedge_around_facet_circulator hcir = facet->facet_begin();
+    int n = 0;
+    Point_3 p(0,0,0);
+    do {
+      p = p + (hcir->vertex()->point() - ORIGIN);
+      ++n;
+    } while (++hcir != facet->facet_begin());
+    pt = ORIGIN + (p - ORIGIN)/FT(n);
+  }
+};
 
 \endcode
 
@@ -445,17 +447,17 @@ is listed below, where `ept` returns the new point splitting
 \code{.cpp}
 
 void border_node(Halfedge_handle edge, Point_3& ept, Point_3& vpt) {
-Point_3& ep1 = edge->vertex()->point();
-Point_3& ep2 = edge->opposite()->vertex()->point();
-ept = Point_3((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
+  Point_3& ep1 = edge->vertex()->point();
+  Point_3& ep2 = edge->opposite()->vertex()->point();
+  ept = Point_3((ep1[0]+ep2[0])/2, (ep1[1]+ep2[1])/2, (ep1[2]+ep2[2])/2);
 
-Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
-Point_3& vp1 = vcir->opposite()->vertex()->point();
-Point_3& vp0 = vcir->vertex()->point();
-Point_3& vp_1 = (--vcir)->opposite()->vertex()->point();
-vpt = Point_3((vp_1[0] + 6*vp0[0] + vp1[0])/8,
-(vp_1[1] + 6*vp0[1] + vp1[1])/8,
-(vp_1[2] + 6*vp0[2] + vp1[2])/8 );
+  Halfedge_around_vertex_circulator vcir = edge->vertex_begin();
+  Point_3& vp1 = vcir->opposite()->vertex()->point();
+  Point_3& vp0 = vcir->vertex()->point();
+  Point_3& vp_1 = (--vcir)->opposite()->vertex()->point();
+  vpt = Point_3((vp_1[0] + 6*vp0[0] + vp1[0])/8,
+                (vp_1[1] + 6*vp0[1] + vp1[1])/8,
+                (vp_1[2] + 6*vp0[2] + vp1[2])/8 );
 }
 
 \endcode
@@ -470,31 +472,31 @@ current release. This might be changed in the future releases.
 
 template <class Polyhedron_3>
 class PQQ_stencil_3 {
-void facet_node(Facet_handle, Point_3&);
-void edge_node(Halfedge_handle, Point_3&);
-void vertex_node(Vertex_handle, Point_3&);
+  void facet_node(Facet_handle, Point_3&);
+  void edge_node(Halfedge_handle, Point_3&);
+  void vertex_node(Vertex_handle, Point_3&);
 
-void border_node(Halfedge_handle, Point_3&, Point_3&);
+  void border_node(Halfedge_handle, Point_3&, Point_3&);
 };
 
 template <class Polyhedron_3>
 class PTQ_stencil_3 {
-void edge_node(Halfedge_handle, Point_3&);
-void vertex_node(Vertex_handle, Point_3&);
+  void edge_node(Halfedge_handle, Point_3&);
+  void vertex_node(Vertex_handle, Point_3&);
 
-void border_node(Halfedge_handle, Point_3&, Point_&);
+  void border_node(Halfedge_handle, Point_3&, Point_&);
 };
 
 template <class Polyhedron_3>
 class DQQ_stencil_3 {
 public:
-void corner_node(Halfedge_handle edge, Point_3& pt);
+  void corner_node(Halfedge_handle edge, Point_3& pt);
 };
 
 template <class Polyhedron_3>
 class Sqrt3_stencil_3 {
 public:
-void vertex_node(Vertex_handle vertex, Point_3& pt);
+  void vertex_node(Vertex_handle vertex, Point_3& pt);
 };
 
 \endcode
@@ -516,25 +518,25 @@ based on that kernel.
 \code{.cpp}
 
 namespace Subdivision_method_3 {
-template <class Polyhedron_3>
-void CatmullClark_subdivision(Polyhedron_3& p, int step = 1) {
-PQQ(p, CatmullClark_mask_3<Polyhedron_3>(), step);
-}
+  template <class Polyhedron_3>
+  void CatmullClark_subdivision(Polyhedron_3& p, int step = 1) {
+    PQQ(p, CatmullClark_mask_3<Polyhedron_3>(), step);
+  }
 
-template <class Polyhedron_3>
-void Loop_subdivision(Polyhedron_3& p, int step = 1) {
-PTQ(p, Loop_mask_3<Polyhedron_3>() , step);
-}
+  template <class Polyhedron_3>
+  void Loop_subdivision(Polyhedron_3& p, int step = 1) {
+    PTQ(p, Loop_mask_3<Polyhedron_3>() , step);
+  }
 
-template <class Polyhedron_3>
-void DooSabin_subdivision(Polyhedron_3& p, int step = 1) {
-DQQ(p, DooSabin_mask_3<Polyhedron_3>(), step);
-}
+  template <class Polyhedron_3>
+  void DooSabin_subdivision(Polyhedron_3& p, int step = 1) {
+    DQQ(p, DooSabin_mask_3<Polyhedron_3>(), step);
+  }
 
-template <class Polyhedron_3>
-void Sqrt3_subdivision(Polyhedron_3& p, int step = 1) {
-Sqrt3(p, Sqrt3_mask_3<Polyhedron_3>(), step);
-}
+  template <class Polyhedron_3>
+  void Sqrt3_subdivision(Polyhedron_3& p, int step = 1) {
+    Sqrt3(p, Sqrt3_mask_3<Polyhedron_3>(), step);
+  }
 }
 
 \endcode
