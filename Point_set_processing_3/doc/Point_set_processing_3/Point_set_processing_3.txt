@@ -1,0 +1,211 @@
+
+\page chappoint_set_processing_3 Point Set Processing
+
+namespace CGAL {
+/*!
+
+\mainpage Point Set Processing
+
+\anchor chappoint_set_processing_3
+
+\authors Pierre Alliez, Laurent Saboret, Nader Salman
+
+# Introduction #
+
+This \cgal component implements methods to analyze and process
+unorganized 3D point sets. The input is an unorganized 3D point set,
+possibly with normal attributes (unoriented or oriented). This point
+set can be analyzed to measure geometric properties such as average
+spacing between the points and their \f$ K\f$ nearest neighbors. It
+can be processed with functions devoted to the simplification, outlier
+removal, smoothing, normal estimation and normal orientation. The
+processing of point sets is often needed in applications dealing with
+measurement data, such as surface reconstruction from laser scanned
+data (see Figure \ref Point_set_processing_3figintroduction).
+
+\anchor Point_set_processing_3figintroduction
+\image html introduction.jpg "Point set processing. Left: 275K points sampled on the statue of an elephant with a Minolta laser scanner. Right: point set after clean-up and simplification to 17K points."
+
+In the context of surface reconstruction we can position the elements
+of this component along the common surface reconstruction pipeline
+(Figure \ref Point_set_processing_3figpipeline) which involves the
+following steps: 1) Scanning and scan alignment to produce a set of
+points or points with normals (alignment is not yet covered in \cgal);
+2) Outlier removal; 3) Simplification to reduce the number of input
+points; 4) Smoothing to reduce noise in the input data; 5) Normal
+estimation and orientation when the normals are not already provided
+by the acquisition device; and 6) Surface reconstruction. Chapter
+`Surface_reconstruction_points_3` \ref
+chapsurface_reconstruction_points_3 deals with surface reconstruction
+from point sets with normal attributes.
+
+\anchor Point_set_processing_3figpipeline
+\image html pipeline.jpg "Point set processing pipeline for surface reconstruction. The algorithms listed in gray are available from other \cgal components (bounding volumes and principal component analysis)."
+
+# Input/Output #
+
+## Property Maps ##
+
+The algorithms of this component take as input parameters iterator
+ranges of 3D points, or of 3D points with normals. The property maps
+are used to access the point or normal information from the input
+data, so as to let the user decide upon the implementation of a point
+with normal. The latter can be represented as, e.g., a class derived
+from the \cgal 3D point, or as a `std::pair<Point_3<K>, Vector_3<K>>`, 
+or as a `boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
+
+The following classes described in Chapter \ref chapterProperty_map
+provide property maps for the implementations of points with normals
+listed above:
+
+- `CGAL::Dereference_property_map<T>` 
+- `CGAL::First_of_pair_property_map<Pair>` and `CGAL::Second_of_pair_property_map<Pair>` 
+- `CGAL::Nth_of_tuple_property_map<N, Tuple>` 
+
+`Dereference_property_map<Point_3>` is the default value of the
+position property map expected by all functions in this component.
+
+See below examples using pair and tuple property maps.
+
+Users of this package may use other types to represent positions and
+normals if they implement the corresponding property maps.
+
+## Streams ##
+
+We provide functions to read and write sets of points or sets of
+points with normals from the following ASCII file formats: XYZ (three
+point coordinates `x y z` per line or three point coordinates and
+three normal vector coordinates `x y z nx ny nz` per line), and OFF
+(Object File Format) \cite cgal:p-gmgv16-96.
+
+- `CGAL::read_xyz_points` 
+- `CGAL::read_off_points` 
+- `CGAL::write_off_points` 
+- `CGAL::write_xyz_points` 
+
+## Example ##
+
+The following example reads a point set from an input file and writes
+it to a file, both in the XYZ format. Positions and normals are stored
+in pairs and accessed through property maps.
+\cgalexample{read_write_xyz_point_set_example.cpp}
+
+# Analysis #
+
+Function `CGAL::compute_average_spacing()` computes the average
+spacing of all input points to their \f$ k\f$ nearest neighbor points,
+\f$ k\f$ being specified by the user. As it provides an order of a
+point set density, this function is used downstream the surface
+reconstruction pipeline to automatically determine some parameters
+such as output mesh sizing for surface reconstruction.
+
+## Example ##
+
+The following example reads a point set in the `xyz` format and
+computes the average spacing. Index, position and color are stored in
+a tuple and accessed through property maps.
+\cgalexample{average_spacing_example.cpp}
+
+Note that other functions such as centroid or bounding volumes are
+found in other \cgal components:
+
+- `CGAL::centroid` 
+- `CGAL::bounding_box` 
+- `Min_sphere_of_spheres_d<Traits>` 
+
+
+
+# Outlier Removal #
+
+Function `CGAL::remove_outliers()` deletes a user-specified fraction
+of outliers from an input point set. More specifically, it sorts the
+input points in increasing order of average squared distances to their
+\f$ k\f$ nearest neighbors and deletes the points with largest value.
+
+## Example ##
+
+The following example reads a point set and removes 5% of the
+points. It uses the `CGAL::Dereference_property_map<Point_3>` property
+map (optional as it is the default position property map of all
+functions in this component.)
+\cgalexample{remove_outliers_example.cpp}
+
+# Simplification #
+
+
+Two simplification functions are devised to reduce an input point set,
+either randomly or using a grid-based clustering approach.
+
+Function `CGAL::random_simplify_point_set()` randomly deletes a
+user-specified fraction of points from the input point set. This
+algorithm is fast.
+
+Function `CGAL::grid_simplify_point_set()` considers a regular grid
+covering the bounding box of the input point set, and clusters all
+points sharing the same cell of the grid by picking as representant
+one arbitrarily chosen point. This algorithm is slower than
+`CGAL::random_simplify_point_set()`.
+
+## Example ##
+
+The following example reads a point set and simplifies it by clustering.
+\cgalexample{grid_simplification_example.cpp}
+
+\anchor Point_set_processing_3figgrid_simplification
+\image html grid_simplification.jpg "Point set simplification through grid-based clustering. Removed points are depicted in red. Notice how low-density areas (in green) are not simplified."
+
+# Smoothing #
+
+
+Function `CGAL::jet_smooth_point_set` smooths the input point set by
+projecting each point onto a smooth parametric surface patch
+(so-called jet surface) fitted over its \f$ k\f$ nearest neighbors.
+
+
+## Example ##
+
+The following example generates a set of 9 points close to the \f$xy\f$ 
+plane and smooths them using 8 nearest neighbors:
+\cgalexample{jet_smoothing_example.cpp}
+
+# Normal Estimation #
+
+Assuming a point set sampled over an inferred surface \f$ S\f$, two
+functions provide an estimate of the normal to \f$ S\f$ at each
+point. The result is an unoriented normal vector for each input point.
+
+Function `CGAL::jet_estimate_normals()` estimates the normal direction
+at each point from the input set by fitting a jet surface over its \f$
+k\f$ nearest neighbors. The default jet is a quadric surface. This
+algorithm is well suited to point sets scattered over curved surfaces.
+
+Function `CGAL::pca_estimate_normals()` estimates the normal direction
+at each point from the set by linear least squares fitting of a plane
+over its \f$ k\f$ nearest neighbors. This algorithm is simpler and
+faster than `CGAL::jet_estimate_normals()`.
+
+# Normal Orientation #
+
+Function `CGAL::mst_orient_normals()` orients the normals of a set of
+points with unoriented normals using the method described by Hoppe et
+al. in <I>Surface reconstruction from unorganized points</I> \cite
+cgal:hddms-srup-92. More specifically, this method constructs a
+Riemannian graph over the input points (the graph of the \f$ K\f$
+nearest neighbor points) and propagates a seed normal orientation
+within a minimum spanning tree computed over this graph. The result is
+an oriented normal vector for each input unoriented normal, except for
+the normals which could not be successfully oriented.
+
+\anchor Point_set_processing_3figmst_orient_normals
+\image html  mst_orient_normals.jpg "Normal orientation of a sampled cube surface. Left: unoriented normals. Right: orientation of right face normals is propagated to bottom face."
+
+## Example ##
+
+The following example reads a point set from a file, estimates the
+normals through PCA over the 6 nearest neighbors and orients the
+normals:
+\cgalexample{normals_example.cpp}
+
+*/ 
+} /* namespace CGAL */
+

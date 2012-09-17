@@ -1,0 +1,27 @@
+/// \defgroup PkgPointSetProcessing Point Set Processing
+
+/// \defgroup PkgPointSetProcessingConcepts Concepts
+/// \ingroup PkgPointSetProcessing
+
+/*!
+\addtogroup PkgPointSetProcessing
+\todo check generated documentation
+\PkgDescriptionBegin{Point Set Processing}
+\PkgPicture{point_set_processing_detail.png}
+\PkgAuthor{Pierre Alliez, Laurent Saboret, Nader Salman}
+\PkgDesc{This \cgal component implements methods to analyze and process unorganized point sets. The input is an unorganized point set, possibly with normal attributes (unoriented or oriented). The point set can be analyzed to measure its average spacing, and processed through functions devoted to the simplification, outlier removal, smoothing, normal estimation and normal orientation.}
+\PkgSince{3.5}
+\cgalbib{cgal:ass-psp}
+\license{\ref licensesGPL "GPL"}
+\PkgDescriptionEnd
+
+This \cgal component implements methods to analyze and process
+unorganized point sets. The input is an unorganized point set,
+possibly with attributes. This point set can be analyzed to measure
+average spacing, a global estimation of the point set
+density. Furthermore we can process it with functions devoted to
+simplification, outlier removal, smoothing, normal estimation and
+normal orientation.
+
+*/
+

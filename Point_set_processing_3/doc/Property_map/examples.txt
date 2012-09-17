@@ -1,0 +1,5 @@
+/*!
+\example remove_outliers_example.cpp
+\example read_write_xyz_point_set_example.cpp
+\example average_spacing_example.cpp
+*/
