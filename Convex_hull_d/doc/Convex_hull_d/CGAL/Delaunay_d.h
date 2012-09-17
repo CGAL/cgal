@@ -53,16 +53,14 @@ belongs to the nearest site triangulation and the test
 `DT.simplex_of_furthest(dt_simplex s)` returns true if `s`
 belongs to the furthest site triangulation.
 
-Requirements
---------------
+### Requirements ###
 
 `R` is a model of the concept `DelaunayTraits_d`
 c.
 `Lifted_R` is a model of the concept `DelaunayLiftedTraits_d`
 c.
 
-Implementation
---------------
+### Implementation ###
 
 The data type is derived from `Convex_hull_d` via
 the lifting map. For a point \f$ x\f$ in \f$ d\f$-dimensional space let
@@ -78,8 +76,7 @@ The space requirement is the same as for convex hulls. The time
 requirement for an insert is the time to insert the lifted point
 into the convex hull of the lifted points.
 
-Example
---------------
+### Example ###
 
 The abstract data type `Delaunay_d` has a default instantiation by
 means of the \f$ d\f$-dimensional geometric kernel.
@@ -104,8 +101,7 @@ Vertex_handle v1 = T.insert(Point_d(2,11));
 }
 \endcode
 
-Traits requirements
---------------
+### Traits Requirements ###
 
 `Delaunay_d< R, Lifted_R >` requires the following types from the kernel traits `Lifted_R`:
 

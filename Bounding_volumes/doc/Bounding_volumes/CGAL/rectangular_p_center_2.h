@@ -7,11 +7,8 @@ The class `Rectangular_p_center_default_traits_2` defines types and operations
 needed to compute rectilinear \f$ p\f$-centers of a planar point set 
 using the function `rectangular_p_center_2`. 
 
-Requirements 
--------------- 
 
-The template parameter `K` is a model for 
-`Kernel`. 
+\tparam K must be a model for `Kernel`. 
 
 \models ::RectangularPCenterTraits_2 
 
@@ -245,8 +242,7 @@ is a model for `RectangularPCenterTraits_2`.
 \sa `CGAL::Rectangular_p_center_default_traits_2<K>` 
 \sa `CGAL::sorted_matrix_search` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The runtime is linear for \f$ p \in \{2,\,3\}\f$ and 
 \f$ \mathcal{O}(n \cdot \log n)\f$ for \f$ p = 4\f$ where \f$ n\f$ is the number of 
@@ -256,8 +252,7 @@ algorithm uses a prune-and-search technique described in
 search \cite fj-fkppc-83, \cite fj-gsrsm-84 and fast algorithms for 
 piercing rectangles \cite sw-rpppp-96. 
 
-Example 
--------------- 
+### Example ###
 
 The following code generates a random set of ten points 
 and computes its two-centers. 

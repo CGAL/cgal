@@ -10,8 +10,7 @@ representation based on a Euclidean ring number type `RT`.
 
 \models ::ExtendedKernelTraits_2 
 
-Requirements 
--------------- 
+### Requirements ###
 
 To make an Euclidean ring number type 
 `RT_model` work with this class the number type must support 
@@ -21,8 +20,7 @@ your number type is not one of the built-in number types, one of
 the number types distrubuted with \cgal or one of the \leda 
 number types. 
 
-Operations 
--------------- 
+### Operations ###
 
 Fits all operation requirements of the concept. 
 

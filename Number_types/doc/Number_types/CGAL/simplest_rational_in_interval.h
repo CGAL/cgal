@@ -9,8 +9,7 @@ interval `[d1,d2]`.
 The function `simplest_rational_in_interval` computes the simplest rational number in an 
 interval of two `double` values. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 See Knuth, "Seminumerical algorithms", page 654, answer to exercise 
 4.53-39. 

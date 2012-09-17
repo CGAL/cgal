@@ -11,8 +11,7 @@ The outer boundary \f$ F\f$ is constructed by enlarging the bounding box of \f$ 
 \f$ d\f$ is a margin sufficiently large to allow an outer offset at dinstance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin` 
 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`K` is any \cgal kernel. 
@@ -43,8 +42,8 @@ The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</
 The skeleton in the <I>limited exterior</I> of \f$ P\f$ is the skeleton in the interior of a polygon \f$ Q\f$ with \f$ P\f$ as its hole and a rectangular frame \f$ F\f$ as outer boundary.
 The outer boundary \f$ F\f$ is constructed by enlarging the bounding box of \f$ P\f$ a distance \f$ d\f$. 
 \f$ d\f$ is a margin sufficiently large to allow an outer offset at dinstance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin` 
-Requirements 
--------------- 
+
+### Requirements ###
 
 <OL> 
 <LI>`K` is any \cgal kernel. 

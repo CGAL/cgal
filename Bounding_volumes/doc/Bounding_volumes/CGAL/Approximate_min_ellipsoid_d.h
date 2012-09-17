@@ -102,10 +102,8 @@ requires a number type `ET` that provides <I>exact</I> arithmetic.
 (Both these aspects are discussed in the documentation of the concept 
 `ApproximateMinEllipsoid_d_Traits_d`.) 
 
-Requirements 
--------------- 
 
-The template parameter `Traits` is a model for 
+\tparam Traits must be a model for 
 `ApproximateMinEllipsoid_d_Traits_d`. 
 
 We provide the model 

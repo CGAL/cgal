@@ -7,8 +7,7 @@ class used by the function `random_polygon_2`.
 
 \hasModel \cgal kernels. 
 
-Operations 
--------------- 
+### Operations ###
 
 The following two member functions returning instances of the above predicate 
 object types are required. 

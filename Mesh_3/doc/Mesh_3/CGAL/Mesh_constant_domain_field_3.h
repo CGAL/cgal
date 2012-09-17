@@ -10,9 +10,6 @@ The class `Mesh_constant_domain_field_3` can also be customized through `set_siz
 a piecewise constant field, i.e. a sizing field with a constant size on each subpart 
 of the domain. 
 
-Parameters 
--------------- 
-
 \tparam Gt is the geometric traits class. It must match the type `Triangulation::Geom_traits`, 
 where `Triangulation` is the nested type of the model of `MeshComplex_3InTriangulation_3` used 
 in the meshing process. 

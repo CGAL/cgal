@@ -17,8 +17,7 @@ iterators that supports removal.
 \sa `CGAL::HalfedgeDS_decorator<HDS>` 
 \sa `CGAL::HalfedgeDS_const_decorator<HDS>` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 `HalfedgeDS_list` uses internally the `CGAL::In_place_list` container class. 
 The copy constructor and the assignment operator need \f$ O(n)\f$ time with 

@@ -16,8 +16,7 @@ the kernel is only an approximation of Euclidean geometry.
 
 \models ::Kernel 
 
-Implementation 
--------------- 
+### Implementation ###
 
 In contrast to `Cartesian`, no reference counting 
 is used internally. This eases debugging, but may slow down algorithms 

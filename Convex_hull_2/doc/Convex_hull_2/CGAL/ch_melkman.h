@@ -13,8 +13,7 @@ the resulting sequence is returned.
 The default traits class `Default_traits` is the kernel in which the 
 type `InputIterator::value_type` is defined. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`InputIterator::value_type` and `OutputIterator::value_type` 
@@ -38,8 +37,7 @@ functions that return instances of these types:
 \sa `CGAL::ch_melkman` 
 \sa `CGAL::convex_hull_2` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 It uses an implementation of Melkman's algorithm \cite m-olcch-87. 
 Running time of this is linear.

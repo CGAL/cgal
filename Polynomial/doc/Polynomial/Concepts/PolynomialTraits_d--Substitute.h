@@ -11,8 +11,7 @@ iterator range, where begin refers the value for the innermost variable.
 \refines CopyConstructible
 \refines DefaultConstructible
 
-Types 
--------------- 
+### Types ###
 
 Note that the `result_type` is the coercion type of the value type of the 
 given iterator range and `PolynomialTraits_d::Innermost_coefficient_type`. 

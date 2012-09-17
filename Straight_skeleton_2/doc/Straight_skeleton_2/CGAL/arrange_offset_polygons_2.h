@@ -11,8 +11,7 @@ A `CLOCKWISE` oriented polygon \f$ H\f$ is a hole of a `COUNTERCLOCKWISE` polygo
 
 This function should not be used to arrange arbitrary polygons into polygons with holes unless they meet the requirements specified below. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`K` is any \cgal kernel. 

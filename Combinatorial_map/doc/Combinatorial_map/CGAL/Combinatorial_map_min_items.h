@@ -12,8 +12,7 @@ In this class, no attribute is enabled.
 
 \models ::CombinatorialMapItems 
 
-Example 
--------------- 
+### Example ###
 
 The following example shows the implementation of the 
 `CGAL::Combinatorial_map_min_items` class. 

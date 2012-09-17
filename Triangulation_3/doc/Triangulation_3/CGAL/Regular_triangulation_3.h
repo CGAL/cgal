@@ -27,8 +27,7 @@ the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres 
 of all simplices are regular. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first template argument must be a model of the 
 `RegularTriangulationTraits_3` concept. 

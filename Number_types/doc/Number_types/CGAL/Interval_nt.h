@@ -33,8 +33,7 @@ real, \f$ X\f$ and \f$ Y\f$ are intervals, \f$ \mathcal{OP}\f$ is an arithmetic 
 For example, if the final result of a sequence of arithmetic operations is 
 an interval that does not contain zero, then you can safely determine its sign. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameter `Protected` is a Boolean parameter, which defaults 
 to `true`. It provides a way to select faster computations by avoiding 
@@ -48,8 +47,7 @@ doing any computations with the interval class. He can do so using the
 \models ::FieldWithSqrt 
 \models ::RealEmbeddable 
 
-Example 
--------------- 
+### Example ###
 
 Protecting an area of code that uses operations on the class 
 `Interval_nt_advanced` can be done in the following way: 

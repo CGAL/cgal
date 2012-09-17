@@ -21,8 +21,7 @@ A `Quotient<NT>` `q` is represented as a pair of
 \models ::RealEmbeddable 
 \models ::Fraction 
 
-Operations 
--------------- 
+### Operations ###
 
 There are two access functions, namely to the 
 numerator and the denominator of a quotient. 

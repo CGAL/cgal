@@ -13,8 +13,7 @@ string passed to the constructor. The macro ::CGAL_PROFILER can be
 used to conveniently place these counters anywhere. They are disabled by 
 default and activated by the global macro ::CGAL_PROFILE. 
 
-Operations 
--------------- 
+### Operations ###
 
 If `CGAL_PROFILE` is not defined, then `CGAL_PROFILER` is defined 
 to an empty statement. Otherwise, it is defined to 

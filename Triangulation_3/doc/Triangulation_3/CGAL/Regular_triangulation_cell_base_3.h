@@ -8,8 +8,7 @@ The class `Regular_triangulation_cell_base_3` is a model of the concept
 `RegularTriangulationCellBase_3`. It is the default face base class 
 of regular triangulations. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameters `Traits` has to be a model 
 of `RegularTriangulationTraits_3`. 

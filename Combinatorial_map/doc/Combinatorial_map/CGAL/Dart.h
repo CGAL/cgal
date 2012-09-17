@@ -13,15 +13,11 @@ non void <I>i</I>-attribute.
 
 \models ::Dart 
 
-Parameters 
--------------- 
+\tparam d an integer for the dimension of the dart. 
 
-`d` an integer for the dimension of the dart. 
+\tparam CMap must be a model of the `CombinatorialMap` concept. 
 
-`CMap` must be a model of the `CombinatorialMap` concept. 
-
-Complexity 
--------------- 
+###Complexity ###
 
 Each \f$ \beta_i\f$ link is initialized to `CMap::null_dart_handle`, and each 
 attribute handle of non void <I>i</I>-attribute is initialized to `NULL` 

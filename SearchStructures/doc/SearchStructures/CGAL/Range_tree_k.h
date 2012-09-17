@@ -21,8 +21,7 @@ RangeSegmentTreeTraits_d defines the requirements that range tree traits
 classes must fulfill. This allows the advanced user to develop further 
 range tree traits classes. 
 
-Example 
--------------- 
+### Example ###
 
 The following example program uses the predefined `Range_tree_2` data structure together with the predefined traits 
 class `Range_tree_map_traits_2` which has two template 

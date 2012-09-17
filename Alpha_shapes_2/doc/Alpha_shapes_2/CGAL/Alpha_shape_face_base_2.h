@@ -6,8 +6,7 @@ namespace CGAL {
 
 The class `Alpha_shape_face_base_2` is the default model for the concept `AlphaShapeFace_2`. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameter `Traits` has to be a model of `AlphaShapeTraits_2`. 
 

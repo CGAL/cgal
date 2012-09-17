@@ -5,11 +5,8 @@ namespace Qt {
 
 An object of type `ConstrainedTriangulationGraphicsItem` is a graphics item that encapsulates a constrained triangulation. 
 
-Parameters 
--------------- 
 
-The template parameter of `ConstrainedTriangulationGraphicsItem` must be a 
-\cgal 2D constrained triangulation class. 
+\tparam CT must be a \cgal 2D constrained triangulation class. 
 
 */
 template< typename CT >

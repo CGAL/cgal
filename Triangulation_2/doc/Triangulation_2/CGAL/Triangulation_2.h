@@ -70,8 +70,7 @@ of `f` (see Figure \ref Triangulation_ref_Fig_neighbors).
 \anchor Triangulation_ref_Fig_neighbors 
 \image html neighbors.gif "Vertices and neighbors."
 
-Parameters 
--------------- 
+### Parameters ###
 
 The class `Triangulation_2` has two template parameters. The first one 
 `Traits` is the geometric traits, it is to be instantiated by 
@@ -83,15 +82,13 @@ it has to be instantiated by a model of the concept
 By default, the triangulation data structure is instantiated by 
 `CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Triangulation_face_base_2<Gt> >`. 
 
-Traversal of the Triangulation 
--------------- 
+### Traversal of the Triangulation ###
 
 A triangulation can be seen as a container of faces and vertices. 
 Therefore the triangulation provides several iterators and circulators 
 that allow to traverse it (completely or partially). 
 
-Traversal of the Convex Hull 
-----------------------------
+### Traversal of the Convex Hull ###
 
 Applied on the `infinite_vertex` the above functions allow to visit
 the vertices on the convex hull and the infinite edges and faces. Note
@@ -111,8 +108,7 @@ Vertex_circulator incident_vertices(t.infinite_vertex() v) ;
 Vertex_circulator incident_vertices(t.infinite_vertex(), f) ; 
 \endcode
 
-I/O 
--------------- 
+### I/O ###
 
 The I/O operators are defined for `iostream`. 
 The format for the iostream 
@@ -138,8 +134,7 @@ the rank of this item in the output order.
 When dimension \f$ <\f$ 2, the same information is output 
 for faces of maximal dimension instead of faces. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 Locate is implemented by a line walk from a vertex of the face given 
 as optional parameter (or from a finite vertex of 

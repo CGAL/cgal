@@ -11,8 +11,7 @@ classes. Therefore, instantiate `Sublayer_type` of `Range_tree_d`
 (`Segment_tree_d` respectively) with `Tree_anchor` and the container
 classes for the data items (`Data` and `Window`).
 
-Example 
--------------- 
+### Example ###
 
 The following figures show a number of rectangles and a 2-dimensional 
 segment tree built on them. 

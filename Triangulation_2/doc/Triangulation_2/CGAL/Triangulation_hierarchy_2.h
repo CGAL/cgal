@@ -34,8 +34,7 @@ The class `Triangulation_hierarchy_2` is templated by a parameter
 which is to be instantiated by anyone of the \cgal triangulation 
 classes. 
 
-Types 
--------------- 
+### Types ###
 
 The class `Triangulation_hierarchy_2` inherits the types from its base triangulation 
 class `Tr`. 

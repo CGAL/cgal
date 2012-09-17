@@ -11,8 +11,7 @@ that the Voronoi diagram adaptor can adapt it.
 
 \refines ::DefaultConstructible, \refines ::CopyConstructible, \refines ::Assignable 
 
-Traversal of the Delaunay graph 
--------------- 
+### Traversal of the Delaunay graph ###
 
 A model of the `DelaunayGraph_2` concept must provide several 
 iterators and circulators that allow to traverse it (completely or 

@@ -11,8 +11,7 @@ output is active or not. If the state is active, the stream output
 operator `<<` uses the internal stream to output its argument. If 
 the state is inactive, nothing happens. 
 
-Example 
--------------- 
+### Example ###
 
 The class `Verbose_ostream` can be conveniently used to implement for 
 example the `is_valid()` member function for triangulations or 

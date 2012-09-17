@@ -10,14 +10,12 @@ The class `Apollonius_site_2` is a model for the concept
 
 \models ::ApolloniusSite_2 
 
-Types 
--------------- 
+### Types ###
 
 The class `Apollonius_site_2` does not introduce any types in addition to the 
 concept `ApolloniusSite_2`. 
 
-I/O 
--------------- 
+### I/O ###
 
 The I/O operators are defined for `iostream`. 
 

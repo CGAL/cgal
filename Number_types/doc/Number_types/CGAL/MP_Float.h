@@ -21,8 +21,7 @@ plan to also have a multiprecision exponent to fix this issue.
 \models `EuclideanRing`
 \models ::RealEmbeddable 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The implementation of `MP_Float` is simple but provides a quadratic 
 complexity for multiplications. This can be a problem for large operands. 

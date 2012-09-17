@@ -13,8 +13,7 @@ operations `intersection`, `union`, `difference`, `complement` and
 under the topological operations `boundary`, `closure`, and
 `interior`.
 
-Parameters 
--------------- 
+### Parameters ###
 
 \code
 template< class Nef_polyhedronTraits_S2,
@@ -35,8 +34,7 @@ Neither `Nef_polyhedronItems_S2` nor `Nef_polyhedronMarks` is
 specifed, yet. Do not use other than the default types for these two 
 template parameters. 
 
-Exploration - Point location - Ray shooting 
--------------- 
+### Exploration - Point location - Ray shooting ###
 
 As Nef 
 polyhedra are the result of forming complements and intersections 
@@ -46,15 +44,13 @@ plane map \f$ M = (V,E,F)\f$. For topological queries within `M` the
 following types and operations allow exploration access to this 
 structure. 
 
-Input and Output 
--------------- 
+### Input and Output ###
 
 A Nef polyhedron `N` can be visualized in an open GL window. The
 output operator is defined in the file
 `CGAL/IO/Nef_-poly-hedron_2_-Win-dow_-stream.h`.
 
-Implementation 
--------------- 
+### Implementation ###
 
 Nef polyhedra are implemented on top of a halfedge data structure and 
 use linear space in the number of vertices, edges and facets. 
@@ -183,8 +179,7 @@ surface of a unit sphere. Such points correspond to the nontrivial
 directions in space and similarly to the equivalence classes of all 
 nontrivial vectors under normalization. 
 
-Operations 
--------------- 
+### Operations ###
 
 Access to the coordinates is provided by the following operations. 
 Note that the vector \f$ (x,y,z)\f$ is not normalized. 
@@ -485,8 +480,7 @@ Additionally, `Nef_polyhedron_S2` provides the macro
 `SFace_cycle_const_iterator` and represent either a shalfedge, a shalfloop, 
 or a svertex. 
 
-Creation 
--------------- 
+### Creation ###
 
 There is no need for a user to create a `SFace` explicitly. The 
 class `Nef_polyhedron_S2<Traits>` manages the needed sfaces internally. 
@@ -587,8 +581,7 @@ used as a shortcut.
 A const circulator is provided for each of the two circular orders. 
 The circulators are bidirectional and assignable to `SHalfedge_const_handle`. 
 
-Creation 
--------------- 
+### Creation ###
 
 There is no need for a user to create a `SHalfedge` explicitly. The 
 class `Nef_polyhedron_S2<Traits>` manages the needed shalfedges internally. 
@@ -717,8 +710,7 @@ depicts the relationship between a shalfloop and sfaces on a sphere map.
 \anchor figureNefS2SHalfloopIncidences 
 \image html shalfloopB.gif "Incidences of an SHalfloop "
 
-Creation 
--------------- 
+### Creation ###
 
 There is no need for a user to create a `SHalfloop` explicitly. The 
 class `Nef_polyhedron_S2<Traits>` manages the needed shalfloops internally. 
@@ -793,8 +785,7 @@ The member function
 `out_sedge` returns the first outgoing shalfedge, and `incident_sface` 
 returns the incident sface. 
 
-Creation 
--------------- 
+### Creation ###
 
 There is no need for a user to create a `SVertex` explicitly. The 
 class `Nef_polyhedron_S2<Traits>` manages the needed svertices internally. 

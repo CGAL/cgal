@@ -16,8 +16,7 @@ the kernel is only an approximation of Euclidean geometry.
 
 \models ::Kernel 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This model of a kernel uses reference counting. 
 

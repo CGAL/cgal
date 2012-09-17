@@ -9,8 +9,7 @@ metric) between a \f$ d\f$-dimensional sphere and a point, and the
 Euclidean distance between a \f$ d\f$-dimensional sphere and a 
 \f$ d\f$-dimensional iso-rectangle defined as a \f$k\f$-\f$d\f$ tree rectangle. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the template argument a model of the concept `SearchTraits`, 
 for example `CGAL::Cartesian_d<double>`. 

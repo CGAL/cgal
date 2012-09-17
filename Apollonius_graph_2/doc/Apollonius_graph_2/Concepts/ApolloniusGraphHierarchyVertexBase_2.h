@@ -14,8 +14,7 @@ next and previous level graphs.
 
 \refines ::ApolloniusGraphVertexBase_2 
 
-Types 
--------------- 
+### Types ###
 
 `ApolloniusGraphHierarchyVertexBase_2` does not introduce any 
 types in addition to those of `ApolloniusGraphVertexBase_2`. 

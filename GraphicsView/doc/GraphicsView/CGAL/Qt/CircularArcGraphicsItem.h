@@ -5,11 +5,7 @@ namespace Qt {
 
 An object of type `CircularArcGraphicsItem` is a graphics item that encapsulates a circular arc. 
 
-Parameters 
--------------- 
-
-The template parameter of `CircularArcGraphicsItem` must be a 
-\cgal `CircularKernel`. 
+\tparam CK  must be a \cgal `CircularKernel`. 
 
 */
 template< typename CK >

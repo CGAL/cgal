@@ -26,8 +26,7 @@ all halfedge data structures and will not appear here again.
 \sa `CGAL::HalfedgeDS_decorator<HDS>` 
 \sa `CGAL::HalfedgeDS_const_decorator<HDS>` 
 
-Example 
--------------- 
+### Example ###
 
 The following program fragment illustrates how a refined halfedge 
 class for a polyhedron can make use of the `find_prev()` member 

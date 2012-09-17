@@ -60,8 +60,7 @@ namespace CGAL {
   modifications. There is no automatic caching done for auxiliary 
   information. 
 
-  Parameters 
-  -------------- 
+### Parameters ###
 
   The full template declaration of `Polyhedron_3` states four 
   template parameters: 
@@ -101,8 +100,7 @@ class Polyhedron_3;
   \sa `CGAL::Polyhedron_incremental_builder_3<HDS>` 
   \sa `CGAL::Modifier_base`. 
 
-  Example 
-  -------------- 
+### Example ###
 
   This example program instantiates a polyhedron using the default 
   traits class and creates a tetrahedron. 
@@ -157,8 +155,7 @@ public:
     \sa `CGAL::Polyhedron_3::Facet` 
     \sa `CGAL::Polyhedron_3<Traits>`
 
-    Implementation 
-    -------------- 
+### Implementation ###
 
     The member functions `prev()` and `prev_on_vertex()` work in 
     constant time if `Supports_halfedge_prev` \f$ \equiv\f$ 
@@ -437,10 +434,6 @@ public:
     argument provides a member function `prev()`, otherwise it is 
     of the forward category. 
 
-    Operations available if `Supports_facet_plane` \f$ \equiv\f$ `CGAL::Tag_true` 
-    -------------- 
-
-    Operations available if `Supports_facet_halfedge` \f$ \equiv\f$ 
     \sa `CGAL::Polyhedron_3::Vertex` 
     \sa `CGAL::Polyhedron_3::Halfedge` 
     \sa `CGAL::Polyhedron_3<Traits>` 
@@ -452,6 +445,12 @@ public:
 
     /// \name Types 
     /// @{
+
+
+    /*! 
+      type of incident vertices. 
+    */ 
+    typedef Hidden_type Vertex; 
 
     /*! 
       type of incident halfedges. 
@@ -1230,10 +1229,7 @@ public:
     facet removed and the time to compute `h->prev()`. 
     \pre The degree of both vertices incident to `h` is at least three (no antennas). 
 
-    Requirement 
-    -------------- 
-
-    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`.
+    \requires     `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`.
 
     \image html euler_facet.gif
 
@@ -1257,8 +1253,7 @@ public:
 
     \image euler_vertex.gif
 
-    Note 
-    -------------- 
+### Note ###
 
     A special application of the split is 
     `split_vertex(h,h->next()->opposite())` which is equivalent to an 
@@ -1279,10 +1274,7 @@ public:
     the time to compute `h->prev()` and `h->opposite()->prev()`. 
     \pre The size of both facets incident to `h` is at least four (no multi-edges). 
 
-    Requirement 
-    -------------- 
-
-    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+    \requires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
     \image euler_vertex.gif
   */ 
@@ -1334,10 +1326,7 @@ public:
     The time is proportional to the sum of the size of all incident facets. 
     \pre None of the incident facets of `g->vertex()` is a hole. There are at least two distinct facets incident to the facets that are incident to `g->vertex()`. (This prevents the operation from collapsing a volume into two facets glued together with opposite orientations, such as would happen with any vertex of a tetrahedron.) 
 
-    Requirement 
-    -------------- 
-
-    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+    \requires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
     \image euler_center.gif
   */ 
@@ -1372,11 +1361,7 @@ public:
     polyhedron unchanged. 
     \pre The facets denoted by `h` and `g` are different and have equal degree (i.e., number of edges). 
 
-    Requirement 
-    -------------- 
-
-    `Supports_removal` \f$ \equiv\f$ 
-    `CGAL::Tag_true`. 
+    \requires     `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`. 
 
     \image html euler_loop.gif
 
@@ -1395,11 +1380,7 @@ public:
     See `erase_facet(h)` for a more generalized variant. 
     \pre None of the incident halfedges of the facet is a border edge. 
 
-    Requirement 
-    -------------- 
-
-    `Supports_removal` \f$ \equiv\f$ 
-    `CGAL::Tag_true`. 
+    \requires    `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`. 
   */ 
   Halfedge_handle make_hole( Halfedge_handle h); 
 
@@ -1451,10 +1432,8 @@ public:
     If this creates isolated vertices they get removed as well. 
     See `make_hole(h)` for a more specialized variant. 
     \pre `h->is_border() == false`. 
-    Requirement 
-    -------------- 
 
-    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+    \requirement     `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
     \image html add_facet1.gif
 
@@ -1466,11 +1445,7 @@ public:
     removes the vertices, halfedges, and facets that belong to the 
     connected component of `h`. 
 
-    Requirement 
-    -------------- 
-
-    `Supports_removal` \f$ \equiv\f$ 
-    `CGAL::Tag_true`. 
+    \requires    `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`. 
   */ 
   void erase_connected_component( Halfedge_handle h); 
 
@@ -1479,10 +1454,7 @@ public:
     Keep `nb_components_to_keep` largest connected components. 
     Returns the number of connected components erased (ignoring isolated vertices). 
 
-    Requirement 
-    -------------- 
-
-    supports vertices, halfedges, and removal operation. 
+    \requires supports vertices, halfedges, and removal operation. 
   */ 
   unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep); 
 

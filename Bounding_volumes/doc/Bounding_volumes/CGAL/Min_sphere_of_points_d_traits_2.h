@@ -10,23 +10,23 @@ type `Point_2` to represent circles.
 
 \models ::MinSphereOfSpheresTraits 
 
-\name Parameters 
-The last two template parameters, `UseSqrt` and `Algorithm`, have
-default arguments, namely `CGAL::Tag_false` and
-`CGAL::Default_algorithm`, respectively. The template parameters
-of class `Min_sphere_of_points_d_traits_2<K,FT,UseSqrt,Algorithm>`
-must fulfill the following requirements:
 
-\tparam K is a model for `Kernel`.
+
+\tparam K must be a model for `Kernel`.
+
 \tparam FT is a number type, which fulfills the requirements of 
 type `FT` of concept `MinSphereOfSpheresTraits`: It must be 
 either `double` or `float`, or an exact number type. 
+
 \tparam UseSqrt fulfills the 
 requirements of type `Use_square_roots` of concept 
-`MinSphereOfSpheresTraits`: It must be either `Tag_true` or `Tag_false`. 
+`MinSphereOfSpheresTraits`: It must be either `Tag_true` or `Tag_false`,
+and it is by default  `CGAL::Tag_false`.
+
 \tparam Algorithm fulfills the requirements of type `Algorithm` of
 concept `MinSphereOfSpheresTraits`: It must be either
-`Default_algorithm`, `LP_algorithm` or `Farthest_first_heuristic`.
+`Default_algorithm`, `LP_algorithm` or `Farthest_first_heuristic`,
+and it is by default `CGAL::Default_algorithm`.
 
 */
 template< typename K, typename FT, typename UseSqrt, typename Algorithm >

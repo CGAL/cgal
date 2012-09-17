@@ -6,8 +6,7 @@ namespace CGAL {
 The class `Incremental_neighbor_search` implements incremental nearest and furthest neighbor searching 
 on a tree. The tree may have extended or unextended nodes. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the first template argument a model of the concept `SearchTraits`, 
 for example `CGAL::Search_traits_2<CGAL::Cartesian<double> >`. 

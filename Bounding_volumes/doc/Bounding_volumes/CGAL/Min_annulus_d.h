@@ -24,10 +24,7 @@ The underlying algorithm can cope with all kinds of input, e.g. \f$ P\f$ may be
 empty or points may occur more than once. The algorithm computes a support 
 set \f$ S\f$ which remains fixed until the next set, insert, or clear operation. 
 
-Requirements 
--------------- 
-
-The template parameter `Traits` is a model for `OptimisationDTraits`. 
+\tparam Traits must be a model for `OptimisationDTraits`. 
 
 We provide the models `Optimisation_d_traits_2`, 
 `Optimisation_d_traits_3`, and `Optimisation_d_traits_d` using the 
@@ -39,8 +36,7 @@ two-, three-, and \f$ d\f$-dimensional \cgal kernel, respectively.
 \sa `CGAL::Optimisation_d_traits_d<K,ET,NT>` 
 \sa `OptimisationDTraits` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The problem of finding the smallest enclosing annulus of a finite point set 
 can be formulated as an optimization problem with linear constraints and a 
@@ -272,8 +268,7 @@ FT squared_outer_radius( ) const;
 returns an iterator referring to the first coordinate 
 of the center of `min_annulus`. 
 
-Note 
--------------- 
+### Note ###
 
 The coordinates have a rational 
 representation, i.e. the first \f$ d\f$ elements of the iterator 

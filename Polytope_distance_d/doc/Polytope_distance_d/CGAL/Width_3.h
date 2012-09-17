@@ -29,18 +29,15 @@ width-planes.
 neither the width-planes nor the direction \f$ \mathbf{d}_{opt}\f$ are 
 unique - only the width is. 
 
-Requirements 
--------------- 
+\tparam Traits must be a model for `WidthTraits_3`. 
 
-The template parameter `Traits` is a model for `WidthTraits_3`. 
 We provide the model `Width_default_traits_3<Kernel>` based on a 
 three-dimensional \cgal kernel. 
 
 \sa `CGAL::Width_default_traits_3<K>` 
 \sa `WidthTraits_3` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 Since the width of the point set \f$ \mathcal{S}\f$ and the width of the convex 
 hull of \f$ \mathcal{S}\f$ (\f$ \mathit{conv(\mathcal{S})}\f$) is the same, the 
@@ -75,8 +72,7 @@ from 0 (no output) to 1 (output available). But then it is required
 that the \f$ <\!<\f$-operator has to been overloaded for `Point_3`, 
 `Plane_3`, `Vector_3` and `RT`. 
 
-Example 
--------------- 
+### Example ###
 
 \cgalexample{width_simplex.cpp} 
 
@@ -130,11 +126,7 @@ creates a variable `width` initialized to the width of \f$ \mathcal{S}\f$ -
 with \f$ \mathcal{S}\f$ being the set of points in the range 
 [`first`,`beyond`). 
 
-Requirement 
--------------- 
-
-The value type of `InputIterator` 
-is `Point_3`. 
+\requires The value type of `InputIterator` is `Point_3`. 
 */ 
 template < class InputIterator > 
 Width_3( InputIterator first, InputIterator beyond); 
@@ -145,10 +137,7 @@ the width of the polyhedron \f$ P\f$. Note that the vertex point coordinates
 are altered! 
 \pre \f$ P\f$ is a convex polyhedron. 
 
-Requirement 
--------------- 
-
-`Polyhedron` is a 
+\requires `Polyhedron` is a 
 `CGAL::Polyhedron_3` with facets supporting plane equations 
 where `Polyhedron::Point_3` \f$ \equiv\f$ `Point_3` and 
 `Polyhedron::Plane_3` \f$ \equiv\f$ `Plane_3`. 

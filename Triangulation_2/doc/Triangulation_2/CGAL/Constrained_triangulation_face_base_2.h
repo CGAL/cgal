@@ -10,8 +10,7 @@ of constrained triangulations.
 
 \models ::ConstrainedTriangulationFaceBase_2 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first template parameter is a geometric traits. 
 
@@ -19,11 +18,10 @@ The second template parameter has to be a model
 of the concept `TriangulationFaceBase_2`. 
 Its default is `CGAL::Triangulation_face_base_2<Traits>` 
 
-Inherits From 
--------------- 
+### Inherits From ###
 
 The class `Constrained_triangulation_face_base_2` derives from its
-parameter `Fb`.  and add three Boolean to deal with information about
+parameter `Fb`.  It adds three Boolean to deal with information about
 constrained edges.
 
 The member functions `cw(int i)`, `ccw(int i)` 

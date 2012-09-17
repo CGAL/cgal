@@ -7,10 +7,7 @@ namespace CGAL {
 The class `Min_ellipse_2_traits_2` is a traits class for `CGAL::Min_ellipse_2<Traits>` 
 using the two-di-men-sional \cgal kernel. 
 
-Requirements 
--------------- 
-
-The template parameter `K` is a model for `Kernel`. 
+The template parameter `K` must be a model for `Kernel`. 
 
 \models ::MinEllipse2Traits 
 

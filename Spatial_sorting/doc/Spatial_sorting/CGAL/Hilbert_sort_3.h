@@ -7,8 +7,7 @@ The function object `Hilbert_sort_3` sorts iterator ranges of
 `Traits::Point_3` along a Hilbert curve by recursively subdividing at the median 
 or the middle depending on the `PolicyTag`. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` is a model for `SpatialSortingTraits_3`. 
 

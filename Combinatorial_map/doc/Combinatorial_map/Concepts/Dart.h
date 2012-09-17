@@ -8,8 +8,7 @@ stores handles to the darts linked with itself by \f$ \beta_i\f$, \f$ \forall\f$
 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>. Moreover, it stores also handles to each 
 non void attribute associated with itself. 
 
-Creation 
--------------- 
+### Creation ###
 
 A dart `d0` is never constructed directly, but always created 
 within a combinatorial map `cm` by using the method 

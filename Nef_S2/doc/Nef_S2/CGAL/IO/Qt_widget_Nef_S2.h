@@ -15,15 +15,13 @@ In addition to the functions inherited from the Qt class `QGLWidget`,
 constructor. For the usage of `Qt_widget_Nef_S2` see the example 
 below. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameter expects an instantiation of `Nef_polyhedron_S2<Traits>`. 
 
 \sa `CGAL::Nef_polyhedron_S2<Traits>` 
 
-Example 
--------------- 
+### Example ###
 
 This example creates some random `Sphere_segments` and distributes them on 
 two `Nef_polyhedron_2`. The two Nef polyhedra are combined by a symmetric 

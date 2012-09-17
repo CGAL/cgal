@@ -66,8 +66,7 @@ For example, passing `Location_policy<Compact>` as parameter to
 
 
 
-Parameters 
--------------- 
+### Parameters ###
 
 `Tag` can only be either `Fast` or `Compact` currently. 
 

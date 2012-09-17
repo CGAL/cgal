@@ -14,8 +14,7 @@ It can have any number of connected components, boundaries
 
 \refines ::HalfedgeGraph 
 
-Valid Expressions 
--------------- 
+### Valid Expressions ###
 
 The mesh simplification algorithm requires the free function `collapse_triangulation_edge()`.
 

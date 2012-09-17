@@ -18,13 +18,11 @@ is taken from Boost.
 
 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The parameters `...` are the value types. 
 
-Free functions and helper classes 
--------------- 
+### Free functions and helper classes ###
 
 Some free functions part of the standard interface of `tuple` are also 
 brought in namespace `CGAL::cpp11` with using declarations, these are `make_tuple`, 

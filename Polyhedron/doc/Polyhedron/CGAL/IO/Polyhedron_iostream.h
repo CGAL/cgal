@@ -22,8 +22,7 @@ format automatically and can read both.
 \sa operator<<(std::ostream&, CGAL::Polyhedron_3<PolyhedronTraits_3>&)
 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This operator is implemented using the modifier mechanism for 
 polyhedral surfaces and the `CGAL::Polyhedron_incremental_builder_3` 

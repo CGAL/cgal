@@ -18,14 +18,12 @@ is taken from Boost.
 
 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The parameter `T` is the value type. The second parameter is the 
 dimension of the array. 
 
-Construction functions 
--------------- 
+### Construction Functions ###
 
 The array class does not provide a constructor which can be used to initialize 
 data members. \cgal therefore provides a `make_array` function for 

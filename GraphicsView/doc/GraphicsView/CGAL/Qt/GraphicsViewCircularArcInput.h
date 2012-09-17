@@ -8,10 +8,7 @@ vertex is inserted every time the left mouse button is released.
 The `Del` key removes the last entered point. The `Esc` 
 key removes all entered points. 
 
-Parameters 
--------------- 
-
-The template parameter of `GraphicsViewCircularArcInput` must be a \cgal `CircularKernel`. 
+\tparam K must be a \cgal `CircularKernel`. 
 
 */
 template< typename K >

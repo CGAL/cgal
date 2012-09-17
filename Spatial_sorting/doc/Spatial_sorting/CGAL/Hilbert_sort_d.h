@@ -7,8 +7,7 @@ The function object `Hilbert_sort_d` sorts iterator ranges of
 `Traits::Point_d` along a Hilbert curve by recursively subdividing at the median 
 or the middle depending on the `PolicyTag`. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` is a model for `SpatialSortingTraits_d`. 
 

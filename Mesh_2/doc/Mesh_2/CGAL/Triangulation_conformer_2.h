@@ -8,8 +8,9 @@ namespace CGAL {
 Refines the constrained Delaunay triangulation `t` into a
 conforming Delaunay triangulation. After a call to this function,
 all edges of `t` are Delaunay edges. 
-\requires The template parameter `CDT` should be a model of the concept `ConstrainedDelaunayTriangulation_2`.
-\requires The geometric traits class of into the constrained Delaunay triangulation must be a model of `ConformingDelaunayTriangulationTraits_2`.
+
+\tparam CDT must be a model of the concept `ConstrainedDelaunayTriangulation_2`.
+The geometric traits class of into the constrained Delaunay triangulation must be a model of `ConformingDelaunayTriangulationTraits_2`.
 */
 template<class CDT> void make_conforming_Delaunay_2 (CDT &t); 
 
@@ -27,8 +28,8 @@ conforming Gabriel triangulation. After a call to this function, all
 constrained edges of `t` have the <I>Gabriel property</I>: the
 circle that has \f$ e\f$ as diameter does not contain any vertex from
 the triangulation. 
-\requires The template parameter `CDT` should be a model of the concept `ConstrainedDelaunayTriangulation_2`.
-\requires The geometric traits class of the constrained Delaunay triangulation must be a model of `ConformingDelaunayTriangulationTraits_2`.
+
+\tparam CDT must be a model of the concept `ConstrainedDelaunayTriangulation_2`. The geometric traits class of the constrained Delaunay triangulation must be a model of `ConformingDelaunayTriangulationTraits_2`.
 */
 template<class CDT> void make_conforming_Gabriel_2 (CDT &t); 
 
@@ -49,18 +50,11 @@ functions `make_conforming_Gabriel_2` and
 `make_conforming_Delaunay_2`. 
 
 
-
-Parameters 
--------------- 
-
-The template parameter `CDT` should be a model of the concept 
-`ConstrainedDelaunayTriangulation_2`. 
-
-The geometric traits class of the instance of `CDT` has to be 
+\tparam CDT must be a model of the concept 
+`ConstrainedDelaunayTriangulation_2`.  The geometric traits class of the instance of `CDT` has to be 
 a model of the concept `ConformingDelaunayTriangulationTraits_2`. 
 
-Using this class 
--------------- 
+### Using This Class ###
 
 The constructor of the class `Triangulation_conformer_2` takes a reference to a `CDT` 
 as an argument. A call to the method `make_conforming_Delaunay()` or 

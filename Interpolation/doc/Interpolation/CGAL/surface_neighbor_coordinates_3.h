@@ -24,8 +24,7 @@ the range \f$ \left[\right.\f$`first`, `beyond`\f$
 k\f$-nearest neighbor or a range search query, this permits to check
 whether the neighborhood which has been considered is large enough.
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`Dt` is equivalent to the class 
@@ -42,8 +41,7 @@ associating a point and its natural neighbor coordinate.
 \sa CGAL::Voronoi_intersection_2_traits_3<K> 
 \sa CGAL::surface_neighbors_3 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This functions construct the regular triangulation of the input points 
 instantiated with `Voronoi_intersection_2_traits_3<Kernel>` or `ITraits` if provided. 

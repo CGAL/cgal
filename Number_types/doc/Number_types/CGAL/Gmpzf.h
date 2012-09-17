@@ -14,8 +14,7 @@ functionality very similar to `MP_Float` but is generally faster.
 \models ::EuclideanRing 
 \models ::RealEmbeddable 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The significand \f$ m\f$ of a `Gmpzf` is a `Gmpz` and is reference 
 counted. The exponent \f$ e\f$ of a `Gmpzf` is a <TT>long</TT>. 

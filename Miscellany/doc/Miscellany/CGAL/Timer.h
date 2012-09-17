@@ -15,8 +15,7 @@ counts the number of calls of the `Timer::start()` member function since the
 last reset. If the reset occures while the timer is running it counts as the 
 first interval. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The timer class is based in the C function `std::clock()` on 
 PC systems and the C function `getrusage()` on standard 

@@ -139,8 +139,7 @@ const Null_vector NULL_VECTOR;
 A symbolic constant which denotes the point at the origin.
 This constant is used in the conversion between points and vectors.
 
-Example 
---------------
+### Example ###
 
 \code
   Point_2< Cartesian<Exact_NT> >  p(1.0, 1.0), q;

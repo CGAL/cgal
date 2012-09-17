@@ -13,8 +13,7 @@ The default traits class `Default_traits` is the kernel in which the type
 The default policy is `Hilbert_sort_median_policy()` and the 
 other option is `Hilbert_sort_middle_policy()`. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`RandomAccessIterator::value_type` is convertible to 
@@ -23,8 +22,7 @@ Requirements
 `SpatialSortingTraits_3`, or `SpatialSortingTraits_d`. 
 </OL> 
 
-Implementation 
--------------- 
+### Implementation ###
 
 Creates an instance of 
 `Hilbert_sort_2<Traits, PolicyTag>`, 

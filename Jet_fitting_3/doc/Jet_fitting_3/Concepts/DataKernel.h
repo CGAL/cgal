@@ -8,8 +8,7 @@ fulfilled by any class used to instantiate first template parameter of
 the class 
 `CGAL::Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>`. 
 
-Operations 
--------------- 
+### Operations ###
 
 Only constructors (from 3 scalars and copy constructors) and access 
 methods to coordinates `x()`, `y()`, `z()` are needed. 

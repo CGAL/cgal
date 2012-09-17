@@ -14,8 +14,7 @@ After execution, the value of
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` defines a type `Traits::Less_xy_2` as described in 
 the concept `ConvexHullTraits_2` and the corresponding member 
@@ -54,8 +53,7 @@ After execution, the value of
 The default traits class `Default_traits` is the kernel in which the type 
 `ForwardIterator::value_type` is defined. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` defines the type `Traits::Less_yx_2` as specified in 
 the concept `ConvexHullTraits_2` and the corresponding member 
@@ -96,8 +94,7 @@ holds for all iterators in the range.
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` defines the type `Traits::Less_yx_2` as specified in 
 the concept `ConvexHullTraits_2` and the corresponding member 
@@ -140,8 +137,7 @@ After execution, the value of
 \f$ \ge_{xy}\f$ `*it` hold for all iterators
 `it` in the range.
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` contains the following subset of types from 
 the concept `ConvexHullTraits_2` and their corresponding member 
@@ -190,8 +186,7 @@ After execution, the value of
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` defines the type `Traits::Less_yx_2` as specified in 
 the concept `ConvexHullTraits_2` and the corresponding member 
@@ -232,8 +227,7 @@ holds for all iterators in the range.
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` defines the type `Traits::Less_xy_2` as specified in 
 the concept `ConvexHullTraits_2` and the corresponding member 
@@ -270,8 +264,7 @@ After execution, the value of
 `w` is an iterator in the range such that `*w` \f$ \le_{xy}\f$
 `*it` for all iterators `it` in the range.
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` defines the type `Traits::Less_xy_2` as specified in 
 the concept `ConvexHullTraits_2` and the corresponding member 

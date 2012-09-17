@@ -42,8 +42,7 @@ is no feature above it.
 </UL> 
 The function returns a past-the-end iterator for its output sequence. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `OutputIterator::value_type` must be 
 `pair<Arrangement_2::Vertex_const_handle, pair<Object, Object> >`. 

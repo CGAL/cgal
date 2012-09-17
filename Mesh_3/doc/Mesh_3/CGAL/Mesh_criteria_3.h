@@ -21,8 +21,7 @@ and `C3T3::Triangulation` its nested triangulation type.
 
 \models ::MeshCriteria_3 
 
-Example 
--------------- 
+### Example ###
 
 \code{.cpp} 
 

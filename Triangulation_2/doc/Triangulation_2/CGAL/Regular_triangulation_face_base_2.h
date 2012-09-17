@@ -8,8 +8,7 @@ The class `Regular_triangulation_face_base_2` is a model of the concept
 `RegularTriangulationFaceBase_2`. It is the default face base class 
 of regular triangulations. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameters `Traits` has to be a model 
 of `RegularTriangulationTraits_2`. 

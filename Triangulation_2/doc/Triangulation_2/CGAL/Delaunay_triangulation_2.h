@@ -17,8 +17,7 @@ of more than three points,
 the Delaunay triangulation is unique, it is the dual 
 of the Voronoi diagram of the points. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameter `Tds` 
 is to be instantiated with a model of 
@@ -55,13 +54,11 @@ instantiated with `Delaunay_triangulation_2`. The triangulation
 hierarchy will then offer the same functionalities but be much more
 for efficient for locations and insertions.
 
-Types 
--------------- 
+### Types ###
 
 Inherits all the types defined in `Triangulation_2<Traits,Tds>`. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 Insertion is implemented by inserting in the triangulation, then 
 performing a sequence of Delaunay flips. The number of flips is \f$ O(d)\f$ 

@@ -7,8 +7,7 @@ namespace CGAL {
 The class `Triangulation_vertex_base_with_info_2` is designed to be used as a base vertex class 
 of a triangulation. It provides an easy way to add some user defined information in vertices. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first template parameter is the information the user would like to add 
 to a vertex. It has to be `DefaultConstructible` and `Assignable`. 

@@ -17,8 +17,7 @@ provide `K2::FT operator()(K1::FT n)` that converts `n` to an
 
 The default value of this parameter is `CGAL::NT_converter<K1::FT, K2::FT>`. 
 
-Example 
--------------- 
+### Example ###
 
 In the following example, we compute exactly 
 the intersection point between a line and a triangle, 

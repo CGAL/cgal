@@ -5,15 +5,13 @@ namespace CGAL {
 \ingroup PkgIOstreams
 
 The class `Ostream_iterator` is an output iterator adaptor for the 
-output stream class `Stream` and value type \f$ T\f$. 
+output stream class `Stream` and value type `T`. 
 
-Operations 
--------------- 
+### Operations ###
 
 `o` fulfills the requirements for an output iterator. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The `operator*()` in class `Ostream_iterator` uses a proxy class. 
 
@@ -27,7 +25,7 @@ public:
 
 /*! 
 creates an output 
-iterator `o` writing to \f$ s\f$. 
+iterator `o` writing to `s`. 
 */ 
 Ostream_iterator( Stream& s); 
 

@@ -13,8 +13,7 @@ kernel model `Homogeneous<T>`, `Kernel::RT` is equal
 to `T`, and `Kernel::FT` is equal to 
 `Quotient<T>`. 
 
-Operators 
--------------- 
+### Operators ###
 
 The following operations can be applied on points: 
 

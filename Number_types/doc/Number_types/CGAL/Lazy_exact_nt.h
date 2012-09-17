@@ -23,8 +23,7 @@ using `Filtered_predicate` and `Filtered_kernel`.
 \models ::RealEmbeddable 
 \models ::Fraction, if NT is a ::Fraction
 
-Example 
--------------- 
+### Example ###
 
 \code
 #include <CGAL/Cartesian.h> 

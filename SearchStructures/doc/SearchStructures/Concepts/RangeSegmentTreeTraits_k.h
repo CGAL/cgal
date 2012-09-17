@@ -8,8 +8,7 @@ type information of the keys and intervals. Further more, they define function o
 the keys and intervals, and provide comparison functions that 
 are needed for window queries. 
 
-Example 
--------------- 
+### Example ###
 
 The following piece of code gives an example of how a traits class 
 might look like, if you have keys that are of the type `int` 

@@ -10,8 +10,7 @@ two-dimensional regular triangulation and a (weighted) query point
 inside the convex hull of the vertices of the triangulation. We call these 
 coordinates regular neighbor coordinates. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`Rt` are equivalent to the class 
@@ -27,8 +26,7 @@ meet the requirements for the traits class of the
 associating a point and its regular neighbor coordinate. 
 </OL> 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This function computes the areas stolen from the 
 Voronoi cells of points in `rt` by the insertion of `p`. The 

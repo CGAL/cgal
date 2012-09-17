@@ -107,8 +107,7 @@ the list of hidden vertices whose points are located in the facet.
 When a facet is removed, 
 points hidden by this facet are reinserted in the triangulation. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The geometric traits parameter `Traits` has 
 to be instantiated with a model of the concept 

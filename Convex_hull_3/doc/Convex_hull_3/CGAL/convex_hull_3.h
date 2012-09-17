@@ -17,8 +17,7 @@ are available. The first can be used when it is known that the result
 will be a polyhedron and the second when a degenerate hull 
 may also be possible. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 Both functions require the following: 
 <OL> 
@@ -50,14 +49,12 @@ then the default traits class of `::convex_hull_3` is `Convex_hull_traits_3<R>`,
 \sa `CGAL::ch_eddy` 
 \sa `CGAL::convex_hull_2` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The algorithm implemented by these functions is the quickhull algorithm of 
 Barnard <I>et al.</I> \cite bdh-qach-96. 
 
-Example 
--------------- 
+### Example ###
 
 The following program computes the convex hull of a set of 250 random 
 points chosen from a sphere of radius 100. It then determines if the resulting 

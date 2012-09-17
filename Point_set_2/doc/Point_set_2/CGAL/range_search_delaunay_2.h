@@ -29,8 +29,7 @@ returns an output iterator pointing to the position beyond the end
 of the sequence.
 `delau`$ is the \cgal Delaunay triangulation on which we perform the range search operation.
 
-Requirements 
--------------- 
+### Requirements ###
 
 <UL> 
 <LI>`Dt` is a \cgal Delaunay triangulation and contains the following subset of types from the concept `PointSetTraits` and from 
@@ -65,8 +64,7 @@ returns an output iterator pointing to the position beyond the end
 of the sequence. 
 `delau` is the \cgal Delaunay triangulation on which we perform the range search operation.
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Dt` is a \cgal Delaunay triangulation and contains the following subset of types from the concept `PointSetTraits` and from 
 the Delaunay triangulation data type: 
@@ -101,8 +99,7 @@ which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence. `delau` is the \cgal Delaunay triangulation on which we perform the range search operation.
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Dt` is a \cgal Delaunay triangulation and contains the following subset of types from the concept `PointSetTraits` and from 
 the Delaunay triangulation data type: 
@@ -137,8 +134,7 @@ of the sequence.
 ` pred` controls the search operation. If `return_if_succeded` is `true`, we will end the search
 after the first success of the predicate, otherwise we will continue till the search is finished.
 
-Requirements 
--------------- 
+### Requirements ###
 
 For the requirements of `Dt` see the description for the non-predicate version. 
 
@@ -173,8 +169,7 @@ of the sequence.
 `pred` controls the search operation. If `return_if_succeded` is `true`, we will end the search
 after the first success of the predicate, otherwise we will continue till the search is finished.
 
-Requirements 
--------------- 
+### Requirements ###
 
 For the requirements of `Dt` see the description for the non-predicate version. 
 
@@ -199,8 +194,7 @@ of the sequence. `delau` is the \cgal Delaunay triangulation on which we perform
 `pred` controls the search operation. If `return_if_succeded` is `true`, we will end the search
 after the first success of the predicate, otherwise we will continue till the search is finished.
 
-Requirements 
--------------- 
+### Requirements ###
 
 For the requirements of `Dt` see the description for the non-predicate version. 
 

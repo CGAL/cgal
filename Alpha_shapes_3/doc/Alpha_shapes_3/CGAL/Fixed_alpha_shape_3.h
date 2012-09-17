@@ -15,8 +15,7 @@ a classification that specifies its status in the alpha complex, alpha being fix
 Note that this class can be used at the same time to build a <I>basic</I> or 
 a <I>weighted</I> Alpha Shape. 
 
-Inherits From 
--------------- 
+### Inherits From ###
 
 Inherits from `Dt`.
 
@@ -25,8 +24,7 @@ This class is the underlying triangulation class.
 The modifying functions `insert` and `remove` will overwrite 
 the inherited functions. 
 
-I/O 
--------------- 
+### I/O ###
 
 The I/O operators are defined for `iostream`, and for 
 the window stream provided by \cgal. The format for the iostream 

@@ -17,8 +17,7 @@ on the negative side of `l`, iff
 \f$ a\, px + b\, py +c < 0\f$. 
 The positive side is to the left of `l`. 
 
-Example 
--------------- 
+### Example ###
 
 Let us first define two %Cartesian two-dimensional points in the Euclidean 
 plane \f$ \E^2\f$. Their 

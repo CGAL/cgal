@@ -6,8 +6,7 @@ namespace CGAL {
 computes a handle to a vertex `w` of `delau` that is closest to `v`.
 If `v` is the only vertex in `delau`, `NULL` is returned. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Dt` is a \cgal Delaunay triangulation and contains the following subset of types from the concept `PointSetTraits` and from 
 the Delaunay triangulation data type: 
@@ -42,8 +41,7 @@ neighbors search on Delaunay triangulations. There are two versions of
 this function, one taking a point of the Delaunay triangulation and the 
 other taking a vertex handle. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Dt` is a \cgal Delaunay triangulation and contains the following subset of types from the concept `PointSetTraits` and from 
 the Delaunay triangulation data type: 
@@ -79,8 +77,7 @@ neighbors search on Delaunay triangulations. There are two versions of
 this function, one taking a point of the Delaunay triangulation and the 
 other taking a vertex handle. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Dt` is a \cgal Delaunay triangulation and contains the following subset of types from the concept `PointSetTraits` and from 
 the Delaunay triangulation data type: 

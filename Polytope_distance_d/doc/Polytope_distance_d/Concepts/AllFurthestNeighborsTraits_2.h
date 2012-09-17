@@ -14,8 +14,7 @@ convex polygon using the function `all_furthest_neighbors_2`.
 
 \sa `CGAL::all_furthest_neighbors_2` 
 
-Notes 
--------------- 
+### Notes ###
 
 <UL> 
 <LI>`AllFurthestNeighborsTraits_2``::Less_xy_2` and 

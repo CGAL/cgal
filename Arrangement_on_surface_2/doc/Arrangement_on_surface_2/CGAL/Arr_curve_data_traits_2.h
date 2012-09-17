@@ -53,8 +53,7 @@ is associated with the output of this functor.
 
 \models ::ArrangementTraits_2 
 
-Inherits From 
--------------- 
+### Inherits From ###
 
 CONVERROR Inherits From must be handled manually, e.g. adjust the class decl`Base_traits_2` 
 

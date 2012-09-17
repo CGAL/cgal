@@ -16,8 +16,7 @@ The default for the template `LocalKernel` is
 `Cartesian<double>` and the default for `SvdTraits` is `Eigen_svd` if `CGAL_EIGEN3_ENABLED` 
 is defined and `Lapack_svd` otherwise. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The class `Monge_via_jet_fitting` has three template parameters. Parameter 
 `DataKernel` provides the geometric classes and tools 

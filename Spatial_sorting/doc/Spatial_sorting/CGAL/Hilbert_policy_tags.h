@@ -13,8 +13,7 @@ can be passed to
 as parameter to 
 `hilbert_sort` to choose the sorting policy. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 `Tag` can only be either `Median` or `Middle` currently. 
 

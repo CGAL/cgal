@@ -7,8 +7,7 @@ namespace CGAL {
 The class `Delaunay_triangulation_3` represents a three-dimensional 
 Delaunay triangulation. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first template argument must be a model of the 
 `DelaunayTriangulationTraits_3` concept. 

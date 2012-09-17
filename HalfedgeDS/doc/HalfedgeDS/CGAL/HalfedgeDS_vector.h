@@ -17,8 +17,7 @@ access iterators that does not support removal.
 \sa `CGAL::HalfedgeDS_decorator<HDS>` 
 \sa `CGAL::HalfedgeDS_const_decorator<HDS>` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 `HalfedgeDS_vector` uses internally the \stl `std::vector` container 
 class. We require that we can create a `std::vector::iterator` 

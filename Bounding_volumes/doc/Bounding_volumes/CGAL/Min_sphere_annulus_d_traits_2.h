@@ -7,13 +7,8 @@ namespace CGAL {
 The class `Min_sphere_annulus_d_traits_2` is a traits class for the \f$ d\f$-dimensional 
 optimisation algorithms using the two-dimensional \cgal kernel. 
 
-Requirements 
--------------- 
-
-The template parameter `K` is a model for `Kernel`. Template 
-parameters `ET` and `NT` are models for `RingNumberType`. 
-
-The second and third template parameter have default type `K::RT`. 
+\tparam K  must bea model for `Kernel`. 
+\tparam ET NT are models for `RingNumberType`. Their default type is `K::RT`. 
 
 \models ::MinSphereAnnulusDTraits 
 

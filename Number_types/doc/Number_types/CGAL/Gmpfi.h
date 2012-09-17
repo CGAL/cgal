@@ -21,8 +21,7 @@ and <TT>long double</TT>.
 \models ::FieldWithKthRoot 
 \models ::RealEmbeddable 
 
-Implementation 
--------------- 
+### Implementation ###
 
 All interval operations are performed by the <span class="textsc">Mpfi</span> library. The class 
 `Gmpfi` is not reference counted, but its members are. 

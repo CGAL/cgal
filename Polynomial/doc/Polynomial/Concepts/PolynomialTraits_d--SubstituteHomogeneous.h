@@ -17,8 +17,7 @@ polynomial \f$ p(x_0,x_1,w) = x_0^2x_1^3+x_1^4w^1\f$.
 \refines CopyConstructible
 \refines DefaultConstructible
 
-Types 
--------------- 
+### Types ###
 
 Note that the `result_type` is the coercion type of the value type of the 
 given iterator range and `PolynomialTraits_d::Innermost_coefficient_type`. 

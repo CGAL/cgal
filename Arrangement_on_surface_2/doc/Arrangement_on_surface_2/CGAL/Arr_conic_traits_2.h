@@ -77,8 +77,7 @@ supports the merging of curves of opposite directions.
 \models ::ArrangementLandmarkTraits_2 
 \models ::ArrangementDirectionalXMonotoneTraits_2 
 
-Types 
--------------- 
+### Types ###
 
 
 */

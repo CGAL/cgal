@@ -11,12 +11,9 @@ an exact number-type `ET` has to be provided which
 `Approximate_min_ellipsoid_d<Traits>` will use for its internal 
 exact computations. 
 
-Requirements 
--------------- 
+\tparam K must be a model for concept `Kernel`. 
 
-The template parameter `K` must be a model for concept 
-`Kernel`. The template parameter `ET` must be a model for concept 
-`RingNumberType` with exact arithmetic operations, i.e., the type 
+\tparam ET must be a model for concept `RingNumberType` with exact arithmetic operations, i.e., the type 
 `CGAL::Number_type_traits<ET>::Has_exact_ring_operations` must be 
 `CGAL::Tag_true`. In addition, `ET` must be able to exactly 
 represent any finite `double` value. (Examples of such a 

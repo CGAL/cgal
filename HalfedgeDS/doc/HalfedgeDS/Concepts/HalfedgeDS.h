@@ -48,8 +48,7 @@ dangling handles), it must be called explicitly in advance for a
 Classes built on top of a `HalfedgeDS` are advised to call the 
 `reserve()` member function before creating new items. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 A `HalfedgeDS` is a class template and will be used as argument for 
 other class templates, for example `CGAL::Polyhedron_3`. The 

@@ -8,11 +8,7 @@ The class `Min_quadrilateral_default_traits_2` is a traits class for the
 functions `min_rectangle_2`, `min_parallelogram_2` and 
 `min_strip_2` using a two-dimensional \cgal kernel. 
 
-Requirements 
--------------- 
-
-The template parameter `K` is a model for 
-`Kernel`. 
+\tparam K must be a model for `Kernel`. 
 
 \models ::MinQuadrilateralTraits_2 
 

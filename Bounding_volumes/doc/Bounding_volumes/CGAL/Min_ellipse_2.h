@@ -23,10 +23,7 @@ The underlying algorithm can cope with all kinds of input, e.g. \f$ P\f$ may be
 empty or points may occur more than once. The algorithm computes a support 
 set \f$ S\f$ which remains fixed until the next insert or clear operation. 
 
-Requirements 
--------------- 
-
-The template parameter `Traits` is a model for `MinEllipse2Traits`. 
+\tparam Traits must be a model for `MinEllipse2Traits`. 
 
 We provide the model `CGAL::Min_ellipse_2_traits_2<K>` using the 
 two-dimensional \cgal kernel. 
@@ -35,8 +32,7 @@ two-dimensional \cgal kernel.
 \sa `CGAL::Min_ellipse_2_traits_2<K>` 
 \sa `MinEllipse2Traits` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 We implement the incremental algorithm of Welzl, with move-to-front 
 heuristic \cite w-sedbe-91a, using the primitives as described 
@@ -50,8 +46,7 @@ take up to linear time, but substantially less than computing the new
 smallest enclosing ellipse from scratch. The clear operation and the check 
 for validity each takes linear time. 
 
-Example 
--------------- 
+### Example ###
 
 To illustrate the usage of `Min_ellipse_2` and to show that randomization 
 can be useful in certain cases, we give an example. The example also 

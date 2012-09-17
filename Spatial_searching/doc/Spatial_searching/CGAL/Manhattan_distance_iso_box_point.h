@@ -10,8 +10,7 @@ between a \f$ d\f$-dimensional iso-box and a \f$ d\f$-dimensional point
 and the Manhattan distance between a \f$ d\f$-dimensional iso-box 
 and a \f$ d\f$-dimensional iso-box defined as a \f$ k\f$-\f$d\f$ tree rectangle. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the template argument a model for the concept 
 `SearchTraits`, for example `CGAL::Search_traits_3<CGAL::Cartesian<double> >`. 

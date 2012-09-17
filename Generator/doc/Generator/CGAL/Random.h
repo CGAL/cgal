@@ -21,8 +21,7 @@ It can be very useful, e.g. for debugging, to reproduce a sequence of
 random numbers. This can be done by either initialising with a fixed 
 seed, or by using the state functions as described below. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 We use the boost random library function `boost::rand48` to generate the random 
 numbers. 

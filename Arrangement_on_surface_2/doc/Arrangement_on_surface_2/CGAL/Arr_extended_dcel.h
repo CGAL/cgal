@@ -35,8 +35,7 @@ The default values follow:
 
 \models ::ArrangementDcelWithRebind 
 
-Inherits From 
--------------- 
+### Inherits From ###
 
 CONVERROR Inherits From must be handled manually, e.g. adjust the class decl 
 <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 

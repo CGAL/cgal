@@ -20,8 +20,7 @@ Moreover, `CGAL::Algebraic_structure_traits< EuclideanRing >` is a model of
 
 - `CGAL::Algebraic_structure_traits< EuclideanRing >::Div_mod` 
 
-Remarks 
--------------- 
+### Remarks ###
 
 The most prominent example of a Euclidean ring are the integers. 
 Whenever both \f$ x\f$ and \f$ y\f$ are positive, then it is conventional to choose 

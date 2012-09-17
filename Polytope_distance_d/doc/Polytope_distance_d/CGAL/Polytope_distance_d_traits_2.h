@@ -7,13 +7,10 @@ namespace CGAL {
 The class `Polytope_distance_d_traits_2` is a traits class for the \f$ d\f$-dimensional 
 optimisation algorithms using the two-dimensional \cgal kernel. 
 
-Requirements 
--------------- 
 
-The template parameter `K` is a model for `Kernel`. Template 
-parameters `ET` and `NT` are models for `RingNumberType`. 
+\tparam K must be a model for `Kernel`. 
 
-The second and third template parameter have default type `K::RT`. 
+\tparam ET NT must be models for `RingNumberType`. Their default is  `K::RT`. 
 
 \models ::PolytopeDistanceDTraits 
 

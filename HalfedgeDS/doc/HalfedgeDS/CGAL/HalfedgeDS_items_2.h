@@ -19,8 +19,7 @@ is the template argument of the corresponding `HalfedgeDS`.
 \sa `CGAL::HalfedgeDS_halfedge_base<Refs>` 
 \sa `CGAL::HalfedgeDS_face_base<Refs>` 
 
-Example 
--------------- 
+### Example ###
 
 The following example shows the canonical implementation of the 
 `HalfedgeDS_items_2` class. It uses the base classes for the item types that 

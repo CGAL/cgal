@@ -11,8 +11,7 @@ the instances after each modification, as well as for each comparison.
 
 This is a debugging tool which is useful when dealing with number types. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 `NT1` must be a model of some algebraic structure concept. 
 `NT2` must be a model of the same algebraic structure concept. 
@@ -25,8 +24,7 @@ the two arguments.
 \models `IntegralDomainWithoutDivision` (same as `NT1`) 
 \models ::RealEmbeddable 
 
-Operations 
--------------- 
+### Operations ###
 
 Some operations have a particular behavior documented here. 
 

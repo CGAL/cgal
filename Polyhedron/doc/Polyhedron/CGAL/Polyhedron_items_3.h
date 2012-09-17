@@ -18,8 +18,7 @@ halfedge.
 \sa `CGAL::HalfedgeDS_min_items` 
 \sa `CGAL::HalfedgeDS_items_2` 
 
-Example 
--------------- 
+### Example ###
 
 The following example program defines a new face class based on the 
 `CGAL::HalfedgeDS_face_base` and adds a new color member variable. 

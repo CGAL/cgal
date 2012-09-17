@@ -8,24 +8,18 @@ namespace CGAL {
 This class implements a 2D mesh generator. 
 
 
-
-Parameters 
--------------- 
-
-The template parameter `CDT` should be a model of the 
+\tparam CDT must be a model of the 
 concept `ConstrainedDelaunayTriangulation_2`, and type `CDT::Face` 
 should be a model of the concept `MeshFaceBase_2`. 
-
 The geometric traits class of the instance of `CDT` has to be 
 a model of the concept `DelaunayMeshTraits_2`. 
 
-The template parameter `Criteria` should be a model of the concept 
+\tparam Criteria must be a model of the concept 
 `MeshingCriteria_2`. This traits class defines the shape and size 
 criteria for the triangles of the mesh. `Criteria::Face_handle` has to 
 be the same as `CDT::Face_handle`. 
 
-Using this class 
--------------- 
+### Using This Class ###
 
 The constructor of the class `Delaunay_mesher_2` takes a reference to a `CDT` 
 as an argument. A call to the refinement method `refine_mesh()` will 
@@ -36,8 +30,7 @@ modified, any further call to its member methods may crash. Consider
 constructing a new `Delaunay_mesher_2` object if the triangulation has been 
 modified. 
 
-Meshing domain 
--------------- 
+### Meshing Domain ###
 
 The domain to be mesh is defined by the constrained edges and a set of seed 
 points. The constrained edges divides the plane into several connected 

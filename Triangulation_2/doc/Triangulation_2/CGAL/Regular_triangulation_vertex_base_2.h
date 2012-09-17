@@ -8,8 +8,7 @@ The class `Regular_triangulation_vertex_base_2` is a model of the concept
 `RegularTriangulationVertexBase_2`. It is the default 
 vertex base class of regular triangulations. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameters `Traits` has to be a model 
 of `RegularTriangulationTraits_2`. 

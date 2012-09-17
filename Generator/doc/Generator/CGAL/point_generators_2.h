@@ -12,6 +12,7 @@ The function `perturb_points_2` perturbs each point in a given range of points b
 a random amount. 
 
 ###Requires ###
+
 - `Creator` must be a function object accepting two 
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
   `(x,y)` of type `P`. 

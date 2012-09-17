@@ -14,8 +14,7 @@ with a data structure which allows fast point location queries. As proved
 in \cite cgal:d-dh-02, this structure has an optimal behavior when it is built 
 for Delaunay triangulations. It can however be used for other triangulations. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 It is templated by a parameter which must be instantiated by one of the \cgal triangulation classes. <I>In the current implementation, only 
 `Delaunay_triangulation_3` is supported for `Tr`.</I> 
@@ -39,8 +38,7 @@ hierarchy into a file will lose the hierarchic structure and reading
 it from the file will result in an ordinary triangulation whose 
 efficiency will be the same as `Tr`. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The data structure is a hierarchy 
 of triangulations. The triangulation at the lowest level is 

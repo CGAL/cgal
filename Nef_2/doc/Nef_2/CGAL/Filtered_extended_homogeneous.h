@@ -10,8 +10,7 @@ representation based on a ring number type `RT`.
 
 \models ::ExtendedKernelTraits_2 
 
-Operations 
--------------- 
+### Operations ###
 
 Fits all operation requirements of the concept. 
 

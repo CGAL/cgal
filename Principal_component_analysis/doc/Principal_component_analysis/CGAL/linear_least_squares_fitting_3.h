@@ -65,8 +65,7 @@ The class `K` is the kernel in which the type
 `InputIterator::value_type` is defined. It can be omitted and deduced
 automatically from the value type.
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`InputIterator::value_type` can be either `K::Point_3`, 
@@ -102,8 +101,7 @@ The class `K` is the kernel in which the type
 automatically from the value type. The tag `tag` identifies the
 dimension to be considered from the objects (see above).
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`InputIterator::value_type` can either be `K::Point_3`, 

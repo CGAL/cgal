@@ -9,8 +9,7 @@ partition of values of type `T` into disjoint sets. The template
 parameter `A` has to be a model of the allocator concept as defined 
 in the C++ standard. It has a default argument `CGAL_ALLOCATOR(T)`. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 `Union_find<T,A>` is implemented with union by rank and path 
 compression. The running time for \f$ m\f$ set operations on \f$ n\f$ elements 

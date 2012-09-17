@@ -15,15 +15,12 @@ specific application.
 
 
 
-Parameters 
--------------- 
-
-<UL> 
-<LI>The first parameter `Traits` is the geometric traits class. It must 
+\tparam Traits is the geometric traits class. It must 
 be the same as the one used for the Delaunay mesh. 
-<LI>The second parameter `Fb` is the base class from which `Delaunay_mesh_face_base_2` 
+
+\tparam Fb is the base class from which `Delaunay_mesh_face_base_2` 
 derives. It must be a model of the `TriangulationFaceBase_2` concept. 
-</UL> 
+
 
 \models ::DelaunayMeshFaceBase_2 
 

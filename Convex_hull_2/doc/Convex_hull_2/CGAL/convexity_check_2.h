@@ -16,8 +16,7 @@ if it consists of only extreme points
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` contains the following subset of types from 
 the concept `ConvexHullTraits_2` and their corresponding member 
@@ -31,8 +30,7 @@ functions that return instances of these types:
 \sa `CGAL::is_cw_strongly_convex_2` 
 \sa `CGAL::is_strongly_convex_3` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The algorithm requires \f$ O(n)\f$ time for a set of \f$ n\f$ input points. 
 
@@ -67,8 +65,7 @@ if it consists of only extreme points
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` contains the following subset of types from 
 the concept `ConvexHullTraits_2` and their corresponding member 
@@ -82,8 +79,7 @@ functions that return instances of these types:
 \sa `CGAL::is_ccw_strongly_convex_2` 
 \sa `CGAL::is_strongly_convex_3` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The algorithm requires \f$ O(n)\f$ time for a set of \f$ n\f$ input points. 
 

@@ -9,8 +9,7 @@ The class `Triangulation_cell_base_with_info_3` is a model of the concept
 It provides an easy way to add some user defined information in cells. 
 Note that input/output operators discard this additional information. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first template argument is the information the user would like to add 
 to a cell. It has to be `DefaultConstructible` and `Assignable`. 

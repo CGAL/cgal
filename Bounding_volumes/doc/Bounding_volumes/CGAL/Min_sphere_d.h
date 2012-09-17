@@ -36,11 +36,10 @@ case the algorithm is division-free. Thus, `Min_sphere_d` might still
 be an option in case your input number type cannot (efficiently) 
 divide. 
 
-Requirements 
--------------- 
 
-The class `Min_sphere_d` expects a model of the concept 
+\tparam Traits must be a model of the concept 
 `OptimisationDTraits` as its template argument. 
+
 We provide the models `CGAL::Optimisation_d_traits_2`, 
 `CGAL::Optimisation_d_traits_3` and 
 `CGAL::Optimisation_d_traits_d` 
@@ -54,8 +53,7 @@ for two-, three-, and \f$ d\f$-dimensional points respectively.
 \sa `CGAL::Min_sphere_of_spheres_d<Traits>` 
 \sa `CGAL::Min_annulus_d<Traits>` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 We implement the algorithm of Welzl with move-to-front 
 heuristic \cite w-sedbe-91a for small point sets, combined with a new 
@@ -68,8 +66,7 @@ but substantially less than computing the new smallest enclosing
 sphere from scratch. The clear operation and the check for validity 
 each take linear time. 
 
-Example 
--------------- 
+### Example ###
 
 \cgalexample{min_sphere_d.cpp} 
 
@@ -129,7 +126,7 @@ Min_sphere_d (const Traits& traits = Traits());
 creates a variable `min_sphere` of type `Min_sphere_d`. 
 It is initialized to \f$ ms(P)\f$ with \f$ P\f$ being the set of points 
 in the range [`first`,`last`). 
-\require The value type of `first` and `last` is `Point`. If the traits parameter is not supplied, the class `Traits` must provide a default constructor. \pre All points have the same dimension. 
+\requires The value type of `first` and `last` is `Point`. If the traits parameter is not supplied, the class `Traits` must provide a default constructor. \pre All points have the same dimension. 
 */ 
 template < class InputIterator > 
 Min_sphere_d( InputIterator first, 
@@ -262,7 +259,7 @@ void clear ();
 
 sets `min_sphere` to the \f$ ms(P)\f$, where \f$ P\f$ is the set of points 
 in the range [`first`,`last`). 
-\require The value type of `first` and `last` is `Point`. 
+\requires The value type of `first` and `last` is `Point`. 
 \pre All points have the same dimension. 
 */ 
 template < class InputIterator > 
@@ -284,7 +281,7 @@ void insert( const Point& p);
 inserts the points in the range [`first`,`last`) 
 into `min_sphere` and recomputes the smallest enclosing sphere, by 
 calling `insert` for all points in the range. 
-\require The value type of `first` and `last` is `Point`. 
+\requires The value type of `first` and `last` is `Point`. 
 \pre All points have the same dimension. If `min_sphere` is not empty, this dimension must be equal to `ambient_dimension()`. 
 */ 
 template < class InputIterator > 
@@ -334,7 +331,7 @@ const Traits& traits( ) const;
 /*! 
 
 writes `min_sphere` to output stream `os`. 
-\require The output operator is defined for `Point`. 
+\requires The output operator is defined for `Point`. 
 \relates Min_sphere_d 
 */ 
 std::ostream& operator << ( std::ostream& os, 
@@ -344,7 +341,7 @@ min_sphere);
 /*! 
 
 reads `min_sphere` from input stream `is`. 
-\require The input operator is defined for `Point`. 
+\requires The input operator is defined for `Point`. 
 \relates Min_sphere_d 
 */ 
 std::istream& operator >> ( std::istream& is, 

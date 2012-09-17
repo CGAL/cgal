@@ -44,8 +44,7 @@ maximal element of a range. It is modeled after the STL functions
 one only iterates once over the sequence. This is more efficient 
 especially for large and/or complex sequences. 
 
-Example 
--------------- 
+### Example ###
 
 The following example program computes the minimal and 
 maximal element of the sequence \f$ (3,\,6,\,5)\f$. Hence the output is 
@@ -74,8 +73,7 @@ maximal element of a range. It is modeled after the STL functions
 one only iterates once over the sequence. This is more efficient 
 especially for large and/or complex sequences. 
 
-Example 
--------------- 
+### Example ###
 
 The following example program computes the minimal and 
 maximal element of the sequence \f$ (3,\,6,\,5)\f$. Hence the output is 

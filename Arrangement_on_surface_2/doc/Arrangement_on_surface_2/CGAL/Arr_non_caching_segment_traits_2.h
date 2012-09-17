@@ -36,8 +36,7 @@ supports the merging of curves of opposite directions.
 \models ::ArrangementLandmarkTraits_2 
 \models ::ArrangementDirectionalXMonotoneTraits_2 
 
-Inherits From 
--------------- 
+### Inherits From ###
 
 CONVERROR Inherits From must be handled manually, e.g. adjust the class decl`Arr_non_caching_segment_basic_traits_2<Kernel>` 
 

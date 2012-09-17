@@ -23,16 +23,14 @@ except that it does not provide the type and constructors
 required to build the dual Voronoi diagram. The class is also a model 
 of the concept `ConstrainedTriangulationTraits_2`. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameter `K` has to 
 be instantiated by a model of the `Kernel` concept. 
 `Triangulation_euclidean_traits_xy_3` uses types 
 and predicates defined in `K`. 
 
-Access to predicate objects 
--------------- 
+### Access to Predicate Objects ###
 
 The following access functions are provided 
 

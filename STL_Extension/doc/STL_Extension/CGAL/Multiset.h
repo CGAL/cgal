@@ -55,8 +55,7 @@ second function splits `s` into two sets, one containing all the
 elements that are less than a given key, and the other contains all 
 elements greater than (or equal to) this key. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The `Multiset` class-template has three parameters: 
 <UL> 
@@ -74,15 +73,13 @@ less-than operator (`operator<`).
 `CGAL_ALLOCATOR` is used by default. 
 </UL> 
 
-Assertions 
--------------- 
+### Assertions ###
 
 The assertion and precondition flags for the `Multiset` class 
 use `MULTISET` in their names (i.e., `CGAL_MULTISET_NO_ASSERTIONS` and 
 `CGAL_MULTISET_NO_PRECONDITIONS`). 
 
-Implementation 
--------------- 
+### Implementation ###
 
 `Multiset` uses a proprietary implementation of a red-black tree 
 data-structure. The red-black tree invariants guarantee that the height of a 

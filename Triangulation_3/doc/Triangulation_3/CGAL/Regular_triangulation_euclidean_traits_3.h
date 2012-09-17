@@ -26,8 +26,7 @@ of that class is set to `true`.
 
 \models ::RegularTriangulationTraits_3 
 
-Operations 
--------------- 
+### Operations ###
 
 The following functions give access to the predicate and constructor 
 functors. 

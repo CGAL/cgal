@@ -106,7 +106,6 @@ Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_basics
 Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_with_core
 Distance_3/include
 Documentation/log
-Documentation/log/*
 Documentation/output
 Documentation/tags/*.*
 Generator/examples/Generator/CMakeLists.txt

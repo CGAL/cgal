@@ -14,8 +14,7 @@ which the points have the largest spread. It then splits the points
 in the most even manner possible, subject to maintaining the bound on 
 the ratio of the resulting rectangles. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the first template argument a model of 
 the concept `SearchTraits`, 
@@ -73,8 +72,7 @@ The splitting dimension is the dimension of the longest side of the rectangle.
 The splitting value is defined by the median of the coordinates of the data points 
 along this dimension. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the first template argument a model of 
 the concept `SearchTraits`, for example 
@@ -121,8 +119,7 @@ The splitting dimension is the dimension of the longest side of the rectangle.
 The splitting value is defined by the median of the coordinates of the data points 
 along this dimension. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the first template argument a model of 
 the concept `SearchTraits`, for example 
@@ -168,8 +165,7 @@ Implements the <I>midpoint of max spread</I> splitting rule.
 A rectangle is cut through \f$ (Mind+Maxd)/2\f$ orthogonal 
 to the dimension with the maximum point spread \f$ [Mind,Maxd]\f$. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the first template argument a model of 
 the concept `SearchTraits`, for example 
@@ -214,8 +210,7 @@ namespace CGAL {
 Implements the <I>midpoint of rectangle</I> splitting rule. 
 A rectangles is cut through its midpoint orthogonal to the longest side. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the first template argument a model of 
 the concept `SearchTraits`, for example 
@@ -278,8 +273,7 @@ to one side of this cut, then we slide the cut until it hits the first
 point. This may violate the aspect ratio bound, but will never 
 generate empty cells. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the first template argument a model of 
 the concept `SearchTraits`, 
@@ -352,8 +346,7 @@ the midpoint of rectangle rule. If the data points lie only on one
 side it avoids this by sliding the separator, computed by 
 the midpoint of rectangle rule, to the nearest data point. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the first template argument a model of the concept 
 `SearchTraits`, for example `CGAL::Cartesian_d<double>`. 

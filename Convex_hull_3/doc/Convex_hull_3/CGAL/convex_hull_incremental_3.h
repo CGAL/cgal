@@ -15,8 +15,7 @@ purposes. When an efficient incremental implementation is needed,
 using `CGAL::Delaunay_triangulation_3` together with 
 `CGAL::convex_hull_3_to_polyhedron_3` is highly recommended. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`Polyhedron` must provide a type `Polyhedron::Traits` 
@@ -34,8 +33,7 @@ the representation class `R` required by
 \sa `CGAL::convex_hull_3` 
 \sa `CGAL::convex_hull_2` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This function uses the \f$ d\f$-dimensional convex hull incremental construction 
 algorithm \cite cms-frric-93 
@@ -44,8 +42,7 @@ worst case and \f$ O(n \log n)\f$ expected time.
 
 \sa `CGAL::Convex_hull_d<R>` 
 
-Example 
--------------- 
+### Example ###
 
 The following example computes the convex hull of a set of 250 random 
 points chosen uniformly in a sphere of radius 100. 

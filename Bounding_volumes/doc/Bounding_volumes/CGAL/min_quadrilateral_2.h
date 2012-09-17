@@ -184,15 +184,13 @@ is `CGAL::Point_2<K>` for some kernel `K`.
 \sa `MinQuadrilateralTraits_2` 
 \sa `CGAL::Min_quadrilateral_default_traits_2<K>` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 We use a rotating caliper 
 algorithm \cite t-sgprc-83 
 with worst case running time linear in the number of input points. 
 
-Example 
--------------- 
+### Example ###
 
 The following code generates a random convex polygon 
 `P` with 20 vertices and computes the minimum enclosing 

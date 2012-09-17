@@ -35,8 +35,7 @@ The default traits class `Default_traits` is an instance of the
 class `Polygon_offset_builder_traits_2<Kernel>` parameterized on 
 the kernel in which the type `InputIterator::value_type` is defined. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`InputIterator::value_type` 

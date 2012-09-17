@@ -10,8 +10,7 @@ rectangle is called the associated rectangle.  Provides a method to
 split a container and a number of methods to support the
 implementation of splitting rules.
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the template argument an implementation for 
 \f$ d\f$-dimensional points of the concept `SearchTraits`, for example 

@@ -8,8 +8,7 @@ The function object `Hilbert_sort_2` sorts iterator ranges of
 at the median 
 or the middle depending on the `PolicyTag`. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 `Traits` is a model for `SpatialSortingTraits`. 
 

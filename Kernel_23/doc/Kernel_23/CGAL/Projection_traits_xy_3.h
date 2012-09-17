@@ -13,8 +13,7 @@ deal with projections on the
 `zx`- and the `zy`-plane, 
 respectively. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameter `K` has to 
 be instantiated by a model of the `Kernel` concept. 

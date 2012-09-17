@@ -7,11 +7,7 @@ An object of type `VoronoiGraphicsItem` is a graphics item that
 encapsulates a Delaunay triangulation in order to draw its dual, the 
 Voronoi diagram. 
 
-Parameters 
--------------- 
-
-The template parameter `DT` of `VoronoiGraphicsItem` must be a 
-\cgal 2D Delaunay triangulation class. 
+\tparam DT must be a \cgal 2D Delaunay triangulation class. 
 
 */
 template< typename DT >

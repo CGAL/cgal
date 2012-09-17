@@ -24,8 +24,7 @@ actions. If a particular feature is not supported nothing is done.
 Note that for example the creation of new halfedges is mandatory for 
 all halfedge data structures and will not appear here again. 
 
-Example 
--------------- 
+### Example ###
 
 The following program fragment illustrates the implementation of a 
 `is_valid()` member function for a simplified polyhedron class. 

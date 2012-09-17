@@ -18,8 +18,7 @@ To convert the geometric objects that are the arguments of the predicate,
 we use the function objects `C2E` and `C2F`, which must be of the form 
 `Cartesian_converter` or `Homogeneous_converter`. 
 
-Example 
--------------- 
+### Example ###
 
 The following example defines an efficient and exact version of the 
 orientation predicate over three points using the Cartesian representation 

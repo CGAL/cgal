@@ -8,8 +8,7 @@ key as point type.
 When using `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
 in a nearest neighbor search algorithm, this class must be used as distance. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 `Key` is a type that is associated to a point of type `Base_distance::Point_d`. 
 
@@ -81,8 +80,7 @@ and the search classes. When using this traits class in a nearest neighbor searc
 `Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>` 
 must be used as distance. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 `Key` is a type that is associated to a point of type `Base_distance::Point_d`. 
 

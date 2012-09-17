@@ -5,10 +5,7 @@ namespace Qt {
 
 An object of type `GraphicsViewIsoRectangleInput` creates an axis parallel rectangle. 
 
-Parameters 
--------------- 
-
-The template parameter of `GraphicsViewIsoRectangleInput` must be a \cgal `Kernel`. 
+\tparam K must be a \cgal `Kernel`. 
 
 */
 template< typename K >

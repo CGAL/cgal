@@ -64,8 +64,7 @@ this use as a template parameter of `Triangulation_3`.<BR>
 A class that satisfies the requirements for a triangulation data structure 
 class must provide the following types and operations. 
 
-I/O 
--------------- 
+### I/O ###
 
 The information stored in the `iostream` is: 
 the dimension, the number of vertices, the number of cells, 
@@ -96,8 +95,7 @@ when using the triangulation data structure class alone. They become
 compulsory when the triangulation data structure is used as a layer 
 for the geometric triangulation class. (See Section \ref TDS3secdesign.) 
 
-Creation 
--------------- 
+### Creation ###
 
 In order to obtain new vertices or destruct unused vertices, the user must 
 call the `create_vertex()` and `delete_vertex()` methods of the 
@@ -202,8 +200,7 @@ facet of index 3, and 3 edges \f$ (0,1)\f$, \f$ (1,2)\f$ and \f$ (2,0)\f$; in
 dimension 1, each cell represents one edge \f$ (0,1)\f$. (See also 
 Section \ref TDS3secintro.) 
 
-Creation 
--------------- 
+### Creation ###
 
 In order to obtain new cells or destruct unused cells, the user must call the 
 `create_cell()` and `delete_cell()` methods of the triangulation data 

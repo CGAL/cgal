@@ -11,8 +11,7 @@ number based on the <span class="textsc">Gnu</span> Multiple Precision Arithmeti
 \models ::RealEmbeddable 
 \models ::Fraction 
 
-Implementation 
--------------- 
+### Implementation ###
 
 `Gmpq`s are reference counted. 
 

@@ -138,8 +138,7 @@ global function are available.
 
 \brief
 
-Example 
---------------
+### Example ###
 
 The following example demonstrates the most common use of 
 `intersection` routines with the 2D and 3D Linear %Kernel.

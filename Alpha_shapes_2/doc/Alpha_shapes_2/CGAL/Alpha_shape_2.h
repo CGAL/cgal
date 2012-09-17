@@ -16,8 +16,7 @@ and the \f$ k\f$-dimensional faces of the triangulation.
 Note that this class is at the same time used for <I>basic</I> and 
 for <I>weighted</I> Alpha Shapes. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameter `Dt` has to be either `Delaunay_triangulation_2` or `Regular_triangulation_2`. 
 Note that `DT::Geom_traits`, `DT::Vertex` and `DT::Face` must model the concepts `AlphaShapeTraits_2`, 
@@ -30,8 +29,7 @@ kernel. By default the `ExactAlphaComparisonTag` is set to `CGAL::Tag_false` as 
 overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
 the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
 
-Inherits From 
--------------- 
+### Inherits From ###
 
 Inherits from `Dt`.
 
@@ -40,14 +38,12 @@ This class is the underlying triangulation class.
 The modifying functions `insert` and `remove` will overwrite 
 the inherited functions. At the moment, only the static version is implemented. 
 
-I/O 
--------------- 
+### I/O ###
 
 The I/O operators are defined for `std::iostream`. The format for the iostream 
 is an internal format. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The set of intervals associated with the 
 \f$ k\f$-dimensional faces of the underlying triangulation are 

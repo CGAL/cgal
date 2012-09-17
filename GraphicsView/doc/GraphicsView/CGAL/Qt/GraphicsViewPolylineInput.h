@@ -18,10 +18,7 @@ For polylines the segment between the last entered point and the current
 mouse position is only drawn correctly when mouse tracking is enabled 
 in the graphics view. The same holds for closed polygons. 
 
-Parameters 
--------------- 
-
-The template parameter of `GraphicsViewPolylineInput<K>` must be a \cgal `Kernel`. 
+\tparam K must be a \cgal `Kernel`. 
 
 */
 template< typename K >

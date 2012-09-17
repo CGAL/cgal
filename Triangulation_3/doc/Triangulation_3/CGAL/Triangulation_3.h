@@ -7,8 +7,7 @@ namespace CGAL {
 The class `Triangulation_3` represents a 3-dimensional tetrahedralization 
 of points. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first template argument must be a model of the 
 `TriangulationTraits_3` concept. 
@@ -17,8 +16,7 @@ The second template argument must be a model of the
 `TriangulationDataStructure_3` concept. 
 It has the default value `Triangulation_data_structure_3< Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> >`. 
 
-Traversal of the Triangulation 
--------------- 
+### Traversal of the Triangulation ###
 
 The triangulation class provides several iterators and circulators 
 that allow one to traverse it (completely or partially). 

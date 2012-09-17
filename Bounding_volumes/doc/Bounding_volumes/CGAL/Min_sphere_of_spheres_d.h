@@ -64,17 +64,13 @@ algorithm is division-free. Thus, `CGAL::Min_sphere_d<Traits>`
 might still be an option in case your input number type cannot 
 (efficiently) divide. 
 
-Requirements 
--------------- 
-
-The class `Min_sphere_of_spheres_d` expects a model of the concept 
+\tparam Traits must be a model of the concept 
 `MinSphereOfSpheresTraits` as its template argument. 
 
 \sa `CGAL::Min_sphere_d<Traits>` 
 \sa `CGAL::Min_circle_2<Traits>` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 We implement two algorithms, the LP-algorithm and a 
 heuristic \cite msw-sblp-92. As described in the documentation of 
@@ -97,8 +93,7 @@ not supported at this time. Also, the current implementation only
 handles spheres with Cartesian coordinates; homogenous representation 
 is not supported yet. 
 
-Example 
--------------- 
+### Example ###
 
 \cgalexample{min_sphere_of_spheres_d_d.cpp} 
 
@@ -181,7 +176,7 @@ creates a variable `minsphere` of type
 `Min_sphere_of_spheres_d` and inserts (cf. 
 `insert()`) the spheres from 
 the range [`first`,`last`). 
-\require The value type of `first` and `last` is `Sphere`. If the traits parameter is not supplied, the class `Traits` must provide a default constructor. 
+\requires The value type of `first` and `last` is `Sphere`. If the traits parameter is not supplied, the class `Traits` must provide a default constructor. 
 */ 
 template < typename InputIterator > 
 Min_sphere_of_spheres_d( InputIterator first, 
@@ -269,7 +264,7 @@ void clear ();
 sets `minsphere` to 
 the \f$ ms(S)\f$, where \f$ S\f$ is the set of spheres in the range 
 [`first`,`last`). 
-\require The value type of `first` and `last` is `Sphere`. 
+\requires The value type of `first` and `last` is `Sphere`. 
 */ 
 template < class InputIterator > void 
 set( InputIterator first, InputIterator last ); 
@@ -284,7 +279,7 @@ void insert( const Sphere& s );
 inserts the spheres in 
 the range [`first`,`last`) into the set \f$ S\f$ of instance 
 `minsphere`. 
-\require The value type of `first` and `last` is `Sphere`. 
+\requires The value type of `first` and `last` is `Sphere`. 
 */ 
 template < class InputIterator > void insert( 
 InputIterator first, InputIterator last ); 

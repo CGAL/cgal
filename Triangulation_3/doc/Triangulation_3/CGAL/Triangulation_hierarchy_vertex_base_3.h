@@ -19,8 +19,7 @@ requirements in order to match the concept
 provided by \cgal, or a user customized vertex base with additional 
 functionalities. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 It is parameterized by a model of the concept `TriangulationVertexBase_3`. 
 

@@ -16,8 +16,7 @@ the kernel is only an approximation of Euclidean geometry.
 
 \models ::Kernel 
 
-Implementation 
--------------- 
+### Implementation ###
 
 All geometric objects in `Cartesian` are reference counted. 
 

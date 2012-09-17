@@ -6,8 +6,7 @@ namespace CGAL {
 The class `Search_traits_2` can be used as a template parameter of the kd tree 
 and the search classes. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 Expects for the template argument a model of the concept `Kernel`, 
 for example `CGAL::Cartesian<double>` or `CGAL::Simple_cartesian<CGAL::Gmpq>`. 

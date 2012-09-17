@@ -16,15 +16,13 @@ The only function that needs to be defined in a derived class is
 the name of the function suggests that the ipelet may throw exceptions that 
 will be caught by a function of the class `Ipelet_base` avoiding Ipe to crash. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The `Kernel` template parameter determines the kernel that will be used 
 in the ipelet. This parameter must be set according to the algorithm to be used. 
 The integer `nbf` indicates the number of functions defined by the ipelet. 
 
-Readable and Drawable Object
-----------------------------
+### Readable and Drawable Object ###
 
 The set of `read objects` is defined as the set of objects of type
 `Point_2`, `Segment_2`, `Polygon_2`, `Circular_arc_2` or

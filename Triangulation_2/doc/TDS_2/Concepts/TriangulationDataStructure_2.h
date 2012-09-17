@@ -45,8 +45,7 @@ Insertion of a new vertex in a given face, or in a given edge,
 suppression of a vertex of degree three, flip of two edges 
 are examples of combinatorial operations. 
 
-I/O 
--------------- 
+### I/O ###
 
 The information output in the `iostream` is: 
 the dimension, the number of (finite) vertices, 
@@ -89,8 +88,7 @@ when using the triangulation data structure class alone.
 They became required when the triangulation data structure is plugged 
 into a triangulation. 
 
-Creation 
--------------- 
+### Creation ###
 
 In order to obtain new vertices or destruct unused vertices, the user must 
 call the `create_vertex()` and `delete_vertex()` methods of the 
@@ -198,15 +196,13 @@ of maximal dimension of the complex
 Only vertices and neighbors with index \f$ 0\f$ are set in the first case, 
 only vertices and neighbors with index \f$ 0\f$ or \f$ 1\f$ are set in the second case. 
 
-Types 
--------------- 
+### Types ###
 
 The class `TriangulationDataStructure_2::Face` defines the same types as 
 the triangulation data structure 
 except the iterators and the circulators. 
 
-Creation 
--------------- 
+### Creation ###
 
 The methods `create_face` and 
 `delete_face()` 

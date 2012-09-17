@@ -12,8 +12,7 @@ This class can be used directly or can serve as a base to derive other classes
 with some additional attributes (a color for example) tuned for a specific 
 application. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first template argument is the geometric traits class 
 `TriangulationTraits_3` which provides the point type, `Point_3`. 

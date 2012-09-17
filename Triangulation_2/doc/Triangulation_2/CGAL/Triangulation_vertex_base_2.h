@@ -12,8 +12,7 @@ structure
 of a triangulation, or used as a base class to derive 
 other base vertex classes tuned for specific applications. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 `Triangulation_vertex_base_2` is templated by a geometric traits class which provide the type 
 `Point`. It is strongly recommended to instantiate this 

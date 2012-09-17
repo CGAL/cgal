@@ -38,10 +38,8 @@ case the algorithm is division-free. Thus, `Min_circle_2` might still
 be an option in case your input number type cannot (efficiently) 
 divide. 
 
-Requirements 
--------------- 
 
-The template parameter `Traits` is a model for `MinCircle2Traits`. 
+\tparam Traits must be a model for `MinCircle2Traits`. 
 
 We provide the model `CGAL::Min_circle_2_traits_2` using the 
 two-dimensional \cgal kernel. 

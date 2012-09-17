@@ -38,8 +38,7 @@ The `Apollonius_graph_hierarchy_2` class derives publicly from the
 the same with its base class. In the sequel only the methods 
 overridden are documented. 
 
-Types 
--------------- 
+### Types ###
 
 `Apollonius_graph_hierarchy_2` does not introduce other types than those introduced by 
 its base class `Apollonius_graph_2<Gt,Agds>`. 

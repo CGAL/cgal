@@ -17,8 +17,7 @@ cyclic sequence of extreme points is cut into a linear sequence.
 The default traits class `Default_traits` is the kernel in which 
 the type `InputIterator::value_type` is defined. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`InputIterator::value_type` and `OutputIterator::value_type` 
@@ -43,8 +42,7 @@ functions that return instances of these types:
 \sa `CGAL::ch_jarvis` 
 \sa `CGAL::ch_melkman` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 One of two algorithms is used, 
 depending on the type of iterator used to specify the input points. For 
@@ -91,8 +89,7 @@ The different treatment by `::upper_hull_points_2` of the case that
 all points are equal ensures that concatenation of lower and upper hull 
 points gives the sequence of extreme points. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`InputIterator::value_type` and `OutputIterator::value_type` 
@@ -113,8 +110,7 @@ functions that return instances of these types:
 \sa `CGAL::ch_graham_andrew_scan` 
 \sa `CGAL::upper_hull_points_2` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This function uses Andrew's variant of Graham's scan algorithm 
 \cite a-aeach-79, \cite m-mdscg-84. The algorithm has worst-case running time 
@@ -157,8 +153,7 @@ The different treatment by `::lower_hull_points_2` of the case that
 all points are equal ensures that concatenation of lower and upper hull 
 points gives the sequence of extreme points. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`InputIterator::value_type` and `OutputIterator::value_type` 
@@ -179,8 +174,7 @@ functions that return instances of these types:
 \sa `CGAL::ch_graham_andrew_scan` 
 \sa `CGAL::lower_hull_points_2` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This function uses Andrew's 
 variant of Graham's scan algorithm \cite a-aeach-79, \cite m-mdscg-84. The algorithm 

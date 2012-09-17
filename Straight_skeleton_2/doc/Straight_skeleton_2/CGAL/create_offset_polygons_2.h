@@ -14,8 +14,7 @@ instead. The exterior skeleton is limited by an outer rectangular
 frame placed at a margin sufficiently large to allow the offset
 polygons to be constructed.
 
-Requirements 
---------------
+### Requirements ###
 
 1. `OffsettingK` is the \cgal kernel used to instantiate 
     `Polygon_offset_builder_traits_2<K>` for constructing 

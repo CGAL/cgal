@@ -9,8 +9,7 @@ called Sibson's coordinates, for \f$ 2D\f$ points provided a two-dimensional
 triangulation and a query point in the convex hull of the vertices 
 of the triangulation. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 <OL> 
 <LI>`Dt` are equivalent to the class 
@@ -31,8 +30,7 @@ the traits class of the `polygon_area_2` function.
 associating a point and its natural neighbor coordinate. 
 </OL> 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This function computes the area of the sub-cells 
 stolen from the Voronoi cells of the points in `dt` when inserting 

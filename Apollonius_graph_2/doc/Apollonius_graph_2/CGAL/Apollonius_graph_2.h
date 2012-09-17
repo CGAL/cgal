@@ -13,15 +13,13 @@ The second template argument defaults to
 `CGAL::Triangulation_data_structure_2< CGAL::Apollonius_graph_vertex_base_2<Gt,true>, CGAL::Triangulation_face_base_2<Gt> >`.
 \models ::DelaunayGraph_2 
 
-Traversal of the Apollonius Graph 
--------------- 
+### Traversal of the Apollonius Graph ###
 
 An Apollonius graph can be seen as a container of faces and vertices.
 Therefore the Apollonius graph provides several iterators and
 circulators that allow to traverse it (completely or partially).
 
-Traversal of the Convex Hull 
-----------------------------
+### Traversal of the Convex Hull ###
 
 Applied on the `infinite_vertex` the `incident_*` functions allow to
 visit the vertices on the convex hull and the infinite edges and

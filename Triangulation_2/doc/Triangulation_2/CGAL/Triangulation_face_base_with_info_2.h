@@ -10,8 +10,7 @@ triangulation data structure of a triangulation class.
 It provides an easy way to add some user defined information 
 in the faces of a triangulation. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first template argument is the information the user would like to add 
 to a face. It has to be `DefaultConstructible` and `Assignable`. 

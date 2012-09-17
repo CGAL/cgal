@@ -7,10 +7,7 @@ namespace CGAL {
 The class `Min_circle_2_traits_2` is a traits class for `Min_circle_2<Traits>` 
 using the two-dimensional \cgal kernel. 
 
-Requirements 
--------------- 
-
-The template parameter `K` is a model for `Kernel`. 
+\tparam K must be a model for `Kernel`. 
 
 \models ::MinCircle2Traits 
 

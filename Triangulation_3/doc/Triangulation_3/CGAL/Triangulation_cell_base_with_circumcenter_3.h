@@ -13,8 +13,7 @@ Note that input/output operators discard this additional information.
 All functions modifying the vertices of the cell, invalidate the cached 
 circumcenter. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first template argument is the geometric traits class 
 `DelaunayTriangulationTraits_3`. 

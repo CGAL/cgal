@@ -10,15 +10,13 @@ representation based on a field number type `FT`.
 
 \models ::ExtendedKernelTraits_2 
 
-Requirements 
--------------- 
+### Requirements ###
 
 To make a field number type `FT_model` work with this class, you 
 must provide a traits class for this number type: 
 `CGAL::Number_type_traits<FT_model>` (See the support library manual.) 
 
-Operations 
--------------- 
+### Operations ###
 
 Fits all operation requirements of the concept. 
 

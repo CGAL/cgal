@@ -9,8 +9,7 @@ attributes. For that, it defines an inner class template named
 of the `CombinatorialMap` concept. This inner class must define 
 two types: `Dart` and `Attributes`. 
 
-Example 
--------------- 
+### Example ###
 
 The following examples show two possible models of the 
 `CombinatorialMapItems` concept: the first one for a 4D 

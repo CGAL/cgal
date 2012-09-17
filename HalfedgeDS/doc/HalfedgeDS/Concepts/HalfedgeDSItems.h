@@ -30,8 +30,7 @@ page \ref HalfedgeDSFace respectively.
 \sa `CGAL::HalfedgeDS_halfedge_base<Refs>` 
 \sa `CGAL::HalfedgeDS_face_base<Refs>` 
 
-Example 
--------------- 
+### Example ###
 
 The following example shows the canonical implementation of the 
 `CGAL::HalfedgeDS_min_items` class. It uses the base classes for the 
