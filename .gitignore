@@ -169,6 +169,9 @@ HalfedgeDS/test/HalfedgeDS/CMakeLists.txt
 HalfedgeDS/test/HalfedgeDS/cgal_test_with_cmake
 HalfedgeDS/test/HalfedgeDS/test_hds
 HalfedgeDS/test/HalfedgeDS/test_hds_decorator
+Inscribed_areas/test/Largest_empty_rect_2/CMakeLists.txt
+Inscribed_areas/test/Largest_empty_rect_2/Makefile
+Inscribed_areas/test/Largest_empty_rect_2/data/out
 Installation/auxiliary/gdb/python/CGAL/__init__.pyc
 Installation/auxiliary/gdb/python/CGAL/printers.pyc
 Installation/auxiliary/gdb/test
@@ -237,9 +240,6 @@ Kinetic_data_structures/test/Kinetic_data_structures/regular_triangulation_3
 Kinetic_data_structures/test/Kinetic_data_structures/simulator
 Kinetic_data_structures/test/Kinetic_data_structures/solvers
 Kinetic_data_structures/test/Kinetic_data_structures/timings
-Largest_empty_rect_2/test/Largest_empty_rect_2/CMakeLists.txt
-Largest_empty_rect_2/test/Largest_empty_rect_2/Makefile
-Largest_empty_rect_2/test/Largest_empty_rect_2/data/out
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3.qrc.depends
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3_demo
 Linear_cell_complex/demo/Linear_cell_complex/cgal_test_with_cmake
