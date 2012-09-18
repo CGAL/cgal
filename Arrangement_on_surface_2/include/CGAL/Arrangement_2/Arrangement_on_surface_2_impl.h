@@ -3898,7 +3898,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
       // associated curve.
       ind_curr = (he_min->direction() == ARR_LEFT_TO_RIGHT) ?
         ARR_MAX_END : ARR_MIN_END;
-v
+
       if (he_min->next() != he_last)
         // The contraction point is he_min->next()'s source and cv_next
         // is its associated curve.
