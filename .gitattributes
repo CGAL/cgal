@@ -1776,8 +1776,7 @@ Inscribed_areas/doc_tex/Inscribed_areas/max_triangle.gif -text svneol=unset#imag
 Inscribed_areas/doc_tex/Inscribed_areas/max_triangle.pdf -text svneol=unset#application/pdf
 Inscribed_areas/doc_tex/Inscribed_areas_ref/ler-detail.png -text
 Inscribed_areas/doc_tex/Inscribed_areas_ref/ler.png -text
-Inscribed_areas/test/Inscribed_areas/cgal_test eol=lf
-Inscribed_areas/test/Inscribed_areas/cgal_test_with_cmake eol=lf
+Inscribed_areas/test/Inscribed_areas/largest_empty_iso_rectangle_2_test.cmd -text
 Installation/INSTALL -text
 Installation/LICENSE.BSL -text
 Installation/LICENSE.FREE_USE -text
