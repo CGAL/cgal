@@ -468,12 +468,24 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Algebraic_kernel_d/doc/Algebraic_kernel_d/</string>
           <string name="STRIP_FROM_INC_PATH">../Algebraic_kernel_d/doc/Algebraic_kernel_d/</string>
           <string name="GENERATE_TAGFILE">./tags/Algebraic_kernel_d.tag</string>
-          <string name="EXAMPLE_PATH">../Algebraic_kernel_d/examples</string>
           <string name="IMAGE_PATH">../Algebraic_kernel_d/doc/Algebraic_kernel_d/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
         </doxygen>
       </project>
 
+      <project>
+        <name>dD Geometry Kernel</name>
+        <input>../Kernel_d/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Kernel_d/doc/Kernel_d/</string>
+          <string name="STRIP_FROM_PATH">../Kernel_d/doc/Kernel_d/</string>
+          <string name="STRIP_FROM_INC_PATH">../Kernel_d/doc/Kernel_d/</string>
+          <string name="GENERATE_TAGFILE">./tags/Kernel_d.tag</string>
+          <string name="EXAMPLE_PATH">../Kernel_d/examples</string>
+          <string name="IMAGE_PATH">../Kernel_d/doc/Kernel_d/fig</string>
+          <bool name="SORT_GROUP_NAMES">true</bool>
+        </doxygen>
+      </project>
 
       <project>
         <name>Convex Decomposition of Polyhedra</name>
@@ -1141,6 +1153,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Circular_kernel_2/doc/Circular_kernel_2/fig</item>
           <item>../Circular_kernel_3/doc/Circular_kernel_3/fig</item>
           <item>../Algebraic_kernel_d/doc/Algebraic_kernel_d/fig</item>
+          <item>../Kernel_d/doc/Kernel_d/fig</item>
           <item>../Point_set_2/doc/Point_set_2/fig</item>
           <item>../SearchStructures/doc/SearchStructures/fig</item>
           <item>../Polytope_distance_d/doc/Polytope_distance_d/fig</item>
@@ -1212,6 +1225,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Circular_kernel_2.tag=../../CGAL.CGAL.2D-Circular-Geometry-Kernel/html</item>
           <item>./tags/Circular_kernel_3.tag=../../CGAL.CGAL.3D-Spherical-Geometry-Kernel/html</item>
           <item>./tags/Algebraic_kernel_d.tag=../../CGAL.CGAL.Algebraic-Kernel/html</item>
+          <item>./tags/Kernel_d.tag=../../CGAL.CGAL.dD-Geometry-Kernel/html</item>
           <item>./tags/Point_set_2.tag=../../CGAL.CGAL.2D-Range-and-Neighbor-Search/html</item>
           <item>./tags/SearchStructures.tag=../../CGAL.CGAL.dD-Range-and-Segment-Trees/html</item>
           <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
