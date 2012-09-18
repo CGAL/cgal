@@ -1,15 +1,13 @@
-
-\page chapterSubdivision 3D Surface Subdivision Methods
-
 namespace CGAL {
 /*!
 
 \mainpage 3D Surface Subdivision Methods
 \anchor chapterSubdivision
+\autotoc
 
 \authors Le-Jeng Andy Shiue
 
-\image html teaser.jpg
+\image html subdivision-teaser.jpg
 
 \section sectionSubIntro Introduction 
 
