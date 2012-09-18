@@ -21,47 +21,47 @@ typedef K::Iso_rectangle_2              Iso_rectangle_2;
 
 typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_rect;
 
+int test(std::ifstream* is_ptr);
+
 int main(int argc,char *argv[])
 {
-  const CGAL::Set_ieee_double_precision pfr;
-
-  std::ifstream *is_ptr;
-  double x,y;
-  std::list<Point> points_list;
-  Iso_rectangle_2 ler;
-
-  if(argc == 2) {
-    // initialize input file
-    is_ptr = new std::ifstream(argv[1]);
-    if(is_ptr->bad()) {
-      std::cerr << "Bad input file : " << argv[1] << std::endl;
-      return(1);
-    }
-  } else {
+  if(argc < 2) {
     std::cerr << "Syntax : test [input file name] > [output file name]\n";
     return(1);
   }
 
+  for(int i = 1; i < argc; ++i) { 
+    std::cout << "Using " << argv[i] << std::endl;
+    std::ifstream* is_ptr = new std::ifstream(argv[i]);
+    if(is_ptr->bad()) {
+      std::cerr << "Bad input file : " << argv[1] << std::endl;
+      return(1);
+    }
+    test(is_ptr);;
+    delete is_ptr;
+  }
+}
+
+int test(std::ifstream* is_ptr)
+{
+  const CGAL::Set_ieee_double_precision pfr;
+
+  double x,y;
+  std::list<Point> points_list;
+  Iso_rectangle_2 ler;
   // determine bounding box
   Number_Type x1,y1,x2,y2;
-  if(argc == 1) {
-    x1 = MIN_X;
-    y1 = MIN_Y;
-    x2 = MAX_X;
-    y2 = MAX_Y;
-  } else {
-    Number_Type tmp;
-    (*is_ptr) >> x1 >> y1 >> x2 >> y2;
-    if(x1 > x2) {
-      tmp = x1;
-      x1 = x2;
-      x2 = tmp;
-    }
-    if(y1 > y2) {
-      tmp = y1;
-      y1 = y2;
-      y2 = tmp;
-    }
+  Number_Type tmp;
+  (*is_ptr) >> x1 >> y1 >> x2 >> y2;
+  if(x1 > x2) {
+    tmp = x1;
+    x1 = x2;
+    x2 = tmp;
+  }
+  if(y1 > y2) {
+    tmp = y1;
+    y1 = y2;
+    y2 = tmp;
   }
 
   Iso_rectangle_2 b(Point(x1, y1), Point(x2, y2));
