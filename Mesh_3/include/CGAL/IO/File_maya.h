@@ -110,8 +110,8 @@ output_to_maya(std::ostream& os,
        vit != tr.finite_vertices_end();
        ++vit)
   {
-    if ( (surfaceOnly  && c3t3.in_dimension(vit) == 2)
-      || (!surfaceOnly && c3t3.in_dimension(vit) >= 2))
+    if ( (surfaceOnly  && c3t3.in_dimension(vit) <= 2)
+      || !surfaceOnly)
     {
       V[vit] = num_vertices++;
       Point_3 p = vit->point();
