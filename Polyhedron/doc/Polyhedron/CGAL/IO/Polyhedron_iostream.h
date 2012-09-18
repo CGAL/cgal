@@ -2,7 +2,6 @@ namespace CGAL {
 
 /*!
 \ingroup PkgPolyhedron
-\anchor refPolyhedron_operator_rightshift 
 
 This operator reads a polyhedral surface in Object File Format, OFF, 
 with file extension <TT>.off</TT>, which is also understood by 
