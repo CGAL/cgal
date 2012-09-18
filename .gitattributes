@@ -2051,8 +2051,12 @@ Combinatorial_map/doc/Combinatorial_map/PackageDescription.txt -text
 Combinatorial_map/doc/Combinatorial_map/examples.txt -text
 Combinatorial_map/doc/Combinatorial_map/fig/Diagramme_class.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/Diagramme_class.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/cmap2d-3d-attribs.png -text
+Combinatorial_map/doc/Combinatorial_map/fig/cmap3d-example2.png -text
 Combinatorial_map/doc/Combinatorial_map/fig/cmaps2d-3d-zoom.png -text
 Combinatorial_map/doc/Combinatorial_map/fig/cmaps2d-3d.png -text
+Combinatorial_map/doc/Combinatorial_map/fig/example-insertions.png -text
+Combinatorial_map/doc/Combinatorial_map/fig/exemple-3d-sew.png -text
 Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew.png -text svneol=unset#image/png
 Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew2.pdf -text svneol=unset#application/pdf
@@ -2080,6 +2084,7 @@ Combinatorial_map/doc/Combinatorial_map/fig/logo-combinatorial-map-small.png -te
 Combinatorial_map/doc/Combinatorial_map/fig/logo-combinatorial-map.png -text svneol=unset#image/png
 Combinatorial_map/doc/Combinatorial_map/fig/map2d-with-attrib.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/map2d-with-attrib.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/nonmanifolds.png -text
 Combinatorial_map/doc/Combinatorial_map/fig/object2d-nonmanifold.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/object2d-nonmanifold.png -text svneol=unset#image/png
 Combinatorial_map/doc/Combinatorial_map/fig/object2d.pdf -text svneol=unset#application/pdf
@@ -2101,10 +2106,12 @@ Combinatorial_map/doc/Combinatorial_map/fig/pb-carte3D.pdf -text svneol=unset#ap
 Combinatorial_map/doc/Combinatorial_map/fig/pb-carte3D.png -text svneol=unset#image/png
 Combinatorial_map/doc/Combinatorial_map/fig/pb2-carte3D.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/pb2-carte3D.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/problems-cmaps.png -text
 Combinatorial_map/doc/Combinatorial_map/fig/quasivariete.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/quasivariete.png -text svneol=unset#image/png
 Combinatorial_map/doc/Combinatorial_map/fig/quasivarietea.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/quasivarietea.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/quasivarietes.png -text
 Combinatorial_map/doc/Combinatorial_map/fig/triangulation.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/triangulation.png -text svneol=unset#image/png
 Combinatorial_map/doc_tex/Combinatorial_map/Combinatorial_map.tex -text

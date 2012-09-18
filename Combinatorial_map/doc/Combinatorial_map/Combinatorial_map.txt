@@ -235,8 +235,7 @@ have for example \f$ \beta_1\f$(1)=2, \f$ \beta_2\f$(1)=10, and
 for example \f$ \beta_3\f$(10)=\f$ \varnothing\f$ and \f$ \beta_3\f$(12)=\f$ \varnothing\f$.
 
 \anchor figexemplecarte3d
-\image html object3d.png
-\image html exemple-carte2-3d.png
+\image html cmap3d-example2.png
 <center><b>
 Example of a 3D combinatorial map. <B>Left</B>: A 3D object made of
 two volumes adjacent along facet <I>f2</I>. <B>Right</B>: The
@@ -421,8 +420,7 @@ for example corresponding to the length of the associated 1-cell, and
 in RGB format.
 
 \anchor figexempleattribs
-\image html map2d-with-attrib.png
-\image html exemple-carte-3d-sew2.png
+\image html cmap2d-3d-attribs.png
 
 <center><b>Example of combinatorial maps with attributes. Attributes
 are represented by black rectangles containing an information, and
@@ -460,8 +458,7 @@ right is not a manifold since the neighborhood of the point <I>p</I> in the
 object is not homeomorphic\footnote{Intuitively, two objects are homeomorphic if each object can be continuously deformed into the second one. In such a case, the two objects have exactly the same topological properties.} to a 3D ball.
 
 \anchor figquasivariete
-\image html quasivarietea.png
-\image html quasivariete.png
+\image html quasivarietes.png
 <center><b>Example of a 3D quasi-manifold which is not a manifold. The
 object to the right is made of the four pyramids (shown to the left)
 glued together along facets, thus it is a quasi-manifold.
@@ -481,9 +478,7 @@ combinatorial maps.
 
 
 \anchor fignonquasimanifold
-\image html object2d-nonmanifold.png
-\image html object3d-nonmanifold.png
-\image html object3d-nonmanifold2.png
+\image html nonmanifolds.png
 <center><b>Three examples of non quasi-manifold objects. <B>Left</B>:
 A 2D object which is not a quasi-manifold since the two 2-cells share
 a common vertex but no common 1-cell. <B>Middle</B>: A 3D object which
@@ -500,8 +495,7 @@ study now the inverse relation. Does any set of darts linked together by
 we can see in Figure \ref figpbcarte, the answer is no.
 
 \anchor figpbcarte
-\image html pb-carte3D.png
-\image html pb2-carte3D.png
+\image html problems-cmaps.png
 
 <center><b>Two examples of darts linked together by some \f$
 \beta_0\f$, \f$ \beta_1\f$, \f$ \beta_2\f$ and \f$ \beta_3\f$ which
@@ -899,8 +893,7 @@ The `CombinatorialMap` defines two groups of methods to modify the
 \f$ \beta\f$ pointers of existing darts.
 
 \anchor figexemplesew
-\image html exemple-carte-3d-sew.png
-\image html exemple-carte-3d-sew2.png
+\image html exemple-3d-sew.png
 
 <center><b>Example of 3-sew operation. <B>Left</B>: A 3D combinatorial
 map containing two volumes that are not connected, with
@@ -1251,9 +1244,7 @@ retrieve the original combinatorial hexahedron since we have removed
 all the inserted elements.
 
 \anchor fig_exemple_ope
-\image html ope1.png
-\image html ope2.png
-\image html ope3.png
+\image html example-insertions.png
 
 <center><b>Example of high level operations. <B>Left</B>: Initial 3D combinatorial map after the creation of the combinatorial hexahedron. <B>Middle</B>: Combinatorial map obtained after the two 1-cell insertions. The two 2-cells were split in two. <B>Right</B>: Combinatorial map obtained after the 2-cell insertion. The 3-cell was split in two.
 </b></center>
