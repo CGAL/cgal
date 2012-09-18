@@ -38,6 +38,7 @@ namespace po = boost::program_options;
 
 #define MESH_3_WITH_FEATURES
 #define MESH_3_BENCHMARK_EXPORT_TO_MAYA
+#define MESH_3_BENCHMARK_EXPORT_TO_MESH
 
 // ==========================================================================
 // MESH_3 GENERAL PARAMETERS
@@ -145,8 +146,8 @@ const int TET_SHAPE       = 3;
 
 #else // !CONCURRENT_MESH_3
 
-//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
-# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+//# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
   // For better performance on meshes like fandisk
@@ -584,7 +585,9 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   Mesh_domain domain(polyhedron);
 
 #ifdef MESH_3_WITH_FEATURES
-  domain.detect_features(150);
+  std::cerr << "Detecting features... ";
+  domain.detect_features();
+  std::cerr << "done." << std::endl;
 #endif
 
   Mesh_parameters params;
@@ -601,6 +604,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 
   // Mesh criteria (no cell_size set)
   Mesh_criteria criteria(
+    edge_size=params.facet_sizing,
     facet_angle=params.facet_angle,
     facet_size=params.facet_sizing,
     facet_distance=params.facet_approx,
@@ -611,11 +615,6 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
-  std::cerr
-    << "Vertices: " << c3t3.triangulation().number_of_vertices() << std::endl
-    << "Facets  : " << c3t3.number_of_facets_in_complex() << std::endl
-    << "Tets    : " << c3t3.number_of_cells_in_complex() << std::endl;
-
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
@@ -623,13 +622,18 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 #ifdef MESH_3_BENCHMARK_EXPORT_TO_MAYA
   c3t3.output_to_maya(std::ofstream(input_filename + ".maya"), true);
 #endif
+  
+#ifdef MESH_3_BENCHMARK_EXPORT_TO_MESH
+  c3t3.output_to_medit(std::ofstream(input_filename + ".mesh"), true);
+#endif
 
   return true;
 }
 
 
 template <class ImplicitFunction>
-bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunction func)
+bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunction func, 
+                        const std::string &function_name)
 {
   // Domain
 #ifdef MESH_3_WITH_FEATURES
@@ -652,7 +656,7 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
 
   // Create domain
 	Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
-  Mesh_domain domain(func, bounding_sphere, 1e-7);
+  Mesh_domain domain(func, bounding_sphere/*, 1e-7*/);
 
 #ifdef MESH_3_WITH_FEATURES
 	// Add 12 feature creases
@@ -708,14 +712,17 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
-  std::cerr
-    << "Vertices: " << c3t3.triangulation().number_of_vertices() << std::endl
-    << "Facets  : " << c3t3.number_of_facets_in_complex() << std::endl
-    << "Tets    : " << c3t3.number_of_cells_in_complex() << std::endl;
-
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
+  
+#ifdef MESH_3_BENCHMARK_EXPORT_TO_MAYA
+  c3t3.output_to_maya(std::ofstream(function_name + ".maya"), true);
+#endif
+
+#ifdef MESH_3_BENCHMARK_EXPORT_TO_MESH
+  c3t3.output_to_medit(std::ofstream(function_name + ".mesh"), true);
+#endif
 
   return true;
 }
@@ -857,20 +864,20 @@ int main()
             display_info(num_threads);
 
             if (input == "Klein_function")
-              make_mesh_implicit(facet_sizing, cell_sizing, Klein_function());
+              make_mesh_implicit(facet_sizing, cell_sizing, Klein_function(), input);
             /*else if (input == "Tanglecube_function")
-              make_mesh_implicit(facet_sizing, cell_sizing, Tanglecube_function());*/
+              make_mesh_implicit(facet_sizing, cell_sizing, Tanglecube_function(), input);*/
             else if (input == "Sphere_function")
-              make_mesh_implicit(facet_sizing, cell_sizing, Sphere_function(1.));
+              make_mesh_implicit(facet_sizing, cell_sizing, Sphere_function(1.), input);
             else if (input == "Thin_cylinder_function")
             {
               Cylinder_function f(0.05, 3.);
-              make_mesh_implicit(facet_sizing, cell_sizing, f);
+              make_mesh_implicit(facet_sizing, cell_sizing, f, input);
             }
             else if (input == "Pancake_function")
             {
               Cylinder_function f(3., 0.1);
-              make_mesh_implicit(facet_sizing, cell_sizing, f);
+              make_mesh_implicit(facet_sizing, cell_sizing, f, input);
             }
             else
               make_mesh_polyhedron(input, facet_sizing, cell_sizing);
@@ -897,7 +904,7 @@ int main()
       std::cerr << "Refinement #" << i << "..." << std::endl;
       display_info(num_threads);
       //make_mesh_polyhedron(filename, facet_sizing, cell_sizing);
-      make_mesh_implicit(facet_sizing, cell_sizing, Klein_function());
+      make_mesh_implicit(facet_sizing, cell_sizing, Klein_function(), "Klein_function");
       std::cerr << "Refinement #" << i << " done." << std::endl;
       std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
     }
