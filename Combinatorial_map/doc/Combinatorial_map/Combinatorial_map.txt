@@ -35,8 +35,7 @@ Figure \ref figexemple3Dmanifold showing some cells of the
 subdivision and some adjacency and incidence relations.
 
 \anchor figexemple3Dmanifold
-\image html object2d.png
-\image html intuitif-example.png
+\image html objects2d-3d.png
 <center><b>
 Example of subdivided objects that can be described by combinatorial
 maps. <B>Left</B>: A 2D object composed of three facets (2-cells),
@@ -71,8 +70,7 @@ the 2D and 3D combinatorial maps describing the two objects given in
 Figure \ref figexemple3Dmanifold.
 
 \anchor figexemplecombimaps
-\image html intuitif-example-map2d.png
-\image html intuitif-example-map.png
+\image html cmaps2d-3d.png
 <center><b>
 Combinatorial maps representing the objects given in Figure \ref
 figexemple3Dmanifold. <B>Left</B>: The 2D combinatorial map which
@@ -122,8 +120,7 @@ facet (2-cell). Starting from any of these six darts and following
 describing edge <I>e4</I>.
 
 \anchor figintuitiveexemple
-\image html intuitif-example-zoom.png
-\image html intuitif-example-zoom2.png
+\image html cmaps2d-3d-zoom.png
 <center><b>
 Two zooms on the 3D combinatorial map given in Figure \ref
 figexemplecombimaps (Right). <B>Left</B>: Zoom around the central edge

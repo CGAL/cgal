@@ -2051,6 +2051,8 @@ Combinatorial_map/doc/Combinatorial_map/PackageDescription.txt -text
 Combinatorial_map/doc/Combinatorial_map/examples.txt -text
 Combinatorial_map/doc/Combinatorial_map/fig/Diagramme_class.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/Diagramme_class.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/cmaps2d-3d-zoom.png -text
+Combinatorial_map/doc/Combinatorial_map/fig/cmaps2d-3d.png -text
 Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew.png -text svneol=unset#image/png
 Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew2.pdf -text svneol=unset#application/pdf
@@ -2088,6 +2090,7 @@ Combinatorial_map/doc/Combinatorial_map/fig/object3d-nonmanifold2.pdf -text svne
 Combinatorial_map/doc/Combinatorial_map/fig/object3d-nonmanifold2.png -text svneol=unset#image/png
 Combinatorial_map/doc/Combinatorial_map/fig/object3d.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/object3d.png -text svneol=unset#image/png
+Combinatorial_map/doc/Combinatorial_map/fig/objects2d-3d.png -text
 Combinatorial_map/doc/Combinatorial_map/fig/ope1.pdf -text svneol=unset#application/pdf
 Combinatorial_map/doc/Combinatorial_map/fig/ope1.png -text svneol=unset#image/png
 Combinatorial_map/doc/Combinatorial_map/fig/ope2.pdf -text svneol=unset#application/pdf
