@@ -258,6 +258,16 @@ A vertex is always associated with a geometric entity, namely with
 a `Point_2` object, which can be obtained by the `point()`
 method of the `Vertex` class nested within `Arrangement_2`.
 
+\todo With doxygen it is enough to prefix a method with the
+right scope to get the right link in the manual. So we could write:
+<br><br>
+"A vertex is always associated with a geometric entity, namely with
+an `Arrangement_2::Point_2` object, which can be obtained by the 
+`Arrangement_2::Vertex::point()` method."
+
+
+
+
 The `is_isolated()` method determines whether a vertex is isolated
 or not. Recall that the halfedges incident to a non-isolated vertex,
 namely the halfedges that share a common target vertex, form a circular
