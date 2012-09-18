@@ -3878,6 +3878,11 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
 
   // Check if the leftmost vertex is a contraction point in y, in which case
   // special care must be taken.
+
+  // TODO EFEF: replace v_min->parameter_space_in_{x,y}() with ps_{x,y}_min
+  // First, it is available. Secondly, we want to get rid of these fields
+  // in the vertex record.
+  
   if (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
        is_contracted(Bottom_side_category())) ||
       ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
@@ -3893,7 +3898,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
       // associated curve.
       ind_curr = (he_min->direction() == ARR_LEFT_TO_RIGHT) ?
         ARR_MAX_END : ARR_MIN_END;
-
+v
       if (he_min->next() != he_last)
         // The contraction point is he_min->next()'s source and cv_next
         // is its associated curve.
@@ -3931,14 +3936,14 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
       ((ind_curr == ARR_MAX_END) ? SMALLER : LARGER) :
       m_geom_traits->compare_x_curve_ends_2_object()(*p_cv_curr, ind_curr,
                                                      *p_cv_next, ind_next);
-    CGAL_assertion(x_res != EQUAL);
 
     // bool rc1 = (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
     //              (x_res == SMALLER)) ||
     //             ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
     //              (x_res == LARGER)));
     // std::cout << "rc1: " << rc1 << std::endl;
-      
+
+    // Observe that if x_res == EQUAL the given subsequence is always exterior.
     return (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
              (x_res == SMALLER)) ||
             ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
