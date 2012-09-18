@@ -13,12 +13,10 @@ else()
 endif()
 
 # Tested version:
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 #--------------------------------------------------------------------------------------------------
@@ -579,6 +577,7 @@ cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" )
 
 # default is on, but some use-cases need to set it to off, e.g., debian packages
 option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" ON)
+
 # additional info: some header files in CGAL add additional code if
 # certain optional libs are installed, and some examples/tests rely on
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
@@ -641,6 +640,7 @@ add_config_flag( CGAL_USE_LEDA )
 add_config_flag( CGAL_USE_MPFI )
 add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
+
 add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
 if (NOT ${WITH_CGAL_Core}) 
@@ -768,26 +768,18 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-# fake to simplify loop
-set(CGAL_CGAL_LIBRARY ${CGAL_LIBRARY})
-hide_variable(CGAL_CGAL_LIBRARY)
-
-# Set CGAL_INSTALLED_LIBRARY, CGAL_INSTALLED_Qt3_LIBRARY and so on. Those
+# Set CGAL_LIBRARY_INSTALLED, CGAL_Qt3_LIBRARY_INSTALLED and so on. Those
 # variables are the path to the libraries installed by the install
 # target. Used in the generation of the installed CGALConfig.cmake
 foreach(lib ${CGAL_CONFIGURED_LIBRARIES} CGAL) # note the added fake 'CGAL'
-  if(CGAL_${lib}_LIBRARY)
-    get_filename_component(lib_name "${CGAL_${lib}_LIBRARY}" NAME)
-    set(CGAL_INSTALLED_${lib}_LIBRARY "${CMAKE_INSTALL_PREFIX}/${CGAL_INSTALL_LIB_DIR}/${lib_name}")
-  else()
-    set(CGAL_INSTALLED_${lib}_LIBRARY "")
+ if(${lib}_LIBRARY)
+    get_filename_component(lib_name "${${lib}_LIBRARY}" NAME)
+    set(${lib}_LIBRARY_INSTALLED "${CMAKE_INSTALL_PREFIX}/${CGAL_INSTALL_LIB_DIR}/${lib_name}")
+ else()
+    set(${lib}_LIBRARY_INSTALLED "")
   endif()
-  hide_variable(CGAL_INSTALLED_${lib}_LIBRARY)
+  hide_variable(${lib}_LIBRARY_INSTALLED)
 endforeach()
-
-# set back from the fake
-set(CGAL_INSTALLED_LIBRARY  ${CGAL_INSTALLED_CGAL_LIBRARY})
-hide_variable(CGAL_INSTALLED_LIBRARY)
 
 create_CGALconfig_files()
 

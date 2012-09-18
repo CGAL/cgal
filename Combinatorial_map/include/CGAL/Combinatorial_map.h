@@ -257,6 +257,12 @@ namespace CGAL {
     Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
                             const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
     { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5, t6, t7, t8); }
+    template < typename T1, typename T2, typename T3, typename T4, typename T5,
+               typename T6, typename T7, typename T8, typename T9 >
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                            const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8,
+                            const T9 &t9)
+    { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5, t6, t7, t8, t9); }
 #endif
 
     /** Erase a dart from the list of darts.
@@ -943,6 +949,18 @@ namespace CGAL {
                   "create_attribute<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8); 
+    }
+    template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
+             typename T5, typename T6, typename T7, typename T8, typename T9>
+    typename Attribute_handle<i>::type
+    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                     const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8,
+                     const T9 &t9)
+    {      
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8, t9); 
     }
 #endif
 

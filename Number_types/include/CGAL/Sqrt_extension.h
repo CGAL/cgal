@@ -65,6 +65,7 @@ factorization property.
 #include <CGAL/Sqrt_extension/Get_arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension/convert_to_bfi.h>
 #include <CGAL/Sqrt_extension/Wang_traits.h>
+#include <CGAL/Sqrt_extension/Eigen_NumTraits.h>
 
 
 #endif  // CGAL_SQRT_EXTENSION_H
