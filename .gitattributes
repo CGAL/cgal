@@ -1426,6 +1426,23 @@ Arrangement_on_surface_2/test/Sweep_line_2/cgal_test_with_cmake eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/test_sweep.cpp eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/test_sweep_conic.cpp eol=lf
 Arrangement_on_surface_2/todo -text
+BGL/doc/BGL/BGL.txt -text
+BGL/doc/BGL/CGAL/HalfedgeDS_face_max_base_with_id.h -text
+BGL/doc/BGL/CGAL/HalfedgeDS_halfedge_max_base_with_id.h -text
+BGL/doc/BGL/CGAL/HalfedgeDS_vertex_max_base_with_id.h -text
+BGL/doc/BGL/CGAL/Polyhedron_items_with_id_3.h -text
+BGL/doc/BGL/CGAL/Triangulation_vertex_base_with_id_2.h -text
+BGL/doc/BGL/CGAL/boost/graph/graph_traits_Arrangement_2.h -text
+BGL/doc/BGL/CGAL/boost/graph/graph_traits_Polyhedron_3.h -text
+BGL/doc/BGL/CGAL/boost/graph/graph_traits_Triangulation_2.h -text
+BGL/doc/BGL/CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h -text
+BGL/doc/BGL/CGAL/boost/graph/properties.h -text
+BGL/doc/BGL/Concepts/HalfedgeGraph.h -text
+BGL/doc/BGL/PackageDescription.txt -text
+BGL/doc/BGL/fig/emst-detail.png -text svneol=unset#image/png
+BGL/doc/BGL/fig/emst.jpg -text svneol=unset#image/jpeg
+BGL/doc/BGL/fig/ex_bgl.gif -text svneol=unset#image/gif
+BGL/doc/BGL/fig/ex_bgl.pdf -text svneol=unset#application/pdf
 BGL/doc_tex/BGL/fig/emst-detail.png -text
 BGL/doc_tex/BGL/fig/emst.jpg -text
 BGL/doc_tex/BGL/fig/ex_bgl.fig -text svneol=unset#application/octet-stream

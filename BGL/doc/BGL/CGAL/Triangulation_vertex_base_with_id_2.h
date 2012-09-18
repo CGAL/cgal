@@ -1,0 +1,48 @@
+namespace CGAL {
+
+/*!
+\ingroup PkgBGL
+
+The class `Triangulation_vertex_base_with_id_2` is a model of the
+concept `TriangulationVertexBase_2`, the base vertex of a
+2D-triangulation.  It provides an integer field that can be used to
+index vertices for \sc{Bgl} algorithms.
+
+Note that the user is in charge to set the index correctly before 
+running a graph algorithm. 
+
+Parameters 
+-------------- 
+
+The first template argument is the geometric traits class
+`TriangulationTraits_2` which provides the `Point_2`.
+
+The second template argument is a vertex base class from which 
+`Triangulation_vertex_base_with_id_2` derives. It has the default 
+value `Triangulation_vertex_base_2<TriangulationTraits_2>`. 
+
+\models ::TriangulationVertexBase_2 
+
+\sa `CGAL::Triangulation_vertex_base_2` 
+*/
+template< typename TriangulationTraits_2, typename TriangulationVertexBase_2 >
+class Triangulation_vertex_base_with_id_2 : public TriangulationVertexBase_2 {
+public:
+
+/// \name Access Functions 
+/// @{
+
+/*! 
+Returns the index. 
+*/ 
+int id() const; 
+
+/*! 
+Returns a reference to the index stored in the vertex. 
+*/ 
+int& id(); 
+
+/// @}
+
+}; /* end Triangulation_vertex_base_with_id_2 */
+} /* end namespace CGAL */
