@@ -3171,6 +3171,65 @@ Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3_subdivision.c
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_pqq_subdivision.cpp -text
 Linear_cell_complex/demo/Linear_cell_complex/MainWindow.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/about_Linear_cell_complex_3.html svneol=native#text/html
+Linear_cell_complex/doc/Linear_cell_complex/CGAL/Cell_attribute_with_point.h -text
+Linear_cell_complex/doc/Linear_cell_complex/CGAL/Linear_cell_complex.h -text
+Linear_cell_complex/doc/Linear_cell_complex/CGAL/Linear_cell_complex_constructors.h -text
+Linear_cell_complex/doc/Linear_cell_complex/CGAL/Linear_cell_complex_min_items.h -text
+Linear_cell_complex/doc/Linear_cell_complex/CGAL/Linear_cell_complex_operations.h -text
+Linear_cell_complex/doc/Linear_cell_complex/CGAL/Linear_cell_complex_traits.h -text
+Linear_cell_complex/doc/Linear_cell_complex/Concepts/CellAttributeWithPoint.h -text
+Linear_cell_complex/doc/Linear_cell_complex/Concepts/LinearCellComplexItems.h -text
+Linear_cell_complex/doc/Linear_cell_complex/Concepts/LinearCellComplexTraits.h -text
+Linear_cell_complex/doc/Linear_cell_complex/Linear_cell_complex.txt -text
+Linear_cell_complex/doc/Linear_cell_complex/PackageDescription.txt -text
+Linear_cell_complex/doc/Linear_cell_complex/fig/4Dobject.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/4Dobject.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/Diagramme_class.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/Diagramme_class.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/basic-example3D.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/basic-example3D.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/creations.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/creations.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew2.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew2.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/import_graph.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/import_graph.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/insert-edge.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/insert-edge.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/insert-vertex.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/insert-vertex.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-object.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-object.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-zoom.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-zoom.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-zoom2.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-zoom2.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/logo-lcc-small.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/logo-lcc.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_cuboid.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_cuboid.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_hexahedron.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_hexahedron.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_quadrilateral.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_quadrilateral.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_rectangle.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_rectangle.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_segment.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_segment.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_tetrahedron.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_tetrahedron.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_triangle.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/make_triangle.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/object2d.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/object2d.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/plane-graph.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/plane-graph.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/triangulation.pdf -text svneol=unset#application/pdf
+Linear_cell_complex/doc/Linear_cell_complex/fig/triangulation.png -text svneol=unset#image/png
 Linear_cell_complex/doc_tex/Linear_cell_complex/Linear_cell_complex.tex -text
 Linear_cell_complex/doc_tex/Linear_cell_complex/PkgDescription.tex -text
 Linear_cell_complex/doc_tex/Linear_cell_complex/fig/4Dobject.fig -text

@@ -281,6 +281,23 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>Linear Cell Complex</name>
+        <input>../Linear_cell_complex/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Linear_cell_complex/doc/Linear_cell_complex/</string>
+          <string name="STRIP_FROM_INC_PATH">../Linear_cell_complex/doc/Linear_cell_complex/</string>
+          <string name="GENERATE_TAGFILE">./tags/Linear_cell_complex.tag</string>
+          <string name="EXAMPLE_PATH">../Linear_cell_complex/examples</string>
+          <string name="IMAGE_PATH">../Linear_cell_complex/doc/Linear_cell_complex/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+            <item>./tags/Combinatorial_map.tag=../../CGAL.CGAL.Combinatorial-Maps/html</item>
+          </list>
+        </doxygen>
+      </project>
+
+
+      <project>
         <name>2D Convex Hulls and Extreme Points</name>
         <input>../Convex_hull_2/doc</input>
         <doxygen>
@@ -1167,6 +1184,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../HalfedgeDS/doc/HalfedgeDS/fig</item>
           <item>../BGL/doc/BGL/fig</item>
           <item>../Combinatorial_map/doc/Combinatorial_map/fig</item>
+          <item>../Linear_cell_complex/doc/Linear_cell_complex/fig</item>
           <item>../Interval_skip_list/doc/Interval_skip_list/fig</item>
           <item>../Nef_2/doc/Nef_2/fig</item>
           <item>../Nef_S2/doc/Nef_S2/fig</item>
@@ -1241,6 +1259,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.Halfedge-Data-Structures/html</item>
           <item>./tags/BGL.tag=../../CGAL.CGAL.CGAL-and-the-Boost-Graph-Library/html</item>
           <item>./tags/Combinatorial_map.tag=../../CGAL.CGAL.Combinatorial-Maps/html</item>
+          <item>./tags/Linear_cell_complex.tag=../../CGAL.CGAL.Linear-Cell-Complex/html</item>
           <item>./tags/Interval_skip_list.tag=../../CGAL.CGAL.Interval-Skip-List/html</item>
           <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
           <item>./tags/Nef_S2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons-Embedded-on-the-Sphere/html</item>
