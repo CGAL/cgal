@@ -1,0 +1,25 @@
+
+/*!
+\ingroup PkgSphericalKernel3Concepts
+\cgalconcept
+
+*/
+
+class SphericalKernel::ConstructCircularMaxVertex_3 {
+public:
+
+/// \name Operations
+/// A model `fo` of this concept must provide: 
+/// @{
+
+/*! 
+Constructs the maximal vertex of `l` with lexicographically 
+largest coordinates. 
+*/ 
+SphericalKernel::Circular_arc_point_3 operator() 
+(const SphericalKernel::Line_arc_3 & l); 
+
+/// @}
+
+}; /* end SphericalKernel::ConstructCircularMaxVertex_3 */
+

@@ -1,0 +1,30 @@
+
+/*!
+\ingroup PkgSphericalKernel3Concepts
+\cgalconcept
+
+\sa `SphericalKernel::ConstructPlane_3`
+\sa `SphericalKernel::GetEquation`
+
+*/
+
+class AlgebraicKernelForSpheres::ConstructPolynomial_1_3 {
+public:
+
+/// \name Operations
+/// A model `fo` of this concept must provide: 
+/// @{
+
+/*! 
+Constructs polynomial `ax+by+cz+d`. 
+*/ 
+AlgebraicKernelForSpheres::Polynomial_1_3 
+operator()(const AlgebraicKernelForSpheres::RT &a, 
+const AlgebraicKernelForSpheres::RT &b, 
+const AlgebraicKernelForSpheres::RT &c, 
+const AlgebraicKernelForSpheres::RT &d); 
+
+/// @}
+
+}; /* end AlgebraicKernelForSpheres::ConstructPolynomial_1_3 */
+
