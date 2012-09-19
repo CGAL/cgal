@@ -244,6 +244,6 @@ _______________________________________________________DELAUNAY_TRIANGULATION
 
 ________________________________________________________REGULAR_TRIANGULATION
 
-*) write Regular_triangulaion.h (!)
+*) write Regular_triangulation.h (!)
 *) write RegularTriangulationTraits.tex
 *) write Regular_triangulation.tex

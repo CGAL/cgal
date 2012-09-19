@@ -8,12 +8,14 @@ This package proposes data structure and algorithms to compute
 triangulations of points in any dimensions.
 The \ccc{Triangulation_data_structure} allows to store and manipulate the
 combinatorial part of a triangulation while the geometric classes
-\ccc{Triangulation} and \ccc{DelaunayTriangulation} allows to 
+\ccc{Triangulation} and \ccc{Delaunay_triangulation} allows to
 compute a (Delaunay) triangulation of a set of points and to maintain
 it under insertions (and deletions in the Delaunay case).
 
 
 \section{Introduction\label{triangulation:intro}}
+
+\subsubsection{Some definitions}
 
 A {\em finite abstract simplicial complex} is built on a finite set of
 vertices $V$ and consists of a collection $S$ of subsets of $V$ such that
@@ -28,7 +30,7 @@ singular of which is {\em simplex}).
 A simplex $s\in S$ is {\em maximal} if it is not a proper subset of some other
 set in $S$. The simplicial complex is {\em pure} %(or {\em homogeneous})
 if all the maximal simplices have the same cardinality, i.e., they have the same
-number of vertices. 
+number of vertices.
 In the sequel, we will call these maximal simplices {\em full cells}.
 A {\em face} of a simplex is a subset of it.
 A {\em proper face} of a simplex is a strict subset of it.
@@ -45,6 +47,8 @@ simplices (the empty set counts).
 \end{itemize}
 See the \ccAnchor{http://en.wikipedia.org/wiki/Simplicial_complex}{wikipedia
 entry} for more about simplicial complexes.
+
+\subsubsection{What's in this package?}
 
 This \cgal\ package deals with pure finite simplicial complexes
 without boundary, which
@@ -79,7 +83,7 @@ supports deletion of vertices.
 
 %The rest of this user manual gives more details about these classes and the
 %data they store, but does not tell the whole story. For the latter, the user
-%should have a look at the reference manual of this package. 
+%should have a look at the reference manual of this package.
 
 %A last remark:
 %pure complexes are also called \emph{triangulations}. We feel more confortable
@@ -114,9 +118,9 @@ $\sigma'$ is a proper sub-face of $\sigma$ or \emph{vice versa}.
 In this section, we describe the concept \ccc{TriangulationDataStructure} for
 which \cgal\ provides one model class:
 \ccc{CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex,
-TriangulationDSFullCell>}.  For simplicity, we use the abbreviation \tds.
+TriangulationDSFullCell>}.%  For simplicity, we use the abbreviation \tds.
 
-A \tds\ can represent an abstract pure complex, 
+A \tds\ can represent an abstract pure complex
 such that any facet is incident to exactly two full cells.
 
 A \tds\ has a property called the {\em maximal dimension} which is a
@@ -126,8 +130,8 @@ and can then be queried using the method \ccc{tds.maximal_dimension()}.
 A \tds\ also knows the {\em current dimension} of its full cells,
 which can be queried with \ccc{tds.current_dimension()}. In the sequel, let
 us denote the maximal dimension with \ad\ and the current dimension with \cd.
-It always holds that $-2\leq\cd\leq\ad$ and $0<\ad$.
-The special meaning of negative values for $d$ will be explain below.
+The inequalities $-2\leq\cd\leq\ad$ and $0<\ad$ always hold.
+The special meaning of negative values for $d$ is explained below.
 
 %\note{I remove some comments about 3D vs dD which are not exact. %
 %in T3D package in degenerate dimension \ccc{Cell} is actually used with the %
@@ -142,7 +146,7 @@ The special meaning of negative values for $d$ will be explain below.
 %
 %% By contrast, in the present \ccc{Triangulation} \cgal\ package, the reference
 %% dimension of a pure complex (or a pure complex data structure) is its current
-%% dimension. This means that, whatever the current dimension is, a 
+%% dimension. This means that, whatever the current dimension is, a
 %% full cell is always represented by the \ccc{FullCell} nested type, And a
 %% \ccc{Facet} represents a face of dimension \ccc{current_dimension()-1}
 %% {\em and not} \ccc{maximal_dimension()-1}.
@@ -152,8 +156,8 @@ The special meaning of negative values for $d$ will be explain below.
 A \tds\ can be viewed as
 a {triangulation} of the topological sphere $\sphere^\cd$,
 i.e., its faces can be embedded to form a partition of
-$\sphere^\cd$ into $\cd$-simplices. 
-% When a 
+$\sphere^\cd$ into $\cd$-simplices.
+% When a
 % \tds\ is used as the combinatorial part of a geometric triangulation, one
 % special vertex of the \tds\ plays the role of the {\em vertex at
 % infinity}; we can consider that the triangulation covers the whole
@@ -167,11 +171,8 @@ always exactly  $\cd+1$ neighbors.
 Two  full cells $\sigma$ and $\sigma'$ sharing a facet are called
 {\em neighbors}.
 
-
-Possible values of $\cd$ (the \emph{current dimension} of the triangulation) include
-\begin{ccTexOnly}
-    \begin{list}{}{\leftmargin=20mm\labelsep=3mm\labelwidth=17mm}
-    \item[$\cd=-2$] This corresponds to the non-existence of any object in
+\newcommand{\cgalTriangulationCurrentDimension}{%
+\item[$\cd=-2$] This corresponds to the non-existence of any object in
         the \tds.
     \item[$\cd=-1$] This corresponds to a single vertex and a single full cell. In a
         geometric triangulation, this vertex corresponds to the vertex at infinity.
@@ -180,30 +181,28 @@ Possible values of $\cd$ (the \emph{current dimension} of the triangulation) inc
         the two full cells being neighbors of each other. This is the unique
         triangulation of the $0$-sphere.
     \item[$0<\cd\le\ad$] This corresponds to a standard triangulation of
-        the sphere $\sphere^\cd$.
-    \end{list}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-    \begin{itemize}
-        \item[$\cd=-2$] This corresponds to the non-existence of any object in
-            the \tds.
-        \item[$\cd=-1$] This corresponds to a single vertex and a single full cell. In a
-            geometric triangulation, this vertex corresponds to the vertex at infinity.
-        \item[$\cd=0$] This corresponds to two vertices (geometrically, the finite vertex and
-            the infinite vertex), each corresponding to  a full cell;
-            the two full cells being neighbors of each other. This is the unique
-            triangulation of the $0$-sphere.
-        \item[$0<\cd\le\ad$] This corresponds to a standard triangulation of
-            the sphere $\sphere^\cd$.
+        the sphere $\sphere^\cd$.}
+
+Possible values of $\cd$ (the \emph{current dimension} of the triangulation) include
+%\begin{ccTexOnly}
+%    \begin{list}{}{\leftmargin=20mm\labelsep=3mm\labelwidth=17mm}
+%    \cgalTriangulationCurrentDimension
+%    \end{list}
+%\end{ccTexOnly}
+%\begin{ccHtmlOnly}
+\begin{quotation}
+    \noindent\begin{itemize}
+    \cgalTriangulationCurrentDimension
     \end{itemize}
-\end{ccHtmlOnly}
+\end{quotation}
+%\end{ccHtmlOnly}
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - T D S IMPLEMENTATION
 
 \subsection{The class \ccc{Triangulation_data_structure}\label{triangulation:tds:impl}}
 
 We give here some details about the class
-\ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, 
+\ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex,
 TriangulationDSFullCell>}
 implementing the concept \ccc{TriangulationDataStructure}.
 
@@ -221,7 +220,7 @@ neighbors. Its vertices and neighbors are indexed from $0$ to \cd. The indices
 of its neighbors have the following meaning: the $i$-th neighbor of $\sigma$
 is the unique neighbor of $\sigma$ that does not contain the $i$-th vertex of
 $\sigma$; in other words, it is the neighbor of $\sigma$ {\em opposite} to
-the $i$-th vertex of $\sigma$.
+the $i$-th vertex of $\sigma$ (Figure~\ref{triangulation:fig:full-cell}).
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -238,7 +237,7 @@ alt="Index the vertices and neighbors of a full cell">
 \caption{Indexing the vertices and neighbors of a full cell $c$ in
   dimension $\cd=2$.}
 \label{triangulation:fig:full-cell}
-\end{figure} 
+\end{figure}
 
 \begin{ccAdvanced}
 The index of a full cell $c$ in the $i$-th neighbor of $c$ is called the
@@ -276,7 +275,7 @@ one of the following:
 \item \ccPureGlobalScope\ccc{Dimension_tag<D>} for some integer \ad. This
 indicates that the triangulation can store full cells of dimension at most
 \ad. The maximum dimension \ad\ is known by the compiler, which
-triggers some optimizations. 
+triggers some optimizations.
 \item \ccPureGlobalScope\ccc{Dynamic_dimension_tag}. In this case, the maximum
 dimension of the full cells must be passed as an integer argument to an instance
 constructor (see \ccc{TriangulationDataStructure}).
@@ -300,7 +299,7 @@ which is documented in those two concept's reference manual pages.
 \begin{ccAdvanced}
 The user that is in need of a custom vertex or full cell class, is
 encouraged to read the documentation of the \cgal\
-\ccc{Triangulation_2}  or  \ccc{Triangulation_3} package. 
+\ccc{Triangulation_2}  or  \ccc{Triangulation_3} package.
 \end{ccAdvanced}
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - TDS EXAMPLES
@@ -313,24 +312,24 @@ inserting vertices. Its main interest is that it demonstrates most of the API
 to insert new vertices into the triangulation. Therefore, the reader will make
 the best use of this example by reading it slowly, together with the reference
 manual documentation of the methods that are called (see here:
-\ccc{TriangulationDataStructure}) and by trying to understand the various 
+\ccc{TriangulationDataStructure}) and by trying to understand the various
 \ccc{assert(...)} statements.
 
 \ccIncludeExampleCode{Triangulation/triangulation_data_structure_static.cpp}
 
 In previous example, the maximal dimension is fixed at compile time.
-It is also possible to fix it at run time as in the next example.
+It is also possible to fix it at run time, as in the next example.
 
 \ccIncludeExampleCode{Triangulation/triangulation_data_structure_dynamic.cpp}
 
 \subsubsection{Barycentric subdivision}
 This example provides a function for computing the barycentric subdivision of a
-single full cell \ccc{c} in a triangulation data structure. The other 
+single full cell \ccc{c} in a triangulation data structure. The other
 full cells adjacent to \ccc{c} are automatically subdivided to match the
 subdivision of the full cell \ccc{c}. The barycentric subdivision of \ccc{c} is
 obtained by enumerating all the faces of \ccc{c} in order of decreasing
 dimension, from the dimension of~\ccc{c} to dimension~1, and inserting a new
-vertex in each face. For the enumeration, we use a combinatorial enumerator,
+vertex in each face. For the enumeration, we use a combination enumerator,
 which is not documented, but provided in \cgal.
 
 
@@ -348,16 +347,16 @@ alt="Barycentric subdivision">
 \end{ccHtmlOnly}
 \caption{Barycentric subdivision in  dimension $\cd=2$.}
 \label{triangulation:fig:barycentric}
-\end{figure} 
+\end{figure}
 
 \ccIncludeExampleCode{Triangulation/barycentric_subdivision.cpp}
- 
+
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - TRIANGULATIONS
 
 \section{Triangulations}
 
-The class \ccc{CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>} embeds an abstract 
+The class \ccc{CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>} embeds an abstract
 triangulation into Euclidean space. More precisely, it
 maintains a triangulation (a partition into pairwise interior-disjoint
 full cells) of the convex hull of the points (the embedded vertices) of the
@@ -370,8 +369,8 @@ contraction of faces, the traversal of various elements of the triangulation
 as well as the localization of a query point inside the triangulation.
 
 Infinite full cells outside the convex hull are each incident to
-a finite facet on the convex hull of the triangulation and to a unique special
-{\em vertex at infinity}. 
+a finite facet on the convex hull of the triangulation and to a unique
+{\em vertex at infinity}.
 %\note{In every infinite full cell, the vertex at infinity always has index $0$.}
 %\note{SH: the above note this should go in the documentation of the
 %\ccc{TriangulationDataStructure} concept, or that of the class?}
@@ -386,7 +385,8 @@ the oriented hyperplane defined by the full cell's finite facet.
 
 \subsection{Implementation}
 
-The class \ccc{CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>} stores a model \tds
+The class \ccc{CGAL::Triangulation<TriangulationTraits,
+TriangulationDataStructure>} stores a model
 of the concept \ccc{TriangulationDataStructure} which is instantiated with a
 vertex type that stores a point, and a full cell type that allows the retrieval
 of the point of its vertices.
@@ -403,12 +403,12 @@ as various geometric predicates used by the \ccc{Triangulation} class.
 
 The following example shows how to construct a triangulation in which we insert
 random points. In \ccc{STEP 1}, we generate one hundred random points in
-$\real^5$, which we then insert into a triangulation. In \ccc{STEP 2}, we 
-%have a little fun and 
+$\real^5$, which we then insert into a triangulation. In \ccc{STEP 2}, we
+%have a little fun and
 ask the triangulation to construct the set of edges
 ($1$ dimensional faces) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the
-points. This gives us a handy way to count the convex hull vertices. 
+points. This gives us a handy way to count the convex hull vertices.
 %(Note that
 %in general, this set of vertices is a superset of the set of extremal vertices
 %of the convex hull.)
@@ -420,11 +420,11 @@ points. This gives us a handy way to count the convex hull vertices.
 \subsubsection{Traversing the facets of the convex hull}
 
 Remember that a triangulation triangulates the convex hull of its
-vertices. 
+vertices.
 In general position, each
 facet of the convex hull is incident to one finite full cell and one infinite
 full cell. In fact there is a bijection between the infinite full cells and the
-facets of the convex hull. 
+facets of the convex hull.
 If vertices are not in general position, convex hull faces that are
 not simplices are triangulated.
 So, in order to traverse the convex hull facets,
@@ -434,18 +434,20 @@ The first is to iterate over the full cells of the triangulation and check if th
 are infinite or not:
 
 \begin{ccExampleCode}
-{int i=0;
-typedef Triangulation::Full_cell_iterator Full_cell_iterator;
-typedef Triangulation::Facet Facet;
+{   int i=0;
+    typedef Triangulation::Full_cell_iterator Full_cell_iterator;
+    typedef Triangulation::Facet Facet;
 
-for( Full_cell_iterator cit = t.full_cells_begin(); 
-      cit != t.full_cells_end(); ++cit ) {
-    if( ! t.is_infinite(cit) )
-        continue;
-    Facet ft(cit, cit->index(t.infinite_vertex() ) ); 
-    ++i;// |ft| is a facet of the convex hull
+    for( Full_cell_iterator cit = t.full_cells_begin();
+      cit != t.full_cells_end(); ++cit )
+    {
+        if( ! t.is_infinite(cit) )
+            continue;
+        Facet ft(cit, cit->index(t.infinite_vertex()));
+        ++i;// |ft| is a facet of the convex hull
+    }
+    std::cout << "There are " << i << " facets on the convex hull."<< std::endl;
 }
-std::cout << "There are " << i << " facets on the convex hull."<< std::endl;}
 \end{ccExampleCode}%
 \textbf{Remark}: the code example above is not self contained, it can
 be cut and paste at STEP 2 of {\tt triangulation.cpp} program above.
@@ -455,22 +457,24 @@ incident to the infinite vertex: they form precisely the set of infinite
 full cells:
 
 \begin{ccExampleCode}
-{int i=0;
-typedef Triangulation::Full_cell_handle Full_cell_handle;
-typedef Triangulation::Facet Facet;
-typedef std::vector<Full_cell_handle> Full_cells;
+{   int i=0;
+    typedef Triangulation::Full_cell_handle Full_cell_handle;
+    typedef Triangulation::Facet Facet;
+    typedef std::vector<Full_cell_handle> Full_cells;
 
-Full_cells infinite_full_cells;
-std::back_insert_iterator<Full_cells> out(infinite_full_cells);
+    Full_cells infinite_full_cells;
+    std::back_insert_iterator<Full_cells> out(infinite_full_cells);
 
-t.incident_full_cells(t.infinite_vertex(), out);
+    t.incident_full_cells(t.infinite_vertex(), out);
 
-for( Full_cells::iterator sit = infinite_full_cells.begin(); 
-       sit != infinite_full_cells.end(); ++sit ) {
-    Facet ft(*sit, (*sit)->index(t.infinite_vertex()) );
-    ++i// |ft| is a facet of the convex hull
+    for( Full_cells::iterator sit = infinite_full_cells.begin();
+           sit != infinite_full_cells.end(); ++sit )
+    {
+        Facet ft(*sit, (*sit)->index(t.infinite_vertex()));
+        ++i // |ft| is a facet of the convex hull
+    }
+    std::cout << "There are " << i << " facets on the convex hull."<< std::endl;
 }
-std::cout << "There are " << i << " facets on the convex hull."<< std::endl;}
 \end{ccExampleCode}
 \textbf{Remark}: the code example above is not self contained, it can
 be cut and paste at STEP 2 of {\tt triangulation.cpp} program above.
@@ -494,9 +498,9 @@ of the triangulation.
 The {\em circumscribing ball} of a full cell is the ball
 having all vertices of the full cell on its boundary.
 In case of degeneracies (co-spherical points) the triangulation is not
-uniquely defined, 
-note however that the \cgal\ implementation computes a unique
-triangulation even in these cases. 
+uniquely defined;
+Note however that the \cgal\ implementation computes a unique
+triangulation even in these cases.
 %The {\em circumscribing sphere} of a face \ccc{c} is the smallest sphere
 %touching all vertices of the face. A triangulation of the convex
 %hull of a finite point set has the Delaunay (or empty-ball) property if all
@@ -513,7 +517,8 @@ conflict with \ccc{p} form the {\em conflict zone}. That conflict zone is
 augmented with the infinite full cells whose finite facet does not lie
 anymore on the convex hull of the triangulation (with \ccc{p} added). The full cells
 in the conflict zone are removed, leaving a hole that contains \ccc{p}. That
-hole is then re-triangulated in a ``star shape'' centered at \ccc{p}.
+hole is ``star shaped'' around \ccc{p} and thus is easily re-triangulated using
+\ccc{p} as a center vertex.
 
 Delaunay triangulations also support vertex removal.
 
@@ -522,10 +527,10 @@ Delaunay triangulations also support vertex removal.
 \subsection{Implementation}
 
 The class \ccc{CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>} derives from
-\ccc{CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}. It thus stores a model \tds of
+\ccc{CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}. It thus stores a model of
 the concept \ccc{TriangulationDataStructure} which is instantiated with a vertex
-type that stores a geometric point, and a full cell type that allows the
-retrieval of the points of its vertices.
+type that stores a geometric point and allows its retrieval.% and a full cell type that allows the
+%retrieval of the points of its vertices.
 
 The template parameter \ccc{DelaunayTriangulationTraits} must be a model of the concept
 \ccc{DelaunayTriangulationTraits} which provides the geometric \ccc{Point} type as
@@ -556,12 +561,12 @@ retaining an efficient update of the Delaunay triangulation.
 The current implementation locate points by walking in the
 triangulation, and sort the points with spatial sort to insert a
 set of points. Thus the theoretical complexity are
-$O(n\log n)$ for inserting $n$ random points and $O(n^{\frac{1}{\cd}}$
+$O(n\log n)$ for inserting $n$ random points and $O(n^{\frac{1}{\cd}})$
 for inserting one point in a triangulation of $n$ random points.
 
 The actual timing are the following:
 
-% insert here the table produce by script in directory benchmark 
+% insert here the table produce by script in directory benchmark
 % (code to be done) !
 
 \note{todo}
