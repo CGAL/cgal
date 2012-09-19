@@ -5255,6 +5255,28 @@ Principal_component_analysis/test/Principal_component_analysis/linear_least_squa
 Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_tetrahedra_3.cpp -text
 Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_triangles_2.cpp -text
 Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_triangles_3.cpp -text
+QP_solver/doc/QP_solver/CGAL/QP_functions.h -text
+QP_solver/doc/QP_solver/CGAL/QP_models.h -text
+QP_solver/doc/QP_solver/CGAL/QP_options.h -text
+QP_solver/doc/QP_solver/CGAL/QP_solution.h -text
+QP_solver/doc/QP_solver/Classified.txt -text
+QP_solver/doc/QP_solver/Concepts/LinearProgram.h -text
+QP_solver/doc/QP_solver/Concepts/MPSFormat.h -text
+QP_solver/doc/QP_solver/Concepts/NonnegativeLinearProgram.h -text
+QP_solver/doc/QP_solver/Concepts/NonnegativeQuadraticProgram.h -text
+QP_solver/doc/QP_solver/Concepts/QuadraticProgram.h -text
+QP_solver/doc/QP_solver/PackageDescription.txt -text
+QP_solver/doc/QP_solver/QP_solver.txt -text
+QP_solver/doc/QP_solver/examples.txt -text
+QP_solver/doc/QP_solver/fig/closest_point.gif -text svneol=unset#image/gif
+QP_solver/doc/QP_solver/fig/closest_point.pdf -text svneol=unset#application/pdf
+QP_solver/doc/QP_solver/fig/first_lp.pdf -text svneol=unset#application/pdf
+QP_solver/doc/QP_solver/fig/first_lp.png -text svneol=unset#image/png
+QP_solver/doc/QP_solver/fig/first_nonnegative_qp.pdf -text svneol=unset#application/pdf
+QP_solver/doc/QP_solver/fig/first_nonnegative_qp.png -text svneol=unset#image/png
+QP_solver/doc/QP_solver/fig/first_qp.pdf -text svneol=unset#application/pdf
+QP_solver/doc/QP_solver/fig/first_qp.png -text svneol=unset#image/png
+QP_solver/doc/QP_solver/fig/qp.png -text svneol=unset#image/png
 QP_solver/doc_tex/QP_solver/PkgDescription.tex -text
 QP_solver/doc_tex/QP_solver/closest_point.fig -text svneol=unset#application/octet-stream
 QP_solver/doc_tex/QP_solver/closest_point.gif -text svneol=unset#image/gif

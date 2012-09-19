@@ -1196,6 +1196,18 @@ namespace for the XML file to be processed properly.  -->
           </list>
         </doxygen>
       </project>
+
+      <project>
+        <name>Linear and Quadratic Programming Solver</name>
+        <input>../QP_solver/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../QP_solver/doc/QP_solver/</string>
+          <string name="STRIP_FROM_INC_PATH">../QP_solver/doc/QP_solver/</string>
+          <string name="GENERATE_TAGFILE">./tags/QP_solver.tag</string>
+          <string name="IMAGE_PATH">../QP_solver/doc/QP_solver/fig</string>
+          <string name="EXAMPLE_PATH" append="true">../QP_solver/examples</string>
+        </doxygen>
+      </project>
     <!-- subprojects end -->
     </project>
     
@@ -1255,6 +1267,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Nef_2/doc/Nef_2/fig</item>
           <item>../Nef_S2/doc/Nef_S2/fig</item>
           <item>../Nef_3/doc/Nef_3/fig</item>
+          <item>../QP_solver/doc/QP_solver/fig</item>
           <item>../Mesh_2/doc/Mesh_2/fig</item>
           <item>../Surface_mesher/doc/Surface_mesher/fig</item>
           <item>../Mesh_3/doc/Mesh_3/fig</item>
@@ -1333,6 +1346,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
           <item>./tags/Nef_S2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons-Embedded-on-the-Sphere/html</item>
           <item>./tags/Nef_3.tag=../../CGAL.CGAL.3D-Boolean-Operations-on-Nef-Polyhedra/html</item>
+          <item>./tags/QP_solver.tag=../../CGAL.CGAL.Linear-and-Quadratic-Programming-Solver/html</item>
           <item>./tags/Mesh_2.tag=../../CGAL.CGAL.2D-Conforming-Triangulations-and-Meshes/html</item>
           <item>./tags/Surface_mesher.tag=../../CGAL.CGAL.3D-Surface-Mesh-Generation/html</item>
           <item>./tags/Mesh_3.tag=../../CGAL.CGAL.3D-Mesh-Generation/html</item>
