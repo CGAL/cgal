@@ -894,7 +894,12 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remov
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test13.wrl -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test14.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test14.wrl -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test15.jpg -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test15.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test15.wrl -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test16.jpg -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test16.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test16.wrl -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_circle_segments.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_dynamic.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_dynamic_segments.cmd -text
