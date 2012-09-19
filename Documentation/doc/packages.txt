@@ -196,7 +196,7 @@ h1 {
 <a name="Pkg:Kds"></a>
 \package_listing{Kinetic_data_structures}
 <a name="Pkg:KdsFramework"></a>
-\package_listing{Kinetic_framework}
+\package_listing{Kinetic_data_structures/Kinetic_framework}
 
 \section PartSupportLibrary Support Library
 

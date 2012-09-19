@@ -3114,6 +3114,96 @@ Kinetic_data_structures/demo/Kinetic_data_structures/data/before103 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/before106 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/before107 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/include/control_coin.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Delaunay_triangulation_2.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Delaunay_triangulation_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Delaunay_triangulation_cell_base_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Delaunay_triangulation_event_log_visitor_2.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Delaunay_triangulation_event_log_visitor_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Delaunay_triangulation_face_base_2.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Delaunay_triangulation_recent_edges_visitor_2.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Delaunay_triangulation_visitor_base_2.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Delaunay_triangulation_visitor_base_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Enclosing_box_2.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Enclosing_box_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Erase_event.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/IO/Qt_moving_points_2.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/IO/Qt_triangulation_2.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/IO/Qt_widget_2.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Insert_event.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Regular_triangulation_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Regular_triangulation_cell_base_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Regular_triangulation_event_log_visitor_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Regular_triangulation_instantaneous_kernel.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Regular_triangulation_vertex_base_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Regular_triangulation_visitor_base_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Sort.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Sort_event_log_visitor.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Sort_visitor_base.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/Concepts/DelaunayTriangulationVisitor_2.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/Concepts/DelaunayTriangulationVisitor_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/Concepts/EventLogVisitor.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/Concepts/RegularTriangulationVisitor_3.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/Concepts/SortVisitor.h -text
+Kinetic_data_structures/doc/Kinetic_data_structures/Kinetic_data_structures.txt -text
+Kinetic_data_structures/doc/Kinetic_data_structures/PackageDescription.txt -text
+Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Active_objects_vector.h -text
+Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Cartesian.h -text
+Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Default_instantaneous_kernel.h -text
+Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Default_simulator.h -text
+Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Listener.h -text
+Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Multi_listener.h -text
+Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Ref_counted.h -text
+Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Simulator_objects_listener.h -text
+Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/listeners.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Classified.txt -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/ActiveObjectsTable.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/CertificateGenerator.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/EvenQueue.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/FunctionKernel.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/InstantaneousKernel.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/Kernel.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/Key.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/Kinetic--Certificate.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/RootStack.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/SimulationTraits.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Concepts/Simulator.h -text
+Kinetic_data_structures/doc/Kinetic_framework/Kinetic_framework.txt -text
+Kinetic_data_structures/doc/Kinetic_framework/PackageDescription.txt -text
+Kinetic_data_structures/doc/Kinetic_framework/fig/architecture_pct.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/architecture_pct.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_0.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_0.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_0.png -text svneol=unset#image/png
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_1.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_1.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_1.png -text svneol=unset#image/png
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_2.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_2.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_2.png -text svneol=unset#image/png
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_3.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_3.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_3.png -text svneol=unset#image/png
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_4.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_4.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_4.png -text svneol=unset#image/png
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_5.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_5.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_5.png -text svneol=unset#image/png
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_6.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_6.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_6.png -text svneol=unset#image/png
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_7.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_7.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_7.png -text svneol=unset#image/png
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_8.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_8.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_8.png -text svneol=unset#image/png
+Kinetic_data_structures/doc/Kinetic_framework/fig/kds.jpg -text svneol=unset#image/jpeg
+Kinetic_data_structures/doc/Kinetic_framework/fig/kdsDetail.png -text svneol=unset#image/png
+Kinetic_data_structures/doc/Kinetic_framework/fig/qt_widget_marked_pct.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/qt_widget_marked_pct.pdf -text svneol=unset#application/pdf
+Kinetic_data_structures/doc/Kinetic_framework/fig/sort_usage_pct.gif -text svneol=unset#image/gif
+Kinetic_data_structures/doc/Kinetic_framework/fig/sort_usage_pct.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.png -text svneol=unset#image/png

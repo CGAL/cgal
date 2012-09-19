@@ -1,0 +1,41 @@
+/// \defgroup PkgKdsFramework Kinetic Framework
+
+/// \defgroup PkgKdsFrameworkConcepts Main Concepts
+/// \ingroup PkgKdsFramework
+/// Here we list the main concepts provided by the
+/// framework to support implementing kinetic data structures
+
+
+/// \defgroup PkgKdsFrameworkClasses Main Classes
+/// \ingroup PkgKdsFramework
+/// Here we list the main classes provided by the
+/// framework to support implementing kinetic data structures
+
+/// \defgroup PkgKdsFrameworkOtherClasses Other Classes
+/// \ingroup PkgKdsFramework
+
+/// \defgroup PkgKdsFrameworkOtherConcepts Other Concepts
+/// \ingroup PkgKdsFramework
+
+
+/*!
+\addtogroup PkgKdsFramework
+\todo check generated documentation
+\PkgDescriptionBegin{Kinetic Framework}
+\PkgAuthor{Daniel Russel}
+\PkgDesc{Kinetic data structures allow combinatorial geometric structures to be maintained as the primitives move. The package provides a framework to ease implementing and debugging kinetic data structures. The package supports exact or inexact operations on primitives which move along polynomial trajectories.  }
+\PkgSince{3.2}
+\cgalbib{cgal:r-kdsf}
+\license{\ref licensesLGPL "LGPL"}
+\PkgDescriptionEnd
+
+Kinetic data structures are a way of adding motion to classical
+geometric data structures. \cgal provides a number of classes to aid
+implementation of kinetic data structures.
+
+There are three levels at which the user can interact with the
+package. The user can use an existing kinetic data structure, write a
+new kinetic data structure, or replace parts of the framework.The
+first level is covered in the Chapter  \ref refchapterkinetic.
+*/
+

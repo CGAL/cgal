@@ -12,6 +12,6 @@
 \PkgDesc{The AABB (axis-aligned bounding box) tree component offers a static data structure and algorithms to perform efficient intersection and distance queries on sets of finite 3D geometric objects.}
 \PkgSince{1.0}
 \cgalbib{cgal:atw-aabb}
-\license{\ref licenseGPL "GPL"}
+\license{\ref licensesGPL "GPL"}
 \PkgDescriptionEnd
 */

@@ -115,7 +115,6 @@ namespace for the XML file to be processed properly.  -->
         </doxygen>
       </project>
 
-
       <project>
         <name>2D Conforming Triangulations and Meshes</name>
         <input>../Mesh_2/doc</input>
@@ -388,7 +387,7 @@ namespace for the XML file to be processed properly.  -->
         <doxygen>
           <string name="STRIP_FROM_PATH">../Stream_support/doc/IOstream/</string>
           <string name="STRIP_FROM_INC_PATH">../Stream_support/doc/IOstream/</string>
-          <string name="GENERATE_TAGFILE">./tags/IOstream.tag</string>
+          <string name="GENERATE_TAGFILE">./tags/Stream_support.tag</string>
           <string name="EXAMPLE_PATH">../Stream_support/examples</string>
           <string name="IMAGE_PATH">../Stream_support/doc/IOstream/fig</string>
         </doxygen>
@@ -1135,7 +1134,35 @@ namespace for the XML file to be processed properly.  -->
         </doxygen>
       </project>
 
+      <project>
+        <name>Kinetic Data Structures</name>
+        <input>../Kinetic_data_structures/doc/Kinetic_data_structures</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Kinetic_data_structures/doc/Kinetic_data_structures</string>
+          <string name="STRIP_FROM_INC_PATH">../Kinetic_data_structures/doc/Kinetic_data_structures</string>
+          <string name="GENERATE_TAGFILE">./tags/Kinetic_data_structures.tag</string>
+          <string name="IMAGE_PATH">../Kinetic_data_structures/doc/Kinetic_framework/fig</string>
+          <string name="EXAMPLE_PATH">../Kinetic_data_structures/examples/Kinetic_data_structures</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Kinetic_framework.tag=../../CGAL.CGAL.Kinetic-Framework/html</item>
+          </list>
+        </doxygen>
+      </project>
 
+      <project>
+        <name>Kinetic Framework</name>
+        <input>../Kinetic_data_structures/doc/Kinetic_framework</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Kinetic_data_structures/doc/Kinetic_framework/</string>
+          <string name="STRIP_FROM_INC_PATH">../Kinetic_data_structures/doc/Kinetic_framework/</string>
+          <string name="GENERATE_TAGFILE">./tags/Kinetic_framework.tag</string>
+          <string name="IMAGE_PATH">../Kinetic_data_structures/doc/Kinetic_framework/fig</string>
+          <string name="EXAMPLE_PATH">../Kinetic_data_structures/examples/Kinetic_framework</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Kinetic_data_structures.tag=../../CGAL.CGAL.Kinetic-Data-Structures/html</item>
+          </list>
+        </doxygen>
+      </project>
 
       <project>
         <name>3D Boolean Operations on Nef Polyhedra</name>
@@ -1243,6 +1270,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Ridges_3/doc/Ridges_3/fig</item>
           <item>../Point_set_processing_3/doc/Point_set_processing_3/fig</item>
           <item>../Point_set_processing_3/doc/Property_map/fig</item>
+          <item>../Kinetic_data_structures/doc/Kinetic_framework/fig</item>
           <item>../Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig</item>
           <item>../Spatial_searching/doc/Spatial_searching/fig</item>
           <item>../Spatial_sorting/doc/Spatial_sorting/fig</item>
@@ -1319,6 +1347,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Ridges_3.tag=../../CGAL.CGAL.Approximation-of-Ridges-and-Umbilics-on-Triangulated-Surface-Meshes/html</item>
           <item>./tags/Property_map.tag=../../CGAL.CGAL.CGAL-and-Boost-Property-Maps/html</item>
           <item>./tags/Point_set_processing_3.tag=../../CGAL.CGAL.Point-Set-Processing/html</item>
+          <item>./tags/Kinetic_data_structures.tag=../../CGAL.CGAL.Kinetic-Data-Structures/html</item>
           <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.2D-Snap-Rounding/html</item>
           <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.dD-Spatial-Searching/html</item>
           <item>./tags/Spatial_sorting.tag=../../CGAL.CGAL.Spatial-Sorting/html</item>
