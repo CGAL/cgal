@@ -49,6 +49,7 @@ namespace CGAL {
 	DECL_OBJ(Direction);
 	DECL_OBJ(Hyperplane);
 	DECL_OBJ(Ray);
+	DECL_OBJ(Iso_box);
 	DECL_OBJ(Bbox);
 	DECL_OBJ(Aff_transformation);
 #undef DECL_OBJ
@@ -112,8 +113,10 @@ namespace CGAL {
 	DECL_CONSTRUCT(Sum_of_vectors,Vector);
 	DECL_CONSTRUCT(Difference_of_vectors,Vector);
 	DECL_CONSTRUCT(Opposite_vector,Vector);
+	DECL_CONSTRUCT(Scaled_vector,Vector);
 	DECL_CONSTRUCT(Orthogonal_vector,Vector);
 	DECL_CONSTRUCT(Difference_of_points,Vector);
+	DECL_CONSTRUCT(Translated_point,Point);
 	DECL_CONSTRUCT(Point_to_vector,Vector);
 	DECL_CONSTRUCT(Vector_to_point,Point);
 #undef DECL_CONSTRUCT

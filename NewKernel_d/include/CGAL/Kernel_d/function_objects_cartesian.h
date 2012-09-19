@@ -349,6 +349,22 @@ template<class R_> struct Opposite_vector : private Store_kernel<R_> {
 	}
 };
 
+template<class R_> struct Scaled_vector : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Scaled_vector)
+	typedef R_ R;
+	typedef typename R_::FT FT;
+	typedef typename R::Vector Vector;
+	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
+	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+	typedef Vector result_type;
+	typedef Vector first_argument_type;
+	typedef FT second_argument_type;
+	result_type operator()(Vector const&v,FT const& s)const{
+		CI ci(this->kernel());
+		return CV(this->kernel())(make_transforming_iterator(ci(v,Begin_tag()),Scale<FT>(s)),make_transforming_iterator(ci(v,End_tag()),Scale<FT>(s)));
+	}
+};
+
 template<class R_> struct Sum_of_vectors : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Sum_of_vectors)
 	typedef R_ R;
@@ -378,6 +394,25 @@ template<class R_> struct Difference_of_vectors : private Store_kernel<R_> {
 	result_type operator()(Vector const&a, Vector const&b)const{
 		CI ci(this->kernel());
 		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::minus<RT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::minus<RT>()));
+	}
+};
+
+template<class R_> struct Translated_point : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Translated_point)
+	typedef R_ R;
+	typedef typename R_::RT RT;
+	typedef typename R::Vector Vector;
+	typedef typename R::Point Point;
+	typedef typename R::template Functor<Construct_ttag<Point_tag> >::type CP;
+	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
+	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
+	typedef Point  result_type;
+	typedef Point  first_argument_type;
+	typedef Vector second_argument_type;
+	result_type operator()(Point const&a, Vector const&b)const{
+		CVI cvi(this->kernel());
+		CPI cpi(this->kernel());
+		return CP(this->kernel())(make_transforming_pair_iterator(cpi(a,Begin_tag()),cvi(b,Begin_tag()),std::plus<RT>()),make_transforming_pair_iterator(cpi(a,End_tag()),cvi(b,End_tag()),std::plus<RT>()));
 	}
 };
 

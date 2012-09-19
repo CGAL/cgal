@@ -39,8 +39,11 @@ CGAL_Kernel_obj1(Vector,vector)
 CGAL_Kernel_obj1(Point,point)
 CGAL_Kernel_obj2(Segment,segment)
 CGAL_Kernel_obj2(Sphere,sphere)
+CGAL_Kernel_obj3(Line,line)
+CGAL_Kernel_obj3(Ray,ray)
 CGAL_Kernel_obj3(Hyperplane,hyperplane)
 CGAL_Kernel_obj3(Aff_transformation,aff_transformation)
+CGAL_Kernel_obj3(Iso_box,iso_box)
 
 CGAL_Kernel_cons1(Construct_point_cartesian_const_iterator,
 		  construct_point_cartesian_const_iterator_object)
@@ -50,8 +53,12 @@ CGAL_Kernel_cons2(Sum_of_vectors,
 		  sum_of_vectors_object)
 CGAL_Kernel_cons2(Difference_of_vectors,
 		  difference_of_vectors_object)
+CGAL_Kernel_cons2(Translated_point,
+		  translated_point_object)
 CGAL_Kernel_cons2(Opposite_vector,
 		  opposite_vector_object)
+CGAL_Kernel_cons2(Scaled_vector,
+		  scaled_vector_object)
 CGAL_Kernel_cons2(Difference_of_points,
 		  difference_of_points_object)
 CGAL_Kernel_cons2(Vector_to_point,
@@ -60,6 +67,10 @@ CGAL_Kernel_cons2(Point_to_vector,
 		  point_to_vector_object)
 CGAL_Kernel_cons2(Midpoint,
 		  midpoint_object)
+CGAL_Kernel_cons2(Orthogonal_vector,
+		  orthogonal_vector_object)
+CGAL_Kernel_cons2(Hyperplane_translation,
+		  hyperplane_translation_object)
 //CGAL_Kernel_cons2(Construct_segment,
 //		  construct_segment_object)
 CGAL_Kernel_cons2(Segment_extremity,

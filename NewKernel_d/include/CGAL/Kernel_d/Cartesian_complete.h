@@ -7,6 +7,9 @@
 #include <CGAL/Kernel_d/Types/Sphere.h>
 #include <CGAL/Kernel_d/Types/Hyperplane.h>
 #include <CGAL/Kernel_d/Types/Aff_transformation.h>
+#include <CGAL/Kernel_d/Types/Line.h>
+#include <CGAL/Kernel_d/Types/Ray.h>
+#include <CGAL/Kernel_d/Types/Iso_box.h>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/has_xxx.hpp>
