@@ -79,6 +79,24 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>2D Polygons</name>
+        <input>../Polygon/doc</input>
+        <input>../Polygon/include</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Polygon/doc/Polygon/</string>
+          <string name="STRIP_FROM_INC_PATH">../Polygon/include</string>
+          <string name="GENERATE_TAGFILE">./tags/Polygon.tag</string>
+          <string name="IMAGE_PATH">../Polygon/doc/Polygon/fig</string>
+          <string name="EXAMPLE_PATH">../Polygon/examples</string>
+          <bool name="EXTRACT_ALL">false</bool>
+          <bool name="HIDE_UNDOC_MEMBERS">true</bool>
+          <bool name="HIDE_UNDOC_CLASSES">true</bool>
+          <bool name="SHOW_INCLUDE_FILES">true</bool>
+        </doxygen>
+      </project>
+
+
+      <project>
         <name>Planar Parameterization of Triangulated Surface Meshes</name>
         <input>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization</input>
         <input>../Surface_mesh_parameterization/doc/concepts</input>
@@ -1210,6 +1228,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./doc/fig</item>
           <item>../Algebraic_foundations/doc/Algebraic_foundations/fig</item>
           <item>../AABB_tree/doc/AABB_tree/fig</item>
+          <item>../Polygon/doc/Polygon/fig</item>
           <item>../Number_types/doc/Number_types/fig</item>
           <item>../Alpha_shapes_2/doc/Alpha_shapes_2/fig</item>
           <item>../Alpha_shapes_3/doc/Alpha_shapes_3/fig</item>
@@ -1287,6 +1306,7 @@ namespace for the XML file to be processed properly.  -->
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
           <item>./tags/AABB_tree.tag=../../CGAL.CGAL.3D-Fast-Intersection-and-Distance-Computation/html</item>
+          <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
           <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.2D-Alpha-Shapes/html</item>
           <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.3D-Alpha-Shapes/html</item>

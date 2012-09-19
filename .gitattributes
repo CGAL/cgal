@@ -4871,6 +4871,13 @@ Point_set_processing_3/test/Point_set_processing_3/normal_estimation_test.cmd eo
 Point_set_processing_3/test/Point_set_processing_3/remove_outliers_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/smoothing_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/smoothing_test.cpp -text
+Polygon/doc/Polygon/Concepts/PolygonTraits_2.h -text
+Polygon/doc/Polygon/PackageDescription.txt -text
+Polygon/doc/Polygon/Polygon.txt -text
+Polygon/doc/Polygon/examples.txt -text
+Polygon/doc/Polygon/fig/pgn_algos.gif -text svneol=unset#image/gif
+Polygon/doc/Polygon/fig/pgn_algos.pdf -text svneol=unset#application/pdf
+Polygon/doc/Polygon/fig/polygon.png -text svneol=unset#image/png
 Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#image/gif
 Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#application/pdf

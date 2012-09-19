@@ -1,0 +1,26 @@
+/// \defgroup PkgPolygon2 2D Polygon
+
+/// \defgroup PkgPolygon2Concepts Concepts
+/// \ingroup PkgPolygon2
+
+/// \defgroup PkgPolygon2Functions Global Functions
+/// \ingroup PkgPolygon2
+
+/*!
+\addtogroup PkgPolygon2
+\todo check generated documentation
+\PkgDescriptionBegin{2D Polygons}
+\PkgPicture{polygon.png}
+\PkgAuthor{Geert-Jan Giezeman  and Wieger Wesselink}
+\PkgDesc{This package provides a 2D polygon class and operations on sequences of points, like bounding box, extremal points, signed area, simplicity and convexity test, orientation, and point location.  The demo includes operations on polygons, such as computing a convex  partition, and the straight skeleton.}
+\PkgSince{0.9}
+\cgalbib{cgal:gw-p2}
+\license{\ref licensesLGPL "LGPL"}
+\PkgDescriptionEnd
+
+## Assertions ##
+
+The assertion flags for the polygons and polygon operations use 
+`POLYGON` in their names (<I>e.g.</I>, `CGAL_POLYGON_NO_ASSERTIONS`).
+*/
+

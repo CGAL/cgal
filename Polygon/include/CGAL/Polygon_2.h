@@ -23,6 +23,10 @@
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
 //                 Wieger Wesselink
 
+/*!
+  \file Polygon_2.h
+ */
+
 #ifndef CGAL_POLYGON_2_H
 #define CGAL_POLYGON_2_H
 
@@ -43,18 +47,49 @@
 
 namespace CGAL {
 
+/// \ingroup PkgPolygon2
+/// The class Polygon_2 implements polygons. The Polygon_2 is
+/// parameterized by a traits class and a container class.  The latter
+/// can be any class that fulfills the requirements for an STL
+/// container. It defaults to the std::vector class.
+///
+/// Implementation
+/// --------------
+///
+/// The methods `is_simple()`, `is_convex()`, `orientation()`,
+/// `oriented_side()`, `bounded_side()`, `bbox()`, `area()`, `left_vertex()`,
+/// `right_vertex()`, `top_vertex()` and `bottom_vertex()` are all
+/// implemented using the algorithms on sequences of 2D points.  See
+/// the corresponding global functions for information about which
+/// algorithms were used and what complexity they have.
+///
+/// Example
+/// -------
+/// The following code fragment creates a polygon and checks if it is convex.
+/// 
+/// \cgalexample{Polygon.cpp}
 template <class Traits_P, class Container_P
         = std::vector<typename Traits_P::Point_2> >
 class Polygon_2 {
 
   public:
 
+    /// \name Types
+    /// @{
+
+    /// The traits type.
     typedef Traits_P Traits;
+    /// The container type.
     typedef Container_P Container;
 
+    /// The number type, which is the {\em field type} of the points of the polygon.
     typedef typename Traits_P::FT FT;
+    /// The point type of the polygon.
     typedef typename Traits_P::Point_2 Point_2;
+    /// The type of a segment between two points of the polygon.
     typedef typename Traits_P::Segment_2 Segment_2;
+
+    /// @}
 
     typedef typename Container_P::difference_type difference_type;
     typedef typename Container_P::value_type value_type;
@@ -69,28 +104,60 @@ class Polygon_2 {
     typedef typename Container_P::const_iterator const_iterator;
     //-------------------------------------------------------//
 
-    typedef typename Container::iterator       Vertex_iterator;
-    typedef typename Container::iterator       Vertex_const_iterator;
-    //typedef typename Container::const_iterator Vertex_const_iterator; ??
+    /// \name Iterators
+    ///
+    /// The following types denote iterators that allow to traverse
+    /// the vertices and edges of a polygon.  Since it is questionable
+    /// whether a polygon should be viewed as a circular or as a
+    /// linear data structure both circulators and iterators are
+    /// defined.  The circulators and iterators are
+    /// non-mutable. 
+    ///
+    /// \note At least conceptually.  The enforcement
+    /// depends on preprocessor flags. 
+    ///
+    /// The iterator category is in all cases bidirectional, except
+    /// for Vertex_iterator, which has the same iterator category as
+    /// Container::iterator.  **N.B.** In fact all of them should have
+    /// the same iterator category as Container::iterator. However,
+    /// due to compiler problems this is currently not possible.
+    ///
+    /// @{
 
-    typedef Polygon_circulator<Container_P>    Vertex_const_circulator;
+    /// 
+    typedef typename Container::iterator       Vertex_iterator;
+
+    /// 
     typedef Vertex_const_circulator            Vertex_circulator;
 
+    //typedef typename Container::const_iterator Vertex_const_iterator; ??
+
+    /// 
     typedef Polygon_2_edge_iterator<Traits_P,Container_P>
             Edge_const_iterator;
 
+    /// 
     typedef Polygon_2_const_edge_circulator<Traits_P,Container_P>
             Edge_const_circulator;
+    
+    /// @}
 
-    //--------------------------------------------------------
-    //             Creation
-    //--------------------------------------------------------
+    typedef typename Container::iterator       Vertex_const_iterator;
+    typedef Polygon_circulator<Container_P>    Vertex_const_circulator;
 
+    /// \name Creation
+    /// @{
+
+    /// Creates an empty polygon.
     Polygon_2(const Traits & p_traits = Traits()) : traits(p_traits) {}
 
+    /// Copy constructor.
     Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)
       : d_container(polygon.d_container), traits(polygon.traits) {}
 
+    /// Introduces a polygon with vertices from the sequence
+    /// defined by the range \c [first,last).
+    /// The value type of \c InputIterator must be \c Point_2.
     template <class InputIterator>
     Polygon_2(InputIterator first, InputIterator last,
               Traits p_traits = Traits())
@@ -100,59 +167,73 @@ class Polygon_2 {
       std::copy(first, last, std::back_inserter(d_container));
     }
 
-    //--------------------------------------------------------
-    //             Operations
-    //--------------------------------------------------------
+    /// @}
 
-    void set(Vertex_iterator pos, const Point_2& x)
-     { *pos = x; }
+    /// \name Modifiers
+    /// @{
 
-    void set(Polygon_circulator<Container>const &pos, const Point_2& x)
+    /// Acts as `*i = q`, except that that would be illegal because
+    /// the iterator is not mutable.
+    void set(Vertex_iterator i, const Point_2& q)
+     { *i = q; }
+
+    void set(Polygon_circulator<Container>const &i, const Point_2& q)
      {
-       *pos.mod_iterator() = x;
+       *i.mod_iterator() = q;
      }
 
-    Vertex_iterator insert(Vertex_iterator pos, const Point_2& x)
+    /// Inserts the vertex `q` before `i`. The return value points to
+    /// the inserted vertex.
+    Vertex_iterator insert(Vertex_iterator i, const Point_2& q)
       {
-        return d_container.insert(pos,x);
+        return d_container.insert(i,q);
       }
 
-    Vertex_iterator insert(Vertex_circulator pos, const Point_2& x)
+    Vertex_iterator insert(Vertex_circulator i, const Point_2& q)
       {
-        return d_container.insert(pos.mod_iterator(),x);
+        return d_container.insert(i.mod_iterator(),q);
       }
 
+    /// Inserts the vertices in the range `[first, last)`
+    /// before `i`.  The value type of points in the range
+    /// `[first,last)} must be \ccStyle{Point_2`.
     template <class InputIterator>
-    void insert(Vertex_iterator pos,
+    void insert(Vertex_iterator i,
                 InputIterator first,
                 InputIterator last)
-      { d_container.insert(pos, first, last); }
+      { d_container.insert(i, first, last); }
 
     template <class InputIterator>
-    void insert(Vertex_circulator pos,
+    void insert(Vertex_circulator i,
                 InputIterator first,
                 InputIterator last)
-      { d_container.insert(pos.mod_iterator(), first, last); }
+      { d_container.insert(i.mod_iterator(), first, last); }
 
+    /// Has the same semantics as `p.insert(p.vertices_end(), q)`.
     void push_back(const Point_2& x)
       { d_container.insert(d_container.end(), x); }
 
-    void erase(Vertex_iterator pos)
-      { d_container.erase(pos); }
+    /// Erases the vertex pointed to by `i`.
+    void erase(Vertex_iterator i)
+      { d_container.erase(i); }
 
-    void erase(Vertex_circulator pos)
-      { d_container.erase(pos.mod_iterator()); }
+    void erase(Vertex_circulator i)
+      { d_container.erase(i.mod_iterator()); }
 
+    /// Erases the vertices in the range `[first, last)`.
     void erase(Vertex_iterator first, Vertex_iterator last)
       {
         d_container.erase(first, last);
       }
 
+    /// Erases the vertices in the range `[first, last)`.
     void clear()
     {
       d_container.clear();
     }
 
+    /// Reverses the orientation of the polygon. The vertex pointed to
+    ///  by `p.vertices_begin()` remains the same.
     void reverse_orientation()
     {
       if (size() <= 1)
@@ -161,25 +242,28 @@ class Polygon_2 {
       std::reverse(++i, d_container.end());
     }
 
-    //--------------------------------------------------------
-    //             Traversal of a polygon
-    //--------------------------------------------------------
+    /// @}
 
-//    Vertex_iterator vertices_begin()
-//      { return d_container.begin(); }
+    /// \name Access 
+    /// The following methods of the class Polygon_2
+    /// return circulators and iterators that allow to traverse the
+    /// vertices and edges.
+    /// @{
 
-//    Vertex_iterator vertices_end()
-//      { return d_container.end(); }
-
+    /// Returns a constant iterator that allows to traverse the
+    /// vertices of the polygon.
     Vertex_const_iterator vertices_begin() const
       { return const_cast<Polygon_2&>(*this).d_container.begin(); }
 
+    /// Returns the corresponding past-the-end iterator.
     Vertex_const_iterator vertices_end() const
       { return const_cast<Polygon_2&>(*this).d_container.end(); }
 
 //    Vertex_const_circulator vertices_circulator() const
 //      { return Vertex_const_circulator(&d_container, d_container.begin()); }
 
+    /// Returns a mutable circulator that allows to traverse the
+    /// vertices of the polygon.
     Vertex_const_circulator vertices_circulator() const
       { 
         Polygon_2& self = const_cast<Polygon_2&>(*this);
@@ -187,40 +271,59 @@ class Polygon_2 {
                self.d_container.begin());
       }
 
+    /// Returns a non-mutable iterator that allows to traverse the
+    /// edges of the polygon.
     Edge_const_iterator edges_begin() const
       { return Edge_const_iterator(&d_container, d_container.begin()); }
 
+    /// Returns the corresponding past-the-end iterator.
     Edge_const_iterator edges_end() const
       { return Edge_const_iterator(&d_container, d_container.end()); }
 
+    /// Returns a non-mutable circulator that allows to traverse the
+    /// edges of the polygon.
     Edge_const_circulator edges_circulator() const
       { return Edge_const_circulator(vertices_circulator()); }
 
-    //--------------------------------------------------------
-    //             Predicates
-    //--------------------------------------------------------
+    /// @}
 
+    /// \name Predicates
+    /// @{
+
+    /// Returns whether this is a simple polygon.
     bool is_simple() const
     {
       return is_simple_2(d_container.begin(),d_container.end(), traits);
     }
 
+    /// Returns whether this is convex.
     bool is_convex() const
     {
       return is_convex_2(d_container.begin(),d_container.end(), traits);
     }
 
+    /// Returns the orientation. If the number of vertices
+    /// \f$ p.size() < 3 \f$ then \c COLLINEAR is returned.
+    /// \pre `p.is_simple()`.
     Orientation orientation() const
     {
       return orientation_2(d_container.begin(), d_container.end(), traits);
     }
 
+    /// Returns `POSITIVE_SIDE`, or `NEGATIVE_SIDE`,
+    /// or `ON_ORIENTED_BOUNDARY`, depending on where point
+    /// `q` is. 
+    /// \pre `p.is_simple()`.
     Oriented_side oriented_side(const Point_2& value) const
     {
       return oriented_side_2(d_container.begin(), d_container.end(),
                                   value, traits);
     }
 
+    /// Returns the symbolic constant `ON_BOUNDED_SIDE`,
+    /// `ON_BOUNDARY` or `ON_UNBOUNDED_SIDE`,
+    /// depending on where point `q` is. \pre
+    /// `p.is_simple()`.
     Bounded_side bounded_side(const Point_2& value) const
     {
       CGAL_polygon_precondition(is_simple());
@@ -228,16 +331,22 @@ class Polygon_2 {
                                  value, traits);
     }
 
+    /// Returns the smallest bounding box containing this polygon.
     Bbox_2 bbox() const
     {
       return bbox_2(d_container.begin(), d_container.end()); 
     }
 
+    /// Returns the signed area of the polygon. This means that the
+    /// area is positive for counter clockwise polygons and negative
+    /// for clockwise polygons.
     FT area() const
     {
       return polygon_area_2(d_container.begin(), d_container.end(), traits);
     }
 
+    /// Returns the leftmost vertex of the polygon with the smallest
+    /// `x`-coordinate.
     Vertex_const_iterator left_vertex() const
     {
        Polygon_2 &self = const_cast<Polygon_2&>(*this);
@@ -245,11 +354,8 @@ class Polygon_2 {
                             self.d_container.end(), traits);
     }
 
-    //Vertex_iterator left_vertex()
-    //{
-      //return left_vertex_2(d_container.begin(), d_container.end(), traits);
-    //}
-
+    /// Returns the rightmost vertex of the polygon with the largest
+    /// `x`-coordinate.
     Vertex_const_iterator right_vertex() const
     {
        Polygon_2 &self = const_cast<Polygon_2&>(*this);
@@ -257,11 +363,8 @@ class Polygon_2 {
                              self.d_container.end(), traits);
     }
 
-//    Vertex_iterator right_vertex()
-//    {
-//      return right_vertex_2(d_container.begin(), d_container.end(), traits);
-//    }
-
+    /// Returns topmost vertex of the polygon with the largest
+    /// `y`-coordinate.
     Vertex_const_iterator top_vertex() const
     {
        Polygon_2 &self = const_cast<Polygon_2&>(*this);
@@ -269,11 +372,8 @@ class Polygon_2 {
                            self.d_container.end(), traits);
     }
 
-//    Vertex_iterator top_vertex()
-//    {
-//      return top_vertex_2(d_container.begin(), d_container.end(), traits);
-//    }
-
+    /// Returns the bottommost vertex of the polygon with the
+    /// smallest `y`-coordinate.
     Vertex_const_iterator bottom_vertex() const
     {
        Polygon_2 &self = const_cast<Polygon_2&>(*this);
@@ -281,10 +381,12 @@ class Polygon_2 {
                               self.d_container.end(), traits);
     }
 
-//    Vertex_iterator bottom_vertex()
-//    {
-//      return bottom_vertex_2(d_container.begin(), d_container.end(), traits);
-//    }
+    /// @}
+
+
+    /// \name Convenience
+    /// For convenience we provide the following Boolean functions:
+    /// @{
 
     bool is_counterclockwise_oriented() const
       { return orientation() == COUNTERCLOCKWISE; }
@@ -310,41 +412,46 @@ class Polygon_2 {
     bool has_on_unbounded_side(const Point_2& q) const
       { return bounded_side(q) == ON_UNBOUNDED_SIDE; }
 
-    //--------------------------------------------------------
-    //             Random access methods
-    //--------------------------------------------------------
+    /// @}
 
-  const Point_2& vertex(std::size_t i) const
+
+    /// \name Random Access Methos
+    /// @{
+
+    /// Returns a (const) reference to the \f$i\f$-th vertex.
+    const Point_2& vertex(std::size_t i) const
       { return *(d_container.begin() + i); }
 
-//    Point_2& vertex(std::size_t i)
-//      { return *(d_container.begin() + i); }
 
-  const Point_2& operator[](std::size_t i) const
+    /// Returns a (const) reference to the \f$i\f$-th vertex.
+    const Point_2& operator[](std::size_t i) const
       { return vertex(i); }
 
-//    Point_2& operator[](std::size_t i)
-//      { return vertex(i); }
-
-  Segment_2 edge(std::size_t i) const
+    /// Returns the \f$i\f$-th edge.
+    Segment_2 edge(std::size_t i) const
       { return *(edges_begin() + i); }
 
-    //--------------------------------------------------------
-    //             Miscellaneous
-    //--------------------------------------------------------
+    /// @}
 
-  std::size_t size() const
+    /// \name Miscellaneous
+    /// @{
+
+    /// Returns the number of vertices of the polygon.
+    std::size_t size() const
       { return d_container.size(); }
 
+    /// Returns `size() == 0`.
     bool is_empty() const
       { return d_container.empty(); }
 
+    /// Returns a const reference to the sequence of vertices of the polygon.
     const Container_P& container() const
       { return d_container; }
 
+    /// @}
+
     bool identical(const Polygon_2<Traits_P,Container_P> &q) const
       { return this == &q; }
-
 
     Traits_P const &traits_member() const { return traits;}
 
@@ -353,40 +460,61 @@ class Polygon_2 {
     Traits_P traits;
 };
 
-//-----------------------------------------------------------------------//
-//               Globally defined operators
-//-----------------------------------------------------------------------//
+/// @} // polygon_2
 
+/// \name Global Operators
+/// @{
+
+/// Test for equality: two polygons are equal iff there exists a
+/// cyclic permutation of the vertices of `p2` such that they are
+/// equal to the vertices of `p1`. Note that the template argument
+/// `Container` of `p1` and `p2` may be different.
+/// \memberof Polygon_2
 template <class Traits_P, class Container1_P, class Container2_P>
-bool operator==( const Polygon_2<Traits_P,Container1_P> &x,
-                 const Polygon_2<Traits_P,Container2_P> &y );
+bool operator==( const Polygon_2<Traits_P,Container1_P> &p1,
+                 const Polygon_2<Traits_P,Container2_P> &p2 );
 
+/// Test for inequality. 
+/// \memberof Polygon_2
 template <class Traits_P, class Container1_P, class Container2_P>
 inline
 bool
-operator!=(const Polygon_2<Traits_P,Container1_P> &x,
-           const Polygon_2<Traits_P,Container2_P> &y);
+operator!=(const Polygon_2<Traits_P,Container1_P> &p1,
+           const Polygon_2<Traits_P,Container2_P> &p2);
 
+/// Returns the image of the polygon \c p under the transformation \c t.
+/// \memberof Polygon_2
 template <class Transformation, class Traits_P, class Container_P>
 Polygon_2<Traits_P,Container_P>
 transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p);
 
-//-----------------------------------------------------------------------//
-//               I/O
-//-----------------------------------------------------------------------//
+/// @} // global operators
 
+/// \name I/O
+/// The information output in the `std::iostream` is the number of points
+/// followed by the output of the coordinates of the vertices.
+/// @{
+
+/// Inserts the polygon `p` into the stream `os`. \pre The insert
+/// operator must be defined for `Point_2`.
+/// \memberof Polygon_2
 template <class Traits_P, class Container_P>
 std::istream &operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p);
 
+/// Reads a polygon from stream `is` and assigns it
+/// to `p`. \pre The extract operator must be defined for `Point_2`.
+/// \memberof Polygon_2
 template <class Traits_P, class Container_P>
 std::ostream
 &operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p);
 
+/// @} // IO
+
+} //namespace CGAL
+
 //-----------------------------------------------------------------------//
 //                         implementation
 //-----------------------------------------------------------------------//
-
-} //namespace CGAL
 
 #include <CGAL/Polygon_2/Polygon_2_impl.h>
 
