@@ -26,7 +26,7 @@
 
 namespace CGAL {
 
-
+/// \internal
 /// Wrapper around Orthogonal_k_neighbor_search for Triangulation_3 Vertex_handles.
 template <class Gt, class Vertex_handle>
 class K_nearest_neighbor
@@ -91,7 +91,6 @@ public:
   }
 
 }; // K_nearest_neighbor
-
 
 } //namespace CGAL
 

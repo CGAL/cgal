@@ -36,7 +36,7 @@
 
 namespace CGAL {
 
-
+/// \internal
 /// The Reconstruction_vertex_base_3 class is the default
 /// vertex class of the Reconstruction_triangulation_3 class.
 ///
@@ -47,7 +47,6 @@ namespace CGAL {
 ///   or not (i.e. may contribute to the right or left member of the linear system),
 ///   and has a unique index.
 ///
-/// @heading Parameters:
 /// @param Gt   Geometric traits class / Point_3 is a typedef to Point_with_normal_3.
 /// @param Cb   Vertex base class, model of TriangulationVertexBase_3.
 
@@ -62,14 +61,14 @@ public:
   typedef Gt Geom_traits;
 
   // Repeat Triangulation_vertex_base_3 public types
-  /// @cond SKIP_IN_MANUAL
+  /// \cond SKIP_IN_MANUAL
   typedef typename Vb::Cell_handle Cell_handle;
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other                       Vb2;
     typedef Reconstruction_vertex_base_3<Geom_traits, Vb2> Other;
   };
-  /// @endcond
+  /// \endcond
 
   // Geometric types
   typedef typename Geom_traits::FT FT;
@@ -139,12 +138,12 @@ private:
 }; // end of Reconstruction_vertex_base_3
 
 
+/// \internal
 /// Helper class:
 /// Reconstruction_triangulation_default_geom_traits_3
 /// changes in a geometric traits class the Point_3 type to
 /// Point_with_normal_3<BaseGt>.
 ///
-/// @heading Parameters:
 /// @param BaseGt   Geometric traits class.
 template <class BaseGt>
 struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
@@ -153,6 +152,7 @@ struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 };
 
 
+/// \internal
 /// The Reconstruction_triangulation_3 class
 /// provides the interface requested by the Poisson_reconstruction_function class:
 /// - Each vertex stores a normal vector.
@@ -162,7 +162,6 @@ struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 ///   and has a unique index.
 /// The vertex class must derive from Reconstruction_vertex_base_3.
 ///
-/// @heading Parameters:
 /// @param BaseGt   Geometric traits class.
 /// @param Gt       Geometric traits class / Point_3 is a typedef to Point_with_normal_3<BaseGt>.
 /// @param Tds      Model of TriangulationDataStructure_3. The vertex class
@@ -198,7 +197,7 @@ public:
   typedef Gt  Geom_traits;
 
   // Repeat base class' types
-  /// @cond SKIP_IN_MANUAL
+  /// \cond SKIP_IN_MANUAL
   typedef Tds_ Triangulation_data_structure;
   typedef typename Base::Segment      Segment;
   typedef typename Base::Triangle     Triangle;
@@ -226,7 +225,7 @@ public:
   typedef typename Base::All_cells_iterator       All_cells_iterator;
   typedef typename Base::All_vertices_iterator       All_vertices_iterator;
   typedef typename Base::Locate_type Locate_type;
-  /// @endcond
+  /// \endcond
 
   // Geometric types
   typedef typename Geom_traits::FT FT;
@@ -260,7 +259,7 @@ public:
   // Default copy constructor and operator =() are fine.
 
   // Repeat base class' public methods used below
-  /// @cond SKIP_IN_MANUAL
+  /// \cond SKIP_IN_MANUAL
   using Base::points_begin;
   using Base::points_end;
   using Base::number_of_vertices;
@@ -270,7 +269,7 @@ public:
   using Base::all_vertices_end;
 
   using Base::geom_traits;
-  /// @endcond
+  /// \endcond
 
   /// Gets first iterator over input vertices.
   Input_vertices_iterator input_vertices_begin() const
@@ -402,7 +401,7 @@ public:
     return number_of_vertices() - n;
   }
 
-  /// @cond SKIP_IN_MANUAL
+  /// \cond SKIP_IN_MANUAL
   // This variant creates a default point property map = Dereference_property_map.
   template <typename InputIterator,
             typename NormalPMap
@@ -449,8 +448,8 @@ public:
     return index;
   }
 
+  // \endcond
 }; // end of Reconstruction_triangulation_3
-
 
 } //namespace CGAL
 

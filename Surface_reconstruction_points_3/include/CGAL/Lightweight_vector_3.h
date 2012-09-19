@@ -27,15 +27,14 @@
 namespace CGAL {
 
 
+/// \internal
 /// The Lightweight_vector_3 class represents a 3D vector (oriented).
 /// The purpose of this class is to save memory as the actual vector 
 /// is allocated only when needed.
 ///
-/// @heading Is Model for the Concepts: Model of the Kernel::Vector_3 concept.
+/// \models `Kernel::Vector_3`
 ///
-/// @heading Parameters:
-/// @param Gt   Geometric traits class.
-
+/// @tparam Gt   Geometric traits class.
 template<class Gt>
 class Lightweight_vector_3
 {
