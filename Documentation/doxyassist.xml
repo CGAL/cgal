@@ -97,6 +97,26 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>Surface Reconstruction from Point Sets</name>
+        <input>../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3</input>
+        <input>../Surface_reconstruction_points_3/include</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/</string>
+          <string name="STRIP_FROM_INC_PATH">../Surface_reconstruction_points_3/include/</string>
+          <string name="GENERATE_TAGFILE">./tags/Surface_reconstruction_points_3.tag</string>
+          <string name="IMAGE_PATH">../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig</string>
+          <string name="EXAMPLE_PATH">../Surface_reconstruction_points_3/examples</string>
+          <bool name="EXTRACT_ALL">false</bool>
+          <bool name="HIDE_UNDOC_CLASSES">true</bool>
+          <bool name="SHOW_INCLUDE_FILES">true</bool>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Surface_mesher.tag=../../CGAL.CGAL.3D-Surface-Mesh-Generation/html</item>
+          </list>
+        </doxygen>
+      </project>
+
+
+      <project>
         <name>2D Conforming Triangulations and Meshes</name>
         <input>../Mesh_2/doc</input>
         <doxygen>
@@ -1232,6 +1252,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Surface_mesh_simplification/doc/Surface_mesh_simplification/fig</item>
           <item>../Subdivision_method_3/doc/Subdivision_method_3/fig</item>
           <item>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig</item>
+          <item>../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig</item>
           <item>../Stream_lines_2/doc/Stream_lines_2/fig</item>
           <item>../Stream_support/doc/IOstream/fig</item>
         </list>
@@ -1309,6 +1330,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Stream_lines_2.tag=../../CGAL.CGAL.2D Placement-of-Streamlines/html</item>
           <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
           <item>./tags/Surface_mesh_parameterization.tag=../../CGAL.CGAL.Planar-Parameterization-of-Triangulated-Surface-Meshes</item>
+          <item>./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGALSurface-Reconstruction-from-Point-Sets/html</item>
         </list>
         <string name="HTML_EXTRA_STYLESHEET">cgal_stylesheet.css</string>
         <bool name="ALLEXTERNALS">true</bool>
