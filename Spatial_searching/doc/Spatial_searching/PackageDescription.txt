@@ -36,5 +36,18 @@
 \PkgDemo{2D Spatial Searching,spatial_searching.zip}
 \PkgManuals{Chapter_dD_Spatial_Searching,PkgSpatialSearchingD}
 \PkgDescriptionEnd
+
+This package provides data structures and algorithms for exact and approximate distance browsing,
+supporting
+
+- both nearest and furthest neighbor searching,
+- both exact and approximate searching,
+- (approximate) range searching,
+- (approximate) \f$ k\f$-nearest and \f$ k\f$-furthest neighbor searching,
+- (approximate) incremental nearest and incremental furthest neighbor searching,
+- query items representing points and spatial objects.
+
+The spatial searching package consists of the following concepts and
+classes that are described in the reference pages.
 */
 

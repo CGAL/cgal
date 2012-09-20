@@ -146,7 +146,6 @@ Algebraic_kernel_d/doc/Algebraic_kernel_d/CGAL/Algebraic_kernel_d_1.h -text
 Algebraic_kernel_d/doc/Algebraic_kernel_d/CGAL/Algebraic_kernel_d_2.h -text
 Algebraic_kernel_d/doc/Algebraic_kernel_d/CGAL/Algebraic_kernel_rs_gmpq_d_1.h -text
 Algebraic_kernel_d/doc/Algebraic_kernel_d/CGAL/Algebraic_kernel_rs_gmpz_d_1.h -text
-Algebraic_kernel_d/doc/Algebraic_kernel_d/Classified.txt -text
 Algebraic_kernel_d/doc/Algebraic_kernel_d/Concepts/AlgebraicKernel_d_1--ApproximateAbsolute_1.h -text
 Algebraic_kernel_d/doc/Algebraic_kernel_d/Concepts/AlgebraicKernel_d_1--ApproximateRelative_1.h -text
 Algebraic_kernel_d/doc/Algebraic_kernel_d/Concepts/AlgebraicKernel_d_1--BoundBetween_1.h -text
@@ -403,7 +402,6 @@ Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_graph_hierarchy_vertex
 Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_graph_traits_2.h -text
 Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_graph_vertex_base_2.h -text
 Apollonius_graph_2/doc/Apollonius_graph_2/CGAL/Apollonius_site_2.h -text
-Apollonius_graph_2/doc/Apollonius_graph_2/Classified.txt -text svneol=unset#application/octet-stream
 Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusGraphDataStructure_2.h -text
 Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusGraphHierarchyVertexBase_2.h -text
 Apollonius_graph_2/doc/Apollonius_graph_2/Concepts/ApolloniusGraphTraits_2.h -text
@@ -1533,7 +1531,6 @@ Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/Gps_traits_2.h -text
 Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/Polygon_set_2.h -text
 Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/Polygon_with_holes_2.h -text
 Boolean_set_operations_2/doc/Boolean_set_operations_2/CGAL/connect_holes.h -text
-Boolean_set_operations_2/doc/Boolean_set_operations_2/Classified.txt -text
 Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/ArrDirectionalTraits--AreMergeable_2.h -text
 Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/ArrDirectionalTraits--CompareEndpointsXy_2.h -text
 Boolean_set_operations_2/doc/Boolean_set_operations_2/Concepts/ArrDirectionalTraits--ConstructOpposite_2.h -text
@@ -1777,7 +1774,6 @@ CGAL_ipelets/demo/CGAL_ipelets/skeleton.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/triangulation.cpp -text
 CGAL_ipelets/doc/CGAL_ipelets/CGAL/CGAL_Ipelet_base.h -text
 CGAL_ipelets/doc/CGAL_ipelets/CGAL_ipelets.txt -text
-CGAL_ipelets/doc/CGAL_ipelets/Classified.txt -text svneol=unset#application/octet-stream
 CGAL_ipelets/doc/CGAL_ipelets/PackageDescription.txt -text
 CGAL_ipelets/doc/CGAL_ipelets/examples.txt -text
 CGAL_ipelets/doc/CGAL_ipelets/fig/example.png -text svneol=unset#image/png
@@ -1815,7 +1811,6 @@ Circular_kernel_2/doc/Circular_kernel_2/CGAL/Polynomials_2_2.h -text
 Circular_kernel_2/doc/Circular_kernel_2/CGAL/Root_for_circles_2_2.h -text
 Circular_kernel_2/doc/Circular_kernel_2/CGAL/global_functions_circular_kernel_2.h -text
 Circular_kernel_2/doc/Circular_kernel_2/Circular_kernel_2.txt -text
-Circular_kernel_2/doc/Circular_kernel_2/Classified.txt -text
 Circular_kernel_2/doc/Circular_kernel_2/Concepts/AlgebraicKernelForCircles--CompareX.h -text
 Circular_kernel_2/doc/Circular_kernel_2/Concepts/AlgebraicKernelForCircles--CompareXY.h -text
 Circular_kernel_2/doc/Circular_kernel_2/Concepts/AlgebraicKernelForCircles--CompareY.h -text
@@ -1896,7 +1891,6 @@ Circular_kernel_3/doc/Circular_kernel_3/CGAL/Root_for_spheres_2_3.h -text
 Circular_kernel_3/doc/Circular_kernel_3/CGAL/Spherical_kernel_3.h -text
 Circular_kernel_3/doc/Circular_kernel_3/CGAL/global_functions_spherical_kernel_3.h -text
 Circular_kernel_3/doc/Circular_kernel_3/Circular_kernel_3.txt -text
-Circular_kernel_3/doc/Circular_kernel_3/Classified.txt -text
 Circular_kernel_3/doc/Circular_kernel_3/Concepts/AlgebraicKernelForSpheres--CompareX.h -text
 Circular_kernel_3/doc/Circular_kernel_3/Concepts/AlgebraicKernelForSpheres--CompareXY.h -text
 Circular_kernel_3/doc/Circular_kernel_3/Concepts/AlgebraicKernelForSpheres--CompareXYZ.h -text
@@ -2261,7 +2255,6 @@ Convex_hull_3/doc/Convex_hull_3/CGAL/convex_hull_3.h -text
 Convex_hull_3/doc/Convex_hull_3/CGAL/convex_hull_3_to_polyhedron_3.h -text
 Convex_hull_3/doc/Convex_hull_3/CGAL/convex_hull_incremental_3.h -text
 Convex_hull_3/doc/Convex_hull_3/CGAL/convexity_check_3.h -text
-Convex_hull_3/doc/Convex_hull_3/Classified.txt -text
 Convex_hull_3/doc/Convex_hull_3/Concepts/ConvexHullPolyhedronFacet_3.h -text
 Convex_hull_3/doc/Convex_hull_3/Concepts/ConvexHullPolyhedronHalfedge_3.h -text
 Convex_hull_3/doc/Convex_hull_3/Concepts/ConvexHullPolyhedronVertex_3.h -text
@@ -2284,7 +2277,6 @@ Convex_hull_d/doc/Convex_hull_d/CGAL/Convex_hull_d.h -text
 Convex_hull_d/doc/Convex_hull_d/CGAL/Convex_hull_d_to_polyhedron_3.h -text
 Convex_hull_d/doc/Convex_hull_d/CGAL/Convex_hull_d_traits_3.h -text
 Convex_hull_d/doc/Convex_hull_d/CGAL/Delaunay_d.h -text
-Convex_hull_d/doc/Convex_hull_d/Classified.txt -text
 Convex_hull_d/doc/Convex_hull_d/Concepts/ConvexHullTraits_d.h -text
 Convex_hull_d/doc/Convex_hull_d/Concepts/DelaunayLiftedTraits_d.h -text
 Convex_hull_d/doc/Convex_hull_d/Concepts/DelaunayTraits_d.h -text
@@ -2846,7 +2838,6 @@ Interpolation/doc/Interpolation/CGAL/regular_neighbor_coordinates_2.h -text
 Interpolation/doc/Interpolation/CGAL/sibson_gradient_fitting.h -text
 Interpolation/doc/Interpolation/CGAL/surface_neighbor_coordinates_3.h -text
 Interpolation/doc/Interpolation/CGAL/surface_neighbors_3.h -text
-Interpolation/doc/Interpolation/Classified.txt -text
 Interpolation/doc/Interpolation/Concepts/GradientFittingTraits.h -text
 Interpolation/doc/Interpolation/Concepts/InterpolationTraits.h -text
 Interpolation/doc/Interpolation/Interpolation.txt -text
@@ -3137,7 +3128,6 @@ Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Multi_listener.h -tex
 Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Ref_counted.h -text
 Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/Simulator_objects_listener.h -text
 Kinetic_data_structures/doc/Kinetic_framework/CGAL/Kinetic/listeners.h -text
-Kinetic_data_structures/doc/Kinetic_framework/Classified.txt -text
 Kinetic_data_structures/doc/Kinetic_framework/Concepts/ActiveObjectsTable.h -text
 Kinetic_data_structures/doc/Kinetic_framework/Concepts/CertificateGenerator.h -text
 Kinetic_data_structures/doc/Kinetic_framework/Concepts/EvenQueue.h -text
@@ -3989,7 +3979,6 @@ Mesh_2/doc/Mesh_2/CGAL/Delaunay_mesh_size_criteria_2.h -text
 Mesh_2/doc/Mesh_2/CGAL/Delaunay_mesher_2.h -text
 Mesh_2/doc/Mesh_2/CGAL/Mesh_2/Face_badness.h -text
 Mesh_2/doc/Mesh_2/CGAL/Triangulation_conformer_2.h -text
-Mesh_2/doc/Mesh_2/Classified.txt -text
 Mesh_2/doc/Mesh_2/Concepts/ConformingDelaunayTriangulationTraits_2.h -text
 Mesh_2/doc/Mesh_2/Concepts/DelaunayMeshFaceBase_2.h -text
 Mesh_2/doc/Mesh_2/Concepts/DelaunayMeshTraits_2.h -text
@@ -4370,7 +4359,6 @@ Nef_2/doc/Nef_2/CGAL/Extended_cartesian.h -text
 Nef_2/doc/Nef_2/CGAL/Extended_homogeneous.h -text
 Nef_2/doc/Nef_2/CGAL/Filtered_extended_homogeneous.h -text
 Nef_2/doc/Nef_2/CGAL/Nef_polyhedron_2.h -text
-Nef_2/doc/Nef_2/Classified.txt -text
 Nef_2/doc/Nef_2/Concepts/ExtendedKernelTraits_2.h -text
 Nef_2/doc/Nef_2/Nef_2.txt -text
 Nef_2/doc/Nef_2/PackageDescription.txt -text
@@ -4555,7 +4543,6 @@ Number_types/doc/Number_types/CGAL/simplest_rational_in_interval.h -text
 Number_types/doc/Number_types/CGAL/to_rational.h -text
 Number_types/doc/Number_types/CGAL/utils.h -text
 Number_types/doc/Number_types/CGAL/utils_classes.h -text
-Number_types/doc/Number_types/Classified.txt -text
 Number_types/doc/Number_types/Concepts/RootOf_2.h -text
 Number_types/doc/Number_types/NumberTypeSupport.txt -text
 Number_types/doc/Number_types/PackageDescription.txt -text
@@ -5138,7 +5125,6 @@ Polytope_distance_d/doc/Polytope_distance_d/CGAL/Polytope_distance_d_traits_d.h 
 Polytope_distance_d/doc/Polytope_distance_d/CGAL/Width_3.h -text
 Polytope_distance_d/doc/Polytope_distance_d/CGAL/Width_default_traits_3.h -text
 Polytope_distance_d/doc/Polytope_distance_d/CGAL/all_furthest_neighbors_2.h -text
-Polytope_distance_d/doc/Polytope_distance_d/Classified.txt -text svneol=unset#application/octet-stream
 Polytope_distance_d/doc/Polytope_distance_d/Concepts/AllFurthestNeighborsTraits_2.h -text
 Polytope_distance_d/doc/Polytope_distance_d/Concepts/PolytopeDistanceDTraits.h -text
 Polytope_distance_d/doc/Polytope_distance_d/Concepts/WidthTraits_3.h -text
@@ -5508,7 +5494,6 @@ Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_grap
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_storage_site_2.h -text
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_traits_2.h -text
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/CGAL/Segment_Delaunay_graph_vertex_base_2.h -text
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Classified.txt -text
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGraphDataStructure_2.h -text
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGraphHierarchyVertexBase_2.h -text
 Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/Concepts/SegmentDelaunayGraphSite_2.h -text
@@ -5655,7 +5640,6 @@ Spatial_searching/doc/Spatial_searching/CGAL/Search_traits_adapter.h -text
 Spatial_searching/doc/Spatial_searching/CGAL/Search_traits_d.h -text
 Spatial_searching/doc/Spatial_searching/CGAL/Splitters.h -text
 Spatial_searching/doc/Spatial_searching/CGAL/Weighted_Minkowski_distance.h -text
-Spatial_searching/doc/Spatial_searching/Classified.txt -text svneol=unset#application/octet-stream
 Spatial_searching/doc/Spatial_searching/Concepts/FuzzyQueryItem.h -text
 Spatial_searching/doc/Spatial_searching/Concepts/GeneralDistance.h -text
 Spatial_searching/doc/Spatial_searching/Concepts/OrthogonalDistance.h -text
@@ -6136,7 +6120,6 @@ Subdivision_method_3/test/Subdivision_method_3/data/corner_with_hole.off -text s
 Subdivision_method_3/test/Subdivision_method_3/data/corner_with_sharp_edge.off -text svneol=unset#application/octet-stream
 Subdivision_method_3/test/Subdivision_method_3/data/cross.off -text svneol=unset#application/octet-stream
 Subdivision_method_3/test/Subdivision_method_3/data/quint_tris.off -text svneol=unset#application/octet-stream
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/Classified.txt -text
 Surface_mesh_parameterization/doc/Surface_mesh_parameterization/PackageDescription.txt -text
 Surface_mesh_parameterization/doc/Surface_mesh_parameterization/Surface_mesh_parameterization.txt -text
 Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/LSCM.png -text svneol=unset#image/png

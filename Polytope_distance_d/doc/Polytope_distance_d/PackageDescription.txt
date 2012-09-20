@@ -1,6 +1,7 @@
 /// \defgroup PkgOptimalDistances Optimal Distances 
 /// \defgroup PkgOptimalDistancesConcepts Concepts
 /// \ingroup PkgOptimalDistances
+
 /*!
 \addtogroup PkgOptimalDistances
 \todo check generated documentation

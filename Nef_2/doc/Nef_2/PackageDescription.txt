@@ -17,5 +17,8 @@
 \PkgManuals{Chapter_2D_Boolean_Operations_on_Nef_Polygons,PkgNef2}
 \PkgDescriptionEnd
 
+Planar Nef Polyhedra are whatever can be constructed with a finite number of
+Boolean operations on halfspaces. See the user manual pages for a detailed
+introduction.
 */
 

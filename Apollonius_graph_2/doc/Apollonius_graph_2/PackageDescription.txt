@@ -16,5 +16,23 @@
 \PkgDemo{2D Apollonius Graph,apollonius_graph_2.zip}
 \PkgManuals{Chapter_2D_Apollonius_Graphs,PkgApolloniusGraph2}
 \PkgDescriptionEnd
+
+An Apollonius graph is the dual of the Apollonius diagram, also known
+as the <I>additively weighted Voronoi diagram</I>. It is essentially the
+Voronoi diagram of a set of disks, where the distance of a
+point of the plane from a disk is defined as the Euclidean
+distance of the point and the center of the circle, minus the radius
+of the disk.
+
+\cgal provides the class `CGAL::Apollonius_graph_2<Gt,Agds>` for
+computing the 2D Apollonius graph. The two template parameters must be
+models of the `ApolloniusGraphTraits_2` and
+`ApolloniusGraphDataStructure_2` concepts. The first concept is
+related to the geometric objects and predicates associated with
+Apollonius graphs, whereas the second concept refers to the data
+structure used to represent the Apollonius graph. The classes
+`Apollonius_graph_traits_2<K,Method_tag>` and
+`Triangulation_data_structure_2<Vb,Fb>` are models of the
+aforementioned concepts.
 */
 

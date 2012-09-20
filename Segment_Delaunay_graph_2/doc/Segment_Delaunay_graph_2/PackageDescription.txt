@@ -1,5 +1,3 @@
-
-
 /// \defgroup PkgSegmentDelaunayGraph2 2D Segment Delaunay Graphs 
 /// \defgroup PkgSegmentDelaunayGraph2Concepts Concepts
 /// \ingroup PkgSegmentDelaunayGraph2
@@ -16,5 +14,24 @@
 \PkgDemo{2D Segment Voronoi Diagram,segment_voronoi_diagram_2.zip}
 \PkgManuals{Chapter_2D_Segment_Delaunay_Graphs,PkgSegmentDelaunayGraph2}
 \PkgDescriptionEnd
+
+\cgal provides the class
+`CGAL::Segment_Delaunay_graph_2<Gt,DS>` for
+computing the 2D Delaunay graph of segments and points. The two
+template parameters must be models of the
+`SegmentDelaunayGraphTraits_2` and
+`SegmentDelaunayGraphDataStructure_2` concepts. The first concept
+is related to the geometric objects and predicates associated with
+segment Delaunay graphs, whereas the second concept refers to the data
+structure used to represent the segment Delaunay graph, which is dual
+to the 2D Voronoi diagram of segments and points.
+The classes `Segment_Delaunay_graph_traits_2<K,MTag>`,
+`Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
+`Segment_Delaunay_graph_filtered_traits_2<K,MTag>`
+`Segment_Delaunay_graph_filtered_traits_without_intersections_2<K,MTag>`
+are models of the `SegmentDelaunayGraphTraits_2` concept, whereas
+the class
+`Triangulation_data_structure_2<Vb,Fb>` is a model of the
+`SegmentDelaunayGraphDataStructure_2` concept.
 */
 
