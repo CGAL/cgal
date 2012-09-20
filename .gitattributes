@@ -3321,6 +3321,8 @@ Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew.
 Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew.png -text svneol=unset#image/png
 Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew2.pdf -text svneol=unset#application/pdf
 Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew2.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-lcc3d-sew.png -text
+Linear_cell_complex/doc/Linear_cell_complex/fig/first-example-lcc.png -text
 Linear_cell_complex/doc/Linear_cell_complex/fig/import_graph.pdf -text svneol=unset#application/pdf
 Linear_cell_complex/doc/Linear_cell_complex/fig/import_graph.png -text svneol=unset#image/png
 Linear_cell_complex/doc/Linear_cell_complex/fig/insert-edge.pdf -text svneol=unset#application/pdf
@@ -3335,6 +3337,7 @@ Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-zoom2.pdf -
 Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-zoom2.png -text svneol=unset#image/png
 Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc.pdf -text svneol=unset#application/pdf
 Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/lcc-examples-2d-3d.png -text
 Linear_cell_complex/doc/Linear_cell_complex/fig/logo-lcc-small.png -text svneol=unset#image/png
 Linear_cell_complex/doc/Linear_cell_complex/fig/logo-lcc.png -text svneol=unset#image/png
 Linear_cell_complex/doc/Linear_cell_complex/fig/make_cuboid.pdf -text svneol=unset#application/pdf
@@ -3353,6 +3356,7 @@ Linear_cell_complex/doc/Linear_cell_complex/fig/make_triangle.pdf -text svneol=u
 Linear_cell_complex/doc/Linear_cell_complex/fig/make_triangle.png -text svneol=unset#image/png
 Linear_cell_complex/doc/Linear_cell_complex/fig/object2d.pdf -text svneol=unset#application/pdf
 Linear_cell_complex/doc/Linear_cell_complex/fig/object2d.png -text svneol=unset#image/png
+Linear_cell_complex/doc/Linear_cell_complex/fig/objects2d-3d.png -text
 Linear_cell_complex/doc/Linear_cell_complex/fig/plane-graph.pdf -text svneol=unset#application/pdf
 Linear_cell_complex/doc/Linear_cell_complex/fig/plane-graph.png -text svneol=unset#image/png
 Linear_cell_complex/doc/Linear_cell_complex/fig/triangulation.pdf -text svneol=unset#application/pdf

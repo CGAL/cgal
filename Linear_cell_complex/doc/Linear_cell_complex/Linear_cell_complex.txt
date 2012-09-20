@@ -28,8 +28,7 @@ the linear geometrical embedding, a point (a model of
 associated to each vertex of the combinatorial map.
 
 \anchor figexempleintroductif
-\image html object2d.png
-\image html intuitif-example-lcc-object.png
+\image html objects2d-3d.png
 
 <center><b>
 Examples of objects with linear geometry. <B>Left</B>: A 2D object
@@ -47,9 +46,7 @@ geometrical part of the object is described by associating a point to
 each vertex of the map.
 
 \anchor figexempleintroductiflcc
-\image html intuitif-example-lcc.png
-\image html intuitif-example-lcc-zoom.png
-\image html intuitif-example-lcc-zoom2.png
+\image html first-example-lcc.png
 
 <center><b>
 Example of 3D linear cell complex describing the object given in Figure \ref figexempleintroductif (Right). <B>Left</B>: The 3D linear cell complex which contains 54 darts (18 for each 3-cell) where each vertex is associated with a point, here a `CGAL::Point_3`. Blue segments represent \f$ \beta_3\f$ relations. <B>Middle</B>: Zoom around the central edge which details the six darts belonging to the edge and the associations between darts and points. <B>Right</B>: Zoom around the facet between light gray and white 3-cells, which details the eight darts belonging to the facet and the associations between darts and points (given by red segments).
@@ -119,8 +116,7 @@ We can see two examples of `CGAL::Linear_cell_complex` in
 Figure \ref figcombi_map_with_point.
 
 \anchor figcombi_map_with_point
-\image html plane-graph.png
-\image html basic-example3D.png
+\image html lcc-examples-2d-3d.png
 <center><b>
 Examples of `CGAL::Linear_cell_complex`. Gray disks show the attributes associated to vertices. Associations between darts and attributes are drawn by small lines between darts and disks. <B>Left:</B> Example of `CGAL::Linear_cell_complex<2,2>`. <B>Right:</B> Example of `CGAL::Linear_cell_complex<3,3>`.
 </b></center>
@@ -223,8 +219,7 @@ Intuitively, the
 geometry of the second 2-cell is deformed to fit to the first 2-cell.
 
 \anchor figlccexemplesew
-\image html exemple-carte-with_point_3d-sew.png
-\image html exemple-carte-with_point_3d-sew2.png
+\image html exemple-lcc3d-sew.png
 <center><b>
 Example of 3-sew operation for linear cell complex. <B>Left</B>: A 3D linear cell complex containing two 3-cells that are not connected. Vertex attributes are drawn with circles containing point coordinates. Associations between darts and attributes are drawn with small lines between darts and disks. <B>Right</B>: The 3D linear cell complex obtained as result of `sew<3>(1,5)` (or `sew<3>(2,8)`, or `sew<3>(3,7)`, or `sew<3>(4,6)`). The eight 0-attributes around the facet between the two 3-cells before the sew operation, are merged into four 0-attributes after. The geometry of the pyramid is deformed since its base is fitted on the 2-cell of the cube.
 </b></center>
