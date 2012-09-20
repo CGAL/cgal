@@ -1,0 +1,29 @@
+\begin{ccRefClass}{Epick_d<dimension>}
+
+\ccInclude{CGAL/Epick_d.h}
+
+\ccDefinition
+A model for \ccc{Kernel_d} and \ccc{DelaunayTriangulationTraits} that
+uses Cartesian coordinates to represent the geometric objects.  The
+integer parameter \ccc{dimension} is the dimension of the ambient
+Euclidean space. It supports construction of points from \ccc{double}
+Cartesian coordinates. It provides exact geometric predicates, but
+inexact geometric constructions.
+
+Note that this kernel does not completely conform to the \ccc{Kernel_d}
+concept: it is missing the constructions \ccc{Lift_to_paraboloid_d} and
+\ccc{Project_along_d_axis_d} which do not make sense with a fixed
+dimension.
+
+\ccIsModel
+\ccRefConceptPage{Kernel_d}
+
+\ccRefConceptPage{DelaunayTriangulationTraits}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Cartesian_d<FieldNumberType>}
+
+\ccRefIdfierPage{CGAL::Homogeneous_d<RingNumberType>}
+
+
+\end{ccRefClass}
