@@ -529,6 +529,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Circular_kernel_3/examples</string>
           <string name="IMAGE_PATH">../Circular_kernel_3/doc/Circular_kernel_3/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Circular_kernel_2.tag=../../CGAL.CGAL.2D-Circular-Geometry-Kernel/html</item>
+          </list>
         </doxygen>
       </project>
 
