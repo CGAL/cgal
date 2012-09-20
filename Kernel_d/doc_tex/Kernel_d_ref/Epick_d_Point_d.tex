@@ -1,0 +1,18 @@
+\begin{ccRefClass} {Epick_d<dimension>::Point_d}
+
+\ccDefinition
+An object of the class \ccRefName\ is a point in the Euclidean space $\E^{dimension}$.
+
+This class is DefaultConstructible, Copyable, Assignable, and provides the following additional interfaces:
+
+\ccCreation
+\ccCreationVariable{p}
+\ccConstructor{Point_d(double $x_0$, \ldots, double $x_{dimension-1}$);}
+{introduces a point \ccVar\ initialized to $(x_0, \ldots, x_{dimension-1})$.}
+
+\ccOperations
+\ccMethod{double operator[](int i) const;}
+       {returns the i'th Cartesian coordinate of \ccVar.
+        \ccPrecond $0\leq i < dimension$.}
+
+\end{ccRefClass}
