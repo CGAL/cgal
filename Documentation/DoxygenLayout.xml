@@ -45,8 +45,7 @@
     <allmemberslink visible="yes"/>
     <memberdecl>
       <nestedclasses visible="yes" title=""/>
-      <!-- Disable the naming of the public types group -->
-      <publictypes title=" "/>
+      <publictypes title=""/>
       <publicslots title=""/>
       <signals title=""/>
       <publicmethods title=""/>

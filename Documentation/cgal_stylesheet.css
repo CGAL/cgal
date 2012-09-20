@@ -32,3 +32,7 @@ padding-right: 20px;
         font-weight: bold;
         vertical-align: top;
 }
+
+h2.groupheader {
+  font-size: 100%;
+}
