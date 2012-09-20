@@ -1,10 +1,8 @@
-
-\page chapcgalipelets CGAL Ipelets 
-
 namespace CGAL {
 /*!
 
-\mainpage CGAL Ipelets 
+\mainpage CGAL Ipelets
+\anchor Chapter_CGAL_Ipelets
 \anchor chapcgalipelets
 \autotoc
 \authors S&eacute;bastien Loriot and Sylvain Pion

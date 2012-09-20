@@ -1,7 +1,8 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Convex Hulls and Extreme Points 
+\mainpage 2D Convex Hulls and Extreme Points
+\anchor Chapter_2D_Convex_Hulls_and_Extreme_Points
 \anchor chapconvexhull2
 \autotoc
 \authors Susan Hert and Stefan Schirra

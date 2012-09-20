@@ -1,10 +1,8 @@
-
-\page ChapterCombinatorialMap Combinatorial Maps
-
 namespace CGAL {
 /*!
 
 \mainpage Combinatorial Maps
+\anchor Chapter_Combinatorial_Maps
 \anchor ChapterCombinatorialMap
 
 \authors Guillaume Damiand

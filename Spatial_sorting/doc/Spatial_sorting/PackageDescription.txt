@@ -18,8 +18,9 @@
 \PkgAuthor{Christophe Delage and Olivier Devillers}
 \PkgDesc{This package provides functions for sorting geometric objects in two, three and higher dimensions, in order to improve efficiency of incremental geometric algorithms.}
 \PkgSince{3.3}
-\cgalbib{cgal:dd-ss}
-\license{\ref licensesLGPL "LGPL"}
+\PkgBib{cgal:dd-ss}
+\PkgLicense{\ref licensesLGPL "LGPL"}
+\PkgManuals{Chapter_Spatial_Sorting,PkgSpatialSorting}
 \PkgDescriptionEnd
 */
 

@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D %Range and Neighbor Search
+\anchor Chapter_2D_Range_and_Neighbor_Search
 \anchor chapterPointset2
 \autotoc
 \authors Matthias B&auml;sken

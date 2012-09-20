@@ -1,10 +1,8 @@
-
-\page chaptercircularkernel 2D Circular Geometry Kernel
-
 namespace CGAL {
 /*!
 
 \mainpage 2D Circular Geometry %Kernel
+\anchor Chapter_2D_Circular_Geometry_Kernel
 \anchor chaptercircularkernel
 \autotoc
 

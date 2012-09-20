@@ -2,6 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage Surface Reconstruction from Point Sets
+\anchor Chapter_Surface_Reconstruction_from_Point_Sets
 \anchor chapsurface_reconstruction_points_3
 
 \authors Pierre Alliez, Laurent Saboret, Ga&euml;l Guennebaud

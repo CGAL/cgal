@@ -11,8 +11,9 @@
 \PkgAuthor{Ron Wein}
 \PkgDesc{This package consists of functions that compute the Minkowski sum of two simple straight-edge polygons in the plane. It also contains functions for computing the Minkowski sum of a polygon and a disc, an operation known as <I>offsetting</I> or <I>dilating</I> a polygon. The package can compute the exact representation of the offset polygon, or provide a guaranteed approximation of the offset.}
 \PkgSince{3.3}
-\cgalbib{cgal:w-rms2}
-\license{ \ref licensesGPL  "GPL" }
+\PkgBib{cgal:w-rms2}
+\PkgLicense{\ref licensesGPL  "GPL"}
+\PkgManuals{Chapter_2D_Minkowski_Sums,PkgMinkowskiSum2}
 \PkgDescriptionEnd
 
 This package consist of functions for computing the Minkowksi sum

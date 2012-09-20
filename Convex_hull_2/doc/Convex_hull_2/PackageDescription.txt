@@ -26,9 +26,10 @@
 \PkgAuthor{Susan Hert and Stefan Schirra}
 \PkgDesc{This package provides functions for computing convex hulls in two dimensions as well as functions for checking if sets of points are strongly convex are not. There are also a number of functions described for computing particular extreme points and subsequences of hull points, such as the lower and upper hull of a set of points.}
 \PkgSince{1.0}
-\cgalbib{cgal:hs-chep2}
-\license{ \ref licensesGPL  "GPL" }
+\PkgBib{cgal:hs-chep2}
+\PkgLicense{\ref licensesGPL  "GPL"}
 \PkgDemo{See Bounding Volumes,bounding_volumes_2.zip}
+\PkgManuals{Chapter_2D_Convex_Hulls_and_Extreme_Points,PkgConvexHull2}
 \PkgDescriptionEnd
 
 Assertions

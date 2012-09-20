@@ -1,10 +1,8 @@
-
-\page ChapterLinearCellComplex Linear Cell Complex
-
 namespace CGAL {
 /*!
 
 \mainpage Linear Cell Complex
+\anchor Chapter_Linear_Cell_Complex
 \anchor ChapterLinearCellComplex
 
 \authors Guillaume Damiand

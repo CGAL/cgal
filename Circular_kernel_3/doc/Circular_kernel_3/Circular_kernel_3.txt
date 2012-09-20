@@ -2,6 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage 3D Spherical Geometry %Kernel
+\anchor Chapter_3D_Spherical_Geometry_Kernel
 \anchor chaptersphericalkernel
 
 \authors Pedro Machado Manh&atilde;es de Castro, Fr&eacute;d&eacute;ric Cazals, S&eacute;bastien Loriot, and Monique Teillaud

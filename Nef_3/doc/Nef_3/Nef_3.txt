@@ -1,10 +1,8 @@
-
-\page chapterNef3 3D Boolean Operations on Nef Polyhedra
-
 namespace CGAL {
 /*!
 
 \mainpage 3D Boolean Operations on Nef Polyhedra
+\anchor Chapter_3D_Boolean_Operations_on_Nef_Polyhedra
 \anchor chapterNef3
 
 <span style="display:none">

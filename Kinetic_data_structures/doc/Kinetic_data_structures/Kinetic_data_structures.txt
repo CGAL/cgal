@@ -2,6 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage Kinetic Data Structures
+\anchor Chapter_Kinetic_Data_Structures
 \anchor chapterkds
 \autotoc
 

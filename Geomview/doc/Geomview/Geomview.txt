@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage Geomview
-\anchor ChapterGeomview
+\anchor Chapter_Geomview
 \autotoc
 \authors Andreas Fabri and Sylvain Pion
 

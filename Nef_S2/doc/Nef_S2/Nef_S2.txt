@@ -1,10 +1,8 @@
-
-\page chapterNef_S2 2D Boolean Operations on Nef Polygons Embedded on the Sphere 
-
 namespace CGAL {
 /*!
 
-\mainpage 2D Boolean Operations on Nef Polygons Embedded on the Sphere 
+\mainpage 2D Boolean Operations on Nef Polygons Embedded on the Sphere
+\anchor Chapter_2D_Boolean_Operations_on_Nef_Polygons_Embedded_on_the_Sphere
 \anchor chapterNefS2
 \autotoc
 

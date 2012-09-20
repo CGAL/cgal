@@ -10,8 +10,9 @@
 \PkgAuthor{Olivier Devillers, Lutz Kettner, Sylvain Pion, Michael Seel, and Mariette Yvinec}
 \PkgDesc{This package descibes handles and circulators. They are related to iterators. Handles allow to dereference but neither to increment nor to decrement. Circulators have no notion of past-the-end, and they are used in \cgal whenever we have cyclic stuctures. }
 \PkgSince{1.0}
-\cgalbib{cgal:dksy-hc}
-\license{ \ref licensesLGPL  "LGPL" }
+\PkgBib{cgal:dksy-hc}
+\PkgLicense{\ref licensesLGPL  "LGPL"}
+\PkgManuals{Chapter_Handles_Ranges_and_Circulators,PkgHandlesAndCirculators}
 \PkgDescriptionEnd
 
 The concept of iterators in the \stl is tailored for linear sequences.

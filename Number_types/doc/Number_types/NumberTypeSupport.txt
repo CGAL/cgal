@@ -1,10 +1,8 @@
-
-\page Numbertype Number Types
-
 namespace CGAL {
 /*!
 
 \mainpage Number Types
+\anchor Chapter_Number_Types
 \anchor Numbertype
 
 \autotoc
@@ -225,7 +223,7 @@ Susan Hert, who also contributed utility algorithms.
 
 The work on concepts was further extended within the <span class="textsc">Exacus</span> project, and was finally
 contributed to \cgal by Michael Hemmer in 2006, as what is now the separate
-Algebraic Foundations package \ref ChapterAlgebraicFoundations, together with
+Algebraic Foundations package \ref Chapter_Algebraic_Foundations, together with
 a rewritten interface to operations on number types.
 
 The class `Sqrt_extension` was contributed by Michael Hemmer and Ron Wein around 2006. In 2010 it went through a considerable reinvestigation by S&eacute;bastien Loriot, Michael Hemmer, and Monique Teillaud. As a result it got further improved and now replaces several similar types such as `Root_of_2`, which had been contributed by Pedro M. M. de Castro, Sylvain Pion and Monique Teillaud, and is deprecated since CGAL-3.8.

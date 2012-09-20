@@ -1,10 +1,8 @@
-
-\page Trees dD Range and Segment Trees 
-
 namespace CGAL {
 /*!
 
-\mainpage dD Range and Segment Trees 
+\mainpage dD Range and Segment Trees
+\anchor Chapter_dD_Range_and_Segment_Trees
 \anchor Trees
 \autotoc
 \authors Gabriele Neyer

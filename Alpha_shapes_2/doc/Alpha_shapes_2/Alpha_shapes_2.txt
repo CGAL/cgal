@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Alpha Shapes
+\anchor Chapter_2D_Alpha_Shapes
 \anchor I1ChapterAlphashapes2D
 \autotoc
 \authors Tran Kai Frank Da

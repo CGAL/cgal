@@ -1,10 +1,8 @@
-
-\page chapteralgebraickerneld Algebraic Kernel
-
 namespace CGAL {
 /*!
 
 \mainpage Algebraic Kernel
+\anchor Chapter_Algebraic_Kernel
 \anchor chapteralgebraickerneld
 
 \authors Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Pe&ntilde;aranda, and Monique Teillaud

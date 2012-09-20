@@ -2,6 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage Approximation of Ridges and Umbilics on Triangulated Surface Meshes
+\anchor Chapter_Approximation_of_Ridges_and_Umbilics_on_Triangulated_Surface_Meshes
 \anchor chapRidges3
 
 \authors Marc Pouget and Fr&eacute;d&eacute;ric Cazals

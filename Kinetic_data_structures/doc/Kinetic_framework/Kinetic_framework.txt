@@ -1,7 +1,8 @@
 namespace CGAL {
 /*!
 
-\mainpage Kinetic Framework 
+\mainpage Kinetic Framework
+\anchor Chapter_Kinetic_Framework
 \anchor chapterkinetic
 \autotoc
 

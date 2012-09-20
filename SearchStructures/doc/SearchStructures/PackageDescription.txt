@@ -16,8 +16,9 @@
 \PkgAuthor{Gabriele Neyer}
 \PkgDesc{Range and segment trees allow to perform window queries on point sets, and to enumerate all ranges enclosing a query point. The provided data structures  are static and they are optimized for fast queries.}
 \PkgSince{0.9}
-\cgalbib{cgal:n-rstd}
-\license{\ref licensesGPL "GPL"}
+\PkgBib{cgal:n-rstd}
+\PkgLicense{\ref licensesGPL "GPL"}
+\PkgManuals{Chapter_dD_Range_and_Segment_Trees,PkgRangeSegmentTreesD}
 \PkgDescriptionEnd
 
 This chapter presents the \cgal range tree and  segment tree data structures.

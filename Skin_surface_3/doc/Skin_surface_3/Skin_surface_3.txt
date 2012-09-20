@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage 3D Skin Surface Meshing
+\anchor Chapter_3D_Skin_Surface_Meshing
 \anchor chapterSkinSurface
 \htmlonly
 \( \newcommand\ssWpoint[1]{{\bf #1}} \)

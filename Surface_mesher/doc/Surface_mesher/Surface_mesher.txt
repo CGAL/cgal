@@ -1,11 +1,8 @@
-
-\page chapter_SurfaceMesher 3D Surface Mesh Generation
-
 namespace CGAL {
 /*!
 
 \mainpage 3D Surface Mesh Generation
-\anchor chapter_SurfaceMesher
+\anchor Chapter_3D_Surface_Mesh_Generation
 
 \authors Laurent Rineau and Mariette Yvinec
 

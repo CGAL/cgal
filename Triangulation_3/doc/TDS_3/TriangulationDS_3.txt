@@ -1,10 +1,8 @@
-
-\page chapterTDS3 3D Triangulation Data Structure
-
 namespace CGAL {
 /*!
 
 \mainpage 3D Triangulation Data Structure
+\anchor Chapter_3D_Triangulation_Data_Structure
 \anchor chapterTDS3
 
 \autotoc

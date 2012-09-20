@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage Envelopes of Surfaces in 3D
+\anchor Chapter_Envelopes_of_Surfaces_in_3D
 
 \anchor chapterEnvelope3
 

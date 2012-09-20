@@ -1,10 +1,8 @@
-*
-\page chapsurface_mesh_parameterization Planar Parameterization of Triangulated Surface Meshes
-
 namespace CGAL {
 /*!
 
 \mainpage Planar Parameterization of Triangulated Surface Meshes
+\anchor Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes
 
 \anchor chapsurface_mesh_parameterization
 \autotoc

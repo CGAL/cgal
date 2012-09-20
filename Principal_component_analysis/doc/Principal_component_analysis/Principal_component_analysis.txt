@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage Principal Component Analysis
+\anchor Chapter_Principal_Component_Analysis
 
 \autotoc
 \authors Pierre Alliez, Sylvain Pion and Ankit Gupta

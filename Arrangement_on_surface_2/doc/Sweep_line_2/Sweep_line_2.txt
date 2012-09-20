@@ -2,6 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Intersection of Curves
+\anchor Chapter_2D_Intersection_of_Curves
 \anchor I1_ChapterSweepLine
 
 \autotoc

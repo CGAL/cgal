@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage Intersecting Sequences of dD Iso-oriented Boxes
+\anchor Chapter_Intersecting_Sequences_of_dD_Iso-oriented_Boxes
 \anchor chapterBoxIntersection
 \autotoc
 \authors Lutz Kettner, Andreas Meyer, and Afra Zomorodian

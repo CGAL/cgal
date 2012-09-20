@@ -2,6 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage Estimation of Local Differential Properties of Point-Sampled Surfaces
+\anchor Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces
 \anchor chapJetfitting3
 \autotoc
 \authors Marc Pouget and Fr&eacute;d&eacute;ric Cazals

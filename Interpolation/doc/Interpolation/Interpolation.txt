@@ -1,10 +1,8 @@
-
-\page chapinterpolation 2D and Surface Function Interpolation
-
 namespace CGAL {
 /*!
 
 \mainpage 2D and Surface Function Interpolation
+\anchor Chapter_2D_and_Surface_Function_Interpolation
 \anchor chapinterpolation
 \autotoc
 

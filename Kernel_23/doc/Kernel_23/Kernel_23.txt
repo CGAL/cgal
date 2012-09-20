@@ -1,7 +1,8 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D and 3D Geometry %Kernel 
+\mainpage 2D and 3D Geometry %Kernel
+\anchor Chapter_2D_and_3D_Geometry_Kernel
 \anchor chapterkernel23
 
 \autotoc

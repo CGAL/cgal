@@ -11,8 +11,9 @@
 \PkgAuthor{Andreas Fabri  and Sylvain Pion}
 \PkgDesc{This package implements an interface to Geomview, an interactive 3D viewing program,  originally developed at the Geometry Center in Minneapolis.}
 \PkgSince{2.0}
-\cgalbib{cgal:fp-gv}
-\license{ \ref licensesLGPL "LGPL" }
+\PkgBib{cgal:fp-gv}
+\PkgLicense{\ref licensesLGPL "LGPL"}
+\PkgManuals{Chapter_Geomview,PkgGeomview}
 \PkgDescriptionEnd
 */
 

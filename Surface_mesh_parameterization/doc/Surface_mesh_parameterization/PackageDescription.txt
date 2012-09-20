@@ -156,8 +156,9 @@ sparse linear solvers:
 \PkgAuthor{Laurent Saboret, Pierre Alliez  and Bruno L&eacute;vy}
 \PkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from a suitable domain to the surface. In this package, we focus on triangulated surfaces that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.  This package implements several surface mesh parameterization methods, such as least squares conformal maps, discrete conformal map, discrete authalic parameterization, Floater mean value coordinates or Tutte barycentric mapping.}
 \PkgSince{3.2}
-\cgalbib{cgal:sal-pptsm2}
-\license{\ref licensesGPL "GPL"}
+\PkgBib{cgal:sal-pptsm2}
+\PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\PkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes,PkgSurfaceParameterization}
 \PkgDescriptionEnd
 */

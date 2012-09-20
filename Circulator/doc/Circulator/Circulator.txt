@@ -1,7 +1,8 @@
 namespace CGAL {
 /*!
 
-\mainpage Handles, Ranges and Circulators
+\mainpage Handles, Ranges, and Circulators
+\anchor Chapter_Handles_Ranges_and_Circulators
 \anchor chapterCirculators
 
 \autotoc

@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage Algebraic Foundations
-\anchor ChapterAlgebraicFoundations
+\anchor Chapter_Algebraic_Foundations
 
 \autotoc
 \authors Michael Hemmer

@@ -2,7 +2,8 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Straight Skeleton and Polygon Offsetting 
+\mainpage 2D Straight Skeleton and Polygon Offsetting
+\anchor Chapter_2D_Straight_Skeleton_and_Polygon_Offsetting
 \anchor chapterstraightskeleton2
 \autotoc
 \authors Fernando Cacciola

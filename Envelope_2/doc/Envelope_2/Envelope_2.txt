@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage Envelopes of Curves in 2D
+\anchor Chapter_Envelopes_of_Curves_in_2D
 
 \anchor chapterEnvelope2
 

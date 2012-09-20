@@ -1,7 +1,8 @@
 namespace CGAL {
 /*!
 
-\mainpage Monotone and Sorted Matrix Search 
+\mainpage Monotone and Sorted Matrix Search
+\anchor Chapter_Monotone_and_Sorted_Matrix_Search
 \anchor chapMatrixSearch
 
 \authors Michael Hoffmann

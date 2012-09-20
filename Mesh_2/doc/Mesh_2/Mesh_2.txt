@@ -2,6 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Conforming Triangulations and Meshes
+\anchor Chapter_2D_Conforming_Triangulations_and_Meshes
 \anchor userchapter2DMeshes
 \autotoc
 \author Laurent Rineau

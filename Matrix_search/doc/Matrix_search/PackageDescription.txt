@@ -11,8 +11,9 @@
 \PkgAuthor{Michael Hoffmann}
 \PkgDesc{This package provides a matrix search framework, which is the underlying technique for the computation of all furthest neighbors for the vertices of a convex polygon,  maximal k-gons inscribed into a planar point set, and computing rectangular p-centers.}
 \PkgSince{1.1}
-\cgalbib{cgal:h-msms}
-\license{\ref licensesGPL "GPL"}
+\PkgBib{cgal:h-msms}
+\PkgLicense{\ref licensesGPL "GPL"}
+\PkgManuals{Chapter_Monotone_and_Sorted_Matrix_Search,PkgMatrixSearch}
 \PkgDescriptionEnd
 
 This chapter describes concepts, classes, and functions for 

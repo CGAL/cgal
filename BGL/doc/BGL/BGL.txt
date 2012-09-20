@@ -1,10 +1,8 @@
-
-\page chapterBGL CGAL and the Boost Graph Library
-
 namespace CGAL {
 /*!
 
 \mainpage CGAL and the Boost Graph Library
+\anchor Chapter_CGAL_and_the_Boost_Graph_Library
 \anchor chapterBGL
 
 \authors Andreas Fabri and Fernando Cacciola and Ron Wein

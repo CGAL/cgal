@@ -1,10 +1,8 @@
-
-\page chapInscribedAreas Inscribed Areas 
-
 namespace CGAL {
 /*!
 
-\mainpage Inscribed Areas 
+\mainpage Inscribed Areas
+\anchor Chapter_Inscribed_Areas
 \anchor chapInscribedAreas
 
 \authors Michael Hoffmann and Eli Packer 

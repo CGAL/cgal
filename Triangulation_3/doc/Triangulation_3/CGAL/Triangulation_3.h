@@ -1290,7 +1290,7 @@ is_valid(Cell_handle c, bool verbose = false) const;
 \name I/O
 
 \cgal provides an interface to Geomview for a 3D-triangulation, 
-see Chapter \ref ChapterGeomview on `Geomview_stream`. 
+see Chapter \ref Chapter_Geomview on `Geomview_stream`. 
 
 \code
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>

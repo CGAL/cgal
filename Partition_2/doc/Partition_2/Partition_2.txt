@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Polygon Partitioning
+\anchor Chapter_2D_Polygon_Partitioning
 \anchor chappolygonpartition
 \autotoc
 \authors Susan Hert

@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage 3D Mesh Generation
+\anchor Chapter_3D_Mesh_Generation
 \anchor userchaptermesh3
 
 \autotoc

@@ -1,10 +1,8 @@
-
-\page chapterP3Triangulation3 3D Periodic Triangulations
-
 namespace CGAL {
 /*!
 
 \mainpage 3D Periodic Triangulations
+\anchor Chapter_3D_Periodic_Triangulations
 \anchor chapterP3Triangulation3
 
 \authors Manuel Caroli and Monique Teillaud

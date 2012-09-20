@@ -1,10 +1,8 @@
-
-\page chaptersegdel2 2D Segment Delaunay Graphs 
-
 namespace CGAL {
 /*!
 
-\mainpage 2D Segment Delaunay Graphs 
+\mainpage 2D Segment Delaunay Graphs
+\anchor Chapter_2D_Segment_Delaunay_Graphs
 \anchor chaptersegdel2
 \autotoc
 \author Menelaos Karavelas

@@ -202,7 +202,6 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cpp11=*C++11*" \
                          "CC=*C++*" \
                          "cgalexample{1}=<br><b>File</b> \ref \1 \include \1" \
-                         "license{1}=\par \"License\" \1" \
                          "advanced=\attention" \
                          "beginadvanced=" \
                          "endadvanced="
@@ -211,9 +210,6 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
 # thus removes its include statement
 ALIASES += "cgalconcept=\headerfile \"ConceptCannotBeIncluded.h\" "
 
-# this alias controls linking to the how to cite page, it is also
-# responsible for adding the -YY{a,b} suffix to a cite
-ALIASES += "cgalbib{1}=\par \"BibTeX\" <a href=\"how_to_cite_cgal.html#\1-12b\">\1-12b</a>"
 
 ALIASES += "advanced=\xrefitem advanceds \"Advanced\" \"Advanced\""
 ALIASES += "refines=\xrefitem refiness \"Refines\" \"Refines\""
@@ -230,7 +226,12 @@ ALIASES += "PkgDesc{1}=\par \"Description\" \1"
 ALIASES += "PkgSince{1}=\since \cgal \1"
 ALIASES += "PkgLicense{1}=\par \"License\" \1"
 ALIASES += "PkgDemo{2}=\par \"Demo\" <a href=\"http://www.cgal.org/demo/4.0.2/\2\">\1</a>"
+ALIASES += "PkgManuals{2}=\par \"Manuals\"\ref \1 \"User Manual\" \ref \2 \"Reference Manual\""
 ALIASES += "PkgDescriptionEnd=</td></tr></table>"
+# this alias controls linking to the how to cite page, it is also
+# responsible for adding the -YY{a,b} suffix to a cite
+ALIASES += "PkgBib{1}=\par \"BibTeX\" <a href=\"../../CGAL.CGAL/html/how_to_cite_cgal.html#\1-12b\">\1-12b</a>"
+
 
 ALIASES += "footnote{1}=<span class=\"footnote\">\1</span>"
 ALIASES += "autotoc=\htmlonly <div id=\"autotoc\" class=\"toc\"></div> \endhtmlonly"

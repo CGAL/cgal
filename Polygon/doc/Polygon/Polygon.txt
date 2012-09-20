@@ -1,5 +1,8 @@
 /*!
 \mainpage 2D Polygon
+\anchor Chapter_2D_Polygon
+\anchor Chapter_Polygon
+
 \authors Geert-Jan Giezeman and Wieger Wesselink
 \autotoc
 

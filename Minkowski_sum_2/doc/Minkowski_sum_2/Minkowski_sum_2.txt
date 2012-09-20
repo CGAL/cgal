@@ -9,6 +9,7 @@ namespace CGAL {
 /*!
 
 \mainpage 2D Minkowski Sums
+\anchor Chapter_2D_Minkowski_Sums
 
 \anchor chapterMinkowskisum2
 

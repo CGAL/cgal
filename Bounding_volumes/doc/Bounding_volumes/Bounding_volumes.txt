@@ -2,7 +2,8 @@
 namespace CGAL {
 /*!
 
-\mainpage Bounding Volumes 
+\mainpage Bounding Volumes
+\anchor Chapter_Bounding_Volumes
 \anchor chapBoundingVolumes
 \autotoc
 \authors Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr

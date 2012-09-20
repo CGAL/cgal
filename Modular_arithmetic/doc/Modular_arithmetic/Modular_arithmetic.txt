@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage Modular Arithmetic
+\anchor Chapter_Modular_Arithmetic
 \anchor chapmodulararithmetic
 \autotoc
 \authors Michael Hemmer and Sylvain Pion

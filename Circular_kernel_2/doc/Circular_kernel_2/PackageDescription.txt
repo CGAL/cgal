@@ -29,9 +29,10 @@
 \PkgAuthor{Pedro Machado Manh&atilde;es de Castro, Sylvain Pion, and Monique Teillaud}
 \PkgDesc{This package is an extension of the linear \cgal kernel. It offers functionalities on circles, circular arcs and line segments in the plane.  }
 \PkgSince{3.2}
-\cgalbib{cgal:cpt-cgk2}
-\license{\ref licensesGPL "GPL"}
+\PkgBib{cgal:cpt-cgk2}
+\PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{Arrangement of Circular Arcs,circular_kernel.zip}
+\PkgManuals{Chapter_2D_Circular_Geometry_Kernel,PkgCircularKernel2}
 \PkgDescriptionEnd
 */
 

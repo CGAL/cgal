@@ -1,10 +1,8 @@
-
-\page ChapterPolynomial Polynomial
-
 namespace CGAL {
 /*!
 
 \mainpage Polynomial
+\anchor Chapter_Polynomial
 \anchor ChapterPolynomial
 \autotoc
 \authors Michael Hemmer

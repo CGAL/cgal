@@ -2,7 +2,8 @@
 namespace CGAL {
 /*!
 
-\mainpage 3D Convex Hulls 
+\mainpage 3D Convex Hulls
+\anchor Chapter_3D_Convex_Hulls
 \anchor chapconvexhull3
 \autotoc
 \authors Susan Hert and Stefan Schirra

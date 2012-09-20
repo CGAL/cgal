@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage Interval Skip List
+\anchor Chapter_Interval_Skip_List
 \anchor ChapterIntervalskiplist
 \autotoc
 \authors Andreas Fabri

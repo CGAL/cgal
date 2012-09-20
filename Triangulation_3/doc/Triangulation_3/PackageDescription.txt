@@ -28,9 +28,10 @@
 \PkgAuthor{Sylvain Pion  and Monique Teillaud}
 \PkgDesc{This package  allows to build and handle triangulations for point sets in three dimensions. Any \cgal triangulation covers the convex hull of its vertices. Triangulations are build incrementally  and can be modified by insertion, displacements or removal of vertices.  They offer point location facilities.  The package provides plain triangulation (whose faces depends on the  insertion order of the vertices) and Delaunay triangulations.  Regular triangulations are also provided for sets of weighted points. Delaunay and regular triangulations offer nearest neighbor queries and primitives to build the dual Voronoi and power diagrams.}
 \PkgSince{2.1}
-\cgalbib{cgal:pt-t3}
-\license{\ref licensesGPL "GPL" }
+\PkgBib{cgal:pt-t3}
+\PkgLicense{\ref licensesGPL "GPL" }
 \PkgDemo{3D Triangulation,triangulation_3.zip}
+\PkgManuals{Chapter_3D_Triangulations,PkgTriangulation3}
 \PkgDescriptionEnd
 
 A three-dimensional triangulation is a three-dimensional simplicial

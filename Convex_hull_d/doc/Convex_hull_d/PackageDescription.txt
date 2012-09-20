@@ -11,8 +11,9 @@
 \PkgAuthor{Susan Hert  and Michael Seel}
 \PkgDesc{This package provides functions for computing convex hulls and Delaunay triangulations in \f$ d\f$-dimensional Euclidean space.}
 \PkgSince{2.3}
-\cgalbib{cgal:hs-chdt3}
-\license{ \ref licensesGPL  "GPL" }
+\PkgBib{cgal:hs-chdt3}
+\PkgLicense{\ref licensesGPL "GPL"}
+\PkgManuals{Chapter_dD_Convex_Hulls_and_Delaunay_Triangulations,PkgConvexHullD}
 \PkgDescriptionEnd
 */
 

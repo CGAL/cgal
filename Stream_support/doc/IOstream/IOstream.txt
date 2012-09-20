@@ -1,10 +1,8 @@
-
-\page Chapter_operator_for_IO_streams IO Streams
-
 namespace CGAL {
 /*!
 
 \mainpage IO Streams
+\anchor Chapter_IO_Streams
 \anchor Chapter_operator_for_IO_streams
 \autotoc
 

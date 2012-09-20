@@ -1389,6 +1389,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Property_map.tag=../../CGAL.CGAL.CGAL-and-Boost-Property-Maps/html</item>
           <item>./tags/Point_set_processing_3.tag=../../CGAL.CGAL.Point-Set-Processing/html</item>
           <item>./tags/Kinetic_data_structures.tag=../../CGAL.CGAL.Kinetic-Data-Structures/html</item>
+          <item>./tags/Kinetic_framework.tag=../../CGAL.CGAL.Kinetic-Framework/html</item>
           <item>./tags/Snap_rounding_2.tag=../../CGAL.CGAL.2D-Snap-Rounding/html</item>
           <item>./tags/Spatial_searching.tag=../../CGAL.CGAL.dD-Spatial-Searching/html</item>
           <item>./tags/Spatial_sorting.tag=../../CGAL.CGAL.Spatial-Sorting/html</item>

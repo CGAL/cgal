@@ -2,6 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage CGAL and Boost Property Maps
+\anchor Chapter_CGAL_and_Boost_Property_Maps
 
 \anchor chapterProperty_map
 

@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage %CGAL and the %Qt Graphics View Framework
+\anchor Chapter_CGAL_and_the_Qt_Graphics_View_Framework
 \anchor chapterQGraphicsView
 \autotoc
 \authors Andreas Fabri and Laurent Rineau

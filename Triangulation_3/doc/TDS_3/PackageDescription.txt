@@ -9,8 +9,9 @@
 \PkgAuthor{Sylvain Pion  and Monique Teillaud}
 \PkgDesc{This package provides a data structure to store a three-dimensional triangulation that has the topology of a three-dimensional sphere.  The package acts as a container for the vertices  and cells of the triangulation  and provides basic  combinatorial operations on the triangulation.}
 \PkgSince{2.1}
-\cgalbib{cgal:pt-tds3}
-\license{\ref licensesGPL "GPL"}
+\PkgBib{cgal:pt-tds3}
+\PkgLicense{\ref licensesGPL "GPL"}
+\PkgManuals{Chapter_3D_Triangulation_Data_Structure,PkgTDS3}
 \PkgDescriptionEnd
 
 The triangulation data structure is able to represent a

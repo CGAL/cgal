@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage dD Spatial Searching
+\anchor Chapter_dD_Spatial_Searching
 \anchor ChapterUserSpatialSearching
 \autotoc
 \authors Hans Tangelder and Andreas Fabri

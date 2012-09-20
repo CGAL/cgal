@@ -1,10 +1,8 @@
-
-\page chaptermeshsimplification Triangulated Surface Mesh Simplification
-
 namespace CGAL {
 /*!
 
 \mainpage Triangulated Surface Mesh Simplification
+\anchor Chapter_Triangulated_Surface_Mesh_Simplification
 \anchor chaptermeshsimplification
 \autotoc
 

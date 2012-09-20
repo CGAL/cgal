@@ -11,8 +11,9 @@
 \PkgAuthor{Pierre Alliez, St&eacute;phane Tayeb, Camille Wormser}
 \PkgDesc{The AABB (axis-aligned bounding box) tree component offers a static data structure and algorithms to perform efficient intersection and distance queries on sets of finite 3D geometric objects.}
 \PkgSince{1.0}
-\cgalbib{cgal:atw-aabb}
-\license{\ref licensesGPL "GPL"}
+\PkgBib{cgal:atw-aabb}
+\PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{AABB Tree,AABB_demo.zip}
+\PkgManuals{Chapter_3D_Fast_Intersection_and_Distance_Computation,PkgAABB_tree}
 \PkgDescriptionEnd
 */

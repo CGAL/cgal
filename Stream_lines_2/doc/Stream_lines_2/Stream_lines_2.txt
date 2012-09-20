@@ -1,10 +1,8 @@
-
-\page chapterStream_lines_2 2D Placement of Streamlines
-
 namespace CGAL {
 /*!
 
 \mainpage 2D Placement of Streamlines
+\anchor Chapter_2D_Placement_of_Streamlines
 \anchor chapterStream_lines_2
 \autotoc
 

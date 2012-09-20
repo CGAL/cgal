@@ -2,6 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage 3D Surface Subdivision Methods
+\anchor Chapter_3D_Surface_Subdivision_Methods
 \anchor chapterSubdivision
 \autotoc
 

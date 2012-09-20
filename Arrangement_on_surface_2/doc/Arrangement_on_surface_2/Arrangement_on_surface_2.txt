@@ -1,10 +1,8 @@
-
-\page 2D Arrangements
-
 namespace CGAL {
 /*!
 
 \mainpage 2D Arrangements
+\anchor Chapter_2D_Arrangements
 \anchor chapterArrangement_on_surface_2
 \tableofcontents
 

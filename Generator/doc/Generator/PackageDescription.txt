@@ -10,9 +10,10 @@
             Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr}
 \PkgDesc{This package provides a variety of generators for geometric objects. They are useful as synthetic test data sets, e.g. for testing algorithms on degenerate object sets and for performance analysis. }
 \PkgSince{1.0}
-\cgalbib{cgal:dhhk-gog}
-\license{ \ref licensesLGPL  "LGPL" }
+\PkgBib{cgal:dhhk-gog}
+\PkgLicense{\ref licensesLGPL  "LGPL"}
 \PkgDemo{Generators,generator.zip}
+\PkgManuals{Chapter_Geometric_Object_Generators,PkgGenerators}
 \PkgDescriptionEnd
 
 This chapter describes the functions and classes provided in \cgal

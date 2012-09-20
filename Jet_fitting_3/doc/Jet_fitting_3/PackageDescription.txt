@@ -9,9 +9,10 @@
 \PkgAuthor{Marc Pouget  and Fr&eacute;d&eacute;ric Cazals}
 \PkgDesc{For a surface discretized as a point cloud or a mesh, it is desirable to estimate pointwise differential quantities. More precisely, first order properties correspond to the normal or the tangent plane; second order properties provide the principal curvatures and directions, third order properties provide the directional derivatives of the principal curvatures along the curvature lines, etc. This package allows the estimation of local differential quantities of a surface from a point sample.}
 \PkgSince{3.3}
-\cgalbib{cgal:pc-eldp}
-\license{ \ref licensesGPL  "GPL" }
+\PkgBib{cgal:pc-eldp}
+\PkgLicense{\ref licensesGPL  "GPL"}
 \PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\PkgManuals{Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces,PkgJet_fitting_3}
 \PkgDescriptionEnd
 */
 

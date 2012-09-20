@@ -27,8 +27,9 @@
 \PkgAuthor{Michael Seel}
 \PkgDesc{The dD Kernel contains objects of constant size, such as point, vector, direction, line, ray, segment, circle in d dimensional Euclidean space, as well as predicates and constructions for these objects.}
 \PkgSince{1.1}
-\cgalbib{cgal:s-gkd}
-\license{\ref licensesLGPL "LGPL"}
+\PkgBib{cgal:s-gkd}
+\PkgLicense{\ref licensesLGPL "LGPL"}
+\PkgManuals{Chapter_dD_Geometry_Kernel,PkgKernelD}
 \PkgDescriptionEnd
 */
 

@@ -1,10 +1,8 @@
-
-\page chapterTriangulation3 3D Triangulations
-
 namespace CGAL {
 /*!
 
 \mainpage 3D Triangulations
+\anchor Chapter_3D_Triangulations
 \anchor chapterTriangulation3
 \autotoc
 

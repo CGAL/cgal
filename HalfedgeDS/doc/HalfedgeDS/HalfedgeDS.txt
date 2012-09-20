@@ -2,7 +2,8 @@
 namespace CGAL {
 /*!
 
-\mainpage Halfedge Data Structures 
+\mainpage Halfedge Data Structures
+\anchor Chapter_Halfedge_Data_Structures
 \anchor chapterHalfedgeDS
 \autotoc
 \authors Lutz Kettner

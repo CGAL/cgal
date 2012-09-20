@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage STL Extensions for %CGAL
+\anchor Chapter_STL_Extensions_for_CGAL
 \anchor chapterStlExtensions
 \autotoc
 \authors Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein

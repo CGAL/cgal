@@ -11,9 +11,10 @@
 \PkgAuthor{Manuel Caroli  and Monique Teillaud}
 \PkgDesc{This package allows to build and handle triangulations of point sets in the three dimensional flat torus. Triangulations are built incrementally and can be modified by insertion or removal of vertices. They offer point location facilities. The package provides Delaunay triangulations and offers nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
 \PkgSince{3.5}
-\cgalbib{cgal:ct-pt3}
-\license{\ref licensesGPL "GPL"}
+\PkgBib{cgal:ct-pt3}
+\PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{Periodic Delaunay Triangulation,periodic_3_triangulation_3.zip}
+\PkgManuals{Chapter_3D_Periodic_Triangulations,PkgPeriodic3Triangulation3}
 \PkgDescriptionEnd
 
 The main classes of the 3D Periodic Triangulation package are
