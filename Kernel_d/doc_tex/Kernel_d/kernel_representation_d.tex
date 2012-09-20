@@ -134,9 +134,9 @@ type \ccc{LinearAlgebra}.
 
 \subsection{Epick Kernel}
 
-The kernel \ccc{Epick_d<dim>}, short for Exact Predicates Inexact Constructions Kernel is an experimental kernel useful when the dimension of the space is known at compile-time. It uses a Cartesian representation and supports construction of points from \ccc{double} coordinates. It provides exact geometric predicates, but inexact geometric constructions.
+The kernel \ccc{Epick_d<dimension>}, short for Exact Predicates Inexact Constructions Kernel is an experimental kernel useful when the dimension of the space is known at compile-time. It uses a Cartesian representation and supports construction of points from \ccc{double} coordinates. It provides exact geometric predicates, but inexact geometric constructions.
 
-Note that it is a rather strict model of the \ccc{Kernel_d} concept. The type of a point is \ccc{Epick_d<dim>::Point_d}, \emph{not} \ccc{Point_d<Epick_d<dim>>}.
+Note that it is a rather strict model of the \ccc{Kernel_d} concept. The type of a point is \ccc{Epick_d<dimension>::Point_d}, \emph{not} \ccc{Point_d<Epick_d<dimension>>}.
 
 \subsection{Naming conventions}
 
