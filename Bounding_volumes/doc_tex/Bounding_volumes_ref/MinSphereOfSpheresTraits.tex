@@ -1,0 +1,85 @@
+
+\begin{ccRefConcept}{MinSphereOfSpheresTraits}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+A model of concept \ccc{MinSphereOfSpheresTraits} must provide the
+following constants, types, predicates and operations.
+
+\ccHasModels
+\ccc{CGAL::Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>} \\
+\ccc{CGAL::Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>} \\
+\ccc{CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>}
+
+\ccConstants 
+
+\ccNestedType{D}{specifies the dimension of the spheres you want to
+  compute the minsphere of.}
+
+\ccTypes
+
+\ccNestedType{Sphere}{is a typedef to to some class representing a sphere.
+(The package will compute the minsphere of spheres of type
+\ccc{Sphere}.)  The type \ccc{Sphere} must provide a copy constructor.}
+
+\ccNestedType{FT}{is a (exact or inexact) field number type.
+  \ccRequire Currently, \ccc{FT} must either be \ccc{double} or
+  \ccc{float}, or an exact field number type.  (An \emph{exact} number
+  type is one which evaluates arithmetic expressions involving the
+  four basic operations and comparisions with infinite precision, that
+  is, like in~$\R$.)}
+
+\ccNestedType{Cartesian_const_iterator}{non-mutable model of the STL
+concept \ccc{ForwardIterator} with value type \ccc{FT}. Used
+to access the center coordinates of a sphere.}
+
+\ccNestedType{Use_square_roots}{must typedef to either
+  \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.  The algorithm
+  uses (depending on the type
+  \ccc{MinSphereOfSpheresTraits::Algorithm}) floating-point arithmetic
+  internally for some intermediate computations.  The type
+  \ccc{Use_square_roots} affects how these calculations are done: When
+  \ccc{Use_square_roots} is \ccc{Tag_true}, the algorithm computing
+  the minsphere will perform square-root operations on \ccc{double}s
+  and \ccc{float}s where appropriate.  On the other hand, if
+  \ccc{Use_square_roots} is \ccc{CGAL::Tag_false}, the algorithm will
+  work without doing square-roots.\\
+%
+  \emph{Note:} On some platforms the algorithm is much faster when
+  square-roots are disabled (due to lacking hardware support).}
+
+\ccNestedType{Algorithm}{selects the method to compute the minsphere
+  with.  It must typedef to either \ccc{CGAL::Default_algorithm},
+  \ccc{CGAL::LP_algorithm} or \ccc{CGAL::Farthest_first_heuristic}.
+  The recommended choice is the first, which is a synonym to the one
+  of the other two methods which we consider ``the best in practice.''
+  In case of \ccc{CGAL::LP_algorithm}, the minsphere will be computed
+  using the LP-algorithm~\cite{msw-sblp-92}, which in our
+  implementation has maximal expected running time $O(2^d n)$ (in the
+  number of operations on the number type \ccc{FT}).  In case of
+  \ccc{CGAL::Farthest_first_heuristic}, a simple heuristic will be
+  used instead which seems to work fine in practice, but comes without
+  a guarantee on the running time.  For an inexact number type
+  \ccc{FT} we strongly recommend \ccc{CGAL::Default_algorithm}, or, if
+  you want, \ccc{CGAL::Farthest_first_heuristic}, since these handle
+  most degeneracies in a satisfying manner.  Notice that this
+  compile-time flag is taken as a hint only.  Should one of the
+  methods not be available anymore in a future release, then the
+  default algorithm will be chosen.}
+
+\ccAccessFunctions
+
+\ccCreationVariable{traits}
+
+\ccMemberFunction{ FT radius(const
+Sphere& s);}{ returns the radius of sphere \ccc{s}.
+\ccPostcond The returned number is
+ greater or equal to~$0$.}
+
+\ccMemberFunction{ Cartesian_const_iterator center_cartesian_begin(const Sphere& s);}{
+  returns an iterator referring to the first of the \ccc{D} Cartesian
+  coordinates of the center of \ccc{s}.}
+
+\end{ccRefConcept}
+

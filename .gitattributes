@@ -523,7 +523,6 @@ Apollonius_graph_2/doc_tex/Apollonius_graph_2/fig/CircleVoronoiLarge.png -text
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text svneol=unset#application/octet-stream
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#image/gif
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#image/png
-Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#application/octet-stream
 Arithmetic_kernel/include/CGAL/CORE_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/GMP_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/LEDA_arithmetic_kernel.h -text
@@ -1718,6 +1717,71 @@ Boolean_set_operations_2/test/Boolean_set_operations_2/test_agg_op.cmd eol=lf
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_bop.cmd eol=lf
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_connect_holes.cpp -text
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_polygon_validation.cpp -text
+Bounding_volumes/demo/Min_circle_2/help/index.html svneol=native#text/html
+Bounding_volumes/demo/Min_ellipse_2/help/index.html svneol=native#text/html
+Bounding_volumes/demo/Min_quadrilateral_2/Min_quadrilateral_2/help/index.html svneol=native#text/html
+Bounding_volumes/doc/Bounding_volumes/Bounding_volumes.txt -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Approximate_min_ellipsoid_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Approximate_min_ellipsoid_d_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Approximate_min_ellipsoid_d_traits_3.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Approximate_min_ellipsoid_d_traits_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_annulus_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_circle_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_circle_2_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_ellipse_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_ellipse_2_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_quadrilateral_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_annulus_d_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_annulus_d_traits_3.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_annulus_d_traits_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_points_d_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_points_d_traits_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_spheres_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_spheres_d_traits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_spheres_d_traits_3.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/Min_sphere_of_spheres_d_traits_d.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/min_quadrilateral_2.h -text
+Bounding_volumes/doc/Bounding_volumes/CGAL/rectangular_p_center_2.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/ApproximateMinEllipsoid_d_Traits_d.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/Circle.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/Ellipse.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/MinCircle2Traits.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/MinEllipse2Traits.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/MinQuadrilateralTraits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/MinSphereAnnulusDTraits.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/MinSphereOfSpheresTraits.h -text
+Bounding_volumes/doc/Bounding_volumes/Concepts/RectangularPCenterTraits_2.h -text
+Bounding_volumes/doc/Bounding_volumes/PackageDescription.txt -text
+Bounding_volumes/doc/Bounding_volumes/fig/annulus.gif -text svneol=unset#image/gif
+Bounding_volumes/doc/Bounding_volumes/fig/annulus.pdf -text svneol=unset#application/pdf
+Bounding_volumes/doc/Bounding_volumes/fig/ball.gif -text svneol=unset#image/gif
+Bounding_volumes/doc/Bounding_volumes/fig/ball.pdf -text svneol=unset#application/pdf
+Bounding_volumes/doc/Bounding_volumes/fig/minCircle.png -text svneol=unset#image/png
+Bounding_volumes/doc/Bounding_volumes/fig/pcenter.gif -text svneol=unset#image/gif
+Bounding_volumes/doc/Bounding_volumes/fig/pcenter.pdf -text svneol=unset#application/pdf
+Bounding_volumes/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
+Bounding_volumes/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf
+Bounding_volumes/doc_tex/Bounding_volumes/ball.gif -text svneol=unset#image/gif
+Bounding_volumes/doc_tex/Bounding_volumes/ball.pdf -text svneol=unset#application/pdf
+Bounding_volumes/doc_tex/Bounding_volumes/minCircle.png -text
+Bounding_volumes/doc_tex/Bounding_volumes/pcenter.gif -text svneol=unset#image/gif
+Bounding_volumes/doc_tex/Bounding_volumes/pcenter.pdf -text svneol=unset#application/pdf
+Bounding_volumes/dont_submit -text
+Bounding_volumes/package_info/Bounding_volumes/copyright -text
+Bounding_volumes/package_info/Bounding_volumes/description.txt -text
+Bounding_volumes/package_info/Bounding_volumes/license.txt -text
+Bounding_volumes/package_info/Bounding_volumes/maintainer -text
+Bounding_volumes/test/Bounding_volumes/rectangular_p_center_2_random1_test.cmd eol=lf
+Bounding_volumes/test/Bounding_volumes/rectangular_p_center_2_random2_test.cmd eol=lf
+Bounding_volumes/test/Bounding_volumes/test_Min_circle.cmd eol=lf
+Bounding_volumes/test/Bounding_volumes/test_Min_ellipse_2.cmd eol=lf
+Bounding_volumes/test_extensive/stability/maple/balls-on-boundary-2.mws -text svneol=unset#application/octet-stream
+Bounding_volumes/test_extensive/stability/maple/balls-on-boundary-3.mws -text svneol=unset#application/octet-stream
+Bounding_volumes/web/Approximate_min_ellipsoid_d/boundingbox.mw -text svneol=native#application/octet-stream
+Bounding_volumes/web/Min_sphere_of_spheres_d/figs/heuristic/excess.xfig -text svneol=unset#application/octet-stream
+Bounding_volumes/web/Min_sphere_of_spheres_d/figs/mbex/mbex.xfig -text svneol=unset#application/octet-stream
+Bounding_volumes/web/Min_sphere_of_spheres_d/figs/pivot/cex.xfig -text svneol=unset#application/octet-stream
 Box_intersection_d/doc/Box_intersection_d/Box_intersection_d.txt -text
 Box_intersection_d/doc/Box_intersection_d/CGAL/Box_intersection_d/Box_d.h -text
 Box_intersection_d/doc/Box_intersection_d/CGAL/Box_intersection_d/Box_traits_d.h -text
@@ -2730,6 +2794,14 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_vertex.gif -text svneol=unset#image/
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
+Inscribed_areas/demo/Largest_empty_rect_2/Qt3/help/index.html svneol=native#text/html
+Inscribed_areas/doc_tex/Inscribed_areas/largestEmptyRect.gif -text svneol=unset#image/gif
+Inscribed_areas/doc_tex/Inscribed_areas/largestEmptyRect.pdf -text svneol=unset#application/pdf
+Inscribed_areas/doc_tex/Inscribed_areas/max_triangle.gif -text svneol=unset#image/gif
+Inscribed_areas/doc_tex/Inscribed_areas/max_triangle.pdf -text svneol=unset#application/pdf
+Inscribed_areas/doc_tex/Inscribed_areas_ref/ler-detail.png -text
+Inscribed_areas/doc_tex/Inscribed_areas_ref/ler.png -text
+Inscribed_areas/test/Inscribed_areas/largest_empty_iso_rectangle_2_test.cmd -text
 Installation/INSTALL -text
 Installation/LICENSE.BSL -text
 Installation/LICENSE.FREE_USE -text
@@ -3219,11 +3291,6 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=1 -te
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/instantaneous_kernel.cpp -text
 Kinetic_data_structures/todo -text
-Largest_empty_rect_2/demo/Largest_empty_rect_2/Qt3/help/index.html svneol=native#text/html
-Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler-detail.png -text
-Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler.png -text
-Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test eol=lf
-Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test_with_cmake eol=lf
 Linear_cell_complex/demo/Linear_cell_complex/CreateMenger.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/CreateMesh.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3.qrc -text
@@ -3956,8 +4023,6 @@ Matrix_search/doc/Matrix_search/PackageDescription.txt -text
 Matrix_search/doc/Matrix_search/examples.txt -text
 Matrix_search/doc/Matrix_search/fig/matrix.png -text svneol=unset#image/png
 Matrix_search/doc_tex/Matrix_search/matrix.png -text
-Matrix_search/test/Matrix_search/rectangular_p_center_2_random1_test.cmd eol=lf
-Matrix_search/test/Matrix_search/rectangular_p_center_2_random2_test.cmd eol=lf
 Matrix_search/test/Matrix_search/sorted_matrix_search_test.cmd eol=lf
 Mesh_2/benchmark/data/square-deforme.poly -text svneol=unset#application/octet-stream
 Mesh_2/benchmark/data/square.poly -text svneol=unset#application/octet-stream
@@ -4153,16 +4218,6 @@ Mesh_3/stylesheet.css svneol=native#text/css
 Mesh_3/test/Mesh_3/data/cube.off -text svneol=unset#application/octet-stream
 Mesh_3/test/Mesh_3/data/liver.inr.gz -text
 Mesh_3/test/Mesh_3/data/sphere.off -text svneol=unset#application/octet-stream
-Min_circle_2/demo/Min_circle_2/help/index.html svneol=native#text/html
-Min_circle_2/test/Min_circle_2/test_Min_circle.cmd eol=lf
-Min_ellipse_2/demo/Min_ellipse_2/help/index.html svneol=native#text/html
-Min_ellipse_2/test/Min_ellipse_2/test_Min_ellipse_2.cmd eol=lf
-Min_quadrilateral_2/demo/Min_quadrilateral_2/help/index.html svneol=native#text/html
-Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-2.mws -text svneol=unset#application/octet-stream
-Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-3.mws -text svneol=unset#application/octet-stream
-Min_sphere_of_spheres_d/web/figs/heuristic/excess.xfig -text svneol=unset#application/octet-stream
-Min_sphere_of_spheres_d/web/figs/mbex/mbex.xfig -text svneol=unset#application/octet-stream
-Min_sphere_of_spheres_d/web/figs/pivot/cex.xfig -text svneol=unset#application/octet-stream
 Minkowski_sum_2/benchmark/Minkowski_sum_2/print_utils.h -text
 Minkowski_sum_2/benchmark/Minkowski_sum_2/sum_by_decomposition.cpp -text
 Minkowski_sum_2/doc/Minkowski_sum_2/CGAL/Polygon_convex_decomposition_2.h -text
@@ -4589,17 +4644,6 @@ Number_types/test/Number_types/Gmpfr.cpp -text
 Number_types/test/Number_types/Gmpfr_bug.cpp -text
 Number_types/test/Number_types/include/CGAL/Test/test_root_of_2_traits.h -text
 Number_types/test/Number_types/include/CGAL/_test_io.h -text
-Optimisation_doc/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Bounding_volumes/ball.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Bounding_volumes/ball.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Bounding_volumes/minCircle.png -text
-Optimisation_doc/doc_tex/Bounding_volumes/pcenter.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Bounding_volumes/pcenter.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.gif -text svneol=unset#image/gif
-Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.pdf -text svneol=unset#application/pdf
 Partition_2/demo/Partition_2/Qt3/help/index.html svneol=native#text/html
 Partition_2/doc/Partition_2/CGAL/Partition_is_valid_traits_2.h -text
 Partition_2/doc/Partition_2/CGAL/Partition_traits_2.h -text

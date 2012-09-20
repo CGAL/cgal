@@ -1,0 +1,437 @@
+
+\newcommand{\vol}{\ensuremath{\mathop{{\textsc{vol}}}\nolimits}}
+\newcommand{\mel}{\ensuremath{\mathop{{\textsc{mel}}}\nolimits}}
+%\newcommand{\vol}{\ensuremath{\mathop{\rm vol}\nolimits}}
+%\newcommand{\mel}{\ensuremath{\mathop{\rm mel}\nolimits}}
+
+\begin{ccRefClass}{Approximate_min_ellipsoid_d<Traits>}
+
+\ccIndexSubitem[t]{ellipse}{approximate smallest enclosing}
+\ccIndexSubitem[t]{bounding volumes}{approximate smallest enclosing ellipsoid}
+
+\ccSaveThreeColumns
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+An object of class \ccRefName\ is an approximation to the
+ellipsoid of smallest volume enclosing a finite multiset of points
+in $d$-dimensional Euclidean space~$\E^d$, $d\ge 2$.
+
+An \emph{ellipsoid} in $\E^d$ is a Cartesian pointset of the form $\{
+x\in\E^d \mid x^T E x + x^T e + \eta\leq 0 \}$, where $E$ is some
+positive definite matrix from the set $\R^{d\times d}$, $e$ is some
+real $d$-vector, and $\eta\in\R$.  A pointset $P\subseteq \E^d$ is
+called \emph{full-dimensional} if its affine hull has dimension $d$.
+For a finite, full-dimensional pointset $P$ we denote by $\mel(P)$ the
+smallest ellipsoid that contains all points of $P$; this ellipsoid
+exists and is unique.
+
+%% i.e.~$me(P)=\emptyset$ if
+%% $P=\emptyset$, $me(P)=\{p\}$ if
+%% $P=\{p\}$, and $me(P) = \{ (1-\lambda)p + \lambda q
+%% \mid 0 \leq \lambda \leq 1 \}$ if
+%% $P=\{p,q\}$.
+
+For a given finite and full-dimensional pointset $P\subset \E^d$ and a
+real number $\epsilon\ge 0$, we say that an ellipsoid ${\cal
+E}\subset\E^d$ is an \emph{$(1+\epsilon)$-appoximation} to $\mel(P)$ if
+$P\subset {\cal E}$ and $\vol({\cal E}) \leq (1+\epsilon)
+\vol(\mel(P))$.  In other words, an $(1+\epsilon)$-approximation to
+$\mel(P)$ is an enclosing ellipsoid whose volume is by at most a
+factor of $1+\epsilon$ larger than the volume of the smallest
+enclosing ellipsoid of $P$.
+
+Given this notation, an object of class \ccRefName\ represents an
+$(1+\epsilon)$-approximation to $\mel(P)$ for a given finite and
+full-dimensional multiset of points $P\subset\E^d$ and a real constant
+$\epsilon>0$.\footnote{A \emph{multiset} is a set where elements may
+have multiplicity greater than~$1$.} When an
+\ccc{Approximate_min_ellipsoid_d<Traits>} object is constructed, an
+iterator over the points $P$ and the number $\epsilon$ have to be
+specified; the number $\epsilon$ defines the \emph{desired
+approximation ratio} $1+\epsilon$.  The underlying algorithm will then
+try to compute an $(1+\epsilon)$-approximation to $\mel(P)$, and one of
+the following two cases takes place.
+\begin{itemize}
+\item The algorithm determines that $P$ is not full-dimensional (see
+  \ccc{is_full_dimensional()} below).
+
+  \emph{Important note:} due to rounding errors, the algorithm cannot
+  in all cases decide correctly whether $P$ is full-dimensional or
+  not.  If \ccc{is_full_dimensional()} returns \ccc{false}, the points
+  lie in such a ``thin'' subspace of $\E^d$ that the algorithm is
+  incapable of computing an approximation to $\mel(P)$.  More
+  precisely, if \ccc{is_full_dimensional()} returns \ccc{false}, there
+  exist two parallel hyperplanes in $\E^d$ with the points $P$ in
+  between so that the distance $\delta$ between the hyperplanes is
+  very small, possible zero. (If $\delta=0$ then $P$ is not
+  full-dimensional.)
+
+  If $P$ is not full-dimensional, linear algebra techniques should be
+  used to determine an affine subspace $S$ of $\E^d$ that contains the
+  points $P$ as a (w.r.t.\ $S$) full-dimensional pointset; once $S$ is
+  determined, the algorithm can be invoked again to compute an
+  approximation to (the lower-dimensional) $\mel(P)$ in $S$.  Since
+  \ccc{is_full_dimensional()} might (due to rounding errors, see
+  above) return \ccc{false} even though $P$ is full-dimensional, the
+  lower-dimensional subspace $S$ containing $P$ need not exist.
+  Therefore, it might be more advisable to fit a hyperplane $H$
+  through the pointset $P$, project $P$ onto this affine subspace $H$,
+  and compute an approximation to the minimum-volume enclosing
+  ellipsoid of the projected points within $H$; the fitting can be
+  done for instance using the \ccc{linear_least_squares_fitting()}
+  function from the \cgal\ package \ccc{Principal_component_analysis}.
+\item The algorithm determines that $P$ is full-dimensional.  In this
+  case, it provides an approximation ${\cal E}$ to $\mel(P)$, but
+  depending on the input problem (i.e., on the pair $(P,\epsilon)$),
+  it may not have achieved the desired approximation ratio but merely
+  some \emph{worse} approximation ratio $1+\epsilon'>1+\epsilon$.  The
+  achieved approximation ratio $1+\epsilon'$ can be queried using
+  \ccc{achieved_epsilon()}, which returns $\epsilon'$. The ellipsoid
+  ${\cal E}$ itself can be queried via the methods
+  \ccc{defining_matrix()}, \ccc{defining_vector()}, and
+  \ccc{defining_scalar()}.
+\end{itemize}
+
+The ellipsoid ${\cal E}$ computed by the algorithm satisfies the inclusions
+\begin{equation}
+  \label{eq:approximate_min_ellipsoid_incl}
+\frac{1}{(1+\epsilon')d} {\cal E} \subseteq \mathop{\rm
+conv}\nolimits(P) \subseteq {\cal E}
+\end{equation}
+where $f {\cal E}$ denotes the ellipsoid ${\cal E}$ scaled by the
+factor $f\in\R^+$ with respect to its center, and where $\mathop{\rm
+conv}\nolimits(A)$ denotes the \emph{convex hull} of a pointset
+$A\subset \E^d$.
+
+The underlying algorithm can cope with all kinds of inputs (multisets
+$P$, $\epsilon\in[0,\infty)$) and terminates in all cases.  There
+is, however, no guarantee that any desired approximation ratio
+is actually achieved; the performance of the algorithm in this respect
+highly depends on the input pointset.  Values of at least $0.01$ for
+$\epsilon$ are usually handled without problems.
+
+Internally, the algorithm represents the input points' Cartesian
+coordinates as \ccc{double}'s.  For this conversion to work, the input
+point coordinates must be convertible to \ccc{double}.  Also, in order
+to compute the achieved epsilon $\epsilon'$ mentioned above, the algorithm
+requires a number type \ccc{ET} that provides \emph{exact} arithmetic.
+(Both these aspects are discussed in the documentation of the concept
+\ccc{ApproximateMinEllipsoid_d_Traits_d}.)
+
+\ccInclude{CGAL/Approximate_min_ellipsoid_d.h}
+
+% -----------------------------------------------------------------------------
+\ccRequirements
+\ccIndexRequirements
+
+The template parameter \ccc{Traits} is a model for
+\ccc{ApproximateMinEllipsoid_d_Traits_d}.
+
+We provide the model
+\ccc{CGAL::Approximate_min_ellipsoid_d_traits_d<K>} using the
+$d$-dimensional \cgal~kernel; the models
+\ccc{CGAL::Approximate_min_ellipsoid_d_traits_2<K>} and
+\ccc{CGAL::Approximate_min_ellipsoid_d_traits_3<K>} are for use with
+the $2$- and $3$-dimensional \cgal~kernel, respectively.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+\ccIndexClassTypes
+
+\ccSetTwoColumns{\ccRefName}{}
+
+\ccNestedType{FT}{\ccc{typedef Traits::FT FT} (which is always a
+typedef to \ccc{double}).}
+\ccNestedType{ET}{\ccc{typedef Traits::ET ET} (which is an exact number type used for exact computation like for example in \ccc{achieved_epsilon()}).}
+\ccNestedType{Point}{\ccc{typedef Traits::Point Point}}
+\ccNestedType{Cartesian_const_iterator}{\ccc{typedef Traits::Cartesian_const_iterator Cartesian_const_iterator}}
+
+\ccNestedType{Center_coordinate_iterator}{A model of STL concept
+\ccc{RandomAccessIterator} with value type \ccc{double} that is used
+to iterate over the Cartesian center coordinates of the computed
+ellipsoid, see \ccc{center_cartesian_begin()}.}
+\ccNestedType{Axes_lengths_iterator}{A model of STL concept
+\ccc{RandomAccessIterator} with value type \ccc{double} that is used
+to iterate over the lengths of the semiaxes of the computed ellipsoid,
+see \ccc{axes_lengths_begin()}.}
+\ccNestedType{Axis_direction_iterator}{A model of STL concept
+\ccc{RandomAccessIterator} with value type \ccc{double} that is used
+to iterate over the Cartesian coordinates of the direction of a fixed
+axis of the computed ellipsoid, see
+\ccc{axis_direction_cartesian_begin()}.}
+
+\ccPropagateThreeToTwoColumns
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{ame}
+
+An object of type \ccRefName\ can be created from an arbitrary point
+set $P$ and some nonnegative \ccc{double} value \ccc{eps}.
+
+\ccConstructor{ template < class Iterator >
+                Approximate_min_ellipsoid_d(double eps,
+		               Iterator  first,
+                               Iterator  last,
+                               const Traits&  traits    = Traits()   );}{
+        initializes \ccVar\ to an $(1+\epsilon)$-approximation of
+        $\mel(P)$ with $P$ being the set of points in the range
+        [\ccc{first},\ccc{last}).  The number $\epsilon$ in this will
+        be at most \ccc{eps}, if possible.  However, due to the
+        limited precision in the algorithm's underlying arithmetic, it
+        can happen that the computed approximation ellipsoid has a
+        worse approximation ratio (and $\epsilon$ can thus be larger
+        than \ccc{eps} in general).  In any case, the number
+        $\epsilon$ (and with this, the achived approximation
+        $1+\epsilon$) can be queried by calling the routine
+        \ccc{achieved_epsilon()} discussed below.  \ccRequire
+        \ccc{Iterator} must be a model for concept \ccc{InputIterator}
+        with value type \ccc{Point}. \ccPrecond The dimension $d$ of
+        the input points must be at least $2$, and $\epsilon>0$.}
+
+% -----------------------------------------------------------------------------
+\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+The following methods can be used to query the achieved approximation
+ratio $1+\epsilon'$ and the computed ellipsoid ${\cal E} = \{ x\in\E^d
+\mid x^T E x + x^T e + \eta\leq 0 \}$.  The methods
+\ccc{defining_matrix()}, \ccc{defining_vector()}, and
+\ccc{defining_scalar()} do not return $E$, $e$, and $\eta$ directly
+but yield multiples of these quantities that are exactly representable
+using the \ccc{double} type.  (This is necessary because the
+parameters $E$, $e$, and $\eta$ of the computed approximation
+ellipsoid ${\cal E}$ might not be exactly representable as
+\ccc{double} numbers.)
+
+\ccMemberFunction{unsigned int  number_of_points( ) const;}{
+        returns the number of points of \ccVar, i.e., $|P|$.}
+
+\ccMemberFunction{double achieved_epsilon() const;}{ returns a number
+  $\epsilon'$ such that the computed approximation is (under exact
+  arithmetic) guaranteed to be an $(1+\epsilon')$-approximation to
+  $\mel(P)$.
+\ccPrecond \ccVar\ccc{.is_full_dimensional() == true}.
+\ccPostcond $\epsilon'>0$.}
+
+%\ccGlueBegin
+%\ccMemberFunction{ Point_iterator  points_begin() const;}{
+%        returns an iterator referring to the first point of \ccVar.}
+%%
+%\ccMemberFunction{ Point_iterator  points_end() const;}{
+%        returns the corresponding past-the-end iterator.}
+%\ccGlueEnd
+
+\ccGlueBegin
+\ccMemberFunction{double defining_matrix(int i,int j) const;}{
+        gives access  to the $(i,j)$th entry of the matrix $E$ in the
+	representation $\{ x\in\E^d \mid x^T E x + x^T e + \eta\leq 0
+	\}$ of the computed approximation ellipsoid ${\cal E}$.  The number returned by
+	this routine is $(1+\epsilon')(d+1)\,E_{ij}$, where $\epsilon'$ is
+	the number returned by \ccc{achieved_epsilon()}.
+	\ccPrecond $0\leq i,j\leq d$, where $d$ is the dimension
+        of the points $P$, and \ccVar\ccc{.is_full_dimensional() == true}.}
+
+\ccMemberFunction{double defining_vector(int i) const;}{
+        gives access to the $i$th entry of the vector $e$ in the
+	representation $\{ x\in\E^d \mid x^T E x + x^T e + \eta\leq 0
+	\}$ of the computed approximation ellipsoid ${\cal E}$.  The number returned by
+	this routine is $(1+\epsilon')(d+1)\,e_{i}$, where $\epsilon'$ is
+	the number returned by \ccc{achieved_epsilon()}.
+	\ccPrecond $0\leq i\leq d$, where $d$ is the dimension
+        of the points $P$, and \ccVar\ccc{.is_full_dimensional() == true}.}
+\ccMemberFunction{double defining_scalar() const;}{
+        gives access to the scalar $\eta$ from the 
+	representation $\{ x\in\E^d \mid x^T E x + x^T e + \eta\leq 0
+	\}$ of the computed approximation ellipsoid ${\cal E}$.   The number returned by
+	this routine is $(1+\epsilon')(d+1)\,(\eta+1)$, where $\epsilon'$ is
+	the number returned by \ccc{achieved_epsilon()}.
+	\ccPrecond \ccVar\ccc{.is_full_dimensional() == true}.}
+
+\ccMemberFunction{ const Traits&  traits( ) const;}{
+        returns a const reference to the traits class object.}
+
+\ccMemberFunction{ int dimension() const;}{ returns the dimension of
+        the ambient space, i.e., the dimension of the points $P$.}
+\ccGlueEnd
+
+In order to access the center and semiaxes of the computed
+approximation ellipsoid, the functions \ccc{center_cartesian_begin()},
+\ccc{axes_lengths_begin()}, and \ccc{axis_direction_cartesian_begin()}
+can be used. In constrast to the above access functions
+\ccc{achieved_epsilon()}, \ccc{defining_matrix()},
+\ccc{defining_vector()}, and \ccc{defining_scalar()}, which return the
+described quantities exactly, the routines below return
+\emph{numerical approximations} to the real center and real semiaxes
+of the computed ellipsoid; the comprised relative error may be larger
+than zero, and there are no guarantees for the returned quantities.
+
+\ccGlueBegin
+\ccMemberFunction{Center_coordinate_iterator center_cartesian_begin();}{
+  returns an iterator pointing to the first of the $d$ Cartesian
+	coordinates of the computed ellipsoid's center. \\
+  The returned point is a floating-point approximation to the
+     ellipsoid's exact center; no guarantee is given w.r.t.\ the involved
+     relative error. \ccPrecond
+	\ccVar\ccc{.is_full_dimensional() == true}.}
+
+\ccMemberFunction{Center_coordinate_iterator center_cartesian_end();}{
+     returns the past-the-end iterator corresponding to
+     \ccc{center_cartesian_begin()}.
+	\ccPrecond \ccVar\ccc{.is_full_dimensional() == true}.}
+
+\ccMemberFunction{Axes_lengths_iterator axes_lengths_begin();}{
+    returns an iterator pointing to the first of the $d$ descendantly
+    sorted lengths of the computed ellipsoid's axes.  The $d$ returned
+    numbers are floating-point approximations to the exact
+    axes-lengths of the computed ellipsoid; no guarantee is given
+    w.r.t.\ the involved relative error.  (See also method
+    \ccc{axes_direction_cartesian_begin()}.)  \ccPrecond
+    \ccVar\ccc{.is_full_dimensional() == true}, and
+    $d\in\{2,3\}$.}
+
+\ccMemberFunction{Axes_lengths_iterator axes_lengths_end();}{
+     returns the past-the-end iterator corresponding to
+     \ccc{axes_lengths_begin()}.  \ccPrecond
+    \ccVar\ccc{.is_full_dimensional() == true}, and
+    $d\in\{2,3\}$.}
+
+\ccMemberFunction{Axes_direction_coordinate_iterator
+   axis_direction_cartesian_begin(int i);}{ returns an iterator
+   pointing to the first of the $d$ Cartesian coordinates of the
+   computed ellipsoid's $i$th axis direction (i.e., unit vector in
+   direction of the ellipsoid's $i$th axis).  The direction described
+   by this iterator is a floating-point approximation to the exact
+   axis direction of the computed ellipsoid; no guarantee is given
+   w.r.t.\ the involved relative error.  An approximation to the
+   length of axis $i$ is given by the $i$th entry of
+   \ccc{axes_lengths_begin()}.
+   \ccPrecond
+    \ccVar\ccc{.is_full_dimensional() == true}, and
+    $d\in\{2,3\}$, and $0\leq i < d$.}
+
+\ccMemberFunction{Axes_direction_coordinate_iterator
+axis_direction_cartesian_end(int i);}{ returns the past-the-end
+iterator corresponding to
+\ccc{axis_direction_cartesian_begin()}.\ccPrecond
+\ccVar\ccc{.is_full_dimensional() == true}, and $d\in\{2,3\}$,
+and $0\leq i < d$.}
+
+\ccGlueEnd
+
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+\ccIndexMemberFunctionGroup{predicates}
+
+\ccMemberFunction{bool is_full_dimensional( ) const;}{ returns whether
+        $P$ is full-dimensional or not, i.e., returns \ccc{true} if
+        and only if $P$ is full-dimensional.  \\ \emph{Note:} due to
+        the limited precision in the algorithm's underlying
+        arithmetic, the result of this method is not always
+        correct. Rather, a return value of \ccc{false} means that the
+        points $P$ are contained in a ``very thin'' linear subspace of
+        $\E^d$, and as a consequence, the algorithm cannot compute an
+        approximation. More precisely, a return value of \ccc{false}
+        means that the points $P$ are contained between two parallel
+        hyperplanes in $\E^d$ that are very close to each other
+        (possibly at distance zero) --- so close, that the algorithm
+        could not compute an approximation ellipsoid.  Similarly, a
+        return value of \ccc{true} does not guarantee $P$ to be
+        full-dimensional; but there exists an input pointset $P'$ such
+        that the points $P'$ and $P$ have almost identical coordinates
+        and $P'$ is full-dimensional.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+\lcTex{\ccIndexSubitem[t]{validity check}{\ccFont Min_ellipse_2}}
+
+An object \ccVar\ is valid iff
+\begin{itemize}
+  \item \ccVar\ contains all points of its defining set $P$,
+  \item \ccVar\ is an $(1+\epsilon')$-approximation to the smallest
+    ellipsoid $\mel(P)$ of $P$,
+  \item The ellipsoid represented by \ccVar\ fulfills the
+  inclusion~(\ref{eq:approximate_min_ellipsoid_incl}).
+\end{itemize}
+
+\ccMemberFunction{ bool is_valid( bool verbose = false) const;}{
+      returns \ccc{true} iff \ccVar\ is valid according to the above
+      definition. If \ccc{verbose} is \ccc{true}, some messages
+      concerning the performed checks are written to the standard error
+      stream.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
+
+\def\ccTagRmConstRefPair{\ccFalse}
+
+\ccMemberFunction{ void write_eps(const std::string& name) const;}{
+        Writes the points $P$ and the computed approximation to
+        $\mel(P)$ as an EPS-file under pathname \ccc{name}. \ccPrecond
+        The dimension of points $P$ must be $2$.  \\ \emph{Note:} this
+        routine is provided as a debugging routine; future version of
+        \cgal\ might not provide it anymore.
+	\ccPrecond \ccVar\ccc{.is_full_dimensional() == true}.}
+
+\def\ccTagRmConstRefPair{\ccTrue}
+
+\end{ccIndexMemberFunctions}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Min_ellipse_2<Traits>}\\[1ex]
+
+% -----------------------------------------------------------------------------
+\ccImplementation
+\ccIndexImplementation
+
+We implement Khachyian's algorithm for rounding
+polytopes~\cite{cgal:k-rprnm-96}.  Internally, we use
+\ccc{double}-arithmetic and (initially a single)
+Cholesky-decomposition.  The algorithm's running time is ${\cal
+O}(nd^2(\epsilon^{-1}+\ln d + \ln\ln(n)))$, where $n=|P|$ and
+$1+\epsilon$ is the desired approximation ratio.
+
+%% @article{cgal:k-rprnm-96,
+%%   Author = {L. Khachiyan},
+%%   Date-Modified = {2005-02-01 14:18:59 +0100},
+%%   Internal-No = {32},
+%%   Journal = {Mathematics of Operations Research},
+%%   Number = {2},
+%%   Pages = {307--320},
+%%   Title = {Rounding of polytopes in the real number model of computation},
+%%   Volume = {21},
+%%   Year = {1996}}
+
+% -----------------------------------------------------------------------------
+\ccExample
+\ccIndexSubitem[C]{Min_ellipse_2}{example}
+
+To illustrate the usage of \ccRefName\ we give two examples in 2D. The
+first program generates a random set $P\subset\E^2$ and outputs the
+points and a $1.01$-approximation of $\mel(P)$ as an EPS-file, which
+you can view using {\tt gv}, for instance.  (In both examples you can
+change the variables \ccc{n} and \ccc{d} to experiment with the code.)
+
+\ccIncludeExampleCode{Approximate_min_ellipsoid_d/ellipsoid.cpp}
+
+The second program outputs the approximation in a format suitable
+for display in Maplesoft's Maple.
+
+\ccIncludeExampleCode{Approximate_min_ellipsoid_d/ellipsoid_for_maple.cpp}
+
+% -----------------------------------------------------------------------------
+
+\ccRestoreThreeColumns
+
+\end{ccRefClass}
+
+
