@@ -760,8 +760,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../GraphicsView/doc/GraphicsView/</string>
           <string name="STRIP_FROM_INC_PATH">../GraphicsView/doc/GraphicsView/</string>
           <string name="GENERATE_TAGFILE">./tags/GraphicsView.tag</string>
-          <!-- The path ../GraphicsView/examples does not exist currently. -->
-          <!-- <string name="EXAMPLE_PATH">../GraphicsView/examples</string> -->
           <string name="IMAGE_PATH">../GraphicsView/doc/GraphicsView/fig</string>
           <list name="TAGFILES" append="true">
           </list>
@@ -801,14 +799,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Polytope_distance_d/doc/Polytope_distance_d/</string>
           <string name="STRIP_FROM_INC_PATH">../Polytope_distance_d/doc/Polytope_distance_d/</string>
           <string name="GENERATE_TAGFILE">./tags/Polytope_distance_d.tag</string>
-          <list name="EXAMPLE_PATH" append="true">
-            <item>../Polytope_distance_d/examples</item>
-            <item>../Width_3/examples</item>
-            <item>../Matrix_search/examples</item>
-          </list>
+          <string name="EXAMPLE_PATH">../Polytope_distance_d/examples</string>
           <string name="IMAGE_PATH">../Polytope_distance_d/doc/Polytope_distance_d/fig</string>
-          <list name="TAGFILES" append="true">
-          </list>
         </doxygen>
       </project>
 
@@ -819,15 +811,20 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Bounding_volumes/doc/Bounding_volumes/</string>
           <string name="STRIP_FROM_INC_PATH">../Bounding_volumes/doc/Bounding_volumes/</string>
           <string name="GENERATE_TAGFILE">./tags/Bounding_volumes.tag</string>
-          <list name="EXAMPLE_PATH" append="true">
-            <item>../Min_quadrilateral_2/examples</item>
-            <item>../Min_circle_2/examples</item>
-            <item>../Min_ellipse_2/examples</item>
-            <item>../Min_sphere_d/examples</item>
-            <item>../Approximate_min_ellipsoid_d/examples</item>
-            <item>../Matrix_search/examples</item>
-          </list>
+          <string name="EXAMPLE_PATH">../Bounding_volumes/examples</string>
           <string name="IMAGE_PATH">../Bounding_volumes/doc/Bounding_volumes/fig</string>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Inscribed Areas</name>
+        <input>../Inscribed_areas/doc/Inscribed_areas</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Inscribed_areas/doc/Inscribed_areas/</string>
+          <string name="STRIP_FROM_INC_PATH">../Inscribed_areas/doc/Inscribed_areas/</string>
+          <string name="GENERATE_TAGFILE">./tags/Inscribed_areas.tag</string>
+          <string name="EXAMPLE_PATH">../Inscribed_areas/examples</string>
+          <string name="IMAGE_PATH">../Inscribed_areas/doc/Inscribed_areas/fig</string>
         </doxygen>
       </project>
 

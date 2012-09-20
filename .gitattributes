@@ -2795,6 +2795,19 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#image/
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
 Inscribed_areas/demo/Largest_empty_rect_2/Qt3/help/index.html svneol=native#text/html
+Inscribed_areas/doc/Inscribed_areas/CGAL/Extremal_polygon_traits_2.h -text
+Inscribed_areas/doc/Inscribed_areas/CGAL/Largest_empty_iso_rectangle_2.h -text
+Inscribed_areas/doc/Inscribed_areas/CGAL/extremal_polygon_2.h -text
+Inscribed_areas/doc/Inscribed_areas/Concepts/ExtremalPolygonTraits_2.h -text
+Inscribed_areas/doc/Inscribed_areas/Concepts/LargestEmptyIsoRectangleTraits_2.h -text
+Inscribed_areas/doc/Inscribed_areas/Inscribed_areas.txt -text
+Inscribed_areas/doc/Inscribed_areas/PackageDescription.txt -text
+Inscribed_areas/doc/Inscribed_areas/fig/largestEmptyRect.gif -text svneol=unset#image/gif
+Inscribed_areas/doc/Inscribed_areas/fig/largestEmptyRect.pdf -text svneol=unset#application/pdf
+Inscribed_areas/doc/Inscribed_areas/fig/ler-detail.png -text svneol=unset#image/png
+Inscribed_areas/doc/Inscribed_areas/fig/ler.png -text svneol=unset#image/png
+Inscribed_areas/doc/Inscribed_areas/fig/max_triangle.gif -text svneol=unset#image/gif
+Inscribed_areas/doc/Inscribed_areas/fig/max_triangle.pdf -text svneol=unset#application/pdf
 Inscribed_areas/doc_tex/Inscribed_areas/largestEmptyRect.gif -text svneol=unset#image/gif
 Inscribed_areas/doc_tex/Inscribed_areas/largestEmptyRect.pdf -text svneol=unset#application/pdf
 Inscribed_areas/doc_tex/Inscribed_areas/max_triangle.gif -text svneol=unset#image/gif
