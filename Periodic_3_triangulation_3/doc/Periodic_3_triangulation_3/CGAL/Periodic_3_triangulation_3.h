@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic3Triangulation3
+\ingroup PkgPeriodic3Triangulation3MainClasses
 
 The class `Periodic_triangulation_3` represents a 3-dimensional 
 triangulation of a point set in \f$ \mathbb T_c^3\f$. 
@@ -33,7 +33,7 @@ class Periodic_3_triangulation_3 {
 public:
 
 /// \name Types 
-CONVERROR Check if this needs to be spread\n/// The class `Triangulation_3` defines the following types: Only vertices (\f$ 0\f$-faces) and cells (\f$ 3\f$-faces) are stored. Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly represented and thus there are no corresponding classes (see Section \ref P3Triangulation3secintro). The vertices and faces of the triangulations are accessed through `handles`, `iterators` and `circulators`. A handle is a type which supports the two dereference operators and `operator->`. The Handle concept is documented in the support library. Iterators and circulators are bidirectional and non-mutable. The edges and facets of the triangulation can also be visited through iterators and circulators which are bidirectional and non-mutable. Iterators and circulators are convertible to the corresponding handles, thus the user can pass them directly as arguments to the functions.
+
 /// @{
 
 /*! 
@@ -108,6 +108,15 @@ Periodic_triangle;
 typedef array< Periodic_point, 4> 
 Periodic_tetrahedron; 
 
+
+/// @}
+
+/*! \name
+Only vertices (\f$ 0\f$-faces) and cells (\f$ 3\f$-faces) are stored. Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly represented and thus there are no corresponding classes (see Section \ref P3Triangulation3secintro).
+*/
+/// @{
+
+
 /*! 
 
 */ 
@@ -127,6 +136,27 @@ typedef Triangulation_data_structure::Edge Edge;
 
 */ 
 typedef Triangulation_data_structure::Facet Facet; 
+
+
+
+/// @}
+
+/*! \name
+
+The vertices and faces of the triangulations are accessed through
+`handles`, `iterators` and `circulators`. A handle is a type which
+supports the two dereference operators and `operator->`. The Handle
+concept is documented in the support library. Iterators and
+circulators are bidirectional and non-mutable. The edges and facets of
+the triangulation can also be visited through iterators and
+circulators which are bidirectional and non-mutable.
+
+Iterators and circulators are convertible to the corresponding
+handles, thus the user can pass them directly as arguments to the
+functions.
+
+*/
+/// @{
 
 /*! 
 handle to a vertex 
@@ -218,11 +248,11 @@ typedef Hidden_type Periodic_point_iterator;
 /// @} 
 
 /// \name Enums: 
-CONVERROR Check if this needs to be spread\n/// The triangulation class also defines the following enum types: To specify which case occurs when locating a point in the triangulation. To specify the behavior of geometric iterators.
+
 /// @{
 
 /*!
-\ingroup PkgPeriodic3Triangulation3
+\ingroup PkgPeriodic3Triangulation3Enums
 
 The enum `Locate_type` is defined by `Periodic_3_triangulation_3` to
 specify which case occurs when locating a point in the
@@ -235,7 +265,7 @@ triangulation. If the triangulation does not contain any points
 enum Locate_type {VERTEX=0, EDGE, FACET, CELL, EMPTY};
 
 /*!
-\ingroup PkgPeriodic3Triangulation3
+\ingroup PkgPeriodic3Triangulation3Enums
 
 The enum `Iterator_type` is defined by `Periodic_3_triangulation_3` to
 specify the behavior of geometric iterators.
@@ -801,8 +831,17 @@ Locate_type & lt, int & li, int & lj) const;
 
 /// @} 
 
-/// \name Cell, Face, Edge and Vertex Iterators 
-CONVERROR Check if this needs to be spread\n/// The following iterators allow the user to visit cells, facets, edges and vertices of the stored triangulation, i.e. in case of computing in a multiply sheeted covering space all stored periodic copies of each item are returned. These iterators are non-mutable, bidirectional and their value types are respectively `Cell`, `Facet`, `Edge` and `Vertex`. They are all invalidated by any change in the triangulation.
+/*! \name Cell, Face, Edge and Vertex Iterators 
+
+The following iterators allow the user to visit cells, facets, edges
+and vertices of the stored triangulation, i.e. in case of computing in
+a multiply sheeted covering space all stored periodic copies of each
+item are returned. These iterators are non-mutable, bidirectional and
+their value types are respectively `Cell`, `Facet`, `Edge` and
+`Vertex`. They are all invalidated by any change in the triangulation.
+
+*/
+
 /// @{
 
 /*! 
@@ -865,8 +904,28 @@ Unique_vertex_iterator unique_vertices_end() const;
 
 /// @} 
 
-/// \name Geometric iterators 
-CONVERROR Check if this needs to be spread\n/// The following iterators allow the user to obtain geometric primitives corresponding to cells, facets, edges, and vertices of the triangulation. These iterators are non-mutable, bidirectional and their value types are respectively `Periodic_point`, `Periodic_segment`, `Periodic_triangle`, and `Periodic_tetrahedron`. They are all invalidated by any change in the triangulation. If the periodic triangulation is not computed in the 1-sheeted covering space, these iterators can be used to retain only the geometric primitives in the original domain. This can be controlled using the enum `Iterator_type`, see CONVERROR ccRefPage for CGAL::Periodic_3_triangulation_3::Iterator_type not supported. CONVERROR HtmlOnly needs treatment <CENTER> <img border=0 src="./it_STORED_small.jpg" align=middle alt="STORED"> <img border=0 src="./it_STORED_COVER_DOMAIN_small.jpg" align=middle alt="STORED_COVER_DOMAIN"> <img border=0 src="./it_UNIQUE_small.jpg" align=middle alt="UNIQUE"> <img border=0 src="./it_UNIQUE_COVER_DOMAIN_small.jpg" align=middle alt="UNIQUE_COVER_DOMAIN"> </CENTER> CONVERROR EndHtmlOnly CAPTION The four different modes of the geometric iterators: STORED, STORED_COVER_DOMAIN, UNIQUE, UNIQUE_COVER_DOMAIN. Note that in case of computing in the 1-sheeted covering space, STORED and UNIQUE give the same result. \anchor P3Triangulation3figgeom_iterators
+/*! \name Geometric Iterators 
+
+The following iterators allow the user to obtain geometric primitives
+corresponding to cells, facets, edges, and vertices of the
+triangulation. These iterators are non-mutable, bidirectional and
+their value types are respectively `Periodic_point`,
+`Periodic_segment`, `Periodic_triangle`, and
+`Periodic_tetrahedron`. They are all invalidated by any change in the
+triangulation. If the periodic triangulation is not computed in the
+1-sheeted covering space, these iterators can be used to retain only
+the geometric primitives in the original domain. This can be
+controlled using the enum `Iterator_type`.
+
+ <img border=0 src="./it_STORED_small.jpg" align=middle alt="STORED"> 
+<img border=0 src="./it_STORED_COVER_DOMAIN_small.jpg" align=middle alt="STORED_COVER_DOMAIN"> 
+<img border=0 src="./it_UNIQUE_small.jpg" align=middle alt="UNIQUE"> 
+<img border=0 src="./it_UNIQUE_COVER_DOMAIN_small.jpg" align=middle alt="UNIQUE_COVER_DOMAIN"> 
+
+<CENTER><b> The four different modes of the geometric iterators: STORED, STORED_COVER_DOMAIN, UNIQUE, UNIQUE_COVER_DOMAIN. Note that in case of computing in the 1-sheeted covering space, STORED and UNIQUE give the same result. </b></center>
+
+*/
+
 /// @{
 
 /*! 

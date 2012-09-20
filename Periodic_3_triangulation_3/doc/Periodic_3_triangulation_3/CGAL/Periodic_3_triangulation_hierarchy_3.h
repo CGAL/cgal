@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic3Triangulation3
+\ingroup PkgPeriodic3Triangulation3MainClasses
 
 The class `Periodic_3_triangulation_hierarchy_3` implements a 
 triangulation augmented with a data structure which allows fast point 

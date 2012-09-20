@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic3Triangulation3
+\ingroup PkgPeriodic3Triangulation3MainClasses
 
 The class `Periodic_3_triangulation_ds_vertex_base_3` is a model 
 of the concept `Periodic_3TriangulationDSVertexBase_3` to be used by 

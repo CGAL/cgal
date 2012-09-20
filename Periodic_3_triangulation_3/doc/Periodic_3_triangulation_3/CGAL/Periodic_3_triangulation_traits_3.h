@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic3Triangulation3
+\ingroup PkgPeriodic3Triangulation3TraitsClasses
 
 The class `Periodic_3_triangulation_traits_3` is designed as a default traits class for the 
 class `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,TriangulationDataStructure_3>`. 

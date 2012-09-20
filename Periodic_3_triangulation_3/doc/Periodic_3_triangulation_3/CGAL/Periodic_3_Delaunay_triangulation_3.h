@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic3Triangulation3
+\ingroup PkgPeriodic3Triangulation3MainClasses
 
 The class `Periodic_3_Delaunay_triangulation_3` represents a 
 Delaunay triangulation in three-dimensional periodic space. 
@@ -61,8 +61,22 @@ const Geom_traits & traits = Geom_traits());
 
 /// @} 
 
-/// \name Insertion 
-CONVERROR Check if this needs to be spread\n/// The following methods insert points in the triangulation ensuring the empty sphere property of Delaunay triangulations. The inserted points need to lie in the original domain (see Section \ref P3Triangulation3secspace of the user manual). In the degenerate case when there are co-spherical points, the Delaunay triangulation is known not to be uniquely defined. In this case, \cgal chooses a particular Delaunay triangulation using a symbolic perturbation scheme \cite cgal:dt-pvr3d-03. Note that insertion of a new point can cause a switch from computing in the 27-sheeted covering space to computing in the 1-sheeted covering space, which invalidates some `Vertex_handle`s and `Cell_handle`s. The following method allows one to insert several points. It returns the number of inserted points.
+/*! \name Insertion 
+
+The following methods insert points in the triangulation ensuring the
+empty sphere property of Delaunay triangulations. The inserted points
+need to lie in the original domain (see Section \ref
+P3Triangulation3secspace of the user manual). In the degenerate case
+when there are co-spherical points, the Delaunay triangulation is
+known not to be uniquely defined. In this case, \cgal chooses a
+particular Delaunay triangulation using a symbolic perturbation scheme
+\cite cgal:dt-pvr3d-03. Note that insertion of a new point can cause a
+switch from computing in the 27-sheeted covering space to computing in
+the 1-sheeted covering space, which invalidates some `Vertex_handle`s
+and `Cell_handle`s.
+
+*/
+
 /// @{
 
 /*! 
@@ -83,6 +97,15 @@ parameter the return values of a previous location query. See description of
 */ 
 Vertex_handle insert(const Point & p, Locate_type lt, 
 Cell_handle loc, int li, int lj); 
+
+
+/// @}
+
+/*! \name
+The following method allows one to insert several points. It returns the number of inserted points.
+*/
+/// @{
+
 
 /*! 
 Inserts the points in the iterator range \f$ \left[\right.\f$`first`, 
@@ -115,8 +138,21 @@ Vertex_handle move_point(Vertex_handle v, const Point & p);
 
 /// @} 
 
-/// \name Removal 
-CONVERROR Check if this needs to be spread\n/// When a vertex `v` is removed from a triangulation, all the cells incident to `v` must be removed, and the polyhedral region consisting of all the tetrahedra that are incident to `v` must be re-triangulated. So, the problem reduces to triangulating a polyhedral region, while preserving its boundary, or to compute a <I>constrained</I> triangulation. This is known to be sometimes impossible: the Sch&ouml;nhardt polyhedron cannot be triangulated \cite cgal:s-cgehd-98. However, when dealing with Delaunay triangulations, the case of such polyhedra that cannot be re-triangulated cannot happen, so \cgal proposes a vertex removal.
+/*! \name Removal 
+
+When a vertex `v` is removed from a triangulation, all the cells
+incident to `v` must be removed, and the polyhedral region consisting
+of all the tetrahedra that are incident to `v` must be
+re-triangulated. So, the problem reduces to triangulating a polyhedral
+region, while preserving its boundary, or to compute a
+<I>constrained</I> triangulation. This is known to be sometimes
+impossible: the Sch&ouml;nhardt polyhedron cannot be triangulated
+\cite cgal:s-cgehd-98.
+
+However, when dealing with Delaunay triangulations, the case of such
+polyhedra that cannot be re-triangulated cannot happen, so \cgal
+proposes a vertex removal.  
+*/
 /// @{
 
 /*! 
@@ -139,7 +175,7 @@ std::ptrdiff_t remove(InputIterator first, InputIterator beyond);
 /// @} 
 
 /// \name Queries 
-CONVERROR Check if this needs to be spread\n/// A point-offset pair (`p`,`off`) is said to be in conflict with a cell `c` iff `dt`.`side_of_sphere(c, p, off)` returns `ON_BOUNDED_SIDE`. The set of cells that are in conflict with (`p`,`off`) is star-shaped. A face (cell, facet or edge) is said to be a Gabriel face iff its smallest circumscribing sphere do not enclose any vertex of the triangulation. Any Gabriel face belongs to the Delaunay triangulation, but the reciprocal is not true. The following member functions test the Gabriel property of Delaunay faces.
+
 /// @{
 
 /*! 
@@ -179,6 +215,16 @@ point-offset pair (`p`,`off`).
 Vertex_handle nearest_vertex_in_cell(Cell_handle c, 
 Point p, Offset off = Offset(0,0,0)) const; 
 
+
+/// @}
+
+/*! \name
+A point-offset pair (`p`,`off`) is said to be in conflict with a cell `c` iff `dt`.`side_of_sphere(c, p, off)` returns `ON_BOUNDED_SIDE`. The set of cells that are in conflict with (`p`,`off`) is star-shaped. 
+*/
+/// @{
+
+
+
 /*! 
 Computes the conflict hole induced by `p`. The starting cell 
 `c` must be in conflict. Then this function returns 
@@ -217,6 +263,21 @@ template <class OutputIterator>
 OutputIterator 
 vertices_in_conflict(Point p, Cell_handle c, 
 OutputIterator res); 
+
+
+/// @}
+
+/*! \name
+
+A face (cell, facet or edge) is said to be a Gabriel face iff its
+smallest circumscribing sphere do not enclose any vertex of the
+triangulation. Any Gabriel face belongs to the Delaunay triangulation,
+but the reciprocal is not true. The following member functions test
+the Gabriel property of Delaunay faces.
+
+*/
+/// @{
+
 
 /*! 
 
