@@ -2,7 +2,6 @@ namespace CGAL {
 
 /*!
 \ingroup PkgNef3
-\anchor refOFF_to_nef_3 
 
 This function creates a 3D Nef polyhedron from an OFF file which 
 is read from input stream `in`. The purpose of `OFF_to_nef_3` 

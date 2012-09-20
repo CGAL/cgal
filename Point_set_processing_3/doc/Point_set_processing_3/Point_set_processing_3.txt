@@ -1,12 +1,11 @@
-
-\page chappoint_set_processing_3 Point Set Processing
-
 namespace CGAL {
 /*!
 
 \mainpage Point Set Processing
-\autotoc
+\anchor Chapter_Point_Set_Processing
 \anchor chappoint_set_processing_3
+
+\autotoc
 
 \authors Pierre Alliez, Laurent Saboret, Nader Salman
 

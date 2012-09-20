@@ -10,7 +10,6 @@ namespace CGAL {
 \autotoc
 \authors Ron Wein
 
-\anchor figteaser
 \image html lwrenv.gif The lower envelope of a set of line segments and hyperbolic arc. 
 
 # Introduction #

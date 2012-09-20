@@ -11,7 +11,6 @@ namespace CGAL {
 
 \section bso_secintro Introduction 
 
-\anchor figteaser
 \image html teaser.gif "Examples of Boolean set-operations on general polygons."
 
 This package consists of the implementation of Boolean set-operations

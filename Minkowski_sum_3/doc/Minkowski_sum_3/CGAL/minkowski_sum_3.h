@@ -2,7 +2,6 @@ namespace CGAL {
 
 /*!
 \ingroup PkgMinkowskiSum3
-\anchor refminkowski_sum_3 
 
 The function `minkowski_sum_3` computes the Minkowski sum of two 
 given 3D Nef polyhedra \f$ N0\f$ and \f$ N1\f$. Note that the function runs in 

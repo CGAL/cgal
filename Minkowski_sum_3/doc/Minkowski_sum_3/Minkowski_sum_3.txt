@@ -254,7 +254,7 @@ selection mark without spoiling the correctness of the Minkowski sum.
 # Usage #
 
 The function `::minkowski_sum_3` should be used with the
-`::Exact_predicates_exact_constructions_kernel`, which often is
+CGAL::Exact_predicates_exact_constructions_kernel, which often is
 the most efficient choice and allows floating-point input. Consult
 Section \ref sectionNef_3IO for more details.
 
