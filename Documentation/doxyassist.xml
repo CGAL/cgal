@@ -1152,6 +1152,11 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Point_set_processing_3.tag</string>
           <string name="IMAGE_PATH">../Point_set_processing_3/doc/Point_set_processing_3/fig</string>
           <string name="EXAMPLE_PATH">../Point_set_processing_3/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Property_map.tag=../../CGAL.CGAL.CGAL-and-Boost-Property-Maps/html</item>
+            <item>./tags/Bounding_volumes.tag=../../CGAL.CGAL.Bounding-Volumes/html</item>
+            <item>./tags/Principal_component_analysis.tag=../../CGAL.CGAL.Principal-Component-Analysis/html</item>
+          </list>
         </doxygen>
       </project>
 
