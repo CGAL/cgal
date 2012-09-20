@@ -5,7 +5,7 @@ namespace CGAL {
 /*!
 
 \mainpage Point Set Processing
-
+\autotoc
 \anchor chappoint_set_processing_3
 
 \authors Pierre Alliez, Laurent Saboret, Nader Salman
@@ -40,7 +40,7 @@ chapsurface_reconstruction_points_3 deals with surface reconstruction
 from point sets with normal attributes.
 
 \anchor Point_set_processing_3figpipeline
-\image html pipeline.jpg "Point set processing pipeline for surface reconstruction. The algorithms listed in gray are available from other \cgal components (bounding volumes and principal component analysis)."
+\image html pipeline.jpg "Point set processing pipeline for surface reconstruction. The algorithms listed in gray are available from other CGAL components (bounding volumes and principal component analysis)."
 
 # Input/Output #
 
