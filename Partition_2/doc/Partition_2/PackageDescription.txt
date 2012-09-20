@@ -13,6 +13,8 @@
 \PkgSince{2.3}
 \cgalbib{cgal:h-pp2}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{2D Polygon Partition,partition_2.zip}
+\PkgDemo{Operations on Polygons,polygon.zip}
 \PkgDescriptionEnd
 
 The assertion flags for this package use `PARTITION` in their names

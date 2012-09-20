@@ -13,6 +13,7 @@
 \PkgSince{2.3}
 \cgalbib{cgal:s-bonp2}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{2D Nef Polygons,nef_2.zip}
 \PkgDescriptionEnd
 
 */

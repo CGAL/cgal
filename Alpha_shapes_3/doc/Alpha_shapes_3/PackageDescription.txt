@@ -11,6 +11,7 @@
 \PkgSince{2.3}
 \cgalbib{cgal:dy-as3}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{3D Alpha Shapes,alpha_shape_3.zip}
 \PkgDescriptionEnd
 
 Alpha shapes definition is based on an underlying

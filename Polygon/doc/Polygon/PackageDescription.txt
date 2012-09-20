@@ -16,6 +16,7 @@
 \PkgSince{0.9}
 \cgalbib{cgal:gw-p2}
 \license{\ref licensesLGPL "LGPL"}
+\PkgDemo{Operations on Polygons,polygon.zip}
 \PkgDescriptionEnd
 
 ## Assertions ##

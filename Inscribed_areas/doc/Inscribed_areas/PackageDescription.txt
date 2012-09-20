@@ -13,6 +13,8 @@
 \PkgSince{1.1}
 \cgalbib{cgal:hp-ia}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{2D Inscribed k-gon as part of Polygon demo,polygon.zip}
+\PkgDemo{2D Largest Empty Rectangle,largest_empty_rect_2.zip}
 \PkgDescriptionEnd
 
 This chapter describes concepts, classes, and functions for

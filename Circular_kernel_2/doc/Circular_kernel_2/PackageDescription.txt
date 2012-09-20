@@ -31,6 +31,7 @@
 \PkgSince{3.2}
 \cgalbib{cgal:cpt-cgk2}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{Arrangement of Circular Arcs,circular_kernel.zip}
 \PkgDescriptionEnd
 */
 

@@ -38,6 +38,7 @@
 \PkgSince{3.5}
 \cgalbib{cgal:rty-m3}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{3D Mesh Generation,mesh_3.zip}
 \PkgDescriptionEnd
 */
 

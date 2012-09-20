@@ -11,6 +11,7 @@
 \PkgSince{1.0}
 \cgalbib{cgal:k-ps}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \PkgDescriptionEnd
 
 Polyhedral surfaces in three dimensions are composed of vertices,

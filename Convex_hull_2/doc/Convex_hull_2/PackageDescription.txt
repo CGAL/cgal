@@ -28,6 +28,7 @@
 \PkgSince{1.0}
 \cgalbib{cgal:hs-chep2}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{See Bounding Volumes,bounding_volumes_2.zip}
 \PkgDescriptionEnd
 
 Assertions

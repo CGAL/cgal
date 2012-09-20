@@ -30,6 +30,7 @@
 \PkgSince{2.1}
 \cgalbib{cgal:pt-t3}
 \license{\ref licensesGPL "GPL" }
+\PkgDemo{3D Triangulation,triangulation_3.zip}
 \PkgDescriptionEnd
 
 A three-dimensional triangulation is a three-dimensional simplicial

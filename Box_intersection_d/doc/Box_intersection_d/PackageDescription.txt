@@ -13,6 +13,7 @@
 \PkgSince{3.1}
 \cgalbib{cgal:kmz-isiobd}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \PkgDescriptionEnd
 */
 

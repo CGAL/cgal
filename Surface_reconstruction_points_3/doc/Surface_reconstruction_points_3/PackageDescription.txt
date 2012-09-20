@@ -9,6 +9,7 @@
 \PkgSince{3.5}
 \cgalbib{cgal:asg-srps}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{Surface Reconstruction,surface_reconstruction_points_3.zip}
 \PkgDescriptionEnd
 
 This \cgal component implements a state-of-the-art surface

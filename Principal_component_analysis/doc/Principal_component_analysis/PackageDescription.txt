@@ -10,6 +10,9 @@
 \PkgSince{3.2}
 \cgalbib{cgal:ap-pcad}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{Principal Component Analysis,pca.zip}
+\PkgDemo{Operations on Polygons,polygon.zip}
+\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \PkgDescriptionEnd
 
 This \cgal component provides functions to compute global information

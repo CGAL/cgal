@@ -12,6 +12,9 @@
 \PkgSince{3.2}
 \cgalbib{cgal:k-vda2}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{2D Point Voronoi Diagram ,delaunay_triangulation_2.zip}
+\PkgDemo{2D Disk Voronoi Diagram,apollonius_graph_2.zip}
+\PkgDemo{2D Segment Voronoi Diagram,segment_voronoi_diagram_2.zip}
 \PkgDescriptionEnd
 
 \cgal provides the class `CGAL::Voronoi_diagram_2<DG,AT,AP>` for

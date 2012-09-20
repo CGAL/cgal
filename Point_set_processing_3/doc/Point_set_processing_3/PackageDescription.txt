@@ -13,6 +13,7 @@
 \PkgSince{3.5}
 \cgalbib{cgal:ass-psp}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{Surface Reconstruction,surface_reconstruction_points_3.zip}
 \PkgDescriptionEnd
 
 This \cgal component implements methods to analyze and process

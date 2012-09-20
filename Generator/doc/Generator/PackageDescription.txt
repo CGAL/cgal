@@ -12,6 +12,7 @@
 \PkgSince{1.0}
 \cgalbib{cgal:dhhk-gog}
 \license{ \ref licensesLGPL  "LGPL" }
+\PkgDemo{Generators,generator.zip}
 \PkgDescriptionEnd
 
 This chapter describes the functions and classes provided in \cgal

@@ -12,6 +12,7 @@
 \PkgSince{2.1}
 \cgalbib{cgal:d-as2}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{2D Alpha Shapes,alpha_shapes_2.zip}
 \PkgDescriptionEnd
 
 This chapter presents a framework for alpha shapes. The description is based on

@@ -228,6 +228,8 @@ ALIASES += "PkgAuthor{1}=<td>\author \1"
 ALIASES += "PkgAuthors{1}=\authors \1"
 ALIASES += "PkgDesc{1}=\par \"Description\" \1"
 ALIASES += "PkgSince{1}=\since \cgal \1"
+ALIASES += "PkgLicense{1}=\par \"License\" \1"
+ALIASES += "PkgDemo{2}=\par \"Demo\" <a href=\"http://www.cgal.org/demo/4.0.2/\2\">\1</a>"
 ALIASES += "PkgDescriptionEnd=</td></tr></table>"
 
 ALIASES += "footnote{1}=<span class=\"footnote\">\1</span>"

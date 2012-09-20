@@ -12,6 +12,7 @@
 \PkgSince{3.2}
 \cgalbib{cgal:fwzh-rbso2}
 \license{ \ref licensesGPL "GPL" }
+\PkgDemo{Boolean operations,boolean_operations_2.zip}
 \PkgDescriptionEnd
 
 

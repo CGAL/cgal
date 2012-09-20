@@ -12,6 +12,7 @@
 \PkgSince{3.1}
 \cgalbib{cgal:r-ctm2}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{2D Mesh Generator,constrained_delaunay_triangulation_2.zip}
 \PkgDescriptionEnd
 */
 

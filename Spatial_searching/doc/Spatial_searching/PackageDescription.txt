@@ -33,6 +33,7 @@
 \PkgSince{3.0}
 \cgalbib{cgal:tf-ssd}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{2D Spatial Searching,spatial_searching.zip}
 \PkgDescriptionEnd
 */
 

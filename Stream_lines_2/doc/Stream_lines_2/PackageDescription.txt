@@ -11,6 +11,7 @@
 \PkgSince{3.2}
 \cgalbib{cgal:m-ps}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{2D Stream Lines,streamlines.zip}
 \PkgDescriptionEnd
 
 Vector and direction fields are commonly used for modeling physical

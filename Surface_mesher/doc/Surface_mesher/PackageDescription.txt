@@ -13,6 +13,7 @@
 \PkgSince{3.2}
 \cgalbib{cgal:ry-smg}
 \license{\ref licensesGPL}
+\PkgDemo{Surface Mesh Generator,surface_mesher.zip}
 \PkgDescriptionEnd
 
 The surface mesh generation package offers a function template

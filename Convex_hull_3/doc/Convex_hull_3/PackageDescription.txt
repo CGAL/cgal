@@ -22,6 +22,7 @@
 \PkgSince{1.1}
 \cgalbib{cgal:hs-ch3}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{See Polyhedral Surface,polyhedron_3.zip}
 \PkgDescriptionEnd
 
 Assertions 

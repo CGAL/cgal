@@ -13,6 +13,8 @@
 \PkgSince{3.2}
 \cgalbib{cgal:c-sspo2}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{2D Straight Skeleton,straight_skeleton_2.zip}
+\PkgDemo{Operations on Polygons,polygon.zip}
 \PkgDescriptionEnd
 */
 

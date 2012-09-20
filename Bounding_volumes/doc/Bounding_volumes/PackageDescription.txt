@@ -13,6 +13,7 @@
 \PkgSince{1.1}
 \cgalbib{cgal:fghhs-bv}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{2D Bounding Volumes,bounding_volumes_2.zip}
 \PkgDescriptionEnd
 
 The optimization code uses infix `OPTIMISATION` in the assertions,

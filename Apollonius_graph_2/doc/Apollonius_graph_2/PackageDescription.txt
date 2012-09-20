@@ -13,6 +13,7 @@
 \PkgSince{3.0}
 \cgalbib{cgal:ky-ag2}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{2D Apollonius Graph,apollonius_graph_2.zip}
 \PkgDescriptionEnd
 */
 

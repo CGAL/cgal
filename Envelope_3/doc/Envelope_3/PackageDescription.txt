@@ -13,6 +13,8 @@
 \PkgSince{3.3}
 \cgalbib{cgal:mwz-e3}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{3D Envelopes,envelope_3.zip}
+\PkgDemo{L1 Voronoi Diagram,l1_voronoi_diagram_2.zip}
 \PkgDescriptionEnd
 
 This package consists of functions that compute the lower (or upper)

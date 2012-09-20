@@ -16,6 +16,7 @@
 \PkgSince{3.2}
 \cgalbib{cgal:s-ssm2}
 \license{\ref licensesLGPL "LGPL"}
+\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \PkgDescriptionEnd
 
 Subdivision methods recursively refine the control mesh 

@@ -13,6 +13,7 @@
 \PkgSince{3.1}
 \cgalbib{cgal:hk-bonp3}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \PkgDescriptionEnd
 
 A Nef polyhedron is any point set generated from a finite number of

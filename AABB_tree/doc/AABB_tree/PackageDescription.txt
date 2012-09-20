@@ -13,5 +13,6 @@
 \PkgSince{1.0}
 \cgalbib{cgal:atw-aabb}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{AABB Tree,AABB_demo.zip}
 \PkgDescriptionEnd
 */

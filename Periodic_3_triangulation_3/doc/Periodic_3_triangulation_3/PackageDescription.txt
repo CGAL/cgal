@@ -13,6 +13,7 @@
 \PkgSince{3.5}
 \cgalbib{cgal:ct-pt3}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{Periodic Delaunay Triangulation,periodic_3_triangulation_3.zip}
 \PkgDescriptionEnd
 
 The main classes of the 3D Periodic Triangulation package are

@@ -20,6 +20,8 @@
 \PkgSince{3.9}
 \cgalbib{cgal:d-cm}
 \license{\ref licensesLGPL "LGPL"}
+\PkgDemo{2D Combinatorial Map,combinatorial_map_2.zip}
+\PkgDemo{3D Combinatorial Map,combinatorial_map_3.zip}
 \PkgDescriptionEnd
 */
 

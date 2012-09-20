@@ -158,5 +158,6 @@ sparse linear solvers:
 \PkgSince{3.2}
 \cgalbib{cgal:sal-pptsm2}
 \license{\ref licensesGPL "GPL"}
+\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \PkgDescriptionEnd
 */

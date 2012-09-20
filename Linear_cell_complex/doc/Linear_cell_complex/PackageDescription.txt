@@ -24,6 +24,7 @@
 \PkgSince{4.0}
 \cgalbib{cgal:d-lcc-12}
 \license{\ref licensesLGPL "LGPL"}
+\PkgDemo{3D Linear Cell Complex,linear_cell_complex_3.zip}
 \PkgDescriptionEnd
 */
 

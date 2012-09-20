@@ -11,6 +11,7 @@
 \PkgSince{3.1}
 \cgalbib{cgal:p-sr2}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{2D Snap Rounding,snap_rounding_2.zip}
 \PkgDescriptionEnd
 */
 

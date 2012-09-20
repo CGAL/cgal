@@ -11,6 +11,7 @@
 \PkgSince{3.5}
 \cgalbib{cgal:h-msp3}
 \license{ \ref licensesGPL  "GPL" }
+\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \PkgDescriptionEnd
 */
 

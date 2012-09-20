@@ -26,6 +26,9 @@
 \PkgSince{0.9}
 \cgalbib{cgal:y-t2}
 \license{ \ref licensesGPL "GPL" }
+\PkgDemo{Delaunay Triangulation,delaunay_triangulation_2.zip}
+\PkgDemo{Regular Triangulation,regular_triangulation_2.zip}
+\PkgDemo{Constrained Delaunay Triangulation,constrained_delaunay_triangulation_2.zip}
 \PkgDescriptionEnd
 
 A triangulation is a 2-dimensional simplicial complex which is pure
