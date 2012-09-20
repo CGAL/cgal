@@ -164,6 +164,8 @@ namespace Eigen {
     typedef CGAL::Gmpfr NonInteger;
     typedef CGAL::Gmpfr Nested;
 
+    static inline Real epsilon() { return 0; }
+
     enum {
       IsInteger = 0,
       IsSigned = 1,

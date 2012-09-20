@@ -1,0 +1,34 @@
+Min_quadrilateral_2
+-------------------
+Michael Hoffmann <hoffmann@inf.ethz.ch>
+
+Min_sphere_of_spheres_d
+-----------------------
+Kaspar Fischer <fischerk@inf.ethz.ch>
+Bernd Gaertner <gaertner@inf.ethz.ch>
+Michael Hoffmann <hoffmann@inf.ethz.ch>
+
+Matrix_search
+-------------
+Michael Hoffmann <hoffmann@inf.ethz.ch>
+
+Approximate_min_ellipsoid_d
+---------------------------
+Kaspar Fischer <fischerk@inf.ethz.ch>
+
+Min_ellipse_2
+-------------
+cgal-develop
+
+Min_circle_2
+------------
+cgal-develop
+
+Min_sphere_d
+------------
+Bernd Gaertner <gaertner@inf.ethz.ch>
+Michael Hoffmann <hoffmann@inf.ethz.ch>
+
+Min_annulus_d
+-------------
+Michael Hoffmann <hoffmann@inf.ethz.ch>

@@ -198,6 +198,8 @@ namespace Eigen {
     typedef CORE::Expr NonInteger;
     typedef CORE::Expr Nested;
 
+    static inline Real epsilon() { return 0; }
+
     enum {
       IsInteger = 0,
       IsSigned = 1,

@@ -32,6 +32,8 @@ namespace Eigen {
     typedef Real NonInteger;
     typedef Real Nested;
 
+    static inline Real epsilon() { return NumTraits<NT>::epsilon(); }
+
     enum {
       IsInteger = 0,
       IsSigned = 1,

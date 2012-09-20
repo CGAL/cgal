@@ -768,26 +768,18 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-# fake to simplify loop
-set(CGAL_CGAL_LIBRARY ${CGAL_LIBRARY})
-hide_variable(CGAL_CGAL_LIBRARY)
-
-# Set CGAL_INSTALLED_LIBRARY, CGAL_INSTALLED_Qt3_LIBRARY and so on. Those
+# Set CGAL_LIBRARY_INSTALLED, CGAL_Qt3_LIBRARY_INSTALLED and so on. Those
 # variables are the path to the libraries installed by the install
 # target. Used in the generation of the installed CGALConfig.cmake
 foreach(lib ${CGAL_CONFIGURED_LIBRARIES} CGAL) # note the added fake 'CGAL'
-  if(CGAL_${lib}_LIBRARY)
-    get_filename_component(lib_name "${CGAL_${lib}_LIBRARY}" NAME)
-    set(CGAL_INSTALLED_${lib}_LIBRARY "${CMAKE_INSTALL_PREFIX}/${CGAL_INSTALL_LIB_DIR}/${lib_name}")
-  else()
-    set(CGAL_INSTALLED_${lib}_LIBRARY "")
+ if(${lib}_LIBRARY)
+    get_filename_component(lib_name "${${lib}_LIBRARY}" NAME)
+    set(${lib}_LIBRARY_INSTALLED "${CMAKE_INSTALL_PREFIX}/${CGAL_INSTALL_LIB_DIR}/${lib_name}")
+ else()
+    set(${lib}_LIBRARY_INSTALLED "")
   endif()
-  hide_variable(CGAL_INSTALLED_${lib}_LIBRARY)
+  hide_variable(${lib}_LIBRARY_INSTALLED)
 endforeach()
-
-# set back from the fake
-set(CGAL_INSTALLED_LIBRARY  ${CGAL_INSTALLED_CGAL_LIBRARY})
-hide_variable(CGAL_INSTALLED_LIBRARY)
 
 create_CGALconfig_files()
 

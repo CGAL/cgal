@@ -531,6 +531,8 @@ namespace Eigen {
     typedef CORE::BigFloat NonInteger;
     typedef CORE::BigFloat Nested;
 
+    static inline Real epsilon() { return 0; }
+
     enum {
       IsInteger = 0,
       IsSigned = 1,

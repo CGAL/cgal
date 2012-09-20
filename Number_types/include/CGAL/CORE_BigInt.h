@@ -209,6 +209,8 @@ namespace Eigen {
     typedef CORE::BigRat NonInteger;
     typedef CORE::BigInt Nested;
 
+    static inline Real epsilon() { return 0; }
+
     enum {
       IsInteger = 1,
       IsSigned = 1,

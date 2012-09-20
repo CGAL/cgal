@@ -1383,6 +1383,8 @@ namespace Eigen {
     typedef CGAL::Lazy_exact_nt<typename NumTraits<ET>::NonInteger> NonInteger;
     typedef CGAL::Lazy_exact_nt<ET> Nested;
 
+    static inline Real epsilon() { return 0; }
+
     enum {
       IsInteger = NumTraits<ET>::IsInteger,
       IsSigned = NumTraits<ET>::IsSigned,

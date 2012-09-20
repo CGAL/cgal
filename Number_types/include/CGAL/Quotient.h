@@ -862,6 +862,8 @@ namespace Eigen {
     typedef CGAL::Quotient<NT> NonInteger;
     typedef CGAL::Quotient<NT> Nested;
 
+    static inline Real epsilon() { return NumTraits<NT>::epsilon(); }
+
     enum {
       IsInteger = 0,
       IsSigned = 1,

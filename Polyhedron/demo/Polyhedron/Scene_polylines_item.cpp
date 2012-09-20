@@ -327,6 +327,11 @@ QMenu* Scene_polylines_item::contextMenu()
     QAction* action = menu->addAction(tr("Display corners with radius..."));
     connect(action, SIGNAL(triggered()),
             this, SLOT(change_corner_radii()));
+
+    QAction* actionSmoothPolylines = 
+      menu->addAction(tr("Smooth polylines"));
+    actionSmoothPolylines->setObjectName("actionSmoothPolylines");
+    connect(actionSmoothPolylines, SIGNAL(triggered()),this, SLOT(smooth()));
     menu->setProperty(prop_name, true);
   }
   return menu;

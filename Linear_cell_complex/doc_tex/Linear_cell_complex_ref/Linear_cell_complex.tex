@@ -7,7 +7,7 @@
 \ccRefPageBegin
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
-\begin{ccRefClass}{Linear_cell_complex<d,d2,LCCTraits,CMItems,Alloc>}
+\begin{ccRefClass}{Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>}
 
 \ccInclude{CGAL/Linear_cell_complex.h}
 
@@ -23,25 +23,25 @@ model of \ccc{CellAttributeWithPoint}.
 \ccRefConceptPage{CombinatorialMap}
 
 \ccInheritsFrom
-\ccRefIdfierPage{CGAL::Combinatorial_map<d,CMItems,Alloc>}
+\ccRefIdfierPage{CGAL::Combinatorial_map<d,Items,Alloc>}
 
 \ccParameters
 \ccc{d} an integer for the dimension of the combinatorial map,\\
 \ccc{d2} an integer for the dimension of the ambient space,\\
 \ccc{LCCTraits} must be a model of the \ccc{LinearCellComplexTraits} concept, satisfying \ccc{LCCTraits::ambiant_dimension==d2},\\
-\ccc{CMItems} must be a model of the \ccc{CombinatorialMapItems} concept,\\
+\ccc{Items} must be a model of the \ccc{LinearCellComplexItems} concept,\\
 \ccc{Alloc} has to match the standard allocator requirements. 
 
 There are four default template arguments:
 \ccc{d2} is equal to \ccc{d},
 \ccc{LCCTraits} is equal to \ccc{CGAL::Linear_cell_complex_traits<d2>},
-\ccc{CMItems} is equal to \ccc{CGAL::Linear_cell_complex_min_items<d>} and
+\ccc{Items} is equal to \ccc{CGAL::Linear_cell_complex_min_items<d>} and
 \ccc{Alloc} is \ccc{CGAL_ALLOCATOR(int)}.
 
 \begin{ccAdvanced}
   Note that there is an additional, and undocumented, template
   parameter \ccc{CMap} for
-  \ccc{Linear_cell_complex<d,d2,LCCTraits,CMItems,Alloc,CMap>} allowing
+  \ccc{Linear_cell_complex<d,d2,LCCTraits,Items,Alloc,CMap>} allowing
   to inherit from any model of the \ccc{CombinatorialMap} concept.
 \end{ccAdvanced}
 
@@ -56,14 +56,14 @@ There are four default template arguments:
 
 % +-----------------------------------+
 \ccTypes
-\ccThree{typedef Linear_cell_complex<d,d2,LCCTraits,CMItems,Alloc>}{}{}
-\ccTypedef{typedef Linear_cell_complex<d,d2,LCCTraits,CMItems,Alloc> Self;}{}
+\ccThree{typedef Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>}{}{}
+\ccTypedef{typedef Linear_cell_complex<d,d2,LCCTraits,Items,Alloc> Self;}{}
 \ccGlue
-\ccTypedef{typedef CMItems::Dart_wrapper<Self>::Dart Dart;}{The type of dart, must satisfy \ccc{Dart::dimension==d}.}
+\ccTypedef{typedef Items::Dart_wrapper<Self>::Dart Dart;}{The type of dart, must satisfy \ccc{Dart::dimension==d}.}
 
 \ccTypedef{typedef LCCTraits Traits;}{}
 \ccGlue
-\ccTypedef{typedef CMItems Items;}{}
+\ccTypedef{typedef Items Items;}{}
 \ccGlue
 \ccTypedef{typedef Alloc Alloc;}{}
 
@@ -157,13 +157,22 @@ if it is a valid combinatorial map, and if for each dart handle \emph{dh} such t
   of the new dart to this new 0-attribute, 
   and returns the corresponding handle.}
 
-\ccMethod{Vertex_attribute_handle create_vertex_attribute();}
-{Creates a new 0-attribute in \ccc{lcc}, and returns the corresponding handle
-  (a shortcut for \ccc{create_attribute<0>()}).}
+\ccMethod{template<typename T1> Vertex_attribute_handle
+  create_vertex_attribute(T1 t1);} {Creates a new 0-attribute in
+  \ccc{lcc}, and returns the corresponding handle (a shortcut for
+  \ccc{create_attribute<0>(t1)}).  Calls the constructor of
+  \ccc{Vertex_attribute} having \ccc{T1} as parameter.  Overloads of
+  this member function are defined that take from zero to nine
+  arguments.  With zero argument, \ccc{create_vertex_attribute()}
+  creates a new 0-attribute by using the default constructor.}
 
-\ccMethod{Vertex_attribute_handle create_vertex_attribute(const Point& apoint);}
-{Creates a new 0-attribute in \ccc{lcc} initialized with \ccc{apoint},
-  and returns the corresponding handle.}
+% \ccMethod{Vertex_attribute_handle create_vertex_attribute();}
+% {Creates a new 0-attribute in \ccc{lcc}, and returns the corresponding handle
+%   (a shortcut for \ccc{create_attribute<0>()}).}
+
+% \ccMethod{Vertex_attribute_handle create_vertex_attribute(const Point& apoint);}
+% {Creates a new 0-attribute in \ccc{lcc} initialized with \ccc{apoint},
+%   and returns the corresponding handle.}
 
 \ccMethod{void erase_vertex_attribute(Vertex_attribute_handle vh);}
 {Removes the 0-attribute pointed to by \ccc{vh} from \ccc{lcc}
@@ -328,7 +337,7 @@ if it is a valid combinatorial map, and if for each dart handle \emph{dh} such t
 % +-----------------------------------+
 \ccSeeAlso
 \ccRefConceptPage{CombinatorialMap}\\
-\ccRefIdfierPage{CGAL::Combinatorial_map<d,CMItems,Alloc>}\\
+\ccRefIdfierPage{CGAL::Combinatorial_map<d,Items,Alloc>}\\
 \ccRefConceptPage{Dart}\\
 \ccRefConceptPage{LinearCellComplexItems}\\
 \ccRefIdfierPage{CGAL::Linear_cell_complex_min_items<d>}\\

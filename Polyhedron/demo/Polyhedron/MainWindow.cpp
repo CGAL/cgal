@@ -1081,6 +1081,7 @@ void MainWindow::on_actionLoad_triggered()
       this->addToRecentFiles(filename);
     } else {
       open(filename);
+      this->addToRecentFiles(filename);
     }
   }
 }

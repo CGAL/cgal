@@ -217,6 +217,8 @@ namespace Eigen {
     typedef CGAL::Gmpq NonInteger;
     typedef CGAL::Gmpz Nested;
 
+    static inline Real epsilon() { return 0; }
+
     enum {
       IsInteger = 1,
       IsSigned = 1,
