@@ -210,7 +210,7 @@ if domain is a model of the refined concept `MeshDomainWithFeatures_3`.
 \sa `CGAL::parameters::no_features`
 
 */
-parameters::internal::Features_options features(MeshDomain_3 domain);
+parameters::internal::Features_options features();
 
 /*!
 \ingroup PkgMesh_3Parameters
