@@ -2860,6 +2860,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
             std::list< std::pair< const DHalfedge*, int > > dummy;
             // IDEA EBEB 2012-07-28
             // store signs of CCB with CCB in DCEL and use them here
+            //std::cout << ">>> call oc" << std::endl;
             std::pair< CGAL::Sign, CGAL::Sign > signs_oc =
               // *oc_it is already closed, so we do a full round
               // (default = false)
@@ -3280,6 +3281,9 @@ _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                  Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
                  int& x_index, int& y_index) const
 {
+  // TODO EBEB 2012-08-07
+  // compile only if identification(s) take place (tag dispatch!)
+
   // If we cross the identification curve in x, then we must update the
   // x_index. Note that a crossing takes place in the following cases:
   //                .                                  .
@@ -3338,9 +3342,6 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
                                 const DHalfedge* he_away,
                                 OutputIterator local_mins_it) const
 {
-  // TODO EBEB 2012-08-07
-  // compile parts of code only if identification(s) take place
-
   std::cout << "he_to: " << he_to->opposite()->vertex()->point()
             << " => " << he_to->vertex()->point() << std::endl;
   std::cout << "cv: " << cv << std::endl;
@@ -3360,6 +3361,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
     m_geom_traits->compare_y_at_x_right_2_object();  
 
+  // TODO 2012-09-20 check init here to (as in "other" function of this kind
   int x_index = 0;
   int y_index = 0;
 
@@ -3463,11 +3465,10 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   if ((he_to->direction() == ARR_RIGHT_TO_LEFT) &&
       (cv_dir == ARR_LEFT_TO_RIGHT))
     *local_mins_it++  = std::make_pair(he_to, x_index);
-    
+
   _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
                    x_index, y_index);
 
-  // Return the leftmost vertex and its x_index (with respect to he_before).
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
 
@@ -3480,9 +3481,6 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
                                 OutputIterator local_mins_it,
                                 bool end_is_anchor_opposite /* = false */) const
 {
-  // TODO EBEB 2012-08-07
-  // compile parts of code only if identification(s) take place
-
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
   // one. Note that we do this carefully, keeping track of the number of
@@ -3499,9 +3497,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
   // - determine values upon insertion of a curve
   // - or if this is not possible, perform the following computation 
   //   on-demand only
-  // 
-  int x_index = 0;
-  int y_index = 0;
+  
+  // std::cout << "end_is_anchor_opposite: " << end_is_anchor_opposite << std::endl;
 
   // init with edges at first link
   // assuming that he_anchor has been removed
@@ -3512,7 +3509,11 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
   // init edge where loop should end
   const DHalfedge* he_end =
     end_is_anchor_opposite ? he_anchor->opposite() : he_anchor;
-  
+
+
+  int x_index = 0;
+  int y_index = 0;
+
   // obtain the parameter space pair of he_curr
   Arr_curve_end he_curr_tgt_end =
     (he_curr->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
@@ -3753,9 +3754,9 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   int index_min = lm_it->second;
   const DHalfedge* he_min = lm_it->first;
   const DVertex* v_min =
-    (he_min != NULL) ? he_min->vertex() : he_away->opposite()->vertex();
+    (he_min == NULL) ? he_away->opposite()->vertex() : he_min->vertex();
   const X_monotone_curve_2* cv_min =
-    (he_min != NULL) ? &(he_min->curve()) : &cv;
+    (he_min == NULL) ? &cv : &(he_min->curve());
   Arr_parameter_space ps_x_min = parameter_space_in_x(*cv_min, ARR_MIN_END);
   Arr_parameter_space ps_y_min = parameter_space_in_y(*cv_min, ARR_MIN_END);
 
@@ -3763,6 +3764,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   
   for (++lm_it; lm_it != lm_end; ++lm_it) {
     const DHalfedge* he = lm_it->first;
+    CGAL_assertion(he->direction() == CGAL::ARR_RIGHT_TO_LEFT);
     int index = lm_it->second;
     Arr_parameter_space ps_x_he_min =
       parameter_space_in_x(he->curve(), ARR_MIN_END);
@@ -3803,12 +3805,13 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     }
   }
 
+  CGAL_assertion(v_min != NULL);
+  CGAL_assertion(!v_min->has_null_point());
+
   // some output:
 #if 1
   std::cout << "v_min: ";
-  if (v_min)
-    std::cout << v_min->point();
-  else std::cout << "NULL";
+  std::cout << v_min->point();
   std::cout << std::endl;
 
   std::cout << "he_min: ";
@@ -3819,27 +3822,22 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   std::cout << std::endl;
 #endif
 
-  CGAL_assertion(v_min != NULL);
-
-  CGAL_assertion(! v_min->has_null_point());
-
-  const DHalfedge* he_last = he_to->next();
-
   // Now note that the curves of leftmost edge and its successor are defined
   // to the right of the smallest vertex. We compare them to the right of this
   // point to determine whether he_to (the curve) and he_away are inside the
   // hole to be created or not.
-  const X_monotone_curve_2* p_cv_curr = cv_min;
-  const X_monotone_curve_2* p_cv_next;
 
-  if (he_min != NULL) {
-    // Take special care if the next curve should really be the new curve.
-    p_cv_next = (he_min->next() != he_last) ? &(he_min->next()->curve()) : &cv;
+  const X_monotone_curve_2* p_cv_to;
+  const X_monotone_curve_2* p_cv_from;
+
+  if (he_min == NULL) {
+    p_cv_to = &cv;
+    p_cv_from = &(he_away->curve());
   }
   else {
-    // In this case, the leftmost edge should be the one associated with the
-    // new curve (which has not been created yet).
-    p_cv_next = &(he_away->curve());
+    CGAL_assertion(he_min->direction() == ARR_RIGHT_TO_LEFT);
+    p_cv_to = &(he_min->curve());
+    p_cv_from = (he_min == he_to) ? &cv : &(he_min->next()->curve());
   }
 
   // Check if the vertex lies on the identification curve in y, in which case
@@ -3853,9 +3851,9 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     // As v_min is the leftmost vertex, we now that their left ends must have
     // a boundary condition of type identification in y.
     Arr_parameter_space  ps_y_curr =
-      m_geom_traits->parameter_space_in_y_2_object()(*p_cv_curr, ARR_MIN_END);
+      m_geom_traits->parameter_space_in_y_2_object()(*p_cv_to, ARR_MIN_END);
     Arr_parameter_space  ps_y_next =
-      m_geom_traits->parameter_space_in_y_2_object()(*p_cv_next, ARR_MIN_END);
+      m_geom_traits->parameter_space_in_y_2_object()(*p_cv_from, ARR_MIN_END);
 
     // Check if the curves lie on opposite sides of the identification curve.
     if ((ps_y_curr == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY))
@@ -3888,54 +3886,12 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
       ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
        is_contracted(Top_side_category())))
   {
-    // Get the curve-ends for cv_curr and cv_next that conincide with the
-    // contraction point.
-    Arr_curve_end ind_curr;
-    Arr_curve_end ind_next;
-
-    if (he_min != NULL) {
-      // The contraction point is he_min's target and cv_curr is its
-      // associated curve.
-      ind_curr = (he_min->direction() == ARR_LEFT_TO_RIGHT) ?
-        ARR_MAX_END : ARR_MIN_END;
-
-      if (he_min->next() != he_last)
-        // The contraction point is he_min->next()'s source and cv_next
-        // is its associated curve.
-        ind_next = (he_min->next()->direction() == ARR_LEFT_TO_RIGHT) ?
-          ARR_MIN_END : ARR_MAX_END;
-      else {
-        // In this case cv_next equals cv.
-        ind_next =
-          (m_topol_traits.are_equal
-           (v_min, cv, ARR_MIN_END,
-            m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END),
-            m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END))) ?
-          ARR_MIN_END : ARR_MAX_END;
-      }
-    }
-    else {
-      // In this case cv_curr equals cv.
-      ind_curr =
-        (m_topol_traits.are_equal
-         (v_min, cv, ARR_MIN_END,
-          m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END),
-          m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END))) ?
-        ARR_MIN_END : ARR_MAX_END;
-
-      // The contraction point is he_away's source and cv_next
-      // is its associated curve.
-      ind_next = (he_away->direction() == ARR_LEFT_TO_RIGHT) ?
-        ARR_MIN_END : ARR_MAX_END;
-    }
 
     // Compare the horizontal position of the two curve-ends at the point
     // of contraction.
-
-    Comparison_result x_res = (ind_curr != ind_next) ?
-      ((ind_curr == ARR_MAX_END) ? SMALLER : LARGER) :
-      m_geom_traits->compare_x_curve_ends_2_object()(*p_cv_curr, ind_curr,
-                                                     *p_cv_next, ind_next);
+    Comparison_result x_res = 
+      m_geom_traits->compare_x_curve_ends_2_object()(*p_cv_to, ARR_MIN_END,
+                                                     *p_cv_from, ARR_MIN_END);
 
     // bool rc1 = (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
     //              (x_res == SMALLER)) ||
@@ -3950,17 +3906,14 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
              (x_res == LARGER)));
   }
 
-  // TODO EBEB minimal point can also be on left boundary where we have
-  // to call boundary-functors
-
   // bool rc2 = (m_geom_traits->compare_y_at_x_right_2_object()
-  //             (*p_cv_curr, *p_cv_next, v_min->point()) == LARGER);
-  // std::cout << *p_cv_curr << std::endl;
-  // std::cout << *p_cv_next << std::endl;
+  //             (*p_cv_to, *p_cv_from, v_min->point()) == LARGER);
+  // std::cout << *p_cv_to << std::endl;
+  // std::cout << *p_cv_from << std::endl;
   // std::cout << "rc2: " << rc2 << std::endl;
   
   return (m_geom_traits->compare_y_at_x_right_2_object()
-          (*p_cv_curr, *p_cv_next, v_min->point()) == LARGER);
+          (*p_cv_to, *p_cv_from, v_min->point()) == LARGER);
 }
 
 
@@ -4027,6 +3980,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
     bool end_is_anchor_opposite = (f1 == f2);
 
+    //std::cout << ">>> call he1" << std::endl;
     signs1 = _compute_signs_and_local_minima(he1,
                                              std::front_inserter(local_mins1),
                                              end_is_anchor_opposite);
@@ -4034,6 +3988,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     std::cout << "signs1.y: " << signs1.second << std::endl;
     std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
 
+    // std::cout << ">>> call he2" << std::endl;
     signs2 = _compute_signs_and_local_minima(he2,
                                              std::front_inserter(local_mins2),
                                              end_is_anchor_opposite);
