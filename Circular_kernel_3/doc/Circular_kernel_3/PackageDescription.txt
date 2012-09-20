@@ -1,6 +1,21 @@
 /// \defgroup PkgSphericalKernel3 3D Spherical Geometry Kernel 
 
-/// \defgroup PkgSphericalKernel3Concepts Concepts
+/// \defgroup PkgSphericalKernel3GeometricConcepts Geometric Concepts
+/// \ingroup PkgSphericalKernel3
+
+/// \defgroup PkgSphericalKernel3GeometricClasses Geometric Kernel and Classes
+/// \ingroup PkgSphericalKernel3
+
+
+/// \defgroup PkgSphericalKernel3GeometricFunctions Geometric Global Functions
+/// \ingroup PkgSphericalKernel3
+
+
+/// \defgroup PkgSphericalKernel3AlgebraicConcepts Algebraic Concepts
+/// \ingroup PkgSphericalKernel3
+
+
+/// \defgroup PkgSphericalKernel3AlgebraicClasses Algebraic Kernel and Classes
 /// \ingroup PkgSphericalKernel3
 
 /*!

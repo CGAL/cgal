@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 3D Spherical Geometry Kernel
+\mainpage 3D Spherical Geometry %Kernel
 \anchor chaptersphericalkernel
 
 \authors Pedro Machado Manh&atilde;es de Castro, Fr&eacute;d&eacute;ric Cazals, S&eacute;bastien Loriot, and Monique Teillaud
@@ -41,14 +41,14 @@ them, which explains the need for a new point type.
 A consistent set of predicates and constructions is offered on these
 new types.
 
-<b>General functionalities</b>
+<b>General Functionalities</b>
 
 The spherical kernel currently implements a set of
 fundamental functionalities like intersection, comparisons, inclusion,
 etc. More might be provided in the future, as long as only algebraic
 numbers of degree two are used.
 
-<b>Functionalities relative to a sphere</b>
+<b>Functionalities Relative to a Sphere</b>
 
 The interface of the underlying objects is extended by providing
 additional operations that make sense only if the objects are

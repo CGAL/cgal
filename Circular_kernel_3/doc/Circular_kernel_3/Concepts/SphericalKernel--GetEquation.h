@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3Concepts
+\ingroup PkgSphericalKernel3GeometricConcepts
 \cgalconcept
 
 A model `fo` of this concept must provide: 

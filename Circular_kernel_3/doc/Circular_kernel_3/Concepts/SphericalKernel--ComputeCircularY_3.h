@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3Concepts
+\ingroup PkgSphericalKernel3GeometricConcepts
 \cgalconcept
 */
 class SphericalKernel::ComputeCircularY_3 {

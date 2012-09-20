@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3Concepts
+\ingroup PkgSphericalKernel3GeometricConcepts
 \cgalconcept
 
 Concept for points on spheres, circles, circular arcs or line arcs. 
@@ -9,7 +9,7 @@ Concept for points on spheres, circles, circular arcs or line arcs.
 \refines `Assignable`
 \refines `DefaultConstructible`
 
-\hasModel CGAL::Circular_arc_point_3<SphericalKernel> 
+\hasModel `CGAL::Circular_arc_point_3<SphericalKernel>`
 
 */
 

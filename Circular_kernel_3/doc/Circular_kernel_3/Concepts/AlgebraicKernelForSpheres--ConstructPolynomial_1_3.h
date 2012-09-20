@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3Concepts
+\ingroup PkgSphericalKernel3AlgebraicConcepts
 \cgalconcept
 
 \sa `SphericalKernel::ConstructPlane_3`

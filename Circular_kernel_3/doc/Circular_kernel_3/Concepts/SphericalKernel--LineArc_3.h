@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3Concepts
+\ingroup PkgSphericalKernel3GeometricConcepts
 \cgalconcept
 
 Concept for line segments supported by a line that is a model of 
@@ -11,7 +11,7 @@ Concept for line segments supported by a line that is a model of
 \refines `Assignable`
 \refines `DefaultConstructible`
 
-\hasModel CGAL::Line_arc_3<SphericalKernel> 
+\hasModel `CGAL::Line_arc_3<SphericalKernel>`
 
 */
 

@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3Concepts
+\ingroup PkgSphericalKernel3AlgebraicConcepts
 \cgalconcept
 
 Concept to represent the roots of a system of three equations of degree 2 

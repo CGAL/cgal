@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSphericalKernel3
+\ingroup PkgSphericalKernel3AlgebraicClasses
 
 \models ::AlgebraicKernelForSpheres::RootForSpheres_2_3 
 

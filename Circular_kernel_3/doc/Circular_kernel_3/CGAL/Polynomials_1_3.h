@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSphericalKernel3
+\ingroup PkgSphericalKernel3AlgebraicClasses
 
 \models ::AlgebraicKernelForSpheres::Polynomial_1_3 
 

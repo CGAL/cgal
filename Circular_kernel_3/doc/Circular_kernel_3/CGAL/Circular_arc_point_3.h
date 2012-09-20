@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSphericalKernel3
+\ingroup PkgSphericalKernel3GeometricClasses
 
 \models ::SphericalKernel::CircularArcPoint_3 
 
