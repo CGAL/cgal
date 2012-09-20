@@ -5,6 +5,8 @@ namespace CGAL {
 \anchor Chapter_3D_Periodic_Triangulations
 \anchor chapterP3Triangulation3
 
+\autotoc
+
 \authors Manuel Caroli and Monique Teillaud
 
 \image html p3Delaunay3.jpg
