@@ -30,12 +30,12 @@ public:
 /*! 
 Number type. 
 */ 
-Traits::FT FT; 
+typedef Traits::FT FT; 
 
 /*! 
 Point type. 
 */ 
-Traits::Point_d Point_d; 
+typedef Traits::Point_d Point_d; 
 
 /*! 
 An iterator with value type `Point_d*`. 

@@ -37,22 +37,22 @@ public:
 /*! 
 Point type. 
 */ 
-Traits::Point_d Point_d; 
+typedef Traits::Point_d Point_d; 
 
 /*! 
 Number type. 
 */ 
-Traits::NT NT; 
+typedef Traits::NT NT; 
 
 /*! 
 Distance type. 
 */ 
-GeneralDistance Distance; 
+typedef GeneralDistance Distance; 
 
 /*! 
 Pair of point and transformed distance. 
 */ 
-std::pair<Point_d,NT> Point_with_transformed_distance; 
+typedef std::pair<Point_d,NT> Point_with_transformed_distance; 
 
 /*! 
 const input iterator with value type `Point_with_transformed_distance` 

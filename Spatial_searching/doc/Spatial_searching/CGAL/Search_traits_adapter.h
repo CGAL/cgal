@@ -33,17 +33,17 @@ public:
 /*! 
 
 */ 
-Base_distance::FT FT; 
+typedef Base_distance::FT FT; 
 
 /*! 
 
 */ 
-Key Point_d; 
+typedef Key Point_d; 
 
 /*! 
 
 */ 
-Base_distance::Query_item Query_item; 
+typedef Base_distance::Query_item Query_item; 
 
 /// @} 
 

@@ -37,27 +37,27 @@ public:
 /*! 
 Point type. 
 */ 
-Traits::Point_d Point_d; 
+typedef Traits::Point_d Point_d; 
 
 /*! 
 Number type. 
 */ 
-Traits::FT FT; 
+typedef Traits::FT FT; 
 
 /*! 
 Distance type. 
 */ 
-OrthogonalDistance Distance; 
+typedef OrthogonalDistance Distance; 
 
 /*! 
 Query item. 
 */ 
-OrthogonalDistance::Query_item Query_item; 
+typedef OrthogonalDistance::Query_item Query_item; 
 
 /*! 
 Pair of point and transformed distance. 
 */ 
-std::pair<Point_d,FT> Point_with_transformed_distance; 
+typedef std::pair<Point_d,FT> Point_with_transformed_distance; 
 
 /*! 
 const input iterator with value type `Point_with_transformed_distance` 
@@ -68,7 +68,7 @@ typedef Hidden_type iterator;
 /*! 
 The tree type. 
 */ 
-SpatialTree Tree; 
+typedef SpatialTree Tree; 
 
 /// @} 
 

@@ -30,17 +30,17 @@ public:
 /*! 
 Number type. 
 */ 
-Traits::FT FT; 
+typedef Traits::FT FT; 
 
 /*! 
 Point type. 
 */ 
-Traits::Point_d Point_d; 
+typedef Traits::Point_d Point_d; 
 
 /*! 
 Query item type. 
 */ 
-Traits::Iso_box_d Query_item; 
+typedef Traits::Iso_box_d Query_item; 
 
 /// @} 
 

@@ -32,32 +32,32 @@ Denotes type of node.
 /*! 
 Number type. 
 */ 
-Traits::FT FT; 
+typedef Traits::FT FT; 
 
 /*! 
 Point type. 
 */ 
-Traits::Point_d Point_d; 
+typedef Traits::Point_d Point_d; 
 
 /*! 
 Separator type. 
 */ 
-Splitter::Separator Separator; 
+typedef Splitter::Separator Separator; 
 
 /*! 
 const iterator over points. 
 */ 
-Kd_tree<Traits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator; 
+typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator; 
 
 /*! 
 Node handle. 
 */ 
-Kd_tree<Traits,Splitter,UseExtendedNode>::Node_handle Node_handle; 
+typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Node_handle Node_handle; 
 
 /*! 
 const node handle. 
 */ 
-Kd_tree<Traits,Splitter,UseExtendedNode>::Node_const_handle Node_const_handle; 
+typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Node_const_handle Node_const_handle; 
 
 /// @} 
 

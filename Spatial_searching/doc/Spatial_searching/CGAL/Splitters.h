@@ -39,7 +39,7 @@ public:
 /*! 
 Number type. 
 */ 
-Traits::FT FT; 
+typedef Traits::FT FT; 
 
 /// @} 
 
@@ -298,7 +298,7 @@ public:
 /*! 
 Number type. 
 */ 
-Traits::FT FT; 
+typedef Traits::FT FT; 
 
 /// @} 
 

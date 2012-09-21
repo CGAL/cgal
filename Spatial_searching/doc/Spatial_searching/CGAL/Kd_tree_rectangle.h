@@ -17,7 +17,7 @@ public:
 /*! 
 Number type. 
 */ 
-FT FT; 
+typedef FT FT; 
 
 /// @} 
 

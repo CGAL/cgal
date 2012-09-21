@@ -29,17 +29,17 @@ public:
 /*! 
 Number type. 
 */ 
-Traits::FT FT; 
+typedef Traits::FT FT; 
 
 /*! 
 Point type. 
 */ 
-Traits::Point_d Point_d; 
+typedef Traits::Point_d Point_d; 
 
 /*! 
 Query item type. 
 */ 
-Traits::Sphere_d Sphere_d; 
+typedef Traits::Sphere_d Sphere_d; 
 
 /// @} 
 
