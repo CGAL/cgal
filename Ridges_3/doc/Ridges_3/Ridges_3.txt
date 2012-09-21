@@ -106,18 +106,20 @@ canonical form, known as the Monge form :
 \f{eqnarray}{
 z(x,y) = & \frac{1}{2}(k_1x^2 + k_2y^2)+
 \frac{1}{6}(b_0x^3+3b_1x^2y+3b_2xy^2+b_3y^3) \\
-& +\frac{1}{24}(c_0x^4+4c_1x^3y+6c_2x^2y^2+4c_3xy^3+c_4y^4) + \hot
+& +\frac{1}{24}(c_0x^4+4c_1x^3y+6c_2x^2y^2+4c_3xy^3+c_4y^4) + h.o.t
 \f}
 
 The Taylor expansion of \f$ k_1\f$ (resp. \f$ k_2\f$) along the max
 (resp. min) curvature line going through the origin and parameterized
 by \f$ x\f$ (resp. \f$ y\f$) are:
-\f[ 
+
 \anchor eqtaylor_along_line
+\f[ 
 k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)} x^2 +h.o.t, P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
 \f] 
-\f[ 
+
 \anchor eqtaylor_along_red_line
+\f[ 
 k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)} y^2 +h.o.t, P_2= 3b_2^2+(k_2-k_1)(c_4-3k_2^3).
 \f] 
 
@@ -554,7 +556,7 @@ Ridges on the ellipsoid, normals pointing outward. Color coding :
 `MIN_ELLIPTIC_RIDGE` are red and `MIN_HYPERBOLIC_RIDGE` are yellow.
 </b></center>
 
-## Example: Filtering of Crest Ridges on a Mechanical Par ##
+## Example: Filtering of Crest Ridges on a Mechanical Part ##
 
 Figure \ref figmechanical_crest_filteredintro illustrates the filtering 
 of crest ridges on a mechanical model, and has been computed as follows:

@@ -3,6 +3,16 @@
 /// \defgroup PkgRidges_3Concepts Concepts
 /// \ingroup PkgRidges_3
 
+
+/// \defgroup PkgRidges_3Enums Enums
+/// \ingroup PkgRidges_3
+
+/// \defgroup PkgRidges_3Classes Classes
+/// \ingroup PkgRidges_3
+
+/// \defgroup PkgRidges_3Functions Global Functions
+/// \ingroup PkgRidges_3
+
 /*!
 \addtogroup PkgRidges_3
 \todo check generated documentation

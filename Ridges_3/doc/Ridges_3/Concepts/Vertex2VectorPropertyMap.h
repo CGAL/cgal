@@ -10,7 +10,7 @@ the concept `TriangulatedSurfaceMesh` in the class
 `TriangulatedSurfaceMesh::Traits::Vector_3` to keys which are 
 `TriangulatedSurfaceMesh::Vertex_handle`. 
 
-\hasModel `Vertex2Data_Property_Map_with_std_map::Vertex2Vector_property_map`
+\hasModel `CGAL::Vertex2Data_Property_Map_with_std_map::Vertex2Vector_property_map`
 
 \sa `TriangulatedSurfaceMesh`
 */
