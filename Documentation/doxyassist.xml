@@ -545,6 +545,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Algebraic_kernel_d.tag</string>
           <string name="IMAGE_PATH">../Algebraic_kernel_d/doc/Algebraic_kernel_d/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
+          </list>
         </doxygen>
       </project>
 
@@ -559,6 +562,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Kernel_d/examples</string>
           <string name="IMAGE_PATH">../Kernel_d/doc/Kernel_d/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
+          </list>
         </doxygen>
       </project>
 
@@ -1211,6 +1217,11 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/QP_solver.tag</string>
           <string name="IMAGE_PATH">../QP_solver/doc/QP_solver/fig</string>
           <string name="EXAMPLE_PATH" append="true">../QP_solver/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
+            <item>./tags/Bounding_volumes.tag=../../CGAL.CGAL.Bounding-Volumes/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
+          </list>
         </doxygen>
       </project>
     <!-- subprojects end -->
