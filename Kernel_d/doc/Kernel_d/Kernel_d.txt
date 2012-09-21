@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage dD Geometry Kernel
+\mainpage dD Geometry %Kernel
 \anchor Chapter_dD_Geometry_Kernel
 \autotoc
 \authors Michael Seel
@@ -69,7 +69,7 @@ This extends the syntax of random access iterators to input iterators.
 If we index the tuple as above then we require that
 \f$ ++^{(d+1)}\mathit{first} = \mathit{last}\f$.
 
-# Kernel Representations #
+# %Kernel Representations #
 
 Our object of study is the \f$ d\f$-dimensional affine Euclidean space,
 where \f$ d\f$ is a parameter of our geometry. Objects in that space are
@@ -94,7 +94,7 @@ For a point with Cartesian coordinates
 \f$ (c_0,c_1,\ldots,c_{d-1})\f$ a
 possible homogeneous representation is
 \f$ (c_0,c_1,\ldots,c_{d-1},1)\f$.
-Homogeneous coordinates in fact allow to represent 
+%Homogeneous coordinates in fact allow to represent 
 objects in a more general space, the projective space \f$ \mathbb{P}^d\f$.
 In \cgal, we do not compute in projective geometry. Rather, we use 
 homogeneous coordinates to avoid division operations,
@@ -150,7 +150,7 @@ must be available as well. It must work for exact (i.e., no
 remainder) integer divisions only. Furthermore, both number types
 should fulfill \cgal's requirements on a number type.
 
-## Cartesian Kernel ##
+## %Cartesian %Kernel ##
 
 With `Cartesian_d<FieldNumberType,LinearAlgebra>` you can choose
 Cartesian representation of coordinates. The type
@@ -170,7 +170,7 @@ and `Cartesian<FieldNumberType>::RT` are mapped to number type
 type `LinearAlgebra`. `Cartesian<FieldNumberType>` uses
 reference counting internally to save copying costs.
 
-## Homogeneous Kernel ##
+## %Homogeneous %Kernel ##
 
 As we mentioned before, homogeneous coordinates permit to avoid
 division operations in numerical computations, since the additional
@@ -222,7 +222,7 @@ parameterized with a number type, such as
 `Cartesian_d<double>` or `Homogeneous_d<leda_integer>`.
 </OL>
 
-## Kernel as a Traits Class ##
+## %Kernel as a Traits Class ##
 
 Algorithms and data structures in the basic library of \cgal are
 parameterized by a traits class that subsumes the objects on which the
@@ -235,7 +235,7 @@ algorithm. In some other cases, the algorithms or data structures
 needs more than is provided by a kernel. In these cases, a kernel can
 not be used as a traits class.
 
-## Choosing a Kernel ##
+## Choosing a %Kernel ##
 
 If you start with integral Cartesian coordinates,
 many geometric computations will involve integral numerical values
@@ -274,7 +274,7 @@ geometric objects of the kernel that you would like to use with the
 representation class, i.e., `CGAL/Cartesian_d.h` or
 `CGAL/Homogeneous_d.h`
 
-# Kernel Geometry #
+# %Kernel Geometry #
 
 ## Points and Vectors ##
 
@@ -317,7 +317,7 @@ Note that these constructions do not involve any performance overhead
 for the conversion with the currently available representation
 classes.
 
-## Kernel Objects ##
+## %Kernel Objects ##
 
 Besides points (`Point_d<R>`), vectors (`Vector_d<R>`), and
 directions (`Direction_d<R>`), \cgal provides lines, rays,
@@ -384,7 +384,7 @@ objects (also called functors and provided by a kernel class).
 
 \cgal provides predicates for the orientation of
 point sets (`orientation`), for comparing points according to some
-given order, especially for comparing Cartesian coordinates
+given order, especially for comparing %Cartesian coordinates
 (e.g. `lexicographically_xy_smaller`), in-sphere tests, and
 predicates to compare distances.
 

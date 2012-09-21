@@ -18,8 +18,8 @@ predicates. The former replace constructors of the kernel classes and
 constructive procedures in the kernel. There are also function objects 
 replacing operators, especially for equality testing. 
 
-\hasModel `Cartesian_d<FieldNumberType>`
-\hasModel `Homogeneous_d<RingNumberType>` 
+\hasModel `CGAL::Cartesian_d<FieldNumberType>`
+\hasModel `CGAL::Homogeneous_d<RingNumberType>` 
 */
 class Kernel_d {
 public:
