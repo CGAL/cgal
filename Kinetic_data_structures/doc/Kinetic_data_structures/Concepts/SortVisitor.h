@@ -1,4 +1,5 @@
 namespace KineticConcepts {
+
 /*!
 \ingroup PkgKdsConcepts
 \cgalconcept

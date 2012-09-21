@@ -1,13 +1,14 @@
-namespace KineticConcepts {
+namespace Kinetic {
+
 /*!
 \ingroup PkgKdsConcepts
 \cgalconcept
 
 This concept is for proxy objects which get notified when a kinetic Delaunay triangulation changes. 
 
-\hasModel `Kinetic::Delaunay_triangulation_visitor_base_2`
-\hasModel `Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>`
-\hasModel Kinetic::Delaunay_triangulation_event_log_visitor_2 `
+\hasModel CGAL::`Kinetic::Delaunay_triangulation_visitor_base_2`
+\hasModel `CGAL::Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>`
+\hasModel `CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_2 `
 
 */
 
@@ -64,6 +65,10 @@ void post_flip(Edge);
 
 /// @}
 
-}; /* end Kinetic::DelaunayTriangulationVisitor_2 */
+}; /* end DelaunayTriangulationVisitor_2 */
 
+<<<<<<< .mine
+} /* end namespace Kinetic */
+=======
 } /* end namespae KineticConcepts */
+>>>>>>> .r72297

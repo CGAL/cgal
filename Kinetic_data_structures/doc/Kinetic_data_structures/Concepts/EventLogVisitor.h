@@ -1,14 +1,15 @@
-namespace KineticConcepts {
+namespace Kinetic {
+
 /*!
 \ingroup PkgKdsConcepts
 \cgalconcept
 
 This concept is for visitors which maintain a text log of events. 
 
-\hasModel `Kinetic::Delaunay_triangulation_event_log_visitor_3`
-\hasModel `Kinetic::Delaunay_triangulation_event_log_visitor_2`
-\hasModel `Kinetic::Regular_trianglation_event_log_visitor_3`
-\hasModel `Kinetic::Sort_event_log_visitor` 
+\hasModel `CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3`
+\hasModel `CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_2`
+\hasModel `CGAL::Kinetic::Regular_trianglation_event_log_visitor_3`
+\hasModel `CGAL::Kinetic::Sort_event_log_visitor` 
 */
 class EventLogVisitor {
 public:
@@ -38,6 +39,11 @@ Event_iterator events_end();
 
 /// @}
 
-}; /* end Kinetic::EventLogVisitor */
+}; /* end EventLogVisitor */
 
+<<<<<<< .mine
+
+} /* end namespace Kinetic */
+=======
 } /* end namespae KineticConcepts */
+>>>>>>> .r72297
