@@ -574,7 +574,6 @@ Arrangement_on_surface_2/doc/Arrangement_on_surface_2/CGAL/IO/Arr_text_formatter
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/CGAL/IO/Arr_with_history_text_formatter.h -text
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/CGAL/IO/Qt_widget_Conic_arc_2.h -text
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/CGAL/IO/Qt_widget_Polyline_2.h -text
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/CGAL/nested_class.h -text
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/Concepts/ArrTraits--Approximate_2.h -text
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/Concepts/ArrTraits--AreMergeable_2.h -text
 Arrangement_on_surface_2/doc/Arrangement_on_surface_2/Concepts/ArrTraits--CompareXAtLimit_2.h -text
