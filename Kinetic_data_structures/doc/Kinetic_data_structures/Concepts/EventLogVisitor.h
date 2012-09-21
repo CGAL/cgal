@@ -8,7 +8,7 @@ This concept is for visitors which maintain a text log of events.
 
 \hasModel `CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3`
 \hasModel `CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_2`
-\hasModel `CGAL::Kinetic::Regular_trianglation_event_log_visitor_3`
+\hasModel `CGAL::Kinetic::Regular_triangulation_event_log_visitor_3`
 \hasModel `CGAL::Kinetic::Sort_event_log_visitor` 
 */
 class EventLogVisitor {

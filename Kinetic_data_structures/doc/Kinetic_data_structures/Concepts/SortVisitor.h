@@ -1,4 +1,4 @@
-namespace KineticConcepts {
+namespace Kinetic {
 
 /*!
 \ingroup PkgKdsConcepts
@@ -6,8 +6,8 @@ namespace KineticConcepts {
 
 This concept is for proxy objects which have functions called on them when a `Kinetic::Sort<Traits, Visitor>`. 
 
-\hasModel `Kinetic::Sort_visitor_base`
-\hasModel `Kinetic::Sort_event_log_visitor` 
+\hasModel `CGAL::Kinetic::Sort_visitor_base`
+\hasModel `CGAL::Kinetic::Sort_event_log_visitor` 
 
 */
 

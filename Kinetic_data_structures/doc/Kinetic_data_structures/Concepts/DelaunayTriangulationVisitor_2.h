@@ -6,7 +6,7 @@ namespace Kinetic {
 
 This concept is for proxy objects which get notified when a kinetic Delaunay triangulation changes. 
 
-\hasModel CGAL::`Kinetic::Delaunay_triangulation_visitor_base_2`
+\hasModel `CGAL::`Kinetic::Delaunay_triangulation_visitor_base_2`
 \hasModel `CGAL::Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>`
 \hasModel `CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_2 `
 

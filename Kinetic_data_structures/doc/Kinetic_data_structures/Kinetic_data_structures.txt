@@ -41,7 +41,7 @@ Section \ref secquick_hints which covers quick hints.
 This section gives quick answers to some questions people might have.
 It presumes knowledge of kinetic data structures and this framework.
 
-## How do I store extra information allow with, for example, a kinetic Point_2? ##
+## How do I store extra information allow with, for example, a kinetic %Point_2? ##
 
 See the example
 \ref defining_a_simulation_traits.cpp to see how
@@ -295,7 +295,7 @@ arrangements of \f$ x\f$-monotone curves on top of the
 lines of code. This sweepline code is presented in
 Section \ref seckds_sweepline_example.
 
-## Creating Kinetic Primitives ##
+## Creating %Kinetic Primitives ##
 
 One key part of the framework not shown is how to create kinetic
 primitives (rather than just reading them in from a file). There are
