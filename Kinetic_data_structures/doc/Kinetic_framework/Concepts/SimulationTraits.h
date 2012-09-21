@@ -1,4 +1,4 @@
-namespace KineticConcepts {
+namespace Kinetic {
 /*!
 \ingroup PkgKdsFrameworkConcepts
 \cgalconcept
@@ -20,10 +20,10 @@ the appropriate dimension as the primitive used in the
 `Kinetic::InstantaneousKernel` and the 
 `Kinetic::ActiveObjectsTable`. 
 
-\hasModel `Kinetic::Exact_simulation_traits`
-\hasModel `Kinetic::Inexact_simulation_traits`
-\hasModel `Kinetic::Regular_triangulation_exact_simulation_traits`
-\hasModel `Kinetic::Regular_triangulation_inexact_simulation_traits`
+\hasModel `CGAL::Kinetic::Exact_simulation_traits`
+\hasModel `CGAL::Kinetic::Inexact_simulation_traits`
+\hasModel `CGAL::Kinetic::Regular_triangulation_exact_simulation_traits`
+\hasModel `CGAL::Kinetic::Regular_triangulation_inexact_simulation_traits`
 
 */
 

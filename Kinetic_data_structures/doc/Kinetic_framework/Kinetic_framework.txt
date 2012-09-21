@@ -54,7 +54,7 @@ The `Kinetic::Simulator` is the central repository of all active events.
 It maintains the event queue and can use its knowledge of the events
 in the queue to find times for the kinetic data structures to easily
 check their own correctness (this will be discussed in more detail
-later in this section). Kinetic data structures call methods of the
+later in this section). %Kinetic data structures call methods of the
 `Kinetic::Simulator` to schedule new events, deschedule old ones and
 access and change data contained in already scheduled events (the
 operations on existing events are performed using a key which was
@@ -158,14 +158,14 @@ queue causes a 20% reduction in running time relative to a binary
 heap for Delaunay triangulations with degree 3 polynomial motions and
 20 points.
 
-## The Kinetic::Kernel ##
+## The %Kinetic::Kernel ##
 
-The `Kinetic::Kernel` is structured very much like static CGAL
+The `Kinetic::Kernel` is structured very much like static %CGAL
 kernels. It defines a number of primitives, which in the model
 provided are `Kinetic::Kernel::Point_1`,
 `Kinetic::Kernel::Point_2`, `Kinetic::Kernel::Point_3` and
 `Kinetic::Kernel::Weighted_point_3`. The primitives are defined by
-a set of Cartesian coordinates each of which is a function of time, a
+a set of %Cartesian coordinates each of which is a function of time, a
 `Kernel::MotionFunction`. In addition it defines constructions
 and certificate generators which act on the primitives. The
 certificate generators are the direct analog of the non-kinetic
@@ -195,7 +195,7 @@ three dimensions) and regular triangulations (in 3D). New
 certificates can be fairly easily added. An example is included in the
 distributed code.
 
-\subsection seckds_active_objects_table The Kinetic::ActiveObjectsTable 
+\subsection seckds_active_objects_table The %Kinetic::ActiveObjectsTable 
 
 The `Kinetic::ActiveObjectsTable` stores a set of kinetic primitives.
 Its purpose is to notify kinetic data structures when new primitives
@@ -214,13 +214,13 @@ notification. We provide a helper class,
 `erase(Key)` or `set(Key)` function calls on the kinetic data
 structure.
 
-\subsection seckds_instantaneous_kernel The Kinetic::InstantaneousKernel 
+\subsection seckds_instantaneous_kernel The %Kinetic::InstantaneousKernel 
 
 The `Kinetic::InstantaneousKernel` allows existing \cgal data structures
 to be used on moving data as it appears at some instant of time.
-Models of this concept are, by definition, models of a CGAL
+Models of this concept are, by definition, models of a %CGAL
 Kernel or a traits class, and, therefore, can then be used as
-the traits class of CGAL's algorithms and data structures.
+the traits class of %CGAL's algorithms and data structures.
 
 Consider for example the kinetic Delaunay data structure in either two
 or three dimensions. Internally, it uses a
@@ -252,7 +252,7 @@ We describe some coding conventions used, graphical display,
 notification and reference management support in the framework in the
 following sections.
 
-## Reference management ##
+## Reference Management ##
 
 A number of objects need to maintain pointers to other independent
 objects. For example, each kinetic data structure must have access to
@@ -324,7 +324,7 @@ The exact models, which we implement the numerics for, handle
 non-square-free polynomials and polynomials with arbitrary field
 number type coefficients and are quite robust.
 
-## Kinetic::FunctionKernel customized for kinetic data structures ##
+## %Kinetic::FunctionKernel Customized for %Kinetic Data Structures ##
 
 There are several modifications we can make to how the roots are
 handled to optimize for the case of kinetic data structures. The
@@ -461,7 +461,7 @@ auditing a kinetic data structure typically requires at least linear
 time in the size of the combinatorial structure, the auditing
 procedure in between events is deactivated by default. The user can
 however easily switch it on by defining the
-`CGAL_CHECK_EXACTNESS` and `CGAL_CHECK_EXPENSIVE` CGAL
+`CGAL_CHECK_EXACTNESS` and `CGAL_CHECK_EXPENSIVE` %CGAL
 macros.
 
 This general structure of the interaction between the kinetic data

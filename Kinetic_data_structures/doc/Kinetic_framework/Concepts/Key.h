@@ -1,5 +1,5 @@
-/// yada.
-namespace KineticConcepts {
+namespace Kinetic {
+
 /*!
 \ingroup PkgKdsFrameworkOtherConcepts
 \cgalconcept
@@ -11,8 +11,8 @@ table. There are two classes of values for a `Key`, valid and
 invalid. The latter cannot refer to something in a table. Use the
 method `is_valid()` to differentiate.
 
-\hasModel `Kinetic::Simulator::Event_key`
-\hasModel `Kinetic::Active_objects_vector<Object>::Key`
+\hasModel `CGAL::Kinetic::Simulator::Event_key`
+\hasModel `CGAL::Kinetic::Active_objects_vector::Key`
 
 */
 
@@ -20,7 +20,7 @@ class Key {
 public:
 
 /*! 
-The default constructor is guaranteed to construct an invalid key (i.e. one which is false when cast to a bool. 
+The default constructor is guaranteed to construct an invalid key (i.e.\ one which is false when cast to a bool. 
 */ 
 Key(); 
 
@@ -43,4 +43,4 @@ std::ostream& operator<<(std::ostream&, Key);
 
 }; /* end Key */
 
-} /* end namespace KineticConcepts */
+} /* end namespace Kinetic */

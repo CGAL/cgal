@@ -1,4 +1,4 @@
-namespace KineticConcepts {
+namespace Kinetic {
 /*!
 \ingroup PkgKdsFrameworkOtherConcepts
 \cgalconcept
@@ -6,8 +6,8 @@ namespace KineticConcepts {
 The concept `Kinetic::RootStack` enumerates through roots of a function 
 contained in a half open interval [lb \f$ \dots\f$ ub). 
 
-\sa `Kinetic::FunctionKernel`
-\sa `Kinetic::Certificate`
+\sa `CGAL::Kinetic::FunctionKernel`
+\sa `CGAL::Kinetic::Certificate`
 
 */
 

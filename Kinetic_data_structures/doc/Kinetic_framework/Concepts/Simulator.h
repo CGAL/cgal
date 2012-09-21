@@ -1,3 +1,5 @@
+namespace Kinetic {
+
 /*!
   \ingroup PkgKdsFrameworkConcepts
   \cgalconcept
@@ -34,10 +36,10 @@
   guaranteed to occur after all other events (but have no particular 
   order amongst themselves). 
 
-  \sa `Kinetic::Simulator_objects_listener<Simulator_listener, KDS>`
-  \sa `Kinetic::Simulator_kds_listener<Simulator_listener, KDS>`
+  \sa `CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, KDS>`
+  \sa `CGAL::Kinetic::Simulator_kds_listener<Simulator_listener, KDS>`
 
-  \hasModel `Kinetic::Default_simulator<FunctionKernel, EventQueue>`
+  \hasModel `CGAL::Kinetic::Default_simulator<FunctionKernel, EventQueue>`
 
 */
 
@@ -367,7 +369,11 @@ public:
 
   /// @}
 
+
 }; /* end Kinetic::Simulator */
+
+} /*end namespace Kinetic
+
 
 /*! 
   Return a double approximation of the time value. 
@@ -380,3 +386,4 @@ double to_double(Time);
   \relates Simulator::Time
 */ 
 std::pair<double, double> to_interval(Time); 
+

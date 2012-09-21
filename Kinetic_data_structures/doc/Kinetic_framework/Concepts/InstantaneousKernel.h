@@ -1,4 +1,4 @@
-namespace KineticConcepts {
+namespace Kinetic {
 /*!
 \ingroup PkgKdsFrameworkConcepts
 \cgalconcept
@@ -9,7 +9,7 @@ data. Different methods for evaluating predicates are used depending
 on whether time is set using an `NT` or a `Time` 
 object. Evaluating predicates when time is the former is much cheaper. 
 
-\hasModel `Kinetic::Default_instantaneous_kernel`
+\hasModel `CGAL::Kinetic::Default_instantaneous_kernel`
 
 */
 

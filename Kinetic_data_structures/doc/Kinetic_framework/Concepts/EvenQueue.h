@@ -1,4 +1,4 @@
-namespace KineticConcepts {
+namespace Kinetic {
 /*!
 \ingroup PkgKdsFrameworkOtherConcepts
 \cgalconcept
@@ -8,8 +8,8 @@ basically defines a priority queue which supports deletions and
 changes of items in the queue (but not their priorities). Items in the
 queue must implement the `Event` concept.
 
-\hasModel `Kinetic::Two_list_pointer_event_queue<FunctionKernel>`
-\hasModel `Kinetic::Heap_pointer_event_queue<FunctionKernel>`
+\hasModel `CGAL::Kinetic::Two_list_pointer_event_queue<FunctionKernel>`
+\hasModel `CGAL::Kinetic::Heap_pointer_event_queue<FunctionKernel>`
 
 */
 

@@ -1,4 +1,4 @@
-namespace KineticConcepts {
+namespace Kinetic {
 /*!
 \ingroup PkgKdsFrameworkConcepts
 \cgalconcept
@@ -9,7 +9,7 @@ predicates are instances of `Kinetic::CertificateGenerator` and
 can be used to either create `Certificate`s or to evaluate 
 instantaneous predicates. 
 
-\hasModel `Kinetic::Cartesian<FunctionKernel>`
+\hasModel `CGAL::Kinetic::Cartesian<FunctionKernel>`
 
 */
 

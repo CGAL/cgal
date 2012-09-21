@@ -1,4 +1,4 @@
-namespace KineticConcepts {
+namespace Kinetic {
 
 /*!
 \ingroup PkgKdsFrameworkOtherConcepts
@@ -30,7 +30,7 @@ KineticKernel::Orientation_2 o2= kk.orientation_2_object();
 
 KineticKernel::Certificate c= o2(a,b,c, sh->current_time(), sh->end_time()); 
 if (c.will_fail()) { 
-std::cout << "Certificate will fail" << std::endl; 
+  std::cout << "Certificate will fail" << std::endl; 
 } 
 // Compute the sign immediately following the current time 
 CGAL::Sign sn= o2(a,c,b, sh->current_time()); 
