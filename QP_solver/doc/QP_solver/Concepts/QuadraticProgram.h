@@ -33,9 +33,9 @@ The description is given by appropriate <I>random-access</I>
 iterators over the program data, see below. The program therefore 
 comes in <I>dense</I> representation which includes zero entries. 
 
-\hasModel Quadratic_program<NT> 
-\hasModel Quadratic_program_from_mps<NT> 
-\hasModel Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it> 
+\hasModel `CGAL::Quadratic_program<NT>` 
+\hasModel `CGAL::Quadratic_program_from_mps<NT>` 
+\hasModel `CGAL::Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>` 
 
 Requirements 
 -------------- 
@@ -44,11 +44,6 @@ The value types of all iterator types (nested iterator types,
 respectively, for `A_iterator` and `D_iterator`) must be 
 convertible to some common `IntegralDomain` `ET`. 
 
-The models 
-\sa `Quadratic_program<NT>` 
-\sa `Quadratic_program_from_mps<NT>` 
-\sa `Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>` 
-and the other conepts 
 \sa `NonnegativeQuadraticProgramInterface` 
 \sa `LinearProgramInterface` 
 \sa `NonnegativeLinearProgramInterface` 

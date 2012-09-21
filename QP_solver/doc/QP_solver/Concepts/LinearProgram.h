@@ -35,14 +35,11 @@ The description is given by appropriate <I>random-access</I>
 iterators over the program data, see below. The program therefore 
 comes in <I>dense</I> representation which includes zero entries. 
 
-\hasModel Quadratic_program<NT> 
-\hasModel Quadratic_program_from_mps<NT> 
-\hasModel Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it> 
+\hasModel `CGAL::Quadratic_program<NT>` 
+\hasModel `CGAL::Quadratic_program_from_mps<NT>` 
+\hasModel `CGAL::Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>`
 
-The models 
-\sa `Quadratic_program<NT>` 
-\sa `Quadratic_program_from_mps<NT>` 
-\sa `Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>` 
+
 and the other concepts 
 \sa `QuadraticProgram` 
 \sa `NonnegativeQuadraticProgram` 

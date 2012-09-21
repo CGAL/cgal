@@ -41,10 +41,10 @@ respectively, for `A_iterator`) must be convertible to some common
 `IntegralDomain` `ET`. 
 
 The models 
-\sa `Quadratic_program<NT>` 
-\sa `Quadratic_program_from_mps<NT>` 
-\sa `Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
-and the other concepts 
+\hasModel `CGAL::Quadratic_program<NT>` 
+\hasModel `CGAL::Quadratic_program_from_mps<NT>` 
+\hasModel `CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
+
 \sa `QuadraticProgram` 
 \sa `LinearProgram` 
 \sa `NonnegativeQuadraticProgram` 

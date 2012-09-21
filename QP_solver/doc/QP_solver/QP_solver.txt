@@ -80,7 +80,7 @@ of a class that is a model of the concept `QuadraticProgram`
 type, such as `double`, `int`, or any exact type.
 
 Then the program is solved using the function
-`solve_quadratic_program` (or some specialized other functions,
+`CGAL::solve_quadratic_program` (or some specialized other functions,
 e.g. for linear programs). For this, you also have to provide a
 suitable <I>exact</I> number type `ET` used in the solution
 process. In case of input type `double`, solution methods that use
