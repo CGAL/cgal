@@ -9,7 +9,7 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-set(PACKAGE_ROOT ../..)
+set(PACKAGE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
 # Add several CGAL packages to the include and link paths,
 # if they lie in ${PACKAGE_ROOT}/.
