@@ -103,30 +103,26 @@ requires a number type `ET` that provides <I>exact</I> arithmetic.
 `ApproximateMinEllipsoid_d_Traits_d`.) 
 
 
-\tparam Traits must be a model for 
-`ApproximateMinEllipsoid_d_Traits_d`. 
+\tparam Traits must be a model for `ApproximateMinEllipsoid_d_Traits_d`. 
 
-We provide the model 
-`CGAL::Approximate_min_ellipsoid_d_traits_d<K>` using the 
-\f$ d\f$-dimensional \cgal kernel; the models 
-`CGAL::Approximate_min_ellipsoid_d_traits_2<K>` and 
-`CGAL::Approximate_min_ellipsoid_d_traits_3<K>` are for use with 
-the \f$ 2\f$- and \f$ 3\f$-dimensional \cgal kernel, respectively. 
+We provide the model `CGAL::Approximate_min_ellipsoid_d_traits_d<K>`
+using the \f$ d\f$-dimensional \cgal kernel; the models
+`CGAL::Approximate_min_ellipsoid_d_traits_2<K>` and
+`CGAL::Approximate_min_ellipsoid_d_traits_3<K>` are for use with the
+\f$ 2\f$- and \f$ 3\f$-dimensional \cgal kernel, respectively.
 
 \sa `CGAL::Min_ellipse_2<Traits>` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 We implement Khachyian's algorithm for rounding 
 polytopes \cite cgal:k-rprnm-96. Internally, we use 
 `double`-arithmetic and (initially a single) 
-Cholesky-decomposition. The algorithm's running time is \f$ {\cal 
-O}(nd^2(\epsilon^{-1}+\ln d + \ln\ln(n)))\f$, where \f$ n=|P|\f$ and 
+Cholesky-decomposition. The algorithm's running time is 
+\f$ {\cal O}(nd^2(\epsilon^{-1}+\ln d + \ln\ln(n)))\f$, where \f$ n=|P|\f$ and 
 \f$ 1+\epsilon\f$ is the desired approximation ratio. 
 
-Example 
--------------- 
+## Example ###
 
 To illustrate the usage of `Approximate_min_ellipsoid_d` we give two examples in 2D. The 
 first program generates a random set \f$ P\subset\E^2\f$ and outputs the 

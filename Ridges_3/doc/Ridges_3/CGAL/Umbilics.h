@@ -40,8 +40,7 @@ namespace CGAL {
 The class `Umbilic_approximation` computes the approximation of 
 umbilics on a triangular polyhedral surface. 
 
-Parameters 
--------------- 
+### Template Parameters ###
 
 The class `Umbilic_approximation` has three template parameters. 
 `TriangulatedSurfaceMesh` provides the surface. Parameters 
@@ -114,10 +113,9 @@ namespace CGAL {
 
 The class `Umbilic` stores the description of an umbilic. 
 
-Operations 
--------------- 
+### Operations ###
 
-The usual insert operator (\f$ <<\f$) is overloaded for `Umbilic`, it 
+The usual insert operator (\f$<<\f$) is overloaded for `Umbilic`, it 
 gives the location (3d coordinates of the vertex) and the type. 
 
 \sa `Umbilic_approximation` 

@@ -37,12 +37,9 @@ comes in <I>dense</I> representation which includes zero entries.
 \hasModel `CGAL::Quadratic_program_from_mps<NT>`
 \hasModel `CGAL::Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>`
 
-Requirements 
--------------- 
-
-The value types of all iterator types (nested iterator types, 
-respectively, for `A_iterator` and `D_iterator`) must be 
-convertible to some common `IntegralDomain` `ET`. 
+\requires The value types of all iterator types (nested iterator
+types, respectively, for `A_iterator` and `D_iterator`) must be
+convertible to some common `IntegralDomain` `ET`.
 
 
 \sa `QuadraticProgram` 

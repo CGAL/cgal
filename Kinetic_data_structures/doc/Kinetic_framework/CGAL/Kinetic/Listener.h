@@ -59,8 +59,7 @@ writing my own.
 
 \sa `Multi_listener<Interface>`
 
-Example 
--------------- 
+### Example ###
 
 Here is a simplier class that provides notifications: 
 

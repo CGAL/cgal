@@ -49,8 +49,7 @@ binary function: `Matrix::Value` \f$ \times\f$
 \sa `CGAL::maximum_perimeter_inscribed_k_gon_2`
 \sa `CGAL::extremal_polygon_2`
 
-Implementation 
--------------- 
+### Implementation ###
 
 The implementation uses an algorithm by Aggarwal 
 et al.\cite akmsw-gamsa-87. The runtime is linear in the number 

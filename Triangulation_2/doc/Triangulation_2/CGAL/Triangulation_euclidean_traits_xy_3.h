@@ -30,24 +30,18 @@ be instantiated by a model of the `Kernel` concept.
 `Triangulation_euclidean_traits_xy_3` uses types 
 and predicates defined in `K`. 
 
-### Access to Predicate Objects ###
+\sa `TriangulationTraits_2` 
+\sa `DelaunayTriangulationTraits_2` 
+\sa `CGAL::Triangulation_2<Traits,Tds>` 
+\sa `CGAL::Delaunay_triangulation_2<Traits,Tds>` 
 
-The following access functions are provided 
+\cgal provides also predefined geometric traits class
+`Triangulation_euclidean_traits_yz_3<K>` and
+`Triangulation_euclidean_traits_xz_3<K>` to deal with projections on
+the `xz`- or the `yz`-plane, respectively.
 
-`TriangulationTraits_2` 
-
-`DelaunayTriangulationTraits_2` 
-
-`CGAL::Triangulation_2<Traits,Tds>` 
-
-`CGAL::Delaunay_triangulation_2<Traits,Tds>` 
-
-\cgal provides also predefined geometric traits class 
-`Triangulation_euclidean_traits_yz_3<K>` and 
-`Triangulation_euclidean_traits_xz_3<K>` to 
-deal with projections on the 
-`xz`- or the `yz`-plane, 
-respectively. 
+\sa \ref CGAL/Triangulation_euclidean_traits_xz_3.h
+\sa \ref CGAL/Triangulation_euclidean_traits_yz_3.h
 
 */
 template< typename K >
@@ -224,6 +218,7 @@ Triangulation_euclidean_traits_xy_3 operator=
 /// @} 
 
 /// \name Access to predicate objects 
+/// The following access functions are provided 
 /// @{
 
 /*! 
@@ -274,9 +269,6 @@ compare_distance_2_object();
 Intersect_2 intersect_2_object(); 
 
 /*! 
-
-See Also 
--------------- 
 
 */ 
 Compute_squared_distance_2 compute_squared_distance_2_object(); 

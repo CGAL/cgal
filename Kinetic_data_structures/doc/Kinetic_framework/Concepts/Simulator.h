@@ -99,8 +99,7 @@ public:
 
   \sa `Kinetic::EventQueue` 
 
-  Example 
-  -------------- 
+  ### Example ###
 
   All of the kinetic data structures provided have models of 
   `Event`. Here is the code implementing a swap event from the 

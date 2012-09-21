@@ -11,22 +11,11 @@ The plane equations of each face are not computed.
 
 \pre `T.dimension()`==3.
 
-Requirements 
--------------- 
-
-This function requires the following: 
-<OL> 
-<LI>`Triangulation_3` is a \cgal\ 3D triangulation. 
-<LI>`Polyhedron_3` is an instantiation of `CGAL::Polyhedron_3<Traits>`. 
-</OL> 
+\requires `Triangulation_3` is a \cgal\ 3D triangulation. 
+\requires `Polyhedron_3` is an instantiation of `CGAL::Polyhedron_3<Traits>`. 
 
 \sa `CGAL::convex_hull_3` 
-
-
-
-
 */
-
 template <class Triangulation_3, class Polyhedron_3>
 void convex_hull_3_to_polyhedron_3(const Triangulation_3& T,Polyhedron_3& P);
 

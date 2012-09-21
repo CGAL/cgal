@@ -6,8 +6,7 @@ namespace CGAL {
 
 \models ::SphericalKernel 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first parameter of the spherical kernel must be instantiated with 
 a model of the `Kernel` concept. The `Spherical_kernel_3` 

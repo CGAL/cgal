@@ -164,7 +164,8 @@ forms a two-dimensional Nef polyhedron embedded in
 the sphere. We add the set-selection mark for the vertex and call the
 resulting structure the <I>sphere map</I> of the vertex. 
 We use the prefix \f$ s\f$ to distinguish the elements of the sphere map
-from the three-dimensional elements. See Chapter \ref chapterNef_S2 
+from the three-dimensional elements. See Chapter 
+\ref Chapter_2D_Boolean_Operations_on_Nef_Polygons_Embedded_on_the_Sphere
 for further details.
 
 \image html sphere_map.png

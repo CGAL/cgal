@@ -14,8 +14,7 @@ implemented using `CGAL::Compact_container`. The class may offer some
 flexibility for the choice of container in the future, in the form of 
 additional template parameters. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 It is parameterized by base classes for vertices and cells which have to match 
 the requirements for the concepts `TriangulationDSCellBase_3` and 

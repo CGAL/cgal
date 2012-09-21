@@ -13,14 +13,12 @@ which are of type `FT`. Two directions are equal if their
 Cartesian coordinates are positive multiples of each other. Directions 
 are in one-to-one correspondence to points on the unit sphere. 
 
-Downward compatibility 
--------------- 
+### Downward compatibility ###
 
 We provide the operations of the lower dimensional interface `dx()`, 
 `dy()`, `dz()`. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 Directions are implemented by arrays of integers as an item type. All 
 operations like creation, initialization, tests, inversion, input and 

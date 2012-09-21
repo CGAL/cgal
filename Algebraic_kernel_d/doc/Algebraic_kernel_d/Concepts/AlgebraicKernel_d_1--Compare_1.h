@@ -7,13 +7,7 @@ Compares `AlgebraicKernel_d_1::Algebraic_real_1` values.
 
 \refines ::AdaptableBinaryFunction 
 
-Operations 
--------------- 
-
-The following operators and their symmetric counterparts are required: 
-
 */
-
 class AlgebraicKernel_d_1::Compare_1 {
 public:
 
@@ -38,6 +32,8 @@ typedef AlgebraicKernel_d_1::Algebraic_real_1 second_argument_type;
 /// @} 
 
 /// \name Operations 
+/// The following operators and their symmetric counterparts are
+/// required:
 /// @{
 
 /*! 

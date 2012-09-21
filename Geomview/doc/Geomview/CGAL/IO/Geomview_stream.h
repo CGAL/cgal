@@ -8,8 +8,7 @@ namespace CGAL {
   from. The constructor starts Geomview either on the local either on
   a remote machine.
 
-  Implementation 
-  --------------
+  ### Implementation ###
 
   The constructor forks a process and establishes two pipes between the
   processes. The forked process is then overlaid with Geomview. The

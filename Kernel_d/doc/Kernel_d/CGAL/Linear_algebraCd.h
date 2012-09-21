@@ -10,13 +10,9 @@ algebra for field number types `FT`.
 
 \models ::LinearAlgebraTraits_d 
 
-Requirements 
--------------- 
+\tparam FT must be a field number type. 
 
-`FT` must be a field number type. 
-
-Operations 
--------------- 
+### Operations ###
 
 Fits all operation requirements of the concept. 
 

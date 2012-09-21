@@ -11,8 +11,7 @@ index vertices for \sc{Bgl} algorithms.
 Note that the user is in charge to set the index correctly before 
 running a graph algorithm. 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The first template argument is the geometric traits class
 `TriangulationTraits_2` which provides the `Point_2`.

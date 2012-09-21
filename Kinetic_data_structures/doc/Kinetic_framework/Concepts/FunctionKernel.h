@@ -18,8 +18,7 @@ namespace KineticConcepts {
 
   \sa `Kinetic::RootEnumerator`
 
-  Example 
-  -------------- 
+  ### Example ###
 
   We provide several models of the concept, which are not documented 
   separately. The models of `Kinetic::SimulationTraits` all choose 
@@ -110,8 +109,7 @@ public:
     \sa `FunctionKernel
     \sa `FunctionKernel::ConstructFunction` 
 
-    Example 
-    -------------- 
+    ### Example ###
 
     Several ways to create functions: 
 
@@ -230,8 +228,7 @@ public:
 
     \sa `FunctionKernel` 
 
-    Example 
-    -------------- 
+    ### Example ###
 
     \code{.cpp} 
 

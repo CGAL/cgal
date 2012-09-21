@@ -10,10 +10,7 @@ models of the `CellAttributeWithPoint` concept.
 
 \refines ::CombinatorialMapItems 
 
-Requirements 
--------------- 
-
-The first type in `Attributes` must be a model of the 
+\requires The first type in `Attributes` must be a model of the 
 `CellAttributeWithPoint` concept. 
 
 \hasModel `CGAL::Linear_cell_complex_min_items<d>`

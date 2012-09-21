@@ -11,12 +11,8 @@ types and functors corresponding to the given dimension.
 
 \models ::LinearCellComplexTraits 
 
-Parameters 
--------------- 
-
-`d` the dimension of the kernel, 
-
-`K` a model of the concept `Kernel` if `d==2` or 
+\tparam d the dimension of the kernel, 
+\tparam K a model of the concept `Kernel` if `d==2` or 
 `d==3`; a model of the concept `Kernel_d` otherwise. 
 
 There is a default template arguments for `K` which is 

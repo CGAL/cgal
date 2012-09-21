@@ -12,8 +12,7 @@ a vertex. Each vertex has a geometric position in space. As in a
 halfedge data structure we define the face adjacent to a halfedge to be 
 to the <I>left</I> of the halfedge. 
 
-Requirements 
--------------- 
+### Requirements ###
 
 For each <I>directed edge</I> \f$ e=(v,w)\f$ its opposite edge \f$ e'=(w,v)\f$ 
 must be part of the graph. 
@@ -32,8 +31,7 @@ A model of `HalfedgeGraph` must have the <I>interior properties</I>
 `edge_is_border` attached to its edges, and it must have
 `vertex_is_border` and `vertex_point` attached to its vertices.
 
-Associated Types 
--------------- 
+### Associated Types ###
 
 Because (directed) edges must come in pairs, there is the
 additional notion of an <I>undirected edge</I>
@@ -56,8 +54,7 @@ typedef Hidden_type halfedge_graph_traits<HalfedgeGraph>::Point;
 typedef Hidden_type halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterator; 
 \endcode
 
-Valid Expressions 
--------------- 
+### Valid Expressions ###
 
 Following the \sc{Bgl} design, the following graph operations are defined as free 
 rather than member functions. 

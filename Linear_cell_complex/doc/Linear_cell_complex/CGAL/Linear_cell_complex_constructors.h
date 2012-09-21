@@ -8,8 +8,7 @@ Objects are added in `lcc`, existing darts are not modified.
 Returns a dart created during the import.
 \pre `LCC::dimension`\f$ \geq\f$2 and `LCC::ambient_dimension`==2.
 
-File format 
--------------- 
+### File format ###
 
 The file format must be the following. First 
 the number of vertices and the number of edges of the planar graph. 

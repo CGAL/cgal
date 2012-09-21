@@ -10,8 +10,7 @@ the type to be reference counted as the template argument) and then
 access the object through `Handle` objects rather than bare C++ 
 pointers. 
 
-Operations 
--------------- 
+### Operations ###
 
 There are no methods which should be called by users of this class. 
 

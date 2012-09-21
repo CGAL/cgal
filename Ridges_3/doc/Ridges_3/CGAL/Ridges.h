@@ -120,8 +120,7 @@ namespace CGAL {
 The class `Ridge_approximation` computes the approximation of 
 ridges of a triangular polyhedral surface. 
 
-Parameters 
--------------- 
+### Template Parameters ###
 
 The class `Ridge_approximation` has three template parameters. 
 `TriangulatedSurfaceMesh` provides the surface. 

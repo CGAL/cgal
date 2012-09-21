@@ -20,13 +20,11 @@ type `InputIterator::value_type` is defined.
 \sa `CGAL::y_monotone_partition_2` 
 \sa `CGAL::y_monotone_partition_is_valid_2` 
 
-Implementation 
--------------- 
+### Implementation ###
 
 This function requires \f$ O(n)\f$ time for a polygon with \f$ n\f$ vertices. 
 
-Example 
--------------- 
+### Example ###
 
 The following program computes a \f$ y\f$-monotone partitioning 
 of a polygon using the default 

@@ -8,18 +8,12 @@ The multiplicity stored in the output iterator is the multiplicity in the system
 
 \refines ::Assignable 
 \refines ::CopyConstructible 
-
-Operations 
--------------- 
-
-A model of this type must provide: 
-
 */
-
 class AlgebraicKernel_d_2::Solve_2 {
 public:
 
 /// \name Operations 
+/// A model of this type must provide: 
 /// @{
 
 /*! 

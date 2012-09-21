@@ -257,8 +257,7 @@ Let `os` be an output stream.
 \sa `CGAL::is_pretty`
 \sa `CGAL::operator>>`
 
-Example 
--------------- 
+### Example ###
 
 \code{.cpp}
 #include <CGAL/basic.h> 
@@ -299,8 +298,7 @@ from the class `istream`. This allows to read from istreams
 as `cin`, as well as from strstreams and fstreams.
 The input operator is defined for all classes in the \cgal kernel.
 
-Example 
--------------- 
+### Example ###
 \code{.cpp}
 #include <CGAL/basic.h>
 #include <iostream>

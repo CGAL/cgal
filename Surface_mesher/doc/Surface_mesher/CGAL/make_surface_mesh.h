@@ -10,8 +10,7 @@ approximating a surface.
 The library provides two overloaded version 
 of this function: 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameter `SurfaceMeshC2T3` 
 is required to be a model of the concept 
@@ -144,8 +143,7 @@ approximating a surface.
 The library provides two overloaded version 
 of this function: 
 
-Parameters 
--------------- 
+### Parameters ###
 
 The template parameter `SurfaceMeshC2T3` 
 is required to be a model of the concept 

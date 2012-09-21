@@ -7,8 +7,7 @@ namespace CGAL {
 The class `Periodic_triangulation_3` represents a 3-dimensional 
 triangulation of a point set in \f$ \mathbb T_c^3\f$. 
 
-Parameters 
--------------- 
+### Template Parameters ###
 
 The first template argument `PT` must be a model of the 
 `Periodic_3DelaunayTriangulationTraits_3` concept. 
@@ -19,14 +18,12 @@ functionality in cells and vertices.
 Its default value is 
 `Triangulation_data_structure_3<Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<>>,Triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`. 
 
-Traversal of the Triangulation 
--------------- 
+### Traversal of the Triangulation ###
 
 The periodic triangulation class provides several iterators and circulators 
 that allow one to traverse it. 
 
 \sa `Periodic_3_Delaunay_triangulation_3` 
-
 */
 template< typename PT, typename TDS >
 class Periodic_3_triangulation_3 {

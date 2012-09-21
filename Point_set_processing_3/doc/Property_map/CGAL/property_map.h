@@ -7,18 +7,9 @@ namespace CGAL {
 Property map that converts a `T*` pointer (or in general an iterator
 over `T` elements) to the `T` object.
 
-Parameters 
--------------- 
-
-\code
-template<typename T> 
-struct Dereference_property_map; 
-\endcode
-
 \models `boost::LvaluePropertyMap`
 
-Example 
--------------- 
+### Example ###
 
 See \ref property_map.cpp example. 
 
@@ -81,11 +72,7 @@ public:
 
   Access a property map element. 
 
-  Template Parameters 
-  -------------- 
-
-  `Iter`: Type convertible to `key_type`. 
-
+  \tparam Iter Type convertible to `key_type`. 
   */ 
   template<class Iter> reference operator[](Iter it) const; 
 
@@ -108,27 +95,13 @@ Dereference_property_map<typename value_type_traits<Iter>::type> make_dereferenc
 
 Property map that accesses the first item of a `std::pair`. 
 
-Parameters 
--------------- 
-
-template\f$ <\f$typename Pair\f$ >\f$ 
-
-struct `First_of_pair_property_map`; 
-
-Parameters 
--------------- 
-
-`Pair`: Instance of `std::pair`. 
-
-Inherits From 
--------------- 
+\tparam Pair Instance of `std::pair`. 
 
 \models `boost::LvaluePropertyMap`
 
 \sa `CGAL::Second_of_pair_property_map<Pair>`
 
-Example 
--------------- 
+### Example ###
 
 See `property_map.cpp` example. 
 
@@ -191,10 +164,7 @@ public:
 
   Access a property map element. 
 
-  Template Parameters 
-  -------------- 
-
-  `Iter`: Type convertible to `key_type`. 
+  \tparam Iter Type convertible to `key_type`. 
 
   */ 
   template<class Iter> reference operator[](Iter pair) const; 
@@ -216,22 +186,12 @@ First_of_pair_property_map<typename value_type_traits<Iter>::type> make_first_of
 
 Property map that accesses the Nth item of a `boost::tuple`. 
 
-Parameters 
--------------- 
-
-template\f$ <\f$int N, typename Tuple\f$ >\f$ 
-
-struct `Nth_of_tuple_property_map`; 
-
-Parameters 
--------------- 
-
-`N`: Index of the item to access. `Tuple`: Instance of `boost::tuple`. 
+\tparam N Index of the item to access.
+\tparam Tuple Instance of `boost::tuple`.
 
 \models `boost::LvaluePropertyMap`
 
-Example 
--------------- 
+### Example ###
 
 See `property_map.cpp` example. 
 
@@ -293,10 +253,7 @@ public:
 
   Access a property map element. 
 
-  Template Parameters 
-  -------------- 
-
-  `Iter`: Type convertible to `key_type`. 
+  \tparam Iter Type convertible to `key_type`. 
 
   */ 
   template<class Iter> reference operator[](Iter tuple) const; 
@@ -320,24 +277,13 @@ Nth_of_tuple_property_map<N, typename value_type_traits<Iter>::type> make_nth_of
 
 Property map that accesses the second item of a `std::pair`. 
 
-Parameters 
--------------- 
-
-template\f$ <\f$typename Pair\f$ >\f$ 
-
-struct `Second_of_pair_property_map`; 
-
-Parameters 
--------------- 
-
-`Pair`: Instance of `std::pair`. 
+\tparam Pair Instance of `std::pair`. 
 
 \models `boost::LvaluePropertyMap`
 
 \sa `CGAL::First_of_pair_property_map<Pair>`
 
-Example 
--------------- 
+### Example ###
 
 See `property_map.cpp` example. 
 
@@ -399,10 +345,7 @@ public:
   /*! 
   Access a property map element. 
 
-  Template Parameters 
-  -------------- 
-
-  `Iter`: Type convertible to `key_type`. 
+  \tparam Iter Type convertible to `key_type`. 
 
   */ 
   template<class Iter> reference operator[](Iter pair) const; 

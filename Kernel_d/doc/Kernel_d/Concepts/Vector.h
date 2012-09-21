@@ -7,12 +7,6 @@ An instance of data type `Vector` is a vector of variables of
 number type `NT`. Together with the type `Matrix` it realizes 
 the basic operations of linear algebra. 
 
-Operations 
--------------- 
-
-The same operations `begin()`, `end()` exist for 
-`const_iterator`. 
-
 */
 
 class Vector {
@@ -103,6 +97,17 @@ iterator begin() ;
 iterator beyond the last component. 
 */ 
 iterator end() ; 
+
+/*! 
+iterator to the first component. 
+*/ 
+const_iterator begin() const;
+
+/*! 
+iterator beyond the last component. 
+*/ 
+const_iterator end() const;
+
 
 /*! 
 Addition. 

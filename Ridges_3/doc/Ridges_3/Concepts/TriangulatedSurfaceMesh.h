@@ -8,15 +8,12 @@ boundary) embedded in the 3 space. It is combinatorially based on a
 halfedge data structure with triangular faces, geometrically 3d points 
 associated to the vertices define the embedding. 
 
-Creation 
--------------- 
-
-Construction and destruction are undefined. 
-
 \hasModel `CGAL::Polyhedron_3` with the restriction that faces are triangular.
 
-*/
+### Creation ###
 
+Construction and destruction are undefined. 
+*/
 class TriangulatedSurfaceMesh {
 public:
 

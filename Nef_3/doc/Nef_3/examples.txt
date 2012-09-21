@@ -17,4 +17,6 @@
 \example shell_exploration.cpp
 \example topological_operations.cpp
 \example transformation.cpp
+\example visualization_SM.cpp
+\example visualization_SNC.cpp
 */

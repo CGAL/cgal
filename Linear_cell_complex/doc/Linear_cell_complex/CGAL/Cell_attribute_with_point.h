@@ -11,19 +11,13 @@ of a combinatorial map.
 
 \models ::CellAttributeWithPoint 
 
-Parameters 
--------------- 
+\tparam LCC must be an instantiation of `Linear_cell_complex` class, 
+\tparam Info_ is the type of the information contained in the attribute, `void` for no information, 
 
-`LCC` must be an instantiation of `Linear_cell_complex` class, 
-
-`Info_` is the type of the information contained in the attribute, `void` for no information, 
-
-`Tag` is `Tag_true` to enable the storage of a 
-`Dart_handle` of the associated cell, `Tag_false` otherwise, 
-
-`OnMerge` is a functor called when two attributes are merged, 
-
-`OnSplit` is a functor called when one attribute is split in two. 
+\tparam Tag is `Tag_true` to enable the storage of a 
+\tparam Dart_handle of the associated cell, `Tag_false` otherwise, 
+\tparam OnMerge is a functor called when two attributes are merged, 
+\tparam OnSplit is a functor called when one attribute is split in two. 
 
 By default, `OnMerge` and `OnSplit` are equal to 
 `Null_functor`; `Tag` is equal to 

@@ -15,8 +15,7 @@ constraints.
 
 \refines ::TriangulationFaceBase_2 
 
-Types 
--------------- 
+### Types ###
 
 Defines the same types as the `TriangulationFaceBase_2` concept 
 

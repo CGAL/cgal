@@ -11,13 +11,9 @@ this class, 0-attributes are enabled and associated with
 
 \models ::LinearCellComplexItems 
 
-Parameters 
--------------- 
+\tparam d the dimension of the combinatorial map. 
 
-`d` the dimension of the combinatorial map. 
-
-Example 
--------------- 
+### Example ###
 
 The following example shows one implementation of the 
 `Linear_cell_complex_min_items` class. 

@@ -22,8 +22,7 @@ coefficient vectors are positive multiples of each other and they are
 (weakly) equal if their coefficient vectors are multiples of each 
 other. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 Hyperplanes are implemented by arrays of integers as an item type. 
 All operations like creation, initialization, tests, vector 

@@ -1142,7 +1142,12 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Point_set_processing_3/doc/Property_map</string>
           <string name="STRIP_FROM_INC_PATH">../Point_set_processing_3/doc/Property_map</string>
           <string name="GENERATE_TAGFILE">./tags/Property_map.tag</string>
+          <string name="IMAGE_PATH">../Point_set_processing_3/doc/Property_map/fig</string>
           <string name="EXAMPLE_PATH">../Point_set_processing_3/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Point_set_processing_3.tag=../../CGAL.CGAL.Point-Set-Processing/html</item>
+            <item>./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGAL.Surface-Reconstruction-from-Point-Sets/html</item>
+          </list>
         </doxygen>
       </project>
 
@@ -1204,6 +1209,10 @@ namespace for the XML file to be processed properly.  -->
           <list name="EXAMPLE_PATH" append="true">
             <item>../Nef_3/examples</item>
             <item>../Nef_3/demo</item>
+          </list>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Nef_S2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons-Embedded-on-the-Sphere/html</item>
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
           </list>
         </doxygen>
       </project>

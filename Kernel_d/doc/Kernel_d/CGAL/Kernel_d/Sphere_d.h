@@ -13,8 +13,7 @@ sense and hence many operations on spheres require the set of defining
 points to be legal. The orientation of \f$ S\f$ is equal to the 
 orientation of the defining points, i.e., `orientation(A)`. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 Spheres are implemented by a vector of points as a handle type. All 
 operations like creation, initialization, tests, input and output of a 

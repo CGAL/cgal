@@ -12,18 +12,12 @@ model of `CellAttributeWithPoint`.
 
 \models ::CombinatorialMap 
 
-Parameters 
--------------- 
-
-`d` an integer for the dimension of the combinatorial map, 
-
-`d2` an integer for the dimension of the ambient space, 
-
-`LCCTraits` must be a model of the `LinearCellComplexTraits` concept, satisfying `LCCTraits::ambiant_dimension==d2`, 
-
-`Items` must be a model of the `LinearCellComplexItems` concept, 
-
-`Alloc` has to match the standard allocator requirements. 
+\tparam d an integer for the dimension of the combinatorial map, 
+\tparam d2 an integer for the dimension of the ambient space, 
+\tparam LCCTraits must be a model of the `LinearCellComplexTraits` concept, 
+satisfying `LCCTraits::ambiant_dimension==d2`, 
+\tparam Items must be a model of the `LinearCellComplexItems` concept, 
+\tparam Alloc has to match the standard allocator requirements. 
 
 There are four default template arguments: 
 `d2` is equal to `d`, 

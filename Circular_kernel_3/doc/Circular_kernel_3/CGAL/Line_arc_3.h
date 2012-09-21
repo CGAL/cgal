@@ -6,16 +6,8 @@ namespace CGAL {
 
 \models ::SphericalKernel::LineArc_3 
 
-I/O 
--------------- 
-
-The format for input/output is, for each line arc: a `Line_3` 
-(the supporting line) and two `Circular_arc_point_3` (the two endpoints), 
-under the condition that the endpoints are actually lying on the line. 
-
 \sa `CGAL::Circular_arc_point_3<SphericalKernel>`
 \sa `CGAL::Circular_arc_3<SphericalKernel>`
-
 */
 template< typename SphericalKernel >
 class Line_arc_3 {
@@ -100,12 +92,16 @@ Test for nonequality.
 bool operator!=(const Line_arc_3<SphericalKernel> &s1, const Line_arc_3<SphericalKernel> &s2); 
 
 /*! 
-
+The format for input/output is, for each line arc: a `Line_3` 
+(the supporting line) and two `Circular_arc_point_3` (the two endpoints), 
+under the condition that the endpoints are actually lying on the line. 
 */ 
 istream& operator>> (std::istream& is, Line_arc_3 & ca); 
 
 /*! 
-
+The format for input/output is, for each line arc: a `Line_3` 
+(the supporting line) and two `Circular_arc_point_3` (the two endpoints), 
+under the condition that the endpoints are actually lying on the line. 
 */ 
 ostream& operator<< (std::ostream& os, const Line_arc_3 & ca); 
 

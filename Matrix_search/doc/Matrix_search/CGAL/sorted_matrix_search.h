@@ -48,8 +48,7 @@ true.
 \requires `Traits` is a model for `SortedMatrixSearchTraits`. 
 \requires Value type of `RandomAccessIterator` is `Traits::Matrix`. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 The implementation uses an algorithm by 
 Frederickson and Johnson\cite fj-fkppc-83, \cite fj-gsrsm-84 and runs in 
@@ -57,8 +56,7 @@ Frederickson and Johnson\cite fj-fkppc-83, \cite fj-gsrsm-84 and runs in
 the number of input matrices, \f$ k\f$ denotes the maximal dimension of 
 any input matrix and \f$ f\f$ the time needed for one feasibility test. 
 
-Example 
--------------- 
+### Example ###
 
 In the following program we build a random vector \f$ a = 
 (a_i)_{i = 1,\,\ldots,\,5}\f$ (elements drawn uniformly from \f$ \{ 

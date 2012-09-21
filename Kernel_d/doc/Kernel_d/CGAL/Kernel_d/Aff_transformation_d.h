@@ -12,8 +12,7 @@ must be non-zero. A point \f$ p\f$ with homogeneous coordinates \f$ (p[0],
 = \f$ Mp\f$, where `A` is an affine transformation created from `M` 
 by the constructors below. 
 
-Implementation 
--------------- 
+### Implementation ###
 
 Affine Transformations are implemented by matrices of number type 
 `RT` as a handle type. All operations like creation, 

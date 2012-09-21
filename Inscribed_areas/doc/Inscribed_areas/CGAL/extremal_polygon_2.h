@@ -32,8 +32,7 @@ type.
 \sa `ExtremalPolygonTraits_2` 
 \sa `CGAL::monotone_matrix_search`
 
-Implementation 
--------------- 
+### Implementation ###
 
 The implementation uses monotone matrix search 
 \cite akmsw-gamsa-87 and has a worst case running time of \f$ O(k 
@@ -95,16 +94,14 @@ where `K` is a model for `Kernel`.
 \sa `CGAL::extremal_polygon_2`
 \sa `CGAL::monotone_matrix_search`
 
-Implementation 
--------------- 
+### Implementation ###
 
 The implementation uses monotone matrix search 
 \cite akmsw-gamsa-87 and has a worst case running time of \f$ O(k 
 \cdot n + n \cdot \log n)\f$, where \f$ n\f$ is the number of vertices in 
 \f$ P\f$. 
 
-Example 
--------------- 
+### Example ###
 
 The following code generates a random convex polygon 
 `p` with ten vertices and computes the maximum area inscribed 
@@ -168,16 +165,14 @@ defined that computes the squareroot of a number.
 \sa `CGAL::extremal_polygon_2`
 \sa `CGAL::monotone_matrix_search`
 
-Implementation 
--------------- 
+### Implementation ###
 
 The implementation uses monotone matrix search 
 \cite akmsw-gamsa-87 and has a worst case running time of \f$ O(k 
 \cdot n + n \cdot \log n)\f$, where \f$ n\f$ is the number of vertices in 
 \f$ P\f$. 
 
-Example 
--------------- 
+### Example ###
 
 The following code generates a random convex polygon 
 `p` with ten vertices and computes the maximum perimeter inscribed 

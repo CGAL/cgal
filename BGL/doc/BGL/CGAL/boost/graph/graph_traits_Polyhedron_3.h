@@ -9,9 +9,6 @@ to the
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and 
 <A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>. 
 
-Types 
--------------- 
-
 The const specialization, `boost::graph_traits< CGAL::Polyhedron_3<Traits> const>` 
 is also defined, using the constant handles in the polyhedron. 
 

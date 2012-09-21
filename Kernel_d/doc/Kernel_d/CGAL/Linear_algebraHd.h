@@ -10,14 +10,10 @@ algebra for Euclidean ring number types `RT`.
 
 \models ::LinearAlgebraTraits_d 
 
-Requirements 
--------------- 
-
-To make a ring number type `RT` work with this class it has to 
+\requires To make a ring number type `RT` work with this class it has to 
 provide a division `operator/` with remainder. 
 
-Operations 
--------------- 
+### Operations ###
 
 Fits all operation requirements of the concept. 
 

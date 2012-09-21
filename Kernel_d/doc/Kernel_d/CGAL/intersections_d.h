@@ -118,8 +118,7 @@ the possible return values wrapped in `Object` are the following:
 </TABLE> 
 </DIV> 
 
-Example 
--------------- 
+### Example ###
 
 The following example demonstrates the most common use of 
 `intersection` routines. 
