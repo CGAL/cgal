@@ -9,9 +9,10 @@ class Scene_item;
 class Polyhedron_demo_io_plugin_interface 
 {
 public:
+  virtual QString name() const = 0;
   virtual ~Polyhedron_demo_io_plugin_interface() {}
-
-  virtual QStringList nameFilters() const = 0;
+  
+  virtual QString nameFilters() const = 0;
 
   virtual bool canLoad() const = 0;
   virtual Scene_item* load(QFileInfo fileinfo) = 0;

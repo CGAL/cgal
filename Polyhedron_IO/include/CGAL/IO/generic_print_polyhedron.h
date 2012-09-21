@@ -33,7 +33,6 @@ generic_print_polyhedron( std::ostream&     out,
                           const Polyhedron& P,
                           Writer&           writer) {
     // writes P to `out' in the format provided by `writer'.
-    typedef typename Polyhedron::Vertex                                 Vertex;
     typedef typename Polyhedron::Vertex_const_iterator                  VCI;
     typedef typename Polyhedron::Facet_const_iterator                   FCI;
     typedef typename Polyhedron::Halfedge_around_facet_const_circulator HFCC;

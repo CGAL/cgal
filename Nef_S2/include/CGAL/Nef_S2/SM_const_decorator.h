@@ -294,8 +294,6 @@ check_integrity_and_topological_planarity(bool faces) const
     EI(shalfedges_begin(),shalfedges_end(),'e');
   Object_index<SFace_const_iterator> 
     FI(sfaces_begin(),sfaces_end(),'f');
-  typedef SHalfedge_around_svertex_const_circulator hvc_circulator;
-  typedef SHalfedge_around_sface_const_circulator   hfc_circulator;
   SVertex_const_handle v;
   int iso_vert_num=0;
   /* check the source links of out edges and count isolated vertices */

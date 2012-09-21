@@ -130,10 +130,11 @@ int main ()
   // NT b(a);
   // NT c = b;
   NT d (1.0);
-  NT zzz = 1u;
   NT e = d + d;
+  NT f = (short)1;
+  NT g = CGAL::POSITIVE;
   NT z = CGAL::my_min(e,d);
-  (void) d; (void) e; (void) z; // Shut up warnings.
+  (void) d; (void) e; (void) f; (void) g; (void) z; // Shut up warnings.
   std::cout << e/NT(3) << std::endl;
   // NT f = abs(NT(0));
   std::cout << "sign(3*(1/3)-1) = " << CGAL::my_sign(NT(3)*(NT(1)/NT(3))-NT(1))

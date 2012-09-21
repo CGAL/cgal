@@ -68,8 +68,6 @@ namespace CircularFunctors {
   typename CK::Polynomial_for_circles_2_2
   get_equation( const typename CK::Circle_2 & c )
   {
-    typedef typename CK::RT RT;
- 
     typedef typename CK::Algebraic_kernel   AK;
     
     return AK().construct_polynomial_for_circles_2_2_object()

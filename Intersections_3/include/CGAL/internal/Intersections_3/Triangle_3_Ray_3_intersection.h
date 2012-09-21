@@ -43,7 +43,6 @@ t3r3_intersection_coplanar_aux(const typename K::Point_3& p,
   // preconditions:
   //   + p,v,a,b are coplanar
 
-  typedef typename K::Point_3 Point_3;
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::FT FT;
 

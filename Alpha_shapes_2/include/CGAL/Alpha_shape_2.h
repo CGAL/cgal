@@ -680,7 +680,7 @@ public:
     }
 
   size_type 
-  number_solid_components(const Type_of_alpha& alpha) const
+  number_solid_components(const Type_of_alpha& /* alpha */) const
     {
       return number_of_solid_components(get_alpha());
     }

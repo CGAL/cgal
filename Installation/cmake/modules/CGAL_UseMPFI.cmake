@@ -7,8 +7,8 @@ if( MPFI_FOUND AND NOT MPFI_SETUP )
 
     message( STATUS "UseMPFI" )
     message( STATUS "MPFI include:      ${MPFI_INCLUDE_DIR}" )
-    message( STATUS "MPFI libraries:    ${MPFI_LIBRARIES}" )
     message( STATUS "MPFI definitions:  ${MPFI_DEFINITIONS}" )
+    message( STATUS "MPFI libraries:    ${MPFI_LIBRARIES}" )
 
     try_run( MPFI_TEST_RESULT
              COMPILED_MPFI_TEST
@@ -25,7 +25,7 @@ if( MPFI_FOUND AND NOT MPFI_SETUP )
            )
 
     if( COMPILED_MPFI_TEST AND MPFI_TEST_RESULT EQUAL 0)
-      include_directories( ${MPFI_INCLUDE_DIR} )
+      include_directories( SYSTEM ${MPFI_INCLUDE_DIR} )
       link_directories( ${MPFI_LIBRARIES_DIR} )
       add_definitions( ${MPFI_DEFINITIONS} "-DCGAL_USE_MPFI" )
       link_libraries( ${MPFI_LIBRARIES} )

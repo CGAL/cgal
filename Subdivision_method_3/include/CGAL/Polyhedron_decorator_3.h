@@ -116,7 +116,7 @@ public:
       a <----------> b
       H is the return halfedge connecting vertex a to b.      
   */
-  static Halfedge* insert_edge(Polyhedron& p, Vertex* a, Vertex* b) {
+  static Halfedge* insert_edge(Polyhedron& /*p*/, Vertex* a, Vertex* b) {
     return insert_edge(Vertex_handle(a), Vertex_handle(b)).ptr();
   }
   //

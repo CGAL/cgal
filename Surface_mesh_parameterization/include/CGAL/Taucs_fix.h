@@ -32,6 +32,7 @@
 #if defined(__GNUC__)
     #undef __DEPRECATED
     #include <complex.h>
+    #undef complex
 #endif
 
 // taucs.h will define min/max macros if it's not already done (e.g. by Windows.h).

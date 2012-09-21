@@ -26,6 +26,9 @@ public:
     return QStringList() << "actionSimplify";
   }
 
+  bool applicable() const { 
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+  }
 public slots:
   void on_actionSimplify_triggered();
 
@@ -44,12 +47,12 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
 
     // get option (#edges)
     bool ok;
-    const unsigned int nb_edges = 
+    const int nb_edges = 
       QInputDialog::getInteger(mw, tr("Stop condition"),
       tr("Number of edges:"),
-      pMesh->size_of_halfedges () / 4, // default value: current #edges / 2 
+      (int)(pMesh->size_of_halfedges () / 4), // default value: current #edges / 2 
       3, // min = one triangle
-      pMesh->size_of_halfedges(), // max #edges
+      (int)pMesh->size_of_halfedges(), // max #edges
       1, // step for the spinbox
       &ok);
 

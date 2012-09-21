@@ -569,7 +569,6 @@ is_valid() const
     const Bare_point& p = it->right->point().point();
     const Bare_point& q = it->left->point().point();
     
-    typedef typename Tr::Geom_traits::Sphere_3 Sphere_3;
     typename Tr::Geom_traits::Construct_sphere_3 sphere = 
       this->triangulation().geom_traits().construct_sphere_3_object();
 

@@ -410,7 +410,7 @@ see \ref{sec:3partysoftwareconfig} to specify the location of 3rd
 party software.
 
 The libraries \stl\ (shipped with any compiler) and \boost\ are essential to all components (i.e.~libCGAL,
-libCGAL\_Core,  libCGAL\_imageIO, libCGAL\_Qt3 and libCGAL\_Qt4).
+libCGAL\_Core,  libCGAL\_ImageIO, libCGAL\_Qt3 and libCGAL\_Qt4).
 
 \subsection{Standard Template Library (\stl) \label{thirdparty:stl}}
 
@@ -429,8 +429,8 @@ The \boost\ libraries are a set of portable C++ source libraries. Most of
 installed as binaries.
 
 \cgal\ requires the \boost\ libraries. In particular the header files
-and the threading library (\texttt{Boost.Thread} binaries. Version 1.39 (or
-higher) are needed.
+and the threading library (\texttt{Boost.Thread} and
+\texttt{Boost.System} binaries). Version 1.39 (or higher) are needed.
 
 On Windows, as auto-linking is used, you also need the binaries of
 \texttt{Boost.Serialization} and \texttt{Boost.DateTime}, but the
@@ -443,7 +443,7 @@ In case the \boost\ libraries are not installed on your system already, you
 can obtain them from \boostpage. For Windows you can download an
 installer from \boostprodownloadpage.
 Since \texttt{Boost.Thread} is required, make sure to either install the precompiled 
-libraries for your compiler or build \texttt{libboost-thread}.
+libraries for your compiler or build \texttt{libboost-thread} and \texttt{libboost-system}.
 
 As on Windows there is no canonical directory for where to find \boost, we recommend that you define the environment variable \ccc{BOOST_ROOT} and set it 
 to where you have installed \boost, e.g., \path|C:\boost\boost_1_41_0|.

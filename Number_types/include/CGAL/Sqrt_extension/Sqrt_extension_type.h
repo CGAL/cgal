@@ -267,10 +267,12 @@ public:
     {
       if (! is_extended_)
           return CGAL_NTS to_interval(a0_);
-      CGAL::Interval_nt<false>::Protector p;
+      
       const CGAL::Interval_nt<false>&  a0_int = CGAL_NTS to_interval(a0_);
       const CGAL::Interval_nt<false>&  a1_int = CGAL_NTS to_interval(a1_);
       const CGAL::Interval_nt<false>&  root_int = CGAL_NTS to_interval(root_);
+
+      CGAL::Interval_nt<false>::Protector p;
       const CGAL::Interval_nt<false>&  x_int = 
           a0_int + (a1_int * CGAL::sqrt(root_int));
 

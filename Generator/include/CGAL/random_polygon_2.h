@@ -47,7 +47,6 @@ OutputIterator random_polygon_2(std::size_t n,  OutputIterator result,
 {
    typedef typename Traits::Point_2           Point_2;
    typedef std::vector<Point_2>               Vertex_list;
-   typedef typename Vertex_list::iterator     Iterator;
 
    Vertex_list  vertices;
 

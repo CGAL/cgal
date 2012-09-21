@@ -782,10 +782,6 @@ public:
     typedef typename SNC_structure::Vertex_iterator Vertex_iterator;
     typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator;
     typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator;
-    typedef typename SNC_structure::Halffacet_cycle_iterator
-                                    Halffacet_cycle_iterator;
-    typedef typename SNC_structure::SHalfedge_around_facet_circulator
-                                    SHalfedge_around_facet_circulator;
 
     CGAL_assertion( W != NULL);
     Object_list objects;
@@ -799,7 +795,11 @@ public:
       objects.push_back(make_object(Halfedge_handle(e)));
     CGAL_forall_facets( f, *W) {
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-   
+      typedef typename SNC_structure::SHalfedge_around_facet_circulator
+                                      SHalfedge_around_facet_circulator;
+      typedef typename SNC_structure::Halffacet_cycle_iterator
+                                      Halffacet_cycle_iterator;
+
       Halffacet_cycle_iterator fci = f->facet_cycles_begin();
       CGAL_assertion(fci.is_shalfedge());
       SHalfedge_around_facet_circulator safc(fci);

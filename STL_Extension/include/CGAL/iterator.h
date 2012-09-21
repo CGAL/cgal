@@ -29,6 +29,7 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 #include <vector>
 #include <map>
 #include <boost/type_traits.hpp>
@@ -318,6 +319,7 @@ public:
 
   Iterator  current_iterator() const { return nt;}
   bool operator==( Nullptr_t p) const {
+    CGAL_USE(p);
     CGAL_assertion( p == 0);
     return empty;
   }

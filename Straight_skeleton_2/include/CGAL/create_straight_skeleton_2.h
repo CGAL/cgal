@@ -62,7 +62,6 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     )
 {
   typedef Straight_skeleton_2<K> Ss ;
-  typedef boost::shared_ptr<Ss>  SsPtr ;
 
   typedef Straight_skeleton_builder_traits_2<K> SsBuilderTraits;
   
