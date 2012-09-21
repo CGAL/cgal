@@ -1,4 +1,4 @@
-
+namespace KineticConcepts {
 /*!
 \ingroup PkgKdsConcepts
 \cgalconcept
@@ -10,7 +10,7 @@ This concept is for proxy objects which have functions called on them when a `Ki
 
 */
 
-class Kinetic::SortVisitor {
+class SortVisitor {
 public:
 
 /// \name Operations 
@@ -55,3 +55,4 @@ void post_swap(Vertex_handle, Vertex_handle);
 
 }; /* end Kinetic::SortVisitor */
 
+} /* end namespae KineticConcepts */

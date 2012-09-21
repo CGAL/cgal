@@ -31,7 +31,7 @@ and will serve as a base class for `Triangulation_face_base_2` .
 
 */
 template< typename Traits, typename Fb >
-class Triangulation_face_base_2 {
+class Triangulation_face_base_2 : public Fb {
 public:
 
 /// @}

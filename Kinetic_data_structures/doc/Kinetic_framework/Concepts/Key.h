@@ -1,3 +1,4 @@
+/// yada.
 namespace KineticConcepts {
 /*!
 \ingroup PkgKdsFrameworkOtherConcepts

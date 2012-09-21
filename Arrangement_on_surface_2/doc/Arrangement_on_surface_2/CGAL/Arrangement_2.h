@@ -95,7 +95,7 @@ public:
     An object \f$ v\f$ of the class `Vertex` represents an arrangement vertex, 
     that is - a \f$ 0\f$-dimensional cell, associated with a point on the plane. 
   */
-  class Vertex : public typename Dcel::Vertex {
+  class Vertex : public Dcel::Vertex {
   public:
 
     /// \name Creation 
@@ -127,7 +127,7 @@ public:
     /*! 
       returns the number of edges incident to `v`. 
     */ 
-    typename Dcel::Size degree() const; 
+    Size degree() const; 
 
     /*! 
       returns a circulator circulator that allows going over the halfedges 
@@ -181,7 +181,7 @@ public:
     chains define the inner and outer boundaries of connected components. 
 
   */
-  class Halfedge : public typename Dcel::Halfedge {
+  class Halfedge : public Dcel::Halfedge {
   public:
 
     /// \name Creation 
@@ -281,7 +281,7 @@ public:
     to real curves. A face may also contain holes, which are defined by 
     clockwise-oriented halfedge chains, and isolated vertices. 
   */
-  class Face : public typename Dcel::Face {
+  class Face : public Dcel::Face {
   public:
 
     /// \name Creation 
@@ -361,8 +361,8 @@ public:
 
 The following handles, iterators, and circulators all have respective
 constant counterparts (for example, in addition to `Vertex_iterator`
-the type `Vertex_const_iterator` is also defined). See \cite
-cgal:ms-strg-96 for a discussion of constant versus mutable iterator
+the type `Vertex_const_iterator` is also defined). See \cite cgal:ms-strg-96 
+for a discussion of constant versus mutable iterator
 types. The mutable types are assignable to their constant
 counterparts. `Vertex_iterator`, `Halfedge_iterator`, and
 `Face_iterator` are equivalent to the respective handle types (namely,

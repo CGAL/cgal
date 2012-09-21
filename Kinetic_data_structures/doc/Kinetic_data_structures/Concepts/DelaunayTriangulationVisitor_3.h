@@ -1,4 +1,4 @@
-
+namespace KineticConcepts {
 /*!
 \ingroup PkgKdsConcepts
 \cgalconcept
@@ -11,7 +11,7 @@ This concept is for proxy objects which get notified when a kinetic Delaunay tri
 
 */
 
-class Kinetic::DelaunayTriangulationVisitor_3 {
+class DelaunayTriangulationVisitor_3 {
 public:
 
 /// \name Operations 
@@ -76,3 +76,4 @@ void post_facet_flip(Edge);
 
 }; /* end Kinetic::DelaunayTriangulationVisitor_3 */
 
+} /* end namespae KineticConcepts */

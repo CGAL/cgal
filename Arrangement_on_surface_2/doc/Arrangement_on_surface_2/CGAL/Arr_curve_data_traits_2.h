@@ -52,15 +52,9 @@ of `d1` and `d2`. The \f$ x\f$-monotone curve that represents the overlap
 is associated with the output of this functor. 
 
 \models ::ArrangementTraits_2 
-
-### Inherits From ###
-
-CONVERROR Inherits From must be handled manually, e.g. adjust the class decl`Base_traits_2` 
-
-
 */
 template< typename Tr, typename XData, typename Mrg, typename CData, typename Cnv >
-class Arr_curve_data_traits_2 {
+class Arr_curve_data_traits_2 : public Tr {
 public:
 
 /// \name Types 

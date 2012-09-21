@@ -46,16 +46,15 @@ namespace for the XML file to be processed properly.  -->
         <name>STL Extensions for CGAL</name>
         <input>../STL_Extension/doc</input>
         <doxygen>
-          <string name="OUTPUT_DIRECTORY">./output/CGAL.CGAL.STL_Extension/</string>
           <string name="STRIP_FROM_PATH">../STL_Extension/doc/STL_Extension/</string>
           <string name="STRIP_FROM_INC_PATH">../STL_Extension/doc/STL_Extension/</string>
           <string name="GENERATE_TAGFILE">./tags/STL_Extension.tag</string>
           <string name="IMAGE_PATH">../STL_Extension/doc/STL_Extension/fig</string>
           <string name="EXAMPLE_PATH">../STL_Extension/examples</string>
+          <list name="TAGFILES" append="false">
+            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+          </list>
         </doxygen>
-        <list name="TAGFILES" append="false">
-          <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
-        </list>
       </project>
 
       <project>
@@ -950,6 +949,9 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
           </list>
+          <list name="EXCLUDE_SYMBOLS" append="true">
+            <item>Agvb</item>
+          </list>
         </doxygen>
       </project>
 
@@ -1022,6 +1024,14 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Arrangement_on_surface_2.tag</string>
           <string name="IMAGE_PATH">../Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig</string>
           <string name="EXAMPLE_PATH">../Arrangement_on_surface_2/examples</string>
+          <list name="EXCLUDE_SYMBOLS" append="true">
+            <!-- otherwise Dcel will be recognized as a namespace when the name is used in inheritance -->
+            <!-- could be fixed by using ArrangementDcel as the name of the template parameter instead -->
+            <item>Dcel</item>
+            <item>FaceBase</item>
+            <item>HalfedgeBase</item>
+            <item>VertexBase</item>
+          </list>
         </doxygen>
       </project>
 
@@ -1073,7 +1083,6 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
             <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
-            <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
           </list>
         </doxygen>
       </project>
@@ -1233,7 +1242,7 @@ namespace for the XML file to be processed properly.  -->
           </list>
         </doxygen>
       </project>
-    <!-- subprojects end -->
+      <!-- subprojects end -->
     </project>
     
     <!-- The main CGAL project containing the package list and complete reference documentation -->
@@ -1404,7 +1413,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
           <item>./tags/TDS_3.tag=../../CGAL.CGAL.3D-Triangulation-Data-Structure/html</item>
           <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
-          <item>./tags/Periodic_3_triangulation_3.tag=../../CGAL.CGAL.3D-Periodic-Triangulation/html</item>
+          <item>./tags/Periodic_3_triangulation_3.tag=../../CGAL.CGAL.3D-Periodic-Triangulations/html</item>
           <item>./tags/Ridges_3.tag=../../CGAL.CGAL.Approximation-of-Ridges-and-Umbilics-on-Triangulated-Surface-Meshes/html</item>
           <item>./tags/Property_map.tag=../../CGAL.CGAL.CGAL-and-Boost-Property-Maps/html</item>
           <item>./tags/Point_set_processing_3.tag=../../CGAL.CGAL.Point-Set-Processing/html</item>

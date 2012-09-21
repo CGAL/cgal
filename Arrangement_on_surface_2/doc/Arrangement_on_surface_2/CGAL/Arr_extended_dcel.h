@@ -35,33 +35,15 @@ The default values follow:
 
 \models ::ArrangementDcelWithRebind 
 
-### Inherits From ###
-
-CONVERROR Inherits From must be handled manually, e.g. adjust the class decl 
-<TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-
-`Arr_dcel_base<` 
-<TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-`Arr_extended_vertex<V, VData>,` 
-<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-
-<TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-`Arr_extended_halfedge<H, HData>,` 
-<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-
-<TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-`Arr_extended_face<F, FData> >` 
-
-</TABLE> 
-
 \sa `Arr_dcel_base<V,H,F>` 
 
 */
 template< typename Traits, typename VData, typename HData, typename FData, typename V, typename H, typename F >
-class Arr_extended_dcel {
-public:
-
-/// @}
+class Arr_extended_dcel
+  : public Arr_dcel_base<Arr_extended_vertex<V, VData>,
+                         Arr_extended_halfedge<H, HData>,
+                         Arr_extended_face<F, FData> >
+{
 
 }; /* end Arr_extended_dcel */
 } /* end namespace CGAL */

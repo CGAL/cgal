@@ -200,12 +200,6 @@ circulator over all facets incident to a given edge
 */ 
 typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator; 
 
-/*! 
-specifies which case occurs when performing point locating in the triangulation.
-*/ 
-enum Locate_type {VERTEX=0, EDGE, FACET, CELL, OUTSIDE_CONVEX_HULL, 
-OUTSIDE_AFFINE_HULL}; 
-
 /// @} 
 
 /// \name Creation 

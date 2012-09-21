@@ -258,10 +258,9 @@ method of the `Vertex` class nested within `Arrangement_2`.
 
 \todo With doxygen it is enough to prefix a method with the
 right scope to get the right link in the manual. So we could write:
-<br><br>
-"A vertex is always associated with a geometric entity, namely with
+\"A vertex is always associated with a geometric entity, namely with
 an `Arrangement_2::Point_2` object, which can be obtained by the 
-`Arrangement_2::Vertex::point()` method."
+`Arrangement_2::Vertex::point()` method.\"
 
 
 
@@ -488,18 +487,19 @@ for more details and examples.
 \image html insert.gif
 <center><b>
  The various specialized insertion procedures. The inserted \f$ x\f$-monotone curve is drawn with a light dashed line, surrounded by two solid arrows that represent the pair of twin half-edges added to the \sc{Dcel}. Existing vertices are shown as black dots while new vertices are shown as light dots. Existing half-edges that are affected by the insertion operations are drawn as dashed arrows. (a) Inserting a curve as a new hole inside the face \f$ f\f$. (b) Inserting a curve from an existing vertex \f$ u\f$ that corresponds to one of its endpoints. (c) Inserting an \f$ x\f$-monotone curve whose endpoints are the already existing vertices \f$ u_1\f$ and \f$ u_2\f$. In our case, the new pair of half-edges close a new face \f$ f'\f$, where the hole \f$ h_1\f$, which used to belong to \f$ f\f$, now becomes an enclave in this new face. \anchor arr_figinsert
- </b></center>
+</b></center>
 
 When an \f$ x\f$-monotone curve is inserted into an existing arrangement, such
 that the interior of this curve is disjoint from any arrangement feature,
 only the following three scenarios are possible, depending on the status
 of the endpoints of the inserted subcurve:
+
 <OL>
 <LI>In case both curve endpoints do not correspond to any existing
 arrangement vertex we have to create two new vertices
 corresponding to the curve endpoints and connect them using a pair
 of twin halfedges. This halfedge pair initiates a new hole inside
-the face that contains the curve in its interior.
+the face that contains the curve in its interior.</LI>
 <LI>If exactly one endpoint corresponds to an existing arrangement
 vertex (we distinguish between a vertex that corresponds to the left
 endpoint of the inserted curve and a vertex corresponding to its right
@@ -508,7 +508,7 @@ endpoint of the curve and to connect the two vertices by a pair of
 twin halfedges that form an "antenna" emanating from the boundary
 of an existing connected component (note that if the existing vertex
 used to be isolated, this operation is actually equivalent to forming
-a new hole inside the face that contains this vertex).
+a new hole inside the face that contains this vertex).</LI>
 <LI>If both endpoints correspond to existing arrangement
 vertices, we connect these vertices using a pair of twin halfedges.
 (If one or both vertices are isolated this case reduces to one of
@@ -517,13 +517,14 @@ occur:
 <UL>
 <LI>Two disconnected components are merged into a single connected
 component (as is the case with the segment \f$s_1\f$ in the figure to the
-left).
+left).</LI>
 <LI>A new face is created, a face that splits from an existing
 arrangement face. In this case we also have to examine the holes and
 isolated vertices in the existing face and move the relevant ones
 inside the new face (as is the case with the segment \f$s_2\f$ in the
-figure to the left).
+figure to the left).</LI>
 </UL>
+</LI>
 </OL>
 
 \image html connect_comp.gif
@@ -871,8 +872,7 @@ locating the arrangement cell containing it.
 uses a set of "landmark" points whose location in the
 arrangement is known. Given a query point, it uses a <span class="textsc">Kd</span>-tree to
 find the nearest landmark and then traverses the straight line
-segment connecting this landmark to the query point.
-
+segment connecting this landmark to the query point.<BR>
 There are various ways to select the landmark set in the
 arrangement, determined by the `Generator` template parameter.
 By default, the generator
@@ -1552,7 +1552,7 @@ exists. This implied that collinearity indeed exists as explained above.
 
 \subsection arr_ssecunb_rep Representation of Unbounded Arrangements 
 
-<LI>\anchor typenormal
+\anchor typenormal
 \image html unb_dcel.gif
 <center><b>
 A \sc{Dcel} representing an arrangement of four lines. Halfedges are drawn as thin arrows. The vertices \f$ v_1, \ldots, v_8\f$ lie at infinity, and are not associated with valid points. The halfedges that connect them are fictitious, and are not associated with concrete curves. The face denoted \f$ f_0\f$ (lightly shaded) is the fictitious "unbounded face" which lies outside the bounding rectangle (dashed) that bounds the actual arrangement. The four fictitious vertices \f$ v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$ and \f$ v_{\rm tr}\f$ represent the four corners of the bounding rectangle.

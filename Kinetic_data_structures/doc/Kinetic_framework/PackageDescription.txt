@@ -37,6 +37,6 @@ implementation of kinetic data structures.
 There are three levels at which the user can interact with the
 package. The user can use an existing kinetic data structure, write a
 new kinetic data structure, or replace parts of the framework.The
-first level is covered in the Chapter  \ref refchapterkinetic.
+first level is covered in the Chapter  \ref Chapter_Kinetic_Framework.
 */
 

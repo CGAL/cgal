@@ -1,3 +1,4 @@
+namespace KineticConcepts {
 
 /*!
 \ingroup PkgKdsConcepts
@@ -12,7 +13,7 @@ This concept is for proxy objects which get notified when a kinetic regular tria
 
 */
 
-class Kinetic::RegularTriangulationVisitor_3 {
+class RegularTriangulationVisitor_3 {
 public:
 
 /// \name Operations 
@@ -32,3 +33,4 @@ void post_move(Key, Cell);
 
 }; /* end Kinetic::RegularTriangulationVisitor_3 */
 
+} /* end namespace KinetiConcepts */
