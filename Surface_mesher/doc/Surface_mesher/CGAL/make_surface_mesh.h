@@ -130,7 +130,7 @@ class Tag >
 void make_surface_mesh(SurfaceMeshC2T3& c2t3,
 Surface surface,
 FacetsCriteria criteria,
-Tag,
+Tag tag,
 int initial_number_of_points = 20) ;
 
 /*!
@@ -264,7 +264,7 @@ void make_surface_mesh(SurfaceMeshC2T3& c2t3,
 SurfaceMeshTraits::Surface_3 surface,
 SurfaceMeshTraits traits,
 FacetsCriteria criteria,
-Tag,
+Tag tag,
 int initial_number_of_points = 20 );
 
 } /* namespace CGAL */

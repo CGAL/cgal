@@ -17,8 +17,8 @@ to the generated model of `SurfaceMeshTraits_3`.
 
 \hasModel Any \cgal Kernel. 
 
-\sa `Implicit_surface_3<Traits, Function>`
-\sa `make_surface_mesh` 
+\sa `CGAL::Implicit_surface_3<Traits, Function>`
+\sa `CGAL::make_surface_mesh` 
 
 */
 

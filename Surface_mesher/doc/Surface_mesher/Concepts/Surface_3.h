@@ -8,11 +8,11 @@ The surface types
 are required to be copy constructible 
 and assignable. 
 
-\hasModel Implicit_surface_3<Traits, Function> 
+\hasModel `CGAL::Implicit_surface_3<Traits, Function>` 
 
-\sa `make_surface_mesh`
+\sa `CGAL::make_surface_mesh`
 \sa `SurfaceMeshTraits_3` 
-\sa `Surface_mesh_traits_generator_3<Surface>` 
+\sa `CGAL::Surface_mesh_traits_generator_3<Surface>` 
 
 */
 

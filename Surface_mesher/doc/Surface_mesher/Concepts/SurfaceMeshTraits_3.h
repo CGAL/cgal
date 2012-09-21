@@ -11,9 +11,9 @@ and to compute some intersection
 points if any. The concept `SurfaceMeshTraits_3` also includes a constructor able to provide 
 a small set of initial points on the surface. 
 
-\hasModel Surface_mesh_traits_generator_3<Surface>::Type 
+\hasModel `CGAL::Surface_mesh_traits_generator_3::Type` 
 
-\sa `make_surface_mesh` 
+\sa `CGAL::make_surface_mesh` 
 
 */
 

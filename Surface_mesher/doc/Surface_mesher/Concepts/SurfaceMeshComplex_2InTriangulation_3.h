@@ -30,9 +30,9 @@ A model of this concept is a type to be plugged as first template
 parameter in the 
 function template `make_surface_mesh`. 
 
-\hasModel Surface_mesh_complex_2_in_triangulation_3<Tr> 
+\hasModel `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>` 
 
-\sa `make_surface_mesh`
+\sa `CGAL::make_surface_mesh`
 
 */
 

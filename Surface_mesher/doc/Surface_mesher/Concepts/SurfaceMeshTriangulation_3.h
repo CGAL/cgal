@@ -19,11 +19,11 @@ plugged in the class
 
 \hasModel Any 3D Delaunay triangulation class of \cgal 
 
-\sa `Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>` 
-\sa `Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>` 
+\sa `CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>` 
+\sa `CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>` 
 \sa `SurfaceMeshComplex2InTriangulation3` 
-\sa `Surface_mesh_complex_2_in_triangulation_3<Tr>` 
-\sa `make_surface_mesh` 
+\sa `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>` 
+\sa `CGAL::make_surface_mesh` 
 
 */
 

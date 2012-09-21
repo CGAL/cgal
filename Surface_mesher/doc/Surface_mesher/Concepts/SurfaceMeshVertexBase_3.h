@@ -32,12 +32,12 @@ integers, which, when they are valid, store respectively the number of
 complex facets incident to the vertex and the number of connected
 components of the adjacency graph of those facets.
 
-\hasModel Surface_mesh_vertex_base_3<Gt,Vb> 
-\hasModel Surface_mesh_default_triangulation_3::Vertex 
+\hasModel `CGAL::Surface_mesh_vertex_base_3<Gt,Vb>` 
+\hasModel `CGAL::Surface_mesh_default_triangulation_3::Vertex` 
 
-\sa `SurfaceMesherComplex_2InTriangulation_3` 
-\sa `Surface_mesh_complex_2_in_triangulation_3<Tr>` 
-\sa `Surface_mesh_default_triangulation_3`
+\sa `CGAL::SurfaceMesherComplex_2InTriangulation_3` 
+\sa `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>` 
+\sa `CGAL::Surface_mesh_default_triangulation_3`
 
 */
 

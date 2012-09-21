@@ -37,14 +37,14 @@ of the restriction to the surface of a three dimensional
 triangulation.  In the following we call surface center of a facet,
 the center of its biggest Delaunay surface ball.
 
-\hasModel Surface_mesh_cell_base_3<Gt,Vb> 
-\hasModel Surface_mesh_default_triangulation_3::Cell 
+\hasModel `CGAL::Surface_mesh_cell_base_3<Gt,Vb>`
+\hasModel `CGAL::Surface_mesh_default_triangulation_3::Cell`
 
 \sa `SurfaceMeshTriangulation_3` 
 \sa `SurfaceMeshComplex_2InTriangulation_3` 
-\sa `Surface_mesh_complex_2_in_triangulation_3<Tr>` 
-\sa `Surface_mesh_default_triangulation_3` 
-\sa `make_surface_mesh` 
+\sa `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>` 
+\sa `CGAL::Surface_mesh_default_triangulation_3` 
+\sa `CGAL::make_surface_mesh` 
 
 */
 

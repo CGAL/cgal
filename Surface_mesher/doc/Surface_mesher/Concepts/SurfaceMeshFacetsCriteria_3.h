@@ -35,9 +35,9 @@ is just a lexicographical comparison. The meshing algorithm handles facets
 with lowest quality first. The qualities are computed by a function 
 `is_bad(Facet f, Quality& q)`. 
 
-\hasModel Surface_mesh_default_criteria_3<Tr> 
+\hasModel `CGAL::Surface_mesh_default_criteria_3<Tr>` 
 
-\sa `make_surface_mesh<SurfaceMeshC2T3,Surface,FacetsCriteria,Tag>` 
+\sa `CGAL::make_surface_mesh` 
 
 */
 
