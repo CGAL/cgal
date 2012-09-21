@@ -667,9 +667,13 @@ Mesh_3/test/Mesh_3/off_to_ghs
 Mesh_3/test/Mesh_3/read_mesh
 Mesh_3/test/Mesh_3/slivers_exuder
 Mesh_3/test/Mesh_3/stat_mesh
+Mesh_3/test/Mesh_3/test-tetgen.elem
+Mesh_3/test/Mesh_3/test-tetgen.face
+Mesh_3/test/Mesh_3/test-tetgen.node
 Mesh_3/test/Mesh_3/test_backward_compatibility_MeshFoobarCriteria_3
 Mesh_3/test/Mesh_3/test_boost_has_xxx
 Mesh_3/test/Mesh_3/test_c3t3
+Mesh_3/test/Mesh_3/test_c3t3_io
 Mesh_3/test/Mesh_3/test_c3t3_with_features
 Mesh_3/test/Mesh_3/test_criteria
 Mesh_3/test/Mesh_3/test_domain_with_polyline_features

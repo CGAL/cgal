@@ -25,6 +25,9 @@
 #include "test_meshing_utilities.h"
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
+#include <CGAL/IO/File_medit.h>
+#include <CGAL/IO/File_tetgen.h>
+#include <CGAL/IO/File_binary_mesh_3.h>
 
 template <typename K>
 struct Polyhedron_with_features_tester : public Tester<K>
@@ -64,6 +67,20 @@ struct Polyhedron_with_features_tester : public Tester<K>
     
     // Verify
     this->verify(c3t3,domain,criteria); //, 1099, 1099, 1158, 1158, 4902, 4902);
+
+    std::ofstream out_medit("test-medit.mesh");
+    CGAL::output_to_medit(out_medit, c3t3);
+    CGAL::output_to_tetgen("test-tetgen", c3t3);
+    std::ofstream out_binary("test-binary.mesh.cgal",
+                             std::ios_base::out|std::ios_base::binary);
+    CGAL::Mesh_3::save_binary_file(out_binary, c3t3);
+    out_binary.close();
+    C3t3 c3t3_bis;
+    std::ifstream in_binary("test-binary.mesh.cgal",
+                             std::ios_base::in|std::ios_base::binary);
+    CGAL::Mesh_3::load_binary_file(in_binary, c3t3_bis);
+    assert(c3t3_bis.triangulation() == c3t3.triangulation());
+    
   }
 };
 
