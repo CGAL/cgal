@@ -6,6 +6,18 @@ namespace CGAL {
 
   An object of class `Linear_program_from_iterators` describes a linear program of the form 
 
+\f$
+\newcommand{\qprel}{\gtreqless}
+\newcommand{\qpx}{\mathbf{x}}
+\newcommand{\qpl}{\mathbf{l}}
+\newcommand{\qpu}{\mathbf{u}}
+\newcommand{\qpc}{\mathbf{c}}
+\newcommand{\qpb}{\mathbf{b}}
+\newcommand{\qpy}{\mathbf{y}}
+\newcommand{\qpw}{\mathbf{w}}
+\newcommand{\qplambda}{\mathbf{\lambda}}
+\f$
+
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize} 
   & \qpc^{T}\qpx+c_0 \\ 

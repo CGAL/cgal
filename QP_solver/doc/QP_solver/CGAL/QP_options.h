@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgQPSolver
+\ingroup PkgQPSolverFunctions
 
 This is a class used for passing options to the linear and 
 quadratic programming solvers. Currently, we support only 
@@ -19,11 +19,6 @@ Operations
 -------------- 
 
 Here we just have set/get pairs for any option type. 
-
-Example 
--------------- 
-
-\ref cycling.cpp 
 
 \sa `Quadratic_program_solution` 
 \sa `solve_quadratic_program` 
@@ -111,7 +106,7 @@ bool get_auto_validation() const;
 }; /* end Quadratic_program_options */
 
 /*!
-  \ingroup PkgQPSolver
+  \ingroup PkgQPSolverFunctions
 
   This is an enumeration type containing the values 
   `QP_CHOOSE_DEFAULT`, `QP_DANTZIG`, 

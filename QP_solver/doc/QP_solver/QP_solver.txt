@@ -699,7 +699,7 @@ If you have a program where the number of variables \f$ n\f$ and the number of
 constraints \f$ m\f$ have the same order of 
 magnitude, the filtering will usually have
 no dramatic effect on the performance, so in that case you might as well 
-switch to `QP_PARTIAL_DANTZIG` 
+switch to `CGAL::QP_PARTIAL_DANTZIG` 
 to be safe from the issue described here (see 
 \ref cycling.cpp 
 for an example that shows how to change the pricing strategy).
@@ -709,7 +709,7 @@ for an example that shows how to change the pricing strategy).
 Consider the following program. It reads a nonnegative linear program from 
 the file <TT>cycling.mps</TT> (which is in the example directory as well),
 and then solves it in verbose mode, using <I>Bland's rule</I>, see
-`Quadratic_program_pricing_strategy`.
+`CGAL::Quadratic_program_pricing_strategy`.
 
 \cgalexample{cycling.cpp}
 
@@ -721,7 +721,7 @@ options.set_pricing_strategy(CGAL::QP_BLAND); // Bland's rule
 
 you will see that the solver cycles: the verbose mode outputs the same
 sequence of six iterations over and over again. By switching to 
-`QP_BLAND`, the solution process typically slows down a bit 
+`CGAL::QP_BLAND`, the solution process typically slows down a bit 
 (it may also speed up in some cases), but now it is guaranteed that
 no cycling occurs.
 
@@ -765,7 +765,7 @@ performance!!), you will see runtimes that qualitatively look as
 follows (on your machine, the actual runtimes will roughly be some
 fixed multiples of the numbers in the table below, and they might
 vary with the random choices). The default choice of the pricing 
-strategy in that case is `QP_PARTIAL_FILTERED_DANTZIG`.
+strategy in that case is `CGAL::QP_PARTIAL_FILTERED_DANTZIG`.
 
 strategy                            | runtime in seconds
 --------------------------          | ------------------

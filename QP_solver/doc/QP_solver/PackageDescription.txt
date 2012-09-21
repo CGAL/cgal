@@ -1,13 +1,71 @@
 /// \defgroup PkgQPSolver Linear and Quadratic Programming Solver 
 
-/// \defgroup PkgQPSolverConcepts Concepts
-/// \ingroup PkgQPSolver
+/*! \defgroup PkgQPSolverConcepts Concepts
+ \ingroup PkgQPSolver
 
-/// \defgroup PkgQPSolverClasses Classes
-/// \ingroup PkgQPSolver
+- `QuadraticProgram`   (for quadratic programs with variable bounds \f$ l \leq  x \leq u\f$)
+- `LinearProgram` (for linear programs with variable bounds  \f$ l \leq  x \leq u\f$)
+- `NonnegativeQuadraticProgram` (for quadratic programs with variable bounds \f$ x \geq 0\f$ )
+- `NonnegativeLinearProgram`   (for linear programs with variable bounds \f$ x \geq 0 \f$)
 
-/// \defgroup PkgQPSolverFunctions Functions
-/// \ingroup PkgQPSolver
+- `MPSFormat` (the format used for reading and writing linear and quadratic programs) 
+
+*/
+
+
+/*! \defgroup PkgQPSolverClasses Classes
+ \ingroup PkgQPSolver
+
+There is a class that represents the solution of a linear or quadratic program. An instance of this class is returned by any of the solution functions below.
+
+- `CGAL::Quadratic_program_solution`
+
+We offer a number of predefined models for the above program concepts. The following two are simultaneously models for all four concepts and are probably the most convenient models; they allow you to construct linear or quadratic programs entry by entry, or from streams in MPSFormat. At any time, you can query these programs for linearity and nonnegativity and thus select the appropriate solution function.
+
+- `CGAL::Quadratic_program`   (for linear and quadratic programs that own their data and are built entry-wise)
+- `CGAL::Quadratic_program_from_mps` (for linear and quadratic programs read from an input stream in MPSFormat; the constructed program can also be manipulate entry-wise)
+
+Then there are specific models for any of the four program concepts above; these are useful if you want to maintain the program data yourself, since they simply wrap random access iterators over the program data and involve no further copying of data.
+
+- `CGAL::Quadratic_program_from_iterators`  (for quadratic programs that wrap given iterators, without copying data)
+- `CGAL::Linear_program_from_iterators`   (for linear programs wrapping given iterators)
+- `CGAL::Nonnegative_quadratic_program_from_iterators`  (for nonnegative quadratic programs, wrapping given iterators)
+-`CGAL::Nonnegative_linear_program_from_iterators`   (for nonnegative linear programs, wrapping given iterators) 
+
+*/
+
+
+
+
+/*! \defgroup PkgQPSolverFunctions Functions
+ \ingroup PkgQPSolver
+
+ In case you want to construct a program from complicated iterators (whose types you don't know, or simply don't want to bother with), we provide four makers.
+
+- `CGAL::make_quadratic_program_from_iterators`
+- `CGAL::make_linear_program_from_iterators`
+- `CGAL::make_nonnegative_quadratic_program_from_iterators`
+-`CGAL::make_nonnegative_linear_program_from_iterators`.
+
+There are four functions to solve a program, one for each program concept.
+
+- `CGAL::solve_quadratic_program`
+- `CGAL::solve_linear_program`
+- `CGAL::solve_nonnegative_quadratic_program`
+- `CGAL::solve_nonnegative_linear_program`
+
+The solution process can customized by passing an object of the class
+
+- `CGAL::Quadratic_program_options`
+
+Programs can be written to an output stream in MPSFormat, using one of the following four functions.
+
+- `CGAL::print_quadratic_program`
+- `CGAL::print_linear_program`
+- `CGAL::print_nonnegative_quadratic_program`
+- `CGAL::print_nonnegative_linear_program`
+
+*/
 
 /*!
 \addtogroup PkgQPSolver
