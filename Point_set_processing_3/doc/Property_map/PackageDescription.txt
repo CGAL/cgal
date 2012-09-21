@@ -13,7 +13,5 @@
 \PkgManuals{Chapter_CGAL_and_Boost_Property_Maps,PkgProperty_map}
 \PkgDescriptionEnd
 
-This package provides a framework for interfacing \cgal data
-structures with algorithms expecting Boost Property Maps.  
 */
 

@@ -9,10 +9,6 @@ over `T` elements) to the `T` object.
 
 \models `boost::LvaluePropertyMap`
 
-### Example ###
-
-See \ref property_map.cpp example. 
-
 */
 template< typename T >
 class Dereference_property_map : 

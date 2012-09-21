@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage CGAL and Boost Property Maps
+\mainpage %CGAL and Boost Property Maps
 \anchor Chapter_CGAL_and_Boost_Property_Maps
 
 \anchor chapterProperty_map
@@ -21,7 +21,7 @@ the fly. This is an "implementation detail" of the particular property map.<BR>
 
 Property maps in the Boost manuals: <A HREF="http://www.boost.org/libs/property_map/doc/property_map.html"><TT>http://www.boost.org/libs/property_map/doc/property_map.html</TT></A>
 
-# CGAL and Boost Property Maps #
+# %CGAL and Boost Property Maps #
 
 Some algorithms in \cgal take as input parameters iterator ranges and property maps to access information attached to elements of the sequence.
 
@@ -36,7 +36,7 @@ This component provides property maps to support these cases:
 
 `CGAL::Nth_of_tuple_property_map<N, Tuple>` 
 
-## Example with Dereference_property_map ##
+## Example with %Dereference_property_map ##
 
 The following example reads a point set and removes 5% of the points. It uses `CGAL::Dereference_property_map<Point_3>` as position property map.
 \cgalexample{remove_outliers_example.cpp}
