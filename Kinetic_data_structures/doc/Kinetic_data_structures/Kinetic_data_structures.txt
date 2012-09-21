@@ -236,19 +236,15 @@ kinetic primitive which will be used by the kinetic data structures.
 \section seckds_provided_kdss Using Kinetic Data Structures 
 
 There are five provided kinetic data structures. They are
-<DL>
-<DT><B>`Kinetic::Sort<Traits, Visitor>`</B><DD> maintain a list of points
-sorted by x-coordinate.
-<DT><B>`Kinetic::Delaunay_triangulation_2<Traits, Visitor, Triangulation>`</B><DD> maintain the Delaunay triangulation of a set of
-two dimensional points
-<DT><B>`Kinetic::Delaunay_triangulation_3<Traits,Visitor, Triangulation>`</B><DD> maintain the Delaunay triangulation of a set of
+
+- `Kinetic::Sort<Traits, Visitor>` maintain a list of pointssorted by x-coordinate.
+- `Kinetic::Delaunay_triangulation_2<Traits, Visitor, Triangulation>` maintain the Delaunay triangulation of a set of
+two dimensional points.
+- `Kinetic::Delaunay_triangulation_3<Traits,Visitor, Triangulation>` maintain the Delaunay triangulation of a set of
 three dimensional points.
-<DT><B>`Kinetic::Regular_triangulation_3<Traits, Visitor, Triangulation>`</B><DD> maintain the regular triangulation of a set of waiting
-three dimensional points.
-<DT><B>`Kinetic::Enclosing_box_2<Traits>`,
-`Kinetic::Enclosing_box_3<Traits>`</B><DD> restrict points to stay
-within a box by bouncing them off the walls.
-</DL>
+- `Kinetic::Regular_triangulation_3<Traits, Visitor, Triangulation>` maintain the regular triangulation of a set of waiting three dimensional points.
+- `Kinetic::Enclosing_box_2<Traits>` and `Kinetic::Enclosing_box_3<Traits>`</B><DD> restrict points to stay within a box by bouncing them off the walls.
+
 
 \subsection seckds_sort_example A Simple Example 
 
