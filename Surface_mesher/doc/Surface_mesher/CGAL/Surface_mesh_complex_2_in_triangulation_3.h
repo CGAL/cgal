@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3Classes
 
 The class `Surface_mesh_complex_2_in_triangulation_3` implements a data structure to store 
 the restricted Delaunay triangulation used by the surface mesh generator. 

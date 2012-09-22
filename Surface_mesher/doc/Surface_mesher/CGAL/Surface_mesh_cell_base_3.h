@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3Classes
 
 The class `Surface_mesh_cell_base_3` is a model of the concept 
 `SurfaceMeshCellBase_3`. 

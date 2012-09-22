@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3Classes
 
 The class `Surface_mesh_traits_generator_3` provides a type `Type`,
 that is a model of the concept `SurfaceMeshTraits_3` for the surface

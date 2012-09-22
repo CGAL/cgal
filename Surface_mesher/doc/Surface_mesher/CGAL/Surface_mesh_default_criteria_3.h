@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3Classes
 
 The class `Surface_mesh_default_criteria_3` implements the most commonly used combination 
 of meshing criteria. It involves mainly three criteria which are 

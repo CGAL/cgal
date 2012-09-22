@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3Classes
 
 A 3D gray image is a 
 tri-dimensional array that associates a scalar value to each triple of 

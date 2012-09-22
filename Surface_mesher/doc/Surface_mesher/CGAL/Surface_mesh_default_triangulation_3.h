@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3Classes
 
 The class `Surface_mesh_default_triangulation_3` is a model of the concept 
 `SurfaceMeshTriangulation_3`, whose vertex base and cell base classes 

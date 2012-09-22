@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3Classes
 
 The class `Implicit_surface_3` implements a surface described 
 as the zero level 
@@ -34,7 +34,7 @@ the type `Traits::FT`.
 \sa `make_surface_mesh`
 \sa `Surface_3` 
 \sa `Surface_mesh_traits_generator_3<Surface>`
-\sa `ImplicitSurfaceTraits`
+\sa `ImplicitSurfaceTraits_3`
 \sa `ImplicitFunction`
 
 */

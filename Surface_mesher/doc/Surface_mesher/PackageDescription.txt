@@ -3,6 +3,18 @@
 /// \defgroup PkgSurfaceMesher3Concepts Concepts
 /// \ingroup PkgSurfaceMesher3
 
+
+/// \defgroup PkgSurfaceMesher3Classes Mesh and Domain Classes
+/// \ingroup PkgSurfaceMesher3
+
+/// \defgroup PkgSurfaceMesher3TagClasses Tag Classes
+/// \ingroup PkgSurfaceMesher3
+
+
+/// \defgroup PkgSurfaceMesher3Functions Functions
+/// \ingroup PkgSurfaceMesher3
+
+
 /*!
 \addtogroup PkgSurfaceMesher3
 \todo check generated documentation

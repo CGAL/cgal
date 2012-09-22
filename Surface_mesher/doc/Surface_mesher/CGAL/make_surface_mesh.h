@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3Functions
 
 The function `make_surface_mesh` is a surface mesh generator, 
 that is a function to build a two dimensional mesh 
@@ -134,7 +134,7 @@ Tag tag,
 int initial_number_of_points = 20) ;
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3Functions
 
 The function `make_surface_mesh` is a surface mesh generator, 
 that is a function to build a two dimensional mesh 
@@ -273,12 +273,12 @@ int initial_number_of_points = 20 );
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3TagClasses
 
 The class `Manifold_tag` is a tag class used to monitor the 
 surface meshing algorithm. When instantiated with the tag 
 `Manifold_tag` the function template 
-`make_surface_mesh` 
+`CGAL::make_surface_mesh` 
 ensures that the output mesh is a manifold surface 
 without boundary. 
 
@@ -299,12 +299,12 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3TagClasses
 
 The class `Manifold_with_boundary_tag` is a tag class used to monitor the 
 surface meshing algorithm. When instantiated with the tag 
 `Manifold_with_boundary_tag`, the function template 
-`make_surface_mesh` 
+`CGAL::make_surface_mesh` 
 ensures that the output mesh is a manifold surface 
 but it may have boundaries. 
 
@@ -325,12 +325,12 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3
+\ingroup PkgSurfaceMesher3TagClasses
 
 The class `Non_manifold_tag` is a tag class used to monitor the 
 surface meshing algorithm. When instantiated with the tag 
 `Non_manifold_tag` the function template 
-`make_surface_mesh` 
+`CGAL::make_surface_mesh` 
 does not ensure that the output mesh is a manifold surface. 
 The manifold property of output mesh 
 may nevertheless result from the choice of 
