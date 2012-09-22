@@ -36,7 +36,7 @@ several types of 3D images: INRIMAGE (extension .inr[.gz]), GIS (extension
 \sa `make_surface_mesh` 
 
 */
-template< typename FT, typename Point >
+template< typename FT_, typename Point_ >
 class Gray_level_image_3 {
 public:
 
@@ -44,9 +44,14 @@ public:
 /// @{
 
 /*! 
-the numerical type `FT` 
+the numerical type `FT`.
 */ 
-typedef Hidden_type FT; 
+typedef FT_ FT; 
+
+/*! 
+the point type. 
+*/ 
+typedef Point_ Point; 
 
 
 /// @} 
