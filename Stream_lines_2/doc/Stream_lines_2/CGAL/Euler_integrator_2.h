@@ -20,7 +20,7 @@ public:
 /// @{
 
 /*! 
-Creates an Euler integrator class `einteg` with `integration_step` as integration step. 
+Creates an Euler integrator with `integration_step` as integration step. 
 */ 
 Euler_integrator_2(const FT & integration_step); 
 

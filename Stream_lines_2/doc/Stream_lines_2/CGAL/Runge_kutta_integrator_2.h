@@ -20,7 +20,7 @@ public:
 /// @{
 
 /*! 
-Creates a Runge-Kutta second order integrator class `rkinteg` with `integration_step` as integration step. 
+Creates a Runge-Kutta second order integrator with `integration_step` as integration step. 
 */ 
 Runge_kutta_integrator_2(const FT & integration_step); 
 

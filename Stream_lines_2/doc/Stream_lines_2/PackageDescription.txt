@@ -36,7 +36,7 @@ Streamlines are represented as containers of points, manipulated by an
 iterator range of points, and the whole placement is accessible via an
 iterator range of streamlines.
 
-The main class in this package, the `Stream_lines_2` class of \cgal depends on two template
+The main class in this package, the `CGAL::Stream_lines_2` class of \cgal depends on two template
 parameters.  The first template parameter stands for a class which
 represents both the vector field and the visualization domain with
 operations on them, and should be instantiated by a model of the concept

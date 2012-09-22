@@ -10,7 +10,7 @@ defined on a triangulated domain. All sample points are inserted to a
 located in a face `f`, its vector value is interpolated from the 
 vertices of the face `f`. 
 
-\tpram StreamLinesTraits_2 has to be instantiated by a model of the concept `StreamLinesTraits_2`. 
+\tparam StreamLinesTraits_2 has to be instantiated by a model of the concept `StreamLinesTraits_2`. 
 
 \models ::VectorField_2 
 

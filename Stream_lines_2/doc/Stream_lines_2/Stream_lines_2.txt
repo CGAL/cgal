@@ -22,8 +22,6 @@ placements.
 
 \anchor illustration
 \image html 1.gif
-\image html 2.gif
-\image html 3.gif
 <center><b>
 The core idea of the algorithm is to integrate the streamlines from
 the center of the biggest empty cavities in the domain (left). A
