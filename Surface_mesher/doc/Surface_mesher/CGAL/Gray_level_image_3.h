@@ -48,10 +48,6 @@ the numerical type `FT`
 */ 
 typedef Hidden_type FT; 
 
-/*! 
-the point type `Point` 
-*/ 
-typedef Hidden_type FT; 
 
 /// @} 
 
