@@ -120,15 +120,11 @@ namespace CGAL {
 The class `Ridge_approximation` computes the approximation of 
 ridges of a triangular polyhedral surface. 
 
-### Template Parameters ###
-
-The class `Ridge_approximation` has three template parameters. 
-`TriangulatedSurfaceMesh` provides the surface. 
-Parameters `Vertex2FTPropertyMap` 
-and `Vertex2VectorPropertyMap` provide the differential properties of 
+\tparam TriangulatedSurfaceMesh is the surface type. 
+\tparam Vertex2FTPropertyMap, Vertex2VectorPropertyMap provide the differential properties of 
 the surface associated to its vertices. 
 
-Requirements (checked at compile time) : the types 
+Requirements (checked at compile time): the types 
 `TriangulatedSurfaceMesh::Traits::FT` and 
 `Vertex2FTPropertyMap::value_type` must coincide; the types 
 `TriangulatedSurfaceMesh::Traits::Vector_3` and 
@@ -179,22 +175,22 @@ Vertex2FTPropertyMap& vertex2P2_pm);
 
 /*! 
 Outputs ridges of types `MAX_ELLIPTIC_RIDGE` and `MAX_HYPERBOLIC_RIDGE`. 
-Parameter `it` is a <span class="textsc">Stl</span> output iterator whose 
-`value_type` is `Ridge_line*`. 
+Parameter `it` is an output iterator whose 
+value type is `Ridge_line*`. 
 */ 
 template <class OutputIterator> OutputIterator compute_max_ridges(OutputIterator it, Tag_order ord = Tag_3); 
 
 /*! 
 Outputs ridges of types `MIN_ELLIPTIC_RIDGE` and `MIN_HYPERBOLIC_RIDGE`. 
-Parameter `it` is a <span class="textsc">Stl</span> output iterator whose 
-`value_type` is `Ridge_line*`. 
+Parameter `it` is an output iterator whose 
+value type is `Ridge_line*`. 
 */ 
 template <class OutputIterator> OutputIterator compute_min_ridges(OutputIterator it, Tag_order ord = Tag_3); 
 
 /*! 
 Outputs ridges of types `MAX_CREST_RIDGE` and `MIN_CREST_RIDGE`. 
-Parameter `it` is a <span class="textsc">Stl</span> output iterator whose 
-`value_type` is `Ridge_line*`. 
+Parameter `it` is an output iterator whose 
+value type is `Ridge_line*`. 
 */ 
 template <class OutputIterator> OutputIterator compute_crest_ridges(OutputIterator it, Tag_order ord = Tag_3); 
 
@@ -211,7 +207,7 @@ namespace CGAL {
 The class `Ridge_line` stores the description of a ridge line. The list 
 of halfedges defines a connected sequence of edges (but not as 
 oriented halfedges). The scalar \f$ b\f$ paired with a halfedge \f$ pq\f$ is the 
-barycentric coordinate of the crossing point \f$ r\f$ with the ridge : 
+barycentric coordinate of the crossing point \f$ r\f$ with the ridge: 
 \f$ r = b\times p + (1-b)\times q\f$. 
 
 \sa `Ridge_approximation`
@@ -285,7 +281,7 @@ namespace CGAL {
 /*!
 \ingroup PkgRidges_3Classes
 
-The class `Vertex2Data_Property_Map_with_std_map` provides models for the concepts 
+The class `Vertex2Data_Property_Map_with_std_map` is a model of the concepts 
 `Vertex2FTPropertyMap` and `Vertex2VectorPropertyMap` to be used for 
 `Ridge_approximation`. The property maps are 
 created with the `boost::associative_property_map` adaptor from 

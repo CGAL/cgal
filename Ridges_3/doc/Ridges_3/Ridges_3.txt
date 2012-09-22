@@ -161,14 +161,9 @@ Otherwise the umbilic is qualified
 \anchor index_umbilic
 \image index_umbilic.png 
 <center><b>
-Index \f$ 1/2\f$ umbilic or elliptic umbilic.
+Left: Index \f$ 1/2\f$ umbilic or elliptic umbilic. Right: Elliptic and hyperbolic umbilics.
 </b></center>
 
-\anchor umbilics
-\image html lemon.png 
-<center><b>
-Elliptic and hyperbolic umbilics.
-</b></center>
 
 # Approximating Ridges on Triangulated Surface Meshes #
 
@@ -567,15 +562,14 @@ of crest ridges on a mechanical model, and has been computed as follows:
 
 \anchor figmechanical_crest_filteredintro 
 \image html mecanic-sub1_crest-jpg.png
-\image html mecanic-sub1_crestTweight1Tsharp7-jpg.png"
 
 <center><b>
-Mechanical part (37k pts): (a) All crest lines, (b) crests filtered
-with the strength threshold 1 and (c) crests filtered with the
+Mechanical part (37k pts). Left: All crest lines. Middle:  crests filtered
+with the strength threshold 1. Right: crests filtered with the
 sharpness threshold 100 000. Notice that any point on a flat or
 cylindrical part lies on two ridges, so that the noise observed on the
-top two Figs. is unavoidable. It is however easily filtered out with
-the sharpness on the bottom figure.
+first two figures is unavoidable. It is however easily filtered out with
+the sharpness as can be seen on the right figure.
 </b></center>
 
 */ 

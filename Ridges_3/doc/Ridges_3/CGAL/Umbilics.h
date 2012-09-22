@@ -40,11 +40,8 @@ namespace CGAL {
 The class `Umbilic_approximation` computes the approximation of 
 umbilics on a triangular polyhedral surface. 
 
-### Template Parameters ###
-
-The class `Umbilic_approximation` has three template parameters. 
-`TriangulatedSurfaceMesh` provides the surface. Parameters 
-`Vertex2FTPropertyMap` and `Vertex2VectorPropertyMap` provide 
+\tparam TriangulatedSurfaceMesh is the surface type. 
+\tparam Vertex2FTPropertyMap, Vertex2VectorPropertyMap provide 
 the differential properties of the surface associated to its vertices. 
 
 Requirements (checked at compile time) : the types 
@@ -96,8 +93,7 @@ const Vertex2VectorPropertyMap& vertex2d2_pm);
 /*! 
 Performs the approximation, `size` determines the size of the 
 patches around vertices, taken as `size` times the size of the 
-1-ring. Umbilics are output through the `OutputIterator` which is a 
-concept of output iterator of the <span class="textsc">Stl</span> with value type `Umbilic*`. 
+1-ring. Umbilics are inserted into the `OutputIterator` `it` with value type `Umbilic*`. 
 */ 
 template <class OutputIterator> OutputIterator compute(OutputIterator it, FT size); 
 

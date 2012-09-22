@@ -6,7 +6,7 @@
 The concept `Vertex2VectorPropertyMap` specializes the concept of LvaluePropertyMap 
 of the Boost library. It is intended to be used in combination with 
 the concept `TriangulatedSurfaceMesh` in the class 
-`Ridge_approximation`. It associates a three dimensional vector 
+`CGAL::Ridge_approximation`. It associates a three dimensional vector 
 `TriangulatedSurfaceMesh::Traits::Vector_3` to keys which are 
 `TriangulatedSurfaceMesh::Vertex_handle`. 
 
