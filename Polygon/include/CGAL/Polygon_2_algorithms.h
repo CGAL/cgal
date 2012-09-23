@@ -50,7 +50,7 @@ namespace CGAL {
 /// with the smallest `y`-coordinate is taken.
 ///
 /// \requires `Traits` is a model of the concept `PolygonTraits_2`.
-/// 	  In fact, only the members `Less_xy_2` and
+/// 	  Only the members `Less_xy_2` and
 /// 	  `less_xy_2_object()` are used.
 /// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
 ///
@@ -68,7 +68,7 @@ ForwardIterator left_vertex_2(ForwardIterator first,
 /// with the largest `y`-coordinate is taken.
 /// 
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2`
+/// 	  `PolygonTraits_2`.
 /// 	  In fact, only the members `Less_xy_2` and
 /// 	  `less_xy_2_object()` are used.
 /// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
@@ -88,8 +88,8 @@ ForwardIterator right_vertex_2(ForwardIterator first,
 /// with the largest `x`-coordinate is taken.
 ///
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2`
-/// 	  In fact, only the members `Less_yx_2` and
+/// 	  `PolygonTraits_2`.
+/// 	  Only the members `Less_yx_2` and
 /// 	  `less_yx_2_object()` are used.
 /// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
 /// 
@@ -107,8 +107,8 @@ ForwardIterator top_vertex_2(ForwardIterator first,
 /// with the smallest `x`-coordinate is taken.
 ///
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2`
-/// 	  In fact, only the members `Less_yx_2` and
+/// 	  `PolygonTraits_2`.
+/// 	  Only the members `Less_yx_2` and
 /// 	  `less_yx_2_object()` are used.
 /// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
 /// 
@@ -126,8 +126,8 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
 /// Returns the bounding box of the range `[first,last)`. 
 /// 
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2`
-/// 	  In fact, only the members `Construct_bbox_2` and
+/// 	  `PolygonTraits_2`.
+/// 	  Only the members `Construct_bbox_2` and
 /// 	  `construct_bbox_2_object()` are used.
 /// \requires The value type of `InputIterator` must be `Traits::Point_2`.
 /// 
@@ -146,7 +146,7 @@ Bbox_2 bbox_2(InputIterator first,
 /// returns the area instead of taking it as a parameter.
 /// 
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2
+/// 	  `PolygonTraits_2.
 /// 	  Only the following members of this traits class are used:
 ///   - `Compute_area_2` : Computes the signed area of the
 /// 	    oriented triangle defined by 3 `Point_2` passed as arguments.
@@ -218,10 +218,10 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
    return result;
 }
 
-/// The function is_convex_2 computes if a polygon is convex.
+/// Checks if the polygon is convex.
 /// 
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2`
+/// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Less_xy_2`
 ///   - `Orientation_2`
@@ -236,14 +236,12 @@ bool is_convex_2(ForwardIterator first,
 		 ForwardIterator last,
 		 const Traits& traits);
 
-/// The function is_simple_2 computes if a polygon is simple, that is, if the edges 
+/// Checks if the polygon defined by the
+/// iterator range `[first,last)` is simple, that is, if the edges 
 /// do not intersect, except consecutive edges in their common vertex.
 /// 
-/// Checks if the polygon defined by the
-/// iterator range `[first,last)` is simple.
-/// 
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2`
+/// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Point_2`
 ///   - `Less_xy_2`
@@ -252,12 +250,11 @@ bool is_convex_2(ForwardIterator first,
 ///   - `orientation_2_object()`
 /// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
 /// 
-/// Implementation
-/// --------------
+/// ### Implementation##
 /// 
 /// The simplicity test is implemented by means of a plane sweep algorithm.
 /// The algorithm is quite robust when used with inexact number types.
-/// The running time is O(n log n), where n is the number of vertices of the
+/// The running time is `O(n log n)`, where n is the number of vertices of the
 /// polygon.
 /// 
 /// \sa `PolygonTraits_2 `
@@ -270,9 +267,9 @@ bool is_simple_2(ForwardIterator first,
 // In the following two functions we would like to use Traits::Point_2
 // instead of Point, but this is not allowed by g++ 2.7.2.
 ///
-/// The function oriented_side_2 computes on which side of a polygon a point lies.
+/// Computes on which side of a polygon a point lies.
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2`
+/// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Less_xy_2`
 ///   - `Compare_x_2`
@@ -295,8 +292,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
 			      const Point& point,
 			      const Traits& traits);
 
-/// The function  bounded_side_2 computes if a point lies inside a polygon.
-/// The function bounded_side_2 computes if a point lies inside a polygon. 
+/// Computes if a point lies inside a polygon.
 /// The polygon is defined by the sequence of points `[first,last)`.
 /// Being inside is defined by the odd-even rule. If we take a ray starting at the
 /// point and extending to infinity (in any direction), we count the number of
@@ -307,7 +303,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
 /// 
 /// 
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2`
+/// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Compare_x_2`
 ///   - `Compare_y_2`
@@ -317,8 +313,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
 ///   - `orientation_2_object()`
 /// \requires The value type of  `ForwardIterator` must be `Traits::Point_2`,
 /// 
-/// Implementation
-/// --------------
+/// ### Implementation ###
 /// 
 /// The running time is linear in the number of vertices of the polygon.
 /// A horizontal ray is taken to count the number of intersections.
@@ -335,12 +330,11 @@ Bounded_side bounded_side_2(ForwardIterator first,
 			    const Point& point,
 			    const Traits& traits);
 
-/// The function orientation_2 computes if a polygon is clockwise or counterclockwise
-/// oriented.
+/// Computes if a polygon is clockwise or counterclockwise oriented.
 /// \pre `is_simple_2(first, last, traits);`
 /// 
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2`
+/// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Less_xy_2`
 ///   - `less_xy_2_object()`

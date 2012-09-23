@@ -53,8 +53,7 @@ namespace CGAL {
 /// can be any class that fulfills the requirements for an STL
 /// container. It defaults to the std::vector class.
 ///
-/// Implementation
-/// --------------
+/// ### Implementation ###
 ///
 /// The methods `is_simple()`, `is_convex()`, `orientation()`,
 /// `oriented_side()`, `bounded_side()`, `bbox()`, `area()`, `left_vertex()`,
@@ -63,11 +62,7 @@ namespace CGAL {
 /// the corresponding global functions for information about which
 /// algorithms were used and what complexity they have.
 ///
-/// Example
-/// -------
-/// The following code fragment creates a polygon and checks if it is convex.
-/// 
-/// \cgalexample{Polygon.cpp}
+
 template <class Traits_P, class Container_P
         = std::vector<typename Traits_P::Point_2> >
 class Polygon_2 {

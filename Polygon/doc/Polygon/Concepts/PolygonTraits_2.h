@@ -3,7 +3,7 @@
 \ingroup PkgPolygon2Concepts
 \cgalconcept
 
-The `Polygon_2` class and the functions that implement the
+The `CGAL::Polygon_2` class and the functions that implement the
 functionality found in that class each are parameterized by a traits
 class that defines the primitives used in the algorithms.  The concept
 `PolygonTraits_2` defines this common set of requirements.
@@ -94,7 +94,7 @@ typedef Hidden_type Compute_area_2;
 /// @} 
 
 /// \name Operations 
-CONVERROR Check if this needs to be spread\n/// The following functions that create instances of the above predicate object types must exist.
+/// The following functions that create instances of the above predicate object types must exist.
 /// @{
 
 /*! 
