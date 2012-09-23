@@ -9,8 +9,8 @@ ArrangementGraphicsItemBase( ):
     bb_initialized( false ),
     visible_edges( true ),
     visible_vertices( true ),
-    verticesPen( QPen( ::Qt::black, 3. ) ),
-    edgesPen( QPen( ::Qt::black, 1. ) ),
+    verticesPen( QPen( ::Qt::blue, 3. ) ),
+    edgesPen( QPen( ::Qt::blue, 1. ) ),
     scene( NULL )
 {
     this->verticesPen.setCosmetic( true );

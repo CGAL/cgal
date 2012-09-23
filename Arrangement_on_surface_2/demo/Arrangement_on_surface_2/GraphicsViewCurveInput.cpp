@@ -43,7 +43,8 @@ GraphicsViewCurveInputBase( QObject* parent ):
     GraphicsViewInput( parent ),
 //    scene( NULL ),
     snappingEnabled( false ),
-    snapToGridEnabled( false )
+    snapToGridEnabled( false ),
+    color( ::Qt::blue )
 { }
 
 void 
@@ -76,6 +77,20 @@ eventFilter( QObject* obj, QEvent* event )
     }
 
     return QObject::eventFilter( obj, event );
+}
+
+void 
+GraphicsViewCurveInputBase::
+setColor( QColor c )
+{
+    this->color = c;
+}
+
+QColor 
+GraphicsViewCurveInputBase::
+getColor( ) const
+{
+    return this->color;
 }
 
 #if 0

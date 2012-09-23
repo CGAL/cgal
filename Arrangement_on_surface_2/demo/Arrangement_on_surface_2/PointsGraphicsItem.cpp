@@ -5,7 +5,8 @@
 
 PointsGraphicsItem::
 PointsGraphicsItem( ):
-    pointPen( QPen( ::Qt::black, 3. ) )
+    pointRadius( 3.0 ),
+    color( ::Qt::blue )
 { }
 
 void
@@ -13,10 +14,10 @@ PointsGraphicsItem::
 paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {
     double scale = painter->worldTransform( ).m11( );
-    double radius = this->pointPen.width( ) / 2.0;
+    double radius = this->pointRadius;
     radius /= scale;
     QPen savePen = painter->pen( );
-    painter->setBrush( this->pointPen.brush( ) );
+    painter->setBrush( QBrush( this->color ) );
 
     for ( int i = 0; i < this->points.size( ); ++i )
     {
@@ -61,6 +62,33 @@ clear( )
     this->prepareGeometryChange( );
 
     this->points.clear( );
+}
+
+void 
+PointsGraphicsItem::
+setColor( QColor c )
+{
+    this->color = c;
+}
+QColor 
+PointsGraphicsItem::
+getColor( ) const
+{
+    return this->color;
+}
+
+void 
+PointsGraphicsItem::
+setPointRadius( double d )
+{
+    this->pointRadius = d;
+}
+
+double 
+PointsGraphicsItem::
+getPointRadius( ) const
+{
+    return this->pointRadius;
 }
 
 void

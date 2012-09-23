@@ -30,12 +30,19 @@ public:
 
     void clear( );
 
+    void setColor( QColor c );
+    QColor getColor( ) const;
+
+    void setPointRadius( double d );
+    double getPointRadius( ) const;
+
 public slots:
     virtual void modelChanged( );
 
 protected:
     std::vector< QPointF > points;
-    QPen pointPen;
+    double pointRadius;
+    QColor color;
 
 }; // class PointsGraphicsItem
 #endif // POINTS_GRAPHICS_ITEM_H

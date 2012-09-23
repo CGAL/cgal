@@ -244,13 +244,13 @@ updateMode( QAction* newMode )
     else if ( newMode == this->ui->actionRayShootingUp )
     {
         // -y is up for Qt, so we shoot down
-        activeTab->getVerticalRayShootCallback( )->setShootingUp( false );
+        activeTab->getVerticalRayShootCallback( )->setShootingUp( true );
         activeScene->installEventFilter( activeTab->getVerticalRayShootCallback( ) );
     }
     else if ( newMode == this->ui->actionRayShootingDown )
     {
         // the bottom of the viewport for Qt is +y, so we shoot up
-        activeTab->getVerticalRayShootCallback( )->setShootingUp( true );
+        activeTab->getVerticalRayShootCallback( )->setShootingUp( false );
         activeScene->installEventFilter( activeTab->getVerticalRayShootCallback( ) );
     }
     else if ( newMode == this->ui->actionMerge )

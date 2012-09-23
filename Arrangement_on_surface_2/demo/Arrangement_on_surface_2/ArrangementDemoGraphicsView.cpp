@@ -8,8 +8,13 @@ ArrangementDemoGraphicsView( QWidget* parent ):
     QGraphicsView( parent ),
     showGrid( false ),
     gridSize( 50 ),
-    gridColor( ::Qt::black )
-{ }
+    gridColor( ::Qt::white ),
+    backgroundColor( ::Qt::black )
+{
+    QMatrix m( 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
+    this->setMatrix( m );
+    this->setBackgroundBrush( QBrush( backgroundColor ) );
+}
 
 
 void
@@ -54,6 +59,20 @@ getGridColor( ) const
     return this->gridColor;
 }
 
+void 
+ArrangementDemoGraphicsView::
+setBackgroundColor( QColor color )
+{
+    this->backgroundColor = color;
+}
+
+QColor 
+ArrangementDemoGraphicsView::
+getBackgroundColor( ) const
+{
+    return this->backgroundColor;
+}
+
 void
 ArrangementDemoGraphicsView::
 drawForeground( QPainter* painter, const QRectF& rect )
@@ -96,6 +115,13 @@ getViewportRect( ) const
 {
     QPointF p1 = this->mapToScene( 0, 0 );
     QPointF p2 = this->mapToScene( this->width( ), this->height( ) );
-    QRectF res = QRectF( p1, p2 );
+
+    double xmin = std::min( p1.x( ), p2.x( ) );
+    double xmax = std::max( p1.x( ), p2.x( ) );
+    double ymin = std::min( p1.y( ), p2.y( ) );
+    double ymax = std::max( p1.y( ), p2.y( ) );
+
+    QRectF res = QRectF( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
+
     return res;
 }

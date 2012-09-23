@@ -28,7 +28,7 @@ paint( QPainter* painter,
     {
         return;
     }
-    bool isShootingUp = ( this->m_source.y( ) > this->m_targetY ); // -y towards the top
+    bool isShootingUp = ( this->m_source.y( ) < this->m_targetY ); // -y towards the top
     if ( this->m_isInfinite )
     {
         QRectF clipRect = this->viewportRect( );

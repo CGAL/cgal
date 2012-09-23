@@ -32,6 +32,8 @@ public:
 
     void setSnappingEnabled( bool b );
     void setSnapToGridEnabled( bool b );
+    virtual void setColor( QColor c );
+    QColor getColor( ) const;
 
 protected:
     GraphicsViewCurveInputBase( QObject* parent );
@@ -42,6 +44,7 @@ protected:
     PointsGraphicsItem pointsGraphicsItem; // shows user specified curve points
     bool snappingEnabled;
     bool snapToGridEnabled;
+    QColor color;
 
 }; // class GraphicsViewCurveInputBase
 
@@ -68,7 +71,17 @@ public:
     GraphicsViewCurveInput( QObject* parent ):
         GraphicsViewCurveInputBase( parent ),
         second( false )
-    { }
+    { 
+        this->setColor( this->color );
+    }
+
+    void setColor( QColor c )
+    {
+        this->GraphicsViewCurveInputBase::setColor( c );
+        QPen pen = this->segmentGuide.pen( );
+        pen.setColor( c );
+        this->segmentGuide.setPen( pen );
+    }
 
 protected:
     void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
@@ -172,6 +185,9 @@ protected:
 
             QPointF pt = this->convert( clickedPoint );
             QGraphicsLineItem* lineItem = new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+            QPen pen = lineItem->pen( );
+            pen.setColor( this->color );
+            lineItem->setPen( pen );
             this->polylineGuide.push_back( lineItem );
             if ( this->scene != NULL )
             {
@@ -203,6 +219,9 @@ protected:
             { // start the next segment
                 QPointF pt = this->convert( clickedPoint );
                 QGraphicsLineItem* lineItem = new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+                QPen pen = lineItem->pen( );
+                pen.setColor( this->color );
+                lineItem->setPen( pen );
                 this->polylineGuide.push_back( lineItem );
                 if ( this->scene != NULL )
                 {
@@ -321,6 +340,9 @@ protected:
             {
                 QPointF pt = this->convert( clickedPoint );
                 QGraphicsLineItem* lineItem = new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+                QPen pen = lineItem->pen( );
+                pen.setColor( this->color );
+                lineItem->setPen( pen );
                 this->polylineGuide.push_back( lineItem );
                 if ( this->scene != NULL )
                 {
@@ -333,6 +355,9 @@ protected:
                 if ( this->scene != NULL )
                 {
                     QGraphicsEllipseItem* ellipse = this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
+                    QPen pen = ellipse->pen( );
+                    pen.setColor( this->color );
+                    ellipse->setPen( pen );
                     this->circleItem = ellipse;
                 }
             }
@@ -342,6 +367,9 @@ protected:
                 if ( this->scene != NULL )
                 {
                     QGraphicsEllipseItem* ellipse = this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
+                    QPen pen = ellipse->pen( );
+                    pen.setColor( this->color );
+                    ellipse->setPen( pen );
                     this->ellipseItem = ellipse;
                 }
             }
@@ -539,12 +567,22 @@ public: // constructors
         GraphicsViewCurveInputBase( parent ),
         second( false ),
         curveType( SEGMENT )
-    { }
+    {
+        this->setColor( this->color );
+    }
 
 public: // methods
     void setCurveType( CurveType type )
     {
         this->curveType = type;
+    }
+
+    void setColor( QColor c )
+    {
+        this->GraphicsViewCurveInputBase::setColor( c );
+        QPen pen = this->segmentGuide.pen( );
+        pen.setColor( c );
+        this->segmentGuide.setPen( pen );
     }
 
 protected: // methods
@@ -553,6 +591,10 @@ protected: // methods
         // before we do anything, update the clipping rect
         // TODO: somehow only update this when the view changes
         QRectF clippingRect = this->viewportRect( );
+        if ( !clippingRect.isValid( ) )
+        {
+            std::cout << "Warning: not valid clipping rect" << std::endl;
+        }
         this->convert = Converter< Kernel >( clippingRect );
 
         // now handle the event

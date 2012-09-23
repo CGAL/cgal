@@ -21,7 +21,7 @@ namespace CGAL {
 namespace Qt {
 
 template < class ArrTraits >
-class ArrangementPainterOstreamBase
+class ArrangementPainterOstreamBase : public QGraphicsSceneMixin
 {
 public: // typedefs
     typedef ArrTraits Traits;
@@ -39,7 +39,7 @@ public: // constructors
         painterOstream( p, clippingRectangle ),
         qp( p ),
         convert( clippingRectangle ),
-        scene( NULL ),
+//      scene( NULL ),
         clippingRect( QRectF( ) ), // null rectangle
         scale( 1.0 )
     {
@@ -66,10 +66,26 @@ public: // methods
         {
             return;
         }
-        this->clippingRect = this->getViewportRect( );
+        this->clippingRect = this->viewportRect( );
+        this->convert = Converter< Kernel >( this->clippingRect );
     }
 
+#if 0
+    void setScene( QGraphicsScene* scene_ )
+    {
+        this->scene = scene_;
+
+        // set the clipping rectangle
+        if ( scene_ == NULL )
+        {
+            return;
+        }
+        this->clippingRect = this->getViewportRect( );
+    }
+#endif
+
 protected: // methods
+#if 0
     QRectF getViewportRect( ) const
     {
         // assumes scene is not null and attached to exactly one view
@@ -80,12 +96,13 @@ protected: // methods
 
         return clipRect;
     }
+#endif
 
 protected: // fields
     PainterOstream< Kernel > painterOstream;
     QPainter* qp;
     Converter< Kernel > convert;
-    QGraphicsScene* scene;
+//    QGraphicsScene* scene;
     QRectF clippingRect;
     double scale;
 
@@ -908,7 +925,7 @@ protected:
     {
         typedef Curve_renderer_facade<CKvA_2> Facade;
         QGraphicsView* view = this->scene->views( ).first( );
-        QRectF viewport = this->getViewportRect( );
+        QRectF viewport = this->viewportRect( );
         CGAL::Bbox_2 bbox = this->convert( viewport ).bbox( );
         Facade::setup(bbox, view->width(), view->height());
     }
