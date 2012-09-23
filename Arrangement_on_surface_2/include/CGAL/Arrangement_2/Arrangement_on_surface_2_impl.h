@@ -2860,7 +2860,6 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
             std::list< std::pair< const DHalfedge*, int > > dummy;
             // IDEA EBEB 2012-07-28
             // store signs of CCB with CCB in DCEL and use them here
-            //std::cout << ">>> call oc" << std::endl;
             std::pair< CGAL::Sign, CGAL::Sign > signs_oc =
               // *oc_it is already closed, so we do a full round
               // (default = false)
@@ -3498,8 +3497,6 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
   // - or if this is not possible, perform the following computation 
   //   on-demand only
   
-  // std::cout << "end_is_anchor_opposite: " << end_is_anchor_opposite << std::endl;
-
   // init with edges at first link
   // assuming that he_anchor has been removed
   const DHalfedge* he_curr =
@@ -3521,6 +3518,15 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
     parameter_space_in_x(he_curr->curve(), he_curr_tgt_end);
   Arr_parameter_space ps_y_save =
     parameter_space_in_y(he_curr->curve(), he_curr_tgt_end);
+
+  // TODO EBEB 2012-09-20 check whether this fix is correct
+  // EBEB 2012-08-22 the 'start' of one (out of two) loops might
+  // be directed towards the identification. 
+  // In this cases, we have to adapt the index:
+  int x_correction = 0;
+  if (ps_x_save == ARR_RIGHT_BOUNDARY) {
+    x_correction--;
+  }
 
   Arr_parameter_space ps_x_curr, ps_y_curr;
   Arr_parameter_space ps_x_next, ps_y_next;
@@ -3553,7 +3559,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
       // std::cout << "hit" << std::endl;
       // store he (and implicitly he->next) as halfedge pointing to a local
       // minimum
-      *local_mins_it++  = std::make_pair(he_curr, x_index);
+      *local_mins_it++  = std::make_pair(he_curr, x_index + x_correction);
     }
     
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
@@ -3980,7 +3986,6 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
     bool end_is_anchor_opposite = (f1 == f2);
 
-    //std::cout << ">>> call he1" << std::endl;
     signs1 = _compute_signs_and_local_minima(he1,
                                              std::front_inserter(local_mins1),
                                              end_is_anchor_opposite);
@@ -3988,7 +3993,6 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     std::cout << "signs1.y: " << signs1.second << std::endl;
     std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
 
-    // std::cout << ">>> call he2" << std::endl;
     signs2 = _compute_signs_and_local_minima(he2,
                                              std::front_inserter(local_mins2),
                                              end_is_anchor_opposite);
