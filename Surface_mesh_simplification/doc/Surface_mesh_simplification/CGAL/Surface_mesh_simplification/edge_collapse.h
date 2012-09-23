@@ -41,7 +41,7 @@ In the following subsections, each named parameter is documented as a helper fun
 function is the actual parameter to `edge_collapse()`, while the name of the helper 
 function designates which formal argument it is. 
 
-## vertex_index_map(VertexIndexMap vpm) ## 
+### vertex_index_map(VertexIndexMap vpm) ## #
 
 Maps each vertex in the surface into an unsigned integer number 
 in the range `[0,num_vertices(surface))`. 
@@ -53,7 +53,7 @@ whose `key_type` is
 and whose `value_type` is 
 `boost::graph_traits<EdgeCollapsableMesh>::size_type`, 
 
-<B>Default</B>: the property map obtained by calling `get(vertex_index,surface)`, 
+<B>%Default</B>: the property map obtained by calling `get(vertex_index,surface)`, 
 which requires the surface vertices to have an `id()` member properly initialized to the 
 required value. 
 
@@ -74,7 +74,7 @@ whose `key_type` is
 and whose `value_type` is 
 `boost::graph_traits<EdgeCollapsableMesh>::size_type` 
 
-<B>Default</B>: the property map obtained by calling `get(edge_index,surface)`, 
+<B>%Default</B>: the property map obtained by calling `get(edge_index,surface)`, 
 which requires the surface edges to have an `id()` member properly initialized to the 
 require value. 
 
@@ -94,7 +94,7 @@ whose `key_type` is
 `boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor` 
 and whose `value_type` is `bool`. 
 
-<B>Default</B>: the property map obtained by calling `get(edge_is_border,surface)`. 
+<B>%Default</B>: the property map obtained by calling `get(edge_is_border,surface)`. 
 
 ### get_cost(GetCost gc) ## 
 
@@ -102,7 +102,7 @@ The policy which returns the collapse cost for an edge.
 
 The type of `gc` must be a model of the `GetCost` concept. 
 
-<B>Default</B>: 
+<B>%Default</B>: 
 `CGAL::Surface_mesh_simplification::LindstromTurk_cost<EdgeCollapsableMesh>`. 
 
 ### get_placement(GetPlacement gp) ## 
@@ -112,7 +112,7 @@ for an edge.
 
 The type of `gp` must be a model of the `GetPlacement` concept. 
 
-<B>Default</B>: 
+<B>%Default</B>: 
 `CGAL::Surface_mesh_simplification::LindstromTurk_placement<EdgeCollapsableMesh>` 
 
 ### visitor(EdgeCollapseSimplificationVisitor v) ## 
@@ -122,7 +122,7 @@ in certain points to allow the user to track the simplification process.
 
 The type of `v` must be a model of the `EdgeCollapseSimplificationVisitor` concept. 
 
-<B>Default: an implementation-defined dummy visitor</B>. 
+<B>%Default: an implementation-defined dummy visitor</B>. 
 
 If you wish to provide your own visitor, you can derive from: 
 `CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<EdgeCollapsableMesh>` 
