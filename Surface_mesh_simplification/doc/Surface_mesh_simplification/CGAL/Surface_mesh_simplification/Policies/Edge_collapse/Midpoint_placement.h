@@ -40,5 +40,5 @@ result_type operator()( Profile const& edge_profile ) const;
 /// @}
 
 }; /* end Surface_mesh_simplification::Midpoint_placement */
-} /* end namespace Surface_Mesh_Simplification
+} /* end namespace Surface_Mesh_Simplification */
 } /* end namespace CGAL */
