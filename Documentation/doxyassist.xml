@@ -372,6 +372,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Surface_mesh_simplification.tag</string>
           <string name="EXAMPLE_PATH">../Surface_mesh_simplification/examples</string>
           <string name="IMAGE_PATH">../Surface_mesh_simplification/doc/Surface_mesh_simplification/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+          </list>
         </doxygen>
       </project>
 
