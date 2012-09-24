@@ -191,7 +191,7 @@ private:
 /// \ingroup  PkgSurfaceParameterizationAlgebra
 ///
 /// The class Taucs_solver_traits
-/// is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems
+/// is a traits class for solving general, that is symmetric and unsymmetric, sparse linear systems
 /// using TAUCS out-of-core LU factorization.
 ///
 /// \models SparseLinearAlgebraTraits_d

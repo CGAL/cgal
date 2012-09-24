@@ -21,26 +21,29 @@
 
 /// \ingroup PkgSurfaceParameterizationConcepts
 /// \cgalconcept
+///
 /// The concept SparseLinearAlgebraTraits_d
-/// is used to solve sparse linear systems "A*X = B".
+/// is used to solve sparse linear systems `A*X = B`.
+///
 /// \refines LinearAlgebraTraits_d
+
 class SparseLinearAlgebraTraits_d
 {
 public:
-    typedef xxx Matrix ;
-    typedef xxx Vector ;
-    typedef xxx NT;
+    typedef Hidden_type Matrix ;
+    typedef Hidden_type Vector ;
+    typedef Hidden_type NT;
 
 // Public operations
 public:
     /// Default constructor
     SparseLinearAlgebraTraits_d();
 
-    /// Solve the sparse linear system "A*X = B".
-    /// Return true on success. The solution is then (1/D) * X.
+    /// Solve the sparse linear system `A*X = B`.
+    /// Return `true` on success. The solution is then `(1/D) * X`.
     ///
-    /// \pre A.row_dimension() == B.dimension().
-    /// \pre A.column_dimension() == X.dimension().
+    /// \pre `A.row_dimension() == B.dimension()`.
+    /// \pre `A.column_dimension() == X.dimension()`.
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D);
 };
 

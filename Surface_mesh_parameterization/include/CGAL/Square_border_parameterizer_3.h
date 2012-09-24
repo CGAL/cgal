@@ -51,7 +51,7 @@ namespace CGAL {
 /// `ParameterizationMesh_3` class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// \models BorderParameterizer_3 (although you cannot instantiate this class).
+/// \models BorderParameterizer_3
 ///
 
 template<class ParameterizationMesh_3>      //< 3D surface
@@ -106,7 +106,7 @@ public:
 
     // Default constructor, copy constructor and operator =() are fine
 
-    /// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
+    /// Assign to mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
     /// on border's shape. Mark them as "parameterized".
     typename Parameterizer_traits_3<Adaptor>::Error_code
                                         parameterize_border(Adaptor& mesh);

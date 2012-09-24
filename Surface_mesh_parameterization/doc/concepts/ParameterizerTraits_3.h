@@ -25,9 +25,7 @@
 /// for a given type of mesh, 'Adaptor', which is a model of the
 /// ParameterizationMesh_3 concept.
 ///
-/// ## Design Pattern ##
-/// ParameterizerTraits_3 models are Strategies [GHJV95]: they implement
-/// a strategy of surface parameterization for models of ParameterizationMesh_3.
+
 class ParameterizerTraits_3
 {
 // Public types
@@ -46,15 +44,15 @@ public:
     ERROR_WRONG_PARAMETER           ///< A method received an unexpected parameter
     };
 
-    /// Export the type of mesh to parameterize
-    typedef xxx Adaptor;
+    /// the type of mesh to parameterize.
+    typedef Hidden_type Adaptor;
 
 // Public operations
 public:
     /// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
     /// to a piece of the 2D space.
     /// The mapping is linear by pieces (linear in each triangle).
-    /// The result is the (u,v) pair image of each vertex of the 3D surface.
+    /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
     ///
     /// \pre 'mesh' must be a surface with one connected component and no hole.
     /// \pre 'mesh' must be a triangular mesh.

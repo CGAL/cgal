@@ -61,7 +61,7 @@ namespace CGAL {
 /// from the linear systems in order to have a symmetric positive definite
 /// matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 ///
-/// \models ParameterizerTraits_3 (although you cannot instantiate this class).
+/// \models ParameterizerTraits_3
 ///
 ///
 ///

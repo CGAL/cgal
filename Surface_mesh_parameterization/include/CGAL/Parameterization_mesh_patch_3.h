@@ -47,16 +47,10 @@ namespace CGAL {
 /// describes the border of a topological disc. This border may be an actual
 /// border of the mesh or a virtual border.
 ///
-/// \models `ParameterizationMesh_3` concept, whose purpose is to allow
-/// the Surface_mesh_parameterization package to access meshes in a
-/// uniform manner.
+/// \models `ParameterizationMesh_3`
 ///
-/// ## Design Pattern ##
-/// `Parameterization_mesh_patch_3` is a `Decorator`  \cite cgal:ghjv-dpero-95\ : it changes the behavior
-/// of a `ParameterizationPatchableMesh_3` 3D surface while keeping its
-/// `ParameterizationMesh_3` interface.
 ///
-/// @param ParameterizationPatchableMesh_3 3D surface mesh.
+/// \tparam ParameterizationPatchableMesh_3 3D surface mesh.
 
 template<class ParameterizationPatchableMesh_3>
 class Parameterization_mesh_patch_3
@@ -82,14 +76,14 @@ public:
     /// Number type to represent coordinates.
     typedef typename Adaptor::NT            NT;
 
-    /// 2D point that represents (u,v) coordinates computed
-    /// by parameterization methods. Must provide X() and Y() methods.
+    /// 2D point that represents `(u,v)` coordinates computed
+    /// by parameterization methods. Must provide `x()` and `y()` methods.
     typedef typename Adaptor::Point_2       Point_2;
-    /// 3D point that represents vertices coordinates. Must provide X() and Y() methods.
+    /// 3D point that represents vertices coordinates. Must provide `x()` and `y()` methods.
     typedef typename Adaptor::Point_3       Point_3;
-    /// 2D vector. Must provide X() and Y() methods.
+    /// 2D vector. Must provide `x()` and `y()` methods.
     typedef typename Adaptor::Vector_2      Vector_2;
-    /// 3D vector. Must provide X() and Y() methods.
+    /// 3D vector. Must provide `x()` and `y()` methods.
     typedef typename Adaptor::Vector_3      Vector_3;
 
     /// Opaque type representing a facet of the 3D mesh. No methods are expected.
@@ -98,7 +92,7 @@ public:
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
                                             Facet_const_handle;
-    /// Iterator over all mesh facets. Model of the ForwardIterator concept.
+    /// Iterator over all mesh facets. Model of the `ForwardIterator` concept.
     typedef Convertible_filter_iterator<typename Adaptor::Facet_iterator,
                                         Inner_facets_filter,
                                         Facet_const_handle,
@@ -111,22 +105,22 @@ public:
 
     /// Opaque type representing a vertex of the 3D mesh. No methods are expected.
     typedef Param_mesh_patch_vertex<Adaptor> Vertex;
-    /// Handle to a vertex. Model of the Handle concept.
+    /// Handle to a vertex. Model of the `Handle` concept.
     typedef Param_mesh_patch_vertex_handle<Adaptor>
                                             Vertex_handle;
     typedef Param_mesh_patch_vertex_const_handle<Adaptor>
                                             Vertex_const_handle;
-    /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
+    /// Iterator over all vertices of a mesh. Model of the `ForwardIterator` concept.
     typedef Param_mesh_patch_vertex_list_iterator<Adaptor>
                                             Vertex_iterator;
     typedef Param_mesh_patch_vertex_list_const_iterator<Adaptor>
                                             Vertex_const_iterator;
     /// Iterator over vertices of the mesh "main border".
-    /// Model of the ForwardIterator concept.
+    /// Model of the `ForwardIterator` concept.
     typedef Vertex_iterator                 Border_vertex_iterator;
     typedef Vertex_const_iterator           Border_vertex_const_iterator;
     /// Counter-clockwise circulator over a facet's vertices.
-    /// Model of the BidirectionalCirculator concept.
+    /// Model of the `BidirectionalCirculator` concept.
     typedef Mesh_patch_vertex_around_facet_cir<Parameterization_mesh_patch_3,
                                                Vertex_handle,
                                                typename Adaptor::Vertex_around_facet_circulator>
@@ -136,7 +130,7 @@ public:
                                                typename Adaptor::Vertex_around_facet_const_circulator>
                                             Vertex_around_facet_const_circulator;
     /// Clockwise circulator over the vertices incident to a vertex.
-    /// Model of the BidirectionalCirculator concept.
+    /// Model of the `BidirectionalCirculator` concept.
     typedef Mesh_patch_vertex_around_vertex_cir<Parameterization_mesh_patch_3,
                                                 Vertex_handle,
                                                 typename Adaptor::Vertex_around_vertex_circulator,
@@ -158,10 +152,10 @@ public:
     /// describes the border of a topological disc. This border may be an actual
     /// border of the mesh or a virtual border.
     ///
-    /// \pre first_seam_vertex -> end_seam_vertex defines the outer seam,
+    /// \pre `first_seam_vertex -> end_seam_vertex` defines the outer seam,
     ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
-    /// \pre The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// \pre The "seam" is implicitely a loop. The first vertex should *not* be
+    /// \pre The "seam" is given as a container of `Adaptor::Vertex_handle` elements.
+    /// \pre The "seam" is implicitely a loop. The first vertex must *not* be
     ///   duplicated at the end.
     template<class InputIterator>
     Parameterization_mesh_patch_3(Adaptor& mesh,
@@ -509,22 +503,22 @@ public:
                                               tag);
     }
 
-    /// Return true if a vertex belongs to ANY mesh's border.
+    /// Return `true` if `vertex` belongs to the border of any mesh.
     bool  is_vertex_on_border(Vertex_const_handle vertex) const {
         CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return is_vertex_on_main_border(vertex) ||
                m_mesh_adaptor.is_vertex_on_border(vertex->vertex());
     }
 
-    /// Return true if a vertex belongs to the UNIQUE mesh's main border
+    /// Return `true` if `vertex` belongs to the UNIQUE mesh's main border
     /// set by the constructor.
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const {
         CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return get_vertex_seaming(vertex) == BORDER;
     }
 
-    /// Get circulator over the vertices incident to 'vertex'.
-    /// 'start_position' defines the optional initial position of the circulator.
+    /// Get circulator over the vertices incident to `vertex`.
+    /// `start_position` defines the optional initial position of the circulator.
     Vertex_around_vertex_circulator vertices_around_vertex_begin(
                             Vertex_handle vertex,
                             Vertex_handle start_position = Vertex_handle())

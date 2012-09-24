@@ -46,10 +46,10 @@ namespace CGAL {
 /// `ParameterizationMesh_3` class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// \models BorderParameterizer_3 (although you cannot instantiate this class).
+/// \models BorderParameterizer_3
 ///
-/// \sa CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
-/// \sa CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>}`
+/// \sa `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
 
 template<class ParameterizationMesh_3>           //< 3D surface
 class Circular_border_parameterizer_3
@@ -101,7 +101,7 @@ public:
 
     // Default constructor, copy constructor and operator =() are fine
 
-    /// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
+    /// Assign to mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
     /// on border's shape. Mark them as "parameterized".
     typename Parameterizer_traits_3<Adaptor>::Error_code
                                         parameterize_border(Adaptor& mesh);
@@ -148,7 +148,7 @@ double Circular_border_parameterizer_3<Adaptor>::compute_border_length(
     return len;
 }
 
-// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
+// Assign to mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
 // on border's shape. Mark them as "parameterized".
 template<class Adaptor>
 inline
@@ -215,8 +215,8 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 ///
 /// \models BorderParameterizer_3
 ///
-/// \sa CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
-/// \sa CGAL::Circular_border_parameterizer_3<ParameterizationMesh_3>}`
+/// \sa `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Circular_border_parameterizer_3<ParameterizationMesh_3>`
 
 template<class ParameterizationMesh_3>      //< 3D surface
 class Circular_border_uniform_parameterizer_3
@@ -296,8 +296,8 @@ protected:
 ///
 /// \models BorderParameterizer_3
 ///
-/// \sa CGAL::Circular_border_parameterizer_3<ParameterizationMesh_3>`
-/// \sa CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>}`
+/// \sa `CGAL::Circular_border_parameterizer_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
 
 template<class ParameterizationMesh_3>           //< 3D surface
 class Circular_border_arc_length_parameterizer_3

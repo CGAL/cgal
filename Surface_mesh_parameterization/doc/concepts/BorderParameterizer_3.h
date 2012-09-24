@@ -24,32 +24,28 @@
 /// BorderParameterizer_3 is a concept of class that parameterizes a given type of mesh,
 /// 'Adaptor', which is a model of the ParameterizationMesh_3 concept.
 ///
-/// Implementation note:
-/// To simplify the implementation, BorderParameterizer_3 models know only the
+/// Models of BorderParameterizer_3 know only the
 /// ParameterizationMesh_3 class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// ## Design Pattern ##
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3.
+
 
 class BorderParameterizer_3
 {
 // Public types
 public:
     /// Export ParameterizationMesh_3 template parameter
-    typedef xxx Adaptor;
+    typedef Hidden_type Adaptor;
 
     /// The various errors detected by this package
-    typedef xxx Error_code;
+  typedef Hidden_type Error_code;
 
 // Public operations
 public:
     // Construction and destruction are undefined
 
-    /// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
+    /// Assign to mesh's border vertices a 2D position (i.e.\ a `(u,v)` pair)
     /// on border's shape. Mark them as "parameterized".
-    /// Return false on error.
     Error_code parameterize_border (Adaptor& mesh);
 
     /// Indicate if border's shape is convex.

@@ -24,7 +24,7 @@
 /// Its main purpose is to allow the parameterization methods to access meshes in a uniform manner.
 ///
 /// A ParameterizationMesh_3 surface consists of vertices, facets and an incidence relation on them.
-/// No notion of edge is requested.
+/// No notion of edge is required.
 /// Vertices represent points in 3d-space. Facets are planar polygons without holes
 /// defined by the circular sequence of vertices along their border.
 /// The surface itself can have holes. The vertices
@@ -39,18 +39,16 @@
 /// ParameterizationMesh_3 defines the types, data and methods that a mesh must implement
 /// to allow surface parameterization.
 /// Among other things, this concept defines accessors to fields specific
-/// to parameterizations methods: index, u, v, is_parameterized.
+/// to parameterizations methods: `index`, `u`, `v`, `is_parameterized`.
 ///
 /// ParameterizationMesh_3 meshes can have any genus, arity or number of components. On the other hand,
 /// as parameterization methods deal only with topological disks, ParameterizationMesh_3
 /// defines an interface oriented towards topological disks.
 ///
-/// \hasModel Parameterization_polyhedron_adaptor_3<Polyhedron_3_>
-/// \hasModel Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>
+/// \hasModel `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
+/// \hasModel `CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>`
 ///
-/// ## Design Pattern ##
-/// ParameterizationMesh_3 is an Adaptor [GHJV95]: it changes the
-/// interface of a 3D mesh to match the interface expected by the parameterization methods.
+
 
 class ParameterizationMesh_3
 {
@@ -58,47 +56,47 @@ class ParameterizationMesh_3
 public:
 
     /// Number type to represent coordinates.
-    typedef xxx NT;
+    typedef Hidden_type NT;
 
-    /// 2D point that represents (u,v) coordinates computed
-    /// by parameterization methods. Must provide X() and Y() methods.
-    typedef xxx Point_2;
-    /// 3D point that represents vertices coordinates. Must provide X() and Y() methods.
-    typedef xxx Point_3;
-    /// 2D vector. Must provide X() and Y() methods.
-    typedef xxx Vector_2;
-    /// 3D vector. Must provide X() and Y() methods.
-    typedef xxx Vector_3;
+    /// 2D point that represents `(u,v)` coordinates computed
+    /// by parameterization methods. Must provide `x()` and `y()` methods.
+    typedef Hidden_type Point_2;
+    /// 3D point that represents vertices coordinates. Must provide `x()` and `y()` methods.
+    typedef Hidden_type Point_3;
+    /// 2D vector. Must provide `x()` and `y()` methods.
+    typedef Hidden_type Vector_2;
+    /// 3D vector. Must provide `x()` and `y()` methods.
+    typedef Hidden_type Vector_3;
 
     /// Opaque type representing a facet of the 3D mesh. No methods are expected.
-    typedef xxx Facet;
+    typedef Hidden_type Facet;
     /// Handle to a facet. Model of the Handle concept.
-    typedef xxx Facet_handle;
-    typedef xxx Facet_const_handle;
+    typedef Hidden_type Facet_handle;
+    typedef Hidden_type Facet_const_handle;
     /// Iterator over all mesh facets. Model of the ForwardIterator concept.
-    typedef xxx Facet_iterator;
-    typedef xxx Facet_const_iterator;
+    typedef Hidden_type Facet_iterator;
+    typedef Hidden_type Facet_const_iterator;
 
     /// Opaque type representing a vertex of the 3D mesh. No methods are expected.
-    typedef xxx Vertex;
+    typedef Hidden_type Vertex;
     /// Handle to a vertex. Model of the Handle concept.
-    typedef xxx Vertex_handle;
-    typedef xxx Vertex_const_handle;
+    typedef Hidden_type Vertex_handle;
+    typedef Hidden_type Vertex_const_handle;
     /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
-    typedef xxx Vertex_iterator;
-    typedef xxx Vertex_const_iterator;
+    typedef Hidden_type Vertex_iterator;
+    typedef Hidden_type Vertex_const_iterator;
     /// Iterator over vertices of the mesh "main border".
     /// Model of the ForwardIterator concept.
-    typedef xxx Border_vertex_iterator;
-    typedef xxx Border_vertex_const_iterator;
+    typedef Hidden_type Border_vertex_iterator;
+    typedef Hidden_type Border_vertex_const_iterator;
     /// Counter-clockwise circulator over a facet's vertices.
     /// Model of the BidirectionalCirculator concept.
-    typedef xxx Vertex_around_facet_circulator;
-    typedef xxx Vertex_around_facet_const_circulator;
+    typedef Hidden_type Vertex_around_facet_circulator;
+    typedef Hidden_type Vertex_around_facet_const_circulator;
     /// Clockwise circulator over the vertices incident to a vertex.
     /// Model of the BidirectionalCirculator concept.
-    typedef xxx Vertex_around_vertex_circulator;
-    typedef xxx Vertex_around_vertex_const_circulator;
+    typedef Hidden_type Vertex_around_vertex_circulator;
+    typedef Hidden_type Vertex_around_vertex_const_circulator;
 
 
 // Public operations
@@ -168,26 +166,34 @@ public:
     /// Get the 3D position of a vertex.
     Point_3  get_vertex_position (Vertex_const_handle vertex) const;
 
-    /// Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
+    /// Getthe 2D position (u/v pair) of a vertex. Default value is undefined.
     Point_2  get_vertex_uv (Vertex_const_handle vertex) const;
+
+    /// Set the 2D position (u/v pair) of a vertex. Default value is undefined.
     void  set_vertex_uv (Vertex_handle vertex, const Point_2& uv);
 
-    /// Get/set "is parameterized" field of vertex. Default value is undefined.
+    /// Get "is parameterized" field of vertex. Default value is undefined.
     bool  is_vertex_parameterized (Vertex_const_handle vertex) const;
+ 
+    /// Set "is parameterized" field of vertex. Default value is undefined.
     void  set_vertex_parameterized (Vertex_handle vertex, bool parameterized);
 
-    /// Get/set vertex index. Default value is undefined.
+    /// Get vertex index. Default value is undefined.
     int  get_vertex_index (Vertex_const_handle vertex) const;
+
+    /// Set vertex index. Default value is undefined.
     void  set_vertex_index (Vertex_handle vertex, int index);
 
-    /// Get/set vertex' all purpose tag. Default value is undefined.
+    /// Get vertex' all purpose tag. Default value is undefined.
     int  get_vertex_tag(Vertex_const_handle vertex) const;
+
+    /// Set vertex' all purpose tag. Default value is undefined.
     void set_vertex_tag(Vertex_handle vertex, int tag);
 
-    /// Return true if a vertex belongs to ANY mesh's border.
+    /// Return true if a vertex belongs to any mesh's border.
     bool  is_vertex_on_border(Vertex_const_handle vertex) const;
 
-    /// Return true if a vertex belongs to the UNIQUE mesh's main border.
+    /// Return true if a vertex belongs to the unique mesh's main border.
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const;
 
     /// Get circulator over the vertices incident to 'vertex'.

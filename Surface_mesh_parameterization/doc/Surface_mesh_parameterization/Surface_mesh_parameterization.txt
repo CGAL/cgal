@@ -35,7 +35,7 @@ minimize (angles vs. areas), by the constrained border onto the
 planar domain (convex polygon vs. free border) and by the guarantees
 provided in terms of bijective mapping.
 
-The package proposes currently an interface with `CGAL::Polyhedron_3<Traits>`
+The package proposes currently an interface with the `CGAL::Polyhedron_3`
 data structure.
 
 Since parameterizing meshes require efficient representation of sparse
@@ -45,7 +45,7 @@ and propose a separate package devoted to OpenNL sparse
 linear solver.
 
 Note that linear solvers commonly use double precision floating point
-numbers. Therefore, this package is intended to be used with a \cgal Cartesian kernel with doubles.
+numbers. Therefore, this package is intended to be used with a \cgal %Cartesian kernel with doubles.
 
 The intended audience of this package is researchers, developers or
 students developing algorithms around parameterization of triangle
@@ -133,7 +133,7 @@ Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (Paramet
 
 ## The %ParameterizerTraits_3 Concept ##
 
-This \cgal package implements some of the state-of-the-art
+This \cgal package implements 
 surface parameterization methods, such as Least Squares Conformal Maps,
 Discrete Conformal Map, Discrete Authalic
 Parameterization, Floater Mean Value Coordinates or Tutte Barycentric
@@ -218,7 +218,7 @@ entry. Although a bijective mapping is guaranteed when the border is convex,
 this method does not minimize angles nor areas distortion.
 
 \anchor Surface_mesh_parameterizationfiguniform
-\iamge html uniform.png "Left: Tutte barycentric mapping parameterization (the red line depicts the cut graph). Right: parameter space."
+\image html uniform.png "Left: Tutte barycentric mapping parameterization (the red line depicts the cut graph). Right: parameter space."
 
 ## Discrete Conformal Map ##
 
@@ -425,6 +425,8 @@ and include a separate package devoted to OpenNL sparse linear solver.
 
 ## List of Solvers ##
 
+\todo Move solvers in their own package. 
+
 We provide an interface to several sparse linear solvers, as models
 of the `SparseLinearAlgebraTraits_d` concept:
 
@@ -629,7 +631,7 @@ OpenNL's BICGSTAB solver (accessible through the
 `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` interface)
 is the only solver supported by this package which 
 computes exact results, when used with an exact arithmetic. This package is
-intended to be used mainly with a \cgal Cartesian kernel with doubles.
+intended to be used mainly with a \cgal %Cartesian kernel with doubles.
 
 ## OpenNL's BICGSTAB Solver with an Exact Arithmetic ##
 
