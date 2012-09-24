@@ -17,46 +17,33 @@ is also deduced automatically.
 /// @{
 
 /*!
-computes the bounding box of a non-empty set of 2D points.
+computes the bounding box of a non-empty set of 2D or 3D points.
 
-`K` is `Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel`.
-The value type must be `K::Point_2`.
-
-\pre first != beyond. 
-*/
-template < typename InputIterator >
-K::Iso_rectangle_2
-bounding_box(InputIterator first, InputIterator beyond);
-
-/*!
-computes the bounding box of a non-empty set of 2D points.
-
-The value type must be `K::Point_2`.
-\pre first != beyond. 
-*/
-template < typename InputIterator, typename K >
-K::Iso_rectangle_2
-bounding_box(InputIterator first, InputIterator beyond, const K & k);
-
-/*!
-computes the bounding box of a non-empty set of 3D points.
-
-`K` is `Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel`.
-The value type must be `K::Point_3`.
+\returns The return type is either `K::Iso_rectangle_2` or
+`K::Iso_cuboid_3`, depending on the dimension of the input values,
+where `K` is
+\code
+CGAL::Kernel_traits<
+  std::iterator_traits<InputIterator>::value_type
+>::Kernel
+\endcode
 
 \pre first != beyond. 
 */
 template < typename InputIterator >
-K::Iso_cuboid_3
+Deduced
 bounding_box(InputIterator first, InputIterator beyond);
 
 /*!
-computes the bounding box of a non-empty set of 3D points.
-The value type must be `K::Point_3`.
+computes the bounding box of a non-empty set of 2D or 3D points.
+
+\returns The return type is either `K::Iso_rectangle_2` or
+`K::Iso_cuboid_3`, depending on the dimension of the input values.
+
 \pre first != beyond. 
 */
 template < typename InputIterator, typename K >
-K::Iso_cuboid_3
+Deduced
 bounding_box(InputIterator first, InputIterator beyond, const K & k);
 
 /// @}

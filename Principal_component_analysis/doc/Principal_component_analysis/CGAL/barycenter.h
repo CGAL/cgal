@@ -19,48 +19,40 @@ dimension is also deduced automatically.
 /// @{
 
 /*!
-computes the barycenter of a non-empty set of 2D weighted points.
-`K` is `Kernel_traits<std::iterator_traits<InputIterator>::value_type::first_type>::Kernel`.
-The value type must be `std::pair<K::Point_2, K::FT>`.
+computes the barycenter of a non-empty set of 2D or 3D weighted
+points.
 
-\pre first != beyond, and the sum of the weights is non-zero. 
+\returns `K::Point_2` or `K::Point_3` depending on the dimension of
+the input values, where `K` is 
+\code
+CGAL::Kernel_traits<
+  std::iterator_traits<InputIterator>::value_type::first_type
+>::Kernel
+\endcode
+
+\requires The value type of `InputIterator` must be
+`std::pair<K::Point_2, K::FT>` or `std::pair<K::Point_3, K::FT>`.
+
+\pre first != beyond, and the sum of the weights is non-zero.
 */
 template < typename InputIterator >
-K::Point_2
+Deduced
 barycenter(InputIterator first, InputIterator beyond);
 
 /*!
-computes the barycenter of a non-empty set of 2D weighted points.
+computes the barycenter of a non-empty set of 2D or 3D weighted
+points.
 
-The value type must be `std::pair<K::Point_2, K::FT>`.
+\returns `K::Point_2` or `K::Point_3` depending on the dimension of
+the input values.
+
+\requires The value type of `InputIterator` must be
+`std::pair<K::Point_2, K::FT>` or `std::pair<K::Point_3, K::FT>`.
 
 \pre first != beyond, and the sum of the weights is non-zero. 
 */
 template < typename InputIterator, typename K >
-K::Point_2
-barycenter(InputIterator first, InputIterator beyond, const K & k);
-
-/*!
-computes the barycenter of a non-empty set of 3D weighted points.
-
-`K` is `Kernel_traits<std::iterator_traits<InputIterator>::value_type::first_type>::Kernel`.
-The value type must be `std::pair<K::Point_3, K::FT>`.
-
-\pre first != beyond, and the sum of the weights is non-zero. 
-*/
-template < typename InputIterator >
-K::Point_3
-barycenter(InputIterator first, InputIterator beyond);
-
-/*!
-computes the barycenter of a non-empty set of 3D weighted points.
-
-The value type must be `std::pair<K::Point_3, K::FT>`.
-
-\pre first != beyond, and the sum of the weights is non-zero. 
-*/
-template < typename InputIterator, typename K >
-K::Point_3
+Deduced
 barycenter(InputIterator first, InputIterator beyond, const K & k);
 
 /// @}
