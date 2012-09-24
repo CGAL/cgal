@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgLinearCellComplexOperations
+\ingroup PkgLinearCellComplexConstructions
 
 Imports an embedded plane graph read from `ais` into `lcc`. 
 Objects are added in `lcc`, existing darts are not modified.
@@ -40,7 +40,7 @@ typename LCC::Dart_handle import_from_plane_graph(LCC& lcc,
 std::istream& ais);
 
 /*!
-\ingroup PkgLinearCellComplexOperations
+\ingroup PkgLinearCellComplexConstructions
 
 Imports `apoly` (a `Polyhedron_3`) into `lcc`. Objects are added in `lcc`,
 existing darts are not modified.
@@ -56,7 +56,7 @@ Polyhedron &apoly);
 
 
 /*!
-\ingroup PkgLinearCellComplexOperations
+\ingroup PkgLinearCellComplexConstructions
 
 Imports `atr` (a `Triangulation_3`) into `lcc`. 
 Objects are added in `lcc`, existing darts are not modified.
