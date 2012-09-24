@@ -844,6 +844,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Inscribed_areas.tag</string>
           <string name="EXAMPLE_PATH">../Inscribed_areas/examples</string>
           <string name="IMAGE_PATH">../Inscribed_areas/doc/Inscribed_areas/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Matrix_search.tag=../../CGAL.CGAL.Monotone-and-Sorted-Matrix-Search/html</item>
+          </list>
         </doxygen>
       </project>
 
