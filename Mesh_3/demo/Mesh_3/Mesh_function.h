@@ -35,6 +35,7 @@
 
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
 
 #include "C3t3_type.h"
 #include "Meshing_thread.h"
@@ -49,6 +50,23 @@ struct Mesh_parameters
   double tet_sizing;
   
   inline QStringList log() const;
+};
+
+
+template < typename EdgeCriteria >
+struct Edge_criteria_sizing_field_wrapper
+{
+  typedef typename EdgeCriteria::Index    Index;
+  typedef typename EdgeCriteria::FT       FT;
+  typedef typename EdgeCriteria::Point_3  Point_3;
+  
+  Edge_criteria_sizing_field_wrapper(const EdgeCriteria& ec) : ec_(ec) {}
+  FT operator()(const Point_3& p, const int dim, const Index& index) const
+  { return ec_.sizing_field(p,dim,index); }
+
+private:
+  // No need to copy EdgeCriteria here
+  const EdgeCriteria& ec_;
 };
 
 
@@ -82,6 +100,7 @@ private:
   
   typedef C3t3::Triangulation                       Tr;
   typedef CGAL::Mesh_criteria_3<Tr>                 Mesh_criteria;
+  typedef Mesh_criteria::Edge_criteria              Edge_criteria;
   typedef Mesh_criteria::Facet_criteria             Facet_criteria;
   typedef Mesh_criteria::Cell_criteria              Cell_criteria;
   
@@ -155,7 +174,16 @@ launch()
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   CGAL::default_random = CGAL::Random(0);
 #endif
-
+    
+  // Create mesh criteria
+  Mesh_criteria criteria(Edge_criteria(p_.facet_sizing),
+                         Facet_criteria(p_.facet_angle,
+                                        p_.facet_sizing,
+                                        p_.facet_approx),
+                         Cell_criteria(p_.tet_shape,
+                                       p_.tet_sizing));
+  
+#ifndef CGAL_MESH_3_DEMO_ACTIVATE_SHARP_FEATURES_IN_POLYHEDRAL_DOMAIN
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
   domain_->construct_initial_points_object()(std::back_inserter(initial_points));
@@ -173,14 +201,13 @@ launch()
       c3t3_.set_index(v,it->second);
     }
   }
-  
-  // Create mesh criteria
-  Mesh_criteria criteria(Facet_criteria(p_.facet_angle,
-                                        p_.facet_sizing,
-                                        p_.facet_approx),
-                         Cell_criteria(p_.tet_shape,
-                                       p_.tet_sizing));
-  
+#else
+  typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
+  CGAL::Mesh_3::Protect_edges_sizing_field<C3t3,D_,Sizing_field>     
+    protect_edges(c3t3_, *domain_, Sizing_field(criteria.edge_criteria_object()));
+  protect_edges(true);
+#endif
+
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
   mesher_->refine_mesh();

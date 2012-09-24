@@ -10,6 +10,7 @@
 
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Labeled_image_mesh_domain_3.h>
 #include <CGAL/tags.h>
 
@@ -31,6 +32,7 @@ private:
 
 namespace CGAL {
 
+#ifndef CGAL_MESH_3_DEMO_ACTIVATE_SHARP_FEATURES_IN_POLYHEDRAL_DOMAIN
 // A specialisation of Triangle_accessor_3 which fits our Polyhedron type
 template <typename K>
 class Triangle_accessor_3<Polyhedron, K>
@@ -61,11 +63,17 @@ public:
     return Triangle_3(a,b,c);
   }
 };
+#endif
 
 }
 
 typedef CGAL::Mesh_3::Robust_intersection_traits_3<Kernel>              RKernel;
-typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron,RKernel>              Polyhedral_mesh_domain;
+typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron,RKernel>               Polyhedral_mesh_domain_without_features;
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SHARP_FEATURES_IN_POLYHEDRAL_DOMAIN
+  typedef CGAL::Polyhedral_mesh_domain_with_features_3<Kernel>          Polyhedral_mesh_domain;
+#else
+  typedef Polyhedral_mesh_domain_without_features                       Polyhedral_mesh_domain;
+#endif
 typedef CGAL::Labeled_image_mesh_domain_3<Image,Kernel>                 Image_mesh_domain;
 typedef Wrapper<Kernel>                                                 Function_wrapper;
 typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, Kernel>   Function_mesh_domain;
@@ -73,11 +81,10 @@ typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, Kernel>   Function
 // Triangulation
 #ifdef CONCURRENT_MESH_3
   typedef CGAL::Parallel_mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
-  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr, CGAL::Parallel_tag> C3t3;
 #else
   typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
-  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr, CGAL::Sequential_tag> C3t3;
 #endif
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // 3D complex
 
