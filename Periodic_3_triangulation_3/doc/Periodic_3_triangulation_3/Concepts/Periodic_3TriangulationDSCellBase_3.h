@@ -10,7 +10,7 @@ indexed 0, 1, 2 and 3. Neighbor \f$ i\f$ lies opposite to vertex \f$ i\f$.
 
 \refines ::TriangulationDSCellBase_3 
 
-\refines For periodic triangulation the cell base class needs to
+For periodic triangulation the cell base class needs to
 additionally store an offset for each vertex. Only the last three
 bits of each integer are required to be stored. The remaining part
 does not contain any information.

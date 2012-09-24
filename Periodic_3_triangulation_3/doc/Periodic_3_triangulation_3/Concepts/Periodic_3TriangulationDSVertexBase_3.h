@@ -12,7 +12,7 @@ For optimization purposes we need to extend the concept
 
 \refines ::TriangulationDSVertexBase_3 
 
-\refines Periodic_3TriangulationDSVertexBase_3 needs to store an offset 
+Periodic_3TriangulationDSVertexBase_3 needs to store an offset 
    and some index inside the vertex. 
 
 \hasModel CGAL::Periodic_3_triangulation_ds_vertex_base_3 

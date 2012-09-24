@@ -99,11 +99,7 @@ space, which is a <I>27-sheeted covering space</I> of \f$ \mathbb T_c^3\f$
 (see Figure \ref P3Triangulation3figcovering).
 
 \anchor P3Triangulation3figcovering
-\image html it_UNIQUE_small.jpg
-\image html it_STORED_small.jpg
-<center><b>
-The same periodic triangulation in the 1-sheeted covering space and the 27-sheeted covering space. 
-</b></center>
+\image html it_UNIQUE_small.jpg The same periodic triangulation in the 1-sheeted covering space and the 27-sheeted covering space. 
 
 The machinery that manages the copies is largely hidden from the
 user. However there are some effects that cannot be ignored. For
