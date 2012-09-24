@@ -15,16 +15,12 @@ that provides a traits class, model of the concept
 `SurfaceMeshTraits_3`, 
 to be used by the surface mesher. 
 
-The parameter `Traits` is a traits class 
-that has to be implemented with a model of 
-`ImplicitSurfaceTraits_3`. 
-Actually, this traits class implements the oracle needed by the 
-surface mesher: 
-the types, predicates and constructors provided 
-in `Traits` are 
-passed by the surface mesher traits generator 
-to the generated the traits class 
-used by the surface mesh generator. 
+The parameter `Traits` is a geometric traits class that must be a model of
+`ImplicitSurfaceTraits_3`. That concept defines all the types, predicates
+and constructors that the `Traits` has to provide to implement the surface
+mesh traits
+ `Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function> >`.
+
 
 The template parameter `Function` stands for a model 
 of the concept `ImplicitFunction`. 
