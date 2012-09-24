@@ -56,15 +56,15 @@ to set the background for the discussion of the parameters to the algorithm.
 
 There are two slightly different "edge" collapse operations. One is known as
 <I>edge-collapse</I> while the other is known as <I>halfedge-collapse</I>.
-Given an edge 'e' joining vertices 'w' and 'v', the edge-collapse operation replaces
-'e','w' and 'v' for a new vertex 'r', while the halfedge-collapse operation
-pulls 'v' into 'w', dissapearing 'e' and leaving 'w' in place.
-In both cases the operation removes the edge 'e' along with the 2 triangles 
+Given an edge `e` joining vertices `w` and `v`, the edge-collapse operation replaces
+`e`,`w` and `v` for a new vertex `r`, while the halfedge-collapse operation
+pulls `v` into `w`, dissapearing `e` and leaving `w` in place.
+In both cases the operation removes the edge `e` along with the 2 triangles 
 adjacent to it.
 
 This package uses the halfedge-collapse operation, which is implemented by removing,
-additionally, 1 vertex ('v') and 2 edges, one per adjacent triangle.
-It optionally moves the remaining vertex ('w') into a new position, 
+additionally, 1 vertex (`v`) and 2 edges, one per adjacent triangle.
+It optionally moves the remaining vertex (`w`) into a new position, 
 called <I>placement</I>, in which case the net effect is the same as in
 the edge-collapse operation.
 
@@ -95,7 +95,7 @@ cost of all the edges now incident on the replacement vertex is recalculated, af
 the order of the remaining unprocessed edges.
 
 Not all edges selected for processing are collapsed. A processed edge can be discarded 
-right away, without being collapsed, if it doesn't satisfy certain topological
+right away, without being collapsed, if it does not satisfy certain topological
 and geometric conditions.
 
 The algorithm presented in \cite gh-ssqem-97 contracts (collapses) arbitrary vertex pairs and not 

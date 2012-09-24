@@ -65,60 +65,60 @@ edge being collapsed.
 edge_descriptor v1v0() const; 
 
 /*! 
-The point of vertex \f$ v0\f$. 
+The point of vertex ` v0`. 
 */ 
 Point const& p0() const; 
 
 /*! 
-The point of vertex \f$ v1\f$. 
+The point of vertex ` v1`. 
 */ 
 Point const& p1() const; 
 
 /*! 
-If \f$ v0v1\f$ belongs to a finite face (is not a border edge) 
+If ` v0v1` belongs to a finite face (is not a border edge) 
 the third vertex of that triangular face, a <I>null descriptor</I> otherwise. 
 */ 
 vertex_descriptor vL() const; 
 
 /*! 
-If \f$ v0v1\f$ belongs to a finite face (is not a border edge) 
-the directed edge from \f$ v1\f$ to \f$ vL\f$, a <I>null descriptor</I> otherwise. 
+If ` v0v1` belongs to a finite face (is not a border edge) 
+the directed edge from ` v1` to ` vL`, a <I>null descriptor</I> otherwise. 
 */ 
 edge_descriptor v1vL() const; 
 
 /*! 
-If \f$ v0v1\f$ belongs to a finite face (is not a border edge) 
-the directed edge from \f$ vL\f$ to \f$ v0\f$, a <I>null descriptor</I> otherwise. 
+If ` v0v1` belongs to a finite face (is not a border edge) 
+the directed edge from ` vL` to ` v0`, a <I>null descriptor</I> otherwise. 
 */ 
 edge_descriptor vLv0() const; 
 
 /*! 
-If \f$ v1v0\f$ belongs to a finite face (is not a border edge) 
+If ` v1v0` belongs to a finite face (is not a border edge) 
 the third vertex of that triangular face, a <I>null descriptor</I> otherwise. 
 */ 
 vertex_descriptor vR() const; 
 
 /*! 
-If \f$ v1v0\f$ belongs to a finite face (is not a border edge) 
-the directed edge from \f$ v0\f$ to \f$ vR\f$, a <I>null descriptor</I> otherwise. 
+If ` v1v0` belongs to a finite face (is not a border edge) 
+the directed edge from ` v0` to ` vR`, a <I>null descriptor</I> otherwise. 
 */ 
 edge_descriptor v0vR() const; 
 
 /*! 
-If \f$ v1v0\f$ belongs to a finite face (is not a border edge) 
-the directed edge from \f$ vR\f$ to \f$ v1\f$, a <I>null descriptor</I> otherwise. 
+If ` v1v0` belongs to a finite face (is not a border edge) 
+the directed edge from ` vR` to ` v1`, a <I>null descriptor</I> otherwise. 
 */ 
 edge_descriptor vRv1() const; 
 
 /*! 
 The unique sequence of the vertices 
-around \f$ v0v1\f$ in topological order (<I>ccw</I> or <I>ccw</I> depending 
+around ` v0v1` in topological order (<I>ccw</I> or <I>ccw</I> depending 
 on the relative ordering of `v0` and `v1` in the profile). 
 */ 
 std::vector<vertex_descriptor> link() const; 
 
 /*! 
-The unique collection of the border directed edges incident upon \f$ v0\f$ and \f$ v1\f$. 
+The unique collection of the border directed edges incident upon ` v0` and ` v1`. 
 */ 
 std::vector<edge_descriptor> border_edges() const; 
 

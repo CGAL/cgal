@@ -9,7 +9,7 @@ the number of edges effectively removed.
 
 The function `Surface_mesh_simplification::edge_collapse` simplifies in-place a triangulated surface mesh by iteratively collapsing edges. 
 
-## Non-named parameters ##
+### Non-Named Parameters ###
 
 `surface` is the surface to simplify. 
 It must be a model of the `EdgeCollapsableMesh` concept. 
@@ -17,7 +17,7 @@ It must be a model of the `EdgeCollapsableMesh` concept.
 `should_stop` is the stop-condition policy. 
 It must be a model of the `StopPredicate` concept. 
 
-## Named parameters ##
+### Named Parameters ###
 
 `named_parameters` holds the list of all the additional parameters 
 used by the `edge_collapse` function (including default parameters). 
