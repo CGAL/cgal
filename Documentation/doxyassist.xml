@@ -99,7 +99,6 @@ namespace for the XML file to be processed properly.  -->
       <project>
         <name>Planar Parameterization of Triangulated Surface Meshes</name>
         <input>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization</input>
-        <input>../Surface_mesh_parameterization/doc/concepts</input>
         <input>../Surface_mesh_parameterization/include</input>
         <doxygen>
           <!-- <string name="STRIP_FROM_PATH">../Surface_mesh_parameterization/doc/Surface_mesh_parameterization/</string> -->
@@ -750,7 +749,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
-            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs/html</item>
+            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graph-of-Disks-</item>
             <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.Voronoi_diagram_2/html</item>
           </list>
         </doxygen>
@@ -783,7 +782,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>Profiling Tools</name>
+        <name>Profiling tools, Hash Map, Union-find, Modifiers</name>
         <input>../Miscellany/doc/Miscellany</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Miscellany/doc/Miscellany/</string>
@@ -943,7 +942,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>2D Apollonius Graphs</name>
+        <name>2D Apollonius Graphs (Delaunay Graphs of Disks)</name>
         <input>../Apollonius_graph_2/doc/Apollonius_graph_2</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Apollonius_graph_2/doc/Apollonius_graph_2/</string>
@@ -1376,7 +1375,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.2D-Alpha-Shapes/html</item>
           <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.3D-Alpha-Shapes/html</item>
-          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs/html</item>
+          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graph-of-Disks-/html</item>
           <item>./tags/Bounding_volumes.tag=../../CGAL.CGAL.Bounding-Volumes/html</item>
           <item>./tags/Inscribed_areas.tag=../../CGAL.CGAL.Inscribed-Areas/html</item>
           <item>./tags/Matrix_search.tag=../../CGAL.CGAL.Monotone-and-Sorted-Matrix-Search/html</item>
@@ -1407,7 +1406,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Jet_fitting_3.tag=../../CGAL.CGAL.Estimation-of-Local-Differential-Properties-of-Point-Sampled-Surfaces/html</item>
           <item>./tags/Minkowski_sum_2.tag=../../CGAL.CGAL.2D-Minkowski-Sums/html</item>
           <item>./tags/Minkowski_sum_3.tag=../../CGAL.CGAL.3D-Minkowski-Sum-of-Polyhedra/html</item>
-          <item>./tags/Miscellany.tag=../../CGAL.CGAL.Profiling-Tools/html</item>
+          <item>./tags/Miscellany.tag=../../CGAL.CGAL.Profiling-tools--Hash-Map--Union-find--Modifiers/html</item>
           <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular-Arithmetic/html</item>
           <item>./tags/Partition_2.tag=../../CGAL.CGAL.2D-Polygon-Partitioning/html</item>
           <item>./tags/Interpolation.tag=../../CGAL.CGAL.2D-and-Surface-Function-Interpolation</item>
@@ -1461,4 +1460,3 @@ namespace for the XML file to be processed properly.  -->
     </project>
   </projects>
 </DoxyAssist>
-
