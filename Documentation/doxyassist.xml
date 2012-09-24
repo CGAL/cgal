@@ -804,6 +804,10 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Matrix_search.tag</string>
           <string name="EXAMPLE_PATH">../Matrix_search/examples</string>
           <string name="IMAGE_PATH">../Matrix_search/doc/Matrix_search/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
+            <item>./tags/Inscribed_areas.tag=../../CGAL.CGAL.Inscribed-Areas/html</item>
+          </list>
         </doxygen>
       </project>
 
