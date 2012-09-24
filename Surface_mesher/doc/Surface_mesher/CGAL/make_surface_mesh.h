@@ -1,19 +1,13 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceMesher3Functions
+\addtogroup PkgSurfaceMesher3FunctionsMakeMesh
 
 The function `make_surface_mesh` is a surface mesh generator, 
 that is a function to build a two dimensional mesh 
 approximating a surface. 
 
-The library provides two overloaded version 
-of this function: 
-
-### Parameters ###
-
-The template parameter `SurfaceMeshC2T3` 
-is required to be a model of the concept 
+\tparam SurfaceMeshC2T3  must be a model of the concept 
 `SurfaceMeshComplex_2InTriangulation_3`, 
 a data structure able to represent a two dimensional 
 complex embedded in a three dimensional triangulation. 
@@ -31,9 +25,9 @@ to be models of the concepts
 `SurfaceMeshVertexBase_3` and 
 `SurfaceMeshCellBase_3` respectively. 
 
-The template parameter `Surface` stands for the surface type. 
+\tparam Surface stands for the surface type. 
 This type has to be a model of the concept `Surface_3`. 
-
+<br>
 The knowledge on the surface, required by the surface mesh generator 
 is encapsulated in a 
 traits class. Actually, the mesh generator accesses the surface to be meshed 
@@ -41,61 +35,21 @@ through this traits class only.
 The traits class is required to be a model 
 of the concept `SurfaceMeshTraits_3`. 
 
-In the first version 
-of `make_surface_mesh` the surface type is a template parameter `Surface` 
-and the surface mesh generator traits type 
-is automatically generated form the surface type through 
-the class 
-`Surface_mesh_traits_generator_3<Surface>`. 
-
-The difference between the two overloaded versions of 
-`make_surface_mesh` 
-can be explained as follows 
-<UL> 
-<LI>In the first overloaded version of 
-of `make_surface_mesh`, the surface type is given 
-as template parameter (`Surface`) and the `surface` 
-to be meshed is passed as parameter to the mesh generator. 
-In that case the surface mesh generator traits type 
-is automatically generated form the surface type 
-by an auxiliary class called the `Surface_mesh_traits_generator_3`. 
-<LI>In the second overloaded version of `make_surface_mesh`, 
-the surface mesh generator traits type is provided 
-by the template parameter `SurfaceMeshTraits_3` 
-and the surface type is obtained from this traits type. 
-Both the surface and the traits 
-are passed to the mesh generator as arguments. 
-</UL> 
-
-The first overloaded version can be used 
-whenever the surface type either provides a nested type 
-`Surface::Surface_mesher_traits_3` 
-that is a model of `SurfaceMeshTraits_3` 
-or is a surface type for which a specialization 
-of the traits generator `Surface_mesh_traits_generator_3<Surface>` 
-is provided. 
-Currently, the library provides partial specializations 
-of `Surface_mesher_traits_generator_3<Surface>` 
-for implicit surfaces (`Implicit_surface_3<Traits, Function>`) and 
-gray level images (`Gray_level_image_3<FT, Point>`). 
-
-The template parameter `FacetsCriteria` has to be a model 
+\tparam FacetsCriteria has to be a model 
 of the concept `SurfaceMeshFacetsCriteria_3`. 
 The argument of type `FacetsCriteria` passed to the surface 
 mesh generator specifies the size and shape requirements 
 on the output surface mesh. 
 
-The template parameter `Tag` 
+\tparam Tag 
 is a tag whose type affects the behavior of the 
 meshing algorithm. The function `make_surface_mesh` has specialized versions 
 for the following tag types: 
-
+<br>
 - `Manifold_tag`: the output mesh is guaranteed to be a manifold 
 surface without boundary. 
-
 - `Manifold_with_boundary_tag`: the output mesh is guaranteed to be 
 manifold but may have boundaries. 
-
 - `Non_manifold_tag`: the algorithm relies on the given criteria and 
 guarantees nothing else. 
 
@@ -123,6 +77,32 @@ one.
 \sa `Surface_mesh_default_triangulation_3` 
 
 */
+
+/// @{
+
+/*!
+In the first overloaded version of 
+of `make_surface_mesh`, the surface type is given 
+as template parameter (`Surface`) and the `surface` 
+to be meshed is passed as parameter to the mesh generator. 
+In that case the surface mesh generator traits type 
+is automatically generated form the surface type 
+by an auxiliary class called the `Surface_mesh_traits_generator_3`.
+
+
+The first overloaded version can be used 
+whenever the surface type either provides a nested type 
+`Surface::Surface_mesher_traits_3` 
+that is a model of `SurfaceMeshTraits_3` 
+or is a surface type for which a specialization 
+of the traits generator `Surface_mesh_traits_generator_3<Surface>` 
+is provided. 
+Currently, the library provides partial specializations 
+of `Surface_mesher_traits_generator_3<Surface>` 
+for implicit surfaces (`Implicit_surface_3<Traits, Function>`) and 
+gray level images (`Gray_level_image_3<FT, Point>`). 
+
+ */  
 template <class SurfaceMeshC2T3,
 class Surface,
 class FacetsCriteria,
@@ -134,128 +114,13 @@ Tag tag,
 int initial_number_of_points = 20) ;
 
 /*!
-\ingroup PkgSurfaceMesher3Functions
-
-The function `make_surface_mesh` is a surface mesh generator, 
-that is a function to build a two dimensional mesh 
-approximating a surface. 
-
-The library provides two overloaded version 
-of this function: 
-
-### Parameters ###
-
-The template parameter `SurfaceMeshC2T3` 
-is required to be a model of the concept 
-`SurfaceMeshComplex_2InTriangulation_3`, 
-a data structure able to represent a two dimensional 
-complex embedded in a three dimensional triangulation. 
-The argument `c2t3` of type `SurfaceMeshC2T3`, passed by reference 
-to the surface mesh generator, 
-is used to maintain the current approximating mesh and it stores 
-the final mesh at the end of the procedure. 
-The type `SurfaceMeshC2T3` is in particular required to 
-provide a type `SurfaceMeshC2T3::Triangulation_3` 
-for the three dimensional triangulation 
-embedding the surface mesh. 
-The vertex and cell base classes of the triangulation 
-`SurfaceMeshC2T3::Triangulation_3` are required 
-to be models of the concepts 
-`SurfaceMeshVertexBase_3` and 
-`SurfaceMeshCellBase_3` respectively. 
-
-The template parameter `Surface` stands for the surface type. 
-This type has to be a model of the concept `Surface_3`. 
-
-The knowledge on the surface, required by the surface mesh generator 
-is encapsulated in a 
-traits class. Actually, the mesh generator accesses the surface to be meshed 
-through this traits class only. 
-The traits class is required to be a model 
-of the concept `SurfaceMeshTraits_3`. 
-
-In the first version 
-of `make_surface_mesh` the surface type is a template parameter `Surface` 
-and the surface mesh generator traits type 
-is automatically generated form the surface type through 
-the class 
-`Surface_mesh_traits_generator_3<Surface>`. 
-
-The difference between the two overloaded versions of 
-`make_surface_mesh` 
-can be explained as follows 
-<UL> 
-<LI>In the first overloaded version of 
-of `make_surface_mesh`, the surface type is given 
-as template parameter (`Surface`) and the `surface` 
-to be meshed is passed as parameter to the mesh generator. 
-In that case the surface mesh generator traits type 
-is automatically generated form the surface type 
-by an auxiliary class called the `Surface_mesh_traits_generator_3`. 
-<LI>In the second overloaded version of `make_surface_mesh`, 
+In the second overloaded version of `make_surface_mesh`, 
 the surface mesh generator traits type is provided 
 by the template parameter `SurfaceMeshTraits_3` 
 and the surface type is obtained from this traits type. 
 Both the surface and the traits 
 are passed to the mesh generator as arguments. 
-</UL> 
-
-The first overloaded version can be used 
-whenever the surface type either provides a nested type 
-`Surface::Surface_mesher_traits_3` 
-that is a model of `SurfaceMeshTraits_3` 
-or is a surface type for which a specialization 
-of the traits generator `Surface_mesh_traits_generator_3<Surface>` 
-is provided. 
-Currently, the library provides partial specializations 
-of `Surface_mesher_traits_generator_3<Surface>` 
-for implicit surfaces (`Implicit_surface_3<Traits, Function>`) and 
-gray level images (`Gray_level_image_3<FT, Point>`). 
-
-The template parameter `FacetsCriteria` has to be a model 
-of the concept `SurfaceMeshFacetsCriteria_3`. 
-The argument of type `FacetsCriteria` passed to the surface 
-mesh generator specifies the size and shape requirements 
-on the output surface mesh. 
-
-The template parameter `Tag` 
-is a tag whose type affects the behavior of the 
-meshing algorithm. The function `make_surface_mesh` has specialized versions 
-for the following tag types: 
-
-- `Manifold_tag`: the output mesh is guaranteed to be a manifold 
-surface without boundary. 
-
-- `Manifold_with_boundary_tag`: the output mesh is guaranteed to be 
-manifold but may have boundaries. 
-
-- `Non_manifold_tag`: the algorithm relies on the given criteria and 
-guarantees nothing else. 
-
-The Delaunay refinement 
-process is started with an initial set of points which is the union 
-of two sets: the 
-set of vertices in the initial triangulation pointed to by the 
-`c2t3` argument and a set of 
-points provided by the traits class. 
-The optional parameter `initial_number_of_points` 
-allows to monitor the number of points in this second set. 
-(This parameter is passed to the `operator()` of 
-the constructor object `Construct_initial_points` 
-in the traits class.) 
-The meshing algorithm requires that the initial set of points 
-includes at least one point 
-on each connected components of the surface to be meshed. 
-one. 
-
-\sa `SurfaceMeshComplex_2InTriangulation_3` 
-\sa `SurfaceMeshCellBase_3` 
-\sa `SurfaceMeshVertexBase_3` 
-\sa `Surface_3` 
-\sa `SurfaceMeshFacetsCriteria_3` 
-\sa `Surface_mesh_default_triangulation_3` 
-
-*/
+ */
 template <class SurfaceMeshC2T3,
 class SurfaceMeshTraits,
 class FacetsCriteria,
@@ -267,6 +132,7 @@ FacetsCriteria criteria,
 Tag tag,
 int initial_number_of_points = 20 );
 
+/// @}
 } /* namespace CGAL */
 
 

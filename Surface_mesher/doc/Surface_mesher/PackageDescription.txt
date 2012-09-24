@@ -15,6 +15,14 @@
 /// \ingroup PkgSurfaceMesher3
 
 
+/// \defgroup PkgSurfaceMesher3FunctionsMakeMesh Mesh Generation
+/// \ingroup PkgSurfaceMesher3Functions
+
+
+/// \defgroup PkgSurfaceMesher3FunctionsIO I/O
+/// \ingroup PkgSurfaceMesher3Functions
+
+
 /*!
 \addtogroup PkgSurfaceMesher3
 \todo check generated documentation

@@ -19,6 +19,13 @@ are models of the concepts
 
 class Surface_mesh_default_triangulation_3 {
 public:
+  
+  /// the vertex type which is model of `::SurfaceMeshVertexBase_3`.
+  typedef Hidden_type Vertex;
+
+
+  /// the cell type which is model of `::SurfaceMeshCellBase_3`.
+  typedef Hidden_type Cell;  
 
 /// @}
 

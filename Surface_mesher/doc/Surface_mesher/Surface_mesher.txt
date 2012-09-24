@@ -130,13 +130,13 @@ or is a surface type for which a specialization
 of the traits generator `Surface_mesh_traits_generator_3<Surface>`
 is provided.
 Currently, the library provides partial specializations
-of `Surface_mesher_traits_generator_3<Surface>`
+of `Surface_mesh_traits_generator_3<Surface>`
 for implicit surfaces (`Implicit_surface_3<Traits, Function>`) and
 gray level images (`Gray_level_image_3<FT, Point>`).
 
 The parameter `criteria` handles the description of the size and shape
 criteria driving the meshing process. The template parameter `FacetsCriteria`
-has to be instantiated by a model of the concept `SurfaceMeshFacetsCriteria`.
+has to be instantiated by a model of the concept `SurfaceMeshFacetsCriteria_3`.
 
 The parameter `Tag` is a tag
 whose type influences the behavior of the
