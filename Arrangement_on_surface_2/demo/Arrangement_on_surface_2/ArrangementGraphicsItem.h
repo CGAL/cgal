@@ -28,6 +28,7 @@
 //#include <QStyleOption>
 
 #include "ArrangementPainterOstream.h"
+#include "Utils.h"
 #include <iostream>
 
 class QGraphicsScene;
@@ -35,7 +36,7 @@ class QGraphicsScene;
 namespace CGAL {
 namespace Qt {
 
-class ArrangementGraphicsItemBase : public GraphicsItem
+class ArrangementGraphicsItemBase : public GraphicsItem, public QGraphicsSceneMixin
 {
 public:
     ArrangementGraphicsItemBase( );
@@ -48,10 +49,10 @@ public:
     void setVisibleVertices( const bool b );
     bool visibleEdges( ) const;
     void setVisibleEdges( const bool b );
-    void setScene( QGraphicsScene* scene_ );
+//    void setScene( QGraphicsScene* scene_ );
 
 protected:
-    QRectF getViewportRect( ) const;
+//    QRectF getViewportRect( ) const;
 
     CGAL::Bbox_2 bb;
     bool bb_initialized;
@@ -73,6 +74,13 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
     typedef typename Arrangement::Vertex_iterator Vertex_iterator;
     typedef typename Arrangement::Curve_iterator Curve_iterator;
     typedef typename Arrangement::Edge_iterator Edge_iterator;
+    typedef typename Arrangement::Halfedge Halfedge;
+    typedef typename Arrangement::Halfedge_handle Halfedge_handle;
+    typedef typename Arrangement::Face_handle Face_handle;
+    typedef typename Arrangement::Face_iterator Face_iterator;
+    typedef typename Arrangement::Hole_iterator Holes_iterator;
+    typedef typename Arrangement::Ccb_halfedge_circulator Ccb_halfedge_circulator;
+ 
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename Kernel::Point_2 Kernel_point_2;
@@ -94,6 +102,124 @@ protected:
     void paint( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
     template < class Coefficient_ >
     void paint( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
+
+    void paintFaces( QPainter* painter )
+    {
+        for( Face_iterator fi = this->arr->faces_begin( ); fi != this->arr->faces_end( ); ++fi )
+        {
+            fi->set_visited( false );
+        }
+
+        Face_handle unboundedFace = this->arr->unbounded_face( );
+        this->paintFace( unboundedFace, painter );
+    }
+
+#if 0
+    template < class TTraits >
+    void paintFaces( QPainter* painter, TTraits traits ) { }
+    template < class Kernel_ >
+    void paintFaces( QPainter* painter, CGAL::Arr_segment_traits_2< Kernel_ > ) { }
+    template < class Kernel_ >
+    void paintFaces( QPainter* painter, CGAL::Arr_polyline_traits_2< Kernel_ > ) { }
+    template < class RatKernel, class AlgKernel, class NtTraits >
+    void paintFaces( QPainter* painter, CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > ) { }
+    template < class CircularKernel >
+    void paintFaces( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits ) { }
+    template < class Coefficient_ >
+    void paintFaces( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits ) { }
+#endif
+
+    void paintFace( Face_handle f, QPainter* painter )
+    {
+        if (! f->visited( ) )
+        {
+            Holes_iterator hit; // holes iterator
+            this->paintFace( f, painter, Traits( ) );
+            f->set_visited( true );
+            for ( hit = f->holes_begin(); hit != f->holes_end(); ++hit )
+            {
+                Ccb_halfedge_circulator cc = *hit;
+                do {
+                    Halfedge_handle he = cc;
+                    Halfedge_handle he2 = he->twin();
+                    Face_handle inner_face = he2->face();
+                    if ( this->antenna( he ) )
+                        continue;
+
+                    // move on to next hole
+                    this->visit_ccb_faces( inner_face, painter );
+                } while ( ++cc != *hit );
+            }// for
+        }
+    }
+
+    void visit_ccb_faces( Face_handle & fh, QPainter* painter )
+    {
+        this->paintFace( fh, painter );
+
+        Ccb_halfedge_circulator cc=fh->outer_ccb();
+        do {
+            Halfedge he = *cc;
+            if (! he.twin()->face()->visited())
+            {
+                Face_handle nei = (Face_handle) he.twin()->face();
+                this->visit_ccb_faces( nei , painter );
+            }
+            //created from the outer boundary of the face
+        } while (++cc != fh->outer_ccb());
+    }
+
+    /*! antenna - return true if the halfedge and its
+     *  twin point to the same face.
+     */
+    bool antenna(Halfedge_handle h)
+    {
+        Halfedge_handle twin = h->twin();
+        return (twin->face() == h->face());
+    }
+
+    template < class Traits >
+    void paintFace( Face_handle f, QPainter* painter, Traits traits ) { }
+    template < class Kernel_ >
+    void paintFace( Face_handle f, QPainter* painter, CGAL::Arr_segment_traits_2< Kernel_ > )
+    {
+        if (!f->is_unbounded())  // f is not the unbounded face
+        {
+            QVector< QPointF > pts; // holds the points of the polygon
+
+            /* running with around the outer of the face and generate from it
+             * polygon
+             */
+            Ccb_halfedge_circulator cc=f->outer_ccb();
+            do {
+                double x = CGAL::to_double(cc->source()->point().x());
+                double y = CGAL::to_double(cc->source()->point().y());
+                QPointF coord_source(x , y);
+                pts.push_back(coord_source );
+                //created from the outer boundary of the face
+            } while (++cc != f->outer_ccb());
+
+            // make polygon from the outer ccb of the face 'f'
+            QPolygonF pgn (pts);
+
+            // FIXME: get the bg color
+            QColor color = ::Qt::black;
+            if ( f->color().isValid() )
+            {
+                color = f->color();
+            }
+            QBrush oldBrush = painter->brush( );
+            painter->setBrush( color );
+            painter->drawPolygon( pgn );
+            painter->setBrush( oldBrush );
+        }
+        else
+        {
+            QRectF rect = this->viewportRect( );
+            QColor color = ::Qt::black;
+            painter->fillRect( rect, color );
+        }
+    }
 
     //void cacheCurveBoundingRects( );
     void updateBoundingBox( );
@@ -145,6 +271,8 @@ void
 ArrangementGraphicsItem< Arr_, ArrTraits >::
 paint( QPainter* painter, TTraits traits )
 {
+    this->paintFaces( painter );
+
     painter->setPen( this->verticesPen );
     this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
     this->painterostream.setScene( this->scene );
@@ -203,7 +331,7 @@ paint( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > t
         std::isinf(clipRect.top( )) || 
         std::isinf(clipRect.bottom( )) )
     {
-        clipRect = this->getViewportRect( );
+        clipRect = this->viewportRect( );
     }
 
     this->painterostream = ArrangementPainterOstream< Traits >( painter, clipRect );
@@ -394,7 +522,7 @@ protected: // methods
     void updateBoundingBox( )
     {
         this->prepareGeometryChange( );
-        QRectF clipRect = this->getViewportRect( );
+        QRectF clipRect = this->viewportRect( );
         this->convert = Converter<Kernel>( clipRect );
 
         if ( ! clipRect.isValid( ) /*|| this->arr->number_of_vertices( ) == 0*/ )

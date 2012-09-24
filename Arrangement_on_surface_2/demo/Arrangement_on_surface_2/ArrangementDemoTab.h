@@ -11,6 +11,7 @@
 #include "MergeEdgeCallback.h"
 #include "SplitEdgeCallback.h"
 #include "EnvelopeCallback.h"
+#include "FillFaceCallback.h"
 
 class QGridLayout;
 
@@ -35,6 +36,7 @@ public:
     virtual CGAL::Qt::Callback* getMergeEdgeCallback( ) const;
     virtual SplitEdgeCallbackBase* getSplitEdgeCallback( ) const;
     virtual EnvelopeCallbackBase* getEnvelopeCallback( ) const;
+    virtual FillFaceCallbackBase* getFillFaceCallback( ) const;
 
 protected:
     virtual void setupUi( );
@@ -51,6 +53,7 @@ protected:
     CGAL::Qt::Callback* mergeEdgeCallback;
     SplitEdgeCallbackBase* splitEdgeCallback;
     EnvelopeCallbackBase* envelopeCallback;
+    FillFaceCallbackBase* fillFaceCallback;
 
 }; // class ArrangementDemoTabBase
 
@@ -75,6 +78,7 @@ public:
         this->mergeEdgeCallback = new MergeEdgeCallback< Arrangement >( this->arrangement, this );
         this->splitEdgeCallback = new SplitEdgeCallback< Arrangement >( this->arrangement, this );
         this->envelopeCallback = new EnvelopeCallback< Arrangement >( this->arrangement, this );
+        this->fillFaceCallback = new FillFaceCallback< Arrangement >( this->arrangement, this );
 
         this->scene->addItem( this->arrangementGraphicsItem );
         this->arrangementGraphicsItem->setScene( this->scene );
@@ -85,13 +89,16 @@ public:
         this->mergeEdgeCallback->setScene( this->scene );
         this->splitEdgeCallback->setScene( this->scene );
         this->envelopeCallback->setScene( this->scene );
+        this->fillFaceCallback->setScene( this->scene );
 
         // set up callbacks
         this->scene->installEventFilter( this->curveInputCallback );
         QObject::connect( this->curveInputCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
         QObject::connect( this->deleteCurveCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
+        QObject::connect( this->fillFaceCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
         QObject::connect( this, SIGNAL( modelChanged( ) ), this->arrangementGraphicsItem, SLOT( modelChanged( ) ) );
         QObject::connect( this, SIGNAL( modelChanged( ) ), this->envelopeCallback, SLOT( slotModelChanged( ) ) );
+        // TODO: Add a connection to update the demo window when the fill color changes
     }
 
     void setArrangement( Arrangement* newArr )
@@ -105,6 +112,7 @@ public:
         delete this->mergeEdgeCallback;
         delete this->splitEdgeCallback;
         delete this->envelopeCallback;
+        delete this->fillFaceCallback;
 
         this->arrangement = newArr;
 
@@ -117,6 +125,7 @@ public:
         this->mergeEdgeCallback = new MergeEdgeCallback< Arrangement >( this->arrangement, this );
         this->splitEdgeCallback = new SplitEdgeCallback< Arrangement >( this->arrangement, this );
         this->envelopeCallback = new EnvelopeCallback< Arrangement >( this->arrangement, this );
+        this->fillFaceCallback = new FillFaceCallback< Arrangement >( this->arrangement, this );
 
         this->scene->addItem( this->arrangementGraphicsItem );
         this->arrangementGraphicsItem->setScene( this->scene );
@@ -127,12 +136,15 @@ public:
         this->mergeEdgeCallback->setScene( this->scene );
         this->splitEdgeCallback->setScene( this->scene );
         this->envelopeCallback->setScene( this->scene );
+        this->fillFaceCallback->setScene( this->scene );
 
         this->scene->installEventFilter( this->curveInputCallback );
         QObject::connect( this->curveInputCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
         QObject::connect( this->deleteCurveCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
+        QObject::connect( this->fillFaceCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
         QObject::connect( this, SIGNAL( modelChanged( ) ), this->arrangementGraphicsItem, SLOT( modelChanged( ) ) );
         QObject::connect( this, SIGNAL( modelChanged( ) ), this->envelopeCallback, SLOT( slotModelChanged( ) ) );
+        // TODO: Add a connection to update the demo window when the fill color changes
 
         emit modelChanged( );
     }

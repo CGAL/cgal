@@ -15,7 +15,8 @@ ArrangementDemoTabBase( QWidget* parent ):
     verticalRayShootCallback( NULL ),
     mergeEdgeCallback( NULL ),
     splitEdgeCallback( NULL ),
-    envelopeCallback( NULL )
+    envelopeCallback( NULL ),
+    fillFaceCallback( NULL )
 {
     this->setupUi( );
 }
@@ -97,4 +98,11 @@ ArrangementDemoTabBase::
 getEnvelopeCallback( ) const
 {
     return this->envelopeCallback;
+}
+
+FillFaceCallbackBase*
+ArrangementDemoTabBase::
+getFillFaceCallback( ) const
+{
+    return this->fillFaceCallback;
 }

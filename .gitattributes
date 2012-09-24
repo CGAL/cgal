@@ -342,6 +342,8 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveModeItemEditor
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveModeItemEditor.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/FillFaceCallback.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/FillFaceCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewCurveInput.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewCurveInput.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewSegmentInput.cpp -text

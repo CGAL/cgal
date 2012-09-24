@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>829</width>
+    <width>946</width>
     <height>600</height>
    </rect>
   </property>
@@ -29,8 +29,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>829</width>
-     <height>25</height>
+     <width>946</width>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -116,6 +116,9 @@
    <addaction name="actionRayShootingDown"/>
    <addaction name="actionMerge"/>
    <addaction name="actionSplit"/>
+   <addaction name="separator"/>
+   <addaction name="actionFill"/>
+   <addaction name="actionFillColor"/>
    <addaction name="separator"/>
    <addaction name="actionZoomIn"/>
    <addaction name="actionZoomOut"/>
@@ -239,6 +242,13 @@
    </property>
   </action>
   <action name="actionFill">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_fill.xpm</normaloff>:/icons/demo_fill.xpm</iconset>
+   </property>
    <property name="text">
     <string>Fill</string>
    </property>
@@ -461,6 +471,14 @@
    </property>
    <property name="text">
     <string>Line</string>
+   </property>
+  </action>
+  <action name="actionFillColor">
+   <property name="text">
+    <string>Fill Color</string>
+   </property>
+   <property name="toolTip">
+    <string>Set the fill color</string>
    </property>
   </action>
  </widget>

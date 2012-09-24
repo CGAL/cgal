@@ -71,7 +71,8 @@ public:
     GraphicsViewCurveInput( QObject* parent ):
         GraphicsViewCurveInputBase( parent ),
         second( false )
-    { 
+    {
+        this->segmentGuide.setZValue( 10 );
         this->setColor( this->color );
     }
 
@@ -185,6 +186,7 @@ protected:
 
             QPointF pt = this->convert( clickedPoint );
             QGraphicsLineItem* lineItem = new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+            lineItem->setZValue( 100 );
             QPen pen = lineItem->pen( );
             pen.setColor( this->color );
             lineItem->setPen( pen );
@@ -219,6 +221,7 @@ protected:
             { // start the next segment
                 QPointF pt = this->convert( clickedPoint );
                 QGraphicsLineItem* lineItem = new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+                lineItem->setZValue( 100 );
                 QPen pen = lineItem->pen( );
                 pen.setColor( this->color );
                 lineItem->setPen( pen );
@@ -340,6 +343,7 @@ protected:
             {
                 QPointF pt = this->convert( clickedPoint );
                 QGraphicsLineItem* lineItem = new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+                lineItem->setZValue( 100 );
                 QPen pen = lineItem->pen( );
                 pen.setColor( this->color );
                 lineItem->setPen( pen );
@@ -355,6 +359,7 @@ protected:
                 if ( this->scene != NULL )
                 {
                     QGraphicsEllipseItem* ellipse = this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
+                    ellipse->setZValue( 100 );
                     QPen pen = ellipse->pen( );
                     pen.setColor( this->color );
                     ellipse->setPen( pen );
@@ -367,6 +372,7 @@ protected:
                 if ( this->scene != NULL )
                 {
                     QGraphicsEllipseItem* ellipse = this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
+                    ellipse->setZValue( 100 );
                     QPen pen = ellipse->pen( );
                     pen.setColor( this->color );
                     ellipse->setPen( pen );

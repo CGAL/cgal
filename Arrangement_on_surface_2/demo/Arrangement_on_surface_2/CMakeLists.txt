@@ -87,6 +87,7 @@ add_executable( arrangement_2b
     VerticalRayShootCallback.cpp
     EnvelopeCallback.cpp
     SplitEdgeCallback.cpp
+    FillFaceCallback.cpp
     GraphicsViewSegmentInput.cpp
     GraphicsViewCurveInput.cpp
     Utils.cpp

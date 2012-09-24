@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>icons/demo_fill.xpm</file>
     <file>icons/demo_conic_line.xpm</file>
     <file>icons/demo_zoomin.xpm</file>
     <file>icons/demo_zoomout.xpm</file>

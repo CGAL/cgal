@@ -10,6 +10,7 @@
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QColorDialog>
 
 #include <CGAL/IO/Arr_with_history_iostream.h>
 #include <CGAL/IO/Arr_text_formatter.h>
@@ -115,6 +116,7 @@ makeTab( TraitsType tt )
     this->resetCallbackState( this->ui->tabWidget->currentIndex( ) );
     this->removeCallback( this->ui->tabWidget->currentIndex( ) );
     this->updateMode( this->modeGroup->checkedAction( ) );
+    this->updateFillColorSwatch( );
 
     return demoTab;
 }
@@ -183,6 +185,7 @@ setupUi( )
     this->modeGroup->addAction( this->ui->actionRayShootingDown );
     this->modeGroup->addAction( this->ui->actionMerge );
     this->modeGroup->addAction( this->ui->actionSplit );
+    this->modeGroup->addAction( this->ui->actionFill );
     this->activeModes.push_back( this->ui->actionInsert );
 
     this->envelopeGroup = new QActionGroup( this );
@@ -204,6 +207,8 @@ setupUi( )
     this->conicTypeGroup->addAction( this->ui->actionConicFivePoint );
     this->conicTypeGroup->addAction( this->ui->actionCurveRay );
     this->conicTypeGroup->addAction( this->ui->actionCurveLine );
+
+    this->updateFillColorSwatch( );
 }
 
 void
@@ -261,6 +266,11 @@ updateMode( QAction* newMode )
     {
         activeScene->installEventFilter( activeTab->getSplitEdgeCallback( ) );
     }
+    else if ( newMode == this->ui->actionFill )
+    {
+        activeScene->installEventFilter( activeTab->getFillFaceCallback( ) );
+    }
+    this->updateFillColorSwatch( );
 }
 
 void
@@ -307,6 +317,10 @@ resetCallbackState( int tabIndex )
     else if ( activeMode == this->ui->actionSplit )
     {
         activeTab->getSplitEdgeCallback( )->reset( );
+    }
+    else if ( activeMode == this->ui->actionFill )
+    {
+        activeTab->getFillFaceCallback( )->reset( );
     }
 }
 
@@ -368,6 +382,27 @@ removeCallback( int tabIndex )
         activeScene->removeEventFilter( activeTab->getSplitEdgeCallback( ) );
     }
 #endif
+}
+
+void
+ArrangementDemoWindow::
+updateFillColorSwatch( )
+{
+    int currentTabIndex = this->ui->tabWidget->currentIndex( );
+    if ( currentTabIndex == -1 )
+        return;
+    ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
+    FillFaceCallbackBase* fillFaceCallback = currentTab->getFillFaceCallback( );
+    QColor fillColor = fillFaceCallback->getColor( );
+    if ( !fillColor.isValid( ) )
+    {
+        fillColor = ::Qt::black;
+    }
+
+    QPixmap fillColorPixmap( 16, 16 );
+    fillColorPixmap.fill( fillColor );
+    QIcon fillColorIcon( fillColorPixmap );
+    this->ui->actionFillColor->setIcon( fillColorIcon );
 }
 
 void
@@ -1004,5 +1039,25 @@ on_actionPreferences_triggered( )
         std::cout << DeleteCurveMode::ToString( mode ).toStdString( ) << std::endl;
 #endif
         
+    }
+}
+
+void
+ArrangementDemoWindow::
+on_actionFillColor_triggered( )
+{
+    int currentTabIndex = this->ui->tabWidget->currentIndex( );
+    if ( currentTabIndex == -1 )
+        return;
+    ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
+    FillFaceCallbackBase* fillFaceCallback = currentTab->getFillFaceCallback( );
+    QColor fillColor = fillFaceCallback->getColor( );
+
+    QColor selectedColor = QColorDialog::getColor( fillColor );
+    if ( selectedColor.isValid( ) )
+    {
+        fillFaceCallback->setColor( selectedColor );
+
+        this->updateFillColorSwatch( );
     }
 }

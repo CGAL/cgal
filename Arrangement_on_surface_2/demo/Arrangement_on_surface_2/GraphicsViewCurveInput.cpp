@@ -45,7 +45,9 @@ GraphicsViewCurveInputBase( QObject* parent ):
     snappingEnabled( false ),
     snapToGridEnabled( false ),
     color( ::Qt::blue )
-{ }
+{
+    this->pointsGraphicsItem.setZValue( 100 );
+}
 
 void 
 GraphicsViewCurveInputBase::

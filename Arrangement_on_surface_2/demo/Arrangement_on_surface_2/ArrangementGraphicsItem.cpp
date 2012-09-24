@@ -76,6 +76,7 @@ setVisibleEdges( const bool b )
     this->update( );
 }
 
+#if 0
 void
 ArrangementGraphicsItemBase::
 setScene( QGraphicsScene* scene_ )
@@ -100,6 +101,7 @@ getViewportRect( ) const
 
     return clipRect;
 }
+#endif
 
 } // namespace Qt
 } // namespace CGAL
