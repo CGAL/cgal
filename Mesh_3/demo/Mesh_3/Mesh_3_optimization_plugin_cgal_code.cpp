@@ -90,7 +90,8 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
   
   // Create domain using real type of c3t3_item.data_item()
   // ------------------
-  
+
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
   // Image
   const Scene_segmented_image_item* image_item = 
     qobject_cast<const Scene_segmented_image_item*>(c3t3_item.data_item());
@@ -112,7 +113,7 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     
     return new Optimizer_thread(p_opt_function, p_result_item);
   }
-  
+#endif
   
   // Polyhedron
   const Scene_polyhedron_item* poly_item = 
@@ -136,6 +137,7 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     return new Optimizer_thread(p_opt_function, p_result_item);
   }
   
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   // Function
   const Scene_implicit_function_item* function_item = 
     qobject_cast<const Scene_implicit_function_item*>(c3t3_item.data_item());
@@ -162,6 +164,7 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     
     return new Optimizer_thread(p_opt_function, p_result_item);
   }
+#endif
   
   return NULL;
 }
