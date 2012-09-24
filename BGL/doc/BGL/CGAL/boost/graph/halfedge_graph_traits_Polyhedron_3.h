@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGL
+\ingroup PkgBGLTraits
 
 The class `halfedge_graph_traits` is a partial specialization of `CGAL::halfedge_graph_traits` 
 for `Polyhedron_3`. It provides the types associated 

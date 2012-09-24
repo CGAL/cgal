@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGL
+\ingroup PkgBGLHelper
 
 The class `Polyhedron_items_with_id_3` is a model of the `PolyhedronItems_3` 
 concept. It provides definitions for vertices with points, halfedges, 

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGL
+\ingroup PkgBGLEnums
 The constant `edge_is_border` is a 
 <A HREF="http://www.boost.org/libs/graph/doc/PropertyTag.html">property tag</A> 
 which refers to the property of an edge of being a border edge.
@@ -19,7 +19,7 @@ The Boolean flag that indicates if the edge is a border can be directly accessed
 */
 enum edge_is_border_t { edge_is_border };
 /*!
-\ingroup PkgBGL
+\ingroup PkgBGLEnums
 
 The constant `vertex_is_border` is a 
 <A HREF="http://www.boost.org/libs/graph/doc/PropertyTag.html">property tag</A> which refers to the property
@@ -39,7 +39,7 @@ The Boolean flag that indicates if the vertex is a border can be directly access
 enum vertex_is_border_t { vertex_is_border };
 
 /*!
-\ingroup PkgBGL
+\ingroup PkgBGLEnums
 The constant `vertex_point` is a <A HREF="http://www.boost.org/libs/graph/doc/PropertyTag.html">property tag</A> which refers to the  geometric embedding property of a  vertex of a `HalfedgeGraph`.
 
 A `vertex_point` is an 
@@ -62,7 +62,7 @@ enum vertex_point_t { vertex_point };
 namespace boost {
 
 /*!
-\ingroup PkgBGL
+\ingroup PkgBGLEnums
 The constant `edge_index` is a 
 <A HREF="http://www.boost.org/libs/graph/doc/PropertyTag.html">property tag</A> which identifies the <I>index</I> property
 of an edge of a \sc{Bgl} 

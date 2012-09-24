@@ -14,10 +14,10 @@ to the <I>left</I> of the halfedge.
 
 ### Requirements ###
 
-For each <I>directed edge</I> \f$ e=(v,w)\f$ its opposite edge \f$ e'=(w,v)\f$ 
+For each <I>directed edge</I> `e=(v,w)` its opposite edge `e2=(w,v)` 
 must be part of the graph. 
 
-The incoming edges of a vertex \f$ v\f$ have a fixed order, that is all 
+The incoming edges of a vertex `v` have a fixed order, that is all 
 calls of `in_edges(v,g)` must return the same iterator range, 
 modulo a cyclic permutation. The order must be <I>clockwise</I>. 
 
@@ -35,7 +35,7 @@ A model of `HalfedgeGraph` must have the <I>interior properties</I>
 
 Because (directed) edges must come in pairs, there is the
 additional notion of an <I>undirected edge</I>
-\footnote{The directed edges are not called `halfedges` (as in a `HalfedgeDS`) because from the point of view of this graph, being a refinement of a sc{Bgl} graph, each directed edge is an edge in itself. In other words, the unqualified term edge refers to one and only one directed edge and not to a pair.} 
+\footnote{The directed edges are not called `halfedges` (as in a `HalfedgeDS`) because from the point of view of this graph, being a refinement of a Bgl graph, each directed edge is an edge in itself. In other words, the unqualified term edge refers to one and only one directed edge and not to a pair.} 
 for a pair of opposite directed edges. The number of undirected
 edges is exactly half the number of directed edges. Note that the
 notion of directed and undirected edges does not imply the
@@ -78,8 +78,8 @@ undirected_edges(const Graph& g);
 /*! 
 Returns the opposite edge of `e`. 
 
-An edge \f$ e=(v,w)\f$ is said to be the <I>opposite edge</I> of edge
-\f$ e'=(w,v)\f$.
+An edge `e=(v,w)` is said to be the <I>opposite edge</I> of edge
+`e2=(w,v)`.
 
 \relates HalfedgeGraph 
 */ 
@@ -90,11 +90,11 @@ opposite_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Grap
 /*! 
 Returns the clockwise neighbor of `e`. 
 
-An edge \f$ e'=(v,w)\f$ is called the <I>clockwise neighbor</I> of
-edge \f$ e=(u,w)\f$, and \f$ e\f$ the <I>counterclockwise neighbor</I>
-of \f$ e'\f$, iff there exist two iterators \f$ it\f$ and \f$ it'\f$
-in the iterator range `in_edges(w,g)` such that `**it == e` and `**it'
-== e'`, and `it' == it++` or `it` is the last and `it'` the first
+An edge `e2=(v,w)` is called the <I>clockwise neighbor</I> of
+edge `e=(u,w)`, and `e` the <I>counterclockwise neighbor</I>
+of `e2`, iff there exist two iterators `it` and `it2`
+in the iterator range `in_edges(w,g)` such that `**it == e` and `**it2
+== e2`, and `it2 == it++` or `it` is the last and `it2` the first
 iterator of the iterator range.
 
 \relates HalfedgeGraph 
@@ -114,9 +114,9 @@ next_edge_ccw(typename boost::graph_traits<Graph const>::edge_descriptor e, Grap
 /*! 
 Returns the successor of `e`. 
 
-An edge \f$ e'=(v,w)\f$ is called the <I>successor</I> of edge \f$
-e=(u,v)\f$, and \f$ e\f$ the <I>predecessor</I> of \f$ e'\f$, iff \f$
-e'\f$ is the clockwise neighbor of the opposite edge of \f$ e\f$.
+An edge `e2=(v,w)` is called the <I>successor</I> of edge `
+e=(u,v)`, and `e` the <I>predecessor</I> of `e2`, iff `
+e2` is the clockwise neighbor of the opposite edge of `e`.
 
 \relates HalfedgeGraph 
 */ 
@@ -127,9 +127,9 @@ next_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph co
 /*! 
 Returns the predecessor of `e`. 
 
-An edge \f$ e'=(v,w)\f$ is called the <I>successor</I> of edge \f$
-e=(u,v)\f$, and \f$ e\f$ the <I>predecessor</I> of \f$ e'\f$, iff \f$
-e'\f$ is the clockwise neighbor of the opposite edge of \f$ e\f$.
+An edge `e2=(v,w)` is called the <I>successor</I> of edge `
+e=(u,v)`, and `e` the <I>predecessor</I> of `e2`, iff `
+e2` is the clockwise neighbor of the opposite edge of `e`.
 
 \relates HalfedgeGraph 
 */ 

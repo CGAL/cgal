@@ -1,9 +1,10 @@
 namespace boost {
 /*!
-\ingroup PkgBGL
+\ingroup PkgBGLTraits
 
-The class `graph_traits` is a partial specialization of `boost::graph_traits` 
-for the class `Polyhedron_3`. It provides the types associated 
+The class `graph_traits` is a partial specialization of 
+<A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A> 
+for the class `CGAL::Polyhedron_3`. It provides the types associated 
 to the 
 <A HREF="http://www.boost.org/libs/graph/doc/graph_concepts.html">graph</A> concepts 
 <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and 

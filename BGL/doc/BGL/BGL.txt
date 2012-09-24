@@ -37,7 +37,7 @@ edges of a vertex, or also the ingoing edges, or whether one can add and remove 
 
 Graph concepts in the \sc{Bgl} manual: <A HREF="http://www.boost.org/libs/graph/doc/graph_concepts.html"><TT>http://www.boost.org/libs/graph/doc/graph_concepts.html</TT></A>
 
-## The Graph Traits Class ##
+## The Graph %Traits Class ##
 
 The algorithms determine types with the help of the traits class
 <A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>. Such types are the `vertex_descriptor`

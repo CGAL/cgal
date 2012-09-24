@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGL
+\ingroup PkgBGLHelper
 
 The class `Triangulation_vertex_base_with_id_2` is a model of the
 concept `TriangulationVertexBase_2`, the base vertex of a

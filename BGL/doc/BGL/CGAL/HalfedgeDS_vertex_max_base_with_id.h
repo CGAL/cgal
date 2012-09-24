@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGL
+\ingroup PkgBGLHelper
 
 The class `HalfedgeDS_vertex_max_base_with_id` is a model of the `HalfedgeDSVertex` 
 concept. `Refs` is an instantiation of a `HalfedgeDS`. It is 

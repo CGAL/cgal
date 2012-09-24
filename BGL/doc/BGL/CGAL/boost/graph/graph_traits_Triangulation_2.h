@@ -1,14 +1,16 @@
 namespace boost {
 
 /*!
-\ingroup PkgBGL
+\ingroup PkgBGLTraits
+
+The class `graph_traits` is a partial specialization of 
+<A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A> 
+for the 2D triangulation classes.
 
 The triangulations of \cgal are all models of the concepts
 `BidirectionalGraph` and `VertexAndEdgeListGraph` of the Boost Graph
 Library \cite cgal:sll-bgl-02.
 
-The class `graph_traits` is a partial specialization of the class 
-<A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits<G>`</A>. 
 
 The mapping between vertices and edges of the triangulation and the 
 graph is rather straightforward, but there are some subtleties. The 

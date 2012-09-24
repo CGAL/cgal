@@ -3,6 +3,18 @@
 /// \defgroup PkgBGLConcepts Concepts
 /// \ingroup PkgBGL
 
+
+/// \defgroup PkgBGLEnums Enums
+/// \ingroup PkgBGL
+
+
+/// \defgroup PkgBGLTraits Traits Classes
+/// \ingroup PkgBGL
+
+
+/// \defgroup PkgBGLHelper Helper Classes
+/// \ingroup PkgBGL
+
 /*!
 \addtogroup PkgBGL
 \todo check generated documentation
@@ -16,7 +28,5 @@
 \PkgManuals{Chapter_CGAL_and_the_Boost_Graph_Library,PkgBGL}
 \PkgDescriptionEnd
 
-This chapter introduces the concepts and classes that allow to interface \cgal data structures 
-with the algorithms of the \sc{Bgl}, as well as a new graph concept.
 */
 
