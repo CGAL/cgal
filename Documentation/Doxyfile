@@ -226,7 +226,6 @@ ALIASES += "PkgDesc{1}=\par \"Description\" \1"
 ALIASES += "PkgSince{1}=\since \cgal \1"
 ALIASES += "PkgLicense{1}=\par \"License\" \1"
 ALIASES += "PkgDemo{2}=\par \"Demo\" <a href=\"http://www.cgal.org/demo/4.0.2/\2\">\1</a>"
-ALIASES += "PkgManuals{2}=\par \"Manuals\"\ref \1 \"User Manual\" \ref \2 \"Reference Manual\""
 ALIASES += "PkgDescriptionEnd=</td></tr></table>"
 # this alias controls linking to the how to cite page, it is also
 # responsible for adding the -YY{a,b} suffix to a cite
