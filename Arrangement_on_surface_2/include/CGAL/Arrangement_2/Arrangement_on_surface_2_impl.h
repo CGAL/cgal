@@ -2975,7 +2975,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   // Notify the observers that we have created a new edge.
   _notify_after_create_edge(Halfedge_handle(he2));
 
-  // TODO EBEB 2012-08-08 add postcondition that sanity checks
+  // TODO EBEB 2012-08-08 add postcondition that checks sanity
 #if 0
   {
     DHalfedge* he1 = he2->opposite();
@@ -3360,7 +3360,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
     m_geom_traits->compare_y_at_x_right_2_object();  
 
-  // TODO 2012-09-20 check init here to (as in "other" function of this kind
+  // TODO 2012-09-20 check "correction" here too (as in "other" function of this kind
   int x_index = 0;
   int y_index = 0;
 
