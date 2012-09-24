@@ -3,7 +3,6 @@
 \ingroup PkgMatrixSearchConcepts
 \cgalconcept
 
-\todo advanced missing
 
 The concept `MonotoneMatrixSearchTraits` is a refinement of 
 `BasicMatrix` and defines types and operations needed to 

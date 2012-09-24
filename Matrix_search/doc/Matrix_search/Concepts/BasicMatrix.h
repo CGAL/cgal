@@ -3,7 +3,6 @@
 \ingroup PkgMatrixSearchConcepts
 \cgalconcept
 
-\todo advanced missing
 
 A class `BasicMatrix` has to provide the following 
 types and operations in order to be a model for 

@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgMatrixSearch
 
-\todo advanced missing
-
 The class `Sorted_matrix_search_traits_adaptor` can be used
 as an adaptor to create sorted matrix search traits classes for
 arbitrary feasibility test and matrix classes `F` resp. `M`.

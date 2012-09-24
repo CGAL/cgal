@@ -3,7 +3,6 @@ namespace CGAL {
 /*!
 \ingroup PkgMatrixSearch
 
-\todo advanced missing
 
 The function `monotone_matrix_search` computes the maxima
 for all rows of a totally monotone matrix.

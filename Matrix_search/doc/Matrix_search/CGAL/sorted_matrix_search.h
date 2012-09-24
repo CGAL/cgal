@@ -3,8 +3,6 @@ namespace CGAL {
 /*!
 \ingroup PkgMatrixSearch
 
-\todo advanced missing
-
 The function `sorted_matrix_search` selects the smallest entry 
 in a set of sorted matrices that fulfills a certain feasibility 
 criterion. 
@@ -56,17 +54,6 @@ Frederickson and Johnson\cite fj-fkppc-83, \cite fj-gsrsm-84 and runs in
 the number of input matrices, \f$ k\f$ denotes the maximal dimension of 
 any input matrix and \f$ f\f$ the time needed for one feasibility test. 
 
-### Example ###
-
-In the following program we build a random vector \f$ a = 
-(a_i)_{i = 1,\,\ldots,\,5}\f$ (elements drawn uniformly from \f$ \{ 
-0,\,\ldots,\,99 \}\f$) and construct a Cartesian matrix \f$ M\f$ 
-containing as elements all sums \f$ a_i + a_j,\: i,\,j \in 
-\{1,\,\ldots,\,5\}\f$. If \f$ a\f$ is sorted, \f$ M\f$ is sorted as well. So 
-we can apply `sorted_matrix_search` to compute the upper bound 
-for the maximal entry of \f$ a\f$ in \f$ M\f$. 
-
-\cgalexample{sorted_matrix_search.cpp} 
 
 \sa `SortedMatrixSearchTraits` 
 */

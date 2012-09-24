@@ -3,8 +3,6 @@
 \ingroup PkgMatrixSearchConcepts
 \cgalconcept
 
-\todo advanced missing
-
 The concept `SortedMatrixSearchTraits` defines types and operations 
 needed to compute the smallest entry in a set of sorted matrices 
 that fulfills a certain feasibility criterion using the function 
