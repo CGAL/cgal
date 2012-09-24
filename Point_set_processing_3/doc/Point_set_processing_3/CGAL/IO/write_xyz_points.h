@@ -38,7 +38,7 @@ write_xyz_points(std::ostream& stream, ForwardIterator first, ForwardIterator be
 
 
 \tparam ForwardIterator iterator over input points. 
-\tparam PointPMap is a model of `boost::ReadablePropertyMap` with value type `Point_3<Kernel>`. It can be omitted if the value typ[e of `ForwardIterator` is convertible to `Point_3<Kernel>`. 
+\tparam PointPMap is a model of `boost::ReadablePropertyMap` with value type `Point_3<Kernel>`. It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`. 
 \tparam NormalPMap is a model of `boost::WritablePropertyMap` with value type `Vector_3<Kernel>`. 
 \tparam Kernel Geometric traits class. It can be omitted and deduced automatically from the value type of `PointPMap`.
 

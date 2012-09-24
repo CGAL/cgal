@@ -15,7 +15,7 @@ This \cgal component implements methods to analyze and process
 unorganized 3D point sets. The input is an unorganized 3D point set,
 possibly with normal attributes (unoriented or oriented). This point
 set can be analyzed to measure geometric properties such as average
-spacing between the points and their \f$ K\f$ nearest neighbors. It
+spacing between the points and their `k` nearest neighbors. It
 can be processed with functions devoted to the simplification, outlier
 removal, smoothing, normal estimation and normal orientation. The
 processing of point sets is often needed in applications dealing with
@@ -92,8 +92,8 @@ in pairs and accessed through property maps.
 # Analysis #
 
 Function `CGAL::compute_average_spacing()` computes the average
-spacing of all input points to their \f$ k\f$ nearest neighbor points,
-\f$ k\f$ being specified by the user. As it provides an order of a
+spacing of all input points to their `k` nearest neighbor points,
+`k` being specified by the user. As it provides an order of a
 point set density, this function is used downstream the surface
 reconstruction pipeline to automatically determine some parameters
 such as output mesh sizing for surface reconstruction.
@@ -119,7 +119,7 @@ found in other \cgal components:
 Function `CGAL::remove_outliers()` deletes a user-specified fraction
 of outliers from an input point set. More specifically, it sorts the
 input points in increasing order of average squared distances to their
-\f$ k\f$ nearest neighbors and deletes the points with largest value.
+`k` nearest neighbors and deletes the points with largest value.
 
 ## Example ##
 
@@ -158,12 +158,12 @@ The following example reads a point set and simplifies it by clustering.
 
 Function `CGAL::jet_smooth_point_set` smooths the input point set by
 projecting each point onto a smooth parametric surface patch
-(so-called jet surface) fitted over its \f$ k\f$ nearest neighbors.
+(so-called jet surface) fitted over its `k` nearest neighbors.
 
 
 ## Example ##
 
-The following example generates a set of 9 points close to the \f$xy\f$ 
+The following example generates a set of 9 points close to the `xy` 
 plane and smooths them using 8 nearest neighbors:
 \cgalexample{jet_smoothing_example.cpp}
 
@@ -174,13 +174,13 @@ functions provide an estimate of the normal to \f$ S\f$ at each
 point. The result is an unoriented normal vector for each input point.
 
 Function `CGAL::jet_estimate_normals()` estimates the normal direction
-at each point from the input set by fitting a jet surface over its \f$
-k\f$ nearest neighbors. The default jet is a quadric surface. This
+at each point from the input set by fitting a jet surface over its `k`
+nearest neighbors. The default jet is a quadric surface. This
 algorithm is well suited to point sets scattered over curved surfaces.
 
 Function `CGAL::pca_estimate_normals()` estimates the normal direction
 at each point from the set by linear least squares fitting of a plane
-over its \f$ k\f$ nearest neighbors. This algorithm is simpler and
+over its `k` nearest neighbors. This algorithm is simpler and
 faster than `CGAL::jet_estimate_normals()`.
 
 # Normal Orientation #
@@ -189,7 +189,7 @@ Function `CGAL::mst_orient_normals()` orients the normals of a set of
 points with unoriented normals using the method described by Hoppe et
 al. in <I>Surface reconstruction from unorganized points</I> \cite
 cgal:hddms-srup-92. More specifically, this method constructs a
-Riemannian graph over the input points (the graph of the \f$ K\f$
+Riemannian graph over the input points (the graph of the `k`
 nearest neighbor points) and propagates a seed normal orientation
 within a minimum spanning tree computed over this graph. The result is
 an oriented normal vector for each input unoriented normal, except for
