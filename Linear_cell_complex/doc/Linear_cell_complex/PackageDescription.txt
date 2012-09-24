@@ -7,10 +7,10 @@
 /// \defgroup PkgLinearCellComplexClasses Classes
 /// \ingroup PkgLinearCellComplex
 
-/// \defgroup PkgLinearCellComplexConstructions Constructions for Linear Cell complex
+/// \defgroup PkgLinearCellComplexConstructions Constructions for Linear Cell Complex
 /// \ingroup PkgLinearCellComplex
 
-/// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell complex
+/// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell Complex
 /// \ingroup PkgLinearCellComplex
 
 

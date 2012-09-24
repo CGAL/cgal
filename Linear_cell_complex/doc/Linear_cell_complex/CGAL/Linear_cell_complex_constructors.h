@@ -52,7 +52,7 @@ Returns a dart created during the import.
 */
 template<class LCC,class Polyhedron>
 typename LCC::Dart_handle import_from_polyhedron_3(LCC& lcc, 
-Polyhedron &apoly);
+const Polyhedron &apoly);
 
 
 /*!

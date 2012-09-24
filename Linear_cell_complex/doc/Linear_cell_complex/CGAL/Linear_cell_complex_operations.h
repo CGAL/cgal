@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgLinearCellComplexOperations
 
-Returns the normal vector of the 0-cell containing `dh`; i.e. the average of
+Returns the normal vector of the 0-cell containing `dh`, i.e.\ the average of
 all the normal vectors of the 2-cells incident to the 0-cell containing `dh`.
 \pre `LCC::ambient_dimension`==3 and `*dh`\f$ \in\f$`lcc.darts()`.
 
