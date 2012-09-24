@@ -18,9 +18,6 @@
 \PkgManuals{Chapter_Inscribed_Areas,PkgInscribedAreas}
 \PkgDescriptionEnd
 
-This chapter describes concepts, classes, and functions for
-maximum area and perimeter inscribed \f$ k\f$-gon (2D), extremal inscribed
-\f$ k\f$-gon (2D), largest empty isorectangle (2D).
 
 # Assertions #
 

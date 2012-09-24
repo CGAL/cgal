@@ -9,7 +9,7 @@ structure that maintains an iso-rectangle with the largest area among
 all iso-rectangles that are inside a given bounding box( iso-rectangle), and 
 that do not contain any point of the point set. 
 
-The class `Largest_empty_iso_rectangle_2` expects a model of the concept `LargestEmptyIsoRectangleTraits_2` as its template argument. 
+\tparam T must be a model of the concept `LargestEmptyIsoRectangleTraits_2`.
 
 ### Implementation ###
 
@@ -154,10 +154,9 @@ void
 push_back(const Point_2& p); 
 
 /*! 
-Inserts the points in the range \f$ \left[\right.\f$`first`, 
-`last`\f$ \left.\right)\f$. Returns the number of inserted points. 
+Inserts the points in the range `[first, last)` Returns the number of inserted points. 
 
-\requires The `value_type` of `first` and `last` is `Point`.
+\requires The valuetype of `first` and `last` is `Point`.
 */ 
 template < class InputIterator > 
 int 
@@ -175,7 +174,7 @@ Returns false iff `p` is not in the point set.
 bool remove(const Point_2& p); 
 
 /*! 
-Removes all points of `l`. 
+Removes all points. 
 */ 
 void clear(); 
 
