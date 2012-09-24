@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgPolyhedron
 
-\anchor pagePolyIncrBuilder 
-
 The auxiliary class `Polyhedron_incremental_builder_3` supports the incremental 
 construction of polyhedral surfaces, which is for example convenient 
 when constructing polyhedral surfaces from file formats, such as the 
@@ -48,9 +46,9 @@ while the latter mode allows to to continue the construction of an
 existing surface, the absolute indexing allows to address existing 
 vertices when creating new facets. 
 
-\sa \ref ::CGAL::Polyhedron_3<Traits> 
-\sa \ref ::HalfedgeDS 
-\sa `CGAL::Modifier_base`. 
+\sa `CGAL::Polyhedron_3<Traits>`
+\sa `HalfedgeDS`
+\sa `CGAL::Modifier_base`
 
 ### Example ###
 
@@ -132,7 +130,9 @@ To build a polyhedral surface, the following regular expression gives
 the correct and allowed order and nesting of method calls from this
 section:
 
-\code begin_surface ( add_vertex  | ( begin_facet  add_vertex_to_facet  end_facet ) ) end_surface
+\code 
+begin_surface ( add_vertex  | ( begin_facet  add_vertex_to_facet  end_facet ) ) end_surface
+\endcode
 */
 /// @{
 

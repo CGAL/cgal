@@ -4908,6 +4908,7 @@ Polyhedron/doc/Polyhedron/Concepts/PolyhedronItems_3.h -text
 Polyhedron/doc/Polyhedron/Concepts/PolyhedronTraits_3.h -text
 Polyhedron/doc/Polyhedron/PackageDescription.txt -text
 Polyhedron/doc/Polyhedron/Polyhedron.txt -text
+Polyhedron/doc/Polyhedron/examples.txt -text
 Polyhedron/doc/Polyhedron/fig/Polyhedron-teaser-small.gif -text svneol=unset#image/gif
 Polyhedron/doc/Polyhedron/fig/add_facet.pdf -text svneol=unset#application/pdf
 Polyhedron/doc/Polyhedron/fig/add_facet1.gif -text svneol=unset#image/gif

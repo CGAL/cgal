@@ -16,8 +16,8 @@ unchanged.
 For OFF an ASCII and a binary format exist. The stream detects the 
 format automatically and can read both. 
 
-\sa \ref ::CGAL::Polyhedron_3<Traits> 
-\sa \ref ::CGAL::Polyhedron_incremental_builder_3<HDS> 
+\sa `CGAL::Polyhedron_3<Traits>`
+\sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
 \sa operator<<(std::ostream&, CGAL::Polyhedron_3<PolyhedronTraits_3>&)
 
 
@@ -50,8 +50,8 @@ to allow for (a few) structuring comments in the output. Otherwise,
 the output would be free of comments. The default for writing is ASCII
 without comments.
 
-\sa \ref ::CGAL::Polyhedron_3<Traits> 
-\sa \ref ::CGAL::Polyhedron_incremental_builder_3<HDS> 
+\sa `CGAL::Polyhedron_3<Traits>`
+\sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
 \sa operator>>(std::istream&, CGAL::Polyhedron_3<PolyhedronTraits_3>&)
 
 */

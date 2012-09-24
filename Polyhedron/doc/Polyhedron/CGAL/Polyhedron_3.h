@@ -1251,7 +1251,7 @@ public:
     `h` to `g` around the vertex. 
     \pre `h` and `g` are incident to the same vertex. `h != g` (antennas are not allowed). 
 
-    \image euler_vertex.gif
+    \image html euler_vertex.gif
 
 ### Note ###
 
@@ -1276,7 +1276,7 @@ public:
 
     \requires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
-    \image euler_vertex.gif
+    \image html euler_vertex.gif
   */ 
   Halfedge_handle join_vertex( Halfedge_handle h); 
 
@@ -1311,7 +1311,7 @@ public:
     The time is proportional to the size of the facet. 
     \pre `h` is not a border halfedge. 
 
-    \image euler_center.gif
+    \image html euler_center.gif
 
   */ 
   Halfedge_handle create_center_vertex( Halfedge_handle h); 
@@ -1328,7 +1328,7 @@ public:
 
     \requires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
-    \image euler_center.gif
+    \image html euler_center.gif
   */ 
   Halfedge_handle erase_center_vertex( Halfedge_handle g); 
 
@@ -1433,7 +1433,7 @@ public:
     See `make_hole(h)` for a more specialized variant. 
     \pre `h->is_border() == false`. 
 
-    \requirement     `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+    \requires `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`
 
     \image html add_facet1.gif
 

@@ -14,7 +14,7 @@ with local state.
 
 \models ::PolyhedronTraits_3 
 
-\sa \ref ::CGAL::Polyhedron_traits_3<Kernel> 
+\sa `CGAL::Polyhedron_traits_3<Kernel>`
 
 ### Example ###
 
