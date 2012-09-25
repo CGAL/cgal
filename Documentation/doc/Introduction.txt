@@ -38,7 +38,7 @@ point written, so the pointer difference tells us how
 many points are on the convex hull. 
  
 
-Points in a STL Vector
+Points in a STL %Vector
 ======================
 
 In the second example we replace the built-in array
