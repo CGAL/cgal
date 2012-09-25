@@ -12,18 +12,18 @@ for Homogeneous kernels.
 \refines ::RealEmbeddable 
 
 \hasModel \cpp built-in number types 
-\hasModel CGAL::Gmpq 
-\hasModel CGAL::Gmpz 
-\hasModel CGAL::Interval_nt 
-\hasModel CGAL::Interval_nt_advanced 
-\hasModel CGAL::Lazy_exact_nt<RingNumberType> 
-\hasModel CGAL::MP_Float 
-\hasModel CGAL::Gmpzf 
-\hasModel CGAL::Quotient<RingNumberType> 
-\hasModel leda_integer 
-\hasModel leda_rational 
-\hasModel leda_bigfloat 
-\hasModel leda_real 
+\hasModel `CGAL::Gmpq` 
+\hasModel `CGAL::Gmpz` 
+\hasModel` CGAL::Interval_nt` 
+\hasModel `CGAL::Interval_nt_advanced `
+\hasModel `CGAL::Lazy_exact_nt<RingNumberType>` 
+\hasModel `CGAL::MP_Float` 
+\hasModel `CGAL::Gmpzf`
+\hasModel `CGAL::Quotient<RingNumberType>` 
+\hasModel `CGAL::leda_integer` 
+\hasModel `CGAL::leda_rational` 
+\hasModel `CGAL::leda_bigfloat` 
+\hasModel `CGAL::leda_real` 
 
 \sa `FieldNumberType` 
 
