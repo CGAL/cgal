@@ -6,7 +6,7 @@ namespace CGAL {
 
 The function `linear_least_squares_fitting_3` computes the best
 fitting 3D line or plane (in the least squares sense) of a set of 3D
-objects such as points, segments, triangles, spheres, balls, cuboids
+objects such as points, segments, triangles, spheres, balls, iso cuboids
 or tetrahedra.
 
 The best fitting linear sub-space (here line or plane) minimizes the
@@ -52,9 +52,9 @@ objects. For point sets it should be 0. For segment sets it could be 1
 or 0 according to whether one wants to fit the entire segments or just
 the end points. For triangle sets it can range from 0 to 2 according
 to whether one wants to fit either the corner points, the segments or
-the whole triangles. For cuboid sets it can range from 0 to 3
+the whole triangles. For iso cuboid sets it can range from 0 to 3
 according to whether one wants to fit either the corners, the
-segments, the faces or the whole solid cuboids. For sphere sets it can
+segments, the faces or the whole solid iso cuboids. For sphere sets it can
 be 2 or 3 according to whether one wants to fit either the surface of
 the spheres or the whole solid balls. For tetrahedron sets it can
 range from 0 to 3 according to whether one wants to fit either the
@@ -69,8 +69,8 @@ automatically from the value type.
 
 <OL> 
 <LI>`InputIterator::value_type` can be either `K::Point_3`, 
-`K::Segment_3`, `Triangle_3`, `Cuboid_3`, 
-`Sphere_3` or `Tetrahedron_3`. 
+`K::Segment_3`, `K::Triangle_3`, `K::Iso_cuboid_3`, 
+`K::Sphere_3` or `K::Tetrahedron_3`. 
 <LI>`line` is the best fitting line computed. 
 <LI>`centroid` is the centroid computed. This parameter is optional and can be omitted. 
 <LI>`tag` is the tag identifying the dimension to be considered from the objects. It should range from `Dimension_tag<0>` to `Dimension_tag<3>`. Also, it should not be of a dimension greater nor smaller than the geometry of the object. For example, a `Triangle` can not have a `Dimension_tag<3>` tag. A `Segment` can not have a `Dimension_tag<2>` nor a `Dimension_tag<3>` tag. A `Sphere` can not have a `Dimension_tag<0>` nor a `Dimension_tag<1>` tag. 
@@ -105,8 +105,8 @@ dimension to be considered from the objects (see above).
 
 <OL> 
 <LI>`InputIterator::value_type` can either be `K::Point_3`, 
-`K::Segment_3`, `Triangle_3`, `Cuboid_3`, 
-`Sphere_3` or `Tetrahedron_3`. 
+`K::Segment_3`, `K::Triangle_3`, `K::Iso_cuboid_3`, 
+`K::Sphere_3` or `K::Tetrahedron_3`. 
 <LI>`plane` is the best fitting plane computed. 
 <LI>`centroid` is the centroid computed. This parameter is optional and can be omitted. 
 <LI>`tag` is the tag identifying the dimension to be considered from the objects. It should range from `Dimension_tag<0>` to `Dimension_tag<3>`. Also, it should not be of a dimension greater nor smaller than the geometry of the object. For example, a `Triangle` can not have a `Dimension_tag<3>` tag. A `Segment` can not have a `Dimension_tag<2>` nor a `Dimension_tag<3>` tag. A `Sphere` can not have a `Dimension_tag<0>` nor a `Dimension_tag<1>` tag. 
