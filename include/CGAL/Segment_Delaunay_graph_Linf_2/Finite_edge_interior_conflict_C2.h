@@ -920,7 +920,7 @@ public:
                            seg.is_vertical()     ));
       // t is segment
       if (t.is_segment()) {
-        CGAL_assertion(sgn == NEGATIVE)
+        CGAL_assertion(sgn == NEGATIVE);
         return false;
       }  
 
