@@ -13,14 +13,14 @@ for Cartesian kernels.
 
 \hasModel float 
 \hasModel double 
-\hasModel CGAL::Gmpq 
-\hasModel CGAL::Interval_nt 
-\hasModel CGAL::Interval_nt_advanced 
-\hasModel CGAL::Lazy_exact_nt<FieldNumberType> 
-\hasModel CGAL::Quotient<RingNumberType> 
-\hasModel leda_rational 
-\hasModel leda_bigfloat 
-\hasModel leda_real 
+\hasModel `CGAL::Gmpq` 
+\hasModel `CGAL::Interval_nt` 
+\hasModel `CGAL::Interval_nt_advanced` 
+\hasModel `CGAL::Lazy_exact_nt<FieldNumberType>` 
+\hasModel `CGAL::Quotient<RingNumberType>` 
+\hasModel `CGAL::leda_rational` 
+\hasModel `CGAL::leda_bigfloat` 
+\hasModel `CGAL::leda_real` 
 
 \sa `RingNumberType` 
 \sa `Kernel` 
