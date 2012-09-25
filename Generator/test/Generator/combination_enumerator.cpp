@@ -18,7 +18,7 @@ long fac(long from, long to)
 template< typename T >
 void test(const int K, const T & first, const T & beyond)
 {
-    unsigned int n(0);
+    long n(0);
 
     CGAL::Combination_enumerator<T> combi(K, first, beyond);
     CGAL_assertion( first  == combi.min_element() );
