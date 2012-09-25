@@ -24,7 +24,7 @@ script.onload = function() {
 head.appendChild(script);
 gotoNode = function (o,subIndex,root,hash,relpath) {
   var nti = navTreeSubIndices[subIndex][root+hash];
-  if(nti[0] === 1 && nti[0]) {
+  if(nti && (nti[0] === 1 && nti[0])) {
       nti.splice(1, 1);
   }
   o.breadcrumbs = $.extend(true, [], nti ? nti : navTreeSubIndices[subIndex][root]);
