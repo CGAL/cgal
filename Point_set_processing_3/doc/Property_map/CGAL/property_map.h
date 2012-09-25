@@ -7,7 +7,7 @@ namespace CGAL {
 Property map that converts a `T*` pointer (or in general an iterator
 over `T` elements) to the `T` object.
 
-\models `boost::LvaluePropertyMap`
+\models `LvaluePropertyMap`
 
 */
 template< typename T >
@@ -93,7 +93,7 @@ Property map that accesses the first item of a `std::pair`.
 
 \tparam Pair Instance of `std::pair`. 
 
-\models `boost::LvaluePropertyMap`
+\models `LvaluePropertyMap`
 
 \sa `CGAL::Second_of_pair_property_map<Pair>`
 
@@ -185,7 +185,7 @@ Property map that accesses the Nth item of a `boost::tuple`.
 \tparam N Index of the item to access.
 \tparam Tuple Instance of `boost::tuple`.
 
-\models `boost::LvaluePropertyMap`
+\models `LvaluePropertyMap`
 
 ### Example ###
 
@@ -275,7 +275,7 @@ Property map that accesses the second item of a `std::pair`.
 
 \tparam Pair Instance of `std::pair`. 
 
-\models `boost::LvaluePropertyMap`
+\models `LvaluePropertyMap`
 
 \sa `CGAL::First_of_pair_property_map<Pair>`
 
