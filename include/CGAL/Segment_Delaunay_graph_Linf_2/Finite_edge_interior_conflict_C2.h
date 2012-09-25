@@ -918,6 +918,11 @@ public:
 
       CGAL_assertion( not( seg.is_horizontal() or
                            seg.is_vertical()     ));
+      // t is segment
+      if (t.is_segment()) {
+        CGAL_assertion(sgn == NEGATIVE)
+        return false;
+      }  
 
       CGAL_assertion(t.is_point());
 
