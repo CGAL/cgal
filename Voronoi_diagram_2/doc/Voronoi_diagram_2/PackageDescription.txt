@@ -2,6 +2,16 @@
 /// \defgroup PkgVoronoiDiagramAdaptor2Concepts Concepts
 /// \ingroup PkgVoronoiDiagramAdaptor2
 
+/// \defgroup PkgVoronoiDiagramAdaptor2Points Voronoi Diagram of Points 
+/// \ingroup PkgVoronoiDiagramAdaptor2
+
+
+/// \defgroup PkgVoronoiDiagramAdaptor2Segments Voronoi Diagram of Segments
+/// \ingroup PkgVoronoiDiagramAdaptor2
+
+/// \defgroup PkgVoronoiDiagramAdaptor2Disks Voronoi Diagram of Disks
+/// \ingroup PkgVoronoiDiagramAdaptor2
+
 /*!
 \addtogroup PkgVoronoiDiagramAdaptor2
 \todo check generated documentation

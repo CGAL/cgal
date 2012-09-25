@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2
+\ingroup PkgVoronoiDiagramAdaptor2Segments
 
 The class `Segment_Delaunay_graph_caching_degeneracy_removal_policy_2` provides a model for the `AdaptationPolicy_2` 
 concept. The template parameter of the `Segment_Delaunay_graph_caching_degeneracy_removal_policy_2` class must be a 
@@ -42,7 +42,7 @@ typedef CGAL::Tag_false Has_inserter;
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2
+\ingroup PkgVoronoiDiagramAdaptor2Segments
 
 The class `Segment_Delaunay_graph_degeneracy_removal_policy_2` provides a model for the `AdaptationPolicy_2` 
 concept. The template parameter of the `Segment_Delaunay_graph_degeneracy_removal_policy_2` class must be a 

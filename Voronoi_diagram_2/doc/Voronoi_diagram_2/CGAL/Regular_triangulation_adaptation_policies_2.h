@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2
+\ingroup PkgVoronoiDiagramAdaptor2Points
 
 The class `Regular_triangulation_caching_degeneracy_removal_policy_2` provides a model for the `AdaptationPolicy_2` 
 concept. The template parameter of the `Regular_triangulation_caching_degeneracy_removal_policy_2` class must be a 
@@ -41,7 +41,7 @@ typedef CGAL::Tag_true Has_inserter;
 namespace CGAL {
 
 /*!
-\ingroup PkgVoronoiDiagramAdaptor2
+\ingroup PkgVoronoiDiagramAdaptor2Points
 
 The class `Regular_triangulation_degeneracy_removal_policy_2` provides a model for the `AdaptationPolicy_2` 
 concept. The template parameter of the `Regular_triangulation_degeneracy_removal_policy_2` class must be a 
