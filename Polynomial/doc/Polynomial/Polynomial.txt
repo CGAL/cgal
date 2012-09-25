@@ -114,7 +114,7 @@ However, we decided to in principal allow negative exponents as they may
 appear as intermediate results, in particular we did <B>not</B> derive from 
 `std::vector<unsigned int>`.
 
-# Constructing a multivariate polynomial #
+# Constructing a Multivariate Polynomial #
 
 First of all the concept `Polynomial_d` requires that the model is 
 constructible from int. This is due to the fact that `Polynomial_d` 
@@ -143,7 +143,7 @@ algebraic expressions. The most elegant way to construct a certain variable is
 `CGAL::Polynomial_traits_d<Polynomial_d>::Shift` being a model of 
 `PolynomialTraits_d::Shift`.
 
-## Examples ##
+## Example ##
 
 The following example illustrates different ways to construct a 
 bivariate polynomial:
@@ -171,13 +171,13 @@ it returns the (innermost) coefficient of the leading multivariate monomial.
 See also `PolynomialTraits_d::DegreeVector`. 
 </UL>
 
-## Examples ##
+## Example ##
 
 The following example illustrates the application of the functors 
 discussed above:
 \cgalexample{coefficient_access.cpp}
 
-# Degree, total degree and degree vector #
+# Degree, Total Degree and Degree Vector #
 
 There are three functors in `PolynomialTraits_d` 
 related to the degree of a polynomial. 
@@ -197,13 +197,13 @@ where the monomial order is lexicographic and starts with the outermost
 variable. See also `PolynomialTraits_d::InnermostLeadingCoefficient`. 
 </UL>
 
-## Examples ##
+## Example ##
 
 The following example illustrates the application of the functors discussed 
 above:
 \cgalexample{degree.cpp}
 
-# Changing the order of variables #
+# Changing the Order of Variables #
 
 Given for instance a bivariate polynomial it is conceivable that one wants to 
 interchange the role of \f$ x\f$ and \f$ y\f$. That is one wants to interpret the 
@@ -223,7 +223,7 @@ For such a case the polynomial traits provides `PolynomialTraits_d::Move`.
 Of course there is also a general method to interchange the order of 
 variables, namely `PolynomialTraits_d::Permute`.
 
-## Examples ##
+## Example ##
 
 The following example illustrates the application of the functors discussed 
 above:
@@ -294,7 +294,7 @@ The concepts for the related functors are:
 `PolynomialTraits_d::PseudoDivisionRemainder`
 </UL>
 
-## Examples ##
+## Example ##
 
 The following example illustrates the application of some functors 
 discussed above:
@@ -341,13 +341,13 @@ than their equivalent implementation using substitution:
 <LI>`PolynomialTraits_d::Shift`<LI>`PolynomialTraits_d::Negate`<LI>`PolynomialTraits_d::Invert`<LI>`PolynomialTraits_d::Translate`<LI>`PolynomialTraits_d::TranslateHomogeneous`<LI>`PolynomialTraits_d::Scale`<LI>`PolynomialTraits_d::ScaleHomogeneous`
 </UL>
 
-## Examples ##
+## Example ##
 
 The following example illustrates the application of some functors 
 discussed above:
 \cgalexample{substitute.cpp}
 
-# Resultants, Subresultants and Sturm-Habicht sequences #
+# Resultants, Subresultants and Sturm-Habicht Sequences #
 
 The `PolynomialTraits_d` concept also provides more sophisticated functors
 for computations with polynomials -
@@ -392,7 +392,7 @@ for built-in integers except for toy examples.
 To avoid overflows, one should use arbitrary size integer types
 in real applications.
 
-## Examples ##
+## Example ##
 
 The following example illustrates how two compute resultants of two
 polynomials, and how to count the number of distinct real roots
