@@ -10,7 +10,7 @@ space in dimension \f$ d\f$. A point \f$ p = (p_0,\ldots,p_{ d - 1 })\f$ in
 h_i/h_d\f$, which is of type `FT`. The homogenizing coordinate \f$ h_d\f$ 
 is positive. 
 
-We call \f$ p_i\f$, \f$ 0 \leq i < d\f$ the \f$ i\f$-th Cartesian coordinate and 
+We call \f$ p_i\f$, \f$ 0 \leq i < d\f$ the \f$ i\f$-th %Cartesian coordinate and 
 \f$ h_i\f$, \f$ 0 \le i \le d\f$, the \f$ i\f$-th homogeneous coordinate. We call \f$ d\f$ 
 the dimension of the point. 
 
@@ -43,7 +43,7 @@ typedef Hidden_type LA;
 
 /*! 
 a read-only iterator for the 
-Cartesian coordinates. 
+%Cartesian coordinates. 
 */ 
 typedef Hidden_type Cartesian_const_iterator; 
 
@@ -73,7 +73,7 @@ Point_d<Kernel>(int d, Origin);
 
 /*! 
 introduces a variable 
-`p` of type `Point_d<Kernel>` in dimension `d`. If `size [first,last) == d` this creates a point with Cartesian coordinates 
+`p` of type `Point_d<Kernel>` in dimension `d`. If `size [first,last) == d` this creates a point with %Cartesian coordinates 
 `set [first,last)`. If `size [first,last) == d+1` the range 
 specifies the homogeneous coordinates 
 \f$ H = set [first,last) = (\pm h_0, \pm h_1, \ldots, \pm h_d)\f$
@@ -127,7 +127,7 @@ returns the dimension of `p`.
 int dimension() ; 
 
 /*! 
-returns the \f$ i\f$-th Cartesian 
+returns the \f$ i\f$-th %Cartesian 
 coordinate of `p`.
 
 \pre \f$ 0 \leq i < d\f$. 
@@ -135,7 +135,7 @@ coordinate of `p`.
 FT cartesian(int i) ; 
 
 /*! 
-returns the \f$ i\f$-th Cartesian 
+returns the \f$ i\f$-th %Cartesian 
 coordinate of `p`.
 
 \pre \f$ 0 \leq i < d\f$. 
@@ -152,14 +152,14 @@ RT homogeneous(int i) ;
 
 /*! 
 returns an 
-iterator pointing to the zeroth Cartesian coordinate \f$ p_0\f$ of 
+iterator pointing to the zeroth %Cartesian coordinate \f$ p_0\f$ of 
 `p`. 
 */ 
 Cartesian_const_iterator cartesian_begin() ; 
 
 /*! 
 returns an 
-iterator pointing beyond the last Cartesian coordinate of `p`. 
+iterator pointing beyond the last %Cartesian coordinate of `p`. 
 
 */ 
 Cartesian_const_iterator cartesian_end() ; 

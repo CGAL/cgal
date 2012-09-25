@@ -44,7 +44,7 @@ typedef Hidden_type RT;
 
 /*! 
 a type that allows to iterate over 
-the Cartesian coordinates 
+the %Cartesian coordinates 
 */ 
 typedef Hidden_type Cartesian_const_iterator_d; 
 

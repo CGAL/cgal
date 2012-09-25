@@ -7,7 +7,7 @@ An instance of data type `Vector_d<Kernel>` is a vector of Euclidean
 space in dimension \f$ d\f$. A vector \f$ r = (r_0,\ldots,r_{ d - 1})\f$ can be 
 represented in homogeneous coordinates \f$ (h_0,\ldots,h_d)\f$ of number 
 type `RT`, such that \f$ r_i = h_i/h_d\f$ which is of type `FT`. We 
-call the \f$ r_i\f$'s the Cartesian coordinates of the vector. The 
+call the \f$ r_i\f$'s the %Cartesian coordinates of the vector. The 
 homogenizing coordinate \f$ h_d\f$ is positive. 
 
 This data type is meant for use in computational geometry. It realizes 
@@ -45,7 +45,7 @@ typedef Hidden_type LA;
 
 /*! 
 a read-only iterator for the 
-Cartesian coordinates. 
+%Cartesian coordinates. 
 */ 
 typedef Hidden_type Cartesian_const_iterator; 
 
@@ -81,7 +81,7 @@ Vector_d<Kernel>(int d, Null_vector);
 /*! 
 introduces a variable 
 `v` of type `Vector_d<Kernel>` in dimension `d`. If 
-`size [first,last) == d` this creates a vector with Cartesian 
+`size [first,last) == d` this creates a vector with %Cartesian 
 coordinates `set [first,last)`. If `size [first,last) == p+1` the range specifies the homogeneous coordinates \f$ H = set 
 [first,last) = (\pm h_0, \pm h_1, \ldots, \pm h_d)\f$ where the 
 sign chosen is the sign of \f$ h_d\f$.
@@ -140,7 +140,7 @@ returns the dimension of `v`.
 int dimension() ; 
 
 /*! 
-returns the \f$ i\f$-th Cartesian 
+returns the \f$ i\f$-th %Cartesian 
 coordinate of `v`.
 
 \pre \f$ 0 \leq i < d\f$. 
@@ -148,7 +148,7 @@ coordinate of `v`.
 FT cartesian(int i) ; 
 
 /*! 
-returns the \f$ i\f$-th Cartesian 
+returns the \f$ i\f$-th %Cartesian 
 coordinate of `v`.
 
 \pre \f$ 0 \leq i < d\f$. 
@@ -171,13 +171,13 @@ FT squared_length() ;
 
 /*! 
 returns an 
-iterator pointing to the zeroth Cartesian coordinate of `v`. 
+iterator pointing to the zeroth %Cartesian coordinate of `v`. 
 */ 
 Cartesian_const_iterator cartesian_begin() ; 
 
 /*! 
 returns an 
-iterator pointing beyond the last Cartesian coordinate of `v`. 
+iterator pointing beyond the last %Cartesian coordinate of `v`. 
 
 */ 
 Cartesian_const_iterator cartesian_end() ; 
@@ -215,50 +215,50 @@ Vector_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
 
 /*! 
 multiplies all 
-Cartesian coordinates by `n`. 
+%Cartesian coordinates by `n`. 
 */ 
 Vector_d<Kernel>& operator*=(const RT& n) ; 
 
 /*! 
 multiplies all 
-Cartesian coordinates by `r`. 
+%Cartesian coordinates by `r`. 
 */ 
 Vector_d<Kernel>& operator*=(const FT& r) ; 
 
 /*! 
 returns the vector 
-with Cartesian coordinates \f$ v_i/n, 0 \leq i < d\f$. 
+with %Cartesian coordinates \f$ v_i/n, 0 \leq i < d\f$. 
 */ 
 Vector_d<Kernel> operator/(const RT& n) ; 
 
 /*! 
 returns the vector 
-with Cartesian coordinates \f$ v_i/r, 0 \leq i < d\f$. 
+with %Cartesian coordinates \f$ v_i/r, 0 \leq i < d\f$. 
 */ 
 Vector_d<Kernel> operator/(const FT& r) ; 
 
 /*! 
 divides all 
-Cartesian coordinates by `n`. 
+%Cartesian coordinates by `n`. 
 */ 
 Vector_d<Kernel>& operator/=(const RT& n) ; 
 
 /*! 
 divides all 
-Cartesian coordinates by `r`. 
+%Cartesian coordinates by `r`. 
 */ 
 Vector_d<Kernel>& operator/=(const FT& r) ; 
 
 /*! 
 inner product, i.e., 
 \f$ \sum_{ 0 \le i < d } v_i w_i\f$, where \f$ v_i\f$ and \f$ w_i\f$ are the 
-Cartesian coordinates of \f$ v\f$ and \f$ w\f$ respectively. 
+%Cartesian coordinates of \f$ v\f$ and \f$ w\f$ respectively. 
 */ 
 FT operator* (const Vector_d<Kernel>& w) ; 
 
 /*! 
 returns the 
-vector with Cartesian coordinates \f$ v_i+w_i, 0 \leq i < d\f$. 
+vector with %Cartesian coordinates \f$ v_i+w_i, 0 \leq i < d\f$. 
 */ 
 Vector_d<Kernel> operator+(const Vector_d<Kernel>& w) ; 
 
@@ -270,7 +270,7 @@ Vector_d<Kernel>& operator+=(const Vector_d<Kernel>& w) ;
 
 /*! 
 returns the 
-vector with Cartesian coordinates \f$ v_i-w_i, 0 \leq i < d\f$. 
+vector with %Cartesian coordinates \f$ v_i-w_i, 0 \leq i < d\f$. 
 */ 
 Vector_d<Kernel> operator-(const Vector_d<Kernel>& w) ; 
 
@@ -293,12 +293,12 @@ vector.
 bool is_zero() ; 
 
 /*! 
-returns the vector with Cartesian coordinates \f$ n v_i\f$. 
+returns the vector with %Cartesian coordinates \f$ n v_i\f$. 
 */ 
 Vector_d<Kernel> operator*(const RT& n, const Vector_d<Kernel>& v); 
 
 /*! 
-returns the vector with Cartesian coordinates \f$ r v_i, 0 \leq i < 
+returns the vector with %Cartesian coordinates \f$ r v_i, 0 \leq i < 
 d\f$. 
 */ 
 Vector_d<Kernel> operator*(const FT& r, const Vector_d<Kernel>& v); 

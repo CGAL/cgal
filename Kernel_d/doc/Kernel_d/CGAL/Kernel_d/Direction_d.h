@@ -7,10 +7,10 @@ A `Direction_d` is a vector in the \f$ d\f$-dimensional vector space
 where we forget about its length. We represent directions in 
 \f$ d\f$-dimensional space as a tuple \f$ (h_0,\ldots,h_d)\f$ of variables of 
 type `RT` which we call the homogeneous coordinates of the 
-direction. The coordinate \f$ h_d\f$ must be positive. The Cartesian 
+direction. The coordinate \f$ h_d\f$ must be positive. The %Cartesian 
 coordinates of a direction are \f$ c_i = h_i/h_d\f$ for \f$ 0 \le i < d\f$, 
 which are of type `FT`. Two directions are equal if their 
-Cartesian coordinates are positive multiples of each other. Directions 
+%Cartesian coordinates are positive multiples of each other. Directions 
 are in one-to-one correspondence to points on the unit sphere. 
 
 ### Downward compatibility ###

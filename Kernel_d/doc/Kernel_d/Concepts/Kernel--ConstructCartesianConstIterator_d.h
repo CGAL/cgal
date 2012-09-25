@@ -13,13 +13,13 @@ A model for this must provide:
 class Kernel_d::ConstructCartesianConstIterator_d {
 public:
 /*! 
-returns an iterator on the 0'th Cartesian coordinate of `p`. 
+returns an iterator on the 0'th %Cartesian coordinate of `p`. 
 */ 
 Kernel_d::Cartesian_const_iterator_d operator()(const Kernel_d::Point_d 
 &p); 
 
 /*! 
-returns the past the end iterator of the Cartesian coordinates of `p`. 
+returns the past the end iterator of the %Cartesian coordinates of `p`. 
 */ 
 Kernel_d::Cartesian_const_iterator_d operator()(const Kernel_d::Point_d 
 &p, int); 

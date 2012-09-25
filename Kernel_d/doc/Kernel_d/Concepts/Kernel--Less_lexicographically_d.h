@@ -15,7 +15,7 @@ public:
 
 /*! 
 returns `true` iff `p` is 
-lexicographically smaller than `q` with respect to Cartesian 
+lexicographically smaller than `q` with respect to %Cartesian 
 lexicographic order of points.
 
 \pre `p` and `q` have the same dimension. 

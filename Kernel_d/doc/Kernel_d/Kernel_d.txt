@@ -74,23 +74,23 @@ If we index the tuple as above then we require that
 Our object of study is the \f$ d\f$-dimensional affine Euclidean space,
 where \f$ d\f$ is a parameter of our geometry. Objects in that space are
 sets of points. A common way to represent the points is the use of
-Cartesian coordinates, which assumes a reference
+%Cartesian coordinates, which assumes a reference
 frame (an origin and \f$ d\f$ orthogonal axes). In that framework, a point
 is represented by a \f$ d\f$-tuple \f$ (c_0,c_1,\ldots,c_{d-1})\f$,
 and so are vectors in the underlying linear space. Each point is
-represented uniquely by such Cartesian
+represented uniquely by such %Cartesian
 coordinates.
 
 Another way to represent points is by homogeneous coordinates. In that
 framework, a point is represented by a \f$ (d+1)\f$-tuple \f$ (h_0,h_1,\ldots,h_d)\f$.
 Via the formulae \f$ c_i = h_i/h_d\f$,
-the corresponding point with Cartesian coordinates
+the corresponding point with %Cartesian coordinates
 \f$ (c_0,c_1,\ldots,c_{d-1})\f$
 can be computed. Note that homogeneous coordinates are not unique. 
 For \f$ \lambda\ne 0\f$, the tuples \f$ (h_0,h_1,\ldots,h_d)\f$ and 
 \f$ (\lambda\cdot h_0,\lambda\cdot h_1,\ldots,\lambda\cdot h_d)\f$
 represent the same point.
-For a point with Cartesian coordinates 
+For a point with %Cartesian coordinates 
 \f$ (c_0,c_1,\ldots,c_{d-1})\f$ a
 possible homogeneous representation is
 \f$ (c_0,c_1,\ldots,c_{d-1},1)\f$.
@@ -114,11 +114,11 @@ all kernel objects `Kernel_object`, the types
 `CGAL::Kernel_object<R>` and `R::Kernel_object` are identical.
 
 \cgal offers two families of concrete models for the concept
-representation class, one based on the Cartesian
+representation class, one based on the %Cartesian
 representation of points and one based on the homogeneous
 representation of points. The interface of the kernel objects is
 designed such that it works well with both
-Cartesian and homogeneous representation, for
+%Cartesian and homogeneous representation, for
 example, points have a constructor with a range of coordinates plus a
 common denominator (the \f$ d+1\f$ homogeneous coordinates of the point).
 The common interfaces parameterized with a representation class allow
@@ -153,21 +153,21 @@ should fulfill \cgal's requirements on a number type.
 ## %Cartesian %Kernel ##
 
 With `Cartesian_d<FieldNumberType,LinearAlgebra>` you can choose
-Cartesian representation of coordinates. The type
+%Cartesian representation of coordinates. The type
 `LinearAlgebra` must me a linear algebra module working on numbers
 of type `FieldNumberType`. The second parameter defaults to module
 delivered with the kernel so for short a user can just write
 `Cartesian_d<FieldNumberType>` when not providing her own linear
 algebra.
 
-When you choose Cartesian representation you have
+When you choose %Cartesian representation you have
 to declare at least the type of the coordinates. A number type used
 with the `Cartesian_d` representation class should be a <I>field
-type</I> as described above. Both `Cartesian<FieldNumberType>::FT`
-and `Cartesian<FieldNumberType>::RT` are mapped to number type
+type</I> as described above. Both `Cartesian_d<FieldNumberType>::FT`
+and `Cartesian_d<FieldNumberType>::RT` are mapped to number type
 `FieldNumberType`.
 `Cartesian_d<FieldNumberType,LinearAlgebra>::LA` is mapped to the
-type `LinearAlgebra`. `Cartesian<FieldNumberType>` uses
+type `LinearAlgebra`. `Cartesian_d<FieldNumberType>` uses
 reference counting internally to save copying costs.
 
 ## %Homogeneous %Kernel ##
@@ -178,7 +178,7 @@ coordinate can serve as a common denominator. Avoiding divisions can
 be useful for exact geometric computation. With
 `Homogeneous_d<RingNumberType,LinearAlgebra>` you can choose
 homogeneous representation of coordinates with the kernel objects. 
-As for Cartesian representation you have to declare
+As for %Cartesian representation you have to declare
 at the same time the type used to store the homogeneous coordinates.
 Since the homogeneous representation allows one to avoid the
 divisions, the number type associated with a homogeneous
@@ -193,7 +193,7 @@ is no issue.
 
 However, some operations provided by this kernel involve division
 operations, for example computing squared distances or returning a
-Cartesian coordinate. To keep the requirements on
+%Cartesian coordinate. To keep the requirements on
 the number type parameter of `Homogeneous` low, the number type
 `Quotient<RingNumberType>` is used instead. This number type
 turns a ring type into a field type. It maintains numbers as
@@ -237,7 +237,7 @@ not be used as a traits class.
 
 ## Choosing a %Kernel ##
 
-If you start with integral Cartesian coordinates,
+If you start with integral %Cartesian coordinates,
 many geometric computations will involve integral numerical values
 only. Especially, this is true for geometric computations that
 evaluate only predicates, which are tantamount to determinant
@@ -253,12 +253,12 @@ type, incorrect results might arise due to overflow.
 
 If new points are to be constructed, for example the
 intersection point of two lines, computation of
-Cartesian coordinates usually involves divisions,
-so you need to use a field type with Cartesian
+%Cartesian coordinates usually involves divisions,
+so you need to use a field type with %Cartesian
 representation or have to switch to homogeneous representation.
 `double` is a possible, but imprecise field type. You can also
 put any ring type into `Quotient` to get a field type and put it
-into `Cartesian`, but you better put the ring type into
+into `Cartesian_d`, but you better put the ring type into
 `Homogeneous`. `leda_rational` and `leda_real` are valid
 field types, too.
 

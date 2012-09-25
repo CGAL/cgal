@@ -21,7 +21,7 @@ determines the orientation of the points of the tuple
 1 & 1 & 1 & 1 \\ 
 A[0] & A[1] & \dots& A[d] 
 \end{array} \right| \f] 
-where `A[i]` denotes the Cartesian coordinate vector of 
+where `A[i]` denotes the %Cartesian coordinate vector of 
 the \f$ i\f$-th point in \f$ A\f$. 
 \pre `size [first,last) == d+1` and `A[i].dimension() == d` \f$ \forall0 \leq i \leq d\f$. 
 

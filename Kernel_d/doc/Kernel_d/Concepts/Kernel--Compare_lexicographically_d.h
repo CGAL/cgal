@@ -14,9 +14,9 @@ public:
 /// @{
 
 /*! 
-Compares the Cartesian coordinates of 
+Compares the %Cartesian coordinates of 
 points `p` and `q` lexicographically in ascending 
-order of its Cartesian components `p[i]` and `q[i]` for \f$ i = 
+order of its %Cartesian components `p[i]` and `q[i]` for \f$ i = 
 0,\ldots,d-1\f$.
 
 \pre The objects are of the same dimension. 

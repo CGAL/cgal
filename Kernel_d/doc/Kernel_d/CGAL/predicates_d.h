@@ -31,9 +31,9 @@ affine_rank(ForwardIterator first, ForwardIterator last);
 /*!
 
 
-Compares the Cartesian
+Compares the %Cartesian
 coordinates of points `p` and `q` lexicographically
-in ascending order of its Cartesian components `p[i]` and
+in ascending order of its %Cartesian components `p[i]` and
 `q[i]` for \f$ i = 0,\ldots,d-1\f$.
 
 \pre `p.dimension() == q.dimension()`.
@@ -89,7 +89,7 @@ const Point_d<R>& p);
 
 
 returns `true` iff `p` is
-lexicographically smaller than `q` with respect to Cartesian
+lexicographically smaller than `q` with respect to %Cartesian
 lexicographic order of points.
 
 \pre `p.dimension() == q.dimension()`.
@@ -102,7 +102,7 @@ Point_d<R>& q);
 
 
 returns `true` iff \f$ p\f$ is
-lexicographically smaller than \f$ q\f$ with respect to Cartesian
+lexicographically smaller than \f$ q\f$ with respect to %Cartesian
 lexicographic order of points or equal to \f$ q\f$.
 
 \pre `p.dimension() == q.dimension()`.
@@ -146,7 +146,7 @@ determines the orientation of the points of the tuple `A = tuple [first,last)` w
 1 & 1 & 1 & 1 \\
 A[0] & A[1] & \dots& A[d]
 \end{array} \right| \f]
-where `A[i]` denotes the Cartesian coordinate vector of 
+where `A[i]` denotes the %Cartesian coordinate vector of 
 the \f$ i\f$-th point in \f$ A\f$.
 \pre `size [first,last) == d+1` and `A[i].dimension() == d` \f$ \forall0 \leq i \leq d\f$.
 

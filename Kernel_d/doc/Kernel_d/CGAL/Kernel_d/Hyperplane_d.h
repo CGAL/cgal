@@ -8,7 +8,7 @@ in \f$ d\f$ - dimensional space. A hyperplane \f$ h\f$ is represented by
 coefficients \f$ (c_0,c_1,\ldots,c_d)\f$ of type `RT`. At least one of 
 \f$ c_0\f$ to \f$ c_{ d - 1 }\f$ must be non-zero. The plane equation is 
 \f$ \sum_{ 0 \le i < d } c_i x_i + c_d = 0\f$, where \f$ x_0\f$ to \f$ x_{d-1}\f$ are 
-Cartesian point coordinates. For a particular \f$ x\f$ the sign of \f$ \sum_{ 
+%Cartesian point coordinates. For a particular \f$ x\f$ the sign of \f$ \sum_{ 
 0 \le i < d } c_i x_i + c_d\f$ determines the position of a point \f$ x\f$ 
 with respect to the hyperplane (on the hyperplane, on the negative 
 side, or on the positive side). 

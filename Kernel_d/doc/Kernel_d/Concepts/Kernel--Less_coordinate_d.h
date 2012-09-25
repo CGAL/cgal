@@ -14,9 +14,9 @@ public:
 /// @{
 
 /*! 
-returns `true` iff the \f$ i\f$th Cartesian coordinate 
+returns `true` iff the \f$ i\f$th %Cartesian coordinate 
 of `p` is 
-smaller than the \f$ i\f$th Cartesian coordinate of `q`.
+smaller than the \f$ i\f$th %Cartesian coordinate of `q`.
 
 \pre `p` and `q` have the same dimension. 
 */ 

@@ -16,11 +16,11 @@ the kernel is only an approximation of Euclidean geometry.
 
 \models ::Kernel_d 
 
-\sa `CGAL::Cartesian_d<FieldumberType>`
+\sa `CGAL::Cartesian_d<FieldNumberType>`
 
 */
 template< typename RingNumberType >
-class Homogeneous {
+class Homogeneous_d {
 public:
 
 /// @}
