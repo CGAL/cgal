@@ -3112,7 +3112,6 @@ Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Sort.h -text
 Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Sort_event_log_visitor.h -text
 Kinetic_data_structures/doc/Kinetic_data_structures/CGAL/Kinetic/Sort_visitor_base.h -text
 Kinetic_data_structures/doc/Kinetic_data_structures/Concepts/DelaunayTriangulationVisitor_2.h -text
-Kinetic_data_structures/doc/Kinetic_data_structures/Concepts/DelaunayTriangulationVisitor_3.h -text
 Kinetic_data_structures/doc/Kinetic_data_structures/Concepts/EventLogVisitor.h -text
 Kinetic_data_structures/doc/Kinetic_data_structures/Concepts/RegularTriangulationVisitor_3.h -text
 Kinetic_data_structures/doc/Kinetic_data_structures/Concepts/SortVisitor.h -text
