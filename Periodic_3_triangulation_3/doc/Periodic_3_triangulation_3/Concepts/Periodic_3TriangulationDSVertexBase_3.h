@@ -3,17 +3,18 @@
 \ingroup PkgPeriodic3Triangulation3Concepts
 \cgalconcept
 
+A refinement of the concept `TriangulationDSVertexBase_3` 
+which adds an API for offset.
+
 At the base level of 3D-triangulations 
 (see Sections \ref P3Triangulation3secdesign and \ref TDS3secdesign), 
 a vertex provides access to one of its incident cells through a handle. 
 
-For optimization purposes we need to extend the concept 
-`TriangulationDSVertexBase_3` as follows. 
+
 
 \refines ::TriangulationDSVertexBase_3 
 
-Periodic_3TriangulationDSVertexBase_3 needs to store an offset 
-   and some index inside the vertex. 
+ 
 
 \hasModel CGAL::Periodic_3_triangulation_ds_vertex_base_3 
 

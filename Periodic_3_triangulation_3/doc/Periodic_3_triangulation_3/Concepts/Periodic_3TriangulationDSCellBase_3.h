@@ -3,17 +3,20 @@
 \ingroup PkgPeriodic3Triangulation3Concepts
 \cgalconcept
 
+A refinement of the concept `TriangulationDSCellBase_3`
+which adds an API for offsets.
+
 At the base level (see Sections \ref P3Triangulation3secdesign 
 and \ref TDS3secdesign), a cell stores handles to its four vertices 
 and to its four neighbor cells. The vertices and neighbors are 
-indexed 0, 1, 2 and 3. Neighbor \f$ i\f$ lies opposite to vertex \f$ i\f$. 
-
-\refines ::TriangulationDSCellBase_3 
+indexed 0, 1, 2 and 3. Neighbor `i` lies opposite to vertex `i`. 
 
 For periodic triangulation the cell base class needs to
 additionally store an offset for each vertex. Only the last three
 bits of each integer are required to be stored. The remaining part
 does not contain any information.
+
+\refines ::TriangulationDSCellBase_3 
 
 \hasModel CGAL::Periodic_3_triangulation_ds_cell_base_3 
 
