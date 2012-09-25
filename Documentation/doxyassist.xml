@@ -37,7 +37,7 @@ namespace for the XML file to be processed properly.  -->
         <string name="HTML_EXTRA_STYLESHEET">cgal_package_stylesheet.css</string>
         <string name="LAYOUT_FILE">DoxygenLayoutPackage.xml</string>
         <list name="ALIASES" append="true">
-          <item>PkgDescriptionBegin{1}=&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;</item>
+          <item>PkgDescriptionBegin{2}=&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;</item>
           <item>PkgManuals{2}=</item>
         </list>
         <string name="HTML_HEADER">header_package.html</string>
@@ -1465,7 +1465,7 @@ namespace for the XML file to be processed properly.  -->
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>
         <list name="ALIASES" append="true">
-          <item>PkgDescriptionBegin{2}=&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&lt;h2&gt;&lt;a href=&quot;../../CGAL.CGAL.\2/html/index.html&quot;&gt;\1&lt;/a&gt;&lt;/h2&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;</item>
+          <item>PkgDescriptionBegin{2}=\subsection \2 \1 \n&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tr&gt;</item>
           <item>PkgManuals{2}=\par &quot;Manuals&quot;\ref \1 &quot;User Manual&quot; \ref \2 &quot;Reference Manual&quot;</item>
         </list>
       </doxygen>

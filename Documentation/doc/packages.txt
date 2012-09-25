@@ -13,213 +13,134 @@ h1 {
 
 \section PartAlgebraicFoundations Arithmetic and Algebra
 
-<a name="Pkg:AlgebraicFoundations"></a>
 \package_listing{Algebraic_foundations}
-<a name="Pkg:NumberTypes"></a>
 \package_listing{Number_types}
-<a name="Pkg:ModularArithmetic"></a>
 \package_listing{Modular_arithmetic}
-<a name="Pkg:Polynomial"></a>
 \package_listing{Polynomial}
-<a name="Pkg:AlgebraicKerneld"></a>
 \package_listing{Algebraic_kernel_d}
 
 \section PartCombinatorialAlgorithms Combinatorial Algorithms
 
-<a name="Pkg:MatrixSearch"></a>
 \package_listing{Matrix_search}
-<a name="Pkg:QPSolver"></a>
 \package_listing{QP_solver}
 
 \section PartKernels Geometry Kernels
 
-<a name="Pkg:Kernel23"></a>
 \package_listing{Kernel_23}
-<a name="Pkg:KernelD"></a>
 \package_listing{Kernel_d}
-<a name="Pkg:CircularKernel2"></a>
 \package_listing{Circular_kernel_2}
-<a name="Pkg:SphericalKernel3"></a>
 \package_listing{Circular_kernel_3}
 
 \section PartConvexHullAlgorithms Convex Hull Algorithms
 
-<a name="Pkg:ConvexHull2"></a>
 \package_listing{Convex_hull_2}
-<a name="Pkg:ConvexHull3"></a>
 \package_listing{Convex_hull_3}
-<a name="Pkg:ConvexHullD"></a>
 \package_listing{Convex_hull_d}
 
 \section PartPolygons Polygons
 
-<a name="Pkg:Polygon2"></a>
 \package_listing{Polygon}
-<a name="Pkg:BooleanSetOperations2"></a>
 \package_listing{Boolean_set_operations_2}
-<a name="Pkg:Nef2"></a>
 \package_listing{Nef_2}
-<a name="Pkg:NefS2"></a>
 \package_listing{Nef_S2}
-<a name="Pkg:PolygonPartitioning2"></a>
 \package_listing{Partition_2}
-<a name="Pkg:StraightSkeleton2"></a>
 \package_listing{Straight_skeleton_2}
-<a name="Pkg:MinkowskiSum2"></a>
 \package_listing{Minkowski_sum_2}
 
 
 \section PartPolyhedra Cell Complexes and Polyhedra
 
-<a name="Pkg:Polyhedron"></a>
 \package_listing{Polyhedron}
-<a name="Pkg:HDS"></a>
 \package_listing{HalfedgeDS}
-<a name="Pkg:CombinatorialMaps"></a>
 \package_listing{Combinatorial_map}
-<a name="Pkg:LinearCellComplex"></a>
 \package_listing{Linear_cell_complex}
-<a name="Pkg:Nef3"></a>
 \package_listing{Nef_3}
-<a name="Pkg:ConvexDecomposition3"></a>
 \package_listing{Convex_decomposition_3}
-<a name="Pkg:MinkowskiSum3"></a>
 \package_listing{Minkowski_sum_3}
 
 
 \section PartArrangements Arrangements
 
-<a name="Pkg:Arrangement2"></a>
 \package_listing{Arrangement_on_surface_2}
-<a name="Pkg:IntersectionOfCurves2"></a>
 \package_listing{Arrangement_on_surface_2/Sweep_line_2}
-<a name="Pkg:SnapRounding2"></a>
 \package_listing{Snap_rounding_2}
-<a name="Pkg:Envelope2"></a>
 \package_listing{Envelope_2}
-<a name="Pkg:Envelope3"></a>
 \package_listing{Envelope_3}
 
 \section PartTriangulationsAndDelaunayTriangulations Triangulations and Delaunay Triangulations
 
-<a name="Pkg:Triangulation2"></a>
 \package_listing{Triangulation_2}
-<a name="Pkg:TDS2"></a>
 \package_listing{Triangulation_2/TDS_2}
-<a name="Pkg:Triangulation3"></a>
 \package_listing{Triangulation_3}
-<a name="Pkg:TDS3"></a>
 \package_listing{Triangulation_3/TDS_3}
-<a name="Pkg:Periodic3Triangulation3"></a>
 \package_listing{Periodic_3_triangulation_3}
-<a name="Pkg:AlphaShape2"></a>
 \package_listing{Alpha_shapes_2}
-<a name="Pkg:AlphaShapes3"></a>
 \package_listing{Alpha_shapes_3}
 
 \section PartVoronoiDiagrams Voronoi Diagrams
 
-<a name="Pkg:SegmentDelaunayGraph2"></a>
 \package_listing{Segment_Delaunay_graph_2}
-<a name="Pkg:ApolloniusGraph2"></a>
 \package_listing{Apollonius_graph_2}
-<a name="Pkg:VoronoiDiagramAdaptor2"></a>
 \package_listing{Voronoi_diagram_2}
 
 \section PartMeshing Mesh Generation
 
-<a name="Pkg:Mesh2"></a>
 \package_listing{Mesh_2}
-<a name="Pkg:SurfaceMesher3"></a>
 \package_listing{Surface_mesher}
-<a name="Pkg:SurfaceReconstructionFromPointSets"></a>
 \package_listing{Surface_reconstruction_points_3}
-<a name="Pkg:SkinSurface3"></a>
 \package_listing{Skin_surface_3}
-<a name="Pkg:Mesh_3"></a>
 \package_listing{Mesh_3}
 
 \section PartGeometryProcessing Geometry Processing
 
-<a name="Pkg:SurfaceSubdivisionMethods3"></a>
 \package_listing{Subdivision_method_3}
-<a name="Pkg:SurfaceMeshSimplification"></a>
 \package_listing{Surface_mesh_simplification}
-<a name="Pkg:SurfaceParameterization"></a>
 \package_listing{Surface_mesh_parameterization}
-<a name="Pkg:PlacementOfStreamlines2"></a>
 \package_listing{Stream_lines_2}
-<a name="Pkg:Ridges_3"></a>
 \package_listing{Ridges_3}
-<a name="Pkg:Jet_fitting_3"></a>
 \package_listing{Jet_fitting_3}
-<a name="Pkg:PointSetProcessing"></a>
 \package_listing{Point_set_processing_3}
 
 \section PartSearchStructures Spatial Searching and Sorting
 
-<a name="Pkg:PointSet2"></a>
 \package_listing{Point_set_2}
-<a name="Pkg:IntervalSkipList"></a>
 \package_listing{Interval_skip_list}
-<a name="Pkg:SpatialSearchingD"></a>
 \package_listing{Spatial_searching}
-<a name="Pkg:RangeSegmentTreesD"></a>
 \package_listing{SearchStructures}
-<a name="Pkg:BoxIntersectionD"></a>
 \package_listing{Box_intersection_d}
-<a name="Pkg:AABB_tree"></a>
 \package_listing{AABB_tree}
-<a name="Pkg:SpatialSorting"></a>
 \package_listing{Spatial_sorting}
 
 \section PartGeometricOptimization Geometric Optimization
 
-<a name="Pkg:BoundingVolumes"></a>
 \package_listing{Bounding_volumes}
-<a name="Pkg:InscribedAreas"></a>
 \package_listing{Inscribed_areas}
-<a name="Pkg:OptimalDistances"></a>
 \package_listing{Polytope_distance_d}
-<a name="Pkg:PrincipalComponentAnalysisD"></a>
 \package_listing{Principal_component_analysis}
 
 \section PartInterpolation Interpolation
 
-<a name="Pkg:Interpolation2"></a>
 \package_listing{Interpolation}
 
 \section PartKineticDataStructures Kinetic Data Structures
 
-<a name="Pkg:Kds"></a>
 \package_listing{Kinetic_data_structures}
-<a name="Pkg:KdsFramework"></a>
 \package_listing{Kinetic_data_structures/Kinetic_framework}
 
 \section PartSupportLibrary Support Library
 
-<a name="Pkg:StlExtension"></a>
 \package_listing{STL_Extension}
-<a name="Pkg:BGL"></a>
 \package_listing{BGL}
-<a name="Pkg:Property_map"></a>
 \package_listing{Point_set_processing_3/Property_map}
-<a name="Pkg:HandlesAndCirculators"></a>
 \package_listing{Circulator}
-<a name="Pkg:Generators"></a>
 \package_listing{Generator}
-<a name="Pkg:ProfilingTools"></a>
 \package_listing{Miscellany}
-<a name="Pkg:IOstreams"></a>
 \package_listing{Stream_support/IOstream}
 
 \section PartVisualization Visualization
 
-<a name="Pkg:Geomview"></a>
 \package_listing{Geomview}
-<a name="Pkg:GraphicsView"></a>
 \package_listing{GraphicsView}
-<a name="Pkg:CGALIpelets"></a>
 \package_listing{CGAL_ipelets}
 
 */
