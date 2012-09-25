@@ -348,11 +348,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Convex_hull_2.tag</string>
           <string name="EXAMPLE_PATH">../Convex_hull_2/examples</string>
           <string name="IMAGE_PATH">../Convex_hull_2/doc/Convex_hull_2/fig</string>
-          <list name="TAGFILES" append="true">
-            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
-            <item>./tags/Segment_Delaunay_graph_2.tag=../../CGAL.CGAL.2D-Segment-Delaunay-Graphs/html</item>
-            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graph-of-Disks-/html</item>
-          </list>
         </doxygen>
       </project>
 
@@ -365,6 +360,11 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Voronoi_diagram_2.tag</string>
           <string name="EXAMPLE_PATH">../Voronoi_diagram_2/examples</string>
           <string name="IMAGE_PATH">../Voronoi_diagram_2/doc/Voronoi_diagram_2/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+            <item>./tags/Segment_Delaunay_graph_2.tag=../../CGAL.CGAL.2D-Segment-Delaunay-Graphs/html</item>
+            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graph-of-Disks-/html</item>
+          </list>
         </doxygen>
       </project>
 
