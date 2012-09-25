@@ -6,7 +6,7 @@
 /*!
 \addtogroup PkgSurfaceMeshSimplification
 \todo check generated documentation
-\PkgDescriptionBegin{Triangulated Surface Mesh Simplification}
+\PkgDescriptionBegin{Triangulated Surface Mesh Simplification,PkgSurfaceMeshSimplificationSummary}
 \PkgPicture{detail.png}
 \PkgAuthor{Fernando Cacciola}
 \PkgDesc{This package provides an algorithm to simplify a triangulated surface mesh  by edge collapsing.  It is an implementation of the Turk/Lindstrom <I>memoryless</I>  mesh simplification algorithm.}

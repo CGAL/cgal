@@ -5,7 +5,7 @@
 /*!
 \addtogroup PkgMesh2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Conforming Triangulations and Meshes}
+\PkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2Summary}
 \PkgPicture{Mesh_2/fig/delaunaymesh-small.png}
 \PkgAuthor{Laurent Rineau}
 \PkgDesc{This package implements a Delaunay refinement algorithm to construct  conforming triangulations and 2D meshes.  Conforming Delaunay triangulations are obtained from constrained Delaunay triangulations by refining constrained edges until they are Delaunay edges. Conforming Gabriel triangulations  are obtained by further refining constrained edges until they become Gabriel edges.  The package provides also a 2D mesh generator that refines triangles and constrained edges until user defined size and shape criteria on triangles are satisfied.  The package can handle intersecting input constraints  and set no restriction on the angle formed  by two constraints sharing an endpoint.}

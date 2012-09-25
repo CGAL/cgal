@@ -34,7 +34,7 @@
 /*!
 \addtogroup PkgNumberTypes
 \todo check generated documentation
-\PkgDescriptionBegin{Number Types}
+\PkgDescriptionBegin{Number Types,PkgNumberTypesSummary}
 \PkgPicture{illustration.png}
 \PkgAuthor{Michael Hemmer, Susan Hert, Sylvain Pion, and Stefan Schirra}
 \PkgDesc{This package provides number type concepts as well as number type classes and wrapper classes for third party number type libraries. }

@@ -13,7 +13,7 @@
 /*!
 \addtogroup PkgSpatialSorting
 \todo check generated documentation
-\PkgDescriptionBegin{Spatial Sorting}
+\PkgDescriptionBegin{Spatial Sorting,PkgSpatialSortingSummary}
 \PkgPicture{hilbert.png}
 \PkgAuthor{Christophe Delage and Olivier Devillers}
 \PkgDesc{This package provides functions for sorting geometric objects in two, three and higher dimensions, in order to improve efficiency of incremental geometric algorithms.}

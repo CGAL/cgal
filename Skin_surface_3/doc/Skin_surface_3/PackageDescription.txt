@@ -5,7 +5,7 @@
 /*!
 \addtogroup PkgSkinSurface3
 \todo check generated documentation
-\PkgDescriptionBegin{3D Skin Surface Meshing}
+\PkgDescriptionBegin{3D Skin Surface Meshing,PkgSkinSurface3Summary}
 \PkgPicture{small.png}
 \PkgAuthor{Nico Kruithof}
 \PkgDesc{This package allows to build a triangular mesh of a skin surface.     Skin surfaces are used for modeling large molecules in biological     computing. The surface is defined by a set of balls, representing     the atoms of the molecule, and a shrink factor that determines the     size of the smooth patches gluing the balls together.      The construction of a triangular mesh of a smooth skin surface is     often necessary for further analysis and for fast visualization.     This package provides functions to construct a triangular mesh     approximating the skin surface from a set of balls and a shrink     factor. It also contains code to subdivide the mesh efficiently.     }

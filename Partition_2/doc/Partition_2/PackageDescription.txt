@@ -6,7 +6,7 @@
 /*!
 \addtogroup PkgPolygonPartitioning2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Polygon Partitioning}
+\PkgDescriptionBegin{2D Polygon Partitioning,PkgPolygonPartitioning2Summary}
 \PkgPicture{Partition_2/fig/Partition_2-teaser-small.png}
 \PkgAuthor{Susan Hert}
 \PkgDesc{This package provides functions for partitioning polygons in monotone or convex polygons. The algorithms can produce results with the minimal number of polygons, as well as approximations which have no more than four  times the optimal number of convex pieces but they differ in  their runtime complexities.}

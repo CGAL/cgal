@@ -6,7 +6,7 @@
 /*!
 \addtogroup PkgNef2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Boolean Operations on Nef Polygons}
+\PkgDescriptionBegin{2D Boolean Operations on Nef Polygons,PkgNef2Summary}
 \PkgPicture{complex-teaser.png}
 \PkgAuthor{Michael Seel}
 \PkgDesc{A Nef polygon is any set that can be obtained from a finite set of open halfspaces by set complement and set intersection operations. Due to the fact that all other binary set operations like union, difference and symmetric difference can be reduced to intersection and complement calculations, Nef polygons are also closed under those operations. Apart from the set complement operation there are more topological unary set operations that are closed in the domain of Nef polygons interior, boundary, and closure.}

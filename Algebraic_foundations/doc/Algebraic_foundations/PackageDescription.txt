@@ -1,6 +1,5 @@
 /// \defgroup PkgAlgebraicFoundations Algebraic Foundations
 
-
 /// \defgroup PkgAlgebraicFoundationsAlgebraicStructures Algebraic Structures
 /// \ingroup PkgAlgebraicFoundations
 
@@ -13,7 +12,6 @@
 
 /// \defgroup PkgAlgebraicFoundationsRealEmbeddableConcepts Concepts
 /// \ingroup PkgAlgebraicFoundationsRealEmbeddable
-
 
 /// \defgroup PkgAlgebraicFoundationsRealNumberTypes Real Number Types
 /// \ingroup PkgAlgebraicFoundations
@@ -45,7 +43,7 @@
 /*!
 \addtogroup PkgAlgebraicFoundations
 \todo check generated documentation
-\PkgDescriptionBegin{Algebraic Foundations}
+\PkgDescriptionBegin{Algebraic Foundations,PkgAlgebraicFoundationsSummary}
 \PkgPicture{Algebraic_foundations2.png}
 \PkgAuthor{Michael Hemmer}
 \PkgDesc{This package defines what algebra means for \cgal, in terms of concepts, classes and functions. The main features are: (i) explicit concepts for interoperability of types  (ii) separation between algebraic types (not necessarily embeddable into the reals), and number types (embeddable into the reals). }

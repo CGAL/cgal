@@ -24,7 +24,7 @@
 /*!
 \addtogroup PkgCircularKernel2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Circular Geometry Kernel}
+\PkgDescriptionBegin{2D Circular Geometry Kernel,PkgCircularKernel2Summary}
 \PkgPicture{Boolean_operation_detail.png}
 \PkgAuthor{Pedro Machado Manh&atilde;es de Castro, Sylvain Pion, and Monique Teillaud}
 \PkgDesc{This package is an extension of the linear \cgal kernel. It offers functionalities on circles, circular arcs and line segments in the plane.  }

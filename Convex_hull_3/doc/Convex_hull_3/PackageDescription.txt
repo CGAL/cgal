@@ -15,7 +15,7 @@
 /*!
 \addtogroup PkgConvexHull3
 \todo check generated documentation
-\PkgDescriptionBegin{3D Convex Hulls}
+\PkgDescriptionBegin{3D Convex Hulls,PkgConvexHull3Summary}
 \PkgPicture{Convex_hull_3/fig/bunny.png}
 \PkgAuthor{Susan Hert  and Stefan Schirra}
 \PkgDesc{This package provides functions  for computing convex hulls in three dimensions as well as functions for checking if sets of points are strongly convex or not. One can compute the convex hull of a set of points in three dimensions in one of three ways: using a static algorithm, using an incremental construction algorithm, or using a triangulation to get a fully dynamic computation.}

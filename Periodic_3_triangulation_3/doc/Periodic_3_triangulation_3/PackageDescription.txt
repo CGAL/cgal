@@ -14,7 +14,7 @@
 /*!
 \addtogroup PkgPeriodic3Triangulation3
 \todo check generated documentation
-\PkgDescriptionBegin{3D Periodic Triangulations}
+\PkgDescriptionBegin{3D Periodic Triangulations,PkgPeriodic3Triangulation3Summary}
 \PkgPicture{p3Delaunay3_small.jpg}
 \PkgAuthor{Manuel Caroli  and Monique Teillaud}
 \PkgDesc{This package allows to build and handle triangulations of point sets in the three dimensional flat torus. Triangulations are built incrementally and can be modified by insertion or removal of vertices. They offer point location facilities. The package provides Delaunay triangulations and offers nearest neighbor queries and primitives to build the dual Voronoi diagrams.}

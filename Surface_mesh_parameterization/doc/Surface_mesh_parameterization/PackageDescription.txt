@@ -151,7 +151,7 @@ sparse linear solvers:
 /*!
 \addtogroup PkgSurfaceParameterization
 \todo check generated documentation
-\PkgDescriptionBegin{Planar Parameterization of Triangulated Surface Meshes}
+\PkgDescriptionBegin{Planar Parameterization of Triangulated Surface Meshes,PkgSurfaceParameterizationSummary}
 \PkgPicture{bimbaDetail.png}
 \PkgAuthor{Laurent Saboret, Pierre Alliez  and Bruno L&eacute;vy}
 \PkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from a suitable domain to the surface. In this package, we focus on triangulated surfaces that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.  This package implements several surface mesh parameterization methods, such as least squares conformal maps, discrete conformal map, discrete authalic parameterization, Floater mean value coordinates or Tutte barycentric mapping.}

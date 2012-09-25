@@ -16,7 +16,7 @@
 /*!
 \addtogroup PkgInterpolation2
 \todo check generated documentation
-\PkgDescriptionBegin{2D and Surface Function Interpolation}
+\PkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2Summary}
 \PkgPicture{interpolation.png}
 \PkgAuthor{Julia Fl&ouml;totto}
 \PkgDesc{This package implements different methods for scattered data interpolation: Given measures of a function on a set of discrete data points, the task is to interpolate this function on an arbitrary query point. The package further offers functions for natural neighbor interpolation.}

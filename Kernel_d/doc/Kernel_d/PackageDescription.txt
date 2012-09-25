@@ -22,7 +22,7 @@
 /*!
 \addtogroup PkgKernelD
 \todo check generated documentation
-\PkgDescriptionBegin{dD Geometry Kernel}
+\PkgDescriptionBegin{dD Geometry Kernel,PkgKernelDSumamry}
 \PkgPicture{hypercube.png}
 \PkgAuthor{Michael Seel}
 \PkgDesc{The dD Kernel contains objects of constant size, such as point, vector, direction, line, ray, segment, circle in d dimensional Euclidean space, as well as predicates and constructions for these objects.}

@@ -2,7 +2,7 @@
 /*!
 \addtogroup PkgSurfaceReconstructionFromPointSets
 \todo check generated documentation
-\PkgDescriptionBegin{Surface Reconstruction from Point Sets}
+\PkgDescriptionBegin{Surface Reconstruction from Point Sets,PkgSurfaceReconstructionFromPointSetsSummary}
 \PkgPicture{surface_reconstruction_points_detail.png}
 \PkgAuthor{Pierre Alliez, Laurent Saboret, Ga&euml;l Guennebaud}
 \PkgDesc{This \cgal package implements a surface reconstruction method: Poisson Surface Reconstruction. It takes as input a set of points with oriented normals and computes an implicit function. The \cgal surface mesh generator can then be used to extract an iso-surface from this function. }

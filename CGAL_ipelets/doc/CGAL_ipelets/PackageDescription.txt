@@ -6,7 +6,7 @@
 /*!
 \addtogroup PkgCGALIpelets
 \todo check generated documentation
-\PkgDescriptionBegin{CGAL Ipelets}
+\PkgDescriptionBegin{CGAL Ipelets,PkgCGALIpeletsSummary}
 \PkgPicture{ipeico.jpg}
 \PkgAuthor{S&eacute;bastien Loriot and Sylvain Pion}
 \PkgDesc{This package provides  a generic framework to easily write ipelets (plug-in's) using \cgal for the the Ipe extensible drawing editor.}

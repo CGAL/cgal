@@ -6,7 +6,7 @@
 /*!
 \addtogroup PkgMatrixSearch
 \todo check generated documentation
-\PkgDescriptionBegin{Monotone and Sorted Matrix Search}
+\PkgDescriptionBegin{Monotone and Sorted Matrix Search,PkgMatrixSearchSummary}
 \PkgPicture{matrix.png}
 \PkgAuthor{Michael Hoffmann}
 \PkgDesc{This package provides a matrix search framework, which is the underlying technique for the computation of all furthest neighbors for the vertices of a convex polygon,  maximal k-gons inscribed into a planar point set, and computing rectangular p-centers.}

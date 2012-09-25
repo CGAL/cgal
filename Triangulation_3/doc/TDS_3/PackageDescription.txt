@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgTDS3
 \todo check generated documentation
-\PkgDescriptionBegin{3D Triangulation Data Structure}
+\PkgDescriptionBegin{3D Triangulation Data Structure,PkgTDS3Summary}
 \PkgPicture{tds3_small.png}
 \PkgAuthor{Sylvain Pion  and Monique Teillaud}
 \PkgDesc{This package provides a data structure to store a three-dimensional triangulation that has the topology of a three-dimensional sphere.  The package acts as a container for the vertices  and cells of the triangulation  and provides basic  combinatorial operations on the triangulation.}

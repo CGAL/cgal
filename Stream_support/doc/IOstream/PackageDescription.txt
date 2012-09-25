@@ -2,7 +2,7 @@
 /*!
 \addtogroup PkgIOstreams
 \todo check generated documentation
-\PkgDescriptionBegin{IO Streams}
+\PkgDescriptionBegin{IO Streams,PkgIOstreamsSummary}
 \PkgPicture{io.png}
 \PkgAuthor{Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner}
 \PkgDesc{All classes in the \cgal kernel provide input and output operators for IO streams.   The basic task of such an operator is to produce a representation of an object that can be written as a sequence of characters on devices as a console, a file, or a pipe. In \cgal we distinguish between  a raw ascii, a raw binary and a pretty printing format.}

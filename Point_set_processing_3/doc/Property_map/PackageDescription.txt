@@ -3,7 +3,7 @@
 /*!
 \addtogroup PkgProperty_map
 \todo check generated documentation
-\PkgDescriptionBegin{CGAL and Boost Property Maps}
+\PkgDescriptionBegin{CGAL and Boost Property Maps,Pkg:Property_mapSummary}
 \PkgPicture{property_map.png}
 \PkgAuthor{Andreas Fabri and Laurent Saboret}
 \PkgDesc{This package provides a framework for interfacing \cgal data structures with algorithms expecting Boost Property Maps.}

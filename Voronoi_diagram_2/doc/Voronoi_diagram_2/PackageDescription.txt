@@ -15,7 +15,7 @@
 /*!
 \addtogroup PkgVoronoiDiagramAdaptor2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Voronoi Diagram Adaptor}
+\PkgDescriptionBegin{2D Voronoi Diagram Adaptor,PkgVoronoiDiagramAdaptor2Summary}
 \PkgPicture{voronoi.png}
 \PkgAuthor{Menelaos Karavelas}
 \PkgDesc{The 2D Voronoi diagram adaptor package provides an adaptor that adapts a 2-dimensional triangulated Delaunay graph to the corresponding Voronoi diagram, represented as a doubly connected edge list (DCEL) data structure. The adaptor has the ability to automatically eliminate, in a consistent manner, degenerate features of the Voronoi diagram, that are artifacts of the requirement that Delaunay graphs should be triangulated even in degenerate configurations. Depending on the type of operations that the underlying Delaunay graph supports, the adaptor allows for the incremental or dynamic construction of Voronoi diagrams and can support point location queries. }

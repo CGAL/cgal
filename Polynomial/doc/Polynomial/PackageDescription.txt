@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgPolynomial
 \todo check generated documentation
-\PkgDescriptionBegin{Polynomial}
+\PkgDescriptionBegin{Polynomial,PkgPolynomialSummary}
 \PkgPicture{Polynomial.png}
 \PkgAuthor{Michael Hemmer}
 \PkgDesc{This package introduces a concept for univariate and multivariate  polynomials in \f$ d\f$ variables. Though the concept is written for an arbitrary  number of variables, the number of variables is considered as fixed for a  particular model of this concept.}

@@ -6,7 +6,7 @@
 /*!
 \addtogroup PkgNef3
 \todo check generated documentation
-\PkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra}
+\PkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3Summary}
 \PkgPicture{Nef_3-teaser.png}
 \PkgAuthor{Peter Hachenberger  and Lutz Kettner}
 \PkgDesc{3D Nef polyhedra, are a boundary representation for cell-complexes bounded by halfspaces that supports Boolean operations and topological operations in full generality including unbounded cells, mixed dimensional cells (e.g., isolated vertices and antennas). Nef polyhedra distinguish between open and closed sets and can represent non-manifold geometry.}

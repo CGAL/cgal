@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgIntervalSkipList
 \todo check generated documentation
-\PkgDescriptionBegin{Interval Skip List}
+\PkgDescriptionBegin{Interval Skip List,PkgIntervalSkipListSummary}
 \PkgPicture{Interval_skip_list/fig/query.png}
 \PkgAuthor{Andreas Fabri}
 \PkgDesc{An interval skip list is a data structure for finding all intervals that contain a point, and for stabbing queries, that is for answering the question whether a given point is contained in an interval or not. For a triangulated terrain, this allows to quickly identify the triangles which intersect an iso line. }

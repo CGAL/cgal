@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgSnapRounding2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Snap Rounding}
+\PkgDescriptionBegin{2D Snap Rounding,PkgSnapRounding2Summary}
 \PkgPicture{snap-detail.png}
 \PkgAuthor{Eli Packer}
 \PkgDesc{Snap Rounding is a well known method for converting arbitrary-precision arrangements of segments into a fixed-precision representation. In the study of robust geometric computing, it can be classified as a finite precision approximation technique. Iterated Snap Rounding is a modification of Snap Rounding in which each vertex is at least half-the-width-of-a-pixel away from any non-incident edge. This package supports both methods.}

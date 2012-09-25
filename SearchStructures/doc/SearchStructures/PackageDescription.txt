@@ -11,7 +11,7 @@
 /*!
 \addtogroup PkgRangeSegmentTreesD
 \todo check generated documentation
-\PkgDescriptionBegin{dD Range and Segment Trees}
+\PkgDescriptionBegin{dD Range and Segment Trees,PkgRangeSegmentTreesDSummary}
 \PkgPicture{segment_tree.png}
 \PkgAuthor{Gabriele Neyer}
 \PkgDesc{Range and segment trees allow to perform window queries on point sets, and to enumerate all ranges enclosing a query point. The provided data structures  are static and they are optimized for fast queries.}

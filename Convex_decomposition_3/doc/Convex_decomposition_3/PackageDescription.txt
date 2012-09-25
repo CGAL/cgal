@@ -3,7 +3,7 @@
 /*!
 \addtogroup PkgConvexDecomposition3
 \todo check generated documentation
-\PkgDescriptionBegin{Convex Decomposition of Polyhedra}
+\PkgDescriptionBegin{Convex Decomposition of Polyhedra,PkgConvexDecomposition3Summary}
 \PkgPicture{Convex_decomposition_3/fig/Convex_decomposition_3-teaser.png}
 \PkgAuthor{Peter Hachenberger}
 \PkgDesc{This packages provides a function for decomposing a bounded polyhedron into convex sub-polyhedra. The decomposition yields \f$ O(r^2)\f$ convex pieces, where \f$ r\f$ is the number of edges, whose adjacent facets form an angle of more than 180 degrees with respect to the polyhedron's interior. This bound is worst-case optimal. }

@@ -8,7 +8,7 @@
 /*!
 \addtogroup PkgPointSet2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Range and Neighbor Search}
+\PkgDescriptionBegin{2D Range and Neighbor Search,PkgPointSet2Summary}
 \PkgPicture{Point_set_2/fig/point_set.png}
 \PkgAuthor{Matthias B&auml;sken}
 \PkgDesc{This package supports circular, triangular, and isorectangular range search queries as well as (k) nearest neighbor search queries on 2D point sets. In contrast to the spatial searching package, this package uses a  Delaunay triangulation as underlying data structure.}

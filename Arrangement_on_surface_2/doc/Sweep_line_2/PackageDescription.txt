@@ -2,7 +2,7 @@
 /*!
 \addtogroup PkgIntersectionOfCurves2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Intersection of Curves}
+\PkgDescriptionBegin{2D Intersection of Curves,PkgIntersectionOfCurves2Summary}
 \PkgPicture{Curve_intersections_2.png}
 \PkgAuthor{Baruch Zukerman, Ron Wein, and Efi Fogel}
 \PkgDesc{This package provides three free functions implemented based on the sweep-line paradigm: given a collection of input curves, compute all intersection points, compute the set of subcurves that are pairwise interior-disjoint induced by them, and check whether there is at least one pair of curves among them that intersect in their interior.}
