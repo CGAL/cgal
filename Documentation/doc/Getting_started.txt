@@ -1,0 +1,8 @@
+/*!
+\page general_intro Getting Started
+
+- \subpage introduction
+- \subpage preliminaries
+- \subpage installation
+
+*/

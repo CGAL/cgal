@@ -1566,6 +1566,9 @@ ALLEXTERNALS           = NO
 
 EXTERNAL_GROUPS        = NO
 
+# Currently only available with Philipp's patches.
+EXTERNAL_PAGES         = NO
+
 # The PERL_PATH should be the absolute path and name of the perl script
 # interpreter (i.e. the result of `which perl').
 
@@ -1794,3 +1797,6 @@ GENERATE_LEGEND        = YES
 # the various graphs.
 
 DOT_CLEANUP            = YES
+
+# Currently only available with Philipp's patches.
+SHOW_GROUPED_MEMBER_INCLUDES = YES

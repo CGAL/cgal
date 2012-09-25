@@ -2,8 +2,6 @@
 
 \page packages Package Overview
 
-\tableofcontents
-
 \htmlonly
 <style type="text/css">
 h1 {

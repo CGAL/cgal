@@ -1,5 +1,5 @@
 /*!
-\page how_to_cite_cgal Acknowledging %CGAL
+\page how_to_cite_cgal Acknowledging CGAL
 
 %CGAL is implemented for the most part by researchers. The academic
 world evaluates and rewards researchers for a good part by the

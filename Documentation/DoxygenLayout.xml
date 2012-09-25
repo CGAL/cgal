@@ -2,20 +2,8 @@
   <!-- Navigation index tabs for HTML output -->
   <navindex>
     <tab type="mainpage" visible="yes" title=""/>
-
-    <tab type="usergroup" url="@ref general_intro" title="Getting Started">
-      <tab type="user" url="@ref introduction" title="Hello World"/>
-      <tab type="user" url="@ref preliminaries" title="Preliminaries"/>
-      <tab type="user" url="@ref installation" title="Installation"/>
-    </tab>
-    
-    <tab type="user" url="@ref packages" title="Package Overview"/>
-    <tab type="pages" visible="no" title="" intro=""/>
+    <tab type="pages" visible="yes" title="" intro=""/>
     <tab type="modules" visible="yes" title="" intro=""/>
-    <tab type="namespaces" visible="no" title="">
-      <tab type="namespacelist" visible="no" title="" intro=""/>
-      <tab type="namespacemembers" visible="no" title="" intro=""/>
-    </tab>
 
     <tab type="classes" visible="yes" title="Class Index">
       <tab type="classlist" visible="yes" title="" intro=""/>
@@ -25,14 +13,19 @@
     </tab>
 
     <tab type="filelist" visible="yes" title="" intro=""/>
-    
+
+    <tab type="namespaces" visible="no" title="">
+      <tab type="namespacelist" visible="no" title="" intro=""/>
+      <tab type="namespacemembers" visible="no" title="" intro=""/>
+    </tab>
+
     <tab type="files" visible="no" title="">
       <tab type="filelist" visible="yes" title="" intro=""/>
       <tab type="globals" visible="yes" title="" intro=""/>
     </tab>
 
     <tab type="examples" visible="yes" title="" intro=""/>  
-    <tab type="user" url="@ref how_to_cite_cgal" title="Acknowledging CGAL"/>
+    <!-- <tab type="user" url="@ref how_to_cite_cgal" title="Acknowledging CGAL"/> -->
   </navindex>
 
   <!-- Layout definition for a class page -->

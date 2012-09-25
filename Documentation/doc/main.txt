@@ -68,13 +68,3 @@ other contexts can be done by obtaining a commercial license from
 [GeometryFactory](http://www.geometryfactory.com). For more details
 see the \ref licenseIssues "License" page.
 */
-
-/*!
-
-\page general_intro Getting Started
-
-- \subpage introduction
-- \subpage preliminaries
-- \subpage installation
-
-*/
