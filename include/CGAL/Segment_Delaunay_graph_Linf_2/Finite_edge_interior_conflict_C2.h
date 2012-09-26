@@ -693,6 +693,8 @@ public:
     }
 
     if (t.is_point() and (sgn == NEGATIVE)) {
+	  std::cout << "debug finite-edge-int-cf retval pqrt= " 
+		        << true << std::endl;
       return true; 
     }
 
@@ -735,6 +737,8 @@ public:
           CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
 
           if (ossegp != ossegt) {
+			std::cout << "debug finite-edge-int-cf retval pqrt= " 
+			          << false << std::endl;
             return false;
           } else {  
             // here, t and p are on the same side of q
@@ -774,7 +778,7 @@ public:
 
             Oriented_side os_line_fin = 
               oriented_side_of_line(line_fin, t.point());
-            
+			  
             return ( os_line_inf == os_line_fin) ? false : true;
 
           } // end of case where 
@@ -785,6 +789,8 @@ public:
       if ( p.is_segment() and q.is_point() ) {
         if (same_points(q, p.source_site()) or
             same_points(q, p.target_site())   ) {
+		  std::cout << "debug finite-edge-int-cf retval pqrt= " 
+			        << false << std::endl;
           return false;
         } else { // q is not endpoint of p
           CGAL_assertion( not ( p.segment().is_horizontal() or
@@ -802,6 +808,8 @@ public:
           CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
 
           if (ossegq != ossegt) {
+			std::cout << "debug finite-edge-int-cf retval pqrt= " 
+			          << false << std::endl;
             return false;
           } else {  
             // here, t and q are on the same side of p
@@ -845,7 +853,8 @@ public:
             // t, q are on the same side of p
         } // end of case where q is not endpoint of p
       } // end of case where q is point and p is segment
-
+	  std::cout << "debug finite-edge-int-cf retval pqrt= " 
+	        	<< false << std::endl;
       return false;
     }
 
@@ -869,7 +878,7 @@ public:
       std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
         << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
         << t << ")  "  
-        << sgn << std::endl; 
+        << sgn << " retval= " << true << std::endl; 
       // philaris: always return true
       return true;
     }
@@ -889,6 +898,8 @@ public:
     } else {
       // philaris: tocheck
       CGAL_assertion(sgn == NEGATIVE);
+	  std::cout << "debug finite-edge-int-cf pqrt retval= " 
+	        	<< true << std::endl;
       return true;
     }
   }
