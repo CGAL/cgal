@@ -7,8 +7,9 @@
 
 The goal of this chapter is to get a first idea of the look and feal of a program that uses CGAL.
 
-We will take a closer look at three \cgal example
+We will take a closer look at four \cgal example
 programs, all of them computing the 2D convex hull of a set of points.
+You will find the same ideas in other 
 
 
 Points in a Built-in Array
@@ -68,7 +69,7 @@ incremented, and calls `result.push_back(..)` on the assignment.
 Points in Streams
 =================
 
-The last example program reads a sequence of points from standard
+The next example program reads a sequence of points from standard
 input `std::cin` and writes the points on the convex hull to standard
 output `std::cout`.
 
@@ -101,6 +102,81 @@ If you know the \stl, the Standard Template Library, the above makes
 perfect sense, as this is the way the \stl decouples algorithms from
 containers. If you don't know the \stl, you maybe better first
 familiarize yourself with its basic ideas.
+
+
+About Traits Classes
+====================
+
+If you look at the manual page of the function `CGAL::convex_hull_2()`
+and the other 2D convex hull algorithms, you see that they come in two
+versions. In the examples we have seen so far the function takes two
+iterators for the sequnce of input points and an output iterator for
+writing the result to. The second version has an additional template
+parameter `Traits`, and an additional parameter of this type.
+
+What are the geometric primitives a typical convex hull algorithm
+uses? Of course, this depends on the algorithm, so let us consider
+what is probably the simplest efficient algorithm, the so-called
+"Graham/Andrew Scan". This algorithm first sorts the points from left
+to right, and then builds the convex hull incrementally by adding one
+point after another from the sorted list. To do this, it must at least
+know about some point type, it should have some idea how to sort those
+points, and it must be able to evaluate the orientation of a triple of
+points.
+
+And that is where the template parameter `Traits` comes in.
+For `CGAL::ch_graham_andrew` it must provide the following nested types:
+
+- `Traits::Point_2`
+- `Traits::Less_xy_2`
+- `Traits::Left_turn_2`
+- `Traits::Equal_2`
+
+
+As you can guess, `Left_turn_2` is responsible for the orientation
+test, while `Less_xy_2` does the sorting. The requirements these
+types have to satisfy are documented in full with the concept
+`ConvexHullTraits_2`.
+
+
+
+The types are regrouped for a simple reason. The alternative would
+have been a rather lengthy function template, and an even longer 
+function call.
+
+\code{.cpp}
+template <class InputIterator, class OutputIterator, class Point_2, class Less_xy_2, class Lef_turn_2, class Equal_2>
+OutputIterator
+ch_graham_andrew( InputIterator  first,
+                  InputIterator  beyond,
+                  OutputIterator result);}
+\endcode
+
+There are two obvious questions: What can be used as argument for
+this template parameter? And why do we have template parameters at all?
+
+Any %CGAL `Kernel` provides what is required by `ConvexHullTraits_2`.
+
+As for the second question, think about an application where we want to 
+compute the convex hull of 3D points projected into the `yz` plane. Using
+the class `Projection_traits_yz_3` this is a small modification
+of the previous example.
+
+\cgalexample{Convex_hull_2/convex_hull_yz.cpp}
+
+Another example would be about a user defined point type, or a point
+type coming from a third party library other than %CGAL. Put the point
+type together with the required predicates for this point type in the
+scope of a class, and you can run CGAL::convex_hull_2()` with these
+points.
+
+Finally, let us explain why a traits object that is passed to the
+convex hull function?  It would allow to use a more general projection
+traits object to store state, for example if the projection plane was
+given by a direction, which is hardwired in the class
+`Projection_traits_yz_3`.
+
+
 
 Further Reading
 ===============
