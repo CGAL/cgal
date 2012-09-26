@@ -38,3 +38,13 @@
 h2.groupheader {
   font-size: 100%;
 }
+
+.PkgDescription {
+    width: 50%;
+}
+
+.PkgDescription, .PkgSummary, .PkgImage, .PkgImage .image {
+    display:inline-block;
+    padding:5px;
+    vertical-align:middle;
+}
