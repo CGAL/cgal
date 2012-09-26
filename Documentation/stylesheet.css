@@ -957,6 +957,15 @@ dl.section, dl.asModelss, dl.debugs, dl.modelss, dl.refiness
 	padding-left: 0px;
 }
 
+
+dl.section dt a, dl.asModelss dt a, dl.debugs dt a, 
+dl.modelss dt a, dl.refiness dt a, dl.advanceds dt a, 
+dl.todo dt a, dl.bug dt a, dl.test dt a
+{
+    font-weight: bold;
+    color: black;
+}
+
 dl.note
 {
         margin-left:-7px;

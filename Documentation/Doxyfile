@@ -202,7 +202,6 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cpp11=*C++11*" \
                          "CC=*C++*" \
                          "cgalexample{1}=<br><b>File</b> \ref \1 \include \1" \
-                         "advanced=\attention" \
                          "beginadvanced=" \
                          "endadvanced="
 
