@@ -3,8 +3,9 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Functions
 
-The function `::convex_hull_2` generates the counterclockwise sequence of extreme 
-points from a given set of input points. 
+generates the counterclockwise sequence of extreme 
+points of the points in the range [`first`,`beyond`)
+with a user provided traits class. 
 
 It generates the counterclockwise sequence of extreme points
 of the points in the range [`first`,`beyond`).
@@ -14,8 +15,7 @@ sequence is returned. It is not specified at which point the
 cyclic sequence of extreme points is cut into a linear sequence.
 \pre The source range [`first`,`beyond`) does not contain `result`.
 
-The default traits class `Default_traits` is the kernel in which 
-the type `InputIterator::value_type` is defined. 
+
 
 ### Requirements ###
 
@@ -54,11 +54,25 @@ iterators, the \f$ O(n \log n)\f$ algorithm of of Akl and Toussaint
 
 
 */
-template <class InputIterator, class OutputIterator>
+template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
 convex_hull_2(InputIterator first, InputIterator beyond,
 OutputIterator result,
-const Traits & ch_traits = Default_traits );
+const Traits & ch_traits);
+
+  /*!
+\ingroup PkgConvexHull2Functions
+
+generates the counterclockwise sequence of extreme points 
+of the points in the range [`first`,`beyond`) using as traits class
+the kernel in which the point type is defined.
+
+The kernel is deduced using `std::iterator_traits` and `CGAL::Kernel_traits`.
+   */
+template <class InputIterator, class OutputIterator>
+OutputIterator
+convex_hull_2(InputIterator first, InputIterator beyond,
+OutputIterator result);
 
 } /* namespace CGAL */
 
