@@ -1,3 +1,5 @@
+typedef int X;
+
 
 /*!
 \ingroup PkgAlgebraicFoundationsRealNumberTypesConcepts
@@ -15,7 +17,7 @@ for Cartesian kernels.
 \hasModel double 
 \hasModel `CGAL::Gmpq` 
 \hasModel `CGAL::Interval_nt` 
-\hasModel `CGAL::Interval_nt_advanced` 
+\hasModel \ref CGAL::Interval_nt_advanced
 \hasModel `CGAL::Lazy_exact_nt<FieldNumberType>` 
 \hasModel `CGAL::Quotient<RingNumberType>` 
 \hasModel `CGAL::leda_rational` 

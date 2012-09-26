@@ -199,13 +199,6 @@ have a non empty intersection.
 */ 
 bool do_overlap(Interval_nt J); 
 
-/*! 
-This typedef (at namespace \cgal scope) exists for backward compatibility, 
-as well as removing the need to remember the Boolean value for the template 
-parameter. 
-*/ 
-typedef Interval_nt<false> Interval_nt_advanced; 
-
 /// @} 
 
 /*! \name Implementation 
@@ -329,5 +322,14 @@ sets the rounding mode to `R` and returns the old one.
 \relates Interval_nt 
 */ 
 FPU_CW_t FPU_get_and_set_cw (FPU_CW_t R); 
+
+
+/*! 
+\ingroup nt_cgal
+This typedef (at namespace \cgal scope) exists for backward compatibility, 
+as well as removing the need to remember the Boolean value for the template 
+parameter. 
+*/ 
+typedef Interval_nt<false> Interval_nt_advanced; 
 
 } /* end namespace CGAL */
