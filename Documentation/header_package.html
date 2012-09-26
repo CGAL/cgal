@@ -65,8 +65,6 @@ gotoNode = function (o,subIndex,root,hash,relpath) {
             i + "' title='" + current.prop("tagName") + "'>" + current.text() + "</a></li>");
         });
       }
-      <!-- trigger a resize event -->
-      $(window).resize();
     });
 </script>
 <!-- hack around a bug in resize.js. The original resizeHeight is not
@@ -77,13 +75,13 @@ variable and then do our thing.  -->
    $(document).ready(function () { 
       footer = $("#footer");
       resizeHeight = function() {
-      var headerHeight = header.outerHeight(true);
-      var footerHeight = footer.outerHeight(true);
-      var windowHeight = $(window).outerHeight(true) - headerHeight - footerHeight;
-      content.css({height:windowHeight + "px"});
-      navtree.css({height:windowHeight + "px"});
-      sidenav.css({height:windowHeight + "px",top: headerHeight+"px"});
-    }
+        var headerHeight = header.outerHeight(true);
+        var footerHeight = footer.outerHeight(true);
+        var windowHeight = $(window).outerHeight(true) - headerHeight - footerHeight;
+        content.css({height:windowHeight + "px"});
+        navtree.css({height:windowHeight + "px"});
+        sidenav.css({height:windowHeight + "px",top: headerHeight+"px"});
+      }
     $(window).resize(resizeHeight);
     $(window).resize();
    });
@@ -111,12 +109,12 @@ $extrastylesheet
     <li><a href="../../CGAL.CGAL/html/general_intro.html">Getting Started</a></li>
     <li><a href="../../CGAL.CGAL/html/packages.html">Package Overview</a></li>
     <li><a href="../../CGAL.CGAL/html/how_to_cite_cgal.html">Acknowledging CGAL</a></li>
-    <!--BEGIN DISABLE_INDEX-->
-    <!--BEGIN SEARCHENGINE-->
-    <li>$searchbox</li>
-    <!--END SEARCHENGINE-->
-    <!--END DISABLE_INDEX-->
   </ul>
+  <!--BEGIN DISABLE_INDEX-->
+  <!--BEGIN SEARCHENGINE-->
+  $searchbox
+  <!--END SEARCHENGINE-->
+  <!--END DISABLE_INDEX-->
 </div>
 <!--BEGIN TITLEAREA-->
 <div id="titlearea">
@@ -128,9 +126,7 @@ $extrastylesheet
   <!--END PROJECT_LOGO-->
   <!--BEGIN PROJECT_NAME-->
   <td style="padding-left: 0.5em;">
-   <div id="projectname">$projectname
-   <!--BEGIN PROJECT_NUMBER-->&#160;<span id="projectnumber">$projectnumber</span><!--END PROJECT_NUMBER-->
-   </div>
+   <div id="projectname">$projectname</div>
    <!--BEGIN PROJECT_BRIEF--><div id="projectbrief">$projectbrief</div><!--END PROJECT_BRIEF-->
   </td>
   <!--END PROJECT_NAME-->
