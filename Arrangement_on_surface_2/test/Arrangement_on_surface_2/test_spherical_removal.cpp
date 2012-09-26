@@ -59,11 +59,13 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   // Read the number of cells left.
   unsigned int num_vertices_left, num_edges_left, num_faces_left;
   in_file >> num_vertices_left >> num_edges_left >> num_faces_left;  
-  
-  // Insert the curves incrementally.
+
   Arrangement_2 arr;
   std::vector<Halfedge_handle> halfedges;
   std::vector<std::pair<unsigned int, unsigned int> >::const_iterator cit;
+
+#if 0
+  // Insert the curves incrementally.
   for (cit = curves.begin(); cit != curves.end(); ++cit) {
     X_monotone_curve_2 xcv(points[cit->first], points[cit->second]);
     std::cout << "inserting " << xcv << " ... ";
@@ -72,6 +74,19 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
     halfedges.push_back(he);
     std::cout << "inserted" << std::endl;
   }
+#else
+  // Insert the curves aggregately.
+  std::list<X_monotone_curve_2> xcurves;
+  for (cit = curves.begin(); cit != curves.end(); ++cit) {
+    X_monotone_curve_2 xcv(points[cit->first], points[cit->second]);
+    xcurves.push_back(xcv);
+  }  
+  std::cout << "inserting " << " ... ";
+  std::cout.flush();
+  CGAL::insert_non_intersecting_curves(arr, xcurves.begin(), xcurves.end());
+  std::cout << "inserted" << std::endl;
+#endif
+
   curves.clear();
   
   // Insert the isolated points.
@@ -84,11 +99,25 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   }
   isolated_points.clear();
   points.clear();
-  
+
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
+
+  {
+    std::cout << "Faces:" << std::endl;
+    Arrangement_2::Face_const_iterator fit;
+    for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
+      std::cout << "  Outer CCBs: "
+                << std::distance(fit->outer_ccbs_begin(), fit->outer_ccbs_end())
+                << std::endl;
+      std::cout << "  Inner CCBs: "
+                << std::distance(fit->inner_ccbs_begin(), fit->inner_ccbs_end())
+                << std::endl;
+      std::cout << std::endl;
+    }
+  }
   
   // Remove the halfedges.
   if (num_edges_to_remove-- > 0) {
