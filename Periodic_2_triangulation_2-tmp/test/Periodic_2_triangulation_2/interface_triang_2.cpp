@@ -1,0 +1,372 @@
+#include "./types.h"
+#include <CGAL/Periodic_2_triangulation_2.h>
+
+template <class T>
+void test_constructor() {
+  typedef typename T::Iso_rectangle Iso_rectangle;
+  typedef typename T::Geom_traits   Geom_traits;
+
+  T t;
+  T t2(t);
+  CGAL_assertion(t == t2);
+  T t3 = t2;
+  CGAL_assertion(t == t3);
+  T t4(Iso_rectangle(0,0,2,2));
+  T t5(Iso_rectangle(0,0,2,2), Geom_traits());
+  t5.clear();
+
+  t.insert(Point(0.5, 0.5));
+  CGAL_assertion(t != t2);
+  CGAL_assertion(t != t3);
+
+  T t6(t);
+  CGAL_assertion(t == t6);
+  T t7 = t6;
+  CGAL_assertion(t == t7);
+
+  t.clear();
+  CGAL_assertion(t != t6);
+  CGAL_assertion(t != t7);
+}
+
+template <class T>
+void test_global_access() {
+  T t;
+  const T &t_const = t;
+
+  const typename T::Geom_traits &gt = t.geom_traits();
+
+  const typename T::Triangulation_data_structure &tds = t_const.tds();
+  typename T::Triangulation_data_structure &tds2 = t.tds();
+  const typename T::Iso_rectangle &domain = t_const.domain();
+  const typename T::Covering_sheets &sheets = t_const.number_of_sheets();
+  int dimension = t_const.dimension();
+
+  int number_of_vertices = t_const.number_of_vertices();
+  int number_of_faces = t_const.number_of_faces();
+  int number_of_stored_vertices = t_const.number_of_stored_vertices();
+  int number_of_stored_faces = t_const.number_of_stored_faces();
+
+  int number_of_edges = t_const.number_of_edges();
+  int number_of_stored_edges = t_const.number_of_stored_edges();
+
+  bool ext1 = t_const.is_extensible_triangulation_in_1_sheet_h1();
+  bool ext2 = t_const.is_extensible_triangulation_in_1_sheet_h2();
+  bool is_triang1 = t_const.is_triangulation_in_1_sheet();
+  t.convert_to_1_sheeted_covering();
+  t.convert_to_9_sheeted_covering();
+}
+
+template <class T>
+void test_geometric_access() {
+  typedef typename T::Point             Point;
+  typedef typename T::Segment           Segment;
+  typedef typename T::Triangle          Triangle;
+  typedef typename T::Periodic_point    Periodic_point;
+  typedef typename T::Periodic_segment  Periodic_segment;
+  typedef typename T::Periodic_triangle Periodic_triangle;
+  typedef typename T::Vertex_iterator   Vertex_iterator;
+  typedef typename T::Face_iterator     Face_iterator;
+
+  T t;
+  const T &t_const = t;
+
+  t.insert(Point(0.5, 0.5));
+  t.insert(Point(0.7, 0.5));
+  t.insert(Point(0.7, 0.7));
+
+  Vertex_iterator vit = t.vertices_begin();
+  Face_iterator fit = t.faces_begin();
+
+  Periodic_point pp0 = t_const.periodic_point(vit);
+  Periodic_point pp1 = t_const.periodic_point(fit, 0);
+  Periodic_segment ps0 = t_const.periodic_segment(fit, 0);
+  Periodic_segment ps1 = t_const.periodic_segment(*t.edges_begin());
+  Periodic_triangle pt0 = t_const.periodic_triangle(fit);
+
+  Point p0 = t_const.point(pp0);
+  Segment s0 = t_const.segment(ps0);
+  Triangle t0 = t_const.triangle(pt0);
+}
+
+template <class T>
+void test_predicates() {
+  typedef typename T::Vertex_handle   Vertex_handle;
+  typedef typename T::Face_handle     Face_handle;
+
+  T t;
+  const T &t_const = t;
+
+  Vertex_handle vh0 = t.insert(Point(0.5, 0.5));
+  Vertex_handle vh1 = t.insert(Point(0.7, 0.5));
+  Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
+
+  bool b = t.is_edge(vh0, vh1);
+  Face_handle fh; int i;
+  b = t.is_edge(vh0, vh1, fh, i);
+  
+  b = t.is_face(vh0, vh1, vh2);
+  b = t.is_face(vh0, vh1, vh2, fh);
+}
+
+template <class T>
+void test_queries() {
+  typedef typename T::Vertex_handle   Vertex_handle;
+  typedef typename T::Face_handle     Face_handle;
+
+  T t;
+  const T &t_const = t;
+
+  Point p0(0.5, 0.5);
+  Vertex_handle vh0 = t.insert(p0);
+  Vertex_handle vh1 = t.insert(Point(0.7, 0.5));
+  Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
+
+  Face_handle fh = t_const.locate(p0);
+  fh = t_const.locate(Point(0.5, 0.5), fh);
+
+  typename T::Locate_type lt; int li;
+  fh = t_const.locate(p0, lt, li);
+  fh = t_const.locate(p0, lt, li, fh);
+
+  CGAL::Oriented_side os = t_const.oriented_side(fh, p0);
+  os = t_const.side_of_oriented_circle(fh, p0);
+}
+
+template <class T>
+void test_iterators() {
+  typedef typename T::Vertex_handle   Vertex_handle;
+  typedef typename T::Face_handle     Face_handle;
+
+  T t;
+  const T &t_const = t;
+
+  Point p0(0.5, 0.5);
+  Vertex_handle vh0 = t.insert(p0);
+  Vertex_handle vh1 = t.insert(Point(0.7, 0.5));
+  Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
+
+  for (typename T::Vertex_iterator vit = t_const.vertices_begin();
+       vit != t_const.vertices_end(); ++vit) {
+  }
+  for (typename T::Edge_iterator eit = t_const.edges_begin();
+       eit != t_const.edges_end(); ++eit) {
+  }
+  for (typename T::Face_iterator fit = t_const.faces_begin();
+       fit != t_const.faces_end(); ++fit) {
+  }
+
+  for (typename T::Periodic_point_iterator ppit = t_const.periodic_points_begin();
+       ppit != t_const.periodic_points_end(); ++ppit) {
+  }
+  for (typename T::Periodic_point_iterator ppit = 
+         t_const.periodic_points_begin(T::STORED);
+       ppit != t_const.periodic_points_end(T::STORED); ++ppit) {
+  }
+  for (typename T::Periodic_point_iterator ppit = 
+         t_const.periodic_points_begin(T::UNIQUE);
+       ppit != t_const.periodic_points_end(T::UNIQUE); ++ppit) {
+  }
+  for (typename T::Periodic_point_iterator ppit = 
+         t_const.periodic_points_begin(T::STORED_COVER_DOMAIN);
+       ppit != t_const.periodic_points_end(T::STORED_COVER_DOMAIN); ++ppit) {
+  }
+  for (typename T::Periodic_point_iterator ppit = 
+         t_const.periodic_points_begin(T::UNIQUE_COVER_DOMAIN);
+       ppit != t_const.periodic_points_end(T::UNIQUE_COVER_DOMAIN); ++ppit) {
+  }
+
+  for (typename T::Periodic_segment_iterator psit = t_const.periodic_segments_begin();
+       psit != t_const.periodic_segments_end(); ++psit) {
+  }
+  for (typename T::Periodic_segment_iterator psit = 
+         t_const.periodic_segments_begin(T::STORED);
+       psit != t_const.periodic_segments_end(T::STORED); ++psit) {
+  }
+  for (typename T::Periodic_segment_iterator psit = 
+         t_const.periodic_segments_begin(T::UNIQUE);
+       psit != t_const.periodic_segments_end(T::UNIQUE); ++psit) {
+  }
+  for (typename T::Periodic_segment_iterator psit = 
+         t_const.periodic_segments_begin(T::STORED_COVER_DOMAIN);
+       psit != t_const.periodic_segments_end(T::STORED_COVER_DOMAIN); ++psit) {
+  }
+  for (typename T::Periodic_segment_iterator psit = 
+         t_const.periodic_segments_begin(T::UNIQUE_COVER_DOMAIN);
+       psit != t_const.periodic_segments_end(T::UNIQUE_COVER_DOMAIN); ++psit) {
+  }
+
+  for (typename T::Periodic_triangle_iterator ptit = t_const.periodic_triangles_begin();
+       ptit != t_const.periodic_triangles_end(); ++ptit) {
+  }
+  for (typename T::Periodic_triangle_iterator ptit = 
+         t_const.periodic_triangles_begin(T::STORED);
+       ptit != t_const.periodic_triangles_end(T::STORED); ++ptit) {
+  }
+  for (typename T::Periodic_triangle_iterator ptit = 
+         t_const.periodic_triangles_begin(T::UNIQUE);
+       ptit != t_const.periodic_triangles_end(T::UNIQUE); ++ptit) {
+  }
+  for (typename T::Periodic_triangle_iterator ptit = 
+         t_const.periodic_triangles_begin(T::STORED_COVER_DOMAIN);
+       ptit != t_const.periodic_triangles_end(T::STORED_COVER_DOMAIN); ++ptit) {
+  }
+  for (typename T::Periodic_triangle_iterator ptit = 
+         t_const.periodic_triangles_begin(T::UNIQUE_COVER_DOMAIN);
+       ptit != t_const.periodic_triangles_end(T::UNIQUE_COVER_DOMAIN); ++ptit) {
+  }
+}
+
+
+template <class T>
+void test_circulators() {
+  typedef typename T::Vertex_handle   Vertex_handle;
+  typedef typename T::Face_handle     Face_handle;
+
+  T t;
+  const T &t_const = t;
+
+  Point p0(0.5, 0.5);
+  Vertex_handle vh0 = t.insert(p0);
+  Vertex_handle vh1 = t.insert(Point(0.7, 0.5));
+  Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
+
+  typename T::Face_circulator fcir = t_const.incident_faces(vh0);
+  fcir = t_const.incident_faces(vh0, fcir);
+
+  typename T::Edge_circulator ecir = t_const.incident_edges(vh0);
+  ecir = t_const.incident_edges(vh0, fcir);
+
+  typename T::Vertex_circulator vcir = t_const.adjacent_vertices(vh0);
+  vcir = t_const.adjacent_vertices(vh0, fcir);
+
+  Vertex_handle v_mirror = t_const.mirror_vertex(fcir, 0);
+  int mirror_index = t_const.mirror_index(fcir, 0);
+}
+
+template <class T>
+void test_modifiers() {
+  typedef typename T::Vertex_handle   Vertex_handle;
+  typedef typename T::Face_handle     Face_handle;
+
+  T t;
+  const T &t_const = t;
+
+  Point p0(0.5, 0.5);
+  Point p1(0.8, 0.6);
+  Point p2(0.7, 0.7);
+
+  Vertex_handle vh0 = t.insert(p0);
+  Face_handle fh = t.faces_begin();
+  Vertex_handle vh1 = t.insert(Point(0.7, 0.5), fh);
+  Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
+
+
+  t.flip(fh, 0);
+
+  t.clear();
+  vh0 = t.insert(p0);
+  vh1 = t.insert(p1);
+  vh2 = t.insert(p2);
+
+  typename T::Locate_type lt; int li;
+  fh = t_const.locate(p0, lt, li);
+  t.insert(p0, lt, fh, li);
+  t.push_back(p0);
+
+  t.clear();
+  std::vector<Point> pts;
+  pts.push_back(p0);
+  pts.push_back(p1);
+  pts.push_back(p0);
+  pts.push_back(p2);
+  t.insert(pts.begin(), pts.end());
+
+  t.clear();
+  vh0 = t.insert(p0);
+  t.remove(vh0);
+
+  t.clear();
+  vh0 = t.insert_first(p0);
+
+  fh = t_const.locate(p1, lt, li);
+  CGAL_assertion(lt == T::FACE);
+  t.insert_in_face(p1, fh);
+  fh = t_const.locate(p2, lt, li);
+  CGAL_assertion(lt == T::EDGE);
+  t.insert_in_edge(p2, fh, 0);
+
+  t.clear();
+  t.insert(pts.begin(), pts.end());
+  for (typename T::Vertex_iterator vit = t_const.vertices_begin();
+       vit != t_const.vertices_end(); ++vit) {
+    if (t_const.degree(vit) == 3) {
+      t.remove_degree_3(vit);
+      vit = t_const.vertices_begin();
+    }
+  }
+
+  t.clear();
+  vh0 = t.insert(p0);
+  t.remove_first(vh0);
+
+  // star_hole is not tested
+}
+
+template <class T>
+void test_miscellaneous() {
+  typedef typename T::Vertex_handle   Vertex_handle;
+  typedef typename T::Face_handle     Face_handle;
+
+  T t;
+  const T &t_const = t;
+
+  Point p0(0.5, 0.5);
+  Point p1(0.8, 0.6);
+  Point p2(0.7, 0.7);
+  Vertex_handle vh0, vh1, vh2;
+  vh0 = t.insert(p0);
+  vh1 = t.insert(p1);
+  vh2 = t.insert(p2);
+
+  t.set_domain(typename T::Iso_rectangle(0,0,2,2));
+  int i = t.ccw(0);
+  i = t.cw(0);
+
+  t = T();
+  vh0 = t.insert(p0);
+  vh1 = t.insert(p1);
+  vh2 = t.insert(p2);
+  Face_handle fh = t.faces_begin();
+  bool b = t.flippable(fh, 0);
+  size_t deg = t.degree(vh0);
+
+  b = t.is_valid();
+  b = t.is_valid(true);
+  b = t.is_valid(false);
+  b = t.is_valid(true, 0);
+  b = t.is_valid(false, 0);
+}
+
+template <class T>
+void test() {
+  test_constructor<T>();
+  test_global_access<T>();
+  test_geometric_access<T>();
+  test_predicates<T>();
+  test_queries<T>();
+  test_iterators<T>();
+  test_circulators<T>();
+  test_modifiers<T>();
+  test_miscellaneous<T>();
+}
+
+int main(int argc, char *argv[]) {
+  typedef Periodic_2_triangulation_2<Gt>              P2T2;
+  typedef Periodic_2_Delaunay_triangulation_2<Gt>     DP2T2;
+
+  test<P2T2>();
+  test<DP2T2>();
+
+  return 0;
+}

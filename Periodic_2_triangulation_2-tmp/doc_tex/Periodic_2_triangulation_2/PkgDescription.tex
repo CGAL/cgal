@@ -1,0 +1,22 @@
+\begin{ccPkgDescription}{2D Periodic Triangulations\label{Pkg:Periodic2Triangulation2}}
+\ccPkgHowToCiteCgal{cgal:k-pt2-09}
+\ccPkgSummary{
+This package allows to build and handle triangulations of point sets
+in the two dimensional flat torus. Triangulations are built
+incrementally and can be modified by insertion or removal of
+vertices. They offer point location facilities.
+
+The package provides Delaunay triangulations and offers nearest
+neighbor queries and primitives to build the dual Voronoi diagrams.}
+
+\ccPkgDependsOn{
+  \ccRef[2D Triangulation]{Pkg:Triangulation2},
+  \ccRef[2D Triangulation Data Structure]{Pkg:TDS2} and
+  \ccRef[3D Periodic Triangulation]{Pkg:Periodic3Triangulation3}
+}
+%\ccPkgIntroducedInCGAL{3.5}
+\ccPkgLicense{\ccLicenseQPL}
+% TODO(NGHK): Check what this means.
+\ccPkgDemo{Periodic Delaunay Triangulation}{periodic_2_triangulation_2.zip}
+\ccPkgIllustration{Periodic_2_triangulation_2/p2Delaunay2_small.png}{Periodic_2_triangulation_2/p2Delaunay2.png}
+\end{ccPkgDescription}

@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_2TriangulationDSFaceBase_2.tex
+% +------------------------------------------------------------------------+
+% | 23.11.2010   Nico Kruithof
+% | Package: Periodic_2_triangulation_2
+% | 
+\RCSdef{\RCSPeriodicTriangulationDSFaceBaseRev}{$Id$}
+\RCSdefDate{\RCSPeriodicTriangulationDSFaceBaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Periodic_2TriangulationDSFaceBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+At the base level (see Sections~\ref{P2Triangulation2-sec-design} 
+and~\ref{TDS2-sec-design}), a face stores handles to its four vertices
+and to its four neighbor faces.  The vertices and neighbors are
+indexed 0, 1 and 2. Neighbor $i$ lies opposite to vertex $i$.
+
+\ccRefines \ccc{TriangulationDSFaceBase_2}
+
+\ccCreationVariable{f}
+
+\ccAccessFunctions
+\ccThree{voidx}{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{int offset(int i) const;}
+{Returns the offset of vertex \ccc{i}.
+\ccPrecond{$i \in \{0, 1, 2\}$.}}
+\ccGlue
+\ccMethod{bool has_zero_offsets() const;}
+{Returns true if the offset of vertex \ccc{i} is zero for $i \in \{0, 1, 2\}$.}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_offsets(int off0, int off1, int off2);}
+{Sets the vertex offsets according to \ccc{off0} to \ccc{off2}.}
+
+\ccHasModels
+
+\ccc{CGAL::Periodic_2_triangulation_ds_face_base_2}
+
+\ccSeeAlso
+
+\ccc{TriangulationDataStructure_2}\\
+\ccc{TriangulationDSFaceBase_2}\\
+\ccc{Periodic_2TriangulationDSVertexBase_2}
+
+
+%% \ccExample
+%% \ccIncludeExampleCode{Triangulation3/Triangulation_cb_2_prog.C}
+
+\end{ccRefConcept}
