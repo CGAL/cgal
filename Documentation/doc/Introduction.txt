@@ -149,7 +149,7 @@ template <class InputIterator, class OutputIterator, class Point_2, class Less_x
 OutputIterator
 ch_graham_andrew( InputIterator  first,
                   InputIterator  beyond,
-                  OutputIterator result);}
+                  OutputIterator result);
 \endcode
 
 There are two obvious questions: What can be used as argument for
