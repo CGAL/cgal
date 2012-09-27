@@ -8,9 +8,6 @@ h1 {
 	font-size: 150%;
     background-color: #EEEDF2;
 }
-.section {
-    margin:0;
-}
 </style>
 \endhtmlonly
 

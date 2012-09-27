@@ -1464,7 +1464,7 @@ namespace for the XML file to be processed properly.  -->
         <bool name="EXTERNAL_GROUPS">false</bool>
         <list name="ALIASES" append="true">
           <item>PkgDescriptionBegin{2}=\subsection \2 \1</item>
-          <item>PkgManuals{2}=\par &quot;Manuals&quot;\ref \1 &quot;User Manual&quot; &lt;BR&gt;\ref \2 &quot;Reference Manual\&quot;</item>
+          <item>PkgManuals{2}=\ref \1 &quot;User Manual&quot; \ref \2 &quot;Reference Manual\&quot;</item>
         </list>
       </doxygen>
     </project>
