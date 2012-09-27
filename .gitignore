@@ -1277,4 +1277,16 @@ Triangulation_3/test/Triangulation_3/test_simplex_3
 Triangulation_3/test/Triangulation_3/test_static_filters
 Triangulation_3/test/Triangulation_3/test_triangulation_3
 Triangulation_3/test/Triangulation_3/test_triangulation_tds
+Triangulation_on_sphere_2/demo/Mesh_on_sphere_2/*.exe
+Triangulation_on_sphere_2/demo/Mesh_on_sphere_2/*.sln
+Triangulation_on_sphere_2/demo/Mesh_on_sphere_2/*.vcproj
+Triangulation_on_sphere_2/demo/Mesh_on_sphere_2/.qglviewer.xml
+Triangulation_on_sphere_2/demo/Mesh_on_sphere_2/Makefile
+Triangulation_on_sphere_2/demo/Mesh_on_sphere_2/Mesh_on_sphere_2
+Triangulation_on_sphere_2/demo/Mesh_on_sphere_2/simpleViewer
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/*.sln
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/*.vcproj
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/*exe
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/Makefile
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/simpleViewer
 /build*
