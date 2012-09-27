@@ -1,6 +1,3 @@
-typedef int X;
-
-
 /*!
 \ingroup PkgAlgebraicFoundationsRealNumberTypesConcepts
 \cgalconcept
