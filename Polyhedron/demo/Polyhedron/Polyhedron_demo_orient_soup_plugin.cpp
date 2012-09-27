@@ -110,9 +110,9 @@ void Polyhedron_demo_orient_soup_plugin::orient()
           scene->itemChanged(item);
         }
       }
+      QApplication::restoreOverrideCursor();
     }
   }
-  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_orient_soup_plugin::shuffle()
