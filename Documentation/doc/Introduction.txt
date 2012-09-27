@@ -159,7 +159,7 @@ Any %CGAL `Kernel` provides what is required by `ConvexHullTraits_2`.
 
 As for the second question, think about an application where we want to 
 compute the convex hull of 3D points projected into the `yz` plane. Using
-the class `Projection_traits_yz_3` this is a small modification
+the class `CGAL::Projection_traits_yz_3` this is a small modification
 of the previous example.
 
 \cgalexample{Convex_hull_2/convex_hull_yz.cpp}
@@ -167,14 +167,14 @@ of the previous example.
 Another example would be about a user defined point type, or a point
 type coming from a third party library other than %CGAL. Put the point
 type together with the required predicates for this point type in the
-scope of a class, and you can run CGAL::convex_hull_2()` with these
+scope of a class, and you can run `CGAL::convex_hull_2()` with these
 points.
 
 Finally, let us explain why a traits object that is passed to the
 convex hull function?  It would allow to use a more general projection
 traits object to store state, for example if the projection plane was
 given by a direction, which is hardwired in the class
-`Projection_traits_yz_3`.
+`CGAL::Projection_traits_yz_3`.
 
 
 
