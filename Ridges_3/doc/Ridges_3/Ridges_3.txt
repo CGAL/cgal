@@ -6,6 +6,7 @@ namespace CGAL {
 \anchor chapRidges3
 
 \authors Marc Pouget and Fr&eacute;d&eacute;ric Cazals
+\autotoc
 
 \anchor davidcrest
 \image html david_crest.jpg "Crest ridges on the David, model provided by the Digital Michelangelo Project."
@@ -72,23 +73,23 @@ The previous characterization of ridges involves third-order
 differential properties. Using fourth-order differential quantities, a
 ridge point can further be qualified as <I>elliptic</I> if it
 corresponds to a maximum of \f$ k_1\f$ or a minimum of \f$ k_2\f$, or <I>hyperbolic</I> otherwise. Hence we end up with four types of ridges, namely:
-`MAX_ELLIPTIC_RIDGE`, `MAX_HYPERBOLIC_RIDGE`, `MIN_ELLIPTIC_RIDGE`,
-`MIN_HYPERBOLIC_RIDGE`, which are illustrated in Figure \ref ellipsoidridges.
+\ref MAX_ELLIPTIC_RIDGE, \ref MAX_HYPERBOLIC_RIDGE, \ref MIN_ELLIPTIC_RIDGE,
+\ref MIN_HYPERBOLIC_RIDGE, which are illustrated in Figure \ref ellipsoidridges.
 Also of interest are the <I>crest lines</I>, a crest line being an
 elliptic ridge which is a maximum of \f$ \max(|k_1|,|k_2|)\f$. Crest lines
 form a subset of elliptic ridges, and can be seen as the visually most
 salient curves on a surface.
 Hence we provide the two additional ridge types
-`MAX_CREST_RIDGE` and `MIN_CREST_RIDGE`, which are illustrated in
+\ref MAX_CREST_RIDGE and \ref MIN_CREST_RIDGE, which are illustrated in
 Figure \ref davidcrest.
 
 \anchor ellipsoidridges
 \image html ellipsoid_ridges.png"
 <center><b>
 Ridges on the ellipsoid, normals pointing outward. Color coding:
-`MAX_ELLIPTIC_RIDGE` are blue, `MAX_HYPERBOLIC_RIDGE` are green,
-`MIN_ELLIPTIC_RIDGE` are red and `MIN_HYPERBOLIC_RIDGE` are
-yellow. The red line is also the `MIN_CREST_RIDGE` and this is the
+\ref MAX_ELLIPTIC_RIDGE are blue, \ref MAX_HYPERBOLIC_RIDGE are green,
+\ref MIN_ELLIPTIC_RIDGE are red and \ref MIN_HYPERBOLIC_RIDGE are
+yellow. The red line is also the \ref MIN_CREST_RIDGE and this is the
 only crest ridge of the ellipsoid.
 </b></center>
 
@@ -114,14 +115,20 @@ The Taylor expansion of \f$ k_1\f$ (resp. \f$ k_2\f$) along the max
 by \f$ x\f$ (resp. \f$ y\f$) are:
 
 \anchor eqtaylor_along_line
-\f[ 
-k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)} x^2 +h.o.t, P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
-\f] 
+\f[
+\begin{equation}
+k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)}x^2 +\hot , \quad \quad \quad
+P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
+\end{equation}
+\f]
 
 \anchor eqtaylor_along_red_line
-\f[ 
-k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)} y^2 +h.o.t, P_2= 3b_2^2+(k_2-k_1)(c_4-3k_2^3).
-\f] 
+\f[
+\begin{equation}
+k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)}y^2 +\hot , \quad \quad \quad
+P_2= 3b_2^2+(k_2-k_1)(c_4-3k_2^3).
+\end{equation}
+\f]
 
 Notice also that switching from one to the other of the two
 afore-mentioned coordinate systems reverts the sign of all the odd
@@ -132,13 +139,13 @@ coefficients on the Monge form of the surface.<BR>
 Hence ridge types are characterized by 
 <UL>
 <LI>max ridge if \f$ b_0=0\f$
-<LI>`MAX_ELLIPTIC_RIDGE` if \f$ b_0=0\f$ and \f$ P_1<0\f$
-<LI>`MAX_HYPERBOLIC_RIDGE` if \f$ b_0=0\f$ and \f$ P_1>0\f$
+<LI>\ref MAX_ELLIPTIC_RIDGE if \f$ b_0=0\f$ and \f$ P_1<0\f$
+<LI>\ref MAX_HYPERBOLIC_RIDGE if \f$ b_0=0\f$ and \f$ P_1>0\f$
 <LI>min ridge if \f$ b_3=0\f$
-<LI>`MIN_ELLIPTIC_RIDGE` if \f$ b_3=0\f$ and \f$ P_2<0\f$
-<LI>`MIN_HYPERBOLIC_RIDGE` if \f$ b_3=0\f$ and \f$ P_2>0\f$
-<LI>`MAX_CREST_RIDGE` if \f$ b_0=0\f$ and \f$ P_1<0\f$ and \f$ |k_1|>|k_2|\f$
-<LI>`MIN_CREST_RIDGE` if \f$ b_3=0\f$ and \f$ P_2<0\f$ and \f$ |k_2|>|k_1|\f$
+<LI>\ref MIN_ELLIPTIC_RIDGE if \f$ b_3=0\f$ and \f$ P_2<0\f$
+<LI>\ref MIN_HYPERBOLIC_RIDGE if \f$ b_3=0\f$ and \f$ P_2>0\f$
+<LI>\ref MAX_CREST_RIDGE if \f$ b_0=0\f$ and \f$ P_1<0\f$ and \f$ |k_1|>|k_2|\f$
+<LI>\ref MIN_CREST_RIDGE if \f$ b_3=0\f$ and \f$ P_2<0\f$ and \f$ |k_2|>|k_1|\f$
 </UL>
 
 As illustrated in Figures \ref index_umbilic and \ref umbilics, the
@@ -154,16 +161,18 @@ normalized by \f$ 2\pi\f$. In our example, the index is thus 1/2.
 
 If the index of the principal direction field is \f$ 1/2\f$
 then it is called a
-`ELLIPTIC_UMBILIC`, if it is \f$ -1/2\f$ it is called a `HYPERBOLIC_UMBILIC`.
+\ref ELLIPTIC_UMBILIC, if it is \f$ -1/2\f$ it is called a \ref HYPERBOLIC_UMBILIC.
 Otherwise the umbilic is qualified
-`NON_GENERIC_UMBILIC`.
+\ref NON_GENERIC_UMBILIC.
 
 \anchor index_umbilic
-\image index_umbilic.png 
+\image html index_umbilic.png 
 <center><b>
-Left: Index \f$ 1/2\f$ umbilic or elliptic umbilic. Right: Elliptic and hyperbolic umbilics.
+Index \f$1/2\f$ umbilic or elliptic umbilic.
 </b></center>
 
+\anchor umbilics
+\image html lemon.png "Elliptic and hyperbolic umbilics."
 
 # Approximating Ridges on Triangulated Surface Meshes #
 
@@ -193,8 +202,6 @@ surface. To summarize things, a compliant mesh is a mesh dense enough
 so that (i) umbilics are properly isolated (ii) ridges running next
 to one another are also properly separated.
 See \cite cgal:cp-tdare-05 for a detailed discussion of <I>compliant</I> meshes.<BR>
-
-<BR>
 
 As 0-level set of the extremality coefficients \f$ b_0\f$ and \f$ b_3\f$, ridges
 are extracted by a marching triangles algorithm.\footnote{A marching triangles algorithm is similar to a 2d marching cubes algorithm (or marching rectangles algorithm), except that a one-manifold is reported on a two-manifold tessellated by triangles.}
@@ -358,11 +365,11 @@ Three functions (provided as members and also as global functions)
 enable the computation of different types of ridges :
 <UL>
 <LI>`compute_max_ridges` (resp. `compute_min_ridges`)
-outputs ridges of types `MAX_ELLIPTIC_RIDGE` and
-`MAX_HYPERBOLIC_RIDGE` (resp. `MIN_ELLIPTIC_RIDGE` and
-`MIN_HYPERBOLIC_RIDGE`).
+outputs ridges of types \ref MAX_ELLIPTIC_RIDGE and
+\ref MAX_HYPERBOLIC_RIDGE (resp. `MIN_ELLIPTIC_RIDGE` and
+\ref MIN_HYPERBOLIC_RIDGE).
 <LI>`compute_crest_ridges` outputs ridges of types
-`MAX_CREST_RIDGE` and `MIN_CREST_RIDGE`.
+\ref MAX_CREST_RIDGE and \ref MIN_CREST_RIDGE.
 </UL>
 
 These functions allows the user to specify how the elliptic/hyperbolic
@@ -396,8 +403,8 @@ function `compute` (or the global function `compute_umbilics`)
 has a parameter to define the size of the neighborhood of the umbilic.
 
 Umbilics are stored in `Umbilic` objects, they come with their
-type : `ELLIPTIC_UMBILIC`, `HYPERBOLIC_UMBILIC` or
-`NON_GENERIC_UMBILIC`; the vertex of the mesh they are associated
+type : \ref ELLIPTIC_UMBILIC, \ref HYPERBOLIC_UMBILIC or
+\ref NON_GENERIC_UMBILIC; the vertex of the mesh they are associated
 to and the list of half-edges representing the contour of the
 neighborhood.
 
@@ -417,7 +424,7 @@ using `std::maps` and `boost::associative_property_map`.
 ## Example program ##
 
 The following program computes ridges and umbilics from an off
-file.\footnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce Figure \ref figmechanical_crest_filteredintro, due to copyright issues the available model is not the same, it is provided by the AIM@SHAPE Shape Repository.} It uses the Jet fitting package to estimate the differential
+file.\footnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce Figure \ref figmechanical_crest_filteredintro, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the Jet fitting package to estimate the differential
 quantities. 
 The default output file gives rough data for visualization purpose, a
 verbose output file may also be asked for. Parameters are
@@ -547,8 +554,8 @@ Umbilic at location (0.81413 0.0018689 0.290339) of type elliptic
 
 <center><b>
 Ridges on the ellipsoid, normals pointing outward. Color coding :
-`MAX_ELLIPTIC_RIDGE` are blue, `MAX_HYPERBOLIC_RIDGE` are green,
-`MIN_ELLIPTIC_RIDGE` are red and `MIN_HYPERBOLIC_RIDGE` are yellow.
+\ref MAX_ELLIPTIC_RIDGE are blue, \ref MAX_HYPERBOLIC_RIDGE are green,
+\ref MIN_ELLIPTIC_RIDGE are red and \ref MIN_HYPERBOLIC_RIDGE are yellow.
 </b></center>
 
 ## Example: Filtering of Crest Ridges on a Mechanical Part ##

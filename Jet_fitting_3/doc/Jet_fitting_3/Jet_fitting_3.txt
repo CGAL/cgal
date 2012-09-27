@@ -8,9 +8,9 @@ namespace CGAL {
 \authors Marc Pouget and Fr&eacute;d&eacute;ric Cazals
 
 \anchor figjet3figdavid
-\image html david-dirmaxkmin-white-back.jpg width=400px
+\image html david-dirmaxkmin-white-back.jpg
 <center>
-<div class="caption">Principal directions associated with \f$ k_{max}\f$ scaled by \f$ k_{min}\f$.</div>
+<div class="caption">Principal directions associated with \f$k_{max}\f$ scaled by \f$ k_{min}\f$.</div>
 </center>
 
 This package allows the estimation of local differential quantities of
@@ -79,14 +79,15 @@ whose \f$ z\f$-axis does not belong to the tangent space. In such a frame,
 the surface can locally be written as the graph of a bivariate
 function. Letting \f$ h.o.t.\f$ stand for <I>higher order terms</I>, one
 has :
-\f[ 
-z(x,y)=J_B,d(x,y) + h.o.t. ; J_B,d(x,y)=
-\sum _k=0^d(
-\sum _i=0^i
-\frac{B_k-i,ix^k-iy^i}{i!(k-i)!} 
-)
-.
-\f] 
+
+\f[
+\begin{equation}
+z(x,y)=J_{B,d}(x,y) + h.o.t. \ ; \quad 
+J_{B,d}(x,y)=\ccSum{k=0}{d}{(\ccSum{i=0}{i}{
+\frac{B_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}})}.
+\end{equation}
+\f]
+
 The degree \f$ d\f$ polynomial \f$ J_{B,d}\f$ is the Taylor expansion of the
 function \f$ z\f$, and is called its <I>\f$ d\f$-jet</I>. Notice that a \f$ d\f$-jet contains
 \f$ N_d=(d+1)(d+2)/2\f$ coefficients.
@@ -345,15 +346,14 @@ translation (\f$ -p\f$) and multiplication by \f$ P_{W\rightarrow F}\f$.
 
 The fitting process consists of finding the coefficients
 \f$ A_{i,j}\f$ of the degree \f$ d\f$ polynomial 
+
 \anchor eqanswer
-\f[ 
-J_A,d= 
-\sum _k=0^d(
-\sum _i=0^k
-\frac{A_k-i,ix^k-iy^i}{i!(k-i)!} 
-)
-.
-\f] 
+\f[
+\begin{equation}
+J_{A,d}= \ccSum{k=0}{d}{(\ccSum{i=0}{k}{
+\frac{A_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}})}.
+\end{equation}
+\f]
 
 Denote \f$ p_i=(x_i,y_i,z_i), \ i=1,\ldots , N\f$ the coordinates of the
 sample points of \f$ P^+\f$.
@@ -399,7 +399,9 @@ D_r & 0_{r,\ N_d-r}\\
 The number \f$ r\f$, which is the number of non zero singular values, is
 strictly lower than \f$ N_d\f$ if the system is under constrained. In any
 case, the unique solution which minimize \f$ ||A||_2\f$ is given by :
-\f{equation}{
+
+\f[
+\begin{equation}
 A= V
 \left( \begin{array}{cc}
 D_r^{-1} & 0_{N_d-r,\ r}\\
@@ -407,7 +409,9 @@ D_r^{-1} & 0_{N_d-r,\ r}\\
 \end{array} 
 \right)
  U^TZ.
-\f}
+\end{equation}
+\f]
+
 One can provide the condition number of the matrix \f$ M\f$ (after
 preconditioning) which is the ratio of the maximal and the minimal
 singular values. It is infinite if the system is under constrained,
@@ -491,18 +495,24 @@ Output : third and fourth order coefficients of Monge</B>
 We use explicit formula. The implicit equation of the fitted
 polynomial surface in the fitting-basis with origin the point
 \f$ (0,0,A_{0,0})\f$ is \f$ Q=0\f$ with
-\f[ 
-Q=-w-A_0,0 +
-\sum _i,j^ \frac{A_i,ju^iv^j}{i!j!} 
-.
-\f] 
+
+\f[
+\begin{equation}
+Q=-w-A_{0,0}  +\ccSum{i,j}{}{\frac{A_{i,j}u^iv^j}{i!j!}}.
+\end{equation}
+\f]
+
 The equation in the Monge basis is obtained by substituting \f$ (u,v,w)\f$
 by \f$ P^T_{F\rightarrow M}(x,y,z)\f$. Denote \f$ f(x,y,z)=0\f$ this implicit
 equation. By definition of the Monge basis, we have locally (at
 \f$ (0,0,0)\f$)
+
 \f[ 
+\begin{equation}
 f(x,y,z)=0 \Leftrightarrow z=g(x,y)
-\f] 
+\end{equation}
+\f]
+
 and the Taylor expansion of \f$ g\f$ at \f$ (0,0)\f$ are the Monge coefficients
 sought.
 Let us denote the partial derivatives evaluated at the origin of \f$ f\f$
