@@ -22,6 +22,7 @@
 \PkgAuthor{Guillaume Damiand}
 \PkgDesc{This package implements linear cell complexes, objects in <I>d</I>-dimension with linear geometry. The combinatorial part of objects is described by a combinatorial map, representing all the cells of the object plus the incidence and adjacency relations between cells. Geometry is added to combinatorial maps simply by associating a point to each vertex of the map. Taking a 2D combinatorial map, and using 3D points, gives a linear cell complex equivalent to a <I>Polyhedron_3</I>.}
 \PkgSince{4.0}
+\PkgDependsOn{\ref PkgCombinatorialMaps}
 \PkgBib{cgal:d-lcc-12}
 \PkgLicense{\ref licensesLGPL "LGPL"}
 \PkgDemo{3D Linear Cell Complex,linear_cell_complex_3.zip}

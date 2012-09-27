@@ -11,6 +11,7 @@
 \PkgAuthor{Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman}
 \PkgDesc{This package consits of functions that compute the lower (or upper) envelope of a set of arbitrary surfaces in 3D. The output is represented as an 2D envelope diagram, namely a planar subdivision such that the identity of the surfaces that induce the envelope over each diagram cell is unique.}
 \PkgSince{3.3}
+\PkgDependsOn{\ref PkgArrangement2}
 \PkgBib{cgal:mwz-e3}
 \PkgLicense{\ref licensesGPL  "GPL"}
 \PkgDemo{3D Envelopes,envelope_3.zip}

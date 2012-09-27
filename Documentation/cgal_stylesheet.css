@@ -40,7 +40,11 @@ h2.groupheader {
 }
 
 .PkgDescription {
-    width: 50%;
+    width: 60%;
+}
+
+.PkgSummary {
+    width: 20%;
 }
 
 .PkgDescription, .PkgSummary, .PkgImage, .PkgImage .image {

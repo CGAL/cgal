@@ -15,7 +15,7 @@ for Homogeneous kernels.
 \hasModel `CGAL::Gmpq` 
 \hasModel `CGAL::Gmpz` 
 \hasModel` CGAL::Interval_nt` 
-\hasModel `CGAL::Interval_nt_advanced `
+\hasModel \ref CGAL::Interval_nt_advanced
 \hasModel `CGAL::Lazy_exact_nt<RingNumberType>` 
 \hasModel `CGAL::MP_Float` 
 \hasModel `CGAL::Gmpzf`
