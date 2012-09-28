@@ -351,9 +351,10 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   compute_horizontal_projection_hom(const Line_2& l, const Point_2& p)
   {
     //CGAL_precondition( not l.is_horizontal() );
+
     CGAL_precondition( 
         (CGAL::sign(l.a()) != ZERO) );
-
+    
     RT hx, hy, hw;
 
     hx = - l.b() * p.y() - l.c();
@@ -1044,7 +1045,11 @@ public:
                                            const Site_2 & p, 
                                            const Site_2 & t)
   {    
-    CGAL_assertion(s.is_segment());
+    CGAL_assertion( t.is_segment() );
+    CGAL_assertion( s.is_segment()
+                    and (not s.is_horizontal()) 
+                    and (not s.is_vertical()) ); 
+    
     Segment_2 seg = s.segment();
     
     Point_2 ssrc = seg.source();
@@ -1058,7 +1063,9 @@ public:
     Line_2 lseg = compute_supporting_line(seg);
     Oriented_side os_lseg_p = oriented_side_of_line(lseg, pp);
     
-    //sandeep: lhor, lver remains same for left turn and right turn
+    CGAL_assertion( os_lseg_p != ON_ORIENTED_BOUNDARY );
+
+  //sandeep: lhor, lver remains same for left turn and right turn
     
     if (dxs == NEGATIVE and dys == NEGATIVE) {
       
