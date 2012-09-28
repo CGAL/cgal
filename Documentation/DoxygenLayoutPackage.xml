@@ -16,7 +16,7 @@
 
   <!-- Layout definition for a class page -->
   <class>
-    <briefdescription visible="yes"/>
+    <briefdescription visible="no"/>
     <detaileddescription title=" "/>
     <includes visible="$SHOW_INCLUDE_FILES"/>
     <inheritancegraph visible="$CLASS_GRAPH"/>

@@ -6,57 +6,20 @@
 <!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
 <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
 <link href="$relpath$tabs.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="$relpath$jquery.js"></script>
-<script type="text/javascript" src="$relpath$dynsections.js"></script>
-<script type="text/javascript" src="$relpath$jquery.footnotes.min.js"></script>
+<script type="text/javascript" src="$relpath$../../CGAL.CGAL/html/jquery.js"></script>
+<script type="text/javascript" src="$relpath$../../CGAL.CGAL/html/dynsections.js"></script>
+<script type="text/javascript" src="$relpath$../../CGAL.CGAL/html/jquery.footnotes.min.js"></script>
 $treeview
 $search
 <!-- don't use the doxygen include style to specify config parameters  -->
-<script src="$relpath$../../MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="$relpath$../../MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
 <!-- use the mathjax cdn -->
 <!-- <script  -->
 <!--    type="text/javascript"  -->
 <!--    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> -->
 <!-- </script> -->
-
-<!-- set-up footnote generation and autotoc -->
-<script type="text/javascript"> 
-    $(document).ready(function() { 
-      $("#doc-content").append('<ol id="autoFootnotes0" class="footnotesList"></ol>');
-      $("body").footnotes();
-      var toc = $("#autotoc").append('<ul></ul>');
-      if(toc) {
-        toc = toc.find('ul');
-        $("h1, h2, h3").each(function(i) {
-          var current = $(this);
-          var levelTag = current[0].tagName.charAt(1);
-          current.attr("id", "title" + i);
-          toc.append("<li class='level" + levelTag + "'><a id='link" + i + "' href='#title" +
-            i + "' title='" + current.prop("tagName") + "'>" + current.text() + "</a></li>");
-        });
-      }
-    });
-</script>
-<!-- hack around a bug in resize.js. The original resizeHeight is not
-considering margins or borders when calculating the div heights. Our
-ready hook is run after the original resize. We fixup the footer
-variable and then do our thing.  -->
-<script type="text/javascript"> 
-   $(document).ready(function () { 
-      footer = $("#footer");
-      resizeHeight = function() {
-        var headerHeight = header.outerHeight(true);
-        var footerHeight = footer.outerHeight(true);
-        var windowHeight = $(window).outerHeight(true) - headerHeight - footerHeight;
-        content.css({height:windowHeight + "px"});
-        navtree.css({height:windowHeight + "px"});
-        sidenav.css({height:windowHeight + "px",top: headerHeight+"px"});
-      }
-    $(window).resize(resizeHeight);
-    $(window).resize();
-   });
-</script>
+<script src="$relpath$../../CGAL.CGAL/html/hacks.js" type="text/javascript"></script>
 <link href="stylesheet.css" rel="stylesheet" type="text/css" />
 $extrastylesheet
 </head>
@@ -72,7 +35,6 @@ $extrastylesheet
   \sum_{#1}^{#2}{#3}
 }\)
 </span>
-
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="back-nav">
   <ul>

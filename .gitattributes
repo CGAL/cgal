@@ -2312,6 +2312,7 @@ Documentation/biblio/how_to_cite.html -text
 Documentation/biblio/how_to_cite_cgal.txt -text
 Documentation/biblio/makebiblio -text
 Documentation/cgal_stylesheet.css -text
+Documentation/conceptify.py -text
 Documentation/doc/Developer_manual/Chapter_checks.txt -text
 Documentation/doc/Developer_manual/Chapter_code_format.txt -text
 Documentation/doc/Developer_manual/Chapter_debugging.txt -text
@@ -2348,6 +2349,7 @@ Documentation/doc/main.txt -text
 Documentation/doc/packages.txt -text
 Documentation/doxyassist.xml -text
 Documentation/footer.html -text
+Documentation/hacks.js -text
 Documentation/header.html -text
 Documentation/header_package.html -text
 Documentation/how_to_cite_cgal.bib -text

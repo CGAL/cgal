@@ -10,10 +10,6 @@ namespace for the XML file to be processed properly.  -->
   <doxygen doxyfile="Doxyfile">
     <bool name="GENERATE_TREEVIEW">true</bool>
     <bool name="DISABLE_INDEX">true</bool>
-
-    <list name="HTML_EXTRA_FILES" append="true">
-      <item>jquery.footnotes.min.js</item>
-    </list>
   </doxygen>
   
   <projects>
@@ -504,14 +500,17 @@ namespace for the XML file to be processed properly.  -->
         <input>../Kernel_23/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Kernel_23/doc/Kernel_23/</string>
-          <string name="STRIP_FROM_PATH">../Kernel_23/doc/Kernel_23/</string>
           <string name="STRIP_FROM_INC_PATH">../Kernel_23/doc/Kernel_23/</string>
           <string name="GENERATE_TAGFILE">./tags/Kernel_23.tag</string>
-          <string name="EXAMPLE_PATH">../Kernel_23/examples</string>
+          <list name="EXAMPLE_PATH" append="false">
+            <item>../Kernel_23/examples</item>
+            <item>../Filtered_kernel/examples</item>
+          </list>
           <string name="IMAGE_PATH">../Kernel_23/doc/Kernel_23/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
           <list name="TAGFILES" append="false">
             <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+            <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
             <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.2D-Convex-Hulls-and-Extreme-Points/html</item>
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
@@ -1457,7 +1456,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.2D-Voronoi-Diagram-Adaptor/html</item>
           <item>./tags/Surface_mesh_simplification.tag=../../CGAL.CGAL.Triangulated-Surface-Mesh-Simplification/html</item>
           <item>./tags/Subdivision_method_3.tag=../../CGAL.CGAL.3D-Surface-Subdivion-Methods/html</item>
-          <item>./tags/Stream_lines_2.tag=../../CGAL.CGAL.2D Placement-of-Streamlines/html</item>
+          <item>./tags/Stream_lines_2.tag=../../CGAL.CGAL.2D-Placement-of-Streamlines/html</item>
           <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
           <item>./tags/Surface_mesh_parameterization.tag=../../CGAL.CGAL.Planar-Parameterization-of-Triangulated-Surface-Meshes</item>
           <item>./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGALSurface-Reconstruction-from-Point-Sets/html</item>
@@ -1467,6 +1466,10 @@ namespace for the XML file to be processed properly.  -->
         <list name="ALIASES" append="true">
           <item>PkgDescriptionBegin{2}=\subsection \2 \1</item>
           <item>PkgManuals{2}=\ref \1 &quot;User Manual&quot; \ref \2 &quot;Reference Manual\&quot;</item>
+        </list>
+        <list name="HTML_EXTRA_FILES" append="true">
+          <item>jquery.footnotes.min.js</item>
+          <item>hacks.js</item>
         </list>
       </doxygen>
     </project>

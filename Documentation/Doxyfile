@@ -195,6 +195,8 @@ TAB_SIZE               = 4
 
 ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</span>" \
                          "cgal=\sc{%CGAL}" \
+                         "protocgal=\sc{C++gal}" \
+                         "plageo=\sc{Plageo}" \
                          "stl=*STL*" \
                          "leda=*LEDA*" \
                          "gcc=*GCC*" \
@@ -207,8 +209,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
 
 # this sets the include file of a concept to a non-existing file and
 # thus removes its include statement
-ALIASES += "cgalconcept=\headerfile \"ConceptCannotBeIncluded.h\" "
-
+ALIASES += "cgalconcept=\details <div id=\"CGALConcept\"></div> \brief"
 
 ALIASES += "advanced=\xrefitem advanceds \"Advanced\" \"Advanced\""
 ALIASES += "refines=\xrefitem refiness \"Refines\" \"Refines\""
