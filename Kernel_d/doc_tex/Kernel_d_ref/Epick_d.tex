@@ -10,6 +10,8 @@ Euclidean space. It supports construction of points from \ccc{double}
 Cartesian coordinates. It provides exact geometric predicates, but
 inexact geometric constructions.
 
+This kernel is default constructible and copyable. It does not carry any state so it is possible to use objects created by one instance with functors created by another one.
+
 Note that this kernel does not completely conform to the \ccc{Kernel_d}
 concept: it is missing the constructions \ccc{Lift_to_paraboloid_d} and
 \ccc{Project_along_d_axis_d} which do not make sense with a fixed
