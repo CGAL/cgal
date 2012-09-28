@@ -55,6 +55,9 @@ public:
   using Base::compute_vertical_projection;
   using Base::compute_horizontal_projection;
   using Base::intersects_segment_interior_bbox;
+  using Base::intersects_segment_positive_of_wedge;
+  using Base::intersects_segment_negative_of_wedge;
+  using Base::intersects_segment_interior_inf_box;
 
 
 private:
@@ -874,6 +877,11 @@ public:
                        (not same_points(q, p.target_site())))    
                     ) ;
 
+	  //sandeep: if t is segment and it not intersects the positive wedge 
+	  // then return false
+	  /*if (t.is_segment()) {
+            TO DO
+	  }*/
       // philaris: tocheck
       std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
         << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 

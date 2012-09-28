@@ -885,9 +885,8 @@ public:
       }
     }
   } // end of intersects_segment_interior_inf_box
-
-
-
+  
+  
   // returns true if and only if 
   // the interior of s has non-empty intersection
   // with the interior of the following infinite box:
@@ -1028,7 +1027,74 @@ public:
         s, lhor, lver, ON_NEGATIVE_SIDE);
   }
 
-
+  // returns true if and only if 
+  // the interior of t has non-empty intersection
+  // with the interior of the following infinite box:
+  // the only finite corner of the infinite box is p
+  // and this infinite box is a 90 degree wedge defined
+  // by the intersection of the halfplanes
+  // with supporting lines lhor and lver through p, where
+  // the halfplanes are both on the positive or negative
+  // sides of the supporting lines. The positive or negative 
+  // side depends on the relative position of p with respect to s
+  
+  static 
+  Boolean
+  intersects_segment_interior_inf_wedge_sp(const Site_2 & s, 
+                                           const Point_2 & p, 
+                                           const Site_2 & t)
+  {    
+    CGAL_assertion(s.is_segment());
+    Segment_2 seg = s.segment();
+    
+    Point_2 ssrc = seg.source();
+    Point_2 strg = seg.target();
+    
+    Sign dxs = CGAL::sign(strg.x() - ssrc.x());
+    Sign dys = CGAL::sign(strg.y() - ssrc.y());
+    
+    Line_2 lseg = compute_supporting_line(seg);
+    Oriented_side os_lseg_p = oriented_side_of_line(lseg, p);
+    
+    //sandeep: lhor, lver remains same for left turn and right turn
+    
+    if (dxs == NEGATIVE and dys == NEGATIVE) {
+      
+      Line_2 lhor = Line_2(0,1,-p.y());
+      Line_2 lver = Line_2(-1,0,p.x());
+    
+      return intersects_segment_side_of_wedge(t, 
+                                       lhor, lver,
+                                       os_lseg_p);
+    } else if (dxs == POSITIVE and dys == NEGATIVE) {
+      
+      Line_2 lhor = Line_2(0,-1,p.y());
+      Line_2 lver = Line_2(-1,0,p.x());
+      
+      return intersects_segment_side_of_wedge(t, 
+                                       lhor, lver,
+                                       os_lseg_p);
+    } else if (dxs == POSITIVE and dys == POSITIVE) {
+      
+      Line_2 lhor = Line_2(0,-1,p.y());
+      Line_2 lver = Line_2(1,0,-p.x());
+      
+      return intersects_segment_side_of_wedge(t, 
+                                       lhor, lver,
+                                       os_lseg_p);
+    } else {//dxs == NEGATIVE and dys == POSITIVE
+      
+      Line_2 lhor = Line_2(0,1,-p.y());
+      Line_2 lver = Line_2(1,0,-p.x());
+      
+      return intersects_segment_side_of_wedge(t, 
+                                       lhor, lver,
+                                       os_lseg_p);
+    }
+    
+  } // end of intersects_segment_interior_inf_wedge_sp 
+  
+  
   // returns true if and only if 
   // the interior of s has non-empty intersection
   // with the interior of the bounding box of q, p
