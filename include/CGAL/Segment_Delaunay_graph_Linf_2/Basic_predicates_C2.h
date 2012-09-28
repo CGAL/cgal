@@ -1041,7 +1041,7 @@ public:
   static 
   Boolean
   intersects_segment_interior_inf_wedge_sp(const Site_2 & s, 
-                                           const Point_2 & p, 
+                                           const Site_2 & p, 
                                            const Site_2 & t)
   {    
     CGAL_assertion(s.is_segment());
@@ -1049,43 +1049,45 @@ public:
     
     Point_2 ssrc = seg.source();
     Point_2 strg = seg.target();
+
+    Point_2 pp = p.point();
     
     Sign dxs = CGAL::sign(strg.x() - ssrc.x());
     Sign dys = CGAL::sign(strg.y() - ssrc.y());
     
     Line_2 lseg = compute_supporting_line(seg);
-    Oriented_side os_lseg_p = oriented_side_of_line(lseg, p);
+    Oriented_side os_lseg_p = oriented_side_of_line(lseg, pp);
     
     //sandeep: lhor, lver remains same for left turn and right turn
     
     if (dxs == NEGATIVE and dys == NEGATIVE) {
       
-      Line_2 lhor = Line_2(0,1,-p.y());
-      Line_2 lver = Line_2(-1,0,p.x());
+      Line_2 lhor = Line_2(0,1,-pp.y());
+      Line_2 lver = Line_2(-1,0,pp.x());
     
       return intersects_segment_side_of_wedge(t, 
                                        lhor, lver,
                                        os_lseg_p);
     } else if (dxs == POSITIVE and dys == NEGATIVE) {
       
-      Line_2 lhor = Line_2(0,-1,p.y());
-      Line_2 lver = Line_2(-1,0,p.x());
+      Line_2 lhor = Line_2(0,-1,pp.y());
+      Line_2 lver = Line_2(-1,0,pp.x());
       
       return intersects_segment_side_of_wedge(t, 
                                        lhor, lver,
                                        os_lseg_p);
     } else if (dxs == POSITIVE and dys == POSITIVE) {
       
-      Line_2 lhor = Line_2(0,-1,p.y());
-      Line_2 lver = Line_2(1,0,-p.x());
+      Line_2 lhor = Line_2(0,-1,pp.y());
+      Line_2 lver = Line_2(1,0,-pp.x());
       
       return intersects_segment_side_of_wedge(t, 
                                        lhor, lver,
                                        os_lseg_p);
     } else {//dxs == NEGATIVE and dys == POSITIVE
       
-      Line_2 lhor = Line_2(0,1,-p.y());
-      Line_2 lver = Line_2(1,0,-p.x());
+      Line_2 lhor = Line_2(0,1,-pp.y());
+      Line_2 lver = Line_2(1,0,-pp.x());
       
       return intersects_segment_side_of_wedge(t, 
                                        lhor, lver,
