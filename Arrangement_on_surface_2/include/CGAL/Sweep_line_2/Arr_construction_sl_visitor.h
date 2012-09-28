@@ -748,7 +748,9 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   //          computation of signs and local/global minima
   //          that now takes place inside _insert_at_vertices
   // TODO EBEB 2012-08-06 check whether signs are not needed
-  // it seems that swap_pred is either false or
+  // it seems that swap_pred is either 
+  //   false 
+  // if obbiblious or
   //   event->parameter_space_in_x() == CGAL::ARR_INTERIOR &&
   //   event->parameter_space_in_y() == CGAL::ARR_TOP_BOUNDARY
   // if not oblivious! But I have the feeling that signs are needed!
