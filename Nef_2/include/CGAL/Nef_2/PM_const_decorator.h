@@ -432,8 +432,6 @@ check_integrity_and_topological_planarity(bool faces) const
     EI(halfedges_begin(),halfedges_end(),'e');
   Object_index<Face_const_iterator> 
     FI(faces_begin(),faces_end(),'f');
-  typedef Halfedge_around_vertex_const_circulator hvc_circulator;
-  typedef Halfedge_around_face_const_circulator   hfc_circulator;
   Vertex_const_handle vit, vend = phds->vertices_end();
   int iso_vert_num=0;
   /* check the source links of out edges and count isolated vertices */

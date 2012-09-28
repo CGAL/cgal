@@ -132,9 +132,6 @@ void prepare_for_sweep (Arrangement& arr,
                         PointOutIter iso_points,
                         const ExTraits * /* ex_tr */)
 {
-  typedef typename Arrangement::X_monotone_curve_2    X_monotone_curve_2;
-  typedef typename Arrangement::Point_2               Point_2;
-
   typedef typename Arrangement::Vertex_iterator       Vertex_iterator;
   typedef typename Arrangement::Edge_iterator         Edge_iterator;
   typedef typename Arrangement::Vertex_handle         Vertex_handle;

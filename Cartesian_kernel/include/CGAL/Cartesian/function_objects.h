@@ -988,35 +988,34 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_2     Point_2;
     typedef typename K::Circle_2    Circle_2;
   public:
-    typedef FT               result_type;
+    template<class>
+    struct result {
+      typedef FT type;
+    };
+    
+    template<typename F>
+    struct result<F(Circle_2)> {
+      typedef const FT& type;
+    };
 
-    const result_type&
+    const FT&
     operator()( const Circle_2& c) const
     { return c.rep().squared_radius(); }
 
-    result_type
+    FT
     operator()( const Point_2& /*p*/) const
     { return FT(0); }
 
-    result_type
+    FT
     operator()( const Point_2& p, const Point_2& q) const
     { return squared_radiusC2(p.x(), p.y(), q.x(), q.y()); }
 
-    result_type
+    FT
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
     { return squared_radiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()); }
   };
 
 } //namespace CartesianKernelFunctors
-
-#ifndef CGAL_CFG_DONT_OVERLOAD_TOO_MUCH
-template < typename K>
-struct Qualified_result_of<CartesianKernelFunctors::Compute_squared_radius_2<K>,
-                           typename K::Circle_2>
-{
-  typedef typename K::FT const &   type;
-};
-#endif
 
 // For the non specialized template will do the right thing,
 // namely return a copy of an FT
@@ -1104,22 +1103,22 @@ namespace CartesianKernelFunctors {
 
 
   template <typename K>
-  class Compute_x_2 : Has_qrt
+  class Compute_x_2
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_2        Point_2;
     typedef typename K::Vector_2       Vector_2;
 
   public:
-    typedef FT                         result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_2& p) const
     {
       return p.rep().x();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_2& v) const
     {
       return v.rep().x();
@@ -1127,22 +1126,22 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_x_3 : Has_qrt
+  class Compute_x_3
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_3        Point_3;
     typedef typename K::Vector_3       Vector_3;
 
   public:
-    typedef FT                         result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_3& p) const
     {
       return p.rep().x();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_3& v) const
     {
       return v.rep().x();
@@ -1151,22 +1150,22 @@ namespace CartesianKernelFunctors {
 
 
   template <typename K>
-  class Compute_y_2 : Has_qrt
+  class Compute_y_2
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_2        Point_2;
     typedef typename K::Vector_2       Vector_2;
 
   public:
-    typedef FT                         result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_2& p) const
     {
       return p.rep().y();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_2& v) const
     {
       return v.rep().y();
@@ -1175,22 +1174,22 @@ namespace CartesianKernelFunctors {
 
 
   template <typename K>
-  class Compute_y_3 : Has_qrt
+  class Compute_y_3
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_3        Point_3;
     typedef typename K::Vector_3       Vector_3;
 
   public:
-    typedef FT                         result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_3& p) const
     {
       return p.rep().y();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_3& v) const
     {
       return v.rep().y();
@@ -1198,22 +1197,22 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_z_3 : Has_qrt
+  class Compute_z_3
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_3        Point_3;
     typedef typename K::Vector_3       Vector_3;
 
   public:
-    typedef FT                         result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_3& p) const
     {
       return p.rep().z();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_3& v) const
     {
       return v.rep().z();
@@ -1223,15 +1222,15 @@ namespace CartesianKernelFunctors {
 
 
   template <typename K>
-  class Compute_dx_2 : public Has_qrt
+  class Compute_dx_2
   {
     typedef typename K::FT             FT;
-    typedef typename K::Direction_2        Direction_2;
+    typedef typename K::Direction_2    Direction_2;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Direction_2& d) const
     {
       return d.rep().dx();
@@ -1239,15 +1238,15 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_dx_3 : public Has_qrt
+  class Compute_dx_3
   {
     typedef typename K::FT             FT;
-    typedef typename K::Direction_3        Direction_3;
+    typedef typename K::Direction_3    Direction_3;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Direction_3& d) const
     {
       return d.rep().dx();
@@ -1255,15 +1254,15 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_dy_2 : public Has_qrt
+  class Compute_dy_2
   {
     typedef typename K::FT             FT;
-    typedef typename K::Direction_2        Direction_2;
+    typedef typename K::Direction_2    Direction_2;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Direction_2& d) const
     {
       return d.rep().dy();
@@ -1271,15 +1270,15 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_dy_3 : public Has_qrt
+  class Compute_dy_3
   {
     typedef typename K::FT             FT;
-    typedef typename K::Direction_3        Direction_3;
+    typedef typename K::Direction_3    Direction_3;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Direction_3& d) const
     {
       return d.rep().dy();
@@ -1287,15 +1286,15 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_dz_3 : public Has_qrt
+  class Compute_dz_3
   {
     typedef typename K::FT             FT;
     typedef typename K::Direction_3        Direction_3;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&               result_type;
 
-    const result_type &
+    result_type
     operator()(const Direction_3& d) const
     {
       return d.rep().dz();
@@ -1303,68 +1302,68 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hx_2 : public Has_qrt
-  {
-    typedef typename K::FT             FT;
-    typedef typename K::Point_2        Point_2;
-    typedef typename K::Vector_2        Vector_2;
-
-  public:
-    typedef FT               result_type;
-
-    const result_type &
-    operator()(const Point_2& p) const
-    {
-      return p.rep().hx();
-    }
-
-    const result_type &
-    operator()(const Vector_2& v) const
-    {
-      return v.rep().hx();
-    }
-  };
-
-  template <typename K>
-  class Compute_hx_3 : public Has_qrt
-  {
-    typedef typename K::FT             FT;
-    typedef typename K::Point_3        Point_3;
-    typedef typename K::Vector_3       Vector_3;
-
-  public:
-    typedef FT               result_type;
-
-    const result_type &
-    operator()(const Point_3& p) const
-    {
-      return p.rep().hx();
-    }
-
-    const result_type &
-    operator()(const Vector_3& v) const
-    {
-      return v.rep().hx();
-    }
-  };
-
-  template <typename K>
-  class Compute_hy_2 : public Has_qrt
+  class Compute_hx_2
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_2        Point_2;
     typedef typename K::Vector_2       Vector_2;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
+    operator()(const Point_2& p) const
+    {
+      return p.rep().hx();
+    }
+
+    result_type
+    operator()(const Vector_2& v) const
+    {
+      return v.rep().hx();
+    }
+  };
+
+  template <typename K>
+  class Compute_hx_3
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Point_3        Point_3;
+    typedef typename K::Vector_3       Vector_3;
+
+  public:
+    typedef const FT&                  result_type;
+
+    result_type
+    operator()(const Point_3& p) const
+    {
+      return p.rep().hx();
+    }
+
+    result_type
+    operator()(const Vector_3& v) const
+    {
+      return v.rep().hx();
+    }
+  };
+
+  template <typename K>
+  class Compute_hy_2
+  {
+    typedef typename K::FT             FT;
+    typedef typename K::Point_2        Point_2;
+    typedef typename K::Vector_2       Vector_2;
+
+  public:
+    typedef const FT&                  result_type;
+
+    result_type
     operator()(const Point_2& p) const
     {
       return p.rep().hy();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_2& v) const
     {
       return v.rep().hy();
@@ -1372,22 +1371,22 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hy_3 : public Has_qrt
+  class Compute_hy_3
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_3        Point_3;
     typedef typename K::Vector_3       Vector_3;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_3& p) const
     {
       return p.rep().hy();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_3& v) const
     {
       return v.rep().hy();
@@ -1395,22 +1394,22 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hz_3 : public Has_qrt
+  class Compute_hz_3
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_3        Point_3;
     typedef typename K::Vector_3       Vector_3;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_3& p) const
     {
       return p.rep().hz();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_3& v) const
     {
       return v.rep().hz();
@@ -1418,22 +1417,22 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hw_2 : public Has_qrt
+  class Compute_hw_2
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_2        Point_2;
     typedef typename K::Vector_2       Vector_2;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_2& p) const
     {
       return p.rep().hw();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_2& v) const
     {
       return v.rep().hw();
@@ -1441,22 +1440,22 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hw_3 : public Has_qrt
+  class Compute_hw_3
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_3        Point_3;
     typedef typename K::Vector_3       Vector_3;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                 result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_3& p) const
     {
       return p.rep().hw();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_3& v) const
     {
       return v.rep().hw();
@@ -1465,15 +1464,15 @@ namespace CartesianKernelFunctors {
 
 
   template <typename K>
-  class Compute_xmin_2 : public Has_qrt
+  class Compute_xmin_2
   {
     typedef typename K::FT              FT;
     typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                   result_type;
 
-    const result_type &
+    result_type
     operator()(const Iso_rectangle_2& r) const
     {
       return (r.min)().x();
@@ -1481,15 +1480,15 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_xmax_2 : public Has_qrt
+  class Compute_xmax_2
   {
     typedef typename K::FT              FT;
     typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                   result_type;
 
-    const result_type &
+    result_type
     operator()(const Iso_rectangle_2& r) const
     {
       return (r.max)().x();
@@ -1497,15 +1496,15 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_ymin_2 : public Has_qrt
+  class Compute_ymin_2
   {
     typedef typename K::FT              FT;
     typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                   result_type;
 
-    const result_type &
+    result_type
     operator()(const Iso_rectangle_2& r) const
     {
       return (r.min)().y();
@@ -1513,15 +1512,15 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_ymax_2 : public Has_qrt
+  class Compute_ymax_2
   {
     typedef typename K::FT              FT;
     typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
 
   public:
-    typedef FT               result_type;
+    typedef const FT&                   result_type;
 
-    const result_type &
+    result_type
     operator()(const Iso_rectangle_2& r) const
     {
       return (r.max)().y();
@@ -3346,7 +3345,15 @@ namespace CartesianKernelFunctors {
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef Point_2                      result_type;
+    template<class>
+    struct result {
+      typedef const Point_2& type;
+    };
+    
+    template<typename F>
+    struct result<F(Iso_rectangle_2, int)> {
+      typedef Point_2 type;
+    };
 
     const Point_2 &
     operator()( const Segment_2& s, int i) const
@@ -3369,22 +3376,6 @@ namespace CartesianKernelFunctors {
   };
 
 } //namespace CartesianKernelFunctors
-
-#ifndef CGAL_CFG_DONT_OVERLOAD_TOO_MUCH
-template < typename K>
-struct Qualified_result_of<CartesianKernelFunctors::Construct_vertex_2<K>, typename K::Segment_2, int >
-{
-  typedef typename K::Point_2 const &   type;
-};
-
-template < typename K>
-struct Qualified_result_of<CartesianKernelFunctors::Construct_vertex_2<K>, typename K::Triangle_2, int >
-{
-  typedef typename K::Point_2 const &   type;
-};
-#endif
-
-// For Iso_rectangle the non specialized template will do the right thing, namely return a copy of a point
 
 namespace CartesianKernelFunctors {
 

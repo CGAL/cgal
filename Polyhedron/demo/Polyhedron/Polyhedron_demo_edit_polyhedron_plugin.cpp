@@ -24,6 +24,16 @@ public:
     return QList<QAction*>() << actionToggleEdit;
   }
 
+  //! Applicable if any of the currently selected items is either a Polyhedron or an Edit polyhedron
+  bool applicable() const { 
+    Q_FOREACH(Scene_interface::Item_id i, scene->selectionIndices())
+    {
+      if(qobject_cast<Scene_polyhedron_item*>(scene->item(i)) 
+         || qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i)))
+        return true;
+    }
+    return false;
+  }
 public slots:
   void on_actionToggleEdit_triggered();
   void edition();

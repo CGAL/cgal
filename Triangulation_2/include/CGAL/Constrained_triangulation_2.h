@@ -617,6 +617,11 @@ intersect(Face_handle , int ,
 	  Vertex_handle ,
 	  No_intersection_tag)
 {
+  //SL: I added that to be able to throw while we find a better solution
+  #ifdef CGAL_CT2_WANTS_TO_HAVE_EXTRA_ACTION_FOR_INTERSECTING_CONSTRAINTS
+  CGAL_CDT2_EXTRA_ACTION_FOR_INTERSECTING_CONSTRAINTS
+  #endif
+  
   std::cerr << " sorry, this triangulation does not deal with" 
 	    <<    std::endl
 	    << " intersecting constraints" << std::endl;

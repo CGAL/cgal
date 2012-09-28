@@ -11,6 +11,7 @@
 #include <stack>
 #include <algorithm>
 #include <boost/array.hpp>
+#include <boost/foreach.hpp>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/IO/File_scanner_OFF.h>
@@ -27,7 +28,7 @@ struct Polygon_soup :
   typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
   typedef boost::array<std::size_t, 2> Edge;
   typedef std::vector<Polygon_3> Polygons;
-  typedef std::vector<Edge> Edges;
+  typedef std::set<Edge> Edges;
   typedef Polygons::size_type size_type;
   Points points;
   Polygons polygons;
@@ -82,7 +83,8 @@ struct Polygon_soup :
           Edge edge;
           edge[0] = i0;
           edge[1] = i1;
-          non_manifold_edges.push_back(edge);
+          if(i0 > i1) std::swap(edge[0], edge[1]);
+          non_manifold_edges.insert(edge);
         }
       }
     }
@@ -103,10 +105,10 @@ struct Polyhedron_to_polygon_soup_writer {
   }
 
   void write_header( std::ostream&,
-                     std::size_t vertices,
-                     std::size_t halfedges,
-                     std::size_t facets,
-                     bool normals = false ) {
+                     std::size_t /* vertices */,
+                     std::size_t /* halfedges */,
+                     std::size_t /* facets */,
+                     bool /* normals */ = false ) {
     soup->clear();
   }
 
@@ -117,7 +119,7 @@ struct Polyhedron_to_polygon_soup_writer {
     soup->points.push_back(Point_3(x, y, z));
   }
 
-  void write_normal( const double& x, const double& y, const double& z) {
+  void write_normal( const double& /* x */, const double& /* y */, const double& /* z */) {
   }
 
   void write_facet_header() {
@@ -296,6 +298,15 @@ Scene_polygon_soup_item::orient()
         const std::size_t& i1 = polygons[to_be_oriented_index][ih];
         const std::size_t& i2 = polygons[to_be_oriented_index][ihp1];
 
+        Polygon_soup::Edge edge;
+        edge[0] = i1;
+        edge[1] = i2;
+        if(i1 > i2) std::swap(edge[0], edge[1]);
+
+        if(soup->non_manifold_edges.count(edge) > 0) {
+          continue;
+        }
+
 //         qDebug() << tr("edge %3-%4 (%1,%2)").arg(i1).arg(i2).arg(ih).arg(ihp1);
         // edge (i1,i2)
         Edges::iterator it_same_orient = edges.find(make_pair(i1, i2));
@@ -351,8 +362,14 @@ Scene_polygon_soup_item::orient()
           stack.push(index);
         }
         else {
-//           qDebug() << "else" << it_same_orient->second.size() << it_other_orient->second.size();
-          success = false; // non-orientable
+          // qDebug() << "else" << it_same_orient->second.size() << 
+          //   (it_other_orient == edges.end() ? 0 : it_other_orient->second.size());
+          if(it_same_orient->second.size() != 1 || 
+             (it_other_orient != edges.end() && it_other_orient->second.size() > 0)) 
+          {
+            // qDebug() << tr("non orientable");
+            success = false; // non-orientable
+          }
         }
       } // end for on all edges of one 
     } // end while loop on the polygons of the connected component
@@ -478,13 +495,10 @@ Scene_polygon_soup_item::direct_draw() const {
     ::glColor3d(1., 0., 0.); // red
     ::glGetBooleanv(GL_LIGHTING, &lightning);
     ::glDisable(GL_LIGHTING);
-    
-    for(Polygon_soup::size_type 
-          i = 0,
-          end = soup->non_manifold_edges.size();
-        i < end; ++i) 
+
+    BOOST_FOREACH(const Polygon_soup::Edge& edge,
+                  soup->non_manifold_edges)
     {
-      const Polygon_soup::Edge& edge = soup->non_manifold_edges[i];
       const Point_3& a = soup->points[edge[0]];
       const Point_3& b = soup->points[edge[1]];
       ::glBegin(GL_LINES);

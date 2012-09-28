@@ -40,8 +40,8 @@ public:
   typedef typename Kernel::FT                  FT;
   typedef Arr_linear_traits_2<Kernel>          Base;
   typedef Env_plane_traits_3<Kernel>           Self;
-  typedef unsigned int                         Multiplicity;
 
+  typedef typename Base::Multiplicity          Multiplicity;
   typedef typename Base::Point_2               Point_2;
   typedef typename Base::Curve_2               Curve_2;
   typedef typename Base::X_monotone_curve_2    X_monotone_curve_2;

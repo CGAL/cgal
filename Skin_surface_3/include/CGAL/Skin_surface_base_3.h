@@ -498,7 +498,6 @@ construct_bounding_box()
 {
   typedef typename Regular::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Regular::Geom_traits     GT;
-  typedef typename GT::Bare_point             Point;
   typedef typename GT::Point                Weighted_point;
   typedef typename GT::FT                     FT;
   

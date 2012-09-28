@@ -151,7 +151,6 @@ namespace CGAL {
       typedef typename SK::Point_3 Point_3;
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef typename SK::Line_3 Line_3;
-      typedef typename SK::Line_arc_3 Line_arc_3;
 
       Point_3 inters_p;
       Line_3 inters_l;

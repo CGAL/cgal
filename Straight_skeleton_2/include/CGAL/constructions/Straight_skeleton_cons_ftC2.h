@@ -553,7 +553,6 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( intrusive_ptr< Tri
 {
   typedef typename K::FT  FT ;
   
-  typedef Point_2<K> Point_2 ;
   typedef Line_2<K>  Line_2 ;
   
   typedef optional<Line_2>  Optional_line_2 ;

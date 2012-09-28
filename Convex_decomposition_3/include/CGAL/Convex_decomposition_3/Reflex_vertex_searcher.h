@@ -72,11 +72,11 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
 			  Reflex_vertex_map& vm) 
       : dir(dir_in), vertex_map(vm) {}
     
-    void visit(Vertex_handle v) const {}
-    void visit(Halfedge_handle e) const {}
-    void visit(Halffacet_handle f) const {}
-    void visit(SHalfloop_handle sl) const {}
-    void visit(SFace_handle sf) const {}
+    void visit(Vertex_handle /*v*/) const {}
+    void visit(Halfedge_handle /*e*/) const {}
+    void visit(Halffacet_handle /*f*/) const {}
+    void visit(SHalfloop_handle /*sl*/) const {}
+    void visit(SFace_handle /*sf*/) const {}
     void visit(SHalfedge_handle se) const {
       //      if(vertex_map[se->source()->source()]==3) return;
       int isrse = is_reflex_sedge<SNC_structure>(se, dir);

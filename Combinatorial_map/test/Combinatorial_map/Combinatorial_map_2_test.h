@@ -252,7 +252,7 @@ void test2D()
 	( map, map.first_dart(), mark);
 
         nbc = 0;
-        for ( typename Map::template One_dart_per_incident_cell_range<0,3>::iterator 
+        for ( typename Map::template One_dart_per_incident_cell_range<0,3, Map::dimension>::iterator 
 		it1 ( map, map.first_dart() ); it1.cont(); ++it1 )
         {
             ++nbc;
@@ -431,7 +431,7 @@ void test2D()
 
     std::vector<Dart_handle> V;
     {
-      for ( typename Map::template Dart_of_cell_range<0>::iterator it =
+      for ( typename Map::template Dart_of_cell_range<0, Map::dimension>::iterator it =
 	      map.template darts_of_cell<0>( d1 ).begin();
 	    it != map.template darts_of_cell<0>( d1 ).end(); ++it )
             V.push_back ( it );

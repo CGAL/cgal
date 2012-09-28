@@ -60,8 +60,8 @@ public:
         static Scalar scalar_factor(const NT& a, Field_tag) {
             return (a == NT(0)) ? NT(0) : NT(1);
         }
-        static Scalar scalar_factor(const NT& a, 
-                                    const Scalar& d,
+        static Scalar scalar_factor(const NT& /* a */, 
+                                    const Scalar& /* d */,
                                     Integral_domain_tag) {
             return Scalar(1);
         }

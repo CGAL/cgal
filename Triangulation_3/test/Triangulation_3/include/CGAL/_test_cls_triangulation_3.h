@@ -28,6 +28,7 @@
 #include "_test_cls_circulator.h"
 
 #include <CGAL/Random.h>
+#include <CGAL/Testsuite/use.h>
 
 template <class Triangulation, class Container>
 bool check_all_are_finite(Triangulation* tr, const Container& cont) 
@@ -639,6 +640,7 @@ _test_cls_triangulation_3(const Triangulation &)
       TAI1.insert_and_give_new_cells(
                                      Point(x, x, x), 
                                      std::back_inserter(lis_tai1));
+    CGAL_USE(taiv);
     assert(TAI1.is_valid());
     assert(TAI1.dimension() == 1);
     assert(lis_tai1.size() == 2);
@@ -668,6 +670,7 @@ _test_cls_triangulation_3(const Triangulation &)
       TAI1.insert_and_give_new_cells(
                                      Point(x, y, 0), 
                                      std::back_inserter(lis_tai1));
+    CGAL_USE(taiv);
     assert(TAI1.is_valid());
     assert(TAI1.dimension() == 2);
     while(!lis_tai1.empty())
@@ -697,6 +700,7 @@ _test_cls_triangulation_3(const Triangulation &)
       TAI1.insert_and_give_new_cells(
                                      Point(x, y, z), 
                                      std::back_inserter(lis_tai1));
+    CGAL_USE(taiv);
     assert(TAI1.is_valid());
     assert(TAI1.dimension() == 3);
     while(!lis_tai1.empty())

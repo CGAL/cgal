@@ -1405,7 +1405,7 @@ public:
         if (!is_certainly_zero) ub_log2 = Ceil_log2_abs()(x);
         return true; // reported bound is tight
     }
-    bool improve_upper_bound(NT x, long&, bool&) { return true; }
+    bool improve_upper_bound(NT, long&, bool&) { return true; }
 };
 
 /*! \ingroup NiX_Bitstream_descartes_tree

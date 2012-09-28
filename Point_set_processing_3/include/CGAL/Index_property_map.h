@@ -126,13 +126,13 @@ class Index_property_map<Iter,
 public:
   // Property maps' required types
   typedef boost::readable_property_map_tag  category;
-  typedef unsigned int                      value_type;
+  typedef std::size_t                       value_type;
   typedef value_type                        reference;
   typedef Iter                              key_type;
 
   Index_property_map(
     Iter first,  ///< iterator over the first element (index 0)
-    Iter beyond) ///< past-the-end iterator over the elements
+    Iter /*beyond*/) ///< past-the-end iterator over the elements
   : m_first(first)
   {
     CGAL_TRACE("  Index_property_map: optimized version for a random access container\n");

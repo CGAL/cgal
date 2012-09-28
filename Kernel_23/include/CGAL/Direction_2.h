@@ -98,19 +98,19 @@ public:
     return R().construct_perpendicular_direction_2_object()(*this,o);
   }
 
-  typename Qualified_result_of<typename R::Compute_dx_2, Direction_2>::type
+  typename boost::result_of<typename R::Compute_dx_2( Direction_2)>::type
   dx() const
   {
     return R().compute_dx_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_dy_2, Direction_2>::type
+  typename boost::result_of<typename R::Compute_dy_2( Direction_2)>::type
   dy() const
   {
     return R().compute_dy_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_dx_2, Direction_2>::type
+  typename boost::result_of<typename R::Compute_dx_2( Direction_2)>::type
   delta(int i) const
   {
     CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );

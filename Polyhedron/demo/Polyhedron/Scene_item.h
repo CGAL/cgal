@@ -12,6 +12,7 @@ namespace qglviewer {
 }
 
 class QMenu;
+class QKeyEvent;
 
 // This class represents an object in the OpenGL scene
 class SCENE_ITEM_EXPORT Scene_item : public QObject {
@@ -71,6 +72,8 @@ public:
   // Context menu
   virtual QMenu* contextMenu();
 
+  // Event handling
+  virtual bool keyPressEvent(QKeyEvent*){return false;}
 public slots:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
@@ -111,6 +114,10 @@ public slots:
     setRenderingMode(Gouraud);
   }
 
+  void setPointsPlusNormalsMode(){
+    setRenderingMode(PointsPlusNormals);
+  }
+  
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
   virtual void select(double orig_x,

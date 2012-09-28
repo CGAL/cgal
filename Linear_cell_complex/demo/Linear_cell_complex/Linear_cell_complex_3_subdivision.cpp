@@ -30,7 +30,7 @@ public:
    * @param amark is a mark designing old darts (i.e. darts not created during
    *        the triangulation step)
    */
-  Smooth_old_vertex (LCC & alcc, unsigned int amark):mlcc (alcc)
+  Smooth_old_vertex (LCC & alcc, unsigned int /* TODO amark*/):mlcc (alcc)
   {
   }
 
@@ -75,21 +75,51 @@ private:
   LCC & mlcc;
 };
 
-// Flip an edge, work in any dimension.
+// Flip an edge, work only in 2D and 3D
 Dart_handle
 flip_edge (LCC & m, Dart_handle d)
 {
-  CGAL_assertion (d != NULL && !d->is_free (2));
+  CGAL_assertion ( d!=NULL && !d->is_free(2) );
+  CGAL_assertion ( !d->is_free(1) && !d->is_free(0) );
+  CGAL_assertion ( !d->beta(2)->is_free(0) && !d->beta(2)->is_free(1) );  
+  
+  if (!CGAL::is_removable<LCC,1>(m,d)) return NULL;
 
-  if (!CGAL::is_removable<LCC,1>(m,d))
-    return NULL;
+  Dart_handle d1 = d->beta(1);
+  Dart_handle d2 = d->beta(2)->beta(0);
 
-  Dart_handle d2 = d->beta(1)->beta(1);
-  CGAL::remove_cell<LCC,1>(m, d);
+  CGAL_assertion ( !d1->is_free(1) && !d2->is_free(0) );
 
-  insert_cell_1_in_cell_2(m, d2, d2->beta(1)->beta(1));
+  Dart_handle d3 = d1->beta(1);
+  Dart_handle d4 = d2->beta(0);
 
-  return d2->beta (0);
+  // We isolated the edge
+  m.basic_link_beta_1(d->beta(0), d->beta(2)->beta(1));
+  m.basic_link_beta_0(d->beta(1), d->beta(2)->beta(0));
+  if ( !d->is_free(3) )
+  {
+    m.basic_link_beta_0(d->beta(0)->beta(3), d->beta(2)->beta(1)->beta(3));
+    m.basic_link_beta_1(d->beta(1)->beta(3), d->beta(2)->beta(0)->beta(3));
+  }
+
+  // Then we push the two extremities.
+  m.basic_link_beta_0(d3, d);
+  m.basic_link_beta_0(d2, d->beta(2));
+  m.link_beta_1(d4, d);
+  m.link_beta_1(d1, d->beta(2));
+
+  if ( !d->is_free(3) )
+  {
+    m.basic_link_beta_0(d4->beta(3), d->beta(3));
+    m.basic_link_beta_0(d1->beta(3), d->beta(2)->beta(3));
+    m.link_beta_1(d3->beta(3), d->beta(3));
+    m.link_beta_1(d2->beta(3), d->beta(2)->beta(3));
+  }
+  
+  // CGAL::remove_cell<LCC,1>(m, d);
+  // insert_cell_1_in_cell_2(m, d1, d1->beta(1)->beta(1));
+
+  return d;
 }
 
 // Subdivide each facet of the lcc by using sqrt(3)-subdivision.
@@ -156,9 +186,8 @@ subdivide_lcc_3 (LCC & m)
              (m.is_marked(d2->beta(3), mark) &&
               m.is_marked(d2->beta(2)->beta(3), mark))))
         {
-          m.negate_mark (mark);  // thus new darts will be marked
           flip_edge (m, d2);
-          m.negate_mark (mark);
+          m.mark(d2, mark);
         }
         else
           m.mark (d2, mark);

@@ -33,7 +33,7 @@ namespace VoronoiDiagram_2 { namespace Internal {
 struct Null_functor
 {
   Null_functor() {}
-  template<typename T> Null_functor(T t) {}
+  template<typename T> Null_functor(T /*t*/) {}
 };
 
 //=========================================================================

@@ -55,7 +55,7 @@ Point_d<R> midpoint(const Point_d<R>& p, const Point_d<R>& q)
 
 template <class R, class Forward_iterator>
 Point_d<R> center_of_sphere(Forward_iterator start, Forward_iterator end)
-{ typename R::Center_of_sphereHd center;
+{ typename R::Center_of_sphere_d center;
   return center(start,end); }
 
 template <class R> typename R::FT

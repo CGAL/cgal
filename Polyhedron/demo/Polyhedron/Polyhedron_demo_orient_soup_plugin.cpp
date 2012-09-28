@@ -22,6 +22,15 @@ public:
   void init(QMainWindow* mainWindow,
             Scene_interface* scene_interface,
             Messages_interface* m);
+
+  bool applicable() const {
+    Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices()) {
+      if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
+        return true;
+    }
+    return false;
+  }
+
   QList<QAction*> actions() const;
 
 public slots:
@@ -46,12 +55,12 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   scene = scene_interface;
   mw = mainWindow;
   messages = m;
-  actionOrient = new QAction(tr("Orient polygon soup"), mainWindow);
+  actionOrient = new QAction(tr("&Orient polygon soup"), mainWindow);
   actionOrient->setObjectName("actionOrient");
   connect(actionOrient, SIGNAL(triggered()),
           this, SLOT(orient()));
 
-  actionShuffle = new QAction(tr("Shuffle polygon soup"), mainWindow);
+  actionShuffle = new QAction(tr("&Shuffle polygon soup"), mainWindow);
   connect(actionShuffle, SIGNAL(triggered()),
           this, SLOT(shuffle()));
 
@@ -101,9 +110,9 @@ void Polyhedron_demo_orient_soup_plugin::orient()
           scene->itemChanged(item);
         }
       }
+      QApplication::restoreOverrideCursor();
     }
   }
-  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_orient_soup_plugin::shuffle()

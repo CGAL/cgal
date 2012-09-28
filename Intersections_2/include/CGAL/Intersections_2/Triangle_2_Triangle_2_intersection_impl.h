@@ -120,8 +120,8 @@ void _cut_off(Pointlist_2_<K> &list,
             last->next = newrec;
             newrec->side = ON_ORIENTED_BOUNDARY;
             Line_2_Line_2_pair<K> linepair(&cutter,  &l);
-            typename Line_2_Line_2_pair<K>::Intersection_results isr;
-            isr = linepair.intersection_type();
+            CGAL_kernel_assertion_code(typename Line_2_Line_2_pair<K>::Intersection_results isr =)
+            linepair.intersection_type();
             CGAL_kernel_assertion(isr == Line_2_Line_2_pair<K>::POINT);
             newrec->point = linepair.intersection_point();
         }

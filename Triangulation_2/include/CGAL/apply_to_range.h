@@ -35,8 +35,6 @@ void apply_to_range(const Tr &t,
 {
   if (t.dimension()<2) return;
   typedef typename Tr::Point         POINT;
-  typedef typename Tr::Segment       SEGMENT;
-  typedef typename Tr::Triangle      TRIANGLE;
   typedef typename Tr::Face_handle   hFACE;
   typedef typename Tr::Vertex_handle hVERTEX;
   typedef typename Tr::Line_face_circulator      LFC;

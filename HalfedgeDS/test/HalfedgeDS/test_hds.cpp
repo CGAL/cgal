@@ -108,13 +108,8 @@ void test_HalfedgeDS_default() {
 void test_HalfedgeDS_vector() {
     // Instantiation of the halfedge data structure using vector
     // and maximal bases for polyhedral surfaces.
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     typedef CGAL::HalfedgeDS_vector< Dummy_traits_3,
                                            CGAL::Polyhedron_items_3> HDS;
-#else
-    typedef CGAL::HalfedgeDS_vector::HDS< Dummy_traits_3,
-                                           CGAL::Polyhedron_items_3> HDS;
-#endif
     typedef HDS::Halfedge          Halfedge;
     typedef Halfedge::Base         HBase;
     typedef HDS::Face_handle       Face_handle;
@@ -152,13 +147,8 @@ void test_HalfedgeDS_vector() {
 void test_HalfedgeDS_vector_min() {
     // Instantiation of the halfedge data structure using vector
     // and minimal bases as for an undirected graph.
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     typedef CGAL::HalfedgeDS_vector< Empty_traits,
                                            CGAL::HalfedgeDS_min_items> HDS;
-#else
-    typedef CGAL::HalfedgeDS_vector::HDS< Empty_traits,
-                                           CGAL::HalfedgeDS_min_items> HDS;
-#endif
     typedef HDS::Halfedge   Halfedge;
     typedef Halfedge::Base  HBase;
 
