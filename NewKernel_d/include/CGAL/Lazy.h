@@ -22,6 +22,7 @@
 #define CGAL_LAZY_H
 
 #include <CGAL/basic.h>
+#include <CGAL/is_iterator.h>
 #include <CGAL/Handle.h>
 #include <CGAL/Object.h>
 #include <CGAL/Kernel/Type_mapper.h>
