@@ -874,7 +874,7 @@ const typename Kernel::FT& sr);
 /// @}
 
 /*!
-\addtogroup compare_x compare_x
+\defgroup compare_x compare_x
 \ingroup PkgKernel23
 
 \details Depending on which \cgal kernel is used,
@@ -889,10 +889,10 @@ described below.
 \sa `CGAL::compare_y_at_x` 
 \sa `CGAL::compare_z` 
 */
-/// @{
 
 /*!
 \addtogroup compare_x_linear compare_x (Linear Kernel)
+\ingroup compare_x
 \anchor figcompare_x
 \image html compare1.gif 
 */
@@ -902,15 +902,13 @@ described below.
 compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
 */
 template <typename Kernel>
-Comparison_result compare_x(const Point_2<Kernel> &p,
-                                        const Point_2<Kernel> &q);
+Comparison_result compare_x(const Point_2<Kernel> &p, const Point_2<Kernel> &q);
+
 /*!
 compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
 */
-
 template <typename Kernel>
-Comparison_result compare_x(const Point_3<Kernel> &p,
-                                        const Point_3<Kernel> &q);
+Comparison_result compare_x(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
 /*!
 compares the \f$ x\f$-coordinates of \f$ p\f$ and the intersection 
 of lines \f$ l1\f$ and \f$ l2\f$.
@@ -918,8 +916,8 @@ See Figure \ref figcompare_x (a).
 */
 template <typename Kernel>
 Comparison_result compare_x(const Point_2<Kernel> &p,
-                                        const Line_2<Kernel> &l1,
-                                        const Line_2<Kernel> &l2);
+                            const Line_2<Kernel> &l1,
+                            const Line_2<Kernel> &l2);
 
 /*!
 compares the \f$ x\f$-coordinates of  the intersection of line \f$ l\f$
@@ -929,8 +927,8 @@ See Figure \ref figcompare_x (b).
 */
 template <typename Kernel>
 Comparison_result compare_x(const Line_2<Kernel> &l,
-                                        const Line_2<Kernel> &h1,
-                                        const Line_2<Kernel> &h2);
+                            const Line_2<Kernel> &h1,
+                            const Line_2<Kernel> &h2);
 /*!
 compares the \f$ x\f$-coordinates of the intersection of lines \f$ l1\f$
 and \f$ l2\f$ and  the intersection of lines \f$ h1\f$ and \f$ h2\f$.
@@ -947,7 +945,7 @@ Comparison_result compare_x(const Line_2<Kernel> &l1,
 
 /*!
 \addtogroup compare_x_circular compare_x (Circular Kernel)
-
+\ingroup compare_x
 \details See Chapter \ref chaptercircularkernel.
 
 \code
@@ -958,8 +956,8 @@ If this kernel is used, in addition to the function and the
 combination of 2D types described above, another version of the function
 is provided.
 */
-template <typename Kernel>
 /// @{
+
 /*!
 compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
 */
@@ -979,7 +977,7 @@ Comparison_result
 
 /*!
 \addtogroup compare_x_spherical compare_x (Spherical Kernel)
-
+\ingroup compare_x
 \details See Chapter \ref chaptersphericalkernel.
 
 \code
@@ -1009,10 +1007,9 @@ Comparison_result
             const Point_3<SphericalKernel> &q);
 
 /// @}
-/// @}
 
 /*!
-\addtogroup compare_xy compare_xy
+\defgroup compare_xy compare_xy
 \ingroup PkgKernel23
 
 \details Depending on which \cgal kernel is used, different versions of this
@@ -1027,11 +1024,11 @@ global function are available.
 \sa `CGAL::compare_z` 
 
 */
-/// @{
+
 
 /*!
 \addtogroup compare_xy_linear compare_xy (Linear Kernel)
-
+\ingroup compare_xy
 */
 /// @{
 
@@ -1059,7 +1056,7 @@ compare_xy(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
 
 /*!
 \addtogroup compare_xy_circular compare_xy (Circular Kernel)
-
+\ingroup compare_xy
 \details See Chapter \ref chaptercircularkernel.
 
 \code
@@ -1094,7 +1091,7 @@ compare_xy(const Circular_arc_point_2<CircularKernel> &p,
 
 /*!
 \addtogroup compare_xy_spherical compare_xy (Spherical Kernel)
-
+\ingroup compare_xy
 \details See Chapter \ref chaptersphericalkernel.
 
 \code
@@ -1125,8 +1122,6 @@ template <typename SphericalKernel>
 Comparison_result 
   compare_xy(const Circular_arc_point_3<SphericalKernel> &p,
             const Point_3<SphericalKernel> &q);
-
-/// @}
 
 /// @}
 
@@ -1319,7 +1314,7 @@ compare_y_at_x(const Circular_arc_point_2<CircularKernel> &p,
 
 
 /*!
-\addtogroup compare_y compare_y
+\defgroup compare_y compare_y
 \ingroup PkgKernel23
 
 \details Depending on which \cgal kernel is used, different versions of this
@@ -1333,11 +1328,10 @@ global function are available.
 \sa `CGAL::compare_y_at_x` 
 \sa `CGAL::compare_z` 
 */
-/// @{
 
 /*!
 \addtogroup compary_y_linear compare_y (Linear Kernel)
-
+\ingroup compare_y
 \details See Chapter \ref chapterkernel23
 
 \anchor figcompare13
@@ -1392,7 +1386,7 @@ Comparison_result compare_y(const Line_2<Kernel> &l1,
 
 /*!
 \addtogroup compare_y_circular compare_y (Circular Kernel)
-
+\ingroup compare_y
 \details See Chapter \ref chaptercircularkernel.
 
 \code
@@ -1423,7 +1417,7 @@ compare_y(const Circular_arc_point_2<CircularKernel> &p,
 
 /*!
 \addtogroup compare_y_spherical compare_y (Spherical Kernel)
-
+\ingroup compare_y
 \details See Chapter \ref chaptersphericalkernel.
 
 \code
@@ -1451,11 +1445,9 @@ Comparison_result
             const Point_3<SphericalKernel> &q);
 /// @}
 
-/// @}
-
 
 /*!
-\addtogroup compare_xyz compare_xyz
+\defgroup compare_xyz compare_xyz
 \ingroup PkgKernel23
 
 \details Depending on which \cgal kernel is used, different versions of this
@@ -1470,10 +1462,10 @@ global function are available.
 \sa `CGAL::compare_z` 
 
 */
-/// @{
 
 /*!
 \addtogroup compare_xyz_linear compare_xyz (Linear Kernel)
+\ingroup compare_xyz
 */
 /// @{
 
@@ -1492,7 +1484,7 @@ compare_xyz(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
 
 /*!
 \addtogroup compare_xyz_spherical compare_xyz (Spherical Kernel)
-
+\ingroup compare_xyz
 \details See Chapter \ref chaptersphericalkernel
 
 \code
@@ -1521,7 +1513,6 @@ Comparison_result
 compare_xyz(const Circular_arc_point_3<SphericalKernel> &p,
 const Point_3<SphericalKernel> &q);
 
-/// @}
 /// @}
 
 

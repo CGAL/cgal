@@ -1,4 +1,8 @@
 /*!
+\file
+*/
+
+/*!
 \ingroup PkgKernel23Concepts
 \cgalconcept
 

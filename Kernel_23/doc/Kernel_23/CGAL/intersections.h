@@ -124,18 +124,18 @@ bool do_intersect(Type1 obj1, Type2 obj2, Type3 obj3);
 
 
 /*!
-\addtogroup intersection intersection
+\defgroup intersection intersection
 \ingroup PkgKernel23
 
 \brief 
 \details Depending on which \cgal kernel is used, different versions of this
 global function are available.
 */
-/// @{
+
 
 /*!
 \addtogroup intersection_linear intersection (Linear Kernel)
-
+\ingroup intersection
 \brief
 
 ### Example ###
@@ -378,7 +378,7 @@ Object intersection(const Plane_3<Kernel>& pl1,
 
 /*!
 \addtogroup intersection_circular intersection (Circular Kernel)
-
+\ingroup intersection
 \details See Chapter \ref chaptercircularkernel
 
 \code
@@ -432,7 +432,7 @@ intersection(const Type1 &obj1, const Type2 &obj2,
 
 /*!
 \addtogroup intersection_spherical intersection (Spherical Kernel)
-
+\ingroup intersection
 \details See Chapter \ref chaptersphericalkernel
 
 \code
@@ -516,10 +516,6 @@ template < typename Type1, typename Type2, typename OutputIterator >
 OutputIterator
 intersection(const Type1 &obj1, const Type2 &obj2, const Type3 &obj3,
              OutputIterator intersections);
-
-
-/// @}
-
 
 /// @}
 }
