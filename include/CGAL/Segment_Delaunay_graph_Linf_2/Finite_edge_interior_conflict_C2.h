@@ -983,8 +983,12 @@ public:
         // this works if p or q is point
         bool result;
         if (p.is_point()) { // p is point, q is segment
+          CGAL_assertion((not same_points(p, q.source_site())) and
+                         (not same_points(p, q.target_site()))    );
           result = intersects_segment_interior_inf_wedge_sp(q,p,t);
         } else { // q is point and p is segment
+          CGAL_assertion((not same_points(q, p.source_site())) and
+                         (not same_points(q, p.target_site()))    );
           result = intersects_segment_interior_inf_wedge_sp(p,q,t);
         }
         
