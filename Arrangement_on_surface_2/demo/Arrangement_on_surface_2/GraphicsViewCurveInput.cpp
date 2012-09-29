@@ -47,6 +47,7 @@ GraphicsViewCurveInputBase( QObject* parent ):
     color( ::Qt::blue )
 {
     this->pointsGraphicsItem.setZValue( 100 );
+    this->pointsGraphicsItem.setColor( this->color );
 }
 
 void 
@@ -86,6 +87,8 @@ GraphicsViewCurveInputBase::
 setColor( QColor c )
 {
     this->color = c;
+
+    this->pointsGraphicsItem.setColor( this->color );
 }
 
 QColor 

@@ -72,15 +72,16 @@ public:
         GraphicsViewCurveInputBase( parent ),
         second( false )
     {
-        this->segmentGuide.setZValue( 10 );
+        this->segmentGuide.setZValue( 100 );
         this->setColor( this->color );
     }
 
     void setColor( QColor c )
     {
         this->GraphicsViewCurveInputBase::setColor( c );
+
         QPen pen = this->segmentGuide.pen( );
-        pen.setColor( c );
+        pen.setColor( this->color );
         this->segmentGuide.setPen( pen );
     }
 

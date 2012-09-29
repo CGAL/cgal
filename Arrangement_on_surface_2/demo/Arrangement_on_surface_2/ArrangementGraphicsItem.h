@@ -221,6 +221,186 @@ protected:
         }
     }
 
+    template < class Kernel_ >
+    void paintFace( Face_handle f, QPainter* painter, CGAL::Arr_polyline_traits_2< Kernel_ > )
+    {
+        if (!f->is_unbounded())  // f is not the unbounded face
+        {
+            QVector< QPointF > pts; // holds the points of the polygon
+            typename X_monotone_curve_2::const_iterator           pt_itr;
+            typename X_monotone_curve_2::const_reverse_iterator   pt_rev_itr;
+            X_monotone_curve_2 cv;
+
+            /* running with around the outer of the face and generate from it
+             * polygon
+             */
+            Ccb_halfedge_circulator cc = f->outer_ccb();
+            do {
+                cv = cc->curve();
+                bool curve_has_same_direction = ( *(cc->curve().begin()) == cc->source()->point() );
+                if ( curve_has_same_direction )
+                {
+                    for( pt_itr = cv.begin() , ++pt_itr ; pt_itr != cv.end(); ++pt_itr)
+                    {
+                        double x = CGAL::to_double((*pt_itr).x());
+                        double y = CGAL::to_double((*pt_itr).y());
+                        QPointF coord_source(x , y);
+                        pts.push_back(coord_source );
+                    }
+                }
+                else
+                {
+                    for (pt_rev_itr = cv.rbegin() , ++pt_rev_itr; pt_rev_itr != cv.rend();
+                            ++pt_rev_itr)
+                    {
+                        double x = CGAL::to_double((*pt_rev_itr).x());
+                        double y = CGAL::to_double((*pt_rev_itr).y());
+                        QPointF coord_source(x , y);
+                        pts.push_back(coord_source );
+                    }
+                }
+                //created from the outer boundary of the face
+            } while (++cc != f->outer_ccb());
+
+            // make polygon from the outer ccb of the face 'f'
+            QPolygonF pgn( pts );
+
+            // fill the face according to its color (stored at any of her
+            // incidents curves)
+            QBrush oldBrush = painter->brush( );
+            QColor def_bg_color = ::Qt::black;
+            if (! f->color().isValid())
+            {
+                painter->setBrush( def_bg_color );
+            }
+            else
+            {
+                painter->setBrush( f->color( ) );
+            }
+            painter->drawPolygon( pgn );
+            painter->setBrush( oldBrush );
+        }
+        else
+        {
+            QRectF rect = this->viewportRect( );
+            QColor color = ::Qt::black;
+            painter->fillRect( rect, color );
+        }
+    }
+
+    template < class RatKernel, class AlgKernel, class NtTraits >
+    void paintFace( Face_handle f, QPainter* painter, CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > )
+    {
+        if (! f->is_unbounded())  // f is not the unbounded face
+        {
+            QVector< QPointF > pts; // holds the points of the polygon
+            /* running with around the outer of the face and generate from it
+             * polygon
+             */
+            Ccb_halfedge_circulator cc=f->outer_ccb();
+            do 
+            {
+                if (this->antenna(cc))
+                    continue;
+
+                Halfedge_handle he = cc;
+                X_monotone_curve_2 c = he->curve();
+                // Get the co-ordinates of the curve's source and target.
+                double sx = CGAL::to_double(he->source()->point().x()),
+                       sy = CGAL::to_double(he->source()->point().y()),
+                       tx = CGAL::to_double(he->target()->point().x()),
+                       ty = CGAL::to_double(he->target()->point().y());
+
+                QPointF coord_source(sx, sy);
+                QPointF coord_target(tx, ty);
+                QPoint coord_source_viewport = this->fromScene( coord_source );
+                QPoint coord_target_viewport = this->fromScene( coord_target );
+
+                if (c.orientation() == CGAL::COLLINEAR)
+                    pts.push_back(coord_source );
+                else
+                {
+                    // If the curve is monotone, than its source and its target has the
+                    // extreme x co-ordinates on this curve.
+                    bool is_source_left = (sx < tx);
+                    int  x_min = is_source_left ? coord_source_viewport.x( ) : coord_target_viewport.x( );
+                    int  x_max = is_source_left ? coord_target_viewport.x( ) : coord_source_viewport.x( );
+                    double curr_x, curr_y;
+                    int x;
+
+                    Arr_conic_point_2 px;
+
+                    pts.push_back(coord_source );
+
+                    const int DRAW_FACTOR = 5;
+                    if (is_source_left) 
+                    {
+                        for (x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR) 
+                        {
+                            //= COORD_SCALE)
+                            curr_x = this->toScene( x );
+                            Alg_kernel   ker;
+                            Arr_conic_point_2 curr_p(curr_x, 0);
+                            if (!(ker.compare_x_2_object()(curr_p, c.left()) !=
+                                        CGAL::SMALLER &&
+                                        ker.compare_x_2_object()(curr_p, c.right()) !=
+                                        CGAL::LARGER))
+                                continue;
+                            px = c.point_at_x (curr_p);
+                            curr_y = CGAL::to_double(px.y());
+                            QPointF curr( curr_x, curr_y );
+                            pts.push_back( curr );
+                        }// for
+                    }
+                    else 
+                    {
+                        for (x = x_max; x > x_min; x-=DRAW_FACTOR) 
+                        {
+                            curr_x = this->toScene( x );
+                            Alg_kernel   ker;
+                            Arr_conic_point_2 curr_p(curr_x, 0);
+                            if (!(ker.compare_x_2_object() (curr_p, c.left()) !=
+                                        CGAL::SMALLER &&
+                                        ker.compare_x_2_object() (curr_p, c.right()) !=
+                                        CGAL::LARGER))
+                                continue;
+                            px = c.point_at_x (curr_p);
+                            curr_y = CGAL::to_double(px.y());
+                            QPointF curr( curr_x, curr_y );
+                            pts.push_back( curr );
+                        }// for
+                    }// else
+                    pts.push_back(coord_target );
+                }
+                //created from the outer boundary of the face
+            } while (++cc != f->outer_ccb());
+
+            // make polygon from the outer ccb of the face 'f'
+            QPolygonF pgn( pts );
+
+            // fill the face according to its color (stored at any of her
+            // incidents curves)
+            QBrush oldBrush = painter->brush( );
+            QColor def_bg_color = ::Qt::black;
+            if (! f->color().isValid())
+            {
+                painter->setBrush( def_bg_color );
+            }
+            else
+            {
+                painter->setBrush( f->color( ) );
+            }
+            painter->drawPolygon( pgn );
+            painter->setBrush( oldBrush );
+        }
+        else
+        {
+            QRectF rect = this->viewportRect( );
+            QColor color = ::Qt::black;
+            painter->fillRect( rect, color );
+        }
+    }
+
     //void cacheCurveBoundingRects( );
     void updateBoundingBox( );
     template < class TTraits >

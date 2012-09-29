@@ -136,6 +136,8 @@ VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ ):
     highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
     activeRay( new QGraphicsLineItem )
 {
+    this->rayGraphicsItem.setZValue( 100 );
+
     this->highlightedCurves->setEdgeColor( this->rayGraphicsItem.color( ) );
     this->highlightedCurves->setVertexColor( this->rayGraphicsItem.color( ) );
 

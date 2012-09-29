@@ -61,6 +61,66 @@ public:
         return res;
     }
 
+    QPoint fromScene( QPointF p, bool *ok = 0 )
+    {
+        QPoint res;
+        if ( this->scene == NULL )
+        {
+            if ( ok ) { *ok = false; }
+            return res;
+        }
+        QList< QGraphicsView* > views = this->scene->views( );
+        if ( views.size( ) == 0 )
+        {
+            if ( ok ) { *ok = false; }
+            return res;
+        }
+
+        // assumes the first view is the right one
+        QGraphicsView* viewport = views.first( );
+
+        if ( ok ) { *ok = true; }
+        res = viewport->mapFromScene( p );
+        return res;
+    }
+
+    QPointF toScene( QPoint p, bool *ok = 0 )
+    {
+        QPointF res;
+        if ( this->scene == NULL )
+        {
+            if ( ok ) { *ok = false; }
+            return res;
+        }
+        QList< QGraphicsView* > views = this->scene->views( );
+        if ( views.size( ) == 0 )
+        {
+            if ( ok ) { *ok = false; }
+            return res;
+        }
+
+        // assumes the first view is the right one
+        QGraphicsView* viewport = views.first( );
+
+        if ( ok ) { *ok = true; }
+        res = viewport->mapToScene( p );
+        return res;
+    }
+
+    int fromScene( double d, bool* ok = 0 )
+    {
+        QPointF p( d, 0 );
+        QPoint pp = this->fromScene( p, ok );
+        return pp.x( );
+    }
+
+    double toScene( int i, bool* ok = 0 )
+    {
+        QPoint p( i, 0 );
+        QPointF pp = this->toScene( p, ok );
+        return pp.x( );
+    }
+
 protected: // fields
     QGraphicsScene* scene;
 };

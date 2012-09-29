@@ -346,6 +346,7 @@ removeCallback( int tabIndex )
     activeScene->removeEventFilter( activeTab->getMergeEdgeCallback( ) );
     activeScene->removeEventFilter( activeTab->getSplitEdgeCallback( ) );
     activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
+    activeScene->removeEventFilter( activeTab->getFillFaceCallback( ) );
 
     // unhook the old active mode
 #if 0
@@ -989,6 +990,7 @@ on_actionPreferences_triggered( )
     ArrangementDemoGraphicsView* view = currentTab->getView( );
     EnvelopeCallbackBase* envelopeCallback = currentTab->getEnvelopeCallback( );
     VerticalRayShootCallbackBase* verticalRayShootCallback = currentTab->getVerticalRayShootCallback( );
+    SplitEdgeCallbackBase* splitEdgeCallback = currentTab->getSplitEdgeCallback( );
     
 #if 0
     QPen vertexPen = agi->getVerticesPen( );
@@ -1030,6 +1032,7 @@ on_actionPreferences_triggered( )
         envelopeCallback->setEnvelopeVertexRadius( envelopeVertexRadius );
         verticalRayShootCallback->setEdgeColor( verticalRayEdgeColor );
         verticalRayShootCallback->setEdgeWidth( verticalRayEdgeWidth );
+        splitEdgeCallback->setColor( edgeColor );
 
 #if 0
         std::cout << edgeColor.name( ).toStdString( ) << std::endl;

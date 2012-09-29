@@ -16,11 +16,16 @@ public:
     void setSnappingEnabled( bool b );
     void setSnapToGridEnabled( bool b );
 
+    virtual void setColor( QColor c );
+    QColor getColor( ) const;
+
 protected:
     SplitEdgeCallbackBase( QObject* parent );
 
     bool snappingEnabled;
     bool snapToGridEnabled;
+    QColor color;
+
 }; // SplitEdgeCallbackBase
 
 /**
@@ -52,6 +57,7 @@ public:
 
     SplitEdgeCallback( Arrangement* arr_, QObject* parent );
     void setScene( QGraphicsScene* scene_ );
+    virtual void setColor( QColor c );
     void reset( );
     
     void slotModelChanged( );
@@ -102,6 +108,11 @@ SplitEdgeCallback( Arrangement* arr_, QObject* parent ):
     intersectCurves( this->traits.intersect_2_object( ) ),
     areEqual( this->traits.equal_2_object( ) )
 {
+    this->segmentGuide.setZValue( 100 );
+    QPen pen = this->segmentGuide.pen( );
+    pen.setColor( this->color );
+    this->segmentGuide.setPen( pen );
+
     this->snapToVertexStrategy.setArrangement( arr_ );
 
     QObject::connect( this, SIGNAL( modelChanged( ) ),
@@ -120,6 +131,18 @@ setScene( QGraphicsScene* scene_ )
     {
         this->scene->addItem( &( this->segmentGuide ) );
     }
+}
+
+template < class Arr_ >
+void 
+SplitEdgeCallback< Arr_ >::
+setColor( QColor c )
+{
+    this->color = c;
+
+    QPen pen = this->segmentGuide.pen( );
+    pen.setColor( c );
+    this->segmentGuide.setPen( pen );
 }
 
 template < class Arr_ >
