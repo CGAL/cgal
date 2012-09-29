@@ -6,6 +6,6 @@
 
 - \subpage installation describes how to install %CGAL, and lists the third party libraries on which %CGAL depends, or for which %CGAL provides interfaces. 
 
-- \subpage introduction presents you some short example programs to get a first idea of the look and feal of a program that uses %CGAL.
+- \subpage introduction presents you some short example programs to get a first idea of the look and feel of a program that uses %CGAL.
 
 */
