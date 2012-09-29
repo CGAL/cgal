@@ -58,6 +58,7 @@ public:
   using Base::intersects_segment_positive_of_wedge;
   using Base::intersects_segment_negative_of_wedge;
   using Base::intersects_segment_interior_inf_box;
+  using Base::intersects_segment_interior_inf_wedge_sp;
 
 
 private:
@@ -877,11 +878,15 @@ public:
                        (not same_points(q, p.target_site())))    
                     ) ;
 
-	  //sandeep: if t is segment and it not intersects the positive wedge 
+	  //sandeep: if t is segment and it not intersects the wedge 
+      //as defined by s and p in the basic predicate
+      //intersects_segment_interior_inf_wedge_sp 
 	  // then return false
-	  /*if (t.is_segment()) {
-            TO DO
-	  }*/
+	  if (t.is_segment()) {
+         if(intersects_segment_interior_inf_wedge_sp(s,p,t)
+            == false)
+           return false;
+	  }
       // philaris: tocheck
       std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
         << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
