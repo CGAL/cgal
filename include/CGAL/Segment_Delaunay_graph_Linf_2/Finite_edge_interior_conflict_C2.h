@@ -978,7 +978,22 @@ public:
       // t is segment
       if (t.is_segment()) {
         CGAL_assertion(sgn == NEGATIVE);
-        return false;
+        // sandeep if t does not intersect the wedge as defined by
+        //intersects_segment_interior_inf_wedge_sp(seg,pt,t) then return true
+        // this works if p or q is point
+        bool result;
+        if (p.is_point()) { // p is point, q is segment
+          result = intersects_segment_interior_inf_wedge_sp(q,p,t);
+        } else { // q is point and p is segment
+          result = intersects_segment_interior_inf_wedge_sp(p,q,t);
+        }
+        
+        if (result == true) {
+          return true;
+        } else {
+          return false;
+        }
+        //return false;
       }  
 
       CGAL_assertion(t.is_point());
