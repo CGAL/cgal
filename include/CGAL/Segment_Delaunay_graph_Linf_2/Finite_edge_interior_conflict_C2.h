@@ -884,20 +884,42 @@ public:
       // then return false
       if (t.is_segment()) {
         bool result;
+      
         if(p.is_point()) {
-          result = intersects_segment_interior_inf_wedge_sp(q,p,t);
-        } else { // p is segment
-          result = intersects_segment_interior_inf_wedge_sp(p,q,t);
-        }
-        
-        if (result == false) {
-          std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
+          //p may be end point of t
+          if ( same_points(p,t.source_site()) 
+               or same_points(p,t.target_site()) ) {
+            std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
             << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
             << t << ")  "  
-            << sgn << " retval= " << false << std::endl; 
-          return false;
+            << sgn << " retval= " << true << std::endl; 
+            return true;
+          } else {
+            result = intersects_segment_interior_inf_wedge_sp(q,p,t);
+          }
+        } else { // p is segment and q is point
+          //q may be endpoint of t
+            if ( same_points(q,t.source_site()) 
+                 or same_points(q,t.target_site())) {
+              std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
+              << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
+              << t << ")  "  
+              << sgn << " retval= " << true << std::endl; 
+              return true;
+            } else {
+              result = intersects_segment_interior_inf_wedge_sp(p,q,t);
+            }
         }
-      }
+        
+        if (result == false){ 
+          std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
+          << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
+          << t << ")  "  
+          << sgn << " retval= " << false << std::endl; 
+          return false;
+        } 
+      }//end of t is segment
+
       // philaris: tocheck
       std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
         << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
