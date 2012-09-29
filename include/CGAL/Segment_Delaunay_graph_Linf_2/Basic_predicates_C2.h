@@ -1046,9 +1046,10 @@ public:
                                            const Site_2 & t)
   {    
     CGAL_assertion( t.is_segment() );
-    CGAL_assertion( s.is_segment()
-                    and (not s.is_horizontal()) 
-                    and (not s.is_vertical()) ); 
+    CGAL_assertion( s.is_segment() );
+    //need to add assertion for s not hor and not ver
+                    //and (not s.is_horizontal()) 
+                    //and (not s.is_vertical()) ); 
     
     Segment_2 seg = s.segment();
     

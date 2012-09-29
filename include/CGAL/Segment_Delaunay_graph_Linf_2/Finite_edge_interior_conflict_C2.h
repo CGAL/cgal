@@ -883,7 +883,8 @@ public:
       //intersects_segment_interior_inf_wedge_sp 
 	  // then return false
 	  if (t.is_segment()) {
-         if(intersects_segment_interior_inf_wedge_sp(s,p,t)
+         if(p.is_point() ? intersects_segment_interior_inf_wedge_sp(q,p,t)
+                         : intersects_segment_interior_inf_wedge_sp(p,q,t)
             == false)
            return false;
 	  }
