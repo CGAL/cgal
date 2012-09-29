@@ -1028,7 +1028,7 @@ public:
         s, lhor, lver, ON_NEGATIVE_SIDE);
   }
 
-  // returns true if and only if 
+  // returns true if and only if
   // the interior of t has non-empty intersection
   // with the interior of the following infinite box:
   // the only finite corner of the infinite box is p
@@ -1036,86 +1036,83 @@ public:
   // by the intersection of the halfplanes
   // with supporting lines lhor and lver through p, where
   // the halfplanes are both on the positive or negative
-  // sides of the supporting lines. The positive or negative 
+  // sides of the supporting lines. The positive or negative
   // side depends on the relative position of p with respect to s
-  
-  static 
+
+  static
   Boolean
-  intersects_segment_interior_inf_wedge_sp(const Site_2 & s, 
-                                           const Site_2 & p, 
+  intersects_segment_interior_inf_wedge_sp(const Site_2 & s,
+                                           const Site_2 & p,
                                            const Site_2 & t)
-  {    
+  {
     CGAL_assertion( t.is_segment() );
     CGAL_assertion( s.is_segment() );
-    CGAL_assertion(not s.segment().is_horizontal()
-                   and not s.segment().is_vertical());
-    //need to add assertion for s not hor and not ver
-                    //and (not s.is_horizontal()) 
-                    //and (not s.is_vertical()) ); 
-    
+    CGAL_assertion(not s.segment().is_horizontal());
+    CGAL_assertion(not s.segment().is_vertical());
+
     Segment_2 seg = s.segment();
-    
+
     Point_2 ssrc = seg.source();
     Point_2 strg = seg.target();
 
     Point_2 pp = p.point();
-    
+
     Sign dxs = CGAL::sign(strg.x() - ssrc.x());
     Sign dys = CGAL::sign(strg.y() - ssrc.y());
-    
+
     Line_2 lseg = compute_supporting_line(s);
     Oriented_side os_lseg_p = oriented_side_of_line(lseg, pp);
-    
+
     CGAL_assertion( os_lseg_p != ON_ORIENTED_BOUNDARY );
 
-  //sandeep: lhor, lver remains same for left turn and right turn
-    
+    //sandeep: lhor, lver remains same for left turn and right turn
+
     if (dxs == NEGATIVE and dys == NEGATIVE) {
-      
+
       Line_2 lhor = Line_2(0,1,-pp.y());
       Line_2 lver = Line_2(-1,0,pp.x());
-    
-      return intersects_segment_side_of_wedge(t, 
+
+      return intersects_segment_side_of_wedge(t,
                                        lhor, lver,
                                        os_lseg_p);
     } else if (dxs == POSITIVE and dys == NEGATIVE) {
-      
+
       Line_2 lhor = Line_2(0,-1,pp.y());
       Line_2 lver = Line_2(-1,0,pp.x());
-      
-      return intersects_segment_side_of_wedge(t, 
+
+      return intersects_segment_side_of_wedge(t,
                                        lhor, lver,
                                        os_lseg_p);
     } else if (dxs == POSITIVE and dys == POSITIVE) {
-      
+
       Line_2 lhor = Line_2(0,-1,pp.y());
       Line_2 lver = Line_2(1,0,-pp.x());
-      
-      return intersects_segment_side_of_wedge(t, 
+
+      return intersects_segment_side_of_wedge(t,
                                        lhor, lver,
                                        os_lseg_p);
     } else {//dxs == NEGATIVE and dys == POSITIVE
-      
+
       Line_2 lhor = Line_2(0,1,-pp.y());
       Line_2 lver = Line_2(1,0,-pp.x());
-      
-      return intersects_segment_side_of_wedge(t, 
+
+      return intersects_segment_side_of_wedge(t,
                                        lhor, lver,
                                        os_lseg_p);
     }
-    
-  } // end of intersects_segment_interior_inf_wedge_sp 
-  
-  
-  // returns true if and only if 
+
+  } // end of intersects_segment_interior_inf_wedge_sp
+
+
+  // returns true if and only if
   // the interior of s has non-empty intersection
   // with the interior of the bounding box of q, p
   // precondition: the bounding box should be non-trivial,
   // i.e., it should not be a segment
-  static 
+  static
   Boolean
-  intersects_segment_interior_bbox(const Site_2 & s, 
-      const Site_2 & q, 
+  intersects_segment_interior_bbox(const Site_2 & s,
+      const Site_2 & q,
       const Site_2 & p)
   {
     CGAL_precondition(s.is_segment());
