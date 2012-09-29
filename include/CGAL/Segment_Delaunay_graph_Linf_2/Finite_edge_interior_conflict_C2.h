@@ -878,22 +878,26 @@ public:
                        (not same_points(q, p.target_site())))    
                     ) ;
 
-	  //sandeep: if t is segment and it not intersects the wedge 
+      //sandeep: if t is segment and it not intersects the wedge 
       //as defined by s and p in the basic predicate
       //intersects_segment_interior_inf_wedge_sp 
-	  // then return false
-	  if (t.is_segment()) {
+      // then return false
+      if (t.is_segment()) {
         bool result;
         if(p.is_point()) {
           result = intersects_segment_interior_inf_wedge_sp(q,p,t);
-        } else {
+        } else { // p is segment
           result = intersects_segment_interior_inf_wedge_sp(p,q,t);
         }
         
         if (result == false) {
+          std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
+            << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
+            << t << ")  "  
+            << sgn << " retval= " << false << std::endl; 
           return false;
         }
-	  }
+      }
       // philaris: tocheck
       std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
         << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
