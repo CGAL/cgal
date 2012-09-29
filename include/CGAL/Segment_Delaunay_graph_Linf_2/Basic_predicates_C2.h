@@ -1047,6 +1047,8 @@ public:
   {    
     CGAL_assertion( t.is_segment() );
     CGAL_assertion( s.is_segment() );
+    CGAL_assertion(not s.segment().is_horizontal()
+                   and not s.segment().is_vertical());
     //need to add assertion for s not hor and not ver
                     //and (not s.is_horizontal()) 
                     //and (not s.is_vertical()) ); 

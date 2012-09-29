@@ -883,10 +883,16 @@ public:
       //intersects_segment_interior_inf_wedge_sp 
 	  // then return false
 	  if (t.is_segment()) {
-         if(p.is_point() ? intersects_segment_interior_inf_wedge_sp(q,p,t)
-                         : intersects_segment_interior_inf_wedge_sp(p,q,t)
-            == false)
-           return false;
+        bool result;
+        if(p.is_point()) {
+          result = intersects_segment_interior_inf_wedge_sp(q,p,t);
+        } else {
+          result = intersects_segment_interior_inf_wedge_sp(p,q,t);
+        }
+        
+        if (result == false) {
+          return false;
+        }
 	  }
       // philaris: tocheck
       std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
