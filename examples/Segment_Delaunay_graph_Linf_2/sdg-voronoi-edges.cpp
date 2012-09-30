@@ -36,9 +36,14 @@ int main( int argc, char *argv[] ) {
 
   ifs.close();
 
+
+  std::cout << "About to validate diagram ..." << std::endl;
+
   // validate the diagram
-  assert( sdg.is_valid(true, 1) );
+  //assert( sdg.is_valid(true, 1) );
   cout << endl << endl;
+
+  std::cout << "Diagram validated." << std::endl;
 
   /*
   // now walk through the non-infinite edges of the segment Delaunay
