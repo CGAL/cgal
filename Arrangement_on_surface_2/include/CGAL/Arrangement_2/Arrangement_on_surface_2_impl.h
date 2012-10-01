@@ -2377,13 +2377,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
       std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
       std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
 #endif
-      std::cout << "signs1.x: " << signs1.first << std::endl;
-      std::cout << "signs1.y: " << signs1.second << std::endl;
-      std::cout << "signs2.x: " << signs2.first << std::endl;
-      std::cout << "signs2.y: " << signs2.second << std::endl;
-      std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
-      std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
-
+      
       if (!m_topol_traits.let_me_decide_the_outer_ccb(signs1, signs2, 
                                                       swap_predecessors))
       {
@@ -2739,8 +2733,6 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
     // Create the new face and create a single outer component which should
     // point to he2.
     DFace* new_f = _dcel().new_face();
-    //std::cout << "New face: " << &(*new_f) << std::endl;
-
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
     std::cout << "new face: " << new_f << std::endl;
 #endif
@@ -2762,7 +2754,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 
     for (curr = he2->next(); curr != he2; curr = curr->next())
       curr->set_outer_ccb(new_oc);
-
+    
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
     std::cout << "he2 (=> prev1) defines new outer CCB" << std::endl;
     std::cout << "prev1->face(): " << (prev1->is_on_inner_ccb() ? 
@@ -2847,6 +2839,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
         DOuter_ccb_iter  oc_it = f->outer_ccbs_begin();
         DOuter_ccb_iter  oc_to_move;
 
+
         while (oc_it != f->outer_ccbs_end()) {
           // Use the topology traits to determine whether the representative
           // of the current outer CCB should belong to the same face as he2
@@ -2865,7 +2858,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
               // (default = false)
               _compute_signs_and_local_minima(*oc_it,
                                               std::front_inserter(dummy));
-            
+
             bool move = false;
            
             // TODO EBEB 2012-08-07 this either compares signs in left-right
