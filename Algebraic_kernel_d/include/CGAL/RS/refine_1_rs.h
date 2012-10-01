@@ -29,6 +29,19 @@ namespace RS3{
 
 inline void refine_1(const CGAL::Algebraic_1 &a,unsigned int s=10000){
         CGAL_precondition(a.inf()<=a.sup());
+        // If the algebraic endpoints have room for a refinement bigger
+        // than desired, refine as much is possible. This would ensure that
+        // small refinements are never made. Other possibility to avoid
+        // small refinements is to refine the number just after it was
+        // isolated (this early refinement would also have the advantage
+        // that one can choose to refine until reaching a certain criterion
+        // and assume it is true for later refinements, but this can slow
+        // down the Solve_1 functor). And a last option would be to
+        // determine a lower bound on the precisions RS likes to refine.
+        if(s<mpfr_get_prec(&((mpfi_ptr)(a.mpfi()))->left)-2)
+                s=mpfr_get_prec(&((mpfi_ptr)(a.mpfi()))->left)-2;
+        if(s<mpfr_get_prec(&((mpfi_ptr)(a.mpfi()))->right)-2)
+                s=mpfr_get_prec(&((mpfi_ptr)(a.mpfi()))->right)-2;
         // If the precision of the endpoints is not enough for the desired
         // refinement, allocate a new mpfi and swap later the result.
         if(mpfr_get_prec(&((mpfi_ptr)(a.mpfi()))->left)<s+2||
