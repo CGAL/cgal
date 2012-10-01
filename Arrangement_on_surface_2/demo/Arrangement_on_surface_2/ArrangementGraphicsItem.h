@@ -87,6 +87,9 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
     typedef typename Traits::Point_2 Point_2;
     //typedef typename Kernel::Segment_2 Segment_2;
 
+    typedef ArrangementGraphicsItemBase Superclass;
+    typedef typename Kernel::Segment_2 Segment_2;
+
 public:
     ArrangementGraphicsItem( Arrangement* t_ );
 
@@ -98,12 +101,20 @@ public:
 protected:
     template < class TTraits >
     void paint( QPainter* painter, TTraits traits );
+    template < class Kernel_ >
+    void paint( QPainter* painter, CGAL::Arr_linear_traits_2< Kernel_ > traits );
     template < class CircularKernel >
     void paint( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
     template < class Coefficient_ >
     void paint( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
 
     void paintFaces( QPainter* painter )
+    {
+        typename Traits::Left_side_category category;
+        this->paintFaces( painter, category );
+    }
+
+    void paintFaces( QPainter* painter, CGAL::Arr_oblivious_side_tag )
     {
         for( Face_iterator fi = this->arr->faces_begin( ); fi != this->arr->faces_end( ); ++fi )
         {
@@ -112,6 +123,11 @@ protected:
 
         Face_handle unboundedFace = this->arr->unbounded_face( );
         this->paintFace( unboundedFace, painter );
+    }
+
+    void paintFaces( QPainter* painter, CGAL::Arr_open_side_tag )
+    {
+
     }
 
 #if 0
@@ -133,6 +149,8 @@ protected:
     {
         if (! f->visited( ) )
         {
+            int holes = 0;
+            int inner_faces = 0;
             Holes_iterator hit; // holes iterator
             this->paintFace( f, painter, Traits( ) );
             f->set_visited( true );
@@ -147,9 +165,17 @@ protected:
                         continue;
 
                     // move on to next hole
+                    if ( ! inner_face->visited( ) )
+                        inner_faces++;
                     this->visit_ccb_faces( inner_face, painter );
                 } while ( ++cc != *hit );
+                holes++;
             }// for
+            if ( f->is_unbounded( ) )
+            {
+                std::cout << "unbounded face has " << holes << " holes" << std::endl;
+                std::cout << "unbounded face has " << inner_faces << " inner faces" << std::endl;
+            }
         }
     }
 
@@ -405,6 +431,8 @@ protected:
     void updateBoundingBox( );
     template < class TTraits >
     void updateBoundingBox( TTraits traits );
+    template < class Kernel_ >
+    void updateBoundingBox( CGAL::Arr_linear_traits_2< Kernel_ > traits );
     template < class Coefficient_ >
     void updateBoundingBox( CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
 
@@ -461,6 +489,30 @@ paint( QPainter* painter, TTraits traits )
     {
         Point_2 p = it->point( );
         Kernel_point_2 pt( p.x( ), p.y( ) );
+        this->painterostream << pt;
+    }
+    painter->setPen( this->edgesPen );
+    for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
+    {
+        X_monotone_curve_2 curve = it->curve( );
+        this->painterostream << curve;
+    }
+}
+
+template < class Arr_, class ArrTraits >
+template < class Kernel_ >
+void
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+paint( QPainter* painter, CGAL::Arr_linear_traits_2< Kernel_ > traits )
+{
+    this->updateBoundingBox( );
+    painter->setPen( this->verticesPen );
+    this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
+    this->painterostream.setScene( this->scene );
+
+    for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
+    {
+        Point_2 pt = it->point( );
         this->painterostream << pt;
     }
     painter->setPen( this->edgesPen );
@@ -571,6 +623,50 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::updateBoundingBox( TTraits traits )
         this->bb = this->bb + this->curveBboxMap[ it ];
     }
 }
+template < class Arr_, class ArrTraits >
+template < class Kernel_ >
+void
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+updateBoundingBox( CGAL::Arr_linear_traits_2< Kernel_ > traits )
+{
+    this->prepareGeometryChange( );
+    QRectF clipRect = this->viewportRect( );
+    this->convert = Converter<Kernel>( clipRect );
+
+    if ( ! clipRect.isValid( ) /*|| this->arr->number_of_vertices( ) == 0*/ )
+    {
+        this->bb = Bbox_2( 0, 0, 0, 0 );
+        this->bb_initialized = false;
+        return;
+    }
+    else
+    {
+        this->bb = this->convert( clipRect ).bbox( );
+        this->bb_initialized = true;
+    }
+
+    for ( Curve_iterator it = this->arr->curves_begin( );
+        it != this->arr->curves_end( );
+        ++it )
+    {
+        if ( it->is_segment( ) )
+        {
+            this->bb = this->bb + it->segment( ).bbox( );
+        }
+        else if ( it->is_ray( ) )
+        {
+            QLineF qclippedRay = this->convert( it->ray( ) );
+            Segment_2 clippedRay = this->convert( qclippedRay );
+            this->bb = this->bb + clippedRay.bbox( );
+        }
+        else // ( it->is_line( ) )
+        {
+            QLineF qclippedLine = this->convert( it->line( ) );
+            Segment_2 clippedLine = this->convert( qclippedLine );
+            this->bb = this->bb + clippedLine.bbox( );
+        }
+    }
+}
 
 template < class Arr_, class ArrTraits >
 template < class Coefficient_ >
@@ -628,6 +724,7 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
 Specialized methods:
     updateBoundingBox
 */
+#if 0
 template < class Arr_, class Kernel_ >
 class ArrangementGraphicsItem< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > >  : public ArrangementGraphicsItemBase
 {
@@ -654,6 +751,8 @@ public:
         this->setZValue( 3 );
     }
 
+public: // methods
+#if 0
     void modelChanged( )
     {
         if ( this->arr->is_empty( ) )
@@ -668,16 +767,16 @@ public:
         this->update( );
     }
 
-
-public: // methods
     // @override QGraphicsItem::boundingRect
     QRectF boundingRect( ) const
     {
         QRectF rect = this->convert( this->bb );
         return rect;
     }
+#endif
 
     // @override QGraphicsItem::paint
+#if 0
     virtual void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
     {
         this->updateBoundingBox( );
@@ -697,8 +796,10 @@ public: // methods
             this->painterostream << curve;
         }
     }
+#endif
 
 protected: // methods
+#if 0
     void updateBoundingBox( )
     {
         this->prepareGeometryChange( );
@@ -739,12 +840,14 @@ protected: // methods
             }
         }
     }
+#endif
 
 protected: // fields
     Arrangement* arr;
     ArrangementPainterOstream< Traits > painterostream;
     CGAL::Qt::Converter< Kernel > convert;
 }; // class ArrangementGraphicsItem
+#endif
 
 } // namespace Qt
 } // namespace CGAL

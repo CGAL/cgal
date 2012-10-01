@@ -140,6 +140,7 @@ VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ ):
 
     this->highlightedCurves->setEdgeColor( this->rayGraphicsItem.color( ) );
     this->highlightedCurves->setVertexColor( this->rayGraphicsItem.color( ) );
+    this->highlightedCurves->setZValue( 100 );
 
     QObject::connect( this, SIGNAL( modelChanged( ) ),
         this->highlightedCurves, SLOT( modelChanged( ) ) );
@@ -260,7 +261,11 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
     }
     else if ( CGAL::assign( vertex, pointLocationResult ) )
     {
-        std::cout << "Hit a vertex. Now that's rare." << std::endl;
+        if ( ! vertex->is_at_open_boundary( ) )
+        {
+            Point_2 pt = vertex->point( );
+            this->highlightedCurves->insert( pt );
+        }
     }
 
     emit modelChanged( );

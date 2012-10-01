@@ -236,6 +236,8 @@ updateEnvelope( bool lower, TTraits traits )
             X_monotone_curve_2 curve =
                 this->construct_x_monotone_subcurve_2( e->curve( ), leftPoint, rightPoint );
             envelopeToUpdate->insert( curve );
+            envelopeToUpdate->insert( leftPoint );
+            envelopeToUpdate->insert( rightPoint );
         }
         v = e->right( );
 
