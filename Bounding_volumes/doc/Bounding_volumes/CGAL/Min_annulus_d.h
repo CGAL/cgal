@@ -135,7 +135,7 @@ std::ostream& stream = std::cout);
 
 initializes `min_annulus` to \f$ ma(P)\f$ with \f$ P\f$ being the set of points 
 in the range [`first`,`last`). 
-\require The value type of `InputIterator` is `Point`. 
+\requires The value type of `InputIterator` is `Point`. 
 \pre All points have the same dimension. 
 */ 
 template < class InputIterator > 
@@ -242,7 +242,7 @@ outer_support_points_end( ) const;
 /*! 
 
 returns the center of `min_annulus`. 
-\require An implicit conversion from `ET` to `RT` is available. 
+\requires An implicit conversion from `ET` to `RT` is available. 
 \pre `min_annulus` is not empty. 
 */ 
 Point center( ) const; 
@@ -250,7 +250,7 @@ Point center( ) const;
 /*! 
 
 returns the squared inner radius of `min_annulus`. 
-\require An implicit conversion from `ET` to `RT` is available. 
+\requires An implicit conversion from `ET` to `RT` is available. 
 \pre `min_annulus` is not empty. 
 */ 
 FT squared_inner_radius( ) const; 
@@ -258,7 +258,7 @@ FT squared_inner_radius( ) const;
 /*! 
 
 returns the squared outer radius of `min_annulus`. 
-\require An implicit conversion from `ET` to `RT` is available. 
+\requires An implicit conversion from `ET` to `RT` is available. 
 \pre `min_annulus` is not empty. 
 */ 
 FT squared_outer_radius( ) const; 
@@ -373,7 +373,7 @@ void clear( );
 
 sets `min_annulus` to \f$ ma(P)\f$, where \f$ P\f$ is the set of points in 
 the range [`first`,`last`). 
-\require The value type of `InputIterator` is `Point`. 
+\requires The value type of `InputIterator` is `Point`. 
 \pre All points have the same dimension. 
 */ 
 template < class InputIterator > 
@@ -391,7 +391,7 @@ void insert( const Point& p);
 
 inserts the points in the range [`first`,`last`) into 
 `min_annulus` and recomputes the smallest enclosing annulus. 
-\require The value type of `InputIterator` is `Point`. 
+\requires The value type of `InputIterator` is `Point`. 
 \pre All points have the same dimension. If `min_annulus` is not empty, this dimension must be equal to `min_annulus.ambient_dimension()`. 
 */ 
 template < class InputIterator > 
@@ -439,7 +439,7 @@ const Traits& traits( ) const;
 /*! 
 
 writes `min_annulus` to output stream `os`. 
-\require The output operator is defined for `Point`. 
+\requires The output operator is defined for `Point`. 
 \relates Min_annulus_d 
 */ 
 std::ostream& 
@@ -449,7 +449,7 @@ const Min_annulus_d<Traits>& min_annulus);
 /*! 
 
 reads `min_annulus` from input stream `is`. 
-\require The input operator is defined for `Point`. 
+\requires The input operator is defined for `Point`. 
 \relates Min_annulus_d 
 */ 
 std::istream& 

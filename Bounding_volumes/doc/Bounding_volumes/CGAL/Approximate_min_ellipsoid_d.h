@@ -211,8 +211,11 @@ worse approximation ratio (and \f$ \epsilon\f$ can thus be larger
 than `eps` in general). In any case, the number 
 \f$ \epsilon\f$ (and with this, the achived approximation 
 \f$ 1+\epsilon\f$) can be queried by calling the routine 
-`achieved_epsilon()` discussed below. \require `Iterator` must be a model for concept `InputIterator` 
-with value type `Point`. \pre The dimension \f$ d\f$ of the input points must be at least \f$ 2\f$, and \f$ \epsilon>0\f$. 
+`achieved_epsilon()` discussed below. 
+
+\requires `Iterator` must be a model for concept `InputIterator` with value type `Point`. 
+
+\pre The dimension \f$ d\f$ of the input points must be at least \f$ 2\f$, and \f$ \epsilon>0\f$. 
 */ 
 template < class Iterator > 
 Approximate_min_ellipsoid_d(double eps, 

@@ -86,7 +86,7 @@ Builds an alpha shape data structure
 for the points in the range 
 \f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$ and 
 set the alpha value to `alpha`. 
-\require The `value_type` of `first` and `last` is `Point` (the type point of the underlying triangulation.) 
+\requires The `value_type` of `first` and `last` is `Point` (the type point of the underlying triangulation.) 
 */ 
 template < class InputIterator > 
 Alpha_shape_3( 
@@ -204,7 +204,7 @@ Inserts the alpha shape `A` into the stream `os`.
 
 Defined in \ref CGAL/IO/io.h
 
-\require The insert operator must be defined for `GT::Point`. 
+\requires The insert operator must be defined for `GT::Point`. 
 \relates Fixed_alpha_shape_3 
 */ 
 ostream& operator<<(ostream& os, const Fixed_alpha_shape_3<Dt>& A); 

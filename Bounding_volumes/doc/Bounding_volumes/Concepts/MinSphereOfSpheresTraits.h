@@ -38,7 +38,8 @@ typedef Hidden_type Sphere;
 
 /*! 
 is a (exact or inexact) field number type. 
-\require Currently, `FT` must either be `double` or `float`, or an exact field number type. (An <I>exact</I> number type is one which evaluates arithmetic expressions involving the four basic operations and comparisions with infinite precision, that is, like in \f$ \R\f$.) 
+
+\requires Currently, `FT` must either be `double` or `float`, or an exact field number type. (An <I>exact</I> number type is one which evaluates arithmetic expressions involving the four basic operations and comparisions with infinite precision, that is, like in \f$ \R\f$.) 
 */ 
 typedef Hidden_type FT; 
 

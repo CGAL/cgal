@@ -31,7 +31,7 @@ Hilbert_sort_d(const Traits &traits = Traits());
 
 /*! 
 sorts the range [`begin`, `end`). 
-\require `RandomAccessIterator::value_type` equals to `Traits::Point_d`. 
+\requires `RandomAccessIterator::value_type` equals to `Traits::Point_d`. 
 */ 
 template <class RandomAccessIterator> void operator() (RandomAccessIterator begin, RandomAccessIterator end) const; 
 

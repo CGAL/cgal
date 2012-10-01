@@ -401,7 +401,7 @@ additional argument.
 
 \models ::OutputIterator 
 
-\require `Container` provides a member function `insert(const Container::const_reference&)`. 
+\requires `Container` provides a member function `insert(const Container::const_reference&)`. 
 
 */
 template< typename Container >

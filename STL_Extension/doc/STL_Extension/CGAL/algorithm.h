@@ -85,7 +85,7 @@ maximal element of the sequence \f$ (3,\,6,\,5)\f$. Hence the output is
 second component refers to the maximal element in the range
 [`first`, `last`). 
 
-\require `CompareMin` and `CompareMax` are adaptable binary
+\requires `CompareMin` and `CompareMax` are adaptable binary
 function objects: `VT` \f$ \times\f$ `VT` \f$ \rightarrow\f$ `bool` where `VT`
 is the value type of `ForwardIterator`.
 */
