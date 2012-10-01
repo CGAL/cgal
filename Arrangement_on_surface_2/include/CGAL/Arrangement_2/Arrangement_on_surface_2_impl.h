@@ -2338,6 +2338,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   // default values for signs
   std::pair< CGAL::Sign, CGAL::Sign > signs1(CGAL::ZERO, CGAL::ZERO);
   std::pair< CGAL::Sign, CGAL::Sign > signs2(CGAL::ZERO, CGAL::ZERO);
+  // Remark: signs1 and signs2 are only used later when hole1==hole2
 
   // Comment: This also checks which is the 'cheaper' (previously the
   //          'shorter') way to insert the curve. Now cheaper means checking
@@ -2352,11 +2353,12 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
     if ((hole1 == hole2) && (hole1 != NULL)) {
       // .. only in this special case, we have to check wether swapping should
       // take place
-      
+
       // EBEB 2012-07-26 the following code enables optimizations:
       // - avoid length-test
       // - search only local minima to find leftmost vertex
       // - re-use of signs of ccbs
+      // signs1/2 are only used when hole1 == hole2, thus we have to init them now
       Arr_halfedge_direction cv_dir1 = cv_dir;
       std::list<std::pair<const DHalfedge*, int> > local_mins1;
       signs1 =
