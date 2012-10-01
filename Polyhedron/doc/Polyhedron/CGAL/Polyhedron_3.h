@@ -1547,7 +1547,7 @@ public:
     printed to `cerr`. For `level == 1` the normalization of the 
     border edges is checked too. This method checks in particular level 3 of 
     `CGAL::Halfedge_data_structure_decorator::is_valid` from 
-    page \ref pageHalfedgeDSconstDecoratorRef and that each facet is at least 
+    `CGAL::HalfedgeDS_const_decorator` and that each facet is at least 
     a triangle and that the two incident facets of a non-border edge are 
     distinct. 
   */ 

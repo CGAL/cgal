@@ -1,6 +1,6 @@
 /*!
 
-\mainpage %CGAL - Computational Geometry Algorithms Library
+\mainpage
 
 \attention PRELIMINARY 
 

@@ -1,4 +1,3 @@
-
 /*!
 \ingroup PkgPolyhedronConcepts
 \cgalconcept
@@ -60,6 +59,7 @@ typedef CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true, Plane> Face;
 
 class PolyhedronItems_3 {
 public:
+  /// \cgalconcept
   class Vertex {
   public:
     /// \name Types in PolyhedronItems_3::Vertex_wrapper<Refs,Traits>::Vertex
@@ -80,6 +80,7 @@ public:
     /// @}
   };
 
+  /// \cgalconcept
   class Face {
   public:
     /*!

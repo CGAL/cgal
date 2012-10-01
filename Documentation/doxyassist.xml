@@ -19,6 +19,7 @@ namespace for the XML file to be processed properly.  -->
       <!-- The version number of the documentation -->
       <version>4.1</version>
       <versionSpecific>false</versionSpecific>
+      <input>./doc</input>
       <output>./output</output>
       <logDirectory>./log</logDirectory>
       
@@ -299,6 +300,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Polyhedron/doc/Polyhedron/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.Halfedge-Data-Structures/html</item>
+            <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
           </list>
         </doxygen>
       </project>

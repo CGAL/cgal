@@ -3,8 +3,6 @@
 \ingroup PkgPolyhedronConcepts
 \cgalconcept
 
-\anchor pagePolyTraitsRef 
-
 Required types and member functions for the `PolyhedronTraits_3` concept. This 
 geometric traits concept is used in the polyhedral surface data 
 structure `CGAL::Polyhedron_3<Traits>`. This concept is a subset of 

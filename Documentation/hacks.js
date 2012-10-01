@@ -30,10 +30,36 @@ function fix_resize() {
     $(window).resize();
 }
 
+// throw a stick at the modules array and hijack gotoNode 
+// for our own evil purposes
 $(document).ready(function() {
+    if (typeof modules !== 'undefined') {
+        // modules has been loaded, that means we are inside the
+        // documentation of a package
+        NAVTREE[0][2][1][1] = modules[0][1];
+        NAVTREE[0][2][1][2] = modules[0][2];
+        gotoNode = function (o,subIndex,root,hash,relpath) {
+            var nti = navTreeSubIndices[subIndex][root+hash];
+            if(nti && (nti[0] === 1 && nti[0])) {
+                nti.splice(1, 1);
+            }
+            o.breadcrumbs = $.extend(true, [], nti ? nti : navTreeSubIndices[subIndex][root]);
+            if (!o.breadcrumbs && root!=NAVTREE[0][1]) { // fallback: show index
+                navTo(o,NAVTREE[0][1],"",relpath);
+                $('.item').removeClass('selected');
+                $('.item').removeAttr('id');
+            }
+            if (o.breadcrumbs) {
+                o.breadcrumbs.unshift(0); // add 0 for root node
+                showNode(o, o.node, 0, hash);
+            }
+        }
+    }
     // set-up footnote generation
     $("#doc-content").append('<ol id="autoFootnotes0" class="footnotesList"></ol>');
     $("body").footnotes();
     generate_autotoc();
     // fix_resize();
 });
+
+

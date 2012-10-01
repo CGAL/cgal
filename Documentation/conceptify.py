@@ -36,6 +36,13 @@ def write_out_html(d, fn):
     print(d, file=f)
     f.close()
 
+# remove duplicate files
+def clean_doc():
+    duplicate_files=glob.glob('./output/CGAL.CGAL.*/html/jquery.js')
+    duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/html/dynsections.js'))
+    for fn in duplicate_files:
+        os.remove(fn)
+
 # from http://stackoverflow.com/a/1597755/105672
 def re_replace_in_file(pat, s_after, fname):
     # first, see if the pattern is even in the file.
@@ -52,31 +59,25 @@ def re_replace_in_file(pat, s_after, fname):
         out.close()
         os.rename(out_fname, fname)
 
-# html_files=glob.glob('./output/CGAL.CGAL*/html/*')
-# html_files=['./output/CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html/classKernel.html', 
-#             './output/CGAL.CGAL.3D-Convex-Hulls/html/classConvexHullPolyhedron__3.html']
-
-class_files=glob.glob('./output/CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html/class*.html')
+class_files=glob.glob('./output/CGAL.CGAL.*/html/class*.html')
 for fn in class_files:
     d = pq(filename=fn, parser='html')
     ident = d('#CGALConcept')
-    if ident.size()  == 1:
-        print('conceptify ' + fn)
+    if ident.size() == 1:
         conceptify(d);
         # in case of a second pass don't process this again
         d.remove("#CGALConcept")
         write_out_html(d, fn)
 
 # in a group we only need to change the nested-classes
-group_files=glob.glob('./output/CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html/group*Concepts*.html')
+group_files=glob.glob('./output/CGAL.CGAL.*/html/group*Concepts*.html')
 for fn in group_files:
-    print(fn)
     d = pq(filename=fn, parser='html')
     conceptify_nested_classes(d)
     write_out_html(d, fn)    
 
-# fix up Files
-files_files=glob.glob('./output/CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html/files.html')
+# # fix up Files
+files_files=glob.glob('./output/CGAL.CGAL.*/html/files.html')
 for fn in files_files:
     d = pq(filename=fn, parser='html')
     table = d("table.directory")
@@ -86,6 +87,8 @@ for fn in files_files:
         table("tr").filter(lambda i: re.match(row_id + '*', pq(this).attr('id'))).remove()
         write_out_html(d, fn)
 
-filesjs_files=glob.glob('./output/CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html/files.js')
+filesjs_files=glob.glob('./output/CGAL.CGAL.*/html/files.js')
 for fn in filesjs_files:
     re_replace_in_file('^.*\[ "Concepts",.*$', '', fn)
+    
+clean_doc()

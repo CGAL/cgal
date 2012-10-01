@@ -29,7 +29,7 @@ halfedges and facets are documented separately.  A default traits
 class, a default items class and an incremental builder conclude the
 references. The polyhedral surface is based on the highly flexible
 design of the halfedge data structure, see the reference for
-`HalfedgeDS` in Chapter  \ref chapterHalfedgeDSRef
+`HalfedgeDS` in Chapter  \ref PkgHDS
 or \cite k-ugpdd-99, but the default instantiation of the polyhedral
 surface can be used without knowing the halfedge data structure.
 
