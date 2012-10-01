@@ -1,4 +1,4 @@
-/// \defgroup PkgQPSolver Linear and Quadratic Programming Solver 
+/// \defgroup PkgQPSolver Linear and Quadratic Programming Solver Reference
 
 /*! \defgroup PkgQPSolverConcepts Concepts
  \ingroup PkgQPSolver

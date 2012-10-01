@@ -27,7 +27,7 @@ This example creates some random `Sphere_segments` and distributes them on
 two `Nef_polyhedron_2`. The two Nef polyhedra are combined by a symmetric 
 diffrence and the result is displayed in a Qt widget. 
 
-\cgalexample{nef_S2.cpp} 
+\cgalexample{Nef_S2/nef_S2.cpp} 
 
 */
 template< typename Nef_polyhedron_S2 >

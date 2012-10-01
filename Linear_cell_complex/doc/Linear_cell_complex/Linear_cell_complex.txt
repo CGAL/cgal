@@ -331,7 +331,7 @@ tetrahedron shared with the second one. This is illustrated by
 displaying all the points of each 3-cell. For that we use a
 `std::for_each` and the `Display_vol_vertices` functor.
 
-\cgalexample{linear_cell_complex_3.cpp}
+\cgalexample{Linear_cell_complex/linear_cell_complex_3.cpp}
 
 The output is:
 \verbatim
@@ -366,7 +366,7 @@ level operations, display the number of cells of the linear cell
 complex, and check its validity. Last we use the reverse operations
 to get back to the initial configuration.
 
-\cgalexample{linear_cell_complex_4.cpp}
+\cgalexample{Linear_cell_complex/linear_cell_complex_4.cpp}
 
 The output is:
 \verbatim
@@ -408,7 +408,7 @@ the information of the new 0-attribute to 5. In the last loop, we
 display the point and the information of each vertex of the linear
 cell complex.
 
-\cgalexample{linear_cell_complex_3_with_colored_vertices.cpp}
+\cgalexample{Linear_cell_complex/linear_cell_complex_3_with_colored_vertices.cpp}
 
 The output is:
 \verbatim

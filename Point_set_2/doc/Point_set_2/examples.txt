@@ -1,4 +1,4 @@
 /*!
-\example nearest_neighbor.cpp
-\example range_search.cpp
+\example Point_set_2/nearest_neighbor.cpp
+\example Point_set_2/range_search.cpp
 */

@@ -1,4 +1,4 @@
-/// \defgroup PkgMesh_3 3D Mesh Generation 
+/// \defgroup PkgMesh_3 3D Mesh Generation Reference
 
 /// \defgroup PkgMesh_3Concepts Main Concepts
 /// \ingroup PkgMesh_3

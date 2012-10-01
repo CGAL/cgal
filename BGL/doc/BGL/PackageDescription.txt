@@ -1,4 +1,4 @@
-/// \defgroup PkgBGL CGAL and the Boost Graph Library
+/// \defgroup PkgBGL CGAL and the Boost Graph Library Reference
 
 /// \defgroup PkgBGLConcepts Concepts
 /// \ingroup PkgBGL

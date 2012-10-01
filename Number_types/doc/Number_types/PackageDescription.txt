@@ -1,4 +1,4 @@
-/// \defgroup PkgNumberTypes Number Types
+/// \defgroup PkgNumberTypes Number Types Reference
 
 /// \defgroup PkgNumberTypesConcepts Concepts
 /// \ingroup PkgNumberTypes

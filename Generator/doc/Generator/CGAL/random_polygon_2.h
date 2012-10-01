@@ -46,7 +46,7 @@ The following program displays a random simple polygon with up to 100
 vertices, where the vertex coordinates are drawn uniformly from the 
 unit square centered at the origin. 
 
-\cgalexample{random_polygon.cpp} 
+\cgalexample{Generator/random_polygon.cpp} 
 
 */
 

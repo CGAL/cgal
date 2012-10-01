@@ -1,7 +1,7 @@
 /*!
-\example sdg-count-sites.cpp
-\example sdg-filtered-traits.cpp
-\example sdg-info-set.cpp
-\example sdg-red-blue-info.cpp
-\example sdg-voronoi-edges.cpp
+\example Segment_Delaunay_graph_2/sdg-count-sites.cpp
+\example Segment_Delaunay_graph_2/sdg-filtered-traits.cpp
+\example Segment_Delaunay_graph_2/sdg-info-set.cpp
+\example Segment_Delaunay_graph_2/sdg-red-blue-info.cpp
+\example Segment_Delaunay_graph_2/sdg-voronoi-edges.cpp
 */

@@ -53,7 +53,7 @@ writes the sequence of their indices (relative to
 `points_begin[0]` is `points_begin[4]`, the furthest 
 neighbor of `points_begin[1]` is `points_begin[7]` etc.). 
 
-\cgalexample{all_furthest_neighbors_2.cpp} 
+\cgalexample{Polytope_distance_d/all_furthest_neighbors_2.cpp} 
 
 */
 template < class RandomAccessIterator, class

@@ -217,7 +217,7 @@ on a \stl vector with three elements. The resulting vector will be
 <TT>[2 5 9]</TT> as it is checked by the assertions. The program is
 part of the \cgal distribution.
 
-\cgalexample{circulator_prog2.cpp}
+\cgalexample{Circulator/circulator_prog2.cpp}
 
 */
 template< typename C >
@@ -286,7 +286,7 @@ on a \stl vector containing three elements. The resulting vector will
 be <TT>[2 5 9]</TT> as it is checked by the assertions. The program is
 part of the \cgal distribution.
 
-\cgalexample{circulator_prog1.cpp}
+\cgalexample{Circulator/circulator_prog1.cpp}
 
 Another example usage for this adaptor is a random access circulator
 over the built-in C arrays. Given an array of type <TT>T*</TT> with a

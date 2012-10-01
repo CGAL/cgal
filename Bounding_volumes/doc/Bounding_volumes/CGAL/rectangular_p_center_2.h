@@ -257,7 +257,7 @@ piercing rectangles \cite sw-rpppp-96.
 The following code generates a random set of ten points 
 and computes its two-centers. 
 
-\cgalexample{rectangular_p_center_2.cpp} 
+\cgalexample{Bounding_volumes/rectangular_p_center_2.cpp} 
 
 */
 template < class ForwardIterator, class

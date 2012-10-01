@@ -1,4 +1,4 @@
-/// \defgroup PkgTriangulation2 2D Triangulation 
+/// \defgroup PkgTriangulation2 2D Triangulation Reference
 /// \defgroup PkgTriangulation2Concepts Concepts
 /// \ingroup PkgTriangulation2
 

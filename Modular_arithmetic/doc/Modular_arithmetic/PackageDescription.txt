@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgModularArithmetic Modular Arithmetic 
+/// \defgroup PkgModularArithmetic Modular Arithmetic Reference
 /// \defgroup PkgModularArithmeticConcepts Concepts
 /// \ingroup PkgModularArithmetic
 /*!

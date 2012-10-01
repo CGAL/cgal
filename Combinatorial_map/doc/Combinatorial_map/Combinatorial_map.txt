@@ -870,7 +870,7 @@ combinatorial tetrahedron. Finally, these tetrahedron are merged. The
 marks allow us to know which darts come from the first and second
 tetrahedron.
 
-\cgalexample{map_3_marks.cpp}
+\cgalexample{Combinatorial_map/map_3_marks.cpp}
 
 # Modification Operations #
 
@@ -1169,7 +1169,7 @@ second loop enumerates all the darts of the facet containing dart
 `dh2` by using the range
 `Dart_of_orbit_range<1>`.
 
-\cgalexample{map_3_simple_example.cpp}
+\cgalexample{Combinatorial_map/map_3_simple_example.cpp}
 
 The output is:
 \verbatim
@@ -1219,7 +1219,7 @@ we remove the inserted 2-cell, then the two inserted 1-cells. We get
 back the initial combinatorial hexahedron, which is verified by displaying once
 again the characteristics of the combinatorial map.
 
-\cgalexample{map_3_operations.cpp}
+\cgalexample{Combinatorial_map/map_3_operations.cpp}
 
 The output is:
 \verbatim
@@ -1282,7 +1282,7 @@ simplex, we must create five 3D simplexes, and sew them correctly
 two by two by \f$ \beta_3\f$ (and so on if you want to create higher
 dimensional combinatorial map).
 
-\cgalexample{map_4_simple_example.cpp}
+\cgalexample{Combinatorial_map/map_4_simple_example.cpp}
 
 The output is:
 \verbatim
@@ -1307,7 +1307,7 @@ two initial values. When an attribute `ca1` is split in the two
 attributes `ca1` and `ca2`, the value of each attribute is
 half of the first value.
 
-\cgalexample{map_3_with_colored_facets.cpp}
+\cgalexample{Combinatorial_map/map_3_with_colored_facets.cpp}
 
 The output is:
 \verbatim

@@ -1,4 +1,4 @@
-/// \defgroup PkgSkinSurface3 3D Skin Surface Meshing 
+/// \defgroup PkgSkinSurface3 3D Skin Surface Meshing Reference
 /// \defgroup PkgSkinSurface3Concepts Concepts
 /// \ingroup PkgSkinSurface3
 

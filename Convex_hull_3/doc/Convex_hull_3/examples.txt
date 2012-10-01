@@ -1,6 +1,6 @@
 /*!
-\example dynamic_hull_3.cpp
-\example incremental_hull_3.cpp
-\example incremental_hull_class_3.cpp
-\example quickhull_3.cpp
+\example Convex_hull_3/dynamic_hull_3.cpp
+\example Convex_hull_3/incremental_hull_3.cpp
+\example Convex_hull_3/incremental_hull_class_3.cpp
+\example Convex_hull_3/quickhull_3.cpp
 */

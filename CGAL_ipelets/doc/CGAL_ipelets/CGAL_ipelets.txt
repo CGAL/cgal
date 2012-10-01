@@ -45,7 +45,7 @@ must follow the definition of the ipelet class, in the same file source file.
 The following example shows how the class `CGAL::Ipelet_base` can be used to easily
 interface the \cgal 2D Delaunay triangulation with Ipe.
 
-\cgalexample{simple_triangulation.cpp}
+\cgalexample{CGAL_ipelets/simple_triangulation.cpp}
 
 \image html example.png 
 

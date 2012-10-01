@@ -1,4 +1,4 @@
-/// \defgroup PkgMatrixSearch Monotone and Sorted Matrix Search 
+/// \defgroup PkgMatrixSearch Monotone and Sorted Matrix Search Reference
 
 /// \defgroup PkgMatrixSearchConcepts Concepts
 /// \ingroup PkgMatrixSearch

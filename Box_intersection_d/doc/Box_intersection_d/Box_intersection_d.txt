@@ -187,7 +187,7 @@ The result will be that the first `query` box intersects all nine
 in the upper-right quadrant. See Section \ref secboxintersparams 
 for the change of the `topology` parameter and its effect.
 
-\cgalexample{minimal.cpp}
+\cgalexample{Box_intersection_d/minimal.cpp}
 
 # Example for Finding Intersecting 3D Triangles #
 
@@ -232,7 +232,7 @@ the polyhedral surface that should not be reported as intersections,
 see the <TT>examples/Polyhedron/polyhedron_self_intersection.cpp</TT>
 example program in the \cgal distribution.
 
-\cgalexample{triangle_self_intersect.cpp}
+\cgalexample{Box_intersection_d/triangle_self_intersect.cpp}
 
 # Example for Using Pointers to Boxes #
 
@@ -262,7 +262,7 @@ In addition, the callback function `report_inters` needs to be
 changed to work with pointers to boxes. The full example program looks
 as follows:
 
-\cgalexample{triangle_self_intersect_pointers.cpp}
+\cgalexample{Box_intersection_d/triangle_self_intersect_pointers.cpp}
 
 A note on performance: The algorithm sorts and partitions the input
 sequences. It is clearly costly to copy a large box compared to a
@@ -338,7 +338,7 @@ For the second box intersection function call we have to specify the
 Section \ref secboxintersperformance below for a detailed
 discussion.
 
-\cgalexample{box_grid.cpp}
+\cgalexample{Box_intersection_d/box_grid.cpp}
 
 \section secboxintersperformance Runtime Performance 
 
@@ -417,7 +417,7 @@ and the type `ID` for the `id`-number. Member functions
 give access to the coordinates and the `id`-number. A static
 member function returns the dimension.
 
-\cgalexample{custom_box_grid.cpp}
+\cgalexample{Box_intersection_d/custom_box_grid.cpp}
 
 \section secbox_inters_example_proximity Example for Point Proximity Search with a Custom Traits Class 
 
@@ -455,7 +455,7 @@ and the `boxes` vector in parallel, since otherwise the
 `points` vector might reallocate and invalidate all pointers
 stored in the `boxes` so far.
 
-\cgalexample{proximity_custom_box_traits.cpp}
+\cgalexample{Box_intersection_d/proximity_custom_box_traits.cpp}
 
 # Design and Implementation History #
 

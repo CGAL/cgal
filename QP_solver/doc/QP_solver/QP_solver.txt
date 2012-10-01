@@ -282,7 +282,7 @@ of the matrix \f$ 2D\f$ have to be provided, rather than \f$ D\f$. Although
 this is common to almost all quadratic programming solvers, it 
 can easily be overlooked by a novice.
 
-\cgalexample{first_qp.cpp}
+\cgalexample{QP_solver/first_qp.cpp}
 
 Asuming that <TT>GMP</TT> is installed, the 
 output of the of the above program is:
@@ -306,7 +306,7 @@ your working directory contains the file <TT>first_qp.mps</TT>,
 the following program will read and solve it, with the same output
 as before.
 
-\cgalexample{first_qp_from_mps.cpp}
+\cgalexample{QP_solver/first_qp_from_mps.cpp}
 
 ## Constructing a Program from Iterators ##
 
@@ -318,7 +318,7 @@ approaches (program from data/stream) are clearly preferable,
 but Section \ref secQPiterators shows an
 example where it makes sense to use the iterator-based approach.
 
-\cgalexample{first_qp_from_iterators.cpp}
+\cgalexample{QP_solver/first_qp_from_iterators.cpp}
 
 <B>Note 1:</B> The example shows an interesting feature of this approach:
 not all data need to come from containers. Here, the iterator over the
@@ -542,7 +542,7 @@ through a fixed column of the constraint matrix \f$ A\f$. We get this
 from transforming the iterator through the points using a functor 
 that maps a point to an iterator through its homogeneous coordinates.
 
-\cgalexample{solve_convex_hull_containment_lp.h}
+\cgalexample{QP_solver/solve_convex_hull_containment_lp.h}
 
 To see this in action, let us call it with \f$ p_1=(0,0), p_2=(10,0),
 p_3=(0,10)\f$ fixed (they define a triangle) and all integral points \f$ p\f$
@@ -551,7 +551,7 @@ in \f$ [0,10]^2\f$. We know that \f$ p\f$ is in the convex hull of
 most. As the exact type, we use `MP_Float` or `Gmpzf` 
 (which is faster and preferable if <TT>GMP</TT> is installed).
 
-\cgalexample{convex_hull_containment.cpp}
+\cgalexample{QP_solver/convex_hull_containment.cpp}
 
 \subsection secQPmakers Using Makers 
 
@@ -573,7 +573,7 @@ version of
 that shows how this works. In effect, you get shorter and more
 readable code.
 
-\cgalexample{solve_convex_hull_containment_lp2.h}
+\cgalexample{QP_solver/solve_convex_hull_containment_lp2.h}
 
 # Important Variables and Constraints #
 
@@ -594,7 +594,7 @@ the ones that contribute to the convex combinations of all 25 lattice
 points in \f$ [0,4]^2\f$. If the lattice point in question is not in the 4-gon, 
 we simply output this fact.
 
-\cgalexample{important_variables.cpp}
+\cgalexample{QP_solver/important_variables.cpp}
 
 It turns out that exactly three of the four points contribute to any
 convex combination, even through there are lattice points that lie
@@ -662,7 +662,7 @@ we solve it and ask for a certificate. Finally, we verify the certificate
 by simply checking the inequalities of the second system in Farkas
 Lemma.
 
-\cgalexample{infeasibility_certificate.cpp}
+\cgalexample{QP_solver/infeasibility_certificate.cpp}
 
 There are similar certificates for optimality and unboundedness
 that you can see in action in the programs
@@ -711,7 +711,7 @@ the file <TT>cycling.mps</TT> (which is in the example directory as well),
 and then solves it in verbose mode, using <I>Bland's rule</I>, see
 `CGAL::Quadratic_program_pricing_strategy`.
 
-\cgalexample{cycling.cpp}
+\cgalexample{QP_solver/cycling.cpp}
 
 If you comment the line 
 
@@ -748,7 +748,7 @@ parameter of type `Quadratic_program_options` to the function
 `solve_convex_hull_containment_lp` that we pass on to the solution
 function:
 
-\cgalexample{solve_convex_hull_containment_lp3.h}
+\cgalexample{QP_solver/solve_convex_hull_containment_lp3.h}
 
 Now let us test containment of the origin in the convex hull
 of \f$ n\f$ random points in \f$ [0,1]^d\f$ (it will most likely not be contained,
@@ -757,7 +757,7 @@ below, we use \f$ d=10\f$ and \f$ n=100,000\f$, and we comment on some other
 combinations of \f$ n\f$ and \f$ d\f$ below (feel free to experiment with still other
 values).
 
-\cgalexample{convex_hull_containment_benchmarks.cpp}
+\cgalexample{QP_solver/convex_hull_containment_benchmarks.cpp}
 
 If you compile with the macros <TT>NDEBUG</TT> or
 <TT>CGAL_QP_NO_ASSERTIONS</TT> set (this is essential for good

@@ -1,4 +1,4 @@
-/// \defgroup PkgKdsFramework Kinetic Framework
+/// \defgroup PkgKdsFramework Kinetic Framework Reference
 
 /// \defgroup PkgKdsFrameworkConcepts Main Concepts
 /// \ingroup PkgKdsFramework

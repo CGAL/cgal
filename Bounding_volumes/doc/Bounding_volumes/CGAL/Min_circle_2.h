@@ -68,7 +68,7 @@ for validity each takes linear time.
 To illustrate the creation of `Min_circle_2` and to show that 
 randomization can be useful in certain cases, we give an example. 
 
-\cgalexample{min_circle_2.cpp} 
+\cgalexample{Bounding_volumes/min_circle_2.cpp} 
 
 */
 template< typename Traits >

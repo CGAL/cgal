@@ -1,4 +1,4 @@
-/// \defgroup PkgHandlesAndCirculators Handles and Circulators
+/// \defgroup PkgHandlesAndCirculators Handles and Circulators Reference
 /// \defgroup PkgHandlesAndCirculatorsConcepts Concepts
 /// \ingroup PkgHandlesAndCirculators
 

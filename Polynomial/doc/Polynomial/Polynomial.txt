@@ -147,7 +147,7 @@ algebraic expressions. The most elegant way to construct a certain variable is
 
 The following example illustrates different ways to construct a 
 bivariate polynomial:
-\cgalexample{construction.cpp}
+\cgalexample{Polynomial/construction.cpp}
 
 # Coefficient Access #
 
@@ -175,7 +175,7 @@ See also `PolynomialTraits_d::DegreeVector`.
 
 The following example illustrates the application of the functors 
 discussed above:
-\cgalexample{coefficient_access.cpp}
+\cgalexample{Polynomial/coefficient_access.cpp}
 
 # Degree, Total Degree and Degree Vector #
 
@@ -201,7 +201,7 @@ variable. See also `PolynomialTraits_d::InnermostLeadingCoefficient`.
 
 The following example illustrates the application of the functors discussed 
 above:
-\cgalexample{degree.cpp}
+\cgalexample{Polynomial/degree.cpp}
 
 # Changing the Order of Variables #
 
@@ -227,7 +227,7 @@ variables, namely `PolynomialTraits_d::Permute`.
 
 The following example illustrates the application of the functors discussed 
 above:
-\cgalexample{swap_move.cpp}
+\cgalexample{Polynomial/swap_move.cpp}
 
 # GCD and More #
 
@@ -298,7 +298,7 @@ The concepts for the related functors are:
 
 The following example illustrates the application of some functors 
 discussed above:
-\cgalexample{gcd_up_to_constant_factor.cpp}
+\cgalexample{Polynomial/gcd_up_to_constant_factor.cpp}
 
 # Evaluation and Substitution #
 
@@ -345,7 +345,7 @@ than their equivalent implementation using substitution:
 
 The following example illustrates the application of some functors 
 discussed above:
-\cgalexample{substitute.cpp}
+\cgalexample{Polynomial/substitute.cpp}
 
 # Resultants, Subresultants and Sturm-Habicht Sequences #
 
@@ -398,7 +398,7 @@ The following example illustrates how two compute resultants of two
 polynomials, and how to count the number of distinct real roots
 of a polynomial using its principal Sturm-Habicht coefficients.
 
-\cgalexample{subresultants.cpp}
+\cgalexample{Polynomial/subresultants.cpp}
 
 # Design and Implementation History #
 

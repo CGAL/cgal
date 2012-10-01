@@ -275,7 +275,7 @@ int r = edge_collapse(surface
 The following example illustrates the simplest of the cases. It uses
 an ordinary polyhedron and only one of the optional parameters.
 The unspecified cost strategy defaults to Lindstrom-Turk.
-\cgalexample{edge_collapse_polyhedron.cpp}
+\cgalexample{Surface_mesh_simplification/edge_collapse_polyhedron.cpp}
 
 ## Example Using an Enriched Polyhedron ##
 
@@ -285,14 +285,14 @@ store the edge index needed by the algorithm. It also shows how to
 explicitly specify a cost strategy (other than the default)
 and how to use a visitor object to track the simplification process.
 
-\cgalexample{edge_collapse_enriched_polyhedron.cpp}
+\cgalexample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
 
 ## Example with edges marked as non-removable ##
 
 The following example shows how to use the optional named parameter `edge_is_border_map` to prevent
 edges from being removed even if they are not really borders.
 
-\cgalexample{edge_collapse_constrained_polyhedron.cpp}
+\cgalexample{Surface_mesh_simplification/edge_collapse_constrained_polyhedron.cpp}
 
 */ 
 } /* namespace CGAL */

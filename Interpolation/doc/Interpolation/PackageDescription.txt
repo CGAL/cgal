@@ -1,4 +1,4 @@
-/// \defgroup PkgInterpolation2 2D and Surface Function Interpolation
+/// \defgroup PkgInterpolation2 2D and Surface Function Interpolation Reference
 
 /// \defgroup PkgInterpolation2Concepts Concepts
 /// \ingroup PkgInterpolation2

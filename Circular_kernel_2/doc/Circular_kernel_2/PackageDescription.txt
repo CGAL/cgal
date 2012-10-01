@@ -1,5 +1,4 @@
-/// \defgroup PkgCircularKernel2 2D Circular Geometry Kernel 
-
+/// \defgroup PkgCircularKernel2 2D Circular Geometry Kernel Reference
 
 /// \defgroup PkgCircularKernel2GeometricConcepts Geometric Concepts
 /// \ingroup PkgCircularKernel2

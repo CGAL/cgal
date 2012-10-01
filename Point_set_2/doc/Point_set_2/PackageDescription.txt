@@ -1,4 +1,4 @@
-/// \defgroup PkgPointSet2 2D Range and Neighbor Search
+/// \defgroup PkgPointSet2 2D Range and Neighbor Search Reference
 /// \defgroup PkgPointSet2Concepts Concepts
 /// \ingroup PkgPointSet2
 

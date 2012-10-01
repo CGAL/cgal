@@ -23,7 +23,7 @@ In the following example, we compute exactly
 the intersection point between a line and a triangle, 
 and we then create a double approximation of this point. 
 
-\cgalexample{cartesian_converter.cpp} 
+\cgalexample{Kernel_23/cartesian_converter.cpp} 
 
 \sa `CGAL::Cartesian<FieldNumberType>` 
 \sa `CGAL::Simple_cartesian<FieldNumberType>` 

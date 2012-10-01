@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceParameterization Planar Parameterization of Triangulated Surface Meshes
+/// \defgroup PkgSurfaceParameterization Planar Parameterization of Triangulated Surface Meshes Reference
 /// \defgroup PkgSurfaceParameterizationConcepts Concepts
 /// \ingroup PkgSurfaceParameterization
 

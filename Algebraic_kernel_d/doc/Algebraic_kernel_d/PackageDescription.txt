@@ -1,4 +1,4 @@
-/// \defgroup PkgAlgebraicKerneld Algebraic Kernel 
+/// \defgroup PkgAlgebraicKerneld Algebraic Kernel Reference
 
 /// \defgroup PkgAlgebraicKerneldConcepts Concepts
 /// \ingroup PkgAlgebraicKerneld

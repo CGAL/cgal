@@ -62,7 +62,7 @@ The class `CGAL::Modular_traits<T>` is designed such that the concept
 ## Example ##
 
 In the following example modular arithmetic is used as a filter. 
-\cgalexample{modular_filter.cpp}
+\cgalexample{Modular_arithmetic/modular_filter.cpp}
 
 # Design and Implementation History #
 

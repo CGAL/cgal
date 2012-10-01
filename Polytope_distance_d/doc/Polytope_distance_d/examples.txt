@@ -1,4 +1,4 @@
 /*!
-\example polytope_distance_d.cpp
-\example polytope_distance_d_fast_exact.cpp
+\example Polytope_distance_d/polytope_distance_d.cpp
+\example Polytope_distance_d/polytope_distance_d_fast_exact.cpp
 */

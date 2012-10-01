@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-/// \addtogroup PkgAABB_tree AABB Tree
+/// \addtogroup PkgAABB_tree
 /// @{
 
     /// The class AABB_polyhedron_segment_primitive is a model of the

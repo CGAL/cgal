@@ -1,4 +1,4 @@
-/// \defgroup PkgPlacementOfStreamlines2 2D Placement of Streamlines
+/// \defgroup PkgPlacementOfStreamlines2 2D Placement of Streamlines Reference
 /// \defgroup PkgPlacementOfStreamlines2Concepts Concepts
 /// \ingroup PkgPlacementOfStreamlines2
 /*!

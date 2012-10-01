@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgTriangulation3 3D Triangulations
+/// \defgroup PkgTriangulation3 3D Triangulations Reference
 /// \defgroup PkgTriangulation3Concepts Concepts
 /// \ingroup PkgTriangulation3
 

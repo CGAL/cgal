@@ -162,10 +162,10 @@ Library \cite cgal:sgcsi-stlpg-97.
 
 The first example illustrates the generation of a 2D streamline
 placement from a vector field defined on a regular grid.
-\cgalexample{stl_regular_field.cpp}
+\cgalexample{Stream_lines_2/stl_regular_field.cpp}
 The second example depicts the generation of a streamline placement from a vector
 field defined on a triangular grid.
-\cgalexample{stl_triangular_field.cpp}
+\cgalexample{Stream_lines_2/stl_triangular_field.cpp}
 
 */ 
 } /* namespace CGAL */

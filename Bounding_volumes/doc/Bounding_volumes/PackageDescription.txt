@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgBoundingVolumes Bounding Volumes 
+/// \defgroup PkgBoundingVolumes Bounding Volumes Reference
 /// \defgroup PkgBoundingVolumesConcepts Concepts
 /// \ingroup PkgBoundingVolumes
 /*!

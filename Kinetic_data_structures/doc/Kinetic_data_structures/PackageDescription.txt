@@ -1,4 +1,4 @@
-/// \defgroup PkgKds Kinetic Data Structures
+/// \defgroup PkgKds Kinetic Data Structures Reference
 
 /// \defgroup PkgKdsConcepts Concepts
 /// \ingroup PkgKds

@@ -71,7 +71,7 @@ a space filling curve as illustrated in Figure \ref Spatial_sorting_fig_Hilbert_
 
 The code to use Hilbert sort is as simple as the following example:
 
-\cgalexample{hilbert.cpp}
+\cgalexample{Spatial_sorting/hilbert.cpp}
 
 If instead of subdividing the square in a fixed way at its middle point,
 as above, we subdivide it
@@ -100,7 +100,7 @@ Most theoretical results are using the middle policy
 
 This other example illustrates the use of the two different policies
 
-\cgalexample{hilbert_policies.cpp}
+\cgalexample{Spatial_sorting/hilbert_policies.cpp}
 
 \section secspatial_sorting Spatial Sorting 
 
@@ -128,7 +128,7 @@ Delaunay with median hilbert sort... done in 0.822975 seconds.
 Delaunay with median spatial sort... done in 0.022415 seconds.
 \endcode
 
-\cgalexample{small_example_delaunay_2.cpp}
+\cgalexample{Spatial_sorting/small_example_delaunay_2.cpp}
 
 ## Using Your Own Point Type ##
 
@@ -139,7 +139,7 @@ to associate an extra information to your point you might consider the example o
 \ref secsort_any_type_2
 as an alternative.
 
-\cgalexample{myPoint.cpp}
+\cgalexample{Spatial_sorting/myPoint.cpp}
 
 ## Sorting Arbitrary Types ##
 
@@ -162,19 +162,19 @@ The following examples illustrate the usage of these traits class adapters.
 \anchor secsort_any_type_2
 In this example program, the sorted sequence of points is retrieved 
 using a vector of pairs of points and integers.
-\cgalexample{sp_sort_using_property_map_2.cpp}
+\cgalexample{Spatial_sorting/sp_sort_using_property_map_2.cpp}
 
 ## Sorting Using Indices of Points ##
 
 In this example program, the sorted sequence of points is retrieved 
 using the indices of the points in a vector of points.
-\cgalexample{sp_sort_using_property_map_3.cpp}
+\cgalexample{Spatial_sorting/sp_sort_using_property_map_3.cpp}
 
 ## Sorting Using Indices of Pairs of Points and Integers ##
 
 In this example program, the sorted sequence of points is retrieved 
 using the indices of the points in a vector of pairs of points and integers.
-\cgalexample{sp_sort_using_property_map_d.cpp}
+\cgalexample{Spatial_sorting/sp_sort_using_property_map_d.cpp}
 
 */ 
 } /* namespace CGAL */

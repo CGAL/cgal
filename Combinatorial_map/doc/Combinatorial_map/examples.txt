@@ -1,7 +1,7 @@
 /*!
-\example map_3_marks.cpp
-\example map_3_simple_example.cpp
-\example map_3_operations.cpp
-\example map_4_simple_example.cpp
-\example map_3_with_colored_facets.cpp
+\example Combinatorial_map/map_3_marks.cpp
+\example Combinatorial_map/map_3_simple_example.cpp
+\example Combinatorial_map/map_3_operations.cpp
+\example Combinatorial_map/map_4_simple_example.cpp
+\example Combinatorial_map/map_3_with_colored_facets.cpp
 */

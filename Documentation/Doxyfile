@@ -701,6 +701,7 @@ WARN_LOGFILE           =
 
 FILE_PATTERNS = *.cpp \
                 *.txt \
+                *.md \
                 *.h   \
                 *.hpp
 

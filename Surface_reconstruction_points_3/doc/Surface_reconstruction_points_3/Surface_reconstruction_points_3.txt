@@ -101,7 +101,7 @@ For details see: `CGAL::Poisson_reconstruction_function<GeomTraits>`
 
 `poisson_reconstruction_example.cpp` reads a point set, creates a Poisson implicit function and reconstructs a surface.
 
-\cgalexample{poisson_reconstruction_example.cpp}
+\cgalexample{Surface_reconstruction_points_3/poisson_reconstruction_example.cpp}
 
 # Contouring #
 

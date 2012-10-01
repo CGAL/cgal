@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgEnvelope3 3D Envelopes
+/// \defgroup PkgEnvelope3 3D Envelopes Reference
 /// \defgroup PkgEnvelope3Concepts Concepts
 /// \ingroup PkgEnvelope3
 /*!

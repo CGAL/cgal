@@ -1,15 +1,15 @@
 /*!
-\example circular_query.cpp
-\example distance_browsing.cpp
-\example fuzzy_range_query.cpp
-\example general_neighbor_searching.cpp
-\example iso_rectangle_2_query.cpp
-\example nearest_neighbor_searching.cpp
-\example searching_with_circular_query.cpp
-\example searching_with_point_with_info.cpp
-\example searching_with_point_with_info_inplace.cpp
-\example searching_with_point_with_info_pmap.cpp
-\example user_defined_point_and_distance.cpp
-\example using_fair_splitting_rule.cpp
-\example weighted_Minkowski_distance.cpp
+\example Spatial_searching/circular_query.cpp
+\example Spatial_searching/distance_browsing.cpp
+\example Spatial_searching/fuzzy_range_query.cpp
+\example Spatial_searching/general_neighbor_searching.cpp
+\example Spatial_searching/iso_rectangle_2_query.cpp
+\example Spatial_searching/nearest_neighbor_searching.cpp
+\example Spatial_searching/searching_with_circular_query.cpp
+\example Spatial_searching/searching_with_point_with_info.cpp
+\example Spatial_searching/searching_with_point_with_info_inplace.cpp
+\example Spatial_searching/searching_with_point_with_info_pmap.cpp
+\example Spatial_searching/user_defined_point_and_distance.cpp
+\example Spatial_searching/using_fair_splitting_rule.cpp
+\example Spatial_searching/weighted_Minkowski_distance.cpp
 */

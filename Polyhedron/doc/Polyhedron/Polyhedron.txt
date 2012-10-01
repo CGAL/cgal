@@ -109,7 +109,7 @@ component referred to by the halfedge `h` and not the polyhedral
 surface as a whole. This examples works only on the combinatorial
 level of a polyhedral surface. The next example adds the geometry.
 
-\cgalexample{polyhedron_prog_simple.cpp}
+\cgalexample{Polyhedron/polyhedron_prog_simple.cpp}
 
 ## Example with Geometry in Vertices ##
 
@@ -132,7 +132,7 @@ the tip of `h`, and so on. The output of the program will be
 \endverbatim
 
 
-\cgalexample{polyhedron_prog_tetra.cpp}
+\cgalexample{Polyhedron/polyhedron_prog_tetra.cpp}
 
 The polyhedron offers a point iterator for convenience. The above
 `for` loop simplifies to a single statement by using
@@ -173,7 +173,7 @@ and exact arithmetic. In our example a homogeneous representation with
 `int` coordinates is sufficient. The four plane equations of the
 tetrahedron are the output of the program.
 
-\cgalexample{polyhedron_prog_planes.cpp}
+\cgalexample{Polyhedron/polyhedron_prog_planes.cpp}
 
 \subsection sectionPolyVector Example with a Vector Instead of a List Representation 
 
@@ -214,7 +214,7 @@ structure triggers the resize operation, since the resize operation
 requires some preconditions, such as valid incidences, to be fulfilled
 that only the polyhedron can guarantee.
 
-\cgalexample{polyhedron_prog_vector.cpp}
+\cgalexample{Polyhedron/polyhedron_prog_vector.cpp}
 
 ## Example with %Circulator Writing %Object File Format (OFF) ##
 
@@ -234,7 +234,7 @@ facets. It can be stored, for example, in the vertex itself or in a
 hash-structure. See also the following Section \ref sectionPolyIO for 
 file I/O.
 
-\cgalexample{polyhedron_prog_off.cpp}
+\cgalexample{Polyhedron/polyhedron_prog_off.cpp}
 
 ## Example Using Euler Operators to Build a Cube ##
 
@@ -257,7 +257,7 @@ are also marked in the program code.
 
 \image html make_cube.gif
 
-\cgalexample{polyhedron_prog_cube.cpp}
+\cgalexample{Polyhedron/polyhedron_prog_cube.cpp}
 
 # File I/O #
 
@@ -339,7 +339,7 @@ in the distribution under <TT>examples/Polyhedron_IO/</TT> and
 <TT>demo/Polyhedron_IO/</TT>. We show an example converting OFF input
 into VRML 1.0 output.
 
-\cgalexample{polyhedron2vrml.cpp}
+\cgalexample{Polyhedron/polyhedron2vrml.cpp}
 
 # Extending Vertices, Halfedges, and Facets #
 
@@ -448,7 +448,7 @@ structure design.
 Pulling all pieces together, the full example program illustrates how easy
 the color attribute can be accessed once it is defined.
 
-\cgalexample{polyhedron_prog_color.cpp}
+\cgalexample{Polyhedron/polyhedron_prog_color.cpp}
 
 We come back to the first template parameter, `Refs`, of the
 wrapper classes. This parameter provides us with local types that
@@ -512,7 +512,7 @@ actually a hole whose vertex coordinates pinch the hole shut to form an
 edge. The example directory <TT>examples/Polyhedron/</TT> contains the 
 OFF files used here.
 
-\cgalexample{polyhedron_prog_subdiv.cpp}
+\cgalexample{Polyhedron/polyhedron_prog_subdiv.cpp}
 
 ## Example Using the Incremental Builder and Modifier Mechanism ##
 
@@ -541,7 +541,7 @@ its `operator()` with a reference to its internally used halfedge
 data structure. Thus, this member function in `Build_triangle` can 
 create the triangle in the halfedge data structure.
 
-\cgalexample{polyhedron_prog_incr_builder.cpp}
+\cgalexample{Polyhedron/polyhedron_prog_incr_builder.cpp}
 
 */ 
 } /* namespace CGAL */

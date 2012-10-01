@@ -1,4 +1,4 @@
-/// \defgroup PkgRangeSegmentTreesD dD Range and Segment Trees 
+/// \defgroup PkgRangeSegmentTreesD dD Range and Segment Trees Reference
 /// \defgroup PkgRangeSegmentTreesDConcepts Concepts
 /// \ingroup PkgRangeSegmentTreesD
 

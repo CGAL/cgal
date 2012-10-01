@@ -1,4 +1,4 @@
-/// \defgroup PkgCombinatorialMaps Combinatorial Maps
+/// \defgroup PkgCombinatorialMaps Combinatorial Maps Reference
 
 /// \defgroup PkgCombinatorialMapsConcepts Concepts
 /// \ingroup PkgCombinatorialMaps

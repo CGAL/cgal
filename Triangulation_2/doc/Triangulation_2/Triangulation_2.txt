@@ -466,7 +466,7 @@ as geometric traits and the default triangulation data structure.
 The input points are read from a file 
 and inserted in the triangulation.
 Finally points on the convex hull are written to <TT>cout</TT>. 
-\cgalexample{triangulation_prog1.cpp}
+\cgalexample{Triangulation_2/triangulation_prog1.cpp}
 
 \section Section_2D_Triangulations_Delaunay Delaunay Triangulations 
 
@@ -589,7 +589,7 @@ of these points.
 The class `Projection_traits_xy_3<K>` is part of the 2D and 3D Linear Geometric Kernel,
 and replaces the class `Triangulation_euclidean_traits_xy_3<K>` which is deprecated.
 
-\cgalexample{terrain.cpp}
+\cgalexample{Triangulation_2/terrain.cpp}
 
 \subsection Subsection_2D_Triangulations_Voronoi Example: Voronoi Diagram 
 
@@ -597,7 +597,7 @@ The following code computes the edges of Voronoi diagram
 of a set of data points
 and counts the number of finite edges and the number of rays
 of this diagram
-\cgalexample{voronoi.cpp}
+\cgalexample{Triangulation_2/voronoi.cpp}
 
 \subsection Subsection_2D_Triangulations_Cropped_Voronoi Example: Print Voronoi Diagram Edges Restricted to a Rectangle 
 
@@ -607,7 +607,7 @@ restricted to a given rectangle.
 \anchor figurecropped_voronoi
 \image html cropped_voronoi.png "Voronoi diagram (in red) of the black points restricted to the blue rectangle."
 
-\cgalexample{print_cropped_voronoi.cpp}
+\cgalexample{Triangulation_2/print_cropped_voronoi.cpp}
 
 \section Section_2D_Triangulations_Regular Regular Triangulations 
 
@@ -783,7 +783,7 @@ The following code creates a regular triangulation
 of a set of weighted points and output the number
 of vertices and the number of hidden vertices.
 
-\cgalexample{regular.cpp}
+\cgalexample{Triangulation_2/regular.cpp}
 
 \section Section_2D_Triangulations_Constrained Constrained Triangulations 
 
@@ -983,7 +983,7 @@ into a triangulation
 and counts the number of constrained edges of the
 resulting triangulation.
 
-\cgalexample{constrained.cpp}
+\cgalexample{Triangulation_2/constrained.cpp}
 
 \subsection Subsection_2D_Triangulations_Polygon_triangulation Example: Triangulating a Polygonal Domain 
 
@@ -994,7 +994,7 @@ boundaries of the polygons intersect.
 \anchor figuretri_domain
 \image html tri_domain.png "Triangulation (in blue) of the domain delimited by the red polygons."
 
-\cgalexample{polygon_triangulation.cpp}
+\cgalexample{Triangulation_2/polygon_triangulation.cpp}
 
 \section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations Plus 
 
@@ -1036,7 +1036,7 @@ into a triangulation
 and counts the number of constrained edges of the
 resulting triangulation.
 
-\cgalexample{constrained_plus.cpp}
+\cgalexample{Triangulation_2/constrained_plus.cpp}
 
 \section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy 
 
@@ -1106,12 +1106,12 @@ for the standard use of a triangulation hierarchy
 to enhance the efficiency
 of a Delaunay triangulation. The program outputs the number of vertices
 at the different levels of the hierarchy.
-\cgalexample{hierarchy.cpp}
+\cgalexample{Triangulation_2/hierarchy.cpp}
 
 The following program shows how to use
 a triangulation hierarchy in conjunction with a constrained 
 triangulation plus.
-\cgalexample{constrained_hierarchy_plus.cpp}
+\cgalexample{Triangulation_2/constrained_hierarchy_plus.cpp}
 
 \section Section_2D_Triangulations_Flexibility Flexibility 
 
@@ -1186,7 +1186,7 @@ handle additional information.
 The following examples shows how to add a 
 `CGAL::Color` in the triangulation faces.
 
-\cgalexample{colored_face.cpp}
+\cgalexample{Triangulation_2/colored_face.cpp}
 
 ## Adding Handles ##
 
@@ -1196,7 +1196,7 @@ or face class when he would like to have
 additional functionalities depending on types provided by the triangulation
 data structure.
 
-\cgalexample{adding_handles.cpp}
+\cgalexample{Triangulation_2/adding_handles.cpp}
 
 ## Setting Information While Inserting a %Range of Points ##
 
@@ -1215,14 +1215,14 @@ of the corresponding point given in the range.
 
 Each point and its information are gathered into a pair. We provide
 the `insert` function of the triangulation with a range of such pairs.
-\cgalexample{info_insert_with_pair_iterator_2.cpp}
+\cgalexample{Triangulation_2/info_insert_with_pair_iterator_2.cpp}
 
 ## Using the Boost Zip Iterator ##
 
 Information and points are in separate containers. We use
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
-\cgalexample{info_insert_with_zip_iterator_2.cpp}
+\cgalexample{Triangulation_2/info_insert_with_zip_iterator_2.cpp}
 
 ## Using the Boost Transform Iterator ##
 
@@ -1230,7 +1230,7 @@ We define a functor `Auto_count` used together with
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
 in the range. Note that this is correct because the iterator
 is dereferenced only once per point during the insertion.
-\cgalexample{info_insert_with_transform_iterator_2.cpp}
+\cgalexample{Triangulation_2/info_insert_with_transform_iterator_2.cpp}
 
 # Design and Implementation History #
 

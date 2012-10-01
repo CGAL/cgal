@@ -1,9 +1,9 @@
 /*!
-\example box_grid.cpp
-\example custom_box_grid.cpp
-\example minimal.cpp
-\example minimal_self.cpp
-\example proximity_custom_box_traits.cpp
-\example triangle_self_intersect.cpp
-\example triangle_self_intersect_pointers.cpp
+\example Box_intersection_d/box_grid.cpp
+\example Box_intersection_d/custom_box_grid.cpp
+\example Box_intersection_d/minimal.cpp
+\example Box_intersection_d/minimal_self.cpp
+\example Box_intersection_d/proximity_custom_box_traits.cpp
+\example Box_intersection_d/triangle_self_intersect.cpp
+\example Box_intersection_d/triangle_self_intersect_pointers.cpp
 */

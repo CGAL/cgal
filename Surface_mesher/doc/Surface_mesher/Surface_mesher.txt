@@ -194,7 +194,7 @@ Figure \ref figureSurface_mesherspheresurface.
 \anchor figureSurface_mesherspheresurface
 \image html sphere-surface.png "Surface mesh of a sphere"
 
-\cgalexample{mesh_an_implicit_function.cpp}
+\cgalexample{Surface_mesher/mesh_an_implicit_function.cpp}
 
 ## Meshing Isosurfaces Defined as Gray Levels in 3D Images ##
 
@@ -226,7 +226,7 @@ resulting mesh is shown in Figure \ref figureSurface_mesherskull.
 \anchor figureSurface_mesherskull
 \image html skull-surface.png "Surface mesh of an iso-contour extracted from a gray level 3D image"
 
-\cgalexample{mesh_a_3d_gray_image.cpp}
+\cgalexample{Surface_mesher/mesh_a_3d_gray_image.cpp}
 
 \section SurfaceMesher_section_criteria Meshing Criteria, Guarantees and Variations 
 

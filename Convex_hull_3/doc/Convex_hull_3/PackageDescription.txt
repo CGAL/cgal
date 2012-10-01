@@ -1,4 +1,4 @@
-/// \defgroup PkgConvexHull3 3D Convex Hulls
+/// \defgroup PkgConvexHull3 3D Convex Hulls Reference
 
 /// \defgroup PkgConvexHull3Concepts Concepts
 /// \ingroup PkgConvexHull3

@@ -95,7 +95,7 @@ is not supported yet.
 
 ### Example ###
 
-\cgalexample{min_sphere_of_spheres_d_d.cpp} 
+\cgalexample{Bounding_volumes/min_sphere_of_spheres_d_d.cpp} 
 
 */
 template< typename Traits >

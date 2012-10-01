@@ -1,4 +1,4 @@
-/// \defgroup PkgAlgebraicFoundations Algebraic Foundations
+/// \defgroup PkgAlgebraicFoundations Algebraic Foundations Reference
 
 /// \defgroup PkgAlgebraicFoundationsAlgebraicStructures Algebraic Structures
 /// \ingroup PkgAlgebraicFoundations

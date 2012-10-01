@@ -1,6 +1,6 @@
 /*!
-\example Default.cpp
-\example in_place_list_prog.cpp
-\example min_element_if_example.cpp
-\example min_max_element_example.cpp
+\example STL_Extension/Default.cpp
+\example STL_Extension/in_place_list_prog.cpp
+\example STL_Extension/min_element_if_example.cpp
+\example STL_Extension/min_max_element_example.cpp
 */

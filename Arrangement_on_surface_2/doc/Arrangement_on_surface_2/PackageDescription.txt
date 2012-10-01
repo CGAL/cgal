@@ -1,4 +1,4 @@
-/// \defgroup PkgArrangement2 2D Arrangement
+/// \defgroup PkgArrangement2 2D Arrangement Reference
 
 /// \defgroup PkgArrangement2Concepts Concepts
 /// \ingroup PkgArrangement2

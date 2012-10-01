@@ -273,7 +273,7 @@ operations on indices in a cell. It uses the default parameter of the
 `Periodic_3_Delaunay_triangulation_3` class for the triangulation
 data structure.
 
-\cgalexample{simple_example.cpp}
+\cgalexample{Periodic_3_triangulation_3/simple_example.cpp}
 
 ## Changing the Vertex Base ##
 
@@ -289,7 +289,7 @@ If the user does not need to add a type in a vertex that depends on the
 easily in the vertices. The example below shows how to add a `CGAL::Color`
 this way.
 
-\cgalexample{colored_vertices.cpp}
+\cgalexample{Periodic_3_triangulation_3/colored_vertices.cpp}
 
 ## Adding Handles ##
 
@@ -298,7 +298,7 @@ If the user needs to add a type in a vertex that depends on the
 `Cell_handle`), then he has to derive his own vertex base class,
 as the following example shows.
 
-\cgalexample{periodic_adding_handles.cpp}
+\cgalexample{Periodic_3_triangulation_3/periodic_adding_handles.cpp}
 
 ## The 27-sheeted Covering Space ##
 
@@ -313,7 +313,7 @@ the 1-sheeted covering space. However, we can insert new points such that the
 point set does not have a Delaunay triangulation in the 1-sheeted
 covering space anymore, so the triangulation is not <I>extensible</I>.
 
-\cgalexample{covering.cpp}
+\cgalexample{Periodic_3_triangulation_3/covering.cpp}
 
 ## Large Point Set ##
 
@@ -333,7 +333,7 @@ triangulation in the 1-sheeted covering space.
 It is recommended to run this example only when compiled in release
 mode because of the relatively large number of points.
 
-\cgalexample{large_point_set.cpp}
+\cgalexample{Periodic_3_triangulation_3/large_point_set.cpp}
 
 ## Geometric Access ##
 
@@ -353,7 +353,7 @@ method `is_null`. If so, we convert the periodic triangle to a
 `PK::Triangle_3`, which requires <I>exact constructions</I> to be
 exact.
 
-\cgalexample{geometric_access.cpp}
+\cgalexample{Periodic_3_triangulation_3/geometric_access.cpp}
 
 ## Periodic Alpha Shapes ##
 

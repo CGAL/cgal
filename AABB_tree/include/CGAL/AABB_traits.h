@@ -35,7 +35,7 @@
 
 namespace CGAL {
 
-/// \addtogroup PkgAABB_tree AABB Tree
+/// \addtogroup PkgAABB_tree
 /// @{
 
 /// The class AABB_traits is a model of the concept \ref
@@ -103,13 +103,14 @@ public:
   Squared_distance squared_distance_object() const { return GeomTraits().compute_squared_distance_3_object(); }
 
   /**
+   * @internal
    * @brief Sorts [first,beyond[
    * @param first iterator on first element
    * @param beyond iterator on beyond element
    * @param bbox the bounding box of [first,beyond[
    *
    * Sorts the range defined by [first,beyond[. Sort is achieved on bbox longuest
-   * axis, using the comparison function <dim>_less_than (dim in {x,y,z})
+   * axis, using the comparison function `<dim>_less_than` (dim in {x,y,z})
    */
 class Sort_primitives
 {

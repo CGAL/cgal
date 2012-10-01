@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgPolygonPartitioning2 2D Polygon Partitioning 
+/// \defgroup PkgPolygonPartitioning2 2D Polygon Partitioning Reference
 /// \defgroup PkgPolygonPartitioning2Concepts Concepts
 /// \ingroup PkgPolygonPartitioning2
 /*!

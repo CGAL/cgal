@@ -19,7 +19,7 @@ If `CGAL_PROFILE` is not defined, then `CGAL_PROFILER` is defined
 to an empty statement. Otherwise, it is defined to 
 `static CGAL::Profile_counter tmp(MSG); ++tmp;`. 
 
-\cgalexample{Profile_counter.cpp} 
+\cgalexample{Miscellany/Profile_counter.cpp} 
 
 will print at exit: 
 

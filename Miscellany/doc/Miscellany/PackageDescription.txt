@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgProfilingTools Profiling Tools, Hash Map, Union-find, Modifiers 
+/// \defgroup PkgProfilingTools Profiling Tools, Hash Map, Union-find, Modifiers Reference
 /// \defgroup PkgProfilingToolsConcepts Concepts
 /// \ingroup PkgProfilingTools
 /*!

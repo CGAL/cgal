@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgSurfaceMeshSimplification Triangulated Surface Mesh Simplification
+/// \defgroup PkgSurfaceMeshSimplification Triangulated Surface Mesh Simplification Reference
 /// \defgroup PkgSurfaceMeshSimplificationConcepts Concepts
 /// \ingroup PkgSurfaceMeshSimplification
 /*!

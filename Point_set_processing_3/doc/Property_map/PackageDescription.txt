@@ -1,4 +1,4 @@
-/// \defgroup PkgProperty_map CGAL and Boost Property Maps
+/// \defgroup PkgProperty_map CGAL and Boost Property Maps Reference
 
 /*!
 \addtogroup PkgProperty_map

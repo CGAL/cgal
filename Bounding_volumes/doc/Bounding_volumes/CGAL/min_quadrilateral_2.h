@@ -55,7 +55,7 @@ The following code generates a random convex polygon
 `P` with 20 vertices and computes the minimum enclosing 
 parallelogram of `P`. 
 
-\cgalexample{minimum_enclosing_parallelogram_2.cpp} 
+\cgalexample{Bounding_volumes/minimum_enclosing_parallelogram_2.cpp} 
 
 */
 
@@ -124,7 +124,7 @@ The following code generates a random convex polygon
 `P` with 20 vertices and computes the minimum enclosing 
 rectangle of `P`. 
 
-\cgalexample{minimum_enclosing_rectangle_2.cpp} 
+\cgalexample{Bounding_volumes/minimum_enclosing_rectangle_2.cpp} 
 
 */
 
@@ -192,7 +192,7 @@ The following code generates a random convex polygon
 `P` with 20 vertices and computes the minimum enclosing 
 strip of `P`. 
 
-\cgalexample{minimum_enclosing_strip_2.cpp} 
+\cgalexample{Bounding_volumes/minimum_enclosing_strip_2.cpp} 
 
 */
 

@@ -1,4 +1,4 @@
-/// \defgroup PkgAABB_tree 3D Fast Intersection and Distance Computation (AABB Tree)
+/// \defgroup PkgAABB_tree AABB Tree Reference
 
 /// \defgroup PkgAABB_treeConcepts Concepts
 /// \ingroup PkgAABB_tree

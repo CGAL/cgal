@@ -188,7 +188,7 @@ library of \cgal, based on whether the <span class="textsc">Gmp</span> library i
 or not. It also uses the function `print_polygon.h` listed above,
 which is located in the header file `print_utils.h`.
 
-\cgalexample{do_intersect.cpp}
+\cgalexample{Boolean_set_operations_2/do_intersect.cpp}
 
 \subsection bso_ssecpolygons_with_holes Polygons with Holes 
 
@@ -315,7 +315,7 @@ Figure \ref figsimple (b). The example uses the auxiliary function
 `print_polygon_with_holes()` listed above, which is located in
 the header file `print_utils.h` under the examples folder.
 
-\cgalexample{simple_join_intersect.cpp}
+\cgalexample{Boolean_set_operations_2/simple_join_intersect.cpp}
 
 \subsection bso_sssecpwh_bops Operations on Polygons with Holes 
 
@@ -337,7 +337,7 @@ rectangle that contains a rectangular hole in its interior, such that
 the symmetric difference between the two sets is a single polygon that
 contains of five holes:
 
-\cgalexample{symmetric_difference.cpp}
+\cgalexample{Boolean_set_operations_2/symmetric_difference.cpp}
 
 In some cases it is convenient to connect the outer boundary of a
 polygon with holes with the holes inside it. The
@@ -349,7 +349,7 @@ points that match the traversal of all vertices in the connected
 polygon (note that there are additional vertices, induced by the
 vertical walls).
 
-\cgalexample{connect_polygon.cpp}
+\cgalexample{Boolean_set_operations_2/connect_polygon.cpp}
 
 \subsection bso_ssecmain_component Operating on Polygon Sets 
 
@@ -432,7 +432,7 @@ the area of the rectangle. The resulting set \f$ S\f$ is comprised of two
 components: a polygon with a hole, and a simple polygon contained in the
 interior of this hole.
 
-\cgalexample{sequence.cpp}
+\cgalexample{Boolean_set_operations_2/sequence.cpp}
 
 \subsection bso_ssecinsert_ni Inserting Non Intersecting Polygons 
 
@@ -667,7 +667,7 @@ are disjoint, their union is computed with the `insert` method,
 while the union with the rectangles is computed with the `join`
 operator.
 
-\cgalexample{circle_segment.cpp}
+\cgalexample{Boolean_set_operations_2/circle_segment.cpp}
 
 \subsection bso_ssecgeneral_polygon_concept General Polygon Set Traits Adapter 
 
@@ -752,7 +752,7 @@ boundary. Note that this function is also responsible for subdividing
 the input B&eacute;zier curves into \f$ x\f$-monotone subcurves, as required by
 the `Gps_traits_2` adapter.
 
-\cgalexample{bezier_traits_adapter.cpp}
+\cgalexample{Boolean_set_operations_2/bezier_traits_adapter.cpp}
 
 \subsection bso_ssecaggregated_gen_ops Example - Aggregated Operations 
 
@@ -774,7 +774,7 @@ placed a unit distance from the origin, as depicted to the right. The example
 also allows users to provide a different number of discs through the command
 line.
 
-\cgalexample{set_union.cpp}
+\cgalexample{Boolean_set_operations_2/set_union.cpp}
 
 */ 
 } /* namespace CGAL */

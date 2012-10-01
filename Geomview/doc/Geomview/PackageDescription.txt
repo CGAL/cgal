@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgGeomview Geomview
+/// \defgroup PkgGeomview Geomview Reference
 /// \defgroup PkgGeomviewConcepts Concepts
 /// \ingroup PkgGeomview
 /*!

@@ -1,4 +1,4 @@
-/// \defgroup PkgIOstreams IO Streams
+/// \defgroup PkgIOstreams IO Streams Reference
 /*!
 \addtogroup PkgIOstreams
 \todo check generated documentation

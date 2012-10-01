@@ -525,7 +525,7 @@ addition it shows how to use a few of the iterators provided by the
 `Segment_Delaunay_graph_2` class in order to count a few
 site-related quantities.
 
-\cgalexample{sdg-count-sites.cpp}
+\cgalexample{Segment_Delaunay_graph_2/sdg-count-sites.cpp}
 
 ## Second Example ##
 
@@ -533,7 +533,7 @@ The following example shows how to use the segment Delaunay graph
 hierarchy along with the filtered traits class that supports
 intersecting sites.
 
-\cgalexample{sdg-filtered-traits.cpp}
+\cgalexample{Segment_Delaunay_graph_2/sdg-filtered-traits.cpp}
 
 ## Third Example ##
 
@@ -541,7 +541,7 @@ The following example demonstrates how to recover the defining sites
 for the edges of the Voronoi diagram (which are the duals of the
 edges of the segment Delaunay graph computed).
 
-\cgalexample{sdg-voronoi-edges.cpp}
+\cgalexample{Segment_Delaunay_graph_2/sdg-voronoi-edges.cpp}
 
 */ 
 } /* namespace CGAL */

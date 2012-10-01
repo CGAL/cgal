@@ -69,7 +69,7 @@ where `NT` is a field type, and finally
 first). The following example uses the filtered homogeneous kernel to 
 construct the intersection of two halfspaces. 
 
-\cgalexample{nef_2_intersection.cpp} 
+\cgalexample{Nef_2/nef_2_intersection.cpp} 
 
 After line (*) `N3` is the intersection of `N1` and `N2`. 
 The member types of `Nef_polyhedron_2< Extended_homogeneous<NT> >` 

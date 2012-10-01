@@ -1,4 +1,4 @@
-/// \defgroup PkgJet_fitting_3 Estimation of Local Differential Properties  of Point-Sampled Surfaces
+/// \defgroup PkgJet_fitting_3 Estimation of Local Differential Properties  of Point-Sampled Surfaces Reference
 /// \defgroup PkgJet_fitting_3Concepts Concepts
 /// \ingroup PkgJet_fitting_3
 /*!

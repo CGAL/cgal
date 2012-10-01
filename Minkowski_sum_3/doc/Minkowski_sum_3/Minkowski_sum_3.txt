@@ -264,7 +264,7 @@ modified by the function if it is non-convex. So, if they are needed
 further on, they need to be copied, first. The copying is not done by
 the function itself to keep the memory usage as small as possible.
 
-\cgalexample{cube_offset.cpp}
+\cgalexample{Minkowski_sum_3/cube_offset.cpp}
 
 # Glide #
 
@@ -277,7 +277,7 @@ polygonal path. The following example shows how to construct a
 polygonal path and then compute the glide operation by calling the
 function `::minkowski_sum_3`.
 
-\cgalexample{glide.cpp}
+\cgalexample{Minkowski_sum_3/glide.cpp}
 
 */ 
 } /* namespace CGAL */

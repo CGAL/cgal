@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceMesher3 3D Surface Mesh Generation
+/// \defgroup PkgSurfaceMesher3 3D Surface Mesh Generation Reference
 
 /// \defgroup PkgSurfaceMesher3Concepts Concepts
 /// \ingroup PkgSurfaceMesher3

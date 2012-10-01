@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgApolloniusGraph2 2D Apollonius Graphs (Delaunay Graphs of Disks)
+/// \defgroup PkgApolloniusGraph2 2D Apollonius Graphs (Delaunay Graphs of Disks) Reference
 /// \defgroup PkgApolloniusGraph2Concepts Concepts
 /// \ingroup PkgApolloniusGraph2
 /*!

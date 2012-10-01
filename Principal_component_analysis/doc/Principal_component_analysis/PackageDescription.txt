@@ -1,4 +1,4 @@
-/// \defgroup PkgPrincipalComponentAnalysisD Principal Component Analysis
+/// \defgroup PkgPrincipalComponentAnalysisD Principal Component Analysis Reference
 
 /*!
 \addtogroup PkgPrincipalComponentAnalysisD

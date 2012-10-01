@@ -74,7 +74,7 @@ that the \f$ <\!<\f$-operator has to been overloaded for `Point_3`,
 
 ### Example ###
 
-\cgalexample{width_simplex.cpp} 
+\cgalexample{Polytope_distance_d/width_simplex.cpp} 
 
 */
 template< typename Traits >

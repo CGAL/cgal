@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgNef2 2D Boolean Operations on Nef Polygons 
+/// \defgroup PkgNef2 2D Boolean Operations on Nef Polygons Reference
 /// \defgroup PkgNef2Concepts Concepts
 /// \ingroup PkgNef2
 /*!

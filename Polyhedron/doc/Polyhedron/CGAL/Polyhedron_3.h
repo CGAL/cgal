@@ -105,7 +105,7 @@ class Polyhedron_3;
   This example program instantiates a polyhedron using the default 
   traits class and creates a tetrahedron. 
 
-  \cgalexample{polyhedron_prog_simple.cpp} 
+  \cgalexample{Polyhedron/polyhedron_prog_simple.cpp} 
 
 */
 template< typename Traits >

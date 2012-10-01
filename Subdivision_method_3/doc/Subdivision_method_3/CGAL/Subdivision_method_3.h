@@ -43,7 +43,7 @@ the geometry masks.
 This example program subdivides a polyhedral mesh with 
 Catmull-Clark subdivision. 
 
-\cgalexample{CatmullClark_subdivision.cpp} 
+\cgalexample{Subdivision_method_3/CatmullClark_subdivision.cpp} 
 
 
 \sa `CGAL::CatmullClark_mask_3<Polyhedron_3>`

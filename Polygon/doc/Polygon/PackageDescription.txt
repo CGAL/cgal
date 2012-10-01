@@ -1,4 +1,4 @@
-/// \defgroup PkgPolygon2 2D Polygon
+/// \defgroup PkgPolygon2 2D Polygon Reference
 
 /// \defgroup PkgPolygon2Concepts Concepts
 /// \ingroup PkgPolygon2

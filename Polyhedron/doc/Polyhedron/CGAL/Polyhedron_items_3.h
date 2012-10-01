@@ -28,7 +28,7 @@ access to the new member variable.
 See also the `PolyhedronItems_3` concept for another illustrative 
 example. 
 
-\cgalexample{polyhedron_prog_color.cpp} 
+\cgalexample{Polyhedron/polyhedron_prog_color.cpp} 
 
 */
 

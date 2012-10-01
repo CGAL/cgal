@@ -250,7 +250,7 @@ three dimensional points.
 
 Using a kinetic data structure can be as simple as the following:
 \anchor figkds_sort_program
-\cgalexample{Kinetic_sort.cpp}
+\cgalexample{Kinetic_data_structures/Kinetic_sort.cpp}
 
 Using the other kinetic data
 structures is substantially identical. Please see the appropriate

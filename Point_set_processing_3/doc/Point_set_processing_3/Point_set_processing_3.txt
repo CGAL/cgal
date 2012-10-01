@@ -87,7 +87,7 @@ three normal vector coordinates `x y z nx ny nz` per line), and OFF
 The following example reads a point set from an input file and writes
 it to a file, both in the XYZ format. Positions and normals are stored
 in pairs and accessed through property maps.
-\cgalexample{read_write_xyz_point_set_example.cpp}
+\cgalexample{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
 
 # Analysis #
 
@@ -103,7 +103,7 @@ such as output mesh sizing for surface reconstruction.
 The following example reads a point set in the `xyz` format and
 computes the average spacing. Index, position and color are stored in
 a tuple and accessed through property maps.
-\cgalexample{average_spacing_example.cpp}
+\cgalexample{Point_set_processing_3/average_spacing_example.cpp}
 
 Note that other functions such as centroid or bounding volumes are
 found in other \cgal components:
@@ -127,7 +127,7 @@ The following example reads a point set and removes 5% of the
 points. It uses the `CGAL::Dereference_property_map<Point_3>` property
 map (optional as it is the default position property map of all
 functions in this component.)
-\cgalexample{remove_outliers_example.cpp}
+\cgalexample{Point_set_processing_3/remove_outliers_example.cpp}
 
 # Simplification #
 
@@ -148,7 +148,7 @@ one arbitrarily chosen point. This algorithm is slower than
 ## Example ##
 
 The following example reads a point set and simplifies it by clustering.
-\cgalexample{grid_simplification_example.cpp}
+\cgalexample{Point_set_processing_3/grid_simplification_example.cpp}
 
 \anchor Point_set_processing_3figgrid_simplification
 \image html grid_simplification.jpg "Point set simplification through grid-based clustering. Removed points are depicted in red. Notice how low-density areas (in green) are not simplified."
@@ -165,7 +165,7 @@ projecting each point onto a smooth parametric surface patch
 
 The following example generates a set of 9 points close to the `xy` 
 plane and smooths them using 8 nearest neighbors:
-\cgalexample{jet_smoothing_example.cpp}
+\cgalexample{Point_set_processing_3/jet_smoothing_example.cpp}
 
 # Normal Estimation #
 
@@ -203,7 +203,7 @@ the normals which could not be successfully oriented.
 The following example reads a point set from a file, estimates the
 normals through PCA over the 6 nearest neighbors and orients the
 normals:
-\cgalexample{normals_example.cpp}
+\cgalexample{Point_set_processing_3/normals_example.cpp}
 
 */ 
 } /* namespace CGAL */

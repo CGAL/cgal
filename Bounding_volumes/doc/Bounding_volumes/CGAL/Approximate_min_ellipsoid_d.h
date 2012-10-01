@@ -130,12 +130,12 @@ points and a \f$ 1.01\f$-approximation of \f$ \mel(P)\f$ as an EPS-file, which
 you can view using <TT>gv</TT>, for instance. (In both examples you can 
 change the variables `n` and `d` to experiment with the code.) 
 
-\cgalexample{ellipsoid.cpp} 
+\cgalexample{Bounding_volumes/ellipsoid.cpp} 
 
 The second program outputs the approximation in a format suitable 
 for display in Maplesoft's Maple. 
 
-\cgalexample{ellipsoid_for_maple.cpp} 
+\cgalexample{Bounding_volumes/ellipsoid_for_maple.cpp} 
 
 */
 template< typename Traits >

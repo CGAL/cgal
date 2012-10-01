@@ -110,7 +110,7 @@ meshes that are not topological disks.
 `CGAL::Polyhedron_3<Traits>` mesh (must be a topological disk).
 Eventually, it extracts the result from halfedges and prints it.
 
-\cgalexample{Simple_parameterization.cpp}
+\cgalexample{Surface_mesh_parameterization/Simple_parameterization.cpp}
 
 ## Enhanced %parameterize() Function ##
 
@@ -543,7 +543,7 @@ class in `polyhedron_ex_parameterization.cpp` example.
 `CGAL::Polyhedron_3<Traits>` mesh
 to make it a topological disk, then applies the default parameterization:
 
-\cgalexample{Mesh_cutting_parameterization.cpp}
+\cgalexample{Surface_mesh_parameterization/Mesh_cutting_parameterization.cpp}
 
 # Output #
 
@@ -566,7 +566,7 @@ thus the output traversal is specific to the way the (u,v) fields are implemente
 example which outputs the resulting parameterization to a EPS file. It gets the \f$ (u,v)\f$ fields computed by a parameterization method over a `CGAL::Polyhedron_3<Traits>` mesh with a
 `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>` adaptor:
 
-\cgalexample{Complete_parameterization_example.cpp}
+\cgalexample{Surface_mesh_parameterization/Complete_parameterization_example.cpp}
 
 # Complexity and Guarantees #
 

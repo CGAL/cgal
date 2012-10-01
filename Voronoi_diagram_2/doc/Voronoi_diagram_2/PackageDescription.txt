@@ -1,4 +1,4 @@
-/// \defgroup PkgVoronoiDiagramAdaptor2 2D Voronoi Diagram Adaptor 
+/// \defgroup PkgVoronoiDiagramAdaptor2 2D Voronoi Diagram Adaptor Reference
 /// \defgroup PkgVoronoiDiagramAdaptor2Concepts Concepts
 /// \ingroup PkgVoronoiDiagramAdaptor2
 

@@ -1,4 +1,4 @@
-/// \defgroup PkgInscribedAreas Inscribed Areas 
+/// \defgroup PkgInscribedAreas Inscribed Areas Reference
 
 /// \defgroup PkgInscribedAreasConcepts Concepts
 /// \ingroup PkgInscribedAreas

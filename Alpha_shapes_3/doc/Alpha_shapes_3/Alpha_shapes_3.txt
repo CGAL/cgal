@@ -276,7 +276,7 @@ requires 0.90s.
 This example builds a basic alpha shape using a Delaunay triangulation
 as underlying triangulation.
 
-\cgalexample{ex_alpha_shapes_3.cpp}
+\cgalexample{Alpha_shapes_3/ex_alpha_shapes_3.cpp}
 
 ## Building Basic Alpha Shapes for Many Points ##
 
@@ -285,7 +285,7 @@ it may pay off to use a Delaunay triangulation with `Fast_location`
 policy as underlying triangulation in order to speed up point location
 queries (cf. \ref Triangulation3seclocpol ).
 
-\cgalexample{ex_alpha_shapes_with_fast_location_3.cpp}
+\cgalexample{Alpha_shapes_3/ex_alpha_shapes_with_fast_location_3.cpp}
 
 \subsection I1_SectWeightedAS3D Example for Weighted Alpha-Shapes 
 
@@ -293,13 +293,13 @@ The following examples build a weighted alpha shape requiring a
 regular triangulation as underlying triangulation.
 The alpha shape is built in `GENERAL` mode.
 
-\cgalexample{ex_weighted_alpha_shapes_3.cpp}
+\cgalexample{Alpha_shapes_3/ex_weighted_alpha_shapes_3.cpp}
 
 \subsection I1_SectFxWeightedAS3D Example for Fixed Weighted Alpha-Shapes 
 
 Same example as previous but using a fixed value of alpha.
 
-\cgalexample{ex_fixed_weighted_alpha_shapes_3.cpp}
+\cgalexample{Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp}
 
 ## Building an Alpha Shapes with Exact Comparisons of Alpha Values ##
 
@@ -307,7 +307,7 @@ On some platforms, the alpha shapes of the set of points of this example
 cannot be computed when using a traits with inexact constructions. To be able to compute
 them with a traits with inexact constructions, the tag
 `ExactAlphaComparisonTag` is set to `CGAL::Tag_true`.
-\cgalexample{ex_alpha_shapes_exact_alpha.cpp}
+\cgalexample{Alpha_shapes_3/ex_alpha_shapes_exact_alpha.cpp}
 
 \subsection l1_SectPeriodicAS3D Example for periodic Alpha Shapes 
 
@@ -329,7 +329,7 @@ covering space is degenerate. In this case an exact constructions
 kernel needs to be used to compute the alpha shapes. Otherwise the
 results will suffer from round-off problems.
 
-\cgalexample{ex_periodic_alpha_shapes_3.cpp}
+\cgalexample{Alpha_shapes_3/ex_periodic_alpha_shapes_3.cpp}
 
 */ 
 } /* namespace CGAL */

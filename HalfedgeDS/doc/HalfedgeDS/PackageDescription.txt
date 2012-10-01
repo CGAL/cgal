@@ -1,4 +1,4 @@
-/// \defgroup PkgHDS Halfedge Data Structures  
+/// \defgroup PkgHDS Halfedge Data Structures Reference
 /// \defgroup PkgHDSConcepts Concepts
 /// \ingroup PkgHDS
 /*!

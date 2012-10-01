@@ -486,7 +486,7 @@ the Voronoi diagram destroyed because of the site inserted.
 In this section we present an example that shows how to perform point
 location queries.
 
-\cgalexample{vd_2_point_location.cpp}
+\cgalexample{Voronoi_diagram_2/vd_2_point_location.cpp}
 
 */ 
 } /* namespace CGAL */

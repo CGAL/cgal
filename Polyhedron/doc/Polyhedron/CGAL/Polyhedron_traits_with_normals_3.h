@@ -23,7 +23,7 @@ normal vector and no plane equation for each facet. We compute the
 normal vector assuming exact arithmetic (integers in this example) 
 and convex planar facets. 
 
-\cgalexample{polyhedron_prog_normals.cpp} 
+\cgalexample{Polyhedron/polyhedron_prog_normals.cpp} 
 
 */
 template< typename Kernel >

@@ -1,4 +1,4 @@
-/// \defgroup PkgSegmentDelaunayGraph2 2D Segment Delaunay Graphs 
+/// \defgroup PkgSegmentDelaunayGraph2 2D Segment Delaunay Graphs Reference
 /// \defgroup PkgSegmentDelaunayGraph2Concepts Concepts
 /// \ingroup PkgSegmentDelaunayGraph2
 /*!

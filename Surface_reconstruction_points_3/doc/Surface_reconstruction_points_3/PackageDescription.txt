@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceReconstructionFromPointSets Surface Reconstruction from Point Sets
+/// \defgroup PkgSurfaceReconstructionFromPointSets Surface Reconstruction from Point Sets Reference
 /*!
 \addtogroup PkgSurfaceReconstructionFromPointSets
 \todo check generated documentation

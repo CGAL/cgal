@@ -104,7 +104,6 @@ systems are known as the <I>Monge coordinate systems</I>. In both these
 systems, the surface is said to be given in the Monge form and its jet
 has the following canonical form :
 
-\anchor eqmonge
 \f{eqnarray}{
 z(x,y) =  & \frac{1}{2}(k_1x^2 + k_2y^2)+
 	\frac{1}{6}(b_0x^3+3b_1x^2y+3b_2xy^2+b_3y^3) \\
@@ -273,7 +272,7 @@ differential quantities from a set of points given in a text file as
 input. The first point of the list is the one at which the computation
 is performed. The user has to specify a file for the input points and
 the degrees \f$ d\f$ and \f$ d'\f$.
-\cgalexample{Single_estimation.cpp}
+\cgalexample{Jet_fitting_3/Single_estimation.cpp}
 
 ## On a Mesh ##
 

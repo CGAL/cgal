@@ -103,7 +103,7 @@ The following code generates a random convex polygon
 `p` with ten vertices and computes the maximum area inscribed 
 five-gon of `p`. 
 
-\cgalexample{extremal_polygon_2_area.cpp} 
+\cgalexample{Inscribed_areas/extremal_polygon_2_area.cpp} 
 
 */
 
@@ -172,7 +172,7 @@ The following code generates a random convex polygon
 `p` with ten vertices and computes the maximum perimeter inscribed 
 five-gon of `p`. 
 
-\cgalexample{extremal_polygon_2_perimeter.cpp} 
+\cgalexample{Inscribed_areas/extremal_polygon_2_perimeter.cpp} 
 
 */
 

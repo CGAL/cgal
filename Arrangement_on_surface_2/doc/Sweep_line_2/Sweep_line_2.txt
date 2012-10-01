@@ -46,7 +46,7 @@ a set of four input segments illustrated in figure \ref SL_secsimple.
 \anchor SL_secsimple
 \image html sl_simple.gif "Four input segments"
 
-\cgalexample{sweep_line.cpp}
+\cgalexample{Sweep_line_2/sweep_line.cpp}
 
 # Design and Implementation History #
 

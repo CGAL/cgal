@@ -1,4 +1,4 @@
-/// \defgroup PkgOptimalDistances Optimal Distances 
+/// \defgroup PkgOptimalDistances Optimal Distances Reference
 /// \defgroup PkgOptimalDistancesConcepts Concepts
 /// \ingroup PkgOptimalDistances
 

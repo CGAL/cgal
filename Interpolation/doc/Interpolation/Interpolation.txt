@@ -119,14 +119,14 @@ functions allow to avoid the re-computation.
 
 The signature of all coordinate computation functions is about the
 same.
-\cgalexample{nn_coordinates_2.cpp}
+\cgalexample{Interpolation/nn_coordinates_2.cpp}
 
 ## Example for Regular Neighbor Coordinates ##
 
 For regular neighbor coordinates, it is sufficient to replace the name
 of the function and the type of triangulation passed as parameter. A
 special traits class is needed.
-\cgalexample{rn_coordinates_2.cpp}
+\cgalexample{Interpolation/rn_coordinates_2.cpp}
 For surface neighbor coordinates, the surface normal at the query
 point must be provided, see Section \ref secsurface.
 
@@ -230,7 +230,7 @@ provided.
 
 ## Example for Surface Neighbor Coordinates ##
 
-\cgalexample{surface_neighbor_coordinates_3.cpp}
+\cgalexample{Interpolation/surface_neighbor_coordinates_3.cpp}
 
 \section secinterpolation Interpolation Methods 
 
@@ -337,11 +337,11 @@ type of natural neighbor coordinate (i.e. `CGAL::natural_neighbor_coordinates_2`
 
 \subsection subsecinterpol_examples Example for Linear Interpolation 
 
-\cgalexample{linear_interpolation_2.cpp}
+\cgalexample{Interpolation/linear_interpolation_2.cpp}
 
 ## Example for Sibson's \f$ C^1\f$ Interpolation Scheme with Gradient Estimation ##
 
-\cgalexample{sibson_interpolation_2.cpp}
+\cgalexample{Interpolation/sibson_interpolation_2.cpp}
 
 An additional example in the distribution compares numerically the errors of the different 
 interpolation functions with respect to a known function. 

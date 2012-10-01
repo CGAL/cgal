@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgEnvelope2 2D Envelopes
+/// \defgroup PkgEnvelope2 2D Envelopes Reference
 /// \defgroup PkgEnvelope2Concepts Concepts
 /// \ingroup PkgEnvelope2
 /*!

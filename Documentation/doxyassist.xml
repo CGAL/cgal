@@ -60,7 +60,7 @@ namespace for the XML file to be processed properly.  -->
         <input>../AABB_tree/doc</input>
         <input>../AABB_tree/include</input>
         <doxygen>
-          <string name="STRIP_FROM_PATH">../AABB_tree/doc/AABB_tree/</string>
+          <string name="STRIP_FROM_PATH">../AABB_tree/include</string>
           <string name="STRIP_FROM_INC_PATH">../AABB_tree/include</string>
           <string name="GENERATE_TAGFILE">./tags/AABB_tree.tag</string>
           <string name="IMAGE_PATH">../AABB_tree/doc/AABB_tree/fig</string>
@@ -614,6 +614,7 @@ namespace for the XML file to be processed properly.  -->
         <name>2D Range and Neighbor Search</name>
         <input>../Point_set_2/doc/Point_set_2</input>
         <doxygen>
+          <string name="STRIP_FROM_PATH">../Point_set_2/doc/Point_set_2/</string>
           <string name="STRIP_FROM_INC_PATH">../Point_set_2/doc/Point_set_2/</string>
           <string name="GENERATE_TAGFILE">./tags/Point_set_2.tag</string>
           <string name="EXAMPLE_PATH">../Point_set_2/examples</string>
@@ -1423,7 +1424,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Miscellany.tag=../../CGAL.CGAL.Profiling-tools--Hash-Map--Union-find--Modifiers/html</item>
           <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular-Arithmetic/html</item>
           <item>./tags/Partition_2.tag=../../CGAL.CGAL.2D-Polygon-Partitioning/html</item>
-          <item>./tags/Interpolation.tag=../../CGAL.CGAL.2D-and-Surface-Function-Interpolation</item>
+          <item>./tags/Interpolation.tag=../../CGAL.CGAL.2D-and-Surface-Function-Interpolation/html</item>
           <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
           <item>./tags/Circular_kernel_2.tag=../../CGAL.CGAL.2D-Circular-Geometry-Kernel/html</item>
           <item>./tags/Circular_kernel_3.tag=../../CGAL.CGAL.3D-Spherical-Geometry-Kernel/html</item>
@@ -1461,7 +1462,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Stream_lines_2.tag=../../CGAL.CGAL.2D-Placement-of-Streamlines/html</item>
           <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
           <item>./tags/Surface_mesh_parameterization.tag=../../CGAL.CGAL.Planar-Parameterization-of-Triangulated-Surface-Meshes</item>
-          <item>./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGALSurface-Reconstruction-from-Point-Sets/html</item>
+          <item>./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGAL.Surface-Reconstruction-from-Point-Sets/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>

@@ -1,6 +1,6 @@
 /*!
-\example Example.cpp
-\example polygon_algorithms.cpp
-\example Polygon.cpp
-\example projected_polygon.cpp
+\example Polygon/Example.cpp
+\example Polygon/polygon_algorithms.cpp
+\example Polygon/Polygon.cpp
+\example Polygon/projected_polygon.cpp
 */

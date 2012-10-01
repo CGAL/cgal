@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgStraightSkeleton2 2D Straight Skeleton and Polygon Offsetting 
+/// \defgroup PkgStraightSkeleton2 2D Straight Skeleton and Polygon Offsetting Reference
 /// \defgroup PkgStraightSkeleton2Concepts Concepts
 /// \ingroup PkgStraightSkeleton2
 /*!

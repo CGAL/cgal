@@ -1,4 +1,4 @@
-/// \defgroup PkgPeriodic3Triangulation3 3D Periodic Triangulations
+/// \defgroup PkgPeriodic3Triangulation3 3D Periodic Triangulations Reference
 
 /// \defgroup PkgPeriodic3Triangulation3Concepts Concepts
 /// \ingroup PkgPeriodic3Triangulation3

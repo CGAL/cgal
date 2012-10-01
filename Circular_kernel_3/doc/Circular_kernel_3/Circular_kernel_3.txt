@@ -172,18 +172,18 @@ In fact, the spherical kernel is documented as a concept,
 The first example shows how to construct spheres and compute
 intersections on them using the global function.
 
-\cgalexample{intersecting_spheres.cpp}
+\cgalexample{Circular_kernel_3/intersecting_spheres.cpp}
 
 The second example illustrates the use of a functor.
 
-\cgalexample{functor_has_on_3.cpp}
+\cgalexample{Circular_kernel_3/functor_has_on_3.cpp}
 
 The third example illustrates the use of a functor on objects on the
 same sphere. The intersection points of two circles on
 the same sphere are computed and their cylindrical coordinates are
 then compared.
 
-\cgalexample{functor_compare_theta_3.cpp}
+\cgalexample{Circular_kernel_3/functor_compare_theta_3.cpp}
 
 # Design and Implementation History #
 

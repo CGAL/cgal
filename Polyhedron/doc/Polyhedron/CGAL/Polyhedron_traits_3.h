@@ -26,7 +26,7 @@ for testing sufficiency of requirements.
 Instantiation of a polyhedral surface with the 
 %Cartesian kernel based on double coordinates. 
 
-\cgalexample{polyhedron_prog_simple.cpp} 
+\cgalexample{Polyhedron/polyhedron_prog_simple.cpp} 
 
 */
 template< typename Kernel >

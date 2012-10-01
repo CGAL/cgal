@@ -1,4 +1,4 @@
-/// \defgroup PkgIntersectionOfCurves2 2D Intersection of Curves
+/// \defgroup PkgIntersectionOfCurves2 2D Intersection of Curves Reference
 /*!
 \addtogroup PkgIntersectionOfCurves2
 \todo check generated documentation

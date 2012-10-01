@@ -1,4 +1,4 @@
-/// \defgroup PkgSpatialSearchingD dD Spatial Searching
+/// \defgroup PkgSpatialSearchingD dD Spatial Searching Reference
 
 /// \defgroup PkgSpatialSearchingDConcepts Concepts
 /// \ingroup PkgSpatialSearchingD

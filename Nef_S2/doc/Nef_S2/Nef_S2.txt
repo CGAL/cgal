@@ -92,7 +92,7 @@ with the type
 including the boundary, \f$ N2\f$ is another halfsphere without the boundary, and 
 \f$ N3\f$ is the intersection of \f$ N1\f$ and \f$ N2\f$.
 
-\cgalexample{nef_s2_simple.cpp}
+\cgalexample{Nef_S2/nef_s2_simple.cpp}
 
 ## Construction and Combinations ##
 
@@ -107,7 +107,7 @@ compared with the union of \f$ N2\f$ and \f$ N3\f$, \f$ N5\f$ is united with \f$
 intersected with \f$ N4\f$. At last, it is tested if \f$ N5\f$ is a subset of \f$ N2\f$ and
 if \f$ N5\f$ is not equal to \f$ N4\f$.
 
-\cgalexample{nef_s2_construction.cpp}
+\cgalexample{Nef_S2/nef_s2_construction.cpp}
 
 ## Exploration ##
 
@@ -131,7 +131,7 @@ to find out which handle type is represented, the functions
 `Nef_polyhedron_S2::is_svertex()`, `Nef_polyhedron_S2::is_shafledge()` and `Nef_polyhedron_S2::is_shalfloop()` are provided.
 Afterwards the iterator can be casted to the proper handle type.
 
-\cgalexample{nef_s2_exploration.cpp}
+\cgalexample{Nef_S2/nef_s2_exploration.cpp}
 
 ## Point Location ##
 
@@ -145,14 +145,14 @@ a `Nef_polyhedron_S2::SHafloop_const_handle` or a `Nef_polyhedron_S2::SFace_cons
 `CGAL::assign` performs the cast operation and returns a boolean which
 indicates whether the cast was successful or not.
 
-\cgalexample{nef_s2_point_location.cpp}
+\cgalexample{Nef_S2/nef_s2_point_location.cpp}
 
 ## Visualization ##
 
 `Nef_polyhedron_S2` provides an interface for OpenGL visualization via a
 Qt widget. The usage is shown in the following example:
 
-\cgalexample{nef_S2.cpp}
+\cgalexample{Nef_S2/nef_S2.cpp}
 
 */ 
 } /* namespace CGAL */

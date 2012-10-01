@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgBoxIntersectionD Intersecting Sequences of dD Iso-oriented Boxes
+/// \defgroup PkgBoxIntersectionD Intersecting Sequences of dD Iso-oriented Boxes Reference
 /// \defgroup PkgBoxIntersectionDConcepts Concepts
 /// \ingroup PkgBoxIntersectionD
 /*!

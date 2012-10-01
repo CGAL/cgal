@@ -1,4 +1,4 @@
-/// \defgroup PkgSpatialSorting Spatial Sorting 
+/// \defgroup PkgSpatialSorting Spatial Sorting Reference
 
 /// \defgroup PkgSpatialSortingConcepts Concepts
 /// \ingroup PkgSpatialSorting

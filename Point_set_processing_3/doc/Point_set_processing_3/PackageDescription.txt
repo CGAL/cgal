@@ -1,4 +1,4 @@
-/// \defgroup PkgPointSetProcessing Point Set Processing
+/// \defgroup PkgPointSetProcessing Point Set Processing Reference
 
 /// \defgroup PkgPointSetProcessingConcepts Concepts
 /// \ingroup PkgPointSetProcessing

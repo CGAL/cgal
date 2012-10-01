@@ -1,4 +1,4 @@
-/// \defgroup PkgPolynomial Polynomial 
+/// \defgroup PkgPolynomial Polynomial Reference
 /// \defgroup PkgPolynomialConcepts Concepts
 /// \ingroup PkgPolynomial
 /*!

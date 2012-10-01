@@ -1,6 +1,4 @@
-
-
-/// \defgroup PkgLinearCellComplex Linear Cell Complex
+/// \defgroup PkgLinearCellComplex Linear Cell Complex Reference
 /// \defgroup PkgLinearCellComplexConcepts Concepts
 /// \ingroup PkgLinearCellComplex
 

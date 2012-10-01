@@ -1,4 +1,4 @@
-/// \defgroup PkgTDS3 3D Triangulation Data Structure 
+/// \defgroup PkgTDS3 3D Triangulation Data Structure Reference
 /// \defgroup PkgTDS3Concepts Concepts
 /// \ingroup PkgTDS3
 /*!

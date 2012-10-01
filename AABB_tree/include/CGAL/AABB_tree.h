@@ -36,7 +36,7 @@
 
 namespace CGAL {
 
-/// \addtogroup PkgAABB_tree AABB Tree
+/// \addtogroup PkgAABB_tree
 /// @{
 
 	/**

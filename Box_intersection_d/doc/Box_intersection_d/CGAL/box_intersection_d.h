@@ -205,7 +205,7 @@ namespace CGAL {
   the second `query` box intersects the four boxes in the 
   upper-right quadrant. 
 
-  \cgalexample{minimal.cpp} 
+  \cgalexample{Box_intersection_d/minimal.cpp} 
 
 */
 
@@ -500,7 +500,7 @@ namespace CGAL {
   be 20 pairwise intersections, but the order in which they are reported 
   is non-intuitive. 
 
-  \cgalexample{minimal_self.cpp} 
+  \cgalexample{Box_intersection_d/minimal_self.cpp} 
 
 */
 

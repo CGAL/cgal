@@ -430,19 +430,19 @@ nearest neighbor queries.
 
 ## First Example ##
 
-\cgalexample{ag2_exact_traits.cpp}
+\cgalexample{Apollonius_graph_2/ag2_exact_traits.cpp}
 
 ## Second Example ##
 
-\cgalexample{ag2_exact_traits_sqrt.cpp}
+\cgalexample{Apollonius_graph_2/ag2_exact_traits_sqrt.cpp}
 
 ## Third Example ##
 
-\cgalexample{ag2_filtered_traits_no_hidden.cpp}
+\cgalexample{Apollonius_graph_2/ag2_filtered_traits_no_hidden.cpp}
 
 ## Fourth Example ##
 
-\cgalexample{ag2_hierarchy.cpp}
+\cgalexample{Apollonius_graph_2/ag2_hierarchy.cpp}
 
 */ 
 } /* namespace CGAL */

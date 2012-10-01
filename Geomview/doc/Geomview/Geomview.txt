@@ -49,7 +49,7 @@ take a look at the implementation and at the Geomview manual.
 The following program ouputs successively a 2D
 Delaunay triangulation (projected), a 3D Delaunay, and a terrain
 from the set of points.
-\cgalexample{gv_terrain.cpp}
+\cgalexample{Geomview/gv_terrain.cpp}
 
 */ 
 } /* namespace CGAL */

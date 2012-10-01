@@ -1,4 +1,11 @@
 /*!
+\example Convex_hull_2/array_convex_hull_2.cpp
+\example Convex_hull_2/vector_convex_hull_2.cpp
+\example Convex_hull_2/iostream_convex_hull_2.cpp
+\example Convex_hull_2/convex_hull_yz.cpp
+*/
+
+/*!
 
 \page introduction Hello World
 \autotoc

@@ -39,17 +39,17 @@ This component provides property maps to support these cases:
 ## Example with %Dereference_property_map ##
 
 The following example reads a point set and removes 5% of the points. It uses `CGAL::Dereference_property_map<Point_3>` as position property map.
-\cgalexample{remove_outliers_example.cpp}
+\cgalexample{Property_map/remove_outliers_example.cpp}
 
 ## Example with Pairs ##
 
 The following example reads a point set from an input file and writes it to a file, both in the xyz format. Position and normal are stored in pairs and accessed through property maps.
-\cgalexample{read_write_xyz_point_set_example.cpp}
+\cgalexample{Property_map/read_write_xyz_point_set_example.cpp}
 
 ## Example with Tuples ##
 
 The following example reads a point set in the `xyz` format and computes the average spacing. Index, position and color are stored in a tuple and accessed through property maps.
-\cgalexample{average_spacing_example.cpp}
+\cgalexample{Property_map/average_spacing_example.cpp}
 
 */ 
 } /* namespace CGAL */

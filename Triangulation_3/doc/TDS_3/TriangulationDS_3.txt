@@ -303,14 +303,14 @@ typedef Triangulation_vertex_base_3<GT, Vb2> Other;
 The following example shows how to construct a 3D triangulation data
 structure by inserting vertices.
 
-\cgalexample{tds.cpp}
+\cgalexample{TDS_3/tds.cpp}
 
 ## Cross-Linking Between a 2D and a 3D Data Structures ##
 
 This example program illustrates how to setup a 2D and a 3D triangulation data
 structures whose vertices respectively store vertex handles of the other one.
 
-\cgalexample{linking_2d_and_3d.cpp}
+\cgalexample{TDS_3/linking_2d_and_3d.cpp}
 
 # Design and Implementation History #
 

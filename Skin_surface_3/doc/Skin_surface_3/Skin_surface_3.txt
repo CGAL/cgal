@@ -254,7 +254,7 @@ Gramicidin A
 The following example shows the construction of a coarse mesh of the
 skin surface using the function `::make_skin_surface_mesh_3`. The
 output is a `CGAL::Polyhedron`.
-\cgalexample{skin_surface_simple.cpp}
+\cgalexample{Skin_surface_3/skin_surface_simple.cpp}
 
 ## Meshing and Subdividing a Skin Surface ##
 
@@ -269,7 +269,7 @@ Next, the coarse mesh is refined to obtain a better approximation. The
 use of `CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3>` in
 the `CGAL::Polyhedron` is not necessary, but gives the subdivision
 a significant speedup.
-\cgalexample{skin_surface_subdiv.cpp}
+\cgalexample{Skin_surface_3/skin_surface_subdiv.cpp}
 
 */ 
 } /* namespace CGAL */

@@ -95,7 +95,7 @@ of an arrangement of four line segments. In particular it produces
 a list of points that are the vertices of the resulting polylines in a plane
 tiled with one-unit square pixels.
 
-\cgalexample{snap_rounding.cpp}
+\cgalexample{Snap_rounding_2/snap_rounding.cpp}
 
 This program generates four polylines, one for each input segment. The exact
 output follows:

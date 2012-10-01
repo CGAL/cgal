@@ -62,7 +62,7 @@ standard two-dimensional \cgal kernel (`CGAL::Point_2<K>`
 and `CGAL::Line_2<K>`). Their user interface is thus defined in
 the corresponding reference pages.
 
-\cgalexample{nef_2_construction.cpp}
+\cgalexample{Nef_2/nef_2_construction.cpp}
 
 Planar halfspaces (as used in the definition) are modelled by oriented
 lines. In the previous example `N1` is the Nef polyhedron
