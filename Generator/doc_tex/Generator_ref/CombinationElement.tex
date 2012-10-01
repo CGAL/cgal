@@ -1,0 +1,44 @@
+\begin{ccRefConcept}{CombinationElement}
+
+\ccDefinition
+
+A \ccRefName\ can be used as template parameter for the class
+\ccc{Combination_enumerator<CombinationElement>}.
+
+\ccCreationVariable{e}
+
+\ccCreation
+
+\ccConstructor{CombinationElement(const CombinationElement & e2)}{Copy
+constructor.}
+
+\ccOperations
+
+\ccMethod{void operator++();}{Incrementation of \ccVar.}
+
+\ccMethod{void operator--();}{Decrementation of \ccVar.}
+
+\ccMethod{bool operator<(const CombinationElement & e2);}{Total order comparison.}
+
+\ccMethod{bool operator==(const CombinationElement & e2);}{Equality test.}
+
+\ccMethod{CombinationElement operator+(int i);}{%
+Equivalent to calling \ccc{++}\ccVar\ ~\ccc{i} times if \ccc{i} is positive.
+Equivalent to calling \ccc{--}\ccVar\ ~\ccc{(-i)} times if \ccc{i} is negative.}
+
+\ccMethod{int operator-(const CombinationElement & e2);}{Compute the difference
+\ccc{d} between \ccc{e2} and \ccVar\ so that \ccc{e2+d==e}.}
+
+\ccHasModels
+
+Any integer type (\ccc{char}, \ccc{short}, \ccc{int}, \ccc{long}, etc.)
+
+Pointers
+
+Random access iterators
+
+\ccSeeAlso
+
+\ccc{Combination_enumerator<CombinationElement>}
+
+\end{ccRefConcept}
