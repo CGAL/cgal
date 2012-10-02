@@ -19,7 +19,7 @@ predicates and constructions on these objects.
 \hasModel CGAL::Simple_homogeneous 
 
 In addition to the requirements described for the traits class of 
-\refines ::Triangulation_3, the geometric traits class of a 
+`CGAL::Triangulation_3`, the geometric traits class of a 
   Delaunay triangulation must fulfill the following requirements: 
 
 */
@@ -28,7 +28,7 @@ class DelaunayTriangulationTraits_3 {
 public:
 
 /// \name Types 
-CONVERROR Check if this needs to be spread\n/// In addition, only when the dual operations are used, the traits class must provide the following constructor objects:
+
 /// @{
 
 /*! 
@@ -79,6 +79,14 @@ It is only needed when using the `Fast_location` policy or the
 `nearest_vertex` function. 
 */ 
 typedef Hidden_type Compare_distance_3; 
+
+
+/// @}
+
+/*! \name
+ In addition, only when the dual operations are used, the traits class must provide the following constructor objects:
+*/
+/// @{
 
 /*! 
 A constructor object that must provide the function operator 
@@ -132,7 +140,7 @@ typedef Hidden_type Construct_ray_3;
 /// @} 
 
 /// \name Operations 
-CONVERROR Check if this needs to be spread\n/// The following functions give access to the predicate and construction objects: When using the `Fast_location` policy or the `nearest_vertex` function, the traits must provide: The following functions must be provided only if the methods of `Delaunay_triangulation_3` returning elements of the Voronoi diagram are instantiated:
+/// The following functions give access to the predicate and construction objects:
 /// @{
 
 /*! 
@@ -145,10 +153,27 @@ Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object();
 */ 
 Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object(); 
 
+
+/// @}
+
+/*! \name
+When using the `Fast_location` policy or the `CGAL::Delaunay_trioangulation_3::nearest_vertex()` function, the traits must provide:
+*/
+/// @{
+
 /*! 
 
 */ 
 Compare_distance_3 compare_distance_3_object(); 
+
+
+
+/// @}
+
+/*! \name
+The following functions must be provided only if the methods of `Delaunay_triangulation_3` returning elements of the Voronoi diagram are instantiated:
+*/
+/// @{
 
 /*! 
 
