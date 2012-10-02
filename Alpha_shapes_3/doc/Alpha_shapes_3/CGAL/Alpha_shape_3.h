@@ -73,16 +73,11 @@ In case `ExactAlphaComparisonTag` is `CGAL::Tag_false`, it is Gt::FT.
 
 In case `ExactAlphaComparisonTag` is `CGAL::Tag_true`, it is a number type 
 allowing filtered exact comparisons (that is, interval arithmetic is first used before 
-resorting to exact arithmetic). 
-
-Access to the interval containing the exact value is provided through the function 
+resorting to exact arithmetic). Access to the interval containing the exact value is provided through the function 
 `FT::Approximate_nt approx() const` where `FT::Approximate_nt` is `Interval_nt<Protected>` 
-with `Protected=true`. 
-
-Access to the exact value is provided through the function 
+with `Protected=true`. Access to the exact value is provided through the function 
 `FT::Exact_nt exact() const` where `FT::Exact_nt` depends on the configuration of CGAL 
 (it is `CGAL::Gmpq` if `gmp` is available and `CGAL::Quotient<CGAL::MP_Float>` otherwise). 
-
 It must be noted that an object of type `FT` is valid as long as the alpha shapes class that creates 
 it is valid and has not been modified. 
 For convenience, classical comparison operators are provided for the type `FT`. 

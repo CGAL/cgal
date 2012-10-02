@@ -135,7 +135,7 @@ get the current \f$ \alpha\f$-value, as well as an iterator that enumerates
 the \f$ \alpha\f$ values where the alpha shape changes.
 
 Also the class has a filtration member function that, given
-an output iterator with `CGAL::object`
+an output iterator with `CGAL::Object`
 as value type, outputs the faces of the triangulation 
 according to the 
 order of apparition in the alpha complex when alpha increases.
@@ -207,13 +207,13 @@ the class `CGAL::Regular_triangulation_3`. The triangulation needs a geometric t
 and a triangulation data structure as template parameters.
 
 For the class `CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>`, the requirements of
-the traits class are described in the concepts `CGAL::AlphaShapeTraits_3`
-in the non-weighted case and `CGAL::WeightedAlphaShapeTraits_3` in the weighted case.
+the traits class are described in the concepts `AlphaShapeTraits_3`
+in the non-weighted case and `WeightedAlphaShapeTraits_3` in the weighted case.
 The \cgal kernels are models in the non-weighted case, and 
 the class `CGAL::Regular_triangulation_euclidean_traits_3` is a model
 in the weighted case.
 The triangulation data structure of the triangulation
-has to be a model of the concept `CGAL::TriangulationDataStructure_3`,
+has to be a model of the concept `TriangulationDataStructure_3`,
 and it must be parameterized with vertex and cell classes, which are model of the concepts
 `AlphaShapeVertex_3` and `AlphaShapeCell_3`.
 The package provides by default the classes
@@ -227,13 +227,13 @@ triangulation the vertex and cell classes need to be models to both
 (see example \ref l1_SectPeriodicAS3D ).
 
 For the class `CGAL::Fixed_alpha_shape_3<Dt>`, the requirements of
-the traits class are described in the concepts `CGAL::FixedAlphaShapeTraits_3`
-in the non-weighted case and `CGAL::FixedWeightedAlphaShapeTraits_3` in the weighted case.
+the traits class are described in the concepts `FixedAlphaShapeTraits_3`
+in the non-weighted case and `FixedWeightedAlphaShapeTraits_3` in the weighted case.
 The \cgal kernels are models in the non-weighted case, and 
 the class `CGAL::Regular_triangulation_euclidean_traits_3` is a model
 in the weighted case.
 The triangulation data structure of the triangulation
-has to be a model of the concept `CGAL::TriangulationDataStructure_3`,
+has to be a model of the concept `TriangulationDataStructure_3`,
 and it must be parameterized with vertex and cell classes, which are model of the concepts
 `FixedAlphaShapeVertex_3` and `FixedAlphaShapeCell_3`.
 The package provides models `CGAL::Fixed_alpha_shape_vertex_base_3<Gt>` 

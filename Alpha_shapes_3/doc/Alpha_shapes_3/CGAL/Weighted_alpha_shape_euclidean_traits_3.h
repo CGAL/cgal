@@ -14,7 +14,7 @@ The class `Weighted_alpha_shape_euclidean_traits_3` is the default model for the
 the underlying triangulation of a weighted alpha shapes. 
 `K` must be a kernel. 
 
-\refines ::Regular_triangulation_euclidean_traits_3<K, typename K::FT>  
+\refines CGAL::Regular_triangulation_euclidean_traits_3<K, typename K::FT>  
 
 \models ::WeightedAlphaShapeTraits_3 
 

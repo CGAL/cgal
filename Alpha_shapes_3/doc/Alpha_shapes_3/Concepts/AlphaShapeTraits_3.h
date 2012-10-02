@@ -40,16 +40,13 @@ typedef Hidden_type FT;
 /*! 
 An object constructor able to compute: 
 
-the squared radius of the 
+- the squared radius of the 
 smallest circumscribing sphere of 4 points `p0, p1, p2, p3`, 
-
-the squared radius of the 
+- the squared radius of the 
 smallest circumscribing sphere of 3 points `p0, p1, p2`, 
-
-the squared radius of the smallest circumscribing sphere 
+- the squared radius of the smallest circumscribing sphere 
 of 2 points `p0, p1`, 
-
-and also the squared radius of the smallest circumscribing sphere 
+- the squared radius of the smallest circumscribing sphere 
 to a single point `p0` (which is `FT(0)`). 
 */ 
 typedef Hidden_type Compute_squared_radius_3; 

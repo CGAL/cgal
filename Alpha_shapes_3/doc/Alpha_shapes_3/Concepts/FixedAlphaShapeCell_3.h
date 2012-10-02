@@ -20,17 +20,17 @@ public:
 /*! 
 default constructor. 
 */ 
-Alpha_shape_cell_base_3(); 
+FixedAlphaShapeCell_3(); 
 
 /*! 
 constructor setting the incident vertices. 
 */ 
-Alpha_shape_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1, const Vertex_handle& v2, const Vertex_handle& v3); 
+FixedAlphaShapeCell_3(const Vertex_handle& v0, const Vertex_handle& v1, const Vertex_handle& v2, const Vertex_handle& v3); 
 
 /*! 
 constructor setting the incident vertices and the neighboring cells. 
 */ 
-Alpha_shape_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1, const Vertex_handle& v2, const Vertex_handle& v3, 
+FixedAlphaShapeCell_3(const Vertex_handle& v0, const Vertex_handle& v1, const Vertex_handle& v2, const Vertex_handle& v3, 
 const Cell_handle& n0, const Cell_handle& n1, const Cell_handle& n2, const Cell_handle& n3); 
 
 /// @} 

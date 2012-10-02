@@ -41,18 +41,18 @@ typedef Hidden_type Alpha_status;
 /*! 
 default constructor. 
 */ 
-Alpha_shape_vertex_base_3(); 
+AlphaShapeVertex_3(); 
 
 /*! 
 constructor setting 
 the point associated to. 
 */ 
-Alpha_shape_vertex_base_3(Point p); 
+AlphaShapeVertex_3(Point p); 
 
 /*! 
 constructor setting the point associated to and an incident cell. 
 */ 
-Alpha_shape_vertex_base_3(Point p, const Cell_handle& c); 
+AlphaShapeVertex_3(Point p, const Cell_handle& c); 
 
 /// @} 
 

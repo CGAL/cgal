@@ -37,20 +37,14 @@ public:
 typedef Hidden_type Comparison_result; 
 
 /*! 
-An object constructor able to compare 
-
-the squared radius of the smallest circumscribing sphere of 
+An object constructor able to compare the squared radius of the smallest circumscribing sphere of 
 either four, three, two or one point(s) 
 with a given value of alpha. 
 It provides: 
-
-`Comparison_result operator()(Point_3,Point_3,Point_3,Point_3)` 
-
-`Comparison_result operator()(Point_3,Point_3,Point_3)` 
-
-`Comparison_result operator()(Point_3,Point_3)` 
-
-`Comparison_result operator()(Point_3)` 
+- `Comparison_result operator()(Point_3,Point_3,Point_3,Point_3)` 
+- `Comparison_result operator()(Point_3,Point_3,Point_3)` 
+- `Comparison_result operator()(Point_3,Point_3)` 
+- `Comparison_result operator()(Point_3)` 
 
 */ 
 typedef Hidden_type Compare_squared_radius_3; 
@@ -63,7 +57,7 @@ typedef Hidden_type Compare_squared_radius_3;
 /*! 
 Default constructor. 
 */ 
-AlphaShapeTraits_3(); 
+FixedAlphaShapeTraits_3(); 
 
 /// @} 
 

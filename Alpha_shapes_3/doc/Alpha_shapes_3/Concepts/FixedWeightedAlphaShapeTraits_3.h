@@ -33,14 +33,10 @@ An object constructor able to compare the squared radius of the
 smallest sphere orthogonal to either four, three, two or one weighted point(s) 
 to a given value of alpha. 
 It provides: 
-
-`Comparison_result operator()(Weighted_point_3 ,Weighted_point_3 ,Weighted_point_3 ,Weighted_point_3 )` 
-
-`Comparison_result operator()(Weighted_point_3 ,Weighted_point_3 ,Weighted_point_3 )` 
-
-`Comparison_result operator()(Weighted_point_3 ,Weighted_point_3 )` 
-
-`Comparison_result operator()(Weighted_point_3 )` 
+- `Comparison_result operator()(Weighted_point_3 ,Weighted_point_3 ,Weighted_point_3 ,Weighted_point_3 )` 
+- `Comparison_result operator()(Weighted_point_3 ,Weighted_point_3 ,Weighted_point_3 )` 
+- `Comparison_result operator()(Weighted_point_3 ,Weighted_point_3 )` 
+- `Comparison_result operator()(Weighted_point_3 )` 
 
 */ 
 typedef Hidden_type Compare_weighted_squared_radius_3; 
@@ -53,7 +49,7 @@ typedef Hidden_type Compare_weighted_squared_radius_3;
 /*! 
 default constructor. 
 */ 
-WeightedAlphaShapeTraits_3(); 
+FixedWeightedAlphaShapeTraits_3(); 
 
 /// @} 
 

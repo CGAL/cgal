@@ -3,7 +3,6 @@
 /// \ingroup PkgAlphaShapes3
 /*!
 \addtogroup PkgAlphaShapes3
-\todo check generated documentation
 \PkgDescriptionBegin{3D Alpha Shapes,PkgAlphaShapes3Summary}
 \PkgPicture{alpha_shapes_3_small.png}
 \PkgAuthor{Tran Kai Frank Da, S&eacute;bastien Loriot, and Mariette Yvinec}
