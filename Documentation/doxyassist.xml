@@ -1083,6 +1083,7 @@ namespace for the XML file to be processed properly.  -->
           </list>
           <list name="TAGFILES" append="true">
             <item>./tags/Boolean_set_operations_2.tag=../../CGAL.CGAL.2D-Regularized-Boolean-Set-Operations/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
       </project>
