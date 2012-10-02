@@ -85,6 +85,9 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   std::cout.flush();
   CGAL::insert_non_intersecting_curves(arr, xcurves.begin(), xcurves.end());
   std::cout << "inserted" << std::endl;
+  for (Halfedge_iterator hit = arr.halfedges_begin(); hit != arr.halfedges_end(); hit++) {
+    halfedges.push_back(hit);
+  }
 #endif
 
   curves.clear();
@@ -109,6 +112,9 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
     std::cout << "Faces:" << std::endl;
     Arrangement_2::Face_const_iterator fit;
     for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
+      std::cout << "  Face: "
+                << &(*fit)
+                << std::endl;
       std::cout << "  Outer CCBs: "
                 << std::distance(fit->outer_ccbs_begin(), fit->outer_ccbs_end())
                 << std::endl;
