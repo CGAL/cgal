@@ -3,7 +3,6 @@
 /// \ingroup PkgCGALIpelets
 /*!
 \addtogroup PkgCGALIpelets
-\todo check generated documentation
 \PkgDescriptionBegin{CGAL Ipelets,PkgCGALIpeletsSummary}
 \PkgPicture{ipeico.jpg}
 \PkgAuthor{S&eacute;bastien Loriot and Sylvain Pion}

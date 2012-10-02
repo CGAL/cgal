@@ -27,8 +27,8 @@ of ipelets: alpha-shape, arrangements, Voronoi diagrams, convex hulls, Hilbert c
 The class `CGAL::Ipelet_base` derives from the class `Ipelets` from Ipe
 and has one template parameter indicating 
 which kernel must be used within the ipelet. 
-In practice, we recommend to use either `CGAL::Exact_predicate_exact_constructions_kernel`
-or `CGAL::Exact_predicate_inexact_construction_kernel`.
+In practice, we recommend to use either `CGAL::Exact_predicates_exact_constructions_kernel`
+or `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
 Two main methods are provided by the `CGAL::Ipelet_base` class.
 The first one, `read_active_objects` retrieves all
