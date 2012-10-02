@@ -7,7 +7,7 @@ namespace CGAL {
 
 \authors Pierre Alliez, Laurent Saboret, Ga&euml;l Guennebaud
 
-# Introduction #
+# Introduction # {#Surface_reconstruction_points_3Introduction}
 
 This \cgal component implements a surface reconstruction method which
 takes as input point sets with oriented normals and computes an
@@ -26,7 +26,7 @@ function of the inferred solid (Poisson Surface Reconstruction -
 referred to as Poisson). Poisson is a two steps process: it requires
 solving for the implicit function before function evaluation.
 
-# Common Reconstruction Pipeline #
+# Common Reconstruction Pipeline # {#Surface_reconstruction_points_3Common}
 
 Surface reconstruction from point sets is often a sequential process
 with the following steps: 1) Scanning and scan alignment produce a set
@@ -46,7 +46,7 @@ removal, smoothing, normal estimation and normal orientation.
 \anchor Surface_reconstruction_points_3figpipeline
 \image html pipeline.jpg "Common surface reconstruction pipeline."
 
-# Poisson #
+# Poisson # {#Surface_reconstruction_points_3Poisson}
 
 Given a set of 3D points with oriented normals (denoted oriented
 points in the sequel) sampled on the boundary of a 3D solid, the
@@ -103,7 +103,7 @@ For details see: `CGAL::Poisson_reconstruction_function<GeomTraits>`
 
 \cgalexample{Surface_reconstruction_points_3/poisson_reconstruction_example.cpp}
 
-# Contouring #
+# Contouring # {#Surface_reconstruction_points_3Contouring}
 
 
 The computed implicit functions can be iso-contoured to reconstruct a
@@ -117,7 +117,7 @@ The parameter `Tag` affects the behavior of `make_surface_mesh()`:
 - `Manifold_with_boundary_tag`: the output mesh is guaranteed to be manifold and may have boundaries.
 - `Non_manifold_tag`: the output mesh has no guarantee and hence is outputted as a polygon soup.
 
-# Output #
+# Output # {#Surface_reconstruction_points_3Output}
 
 The surface reconstructed by `make_surface_mesh()` is required to be a
 model of the concept `SurfaceMeshComplex_2InTriangulation_3`, a data
@@ -134,7 +134,7 @@ and to convert it to a polyhedron (when it is manifold):
 
 See `poisson_reconstruction_example.cpp` example above.
 
-# Case Studies #
+# Case Studies # {#Surface_reconstruction_points_3Case}
 
 \anchor surface_reconstruction_section_case_studies
 
@@ -305,7 +305,8 @@ into smoothed sharp creases.
 \anchor Surface_reconstruction_points_3figsharp_features
 \image html sharp_features.jpg "Left: 5K points sampled on a mechanical piece with sharp features (creases, darts and corners). Right: reconstructed surface mesh with smoothed creases."
 
-# Performances #
+# Performances # {Surface_reconstruction_points_3
+The}
 
 \anchor surface_reconstruction_section_performances
 

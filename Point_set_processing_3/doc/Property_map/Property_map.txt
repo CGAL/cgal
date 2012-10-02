@@ -8,7 +8,7 @@ namespace CGAL {
 
 \authors Andreas Fabri and Laurent Saboret
 
-# A Short Introduction to the Boost Property Maps Library #
+# A Short Introduction to the Boost Property Maps Library # {#Property_mapA}
 
 The Boost Property Map Library consists mainly of interface specifications in the form of concepts. These interface specifications are intended for use by implementors of generic libraries in communicating requirements on template parameters to their users. In particular, the Boost Property Map concepts define a general purpose interface for mapping key objects to corresponding value objects, thereby hiding the details of how the mapping is implemented from algorithms. The implementation of types fulfilling the property map interface is up to the client of the algorithm to provide.
 
@@ -21,7 +21,7 @@ the fly. This is an "implementation detail" of the particular property map.<BR>
 
 Property maps in the Boost manuals: <A HREF="http://www.boost.org/libs/property_map/doc/property_map.html"><TT>http://www.boost.org/libs/property_map/doc/property_map.html</TT></A>
 
-# %CGAL and Boost Property Maps #
+# CGAL and Boost Property Maps # {#Property_mapCGAL}
 
 Some algorithms in \cgal take as input parameters iterator ranges and property maps to access information attached to elements of the sequence.
 

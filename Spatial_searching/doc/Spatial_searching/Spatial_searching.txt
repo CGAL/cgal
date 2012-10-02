@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Hans Tangelder and Andreas Fabri
 
-# Introduction #
+# Introduction # {#Spatial_searching}Introduction}
 
 The spatial searching package implements exact and approximate
 distance browsing by providing implementations of algorithms
@@ -217,7 +217,7 @@ generate empty cells.
 
 </DL>
 
-# Example Programs #
+# Example Programs # {#Spatial_searchingExample}
 
 We give six examples. The first example illustrates k nearest neighbor
 searching, and the second example incremental neighbor searching. 
@@ -333,7 +333,7 @@ splitting rule, needed to set the maximal allowed bucket size.
 
 \cgalexample{Spatial_searching/using_fair_splitting_rule.cpp}
 
-# Software Design #
+# Software Design # {#Spatial_searchingSoftware}
 
 \subsection Kd_tree_subsection The k-d tree 
 

@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Lutz Kettner
 
-# Introduction #
+# Introduction # {#HalfedgeDSIntroduction}
 
 A halfedge data structure (abbreviated as `HalfedgeDS`, or
 `HDS` for template parameters) is an edge-centered data structure
@@ -54,7 +54,7 @@ polyhedral surface `Polyhedron_3` uses by default the new
 design. See Chapter \ref chapterPolyhedron for how to still select
 the old implementation.
 
-# Software Design #
+# Software Design # {#HalfedgeDSSoftware}
 
 \anchor figureHalfedgeDSDesign
 \image latex hds_design "Responsibilities of the different layers in the halfedge data-structure design." width=0.7
@@ -135,7 +135,7 @@ the `HalfedgeDS`, which gives us the coherent type
 structure in this design, especially if compared to our previous
 design.
 
-# Example Programs #
+# Example Programs # {#HalfedgeDSExample}
 
 \anchor sectionHdsExamples
 

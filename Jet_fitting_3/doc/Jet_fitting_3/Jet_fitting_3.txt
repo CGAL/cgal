@@ -165,7 +165,7 @@ be relevant. To inform the user of these issues, we provide the PCA
 results and the condition number of the fitting. In any case, it is up
 to the user to judge if the result meets its need.
 
-# Software Design #
+# Software Design # {#Jet_fitting_3}Software}
 
 ## Options and Interface Specifications ##
 
@@ -263,7 +263,7 @@ Second the Monge basis and coefficients, computed with the
 (this is done using the `CGAL::Cartesian_converter` and the
 `CGAL::NT_converter`).
 
-# Examples #
+# Examples # {#Jet_fitting_3Examples}
 
 ## Single Estimation about a Point of a Point Cloud ##
 
@@ -298,7 +298,7 @@ provide illustrations of principal directions of curvature.
 
 <center><b>Principal directions of curvature and normals at vertices of a mesh of the graph of the function \f$ f(x,y)=2x^2+y^2\f$.</b></center>
 
-# Mathematical and Algorithmic Details #
+# Mathematical and Algorithmic Details # {#Jet_fitting_3Mathematical}
 
 \anchor secdetails
 In this Section, we detail the mathematics involved, in order to

@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Michael Hemmer and Sylvain Pion
 
-# Introduction #
+# Introduction # {#Modular_arithmeticIntroduction}
 
 Modular arithmetic is a fundamental tool in modern algebra systems. 
 In conjunction with the Chinese remainder theorem it serves as the 
@@ -64,7 +64,7 @@ The class `CGAL::Modular_traits<T>` is designed such that the concept
 In the following example modular arithmetic is used as a filter. 
 \cgalexample{Modular_arithmetic/modular_filter.cpp}
 
-# Design and Implementation History #
+# Design and Implementation History # {#Modular_arithmeticDesign}
 
 The class `CGAL::Residue` is based on the C-code of Sylvain Pion et. al. 
 as it was presented in \cite bepp-sdrns-99.

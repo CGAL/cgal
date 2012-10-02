@@ -17,7 +17,7 @@ As the scope of \cgal is geometry and not graph algorithms, we
 provide the necessary classes and functions that allow to use the
 algorithms of the <A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library (sc{Bgl})</A> \cite cgal:sll-bgl-02 for \cgal data structures.
 
-# A Short Introduction to the Boost Graph Library #
+# A Short Introduction to the Boost Graph Library # {#BGLA}
 
 The algorithms of the \sc{Bgl} operate on models of the various <I>graph concepts</I>. 
 The <I>traits class</I> `boost::graph_traits` allows the algorithms to determine the types of vertices and edges. 
@@ -125,7 +125,7 @@ they are concatenated with the dot operator.<BR>
 
 Named parameters in the \sc{Bgl} manual: <A HREF="http://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>http://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>
 
-# Extensions of the BGL #
+# Extensions of the BGL # {#BGLExtensions}
 
 \cgal provides the partial specializations and free functions such that 
 several data structures become model of some of the \sc{Bgl} graph concepts.
@@ -136,7 +136,7 @@ counterclockwise neighbor of an edge around a given vertex.
 These extensions are used by the surface simplification algorithms which follow
 the design of the \sc{Bgl} as sketched in the previous section.
 
-# Header Files, Namespaces, and Naming Conventions #
+# Header Files, Namespaces, and Naming Conventions # {#BGLHeader}
 
 As we interface two libraries we have to explain what resides in which namespace,
 and what naming conventions we apply to what.
@@ -148,7 +148,7 @@ The `halfedge_graph_traits` class is in the namespace `CGAL`,
 but it is not capitalized as the `boost::graph_traits` is not.
 The same holds for the types and enums for vertex and edge properties.
 
-# Polyhedral Surfaces as Model of the Boost Graph Concept #
+# Polyhedral Surfaces as Model of the Boost Graph Concept # {#BGLPolyhedral}
 
 The class `Polyhedron_3` is model of the graph concept. Furthermore
 this chapter introduces a new graph concept, the `HalfedgeGraph`.
@@ -170,7 +170,7 @@ The main function illustrates the access to the id() field.
 
 \cgalexample{BGL/kruskal_with_stored_id.cpp}
 
-# Triangulations as Models of the Boost Graph Concept #
+# Triangulations as Models of the Boost Graph Concept # {#BGLTriangulations}
 
 Triangulations have vertices and faces. Edges are pairs of a face and the
 index of the edge.
@@ -213,7 +213,7 @@ for the Delaunay triangulation.
 
 \cgalexample{BGL/dijkstra_with_internal_properties.cpp}
 
-# Arrangements as Models of the Boost Graph Concept #
+# Arrangements as Models of the Boost Graph Concept # {#BGLArrangements}
 
 For the arrangements \cgal offers the graph traits for the arrangement
 itself as well as for its dual graph.

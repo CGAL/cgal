@@ -70,7 +70,7 @@ case the quadratic program is <I>infeasible</I>, or there might be
 feasible solutions of arbitrarily small objective function value, in
 which case the program is <I>unbounded</I>.
 
-# Design, Efficiency, and Robustness #
+# Design, Efficiency, and Robustness # {#QP_solverDesign}
 
 The design of the package is quite simple. The linear
 or quadratic program to be solved is supplied in form of an object 
@@ -575,7 +575,7 @@ readable code.
 
 \cgalexample{QP_solver/solve_convex_hull_containment_lp2.h}
 
-# Important Variables and Constraints #
+# Important Variables and Constraints # {#QP_solverImportant}
 
 If you have a solution \f$ \qpx^*\f$ of a linear or quadratic program,
 the "important" variables are typically the ones that are not on

@@ -19,7 +19,7 @@
 \PkgDescriptionEnd
 
 
-# Assertions #
+# Assertions # {#Inscribed_areasAssertions}
 
 The optimization code uses infix `OPTIMISATION` in the assertions,
 e.g. defining the compiler flag

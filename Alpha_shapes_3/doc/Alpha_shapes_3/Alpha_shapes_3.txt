@@ -44,7 +44,7 @@ it's way too large. So we will never spoon up ice-cream lying in the
 inside of the convex hull of \f$ S\f$, and hence the alpha shape for
 \f$ \alpha \rightarrow \infty\f$ is the convex hull of \f$ S\f$.\footnote{ice cream, ice cream!!! The wording of this introductory paragraphs is borrowed from Kaspar Fischer's " Introduction to Alpha Shapes" which can be found at http://people.inf.ethz.ch/fischerk/pubs/as.pdf. The picture has been taken from Walter Luh's homepage at http://www.stanford.edu/&wtilde;luh/cs448b/alphashapes.html.}
 
-# Definitions #
+# Definitions # {#Alpha_shapes_3Definitions}
 
 More precisely, the definition of alpha shapes is based on an underlying
 triangulation that may be a Delaunay triangulation 
@@ -240,7 +240,7 @@ and it must be parameterized with vertex and cell classes, which are model of th
 The package provides models `CGAL::Fixed_alpha_shape_vertex_base_3<Gt>` 
 and `CGAL::Fixed_alpha_shape_cell_base_3<Gt>`, respectively.
 
-# `Alpha_shape_3` or `Fixed_alpha_shape_3` #
+# `Alpha_shape_3` or `Fixed_alpha_shape_3` # {#Alpha_shapes_3`Alpha}
 
 The class `CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>` represents the whole family
 of alpha shapes for a given set of points while the class `CGAL::Fixed_alpha_shape_3<Dt>`
@@ -269,7 +269,7 @@ Using `CGAL::Exact_predicates_exact_constructions_kernel`, building
 the regular triangulation requires 0.19s and then the class `CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>` 
 requires 0.90s.
 
-# Examples #
+# Examples # {#Alpha_shapes_3Examples}
 
 \subsection I1_SectClassicAS3D Example for Basic Alpha-Shapes 
 

@@ -7,12 +7,12 @@ namespace CGAL {
 \autotoc
 \authors Gabriele Neyer
 
-# Introduction #
+# Introduction # {#SearchStructuresIntroduction}
 
 This chapter presents the \cgal range tree and segment tree
 data structures.
 
-# Definitions #
+# Definitions # {#SearchStructuresDefinitions}
 
 This section presents \f$ d\f$-dimensional range and segment trees.
 A one-dimensional range tree is a binary search tree on 
@@ -85,7 +85,7 @@ In the following two sections we give short definitions of the version of
 the range tree and segment tree implemented here together with some
 examples. The presentation closely follows \cite bkos-cgaa-97.
 
-# Software Design #
+# Software Design # {#SearchStructuresSoftware}
 
 In order to be able to define a multilayer tree we first
 designed the range and segment tree to have a template argument

@@ -1232,7 +1232,7 @@ in the range. Note that this is correct because the iterator
 is dereferenced only once per point during the insertion.
 \cgalexample{Triangulation_2/info_insert_with_transform_iterator_2.cpp}
 
-# Design and Implementation History #
+# Design and Implementation History # {#Triangulation_2Design}
 
 The code of this package is the result of a long development
 process. Here follows a tentative list of people

@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Peter Hachenberger
 
-# Introduction #
+# Introduction # {#Convex_decomposition_3Introduction}
 
 For many applications on non-convex polyhedra, there are efficient
 solutions that first decompose the polyhedron into convex pieces. As
@@ -54,7 +54,7 @@ illustrates the two steps.
 At the moment our implementation is restricted to the decomposition of
 bounded polyhedra. An extension to unbounded polyhedra is planned.
 
-# Interface and Usage #
+# Interface and Usage # {#Convex_decomposition_3Interface}
 
 An instance of `Nef_polyhedron_3` represents a subdivision of the
 three-dimensional space into vertices, edges, facets, and

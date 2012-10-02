@@ -174,7 +174,7 @@ Index \f$1/2\f$ umbilic or elliptic umbilic.
 \anchor umbilics
 \image html lemon.png "Elliptic and hyperbolic umbilics."
 
-# Approximating Ridges on Triangulated Surface Meshes #
+# Approximating Ridges on Triangulated Surface Meshes # {#Ridges_3Approximating}
 
 \anchor ridgemesh
 
@@ -275,7 +275,7 @@ the <I>strength </I> which is the integral of the curvature along the
 ridge line
 \cite cgal:ybs-rvlmi-04.
 
-# Approximating Umbilics on Triangulated Surface Meshes #
+# Approximating Umbilics on Triangulated Surface Meshes # {#Ridges_3Approximating}
 
 \anchor umbilicmesh
 
@@ -324,7 +324,7 @@ on the boundary of its patch. This functionality is not provided, and
 the interested reader is referred to \cite cgal:cp-tdare-05 for more
 details.
 
-# Software Design #
+# Software Design # {#Ridges_3Software}
 
 \anchor soft
 
@@ -417,7 +417,7 @@ enables the definition of models for the concepts
 `Vertex2VectorPropertyMap` 
 using `std::maps` and `boost::associative_property_map`.
 
-# Examples #
+# Examples # {#Ridges_3Examples}
 
 \anchor examples
 

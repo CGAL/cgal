@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Susan Hert and Michael Seel
 
-# Introduction #
+# Introduction # {#Convex_hull_dIntroduction}
 
 A subset \f$ S \subseteq \R^d\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
 in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained
@@ -28,7 +28,7 @@ furthest site Delaunay triangulation is the upper hull. Here we also
 describe the companion class to the convex hull class that computes 
 nearest and furthest site Delaunay triangulations.
 
-# dD Convex Hull #
+# dD Convex Hull # {#Convex_hull_ddD}
 
 The class `CGAL::Convex_hull_d<R>` is used to represent the
 convex hull of a set of points in \f$ d\f$-dimensional space. This class
@@ -50,7 +50,7 @@ set or not.
 The implementation follows the papers \cite cms-frric-93 and
 \cite bms-dgc-94.
 
-# Delaunay Triangulation #
+# Delaunay Triangulation # {#Convex_hull_dDelaunay}
 
 There is a class type with a thorough interface providing the
 construction and exploration of closest and furthest site Delaunay

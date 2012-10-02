@@ -28,7 +28,7 @@ polyhedral surface can be used and understood without knowing the
 underlying design. Some of the examples in this chapter introduce also
 gradually into first applications of this flexibility.
 
-# Definition #
+# Definition # {#PolyhedronDefinition}
 
 A polyhedral surface `CGAL::Polyhedron_3<PolyhedronTraits_3>` in
 three dimensions consists of vertices \f$ V\f$, edges \f$ E\f$, facets \f$ F\f$ and
@@ -79,7 +79,7 @@ or any other geometric information.
 surfaces as well as polyhedra. The interface is designed in such a way
 that it is easy to ignore border edges and work only with polyhedra.
 
-# Example Programs #
+# Example Programs # {#PolyhedronExample}
 
 \anchor sectionPolyExamples
 
@@ -259,7 +259,7 @@ are also marked in the program code.
 
 \cgalexample{Polyhedron/polyhedron_prog_cube.cpp}
 
-# File I/O #
+# File I/O # {#PolyhedronFile}
 
 \anchor sectionPolyIO
 
@@ -341,7 +341,7 @@ into VRML 1.0 output.
 
 \cgalexample{Polyhedron/polyhedron2vrml.cpp}
 
-# Extending Vertices, Halfedges, and Facets #
+# Extending Vertices, Halfedges, and Facets # {#PolyhedronExtending}
 
 \anchor sectionPolyExtend
 
@@ -475,7 +475,7 @@ Vertex_handle vertex_ref;
 More advanced examples can be found in the Section \ref sectionHdsExamples
 illustrating further the design of the halfedge data structure.
 
-# Advanced Example Programs #
+# Advanced Example Programs # {#PolyhedronAdvanced}
 
 \anchor sectionPolyAdvanced
 

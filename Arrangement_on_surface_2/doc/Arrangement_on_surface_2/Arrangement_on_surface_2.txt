@@ -3713,7 +3713,7 @@ be avoided by storing the results obtained by the first call, and
 reusing them when needed.
 </OL>
 
-# Design and Implementation History #
+# Design and Implementation History # {#Arrangement_on_surface_2Design}
 
 The code of this package is the result of a long development process.
 Initially (and until version 3.1), the code was spread among several

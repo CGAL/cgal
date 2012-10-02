@@ -6,7 +6,7 @@ namespace CGAL {
 \autotoc
 \authors Michael Seel
 
-# Introduction #
+# Introduction # {#Kernel_dIntroduction}
 
 This part of the reference manual covers the higher-dimensional
 kernel. The kernel contains objects of constant size, such as point,
@@ -69,7 +69,7 @@ This extends the syntax of random access iterators to input iterators.
 If we index the tuple as above then we require that
 \f$ ++^{(d+1)}\mathit{first} = \mathit{last}\f$.
 
-# %Kernel Representations #
+# Kernel Representations # {#Kernel_dKernel}
 
 Our object of study is the \f$ d\f$-dimensional affine Euclidean space,
 where \f$ d\f$ is a parameter of our geometry. Objects in that space are
@@ -274,7 +274,7 @@ geometric objects of the kernel that you would like to use with the
 representation class, i.e., `CGAL/Cartesian_d.h` or
 `CGAL/Homogeneous_d.h`
 
-# %Kernel Geometry #
+# Kernel Geometry # {#Kernel_dKernel}
 
 ## Points and Vectors ##
 
@@ -367,7 +367,7 @@ space, there is only a test whether a point belongs to the object or
 not. This member function, which takes a point as an argument and
 returns a Boolean value, is called `has_on()`
 
-# Predicates and Constructions #
+# Predicates and Constructions # {#Kernel_dPredicates}
 
 ## Predicates ##
 
@@ -491,7 +491,7 @@ For exact number types like `leda_real`, the situation is
 different. If several tests are to be made with the same plane, it
 pays off to construct the plane and to use `oriented_side(p)`.
 
-# Design and Implementation History #
+# Design and Implementation History # {#Kernel_dDesign}
 
 This higher-dimensional kernel is the result of a long evolving
 development. A first version of the kernel was offered as a LEDA

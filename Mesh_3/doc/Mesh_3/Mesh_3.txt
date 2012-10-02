@@ -13,7 +13,7 @@ namespace CGAL {
 \image latex multilabel_mesher height=9cm "Cut-view of a multi-domain 3D mesh generated from a segmented image."
 \image html multilabel_mesher.jpg "Cut-view of a multi-domain 3D mesh generated from a segmented image."
 
-# Introduction #
+# Introduction # {#Mesh_3Introduction}
 \anchor Mesh_3_section_intro
 
 This package is devoted to the generation of isotropic simplicial
@@ -285,7 +285,8 @@ optimization processes.
 \anchor figureoptimization
 \image html optimization.jpg "Compared effect of a global optimizer and the perturber. The left part shows the distribution of dihedral angles of mesh cells, right after Delaunay refinement (top), after some ODT smoothing (middle) and after perturbation (bottom). The numbers under the histograms give the measure in degrees of the smallest and biggest dihedral angles in the mesh."
 
-# Interface #
+# Interface # {Mesh_3
+Any}
 
 \anchor Mesh_3_section_interface
 
@@ -521,7 +522,8 @@ of the following:
 `odt-smoother`, `Lloyd-smoother`, `perturber`,
 `exuder`.
 
-\code{.cpp}
+\code{.cpp
+The}
 
 template< class C3T3, class MeshDomain_3 >
 Mesh_optimization_return_code lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain_3 domain);
@@ -541,7 +543,7 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3);
 Note that the global functions activating the optimization processes or launching
 those processes have themselves parameters (see details in reference pages) to tune the optimization process.
 
-# Examples #
+# Examples # {Mesh_3}
 
 \anchor Mesh_3_section_examples
 
@@ -686,9 +688,10 @@ In this second example, we show how to call the Lloyd optimization on the
 mesh, followed by a call to exudation. We set a time bound of 30s for the Lloyd optimization. 
 We set a time bound of 10s and a sliver bound of 10 degrees for the exuder.
 
-\cgalexample{Mesh_3/mesh_optimization_lloyd_example.cpp}
+\cgalexample{Mesh_3/mesh_optimization_lloyd_example.cpp
+In}
 
-# Performances #
+# Performances # {Mesh_3}
 
 We provide here some benchmarks of the performances of the mesh generation engine. The machine
 used is a PC running Linux64 with two Intel Xeon CPU X5450 clocked at 3.00 GHz
@@ -979,7 +982,8 @@ vertices/second
 
 </CENTER>
 
-# Design and Implementation History #
+# Design and Implementation History # {Mesh_3
+\anchor}
 
 ## Theoretical Foundations ##
 

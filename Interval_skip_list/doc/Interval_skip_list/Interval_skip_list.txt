@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Andreas Fabri
 
-# Definition #
+# Definition # {#Interval_skip_listDefinition}
 
 An interval skip list is a data structure for finding all intervals 
 that contain a point, and for stabbing queries, that is for answering 
@@ -23,7 +23,7 @@ The data structure was introduced by Hanson \cite h-islds-91, and it is called
 interval skip list, because it is an extension of the randomized list
 structure known as skip list \cite p-slpab-90.
 
-# Example Programs #
+# Example Programs # {#Interval_skip_listExample}
 
 \anchor sectionIntervalskiplistExamples
 

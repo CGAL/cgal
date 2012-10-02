@@ -10,7 +10,7 @@ namespace CGAL {
 
 \image html Illustration-Simplification-ALL.jpg
 
-# Introduction #
+# Introduction # {#Surface_mesh_simplificationIntroduction}
 
 Surface mesh simplification is the process of reducing the number of faces used in the surface while 
 keeping the overall shape, volume and boundaries preserved as much as possible. 
@@ -47,7 +47,7 @@ Furthermore, the API uses the so-called `named-parameters` technique which allow
 to pass only the relevant parameters, in any order, omitting those parameters whose
 default is appropriate.
 
-# Overview of the Simplification Process #
+# Overview of the Simplification Process # {#Surface_mesh_simplificationOverview}
 
 The free function that implements the simplification algorithm takes not only the surface
 and the desired stop predicate but a number of additional parameters which control and
@@ -103,7 +103,7 @@ only edges by considering certain vertex pairs as forming a pseudo-edge and proc
 both edges and pseudo-edges in the same way as in \cite cgal:lt-fmeps-98, \cite cgal:lt-ems-99 ( 
 which is the algorithm implemented here). However, contracting an arbitrary vertex-pair may result in a non-manifold surface, but the current state of this package can only deal with manifold surfaces, thus, it can only collapse edges. That is, this package cannot be used as a framework for vertex contraction.
 
-# Cost Strategy #
+# Cost Strategy # {#Surface_mesh_simplificationCost}
 
 The specific way in which the collapse cost and vertex placement is
 calculated is called the <I>cost strategy</I>. The user can choose 
@@ -198,7 +198,7 @@ must be called several times just as well. Caching the placement can only avoid 
 very last call, when the edge is collapsed, but not all the previous calls which
 are needed because the placement (and cost) changes.
 
-# API #
+# API # {#Surface_mesh_simplificationAPI}
 
 ## API Overview ##
 

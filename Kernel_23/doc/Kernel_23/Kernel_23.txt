@@ -316,7 +316,7 @@ faster than both `Exact_predicates_exact_constructions_kernel` and
 </UL>
 </UL>
 
-# %Kernel Geometry #
+# Kernel Geometry # {#Kernel_23Kernel}
 
 ## Points and Vectors ##
 
@@ -422,7 +422,7 @@ space or a segment in two-dimensional space, there is only a test whether a
 point belongs to the object or not. This member function, which takes a 
 point as an argument and returns a Boolean value, is called `has_on()`
 
-# Predicates and Constructions #
+# Predicates and Constructions # {#Kernel_23Predicates}
 
 ## Predicates ##
 
@@ -662,7 +662,7 @@ which are a model of traits class concepts of 2D triangulations,
 2D polygon and 2D convex hull traits classes. The projection traits classes 
 are listed in the "Is Model for the Concepts" sections of the concepts. 
 
-# Design and Implementation History #
+# Design and Implementation History # {#Kernel_23Design}
 
 At a meeting at Utrecht University in January 1995,
 Olivier Devillers, Andreas Fabri, Wolfgang Freiseisen,

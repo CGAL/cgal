@@ -10,7 +10,7 @@ namespace CGAL {
 
 This package provides functions to analyze sets of objects in 2D and 3D. It provides the computation of axis-aligned bounding boxes, centers of mass and principal component analysis for all bounded objects, as well as barycenters for sets of weighted points. Note that unlike most of the \cgal packages, this package uses approximation methods (in particular for linear least squares fitting) and is not intended to provide an exact canonical result in any sense.
 
-# Definitions #
+# Definitions # {#Principal_component_analysisDefinitions}
 
 A <I>bounding box</I> for a set of objects is a cuboid that contains the set. An <I>axis-aligned bounding box</I> captures the maximum extents of all objects from the set within their coordinate system, i.e., a bounding box aligned with the axes of the coordinate system. Axis-aligned bounding boxes are frequently used in geometric algorithms as an indication of the general location of a data set, for either display, first-approximation spatial query, or spatial indexing purposes. 
 

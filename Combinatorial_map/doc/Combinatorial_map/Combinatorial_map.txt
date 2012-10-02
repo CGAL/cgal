@@ -8,7 +8,7 @@ namespace CGAL {
 \authors Guillaume Damiand
 \autotoc
 
-# Introduction #
+# Introduction # {#Combinatorial_mapIntroduction}
 
 A <I>d</I>-dimensional combinatorial map is a data structure
 representing an orientable subdivided <I>d</I>-dimensional object
@@ -537,7 +537,7 @@ example to modify locally a combinatorial map in a really fast way. In
 such a case, additional operations may be needed to restore these
 validity conditions.
 
-# Software Design #
+# Software Design # {#Combinatorial_mapSoftwarre}
 \anchor secsoftwaredesign
 
 The diagram in Figure \ref figdiagram_class shows the different
@@ -724,7 +724,7 @@ typedef CGAL::Combinatorial_map<3, Example_items_3> Example_custom_cmap3;
 
 \endcode
 
-# Iteration and Creation Operations #
+# Iteration and Creation Operations # {#Combinatorial_mapIteration}
 
 An important operation in combinatorial maps consists in iterating
 over specific subsets of darts or over attributes. For that, several
@@ -1154,7 +1154,7 @@ Left: Initial combinatorial map. Right: After the insertion of a 2-cell along th
 Some examples of use of these operations are given in
 Section \ref ssecexempleoperations.
 
-# Examples #
+# Examples # {#Combinatorial_mapExamples}
 
 ## A 3D Combinatorial Map ##
 \anchor ssecexample3DCM
@@ -1336,7 +1336,7 @@ each attribute is thus 5/2=2 (remember that information contained in
 2-attributes with 7 as value, five 2-attributes with 13 as value, and
 four 2-attributes having respectively 2, 2, 5 and 10 as values.
 
-# Mathematical Definitions #
+# Mathematical Definitions # {#Combinatorial_mapMathematical}
 \anchor sec_definition
 
 The initial definition of combinatorial map in any dimension is given
@@ -1410,7 +1410,7 @@ the <I>i</I>-cell containing <I>d0</I> is
 The <I>0</I>-cell containing <I>d0</I> is 
 \f$ \langle{}\f${\f$ \beta_i\f$\f$ \circ\f$\f$ \beta_j\f$\f$ |\f$\f$ \forall\f$<I>i,j</I>: 1\f$ \leq\f$<I>i</I>\f$ <\f$<I>j</I>\f$ \leq\f$<I>d</I>}\f$ \rangle{}\f$(<I>d0</I>).
 
-# Design and Implementation History #
+# Design and Implementation History # {#Combinatorial_mapDesign}
 
 The code of this package is inspired by Moka, a 3D topological modeler
 mainly developed by Fr&eacute;d&eacute;ric Vidil and Guillaume Damiand

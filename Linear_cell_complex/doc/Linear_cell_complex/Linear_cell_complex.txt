@@ -7,7 +7,7 @@ namespace CGAL {
 
 \authors Guillaume Damiand
 
-# Introduction #
+# Introduction # {#Linear_cell_complexIntroduction}
 
 A <I>d</I>D linear cell complex allows to represent an orientable
 subdivided <I>d</I>D object having linear geometry: each vertex of the
@@ -61,7 +61,7 @@ ambient space to describe a surface in 3D space (<I>d</I>=2,
 combinatorial map in a 3D ambient space (<I>d</I>=<I>d2</I>=3) and so
 on.
 
-# Software Design #
+# Software Design # {#Linear_cell_complexSoftware}
 
 The diagram in Figure \ref figdiagram_class_lcc shows the main
 classes of the package. `CGAL::Linear_cell_complex` is the main
@@ -162,7 +162,7 @@ and instances of `CGAL::Cell_attribute_with_point`
 (which contain no information) associated to each vertex. All other
 attributes are void.
 
-# Operations #
+# Operations # {#Linear_cell_complexOperations}
 
 Several operations defined in the combinatorial maps package can be
 used on a linear cell complex. This is the case for all the iteration
@@ -316,7 +316,7 @@ Example of `insert_dangling_cell_1_in_cell_2`, `insert_cell_1_in_cell_2` and `re
 Some examples of use of these operations are given in
 Section \ref ssec5dexample.
 
-# Examples #
+# Examples # {#Linear_cell_complexExamples}
 
 ## A 3D Linear Cell Complex ##
 \anchor ssec3Dlcc
@@ -439,7 +439,7 @@ set its color manually by using the result of
 `insert_barycenter_in_cell<2>` which is a dart incident to the
 new vertex.
 
-# Design and Implementation History #
+# Design and Implementation History # {#Linear_cell_complexDesign}
 
 This package was developed by Guillaume Damiand, with the help of
 Andreas Fabri, S&eacute;bastien Loriot and Laurent Rineau. Monique

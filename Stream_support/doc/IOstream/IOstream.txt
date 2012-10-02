@@ -51,7 +51,7 @@ bool is_binary(std::ios& s);
 bool is_pretty(std::ios& s);
 \endcode
 
-# Output Operator #
+# Output Operator # {#IOstreamOutput}
 
 \cgal defines output operators for classes that are derived
 from the class `ostream`. This allows to write to ostreams
@@ -96,7 +96,7 @@ int main()
 }
 \endcode
 
-# Input Operator #
+# Input Operator # {#IOstreamInput}
 
 \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams
@@ -141,7 +141,7 @@ main()
 }
 \endcode
 
-# IO for non-\cgal types #
+# IO for non-\cgal types # {#IOstreamIO}
 \anchor seciofornoncgaltypes
 
 ## Using Output Formatting ##
@@ -223,7 +223,7 @@ public:
 };
 \endcode
 
-# Colors #
+# Colors # {#IOstreamColors}
 
 An object of the class `CGAL::Color` is a color available
 for drawing operations in many \cgal output streams.
@@ -235,7 +235,7 @@ There are a 11 predefined `Color` constants available:
 `DEEPBLUE`, `BLUE`, `PURPLE`, `VIOLET`, `ORANGE`,
 and `YELLOW`.
 
-# Stream Support #
+# Stream Support # {#IOstreamStream}
 
 Three classes are provided by \cgal as adaptors to input and output stream
 iterators. The class `Istream_iterator` is an input iterator adaptor and 

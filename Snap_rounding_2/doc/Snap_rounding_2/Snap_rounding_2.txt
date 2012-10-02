@@ -25,7 +25,7 @@ details and experimental results are given in \cite cgal:hp-isr-02.
 \anchor figsr1
 \image html sr1.gif "An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)"
 
-# What is Snap Rounding/Iterated Snap Rounding #
+# What is Snap Rounding/Iterated Snap Rounding # {#Snap_rounding_2What}
 
 Given a finite collection \f$ \S\f$ of segments in the plane, the
 arrangement of \f$ \S\f$ denoted \f$ \A(\S)\f$ is the subdivision of the plane
@@ -57,7 +57,7 @@ we operate differently, as this repeated application of SR would have
 resulted in an efficient overall process. The algorithmic details are
 given in \cite cgal:hp-isr-02.
 
-# Terms and Software Design #
+# Terms and Software Design # {#Snap_rounding_2Terms}
 
 Our package supports both schemes, implementing the algorithm
 described in \cite cgal:hp-isr-02.
@@ -88,7 +88,7 @@ this concept.
 \anchor figisr_vs_sr
 \image html isr_vs_sr.gif "An arrangement of segments before (a), after SR (b) and ISR (c) (hot pixels are shaded)."
 
-# Four Line Segment Example #
+# Four Line Segment Example # {#Snap_rounding_2Four}
 
 The following example generates an ISR representation
 of an arrangement of four line segments. In particular it produces

@@ -15,7 +15,7 @@ namespace CGAL {
 \autotoc
 \authors Peter Hachenberger and Lutz Kettner
 
-# Introduction #
+# Introduction # {#Nef_3Introduction}
 
 In solid modeling, two major representation schemes are used:
 <I>constructive solid geometry</I> (CSG) and <I>boundary
@@ -71,7 +71,7 @@ transformations and a point location query operation. We have a custom
 file format for storing and reading Nef polyhedra from files. We offer
 a simple OpenGL-based visualizer for debugging and illustrations.
 
-# Definition #
+# Definition # {#Nef_3Definition}
 
 The theory of Nef polyhedra has been developed for arbitrary
 dimensions. The class `CGAL::Nef_polyhedron_3` implements a
@@ -291,7 +291,7 @@ Regularized polyhedral sets are a subclass of Nef polyhedra. We provide the
 `regularization` operation as a shortcut for the consecutive execution
 of the `interior` and the `closure` operations.
 
-# Example Programs #
+# Example Programs # {#Nef_3Example}
 
 The following example gives a first impression of how to instantiate
 and use `Nef_polyhedron_3`. We use the `CGAL::Cartesian`
@@ -403,7 +403,7 @@ the symbolical value, large but finite, for the size of the infimaximal box.
 
 \cgalexample{Nef_3/extended_kernel.cpp}
 
-# File I/O #
+# File I/O # {#Nef_3File}
 
 \anchor sectionNef_3IO
 
@@ -442,7 +442,7 @@ standard kernel.
 
 \cgalexample{Nef_3/nefIO.cpp}
 
-# Further Example Programs #
+# Further Example Programs # {#Nef_3Further}
 
 ## Exploring a Sphere Map ##
 
@@ -547,7 +547,7 @@ the `Object_handle` can represent a `Vertex_const_handle`, a
 
 \cgalexample{Nef_3/nef_3_point_location.cpp}
 
-# Visualization #
+# Visualization # {#Nef_3Visualization}
 
 With the `Qt_widget_OpenGL` class an interface to OpenGL
 visualization via Qt is offered. The class knows how to handle

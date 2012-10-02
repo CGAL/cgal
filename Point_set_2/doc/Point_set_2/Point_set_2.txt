@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Matthias B&auml;sken
 
-# Introduction #
+# Introduction # {#Point_set_2Introduction}
 
 Geometric queries are fundamental to many applications in computational
 geometry. The task is to maintain a dynamic set of geometric objects
@@ -68,7 +68,7 @@ The `CGAL::Point_set_2` class supports the following kinds of queries:
 </UL>
 For details about the running times see \cite mn-lpcgc-00.
 
-# Example: %Range Search #
+# Example: Range Search # {#Point_set_2Example}
 
 The following example program demonstrates the various range search operations
 of the two dimensional point set.

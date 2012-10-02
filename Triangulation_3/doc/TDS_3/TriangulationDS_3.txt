@@ -312,7 +312,7 @@ structures whose vertices respectively store vertex handles of the other one.
 
 \cgalexample{TDS_3/linking_2d_and_3d.cpp}
 
-# Design and Implementation History #
+# Design and Implementation History # {#TDS_3Design}
 
 Monique Teillaud introduced the triangulation of the topological
 sphere \f$ S^d\f$ in \f$ \R^{d+1}\f$ to manage the underlying graph of geometric

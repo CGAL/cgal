@@ -119,7 +119,7 @@ wrap around the (unshrunk) input balls, we can first increase the
 weights of the input balls by multiplying them with a factor \f$ 1/s\f$ and
 then compute the skin surface.
 
-# The Interface #
+# The Interface # {#Skin_surface_3The}
 
 The interface to the skin surface package consists of one main
 function, taking a set of weighted points and a shrink factor and
@@ -206,7 +206,7 @@ Polyhedron &p,
 int iterations=1);
 \endcode
 
-# Timings #
+# Timings # {#Skin_surface_3Timings}
 
 The timings of the construction of the coarse mesh and the first
 subdivision are given in seconds and were done on a Pentium 4, 3.5
@@ -247,7 +247,7 @@ Gramicidin A
 
 </CENTER>
 
-# Example Programs #
+# Example Programs # {#Skin_surface_3Example}
 
 ## Meshing a Skin Surface ##
 

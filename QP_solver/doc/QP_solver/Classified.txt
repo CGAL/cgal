@@ -1,7 +1,7 @@
 
 \authors Kaspar Fischer, Bernd G&auml;rtner, Sven Sch&ouml;nherr, and Frans Wessendorp
 
-# Classified Reference Pages #
+# Classified Reference Pages # {#QP_solverClassified}
 
 HEADING:Concepts 
 --------------

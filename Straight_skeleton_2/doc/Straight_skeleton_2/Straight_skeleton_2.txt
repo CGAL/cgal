@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Fernando Cacciola
 
-# Definitions #
+# Definitions # {#Straight_skeleton_2Definitions}
 
 ## 2D Contour ##
 
@@ -157,7 +157,7 @@ An <I>inner bisector</I> is a bisector who's defining contour edges are
 not consecutive. Such a bisector is incident upon 2 skeleton vertices
 and is strictly contained in the interior of the polygon.
 
-# Representation #
+# Representation # {#Straight_skeleton_2Representation}
 
 This \cgal package represents a straight skeleton as a specialized `Halfedge Data Structure` (HDS) whose vertices embeds 2D Points (see the `StraightSkeleton_2` concept in the reference manual for details).
 
@@ -249,7 +249,7 @@ Contour vertices have time zero.
 \image latex fig6 "Straight Skeleton Data Structure" width=12cm 
 \image html fig6.png "Straight Skeleton Data Structure" width=12cm 
 
-# API #
+# API # {#Straight_skeleton_2API}
 
 ## Create a Straight Skeleton ##
 
@@ -432,7 +432,7 @@ If you use this function to place the outer frame you are guaranteed to obtain a
 
 <CENTER><B>Exterior skeleton obtained using a frame (left) and 2 sample exterior offset contours (right)</B></CENTER>
 
-# Straight Skeletons, Medial Axis and Voronoi Diagrams #
+# Straight Skeletons, Medial Axis and Voronoi Diagrams # {#Straight_skeleton_2Straight}
 
 The straight skeleton of a polygon is similar to the medial
 axis and the Voronoi diagram of a polygon in the way it partitions
@@ -451,7 +451,7 @@ reflexivity, the straight skeleton bisectors will be placed nearly
 equidistant to their defining edges, producing a straight skeleton
 pretty much alike a proper medial axis.
 
-# Usages of the Straight Skeletons #
+# Usages of the Straight Skeletons # {#Straight_skeleton_2Usages}
 
 The most natural usage of straight skeletons is offsetting: growing and shrinking polygons (provided by this \cgal package).
 
@@ -468,7 +468,7 @@ Pruning each skeleton tree cutting off branches whose length is below some thres
 
 Each skeleton edge in a skeleton branch is associated with 2 contour edges which are facing each other. If the polygon has a bottleneck (it almost touches itself), a search in the skeleton graph measuring the distance between each pair of contour edges will reveal the location of the bottleneck, allowing you to cut the shape in two. Likewise, if two shapes are too close to each other along some part of their boundaries (a near contact zone), a similar search in an exterior skeleton of the two shapes at once would reveal the parts of near contact, allowing you to stitch the shapes. These <I>cut and stitch</I> operations can be directly executed in the straight skeleton itself instead of the input polygon (because the straight skeleton contains a graph of the connected contour edges).
 
-# Straight Skeleton of a General Figure in the Plane #
+# Straight Skeleton of a General Figure in the Plane # {#Straight_skeleton_2Straight}
 
 A straight skeleton can also be defined for a general
 multiply-connected planar directed straight-line graph \cite aa-skfgpf-95 by considering

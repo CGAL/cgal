@@ -7,7 +7,7 @@ namespace CGAL {
 \autotoc
 \authors Michael Seel
 
-# Introduction #
+# Introduction # {#Nef_2Introduction}
 
 When working with polygonal and polyhedral sets, the mathematical
 model determines the kind of point set that can be represented. Nef
@@ -49,7 +49,7 @@ complex polyhedron on the right. Note that the points on the squared
 boundary are at infinity.
 </b></center>
 
-# Construction and Composition #
+# Construction and Composition # {#Nef_2Construction}
 
 Following the above definition, the data type
 `Nef_polyhedron_2<T>` allows construction of elementary Nef
@@ -84,7 +84,7 @@ output them via streams and read them from streams. Graphical output
 is currently possible. For an elaborate
 example see the demo programs in the directory `demo/Nef_2`.
 
-# Exploration #
+# Exploration # {#Nef_2Exploration}
 
 By recursively composing binary and unary operations one can end with
 a very complex rectilinear structure. To explore that structure there
@@ -161,7 +161,7 @@ if ( E.is_frame_edge(e) ) // e is part of square box.
 
 \endcode
 
-# Traits Classes #
+# Traits Classes # {#Nef_2Traits}
 
 Now finally we clarify what the template parameter of class
 `Nef_polyhedron_2<T>` actually models. `T` carries the
@@ -194,7 +194,7 @@ the local scope of `Nef_polyhedron_2<...>`.
 \advanced For its notions and requirements see the desciption of the
 concept `ExtendedKernelTraits_2` in the reference manual.
 
-# Implementation #
+# Implementation # {#Nef_2Implementation}
 
 The underlying set operations are realized by an efficient and
 complete algorithm for the overlay of two plane maps. The algorithm is

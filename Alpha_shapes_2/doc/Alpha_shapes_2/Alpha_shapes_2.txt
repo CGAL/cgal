@@ -42,7 +42,7 @@ it's way too large. So we will never spoon up ice-cream lying in the
 inside of the convex hull of \f$ S\f$, and hence the \f$ \alpha\f$-shape for
 \f$ \alpha \rightarrow \infty\f$ is the convex hull of \f$ S\f$.\footnote{ice cream, ice cream!!! The wording of this introductory paragraphs is borrowed from Kaspar Fischer's " Introduction to Alpha Shapes" which can be found at http://people.inf.ethz.ch/fischerk/pubs/as.pdf. The picture has been taken from Walter Luh's homepage at http://www.stanford.edu/&wtilde;luh/cs448b/alphashapes.html.}
 
-# Definitions #
+# Definitions # {#Alpha_shapes_2Definitions}
 
 We distinguish two versions of alpha shapes. <I>Basic alpha shapes</I>
 are based on the Delaunay triangulation. <I>Weighted alpha shapes</I>
@@ -132,7 +132,7 @@ vertex and face classes, which are model of the concepts
 by default the classes `CGAL::Alpha_shape_vertex_base_2<Gt>` 
 and `CGAL::Alpha_shape_face_base_2<Gt>`.
 
-# Examples #
+# Examples # {#Alpha_shapes_2Examples}
 
 \subsection I1_SectClassicAS2D Example for Basic Alpha-Shapes 
 

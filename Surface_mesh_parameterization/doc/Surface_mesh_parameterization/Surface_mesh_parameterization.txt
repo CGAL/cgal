@@ -9,7 +9,7 @@ namespace CGAL {
 
 \authors Laurent Saboret, Pierre Alliez and Bruno L&eacute;vy
 
-# Introduction #
+# Introduction # {#Surface_mesh_parameterizationIntroduction}
 
 Parameterizing a surface amounts to finding a one-to-one mapping from
 a suitable domain to the surface. A good mapping is the one which
@@ -58,7 +58,7 @@ triangulated surfaces.
 Texture mapping via Least Squares Conformal Maps parameterization. Top: original mesh and texture. Bottom: parameterizedmesh (left: parameter space, right: textured mesh).
 </b></center>
 
-# Basics #
+# Basics # {#Surface_mesh_parameterizationBasics}
 
 ## %Default Surface Parameterization ##
 
@@ -545,7 +545,7 @@ to make it a topological disk, then applies the default parameterization:
 
 \cgalexample{Surface_mesh_parameterization/Mesh_cutting_parameterization.cpp}
 
-# Output #
+# Output # {#Surface_mesh_parameterizationOutput}
 
 Parameterization methods compute \f$ (u,v)\f$ fields for each vertex
 of the input mesh, with the seam vertices being virtually duplicated (thanks
@@ -568,7 +568,7 @@ example which outputs the resulting parameterization to a EPS file. It gets the 
 
 \cgalexample{Surface_mesh_parameterization/Complete_parameterization_example.cpp}
 
-# Complexity and Guarantees #
+# Complexity and Guarantees # {#Surface_mesh_parameterizationComplexity}
 
 ## Parameterization Methods and Guarantees ##
 
@@ -669,7 +669,7 @@ Since convergence is reached after \f$ k\f$ iterations, the complexity is \f$ O(
 Therefore, best case complexity is \f$ O(n)\f$ (equilateral triangles),
 and worst case complexity is \f$ O(n^2)\f$ (skinny triangles).
 
-# Software Design #
+# Software Design # {#Surface_mesh_parameterizationSoftware}
 
 ## Global Function %parameterize() ##
 
@@ -857,7 +857,7 @@ Computing a cutting path that transforms a closed mesh of arbitrary genus into
 a topological disk is a research topic on its own. This package does
 not intend to cover this topic at the moment.
 
-# Extending the Package and Reusing Code #
+# Extending the Package and Reusing Code # {Surface_mesh_parameterizationExtending}
 
 ## Reusing Mesh Adaptors ##
 

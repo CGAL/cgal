@@ -53,9 +53,6 @@ namespace CGAL {
   \models ::ArrangementTraits_2 
   \models ::ArrangementDirectionalXMonotoneTraits_2 
   \models ::ArrangementOpenBoundaryTraits_2 
-
-  CONVERROR 5 nested classes missing 
-
 */
 template< typename AlgebraicKernel_d_1 >
 class Arr_rational_function_traits_2 {

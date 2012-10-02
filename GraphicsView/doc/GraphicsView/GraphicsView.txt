@@ -11,7 +11,7 @@ namespace CGAL {
 <A HREF="http://qt.nokia.com/">Qt</A> is a <span class="textsc">Gui</span> toolkit for
 cross-platform application development.
 
-# Introduction #
+# Introduction # {#GraphicsViewIntroduction}
 
 This chapter describes classes that help to visualize two dimensional \cgal objects
 with the <A HREF="http://doc.qt.nokia.com/latest/graphicsview.html">Qt Graphics View Framework</A>.
@@ -47,7 +47,7 @@ classes that have to override member functions adhering to this naming scheme.
 <LI>All classes are in the nested namespace `CGAL::Qt`.
 </UL>
 
-# Overall Design #
+# Overall Design # {#GraphicsViewOverall}
 
 In Figure \ref graphicsviewuml you see four classes depicted in grey,
 that come from the Qt Graphics View Framework. The <A HREF="http://doc.qt.nokia.com/latest/qgraphicsscene.html">`QGraphicsScene`</A>

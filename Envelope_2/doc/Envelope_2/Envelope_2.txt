@@ -12,7 +12,7 @@ namespace CGAL {
 
 \image html lwrenv.gif The lower envelope of a set of line segments and hyperbolic arc. 
 
-# Introduction #
+# Introduction # {#Envelope_2Introduction}
 
 A continuous curve \f$ C\f$ in \f$ {\mathbb R}^2\f$ is called <I>\f$ x\f$-monotone</I>, if
 every vertical line intersects it at a single point at most. For
@@ -145,7 +145,7 @@ a traits class that models this concepts must also defines a
 provide a functor for subdividing such curves into \f$ x\f$-monotone
 subcurves.
 
-# Examples #
+# Examples # {#Envelope_2Examples}
 
 ## Example for Envelope of Line Segments ##
 

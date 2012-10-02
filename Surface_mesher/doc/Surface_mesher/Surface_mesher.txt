@@ -157,7 +157,7 @@ of the traits class. This initial set of points is required
 to include at least one point on each connected component of the surface
 to be meshed.
 
-# Examples #
+# Examples # {#Surface_mesherExamples}
 
 \anchor SurfaceMesher_section_example
 
@@ -286,7 +286,7 @@ manifold but may have boundaries.
 `Non_manifold_tag`: the algorithm relies on the given criteria and
 guarantees nothing else.
 
-# Output #
+# Output # {#Surface_mesherOutput}
 
 This \cgal component also provides functions to write the reconstructed surface mesh to the Object File Format (OFF) \cite cgal:p-gmgv16-96 and to convert it to a polyhedron (when it is manifold): 
 
@@ -294,7 +294,7 @@ This \cgal component also provides functions to write the reconstructed surface 
 
 `CGAL::output_surface_facets_to_polyhedron` 
 
-# Undocumented Features Available in Demos #
+# Undocumented Features Available in Demos # {#Surface_mesherUndocumented}
 
 The Polyhedron demo has a feature that allows to remesh a polyhedral
 surface, using the 3D Surface Mesh Generator. That has been implemented as
@@ -308,7 +308,7 @@ index. Such images are for example the result of a segmentation of 3D
 medical images. This feature is not yet ready to be documented in current
 release, but will probably be in next release of \cgal.
 
-# Design and Implementation History #
+# Design and Implementation History # {#Surface_mesherDesign}
 
 The algorithm implemented in this package is mainly based on the work of
 Jean-Daniel Boissonnat and Steve Oudot \cite cgal:bo-pgsms-05. Steve Oudot

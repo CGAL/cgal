@@ -134,7 +134,7 @@ data structure, is `locally valid`
 <B>(c)</B> Any cell has its vertices ordered according to positive
 orientation. See Figure \ref P3Triangulation3figorient.
 
-# Delaunay Triangulation #
+# Delaunay Triangulation # {#Periodic_3_triangulation_3Delaunay}
 
 The class `Periodic_3_Delaunay_triangulation_3` implements Delaunay
 triangulations of point sets in \f$ \mathbb T_c^3\f$.
@@ -149,7 +149,7 @@ five points are co-spherical. Note however that the \cgal implementation compute
 This implementation is fully dynamic: it supports both insertions of
 points and vertex removal.
 
-# Triangulation Hierarchy #
+# Triangulation Hierarchy # {#Periodic_3_triangulation_3Triangulation}
 
 The class `Periodic_3_triangulation_hierarchy_3` is the adaptation
 of the hierarchical structure described in
@@ -361,7 +361,7 @@ It is possible to use `Periodic_3_Delaunay_triangulation_3`
 as underlying triangulation for computing alpha shapes (cf. Chapter \ref I1_ChapterAlphashapes3D). For an example see
 Section \ref l1_SectPeriodicAS3D.
 
-# Design and Implementation History #
+# Design and Implementation History # {#Periodic_3_triangulation_3Design}
 
 In 2006, Nico Kruithof started to work with Monique Teillaud on the 3D
 Periodic Triangulations package.

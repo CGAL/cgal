@@ -7,7 +7,7 @@ namespace CGAL {
 
 \authors Peter Hachenberger and Lutz Kettner
 
-# Introduction #
+# Introduction # {#Nef_S2Introduction}
 
 Nef polyhedra are defined as a subset of the d-dimensional space obtained by
 a finite number of set complement and set intersection operations on
@@ -51,7 +51,7 @@ analogous to their counterparts in `Nef_polyhedron_S2`. Additionally,
 there is the \em shalfloop representing the great circles. The
 incidences are illustrated in the figure above.
 
-# Restricted Spherical Geometry #
+# Restricted Spherical Geometry # {#Nef_S2Restricted}
 
 We introduce geometric objects that are part of the spherical surface
 \f$ S_2\f$ and operations on them. We define types `Nef_polyhedron_S2::Sphere_point`,
@@ -78,9 +78,7 @@ segment, two segments intersect in at most one interior point
 (non-degenerately), or three non-cocircular sphere points can be
 qualified as being positively or negatively oriented.
 
-# Example Programs #
-
-\anchor sectionNef_S2Examples
+# Example Programs # {#sectionNef_S2Examples}
 
 ## First Example ##
 

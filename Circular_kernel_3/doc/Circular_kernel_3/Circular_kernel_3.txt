@@ -7,7 +7,7 @@ namespace CGAL {
 
 \authors Pedro Machado Manh&atilde;es de Castro, Fr&eacute;d&eacute;ric Cazals, S&eacute;bastien Loriot, and Monique Teillaud
 
-# Introduction #
+# Introduction # {#Circular_kernel_3Introduction}
 
 The goal of the 3D spherical kernel is to offer to the user a large
 set of functionalities on spheres, circles and circular arcs, in the 3D
@@ -136,7 +136,7 @@ arc on a polar or normal circle is \f$ \theta\f$-monotone if it does not
 contain a \f$ \theta\f$-extremal point, unless it is an endpoint. No such
 arc is defined on a bipolar circle.
 
-# Software Design #
+# Software Design # {#Circular_kernel_3Software}
 
 The design of `Spherical_kernel_3` is similar to the design of
 `Circular_kernel_2` (see Chapter \ref chaptercircularkernel). 
@@ -167,7 +167,7 @@ In fact, the spherical kernel is documented as a concept,
 <LI> and a predefined kernel `Exact_spherical_kernel_3`.
 </UL>
 
-# Examples #
+# Examples # {#Circular_kernel_3Examples}
 
 The first example shows how to construct spheres and compute
 intersections on them using the global function.
@@ -185,7 +185,7 @@ then compared.
 
 \cgalexample{Circular_kernel_3/functor_compare_theta_3.cpp}
 
-# Design and Implementation History #
+# Design and Implementation History # {#Circular_kernel_3Design}
 
 This package follows the 2D circular kernel package (see
 Chapter \ref chaptercircularkernel), which induced the basic

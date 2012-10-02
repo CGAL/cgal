@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Michael Hemmer, Susan Hert, Sylvain Pion, and Stefan Schirra
 
-# Introduction #
+# Introduction # {#Number_typesIntroduction}
 
 This chapter gives an overview of the number types supported by
 \cgal. Number types must fulfill certain syntactical and semantic
@@ -18,7 +18,7 @@ concepts and in case they model a subring of the real numbers they are
 also a model of `RealEmbeddable`. For an overview of the algebraic
 structure concepts see Section \ref PkgAlgebraicFoundations.
 
-# Built-in Number Types #
+# Built-in Number Types # {#Number_typesBuilt}
 
 The built-in number types `float`, `double` and `long double` have
 the required arithmetic and comparison operators. They lack some required
@@ -43,7 +43,7 @@ With floating point arithmetic,
 roundoff errors may cause the answer of the check to be `false`. 
 With the built-in integer types overflow might occur.
 
-# Number Types Provided by %CGAL #
+# Number Types Provided by CGAL # {#Number_typesCGAL}
 
 \anchor cgalnt
 
@@ -77,7 +77,7 @@ A debugging helper `Number_type_checker<NT1,NT2,Comparator>` is also
 provided which allows to compare the behavior of operations over two number
 types.
 
-# Number Types Provided by GMP #
+# Number Types Provided by GMP # {#Number_typesGMP}
 
 \anchor gmpnt
 
@@ -113,7 +113,7 @@ requirements.
 
 To use these classes, <span class="textsc">Gmp</span> and <span class="textsc">Mpfr</span> must be installed.
 
-# Number Types Provided by LEDA #
+# Number Types Provided by LEDA # {#Number_typesLEDA}
 
 \anchor ledant
 
@@ -151,7 +151,7 @@ The files <TT>CGAL/leda_integer.h</TT>, <TT>CGAL/leda_rational.h</TT>,
 necessary functions to make these classes compliant to the \cgal number type
 requirements.
 
-# Number Types Provided by %CORE #
+# Number Types Provided by CORE # {#Number_typesCORE}
 
 \anchor corent
 
@@ -170,7 +170,7 @@ requirements.
 
 <span class="textsc">Core</span> version 1.7 or later is required.
 
-# Interval arithmetic #
+# Interval arithmetic # {#Number_typesInterval}
 
 Interval arithmetic is very important for geometric programming. It
 is a fundamental tool for filtering predicates. For many problems,
@@ -197,7 +197,7 @@ precision are inherited from the `Gmpfr` interface. See
 
 To use the `Gmpfi` class, <span class="textsc">Mpfi</span> must be installed.
 
-# User-supplied Number Types #
+# User-supplied Number Types # {#Number_typesUser}
 
 In order to use your own number type it must be a model of the according
 algebraic structure concept, in particular you must provide a 
@@ -207,7 +207,7 @@ If you even want to provide a related ensemble of number types you should also
 provide specializations for `CGAL::Coercion_traits` in order to 
 reflect their interoperability.
 
-# Design and Implementation History #
+# Design and Implementation History # {#Number_typesDesign}
 
 This package was naturally one of the first packages implemented in \cgal.
 It initially contained the `Quotient`, `Gmpz` and `Gmpq` classes,

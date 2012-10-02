@@ -7,7 +7,7 @@ namespace CGAL {
 \autotoc
 \authors S&eacute;bastien Loriot and Sylvain Pion
 
-# Introduction #
+# Introduction # {#CGAL_ipeletsIntroduction}
 
 The Ipe extensible drawing editor (<A HREF="http://tclab.kaist.ac.kr/ipe/">http://tclab.kaist.ac.kr/ipe/</A>) \cite schwarzkopf1995ede, \cite ipe:man-09
 is a tool used by computational geometry researchers to produce 2D figures for inclusion in articles or presentations.
@@ -40,7 +40,7 @@ The registration of an ipelet into Ipe can be done using the macro
 `CGAL_IPELET`. `CGAL_IPELET(ipelet_class_name)` 
 must follow the definition of the ipelet class, in the same file source file.
 
-# Example #
+# Example # {#CGAL_ipeletsExample}
 
 The following example shows how the class `CGAL::Ipelet_base` can be used to easily
 interface the \cgal 2D Delaunay triangulation with Ipe.
@@ -49,7 +49,7 @@ interface the \cgal 2D Delaunay triangulation with Ipe.
 
 \image html example.png 
 
-# Installation of the Demo Ipelets #
+# Installation of the Demo Ipelets # {#CGAL_ipeletsInstallation}
 
 Some working ipelets can be found within
 the demo directory of this package. To install them you need
@@ -65,7 +65,7 @@ as well as with the version 7 (at least up to version 7.10).
 These ipelets are a good starting point to design your own ipelet. For more details on how
 to compile an ipelet, please refer to the Ipe manual.
 
-# Design and Implementation History #
+# Design and Implementation History # {#CGAL_ipeletsDesign}
 
 A first draft of the \cgal ipelets has been implemented during the
 internship of Nicolas Carrez, in 2005, supervised by Olivier Devillers.

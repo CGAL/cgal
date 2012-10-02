@@ -7,7 +7,7 @@ namespace CGAL {
 \autotoc
 \authors Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Pe&ntilde;aranda, and Monique Teillaud
 
-# Introduction #
+# Introduction # {#Algebraic_kernel_dIntroduction}
 
 Real solving of polynomials is a fundamental problem with a wide application range. 
 This package is targeted at providing black-box implementations of state-of-the-art 
@@ -18,7 +18,7 @@ the algebraic kernels is expressed in concepts. The main concepts provided by th
 `AlgebraicKernel_d_1` for univariate polynomial systems and `AlgebraicKernel_d_2` 
 for bivariate polynomial systems, the latter being a refinement of the first.
 
-# Algebraic %Kernel Concepts #
+# Algebraic Kernel Concepts # {#Algebraic_kernel_dAlgebraic}
 
 ## Univariate Algebraic %Kernel ##
 
@@ -235,7 +235,7 @@ additional functors that may allow a model to bypass this issue:
 
 `AlgebraicKernel_d_2::Bound_between_y_2`.
 
-# Models #
+# Models # {#Algebraic_kernel_dModels}
 
 ## Generic Algebraic Kernels ##
 
@@ -320,7 +320,7 @@ for more details on the implementation, tests of these kernels,
 comparisons with other algebraic kernels and discussions about the
 efficiency.
 
-# Examples #
+# Examples # {#Algebraic_kernel_dExamples}
 
 ## Construction of Algebraic Real Numbers ##
 
@@ -348,7 +348,7 @@ The following example illustrates the isolation of `AlgebraicKernel_d_1::Algebra
 The following example illustrates the sign evaluation of `AlgebraicKernel_d_1::Algebraic_real_1` numbers in polynomials:
 <SMALL>\cgalexample{Algebraic_kernel_d/Sign_at_1.cpp}</SMALL>
 
-# Design and Implementation History #
+# Design and Implementation History # {#Algebraic_kernel_dDesign}
 
 This package is clearly split into a univariate and bivariate
 kernel. However, with respect to its history the package splits into

@@ -12,7 +12,7 @@ namespace CGAL {
 \image latex chull_bimba.png "The convex hull of a model made of 192135 points." width=12cm
 \image html chull_bimba.png "The convex hull of a model made of 192135 points."
 
-# Introduction #
+# Introduction # {#Convex_hull_3Introduction}
 
 A subset \f$ S \subseteq \R^3\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
 in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained
@@ -75,7 +75,7 @@ of the convex hull.
 
 \cgalexample{Convex_hull_3/quickhull_3.cpp}
 
-# Incremental Convex Hull Construction #
+# Incremental Convex Hull Construction # {#Convex_hull_3Incremental}
 
 The function `::convex_hull_incremental_3` C provides an
 interface similar to `::convex_hull_3` for the \f$ d\f$-dimensional 
@@ -105,7 +105,7 @@ example.
 
 \cgalexample{Convex_hull_3/incremental_hull_class_3.cpp}
 
-# Dynamic Convex Hull Construction #
+# Dynamic Convex Hull Construction # {#Convex_hull_3Dynamic}
 
 Fully dynamic maintenance of a convex hull can be achieved by using the
 class `::Delaunay_triangulation_3`. This class supports insertion
@@ -124,7 +124,7 @@ not all of them are vertices of the hull.
 
 \cgalexample{Convex_hull_3/dynamic_hull_3.cpp}
 
-# Performance #
+# Performance # {#Convex_hull_3Performance}
 
 In the following, we compare the running times of the three approaches to compute 3D convex hulls.
 For the static version (using `::convex_hull_3`) and the dynamic version

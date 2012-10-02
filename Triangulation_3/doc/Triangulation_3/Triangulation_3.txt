@@ -120,7 +120,7 @@ the local validity of a given triangulation. This does not always
 ensure global validity \cite mnssssu-cgpvg-96, \cite dlpt-ccpps-98 but it is 
 sufficient for practical cases.
 
-# Delaunay Triangulation #
+# Delaunay Triangulation # {#Triangulation_3Delaunay}
 
 The class `Delaunay_triangulation_3` represents a three-dimensional
 Delaunay triangulation.
@@ -964,7 +964,7 @@ $ \infty $-loop
 <b>Data sets used in the benchmark of Figure \ref Triangulation3figkernelsanddatasets.</b>
 </CENTER>
 
-# Design and Implementation History #
+# Design and Implementation History # {#Triangulation_3Design}
 
 Monique Teillaud started to work on the 3D triangulation packages in
 1997, following the design of the 2D triangulation packages. The

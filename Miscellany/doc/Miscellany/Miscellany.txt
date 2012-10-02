@@ -9,7 +9,7 @@ namespace CGAL {
 \autotoc
 \authors Lutz Kettner, Sylvain Pion, and Michael Seel
 
-# Timers #
+# Timers # {#MiscellanyTimers}
 
 \cgal provides classes for measuring the user process time and the real time.
 The class `CGAL::Timer` is the version for the user process time and
@@ -26,14 +26,14 @@ counts the number of calls of the `start()` member function since the
 last reset. If the reset occurs while the timer is running it counts as the
 first interval.
 
-# Memory Size #
+# Memory Size # {#MiscellanyMemory}
 
 \cgal provides access to the memory size used by the program with the
 `CGAL::Memory_sizer` class. Both the virtual memory size and the
 resident size are available (the resident size does not account for
 swapped out memory nor for the memory which is not yet paged-in).
 
-# Profiling #
+# Profiling # {#MiscellanyProfiling}
 
 \cgal provides a way to count the number of times a given line of code
 is executed during the execution of a program. Such
@@ -43,7 +43,7 @@ code, and at the end of the execution of a program, the count is printed on
 these counters anywhere. They are disabled by default and activated by the
 global macro `CGAL_PROFILE`.
 
-# Unique Hash Map #
+# Unique Hash Map # {#MiscellanyUnique}
 
 The class `Unique_hash_map` implements an injective mapping between
 a set of unique keys and a set of data values. This is implemented using
@@ -52,7 +52,7 @@ Such a mapping is useful, for example, when keys are pointers,
 handles, iterators or circulators that refer to unique memory locations.
 In this case, the default hash function is `Handle_hash_function`.
 
-# Union-find #
+# Union-find # {#MiscellanyUnion}
 
 \cgal also provides a class `Union_find` that implements a partition
 of values into disjoint sets. This is implemented with union by rank and
@@ -60,7 +60,7 @@ path compression. The running time for \f$ m\f$ set operations on \f$ n\f$ eleme
 is \f$ O(n\alpha(m,n))\f$ where \f$ \alpha(m,n)\f$ is the extremely slowly growing
 inverse of Ackermann's function.
 
-# Protected Access to Internal Representations #
+# Protected Access to Internal Representations # {#MiscellanyProtected}
 
 High level data structures typically maintain integrity of an internal
 data representation, which they protect from the user. A minimal while

@@ -8,7 +8,7 @@ namespace CGAL {
 
 \authors Christophe Delage and Olivier Devillers
 
-# Introduction #
+# Introduction # {#Spatial_sortingIntroduction}
 
 Many geometric algorithms implemented in \cgal are incremental, and thus their
 speed is dependent on the order of insertion. This package provides sorting
