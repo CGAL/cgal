@@ -48,7 +48,7 @@ library, with its ability to exactly represent simple algebraic numbers.
 
 While `Arr_Bezier_curve_traits_2` models the concept 
 `ArrangementDirectionalXMonotoneTraits_2`, the implementation of 
-the `Arr_mergeable_2` operation does not enforce the input curves 
+the `Are_mergeable_2` operation does not enforce the input curves 
 to have the same direction as a precondition. Moreover, `Arr_Bezier_curve_traits_2` 
 supports the merging of curves of opposite directions. 
 
