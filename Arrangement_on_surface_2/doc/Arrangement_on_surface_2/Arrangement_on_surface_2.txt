@@ -486,7 +486,7 @@ for more details and examples.
 \anchor arr_figex_1
 \image html insert.gif
 <center><b>
- The various specialized insertion procedures. The inserted \f$ x\f$-monotone curve is drawn with a light dashed line, surrounded by two solid arrows that represent the pair of twin half-edges added to the \sc{Dcel}. Existing vertices are shown as black dots while new vertices are shown as light dots. Existing half-edges that are affected by the insertion operations are drawn as dashed arrows. (a) Inserting a curve as a new hole inside the face \f$ f\f$. (b) Inserting a curve from an existing vertex \f$ u\f$ that corresponds to one of its endpoints. (c) Inserting an \f$ x\f$-monotone curve whose endpoints are the already existing vertices \f$ u_1\f$ and \f$ u_2\f$. In our case, the new pair of half-edges close a new face \f$ f'\f$, where the hole \f$ h_1\f$, which used to belong to \f$ f\f$, now becomes an enclave in this new face. \anchor arr_figinsert
+ The various specialized insertion procedures. The inserted \f$ x\f$-monotone curve is drawn with a light dashed line, surrounded by two solid arrows that represent the pair of twin half-edges added to the \sc{Dcel}. Existing vertices are shown as black dots while new vertices are shown as light dots. Existing half-edges that are affected by the insertion operations are drawn as dashed arrows. (a) Inserting a curve as a new hole inside the face \f$ f\f$. (b) Inserting a curve from an existing vertex \f$ u\f$ that corresponds to one of its endpoints. (c) Inserting an \f$ x\f$-monotone curve whose endpoints are the already existing vertices \f$ u_1\f$ and \f$ u_2\f$. In our case, the new pair of half-edges close a new face \f$ f'\f$, where the hole \f$ h_1\f$, which used to belong to \f$ f\f$, now becomes an enclave in this new face.
 </b></center>
 
 When an \f$ x\f$-monotone curve is inserted into an existing arrangement, such
@@ -721,7 +721,7 @@ list of halfedges incident to \f$ v\f$. More precisely, it is sufficient
 to locate one of the halfedges `pred` directed toward \f$ v\f$ such
 that \f$ c\f$ is located between `pred` and `pred->next()` in
 clockwise order around \f$ v\f$, in order to complete the insertion
-(see Figure \ref arr_figinsert for an illustration). This may
+(see Figure \ref arr_figex_1 for an illustration). This may
 take \f$ O(d)\f$ time where \f$ d\f$ is the degree of the vertex. However,
 if the halfedge `pred` is known in advance, the insertion can
 be carried out in constant time.
