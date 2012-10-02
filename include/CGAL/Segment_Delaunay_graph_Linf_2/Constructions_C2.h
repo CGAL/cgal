@@ -164,8 +164,8 @@ public:
   {
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
 
-    std::cout << "debug construct bisector line " 
-              << "p=" << p << " q=" << q << std::endl;
+    CGAL_SDG_DEBUG( std::cout << "debug construct bisector line " 
+              << "p=" << p << " q=" << q << std::endl; );
 
     if ( p.is_point() and q.is_point() ) { 
       Point_2 pp = p.point(); 
@@ -191,7 +191,7 @@ public:
               (cmpx == EQUAL)? 0 : 
               (  cmpx  == SMALLER )? -1 : +1);
 
-      //std::cout << "debug: final direction d = " << d << std::endl ; 
+      //CGAL_SDG_DEBUG( std::cout << "debug: final direction d = " << d << std::endl ; );
 
       // midpoint m of two points p and q
       Point_2 m = midpoint(pp, pq);
@@ -232,7 +232,7 @@ public:
 
           // swap endpoints of segment if necessary 
           if ( (cmpabsdxy == SMALLER ? cmpy : -cmpx) == LARGER ) {
-              //std::cout << "debug: swapping p1 and p2" << std::endl ; 
+              //CGAL_SDG_DEBUG( std::cout << "debug: swapping p1 and p2" << std::endl ;); 
               std::swap(p1, p2);
           }
 
@@ -242,8 +242,8 @@ public:
 
       Polychainline pcl(-d, points, points+npts, d);
 
-      //std::cout << "debug construct bisector line is " 
-      //  << pcl << std::endl;
+      //CGAL_SDG_DEBUG( std::cout << "debug construct bisector line is " 
+      //  << pcl << std::endl; );
       
       return pcl;
     }// end of point - point case
@@ -373,23 +373,23 @@ public:
         points[0]=pcfirst;
         points[2]=pclast;
         
-        std::cout << "SANDEEP: point1 = " << points[0] << 
+        CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[0] << 
         " point2 = " << points[1] << " point3 = " 
-        << points[2] << std::endl;
+        << points[2] << std::endl; );
         
         if (p.is_segment()) {
           std::swap(points[0], points[2]);
         }
-        std::cout << "SANDEEP: point1 = " << points[0] << 
+        CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[0] << 
         " point2 = " << points[1] << " point3 = " 
-        << points[2] << std::endl;
+        << points[2] << std::endl; );
         
         Line_2 ld(pnt,pcfirst);
         
         Direction_2 d(ld.perpendicular(pcfirst));
 
         Polychainline pcl(d, points, points+npts, d);
-        std::cout << "debug about to return pcl=" << pcl << std::endl ;
+        CGAL_SDG_DEBUG( std::cout << "debug about to return pcl=" << pcl << std::endl ;);
         return pcl;
        
       }
@@ -428,19 +428,19 @@ public:
                    const Site_2& r) const
   {
 
-    std::cout << "debug construct bisector ray "
-              << "p=" << p << " q=" << q << " r=" << r << std::endl;
+    CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray "
+              << "p=" << p << " q=" << q << " r=" << r << std::endl; );
 
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
 
     // compute pqr vertex
     Point_2 v = Construct_svd_vertex_2()(p, q, r);
 
-    std::cout << "debug construct bisector ray " 
+    CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray " 
               << "p=" << p << " q=" << q << " r=" << r 
-              << " has v(pqr)=" << v << std::endl;
+              << " has v(pqr)=" << v << std::endl; );
 
-    //std::cout << "debug in ray computing bisector" << std::endl;
+    //CGAL_SDG_DEBUG( std::cout << "debug in ray computing bisector" << std::endl; );
 
     // compute oriented bisector between p and q
  
@@ -468,7 +468,7 @@ public:
               (cmpx == EQUAL)? 0 : 
               (  cmpx  == SMALLER )? -1 : +1);
 
-      //std::cout << "debug: final direction d = " << d << std::endl ; 
+      //CGAL_SDG_DEBUG( std::cout << "debug: final direction d = " << d << std::endl ;); 
 
       // bisector ray always starts with v
       points[0] = v;
@@ -505,7 +505,7 @@ public:
 
           // swap endpoints of segment if necessary 
           if ( (cmpabsdxy == SMALLER ? cmpy : -cmpx) == LARGER ) {
-              //std::cout << "debug: swapping p1 and p2" << std::endl ; 
+              //CGAL_SDG_DEBUG( std::cout << "debug: swapping p1 and p2" << std::endl ; );
               std::swap(p1, p2);
           }
 
@@ -527,7 +527,7 @@ public:
 
       Polychainray pcr(points, points+npts, d);
 
-      std::cout << "debug construct bisector ray is " << pcr << std::endl;
+      CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
       
       return pcr;
     } 
@@ -571,7 +571,7 @@ public:
         
         Polychainray pcr(points, points+npts, d);
 
-        std::cout << "debug construct bisector ray is " << pcr << std::endl;
+        CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
         
         return pcr;
 
@@ -666,16 +666,16 @@ public:
         points[1]=pcfirst;
         points[3]=pclast;
         
-        std::cout << "SANDEEP: point1 = " << points[1] << 
+        CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[1] << 
         " point2 = " << points[2] << " point3 = " 
-        << points[3] << std::endl;
+        << points[3] << std::endl; );
         
         if (p.is_segment()) {
           std::swap(points[1], points[3]);
         }
-        std::cout << "SANDEEP: point1 = " << points[1] << 
+        CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[1] << 
         " point2 = " << points[2] << " point3 = " 
-        << points[3] << std::endl;
+        << points[3] << std::endl; );
         
         //oriented line from pcfirst to pnt 
         Line_2 l(points[1], pnt);
@@ -707,7 +707,7 @@ public:
         }
         
         Polychainray pcr(points, points+npts, d);
-        std::cout << "debug construct bisector ray is " << pcr << std::endl;
+        CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
         return pcr;
         
       }
@@ -716,7 +716,7 @@ public:
 
     // this part should never be reached
 
-    std::cout << "debug construct bisector ray error " << std::endl;
+    CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray error " << std::endl; );
 
     return Polychainray();
     
@@ -752,17 +752,17 @@ public:
   result_type operator()(const Site_2& p, const Site_2& q,
                          const Site_2& r, const Site_2& s) const
   {
-    std::cout << "debug construct bisector segment " 
+    CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment " 
         << "p=" << p << " q=" << q << " r=" << r << " s=" << s
-        << std::endl;
+        << std::endl; );
 
     Construct_svd_vertex_2 circumcenter;
     Point_2 vpqr = circumcenter(p, q, r);
     Point_2 vqps = circumcenter(q, p, s);
 
-    std::cout << "debug construct bisector segment " 
+    CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment " 
         << "p=" << p << " q=" << q << " r=" << r << " s=" << s
-        << " has v(pqr)=" << vpqr << " v(qps)=" << vqps << std::endl;
+        << " has v(pqr)=" << vpqr << " v(qps)=" << vqps << std::endl; );
 
     Compare_x_2 compare_x_2;
     Compare_y_2 compare_y_2;
@@ -774,11 +774,11 @@ public:
     Comparison_result cmpy_vpqr_vqps = 
       compare_y_2(vpqr, vqps);
 
-    std::cout << "debug bis segment vpqr=" 
+    CGAL_SDG_DEBUG( std::cout << "debug bis segment vpqr=" 
       << vpqr << " vqps=" << vqps 
       << " cmpx=" << cmpx_vpqr_vqps 
       << " cmpy=" << cmpy_vpqr_vqps 
-      << std::endl;
+      << std::endl; );
 
     if ( (cmpx_vpqr_vqps == EQUAL) and 
          (cmpy_vpqr_vqps == EQUAL)    ) {
@@ -790,8 +790,8 @@ public:
       points[1] = vqps;
       Polychainsegment pcs(points, points+2);
 
-      std::cout << "debug construct bisector segment is (trivial) " 
-        << pcs << std::endl;
+      CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment is (trivial) " 
+        << pcs << std::endl; );
       return pcs;
     }
 
@@ -816,7 +816,7 @@ public:
               (cmpx == EQUAL)? 0 : 
               (  cmpx  == SMALLER )? -1 : +1);
 
-      //std::cout << "debug: final direction d = " << d << std::endl ; 
+      //CGAL_SDG_DEBUG( std::cout << "debug: final direction d = " << d << std::endl ; );
 
       // bisector segment always starts with vpqr
       points[0] = vpqr;
@@ -853,7 +853,7 @@ public:
 
         // swap endpoints of segment if necessary 
         if ( (cmpabsdxy == SMALLER ? cmpy : -cmpx) == LARGER ) {
-          //std::cout << "debug: swapping p1 and p2" << std::endl ; 
+          //CGAL_SDG_DEBUG( std::cout << "debug: swapping p1 and p2" << std::endl ; );
           std::swap(p1, p2);
         }
 
@@ -871,8 +871,8 @@ public:
           npts = 2;
         }
 
-        std::cout << "debug p1=" << p1 << " p2=" << p2 
-          << " vpqr=" << vpqr << " vqps=" << vqps << std::endl;
+        CGAL_SDG_DEBUG( std::cout << "debug p1=" << p1 << " p2=" << p2 
+          << " vpqr=" << vpqr << " vqps=" << vqps << std::endl; );
 
         CGAL_assertion(l.perpendicular(vpqr).
                          has_on_negative_side(vqps));
@@ -892,8 +892,8 @@ public:
 
       Polychainsegment pcs(points, points+npts);
 
-      //std::cout << "debug construct bisector segment is " 
-      //  << pcs << std::endl;
+      //CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment is " 
+      //  << pcs << std::endl; );
       
       return pcs;
     } // end of two points case
@@ -978,8 +978,8 @@ public:
               npts = npts - 1;
             }
           }
-          std::cout << "sandeep debug after cutting points,npts = "
-                    << npts << std::endl;
+          CGAL_SDG_DEBUG( std::cout << "sandeep debug after cutting points,npts = "
+                    << npts << std::endl; );
         }//end of horizontal segment case
         else if(seg.is_vertical()){
           //segment site is vertical
@@ -1025,8 +1025,8 @@ public:
             npts = 2;
           }
 
-          std::cout << "debug bis segment npts=" << npts << " vpqr=" 
-            << vpqr << " vqps=" << vqps << std::endl;
+          CGAL_SDG_DEBUG( std::cout << "debug bis segment npts=" << npts << " vpqr=" 
+            << vpqr << " vqps=" << vqps << std::endl; );
 
 
           // philaris: assertion does not work always
@@ -1129,23 +1129,23 @@ public:
           points[1]=pcfirst;
           points[3]=pclast;
           
-          std::cout << "SANDEEP: point1 = " << points[1] << 
+          CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[1] << 
           " point2 = " << points[2] << " point3 = " 
-          << points[3] << std::endl;
+          << points[3] << std::endl; );
           
           if (p.is_segment()) {
             std::swap(points[1], points[3]);
           }
                
-          std::cout << "SANDEEP after possible swap: "
+          CGAL_SDG_DEBUG( std::cout << "SANDEEP after possible swap: "
                     << "point1 = " << points[1] << 
                     " point2 = " << points[2] << " point3 = " 
-                    << points[3] << std::endl;
+                    << points[3] << std::endl; );
                
           //oriented line from pcfirst to pnt 
           Line_2 l(points[1], pnt);
 
-          std::cout << "debug: constr pnt = " << pnt << std::endl;
+          CGAL_SDG_DEBUG( std::cout << "debug: constr pnt = " << pnt << std::endl; );
            
           // philaris: probably not needed, but check more 
           //CGAL_assertion((l.perpendicular(vpqr).
@@ -1219,9 +1219,9 @@ public:
       points[npts-1] = vqps;  
       Polychainsegment pcs(points, points+npts);
           
-      std::cout << 
+      CGAL_SDG_DEBUG( std::cout << 
         " Sandeep: debug construct bisector segment is " << 
-        pcs << " Sandeep npts = " << npts << std::endl;
+        pcs << " Sandeep npts = " << npts << std::endl; );
         
       return pcs; 
     }//end of point segment case  
@@ -1232,8 +1232,8 @@ public:
       points[npts-1] = vqps;  
       Polychainsegment pcs(points, points+npts);
           
-      std::cout << "debug construct bisector segment is " 
-        << pcs << std::endl;
+      CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment is " 
+        << pcs << std::endl; );
         
       return pcs;    
     } // end of segment segment case        

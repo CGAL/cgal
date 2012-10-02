@@ -48,7 +48,7 @@ typename Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
 insert_first(const Storage_site_2& ss, const Point_2& p)
 {
-  std::cout << "debug insert_first " << p << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_first " << p << std::endl;);
   CGAL_precondition( number_of_vertices() == 0 );
 
   Vertex_handle v = this->_tds.insert_second();
@@ -61,7 +61,7 @@ typename Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
 insert_second(const Storage_site_2& ss, const Point_2& p)
 {
-  std::cout << "debug insert_second " << p << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_second " << p << std::endl;);
   CGAL_precondition( number_of_vertices() == 1 );
   // p0 is actually a point
   Site_2 p0 = finite_vertices_begin()->site();
@@ -82,7 +82,7 @@ typename Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
 insert_third(const Storage_site_2& ss, const Point_2& p)
 {
-  std::cout << "debug insert_third p=" << p << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_third p=" << p << std::endl;);
   Site_2 t = Site_2::construct_site_2(p);
   return insert_third(t, ss);
 }
@@ -92,7 +92,7 @@ typename Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
 insert_third(const Site_2& t, const Storage_site_2& ss)
 {
-  std::cout << "debug insert_third site t=" << t << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_third site t=" << t << std::endl;);
 
   CGAL_precondition( number_of_vertices() == 2 );
 
@@ -212,7 +212,7 @@ insert_third(const Storage_site_2& ss, Vertex_handle , Vertex_handle )
 {
   CGAL_precondition( number_of_vertices() == 2 );
 
-  std::cout << "debug insert_third numv==2" << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_third numv==2" << std::endl;);
 
   //  this can only be the case if the first site is a segment
   CGAL_precondition( dimension() == 1 );
@@ -242,7 +242,7 @@ typename Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
 insert_point(const Storage_site_2& ss, const Point_2& p, Vertex_handle vnear)
 {
-  std::cout << "debug insert_point " << p << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_point " << p << std::endl;);
   size_type n = number_of_vertices();
   if ( n == 0 ) {
     return insert_first(ss, p);
@@ -346,14 +346,14 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
   CGAL_precondition( t.is_point() );
   CGAL_assertion( number_of_vertices() > 2 );
 
-  std::cout << "debug insert_point2 entering with t=" 
-    << t << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_point2 entering with t=" 
+                 << t << std::endl;);
 
   CGAL_expensive_precondition
     ( nearest_neighbor(t, vnearest) == vnearest );
 
-  std::cout << "debug insert_point2 nearest neighbor of " << t 
-    << " is " << vnearest->site() << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_point2 nearest neighbor of " << t 
+                 << " is " << vnearest->site() << std::endl;);
 
   // find the first conflict
 
@@ -394,6 +394,7 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
     if ( s == NEGATIVE ) {
 
       // debug
+#ifdef CGAL_SDG_VERBOSE
       std::cout << "debug impl found conflict of t=" 
          << t << " with " 
          << (is_infinite(f)? "infinite" : "finite") 
@@ -414,7 +415,7 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
         std::cout << ' ' << f->vertex(2)->site();
       }
       std::cout << ']' << std::endl; 
-
+#endif
       start_f = f;
       break;
     }
@@ -424,8 +425,8 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
   // we are not in conflict with a Voronoi vertex, so we have to
   // be in conflict with the interior of a Voronoi edge
   if ( s != NEGATIVE ) {
-    std::cout << "debug impl not found conflict of t=" 
-       << t << " with any face" << std::endl; 
+    CGAL_SDG_DEBUG(std::cout << "debug impl not found conflict of t=" 
+                   << t << " with any face" << std::endl;); 
     Edge_circulator ec_start = incident_edges(vnearest);
     Edge_circulator ec = ec_start;
 
@@ -446,8 +447,8 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
       //std::cout << "debug interior e=" << e.first << " " 
       //  << e.first->neighbor(e.second) << std::endl; 
 
-      std::cout << "debug interior "
-                << "s1=" << s1 << " s2=" << s2 <<  std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug interior "
+                     << "s1=" << s1 << " s2=" << s2 <<  std::endl;);
 
       if ( s1 == s2 ) {
 	interior_in_conflict = edge_interior(e, t, s1);
@@ -559,12 +560,12 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 
   do {
 
-    std::cout << "debug impl start (found_f1 found_f2)= "
-      << found_f1 << " " << found_f2 << std::endl;
+    CGAL_SDG_DEBUG(std::cout << "debug impl start (found_f1 found_f2)= "
+                   << found_f1 << " " << found_f2 << std::endl;);
 
     Face_handle ff1(fc1), ff2(fc2);
 
-
+#ifdef CGAL_SDG_VERBOSE
     // debug
     std::cout << "debug ff1=[" ;
     if (is_infinite(ff1->vertex(0))) {
@@ -602,7 +603,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
       std::cout << ' ' << ff2->vertex(2)->site();
     }
     std::cout << ']' << std::endl; 
-
+#endif
 
     Oriented_side os1, os2;
 
@@ -666,7 +667,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 	 os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE ) {
       f1 = ff2;
       found_f1 = true;
-      std::cout << "debug impl found_f1 set to true" << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug impl found_f1 set to true" << std::endl;);
     }
 
     // philaris: change to be more symmetric:
@@ -676,11 +677,11 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 	 os1 != ON_NEGATIVE_SIDE && os2 == ON_NEGATIVE_SIDE ) {
       f2 = ff2;
       found_f2 = true;
-      std::cout << "debug impl found_f2 set to true" << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug impl found_f2 set to true" << std::endl;);
     }
 
-    std::cout << "debug impl end (found_f1 found_f2)= "
-      << found_f1 << " " << found_f2 << std::endl;
+    CGAL_SDG_DEBUG(std::cout << "debug impl end (found_f1 found_f2)= "
+                   << found_f1 << " " << found_f2 << std::endl;);
 
     if ( found_f1 && found_f2 ) { break; }
 
@@ -693,6 +694,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 
 
   // debug
+#ifdef CGAL_SDG_VERBOSE
   std::cout << "debug f1=[" ;
   if (is_infinite(f1->vertex(0))) {
     std::cout << " infv";
@@ -729,7 +731,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
     std::cout << ' ' << f2->vertex(2)->site();
   }
   std::cout << ']' << std::endl; 
-
+#endif
 
   return Face_pair(f1, f2);
 }
@@ -791,10 +793,10 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   Storage_site_2 ssx = st_.construct_storage_site_2_object()(ss, ssitev);
 
   Site_2 sitev = ssitev.site();
-
+  #ifdef CGAL_SDG_VERBOSE
   std::cout << "debug insert_point_on_segment intsec=" 
     << ssx.site() << " v=" << sitev << std::endl ;
-
+  #endif
   Face_pair fpair = find_faces_to_split(v, ssx.site());
 
   boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
@@ -814,8 +816,8 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   Site_2 sv1 = ssv1.site();
   Site_2 sv2 = ssv2.site();
 
-  std::cout << "debug unused-but-set (sv1, sv2)= ( " 
-    << sv1 << " , " << sv2 << " )" << std::endl ;
+  CGAL_SDG_DEBUG(std::cout << "debug unused-but-set (sv1, sv2)= ( " 
+                 << sv1 << " , " << sv2 << " )" << std::endl ;);
   
   v1->set_site( ssv1 );
   v2->set_site( ssv2 );
@@ -840,7 +842,7 @@ insert_segment(const Storage_site_2& ss, const Site_2& t, Vertex_handle vnear)
   CGAL_precondition( t.is_segment() );
   CGAL_precondition( t.is_input() );
 
-  std::cout << "debug insert_segment t=" << t << std::endl; 
+  CGAL_SDG_DEBUG(std::cout << "debug insert_segment t=" << t << std::endl; );
 
   if ( is_degenerate_segment(t) ) {
     Storage_site_2 ss_src = ss.source_site();
@@ -877,7 +879,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 
   CGAL_assertion( vnearest != Vertex_handle() );
 
-  std::cout << "debug insert_segment_interior t=" << t << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_segment_interior t=" << t << std::endl;);
 
 
   // find the first conflict
@@ -928,8 +930,8 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 
 	Storage_site_2 sss1 = split_storage_site(ss, ssvp, false);
 
-        std::cout << "debug unused-but-set sss1=" 
-          << sss1.site() << std::endl ;
+        CGAL_SDG_DEBUG(std::cout << "debug unused-but-set sss1=" 
+                       << sss1.site() << std::endl ;);
 
 	// merge the info of the second (common) subsegment
 	//	merge_info(vv, sss);
@@ -1146,7 +1148,7 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 		       Triple<bool,Vertex_handle,Arrangement_type>& vcross)
 {
 
-  //std::cout << "debug expand_conflict_region entering" << std::endl;
+  //CGAL_SDG_DEBUG(std::cout << "debug expand_conflict_region entering" << std::endl;);
 
 #ifdef CGAL_SDG_NO_FACE_MAP
   if ( f->tds_data().is_in_conflict() ) { return; }
@@ -1239,6 +1241,7 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
     Sign s = incircle(n, t);
 
     // debug
+#ifdef CGAL_SDG_VERBOSE
     std::cout << "debug expand incircle of t=" 
       << t << " with " 
       << (is_infinite(n)? "infinite" : "finite") 
@@ -1259,7 +1262,7 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
       std::cout << ' ' << n->vertex(2)->site();
     }
     std::cout << "] has sign s=" << s << std::endl; 
-
+#endif
 
 
 #ifdef CGAL_SDG_NO_FACE_MAP
@@ -1274,20 +1277,20 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 
     if ( s == POSITIVE ) { continue; }
 
-    std::cout << "debug expand s=" << s 
-              << " s_f=" << s_f << std::endl; 
+    CGAL_SDG_DEBUG(std::cout << "debug expand s=" << s 
+                   << " s_f=" << s_f << std::endl;); 
 
     if ( s != s_f ) { continue; }
 
     bool interior_in_conflict = edge_interior(f, i, t, s);
 
-    std::cout << "interior in conflict (cf) = " << interior_in_conflict 
-              << std::endl; 
+    CGAL_SDG_DEBUG(std::cout << "interior in conflict (cf) = " << interior_in_conflict 
+                   << std::endl; );
 
     if ( !interior_in_conflict ) { continue; }
 
-    std::cout << "face_registered = " << face_registered
-              << std::endl;
+    CGAL_SDG_DEBUG(std::cout << "face_registered = " << face_registered
+                   << std::endl;);
 
     if ( face_registered ) { continue; }
 

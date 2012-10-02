@@ -113,8 +113,8 @@ Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 	     Vertex_handle* vertices)
 {
-  std::cout << "debug hier insert_point " << p << " at level "
-    << level << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug hier insert_point " << p << " at level "
+                 << level << std::endl;);
 
   CGAL_precondition( level != UNDEFINED_LEVEL );
 
@@ -139,8 +139,8 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
 		    at_res == AT2::IDENTICAL );
 
     if ( vnear[0]->is_point() ) {
-      std::cout << "debug hier insert_point nearest is point"
-        << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug hier insert_point nearest is point"
+                     << std::endl;);
       if ( at_res == AT2::IDENTICAL ) {
 	vertex = vnear[0];
 	merge_info(vertex, ss);
@@ -322,8 +322,8 @@ insert_segment(const Point_2& p0, const Point_2& p1,
 	       const Storage_site_2& ss, int level)
 {
 
-  std::cout << "debug hier insert_segment " 
-            << p0 << ' ' << p1 << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug hier insert_segment " 
+                 << p0 << ' ' << p1 << std::endl;);
 
   // the tag is true so we DO insert segments in hierarchy
   if ( level == UNDEFINED_LEVEL ) {
@@ -393,8 +393,8 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   static Intersections_tag          itag;
   static Segments_in_hierarchy_tag  stag;
 
-  std::cout << "debug insert_segment_interior t=" << t 
-    << " at level " << level << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_segment_interior t=" << t 
+                 << " at level " << level << std::endl;);
 
   // find the first conflict
 
@@ -420,8 +420,8 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	merge_info(vv, ss);
 	return vv;
       } else if ( at_res == AT2::CROSSING ) {
-        std::cout << "debug insert_segment_interior crossing "
-          << t << " and " << *vv << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "debug insert_segment_interior crossing "
+                       << t << " and " << *vv << std::endl;);
 	return insert_intersecting_segment_with_tag(ss, t, vv, level,
 						    itag, stag);
       } else if ( at_res == AT2::TOUCH_11_INTERIOR_1 ) {
@@ -458,8 +458,8 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 
 
 
-  std::cout << "debug insert_segment_interior t=" << t 
-    << " start looking for vert cf " << std::endl;
+  CGAL_SDG_DEBUG(std::cout << "debug insert_segment_interior t=" << t 
+                 << " start looking for vert cf " << std::endl;);
 
   // first look for conflict with vertex
   Face_circulator fc_start = hierarchy[0]->incident_faces(vertices[0]);
@@ -486,7 +486,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // segments must have a conflict with at least one vertex
   CGAL_assertion( s == NEGATIVE );
 
-
+#ifdef CGAL_SDG_VERBOSE
   // debug
   std::cout << "debug hier insert_segment_interior t=" 
     << t << " with " 
@@ -509,7 +509,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   }
   std::cout << "] has sign s=" << s << std::endl; 
 
-
+#endif
 
   // we are in conflict with a Voronoi vertex; start from that and 
   // find the entire conflict region and then repair the diagram

@@ -549,8 +549,8 @@ public:
     if (crude != EQUAL) {
       return crude;
     } else {
-      std::cout << "compare_linf_distances_to_line refining" 
-        << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "compare_linf_distances_to_line refining" 
+                     << std::endl;);
       return crude;
     }
   }
@@ -575,8 +575,8 @@ public:
     if (crude != EQUAL) {
       return crude;
     } else {
-      std::cout << "compare_linf_distances_to_lines refining" 
-        << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "compare_linf_distances_to_lines refining" 
+                     << std::endl;);
       return crude;
     }
   }
@@ -624,15 +624,15 @@ public:
         CGAL::max( CGAL::abs(p.x()-r.x()), CGAL::abs(p.y()-r.y()) )
         );
     if (retval == EQUAL) {
-      std::cout << "debug cmpdistlinf maybe break ties" << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug cmpdistlinf maybe break ties" << std::endl;);
       // here, p might be on the 2-dimensional bisector(q,r),
       // therefore we have to break ties, based on one coordinate
       if (CGAL::compare(q.x(), r.x()) == EQUAL) {
-        std::cout << "debug cmpdistlinf try breaking with y" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "debug cmpdistlinf try breaking with y" << std::endl;);
         return CGAL::compare( CGAL::abs(p.y()-q.y()),
                               CGAL::abs(p.y()-r.y()) ) ;
       } else if (CGAL::compare(q.y(), r.y()) == EQUAL) {
-        std::cout << "debug cmpdistlinf try breaking with x" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "debug cmpdistlinf try breaking with x" << std::endl;);
         return CGAL::compare( CGAL::abs(p.x()-q.x()),
                               CGAL::abs(p.x()-r.x()) ) ;
       }
@@ -657,8 +657,8 @@ public:
     // line but are not the same point, then the bounding
     // box of p and q degenerates to the line segment pq.
     
-    std::cout << "debug bounded_side_of_bbox (p q r) = ("
-      << p << ") (" << q << ") (" << r << ")" << std::endl; 
+    CGAL_SDG_DEBUG(std::cout << "debug bounded_side_of_bbox (p q r) = ("
+                   << p << ") (" << q << ") (" << r << ")" << std::endl; );
 
     if ((CGAL::compare(p.x(), q.x()) == EQUAL) and
         (CGAL::compare(p.y(), q.y()) == EQUAL)    ) {
@@ -675,20 +675,20 @@ public:
     Comparison_result comp =
       CGAL::compare(cmpxpr*cmpxrq + cmpypr*cmpyrq, 0);
 
-    std::cout << "debug bounded_side_of_bbox returns ";
+    CGAL_SDG_DEBUG(std::cout << "debug bounded_side_of_bbox returns ";);
 
     switch(comp) {
       case SMALLER:
-        std::cout << "ON_UNBOUNDED_SIDE" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "ON_UNBOUNDED_SIDE" << std::endl;);
         return ON_UNBOUNDED_SIDE;
       case EQUAL:
-        std::cout << "ON_BOUNDARY" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "ON_BOUNDARY" << std::endl;);
         return ON_BOUNDARY;
       case LARGER:
-        std::cout << "ON_BOUNDED_SIDE" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "ON_BOUNDED_SIDE" << std::endl;);
         return ON_BOUNDED_SIDE;
       default:
-        std::cout << "error: should never reach here";
+        CGAL_SDG_DEBUG(std::cout << "error: should never reach here";);
         CGAL_assertion( false );
         return ON_BOUNDARY;
     }
@@ -708,17 +708,17 @@ public:
     Point_2 ssrc = seg.source();
     Point_2 strg = seg.target();
 
-    std::cout << "debug: intersects_segment_positive_halfplane "
+    CGAL_SDG_DEBUG(std::cout << "debug: intersects_segment_positive_halfplane "
       << "s=" << s 
       << " l=" << l.a() << " " << l.b() << " " << l.c()
-      << std::endl;
+                   << std::endl;);
 
     Oriented_side oslsrc = oriented_side_of_line(l, ssrc);
     Oriented_side osltrg = oriented_side_of_line(l, strg);
 
-    std::cout << "debug: intersects_segment_positive_halfplane "
+      CGAL_SDG_DEBUG(std::cout << "debug: intersects_segment_positive_halfplane "
       << "oslsrc=" << oslsrc << " osltrg=" << osltrg 
-      << std::endl;
+                     << std::endl;);
 
     if ((oslsrc == ON_POSITIVE_SIDE) or
         (osltrg == ON_POSITIVE_SIDE)   )
@@ -743,17 +743,17 @@ public:
     Point_2 ssrc = seg.source();
     Point_2 strg = seg.target();
 
-    std::cout << "debug: intersects_segment_negative_halfplane "
+    CGAL_SDG_DEBUG(std::cout << "debug: intersects_segment_negative_halfplane "
       << "s=" << s 
       << " l=" << l.a() << " " << l.b() << " " << l.c()
-      << std::endl;
+                   << std::endl;);
 
     Oriented_side oslsrc = oriented_side_of_line(l, ssrc);
     Oriented_side osltrg = oriented_side_of_line(l, strg);
 
-    std::cout << "debug: intersects_segment_negative_halfplane "
+    CGAL_SDG_DEBUG(std::cout << "debug: intersects_segment_negative_halfplane "
       << "oslsrc=" << oslsrc << " osltrg=" << osltrg 
-      << std::endl;
+                   << std::endl;);
 
     if ((oslsrc == ON_NEGATIVE_SIDE) or
         (osltrg == ON_NEGATIVE_SIDE)   )
@@ -816,21 +816,21 @@ public:
          (os_lcp_strg == ON_POSITIVE_SIDE)    ) ;
     }
 
-    std::cout << "debug qcp= (" << q << ") (" << corner 
+    CGAL_SDG_DEBUG(std::cout << "debug qcp= (" << q << ") (" << corner 
       << ") (" << p << ")" 
       << " isssrcpos=" << is_ssrc_positive
       << " isstrgpos=" << is_strg_positive
-      << std::endl; 
+                   << std::endl;); 
 
     if (is_ssrc_positive or is_strg_positive) {
-      std::cout << "debug is_segment_inside_inf_box " 
-        << "endpoint inside" << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug is_segment_inside_inf_box " 
+                     << "endpoint inside" << std::endl;);
       return true;
     } else {
       // here you have to check if the interior is inside
 
-      std::cout << "debug is_segment_inside_inf_box " 
-        << "try for interior to be inside" << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug is_segment_inside_inf_box " 
+                     << "try for interior to be inside" << std::endl;);
 
       // in fact, here you can intersect the segment
       // with the ray starting from corner and going to the
@@ -905,8 +905,8 @@ public:
     CGAL_assertion(s.is_segment());
     Segment_2 seg = s.segment();
 
-    std::cout << "debug sofw s=" << s 
-      << " orside=" << orside << std::endl;
+    CGAL_SDG_DEBUG(std::cout << "debug sofw s=" << s 
+                   << " orside=" << orside << std::endl;);
 
     Point_2 ssrc = seg.source();
     Point_2 strg = seg.target();
@@ -921,14 +921,14 @@ public:
          (os_lver_ssrc == orside)) or
         ((os_lhor_strg == orside) and 
          (os_lver_strg == orside))   ) {
-      std::cout << "debug intersects_segment_side_of_wedge " 
-        << "endpoint inside" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug intersects_segment_side_of_wedge " 
+                         << "endpoint inside" << std::endl;);
       return true;
     } else {
       // here we have to check if the interior is inside
 
-      std::cout << "debug intersects_segment_side_of_wedge " 
-        << "try for interior to be inside" << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug intersects_segment_side_of_wedge " 
+                     << "try for interior to be inside" << std::endl;);
 
       // in fact, here you can intersect the segment
       // with the ray starting from corner and going to the
@@ -942,7 +942,7 @@ public:
 
       Point_2 corner ( cx, cy, cw );
 
-      std::cout << "debug corner=" << corner << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug corner=" << corner << std::endl;);
  
       RT one(1);
 
@@ -950,7 +950,7 @@ public:
           corner.x() + ( (+orside)*CGAL::sign(lver.a()) ) * one ,
           corner.y() +   (+orside)*CGAL::sign(lhor.b())   * one   );
 
-      std::cout << "debug displaced=" << displaced << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug displaced=" << displaced << std::endl;);
 
       Line_2 l = compute_line_from_to(corner, displaced);
 
@@ -958,19 +958,19 @@ public:
 
       RT hx, hy, hw;
 
-      std::cout << "debug: intersects_segment_side_of_wedge "
+      CGAL_SDG_DEBUG(std::cout << "debug: intersects_segment_side_of_wedge "
         << " l=" << l.a() << " " << l.b() << " " << l.c()
         << " lseg=" << lseg.a() << " " << lseg.b() << " " << lseg.c()
-        << std::endl;
+                     << std::endl;);
 
       compute_intersection_of_lines(l, lseg, hx, hy, hw);
 
       if (CGAL::sign(hw) == ZERO) {
-        std::cout << "debug l and lseg are parallel" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "debug l and lseg are parallel" << std::endl;);
         return false;
       } else {
         Point_2 ip ( hx, hy, hw );
-        std::cout << "debug ip=" << ip << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "debug ip=" << ip << std::endl;);
         Oriented_side os_lhor_ip = oriented_side_of_line(lhor, ip);
         Oriented_side os_lver_ip = oriented_side_of_line(lver, ip);
 

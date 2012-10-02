@@ -139,16 +139,16 @@ public:
   Point_2 point() const { 
 
     if (not is_point()) {
-      std::cout << "debug site expecting pnt, " ;
+      CGAL_SDG_DEBUG(std::cout << "debug site expecting pnt, " ;);
       if ( is_defined() ) {
         if (is_segment()) { 
-          std::cout << "s " << segment().source() << "  "
-            << segment().target();
+          CGAL_SDG_DEBUG(std::cout << "s " << segment().source() << "  "
+                         << segment().target(););
         }
       } else {
-        std::cout << "undefined";
+        CGAL_SDG_DEBUG(std::cout << "undefined";);
       }
-      std::cout << std::endl;
+      CGAL_SDG_DEBUG(std::cout << std::endl;);
     }
 
     CGAL_precondition ( is_point() );

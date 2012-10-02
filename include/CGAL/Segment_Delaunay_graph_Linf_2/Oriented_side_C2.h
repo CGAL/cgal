@@ -64,10 +64,10 @@ public:
 
     Oriented_side retval = lp.oriented_side(q.point());
 
-    std::cout << "debug: Oriented_side_C2 (qsp)= ("
+    CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (qsp)= ("
               << q << ") (" << s << ") (" << p << ") "
               << "returns " << retval 
-              << std::endl;
+              << std::endl;);
 
     return retval;
   }
@@ -88,11 +88,11 @@ public:
 
     Oriented_side retval = v.oriented_side(lp);
 
-    std::cout << "debug: Oriented_side_C2 (s1,s2,s3,s,p)= ("
+    CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (s1,s2,s3,s,p)= ("
               << s1 << ") (" << s2 << ") (" << s3 << ") ("
               << s << ") (" << p << ") "
               << "returns " << retval 
-              << std::endl;
+              << std::endl;);
 
     return retval;
   }
@@ -197,11 +197,11 @@ public:
     Oriented_side retval = 
       oriented_side_of_line(lp, proj_of_infv);
 
-    std::cout << "debug: Oriented_side_C2 (s1,s2,s,p)= ("
+    CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (s1,s2,s,p)= ("
               << s1 << ") (" << s2 << ") (" 
               << s << ") (" << p << ") "
               << "returns " << retval 
-              << std::endl;
+              << std::endl;);
 
     return retval;
   }

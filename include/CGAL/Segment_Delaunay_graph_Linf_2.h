@@ -26,7 +26,12 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/utility.h>
 
-
+/*Sandeep for debugging
+#ifndef CGAL_SDG_VERBOSE
+#define CGAL_SDG_DEBUG(a)
+#else
+#define CGAL_SDG_DEBUG(a) { a }
+#endif*/
 /*
   Conventions:
   ------------

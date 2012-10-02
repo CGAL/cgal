@@ -118,12 +118,12 @@ private:
       y_center = half * (p.y() + q.y());
       is_set_y_center = true;
 
-      std::cout << "debug set y_center=" << 
-        y_center << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug set y_center=" << 
+        y_center << std::endl;);
       
       Comparison_result cmpxrothers = CGAL::compare(r.x(), p.x());
       if (cmpxrothers == SMALLER) {
-        std::cout << "debug r is left of p, q" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "debug r is left of p, q" << std::endl;);
         Comparison_result cmpyrp = CGAL::compare(r.y(), p.y());
         Comparison_result cmpyrq = CGAL::compare(r.y(), q.y());
         if (((cmpyrp == LARGER)  and (cmpyrq == LARGER)) or
@@ -133,17 +133,17 @@ private:
           if (cmpyrp == LARGER) {
             y_min = two*y_center - r.y();
             is_set_y_min = true;
-            std::cout << "debug set y_min=" << 
-              y_min << std::endl;
+            CGAL_SDG_DEBUG(std::cout << "debug set y_min=" << 
+              y_min << std::endl;);
           } else {
             y_max = two*y_center - r.y();
             is_set_y_max = true;
-            std::cout << "debug set y_max=" << 
-              y_max << std::endl;
+            CGAL_SDG_DEBUG(std::cout << "debug set y_max=" << 
+              y_max << std::endl;);
           }
         } 
       } else if (cmpxrothers == LARGER) {
-        std::cout << "debug r is right of p, q" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "debug r is right of p, q" << std::endl;);
         Comparison_result cmpyrp = CGAL::compare(r.y(), p.y());
         Comparison_result cmpyrq = CGAL::compare(r.y(), q.y());
         if (((cmpyrp == LARGER)  and (cmpyrq == LARGER)) or
@@ -153,13 +153,13 @@ private:
           if (cmpyrp == LARGER) {
             y_min = two*y_center - r.y();
             is_set_y_min = true;
-            std::cout << "debug set y_min=" << 
-              y_min << std::endl;
+            CGAL_SDG_DEBUG(std::cout << "debug set y_min=" << 
+              y_min << std::endl;);
           } else {
             y_max = two*y_center - r.y();
             is_set_y_max = true;
-            std::cout << "debug set y_max=" << 
-              y_max << std::endl;
+            CGAL_SDG_DEBUG(std::cout << "debug set y_max=" << 
+              y_max << std::endl;);
           }
         } 
       } else {
@@ -280,34 +280,34 @@ private:
       // here r.x() = x_min
       // r.x() = p.x() or r.x() = q.x()
       if (CGAL::compare(r.x(), p.x()) == EQUAL) {
-        std::cout << "debug r.x = p.x" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "debug r.x = p.x" << std::endl;);
         // r.x() = p.x()
         y_center = half * (p.y() + r.y());
         //Comparison_result cmpyqp = CGAL::compare(q.y(),p.y());
         Comparison_result cmpyqr = CGAL::compare(q.y(),r.y());
         if ((cmpyqp == LARGER) and (cmpyqr == LARGER)) {
-          std::cout << "debug q is above p, r" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug q is above p, r" << std::endl;);
           y_min = two*y_center - q.y();
           is_set_y_min = true;
         }
         if ((cmpyqp == SMALLER) and (cmpyqr == SMALLER)) {
-          std::cout << "debug q is below p, r" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug q is below p, r" << std::endl;);
           y_max = two*y_center - q.y();
           is_set_y_max = true;
         }
       } else { 
         // r.x() = q.x()
-        std::cout << "debug r.x = q.x" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "debug r.x = q.x" << std::endl;);
         y_center = half * (q.y() + r.y());
         Comparison_result cmpypq = CGAL::compare(p.y(),q.y());
         Comparison_result cmpypr = CGAL::compare(p.y(),r.y());
         if ((cmpypq == LARGER) and (cmpypr == LARGER)) {
-          std::cout << "debug p is above q, r" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug p is above q, r" << std::endl;);
           y_min = two*y_center - p.y();
           is_set_y_min = true;
         }
         if ((cmpypq == SMALLER) and (cmpypr == SMALLER)) {
-          std::cout << "debug p is below q, r" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug p is below q, r" << std::endl;);
           y_max = two*y_center - p.y();
           is_set_y_max = true;
         }
@@ -399,10 +399,10 @@ private:
     // on corners of it, then grow it to become square
     switch(cmpsides) {
       case SMALLER:
-        std::cout << "rectangle has to be made fatter" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "rectangle has to be made fatter" << std::endl;);
         // make rectangle fatter
         if (is_set_x_center) {
-          std::cout << "x_center already set" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "x_center already set" << std::endl;);
           // grow in both sides
           break;
         }
@@ -417,20 +417,20 @@ private:
 	     (CGAL::compare(r.y(), y_max) == SMALLER) and
 	     (CGAL::compare(r.y(), y_min) == LARGER)     )   )
         { // grow rectangle to the right
-          std::cout << "debug vsqrnew grow right" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug vsqrnew grow right" << std::endl;);
           x_max = x_min + y_max - y_min;
         } else 
         { // grow rectangle to the left
-          std::cout << "debug vsqrnew grow left" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug vsqrnew grow left" << std::endl;);
           x_min = x_max - y_max + y_min;
         }
         break;
       case LARGER:
-        std::cout << "rectangle has to be made taller" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "rectangle has to be made taller" << std::endl;);
         // make rectangle taller
         if (is_set_y_center) {
           // grow in both sides
-          std::cout << "y_center already set" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "y_center already set" << std::endl;);
           break;
         }
         // grow only if any point is inside horizontal sides
@@ -444,11 +444,11 @@ private:
 	     (CGAL::compare(r.x(), x_max) == SMALLER) and
 	     (CGAL::compare(r.x(), x_min) == LARGER)     )   )
         { // grow rectangle upwards
-          std::cout << "debug vsqrnew grow upwards" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug vsqrnew grow upwards" << std::endl;);
           y_max = y_min + x_max - x_min;
         } else 
         { // grow rectangle downwards
-          std::cout << "debug vsqrnew grow downwards" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug vsqrnew grow downwards" << std::endl;);
           y_min = y_max - x_max + x_min;
         }
         break;
@@ -529,12 +529,12 @@ private:
     Polychainline_2 goodbisector;
     if (p_endp_r) {
       goodbisector = bisector_linf(r, p);
-      std::cout << "debug: brp r=" << r << " p=" << p << std::endl;
-      std::cout << "debug: brp res=" << goodbisector << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug: brp r=" << r << " p=" << p << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: brp res=" << goodbisector << std::endl;);
     } else {
       goodbisector = bisector_linf(q, r);
-      std::cout << "debug: bqr q=" << q << " r=" << r << std::endl;
-      std::cout << "debug: bqr res=" << goodbisector << std::endl;
+      CGAL_SDG_DEBUG(std::cout << "debug: bqr q=" << q << " r=" << r << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: bqr res=" << goodbisector << std::endl;);
     }
 
     Polychainline_2 bpq = bisector_linf(p, q);

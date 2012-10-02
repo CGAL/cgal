@@ -31,16 +31,16 @@ namespace CGAL {
       Bounded_side predicate(const Point_2 &p, const Point_2 &q,
                   const Point_2 &r, const Point_2 &t) const
       {
-        std::cout << "debug Side_of_bounded_square_2 entering" 
-                  << std::endl;
-        std::cout << "debug Side_of_bs (pqrt)= (" << p << ") (" 
-                  << q << ") (" << r << ") (" << t << ")" << std::endl;
+        CGAL_SDG_DEBUG(std::cout << "debug Side_of_bounded_square_2 entering" 
+                  << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs (pqrt)= (" << p << ") (" 
+                  << q << ") (" << r << ") (" << t << ")" << std::endl;);
 
         Point_2 px_min, px_max, py_min, py_max;
 
         //should be added as CGAL precondition
         if (orientation_Linf(p,q,r) == DEGENERATE) {
-          std::cout << "debug: error: p,q,r are monotone!" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug: error: p,q,r are monotone!" << std::endl;);
           exit(0);
         }
         
@@ -112,7 +112,7 @@ namespace CGAL {
         }
 
         if (exist_two_with_same_x) {
-          std::cout << "debug Side_of_bs two same x" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same x" << std::endl;);
           if ( ( ( compare_y_2(dx, s1) == SMALLER ) and
                  ( compare_y_2(dx, s2) == SMALLER )   ) or
                ( ( compare_y_2(dx, s1) == LARGER  ) and
@@ -151,7 +151,7 @@ namespace CGAL {
         }
 
         if (exist_two_with_same_y) {
-          std::cout << "debug Side_of_bs two same y" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same y" << std::endl;);
           if ( ( ( compare_x_2(dy, s1) == SMALLER ) and
                  ( compare_x_2(dy, s2) == SMALLER )   ) or
                ( ( compare_x_2(dy, s1) == LARGER  ) and
@@ -191,7 +191,7 @@ namespace CGAL {
           }
           else {
             //move both sides
-            std::cout << "debug Side_of_bs move both sides" << std::endl;
+            CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs move both sides" << std::endl;);
             pmin = Point_2(
                 px_min.x(), 
                (py_max.y() + py_min.y() - px_max.x() + px_min.x())*FT(0.5));
@@ -218,7 +218,7 @@ namespace CGAL {
           }
           else {
             //move both sides
-            std::cout << "debug Side_of_bs move both sides" << std::endl;
+            CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs move both sides" << std::endl;);
             pmin = Point_2(
                 (px_min.x() + px_max.x() - py_max.y() + py_min.y())*FT(0.5),
                  py_min.y() );
@@ -228,26 +228,26 @@ namespace CGAL {
           }
         }
 
-        std::cout << "debug Side_of_bs pmin=" << pmin
-                  << " pmax=" << pmax << " t=" << t << std::endl; 
+        CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs pmin=" << pmin
+                  << " pmax=" << pmax << " t=" << t << std::endl;); 
 
         //Now we answer the predicate bounded side of square
         if( compare_x_2(pmin, t) == SMALLER && 
             compare_x_2(t, pmax) == SMALLER && 
             compare_y_2(pmin, t) == SMALLER && 
             compare_y_2(t, pmax) == SMALLER   ) {
-          std::cout << "debug Side_of_bs return ON_BOUNDED_SIDE" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs return ON_BOUNDED_SIDE" << std::endl;);
           return ON_BOUNDED_SIDE;
         }
         else if (compare_x_2(pmin, t) == LARGER || 
                  compare_x_2(t, pmax) == LARGER || 
                  compare_y_2(pmin, t) == LARGER || 
                  compare_y_2(t, pmax) == LARGER   ) {
-          std::cout << "debug Side_of_bs return ON_UNBOUNDED_SIDE" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs return ON_UNBOUNDED_SIDE" << std::endl;);
           return ON_UNBOUNDED_SIDE;
         }
         else {
-          std::cout << "debug Side_of_bs return ON_BOUNDARY" << std::endl;
+          CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs return ON_BOUNDARY" << std::endl;);
           return ON_BOUNDARY;
         }
       }
