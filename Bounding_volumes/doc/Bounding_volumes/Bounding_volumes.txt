@@ -23,7 +23,7 @@ on a line and written to standard output. The example
 shows that it is advisable to switch on random shuffling 
 in order to deal with a 'bad' order of the input points. 
 
-\cgalexample{Bounding_volumes/min_circle_2.cpp}
+\cgalexample{Min_circle_2/min_circle_2.cpp}
 
 Other classes for which we provide solutions are ellipses
 (`CGAL::Min_ellipse_2<Traits>`), rectangles

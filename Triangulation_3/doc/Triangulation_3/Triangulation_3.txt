@@ -348,6 +348,7 @@ Figure \ref T3figlayers shows in more detail the flexibility that is
 provided, and the place where the user can insert his own vertex and/or cell
 base classes.
 
+\anchor T3figlayers
 \image html design.gif "Triangulation software design."
 
 The design of the triangulation data structure gives the possibility to store
@@ -905,7 +906,7 @@ also be found in \cite cgal:dp-eegpd-03.
 <TD ALIGN=RIGHT NOWRAP>
 3.8 
 <TD ALIGN=RIGHT NOWRAP>
-$ \infty $-loop 
+\f$ \infty \f$-loop 
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>

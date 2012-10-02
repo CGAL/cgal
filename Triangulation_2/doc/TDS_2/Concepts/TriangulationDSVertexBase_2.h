@@ -35,7 +35,7 @@ as parameter in the face and vertex base classes.
 This mechanism requires that the base class provides 
 a templated nested class `Rebind_TDS` that 
 itself provides 
-the subtype `Rebind_TDS<TDS2>::Other` 
+the subtype `Rebind_TDS::Other` 
 which is the <I>rebound</I> version of the base class. 
 This <I>rebound</I> base class is the class 
 that the `CGAL::Triangulation_data_structure_2` 

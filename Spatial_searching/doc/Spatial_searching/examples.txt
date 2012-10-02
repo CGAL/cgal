@@ -1,4 +1,6 @@
 /*!
+\example Spatial_searching/Point.h
+\example Spatial_searching/Distance.h
 \example Spatial_searching/circular_query.cpp
 \example Spatial_searching/distance_browsing.cpp
 \example Spatial_searching/fuzzy_range_query.cpp

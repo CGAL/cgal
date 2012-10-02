@@ -6,7 +6,7 @@ namespace CGAL {
 For a given `Polynomial_d` the function `canonicalize` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Canonicalize`. 
+Adapts `Polynomial_traits_d::Canonicalize`. 
 
 For more details see the concept `PolynomialTraits_d::Canonicalize`. 
 
@@ -28,7 +28,7 @@ canonicalize(const Polynomial_d& p);
 For a given `Polynomial_d` the function `compare` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Compare`. 
+Adapts `Polynomial_traits_d::Compare`. 
 
 For more details see the concept `PolynomialTraits_d::Compare`. 
 
@@ -47,7 +47,7 @@ compare(const Polynomial_d& p, const Polynomial_d& q);
 For a given `Polynomial_d` the function `degree` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Degree`. 
+Adapts `Polynomial_traits_d::Degree`. 
 
 For more details see the concept `PolynomialTraits_d::Degree`. 
 
@@ -70,7 +70,7 @@ index = Polynomial_traits_d<Polynomial_d>::d-1);
 For a given `Polynomial_d` the function `degree_vector` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::DegreeVector`. 
+Adapts `Polynomial_traits_d::DegreeVector`. 
 
 For more details see the concept `PolynomialTraits_d::DegreeVector`. 
 
@@ -92,7 +92,7 @@ degree_vector(const Polynomial_d& p);
 For a given `Polynomial_d` the function `differentiate` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Differentiate`. 
+Adapts `Polynomial_traits_d::Differentiate`. 
 
 For more details see the concept `PolynomialTraits_d::Differentiate`. 
 
@@ -115,7 +115,7 @@ index = Polynomial_traits_d<Polynomial_d>::d-1 );
 For a given `Polynomial_d` the function `evaluate_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Evaluate_homogeneous`. 
+Adapts `Polynomial_traits_d::Evaluate_homogeneous`. 
 
 For more details see the concept `PolynomialTraits_d::EvaluateHomogeneous`. 
 
@@ -140,7 +140,7 @@ Polynomial_traits_d<Polynomial_d>::Coefficient_type v);
 For a given `Polynomial_d` the function `evaluate` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Evaluate`. 
+Adapts `Polynomial_traits_d::Evaluate`. 
 
 For more details see the concept `PolynomialTraits_d::Evaluate`. 
 
@@ -163,7 +163,7 @@ Polynomial_traits_d<Polynomial_d>::Coefficient_type x);
 For a given `Polynomial_d` the function `gcd_up_to_constant_factor` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Gcd_up_to_constant_factor`. 
+Adapts `Polynomial_traits_d::Gcd_up_to_constant_factor`. 
 
 For more details see the concept `PolynomialTraits_d::GcdUpToConstantFactor`. 
 
@@ -185,7 +185,7 @@ gcd_up_to_constant_factor(const Polynomial_d& p, const Polynomial_d& q);
 For a given `Polynomial_d` the function `get_coefficient` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::GetCoefficient`. 
+Adapts `Polynomial_traits_d::GetCoefficient`. 
 
 For more details see the concept `PolynomialTraits_d::GetCoefficient`. 
 
@@ -208,7 +208,7 @@ get_coefficient(const Polynomial_d& p, int i);
 For a given `Polynomial_d` the function `get_innermost_coefficient` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::GetInnermostCoefficient`. 
+Adapts `Polynomial_traits_d::GetInnermostCoefficient`. 
 
 For more details see the concept `PolynomialTraits_d::GetInnermostCoefficient`. 
 
@@ -231,7 +231,7 @@ get_innermost_coefficient(const Polynomial_d& p, Exponent_vector ev);
 For a given `Polynomial_d` the function `innermost_leading_coefficient` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::InnermostLeadingCoefficient`. 
+Adapts `Polynomial_traits_d::InnermostLeadingCoefficient`. 
 
 For more details see the concept 
 `PolynomialTraits_d::InnermostLeadingCoefficient`. 
@@ -254,7 +254,7 @@ innermost_leading_coefficient(const Polynomial_d& p);
 For a given `Polynomial_d` the function `integral_division_up_to_constant_factor` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Integral_division_up_to_constant_factor`. 
+Adapts `Polynomial_traits_d::Integral_division_up_to_constant_factor`. 
 
 For more details see the concept `PolynomialTraits_d::IntegralDivisionUpToConstantFactor`. 
 
@@ -276,7 +276,7 @@ integral_division_up_to_constant_factor(const Polynomial_d& p, const Polynomial_
 For a given `Polynomial_d` the function `invert` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Invert`. 
+Adapts `Polynomial_traits_d::Invert`. 
 
 For more details see the concept `PolynomialTraits_d::Invert`. 
 
@@ -298,7 +298,7 @@ invert(const Polynomial_d& p, int index = Polynomial_traits_d<Polynomial_d>::d-1
 For a given `Polynomial_d` the function `is_square_free` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Is_square_free`. 
+Adapts `Polynomial_traits_d::Is_square_free`. 
 
 For more details see the concept `PolynomialTraits_d::IsSquareFree`. 
 
@@ -320,7 +320,7 @@ is_square_free(const Polynomial_d& p);
 For a given `Polynomial_d` the function `is_zero_at_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Is_zero_at_homogeneous`. 
+Adapts `Polynomial_traits_d::Is_zero_at_homogeneous`. 
 
 For more details see the concept `PolynomialTraits_d::IsZeroAtHomogeneous`. 
 
@@ -343,7 +343,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 For a given `Polynomial_d` the function `is_zero_at` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Is_zero_at`. 
+Adapts `Polynomial_traits_d::Is_zero_at`. 
 
 For more details see the concept `PolynomialTraits_d::IsZeroAt`. 
 
@@ -366,7 +366,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 For a given `Polynomial_d` the function `leading_coefficient` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Leading_coefficient`. 
+Adapts `Polynomial_traits_d::Leading_coefficient`. 
 
 For more details see the concept `PolynomialTraits_d::LeadingCoefficient`. 
 
@@ -388,7 +388,7 @@ leading_coefficient(const Polynomial_d& p);
 For a given `Polynomial_d` the function `make_square_free` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Make_square_free`. 
+Adapts `Polynomial_traits_d::Make_square_free`. 
 
 For more details see the concept `PolynomialTraits_d::MakeSquareFree`. 
 
@@ -410,7 +410,7 @@ make_square_free(const Polynomial_d& p);
 For a given `Polynomial_d` the function `move` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Move`. 
+Adapts `Polynomial_traits_d::Move`. 
 
 For more details see the concept `PolynomialTraits_d::Move`. 
 
@@ -432,7 +432,7 @@ move(const Polynomial_d& p, int i, int j);
 For a given `Polynomial_d` the function `multivariate_content` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Multivariate_content`. 
+Adapts `Polynomial_traits_d::Multivariate_content`. 
 
 For more details see the concept `PolynomialTraits_d::MultivariateContent`. 
 
@@ -454,7 +454,7 @@ multivariate_content(const Polynomial_d& p);
 For a given `Polynomial_d` the function `negate` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Negate`. 
+Adapts `Polynomial_traits_d::Negate`. 
 
 For more details see the concept `PolynomialTraits_d::Negate`. 
 
@@ -498,20 +498,13 @@ where \f$ s\f$ is the number of subsequences of \f$ I\f$ of the form
 \advanced with \f$ a\neq 0,b\neq 0, k\geq 0\f$. 
 
 \advanced For the \f$ i\f$-th subsequence of \f$ I\f$, define 
-\f$ \f$\epsilon_i:=<TD class="math"> 
-<TABLE CELLSPACING=5 > 
-<TR> 
-<TD ALIGN=CENTER NOWRAP> 
-0 
-<TD ALIGN=CENTER NOWRAP> 
-<span class="mbox">if \f$ k\f$ is odd</span>, 
-<TR> 
-<TD ALIGN=CENTER NOWRAP> 
-(-1)^k/2 mathrm sign(ab) 
-<TD ALIGN=CENTER NOWRAP> 
-<span class="mbox">if \f$ k\f$ is even</span>. 
-</TABLE> 
-<TD nowrap="nowrap" class="math">\f$ \f$ 
+
+\f[
+\epsilon_i:=\begin{array}{cc}
+0 & \mbox{if $k$ is odd},\\
+(-1)^{k/2}\mathrm{sign}(ab) & \mbox{if $k$ is even}.
+\end{array}
+\f]
 
 \advanced For \f$ f\in\mathbb{R}[x]\f$ with \f$ \deg f=n\f$, we have: 
 \f[ C(\mathrm{stha}_n(f),\ldots,\mathrm{stha}_0(f)) = \#\{\alpha\in\R\mid f(\alpha)=0\} \f] 
@@ -554,20 +547,13 @@ where \f$ s\f$ is the number of subsequences of \f$ I\f$ of the form
 \advanced with \f$ a\neq 0,b\neq 0, k\geq 0\f$. 
 
 \advanced For the \f$ i\f$-th subsequence of \f$ I\f$, define 
-\f$ \f$\epsilon_i:=<TD class="math"> 
-<TABLE CELLSPACING=5 > 
-<TR> 
-<TD ALIGN=CENTER NOWRAP> 
-0 
-<TD ALIGN=CENTER NOWRAP> 
-<span class="mbox">if \f$ k\f$ is odd</span>, 
-<TR> 
-<TD ALIGN=CENTER NOWRAP> 
-(-1)^k/2 mathrm sign(ab) 
-<TD ALIGN=CENTER NOWRAP> 
-<span class="mbox">if \f$ k\f$ is even</span>. 
-</TABLE> 
-<TD nowrap="nowrap" class="math">\f$ \f$ 
+
+\f[
+\epsilon_i:=\begin{array}{cc}
+0 & \mbox{if $k$ is odd},\\
+(-1)^{k/2}\mathrm{sign}(ab) & \mbox{if $k$ is even}.
+\end{array}
+\f]
 
 \advanced For \f$ f\in\mathbb{R}[x]\f$ with \f$ \deg f=n\f$, we have: 
 \f[ C(\mathrm{stha}_n(f),\ldots,\mathrm{stha}_0(f)) = \#\{\alpha\in\R\mid f(\alpha)=0\} \f] 
@@ -588,7 +574,7 @@ int number_of_real_roots(InputIterator start,InputIterator end);
 For a given `Polynomial_d` the function `permute` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Permute`.
+Adapts `Polynomial_traits_d::Permute`.
 
 For more details see the concept `PolynomialTraits_d::Permute`. 
 
@@ -664,7 +650,7 @@ OutputIterator3 coQ_out);
 
 computes the principal Sturm-Habicht coefficients of \f$ f\f$
 with respect to the outermost variable. Each element is of type
-`Polynomial_traits_d<Polynomial_d>::Coefficient_type`.
+`Polynomial_traits_d::Coefficient_type`b.
 
 For a given `Polynomial_d` the function `principal_sturm_habicht_sequence` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -689,7 +675,7 @@ OutputIterator out);
 
 computes the principal subresultants of \f$ p\f$ and \f$ q\f$, 
 with respect to the outermost variable. Each element is of type
-`Polynomial_traits_d<Polynomial_d>::Coefficient_type`.
+`Polynomial_traits_d::Coefficient_type`.
 
 For a given `Polynomial_d` the function `principal_subresultants` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -715,7 +701,7 @@ OutputIterator out);
 For a given `Polynomial_d` the function `pseudo_division` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Pseudo_division`. 
+Adapts `Polynomial_traits_d::Pseudo_division`. 
 
 For more details see the concept `PolynomialTraits_d::PseudoDivision`. 
 
@@ -737,7 +723,7 @@ Polynomial_d& q, Polynomial_d& r, Polynomial_traits_d<Polynomial_d>::Coefficient
 For a given `Polynomial_d` the function `pseudo_division_quotient` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Pseudo_division_quotient`.
+Adapts `Polynomial_traits_d::Pseudo_division_quotient`.
 
 For more details see the concept `PolynomialTraits_d::PseudoDivisionQuotient`. 
 
@@ -760,7 +746,7 @@ pseudo_division_quotient(const Polynomial_d& p, const Polynomial_d& q);
 For a given `Polynomial_d` the function `pseudo_division_remainder` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Pseudo_division_remainder`. 
+Adapts `Polynomial_traits_d::Pseudo_division_remainder`. 
 
 For more details see the concept `PolynomialTraits_d::PseudoDivisionRemainder`. 
 
@@ -781,7 +767,7 @@ pseudo_division_remainder(const Polynomial_d& p, const Polynomial_d& q);
 For a given `Polynomial_d` the function `resultant` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Resultant`. 
+Adapts `Polynomial_traits_d::Resultant`. 
 
 For more details see the concept `PolynomialTraits_d::Resultant`. 
 
@@ -802,7 +788,7 @@ resultant(const Polynomial_d& p, const Polynomial_d& q);
 For a given `Polynomial_d` the function `scale_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Scale_homogeneous`. 
+Adapts `Polynomial_traits_d::Scale_homogeneous`. 
 
 For more details see the concept `PolynomialTraits_d::ScaleHomogeneous`. 
 
@@ -827,7 +813,7 @@ int index = Polynomial_traits_d<Polynomial_d>::d-1);
 For a given `Polynomial_d` the function `scale` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Scale`. 
+Adapts `Polynomial_traits_d::Scale`. 
 
 For more details see the concept `PolynomialTraits_d::Scale`. 
 
@@ -851,7 +837,7 @@ int index = Polynomial_traits_d<Polynomial_d>::d-1);
 For a given `Polynomial_d` the function `shift` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Shift`. 
+Adapts `Polynomial_traits_d::Shift`. 
 
 For more details see the concept `PolynomialTraits_d::Shift`. 
 
@@ -871,7 +857,7 @@ shift(const Polynomial_d& p, int i, int index = Polynomial_traits_d<Polynomial_d
 For a given `Polynomial_d` the function `sign_at_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Sign_at_homogeneous`. 
+Adapts `Polynomial_traits_d::Sign_at_homogeneous`. 
 
 For more details see the concept `PolynomialTraits_d::SignAtHomogeneous`. 
 
@@ -894,7 +880,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 For a given `Polynomial_d` the function `sign_at` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Sign_at`. 
+Adapts `Polynomial_traits_d::Sign_at`. 
 
 For more details see the concept `PolynomialTraits_d::SignAt`. 
 
@@ -917,7 +903,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 For a given `Polynomial_d` the function `square_free_factorize` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Square_free_factorize`. 
+Adapts `Polynomial_traits_d::Square_free_factorize`. 
 
 For more details see the concept `PolynomialTraits_d::SquareFreeFactorize`. 
 
@@ -941,7 +927,7 @@ Polynomial_traits_d<Polynomial>::Innermost_coefficient& a);
 For a given `Polynomial_d` the function `square_free_factorize` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Square_free_factorize`. 
+Adapts `Polynomial_traits_d::Square_free_factorize`. 
 
 For more details see the concept `PolynomialTraits_d::SquareFreeFactorize`. 
 
@@ -963,7 +949,7 @@ square_free_factorize(const Polynomial_d& p, OutputIterator it);
 For a given `Polynomial_d` the function `square_free_factorize_up_to_constant_factor` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Square_free_factorize_up_to_constant_factor`. 
+Adapts `Polynomial_traits_d::Square_free_factorize_up_to_constant_factor`. 
 
 For more details see the concept `PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor`. 
 
@@ -1039,7 +1025,7 @@ OutputIterator3 cofx_out);
 For a given `Polynomial_d` the function `substitute_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Substitute_homogeneous`. 
+Adapts `Polynomial_traits_d::Substitute_homogeneous`. 
 
 For more details see the concept `PolynomialTraits_d::SubstituteHomogeneous`. 
 
@@ -1064,7 +1050,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 For a given `Polynomial_d` the function `substitute` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Substitute`. 
+Adapts `Polynomial_traits_d::Substitute`. 
 
 For more details see the concept `PolynomialTraits_d::Substitute`. 
 
@@ -1090,7 +1076,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 For a given `Polynomial_d` the function `swap` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Swap`. 
+Adapts `Polynomial_traits_d::Swap`. 
 
 For more details see the concept `PolynomialTraits_d::Swap`. 
 
@@ -1112,7 +1098,7 @@ swap(const Polynomial_d& p, int i, int j);
 For a given `Polynomial_d` the function `total_degree` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Total_degree`. 
+Adapts `Polynomial_traits_d::Total_degree`. 
 
 For more details see the concept `PolynomialTraits_d::TotalDegree`. 
 
@@ -1134,7 +1120,7 @@ total_degree(const Polynomial_d& p);
 For a given `Polynomial_d` the function `translate_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Translate_homogeneous`. 
+Adapts `Polynomial_traits_d::Translate_homogeneous`. 
 
 For more details see the concept `PolynomialTraits_d::TranslateHomogeneous`. 
 
@@ -1160,7 +1146,7 @@ int index = Polynomial_traits_d<Polynomial_d>::d-1);
 For a given `Polynomial_d` the function `translate` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Translate`. 
+Adapts `Polynomial_traits_d::Translate`. 
 
 For more details see the concept `PolynomialTraits_d::Translate`. 
 
@@ -1185,7 +1171,7 @@ int index = Polynomial_traits_d<Polynomial_d>::d-1);
 For a given `Polynomial_d` the function `univariate_content` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::UnivariateContent`. 
+Adapts `Polynomial_traits_d::UnivariateContent`. 
 
 For more details see the concept `PolynomialTraits_d::UnivariateContent`. 
 
@@ -1207,7 +1193,7 @@ univariate_content(const Polynomial_d& p);
 For a given `Polynomial_d` the function `univariate_content_up_to_constant_factor` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
 
-Adapts `Polynomial_traits_d<Polynomial_d>::Univariate_content_up_to_constant_factor`. 
+Adapts `Polynomial_traits_d::Univariate_content_up_to_constant_factor`. 
 
 For more details see the concept `PolynomialTraits_d::UnivariateContentUpToConstantFactor`. 
 

@@ -346,7 +346,7 @@ model `Quadratic_program<NT>`, we can easily set the default bounds
 so that a nonnegative program results, and a linear program is
 obtained by simply not inserting any \f$ D\f$-entries. Even in the
 iterator-based approach (see 
-\ref first_qp_from_iterators.cpp), linear
+\ref QP_solver/first_qp_from_iterators.cpp), linear
 and nonnegative programs can easily be defined through suitable 
 `Const_oneset_iterator<T>`-style iterators.
 
@@ -411,11 +411,11 @@ Here is \cgal code for solving it, using the dedicated LP solver, and
 according to the three ways for constructing a program that we have
 already discussed in Section \ref secQPfirst.
 
-\ref first_lp.cpp
+\ref QP_solver/first_lp.cpp
 
-\ref first_lp_from_mps.cpp
+\ref QP_solver/first_lp_from_mps.cpp
 
-\ref first_lp_from_iterators.cpp
+\ref QP_solver/first_lp_from_iterators.cpp
 
 In all cases, the output is
 \verbatim
@@ -459,11 +459,11 @@ variable values:
 1: 3/1
 \endverbatim
 
-\ref first_nonnegative_qp.cpp
+\ref QP_solver/first_nonnegative_qp.cpp
 
-\ref first_nonnegative_qp_from_mps.cpp
+\ref QP_solver/first_nonnegative_qp_from_mps.cpp
 
-\ref first_nonnegative_qp_from_iterators.cpp
+\ref QP_solver/first_nonnegative_qp_from_iterators.cpp
 
 ## The Nonnegative Linear Programming Solver ##
 
@@ -485,11 +485,11 @@ a "minimal" input and a "shortest" program; the optimal value is
 
 This can be solved by any of the following three programs
 
-\ref first_nonnegative_lp.cpp
+\ref QP_solver/first_nonnegative_lp.cpp
 
-\ref first_nonnegative_lp_from_mps.cpp
+\ref QP_solver/first_nonnegative_lp_from_mps.cpp
 
-\ref first_nonnegative_lp_from_iterators.cpp
+\ref QP_solver/first_nonnegative_lp_from_iterators.cpp
 
 The output will always be
 \verbatim
@@ -569,7 +569,7 @@ You can avoid the explicit construction of the type
 if you only need an expression of it, e.g. to pass it directly 
 as an argument to the solving function. Here is an alternative
 version of 
-\ref solve_convex_hull_containment_lp.h
+\ref QP_solver/solve_convex_hull_containment_lp.h
 that shows how this works. In effect, you get shorter and more
 readable code.
 
@@ -609,7 +609,7 @@ such a situation is called a <I>degeneracy</I>.
 There is also the concept of an important constraint: this is 
 typically a constraint in the system \f$ A\qpx\qprel\qpb\f$ 
 that is satisfied with equality at \f$ \qpx^*\f$. Program
-\ref first_qp_basic_constraints.cpp
+\ref QP_solver/first_qp_basic_constraints.cpp
 shows how these can be accessed, using the iterators
 `basic_constraint_indices_begin()` and
 `basic_constraint_indices_end()`.
@@ -666,8 +666,8 @@ Lemma.
 
 There are similar certificates for optimality and unboundedness
 that you can see in action in the programs
-\ref optimality_certificate.cpp and
-\ref unboundedness_certificate.cpp.
+\ref QP_solver/optimality_certificate.cpp and
+\ref QP_solver/unboundedness_certificate.cpp.
 The underlying variants of Farkas Lemma are somewhat more
 complicated, due to the mixed relations in \f$ \qprel\f$ and the general
 bounds. The certificate section of `Quadratic_program_solution<ET>` 
@@ -701,7 +701,7 @@ magnitude, the filtering will usually have
 no dramatic effect on the performance, so in that case you might as well 
 switch to `CGAL::QP_PARTIAL_DANTZIG` 
 to be safe from the issue described here (see 
-\ref cycling.cpp 
+\ref QP_solver/cycling.cpp 
 for an example that shows how to change the pricing strategy).
 
 \subsection secQPcustomizationcycling The Solver Internally Cycles 

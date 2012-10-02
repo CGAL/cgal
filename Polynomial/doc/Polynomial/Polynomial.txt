@@ -98,10 +98,8 @@ the polynomial as an element of \f$ R [x_0,\dots,x_{d-1}]\f$.
 According to these two different views the traits class is required to provide 
 two different coefficient types:
 <UL>
-<LI>`CGAL::Polynomial_traits_d<Polynomial_d>::Coefficient_type` 
-representing \f$ R[x_0,\dots,x_{d-2}]\f$.
-<LI>`CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type` 
-representing the base ring \f$ R\f$.
+<LI>`CGAL::Polynomial_traits_d::Coefficient_type` representing \f$ R[x_0,\dots,x_{d-2}]\f$.
+<LI>`CGAL::Polynomial_traits_d::Innermost_coefficient_type` representing the base ring \f$ R\f$.
 </UL>
 
 Another important type which is introduced by this package is 
@@ -123,15 +121,15 @@ refines `IntegralDomainWithoutDivision` which in turn refines
 constant polynomials.
 
 In general a polynomial is constructed using the functor 
-`CGAL::Polynomial_traits_d<Polynomial_d>::Construct_polynomial` a model of 
+`CGAL::Polynomial_traits_d::Construct_polynomial` a model of 
 `PolynomialTraits_d::ConstructPolynomial`. Basically there are two options:
 <UL>
 <LI>The polynomial is constructed from an iterator range with value type 
-`CGAL::Polynomial_traits_d<Polynomial_d>::Coefficient_type`, 
+`CGAL::Polynomial_traits_d::Coefficient_type`, 
 where the \f$ begin\f$ iterator refers to the constant term 
 (constant with respect to the outermost variable). 
 <LI>The polynomial is constructed from an iterator range with value type 
-`std::pair< CGAL::Exponent_vector, CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type>`,
+`std::pair< CGAL::Exponent_vector, CGAL::Polynomial_traits_d::Innermost_coefficient_type>`,
 where each pair defines the coefficient for the monomial defined by 
 the exponent vector. 
 </UL>
@@ -140,7 +138,7 @@ However, in some cases it might be more convenient to just construct
 the polynomials representing the different variables and to obtain the 
 final polynomial using 
 algebraic expressions. The most elegant way to construct a certain variable is 
-`CGAL::Polynomial_traits_d<Polynomial_d>::Shift` being a model of 
+`CGAL::Polynomial_traits_d::Shift` being a model of 
 `PolynomialTraits_d::Shift`.
 
 ## Example ##

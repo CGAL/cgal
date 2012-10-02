@@ -39,11 +39,9 @@ The orientation of a polygon with holes is the orientation of its outer contour.
 Throughout the rest of this chapter the term <I>polygon</I> will be used as a shortcut for <I>polygon with holes</I>.
 
 \anchor Validpolygons
-\image latex Straight_skeleton_2/valid_polygons "Examples of strictly simple polygons: One with no holes and two edges coincident (left) and one with 2 holes (right)."
 \image html valid_polygons.png "Examples of strictly simple polygons: One with no holes and two edges coincident (left) and one with 2 holes (right)." 
 
 \anchor Invalidpolygons
-\image latex Straight_skeleton_2/invalid_polygons "Examples of non-simple polygons: One folding into itself, that is, non-planar (left), one with a vertex touching an edge (right), and one with a hole crossing into the outside (bottom)" 
 \image html invalid_polygons.png "Examples of non-simple polygons: One folding into itself, that is, non-planar (left), one with a vertex touching an edge (middle), and one with a hole crossing into the outside (right)" 
 
 ## Inward Offset of a Non-degenerate Strictly-Simple Polygon with Holes ##
@@ -59,8 +57,6 @@ If the source polygon has no holes, no offset polygon has holes. If the source p
 Each offset polygon has the same orientation as the source polygon.
 
 \anchor Offsets
-\image latex complex_offset "Offset contours of a sample polygon" 
-\image latex complex_offset.png "Offset contours of a sample polygon" 
 
 ## Straight Skeleton of a 2D Non-degenerate Strictly-Simple Polygon with Holes ##
 
@@ -69,13 +65,9 @@ The <I>2D straight skeleton</I> of a non-degenerate strictly-simple polygon with
 These regions are bounded by angular bisectors of the supporting lines of the contour edges and each such region is itself a non-convex non-degenerate strictly-simple polygon.
 
 \anchor ComplexSLS
-\image latex complex_skeleton "Straight skeleton of a complex shaggy contour" 
 \image html complex_skeleton.png "Straight skeleton of a complex shaggy contour"
 
 \anchor MoreSLS
-\image latex simple_skeleton_0 
-\image latex simple_skeleton_1
-\image latex validly_touching
 \image html simple_skeleton_0.png "Other examples: A vertex-event (left), the case of several collinear edges (middle), and the case of a validly simple polygon with tangent edges (right)."
 
 ## Angular Bisecting Lines and Offset Bisectors ##
@@ -246,7 +238,6 @@ Contour vertices have time zero.
 
 
 \anchor Simplepolyoffsets
-\image latex fig6 "Straight Skeleton Data Structure" width=12cm 
 \image html fig6.png "Straight Skeleton Data Structure" width=12cm 
 
 # API # {#Straight_skeleton_2API}
@@ -425,8 +416,6 @@ If you use this function to place the outer frame you are guaranteed to obtain a
 
 
 \anchor Exterior
-\image latex exterior_skeleton
-\image latex exterior_offset
 \image html exterior_skeleton.png
 \image html exterior_offset.png
 

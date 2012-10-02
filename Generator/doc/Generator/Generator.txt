@@ -18,10 +18,10 @@ Two kinds of point generators are provided: first, random point
 generators and second deterministic point generators. Most random
 point generators and a few deterministic point generators are provided
 as input iterators. The input iterators model an infinite sequence of
-points. The function `CGAL::cpp0x::copy_n()` can be used to copy a
-finite sequence; see Section \ref sectionCopyN. The iterator adaptor
+points. The function \ref CGAL::copy_n can be used to copy a
+finite sequence. The iterator adaptor
 `Counting_iterator` can be used to create finite iterator
-ranges; see Section \ref sectionCountingIterator.
+ranges.
 Other generators are provided as functions that write to output
 iterators. Further functions add degeneracies or random perturbations.
 
@@ -49,7 +49,7 @@ distributed in a \f$ d\f$-dimensional cube (`Random_points_in_cube_d`)
 or \f$ d\f$-dimensional ball (`Random_points_in_ball_d`) or on the boundary of a 
 sphere (`Random_points_on_sphere_d`).
 For generating grid points, we provide the function 
-`::points_on_grid_d()` that writes to
+`Random_points_on_sphere_d::points_on_grid_d()` that writes to
 an output iterator.
 
 We also provide two functions for generating more complex geometric objects.
@@ -106,10 +106,10 @@ for the example output.
 \anchor figureIntegerPointGenerator
 \image html generators_prog2.png "Output of example program for point generators working"
 
-\section secsegment_example Examples Generating Segments 
+# Examples Generating Segments # {#secsegment_example}
 
 The following two examples illustrate the use of the generic functions
-from Section \ref sectionGenericFunctions like
+from Section \ref STLAlgos like
 `Join_input_iterator_2` to generate 
 composed objects from other
 generators - here two-dimensional segments from two point generators.

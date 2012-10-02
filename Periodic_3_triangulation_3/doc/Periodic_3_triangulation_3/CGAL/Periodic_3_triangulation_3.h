@@ -914,7 +914,8 @@ triangulation. If the periodic triangulation is not computed in the
 the geometric primitives in the original domain. This can be
 controlled using the enum `Iterator_type`.
 
- <img border=0 src="./it_STORED_small.jpg" align=middle alt="STORED"> 
+\anchor P3Triangulation3figgeom_iterators
+<img border=0 src="./it_STORED_small.jpg" align=middle alt="STORED"> 
 <img border=0 src="./it_STORED_COVER_DOMAIN_small.jpg" align=middle alt="STORED_COVER_DOMAIN"> 
 <img border=0 src="./it_UNIQUE_small.jpg" align=middle alt="UNIQUE"> 
 <img border=0 src="./it_UNIQUE_COVER_DOMAIN_small.jpg" align=middle alt="UNIQUE_COVER_DOMAIN"> 

@@ -115,8 +115,7 @@ public:
 /// @{
 
 /*! 
-<I>Optional for the triangulation data 
-structure alone.</I> 
+<I>Optional for the triangulation data structure alone</I>.
 */ 
 typedef Hidden_type Point; 
 
@@ -645,7 +644,7 @@ bool are_equal(const Facet & f, Cell_handle n, int j) const;
 Two kinds of flips exist for a three-dimensional triangulation. They
 are reciprocal. To be flipped, an edge must be incident to three
 tetrahedra. During the flip, these three tetrahedra disappear and two
-tetrahedra appear. Figure \ref TDS3figflips(left) shows the edge that
+tetrahedra appear. Figure \ref TDS3figflips (left) shows the edge that
 is flipped as bold dashed, and one of its three incident facets is
 shaded. On the right, the facet shared by the two new tetrahedra is
 shaded.

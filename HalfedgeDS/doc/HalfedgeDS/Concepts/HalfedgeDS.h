@@ -33,7 +33,6 @@ for the incidences, the mandatory and optional member functions
 possible for vertices, halfedges, and faces. 
 
 \anchor figureOptionalMethods 
-\image latex hds_optional "The three classes `Vertex`, `Halfedge`, and `Face` of the halfedge data structure. Member functions with shaded background are mandatory. The others are optionally supported."
 \image html hds_optional_small.gif "The three classes `Vertex`, `Halfedge`, and `Face` of the halfedge data structure. Member functions with shaded background are mandatory. The others are optionally supported."
 
 A `HalfedgeDS` organizes the internal storage of its items. Examples 

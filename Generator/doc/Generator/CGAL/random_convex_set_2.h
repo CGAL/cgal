@@ -25,10 +25,6 @@ domain.
 R >` for some representation class `R`, 
 </OL> 
 
-The default traits class `Default_traits` is 
-`Random_convex_set_traits_2`. 
-. 
-
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>` 
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
 
@@ -48,9 +44,8 @@ origin.
 \cgalexample{Generator/random_convex_set.cpp} 
 
 */
-template < class OutputIterator, class PointGenerator,
-class Traits > OutputIterator random_convex_set_2( std::size_t n,
-OutputIterator o, const PointGenerator& pg, Traits t =
-Default_traits);
+template < class OutputIterator, class PointGenerator, class Traits > 
+OutputIterator random_convex_set_2( std::size_t n,
+OutputIterator o, const PointGenerator& pg, Traits t = Random_convex_set_traits_2);
 
 } /* namespace CGAL */

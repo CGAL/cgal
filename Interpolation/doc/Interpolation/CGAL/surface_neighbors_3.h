@@ -15,7 +15,7 @@ to the power diagram which is equivalent to the intersection of the
 Voronoi cell of the query point `p` with the tangent plane to the 
 surface at `p`. 
 
-The functions \t surface_neighbors_certified_3 also return, in
+The functions \c surface_neighbors_certified_3 also return, in
 addition, a Boolean value that certifies whether or not, the Voronoi
 cell of `p` can be affected by points that lie outside the input
 range, i.e. outside the ball centered on `p` passing through the

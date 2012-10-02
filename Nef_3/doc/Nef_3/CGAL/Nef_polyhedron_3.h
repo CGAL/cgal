@@ -38,13 +38,13 @@ namespace CGAL {
   specifed, yet. Do not use any other than the default types for these two 
   template parameters. 
 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Vertex` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Halfedge` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Halffacet` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Volume` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SHalfedge` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SHalfloop` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SFace` 
+  \sa `CGAL::Nef_polyhedron_3::Vertex` 
+  \sa `CGAL::Nef_polyhedron_3::Halfedge` 
+  \sa `CGAL::Nef_polyhedron_3::Halffacet` 
+  \sa `CGAL::Nef_polyhedron_3::Volume` 
+  \sa `CGAL::Nef_polyhedron_3::SHalfedge` 
+  \sa `CGAL::Nef_polyhedron_3::SHalfloop` 
+  \sa `CGAL::Nef_polyhedron_3::SFace` 
   \sa `CGAL::Nef_polyhedron_S2<Traits>` 
   \sa `CGAL::Polyhedron_3<Traits>` 
 
@@ -87,10 +87,10 @@ public:
   There is no need for a user to create a `Halfedge` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed halfedges internally. 
 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Vertex` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SHalfedge` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SFace` 
-  \sa `CGAL::Nef_polyhedron_S2<Traits>::Sphere_point` 
+  \sa `CGAL::Nef_polyhedron_3::Vertex` 
+  \sa `CGAL::Nef_polyhedron_3::SHalfedge` 
+  \sa `CGAL::Nef_polyhedron_3::SFace` 
+  \sa `CGAL::Nef_polyhedron_S2::Sphere_point` 
 
 */
   class Halfedge {
@@ -193,8 +193,8 @@ public:
   of these assignment works out, the member functions `is_shalfedge()` 
   and `is_shalfloop()` are provided. 
 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SHalfedge` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SHalfloop` 
+  \sa `CGAL::Nef_polyhedron_3::SHalfedge` 
+  \sa `CGAL::Nef_polyhedron_3::SHalfloop` 
 
 */
 
@@ -277,9 +277,9 @@ public:
   There is no need for a user to create a `Halffacet` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed halffacets internally. 
 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Volume` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Halfedge` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SHalfedge` 
+  \sa `CGAL::Nef_polyhedron_3::Volume` 
+  \sa `CGAL::Nef_polyhedron_3::Halfedge` 
+  \sa `CGAL::Nef_polyhedron_3::SHalfedge` 
 
 */
 
@@ -369,9 +369,9 @@ public:
   of these assignment works out, the member functions `is_svertex()`, 
   `is_shalfedge()` and `is_shalfloop()` are provided. 
 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Halfedge` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SHalfedge` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SHalfloop` 
+  \sa `CGAL::Nef_polyhedron_3::Halfedge` 
+  \sa `CGAL::Nef_polyhedron_3::SHalfedge` 
+  \sa `CGAL::Nef_polyhedron_3::SHalfloop` 
 
 */
 
@@ -463,8 +463,8 @@ public:
   There is no need for a user to create a `SFace` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed sfaces internally. 
 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Vertex` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Volume` 
+  \sa `CGAL::Nef_polyhedron_3::Vertex` 
+  \sa `CGAL::Nef_polyhedron_3::Volume` 
 
 */
 
@@ -581,10 +581,10 @@ public:
   There is no need for a user to create a `SHalfedge` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed shalfedges internally. 
 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Halfedge` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Halffacet` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SFace` 
-  \sa `CGAL::Nef_polyhedron_S2<Traits>::Sphere_circle` 
+  \sa `CGAL::Nef_polyhedron_3::Halfedge` 
+  \sa `CGAL::Nef_polyhedron_3::Halffacet` 
+  \sa `CGAL::Nef_polyhedron_3::SFace` 
+  \sa `CGAL::Nef_polyhedron_S2::Sphere_circle` 
 
 */
 
@@ -748,9 +748,9 @@ public:
   There is no need for a user to create a `SHalfloop` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed shalfloops internally. 
 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::Halffacet` 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SFace` 
-  \sa `CGAL::Nef_polyhedron_S2<Traits>::Sphere_point` 
+  \sa `CGAL::Nef_polyhedron_3::Halffacet` 
+  \sa `CGAL::Nef_polyhedron_3::SFace` 
+  \sa `CGAL::Nef_polyhedron_S2::Sphere_point` 
 
 */
 
@@ -887,7 +887,7 @@ public:
   There is no need for a user to create a `Volume` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed volumes internally. 
 
-  \sa `CGAL::Nef_polyhedron_3<Traits>::SFace` 
+  \sa `CGAL::Nef_polyhedron_3::SFace` 
 
 */
 

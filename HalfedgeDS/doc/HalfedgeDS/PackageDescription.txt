@@ -23,7 +23,7 @@ classes built on top of the halfedge data structure.These classes
 might be more convenient to use than the halfedge data structure
 directly, since the halfedge data structure is meant as an
 implementation layer.See for example the `CGAL::Polyhedron_3`
-class in the package \ref chapterPolyhedronRef Polyhedron.
+class in the package \ref Chapter_3D_Polyhedral_Surfaces "Polyhedron".
 
 The data structure provided here is known as the
 FE-structure \cite w-ebdss-85, as

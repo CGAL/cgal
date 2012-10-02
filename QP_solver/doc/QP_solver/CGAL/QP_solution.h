@@ -39,7 +39,7 @@ the four functions
 Example 
 -------------- 
 
-\ref first_qp.cpp 
+\ref QP_solver/first_qp.cpp 
 
 Terminology 
 -------------- 
@@ -145,7 +145,7 @@ typedef Hidden_type Unboundedness_certificate_iterator;
 /// functions `solve_quadratic_program`, `solve_linear_program`,
 /// `solve_nonnegative_quadratic_program`, and
 /// `solve_nonnegative_linear_program`. 
-/// <b>Example:</b> \ref first_qp.cpp
+/// <b>Example:</b> \ref QP_solver/first_qp.cpp
 /// @{
 
 /*! 
@@ -267,7 +267,7 @@ const ET& variables_common_denominator() const;
 /// 'important' variables (the ones not attaining one of their
 /// bounds), and 'important' constraints (the ones being satisfied
 /// with equality). The following methods grant access to them. \ref
-/// important_variables.cpp \ref first_qp_basic_constraints.cpp
+/// QP_solver/important_variables.cpp \ref QP_solver/first_qp_basic_constraints.cpp
 /// @{
 
 /*! 
@@ -334,9 +334,9 @@ std::ostream& operator<<(std::ostream& out, const Quadratic_program_solution<ET>
 /// done automatically after the solution of the program, see
 /// `Quadratic_program_options`. If the check fails, a logfile is
 /// generated that contains the details, and an error message is
-/// written to `std::cerr` (see \ref cycling.cpp for an example that
-/// uses this option). \ref first_qp.cpp \ref first_lp.cpp \ref
-/// first_nonnegative_qp.cpp \ref first_nonnegative_lp.cpp
+/// written to `std::cerr` (see \ref QP_solver/cycling.cpp for an example that
+/// uses this option). \ref QP_solver/first_qp.cpp \ref QP_solver/first_lp.cpp \ref
+/// QP_solver/first_nonnegative_qp.cpp \ref QP_solver/first_nonnegative_lp.cpp
 /// @{
 
 /*! 
@@ -446,7 +446,7 @@ this inequality, we get
 and since \f$D\f$ is positive semidefinite, we have
 \f$(\qpx-\qpx^*)^TD(\qpx-\qpx^*)\geq 0\f$ and the lemma follows.
 
-\sa \ref optimality_certificate.cpp
+\sa \ref QP_solver/optimality_certificate.cpp
 */ 
 Optimality_certificate_iterator 
 optimality_certifcate_begin() const; 
@@ -519,7 +519,7 @@ that there is a feasible solution \f$\qpx\f$. Then we get
 \f]
 and this is the desired contradiction \f$0>0\f$.
 
-\sa \ref infeasibility_certificate.cpp
+\sa \ref QP_solver/infeasibility_certificate.cpp
 */ 
 Infeasibility_certificate_iterator 
 infeasibility_certificate_begin() const; 

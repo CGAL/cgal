@@ -182,7 +182,10 @@ diagrams.
 \cgalexample{Envelope_2/convex_hull.cpp}
 
 \anchor env2_figex_circ
-\image html ex_circle.gif "A set of four circles, as constructed in \ref ex_envelope_circles.cpp. The lower envelope and the upper envelope are shown using thick dashed lines of different colors respectively."
+\image html ex_circle.gif 
+<center><b>
+A set of four circles, as constructed in \ref Envelope_2/ex_envelope_circles.cpp. The lower envelope and the upper envelope are shown using thick dashed lines of different colors respectively.
+</b></center>
 
 ## Example for Envelope of Non-Linear Curves ##
 

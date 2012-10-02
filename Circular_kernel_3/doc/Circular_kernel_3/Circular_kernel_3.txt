@@ -139,7 +139,7 @@ arc is defined on a bipolar circle.
 # Software Design # {#Circular_kernel_3Software}
 
 The design of `Spherical_kernel_3` is similar to the design of
-`Circular_kernel_2` (see Chapter \ref chaptercircularkernel). 
+`Circular_kernel_2` (see Chapter \ref Chapter_2D_Circular_Geometry_Kernel).
 It has two template parameters:
 <UL>
 <LI> the first parameter must model the \cgal 
@@ -188,7 +188,7 @@ then compared.
 # Design and Implementation History # {#Circular_kernel_3Design}
 
 This package follows the 2D circular kernel package (see
-Chapter \ref chaptercircularkernel), which induced the basic
+Chapter \ref Chapter_2D_Circular_Geometry_Kernel), which induced the basic
 choices of design.
 
 Julien Hazebrouck and Damien Leroy participated in a first

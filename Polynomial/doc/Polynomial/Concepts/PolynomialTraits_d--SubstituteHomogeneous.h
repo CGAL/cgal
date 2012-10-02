@@ -28,7 +28,7 @@ Hence, it can not be provided as a public type in advance.
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 
 \sa  \ref ::PolynomialTraits_d::Substitute 
-\sa  \ref ::CoercionTraits 
+\sa  \ref CGAL::Coercion_traits
 
 */
 

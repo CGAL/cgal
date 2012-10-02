@@ -14,10 +14,8 @@ all functionality related to polynomials is provided by the traits.
 
 \refines ::IntegralDomainWithoutDivision 
 
-The algebraic structure of  ::Polynomial_d depends on the 
+The algebraic structure of ::Polynomial_d depends on the 
 algebraic structure of ::Innermost_coefficient_type: 
-
-
 
 Innermost_coefficient_type       | %Polynomial_d 
 ---------------------------------|--------------------------------
@@ -39,9 +37,6 @@ coefficient is a Field the polynomial is model of EuclideanRing.
 */
 
 class Polynomial_d {
-public:
-
-/// @}
 
 }; /* end Polynomial_d */
 

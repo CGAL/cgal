@@ -5,7 +5,9 @@
 
 \refines ::Kernel::DoOverlap_3 
 
-An object \refines ::fo of this type must provide: 
+\bug DoOverlap_3 does not exist in the Kernel
+
+An object `fo` of this type must provide: 
 */
 class SphericalKernel::DoOverlap_3 {
 public:

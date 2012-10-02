@@ -171,7 +171,7 @@ return type of calling the functor with an argument of type
 Much of the \cgal code contains assert statements for preconditions, and postconditions of functions
 as well as in the code.  These assertions can be switched on and off per package
 and the user can change the error behaviour. For details see Section \ref secchecks 
-of Chapter  Chapter_STL_Extensions_for_CGAL.
+of Chapter Chapter_STL_Extensions_for_CGAL.
 
 \section seccgal_version Identifying the Version of CGAL
 

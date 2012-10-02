@@ -280,7 +280,6 @@ operation, i.e., the new diagonal. The new face is to the right of the
 new diagonal, the old face is to the left. The time is proportional 
 to the distance from `h` to `g` around the face. 
 
-\image latex euler_hds
 \image html euler_face.gif
 
 */ 
@@ -296,7 +295,6 @@ of the face removed and the time to compute `h->prev()`.
 
 \requires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
-\image latex euler_hds
 \image html euler_face.gif
 
 */ 
@@ -341,7 +339,6 @@ after the operation, i.e., a halfedge pointing to the new vertex.
 The time is proportional to the size of the face. 
 \pre `h` is not a border halfedge. 
 
-\image latex euler_center
 \image html euler_center.gif
 
 */ 
@@ -360,7 +357,6 @@ The time is proportional to the sum of the size of all incident faces.
 
 \requires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
-\image latex euler_center
 \image html euler_center.gif
 */ 
 Halfedge_handle erase_center_vertex( Halfedge_handle g); 
@@ -377,7 +373,6 @@ which is the copy of `h-opposite()`.
 data structure and form a cycle: i.e., `h->vertex() == i->opposite()->vertex()`, 
 \f$\ldots\f$ , `j->vertex() == h->opposite()->vertex()`. 
 
-\image latex euler_loop
 \image html euler_loop.gif
 
 */ 
@@ -395,7 +390,6 @@ data structure unchanged.
 
 \requires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
-\image latex euler_loop
 \image html euler_loop.gif
 */ 
 Halfedge_handle join_loop( Halfedge_handle h, Halfedge_handle g); 

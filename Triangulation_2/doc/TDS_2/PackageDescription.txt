@@ -29,7 +29,7 @@ Chapter \ref Chapter_2D_Triangulations, the model
 `CGAL::Triangulation_data_structure_2<Vb,Fb>` has two template
 parameters.  The class `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 derives its `Vertex` and `Face` types from the two template parameters
-\t %Vb and \t %Fb respectively.
+\c %Vb and \c %Fb respectively.
 
 If the triangulation data structure is used alone, these parameters
 have to be instantiated by models of the concepts
@@ -41,7 +41,7 @@ models `CGAL::Triangulation_ds_face_base_2<Tds>` and
 If the triangulation data structure is plugged into a triangulation
 class, the parameters have to be instantiated by models of different
 refining concepts according to the actual type of the triangulation.
-These refining concepts and their models are described in Chapter \ref
-ref_chapter_2D_Triangulations.
+These refining concepts and their models are described in Chapter 
+\ref Chapter_2D_Triangulations
 */
 

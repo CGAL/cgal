@@ -95,7 +95,7 @@ is not supported yet.
 
 ### Example ###
 
-\cgalexample{Bounding_volumes/min_sphere_of_spheres_d_d.cpp} 
+\cgalexample{Min_sphere_of_spheres_d/min_sphere_of_spheres_d_d.cpp} 
 
 */
 template< typename Traits >
@@ -232,8 +232,9 @@ Cartesian_const_iterator center_cartesian_begin( )
 const; 
 
 /*! 
-returns the corresponding past-the-end iterator, i.e. 
-`center_cartesian_begin()+Traits::D`. \pre `minsphere` is not empty. 
+returns the corresponding past-the-end iterator, i.e.\ 
+`center_cartesian_begin()+Traits::D`. 
+\pre `minsphere` is not empty. 
 */ 
 Cartesian_const_iterator center_cartesian_end( ) 
 const; 

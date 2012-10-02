@@ -4,7 +4,7 @@
 \cgalconcept
 
 \refines ::Kernel::ComputeApproximateSquaredLength_3 
-In addition, an object \refines ::fo of this type must provide: 
+In addition, an object `fo` of this type must provide: 
 
 */
 

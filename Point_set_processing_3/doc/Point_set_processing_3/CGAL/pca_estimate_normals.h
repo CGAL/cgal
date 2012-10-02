@@ -8,7 +8,6 @@ namespace CGAL {
 The output of the normal estimation algorithm highly depends on the `k` parameter. 
 The number of neighbors controls the size of the point subset considered for plane fitting at each input point. As this parameter is application-specific we do not provide any default value. For noise-free point sets this value can be set to a small number, e.g., 18. Larger values (e.g., 30 or more) lead to smoother normal fields and are more time consuming. We thus recommend using them only for noisy data sets. 
 
-
 \pre k \f$ >\f$= 2.
 
 \tparam InputIterator iterator over input points. 

@@ -23,7 +23,7 @@ we use the function objects `C2E` and `C2F`, which must be of the form
 The following example defines an efficient and exact version of the 
 orientation predicate over three points using the Cartesian representation 
 with double coordinates and without reference counting 
-(`Simple_cartesian<double>::Point_2`). 
+(`Simple_cartesian::Point_2`). 
 Of course, the orientation predicate can already be found in the kernel, but 
 you can follow this example to filter your own predicates. 
 It uses the fast but inexact predicate based on interval arithmetic for 

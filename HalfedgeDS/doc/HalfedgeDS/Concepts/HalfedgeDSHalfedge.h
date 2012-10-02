@@ -21,7 +21,6 @@ depicts the relationship between a halfedge and its incident
 halfedges, vertices, and faces. 
 
 \anchor figureHalfedgeDSOptionalMethods 
-\image latex hds_optional "The three classes `Vertex`, `Halfedge`, and `Face` of the halfedge data structure. Member functions with shaded background are mandatory. The others are optionally supported."  
 \image html hds_optional.gif "The three classes `Vertex`, `Halfedge`, and `Face` of the halfedge data structure. Member functions with shaded background are mandatory. The others are optionally supported."  
 
 For the protection of the integrity of the data structure classes such 

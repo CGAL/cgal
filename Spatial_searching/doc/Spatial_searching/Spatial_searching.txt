@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Hans Tangelder and Andreas Fabri
 
-# Introduction # {#Spatial_searching}Introduction}
+# Introduction # {#Spatial_searchingIntroduction}
 
 The spatial searching package implements exact and approximate
 distance browsing by providing implementations of algorithms

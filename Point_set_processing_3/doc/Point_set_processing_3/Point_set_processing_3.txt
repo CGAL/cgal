@@ -34,9 +34,8 @@ points or points with normals (alignment is not yet covered in \cgal);
 points; 4) Smoothing to reduce noise in the input data; 5) Normal
 estimation and orientation when the normals are not already provided
 by the acquisition device; and 6) Surface reconstruction. Chapter
-`Surface_reconstruction_points_3` \ref
-chapsurface_reconstruction_points_3 deals with surface reconstruction
-from point sets with normal attributes.
+\ref Chapter_Surface_Reconstruction_from_Point_Sets "Surface Reconstruction from Point Sets"
+deals with surface reconstruction from point sets with normal attributes.
 
 \anchor Point_set_processing_3figpipeline
 \image html pipeline.jpg "Point set processing pipeline for surface reconstruction. The algorithms listed in gray are available from other CGAL components (bounding volumes and principal component analysis)."
@@ -187,8 +186,8 @@ faster than `CGAL::jet_estimate_normals()`.
 
 Function `CGAL::mst_orient_normals()` orients the normals of a set of
 points with unoriented normals using the method described by Hoppe et
-al. in <I>Surface reconstruction from unorganized points</I> \cite
-cgal:hddms-srup-92. More specifically, this method constructs a
+al. in <I>Surface reconstruction from unorganized points</I> \cite cgal:hddms-srup-92. 
+More specifically, this method constructs a
 Riemannian graph over the input points (the graph of the `k`
 nearest neighbor points) and propagates a seed normal orientation
 within a minimum spanning tree computed over this graph. The result is

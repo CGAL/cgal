@@ -68,7 +68,7 @@ each take linear time.
 
 ### Example ###
 
-\cgalexample{Bounding_volumes/min_sphere_d.cpp} 
+\cgalexample{Min_sphere_d/min_sphere_d.cpp} 
 
 */
 template< typename Traits >

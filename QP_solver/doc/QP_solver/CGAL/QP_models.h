@@ -60,16 +60,16 @@ namespace CGAL {
   Example 
   -------------- 
 
-  \ref first_lp_from_iterators.cpp 
+  \ref QP_solver/first_lp_from_iterators.cpp 
 
   The following example for the simpler model 
   `Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
   should give you a flavor of the use of this 
   model in practice. 
 
-  \ref solve_convex_hull_containment_lp.h 
+  \ref QP_solver/solve_convex_hull_containment_lp.h 
 
-  \ref convex_hull_containment.cpp 
+  \ref QP_solver/convex_hull_containment.cpp 
 
   \sa `LinearProgram` 
   \sa `Quadratic_program<NT>` 
@@ -119,9 +119,9 @@ public:
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators`. 
 
-  \ref solve_convex_hull_containment_lp2.h 
+  \ref QP_solver/solve_convex_hull_containment_lp2.h 
 
-  \ref convex_hull_containment2.cpp 
+  \ref QP_solver/convex_hull_containment2.cpp 
 
   \sa `Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>` 
 */
@@ -163,9 +163,9 @@ make_linear_program_from_iterators (
   Example 
   -------------- 
 
-  \ref solve_convex_hull_containment_lp2.h 
+  \ref QP_solver/solve_convex_hull_containment_lp2.h 
 
-  \ref convex_hull_containment2.cpp 
+  \ref QP_solver/convex_hull_containment2.cpp 
 
   \sa `Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
 */
@@ -204,9 +204,9 @@ make_nonnegative_linear_program_from_iterators (
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators`. 
 
-  \ref solve_convex_hull_containment_lp2.h 
+  \ref QP_solver/solve_convex_hull_containment_lp2.h 
 
-  \ref convex_hull_containment2.cpp 
+  \ref QP_solver/convex_hull_containment2.cpp 
 
   \sa `Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>` 
 
@@ -246,9 +246,9 @@ make_nonnegative_quadratic_program_from_iterators (
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators`. 
 
-  \ref solve_convex_hull_containment_lp2.h 
+  \ref QP_solver/solve_convex_hull_containment_lp2.h 
 
-  \ref convex_hull_containment2.cpp 
+  \ref QP_solver/convex_hull_containment2.cpp 
 
   \sa `Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>` 
 */
@@ -321,11 +321,11 @@ make_quadratic_program_from_iterators (
   Example 
   -------------- 
 
-  \ref first_nonnegative_lp_from_iterators.cpp 
+  \ref QP_solver/first_nonnegative_lp_from_iterators.cpp 
 
-  \ref solve_convex_hull_containment_lp.h 
+  \ref QP_solver/solve_convex_hull_containment_lp.h 
 
-  \ref convex_hull_containment.cpp 
+  \ref QP_solver/convex_hull_containment.cpp 
 
   \sa `NonnegativeLinearProgram` 
   \sa `Quadratic_program<NT>` 
@@ -402,16 +402,16 @@ public:
   Example 
   -------------- 
 
-  \ref first_nonnegative_qp_from_iterators.cpp 
+  \ref QP_solver/first_nonnegative_qp_from_iterators.cpp 
 
   The following example for the simpler model 
   `Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
   should give you a flavor of the use of this 
   model in practice. 
 
-  \ref solve_convex_hull_containment_lp.h 
+  \ref QP_solver/solve_convex_hull_containment_lp.h 
 
-  \ref convex_hull_containment.cpp 
+  \ref QP_solver/convex_hull_containment.cpp 
 
   \sa `NonnegativeQuadraticProgram` 
   \sa `Quadratic_program<NT>` 
@@ -491,16 +491,16 @@ public:
   Example 
   -------------- 
 
-  \ref first_qp_from_iterators.cpp 
+  \ref QP_solver/first_qp_from_iterators.cpp 
 
   The following example for the simpler model 
   `Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
   should give you a flavor of the use of this 
   model in practice. 
 
-  \ref solve_convex_hull_containment_lp.h 
+  \ref QP_solver/solve_convex_hull_containment_lp.h 
 
-  \ref convex_hull_containment.cpp 
+  \ref QP_solver/convex_hull_containment.cpp 
 
   \sa `QuadraticProgram` 
   \sa `Quadratic_program<NT>` 
@@ -588,13 +588,13 @@ public:
   Example 
   -------------- 
 
-  \ref first_qp_from_mps.cpp 
+  \ref QP_solver/first_qp_from_mps.cpp 
 
-  \ref first_lp_from_mps.cpp 
+  \ref QP_solver/first_lp_from_mps.cpp 
 
-  \ref first_nonnegative_qp_from_mps.cpp 
+  \ref QP_solver/first_nonnegative_qp_from_mps.cpp 
 
-  \ref first_nonnegative_lp_from_mps.cpp 
+  \ref QP_solver/first_nonnegative_lp_from_mps.cpp 
 
   \sa `Quadratic_program<NT>` 
   \sa `Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>` 
@@ -800,15 +800,15 @@ namespace CGAL {
   Example 
   -------------- 
 
-  \ref first_qp.cpp 
+  \ref QP_solver/first_qp.cpp 
 
-  \ref first_lp.cpp 
+  \ref QP_solver/first_lp.cpp 
 
-  \ref first_nonnegative_qp.cpp 
+  \ref QP_solver/first_nonnegative_qp.cpp 
 
-  \ref first_nonnegative_lp.cpp 
+  \ref QP_solver/first_nonnegative_lp.cpp 
 
-  \ref invert_matrix.cpp 
+  \ref QP_solver/invert_matrix.cpp 
 
   \sa `Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>` 
   \sa `Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>` 

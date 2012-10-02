@@ -6,7 +6,7 @@
 \todo check generated documentation
 \PkgDescriptionBegin{dD Convex Hulls and Delaunay Triangulations,PkgConvexHullDSummary}
 \PkgPicture{convex_hull_d-teaser.png}
-\PkgAuthor{Susan Hert  and Michael Seel}
+\PkgAuthor{Susan Hert and Michael Seel}
 \PkgDesc{This package provides functions for computing convex hulls and Delaunay triangulations in \f$ d\f$-dimensional Euclidean space.}
 \PkgSince{2.3}
 \PkgBib{cgal:hs-chdt3}

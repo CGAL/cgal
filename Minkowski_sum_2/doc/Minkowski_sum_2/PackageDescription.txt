@@ -11,7 +11,7 @@
 \PkgSince{3.3}
 \PkgDependsOn{\ref PkgArrangement2}
 \PkgBib{cgal:w-rms2}
-\PkgLicense{\ref licensesGPL  "GPL"}
+\PkgLicense{\ref licensesGPL "GPL"}
 \PkgManuals{Chapter_2D_Minkowski_Sums,PkgMinkowskiSum2}
 \PkgDescriptionEnd
 

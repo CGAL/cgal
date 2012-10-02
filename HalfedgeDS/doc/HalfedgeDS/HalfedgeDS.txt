@@ -22,7 +22,6 @@ variants of the halfedge data structure can omit some of these
 information, for example the halfedge pointers in faces or the
 storage of faces at all.
 
-\image latex halfedge
 \image html halfedge_small.gif
 
 The halfedge data structure is a combinatorial data structure,
@@ -57,7 +56,6 @@ the old implementation.
 # Software Design # {#HalfedgeDSSoftware}
 
 \anchor figureHalfedgeDSDesign
-\image latex hds_design "Responsibilities of the different layers in the halfedge data-structure design." width=0.7
 \image html hds_design_col.gif "Responsibilities of the different layers in the halfedge data-structure design."
 
 
@@ -148,7 +146,6 @@ type for vertices are defined. The trivial traits class provides the
 type used for the point. The program creates a loop, consisting
 of two halfedges, one vertex and two faces, and checks its validity.
 
-\image latex loop width=0.3
 \image html loop.gif
 
 \cgalexample{HalfedgeDS/hds_prog_default.cpp}
@@ -186,16 +183,14 @@ member variable `color`.
 
 ## Example Defining a More %Compact Halfedge ##
 
-\advancedbegin
-
-The halfedge data structure as presented here is slightly less space
+\advanced The halfedge data structure as presented here is slightly less space
 efficient as, for example, the winged-edge data
 structure \cite b-prcv-75, the DCEL \cite mp-fitcp-78 or variants of
 the quad-edge data structure \cite gs-pmgsc-85. On the other hand,
 it does not require any search operations during traversals. A
 comparison can be found in \cite k-ugpdd-99.
 
-The following example trades traversal time for a compact storage
+\advanced The following example trades traversal time for a compact storage
 representation using traditional C techniques (i.e., type casting and
 the assumption that pointers, especially those from <TT>malloc</TT> or
 <TT>new</TT>, point to even addresses). The idea goes as follows: The
@@ -208,15 +203,13 @@ store this bit as the least significant bit in the next halfedge
 handle. Furthermore, we do not implement a pointer to the previous
 halfedge. What remains are three pointers per halfedge.
 
-We use the static member function `halfedge_handle()` to convert
+\advanced We use the static member function `halfedge_handle()` to convert
 from pointers to halfedge handles. The same solution can be applied to
 the list-based halfedge data structure `CGAL::HalfedgeDS_list`,
 see <TT>examples/HalfedgeDS/hds_prog_compact2.cpp</TT>. Here is the
 example for the vector-based data structure.
 
 \cgalexample{HalfedgeDS/hds_prog_compact.cpp}
-
-\advancedend
 
 ## Example Using the Halfedge %Iterator ##
 

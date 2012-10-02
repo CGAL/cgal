@@ -6,7 +6,9 @@
 Testing whether the interiors of two curves overlap. 
 
 \bug There is no DoOverlap in the Linear Kernel.
+
 \refines ::Kernel::DoOverlap_2 
+\bug DoOverlap_2 does not exist in the Kernel.
 
 */
 

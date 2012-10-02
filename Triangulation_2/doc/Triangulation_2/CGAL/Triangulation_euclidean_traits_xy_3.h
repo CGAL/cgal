@@ -40,8 +40,8 @@ and predicates defined in `K`.
 `Triangulation_euclidean_traits_xz_3<K>` to deal with projections on
 the `xz`- or the `yz`-plane, respectively.
 
-\sa \ref CGAL/Triangulation_euclidean_traits_xz_3.h
-\sa \ref CGAL/Triangulation_euclidean_traits_yz_3.h
+\sa `CGAL/Triangulation_euclidean_traits_xz_3.h`
+\sa `CGAL/Triangulation_euclidean_traits_yz_3.h`
 
 */
 template< typename K >

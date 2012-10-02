@@ -68,17 +68,17 @@ public:
 /*! 
 model of `HalfedgeDSVertex`. 
 */ 
-typedef Hidden_type Vertex_wrapper<Refs,Traits>::Vertex; 
+typedef Vertex_wrapper<Refs,Traits>::Vertex Vertex;
 
 /*! 
 model of `HalfedgeDSHalfedge`. 
 */ 
-typedef Hidden_type Halfedge_wrapper<Refs,Traits>::Halfedge; 
+typedef Halfedge_wrapper<Refs,Traits>::Halfedge Halfedge;
 
 /*! 
 model of `HalfedgeDSFace`. 
 */ 
-typedef Hidden_type Face_wrapper<Refs,Traits>::Face; 
+typedef Face_wrapper<Refs,Traits>::Face Face;
 
 /// @}
 

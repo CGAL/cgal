@@ -216,8 +216,7 @@ of a user provided type, and give access to it.
 the geometric versions typically used by the geometric layer,
 `Triangulation_vertex_base_3`, and `Triangulation_cell_base_3`).
 <LI> write his own base classes following the requirements given by the
-concepts `TriangulationCellBase_3` and `TriangulationVertexBase_3`
-.
+concepts `TriangulationCellBase_3` and `TriangulationVertexBase_3`.
 </UL>
 
 \subsection tds3cyclic Cyclic Dependency 
@@ -303,14 +302,14 @@ typedef Triangulation_vertex_base_3<GT, Vb2> Other;
 The following example shows how to construct a 3D triangulation data
 structure by inserting vertices.
 
-\cgalexample{TDS_3/tds.cpp}
+\cgalexample{Triangulation_3/tds.cpp}
 
 ## Cross-Linking Between a 2D and a 3D Data Structures ##
 
 This example program illustrates how to setup a 2D and a 3D triangulation data
 structures whose vertices respectively store vertex handles of the other one.
 
-\cgalexample{TDS_3/linking_2d_and_3d.cpp}
+\cgalexample{Triangulation_3/linking_2d_and_3d.cpp}
 
 # Design and Implementation History # {#TDS_3Design}
 

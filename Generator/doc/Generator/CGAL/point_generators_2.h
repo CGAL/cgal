@@ -17,7 +17,7 @@ a random amount.
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
   `(x,y)` of type `P`. 
  Predefined implementations for these creators like the default are  
- described in Section \ref sectionCreatorFunctionObjects. 
+ described in Section \ref STLCreators. 
 
 - The `value_type` of the `ForwardIterator` must be assignable 
   to `P`. 
@@ -85,7 +85,7 @@ grid whose size is determined by the number of points to be generated.
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
   `(x,y)` of type `P`. Predefined implementations for these 
   creators like the default can be found in 
-  Section \ref sectionCreatorFunctionObjects. 
+  Section \ref STLCreators. 
 - The `OutputIterator` must accept values of type `P`. If the 
   `OutputIterator` has a `value_type` the default 
   initializer of the `creator` can be used. `P` is set to 
@@ -125,7 +125,7 @@ Returns the value of `first2` after inserting the \f$ n\f$ points.
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
   `(x,y)` of type `P`. Predefined implementations for these 
   creators like the default can be found in 
-  Section \ref sectionCreatorFunctionObjects. 
+  Section \ref STLCreators. 
 - The `value_type` of the `RandomAccessIterator` must be 
   assignable to `P`. `P` is equal to the `value_type` of the 
   `RandomAccessIterator` when using the default initializer. 

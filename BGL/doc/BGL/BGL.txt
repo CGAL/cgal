@@ -155,10 +155,12 @@ this chapter introduces a new graph concept, the `HalfedgeGraph`.
 
 ## Example: Minimum Spanning Tree of a Polyhedral Surface ##
 
-The example code computes the minimum spanning tree on a polyhedral surface.
-More examples can be found in Chapter \ref chaptermeshsimplification on surface mesh simplification.
+The example code computes the minimum spanning tree on a polyhedral
+surface.  More examples can be found in Chapter 
+\ref Chapter_Triangulated_Surface_Mesh_Simplification on surface mesh
+simplification.
 
-\cgalexample{BGL/kruskal.cpp}
+\cgalexample{BGL_polyhedron_3/kruskal.cpp}
 
 ## Example: Using Vertices, and Edges with an ID ##
 
@@ -168,7 +170,7 @@ field stored in a Polyhedron vertex.
 
 The main function illustrates the access to the id() field.
 
-\cgalexample{BGL/kruskal_with_stored_id.cpp}
+\cgalexample{BGL_polyhedron_3/kruskal_with_stored_id.cpp}
 
 # Triangulations as Models of the Boost Graph Concept # {#BGLTriangulations}
 
@@ -192,7 +194,7 @@ spanning tree algorithm on it. Because the vertex handles of the triangulation a
 in an array, we have to provide a property map that maps vertex handles to
 int's in the range `[0, t.number_of_vertices())`.
 
-\cgalexample{BGL/emst.cpp}
+\cgalexample{BGL_triangulation_2/emst.cpp}
 
 ## Example: Storing the Vertex ID in the Vertex ##
 
@@ -211,7 +213,7 @@ It is in the users responsibility to set the indices properly.
 The example further illustrates that the graph traits also works
 for the Delaunay triangulation.
 
-\cgalexample{BGL/dijkstra_with_internal_properties.cpp}
+\cgalexample{BGL_triangulation_2/dijkstra_with_internal_properties.cpp}
 
 # Arrangements as Models of the Boost Graph Concept # {#BGLArrangements}
 
@@ -287,7 +289,7 @@ arrangement \f$ v_0\f$. Note the usage of the `Arr_vertex_index_map` and
 the `Arr_vertex_property_map` classes. The latter one, instantiated by
 the type `double` is used to map vertices to their distances from \f$ v_0\f$.
 
-\cgalexample{BGL/primal.cpp}
+\cgalexample{BGL_arrangement_2/primal.cpp}
 
 \subsection arr_sssecbgl_dual Example for the Dual of an Arrangement as Graph 
 
@@ -324,7 +326,7 @@ with an unsigned integer, marking the discover time of the face and use a
 breadth-first-search visitor to obtain these times and update the faces
 accordingly:
 
-\cgalexample{BGL/dual.cpp}
+\cgalexample{BGL_arrangement_2/dual.cpp}
 
 */ 
 } /* namespace CGAL */

@@ -44,7 +44,7 @@ write_xyz_points(std::ostream& stream, ForwardIterator first, ForwardIterator be
 
 \returns `true` on success.
 
-\pram stream output stream. 
+\param stream output stream. 
 \param first iterator range over the input points.  
 \param point_pmap property map `ForwardIterator` -> `Point_3`. 
 \param normal_pmap property map `ForwardIterator` -> `Vector_3`. 

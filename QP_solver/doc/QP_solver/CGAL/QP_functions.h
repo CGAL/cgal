@@ -20,7 +20,7 @@ Output operators are defined for all entry types of `lp`.
 Example 
 -------------- 
 
-\ref print_first_lp.cpp 
+\ref QP_solver/print_first_lp.cpp 
 
 \sa The concept `LinearProgram` 
 
@@ -48,7 +48,7 @@ Output operators are defined for all entry types of `lp`.
 Example 
 -------------- 
 
-\ref print_first_nonnegative_lp.cpp 
+\ref QP_solver/print_first_nonnegative_lp.cpp 
 
 \sa The concept `NonnegativeLinearProgram` 
 
@@ -76,7 +76,7 @@ Output operators are defined for all entry types of `qp`.
 Example 
 -------------- 
 
-\ref print_first_nonnegative_qp.cpp 
+\ref QP_solver/print_first_nonnegative_qp.cpp 
 
 \sa The concept `NonnegativeQuadraticProgram` 
 
@@ -103,7 +103,7 @@ Output operators are defined for all entry types of `qp`.
 Example 
 -------------- 
 
-\ref print_first_qp.cpp 
+\ref QP_solver/print_first_qp.cpp 
 
 \sa The concept `QuadraticProgram` 
 */
@@ -147,7 +147,7 @@ with exact number type `ET`.
 Example 
 -------------- 
 
-\ref first_lp.cpp 
+\ref QP_solver/first_lp.cpp 
 
 \models `Quadratic_program<NT>` 
 \models `Quadratic_program_from_mps<NT>` 
@@ -194,9 +194,9 @@ with exact number type `ET`.
 Example 
 -------------- 
 
-\ref first_nonnegative_lp.cpp 
+\ref QP_solver/first_nonnegative_lp.cpp 
 
-The models of \ref NonnegativeLinearProgram: 
+The models of \ref NonnegativeLinearProgram\:
 \sa `Quadratic_program<NT>` 
 \sa `Quadratic_program_from_mps<NT>` 
 \sa `Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
@@ -242,9 +242,9 @@ with exact number type `ET`.
 Example 
 -------------- 
 
-\ref first_nonnegative_qp.cpp 
+\ref QP_solver/first_nonnegative_qp.cpp 
 
-The models of \ref ::NonnegativeQuadraticProgram: 
+The models of \ref ::NonnegativeQuadraticProgram\:
 \sa `Quadratic_program<NT>` 
 \sa `Quadratic_program_from_mps<NT>` 
 \sa `Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>` 
@@ -289,9 +289,9 @@ with exact number type `ET`.
 Example 
 -------------- 
 
-\ref first_qp.cpp 
+\ref QP_solver/first_qp.cpp 
 
-The models of \ref ::QuadraticProgram: 
+The models of \ref QuadraticProgram\:
 \sa `Quadratic_program<NT>` 
 \sa `Quadratic_program_from_mps<NT>` 
 \sa `Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>` 

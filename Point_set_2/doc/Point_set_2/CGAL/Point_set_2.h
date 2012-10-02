@@ -12,8 +12,11 @@ geometric traits classes used by the point set and by the Delaunay triangulation
 and for the triangulation data structure (Tds). 
 
 */
-template< typename Gt, typename Tds >
-class Point_set_2 {
+template< typename Gt, 
+          typename Tds = Triangulation_data_structure_2<
+            Triangulation_vertex_base_2<Gt> >
+          >
+class Point_set_2 : public Delaunay_triangulation_2<Gt,Tds> {
 public:
 
 /// \name Types 
@@ -47,22 +50,22 @@ typedef Hidden_type Triangulation;
 /*! 
 the size type of the underlying triangulation. 
 */ 
-typedef Hidden_type Triangulation::size_type; 
+typedef Triangulation::size_type size_type; 
 
 /*! 
 the vertex type of the underlying triangulation. 
 */ 
-typedef Hidden_type Triangulation::Vertex; 
+typedef Triangulation::Vertex Vertex; 
 
 /*! 
 the edge type of the underlying triangulation. 
 */ 
-typedef Hidden_type Triangulation::Edge; 
+typedef Triangulation::Edge Edge;
 
 /*! 
 handles to vertices. 
 */ 
-typedef Hidden_type Triangulation::Vertex_handle ; 
+typedef Triangulation::Vertex_handle Vertex_handle; 
 
 /// @} 
 

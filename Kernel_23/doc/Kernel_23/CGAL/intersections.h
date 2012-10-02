@@ -47,7 +47,7 @@ Also, `Type1` and `Type2` can be respectively of types
 
 ## With the 2D Circular %Kernel ##
 
-\details See Chapter \ref chaptercircularkernel
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel
 
 \code
 #include <CGAL/Circular_kernel_intersections.h>
@@ -63,12 +63,12 @@ the following:
 - `Circular_arc_2<CircularKernel>`
 
 An example illustrating this is presented in
-Chapter  \ref chaptercircularkernel.
+Chapter  \ref Chapter_2D_Circular_Geometry_Kernel.
 
 
 ## With the 3D Spherical Kernel ## 
 
-\details See Chapter \ref chaptersphericalkernel
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel
 
 \code
 #include <CGAL/Spherical_kernel_intersections.h>
@@ -86,7 +86,7 @@ the following:
 - `Circular_arc_3<SphericalKernel>`
 
 An example illustrating this is presented in
-Chapter \ref chaptersphericalkernel.
+Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
 
 \sa `CGAL::intersection`
 */
@@ -162,8 +162,8 @@ void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
 
 Examples illustrating the use of this function in the case of the 2D
 Circular %Kernel and the 3D Spherical %Kernel are presented respectively
-in Chapters \ref chaptercircularkernel and \ref
-chaptersphericalkernel.
+in Chapters \ref Chapter_2D_Circular_Geometry_Kernel and \ref
+Chapter_3D_Spherical_Geometry_Kernel.
 
 
 \sa `CGAL::do_intersect` 
@@ -379,7 +379,7 @@ Object intersection(const Plane_3<Kernel>& pl1,
 /*!
 \addtogroup intersection_circular intersection (Circular Kernel)
 \ingroup intersection
-\details See Chapter \ref chaptercircularkernel
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel
 
 \code
 #include <CGAL/Circular_kernel_intersections.h>
@@ -433,7 +433,7 @@ intersection(const Type1 &obj1, const Type2 &obj2,
 /*!
 \addtogroup intersection_spherical intersection (Spherical Kernel)
 \ingroup intersection
-\details See Chapter \ref chaptersphericalkernel
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel
 
 \code
 #include <CGAL/Spherical_kernel_intersections.h>

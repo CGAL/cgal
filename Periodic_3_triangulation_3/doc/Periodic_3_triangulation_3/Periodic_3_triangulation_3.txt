@@ -358,7 +358,7 @@ exact.
 ## Periodic Alpha Shapes ##
 
 It is possible to use `Periodic_3_Delaunay_triangulation_3`
-as underlying triangulation for computing alpha shapes (cf. Chapter \ref I1_ChapterAlphashapes3D). For an example see
+as underlying triangulation for computing alpha shapes (cf. Chapter \ref Chapter_3D_Alpha_Shapes). For an example see
 Section \ref l1_SectPeriodicAS3D.
 
 # Design and Implementation History # {#Periodic_3_triangulation_3Design}
@@ -371,7 +371,7 @@ algorithms \cite cgal:ct-c3pt-09 and on the package with Monique
 Teillaud.
 
 The package follows the design of the 3D Triangulations package
-(see Chapter \ref chapterTriangulation3).
+(see Chapter \ref Chapter_3D_Triangulations).
 
 */ 
 } /* namespace CGAL */

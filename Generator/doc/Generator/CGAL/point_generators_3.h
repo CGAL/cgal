@@ -16,7 +16,7 @@ grid whose size is determined by the number of points to be generated.
   `double` values \f$ x\f$, \f$ y\f$, and \f$ z\f$ and returning an initialized 
   point `(x,y,z)` of type `P`. Predefined implementations for 
   these creators like the default can be found in 
-  Section \ref sectionCreatorFunctionObjects . 
+  Section \ref STLCreators. 
 - The `OutputIterator` must accept values of type `P`. If the 
   `OutputIterator` has a `value_type` the default 
   initializer of the `creator` can be used. `P` is set to 

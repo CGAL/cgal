@@ -339,7 +339,7 @@ in the distribution under <TT>examples/Polyhedron_IO/</TT> and
 <TT>demo/Polyhedron_IO/</TT>. We show an example converting OFF input
 into VRML 1.0 output.
 
-\cgalexample{Polyhedron/polyhedron2vrml.cpp}
+\cgalexample{Polyhedron_IO/polyhedron2vrml.cpp}
 
 # Extending Vertices, Halfedges, and Facets # {#PolyhedronExtending}
 

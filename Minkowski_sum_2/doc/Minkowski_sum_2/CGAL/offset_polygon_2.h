@@ -13,7 +13,7 @@ sequence of generalized polygons, such that the edges of each polygon
 correspond to line segments and circular arcs, both are special types of
 conic arcs, as represented by the `traits` class.
 The output sequence is returned via the output iterator `oi`, whose
-value-type must be `Gps_traits_2<ConicTraits>::Polygon_2`.
+value-type must be `Gps_traits_2::Polygon_2`.
 \pre `P` is a simple polygon.
 */
 template<class ConicTraits, class Container, class OutputIterator>

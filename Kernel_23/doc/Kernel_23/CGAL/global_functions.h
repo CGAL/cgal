@@ -948,7 +948,7 @@ Comparison_result compare_x(const Line_2<Kernel> &l1,
 /*!
 \addtogroup compare_x_circular compare_x (Circular Kernel)
 \ingroup compare_x
-\details See Chapter \ref chaptercircularkernel.
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel.
 
 \code
 #include <CGALCGAL/global_functions_circular_kernel_2.h>
@@ -980,7 +980,7 @@ Comparison_result
 /*!
 \addtogroup compare_x_spherical compare_x (Spherical Kernel)
 \ingroup compare_x
-\details See Chapter \ref chaptersphericalkernel.
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
 
 \code
 #include <CGAL/global_functions_spherical_kernel_3.h>
@@ -1059,7 +1059,7 @@ compare_xy(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
 /*!
 \addtogroup compare_xy_circular compare_xy (Circular Kernel)
 \ingroup compare_xy
-\details See Chapter \ref chaptercircularkernel.
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel.
 
 \code
 #include <CGAL/global_functions_circular_kernel_2.h>
@@ -1094,7 +1094,7 @@ compare_xy(const Circular_arc_point_2<CircularKernel> &p,
 /*!
 \addtogroup compare_xy_spherical compare_xy (Spherical Kernel)
 \ingroup compare_xy
-\details See Chapter \ref chaptersphericalkernel.
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
 
 \code
 #include <CGAL/global_functions_spherical_kernel_3.h>
@@ -1285,7 +1285,7 @@ Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
 
 /*!
   \name With the 2D Circular Kernel
-  See \ref chaptercircularkernel.
+  See \ref Chapter_2D_Circular_Geometry_Kernel.
 
   \code 
   #include <CGAL/global_functions_circular_kernel_2.h>
@@ -1389,7 +1389,7 @@ Comparison_result compare_y(const Line_2<Kernel> &l1,
 /*!
 \addtogroup compare_y_circular compare_y (Circular Kernel)
 \ingroup compare_y
-\details See Chapter \ref chaptercircularkernel.
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel.
 
 \code
 #include <CGAL/global_functions_circular_kernel_2.h>
@@ -1420,7 +1420,7 @@ compare_y(const Circular_arc_point_2<CircularKernel> &p,
 /*!
 \addtogroup compare_y_spherical compare_y (Spherical Kernel)
 \ingroup compare_y
-\details See Chapter \ref chaptersphericalkernel.
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
 
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>
@@ -1487,7 +1487,7 @@ compare_xyz(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
 /*!
 \addtogroup compare_xyz_spherical compare_xyz (Spherical Kernel)
 \ingroup compare_xyz
-\details See Chapter \ref chaptersphericalkernel
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel
 
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>
@@ -1545,7 +1545,7 @@ Comparison_result compare_z(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
 /*!
 \name With the 3D Spherical Kernel
 
-\details See Chapter \ref chaptersphericalkernel
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel
 
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>

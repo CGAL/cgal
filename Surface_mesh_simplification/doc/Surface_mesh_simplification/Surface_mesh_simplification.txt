@@ -3,7 +3,7 @@ namespace CGAL {
 
 \mainpage Triangulated Surface Mesh Simplification
 \anchor Chapter_Triangulated_Surface_Mesh_Simplification
-\anchor chaptermeshsimplification
+
 \autotoc
 
 \authors Fernando Cacciola
@@ -34,7 +34,7 @@ is a model of that concept can be simplified. The concept is defined not in term
 of functions and traits, making it easy to adapt any concrete surface type, 
 even if it is not a halfedge data structure at all.
 In particular, the concept definition follows the design of the 
-<A HREF="http://www.boost.org/libs/graph/doc/index.html"> Boost Graph Library (<span class="textsc">Bgl</span>)</A>
+<A HREF="http://www.boost.org/libs/graph/doc/index.html"> Boost Graph Library (Bgl)</A>
 \cite cgal:sll-bgl-02.
 
 The design is <A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>

@@ -31,7 +31,7 @@ in one of three ways in \cgal: using a static algorithm,
 using an incremental construction algorithm, or using a
 triangulation to get a fully dynamic computation.
 
-\section secconvex_hull_3 Static Convex Hull Construction 
+# Static Convex Hull Construction # {#secconvex_hull_3}
 
 The function 
 `::convex_hull_3` provides an 
@@ -40,7 +40,7 @@ dimensionsquickhull, 3D. There are two versions of this
 function available, one that can be used when it is known that the output
 will be a polyhedron (<I>i.e.</I>, there are more than three points and
 they are not all collinear) and one that handles all degenerate cases
-and returns a `::Object`, which may be a point, a segment, a
+and returns a `Object`, which may be a point, a segment, a
 triangle, or a polyhedron. Both versions accept a range of input
 iterators defining the set of points whose convex hull is to be computed
 and a traits class defining the geometric types and predicates used in
@@ -77,15 +77,15 @@ of the convex hull.
 
 # Incremental Convex Hull Construction # {#Convex_hull_3Incremental}
 
-The function `::convex_hull_incremental_3` C provides an
+The function `::convex_hull_incremental_3` provides an
 interface similar to `::convex_hull_3` for the \f$ d\f$-dimensional 
 incremental construction algorithm \cite cms-frric-93 
-implemented by the class `::Convex_hull_d<R>` that is specialized 
+implemented by the class `Convex_hull_d<R>` that is specialized 
 to three dimensions. This function accepts an iterator range over a set of
 input points and returns a polyhedron, but it does not have a traits class
 in its interface. It uses the kernel
 class `Kernel` used in the polyhedron type to define an instance of the 
-adapter traits class `::Convex_hull_d_traits_3<Kernel>`.
+adapter traits class `Convex_hull_d_traits_3<Kernel>`.
 
 In almost all cases, the static and the dynamic version will
 be faster than the incremental convex hull algorithm (mainly
@@ -95,10 +95,10 @@ completeness and educational purposes. You should use the dynamic
 version when you need an efficient incremental convex hull algorithm.
 
 To use the full functionality available with the \f$ d\f$-dimensional class 
-`::Convex_hull_d<R>` in three dimensions (<I>e.g.</I>, the ability
+`Convex_hull_d<R>` in three dimensions (<I>e.g.</I>, the ability
 to insert new points and to query if a point lies in the convex hull or not), 
-you can instantiate the class `::Convex_hull_d<K>` with the adapter
-traits class `::Convex_hull_d_traits_3<K>`, as shown in the following
+you can instantiate the class `Convex_hull_d<K>` with the adapter
+traits class `Convex_hull_d_traits_3<K>`, as shown in the following
 example.
 
 ## Example ##
@@ -108,7 +108,7 @@ example.
 # Dynamic Convex Hull Construction # {#Convex_hull_3Dynamic}
 
 Fully dynamic maintenance of a convex hull can be achieved by using the
-class `::Delaunay_triangulation_3`. This class supports insertion
+class `Delaunay_triangulation_3`. This class supports insertion
 and removal of points (<I>i.e.</I>, vertices of the triangulation) and the 
 convex hull edges are simply the finite edges of infinite faces. 
 The following example illustrates the dynamic construction of a convex hull.
@@ -128,9 +128,9 @@ not all of them are vertices of the hull.
 
 In the following, we compare the running times of the three approaches to compute 3D convex hulls.
 For the static version (using `::convex_hull_3`) and the dynamic version
-(using `::Delaunay_triangulation_3` and `::convex_hull_3_to_polyhedron_3`), the kernel
-used was `::Exact_predicates_inexact_constructions_kernel`. For the incremental version
-(using `::convex_hull_incremental_3`), the kernel used was `::Exact_predicates_exact_constructions_kernel`.
+(using `Delaunay_triangulation_3` and `::convex_hull_3_to_polyhedron_3`), the kernel
+used was `Exact_predicates_inexact_constructions_kernel`. For the incremental version
+(using `::convex_hull_incremental_3`), the kernel used was `Exact_predicates_exact_constructions_kernel`.
 
 To compute the convex hull of a million of random points in a unit ball the static approach needed 1.63s, while 
 the dynamic and incremental approaches needed 9.50s and 11.54s respectively.

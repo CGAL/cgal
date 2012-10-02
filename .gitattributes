@@ -1372,6 +1372,7 @@ BGL/doc/BGL/CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h -text
 BGL/doc/BGL/CGAL/boost/graph/properties.h -text
 BGL/doc/BGL/Concepts/HalfedgeGraph.h -text
 BGL/doc/BGL/PackageDescription.txt -text
+BGL/doc/BGL/examples.txt -text
 BGL/doc/BGL/fig/emst-detail.png -text svneol=unset#image/png
 BGL/doc/BGL/fig/emst.jpg -text svneol=unset#image/jpeg
 BGL/doc/BGL/fig/ex_bgl.gif -text svneol=unset#image/gif
@@ -1686,6 +1687,7 @@ Bounding_volumes/doc/Bounding_volumes/Concepts/MinSphereAnnulusDTraits.h -text
 Bounding_volumes/doc/Bounding_volumes/Concepts/MinSphereOfSpheresTraits.h -text
 Bounding_volumes/doc/Bounding_volumes/Concepts/RectangularPCenterTraits_2.h -text
 Bounding_volumes/doc/Bounding_volumes/PackageDescription.txt -text
+Bounding_volumes/doc/Bounding_volumes/examples.txt -text
 Bounding_volumes/doc/Bounding_volumes/fig/annulus.gif -text svneol=unset#image/gif
 Bounding_volumes/doc/Bounding_volumes/fig/annulus.pdf -text svneol=unset#application/pdf
 Bounding_volumes/doc/Bounding_volumes/fig/ball.gif -text svneol=unset#image/gif
@@ -1861,6 +1863,7 @@ Circular_kernel_2/doc/Circular_kernel_2/Concepts/CircularKernel--MakeXYMonotone_
 Circular_kernel_2/doc/Circular_kernel_2/Concepts/CircularKernel--Split_2.h -text
 Circular_kernel_2/doc/Circular_kernel_2/Concepts/CircularKernel.h -text
 Circular_kernel_2/doc/Circular_kernel_2/PackageDescription.txt -text
+Circular_kernel_2/doc/Circular_kernel_2/examples.txt -text
 Circular_kernel_2/doc/Circular_kernel_2/fig/Boolean_operation.png -text svneol=unset#image/png
 Circular_kernel_2/doc/Circular_kernel_2/fig/Boolean_operation_detail.png -text svneol=unset#image/png
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation.png -text
@@ -1952,6 +1955,7 @@ Circular_kernel_3/doc/Circular_kernel_3/Concepts/SphericalKernel--MakeThetaMonot
 Circular_kernel_3/doc/Circular_kernel_3/Concepts/SphericalKernel--Split_3.h -text
 Circular_kernel_3/doc/Circular_kernel_3/Concepts/SphericalKernel.h -text
 Circular_kernel_3/doc/Circular_kernel_3/PackageDescription.txt -text
+Circular_kernel_3/doc/Circular_kernel_3/examples.txt -text
 Circular_kernel_3/doc/Circular_kernel_3/fig/def_circles_extreme_pt.pdf -text svneol=unset#application/pdf
 Circular_kernel_3/doc/Circular_kernel_3/fig/def_circles_extreme_pt.png -text svneol=unset#image/png
 Circular_kernel_3/doc/Circular_kernel_3/fig/def_meridian.pdf -text svneol=unset#application/pdf
@@ -2834,6 +2838,7 @@ Installation/update_CHANGES -text
 Interpolation/doc/Interpolation/CGAL/Interpolation_gradient_fitting_traits_2.h -text
 Interpolation/doc/Interpolation/CGAL/Interpolation_traits_2.h -text
 Interpolation/doc/Interpolation/CGAL/Voronoi_intersection_2_traits_3.h -text
+Interpolation/doc/Interpolation/CGAL/examples.txt -text
 Interpolation/doc/Interpolation/CGAL/interpolation_functions.h -text
 Interpolation/doc/Interpolation/CGAL/natural_neighbor_coordinates_2.h -text
 Interpolation/doc/Interpolation/CGAL/regular_neighbor_coordinates_2.h -text
@@ -4688,6 +4693,7 @@ Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/Concepts/Periodic_3Tri
 Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/Concepts/Periodic_3TriangulationDSVertexBase_3.h -text
 Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/PackageDescription.txt -text
 Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/Periodic_3_triangulation_3.txt -text
+Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/examples.txt -text
 Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/flips.gif -text svneol=unset#image/gif
 Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/flips.pdf -text svneol=unset#application/pdf
 Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_STORED.jpg -text svneol=unset#image/jpeg
@@ -4771,6 +4777,7 @@ Point_set_processing_3/doc/Point_set_processing_3/CGAL/random_simplify_point_set
 Point_set_processing_3/doc/Point_set_processing_3/CGAL/remove_outliers.h -text
 Point_set_processing_3/doc/Point_set_processing_3/PackageDescription.txt -text
 Point_set_processing_3/doc/Point_set_processing_3/Point_set_processing_3.txt -text
+Point_set_processing_3/doc/Point_set_processing_3/examples.txt -text
 Point_set_processing_3/doc/Point_set_processing_3/fig/grid_simplification.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc/Point_set_processing_3/fig/introduction.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc/Point_set_processing_3/fig/mst_orient_normals.jpg -text svneol=unset#image/jpeg
@@ -5056,6 +5063,7 @@ Polynomial/doc/Polynomial/Concepts/PolynomialTraits_d.h -text
 Polynomial/doc/Polynomial/Concepts/Polynomial_d.h -text
 Polynomial/doc/Polynomial/PackageDescription.txt -text
 Polynomial/doc/Polynomial/Polynomial.txt -text
+Polynomial/doc/Polynomial/examples.txt -text
 Polynomial/doc/Polynomial/fig/Polynomial.png -text svneol=unset#image/png
 Polynomial/doc/Polynomial/fig/sturm_habicht_def.gif -text svneol=unset#image/gif
 Polynomial/doc/Polynomial/fig/subresultant_def.gif -text svneol=unset#image/gif
@@ -5204,7 +5212,6 @@ QP_solver/doc/QP_solver/CGAL/QP_functions.h -text
 QP_solver/doc/QP_solver/CGAL/QP_models.h -text
 QP_solver/doc/QP_solver/CGAL/QP_options.h -text
 QP_solver/doc/QP_solver/CGAL/QP_solution.h -text
-QP_solver/doc/QP_solver/Classified.txt -text
 QP_solver/doc/QP_solver/Concepts/LinearProgram.h -text
 QP_solver/doc/QP_solver/Concepts/MPSFormat.h -text
 QP_solver/doc/QP_solver/Concepts/NonnegativeLinearProgram.h -text
@@ -5682,6 +5689,7 @@ Spatial_sorting/doc/Spatial_sorting/Concepts/SpatialSortingTraits_3.h -text
 Spatial_sorting/doc/Spatial_sorting/Concepts/SpatialSortingTraits_d.h -text
 Spatial_sorting/doc/Spatial_sorting/PackageDescription.txt -text
 Spatial_sorting/doc/Spatial_sorting/Spatial_sorting.txt -text
+Spatial_sorting/doc/Spatial_sorting/examples.txt -text
 Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-median.gif -text svneol=unset#image/gif
 Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-median.pdf -text svneol=unset#application/pdf
 Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-middle.gif -text svneol=unset#image/gif
@@ -6021,6 +6029,7 @@ Stream_lines_2/doc/Stream_lines_2/Concepts/StreamLinesTraits_2.h -text
 Stream_lines_2/doc/Stream_lines_2/Concepts/VectorField_2.h -text
 Stream_lines_2/doc/Stream_lines_2/PackageDescription.txt -text
 Stream_lines_2/doc/Stream_lines_2/Stream_lines_2.txt -text
+Stream_lines_2/doc/Stream_lines_2/examples.txt -text
 Stream_lines_2/doc/Stream_lines_2/fig/1.gif -text svneol=unset#image/gif
 Stream_lines_2/doc/Stream_lines_2/fig/1.pdf -text svneol=unset#application/pdf
 Stream_lines_2/doc/Stream_lines_2/fig/2.gif -text svneol=unset#image/gif
@@ -6065,6 +6074,7 @@ Subdivision_method_3/doc/Subdivision_method_3/Concepts/PTQMask_3.h -text
 Subdivision_method_3/doc/Subdivision_method_3/Concepts/Sqrt3Mask_3.h -text
 Subdivision_method_3/doc/Subdivision_method_3/PackageDescription.txt -text
 Subdivision_method_3/doc/Subdivision_method_3/Subdivision_method_3.txt -text
+Subdivision_method_3/doc/Subdivision_method_3/examples.txt -text
 Subdivision_method_3/doc/Subdivision_method_3/fig/CCBorderMask.pdf -text svneol=unset#application/pdf
 Subdivision_method_3/doc/Subdivision_method_3/fig/CCBorderMask.png -text svneol=unset#image/png
 Subdivision_method_3/doc/Subdivision_method_3/fig/CCSubdivision.png -text svneol=unset#image/png
@@ -6203,6 +6213,7 @@ Surface_mesh_simplification/doc/Surface_mesh_simplification/Concepts/GetPlacemen
 Surface_mesh_simplification/doc/Surface_mesh_simplification/Concepts/StopPredicate.h -text
 Surface_mesh_simplification/doc/Surface_mesh_simplification/PackageDescription.txt -text
 Surface_mesh_simplification/doc/Surface_mesh_simplification/Surface_mesh_simplification.txt -text
+Surface_mesh_simplification/doc/Surface_mesh_simplification/examples.txt -text
 Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.jpg -text svneol=unset#image/jpeg
 Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#application/pdf
 Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse1.pdf -text svneol=unset#application/pdf
@@ -6750,6 +6761,7 @@ Triangulation_3/doc/TDS_3/Concepts/TriangulationDSVertexBase_3.h -text
 Triangulation_3/doc/TDS_3/Concepts/TriangulationDataStructure_3.h -text
 Triangulation_3/doc/TDS_3/PackageDescription.txt -text
 Triangulation_3/doc/TDS_3/TriangulationDS_3.txt -text
+Triangulation_3/doc/TDS_3/examples.txt -text
 Triangulation_3/doc/TDS_3/fig/comborient.gif -text svneol=unset#image/gif
 Triangulation_3/doc/TDS_3/fig/comborient.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc/TDS_3/fig/design_tds.gif -text svneol=unset#image/gif
@@ -6792,6 +6804,7 @@ Triangulation_3/doc/Triangulation_3/Concepts/TriangulationVertexBase_3.h -text
 Triangulation_3/doc/Triangulation_3/Concepts/WeightedPoint.h -text
 Triangulation_3/doc/Triangulation_3/PackageDescription.txt -text
 Triangulation_3/doc/Triangulation_3/Triangulation_3.txt -text
+Triangulation_3/doc/Triangulation_3/examples.txt -text
 Triangulation_3/doc/Triangulation_3/fig/Delaunay_3.jpg -text svneol=unset#image/jpeg
 Triangulation_3/doc/Triangulation_3/fig/HD.gif -text svneol=unset#image/gif
 Triangulation_3/doc/Triangulation_3/fig/HD.pdf -text svneol=unset#application/pdf

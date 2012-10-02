@@ -22,7 +22,7 @@ Only the following members of this traits class are used:
 <LI>`FT` 
 <LI>`Point_2` 
 <LI>`construct_circumcenter_2_object` 
-<DT><B></B><DD> Additionally, `Traits` must meet the requirements for 
+<LI>Additionally, `Traits` must meet the requirements for 
 the traits class of the `polygon_area_2` function. 
 </UL> 
 <LI>`OutputIterator::value_type` is equivalent to 
