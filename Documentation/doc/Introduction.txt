@@ -8,8 +8,6 @@
 /*!
 
 \page introduction Hello World
-\autotoc
-
 \author %CGAL Editorial Board
 
 The goal of this chapter is to get a first idea of the look and feel of a program that uses CGAL.

@@ -1,8 +1,6 @@
 /*!
 
 \page preliminaries Preliminaries
-\autotoc
-
 \author %CGAL Editorial Board
 
 This chapter lists the licenses
@@ -103,8 +101,7 @@ code relies on deprecated features.
 
 \deprecated Such functionality is identified this way in the manual.
 
-# Namespace CGAL # {#Preliminaries_namespace}
-
+\section Preliminaries_namespace Namespace CGAL
 
 All names introduced by \cgal, especially those documented in these
 manuals, are in a namespace called `CGAL`, which is in global
@@ -118,7 +115,7 @@ latter, however, is likely to give raise to name conflicts and is
 therefore not recommended.
 
 
-# Inclusion Order of Header Files # {#Preliminaries_inclusion}
+\section Preliminaries_inclusion Inclusion Order of Header Files
 
 Not all compilers fully support standard header names. \cgal provides
 workarounds for these problems in `CGAL/basic.h`. Consequently, as a
@@ -126,8 +123,7 @@ golden rule, you should always include `CGAL/basic.h` first in your
 programs (or `CGAL/Cartesian.h`, or `CGAL/Homogeneous.h`, since they
 include `CGAL/basic.h` first).
 
-
-#Thread Safety# {#Preliminaries_thread_safety}
+\section Preliminaries_thread_safety Thread Safety
 
 \cgal is progressively being made thread-safe.  The guidelines which are followed
 are:
@@ -142,8 +138,7 @@ to force its definition on the command line, and it is possible to prevent its d
 definition by setting `CGAL_HAS_NO_THREADS` from the command line.
 
 
-# C++0x Support # {#Preliminaries_cc0x}
-
+\section Preliminaries_cc0x C++0x Support 
 
 \cgal is based on the \CC standard released in 1998 (and later refined in 2003).
 A new major version of this standard is being prepared, and is refered to as C++0x.
@@ -155,7 +150,7 @@ a command-line switch `-std=c++0x` which enables some of those features.
 some of these features if they are available, although no extensive support has
 been implemented yet.
 
-#Functor Return Types# {#Preliminaries_functor}
+\section Preliminaries_functor Functor Return Types
 
 \cgal functors support the
 <a href="http://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</a>
@@ -171,7 +166,7 @@ return type of calling the functor with an argument of type
 Much of the \cgal code contains assert statements for preconditions, and postconditions of functions
 as well as in the code.  These assertions can be switched on and off per package
 and the user can change the error behaviour. For details see Section \ref secchecks 
-of Chapter Chapter_STL_Extensions_for_CGAL.
+of Chapter \ref Chapter_STL_Extensions_for_CGAL.
 
 \section seccgal_version Identifying the Version of CGAL
 
@@ -207,7 +202,7 @@ dropped here. Example: `CGAL_VERSION_NUMBER(3,2,4)` is equal to
 </DL>
 
 
-#Compile-time Flags to Control Inlining# {#Preliminaries_flags}
+\section Preliminaries_flags Compile-time Flags to Control Inlining
 
 Making functions inlined can, at times, improve the efficiency of your code.
 However this is not always the case and it can differ for a single function
