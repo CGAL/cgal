@@ -536,8 +536,8 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
       fc++;
     } while ( fc != fc_start );
 
-    std::cout << "debug: impl find_faces_to_split: n_inf=" 
-      << n_inf << std::endl;
+    CGAL_SDG_DEBUG(std::cout << "debug: impl find_faces_to_split: n_inf=" 
+                   << n_inf << std::endl;);
 
     // philaris: 
 
