@@ -1,8 +1,10 @@
 namespace CGAL {
 
+
+
 /*!
 \addtogroup angle angle
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 */
 /// @{
 
@@ -51,7 +53,7 @@ const Point_3<Kernel>& r);
 /// @}
 
 /// \addtogroup unit_normal unit_normal
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -64,7 +66,7 @@ Vector_3<Kernel> unit_normal( const Point_3<Kernel>& p, const Point_3<Kernel>& q
 
 
 /// \addtogroup area area
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -79,7 +81,7 @@ const Point_2<Kernel>& r);
 /// @}
 
 /// \addtogroup are_ordered_along_line are_ordered_along_line
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::are_strictly_ordered_along_line` 
 /// \sa `CGAL::collinear_are_ordered_along_line` 
 /// \sa `CGAL::collinear_are_strictly_ordered_along_line` 
@@ -112,7 +114,7 @@ const Point_3<Kernel> &r);
 /// @}
 
 /// \addtogroup are_strictly_ordered_along_line are_strictly_ordered_along_line
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::are_ordered_along_line` 
 /// \sa `CGAL::collinear_are_ordered_along_line` 
 /// \sa `CGAL::collinear_are_strictly_ordered_along_line` 
@@ -143,7 +145,7 @@ const Point_3<Kernel> &r);
 /// @}
 
 /// \addtogroup barycenter barycenter
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::centroid` 
 /// @{
 
@@ -270,7 +272,7 @@ const Point_3<Kernel>& p4, const Kernel::FT&w4);
 /// @}
 
 /// \addtogroup bisector bisector
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -324,7 +326,7 @@ const Plane_3<Kernel> &h2);
 /// @}
 
 /// \addtogroup centroid centroid
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::barycenter` 
 /// @{
 
@@ -390,7 +392,7 @@ centroid( const Tetrahedron_3<Kernel>& t);
 /// @}
 
 /// \addtogroup circumcenter circumcenter
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -471,7 +473,7 @@ circumcenter( const Tetrahedron_3<Kernel>& t);
 /// @}
 
 /// \addtogroup collinear_are_ordered_along_line collinear_are_ordered_along_line
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::are_ordered_along_line` 
 /// \sa `CGAL::are_strictly_ordered_along_line` 
 /// \sa `CGAL::collinear_are_strictly_ordered_along_line` 
@@ -498,7 +500,7 @@ const Point_3<Kernel> &r);
 /// @}
 
 /// \addtogroup collinear_are_strictly_ordered_along_line collinear_are_strictly_ordered_along_line
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::are_ordered_along_line` 
 /// \sa `CGAL::are_strictly_ordered_along_line` 
 /// \sa `CGAL::collinear_are_ordered_along_line` 
@@ -526,7 +528,7 @@ const Point_3<Kernel> &r);
 /// @}
 
 /// \addtogroup collinear collinear
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::left_turn` 
 /// \sa `CGAL::orientation` 
 /// \sa `CGAL::right_turn` 
@@ -553,7 +555,7 @@ const Point_3<Kernel>&r);
 
 
 /// \addtogroup compare_dihedral_angle compare_dihedral_angle
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -623,7 +625,7 @@ const Vector_3<Kernel>& w2);
 /// @}
 
 /// \addtogroup compare_distance_to_point compare_distance_to_point
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_squared_distance` 
 /// \sa `CGAL::compare_signed_distance_to_line` 
 /// \sa `CGAL::compare_signed_distance_to_plane` 
@@ -668,7 +670,7 @@ const Point_3<Kernel>& r);
 
 
 /// \addtogroup compare_lexicographically_linear compare_lexicographically (Linear Kernel)
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -696,7 +698,7 @@ compare_lexicographically(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
 
 
 /// \addtogroup compare_signed_distance_to_line compare_signed_distance_to_line
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_distance_to_point` 
 /// \sa `CGAL::compare_signed_distance_to_plane` 
 /// \sa `CGAL::has_larger_distance_to_point` 
@@ -770,7 +772,7 @@ const Point_3<Kernel>& t);
 
 
 /// \addtogroup compare_slopes compare_slopes
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -790,7 +792,7 @@ const Segment_2<Kernel> &s2);
 /// @}
 
 /// \addtogroup compare_squared_distance compare_squared_distance
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_distance_to_point` 
 /// \sa `CGAL::compare_signed_distance_to_line` 
 /// \sa `CGAL::compare_signed_distance_to_plane` 
@@ -825,7 +827,7 @@ const typename Kernel::FT& d2);
 /// @}
 
 /// \addtogroup compare_squared_radius compare_squared_radius
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -875,7 +877,7 @@ const typename Kernel::FT& sr);
 
 /*!
 \defgroup compare_x compare_x
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used,
 different versions of this global function are available. This is
@@ -1010,7 +1012,7 @@ Comparison_result
 
 /*!
 \defgroup compare_xy compare_xy
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used, different versions of this
 global function are available. 
@@ -1127,7 +1129,7 @@ Comparison_result
 
 /*!
 \addtogroup compare_x_at_y compare_x_at_y
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 
 \anchor figcomparexaty
 \image html compare_x_at_y.gif
@@ -1192,7 +1194,7 @@ const Line_2<Kernel> &h2);
 
 /*!
   \addtogroup compare_y_at_x compare_y_at_x
-  \ingroup PkgKernel23
+  \ingroup kernel_global_function
 
   \anchor figcompareyatx
   \image html compare2.gif
@@ -1315,7 +1317,7 @@ compare_y_at_x(const Circular_arc_point_2<CircularKernel> &p,
 
 /*!
 \defgroup compare_y compare_y
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used, different versions of this
 global function are available.
@@ -1448,7 +1450,7 @@ Comparison_result
 
 /*!
 \defgroup compare_xyz compare_xyz
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used, different versions of this
 global function are available.
@@ -1518,7 +1520,7 @@ const Point_3<SphericalKernel> &q);
 
 /*!
 \addtogroup compare_z compare_z
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used, 
 different versions of this global function are available. This is 
@@ -1575,7 +1577,7 @@ compare_z(const Circular_arc_point_3<SphericalKernel> &p, const Point_3<Spherica
 /// @}
 
 /// \addtogroup compare_yx compare_yx
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_xy` 
 /// \sa `CGAL::compare_xyz` 
 /// \sa `CGAL::compare_x` 
@@ -1599,7 +1601,7 @@ compare_yx(const Point_2<Kernel>& p, const Point_2<Kernel>& q);
 
 
 /// \addtogroup coplanar coplanar
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::coplanar_orientation` 
 /// \sa `CGAL::coplanar_side_of_bounded_circle` 
 /// @{
@@ -1616,7 +1618,7 @@ const Point_3<Kernel>&s);
 /// @}
 
 /// \addtogroup coplanar_orientation coplanar_orientation
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::coplanar` 
 /// \sa `CGAL::coplanar_side_of_bounded_circle` 
 /// \sa `CGAL::orientation` 
@@ -1655,7 +1657,7 @@ const Point_3<Kernel>& r);
 
 
 /// \addtogroup coplanar_side_of_bounded_circle coplanar_side_of_bounded_circle
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::coplanar_orientation` 
 /// \sa `CGAL::side_of_bounded_circle` 
 /// @{
@@ -1675,7 +1677,7 @@ const Point_3<Kernel>& s);
 
 
 /// \addtogroup cross_product cross_product
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -1688,7 +1690,7 @@ const Vector_3<Kernel>& v);
 /// @}
 
 /// \addtogroup determinant determinant
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::orientation` 
 /// \sa `CGAL::collinear` 
 /// \sa `CGAL::left_turn` 
@@ -1713,7 +1715,7 @@ const Vector_3<Kernel>& w);
 /// @}
 
 /// \addtogroup equidistant_line equidistant_line
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -1729,7 +1731,7 @@ const Point_3<Kernel> &r);
 /// @}
 
 /// \addtogroup has_larger_distance_to_point has_larger_distance_to_point
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_distance_to_point` 
 /// \sa `CGAL::compare_signed_distance_to_line` 
 /// \sa `CGAL::compare_signed_distance_to_plane` 
@@ -1765,7 +1767,7 @@ const Point_3<Kernel>& r);
 /// @}
 
 /// \addtogroup has_larger_signed_distance_to_line has_larger_signed_distance_to_line
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_distance_to_point` 
 /// \sa `CGAL::compare_signed_distance_to_line` 
 /// \sa `CGAL::compare_signed_distance_to_plane` 
@@ -1805,7 +1807,7 @@ const Point_2<Kernel>& s);
 
 
 /// \addtogroup has_larger_signed_distance_to_plane has_larger_signed_distance_to_plane
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_distance_to_point` 
 /// \sa `CGAL::compare_signed_distance_to_line` 
 /// \sa `CGAL::compare_signed_distance_to_plane` 
@@ -1844,7 +1846,7 @@ const Point_3<Kernel>& t);
 /// @}
 
 /// \addtogroup has_smaller_distance_to_point has_smaller_distance_to_point
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_distance_to_point` 
 /// \sa `CGAL::compare_signed_distance_to_line` 
 /// \sa `CGAL::compare_signed_distance_to_plane` 
@@ -1880,7 +1882,7 @@ const Point_3<Kernel>& r);
 /// @}
 
 /// \addtogroup has_smaller_signed_distance_to_line has_smaller_signed_distance_to_line
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_distance_to_point` 
 /// \sa `CGAL::compare_signed_distance_to_line` 
 /// \sa `CGAL::compare_signed_distance_to_plane` 
@@ -1918,7 +1920,7 @@ const Point_2<Kernel>& s);
 /// @}
 
 /// \addtogroup has_smaller_signed_distance_to_plane has_smaller_signed_distance_to_plane
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_distance_to_point` 
 /// \sa `CGAL::compare_signed_distance_to_line` 
 /// \sa `CGAL::compare_signed_distance_to_plane` 
@@ -1957,7 +1959,7 @@ const Point_3<Kernel>& t);
 /// @}
 
 /// \addtogroup left_turn left_turn
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::collinear` 
 /// \sa `CGAL::orientation` 
@@ -1978,7 +1980,7 @@ const Point_2<Kernel> &r);
 
 
 /// \addtogroup lexicographically_xy_larger lexicographically_xy_larger
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::compare_xy` 
 /// \sa `CGAL::lexicographically_xy_larger_or_equal` 
 /// \sa `CGAL::lexicographically_xy_smaller` 
@@ -1999,7 +2001,7 @@ const Point_2<Kernel>& q);
 
 
 /// \addtogroup lexicographically_xy_larger_or_equal lexicographically_xy_larger_or_equal
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::compare_xy` 
 /// \sa `CGAL::lexicographically_xy_larger` 
@@ -2020,7 +2022,7 @@ const Point_2<Kernel>& q);
 /// @}
 
 /// \addtogroup lexicographically_xy_smaller lexicographically_xy_smaller
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::compare_xy` 
 /// \sa `CGAL::lexicographically_xy_larger` 
@@ -2042,7 +2044,7 @@ const Point_2<Kernel>& q);
 
 
 /// \addtogroup lexicographically_xy_smaller_or_equal lexicographically_xy_smaller_or_equal
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::compare_xy` 
 /// \sa `CGAL::lexicographically_xy_larger` 
@@ -2063,7 +2065,7 @@ const Point_2<Kernel>& q);
 /// @}
 
 /// \addtogroup lexicographically_xyz_smaller lexicographically_xyz_smaller
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::compare_xyz` 
 /// \sa `CGAL::lexicographically_xyz_smaller_or_equal` 
@@ -2082,7 +2084,7 @@ const Point_3<Kernel>& q);
 /// @}
 
 /// \addtogroup lexicographically_xyz_smaller_or_equal lexicographically_xyz_smaller_or_equal
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::compare_xyz` 
 /// \sa `CGAL::lexicographically_xyz_smaller` 
@@ -2101,7 +2103,7 @@ const Point_3<Kernel>& q);
 /// @}
 
 /// \addtogroup max_vertex max_vertex
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -2119,7 +2121,7 @@ Point_3<Kernel> max_vertex( const Iso_cuboid_3<Kernel>& ic );
 /// @}
 
 /// \addtogroup midpoint midpoint
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -2138,7 +2140,7 @@ Point_3<Kernel> midpoint( const Point_3<Kernel>& p, const Point_3<Kernel>& q );
 /// @}
 
 /// \addtogroup min_vertex min_vertex
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -2156,7 +2158,7 @@ Point_3<Kernel> min_vertex( const Iso_cuboid_3<Kernel>& ic );
 /// @}
 
 /// \addtogroup normal normal
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// @{
 
 /*!
@@ -2169,7 +2171,7 @@ Vector_3<Kernel> normal( const Point_3<Kernel>& p, const Point_3<Kernel>& q, con
 /// @}
 
 /// \addtogroup operatorminus operator-
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::operator+` 
 /// \sa `CGAL::operator*` 
 
@@ -2208,7 +2210,7 @@ Point_3<Kernel> operator-(const Point_3<Kernel> &p, const Vector_3<Kernel> &v);
 /// @}
 
 /// \addtogroup operatorplus operator+
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::operator-` 
 /// \sa `CGAL::operator*` 
 /// @{
@@ -2231,7 +2233,7 @@ const Vector_3<Kernel> &v);
 /// @}
 
 /// \addtogroup operatormult operator\*
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 /// \sa `CGAL::operator+` 
 /// \sa `CGAL::operator-` 
 /// @{
@@ -2251,7 +2253,7 @@ Vector_3<Kernel> operator*(const Kernel::RT &s, const Vector_3<Kernel> &w);
 /// @}
 
 /// \addtogroup orientation orientation
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::collinear` 
 /// \sa `CGAL::left_turn` 
@@ -2305,7 +2307,7 @@ const Vector_3<Kernel> &w);
 
 
 /// \addtogroup orthogonal_vector orthogonal_vector
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// @{
 
@@ -2329,7 +2331,7 @@ const Point_3<Kernel>& r );
 
 
 /// \addtogroup parallel parallel
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// @{
 
@@ -2394,7 +2396,7 @@ const Segment_3<Kernel>& s2);
 
 
 /// \addtogroup radical_line radical_line
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// @{
 
@@ -2411,7 +2413,7 @@ const Circle_2<Kernel>& c2);
 
 
 /// \addtogroup right_turn right_turn
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::collinear` 
 /// \sa `CGAL::left_turn` 
@@ -2431,7 +2433,7 @@ const Point_2<Kernel> &r);
 
 
 /// \addtogroup side_of_bounded_circle side_of_bounded_circle
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::coplanar_side_of_bounded_circle` 
 /// \sa `CGAL::side_of_oriented_circle` 
@@ -2466,7 +2468,7 @@ const Point_2<Kernel> &t);
 
 
 /// \addtogroup side_of_bounded_sphere side_of_bounded_sphere
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::side_of_oriented_sphere` 
 
@@ -2511,7 +2513,7 @@ const Point_3<Kernel> &t);
 /// @}
 
 /// \addtogroup side_of_oriented_circle side_of_oriented_circle
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::side_of_bounded_circle` 
 
@@ -2542,7 +2544,7 @@ const Point_2<Kernel> &test);
 
 
 /// \addtogroup side_of_oriented_sphere side_of_oriented_sphere
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::side_of_bounded_sphere` 
 
@@ -2572,7 +2574,7 @@ const Point_3<Kernel> &test);
 /// @}
 
 /// \addtogroup squared_area squared_area
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// @{
 
@@ -2588,7 +2590,7 @@ const Point_3<Kernel>& r);
 /// @}
 
 /// \addtogroup squared_radius squared_radius
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::Circle_2<Kernel>` 
 /// \sa `CGAL::Circle_3<Kernel>` 
@@ -2665,7 +2667,7 @@ squared_radius( const Point_3<Kernel>& p);
 
 
 /// \addtogroup volume volume
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::Tetrahedron_3<Kernel>` 
 
@@ -2684,7 +2686,7 @@ Kernel::FT volume(const Point_3<Kernel> & p0, const Point_3<Kernel> & p1,
 
 
 /// \addtogroup x_equal x_equal
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::compare_x` 
 /// \sa `CGAL::y_equal` 
@@ -2713,7 +2715,7 @@ const Point_3<Kernel> &q);
 
 
 /// \addtogroup y_equal y_equal
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::compare_y` 
 /// \sa `CGAL::x_equal` 
@@ -2741,7 +2743,7 @@ const Point_3<Kernel> &q);
 
 
 /// \addtogroup z_equal z_equal
-/// \ingroup PkgKernel23
+/// \ingroup kernel_global_function
 
 /// \sa `CGAL::compare_z` 
 /// \sa `CGAL::x_equal` 

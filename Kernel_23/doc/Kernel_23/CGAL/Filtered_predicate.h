@@ -30,7 +30,7 @@ It uses the fast but inexact predicate based on interval arithmetic for
 filtering and the slow but exact predicate based on multi-precision floats 
 when the filtering predicate fails. 
 
-\cgalexample{Kernel_23/Filtered_predicate.cpp} 
+\cgalexample{Filtered_kernel/Filtered_predicate.cpp} 
 
 */
 template< typename EP, typename FP, typename C2E, typename C2F >

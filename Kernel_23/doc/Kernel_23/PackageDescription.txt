@@ -22,7 +22,11 @@
 /// \defgroup kernel_classes Kernel Classes 
 /// \ingroup PkgKernel23
 
+/// \defgroup kernel_global_function Global Kernel Functions
+/// \ingroup PkgKernel23
 
+/// \defgroup kernel_enums Enumerations and Related Functions
+/// \ingroup PkgKernel23
 
 
 /*!

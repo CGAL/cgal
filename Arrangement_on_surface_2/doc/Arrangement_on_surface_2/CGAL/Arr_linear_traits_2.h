@@ -4,13 +4,13 @@ namespace CGAL {
 /*!
   \ingroup PkgArrangement2TraitsClasses
 
-  The traits class `Arr_linear_traits_2` is a model of the `ArrangementTraits_2` 
-  concept that allows for the construction and maintenance of arrangements of 
-  linear objects which may be bounded (line segments) or unbounded (rays 
-  and lines). The traits class is parameterized with a \cgal-kernel model; 
-  see the reference page of `Arr_segment_traits_2<Kernel>` 
-  (CONVERROR ccRefPage for CGAL::Arr_segment_traits_2<Kernel> not supported) for further explanations 
-  and recommendations on choosing a kernel. 
+  The traits class `Arr_linear_traits_2` is a model of the
+  `ArrangementTraits_2` concept that allows for the construction and
+  maintenance of arrangements of linear objects which may be bounded
+  (line segments) or unbounded (rays and lines). The traits class is
+  parameterized with a \cgal-kernel model; see the reference page of
+  `Arr_segment_traits_2<Kernel>` for further explanations and
+  recommendations on choosing a kernel.
 
   `Arr_linear_traits_2` defines `Kernel::Point_2` as its point type. The nested 
   `X_monotone_curve_2` and `Curve_2` types defined by the traits class 

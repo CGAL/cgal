@@ -512,6 +512,7 @@ namespace for the XML file to be processed properly.  -->
           <bool name="SORT_GROUP_NAMES">true</bool>
           <list name="TAGFILES" append="false">
             <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+            <item>./tags/Kernel_d.tag=../../CGAL.CGAL.dD-Geometry-Kernel/html</item>
             <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
             <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.2D-Convex-Hulls-and-Extreme-Points/html</item>
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>

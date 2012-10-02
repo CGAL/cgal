@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*!
 \addtogroup rational_rotation_approximation rational_rotation_approximation
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 */
 
 /*!

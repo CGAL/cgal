@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*!
 \addtogroup squared_distance squared_distance
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 */
 /// @{
 

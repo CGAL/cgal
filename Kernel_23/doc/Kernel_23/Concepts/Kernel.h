@@ -1,38 +1,4 @@
-/*!
-\file
-*/
-
-/*!
-\ingroup PkgKernel23Concepts
-\cgalconcept
-
-The concept of a <I>kernel</I> is defined by a set of requirements on 
-the provision of certain types and access member functions to create 
-objects of these types. The types are function object classes to be used 
-within the algorithms and data structures of \cgal. 
-This allows you to use any model of a kernel as a traits class in 
-the \cgal algorithms and data structures, unless they require types 
-beyond those provided by a kernel. 
-
-A kernel provides types, construction objects, and generalized predicates. 
-The former replace constructors of the kernel classes and constructive 
-procedures in the kernel. There are also function objects replacing operators, 
-especially for equality testing. 
-
-\hasModel `CGAL::Cartesian<FieldNumberType>` 
-\hasModel `CGAL::Homogeneous<RingNumberType>`
-\hasModel `CGAL::Simple_cartesian<FieldNumberType>` 
-\hasModel `CGAL::Simple_homogeneous<RingNumberType>` 
-\hasModel `CGAL::Filtered_kernel<CK>`
-\hasModel `CGAL::Exact_predicates_exact_constructions_kernel` 
-\hasModel `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` 
-\hasModel `CGAL::Exact_predicates_inexact_constructions_kernel`
-
-\sa `Kernel_d` 
-
-*/
-class Kernel {
-public:
+namespace Kernel {
 
 /// \name Geometric Object Concepts
 /// @{
@@ -8730,7 +8696,39 @@ const Kernel::Point_3& p);
 
 }; /* end Kernel::ConstructPerpendicularPlane_3 */
 
-/// @}
+}
+
+/*!
+\ingroup PkgKernel23Concepts
+\cgalconcept
+
+The concept of a <I>kernel</I> is defined by a set of requirements on 
+the provision of certain types and access member functions to create 
+objects of these types. The types are function object classes to be used 
+within the algorithms and data structures of \cgal. 
+This allows you to use any model of a kernel as a traits class in 
+the \cgal algorithms and data structures, unless they require types 
+beyond those provided by a kernel. 
+
+A kernel provides types, construction objects, and generalized predicates. 
+The former replace constructors of the kernel classes and constructive 
+procedures in the kernel. There are also function objects replacing operators, 
+especially for equality testing. 
+
+\hasModel `CGAL::Cartesian<FieldNumberType>` 
+\hasModel `CGAL::Homogeneous<RingNumberType>`
+\hasModel `CGAL::Simple_cartesian<FieldNumberType>` 
+\hasModel `CGAL::Simple_homogeneous<RingNumberType>` 
+\hasModel `CGAL::Filtered_kernel<CK>`
+\hasModel `CGAL::Exact_predicates_exact_constructions_kernel` 
+\hasModel `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` 
+\hasModel `CGAL::Exact_predicates_inexact_constructions_kernel`
+
+\sa `Kernel_d` 
+
+*/
+class Kernel {
+public:
 
 
 /// \name Types 

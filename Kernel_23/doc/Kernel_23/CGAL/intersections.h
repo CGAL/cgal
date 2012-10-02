@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*!
 \addtogroup do_intersect_linear do_intersect (Linear Kernel)
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used, different versions of this
 global function are available.
@@ -104,7 +104,7 @@ template <typename Type1, typename Type2>
 bool do_intersect(Type1 obj1, Type2 obj2);
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 
 checks whether `obj1`, `obj2` and `obj3` intersect.
 
@@ -125,7 +125,7 @@ bool do_intersect(Type1 obj1, Type2 obj2, Type3 obj3);
 
 /*!
 \defgroup intersection intersection
-\ingroup PkgKernel23
+\ingroup kernel_global_function
 
 \brief 
 \details Depending on which \cgal kernel is used, different versions of this

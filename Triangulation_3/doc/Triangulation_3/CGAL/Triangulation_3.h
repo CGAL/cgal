@@ -944,7 +944,7 @@ Cell_handle begin, int i);
 
 /*! 
 Same as above, except that `newv` will be used as the new vertex, which 
-must have been allocated previously with e.g. `create_vertex`. 
+must have been allocated previously with e.g.\ `create_vertex`. 
 */ 
 template <class CellIt> 
 Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end, 
@@ -1093,7 +1093,8 @@ Cell_circulator incident_cells(Cell_handle c, int i, int j,
 Cell_handle start) const; 
   /// @}
 
-/*! \\name
+/*! 
+\name
 The following circulators on facets are defined only in dimension 3, though facets are defined also in dimension 2: there are only two facets sharing an edge in dimension 2.
 */
 

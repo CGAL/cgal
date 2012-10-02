@@ -1,5 +1,10 @@
 /*!
-\example Kernel_23/cartesian_converter.cpp
+\example Kernel_23/MyPointC2.h
+\example Kernel_23/MyConstruct_bbox_2.h
+\example Kernel_23/MyConstruct_coord_iterator.h
+\example Kernel_23/MyConstruct_point_2.h
+\example Kernel_23/MyKernel.h
 \example Kernel_23/MyKernel.cpp
 \example Filtered_kernel/Filtered_predicate.cpp
+\example Kernel_23/cartesian_converter.cpp
 */

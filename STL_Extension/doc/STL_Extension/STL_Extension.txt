@@ -6,6 +6,8 @@
 \autotoc
 \authors Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein
 
+# Introduction # {#stl_intro}
+
 \cgal is designed in the spirit of the generic programming paradigm
 to work together with the Standard Template Library (\stl)
 \cite cgal:ansi-is14882-98, \cite cgal:a-gps-98. This chapter documents non-geometric
@@ -22,7 +24,7 @@ Finally, tags and policy classes to specify complexity trade-offs of data-struct
 and a class which helps specifying that the default types in template
 parameter lists are desired is also provided.
 
-# Doubly-Connected List Managing Items in Place #
+# Doubly-Connected List Managing Items in Place # {#stl_doubly}
 
 The class `In_place_list<T,bool>` manages a
 sequence of items in place in a doubly-connected list. Its goals are
@@ -40,7 +42,7 @@ This used to simplify mutually pointed data structures like a halfedge
 data structure for planar maps or polyhedral surfaces (the current design
 does not need this anymore). The usual iterators are also available.
 
-# %Compact Container #
+# Compact Container # {#stl_compact}
 
 The class `Compact_container<T, Allocator>` is an \stl like container
 which provides a very compact storage for its elements. It achieves this goal
@@ -69,7 +71,7 @@ This container has been developed in order to efficiently handle large data
 structures like the triangulation and halfedge data structures. It can
 probably be useful for other kinds of graphs as well.
 
-# %Multiset with Extended Functionality #
+# Multiset with Extended Functionality # {#stl_multi}
 
 The class `Multiset<Type,Compare,Allocator>` represents a
 multi-set of elements of type `Type`, represented as a red-black tree
@@ -99,14 +101,14 @@ looking up keys whose type may differ from `Type`, as long as users supply
 a comparison functor `CompareKey`, between the keys and set elements;
 and catenating and splitting sets.
 
-# Polymorphic %Object #
+# Polymorphic Object # {#stl_polyobject}
 
 The class `Object` can store an object of whatever other type.
 It can be used by a function to return objects of different types.
 A mechanism to extract the stored object based on its type is also provided.
 This class is similar to `boost::any`.
 
-# Uncertainty Management #
+# Uncertainty Management # {#stl_uncertainty}
 
 The class `Uncertain<T>` represents a range of values of type `T`.
 `T` is allowed to stand for `bool`, or \cgal's enumeration types
@@ -127,7 +129,7 @@ filtered by `Filtered_predicate`, know about it.
 
 It can also be used in other contexts as well, as it is a general tool.
 
-# Complexity Tags and Policies #
+# Complexity Tags and Policies # {#stl_complexity}
 
 Some data structures and algorithms can be implemented with different
 complexity trade-offs between memory usage and time complexity. \cgal provides
@@ -137,7 +139,7 @@ these tags and allows to specify the complexity of point location (currently in
 `Delaunay_triangulation_3` only). Convenient typedefs `Fast_location`
 and `Compact_location` are also provided.
 
-# %Default Arguments in Template Parameter Lists #
+# Default Arguments in Template Parameter Lists # {#stl_defaults}
 
 In \cpp, it is possible to specify defaults at the end of a template parameter
 list. Specifying that one wishes to use the default is simply done by omitting
@@ -145,7 +147,7 @@ it. This is however possible only at the end of the list. `CGAL::Default`
 provides a simple mechanism that performs something equivalent anywhere in the
 sequence.
 
-# C++ 11 Wrappers #
+# C++ 11 Wrappers # {#stl_wrappers}
 
 Wrappers for the classes `array` and `tuple` which, based on
 availability, either use the version of <I>Boost</I> or the one

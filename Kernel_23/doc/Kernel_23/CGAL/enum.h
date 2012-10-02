@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 
 converts between the various enums provided by the \cgal kernel.
 The conversion preserves the order of the values.
@@ -18,7 +18,7 @@ template < typename T, typename U >
 T enum_cast(const U&u);
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 
 returns the opposite side (for example `ON_POSITIVE_SIDE` if
 `o==ON_NEGATIVE_SIDE`), or `ON_ORIENTED_BOUNDARY` if
@@ -27,7 +27,7 @@ returns the opposite side (for example `ON_POSITIVE_SIDE` if
 Oriented_side opposite(const Oriented_side &o);
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 
 returns the opposite side (for example `BOUNDED_SIDE` if
 `o==UNBOUNDED_SIDE`), or returns `ON_BOUNDARY` if
@@ -36,30 +36,30 @@ returns the opposite side (for example `BOUNDED_SIDE` if
 Bounded_side opposite(const Bounded_side &o);
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 \sa `CGAL::angle`
  */
 enum Angle {OBTUSE, RIGHT, ACUTE};
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 \sa `CGAL::opposite(const Bounded_side& o)`
 */
 enum Bounded_side {ON_UNBOUNDED_SIDE, ON_BOUNDARY, ON_BOUNDED_SIDE};
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 */
 enum Comparison_result { SMALLER, EQUAL, LARGER };
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 \sa CGAL::Orientation
 */
 enum  Sign { NEGATIVE, ZERO, POSITIVE };
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 \sa `CGAL::LEFT_TURN` 
 \sa `CGAL::RIGHT_TURN` 
 \sa `CGAL::COLLINEAR`
@@ -70,32 +70,32 @@ enum  Sign { NEGATIVE, ZERO, POSITIVE };
 typedef Sign Orientation;
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 */
 enum Oriented_side {ON_NEGATIVE_SIDE, ON_ORIENTED_BOUNDARY, ON_POSITIVE_SIDE };
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 
 \sa `CGAL::COUNTERCLOCKWISE`
 */
 const Orientation CLOCKWISE = NEGATIVE;
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 \sa `CGAL::CLOCKWISE`
 */
 const Orientation COUNTERCLOCKWISE = POSITIVE;
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 \sa `CGAL::LEFT_TURN` 
 \sa `CGAL::RIGHT_TURN` 
 */
 const Orientation COLLINEAR = ZERO;
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 
 \sa `CGAL::COLLINEAR` 
 
@@ -104,7 +104,7 @@ const Orientation COLLINEAR = ZERO;
 const Orientation LEFT_TURN = POSITIVE;
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 
 \sa `CGAL::COLLINEAR`
 \sa `CGAL::LEFT_TURN`
@@ -113,17 +113,17 @@ const Orientation LEFT_TURN = POSITIVE;
 const Orientation RIGHT_TURN = NEGATIVE;
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 */
 const Orientation COPLANAR  = ZERO;
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 */
 const Orientation DEGENERATE = ZERO;
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 
 A symbolic constant used to construct zero length vectors.
 
@@ -134,7 +134,7 @@ A symbolic constant used to construct zero length vectors.
 const Null_vector NULL_VECTOR;
 
 /*!
-\ingroup PkgKernel23
+\ingroup kernel_enums
 
 A symbolic constant which denotes the point at the origin.
 This constant is used in the conversion between points and vectors.
