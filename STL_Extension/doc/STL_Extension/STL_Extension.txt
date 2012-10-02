@@ -157,5 +157,205 @@ for backward compatibility. Those are documented for completeness and
 implementers. They are not intended to be used by users of the
 library.
 
+\section secchecks Checks
+
+Much of the \cgal code contains checks.
+For example, all checks used in the kernel code are prefixed by
+`CGAL_KERNEL`.
+Other packages have their own prefixes, as documented in the corresponding
+chapters.
+Some are there to check if the kernel behaves correctly, others are there to
+check if the user calls kernel routines in an acceptable manner.
+
+There are five types of checks.
+The first three are errors and lead to a halt of the program if they fail.
+The fourth only leads to a warning, and the last one is compile-time only.
+
+<DL>
+<DT>Preconditions</DT>
+<DD>
+check if the caller of a routine has called it in a proper fashion.
+If such a check fails it is the responsibility of the caller (usually the user of the library).
+</DD>
+<DT>Postconditions</DT>
+<DD>
+check if a routine does what it promises to do.
+If such a check fails it is the fault of this routine, so of the library.
+</DD>
+<DT>Assertions</DT>
+<DD>
+are other checks that do not fit in the above two
+categories.
+</DD>
+<DT>Warnings</DT>
+<DD>
+are checks for which it is not so severe if they fail.
+</DD>
+<DT>Static assertions</DT>
+<DD>
+are compile-time assertions, used e.g. to verify
+the values of compile-time constants or compare types for (in)equality.
+</DD>
+</DL>
+
+By default, all of these checks are performed.
+It is however possible to turn them off through the use of compile time
+switches.
+For example, for the checks in the kernel code, these switches are the
+following:
+`CGAL_KERNEL_NO_PRECONDITIONS`,
+`CGAL_KERNEL_NO_POSTCONDITIONS`,
+`CGAL_KERNEL_NO_ASSERTIONS` and
+`CGAL_KERNEL_NO_WARNINGS`.
+
+So, in order to compile the file `foo.cpp` with the postcondition checks
+off, you can do:
+
+`CC -DCGAL_KERNEL_NO_POSTCONDITIONS foo.cpp`
+
+This is also preferably done by modifying your makefile by adding
+`-DCGAL_KERNEL_NO_POSTCONDITIONS` to the `CXXFLAGS` variable.
+
+The name `KERNEL` in the macro name can be replaced by a package
+specific name in order to control assertions done in a given package.
+This name is given in the documentation of the corresponding package,
+in case it exists.
+
+Note that global macros can also be used to control the behavior over the
+whole \cgal library:
+
+- `CGAL_NO_PRECONDITIONS`,
+- `CGAL_NO_POSTCONDITIONS`,
+- `CGAL_NO_ASSERTIONS`,
+- `CGAL_NO_WARNINGS` and
+- `CGAL_NDEBUG`.
+
+
+Setting the macro `CGAL_NDEBUG` disables all checks.
+Note that the standard flag `NDEBUG` sets `CGAL_NDEBUG`, but it also
+affects the standard `assert` macro.
+This way, adding `-DCGAL_NDEBUG` to your compilation flags removes
+absolutely all checks.  This is the default recommended setup for performing
+timing benchmarks for example.
+
+Not all checks are on by default.
+The first four types of checks can be marked as expensive or exactness checks
+(or both).
+These checks need to be turned on explicitly by supplying one or both of
+the compile time switches `CGAL_KERNEL_CHECK_EXPENSIVE` and
+`CGAL_KERNEL_CHECK_EXACTNESS`.
+
+Expensive checks are, as the word says, checks that take a considerable
+time to compute.
+Considerable is an imprecise phrase.
+Checks that add less than 10 percent to the execution time of the routine
+they are in are not expensive.
+Checks that can double the execution time are.
+Somewhere in between lies the border line.
+Checks that increase the asymptotic running time of an algorithm are always
+considered expensive.
+Exactness checks are checks that rely on exact arithmetic.
+For example, if the intersection of two lines is computed, the postcondition
+of this routine may state that the intersection point lies on both lines.
+However, if the computation is done with doubles as number type, this may not
+be the case, due to round off errors.
+So, exactness checks should only be turned on if the computation is done
+with some exact number type.
+
+By definition, static assertions are both inexpensive and unaffected by precision
+management. Thus, the categories do not apply for static assertions.
+
+## Altering the Failure Behavior # {#stl_alteriung}
+
+As stated above, if a postcondition, precondition or assertion is
+violated, an exception is thrown, and if nothing is done to catch it,
+the program will abort.
+This behavior can be changed by means of the function `CGAL::set_error_behaviour()`
+and the enum `CGAL::Failure_behaviour`.
+
+The `THROW_EXCEPTION` value is the default, which throws an exception.
+
+If the `EXIT` value is set, the program will stop and return a value
+indicating failure, but not dump the core.
+The `CONTINUE` value tells the checks to go on after diagnosing the error.
+Note that since \cgal 3.4, `CONTINUE` has the same effect as
+`THROW_EXCEPTION` for errors (but it keeps its meaning for warnings), it is
+not possible anymore to let assertion failures simply continue (except by
+totally disabling them).
+
+\advanced If the `EXIT_WITH_SUCCESS` value is set, the program will stop and
+return a value corresponding to successful execution and not dump the core.
+
+The value that is returned by `CGAL::set_error_behaviour` is the value that was in use before.
+
+For warnings we provide `CGAL::set_warning_behaviour()` which works in the same way.
+The only difference is that for warnings the default value is
+`CONTINUE`.
+
+
+## Control at a Finer Granularity## {#stl_control}
+
+The compile time flags as described up to now all operate on the whole
+library.
+Sometimes you may want to have a finer control.
+\cgal offers the possibility to turn checks on and off with a bit finer
+granularity, namely the module in which the routines are defined.
+The name of the module is to be appended directly after the \cgal prefix.
+So, the flag `CGAL_KERNEL_NO_ASSERTIONS` switches off assertions in
+the kernel only, the flag `CGAL_CH_CHECK_EXPENSIVE` turns on
+expensive checks in the convex hull module.
+The name of a particular module is documented with that module.
+
+
+## Customizing how Errors are Reported## {#stl_customizing}
+
+Normally, error messages are written to the standard error output.
+It is possible to do something different with them.
+To that end you can register your own handler using
+`CGAL::set_error_handler(Failure_function handler)`
+This function should be declared as follows.
+
+
+There are several things that you can do with your own handler.
+You can display a diagnostic message in a different way, for instance in
+a pop up window or to a log file (or a combination).
+You can also implement a different policy on what to do after an error.
+For instance, you can throw an exception or ask the user in a dialog
+whether to abort or to continue.
+If you do this, it is best to set the error behavior to
+`CONTINUE`, so that it does not interfere with your policy.
+
+You can register two handlers, one for warnings and one for errors.
+Of course, you can use the same function for both if you want.
+When you set a handler, the previous handler is returned, so you can restore
+it if you want.
+
+
+
+### Example ### {#stl_failure_example}
+
+\code{.cpp}
+#include <CGAL/assertions.h>
+
+void my_failure_handler(
+    const char *type,
+    const char *expr,
+    const char* file,
+    int line,
+    const char* msg)
+{
+    /* report the error in some way. */
+}
+
+void foo()
+{
+    CGAL::Failure_function prev;
+    prev = CGAL::set_error_handler(my_failure_handler);
+    /* call some routines. */
+    CGAL::set_error_handler(prev);
+}
+\endcode
+
+
 */ 
 
