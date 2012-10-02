@@ -44,8 +44,7 @@ code of software you build on top of \sc{Lgpl}ed \cgal data structures
 The exact license terms can be found at the Free Software Foundation web site:
 http://www.gnu.org/copyleft/lesser.html.
 
-Rationale of the License Choice
-------------------------------
+\subsection licensesRationale Rationale of the License Choice
 
 We have chosen the \sc{Gpl} and the \sc{Lgpl} as they are well known
 and well understood open source licenses. The former restricts
@@ -65,21 +64,19 @@ http://www.geometryfactory.com/.  License fees paid by commercial
 customers are reinvested in R\&D performed by the \cgal project partners,
 as well as in evolutive maintenance.
 
-Marking of Special Functionality
-================================
+\section markingSpecialFunctionality Marking of Special Functionality
 
 In this manual you will encounter sections marked as follows.
 
-Advanced Features
------------------
+
+\subsection advanced_features Advanced Features
 
 Some functionality is considered more advanced, for example because it is
 relatively low-level, or requires special care to be properly used.
 
 \advanced Such functionality is identified this way in the manual.
 
-Debugging Support Features
---------------------------
+\subsection debugging_support Debugging Support Features
 
 Usually related to advanced features that for example may not guarantee
 class invariants, some functionality is provided that helps debugging,
@@ -87,8 +84,7 @@ for example by performing invariants checks on demand.
 
 \debug Such functionality is identified this way in the manual.
 
-Deprecated Code
----------------
+\subsection deprecated_code Deprecated Code
 
 Sometimes, the \cgal project decides that a feature is deprecated.  This means
 that it still works in the current release, but it will be removed in the next,
@@ -107,8 +103,8 @@ code relies on deprecated features.
 
 \deprecated Such functionality is identified this way in the manual.
 
-Namespace %CGAL
-==============
+# Namespace CGAL # {#Preliminaries_namespace}
+
 
 All names introduced by \cgal, especially those documented in these
 manuals, are in a namespace called `CGAL`, which is in global
@@ -122,8 +118,7 @@ latter, however, is likely to give raise to name conflicts and is
 therefore not recommended.
 
 
-Inclusion Order of Header Files
-===============================
+# Inclusion Order of Header Files # {#Preliminaries_inclusion}
 
 Not all compilers fully support standard header names. \cgal provides
 workarounds for these problems in `CGAL/basic.h`. Consequently, as a
@@ -132,8 +127,7 @@ programs (or `CGAL/Cartesian.h`, or `CGAL/Homogeneous.h`, since they
 include `CGAL/basic.h` first).
 
 
-Thread Safety
-=============
+#Thread Safety# {#Preliminaries_thread_safety}
 
 \cgal is progressively being made thread-safe.  The guidelines which are followed
 are:
@@ -148,8 +142,8 @@ to force its definition on the command line, and it is possible to prevent its d
 definition by setting `CGAL_HAS_NO_THREADS` from the command line.
 
 
-C++0x Support
-=============
+# C++0x Support # {#Preliminaries_cc0x}
+
 
 \cgal is based on the \CC standard released in 1998 (and later refined in 2003).
 A new major version of this standard is being prepared, and is refered to as C++0x.
@@ -161,8 +155,7 @@ a command-line switch `-std=c++0x` which enables some of those features.
 some of these features if they are available, although no extensive support has
 been implemented yet.
 
-Functor Return Types
-====================
+#Functor Return Types# {#Preliminaries_functor}
 
 \cgal functors support the
 <a href="http://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of">result_of</a>
@@ -281,8 +274,7 @@ with some exact number type.
 By definition, static assertions are both inexpensive and unaffected by precision
 management. Thus, the categories do not apply for static assertions.
 
-Altering the Failure Behavior
-----------------------------
+## Altering the Failure Behavior # {#Preliminaries_alterung}
 
 As stated above, if a postcondition, precondition or assertion is
 violated, an exception is thrown, and if nothing is done to catch it,
@@ -310,7 +302,7 @@ totally disabling them).
 \advanced If the `EXIT_WITH_SUCCESS` value is set, the program will stop and
 return a value corresponding to successful execution and not dump the core.
 
-The value that is returned by `set_error_behaviour` is the value that was in use before.
+The value that is returned by `CGAL::set_error_behaviour` is the value that was in use before.
 
 For warnings there is a separate routine, which works in the same way.
 The only difference is that for warnings the default value is
@@ -318,8 +310,7 @@ The only difference is that for warnings the default value is
 
 `Failure_behaviour set_warning_behaviour(Failure_behaviour eb);`
 
-Control at a Finer Granularity
-------------------------------
+## Control at a Finer Granularity## {#Preliminaries_control}
 
 The compile time flags as described up to now all operate on the whole
 library.
@@ -334,8 +325,7 @@ The name of a particular module is documented with that module.
 
 \beginadvanced
 
-Customizing how Errors are Reported
------------------------------------
+## Customizing how Errors are Reported## {#Preliminaries_customizing}
 
 Normally, error messages are written to the standard error output.
 It is possible to do something different with them.
@@ -374,7 +364,7 @@ it if you want.
 - `Failure_function set_error_handler(Failure_function handler);`
 - `Failure_function set_warning_handler(Failure_function handler);`
 
-### Example ###
+### Example ### {#preliminaries_example}
 
 \code{.cpp}
 #include <CGAL/assertions.h>
@@ -433,10 +423,8 @@ dropped here. Example: `CGAL_VERSION_NUMBER(3,2,4)` is equal to
 </DD>
 </DL>
 
-\beginadvanced
 
-Compile-time Flags to Control Inlining
-======================================
+#Compile-time Flags to Control Inlining# {#Preliminaries_flags}
 
 Making functions inlined can, at times, improve the efficiency of your code.
 However this is not always the case and it can differ for a single function
@@ -465,6 +453,5 @@ Note that setting inline manually is very fragile, especially in a template
 context.  It is usually better to let the compiler select by himself which
 functions should be inlined or not.
 
-\endadvanced
 
 */
