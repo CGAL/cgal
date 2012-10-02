@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes2
 
-An object of type `Circle_2` is a circle in the 
+An object `c` of type `Circle_2` is a circle in the 
 two-dimensional Euclidean plane \f$ \E^2\f$. The circle is oriented, i.e. 
 its boundary has clockwise or counterclockwise orientation. The 
 boundary splits \f$ \E^2\f$ into a positive and a negative side, where the 
@@ -94,7 +94,7 @@ Orientation orientation( ) const;
 /*! 
 
 returns `true`, iff `c` and `circle2` are equal, 
-i.e. if they have the same center, same squared radius and 
+i.e.\ if they have the same center, same squared radius and 
 same orientation. 
 */ 
 bool operator == ( const Circle_2<Kernel>& circle2) const; 
@@ -112,7 +112,7 @@ bool operator != ( const Circle_2<Kernel> & circle2) const;
 
 /*! 
 
-returns `true`, iff `c` is degenerate, i.e. if `c` has squared radius zero. 
+returns `true`, iff `c` is degenerate, i.e.\ if `c` has squared radius zero. 
 */ 
 bool is_degenerate( ) const; 
 

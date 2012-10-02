@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes2
 
-An object \f$ s\f$ of the data type `Segment_2` is a directed 
+An object `s` of the data type `Segment_2` is a directed 
 straight line segment in the two-dimensional Euclidean plane \f$ \E^2\f$, i.e. a 
 straight line segment \f$ [p,q]\f$ connecting two points \f$ p,q \in \R^2\f$. 
 The segment is topologically closed, i.e. the end 

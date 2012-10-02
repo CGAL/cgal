@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes3
 
-An object \f$ s\f$ of the data type `Iso_cuboid_3` is a 
+An object `c` of the data type `Iso_cuboid_3` is a 
 cuboid in the Euclidean space \f$ \E^3\f$ with edges parallel to the \f$ x\f$, 
 \f$ y\f$ and \f$ z\f$ axis of the coordinate system. 
 

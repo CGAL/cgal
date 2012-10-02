@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes3
 
-An object of type `Circle_3` is a circle in the 
+An object `c` of type `Circle_3` is a circle in the 
 three-dimensional Euclidean space \f$ \E^3\f$. Note that the 
 circle can be degenerate, i.e. the squared radius may be zero. 
 
@@ -121,7 +121,7 @@ Kernel::FT squared_length_divided_by_pi_square( ) const;
 
 /*! 
 
-returns an approximation of the squared length (i.e. perimeter) of `c`. 
+returns an approximation of the squared length (i.e.\ perimeter) of `c`. 
 */ 
 double approximate_squared_length( ) const; 
 
@@ -152,7 +152,7 @@ Bbox_3 bbox() const;
 
 /*! 
 returns `true`, iff `c1` and `c2` are equal, 
-i.e. if they have the same center, the same squared radius 
+i.e.\ if they have the same center, the same squared radius 
 and the same supporting plane. 
 \relates Circle_3 
 */ 

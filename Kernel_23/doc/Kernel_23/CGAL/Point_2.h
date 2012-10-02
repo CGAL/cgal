@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes2
 
-An object of the class `Point_2` is a point in the two-dimensional 
+An object `p` of the class `Point_2` is a point in the two-dimensional 
 Euclidean plane \f$ \E^2\f$. 
 
 Remember that `Kernel::RT` and `Kernel::FT` denote a 
@@ -197,7 +197,7 @@ Point_2<Kernel> transform(const Aff_transformation_2<Kernel> &t) const;
 
 /*! 
 returns true iff `p` is lexicographically smaller than `q`, 
-i.e. either if `p.x() < q.x()` or if `p.x() == q.x()` and 
+i.e.\ either if `p.x() < q.x()` or if `p.x() == q.x()` and 
 `p.y() < q.y()`. 
 \relates Point_2 
 */ 

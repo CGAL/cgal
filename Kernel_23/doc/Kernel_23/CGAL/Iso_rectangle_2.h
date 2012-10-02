@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes2
 
-An object \f$ s\f$ of the data type `Iso_rectangle_2` is a 
+An object `r` of the data type `Iso_rectangle_2` is a 
 rectangle in the Euclidean plane \f$ \E^2\f$ with sides parallel to the \f$ x\f$ and 
 \f$ y\f$ axis of the coordinate system. 
 

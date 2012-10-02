@@ -114,7 +114,7 @@ Orientation const& orientation( ) const;
 /*! 
 
 returns `true`, iff `c` and `sphere2` are equal, 
-i.e. if they have the same center, same squared radius and 
+i.e.\ if they have the same center, same squared radius and 
 same orientation. 
 */ 
 bool operator == ( const Sphere_3<Kernel> & sphere2) const; 
@@ -132,7 +132,7 @@ bool operator != (  const Sphere_3<Kernel> & sphere2) const;
 
 /*! 
 
-returns `true`, iff `c` is degenerate, i.e. if `c` has squared radius zero. 
+returns `true`, iff `c` is degenerate, i.e.\ if `c` has squared radius zero. 
 */ 
 bool is_degenerate( ) const; 
 
