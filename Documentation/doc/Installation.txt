@@ -4,8 +4,8 @@
 \authors Eric Berberich, Joachim Reichel, and Fernando Cacciola
 \autotoc
 
-# Introduction #
-
+# Introduction # {#installation_introduction}
+ 
 This document describes how to install \cgal on Windows, Unix-like systems, and MacOS X.
 
 Ideally, setting up \cgal amounts to:
@@ -236,7 +236,7 @@ all this information is called <I>configuration</I>.
 The end of the process is marked by the generation of a makefile or a
 Visual \cpp solution and project file that you can use to build \cgal.
 
-## Configuring %CGAL with the CMake Gui ##
+## Configuring CGAL with the CMake Gui ##
 
 The simplest way to start the configuration is to run the graphical
 user interface of CMake. We recommend to use `cmake-gui`. It
@@ -261,7 +261,7 @@ Providing information and pressing 'Configure' goes on until
 all entries are grayed. You are now ready to press 'Generate'. Once this is
 done, you can quit `cmake-gui`.
 
-## Configuring %CGAL with the cmake command-line tool ##
+## Configuring CGAL with the cmake command-line tool ##  {#installation_configuring_cmd}
 
 Alternatively, you can run the command-line tool called
 `cmake`. You pass as argument the root directory of
@@ -414,7 +414,7 @@ Utilities to read and write image files
 
 </CENTER>
 
-## Debug vs. Release ##
+## Debug vs. Release ## {#installation_debug}
 
 The CMake variable `CMAKE_BUILD_TYPE` indicates how to build
 the libraries. It accepts the values `Release` or
@@ -423,7 +423,7 @@ your program.
 
 This is not an issue for solution/project files, as there the user selects the build type from within the IDE.
 
-## Static vs. Shared Libraries ##
+## Static vs. Shared Libraries ##  {#installation_static}
 
 Shared libraries, also called <I>dynamic-link libraries</I>, are built by default
 (`.dll` on Windows, `.so` on Linux, `.dylib` on MacOS). You
@@ -540,7 +540,7 @@ developed demos require libCGAL_Qt4 and \sc{Qt}4.
 
 Having \sc{Qt}4 version 4.3.0 or higher is recommended.
 
-# %CGAL Examples and Demos #
+# %CGAL Examples and Demos #  {#installation_examples}
 
 \cgal is distributed with a large collection of examples and demos. By default, these are <B>not</B> configured along with
 the \cgal libraries, unless you set the variables `WITH_examples=ON` and/or `WITH_demos=ON`.
@@ -765,7 +765,7 @@ variable explicitly <I>at the configuration time</I> and not when executing the 
 The file `CGALConfig.cmake` is installed by default in
 `$CMAKE_INSTALLED_PREFIX/lib/CGAL-x.y`.
 
-# Example Configuration #
+# Example Configuration #  {#installation_example_configuration}
 
 Below is an example output on a linux machine with g++4.4 installed, using CMake 2.8.5,
 and the following command-line call to `cmake`:
@@ -964,8 +964,8 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 
 </PRE>
 
-# Multiple Variants of makefiles (out-of-source build) #
-\anchor seccmakeoutofsource
+# Multiple Variants of Makefiles (out-of-source build) #  {#seccmakeoutofsource}
+
 
 While you can choose between release or debug builds, and shared or static libraries,
 it is not possible to generate different variants during a single configuration. You need to run CMake in a 
@@ -994,7 +994,7 @@ cd `CGAL-x.y`/cmake/platforms/release
 cmake -DCMAKE_BUILD_TYPE=Release ../../..
 </PRE>
 
-# Configuring and Building Programs Using %CGAL #
+# Configuring and Building Programs Using CGAL #  {#installation_configuring_using}
 
 Ideally, configuring and compiling a demo/example/program amounts to
 
@@ -1038,7 +1038,7 @@ If you have installed CGAL, `CGAL_DIR` must afterwards be set to
 `$CMAKE_INSTALLED_PREFIX/lib/CGAL`. Note that \cgal is
 recommended to be installed in release mode when using it to build programs.
 
-## Creating a cmake script for a program using %CGAL ##
+## Creating a cmake script for a program using CGAL ##  {#installation_creating}
 
 For compiling a non-shipped program, it is
 recommended, to also rely on a CMake-supported configuration using a
@@ -1108,7 +1108,7 @@ libCGAL_ImageIO (``ImageIO'') , libCGAL_Qt3 (``Qt3'') and libCGAL_Qt4
 ``LAPACK''. A user is free to create the `CMakeLists.txt`
 without calling the script (manual creation).
 
-## Custom flags in the programs using %CGAL ##
+## Custom flags in the programs using CGAL ##  {#installation_custom}
 
 Normally, programs linked with \cgal must be compiled with the same flags
 used by the compilation of \cgal libraries. For this reason, the <I>very first</I> time
@@ -1140,7 +1140,7 @@ cd CGAL-x.y/examples/Straight_skeleton_2
 cmake -DCGAL_DIR=CGAL-x.y -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
 \endcode
 
-# Summary of %CGAL's Configuration Variables #
+# Summary of CGAL's Configuration Variables #  {#installation_summary}
 
 Most configuration variables are not environment variables but
 <I>CMake variables</I>. They are given in the command line to CMake
@@ -1148,7 +1148,7 @@ via the `-D` option, or passed from the interactive interface
 of `cmake-gui`. Unless indicated differently, all the variables
 summarized below are CMake variables.
 
-## Component selection ##
+## Component Selection ##  {#installation_component_selection}
 
 The following boolean variables indicate which \cgal components to
 configure and build. Their values can be ON or OFF.
@@ -1194,7 +1194,7 @@ ON
 
 </SMALL>
 
-## Compiler and Linker Flags ##
+## Compiler and Linker Flags ##  {#installation_flags}
 
 The following variables specify compiler and linker flags. Each variable holds a 
 space-separated list of command-line switches for the compiler and linker and 
@@ -1258,7 +1258,7 @@ Linker (programs)
 
 </SMALL>
 
-## Additional Compiler and Linker Flags ##
+## Additional Compiler and Linker Flags ##  {#installation_additional_flags}
 
 The following variables can be used to <I>add</I> flags without overriding the ones
 defined by cmake.
@@ -1314,7 +1314,7 @@ Linker (programs)
 
 </SMALL>
 
-## Miscellaneous Variables ##
+## Miscellaneous Variables ##  {#installation_misc}
 
 <SMALL>
 <TABLE CELLSPACING=5 BORDER=2>
@@ -1358,7 +1358,7 @@ Idem
 
 </SMALL>
 
-## Variables used only when building programs (such as demos or examples) ##
+## Variables used only when building programs (such as demos or examples) ##  {#installation_variables_building}
 
 <SMALL>
 <TABLE CELLSPACING=5 BORDER=2>
@@ -1384,7 +1384,7 @@ Either CMake or Environment
 
 </SMALL>
 
-## Variables providing information about 3rd-party libraries ##
+## Variables providing information about 3rd-party libraries ##  {#installation_variables_third_party}
 \anchor sec3partysoftwareconfig
 
 The following variables provide information about the availability and
@@ -1397,7 +1397,7 @@ Since 3rd-party libraries are system wide, many of the CMake variables listed be
 be given as similarly-named environment variables instead. Keep in mind that you must provide one or the
 other but never both.
 
-## Boost libraries ##
+## Boost libraries ##  {#installation_boost}
 
 In most cases, if \sc{Boost} is not automatically found, setting the `BOOST_ROOT` 
 variable is enough. If it is not, you can specify the header and library
@@ -1476,7 +1476,7 @@ CMake
 
 </SMALL>
 
-## Gmp and Mpfr libraries ##
+## Gmp and Mpfr Libraries ##  {#installation_gmp}
 
 Under Windows, auto-linking is used, so only the <I>directory</I> 
 containing the libraries is needed and you would specify `GMP|MPFR_LIBRARY_DIR` rather than
@@ -1605,7 +1605,7 @@ CMake
 
 </SMALL>
 
-## Qt3 library ##
+## Qt3 Library ##  {#installation_qt3}
 
 In most cases, if \sc{Qt}3 is not automatically found, setting the `QTDIR` 
 environment variable is sufficient. If it is not, you can specify the directory containing 
@@ -1673,7 +1673,7 @@ CMake
 
 </SMALL>
 
-## Qt4 library ##
+## Qt4 Library ## {#installation_qt4}
 
 The CMake scripts that search for \sc{Qt}4 can use the introspection feature
 of the tool `qmake` included in \sc{Qt}4 distributions. If \sc{Qt}4 is not
@@ -1737,7 +1737,7 @@ CMake
 
 </SMALL>
 
-## Leda library ##
+## Leda Library ##  {#installation_leda}
 
 When the \leda libraries are not automatically found, yet they are installed on the system
 with base names 'leda' and 'ledaD' (for the release and debug versions resp.), it might 
@@ -1830,7 +1830,7 @@ Either CMake
 
 </SMALL>
 
-## Mpfi library ##
+## Mpfi Library ##  {#installation_mpfi}
 
 \cgal provides a number type based on this library, but the \cgal library
 itself does not depend on \sc{Mpfi}. This means that this library must be
@@ -1887,7 +1887,7 @@ CMake
 
 </SMALL>
 
-## Rs and Rs3 library ##
+## Rs and Rs3 Library ##  {#installation_rs}
 
 As said before, only the \cgal univariate algebraic kernel depends on the
 library Rs. As the algebraic kernel is not compiled as a part of the \cgal
@@ -1998,7 +1998,7 @@ CMake
 
 </SMALL>
 
-## Ntl library ##
+## Ntl Library ##  {#installation_ntl}
 
 Some polynomial computations in \cgal's algebraic kernel 
 are speed up when \sc{Ntl} is available. 
@@ -2057,7 +2057,7 @@ CMake
 
 </SMALL>
 
-## Eigen library ##
+## Eigen Library ##  {#installation_eigen}
 
 \sc{Eigen} is a header-only template library.
 Only the <I>directory</I> containing the header files of \sc{Eigen} 3.1 (or greater) is needed.
@@ -2089,7 +2089,7 @@ Environment
 
 </SMALL>
 
-## QGLViewer library ##
+## QGLViewer Library ##  {#installation_qgl}
 
 Some demos require the GLViewer library.
 
@@ -2138,7 +2138,7 @@ CMake
 
 </SMALL>
 
-## ESBTL library ##
+## ESBTL Library ##  {#installation_esbtl}
 
 One skin surface example requires the ESBTL library in order to read \sc{Pdb} files.
 
@@ -2172,7 +2172,7 @@ CMake
 
 </SMALL>
 
-# Compiler Workarounds #
+# Compiler Workarounds #  {#installation_compiler_workarounds}
 
 A number of boolean flags are used to workaround compiler bugs and
 limitations. They all start with the prefix `CGAL_CFG`. These
