@@ -1081,6 +1081,9 @@ namespace for the XML file to be processed properly.  -->
             <item>HalfedgeBase</item>
             <item>VertexBase</item>
           </list>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Boolean_set_operations_2.tag=../../CGAL.CGAL.2D-Regularized-Boolean-Set-Operations/html</item>
+          </list>
         </doxygen>
       </project>
 
