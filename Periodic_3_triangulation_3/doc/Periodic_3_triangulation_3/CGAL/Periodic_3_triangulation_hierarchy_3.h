@@ -52,7 +52,6 @@ fraction of the number of vertices of the preceding triangulation
 the data structure remains small and achieves fast point location 
 queries on real data. 
 
-\sa `CGAL::Periodic_3_triangulation_hierarchy_vertex_base_3` 
 \sa `CGAL::Periodic_3_Delaunay_triangulation_3` 
 
 */

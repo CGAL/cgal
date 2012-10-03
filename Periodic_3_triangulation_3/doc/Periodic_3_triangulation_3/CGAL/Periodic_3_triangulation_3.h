@@ -7,21 +7,13 @@ namespace CGAL {
 The class `Periodic_triangulation_3` represents a 3-dimensional 
 triangulation of a point set in \f$ \mathbb T_c^3\f$. 
 
-### Template Parameters ###
+\tparam PT must be a model of the `Periodic_3DelaunayTriangulationTraits_3` concept. 
 
-The first template argument `PT` must be a model of the 
-`Periodic_3DelaunayTriangulationTraits_3` concept. 
-
-The second template argument `TDS` must be a model of the 
-`TriangulationDataStructure_3` concept with some additional 
-functionality in cells and vertices. 
+\tparam TDS must be a model of  `TriangulationDataStructure_3` concept 
+with some additional  functionality in cells and vertices. 
 Its default value is 
 `Triangulation_data_structure_3<Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<>>,Triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`. 
 
-### Traversal of the Triangulation ###
-
-The periodic triangulation class provides several iterators and circulators 
-that allow one to traverse it. 
 
 \sa `Periodic_3_Delaunay_triangulation_3` 
 */
@@ -215,7 +207,7 @@ typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
 /// @} 
 
-/// \name Geometric iterators: 
+/// \name Geometric Iterators: 
 /// @{
 
 /*! 
@@ -244,7 +236,7 @@ typedef Hidden_type Periodic_point_iterator;
 
 /// @} 
 
-/// \name Enums: 
+/// \name Enums 
 
 /// @{
 
@@ -507,7 +499,7 @@ size_type number_of_stored_facets() const;
 
 /// @} 
 
-/// \name Geometric access functions 
+/// \name Geometric Access Functions 
 /// @{
 
 /*! 
@@ -762,7 +754,7 @@ bool are_equal(const Facet & f, Cell_handle n, int j) const;
 
 /// @} 
 
-/// \name Point location 
+/// \name Point Location 
 /// The class `Periodic_3_triangulation_3` provides three functions to
 /// locate a given point with respect to a triangulation. It provides
 /// also functions to test if a given point is inside a face or
@@ -827,7 +819,13 @@ Locate_type & lt, int & li, int & lj) const;
 
 /// @} 
 
-/*! \name Cell, Face, Edge and Vertex Iterators 
+/*! 
+\name Traversal of the Triangulation
+
+The periodic triangulation class provides several iterators and circulators 
+that allow one to traverse it. 
+
+\name Cell, Face, Edge and Vertex Iterators 
 
 The following iterators allow the user to visit cells, facets, edges
 and vertices of the stored triangulation, i.e. in case of computing in
@@ -1056,7 +1054,7 @@ Cell_handle start, int f) const;
 
 /// @} 
 
-/// \name Traversal of the incident cells and facets, and the adjacent vertices of a given vertex
+/// \name Traversal of the Incident Cells and Facets, and the Adjacent Vertices of a Given Vertex
 /// @{
 
 /*! 
@@ -1105,7 +1103,7 @@ size_type degree(Vertex_handle v) const;
 
 /// @} 
 
-/// \name Traversal between adjacent cells 
+/// \name Traversal Between Adjacent Cells 
 /// @{
 
 /*! 
