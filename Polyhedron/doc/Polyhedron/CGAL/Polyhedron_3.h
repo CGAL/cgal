@@ -834,8 +834,7 @@ public:
     halfedge. It is based on the `CGAL::N_step_adaptor` class. For
     convenience, the `Point_iterator` enumerates all points in the polyhedral
     surface in the same order as the `Vertex_iterator`, but with the
-    value type `Point`. It is based on the `CGAL::Iterator_project`
-    adaptor. Similarly, a `Plane_iterator` is provided.
+    value type `Point`. Similarly, a `Plane_iterator` is provided.
   */
   /// @{
 
