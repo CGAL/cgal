@@ -218,7 +218,7 @@ Point p, Offset off = Offset(0,0,0)) const;
 /// @}
 
 /*! \name
-A point-offset pair (`p`,`off`) is said to be in conflict with a cell `c` iff `dt`.`side_of_sphere(c, p, off)` returns `ON_BOUNDED_SIDE`. The set of cells that are in conflict with (`p`,`off`) is star-shaped. 
+A point-offset pair (`p`,`off`) is said to be in conflict with a cell `c` iff `dt.side_of_sphere(c, p, off)` returns `ON_BOUNDED_SIDE`. The set of cells that are in conflict with (`p`,`off`) is star-shaped. 
 */
 /// @{
 
