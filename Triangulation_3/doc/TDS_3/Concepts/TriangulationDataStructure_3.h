@@ -40,7 +40,6 @@ the dimension of the triangulation is lower than 3
 Thus, a 3D-triangulation data structure can store a triangulation of a 
 topological sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.<BR> 
 
-<BR> 
 
 <BR> 
 
@@ -50,14 +49,13 @@ The second template parameter of the basic triangulation class
 `Triangulation_3` is a triangulation data structure class. (See 
 Chapter \ref chapterTDS3.) 
 
-To ensure all the <B>flexibility</B> of the class `Triangulation_3`, a 
+To ensure all the *flexibility* of the class `Triangulation_3`, a 
 model of a triangulation data structure must be templated by the base vertex 
 and the base cell classes (see \ref TDS3secintro): 
 `TriangulationDataStructure_3<TriangulationVertexBase_3,TriangulationCellBase_3>`. 
 The optional functionalities related to geometry are compulsory for 
 this use as a template parameter of `Triangulation_3`.<BR> 
 
-<BR> 
 
 <BR> 
 
@@ -942,7 +940,7 @@ void delete_cells(CellIt first, CellIt last);
 /// @{
 
 /*! 
-Returns `cells_end()` when `tds`.`dimension()` \f$ <3\f$. 
+Returns `cells_end()` when `tds.dimension()` \f$ <3\f$. 
 */ 
 Cell_iterator cells_begin() const; 
 
@@ -953,7 +951,7 @@ Cell_iterator cells_end() const;
 
 /*! 
 Low-level access to the cells, does not return `cells_end()` 
-when `tds`.`dimension()` \f$ <3\f$. 
+when `tds.dimension()` \f$ <3\f$. 
 */ 
 Cell_iterator raw_cells_begin() const; 
 
@@ -963,7 +961,7 @@ Cell_iterator raw_cells_begin() const;
 Cell_iterator raw_cells_end() const; 
 
 /*! 
-Returns `facets_end()` when `tds`.`dimension()` \f$ <2\f$. 
+Returns `facets_end()` when `tds.dimension()` \f$ <2\f$. 
 */ 
 Facet_iterator facets_begin() const; 
 
@@ -973,7 +971,7 @@ Facet_iterator facets_begin() const;
 Facet_iterator facets_end() const; 
 
 /*! 
-Returns `edges_end()` when `tds`.`dimension()` \f$ <1\f$. 
+Returns `edges_end()` when `tds.dimension()` \f$ <1\f$. 
 */ 
 Edge_iterator edges_begin() const; 
 
@@ -999,7 +997,7 @@ Vertex_iterator vertices_end() const;
 
 /*! 
 Starts at an arbitrary cell incident to `e`. 
-\pre `tds`.`dimension()` \f$ =3\f$ 
+\pre `tds.dimension()` \f$ =3\f$ 
 */ 
 Cell_circulator incident_cells(const Edge & e) const; 
 
@@ -1010,7 +1008,7 @@ Cell_circulator incident_cells(Cell_handle c, int i, int j) const;
 
 /*! 
 Starts at cell `start`. 
-\pre `tds`.`dimension()` \f$ =3\f$ and `start` is incident to `e`. 
+\pre `tds.dimension()` \f$ =3\f$ and `start` is incident to `e`. 
 */ 
 Cell_circulator incident_cells(const Edge & e, Cell_handle start) const; 
 
@@ -1026,7 +1024,7 @@ Starts at an arbitrary facet incident to `e`.
 Only defined in dimension 3, though are defined also in dimension 2:
 there are only two facets sahring an edge in dimension 2.
 
-\pre `tds`.`dimension()` \f$ =3\f$ 
+\pre `tds.dimension()` \f$ =3\f$ 
 */ 
 Facet_circulator incident_facets(Edge e) const; 
 
@@ -1083,7 +1081,7 @@ Cell_handle start, int f) const;
 Copies the `Cell_handle`s of all cells incident to `v` to the 
 output iterator `cells`. 
 Returns the resulting output iterator. 
-\pre `tds`.`dimension()` \f$ =3\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds`.`is_vertex(v)`. 
+\pre `tds.dimension()` \f$ =3\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
@@ -1093,7 +1091,7 @@ incident_cells(Vertex_handle v, OutputIterator cells) const;
 Copies the `Facet`s incident to `v` to the output iterator 
 `facets`. 
 Returns the resulting output iterator. 
-\pre `tds`.`dimension()` \f$ >1\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds`.`is_vertex(v)`. 
+\pre `tds.dimension()` \f$ >1\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
@@ -1102,7 +1100,7 @@ incident_facets(Vertex_handle v, OutputIterator facets) const;
 /*! 
 Copies all `Edge`s incident to `v` to the 
 output iterator `edges`. Returns the resulting output iterator. 
-\pre `tds`.`dimension()` \f$ >0\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds`.`is_vertex(v)`. 
+\pre `tds.dimension()` \f$ >0\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
@@ -1110,9 +1108,9 @@ incident_edges(Vertex_handle v, OutputIterator edges) const;
 
 /*! 
 Copies the `Vertex_handle`s of all vertices adjacent to `v` to the 
-output iterator `vertices`. If `tds`.`dimension()` \f$ <0\f$, then do 
+output iterator `vertices`. If `tds.dimension()` \f$ <0\f$, then do 
 nothing. Returns the resulting output iterator. 
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `tds`.`is_vertex(v)`. 
+\pre `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
@@ -1120,7 +1118,7 @@ adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 
 /*! 
 Returns the degree of a vertex, that is, the number of incident vertices. 
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `tds`.`is_vertex(v)`. 
+\pre `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`. 
 */ 
 size_type degree(Vertex_handle v) const; 
 

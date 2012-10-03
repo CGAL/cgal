@@ -188,12 +188,7 @@ Construct_object_3 construct_object_3_object();
 /*! 
 
 */ 
-Construct_perpendicular_line_3 construct_perpendicular_line_object(); 
-
-/*! 
-
-*/ 
-Construct_plane_3 construct_plane_3_object(); 
+Construct_equidistant_line_3 construct_equidistant_line_object(); 
 
 /*! 
 
