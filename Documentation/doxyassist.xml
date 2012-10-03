@@ -943,6 +943,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Alpha_shapes_3/examples</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Periodic_3_triangulation_3.tag=../../CGAL.CGAL.3D-Periodic-Triangulations/html</item>
+            <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
           </list>
         </doxygen>
       </project>
@@ -1496,7 +1498,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Subdivision_method_3.tag=../../CGAL.CGAL.3D-Surface-Subdivision-Methods/html</item>
           <item>./tags/Stream_lines_2.tag=../../CGAL.CGAL.2D-Placement-of-Streamlines/html</item>
           <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
-          <item>./tags/Surface_mesh_parameterization.tag=../../CGAL.CGAL.Planar-Parameterization-of-Triangulated-Surface-Meshes</item>
+          <item>./tags/Surface_mesh_parameterization.tag=../../CGAL.CGAL.Planar-Parameterization-of-Triangulated-Surface-Meshes/html</item>
           <item>./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGAL.Surface-Reconstruction-from-Point-Sets/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>
