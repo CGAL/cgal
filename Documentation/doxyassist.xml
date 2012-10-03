@@ -7,11 +7,7 @@ namespace for the XML file to be processed properly.  -->
 <DoxyAssist xmlns="http://simply-life.net/doxyassist/doxyassist.xsd"
             xmlns:da="http://simply-life.net/doxyassist/doxyassist.xsd"
             version="1.0" type="generic" name="CGAL Documentation">
-  <doxygen doxyfile="Doxyfile">
-    <bool name="GENERATE_TREEVIEW">true</bool>
-    <bool name="DISABLE_INDEX">true</bool>
-  </doxygen>
-  
+  <doxygen doxyfile="Doxyfile"/>
   <projects>
     <project>
       <namespace>CGAL</namespace>
@@ -180,9 +176,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Jet_fitting_3.tag</string>
           <string name="IMAGE_PATH">../Jet_fitting_3/doc/Jet_fitting_3/fig</string>
           <string name="EXAMPLE_PATH">../Jet_fitting_3/examples</string>
-          <list name="TAGFILES" append="true">
-            <item>./tags/Installation.tag=../../CGAL.CGAL.Installation/html</item>
-          </list>
         </doxygen>
       </project>
 
@@ -368,7 +361,7 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
             <item>./tags/Segment_Delaunay_graph_2.tag=../../CGAL.CGAL.2D-Segment-Delaunay-Graphs/html</item>
-            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graph-of-Disks-/html</item>
+            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graphs-of-Disks-/html</item>
           </list>
         </doxygen>
       </project>
@@ -779,7 +772,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
-            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graph-of-Disks-</item>
+            <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graphs-of-Disks-</item>
             <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.Voronoi_diagram_2/html</item>
           </list>
         </doxygen>
@@ -1432,7 +1425,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.2D-Alpha-Shapes/html</item>
           <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.3D-Alpha-Shapes/html</item>
-          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graph-of-Disks-/html</item>
+          <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graphs-of-Disks-/html</item>
           <item>./tags/Bounding_volumes.tag=../../CGAL.CGAL.Bounding-Volumes/html</item>
           <item>./tags/Inscribed_areas.tag=../../CGAL.CGAL.Inscribed-Areas/html</item>
           <item>./tags/Matrix_search.tag=../../CGAL.CGAL.Monotone-and-Sorted-Matrix-Search/html</item>
@@ -1508,6 +1501,10 @@ namespace for the XML file to be processed properly.  -->
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>
+        <bool name="GENERATE_TODOLIST">false</bool>
+        <bool name="GENERATE_DEPRECATEDLIST">false</bool>
+        <bool name="GENERATE_TESTLIST">false</bool>
+        <bool name="GENERATE_BUGLIST">false</bool>
         <list name="ALIASES" append="true">
           <item>PkgDescriptionBegin{2}=\subsection \2 \1</item>
           <item>PkgManuals{2}=\ref \1 &quot;User Manual&quot; \ref \2 &quot;Reference Manual\&quot;</item>

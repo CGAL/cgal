@@ -203,21 +203,19 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cpp=<I>C++</I>" \
                          "cpp11=*C++11*" \
                          "CC=*C++*" \
-                         "cgalexample{1}=<br><b>File</b> \ref \1 \include \1" \
-                         "beginadvanced=" \
-                         "endadvanced="
+                         "cgalexample{1}=<br><b>File</b> \ref \1 \include \1"
 
 # this sets the include file of a concept to a non-existing file and
 # thus removes its include statement
 ALIASES += "cgalconcept=\details <div id=\"CGALConcept\"></div> \brief"
 
-ALIASES += "advanced=\xrefitem advanceds \"Advanced\" \"Advanced\""
 ALIASES += "refines=\xrefitem refiness \"Refines\" \"Refines\""
 ALIASES += "requires=\xrefitem requiress \"Requires\" \"Requires\""
 ALIASES += "models=\xrefitem modelss \"Is Model Of\" \"Is Model Of\""
 ALIASES += "generalizes=\xrefitem generalizess \"Generalizes\" \"Generalizes\""
 ALIASES += "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\""
-ALIASES += "debug=\xrefitem debugs \"Debug\" \"Debug\""
+ALIASES += "debug=\par \"Debug\""
+ALIASES += "advanced=\par \"Advanced\""
 
 ALIASES += "PkgPicture{1}=<div class=\"PkgImage\"> \n \image html \1 \n</div>"
 ALIASES += "PkgAuthor{1}=<div class=\"PkgDescription\"><I>\1</I><BR><BR>"
@@ -566,7 +564,7 @@ GENERATE_TODOLIST      = YES
 # disable (NO) the test list. This list is created by putting \test
 # commands in the documentation.
 
-GENERATE_TESTLIST      = NO
+GENERATE_TESTLIST      = YES
 
 # The GENERATE_BUGLIST tag can be used to enable (YES) or
 # disable (NO) the bug list. This list is created by putting \bug
@@ -1141,7 +1139,7 @@ ECLIPSE_DOC_ID         = org.doxygen.Project
 # navigation tree you can set this option to NO if you already set
 # GENERATE_TREEVIEW to YES.
 
-DISABLE_INDEX          = NO
+DISABLE_INDEX          = YES
 
 # The GENERATE_TREEVIEW tag is used to specify whether a tree-like index
 # structure should be generated to display hierarchical information.
@@ -1153,7 +1151,7 @@ DISABLE_INDEX          = NO
 # Since the tree basically has the same information as the tab index you
 # could consider to set DISABLE_INDEX to NO when enabling this option.
 
-GENERATE_TREEVIEW      = NO
+GENERATE_TREEVIEW      = YES
 
 # The ENUM_VALUES_PER_LINE tag can be used to set the number of enum values
 # (range [0,1..20]) that doxygen will group on one line in the generated HTML
