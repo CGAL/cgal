@@ -20,24 +20,7 @@ A segment Delaunay graph can be seen as a container of faces and
 vertices. Therefore the `Segment_Delaunay_graph_2` class provides several iterators 
 and circulators that allow to traverse it (completely or partially). 
 
-### Traversal of the Convex Hull ###
 
-Applied on the `infinite_vertex` the above methods allow to visit
-the vertices on the convex hull and the infinite edges and
-faces. Note that a counterclockwise traversal of the vertices
-adjacent to the `infinite_vertex` is a clockwise traversal of the
-convex hull. 
-
-\code
-CGAL::Segment_Delaunay_graph_2<Gt, DS> sdg;
-CGAL::Segment_Delaunay_Graph_2<Gt, DS>::Face_handle f;
-sdg.incident_vertices(sdg.infinite_vertex()); 
-sdg.incident_vertices(sdg.infinite_vertex(), f); 
-sdg.incident_faces(sdg.infinite_vertex()); 
-sdg.incident_faces(sdg.infinite_vertex(), f); 
-sdg.incident_edges(sdg.infinite_vertex()); 
-sdg.incident_edges(sdg.infinite_vertex(), f); 
-\endcode
 
 \models ::DelaunayGraph_2 
 
@@ -453,6 +436,14 @@ Output_sites_iterator output_sites_end();
 /// faces incident to the edge pointed to. A vertex circulator is
 /// invalidated by any modification in any of the faces adjacent to
 /// the vertex pointed to.
+///
+/// Applied on the `infinite_vertex` the above methods allow to visit
+/// the vertices on the convex hull and the infinite edges and
+/// faces. Note that a counterclockwise traversal of the vertices
+/// adjacent to the `infinite_vertex` is a clockwise traversal of the
+/// convex hull. 
+
+
 /// @{
 
 /*! 

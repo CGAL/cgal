@@ -26,13 +26,13 @@ is related to the geometric objects and predicates associated with
 segment Delaunay graphs, whereas the second concept refers to the data
 structure used to represent the segment Delaunay graph, which is dual
 to the 2D Voronoi diagram of segments and points.
-The classes `Segment_Delaunay_graph_traits_2<K,MTag>`,
-`Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
-`Segment_Delaunay_graph_filtered_traits_2<K,MTag>`
-`Segment_Delaunay_graph_filtered_traits_without_intersections_2<K,MTag>`
+The classes `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`,
+`CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
+`CGAL::Segment_Delaunay_graph_filtered_traits_2<K,MTag>`
+`CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<K,MTag>`
 are models of the `SegmentDelaunayGraphTraits_2` concept, whereas
 the class
-`Triangulation_data_structure_2<Vb,Fb>` is a model of the
+`CGAL::Triangulation_data_structure_2<Vb,Fb>` is a model of the
 `SegmentDelaunayGraphDataStructure_2` concept.
 */
 
