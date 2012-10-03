@@ -268,24 +268,23 @@ The enum `Iterator_type` is defined by `Periodic_3_triangulation_3` to
 specify the behavior of geometric iterators.
 
 The elements of the enum have the following meaning:
-<UL>
-<LI>STORED: Return all geometric primitives as they are stored internally
-  in `Triangulation_data_structure_3`.
-<LI>UNIQUE: Return only one representative of each geometric
-  primitive even if the triangulation is computed in a multiply
-  sheeted covering space. Choose the representative whose maximum
-  offset is minimal but non-negative in each direction of space. 
-<LI>STORED_COVER_DOMAIN: Same as STORED but return additionally
-  all primitives whose intersection with the original domain of the
-  current covering space is non-empty.
-<LI>UNIQUE_COVER_DOMAIN: Same as UNIQUE but return additionally
-  all primitives whose intersection with the original domain is
-  non-empty.
-</UL>
+
 
 \sa `CGAL::Periodic_3_triangulation_3`
 */
-enum Iterator_type {STORED=0, UNIQUE, STORED_COVER_DOMAIN, UNIQUE_COVER_DOMAIN};
+  enum Iterator_type {STORED=0, /*!< Return all geometric primitives as they are stored internally
+                                  in `Triangulation_data_structure_3`. */
+                      UNIQUE,  /*!< Return only one representative of each geometric
+                                 primitive even if the triangulation is computed in a multiply
+                                 sheeted covering space. Choose the representative whose maximum
+                                 offset is minimal but non-negative in each direction of space.*/
+                      STORED_COVER_DOMAIN,  /*!< Same as STORED but return additionally
+                                              all primitives whose intersection with the original domain of the
+                                              current covering space is non-empty. */
+                      UNIQUE_COVER_DOMAIN  /*!< Same as UNIQUE but return additionally
+                                             all primitives whose intersection with the original domain is
+                                             non-empty. */
+  };
 
 /// @} 
 
