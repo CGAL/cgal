@@ -271,6 +271,13 @@ const FT sharpness();
 */ 
 const std::list<Ridge_halfhedge>* line(); 
 
+/*!
+Writes the line type, strength, sharpness and coordinates of the
+points of the polyline to `o`.
+*/
+template< typename TriangulatedSurfaceMesh >
+std::ostream& operator<<(std::ostream& o, const Ridge_line<TriangulatedSurfaceMesh>&);
+
 /// @}
 
 }; /* end Ridge_line */
@@ -343,4 +350,5 @@ typedef boost::associative_property_map< Vertex2Vector_map > Vertex2Vector_prope
 /// @}
 
 }; /* end Vertex2Data_Property_Map_with_std_map */
+
 } /* end namespace CGAL */
