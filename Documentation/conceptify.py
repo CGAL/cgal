@@ -67,7 +67,11 @@ for fn in class_files:
         conceptify(d);
         # in case of a second pass don't process this again
         d.remove("#CGALConcept")
-        write_out_html(d, fn)
+    # there is a doxygen bug that prevents the correct linkage of the CGAL breadcrumb 
+    ident = d('#nav-path .navelem').eq(0).children().eq(0)
+    if ident and ident.attr('href') == 'namespaceCGAL.html':
+        ident.attr('href', '../../CGAL.CGAL/html/namespaceCGAL.html')
+    write_out_html(d, fn)
 
 # in a group we only need to change the nested-classes
 group_files=glob.glob('./output/CGAL.CGAL.*/html/group*Concepts*.html')
@@ -76,7 +80,7 @@ for fn in group_files:
     conceptify_nested_classes(d)
     write_out_html(d, fn)    
 
-# # fix up Files
+# fix up Files
 files_files=glob.glob('./output/CGAL.CGAL.*/html/files.html')
 for fn in files_files:
     d = pq(filename=fn, parser='html')
