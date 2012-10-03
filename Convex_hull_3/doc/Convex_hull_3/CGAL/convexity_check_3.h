@@ -33,8 +33,6 @@ The vertex type of `Polyhedron_3` must be a model of
 the facet type must be `ConvexHullPolyhedronFacet_3`. 
 </OL> 
 
-\sa `CGAL::is_ccw_strongly_convex_2` 
-\sa `CGAL::is_cw_strongly_convex_2` 
 
 ### Implementation ###
 

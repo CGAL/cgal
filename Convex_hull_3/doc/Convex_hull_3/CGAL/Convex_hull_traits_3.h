@@ -4,14 +4,12 @@ namespace CGAL {
 \ingroup PkgConvexHull3Traits
 
 The class `Convex_hull_traits_3` serves as a traits class for the function 
-`convex_hull_3`. This is the default traits class for this 
+`CGAL::convex_hull_3`. This is the default traits class for this 
 function when `R` is a kernel with exact predicates but inexact constructions 
 (note below that the type `Plane_3` is a triple of `Point_3` and not `R::Plane_3`). 
 
 \models ::ConvexHullTraits_3 
 \models ::IsStronglyConvexTraits_3 
-
-\sa `CGAL::convex_hull_2` 
 
 */
 template< typename R >

@@ -31,7 +31,6 @@ the representation class `R` required by
 </OL> 
 
 \sa `CGAL::convex_hull_3` 
-\sa `CGAL::convex_hull_2` 
 
 ### Implementation ###
 

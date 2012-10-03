@@ -11,7 +11,7 @@ The plane equations of each face are not computed.
 
 \pre `T.dimension()`==3.
 
-\requires `Triangulation_3` is a \cgal\ 3D triangulation. 
+\requires `Triangulation_3` is a \cgal 3D triangulation. 
 \requires `Polyhedron_3` is an instantiation of `CGAL::Polyhedron_3<Traits>`. 
 
 \sa `CGAL::convex_hull_3` 

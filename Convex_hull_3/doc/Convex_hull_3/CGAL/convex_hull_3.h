@@ -46,8 +46,6 @@ is a kernel with exact predicates but inexact constructions
 then the default traits class of `::convex_hull_3` is `Convex_hull_traits_3<R>`, and `R` otherwise. 
 
 \sa `CGAL::convex_hull_incremental_3` 
-\sa `CGAL::ch_eddy` 
-\sa `CGAL::convex_hull_2` 
 
 ### Implementation ###
 
