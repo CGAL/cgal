@@ -9,16 +9,12 @@ segments...) forming the triangulation together with a few geometric
 predicates and constructions on these objects. 
 
 \refines ::TriangulationTraits_3 
-\refines In addition to the requirements described for the traits class of 
+
+In addition to the requirements described for the traits class of 
   Triangulation_3, the geometric traits class of 
   Regular_triangulation_3 must fulfill the following requirements. 
 
 \hasModel CGAL::Regular_triangulation_euclidean_traits_3 
-
-We use here the same notation as in Section \ref
-Triangulation3secclassRegulartriangulation. To simplify notation, \f$
-p\f$ will often denote in the sequel either the point \f$ p\in\R^3\f$
-or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
 
 */
 
@@ -47,6 +43,17 @@ typedef Hidden_type Plane_3;
 The ray type. 
 */ 
 typedef Hidden_type Ray_3; 
+
+
+/// @}
+
+/*! \name
+We use here the same notation as in Section \ref
+Triangulation3secclassRegulartriangulation. To simplify notation, \f$
+p\f$ will often denote in the sequel either the point \f$ p\in\R^3\f$
+or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
+*/
+/// @{
 
 /*! 
 The weighted point type. 
@@ -110,6 +117,7 @@ have equal coordinates, then it returns the comparison of the weights
 */ 
 typedef Hidden_type Power_test_3; 
 
+
 /*! 
 A predicate object that must provide the function operator 
 
@@ -119,7 +127,7 @@ which compares the power distance between `p` and `q`
 to the power distance 
 between `p` and `r`. 
 
-\note The following predicate is required if a call to
+\note This predicate is required if a call to
 `nearest_power_vertex` or `nearest_power_vertex_in_cell` is
 issued.
 */ 
@@ -197,6 +205,14 @@ typedef Hidden_type Construct_ray_3;
 Power_test_3 power_test_3_object(); 
 
 /*! 
+
+/// @}
+
+/*! \name
+The following functions must be provided only if the member functions of 
+`Regular_triangulation_3` returning elements of the dual diagram are called: 
+*/
+/// @{
 
 */ 
 Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object(); 
