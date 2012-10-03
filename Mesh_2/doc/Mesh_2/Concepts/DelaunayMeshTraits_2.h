@@ -26,23 +26,19 @@ public:
 
 /*! 
 Constructor object. Must provide 
-an operator `Point_2 operator()(Point_2 p, 
-Point_2 q, 
-Point_2 r);` 
-that constructs the center of the circle passing through the points \f$ p\f$, 
-\f$ q\f$, and \f$ r\f$. 
-\pre \f$ p\f$, \f$ q\f$, and \f$ r\f$ are not collinear. 
+an operator `Point_2 operator()(Point_2 p, Point_2 q, Point_2 r);` 
+that constructs the center of the circle passing through the points `p`, 
+`q`, and `r`. 
+\pre `p`, `q`, and `r` are not collinear. 
 */ 
 typedef Hidden_type Construct_circumcenter_2; 
 
 
 /*! 
 Constructor object. Must provide an operator 
-`FT operator()(Point_2 p, 
-Point_2 q, 
-Point_2 r);` 
+`FT operator()(Point_2 p, Point_2 q, Point_2 r);` 
 that computes the signed area of the triangle defined by 
-the points \f$ p\f$, \f$ q\f$, and \f$ r\f$. 
+the points `p`, `q`, and `r`. 
 */ 
 typedef Hidden_type Compute_area_2; 
 

@@ -46,7 +46,7 @@ typedef Hidden_type Vector_2;
 /*! 
 Constructor object. Must 
 provide the operator `Vector_2 operator()(Point a, Point b)` 
-that computes the vector \f$ b-a\f$. 
+that computes the vector `b-a`. 
 */ 
 typedef Hidden_type Construct_vector_2; 
 
@@ -54,7 +54,7 @@ typedef Hidden_type Construct_vector_2;
 /*! 
 Constructor object. Must 
 provide the operator `Vector_2 operator()(Vector_2 v, FT scale)` 
-that computes the vector \f$ scale \cdot\mathbf{v}\f$. 
+that computes the vector `scale` \f$\cdot\f$ `v`. 
 */ 
 typedef Hidden_type Construct_scaled_vector_2; 
 
@@ -62,7 +62,7 @@ typedef Hidden_type Construct_scaled_vector_2;
 /*! 
 Constructor object. Must 
 provide the operator `Point_2 operator()(Point_2 p, Vector_2 v)` 
-that computes the point \f$ p + \mathbf{v}\f$. 
+that computes the point `p+v`. 
 */ 
 typedef Hidden_type Construct_translated_point_2; 
 
@@ -78,7 +78,7 @@ typedef Hidden_type Construct_midpoint_2;
 /*! 
 Constructor object. Must 
 provide the operator `FT operator()(Point_2 a, Point_2 b)` that 
-computes the squared distance between \f$ a\f$ and \f$ b\f$. 
+computes the squared distance between `a` and `b`. 
 */ 
 typedef Hidden_type Compute_squared_distance_2; 
 
@@ -87,7 +87,7 @@ typedef Hidden_type Compute_squared_distance_2;
 Predicate object. Must provide the operator 
 `CGAL::Angle operator()(Point_2 p, Point_2 q, Point_2 r)` that 
 returns OBTUSE, RIGHT or ACUTE depending on the angle formed by the three 
-points p, q, r (q being the vertex of the angle). 
+points `p`, `q`, `r` (`q` being the vertex of the angle). 
 */ 
 typedef Hidden_type Angle_2; 
 
