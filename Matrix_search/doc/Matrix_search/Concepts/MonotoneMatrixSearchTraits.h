@@ -7,7 +7,7 @@
 The concept `MonotoneMatrixSearchTraits` is a refinement of 
 `BasicMatrix` and defines types and operations needed to 
 compute the maxima for all rows of a totally monotone matrix using 
-the function `monotone_matrix_search`. 
+the function `CGAL::monotone_matrix_search`. 
 
 ### Notes ###
 

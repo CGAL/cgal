@@ -6,7 +6,7 @@
 The concept `SortedMatrixSearchTraits` defines types and operations 
 needed to compute the smallest entry in a set of sorted matrices 
 that fulfills a certain feasibility criterion using the function 
-`sorted_matrix_search`. 
+`CGAL::sorted_matrix_search`. 
 
 \hasModel `CGAL::Sorted_matrix_search_traits_adaptor<F,M>`
 

@@ -6,12 +6,12 @@ namespace CGAL {
 
 The class `Sorted_matrix_search_traits_adaptor` can be used
 as an adaptor to create sorted matrix search traits classes for
-arbitrary feasibility test and matrix classes `F` resp. `M`.
+arbitrary feasibility test and matrix classes `F` resp.\ `M`.
 
 \models ::SortedMatrixSearchTraits 
 
-\requires `M` is a model for `BasicMatrix`
-\requires `F` defines a copy constructor and a monotone `bool operator()( const Value&)`.
+\tparam `M` must be a model for `BasicMatrix`
+\tparam `F` must define a copy constructor and a monotone `bool operator()( const Value&)`.
 
 */
 template< typename F, typename M >
