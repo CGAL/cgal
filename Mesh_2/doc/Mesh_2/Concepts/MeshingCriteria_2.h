@@ -64,17 +64,24 @@ typedef Hidden_type Quality;
 
 
 /*! 
-Predicate object. Must provide two operators. The 
-first operator `Mesh_2::Face_badness operator()(Face_handle fh, 
-Quality& q)` returns CGAL::Mesh_2::NOT_BAD if it satisfies the desired criteria 
-for mesh triangles, `CGAL::Mesh_2::BAD` if it does not, and `CGAL::Mesh_2::IMPERATIVELY_BAD` 
-if it does not and should be refined unconditionally. In addition, this 
-operator assigns to `q` a value measuring the quality of the triangle 
-pointed by `fh`. The second operator `Mesh_2::Face_badness 
-operator()(Quality q)` returns `CGAL::Mesh_2::NOT_BAD` if `q` is the quality 
-of a good triangle, `CGAL::Mesh_2::BAD` if the `q` represents a poor quality, 
-and `CGAL::Mesh_2::IMPERATIVELY_BAD` if `q` represents the quality of a bad 
-triangle that should be refined unconditionally. 
+Predicate object. Must provide two operators.
+
+- The first operator `Mesh_2::Face_badness operator()(Face_handle fh,
+  Quality& q)` returns
+   - `CGAL::Mesh_2::NOT_BAD` if it satisfies the desired
+     criteria for mesh triangles,
+   - `CGAL::Mesh_2::BAD` if it does not, and
+   - `CGAL::Mesh_2::IMPERATIVELY_BAD` if it does not and should be refined
+     unconditionally.
+
+  In addition, this operator assigns to `q` a value measuring the quality
+  of the triangle pointed by `fh`.
+
+- The second operator `Mesh_2::Face_badness operator()(Quality q)` returns
+  - `CGAL::Mesh_2::NOT_BAD` if `q` is the quality of a good triangle,
+  - `CGAL::Mesh_2::BAD` if the `q` represents a poor quality, and
+  - `CGAL::Mesh_2::IMPERATIVELY_BAD` if `q` represents the quality of a bad
+  triangle that should be refined unconditionally.
 */ 
 typedef Hidden_type Is_bad; 
 
