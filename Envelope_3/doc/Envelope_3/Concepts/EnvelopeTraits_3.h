@@ -47,9 +47,8 @@ typedef Hidden_type Xy_monotone_surface_3;
 /*! 
 provides the operator (templated by the `OutputIterator` type) : 
 <UL> 
-<LI>`OutputIterator operator() (Surface_3 S, bool is_lower, 
-OutputIterator oi)` 
-
+<LI>`OutputIterator operator() (Surface_3 S, bool is_lower, OutputIterator oi)` 
+<BR>
 which subdivides the given surface `S` into \f$ xy\f$-monotone parts 
 and inserts them into the output iterator. The value of 
 `is_lower` indicates whether we compute the lower or the upper 
@@ -65,7 +64,7 @@ typedef Hidden_type Make_xy_monotone_3;
 provides the operator (templated by the `OutputIterator` type) : 
 <UL> 
 <LI>`OutputIterator operator() (Xy_monotone_surface_3 s, OutputIterator oi)` 
-
+<BR>
 which computes all planar \f$ x\f$-monotone curves and possibly isolated planar 
 points that form the projection of the boundary of the given \f$ xy\f$-monotone 
 surface \f$ s\f$ onto the \f$ xy\f$-plane, and inserts them into the output iterator. 
@@ -88,10 +87,8 @@ typedef Hidden_type Construct_projected_boundary_2;
 /*! 
 provides the operator (templated by the `OutputIterator` type) : 
 <UL> 
-<LI>`OutputIterator operator() (Xy_monotone_surface_3 s1, 
-Xy_monotone_surface_3 s2, 
-OutputIterator oi)` 
-
+<LI>`OutputIterator operator() (Xy_monotone_surface_3 s1, Xy_monotone_surface_3 s2, OutputIterator oi)` 
+<BR>
 which computes the projection of the intersections of the 
 \f$ xy\f$-monotone surfaces `s1` and `s2` onto the \f$ xy\f$-plane, 
 and inserts them into the output iterator. 
@@ -110,27 +107,22 @@ typedef Hidden_type Construct_projected_intersections_2;
 /*! 
 provides the operators : 
 <UL> 
-<LI>`Comparison_result operator() (Point_2 p, 
-Xy_monotone_surface_3 s1, 
-Xy_monotone_surface_3 s2)` 
-
+<LI> `Comparison_result operator() (Point_2 p, Xy_monotone_surface_3 s1, Xy_monotone_surface_3 s2)` 
+<BR>
 which determines the relative \f$ z\f$-order of the two given \f$ xy\f$-monotone 
 surfaces at the \f$ xy\f$-coordinates of the point `p`, with the 
 precondition that both surfaces are defined over `p`. Namely, it 
 returns the comparison result of \f$ s_1(p)\f$ and \f$ s_2(p)\f$. 
-<LI>`Comparison_result operator() (X_monotone_curve_2 c, 
-Xy_monotone_surface_3 s1, 
-Xy_monotone_surface_3 s2)` 
-
+<LI>`Comparison_result operator() (X_monotone_curve_2 c, Xy_monotone_surface_3 s1, Xy_monotone_surface_3 s2)` 
+<BR>
 which determines the relative \f$ z\f$-order of the two given \f$ xy\f$-monotone 
 surfaces over the interior of a given \f$ x\f$-monotone curve \f$ c\f$, with the 
 precondition that \f$ c\f$ is fully contained in the \f$ xy\f$-definition range 
 of both \f$ s_1\f$ and \f$ s_2\f$, and that the surfaces do not intersect over 
 \f$ c\f$. The functor should therefore return the comparison result of 
 \f$ s_1(p')\f$ and \f$ s_2(p')\f$ for some point \f$ p'\f$ in the interior of \f$ c\f$. 
-<LI>`Comparison_result operator() (Xy_monotone_surface_3 s1, 
-Xy_monotone_surface_3 s2)` 
-
+<LI>`Comparison_result operator() (Xy_monotone_surface_3 s1, Xy_monotone_surface_3 s2)`
+<BR>
 which determines the relative \f$ z\f$-order of the two given unbounded 
 \f$ xy\f$-monotone surfaces, which are defined over the entire \f$ xy\f$-plane and 
 have no boundary, with the precondition that the surfaces do not intersect 
@@ -146,10 +138,8 @@ typedef Hidden_type Compare_z_at_xy_3;
 /*! 
 provides the operator : 
 <UL> 
-<LI>`Comparison_result operator() (X_monotone_curve_2 c, 
-Xy_monotone_surface_3 s1, 
-Xy_monotone_surface_3 s2)` 
-
+<LI>`Comparison_result operator() (X_monotone_curve_2 c, Xy_monotone_surface_3 s1,  Xy_monotone_surface_3 s2)` 
+<BR>
 which determines the relative \f$ z\f$-order of the two given \f$ xy\f$-monotone 
 surfaces immediately above their projected intersection curve 
 \f$ c\f$ (a planar point \f$ p\f$ is <I>above</I> an \f$ x\f$-monotone curve \f$ c\f$ if it 
@@ -165,10 +155,8 @@ typedef Hidden_type Compare_z_at_xy_above_3;
 /*! 
 provides the operator : 
 <UL> 
-<LI>`Comparison_result operator() (X_monotone_curve_2 c, 
-Xy_monotone_surface_3 s1, 
-Xy_monotone_surface_3 s2)` 
-
+<LI>`Comparison_result operator() (X_monotone_curve_2 c,  Xy_monotone_surface_3 s1, Xy_monotone_surface_3 s2)` 
+<BR>
 which determines the relative \f$ z\f$-order of the two given \f$ xy\f$-monotone 
 surfaces immediately below their projected intersection curve 
 \f$ c\f$ (a planar point \f$ p\f$ is <I>below</I> an \f$ x\f$-monotone curve \f$ c\f$ if it 
