@@ -23,7 +23,7 @@ A model of the `Kernel` concept.
 typedef Hidden_type Kernel; 
 
 /*! 
-A `SqrtFieldNumberType` provided by the kernel. This type is used to represent the 
+A model of the `FieldWithSqrt` concept provided by the kernel. This type is used to represent the 
 coordinates of the input points, of the skeleton nodes and as the event time stored in the skeleton nodes. 
 */ 
 typedef Hidden_type FT; 

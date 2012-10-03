@@ -29,7 +29,7 @@ The type of the 2D point being the geometric embedding of the vertex
 typedef Hidden_type Point_2; 
 
 /*! 
-A model of the `SqrtFieldNumberType` concept representing the time of a vertex (an Euclidean distance) 
+A model of the `FieldWithSqrt` concept representing the time of a vertex (an Euclidean distance) 
 */ 
 typedef Hidden_type FT; 
 

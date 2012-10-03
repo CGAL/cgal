@@ -33,7 +33,7 @@ public:
 
 /*! 
 Numerical type. Must be a model of 
-`SqrtFieldNumberType` and constructible from a `double`. 
+`FieldWithSqrt` and constructible from a `double`. 
 */ 
 typedef Hidden_type FT; 
 
