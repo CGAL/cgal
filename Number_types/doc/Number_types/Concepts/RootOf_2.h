@@ -1,6 +1,6 @@
 
 /*!
-\ingroup nt_ralgebraic
+\ingroup PkgNumberTypesConcepts
 \cgalconcept
 
 Concept to represent algebraic numbers of degree up to 2 over a `RealEmbeddable` `IntegralDomain` `RT`. 
@@ -36,12 +36,12 @@ special construction for extensions of degree 2:
 \hasModel `double` (not exact) 
 \hasModel CGAL::Sqrt_extension 
 
-\sa ::CGAL::make_root_of_2<RT> 
-\sa ::CGAL::make_sqrt<RT> 
-\sa ::CGAL::compute_roots_of_2<RT,OutputIterator> 
-\sa ::CGAL::Root_of_traits<RT> 
-\sa ::AlgebraicKernelForCircles::PolynomialForCircles_2_2 
-\sa ::AlgebraicKernelForCircles 
+\sa `CGAL::make_root_of_2<RT>` 
+\sa `CGAL::make_sqrt<RT>` 
+\sa `CGAL::compute_roots_of_2<RT,OutputIterator>` 
+\sa `CGAL::Root_of_traits<RT>` 
+\sa `AlgebraicKernelForCircles::PolynomialForCircles_2_2` 
+\sa `AlgebraicKernelForCircles` 
 
 */
 

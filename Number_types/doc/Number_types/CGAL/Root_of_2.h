@@ -1,11 +1,10 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgNumberTypes
+\ingroup  nt_ralgebraic
 
 \deprecated This class is deprecated since CGAL-3.8. It is replaced by `Sqrt_extension`. 
 
-\ref ::CGAL::Sqrt_extension<NT,ROOT> 
 
 */
 template< typename RT >
