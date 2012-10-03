@@ -209,7 +209,7 @@ The methods `create_face` and
 have to be used to 
 define new faces and to delete non longer used faces. 
 
- \hasModel `Triangulation_ds_face_base_2<Tds>`
+\hasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
 
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationDataStructure_2::Vertex`
