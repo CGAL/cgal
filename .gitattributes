@@ -2737,6 +2737,7 @@ Inscribed_areas/doc/Inscribed_areas/Concepts/ExtremalPolygonTraits_2.h -text
 Inscribed_areas/doc/Inscribed_areas/Concepts/LargestEmptyIsoRectangleTraits_2.h -text
 Inscribed_areas/doc/Inscribed_areas/Inscribed_areas.txt -text
 Inscribed_areas/doc/Inscribed_areas/PackageDescription.txt -text
+Inscribed_areas/doc/Inscribed_areas/examples.txt -text
 Inscribed_areas/doc/Inscribed_areas/fig/largestEmptyRect.gif -text svneol=unset#image/gif
 Inscribed_areas/doc/Inscribed_areas/fig/largestEmptyRect.pdf -text svneol=unset#application/pdf
 Inscribed_areas/doc/Inscribed_areas/fig/ler-detail.png -text svneol=unset#image/png

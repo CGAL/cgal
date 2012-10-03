@@ -16,7 +16,7 @@ past-the-end iterator of this sequence.
 \pre the - at least three - points denoted by the range 
 [`points_begin`, `points_end`) form the boundary of a 
 convex polygon (oriented clock- or counterclockwise). 
-\pre `k >= t.min_k(). 
+\pre `k >= t.min_k()`.
 
 
 \requires `Traits` is a model for `ExtremalPolygonTraits_2`. 
@@ -48,9 +48,6 @@ int k,
 OutputIterator o,
 const Traits& t);
 
-} /* namespace CGAL */
-
-namespace CGAL {
 
 /*!
 \ingroup PkgInscribedAreas
@@ -74,7 +71,7 @@ sequence.
 \pre the - at least three - points denoted by the range 
 [`points_begin`, `points_end`) form the boundary of a 
 convex polygon (oriented clock- or counterclockwise). 
-\pre `k >= 3. 
+\pre `k >= 3`.
 
 
 \requires Value type of `RandomAccessIterator` is `K::Point_2` 

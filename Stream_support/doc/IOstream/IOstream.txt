@@ -141,7 +141,7 @@ main()
 }
 \endcode
 
-# IO for non-\cgal types # {#IOstreamIO}
+# IO for non-CGAL types # {#IOstreamIO}
 \anchor seciofornoncgaltypes
 
 ## Using Output Formatting ##

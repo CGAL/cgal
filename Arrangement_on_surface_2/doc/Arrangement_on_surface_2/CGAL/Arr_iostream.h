@@ -26,7 +26,7 @@ using a specific input format.
 
 /*!
 Reads the arrangement object `arr` from the given input stream `is`
-using a specific input format defined by ``formatter.
+using a specific input format defined by \"formatter\".
 */
 template<typename Traits, typename Dcel, typename Formatter>
 std::istream& read (Arrangement_2<Traits,Dcel>& arr,

@@ -544,7 +544,7 @@ returning constant iterators instead of mutable ones.
   /*! 
     returns the number of arrangement vertices that lie at infinity and 
     are not associated with valid points. Such vertices are not considered 
-    to be regular arrangement vertices and `arr``.number_of_vertices()` 
+    to be regular arrangement vertices and `arr.number_of_vertices()`
     does not count them. 
   */ 
   Size number_of_vertices_at_infinity() const; 
@@ -625,8 +625,8 @@ returning constant iterators instead of mutable ones.
 
   /*! 
     returns the number of unbounded faces in the arrangement. 
-    Note `arr``.number_of_faces()` also counts the unbounded faces 
-    of the arrangement. 
+    Note `arr.number_of_faces()` also counts the unbounded faces
+    of the arrangement.
   */ 
   Size number_of_unbounded_faces() const; 
 

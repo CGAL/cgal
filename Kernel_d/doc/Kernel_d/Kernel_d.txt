@@ -484,7 +484,7 @@ In \cgal, we provide predicates in which such geometric decisions
 are made directly with a reference to the input points in \f$ P\f$ without
 an intermediary object like a plane. For the above test, the
 recommended way to get the result is to use
-`orientation(P',P'+d)`, where \f$ P'\f$ is an array containing the
+\f$\mathrm{orientation}(P',P'+d)\f$, where \f$ P'\f$ is an array containing the
 points \f$ p_1\f$, ... , \f$ p_d\f$, \f$ p\f$.
 
 For exact number types like `leda_real`, the situation is

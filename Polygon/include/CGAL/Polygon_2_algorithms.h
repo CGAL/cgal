@@ -24,7 +24,7 @@
 
 /*!
   \file Polygon_2_algorithms.h
- */
+*/
 
 #ifndef CGAL_POLYGON_2_ALGORITHMS_H
 #define CGAL_POLYGON_2_ALGORITHMS_H
@@ -34,7 +34,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_2/polygon_assertions.h>
 
-///
+/// 
 namespace CGAL {
 
 //-----------------------------------------------------------------------//
@@ -54,14 +54,15 @@ namespace CGAL {
 /// 	  `less_xy_2_object()` are used.
 /// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
 ///
-/// \sa `CGAL::right_vertex_2()`
-/// \sa `CGAL::top_vertex_2()`
-/// \sa `CGAL::bottom_vertex_2()`
+///
+/// \sa `CGAL::right_vertex_2`
+/// \sa `CGAL::top_vertex_2`
+/// \sa `CGAL::bottom_vertex_2`
 /// \sa `CGAL::Polygon_2`
-template <class ForwardIterator, class Traits>
+template <class ForwardIterator, class PolygonTraits>
 ForwardIterator left_vertex_2(ForwardIterator first,
 			      ForwardIterator last,
-			      const Traits& traits);
+			      const PolygonTraits& traits);
 
 /// Returns an iterator to the rightmost point from the range
 /// `[first,last)`. In case of a tie, the point
@@ -71,17 +72,16 @@ ForwardIterator left_vertex_2(ForwardIterator first,
 /// 	  `PolygonTraits_2`.
 /// 	  In fact, only the members `Less_xy_2` and
 /// 	  `less_xy_2_object()` are used.
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
+/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
-/// 
-/// \sa `CGAL::left_vertex_2()`
+/// \sa `CGAL::left_vertex_2`
 /// \sa `CGAL::top_vertex_2`
 /// \sa `CGAL::bottom_vertex_2`
 /// \sa `CGAL::Polygon_2`
-template <class ForwardIterator, class Traits>
+template <class ForwardIterator, class PolygonTraits>
 ForwardIterator right_vertex_2(ForwardIterator first,
 			       ForwardIterator last,
-			       const Traits& traits);
+			       const PolygonTraits& traits);
 
 /// Returns an iterator to the topmost point from the range
 /// `[first,last)`. In case of a tie, the point
@@ -91,16 +91,16 @@ ForwardIterator right_vertex_2(ForwardIterator first,
 /// 	  `PolygonTraits_2`.
 /// 	  Only the members `Less_yx_2` and
 /// 	  `less_yx_2_object()` are used.
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
+/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
-/// \sa `CGAL::left_vertex_2()`
-/// \sa `CGAL::right_vertex_2()`
-/// \sa `CGAL::bottom_vertex_2()`
+/// \sa `CGAL::left_vertex_2`
+/// \sa `CGAL::right_vertex_2`
+/// \sa `CGAL::bottom_vertex_2`
 /// \sa `CGAL::Polygon_2`
-template <class ForwardIterator, class Traits>
+template <class ForwardIterator, class PolygonTraits>
 ForwardIterator top_vertex_2(ForwardIterator first,
 			     ForwardIterator last,
-			     const Traits& traits);
+			     const PolygonTraits& traits);
 
 /// Returns an iterator to the bottommost point from the range
 /// `[first,last)`. In case of a tie, the point
@@ -110,18 +110,17 @@ ForwardIterator top_vertex_2(ForwardIterator first,
 /// 	  `PolygonTraits_2`.
 /// 	  Only the members `Less_yx_2` and
 /// 	  `less_yx_2_object()` are used.
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
+/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
-/// \ref CGAL::left_vertex_2
-/// \sa `CGAL::left_vertex_2()`
-/// \sa `CGAL::right_vertex_2()`
-/// \sa `CGAL::top_vertex_2()`
+/// \sa `CGAL::left_vertex_2`
+/// \sa `CGAL::right_vertex_2`
+/// \sa `CGAL::top_vertex_2`
 /// \sa `CGAL::Polygon_2`
 /// \sa `PolygonTraits_2`
-template <class ForwardIterator, class Traits>
+template <class ForwardIterator, class PolygonTraits>
 ForwardIterator bottom_vertex_2(ForwardIterator first,
 				ForwardIterator last,
-				const Traits& traits);
+				const PolygonTraits& traits);
 
 /// Returns the bounding box of the range `[first,last)`. 
 /// 
@@ -132,10 +131,10 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
 /// \requires The value type of `InputIterator` must be `Traits::Point_2`.
 /// 
 /// \sa `CGAL::Polygon_2`
-template <class InputIterator, class Traits>
+template <class InputIterator, class PolygonTraits>
 Bbox_2 bbox_2(InputIterator first, 
 	      InputIterator last,
-	      const Traits& traits);
+	      const PolygonTraits& traits);
 
 
 /// Computes the signed area of the polygon defined by the range of points
@@ -152,17 +151,17 @@ Bbox_2 bbox_2(InputIterator first,
 /// 	    oriented triangle defined by 3 `Point_2` passed as arguments.
 ///   - `FT`
 ///   - `compute_area_2_object()`
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
+/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
 /// \sa `CGAL::polygon_area_2`
 /// \sa `PolygonTraits_2`
 /// \sa `CGAL::orientation_2`
 /// \sa `CGAL::Polygon_2`
-template <class ForwardIterator, class Traits>
+template <class ForwardIterator, class PolygonTraits>
 void 
 area_2( ForwardIterator first, ForwardIterator last,
    	typename Traits::FT &result,
-        const Traits& traits)
+        const PolygonTraits& traits)
 {
    typedef typename Traits::FT FT;
    result = FT(0);
@@ -196,10 +195,10 @@ area_2( ForwardIterator first, ForwardIterator last,
 /// \sa `PolygonTraits_2 `
 /// \sa `CGAL::orientation_2 `
 /// \sa `CGAL::Polygon_2 `
-template <class ForwardIterator, class Traits>
+template <class ForwardIterator, class PolygonTraits>
 typename Traits::FT 
 polygon_area_2( ForwardIterator first, ForwardIterator last,
-		const Traits& traits)
+		const PolygonTraits& traits)
 {
    typedef typename Traits::FT FT;
    FT result = FT(0);
@@ -231,10 +230,10 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
 ///
 /// \sa `PolygonTraits_2 `
 /// \sa `CGAL::Polygon_2 `
-template <class ForwardIterator, class Traits>
+template <class ForwardIterator, class PolygonTraits>
 bool is_convex_2(ForwardIterator first,
 		 ForwardIterator last,
-		 const Traits& traits);
+		 const PolygonTraits& traits);
 
 /// Checks if the polygon defined by the
 /// iterator range `[first,last)` is simple, that is, if the edges 
@@ -259,10 +258,10 @@ bool is_convex_2(ForwardIterator first,
 /// 
 /// \sa `PolygonTraits_2 `
 /// \sa `CGAL::Polygon_2 `
-template <class ForwardIterator, class Traits>
+template <class ForwardIterator, class PolygonTraits>
 bool is_simple_2(ForwardIterator first,
 		 ForwardIterator last,
-		 const Traits& traits);
+		 const PolygonTraits& traits);
 
 // In the following two functions we would like to use Traits::Point_2
 // instead of Point, but this is not allowed by g++ 2.7.2.
@@ -319,16 +318,17 @@ Oriented_side oriented_side_2(ForwardIterator first,
 /// A horizontal ray is taken to count the number of intersections.
 /// Special care is taken that the result is correct even if there are degeneracies
 /// (if the ray passes through a vertex).
+///
 /// 
 /// \sa `PolygonTraits_2 `
 /// \sa `CGAL::oriented_side_2 `
 /// \sa `CGAL::Polygon_2 `
-/// \sa `CGAL::Bounded_side`
-template <class ForwardIterator, class Point, class Traits>
+/// \sa \ref CGAL::Bounded_side
+template <class ForwardIterator, class Point, class PolygonTraits>
 Bounded_side bounded_side_2(ForwardIterator first,
 			    ForwardIterator last,
 			    const Point& point,
-			    const Traits& traits);
+			    const PolygonTraits& traits);
 
 /// Computes if a polygon is clockwise or counterclockwise oriented.
 /// \pre `is_simple_2(first, last, traits);`

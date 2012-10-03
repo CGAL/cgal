@@ -78,7 +78,7 @@ namespace for the XML file to be processed properly.  -->
         <input>../Polygon/doc</input>
         <input>../Polygon/include</input>
         <doxygen>
-          <string name="STRIP_FROM_PATH">../Polygon/doc/Polygon/</string>
+          <string name="STRIP_FROM_PATH">../Polygon/include</string>
           <string name="STRIP_FROM_INC_PATH">../Polygon/include</string>
           <string name="GENERATE_TAGFILE">./tags/Polygon.tag</string>
           <string name="IMAGE_PATH">../Polygon/doc/Polygon/fig</string>

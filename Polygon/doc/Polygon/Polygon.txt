@@ -1,3 +1,5 @@
+namespace CGAL {
+
 /*!
 \mainpage 2D Polygon
 \anchor Chapter_2D_Polygon
@@ -68,3 +70,5 @@ and 3D Linear Geometric %Kernel.
 \include projected_polygon.cpp
 
 */
+
+}

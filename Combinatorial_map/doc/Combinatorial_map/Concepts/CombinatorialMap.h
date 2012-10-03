@@ -49,7 +49,7 @@ typedef Hidden_type size_type;
 /// @{
 
 /*! 
-The dimension <I>d</I> of `cm`, equal to `Dart::dimension.` 
+The dimension <I>d</I> of `cm`, equal to `Dart::dimension`.
 */ 
 static unsigned int dimension; 
 

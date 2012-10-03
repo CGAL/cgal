@@ -7,8 +7,8 @@
 operations needed to compute a maximal \f$ k\f$-gon that can be
 inscribed into a given convex polygon.
 
-\note `ExtremalPolygonTraits_2``::Less_xy_2` and 
-`ExtremalPolygonTraits_2``::Orientation_2` are used for (expensive) 
+\note `ExtremalPolygonTraits_2::Less_xy_2` and 
+`ExtremalPolygonTraits_2::Orientation_2` are used for (expensive) 
 precondition checking only. Therefore, they need not to be 
 specified, in case that precondition checking is disabled. 
 

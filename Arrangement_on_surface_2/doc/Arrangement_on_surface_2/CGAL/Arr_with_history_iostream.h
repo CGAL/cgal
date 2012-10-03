@@ -5,7 +5,7 @@ namespace CGAL {
 
 Reads the arrangement-with-history object `arr` from the given 
 input stream `is` using a specific input format defined by
-``formatter.
+\"formatter\".
 
 */
 template<typename Traits, typename Dcel,
