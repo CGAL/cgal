@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_2D_Boolean_Operations_on_Nef_Polygons
 \anchor chapnef2
 \autotoc
-\authors Michael Seel
+\author Michael Seel
 
 # Introduction # {#Nef_2Introduction}
 

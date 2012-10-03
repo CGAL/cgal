@@ -3035,7 +3035,6 @@ Kernel_d/doc/Kernel_d/CGAL/Linear_algebraHd.h -text
 Kernel_d/doc/Kernel_d/CGAL/constructions_d.h -text
 Kernel_d/doc/Kernel_d/CGAL/intersections_d.h -text
 Kernel_d/doc/Kernel_d/CGAL/predicates_d.h -text
-Kernel_d/doc/Kernel_d/Classified.txt -text
 Kernel_d/doc/Kernel_d/Concepts/Kernel--Affine_rank_d.h -text
 Kernel_d/doc/Kernel_d/Concepts/Kernel--Affinely_independent_d.h -text
 Kernel_d/doc/Kernel_d/Concepts/Kernel--CartesianConstIterator_d.h -text

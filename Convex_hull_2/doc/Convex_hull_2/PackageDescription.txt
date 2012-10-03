@@ -23,7 +23,7 @@
 \todo check generated documentation
 \PkgDescriptionBegin{2D Convex Hulls and Extreme Points,PkgConvexHull2Summary}
 \PkgPicture{Convex_hull_2/fig/convex_hull.png}
-\PkgAuthor{Susan Hert and Stefan Schirra}
+\PkgAuthors{Susan Hert and Stefan Schirra}
 \PkgDesc{This package provides functions for computing convex hulls in two dimensions as well as functions for checking if sets of points are strongly convex are not. There are also a number of functions described for computing particular extreme points and subsequences of hull points, such as the lower and upper hull of a set of points.}
 \PkgSince{1.0}
 \PkgBib{cgal:hs-chep2}

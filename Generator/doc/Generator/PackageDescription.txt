@@ -6,8 +6,7 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Geometric Object Generators,PkgGeneratorsSummary}
 \PkgPicture{dice.png}
-\PkgAuthor{Olivier Devillers, Susan Hert, Michael
-            Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr}
+\PkgAuthors{Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr}
 \PkgDesc{This package provides a variety of generators for geometric objects. They are useful as synthetic test data sets, e.g. for testing algorithms on degenerate object sets and for performance analysis. }
 \PkgSince{1.0}
 \PkgBib{cgal:dhhk-gog}

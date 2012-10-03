@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_Kinetic_Framework
 \autotoc
 
-\authors Daniel Russel
+\author Daniel Russel
 
 This chapter describes a framework for implementing kinetic data
 structures and sweepline algorithms. If you just would like to use

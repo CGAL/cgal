@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_Polynomial
 \anchor ChapterPolynomial
 \autotoc
-\authors Michael Hemmer
+\author Michael Hemmer
 
 # Fundamentals # {#PolynomialFundamentals}
 
@@ -401,7 +401,7 @@ of a polynomial using its principal Sturm-Habicht coefficients.
 # Design and Implementation History # {#PolynomialDesign}
 
 This package is the result of the integration process of the NumeriX library 
-of <span class="textsc">Exacus</span> \cite beh+-eeeafcs-05 into \cgal.
+of <span class="textsc">Exacus</span> \cite beh-eeeafcs-05 into \cgal.
 
 The class `CGAL::Polynomial<Coeff>` had been started by Michael Seel within 
 CGAL as part of the Nef_2 package. As part of the <span class="textsc">Exacus</span> project 

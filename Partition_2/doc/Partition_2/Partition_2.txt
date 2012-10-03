@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_2D_Polygon_Partitioning
 \anchor chappolygonpartition
 \autotoc
-\authors Susan Hert
+\author Susan Hert
 
 \section secpartition_2_intro Introduction 
 

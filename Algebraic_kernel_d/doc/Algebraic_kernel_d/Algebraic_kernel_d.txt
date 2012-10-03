@@ -101,7 +101,7 @@ is not zero at the given algebraic real.
 
 First of all the type `AlgebraicKernel_d_1::Polynomial_1` is required
 to be a model of the concept `Polynomial_1`, which is defined
-in the Polynomial package (see chapter \ref ChapterPolynomial).
+in the Polynomial package (see chapter \ref Chapter_Polynomial).
 This implies that all essential functionality is provided via
 `CGAL::Polynomial_traits_d`. However, the algebraic kernel also
 provides several function objects to handle polynomials:
@@ -126,9 +126,8 @@ counterpart in `CGAL::Polynomial_traits_d`. In this way it was possible that the
 the coefficient type to be a model of `IntegralDomain`, instead of `Field` or `UniqueFactorizationDomain`. 
 For more details see also:
 
-\ref ::PolynomialTraits_d::SquareFreeFactorize 
-
-\ref ::PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor
+- \ref PolynomialTraits_d::SquareFreeFactorize 
+- \ref PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor
 
 ## Design Rationale ##
 
@@ -322,18 +321,18 @@ efficiency.
 
 # Examples # {#Algebraic_kernel_dExamples}
 
-## Construction of Algebraic Real Numbers ##
+## Construction of Algebraic Real Numbers ## {#CGALAK1ConstructionExamples}
 
 The following example illustrates the construction of `AlgebraicKernel_d_1::Algebraic_real_1` 
 using `AlgebraicKernel_d_1::Construct_algebraic_real_1`:
 <SMALL>\cgalexample{Algebraic_kernel_d/Construct_algebraic_real_1.cpp}</SMALL>
 
-## Solving Univariate Polynomials ##
+## Solving Univariate Polynomials ## {#CGALAK1Solving}
 
 The following example illustrates the construction of `AlgebraicKernel_d_1::Algebraic_real_1` 
 using `AlgebraicKernel_d_1::Solve_1`: <SMALL>\cgalexample{Algebraic_kernel_d/Solve_1.cpp} </SMALL>
 
-\subsection CGALAK1EGCompare_1 Comparison and Approximation of Algebraic Real Numbers 
+\subsection CGALAK1EGCompare_1 Comparison and Approximation of Algebraic Real Numbers
 
 The following example illustrates the comparison of `AlgebraicKernel_d_1::Algebraic_real_1` numbers: 
 <SMALL>\cgalexample{Algebraic_kernel_d/Compare_1.cpp}</SMALL>

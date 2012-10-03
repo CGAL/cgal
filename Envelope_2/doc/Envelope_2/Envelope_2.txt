@@ -8,7 +8,7 @@ namespace CGAL {
 \anchor chapterEnvelope2
 
 \autotoc
-\authors Ron Wein
+\author Ron Wein
 
 \image html lwrenv.gif The lower envelope of a set of line segments and hyperbolic arc. 
 

@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage dD Geometry %Kernel
 \anchor Chapter_dD_Geometry_Kernel
 \autotoc
-\authors Michael Seel
+\author Michael Seel
 
 # Introduction # {#Kernel_dIntroduction}
 

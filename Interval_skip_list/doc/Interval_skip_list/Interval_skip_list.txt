@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_Interval_Skip_List
 \anchor ChapterIntervalskiplist
 \autotoc
-\authors Andreas Fabri
+\author Andreas Fabri
 
 # Definition # {#Interval_skip_listDefinition}
 

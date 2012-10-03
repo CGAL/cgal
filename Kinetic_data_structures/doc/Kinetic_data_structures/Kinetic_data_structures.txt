@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor chapterkds
 \autotoc
 
-\authors Daniel Russel
+\author Daniel Russel
 
 Lets say you want to maintain a sorted list of items (each item is
 associate with a real number key). You can imagine placing each of the

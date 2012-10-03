@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor chapterStream_lines_2
 \autotoc
 
-\authors Abdelkrim Mebarki
+\author Abdelkrim Mebarki
 
 This chapter describes the \cgal 2D streamline placement package.
 Basic definitions and notions are given in

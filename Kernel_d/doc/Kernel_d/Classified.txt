@@ -1,8 +1,0 @@
-
-\authors Michael Seel
-
-# Linear Algebra Concepts and Classes #
-# Kernels #
-# Kernel Objects #
-# Global Kernel Functions #
-# Kernel Concept #

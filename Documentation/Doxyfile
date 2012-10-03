@@ -209,11 +209,11 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
 # thus removes its include statement
 ALIASES += "cgalconcept=\details <div id=\"CGALConcept\"></div> \brief"
 
-ALIASES += "refines=\xrefitem refiness \"Refines\" \"Refines\""
-ALIASES += "requires=\xrefitem requiress \"Requires\" \"Requires\""
-ALIASES += "models=\xrefitem modelss \"Is Model Of\" \"Is Model Of\""
-ALIASES += "generalizes=\xrefitem generalizess \"Generalizes\" \"Generalizes\""
-ALIASES += "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\""
+ALIASES += "refines=\xrefitem refines \"Refines\" \"Refinement Relationships\""
+ALIASES += "requires=\xrefitem requires \"Requires\" \"Requirements\""
+ALIASES += "models=\xrefitem models \"Is Model Of\" \"Model Relationships\""
+ALIASES += "generalizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\""
+ALIASES += "hasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\""
 ALIASES += "debug=\par \"Debug\""
 ALIASES += "advanced=\par \"Advanced\""
 

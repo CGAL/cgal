@@ -29,7 +29,7 @@ OutputIterator res);
 /*! 
 Computes all real solutions of \f$ p\f$, and copies them as objects of type 
 `AlgebraicKernel_d_1::Algebraic_real_1` in `res`. 
-The &boolcedil; `known_to_be_square_free` indicates whether \f$ p\f$ is known to be square free. 
+The `bool` `known_to_be_square_free` indicates whether \f$ p\f$ is known to be square free. 
 Each root, though it might be a multiple root, is reported only once. 
 */ 
 template < class OutputIterator > 

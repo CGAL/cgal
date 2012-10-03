@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor chaptervda
 \autotoc
 
-\authors Menelaos Karavelas
+\author Menelaos Karavelas
 
 This chapter describes an adaptor that adapts two-dimensional
 triangulated Delaunay graphs to the corresponding Voronoi diagrams.

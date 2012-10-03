@@ -12,7 +12,7 @@ namespace CGAL {
 \endhtmlonly
 
 \autotoc
-\authors Nico Kruithof
+\author Nico Kruithof
 
 \image html molecule.png ""
 

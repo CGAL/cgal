@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import os
 import re
@@ -33,7 +33,7 @@ def write_out_html(d, fn):
     f = open(fn, 'w')
     # this is the normal doxygen doctype, which is thrown away by pyquery
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
-    print >>f, d
+    print(d, file=f)
     f.close()
 
 # remove duplicate files

@@ -6,7 +6,7 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Geomview,PkgGeomviewSummary}
 \PkgPicture{geomview.gif}
-\PkgAuthor{Andreas Fabri  and Sylvain Pion}
+\PkgAuthors{Andreas Fabri and Sylvain Pion}
 \PkgDesc{This package implements an interface to Geomview, an interactive 3D viewing program,  originally developed at the Geometry Center in Minneapolis.}
 \PkgSince{2.0}
 \PkgBib{cgal:fp-gv}

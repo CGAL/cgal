@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor chapterSubdivision
 \autotoc
 
-\authors Le-Jeng Andy Shiue
+\author Le-Jeng Andy Shiue
 
 \image html subdivision-teaser.jpg
 

@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_dD_Range_and_Segment_Trees
 \anchor Trees
 \autotoc
-\authors Gabriele Neyer
+\author Gabriele Neyer
 
 # Introduction # {#SearchStructuresIntroduction}
 

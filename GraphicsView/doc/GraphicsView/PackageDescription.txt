@@ -6,7 +6,7 @@
 \todo check generated documentation
 \PkgDescriptionBegin{CGAL and the Qt Graphics View Framework,PkgGraphicsViewSummary}
 \PkgPicture{detail.png}
-\PkgAuthor{Andreas Fabri  and Laurent Rineau}
+\PkgAuthors{Andreas Fabri and Laurent Rineau}
 \PkgDesc{This package provides classes for displaying \cgal objects  and data structures in the <A HREF="http://doc.qt.nokia.com/latest/graphicsview.html">Qt 4 Graphics View Framework</A>.}
 \PkgSince{3.4}
 \PkgDependsOn{\ref thirdpartyQt}

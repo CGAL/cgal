@@ -6,7 +6,7 @@
 \todo check generated documentation
 \PkgDescriptionBegin{2D Triangulation Data Structure,PkgTDS2Summary}
 \PkgPicture{tds_small.png}
-\PkgAuthor{Sylvain Pion  and Mariette Yvinec}
+\PkgAuthors{Sylvain Pion and Mariette Yvinec}
 \PkgDesc{This package provides a data structure to store a two-dimensional triangulation that has the  topology of a two-dimensional sphere.  The package acts as a container for the vertices and faces of the triangulation  and provides basic  combinatorial operation on the triangulation. }
 \PkgSince{2.2}
 \PkgBib{cgal:py-tds2}

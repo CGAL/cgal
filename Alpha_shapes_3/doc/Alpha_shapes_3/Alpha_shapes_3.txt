@@ -239,7 +239,7 @@ and it must be parameterized with vertex and cell classes, which are model of th
 The package provides models `CGAL::Fixed_alpha_shape_vertex_base_3<Gt>` 
 and `CGAL::Fixed_alpha_shape_cell_base_3<Gt>`, respectively.
 
-# `Alpha_shape_3` or `Fixed_alpha_shape_3` # {#Alpha_shapes_3`Alpha}
+# Alpha_shape_3 or Fixed_alpha_shape_3 # {#Alpha_shapes_3Alpha}
 
 The class `CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>` represents the whole family
 of alpha shapes for a given set of points while the class `CGAL::Fixed_alpha_shape_3<Dt>`
@@ -311,7 +311,7 @@ them with a traits with inexact constructions, the tag
 \subsection l1_SectPeriodicAS3D Example for periodic Alpha Shapes 
 
 The following example shows how to use the periodic Delaunay
-triangulation (Chapter \ref chapterP3Triangulation3 ) as underlying
+triangulation (Chapter \ref Chapter_3D_Periodic_Triangulations) as underlying
 triangulation for the alpha shape computation.
 
 In order to define the original domain and to benefit from the

@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_Algebraic_Foundations
 
 \autotoc
-\authors Michael Hemmer
+\author Michael Hemmer
 
 # Introduction # {#Algebraic_foundationsIntroduction}
 
@@ -80,7 +80,7 @@ compatibility all functionality is also
 accessible through global functions defined within namespace `CGAL`, 
 e.g., `CGAL::sqrt(x)`. This is realized via function templates using 
 the according functor of the traits class. For an overview see 
-Section \ref caf_refclassified_refernce_pages in the reference manual.
+Section \ref PkgAlgebraicFoundations in the reference manual.
 
 ## Tags in Algebraic Structure Traits ##
 
@@ -266,7 +266,7 @@ compute the 'least' common multiple of the denominators.
 
 The package is part of \cgal since release 3.3. Of course the package is based 
 on the former Number type support of CGAL. This goes back to Stefan Schirra and Andreas Fabri. But on the other hand the package is to a large extend influenced 
-by the experience with the number type support in <span class="textsc">Exacus</span> \cite beh+-eeeafcs-05, 
+by the experience with the number type support in <span class="textsc">Exacus</span> \cite beh-eeeafcs-05, 
 which in the main goes back to 
 Lutz Kettner, Susan Hert, Arno Eigenwillig and Michael Hemmer. 
 However, the package abstracts from the pure support for 

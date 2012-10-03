@@ -11,7 +11,7 @@
 \todo check generated documentation
 \PkgDescriptionBegin{2D Polygons,PkgPolygon2Summary}
 \PkgPicture{polygon.png}
-\PkgAuthor{Geert-Jan Giezeman  and Wieger Wesselink}
+\PkgAuthors{Geert-Jan Giezeman and Wieger Wesselink}
 \PkgDesc{This package provides a 2D polygon class and operations on sequences of points, like bounding box, extremal points, signed area, simplicity and convexity test, orientation, and point location.  The demo includes operations on polygons, such as computing a convex  partition, and the straight skeleton.}
 \PkgSince{0.9}
 \PkgBib{cgal:gw-p2}

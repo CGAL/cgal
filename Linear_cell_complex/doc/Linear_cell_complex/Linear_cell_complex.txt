@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_Linear_Cell_Complex
 \anchor ChapterLinearCellComplex
 
-\authors Guillaume Damiand
+\author Guillaume Damiand
 
 # Introduction # {#Linear_cell_complexIntroduction}
 

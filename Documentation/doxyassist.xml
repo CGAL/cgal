@@ -90,7 +90,6 @@ namespace for the XML file to be processed properly.  -->
         </doxygen>
       </project>
 
-
       <project>
         <name>Planar Parameterization of Triangulated Surface Meshes</name>
         <input>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization</input>
@@ -569,10 +568,12 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Algebraic_kernel_d/doc/Algebraic_kernel_d/</string>
           <string name="STRIP_FROM_INC_PATH">../Algebraic_kernel_d/doc/Algebraic_kernel_d/</string>
           <string name="GENERATE_TAGFILE">./tags/Algebraic_kernel_d.tag</string>
+          <string name="EXAMPLE_PATH">../Algebraic_kernel_d/examples</string>
           <string name="IMAGE_PATH">../Algebraic_kernel_d/doc/Algebraic_kernel_d/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
+            <item>./tags/Polynomial.tag=../../CGAL.CGAL.Polynomial/html</item>
           </list>
         </doxygen>
       </project>

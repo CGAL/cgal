@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_2D_Alpha_Shapes
 \anchor I1ChapterAlphashapes2D
 \autotoc
-\authors Tran Kai Frank Da
+\author Tran Kai Frank Da
 
 \image html alphashape.png 
 

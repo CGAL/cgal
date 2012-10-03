@@ -19,8 +19,6 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
-\anchor Euclidean_ring_tag 
-
 Tag indicating that a type is a model of the 
 `EuclideanRing` concept. 
 
@@ -38,8 +36,6 @@ class Euclidean_ring_tag : public Unique_factorization_domain_tag {
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
-\anchor Field_tag 
-
 Tag indicating that a type is a model of the `Field` concept. 
 
 \models ::DefaultConstructible 
@@ -55,8 +51,6 @@ class Field_tag : public Integral_domain_tag {
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructures
-
-\anchor Field_with_kth_root_tag 
 
 Tag indicating that a type is a model of the `FieldWithKthRoot` concept. 
 
@@ -74,8 +68,6 @@ class Field_with_kth_root_tag : public Field_with_sqrt_tag {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-\anchor Field_with_root_of_tag 
-
 Tag indicating that a type is a model of the `FieldWithRootOf` concept. 
 
 \models ::DefaultConstructible 
@@ -91,8 +83,6 @@ class Field_with_root_of_tag : public Field_with_kth_root_tag {
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructures
-
-\anchor Field_with_sqrt_tag 
 
 Tag indicating that a type is a model of the `FieldWithSqrt` concept. 
 
@@ -110,8 +100,6 @@ class Field_with_sqrt_tag : public Field_tag {
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
-\anchor Integral_domain_tag 
-
 Tag indicating that a type is a model of the `IntegralDomain` concept. 
 
 \models ::DefaultConstructible 
@@ -128,8 +116,6 @@ class Integral_domain_tag : public Integral_domain_without_division_tag {
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
-\anchor Integral_domain_without_division_tag 
-
 Tag indicating that a type is a model of the `IntegralDomainWithoutDivision` concept. 
 
 \models ::DefaultConstructible 
@@ -144,8 +130,6 @@ class Integral_domain_without_division_tag {
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructures
-
-\anchor Unique_factorization_domain_tag 
 
 Tag indicating that a type is a model of the `UniqueFactorizationDomain` concept. 
 

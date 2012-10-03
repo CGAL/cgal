@@ -8,7 +8,7 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Inscribed Areas,PkgInscribedAreasSummary}
 \PkgPicture{ler-detail.png}
-\PkgAuthor{Michael Hoffmann and Eli Packer}
+\PkgAuthors{Michael Hoffmann and Eli Packer}
 \PkgDesc{This package provides algorithms for computing inscribed areas. The algorithms for computing inscribed areas are: the largest inscribed k-gon (area or perimeter) of a convex point set and the largest inscribed iso-rectangle.}
 \PkgSince{1.1}
 \PkgBib{cgal:hp-ia}

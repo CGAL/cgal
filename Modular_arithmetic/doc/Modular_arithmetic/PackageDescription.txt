@@ -6,7 +6,7 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Modular Arithmetic,PkgModularArithmeticSummary}
 \PkgPicture{Modular_arithmetic.png}
-\PkgAuthor{Michael Hemmer  and Sylvain Pion}
+\PkgAuthors{Michael Hemmer and Sylvain Pion}
 \PkgDesc{This package provides arithmetic over finite fields. The provided tools are in particular useful for filters based on  modular arithmetic and algorithms based on Chinese remainder. }
 \PkgSince{3.4}
 \PkgBib{cgal:h-ma}
