@@ -119,7 +119,7 @@ with the representation type determined by `InputIterator::value_type`.
 This function implements the approximation algorithm of 
 Greene \cite g-dpcp-83 and requires \f$ O(n \log n)\f$ time and \f$ O(n)\f$ space 
 to produce a convex partitioning given a \f$ y\f$-monotone partitioning of a 
-polygon with \f$ n\f$ vertices. The function `y_monotone_partition_2` 
+polygon with \f$ n\f$ vertices. The function `::y_monotone_partition_2` 
 is used to produce the monotone partition. 
 
 ### Example ###
@@ -200,7 +200,7 @@ traits class used to produce the partition with the function object
 class `CGAL::Is_convex_2` used 
 to define the required `Is_valid` type. 
 (Note that this assertion is superfluous unless the 
-postcondition checking for `optimal_convex_partition_2` has been 
+postcondition checking for `::optimal_convex_partition_2` has been 
 turned off.) 
 
 \cgalexample{Partition_2/optimal_convex_partition_2.cpp} 
@@ -267,7 +267,7 @@ traits class and stores the partition polygons in the list
 `partition_polys`. It then asserts that each partition polygon 
 produced is, in fact, \f$ y\f$-monotone and that the partition is valid. 
 (Note that these assertions are superfluous unless the postcondition 
-checking for `y_monotone_partition_2` has been turned off.) 
+checking for `::y_monotone_partition_2` has been turned off.) 
 
 \cgalexample{Partition_2/y_monotone_partition_2.cpp} 
 

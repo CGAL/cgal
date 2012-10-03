@@ -47,7 +47,7 @@ total number of edges.
 
 ### Example ###
 
-See the example presented with the function `approx_convex_partition_2` 
+See the example presented with the function `::approx_convex_partition_2` 
 for an illustration of the use of this function. 
 
 */
@@ -110,7 +110,7 @@ by `Traits::Is_valid()` to test if partition polygon \f$ p_i\f$ is valid.
 
 ### Example ###
 
-See the example presented with the function `optimal_convex_partition_2` 
+See the example presented with the function `::optimal_convex_partition_2` 
 for an illustration of the use of this function. 
 */
 
@@ -168,7 +168,7 @@ where \f$ n\f$ is the total number of vertices of the partition polygons and
 
 ### Example ###
 
-See the example presented with the function `y_monotone_partition_2` 
+See the example presented with the function `::y_monotone_partition_2` 
 for an illustration of the use of this function. 
 
 */
