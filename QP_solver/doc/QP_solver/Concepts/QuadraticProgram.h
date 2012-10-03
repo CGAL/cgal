@@ -54,9 +54,9 @@ comes in <I>dense</I> representation which includes zero entries.
 types, respectively, for `A_iterator` and `D_iterator`) must be
 convertible to some common `IntegralDomain` `ET`.
 
-\sa `NonnegativeQuadraticProgramInterface` 
-\sa `LinearProgramInterface` 
-\sa `NonnegativeLinearProgramInterface` 
+\sa `NonnegativeQuadraticProgram` 
+\sa `LinearProgram` 
+\sa `NonnegativeLinearProgram` 
 
 */
 class QuadraticProgram {
