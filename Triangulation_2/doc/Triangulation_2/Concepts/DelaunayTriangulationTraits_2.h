@@ -22,14 +22,12 @@ required if calls to
 
 \refines ::TriangulationTraits_2 
 
+
 \hasModel \cgal kernels 
 \hasModel `CGAL::Triangulation_euclidean_traits_2<Rep>`. 
-
-The following traits classes provide everything except types and member 
-functions required for the dual Voronoi diagram: 
-\hasModel `CGAL::Projection_traits_xy_3<K>` 
-\hasModel `CGAL::Projection_traits_yz_3<K>` 
-\hasModel `CGAL::Projection_traits_zx_3<K>` 
+\hasModel `CGAL::Projection_traits_xy_3<K>` (not for dual Voronoi functions)
+\hasModel `CGAL::Projection_traits_yz_3<K>` (not for dual Voronoi functions)
+\hasModel `CGAL::Projection_traits_xz_3<K>` (not for dual Voronoi functions)
 
 \sa `TriangulationTraits_2` 
 */

@@ -18,7 +18,9 @@ and predicates defined `K`.
 \sa `DelaunayTriangulationTraits_2` 
 \sa `CGAL::Triangulation_2<Traits,Tds>` 
 \sa `CGAL::Delaunay_triangulation_2<Traits,Tds>` 
-\sa `CGAL::Triangulation_euclidean_traits_xy_3<K>` 
+\sa `CGAL::Projection_traits_xy_3<K>`
+\sa `CGAL::Projection_traits_xz_3<K>`
+\sa `CGAL::Projection_traits_yz_3<K>`
 
 */
 template< typename K >
