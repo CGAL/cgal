@@ -9,7 +9,7 @@
 \PkgAuthor{Fernando Cacciola}
 \PkgDesc{This package implements an algorithm to construct a halfedge data structure representing the straight skeleton in the interior of 2D polygons with holes and an algorithm to construct inward offset polygons at any offset distance given a straight skeleton.}
 \PkgSince{3.2}
-\PkgDependsOn{\ref PkgHDS}
+\PkgDependsOn{\ref PkgHDSSummary}
 \PkgBib{cgal:c-sspo2}
 \PkgLicense{\ref licensesGPL  "GPL"}
 \PkgDemo{2D Straight Skeleton,straight_skeleton_2.zip}

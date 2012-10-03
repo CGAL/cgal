@@ -7,7 +7,7 @@
 \PkgAuthor{Baruch Zukerman, Ron Wein, and Efi Fogel}
 \PkgDesc{This package provides three free functions implemented based on the sweep-line paradigm: given a collection of input curves, compute all intersection points, compute the set of subcurves that are pairwise interior-disjoint induced by them, and check whether there is at least one pair of curves among them that intersect in their interior.}
 \PkgSince{2.4}
-\PkgDependsOn{\ref PkgArrangement2}
+\PkgDependsOn{\ref PkgArrangement2Summary}
 \PkgBib{cgal:wfz-ic2}
 \PkgLicense{\ref licensesGPL "GPL"}
 \PkgManuals{Chapter_2D_Intersection_of_Curves,PkgIntersectionOfCurves2}
