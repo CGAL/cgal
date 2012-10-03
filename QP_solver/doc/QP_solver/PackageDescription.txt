@@ -45,7 +45,7 @@ Then there are specific models for any of the four program concepts above; these
 - `CGAL::make_quadratic_program_from_iterators`
 - `CGAL::make_linear_program_from_iterators`
 - `CGAL::make_nonnegative_quadratic_program_from_iterators`
--`CGAL::make_nonnegative_linear_program_from_iterators`.
+- `CGAL::make_nonnegative_linear_program_from_iterators`.
 
 There are four functions to solve a program, one for each program concept.
 
