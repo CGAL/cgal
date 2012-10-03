@@ -4,7 +4,7 @@
 
 \attention PRELIMINARY 
 
-\attention See something? Fix it! Follow instructions at: https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/Doxygen
+\attention See something? Fix it! Follow instructions at: https://cgal.geometryfactory.com/CGAL/Members/wiki/Staging_Area/Doxygen
 
 The goal of the \cgal Open Source Project is to provide easy access to
 efficient and reliable geometric algorithms in the form of a C++
