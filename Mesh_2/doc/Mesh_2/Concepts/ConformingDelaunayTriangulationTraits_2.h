@@ -11,7 +11,7 @@ The concept `ConformingDelaunayTriangulationTraits_2` refines the concept
 field type `FT`, a type `Vector_2` and several constructors on 
 `Vector_2`, `Point_2`, and a predicate on angles. 
 The field type has to be a model of 
-the concept `SqrtFieldNumberType`. This field type and the 
+the concept `::SqrtFieldNumberType`. This field type and the 
 constructors are used by the conforming algorithm to compute Steiner 
 points on constrained edges. 
 
@@ -128,7 +128,7 @@ construct_translated_point_2_object();
 /*! 
 
 */ 
-Constructor_midpoint_2 construct_midpoint_2_object(); 
+Construct_midpoint_2 construct_midpoint_2_object(); 
 
 
 
