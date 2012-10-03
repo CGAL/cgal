@@ -84,31 +84,63 @@ template<class R_,class Zero_> struct Construct_LA_vector
 #else
 	using internal::Construct_LA_vector_<R_,R::Default_ambient_dimension::value>::operator();
 #endif
-	template<class Iter> typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
-		(Iter f,Iter g,Cartesian_tag)const
+	template<class Iter> inline
+	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
+		(Iter f,Iter g,Cartesian_tag t)const
 	{
-		int d=std::distance(f,g);
+		return this->operator()(std::distance(f,g),f,g,t);
+	}
+	template<class Iter> inline
+	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
+		(int d,Iter f,Iter g,Cartesian_tag)const
+	{
+		CGAL_assertion(d==std::distance(f,g));
 		CGAL_assertion(check_dimension_eq(d,this->kernel().dimension()));
 		return typename Constructor::Iterator()(d,f,g);
 	}
-	template<class Iter> typename boost::enable_if<is_iterator_type<Iter,std::bidirectional_iterator_tag>,result_type>::type operator()
+	template<class Iter> inline
+	  typename boost::enable_if<is_iterator_type<Iter,std::bidirectional_iterator_tag>,result_type>::type operator()
 		(Iter f,Iter g,Homogeneous_tag)const
 	{
 		--g;
-		return this->operator()(f,g,*g);
+		return this->operator()(std::distance(f,g),f,g,*g);
 	}
-	template<class Iter> typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
+	template<class Iter> inline
+	  typename boost::enable_if<is_iterator_type<Iter,std::bidirectional_iterator_tag>,result_type>::type operator()
+		(int d,Iter f,Iter g,Homogeneous_tag)const
+	{
+		--g;
+		return this->operator()(d,f,g,*g);
+	}
+	template<class Iter> inline
+	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
 		(Iter f,Iter g)const
 	{
+	  // Shouldn't it try comparing dist(f,g) to the dimension if it is known?
 		return this->operator()(f,g,typename R::Rep_tag());
 	}
-	template<class Iter,class NT> typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
-		(Iter f,Iter g,NT const&l)const
+	template<class Iter> inline
+	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
+		(int d,Iter f,Iter g)const
 	{
-		int d=std::distance(f,g);
+		return this->operator()(d,f,g,typename R::Rep_tag());
+	}
+
+	// Last homogeneous coordinate given separately
+	template<class Iter,class NT> inline
+	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
+		(int d,Iter f,Iter g,NT const&l)const
+	{
+		CGAL_assertion(d==std::distance(f,g));
 		CGAL_assertion(check_dimension_eq(d,this->kernel().dimension()));
 		// RT? better be safe for now
 		return typename Constructor::Iterator()(d,CGAL::make_transforming_iterator(f,Divide<FT,NT>(l)),CGAL::make_transforming_iterator(g,Divide<FT,NT>(l)));
+	}
+	template<class Iter,class NT> inline
+	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
+		(Iter f,Iter g,NT const&l)const
+	{
+		return this->operator()(std::distance(f,g),f,g,l);
 	}
 };
 

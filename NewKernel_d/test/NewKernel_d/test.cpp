@@ -196,7 +196,7 @@ void test3(){
   P b=cp(5,6,7,8);
   int rr[]={3,5,2,3};
   int* r=rr;
-  P c=cp_(r,r+3);
+  P c=cp_(3,r,r+3);
   P d=cp_(r,r+4,CGAL::Homogeneous_tag());
   S s=cs(c,d);
   std::cout << cc(a,1) << std::endl;
