@@ -1154,6 +1154,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Triangulation_2/examples</string>
           <list name="TAGFILES" append="true">
             <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
           </list>
         </doxygen>
       </project>
