@@ -1163,7 +1163,7 @@ of `f`.
 \image html neighbors.gif "Vertices and neighbors."
 
 \sa `CGAL::Triangulation_2` 
-\sa `CGAL::TriangulationDSFace_2` 
+\sa `TriangulationDSFaceBase_2` 
 
 */
 

@@ -15,7 +15,7 @@ and refer to the description of the kernel concept for details.
 \hasModel The kernels supplied by \cgal are models of `PolygonTraits_2`. 
 \hasModel `CGAL::Projection_traits_xy_3<K>`
 \hasModel `CGAL::Projection_traits_yz_3<K>`
-\hasModel `CGAL::Projection_traits_zx_3<K>`
+\hasModel `CGAL::Projection_traits_xz_3<K>`
 
 \sa `CGAL::Polygon_2<PolygonTraits_2, Container>`
 

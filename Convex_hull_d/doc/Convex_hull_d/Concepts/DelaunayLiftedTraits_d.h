@@ -138,7 +138,7 @@ typedef Hidden_type Intersect_d;
 
 /// @}
 
-/*! \name Types Required by `ConvexHullTraits_d`
+/*! \name Types Required by ConvexHullTraits_d
 The previous requirements are all identical to the concept
 `ConvexHullTraits_d`. The Delaunay class adds the following
 requirements.

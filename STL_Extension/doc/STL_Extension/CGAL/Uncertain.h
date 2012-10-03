@@ -140,7 +140,7 @@ bool is_same(Uncertain u) const;
 /// @} 
 
 
-/// \name Uncertainty testing and conversion 
+/// \name Uncertainty Testing and Conversion 
 /// There are several ways to extract the content of an `Uncertain` object. The simplest way is to 
 /// rely on the implicit conversion from `Uncertain<T>` to `T`. In this case, no special 
 /// code has to be written, apart from an exception handler (anywhere higher in the call stack) to manage 
@@ -377,7 +377,7 @@ Uncertain<bool> operator&(bool u, Uncertain<bool> v);
 
 /// @}
 
-/// \name Overloaded Operators and Functions for `Uncertain<enum T>` only 
+/// \name Overloaded Operators and Functions for Uncertain<enum T> Only 
 /// @{
 
 /*! 

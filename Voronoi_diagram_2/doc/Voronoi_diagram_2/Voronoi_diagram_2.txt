@@ -289,8 +289,8 @@ The concept `AdaptationPolicy_2` defines the requirements on
 the predicate functors that determine whether a feature of the
 triangulated Delaunay graph should be rejected or not. More
 specifically it defines an `Edge_rejector` and a
-`Face_rejector` functor that answer the question: ``should this
-edge (face) of the Voronoi diagram be rejected?''. In addition to the
+`Face_rejector` functor that answer the question: "Should this
+edge (face) of the Voronoi diagram be rejected?". In addition to the
 edge and face rejectors the adaptation policy defines a tag, the
 `Has_inserter` tag. This tag is either set to `CGAL::Tag_true`
 or to `CGAL::Tag_false`. Semantically it determines if the adaptor
@@ -426,7 +426,7 @@ adaptor should behave, and this is enough from the adaptor's point of
 view.
 
 From the point of a view of a policy writer the dilemma is still
-there: should the policy allow for on-line insertions or not? The
+there: "Should the policy allow for on-line insertions or not?" The
 answer really depends on what are the consequences of such a
 choice. For a policy that has no state, such as our degeneracy removal
 policies, it is natural to set the `Has_inserter` tag to

@@ -145,7 +145,7 @@ Bbox_2 bbox_2(InputIterator first,
 /// returns the area instead of taking it as a parameter.
 /// 
 /// \requires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2.
+/// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Compute_area_2` : Computes the signed area of the
 /// 	    oriented triangle defined by 3 `Point_2` passed as arguments.
@@ -256,8 +256,8 @@ bool is_convex_2(ForwardIterator first,
 /// The running time is `O(n log n)`, where n is the number of vertices of the
 /// polygon.
 /// 
-/// \sa `PolygonTraits_2 `
-/// \sa `CGAL::Polygon_2 `
+/// \sa `PolygonTraits_2`
+/// \sa `CGAL::Polygon_2`
 template <class ForwardIterator, class PolygonTraits>
 bool is_simple_2(ForwardIterator first,
 		 ForwardIterator last,
@@ -280,10 +280,10 @@ bool is_simple_2(ForwardIterator first,
 ///   - `orientation_2_object()`
 /// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
 ///
-/// \sa `PolygonTraits_2 `
-/// \sa `CGAL::bounded_side_2 `
-/// \sa `CGAL::is_simple_2 `
-/// \sa `CGAL::Polygon_2 `
+/// \sa `PolygonTraits_2`
+/// \sa `CGAL::bounded_side_2`
+/// \sa `CGAL::is_simple_2`
+/// \sa `CGAL::Polygon_2`
 /// \sa `Oriented_side`
 template <class ForwardIterator, class Point, class Traits>
 Oriented_side oriented_side_2(ForwardIterator first,
@@ -320,8 +320,8 @@ Oriented_side oriented_side_2(ForwardIterator first,
 /// (if the ray passes through a vertex).
 ///
 /// 
-/// \sa `PolygonTraits_2 `
-/// \sa `CGAL::oriented_side_2 `
+/// \sa `PolygonTraits_2`
+/// \sa `CGAL::oriented_side_2`
 /// \sa `CGAL::Polygon_2 `
 /// \sa \ref CGAL::Bounded_side
 template <class ForwardIterator, class Point, class PolygonTraits>

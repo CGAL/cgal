@@ -185,7 +185,7 @@ Sets the cell `c` as a cell of the subdomain `index`.
 void add_to_complex(Cell_handle c, Subdomain_index index); 
 
 /*! 
-Adds the facet `f` as a facet of the surface patch `index`.) 
+Adds the facet `f` as a facet of the surface patch `index`. 
 */ 
 void add_to_complex(Facet f, Surface_patch_index index); 
 
@@ -210,7 +210,7 @@ Same as above with `f=(c,i)`.
 void remove_from_complex(Cell_handle c, int i); 
 
 /*! 
-Sets the ``dimension'' of vertex `v`. The dimension is an integer attached to the vertex. 
+Sets the `dimension` of vertex `v`. The dimension is an integer attached to the vertex. 
 When the concept `MeshComplex_3InTriangulation_3` is used for mesh generation this integer is used to store 
 the dimension of the lowest dimensional face of the input complex including the vertex. 
 */ 

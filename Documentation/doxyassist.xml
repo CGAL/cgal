@@ -775,6 +775,8 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
             <item>./tags/Apollonius_graph_2.tag=../../CGAL.CGAL.2D-Apollonius-Graphs--Delaunay-Graphs-of-Disks-</item>
             <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.Voronoi_diagram_2/html</item>
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
       </project>

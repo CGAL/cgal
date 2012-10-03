@@ -23,7 +23,7 @@ halfedge.
 class Polyhedron_min_items_3 {
 public:
 
-/// \name Types in `Polyhedron_min_items_3::Face_wrapper<Refs,Traits>::Vertex` 
+/// \name Types in Polyhedron_min_items_3::Face_wrapper<Refs,Traits>::Vertex 
 /// @{
 
 `Polyhedron_min_items_3::Vertex_wrapper<Refs,Traits>::Vertex` 
@@ -40,7 +40,7 @@ typedef CGAL::Tag_true Supports_vertex_point;
 
 /// @} 
 
-/// \name Types in `Polyhedron_min_items_3::Face_wrapper<Refs,Traits>::Face` 
+/// \name Types in Polyhedron_min_items_3::Face_wrapper<Refs,Traits>::Face
 /// @{
 
 /*! 

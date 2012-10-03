@@ -8,7 +8,7 @@ A typedef to a kernel which has the following properties:
 
 <UL> 
 <LI>It uses %Cartesian representation. 
-<LI>It supports constructions of points from double` %Cartesian 
+<LI>It supports constructions of points from `double` %Cartesian 
 coordinates. 
 <LI>It provides both exact geometric predicates and exact geometric 
 constructions. 

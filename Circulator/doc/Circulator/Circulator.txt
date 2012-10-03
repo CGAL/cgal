@@ -206,7 +206,7 @@ iterators can be found in the reference pages.
 \endcode
 
 \code{.cpp}
-circulator_size(C c); // size of the sequence reachable by `c`
+circulator_size(C c); // size of the sequence reachable by c
 circulator_distance(C c, C d); // number of elements in the range [c, d)
 iterator_distance(IC ic1, IC ic2); // number of elements in the range [ic2, ic1)
 is_empty_range( IC ic1, IC ic2); // test the range [ic2, ic1) for emptiness

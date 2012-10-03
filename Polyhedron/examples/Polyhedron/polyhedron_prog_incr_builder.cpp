@@ -8,7 +8,7 @@ class Build_triangle : public CGAL::Modifier_base<HDS> {
 public:
     Build_triangle() {}
     void operator()( HDS& hds) {
-        // Postcondition: `hds' is a valid polyhedral surface.
+        // Postcondition: hds is a valid polyhedral surface.
         CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
         B.begin_surface( 3, 1, 6);
         typedef typename HDS::Vertex   Vertex;

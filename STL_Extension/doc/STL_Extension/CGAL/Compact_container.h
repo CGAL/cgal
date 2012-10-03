@@ -755,9 +755,7 @@ public:
 /// @{ 
 /*! 
 Returns the pointer held by `t`. 
-The template version defines this function as: 
-
-return t.for_compact_container(); 
+The template version defines this function as: `return t.for_compact_container(); `
 
 */ 
 static void * pointer(const T &t); 
@@ -771,11 +769,7 @@ static void * pointer(const T &t);
 /// @{ 
 /*! 
 Returns a reference to the pointer held by `t`. 
-The template version defines this function as: 
-
-` 
-return t.for_compact_container(); 
-` 
+The template version defines this function as: `return t.for_compact_container();` 
 
 */ 
 static void * & pointer(T &t); 

@@ -198,11 +198,9 @@ dual Apollonius site, with its center at infinity).
 typedef Hidden_type Vertex_conflict_2; 
 
 /*! 
-A predicate object 
-type. Must provide `bool operator()(Site_2 s1, 
-Site_2 s2, Site_2 s3, Site_2 s4, 
-Site_2 q, bool b)`. The sites `s1`, `s2`, 
-`s3` and `s4` define an Apollonius edge that lies on the 
+A predicate object type. 
+Must provide `bool operator()(Site_2 s1, Site_2 s2, Site_2 s3, Site_2 s4, Site_2 q, bool b)`. 
+The sites `s1`, `s2`, `s3` and `s4` define an Apollonius edge that lies on the 
 bisector of `s1` and `s2` and has as endpoints the Apollonius 
 vertices defined by the triplets `s1`, `s2`, `s3` and 
 `s1`, `s4` and `s2`. The Boolean `b` denotes if the 

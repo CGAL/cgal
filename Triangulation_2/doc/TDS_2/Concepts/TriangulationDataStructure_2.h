@@ -815,7 +815,7 @@ template< class EdgeIt>
 void star_hole(Vertex_handle v, EdgeIt edge_begin, EdgeIt edge_end); 
 
 /*! 
-same as above, recycling faces in the sequence `[face_begin, face_end[ . ` 
+same as above, recycling faces in the sequence `[face_begin, face_end[`. 
 */ 
 template< class EdgeIt, class FaceIt> 
 void star_hole(Vertex_handle v, 

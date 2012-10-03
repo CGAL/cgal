@@ -28,10 +28,7 @@ The second template parameter must be a model of the
 class that is to be used in the Apollonius graph data structure must 
 be a model of the `ApolloniusGraphHierarchyVertexBase_2` concept. 
 The second template parameter defaults to 
-`Triangulation_data_structure_2< 
-Apollonius_graph_hierarchy_vertex_base_2< 
-Apollonius_graph_vertex_base_2<Gt,true> >, 
-Triangulation_face_base_2<Gt> >`. 
+`Triangulation_data_structure_2< Apollonius_graph_hierarchy_vertex_base_2< Apollonius_graph_vertex_base_2<Gt,true> >, Triangulation_face_base_2<Gt> >`. 
 
 The `Apollonius_graph_hierarchy_2` class derives publicly from the 
 `Apollonius_graph_2<Gt,Agds>` class. The interface is 

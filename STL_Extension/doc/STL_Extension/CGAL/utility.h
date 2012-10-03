@@ -9,7 +9,7 @@ The Quadruple class is an extension of
 `std::pair`. `Quadruple` is a heterogeneous quadruple: it holds 
 one object of type `T1`, one of type `T2`, one of type 
 `T3`, and one of type `T4`. A `Quadruple` is much like a 
-container, in that it ``owns'' its elements. It is not actually a 
+container, in that it "owns" its elements. It is not actually a 
 model of container, though, because it does not support the standard 
 methods (such as iterators) for accessing the elements of a 
 container. 

@@ -173,7 +173,7 @@ bool is_border() const;
 
 /// @} 
 
-/// \name Operations available if `Supports_halfedge_prev` \f$ \equiv\f$ `CGAL::Tag_true` 
+/// \name Operations available if Supports_halfedge_prev == CGAL::Tag_true 
 /// @{
 
 /*! 
@@ -193,7 +193,7 @@ void set_prev( Halfedge_handle h);
 
 /// @} 
 
-/// \name Operations available if `Supports_halfedge_vertex` \f$ \equiv\f$  `CGAL::Tag_true` 
+/// \name Operations available if Supports_halfedge_vertex == CGAL::Tag_true 
 /// @{
 
 /*! 
@@ -213,7 +213,7 @@ void set_vertex( Vertex_handle v);
 
 /// @} 
 
-/// \name Operations available if `Supports_halfedge_face` \f$ \equiv\f$ 
+/// \name Operations available if Supports_halfedge_face == CGAL::Tag_true
 /// @{
 
 /*! 

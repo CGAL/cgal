@@ -183,12 +183,13 @@ The main thing to do with transformations is to apply them on
 geometric objects. Each class `Class_2<Kernel>` representing a
 geometric object has a member function: 
 \code
-Class_2<Kernel> transform(Aff_transformation_2<Kernel> t)`.
+Class_2<Kernel> transform(Aff_transformation_2<Kernel> t).
 \endcode
 
 The transformation classes provide a member function `transform()` for
 points, vectors, directions, and lines. The same functionality is also
-available through `operator()` overloads.  
+available through `operator()` overloads. 
+*/ 
 /// @{
 
 /*! 

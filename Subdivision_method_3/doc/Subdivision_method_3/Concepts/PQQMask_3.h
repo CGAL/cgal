@@ -11,7 +11,7 @@ policy concept of geometric computations is used in
 
 \hasModel `CGAL::CatmullClark_mask_3<Polyhedron_3>`
 
-\sa CGAL::Subdivision_method_3`
+\sa `CGAL::Subdivision_method_3`
 
 */
 

@@ -82,7 +82,7 @@ the vertex pointer and the face pointer for border halfedges are
 unequal to their respective default construction value. For all 
 halfedges `h`: The opposite halfedge is different from `h` and the 
 opposite of the opposite is equal to `h`. The next of the previous 
-halfedge is equal to `h`. For all vertices``v`: the incident vertex 
+halfedge is equal to `h`. For all vertices `v`: the incident vertex 
 of the incident halfedge of`v` is equal to`v`. The halfedges 
 around`v` starting with the incident halfedge of`v` form a cycle. 
 For all faces `f`: the incident face of the incident halfedge of `f` 

@@ -18,7 +18,7 @@ The number of neighbors controls the size of the point subset considered for pla
 
 \param first, beyond iterator range of the input points. 
 \param point_pmap property map `InputIterator` -> `Point_3`. 
-\param normal_pmap` property map `InputIterator` -> `Vector_3`. 
+\param normal_pmap property map `InputIterator` -> `Vector_3`. 
 \param k number of neighbors. 
 \param kernel geometric traits.
 

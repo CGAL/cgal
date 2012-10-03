@@ -69,8 +69,8 @@ void replace_column( int old, int new);
 
 /*! 
 returns 
-a new Matrix consisting of all rows of `d` with even index, 
-(i.e. first row is row \f$ 0\f$ of `d`, second row is row \f$ 2\f$ of 
+a new matrix consisting of all rows of `d` with even index, 
+(i.e.\ first row is row \f$ 0\f$ of `d`, second row is row \f$ 2\f$ of 
 `d` etc.). \pre `number_of_rows()` \f$ > 0\f$. 
 */ 
 Matrix* extract_all_even_rows() const; 

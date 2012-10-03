@@ -363,7 +363,7 @@ halfedge, and facet is used. The implementation of
 `Polyhedron_items_3` looks a bit involved with nested 
 wrapper class templates. But ignoring this technicality, what remains
 are three local typedefs that define the `Vertex`, the
-Halfedge`, and the `Face` for the polyhedral surface.
+`Halfedge`, and the `Face` for the polyhedral surface.
 Note that we use here `Face` instead of facet. Face is the term
 used for the halfedge data structure. Only the top layer of the
 polyhedral surface gives alias names renaming face to facet.

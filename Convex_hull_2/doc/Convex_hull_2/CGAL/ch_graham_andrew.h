@@ -141,7 +141,7 @@ not left of \f$ pq\f$, where \f$ p\f$ is the value of `first` and \f$ q\f$ is
 the value of `beyond` \f$ -1\f$. The resulting sequence is placed
 starting at `result` with \f$ p\f$; point \f$ q\f$ is omitted. The
 past-the-end iterator for the sequence is returned.
-\pre The range [`first`,`beyond`) contains at least two different points. The points in [`first`,`beyond`) are ``sorted'' with respect to \f$ pq\f$, <I>i.e.</I>, the sequence of points in [`first`,`beyond`) define a counterclockwise polygon, for which the Graham-Sklansky-procedure \cite s-mcrm-72 works.
+\pre The range [`first`,`beyond`) contains at least two different points. The points in [`first`,`beyond`) are sorted with respect to \f$ pq\f$, <I>i.e.</I>, the sequence of points in [`first`,`beyond`) define a counterclockwise polygon, for which the Graham-Sklansky-procedure \cite s-mcrm-72 works.
 */
 template <class BidirectionalIterator, class OutputIterator, 
 class Traits>

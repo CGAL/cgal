@@ -106,7 +106,7 @@ public:
 
     The concept `Function` represents a function. 
 
-    \sa `FunctionKernel
+    \sa `FunctionKernel`
     \sa `FunctionKernel::ConstructFunction` 
 
     ### Example ###

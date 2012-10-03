@@ -111,10 +111,10 @@ class Polygon_2 {
     /// \note At least conceptually.  The enforcement
     /// depends on preprocessor flags. 
     ///
-    /// The iterator category is in all cases bidirectional, except
+    /// \note The iterator category is in all cases bidirectional, except
     /// for Vertex_iterator, which has the same iterator category as
-    /// Container::iterator.  **N.B.** In fact all of them should have
-    /// the same iterator category as Container::iterator. However,
+    /// `Container::iterator`. In fact all of them should have
+    /// the same iterator category as `Container::iterator`. However,
     /// due to compiler problems this is currently not possible.
     ///
     /// @{

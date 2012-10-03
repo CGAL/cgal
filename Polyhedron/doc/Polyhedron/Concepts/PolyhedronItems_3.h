@@ -101,7 +101,7 @@ public:
     typedef Hidden_type Supports_face_plane;
     /// @}
 
-    /// \name Only required when `Supports_face_plane` == `Tag_true`
+    /// \name Only required when Supports_face_plane == Tag_true
     /// @{
     Plane& plane();
     const Plane& plane() const;

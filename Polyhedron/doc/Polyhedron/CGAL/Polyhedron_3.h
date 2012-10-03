@@ -68,7 +68,7 @@ namespace CGAL {
 \code{.cpp}
 template < class PolyhedronTraits_3,
            class PolyhedronItems_3 = CGAL::Polyhedron_items_3,
-           template < class T, class I>` 
+           template < class T, class I>
            class HalfedgeDS = CGAL::HalfedgeDS_default,
            class Alloc = CGAL_ALLOCATOR(int) >
 class Polyhedron_3;
@@ -155,7 +155,7 @@ public:
     \sa `CGAL::Polyhedron_3::Facet` 
     \sa `CGAL::Polyhedron_3<Traits>`
 
-### Implementation ###
+    ### Implementation ###
 
     The member functions `prev()` and `prev_on_vertex()` work in 
     constant time if `Supports_halfedge_prev` \f$ \equiv\f$ 
@@ -992,9 +992,9 @@ public:
   /*! 
 
     a tetrahedron is added to the polyhedral surface with its 
-    vertices initialized to `p1`, `p2`, `p3`, and `p_4`. Returns that 
+    vertices initialized to `p1`, `p2`, `p3`, and `p4`. Returns that 
     halfedge of the tetrahedron which incident vertex is initialized 
-    to `p1`. The incident vertex of the next halfedge is `p2, 
+    to `p1`. The incident vertex of the next halfedge is `p2`, 
     and the vertex thereafter is `p3`. 
     The remaining fourth vertex is initialized to `p4`. 
   */ 
@@ -1252,7 +1252,7 @@ public:
 
     \image html euler_vertex.gif
 
-### Note ###
+    ### Note ###
 
     A special application of the split is 
     `split_vertex(h,h->next()->opposite())` which is equivalent to an 

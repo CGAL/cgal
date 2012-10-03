@@ -105,7 +105,7 @@ Face();
 
 /// @} 
 
-/// \name Operations available if `Supports_face_halfedge` \f$ \equiv\f$ `CGAL::Tag_true` 
+/// \name Operations available if Supports_face_halfedge == CGAL::Tag_true 
 /// @{
 
 /*! 

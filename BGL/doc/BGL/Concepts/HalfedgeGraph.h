@@ -44,15 +44,13 @@ used for both. An undirected edge must be implicitly handled, and
 there is no requirement on which of the directed edges of the
 undirected edge must be used to represent it.
 
-\code
-// The type of the geometric location of a vertex. 
-typedef Hidden_type halfedge_graph_traits<HalfedgeGraph>::Point; 
 
-// An iterator that iterates over one and only one of the directed edges 
-// in each pair of opposite directed edges. The value type of the iterator 
-// is `boost::graph_traits<HalfedgeGraph>::edge_descriptor`. 
-typedef Hidden_type halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterator; 
-\endcode
+Associated Type | Explanation
+----------------|------------- 
+halfedge_graph_traits<HalfedgeGraph>::Point; | The type of the geometric location of a vertex. 
+halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterator; | An iterator that iterates over one and only one of the directed edges in each pair of opposite directed edges. The value type of the iterator is `boost::graph_traits<HalfedgeGraph>::edge_descriptor`. 
+
+
 
 ### Valid Expressions ###
 
