@@ -488,6 +488,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Partition_2.tag</string>
           <string name="EXAMPLE_PATH">../Partition_2/examples</string>
           <string name="IMAGE_PATH">../Partition_2/doc/Partition_2/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
+          </list>
         </doxygen>
       </project>
 
