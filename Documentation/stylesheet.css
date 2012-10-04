@@ -951,7 +951,7 @@ dl
 }
 
 /* dl.note, dl.warning, dl.attention, dl.pre, dl.post, dl.invariant, dl.deprecated, dl.todo, dl.test, dl.bug */
-dl.section, dl.hasModels, dl.debugs, dl.models, dl.refines
+dl.section, dl.hasModels, dl.debugs, dl.models, dl.refines, dl.requires
 {
 	margin-left: 0px;
 	padding-left: 0px;
@@ -960,7 +960,7 @@ dl.section, dl.hasModels, dl.debugs, dl.models, dl.refines
 
 dl.section dt a, dl.hasModels dt a, dl.debugs dt a, 
 dl.models dt a, dl.refines dt a, dl.advanced dt a, 
-dl.todo dt a, dl.bug dt a, dl.test dt a
+dl.requires dt a, dl.todo dt a, dl.bug dt a, dl.test dt a
 {
     font-weight: bold;
     color: black;

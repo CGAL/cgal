@@ -247,16 +247,6 @@ and fstreams.
 The output operator is defined for all classes in the \cgal kernel and for the class `Color` as well. 
 Let `os` be an output stream. 
 
-\sa `CGAL::set_mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_binary_mode`
-\sa `CGAL::set_pretty_mode`
-\sa `CGAL::get_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_binary`
-\sa `CGAL::is_pretty`
-\sa `CGAL::operator>>`
-
 ### Example ###
 
 \code{.cpp}
@@ -286,7 +276,15 @@ return 1;
 } 
 \endcode
 
-
+\sa `CGAL::set_mode`
+\sa `CGAL::set_ascii_mode`
+\sa `CGAL::set_binary_mode`
+\sa `CGAL::set_pretty_mode`
+\sa `CGAL::get_mode`
+\sa `CGAL::is_ascii`
+\sa `CGAL::is_binary`
+\sa `CGAL::is_pretty`
+\sa `CGAL::operator>>`
 */
 ostream& operator<<(ostream& os, Class c);
 

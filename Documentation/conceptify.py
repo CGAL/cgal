@@ -109,4 +109,12 @@ for fn in relationship_pages:
     # no contents() on pyquery, do it the hard way
     dts.each(lambda i: pq(this).html(re.sub("Class ", "Concept ", pq(this).html())))
     write_out_html(d, fn)
-    
+
+#throw out nav-sync
+all_pages=glob.glob('./output/CGAL.CGAL*/html/*.html')
+for fn in all_pages:
+    d = pq(filename=fn, parser='html')
+    d('#nav-sync').remove()
+    write_out_html(d, fn)
+
+clean_doc()
