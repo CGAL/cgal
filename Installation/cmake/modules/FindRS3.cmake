@@ -17,7 +17,7 @@ if( MPFI_FOUND )
                   ENV RS3_DIR
                   PATH_SUFFIXES include
                   ENV RS_INC_DIR
-                  ENV RS_INC_DIR
+                  ENV RS_DIR
                   PATH_SUFFIXES include
             DOC "The directory containing the RS3 include files"
            )
