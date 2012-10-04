@@ -1,3 +1,11 @@
+#define CGAL_SDG_VERBOSE
+#undef CGAL_SDG_VERBOSE
+
+#ifndef CGAL_SDG_VERBOSE
+#define CGAL_SDG_DEBUG(a)
+#else
+#define CGAL_SDG_DEBUG(a) { a }
+#endif
 
 //#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 //#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
