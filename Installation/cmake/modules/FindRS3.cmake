@@ -19,6 +19,7 @@ if( MPFI_FOUND )
                   ENV RS_INC_DIR
                   ENV RS_DIR
                   PATH_SUFFIXES include
+            PATHS ${RS_INCLUDE_DIR}
             DOC "The directory containing the RS3 include files"
            )
 
@@ -30,6 +31,7 @@ if( MPFI_FOUND )
                      ENV RS_LIB_DIR
                      ENV RS_DIR
                      PATH_SUFFIXES lib
+               PATHS ${RS_LIBRARIES_DIR}
                DOC "Path to the RS3 library"
               )
 
