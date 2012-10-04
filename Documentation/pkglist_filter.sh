@@ -2,7 +2,8 @@
 
 while read -r line         
 do     
-    pkg=$(echo ${line} | sed -n '/\\package_listing{[^}]*}/ { s/\\package_listing{\([^}]*\)}/\1/; p }')
+    pkg=$(echo ${line} | sed -n -e '/\\package_listing{[^}]*}/ { s/\\package_listing{\([^}]*\)}/\1/;' -e 'p' -e '}')
+
     if [ -n "${pkg}" ]; then
         top_level=${pkg%/*}
         lower_level=${pkg##*/}
