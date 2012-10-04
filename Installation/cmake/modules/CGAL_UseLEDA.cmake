@@ -23,6 +23,8 @@ if ( LEDA_FOUND AND NOT LEDA_SETUP )
   endif()
 
   uniquely_add_flags( CMAKE_CXX_FLAGS ${LEDA_CXX_FLAGS} )
+  uniquely_add_flags( CMAKE_SHARED_LINKER_FLAGS ${LEDA_LINKER_FLAGS} )
+  uniquely_add_flags( CMAKE_MODULE_LINKER_FLAGS ${LEDA_LINKER_FLAGS} )
 
  # Setup is done
   set ( LEDA_SETUP TRUE )
