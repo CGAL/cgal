@@ -2,40 +2,40 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   set(CGAL_MACROS_FILE_INCLUDED 1 )
 
   include("${CGAL_MODULES_DIR}/CGAL_VersionUtils.cmake")
-  
+
   # Probably unused. -- Laurent Rineau, 2011/07/21
   macro(assert _arg )
     if ( NOT ${_arg} )
-      message( FATAL_ERROR "Variable ${_arg} must be defined" ) 
+      message( FATAL_ERROR "Variable ${_arg} must be defined" )
     endif()
   endmacro()
 
   macro( hide_variable var )
-    set ( ${var} ${${var}} CACHE INTERNAL "Variable hidden from user" FORCE )  
+    set ( ${var} ${${var}} CACHE INTERNAL "Variable hidden from user" FORCE )
   endmacro()
 
   macro( cache_set var )
-    set ( ${var} ${ARGN} CACHE INTERNAL "" )  
-    set ( ${var} ${ARGN} CACHE INTERNAL "" )  
+    set ( ${var} ${ARGN} CACHE INTERNAL "" )
+    set ( ${var} ${ARGN} CACHE INTERNAL "" )
   endmacro()
-  
+
   macro( typed_cache_set type doc var )
-    set ( ${var} ${ARGN} CACHE ${type} ${doc} FORCE )  
-    set ( ${var} ${ARGN} CACHE ${type} ${doc} FORCE )  
+    set ( ${var} ${ARGN} CACHE ${type} ${doc} FORCE )
+    set ( ${var} ${ARGN} CACHE ${type} ${doc} FORCE )
   endmacro()
-  
+
   macro( cache_get var )
-    set ( ${var} )  
+    set ( ${var} )
   endmacro()
 
   # Splits inlist in the first element (head) and the rest (tail)
   macro( list_split head tail )
-    set( ${head} ) 
+    set( ${head} )
     set( ${tail} )
     set( _LS_is_head TRUE )
     foreach( _LS_item ${ARGN} )
       if ( _LS_is_head )
-        set( ${head} ${_LS_item} ) 
+        set( ${head} ${_LS_item} )
         set( _LS_is_head FALSE )
       else()
         list( APPEND ${tail} ${_LS_item} )
@@ -43,7 +43,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     endforeach()
   endmacro()
 
-  # adds elements to an internal cached list  
+  # adds elements to an internal cached list
   macro( add_to_cached_list listname )
     cache_get ( ${listname} )
     set( _ATC_${listname}_tmp  ${${listname}} )
@@ -52,7 +52,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     endif()
     cache_set ( ${listname} ${_ATC_${listname}_tmp} )
   endmacro()
-  
+
   # adds elements to an in-memory variable named 'listname'
   macro( add_to_memory_list listname )
     if ( NOT "${ARGN}" STREQUAL "" )
@@ -61,7 +61,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   endmacro()
 
   # adds elements to a list.
-  # If the first argument after 'listname' is PERSISTENT then 'listname' 
+  # If the first argument after 'listname' is PERSISTENT then 'listname'
   # is a persistent internal cached variable, otherwise is a memory variable.
   macro( add_to_list listname )
     list_split( _ATL_ARGN_HEAD _ATL_ARGN_TAIL ${ARGN} )
@@ -78,19 +78,19 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     if ( ${idx} LESS ${${list}_length} )
       list( GET ${list} ${idx} ${var} )
     else()
-      set( ${var} "NOTFOUND" )    
+      set( ${var} "NOTFOUND" )
     endif()
   endmacro()
-   
+
   macro( found_in_list item_list item result )
     set( ${result} "FALSE" )
     foreach( element ${${item_list}} )
       if ( "${element}" STREQUAL "${item}" )
         set( ${result} "TRUE" )
       endif()
-    endforeach()  
+    endforeach()
   endmacro()
-     
+
   macro( uniquely_add_flags target_var )
     if ( "${ARGC}" GREATER "1"  )
       set( target_list "${${target_var}}" )
@@ -101,7 +101,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         found_in_list( target_list ${flag} ${flag}_FOUND )
         if ( NOT ${flag}_FOUND )
           typed_cache_set( STRING "User-defined flags" ${target_var} "${${target_var}} ${flag}" )
-        endif()  
+        endif()
       endforeach()
     endif()
   endmacro()
@@ -146,62 +146,62 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       message("${search_dirs}")
     endif()
   endfunction()
-  
+
   macro( get_dependency_version LIB )
-  
+
     if ( "${ARGC}" GREATER "1" )
       set( PKG ${ARGV1} )
     else()
       set( PKG ${LIB} )
     endif()
-    
+
     if ( ${PKG}_FOUND )
-    
+
       set ( ${LIB}_VERSION "unknown" )
-      
+
       try_run( ${LIB}_RUN_RES
-               ${LIB}_COMPILE_RES 
+               ${LIB}_COMPILE_RES
                "${CMAKE_BINARY_DIR}"
                "${CGAL_INSTALLATION_PACKAGE_DIR}/config/support/print_${LIB}_version.cpp"
                CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR};${${PKG}_DEPENDENCY_INCLUDE_DIR}"
                            "-DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES};${${PKG}_DEPENDENCY_LIBRARIES}"
-                           "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARY_DIR};${${PKG}_DEPENDENCY_LIBRARY_DIR}"
-               OUTPUT_VARIABLE ${LIB}_OUTPUT 
+                           "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARIES_DIR};${${PKG}_DEPENDENCY_LIBRARIES_DIR}"
+               OUTPUT_VARIABLE ${LIB}_OUTPUT
             )
-            
+
       if ( ${LIB}_COMPILE_RES )
-      
+
         if ( ${LIB}_RUN_RES EQUAL "0" )
-        
+
           string( REGEX MATCH "version=.*\$" ${LIB}_VERSION_LINE ${${LIB}_OUTPUT}  )
           string( REPLACE "\n" "" ${LIB}_VERSION_LINE2 ${${LIB}_VERSION_LINE} )
           string( REPLACE "\r" "" ${LIB}_VERSION_LINE3 ${${LIB}_VERSION_LINE2} )
           string( REPLACE "version=" "" ${LIB}_VERSION ${${LIB}_VERSION_LINE3} )
-          
+
         else()
-        
+
           message( STATUS "WARNING: ${LIB} found but print_${LIB}_version.cpp exited with error condition: ${${LIB}_RUN_RES}" )
           message( STATUS "${PKG}_INCLUDE_DIR=${${PKG}_INCLUDE_DIR}" )
           message( STATUS "${PKG}_LIBRARIES=${${PKG}_LIBRARIES}" )
-          message( STATUS "${PKG}_LIBRARY_DIR=${${PKG}_LIBRARY_DIR}" )
+          message( STATUS "${PKG}_LIBRARIES_DIR=${${PKG}_LIBRARIES_DIR}" )
           message( STATUS "${${LIB}_OUTPUT}" )
-          
+
         endif()
-        
+
       else()
-      
+
         message( STATUS "WARNING: ${LIB} found but could not compile print_${LIB}_version.cpp:")
         message( STATUS "${PKG}_INCLUDE_DIR=${${PKG}_INCLUDE_DIR}" )
         message( STATUS "${PKG}_LIBRARIES=${${PKG}_LIBRARIES}" )
-        message( STATUS "${PKG}_LIBRARY_DIR=${${PKG}_LIBRARY_DIR}" )
+        message( STATUS "${PKG}_LIBRARIES_DIR=${${PKG}_LIBRARIES_DIR}" )
         message( STATUS "${${LIB}_OUTPUT}" )
-        
-      endif() 
-      
+
+      endif()
+
       message( STATUS "USING ${LIB}_VERSION = '${${LIB}_VERSION}'" )
-  
+
     endif()
-    
+
   endmacro()
 
   macro( use_lib )
@@ -229,7 +229,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           ####message( STATUS "${lib} include:     ${${vlib}_INCLUDE_DIR}" )
           include_directories ( SYSTEM ${${vlib}_INCLUDE_DIR} )
 
-          # TODO EBEB remove definitions?       
+          # TODO EBEB remove definitions?
           ####message( STATUS "${lib} definitions: ${${vlib}_DEFINITIONS}" )
           add_definitions( ${${vlib}_DEFINITIONS} "-DCGAL_USE_${vlib}" )
 
@@ -239,9 +239,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           endif()
 
           ####message (STATUS "Configured ${lib} in standard way")
- 
+
           set( ${vlib}_SETUP TRUE )
-  
+
         endif()
 
       endif()
@@ -274,24 +274,24 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         add_to_list( CGAL_LIBRARIES ${CGAL_${component}_LIBRARY} )
       endif()
       add_to_list( CGAL_3RD_PARTY_LIBRARIES  ${CGAL_${component}_3RD_PARTY_LIBRARIES}  )
-      
+
       add_to_list( CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_${component}_3RD_PARTY_INCLUDE_DIRS}   )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${component}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${component}_3RD_PARTY_LIBRARIES_DIRS} )
 
       # Nothing to add for Core
 
-      if (${component} STREQUAL "ImageIO") 
+      if (${component} STREQUAL "ImageIO")
         find_package( OpenGL )
         find_package( ZLIB )
       endif()
 
-      if (${component} STREQUAL "Qt3") 
+      if (${component} STREQUAL "Qt3")
         find_package( OpenGL )
         find_package( Qt3-patched )
       endif()
 
-      if (${component} STREQUAL "Qt4") 
+      if (${component} STREQUAL "Qt4")
         find_package( OpenGL )
         find_package( Qt4 )
       endif()
@@ -302,25 +302,25 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       if ( ${component} STREQUAL "ALL_PRECONFIGURED_LIBS" )
 
-        if (CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT) 
+        if (CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT)
           message( STATUS "External libraries are all used")
           foreach ( CGAL_3RD_PARTY_LIB ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
-            if (${CGAL_3RD_PARTY_LIB}_FOUND) 
+            if (${CGAL_3RD_PARTY_LIB}_FOUND)
               use_lib( ${CGAL_3RD_PARTY_LIB} ${${CGAL_3RD_PARTY_LIB}_USE_FILE})
             endif()
           endforeach()
         else()
-          message( SEND_ERROR "Component ALL_PRECONFIGURED_LIBS only allow with CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT=ON") 
-        endif()  
-  
-      else() 
+          message( SEND_ERROR "Component ALL_PRECONFIGURED_LIBS only allow with CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT=ON")
+        endif()
+
+      else()
         if (NOT DEFINED CGAL_EXT_LIB_${component}_PREFIX)
           set(CGAL_EXT_LIB_${component}_PREFIX ${component})
         endif()
-  
+
         set( vlib "${CGAL_EXT_LIB_${component}_PREFIX}" )
 
-        if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND) 
+        if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND)
 
           ####message( STATUS "External library ${component} has been preconfigured")
           use_lib( ${component} ${${vlib}_USE_FILE})
@@ -330,11 +330,11 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           ####message( STATUS "External library ${component} has not been preconfigured")
           find_package( ${component} )
           ####message( STATUS "External library ${vlib} after find")
-          if (${vlib}_FOUND) 
+          if (${vlib}_FOUND)
             ####message( STATUS "External library ${vlib} about to be used")
             use_lib( ${component} ${${vlib}_USE_FILE})
           endif()
-     
+
         endif()
 
       endif()
@@ -359,7 +359,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     endif()
 
     use_component( MPFR )
-    if (GMPXX_FOUND) 
+    if (GMPXX_FOUND)
       use_component( GMPXX )
     endif()
     use_component( GMP )
@@ -395,7 +395,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
 
       set(ORIGINAL_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} PARENT_SCOPE)
-      
+
       set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH})
 
       # Export those variables to the parent scope (the scope that calls the function)
@@ -407,23 +407,23 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   endfunction()
 
   macro( create_CGALconfig_files )
-  
+
     # CGALConfig.cmake is platform specific so it is generated and stored in the binary folder.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in"  "${CMAKE_BINARY_DIR}/CGALConfig.cmake"        @ONLY)
-    
+
     # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in" "${CMAKE_BINARY_DIR}/config/CGALConfig.cmake" @ONLY)
 
     #write prefix exceptions
     file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "${SPECIAL_PREFIXES}\n")
-    file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "${SPECIAL_PREFIXES}")  
+    file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "${SPECIAL_PREFIXES}")
 
      foreach( lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES} )
 
        list( FIND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" POSITION )
        # if lib is essential or preconfiguration for an activated library ...
        if ( ("${POSITION}" STRGREATER "-1") OR ( CGAL_ENABLE_PRECONFIG AND WITH_${lib} ))
-       
+
          set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
          #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
          file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "if (NOT CGAL_IGNORE_PRECONFIGURED_${lib})\n")
@@ -433,8 +433,8 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
          file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
          file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n")
          file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "endif()\n\n")
-         
-         
+
+
          #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "if (NOT CGAL_IGNORE_PRECONFIGURED_${lib})\n")
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_FOUND           \"${${vlib}_FOUND}\")\n")
@@ -443,12 +443,12 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n")
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "endif()\n\n")
-       endif() 
+       endif()
 
      endforeach()
 
   endmacro()
-  
+
   macro ( fetch_env_var VAR )
     if ( "${${VAR}}" STREQUAL "" )
       set( ${VAR}_env_value "$ENV{${VAR}}" )
@@ -461,19 +461,19 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
 
 ## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
-  
+
   # Composes a tagged list of libraries: a list with interpersed keywords or tags
   # indicating that all following libraries, up to the next tag, are to be linked only for the
   # corresponding build type. The 'general' tag indicates libraries that corresponds to all build types.
-  # 'optimized' corresponds to release builds and 'debug' to debug builds. Tags are case sensitve and 
-  # the inital range of libraries listed before any tag is implicitely 'general' 
+  # 'optimized' corresponds to release builds and 'debug' to debug builds. Tags are case sensitve and
+  # the inital range of libraries listed before any tag is implicitely 'general'
   #
   # This macro takes 3 lists of general, optimized and debug libraries, resp, and populates the list
   # given in the fourth argument.
   #
   # The first three parameters must be strings containing a semi-colon separated list of elements.
   # All three lists must be passed, but any of them can be an empty string "".
-  # The fourth parameter, corresponding to the result, must be a variable name and it will be APPENDED 
+  # The fourth parameter, corresponding to the result, must be a variable name and it will be APPENDED
   # (retaining any previous contents)
   #
   # If there is a last parameter whose value is "PERSISTENT" then the result is an internal cached variable,
@@ -494,7 +494,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     if ( NOT "${libs_optimized}" STREQUAL "" )
       add_to_list( ${libs} ${_CTL_IN_CACHE} optimized ${libs_optimized} )
     endif()
-  
+
     if ( NOT "${libs_debug}" STREQUAL "" )
       add_to_list( ${libs} ${_CTL_IN_CACHE} debug ${libs_debug} )
     endif()
@@ -532,13 +532,13 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       else()
 
-        if (     "${_DTL_tag}" STREQUAL "general"   ) 
-                                                       set( _DTL_target ${libs_general}   )        
-        elseif ( "${_DTL_tag}" STREQUAL "optimized" ) 
-                                                       set( _DTL_target ${libs_optimized} )        
-        else()                                         
-                                                       set( _DTL_target ${libs_debug}     )        
-        endif() 
+        if (     "${_DTL_tag}" STREQUAL "general"   )
+                                                       set( _DTL_target ${libs_general}   )
+        elseif ( "${_DTL_tag}" STREQUAL "optimized" )
+                                                       set( _DTL_target ${libs_optimized} )
+        else()
+                                                       set( _DTL_target ${libs_debug}     )
+        endif()
 
         add_to_list( ${_DTL_target} ${_DTL_IN_CACHE} ${_DTL_lib} )
 
@@ -579,28 +579,28 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     list( LENGTH ${libs_general_or_optimized} _TL_libs_general_or_optimized_len )
     list( LENGTH ${libs_general_or_debug}     _TL_libs_general_or_debug_len     )
 
-    if ( _TL_libs_general_or_optimized_len EQUAL 0 ) 
+    if ( _TL_libs_general_or_optimized_len EQUAL 0 )
                                                      compose_tagged_libraries( "${${libs_general_or_debug}}"     ""                                 ""                           ${libs} ${ARGN} )
-    elseif ( _TL_libs_general_or_debug_len EQUAL 0 )   
+    elseif ( _TL_libs_general_or_debug_len EQUAL 0 )
                                                      compose_tagged_libraries( "${${libs_general_or_optimized}}" ""                                 ""                           ${libs} ${ARGN} )
-    else()                                                   
+    else()
                                                      compose_tagged_libraries( ""                                "${${libs_general_or_optimized}}" "${${libs_general_or_debug}}" ${libs} ${ARGN} )
     endif()
 
   endmacro()
 
   # add_to_tagged_libraries( libsR ${libsA} <PERSISTENT> )
-  # 
+  #
   # Appends the list of tagged libraries contained in the variable 'libA' to the list
   # of tagged libraries contained in the variable 'libR', properly redistributing each tagged subsequence.
   #
   # The first argument is the name of the variable recieving the list. It will be APPENDED
-  # (retaining any previous contents). 
+  # (retaining any previous contents).
   # The second parameter is a single string value containing the tagged
   # lists of libraries to append (as a semi-colon separated list). It can be empty, in which case noting is added.
   #
   # If there is a third parameter whose value is PERSISTENT, then 'libR' is an internal cached variable, otherwise
-  # it is an in-memory variable. 
+  # it is an in-memory variable.
   #
   # It is not possible to append more than one list in the same call.
   #
@@ -619,7 +619,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   macro( add_to_tagged_libraries libsR in_cache libsA  )
 
     if ( "${in_cache}" STREQUAL "PERSISTENT" )
-      set( _CTL_IN_CACHE "PERSISTENT" ) 
+      set( _CTL_IN_CACHE "PERSISTENT" )
     else()
       set( _CTL_IN_CACHE )
     endif()
@@ -642,7 +642,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       cache_set( ${libsR} )
     else()
       set( ${libsR} )
-    endif() 
+    endif()
 
     compose_tagged_libraries( "${_CTL_general_0}" "${_CTL_optimized_0}" "${_CTL_debug_0}" ${libsR} ${_CTL_IN_CACHE} )
 
@@ -678,15 +678,15 @@ function(process_CGAL_subdirectory entry subdir type_name)
 
   if(EXISTS ${entry}/../../dont_submit)
     file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${ENTRY_DIR_NAME}/?\$")
-    if(dont_submit_grep) 
+    if(dont_submit_grep)
       set(ADD_SUBDIR FALSE)
     endif()
     file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${subdir}/${ENTRY_DIR_NAME}/?\$")
-    if(dont_submit_grep) 
+    if(dont_submit_grep)
       set(ADD_SUBDIR FALSE)
     endif()
     file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${subdir}/?\$")
-    if(dont_submit_grep) 
+    if(dont_submit_grep)
       set(ADD_SUBDIR FALSE)
     endif()
   endif()
