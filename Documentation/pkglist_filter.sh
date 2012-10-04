@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 while read -r line         
 do     
