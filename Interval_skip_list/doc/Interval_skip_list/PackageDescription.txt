@@ -22,7 +22,7 @@ that is to test whether a point is covered by any of the intervals.
 It further allows to find all intervals that contain a point.
 
 The interval skip list is, as far as its functionality is concerned,
-related to the `CGAL::Segment_tree_d`. Both allow to do stabbing queries
+related to the `Segment_tree_d`. Both allow to do stabbing queries
 and both allow to find all intervals that contain a given point.  The
 implementation of segment trees in \cgal works in higher
 dimensions, whereas the interval skip list is limited to the 1D
