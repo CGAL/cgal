@@ -7,7 +7,6 @@
 - `LinearProgram` (for linear programs with variable bounds  \f$ l \leq  x \leq u\f$)
 - `NonnegativeQuadraticProgram` (for quadratic programs with variable bounds \f$ x \geq 0\f$ )
 - `NonnegativeLinearProgram`   (for linear programs with variable bounds \f$ x \geq 0 \f$)
-
 - `MPSFormat` (the format used for reading and writing linear and quadratic programs) 
 
 */
