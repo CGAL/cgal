@@ -1049,6 +1049,7 @@ usage of \gmp\ and of \mpfr\ will be disabled.
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}             & \textbf{Description}                                & \textbf{Type}\\\hline\hline
   \texttt{WITH\_GMP}            & Indicates whether to search and use \gmp\/\mpfr\ or not & CMake\\\hline
+  \texttt{GMP\_DIR}             & Directory of \gmp\ default installation          & Environment\\\hline
   \texttt{GMP\_INCLUDE\_DIR}    & Directory containing the \texttt{gmp.h} file        & CMake\\\hline
   \texttt{GMP\_INC\_DIR}        & Idem                                                & Environment\\\hline
   \texttt{GMP\_LIBRARIES\_DIR}  & Directory containing the compiled \gmp\ library       & CMake\\\hline
@@ -1069,6 +1070,7 @@ Under Linux, the \gmpxx\ is also searched for, and you may specify the following
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}             & \textbf{Description}                           & \textbf{Type}\\\hline\hline
+  \texttt{GMPXX\_DIR}           & Directory of \gmpxx\ default installation & Environment\\\hline
   \texttt{GMPXX\_INCLUDE\_DIR}  & Directory containing the \texttt{gmpxx.h} file & CMake\\\hline
   \texttt{GMPXX\_LIBRARIES}     & Full pathname of the compiled \gmpxx\ library    & CMake\\\hline
 \end{tabular}
@@ -1135,7 +1137,7 @@ be sufficient to just indicate the library directory via the \texttt{LEDA\_LIBRA
 If that doesn't work because, for example, the names are different, you can provide the full pathnames of each variant
 via \texttt{LEDA\_LIBRARY\_RELEASE} and \texttt{LEDA\_LIBRARY\_DEBUG}.
 
-The variables specifying definitions and flags can be left undefined if they are not needed by LEDA.
+The variables specifying definitions and flags can be left undefined if they are not needed by \leda.
 
 {\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
@@ -1143,6 +1145,7 @@ The variables specifying definitions and flags can be left undefined if they are
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}               & \textbf{Description}                                       & \textbf{Type}\\\hline\hline
   \texttt{WITH\_LEDA}             & Indicates whether to search and use \leda\ or not            & CMake\\\hline
+  \texttt{LEDA\_DIR}              & Directory of \leda\ default installation          & Environment\\\hline
   \texttt{LEDA\_INCLUDE\_DIR}     & Directory containing the file \texttt{LEDA/system/basic.h} & CMake\\\hline
   \texttt{LEDA\_LIBRARIES}        & Directory containing the compiled \leda\ libraries           & CMake\\\hline
   \texttt{LEDA\_INC\_DIR}         & Directory containing the file \texttt{LEDA/system/basic.h} & Environment\\\hline
@@ -1170,6 +1173,7 @@ and library files must be specified by using environment variables.
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}             & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
+  \texttt{MPFI\_DIR}            & Directory of \mpfi\ default installation          & Environment\\\hline
   \texttt{MPFI\_INCLUDE\_DIR}   & Directory containing the \texttt{mpfi.h} file         & CMake\\\hline
   \texttt{MPFI\_INC\_DIR}       & Idem                                                  & Environment\\\hline
   \texttt{MPFI\_LIBRARIES\_DIR} & Directory containing the compiled \mpfi\ library        & CMake\\\hline
@@ -1197,6 +1201,7 @@ related to the latter library may also need to be defined.
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}             & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
+  \texttt{RS\_DIR}              & Directory of \rs\ default installation          & Environment\\\hline
   \texttt{RS\_INCLUDE\_DIR}     & Directory containing the \texttt{rs\_exports.h} file  & CMake\\\hline
   \texttt{RS\_INC\_DIR}         & Idem                                                  & Environment\\\hline
   \texttt{RS\_LIBRARIES\_DIR}   & Directory containing the compiled \rs\ library          & CMake\\\hline
@@ -1212,6 +1217,7 @@ Similar variables exist for \rs3.
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}             & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
+  \texttt{RS3\_DIR}              & Directory of \rs3 default installation          & Environment\\\hline
   \texttt{RS3\_INCLUDE\_DIR}     & Directory containing the \texttt{rs\_exports.h} file  & CMake\\\hline
   \texttt{RS3\_INC\_DIR}         & Idem                                                  & Environment\\\hline
   \texttt{RS3\_LIBRARIES\_DIR}   & Directory containing the compiled \rs\ library          & CMake\\\hline
@@ -1238,6 +1244,7 @@ headers and library files must be specified using environment variables.
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}             & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
+  \texttt{NTL\_DIR}              & Directory of \ntl\ default installation          & Environment\\\hline
   \texttt{NTL\_INCLUDE\_DIR}     & Directory containing the \texttt{NTL/ZZX.h} file  & CMake\\\hline
   \texttt{NTL\_INC\_DIR}         & Idem                                                  & Environment\\\hline
   \texttt{NTL\_LIBRARIES\_DIR}   & Directory containing the compiled \ntl\ library          & CMake\\\hline
@@ -1257,6 +1264,7 @@ Only the  {\em directory} containing the header files of \eigen\ 3.1 (or greater
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}              & \textbf{Description}                            & \textbf{Type}\\\hline\hline
+  \texttt{EIGEN3\_DIR}             & Directory of \eigen\ default installation          & Environment\\\hline
   \texttt{EIGEN3\_INCLUDE\_DIR}  & Directory containing the file \texttt{signature\_of\_eigen3\_matrix\_library} & CMake\\\hline
   \texttt{EIGEN3\_INC\_DIR}      & Idem                                            & Environment\\\hline
 \end{tabular}
@@ -1340,7 +1348,7 @@ the header files and the full pathnames of the release and debug libraries
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}                    & \textbf{Description}                                         & \textbf{Type}\\\hline\hline
-  \texttt{QGLVIEWERROOT}               & Root directory of the QGLViewer library                       & Environment\\\hline
+ \texttt{QGLVIEWERROOT}               & Root directory of the QGLViewer library                       & Environment\\\hline
   \texttt{QGLVIEWER\_INCLUDE\_DIR}     & Directory containing the \texttt{QGLViewer/qglviewer.h} file & CMake\\\hline
   \texttt{QGLVIEWER\_LIBRARY\_RELEASE} & Full pathname to a release build of the QGLViewer library    & CMake\\\hline
   \texttt{QGLVIEWER\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the QGLViewer library      & CMake\\\hline
@@ -1360,6 +1368,7 @@ environment variable is sufficient.
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}                    & \textbf{Description}                                         & \textbf{Type}\\\hline\hline
+  \texttt{ESBTL\_DIR}             & Directory of \esbtl\ default installation          & Environment\\\hline
   \texttt{ESBTL\_INC\_DIR}     & Directory containing the \texttt{ESBTL/default.h} file & Environment\\\hline
   \texttt{ESBTL\_INCLUDE\_DIR}     & Directory containing the \texttt{ESBTL/default.h} file & CMake\\\hline
 \end{tabular}
