@@ -4,7 +4,6 @@
 /// \ingroup PkgMesh2
 /*!
 \addtogroup PkgMesh2
-\todo check generated documentation
 \PkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2Summary}
 \PkgPicture{Mesh_2/fig/delaunaymesh-small.png}
 \PkgAuthor{Laurent Rineau}
