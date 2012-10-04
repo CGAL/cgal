@@ -13,7 +13,7 @@ requirements depending on the triangulation class.
 
 At the base level, 
 (see Sections \ref Section_2D_Triangulations_Software_Design
-and \ref 2D_TDS_default ), 
+and \ref TDS_2D_default ), 
 a face stores handles 
 on its three vertices and on the three neighboring faces. 
 The vertices and neighbors are indexed 0,1 and 2. 
