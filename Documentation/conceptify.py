@@ -95,4 +95,18 @@ filesjs_files=glob.glob('./output/CGAL.CGAL.*/html/files.js')
 for fn in filesjs_files:
     re_replace_in_file('^.*\[ "Concepts",.*$', '', fn)
     
-clean_doc()
+# external is placed by doxygen to mark a class from a tagfile, this
+# is more confusing then helpful in our case
+re_replace_in_file('\[external\]', '', './output/CGAL.CGAL/html/annotated.html')
+
+# fix class/concept mismatch in generated pages
+relationship_pages=glob.glob('./output/CGAL.CGAL.*/html/hasModels.html')
+relationship_pages.extend(glob.glob('./output/CGAL.CGAL.*/html/generalizes.html'))
+relationship_pages.extend(glob.glob('./output/CGAL.CGAL.*/html/refines.html'))
+for fn in relationship_pages:
+    d = pq(filename=fn, parser='html')
+    dts=d(".textblock .reflist dt")
+    # no contents() on pyquery, do it the hard way
+    dts.each(lambda i: pq(this).html(re.sub("Class ", "Concept ", pq(this).html())))
+    write_out_html(d, fn)
+    

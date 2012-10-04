@@ -951,15 +951,15 @@ dl
 }
 
 /* dl.note, dl.warning, dl.attention, dl.pre, dl.post, dl.invariant, dl.deprecated, dl.todo, dl.test, dl.bug */
-dl.section, dl.asModelss, dl.debugs, dl.modelss, dl.refiness
+dl.section, dl.hasModels, dl.debugs, dl.models, dl.refines
 {
 	margin-left: 0px;
 	padding-left: 0px;
 }
 
 
-dl.section dt a, dl.asModelss dt a, dl.debugs dt a, 
-dl.modelss dt a, dl.refiness dt a, dl.advanceds dt a, 
+dl.section dt a, dl.hasModels dt a, dl.debugs dt a, 
+dl.models dt a, dl.refines dt a, dl.advanced dt a, 
 dl.todo dt a, dl.bug dt a, dl.test dt a
 {
     font-weight: bold;

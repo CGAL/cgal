@@ -210,8 +210,8 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
 ALIASES += "cgalconcept=\details <div id=\"CGALConcept\"></div> \brief"
 
 ALIASES += "refines=\xrefitem refines \"Refines\" \"Refinement Relationships\""
-ALIASES += "requires=\xrefitem requires \"Requires\" \"Requirements\""
-ALIASES += "models=\xrefitem models \"Is Model Of\" \"Model Relationships\""
+ALIASES += "requires=\xrefitem requires \"Requires\" \"Type Requirements\""
+ALIASES += "models=\xrefitem models \"Is Model Of\" \"Is Model Relationships\""
 ALIASES += "generalizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\""
 ALIASES += "hasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\""
 ALIASES += "debug=\par \"Debug\""

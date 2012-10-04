@@ -30,7 +30,7 @@ namespace for the XML file to be processed properly.  -->
         </list>
         <string name="LAYOUT_FILE">DoxygenLayoutPackage.xml</string>
         <list name="ALIASES" append="true">
-          <item>PkgDescriptionBegin{2}=</item>
+          <item>PkgDescriptionBegin{2}=\details </item>
           <item>PkgManuals{2}=</item>
         </list>
         <string name="HTML_HEADER">header_package.html</string>
@@ -451,6 +451,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_INC_PATH">../Convex_hull_d/doc/Convex_hull_d/</string>
           <string name="GENERATE_TAGFILE">./tags/Convex_hull_d.tag</string>
           <string name="IMAGE_PATH">../Convex_hull_d/doc/Convex_hull_d/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Kernel_d.tag=../../CGAL.CGAL.dD-Geometry-Kernel/html</item>
+          </list>
         </doxygen>
       </project>
 
