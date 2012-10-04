@@ -882,7 +882,7 @@ also be found in \cite cgal:dp-eegpd-03.
 <B>%Handle</B> 
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-#points 
+Number of points 
 <TD ALIGN=RIGHT NOWRAP>
 <B>100000</B> 
 <TD ALIGN=RIGHT NOWRAP>
