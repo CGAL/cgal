@@ -51,7 +51,7 @@ Level_interval(FaceHandle fh);
 /// @{
 
 /*! 
-returns the face handle. 
+Returns the face handle. 
 */ 
 FaceHandle face_handle(); 
 

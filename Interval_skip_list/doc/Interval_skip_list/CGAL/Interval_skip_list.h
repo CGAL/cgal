@@ -72,12 +72,12 @@ InputIterator first,
 InputIterator last); 
 
 /*! 
-inserts interval `i` in the interval skip list. 
+Inserts interval `i` in the interval skip list. 
 */ 
 void insert(const Interval& i); 
 
 /*! 
-removes interval `i` from the interval skip list. Returns `true` iff removal was successful. 
+Removes interval `i` from the interval skip list. Returns `true` iff removal was successful. 
 */ 
 bool remove(const Interval& i); 
 

@@ -23,7 +23,7 @@ public:
 /// @{
 
 /*! 
-default constructor. 
+Default constructor. 
 */ 
 Interval(); 
 
@@ -43,22 +43,22 @@ typedef Hidden_type Value;
 /// @{
 
 /*! 
-returns the lower bound. 
+Returns the lower bound. 
 */ 
 Value inf() const; 
 
 /*! 
-returns the upper bound. 
+Returns the upper bound. 
 */ 
 Value sup() const; 
 
 /*! 
-returns `true`, iff the interval contains `v`. 
+Returns `true`, iff the interval contains `v`. 
 */ 
 bool contains(const Value& v) const; 
 
 /*! 
-returns `true`, iff `in` contains `(i,s)`. 
+Returns `true`, iff the interval contains `(i,s)`. 
 */ 
 bool contains_interval(const Value& i, const Value& s) const; 
 

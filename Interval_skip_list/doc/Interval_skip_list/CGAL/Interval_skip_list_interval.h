@@ -42,12 +42,12 @@ bool uc = true);
 /// @{
 
 /*! 
-returns `true`, iff the interval is closed at the lower bound. 
+Returns `true`, iff the interval is closed at the lower bound. 
 */ 
 bool inf_closed() const; 
 
 /*! 
-returns `true`, iff the interval is closed at the upper bound. 
+Returns `true`, iff the interval is closed at the upper bound. 
 */ 
 bool sup_closed() const; 
 
