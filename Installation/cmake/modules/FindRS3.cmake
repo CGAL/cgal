@@ -13,17 +13,23 @@ if( MPFI_FOUND )
 
   find_path(RS3_INCLUDE_DIR
             NAMES rs3_fncts.h
-            HINTS
-            $ENV{RS_INC_DIR}
-# TODO uses the same environment variable
+            HINTS ENV RS3_INC_DIR
+                  ENV RS3_DIR
+                  PATH_SUFFIXES include
+                  ENV RS_INC_DIR
+                  ENV RS_INC_DIR
+                  PATH_SUFFIXES include
             DOC "The directory containing the RS3 include files"
            )
 
   find_library(RS3_LIBRARIES
                NAMES rs3
-               HINTS
-               $ENV{RS_LIB_DIR}
-# TODO uses the same environment variable
+               HINTS ENV RS3_LIB_DIR
+                     ENV RS3_DIR
+                     PATH_SUFFIXES lib
+                     ENV RS_LIB_DIR
+                     ENV RS_DIR
+                     PATH_SUFFIXES lib
                DOC "Path to the RS3 library"
               )
 
