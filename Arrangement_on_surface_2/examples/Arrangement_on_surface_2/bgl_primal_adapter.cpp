@@ -123,7 +123,8 @@ int main()
   
   // Perform Dijkstra's algorithm from the vertex v0.
   Edge_length_func                                      edge_length;
-  CGAL::Arr_vertex_property_map<Arrangement_2, double>  dist_map(index_map);
+  
+  boost::vector_property_map<double, boost::Arr_vertex_index_map_boost<Arrangement_2> > dist_map(arr.number_of_vertices(), index_map);
   boost::dijkstra_shortest_paths(arr, v0,
                                  boost::vertex_index_map(index_map).
                                  weight_map(edge_length).

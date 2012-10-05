@@ -25,7 +25,7 @@ faces.
 %-------------------------------------------------
 
 Arrangement instances are adapted to \boost\ graphs by specializing the
-\ccc{boost:graph_traits} template for \ccc{Arrangement_2} instances. The
+\ccc{boost::graph_traits} template for \ccc{Arrangement_2} instances. The
 graph-traits states the graph concepts that the arrangement class models
 (see below) and defines the types required by these concepts.
 
@@ -67,10 +67,12 @@ For example, when we compute the shortest paths from a given source vertex
 $s$ to all other vertices we can obtain a map of distances and a map of
 predecessors --- namely for each $v$ vertex we have its distance from $s$
 and a descriptor of the vertex that precedes $v$ in the shortest path from $s$.
-If the vertex descriptors are simply indices, one can use vectors to
-efficiently represent the property maps. As this is not the case with the
-arrangement graph, we offer the \ccc{Arr_vertex_property_map<Arrangement,Type>}
-template allows for an efficient mapping of \ccc{Vertex_handle} objects to
+If the vertex descriptors are simply indices, boost supplies tools to
+easily represent property maps using vectors.
+\ccc{Arr_vertex_index_map<Arrangement>} class allows create such
+indices, and together with \ccc{boost::vector_property_map<Type,
+  IndexMap>} allows for
+an efficient mapping of \ccc{Vertex_handle} objects to
 properties of type \ccc{Type}. Note however that unlike the
 \ccc{Arr_vertex_index_map} class, the vertex property-map class is not
 kept synchronized with the number of vertices in the arrangement, so it
@@ -100,8 +102,9 @@ as shown in Figure~\ref{arr_fig:ex_bgl},
 then use Dijkstra's shortest-paths algorithm from the \bgl\ to compute
 the graph distance of all vertices from the leftmost vertex in the
 arrangement $v_0$. Note the usage of the \ccc{Arr_vertex_index_map} and
-the \ccc{Arr_vertex_property_map} classes. The latter one, instantiated by
-the type \ccc{double} is used to map vertices to their distances from $v_0$.
+the \ccc{boost::vector_property_map<Type, IndexMap>} classes. The
+latter one, instantiated by the type \ccc{double} is used to map
+vertices to their distances from $v_0$.
 
 \ccIncludeExampleCode{Arrangement_on_surface_2/bgl_primal_adapter.cpp}
 
@@ -112,7 +115,7 @@ It is possible to give a dual graph representation for an arrangement instance,
 such that each arrangement face corresponds to a graph vertex and two vertices
 are adjacent iff the corresponding faces share a common edge on their
 boundaries. This is done by specializing the
-\ccc{boost:graph_traits} template for \ccc{Dual<Arrangement_2>} instances,
+\ccc{boost::graph_traits} template for \ccc{Dual<Arrangement_2>} instances,
 where \ccc{Dual<Arrangement_2>} is a template specialization that gives a
 dual interpretation to an arrangement instance.
 
@@ -129,16 +132,16 @@ arrangement graph is also a model of the concepts \ccc{VertexListGraph},
 
 Since we use \ccc{Face_handle} objects as the vertex descriptors, we define
 the \ccc{Arr_face_index_map<Arrangement>} class-template, which maintains an
-efficient mapping of face handles to indices. We also provide the template
-\ccc{Arr_face_property_map<Arrangement,Type>} for associating arbitrary
-data with the arrangement faces.
+efficient mapping of face handles to indices.
+Like vertices, \ccc{boost::vector_property_map<Type, IndexMap>} can be
+used for associating arbitrary data with the arrangement faces.
 
 In the following example we construct the same arrangement as in
 example \ccc{bgl_primal_adapter.cpp} (see Figure~\ref{arr_fig:ex_bgl}),
 and perform breadth-first search on the graph faces, starting from the
 unbounded face. We extend the \dcel\ faces
-with an unsigned integer, marking the discover time of the face and use a
-breadth-first-search visitor to obtain these times and update the faces
-accordingly:
+with an unsigned integer, marking the discover time of the face
+using \boost\ visitors and a property-map class that directly accesses
+the extended data of the faces:
 
 \ccIncludeExampleCode{Arrangement_on_surface_2/bgl_dual_adapter.cpp}
