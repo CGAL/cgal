@@ -743,6 +743,10 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Geomview.tag</string>
           <string name="EXAMPLE_PATH">../Geomview/demo</string>
           <string name="IMAGE_PATH">../Geomview/doc/Geomview/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+          </list>
         </doxygen>
       </project>
 
