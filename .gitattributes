@@ -1637,7 +1637,7 @@ Generator/doc_tex/Generator_ref/Combination_enumerator.tex -text
 Generator/examples/Generator/combination_enumerator.cpp -text
 Generator/examples/Generator/name_pairs.cpp -text
 Generator/include/CGAL/Combination_enumerator.h -text
-Generator/test/Generator/combination_enumerator.cpp -text
+Generator/test/Generator/test_combination_enumerator.cpp -text
 Geomview/demo/Geomview/CMakeLists.txt -text
 Geomview/doc_tex/Geomview/geomview.gif -text
 GraphicsView/GraphicsView.odp -text

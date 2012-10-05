@@ -179,9 +179,11 @@ Generator/examples/Generator/random_segments1
 Generator/examples/Generator/random_segments2
 Generator/examples/Generator/sphere_d
 Generator/test/Generator/CMakeLists.txt
+Generator/test/Generator/bug
 Generator/test/Generator/cgal_test_with_cmake
 Generator/test/Generator/random_poly_test
 Generator/test/Generator/rcs_test
+Generator/test/Generator/test_combination_enumerator
 Generator/test/Generator/test_generators
 GraphicsView/TAGS
 GraphicsView/demo/Circular_kernel_2/*.exe
