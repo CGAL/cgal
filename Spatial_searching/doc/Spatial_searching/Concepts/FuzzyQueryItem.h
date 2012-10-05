@@ -2,7 +2,7 @@
 \ingroup PkgSpatialSearchingDConcepts
 \cgalconcept
 
-The concept `FuzzyQueryItem` describes the requirements for fuzzy \f$ d\f$-dimensional spatial objects. 
+The concept `FuzzyQueryItem` describes the requirements for fuzzy `d`-dimensional spatial objects. 
 
 \hasModel `CGAL::Fuzzy_sphere<Traits>`
 \hasModel `CGAL::Fuzzy_iso_box<Traits>` 
@@ -16,7 +16,7 @@ public:
 /// @{
 
 /*! 
-represents a \f$ d\f$-dimensional point. 
+represents a `d`-dimensional point. 
 */ 
 typedef Hidden_type Point_d; 
 
@@ -31,18 +31,18 @@ typedef Hidden_type FT;
 /// @{
 
 /*! 
-test whether \f$ q\f$ contains \f$ p\f$. 
+Test whether the query item contains `p`. 
 */ 
 bool contains(Point_d p) const; 
 
 /*! 
-test whether the inner approximation of the spatial object intersects a rectangle 
+Test whether the inner approximation of the spatial object intersects a rectangle 
 associated with a node of a tree. 
 */ 
 bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle) const; 
 
 /*! 
-test whether the outer approximation of the spatial object encloses the rectangle 
+Test whether the outer approximation of the spatial object encloses the rectangle 
 associated with a node of a tree. 
 */ 
 bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle) const; 

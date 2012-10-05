@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup AdvancedClasses
 
-The class `Kd_tree_node` implements a node class for a \f$ k\f$-\f$ d\f$ tree. 
+The class `Kd_tree_node` implements a node class for a `k-d` tree. 
 
 \advanced A node is either a leaf node, an internal node or an
 extended internal node.  A leaf node contains one or more points. An

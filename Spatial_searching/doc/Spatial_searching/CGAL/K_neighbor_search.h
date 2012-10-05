@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup SearchClasses
 
-The class `K_neighbor_search` implements approximate \f$ k\f$-nearest and \f$ k\f$-furthest neighbor searching 
+The class `K_neighbor_search` implements approximate `k`-nearest and `k`-furthest neighbor searching 
 using standard search on a tree using a general distance class. The tree may be built with 
 extended or unextended nodes. 
 
@@ -74,10 +74,10 @@ typedef SpatialTree Tree;
 /// @{
 
 /*! 
-Constructor for searching approximately \f$ k\f$ neighbors of the query item `q` 
+Constructor for searching approximately `k` neighbors of the query item `q` 
 in the points stored in `tree` using 
-distance class \f$ d\f$ and approximation factor `eps`. `sorted` indicates 
-if the computed sequence of \f$ k\f$-nearest neighbors needs to be sorted. 
+distance class `d` and approximation factor `eps`. `sorted` indicates 
+if the computed sequence of `k`-nearest neighbors needs to be sorted. 
 */ 
 K_neighbor_search(const Tree& tree, Query_item q, unsigned int k=1, FT eps=FT(0.0), 
 bool search_nearest=true, GeneralDistance d=GeneralDistance(),bool sorted=true); 

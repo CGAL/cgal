@@ -6,9 +6,9 @@ namespace CGAL {
 The class `Manhattan_distance_iso_box_point` provides an implementation of 
 the `GeneralDistance` concept 
 for the Manhattan distance (\f$ l_1\f$ metric) 
-between a \f$ d\f$-dimensional iso-box and a \f$ d\f$-dimensional point 
-and the Manhattan distance between a \f$ d\f$-dimensional iso-box 
-and a \f$ d\f$-dimensional iso-box defined as a \f$ k\f$-\f$d\f$ tree rectangle. 
+between a `d`-dimensional iso-box and a `d`-dimensional point 
+and the Manhattan distance between a `d`-dimensional iso-box 
+and a `d`-dimensional iso-box defined as a `k-d` tree rectangle. 
 
 ### Parameters ###
 
@@ -64,13 +64,13 @@ distance between `b` and `p`.
 FT transformed_distance(Query_item b, Point_d p) const; 
 
 /*! 
-Returns the transformed value of of \f$ d\f$. 
+Returns the transformed value of of `d`. 
 */ 
 FT transformed_distance(FT d) const; 
 
 /*! 
 Returns the value of the inverse 
-of the transform function applied to \f$ d\f$. 
+of the transform function applied to `d`. 
 */ 
 FT inverse_of_transformed_distance(FT d) const; 
 

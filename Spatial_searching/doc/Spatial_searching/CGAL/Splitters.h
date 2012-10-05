@@ -17,10 +17,10 @@ the ratio of the resulting rectangles.
 ### Parameters ###
 
 Expects for the first template argument a model of 
-the concept `SearchTraits`, 
+the concept `::SearchTraits`, 
 for example `Cartesian_d<double>`. 
 
-Expects for the second template argument a model of the concept `Separator`. 
+Expects for the second template argument a model of the concept `SpatialSeparator`. 
 It has as default value the type, `CGAL::Plane_separator<Traits::FT>`. 
 
 \models ::Splitter 
@@ -78,7 +78,7 @@ Expects for the first template argument a model of
 the concept `SearchTraits`, for example 
 the type `CGAL::Search_traits_3< Cartesian<double> >`. 
 
-Expects for the second template argument a model of the concept `Separator`. It has as default value 
+Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>`. 
 
 \models ::Splitter 
@@ -125,7 +125,7 @@ Expects for the first template argument a model of
 the concept `SearchTraits`, for example 
 the type `CGAL::Search_traits_3< Cartesian<double> >`. 
 
-Expects for the second template argument a model of the concept `Separator`. It has as default value 
+Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>`. 
 
 \models ::Splitter 
@@ -162,8 +162,8 @@ namespace CGAL {
 \ingroup SplitterClasses
 
 Implements the <I>midpoint of max spread</I> splitting rule. 
-A rectangle is cut through \f$ (Mind+Maxd)/2\f$ orthogonal 
-to the dimension with the maximum point spread \f$ [Mind,Maxd]\f$. 
+A rectangle is cut through \f$ (\mathrm{Mind}+\mathrm{Maxd})/2\f$ orthogonal 
+to the dimension with the maximum point spread \f$ [\mathrm{Mind},\matrm{Maxd}]\f$. 
 
 ### Parameters ###
 
@@ -171,7 +171,7 @@ Expects for the first template argument a model of
 the concept `SearchTraits`, for example 
 the type `CGAL::Search_traits_3< Cartesian<double> >`. 
 
-Expects for the second template argument a model of the concept `Separator`. It has as default value 
+Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>` 
 
 \models ::Splitter 
@@ -216,7 +216,7 @@ Expects for the first template argument a model of
 the concept `SearchTraits`, for example 
 the type `CGAL::Search_traits_3< Cartesian<double> >`. 
 
-Expects for the second template argument a model of the concept `Separator`. It has as default value 
+Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>` 
 
 \models ::Splitter 
@@ -279,7 +279,7 @@ Expects for the first template argument a model of
 the concept `SearchTraits`, 
 for example `CGAL::Cartesian_d<double>`. 
 
-Expects for the second template argument a model of the concept `Separator`. It has as default value 
+Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>` 
 
 \models ::Splitter 
@@ -351,7 +351,7 @@ the midpoint of rectangle rule, to the nearest data point.
 Expects for the first template argument a model of the concept 
 `SearchTraits`, for example `CGAL::Cartesian_d<double>`. 
 
-Expects for the second template argument a model of the concept `Separator`. It has as default value 
+Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>`. 
 
 \models ::Splitter 

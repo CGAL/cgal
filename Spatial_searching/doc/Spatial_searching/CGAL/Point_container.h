@@ -13,7 +13,7 @@ implementation of splitting rules.
 ### Parameters ###
 
 Expects for the template argument an implementation for 
-\f$ d\f$-dimensional points of the concept `SearchTraits`, for example 
+`d`-dimensional points of the concept `SearchTraits`, for example 
 `CGAL::Cartesian_d<double>`. 
 
 \sa `SearchTraits` 
@@ -61,7 +61,7 @@ Point_container(int d);
 
 /*! 
 
-Construct the container of \f$ d\f$-dimensional points of type `Point_d` 
+Construct the container of `d`-dimensional points of type `Point_d` 
 given by the iterator sequence `[begin, end)`. 
 */ 
 template <class InputIterator> 

@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup RangeQueryItemClasses
 
-The class `Fuzzy_sphere` implements fuzzy \f$ d\f$-dimensional spheres. 
+The class `Fuzzy_sphere` implements fuzzy `d`-dimensional spheres. 
 A fuzzy sphere with radius \f$ r\f$ and fuzziness value \f$ \epsilon\f$ has 
 as outer approximation a sphere with radius \f$ r+\epsilon\f$ and 
 as inner approximation a sphere with radius \f$ r-\epsilon\f$. 

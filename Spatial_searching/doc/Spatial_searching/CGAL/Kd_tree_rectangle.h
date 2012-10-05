@@ -25,7 +25,7 @@ typedef FT FT;
 /// @{
 
 /*! 
-Constructs a \f$ d\f$-dimensional rectangle `r` with lower bound and upper bound set to zero 
+Constructs a `d`-dimensional rectangle `r` with lower bound and upper bound set to zero 
 in each dimension. 
 */ 
 Kd_tree_rectangle(int d); 

@@ -3,10 +3,10 @@ namespace CGAL {
 /*!
 \ingroup RangeQueryItemClasses 
 
-The class `Fuzzy_iso_box` implements fuzzy \f$ d\f$-dimensional iso boxes. A 
+The class `Fuzzy_iso_box` implements fuzzy  `d`-dimensional iso boxes. A 
 fuzzy iso box with fuzziness value \f$ \epsilon\f$ has as outer 
 approximation a box dilated, and as inner approximation a box eroded 
-by a \f$ d\f$-dim square with side length \f$ \epsilon\f$. 
+by a `d`-dim square with side length \f$ \epsilon\f$. 
 
 ### Parameters ###
 

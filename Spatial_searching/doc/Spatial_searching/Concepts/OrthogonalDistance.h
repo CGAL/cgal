@@ -40,7 +40,7 @@ typedef Hidden_type Query_item;
 /// @{
 
 /*! 
-Constructor implementing distance for \f$ d\f$-dimensional points. 
+Constructor implementing distance for `d`-dimensional points. 
 */ 
 OrthogonalDistance(int d); 
 
@@ -77,8 +77,7 @@ Returns the inverse of the transformed distance.
 FT inverse_of_transformed_distance(FT d) const; 
 
 /*! 
-Updates 
-`dist` incrementally and returns the updated distance. 
+Updates `dist` incrementally and returns the updated distance. 
 */ 
 FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension) const; 
 

@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup SearchClasses
 
-The class `Orthogonal_k_neighbor_search` implements approximate \f$ k\f$-nearest and 
-\f$ k\f$-furthest neighbor searching on a tree 
+The class `Orthogonal_k_neighbor_search` implements approximate`k`-nearest and 
+`k`-furthest neighbor searching on a tree 
 using an orthogonal distance class. 
 
 ### Parameters ###
@@ -81,10 +81,10 @@ typedef SpatialTree Tree;
 /// @{
 
 /*! 
-Constructor for searching approximately \f$ k\f$ neighbors of the query item `query` 
+Constructor for searching approximately `k` neighbors of the query item `query` 
 in the points stored in `tree` using 
-distance `d` and approximation factor `eps`.`sorted` indicates 
-if the computed sequence of \f$ k\f$w-nearest neighbors needs to be sorted. 
+distance `d` and approximation factor `eps`. `sorted` indicates 
+if the computed sequence of `k`-nearest neighbors needs to be sorted. 
 */ 
 Orthogonal_k_neighbor_search(SpatialTree tree, Query_item query, unsigned int k=1, FT eps=FT(0.0), 
 bool search_nearest=true, 

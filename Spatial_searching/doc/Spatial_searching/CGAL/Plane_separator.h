@@ -4,10 +4,11 @@ namespace CGAL {
 \ingroup AdvancedClasses
 
 The class `Plane_separator` implements a plane separator, i.e., a
-hyperplane that is used to separate two half spaces. \advanced This
-hyperplane is defined by a cutting dimension \f$ d\f$ and a cutting
-value \f$ v\f$ as \f$ x_d=v\f$, where \f$ v\f$ denotes the \f$
-d^{th}\f$ coordinate value.
+hyperplane that is used to separate two half spaces. 
+
+\advanced This
+hyperplane is defined by a cutting dimension `d` and a cutting
+value `v` as `xd=v`, where `v` denotes the `d`th coordinate value.
 
 \models ::SpatialSeparator 
 
@@ -21,7 +22,7 @@ public:
 
 /*! 
 Constructs a separator that separates two half spaces by a hyperplane 
-defined by \f$ x_d=v\f$, where \f$ v\f$ denotes the \f$ d^{th}\f$ coordinate value. 
+defined by `xd=v`, where `v` denotes the `d`th coordinate value. 
 */ 
 Plane_separator(int d, FT v); 
 

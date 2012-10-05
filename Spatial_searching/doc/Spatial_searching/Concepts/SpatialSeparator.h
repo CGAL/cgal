@@ -5,8 +5,8 @@
 The concept `SpatialSeparator` defines the requirements for
 a separator.
 
-\advanced A separator is a (\f$ d\f$-1)-dimensional subspace that
-separates a \f$ d\f$-dimensional space into two parts.  One part of
+\advanced A separator is a `d-1`-dimensional subspace that
+separates a `d`-dimensional space into two parts.  One part of
 space is said to be on the negative side of the separator and the
 other part of space is said to be on the positive side of the
 separator.

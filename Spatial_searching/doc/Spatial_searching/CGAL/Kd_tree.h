@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup SearchClasses
 
-The class `Kd_tree` defines a \f$ k\f$-\f$ d\f$ tree. 
+The class `Kd_tree` defines a `k-d` tree. 
 
 ### Parameters ###
 
@@ -67,7 +67,7 @@ typedef Hidden_type Node_const_handle;
 typedef Hidden_type Point_d_iterator; 
 
 /*! 
-  \advanced A type that counts the number of elements in a \f$ k\f$-\f$ d\f$ tree. 
+  \advanced A type that counts the number of elements in a `k-d` tree. 
 */ 
 typedef Hidden_type size_type; 
 
@@ -77,13 +77,13 @@ typedef Hidden_type size_type;
 /// @{
 
 /*! 
-Constructs an empty \f$ k\f$-\f$ d\f$ tree. 
+Constructs an empty `k-d` tree. 
 */ 
 Kd_tree(Splitter s=Splitter(),Traits t=Traits()); 
 
 /*! 
 
-Constructs a \f$ k\f$-\f$ d\f$ tree on the elements from the sequence 
+Constructs a `k-d` tree on the elements from the sequence 
 `[first, beyond)` using the splitting rule implemented by `s`. 
 The value type of the `InputIterator` must be `Point_d`. 
 
@@ -96,12 +96,12 @@ template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond
 /// @{
 
 /*! 
-Inserts the point `p` in the \f$ k\f$-\f$ d\f$ tree. 
+Inserts the point `p` in the `k-d` tree. 
 */ 
 void insert(Point_d p); 
 
 /*! 
-Inserts the elements from the sequence `[first, beyond)` in the \f$ k\f$-\f$ d\f$ tree. 
+Inserts the elements from the sequence `[first, beyond)` in the `k-d` tree. 
 The value type of the `InputIterator` must be `Point_d`. 
 */ 
 template <class InputIterator> void insert(InputIterator first, InputIterator beyond); 
@@ -126,7 +126,7 @@ Returns the appropriate past-the-end const iterator.
 iterator end() const; 
 
 /*! 
-Removes all points from the \f$ k\f$-\f$ d\f$ tree. 
+Removes all points from the `k-d` tree. 
 */ 
 void clear(); 
 

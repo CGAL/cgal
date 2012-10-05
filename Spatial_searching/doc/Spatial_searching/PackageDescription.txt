@@ -43,7 +43,7 @@ supporting
 - both nearest and furthest neighbor searching,
 - both exact and approximate searching,
 - (approximate) range searching,
-- (approximate) \f$ k\f$-nearest and \f$ k\f$-furthest neighbor searching,
+- (approximate) `k`-nearest and `k`-furthest neighbor searching,
 - (approximate) incremental nearest and incremental furthest neighbor searching,
 - query items representing points and spatial objects.
 
