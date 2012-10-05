@@ -949,6 +949,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Alpha_shapes_3/examples</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
             <item>./tags/Periodic_3_triangulation_3.tag=../../CGAL.CGAL.3D-Periodic-Triangulations/html</item>
             <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
           </list>
