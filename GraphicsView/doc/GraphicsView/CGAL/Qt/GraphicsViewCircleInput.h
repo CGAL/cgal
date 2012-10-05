@@ -11,7 +11,7 @@ key removes all entered points.
 
 
 
-\tparam K must be a \cgal `Kernel`. 
+\tparam K must be a model of `Kernel`. 
 
 */
 template< typename K >
@@ -22,7 +22,9 @@ public:
 /// @{
 
 /*! 
-`p` is a parent object. `s` is the scene where the circle is generated. `pointsOnCircle` is the 
+\param p is a parent object. 
+\param s is the scene where the circle is generated. 
+\param pointsOnCircle is the 
 number of points on the circle to be generated, that is the default value `1` 
 corresponds to the case center/radius. 
 */ 

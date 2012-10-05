@@ -8,7 +8,7 @@ vertex is inserted every time the left mouse button is released.
 The `Del` key removes the last entered point. The `Esc` 
 key removes all entered points. 
 
-\tparam K must be a \cgal `CircularKernel`. 
+\tparam K must be a model of `CircularKernel`. 
 
 */
 template< typename K >
@@ -19,7 +19,8 @@ public:
 /// @{
 
 /*! 
-`p` is a parent object. `s` is the scene where the circular arc is generated. 
+\param p is a parent object. 
+\param s is the scene where the circular arc is generated. 
 */ 
 GraphicsViewCircularArcInput<T>(QObject *p, QGraphicsScene* s); 
 

@@ -3,7 +3,7 @@
 /// \ingroup PkgGraphicsView
 /*!
 \addtogroup PkgGraphicsView
-\todo check generated documentation
+
 \PkgDescriptionBegin{CGAL and the Qt Graphics View Framework,PkgGraphicsViewSummary}
 \PkgPicture{detail.png}
 \PkgAuthors{Andreas Fabri and Laurent Rineau}

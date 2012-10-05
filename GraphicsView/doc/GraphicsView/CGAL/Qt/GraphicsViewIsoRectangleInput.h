@@ -5,7 +5,7 @@ namespace Qt {
 
 An object of type `GraphicsViewIsoRectangleInput` creates an axis parallel rectangle. 
 
-\tparam K must be a \cgal `Kernel`. 
+\tparam K must be a model of `Kernel`. 
 
 */
 template< typename K >
@@ -16,7 +16,8 @@ public:
 /// @{
 
 /*! 
-`p` is a parent object. `s` is the scene where the iso rectangle is generated. 
+\param p is a parent object. 
+\param s is the scene where the iso rectangle is generated. 
 */ 
 GraphicsViewIsoRectangleInput<T>(QObject *p, QGraphicsScene* s); 
 

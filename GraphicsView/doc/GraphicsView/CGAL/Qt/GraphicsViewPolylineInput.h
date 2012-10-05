@@ -18,7 +18,7 @@ For polylines the segment between the last entered point and the current
 mouse position is only drawn correctly when mouse tracking is enabled 
 in the graphics view. The same holds for closed polygons. 
 
-\tparam K must be a \cgal `Kernel`. 
+\tparam K must be a model of `Kernel`. 
 
 */
 template< typename K >
@@ -29,11 +29,12 @@ public:
 /// @{
 
 /*! 
-`p` is a parent object. `s` is the scene where the polyline is generated. `n` is the 
-number of points of the polyline to be generated. If `c` is equal to 0, 
-the default value, the number of points of the polyline is not 
-limited. When `closed` is `true` the function displays a 
-polygon. 
+\param p is a parent object. 
+\param s is the scene where the polyline is generated. 
+\param n is the number of points of the polyline to be generated. If `n = 0`, 
+that is the default value, the number of points of the polyline is not 
+limited. 
+\param closed determines if a closed polygon is drawn during the input. 
 */ 
 GraphicsViewPolylineInput<T>(QObject *p, QGraphicsScene* s, int n = 0, 
 bool closed = true); 

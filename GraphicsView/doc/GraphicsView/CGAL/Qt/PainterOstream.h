@@ -3,7 +3,7 @@ namespace Qt {
 /*!
 \ingroup PkgGraphicsView
 
-An object of type `PainterOstream` provides output operators for \cgal kernel objects. 
+An object of type `PainterOstream` provides output operators for `Kernel` objects. 
 As \cgal has unbounded objects the `PainterOstream` must be constructed with a clipping rectangle. 
 This is typically the visible area of the widget where the unbounded object is displayed. 
 
@@ -16,7 +16,7 @@ public:
 /// @{
 
 /*! 
-The clipping rect is used for unbounded \cgal objects. 
+The clipping rect is used for unbounded `Kernel` objects. 
 */ 
 PainterOstream<K>(QPainter* qp, QRectF clippingRect); 
 

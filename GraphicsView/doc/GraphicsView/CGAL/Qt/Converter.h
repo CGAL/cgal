@@ -3,13 +3,15 @@ namespace Qt {
 /*!
 \ingroup PkgGraphicsView
 
-An object of type `Converter` converts 2D \cgal kernel objects to their equivalent 
+An object of type `Converter` converts 2D \cgal `Kernel` objects to their equivalent 
 objects in <I>Qt</I>, and the other way round. Note that some objects have no equivalent. 
 For example the `CGAL::Circle_2<K>` cannot be converted to something in Qt, 
 and the unbounded objects `CGAL::Ray_2<K>` and `CGAL::Line_2<K>` are clipped. 
 Note also that \cgal and <I>Qt</I> sometimes also use the same word for different things. 
 For example <I>line</I> denotes an unbounded line in \cgal, wheras it denotes a bounded 
 segment in <I>Qt</I>. 
+
+\tparam K must be a model of `Kernel`.
 
 */
 template< typename K >

@@ -5,7 +5,7 @@ namespace Qt {
 
 An object of type `TriangulationGraphicsItem` is a graphics item that encapsulates a 2D triangulation. 
 
-\tparam K must be a \cgal 2D triangulation class. 
+\tparam T must be a 2D triangulation class. 
 
 */
 template< typename T >
