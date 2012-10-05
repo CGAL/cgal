@@ -761,6 +761,7 @@ Number_types/test/Number_types/cgal_test_with_cmake
 Number_types/test/Number_types/constant
 Number_types/test/Number_types/double
 Number_types/test/Number_types/doubletst
+Number_types/test/Number_types/eigen
 Number_types/test/Number_types/float
 Number_types/test/Number_types/floattst
 Number_types/test/Number_types/int
@@ -780,7 +781,9 @@ Number_types/test/Number_types/quotient_io
 Number_types/test/Number_types/root_of_2
 Number_types/test/Number_types/rounding_modes
 Number_types/test/Number_types/simplest_rational
+Number_types/test/Number_types/test_nt_Coercion_traits
 Number_types/test/Number_types/to_interval_test
+Number_types/test/Number_types/unsigned
 Number_types/test/Number_types/utilities
 Optimisation_basic/*.aux
 Optimisation_basic/*.bbl
