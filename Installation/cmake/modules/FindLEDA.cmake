@@ -8,21 +8,21 @@ else()
             NAMES "LEDA/basic.h" "LEDA/system/basic.h"
             HINTS ENV LEDA_INC_DIR
                   ENV LEDA_DIR
-                  PATH_SUFFIXES incl
+            PATH_SUFFIXES incl
             DOC "The directory containing the LEDA header files WITHOUT the LEDA prefix"
           )
 
   find_library(LEDA_LIBRARY_RELEASE NAMES "leda"
                HINTS ENV LEDA_LIB_DIR
                      ENV LEDA_DIR
-#                     PATH_SUFFIXES lib
+#               PATH_SUFFIXES lib
                DOC "Path to the LEDA library"
               )
 
   find_library(LEDA_LIBRARY_DEBUG NAMES "ledaD"
                HINTS ENV LEDA_LIB_DIR
                      ENV LEDA_DIR
-#                     PATH_SUFFIXES lib
+#               PATH_SUFFIXES lib
                DOC "Path to the LEDA library"
               )
 

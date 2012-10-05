@@ -14,9 +14,9 @@ else()
             NAMES ESBTL/default.h
             HINTS ENV ESBTL_INC_DIR
                   ENV ESBTL_DIR
-                  PATH_SUFFIXES include
                   /usr/include
                   /usr/local/include
+            PATH_SUFFIXES include
             DOC "The directory containing the ESBTL header files WITHOUT the ESBTL prefix"
            )
 

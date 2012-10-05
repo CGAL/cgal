@@ -15,11 +15,10 @@ if( MPFI_FOUND )
             NAMES rs3_fncts.h
             HINTS ENV RS3_INC_DIR
                   ENV RS3_DIR
-                  PATH_SUFFIXES include
                   ENV RS_INC_DIR
                   ENV RS_DIR
-                  PATH_SUFFIXES include
             PATHS ${RS_INCLUDE_DIR}
+            PATH_SUFFIXES include
             DOC "The directory containing the RS3 include files"
            )
 
@@ -27,11 +26,10 @@ if( MPFI_FOUND )
                NAMES rs3
                HINTS ENV RS3_LIB_DIR
                      ENV RS3_DIR
-                     PATH_SUFFIXES lib
                      ENV RS_LIB_DIR
                      ENV RS_DIR
-                     PATH_SUFFIXES lib
                PATHS ${RS_LIBRARIES_DIR}
+               PATH_SUFFIXES lib
                DOC "Path to the RS3 library"
               )
 

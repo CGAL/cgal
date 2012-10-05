@@ -31,8 +31,8 @@ else()
             NAMES gmp.h
             HINTS ENV GMP_INC_DIR
                   ENV GMP_DIR
-                  PATH_SUFFIXES include
                   ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include
+            PATH_SUFFIXES include
   	        DOC "The directory containing the GMP header files"
            )
 
@@ -43,8 +43,8 @@ else()
   find_library(GMP_LIBRARIES NAMES gmp libgmp-10
     HINTS ENV GMP_LIB_DIR
           ENV GMP_DIR
-          PATH_SUFFIXES lib
           ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
+    PATH_SUFFIXES lib
     DOC "Path to the GMP library"
     )
 

@@ -30,9 +30,9 @@ else()
             NAMES mpfr.h
             HINTS ENV MPFR_INC_DIR
                   ENV MPFR_DIR
-                  PATH_SUFFIXES include
                   ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include
-  	    DOC "The directory containing the MPFR header files"
+            PATH_SUFFIXES include
+  	        DOC "The directory containing the MPFR header files"
            )
 
   if ( MPFR_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include" )
@@ -42,8 +42,8 @@ else()
   find_library(MPFR_LIBRARIES NAMES mpfr libmpfr-4 libmpfr-1
     HINTS ENV MPFR_LIB_DIR
           ENV MPFR_DIR
-          PATH_SUFFIXES lib
           ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
+    PATH_SUFFIXES lib
     DOC "Path to the MPFR library"
     )
 

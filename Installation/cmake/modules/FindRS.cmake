@@ -17,7 +17,7 @@ if( MPFI_FOUND )
             NAMES rs_exports.h
             HINTS ENV RS_INC_DIR
                   ENV RS_DIR
-                  PATH_SUFFIXES include
+            PATH_SUFFIXES include
             DOC "The directory containing the RS include files"
            )
 
@@ -25,7 +25,7 @@ if( MPFI_FOUND )
                NAMES rsexport_rs
                HINTS ENV RS_LIB_DIR
                      ENV RS_DIR
-                     PATH_SUFFIXES lib
+               PATH_SUFFIXES lib
                DOC "Path to the RS library"
               )
 

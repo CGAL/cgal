@@ -26,7 +26,7 @@ else( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
               NAMES NTL/ZZ.h
               HINTS ENV NTL_INC_DIR
                     ENV NTL_DIR
-                    PATH_SUFFIXES include
+              PATH_SUFFIXES include
               DOC "The directory containing the NTL include files"
              )
 
@@ -34,7 +34,7 @@ else( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
                  NAMES ntl
                  HINTS ENV NTL_LIB_DIR
                        ENV NTL_DIR
-                       PATH_SUFFIXES lib
+                 PATH_SUFFIXES lib
                  DOC "Path to the NTL library"
                 )
 

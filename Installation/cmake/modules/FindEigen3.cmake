@@ -74,9 +74,8 @@ else (EIGEN3_INCLUDE_DIR)
   find_path(EIGEN3_INCLUDE_DIR NAMES signature_of_eigen3_matrix_library
       HINTS ENV EIGEN3_INC_DIR
             ENV EIGEN3_DIR
-            PATH_SUFFIXES include
       PATHS ${KDE4_INCLUDE_DIR}
-            PATH_SUFFIXES eigen3 eigen
+      PATH_SUFFIXES include eigen3 eigen
     )
 
   if(EIGEN3_INCLUDE_DIR)

@@ -40,4 +40,3 @@ if ( LEDA_FOUND AND NOT LEDA_SETUP )
   set ( LEDA_SETUP TRUE )
 
 endif()
-
