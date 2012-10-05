@@ -657,6 +657,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Interval_skip_list.tag</string>
           <string name="EXAMPLE_PATH">../Interval_skip_list/examples</string>
           <string name="IMAGE_PATH">../Interval_skip_list/doc/Interval_skip_list/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/SearchStructures.tag=../../CGAL.CGAL.dD-Range-and-Segment-Trees/html</item>
+          </list>
         </doxygen>
       </project>
 
@@ -762,6 +765,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Spatial_searching.tag</string>
           <string name="EXAMPLE_PATH">../Spatial_searching/examples</string>
           <string name="IMAGE_PATH">../Spatial_searching/doc/Spatial_searching/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Kernel_d.tag=../../CGAL.CGAL.dD-Geometry-Kernel/html</item>
+          </list>
         </doxygen>
       </project>
 
