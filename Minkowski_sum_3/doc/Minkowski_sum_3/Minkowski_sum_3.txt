@@ -5,7 +5,6 @@ namespace CGAL {
 \mainpage 3D Minkowski Sum of Polyhedra
 \anchor Chapter_3D_Minkowski_Sum_of_Polyhedra
 \anchor chapterMinkowskiSum3
-\autotoc
 \author Peter Hachenberger
 
 # Introduction # {#Minkowski_sum_3Introduction}

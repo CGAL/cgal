@@ -4256,7 +4256,6 @@ Minkowski_sum_2/test/Minkowski_sum_2/data/wheels_part2.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/test_Minkowski_sum.cmd -text
 Minkowski_sum_2/test/Minkowski_sum_2/test_approx_offset.cmd -text
 Minkowski_sum_2/test/Minkowski_sum_2/test_exact_offset.cmd -text
-Minkowski_sum_3/doc/Minkowski_sum_3/CGAL/minkowski_sum_3.h -text
 Minkowski_sum_3/doc/Minkowski_sum_3/Minkowski_sum_3.txt -text
 Minkowski_sum_3/doc/Minkowski_sum_3/PackageDescription.txt -text
 Minkowski_sum_3/doc/Minkowski_sum_3/examples.txt -text
