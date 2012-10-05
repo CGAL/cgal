@@ -994,8 +994,10 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
         foreach(header ${${package}_HEADERS})
           string(REPLACE "/" "__" header2 "${header}")
           string(REPLACE "." "_" header2 "${header2}")
-          add_custom_target(check_${header2}
+          add_custom_command(OUTPUT check_${header2}
             COMMAND ${CMAKE_CXX_COMPILER} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_DEFINITIONS} ${include_options} -x c++ -fsyntax-only "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+            COMMAND ${CMAKE_COMMAND} -E touch check_${header2}
+            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
             VERBATIM
             COMMENT "Check header ${header}"
             )
