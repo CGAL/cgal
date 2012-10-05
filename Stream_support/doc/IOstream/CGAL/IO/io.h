@@ -238,7 +238,9 @@ template <class T, typename F> Output_rep<T,F> oformat( const T& t, F );
 /*!
 \ingroup PkgIOstreams
 
-Inserts object `c` in the stream `os`. Returns `os`.
+\anchor op_left_shift
+
+\brief Inserts object `c` in the stream `os`. Returns `os`.
 
 \cgal defines output operators for classes that are derived 
 from the class `ostream`. This allows to write to ostreams 
@@ -284,14 +286,17 @@ return 1;
 \sa `CGAL::is_ascii`
 \sa `CGAL::is_binary`
 \sa `CGAL::is_pretty`
-\sa `CGAL::operator>>`
+\sa \ref op_right_shift "CGAL::operator>>"
+
 */
 ostream& operator<<(ostream& os, Class c);
 
 /*!
 \ingroup PkgIOstreams
 
-\cgal  defines input operators for classes that are derived
+\anchor op_right_shift
+
+\brief \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams
 as `cin`, as well as from strstreams and fstreams.
 The input operator is defined for all classes in the \cgal kernel.
@@ -333,7 +338,7 @@ main()
 \sa `CGAL::is_ascii`
 \sa `CGAL::is_binary`
 \sa `CGAL::is_pretty`
-\sa `CGAL::operator<<`
+\sa \ref op_left_shift "CGAL::operator<<"
 */
 istream& operator>>(istream& is, Class c);
 
