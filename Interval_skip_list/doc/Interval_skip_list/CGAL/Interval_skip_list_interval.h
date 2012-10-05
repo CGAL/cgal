@@ -5,7 +5,7 @@ namespace CGAL {
 
 The class `Interval_skip_list_interval` represents intervals with lower and upper 
 bound of type `Value`. These intervals 
-can be opened or closed at each endpoint. 
+can be open or closed at each endpoint. 
 
 ### I/O ###
 
