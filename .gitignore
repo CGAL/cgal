@@ -695,6 +695,12 @@ Modular_arithmetic/doc_tex/Modular_arithmetic/*.aux
 Modular_arithmetic/doc_tex/Modular_arithmetic/*.hax
 Modular_arithmetic/doc_tex/Modular_arithmetic_ref/main.aux
 Modular_arithmetic/doc_tex/Modular_arithmetic_ref/main.hax
+Nef_2/test/Nef_2/CMakeLists.txt
+Nef_2/test/Nef_2/EPoint-test
+Nef_2/test/Nef_2/Nef_polyhedron_2-test
+Nef_2/test/Nef_2/Polynomial-test
+Nef_2/test/Nef_2/cgal_test_with_cmake
+Nef_2/test/Nef_2/nef_2_point_location
 Nef_3/demo/Nef_3/Makefile
 Nef_3/examples/Nef_3/Makefile
 Nef_3/examples/Nef_3/comparison
