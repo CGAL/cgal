@@ -4,8 +4,7 @@
     <tab type="mainpage" visible="yes" title=""/>
     <tab type="modules" visible="yes" title="" intro=""/>
     <tab type="pages" visible="yes" title="" intro=""/>
-    <tab type="classlist" visible="yes" title="Class and Concept List" intro=""/>
-    <tab type="classmembers" visible="yes" title="Class and Concept Members" intro=""/>
+    <tab type="classlist" visible="yes" title="Class and Concept List" intro=" "/>
     <tab type="examples" visible="no" title="" intro=""/>  
     <!-- <tab type="user" url="@ref how_to_cite_cgal" title="Acknowledging CGAL"/> -->
   </navindex>

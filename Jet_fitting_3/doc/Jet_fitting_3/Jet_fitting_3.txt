@@ -165,7 +165,7 @@ be relevant. To inform the user of these issues, we provide the PCA
 results and the condition number of the fitting. In any case, it is up
 to the user to judge if the result meets its need.
 
-# Software Design # {#Jet_fitting_3}Software}
+# Software Design # {#Jet_fitting_3Software}
 
 ## Options and Interface Specifications ##
 

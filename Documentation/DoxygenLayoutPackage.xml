@@ -4,7 +4,7 @@
     <tab type="mainpage" visible="yes" title=""/>
     <tab type="modules" visible="yes" title="Reference Manual" intro=""/>
     <tab type="pages" visible="yes" title="Pages" intro=""/>
-    <tab type="classlist" visible="yes" title="Class and Concept List" intro=""/>
+    <tab type="classlist" visible="yes" title="Class and Concept List" intro=" "/>
     <tab type="filelist" visible="yes" title="" intro=""/>
     <tab type="examples" visible="yes" title="" intro=""/>  
   </navindex>

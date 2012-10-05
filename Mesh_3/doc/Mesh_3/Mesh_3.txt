@@ -1,20 +1,16 @@
-
 namespace CGAL {
 /*!
 
 \mainpage 3D Mesh Generation
 \anchor Chapter_3D_Mesh_Generation
 \anchor userchaptermesh3
-
-\autotoc
 \authors Pierre Alliez, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
+\autotoc
 
 \anchor figuremultilabel_mesher
-\image latex multilabel_mesher height=9cm "Cut-view of a multi-domain 3D mesh generated from a segmented image."
 \image html multilabel_mesher.jpg "Cut-view of a multi-domain 3D mesh generated from a segmented image."
 
-# Introduction # {#Mesh_3Introduction}
-\anchor Mesh_3_section_intro
+# Introduction # {#Mesh_3_section_intro}
 
 This package is devoted to the generation of isotropic simplicial
 meshes discretizing 3D domains.
@@ -150,7 +146,6 @@ The \f$ 1\f$-dimensional exposed features are approximated by sequences of mesh 
 and the \f$ 0\f$-dimensional exposed features are represented by mesh vertices.
 
 ## Delaunay Refinement ##
-
 \anchor introsecparam
 
 The mesh generation algorithm is mainly a Delaunay refinement process.
@@ -252,11 +247,11 @@ In the case of the odt-smoother, the interpolation is linear in each cell
 of the Delaunay triangulation of the mesh vertices,
 hence the name odt which is an abbreviation for *optimal Delaunay triangulation*.
 
-\image latex paraboloid "The one dimensional illustration of the mesh energy minimized by Lloyd (right)  and ODT (left) smoothers."
 \image html paraboloid.jpg "The one dimensional illustration of the mesh energy minimized by Lloyd (right)  and ODT (left) smoothers."
 
 
 The Lloyd optimizer is known to be blind to the occurrence of slivers in the mesh 
+
 while the odt-smoother tends to chase them out.
 Both of them are global optimizers, 
 meaning that they try to improve
@@ -285,10 +280,7 @@ optimization processes.
 \anchor figureoptimization
 \image html optimization.jpg "Compared effect of a global optimizer and the perturber. The left part shows the distribution of dihedral angles of mesh cells, right after Delaunay refinement (top), after some ODT smoothing (middle) and after perturbation (bottom). The numbers under the histograms give the measure in degrees of the smallest and biggest dihedral angles in the mesh."
 
-# Interface # {Mesh_3
-Any}
-
-\anchor Mesh_3_section_interface
+# Interface # {#Mesh_3_section_interface}
 
 ## The Global Functions ##
 
@@ -450,10 +442,6 @@ behaves with respect to these parameters.
 
 <CENTER>
 \anchor figureparameters
-\image latex implicit_domain height=5cm
-\image latex implicit_domain_3 height=5cm
-\image latex implicit_domain_4 height=5cm
-\image latex implicit_domain_5 height=5cm
 <IMG border="0" height="250px" src="./implicit_domain.jpg"><BR/>
 <IMG border="0" height="250px" src="./implicit_domain_3.jpg">
 <IMG border="0" height="250px" src="./implicit_domain_4.jpg">
@@ -543,9 +531,7 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3);
 Note that the global functions activating the optimization processes or launching
 those processes have themselves parameters (see details in reference pages) to tune the optimization process.
 
-# Examples # {Mesh_3}
-
-\anchor Mesh_3_section_examples
+# Examples # {#Mesh_3_section_examples}
 
 ## 3D Domains Bounded by Isosurfaces ##
 
@@ -560,7 +546,6 @@ constructor of the `Mesh_criteria` instance.
 \cgalexample{Mesh_3/mesh_implicit_sphere.cpp}
 
 \anchor figureimplicit_domain
-\image latex implicit_domain "Cut view of a 3D mesh produced from an implicit domain" height=6cm
 \image html implicit_domain.jpg "Cut view of a 3D mesh produced from an implicit domain"
 
 ## 3D Polyhedral Domains ##
@@ -575,8 +560,6 @@ shows the resulting mesh.
 
 <CENTER>
 \anchor figurepolyhedral_domain
-\image latex polyhedral_domain height=7cm
-\image latex polyhedral_domain_2 "View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files." height=7cm
 \image html polyhedral_domain.jpg
 \image html polyhedral_domain_2.jpg "View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files."
 </CENTER>
@@ -599,7 +582,6 @@ The resulting mesh is shown in Figure \ref figureliver_3d_image_mesh.
 \cgalexample{Mesh_3/mesh_3D_image.cpp}
 
 \anchor figureliver_3d_image_mesh
-\image latex liver "Cut view of a 3D mesh produced from a segmented liver image. Code from subsection \ref Mesh_3_subsection_examples_3d_image generates this file." width=10cm
 \image html liver.jpg "Cut view of a 3D mesh produced from a segmented liver image. Code from subsection \ref Mesh_3_subsection_examples_3d_image generates this file."
 
 ## Using Variable Sizing Field ##
@@ -614,7 +596,6 @@ The following example shows how to use an analytical function as sizing field.
 
 
 \anchor figuresphere_variable_mesh
-\image latex sphere_variable "Cut view of a 3D mesh produced from an implicit sphere with non-constant sizing field. Code from subsection \ref Mesh_3_subsubsection_examples_sphere_variable generates this file." width=7cm
 \image html sphere_variable.jpg "Cut view of a 3D mesh produced from an implicit sphere with non-constant sizing field. Code from subsection \ref Mesh_3_subsubsection_examples_sphere_variable generates this file."
 
 ## Different Sizing Field for Different Subdomains ##
@@ -627,7 +608,6 @@ a 3D medical image.
 \cgalexample{Mesh_3/mesh_3D_image_variable_size.cpp}
 
 \anchor figureliver_variable_mesh
-\image latex liver_variable "View of a 3D mesh produced from a 3D image with different size for different organs. Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_variable generates this file." width=9cm
 \image html liver_variable.jpg "View of a 3D mesh produced from a 3D image with different size for different organs. Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_variable generates this file."
 
 ## Meshing Domains with Sharp Features ##
@@ -642,7 +622,6 @@ surface. The output mesh conforms to the sharp features of the input surface.
 \cgalexample{Mesh_3/mesh_polyhedral_domain_with_features.cpp}
 
 \anchor figurefandisk_mesh
-\image latex fandisk "View of a 3D mesh with sharp features. Code from subsection \ref Mesh_3_subsection_example_polyhedral_with_edges generates this mesh." width=10cm
 \image html fandisk.jpg "View of a 3D mesh with sharp features. Code from subsection \ref Mesh_3_subsection_example_polyhedral_with_edges generates this mesh."
 
 ## Implicit Domain With 1D Features ##
@@ -653,7 +632,6 @@ domain. We add by hand the intersection of the spheres as a sharp feature.
 \cgalexample{Mesh_3/mesh_two_implicit_spheres_with_balls.cpp}
 
 \anchor figuretwo_spheres_mesh
-\image latex twospheres "View of a 3D mesh with sharp features generated from two intersected implicit spheres. On the left, one can see the mesh without feature preservation, and on the right the mesh with feature preservation." width=12c
 \image html twospheres.jpg "View of a 3D mesh with sharp features generated from two intersected implicit spheres. On the left, one can see the mesh without feature preservation, and on the right the mesh with feature preservation."
 
 ## Tuning Mesh Optimization ##
@@ -688,10 +666,9 @@ In this second example, we show how to call the Lloyd optimization on the
 mesh, followed by a call to exudation. We set a time bound of 30s for the Lloyd optimization. 
 We set a time bound of 10s and a sliver bound of 10 degrees for the exuder.
 
-\cgalexample{Mesh_3/mesh_optimization_lloyd_example.cpp
-In}
+\cgalexample{Mesh_3/mesh_optimization_lloyd_example.cpp}
 
-# Performances # {Mesh_3}
+# Performances # {#Mesh_3Performances}
 
 We provide here some benchmarks of the performances of the mesh generation engine. The machine
 used is a PC running Linux64 with two Intel Xeon CPU X5450 clocked at 3.00 GHz
@@ -803,7 +780,6 @@ vertices/second
 ## Polyhedral Domain ##
 
 \anchor figuremesh_3_benchmark_polyhedral
-\image latex bench_polyhedral.jpg "View of polyhedral mesh generation result (size = 0.005)." width=10cm
 \image html bench_polyhedral.jpg "View of polyhedral mesh generation result (size = 0.005)."
 
 We mesh a volume bounded by a closed triangulated surface made of about 50,000 vertices and 100,000 triangles.
@@ -900,7 +876,6 @@ vertices/second
 ## 3D Image ##
 
 \anchor figuremesh_3_benchmark_3d_image
-\image latex bench_3d.jpg "View of 3d image mesh generation result (size = 4)." width=14cm
 \image html bench_3d.jpg "View of 3d image mesh generation result (size = 4)."
 
 We mesh image number 2 from the 3D-IRCADb-01 (available at <A href="http://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php">http://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php</A>) public database.
@@ -982,8 +957,7 @@ vertices/second
 
 </CENTER>
 
-# Design and Implementation History # {Mesh_3
-\anchor}
+# Design and Implementation History # {#Mesh_3DesignAndImpl}
 
 ## Theoretical Foundations ##
 
@@ -1033,8 +1007,6 @@ After some experiments on medical imaging data performed by
 Dobrina Boltcheva et al. \cite cgal:byb-mgmmi-09, \cite cgal:-byb-fpdmgmmi-09, the handling
 of \f$ 1\f$-dimensional features was worked out by Laurent Rineau, Stéphane Tayeb
 and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
-
-\tableofcontents
 
 */ 
 } /* namespace CGAL */

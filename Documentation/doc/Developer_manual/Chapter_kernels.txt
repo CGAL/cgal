@@ -52,8 +52,7 @@ representation corresponding to an homogeneous point
 representation to \f$ (x,y,z,w)\f$  for any \f$ \alpha\neq 0\f$. 
 Internally, \cgal always maintains a non-negative homogenizing coordinate.
 
-# Kernel design and conventions # {#Installation.txt:2175:# Compiler Workarounds #
-.nstallation}
+# Kernel design and conventions # {#Compiler Workarounds}
 
 Each kernel object is provided as both a stand-alone class, which is 
 parameterized by a kernel class (`Geo_object_D<K>`), and as a type 
