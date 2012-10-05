@@ -1103,6 +1103,9 @@ STL_Extension/test/STL_Extension/test_nth_element
 STL_Extension/test/STL_Extension/test_stl_extension
 STL_Extension/test/STL_Extension/test_type_traits
 STL_Extension/test/STL_Extension/test_vector
+SearchStructures/test/RangeSegmentTrees/CMakeLists.txt
+SearchStructures/test/RangeSegmentTrees/cgal_test_with_cmake
+SearchStructures/test/RangeSegmentTrees/test_segment_tree_set_2
 Skin_surface_3/.cdtproject
 Skin_surface_3/.project
 Skin_surface_3/.settings
