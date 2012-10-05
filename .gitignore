@@ -996,6 +996,7 @@ Polynomial/test/Polynomial/sturm_habicht_sequence
 Polynomial/test/Polynomial/subresultants
 Polynomial/test/Polynomial/test_polynomial_Coercion_traits
 Polynomial/test/Polynomial/test_polynomial_Get_arithmetic_kernel
+Polynomial/test/Polynomial/test_subresultants
 Polytope_distance_d/*.aux
 Polytope_distance_d/*.bbl
 Polytope_distance_d/*.blg
