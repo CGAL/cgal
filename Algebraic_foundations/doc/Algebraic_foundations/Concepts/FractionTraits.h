@@ -22,7 +22,7 @@ public:
 /// @{
 
 /*! 
-the associated type 
+The associated type 
 */ 
 typedef Hidden_type Type; 
 

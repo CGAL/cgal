@@ -9,7 +9,7 @@ functionality for decomposing and re-composing as well as the numerator and
 denominator type are provided by `CGAL::Fraction_traits`. 
 
 \sa ::FractionTraits 
-\sa CGAL::Fraction_traits<T> 
+\sa `CGAL::Fraction_traits<T>` 
 
 */
 
