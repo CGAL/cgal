@@ -1001,6 +1001,7 @@ STL_Extension/test/STL_Extension/test_is_iterator
 STL_Extension/test/STL_Extension/test_is_streamable
 STL_Extension/test/STL_Extension/test_lexcompare_outputrange
 STL_Extension/test/STL_Extension/test_multiset
+STL_Extension/test/STL_Extension/test_namespaces
 STL_Extension/test/STL_Extension/test_nth_element
 STL_Extension/test/STL_Extension/test_stl_extension
 STL_Extension/test/STL_Extension/test_type_traits

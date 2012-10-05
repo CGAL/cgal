@@ -29,6 +29,8 @@
 
 #include <functional>
 
+#include <CGAL/enum.h>
+
 namespace CGAL {
 
 template < class Value>
