@@ -1,4 +1,4 @@
-namespace CGAL {
+>namespace CGAL {
 /*!
 
 \mainpage CGAL and the Boost Graph Library
@@ -15,7 +15,7 @@ faces as edges of the dual graph.
 
 As the scope of \cgal is geometry and not graph algorithms, we
 provide the necessary classes and functions that allow to use the
-algorithms of the <A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library (sc{Bgl})</A> \cite cgal:sll-bgl-02 for \cgal data structures.
+algorithms of the <A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library (\sc{Bgl})</A> \cite cgal:sll-bgl-02 for \cgal data structures.
 
 # A Short Introduction to the Boost Graph Library # {#BGLA}
 
@@ -50,20 +50,29 @@ because their value type is a `vertex_descriptor`, whereas in
 \cgal handles, iterators, and cicrulators all have the same value
 type, namely the vertex type. Given a graph type `G` the
 declaration of a vertex descriptor looks as follows:
-`boost::graph_traits<G>::vertex_descriptor vd;`.<BR>
+
+\code {.cpp}
+boost::graph_traits<G>::vertex_descriptor vd;
+\endcode
 
 The graph traits in the \sc{Bgl} manual: <A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html"><TT>http://www.boost.org/libs/graph/doc/graph_traits.html</TT></A>
 
 ## Free Functions for Exploring a Graph ##
 
 The algorithms obtain incidence information with the help of global
-functions like `pair<vertex_iterator,vertex_iterator> vertices(const Graph& g);` for getting an iterator range which allows
-to enumerate all vertices, or `int num_vertices(const Graph&);` for getting the number of vertices of a graph, or
-`vertex_descriptor source(edge_descriptor, const Graph&`, for
-getting the source vertex of an edge. Note, that the
-way we have written the types is a simplification, that is in reality
+functions like 
+- `pair<vertex_iterator,vertex_iterator> vertices(const Graph& g);` for getting an iterator range which allows
+to enumerate all vertices, or 
+- `int num_vertices(const Graph&);` for getting the number of vertices of a graph, or
+- `vertex_descriptor source(edge_descriptor, const Graph&`, for
+getting the source vertex of an edge. 
+
+Note, that the way we have written the types is a simplification, that is in reality
 the signature of the first of the above functions is 
-`pair<boost::graph_traits<Graph>::vertex_iterator,boost::graph_traits<Graph>::vertex_iterator> vertices(const Graph& g);`.<BR>
+
+\code{.cpp}
+pair<boost::graph_traits<Graph>::vertex_iterator,boost::graph_traits<Graph>::vertex_iterator> vertices(const Graph& g);
+\endcode
 
 The free functions required for graph concepts: <A HREF="http://www.boost.org/libs/graph/doc/graph_concepts.html"><TT>http://www.boost.org/libs/graph/doc/graph_concepts.html</TT></A>
 
@@ -113,12 +122,12 @@ wants to deviate from the default for the last one. The solution to this problem
 is to first write a tag and then the parameter, which for
 Dijkstra's shortest path algorithm, might look as follows:
 
-<PRE> 
+\code {.cpp}
 std::vector<vertex_descriptor> p(num_vertices(g));
 std::vector<int> d(num_vertices(g));
 vertex_descriptor s = vertex(A, g);
 dijkstra_shortest_paths(g, s, predecessor_map(&p[0]).distance_map(&d[0]));
-</PRE>
+\endcode
 
 The named parameters in the example use the tags `predecessor_map` and `distance_map` and
 they are concatenated with the dot operator.<BR>

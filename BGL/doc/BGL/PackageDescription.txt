@@ -17,7 +17,6 @@
 
 /*!
 \addtogroup PkgBGL
-\todo check generated documentation
 \PkgDescriptionBegin{CGAL and the Boost Graph Library,PkgBGLSummary}
 \PkgPicture{emst-detail.png}
 \PkgAuthors{Andreas Fabri and Fernando Cacciola and Ron Wein}

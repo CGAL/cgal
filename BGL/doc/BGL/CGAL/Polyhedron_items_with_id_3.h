@@ -19,7 +19,7 @@ halfedge.
 
 Supported as required by the `PolyhedronItems_3` concept. 
 
-### Additional methods in all three items ###
+### Additional Methods in All Three Items ###
 
 \code
 int id() const; // Returns the index. 
@@ -54,7 +54,7 @@ public:
   /// @{
 
   /*! 
-    default constructor. 
+    %Default constructor. 
   */ 
   Polyhedron_items_with_id_3(); 
 

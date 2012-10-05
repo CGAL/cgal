@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgBGLHelper
 
 The class `HalfedgeDS_halfedge_max_base_with_id` is a model of the `HalfedgeDSHalfedge` 
-concept. `Refs` is an instantiation of a `HalfedgeDS`. 
+concept. 
 It is equivalent to `CGAL::HalfedgeDS_halfedge_base< Refs, CGAL::Tag_true, CGAL::Tag_true, CGAL::Tag_true>` with an added integer 
 field which can be used to index halfedges in \sc{Bgl} algorithms. 
 The class contains support for the previous, next, opposite, vertex and 
@@ -14,6 +14,8 @@ It can be used for deriving own halfedges.
 
 Note that the user is in charge to set the index correctly before 
 running a graph algorithm. 
+
+\tparam Refs must be an instantiation of a `HalfedgeDS`. 
 
 \models ::HalfedgeDSHalfedge 
 
@@ -37,7 +39,7 @@ public:
 /// @{
 
 /*! 
-default constructor. 
+%Default constructor. 
 */ 
 HalfedgeDS_halfedge_max_base_with_id(); 
 

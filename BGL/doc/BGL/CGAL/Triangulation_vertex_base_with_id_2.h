@@ -11,12 +11,10 @@ index vertices for \sc{Bgl} algorithms.
 Note that the user is in charge to set the index correctly before 
 running a graph algorithm. 
 
-### Parameters ###
+\tparam `TriangulationTraits_2 is the geometric traits class
+and must be a model of `TriangulationTraits_2` which provides the `Point_2`.
 
-The first template argument is the geometric traits class
-`TriangulationTraits_2` which provides the `Point_2`.
-
-The second template argument is a vertex base class from which 
+\tparam TriangulationVertexBase_2 must be a vertex base class from which 
 `Triangulation_vertex_base_with_id_2` derives. It has the default 
 value `Triangulation_vertex_base_2<TriangulationTraits_2>`. 
 

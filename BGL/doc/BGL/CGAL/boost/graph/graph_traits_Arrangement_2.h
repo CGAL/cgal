@@ -69,7 +69,7 @@ typedef Hidden_type out_edge_iterator;
 /*! 
 Indicates that this graph does support multiedges. 
 */ 
-boost::sallow_parallel_edge_tag edge_parallel_category; 
+boost::disallow_parallel_edge_tag edge_parallel_category; 
 
 /*! 
 Indicates that this graph is bidirectional. 
