@@ -54,7 +54,7 @@ public:
 
   /*! 
 
-  Constructor. 
+  %Default constructor. 
 
   */ 
   Dereference_property_map(); 
@@ -97,9 +97,6 @@ Property map that accesses the first item of a `std::pair`.
 
 \sa `CGAL::Second_of_pair_property_map<Pair>`
 
-### Example ###
-
-See `property_map.cpp` example. 
 
 */
 template< typename Pair >
@@ -146,7 +143,7 @@ public:
 
   /*! 
 
-  Constructor. 
+  Default constructor. 
 
   */ 
   First_of_pair_property_map(); 
@@ -186,10 +183,6 @@ Property map that accesses the Nth item of a `boost::tuple`.
 \tparam Tuple Instance of `boost::tuple`.
 
 \models `LvaluePropertyMap`
-
-### Example ###
-
-See `property_map.cpp` example. 
 
 */
 template< typename N, typename Tuple >
@@ -235,7 +228,7 @@ public:
 
   /*! 
 
-  Constructor. 
+  %Default constructor. 
 
   */ 
   Nth_of_tuple_property_map(); 
@@ -278,10 +271,6 @@ Property map that accesses the second item of a `std::pair`.
 \models `LvaluePropertyMap`
 
 \sa `CGAL::First_of_pair_property_map<Pair>`
-
-### Example ###
-
-See `property_map.cpp` example. 
 
 */
 template< typename Pair >
@@ -328,7 +317,7 @@ public:
 
   /*! 
 
-  Constructor. 
+  %Default constructor. 
 
   */ 
   Second_of_pair_property_map(); 
