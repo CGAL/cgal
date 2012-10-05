@@ -931,7 +931,7 @@ HTML_STYLESHEET        = stylesheet.css
 
 HTML_EXTRA_FILES       = 
 
-HTML_EXTRA_STYLESHEET  = cgal_stylesheet.css
+HTML_EXTRA_STYLESHEET  = 
 
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output.

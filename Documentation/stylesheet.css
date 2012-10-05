@@ -1,14 +1,12 @@
-/* The standard CSS for doxygen */
+/* The standard CSS for doxygen 1.8.2-20120930 */
 
 body, table, div, p, dl {
-	font-family: Lucida Grande, Verdana, Geneva, Arial, sans-serif;
-	font-size: 13px;
-	line-height: 1.3;
+	font: 400 14px/19px Roboto,sans-serif;
 }
 
 /* @group Heading Levels */
 
-h1 {
+h1.groupheader {
 	font-size: 150%;
 }
 
@@ -18,11 +16,18 @@ h1 {
 	margin: 10px 2px;
 }
 
-h2 {
-	font-size: 120%;
+h2.groupheader {
+	border-bottom: 1px solid #9C92AF;
+	color: #494159;
+	font-size: 150%;
+	font-weight: normal;
+	margin-top: 1.75em;
+	padding-top: 8px;
+	padding-bottom: 4px;
+	width: 100%;
 }
 
-h3 {
+h3.groupheader {
 	font-size: 100%;
 }
 
@@ -126,6 +131,13 @@ a.qindexHL {
 
 .contents a.qindexHL:visited {
         color: #ffffff;
+}
+
+a.el {
+	font-weight: bold;
+}
+
+a.elRef {
 }
 
 a.code, a.code:visited {
@@ -236,7 +248,7 @@ div.groupHeader {
 
 div.groupText {
 	margin-left: 16px;
-	/* font-style: italic; */
+	font-style: italic;
 }
 
 body {
@@ -358,52 +370,6 @@ blockquote {
         padding: 0 12px 0 16px;
 }
 
-/* footnote support */
-
-blockquote sup {
-	position: absolute;
-	right: 3px;
-	top: 3px;
-}
-
-.footnote ol li:hover {
-	text-decoration: underline;
-}
-
-a.footnoteBackref, a.footnoteLink {
-	text-decoration: none;
-}
-
-ol.footnotesList {
-        margin: 0;
-	font-size: 0.8em;
-	padding-top: 5px;
-}
-
-ol.footnotesList > li {
-	text-indent: -1.5em;
-	padding-left: 1.5em;
-	vertical-align: top;
-}
-
-.footnoteBackReferenceGroup {
-	padding-right: 0.5em;
-}
-.footnoteBackref {
-	padding-right: 0.25em;
-}
-span.footnoteContent {
-
-}
-span.footnoteContent > p:first-child, span.footnoteContent > div:first-child { 
-	display: inline; 
-}
-span.footnoteContent p, span.footnoteContent div {
-	text-indent: 0em;
-}
-
-/* footnote support end */
-
 /* @end */
 
 /*
@@ -457,7 +423,7 @@ table.memberdecls {
 	padding: 0px;
 }
 
-.memberdecls td {
+.memberdecls td, .fieldtable tr {
 	-webkit-transition-property: background-color, box-shadow;
 	-webkit-transition-duration: 0.5s;
 	-moz-transition-property: background-color, box-shadow;
@@ -470,7 +436,7 @@ table.memberdecls {
 	transition-duration: 0.5s;
 }
 
-.memberdecls td.glow {
+.memberdecls td.glow, .fieldtable tr.glow {
 	background-color: cyan;
 	box-shadow: 0 0 15px cyan;
 }
@@ -489,8 +455,11 @@ table.memberdecls {
 	color: #555;
 }
 
-.memItemLeft, .memItemRight, .memTemplParams {
-	border-top: 1px solid #CEC9D7;
+.memSeparator {
+        border-bottom: 1px solid #DEE4F0;
+        line-height: 1px;
+        margin: 0px;
+        padding: 0px;
 }
 
 .memItemLeft, .memTemplItemLeft {
@@ -504,6 +473,7 @@ table.memberdecls {
 .memTemplParams {
 	color: #64597A;
         white-space: nowrap;
+	font-size: 80%;
 }
 
 /* @end */
@@ -682,12 +652,13 @@ span.mlabel {
         border-right:1px solid #CEC9D7;
         border-bottom:1px solid #CEC9D7;
 	text-shadow: none;
-        color: white;
-        margin-right: 4px;
-        padding: 2px 3px;
-        border-radius: 3px;
-        font-size: 7pt;
+	color: white;
+	margin-right: 4px;
+	padding: 2px 3px;
+	border-radius: 3px;
+	font-size: 7pt;
 	white-space: nowrap;
+	vertical-align: middle;
 }
 
 
@@ -730,6 +701,7 @@ div.directory {
         width: 100%;
         padding-left: 6px;
 	padding-right: 6px;
+	padding-top: 3px;
 	border-left: 1px solid rgba(0,0,0,0.05);
 }
 
@@ -819,6 +791,14 @@ table.fieldtable {
         width: 100%;
 }
 
+.fieldtable td.fielddoc p:first-child {
+        margin-top: 2px;
+}       
+        
+.fieldtable td.fielddoc p:last-child {
+        margin-bottom: 2px;
+}
+
 .fieldtable tr:last-child td {
         border-bottom: none;
 }
@@ -857,6 +837,7 @@ table.fieldtable {
 	font-size: 11px;
 	background-image:url('tab_b.png');
 	background-repeat:repeat-x;
+	background-position: 0 -5px;
 	height:30px;
 	line-height:30px;
 	color:#9E94B1;
@@ -884,6 +865,10 @@ table.fieldtable {
 	display:block;
 	text-decoration: none;
 	outline: none;
+	color: #352F41;
+	font-family: 'Lucida Grande',Geneva,Helvetica,Arial,sans-serif;
+	text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.9);
+	text-decoration: none;        
 }
 
 .navpath li.navelem a:hover
@@ -942,7 +927,7 @@ div.header
 
 div.headertitle
 {
-	padding: 5px 5px 5px 7px;
+	padding: 5px 5px 5px 10px;
 }
 
 dl
@@ -951,19 +936,10 @@ dl
 }
 
 /* dl.note, dl.warning, dl.attention, dl.pre, dl.post, dl.invariant, dl.deprecated, dl.todo, dl.test, dl.bug */
-dl.section, dl.hasModels, dl.debugs, dl.models, dl.refines, dl.requires
+dl.section
 {
 	margin-left: 0px;
 	padding-left: 0px;
-}
-
-
-dl.section dt a, dl.hasModels dt a, dl.debugs dt a, 
-dl.models dt a, dl.refines dt a, dl.advanced dt a, 
-dl.requires dt a, dl.todo dt a, dl.bug dt a, dl.test dt a
-{
-    font-weight: bold;
-    color: black;
 }
 
 dl.note
@@ -974,7 +950,7 @@ dl.note
         border-color: #D0C000;
 }
 
-dl.warning, dl.attention, dl.advanceds
+dl.warning, dl.attention
 {
         margin-left:-7px;
         padding-left: 3px;
@@ -1041,7 +1017,7 @@ dl.section dd {
  
 #projectname
 {
-	font: 200% Tahoma, Arial,sans-serif;
+	font: 300% Tahoma, Arial,sans-serif;
 	margin: 0px;
 	padding: 2px 0px;
 }

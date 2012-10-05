@@ -1,3 +1,7 @@
+body, table, div, p, dl {
+    font: Lucida Grande,sans-serif;
+}
+
 .textsc {
     font-variant: small-caps;
 }
@@ -31,12 +35,25 @@
 }
 
 .tparams .paramname {
-        font-weight: bold;
-        vertical-align: top;
+    font-weight: bold;
+    vertical-align: top;
 }
 
-h2.groupheader {
-  font-size: 100%;
+h1 {
+    font-size: 180%;
+}
+
+h2 {
+    font-size: 120%;
+}
+
+
+h1.groupheader {
+    font-size: 150%;
+}
+
+a.el {
+    font-weight: normal;
 }
 
 .PkgDescription {
@@ -51,4 +68,74 @@ h2.groupheader {
     display:inline-block;
     padding:5px;
     vertical-align:middle;
+}
+
+/* footnote support */
+
+blockquote sup {
+	position: absolute;
+	right: 3px;
+	top: 3px;
+}
+
+.footnote ol li:hover {
+	text-decoration: underline;
+}
+
+a.footnoteBackref, a.footnoteLink {
+	text-decoration: none;
+}
+
+ol.footnotesList {
+        margin: 0;
+	font-size: 0.8em;
+	padding-top: 5px;
+}
+
+ol.footnotesList > li {
+	text-indent: -1.5em;
+	padding-left: 1.5em;
+	vertical-align: top;
+}
+
+.footnoteBackReferenceGroup {
+	padding-right: 0.5em;
+}
+.footnoteBackref {
+	padding-right: 0.25em;
+}
+span.footnoteContent {
+
+}
+span.footnoteContent > p:first-child, span.footnoteContent > div:first-child { 
+	display: inline; 
+}
+span.footnoteContent p, span.footnoteContent div {
+	text-indent: 0em;
+}
+
+/* footnote support end */
+
+dl.section, dl.hasModels, dl.debugs, dl.models, dl.refines, dl.requires
+{
+    padding: 0 0 0 0;
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+dl.section dt a, dl.hasModels dt a, dl.debugs dt a, 
+dl.models dt a, dl.refines dt a, dl.advanced dt a, 
+dl.requires dt a, dl.todo dt a, dl.bug dt a, dl.test dt a
+{
+    font-weight: bold;
+    color: black;
+}
+
+div.groupText {
+    font-style: none;
+}
+
+#projectname
+{
+    font: 200% Tahoma, Arial,sans-serif;
 }

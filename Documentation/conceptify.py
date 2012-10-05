@@ -23,7 +23,7 @@ def conceptify(d):
     title = d(".title")
     title.html(re.sub("Class Reference", "Concept Reference", title.html()))
     # remove the include
-    include_statement = d(".textblock").next()
+    include_statement = d(".contents").children().eq(0)
     # should check that this is really the div we think it is
     include_statement.empty()
 
@@ -40,6 +40,7 @@ def write_out_html(d, fn):
 def clean_doc():
     duplicate_files=glob.glob('./output/CGAL.CGAL.*/html/jquery.js')
     duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/html/dynsections.js'))
+    duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/html/stylesheet.css'))
     for fn in duplicate_files:
         os.remove(fn)
 
@@ -110,11 +111,12 @@ for fn in relationship_pages:
     dts.each(lambda i: pq(this).html(re.sub("Class ", "Concept ", pq(this).html())))
     write_out_html(d, fn)
 
-#throw out nav-sync
+# throw out nav-sync and the detailed description title
 all_pages=glob.glob('./output/CGAL.CGAL*/html/*.html')
 for fn in all_pages:
     d = pq(filename=fn, parser='html')
-    d('#nav-sync').remove()
+    d('#nav-sync').hide()
+    d('h2.groupheader').filter(lambda i: pq(this).text() == 'Detailed Description').remove()
     write_out_html(d, fn)
 
 clean_doc()
