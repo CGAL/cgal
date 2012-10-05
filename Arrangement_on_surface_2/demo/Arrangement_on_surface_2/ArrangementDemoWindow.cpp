@@ -406,6 +406,195 @@ updateFillColorSwatch( )
     this->ui->actionFillColor->setIcon( fillColorIcon );
 }
 
+void 
+ArrangementDemoWindow::
+openArrFile( QString filename )
+{
+    int index = this->ui->tabWidget->currentIndex( );
+    if ( index == -1 )
+    {
+        QMessageBox::information( this, "Oops", "Create a new tab first" );
+        return;
+    }
+    if ( filename.isNull( ) )
+    {
+        return;
+    }
+
+
+    std::ifstream ifs( filename.toStdString( ).c_str( ) );
+    CGAL::Object arr = this->arrangements[ index ];
+    Seg_arr* seg;
+    Pol_arr* pol;
+    Conic_arr* conic;
+    Alg_seg_arr* alg;
+    if ( CGAL::assign( seg, arr ) )
+    {
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Seg_arr > > ArrFormatter;
+        typedef ArrangementDemoTab< Seg_arr > TabType;
+
+        ArrFormatter arrFormatter;
+        CGAL::read( *seg, ifs, arrFormatter );
+        this->arrangements[ index ] = CGAL::make_object( seg );
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+        tab->setArrangement( seg );
+    }
+    else if ( CGAL::assign( pol, arr ) )
+    {
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Pol_arr > > ArrFormatter;
+        typedef ArrangementDemoTab< Pol_arr > TabType;
+
+        ArrFormatter arrFormatter;
+        CGAL::read( *pol, ifs, arrFormatter );
+        this->arrangements[ index ] = CGAL::make_object( pol );
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+        tab->setArrangement( pol );
+    }
+    else if ( CGAL::assign( conic, arr ) )
+    {
+#if 0
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Conic_arr > > ArrFormatter;
+        ArrFormatter arrFormatter;
+        CGAL::read( *conic, ifs, arrFormatter );
+        this->arrangements[ index ] = CGAL::make_object( conic );
+        tab->setArrangement( conic );
+#endif
+        typedef ArrangementDemoTab< Conic_arr > TabType;
+        Conic_reader< typename Conic_arr::Geometry_traits_2 > conicReader;
+        std::vector< typename Conic_arr::Curve_2 > curve_list;
+        CGAL::Bbox_2 bbox;
+        conicReader.read_data( filename.toStdString( ).c_str( ),
+            std::back_inserter( curve_list ), bbox );
+        this->arrangements[ index ] = CGAL::make_object( conic );
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+
+        CGAL::insert( *conic, curve_list.begin(), curve_list.end() );
+        tab->setArrangement( conic );
+        //QMessageBox::information( this, "Oops", "Reading conic arrangement not supported" );
+    }
+    else if ( CGAL::assign( alg, arr ) )
+    {
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Alg_seg_arr > > ArrFormatter;
+        typedef ArrangementDemoTab< Alg_seg_arr > TabType;
+
+        ArrFormatter arrFormatter;
+        CGAL::read( *alg, ifs, arrFormatter );
+        this->arrangements[ index ] = CGAL::make_object( alg );
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+        tab->setArrangement( alg );
+    }
+    ifs.close( );
+}
+
+void 
+ArrangementDemoWindow::
+openDatFile( QString filename )
+{
+    int index = this->ui->tabWidget->currentIndex( );
+    if ( index == -1 )
+    {
+        QMessageBox::information( this, "Oops", "Create a new tab first" );
+        return;
+    }
+    if ( filename.isNull( ) )
+    {
+        return;
+    }
+
+    std::ifstream inputFile( filename.toStdString( ).c_str( ) );
+    CGAL::Object arr = this->arrangements[ index ];
+    Seg_arr* seg;
+    Pol_arr* pol;
+    Conic_arr* conic;
+    Alg_seg_arr* alg;
+
+    // Creates an ofstream object named inputFile
+    if (! inputFile.is_open() ) // Always test file open
+    {
+        std::cout << "Error opening input file" << std::endl;
+        return;
+    }
+
+    if ( CGAL::assign( pol, arr ) )
+    {
+        pol->clear( );
+
+        std::vector<Arr_pol_point_2> points;
+
+        unsigned int num_polylines;
+        inputFile >> num_polylines;
+        std::list<Arr_pol_2> pol_list;
+
+        unsigned int i;
+        for (i = 0; i < num_polylines; i++) 
+        {
+            unsigned int num_segments;
+            inputFile >> num_segments;
+            points.clear();
+            unsigned int j;
+            for (j = 0; j < num_segments; j++) 
+            {
+                int ix, iy;
+                inputFile >> ix >> iy;
+                points.push_back (Arr_pol_point_2(NT(ix),NT(iy)));
+            }
+
+            Arr_pol_2 curve (points.begin(), points.end());
+            pol_list.push_back(curve);
+        }
+        CGAL::insert(*pol, pol_list.begin(), pol_list.end());
+
+        typedef ArrangementDemoTab< Pol_arr > TabType;
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+        tab->setArrangement( pol );
+    }
+    else if ( CGAL::assign( seg, arr ) )
+    {
+        seg->clear( );
+
+        int count;
+        inputFile >> count;
+        int i;
+        std::list<Arr_seg_2> seg_list;
+        for (i = 0; i < count; i++)
+        {
+            NT x0, y0, x1, y1;
+            inputFile >> x0 >> y0 >> x1 >> y1;
+
+            Arr_seg_point_2 p1(x0, y0);
+            Arr_seg_point_2 p2(x1, y1);
+
+            Arr_seg_2 curve(p1, p2);
+
+            seg_list.push_back(curve);
+        }
+
+        CGAL::insert(*(seg), seg_list.begin(), seg_list.end());
+
+        typedef ArrangementDemoTab< Seg_arr > TabType;
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+        tab->setArrangement( seg );
+    }
+#ifdef CGAL_USE_CORE
+    else if ( CGAL::assign( conic, arr ) )
+    {
+        conic->clear( );
+        Conic_reader< typename Conic_arr::Geometry_traits_2 > reader;
+        std::list<Arr_conic_2> curve_list;
+        CGAL::Bbox_2 bbox;
+        reader.read_data( filename.toStdString().c_str(), std::back_inserter(curve_list), bbox );
+        CGAL::insert (*conic, curve_list.begin(), curve_list.end());
+
+        typedef ArrangementDemoTab< Conic_arr > TabType;
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+        tab->setArrangement( conic );
+    }
+#endif
+
+    inputFile.close();
+}
+
+
 void
 ArrangementDemoWindow::
 updateEnvelope( QAction* newMode )
@@ -611,71 +800,18 @@ on_actionOpen_triggered( )
     }
     QString filename = 
         QFileDialog::getOpenFileName( this, tr( "Open file" ),
-            "", "Arrangement file - *.arr (*.arr);;All files (*.*)" );
+            "", "Arrangement files (*.arr *.dat);;All files (*.*)" );
     if ( filename.isNull( ) )
         return;
-    std::ifstream ifs( filename.toStdString( ).c_str( ) );
-    CGAL::Object arr = this->arrangements[ index ];
-    Seg_arr* seg;
-    Pol_arr* pol;
-    Conic_arr* conic;
-    Alg_seg_arr* alg;
-    if ( CGAL::assign( seg, arr ) )
-    {
-        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Seg_arr > > ArrFormatter;
-        typedef ArrangementDemoTab< Seg_arr > TabType;
 
-        ArrFormatter arrFormatter;
-        CGAL::read( *seg, ifs, arrFormatter );
-        this->arrangements[ index ] = CGAL::make_object( seg );
-        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-        tab->setArrangement( seg );
-    }
-    else if ( CGAL::assign( pol, arr ) )
+    if ( filename.endsWith( ".arr" ) )
     {
-        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Pol_arr > > ArrFormatter;
-        typedef ArrangementDemoTab< Pol_arr > TabType;
-
-        ArrFormatter arrFormatter;
-        CGAL::read( *pol, ifs, arrFormatter );
-        this->arrangements[ index ] = CGAL::make_object( pol );
-        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-        tab->setArrangement( pol );
+        this->openArrFile( filename );
     }
-    else if ( CGAL::assign( conic, arr ) )
+    else
     {
-#if 0
-        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Conic_arr > > ArrFormatter;
-        ArrFormatter arrFormatter;
-        CGAL::read( *conic, ifs, arrFormatter );
-        this->arrangements[ index ] = CGAL::make_object( conic );
-        tab->setArrangement( conic );
-#endif
-        typedef ArrangementDemoTab< Conic_arr > TabType;
-        Conic_reader< typename Conic_arr::Geometry_traits_2 > conicReader;
-        std::vector< typename Conic_arr::Curve_2 > curve_list;
-        CGAL::Bbox_2 bbox;
-        conicReader.read_data( filename.toStdString( ).c_str( ),
-            std::back_inserter( curve_list ), bbox );
-        this->arrangements[ index ] = CGAL::make_object( conic );
-        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-
-        CGAL::insert( *conic, curve_list.begin(), curve_list.end() );
-        tab->setArrangement( conic );
-        //QMessageBox::information( this, "Oops", "Reading conic arrangement not supported" );
+        this->openDatFile( filename );
     }
-    else if ( CGAL::assign( alg, arr ) )
-    {
-        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Alg_seg_arr > > ArrFormatter;
-        typedef ArrangementDemoTab< Alg_seg_arr > TabType;
-
-        ArrFormatter arrFormatter;
-        CGAL::read( *alg, ifs, arrFormatter );
-        this->arrangements[ index ] = CGAL::make_object( alg );
-        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-        tab->setArrangement( alg );
-    }
-    ifs.close( );
 
     ArrangementDemoTabBase* currentTab = this->tabs[ index ];
     CGAL::Qt::ArrangementGraphicsItemBase* agi = currentTab->getArrangementGraphicsItem( );
@@ -1064,3 +1200,5 @@ on_actionFillColor_triggered( )
         this->updateFillColorSwatch( );
     }
 }
+
+

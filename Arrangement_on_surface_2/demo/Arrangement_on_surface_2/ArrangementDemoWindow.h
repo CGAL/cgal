@@ -78,6 +78,7 @@ public slots:
     void on_actionZoomOut_triggered( );
     void on_actionPreferences_triggered( );
     void on_actionFillColor_triggered( );
+    
 
 signals:
     void modelChanged( );
@@ -87,6 +88,9 @@ protected:
     void resetCallbackState( int tabIndex );
     void removeCallback( int tabIndex );
     void updateFillColorSwatch( );
+
+    void openArrFile( QString filename );
+    void openDatFile( QString filename );
 
     std::vector< ArrangementDemoTabBase* > tabs;
     std::vector< CGAL::Object > arrangements;
