@@ -9,7 +9,7 @@ namespace CGAL {
 \authors Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner
 
 All classes in the \cgal kernel provide input and output operators for
-IO streams. Classes external to \cgal are also supported, by means of `oformat` (Section \ref seciofornoncgaltypes).
+IO streams. Classes external to \cgal are also supported, by means of `CGAL::oformat` (Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
 The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
 characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw ascii, a raw binary and a
@@ -31,7 +31,7 @@ object is written, as well as the data defining the object. For example
 for a point at the origin with Cartesian double coordinates, the output
 would be `PointC2(0.0, 0.0)`. At the moment \cgal does not
 provide input operations for pretty printed data. By default a stream
-is in <span class="textsc">ascii</span> mode.
+is in <span class="textsc">Ascii</span> mode.
 
 \cgal provides the following functions to modify the mode of an IO stream.
 
@@ -55,9 +55,9 @@ bool is_pretty(std::ios& s);
 
 \cgal defines output operators for classes that are derived
 from the class `ostream`. This allows to write to ostreams
-as `cout` or `cerr`, as well as to strstreams
-and fstreams.
-The output operator is defined for all classes in the \cgal kernel and for the class `Color` as well.
+as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
+and std::ofstream`.
+The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 Let `os` be an output stream.
 
 \code{.cpp}
@@ -66,11 +66,9 @@ ostream& operator<<(ostream& os, Class c);
 \endcode
 
 
-Example
---------------
+## Example ##
 
 \code{.cpp}
-#include <CGAL/basic.h>
 #include <iostream>
 #include <fstream>
 
@@ -100,8 +98,8 @@ int main()
 
 \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams
-as `cin`, as well as from strstreams and fstreams.
-The input operator is defined for all classes in the \cgal kernel.
+as `cin`, as well as from std::istringstream` and `std::ifstream`.
+The input operator is defined for all classes in the \cgal `Kernel`.
 Let `is` be an input stream.
 
 \code{.cpp}
@@ -110,11 +108,9 @@ istream& operator>>(istream& is, Class c);
 \endcode
 
 
-Example
---------------
+## Example ##
 
 \code{.cpp}
-#include <CGAL/basic.h>
 #include <iostream>
 #include <fstream>
 
@@ -141,7 +137,7 @@ main()
 }
 \endcode
 
-# IO for non-CGAL types # {#IOstreamIO}
+# IO for Non-CGAL Types # {#IOstreamIO}
 \anchor seciofornoncgaltypes
 
 ## Using Output Formatting ##

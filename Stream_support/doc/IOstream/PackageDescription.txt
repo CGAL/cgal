@@ -1,7 +1,6 @@
 /// \defgroup PkgIOstreams IO Streams Reference
 /*!
 \addtogroup PkgIOstreams
-\todo check generated documentation
 \PkgDescriptionBegin{IO Streams,PkgIOstreamsSummary}
 \PkgPicture{io.png}
 \PkgAuthors{Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner}

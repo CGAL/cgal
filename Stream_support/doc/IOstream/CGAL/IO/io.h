@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
   \ingroup PkgIOstreams
 
-All classes in the \cgal kernel provide input and output operators for
+All classes in the \cgal `Kernel` provide input and output operators for
 IOStreams.  The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
 characters on devices as a console, a file, or a pipe. The enum `Mode` distinguish between three different printing formats.
@@ -244,39 +244,9 @@ template <class T, typename F> Output_rep<T,F> oformat( const T& t, F );
 
 \cgal defines output operators for classes that are derived 
 from the class `ostream`. This allows to write to ostreams 
-as `cout` or `cerr`, as well as to strstreams 
-and fstreams. 
-The output operator is defined for all classes in the \cgal kernel and for the class `Color` as well. 
-Let `os` be an output stream. 
-
-### Example ###
-
-\code{.cpp}
-#include <CGAL/basic.h> 
-#include <iostream> 
-#include <fstream> 
-
-#include <CGAL/Cartesian.h> 
-#include <CGAL/Segment_2.h> 
-
-typedef CGAL::Point_2< CGAL::Cartesian<double> > Point; 
-typedef CGAL::Segment_2< CGAL::Cartesian<double> > Segment; 
-
-int main() 
-{ 
-Point p(0,1), q(2,2); 
-Segment s(p,q); 
-
-CGAL::set_pretty_mode(std::cout); 
-std::cout << p << std::endl << q << std::endl; 
-
-std::ofstream f("data.txt"); 
-CGAL::set_binary_mode(f); 
-f << s << p ; 
-
-return 1; 
-} 
-\endcode
+as `cout` or `cerr`, as well as to `std::ostringstream` 
+and `std::ofstream`. 
+The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well. 
 
 \sa `CGAL::set_mode`
 \sa `CGAL::set_ascii_mode`
@@ -287,7 +257,6 @@ return 1;
 \sa `CGAL::is_binary`
 \sa `CGAL::is_pretty`
 \sa \ref op_right_shift "CGAL::operator>>"
-
 */
 ostream& operator<<(ostream& os, Class c);
 
@@ -298,37 +267,10 @@ ostream& operator<<(ostream& os, Class c);
 
 \brief \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams
-as `cin`, as well as from strstreams and fstreams.
-The input operator is defined for all classes in the \cgal kernel.
+as `cin`, as well as from `std::istringstream` and `std::ifstream`.
+The input operator is defined for all classes in the \cgal `Kernel`.
 
-### Example ###
-\code{.cpp}
-#include <CGAL/basic.h>
-#include <iostream>
-#include <fstream>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Segment_2.h>
-
-typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
-typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
-
-int
-main()
-{
-    Point p, q;
-    Segment s;
-
-    CGAL::set_ascii_mode(std::cin);
-    std::cin >> p >> q;
-
-    std::ifstream f("data.txt");
-    CGAL::set_binary_mode(f);
-    f >> s >> p;
-
-    return 1;
-}
-\endcode
 
 \sa `CGAL::set_mode`
 \sa `CGAL::set_ascii_mode`
