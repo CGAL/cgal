@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgProfilingTools
 
-The class `Handle_hash_function` is a model for the `UniqueHasFunction` 
+The class `Handle_hash_function` is a model for the `UniqueHashFunction` 
 concept. It is applicable for all key types with pointer-like 
 functionality, such as handles, iterators, and circulators. 
 Specifically, for a `key` value the expression `&*key` must 
@@ -30,7 +30,7 @@ public:
 /// @{
 
 /*! 
-default constructor. 
+%Default constructor. 
 */ 
 Handle_hash_function(); 
 
@@ -41,12 +41,10 @@ Handle_hash_function();
 
 /*! 
 
-returns unique hash value for any `Handle` 
+Returns unique hash value for any `Handle` 
 type for which `&*key` gives a unique address. 
 
-### Requirement ###
-
-The type 
+\requires The type 
 `std::iterator_traits<Handle>::value_type` has to be defined 
 (which it is already for pointers, handles, iterators, and 
 circulators). 

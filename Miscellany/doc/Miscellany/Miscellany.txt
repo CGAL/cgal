@@ -13,7 +13,7 @@ namespace CGAL {
 
 \cgal provides classes for measuring the user process time and the real time.
 The class `CGAL::Timer` is the version for the user process time and
-the class `CGAL::Real\_timer` is the version for the real time.
+the class `CGAL::Real_timer` is the version for the real time.
 
 Instantiations of both classes are objects with a state. The state is
 either <I>running</I> or it is <I>stopped</I>. The state of an object
@@ -71,8 +71,8 @@ directly. An example are intermediate steps within an algorithm where
 the internal representation would be invalid. We present a general
 method to accomplish access in a safe manner, such that the high level
 data structures can guarantee validity after the possibly compromising
-algorithm has finished its work. An example are polyhedral surfaces in
-the Basic Library, where a construction process like for
+algorithm has finished its work. An example are polyhedral surfaces, 
+where a construction process like for
 a file scanner could be performed more efficiently on the internal
 halfedge data structure than by using the high-level Euler operators
 of the polyhedron.
@@ -81,8 +81,8 @@ of the polyhedron.
 \image html modifier_small.gif "Class diagram for the modifier. It illustrates the safe access to an internal representation through an high-level interface."
 
 The solution provided here is inspired by the strategy
-pattern \cite cgal:ghjv-dpero-95, though it serves a different intent, see
-Figure \ref figureModifierDesign. The abstract base class
+pattern \cite cgal:ghjv-dpero-95, though it serves a different intent. 
+The abstract base class
 `Modifier_base<R>` declares a pure virtual member function
 `operator()` that accepts a single reference parameter of the
 internal representation type. The member function `delegate()` of

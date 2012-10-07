@@ -9,7 +9,7 @@ function object. It maps objects of its domain type `Key` to
 the integral image type `std::size_t`. The image values have to 
 be unique for all keys in the domain type `Key`. 
 
-\hasModel CGAL::Handle_hash_function 
+\hasModel `CGAL::Handle_hash_function` 
 
 \sa `CGAL::Unique_hash_map<Key,Data,UniqueHashFunction>` 
 
@@ -49,7 +49,7 @@ UniqueHashFunction& operator=(const UniqueHashFunction& hash2);
 
 /*! 
 
-returns unique hash value for the `key` value. 
+returns a unique hash value for the `key` value. 
 */ 
 std::size_t operator()( const Key& key); 
 

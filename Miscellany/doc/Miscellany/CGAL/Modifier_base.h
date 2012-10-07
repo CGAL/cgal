@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgProfilingTools
 
-\anchor sectionModifierBase 
-
 `Modifier_base` is an abstract base class providing the 
 interface for any modifier. A modifier is a function object derived 
 from `Modifier_base` that implements the pure virtual member 
@@ -24,22 +22,22 @@ function applies the modifier to an instance of class <TT>A</TT>.
 
 \code
 class A { 
-int i; // protected internal representation 
+  int i; // protected internal representation 
 public: 
-void delegate( CGAL::Modifier_base<int>& modifier) { 
-modifier(i); 
-CGAL_postcondition( i > 0); // check validity 
-} 
+  void delegate( CGAL::Modifier_base<int>& modifier) { 
+    modifier(i); 
+    CGAL_postcondition( i > 0); // check validity 
+  } 
 }; 
 
 struct Modifier : public CGAL::Modifier_base<int> { 
-void operator()( int& rep) { rep = 42;} 
+  void operator()( int& rep) { rep = 42;} 
 }; 
 
 void use_it() { 
-A a; 
-Modifier m; 
-a.delegate(m); // a.i == 42 and A has checked that A::i > 0. 
+  A a; 
+  Modifier m; 
+  a.delegate(m); // a.i == 42 and A has checked that A::i > 0. 
 } 
 \endcode
 

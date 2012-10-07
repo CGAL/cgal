@@ -17,12 +17,12 @@ first interval.
 
 ### Implementation ###
 
-The timer class is based in the C function `gettimeofday()` on 
+The timer class is based on the C function `gettimeofday()` on 
 POSIX systems and the C function `_ftime()` on MS Visual C++. 
 The system calls to these 
 timers might fail, in which case a warning message will be issued 
 through the \cgal error handler and the functions return with the 
-error codes indicated above. The `precision` method computes the 
+error codes indicated above. The `Real_timer::precision()` method computes the 
 precision dynamically at runtime at its first invocation. 
 
 */

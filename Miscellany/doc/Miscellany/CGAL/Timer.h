@@ -17,14 +17,14 @@ first interval.
 
 ### Implementation ###
 
-The timer class is based in the C function `std::clock()` on 
+The timer class is based on the C function `std::clock()` on 
 PC systems and the C function `getrusage()` on standard 
 POSIX systems. The counter for the `std::clock()` based 
 solution might wrap around (overflow) after only about 36 
 minutes. This won't happen on POSIX systems. The system calls to these 
 timers might fail, in which case a warning message will be issued 
 through the \cgal error handler and the functions return with the 
-error codes indicated above. The `precision` method computes the 
+error codes indicated above. The `Timer::precision()` method computes the 
 precision dynamically at runtime at its first invocation. 
 
 */

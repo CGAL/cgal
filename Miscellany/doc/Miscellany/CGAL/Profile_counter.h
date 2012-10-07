@@ -15,11 +15,14 @@ default and activated by the global macro ::CGAL_PROFILE.
 
 ### Operations ###
 
-If `CGAL_PROFILE` is not defined, then `CGAL_PROFILER` is defined 
+If `::CGAL_PROFILE` is not defined, then `::CGAL_PROFILER` is defined 
 to an empty statement. Otherwise, it is defined to 
-`static CGAL::Profile_counter tmp(MSG); ++tmp;`. 
 
-\cgalexample{Miscellany/Profile_counter.cpp} 
+\code{.cpp}
+{ static CGAL::Profile_counter tmp(MSG); ++tmp; }
+\endcode
+
+\cgalexample{Profiling_tools/Profile_counter.cpp} 
 
 will print at exit: 
 

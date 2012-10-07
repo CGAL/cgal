@@ -62,34 +62,33 @@ Union_find<T,A>();
 /// @{
 
 /*! 
-the allocator of `P`. 
+the allocator of the partition. 
 */ 
 allocator get_allocator() ; 
 
 /*! 
-returns the number of disjoint 
-sets of `P`. 
+returns the number of disjoint sets of the partition. 
 */ 
 std::size_t number_of_sets() ; 
 
 /*! 
-returns the number of values of `P`. 
+returns the number of values of the partition. 
 */ 
 std::size_t size() ; 
 
 /*! 
-returns the memory consumed by `P`. 
+returns the memory consumed by the partition. 
 */ 
 std::size_t bytes() ; 
 
 /*! 
 returns the size of the set 
-containing \f$ p\f$. 
+containing `h`. 
 */ 
-std::size_t size( const_handle p) ; 
+std::size_t size( const_handle h) ; 
 
 /*! 
-reinitializes `P` to an empty partition. 
+reinitializes to an empty partition. 
 */ 
 void clear(); 
 
@@ -105,8 +104,7 @@ same as `make_set(x)`.
 handle push_back(const T& x) ; 
 
 /*! 
-insert 
-the range of values referenced by `[first,beyond)`. 
+inserts the range of values referenced by `[first,beyond)`. 
 \requires value type of `Forward_iterator` is `T`. 
 */ 
 template <class Forward_iterator> void 
@@ -115,39 +113,39 @@ insert(Forward_iterator first, Forward_iterator beyond) ;
 /*! 
 
 */ 
-handle find(handle p) ; 
+handle find(handle h) ; 
 
 /*! 
 returns a 
-canonical handle of the set that contains `p`, i.e., 
-`P.same_set(p,q)` iff `P.find(p)` and `P.find(q)` 
-return the same handle. 
-\pre `p` is a handle in `P`. 
+canonical handle of the set that contains `h`, i.e., 
+`P.same_set(h,h2)` iff `P.find(h) == P.find(h2)`.
+\pre `h` is a handle in `P`. 
 */ 
 const_handle find( const_handle p) ; 
 
 /*! 
 unites the sets of 
-partition `P` containing \f$ p\f$ and \f$ q\f$. \pre \f$ p\f$ and \f$ q\f$ are in `P`. 
+partition `P` containing `h1` and `h2`. 
+\pre `h1` and `h2` are in `P`. 
 */ 
-void unify_sets( handle p, handle q); 
+void unify_sets( handle h1, handle h2); 
 
 /*! 
 returns 
-true iff \f$ p\f$ and \f$ q\f$ belong to the same set of `P`. 
-\pre \f$ p\f$ and \f$ q\f$ are in `P`. 
+true iff `h1` and `h2` belong to the same set of `P`. 
+\pre `h1` and `h2` are in `P`. 
 */ 
-bool same_set( const_handle p, const_handle q) ; 
+bool same_set( const_handle h1, const_handle h2) ; 
 
 /*! 
 returns an iterator pointing to the 
-first value of `P`. 
+first value of the partition. 
 */ 
 iterator begin() ; 
 
 /*! 
 returns an iterator pointing beyond the 
-last value of `P`. 
+last value of the partition. 
 */ 
 iterator end() ; 
 
