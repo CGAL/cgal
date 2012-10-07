@@ -2,10 +2,10 @@
 \ingroup PkgConvexHull3Concepts
 \cgalconcept
 
-The requirements of the polyhedron type to be built by the 
-function `CGAL::convex_hull_3`. 
+Requirements of the polyhedron type built by the 
+function `CGAL::convex_hull_3()`. 
 
-\hasModel `CGAL::Polyhedron_3<Traits>` 
+\hasModel `CGAL::Polyhedron_3` 
 
 */
 class ConvexHullPolyhedron_3 {

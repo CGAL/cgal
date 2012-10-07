@@ -34,7 +34,7 @@ triangulation to get a fully dynamic computation.
 # Static Convex Hull Construction # {#secconvex_hull_3}
 
 The function 
-`::convex_hull_3` provides an 
+`::convex_hull_3()` provides an 
 implementation of the quickhull algorithm \cite bdh-qach-96 for three 
 dimensionsquickhull, 3D. There are two versions of this
 function available, one that can be used when it is known that the output
@@ -48,7 +48,7 @@ computing the hull.
 
 ## Traits Class ##
 
-The function `::convex_hull_3` is parameterized by a traits class,
+The function `::convex_hull_3()` is parameterized by a traits class,
 which specifies the types and geometric primitives to be used in the
 computation. If input points from a kernel with exact predicates 
 and non-exact constructions are used, and a certified result is expected,
@@ -58,11 +58,11 @@ account.
 
 ## Convexity Checking ##
 
-The function `::is_strongly_convex_3`
+The function `::is_strongly_convex_3()`
 implements the algorithm of Mehlhorn <I>et al.</I> \cite mnssssu-cgpvg-96 
 to determine if the vertices of a given polytope constitute a strongly convex 
 point set or not. This function is used in postcondition testing for
-`::convex_hull_3`.
+`::convex_hull_3()`.
 
 ## Example ##
 
@@ -70,15 +70,15 @@ The following program computes the convex hull of a set of 250 random
 points chosen from a sphere of radius 100. We assume that the points are
 not all identical and not all collinear, thus we directly use a polyhedron
 as output. Note the usage of the functor `Plane_from_facet` together with
-`std::transform` to compute the equations of the plane of each facet
+`std::transform()` to compute the equations of the plane of each facet
 of the convex hull.
 
 \cgalexample{Convex_hull_3/quickhull_3.cpp}
 
 # Incremental Convex Hull Construction # {#Convex_hull_3Incremental}
 
-The function `::convex_hull_incremental_3` provides an
-interface similar to `::convex_hull_3` for the \f$ d\f$-dimensional 
+The function `::convex_hull_incremental_3()` provides an
+interface similar to `::convex_hull_3()` for the `d`-dimensional 
 incremental construction algorithm \cite cms-frric-93 
 implemented by the class `Convex_hull_d<R>` that is specialized 
 to three dimensions. This function accepts an iterator range over a set of
@@ -94,7 +94,7 @@ of the general d-dimension). The incremental version is provided for
 completeness and educational purposes. You should use the dynamic
 version when you need an efficient incremental convex hull algorithm.
 
-To use the full functionality available with the \f$ d\f$-dimensional class 
+To use the full functionality available with the `d`-dimensional class 
 `Convex_hull_d<R>` in three dimensions (<I>e.g.</I>, the ability
 to insert new points and to query if a point lies in the convex hull or not), 
 you can instantiate the class `Convex_hull_d<K>` with the adapter
@@ -127,10 +127,10 @@ not all of them are vertices of the hull.
 # Performance # {#Convex_hull_3Performance}
 
 In the following, we compare the running times of the three approaches to compute 3D convex hulls.
-For the static version (using `::convex_hull_3`) and the dynamic version
-(using `Delaunay_triangulation_3` and `::convex_hull_3_to_polyhedron_3`), the kernel
+For the static version (using `::convex_hull_3()`) and the dynamic version
+(using `Delaunay_triangulation_3` and `::convex_hull_3_to_polyhedron_3()`), the kernel
 used was `Exact_predicates_inexact_constructions_kernel`. For the incremental version
-(using `::convex_hull_incremental_3`), the kernel used was `Exact_predicates_exact_constructions_kernel`.
+(using `::convex_hull_incremental_3()`), the kernel used was `Exact_predicates_exact_constructions_kernel`.
 
 To compute the convex hull of a million of random points in a unit ball the static approach needed 1.63s, while 
 the dynamic and incremental approaches needed 9.50s and 11.54s respectively.

@@ -10,27 +10,22 @@ and assigns it to `P`. If `test_correctness` is set to
 used to determine the correctness of the resulting polyhedron.
 
 
-This function is provided for completeness and educational 
+\attention This function is provided for completeness and educational 
 purposes. When an efficient incremental implementation is needed, 
 using `CGAL::Delaunay_triangulation_3` together with 
 `CGAL::convex_hull_3_to_polyhedron_3` is highly recommended. 
 
-### Requirements ###
-
-<OL> 
-<LI>`Polyhedron` must provide a type `Polyhedron::Traits` 
+\requires `Polyhedron` must provide a type `Polyhedron::Traits` 
 that defines the following types 
-<UL> 
-<LI>`Polyhedron::Traits::R`, which is a model of 
+- `Polyhedron::Traits::R`, which is a model of 
 the representation class `R` required by 
 `CGAL::Convex_hull_d_traits_3<R>` 
-<LI>`Polyhedron::Traits::Point` 
-</UL> 
-<LI>`InputIterator::value_type` must be the same as 
-`Polyhedron::Traits::Point` 
-</OL> 
+- `Polyhedron::Traits::Point`  
+\requires `InputIterator::value_type` must be the same as 
+`Polyhedron::Traits::Point`.
 
-\sa `CGAL::convex_hull_3` 
+
+\sa `CGAL::convex_hull_3()` 
 
 ### Implementation ###
 

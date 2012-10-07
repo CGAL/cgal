@@ -2,12 +2,12 @@
 \ingroup PkgConvexHull3Concepts
 \cgalconcept
 
-The requirements of the facet type of a polyhedron to be built by the 
-function `CGAL::convex_hull_3`. 
+Requirements of the facet type of a polyhedron built by the 
+function `CGAL::convex_hull_3()`. 
 
 \hasModel `CGAL::Polyhedron_3::Facet` 
 
-\sa `CGAL::Polyhedron_3<Traits>` 
+\sa `CGAL::Polyhedron_3` 
 \sa `ConvexHullPolyhedronVertex_3` 
 \sa `ConvexHullPolyhedronHalfedge_3` 
 
