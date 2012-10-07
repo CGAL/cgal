@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgGenerators
 
-The class `Random_convex_set_traits_2`serves as a traits class 
-for the function `random_convex_set_2`. 
+The class `Random_convex_set_traits_2` serves as a traits class 
+for the function `random_convex_set_2()`. 
 
 \models ::RandomConvexSetTraits_2 
 

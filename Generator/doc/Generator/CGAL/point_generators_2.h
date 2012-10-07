@@ -3,13 +3,14 @@ namespace CGAL {
 /*!
 \ingroup PkgGenerators
 
-perturbs the points in the range \f$ [first,last)\f$ by
+\brief perturbs each point in a given range of points by a random amount.
+
+The function perturbs the points in the range \f$ [first,last)\f$ by
 replacing each point with a random point from the `xeps` \f$ \times\f$
 `yeps` rectangle centered at the original point.  Two random numbers
 are needed from `rnd` for each point.
 
-The function `perturb_points_2` perturbs each point in a given range of points by 
-a random amount. 
+ 
 
 ###Requires ###
 
@@ -18,7 +19,6 @@ a random amount.
   `(x,y)` of type `P`. 
  Predefined implementations for these creators like the default are  
  described in Section \ref STLCreators. 
-
 - The `value_type` of the `ForwardIterator` must be assignable 
   to `P`. 
 - `P` is equal to the `value_type` of the 
@@ -47,13 +47,15 @@ namespace CGAL {
 /*!
 \ingroup PkgGenerators
 
-creates \f$ n\f$ points equally spaced on the segment from \f$ p\f$ to \f$ q\f$,
+\brief generates a set of points equally spaced on 
+a segment given the endpoints of the segment.
+
+The function creates \f$ n\f$ points equally spaced on the segment from \f$ p\f$ to \f$ q\f$,
 i.e.\ \f$ \forall i: 0 \le i < n: o[i] := \frac{n-i-1}{n-1}\, p +
 \frac{i}{n-1}\, q\f$. Returns the value of \f$ o\f$ after inserting
 the \f$ n\f$ points.
 
-The function `points_on_segment_2` generates a set of points equally spaced on 
-a segment given the endpoints of the segment. 
+ 
 
 \sa `CGAL::points_on_segment_2` 
 \sa `CGAL::points_on_square_grid_2` 
@@ -71,12 +73,12 @@ namespace CGAL {
 /*!
 \ingroup PkgGenerators
 
-creates the first \f$ n\f$ points on the regular \f$ \lceil\sqrt{n}\,\rceil\times\lceil\sqrt{n}\,\rceil\f$ grid within the square
+\brief generates a given number of points on a square 
+grid whose size is determined by the number of points to be generated. 
+
+The function creates the first \f$ n\f$ points on the regular \f$ \lceil\sqrt{n}\,\rceil\times\lceil\sqrt{n}\,\rceil\f$ grid within the square
 \f$ [-a,a]\times[-a,a]\f$. Returns the value of \f$ o\f$ after inserting
 the \f$ n\f$ points. 
-
-The function `points_on_square_grid_2` generates a given number of points on a square 
-grid whose size is determined by the number of points to be generated. 
 
 
 ###Requires###
@@ -155,7 +157,7 @@ namespace CGAL {
 
 The class `Random_points_in_disc_2` is an input iterator creating points uniformly 
 distributed in an open disc. The default `Creator` is 
-`Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>`. 
+`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
 
 \models ::InputIterator 
 \models ::PointGenerator 
@@ -203,13 +205,9 @@ typedef const Point_2* pointer;
 */ 
 typedef const Point_2& reference; 
 
-/// @} 
-
-/// \name Operations 
-/// @{
 
 /*! 
-\f$ g\f$ is an input iterator creating points of type `Point_2` uniformly 
+Creates an input iterator `g` generating points of type `Point_2` uniformly 
 distributed in the open disc with radius \f$ r\f$, 
 i.e.\ \f$ |*g| < r\f$. Two random numbers are needed from 
 `rnd` for each point. 
@@ -230,7 +228,7 @@ namespace CGAL {
 
 The class `Random_points_in_square_2` is an input iterator creating points uniformly 
 distributed in a half-open square. The default `Creator` is 
-`Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>`. 
+`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
 
 \models ::InputIterator 
 \models ::PointGenerator 
@@ -277,13 +275,10 @@ typedef const Point_2* pointer;
 */ 
 typedef const Point_2& reference; 
 
-/// @} 
 
-/// \name Operations 
-/// @{
 
 /*! 
-\f$ g\f$ is an input iterator creating points of type `Point_2` uniformly 
+Creates  an input iterator `g` generating points of type `Point_2` uniformly 
 distributed in the half-open square with side length \f$ 2 a\f$, centered 
 at the origin, i.e.\ \f$ \forall p = *g: -a \le p.x() < a\f$ and 
 \f$ -a \le p.y() < a\f$. 
@@ -305,7 +300,7 @@ namespace CGAL {
 
 The class `Random_points_on_circle_2` is an input iterator creating points uniformly 
 distributed on a circle. The default `Creator` is 
-`Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>`. 
+`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
 The generated points are computed using floating point arithmetic, 
 whatever the Kernel is, thus they are on the circle/sphere only up to 
 rounding errors. 
@@ -356,13 +351,9 @@ typedef const Point_2* pointer;
 */ 
 typedef const Point_2& reference; 
 
-/// @} 
-
-/// \name Operations 
-/// @{
 
 /*! 
-\f$ g\f$ is an input iterator creating points of type `Point_2` uniformly 
+creates an input iterator `g` generating points of type `Point_2` uniformly 
 distributed on the circle with radius \f$ r\f$, 
 i.e.\ \f$ |*g| == r\f$. A single random number is needed from 
 `rnd` for each point. 
@@ -383,7 +374,7 @@ namespace CGAL {
 
 The class `Random_points_on_segment_2` is an input iterator creating points uniformly 
 distributed on a segment. The default `Creator` is 
-`Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>`. 
+`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
 
 \models ::InputIterator 
 \models ::PointGenerator 
@@ -430,13 +421,9 @@ typedef const Point_2* pointer;
 */ 
 typedef const Point_2& reference; 
 
-/// @} 
-
-/// \name Operations 
-/// @{
 
 /*! 
-\f$ g\f$ is an input iterator creating points of type `Point_2` uniformly 
+creates an input iterator `g` generating points of type `Point_2` uniformly 
 distributed on the segment from \f$ p\f$ to \f$ q\f$ (excluding \f$ q\f$), 
 i.e.\ \f$ *g == (1-\lambda)\, p + \lambda q\f$ where \f$ 0 \le\lambda< 1\f$. 
 A single random number is needed from `rnd` for each point. 
@@ -456,8 +443,8 @@ namespace CGAL {
 \ingroup PkgGenerators
 
 The class `Random_points_on_square_2` is an input iterator creating points uniformly 
-distributed in the boundary of a square. The default `Creator` is 
-`Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>`. 
+distributed on the boundary of a square. The default `Creator` is 
+`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
 
 \models ::InputIterator 
 \models ::PointGenerator 
@@ -504,13 +491,9 @@ typedef const Point_2* pointer;
 */ 
 typedef const Point_2& reference; 
 
-/// @} 
-
-/// \name Operations 
-/// @{
 
 /*! 
-\f$ g\f$ is an input iterator creating points of type `Point_2` uniformly 
+creates an input iterator `g` generating points of type `Point_2` uniformly 
 distributed on the boundary of the square with side length \f$ 2 a\f$, 
 centered at the origin, i.e.\ \f$ \forall p = *g:\f$ one 
 coordinate is either \f$ a\f$ or \f$ -a\f$ and for the 
@@ -532,8 +515,7 @@ namespace CGAL {
 \ingroup PkgGenerators
 
 The class `Points_on_segment_2` is a generator for points on a segment whose 
-endpoints are specified upon construction. The points are equally 
-spaced 
+endpoints are specified upon construction. The points are equally spaced. 
 
 \models ::PointGenerator 
 
@@ -581,13 +563,10 @@ typedef const Point_2* pointer;
 */ 
 typedef const Point_2& reference; 
 
-/// @} 
 
-/// \name Creation 
-/// @{
 
 /*! 
-\f$ g\f$ is an input iterator creating points of type `P` equally 
+creates an input iterator `g` generating points of type `P` equally 
 spaced on the segment from \f$ p\f$ to \f$ q\f$. \f$ n-i\f$ points are placed on the 
 segment defined by \f$ p\f$ and \f$ q\f$. Values of the index parameter \f$ i\f$ larger 
 than 0 indicate starting points for the sequence further from \f$ p\f$. 

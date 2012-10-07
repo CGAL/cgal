@@ -3,7 +3,6 @@
 /// \ingroup PkgGenerators
 /*!
 \addtogroup PkgGenerators
-\todo check generated documentation
 \PkgDescriptionBegin{Geometric Object Generators,PkgGeneratorsSummary}
 \PkgPicture{dice.png}
 \PkgAuthors{Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr}

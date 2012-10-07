@@ -6,9 +6,9 @@ namespace CGAL {
 \anchor secrandom_numbers_generator 
 
 The class `Random` is a random numbers generator. It generates 
-uniformly distributed random `bool`s, `int`s and `double`s. 
+uniformly distributed random `bool`, `int` and `double`. 
 It can be used as the random number generating function object in the 
-\stl algorithm `random_shuffle`. 
+\stl algorithm `std::random_shuffle`. 
 
 Instances of `Random` can be seen as input streams. Different 
 streams are <I>independent</I> of each other, i.e. the sequence of 
@@ -48,14 +48,14 @@ typedef Hidden_type State;
 
 /*! 
 
-introduces a variable `random` of type `Random`. The 
-seed is chosen "randomly", depending on the system time. 
+%Default constructor. The 
+seed is chosen based on the system time. 
 */ 
 Random( ); 
 
 /*! 
 
-introduces a variable `random` of type `Random` and initializes its internal state using `seed`. Equal 
+Constructor initializing its internal state using `seed`. Equal 
 values for `seed` result in equal sequences of random 
 numbers. 
 */ 
@@ -75,7 +75,7 @@ bool get_bool( );
 /*! 
 
 returns a random `int` value from the interval 
-\f$ [\mbox{0,2^b})\f$. This is supposed to 
+\f$[0,2^b)\f$. This is supposed to 
 be efficient. 
 */ 
 template <int b> int get_bits(); 
@@ -83,14 +83,14 @@ template <int b> int get_bits();
 /*! 
 
 returns a random `int` from the interval 
-\f$ [\mbox{lower,upper})\f$. 
+`[lower,upper)`. 
 */ 
 int get_int( int lower, int upper); 
 
 /*! 
 
 returns a random `double` from the interval 
-\f$ [\mbox{lower,upper})\f$. 
+`[lower,upper)`. 
 */ 
 double get_double( double lower = 0.0, 
 double upper = 1.0); 
@@ -104,7 +104,7 @@ double upper = 1.0);
 /*! 
 
 returns a random `IntType` from the interval 
-\f$ [\mbox{lower,upper}]\f$. `IntType` can be an integral type 
+`[lower,upper)`. `IntType` can be an integral type 
 as `int`, `std::ptrdiff_t`, `std::size_t`,etc. 
 \warning In contrast to `get_int` this function may return `upper`.
 */ 
@@ -113,7 +113,7 @@ template <typename IntType> IntType uniform_smallint( IntType lower=0, IntType u
 /*! 
 
 returns a random `IntType` from the interval 
-\f$ [\mbox{lower,upper}]\f$. `IntType` can be an integral type 
+`[lower,upper)`. `IntType` can be an integral type 
 as `int`, `std::ptrdiff_t`, `std::size_t`,etc. 
 \warning In contrast to `get_int` this function may return `upper`.
 */ 
@@ -122,7 +122,7 @@ template <typename IntType> IntType uniform_int( IntType lower=0, IntType upper=
 /*! 
 
 returns a random `RealType` from the interval 
-\f$ [\mbox{lower,upper})\f$. `RealType` can be `float`, `double`, etc. 
+`[lower,upper)`. `RealType` can be `float`, `double`, etc. 
 */ 
 template <typename RealType> Realtype uniform_real( RealType lower = 0.0, 
 RealType upper = 1.0); 
@@ -130,7 +130,7 @@ RealType upper = 1.0);
 /*! 
 
 returns a random `RealType` from the interval 
-\f$ [0,1)\f$. `RealType` can be `float`, `double`, etc. 
+`[0,1)`. `RealType` can be `float`, `double`, etc. 
 */ 
 template <typename RealType> RealType uniform_01(); 
 
@@ -170,7 +170,7 @@ void restore_state( State const& state);
 
 /*! 
 
-returns `true`, iff `random` and `random2` have equal 
+returns `true`, iff the random object and `random2` have equal 
 internal states. 
 */ 
 bool operator == ( Random const& random2) const; 

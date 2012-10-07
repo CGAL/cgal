@@ -95,8 +95,8 @@ typedef const Point_d& reference;
 
 /*! 
 \f$ g\f$ is an input iterator creating points of type `Point_d` uniformly 
-distributed in the open ball in dimension \f$ dim\f$ with radius \f$ r\f$, 
-i.e. \f$ |*g| < r\f$ . \f$ 2\cdot dim+1\f$ random numbers are needed from 
+distributed in the open ball in dimension \f$ dim\f$ with radius \f$ r\f$,
+i.e.\ \f$ |*g| < r\f$ . \f$ 2\cdot dim+1\f$ random numbers are needed from 
 `rnd` for each point. 
 
 */ 
@@ -241,8 +241,8 @@ typedef const Point_d& reference;
 
 /*! 
 \f$ g\f$ is an input iterator creating points of type `Point_d` uniformly 
-distributed on a sphere in dimension \f$ dim\f$ with radius \f$ r\f$, 
-i.e. \f$ |*g| == r\f$ . \f$ 2\cdot dim\f$ random numbers are needed from 
+distributed on a sphere in dimension \f$ dim\f$ with radius \f$ r\f$,
+i.e.\ \f$ |*g| == r\f$ . \f$ 2\cdot dim\f$ random numbers are needed from 
 `rnd` for each point. 
 
 */ 

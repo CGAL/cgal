@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Geometric Object Generators
+\mainpage Geometric %Object Generators
 \anchor Chapter_Geometric_Object_Generators
 \anchor chapterGenerators
 \autotoc
@@ -41,15 +41,15 @@ distributed in a sphere (`Random_points_in_sphere_3`)
 or cube (`Random_points_in_cube_3`) or on the boundary of a sphere
 (`Random_points_on_sphere_3`).
 For generating 3D grid points, we provide the function 
-`::points_on_cube_grid_3` that writes to
+`::points_on_cube_grid_3()` that writes to
 an output iterator.
 
 For higher dimensions, input iterators are provided for random points uniformly 
-distributed in a \f$ d\f$-dimensional cube (`Random_points_in_cube_d`)
-or \f$ d\f$-dimensional ball (`Random_points_in_ball_d`) or on the boundary of a 
+distributed in a `d`-dimensional cube (`Random_points_in_cube_d`)
+or `d`-dimensional ball (`Random_points_in_ball_d`) or on the boundary of a 
 sphere (`Random_points_on_sphere_d`).
 For generating grid points, we provide the function 
-`Random_points_on_sphere_d::points_on_grid_d()` that writes to
+`::points_on_cube_grid_d()` that writes to
 an output iterator.
 
 We also provide two functions for generating more complex geometric objects.
@@ -76,7 +76,7 @@ a point set.
 
 ## Support Functions and Classes for Generators ##
 
-The function `::random_selection()` chooses \f$ n\f$ items at random from a random
+The function `::random_selection()` chooses `n` items at random from a random
 access iterator range which is useful to produce degenerate input data
 sets with multiple entries of identical items.
 
@@ -97,7 +97,7 @@ for the example output.
 # Example Generating Grid Points # {#GeneratorExample}
 
 The second example demonstrates the point generators with integer
-points. Arithmetic with `double`s is sufficient to produce
+points. Floating point arithmetic is sufficient to produce
 regular integer grids. See Figure \ref figureIntegerPointGenerator
 for the example output.
 
@@ -135,7 +135,7 @@ objects until they are used.
 \anchor figureSegmentGeneratorFan
 \image html Segment_generator_prog2.png "Output of example program for the generic segment generator using pre-computed point locations."
 
-# Example Generating Point Sets in \f$ d\f$ dimensions # {#GeneratorExample}
+# Example Generating Point Sets in `d` Dimensions # {#GeneratorExample}
 
 The following example generates points inside a cube in dimension 5
 (examples for ball and sphere are available in the example directory) :
@@ -157,13 +157,13 @@ Generating 10 random points in a cube in 5D, coordinates from -100 to 100
 5 53.0183 78.3228 -28.5665 83.3503 68.0482 
 \endverbatim
 
-Next example generates grid points in dimension \f$ dim=4\f$.
+Next example generates grid points in dimension `d=4`.
 Since the required number of
-points, 20 is between \f$ 2^{dim}\f$ and \f$ 3^{dim}\f$ the supporting grid has
+points, 20 is between \f$ 2^d\f$ and \f$ 3^d\f$ the supporting grid has
 \f$ 3\times 3\times 3\times 3\f$ points.
 Since the size parameter is 5, the
 coordinates are in \f$ \{-5, 0, 5\}\f$, but since the number of points
-verifies \f$ 20\leq 3^{dim-1}\f$, all
+verifies \f$ 20\leq 3^{d-1}\f$, all
 generated points have the same last coordinate \f$ -5\f$.
 
 \cgalexample{Generator/grid_d.cpp}

@@ -3,7 +3,7 @@
 \cgalconcept
 
 The concept `RandomPolygonTraits_2` describes the requirements for the traits 
-class used by the function `random_polygon_2`. 
+class used by the function `random_polygon_2()`. 
 
 \hasModel \cgal kernels. 
 

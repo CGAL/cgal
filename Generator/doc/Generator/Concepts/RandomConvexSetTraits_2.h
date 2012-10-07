@@ -2,8 +2,8 @@
 \ingroup PkgGeneratorsConcepts
 \cgalconcept
 
-The concept `RandomConvexSetTraits_2`describes the requirements of the traits 
-class for the function `random_convex_set_2`. 
+The concept `RandomConvexSetTraits_2` describes the requirements of the traits 
+class for the function `random_convex_set_2()`. 
 
 \hasModel `CGAL::Random_convex_set_traits_2<Kernel>`
 
