@@ -451,8 +451,10 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.fig -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.pdf -text svneol=unset#application/pdf
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_algebraic_segment_traits.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_face_index_map.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_halfedge_direction.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_rational_function_traits.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_vertex_index_map.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_do_intersect.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_zone.tex -text
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/fig/Curve_intersections_2.png -text
@@ -1637,7 +1639,7 @@ Generator/doc_tex/Generator_ref/Combination_enumerator.tex -text
 Generator/examples/Generator/combination_enumerator.cpp -text
 Generator/examples/Generator/name_pairs.cpp -text
 Generator/include/CGAL/Combination_enumerator.h -text
-Generator/test/Generator/combination_enumerator.cpp -text
+Generator/test/Generator/test_combination_enumerator.cpp -text
 Geomview/demo/Geomview/CMakeLists.txt -text
 Geomview/doc_tex/Geomview/geomview.gif -text
 GraphicsView/GraphicsView.odp -text
@@ -3371,12 +3373,12 @@ Polynomial/include/CGAL/Polynomial/sturm_habicht_sequence.h -text
 Polynomial/include/CGAL/Polynomial/subresultants.h -text
 Polynomial/include/CGAL/Polynomial_type_generator.h -text
 Polynomial/include/CGAL/Test/_test_polynomial_traits_d.h -text
-Polynomial/test/Polynomial/Coercion_traits.cpp -text
-Polynomial/test/Polynomial/Get_arithmetic_kernel.cpp -text
 Polynomial/test/Polynomial/Polynomial_type_generator.cpp -text
 Polynomial/test/Polynomial/polynomial_utils.cpp -text
 Polynomial/test/Polynomial/sturm_habicht_sequence.cpp -text
-Polynomial/test/Polynomial/subresultants.cpp -text
+Polynomial/test/Polynomial/test_polynomial_Coercion_traits.cpp -text
+Polynomial/test/Polynomial/test_polynomial_Get_arithmetic_kernel.cpp -text
+Polynomial/test/Polynomial/test_subresultants.cpp -text
 Polytope_distance_d/doc_tex/Polytope_distance_d/dist.png -text
 Polytope_distance_d/doc_tex/Polytope_distance_d/polydist.gif -text svneol=unset#image/gif
 Polytope_distance_d/doc_tex/Polytope_distance_d/polydist.pdf -text svneol=unset#application/pdf
@@ -3422,15 +3424,15 @@ Principal_component_analysis/include/CGAL/linear_least_squares_fitting_tetrahedr
 Principal_component_analysis/include/CGAL/linear_least_squares_fitting_triangles_2.h -text
 Principal_component_analysis/include/CGAL/linear_least_squares_fitting_triangles_3.h -text
 Principal_component_analysis/test/Principal_component_analysis/Principal_component_analysis.sln eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_circles_2.cpp -text
-Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_cuboids_3.cpp -text
-Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_rectangles_2.cpp -text
-Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_segments_2.cpp -text
-Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_segments_3.cpp -text
-Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_spheres_3.cpp -text
-Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_tetrahedra_3.cpp -text
-Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_triangles_2.cpp -text
-Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_triangles_3.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_circles_2.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_cuboids_3.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_rectangles_2.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_segments_2.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_segments_3.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_spheres_3.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_tetrahedra_3.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_triangles_2.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_triangles_3.cpp -text
 QP_solver/doc_tex/QP_solver/PkgDescription.tex -text
 QP_solver/doc_tex/QP_solver/closest_point.fig -text svneol=unset#application/octet-stream
 QP_solver/doc_tex/QP_solver/closest_point.gif -text svneol=unset#image/gif

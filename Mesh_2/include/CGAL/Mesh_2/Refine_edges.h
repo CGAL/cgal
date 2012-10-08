@@ -24,6 +24,8 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
 #include <CGAL/Meshes/Filtered_queue_container.h>
+#include <CGAL/tags.h>
+#include <CGAL/assertions.h>
 
 #include <utility>
 #include <iterator>
