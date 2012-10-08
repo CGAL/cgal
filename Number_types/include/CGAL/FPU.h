@@ -25,7 +25,7 @@
 #ifndef CGAL_FPU_H
 #define CGAL_FPU_H
 
-#include <CGAL/number_type_basic.h>
+#include <CGAL/assertions.h>
 
 #ifndef __INTEL_COMPILER
 #include <cmath> // for HUGE_VAL

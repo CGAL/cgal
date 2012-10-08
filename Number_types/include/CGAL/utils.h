@@ -21,7 +21,7 @@
 #ifndef CGAL_UTILS_H
 #define CGAL_UTILS_H
 
-#include <CGAL/number_type_basic.h>
+#include <CGAL/utils_classes.h>
 
 namespace CGAL {
 
