@@ -27,6 +27,8 @@
 #ifndef CGAL_ASSERTIONS_H
 #define CGAL_ASSERTIONS_H
 
+#include <CGAL/export/CGAL.h>
+
 // #include <CGAL/assertions_behaviour.h> // for backward compatibility
 
 #ifndef CGAL_NO_ASSERTIONS 

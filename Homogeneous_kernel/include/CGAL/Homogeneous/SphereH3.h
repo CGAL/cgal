@@ -28,6 +28,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Homogeneous/predicates_on_pointsH3.h>
 #include <boost/tuple/tuple.hpp>
+#include <CGAL/Kernel/global_functions_3.h>
 
 namespace CGAL {
 

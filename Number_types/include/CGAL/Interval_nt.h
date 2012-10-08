@@ -44,6 +44,7 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/utils_classes.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Interval_traits.h>
 #include <CGAL/double.h>
