@@ -68,6 +68,8 @@ protected:
   Topology_traits         *m_top_traits;  // The topology-traits class.
   Face_handle              m_unb_face;    // The unbounded arrangement face.
 
+  Indices_list m_emptylist;
+
 public:
  
   /*! Constructor. */
@@ -102,6 +104,10 @@ public:
   virtual void add_subcurve (Halfedge_handle /* he */, Subcurve* /* sc */)
   {
     return;
+  }
+
+  Indices_list& halfedge_indices_list() {
+    return m_emptylist;
   }
 
   /*! Collect a subcurve index that does not see any status-line from below. */

@@ -342,8 +342,20 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
     return (true);
   }
 
+  // TODO only compile with non-oblivious
+  if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY) {
+    if (!this->is_status_line_empty()) {
+      Status_line_iterator prev = iter; 
+      --prev;
+      // move items from top face to last inserted curve
+      Indices_list& list_ref = (*prev)->halfedges_indices_list();
+      list_ref.clear();
+      list_ref.splice(list_ref.end(), m_helper.halfedge_indices_list());
+    }
+  } else
+
   // Check if the event has only incident subcurves from its right.
-  if (!event->has_left_curves() && !event->is_on_boundary())
+  if (!event->has_left_curves())
   {
     CGAL_assertion(event->has_right_curves());
 
@@ -750,12 +762,13 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   // TODO EBEB 2012-08-06 check whether signs are not needed
   // it seems that swap_pred is either 
   //   false 
-  // if obbiblious or
+  // if oblivious or
   //   event->parameter_space_in_x() == CGAL::ARR_INTERIOR &&
   //   event->parameter_space_in_y() == CGAL::ARR_TOP_BOUNDARY
   // if not oblivious! But I have the feeling that signs are needed!
 
   bool check_swapped_predecessors = true;
+#if 1
   res = (! swap_preds) ?
     // usually prev1 is outer of new split face (it it exists)
     // order is determined by top-traits helper!
@@ -768,6 +781,14 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   
   // ... thus the value should now have changed
   CGAL_assertion(!check_swapped_predecessors);
+  if (swap_preds)
+    res = res->twin();
+#else
+  res = m_arr_access.insert_at_vertices_ex (_curve(cv), prev1, prev2, LARGER, 
+                                            new_face_created, check_swapped_predecessors);
+  if (check_swapped_predecessors)
+    res = res->twin();
+#endif
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
@@ -775,8 +796,6 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   {
     Halfedge_handle he = res;
     
-    if (swap_preds)
-      he = he->twin();
     CGAL_assertion(he->direction() == ARR_RIGHT_TO_LEFT);
 
     Indices_list& list_ref = m_he_indices_table[he];
@@ -990,7 +1009,7 @@ relocate_in_new_face (Halfedge_handle he)
 
   do
   {
-    // We are intreseted only in halfedges directed from right to left.
+    // We are interested only in halfedges directed from right to left.
     if (curr_he->direction() == ARR_LEFT_TO_RIGHT)
     {
       curr_he = curr_he->next();
@@ -1004,12 +1023,12 @@ relocate_in_new_face (Halfedge_handle he)
 
     for (itr = indices_list.begin(); itr != indices_list.end(); ++itr)
     {
-      CGAL_assertion(*itr != 0);
 #if 0
       std::cout << "itr: " << *itr << std::endl;
       std::cout << "m_sc_counter: " << m_sc_counter << std::endl;
       std::cout << "m_sc_he_table: " << m_sc_he_table.size() << std::endl;
 #endif
+      CGAL_assertion(*itr != 0);
 
       // In case the current subcurve index does not match a valid entry in 
       // m_sc_he_table, we know that this subcurve matches a halfedge that is
@@ -1042,6 +1061,7 @@ relocate_in_new_face (Halfedge_handle he)
         if (he_on_face->twin()->face() != new_face &&
             he_on_face->twin()->is_on_inner_ccb())
         {
+          //std::cout << "move inner ccb " << std::endl;
           m_arr_access.move_inner_ccb (he_on_face->twin()->face(),
                                        new_face,
                                        he_on_face->twin()->ccb());
@@ -1068,11 +1088,11 @@ template <class Hlpr>
 void Arr_construction_sl_visitor<Hlpr>::
 _map_new_halfedge (unsigned int i, Halfedge_handle he)
 {
-  CGAL_assertion (i != 0);
 #if 0
   std::cout << "map " << i << " to " << he->curve() << " " 
             << he->direction() << std::endl;
 #endif
+  CGAL_assertion (i != 0);
   if(i >= m_sc_he_table.size())
     // Resize the index table if we reached it capacity.
     m_sc_he_table.resize(2*i);

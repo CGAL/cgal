@@ -143,6 +143,11 @@ public:
     m_halfedge_indices.push_back(i);
   }
 
+  Halfedge_indices_list& halfedges_indices_list() 
+  {
+    return m_halfedge_indices;
+  }
+
   /*! Clear the indices of the halfedges below the subcurve. */
   void clear_halfedge_indices()
   {

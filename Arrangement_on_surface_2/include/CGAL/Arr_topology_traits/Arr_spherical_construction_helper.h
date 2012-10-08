@@ -245,6 +245,14 @@ public:
   void add_subcurve_in_top_face(unsigned int index)
   { m_subcurves_at_nf.push_back(index); }
 
+  /*! Get the indices of the halfedges below the subcurve. */
+  Indices_list& halfedge_indices_list()
+  {
+    return (m_subcurves_at_nf);
+  }
+
+
+
   /*! A notification invoked before the given event it deallocated. */
   void before_deallocate_event(Event* event) { return; }
   //@} 

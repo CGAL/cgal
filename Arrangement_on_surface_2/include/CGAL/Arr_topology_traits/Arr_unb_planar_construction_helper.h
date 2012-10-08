@@ -125,6 +125,13 @@ public:
     m_subcurves_at_ubf.push_back(index);
   }
 
+  /*! Get the indices of the halfedges below the subcurve. */
+  Indices_list& halfedge_indices_list()
+  {
+    return (m_subcurves_at_ubf);
+  }
+
+
   /*! A notification invoked before the given event it deallocated. */
   void before_deallocate_event(Event* event)
   {
