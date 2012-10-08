@@ -63,13 +63,13 @@ Returns the new position from the actual position defined by `p`, according to t
 Point_2 operator()(Point_2 p, Vector_field_2 vector_field_2); 
 
 /*! 
-\brief As above. The integration step is defined by `integration_step`. 
+\brief As above.\ The integration step is defined by `integration_step`. 
 \pre `vector_field_2.is_in_domain(p)` must be `true`. 
 */ 
 Point_2 operator()(Point_2 p, Vector_field_2 vector_field_2, FT integration_step); 
 
 /*! 
-\brief As above. In addition, this function integrates forward if `direction` is true, and backward if it is false. 
+\brief As above.\ In addition, this function integrates forward if `direction` is true, and backward if it is false. 
 \pre `vector_field_2.is_in_domain(p)` must be `true`. 
 */ 
 Point_2 operator()(Point_2 p, Vector_field_2 vector_field_2, FT integration_step, bool direction); 
