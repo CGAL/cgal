@@ -401,13 +401,19 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, fict_prev1, fict_prev2, SMALLER,
                                  new_face_created, dummy_swapped_predecessors);
-    // TODO EBEB 2012-08-05
-    // is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
+      // In case a new face has been created (pointed by the new halfedge we
+      // obtained), we have to examine the holes and isolated vertices in the
+      // existing face (pointed by the twin halfedge) and move the relevant
+      // holes and isolated vertices into the new face.
       _relocate_in_new_face(new_he);
     }
+    
+    // TODO EBEB 2012-08-05
+    // is order of the two boundary-edges really irrelevant here?
+    
   }
 
   // Return a handle to the new halfedge directed from left to right.
@@ -530,13 +536,18 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
                                  new_face_created, dummy_swapped_predecessors);
+    if (new_face_created) {
+      CGAL_assertion(! new_he->is_on_inner_ccb());
+      // In case a new face has been created (pointed by the new halfedge we
+      // obtained), we have to examine the holes and isolated vertices in the
+      // existing face (pointed by the twin halfedge) and move the relevant
+      // holes and isolated vertices into the new face.
+      _relocate_in_new_face(new_he);
+    }
+
     // TODO EBEB 2012-08-05
     // is order of the two boundary-edges really irrelevant here?
 
-    if (new_face_created) {
-      CGAL_assertion(! new_he->is_on_inner_ccb());
-      _relocate_in_new_face(new_he);
-    }
   }
 
   // Return a handle to the halfedge directed toward the new vertex v2.
@@ -617,13 +628,19 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
                                  new_face_created, dummy_swapped_predecessors);
+
+    if (new_face_created) {
+      CGAL_assertion(! new_he->is_on_inner_ccb());
+      // In case a new face has been created (pointed by the new halfedge we
+      // obtained), we have to examine the holes and isolated vertices in the
+      // existing face (pointed by the twin halfedge) and move the relevant
+      // holes and isolated vertices into the new face.
+      _relocate_in_new_face(new_he);
+    }
+
     // TODO EBEB 2012-08-05
     // is order of the two boundary-edges really irrelevant here?
   
-    if (new_face_created) {
-      CGAL_assertion(! new_he->is_on_inner_ccb());
-      _relocate_in_new_face(new_he);
-    }
   }
 
   // Return a handle to the halfedge directed toward the new vertex v2.
@@ -740,13 +757,18 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
                                  new_face_created, dummy_swapped_predecessors);
-    // TODO EBEB 2012-08-05
-    // is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
+      // In case a new face has been created (pointed by the new halfedge we
+      // obtained), we have to examine the holes and isolated vertices in the
+      // existing face (pointed by the twin halfedge) and move the relevant
+      // holes and isolated vertices into the new face.
       _relocate_in_new_face(new_he);
     }
+
+    // TODO EBEB 2012-08-05
+    // is order of the two boundary-edges really irrelevant here?
   }
 
   // Return a handle to the halfedge directed toward the new vertex v1.
@@ -826,13 +848,19 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     bool dummy_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
                                  new_face_created, dummy_swapped_predecessors);
-    // TODO EBEB 2012-08-05
-    // is order of the two boundary-edges really irrelevant here?
 
     if (new_face_created) {
       CGAL_assertion(! new_he->is_on_inner_ccb());
+      // In case a new face has been created (pointed by the new halfedge we
+      // obtained), we have to examine the holes and isolated vertices in the
+      // existing face (pointed by the twin halfedge) and move the relevant
+      // holes and isolated vertices into the new face.
       _relocate_in_new_face(new_he);
     }
+
+    // TODO EBEB 2012-08-05
+    // is order of the two boundary-edges really irrelevant here?
+
   }
 
   // Return a handle to the halfedge directed toward the new vertex v1.
@@ -1367,12 +1395,16 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     _insert_at_vertices(cv, p_prev1, p_prev2, res, new_face_created,
                         swapped_predecessors);
 
-  if (new_face_created)
+  if (new_face_created) {
+    // TODO EBEB 2012-10-05 why is here no assertion for inner_ccb - or:
+    // why don't we have to remove the assertion in the previous cases?
+
     // In case a new face has been created (pointed by the new halfedge we
     // obtained), we have to examine the holes and isolated vertices in the
     // existing face (pointed by the twin halfedge) and move the relevant
     // holes and isolated vertices into the new face.
     _relocate_in_new_face(new_he);
+  }
 
   // Return a handle to the new halfedge directed from prev1's target to
   // prev2's target. Note that this may be the twin halfedge of the one
@@ -2315,8 +2347,9 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                     bool& swapped_predecessors,
                     bool allow_swap_of_predecessors /* = true */)
 {
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "_insert_at_vertices: " << cv << std::endl;
-  
+#endif
   // the function adds he1 and he2 in this way:
   //    ----prev1---> ( --he2--> ) ---p2next--->
   //                  o ===cv=== 0
@@ -3336,12 +3369,14 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
                                 const DHalfedge* he_away,
                                 OutputIterator local_mins_it) const
 {
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "he_to: " << he_to->opposite()->vertex()->point()
             << " => " << he_to->vertex()->point() << std::endl;
   std::cout << "cv: " << cv << std::endl;
   std::cout << "cv_dir: " << cv_dir << std::endl;
   std::cout << "he_away: " << he_away->opposite()->vertex()->point()
             << " => " << he_away->vertex()->point() << std::endl;
+#endif
 
   // We go over the sequence of vertices, starting from he_away's target
   // vertex, until reaching he_to's source vertex, and find the leftmost
@@ -3466,7 +3501,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
 
-// TODO info
+// TODO "documentation"
 template <typename GeomTraits, typename TopTraits>
 template <typename OutputIterator>
 std::pair< CGAL::Sign, CGAL::Sign > 
@@ -3761,7 +3796,9 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   Arr_parameter_space ps_x_min = parameter_space_in_x(*cv_min, ARR_MIN_END);
   Arr_parameter_space ps_y_min = parameter_space_in_y(*cv_min, ARR_MIN_END);
 
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "1 set global min to " << *cv_min << std::endl;
+#endif
   
   for (++lm_it; lm_it != lm_end; ++lm_it) {
     const DHalfedge* he = lm_it->first;
@@ -3802,7 +3839,9 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
       ps_y_min = ps_y_he_min;
       he_min = he;
       v_min = he->vertex();
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "2 set global min to " << *cv_min << std::endl;
+#endif
     }
   }
 
@@ -3810,7 +3849,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   CGAL_assertion(!v_min->has_null_point());
 
   // some output:
-#if 1
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "v_min: ";
   std::cout << v_min->point();
   std::cout << std::endl;
@@ -3848,6 +3887,8 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
       ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
        is_identified(Top_side_category())))
   {
+    // TODO EBEB 2010-10-08 is this code really executed or should it be part of top traits?
+
     // Both current and next curves are incident to the identification curve.
     // As v_min is the leftmost vertex, we now that their left ends must have
     // a boundary condition of type identification in y.
@@ -3941,6 +3982,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   DOuter_ccb* oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
   DFace* f2 = (oc2 != NULL) ? oc2->face() : ic2->face();
 
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 #if 0
   std::cout << "before swap" << std::endl;
   std::cout << "he1c: " << he1->curve() <<  ", " << he1->direction()
@@ -3955,6 +3997,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   std::cout << "oc2: " << oc2 << std::endl;
   std::cout << "f1 : " << f1 << std::endl;
   std::cout << "f2 : " << f2 << std::endl;
+#endif
 #endif
 
   bool swap_he1_he2 = false;
@@ -3984,16 +4027,19 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     signs1 = _compute_signs_and_local_minima(he1,
                                              std::front_inserter(local_mins1),
                                              end_is_anchor_opposite);
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
     std::cout << "signs1.x: " << signs1.first << std::endl;
     std::cout << "signs1.y: " << signs1.second << std::endl;
     std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
-
+#endif
     signs2 = _compute_signs_and_local_minima(he2,
                                              std::front_inserter(local_mins2),
                                              end_is_anchor_opposite);
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
     std::cout << "signs2.x: " << signs2.first << std::endl;
     std::cout << "signs2.y: " << signs2.second << std::endl;
     std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
+#endif
     // Comments: signs1/2 are used later again, probably for
     // hole_creation_after_edge_removed
 
@@ -4022,7 +4068,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       
       bool is_perimetric1 = signs1.first || signs1.second;
       // TODO EBEB 2012-07-29
-      // is this the right for torus, or let TopTraits decide?
+      // is this the right thing to do for torus, or let TopTraits decide?
 
       const DHalfedge* he_min1 = NULL;
       Arr_parameter_space ps_x_min1 = CGAL::ARR_INTERIOR;
@@ -4050,13 +4096,15 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
           ps_x_min1 = ps_x_he_min;
           ps_y_min1 = ps_y_he_min;
           he_min1 = he;
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
           std::cout << "set global min1 to he: " << he->curve() << std::endl;
+#endif
         }
       }
       
       bool is_perimetric2 = signs2.first || signs2.second;
       // TODO EBEB 2012-07-29
-      // is this the right for torus, or let TopTraits decide?
+      // is this the right thing to do for torus, or let TopTraits decide?
       
       const DHalfedge* he_min2 = NULL;
       Arr_parameter_space ps_x_min2 = CGAL::ARR_INTERIOR;
@@ -4081,10 +4129,14 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
           ps_x_min2 = ps_x_he_min;
           ps_y_min2 = ps_y_he_min;
           he_min2 = he;
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
           std::cout << "set global min2 to he: " << he->curve() << std::endl;
+#endif
         }
       }
       
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 #if 0
       std::cout << std::endl
                 << "index 1: " << index_min1
@@ -4098,6 +4150,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
                 << ", ps_y_min2: " << ps_y_min2
                 << ", is_perimetric2: " << is_perimetric2
                 << std::endl;
+#endif
 #endif
       
       if (is_perimetric1 || is_perimetric2) {
@@ -4219,6 +4272,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     
   }
 
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 #if 0
   std::cout << "after swap" << std::endl;
   std::cout << "he1c: " << he1->curve() <<  ", " << he1->direction()
@@ -4233,6 +4287,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   std::cout << "oc2: " << oc2 << std::endl;
   std::cout << "f1 : " << f1 << std::endl;
   std::cout << "f2 : " << f2 << std::endl;
+#endif
 #endif
 
   // now the real removal starts
