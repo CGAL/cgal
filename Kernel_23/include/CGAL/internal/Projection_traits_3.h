@@ -27,6 +27,8 @@
 #include <CGAL/Segment_3.h>
 #include <CGAL/Triangle_3.h>
 
+#include <CGAL/Kernel/global_functions_2.h>
+
 namespace CGAL { 
 
 namespace internal {

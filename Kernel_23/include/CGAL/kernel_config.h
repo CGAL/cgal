@@ -22,15 +22,19 @@
 //
 // Author(s)     : Stefan Schirra
  
-#ifndef CGAL_KERNEL_BASIC_H
-#define CGAL_KERNEL_BASIC_H
+#ifndef CGAL_KERNEL_CONFIG_H
+#define CGAL_KERNEL_CONFIG_H
 
-#include <CGAL/kernel_config.h>
+#ifndef CGAL_KERNEL_INLINE
+#  define CGAL_KERNEL_INLINE inline
+#endif
 
-#include <CGAL/kernel_assertions.h>
-#include <CGAL/enum.h>
-#include <CGAL/aff_transformation_tags.h>
-#include <CGAL/Object.h>
-#include <CGAL/Kernel_traits.h>
+#ifndef CGAL_KERNEL_MEDIUM_INLINE
+#  define CGAL_KERNEL_MEDIUM_INLINE
+#endif
 
-#endif // CGAL_KERNEL_BASIC_H
+#ifndef CGAL_KERNEL_LARGE_INLINE
+#  define CGAL_KERNEL_LARGE_INLINE
+#endif
+
+#endif // CGAL_KERNEL_CONFIG_H
