@@ -29,9 +29,9 @@ the representation class `R` required by
 
 ### Implementation ###
 
-This function uses the \f$ d\f$-dimensional convex hull incremental construction 
+This function uses the `d`-dimensional convex hull incremental construction 
 algorithm \cite cms-frric-93 
-with \f$ d\f$ fixed to 3. The algorithm requires \f$ O(n^2)\f$ time in the 
+with `d` fixed to 3. The algorithm requires \f$ O(n^2)\f$ time in the 
 worst case and \f$ O(n \log n)\f$ expected time. 
 
 \sa `CGAL::Convex_hull_d<R>` 

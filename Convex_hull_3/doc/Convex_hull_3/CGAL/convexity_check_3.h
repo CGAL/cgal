@@ -9,17 +9,17 @@ to be strongly convex if it consists of only extreme points (<I>i.e.</I>,
 vertices of the convex hull). 
 
 The default traits class is the kernel in which the type 
-`Polyhedron_3::Point_3` is defined. 
+`Polyhedron::Point_3` is defined. 
 
 ### Requirements ###
 
 <OL> 
-<LI>`Polyhedron_3::Point_3` is equivalent to `Traits::Point_3`. 
+<LI>`Polyhedron::Point_3` is equivalent to `Traits::Point_3`. 
 <LI>`Traits` is a model of the concept `IsStronlyConvexTraits_3` 
-<LI>`Polyhedron_3` must define the following types: 
+<LI>`Polyhedron` must define the following types: 
 <UL> 
-<LI>`Polyhedron_3::Facet_iterator` 
-<LI>`Polyhedron_3::Vertex_iterator` 
+<LI>`Polyhedron::Facet_iterator` 
+<LI>`Polyhedron::Vertex_iterator` 
 </UL> 
 and the following member functions: 
 <UL> 
@@ -28,7 +28,7 @@ and the following member functions:
 <LI>`vertices_begin()` 
 <LI>`vertices_end()` 
 </UL> 
-The vertex type of `Polyhedron_3` must be a model of 
+The vertex type of `Polyhedron` must be a model of 
 `ConvexHullPolyhedronVertex_3`; 
 the facet type must be `ConvexHullPolyhedronFacet_3`. 
 </OL> 
@@ -47,8 +47,8 @@ already been computed.
 
 */
 
-template<class Polyhedron_3, class Traits>
-bool is_strongly_convex_3(Polyhedron_3& P, 
+template<class Polyhedron, class Traits>
+bool is_strongly_convex_3(Polyhedron& P, 
 const Traits& traits = Default_traits);
 
 } /* namespace CGAL */
