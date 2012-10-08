@@ -46,6 +46,7 @@ public:
   typedef typename Base::Face_circulator       Face_circulator;
   typedef typename Base::Edge_circulator       Edge_circulator;
   typedef typename Base::Vertex_circulator     Vertex_circulator;
+  typedef typename Base::Vertices_iterator     Vertices_iterator;		
   typedef typename Base::Edges_iterator        Edges_iterator;
   typedef typename Base::Faces_iterator        Faces_iterator;
   typedef typename Base::Face::Vertex_list     Vertex_list;
@@ -63,6 +64,9 @@ public:
   using Base::faces_end;
   using Base::edges_begin;
   using Base::edges_end;
+  using Base::vertices_begin;	
+  using Base::vertices_end;
+		
   using Base::OUTSIDE_AFFINE_HULL;
   using Base::VERTEX;
   using Base::FACE;
@@ -72,59 +76,11 @@ public:
   using Base::insert_four_init_vertices;
 #endif
 
-private:
-
- class Hidden_tester {
-  public:
-    bool operator()(const typename Base::Vertices_iterator&  it){
-      return it->is_hidden();
-     }
-  };
-
-/*  class Unhidden_tester {
-  public:
-    bool operator()(const typename Base::Vertices_iterator&  it){
-      return ! it->is_hidden();
-    }
-  };*/
-
-  typedef typename Base::Vertices_iterator     vertices_ib;
-
-public:
-  // We derive in order to add a conversion to handle.
-  class Vertices_iterator :
-    public Filter_iterator<vertices_ib, Hidden_tester> {
-   typedef Filter_iterator<vertices_ib, Hidden_tester> Base;
-    typedef Vertices_iterator                     Self;
-     public:
-    Vertices_iterator() : Base() {}
-    Vertices_iterator(const Base &b) : Base(b) {}
-    Self & operator++() { Base::operator++(); return *this; }
-    Self & operator--() { Base::operator--(); return *this; }
-    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
-    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); } 
-  };
-
-
- /* class Hidden_vertices_iterator :
-    public Filter_iterator<vertices_ib, Unhidden_tester> {
-    typedef Filter_iterator<vertices_ib, Unhidden_tester> Base; 
-    typedef Hidden_vertices_iterator                     Self;
-  public:
-   // Hidden_vertices_iterator() : Base() {}
-  //  Hidden_vertices_iterator(const Base &b) : Base(b) {}
-    Self & operator++() { Base::operator++(); return *this; }
-    Self & operator--() { Base::operator--(); return *this; }
-    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
-    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
- };*/
 
 
  private:
   typedef std::list<Face_handle>      Faces_around_stack; 
-  size_type _hidden_vertices;
+ 
    
 
   //PREDICATES
@@ -147,7 +103,7 @@ public:
  public: 
   //CONSTRUCTORS
   Regular_triangulation_on_sphere_2(const Gt& gt=Gt()) 
-    : Base(Gt(gt)), _hidden_vertices(0)
+    : Base(Gt(gt))
   {}
 
   void clear();
@@ -193,12 +149,11 @@ public:
 
   //ACCES FUNCTION
   size_type number_of_vertices() const {
-    return Base::number_of_vertices() - _hidden_vertices;
+	  return Base::number_of_vertices() ;
   }
  
-  size_type number_of_hidden_vertices() const {
-    return _hidden_vertices;
-  }
+
+	
   Face_handle create_star_2(const Vertex_handle& v, const Face_handle& c, int li);
 
   //INSERTION
@@ -213,7 +168,7 @@ public:
   //REMOVAL
   void remove_degree_3(Vertex_handle v, Face_handle f = Face_handle());
   void remove(Vertex_handle v);
-  void remove_hidden(Vertex_handle v);
+ 
   void remove_2D(Vertex_handle v);
   bool test_dim_down(Vertex_handle v);
   void fill_hole_regular(std::list<Edge> & hole);
@@ -224,16 +179,14 @@ public:
   //HIDDING
     void exchange_incidences(Vertex_handle va, Vertex_handle vb);
   void set_face(Vertex_list& vl, const Face_handle& fh);
-  //void exchange_hidden(Vertex_handle va, Vertex_handle vb);
+
 
 
 
   //REGULAR 
   void regularize(Vertex_handle v);
  
-  //ITERATORS
-  Vertices_iterator vertices_begin () const;
-  Vertices_iterator vertices_end () const;
+
 
   
   //---------------------------------------------------------------------HOLE APPROACH
@@ -485,7 +438,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 clear()
 {
   Base::clear();
-  _hidden_vertices = 0;
+ 
 }
 
 template < class Gt, class Tds >
@@ -572,11 +525,6 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
     result = result && is_valid_vertex(vit);
   }CGAL_triangulation_assertion(result);
 
-/*   for(Hidden_vertices_iterator hvit = hidden_vertices_begin(); 
-                                hvit != hidden_vertices_end(); ++hvit) {
-    result = result && is_valid_vertex(hvit);
-  }CGAL_triangulation_assertion(result);*/
-
    switch(dimension()) {
    case 0 :
      break;
@@ -619,12 +567,9 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
    // in any dimension
    if(verbose) {
      std::cerr << " nombres de sommets " << number_of_vertices() << "\t"
-	       << "nombres de sommets  caches " << number_of_hidden_vertices()
-	       << std::endl;
+	      	       << std::endl;
    }
-   result = result && ( Base::number_of_vertices() ==
-			number_of_vertices() + number_of_hidden_vertices());
-   CGAL_triangulation_assertion( result);
+     CGAL_triangulation_assertion( result);
    return result;
 }
 
@@ -700,8 +645,7 @@ show_all() const
   std::cerr << std::endl<<"====> "<< this ;
   std::cerr <<  " dimension " <<  dimension() << std::endl;
   std::cerr << "nb of vertices " << number_of_vertices() 
-	    << " nb of hidden vertices " << number_of_hidden_vertices() 
-	    <<   std::endl;
+	   	    <<   std::endl;
 
   if (dimension() == 0){
     show_face(vertices_begin()->face());
@@ -892,7 +836,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 			
 			
 			
-			//process_faces_in_conflict(faces.begin(),faces.end(),std::back_inserter(hid_verts));
+			
 			
 			//get_conflicts(p, Oneset_iterator<Edges> edge);
 			
@@ -1331,7 +1275,7 @@ void
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 exchange_incidences(Vertex_handle va, Vertex_handle vb)
 {
-  CGAL_triangulation_assertion ( !vb->is_hidden());
+  
   std::list<Face_handle> faces;
   if (dimension() < 1) {
     faces.push_back (vb->face());
@@ -1564,30 +1508,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 
 
 
- //-----------------------------------------------------------------------------------ITERATORS-----------------------------------------------------------//
-template < class Gt, class Tds >
-typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertices_iterator 
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-vertices_begin () const
-{
-  return CGAL::filter_iterator(Base::vertices_end(), 
-			 Hidden_tester(),
-			 Base::vertices_begin());
-}
-
-template < class Gt, class Tds >
-typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertices_iterator 
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-vertices_end () const
-{
-  return CGAL::filter_iterator(Base::vertices_end(), 
-			 Hidden_tester() ); 
-}
-
-
-
-
-
+ 
 
 
 //-------------------------------------------------------------------CLASS DEFINITION--------------------------------------------------------//
