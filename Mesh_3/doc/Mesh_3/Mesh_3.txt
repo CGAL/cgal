@@ -282,7 +282,7 @@ optimization processes.
 
 # Interface # {#Mesh_3_section_interface}
 
-## The Global Functions ##
+## The Global %Functions ##
 
 A 3D mesh generation process is launched through a call
 to one of the two following functions:
@@ -584,9 +584,9 @@ The resulting mesh is shown in Figure \ref figureliver_3d_image_mesh.
 \anchor figureliver_3d_image_mesh
 \image html liver.jpg "Cut view of a 3D mesh produced from a segmented liver image. Code from subsection \ref Mesh_3_subsection_examples_3d_image generates this file."
 
-## Using Variable Sizing Field ##
+## Using Variable Sizing %Field ##
 
-## Sizing Field as an Analytical Function ##
+## Sizing %Field as an Analytical %Function ##
 
 \anchor Mesh_3_subsubsection_examples_sphere_variable
 
@@ -598,7 +598,7 @@ The following example shows how to use an analytical function as sizing field.
 \anchor figuresphere_variable_mesh
 \image html sphere_variable.jpg "Cut view of a 3D mesh produced from an implicit sphere with non-constant sizing field. Code from subsection \ref Mesh_3_subsubsection_examples_sphere_variable generates this file."
 
-## Different Sizing Field for Different Subdomains ##
+## Different Sizing %Field for Different Subdomains ##
 
 \anchor Mesh_3_subsubsection_examples_3d_image_variable
 
@@ -686,7 +686,7 @@ shaped elements: we set the facet angle bound and the radius edge bound to their
 theoretical limit (resp. 30 degrees and 2). We also use the same uniform sizing field for facets
 and cells.
 
-## Implicit Function ##
+## Implicit %Function ##
 
 We mesh an analytical sphere of radius 1.
 
