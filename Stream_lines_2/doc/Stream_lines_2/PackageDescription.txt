@@ -3,7 +3,7 @@
 /// \ingroup PkgPlacementOfStreamlines2
 /*!
 \addtogroup PkgPlacementOfStreamlines2
-\todo check generated documentation
+
 \PkgDescriptionBegin{2D Placement of Streamlines,PkgPlacementOfStreamlines2Summary}
 \PkgPicture{streamlines-small.jpg}
 \PkgAuthor{Abdelkrim Mebarki}
@@ -29,7 +29,7 @@ bidirectional numerical integration started from a seed point, until
 it comes close to another streamline, hits the domain boundary, or
 reaches a critical point.
 
-The `Stream_lines_2` class consists of saturating the domain with
+The `CGAL::Stream_lines_2` class consists of saturating the domain with
 a set of tangential streamlines in accordance with a specified
 density.
 
@@ -37,7 +37,7 @@ Streamlines are represented as containers of points, manipulated by an
 iterator range of points, and the whole placement is accessible via an
 iterator range of streamlines.
 
-The main class in this package, the `CGAL::Stream_lines_2` class of \cgal depends on two template
+The main class in this package, the class `CGAL::Stream_lines_2`, depends on two template
 parameters.  The first template parameter stands for a class which
 represents both the vector field and the visualization domain with
 operations on them, and should be instantiated by a model of the concept

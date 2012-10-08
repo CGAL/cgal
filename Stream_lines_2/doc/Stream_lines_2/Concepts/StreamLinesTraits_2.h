@@ -3,8 +3,8 @@
 \ingroup PkgPlacementOfStreamlines2Concepts
 \cgalconcept
 
-The concept `StreamLinesTraits_2` describes the set of requirements to be 
-fulfilled by any class used to instantiate the template parameter of the class 
+The concept `StreamLinesTraits_2` describes the set of requirements for
+the template parameter of the class 
 `CGAL::Regular_grid_2<StreamLinesTraits_2>`. 
 This concept provides the types handled by the 
 `CGAL::Stream_lines_2<VectorField_2, Integrator_2>` class. 

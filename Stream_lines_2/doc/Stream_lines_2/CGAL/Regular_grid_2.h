@@ -44,7 +44,7 @@ typedef StreamLinesTraits_2::Vector_2 Vector_2;
 /// @{
 
 /*! 
-Generate a regular grid `rgrid` whose size is `x_size` by `y_size`, while `x_samples` and 
+Generate a regular grid  whose size is `x_size` by `y_size`, while `x_samples` and 
 `y_samples` specify the number of samples on `x` and `y`. 
 */ 
 Regular_grid_2(int x_samples, int y_samples, FT x_size, FT y_size); 

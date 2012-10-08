@@ -3,18 +3,18 @@ namespace CGAL {
 /*!
 \ingroup PkgPlacementOfStreamlines2
 
-The class `Stream_lines_2` is designed to handle a placement of streamlines 
+The class `Stream_lines_2` generates a placement of streamlines 
 in a 2D domain according to a bidimensional vector field. 
 
-The class `Stream_lines_2` creates a placement of streamlines according to 
-a specified density and gives access to those streamlines via two 
+The class places streamlines according to 
+a specified density and gives access to the generated streamlines via two 
 iterators over a container of iterators that provide access to the 
 streamline points. 
 
 
-\tparam VectorField_2 has to be instantiated by a model of the concept 
+\tparam VectorField_2 must be a model of the concept 
 `VectorField_2`. 
-\tparam  Integrator_2 is a function object and has to be instantiated by a model of the concept `Integrator_2`. 
+\tparam  Integrator_2 is a function object and must be a model of the concept `Integrator_2`. 
 
 */
 template< typename VectorField_2, typename Integrator_2 >
@@ -64,16 +64,13 @@ typedef Hidden_type Stream_line_iterator_2;
 
 /// @} 
 
-/// \name Creation 
-/// @{
 
 /*! 
-Generates a streamline placement `stl`. 
+Constructor which generates a streamline placement. 
 */ 
 Stream_lines_2(VectorField_2 vector_field_2, Integrator_2 integrator_2, FT 
 separating_distance, FT saturation_ratio); 
 
-/// @} 
 
 /// \name Modifiers 
 /// @{

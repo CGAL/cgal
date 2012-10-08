@@ -3,9 +3,8 @@
 \ingroup PkgPlacementOfStreamlines2Concepts
 \cgalconcept
 
-The concept `VectorField_2` describes the set of requirements to be 
-fulfilled by any class used to instantiate the first template 
-parameter of the class 
+The concept `VectorField_2` describes the set of requirements for
+the first template parameter of the class 
 `CGAL::Stream_lines_2<VectorField_2,Integrator_2>`. This concept 
 provides the types of the geometric primitives used in the placement 
 of streamlines and some functions for answering different queries. 

@@ -32,7 +32,7 @@ is shown (right).
 
 \section Section_2D_Streamlines_Definitions Definitions 
 
-In physics, a `field` is an assignment of a quantity to every
+In physics, a *field* is an assignment of a quantity to every
 point in space. For example, a gravitational field assigns a
 gravitational potential to each point in space.
 
@@ -42,16 +42,16 @@ each point inside a domain (such as the magnitude and direction of the
 force at each point in a magnetic field).
 
 Streamlines are important tools for visualizing flow fields. A
-`streamline` is a curve everywhere tangent to the field. In practice, 
+*streamline* is a curve everywhere tangent to the field. In practice, 
 a streamline is often represented as a polyline (series of points)
 iteratively elongated by bidirectional numerical integration started
-from a `seed point`, until it comes close to another streamline
-(according to a specified distance called `the separating distance`), hits the domain boundary, reaches a critical point or
+from a *seed point*, until it comes close to another streamline
+(according to a specified distance called *the separating distance*), hits the domain boundary, reaches a critical point or
 generates a closed path.
 
-A `valid` placement of streamlines consists of saturating the
+A *valid* placement of streamlines consists of saturating the
 domain with a set of tangential streamlines in accordance with a
-specified `density`, determined by the `separating distance`
+specified *density*, determined by the *separating distance*
 between the streamlines.
 
 \section Section_2D_Streamlines_Fundamental_notions Fundamental Notions 
@@ -67,7 +67,9 @@ position of the particle at time `t`, `v` is a function which
 assigns a vector value at each point in the domain (possibly by
 interpolation), and \f$ p_0\f$ is the initial position. The position after
 a given interval \f$ \Delta t\f$ is given by : \f[ p(t + \Delta t) = p(t) +
-\int_t^{t+\Delta t} v(p(t)) dt \f]. Several numeric methods have been
+\int_t^{t+\Delta t} v(p(t)) dt \f]
+
+Several numeric methods have been
 proposed to solve this equation. In this package, the Euler, and the
 Second Order Runge-Kutta algorithm are implemented.
 
@@ -78,7 +80,7 @@ Second Order Runge-Kutta algorithm are implemented.
 
 This algorithm approximates the point computation by this formula
 \f[ p_{k+1} = p_k + hv(p_k) \f] where `h` specifies the
-`integration step` (see Figure \ref euler_fig). The integration
+*integration step* (see Figure \ref euler_fig). The integration
 can be done forward (resp. backward) by specifying a positive
 (resp. negative) integration step `h`. The streamline is then
 constructed by successive integration from a seed point both forward
@@ -154,7 +156,7 @@ Streamlines are represented as polylines, and are obtained by
 iterative integration from the seed point. A polyline is represented as a range of points. The computation is
 processed via a list of Delaunay triangulation vertices.
 
-To implement the triangular grid, the \cgal `Delaunay_triangulation_2` class is used. The priority queue used
+To implement the triangular grid, the class `CGAL::Delaunay_triangulation_2` is used. The priority queue used
 to store candidate seed points is taken from the Standard Template
 Library \cite cgal:sgcsi-stlpg-97.
 
