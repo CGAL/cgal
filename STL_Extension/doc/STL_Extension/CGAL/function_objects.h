@@ -148,7 +148,7 @@ namespace CGAL {
 \ingroup STLCreators
 
 
-The concept `Creator_1` defines types and operations 
+The class `Creator_1` defines types and operations 
 for creating objects from one argument. 
 
 \tparam Arg must be convertible to `Result`. 
@@ -200,7 +200,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_2` defines types and operations 
+The class `Creator_2` defines types and operations 
 for creating objects from two arguments. 
 
 
@@ -262,7 +262,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_3` defines types and operations 
+The class `Creator_3` defines types and operations 
 for creating objects from three arguments. 
 
 
@@ -336,7 +336,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_4` defines types and operations 
+The class `Creator_4` defines types and operations 
 for creating objects from four arguments. 
 
 
@@ -419,7 +419,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_5` defines types and operations 
+The class `Creator_5` defines types and operations 
 for creating objects from five arguments. 
 
 
@@ -511,7 +511,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_uniform_2` defines types and operations 
+The class `Creator_uniform_2` defines types and operations 
 for creating objects from two arguments of the same type. 
 
 
@@ -566,7 +566,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_uniform_3` defines types and operations 
+The class `Creator_uniform_3` defines types and operations 
 for creating objects from three arguments of the same type. 
 
 
@@ -621,7 +621,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_uniform_4` defines types and operations 
+The class `Creator_uniform_4` defines types and operations 
 for creating objects from four arguments of the same type. 
 
 
@@ -677,7 +677,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_uniform_5` defines types and operations 
+The class `Creator_uniform_5` defines types and operations 
 for creating objects from five arguments of the same type. 
 
 
@@ -733,7 +733,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_uniform_6` defines types and operations 
+The class `Creator_uniform_6` defines types and operations 
 for creating objects from six arguments of the same type. 
 
 
@@ -790,7 +790,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_uniform_7` defines types and operations 
+The class `Creator_uniform_7` defines types and operations 
 for creating objects from seven arguments of the same type. 
 
 
@@ -847,7 +847,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_uniform_8` defines types and operations 
+The class `Creator_uniform_8` defines types and operations 
 for creating objects from eight arguments of the same type. 
 
 
@@ -905,7 +905,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_uniform_9` defines types and operations 
+The class `Creator_uniform_9` defines types and operations 
 for creating objects from nine arguments of the same type. 
 
 
@@ -963,7 +963,7 @@ namespace CGAL {
 
 
 
-The concept `Creator_uniform_d` defines types and operations 
+The class `Creator_uniform_d` defines types and operations 
 for creating objects from two arguments of the same type. 
 
 
