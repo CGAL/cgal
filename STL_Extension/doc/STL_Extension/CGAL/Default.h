@@ -16,7 +16,7 @@ error messages and mangled symbol names), (c) when defining the default
 involves circular dependencies of type instantiations (there, it breaks the 
 cycle in a nice way). 
 
-Using the mechanism is easy : just plug `Default` as template argument 
+Using the mechanism is easy: just plug `Default` as template argument 
 in the place where you would like to use the default. You should refer 
 to the documentation of the template class you are using in order to know 
 whether this functionality is offered. 

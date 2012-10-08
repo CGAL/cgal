@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 The `Sixtuple` class stores a homogeneous (same type) 
 sixtuple of objects of type `T`. A `Sixtuple` is much like a 

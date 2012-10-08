@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 Depending on `bool value` the class `Boolean_tag` indicates that 
 something is `true` or `false` respectively. 
@@ -30,7 +30,7 @@ static const bool value;
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 The typedef `Tag_false` is `Boolean_tag<false>`. 
 It is used to indicate, for example, 
@@ -39,23 +39,11 @@ that a certain feature is not available in a class.
 \sa `CGAL::Boolean_tag<bool value>` 
 \sa `CGAL::Tag_true` 
 */
-class Tag_false {
-public:
-
-/// \name Definition 
-/// @{ 
-/*! 
-is `false` 
-*/ 
-static const bool value; 
-
-/// @} 
-
-}; /* end Tag_false */
+typedef CGAL::Boolean_tag<false> Tag_false;
 
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 The typedef `Tag_true` is `Boolean_tag<true>`. 
 It is used to indicate, for example, 
@@ -63,25 +51,12 @@ that a certain feature is available in a class.
 
 \sa `CGAL::Boolean_tag<bool value>` 
 \sa `CGAL::Tag_false` 
-
-
 */
-class Tag_true {
-public:
+typedef CGAL::Boolean_tag<true> Tag_true;
 
-/// \name Definition 
-/// @{ 
-/*! 
-is `true` 
-*/ 
-static const bool value; 
-
-/// @} 
-
-}; /* end Tag_true */
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 Class indicating the absence of a functor.
 \models ::DefaultConstructible 
@@ -94,7 +69,7 @@ struct Null_functor {
 };
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 General tag indicating that non of any other possible tags is valid. 
 

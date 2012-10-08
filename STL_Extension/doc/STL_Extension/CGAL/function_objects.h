@@ -22,22 +22,18 @@ class Cast_function_object {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
+
 /*! 
-typedef to `Arg`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Arg argument_type; 
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
+
+
 /*! 
-typedef to `Result`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef Result result_type; 
+
 
 /// \name Creation 
 /// @{ 
@@ -168,7 +164,7 @@ public:
 /*! 
 type of argument. 
 */ 
-typedef Hidden_type argument_type; 
+typedef Arg argument_type; 
 /// @} 
 
 
@@ -177,7 +173,7 @@ typedef Hidden_type argument_type;
 /*! 
 type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -221,7 +217,7 @@ public:
 /*! 
 type of first argument. 
 */ 
-typedef Hidden_type argument1_type; 
+typedef Arg1 argument1_type; 
 /// @} 
 
 
@@ -230,7 +226,7 @@ typedef Hidden_type argument1_type;
 /*! 
 type of second argument. 
 */ 
-typedef Hidden_type argument2_type; 
+typedef Arg2 argument2_type; 
 /// @} 
 
 
@@ -239,7 +235,7 @@ typedef Hidden_type argument2_type;
 /*! 
 type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -285,7 +281,7 @@ public:
 /*! 
 type of first argument. 
 */ 
-typedef Hidden_type argument1_type; 
+typedef Arg1 argument1_type; 
 /// @} 
 
 
@@ -294,7 +290,7 @@ typedef Hidden_type argument1_type;
 /*! 
 type of second argument. 
 */ 
-typedef Hidden_type argument2_type; 
+typedef Arg2 argument2_type; 
 /// @} 
 
 
@@ -303,7 +299,7 @@ typedef Hidden_type argument2_type;
 /*! 
 type of third argument. 
 */ 
-typedef Hidden_type argument3_type; 
+typedef Arg3 argument3_type; 
 /// @} 
 
 
@@ -312,7 +308,7 @@ typedef Hidden_type argument3_type;
 /*! 
 type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -359,7 +355,7 @@ public:
 /*! 
 type of first argument. 
 */ 
-typedef Hidden_type argument1_type; 
+typedef Arg1 argument1_type; 
 /// @} 
 
 
@@ -368,7 +364,7 @@ typedef Hidden_type argument1_type;
 /*! 
 type of second argument. 
 */ 
-typedef Hidden_type argument2_type; 
+typedef Arg2 argument2_type; 
 /// @} 
 
 
@@ -377,7 +373,7 @@ typedef Hidden_type argument2_type;
 /*! 
 type of third argument. 
 */ 
-typedef Hidden_type argument3_type; 
+typedef Arg3 argument3_type; 
 /// @} 
 
 
@@ -386,7 +382,7 @@ typedef Hidden_type argument3_type;
 /*! 
 type of 4th argument. 
 */ 
-typedef Hidden_type argument4_type; 
+typedef Arg4 argument4_type; 
 /// @} 
 
 
@@ -395,7 +391,7 @@ typedef Hidden_type argument4_type;
 /*! 
 type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -442,7 +438,7 @@ public:
 /*! 
 type of first argument. 
 */ 
-typedef Hidden_type argument1_type; 
+typedef Arg1 argument1_type; 
 /// @} 
 
 
@@ -451,7 +447,7 @@ typedef Hidden_type argument1_type;
 /*! 
 type of second argument. 
 */ 
-typedef Hidden_type argument2_type; 
+typedef Arg2 argument2_type; 
 /// @} 
 
 
@@ -460,7 +456,7 @@ typedef Hidden_type argument2_type;
 /*! 
 type of third argument. 
 */ 
-typedef Hidden_type argument3_type; 
+typedef Arg3 argument3_type; 
 /// @} 
 
 
@@ -469,7 +465,7 @@ typedef Hidden_type argument3_type;
 /*! 
 type of 4th argument. 
 */ 
-typedef Hidden_type argument4_type; 
+typedef Arg4 argument4_type; 
 /// @} 
 
 
@@ -478,7 +474,7 @@ typedef Hidden_type argument4_type;
 /*! 
 type of 5th argument. 
 */ 
-typedef Hidden_type argument5_type; 
+typedef Arg5 argument5_type; 
 /// @} 
 
 
@@ -487,7 +483,7 @@ typedef Hidden_type argument5_type;
 /*! 
 type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -532,20 +528,18 @@ public:
 /// \name Requirements 
 /// @{ 
 /*! 
-type of arguments; typedef to 
-`Arg`. 
+type of arguments.
 */ 
-typedef Hidden_type argument_type; 
+typedef Arge argument_type; 
 /// @} 
 
 
 /// \name Requirements 
 /// @{ 
 /*! 
-type of object to create; typedef to 
-`Result`. 
+type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -589,20 +583,18 @@ public:
 /// \name Requirements 
 /// @{ 
 /*! 
-type of arguments; typedef to 
-`Arg`. 
+type of arguments. 
 */ 
-typedef Hidden_type argument_type; 
+typedef Arg argument_type; 
 /// @} 
 
 
 /// \name Requirements 
 /// @{ 
 /*! 
-type of object to create; typedef to 
-`Result`. 
+type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -646,20 +638,18 @@ public:
 /// \name Requirements 
 /// @{ 
 /*! 
-type of arguments; typedef to 
-`Arg`. 
+type of arguments. 
 */ 
-typedef Hidden_type argument_type; 
+typedef Arg argument_type; 
 /// @} 
 
 
 /// \name Requirements 
 /// @{ 
 /*! 
-type of object to create; typedef to 
-`Result`. 
+type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -704,20 +694,18 @@ public:
 /// \name Requirements 
 /// @{ 
 /*! 
-type of arguments; typedef to 
-`Arg`. 
+type of arguments. 
 */ 
-typedef Hidden_type argument_type; 
+typedef Arg argument_type; 
 /// @} 
 
 
 /// \name Requirements 
 /// @{ 
 /*! 
-type of object to create; typedef to 
-`Result`. 
+type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -762,20 +750,18 @@ public:
 /// \name Requirements 
 /// @{ 
 /*! 
-type of arguments; typedef to 
-`Arg`. 
+type of arguments. 
 */ 
-typedef Hidden_type argument_type; 
+typedef Arg argument_type; 
 /// @} 
 
 
 /// \name Requirements 
 /// @{ 
 /*! 
-type of object to create; typedef to 
-`Result`. 
+type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -821,20 +807,18 @@ public:
 /// \name Requirements 
 /// @{ 
 /*! 
-type of arguments; typedef to 
-`Arg`. 
+type of arguments. 
 */ 
-typedef Hidden_type argument_type; 
+typedef Arg argument_type; 
 /// @} 
 
 
 /// \name Requirements 
 /// @{ 
 /*! 
-type of object to create; typedef to 
-`Result`. 
+type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -880,20 +864,18 @@ public:
 /// \name Requirements 
 /// @{ 
 /*! 
-type of arguments; typedef to 
-`Arg`. 
+type of arguments. 
 */ 
-typedef Hidden_type argument_type; 
+typedef Arg argument_type; 
 /// @} 
 
 
 /// \name Requirements 
 /// @{ 
 /*! 
-type of object to create; typedef to 
-`Result`. 
+type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -940,20 +922,18 @@ public:
 /// \name Requirements 
 /// @{ 
 /*! 
-type of arguments; typedef to 
-`Arg`. 
+type of arguments. 
 */ 
-typedef Hidden_type argument_type; 
+typedef Arg argument_type; 
 /// @} 
 
 
 /// \name Requirements 
 /// @{ 
 /*! 
-type of object to create; typedef to 
-`Result`. 
+type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -1000,20 +980,18 @@ public:
 /// \name Requirements 
 /// @{ 
 /*! 
-type of arguments; typedef to 
-`Arg`. 
+type of arguments. 
 */ 
-typedef Hidden_type argument_type; 
+typedef Arg argument_type; 
 /// @} 
 
 
 /// \name Requirements 
 /// @{ 
 /*! 
-type of object to create; typedef to 
-`Result`. 
+type of object to create. 
 */ 
-typedef Hidden_type result_type; 
+typedef Result result_type; 
 /// @} 
 
 /// \name Requirements 
@@ -1053,22 +1031,14 @@ class Dereference {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Value*`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Value*  argument_type; 
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Value`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef Value result_type; 
 
 /// \name Creation 
 /// @{ 
@@ -1133,22 +1103,13 @@ class Get_address {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Value`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Value argument_type; 
 
-
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Value*`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef  Value* result_type; 
 
 /// \name Creation 
 /// @{ 
@@ -1212,21 +1173,13 @@ class Identity {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Value`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Value argument_type; 
 
-
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Value`. 
 */ 
-typedef Hidden_type result_type; 
+typedef Value result_type; 
 /// @} 
 
 /// \name Creation 
@@ -1291,22 +1244,14 @@ class Project_facet {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Node argument_type; 
 
-
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node::Facet`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef Node::Facet result_type; 
+
 
 /// \name Creation 
 /// @{ 
@@ -1323,8 +1268,7 @@ Project_facet();
 /// \name Operations 
 /// @{ 
 /*! 
-returns 
-`n.facet()`. 
+returns `n.facet()`. 
 */ 
 result_type& operator()(argument_type& n) const; 
 
@@ -1371,22 +1315,13 @@ class Project_next {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node*`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Node* argument_type; 
 
-
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node*`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef Node* result_type; 
 
 /// \name Creation 
 /// @{ 
@@ -1403,8 +1338,7 @@ Project_next();
 /// \name Operations 
 /// @{ 
 /*! 
-returns 
-`n->next()`. 
+returns  `n->next()`. 
 */ 
 result_type& operator()(argument_type& n) const; 
 
@@ -1450,22 +1384,14 @@ class Project_next_opposite {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node*`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Node* argument_type; 
 
-
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node*`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef Node* result_type; 
+
 
 /// \name Creation 
 /// @{ 
@@ -1530,22 +1456,14 @@ class Project_normal {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Node argument_type; 
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node::Normal`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+  typedef Node::Normal result_type; 
 
 /// \name Creation 
 /// @{ 
@@ -1610,22 +1528,14 @@ class Project_opposite_prev {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node*`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Node* argument_type; 
 
-
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node*`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef Node* result_type; 
+
 
 /// \name Creation 
 /// @{ 
@@ -1690,22 +1600,14 @@ class Project_plane {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Node argument_type; 
 
-
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node::Plane`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef Node::Plane result_type; 
+
 
 /// \name Creation 
 /// @{ 
@@ -1769,22 +1671,14 @@ class Project_point {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Node argument_type; 
 
-
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node::Point`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef Node::Point result_type; 
+
 
 /// \name Creation 
 /// @{ 
@@ -1848,22 +1742,15 @@ class Project_prev {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node*`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Node* argument_type; 
 
-
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node*`. 
+
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef Node* result_type; 
+
 
 /// \name Creation 
 /// @{ 
@@ -1880,8 +1767,7 @@ Project_prev();
 /// \name Operations 
 /// @{ 
 /*! 
-returns 
-`n->prev()`. 
+returns  `n->prev()`. 
 */ 
 result_type& operator()(argument_type& n) const; 
 
@@ -1927,22 +1813,14 @@ class Project_vertex {
 public:
 
 
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node`. 
 */ 
-typedef Hidden_type argument_type; 
-/// @} 
+typedef Node argument_type; 
 
-
-/// \name Is Model for the Concepts 
-/// @{ 
 /*! 
-typedef to `Node::Vertex`. 
 */ 
-typedef Hidden_type result_type; 
-/// @} 
+typedef Node::Vertex result_type; 
+
 
 /// \name Creation 
 /// @{ 

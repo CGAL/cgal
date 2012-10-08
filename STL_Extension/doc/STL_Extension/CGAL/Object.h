@@ -49,7 +49,7 @@ if (assign(point, obj)) {
 \endcode
 
 A more efficient way to access the object is to use `object_cast`, 
-which allows to skip a default construction and assignment : 
+which allows to skip a default construction and assignment: 
 
 \code{.cpp}
 { 
@@ -125,7 +125,7 @@ Object &operator=(const Object &o);
 /// @{ 
 /*! 
 returns true, if `obj` does not 
-contain an object. 
+contain an object of type `T`. 
 */ 
 bool empty(); 
 

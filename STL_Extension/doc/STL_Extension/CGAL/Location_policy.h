@@ -2,39 +2,25 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
-
-
+\ingroup PkgStlExtensionUtilities
 
 A typedef to `Location_policy<Compact>`. 
-
-
 
 \sa `Compact` 
 \sa `Fast` 
 \sa `Location_policy` 
 \sa `Fast_location` 
 
-
 */
-
-class Compact_location {
-public:
-
-
-}; /* end Compact_location */
+  typedef Location_policy<Compact> Compact_location;
 } /* end namespace CGAL */
 
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
-
-
+\ingroup PkgStlExtensionUtilities
 
 A typedef to `Location_policy<Fast>`. 
-
-
 
 \sa `Compact` 
 \sa `Fast` 
@@ -43,18 +29,13 @@ A typedef to `Location_policy<Fast>`.
 
 
 */
-
-class Fast_location {
-public:
-
-
-}; /* end Fast_location */
+  typedef Location_policy<Fast> Fast_location;
 } /* end namespace CGAL */
 
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 
 
@@ -70,7 +51,8 @@ For example, passing `Location_policy<Compact>` as parameter to
 
 `Tag` can only be either `Fast` or `Compact` currently. 
 
-\models ::DefaultConstructible, CopyConstructible 
+\models ::DefaultConstructible
+\models ::CopyConstructible 
 
 \sa `Compact` 
 \sa `Fast` 

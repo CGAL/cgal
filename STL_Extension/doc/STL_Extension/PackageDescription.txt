@@ -3,12 +3,15 @@
 /// \defgroup PkgStlExtensionConcepts Concepts
 /// \ingroup PkgStlExtension
 
+
+/// \defgroup PkgStlExtensionUtilities Utilities
+/// \ingroup PkgStlExtension
+
 /// \defgroup PkgStlExtensionAssertions Assertions and Failure Behaviour
 /// \ingroup PkgStlExtension
 
 /*!
 \addtogroup PkgStlExtension
-\todo check generated documentation
 \PkgDescriptionBegin{STL Extensions for CGAL,PkgStlExtensionSummary}
 \PkgPicture{plusplus.png}
 \PkgAuthors{Michael Hoffmann\, Lutz Kettner\, Sylvain Pion\, and Ron Wein}

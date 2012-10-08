@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 
 
@@ -13,7 +13,8 @@ For example, passing `Location_policy<Compact>` as parameter to
 
 
 
-\models ::DefaultConstructible, CopyConstructible 
+\models ::DefaultConstructible
+\models ::CopyConstructible 
 
 \sa `Location_policy` 
 \sa `Fast` 
@@ -33,7 +34,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 
 
@@ -45,7 +46,8 @@ more memory usage.
 
 
 
-\models ::DefaultConstructible, CopyConstructible 
+\models ::DefaultConstructible
+\models ::CopyConstructible 
 
 \sa `Location_policy` 
 \sa `Compact` 

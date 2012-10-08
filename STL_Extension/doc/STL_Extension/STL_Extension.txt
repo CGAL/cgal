@@ -1,3 +1,4 @@
+namespace CGAL {
 /*!
 
 \mainpage STL Extensions for %CGAL
@@ -18,7 +19,8 @@ uses three-valued comparisons and offers additional functionality,
 generic algorithms, iterators, functor adaptors for binding and swapping
 arguments and for composition, functors for projection and creation and
 adaptor classes around iterators and circulators. See also circulators in
-Chapter \ref Chapter_Handles_Ranges_and_Circulators. A class storing polymorphic objects
+Chapter \ref Chapter_Handles_Ranges_and_Circulators "Handles and Circulators". 
+A class storing polymorphic objects
 is also provided, as well as a class to manage the uncertainty of some values.
 Finally, tags and policy classes to specify complexity trade-offs of data-structures,
 and a class which helps specifying that the default types in template
@@ -88,7 +90,7 @@ elements of type `Type` is an expensive operation.
 `Multiset<Type,Compare,Allocator>` also guarantees that the order of
 elements sent to the comparison functor is fixed. For example, if we insert
 a new element `x` into the set (or erase an element from the set), then
-we always invoke `Compare() (x, y)` (and never `Compare() (y, x)`),
+we always invoke `Compare()(x, y)` (and never `Compare()(y, x)`),
 where `y` is an element already stored in the set. This behavior, not
 supported by `std::multiset`, is sometimes crucial for designing more
 efficient comparison predicates.
@@ -344,18 +346,19 @@ void my_failure_handler(
     int line,
     const char* msg)
 {
-    /* report the error in some way. */
+    // report the error in some way.
 }
 
 void foo()
 {
     CGAL::Failure_function prev;
     prev = CGAL::set_error_handler(my_failure_handler);
-    /* call some routines. */
+    // call some routines.
     CGAL::set_error_handler(prev);
 }
 \endcode
 
 
 */ 
+} /* namespace CGAL */
 

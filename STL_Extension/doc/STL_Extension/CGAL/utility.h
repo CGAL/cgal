@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 
 The Quadruple class is an extension of 
@@ -225,7 +225,7 @@ y);
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionUtilities
 
 
 

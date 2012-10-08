@@ -12,7 +12,7 @@ An instance `s` of the parametrized data type `Multiset` is a
 multi-set of elements of type `Type`, represented as a red-black tree 
 (see [\cite clrs-ia-01 Chapter 13 for an excellent introduction to red-black 
 trees). 
-The main difference between `Multiset` and \stl's `multiset` is that 
+The main difference between `Multiset` and the \stl `std::multiset` is that 
 the latter uses a less-than functor with a Boolean return type, while our 
 `Multiset` class is parameterized by a comparison functor `Compare` that 
 returns the three-valued `Comparison_result` (namely it returns either 
@@ -49,29 +49,25 @@ it is also possible to use a key of type `Type` and to employ the default
 
 \warning Finally, `Multiset` introduces the `catenate()` and `split()` 
 functions. The first function operates on `s` and accepts a second 
-set `s`', such that the maximum element in `s` is not greater than 
-the minimal element in `s`', and concatenates `s`' to `s`. The 
+set `s2`, such that the maximum element in `s` is not greater than 
+the minimal element in `s2`, and concatenates `s2` to `s`. The 
 second function splits `s` into two sets, one containing all the 
 elements that are less than a given key, and the other contains all 
 elements greater than (or equal to) this key. 
 
-### Parameters ###
 
-The `Multiset` class-template has three parameters: 
-<UL> 
-<LI>`Type` - the type of the stored elements. 
-<LI>`Compare` - the comparison-functor type. This type should provide 
+
+\tparam Type the type of the stored elements. 
+\tparam Compare  the comparison-functor type. This type should provide 
 the following operator for comparing two `Type` elements, namely: 
-
+<br>
 `Comparison_result operator() (const Type& t1, const Type& t2) const;` 
-
+<br>
 The `CGAL::Compare<Type>` functor is used by default. In this case, 
 `Type` must support an equality operator (`operator==`) and a 
 less-than operator (`operator<`). 
-<LI>`Allocator` - the allocator type. 
+\tparam Allocator the allocator type. `CGAL_ALLOCATOR` is used by default. 
 
-`CGAL_ALLOCATOR` is used by default. 
-</UL> 
 
 ### Assertions ###
 

@@ -60,7 +60,7 @@ insert new objects. However, all dereferenceable iterators are
 still valid after calls to `insert()` and `erase()`, except those 
 that have been erased (it behaves similarly to `std::list`). 
 
-The main feature of this container is that it is very memory efficient : 
+The main feature of this container is that it is very memory efficient: 
 its memory size is `N*sizeof(T)+o(N)`, where `N` is the maximum size 
 that the container has had in its past history, its `capacity()` 
 (the memory of erased elements is not deallocated until destruction of the 
@@ -74,7 +74,7 @@ It supports bidirectional iterators and allows a constant time amortized
 although `insert()` returns an iterator pointing to the newly inserted 
 object). You can erase any element with a constant time complexity. 
 
-Summary of the differences with `std::list` : it is more compact in 
+Summary of the differences with `std::list`: it is more compact in 
 memory since it doesn't store two additional pointers for the iterator needs. 
 It doesn't deallocate elements until the destruction or `clear()` of the 
 container. The iterator does not have constant amortized time complexity for 
@@ -88,7 +88,7 @@ is needed.
 
 The iterators themselves can be used as `T`, they provide the necessary 
 functions to be used by `Compact_container_traits<T>`. Moreover, they 
-also provide a default constructor value which is not singular : it is 
+also provide a default constructor value which is not singular: it is 
 copyable, comparable, and guaranteed to be unique under comparison 
 (like `NULL` for pointers). This makes them suitable for use in 
 geometric graphs like handles to vertices in triangulations. 
@@ -228,7 +228,7 @@ typedef Hidden_type allocator_type;
 /// \name Creation 
 /// @{ 
 /*! 
-introduces an empty container, eventually specifying a particular 
+introduces an empty container `cc`, eventually specifying a particular 
 allocator `a` as well. 
 */ 
 explicit Compact_container(const Allocator &a = Allocator()); 
@@ -256,10 +256,10 @@ const Allocator &a = Allocator());
 /// \name Creation 
 /// @{ 
 /*! 
-copy constructor. Each item in `cc` is copied. The allocator 
+copy constructor. Each item in `cc2` is copied. The allocator 
 is copied. The iterator order is preserved. 
 */ 
-Compact_container(const Compact_container<T, Allocator> &cc); 
+Compact_container(const Compact_container<T, Allocator> &cc2); 
 
 
 
@@ -269,11 +269,11 @@ Compact_container(const Compact_container<T, Allocator> &cc);
 /// \name Creation 
 /// @{ 
 /*! 
-assignment. Each item in `cc` is copied. The allocator is copied. 
+assignment. Each item in `cc2` is copied. The allocator is copied. 
 Each item in `c` is deleted. The iterator order is preserved. 
 */ 
 Compact_container<T, Allocator> & operator=(const 
-Compact_container<T, Allocator> &cc); 
+Compact_container<T, Allocator> &cc2); 
 
 
 
@@ -283,10 +283,10 @@ Compact_container<T, Allocator> &cc);
 /// \name Creation 
 /// @{ 
 /*! 
-swaps the contents of `c` and `cc` in constant time 
+swaps the contents of `cc` and `cc2` in constant time 
 complexity. No exception is thrown. 
 */ 
-void swap(Compact_container<T, Allocator> &cc); 
+void swap(Compact_container<T, Allocator> &cc2); 
 
 
 
@@ -311,7 +311,7 @@ void reserve(size_type value);
 /// \name Access Member Functions 
 /// @{ 
 /*! 
-returns a mutable iterator referring to the first element in `c`. 
+returns a mutable iterator referring to the first element in `cc`. 
 */ 
 iterator begin(); 
 
@@ -323,7 +323,7 @@ iterator begin();
 /// \name Access Member Functions 
 /// @{ 
 /*! 
-returns a constant iterator referring to the first element in `c`. 
+returns a constant iterator referring to the first element in `cc`. 
 */ 
 const_iterator begin() const; 
 
@@ -335,7 +335,7 @@ const_iterator begin() const;
 /// \name Access Member Functions 
 /// @{ 
 /*! 
-returns a mutable iterator which is the past-end-value of `c`. 
+returns a mutable iterator which is the past-end-value of `cc`. 
 */ 
 iterator end(); 
 
@@ -347,7 +347,7 @@ iterator end();
 /// \name Access Member Functions 
 /// @{ 
 /*! 
-returns a constant iterator which is the past-end-value of `c`. 
+returns a constant iterator which is the past-end-value of `cc`. 
 */ 
 const_iterator end() const; 
 
@@ -455,7 +455,7 @@ static const_iterator s_iterator_to(const_reference value);
 /// \name Access Member Functions 
 /// @{ 
 /*! 
-returns `true` iff `c` is empty. 
+returns `true` iff `cc` is empty. 
 */ 
 bool empty() const; 
 
@@ -467,7 +467,7 @@ bool empty() const;
 /// \name Access Member Functions 
 /// @{ 
 /*! 
-returns the number of items in `c`. 
+returns the number of items in `cc`. 
 */ 
 size_type size() const; 
 
@@ -479,7 +479,7 @@ size_type size() const;
 /// \name Access Member Functions 
 /// @{ 
 /*! 
-returns the maximum possible size of the container `c`. 
+returns the maximum possible size of the container `cc`. 
 */ 
 size_type max_size() const; 
 
@@ -491,7 +491,7 @@ size_type max_size() const;
 /// \name Access Member Functions 
 /// @{ 
 /*! 
-returns the total number of elements that `c` can hold without requiring 
+returns the total number of elements that `cc` can hold without requiring 
 reallocation. 
 */ 
 size_type capacity() const; 
@@ -516,7 +516,7 @@ Allocator get_allocator() const;
 /// \name Insertion 
 /// @{ 
 /*! 
-inserts a copy of `t` in `c` and returns the iterator pointing 
+inserts a copy of `t` in `cc` and returns the iterator pointing 
 to it. 
 */ 
 iterator insert(const T& t); 
@@ -529,7 +529,7 @@ iterator insert(const T& t);
 /// \name Insertion 
 /// @{ 
 /*! 
-inserts the range [`first, last`) in `c`. 
+inserts the range [`first, last`) in `cc`. 
 */ 
 template <class InputIterator> 
 void insert(InputIterator first, InputIterator last); 
@@ -542,8 +542,8 @@ void insert(InputIterator first, InputIterator last);
 /// \name Insertion 
 /// @{ 
 /*! 
-erases all the elements of `c`, then inserts the range 
-[`first, last`) in `c`. 
+erases all the elements of `cc`, then inserts the range 
+[`first, last`) in `cc`. 
 */ 
 template <class InputIterator> 
 void assign(InputIterator first, InputIterator last); 
@@ -557,7 +557,7 @@ void assign(InputIterator first, InputIterator last);
 /// @{ 
 /*! 
 constructs an object of type `T` with the constructor that takes 
-`t1` as argument, inserts it in `c`, and returns the iterator pointing 
+`t1` as argument, inserts it in `cc`, and returns the iterator pointing 
 to it. Overloads of this member function are defined that take additional 
 arguments, up to 9. 
 */ 
@@ -572,7 +572,7 @@ iterator emplace(const T1& t1);
 /// \name Removal 
 /// @{ 
 /*! 
-removes the item pointed by `pos` from `c`. 
+removes the item pointed by `pos` from `cc`. 
 */ 
 void erase(iterator pos); 
 
@@ -584,7 +584,7 @@ void erase(iterator pos);
 /// \name Removal 
 /// @{ 
 /*! 
-removes the items from the range [`first, last`) from `c`. 
+removes the items from the range [`first, last`) from `cc`. 
 */ 
 void erase(iterator first, iterator last); 
 
@@ -596,8 +596,8 @@ void erase(iterator first, iterator last);
 /// \name Removal 
 /// @{ 
 /*! 
-all items in `c` are deleted, and the memory is deallocated. 
-After this call, `c` is in the same state as if just default 
+all items in `cc` are deleted, and the memory is deallocated. 
+After this call, `cc` is in the same state as if just default 
 constructed. 
 */ 
 void clear(); 
@@ -609,16 +609,16 @@ void clear();
 
 /// \name Ownership testing 
 /// The following functions are mostly helpful for efficient debugging, since 
-/// their complexity is \f$ O(\sqrt{c.capacity()})\f$. 
+/// their complexity is \f$ O(\sqrt{\mathrm{c.capacity()}})\f$. 
 /// @{ 
 
 /*!
- * returns whether `pos` is in the range [`c`.\ `begin()`, `c`.\ `end()`] \(`c`.\ `end()` included\).
+ * returns whether `pos` is in the range `[cc.begin(),  cc.end()]` (`cc.end()` included).
  */ 
 bool owns(const_iterator pos); 
 
 /*!
- * returns whether `pos` is in the range [`c`.\ `begin()`, `c`.\ `end()`) \(`c`.\ `end()` excluded\). 
+ * returns whether `pos` is in the range `[cc.begin(), cc`.end())` (`cc.end()` excluded). 
  */ 
 bool owns_dereferencable(const_iterator pos); 
 
@@ -628,9 +628,9 @@ bool owns_dereferencable(const_iterator pos);
 /// \name Merging 
 /// @{ 
 /*! 
-adds the items of `cc` to the end of `c` and `cc` becomes empty. 
-The time complexity is O(`c`.`capacity()`-`c`.`size()`). 
-\pre `cc` must not be the same as `c`, and the allocators of `c` and `cc` need to be compatible : `c`.`get_allocator() == cc.get_allocator()`. 
+adds the items of `cc2` to the end of `cc` and `cc2` becomes empty. 
+The time complexity is O(`cc`.`capacity()`-`cc`.`size()`). 
+\pre `cc2` must not be the same as `cc`, and the allocators of `cc` and `cc2` must be compatible: `cc.get_allocator() == cc2.get_allocator()`. 
 */ 
 void merge(Compact_container<T, Allocator> &cc); 
 
@@ -655,7 +655,7 @@ bool operator==(const Compact_container<T, Allocator> &cc) const;
 /// \name Comparison Operations 
 /// @{ 
 /*! 
-test for inequality: returns !(`c` `== cc`). 
+test for inequality: returns `!(c == cc)`. 
 */ 
 bool operator!=(const Compact_container<T, Allocator> &cc) const; 
 
@@ -669,7 +669,7 @@ bool operator!=(const Compact_container<T, Allocator> &cc) const;
 /*! 
 compares in lexicographical order. 
 */ 
-bool operator<(const Compact_container<T, Allocator> &cc) const; 
+bool operator<(const Compact_container<T, Allocator> &cc2) const; 
 
 
 
@@ -679,9 +679,9 @@ bool operator<(const Compact_container<T, Allocator> &cc) const;
 /// \name Comparison Operations 
 /// @{ 
 /*! 
-returns `cc <` `c`. 
+returns `cc2 <cc`. 
 */ 
-bool operator>(const Compact_container<T, Allocator> &cc) const; 
+bool operator>(const Compact_container<T, Allocator> &cc2) const; 
 
 
 
@@ -691,9 +691,9 @@ bool operator>(const Compact_container<T, Allocator> &cc) const;
 /// \name Comparison Operations 
 /// @{ 
 /*! 
-returns !(`c` `> cc`). 
+  returns `!(cc > cc2)`. 
 */ 
-bool operator<=(const Compact_container<T, Allocator> &cc) const; 
+bool operator<=(const Compact_container<T, Allocator> &cc2) const; 
 
 
 
@@ -703,9 +703,9 @@ bool operator<=(const Compact_container<T, Allocator> &cc) const;
 /// \name Comparison Operations 
 /// @{ 
 /*! 
-returns !(`c` `< cc`). 
+returns `!(cc < cc2)`. 
 */ 
-bool operator>=(const Compact_container<T, Allocator> &cc) const; 
+bool operator>=(const Compact_container<T, Allocator> &cc2) const; 
 
 
 

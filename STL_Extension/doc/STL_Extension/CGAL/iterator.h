@@ -6,7 +6,7 @@ namespace CGAL {
 /*!
 \ingroup STLIterators
 
-The class `Const_oneset_iterator` defines an 
+The class `Const_oneset_iterator` defines a
 `RandomAccessIterator` that always refers to a copy of a 
 specific object of type `T`. 
 
@@ -28,8 +28,7 @@ public:
 /*! 
 creates an iterator that always refers to some copy of 
 `t`. The copy is constructed by invoking `T`'s copy 
-constructor and remains constant during \f$ i\f$'s 
-lifetime. 
+constructor and remains constant during the lifetime of the iterator. 
 */ 
 Const_oneset_iterator(T& 
 t); 
@@ -76,7 +75,7 @@ public:
 /// @{ 
 /*! 
 initializes 
-the internal counter to \f$ n\f$ and `i` has a singular value. 
+the internal counter to `n` and `i` has a singular value. 
 */ 
 Counting_iterator( std::size_t n = 0); 
 
@@ -89,7 +88,7 @@ Counting_iterator( std::size_t n = 0);
 /// @{ 
 /*! 
 
-initializes the internal counter to \f$ n\f$ and `i` to \f$ j\f$. 
+initializes the internal counter to `n` and `i` to `j`. 
 */ 
 Counting_iterator( Iterator j, std::size_t n = 0); 
 
@@ -332,7 +331,7 @@ decremented, it ignores all iterators for which the given
 `Predicate` is true. The iterator category is the same as for 
 `Iterator`. 
 
-\note Boost also provides the same functionality via the 
+\attention Boost also provides the same functionality via the 
 `boost::filter_iterator` class. Unfortunately, the semantics 
 chosen for accepting or rejecting elements based on the predicate's 
 result are opposite as the semantic chosen here. What is more, the 
@@ -387,7 +386,7 @@ Constructs `Insert_iterator<Container>(x)`.
 */ 
 template < class Container > 
 Insert_iterator<Container> 
-inserter(Container &x); 
+inserter(Container &c); 
 
 /*!
 \ingroup STLIterators
@@ -412,7 +411,7 @@ public:
 /// @{ 
 /*! 
 initializes 
-the internal container reference to \f$ c\f$. 
+the internal container reference to `c`. 
 */ 
 Insert_iterator( Container &c ); 
 
@@ -433,11 +432,12 @@ namespace CGAL {
 
 
 The class `Inverse_index` constructs an inverse 
-index for a given range [\f$ i,j\f$) of two iterators or circulators of 
-type `IC`. The first element \f$ I\f$ in the range [\f$ i,j\f$) has the 
+index for a given range `[i,j)` of two iterators or circulators of 
+type `IC`. The first element `I` in the range `[i,j)` has the 
 index 0. Consecutive elements are numbered incrementally. The 
 inverse index provides a query for a given iterator or circulator 
-\f$ k\f$ to retrieve its index number. <I>Precondition:</I>/ The iterator 
+`k` to retrieve its index number. 
+\pre The iterator 
 or circulator must be either of the random access category or the 
 dereference operator must return stable and distinguishable 
 addresses for the values, e.g. proxies or non-modifiable iterator 
@@ -448,8 +448,8 @@ with opaque values will not work.
 ### Implementation ###
 
 For random access iterators or circulators, it is done in constant 
-time by subtracting \f$ i\f$. For other iterator categories, an \stl 
-`map` is used, which results in a \f$ \log j-i\f$ query time. The 
+time by subtracting `i`. For other iterator categories, an \stl 
+`map` is used, which results in a `log(j-i)` query time. The 
 comparisons are done using the operator `operator<` on pointers. 
 
 \sa `CGAL::Random_access_adaptor<IC>` 
@@ -477,7 +477,7 @@ Inverse_index();
 /// @{ 
 /*! 
 empty inverse 
-index initialized to start at \f$ i\f$. 
+index initialized to start at `i`. 
 */ 
 Inverse_index( const IC& i); 
 
@@ -489,7 +489,7 @@ Inverse_index( const IC& i);
 /// \name Creation 
 /// @{ 
 /*! 
-inverse index initialized with range [\f$ i,j\f$). 
+inverse index initialized with range `[i,j)`. 
 */ 
 Inverse_index( const IC& i, const IC& j); 
 
@@ -501,8 +501,8 @@ Inverse_index( const IC& i, const IC& j);
 /// \name Operations 
 /// @{ 
 /*! 
-returns inverse 
-index of \f$ k\f$. \pre \f$k\f$ has been stored in the inverse 
+returns inverse index of `k`. 
+\pre `k` has been stored in the inverse 
 index. 
 */ 
 std::size_t operator[]( const IC& k); 
@@ -515,8 +515,7 @@ std::size_t operator[]( const IC& k);
 /// \name Operations 
 /// @{ 
 /*! 
-adds \f$ k\f$ at the end of the 
-indices. 
+adds `k` at the end of the indices. 
 */ 
 void push_back( const IC& k); 
 
@@ -566,9 +565,9 @@ typedef Hidden_type value_type;
 /// \name Creation 
 /// @{ 
 /*! 
-creates a join iterator from the given iterator \f$ i\f$ 
+creates a join iterator from the given iterator `i` 
 and the functor `creator`. Applies `creator` to each item 
-read from \f$ i\f$. 
+read from `i`. 
 */ 
 Join_input_iterator_1( Iterator i, const Creator& 
 creator); 
@@ -582,9 +581,9 @@ creator);
 /// @{ 
 /*! 
 creates a join 
-iterator from the given iterator \f$ i\f$ and a default constructed 
+iterator from the given iterator `i` and a default constructed 
 instance of `Creator`. The latter instance is applied to each 
-item read from \f$ i\f$. 
+item read from `i`. 
 */ 
 Join_input_iterator_1( Iterator i); 
 
@@ -605,10 +604,10 @@ namespace CGAL {
 
 
 The adaptor `N_step_adaptor` changes the step width of the 
-iterator or circulator class `I` to \f$ N\f$. It is itself an 
+iterator or circulator class `I` to `N`. It is itself an 
 iterator or circulator respectively. The behavior is undefined if 
-the adaptor is used on a range [\f$ i,j\f$) where \f$ j-i\f$ is not a multiple 
-of \f$ n\f$. 
+the adaptor is used on a range `[i,j)` where `j-i` is not a multiple 
+of `n`. 
 
 */
 template< typename I, typename int N >
@@ -723,7 +722,7 @@ Random_access_adaptor();
 /// @{ 
 /*! 
 empty random 
-access index initialized to start at \f$ i\f$. 
+access index initialized to start at `i`. 
 */ 
 Random_access_adaptor( const IC& i); 
 
@@ -735,7 +734,7 @@ Random_access_adaptor( const IC& i);
 /// \name Creation 
 /// @{ 
 /*! 
-random access index initialized to the range [\f$ i,j\f$). 
+random access index initialized to the range `[i,j)`. 
 */ 
 Random_access_adaptor( const IC& i, const IC& j); 
 
@@ -747,7 +746,7 @@ Random_access_adaptor( const IC& i, const IC& j);
 /// \name Creation 
 /// @{ 
 /*! 
-reserve \f$ r\f$ entries, if a 
+reserve `r` entries, if a 
 `std::vector` is used internally. 
 */ 
 void 
@@ -761,9 +760,8 @@ reserve( size_type r);
 /// \name Operations 
 /// @{ 
 /*! 
-returns iterator or 
-circulator to the \f$ n\f$-th item. \pre \f$n <\f$ number of items 
-in `random_access`. 
+returns iterator or circulator to the `n`-th item. 
+\pre `n <` number of items in the data-structure. 
 */ 
 IC operator[]( size_type n); 
 
@@ -775,8 +773,7 @@ IC operator[]( size_type n);
 /// \name Operations 
 /// @{ 
 /*! 
-adds \f$ k\f$ at the end of the 
-indices. 
+adds `k` at the end of the indices. 
 */ 
 void push_back( const IC& k); 
 
@@ -801,7 +798,7 @@ access for data structures. It is derived from
 `Random_access_adaptor<IC>`. Instead of returning iterators from 
 the `operator[]` methods, it returns the dereferenced value of 
 the iterator. The iterator or circulator of the data structure are 
-of type `IC`. Their value type is \f$ T\f$. 
+of type `IC`. Their value type is `T`. 
 
 \sa `CGAL::Inverse_index<IC>` 
 \sa `CGAL::Random_access_adaptor<IC>` 
@@ -817,8 +814,8 @@ public:
 /// the exception of: 
 /// @{ 
 /*! 
-returns a reference to the 
-\f$ n\f$-th item. \pre \f$n <\f$ number of items in `random_access`. 
+returns a reference to the `n`-th item. 
+\pre `n <` number of items in the data-structure. 
 */ 
 T& operator[]( size_type n); 
 
