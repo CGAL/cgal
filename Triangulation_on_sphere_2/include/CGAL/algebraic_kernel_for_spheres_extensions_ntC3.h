@@ -2,7 +2,8 @@
 #ifndef CGAL_PREDICATES_ALGEBRAIC_KERNEL_FOR_SPHERES_NTC3_H
 #define CGAL_PREDICATES_ALGEBRAIC_KERNEL_FOR_SPHERES_NTC3_H
 
-#include <CGAL/Root_of_2.h>
+//#include <CGAL/Root_of_2.h>
+#include <CGAL/Root_of_traits.h>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Interval_nt.h>
 

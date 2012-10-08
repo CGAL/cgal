@@ -8,6 +8,7 @@
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
 #include <fstream>
+#include <CGAL/Delaunay_triangulation_2.h>
 
 
 namespace CGAL { 
@@ -25,14 +26,15 @@ template < class Gt,
            class Tds  = Triangulation_data_structure_2 <
                         Regular_triangulation_vertex_base_2<Gt>,
 		        Regular_triangulation_face_base_on_sphere_2<Gt> > >
-class Regular_triangulation_on_sphere_2 
+class Regular_triangulation_on_sphere_2
   : public Triangulation_on_sphere_2<Gt,Tds>
 {
   typedef Regular_triangulation_on_sphere_2<Gt, Tds>                         Self;
   typedef Triangulation_on_sphere_2<Gt,Tds>                                  Base;
+
 public:
   typedef Tds                                  Triangulation_data_structure;
-  typedef Gt                                   Geom_traits;
+	  typedef Gt                                   Geom_traits;
   typedef typename Gt::Point_2                 Point;
 
   typedef typename Base::size_type             size_type;
@@ -72,19 +74,19 @@ public:
 
 private:
 
-  class Hidden_tester {
+ class Hidden_tester {
   public:
     bool operator()(const typename Base::Vertices_iterator&  it){
       return it->is_hidden();
      }
   };
 
-  class Unhidden_tester {
+/*  class Unhidden_tester {
   public:
     bool operator()(const typename Base::Vertices_iterator&  it){
       return ! it->is_hidden();
     }
-  };
+  };*/
 
   typedef typename Base::Vertices_iterator     vertices_ib;
 
@@ -92,7 +94,7 @@ public:
   // We derive in order to add a conversion to handle.
   class Vertices_iterator :
     public Filter_iterator<vertices_ib, Hidden_tester> {
-    typedef Filter_iterator<vertices_ib, Hidden_tester> Base;
+   typedef Filter_iterator<vertices_ib, Hidden_tester> Base;
     typedef Vertices_iterator                     Self;
      public:
     Vertices_iterator() : Base() {}
@@ -105,19 +107,19 @@ public:
   };
 
 
-  class Hidden_vertices_iterator :
+ /* class Hidden_vertices_iterator :
     public Filter_iterator<vertices_ib, Unhidden_tester> {
     typedef Filter_iterator<vertices_ib, Unhidden_tester> Base; 
     typedef Hidden_vertices_iterator                     Self;
   public:
-    Hidden_vertices_iterator() : Base() {}
-    Hidden_vertices_iterator(const Base &b) : Base(b) {}
+   // Hidden_vertices_iterator() : Base() {}
+  //  Hidden_vertices_iterator(const Base &b) : Base(b) {}
     Self & operator++() { Base::operator++(); return *this; }
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
     operator Vertex_handle() const { return Base::base(); }
- };
+ };*/
 
 
  private:
@@ -220,37 +222,20 @@ public:
   void flip(Face_handle f, int i);
 
   //HIDDING
-  Vertex_handle hide_new_vertex(Face_handle f, const Point& p);
-  void hide_vertex(Face_handle f, Vertex_handle v);
-  void update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2);
-  void update_hidden_points_3_1(const Face_handle& f1, const Face_handle& f2, const Face_handle& f3);
-  void update_hidden_points_1_3(const Face_handle& f1, const Face_handle& f2,const Face_handle& f3);
-  void hide_remove_degree_3(Face_handle fh, Vertex_handle vh);
-  void exchange_incidences(Vertex_handle va, Vertex_handle vb);
+    void exchange_incidences(Vertex_handle va, Vertex_handle vb);
   void set_face(Vertex_list& vl, const Face_handle& fh);
-  void exchange_hidden(Vertex_handle va, Vertex_handle vb);
+  //void exchange_hidden(Vertex_handle va, Vertex_handle vb);
 
 
 
   //REGULAR 
   void regularize(Vertex_handle v);
-  void stack_flip(Vertex_handle v, Faces_around_stack &faces_around);
-  void stack_flip_4_2(Face_handle f, int i, int j, 
-		      Faces_around_stack &faces_around);
-  void stack_flip_3_1(Face_handle f, int i, int j,
-		      Faces_around_stack &faces_around);
-  void stack_flip_2_2(Face_handle f, int i, 
-		      Faces_around_stack &faces_around);
-  void stack_flip_dim1(Face_handle f, int i,
-		       Faces_around_stack &faces_around);
-
+ 
   //ITERATORS
   Vertices_iterator vertices_begin () const;
   Vertices_iterator vertices_end () const;
 
-  Hidden_vertices_iterator hidden_vertices_begin () const;
-  Hidden_vertices_iterator hidden_vertices_end () const;
-
+  
   //---------------------------------------------------------------------HOLE APPROACH
 
 
@@ -281,21 +266,9 @@ public:
       }
     }
 
-	template <class InputIterator>
-    void reinsert_vertices(Vertex_handle v, InputIterator start, InputIterator end ) {
-	  Face_handle hf = v->face();
-	  while(start != end){
-	    if ((*start)->face() == Face_handle()){
-	    hf = locate ((*start)->point(), hf);
-	    hide_vertex(hf, *start);
-	    }
-	    start++;
-	  }
-	}
-
+	
 template < class InputIterator >
-  int
-  insert(InputIterator first, InputIterator last)
+  int insert(InputIterator first, InputIterator last)
   {
       int n = number_of_vertices();
 
@@ -481,13 +454,29 @@ Stream &write_edges_to_off(Stream &out,FaceIt face_begin, FaceIt face_end){
 	          continue;
 	        }
      	    test->set_in_conflict_flag(2); // test is on the boundary.
+			 
           }
+			//c->set_in_conflict_flag(2);
           *it.first++ = Edge(c, i);
         }
     } while(!Face_stack.empty());
     return it;
   }
   
+
+	template <class OutputItBoundaryEdges>
+	OutputItBoundaryEdges 
+	get_boundary_of_conflicts ( Point p, OutputItBoundaryEdges eit, Face_handle start) const {
+		return Delaunay_triangulation_2<Gt, Tds> ::get_boundary_of_conflicts(p, eit, start);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 };
 //------------------------------------------------------------------PREDICATES---------------------------------------------------------------------//
 template < class Gt, class Tds >
@@ -575,7 +564,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
   bool result = true;
   for(Faces_iterator fit = faces_begin(); 
       fit != faces_end(); ++fit) {
-    result = result && is_valid_face(fit);
+	      result = result && is_valid_face(fit);
   }CGAL_triangulation_assertion(result);
   
   for(Vertices_iterator vit = vertices_begin(); 
@@ -583,10 +572,10 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
     result = result && is_valid_vertex(vit);
   }CGAL_triangulation_assertion(result);
 
-   for(Hidden_vertices_iterator hvit = hidden_vertices_begin(); 
+/*   for(Hidden_vertices_iterator hvit = hidden_vertices_begin(); 
                                 hvit != hidden_vertices_end(); ++hvit) {
     result = result && is_valid_vertex(hvit);
-  }CGAL_triangulation_assertion(result);
+  }CGAL_triangulation_assertion(result);*/
 
    switch(dimension()) {
    case 0 :
@@ -645,35 +634,8 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 is_valid_vertex(Vertex_handle vh) const
 {
   bool result = true;
-  if (vh->is_hidden()) {
-    Locate_type lt; 
-    int li;
-    Face_handle loc  = locate(vh->point(), lt, li, vh->face());
-    if (dimension() == 0) {
-      result = result && lt == Base::VERTEX;
-        result = result && power_test (vh->face()->vertex(0)->point(), vh->point()) <= 0;
-    } else {
-        result = result && (loc == vh->face() ||
-                (lt == Base::VERTEX && vh->face()->has_vertex(loc->vertex(li))) ||
-                (lt == Base::EDGE && vh->face() ==
-                 loc->neighbor(li)) );
-	if(dimension()>1)
-	  {result = result && 
-	      power_test(vh->face(),vh->point()) == ON_NEGATIVE_SIDE;}
-	if ( !result) {
-	  std::cerr << " from is_valid_vertex " << std::endl;
-	  std::cerr << "sommet cache " << &*(vh) 
-		    << "vh_point " <<vh->point() << " " << std::endl;
-               std::cerr << "vh_>face " << &*(vh->face())  << " " << std::endl;
-               std::cerr <<  "loc      " <<  &*(loc )
-        	        << " lt " << lt  << " li " << li << std::endl;
-               show_face(vh->face());
-               show_face(loc);
-	}
-    }
-  }
-  else { // normal vertex
     result = result && vh->face()->has_vertex(vh);
+	    
      if ( !result) {
        std::cerr << " from is_valid_vertex " << std::endl;
        std::cerr << "normal vertex " << &(*vh) << std::endl;
@@ -681,7 +643,7 @@ is_valid_vertex(Vertex_handle vh) const
        std::cerr << "vh_>face " << &*(vh->face())  << " " << std::endl;
        show_face(vh->face());
      }
-  }
+
   CGAL_triangulation_assertion(result);
   return result;
 }
@@ -693,6 +655,11 @@ is_valid_face(Face_handle fh) const
 {
   bool result = true;
   CGAL_triangulation_assertion(result);
+	bool test2 = fh->get_in_conflict_flag()==2;
+	bool test1 = fh->get_in_conflict_flag()==1;
+	
+	
+	
   result = fh->get_in_conflict_flag()==0;
 
   typename Vertex_list::iterator vlit = fh->vertex_list().begin(),
@@ -769,14 +736,7 @@ show_all() const
       std::cerr<<std::endl;
   }
   
-   std::cerr << "sommets caches "  << std::endl;
-   Hidden_vertices_iterator hvi = hidden_vertices_begin();
-   for( ; hvi != hidden_vertices_end(); hvi++) {
-     show_vertex(hvi);
-      std::cerr << "  / face associee : "
-	     << &*(hvi->face()) << std::endl;
-   }
-  return;
+     return;
 }
 
 template < class Gt, class Tds >
@@ -812,107 +772,27 @@ insert(const Point &p, Face_handle start)
   #endif
 }
 
-template < class Gt, class Tds >
-typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-insert(const Point &p, Locate_type lt, Face_handle loc, int li) 
-{
-    Vertex_handle v;
-    switch (lt) {
-    case Base::VERTEX:
-      {
-	CGAL_precondition (dimension() >= -1);
-
-	if (dimension() < 1 ) {
-	  // in this case locate() oddly returns loc = NULL and li = 4,
-	  // so we work around it.
-	  loc = faces_begin();
-	  li = 0;
-	}
-
-	Vertex_handle vv = loc->vertex(li);
-	CGAL::Oriented_side side = power_test (vv->point(), p);
-	switch(side) {
-	      
-	case ON_NEGATIVE_SIDE:
-	  return hide_new_vertex (loc, p);
-	      
-	case ON_POSITIVE_SIDE:
-	  v = this->_tds.create_vertex(); 
-	  v->set_point(p);
-	  exchange_incidences(v,vv);
-	  hide_vertex(loc, vv);
-	  regularize (v);
-	      return v;
-	      
-	    case ON_ORIENTED_BOUNDARY:
-	      return vv;
-	      }
-      }
-    case Base::EDGE:
-        {
-            CGAL_precondition (dimension() >= 1);
-	    /* Oriented_side os = dimension() == 1 ? power_test (loc, li, p) :
-	       power_test (loc, p);*/
-	    Oriented_side os = power_test(loc,p);
-
-            if (os < 0) {
-                return hide_new_vertex (loc, p);
-            }
-            v = insert_in_edge (p, loc, li);
-            break;
-        }	
-    case Base::FACE:
-      {
-            CGAL_precondition (dimension() >= 2);
-            if (power_test (loc, p) < 0) {
-                return hide_new_vertex(loc,p);
-            }
-            v = insert_in_face (p, loc);
-            break;
-      }
-    case Base::OUTSIDE_AFFINE_HULL:
-      {
-	if(dimension()==0){
-	  Vertex_handle v=vertices_begin();
-	  Vertex_handle u=v->face()->neighbor(0)->vertex(0);
-	  loc=v->face();
-
-	  if( collinear_between(u->point(),v->point(),p) && power_test(u->point(),v->point(),p) == ON_NEGATIVE_SIDE )
-	    return hide_new_vertex (loc, p);
-
-	  v = Base::insert_outside_affine_hull(p);    
-	}
-	  
-      }
-    default:
-        v = Base::insert (p, lt, loc, li);
-    }
-    /*
-    if (lt == OUTSIDE_AFFINE_HULL) {
-        //clear vertex list of infinite faces which have been copied
-        for ( All_faces_iterator afi = all_faces_begin();
-                afi != all_faces_end(); afi++)
-            if (is_infinite (afi))
-                afi->vertex_list().clear();
-		}*/
-
-
-    regularize (v);
-
-
-    return v;
-}
-
+	
+	
+/*template <class EdgeIt>
+Vertex_handle star_hole_3(Vertex_handle v, EdgeIt edge_begin,  EdgeIt edge_end) const {
+		return tds.star_hole(v, edge_begin, edge_end);
+	}*/
+	
+	
 
 template < class Gt, class Tds >
 typename Regular_triangulation_on_sphere_2<Gt,Tds>::Face_handle
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 create_star_2(const Vertex_handle& v, const Face_handle& c, int li )
 {
+	
+	
   CGAL_triangulation_assertion( dimension() == 2 );
   Face_handle cnew;
 
+	bool neg = c->is_negative() || c->neighbor(li)->is_negative();
+	//if (!neg){
   // i1 i2 such that v,i1,i2 positive
   int i1=ccw(li);
   // traversal of the boundary of region in ccw order to create all
@@ -923,6 +803,8 @@ create_star_2(const Vertex_handle& v, const Face_handle& c, int li )
                                        // first cell that will be created 
   Face_handle cur;
   Face_handle pnew = Face_handle();
+	
+	
   do {
     cur = bound;
     // turn around v2 until we reach the boundary of region
@@ -934,6 +816,14 @@ create_star_2(const Vertex_handle& v, const Face_handle& c, int li )
     cur->neighbor(cw(i1))->set_in_conflict_flag(0);
     // here cur has an edge on the boundary of region
     cnew = create_face( v, v1, cur->vertex( ccw(i1) ) );
+	  
+	  //new
+	  //v1->set_face(cnew);
+	  cur->vertex( ccw(i1) ) ->set_face(cnew);
+	   //new
+	  
+	  
+	  
     this->_tds.set_adjacency(cnew, 0, cur->neighbor(cw(i1)),
 	                   cur->neighbor(cw(i1))->index(cur));
     cnew->set_neighbor(1, Face_handle());
@@ -951,228 +841,106 @@ create_star_2(const Vertex_handle& v, const Face_handle& c, int li )
   } while ( v1 != c->vertex(ccw(li)) );
   // missing neighbors between the first and the last created cells
   cur = c->neighbor(li)->neighbor(ind); // first created cell
-  this->_tds.set_adjacency(cnew, 1, cur, 2);
+		this->_tds.set_adjacency(cnew, 1, cur, 2);
+		
+	
+	
   return cnew;
 }
 
 template < class Gt, class Tds >
 typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_on_sphere_2<Gt,Tds>::
-insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) 
-{
-  Vertex_handle v;
-    switch (lt) {
-    case Base::VERTEX:
-      {
-	Vertex_handle vv;
-
-	if(dimension() == -1) {
-	  vv=vertices_begin();
-	  loc=vv->face();
-	}else
-	  vv = loc->vertex(li);
+	insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) {
+	//TODO point is valide
 	
-	//bug here because of removing faces_begin_2
-	//CGAL_triangulation_assertion(xy_equal(vv->point(), p));
-
-	CGAL::Oriented_side side = power_test (vv->point(), p);
-
-	switch(side) {
-	case ON_NEGATIVE_SIDE:	    
-	  return hide_new_vertex (loc, p);
-	  
-	case ON_POSITIVE_SIDE:
-	  if(dimension()<1){
-	    v = this->_tds.create_vertex(); 
-	    v->set_point(p);
-	    exchange_incidences(v,vv);
-	    hide_vertex(loc, vv);
-	    return v;
-	  }break;	
-	  
-	case ON_ORIENTED_BOUNDARY:
-	  return vv;
-	}
-      }break;
-
-    case Base::EDGE:
-        {
-            CGAL_precondition (dimension() >= 1);
-	    Oriented_side os = dimension() == 1 ? power_test (loc, li, p) : power_test (loc, p);
-
-            if (os < 0) {
-                return hide_new_vertex (loc, p);
-            }
-        }break;	
-    case Base::FACE:
-	{
-            CGAL_precondition (dimension() >= 2);
-
-	    if (power_test (loc, p) < 0) {
-                return hide_new_vertex(loc,p);
-            }
-	}break;
-    case Base::OUTSIDE_AFFINE_HULL:
-      {
-	if(dimension()==0){
-	  loc=vertices_begin()->face();
-	  v=loc->vertex(0);
-	  Vertex_handle u=loc->neighbor(0)->vertex(0);
-
-	  bool between = collinear_between(u->point(),v->point(),p);
-	  Oriented_side over = power_test(v->point(),u->point(),p);
-	  //p under the edge
-	  if( between  &&  over == ON_NEGATIVE_SIDE )
-	    return hide_new_vertex (loc, p); 
-	  
-	  //p over edge and not inside the cone of edge -> hidding one existing vertex
-	  if(  !between && over == ON_POSITIVE_SIDE && orientation(v->point(),u->point(),p)==COLLINEAR ) {
-	    Vertex_handle nv = this->_tds.create_vertex(); 
-	    nv->set_point(p);
-	    if( collinear_between(u->point(),p,v->point())){
-	      exchange_incidences(nv,v);
-	      hide_vertex(nv->face(),v);
-	    }else{
-	      exchange_incidences(nv,u);
-	      hide_vertex(nv->face(),u);
-	    }
-	    
-	    return nv;
-	  }
-	  
-	  return insert_outside_affine_hull_regular(p);
-
-	}else 
-
-	  if(dimension()==1){
-	    Face_handle f=edges_begin()->first;
-	    Vertex_handle v1=f->vertex(0);
-	    Vertex_handle v2=f->vertex(1);
-	    Vertex_handle v3=f->neighbor(0)->vertex(1);
-
-	    Orientation orient=orientation(v1->point(),v2->point(),v3->point()) ;
-
-	    if (orient != COLLINEAR 	&&
-		power_test (v1->point(),v2->point(),v3->point(),p) == ON_NEGATIVE_SIDE    && 
-		oriented_side (v1->point(),v2->point(),v3->point(),p) == ON_POSITIVE_SIDE  
-		){
-	      return hide_new_vertex(f,p);}
-	    else{
-	      return insert_outside_affine_hull_regular(p,orient==COLLINEAR);//boolean to know if the triangulation is plane
-	    }
-	  }       
-	  }
-    default:
-      {
-		if(dimension()<1){
-			v = Base::insert (p, lt, loc, li);
+		
+		
+		Vertex_handle v;
+		if( dimension() == -2)
+			return Base::insert_first(p);
+		
+		if( dimension() == -1)
+			return Base::insert_second(p);
+				
+		if( dimension() == 0)
+			return insert_outside_affine_hull(p);
+		
+		
+		if(dimension() == 1){
+			Face_handle f=edges_begin()->first;
+			Vertex_handle v1=f->vertex(0);
+			Vertex_handle v2=f->vertex(1);
+			Vertex_handle v3=f->neighbor(0)->vertex(1);
+			Orientation orient=orientation(v1->point(),v2->point(),v3->point()) ;
+			v = insert_outside_affine_hull_regular(p,orient==COLLINEAR);
+			update_negative_faces(v);
+			return v;
 		}
-      }
-    }
-   if (dimension()==2){
-      std::vector<Face_handle> faces;
-      std::vector<Vertex_handle> hid_verts;
-      Edge edge;
-      faces.reserve(32);
-      hid_verts.reserve(96);
-
-      find_conflicts
-	(p,loc, make_triple(Oneset_iterator<Edge>(edge),
-			std::back_inserter(faces),
-				Emptyset_iterator()));
-
-      process_faces_in_conflict(faces.begin(),faces.end(),std::back_inserter(hid_verts));
-      
-      Vertex_handle newv = this->_tds.create_vertex();
-      Face_handle fnew;  
-      fnew = create_star_2(newv, edge.first, edge.second);
-      newv->set_face(fnew);
-  
-      newv->set_point(p);
-
-      delete_faces(faces.begin(),faces.end());
-      if( lt != FACE )
-	update_negative_faces(newv);
-
-      //TODO: in the minimal example of five points in
-      //test/bugs_minimal_examples.cpp one of the vertices stored in
-      //hid_verts has an empty face and therefore is hidden. This is
-      //an incorrect behavior, figure out why its face is empty.
-      reinsert_vertices(newv,hid_verts.begin(),hid_verts.end());
-
-       return newv;
-   }
-   //find the conflicting edges
-   if( dimension()==1 ){
-	std::vector<Face_handle> faces;
-	std::vector<Vertex_handle> hid_verts;
-	Edge bound[2];
-	faces.push_back(loc);
-
-	for (int j = 0; j<2; j++) {
-	  Face_handle f = loc->neighbor(j);
-	  while ( test_conflict_1(p,f) || (lt==OUTSIDE_CONVEX_HULL && f->is_negative() ) ) {
-		faces.push_back(f);
-	    f = f->neighbor(j);
-	  }
-	  Edge e = Edge(f,2);
-	  bound[j]=e;
-	}
-	process_faces_in_conflict(faces.begin(),faces.end(),std::back_inserter(hid_verts));
-
-	delete_faces(faces.begin(),faces.end());
+		
+		if (dimension()==2){
+			std::vector<Face_handle> faces;
+			Edge edge;
+			faces.reserve(32);
+				
+			
+		
+			
+			find_conflicts(p,loc, make_triple(Oneset_iterator<Edge>(edge),
+								std::back_inserter(faces),
+								Emptyset_iterator()));
+			
+			
+			
+			//process_faces_in_conflict(faces.begin(),faces.end(),std::back_inserter(hid_verts));
+			
+			//get_conflicts(p, Oneset_iterator<Edges> edge);
+			
+			
+		
+			Vertex_handle newv = this->_tds.create_vertex();
+			Face_handle fnew;  
+			
+		
+			
+			fnew = create_star_2(newv, edge.first, edge.second);
+			
+			
+			
+			
+			newv->set_face(fnew);
+			delete_faces(faces.begin(),faces.end());
+			newv->set_point(p);
+			
+			
+			if( lt != FACE )
+				update_negative_faces(newv);
+			
+						
+			return newv;
+		}
+		   
+		   
+		  			
 	
-		//"star" the hole with v 
-	v = this->_tds.create_vertex();
-	v->set_point (p);
-	Face_handle fb0 = bound[0].first;
-	Face_handle fb1 = bound[1].first;
-	Face_handle f0 = this->_tds.create_face(v,fb0 ->vertex(0), Vertex_handle());
-	Face_handle f1 = this->_tds.create_face(fb1->vertex(1), v, Vertex_handle());
-	this->_tds.set_adjacency(fb0,1,f0,0);
-	this->_tds.set_adjacency(f0,1,f1,0);
-	this->_tds.set_adjacency(f1,1,fb1,0);
-	fb0->vertex(0)->set_face(fb0);
-	fb1->vertex(1)->set_face(fb1);
-	v->set_face(f0);
-	v->set_point (p);
-
-
-	//update the negative face if needed
-	if(lt == OUTSIDE_CONVEX_HULL){
- 	  Face_handle ff=v->face();
-	  int i=ff->index(v);
-	  int j=(i+1)%2;
-	  Vertex_handle u=ff->vertex(j);
-	  Face_handle fn= ff->neighbor(j);
-	  Vertex_handle w= fn->vertex(i);
-	  if( collinear_between(p,u->point(),w->point()) )
-	    ff->negative()=true;
-	  else if( collinear_between(p,w->point(),u->point()) )
-	    fn->negative()=true;
-	}
-
-	reinsert_vertices(v,hid_verts.begin(),hid_verts.end());
-	return v;
-   }
-
-   return v;
-         
-}
+  }
 
 template < class Gt, class Tds >
 bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 update_negative_faces(Vertex_handle v)
 {
+	bool neg_found=false;
   if(dimension()==1){
     Edges_iterator eit=edges_begin();
     do{
       Face_handle f=eit->first;
       Face_handle fn=f->neighbor(0);
       Point q=fn->vertex(1)->point();
-      if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q))
+		if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q)){
 	 f->negative()=true;
+			neg_found = true;
+		}
       else 
 	f->negative()=false;
       ++eit;
@@ -1180,12 +948,12 @@ update_negative_faces(Vertex_handle v)
   }
   else{//dimension==2
 
-    Face_circulator fc=incident_faces(v,v->face());
+   /* Face_circulator fc=incident_faces(v,v->face());
     Face_circulator done(fc);
-    bool neg_found=false;
+    //bool neg_found=false;
 	
     do{
-      if(orientation(fc)!=POSITIVE){
+      if(orientation(fc)==NEGATIVE){
 	fc->negative()=true;
 	neg_found=true;
 	this->_negative=fc;
@@ -1193,25 +961,41 @@ update_negative_faces(Vertex_handle v)
       else{
 	fc->negative()=false;
       }
-    }while(++fc!=done);
-
-    return neg_found;
+    }while(++fc!=done);*/
+	  
+	  Faces_iterator fit;
+	  int numb =0;
+	  for(fit = faces_begin(); fit != faces_end(); fit++) {
+		  
+		 // if(orientation(fit->vertex(0)->point(),fit->vertex(1)->point(),fit->vertex(2)->point())==NEGATIVE){
+		  Orientation orient = orientation(fit);
+		  if(orientation(fit) == NEGATIVE){
+			  fit->negative()=true;
+			  neg_found=true;
+			  numb ++;
+			  this->_negative=fit;
+		  }
+	  }
+	  
+	  
+	  
+	  
   }
+    return neg_found;
+	  
+ 
 }
 
-template < class Gt, class Tds >
+/*template < class Gt, class Tds >
 typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 insert_in_face(const Point &p, Face_handle f)
 {
   Vertex_handle v = Base::insert_in_face(p,f);
-  update_hidden_points_1_3(f, 
-			   f->neighbor(ccw(f->index(v))), 
-			   f->neighbor( cw(f->index(v))) );
-  return v;
-}
+    return v;
+}*/
 
-template < class Gt, class Tds >
+/*template < class Gt, class Tds >
 typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 insert_in_edge(const Point &p, Face_handle f, int i)
@@ -1239,43 +1023,11 @@ insert_in_edge(const Point &p, Face_handle f, int i)
     }
   }
   return v;
-} 
+} */
 
-//The reinsert function  insert a weighted point which was in a hidden
-//vertex.
-//The new and old vertices are then exchanged ; this is required
-//if the regular triangulation is used with a hierarchy because
-//the old vertex has its up and down pointers set and other vertices
-//pointing on him
 
-template < class Gt, class Tds >
-typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-reinsert(Vertex_handle v, Face_handle start)
-{
-  CGAL_triangulation_assertion(v->is_hidden());
-  v->set_hidden(false);
-  _hidden_vertices--;
- 
-//   //to debug 
-//   std::cerr << "from reinsert " << std::endl;
-//   show_vertex(v);
-//   Locate_type lt;
-//   int li;
-//   Face_handle loc = locate(v->point(), lt, li, start);
-//   std::cerr << "locate " << &(*loc) << "\t" << lt << "\t" << li <<
-//     std::endl;
-//   show_face(loc);
-//    std::cerr << std::endl;
-
-  Vertex_handle vh = insert(v->point(), start);
-  if(vh->is_hidden()) exchange_hidden(v,vh);
-  else  exchange_incidences(v,vh);
-  this->_tds.delete_vertex(vh);
-  return v;
-}
 //-------------------------------------------------------------------------------REMOVAL----------------------------------------------------//
-template < class Gt, class Tds >
+/*template < class Gt, class Tds >
 void
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 remove_degree_3(Vertex_handle v, Face_handle f) 
@@ -1334,12 +1086,16 @@ remove(Vertex_handle v )
 	ihint = f->index(v);
 	hint = f->neighbor(ihint);
 	ihint = mirror_index (f, ihint);
-	do  to_reinsert.splice (to_reinsert.begin(), f->vertex_list());
+	do  
+		to_reinsert.splice (to_reinsert.begin(), f->vertex_list());
 	while (++f != end);
 	break;
       }
     }
  
+	
+	int test = to_reinsert.size();	
+	
     if (number_of_vertices() <= 3) {
        this->_tds.remove_dim_down(v);
     } else if ( dimension() < 2) {
@@ -1347,9 +1103,19 @@ remove(Vertex_handle v )
 	} else {
       remove_2D (v);
     }
+	
+	for (typename Vertex_list::iterator i = to_reinsert.begin();
+         i != to_reinsert.end(); ++i) {
+		
+		show_vertex(*i);
+    }
+	
+	show_all();
+	
     if (hint != Face_handle()) hint = hint->neighbor(ihint);
     for (typename Vertex_list::iterator i = to_reinsert.begin();
          i != to_reinsert.end(); ++i) {
+		
       hint = reinsert (*i, hint)->face();
     }
 }
@@ -1361,6 +1127,8 @@ remove_2D(Vertex_handle v)
 {
   if (test_dim_down(v)) { 
     this->_tds.remove_dim_down(v);
+	  std::cout<<"dim in remove_down"<<dimension()<<std::endl;
+	
     update_negative_faces();
   }
   else {
@@ -1405,7 +1173,7 @@ test_dim_down(Vertex_handle v)
   
   return dim1;
 }
-
+*/
 template < class Gt, class Tds >
 void
 Regular_triangulation_on_sphere_2<Gt,Tds>::
@@ -1555,180 +1323,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
     }
 }
 
-//------------------------------------------------------------------------------FLIP---------------------------------------------------------//
-
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-flip(Face_handle f, int i)
-{
-  Face_handle n = f->neighbor(i);
-  Base::flip(f,i);
-  update_hidden_points_2_2(f,n);
-}
-
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-remove_hidden(Vertex_handle v )
-{
-  _hidden_vertices--;
-  v->face()->vertex_list().remove(v);
-  delete_vertex(v);
-  return;
-}
 //-----------------------------------------------------------------------------HIDDING------------------------------------------------------//
-// create a vertex and hide it
-template < class Gt, class Tds >
-typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-hide_new_vertex(Face_handle f, const Point& p)
-{
-  Vertex_handle v = this->_tds.create_vertex(); 
-  v->set_point(p);
-  hide_vertex(f, v);
-  return v;
-}
-
-// insert the vertex to the hidden vertex list
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-hide_vertex(Face_handle f, Vertex_handle vh)
-{ 
-  if(! vh->is_hidden()) {
-    vh->set_hidden(true);
-    _hidden_vertices++;
-  }
-  vh->set_face(f);
-  f->vertex_list().push_back(vh);
-}
-
-// the points of the lists of 2 faces are sorted
-// because of a 2-2 flip
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2)
-{	
-  CGAL_triangulation_assertion(f1->has_neighbor(f2));
-    
-  Vertex_list p_list;
-  p_list.splice(p_list.begin(),f1->vertex_list());
-  p_list.splice(p_list.begin(),f2->vertex_list());
-
-  /* if (dimension() == 1) {
-    const Point& a1 = f1->vertex(f1->index(f2))->point();
-    const Point& a  = f1->vertex(1-f1->index(f2))->point();
-    while ( ! p_list.empty() ) {
-      if ( compare_x(a, p_list.front()->point()) == 
-	   compare_x(a, a1)  &&
-	   compare_y(a, p_list.front()->point()) == 
-	   compare_y(a, a1))
-	{
-	  hide_vertex(f1, p_list.front());
-	} else {
-	hide_vertex(f2, p_list.front());
-	}
-      p_list.pop_front();
-    }
-    return;
-  }*/
-
-  // from here f1 and f2 are 2-dimensional faces
-  int idx2 = f1->index(f2);
-  Vertex_handle v0=f1->vertex(ccw(idx2));
-  Vertex_handle v1=f1->vertex(cw(idx2)); 
-
-  while ( ! p_list.empty() )
-    {
-      if (orientation(v0->point(), v1->point(), p_list.front()->point()) ==
-	  COUNTERCLOCKWISE)
-	hide_vertex(f1, p_list.front());
-	else
-	hide_vertex(f2, p_list.front());
-      p_list.pop_front();
-    }
-}
-
-// add the vertex_list of f2 and f3 to the point list of f1
-// for the 3-1 flip
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-update_hidden_points_3_1(const Face_handle& f1, const Face_handle& f2, 
-			 const Face_handle& f3)
-{
-  set_face(f2->vertex_list(), f1);
-  set_face(f3->vertex_list(), f1);
-  (f1->vertex_list()).splice(f1->vertex_list().begin(),f2->vertex_list());
-  (f1->vertex_list()).splice(f1->vertex_list().begin(),f3->vertex_list());
-  return;				  
-}
-
-// The point list of f1 is separated into 3 lists
-// for a 1-3 flip
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-update_hidden_points_1_3(const Face_handle& f1, const Face_handle& f2, 
-			 const Face_handle& f3)
-{
-    CGAL_triangulation_assertion(f1->has_neighbor(f2) &&
-			      f2->has_neighbor(f3) &&
-			      f3->has_neighbor(f1));
-
-
-    Vertex_list p_list;
-    p_list.splice(p_list.begin(),f1->vertex_list());
-    if (p_list.empty())
-	return;
-
-    // the following does not work if 
-    // two of f1,f2 and f3 are twice neighbors
-    // but this cannot appear taking the assertion into account;
-    int idx2 = f1->index(f2),
-        idx3 = f1->index(f3);
-    Vertex_handle v2 = f1->vertex(idx2),
-                  v3 = f1->vertex(idx3),
-                  v0 = f1->vertex(3-(idx2+idx3)),
-                  v1 = f2->vertex(f2->index(f1));
-
-    CGAL_triangulation_assertion(f2->has_vertex(v0) && f1->has_vertex(v0));
-    CGAL_triangulation_assertion(f3->has_vertex(v1));
-
-    
-    while(! p_list.empty())
-    {
-      Vertex_handle v(p_list.front());
-      if(orientation(v2->point(),v0->point(), v->point()) ==
- 	 orientation(v2->point(),v0->point(),v3->point())  &&
-	 orientation(v3->point(),v0->point(), v->point()) ==
-	 orientation(v3->point(),v0->point(), v2->point()))
-	hide_vertex(f1, v);
-      else if (orientation(v1->point(), v0->point(), v->point()) ==
-	       orientation(v1->point(), v0->point(), v3->point()) )
-	hide_vertex(f2,v);
-      else hide_vertex(f3,v);
-      p_list.pop_front();
-    }
-}
-
-// the vertex is a degree three vertex which has to be removed
-// and hidden
-// create first  a new hidden vertex and exchange with the vertex
-// to be removed by the tds : 
-// this is required to keep up and down pointers right when using a hierarchy
-template < class Gt, class Tds >
-void 
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-hide_remove_degree_3(Face_handle fh, Vertex_handle vh)
-{
- Vertex_handle vnew= this->_tds.create_vertex();
- exchange_incidences(vnew,vh);
- remove_degree_3(vnew, fh);
- hide_vertex(fh,vh);
-}
 
 // set to va the incidences of vb 
 template < class Gt, class Tds >
@@ -1775,32 +1370,8 @@ set_face(Vertex_list& vl, const Face_handle& fh)
 
 //push va instead of vb in the list of the face fb hiding vb
 // vb must be the last inserted vertex in the list of fb
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-exchange_hidden(Vertex_handle va, Vertex_handle vb)
-{ 
-  CGAL_triangulation_assertion (vb->is_hidden());
-  CGAL_triangulation_assertion (vb == vb->face()->vertex_list().back());
- 
-//   //to debug 
-//   std::cerr << "from exchange hidden 1" << std::endl;
-//   show_vertex(vb);
-//   std::cerr << "  / face associee : "
-// 	     << &*(vb->face()) << std::endl;
-  
-  vb->face()->vertex_list().pop_back();
-  _hidden_vertices--;
-  hide_vertex(vb->face(), va);
-
-//  //to debug 
-//   std::cerr << "from exchange hidden 1" << std::endl;
-//   show_vertex(va);
-//   std::cerr << "  / face associee : "
-// 	     << &*(va->face()) << std::endl << std::endl; 
-}
 //-----------------------------------------------------------------------------REGULAR------------------------------------------------------//
-template < class Gt, class Tds >
+/*template < class Gt, class Tds >
 void
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 regularize(Vertex_handle v)
@@ -1824,8 +1395,8 @@ regularize(Vertex_handle v)
   while( ! faces_around.empty() )
     stack_flip(v, faces_around);
   return;
-}
-
+}*/
+/*
 template < class Gt, class Tds >
 void
 Regular_triangulation_on_sphere_2<Gt,Tds>::
@@ -1879,6 +1450,10 @@ stack_flip(Vertex_handle v, Faces_around_stack &faces_around)
     
     return;
 }
+
+*/
+
+
 template <class Gt, class Tds >
 typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_on_sphere_2<Gt,Tds>::
@@ -1897,6 +1472,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
       nv=Base::tds().insert_dim_up(v,true);
                                 
     nv->set_point(p);
+	  
 
     CGAL_triangulation_assertion( orientation(edges_begin()->first->vertex(0)->point(),
 					      edges_begin()->first->vertex(1)->point(),
@@ -1941,149 +1517,52 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
       conform=( side == ON_POSITIVE_SIDE );
     }
 
-    Vertex_handle v = this->_tds.insert_dim_up( f->vertex(0), conform);
+	 Vertex_handle v = this->_tds.insert_dim_up( f->vertex(0), conform);
+	  //f->
     v->set_point(p);
-    this->_negative=faces_begin();
+	 
+		
+		
+    //this->_negative=faces_begin();
 
+	 
     //seting negative faces if needed
     //TODO: Probably there is a bug in the context of neg_found
-    bool neg_found=false;
-    Face_circulator fc = incident_faces(vertices_begin(),vertices_begin()->face()), done(fc);
-    do {
-      if(orientation(fc->vertex(0)->point(),fc->vertex(1)->point(),fc->vertex(2)->point())!=POSITIVE){
-	fc->negative()=true;
-	this->_negative=fc;
-      }
-      else
-	fc->negative()=false;
-    } 
-    while(++fc != done);
+    /*bool neg_found=false;
+    	
+		Faces_iterator fit;
+		int numb =0;
+		for(fit = faces_begin(); fit != faces_end(); fit++) {
+		
+			if(orientation(fit->vertex(0)->point(),fit->vertex(1)->point(),fit->vertex(2)->point())==POSITIVE){
+				fit->negative()=true;
+				neg_found=true;
+				numb ++;
+				this->_negative=fit;
+		}*/
+		//}
+		
+		
+		
+			 
+		   
+					 
 
-    fc = incident_faces(v,v->face()),  done=fc;
-    do {
-      if(orientation(fc->vertex(0)->point(),fc->vertex(1)->point(),fc->vertex(2)->point())!=POSITIVE){
-	fc->negative()=true;
-	neg_found=true;
-	this->_negative=fc;
-      }
-      else
-	fc->negative()=false;
-    } 
-    while(++fc != done);
- 
-     
-    //in some case, 1 existing vertex has to be hidden 
-    if(!plane && neg_found){
-      int i=this->_negative->index(v);
-      Vertex_handle vv=mirror_vertex(this->_negative,i);
-      if( power_test(this->_negative,vv->point())==ON_POSITIVE_SIDE ){
-	Point q=vv->point();
-	remove(vv);
-	Face_handle loc = locate (q, fc);
-	return hide_new_vertex(loc,q);
-      }
-    }
-    
     return v; 
+	}
+	  
   }
  
-}
-
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-stack_flip_4_2(Face_handle f, int i, int j, Faces_around_stack & faces_around)
-{
-    int k = 3-(i+j);
-    Face_handle g=f->neighbor(k);
-    if (!faces_around.empty())
-    {
-      if (faces_around.front() == g)
-	  faces_around.pop_front();
-      else if (faces_around.back() == g) 
-	  faces_around.pop_back();
-    }
-    
-    //union f with  g and f->neihgbor(i) with g->f->neihgbor(i)
-    Face_handle fn = f->neighbor(i);
-    //Face_handle gn = g->neighbor(g->index(f->vertex(i)));
-    Vertex_handle vq = f->vertex(j);
-    
-    this->_tds.flip( f, i); //not using flip because the vertex j is flat.
-    update_hidden_points_2_2(f,fn);
-    Face_handle h1 = ( j == ccw(i) ? fn : f);
-    //hide_vertex(h1, vq);
-    hide_remove_degree_3(g,vq);
-    if(j == ccw(i)) {
-      faces_around.push_front(h1); 
-      faces_around.push_front(g);
-    }
-    else {
-      faces_around.push_front(g);
-      faces_around.push_front(h1); 
-    }
-}
 
 
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-stack_flip_3_1(Face_handle f, int i, int j, Faces_around_stack & faces_around)
-{
-  int k = 3-(i+j);
-  Face_handle g=f->neighbor(k);
-  if (!faces_around.empty())
-  {
-    if (faces_around.front()== g)
-	faces_around.pop_front();
-    else if ( faces_around.back() == g)
-	faces_around.pop_back();
-  }
-
-  Vertex_handle vq= f->vertex(j);
-  //hide_vertex(f,vq);
-  hide_remove_degree_3(f,vq);
-  faces_around.push_front(f);
-}
 
 
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-stack_flip_2_2(Face_handle f, int i, Faces_around_stack & faces_around)
-{
-    Vertex_handle vq = f->vertex(ccw(i));
-    flip(f,i);
-    if(f->has_vertex(vq)) {
-      faces_around.push_front(f->neighbor(ccw(i)));
-      faces_around.push_front(f);
-    }
-    else { 
-      faces_around.push_front(f);
-      faces_around.push_front(f->neighbor(cw(i)));
-    }
-}
 
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-stack_flip_dim1(Face_handle f, int i, Faces_around_stack &faces_around)
-{
-  Vertex_handle va = f->vertex(1-i);
-  Face_handle n= f->neighbor(i);
-  int in = n->index(f);
-  Vertex_handle vb = n->vertex(in);
-  f->set_vertex(1-i, n->vertex(in));
-  vb->set_face(f);
-  f->set_neighbor(i, n->neighbor(1-in));
-  n->neighbor(1-in)->set_neighbor(n->neighbor(1-in)->index(n), f);
-  (f->vertex_list()).splice(f->vertex_list().begin(),n->vertex_list());
-  set_face(f->vertex_list(),f);
-  delete_face(n);
-  hide_vertex(f,va);
-  faces_around.push_front(f);
-  return;
-}
+
+
+
+
+
 
  //-----------------------------------------------------------------------------------ITERATORS-----------------------------------------------------------//
 template < class Gt, class Tds >
@@ -2105,25 +1584,8 @@ vertices_end () const
 			 Hidden_tester() ); 
 }
 
-template < class Gt, class Tds >
-typename Regular_triangulation_on_sphere_2<Gt,Tds>::Hidden_vertices_iterator 
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-hidden_vertices_begin () const
-{
-  return CGAL::filter_iterator(Base::vertices_end(), 
-			 Unhidden_tester(), 
-			 Base::vertices_begin() );
 
-}
 
-template < class Gt, class Tds >
-typename Regular_triangulation_on_sphere_2<Gt,Tds>::Hidden_vertices_iterator 
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-hidden_vertices_end () const
-{
-  return CGAL::filter_iterator(Base::vertices_end(), 
-			 Unhidden_tester() );
-}
 
 
 

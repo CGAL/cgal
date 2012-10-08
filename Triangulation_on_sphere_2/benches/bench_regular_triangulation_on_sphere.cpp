@@ -14,9 +14,9 @@
 #include <CGAL/Triangulation_on_sphere_2.h>
 
 //manuel prototypes
-#include <CGAL/Regular_triangulation_sphere_traits_2_manuel_proto.h>
-#include <CGAL/Regular_triangulation_on_sphere_2_manuel_proto.h>
-#include <CGAL/Triangulation_on_sphere_2_manuel_proto.h>
+//#include <CGAL/Regular_triangulation_sphere_traits_2_manuel_proto.h>
+//#include <CGAL/Regular_triangulation_on_sphere_2_manuel_proto.h>
+//#include <CGAL/Triangulation_on_sphere_2_manuel_proto.h>
 
 
 #include <CGAL/Random.h>
@@ -32,9 +32,9 @@ typedef CGAL::Regular_triangulation_sphere_traits_2< K > FK;
 template class CGAL::Regular_triangulation_on_sphere_2<FK>;
 typedef CGAL::Regular_triangulation_on_sphere_2<FK>  RTOS;
 
-typedef CGAL::Regular_triangulation_sphere_traits_2_manuel_proto< K > FK2;
-template class CGAL::Regular_triangulation_on_sphere_2_manuel_proto<FK2>;
-typedef CGAL::Regular_triangulation_on_sphere_2_manuel_proto<FK2> RTOSPROTO;
+//typedef CGAL::Regular_triangulation_sphere_traits_2_manuel_proto< K > FK2;
+//template class CGAL::Regular_triangulation_on_sphere_2_manuel_proto<FK2>;
+//typedef CGAL::Regular_triangulation_on_sphere_2_manuel_proto<FK2> RTOSPROTO;
 
 
 void compute_times()
@@ -44,8 +44,8 @@ void compute_times()
 	typedef K::Point_3 Point_3;
   std::list<Point_3> pts3;
 
-  std::cin >> no_of_pts;
-
+ // std::cin >> no_of_pts;
+	no_of_pts = 1000;
   for (int count=0; count<no_of_pts; count++) {
     Point_3 p;
 		std::cin >> p;
@@ -69,7 +69,7 @@ void compute_times()
   
   std::cout << "REGULAR TRIANGULATION ON SPHERE PROTO" << std::endl; 
   {
-	  RTOSPROTO rtosprot;
+	  RTOS rtosprot;
     {
       CGAL::Timer timer_reg; timer_reg.start();
       rtosprot.insert(pts3.begin(),pts3.end());

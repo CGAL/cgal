@@ -143,7 +143,7 @@ public:
  
 
   //INITIALISATION
-  std::vector<Vertex_handle> insert_four_init_vertices();
+  std::vector<Vertex_handle> insert_four_init_vertices(double r);
   std::vector<Vertex_handle> insert_four_init_vertices_half_sphere(const Point& P1=Point(1/sqrt(2.),0,1/sqrt(2.)),
 								   const Point& P2=Point(-0.5,-0.5,1/sqrt(2.)),
 								   const Point& P3=Point(0,1/sqrt(2.),1/sqrt(2.)),
@@ -571,13 +571,13 @@ is_face(Vertex_handle v1,
 template <class Gt, class Tds >
 std::vector<typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle>
 Triangulation_on_sphere_2<Gt,Tds>::
-  insert_four_init_vertices()
+  insert_four_init_vertices(double r)
 {
   std::vector<Vertex_handle> init;
-  Point p1(1,0,0);
-  Point p2(0,1,0);
-  Point p3(0,0,1);
-  Point p4(-1/sqrt(3.),-1/sqrt(3.),-1/sqrt(3.));
+  Point p1(r,0,0);
+  Point p2(0,r,0);
+  Point p3(0,0,r);
+  Point p4(-r/sqrt(3.),-r/sqrt(3.),-r/sqrt(3.));
 
   Vertex_handle v1;
   Vertex_handle v2;
@@ -590,6 +590,10 @@ Triangulation_on_sphere_2<Gt,Tds>::
 
   v3= _tds.insert_dim_up(v1,true);
   v4= _tds.insert_dim_up(v1,false);
+	
+	
+	
+	
 
   v3->set_point(p3);
   v4->set_point(p4);
@@ -1485,15 +1489,26 @@ locate(const Point& p,
   }
  
   if(start->is_negative()){
-    if(!start->neighbor(0)->is_negative())
+	  
+   /* if(!start->neighbor(0)->is_negative())
       start=start->neighbor(0);
     else if(!start->neighbor(1)->is_negative())
       start=start->neighbor(1);
-    else
+    else {
+		bool test = start->is_negative();
+	
       start=start->neighbor(2);
-  }
+	}*/
+	  for (Faces_iterator it = this->_tds.face_iterator_base_begin(); it != faces_end(); it++) {  
+	  
+		  if(!it->is_negative()){
+		  start = it;
+			  break;
+		  }
+	  
+	  }
 
-  
+  }
 
 #if ( ! defined(CGAL_ZIG_ZAG_WALK)) && ( ! defined(CGAL_LFC_WALK))
 #define CGAL_ZIG_ZAG_WALK
@@ -1704,7 +1719,7 @@ oriented_side(const Point &p0, const Point &p1,
 	if(o3==POSITIVE)
 	  return ON_POSITIVE_SIDE;
 
-    if (o1 == COLLINEAR){
+ if (o1 == COLLINEAR){
       if (o2 == COLLINEAR ||  o3 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
       return ON_NEGATIVE_SIDE;
     }
@@ -1716,12 +1731,13 @@ oriented_side(const Point &p0, const Point &p1,
       if (o2 == COLLINEAR ||  o1 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
       return ON_NEGATIVE_SIDE;
     }
-
+	  
+	  if(o1 == COLLINEAR || o2==COLLINEAR || o3==COLLINEAR)
+		  return ON_ORIENTED_BOUNDARY;
     return ON_NEGATIVE_SIDE;
+	  
   }else{
-    if(o1==POSITIVE)
-      if(o2==POSITIVE)
-	if(o3==POSITIVE)
+    if(o1==POSITIVE && o2==POSITIVE && o3==POSITIVE)
 	  return ON_POSITIVE_SIDE;
 
     if(o1==NEGATIVE && o2==NEGATIVE && o3==NEGATIVE )
@@ -1731,6 +1747,57 @@ oriented_side(const Point &p0, const Point &p1,
   }
 }
 
+	
+	
+/*	template <class Gt, class Tds >
+	Oriented_side
+	Triangulation_on_sphere_2<Gt, Tds>::
+	oriented_side2(const Point &p0, const Point &p1,
+				  const Point &p2, const Point &p) const
+	{
+		Orientation o1 = orientation(p0, p1, p),
+		o2 = orientation(p1, p2, p),
+		o3 = orientation(p2, p0, p);
+		
+		if(orientation(p0, p1, p2)==POSITIVE){
+			if(o1==POSITIVE)
+				if(o2==POSITIVE)
+					if(o3==POSITIVE)
+						return ON_POSITIVE_SIDE;
+			
+			if (o1 == COLLINEAR){
+				if (o2 == COLLINEAR ||  o3 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
+				return ON_NEGATIVE_SIDE;
+			}
+			if (o2 == COLLINEAR){
+				if (o1 == COLLINEAR ||  o3 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
+				return ON_NEGATIVE_SIDE;
+			}
+			if (o3 == COLLINEAR){
+				if (o2 == COLLINEAR ||  o1 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
+				return ON_NEGATIVE_SIDE;
+			}
+			
+			return ON_NEGATIVE_SIDE;
+		}else{
+			if(o1==POSITIVE)
+				if(o2==POSITIVE)
+					if(o3==POSITIVE)
+						return ON_POSITIVE_SIDE;
+			
+			if(o1==NEGATIVE && o2==NEGATIVE && o3==NEGATIVE )
+				return ON_NEGATIVE_SIDE;
+			else
+				return ON_POSITIVE_SIDE;
+		}
+	}
+*/	
+	
+	
+	
+	
+	
+	
 
 template <class Gt, class Tds >
 Bounded_side

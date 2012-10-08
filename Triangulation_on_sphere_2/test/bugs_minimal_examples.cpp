@@ -36,33 +36,37 @@ typedef CGAL::Regular_triangulation_on_sphere_2<FKR>  RTOS_exact;
 int main(int argc, char* argv[]) 
 {
 	typedef K::Point_3 Point_3;
-	DTOS_exact dtos;
-  {
+	//DTOS_exact dtos;
+	RTOS_exact dtos;
+  
 		dtos.insert(Point_3(-0.201668, 0.941192, -0.271087));
 		dtos.insert(Point_3(0.217998, 0.861414, 0.458741));
 		dtos.insert(Point_3(-0.600943, 0.398519, -0.692857));
 		dtos.insert(Point_3(-0.134936, 0.465834, 0.874523)); 
-		std::cout << "NUMBER OF VERTICES: " << dtos.number_of_vertices() << std::endl;	
-  }
+		 std::cout<<" number of hidden: "<< dtos.number_of_hidden_vertices()<<std::endl;
+	  std::cout<<"number of vertices: " <<dtos.number_of_vertices()<<std::endl;
+ 
   RTOS_exact rtos;
-  {
+ 
 		rtos.insert(Point_3(-0.201668, 0.941192, -0.271087));
 		rtos.insert(Point_3(0.217998, 0.861414, 0.458741));
+	  //rtos.insert(Point_3(-0.134936, 0.465834, 0.874523)); 
 		rtos.insert(Point_3(-0.600943, 0.398519, -0.692857));
-		rtos.insert(Point_3(-0.134936, 0.465834, 0.874523)); 
-		std::cout << "NUMBER OF VERTICES: " << rtos.number_of_vertices() << std::endl;	
-  }
+		rtos.insert(Point_3(-0.134936, 0.465834, 0.874523));
+	  std::cout<<" number of hidden: "<< rtos.number_of_hidden_vertices()<<std::endl;
+	   std::cout<<"number of vertices: " <<rtos.number_of_vertices()<<std::endl;
+  
+	
 
-  DTOS_exact dtos2;
+RTOS_exact dtos2;
   dtos2.insert(Point_3(0.201668, 0.941192, 0.271087));
   dtos2.insert(Point_3(0.217998, 0.861414, 0.458741));
   dtos2.insert(Point_3(0.600943, 0.398519, 0.692857));
   dtos2.insert(Point_3(0.134936, 0.465834, 0.874523));
-  std::cout << "NUMBER OF VERTICES: " << dtos2.number_of_vertices()
-	    <<'\t'<<dtos2.dimension()<< std::endl;	
   dtos2.insert(Point_3(sqrt(1.0/3.0), sqrt(1.0/3.0), sqrt(1.0/3.0)));
-  std::cout << "NUMBER OF VERTICES: " << dtos2.number_of_vertices() << std::endl;	
+	 std::cout<<" number of hidden: "<< dtos2.number_of_hidden_vertices()<<std::endl;
+	 std::cout<<"number of vertices: " <<dtos2.number_of_vertices()<<std::endl;
 		
-	return 0;
+	//return 0;
 }
 
