@@ -49,6 +49,8 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="false">
             <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
             <item>./tags/Circulator.tag=../../CGAL.CGAL.Handles-and-Circulators/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
+            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
           </list>
         </doxygen>
       </project>
