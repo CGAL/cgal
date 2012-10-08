@@ -197,6 +197,7 @@ namespace for the XML file to be processed properly.  -->
             <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_5.jpg</item>
           </list>
           <list name="TAGFILES" append="true">
+            <item>./tags/Surface_mesher.tag=../../CGAL.CGAL.3D-Surface-Mesh-Generation/html</item>
             <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
           </list>
         </doxygen>

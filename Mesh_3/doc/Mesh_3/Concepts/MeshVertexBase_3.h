@@ -15,7 +15,7 @@ to an integer representing the dimension of the lowest dimensional face
 of the input 3D complex on which the vertex lies, 
 and to an index characteristic of this face. 
 
-\refines ::RegularTriangulationVertexBase_3 
+\refines ::TriangulationVertexBase_3 
 \refines ::SurfaceMeshVertexBase_3 
 
 \hasModel `CGAL::Mesh_vertex_base_3<MD,Gt,Vb>` 
