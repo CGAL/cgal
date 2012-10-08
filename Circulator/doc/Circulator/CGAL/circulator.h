@@ -1,7 +1,8 @@
 namespace CGAL {
 
+
 /*!
-\ingroup PkgHandlesAndCirculators
+\addtogroup PkgHandlesAndCirculatorsAssert
 
 Each of the following assertions, applicable to an iterator
 or a circulator or both,
@@ -14,139 +15,67 @@ a circulator. Note that neither input nor output circulators exists.
 \sa `Circulator_traits`
 \sa `query_circulator_or_iterator`
 \sa `Circulator`
+
+ */
+
+
+/*!
+\ingroup PkgHandlesAndCirculatorsAssert
+
+checks at compile time if its argument is a circulator.
 
 */
 template <class C>
 void Assert_circulator( const C &c);
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsAssert
 
-Each of the following assertions, applicable to an iterator
-or a circulator or both,
-checks at compile time if its argument
-is of the kind stated in the assertions name, i.e.\ a circulator, an
-iterator, or a particular category of either an iterator or
-a circulator. Note that neither input nor output circulators exists.
-
-\sa `Circulator_tag`
-\sa `Circulator_traits`
-\sa `query_circulator_or_iterator`
-\sa `Circulator`
+checks at compile time if its argument is an iterator.
 
 */
 template <class I>
 void Assert_iterator( const I &i);
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsAssert
 
-Each of the following assertions, applicable to an iterator
-or a circulator or both,
-checks at compile time if its argument
-is of the kind stated in the assertions name, i.e.\ a circulator, an
-iterator, or a particular category of either an iterator or
-a circulator. Note that neither input nor output circulators exists.
-
-\sa `Circulator_tag`
-\sa `Circulator_traits`
-\sa `query_circulator_or_iterator`
-\sa `Circulator`
+checks at compile time if its argument is a circulator or iterator.
 
 */
 template< class IC>
 void Assert_circulator_or_iterator(const IC& i);
 
 /*!
-\ingroup PkgHandlesAndCirculators
-
-Each of the following assertions, applicable to an iterator
-or a circulator or both,
-checks at compile time if its argument
-is of the kind stated in the assertions name, i.e.\ a circulator, an
-iterator, or a particular category of either an iterator or
-a circulator. Note that neither input nor output circulators exists.
-
-\sa `Circulator_tag`
-\sa `Circulator_traits`
-\sa `query_circulator_or_iterator`
-\sa `Circulator`
+\ingroup PkgHandlesAndCirculatorsAssert
 
 */
 template <class I>
 void Assert_input_category( const I &i);
 
 /*!
-\ingroup PkgHandlesAndCirculators
-
-Each of the following assertions, applicable to an iterator
-or a circulator or both,
-checks at compile time if its argument
-is of the kind stated in the assertions name, i.e.\ a circulator, an
-iterator, or a particular category of either an iterator or
-a circulator. Note that neither input nor output circulators exists.
-
-\sa `Circulator_tag`
-\sa `Circulator_traits`
-\sa `query_circulator_or_iterator`
-\sa `Circulator`
+\ingroup PkgHandlesAndCirculatorsAssert
 
 */
 template <class I>
 void Assert_output_category( const I &i);
 
 /*!
-\ingroup PkgHandlesAndCirculators
-
-Each of the following assertions, applicable to an iterator
-or a circulator or both,
-checks at compile time if its argument
-is of the kind stated in the assertions name, i.e.\ a circulator, an
-iterator, or a particular category of either an iterator or
-a circulator. Note that neither input nor output circulators exists.
-
-\sa `Circulator_tag`
-\sa `Circulator_traits`
-\sa `query_circulator_or_iterator`
-\sa `Circulator`
+\ingroup PkgHandlesAndCirculatorsAssert
 
 */
 template <class IC>
 void Assert_forward_category( const IC &ic);
 
 /*!
-\ingroup PkgHandlesAndCirculators
-
-Each of the following assertions, applicable to an iterator
-or a circulator or both,
-checks at compile time if its argument
-is of the kind stated in the assertions name, i.e.\ a circulator, an
-iterator, or a particular category of either an iterator or
-a circulator. Note that neither input nor output circulators exists.
-
-\sa `Circulator_tag`
-\sa `Circulator_traits`
-\sa `query_circulator_or_iterator`
-\sa `Circulator`
+\ingroup PkgHandlesAndCirculatorsAssert
 
 */
 template <class IC>
 void Assert_bidirectional_category( const IC &ic);
 
 /*!
-\ingroup PkgHandlesAndCirculators
-
-Each of the following assertions, applicable to an iterator
-or a circulator or both,
-checks at compile time if its argument
-is of the kind stated in the assertions name, i.e.\ a circulator, an
-iterator, or a particular category of either an iterator or
-a circulator. Note that neither input nor output circulators exists.
-
-\sa `Circulator_tag`
-\sa `Circulator_traits`
-\sa `query_circulator_or_iterator`
-\sa `Circulator`
+\ingroup PkgHandlesAndCirculatorsAssert
 
 */
 template <class IC>
@@ -157,12 +86,12 @@ void Assert_random_access_category( const IC &ic);
 namespace CGAL {
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsFunctions
 
-The distance of a circulator \f$ c\f$ to a circulator \f$ d\f$ is the number of
-elements in the range \f$ \left[c, d\right)\f$. It is defined to be zero
+The distance of a circulator `c` to a circulator`d` is the number of
+elements in the range `[c, d)`. It is defined to be zero
 for a circulator on an empty sequence and it returns the size of the data
-structure when applied to a range of the form \f$ \left[c, c\right)\f$.
+structure when applied to a range of the form `[c, c)`.
 
 \sa `circulator_size`
 \sa `iterator_distance`
@@ -179,11 +108,9 @@ circulator_distance(C c, C d);
 namespace CGAL {
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsAdapter
 
-\anchor pageCircFromContainerRef
-
-The adaptor `Circulator_from_container` provides a circulator for an \stl container \f$ C\f$ of equal category as the iterator provided by the container.
+The adaptor `Circulator_from_container` provides a circulator for an \stl container `C` of equal category as the iterator provided by the container.
 The iterator must be at least of the forward iterator
 category. The corresponding non-mutable circulator is called
 `Const_circulator_from_container<C>`.
@@ -256,9 +183,7 @@ Circulator_from_container(C* container, C::iterator i);
 namespace CGAL {
 
 /*!
-\ingroup PkgHandlesAndCirculators
-
-\anchor pageCircFromIterRef
+\ingroup PkgHandlesAndCirculatorsAdapter
 
 The adaptor `Circulator_from_iterator` converts two iterators of type
 `I`, a begin and a past-the-end value, to a circulator of equal
@@ -320,7 +245,7 @@ Circulator_from_iterator();
 
 /*!
 a circulator `c` initialized to refer to the element
-`*cur` in a range <TT>[</TT>`begin`<TT>,</TT>`end`<TT>)</TT>.
+`*cur` in a range `[begin, end)`.
 The circulator `c` refers to a empty sequence
 if `begin==end`.
 
@@ -329,9 +254,9 @@ Circulator_from_iterator(const I& begin,
 const I& end, const I& cur = begin);
 
 /*!
-a copy of circulator \f$ d\f$ referring to the element `*cur`.
+a copy of circulator `d` referring to the element `*cur`.
 The circulator `c` refers to a empty sequence
-if \f$ d\f$ does so.
+if `d` does so.
 
 */
 Circulator_from_iterator(
@@ -345,7 +270,7 @@ const I& cur);
 namespace CGAL {
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsFunctions
 
 The size of a circulator is the size of the data structure it refers
 to. It is zero for a circulator on an empty sequence. The size can be
@@ -353,7 +278,7 @@ computed in linear time for forward and bidirectional circulators, and
 in constant time for random access circulators using the minimal
 circulator. The function `circulator_size(c)`
 returns the circulator size. It uses the
-`c.min_circulator()` function if \f$ c\f$ is a random
+`c.min_circulator()` function if `c` is a random
 access circulator.
 
 \sa `circulator_distance`
@@ -397,19 +322,20 @@ circulator range and a call with an iterator range:
 
 template <class I>
 void bar( I i, I j, CGAL::Iterator_tag) {
-CGAL::Assert_iterator(i);
-// This function is called for iterator ranges [i,j).
-}
-template <class C>
-void bar( C c, C d, CGAL::Circulator_tag) {
-CGAL::Assert_circulator(c);
-// This function is called for circulator ranges [c,d).
-}
-template <class IC>
-void bar( IC i, IC j) { // calls the correct function
-return bar( i, j, typename CGAL::Circulator_traits<IC>::category());
+  CGAL::Assert_iterator(i);
+  // This function is called for iterator ranges [i,j).
 }
 
+template <class C>
+void bar( C c, C d, CGAL::Circulator_tag) {
+  CGAL::Assert_circulator(c);
+  // This function is called for circulator ranges [c,d).
+}
+
+template <class IC>
+void bar( IC i, IC j) { // calls the correct function
+  return bar( i, j, typename CGAL::Circulator_traits<IC>::category());
+}
 \endcode
 
 */
@@ -434,7 +360,7 @@ typedef Hidden_type iterator_category;
 
 /*!
 
-corresponding circulator category for iterator
+corresponding circulator category for iterator.
 */
 typedef Hidden_type circulator_category;
 
@@ -446,7 +372,7 @@ typedef Hidden_type circulator_category;
 namespace CGAL {
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsAdapter
 
 The adaptor `Container_from_circulator` is a class that converts any
 circulator type `C` to a kind of container class, i.e.\ a class
@@ -612,34 +538,33 @@ const_iterator end() const;
 namespace CGAL {
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsFunctions
 
-is `true` if the range [`i, j`) is empty, `false` otherwise.
+is `true` if the range `[i, j)` is empty, `false` otherwise.
 
 In order to write algorithms that work with iterator ranges as well as
 with circulator ranges we have to consider the difference of
-representing an empty range. For iterators this is the range \f$ [i,i)\f$,
+representing an empty range. For iterators this is the range `[i,i)`,
 while for circulators it would be `c == NULL`, the empty sequence test.
 The function `is_empty_range` provides the necessary generic test
 which accepts an iterator range or a circulator range and says whether
 the range is empty or not.
 
-\pre `IC` is either a circulator or an iterator type. The range [`i, j`) is valid.
+\pre `IC` is either a circulator or an iterator type. The range `[i, j)` is valid.
 
 ### Example ###
 
-The following function `process_all` accepts a range \f$ \left[i,
-j\right)\f$ of an iterator or circulator `IC` and processes each
+The following function `process_all` accepts a range `[i, j)` of an iterator or circulator `IC` and processes each
 element in this range:
 
 \code{.cpp}
 template <class IC>
 void process_all( IC i, IC j) {
-if (! CGAL::is_empty_range( i, j)) {
-do {
-process(*i);
-} while (++i != j);
-}
+  if (! CGAL::is_empty_range( i, j)) {
+    do {
+      process(*i);
+    } while (++i != j);
+  }
 }
 \endcode
 
@@ -659,7 +584,7 @@ bool is_empty_range( const IC& i, const IC& j);
 namespace CGAL {
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsFunctions
 
 The following function returns the distance between either two
 iterators or two circulators.
@@ -681,7 +606,7 @@ iterator_distance(IC ic1, IC ic2);
 namespace CGAL {
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsFunctions
 
 if the iterator category of `I` belongs to an iterator.
 
@@ -699,7 +624,7 @@ template <class I>
 Iterator_tag query_circulator_or_iterator( const I& i);
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsFunctions
 
 if the iterator category of `C` belongs to a circulator.
 
@@ -722,11 +647,11 @@ Circulator_tag query_circulator_or_iterator( const C& c);
 
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\ingroup PkgHandlesAndCirculatorsFunctions
 
 In order to write algorithms that work with iterator ranges as well as
 with circulator ranges we have to consider the difference of
-representing an empty range. For iterators this is the range \f$ [i,i)\f$,
+representing an empty range. For iterators this is the range `[i,i)`,
 while for circulators it would be `c == NULL`, the empty sequence test.
 The function `is_empty_range` provides the necessary generic test
 which accepts an iterator range or a circulator range and says whether
@@ -735,7 +660,7 @@ the range is empty or not.
 A macro `CGAL_For_all( i, j)` simplifies the writing of such simple
 loops as the one in the example of the function `is_empty_range`.
 `i` and `j` can be either iterators or circulators. The macro
-loops through the range [`i, j`). It increments `i` until it
+loops through the range `[i, j)`. It increments `i` until it
 reaches `j`. The implementation looks like:
 
 \code
@@ -749,7 +674,7 @@ for ( bool _circ_loop_flag = ! ::CGAL::is_empty_range(i,j);
 Note that the macro behaves like a `for`-loop. It can be used with
 a single statement or with a statement block.  For bidirectional
 iterators or circulators,  a backwards loop macro
-`CGAL_For_all_backwards( i, j)` exists that decrements `j` until
+`CGAL_For_all_backwards(i, j)` exists that decrements `j` until
 it reaches `i`.
 
 \sa `CGAL::iterator_distance`
@@ -762,6 +687,6 @@ it reaches `i`.
 */
 #define CGAL_For_all(i,j)
 
-/// \ingroup PkgHandlesAndCirculators
+/// \ingroup PkgHandlesAndCirculatorsFunctions
 /// See ::CGAL_For_all
 #define CGAL_For_all_backwards(i,j)

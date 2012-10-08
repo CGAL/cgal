@@ -1,12 +1,10 @@
 
 /*!
-\page circulatorConcepts Circulator Concepts
+\addtogroup PkgHandlesAndCirculatorsConcepts
+
 
 # Introduction # {#circulatorConceptsIntro}
 
-Note: This specification is a revised version based on the \cpp
-Standard \cite cgal:ansi-is14882-98, which is available now. In
-particular, iterator traits are now assumed and required.
 
 Iterators in the \stl were tailored for linear sequences. The
 specialization for circular data structures leads to slightly
@@ -15,13 +13,13 @@ different requirements which we will summarize in the
 data structure has no natural past-the-end value. As a consequence, a
 container supporting circulators will not have an
 <TT>end()</TT>-member function. The semantic of a circulator range
-differs from the semantic of an iterator range. For a circulator \f$
-c\f$ the range \f$ \left[c, c\right)\f$ denotes the sequence of all
+differs from the semantic of an iterator range. For a circulator 
+`c` the range `[c, c)` denotes the sequence of all
 elements in the data structure. For iterators, this range defines the
 empty sequence. A separate test for an empty sequence has been added
-to the circulator requirements: A comparison \f$ c ==\f$ <TT>NULL</TT>
-for a circulator \f$ c\f$ is true for an empty sequence. As for \cpp,
-we recommend the use of 0 instead of <TT>NULL</TT>.
+to the circulator requirements: A comparison `c == NULL`
+for a circulator `c` is true for an empty sequence. As for \cpp,
+we recommend the use of 0 instead of `NULL`.
 
 ## Circulators ## {#circulatorConceptsCirculators}
 
@@ -42,9 +40,9 @@ anyway, there is no need to allow singular values for them. An
 un-initalized circulator does not have a singular value, but is
 supposed to refer to an empty sequence.}
 
-<B>Empty sequence:</B> The comparison \f$ c ==\f$ <TT>NULL</TT> (or
-\f$ c == 0\f$) for a circulator \f$ c\f$ is <TT>true</TT> if \f$ c\f$
-denotes an empty sequence, and <TT>false</TT> otherwise.
+<B>Empty sequence:</B> The comparison `c == NULL` (or `c == 0`) 
+for a circulator `c` is `true` if `c`
+denotes an empty sequence, and `false` otherwise.
 
 <B>Dereferenceable values:</B> A circulator that does not denote an
 empty sequence is dereferenceable.
@@ -52,22 +50,22 @@ empty sequence is dereferenceable.
 <B>Reachability:</B> Each dereferenceable circulator can reach itself
 with a finite and non-empty sequence of applications of `operator++`.
 
-<B>Ranges:</B> For any circulator \f$ c\f$ the range \f$ \left[c,
-c\right)\f$ is a valid range. If the circulator refers to an empty
-sequence, the range \f$ \left[c, c\right)\f$ denotes the empty
-range. Otherwise the circulator is dereferenceable and the range \f$
-\left[c, c\right)\f$ denotes the sequence of all elements in the data
+<B>Ranges:</B> For any circulator `c` the range `[c, c)` is a valid range. 
+If the circulator refers to an empty
+sequence, the range `[c, c)` denotes the empty
+range. Otherwise the circulator is dereferenceable and the range 
+`[c, c)` denotes the sequence of all elements in the data
 structure. <I>Remark:</I> When a circulator is used in a place of an
 iterator, as, for example, with an \stl algorithm, it will work as
-expected with the only exception that, in STL algorithms, the range
-\f$ \left[c, c\right)\f$ denotes always the empty range.  This is not
+expected with the only exception that, in \stl algorithms, the range
+`[c, c)` denotes always the empty range.  This is not
 a requirement, but a consequence of the requirements stated here and
 the fact that the \stl requirements for iterator ranges are based on
-the <TT>operator++</TT> and the <TT>operator==</TT>, which we use for
+the `operator++` and the `operator==`, which we use for
 circulators as well. In principle, we face here the difference between
-a <TT>while</TT> loop and a <TT>do-while</TT> loop.
+a `while` loop and a `do-while` loop.
 
-<B>Types:</B> For a circulator of type \f$ C\f$ the following local
+<B>Types:</B> For a circulator of type `c` the following local
 types are required:
 
 <TABLE border="0"><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
@@ -158,7 +156,7 @@ Same as for <TT>++r</TT>.
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 <TT>C::iterator_category</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-circulator category <TT>CBP_Forward_circulator_tag</TT>. 
+circulator category <TT>Forward_circulator_tag</TT>. 
 
 </TABLE> 
 
@@ -171,7 +169,7 @@ category:
 <TABLE border="0"><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 <TT>C::iterator_category</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-circulator category <TT>CBP_Bidirectional_circulator_tag</TT>. 
+circulator category <TT>Bidirectional_circulator_tag</TT>. 
 
 </TABLE> 
 
@@ -195,15 +193,14 @@ circulators.}.
 
 The difference of two circulators is not unique as for iterators. A 
 reasonable requirement demands that the result is in a certain range 
-\f$ [1-\mbox{size, size}-1]\f$, where <I>size</I> is the size of the 
-sequence, and that whenever a circulator <TT>a</TT> is fixed that 
+`[1-size, size-1]`, where `size` is the size of the 
+sequence, and that whenever a circulator `a` is fixed that 
 the differences with all other circulators of the sequence form a 
 consistent ordering. 
 
-For the adaptor to iterators a minimal circulator \f$
-d_{\mbox{min}}\f$ is required for which the difference
-\f$ c - d_{\mbox{min}}\f$ to all other circulators \f$
-c\f$ is non negative.
+For the adaptor to iterators a minimal circulator
+`d_min` is required for which the difference
+`c - d_min` to all other circulators `c` is non negative.
 
 <TABLE border="0"><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 <TT>b - a</TT> 
@@ -214,11 +211,11 @@ as explained above.
 <TT>a.min_circulator()</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 returns the minimal circulator from the 
-range \f$ [a,a)\f$. 
+range `[a,a)`. 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 <TT>C::iterator_category</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-circulator category <TT>CBP_Random_access_circulator_tag</TT>. 
+circulator category <TT>Random_access_circulator_tag</TT>. 
 
 </TABLE> 
 
@@ -234,7 +231,7 @@ circulators.
 For a container <TT>x</TT> of type <TT>X</TT> that supports
 circulators <TT>c</TT> the following naming convention is recommended:
 
-<TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
+<TABLE  border="0"><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 <TT>X::Circulator</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 the type of the mutable circulator. 
@@ -251,11 +248,11 @@ It is of type <TT>X::Circulator</TT> for a
 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 mutable container or <TT>X::Const_circulator</TT> for 
-a const container. There 
+a const container. 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-must not be an <TT>end()</TT> member function. 
+
 
 </TABLE> 
 

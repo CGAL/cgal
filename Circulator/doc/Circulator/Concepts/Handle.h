@@ -28,8 +28,8 @@ standard containers.)
 
 \hasModel T* (pointer)
 \hasModel const T* (const pointers)
-\hasModel ::Iterator
-\hasModel ::Circulator
+\hasModel `Iterator`
+\hasModel `Circulator`
 */
 class Handle {
 public:

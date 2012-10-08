@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHandlesAndCirculators
+\addtogroup PkgHandlesAndCirculatorsTags
 
 Iterators and circulators as well as different categories of
 circulators can be distinguished with the use of discriminating
@@ -28,6 +28,12 @@ example program illustrates both.
 
 \cgalexample{Circulator/circulator_prog3.cpp}
 
+*/
+
+
+/*!
+\addtogroup PkgHandlesAndCirculatorsBaseClasses
+
 ### Implementation ###
 
 Since not all current compilers can eliminate the space needed for the
@@ -36,46 +42,39 @@ for each base class that contains a protected `void*` data member
 called `_ptr`. Here, the allocated space in the derived
 classes can be reused.
 
+
 */
 
-class Circulator_tag {
-public:
-
-/// \name Compile Time Tags
-/// @{
 
 /*!
-any circulator.
+\ingroup PkgHandlesAndCirculatorsTags
+A tag for any circulator type.
 */
 struct Circulator_tag {};
 
 /*!
-any iterator.
+\ingroup PkgHandlesAndCirculatorsTags
+A tag for any iterator type.
 */
 struct Iterator_tag {};
 
 /*!
-
-derived from `forward_iterator_tag`.
+\ingroup PkgHandlesAndCirculatorsTags
 */
-struct Forward_circulator_tag {};
+struct Forward_circulator_tag  : public virtual std::forward_circulator_tag{};
 
 /*!
-
-derived from `bidirectional_iterator_tag`.
+\ingroup PkgHandlesAndCirculatorsTags
 */
-struct Bidirectional_circulator_tag {};
+  struct Bidirectional_circulator_tag  : public virtual std::bidirectional_iterator_tag {};
 
 /*!
-
-derived from `random_access_iterator_tag`.
+\ingroup PkgHandlesAndCirculatorsTags
 */
-struct Random_access_circulator_tag {};
+  struct Random_access_circulator_tag : public virtual  std::random_access_circulator_tag {};
 
-/// @}
 
-/// \name Base Classes
-/// @{
+
 
 /*!
 
@@ -89,47 +88,46 @@ class Ref = T& >
 struct Circulator_base {};
 
 /*!
-
+\ingroup PkgHandlesAndCirculatorsBaseClasses
 */
 template <class T, class Dist, class Size>
 struct Forward_circulator_base {};
 
 /*!
-
+\ingroup PkgHandlesAndCirculatorsBaseClasses
 */
 template <class T, class Dist, class Size>
 struct Bidirectional_circulator_base {};
 
 /*!
-
+\ingroup PkgHandlesAndCirculatorsBaseClasses
 */
 template <class T, class Dist, class Size>
 struct Random_access_circulator_base {};
 
-/// @}
 
-/// \name Implementation
-/// @{
+
 
 /*!
+\ingroup PkgHandlesAndCirculatorsBaseClasses
 forward circulator.
 */
 template <class T, class Dist, class Size>
 class Forward_circulator_ptrbase {};
 
 /*!
+\ingroup PkgHandlesAndCirculatorsBaseClasses
 bidirectional circulator.
 */
 template <class T, class Dist, class Size>
 class Bidirectional_circulator_ptrbase {};
 
 /*!
+\ingroup PkgHandlesAndCirculatorsBaseClasses
 random access circulator.
 */
 template <class T, class Dist, class Size>
 class Random_access_circulator_ptrbase {};
 
-/// @}
 
-}; /* end Circulator_tag */
 } /* end namespace CGAL */
