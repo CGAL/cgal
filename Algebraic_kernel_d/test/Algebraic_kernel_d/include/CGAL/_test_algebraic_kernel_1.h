@@ -300,46 +300,46 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
   // we choose coefficients: small, large, (close to) power of two
   std::vector< int > coeffs;
   coeffs.push_back(1);
+  coeffs.push_back(13);
+  //coeffs.push_back(255);
+  //coeffs.push_back(499);
+  //coeffs.push_back(512);
+  //coeffs.push_back(10000);
   //coeffs.push_back(3);
   //coeffs.push_back(7);
-  coeffs.push_back(13);
   //coeffs.push_back(64);
   //coeffs.push_back(100);
-  coeffs.push_back(255);
-  coeffs.push_back(499);
-  coeffs.push_back(512);
-  //coeffs.push_back(1023);
+  coeffs.push_back(1023);
   //coeffs.push_back(4096);
-  coeffs.push_back(10000);
   std::vector< int > precs;
-  precs.push_back(0);
-  precs.push_back(1);
-  precs.push_back(2);
-  //precs.push_back(3);
-  precs.push_back(4);
+  //precs.push_back(0);
+  //precs.push_back(1);
+  //precs.push_back(2);
+  //precs.push_back(4);
   precs.push_back(8);
-  precs.push_back(13);
+  //precs.push_back(13);
+  //  precs.push_back(1023);
+  //  precs.push_back(2048);
+  //precs.push_back(53);
+  //precs.push_back(3);
   //precs.push_back(64);
-  //precs.push_back(512);
-  precs.push_back(2048);
-  precs.push_back(1023);
-  precs.push_back(53);
   //precs.push_back(106);
-  precs.push_back(424);
+  //precs.push_back(424);
   for (typename std::vector< int >::const_iterator c0i = coeffs.begin(); 
        c0i != coeffs.end(); c0i++) {
     for (typename std::vector< int >::const_iterator c2i = coeffs.begin(); 
          c2i != coeffs.end(); c2i++) {
       // we basically test a quadratic polynomial (with choosen small and large 
       // quadratic and constant coefficient, which is disturbed by a root close to zero).
+      //Polynomial_1 poly((*c2i*x*x - *c0i) * (c*x-1));
       Polynomial_1 poly((*c2i*x*x - *c0i) * (c*x-1));
+      std::list<Algebraic_real_1> roots;
+      solve_1(poly,true,std::back_inserter(roots));
       for (typename std::vector< int >::const_iterator pi = precs.begin(); 
            pi != precs.end(); pi++) {
         // all three roots are approximated with various precisions
         long p = *pi;
         { // Approximate_absolute_1 with positive p
-          std::list<Algebraic_real_1> roots;
-          solve_1(poly,true,std::back_inserter(roots));
           for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
                rit != roots.end(); rit++) {
             BInterval bi = approximate_absolute_1(*rit,p);
@@ -355,8 +355,6 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
           }
         }
         { // Approximate_absolute_1 with negative p
-          std::list<Algebraic_real_1> roots;
-          solve_1(poly,true,std::back_inserter(roots));
           for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
                rit != roots.end(); rit++) {
             BInterval bi = approximate_absolute_1(*rit,-p);
@@ -371,8 +369,6 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
           }
         }
         { // Approximate_relative_1 with positive p
-          std::list<Algebraic_real_1> roots;
-          solve_1(poly,true,std::back_inserter(roots));
           for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
                rit != roots.end(); rit++) {
             BInterval bi = approximate_relative_1(*rit,p);
@@ -389,8 +385,6 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
           }
         }
         { // Approximate_relative_1 with negative p
-          std::list<Algebraic_real_1> roots;
-          solve_1(poly,true,std::back_inserter(roots));
           for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
                rit != roots.end(); rit++) {
             BInterval bi = approximate_relative_1(*rit,-p);

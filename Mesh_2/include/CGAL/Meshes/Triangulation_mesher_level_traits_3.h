@@ -24,6 +24,7 @@
 #include <vector>
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 
