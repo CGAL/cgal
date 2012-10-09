@@ -75,16 +75,17 @@ template <class T> transforming_iterator<Forward_rep,typename boost::enable_if<I
 // Note: this tends to be an all or nothing thing currently, wrapping
 // only some types breaks, probably because we don't check whether the
 // return type is indeed wrapped.
-template < typename Base_ >
+template < typename Base_ , typename Derived_ = Default >
 struct Cartesian_wrap : public Base_
 {
     CGAL_CONSTEXPR Cartesian_wrap(){}
     CGAL_CONSTEXPR Cartesian_wrap(int d):Base_(d){}
     typedef Base_ Kernel_base;
     typedef Cartesian_wrap Self;
+    typedef typename Default::Get<Derived_, Self>::type Derived;
 
 #define CGAL_Kernel_obj(X,Y) \
-    typedef X##_d<Cartesian_wrap> X;
+    typedef X##_d<Derived> X;
 #define CGAL_Kernel_obj3(X,Y)
 
     //CGAL_Kernel_obj(Segment,segment)
@@ -128,6 +129,7 @@ struct Cartesian_wrap : public Base_
 		    type(){}
 		    type(Self const&k):b(k){}
 		    typedef typename map_result_tag<T>::type result_tag;
+		    // FIXME: Self or Derived?
 		    typedef typename Read_tag_type<Self,result_tag>::type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{

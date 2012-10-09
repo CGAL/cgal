@@ -40,7 +40,7 @@ struct Epick_d_help2
                                  Dynamic_dimension_tag, \
 				 Dimension_tag<d_> \
     >::type \
-  > > >
+  >, Epick_d<d_> > >
 template<int d_>
 struct Epick_d
 : CGAL_BASE
