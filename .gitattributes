@@ -2361,6 +2361,7 @@ Documentation/how_to_cite_cgal.bib -text
 Documentation/jquery.footnotes.min.js -text
 Documentation/pkglist_filter.sh -text
 Documentation/stylesheet.css -text
+Documentation/testsuite.py -text
 Envelope_2/doc/Envelope_2/CGAL/Envelope_diagram_1.h -text
 Envelope_2/doc/Envelope_2/CGAL/envelope_2.h -text
 Envelope_2/doc/Envelope_2/Concepts/EnvelopeDiagramEdge.h -text
