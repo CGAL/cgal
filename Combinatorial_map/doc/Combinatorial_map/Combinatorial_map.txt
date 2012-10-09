@@ -206,8 +206,9 @@ in a given building from rooms to rooms by traversing doors.
 
 In this section, we describe <I>d</I>D combinatorial maps in terms of data
 structure and operations. Mathematical definitions are provided in
-Section \ref sec_definition, and a package description is given in
-Section \ref secsoftwaredesign.
+Section \ref sec_definition "Mathematical Definitions", and a package 
+description is given in
+Section \ref secsoftwaredesign "Software Design".
 
 ## Combinatorial Map and Darts ##
 \anchor sseccombimapanddarts
@@ -474,9 +475,10 @@ combinatorial map, among the ten, are associated to a 2-attribute.
 
 There are some conditions that a combinatorial map must satisfy to be
 valid. Some of them have already been given about the \f$ \beta\f$
-pointers (see Section \ref sseccombimapanddarts) and about the
+pointers (see Section 
+\ref sseccombimapanddarts "Combinatorial Map and Darts") and about the
 association between darts and attributes (see Section \ref
-ssecassociateattributes).
+ssecassociateattributes "How to Associate Information to Cells").
 
 There is an additional condition related to the type of represented
 objects, which are <I>quasi-manifold</I> orientable <I>d</I>D
@@ -503,7 +505,7 @@ glued together along facets, thus it is a quasi-manifold.
 
 Combinatorial maps can only represent quasi-manifolds due to the
 definition of \f$ \beta\f$ pointers. As we have seen in Section \ref
-sseccellsinmap, \f$ \beta_i\f$(<I>d0</I>) (with 1\f$
+sseccellsinmap "Cells as Sets of Darts", \f$ \beta_i\f$(<I>d0</I>) (with 1\f$
 \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>) belongs to the same cells as
 <I>d0</I>, only the <I>i</I>-cell and 0-cell are different. In other
 words, \f$ \beta_i\f$ links two <I>i</I>-cells that share a common
@@ -561,7 +563,8 @@ along one <I>(d-1)</I>-cell must preserve the initial
 <I>(d-1)</I>-cell.
 
 To avoid these two kinds of configurations, conditions are added on
-\f$ \beta\f$ pointers compositions (see Section \ref sec_definition,
+\f$ \beta\f$ pointers compositions (see Section 
+\ref sec_definition "Mathematical Definitions",
 condition (4) of the definition of combinatorial maps). Intuitively
 these conditions say that if two darts are linked by \f$ \beta_i\f$,
 then all the required darts are linked by \f$ \beta_i\f$ two by two in
@@ -581,11 +584,11 @@ validity conditions.
 
 The diagram in \ref figure9 "Figure 9" shows the different
 classes of the package. `Combinatorial_map` is the main class
-(see Section \ref sseccombinatorialmap). It allows to manage darts
-(see Section \ref ssecdarts) and attributes (see
-Section \ref ssecattributes).
+(see Section \ref sseccombinatorialmap "Combinatorial Maps"). It allows to manage darts
+(see Section \ref ssecdarts "Darts") and attributes (see
+Section \ref ssecattributes "Cell Attributes").
 Users can customize a combinatorial map thanks to an items class (see
-Section \ref ssecitem), which defines the dart type and the
+Section \ref ssecitem "Combinatorial Map Items"), which defines the dart type and the
 attribute types. These types may be different for different
 dimensions, and they may also be void. The darts and attributes are
 accessed through <I>handles</I>. A handle is a model of the
@@ -612,14 +615,17 @@ from the combinatorial map. The `Dart_handle` type defines a handle to
 the type of used darts (given in the items class).
 `Combinatorial_map` provides several <I>ranges</I> which allow to
 iterate over specific subsets of darts of the combinatorial map (see
-Section \ref ssecrange). It also defines several methods to link and
+Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). 
+It also defines several methods to link and
 to unlink darts by \f$ \beta_i\f$s (see Section \ref
-sseclinkdarts). We said that a dart <I>d0</I> is <I>i</I>-free  if \f$
+sseclinkdarts "Sewing Orbits and Linking Darts"). We said that a 
+dart <I>d0</I> is <I>i</I>-free  if \f$
 \beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$. The \f$ \varnothing\f$
 constant is represented in the class `Combinatorial_map` through a
 `static const Dart_handle`  called `null_dart_handle`. Finally, some
 high level operations are defined as global functions taking a
-`Combinatorial_map` as argument (see Section \ref ssecoperations)
+`Combinatorial_map` as argument (see Section 
+\ref ssecoperations "Removal and Insertion Operations")
 
 The second role of the class `Combinatorial_map` is the storage and
 the management of attributes. It allows to create or remove an
@@ -716,7 +722,8 @@ functor allows the user to define its own custom behavior when two
 attributes are merged (for example if the information is a color, we
 can compute the average color of the two initial attributes, and
 affect this value to the first attribute, see example in Section \ref
-sseccombimapwithcolor). Similarly, the functor `OnSplit` is called
+sseccombimapwithcolor "Combinatorial Map With Attributes"). 
+Similarly, the functor `OnSplit` is called
 when one attribute is split in two, because its corresponding cell is
 split in two during some operation, unless it is equal to
 `Null_functor`. In any high level operation, `OnMerge` is called
@@ -761,14 +768,17 @@ typedef CGAL::Combinatorial_map<3, Example_items_3> Example_custom_cmap3;
 
 An important operation in combinatorial maps consists in iterating
 over specific subsets of darts or over attributes. For that, several
-<I>ranges</I> are offered (see Section \ref ssecrange). A range is a
+<I>ranges</I> are offered (see Section 
+\ref ssecrange "Iterating over Orbits, Cells, and Attributes"). A range is a
 model of the `Range` concept, thus supporting the two methods
 `begin()` and `end()` allowing to iterate over all the elements in the
 range. Several global functions allow to create specific
 configurations of darts into a combinatorial map (see Section \ref
-ssecconstruction). Darts can be marked during operations, for example
+ssecconstruction "Construction Operations"). Darts can be marked 
+during operations, for example
 when performing a breadth-first search traversal, thanks to Boolean
-marks (see Sections \ref ssecadvmarks). In the following, we denote by
+marks (see Sections \ref ssecadvmarks "Boolean Marks"). In the 
+following, we denote by
 `dh0`, `dh1`, `dh2` the dart handles for the darts `d0`, `d1`, `d2`,
 respectively. That is `d0 == *dh0`.
 
@@ -836,7 +846,7 @@ type `Attribute_type<i>::type`.
 
 For each range, there is an associated const range, a model of the
 `ConstRange` concept. You can find some examples of ranges in Section
-\ref ssecexample3DCM.
+\ref ssecexample3DCM "A 3D Combinatorial Map".
 
 ## Construction Operations ##
 \anchor ssecconstruction 
@@ -896,7 +906,8 @@ It is important to free a mark when it is no longer needed, otherwise
 you may at some point run out of marks.
 
 The following example illustrates how to use marks. Two combinatorial
-tetrahedra are created and 3-sewn (see Section \ref sseclinkdarts for
+tetrahedra are created and 3-sewn (see Section 
+\ref sseclinkdarts "Sewing Orbits and Linking Darts" for
 a detailed description of the sew operation). Then a mark is reserved
 and used to mark all the darts belonging to the first combinatorial
 tetrahedron. Finally, these tetrahedron are merged. The marks allow us
@@ -911,9 +922,10 @@ There are two main categories of modification operations:
 <UL>
 <LI>Sew, link, unsew and unlink which modify some existing \f$ \beta\f$
 pointers, without creating or removing darts (see
-Section \ref sseclinkdarts);
+Section \ref sseclinkdarts "Sewing Orbits and Linking Darts");
 <LI>Removal and insertion of cells which modify both darts and
-\f$ \beta\f$ pointers (see Section \ref ssecoperations).
+\f$ \beta\f$ pointers (see Section 
+\ref ssecoperations "Removal and Insertion Operations").
 </UL>
 
 ## Sewing Orbits and Linking Darts ##
@@ -990,7 +1002,8 @@ there is a bijection <I>f</I> between all the darts of the orbit
 \beta_j\f$(<I>e</I>))=\f$
 \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)). Intuitively, this condition
 ensures the validity of the combinatorial map by verifying that
-condition discussed in Section \ref sseccombimapvalidity will be
+condition discussed in Section 
+\ref sseccombimapvalidity "Combinatorial Map Properties" will be
 satisfied after the operation. This condition can be tested by using
 the method `is_sewable<i>(dh1,dh2)`. For example, the function
 `is_sewable<i>` would return `false` if we tried to sew a triangular
@@ -1012,8 +1025,9 @@ attributes <I>attr1</I> and <I>attr2</I>. If both are NULL, there is
 nothing to do. If one is NULL and the other not, we only associate the
 non NULL attribute to all the darts of the resulting cell. When the
 two attributes are non NULL, we first apply functor `On_merge` on the
-two attributes <I>attr1</I> and <I>attr2</I> (see Section \ref
-ssecattributes). Then, we associate the attribute <I>attr1</I> to all
+two attributes <I>attr1</I> and <I>attr2</I> (see Section 
+\ref ssecattributes "Cell Attributes"). Then, we associate the 
+attribute <I>attr1</I> to all
 darts of the resulting <I>j</I>-cell. Finally, attribute <I>attr2</I>
 is removed from the combinatorial map.
 
@@ -1049,7 +1063,7 @@ then this attribute is duplicated into <I>attr2</I>, and all the darts
 belonging to <I>c2</I> are associated with this new
 attribute. Finally, we call the functor `On_split` on the two
 attributes <I>attr1</I> and <I>attr2</I> (see Section \ref
-ssecattributes).
+ssecattributes "Cell Attributes").
 
 Let us consider the combinatorial map given in 
 \ref figure10 "Figure 10" (Right). If we call `unsew<3>(2)`, we obtain the
@@ -1184,7 +1198,7 @@ respectively `d1,d2,d3,d4`. Now if we remove the 2-cell containing
 dart `d5`, we obtain the initial combinatorial map.  </b></center>
 
 Some examples of use of these operations are given in Section \ref
-ssecexempleoperations.
+ssecexempleoperations "High Level Operations".
 
 # Examples # {#Combinatorial_mapExamples}
 
@@ -1290,7 +1304,8 @@ validity is checked.
 By looking at these numbers of cells, we can see that the 4D
 combinatorial map contains only one 3-cell. Indeed, the `sew<4>`
 operation has identified by pairs all the darts of the two 3-cells by
-definition of the sew operation (see Section \ref sseclinkdarts)
+definition of the sew operation (see Section 
+\ref sseclinkdarts "Sewing Orbits and Linking Darts")
 which, in 4D, links by \f$ \beta_3\f$ all the darts in \f$
 \langle{}\f$\f$ \beta_1\f$,\f$ \beta_2\f$\f$ \rangle{}\f$(<I>d1</I>)
 and in  \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \beta_2\f$\f$
