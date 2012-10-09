@@ -557,9 +557,8 @@ public:
 /// \name Types 
 /// @{ 
 /*! 
-typedef to `Creator::result_type`. 
 */ 
-typedef Hidden_type value_type; 
+typedef Creator::result_type value_type; 
 /// @} 
 
 /// \name Creation 
@@ -594,6 +593,60 @@ Join_input_iterator_1( Iterator i);
 
 
 }; /* end Join_input_iterator_1 */
+} /* end namespace CGAL */
+
+/*!
+\ingroup STLIterators
+
+
+
+The class `Join_input_iterator_2` joins two iterators. The result is again an iterator (of the same 
+iterator category type as the original iterator) that reads an object 
+from the stream and applies a function object to that object. 
+
+\models ::InputIterator 
+
+
+*/
+template< typename I1, typename I2, typename Op >
+class Join_input_iterator_2 {
+public:
+
+  typedef typename Op::result_type value_type;
+  typedef typename std::iterator_traits<I1>::difference_type difference_type; 
+  typedef value_type* pointer;
+  typedef value_type& reference; 
+
+/// \name Creation 
+/// @{ 
+/*!
+%Default constructor.
+ */
+Join_input_iterator_2(); 
+/*! 
+creates a join iterator from the given iterators `i1`, `i2`, 
+and the functor `op`. 
+*/ 
+Join_input_iterator_2(I1 i1,I2 i2,const Op& op=Op()); 
+
+/// @} 
+
+/*! returns current position of the first iterator.
+ */
+ I1 current_iterator1() const { return i1; }
+
+/*! returns current position of the second iterator.
+ */
+  I2 current_iterator2() const { return i2; }
+ 
+/*!
+  returns `op(current_iterator1(), current_iterator2())`.
+ */
+  const value_type& operator*() const;
+
+
+
+}; /* end Join_input_iterator_2 */
 } /* end namespace CGAL */
 
 namespace CGAL {
