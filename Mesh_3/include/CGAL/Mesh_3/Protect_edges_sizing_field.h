@@ -479,7 +479,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   CGAL_assertion ( Vertex_handle() != v );
   CGAL_assertion ( c3t3_.triangulation().number_of_vertices() == (nb_vertices_before+1) );
 
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "Insertion of ";
   if(special_ball) std::cerr << "SPECIAL ";
   std::cerr << "protecting ball "
@@ -497,7 +497,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   std::cerr  << index << std::endl;
   if(v == Vertex_handle()) std::cerr << "  HIDDEN!\n";
   std::cerr << "The weight was " << w << std::endl;
-#endif // PROTECTION_DEBUG
+#endif // CGAL_MESH_3_PROTECTION_DEBUG
 
   c3t3_.set_dimension(v, dim);
   if(special_ball)
@@ -515,7 +515,7 @@ typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
 {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "smart_insert_point( (" << p 
             << "), w=" << w
             << ", dim=" << dim
@@ -589,7 +589,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
       }
     }
     FT min_sq_d = w;
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     typename Tr::Point nearest_point;
 #endif
     for(typename std::set<Vertex_handle>::const_iterator 
@@ -605,7 +605,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
         }
       } else {
         if(sq_d < min_sq_d) {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
           nearest_point = (*it)->point();
 #endif
           min_sq_d = sq_d;
@@ -615,7 +615,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
 
     if ( w > min_sq_d )
     { 
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
       std::cerr << "smart_insert_point: weight " << w
                 << " reduced to " << min_sq_d
                 << "\n (near existing point: " << nearest_point << " )\n";
@@ -675,7 +675,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
     }    
     if ( w > min_sq_d )
     { 
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
       std::cerr << "smart_insert_point: weight " << w
                 << " reduced to " << min_sq_d
                 << "\n (near existing point: " << nearest_point << " )\n";
@@ -688,7 +688,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
   const FT w_max = CGAL::square(query_size(p, dim, index));
 
   if(w > w_max) {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << "smart_insert_point: weight " << w
               << " reduced to " << w_max << " (sizing field)\n";
 #endif
@@ -727,7 +727,7 @@ insert_balls_on_edges()
     const Curve_segment_index& curve_index = CGAL::cpp0x::get<0>(*fit);
     if ( ! is_treated(curve_index) )
     {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
       std::cerr << "** treat curve #" << curve_index << std::endl;
 #endif
       const Bare_point& p = CGAL::cpp0x::get<1>(*fit).first;
@@ -838,7 +838,7 @@ insert_balls(const Vertex_handle& vp,
              const CGAL::Sign d_sign,
              const Curve_segment_index& curve_index)
 {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "insert_balls(vp=" << (void*)(&*vp) << " (" << vp->point() << "),\n"
             << "             vq=" << (void*)(&*vq) << " (" << vq->point() << "),\n"
             << "             sp=" << sp << ",\n"
@@ -897,7 +897,7 @@ insert_balls(const Vertex_handle& vp,
   // at the middle and choose a new size.
   if(n >= internal::max_nb_vertices_to_reevaluate_size && 
      d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight_)) {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << "Number of to-be-inserted balls is: " 
               << n << "\n  between points ("
               << vp->point() << ") and (" << vq->point()
@@ -910,7 +910,7 @@ insert_balls(const Vertex_handle& vp,
     const int dim = 1; // new_point is on edge
     const Index index = domain_.index_from_curve_segment_index(curve_index);
     const FT point_weight = CGAL::square(size_(new_point, dim, index));
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << "  middle point: " << new_point << std::endl;
     std::cerr << "  new weight: " << point_weight << std::endl;
 #endif
@@ -935,7 +935,7 @@ insert_balls(const Vertex_handle& vp,
 
   FT r = (sq - sp) / FT(n+1);
 
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "  n=" << n
             << "\n  r=" << r << std::endl;
 #endif
@@ -1022,7 +1022,7 @@ refine_balls()
   int nb=0;
   while ( (!unchecked_vertices_.empty() || restart) && nb<29)
   {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << "RESTART REFINE LOOP (" << nb << ")\n"
               << "\t unchecked_vertices size: " << unchecked_vertices_.size() <<"\n";
 #endif
@@ -1134,7 +1134,7 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
   // if(v->point().weight() == w)
   // { return v; }
 
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "change_ball_size(v=" << (void*)(&*v) 
             << " (" << v->point()
             << ") dim=" << c3t3_.in_dimension(v) 
@@ -1219,7 +1219,7 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 check_and_repopulate_edges()
 {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "check_and_repopulate_edges()\n";
 #endif
   std::set<Vertex_handle> vertices;
@@ -1252,7 +1252,7 @@ OutputIterator
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 check_and_fix_vertex_along_edge(const Vertex_handle& v, OutputIterator out)
 {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "check_and_fix_vertex_along_edge(" 
             << (void*)(&*v) << "= (" << v->point() 
             << ") dim=" << get_dimension(v)
@@ -1281,9 +1281,9 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, OutputIterator out)
 
   // Walk following direction (v,previous)
   walk_along_edge(v, previous, true, std::front_inserter(to_repopulate));
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr <<  "to_repopulate.size()=" << to_repopulate.size() << "\n";
-#endif // PROTECTION_DEBUG  
+#endif // CGAL_MESH_3_PROTECTION_DEBUG  
 
   // Check whether a complete circle has been discovered or not
   if (   to_repopulate.size() == 1
@@ -1291,9 +1291,9 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, OutputIterator out)
   {
     // Walk in other direction (v,next)
     walk_along_edge(v, next, true, std::back_inserter(to_repopulate));    
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr <<  "to_repopulate.size()=" << to_repopulate.size() << "\n";
-#endif // PROTECTION_DEBUG  
+#endif // CGAL_MESH_3_PROTECTION_DEBUG  
   }
   
   // If only v is in to_repopulate, there is nothing to do
@@ -1404,7 +1404,7 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 repopulate(InputIterator begin, InputIterator last, const Curve_segment_index& index)
 {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "repopulate(begin=" << (void*)(&**begin) 
             << " (" << (*begin)->point() << "),\n"
             << "            last=" << (void*)(&**last)
@@ -1436,7 +1436,7 @@ repopulate(InputIterator begin, InputIterator last, const Curve_segment_index& i
   current = begin;
   while ( ++current != last )
   {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << "Removal of ";
     if(is_special(*current)) std::cerr << "SPECIAL ";
     std::cerr << "protecting ball "
@@ -1452,7 +1452,7 @@ repopulate(InputIterator begin, InputIterator last, const Curve_segment_index& i
       std::cerr << " ERROR dim=" << get_dimension(*current)  << " index=";
     }
     std::cerr  << c3t3_.index(*current) << std::endl;
-#endif // PROTECTION_DEBUG
+#endif // CGAL_MESH_3_PROTECTION_DEBUG
     c3t3_.triangulation().remove(*current);
   }
   
@@ -1478,7 +1478,7 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 analyze_and_repopulate(InputIterator begin, InputIterator last, const Curve_segment_index& index)
 {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "analyze_and_repopulate(begin=" << (void*)(&**begin)
             << " (" << (*begin)->point() << "),\n"
             << "                       last=" << (void*)(&**last)

@@ -175,7 +175,7 @@ struct Detect_polylines {
                        set_of_indices_of_current_edge.begin())) ) 
       {
         // the vertex is a special vertex, a new corner
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
         std::cerr << "New corner vertex " << v->point() << std::endl;
         std::cerr << "  indices were: ";
         BOOST_FOREACH(typename Set_of_indices::value_type i,
@@ -328,7 +328,7 @@ struct Detect_polylines {
       }
     }
 
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << "Corner vertices: " << corner_vertices.size() << std::endl;
     std::cerr << "Feature vertices: " << feature_vertices.size() << std::endl;
 #endif
@@ -345,7 +345,7 @@ struct Detect_polylines {
         }
       }
     }
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << "New corner vertices: "
               << corner_vertices.size() << std::endl;
 #endif

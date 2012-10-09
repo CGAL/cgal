@@ -795,26 +795,26 @@ compute_corners_incidences()
     Surface_patch_index_set& incidences = corners_incidences_[id];
     // That should be an empty set.
 
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << "Corner #" << id << " is incident to the following curves: {";
-#endif // PROTECTION_DEBUG
+#endif // CGAL_MESH_3_PROTECTION_DEBUG
     BOOST_FOREACH(Curve_segment_index curve_index, corners_tmp_incidences_[id])
     {
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
       std::cerr << " " << curve_index;
-#endif // PROTECTION_DEBUG
+#endif // CGAL_MESH_3_PROTECTION_DEBUG
       get_incidences(curve_index, 
                      std::inserter(incidences,
                                    incidences.begin()));
     }
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << " }\n";
     std::cerr << "Corner #" << id << " is incident to the following patches: {";
     BOOST_FOREACH(int i, incidences)  {
       std::cerr << " " << i;
     }
     std::cerr << " }\n";
-#endif // PROTECTION_DEBUG
+#endif // CGAL_MESH_3_PROTECTION_DEBUG
   }
 }
 
