@@ -988,9 +988,9 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
         set(depends "")
-        file(GLOB_RECURSE ${package}_HEADERS 
+        file(GLOB ${package}_HEADERS 
           RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include" 
-          "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/*.h")
+          "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h")
         foreach(header ${${package}_HEADERS})
           string(REPLACE "/" "__" header2 "${header}")
           string(REPLACE "." "_" header2 "${header2}")
