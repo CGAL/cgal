@@ -752,13 +752,13 @@ typedef CGAL::Combinatorial_map<4> Example_cmap4;
 
 struct Example_items_3
 {
-template <class CMap>
-struct Dart_wrapper
-{
-typedef CGAL::Dart<3, CMap> Dart;
-typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
-typedef CGAL::cpp0x::tuple<void,Edge_attrib> Attributes;
-};
+  template <class CMap>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Dart<3, CMap> Dart;
+    typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
+    typedef CGAL::cpp0x::tuple<void,Edge_attrib> Attributes;
+  };
 };
 typedef CGAL::Combinatorial_map<3, Example_items_3> Example_custom_cmap3;
 
