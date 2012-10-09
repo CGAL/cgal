@@ -516,9 +516,11 @@ your own demos you might need these \cgal-libraries.
 
 \section{Optional Third Party Libraries\label{sec:optional3rdpartysoftware}}
 
-Optional 3rd party software is only required to build examples and
-demos shipped with \cgal\ or to build your own project using \cgal. In order
-to simplify these builds, various libraries can be \emph{prepared to be
+Optional 3rd party software can be used by \cgal\ for various reasons:
+Usually certain optional libraries are required to build examples and
+demos shipped with \cgal\ or to build your own project using \cgal. 
+Another reason is to speed up basic tasks. 
+In order to support these goals, all optional libraries can be \emph{prepared to be
 used with \cgal} while configuring \cgal, just in the same way as
 essential libraries are configured. Whenever building an example or a
 demo (or your own executable), these \emph{preconfigured} libraries
@@ -581,9 +583,9 @@ Mainly parts in \cgal's algebraic kernel require \rs3.
 
 \ntl\ provides data structures and algorithms for signed, arbitrary
 length integers, and for vectors, matrices, and polynomials over the 
-integers and over finite fields. In \cgal\ \ntl\ is used to speed up
-polynomial operations such as GCDs. It is recommended to install \ntl\
-with support from \gmp.
+integers and over finite fields. The optional library \ntl\ is used by
+\cgal\ to speed up operations of the Polynomial package, such as GCDs.
+It is recommended to install \ntl\ with support from \gmp.
 
 \ntl\ can be downloaded from \ntlpage. Version 5.1 or higher is recommended.
 
