@@ -202,7 +202,7 @@ public:
 
   /*! 
 
-  typedef to `boost::tuples::element<N, Tuple>::type` 
+  typedef to `boost::tuples::element<N, Tuple>::%type` 
 
   */ 
   typedef Hidden_type value_type; 

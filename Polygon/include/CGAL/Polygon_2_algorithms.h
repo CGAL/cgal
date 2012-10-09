@@ -160,17 +160,17 @@ Bbox_2 bbox_2(InputIterator first,
 template <class ForwardIterator, class PolygonTraits>
 void 
 area_2( ForwardIterator first, ForwardIterator last,
-   	typename Traits::FT &result,
+   	typename PolygonTraits::FT &result,
         const PolygonTraits& traits)
 {
-   typedef typename Traits::FT FT;
+  typedef typename PolygonTraits::FT FT;
    result = FT(0);
    // check if the polygon is empty
    if (first == last) return;
    ForwardIterator second = first; ++second;
    // check if the polygon has only one point
    if (second == last) return;
-   typename Traits::Compute_area_2 compute_area_2 =
+   typename PolygonTraits::Compute_area_2 compute_area_2 =
             traits.compute_area_2_object();
    ForwardIterator third = second;
    while (++third != last) {
@@ -196,18 +196,18 @@ area_2( ForwardIterator first, ForwardIterator last,
 /// \sa `CGAL::orientation_2 `
 /// \sa `CGAL::Polygon_2 `
 template <class ForwardIterator, class PolygonTraits>
-typename Traits::FT 
+typename PolygonTraits::FT 
 polygon_area_2( ForwardIterator first, ForwardIterator last,
 		const PolygonTraits& traits)
 {
-   typedef typename Traits::FT FT;
+   typedef typename PolygonTraits::FT FT;
    FT result = FT(0);
    // check if the polygon is empty
    if (first == last) return result;
    ForwardIterator second = first; ++second;
    // check if the polygon has only one point
    if (second == last) return result;
-   typename Traits::Compute_area_2 compute_area_2 =
+   typename PolygonTraits::Compute_area_2 compute_area_2 =
             traits.compute_area_2_object();
    ForwardIterator third = second;
    while (++third != last) {
@@ -226,7 +226,7 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
 ///   - `Orientation_2`
 ///   - `less_xy_2_object`
 ///   - `orientation_2_object`
-/// \requires `ForwardIterator::value_type` should be `Traits::Point_2`,
+/// \requires `ForwardIterator::value_type` should be `PolygonTraits::Point_2`,
 ///
 /// \sa `PolygonTraits_2 `
 /// \sa `CGAL::Polygon_2 `
@@ -247,7 +247,7 @@ bool is_convex_2(ForwardIterator first,
 ///   - `Orientation_2`
 ///   - `less_xy_2_object()`
 ///   - `orientation_2_object()`
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
+/// \requires The value type of `ForwardIterator` must be `PolygonTraits::Point_2`,
 /// 
 /// ### Implementation##
 /// 
@@ -278,7 +278,7 @@ bool is_simple_2(ForwardIterator first,
 ///   - `compare_x_2_object()`
 ///   - `compare_y_2_object()`
 ///   - `orientation_2_object()`
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
+/// \requires The value type of `ForwardIterator` must be `PolygonTraits::Point_2`,
 ///
 /// \sa `PolygonTraits_2`
 /// \sa `CGAL::bounded_side_2`

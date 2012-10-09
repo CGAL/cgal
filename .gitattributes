@@ -2534,6 +2534,7 @@ Geomview/demo/Geomview/CMakeLists.txt -text
 Geomview/doc/Geomview/CGAL/IO/Geomview_stream.h -text
 Geomview/doc/Geomview/Geomview.txt -text
 Geomview/doc/Geomview/PackageDescription.txt -text
+Geomview/doc/Geomview/examples.txt -text
 Geomview/doc/Geomview/fig/geomview.gif -text svneol=unset#image/gif
 Geomview/doc_tex/Geomview/geomview.gif -text
 GraphicsView/GraphicsView.odp -text

@@ -99,6 +99,9 @@ class Polygon_2 {
     typedef typename Container_P::const_iterator const_iterator;
     //-------------------------------------------------------//
 
+    typedef typename Container::iterator       Vertex_const_iterator;
+    typedef Polygon_circulator<Container_P>    Vertex_const_circulator;
+
     /// \name Iterators
     ///
     /// The following types denote iterators that allow to traverse
@@ -140,9 +143,6 @@ class Polygon_2 {
             Edge_const_circulator;
 #endif // DOXYGEN_RUNNING    
     /// @}
-
-    typedef typename Container::iterator       Vertex_const_iterator;
-    typedef Polygon_circulator<Container_P>    Vertex_const_circulator;
 
     /// \name Creation
     /// @{

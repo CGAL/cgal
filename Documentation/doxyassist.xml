@@ -423,6 +423,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Stream_support/examples</string>
           <string name="IMAGE_PATH">../Stream_support/doc/IOstream/fig</string>
           <list name="TAGFILES" append="false">
+            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
             <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
           </list>
         </doxygen>

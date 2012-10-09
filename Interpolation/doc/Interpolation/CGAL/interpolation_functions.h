@@ -123,15 +123,15 @@ range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
 <OL> 
 <LI>The value type of `ForwardIterator` is a pair of 
 point/coordinate value, thus 
-`std::iterator_traits<ForwardIterator>::value_type::first_type` is equivalent to a 
-point and `std::iterator_traits<ForwardIterator>::value_type::second_type` is a 
+`std::iterator_traits<ForwardIterator>::%value_type::first_type` is equivalent to a 
+point and `std::iterator_traits<ForwardIterator>::%value_type::second_type` is a 
 field number type. 
 <LI>`Functor::argument_type` must be equivalent to 
-`std::iterator_traits<ForwardIterator>::value_type::first_type` and 
+`std::iterator_traits<ForwardIterator>::%value_type::first_type` and 
 `Functor::result_type` is a pair of the function value type 
 and a Boolean value. The function value type must provide a 
 multiplication and addition operation with the field number type 
-`std::iterator_traits<ForwardIterator>::value_type::second_type` and a constructor 
+`std::iterator_traits<ForwardIterator>::%value_type::second_type` and a constructor 
 with argument \f$ 0\f$. A model of the functor is provided by the 
 struct `Data_access`. It must be instantiated accordingly with 
 an associative container (e.g. `std::map`) having the 
@@ -234,9 +234,9 @@ function gradient given a point.
 <LI>`Traits` is a model of the concept 
 `InterpolationTraits`. 
 <LI>The value type of `ForwardIterator` is a point/coordinate pair. 
-Precisely `std::iterator_traits<ForwardIterator>::value_type::first_type` is 
+Precisely `std::iterator_traits<ForwardIterator>::%value_type::first_type` is 
 equivalent to `Traits::Point_d` and 
-`std::iterator_traits<ForwardIterator>::value_type::second_type` is equivalent to 
+`std::iterator_traits<ForwardIterator>::%value_type::second_type` is equivalent to 
 `Traits::FT`. 
 <LI>`Functor::argument_type` must be equivalent to 
 `Traits::Point_d` and `Functor::result_type` is a pair of 
@@ -275,7 +275,7 @@ bool> sibson_c1_interpolation(ForwardIterator first, ForwardIterator
 beyond, const typename
 std::iterator_traits<ForwardIterator>::value_type::second_type&
 norm, const typename
-std::iterator_traits<ForwardIterator>::value_type:: first_type& p,
+std::iterator_traits<ForwardIterator>::value_type::first_type& p,
 Functor function_value, GradFunctor function_gradient,const Traits&
 traits);
 

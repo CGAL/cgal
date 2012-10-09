@@ -56,7 +56,7 @@ bool is_pretty(std::ios& s);
 \cgal defines output operators for classes that are derived
 from the class `ostream`. This allows to write to ostreams
 as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
-and std::ofstream`.
+and `std::ofstream`.
 The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 Let `os` be an output stream.
 
@@ -98,7 +98,7 @@ int main()
 
 \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams
-as `cin`, as well as from std::istringstream` and `std::ifstream`.
+as `cin`, as well as from `std::istringstream` and `std::ifstream`.
 The input operator is defined for all classes in the \cgal `Kernel`.
 Let `is` be an input stream.
 
@@ -106,7 +106,6 @@ Let `is` be an input stream.
 // Extracts object `c` from the stream `is`. Returns `is`.
 istream& operator>>(istream& is, Class c);
 \endcode
-
 
 ## Example ##
 
@@ -137,8 +136,7 @@ main()
 }
 \endcode
 
-# IO for Non-CGAL Types # {#IOstreamIO}
-\anchor seciofornoncgaltypes
+# IO for Non-CGAL Types # {#seciofornoncgaltypes}
 
 ## Using Output Formatting ##
 
@@ -151,7 +149,7 @@ Example
 std::cout << CGAL::oformat( myobject );
 \endcode
 
-Optional, you can provide a second template parameter <TT>F</TT> as a formatting tag:
+Optional, you can provide a second template parameter `F` as a formatting tag:
 
 Example
 --------------
@@ -160,26 +158,26 @@ Example
 std::cout << CGAL::oformat( myobject, My_formatting_tag() );
 \endcode
 
-For a list of formatting tags supported by the type <TT>T</TT>, please
+For a list of formatting tags supported by the type `T`, please
 refer to the documentation of the respective type.
 
 ## Customizing Output Formatting ##
 
 In some situations, you want to control the output formatting for a
-type <TT>T</TT>. For external types (third party libraries etc.),
+type `T`. For external types (third party libraries etc.),
 there might be problems if their stream output operator does not
 respect `IO::Mode`. The purpose of `Output_rep` is to provide a way to
 control output formatting that works independently of the object's
 stream output operator.
 
-Instead of putting <TT>T</TT> directly into an output stream,
-<TT>T</TT> is wrapped into an output representation `Output_rep`. For
+Instead of putting `T` directly into an output stream,
+`T` is wrapped into an output representation `Output_rep`. For
 convenience, a function `oformat` exists which constructs an instance
 of `Output_rep`.
 
-If you do not specialize `Output_rep` for <TT>T</TT>, <TT>T</TT>'s
+If you do not specialize `Output_rep` for `T`, `T`'s
 stream output operator is called from within `Output_rep`, by
-default. If you want another behaviour for your type <TT>T</TT>, you
+default. If you want another behaviour for your type `T`, you
 have to provide a specialization for that type. Furthermore, you can
 provide specializations with a second template parameter (a formatting
 tag). The second template parameter defaults to `Null_tag` and means
