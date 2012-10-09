@@ -353,7 +353,7 @@ OutputIteratorCells cit);
 
 /*! 
 Same as the other `find_conflicts()` function, except that it also 
-computes the internal facets, i.e. the facets common to two cells which 
+computes the internal facets, i.e.\ the facets common to two cells which 
 are in conflict with `p`. 
 Then this function returns respectively in the output iterators: 
 
