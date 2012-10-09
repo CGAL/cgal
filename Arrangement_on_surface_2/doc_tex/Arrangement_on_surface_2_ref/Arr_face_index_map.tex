@@ -43,16 +43,16 @@ to dynamically maintain the mapping of face handles to indices.
 
 \ccNestedType{Arrangement_2}{the type of the attached arrangement.}
 
-\ccTypedef{typedef typename Arrangement_2::Face_handle Face_handle;}
-    {the face handle type.}
+\ccNestedType{category}{\ccc{boost::readable_property_map_tag}}
+\ccGlue
+\ccNestedType{value_type}{\ccc{unsigned int}}
+\ccGlue
+\ccNestedType{reference}{u\ccc{nsigned int}}
+\ccGlue
+\ccNestedType{key_type}{\ccc{Face_handle}}
 
-\ccNestedType{category}{boost::readable_property_map_tag}
-\ccGlue
-\ccNestedType{value_type}{unsigned int}
-\ccGlue
-\ccNestedType{reference}{unsigned int}
-\ccGlue
-\ccNestedType{key_type}{Face_handle}
+\ccTypedef{typedef typename Arrangement_2::Face_handle Face_handle;}
+    {The face handle type.}
 
 \ccTypedef{typedef Unique_hash_map<Face_handle, value_type> Index_map;}
     {The type of mapping of faces to indices.}

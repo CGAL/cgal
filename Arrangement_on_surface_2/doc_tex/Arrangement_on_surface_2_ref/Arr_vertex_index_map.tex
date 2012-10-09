@@ -43,16 +43,16 @@ to dynamically maintain the mapping of vertex handles to indices.
 
 \ccNestedType{Arrangement_2}{the type of the attached arrangement.}
 
-\ccTypedef{typedef typename Arrangement_2::Vertex_handle Vertex_handle;}
-    {the vertex handle type.}
+\ccNestedType{category}{\ccc{boost::readable_property_map_tag}}
+\ccGlue
+\ccNestedType{value_type}{\ccc{unsigned int}}
+\ccGlue
+\ccNestedType{reference}{\ccc{unsigned int}}
+\ccGlue
+\ccNestedType{key_type}{V\ccc{ertex_handle}}
 
-\ccNestedType{category}{boost::readable_property_map_tag}
-\ccGlue
-\ccNestedType{value_type}{unsigned int}
-\ccGlue
-\ccNestedType{reference}{unsigned int}
-\ccGlue
-\ccNestedType{key_type}{Vertex_handle}
+\ccTypedef{typedef typename Arrangement_2::Vertex_handle Vertex_handle;}
+    {The vertex handle type.}
 
 \ccTypedef{typedef Unique_hash_map<Vertex_handle, value_type> Index_map;}
     {The type of mapping of vertices to indices.}
