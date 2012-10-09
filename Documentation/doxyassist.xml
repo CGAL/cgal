@@ -716,11 +716,15 @@ namespace for the XML file to be processed properly.  -->
       <project>
         <name>3D Minkowski Sum of Polyhedra</name>
         <input>../Minkowski_sum_3/doc/Minkowski_sum_3</input>
+        <input>../Minkowski_sum_3/include/</input>
         <doxygen>
-          <string name="STRIP_FROM_INC_PATH">../Minkowski_sum_3/doc/Minkowski_sum_3/</string>
+          <string name="STRIP_FROM_PATH">../Minkowski_sum_3/include/</string>
           <string name="GENERATE_TAGFILE">./tags/Minkowski_sum_3.tag</string>
           <string name="EXAMPLE_PATH">../Minkowski_sum_3/examples</string>
           <string name="IMAGE_PATH">../Minkowski_sum_3/doc/Minkowski_sum_3/fig</string>
+          <bool name="HIDE_UNDOC_MEMBERS">true</bool>
+          <bool name="HIDE_UNDOC_CLASSES">true</bool>
+          <bool name="EXTRACT_ALL">false</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/Nef_3.tag=../../CGAL.CGAL.3D-Boolean-Operations-on-Nef-Polyhedra/html</item>
             <item>./tags/Convex_decomposition_3.tag=../../CGAL.CGAL.Convex-Decomposition-of-Polyhedra/html</item>
@@ -1537,6 +1541,7 @@ namespace for the XML file to be processed properly.  -->
         <list name="HTML_EXTRA_FILES" append="true">
           <item>jquery.footnotes.min.js</item>
           <item>hacks.js</item>
+          <item>cgal_stylesheet.css</item>
         </list>
       </doxygen>
     </project>

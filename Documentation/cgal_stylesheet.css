@@ -52,6 +52,18 @@ h1.groupheader {
     font-size: 150%;
 }
 
+/* enable this to make sections more alike */
+/* h2.groupheader { */
+/*     border-bottom: none; */
+/*     color: black; */
+/*     font-size: 100%; */
+/*     font-weight: bold; */
+/*     margin-top: 1.75em; */
+/*     padding-bottom: 0; */
+/*     padding-top: 0; */
+/*     width: 100%; */
+/* } */
+
 a.el {
     font-weight: normal;
 }

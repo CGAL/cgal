@@ -41,6 +41,13 @@ def clean_doc():
     duplicate_files=glob.glob('./output/CGAL.CGAL.*/html/jquery.js')
     duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/html/dynsections.js'))
     duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/html/stylesheet.css'))
+    # left-over by doxygen?
+    duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/bib2xhtml.pl'))
+    duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/cgal_manual.bib'))
+    duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/citelist.doc'))
+    duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/doxygen.bst'))
+    duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/geom.bib'))
+    
     for fn in duplicate_files:
         os.remove(fn)
 
