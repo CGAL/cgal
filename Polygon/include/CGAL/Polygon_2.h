@@ -77,7 +77,7 @@ class Polygon_2 {
     /// The container type.
     typedef Container_P Container;
 
-    /// The number type, which is the {\em field type} of the points of the polygon.
+    /// The number type of the coordinates of the points of the polygon.
     typedef typename Traits_P::FT FT;
     /// The point type of the polygon.
     typedef typename Traits_P::Point_2 Point_2;
@@ -102,14 +102,13 @@ class Polygon_2 {
     /// \name Iterators
     ///
     /// The following types denote iterators that allow to traverse
-    /// the vertices and edges of a polygon.  Since it is questionable
-    /// whether a polygon should be viewed as a circular or as a
+    /// the vertices and edges of a polygon.  Since 
+    /// a polygon can be viewed as a circular as well as a
     /// linear data structure both circulators and iterators are
-    /// defined.  The circulators and iterators are
-    /// non-mutable. 
+    /// defined.  
     ///
-    /// \note At least conceptually.  The enforcement
-    /// depends on preprocessor flags. 
+    /// \note At least conceptually, the circulators and iterators are
+    /// non-mutable.  The enforcement depends on preprocessor flags. 
     ///
     /// \note The iterator category is in all cases bidirectional, except
     /// for Vertex_iterator, which has the same iterator category as
@@ -122,11 +121,16 @@ class Polygon_2 {
     /// 
     typedef typename Container::iterator       Vertex_iterator;
 
-    /// 
-    typedef Vertex_const_circulator            Vertex_circulator;
 
     //typedef typename Container::const_iterator Vertex_const_iterator; ??
 
+#ifdef DOXYGEN_RUNNING
+  typedef Hidden_type Vertex_circulator;
+    typedef Hidden_type Edge_const_iterator;
+
+    typedef Hidden_type Edge_const_circulator;
+#else 
+    typedef Vertex_const_circulator            Vertex_circulator;
     /// 
     typedef Polygon_2_edge_iterator<Traits_P,Container_P>
             Edge_const_iterator;
@@ -134,7 +138,7 @@ class Polygon_2 {
     /// 
     typedef Polygon_2_const_edge_circulator<Traits_P,Container_P>
             Edge_const_circulator;
-    
+#endif // DOXYGEN_RUNNING    
     /// @}
 
     typedef typename Container::iterator       Vertex_const_iterator;
@@ -239,7 +243,7 @@ class Polygon_2 {
 
     /// @}
 
-    /// \name Access 
+    /// \name Access Functions 
     /// The following methods of the class Polygon_2
     /// return circulators and iterators that allow to traverse the
     /// vertices and edges.
@@ -298,7 +302,7 @@ class Polygon_2 {
     }
 
     /// Returns the orientation. If the number of vertices
-    /// \f$ p.size() < 3 \f$ then \c COLLINEAR is returned.
+    /// `p.size() < 3` then \c COLLINEAR is returned.
     /// \pre `p.is_simple()`.
     Orientation orientation() const
     {
@@ -379,7 +383,7 @@ class Polygon_2 {
     /// @}
 
 
-    /// \name Convenience
+    /// \name 
     /// For convenience we provide the following Boolean functions:
     /// @{
 
@@ -410,19 +414,19 @@ class Polygon_2 {
     /// @}
 
 
-    /// \name Random Access Methos
+    /// \name Random Access Methods
     /// @{
 
-    /// Returns a (const) reference to the \f$i\f$-th vertex.
+    /// Returns a (const) reference to the `i`-th vertex.
     const Point_2& vertex(std::size_t i) const
       { return *(d_container.begin() + i); }
 
 
-    /// Returns a (const) reference to the \f$i\f$-th vertex.
+    /// Returns a (const) reference to the `i`-th vertex.
     const Point_2& operator[](std::size_t i) const
       { return vertex(i); }
 
-    /// Returns the \f$i\f$-th edge.
+    /// Returns the `i`-th edge.
     Segment_2 edge(std::size_t i) const
       { return *(edges_begin() + i); }
 

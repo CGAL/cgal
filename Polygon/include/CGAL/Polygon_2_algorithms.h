@@ -141,7 +141,7 @@ Bbox_2 bbox_2(InputIterator first,
 /// `[first,last)`. The area is returned in the parameter
 /// `result`. The sign is positive for counterclockwise polygons, negative for
 /// clockwise polygons. If the polygon is not simple, the area is not well defined.
-/// The functionality is also available by the `polygon_area_2` function, which
+/// The functionality is also available by the `polygon_area_2()` function, which
 /// returns the area instead of taking it as a parameter.
 /// 
 /// \requires `Traits` is a model of the concept 

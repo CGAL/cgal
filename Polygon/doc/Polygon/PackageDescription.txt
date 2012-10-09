@@ -8,7 +8,7 @@
 
 /*!
 \addtogroup PkgPolygon2
-\todo check generated documentation
+
 \PkgDescriptionBegin{2D Polygons,PkgPolygon2Summary}
 \PkgPicture{polygon.png}
 \PkgAuthors{Geert-Jan Giezeman and Wieger Wesselink}
