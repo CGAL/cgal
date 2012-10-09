@@ -61,33 +61,33 @@ std::pair< Data_type, bool> operator()(const Key_type& p);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-generates the interpolated function value
-computed by Farin's interpolant \cite f-sodt-90.
+generates the interpolated function value computed by Farin's interpolant.
+
 \pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
 \pre The range \f$ \left[\right.\f$ `first`, `beyond`\f$ \left.\right)\f$ contains either one or more than three element
-The function `farin_c1_interpolation` interpolates the function values and the 
+The function `farin_c1_interpolation()` interpolates the function values and the 
 gradients that are provided by functors using the method described in \cite f-sodt-90. 
 
 ### Parameters ###
 
-`RandomAccessIterator::value_type` is a pair 
+The value type of `RandomAccessIterator` is a pair 
 associating a point to a (non-normalized) barycentric coordinate. See 
-`CGALL::sibson_c1_interpolation` for the other parameters. 
+`sibson_c1_interpolation()` for the other parameters. 
 
 ### Requirements ###
 
-Same requirements as for `sibson_c1_interpolation` only the 
+Same requirements as for `sibson_c1_interpolation()` only the 
 iterator must provide random access and `Traits::FT` does not need 
 to provide the square root operation. 
 
 \sa `CGAL::Data_access<Map>` 
-\sa CGAL::linear_interpolation 
-\sa CGAL::sibson_c1_interpolation 
-\sa CGAL::sibson_gradient_fitting 
+\sa `CGAL::linear_interpolation()` 
+\sa `CGAL::sibson_c1_interpolation()` 
+\sa `CGAL::sibson_gradient_fitting()` 
 \sa `CGAL::Interpolation_traits_2<K>`
-\sa CGAL::natural_neighbor_coordinates_2 
-\sa CGAL::regular_neighbor_coordinates_2 
-\sa CGAL::surface_neighbor_coordinates_3 
+\sa `CGAL::natural_neighbor_coordinates_2()` 
+\sa `CGAL::regular_neighbor_coordinates_2()` 
+\sa `CGAL::surface_neighbor_coordinates_3()` 
 
 s. 
 */
@@ -105,10 +105,10 @@ Traits& traits);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The function `linear_interpolation` computes the weighted sum of the function 
+The function `linear_interpolation()` computes the weighted sum of the function 
 values which must be provided via a functor. 
 
-`ForwardIterator::value_type` is a pair associating a point to a (non-normalized) barycentric
+The value type of `ForwardIterator` is a pair associating a point to a (non-normalized) barycentric
 coordinate. `norm` is the normalization factor. Given a point,
 the functor `function_values` allows to access a pair of a
 function value and a Boolean. The Boolean indicates whether the
@@ -121,28 +121,28 @@ range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
 ### Requirements ###
 
 <OL> 
-<LI>`ForwardIterator::value_type` is a pair of 
+<LI>The value type of `ForwardIterator` is a pair of 
 point/coordinate value, thus 
-`ForwardIterator::value_type::first_type` is equivalent to a 
-point and `ForwardIterator::value_type::second_type` is a 
+`std::iterator_traits<ForwardIterator>::value_type::first_type` is equivalent to a 
+point and `std::iterator_traits<ForwardIterator>::value_type::second_type` is a 
 field number type. 
 <LI>`Functor::argument_type` must be equivalent to 
-`ForwardIterator::value_type::first_type` and 
+`std::iterator_traits<ForwardIterator>::value_type::first_type` and 
 `Functor::result_type` is a pair of the function value type 
 and a Boolean value. The function value type must provide a 
 multiplication and addition operation with the field number type 
-`ForwardIterator::value_type::second_type` and a constructor 
+`std::iterator_traits<ForwardIterator>::value_type::second_type` and a constructor 
 with argument \f$ 0\f$. A model of the functor is provided by the 
 struct `Data_access`. It must be instantiated accordingly with 
-an associative container (e.g. \stl `std::map`) having the 
+an associative container (e.g. `std::map`) having the 
 point type as `key_type` and the function value type as 
 `mapped_type`. 
 </OL> 
 
 \sa `CGAL::Data_access<Map>` 
-\sa CGAL::natural_neighbor_coordinates_2 
-\sa CGAL::regular_neighbor_coordinates_2 
-\sa CGAL::surface_neighbor_coordinates_3 
+\sa `CGAL::natural_neighbor_coordinates_2()`
+\sa `CGAL::regular_neighbor_coordinates_2()`
+\sa `CGAL::surface_neighbor_coordinates_3()` 
 
 */
 template < class ForwardIterator, class Functor> typename
@@ -173,19 +173,19 @@ See `sibson_c1_interpolation`.
 ### Requirements ###
 
 Same requirements as for 
-`sibson_c1_interpolation` only that `Traits::FT` does not need 
+`sibson_c1_interpolation()` only that `Traits::FT` does not need 
 to provide the square root operation. 
 
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 
 \sa `CGAL::Data_access<Map>` 
-\sa CGAL::sibson_gradient_fitting 
-\sa CGAL::linear_interpolation 
+\sa `CGAL::sibson_gradient_fitting()`
+\sa `CGAL::linear_interpolation()`
 \sa `CGAL::Interpolation_traits_2<K>` 
 \sa `CGAL::Interpolation_gradient_fitting_traits_2<K>` 
-\sa CGAL::natural_neighbor_coordinates_2 
-\sa CGAL::regular_neighbor_coordinates_2 
-\sa CGAL::surface_neighbor_coordinates_3 
+\sa `CGAL::natural_neighbor_coordinates_2()` 
+\sa `CGAL::regular_neighbor_coordinates_2()`
+\sa `CGAL::surface_neighbor_coordinates_3()`
 */
 template < class ForwardIterator, class Functor, class
 GradFunctor, class Traits> typename Functor::result_type
@@ -219,7 +219,7 @@ interpolated function value as first and `true` as second value. \pre
 
 The template parameter `Traits` is to be 
 instantiated with a model of `InterpolationTraits`. 
-`ForwardIterator::value_type` is a pair associating a point to a 
+The value type of `ForwardIterator` is a pair associating a point to a 
 (non-normalized) barycentric coordinate. `norm` is the 
 normalization factor. The range \f$ \left[\right.\f$ 
 `first`,`beyond`\f$ \left.\right)\f$ contains the barycentric 
@@ -233,10 +233,10 @@ function gradient given a point.
 <OL> 
 <LI>`Traits` is a model of the concept 
 `InterpolationTraits`. 
-<LI>`ForwardIterator::value_type` is a point/coordinate pair. 
-Precisely `ForwardIterator::value_type::first_type` is 
+<LI>The value type of `ForwardIterator` is a point/coordinate pair. 
+Precisely `std::iterator_traits<ForwardIterator>::value_type::first_type` is 
 equivalent to `Traits::Point_d` and 
-`ForwardIterator::value_type::second_type` is equivalent to 
+`std::iterator_traits<ForwardIterator>::value_type::second_type` is equivalent to 
 `Traits::FT`. 
 <LI>`Functor::argument_type` must be equivalent to 
 `Traits::Point_d` and `Functor::result_type` is a pair of 
@@ -261,13 +261,13 @@ the square root operation `sqrt()`.
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 
 \sa `CGAL::Data_access<Map>` 
-\sa CGAL::sibson_gradient_fitting 
-\sa CGAL::linear_interpolation 
+\sa `CGAL::sibson_gradient_fitting()`
+\sa `CGAL::linear_interpolation()`
 \sa `CGAL::Interpolation_traits_2<K>` 
 \sa `CGAL::Interpolation_gradient_fitting_traits_2<K>` 
-\sa CGAL::natural_neighbor_coordinates_2 
-\sa CGAL::regular_neighbor_coordinates_2 
-\sa CGAL::surface_neighbor_coordinates_3 
+\sa `CGAL::natural_neighbor_coordinates_2()`
+\sa `CGAL::regular_neighbor_coordinates_2()`
+\sa `CGAL::surface_neighbor_coordinates_3()` 
 */
 template < class ForwardIterator, class Functor, class
 GradFunctor, class Traits> std::pair< typename Functor::result_type,
@@ -282,7 +282,7 @@ traits);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The same as `CGAL::sibson_interpolation` except that no square root
+The same as `sibson_interpolation()` except that no square root
 operation is needed for FT.
 */
 template < class ForwardIterator, class Functor, class

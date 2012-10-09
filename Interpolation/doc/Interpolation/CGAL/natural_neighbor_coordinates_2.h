@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgInterpolation2NatNeighbor
 
 The function `natural_neighbor_coordinates_2` computes natural neighbor coordinates, also 
-called Sibson's coordinates, for \f$ 2D\f$ points provided a two-dimensional 
+called Sibson's coordinates, for `2D` points provided a two-dimensional 
 triangulation and a query point in the convex hull of the vertices 
 of the triangulation. 
 
@@ -40,10 +40,10 @@ convex hull, the coordinate values cannot be computed and the third
 value of the result triple is set to `false`. 
 
 
-\sa CGAL::linear_interpolation 
-\sa CGAL::sibson_c1_interpolation 
-\sa CGAL::surface_neighbor_coordinates_3 
-\sa CGAL::regular_neighbor_coordinates_2 
+\sa `CGAL::linear_interpolation()`
+\sa `CGAL::sibson_c1_interpolation()` 
+\sa `CGAL::surface_neighbor_coordinates_3()` 
+\sa `CGAL::regular_neighbor_coordinates_2()` 
 
 */
 /// @{
@@ -71,8 +71,8 @@ natural_neighbor_coordinates_2(
 The same as above. `hole_begin` and `hole_end` determines the
 iterator range over the boundary edges of the conflict zone of `p` in
 the triangulation. It is the result of the function
-`T.get_boundary_of_conflicts(p,std::back_inserter(hole), start)`, see
-`Delaunay_triangulation_2<Traits, Tds>`.
+\link Delaunay_triangulation_2::get_boundary_of_conflicts()
+`dt.get_boundary_of_conflicts(p,std::back_inserter(hole), start)`\endlink.
 */
 template <class Dt, class OutputIterator,
 class EdgeIterator > CGAL::Triple< OutputIterator, typename Dt::Geom_traits::FT, 

@@ -4,7 +4,7 @@ namespace CGAL {
 \defgroup surface_neighbor_coordinates_3 surface_neighbor_coordinates_3
 \ingroup PkgInterpolation2SurfaceNeighbor
 
-The function `surface_neighbor_coordinates_3` computes natural neighbor coordinates for 
+The function `surface_neighbor_coordinates_3()` computes natural neighbor coordinates for 
 surface points associated to a finite set of sample points issued from 
 the surface. The coordinates are computed from the intersection of the 
 Voronoi cell of the query point `p` with the tangent plane to the 
@@ -14,14 +14,13 @@ and in \cite bf-lcss-02,\cite cgal:f-csapc-03. The query
 point `p` needs to lie inside the convex hull of the projection of 
 the sample points onto the tangent plane at `p`. 
 
-The functions `surface_neighbor_coordinates_certified_3` return, in
+The functions `surface_neighbor_coordinates_certified_3()` return, in
 addition, a second Boolean value (the fourth value of the quadruple)
 that certifies whether or not, the Voronoi cell of `p` can be affected
 by points that lie outside the input range, i.e. outside the ball
 centered on `p` passing through the furthest sample point from `p` in
-the range \f$ \left[\right.\f$`first`, `beyond`\f$
-\left.\right)\f$. If the sample points are collected by a \f$
-k\f$-nearest neighbor or a range search query, this permits to check
+the range `[first, beyond)`. If the sample points are collected by a
+`k`-nearest neighbor or a range search query, this permits to check
 whether the neighborhood which has been considered is large enough.
 
 ### Requirements ###
@@ -29,24 +28,24 @@ whether the neighborhood which has been considered is large enough.
 <OL> 
 <LI>`Dt` is equivalent to the class 
 `Delaunay_triangulation_3`. 
-<LI>`OutputIterator::value_type` is equivalent to 
+<LI>The value type of `OutputIterator` is equivalent to 
 `std::pair<Dt::Point_3, Dt::Geom_traits::FT>`, i.e. a pair 
 associating a point and its natural neighbor coordinate. 
 <LI>`ITraits` is equivalent to the class `Voronoi_intersection_2_traits_3<K>`. 
 </OL> 
 
-\sa CGAL::linear_interpolation 
-\sa CGAL::sibson_c1_interpolation 
-\sa CGAL::farin_c1_interpolation 
-\sa CGAL::Voronoi_intersection_2_traits_3<K> 
-\sa CGAL::surface_neighbors_3 
+\sa `CGAL::linear_interpolation()`
+\sa `CGAL::sibson_c1_interpolation()` 
+\sa `CGAL::farin_c1_interpolation()`
+\sa `CGAL::Voronoi_intersection_2_traits_3<K>`
+\sa `CGAL::surface_neighbors_3()`
 
 ### Implementation ###
 
 This functions construct the regular triangulation of the input points 
 instantiated with `Voronoi_intersection_2_traits_3<Kernel>` or `ITraits` if provided. 
 They return the result of the function call 
-`CGAL::regular_neighbor_coordinates_2` 
+`regular_neighbor_coordinates_2()` 
 with the regular triangulation and `p` as arguments. 
 
 */
@@ -54,15 +53,15 @@ with the regular triangulation and `p` as arguments.
 
 /*!
 The sample points \f$ \mathcal{P}\f$ are provided in the range
-\f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
-`InputIterator::value_type` is the point type
+`[first`, beyond)`.
+The value type of `InputIterator` is the point type
 `Kernel::Point_3`. The tangent plane is defined by the point
 `p` and the vector `normal`. The parameter `K`
 determines the kernel type that will instantiate
 the template parameter of `Voronoi_intersection_2_traits_3<K>`. 
 
 The natural neighbor coordinates for `p` are computed in the
-power diagram that results from the intersection of the \f$ 3D\f$ Voronoi
+power diagram that results from the intersection of the `3D` Voronoi
 diagram of \f$ \mathcal{P}\f$ with the tangent plane. The sequence of
 point/coordinate pairs that is computed by the function is placed
 starting at `out`. The function returns a triple with an
@@ -93,7 +92,7 @@ ITraits& traits);
 /*!
 Similar to the first function. The additional fourth return
 value is `true` if the furthest point in the range
-\f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$ is further
+`[first, beyond)` is further
 away from `p` than twice the distance from `p` to the
 furthest vertex of the intersection of the Voronoi cell of `p`
 with the tangent plane defined by `(p,normal)`. It is
@@ -109,8 +108,7 @@ K);
 /*!
 The same as above except that this function takes the
 maximal distance from p to the points in the range
-\f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$ as
-additional parameter.
+`[first, beyond)` as additional parameter.
 */
 template <class OutputIterator,
 class InputIterator, class Kernel> CGAL::Quadruple< OutputIterator,
@@ -166,7 +164,7 @@ Dt::Geom_traits::Vector_3& normal, OutputIterator out, typename
 Dt::Cell_handle start = typename Dt::Cell_handle());
 
 /*!
-The same as above only that the parameter `traits` instantiates
+The same as above only that the parameter traits instantiates
 the geometric traits class. Its type `ITraits` must be
 equivalent to `Voronoi_intersection_2_traits_3<K>`.
 */

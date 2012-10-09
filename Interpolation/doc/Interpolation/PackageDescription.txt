@@ -3,6 +3,7 @@
 /// \defgroup PkgInterpolation2Concepts Concepts
 /// \ingroup PkgInterpolation2
 
+
 /// \defgroup PkgInterpolation2Interpolation Interpolation Functions
 /// \ingroup PkgInterpolation2
 
@@ -15,7 +16,6 @@
 
 /*!
 \addtogroup PkgInterpolation2
-\todo check generated documentation
 \PkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2Summary}
 \PkgPicture{interpolation.png}
 \PkgAuthor{Julia Fl&ouml;totto}
@@ -37,10 +37,10 @@ function gradients are known, we can exactly interpolate quadratic
 functions given barycentric coordinates. Any further properties of
 these interpolation functions depend on the properties of the
 barycentric coordinates. They are provided in this package under the
-name `linear_interpolation` and
-`quadratic_interpolation`.
+name `CGAL::linear_interpolation()` and
+`CGAL::quadratic_interpolation()`.
 
-## Natural neighbor interpolation ##
+## Natural Neighbor Interpolation ##
 
 Natural neighbor coordinates are defined by Sibson in 1980 and are based on the Voronoi
 diagram of the data points. Interpolation methods based on natural

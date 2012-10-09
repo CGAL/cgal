@@ -7,7 +7,7 @@ namespace CGAL {
 Given a 3D point `p` and a 3D Delaunay triangulation `dt`, 
  this function calculates the natural neighbors and coordinates of `p` with regard of `dt`.
  
-\tparam `OutputIterator` must have value type
+\tparam OutputIterator must have value type
        `std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>`
 
 Result : 

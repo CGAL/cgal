@@ -3,7 +3,7 @@
 \ingroup PkgInterpolation2Concepts
 \cgalconcept
 
-The function `sibson_gradient_fitting` is parameterized by a 
+The function `sibson_gradient_fitting()` is parameterized by a 
 traits class that defines the primitives used by the algorithm. The 
 concept `GradientFittingTraits` defines this common set of requirements. 
 
@@ -11,10 +11,10 @@ concept `GradientFittingTraits` defines this common set of requirements.
 
 \sa `InterpolationTraits` 
 \sa `CGAL::Interpolation_traits_2<K>` 
-\sa CGAL::sibson_gradient_fitting 
-\sa CGAL::sibson_c1_interpolation 
-\sa CGAL::farin_c1_interpolation 
-\sa CGAL::quadratic_interpolation 
+\sa CGAL::sibson_gradient_fitting() 
+\sa CGAL::sibson_c1_interpolation() 
+\sa CGAL::farin_c1_interpolation() 
+\sa CGAL::quadratic_interpolation() 
 
 */
 

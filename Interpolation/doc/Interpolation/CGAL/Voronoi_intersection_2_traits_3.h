@@ -9,7 +9,7 @@ namespace CGAL {
 `InterpolationTraits`. It can be used to instantiate the 
 geometric traits class of a two-dimensional regular triangulation. 
 A three-dimensional plane is defined by a point and a vector that 
-are members of the traits class. The triangulation is defined on \f$ 3D\f$ 
+are members of the traits class. The triangulation is defined on `3D` 
 points. It is the regular triangulation of the input points 
 projected onto the plane and each weighted with the negative squared 
 distance of the input point to the plane. It can be shown that it is 
@@ -24,9 +24,9 @@ templated by a kernel class `K`.
 \models ::RegularTriangulationTraits_2 
 
 \sa `RegularTriangulationTraits_2` 
-\sa CGAL::Regular_triangulation_2<Gt, Tds> 
-\sa CGAL::regular_neighbor_coordinates_2 
-\sa CGAL::surface_neighbor_coordinates_3 
+\sa `CGAL::Regular_triangulation_2<Gt, Tds>` 
+\sa `CGAL::regular_neighbor_coordinates_2()` 
+\sa `CGAL::surface_neighbor_coordinates_3()` 
 
 */
 template< typename K >

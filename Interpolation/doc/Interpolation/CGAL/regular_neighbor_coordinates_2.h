@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgInterpolation2NatNeighbor
 
 The function `regular_neighbor_coordinates_2` computes natural neighbor coordinates, also 
-called Sibson's coordinates, for weighted \f$ 2D\f$ points provided a 
+called Sibson's coordinates, for weighted `2D` points provided a 
 two-dimensional regular triangulation and a (weighted) query point 
 inside the convex hull of the vertices of the triangulation. We call these 
 coordinates regular neighbor coordinates. 
@@ -21,7 +21,7 @@ type `FT` which is a model for `FieldNumberType` and it must
 meet the requirements for the traits class of the 
 `polygon_area_2` function. A model of this traits class is 
 `Regular_triangulation_euclidean_traits_2<K, Weight>`. 
-<LI>`OutputIterator::value_type` is equivalent to 
+<LI>The value type of `OutputIterator` is equivalent to 
 `std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>`, i.e. a pair 
 associating a point and its regular neighbor coordinate. 
 </OL> 
@@ -35,7 +35,7 @@ returned by the function. If `p` lies outside the convex hull, the
 coordinate values cannot be computed and the third value of the result 
 triple is set to `false`. 
 
-\sa CGAL::natural_neighbor_coordinates_2 
+\sa `CGAL::natural_neighbor_coordinates_2()` 
 
 */
 /// @{
@@ -64,12 +64,12 @@ Rt::Face_handle start = typename Rt::Face_handle());
 /*!
 The same as above. `hole_begin` and `hole_end` determines the iterator
 range over the boundary edges of the conflict zone of `p` in the
-triangulation `rt`.  `hidden_vertices_begin` and `hidden_vertices_end`
+triangulation `rt`.  
+\link  Regular_triangulation_2::hidden_vertices_begin() `rt.hidden_vertices_begin()`\endlink and 
+\link  Regular_triangulation_2::hidden_vertices_end() `rt.hidden_vertices_end()`\endlink
 determines the iterator range over the hidden vertices of the conflict
 zone of `p` in`rt`. It is the result of the function
-`T.get_boundary_of_conflicts(p,std::back_inserter(hole),
-std::back_inserter(hidden_vertices), start)`, see
-`Regular_triangulation_2<Traits, Tds>`.
+\link Regular_triangulation_2::get_boundary_of_conflicts() `rt.get_boundary_of_conflicts(p,std::back_inserter(hole), std::back_inserter(hidden_vertices), start)`\endlink.
 */
 template <class Rt, class OutputIterator,
 class EdgeIterator, class VertexIterator > CGAL::Triple<
