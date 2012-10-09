@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Extreme
 
-The function `::ch_e_point` finds a point of a given set 
+The function `ch_e_point()` finds a point of a given set 
 of input points with maximal \f$ x\f$ coordinate. 
 
 It traverses the range [`first`,`beyond`).
@@ -12,7 +12,7 @@ After execution, the value of
 `*it` for all iterators `it` in the range. 
 
 The default traits class `Default_traits` is the kernel in which the 
-type `ForwardIterator::value_type` is defined. 
+value type of `ForwardIterator` is defined. 
 
 ### Requirements ###
 
@@ -42,7 +42,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Extreme
 
-The function `::ch_n_point` finds a point in a given set 
+The function `ch_n_point()` finds a point in a given set 
 of input points with maximal \f$ y\f$ coordinate. 
 
 It traverses the range [`first`,`beyond`).
@@ -81,7 +81,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Extreme
 
-The function `::ch_ns_point` finds the points of a given set 
+The function `ch_ns_point()` finds the points of a given set 
 of input points with minimal and maximal \f$ x\f$ coordinates. 
 
 It traverses the range [`first`,`beyond`).
@@ -92,7 +92,7 @@ After execution, the value of
 holds for all iterators in the range.
 
 The default traits class `Default_traits` is the kernel in which the 
-type `ForwardIterator::value_type` is defined. 
+value type of `ForwardIterator` is defined. 
 
 ### Requirements ###
 
@@ -123,7 +123,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Extreme
 
-The function `::ch_nswe_point` finds the four extreme points of a given set 
+The function `ch_nswe_point()` finds the four extreme points of a given set 
 of input points using a linear scan of the input points. 
 That is, it determines the points with maximal \f$ y\f$, minimal \f$ y\f$, 
 minimal \f$ x\f$, and maximal \f$ x\f$ coordinates. 
@@ -175,7 +175,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Extreme
 
-The function `::ch_s_point` finds a points in a given set 
+The function `ch_s_point()` finds a points in a given set 
 of input points with minimal \f$ y\f$ coordinates. 
 
 It traverses the range [`first`,`beyond`).
@@ -214,7 +214,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Extreme
 
-The function `::ch_we_point` finds two points of a given set 
+The function `ch_we_point()` finds two points of a given set 
 of input points with minimal and maximal \f$ x\f$ coordinates. 
 
 It traverses the range [`first`,`beyond`).
@@ -256,7 +256,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Extreme
 
-The function `::ch_w_point` finds a point in a given set 
+The function `ch_w_point()` finds a point in a given set 
 of input points with minimal \f$ x\f$ coordinate. 
 
 It traverses the range [`first`,`beyond`).

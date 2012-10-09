@@ -13,14 +13,13 @@ cyclic sequence of extreme points is cut into a linear sequence.
 
 
 The default traits class `Default_traits` is the kernel in which the 
-type `InputIterator::value_type` is defined. 
+value type of  `InputIteratore` is defined. 
 
 ### Requirements ###
 
 <OL> 
-<LI>`InputIterator::value_type` and 
-`OutputIterator::value_type` 
-are equivalent to `Traits::Point_2`. 
+<LI>The value type of `InputIterator` and 
+`OutputIterator` is equivalent to `Traits::Point_2`. 
 <LI>`Traits` defines the following subset of types from 
 the concept `ConvexHullTraits_2` and their corresponding member 
 functions that return instances of these types: 
@@ -65,7 +64,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `::ch_graham_andrew_scan` generates the counterclockwise sequence of extreme 
+The function `ch_graham_andrew_scan()` generates the counterclockwise sequence of extreme 
 points from a given set of input points that are not left of the line defined 
 by the first and last points in this sequence. 
 
@@ -99,7 +98,7 @@ requires \f$ O(n \log n)\f$ time in the worst case for \f$ n\f$ input points.
 
 ### Example ###
 
-In the following example `::ch_graham_andrew_scan` is used to 
+In the following example `ch_graham_andrew_scan()` is used to 
 realize Anderson's variant \cite a-readc-78 of the Graham Scan 
 \cite g-eadch-72. The points are sorted counterclockwise around the leftmost 
 point using the `Less_rotate_ccw_2` predicate, as defined in 
@@ -117,7 +116,7 @@ OutputIterator
 ch_graham_anderson( InputIterator first, InputIterator beyond, 
 OutputIterator result, const Traits& ch_traits) 
 { 
-typedef typename Traits::Less_xy_2 Less_xy_2; 
+typedef typename TraitsLess_xy_2 Less_xy_2; 
 typedef typename Traits::Point_2 Point_2; 
 typedef typename Traits::Less_rotate_ccw_2 Less_rotate_ccw_2; 
 

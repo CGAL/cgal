@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgConvexHull2Traits
 
 \deprecated The functionality of this class has been generalized to other packages than 2D convex hulls. 
-The more general class `Projection_traits_xy_3` can be found in the 2D and 3D Linear Geometric Kernel. 
+The more general class `Projection_traits_xz_3` can be found in the 2D and 3D Linear Geometric Kernel. 
 Note that the deprecated class was templated by a point class, whereas the new class 
 is templated by a geometric kernel. 
 

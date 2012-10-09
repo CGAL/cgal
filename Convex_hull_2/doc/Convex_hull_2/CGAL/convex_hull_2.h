@@ -20,8 +20,8 @@ cyclic sequence of extreme points is cut into a linear sequence.
 ### Requirements ###
 
 <OL> 
-<LI>`InputIterator::value_type` and `OutputIterator::value_type` 
-are equivalent to `Traits::Point_2`. 
+<LI>The value type of `InputIterator` and `OutputIterator` 
+is equivalent to `Traits::Point_2`. 
 <LI>`Traits` contains the following subset of types from 
 the concept `ConvexHullTraits_2` and their corresponding member 
 functions that return instances of these types: 
@@ -81,7 +81,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `::lower_hull_points_2` generates the counterclockwise sequence of extreme 
+The function `lower_hull_points_2()` generates the counterclockwise sequence of extreme 
 points on the lower hull of a given set of input points. 
 
 It generates the counterclockwise sequence of extreme points
@@ -97,17 +97,17 @@ rightmost point are equal) the extreme point is reported.
 `result`.
 
 The default traits class `Default_traits` is the kernel in which the 
-type `InputIterator::value_type` is defined. 
+value type of `InputIterator` is defined. 
 
-The different treatment by `::upper_hull_points_2` of the case that 
+The different treatment by `upper_hull_points_2()` of the case that 
 all points are equal ensures that concatenation of lower and upper hull 
 points gives the sequence of extreme points. 
 
 ### Requirements ###
 
 <OL> 
-<LI>`InputIterator::value_type` and `OutputIterator::value_type` 
-are equivalent to `Traits::Point_2`. 
+<LI>The value type of `InputIterator` and `OutputIterator` 
+is equivalent to `Traits::Point_2`. 
 <LI>`Traits` contains the following subset of types from 
 the concept `ConvexHullTraits_2` and their corresponding member 
 functions that return instances of these types: 
@@ -145,7 +145,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `::upper_hull_points_2` generates the counterclockwise sequence of extreme 
+The function `upper_hull_points_2()` generates the counterclockwise sequence of extreme 
 points on the upper hull of a given set of input points. 
 
 It generates the counterclockwise sequence of extreme points
@@ -161,17 +161,17 @@ rightmost point are equal), the extreme point is not reported.
 `result`.
 
 The default traits class `Default_traits` is the kernel in which the 
-type `InputIterator::value_type` is defined. 
+value type of `InputIterator` is defined. 
 
-The different treatment by `::lower_hull_points_2` of the case that 
+The different treatment by `lower_hull_points_2()` of the case that 
 all points are equal ensures that concatenation of lower and upper hull 
 points gives the sequence of extreme points. 
 
 ### Requirements ###
 
 <OL> 
-<LI>`InputIterator::value_type` and `OutputIterator::value_type` 
-are equivalent to `Traits::Point_2`. 
+<LI>The value type of `InputIterator` and `OutputIterator` 
+is equivalent to `Traits::Point_2`. 
 <LI>`Traits` contains the following subset of types from 
 the concept `ConvexHullTraits_2` and their corresponding member 
 functions that return instances of these types: 

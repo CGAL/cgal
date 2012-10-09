@@ -13,7 +13,7 @@ is specified with each function.
 \hasModel `CGAL::Convex_hull_traits_2<R>`
 \hasModel `CGAL::Projection_traits_xy_3<K>`
 \hasModel `CGAL::Projection_traits_yz_3 <K>`
-\hasModel `CGAL::Projection_traits_zx_3<K>`
+\hasModel `CGAL::Projection_traits_xz_3<K>`
 \hasModel `CGAL::Convex_hull_projective_xy_traits_2<Point_3>`
 \hasModel `CGAL::Convex_hull_projective_xz_traits_2<Point_3>`
 \hasModel `CGAL::Convex_hull_projective_yz_traits_2<Point_3>`

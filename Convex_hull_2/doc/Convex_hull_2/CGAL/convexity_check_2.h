@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Convexity
 
-The function `::is_ccw_strongly_convex_2` determines if a given sequence of points defines 
+The function `is_ccw_strongly_convex_2()` determines if a given sequence of points defines 
 a counterclockwise-oriented, strongly convex polygon. 
 It returns `true`, iff the point elements in 
 [`first`,`beyond`)
@@ -14,7 +14,7 @@ if it consists of only extreme points
 (<I>i.e.</I>, vertices of the convex hull). 
 
 The default traits class `Default_traits` is the kernel in which the 
-type `ForwardIterator::value_type` is defined. 
+value type of `ForwardIterator` is defined. 
 
 ### Requirements ###
 
@@ -51,7 +51,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Convexity
 
-The function `::is_cw_strongly_convex_2` determines if a given sequence of points defines 
+The function `is_cw_strongly_convex_2()` determines if a given sequence of points defines 
 a clockwise-oriented, strongly convex polygon. 
 It returns `true`, iff the point elements in 
 [`first`,`beyond`)
@@ -63,7 +63,7 @@ if it consists of only extreme points
 (<I>i.e.</I>, vertices of the convex hull). 
 
 The default traits class `Default_traits` is the kernel in which the 
-type `ForwardIterator::value_type` is defined. 
+value type of `ForwardIterator` is defined. 
 
 ### Requirements ###
 

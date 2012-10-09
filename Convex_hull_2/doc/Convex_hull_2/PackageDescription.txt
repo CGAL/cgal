@@ -20,7 +20,7 @@
 
 /*!
 \addtogroup PkgConvexHull2
-\todo check generated documentation
+
 \PkgDescriptionBegin{2D Convex Hulls and Extreme Points,PkgConvexHull2Summary}
 \PkgPicture{Convex_hull_2/fig/convex_hull.png}
 \PkgAuthors{Susan Hert and Stefan Schirra}

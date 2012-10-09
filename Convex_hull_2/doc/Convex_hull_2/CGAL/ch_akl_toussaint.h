@@ -11,14 +11,13 @@ sequence is returned. It is not specified at which point the
 cyclic sequence of extreme points is cut into a linear sequence.
 \pre The source range [`first`,`beyond`) does not contain `result`.
 The default traits class `Default_traits` is the kernel in which the 
-type `ForwardIterator::value_type` is defined. 
+value type of `ForwardIterator` is defined. 
 
 ### Requirements ###
 
 <OL> 
-<LI>`ForwardIterator::value_type` and 
-`OutputIterator::value_type` 
-are equivalent to `Traits::Point_2`. 
+<LI>The value type of `ForwardIterator` and 
+`OutputIterator` are equivalent to `Traits::Point_2`. 
 <LI>`Traits` defines the following subset of types from 
 the concept `ConvexHullTraits_2` and their corresponding member 
 functions that return instances of these types: 
