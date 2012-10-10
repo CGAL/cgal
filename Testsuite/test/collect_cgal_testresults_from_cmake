@@ -129,6 +129,7 @@ parse_lib_building_results()
   fi  
   
   if [ -z "${configured}" ] ; then
+    y_or_no='r'
     echo "Not configured!" >> ${libname}_${shared_or_static}/$TEST_REPORT
   fi
   
