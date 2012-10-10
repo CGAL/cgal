@@ -4,11 +4,11 @@
 \cgalconcept
 
 Defines the requirements that a 
-`Sublayer_type` of class `Range_tree_d` 
-or `Segment_tree_d` has to fulfill. 
+`Sublayer_type` of class `CGAL::Range_tree_d` 
+or `CGAL::Segment_tree_d` has to fulfill. 
 
 First of all, the class has to be derived from the abstract base 
-class `Tree_base` and therefore 
+class `CGAL::Tree_base` and therefore 
 has to provide methods 
 `make_tree`, `window_query`, 
 `enclosing_query` and 
@@ -22,7 +22,7 @@ builds a recursion anchor for class
 return `true`, `false` otherwise. 
 
 Such a recursion anchor class is provided by the class class. 
-`Tree_anchor<Data, Window>`. 
+`CGAL::Tree_anchor<Data, Window>`. 
 
 */
 

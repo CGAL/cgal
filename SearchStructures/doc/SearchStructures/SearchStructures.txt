@@ -14,43 +14,43 @@ data structures.
 
 # Definitions # {#SearchStructuresDefinitions}
 
-This section presents \f$ d\f$-dimensional range and segment trees.
+This section presents ` d`-dimensional range and segment trees.
 A one-dimensional range tree is a binary search tree on 
 <I>one-dimensional point data</I>. 
 Here we call all one-dimensional data types having a strict ordering
 (like integer and double) <I>point data</I>. 
-<I>\f$ d\f$-dimensional point data</I> are \f$ d\f$-tuples of one-dimensional 
+<I>` d`-dimensional point data</I> are ` d`-tuples of one-dimensional 
 point data.
 
 A one-dimensional segment tree is a binary search tree as well, but with
 <I>one-dimensional interval data</I> as input data.
-One-dimensional interval data is a pair (i.e., 2-tuple) \f$ (a,b)\f$, where \f$ a\f$ 
-and \f$ b\f$ are one-dimensional point data of the same type and \f$ a< b\f$. 
-The pair \f$ (a,b)\f$ represents a half open interval \f$ [a,b)\f$.
-Analogously, a \f$ d\f$-dimensional interval is represented by a \f$ d\f$-tuple of
+One-dimensional interval data is a pair (i.e., 2-tuple) ` (a,b)`, where ` a` 
+and ` b` are one-dimensional point data of the same type and ` a< b`. 
+The pair ` (a,b)` represents a half open interval ` [a,b)`.
+Analogously, a ` d`-dimensional interval is represented by a ` d`-tuple of
 one-dimensional intervals.
 
-The <I>input data type</I> for a \f$ d\f$-dimensional tree is a container 
-class consisting of a \f$ d\f$-dimensional point data type, interval data type 
+The <I>input data type</I> for a ` d`-dimensional tree is a container 
+class consisting of a ` d`-dimensional point data type, interval data type 
 or a mixture of both, and optionally a <I>value type</I>, which 
 can be used to store arbitrary data. 
-E.g., the \f$ d\f$-dimensional bounding box of a \f$ d\f$-dimensional polygon 
-may define the interval data of a \f$ d\f$-dimensional segment tree and
+E.g., the ` d`-dimensional bounding box of a ` d`-dimensional polygon 
+may define the interval data of a ` d`-dimensional segment tree and
 the polygon itself can be stored as its value. 
 An <I>input data item</I> is an instance of an input data type.
 
 The range and segment tree classes are fully generic in the sense that they 
 can be used to define <I>multilayer trees</I>. 
-A multilayer tree of dimension (number of layers) \f$ d\f$ is a simple tree in 
-the \f$ d\f$-th layer, whereas the \f$ k\f$-th layer, \f$ 1\leq k\leq d-1\f$, of the tree 
+A multilayer tree of dimension (number of layers) ` d` is a simple tree in 
+the ` d`-th layer, whereas the ` k`-th layer, ` 1 <= k <= d-1`, of the tree 
 defines a tree where each (inner) vertex contains a multilayer tree of 
-dimension \f$ d-k+1\f$.
-The \f$ k-1\f$-dimensional tree which is nested in the \f$ k\f$-dimensional tree 
-(\f$ T\f$) is called the <I>sublayer tree</I> (of \f$ T\f$).
-For example, a \f$ d\f$-dim tree can be a range tree on the first layer, 
-constructed with respect to the first dimension of \f$ d\f$-dimensional data 
+dimension ` d-k+1`.
+The ` k-1`-dimensional tree which is nested in the ` k`-dimensional tree 
+(` T`) is called the <I>sublayer tree</I> (of ` T`).
+For example, a ` d`-dim tree can be a range tree on the first layer, 
+constructed with respect to the first dimension of ` d`-dimensional data 
 items.
-On all the data items in each subtree, a \f$ (d-1)\f$-dimensional tree is built,
+On all the data items in each subtree, a ` (d-1)`-dimensional tree is built,
 either a range or a segment tree, with respect to the second dimension of 
 the data items.
 And so on.
@@ -71,7 +71,7 @@ As value type we can choose `string`.
 For this generality we have to
 define what the tree of each dimension looks like and how the
 input data is organized.
-For dimension \f$ k\f$, \f$ 1\le k\le 4\f$, \cgal/ provides ready-to-use
+For dimension ` k`, ` 1 < k < 4`, \cgal provides ready-to-use
 range and segment trees that can store k-dimensional keys
 (intervals resp.). 
 Examples illustrating the use of these classes are given in
@@ -94,7 +94,7 @@ type information the sublayers could be created. This approach lead to nested
 template arguments, since the sublayer tree can again have a template
 argument defining the sublayer. Therefore, the internal class and function
 identifiers got longer than a compiler-dependent limit.
-This happend already for \f$ d=2\f$.
+This happend already for ` d=2`.
 
 Therefore, we chose another, object oriented,
 design. We defined a pure
@@ -200,7 +200,7 @@ range.
 The derived classes `Range_tree_d` and `Segment_tree_d`
 additionally get an argument called
 `Tree_traits` which defines the interface between the
-`Data` and the tree. Let the `Data` type be a \f$ d\f$-dimensional
+`Data` and the tree. Let the `Data` type be a ` d`-dimensional
 tuple, which is either a point data or an interval data in each
 dimension. Then, the class `Tree_traits` provides accessors to
 the point (resp. interval) data of that tree layer and a compare
@@ -217,44 +217,44 @@ An example implementation for these classes is listed below.
 
 \code{.cpp}
 struct Data{
-int min,max; // interval data
-double point; // point data
+  int min,max; // interval data
+  double point; // point data
 };
 
 struct Window{
-int min,max;
-double min_point, max_point;
+  int min,max;
+  double min_point, max_point;
 };
 
 class Point_traits{
 public:
-typedef double Key;
-Key get_key(Data& d){return d.point;} // key accesso
-Key get_left(Window& w){return w.min_point;}
-Key get_right(Window& w){return w.max_point;}
-bool comp(Key& key1, Key& key2){return (key1 < key2);} 
-}
+  typedef double Key;
+  Key get_key(Data& d){return d.point;} // key accesso
+  Key get_left(Window& w){return w.min_point;}
+  Key get_right(Window& w){return w.max_point;}
+  bool comp(Key& key1, Key& key2){return (key1 < key2);} 
+};
 
 class Interval_traits{
 public:
-typedef int Key;
-Key get_left(Data& d){return d.min;}
-Key get_right(Data& d){return d.max;}
-Key get_left_win(Window& w){return w.min;}
-Key get_right_win(Window& w){return w.max;}
-static bool comp(Key& key1, Key& key2){return (key1 < key2);} 
-}
+  typedef int Key;
+  Key get_left(Data& d){return d.min;}
+  Key get_right(Data& d){return d.max;}
+  Key get_left_win(Window& w){return w.min;}
+  Key get_right_win(Window& w){return w.max;}
+  static bool comp(Key& key1, Key& key2){return (key1 < key2);} 
+};
 \endcode
 
 \section general Creating an Arbitrary Multilayer Tree 
 
 Now let us have a closer look on how a multilayer tree is built.
-In case of creating a \f$ d\f$-dimensional tree, we handle a
+In case of creating a ` d`-dimensional tree, we handle a
 sequence of arbitrary data
-items, where each item defines a \f$ d\f$-dimensional interval, point
+items, where each item defines a ` d`-dimensional interval, point
 or other object. The tree is constructed with an iterator over
-this structure. In the \f$ i\f$-th layer, the tree is
-built with respect to the data slot that defines the \f$ i\f$-th
+this structure. In the ` i`-th layer, the tree is
+built with respect to the data slot that defines the ` i`-th
 dimension. Therefore, we need to define which data slot
 corresponds to which dimension.
 In addition we want our tree to work with arbitrary data items.
@@ -265,7 +265,7 @@ form of a traits class using
 function objects.
 These classes provide
 access functions to a specified data slot of a data item.
-A \f$ d\f$-dimensional tree is then defined separately for each layer by
+A ` d`-dimensional tree is then defined separately for each layer by
 defining a traits class for each layer.
 
 \section secrange_trees Range Trees 
@@ -276,17 +276,17 @@ The point data of the tree is stored in the leaves.
 Each inner vertex stores the highest entry of its left subtree.
 The version of a range tree implemented here is static, which means that 
 after construction of the tree, no elements be inserted or deleted.
-A \f$ d\f$-dimensional range tree is a binary leaf search tree according to the 
-first dimension of the \f$ d\f$-dimensional point data, where each vertex contains 
-a \f$ (d-1)\f$-dimensional search tree of the points in the subtree (sublayer tree)
+A ` d`-dimensional range tree is a binary leaf search tree according to the 
+first dimension of the ` d`-dimensional point data, where each vertex contains 
+a ` (d-1)`-dimensional search tree of the points in the subtree (sublayer tree)
 with respect to the second dimension.
 See \cite bkos-cgaa-97 and \cite s-dasds-90 for more detailed information.
 
-A \f$ d\f$-dimensional range tree can be used to determine all
-\f$ d\f$-dimensional points that lie inside a given \f$ d\f$-dimensional
+A ` d`-dimensional range tree can be used to determine all
+` d`-dimensional points that lie inside a given ` d`-dimensional
 interval (`window_query`).
 
-The pictures below show a two-dimensional and a \f$d\f$-dimensional range tree.
+The pictures below show a two-dimensional and a `d`-dimensional range tree.
 
 \image html range2.gif "A two and a d-dimensional range tree."
 
@@ -296,9 +296,9 @@ For the d-dimensional range tree, the figure shows one sublayer tree for each
 layer of the tree.
 
 The tree can be built in \f$ O(n\log^{d-1} n)\f$ time and
-needs \f$ O(n\log^{d-1} n)\f$ space. The \f$ d\f$-dimensional points that lie in the
-\f$ d\f$-dimensional query interval can be reported in \f$ O(\log^dn+k)\f$ time,
-where \f$ n\f$ is the total number of points and \f$ k\f$ is the number of
+needs \f$ O(n\log^{d-1} n)\f$ space. The ` d`-dimensional points that lie in the
+` d`-dimensional query interval can be reported in \f$ O(\log^dn+k)\f$ time,
+where ` n` is the total number of points and ` k` is the number of
 reported points. 
 
 \subsection secrange_tree_ex Example for Range Tree on Map-like Data 
@@ -339,8 +339,8 @@ int main()
   Range_tree_2.window_query(win, std::back_inserter(OutputList));
   std::vector<Key>::iterator current=OutputList.begin();
   while(current!=OutputList.end()){
-  std::cout << (*current).first.x() << "," << (*current).first.y()
-            << ":" << (*current++).second << std::endl;
+    std::cout << (*current).first.x() << "," << (*current).first.y()
+              << ":" << (*current++).second << std::endl;
 }
 }
 \endcode
@@ -398,20 +398,20 @@ build an elementary interval. Every leaf corresponds to an
 elementary interval.
 Inner vertices
 correspond to the union of the subtree intervals of the vertex.
-Each vertex or leaf \f$ v\f$ contains a sublayer type (or a
-list, if it is one-dimensional) that will contain all intervals \f$ I\f$, such that
-\f$ I\f$ contains the interval of vertex \f$ v\f$ but not the interval
-of the parent vertex of \f$ v\f$.
+Each vertex or leaf ` v` contains a sublayer type (or a
+list, if it is one-dimensional) that will contain all intervals ` I`, such that
+` I` contains the interval of vertex ` v` but not the interval
+of the parent vertex of ` v`.
 
-A \f$ d\f$-dimensional segment tree can be used to solve the following problems:
+A ` d`-dimensional segment tree can be used to solve the following problems:
 <UL>
-<LI>Determine all \f$ d\f$-dimensional intervals that contain a
-\f$ d\f$-dimensional point. This query type is called *inverse range query*.
-<LI>Determine all \f$ d\f$-dimensional intervals that enclose a
-given \f$ d\f$-dimensional interval
+<LI>Determine all ` d`-dimensional intervals that contain a
+` d`-dimensional point. This query type is called *inverse range query*.
+<LI>Determine all ` d`-dimensional intervals that enclose a
+given ` d`-dimensional interval
 (*enclosing query*).
-<LI>Determine all \f$ d\f$-dimensional intervals that partially overlap or are
-contained in a given \f$ d\f$-dimensional interval (*window query*).
+<LI>Determine all ` d`-dimensional intervals that partially overlap or are
+contained in a given ` d`-dimensional interval (*window query*).
 </UL>
 
 An example of a one-dimensional segment tree and an example
@@ -434,8 +434,8 @@ the second dimension of all data items of `v`.
 The tree can be built in \f$ O(n\log^{d} n)\f$ time and
 needs \f$ O(n\log^{d} n)\f$ space.
 The processing time for inverse range
-queries in an \f$ d\f$-dimensional segment tree is \f$ O(\log^d n
-+k)\f$ time, where \f$ n\f$ is the total number of intervals and \f$ k\f$ is
+queries in an ` d`-dimensional segment tree is \f$ O(\log^d n
++k)\f$ time, where ` n` is the total number of intervals and ` k` is
 the number of reported intervals.
 
 One possible application of a two-dimensional segment tree is the
