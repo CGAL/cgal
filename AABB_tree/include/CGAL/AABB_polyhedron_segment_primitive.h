@@ -36,14 +36,14 @@ namespace CGAL {
     /// polyhedron, which is used as id, and allows the construction
     /// of the datum on the fly. Since only the halfedge handle is
     /// stored in this primitive, the polyhedron from which the
-    /// AABB_tree is built should not be deleted while the AABB tree
+    /// AABB tree is built should not be deleted while the AABB tree
     /// is in use.
     ///
-    /// The template parameter \c GeomTraits provides a \c Point_3
-    /// type, used as \c Point, and a \c Segment_3 type, used as \c
+    /// The template parameter \c GeomTraits provides a \c %Point_3
+    /// type, used as \c Point, and a \c %Segment_3 type, used as \c
     /// Datum and constructible from two arguments of type \c
     /// Point. The template parameter \c Polyhedron should be a
-    /// CGAL::Polyhedron whose points have type \c Point.
+    /// \c CGAL::Polyhedron_3 whose points have type \c Point.
     ///
     /// \sa \ref AABBPrimitive
     /// \sa AABB_polyhedron_triangle_primitive

@@ -71,6 +71,7 @@ namespace for the XML file to be processed properly.  -->
           <bool name="SHOW_INCLUDE_FILES">false</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/Box_intersection_d.tag=../../CGAL.CGAL.Intersecting-Sequences-of-dD-Iso-oriented-Boxes/html</item>
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
           </list>
         </doxygen>
       </project>

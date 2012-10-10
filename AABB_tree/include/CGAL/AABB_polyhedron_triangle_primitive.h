@@ -32,14 +32,14 @@ namespace CGAL {
     /// \ref AABBPrimitive. It wraps a facet handle of a polyhedron,
     /// which is used as id, and allows the construction of the datum on
     /// the fly. Since only the facet handle is stored in this primitive,
-    /// the polyhedron from which the AABB_tree is built should not be
-    /// deleted while the AABB_tree is in use.
+    /// the polyhedron from which the AABB tree is built should not be
+    /// deleted while the AABB tree is in use.
     ///
-    /// The template parameter \c GeomTraits provides a \c Point_3
-    /// type, used as \c Point, and a \c Triangle_3 type, used as \c
+    /// The template parameter \c GeomTraits provides a \c %Point_3
+    /// type, used as \c Point, and a \c %Triangle_3 type, used as \c
     /// Datum and constructible from three arguments of type \c
     /// Point. The template parameter \c Polyhedron should be a
-    /// CGAL::Polyhedron whose points have type \c Point.
+    /// \c CGAL::Polyhedron_3 whose points have type \c Point.
     ///
     /// \sa \ref AABBPrimitive
     /// \sa AABB_polyhedron_segment_primitive

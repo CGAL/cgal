@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*!
 
-\mainpage 3D Fast Intersection and Distance Computation (AABB Tree)
+\mainpage 3D %Fast Intersection and Distance Computation (AABB Tree)
 \anchor Chapter_3D_Fast_Intersection_and_Distance_Computation
 \tableofcontents
 
@@ -163,14 +163,14 @@ example illustrates this for two polyhedral surfaces.
 \subsection aabb_tree_examples_7 Trees of Custom Primitives
 
 The AABB tree example folder contains three examples of trees
-constructed with customize primitives. In `AABB_custom_example.cpp`
+constructed with customize primitives. In \ref AABB_tree/AABB_custom_example.cpp "AABB_custom_example.cpp"
 the primitive contains triangles which are defined by three pointers
-to custom points. In `AABB_custom_triangle_soup_example.cpp` all input
+to custom points. In \ref AABB_tree/AABB_custom_triangle_soup_example.cpp "AABB_custom_triangle_soup_example.cpp" all input
 triangles are stored into a single array so as to form a triangle
 soup. The primitive internally uses a `boost::iterator_adaptor` so as
 to provide the three functions `AABBPrimitive::id()`, `AABBPrimitive::datum()`,
 and `AABBPrimitive::reference_point()`) required by the primitive concept. In
-`AABB_custom_indexed_triangle_set_example.cpp` the input is an indexed
+\ref AABB_tree/AABB_custom_indexed_triangle_set_example.cpp "AABB_custom_indexed_triangle_set_example.cpp" the input is an indexed
 triangle set stored through two arrays: one array of points and one
 array of indices which refer to the point array. Here also the
 primitive internally uses a `boost::iterator_adaptor`.
@@ -376,7 +376,7 @@ whole set of input primitives. All primitives are then sorted along
 the longest coordinate axis of this box, and the primitives are
 separated into two equal size sets. This procedure is applied
 recursively until an AABB contains a single primitive. The tree is
-leafless as presented in **opcode** \cite cgal:t-ocdl-05\. An
+leafless as presented in `OPCODE` \cite cgal:t-ocdl-05\. An
 intersection query traverses the tree by computing intersection tests
 only with respect to the AABBs during traversal, and with respect to
 the input primitives at the end of traversal (in the leafs of the
@@ -389,12 +389,12 @@ unique primitive, this is not a requirement of the component. This way
 a user may use these reference ids as labels, each of them being
 shared by several geometric object
 
-A distance query between a query point $q$ and the input primitives is
-turned into a *ball* query centered at $q$. The ball traverses the
+A distance query between a query point `q` and the input primitives is
+turned into a *ball* query centered at `q`. The ball traverses the
 tree while recursively querying intersections with the AABBs, and
-computes the closest point $p$ from the query point to the input
+computes the closest point `p` from the query point to the input
 primitives at the leafs of the tree. The ball radius is then shrunk to
-the distance between $p$ and $q$ for all remaining recursive
+the distance between `p` and `q` for all remaining recursive
 traversals of the tree. Efficiency is achieved through setting the
 initial ball radius to a small value still guaranteed to intersect the
 input primitives. This is achieved by constructing through the

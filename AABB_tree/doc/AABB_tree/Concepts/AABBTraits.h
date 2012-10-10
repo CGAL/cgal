@@ -3,12 +3,12 @@
 \ingroup PkgAABB_treeConcepts
 \cgalconcept
 
-The concept `AABBTraits` provides the geometric primitive types and methods for the class `AABB_tree<AT>`. 
+The concept `AABBTraits` provides the geometric primitive types and methods for the class `CGAL::AABB_tree<AABBTraits>`. 
 
-\hasModel `CGAL::AABB_traits<GeomTraits,Primitive>`
+\hasModel `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 
-\sa `CGAL::AABB_traits<GeomTraits,Primitive>` 
-\sa `CGAL::AABB_tree<AT>` 
+\sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>` 
+\sa `CGAL::AABB_tree<AABBTraits>` 
 \sa `AABBPrimitive` 
 
 */
@@ -58,14 +58,14 @@ typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;
 /// @}
 
 /// \name Splitting
-/// During the construction of the `AABB_tree`, the primitives are
+/// During the construction of the AABB tree, the primitives are
 /// sorted according to some comparison functions related to the \f$x\f$,
 /// \f$ y\f$ or \f$ z\f$ coordinate axis:
 /// @{
 
 /*! 
 A functor object to split a range of primitives into two sub-ranges along the X-axis. Provides the operator: 
-`void operator()(InputIterator first, InputIterator beyond);` Iterator `InputIterator` must be a model of RandomAccessIterator and have `Primitive` as value type. The operator is used for determining the primitives assigned to the two children nodes of a given node, assuming that the goal is to split the X-dimension of the bounding box of the node. The primitives assigned to this node are passed as argument to the operator. It should modify the iterator range in such a way that its first half and its second half correspond to the two children nodes. 
+`void operator()(InputIterator first, InputIterator beyond);` %Iterator type `InputIterator` must be a model of RandomAccessIterator and have `Primitive` as value type. The operator is used for determining the primitives assigned to the two children nodes of a given node, assuming that the goal is to split the X-dimension of the bounding box of the node. The primitives assigned to this node are passed as argument to the operator. It should modify the iterator range in such a way that its first half and its second half correspond to the two children nodes. 
 */ 
 typedef Hidden_type Split_primitives_along_x_axis; 
 
@@ -81,7 +81,7 @@ typedef Hidden_type Split_primitives_along_z_axis;
 
 /*! 
 A functor object to compute the bounding box of a set of primitives. Provides the operator: 
-`Bounding_box operator()(Input_iterator begin, Input_iterator beyond);` Iterator `InputIterator` must have `Primitive` as value type. 
+`Bounding_box operator()(Input_iterator begin, Input_iterator beyond);` %Iterator type `InputIterator` must have `Primitive` as value type. 
 */ 
 typedef Hidden_type Compute_bbox; 
 
@@ -98,7 +98,7 @@ typedef Hidden_type Compute_bbox;
 
 /// \name Intersections
 /// The following predicates are required for each type `Query` for
-/// which the class `AABB_tree<AT>` may receive an intersection
+/// which the class `CGAL::AABB_tree<AABBTraits>` may receive an intersection
 /// detection or computation query.
 /// @{
 
@@ -116,7 +116,7 @@ typedef Hidden_type Intersect;
 
 /// \name Distance Queries
 /// The following predicates are required for each
-/// type `Query` for which the class `AABB_tree<AT>` may receive a
+/// type `Query` for which the class `CGAL::AABB_tree<AABBTraits>` may receive a
 /// distance query.
 /// @{
 
