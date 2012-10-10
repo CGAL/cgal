@@ -343,10 +343,8 @@ Construct_circular_arc_3 construct_circular_arc_3_object() const;
 
 /// @}
 
-/// \name
-/// For operations on a given
-/// sphere, a <I>context</I> sphere must be provided to the following
-/// functions:
+/// \name Operations on a given sphere,
+/// A <I>context</I> sphere must be provided to the following functions:
 /// @{
 
 /*! 

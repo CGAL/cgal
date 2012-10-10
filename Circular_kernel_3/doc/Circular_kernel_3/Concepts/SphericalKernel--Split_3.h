@@ -9,11 +9,11 @@ class SphericalKernel::Split_3 {
 public:
 
 /// \name Operations
-/// A model `fo` of this type must provide: 
+/// A model of this type must provide: 
 /// @{
 
 /*! 
-Splits arc \f$ a\f$ at point \f$ p\f$, which creates arcs \f$ a1\f$ and \f$ a2\f$. 
+Splits arc `a` at point `p`, which creates arcs `a1` and `a2`. 
 \pre The point `p` lies in the interior of the input arc `a`. 
 */ 
 void operator() 

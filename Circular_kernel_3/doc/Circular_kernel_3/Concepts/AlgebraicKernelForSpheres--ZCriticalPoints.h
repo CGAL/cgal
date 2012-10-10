@@ -12,7 +12,7 @@ class AlgebraicKernelForSpheres::ZCriticalPoints {
 public:
 
 /// \name Operations
-/// A model `fo` of this concept must provide:
+/// A model of this concept must provide:
 /// @{
 
 /*! 

@@ -3,16 +3,12 @@
 \ingroup PkgSphericalKernel3GeometricConcepts
 \cgalconcept
 
-\refines ::Kernel::DoOverlap_3 
-
-\bug DoOverlap_3 does not exist in the Kernel
-
-An object `fo` of this type must provide: 
 */
 class SphericalKernel::DoOverlap_3 {
 public:
 
-/// \name Refines 
+/// \name Operations 
+/// An object of this type must provide: 
 /// @{
 
 /*! 

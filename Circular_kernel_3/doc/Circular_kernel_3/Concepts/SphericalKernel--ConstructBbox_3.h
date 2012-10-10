@@ -3,6 +3,7 @@
 \ingroup PkgSphericalKernel3GeometricConcepts
 \cgalconcept
 
+\refines Kernel::ConstructBbox_3
 
 */
 
@@ -10,7 +11,7 @@ class SphericalKernel::ConstructBbox_3 {
 public:
 
 /// \name Operations
-/// A model `fo` of this concept must provide operators to construct 
+/// A model of this concept must provide operators to construct 
 /// a bounding box of geometric objects: 
 /// @{
 

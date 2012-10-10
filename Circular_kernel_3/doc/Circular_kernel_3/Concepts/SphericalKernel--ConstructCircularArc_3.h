@@ -9,7 +9,7 @@ and the target `p2`, when traversing the circle counterclockwise
 seen from the side of the plane of the circle pointed by its <I>positive</I> normal 
 vectors. 
 
-In this definition, we say that a normal vector (a,b,c) is <I>positive</I> if 
+In this definition, we say that a normal vector \f$ (a,b,c)\f$  is <I>positive</I> if 
 \f$ (a,b,c)>(0,0,0)\f$ (i.e. \f$ (a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)\f$). 
 
 */
@@ -18,7 +18,7 @@ class SphericalKernel::ConstructCircularArc_3 {
 public:
 
 /// \name Operations
-/// A model `fo` of this concept must provide: 
+/// A model of this concept must provide: 
 /// @{
 
 /*! 

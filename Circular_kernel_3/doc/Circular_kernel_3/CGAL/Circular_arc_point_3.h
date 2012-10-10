@@ -71,27 +71,27 @@ Test for nonequality.
 bool operator!=(const Circular_arc_point_3<SphericalKernel> &p, const Circular_arc_point_3<SphericalKernel> &q); 
 
 /*! 
-Returns true iff \f$ p\f$ is lexicographically smaller than \f$ q\f$, i.e. either 
-if \f$ p.x() < q.x()\f$ or if \f$ p.x() == q.x()\f$ and \f$ p.y() < q.y()\f$ 
-or if \f$ p.x() == q.x()\f$ and \f$ p.y() == q.y()\f$ and \f$ p.z() < q.z()\f$. 
+Returns true iff `p` is lexicographically smaller than `q`, i.e. either 
+if `p.x() < q.x()` or if `p.x() == q.x()` and `p.y() < q.y()`
+or if `p.x() == q.x()` and `p.y() == q.y()` and `p.z() < q.z()`. 
 \relates Circular_arc_point_3 
 */ 
 bool operator<(const Circular_arc_point_3<SphericalKernel> &p, const Circular_arc_point_3<SphericalKernel> &q); 
 
 /*! 
-Returns true iff \f$ p\f$ is lexicographically greater than \f$ q\f$. 
+Returns true iff `p` is lexicographically greater than `q`. 
 \relates Circular_arc_point_3 
 */ 
 bool operator>(const Circular_arc_point_3<SphericalKernel> &p, const Circular_arc_point_3<SphericalKernel> &q); 
 
 /*! 
-Returns true iff \f$ p\f$ is lexicographically smaller than or equal to \f$ q\f$. 
+Returns true iff `p` is lexicographically smaller than or equal to `q`. 
 \relates Circular_arc_point_3 
 */ 
 bool operator<=(const Circular_arc_point_3<SphericalKernel> &p, const Circular_arc_point_3<SphericalKernel> &q); 
 
 /*! 
-Returns true iff \f$ p\f$ is lexicographically greater than or equal to \f$ q\f$. 
+Returns true iff `p` is lexicographically greater than or equal to `q`. 
 \relates Circular_arc_point_3 
 */ 
 bool operator>=(const Circular_arc_point_3<SphericalKernel> &p, const Circular_arc_point_3<SphericalKernel> &q); 

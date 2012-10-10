@@ -16,7 +16,7 @@ class SphericalKernel::BoundedSide_3 {
 public:
 
 /// \name Operations 
-/// An object `fo` of this type must provide:
+/// An object of this type must provide:
 /// @{
 
 /*! 

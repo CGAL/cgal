@@ -11,7 +11,7 @@ class SphericalKernel::ConstructCircle_3 {
 public:
 
 /// \name Operations
-/// A model `fo` of this concept must provide: 
+/// A model of this concept must provide: 
 /// @{
 
 /*! 

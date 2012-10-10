@@ -19,11 +19,11 @@ class SphericalKernel::CompareZ_3 {
 public:
 
 /// \name Operations
-/// An object `fo` of this type must provide in addition:
+/// An object of this type must provide in addition:
 /// @{
 
 /*! 
-Compares the \f$ z\f$-coordinates of \f$ p\f$ and \f$ q\f$. 
+Compares the \f$ z\f$-coordinates of `p` and `q`. 
 */ 
 Comparison_result operator() 
 (const SphericalKernel::Circular_arc_point_3 &p, 

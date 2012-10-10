@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3GeometricConcepts
+\ingroup PkgSphericalKernel3AlgebraicConcepts
 \cgalconcept
 
 \sa `AlgebraicKernelForSpheres::CompareX`
@@ -14,11 +14,11 @@ class AlgebraicKernelForSpheres::CompareZ {
 public:
 
 /// \name Operations
-/// A model `fo` of this concept must provide:
+/// A model of this concept must provide:
 /// @{
 
 /*! 
-Compares the `z` (third) variables of two `Root_for_spheres_2_3`. 
+Compares the \f$ z\f$-coordinates of two `Root_for_spheres_2_3`. 
 */ 
 CGAL::Comparison_result 
 operator()(const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r1, 

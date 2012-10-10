@@ -11,8 +11,8 @@
 class AlgebraicKernelForSpheres::ConstructPolynomialsForLines_3 {
 public:
 
-/// \name See Also 
-/// A model `fo` of this concept must provide: 
+/// \name Operations
+/// A model of this concept must provide: 
 /// @{
 
 /*! 

@@ -3,8 +3,6 @@
 \ingroup PkgSphericalKernel3AlgebraicConcepts
 \cgalconcept
 
-A model `fo` of this concept must provide: 
-
 \sa `AlgebraicKernelForSpheres::CompareY`
 \sa `AlgebraicKernelForSpheres::CompareZ`
 \sa `AlgebraicKernelForSpheres::CompareXY`
@@ -15,7 +13,8 @@ A model `fo` of this concept must provide:
 class AlgebraicKernelForSpheres::CompareX {
 public:
 
-/// \name Is Model for the Concepts 
+/// \name Operations
+/// A model of this concept must provide: 
 /// @{
 
 /*! 

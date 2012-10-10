@@ -7,7 +7,7 @@
 
 \refines `Kernel::DoIntersect_3`
 
-\sa `Kernel::do_intersect`"CGAL::do_intersect" 
+\sa \ref CGAL::do_intersect
 
 */
 
@@ -15,7 +15,7 @@ class SphericalKernel::DoIntersect_3 {
 public:
 
 /// \name Operations 
-/// An object `fo` of this type must provide: 
+/// An object of this type must provide: 
 /// @{
 
 /*! 

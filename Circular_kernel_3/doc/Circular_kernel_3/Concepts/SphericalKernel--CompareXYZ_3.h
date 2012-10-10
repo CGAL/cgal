@@ -18,11 +18,11 @@ class SphericalKernel::CompareXYZ_3 {
 public:
 
 /// \name Operations
-/// An object `fo` of this type must provide in addition:
+/// An object of this type must provide in addition:
 /// @{
 
 /*! 
-Compares \f$ p\f$ and \f$ q\f$ according to the lexicographic ordering on \f$ x\f$-, \f$ y\f$-, 
+Compares `p` and `q` according to the lexicographic ordering on \f$ x\f$-, \f$ y\f$-, 
 and \f$ z\f$-coordinates. 
 */ 
 Comparison_result operator() 

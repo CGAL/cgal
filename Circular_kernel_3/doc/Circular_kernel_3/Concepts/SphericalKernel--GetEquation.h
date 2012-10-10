@@ -3,7 +3,7 @@
 \ingroup PkgSphericalKernel3GeometricConcepts
 \cgalconcept
 
-A model `fo` of this concept must provide: 
+
 
 \sa `SphericalKernel::ConstructPlane_3`
 \sa `SphericalKernel::ConstructSphere_3`
@@ -16,6 +16,7 @@ class SphericalKernel::GetEquation {
 public:
 
 /// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3Concepts
+\ingroup PkgSphericalKernel3AlgebraicConcepts
 \cgalconcept
 
 \sa `SphericalKernel::ConstructSphere_3`
@@ -12,7 +12,7 @@ class AlgebraicKernelForSpheres::ConstructPolynomialForSpheres_2_3 {
 public:
 
 /// \name Operations
-/// A model `fo` of this concept must provide: 
+/// A model of this concept must provide: 
 /// @{
 
 /*! 

@@ -19,7 +19,7 @@ class SphericalKernel::Equal_3 {
 public:
 
 /// \name Operations 
-///  An object `fo` of this type must provide in addition:
+///  An object of this type must provide in addition:
 /// @{
 
 /*! 

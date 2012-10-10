@@ -18,11 +18,11 @@ class SphericalKernel::CompareTheta_3 {
 public:
 
 /// \name Operations
-/// An object `fo` of this type must provide: 
+/// An object of this type must provide: 
 /// @{
 
 /*! 
-Compares the \f$ \theta\f$-coordinates of \f$ p\f$ and \f$ q\f$ in the cylindrical coordinate system relative to the context sphere used by the function `SphericalKernel::compare_theta_3_object`. 
+Compares the \f$ \theta\f$-coordinates of `p` and `q` in the cylindrical coordinate system relative to the context sphere used by the function `SphericalKernel::compare_theta_3_object`. 
 \pre `p` and `q` lie on the context sphere used by the function `SphericalKernel::compare_theta_3_object`, but do not coincide with its poles. 
 
 */ 
@@ -31,8 +31,8 @@ Comparison_result operator()
 const SphericalKernel::Circular_arc_point_3 &q ); 
 
 /*! 
-Compares the \f$ \theta\f$-coordinates of \f$ p\f$ and of the meridian defined by \f$ m\f$ (see section \ref sectionSKobjects) in the cylindrical coordinate system relative to the context sphere used by the function `SphericalKernel::compare_theta_3_object`. 
-\pre `p` lies on the context sphere used by the function `SphericalKernel::compare_theta_3_object`, but does not coincide with its poles. \f$ m \neq(0,0,0)\f$ and the \f$ z\f$-coordinate of \f$ m\f$ is \f$ 0\f$. 
+Compares the \f$ \theta\f$-coordinates of `p` and of the meridian defined by `m` (see section \ref sectionSKobjects) in the cylindrical coordinate system relative to the context sphere used by the function `SphericalKernel::compare_theta_3_object`. 
+\pre `p` lies on the context sphere used by the function `SphericalKernel::compare_theta_3_object`, but does not coincide with its poles. `m` \f$ \neq(0,0,0)\f$ and the \f$ z\f$-coordinate of `m` is \f$ 0\f$. 
 
 */ 
 Comparison_result operator() 
@@ -46,9 +46,9 @@ Comparison_result operator()
 (const SphericalKernel::Vector_3 &m,const SphericalKernel::Circular_arc_point_3 &p); 
 
 /*! 
-Compares the \f$ \theta\f$-coordinates of the meridians defined by \f$ m1\f$ and by \f$ m2\f$ (see section \ref sectionSKobjects) 
+Compares the \f$ \theta\f$-coordinates of the meridians defined by `m1` and by `m2` (see section \ref sectionSKobjects) 
 in the cylindrical coordinate system relative to the context sphere used by the function `SphericalKernel::compare_theta_3_object`. 
-\f$ m1 \neq(0,0,0)\f$, \f$ m2 \neq(0,0,0)\f$ and the \f$ z\f$-coordinate of \f$ m1\f$ and \f$ m2\f$ is \f$ 0\f$. 
+`m1` \f$ \neq(0,0,0)\f$, `m2` \f$ \neq(0,0,0)\f$ and the \f$ z\f$-coordinate of `m1` and `m2` is \f$ 0\f$. 
 */ 
 Comparison_result operator() 
 (const SphericalKernel::Vector_3 &m1, 

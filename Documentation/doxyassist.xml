@@ -567,6 +567,8 @@ namespace for the XML file to be processed properly.  -->
           <bool name="SORT_GROUP_NAMES">true</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/Circular_kernel_2.tag=../../CGAL.CGAL.2D-Circular-Geometry-Kernel/html</item>
+            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
       </project>

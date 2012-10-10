@@ -21,11 +21,11 @@ class SphericalKernel::CompareXY_3 {
 public:
 
 /// \name Operations 
-///  An object `fo` of this type must provide in addition:
+///  An object of this type must provide in addition:
 /// @{
 
 /*! 
-Compares \f$ p\f$ and \f$ q\f$ according to the lexicographic ordering on \f$ x\f$- and \f$ y\f$-coordinates. 
+Compares `p` and `q` according to the lexicographic ordering on \f$ x\f$- and \f$ y\f$-coordinates. 
 */ 
 Comparison_result operator() 
 (const SphericalKernel::Circular_arc_point_3 &p, 

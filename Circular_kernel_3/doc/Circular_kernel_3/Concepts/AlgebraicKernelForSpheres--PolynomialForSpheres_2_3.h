@@ -22,11 +22,17 @@ are of a type that is a model of the concept
 class AlgebraicKernelForSpheres::PolynomialForSpheres_2_3 {
 public:
 
+/// \name Operations
+/// A model of this concept must provide:
+/// @{
+
 /*! 
 Tests equality of two polynomials. 
 */ 
 bool operator ==(const AlgebraicKernelForSpheres::PolynomialForSpheres_2_3 & p, 
 const AlgebraicKernelForSpheres::PolynomialForSpheres_2_3 & q); 
+
+/// @}
 
 }; /* end AlgebraicKernelForSpheres::PolynomialForSpheres_2_3 */
 
