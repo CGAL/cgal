@@ -928,7 +928,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Skin_surface_3/doc/Skin_surface_3/fig</string>
           <string name="EXAMPLE_PATH">../Skin_surface_3/examples</string>
           <list name="TAGFILES" append="true">
-            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
           </list>
         </doxygen>
