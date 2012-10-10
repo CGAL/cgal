@@ -3,7 +3,7 @@
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalconcept
 
-\refines ::AdaptableUnaryFunctor 
+\refines ::AdaptableUnaryFunction
 
 \hasModel `ArrangementDirectionalXMonotoneTraits_2::ConstructOpposite_2` 
 
