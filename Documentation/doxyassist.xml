@@ -547,7 +547,6 @@ namespace for the XML file to be processed properly.  -->
         <input>../Circular_kernel_2/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Circular_kernel_2/doc/Circular_kernel_2/</string>
-          <string name="STRIP_FROM_PATH">../Circular_kernel_2/doc/Circular_kernel_2/</string>
           <string name="STRIP_FROM_INC_PATH">../Circular_kernel_2/doc/Circular_kernel_2/</string>
           <string name="GENERATE_TAGFILE">./tags/Circular_kernel_2.tag</string>
           <string name="EXAMPLE_PATH">../Circular_kernel_2/examples</string>
@@ -560,7 +559,6 @@ namespace for the XML file to be processed properly.  -->
         <name>3D Spherical Geometry Kernel</name>
         <input>../Circular_kernel_3/doc</input>
         <doxygen>
-          <string name="STRIP_FROM_PATH">../Circular_kernel_3/doc/Circular_kernel_3/</string>
           <string name="STRIP_FROM_PATH">../Circular_kernel_3/doc/Circular_kernel_3/</string>
           <string name="STRIP_FROM_INC_PATH">../Circular_kernel_3/doc/Circular_kernel_3/</string>
           <string name="GENERATE_TAGFILE">./tags/Circular_kernel_3.tag</string>
@@ -578,7 +576,6 @@ namespace for the XML file to be processed properly.  -->
         <input>../Algebraic_kernel_d/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Algebraic_kernel_d/doc/Algebraic_kernel_d/</string>
-          <string name="STRIP_FROM_PATH">../Algebraic_kernel_d/doc/Algebraic_kernel_d/</string>
           <string name="STRIP_FROM_INC_PATH">../Algebraic_kernel_d/doc/Algebraic_kernel_d/</string>
           <string name="GENERATE_TAGFILE">./tags/Algebraic_kernel_d.tag</string>
           <string name="EXAMPLE_PATH">../Algebraic_kernel_d/examples</string>
@@ -595,7 +592,6 @@ namespace for the XML file to be processed properly.  -->
         <name>dD Geometry Kernel</name>
         <input>../Kernel_d/doc</input>
         <doxygen>
-          <string name="STRIP_FROM_PATH">../Kernel_d/doc/Kernel_d/</string>
           <string name="STRIP_FROM_PATH">../Kernel_d/doc/Kernel_d/</string>
           <string name="STRIP_FROM_INC_PATH">../Kernel_d/doc/Kernel_d/</string>
           <string name="GENERATE_TAGFILE">./tags/Kernel_d.tag</string>
