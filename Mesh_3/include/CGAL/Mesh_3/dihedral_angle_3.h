@@ -57,8 +57,8 @@ dihedral_angle(const typename K::Point_3& a,
 
   const Vector_3 abad = cross_product(ab,ad);
   const double x = CGAL::to_double(scalar_product(cross_product(ab,ac), abad));
-  const FT l_ab = CGAL::sqrt(sq_distance(a,b));
-  const double y = CGAL::to_double(l_ab * scalar_product(ac,abad));
+  const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
+  const double y = l_ab * CGAL::to_double(scalar_product(ac,abad));
 
   return FT(std::atan2(y, x) * 180 / CGAL_PI );
 }
