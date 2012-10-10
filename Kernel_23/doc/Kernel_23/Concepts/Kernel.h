@@ -4718,7 +4718,7 @@ the types `Type1` and
 - `Kernel::Ray_3` 
 - `Kernel::Segment_3` 
 - `Kernel::Triangle_3` 
-- `Bbox_3` 
+- `CGAL::Bbox_3` 
 
 and also for `Type1` and `Type2` of respective types 
 
