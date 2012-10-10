@@ -393,6 +393,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Subdivision_method_3.tag</string>
           <string name="EXAMPLE_PATH">../Subdivision_method_3/examples</string>
           <string name="IMAGE_PATH">../Subdivision_method_3/doc/Subdivision_method_3/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+          </list>
         </doxygen>
       </project>
 
@@ -1130,6 +1133,7 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
+            <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
           </list>
         </doxygen>
       </project>
