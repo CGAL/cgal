@@ -20,7 +20,6 @@
 
 /*!
 \addtogroup PkgSphericalKernel3
-\todo check generated documentation
 \PkgDescriptionBegin{3D Spherical Geometry Kernel,PkgSphericalKernel3Summary}
 \PkgPicture{segment_sphere_intersection_detail.png}
 \PkgAuthors{Pedro Machado Manh&atilde;es de Castro, Fr&eacute;d&eacute;ric Cazals, S&eacute;bastien Loriot, and Monique Teillaud}

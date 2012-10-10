@@ -5,7 +5,6 @@
 
 /*!
 \addtogroup PkgAABB_tree
-\todo check generated documentation
 \PkgDescriptionBegin{3D Fast Intersection and Distance Computation,PkgAABB_treeSummary}
 \PkgPicture{aabb-teaser-thumb.png}
 \PkgAuthors{Pierre Alliez, St&eacute;phane Tayeb, Camille Wormser}
