@@ -1,6 +1,6 @@
-/*! \page  AlgebraicFoundationsClassified
+/*! \page  AlgebraicFoundationsClassified  Classified Reference Pages
 
-## Classified Reference Pages ##
+
 
 
 ### Algebraic Structures ###
@@ -95,7 +95,7 @@
 
 ### Real Number Types ###
 
-- `Concepts`
+#### Concepts####
 - `RingNumberType`
 - `FieldNumberType`
 

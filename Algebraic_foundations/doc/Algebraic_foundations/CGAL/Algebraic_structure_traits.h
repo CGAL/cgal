@@ -66,7 +66,7 @@ class Field_with_kth_root_tag : public Field_with_sqrt_tag {
 }; /* end Field_with_kth_root_tag */
 
 /*!
-\ingroup PkgAlgebraicFoundations
+\ingroup PkgAlgebraicFoundationsAlgebraicStructures
 
 Tag indicating that a type is a model of the `FieldWithRootOf` concept. 
 
