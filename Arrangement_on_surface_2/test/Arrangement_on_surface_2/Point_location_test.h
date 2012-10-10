@@ -3,7 +3,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
-#include <CGAL/Arrangement_2.h>
+#include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
@@ -19,11 +19,12 @@
 #include "IO_test.h"
 
 /*! Point location test */
-template <typename T_Traits>
-class Point_location_test : public IO_test<T_Traits> {
+template <typename T_Geom_traits, typename T_Topol_traits>
+class Point_location_test : public IO_test<T_Geom_traits> {
 private:
-  typedef T_Traits                                      Traits;
-  typedef IO_test<Traits>                               Base;
+  typedef T_Geom_traits                                 Geom_traits;
+  typedef T_Topol_traits                                Topol_traits;
+  typedef IO_test<Geom_traits>                          Base;
 
 public:
   typedef typename Base::Point_2                        Point_2;
@@ -34,7 +35,8 @@ public:
   typedef typename Base::Xcurves_vector                 Xcurves_vector;
   typedef typename Base::Curves_vector                  Curves_vector;
   
-  typedef CGAL::Arrangement_2<Traits>                   Arrangement_2;
+  typedef CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>
+                                                        Arrangement_2;
 
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
@@ -183,8 +185,8 @@ private:
  * Constructor. 
  * Accepts test data file name.
  */
-template <typename T_Traits>
-Point_location_test<T_Traits>::Point_location_test() :
+template <typename T_Geom_traits, typename T_Topol_traits>
+Point_location_test<T_Geom_traits, T_Topol_traits>::Point_location_test() :
   m_naive_pl(NULL), 
   m_simple_pl(NULL), 
   m_walk_pl(NULL), 
@@ -206,19 +208,20 @@ Point_location_test<T_Traits>::Point_location_test() :
 {}
 
 /*! Set the file names */
-template <typename T_Traits>
-void Point_location_test<T_Traits>::set_filenames(const char* points_filename,
-                                                  const char* xcurves_filename,
-                                                  const char* curves_filename,
-                                                  const char* queries_filename)
+template <typename T_Geom_traits, typename T_Topol_traits>
+void Point_location_test<T_Geom_traits, T_Topol_traits>::
+set_filenames(const char* points_filename,
+              const char* xcurves_filename,
+              const char* curves_filename,
+              const char* queries_filename)
 {
   Base::set_filenames(points_filename, xcurves_filename, curves_filename);
   m_filename_queries.assign(queries_filename);
 }
 
 /*! Initialize the data structures */
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::init()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::init()
 {
   if (!Base::init()) return false;
 
@@ -230,8 +233,8 @@ bool Point_location_test<T_Traits>::init()
 }
 
 /*! Clear the data structures */
-template<class T_Traits>
-void Point_location_test<T_Traits>::clear()
+template<class T_Geom_traits, typename T_Topol_traits>
+void Point_location_test<T_Geom_traits, T_Topol_traits>::clear()
 {
   Base::clear();
   m_query_points.clear();
@@ -239,8 +242,9 @@ void Point_location_test<T_Traits>::clear()
 }
 
 /*! Clear the data structures */
-template<class T_Traits>
-void Point_location_test<T_Traits>::deallocate_pl_strategies()
+template<class T_Geom_traits, typename T_Topol_traits>
+void Point_location_test<T_Geom_traits, T_Topol_traits>::
+deallocate_pl_strategies()
 {
   if (m_naive_pl) {
     delete m_naive_pl;
@@ -255,7 +259,8 @@ void Point_location_test<T_Traits>::deallocate_pl_strategies()
     m_walk_pl = NULL;
   }
 
-#if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
   if (m_lm_pl) {
     delete m_lm_pl;
     m_lm_pl = NULL;
@@ -318,15 +323,15 @@ void Point_location_test<T_Traits>::deallocate_pl_strategies()
   }
 }
 
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::allocate_arrangement()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::allocate_arrangement()
 {
   if (!(m_arr = new Arrangement_2())) return false;
   return true;
 }
 
-template <typename T_Traits>
-void Point_location_test<T_Traits>::deallocate_arrangement()
+template <typename T_Geom_traits, typename T_Topol_traits>
+void Point_location_test<T_Geom_traits, T_Topol_traits>::deallocate_arrangement()
 {
   if (m_arr) {
     delete m_arr;
@@ -334,8 +339,8 @@ void Point_location_test<T_Traits>::deallocate_arrangement()
   }
 }
 
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::construct_arrangement()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::construct_arrangement()
 {
   // Insert all into the arrangement
   CGAL::insert(*m_arr, this->m_xcurves.begin(), this->m_xcurves.end());
@@ -350,21 +355,22 @@ bool Point_location_test<T_Traits>::construct_arrangement()
   return true;
 }
 
-template <typename T_Traits>
-void Point_location_test<T_Traits>::clear_arrangement()
+template <typename T_Geom_traits, typename T_Topol_traits>
+void Point_location_test<T_Geom_traits, T_Topol_traits>::clear_arrangement()
 {
   if (m_arr) m_arr->clear();
 }
 
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::allocate_pl_strategies()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::allocate_pl_strategies()
 {
   // Allocate all point location strategies.
   if (!(m_naive_pl = new Naive_point_location())) return false;
   if (!(m_simple_pl = new Simple_point_location())) return false;
   if (!(m_walk_pl = new Walk_point_location())) return false;
 
-#if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
   if (!(m_lm_pl = new Lm_point_location())) return false;
   if (!(m_random_lm_pl = new Lm_random_point_location())) return false;
@@ -388,10 +394,11 @@ bool Point_location_test<T_Traits>::allocate_pl_strategies()
   return true;
 }
 
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::construct_pl_strategies()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::
+construct_pl_strategies()
 {
-  typedef T_Traits Traits;
+  typedef T_Geom_traits Geom_traits;
 
   // Initialize all point location strategies.
   CGAL::Timer timer;
@@ -400,7 +407,8 @@ bool Point_location_test<T_Traits>::construct_pl_strategies()
   m_simple_pl = new Simple_point_location(*m_arr);                      // 1
   m_walk_pl = new Walk_point_location(*m_arr);                          // 2
 
-#if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
   timer.reset(); timer.start();
   m_lm_pl = new Lm_point_location(*m_arr);                              // 3
@@ -467,10 +475,10 @@ bool Point_location_test<T_Traits>::construct_pl_strategies()
   return true;
 }
 
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::attach_pl_strategies()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::attach_pl_strategies()
 {
-  typedef T_Traits Traits;
+  typedef T_Geom_traits Geom_traits;
 
   // Initialize all point location strategies.
   CGAL::Timer timer;
@@ -479,7 +487,8 @@ bool Point_location_test<T_Traits>::attach_pl_strategies()
   m_simple_pl->attach(*m_arr);
   m_walk_pl->attach(*m_arr);
 
-#if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
   timer.reset(); timer.start();
   m_lm_pl->attach(*m_arr);
@@ -546,8 +555,8 @@ bool Point_location_test<T_Traits>::attach_pl_strategies()
 }
 
 // Perform the test
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::perform()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::perform()
 {
   Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES];
   typename Arrangement_2::Vertex_const_handle    vh_ref, vh_curr;
@@ -570,7 +579,8 @@ bool Point_location_test<T_Traits>::perform()
   query(*m_walk_pl, "Walk", m_query_points.begin(), m_query_points.end(),
         std::back_inserter(objs[pl_index++]));  // Walk
 
-#if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
   query(*m_lm_pl, "Landmarks (vertices)",
         m_query_points.begin(), m_query_points.end(),

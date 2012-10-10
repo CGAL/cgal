@@ -33,20 +33,20 @@ CARTESIAN_KERNEL=0
 SIMPLE_CARTESIAN_KERNEL=1
 UNIVARIATE_ALGEBRAIC_KERNEL=2
 
-SEGMENT_TRAITS=0
-NON_CACHING_SEGMENT_TRAITS=1
-POLYLINE_TRAITS=2
-NON_CACHING_POLYLINE_TRAITS=3
-LINEAR_TRAITS=4
-CORE_CONIC_TRAITS=5
-LINE_ARC_TRAITS=6
-CIRCULAR_ARC_TRAITS=7
-CIRCULAR_LINE_ARC_TRAITS=8
-CIRCLE_SEGMENT_TRAITS=9
-BEZIER_TRAITS=10
-SPHERICAL_ARC_TRAITS=11
-RATIONAL_ARC_TRAITS=12
-ALGEBRAIC_TRAITS=13
+SEGMENT_GEOM_TRAITS=0
+NON_CACHING_SEGMENT_GEOM_TRAITS=1
+POLYLINE_GEOM_TRAITS=2
+NON_CACHING_POLYLINE_GEOM_TRAITS=3
+LINEAR_GEOM_TRAITS=4
+CORE_CONIC_GEOM_TRAITS=5
+LINE_ARC_GEOM_TRAITS=6
+CIRCULAR_ARC_GEOM_TRAITS=7
+CIRCULAR_LINE_ARC_GEOM_TRAITS=8
+CIRCLE_SEGMENT_GEOM_TRAITS=9
+BEZIER_GEOM_TRAITS=10
+GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS=11
+RATIONAL_ARC_GEOM_TRAITS=12
+ALGEBRAIC_GEOM_TRAITS=13
 
 DOUBLE_NT=0
 MP_FLOAT_NT=1
@@ -125,13 +125,13 @@ compile_test()
     local traits=$4;
     local traits_type=$5
 
-    TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits ";
+    TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$traits ";
 
     echo $TESTSUITE_CXXFLAGS;
 
     echo "Compiling $name $traits_type ... "
     if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-        export TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_TRAITS=$traits"
+        export TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$traits"
         configure
 	if eval '${MAKE_CMD} VERBOSE=1 -fMakefile  \
             $name' ; then
@@ -662,7 +662,7 @@ execute_commands_traits_adaptor()
 test_segment_traits_adaptor()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits_adaptor $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS segment_traits_adaptor
+    compile_test test_traits_adaptor $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits_adaptor
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits_adaptor segment_traits" >> $ERRORFILE
     else
@@ -679,7 +679,7 @@ test_segment_traits_adaptor()
 test_linear_traits_adaptor()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits_adaptor $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_TRAITS linear_traits_adaptor
+    compile_test test_traits_adaptor $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear_traits_adaptor
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits_adaptor linear_traits" >> $ERRORFILE
     else
@@ -696,7 +696,7 @@ test_linear_traits_adaptor()
 test_spherical_arcs_traits_adaptor()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits_adaptor $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SPHERICAL_ARC_TRAITS spherical_arcs_traits_adaptor
+    compile_test test_traits_adaptor $CGAL_GMPQ_NT $CARTESIAN_KERNEL $GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS spherical_arcs_traits_adaptor
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits_adaptor spherical_arcs_traits" >> $ERRORFILE
     else
@@ -712,7 +712,7 @@ test_spherical_arcs_traits_adaptor()
 #---------------------------------------------------------------------#
 test_point_location_segments()
 {
-  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS point_location_segments
+  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS point_location_segments
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   point location of segments" >> $ERRORFILE
   else
@@ -742,7 +742,7 @@ test_point_location_segments()
 #---------------------------------------------------------------------#
 test_point_location_dynamic_segments()
 {
-  compile_test point_location_dynamic $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS point_location_dynamic_segments
+  compile_test point_location_dynamic $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS point_location_dynamic_segments
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   point location of segments" >> $ERRORFILE
   else
@@ -772,7 +772,7 @@ test_point_location_dynamic_segments()
 #---------------------------------------------------------------------#
 test_point_location_circle_segments()
 {
-  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_TRAITS point_location_circle_segments
+  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS point_location_circle_segments
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   point_location of circle segments" >> $ERRORFILE
   else
@@ -802,7 +802,7 @@ test_point_location_circle_segments()
 #---------------------------------------------------------------------#
 test_point_location_linear()
 {
-  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $LINEAR_TRAITS point_location_linear
+  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS point_location_linear
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   point_location of linear objects" >> $ERRORFILE
   else
@@ -833,7 +833,7 @@ test_point_location_linear()
 test_segment_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS segment_traits
+    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits segment_traits" >> $ERRORFILE
     else
@@ -857,7 +857,7 @@ test_segment_traits()
 test_non_caching_segment_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_SEGMENT_TRAITS non_caching_segment_traits
+    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_SEGMENT_GEOM_TRAITS non_caching_segment_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits non_caching_segment_traits" >> $ERRORFILE
     else
@@ -882,7 +882,7 @@ test_non_caching_segment_traits()
 test_polyline_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $POLYLINE_TRAITS polyline_traits
+    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $POLYLINE_GEOM_TRAITS polyline_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
     else
@@ -899,7 +899,7 @@ test_polyline_traits()
 test_non_caching_polyline_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_POLYLINE_TRAITS non_caching_polyline_traits
+    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_POLYLINE_GEOM_TRAITS non_caching_polyline_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits non_caching_polyline_traits" >> $ERRORFILE
     else
@@ -916,7 +916,7 @@ test_non_caching_polyline_traits()
 test_linear_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_TRAITS linear_traits
+    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits linear_traits" >> $ERRORFILE
     else
@@ -957,7 +957,7 @@ test_linear_traits()
 test_conic_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $CORE_CONIC_TRAITS conic_traits
+    compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $CORE_CONIC_GEOM_TRAITS conic_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits conic_traits" >> $ERRORFILE
     else
@@ -981,7 +981,7 @@ test_conic_traits()
 test_line_arc_traits()
 {
 # function     executable  number type           kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINE_ARC_TRAITS line_arc_traits
+    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINE_ARC_GEOM_TRAITS line_arc_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
     else
@@ -1009,7 +1009,7 @@ test_line_arc_traits()
 test_circular_arc_traits()
 {
 # function     executable  number type           kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_ARC_TRAITS circular_arc_traits
+    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_ARC_GEOM_TRAITS circular_arc_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
     else
@@ -1029,7 +1029,7 @@ test_circular_arc_traits()
 test_circular_line_arc_traits()
 {
 # function     executable  number type           kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_LINE_ARC_TRAITS circular_line_arc_traits
+    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_LINE_ARC_GEOM_TRAITS circular_line_arc_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits circular_line_arc_traits" >> $ERRORFILE
     else
@@ -1053,7 +1053,7 @@ test_circular_line_arc_traits()
 test_circle_segments_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_TRAITS circle_segments_traits
+    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS circle_segments_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits circle_segments_traits" >> $ERRORFILE
     else
@@ -1089,7 +1089,7 @@ test_circle_segments_traits()
 test_bezier_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $BEZIER_TRAITS bezier_traits
+    compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $BEZIER_GEOM_TRAITS bezier_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits bezier_traits" >> $ERRORFILE
     else
@@ -1106,7 +1106,7 @@ test_bezier_traits()
 test_spherical_arc_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SPHERICAL_ARC_TRAITS spherical_arc_traits
+    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS spherical_arc_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits spherical_arc_traits" >> $ERRORFILE
     else
@@ -1133,7 +1133,7 @@ test_spherical_arc_traits()
 test_rational_arc_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CORE_INT_NT $UNIVARIATE_ALGEBRAIC_KERNEL $RATIONAL_ARC_TRAITS rational_arc_traits
+    compile_test test_traits $CORE_INT_NT $UNIVARIATE_ALGEBRAIC_KERNEL $RATIONAL_ARC_GEOM_TRAITS rational_arc_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits rational_arc_traits" >> $ERRORFILE
     else
@@ -1157,7 +1157,7 @@ test_algebraic_traits_gmp()
 #TODO: Adapt
 
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CGAL_GMPZ_NT $CARTESIAN_KERNEL $ALGEBRAIC_TRAITS algebraic_traits_gmp
+    compile_test test_traits $CGAL_GMPZ_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic_traits_gmp
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits algebraic_traits_gmp" >> $ERRORFILE
     else
@@ -1177,7 +1177,7 @@ test_algebraic_traits_leda()
 #TODO: Adapt
 
 # function     executable  number type   kernel            traits
-    compile_test test_traits $LEDA_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_TRAITS algebraic_traits_leda
+    compile_test test_traits $LEDA_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic_traits_leda
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits algebraic_traits_leda" >> $ERRORFILE
     else
@@ -1198,7 +1198,7 @@ test_algebraic_traits_core()
 #TODO: Adapt
 
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CORE_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_TRAITS algebraic_traits_core
+    compile_test test_traits $CORE_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic_traits_core
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits algebraic_traits_core" >> $ERRORFILE
     else

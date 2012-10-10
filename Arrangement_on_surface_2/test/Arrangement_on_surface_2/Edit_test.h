@@ -10,11 +10,12 @@
 #include "IO_test.h"
 
 /*! Edit test */
-template <typename T_Traits>
-class Edit_test : public IO_test<T_Traits> {
+template <typename T_Geom_traits, typename T_Topol_traits>
+class Edit_test : public IO_test<T_Geom_traits> {
 private:
-  typedef T_Traits                                      Traits;
-  typedef IO_test<Traits>                               Base;
+  typedef T_Geom_traits                                 Geom_traits;
+  typedef T_Topol_traits                                Topol_traits;
+  typedef IO_test<Geom_traits>                          Base;
 
 public:
   typedef typename Base::Point_2                        Point_2;
@@ -25,7 +26,8 @@ public:
   typedef typename Base::Xcurves_vector                 Xcurves_vector;
   typedef typename Base::Curves_vector                  Curves_vector;
   
-  typedef CGAL::Arrangement_2<Traits>                   Arrangement_2;
+  typedef CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>
+                                                        Arrangement_2;
 
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
@@ -84,13 +86,13 @@ private:
  * Constructor. 
  * Accepts test data file name.
  */
-template <typename T_Traits>
+template <typename T_Traits, typename T_Topol_traits>
 Edit_test<T_Traits>::Edit_test() :
   m_arr(NULL)
 {}
 
 /*! Set the file names */
-template <typename T_Traits>
+template <typename T_Traits, typename T_Topol_traits>
 void Edit_test<T_Traits>::set_filenames(const char* points_filename,
                                         const char* xcurves_filename,
                                         const char* curves_filename,
@@ -101,7 +103,7 @@ void Edit_test<T_Traits>::set_filenames(const char* points_filename,
 }
 
 /*! Initialize the data structures */
-template <typename T_Traits>
+template <typename T_Traits, typename T_Topol_traits>
 bool Edit_test<T_Traits>::init()
 {
   if (!Base::init()) return false;
@@ -109,7 +111,7 @@ bool Edit_test<T_Traits>::init()
 }
 
 /*! Clear the data structures */
-template<class T_Traits>
+template<class T_Traits, typename T_Topol_traits>
 void Edit_test<T_Traits>::clear()
 {
   Base::clear();
@@ -117,14 +119,14 @@ void Edit_test<T_Traits>::clear()
   m_filename_cmds.clear();
 }
 
-template <typename T_Traits>
+template <typename T_Traits, typename T_Topol_traits>
 bool Edit_test<T_Traits>::allocate_arrangement()
 {
   if (!(m_arr = new Arrangement_2())) return false;
   return true;
 }
 
-template <typename T_Traits>
+template <typename T_Traits, typename T_Topol_traits>
 void Edit_test<T_Traits>::deallocate_arrangement()
 {
   if (m_arr) {
@@ -133,14 +135,14 @@ void Edit_test<T_Traits>::deallocate_arrangement()
   }
 }
 
-template <typename T_Traits>
+template <typename T_Traits, typename T_Topol_traits>
 void Edit_test<T_Traits>::clear_arrangement()
 {
   if (m_arr) m_arr->clear();
 }
 
 // Perform the test
-template <typename T_Traits>
+template <typename T_Traits, typename T_Topol_traits>
 bool Edit_test<T_Traits>::perform()
 {
   CGAL::Timer timer;
@@ -172,7 +174,7 @@ bool Edit_test<T_Traits>::perform()
   return true;
 }
 
-template <typename T_Traits>
+template <typename T_Traits, typename T_Topol_traits>
 bool Edit_test<T_Traits>::read_perform_opts(std::istream& is)
 {
   typename Arrangement_2::Vertex_const_handle    vh_ref, vh_curr;

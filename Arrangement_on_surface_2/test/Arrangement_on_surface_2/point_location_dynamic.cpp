@@ -4,9 +4,9 @@
 
 #include <CGAL/basic.h>
 
-#if ((TEST_TRAITS == CORE_CONIC_TRAITS) ||	\
-     (TEST_TRAITS == BEZIER_TRAITS) ||					\
-     (TEST_TRAITS == RATIONAL_ARC_TRAITS)) && !defined(CGAL_USE_CORE)
+#if ((TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) ||	\
+     (TEST_GEOM_TRAITS == BEZIER_GEOM_TRAITS) ||	\
+     (TEST_GEOM_TRAITS == RATIONAL_ARC_GEOM_TRAITS)) && !defined(CGAL_USE_CORE)
 
 int main()
 {
@@ -17,7 +17,7 @@ int main()
             << std::endl;
   return 0;
 }
-#elif (TEST_TRAITS == ALGEBRAIC_TRAITS) && \
+#elif (TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS) && \
   (TEST_NT == LEDA_INT_NT || TEST_NT == LEDA_RAT_NT) && \
   (! CGAL_USE_LEDA)
 
@@ -31,7 +31,7 @@ int main()
   return 0;
 }
 
-#elif (TEST_TRAITS == ALGEBRAIC_TRAITS) && \
+#elif (TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS) && \
   (TEST_NT == CGAL_GMPZ_NT || TEST_NT == CGAL_GMPQ_NT) && \
   ! (CGAL_USE_GMP && CGAL_USE_MPFI)
 
@@ -46,7 +46,7 @@ int main()
   return 0;
 }
 
-#elif (TEST_TRAITS == ALGEBRAIC_TRAITS) && \
+#elif (TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS) && \
   (TEST_NT == CORE_INT_NT) && \
   !CGAL_USE_CORE
 
@@ -70,7 +70,7 @@ bool test1(const char* points_filename, const char* xcurves_filename,
            const char* curves_filename, const char* commands_filename,
            const char* queries_filename)
 {
-  Point_location_dynamic_test<Traits> pl_test;
+  Point_location_dynamic_test<Geom_traits, Topol_traits> pl_test;
   pl_test.set_filenames(points_filename, xcurves_filename, curves_filename,
                         commands_filename, queries_filename);
   
@@ -89,7 +89,7 @@ bool test1(const char* points_filename, const char* xcurves_filename,
 
 int main(int argc, char * argv[])
 {
-#if TEST_TRAITS == ALGEBRAIC_TRAITS
+#if TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 #endif
