@@ -9,6 +9,7 @@
 # |  |  |  |  |
 # *  *  *  *  *  command to be executed
 
+PATH=/bin:/usr/bin:/home/lrineau/bin
 
 # Update testsuite result pages
 5,15,25,35,45,55 * * * *  cd $HOME/CGAL/collect_and_public_testresults; ./treat_result_collection
@@ -29,6 +30,9 @@
 
 # Manual Test suite, at 9:40pm
 40 21 * * * cd $HOME/CGAL/releases-and-testsuites-with-cmake/CGAL-I/doc_tex; nice -19 $HOME/bin/cgal_manual -testsuite || true
+
+# Doxygen Test suite, at 9:05pm
+0 21  * * * time $HOME/CGAL/python-3.3/bin/python3 testsuite.py --doxyassist $HOME/CGAL/doxyassist/doxyassist.py --doxygen $HOME/CGAL/doxygen-svn/bin/doxygen --documentation $HOME/CGAL/doxy-port-pmoeller/Documentation --publish /var/CGAL/www/Members/Doxygen_test/ --do-update --do-purge-rebuild
 
 # Dump the crontab to SVN every hour at minute 18
 18 * * * * $HOME/bin/dump_crontab
