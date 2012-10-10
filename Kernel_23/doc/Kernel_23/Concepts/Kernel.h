@@ -783,7 +783,7 @@ public:
 returns an arbitrary point on `l`. It holds 
 `point(i) == point(j)`, iff `i==j`. 
 Furthermore, is directed from `point(i)` 
-to `point(j)`, for all `i` \f$ <\f$ `j`. 
+to `point(j)`, for all `i < j`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Line_3& l, 
 int i); 
@@ -795,8 +795,8 @@ Kernel::Point_3 operator()(const Kernel::Plane_3& h);
 
 /*! 
 returns a point on `r`. `point(0)` is the source, 
-`point(i)`, with \f$ i>0\f$, is different from the 
-source. \pre \f$ i \geq0\f$. 
+`point(i)`, with `i>0`, is different from the 
+source. \pre `i >= 0`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Ray_3& r, 
 int i); 
@@ -832,7 +832,7 @@ public:
 /// @{
 
 /*! 
-computes the midpoint of the segment \f$ pq\f$. 
+computes the midpoint of the segment `pq`. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Point_2& p, 
 const Kernel::Point_2& q ); 
@@ -948,7 +948,7 @@ public:
 /// @{
 
 /*! 
-returns `true`, if \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$ are coplanar. 
+returns `true`, if `p`, `q`, `r`, and `s` are coplanar. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
@@ -977,9 +977,9 @@ public:
 /// @{
 
 /*! 
-returns true iff the \f$ x\f$-coordinate of \f$ p\f$ is smaller than the 
-\f$ x\f$-coordinate of \f$ q\f$ or if the are the same and 
-the \f$ y\f$-coordinate of \f$ p\f$ is smaller than the \f$ y\f$-coordinate of \f$ q\f$. 
+returns true iff the \f$ x\f$-coordinate of `p` is smaller than the 
+\f$ x\f$-coordinate of `q` or if the are the same and 
+the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q); 
@@ -1008,17 +1008,17 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ o\f$ is horizontal. 
+returns true iff `o` is horizontal. 
 */ 
 bool operator()(const Kernel::Line_2&o); 
 
 /*! 
-returns true iff \f$ o\f$ is horizontal. 
+returns true iff `o` is horizontal. 
 */ 
 bool operator()(const Kernel::Ray_2&o); 
 
 /*! 
-returns true iff \f$ o\f$ is horizontal. 
+returns true iff `o` is horizontal. 
 */ 
 bool operator()(const Kernel::Segment_2&o); 
 
@@ -1044,7 +1044,7 @@ public:
 /// @{
 
 /*! 
-introduces the vector \f$ v/s\f$. 
+introduces the vector `v/s`. 
 */ 
 Kernel::Vector_2 operator()(const Kernel::Vector_2 &v, 
 const Kernel::RT s); 
@@ -1071,7 +1071,7 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ and \f$ q\f$ have the same Cartesian \f$ z\f$-coordinate. 
+returns true iff `p` and `q` have the same Cartesian \f$ z\f$-coordinate. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q); 
@@ -1207,7 +1207,7 @@ public:
 /// @{
 
 /*! 
-returns the line representing the same set of points as \f$ l\f$, 
+returns the line representing the same set of points as `l`, 
 but with opposite direction. 
 */ 
 Kernel::Line_3 operator()(const Kernel::Line_3& l); 
@@ -1234,7 +1234,7 @@ public:
 /// @{
 
 /*! 
-returns the ray with the same source as \f$ r\f$, but in opposite direction. 
+returns the ray with the same source as `r`, but in opposite direction. 
 */ 
 Kernel::Ray_2 operator()(const Kernel::Ray_2& r); 
 
@@ -1260,7 +1260,7 @@ public:
 /// @{
 
 /*! 
-introduces the vector \f$ v/s\f$. 
+introduces the vector `v/s`. 
 */ 
 Kernel::Vector_3 operator()(const Kernel::Vector_3 &v, 
 const Kernel::RT s); 
@@ -1320,20 +1320,20 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ lies on the negative side of \f$ h\f$ 
-(\f$ h\f$ is considered a half-space). 
+returns true iff `p` lies on the negative side of `h` 
+(`h` is considered a half-space). 
 */ 
 bool operator()(const Kernel::Plane_3&h, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the negative side of \f$ s\f$. 
+returns true iff `p` lies on the negative side of `s`. 
 */ 
 bool operator()(const Kernel::Sphere_3&s, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the negative side of \f$ t\f$. 
+returns true iff `p` lies on the negative side of `t`. 
 */ 
 bool operator()(const Kernel::Tetrahedron_3&t, 
 const Kernel::Point_3&p); 
@@ -1361,12 +1361,12 @@ public:
 /// @{
 
 /*! 
-returns the squared length of \f$ v\f$. 
+returns the squared length of `v`. 
 */ 
 Kernel::FT operator()(const Kernel::Vector_2& v); 
 
 /*! 
-returns the squared length of \f$ s\f$. 
+returns the squared length of `s`. 
 */ 
 Kernel::FT operator()(const Kernel::Segment_2& s); 
 
@@ -1392,7 +1392,7 @@ public:
 /// @{
 
 /*! 
-compute the center of the circle \f$ c\f$. 
+compute the center of the circle `c`. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Circle_2 & c); 
 
@@ -1447,8 +1447,8 @@ public:
 /// @{
 
 /*! 
-returns true iff the \f$ x\f$-coordinate of \f$ p\f$ is smaller than the 
-\f$ x\f$-coordinate of \f$ q\f$. 
+returns true iff the \f$ x\f$-coordinate of `p` is smaller than the 
+\f$ x\f$-coordinate of `q`. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q); 
@@ -1476,15 +1476,15 @@ public:
 /// @{
 
 /*! 
-checks if point \f$ p\f$ is on \f$ r\f$. 
-\pre \f$ p\f$ is on the supporting line of \f$ r\f$. 
+checks if point `p` is on `r`. 
+\pre `p` is on the supporting line of `r`. 
 */ 
 bool operator()(const Kernel::Ray_2& r, 
 const Kernel::Point_2&p); 
 
 /*! 
-checks if point \f$ p\f$ is on \f$ s\f$. 
-\pre \f$ p\f$ is on the supporting line of \f$ s\f$. 
+checks if point `p` is on `s`. 
+\pre `p` is on the supporting line of `s`. 
 */ 
 bool operator()(const Kernel::Segment_2& s, 
 const Kernel::Point_2&p); 
@@ -1514,12 +1514,12 @@ public:
 /// @{
 
 /*! 
-returns the squared length of \f$ v\f$. 
+returns the squared length of `v`. 
 */ 
 Kernel::FT operator()(const Kernel::Vector_3& v); 
 
 /*! 
-returns the squared length of \f$ s\f$. 
+returns the squared length of `s`. 
 */ 
 Kernel::FT operator()(const Kernel::Segment_3& s); 
 
@@ -1545,8 +1545,8 @@ public:
 /// @{
 
 /*! 
-introduces a segment with source \f$ p\f$ 
-and target \f$ q\f$. The segment is directed from the source towards 
+introduces a segment with source `p` 
+and target `q`. The segment is directed from the source towards 
 the target. 
 */ 
 Kernel::Segment_2 operator()(const Kernel::Point_2 &p, const Kernel::Point_2 &q); 
@@ -1573,8 +1573,8 @@ public:
 /// @{
 
 /*! 
-returns true iff the \f$ y\f$-coordinate of \f$ p\f$ is smaller than the 
-\f$ y\f$-coordinate of \f$ q\f$. 
+returns true iff the \f$ y\f$-coordinate of `p` is smaller than the 
+\f$ y\f$-coordinate of `q`. 
 */ 
 bool operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q); 
@@ -1601,15 +1601,15 @@ public:
 /// @{
 
 /*! 
-compute the center of the smallest circle passing through the points \f$ p\f$ and 
-\f$ q\f$. Note : this is the same as `Kernel::ConstructMidPoint_3`. 
+compute the center of the smallest circle passing through the points `p` and 
+`q`. Note : this is the same as `Kernel::ConstructMidPoint_3`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q); 
 
 /*! 
-compute the center of the sphere passing through the points \f$ p\f$, \f$ q\f$, \f$ r\f$, 
-and \f$ s\f$. \pre \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$ are not coplanar. 
+compute the center of the sphere passing through the points `p`, `q`, `r`, 
+and `s`. \pre `p`, `q`, `r`, and `s` are not coplanar. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
@@ -1617,22 +1617,22 @@ const Kernel::Point_3&r,
 const Kernel::Point_3&s); 
 
 /*! 
-compute the center of the sphere passing through the vertices of \f$ t\f$. 
-\pre \f$ t\f$ is not degenerate. 
+compute the center of the sphere passing through the vertices of `t`. 
+\pre `t` is not degenerate. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Tetrahedron_3&t); 
 
 /*! 
-compute the center of the circle passing through the points \f$ p\f$, \f$ q\f$ and \f$ r\f$. 
-\pre \f$ p\f$, \f$ q\f$ and \f$ r\f$ are not collinear. 
+compute the center of the circle passing through the points `p`, `q` and `r`. 
+\pre `p`, `q` and `r` are not collinear. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
 const Kernel::Point_3&r); 
 
 /*! 
-compute the center of the circle passing through the vertices of \f$ t\f$. 
-\pre \f$ t\f$ is not degenerate. 
+compute the center of the circle passing through the vertices of `t`. 
+\pre `t` is not degenerate. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Triangle_3&t); 
 
@@ -1658,22 +1658,22 @@ public:
 /// @{
 
 /*! 
-compute the center of the smallest circle passing through the points \f$ p\f$ and \f$ q\f$. Note : this is the same as `Kernel::ConstructMidPoint_2`. 
+compute the center of the smallest circle passing through the points `p` and `q`. Note : this is the same as `Kernel::ConstructMidPoint_2`. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q); 
 
 /*! 
-compute the center of the circle passing through the points \f$ p\f$, \f$ q\f$, and \f$ r\f$. 
-\pre \f$ p\f$, \f$ q\f$, and \f$ r\f$ are not collinear. 
+compute the center of the circle passing through the points `p`, `q`, and `r`. 
+\pre `p`, `q`, and `r` are not collinear. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q, 
 const Kernel::Point_2&r); 
 
 /*! 
-compute the center of the circle passing through the three vertices of \f$ t\f$. 
-\pre \f$ t\f$ is not degenerate. 
+compute the center of the circle passing through the three vertices of `t`. 
+\pre `t` is not degenerate. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Triangle_2&t); 
 
@@ -1740,7 +1740,7 @@ const Kernel::Point_3 & q,
 const Orientation & o = COUNTERCLOCKWISE); 
 
 /*! 
-introduces a sphere \f$ s\f$ initialized to the sphere with center 
+introduces a sphere `s` initialized to the sphere with center 
 `center`, squared radius zero and orientation `orientation`. 
 \pre `orientation` \f$ \neq\f$ `COPLANAR`. 
 \post `s.is_degenerate()` = `true`. 
@@ -1776,7 +1776,7 @@ public:
 /// @{
 
 /*! 
-returns the supporting plane of \f$ t\f$, with same orientation. 
+returns the supporting plane of `t`, with same orientation. 
 */ 
 Kernel::Plane_3 operator()(const Kernel::Triangle_3& t); 
 
@@ -1862,7 +1862,7 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ and \f$ q\f$ have the same Cartesian \f$ x\f$-coordinate. 
+returns true iff `p` and `q` have the same Cartesian \f$ x\f$-coordinate. 
 */ 
 bool operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q); 
@@ -2096,7 +2096,7 @@ public:
 /// @{
 
 /*! 
-returns the plane representing the same set of points as \f$ p\f$, 
+returns the plane representing the same set of points as `p`, 
 but with opposite orientation. 
 */ 
 Kernel::Plane_3 operator()(const Kernel::Plane_3& p); 
@@ -2123,8 +2123,8 @@ public:
 /// @{
 
 /*! 
-returns true iff the distance of \f$ q\f$ to \f$ p\f$ is 
-smaller than the distance of \f$ r\f$ to \f$ p\f$. 
+returns true iff the distance of `q` to `p` is 
+smaller than the distance of `r` to `p`. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
@@ -2155,7 +2155,7 @@ public:
 /// @{
 
 /*! 
-compares the \f$ y\f$-coordinates of \f$ p\f$ and the vertical projection 
+compares the \f$ y\f$-coordinates of `p` and the vertical projection 
 of `p` on `h`. See Figure \ref fig-compare2 (e).
 \pre `h` is not vertical. 
 */ 
@@ -2163,7 +2163,7 @@ Comparison_result operator()(const Kernel::Point_2 &p,
 const Kernel::Line_2 &h); 
 
 /*! 
-This function compares the \f$ y\f$-coordinates of the vertical projection 
+This function compares the `y`-coordinates of the vertical projection 
 of `p` on `h1` and on `h2`. See Figure \ref fig-compare2 (e).
 \pre `h1` and `h2` are not vertical. 
 */ 
@@ -2172,8 +2172,8 @@ const Kernel::Line_2 &h1,
 const Kernel::Line_2 &h2); 
 
 /*! 
-Let \f$ p\f$ be the intersection of lines \f$ l1\f$ and \f$ l2\f$. 
-This function compares the \f$ y\f$-coordinates of \f$ p\f$ and 
+Let `p` be the intersection of lines `l1` and `l2`. 
+This function compares the \f$ y\f$-coordinates of `p` and 
 the vertical projection of `p` on `h`.
 See (Figure \ref fig-compare2 (f)).
 \pre `l1`, `l2` intersect and `h` is not vertical. 
@@ -2184,8 +2184,8 @@ const Kernel::Line_2 &l2,
 const Kernel::Line_2 &h); 
 
 /*! 
-Let \f$ p\f$ be the intersection of lines \f$ l1\f$ and \f$ l2\f$. This function 
-compares the \f$ y\f$-coordinates of the vertical projection of `p` on 
+Let `p` be the intersection of lines `l1` and `l2`. This function 
+compares the `y`-coordinates of the vertical projection of `p` on 
 `h1` and on `h2`.
 See (Figure \ref fig-compare2 (g)).
 \pre `l1` and `l2` intersect; `h1` and `h2` are not vertical. 
@@ -2197,7 +2197,7 @@ const Kernel::Line_2 &h1,
 const Kernel::Line_2 &h2); 
 
 /*! 
-compares the \f$ y\f$-coordinates of \f$ p\f$ and the vertical projection 
+compares the `y`-coordinates of `p` and the vertical projection 
 of `p` on `s`. If `s` is vertical, then return 
 `EQUAL` when `p` lies on `s`, `SMALLER` when `p` lies 
 under s, and `LARGER` otherwise. 
@@ -2303,7 +2303,7 @@ public:
 /// @{
 
 /*! 
-returns the square of the area of \f$ t\f$. 
+returns the square of the area of `t`. 
 */ 
 Kernel::FT operator()(const Kernel::Triangle_3& t); 
 
@@ -2336,7 +2336,7 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ and \f$ q\f$ have the same Cartesian \f$ x\f$-coordinate. 
+returns true iff `p` and `q` have the same Cartesian \f$ x\f$-coordinate. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q); 
@@ -2364,22 +2364,22 @@ public:
 
 /*! 
 introduces a direction initialized with the 
-direction of vector \f$ v\f$. 
+direction of vector `v`. 
 */ 
 Kernel::Direction_3 operator()(const Kernel::Vector_3 &v); 
 
 /*! 
-introduces the direction of line \f$ l\f$. 
+introduces the direction of line `l`. 
 */ 
 Kernel::Direction_3 operator()(const Kernel::Line_3 &l); 
 
 /*! 
-introduces the direction of ray \f$ r\f$. 
+introduces the direction of ray `r`. 
 */ 
 Kernel::Direction_3 operator()(const Kernel::Ray_3 &r); 
 
 /*! 
-introduces the direction of segment \f$ s\f$. 
+introduces the direction of segment `s`. 
 */ 
 Kernel::Direction_3 operator()(const Kernel::Segment_3 &s); 
 
@@ -2407,14 +2407,14 @@ public:
 /// @{
 
 /*! 
-compute the centroid of the points \f$ p\f$, \f$ q\f$, and \f$ r\f$. 
+compute the centroid of the points `p`, `q`, and `r`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
 const Kernel::Point_3&r); 
 
 /*! 
-compute the centroid of the points \f$ p\f$, \f$ q\f$, \f$ r\f$ and \f$ s\f$. 
+compute the centroid of the points `p`, `q`, `r` and `s`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
@@ -2422,12 +2422,12 @@ const Kernel::Point_3&r,
 const Kernel::Point_3&s); 
 
 /*! 
-compute the centroid of the triangle \f$ t\f$. 
+compute the centroid of the triangle `t`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Triangle_3&t); 
 
 /*! 
-compute the centroid of the tetrahedron \f$ t\f$. 
+compute the centroid of the tetrahedron `t`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Tetrahedron_3&t); 
 
@@ -2454,28 +2454,28 @@ public:
 
 /*! 
 introduces a ray 
-with source \f$ p\f$ and passing through point \f$ q\f$. 
+with source `p` and passing through point `q`. 
 */ 
 Kernel::Ray_3 operator()(const Kernel::Point_3 &p, 
 const Kernel::Point_3 &q); 
 
 /*! 
-introduces a ray with source \f$ p\f$ and with 
-the direction given by \f$ v\f$. 
+introduces a ray with source `p` and with 
+the direction given by `v`. 
 */ 
 Kernel::Ray_3 operator()(const Kernel::Point_3 &p, 
 const Kernel::Vector_3 &v); 
 
 /*! 
-introduces a ray with source \f$ p\f$ and with 
-direction \f$ d\f$. 
+introduces a ray with source `p` and with 
+direction `d`. 
 */ 
 Kernel::Ray_3 operator()(const Kernel::Point_3 &p, 
 const Kernel::Direction_3 &d); 
 
 /*! 
-introduces a ray with source \f$ p\f$ and with 
-the same direction as \f$ l\f$. 
+introduces a ray with source `p` and with 
+the same direction as `l`. 
 */ 
 Kernel::Ray_3 operator()(const Kernel::Point_3 &p, 
 const Kernel::Line_3 &l); 
@@ -2502,8 +2502,8 @@ public:
 /// @{
 
 /*! 
-introduces a segment with source \f$ p\f$ 
-and target \f$ q\f$. It is directed from the source towards 
+introduces a segment with source `p` 
+and target `q`. It is directed from the source towards 
 the target. 
 */ 
 Kernel::Segment_3 operator()(const Kernel::Point_3 &p, const Kernel::Point_3 &q); 
@@ -2530,7 +2530,7 @@ public:
 /// @{
 
 /*! 
-returns an approximation of the squared length (i.e. perimeter) of \f$ c\f$. 
+returns an approximation of the squared length (i.e. perimeter) of `c`. 
 */ 
 double operator()(const Kernel::Circle_3& c); 
 
@@ -2557,7 +2557,7 @@ public:
 /// @{
 
 /*! 
-returns the determinant of the two vectors \f$ v\f$ and \f$ w\f$. 
+returns the determinant of the two vectors `v` and `w`. 
 */ 
 Kernel::FT operator()(const Kernel::Vector_2& v, 
 const Kernel::Vector_2& w); 
@@ -2585,28 +2585,28 @@ public:
 
 /*! 
 introduces a ray 
-with source \f$ p\f$ and passing through point \f$ q\f$. 
+with source `p` and passing through point `q`. 
 */ 
 Kernel::Ray_2 operator()(const Kernel::Point_2 &p, 
 const Kernel::Point_2 &q); 
 
 /*! 
-introduces a ray starting at source \f$ p\f$ with 
-the direction given by \f$ v\f$. 
+introduces a ray starting at source `p` with 
+the direction given by `v`. 
 */ 
 Kernel::Ray_2 operator()(const Kernel::Point_2 &p, 
 const Kernel::Vector_2 &v); 
 
 /*! 
-introduces a ray starting at source \f$ p\f$ with 
-direction \f$ d\f$. 
+introduces a ray starting at source `p` with 
+direction `d`. 
 */ 
 Kernel::Ray_2 operator()(const Kernel::Point_2 &p, 
 const Kernel::Direction_2 &d); 
 
 /*! 
-introduces a ray starting at source \f$ p\f$ with 
-the same direction as \f$ l\f$. 
+introduces a ray starting at source `p` with 
+the same direction as `l`. 
 */ 
 Kernel::Ray_2 operator()(const Kernel::Point_2 &p, 
 const Kernel::Line_2 &l); 
@@ -2633,7 +2633,7 @@ public:
 /// @{
 
 /*! 
-returns `true`, if \f$ p\f$, \f$ q\f$, and \f$ r\f$ are collinear. 
+returns `true`, if `p`, `q`, and `r` are collinear. 
 */ 
 bool operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q, 
@@ -2740,7 +2740,7 @@ public:
 /// @{
 
 /*! 
-constructs the bisector of \f$ p\f$ and \f$ q\f$. 
+constructs the bisector of `p` and `q`. 
 The bisector is oriented in such a way that `p` lies on its 
 positive side. \pre `p` and `q` are not equal. 
 */ 
@@ -2748,7 +2748,7 @@ Kernel::Line_2 operator()(const Kernel::Point_2&p,
 const Kernel::Point_2&q ); 
 
 /*! 
-constructs the bisector of the two lines \f$ l1\f$ and \f$ l2\f$. 
+constructs the bisector of the two lines `l1` and `l2`. 
 In the general case, the bisector has the direction of the vector which 
 is the sum of the normalized directions of the two lines, and which passes 
 through the intersection of `l1` and `l2`. 
@@ -2783,7 +2783,7 @@ public:
 /// @{
 
 /*! 
-returns an approximation of the area of \f$ c\f$. 
+returns an approximation of the area of `c`. 
 */ 
 double operator()(const Kernel::Circle_3& c); 
 
@@ -2892,7 +2892,7 @@ public:
 /// @{
 
 /*! 
-returns the area of \f$ t\f$. This requires that `Kernel::FT` 
+returns the area of  `t`. This requires that `Kernel::FT` 
 supports the `sqrt` operation. 
 */ 
 Kernel::FT operator()(const Kernel::Triangle_3& t); 
@@ -3023,7 +3023,7 @@ public:
 
 
 /*! 
-returns true iff \f$ p\f$ and \f$ q\f$ have the same Cartesian \f$ x\f$-coordinate 
+returns true iff `p` and `q` have the same Cartesian \f$ x\f$-coordinate 
 and the same Cartesian \f$ y\f$-coordinate. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
@@ -3054,24 +3054,24 @@ public:
 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$ and \f$ p2\f$ with corresponding 
-weights \f$ w1\f$ and \f$ 1-w1\f$. 
+compute the barycenter of the points `p1` and `p2` with corresponding 
+weights `w1` and `1-w1`. 
 */ 
 Kernel::Point_2 
 operator()( const Kernel::Point_2& p1, const Kernel::FT&w1, 
 const Kernel::Point_2& p2); 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$ and \f$ p2\f$ with corresponding 
-weights \f$ w1\f$ and \f$ w2\f$. \pre w1+w2 != 0. 
+compute the barycenter of the points `p1` and `p2` with corresponding 
+weights `w1` and `w2`. \pre `w1+w2 != 0`. 
 */ 
 Kernel::Point_2 
 operator()( const Kernel::Point_2& p1, const Kernel::FT&w1, 
 const Kernel::Point_2& p2, const Kernel::FT&w2); 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$ and \f$ p3\f$ with corresponding 
-weights \f$ w1\f$, \f$ w2\f$ and \f$ 1-w1-w2\f$. 
+compute the barycenter of the points `p1`, `p2` and `p3` with corresponding 
+weights `w1`, `w2` and `1-w1-w2`. 
 */ 
 Kernel::Point_2 
 operator()( const Kernel::Point_2& p1, const Kernel::FT&w1, 
@@ -3079,8 +3079,8 @@ const Kernel::Point_2& p2, const Kernel::FT&w2,
 const Kernel::Point_2& p3); 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$ and \f$ p3\f$ with corresponding 
-weights \f$ w1\f$, \f$ w2\f$ and \f$ w3\f$. \pre w1+w2+w3 != 0. 
+compute the barycenter of the points `p1`, `p2` and `p3` with corresponding 
+weights `w1`, `w2` and `w3`. \pre `w1+w2+w3 != 0`.
 */ 
 Kernel::Point_2 
 operator()( const Kernel::Point_2& p1, const Kernel::FT&w1, 
@@ -3088,8 +3088,8 @@ const Kernel::Point_2& p2, const Kernel::FT&w2,
 const Kernel::Point_2& p3, const Kernel::FT&w3); 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$, \f$ p3\f$ and \f$ p4\f$ with corresponding 
-weights \f$ w1\f$, \f$ w2\f$, \f$ w3\f$ and \f$ 1-w1-w2-w3\f$. 
+compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding 
+weights `w1`, `w2`, `w3` and `1-w1-w2-w3`. 
 */ 
 Kernel::Point_2 
 operator()( const Kernel::Point_2& p1, const Kernel::FT&w1, 
@@ -3098,8 +3098,8 @@ const Kernel::Point_2& p3, const Kernel::FT&w3,
 const Kernel::Point_2& p4); 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$, \f$ p3\f$ and \f$ p4\f$ with corresponding 
-weights \f$ w1\f$, \f$ w2\f$, \f$ w3\f$ and \f$ w4\f$. \pre w1+w2+w3+w4 != 0. 
+compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding 
+weights `w1`, `w2`, `w3` and `w4`. \pre `1+w2+w3+w4 != 0.`
 */ 
 Kernel::Point_2 
 operator()( const Kernel::Point_2& p1, const Kernel::FT&w1, 
@@ -3129,8 +3129,8 @@ public:
 /// @{
 
 /*! 
-returns the line perpendicular to \f$ l\f$ and passing through \f$ p\f$, 
-where the direction is the direction of \f$ l\f$ rotated 
+returns the line perpendicular to `l` and passing through `p`, 
+where the direction is the direction of `l` rotated 
 counterclockwise by 90 degrees. 
 */ 
 Kernel::Line_2 operator()(const Kernel::Line_2& l, 
@@ -3224,9 +3224,9 @@ public:
 /// @{
 
 /*! 
-returns true iff the \f$ y\f$-coordinate of \f$ p\f$ is smaller than the 
-\f$ y\f$-coordinate of \f$ q\f$ or if the are the same and 
-the \f$ x\f$-coordinate of \f$ p\f$ is smaller than the \f$ x\f$-coordinate of \f$ q\f$. 
+returns true iff the \f$ y\f$-coordinate of `p` is smaller than the 
+\f$ y\f$-coordinate of `q` or if the are the same and 
+the \f$ x\f$-coordinate of `p` is smaller than the \f$ x\f$-coordinate of `q`. 
 */ 
 bool operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q); 
@@ -3305,7 +3305,7 @@ public:
 /*! 
 returns `ON_ORIENTED_BOUNDARY`, 
 `ON_NEGATIVE_SIDE`, or the constant `ON_POSITIVE_SIDE`, 
-depending on the position of \f$ p\f$ relative to the oriented circle \f$ c\f$. 
+depending on the position of `p` relative to the oriented circle `c`. 
 */ 
 Oriented_side operator()(const Kernel::Circle_2&c, 
 const Kernel::Point_2&p); 
@@ -3313,7 +3313,7 @@ const Kernel::Point_2&p);
 /*! 
 returns `ON_ORIENTED_BOUNDARY`, 
 `ON_NEGATIVE_SIDE`, or the constant `ON_POSITIVE_SIDE`, 
-depending on the position of \f$ p\f$ relative to the oriented line \f$ l\f$. 
+depending on the position of `p` relative to the oriented line `l`. 
 */ 
 Oriented_side operator()(const Kernel::Line_2&l, 
 const Kernel::Point_2&p); 
@@ -3321,7 +3321,7 @@ const Kernel::Point_2&p);
 /*! 
 returns `ON_ORIENTED_BOUNDARY`, 
 `ON_NEGATIVE_SIDE`, or the constant `ON_POSITIVE_SIDE`, 
-depending on the position of \f$ p\f$ relative to the oriented triangle \f$ t\f$. 
+depending on the position of `p` relative to the oriented triangle `t`. 
 */ 
 Oriented_side operator()(const Kernel::Triangle_2&t, 
 const Kernel::Point_2&p); 
@@ -3350,8 +3350,8 @@ public:
 
 /*! 
 returns the relative position of point `t` 
-to the circle defined by \f$ p\f$, \f$ q\f$ and \f$ r\f$. The order 
-of the points \f$ p\f$, \f$ q\f$ and \f$ r\f$ does not matter. 
+to the circle defined by `p`, `q` and `r`. The order 
+of the points `p`, `q` and `r` does not matter. 
 \pre `p, q` and `r` are not collinear. 
 */ 
 Bounded_side operator()(const Kernel::Point_2&p, 
@@ -3361,7 +3361,7 @@ const Kernel::Point_2&t);
 
 /*! 
 returns the position of the point `t` relative to the circle 
-that has \f$ pq\f$ as its diameter. 
+that has `pq` as its diameter. 
 */ 
 Bounded_side operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q, 
@@ -3391,35 +3391,35 @@ public:
 
 
 /*! 
-introduces the vector \f$ b-a\f$. 
+introduces the vector `b-a`. 
 */ 
 Kernel::Vector_2 operator()(const Kernel::Point_2 &a, 
 const Kernel::Point_2 &b); 
 
 /*! 
-introduces the vector \f$ b\f$. 
+introduces the vector `b`. 
 */ 
 Kernel::Vector_2 operator()(const Origin &o, 
 const Kernel::Point_2 &b); 
 
 /*! 
-introduces the vector \f$ -a\f$. 
+introduces the vector `-a`. 
 */ 
 Kernel::Vector_2 operator()(const Kernel::Point_2 &a, 
 const Origin &o); 
 
 /*! 
-introduces the vector \f$ s.target()-s.source()\f$. 
+introduces the vector `s.target()-s.source()`. 
 */ 
 Kernel::Vector_2 operator()(const Kernel::Segment_2 &s); 
 
 /*! 
-introduces a vector having the same direction as \f$ r\f$. 
+introduces a vector having the same direction as `r`. 
 */ 
 Kernel::Vector_2 operator()(const Kernel::Ray_2 &r); 
 
 /*! 
-introduces a vector having the same direction as \f$ l\f$. 
+introduces a vector having the same direction as `l`. 
 */ 
 Kernel::Vector_2 operator()(const Kernel::Line_2 &l); 
 
@@ -3510,10 +3510,10 @@ public:
 /*! 
 returns true iff the three points `p`, `q` 
 and `r` form a left turn or if they are collinear and 
-the distance of \f$ q\f$ to \f$ p\f$ is 
-larger than the distance of \f$ r\f$ to \f$ p\f$, where \f$ p\f$ is the point 
+the distance of `q` to `p` is 
+larger than the distance of `r` to `p`, where `p` is the point 
 passed to the object at construction. 
-\pre \f$ p\f$ does not lie in the interior of the segment \f$ rq\f$, i.e. \f$ p\f$ is an extreme point with respect to \f$ \{p,q,r\}\f$. 
+\pre `p` does not lie in the interior of the segment `rq`, i.e. `p` is an extreme point with respect to \f$ \{p,q,r\}\f$. 
 */ 
 bool operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q, 
@@ -3592,7 +3592,7 @@ public:
 /// @{
 
 /*! 
-introduces the vector \f$ v1 - v2\f$. 
+introduces the vector `v1 - v2`. 
 */ 
 Kernel::Vector_2 operator()(const Kernel::Vector_2 &v1, 
 const Kernel::Vector_2 &v2); 
@@ -3624,32 +3624,32 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Circle_2&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Iso_rectangle_2&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Line_2&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Ray_2&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Segment_2&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Triangle_2&o); 
 
@@ -3676,8 +3676,8 @@ public:
 
 
 /*! 
-returns true iff the \f$ x\f$-coordinate of \f$ p\f$ is smaller than the 
-\f$ x\f$-coordinate of \f$ q\f$. 
+returns true iff the \f$ x\f$-coordinate of `p` is smaller than the 
+\f$ x\f$-coordinate of `q`. 
 */ 
 bool operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q); 
@@ -3705,7 +3705,7 @@ public:
 
 /*! 
 returns `OBTUSE`, `RIGHT` or `ACUTE` depending 
-on the angle formed by the three points \f$ p\f$, \f$ q\f$, \f$ r\f$ (\f$ q\f$ being the vertex of 
+on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of 
 the angle). 
 */ 
 Angle operator()(const Kernel::Point_3&p, 
@@ -3737,19 +3737,19 @@ public:
 
 
 /*! 
-returns true iff \f$ p\f$ lies on \f$ l\f$. 
+returns true iff `p` lies on `l`. 
 */ 
 bool operator()(const Kernel::Line_2&l, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on \f$ r\f$. 
+returns true iff `p` lies on `r`. 
 */ 
 bool operator()(const Kernel::Ray_2&r, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on \f$ s\f$. 
+returns true iff `p` lies on `s`. 
 */ 
 bool operator()(const Kernel::Segment_2&s, 
 const Kernel::Point_2&p); 
@@ -3915,8 +3915,8 @@ public:
 /// @{
 
 /*! 
-returns true iff the \f$ y\f$-coordinate of \f$ p\f$ is smaller than the 
-\f$ y\f$-coordinate of \f$ q\f$. 
+returns true iff the \f$ y\f$-coordinate of `p` is smaller than the 
+\f$ y\f$-coordinate of `q`. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q); 
@@ -3943,7 +3943,7 @@ public:
 /// @{
 
 /*! 
-introduces the vector \f$ v1 + v2\f$. 
+introduces the vector `v1 + v2`. 
 */ 
 Kernel::Vector_3 operator()(const Kernel::Vector_3 &v1, 
 const Kernel::Vector_3 &v2); 
@@ -4050,61 +4050,61 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ lies on \f$ c\f$. 
+returns true iff `p` lies on `c`. 
 */ 
 bool operator()(const Kernel::Circle_3&c, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on \f$ l\f$. 
+returns true iff `p` lies on `l`. 
 */ 
 bool operator()(const Kernel::Line_3&l, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on \f$ r\f$. 
+returns true iff `p` lies on `r`. 
 */ 
 bool operator()(const Kernel::Ray_3&r, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on \f$ s\f$. 
+returns true iff `p` lies on `s`. 
 */ 
 bool operator()(const Kernel::Segment_3&s, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on \f$ pl\f$. 
+returns true iff `p` lies on `pl`. 
 */ 
 bool operator()(const Kernel::Plane_3&pl, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ l\f$ lies on \f$ pl\f$. 
+returns true iff `l` lies on `pl`. 
 */ 
 bool operator()(const Kernel::Plane_3&pl, 
 const Kernel::Line_3&l); 
 
 /*! 
-returns true iff \f$ c\f$ lies on \f$ pl\f$. 
+returns true iff `c` lies on `pl`. 
 */ 
 bool operator()(const Kernel::Plane_3&pl, 
 const Kernel::Circle_3&c); 
 
 /*! 
-returns true iff \f$ c\f$ lies on \f$ s\f$. 
+returns true iff `c` lies on `s`. 
 */ 
 bool operator()(const Kernel::Sphere_3&s, 
 const Kernel::Point_3&c); 
 
 /*! 
-returns true iff \f$ c\f$ lies on \f$ s\f$. 
+returns true iff `c` lies on `s`. 
 */ 
 bool operator()(const Kernel::Sphere_3&s, 
 const Kernel::Circle_3&c); 
 
 /*! 
-returns true iff \f$ p\f$ lies on \f$ t\f$. 
+returns true iff `p` lies on `t`. 
 */ 
 bool operator()(const Kernel::Triangle_3&t, 
 const Kernel::Point_3&p); 
@@ -4131,7 +4131,7 @@ public:
 /// @{
 
 /*! 
-introduces a tetrahedron with vertices \f$ p_0\f$, \f$ p_1\f$, \f$ p_2\f$ and \f$ p_3\f$. 
+introduces a tetrahedron with vertices `p_0`, `p_1`, `p_2` and `p_3`. 
 */ 
 Kernel::Tetrahedron_3 operator()(const Kernel::Point_3 &p0, 
 const Kernel::Point_3 &p1, 
@@ -4160,9 +4160,9 @@ public:
 /// @{
 
 /*! 
-returns the \f$ y\f$-coordinate of the point at \f$ l\f$ with 
+returns the \f$ y\f$-coordinate of the point at `l` with 
 given \f$ x\f$-coordinate. 
-\pre \f$ l\f$ is not vertical. 
+\pre `l` is not vertical. 
 */ 
 Kernel::FT operator()(const Kernel::Line_2& l, 
 const Kernel::FT &x) const; 
@@ -4194,20 +4194,20 @@ public:
 
 
 /*! 
-returns true iff \f$ p\f$ lies on the negative side of \f$ c\f$. 
+returns true iff `p` lies on the negative side of `c`. 
 */ 
 bool operator()(const Kernel::Circle_2&c, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the negative side of \f$ l\f$ 
-(\f$ l\f$ is considered a half-space). 
+returns true iff `p` lies on the negative side of `l` 
+(`l` is considered a half-space). 
 */ 
 bool operator()(const Kernel::Line_2&l, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the negative side of \f$ t\f$. 
+returns true iff `p` lies on the negative side of `t`. 
 */ 
 bool operator()(const Kernel::Triangle_2&t, 
 const Kernel::Point_2&p); 
@@ -4298,34 +4298,34 @@ public:
 /// @{
 
 /*! 
-introduces a line passing through the points \f$ p\f$ and \f$ q\f$. 
-Line is directed from \f$ p\f$ to \f$ q\f$. 
+introduces a line passing through the points `p` and `q`. 
+Line is directed from `p` to `q`. 
 */ 
 Kernel::Line_2 operator()(const Kernel::Point_2 &p, 
 const Kernel::Point_2 &q); 
 
 /*! 
-introduces a line passing through point \f$ p\f$ with 
-direction \f$ d\f$. 
+introduces a line passing through point `p` with 
+direction `d`. 
 */ 
 Kernel::Line_2 operator()(const Kernel::Point_2 &p, 
 const Kernel::Direction_2&d); 
 
 /*! 
-introduces a line passing through point \f$ p\f$ and 
-oriented by \f$ v\f$. 
+introduces a line passing through point `p` and 
+oriented by `v`. 
 */ 
 Kernel::Line_2 operator()(const Kernel::Point_2 &p, 
 const Kernel::Vector_2&v); 
 
 /*! 
-introduces a line supporting the segment \f$ s\f$, 
+introduces a line supporting the segment `s`, 
 oriented from source to target. 
 */ 
 Kernel::Line_2 operator()(const Kernel::Segment_2 &s); 
 
 /*! 
-introduces a line supporting the ray \f$ r\f$, 
+introduces a line supporting the ray `r`, 
 with same orientation. 
 */ 
 Kernel::Line_2 operator()(const Kernel::Ray_2 &r); 
@@ -4361,47 +4361,47 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Circle_3&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Iso_cuboid_3&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Line_3&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Plane_3&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Ray_3&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Segment_3&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Sphere_3&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Tetrahedron_3&o); 
 
 /*! 
-returns true iff \f$ o\f$ is degenerate. 
+returns true iff `o` is degenerate. 
 */ 
 bool operator()(const Kernel::Triangle_3&o); 
 
@@ -4518,7 +4518,7 @@ public:
 /// @{
 
 /*! 
-compares the \f$ x\f$-coordinates of \f$ p\f$ and the horizontal projection 
+compares the \f$ x\f$-coordinates of `p` and the horizontal projection 
 of `p` on `h`. See Figure \ref fig-compare_x_at_y_2 (a).
 
 */ 
@@ -4536,8 +4536,8 @@ const Kernel::Line_2 &h1,
 const Kernel::Line_2 &h2); 
 
 /*! 
-Let \f$ p\f$ be the intersection of lines \f$ l1\f$ and \f$ l2\f$. 
-This function compares the \f$ x\f$-coordinates of \f$ p\f$ and 
+Let `p` be the intersection of lines `l1` and `l2`. 
+This function compares the \f$ x\f$-coordinates of `p` and 
 the horizontal projection of `p` on `h`.
 
 See Figure \ref fig-compare_x_at_y_2 (c).
@@ -4547,7 +4547,7 @@ const Kernel::Line_2 &l2,
 const Kernel::Line_2 &h); 
 
 /*! 
-Let \f$ p\f$ be the intersection of lines \f$ l1\f$ and \f$ l2\f$. This 
+Let `p` be the intersection of lines `l1` and `l2`. This 
 function compares the \f$ x\f$-coordinates of the horizontal projection of 
 `p` on `h1` and on `h2`.
 
@@ -4660,19 +4660,19 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ lies on the bounded side of \f$ c\f$. 
+returns true iff `p` lies on the bounded side of `c`. 
 */ 
 bool operator()(const Kernel::Circle_2&c, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the bounded side of \f$ i\f$. 
+returns true iff `p` lies on the bounded side of `i`. 
 */ 
 bool operator()(const Kernel::Iso_rectangle_2&i, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the bounded side of \f$ t\f$. 
+returns true iff `p` lies on the bounded side of `t`. 
 */ 
 bool operator()(const Kernel::Triangle_2&t, 
 const Kernel::Point_2&p); 
@@ -4765,7 +4765,7 @@ const Kernel::Point_3& r);
 returns true, iff the signed distance from point `q` to the plane 
 `p` defined by `p1, p2, p3` is smaller than the signed distance 
 from point `r` to `p`. 
-\pre \f$ p, q\f$, and \f$ r\f$ are not collinear. 
+\pre `p, q`, and `r` are not collinear. 
 */ 
 bool operator()(const Kernel::Point_3& p1, 
 const Kernel::Point_3& p2, 
@@ -4795,7 +4795,7 @@ public:
 /// @{
 
 /*! 
-introduces a triangle with vertices \f$ p\f$, \f$ q\f$ and \f$ r\f$. 
+introduces a triangle with vertices `p`, `q` and `r`. 
 */ 
 Kernel::Triangle_2 operator()(const Kernel::Point_2 &p, 
 const Kernel::Point_2 &q, 
@@ -4823,11 +4823,11 @@ public:
 /// @{
 
 /*! 
-returns true iff the \f$ x\f$-coordinate of \f$ p\f$ is smaller than the 
-\f$ x\f$-coordinate of \f$ q\f$ or if the are the same and 
-the \f$ y\f$-coordinate of \f$ p\f$ is smaller than the \f$ y\f$-coordinate of \f$ q\f$, or, 
+returns true iff the \f$ x\f$-coordinate of `p` is smaller than the 
+\f$ x\f$-coordinate of `q` or if the are the same and 
+the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`, or, 
 if both \f$ x\f$- and \f$ y\f$- coordinate are identical and 
-the \f$ z\f$-coordinate of \f$ p\f$ is smaller than the \f$ z\f$-coordinate of \f$ q\f$. 
+the \f$ z\f$-coordinate of `p` is smaller than the \f$ z\f$-coordinate of `q`. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q); 
@@ -4911,7 +4911,7 @@ public:
 /// @{
 
 /*! 
-returns `true`, if \f$ p\f$, \f$ q\f$, and \f$ r\f$ are collinear. 
+returns `true`, if `p`, `q`, and `r` are collinear. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
@@ -4983,7 +4983,7 @@ public:
 /// @{
 
 /*! 
-returns the area of \f$ c\f$, divided by \f$ \pi\f$. 
+returns the area of `c`, divided by \f$ \pi\f$. 
 */ 
 Kernel::FT operator()(const Kernel::Circle_3& c); 
 
@@ -5188,7 +5188,7 @@ public:
 /// @{
 
 /*! 
-computes the cross product of \f$ v\f$ and \f$ w\f$. 
+computes the cross product of `v` and `w`.
 */ 
 Kernel::Vector_3 operator()(const Kernel::Vector_3 &v, 
 const Kernel::Vector_3 &w); 
@@ -5241,19 +5241,19 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ lies on the boundary of \f$ s\f$. 
+returns true iff `p` lies on the boundary of `s`. 
 */ 
 bool operator()(const Kernel::Sphere_3&s, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the boundary of \f$ t\f$. 
+returns true iff `p` lies on the boundary of `t`. 
 */ 
 bool operator()(const Kernel::Tetrahedron_3&t, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the boundary of \f$ c\f$. 
+returns true iff `p` lies on the boundary of `c`. 
 */ 
 bool operator()(const Kernel::Iso_cuboid_3&c, 
 const Kernel::Point_3&p); 
@@ -5282,20 +5282,20 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ lies on the positive side of \f$ c\f$. 
+returns true iff `p` lies on the positive side of `c`. 
 */ 
 bool operator()(const Kernel::Circle_2&c, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the positive side of \f$ l\f$ 
-(\f$ l\f$ is considered a half-space). 
+returns true iff `p` lies on the positive side of `l` 
+(`l` is considered a half-space). 
 */ 
 bool operator()(const Kernel::Line_2&l, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the positive side of \f$ t\f$. 
+returns true iff `p` lies on the positive side of `t`. 
 */ 
 bool operator()(const Kernel::Triangle_2&t, 
 const Kernel::Point_2&p); 
@@ -5323,7 +5323,7 @@ public:
 
 /*! 
 returns the sphere with the same center and squared radius as 
-\f$ s\f$, but with opposite orientation. 
+`s`, but with opposite orientation. 
 */ 
 Kernel::Sphere_3 operator()(const Kernel::Sphere_3& s); 
 
@@ -5406,8 +5406,8 @@ public:
 /// @{
 
 /*! 
-returns true iff the \f$ z\f$-coordinate of \f$ p\f$ is smaller than the 
-\f$ z\f$-coordinate of \f$ q\f$. 
+returns true iff the \f$ z\f$-coordinate of `p` is smaller than the 
+\f$ z\f$-coordinate of `q`. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q); 
@@ -5454,7 +5454,7 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ and \f$ q\f$ have the same Cartesian \f$ y\f$-coordinate. 
+returns true iff `p` and `q` have the same Cartesian \f$ y\f$-coordinate. 
 */ 
 bool operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q); 
@@ -5572,7 +5572,7 @@ public:
 
 /*! 
 returns the circle with the same center and squared radius as 
-\f$ c\f$, but with opposite orientation. 
+`c`, but with opposite orientation. 
 */ 
 Kernel::Circle_2 operator()(const Kernel::Circle_2& c); 
 
@@ -5599,20 +5599,20 @@ public:
 /// @{
 
 /*! 
-returns the signed area of the triangle defined by the points \f$ p\f$, 
-\f$ q\f$ and \f$ r\f$. 
+returns the signed area of the triangle defined by the points `p`, 
+`q` and `r`. 
 */ 
 Kernel::FT operator()(const Kernel::Point_2& p, 
 const Kernel::Point_2& q, 
 const Kernel::Point_2& r); 
 
 /*! 
-returns the area of \f$ r\f$. 
+returns the area of `r`. 
 */ 
 Kernel::FT operator()(const Kernel::Iso_rectangle_2& r); 
 
 /*! 
-returns the signed area of \f$ t\f$. 
+returns the signed area of `t`. 
 */ 
 Kernel::FT operator()(const Kernel::Triangle_2& t); 
 
@@ -5640,14 +5640,14 @@ public:
 /// @{
 
 /*! 
-compute the centroid of the points \f$ p\f$, \f$ q\f$, and \f$ r\f$. 
+compute the centroid of the points `p`, `q`, and `r`. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q, 
 const Kernel::Point_2&r); 
 
 /*! 
-compute the centroid of the points \f$ p\f$, \f$ q\f$, \f$ r\f$ and \f$ s\f$. 
+compute the centroid of the points `p`, `q`, `r` and `s`. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q, 
@@ -5655,7 +5655,7 @@ const Kernel::Point_2&r,
 const Kernel::Point_2&s); 
 
 /*! 
-compute the centroid of the triangle \f$ t\f$. 
+compute the centroid of the triangle `t`. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Triangle_2&t); 
 
@@ -5776,20 +5776,20 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ lies on the positive side of \f$ h\f$ 
-(\f$ h\f$ is considered a half-space). 
+returns true iff `p` lies on the positive side of `h` 
+(`h` is considered a half-space). 
 */ 
 bool operator()(const Kernel::Plane_3&h, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the positive side of \f$ s\f$. 
+returns true iff `p` lies on the positive side of `s`. 
 */ 
 bool operator()(const Kernel::Sphere_3&s, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the positive side of \f$ t\f$. 
+returns true iff `p` lies on the positive side of `t`. 
 */ 
 bool operator()(const Kernel::Tetrahedron_3&t, 
 const Kernel::Point_3&p); 
@@ -5876,7 +5876,7 @@ public:
 
 /*! 
 introduces an iso-oriented cuboid with diagonal 
-opposite vertices \f$ p\f$ and \f$ q\f$ such that \f$ p\f$ is the 
+opposite vertices `p` and `q` such that `p` is the 
 lexicographically smallest point in the cuboid. 
 */ 
 Kernel::Iso_cuboid_3 operator()(const Kernel::Point_3 &p, 
@@ -5884,9 +5884,9 @@ const Kernel::Point_3 &q);
 
 /*! 
 introduces an iso-oriented cuboid with diagonal 
-opposite vertices \f$ p\f$ and \f$ q\f$. The `int` argument value is 
+opposite vertices `p` and `q`. The `int` argument value is 
 only used to distinguish the two overloaded functions. 
-\pre \f$ p.x()<=q.x()\f$, \f$ p.y()<=q.y()\f$ and \f$ p.z()<=q.z()\f$. 
+\pre `p.x()<=q.x()`, `p.y()<=q.y()` and `p.z()<=q.z()`. 
 */ 
 Kernel::Iso_cuboid_3 operator()(const Kernel::Point_3 &p, 
 const Kernel::Point_3 &q, 
@@ -5931,7 +5931,7 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ and \f$ q\f$ have the same Cartesian \f$ y\f$-coordinate. 
+returns true iff `p` and `q` have the same Cartesian \f$ y\f$-coordinate. 
 */ 
 bool operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q); 
@@ -5967,8 +5967,8 @@ Comparison_result operator()(const Kernel::Point_2&p,
 const Kernel::Point_2&q); 
 
 /*! 
-compares the \f$ x\f$-coordinates of \f$ p\f$ and the intersection 
-of lines \f$ l1\f$ and \f$ l2\f$.
+compares the \f$ x\f$-coordinates of `p` and the intersection 
+of lines `l1` and `l2`.
 See Figure \ref fig-compare12 (a).
 */ 
 Comparison_result operator()(const Kernel::Point_2 &p, 
@@ -5976,8 +5976,8 @@ const Kernel::Line_2 &l1,
 const Kernel::Line_2 &l2); 
 
 /*! 
-compares the \f$ x\f$-coordinates of the intersection of line \f$ l\f$ 
-with line \f$ h1\f$ and with line \f$ h2\f$.
+compares the `x`-coordinates of the intersection of line `l` 
+with line `h1` and with line `h2`.
 
 See Figure \ref fig-compare12 (b).
 */ 
@@ -5986,8 +5986,8 @@ const Kernel::Line_2 &h1,
 const Kernel::Line_2 &h2); 
 
 /*! 
-compares the \f$ x\f$-coordinates of the intersection of lines \f$ l1\f$ 
-and \f$ l2\f$ and the intersection of lines \f$ h1\f$ and \f$ h2\f$.
+compares the \f$ x\f$-coordinates of the intersection of lines `l1` 
+and `l2` and the intersection of lines `h1` and `h2`.
 
 See Figure \ref fig-compare12 (c).
 */ 
@@ -6018,7 +6018,7 @@ public:
 /// @{
 
 /*! 
-returns the segment representing the same set of points as \f$ s\f$, 
+returns the segment representing the same set of points as `s`, 
 but with opposite orientation. 
 */ 
 Kernel::Segment_2 operator()(const Kernel::Segment_2& s); 
@@ -6157,7 +6157,7 @@ public:
 /// @{
 
 /*! 
-returns the squared length of \f$ c\f$, divided by \f$ \pi^2\f$. 
+returns the squared length of `c`, divided by \f$ \pi^2\f$. 
 */ 
 Kernel::FT operator()(const Kernel::Circle_3& c); 
 
@@ -6265,7 +6265,7 @@ public:
 /// @{
 
 /*! 
-returns the triangle with opposite orientation to \f$ t\f$ 
+returns the triangle with opposite orientation to `t` 
 (this flips the positive and the negative side, but 
 not bounded and unbounded side). 
 */ 
@@ -6294,9 +6294,9 @@ public:
 /// @{
 
 /*! 
-returns true iff the \f$ x\f$-coordinate of \f$ p\f$ is smaller than the 
-\f$ x\f$-coordinate of \f$ q\f$ or if the are the same and 
-the \f$ y\f$-coordinate of \f$ p\f$ is smaller than the \f$ y\f$-coordinate of \f$ q\f$. 
+returns true iff the \f$ x\f$-coordinate of `p` is smaller than the 
+\f$ x\f$-coordinate of `q` or if the are the same and 
+the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`. 
 */ 
 bool operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q); 
@@ -6326,19 +6326,19 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ lies on the unbounded side of \f$ s\f$. 
+returns true iff `p` lies on the unbounded side of `s`. 
 */ 
 bool operator()(const Kernel::Sphere_3&s, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the unbounded side of \f$ t\f$. 
+returns true iff `p` lies on the unbounded side of `t`. 
 */ 
 bool operator()(const Kernel::Tetrahedron_3&t, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the unbounded side of \f$ c\f$. 
+returns true iff `p` lies on the unbounded side of `c`. 
 */ 
 bool operator()(const Kernel::Iso_cuboid_3&c, 
 const Kernel::Point_3&p); 
@@ -6366,19 +6366,19 @@ public:
 /// @{
 
 /*! 
-returns `LEFT_TURN`, if \f$ r\f$ lies to the left of the oriented 
-line \f$ l\f$ defined by \f$ p\f$ and \f$ q\f$, returns `RIGHT_TURN` if \f$ r\f$ 
-lies to the right of \f$ l\f$, and returns `COLLINEAR` if \f$ r\f$ lies 
-on \f$ l\f$. 
+returns `LEFT_TURN`, if `r` lies to the left of the oriented 
+line `l` defined by `p` and `q`, returns `RIGHT_TURN` if `r` 
+lies to the right of `l`, and returns `COLLINEAR` if `r` lies 
+on `l`. 
 */ 
 Orientation operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q, 
 const Kernel::Point_2&r); 
 
 /*! 
-returns `LEFT_TURN` if \f$ u\f$ and \f$ v\f$ form a left turn, 
-returns `RIGHT_TURN` if \f$ u\f$ and \f$ v\f$ form a right turn, 
-and returns `COLLINEAR` if \f$ u\f$ and \f$ v\f$ are collinear. 
+returns `LEFT_TURN` if `u` and `v` form a left turn, 
+returns `RIGHT_TURN` if `u` and `v` form a right turn, 
+and returns `COLLINEAR` if `u` and `v` are collinear. 
 */ 
 Orientation operator()(const Kernel::Vector_2&u, 
 const Kernel::Vector_2&v); 
@@ -6475,19 +6475,19 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ lies on the boundary of \f$ c\f$. 
+returns true iff `p` lies on the boundary of `c`. 
 */ 
 bool operator()(const Kernel::Circle_2&c, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the boundary of \f$ i\f$. 
+returns true iff `p` lies on the boundary of `i`. 
 */ 
 bool operator()(const Kernel::Iso_rectangle_2&i, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the boundary of \f$ t\f$. 
+returns true iff `p` lies on the boundary of `t`. 
 */ 
 bool operator()(const Kernel::Triangle_2&t, 
 const Kernel::Point_2&p); 
@@ -6515,8 +6515,8 @@ public:
 /// @{
 
 /*! 
-returns true iff the distance of \f$ q\f$ to \f$ p\f$ is 
-smaller than the distance of \f$ r\f$ to \f$ p\f$. 
+returns true iff the distance of `q` to `p` is 
+smaller than the distance of `r` to `p`. 
 */ 
 bool operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q, 
@@ -6578,35 +6578,35 @@ public:
 /// @{
 
 /*! 
-introduces the vector \f$ b-a\f$. 
+introduces the vector `b-a`. 
 */ 
 Kernel::Vector_3 operator()(const Kernel::Point_3 &a, 
 const Kernel::Point_3 &b); 
 
 /*! 
-introduces the vector \f$ b\f$. 
+introduces the vector `b`. 
 */ 
 Kernel::Vector_3 operator()(const Origin &o, 
 const Kernel::Point_3 &b); 
 
 /*! 
-introduces the vector \f$ -a\f$. 
+introduces the vector `-a`. 
 */ 
 Kernel::Vector_3 operator()(const Kernel::Point_3 &a, 
 const Origin &o); 
 
 /*! 
-introduces the vector \f$ s.target()-s.source()\f$. 
+introduces the vector `s.target()-s.source()`. 
 */ 
 Kernel::Vector_3 operator()(const Kernel::Segment_3 &s); 
 
 /*! 
-introduces a vector having the same direction as \f$ r\f$. 
+introduces a vector having the same direction as `r`. 
 */ 
 Kernel::Vector_3 operator()(const Kernel::Ray_3 &r); 
 
 /*! 
-introduces a vector having the same direction as \f$ l\f$. 
+introduces a vector having the same direction as `l`. 
 */ 
 Kernel::Vector_3 operator()(const Kernel::Line_3 &l); 
 
@@ -6639,27 +6639,27 @@ public:
 /// @{
 
 /*! 
-returns the squared radius of \f$ c\f$. 
+returns the squared radius of `c`. 
 */ 
 Kernel::FT operator()(const Kernel::Circle_2& c); 
 
 /*! 
-returns the squared radius of the circle passing through \f$ p\f$, \f$ q\f$ 
-and \f$ r\f$. \pre `p, q` and `r` are not collinear. 
+returns the squared radius of the circle passing through `p`, `q` 
+and `r`. \pre `p, q` and `r` are not collinear. 
 */ 
 Kernel::FT operator()(const Kernel::Point_2& p, 
 const Kernel::Point_2& q, 
 const Kernel::Point_2& r); 
 
 /*! 
-returns the squared radius of the smallest circle passing through \f$ p\f$, 
-and \f$ q\f$, i.e. one fourth of the squared distance between \f$ p\f$ and \f$ q\f$. 
+returns the squared radius of the smallest circle passing through `p`, 
+and `q`, i.e. one fourth of the squared distance between `p` and `q`. 
 */ 
 Kernel::FT operator()(const Kernel::Point_2& p, 
 const Kernel::Point_2& q); 
 
 /*! 
-returns the squared radius of the smallest circle passing through \f$ p\f$, i.e. \f$ 0\f$. 
+returns the squared radius of the smallest circle passing through `p`, i.e. \f$ 0\f$. 
 */ 
 Kernel::FT operator()(const Kernel::Point_2& p); 
 
@@ -6744,7 +6744,7 @@ public:
 /// @{
 
 /*! 
-returns the ray with the same source as \f$ r\f$, but in opposite direction. 
+returns the ray with the same source as `r`, but in opposite direction. 
 */ 
 Kernel::Ray_3 operator()(const Kernel::Ray_3& r); 
 
@@ -6861,7 +6861,7 @@ public:
 /// @{
 
 /*! 
-returns the direction opposite to \f$ d\f$. 
+returns the direction opposite to `d`. 
 */ 
 Kernel::Direction_3 operator()(const 
 Kernel::Direction_3& d); 
@@ -6890,8 +6890,8 @@ public:
 
 /*! 
 
-returns `true` if the signed distance from \f$ p\f$ and the oriented line \f$ l\f$ 
-is smaller than the signed distance of \f$ q\f$ and \f$ l\f$. 
+returns `true` if the signed distance from `p` and the oriented line `l` 
+is smaller than the signed distance of `q` and `l`. 
 
 */ 
 bool operator()(const Kernel::Line_2& l, 
@@ -6900,9 +6900,9 @@ const Kernel::Point_2& q);
 
 /*! 
 
-returns `true` if the signed distance from \f$ r\f$ and the oriented line \f$ l\f$ 
-defined by \f$ p\f$ and \f$ q\f$ is smaller than the signed distance of \f$ s\f$ and \f$ l\f$. 
-\pre \f$ p != q\f$. 
+returns `true` if the signed distance from `r` and the oriented line `l` 
+defined by `p` and `q` is smaller than the signed distance of `s` and `l`. 
+\pre `p != q`. 
 
 */ 
 bool operator()(const Kernel::Point_2& p, 
@@ -6990,18 +6990,18 @@ public:
 
 /*! 
 returns the relative position of point `t` 
-to the oriented sphere defined by \f$ p\f$, \f$ q\f$, \f$ r\f$ and \f$ s\f$. 
-The order of the points \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$ is important, 
+to the oriented sphere defined by `p`, `q`, `r` and `s`. 
+The order of the points `p`, `q`, `r`, and `s` is important, 
 since it determines the orientation of the implicitly 
-constructed sphere. If the points \f$ p\f$, \f$ q\f$, \f$ r\f$ and \f$ s\f$ 
+constructed sphere. If the points `p`, `q`, `r` and `s` 
 are positive oriented, positive side is the bounded interior 
 of the sphere. 
 
 In case of degeneracies, `ON_ORIENTED_BOUNDARY` is returned 
 if all points are coplanar. Otherwise, there is a cyclic permutation of the five points 
 that puts four non coplanar points first, it is used to answer the predicate: 
-e.g. `side_of_oriented_sphere(q, r, s, t, p)` is returned if \f$ q\f$, \f$ r\f$, \f$ s\f$, 
-and \f$ t\f$ are non coplanar. 
+e.g. `side_of_oriented_sphere(q, r, s, t, p)` is returned if `q`, `r`, `s`, 
+and `t` are non coplanar. 
 */ 
 Oriented_side operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
@@ -7032,7 +7032,7 @@ public:
 /// @{
 
 /*! 
-computes the midpoint of the segment \f$ pq\f$. 
+computes the midpoint of the segment `pq`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Point_3& p, 
 const Kernel::Point_3& q ); 
@@ -7117,10 +7117,10 @@ public:
 /*! 
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where 
 \f$ \theta_1\f$ is the dihedral angle, in \f$ [0, \pi]\f$, of the tetrahedron 
-\f$ (a_1, b_1, c_1, d_1)\f$ at the edge \f$ (a_1, b_1)\f$, and \f$ \theta_2\f$ is 
+\f$ (a_1, b_1, c_1, d_1)\f$ at the edge `(a_1, b_1)`, and \f$ \theta_2\f$ is 
 the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = cosine\f$. 
 The result is the same as `operator()(b1-a1, c1-a1, d1-a1, cosine)`. 
-\pre \f$ a_1\f$, \f$ b_1\f$, \f$ c_1\f$ are not collinear, and \f$ a_1\f$, \f$ b_1\f$, \f$ d_1\f$ are not collinear. 
+\pre `a_1`, `b_1`, `c_1` are not collinear, and `a_1`, `b_1`, `d_1` are not collinear. 
 */ 
 Comparison_result operator()(const K::Point_3& a1, 
 const K::Point_3& b1, 
@@ -7130,11 +7130,11 @@ const K::FT& cosine);
 
 /*! 
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where 
-\f$ \theta_i\f$ is the dihedral angle in the tetrahedron \f$ (a_i, b_i, 
-c_i, d_i)\f$ at the edge \f$ (a_i, b_i)\f$. These two angles are computed 
+\f$ \theta_i\f$ is the dihedral angle in the tetrahedron `(a_i, b_i, 
+c_i, d_i)` at the edge `(a_i, b_i)`. These two angles are computed 
 in \f$ [0, \pi]\f$. 
 The result is the same as `operator()(b1-a1, c1-a1, d1-a1, b2-a2, c2-a2, d2-a2)`. 
-\pre For \f$ i \in\{1,2\}\f$, \f$ a_i\f$, \f$ b_i\f$, \f$ c_i\f$ are not collinear, and \f$ a_i\f$, \f$ b_i\f$, \f$ d_i\f$ are not collinear. 
+\pre For \f$ i \in\{1,2\}\f$, `a_i`, `b_i`, `c_i` are not collinear, and `a_i`, `b_i`, `d_i` are not collinear. 
 */ 
 Comparison_result operator()(const K::Point_3& a1, 
 const K::Point_3& b1, 
@@ -7148,10 +7148,10 @@ const K::Point_3& d2);
 /*! 
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where 
 \f$ \theta_1\f$ is the dihedral angle, in \f$ [0, \pi]\f$, between the 
-vectorial planes defined by \f$ (u_1, v_1)\f$ and \f$ (u_1, w_1)\f$, and 
+vectorial planes defined by `(u_1, v_1)` and `(u_1, w_1)`, and 
 \f$ \theta_2\f$ is the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = 
 cosine\f$. 
-\pre \f$ u_1\f$ and \f$ v_1\f$ are not collinear, and \f$ u_1\f$ and \f$ w_1\f$ are not collinear. 
+\pre `u_1` and `v_1` are not collinear, and `u_1` and `w_1` are not collinear. 
 */ 
 Comparison_result operator()(const K::Vector_3& u1, 
 const K::Vector_3& v1, 
@@ -7161,9 +7161,9 @@ const K::FT& cosine);
 /*! 
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where 
 \f$ \theta_i\f$ is the dihedral angle between the vectorial planes 
-defined by \f$ (u_i, v_i)\f$ and \f$ (u_i, w_i)\f$. These two angles are 
+defined by `(u_i, v_i)` and `(u_i, w_i)`. These two angles are 
 computed in \f$ [0, \pi]\f$. 
-\pre For \f$ i \in\{1,2\}\f$, \f$ u_i\f$ and \f$ v_i\f$ are not collinear, and \f$ u_i\f$ and \f$ w_i\f$ are not collinear. 
+\pre For \f$ i \in\{1,2\}\f$, `u_i` and `v_i` are not collinear, and `u_i` and `w_i` are not collinear. 
 */ 
 Comparison_result operator()(const K::Vector_3& u1, 
 const K::Vector_3& v1, 
@@ -7287,22 +7287,22 @@ public:
 /// @{
 
 /*! 
-introduces the direction of vector \f$ v\f$. 
+introduces the direction of vector `v`. 
 */ 
 Kernel::Direction_2 operator()(const Kernel::Vector_2 &v); 
 
 /*! 
-introduces the direction of line \f$ l\f$. 
+introduces the direction of line `l`. 
 */ 
 Kernel::Direction_2 operator()(const Kernel::Line_2 &l); 
 
 /*! 
-introduces the direction of ray \f$ r\f$. 
+introduces the direction of ray `r`. 
 */ 
 Kernel::Direction_2 operator()(const Kernel::Ray_2 &r); 
 
 /*! 
-introduces the direction of segment \f$ s\f$. 
+introduces the direction of segment `s`. 
 */ 
 Kernel::Direction_2 operator()(const Kernel::Segment_2 &s); 
 
@@ -7329,7 +7329,7 @@ public:
 /// @{
 
 /*! 
-introduces the vector \f$ v1 - v2\f$. 
+introduces the vector `v1 - v2`. 
 */ 
 Kernel::Vector_3 operator()(const Kernel::Vector_3 &v1, 
 const Kernel::Vector_3 &v2); 
@@ -7389,12 +7389,12 @@ public:
 /// @{
 
 /*! 
-compute the center of the sphere \f$ s\f$. 
+compute the center of the sphere `s`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Sphere_3 & s); 
 
 /*! 
-compute the center of the circle \f$ c\f$. 
+compute the center of the circle `c`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Circle_3 & c); 
 
@@ -7459,7 +7459,7 @@ public:
 /// @{
 
 /*! 
-returns the determinant of the three vectors \f$ u\f$, \f$ v\f$ and \f$ w\f$. 
+returns the determinant of the three vectors `u`, `v` and `w`. 
 */ 
 Kernel::FT operator()(const Kernel::Vector_3& u, 
 const Kernel::Vector_3& v, 
@@ -7498,8 +7498,8 @@ Comparison_result operator()(const Kernel::Point_2&p,
 const Kernel::Point_2&q); 
 
 /*! 
-compares the \f$ y\f$-coordinates of \f$ p\f$ and the 
-intersection of lines \f$ l1\f$ and \f$ l2\f$.
+compares the \f$ y\f$-coordinates of `p` and the 
+intersection of lines `l1` and `l2`.
 
 See Figure \ref fig-compare14 (a).
 */ 
@@ -7508,8 +7508,8 @@ const Kernel::Line_2 &l1,
 const Kernel::Line_2 &l2); 
 
 /*! 
-compares the \f$ y\f$-coordinates of the intersection of line \f$ l\f$ 
-with line \f$ h1\f$ and with line \f$ h2\f$.
+compares the \f$ y\f$-coordinates of the intersection of line `l` 
+with line `h1` and with line `h2`.
 
 See Figure \ref fig-compare14 (b).
 */
@@ -7518,8 +7518,8 @@ const Kernel::Line_2 &h1,
 const Kernel::Line_2 &h2); 
 
 /*! 
-compares the \f$ y\f$-coordinates of the intersection of lines \f$ l1\f$ 
-and \f$ l2\f$ and the intersection of lines \f$ h1\f$ and \f$ h2\f$.
+compares the \f$ y\f$-coordinates of the intersection of lines `l1` 
+and `l2` and the intersection of lines `h1` and `h2`.
 
 See Figure \ref fig-compare14 (c).
 */ 
@@ -7588,10 +7588,10 @@ public:
 /// @{
 
 /*! 
-returns `POSITIVE`, if \f$ s\f$ lies on the positive side of the oriented 
-plane \f$ h\f$ defined by \f$ p\f$, \f$ q\f$, and \f$ r\f$, returns `NEGATIVE` if \f$ s\f$ 
-lies on the negative side of \f$ h\f$, and returns `COPLANAR` if \f$ s\f$ lies 
-on \f$ h\f$. 
+returns `POSITIVE`, if `s` lies on the positive side of the oriented 
+plane `h` defined by `p`, `q`, and `r`, returns `NEGATIVE` if `s` 
+lies on the negative side of `h`, and returns `COPLANAR` if `s` lies 
+on `h`. 
 */ 
 Orientation operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
@@ -7599,9 +7599,9 @@ const Kernel::Point_3&r,
 const Kernel::Point_3&s); 
 
 /*! 
-returns `POSITIVE` if \f$ u\f$, \f$ v\f$ and \f$ w\f$ are positively oriented, 
-returns `NEGATIVE` if \f$ u\f$, \f$ v\f$ and \f$ w\f$ are negatively oriented, 
-and returns `COPLANAR` if \f$ u\f$, \f$ v\f$ and \f$ w\f$ are coplanar. 
+returns `POSITIVE` if `u`, `v` and `w` are positively oriented, 
+returns `NEGATIVE` if `u`, `v` and `w` are negatively oriented, 
+and returns `COPLANAR` if `u`, `v` and `w` are coplanar. 
 */ 
 Orientation operator()(const Kernel::Vector_3&u, 
 const Kernel::Vector_3&v, 
@@ -7691,34 +7691,34 @@ public:
 /// @{
 
 /*! 
-introduces a line passing through the points \f$ p\f$ and \f$ q\f$. 
-Line is directed from \f$ p\f$ to \f$ q\f$. 
+introduces a line passing through the points `p` and `q`. 
+Line is directed from `p` to `q`. 
 */ 
 Kernel::Line_3 operator()(const Kernel::Point_3 &p, 
 const Kernel::Point_3 &q); 
 
 /*! 
-introduces a line passing through point \f$ p\f$ and 
-oriented by \f$ v\f$. 
+introduces a line passing through point `p` and 
+oriented by `v`. 
 */ 
 Kernel::Line_3 operator()(const Kernel::Point_3 &p, 
 const Kernel::Vector_3&v); 
 
 /*! 
-introduces a line passing through point \f$ p\f$ with 
-direction \f$ d\f$. 
+introduces a line passing through point `p` with 
+direction `d`. 
 */ 
 Kernel::Line_3 operator()(const Kernel::Point_3 &p, 
 const Kernel::Direction_3&d); 
 
 /*! 
-returns the line supporting the segment \f$ s\f$, 
+returns the line supporting the segment `s`, 
 oriented from source to target. 
 */ 
 Kernel::Line_3 operator()(const Kernel::Segment_3 &s); 
 
 /*! 
-returns the line supporting the ray \f$ r\f$, with the 
+returns the line supporting the ray `r`, with the 
 same orientation. 
 */ 
 Kernel::Line_3 operator()(const Kernel::Ray_3 &r); 
@@ -7746,7 +7746,7 @@ public:
 /// @{
 
 /*! 
-returns the direction opposite to \f$ d\f$. 
+returns the direction opposite to `d`. 
 */ 
 Kernel::Direction_2 operator()(const 
 Kernel::Direction_2& d); 
@@ -7809,15 +7809,15 @@ public:
 returns an arbitrary point on `l`. It holds 
 `point(i) == point(j)`, iff `i==j`. 
 Furthermore, is directed from `point(i)` 
-to `point(j)`, for all `i` \f$ <\f$ `j`. 
+to `point(j)`, for all `i < j`. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Line_2& l, 
 int i); 
 
 /*! 
 returns a point on `r`. `point(0)` is the source, 
-`point(i)`, with \f$ i>0\f$, is different from the 
-source. \pre \f$ i \geq0\f$. 
+`point(i)`, with `i>0`, is different from the 
+source. \pre `i>= 0`. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Ray_2& r, 
 int i); 
@@ -7856,19 +7856,19 @@ public:
 /// @{
 
 /*! 
-returns true iff \f$ p\f$ lies on the bounded side of \f$ s\f$. 
+returns true iff `p` lies on the bounded side of `s`. 
 */ 
 bool operator()(const Kernel::Sphere_3&s, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the bounded side of \f$ t\f$. 
+returns true iff `p` lies on the bounded side of `t`. 
 */ 
 bool operator()(const Kernel::Tetrahedron_3&t, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the bounded side of \f$ c\f$. 
+returns true iff `p` lies on the bounded side of `c`. 
 */ 
 bool operator()(const Kernel::Iso_cuboid_3&c, 
 const Kernel::Point_3&p); 
@@ -7990,7 +7990,7 @@ public:
 /*! 
 returns `ON_ORIENTED_BOUNDARY`, 
 `ON_NEGATIVE_SIDE`, or the constant `ON_POSITIVE_SIDE`, 
-depending on the position of \f$ p\f$ relative to the oriented plane \f$ h\f$. 
+depending on the position of `p` relative to the oriented plane `h`. 
 */ 
 Oriented_side operator()(const Kernel::Plane_3&h, 
 const Kernel::Point_3&p); 
@@ -7998,7 +7998,7 @@ const Kernel::Point_3&p);
 /*! 
 returns `ON_ORIENTED_BOUNDARY`, 
 `ON_NEGATIVE_SIDE`, or the constant `ON_POSITIVE_SIDE`, 
-depending on the position of \f$ p\f$ relative to the oriented tetrahedron \f$ t\f$. 
+depending on the position of `p` relative to the oriented tetrahedron `t`. 
 */ 
 Oriented_side operator()(const Kernel::Tetrahedron_3&t, 
 const Kernel::Point_3&p); 
@@ -8090,7 +8090,7 @@ Kernel::Point_2 const& r);
 /*! 
 
 introduces a variable of type `Kernel::Circle_2`. 
-It is initialized to the circle with diameter \f$ \overline{pq}\f$ 
+It is initialized to the circle with diameter `pq` 
 and orientation `orientation`. 
 \pre `orientation` \f$ \neq\f$ `COLLINEAR`. 
 */ 
@@ -8232,7 +8232,7 @@ public:
 
 
 /*! 
-constructs the bisector plane of \f$ p\f$ and \f$ q\f$. 
+constructs the bisector plane of `p` and `q`. 
 The bisector is oriented in such a way that `p` lies on its 
 positive side. \pre `p` and `q` are not equal. 
 */ 
@@ -8240,7 +8240,7 @@ Kernel::Plane_3 operator()(const Kernel::Point_3&p,
 const Kernel::Point_3&q ); 
 
 /*! 
-constructs the bisector of the two planes \f$ h1\f$ and \f$ h2\f$. 
+constructs the bisector of the two planes `h1` and `h2`. 
 In the general case, the bisector has a normal vector which has the same 
 direction as the sum of the normalized normal vectors of the two planes, and 
 passes through the intersection of `h1` and `h2`. 
@@ -8276,14 +8276,14 @@ public:
 
 /*! 
 returns `OBTUSE`, `RIGHT` or `ACUTE` depending 
-on the angle formed by the two vectors \f$ u\f$ and \f$ v\f$. 
+on the angle formed by the two vectors `u` and `v`. 
 */ 
 Angle operator()(const Kernel::Vector_2&u, 
 const Kernel::Vector_2&v); 
 
 /*! 
 returns `OBTUSE`, `RIGHT` or `ACUTE` depending 
-on the angle formed by the three points \f$ p\f$, \f$ q\f$, \f$ r\f$ (\f$ q\f$ being the vertex of 
+on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of 
 the angle). The returned value is the same as `operator()(p - q, r - q)`. 
 */ 
 Angle operator()(const Kernel::Point_2&p, 
@@ -8292,7 +8292,7 @@ const Kernel::Point_2&r);
 
 /*! 
 returns `OBTUSE`, `RIGHT` or `ACUTE` depending 
-on the angle formed by the two vectors \f$ pq\f$, \f$ rs\f$. The returned value is 
+on the angle formed by the two vectors `pq`, `rs`. The returned value is 
 the same as `operator()(q - p, s - r)`. 
 */ 
 Angle operator()(const Kernel::Point_2&p, 
@@ -8324,7 +8324,7 @@ public:
 
 
 /*! 
-introduces the vector \f$ v1 + v2\f$. 
+introduces the vector `v1 + v2`. 
 */ 
 Kernel::Vector_2 operator()(const Kernel::Vector_2 &v1, 
 const Kernel::Vector_2 &v2); 
@@ -8355,17 +8355,17 @@ public:
 
 
 /*! 
-returns true iff \f$ o\f$ is vertical. 
+returns true iff `o` is vertical. 
 */ 
 bool operator()(const Kernel::Line_2&o); 
 
 /*! 
-returns true iff \f$ o\f$ is vertical. 
+returns true iff `o` is vertical. 
 */ 
 bool operator()(const Kernel::Ray_2&o); 
 
 /*! 
-returns true iff \f$ o\f$ is vertical. 
+returns true iff `o` is vertical. 
 */ 
 bool operator()(const Kernel::Segment_2&o); 
 
@@ -8394,12 +8394,12 @@ public:
 
 
 /*! 
-returns the volume of \f$ c\f$. 
+returns the volume of `c`. 
 */ 
 Kernel::FT operator()(const Kernel::Iso_cuboid_3& c); 
 
 /*! 
-returns the signed volume of \f$ t\f$. 
+returns the signed volume of `t`. 
 */ 
 Kernel::FT operator()(const Kernel::Tetrahedron_3& t); 
 
@@ -8473,9 +8473,9 @@ public:
 
 
 /*! 
-returns `v` rotated clockwise by 90 degrees, if \f$ o\f$ is 
+returns `v` rotated clockwise by 90 degrees, if `o` is 
 `CLOCKWISE`, and rotated counterclockwise otherwise. 
-\pre \f$ o\f$ is not `COLLINEAR`. 
+\pre `o` is not `COLLINEAR`. 
 
 */ 
 Kernel::Vector_2 operator()(const Kernel::Vector_2& v, 
@@ -8505,11 +8505,11 @@ public:
 
 
 /*! 
-Let \f$ P\f$ be the plane defined by the points `p`, `q`, 
+Let `p` be the plane defined by the points `p`, `q`, 
 and `r`. Note that the order defines the orientation of 
-\f$ P\f$. The function computes the orientation of points `p`, 
-`q`, and `s` in \f$ P\f$: Iff `p`, `q`, `s` are 
-collinear, `COLLINEAR` is returned. Iff \f$ P\f$ and the plane 
+`p`. The function computes the orientation of points `p`, 
+`q`, and `s` in `p`: Iff `p`, `q`, `s` are 
+collinear, `COLLINEAR` is returned. Iff `p` and the plane 
 defined by `p`, `q`, and `s` have the same orientation, 
 `POSITIVE` is returned; otherwise `NEGATIVE` is returned. 
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear. 
@@ -8521,10 +8521,10 @@ const Kernel::Point_3&s);
 
 /*! 
 If `p,q,r` are collinear, then `COLLINEAR` is returned. 
-If not, then `p,q,r` define a plane \f$ P\f$. The return value in this case is 
+If not, then `p,q,r` define a plane `p`. The return value in this case is 
 either `POSITIVE` or `NEGATIVE`, but we don't specify it explicitly. 
-However, we guarantee that all calls to this predicate over 3 points in \f$ P\f$ 
-will return a coherent orientation if considered a 2D orientation in \f$ P\f$. 
+However, we guarantee that all calls to this predicate over 3 points in `p` 
+will return a coherent orientation if considered a 2D orientation in `p`. 
 */ 
 Orientation operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
@@ -8556,24 +8556,24 @@ public:
 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$ and \f$ p2\f$ with corresponding 
-weights \f$ w1\f$ and \f$ 1-w1\f$. 
+compute the barycenter of the points `p1` and `p2` with corresponding 
+weights `w1` and `1-w1`. 
 */ 
 Kernel::Point_3 
 operator()( const Kernel::Point_3& p1, const Kernel::FT&w1, 
 const Kernel::Point_3& p2); 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$ and \f$ p2\f$ with corresponding 
-weights \f$ w1\f$ and \f$ w2\f$. \pre w1+w2 != 0. 
+compute the barycenter of the points `p1` and `p2` with corresponding 
+weights `w1` and `w2`. \pre `w1+w2 != 0`.
 */ 
 Kernel::Point_3 
 operator()( const Kernel::Point_3& p1, const Kernel::FT&w1, 
 const Kernel::Point_3& p2, const Kernel::FT&w2); 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$ and \f$ p3\f$ with corresponding 
-weights \f$ w1\f$, \f$ w2\f$ and \f$ 1-w1-w2\f$. 
+compute the barycenter of the points `p1`, `p2` and `p3` with corresponding 
+weights `w1`, `w2` and `1-w1-w2`. 
 */ 
 Kernel::Point_3 
 operator()( const Kernel::Point_3& p1, const Kernel::FT&w1, 
@@ -8581,8 +8581,8 @@ const Kernel::Point_3& p2, const Kernel::FT&w2,
 const Kernel::Point_3& p3); 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$ and \f$ p3\f$ with corresponding 
-weights \f$ w1\f$, \f$ w2\f$ and \f$ w3\f$. \pre w1+w2+w3 != 0. 
+compute the barycenter of the points `p1`, `p2` and `p3` with corresponding 
+weights `w1`, `w2` and `w3`. \pre `w1+w2+w3 != 0`.
 */ 
 Kernel::Point_3 
 operator()( const Kernel::Point_3& p1, const Kernel::FT&w1, 
@@ -8590,8 +8590,8 @@ const Kernel::Point_3& p2, const Kernel::FT&w2,
 const Kernel::Point_3& p3, const Kernel::FT&w3); 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$, \f$ p3\f$ and \f$ p4\f$ with corresponding 
-weights \f$ w1\f$, \f$ w2\f$, \f$ w3\f$ and \f$ 1-w1-w2-w3\f$. 
+compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding 
+weights `w1`, `w2`, `w3` and `1-w1-w2-w3`. 
 */ 
 Kernel::Point_3 
 operator()( const Kernel::Point_3& p1, const Kernel::FT&w1, 
@@ -8600,8 +8600,8 @@ const Kernel::Point_3& p3, const Kernel::FT&w3,
 const Kernel::Point_3& p4); 
 
 /*! 
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$, \f$ p3\f$ and \f$ p4\f$ with corresponding 
-weights \f$ w1\f$, \f$ w2\f$, \f$ w3\f$ and \f$ w4\f$. \pre w1+w2+w3+w4 != 0. 
+compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding 
+weights `w1`, `w2`, `w3` and `w4`. \pre `w1+w2+w3+w4 != 0`. 
 */ 
 Kernel::Point_3 
 operator()( const Kernel::Point_3& p1, const Kernel::FT&w1, 
@@ -8637,18 +8637,18 @@ public:
 
 
 /*! 
-returns the squared radius of \f$ s\f$. 
+returns the squared radius of `s`. 
 */ 
 Kernel::FT operator()(const Kernel::Sphere_3& s); 
 
 /*! 
-returns the squared radius of \f$ c\f$. 
+returns the squared radius of `c`. 
 */ 
 Kernel::FT operator()(const Kernel::Circle_3& c); 
 
 /*! 
-returns the squared radius of the sphere passing through \f$ p\f$, \f$ q\f$, \f$ r\f$ 
-and \f$ s\f$. \pre `p, q, r` and `s` are not coplanar. 
+returns the squared radius of the sphere passing through `p`, `q`, `r` 
+and `s`. \pre `p, q, r` and `s` are not coplanar. 
 */ 
 Kernel::FT operator()(const Kernel::Point_3& p, 
 const Kernel::Point_3& q, 
@@ -8656,22 +8656,22 @@ const Kernel::Point_3& r,
 const Kernel::Point_3& s); 
 
 /*! 
-returns the squared radius of the sphere passing through \f$ p\f$, \f$ q\f$ and 
-\f$ r\f$, and whose center is in the plane defined by these three points. 
+returns the squared radius of the sphere passing through `p`, `q` and 
+`r`, and whose center is in the plane defined by these three points. 
 */ 
 Kernel::FT operator()(const Kernel::Point_3& p, 
 const Kernel::Point_3& q, 
 const Kernel::Point_3& r); 
 
 /*! 
-returns the squared radius of the smallest circle passing through \f$ p\f$, 
-and \f$ q\f$, i.e. one fourth of the squared distance between \f$ p\f$ and \f$ q\f$. 
+returns the squared radius of the smallest circle passing through `p`, 
+and `q`, i.e. one fourth of the squared distance between `p` and `q`. 
 */ 
 Kernel::FT operator()(const Kernel::Point_3& p, 
 const Kernel::Point_3& q); 
 
 /*! 
-returns the squared radius of the smallest circle passing through \f$ p\f$, i.e. \f$ 0\f$. 
+returns the squared radius of the smallest circle passing through `p`, i.e. \f$ 0\f$. 
 */ 
 Kernel::FT operator()(const Kernel::Point_3& p); 
 
@@ -8700,8 +8700,8 @@ public:
 
 /*! 
 returns the relative position of point `t` 
-to the sphere defined by \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$. The order 
-of the points \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$ does not matter. 
+to the sphere defined by `p`, `q`, `r`, and `s`. The order 
+of the points `p`, `q`, `r`, and `s` does not matter. 
 \pre `p, q, r` and `s` are not coplanar. 
 */ 
 Bounded_side operator()(const Kernel::Point_3&p, 
@@ -8712,7 +8712,7 @@ const Kernel::Point_3&t);
 
 /*! 
 returns the position of the point `t` relative to the sphere 
-passing through \f$ p\f$, \f$ q\f$, and \f$ r\f$ and whose center is in the plane defined 
+passing through `p`, `q`, and `r` and whose center is in the plane defined 
 by these three points. 
 */ 
 Bounded_side operator()(const Kernel::Point_3&p, 
@@ -8722,7 +8722,7 @@ const Kernel::Point_3&t);
 
 /*! 
 returns the position of the point `t` relative to the sphere 
-that has \f$ pq\f$ as its diameter. 
+that has `pq` as its diameter. 
 */ 
 Bounded_side operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
@@ -8789,7 +8789,7 @@ public:
 
 
 /*! 
-returns the segment representing the same set of points as \f$ s\f$, 
+returns the segment representing the same set of points as `s`, 
 but with opposite orientation. 
 */ 
 Kernel::Segment_3 operator()(const Kernel::Segment_3& s); 
@@ -8876,7 +8876,7 @@ public:
 
 
 /*! 
-returns the line representing the same set of points as \f$ l\f$, 
+returns the line representing the same set of points as `l`, 
 but with opposite direction. 
 */ 
 Kernel::Line_2 operator()(const Kernel::Line_2& l); 
@@ -8906,13 +8906,13 @@ public:
 
 /*! 
 returns the relative position of point `t` 
-to the oriented circle defined by \f$ p\f$, \f$ q\f$ and \f$ r\f$. 
-The order of the points \f$ p\f$, \f$ q\f$ and \f$ r\f$ is important, 
+to the oriented circle defined by `p`, `q` and `r`. 
+The order of the points `p`, `q` and `r` is important, 
 since it determines the orientation of the implicitly 
 constructed circle. 
 
-If \f$ p\f$, \f$ q\f$ and \f$ r\f$ are collinear, the circle degenerates in a line. 
-`ON_ORIENTED_BOUNDARY` is returned if \f$ t\f$ is also collinear or if two 
+If `p`, `q` and `r` are collinear, the circle degenerates in a line. 
+`ON_ORIENTED_BOUNDARY` is returned if `t` is also collinear or if two 
 points are identical, 
 otherwise, `side_of_oriented_circle(r, q, t, p)` is returned. 
 
@@ -8945,7 +8945,7 @@ public:
 
 
 /*! 
-introduces a triangle with vertices \f$ p\f$, \f$ q\f$ and \f$ r\f$. 
+introduces a triangle with vertices `p`, `q` and `r`. 
 */ 
 Kernel::Triangle_3 operator()(const Kernel::Point_3 &p, 
 const Kernel::Point_3 &q, 
@@ -9008,19 +9008,19 @@ public:
 
 
 /*! 
-returns true iff \f$ p\f$ lies on the unbounded side of \f$ c\f$. 
+returns true iff `p` lies on the unbounded side of `c`. 
 */ 
 bool operator()(const Kernel::Circle_2&c, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the unbounded side of \f$ i\f$. 
+returns true iff `p` lies on the unbounded side of `i`. 
 */ 
 bool operator()(const Kernel::Iso_rectangle_2&i, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns true iff \f$ p\f$ lies on the unbounded side of \f$ t\f$. 
+returns true iff `p` lies on the unbounded side of `t`. 
 */ 
 bool operator()(const Kernel::Triangle_2&t, 
 const Kernel::Point_2&p); 
@@ -9050,7 +9050,7 @@ public:
 
 /*! 
 introduces an iso-oriented rectangle with diagonal 
-opposite vertices \f$ p\f$ and \f$ q\f$ such that \f$ p\f$ is the 
+opposite vertices `p` and `q` such that `p` is the 
 lexicographically smallest point in the rectangle. 
 */ 
 Kernel::Iso_rectangle_2 operator()(const Kernel::Point_2 &p, 
@@ -9058,9 +9058,9 @@ const Kernel::Point_2 &q);
 
 /*! 
 introduces an iso-oriented rectangle with diagonal 
-opposite vertices \f$ p\f$ and \f$ q\f$. The `int` argument value is 
+opposite vertices `p` and `q`. The `int` argument value is 
 only used to distinguish the two overloaded functions. 
-\pre \f$ p.x()<=q.x()\f$ and \f$ p.y()<=q.y()\f$. 
+\pre `p.x()<=q.x()` and `p.y()<=q.y()`. 
 */ 
 Kernel::Iso_rectangle_2 operator()(const Kernel::Point_2 &p, 
 const Kernel::Point_2 &q, 
@@ -9180,7 +9180,7 @@ public:
 /// @{
 
 /*! 
-returns the plane perpendicular to \f$ l\f$ passing through \f$ p\f$, 
+returns the plane perpendicular to `l` passing through `p`, 
 such that the normal direction of the plane coincides with the direction of 
 the line. 
 */ 
