@@ -422,8 +422,6 @@ operator<<(Geomview_stream &G, const Polyhedron_3<Traits,HDS> &P);
   Also note that in the case of terrains (when `GT::Point_2` is
   `Point_3<R>`), then the 3D terrain is displayed.
 
-  Include `CGAL/IO/Triangulation_geomview_ostream_2.h`
-
   \relates Geomview_stream
 */
 template <class GT, class TDS>
@@ -433,8 +431,6 @@ operator<<(Geomview_stream &G, const Triangulation_2<GT,TDS> &T);
 /*!
   Inserts the 3D triangulation `T` into the stream `gs`.
   The actual output depends on whether the stream is in wired mode or not.
-
-  Include `CGAL/IO/Triangulation_geomview_ostream_3.h`
 
   \relates Geomview_stream
 */
