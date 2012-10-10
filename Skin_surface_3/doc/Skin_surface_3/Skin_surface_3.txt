@@ -136,7 +136,7 @@ functions in more detail.
 
 The main function of the skin surface package takes an iterator range
 of weighted points, a shrink factor and the number of subdivision
-steps and outputs a mesh in a `CGAL::Polyhedron_3`:
+steps and outputs a mesh in a `Polyhedron_3`:
 
 \code{.cpp}
 template <class WP_iterator, class Polyhedron_3> 
@@ -183,7 +183,7 @@ Union_of_balls_3(WP_iterator begin, WP_iterator end,
 
 With a model of the concept `SkinSurface_3` it is possible to
 generate a coarse mesh isotopic to the skin surface. Using the
-function `CGAL::mesh_skin_surface_3` with signature:
+function `mesh_skin_surface_3()` with signature:
 
 \code{.cpp}
 template <class SkinSurface_3, class Polyhedron>
@@ -200,10 +200,9 @@ on the skin surface.
 
 \code{.cpp}
 template <class SkinSurface_3, class Polyhedron >
-void subdivide_skin_surface_mesh_3 (
-const SkinSurface_3 &skinsurface,
-Polyhedron &p,
-int iterations=1);
+void subdivide_skin_surface_mesh_3 (const SkinSurface_3 &skinsurface,
+                                    Polyhedron &p,
+                                    int iterations = 1);
 \endcode
 
 # Timings # {#Skin_surface_3Timings}
@@ -253,7 +252,7 @@ Gramicidin A
 
 The following example shows the construction of a coarse mesh of the
 skin surface using the function `::make_skin_surface_mesh_3`. The
-output is a `CGAL::Polyhedron`.
+output is a `Polyhedron_3`.
 \cgalexample{Skin_surface_3/skin_surface_simple.cpp}
 
 ## Meshing and Subdividing a Skin Surface ##
@@ -266,8 +265,8 @@ mesh isotopic to the skin surface is extracted using the function
 `::mesh_skin_surface_3`
 
 Next, the coarse mesh is refined to obtain a better approximation. The
-use of `CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3>` in
-the `CGAL::Polyhedron` is not necessary, but gives the subdivision
+use of `Skin_surface_polyhedral_items_3<Skin_surface_3>` in
+the `Polyhedron_3` is not necessary, but gives the subdivision
 a significant speedup.
 \cgalexample{Skin_surface_3/skin_surface_subdiv.cpp}
 

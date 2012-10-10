@@ -55,6 +55,7 @@ The mandatory arguments to the constructor are
 an iterator range `[begin,end)` of weighted points and a 
 shrink factor between 0 and 1. 
 */ 
+ template < class WP_iterator >
 Skin_surface_3 ( WP_iterator begin, WP_iterator end, 
 RT shrink_factor); 
 
@@ -64,19 +65,22 @@ RT shrink_factor);
 /// @{
 
 /*! 
-Constructs a 
-coarse mesh in `p`.\pre `Polyhedron_3::HDS` can be used as the template argument of the `Polyhedron_incremental_builder_3<HDS>`. 
+Constructs a coarse mesh in `p`.
+\tparam Polyhedron must be an instance of `Polyhedron_3`.
+\pre `Polyhedron::HDS` can be used as the template argument of the `CGAL::Polyhedron_incremental_builder_3<HDS>`. 
 */ 
-template <class Polyhedron_3> void 
-mesh_skin_surface_3 (Polyhedron_3 &p); 
+template <class Polyhedron> void 
+mesh_skin_surface_3 (Polyhedron &p); 
 
 /*! 
 Subdivides the skin surface using `nSubdiv` 1-4 split 
 operations (each triangle is split into four sub-triangles) and 
 the new vertices are moved towards the skin surface. 
+
+\tparam Polyhedron must be an instance of `Polyhedron_3`.
 */ 
-template <class Polyhedron_3> void 
-subdivide_skin_surface_mesh_3 (Polyhedron_3 &p, int nSubdiv = 
+template <class Polyhedron> void 
+subdivide_skin_surface_mesh_3 (Polyhedron &p, int nSubdiv = 
 1); 
 
 /// @}

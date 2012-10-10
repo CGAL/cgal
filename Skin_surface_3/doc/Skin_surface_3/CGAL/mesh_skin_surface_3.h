@@ -11,14 +11,16 @@ as input a `SkinSurface_3` object, which is a model of the
 `SkinSurface_3` concept and outputs the mesh in a 
 `Polyhedron_3` object. 
 
-\pre `SkinSurface_3` is a model of the concept `SkinSurface_3` 
-and `Polyhedron_3::HDS` can be used as the template argument 
+\tparam SkinSurface_3  must be a model of the concept `SkinSurface_3`.
+\tparam Polyhedron must be an instance of `Polyhedron_3`.
+
+\pre `Polyhedron::HDS` can be used as the template argument 
 of the `Polyhedron_incremental_builder_3<HDS>`.
 
 */
-template <typename SkinSurface_3, typename Polyhedron_3>
+template <typename SkinSurface_3, typename Polyhedron>
 void mesh_skin_surface_3
-(const SkinSurface_3 &skin_surface, Polyhedron_3 &p);
+(const SkinSurface_3 &skin_surface, Polyhedron &p);
 
 } /* namespace CGAL */
 

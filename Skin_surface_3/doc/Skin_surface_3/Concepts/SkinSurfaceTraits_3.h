@@ -6,7 +6,7 @@
 Required types and member functions for the `SkinSurfaceTraits_3` concept. 
 This geometric traits concept is used for the construction of a 
 polyhedral mesh approximating a skin surface 
-`CGAL::skin_surface_3<Traits>`. 
+`CGAL::Skin_surface_3`. 
 
 \refines ::RegularTriangulationTraits_3 
 
@@ -47,8 +47,8 @@ typedef Hidden_type Construct_anchor_point_3;
 /// @{
 
 /*! 
-constructor that takes 
-the shrink factor as argument. For meshing the boundary of the union 
+Constructor that takes the shrink factor as argument. 
+For meshing the boundary of the union 
 of a set of balls, the shrink factor is discarded. 
 */ 
 SkinSurfaceTraits_3(RT s=.5); 
@@ -65,7 +65,7 @@ Returns the shrink factor.
 Regular_RT shrink_factor() const; 
 
 /*! 
-returns a `Construct_anchor_point_3` object. 
+Returns a `Construct_anchor_point_3` object. 
 */ 
 Construct_anchor_point_3 construct_anchor_point_3_object() 
 const; 

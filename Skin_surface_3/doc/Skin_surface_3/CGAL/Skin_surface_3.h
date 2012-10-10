@@ -8,7 +8,7 @@ The `Skin_surface_3` is the main class in the
 `Skin_surface_3` package. It is a model of 
 the concept `SkinSurface_3`. 
 
-The template argument is required to be a model of the concept 
+The template argument must be a model of the concept 
 `SkinSurfaceTraits_3`, which means that it provides predicates 
 to construct a regular triangulation of the weighted points and for 
 point location in the mixed complex. 
