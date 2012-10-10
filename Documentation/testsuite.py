@@ -128,7 +128,7 @@ def main():
     d, sum=write_report()
     version_string,version_date=get_version()
     title=d('#maintitle')
-    title.text(title.text() + ' for Revision' + version_string)
+    title.text(title.text() + ' for Revision ' + version_string)
     write_out_html(d, './log/testsuite.html')
     
     if args.publish:
