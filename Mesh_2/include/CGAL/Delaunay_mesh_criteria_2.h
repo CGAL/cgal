@@ -22,6 +22,7 @@
 #define CGAL_DELAUNAY_MESH_CRITERIA_2_H
 
 #include <CGAL/Mesh_2/Face_badness.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

@@ -28,6 +28,9 @@
 
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
+#include <CGAL/utils.h> // for CGAL::min
+#include <CGAL/number_utils.h> // for CGAL::square
+#include <CGAL/enum.h>
 
 
 namespace CGAL {

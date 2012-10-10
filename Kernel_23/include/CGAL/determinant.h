@@ -26,6 +26,8 @@
 #ifndef CGAL_DETERMINANT_H
 #define CGAL_DETERMINANT_H
 
+#include <CGAL/kernel_config.h>
+
 namespace CGAL {
 
 template <class RT>

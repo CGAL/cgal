@@ -26,24 +26,7 @@
 #ifndef CGAL_NUMBER_TYPE_BASIC_H
 #define CGAL_NUMBER_TYPE_BASIC_H
 
-#include <CGAL/config.h>
-
-#define CGAL_PI 3.14159265358979323846
-
-
-#ifdef CGAL_USE_NTS_NAMESPACE
-
-#define CGAL_NTS_BEGIN_NAMESPACE namespace NTS {
-#define CGAL_NTS_END_NAMESPACE }
-#define CGAL_NTS ::CGAL::NTS::
-
-#else
-
-#define CGAL_NTS_BEGIN_NAMESPACE
-#define CGAL_NTS_END_NAMESPACE
-#define CGAL_NTS ::CGAL::
-
-#endif
+#include <CGAL/number_type_config.h>
 
 #include <CGAL/basic.h>
 
@@ -71,9 +54,6 @@
 
 #include <CGAL/utils_classes.h>
 #include <CGAL/utils.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/number_utils_classes.h>
-
 #include <CGAL/FPU.h>
 
 #include <CGAL/float.h>
@@ -94,5 +74,8 @@
 #include <CGAL/gmpxx.h>
 #endif // CGAL_USE_GMPXX
 #endif // CGAL_USE_GMP
+
+#include <CGAL/number_utils.h>
+#include <CGAL/number_utils_classes.h>
 
 #endif // CGAL_NUMBER_TYPE_BASIC_H

@@ -1,4 +1,4 @@
-// Copyright (c) 2000  
+// Copyright (c) 1999,2003  
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -20,37 +20,21 @@
 // $Id$
 // 
 //
-// Author(s)     : Herve Bronnimann
+// Author(s)     : Stefan Schirra
+ 
+#ifndef CGAL_KERNEL_CONFIG_H
+#define CGAL_KERNEL_CONFIG_H
 
-#ifndef CGAL_CARTESIAN_POINT_CONSTRUCTIONS_2_H
-#define CGAL_CARTESIAN_POINT_CONSTRUCTIONS_2_H
+#ifndef CGAL_KERNEL_INLINE
+#  define CGAL_KERNEL_INLINE inline
+#endif
 
-#include <CGAL/Cartesian/Point_2.h>
-#include <CGAL/Cartesian/Line_2.h>
+#ifndef CGAL_KERNEL_MEDIUM_INLINE
+#  define CGAL_KERNEL_MEDIUM_INLINE
+#endif
 
-namespace CGAL {
+#ifndef CGAL_KERNEL_LARGE_INLINE
+#  define CGAL_KERNEL_LARGE_INLINE
+#endif
 
-template < class K >
-inline
-typename K::Point_2
-line_get_point(const LineC2<K> &l, int i)
-{
-  typename K::FT x, y;
-  line_get_pointC2(l.a(), l.b(), l.c(), i, x, y);
-  return PointC2<K>(x, y);
-}
-
-template < class K >
-inline
-typename K::Point_2
-line_project_point(const LineC2<K> &l,
-                   const PointC2<K> &p)
-{
-  typename K::FT x, y;
-  line_project_pointC2(l.a(), l.b(), l.c(), p.x(), p.y(), x, y);
-  return PointC2<K>(x, y);
-}
-
-} //namespace CGAL
-
-#endif // CGAL_CARTESIAN_POINT_CONSTRUCTIONS_2_H
+#endif // CGAL_KERNEL_CONFIG_H

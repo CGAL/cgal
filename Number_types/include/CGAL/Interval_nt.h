@@ -40,9 +40,16 @@
 // - test whether stopping constant propagation only in functions taking
 //   double as arguments, improves performance.
 
-#include <CGAL/number_type_basic.h>
+#include <utility> // for std::pair
+#include <CGAL/number_type_config.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/utils_classes.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Interval_traits.h>
+#include <CGAL/double.h>
+#include <CGAL/FPU.h>
+#include <CGAL/IO/io.h>
 #include <iostream>
 
 namespace CGAL {

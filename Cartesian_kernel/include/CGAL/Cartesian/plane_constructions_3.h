@@ -26,6 +26,7 @@
 #define CGAL_CARTESIAN_PLANE_CONSTRUCTIONS_3_H
 
 #include <CGAL/Cartesian/Point_3.h>
+#include <CGAL/Cartesian/Direction_3.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 
 namespace CGAL {

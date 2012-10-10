@@ -31,6 +31,7 @@
 // These functions are not documented for now, but could be as some point.
 
 #include <CGAL/basic.h>
+#include <CGAL/Dimension.h>
 #include <boost/utility/enable_if.hpp>
 #include "boost/mpl/equal_to.hpp"
 #include <boost/mpl/int.hpp>

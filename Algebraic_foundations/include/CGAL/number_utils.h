@@ -25,7 +25,9 @@
 #ifndef CGAL_NUMBER_UTILS_H
 #define CGAL_NUMBER_UTILS_H
 
-#include <CGAL/number_type_basic.h>
+#include <CGAL/number_type_config.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
 
 namespace CGAL {
 CGAL_NTS_BEGIN_NAMESPACE
