@@ -314,25 +314,36 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         endif()
 
       else()
-        if (NOT DEFINED CGAL_EXT_LIB_${component}_PREFIX)
-          set(CGAL_EXT_LIB_${component}_PREFIX ${component})
-        endif()
 
-        set( vlib "${CGAL_EXT_LIB_${component}_PREFIX}" )
+        list( FIND CGAL_CONFIGURED_LIBRARIES "CGAL_${component}" POSITION )
+        if ( "${POSITION}" EQUAL "-1" ) # if component is not a CGAL_<lib>
 
-        if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND)
+          if (NOT DEFINED CGAL_EXT_LIB_${component}_PREFIX)
+            set(CGAL_EXT_LIB_${component}_PREFIX ${component})
+          endif()
 
-          ####message( STATUS "External library ${component} has been preconfigured")
-          use_lib( ${component} ${${vlib}_USE_FILE})
+          set( vlib "${CGAL_EXT_LIB_${component}_PREFIX}" )
 
+          if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND)
+
+            ####message( STATUS "External library ${component} has been preconfigured")
+            use_lib( ${component} ${${vlib}_USE_FILE})
+
+          else()
+
+            ####message( STATUS "External library ${component} has not been preconfigured")
+            find_package( ${component} )
+            ####message( STATUS "External library ${vlib} after find")
+            if (${vlib}_FOUND)
+              ####message( STATUS "External library ${vlib} about to be used")
+              use_lib( ${component} ${${vlib}_USE_FILE})
+            endif()
+
+          endif()
         else()
 
-          ####message( STATUS "External library ${component} has not been preconfigured")
-          find_package( ${component} )
-          ####message( STATUS "External library ${vlib} after find")
-          if (${vlib}_FOUND)
-            ####message( STATUS "External library ${vlib} about to be used")
-            use_lib( ${component} ${${vlib}_USE_FILE})
+          if (NOT WITH_CGAL_${component}) 
+            message(STATUS "NOTICE: The CGAL_${component} library seems to be required but is not build. Thus, it is expected that some executables will not be compiled.")
           endif()
 
         endif()
