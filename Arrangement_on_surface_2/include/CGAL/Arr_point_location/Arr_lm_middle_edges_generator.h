@@ -38,18 +38,20 @@ namespace CGAL {
 * IMPORTANT: THIS ALGORITHM WORKS ONLY FOR SEGMENTS !!!
 */
 template <class Arrangement_, 
-          class Nearest_neighbor_ 
-          = Arr_landmarks_nearest_neighbor <typename Arrangement_::Traits_2> >
-class Arr_middle_edges_landmarks_generator 
-  : public Arr_landmarks_generator_base <Arrangement_, Nearest_neighbor_>
+          class Nearest_neighbor_ =
+          Arr_landmarks_nearest_neighbor<typename Arrangement_::
+                                         Geometry_traits_2> >
+class Arr_middle_edges_landmarks_generator :
+    public Arr_landmarks_generator_base <Arrangement_, Nearest_neighbor_>
 {
 public:
-  typedef Arrangement_					  Arrangement_2;
-  typedef Arr_middle_edges_landmarks_generator<Arrangement_2, 
-                                               Nearest_neighbor_>    Self;
-  typedef Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor_>  Base;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Arr_middle_edges_landmarks_generator<Arrangement_2, earest_neighbor_>
+                                                        Self;
+  typedef Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor_>
+                                                        Base;
 
-  typedef typename Arrangement_2::Traits_2		Traits_2;
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Edge_const_iterator	Edge_const_iterator;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
@@ -59,12 +61,12 @@ public:
   typedef typename Arrangement_2::Face_handle		Face_handle;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
-                                                       Ccb_halfedge_circulator;
-  typedef typename Base::NN_Points_set                 NN_Points_set;
-  typedef typename Base::NN_Point_2                    NN_Point_2;
+                                                        Ccb_halfedge_circulator;
+  typedef typename Base::NN_Points_set                  NN_Points_set;
+  typedef typename Base::NN_Point_2                     NN_Point_2;
   
-  typedef typename Traits_2::Point_2		       Point_2;
-  typedef std::vector<Point_2>			       Points_set;
+  typedef typename Geometry_traits_2::Point_2           Point_2;
+  typedef std::vector<Point_2>			        Points_set;
   
 private:
   
