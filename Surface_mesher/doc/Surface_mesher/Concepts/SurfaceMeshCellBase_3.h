@@ -9,7 +9,7 @@ to embed the surface mesh.
 
 More precisely, 
 the first template parameter `SurfaceMeshC2T3` of the surface mesher 
-`make_surface_mesh` 
+`CGAL::make_surface_mesh()` 
 is a model of the concept 
 `SurfaceMeshComplex_2InTriangulation_3` 
 which describes a data structure to store 

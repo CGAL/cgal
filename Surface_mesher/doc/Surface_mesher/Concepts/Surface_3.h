@@ -23,7 +23,7 @@ public:
 /// In addition, surface types are required 
 /// - either to provide a nested type: `Surface_mesher_traits_3`
 /// - or to be a surface type for which a specialization of the traits generator
-///   `Surface_mesh_traits_generator_3<Surface>` exists. 
+///   `CGAL::Surface_mesh_traits_generator_3<Surface>` exists. 
 /// @{
 
 /*! 

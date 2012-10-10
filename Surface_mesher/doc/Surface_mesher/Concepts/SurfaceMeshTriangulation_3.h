@@ -5,14 +5,14 @@
 
 The concept `SurfaceMeshTriangulation_3` describes 
 the triangulation type used by the surface mesher 
-`make_surface_mesh` to represent 
+`CGAL::make_surface_mesh()` to represent 
 the three dimensional triangulation 
 embedding the surface mesh. 
 Thus, this concept describes the requirements 
 for the triangulation type `SurfaceMeshC2T3::Triangulation` 
 nested in the model of `SurfaceMeshComplex2InTriangulation3` 
 plugged as the template parameter `SurfaceMeshC2T3` of 
-`make_surface_mesh`. It also describes 
+`CGAL::make_surface_mesh()`. It also describes 
 the requirements for the triangulation type 
 plugged in the class 
 `Surface_mesh_complex_2_in_triangulation_3<Tr>`. 
@@ -21,9 +21,9 @@ plugged in the class
 
 \sa `CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>` 
 \sa `CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>` 
-\sa `SurfaceMeshComplex2InTriangulation3` 
+\sa `SurfaceMeshComplex_2InTriangulation_3` 
 \sa `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>` 
-\sa `CGAL::make_surface_mesh` 
+\sa `CGAL::make_surface_mesh()` 
 
 */
 
@@ -200,7 +200,7 @@ OutputIteratorInternalFacets ifit);
 /*! 
 Starts at an arbitrary finite vertex. Then `++` and `-` will 
 iterate over finite vertices. Returns `finite_vertices_end()` when 
-`t`.`number_of_vertices()` \f$ =0\f$. 
+`t.number_of_vertices() == 0`. 
 */ 
 Finite_vertices_iterator finite_vertices_begin() const; 
 
@@ -212,7 +212,7 @@ Finite_vertices_iterator finite_vertices_end() const;
 /*! 
 Starts at an arbitrary finite edge. Then `++` and `-` will 
 iterate over finite edges. Returns `finite_edges_end()` when 
-`t`.`dimension()` \f$ <1\f$. 
+`t.dimension() < 1`. 
 */ 
 Finite_edges_iterator finite_edges_begin() const; 
 
@@ -224,7 +224,7 @@ Finite_edges_iterator finite_edges_end() const;
 /*! 
 Starts at an arbitrary finite facet. Then `++` and `-` will 
 iterate over finite facets. Returns `finite_facets_end()` when 
-`t`.`dimension()` \f$ <2\f$. 
+`t.dimension() < 2`. 
 */ 
 Finite_facets_iterator finite_facets_begin() const; 
 
@@ -235,9 +235,9 @@ Finite_facets_iterator finite_facets_end() const;
 
 /*! 
 Copies the `Cell_handle`s of all cells incident to `v` to the output 
-iterator `cells`. If `t`.`dimension()` \f$ <3\f$, then do nothing. 
+iterator `cells`. If `t.dimension() < 3`, then do nothing. 
 Returns the resulting output iterator. 
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `t`.`is_vertex(v)`. 
+\pre `v != Vertex_handle()`, `t.is_vertex(v)`. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
@@ -245,7 +245,7 @@ incident_cells(Vertex_handle v, OutputIterator cells) const;
 
 /*! 
 Copies the `Cell_handle`s of all cells incident to `v` to the output 
-iterator `cells`. If `t`.`dimension()` \f$ <3\f$, then do nothing. 
+iterator `cells`. If `t.dimension() < 3`, then do nothing. 
 Returns the resulting output iterator. 
 */ 
 template <class OutputIterator> 
@@ -275,7 +275,7 @@ bool is_infinite(const Vertex_handle v) const;
 
 /*! 
 `true`, iff `c` is incident to the infinite vertex. 
-\pre `t`.`dimension()` \f$ =3\f$. 
+\pre `t.dimension() == 3`. 
 */ 
 bool is_infinite(const Cell_handle c) const; 
 
@@ -319,14 +319,14 @@ Cell_handle
 locate(const Point & query, Cell_handle start = Cell_handle()) const; 
 
 /*! 
-If `query` lies inside the affine hull of the points, the \f$ k\f$-face 
+If `query` lies inside the affine hull of the points, the `k`-face 
 (finite or infinite) that contains `query` in its interior is 
 returned, by means of the cell returned together with `lt`, which 
 is set to the locate type of the query (`VERTEX, EDGE, FACET, CELL`, or `OUTSIDE_CONVEX_HULL` if the cell is infinite and `query` 
 lies strictly in it) and two indices `li` and `lj` that 
-specify the \f$ k\f$-face of the cell containing `query`. 
+specify the `k`-face of the cell containing `query`. 
 
-If the \f$ k\f$-face is a cell, `li` and `lj` have no 
+If the `k`-face is a cell, `li` and `lj` have no 
 meaning; if it is a facet (resp. vertex), `li` gives the index of 
 the facet (resp. vertex) and `lj` has no meaning; if it is and 
 edge, `li` and `lj` give the indices of its vertices. 
@@ -358,7 +358,7 @@ all the cells (resp. facets) describing the hole, creates a new vertex
 a new cell (resp. facet) with `v` as vertex. Then `v->set_point(p)` 
 is called and `v` is returned. 
 
-\pre `t`.`dimension()` \f$ \geq2\f$, the set of cells (resp. facets in dimension 2) is connected, its boundary is connected, and `p` lies inside the hole, which is star-shaped wrt `p`. 
+\pre `t.dimension() >= 2`, the set of cells (resp. facets in dimension 2) is connected, its boundary is connected, and `p` lies inside the hole, which is star-shaped wrt `p`. 
 */ 
 template <class CellIt> 
 Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end, 

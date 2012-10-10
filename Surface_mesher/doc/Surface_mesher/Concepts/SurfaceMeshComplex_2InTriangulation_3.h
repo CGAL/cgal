@@ -28,11 +28,11 @@ surface meshes obtained as the restriction to a surface of
 a three dimensional Delaunay triangulation. 
 A model of this concept is a type to be plugged as first template 
 parameter in the 
-function template `make_surface_mesh`. 
+function template `CGAL::make_surface_mesh()`. 
 
 \hasModel `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>` 
 
-\sa `CGAL::make_surface_mesh`
+\sa `CGAL::make_surface_mesh()`
 
 */
 
@@ -306,10 +306,10 @@ Returns the past the end iterator for the above iterator.
 Vertex_iterator vertices_end(); 
 
 /*! 
-Copies the `Facet`s of the complex incident to `v` to the output 
+Copies the facets of the complex incident to `v` to the output 
 iterator `facets`. 
 Returns the resulting output iterator. 
-\pre `c2t3`.`triangulation().dimension()` \f$ =3\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `c2t3`.`triangulation().is_vertex(v)`. 
+\pre `c2t3.triangulation().dimension() == 3`, `v != Vertex_handle()`, `c2t3.triangulation().is_vertex(v)`. 
 */ 
 template <class OutputIterator> 
 OutputIterator 

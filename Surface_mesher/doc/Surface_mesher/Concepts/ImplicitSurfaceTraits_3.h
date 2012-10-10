@@ -7,7 +7,7 @@ The concept `ImplicitSurfaceTraits_3` describes the requirements of the traits c
 be plugged as `Traits` in `Implicit_surface_3<Traits, Function>`. 
 
 When `make_surface_mesh` is called 
-with a surface of type `Implicit_surface_3<Traits,Function>`, 
+with a surface of type `CGAL::Implicit_surface_3<Traits,Function>`, 
 the surface mesher traits generator generates automatically 
 a traits class that is a model of `SurfaceMeshTraits_3`. 
 Actually, 

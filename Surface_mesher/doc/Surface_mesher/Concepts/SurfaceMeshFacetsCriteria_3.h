@@ -4,14 +4,13 @@
 \cgalconcept
 
 The Delaunay refinement process involved in the 
-function template `make_surface_mesh` 
+function template `CGAL::make_surface_mesh()` 
 is guided by a set of refinement criteria. 
 The concept `SurfaceMeshFacetsCriteria_3` describes the type which 
 handles those criteria. 
 It corresponds to the requirements for the template parameter 
 `FacetsCriteria` of the surface mesher function 
-`make_surface_mesh<SurfaceMeshC2T3,Surface,FacetsCriteria,Tag>` 
-. 
+`CGAL::make_surface_mesh<SurfaceMeshC2T3,Surface,FacetsCriteria,Tag>()`. 
 
 Typically the meshing criteria are a set 
 of elementary criteria, each of which 
@@ -37,7 +36,7 @@ with lowest quality first. The qualities are computed by a function
 
 \hasModel `CGAL::Surface_mesh_default_criteria_3<Tr>` 
 
-\sa `CGAL::make_surface_mesh` 
+\sa `CGAL::make_surface_mesh()` 
 
 */
 
@@ -55,7 +54,7 @@ is the type `SurfaceMeshC2T3::Triangulation`
 provided by the model of 
 `SurfaceMeshComplex_2InTriangulation_3` plugged 
 as first template parameter of 
-`make_surface_mesh`). 
+`CGAL::make_surface_mesh()`). 
 */ 
 typedef Hidden_type Facet; 
 
