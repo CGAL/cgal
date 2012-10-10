@@ -512,6 +512,7 @@ Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Curve_ren
 Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Subdivision_1.h -text
 Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Subdivision_2.h -text
 Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/test/simple_models.h -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/Edit_test.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/IO_base_test.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/IO_test.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/Point_location_dynamic_test.h -text
@@ -853,6 +854,10 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_adaptor/spheric
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_adaptor/spherical_arcs/points -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_adaptor/spherical_arcs/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_construction/test47.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_edit/cmds/test01.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_edit/curves/test01.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_edit/points/test01.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_edit/xcurves/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_observer/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_overlay/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_overlay/test02.txt -text
@@ -915,6 +920,8 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_dynamic_se
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_linear.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_edit.cmd -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_edit.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_overlay.cmd -text
