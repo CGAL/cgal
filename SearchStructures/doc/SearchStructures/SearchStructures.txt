@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage dD Range and Segment Trees
+\mainpage dD %Range and Segment Trees
 \anchor Chapter_dD_Range_and_Segment_Trees
 \anchor Trees
 \autotoc
@@ -301,7 +301,7 @@ needs \f$ O(n\log^{d-1} n)\f$ space. The \f$ d\f$-dimensional points that lie in
 where \f$ n\f$ is the total number of points and \f$ k\f$ is the number of
 reported points. 
 
-\subsection secrange_tree_ex Example for %Range Tree on Map-like Data 
+\subsection secrange_tree_ex Example for Range Tree on Map-like Data 
 
 The following example program uses the predefined `Range_tree_2` data structure together with the predefined traits
 class `Range_tree_map_traits_2` which has two template
@@ -345,7 +345,7 @@ int main()
 }
 \endcode
 
-## Example for Range Tree on Set-like Data ##
+## Example for %Range Tree on Set-like Data ##
 
 This example illustrates the use of the range tree on
 2-dimensional point data (no value is associated to a data item).
