@@ -8,7 +8,7 @@ coefficients given to the function. The solutions are written into the given
 `OutputIterator`. 
 Writes the real roots of the polynomial \f$ aX^2+bX+c\f$ into \f$ oit\f$ in ascending order. 
 
-`OutputIterator` is required to accept `Root_of_traits<RT>::Root_of_2`. 
+`OutputIterator` is required to accept \link Root_of_traits::Root_of_2 `Root_of_traits<RT>::Root_of_2`\endlink. 
 
 Multiplicities are not reported. 
 
