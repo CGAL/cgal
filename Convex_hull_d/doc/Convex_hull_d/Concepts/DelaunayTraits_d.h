@@ -3,7 +3,7 @@
 \cgalconcept
 
 Requirements of the first traits class to be used with the 
-class `Delaunay_d`. 
+class `CGAL::Delaunay_d`. 
 
 \hasModel `CGAL::Cartesian_d<FT,LA>` 
 \hasModel `CGAL::Homogeneous_d<RT,LA>` 

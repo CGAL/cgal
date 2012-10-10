@@ -3,7 +3,7 @@
 \cgalconcept
 
 Requirements of the second traits class to be used with the 
-class `Delaunay_d`. 
+class `CGAL::Delaunay_d`. 
 
 \hasModel `CGAL::Cartesian_d<FT,LA>` 
 \hasModel `CGAL::Homogeneous_d<RT,LA>` 
@@ -138,8 +138,8 @@ typedef Hidden_type Intersect_d;
 
 /// @}
 
-/*! \name Types Required by ConvexHullTraits_d
-The previous requirements are all identical to the concept
+/*! \name 
+The previous requirements are all identical to the requirements of concept
 `ConvexHullTraits_d`. The Delaunay class adds the following
 requirements.
 */

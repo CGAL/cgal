@@ -30,7 +30,7 @@ nearest and furthest site Delaunay triangulations.
 
 # dD Convex Hull # {#Convex_hull_ddD}
 
-The class `CGAL::Convex_hull_d<R>` is used to represent the
+The class `Convex_hull_d<R>` is used to represent the
 convex hull of a set of points in \f$ d\f$-dimensional space. This class
 supports incremental construction of hulls, and provides a rich
 interface for exploration. There are also output routines for hulls
@@ -55,7 +55,7 @@ The implementation follows the papers \cite cms-frric-93 and
 There is a class type with a thorough interface providing the
 construction and exploration of closest and furthest site Delaunay
 simplicial complexes in arbitrary higher dimension. The class
-`CGAL::Delaunay_d<R, Lifted_R>`C provides an
+`Delaunay_d<R, Lifted_R>`C provides an
 implementation via the lifting map to higher dimensional
 convex hulls.lifting map, dD.
 The class supports incremental construction of Delaunay triangulations 

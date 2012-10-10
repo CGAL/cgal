@@ -15,38 +15,34 @@ both (The empty set if a facet of every simplex). In the
 sequel we reserve the word simplex for the simplices of dimension
 `dcur`. For each simplex there is a handle of type
 `Simplex_handle` and for each vertex there is a handle of type
-`Vertex_handle`. Each simplex has \f$ 1 + dcur\f$ vertices
-indexed from \f$ 0\f$ to `dcur`; for a simplex \f$ s\f$ and an index \f$ i\f$,
-`C.vertex(s,i)` returns the \f$ i\f$-th vertex of \f$ s\f$. For any simplex
-\f$ s\f$ and any index \f$ i\f$ of \f$ s\f$ there may or may not be a simplex \f$ t\f$
-opposite to the \f$ i\f$-th vertex of \f$ s\f$. The function
-`C.opposite_simplex(s,i)` returns \f$ t\f$ if it exists and returns
-`Simplex_handle()` (the undefined handle) otherwise. If \f$ t\f$ exists
-then \f$ s\f$ and \f$ t\f$ share `dcur` vertices, namely all but the vertex
-with index \f$ i\f$ of \f$ s\f$ and the vertex with index
-`C.index_of_vertex_in_opposite_simplex(s,i)` of \f$ t\f$. Assume that
-\f$ t\f$ exists and let `j =
-C.index_of_vertex_in_opposite_simplex(s,i)`. Then \f$ s =\f$
-`C.opposite_simplex(t,j)` and \f$ i =\f$
-`C.index_of_vertex_in_opposite_simplex(t,j)`.
+`Vertex_handle`. Each simplex has `1 + dcur` vertices
+indexed from `0` to `dcur`; for a simplex `s` and an index `i`,
+`C.vertex(s,i)` returns the `i`-th vertex of `s`. For any simplex
+`s` and any index `i` of `s` there may or may not be a simplex `t`
+opposite to the `i`-th vertex of `s`. The function
+`C.opposite_simplex(s,i)` returns `t` if it exists and returns
+`Simplex_handle()` (the undefined handle) otherwise. If `t` exists
+then `s` and `t` share `dcur` vertices, namely all but the vertex
+with index `i` of `s` and the vertex with index
+`C.index_of_vertex_in_opposite_simplex(s,i)` of `t`. Assume that
+`t` exists and let `j = C.index_of_vertex_in_opposite_simplex(s,i)`. 
+Then `s = C.opposite_simplex(t,j)` 
+and `i = C.index_of_vertex_in_opposite_simplex(t,j)`.
 
 The boundary of the hull is also a simplicial complex. All simplices
-in this complex have dimension \f$ dcur - 1\f$. For each boundary
+in this complex have dimension `dcur - 1`. For each boundary
 simplex there is a handle of type `Facet_handle`. Each facet has
-`dcur` vertices indexed from \f$ 0\f$ to \f$ dcur - 1\f$. If `dcur> 1` 
-then for each facet \f$ f\f$ and each index \f$ i\f$, \f$ 0 \le i <
-dcur\f$, there is a facet \f$ g\f$ opposite to the \f$ i\f$-th vertex of
-\f$ f\f$. The function `C.opposite_facet(f,i)` returns \f$ g\f$. Two
-neighboring facets \f$ f\f$ and \f$ g\f$ share `dcur - 1` vertices, namely
-all but the vertex with index \f$ i\f$ of \f$ f\f$ and the vertex with index
-`C.index_of_vertex_in_opposite_facet(f,i)` of \f$ g\f$. Let `j =
-C.index_of_vertex_in_opposite_facet(f,i)`. Then `f =
-C.opposite_facet(g,j)` and `i =
-C.index_of_vertex_in_opposite_facet(g,j)`.
+`dcur` vertices indexed from `0` to `dcur - 1`. If `dcur> 1` 
+then for each facet `f` and each index `i`, `0 <= i < dcur`, there 
+is a facet `g` opposite to the `i`-th vertex of
+`f`. The function `C.opposite_facet(f,i)` returns `g`. Two
+neighboring facets `f` and `g` share `dcur - 1` vertices, namely
+all but the vertex with index `i` of `f` and the vertex with index
+`C.index_of_vertex_in_opposite_facet(f,i)` of `g`. Let `j =
+C.index_of_vertex_in_opposite_facet(f,i)`. Then 
+`f = C.opposite_facet(g,j)` and `i =C.index_of_vertex_in_opposite_facet(g,j)`.
 
-### Requirements ###
-
-`R` is a model of the concept `ConvexHullTraits_d`.
+\tparam R must be a model of the concept `ConvexHullTraits_d`.
 
 ### Iteration Statements ###
 
@@ -92,7 +88,7 @@ class Convex_hull_d {
 public:
 
 /*! \name Types
-Note that each iterator fits the `Handle` concept, i.e. iterators can be
+Note that each iterator fits the `Handle` concept, i.e.\ iterators can be
 used as handles. Note also that all iterator and handle types come
 also in a const flavor, e.g., `Vertex_const_iterator` is the
 constant version of `Vertex_iterator`. Const correctness requires

@@ -5,8 +5,8 @@ namespace CGAL {
 
 An instance `DT` of type `Delaunay_d< R, Lifted_R >` is the
 nearest and furthest site Delaunay triangulation of a set `S` of
-points in some \f$ d\f$-dimensional space. We call `S` the underlying
-point set and \f$ d\f$ or `dim` the dimension of the underlying space.
+points in some `d`-dimensional space. We call `S` the underlying
+point set and `d` or `dim` the dimension of the underlying space.
 We use `dcur` to denote the affine dimension of `S`. The data
 type supports incremental construction of Delaunay triangulations and
 various kind of query operations (in particular, nearest and furthest
@@ -32,18 +32,18 @@ simplices of a furthest site Delaunay triangulation.
 For each simplex of maximal dimension there is a handle of type
 `Simplex_handle` and for each vertex of the triangulation there is
 a handle of type `Vertex_handle`. Each simplex has `1 + dcur`
-vertices indexed from \f$ 0\f$ to `dcur`. For any simplex \f$ s\f$ and any
-index \f$ i\f$, `DT.vertex_of(s,i)` returns the \f$ i\f$-th vertex of
-\f$ s\f$. There may or may not be a simplex \f$ t\f$ opposite to the vertex of
-\f$ s\f$ with index \f$ i\f$. The function `DT.opposite_simplex(s,i)`
-returns \f$ t\f$ if it exists and returns `Simplex_handle()`
-otherwise. If \f$ t\f$ exists then \f$ s\f$ and \f$ t\f$ share `dcur` vertices,
-namely all but the vertex with index \f$ i\f$ of \f$ s\f$ and the vertex with
-index `DT.index_of_vertex_in_opposite_simplex(s,i)` of \f$ t\f$.
-Assume that \f$ t = DT.opposite_simplex(s,i)\f$ exists and let \f$ j =
-DT.index_of_vertex_in_opposite_simplex(s,i)\f$. Then `s =
-DT.opposite_simplex(t,j)` and `i =
-DT.index_of_vertex_in_opposite_simplex(t,j)`. In general, a vertex
+vertices indexed from `0` to `dcur`. For any simplex `s` and any
+index `i`, `DT.vertex_of(s,i)` returns the `i`-th vertex of
+`s`. There may or may not be a simplex `t` opposite to the vertex of
+`s` with index `i`. The function `DT.opposite_simplex(s,i)`
+returns `t` if it exists and returns `Simplex_handle()`
+otherwise. If `t` exists then `s` and `t` share `dcur` vertices,
+namely all but the vertex with index `i` of `s` and the vertex with
+index `DT.index_of_vertex_in_opposite_simplex(s,i)` of `t`.
+Assume that `t = DT.opposite_simplex(s,i)` exists and let `
+j = DT.index_of_vertex_in_opposite_simplex(s,i)`. Then 
+`s = DT.opposite_simplex(t,j)` and 
+`i = DT.index_of_vertex_in_opposite_simplex(t,j)`. In general, a vertex
 belongs to many simplices.
 
 Any simplex of `DT` belongs either to the nearest or to the
@@ -53,17 +53,14 @@ belongs to the nearest site triangulation and the test
 `DT.simplex_of_furthest(dt_simplex s)` returns true if `s`
 belongs to the furthest site triangulation.
 
-### Requirements ###
 
-`R` is a model of the concept `DelaunayTraits_d`
-c.
-`Lifted_R` is a model of the concept `DelaunayLiftedTraits_d`
-c.
+\tparam R must be a model of the concept `DelaunayTraits_d`.
+\tparam Lifted_R must be a model of the concept `DelaunayLiftedTraits_d`.
 
 ### Implementation ###
 
 The data type is derived from `Convex_hull_d` via
-the lifting map. For a point \f$ x\f$ in \f$ d\f$-dimensional space let
+the lifting map. For a point `x` in `d`-dimensional space let
 `lift(x)` be its lifting to the unit paraboloid of revolution. There
 is an intimate relationship between the Delaunay triangulation of a
 point set \f$ S\f$ and the convex hull of `lift(S)`: The nearest site
@@ -79,7 +76,7 @@ into the convex hull of the lifted points.
 ### Example ###
 
 The abstract data type `Delaunay_d` has a default instantiation by
-means of the \f$ d\f$-dimensional geometric kernel.
+means of the `d`-dimensional geometric kernel.
 
 \code
 #include <CGAL/Homogeneous_d.h>
@@ -143,10 +140,7 @@ class Delaunay_d : Convex_hull_d<Lifted_R> {
 public:
 
 /*! \name Types
-To use these types you can typedef them into the global
-scope after instantiation of the class. We use `Vertex_handle` instead
-of `Delaunay_d< R, Lifted_R >::Vertex_handle` from now on. Similarly we use
-`Simplex_handle`.
+
 */
 /// @{
 
@@ -206,7 +200,7 @@ typedef Hidden_type Simplex_iterator;
 
 /*!
 creates an instance `DT` of type `Delaunay_d`. The
-dimension of the underlying space is \f$ d\f$ and `S` is initialized to the
+dimension of the underlying space is `d` and `S` is initialized to the
 empty point set. The traits class `R` specifies the models of
 all types and the implementations of all geometric primitives used by
 the Delaunay class. The traits class `Lifted_R` specifies the models of
@@ -221,19 +215,19 @@ Delaunay_d< R, Lifted_R >(int d, R k1 = R(), Lifted_R k2 = Lifted_R());
 
 /// \name Operations
 /// All operations below that take a point `x` as an argument
-/// have the common precondition that \f$ x.dimension() = \ccc{DT.dimension()}\f$.
+/// have the common precondition that `x.dimension() == DT.dimension()`.
 /// @{
 
 /*!
-returns the dimension of ambient space
+returns the dimension of ambient space.
 
 */
 int dimension() ;
 
 /*!
 returns the affine dimension of the current point set, i.e.,
-\f$ -1\f$ is \f$ S\f$ is empty, \f$ 0\f$ if \f$ S\f$ consists of a single point,
-\f$ 1\f$ if all points of \f$ S\f$ lie on a common line, etc.
+`-1` is \f$ S\f$ is empty, `0` if \f$ S\f$ consists of a single point,
+`1` if all points of \f$ S\f$ lie on a common line, etc.
 
 */
 int current_dimension() ;
@@ -253,49 +247,50 @@ triangulation.
 bool is_simplex_of_furthest(Simplex_handle s) ;
 
 /*!
-returns the vertex associated with the \f$ i\f$-th node of \f$ s\f$.
-\pre \f$ 0 \leq i \leq dcur\f$.
+returns the vertex associated with the `i`-th node of `s`.
+\pre `0 <= i <= dcur`.
 
 */
 Vertex_handle vertex_of_simplex(Simplex_handle s, int i) ;
 
 /*!
-returns the point associated with vertex \f$ v\f$.
+returns the point associated with vertex `v`.
 
 */
 Point_d associated_point(Vertex_handle v) ;
 
 /*!
-returns the point associated with the \f$ i\f$-th vertex of \f$ s\f$.
-\pre \f$ 0 \leq i \leq dcur\f$.
+returns the point associated with the `i`-th vertex of `s`.
+\pre `0 <= i <= dcur`.
 
 */
 Point_d point_of_simplex(Simplex_handle s,int i) ;
 
 /*!
-returns the simplex opposite to the \f$ i\f$-th vertex of \f$ s\f$
+returns the simplex opposite to the `i`-th vertex of `s`
 (`Simplex_handle()` if there is no such simplex).
-\pre \f$ 0 \leq i \leq dcur\f$.
+\pre `0 <= i <= dcur`.
 
 */
 Simplex_handle opposite_simplex(Simplex_handle s, int i) ;
 
 /*!
-returns the index of the vertex opposite to the \f$ i\f$-th vertex
-of \f$ s\f$. \pre \f$ 0 \leq i \leq dcur\f$.
+returns the index of the vertex opposite to the `i`-th vertex
+of `s`. 
+\pre `0 <= i <= dcur`.
 
 */
 int index_of_vertex_in_opposite_simplex(Simplex_handle s,int i) ;
 
 /*!
 returns a simplex of the nearest site triangulation incident
-to \f$ v\f$.
+to `v`.
 
 */
 Simplex_handle simplex(Vertex_handle v) ;
 
 /*!
-returns the index of \f$ v\f$ in `DT.simplex(v)`.
+returns the index of `v` in `DT.simplex(v)`.
 
 */
 int index(Vertex_handle v) ;
@@ -319,13 +314,13 @@ re-initializes `DT` to the empty Delaunay triangulation.
 void clear() ;
 
 /*!
-inserts point \f$ x\f$ into `DT` and returns the corresponding
+inserts point `x` into `DT` and returns the corresponding
 `Vertex_handle`. More precisely, if there is already a vertex `v` in
-`DT` positioned at \f$ x\f$ (i.e., `associated_point(v)` is equal to
+`DT` positioned at `x` (i.e., `associated_point(v)` is equal to
 `x`) then `associated_point(v)` is changed to `x` (i.e.,
 `associated_point(v)` is made identical to `x`) and if there is no
-such vertex then a new vertex \f$ v\f$ with `associated_point(v) = x` is
-added to `DT`. In either case, \f$ v\f$ is returned.
+such vertex then a new vertex `v` with `associated_point(v) = x` is
+added to `DT`. In either case, `v` is returned.
 
 */
 Vertex_handle insert(const Point_d& x) ;
@@ -339,16 +334,16 @@ outside the convex hull of \f$ S\f$).
 Simplex_handle locate(const Point_d& x) ;
 
 /*!
-if `DT` contains a vertex \f$ v\f$ with `associated_point(v) = x`
-the result is \f$ v\f$ otherwise the result is `Vertex_handle()`.
+if `DT` contains a vertex `v` with `associated_point(v) = x`
+the result is `v` otherwise the result is `Vertex_handle()`.
 
 */
 Vertex_handle lookup(const Point_d& x) ;
 
 /*!
-computes a vertex \f$ v\f$ of `DT` that is closest to \f$ x\f$,
+computes a vertex `v` of `DT` that is closest to `x`,
 i.e.,
-\f$ dist(x,associated_point(v)) = \min\{dist(x, associated_point(u)) \midu \inS\ \}\f$.
+`dist(x,associated_point(v)) = min{dist(x, associated_point(u) | u` \f$\in S\f$ `}`.
 
 */
 Vertex_handle nearest_neighbor(const Point_d& x) ;
@@ -363,7 +358,7 @@ std::list<Vertex_handle> range_search(const Sphere_d& C) ;
 /*!
 returns the list of all vertices contained in the closure of
 the simplex whose corners are given by `A`.
-\pre `A` must consist of \f$ d+1\f$ affinely independent points in base space.
+\pre `A` must consist of `d+1` affinely independent points in base space.
 
 */
 std::list<Vertex_handle> range_search(const std::vector<Point_d>& A) ;
