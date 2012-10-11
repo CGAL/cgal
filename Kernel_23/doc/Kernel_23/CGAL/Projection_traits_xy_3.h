@@ -56,12 +56,7 @@ typedef Triangle_3<K> Triangle_2;
 /*! 
 
 */ 
-typedef Line_3<K> Line_2; 
-
-/*! 
-
-*/ 
-typedef K::Object_3 Object_2; 
+typedef Line_3<K> Line_2;
 
 /// @}
 

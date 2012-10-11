@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes
 
-\brief `Filtered_kernel_adaptor` is a kernel that uses the filtering technique \cite cgal:bbp-iayed-01 to obtain a kernel with exact and efficient predicate functors. 
+\brief `Filtered_kernel_adaptor` is a kernel that uses the filtering technique from \cite cgal:bbp-iayed-01 to obtain a kernel with exact and efficient predicate functors. 
 
 \details
 The geometric constructions are exactly those 
