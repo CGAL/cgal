@@ -538,6 +538,7 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Circular_kernel_2.tag=../../CGAL.CGAL.2D-Circular-Geometry-Kernel/html</item>
             <item>./tags/Circular_kernel_3.tag=../../CGAL.CGAL.3D-Spherical-Geometry-Kernel/html</item>
             <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
           </list>
         </doxygen>
       </project>
