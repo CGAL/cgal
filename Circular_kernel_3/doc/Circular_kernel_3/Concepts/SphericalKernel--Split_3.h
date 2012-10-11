@@ -9,7 +9,7 @@ class SphericalKernel::Split_3 {
 public:
 
 /// \name Operations
-/// A model of this type must provide: 
+/// A model of this concept must provide: 
 /// @{
 
 /*! 
