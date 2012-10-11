@@ -3,9 +3,9 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes2
 
-An object \f$ t\f$ of the class `Triangle_2` is a triangle 
+An object `t` of the class `Triangle_2` is a triangle 
 in the two-dimensional Euclidean plane \f$ \E^2\f$. 
-Triangle \f$ t\f$ is oriented, i.e., its boundary has 
+Triangle `t` is oriented, i.e., its boundary has 
 clockwise or counterclockwise orientation. We call the side to the left 
 of the boundary the positive side and the side to the right of the 
 boundary the negative side. 
@@ -24,7 +24,7 @@ public:
 /// @{
 
 /*! 
-introduces a triangle `t` with vertices \f$ p\f$, \f$ q\f$ and \f$ r\f$. 
+introduces a triangle `t` with vertices `p`, `q` and `r`. 
 */ 
 Triangle_2(const Point_2<Kernel> &p, 
 const Point_2<Kernel> &q, 
@@ -79,7 +79,7 @@ returns
 `POSITIVE_SIDE`, 
 or the constant 
 `ON_NEGATIVE_SIDE`, 
-determined by the position of point \f$ p\f$. 
+determined by the position of point `p`. 
 \pre `t` is not degenerate. 
 */ 
 Oriented_side oriented_side(const Point_2<Kernel> &p) const; 
@@ -88,7 +88,7 @@ Oriented_side oriented_side(const Point_2<Kernel> &p) const;
 returns the constant `ON_BOUNDARY`, 
 `ON_BOUNDED_SIDE`, or else 
 `ON_UNBOUNDED_SIDE`, 
-depending on where point \f$ p\f$ is. 
+depending on where point `p` is. 
 \pre `t` is not degenerate. 
 */ 
 Bounded_side bounded_side(const Point_2<Kernel> &p) const; 

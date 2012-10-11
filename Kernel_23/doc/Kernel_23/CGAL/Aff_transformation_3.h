@@ -50,7 +50,7 @@ introduces an identity transformation.
 Aff_transformation_3(const Identity_transformation& ); 
 
 /*! 
-introduces a translation by a vector \f$ v\f$. 
+introduces a translation by a vector `v`. 
 */ 
 Aff_transformation_3(const Translation, 
 const Vector_3<Kernel> &v); 

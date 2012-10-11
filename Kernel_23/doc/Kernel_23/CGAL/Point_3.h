@@ -175,7 +175,7 @@ returns a bounding box containing `p`.
 Bbox_3 bbox() const; 
 
 /*! 
-returns the point obtained by applying \f$ t\f$ on `p`. 
+returns the point obtained by applying `t` on `p`. 
 */ 
 Point_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const; 
 

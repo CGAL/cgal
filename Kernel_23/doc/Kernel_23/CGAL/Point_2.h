@@ -185,7 +185,7 @@ are not parameterized with whatsoever.
 Bbox_2 bbox() const; 
 
 /*! 
-returns the point obtained by applying \f$ t\f$ on `p`. 
+returns the point obtained by applying `t` on `p`. 
 */ 
 Point_2<Kernel> transform(const Aff_transformation_2<Kernel> &t) const; 
 

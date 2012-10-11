@@ -3,13 +3,13 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes3
 
-An object \f$ s\f$ of the data type `Segment_3` is a directed 
+An object `s` of the data type `Segment_3` is a directed 
 straight line segment in the three-dimensional Euclidean space \f$ \E^3\f$, 
 that is a straight line segment \f$ [p,q]\f$ connecting two points \f$ p,q \in 
 \R^3\f$. The segment is topologically closed, i.e.\ the end 
-points belong to it. Point \f$ p\f$ is called the <I>source</I> and \f$ q\f$ 
-is called the <I>target</I> of \f$ s\f$. The length of \f$ s\f$ is the 
-Euclidean distance between \f$ p\f$ and \f$ q\f$. Note that there is only a function 
+points belong to it. Point `p` is called the <I>source</I> and `q` 
+is called the <I>target</I> of `s`. The length of `s` is the 
+Euclidean distance between `p` and `q`. Note that there is only a function 
 to compute the square of the length, because otherwise we had to 
 perform a square root operation which is not defined for all 
 number types, which is expensive, and may not be exact. 
@@ -25,8 +25,8 @@ public:
 /// @{
 
 /*! 
-introduces a segment `s` with source \f$ p\f$ 
-and target \f$ q\f$. It is directed from the source towards 
+introduces a segment `s` with source `p` 
+and target `q`. It is directed from the source towards 
 the target. 
 */ 
 Segment_3(const Point_3<Kernel> &p, const Point_3<Kernel> &q); 
@@ -106,7 +106,7 @@ returns a segment with source and target interchanged.
 Segment_3<Kernel> opposite() const; 
 
 /*! 
-returns the line \f$ l\f$ passing through `s`. Line \f$ l\f$ has the 
+returns the line `l` passing through `s`. Line `l` has the 
 same orientation as segment `s`, that is 
 from the source to the target of `s`. 
 */ 
@@ -129,7 +129,7 @@ returns a bounding box containing `s`.
 Bbox_3 bbox() const; 
 
 /*! 
-returns the segment obtained by applying \f$ t\f$ on the source 
+returns the segment obtained by applying `t` on the source 
 and the target of `s`. 
 */ 
 Segment_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const; 

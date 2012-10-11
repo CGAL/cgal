@@ -10,7 +10,7 @@ the plane equation
 \f[h :\;  a\, x +b\, y +c\, z + d = 0.\f]
 
 The plane splits \f$ \E^3\f$ in a <I>positive</I> and a <I>negative side</I>. 
-A point \f$ p\f$ with %Cartesian coordinates \f$ (px, py, pz)\f$ is on the 
+A point `p` with %Cartesian coordinates \f$ (px, py, pz)\f$ is on the 
 positive side of `h`, iff \f$ a\, px +b\, py +c\, pz + d > 0\f$. 
 It is on the negative side, iff \f$ a\, px +b\, py\, +c\, pz + d < 0\f$. 
 
@@ -131,7 +131,7 @@ the negative to the positive side of `h`.
 Line_3<Kernel> perpendicular_line(const Point_3<Kernel> &p) const; 
 
 /*! 
-returns the orthogonal projection of \f$ p\f$ on `h`. 
+returns the orthogonal projection of `p` on `h`. 
 */ 
 Point_3<Kernel> projection(const Point_3<Kernel> &p) const; 
 
@@ -187,7 +187,7 @@ under an affine transformation, which maps `h` onto the
 Point_2<Kernel> to_2d(const Point_3<Kernel> &p) const; 
 
 /*! 
-returns a point \f$ q\f$, such that `to_2d( to_3d( p ))` 
+returns a point `q`, such that `to_2d( to_3d( p ))` 
 is equal to `p`. 
 */ 
 Point_3<Kernel> to_3d(const Point_2<Kernel> &p) const; 
@@ -201,7 +201,7 @@ Point_3<Kernel> to_3d(const Point_2<Kernel> &p) const;
 returns either \ref ON_ORIENTED_BOUNDARY, or 
 the constant \ref ON_POSITIVE_SIDE, or the constant 
 \ref ON_NEGATIVE_SIDE, 
-determined by the position of \f$ p\f$ relative to the oriented plane `h`. 
+determined by the position of `p` relative to the oriented plane `h`. 
 
 */ 
 Oriented_side oriented_side(const Point_3<Kernel> &p) const; 
@@ -248,7 +248,7 @@ bool is_degenerate() const;
 /// @{
 
 /*! 
-returns the plane obtained by applying \f$ t\f$ on a point of `h` 
+returns the plane obtained by applying `t` on a point of `h` 
 and the orthogonal direction of `h`. 
 */ 
 Plane_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const; 

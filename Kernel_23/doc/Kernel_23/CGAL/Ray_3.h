@@ -19,25 +19,25 @@ public:
 
 /*! 
 introduces a ray `r` 
-with source \f$ p\f$ and passing through point \f$ q\f$. 
+with source `p` and passing through point `q`. 
 */ 
 Ray_3(const Point_3<Kernel> &p, const Point_3<Kernel> &q); 
 
 /*! 
-introduces a ray `r` with source \f$ p\f$ and with 
-direction \f$ d\f$. 
+introduces a ray `r` with source `p` and with 
+direction `d`. 
 */ 
 Ray_3(const Point_3<Kernel> &p, const Direction_3<Kernel> &d); 
 
 /*! 
-introduces a ray `r` with source \f$ p\f$ and with 
-a direction given by \f$ v\f$. 
+introduces a ray `r` with source `p` and with 
+a direction given by `v`. 
 */ 
 Ray_3(const Point_3<Kernel> &p, const Vector_3<Kernel> &v); 
 
 /*! 
-introduces a ray `r` starting at source \f$ p\f$ with 
-the same direction as \f$ l\f$. 
+introduces a ray `r` starting at source `p` with 
+the same direction as `l`. 
 */ 
 Ray_3(const Point_3<Kernel> &p, const Line_3<Kernel> &l); 
 
@@ -102,7 +102,7 @@ of `r`, or if it is in the interior of `r`.
 bool has_on(const Point_3<Kernel> &p) const; 
 
 /*! 
-returns the ray obtained by applying \f$ t\f$ on the source 
+returns the ray obtained by applying `t` on the source 
 and on the direction of `r`. 
 */ 
 Ray_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const; 

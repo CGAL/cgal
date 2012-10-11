@@ -17,31 +17,31 @@ public:
 /// @{
 
 /*! 
-introduces a line `l` passing through the points \f$ p\f$ and \f$ q\f$. 
-Line `l` is directed from \f$ p\f$ to \f$ q\f$. 
+introduces a line `l` passing through the points `p` and `q`. 
+Line `l` is directed from `p` to `q`. 
 */ 
 Line_3(const Point_3<Kernel> &p, const Point_3<Kernel> &q); 
 
 /*! 
-introduces a line `l` passing through point \f$ p\f$ with 
-direction \f$ d\f$. 
+introduces a line `l` passing through point `p` with 
+direction `d`. 
 */ 
 Line_3(const Point_3<Kernel> &p, const Direction_3<Kernel>&d); 
 
 /*! 
-introduces a line `l` passing through point \f$ p\f$ and 
-oriented by \f$ v\f$. 
+introduces a line `l` passing through point `p` and 
+oriented by `v`. 
 */ 
 Line_3(const Point_3<Kernel> &p, const Vector_3<Kernel>&v); 
 
 /*! 
-returns the line supporting the segment \f$ s\f$, 
+returns the line supporting the segment `s`, 
 oriented from source to target. 
 */ 
 Line_3(const Segment_3<Kernel> &s); 
 
 /*! 
-returns the line supporting the ray \f$ r\f$, with the 
+returns the line supporting the ray `r`, with the 
 same orientation. 
 */ 
 Line_3(const Ray_3<Kernel> &r); 
@@ -63,7 +63,7 @@ Test for inequality.
 bool operator!=(const Line_3<Kernel> &h) const; 
 
 /*! 
-returns the orthogonal projection of \f$ p\f$ on `l`. 
+returns the orthogonal projection of `p` on `l`. 
 */ 
 Point_3<Kernel> projection(const Point_3<Kernel> &p) const; 
 
@@ -94,7 +94,7 @@ bool has_on(const Point_3<Kernel> &p) const;
 /// @{
 
 /*! 
-returns the plane perpendicular to `l` passing through \f$ p\f$. 
+returns the plane perpendicular to `l` passing through `p`. 
 */ 
 Plane_3<Kernel> perpendicular_plane(const Point_3<Kernel> &p) const; 
 
@@ -114,7 +114,7 @@ returns the direction of `l`.
 Direction_3<Kernel> direction() const; 
 
 /*! 
-returns the line obtained by applying \f$ t\f$ on a point on `l` 
+returns the line obtained by applying `t` on a point on `l` 
 and the direction of `l`. 
 */ 
 Line_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const; 

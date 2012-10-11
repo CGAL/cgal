@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes3
 
-An object \f$ t\f$ of the class `Tetrahedron_3` is an oriented 
+An object `t` of the class `Tetrahedron_3` is an oriented 
 tetrahedron in the three-dimensional Euclidean space \f$ \E^3\f$. 
 
 It is defined by four vertices \f$ p_0\f$, \f$ p_1\f$, \f$ p_2\f$ and \f$ p_3\f$. 

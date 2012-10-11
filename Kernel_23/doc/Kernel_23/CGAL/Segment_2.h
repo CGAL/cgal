@@ -7,9 +7,9 @@ An object `s` of the data type `Segment_2` is a directed
 straight line segment in the two-dimensional Euclidean plane \f$ \E^2\f$, i.e.\ a 
 straight line segment \f$ [p,q]\f$ connecting two points \f$ p,q \in \R^2\f$. 
 The segment is topologically closed, i.e.\ the end 
-points belong to it. Point \f$ p\f$ is called the <I>source</I> and \f$ q\f$ 
-is called the <I>target</I> of \f$ s\f$. The length of \f$ s\f$ is the 
-Euclidean distance between \f$ p\f$ and \f$ q\f$. Note that there is only a function 
+points belong to it. Point `p` is called the <I>source</I> and `q` 
+is called the <I>target</I> of `s`. The length of `s` is the 
+Euclidean distance between `p` and `q`. Note that there is only a function 
 to compute the square of the length, because otherwise we had to 
 perform a square root operation which is not defined for all 
 number types, which is expensive, and may not be exact. 
@@ -25,8 +25,8 @@ public:
 /// @{
 
 /*! 
-introduces a segment `s` with source \f$ p\f$ 
-and target \f$ q\f$. The segment is directed from the source towards 
+introduces a segment `s` with source `p` 
+and target `q`. The segment is directed from the source towards 
 the target. 
 */ 
 Segment_2(const Point_2<Kernel> &p, const Point_2<Kernel> &q); 
@@ -106,7 +106,7 @@ returns a segment with source and target point interchanged.
 Segment_2<Kernel> opposite() const; 
 
 /*! 
-returns the line \f$ l\f$ passing through `s`. Line \f$ l\f$ has the 
+returns the line `l` passing through `s`. Line `l` has the 
 same orientation as segment `s`. 
 */ 
 Line_2<Kernel> supporting_line() const; 
@@ -138,9 +138,9 @@ of `s`, or if it is in the interior of `s`.
 bool has_on(const Point_2<Kernel> &p) const; 
 
 /*! 
-checks if point \f$ p\f$ is on segment `s`. This function is faster 
+checks if point `p` is on segment `s`. This function is faster 
 than function `has_on()`. 
-\pre \f$ p\f$ is on the supporting line of `s`. 
+\pre `p` is on the supporting line of `s`. 
 */ 
 bool collinear_has_on(const Point_2<Kernel> &p) const; 
 
@@ -155,7 +155,7 @@ returns a bounding box containing `s`.
 Bbox_2 bbox() const; 
 
 /*! 
-returns the segment obtained by applying \f$ t\f$ on the source 
+returns the segment obtained by applying `t` on the source 
 and the target of `s`. 
 */ 
 Segment_2<Kernel> transform(const Aff_transformation_2<Kernel> &t) const; 

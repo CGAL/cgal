@@ -28,7 +28,7 @@ public:
 
 /*! 
 introduces an iso-oriented cuboid `c` with diagonal 
-opposite vertices \f$ p\f$ and \f$ q\f$. Note that the object is 
+opposite vertices `p` and `q`. Note that the object is 
 brought in the canonical form. 
 */ 
 Iso_cuboid_3(const Point_3<Kernel> &p, 
@@ -36,7 +36,7 @@ const Point_3<Kernel> &q);
 
 /*! 
 introduces an iso-oriented cuboid `c` with diagonal 
-opposite vertices \f$ p\f$ and \f$ q\f$. The `int` argument value 
+opposite vertices `p` and `q`. The `int` argument value 
 is only used to distinguish the two overloaded functions. 
 \pre \f$ p.x()<=q.x()\f$, \f$ p.y()<=q.y()\f$ and \f$ p.z()<=q.z()\f$. 
 */ 
@@ -146,14 +146,14 @@ returns largest %Cartesian
 Kernel::FT zmax() const; 
 
 /*! 
-returns \f$ i\f$-th %Cartesian coordinate of 
+returns `i`-th %Cartesian coordinate of 
 the smallest vertex of `c`. 
 \pre \f$ 0 \leq i \leq2\f$. 
 */ 
 Kernel::FT min_coord(int i) const; 
 
 /*! 
-returns \f$ i\f$-th %Cartesian coordinate of 
+returns `i`-th %Cartesian coordinate of 
 the largest vertex of `c`. 
 \pre \f$ 0 \leq i \leq2\f$. 
 */ 
@@ -174,7 +174,7 @@ bool is_degenerate() const;
 returns either \ref ON_UNBOUNDED_SIDE,
 \ref ON_BOUNDED_SIDE, or the constant 
 \ref ON_BOUNDARY, 
-depending on where point \f$ p\f$ is. 
+depending on where point `p` is. 
 */ 
 Bounded_side bounded_side(const Point_3<Kernel> &p) const; 
 
@@ -209,7 +209,7 @@ returns a bounding box containing `c`.
 Bbox_3 bbox() const; 
 
 /*! 
-returns the iso-oriented cuboid obtained by applying \f$ t\f$ on 
+returns the iso-oriented cuboid obtained by applying `t` on 
 the smallest and the largest of `c`. 
 \pre The angle at a rotation must be a multiple of \f$ \pi/2\f$, otherwise the resulting cuboid does not have the same size. Note that rotating about an arbitrary angle can even result in a degenerate iso-oriented cuboid. 
 */ 

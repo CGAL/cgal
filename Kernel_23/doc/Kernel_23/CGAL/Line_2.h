@@ -10,7 +10,7 @@ that satisfy the equation
 \f[ l:\; a\, x +b\, y +c = 0. \f]
 
 The line splits \f$ \E^2\f$ in a <I>positive</I> and a <I>negative</I> 
-side. A point \f$ p\f$ with %Cartesian coordinates 
+side. A point `p` with %Cartesian coordinates 
 \f$ (px, py)\f$ is on the positive side of `l`, iff 
 \f$ a\, px + b\, py +c > 0\f$, it is 
 on the negative side of `l`, iff 
@@ -28,7 +28,7 @@ the suffix `_2` and the representation type `Cartesian`.
 Point_2< Cartesian<double> > p(1.0,1.0), q(4.0,7.0); 
 \endcode
 
-To define a line \f$ l\f$ we write: 
+To define a line `l` we write: 
 
 \code
 Line_2< Cartesian<double> > l(p,q); 
@@ -51,31 +51,31 @@ coordinates \f$ ax +by +c = 0\f$.
 Line_2(const Kernel::RT &a, const Kernel::RT &b, const Kernel::RT &c); 
 
 /*! 
-introduces a line `l` passing through the points \f$ p\f$ and \f$ q\f$. 
-Line `l` is directed from \f$ p\f$ to \f$ q\f$. 
+introduces a line `l` passing through the points `p` and `q`. 
+Line `l` is directed from `p` to `q`. 
 */ 
 Line_2(const Point_2<Kernel> &p, const Point_2<Kernel> &q); 
 
 /*! 
-introduces a line `l` passing through point \f$ p\f$ with 
-direction \f$ d\f$. 
+introduces a line `l` passing through point `p` with 
+direction `d`. 
 */ 
 Line_2(const Point_2<Kernel> &p, const Direction_2<Kernel>&d); 
 
 /*! 
-introduces a line `l` passing through point \f$ p\f$ and 
-oriented by \f$ v\f$. 
+introduces a line `l` passing through point `p` and 
+oriented by `v`. 
 */ 
 Line_2(const Point_2<Kernel> &p, const Vector_2<Kernel>&v); 
 
 /*! 
-introduces a line `l` supporting the segment \f$ s\f$, 
+introduces a line `l` supporting the segment `s`, 
 oriented from source to target. 
 */ 
 Line_2(const Segment_2<Kernel> &s); 
 
 /*! 
-introduces a line `l` supporting the ray \f$ r\f$, 
+introduces a line `l` supporting the ray `r`, 
 with same orientation. 
 */ 
 Line_2(const Ray_2<Kernel> &r); 
@@ -97,17 +97,17 @@ Test for inequality.
 bool operator!=(const Line_2<Kernel> &h) const; 
 
 /*! 
-returns the first coefficient of \f$ l\f$. 
+returns the first coefficient of `l`. 
 */ 
 Kernel::RT a() const; 
 
 /*! 
-returns the second coefficient of \f$ l\f$. 
+returns the second coefficient of `l`. 
 */ 
 Kernel::RT b() const; 
 
 /*! 
-returns the third coefficient of \f$ l\f$. 
+returns the third coefficient of `l`. 
 */ 
 Kernel::RT c() const; 
 
@@ -120,7 +120,7 @@ to `point(j)`, for all `i` \f$ <\f$ `j`.
 Point_2<Kernel> point(int i) const; 
 
 /*! 
-returns the orthogonal projection of \f$ p\f$ onto `l`. 
+returns the orthogonal projection of `p` onto `l`. 
 */ 
 Point_2<Kernel> projection(const Point_2<Kernel> &p) const; 
 
@@ -163,7 +163,7 @@ bool is_vertical() const;
 returns \ref ON_ORIENTED_BOUNDARY, 
 \ref ON_NEGATIVE_SIDE, or the constant 
 \ref ON_POSITIVE_SIDE, 
-depending on the position of \f$ p\f$ relative to the oriented line `l`. 
+depending on the position of `p` relative to the oriented line `l`. 
 
 */ 
 Oriented_side oriented_side(const Point_2<Kernel> &p) const; 
@@ -209,14 +209,14 @@ returns the line with opposite direction.
 Line_2<Kernel> opposite() const; 
 
 /*! 
-returns the line perpendicular to `l` and passing through \f$ p\f$, 
+returns the line perpendicular to `l` and passing through `p`, 
 where the direction is the direction of `l` rotated 
 counterclockwise by 90 degrees. 
 */ 
 Line_2<Kernel> perpendicular(const Point_2<Kernel> &p) const; 
 
 /*! 
-returns the line obtained by applying \f$ t\f$ on a point on `l` 
+returns the line obtained by applying `t` on a point on `l` 
 and the direction of `l`. 
 */ 
 Line_2<Kernel> transform(const Aff_transformation_2<Kernel> &t) const; 

@@ -46,12 +46,12 @@ introduces the vector \f$ s.target()-s.source()\f$.
 Vector_3(const Segment_3<Kernel> &s); 
 
 /*! 
-introduces a vector having the same direction as \f$ r\f$. 
+introduces a vector having the same direction as `r`. 
 */ 
 Vector_3(const Ray_3<Kernel> &r); 
 
 /*! 
-introduces a vector having the same direction as \f$ l\f$. 
+introduces a vector having the same direction as `l`. 
 */ 
 Vector_3(const Line_3<Kernel> &l); 
 
@@ -187,7 +187,7 @@ returns the dimension (the constant 3).
 int dimension() const; 
 
 /*! 
-returns the vector obtained by applying \f$ t\f$ on `v`. 
+returns the vector obtained by applying `t` on `v`. 
 */ 
 Vector_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const; 
 

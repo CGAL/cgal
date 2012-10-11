@@ -29,7 +29,7 @@ public:
 
 /*! 
 introduces an iso-oriented rectangle `r` with diagonal 
-opposite vertices \f$ p\f$ and \f$ q\f$. Note that the object is 
+opposite vertices `p` and `q`. Note that the object is 
 brought in the canonical form. 
 */ 
 Iso_rectangle_2(const Point_2<Kernel> &p, 
@@ -37,7 +37,7 @@ const Point_2<Kernel> &q);
 
 /*! 
 introduces an iso-oriented rectangle `r` with diagonal 
-opposite vertices \f$ p\f$ and \f$ q\f$. The `int` argument value 
+opposite vertices `p` and `q`. The `int` argument value 
 is only used to distinguish the two overloaded functions. 
 \pre \f$ p.x()<=q.x()\f$ and \f$ p.y()<=q.y()\f$. 
 */ 
@@ -125,14 +125,14 @@ returns the \f$ y\f$ coordinate of upper right vertex of `r`.
 Kernel::FT ymax() const; 
 
 /*! 
-returns the \f$ i\f$'th %Cartesian coordinate of the 
+returns the `i`'th %Cartesian coordinate of the 
 lower left vertex of `r`. 
 \pre \f$ 0 \leq i \leq1\f$. 
 */ 
 Kernel::FT min_coord(int i) const; 
 
 /*! 
-returns the \f$ i\f$'th %Cartesian coordinate of the 
+returns the `i`'th %Cartesian coordinate of the 
 upper right vertex of `r`. 
 \pre \f$ 0 \leq i \leq1\f$. 
 */ 
@@ -153,7 +153,7 @@ bool is_degenerate() const;
 returns either \ref ON_UNBOUNDED_SIDE, 
 \ref ON_BOUNDED_SIDE, or the constant 
 \ref ON_BOUNDARY, 
-depending on where point \f$ p\f$ is. 
+depending on where point `p` is. 
 */ 
 Bounded_side bounded_side(const Point_2<Kernel> &p) const; 
 
@@ -188,7 +188,7 @@ returns a bounding box containing `r`.
 Bbox bbox() const; 
 
 /*! 
-returns the iso-oriented rectangle obtained by applying \f$ t\f$ on 
+returns the iso-oriented rectangle obtained by applying `t` on 
 the lower left and the upper right corner of `r`. 
 \pre The angle at a rotation must be a multiple of \f$ \pi/2\f$, otherwise the resulting rectangle does not have the same side length. Note that rotating about an arbitrary angle can even result in a degenerate iso-oriented rectangle. 
 */ 

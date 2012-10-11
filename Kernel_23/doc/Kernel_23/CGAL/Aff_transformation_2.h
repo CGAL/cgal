@@ -94,14 +94,14 @@ introduces an identity transformation.
 Aff_transformation_2(const Identity_transformation& ); 
 
 /*! 
-introduces a translation by a vector \f$ v\f$. 
+introduces a translation by a vector `v`. 
 */ 
 Aff_transformation_2(const Translation, 
 const Vector_2<Kernel> &v); 
 
 /*! 
 approximates the rotation over the angle indicated by direction 
-\f$ d\f$, such that the differences between the sines and cosines 
+`d`, such that the differences between the sines and cosines 
 of the rotation given by d and the approximating rotation 
 are at most \f$ num/den\f$ each. 
 \pre \f$ num/den>0\f$ and \f$ d != 0\f$. 

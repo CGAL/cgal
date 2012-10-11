@@ -44,12 +44,12 @@ introduces the vector \f$ s.target()-s.source()\f$.
 Vector_2(const Segment_2<Kernel> &s); 
 
 /*! 
-introduces the vector having the same direction as \f$ r\f$. 
+introduces the vector having the same direction as `r`. 
 */ 
 Vector_2(const Ray_2<Kernel> &r); 
 
 /*! 
-introduces the vector having the same direction as \f$ l\f$. 
+introduces the vector having the same direction as `l`. 
 */ 
 Vector_2(const Line_2<Kernel> &l); 
 
@@ -182,7 +182,7 @@ returns the direction which passes through `v`.
 Direction_2<Kernel> direction() const; 
 
 /*! 
-returns the vector obtained by applying \f$ t\f$ on `v`. 
+returns the vector obtained by applying `t` on `v`. 
 */ 
 Vector_2<Kernel> transform(const Aff_transformation_2<Kernel> &t) const; 
 

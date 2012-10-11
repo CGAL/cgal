@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes3
 
-An object \f$ t\f$ of the class `Triangle_3` is a triangle in 
+An object `t` of the class `Triangle_3` is a triangle in 
 the three-dimensional Euclidean space \f$ \E^3\f$. As the triangle is not 
 a full-dimensional object there is only a test whether a point lies on 
 the triangle or not. 
@@ -19,7 +19,7 @@ public:
 /// @{
 
 /*! 
-introduces a triangle `t` with vertices \f$ p\f$, \f$ q\f$ and \f$ r\f$. 
+introduces a triangle `t` with vertices `p`, `q` and `r`. 
 */ 
 Triangle_3(const Point_3<Kernel> &p, 
 const Point_3<Kernel> &q, 

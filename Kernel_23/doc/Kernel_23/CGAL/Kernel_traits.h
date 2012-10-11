@@ -12,11 +12,11 @@ If this type does not exist, a specialization of `Kernel_traits` can be
 used to provide the desired information. 
 
 This class is, for example, useful in the following context. Assume 
-you want to write a generic function that accepts two points \f$ p\f$ and 
-\f$ q\f$ as argument and constructs the line segment between \f$ p\f$ and \f$ q\f$. 
+you want to write a generic function that accepts two points `p` and 
+`q` as argument and constructs the line segment between `p` and `q`. 
 In order to specify the return type of this function, you need to know 
 what is the segment type corresponding to the Point type representing 
-\f$ p\f$ and \f$ q\f$. Using `Kernel_traits`, this can be done as follows. 
+`p` and `q`. Using `Kernel_traits`, this can be done as follows. 
 
 \code
 template < class Point > 

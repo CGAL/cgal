@@ -25,22 +25,22 @@ public:
 /// @{
 
 /*! 
-introduces the direction `d` of vector \f$ v\f$. 
+introduces the direction `d` of vector `v`. 
 */ 
 Direction_2(const Vector_2<Kernel> &v); 
 
 /*! 
-introduces the direction `d` of line \f$ l\f$. 
+introduces the direction `d` of line `l`. 
 */ 
 Direction_2(const Line_2<Kernel> &l); 
 
 /*! 
-introduces the direction `d` of ray \f$ r\f$. 
+introduces the direction `d` of ray `r`. 
 */ 
 Direction_2(const Ray_2<Kernel> &r); 
 
 /*! 
-introduces the direction `d` of segment \f$ s\f$. 
+introduces the direction `d` of segment `s`. 
 */ 
 Direction_2(const Segment_2<Kernel> &s); 
 
@@ -131,7 +131,7 @@ returns a vector that has the same direction as `d`.
 Vector_2<Kernel> vector() const; 
 
 /*! 
-returns the direction obtained by applying \f$ t\f$ on `d`. 
+returns the direction obtained by applying `t` on `d`. 
 */ 
 Direction_2<Kernel> transform(const Aff_transformation_2<Kernel> &t) const; 
 

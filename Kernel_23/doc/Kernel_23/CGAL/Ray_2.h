@@ -19,25 +19,25 @@ public:
 
 /*! 
 introduces a ray `r` 
-with source \f$ p\f$ and passing through point \f$ q\f$. 
+with source `p` and passing through point `q`. 
 */ 
 Ray_2(const Point_2<Kernel> &p, const Point_2<Kernel>&q); 
 
 /*! 
-introduces a ray `r` starting at source \f$ p\f$ with 
-direction \f$ d\f$. 
+introduces a ray `r` starting at source `p` with 
+direction `d`. 
 */ 
 Ray_2(const Point_2<Kernel> &p, const Direction_2<Kernel> &d); 
 
 /*! 
-introduces a ray `r` starting at source \f$ p\f$ with 
-the direction of \f$ v\f$. 
+introduces a ray `r` starting at source `p` with 
+the direction of `v`. 
 */ 
 Ray_2(const Point_2<Kernel> &p, const Vector_2<Kernel> &v); 
 
 /*! 
-introduces a ray `r` starting at source \f$ p\f$ with 
-the same direction as \f$ l\f$. 
+introduces a ray `r` starting at source `p` with 
+the same direction as `l`. 
 */ 
 Ray_2(const Point_2<Kernel> &p, const Line_2<Kernel> &l); 
 
@@ -117,10 +117,10 @@ of `r`, or if it is in the interior of `r`.
 bool has_on(const Point_2<Kernel> &p) const; 
 
 /*! 
-checks if point \f$ p\f$ is on `r`. This function is faster 
+checks if point `p` is on `r`. This function is faster 
 than function `has_on()` if the precondition 
 checking is disabled. 
-\pre \f$ p\f$ is on the supporting line of `r`. 
+\pre `p` is on the supporting line of `r`. 
 */ 
 bool collinear_has_on(const Point_2<Kernel> &p) const; 
 
@@ -130,7 +130,7 @@ bool collinear_has_on(const Point_2<Kernel> &p) const;
 /// @{
 
 /*! 
-returns the ray obtained by applying \f$ t\f$ on the source 
+returns the ray obtained by applying `t` on the source 
 and on the direction of `r`. 
 */ 
 Ray_2<Kernel> transform(const Aff_transformation_2<Kernel> &t) const; 
