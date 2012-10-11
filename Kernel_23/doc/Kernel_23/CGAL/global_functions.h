@@ -9,7 +9,7 @@ namespace CGAL {
 /// @{
 
 /*!
-returns `OBTUSE`, `RIGHT` or `ACUTE` depending
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the two vectors \f$ u\f$ and \f$ v\f$.
 */
 template <typename Kernel>
@@ -18,7 +18,7 @@ const Vector_2<Kernel>&v);
 
 /*!
 
-returns `OBTUSE`, `RIGHT` or `ACUTE` depending
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the three points \f$ p\f$, \f$ q\f$, \f$ r\f$ (\f$ q\f$ being the vertex of
 the angle). The returned value is the same as `angle(p - q, r - q)`.
 */
@@ -29,7 +29,7 @@ const Point_2<Kernel>& r);
 
 /*!
 
-returns `OBTUSE`, `RIGHT` or `ACUTE` depending
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the two vectors \f$ pq\f$, \f$ rs\f$. The returned value is
 the same as `angle(q - p, s - r)`.
 */
@@ -41,7 +41,7 @@ const Point_2<Kernel>& s);
 
 /*!
 
-returns `OBTUSE`, `RIGHT` or `ACUTE` depending
+returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the three points \f$ p\f$, \f$ q\f$, \f$ r\f$ (\f$ q\f$ being the vertex of
 the angle).
 */
@@ -640,10 +640,10 @@ const Vector_3<Kernel>& w2);
 /*!
 compares the distances of points `q` and
 `r` to point `p`.
-returns `SMALLER`, iff `q` is closer
-to `p` than `r`, `LARGER`, iff
+returns `CGAL::SMALLER`, iff `q` is closer
+to `p` than `r`, `CGAL::LARGER`, iff
 `r` is closer to `p` than `q`, and
-`EQUAL` otherwise.
+`CGAL::EQUAL` otherwise.
 */
 template <typename Kernel>
 Comparison_result
@@ -654,10 +654,10 @@ const Point_2<Kernel>& r);
 /*!
 compares the distances of points `q` and
 `r` to point `p`.
-returns `SMALLER`, iff `q` is closer
-to `p` than `r`, `LARGER`, iff
+returns `CGAL::SMALLER`, iff `q` is closer
+to `p` than `r`, `CGAL::LARGER`, iff
 `r` is closer to `p` than `q`, and
-`EQUAL` otherwise.
+`CGAL::EQUAL` otherwise.
 */
 template <typename Kernel>
 Comparison_result
@@ -710,11 +710,11 @@ compare_lexicographically(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
 /// @{
 
 /*!
-returns `LARGER`
+returns `CGAL::LARGER`
 iff the signed distance of `p` and 
 `l` is larger than the signed distance of `q`
-and `l`, `SMALLER`, iff it is smaller,
-and `EQUAL` iff both are equal.
+and `l`, `CGAL::SMALLER`, iff it is smaller,
+and `CGAL::EQUAL` iff both are equal.
 */
 template <typename Kernel>
 Comparison_result
@@ -723,11 +723,11 @@ const Point_2<Kernel>& p,
 const Point_2<Kernel>& q);
 
 /*!
-returns `LARGER`
+returns `CGAL::LARGER`
 iff the signed distance of `r` and 
 `l` is larger than the signed distance of `s`
-and `l`, `SMALLER`, iff it is smaller,
-and `EQUAL` iff both are equal, where 
+and `l`, `CGAL::SMALLER`, iff it is smaller,
+and `CGAL::EQUAL` iff both are equal, where 
 `l` is the directed line through `p` and `q`.
 */
 template <typename Kernel>
@@ -738,11 +738,11 @@ const Point_2<Kernel>& r,
 const Point_2<Kernel>& s);
 
 /*!
-returns `LARGER`
+returns `CGAL::LARGER`
 iff the signed distance of `p` and 
 `h` is larger than the signed distance of `q`
-and `h`, `SMALLER`, iff it is smaller,
-and `EQUAL` iff both are equal.
+and `h`, `CGAL::SMALLER`, iff it is smaller,
+and `CGAL::EQUAL` iff both are equal.
 */
 template <typename Kernel>
 Comparison_result
@@ -751,11 +751,11 @@ const Point_3<Kernel>& p,
 const Point_3<Kernel>& q);
 
 /*!
-returns `LARGER`
+returns `CGAL::LARGER`
 iff the signed distance of `s` and 
 `h` is larger than the signed distance of `t`
-and `h`, `SMALLER`, iff it is smaller,
-and `EQUAL` iff both are equal, where
+and `h`, `CGAL::SMALLER`, iff it is smaller,
+and `CGAL::EQUAL` iff both are equal, where
 `h` is the oriented plane through `p`, `q` and
 `r`.
 */
@@ -1262,8 +1262,8 @@ Comparison_result compare_y_at_x(const Line_2<Kernel> &l1,
 /*!
   compares the \f$y\f$-coordinates of \f$p\f$ and the vertical projection
   of `p` on `s`.  If `s` is vertical, then return
-  `EQUAL` when `p` lies on `s`, `SMALLER` when `p` lies
-  under {s}, and `LARGER` otherwise.
+  `CGAL::EQUAL` when `p` lies on `s`, `CGAL::SMALLER` when `p` lies
+  under {s}, and `CGAL::LARGER` otherwise.
   \pre `p` is within the x range of `s`.
 */
 template <typename Kernel>
@@ -1273,8 +1273,8 @@ Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
 /*!
   compares the \f$y\f$-coordinates of the vertical projection 
   of `p` on `s1` and on `s2`.  If `s1` or `s2`
-  is vertical, then return `EQUAL` if they intersect, otherwise return
-  `SMALLER` if `s1` lies below `s2`, and return `LARGER`
+  is vertical, then return `CGAL::EQUAL` if they intersect, otherwise return
+  `CGAL::SMALLER` if `s1` lies below `s2`, and return `CGAL::LARGER`
   otherwise.
   \pre `p` is within the x range of `s1` and `s2`.
 */
@@ -1629,9 +1629,9 @@ Let \f$ P\f$ be the plane defined by the points `p`, `q`,
 and `r`. Note that the order defines the orientation of
 \f$ P\f$. The function computes the orientation of points `p`, 
 `q`, and `s` in \f$ P\f$: Iff `p`, `q`, `s` are
-collinear, `COLLINEAR` is returned. Iff \f$ P\f$ and the plane 
+collinear, `CGAL::COLLINEAR` is returned. Iff \f$ P\f$ and the plane 
 defined by `p`, `q`, and `s` have the same orientation, 
-`POSITIVE` is returned; otherwise `NEGATIVE` is returned. 
+`CGAL::POSITIVE` is returned; otherwise `CGAL::NEGATIVE` is returned. 
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear.
 */
 template <typename Kernel>
@@ -1641,9 +1641,9 @@ const Point_3<Kernel>& r,
 const Point_3<Kernel>& s);
 
 /*!
-If `p,q,r` are collinear, then `COLLINEAR` is returned.
+If `p,q,r` are collinear, then `CGAL::COLLINEAR` is returned.
 If not, then `p,q,r` define a plane \f$ P\f$. The return value in this case is
-either `POSITIVE` or `NEGATIVE`, but we don't specify it explicitly.
+either `CGAL::POSITIVE` or `CGAL::NEGATIVE`, but we don't specify it explicitly.
 However, we guarantee that all calls to this predicate over 3 points in \f$ P\f$
 will return a coherent orientation if considered a 2D orientation in \f$ P\f$.
 */
@@ -2180,9 +2180,9 @@ Vector_3<Kernel> normal( const Point_3<Kernel>& p, const Point_3<Kernel>& q, con
 /// @{
 
 /*!
-returns `LEFT_TURN`, if \f$ r\f$ lies to the left of the oriented 
-line \f$ l\f$ defined by \f$ p\f$ and \f$ q\f$, returns `RIGHT_TURN` if \f$ r\f$ 
-lies to the right of \f$ l\f$, and returns `COLLINEAR` if \f$ r\f$ lies
+returns `CGAL::LEFT_TURN`, if \f$ r\f$ lies to the left of the oriented 
+line \f$ l\f$ defined by \f$ p\f$ and \f$ q\f$, returns `CGAL::RIGHT_TURN` if \f$ r\f$ 
+lies to the right of \f$ l\f$, and returns `CGAL::COLLINEAR` if \f$ r\f$ lies
 on \f$ l\f$.
 */
 template <typename Kernel>
@@ -2191,18 +2191,18 @@ const Point_2<Kernel>& q,
 const Point_2<Kernel>& r);
 
 /*!
-returns `LEFT_TURN` if \f$ u\f$ and \f$ v\f$ form a left turn,
-returns `RIGHT_TURN` if \f$ u\f$ and \f$ v\f$ form a right turn,
-and returns `COLLINEAR` if \f$ u\f$ and \f$ v\f$ are collinear.
+returns `CGAL::LEFT_TURN` if \f$ u\f$ and \f$ v\f$ form a left turn,
+returns `CGAL::RIGHT_TURN` if \f$ u\f$ and \f$ v\f$ form a right turn,
+and returns `CGAL::COLLINEAR` if \f$ u\f$ and \f$ v\f$ are collinear.
 */
 template <typename Kernel>
 Orientation orientation(const Vector_2<Kernel>& u,
 const Vector_2<Kernel>& v);
 
 /*!
-returns `POSITIVE`, if \f$ s\f$ lies on the positive side of the oriented 
-plane \f$ h\f$ defined by \f$ p\f$, \f$ q\f$, and \f$ r\f$, returns `NEGATIVE` if \f$ s\f$ 
-lies on the negative side of \f$ h\f$, and returns `COPLANAR` if \f$ s\f$ lies
+returns `CGAL::POSITIVE`, if \f$ s\f$ lies on the positive side of the oriented 
+plane \f$ h\f$ defined by \f$ p\f$, \f$ q\f$, and \f$ r\f$, returns `CGAL::NEGATIVE` if \f$ s\f$ 
+lies on the negative side of \f$ h\f$, and returns `CGAL::COPLANAR` if \f$ s\f$ lies
 on \f$ h\f$.
 */
 template <typename Kernel>
@@ -2212,8 +2212,8 @@ const Point_3<Kernel>&r,
 const Point_3<Kernel>&s);
 
 /*!
-returns `NEGATIVE` if \f$ u\f$, \f$ v\f$ and \f$ w\f$ are negatively oriented,
-and returns `COPLANAR` if \f$ u\f$, \f$ v\f$ and \f$ w\f$ are coplanar.
+returns `CGAL::NEGATIVE` if \f$ u\f$, \f$ v\f$ and \f$ w\f$ are negatively oriented,
+and returns `CGAL::COPLANAR` if \f$ u\f$, \f$ v\f$ and \f$ w\f$ are coplanar.
 */
 template <typename Kernel>
 Orientation orientation(const Vector_3<Kernel> &u,
@@ -2445,7 +2445,7 @@ since it determines the orientation of the implicitly
 constructed circle.
 
 If \f$ p\f$, \f$ q\f$ and \f$ r\f$ are collinear, the circle degenerates in a line.
-`ON_ORIENTED_BOUNDARY` is returned if \f$ test\f$ is also collinear or if two
+`CGAL::ON_ORIENTED_BOUNDARY` is returned if \f$ test\f$ is also collinear or if two
 points are identical, 
 otherwise, `side_of_oriented_circle(r, q, test, p)` is returned.
 
@@ -2475,7 +2475,7 @@ since it determines the orientation of the implicitly constructed
 sphere. If the points \f$ p\f$, \f$ q\f$, \f$ r\f$ and \f$ s\f$ are positive oriented, positive side
 is the bounded interior of the sphere.
 
-In case of degeneracies, `ON_ORIENTED_BOUNDARY` is returned
+In case of degeneracies, `CGAL::ON_ORIENTED_BOUNDARY` is returned
 if all points are coplanar. Otherwise, there is a cyclic permutation of the five points
 that puts four non coplanar points first, it is used to answer the predicate:
 e.g. `side_of_oriented_sphere(q, r, s, test, p)` is returned if \f$ q\f$, \f$ r\f$, \f$ s\f$,
