@@ -270,9 +270,9 @@ bool test_one_file(std::ifstream& in, bool verbose)
   
   Arrangement arr;
   Overlay_traits overlay_traits;
-  std::cout << "X1" << " ... ";
+  std::cout << "overlaying" << " ... ";
   CGAL::overlay(arr1, arr2, arr, overlay_traits);
-  std::cout << "X2" << std::endl;
+  std::cout << "overlaid" << std::endl;
   
   // Verify the resulting arrangement.
   unsigned int num_vertices = arr.number_of_vertices();
