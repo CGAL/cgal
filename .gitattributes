@@ -4531,6 +4531,7 @@ Number_types/doc/Number_types/CGAL/Gmpzf.h -text
 Number_types/doc/Number_types/CGAL/Interval_nt.h -text
 Number_types/doc/Number_types/CGAL/Lazy_exact_nt.h -text
 Number_types/doc/Number_types/CGAL/MP_Float.h -text
+Number_types/doc/Number_types/CGAL/NT_converter.h -text
 Number_types/doc/Number_types/CGAL/Number_type_checker.h -text
 Number_types/doc/Number_types/CGAL/Quotient.h -text
 Number_types/doc/Number_types/CGAL/Rational_traits.h -text

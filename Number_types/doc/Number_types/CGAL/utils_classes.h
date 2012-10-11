@@ -18,7 +18,7 @@ template< typename T >
 class Is_valid {
 public:
 
-/// \name Is Model for the Concepts 
+/// \name Operations 
 /// @{
 
 /*! 
