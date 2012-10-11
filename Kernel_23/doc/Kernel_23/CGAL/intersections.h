@@ -1,19 +1,36 @@
 namespace CGAL {
 
 /*!
-\addtogroup do_intersect_linear do_intersect (Linear Kernel)
+\defgroup do_intersect do_intersect
 \ingroup kernel_global_function
 
-\details Depending on which \cgal kernel is used, different versions of this
-global function are available.
+\brief 
+\details Depending on which \cgal kernel is used, different overloads of this global
+function are available.
+*/
 
-## With the 2D and 3D Linear %Kernel ##
-
-\details See Chapter \ref chapterkernel23
+/*!
+\addtogroup do_intersect_linear do_intersect (2D/3D Linear Kernel)
+\ingroup do_intersect
 
 \code
 #include <CGAL/intersections.h>
 \endcode
+  
+\sa \ref do_intersect_circular
+\sa \ref do_intersect_spherical
+\sa `intersection`
+  
+\details See Chapter  \ref chapterkernel23 for details on a linear kernel instantiation.
+*/
+/// @{
+/*!
+checks whether `obj1` and `obj2` intersect.  Two objects `obj1` and
+`obj2` intersect if there is a point `p` that is part of both `obj1`
+and `obj2`.  The intersection region of those two objects is defined
+as the set of all points `p` that are part of both `obj1` and `obj2`.
+Note that for objects like triangles and polygons that enclose a
+bounded region, this region is part of the object.
 
 The types `Type1` and `Type2` can be any of the following:
 
@@ -45,16 +62,42 @@ Also, `Type1` and `Type2` can be respectively of types
 - `Plane_3<Kernel>` and `Sphere_3<Kernel>` (or the contrary)
 - `Sphere_3<Kernel>` and `Sphere_3<Kernel>`.
 
-## With the 2D Circular %Kernel ##
+*/
+bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
+/// @}
 
-\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel
+
+
+/*!
+\addtogroup do_intersect_circular do_intersect (2D Circular Kernel)
+\ingroup do_intersect
 
 \code
 #include <CGAL/Circular_kernel_intersections.h>
 \endcode
+  
+\sa \ref do_intersect_linear
+\sa \ref do_intersect_spherical
+\sa `intersection`
 
-If this kernel is used, in addition to the combinations of 2D types
-previously listed, `Type1` and `Type2` can be any of
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel for details on a circular kernel instantiation.
+
+
+When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear "here",
+the following function overloads are also available.
+
+
+*/
+/// @{
+/*!
+checks whether `obj1` and `obj2` intersect.  Two objects `obj1` and
+`obj2` intersect if there is a point `p` that is part of both `obj1`
+and `obj2`.  The intersection region of those two objects is defined
+as the set of all points `p` that are part of both `obj1` and `obj2`.
+Note that for objects like triangles and polygons that enclose a
+bounded region, this region is part of the object.
+
+`Type1` and `Type2` can be any of
 the following:
 
 - `Line_2<CircularKernel>`
@@ -64,18 +107,41 @@ the following:
 
 An example illustrating this is presented in
 Chapter  \ref Chapter_2D_Circular_Geometry_Kernel.
+*/
+bool do_intersect(Type1<CircularKernel> obj1, Type2<CircularKernel> obj2);
+/// @}
 
 
-## With the 3D Spherical Kernel ## 
-
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel
+/*!
+\addtogroup do_intersect_spherical do_intersect (3D Spherical Kernel)
+\ingroup do_intersect
 
 \code
 #include <CGAL/Spherical_kernel_intersections.h>
 \endcode
+  
+\sa \ref do_intersect_linear
+\sa \ref do_intersect_circular
+\sa `intersection`
 
-If this kernel is used, in addition to the combinations of 3D types
-previously listed, `Type1` and `Type2` can be any of
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel for details on a spherical kernel instantiation.
+
+
+When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear "here",
+the following function overloads are also available.
+
+
+*/
+/// @{
+/*!
+checks whether `obj1` and `obj2` intersect.  Two objects `obj1` and
+`obj2` intersect if there is a point `p` that is part of both `obj1`
+and `obj2`.  The intersection region of those two objects is defined
+as the set of all points `p` that are part of both `obj1` and `obj2`.
+Note that for objects like triangles and polygons that enclose a
+bounded region, this region is part of the object.
+
+`Type1` and `Type2` can be any of
 the following:
 
 - `Line_3<SphericalKernel>`
@@ -87,38 +153,18 @@ the following:
 
 An example illustrating this is presented in
 Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
-
-\sa `CGAL::intersection`
 */
-/// @{
+bool do_intersect(Type1<SphericalKernel> obj1, Type2<SphericalKernel> obj2);
 
 /*!
-checks whether `obj1` and `obj2` intersect.  Two objects `obj1` and
-`obj2` intersect if there is a point `p` that is part of both `obj1`
-and `obj2`.  The intersection region of those two objects is defined
-as the set of all points `p` that are part of both `obj1` and `obj2`.
-Note that for objects like triangles and polygons that enclose a
-bounded region, this region is part of the object.
-*/
-template <typename Type1, typename Type2>
-bool do_intersect(Type1 obj1, Type2 obj2);
-
-/*!
-\ingroup kernel_global_function
-
 checks whether `obj1`, `obj2` and `obj3` intersect.
 
 `Type1`, `Type2` and `Type3` can be:
 
 - `Sphere_3<SphericalKernel>`
 - `Plane_3<SphericalKernel>`
-
-\attention Only available with a SphericalKernel.
-
 */
-  template <typename Type1, typename Type2, typename Type3>
-bool do_intersect(Type1 obj1, Type2 obj2, Type3 obj3);
-
+bool do_intersect(Type1<SphericalKernel> obj1, Type2<SphericalKernel> obj2, Type3<SphericalKernel> obj3);
 
 /// @}
 
