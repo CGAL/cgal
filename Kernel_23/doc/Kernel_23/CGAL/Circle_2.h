@@ -63,7 +63,7 @@ introduces a variable `c` of type `Circle_2`.
 It is initialized to the circle with center `center`, squared 
 radius zero and orientation `ori`. 
 \pre `ori` \f$ \neq\f$ `COLLINEAR`. 
-\post `c`.`is_degenerate()` = `true`. 
+\post `c.is_degenerate()` = `true`. 
 */ 
 Circle_2( const Point_2<Kernel> &center, 
           const Orientation &ori = COUNTERCLOCKWISE); 

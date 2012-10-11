@@ -76,7 +76,7 @@ introduces a variable `c` of type `Sphere_3`.
 It is initialized to the sphere with center `center`, squared 
 radius zero and orientation `orientation`. 
 \pre `orientation` \f$ \neq\f$ \ref COPLANAR. 
-\post `c`.`is_degenerate()` = `true`. 
+\post `c.is_degenerate()` = `true`. 
 */ 
 Sphere_3( const Point_3<Kernel> & center, 
           const Orientation& orientation = COUNTERCLOCKWISE); 

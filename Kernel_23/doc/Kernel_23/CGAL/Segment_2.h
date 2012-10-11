@@ -96,7 +96,7 @@ returns the direction from source to target of `s`.
 Direction_2<Kernel> direction() const; 
 
 /*! 
-returns the vector `s`.`target()` - `s`.`source()`. 
+returns the vector `s.target()` - `s.source()`. 
 */ 
 Vector_2<Kernel> to_vector() const; 
 
