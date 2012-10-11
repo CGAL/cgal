@@ -4,9 +4,9 @@ namespace CGAL {
 \ingroup kernel_classes2
 
 An object `s` of the data type `Segment_2` is a directed 
-straight line segment in the two-dimensional Euclidean plane \f$ \E^2\f$, i.e. a 
+straight line segment in the two-dimensional Euclidean plane \f$ \E^2\f$, i.e.\ a 
 straight line segment \f$ [p,q]\f$ connecting two points \f$ p,q \in \R^2\f$. 
-The segment is topologically closed, i.e. the end 
+The segment is topologically closed, i.e.\ the end 
 points belong to it. Point \f$ p\f$ is called the <I>source</I> and \f$ q\f$ 
 is called the <I>target</I> of \f$ s\f$. The length of \f$ s\f$ is the 
 Euclidean distance between \f$ p\f$ and \f$ q\f$. Note that there is only a function 

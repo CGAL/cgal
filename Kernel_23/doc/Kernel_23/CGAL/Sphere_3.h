@@ -4,12 +4,12 @@ namespace CGAL {
 \ingroup kernel_classes3
 
 An object of type `Sphere_3` is a sphere in the 
-three-dimensional Euclidean space \f$ \E^3\f$. The sphere is oriented, i.e. 
-its boundary has clockwise or counterclockwise orientation. The 
+three-dimensional Euclidean space \f$ \E^3\f$. The sphere is oriented, i.e.\ its 
+boundary has clockwise or counterclockwise orientation. The 
 boundary splits \f$ \E^3\f$ into a positive and a negative side, where the 
 positive side is to the left of the boundary. The boundary also 
 splits \f$ \E^3\f$ into a bounded and an unbounded side. Note that the 
-sphere can be degenerated, i.e. the squared radius may be zero. 
+sphere can be degenerated, i.e.\ the squared radius may be zero. 
 
 \sa `Kernel::Sphere_3` 
 

@@ -4,12 +4,12 @@ namespace CGAL {
 \ingroup kernel_classes2
 
 An object `c` of type `Circle_2` is a circle in the 
-two-dimensional Euclidean plane \f$ \E^2\f$. The circle is oriented, i.e. 
-its boundary has clockwise or counterclockwise orientation. The 
+two-dimensional Euclidean plane \f$ \E^2\f$. The circle is oriented, i.e.\ its 
+boundary has clockwise or counterclockwise orientation. The 
 boundary splits \f$ \E^2\f$ into a positive and a negative side, where the 
 positive side is to the left of the boundary. The boundary also 
 splits \f$ \E^2\f$ into a bounded and an unbounded side. Note that the 
-circle can be degenerated, i.e. the squared radius may be zero. 
+circle can be degenerated, i.e.\ the squared radius may be zero. 
 
 \sa `Kernel::Circle_2` 
 

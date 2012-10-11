@@ -2528,7 +2528,7 @@ const Point_2<Kernel>& r);
 
 /*!
 compute the squared radius of the smallest circle passing through \f$ p\f$,
-and \f$ q\f$, i.e. one fourth of the squared distance between \f$ p\f$ and \f$ q\f$.
+and \f$ q\f$, i.e.\ one fourth of the squared distance between \f$ p\f$ and \f$ q\f$.
 */
 template <typename Kernel>
 FT
@@ -2537,7 +2537,7 @@ const Point_2<Kernel>& q);
 
 /*!
 compute the squared radius of the smallest circle passing through \f$ p\f$, 
-i.e. \f$ 0\f$.
+i.e.\ \f$ 0\f$.
 */
 template <typename Kernel>
 FT
@@ -2566,7 +2566,7 @@ const Point_3<Kernel>& r);
 
 /*!
 compute the squared radius of the smallest circle passing through \f$ p\f$,
-and \f$ q\f$, i.e. one fourth of the squared distance between \f$ p\f$ and \f$ q\f$.
+and \f$ q\f$, i.e.\ one fourth of the squared distance between \f$ p\f$ and \f$ q\f$.
 */
 template <typename Kernel>
 FT
@@ -2575,7 +2575,7 @@ const Point_3<Kernel>& q);
 
 /*!
 compute the squared radius of the smallest circle passing through \f$ p\f$, 
-i.e. \f$ 0\f$.
+i.e.\ \f$ 0\f$.
 */
 template <typename Kernel>
 FT

@@ -18,11 +18,11 @@ The parameter `K` has the default value `Kernel_traits<T>::Kernel>`.
 
 The following retrieves the dimension of a point type. 
 
-<PRE> 
+\code
 typedef K::Point_2 Point; 
 int dimension = Ambient_dimension<Point, K>::value; 
 assert(dimension == 2); 
-</PRE> 
+\endcode
 
 \sa `CGAL::Dimension_tag<int dim>` 
 \sa `CGAL::Dynamic_dimension_tag` 
@@ -72,12 +72,12 @@ practical to pass the dimension as a template parameter directly.
 The following code declares two functions constructing two points at the origin, 
 either in 2D or in 3D. 
 
-<PRE> 
+\code
 Point_2<K> get_origin(Dimension_tag<2>) { return Point_2<K>(ORIGIN); } 
 Point_3<K> get_origin(Dimension_tag<3>) { return Point_3<K>(ORIGIN); } 
 
 std::cout << get_origin(Dimension_tag<2>())) << std::endl; 
-[cccend]</PRE> 
+\endcode
 
 \sa `CGAL::Ambient_dimension<T, K>` 
 \sa `CGAL::Feature_dimension<T, K>` 
@@ -113,13 +113,13 @@ for dispatching functions based on the dimension of an object.
 The following code declares two functions constructing two points at the origin, 
 either in 2D or in 3D. 
 
-<PRE> 
+\code
 Point_2<K> get_origin(Dimension_tag<2>) { return Point_2<K>(ORIGIN); } 
 Point_3<K> get_origin(Dimension_tag<3>) { return Point_3<K>(ORIGIN); } 
 Point_d<K> get_origin(Dynamic_dimension_tag) { return Point_d<K>(ORIGIN); } 
 
 std::cout << get_origin(Dynamic_dimension_tag())) << std::endl; 
-[cccend]</PRE> 
+\endcode
 
 \sa `CGAL::Dimension_tag<int dim>` 
 \sa `CGAL::Ambient_dimension<T, K>` 
@@ -147,11 +147,11 @@ The parameter `K` has the default value `Kernel_traits<T>::Kernel`.
 
 The following retrieves the dimension of a point type. 
 
-<PRE>[cccbegin] 
+\code
 typedef K::Point_2 Point; 
 int dimension = Feature_dimension<Point, K>::value; 
 assert(dimension == 0); 
-</PRE> 
+\endcode
 
 \sa `CGAL::Dimension_tag<int dim>` 
 \sa `CGAL::Dynamic_dimension_tag` 

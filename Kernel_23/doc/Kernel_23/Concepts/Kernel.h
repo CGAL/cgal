@@ -2530,7 +2530,7 @@ public:
 /// @{
 
 /*! 
-returns an approximation of the squared length (i.e. perimeter) of `c`. 
+returns an approximation of the squared length (i.e.\ perimeter) of `c`. 
 */ 
 double operator()(const Kernel::Circle_3& c); 
 
@@ -3513,7 +3513,7 @@ and `r` form a left turn or if they are collinear and
 the distance of `q` to `p` is 
 larger than the distance of `r` to `p`, where `p` is the point 
 passed to the object at construction. 
-\pre `p` does not lie in the interior of the segment `rq`, i.e. `p` is an extreme point with respect to \f$ \{p,q,r\}\f$. 
+\pre `p` does not lie in the interior of the segment `rq`, i.e.\ `p` is an extreme point with respect to \f$ \{p,q,r\}\f$. 
 */ 
 bool operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q, 
@@ -6529,7 +6529,7 @@ const Kernel::Point_2&r);
 
 
 /*!
-\ingroup PkgKernel23ConceptsFunctionObjects
+\ingroup PkgKernel23ConceptsGeomObject
 \cgalconcept
 
 A type representing tetrahedra in three dimensions. 
@@ -6653,13 +6653,13 @@ const Kernel::Point_2& r);
 
 /*! 
 returns the squared radius of the smallest circle passing through `p`, 
-and `q`, i.e. one fourth of the squared distance between `p` and `q`. 
+and `q`, i.e.\ one fourth of the squared distance between `p` and `q`. 
 */ 
 Kernel::FT operator()(const Kernel::Point_2& p, 
 const Kernel::Point_2& q); 
 
 /*! 
-returns the squared radius of the smallest circle passing through `p`, i.e. \f$ 0\f$. 
+returns the squared radius of the smallest circle passing through `p`, i.e.\ \f$ 0\f$. 
 */ 
 Kernel::FT operator()(const Kernel::Point_2& p); 
 
@@ -6958,7 +6958,7 @@ const Kernel::FT& sr);
 
 /*! 
 compares the squared radius of the sphere defined by the 
-points `p`, `q`, , `r`, and `s` to `sr`. 
+points `p`, `q`, `r`, and `s` to `sr`. 
 */ 
 Comparison_result operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q, 
@@ -8665,13 +8665,13 @@ const Kernel::Point_3& r);
 
 /*! 
 returns the squared radius of the smallest circle passing through `p`, 
-and `q`, i.e. one fourth of the squared distance between `p` and `q`. 
+and `q`, i.e.\ one fourth of the squared distance between `p` and `q`. 
 */ 
 Kernel::FT operator()(const Kernel::Point_3& p, 
 const Kernel::Point_3& q); 
 
 /*! 
-returns the squared radius of the smallest circle passing through `p`, i.e. \f$ 0\f$. 
+returns the squared radius of the smallest circle passing through `p`, i.e.\ \f$ 0\f$. 
 */ 
 Kernel::FT operator()(const Kernel::Point_3& p); 
 

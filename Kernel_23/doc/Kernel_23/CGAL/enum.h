@@ -20,18 +20,18 @@ T enum_cast(const U&u);
 /*!
 \ingroup kernel_enums
 
-returns the opposite side (for example `ON_POSITIVE_SIDE` if
-`o==ON_NEGATIVE_SIDE`), or `ON_ORIENTED_BOUNDARY` if
-`o==ON_ORIENTED_BOUNDARY`.
+returns the opposite side (for example `CGAL::ON_POSITIVE_SIDE` if
+`o`==`CGAL::ON_NEGATIVE_SIDE`), or `CGAL::ON_ORIENTED_BOUNDARY` if
+`o`==`CGAL::ON_ORIENTED_BOUNDARY`.
 */
 Oriented_side opposite(const Oriented_side &o);
 
 /*!
 \ingroup kernel_enums
 
-returns the opposite side (for example `BOUNDED_SIDE` if
-`o==UNBOUNDED_SIDE`), or returns `ON_BOUNDARY` if
-`o==ON_BOUNDARY`.
+returns the opposite side (for example `CGAL::ON_BOUNDED_SIDE` if
+`o`==`CGAL::ON_UNBOUNDED_SIDE`), or returns `CGAL::ON_BOUNDARY` if
+`o`==`CGAL::ON_BOUNDARY`.
 */
 Bounded_side opposite(const Bounded_side &o);
 
@@ -79,20 +79,20 @@ enum Oriented_side {ON_NEGATIVE_SIDE, ON_ORIENTED_BOUNDARY, ON_POSITIVE_SIDE };
 
 \sa `CGAL::COUNTERCLOCKWISE`
 */
-const Orientation CLOCKWISE = NEGATIVE;
+const CGAL::Orientation CLOCKWISE = NEGATIVE;
 
 /*!
 \ingroup kernel_enums
 \sa `CGAL::CLOCKWISE`
 */
-const Orientation COUNTERCLOCKWISE = POSITIVE;
+const CGAL::Orientation COUNTERCLOCKWISE = POSITIVE;
 
 /*!
 \ingroup kernel_enums
 \sa `CGAL::LEFT_TURN` 
 \sa `CGAL::RIGHT_TURN` 
 */
-const Orientation COLLINEAR = ZERO;
+const CGAL::Orientation COLLINEAR = ZERO;
 
 /*!
 \ingroup kernel_enums
@@ -101,7 +101,7 @@ const Orientation COLLINEAR = ZERO;
 
 \sa `CGAL::RIGHT_TURN` 
 */
-const Orientation LEFT_TURN = POSITIVE;
+const CGAL::Orientation LEFT_TURN = POSITIVE;
 
 /*!
 \ingroup kernel_enums
@@ -110,17 +110,17 @@ const Orientation LEFT_TURN = POSITIVE;
 \sa `CGAL::LEFT_TURN`
 
 */
-const Orientation RIGHT_TURN = NEGATIVE;
+const CGAL::Orientation RIGHT_TURN = NEGATIVE;
 
 /*!
 \ingroup kernel_enums
 */
-const Orientation COPLANAR  = ZERO;
+const CGAL::Orientation COPLANAR  = ZERO;
 
 /*!
 \ingroup kernel_enums
 */
-const Orientation DEGENERATE = ZERO;
+const CGAL::Orientation DEGENERATE = ZERO;
 
 /*!
 \ingroup kernel_enums
@@ -131,7 +131,7 @@ A symbolic constant used to construct zero length vectors.
 \sa `CGAL::Vector_3<Kernel>` 
 
 */
-const Null_vector NULL_VECTOR;
+const CGAL::Null_vector NULL_VECTOR;
 
 /*!
 \ingroup kernel_enums
@@ -153,6 +153,6 @@ This constant is used in the conversion between points and vectors.
 \sa `CGAL::Point_3<Kernel>` 
 
 */
-const Origin ORIGIN;
+const CGAL::Origin ORIGIN;
 
 } /* namespace CGAL */
