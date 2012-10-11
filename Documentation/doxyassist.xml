@@ -244,7 +244,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_INC_PATH">../Number_types/doc/Number_types/</string>
           <string name="GENERATE_TAGFILE">./tags/Number_types.tag</string>
           <string name="IMAGE_PATH">../Number_types/doc/Number_types/fig</string>
-          <string name="EXAMPLE_PATH">../Number_types/examples</string>
           <list name="TAGFILES" append="false">
             <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
             <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
