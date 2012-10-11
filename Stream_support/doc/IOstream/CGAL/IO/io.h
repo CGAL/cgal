@@ -238,7 +238,7 @@ template <class T, typename F> Output_rep<T,F> oformat( const T& t, F );
 /*!
 \ingroup PkgIOstreams
 
-\anchor op_left_shift
+\anchor PkgIOstreams_op_left_shift
 
 \brief Inserts object `c` in the stream `os`. Returns `os`.
 
@@ -280,7 +280,7 @@ The input operator is defined for all classes in the \cgal `Kernel`.
 \sa `CGAL::is_ascii`
 \sa `CGAL::is_binary`
 \sa `CGAL::is_pretty`
-\sa \ref op_left_shift "CGAL::operator<<"
+\sa \ref PkgIOstreams_op_left_shift "CGAL::operator<<"
 */
 istream& operator>>(istream& is, Class c);
 
