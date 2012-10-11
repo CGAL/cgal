@@ -8,7 +8,7 @@
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
 #include <fstream>
-#include <CGAL/Delaunay_triangulation_2.h>
+
 
 
 namespace CGAL { 
@@ -29,12 +29,17 @@ template < class Gt,
 class Regular_triangulation_on_sphere_2
   : public Triangulation_on_sphere_2<Gt,Tds>
 {
-  typedef Regular_triangulation_on_sphere_2<Gt, Tds>                         Self;
-  typedef Triangulation_on_sphere_2<Gt,Tds>                                  Base;
+	
+   //typedef Exact_predicates_inexact_constructions_kernel                  K;	
+   typedef Regular_triangulation_on_sphere_2<Gt, Tds>                         Self;
+	typedef Triangulation_on_sphere_2<Gt,Tds>                                 Base;
+	
+   
+	
 
 public:
   typedef Tds                                  Triangulation_data_structure;
-	  typedef Gt                                   Geom_traits;
+  typedef Gt                                   Geom_traits;
   typedef typename Gt::Point_2                 Point;
 
   typedef typename Base::size_type             size_type;
@@ -65,8 +70,7 @@ public:
   using Base::edges_begin;
   using Base::edges_end;
   using Base::vertices_begin;	
-  using Base::vertices_end;
-		
+  using Base::vertices_end;		
   using Base::OUTSIDE_AFFINE_HULL;
   using Base::VERTEX;
   using Base::FACE;
@@ -74,14 +78,17 @@ public:
   using Base::OUTSIDE_CONVEX_HULL;
   using Base::orientation;
   using Base::insert_four_init_vertices;
-#endif
+
+	
+	
+ #endif
 
 
 
  private:
   typedef std::list<Face_handle>      Faces_around_stack; 
  
-   
+
 
   //PREDICATES
 
@@ -153,7 +160,7 @@ public:
   }
  
 
-	
+	Vertex_handle star_hole(std::list<Edge> hole);
   Face_handle create_star_2(const Vertex_handle& v, const Face_handle& c, int li);
 
   //INSERTION
@@ -163,7 +170,6 @@ public:
   Vertex_handle insert(const Point &p, Face_handle f = Face_handle() );
   Vertex_handle reinsert(Vertex_handle v, Face_handle start);
   Vertex_handle insert_outside_affine_hull_regular(const Point& p,bool plane=false);
-
   Vertex_handle insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) ;
   //REMOVAL
   void remove_degree_3(Vertex_handle v, Face_handle f = Face_handle());
@@ -173,8 +179,8 @@ public:
   bool test_dim_down(Vertex_handle v);
   void fill_hole_regular(std::list<Edge> & hole);
 
-  //FLIP
-  void flip(Face_handle f, int i);
+  
+
 
   //HIDDING
     void exchange_incidences(Vertex_handle va, Vertex_handle vb);
@@ -188,6 +194,7 @@ public:
  
 
 
+	
   
   //---------------------------------------------------------------------HOLE APPROACH
 
@@ -195,6 +202,43 @@ public:
 
   //TEMPLATE MEMBERS
   //----------------------------------------------------------------------HOLE APPROACH
+	
+	//template <class OutputIteratorFaces, class OutputIteratorBoundaryEdges> 
+	//std::pair<OutputIteratorFaces,OutputIteratorBoundaryEdges>
+	//get_conflicts_and_boundary(const Point &p, OutputIteratorFaces fit,  OutputIteratorBoundaryEdges eit, Face_handle start) const	{
+		
+		
+		
+	//}
+	
+	
+/*private:
+	template <class OutputItFaces, class OutputItBoundaryEdges> 
+	std::pair<OutputItFaces,OutputItBoundaryEdges>
+	propagate_conflicts (const Point  &p,
+						 Face_handle fh, 
+						 int i,
+						 std::pair<OutputItFaces,OutputItBoundaryEdges>
+						 pit)  const {
+		Face_handle fn = fh->neighbor(i);
+		if (! test_conflict(p,fn)) {
+			*(pit.second)++ = Edge(fn, fn->index(fh));
+		} else {
+			*(pit.first)++ = fn;
+			int j = fn->index(fh);
+			pit = propagate_conflicts(p,fn,ccw(j),pit);
+			pit = propagate_conflicts(p,fn,cw(j), pit);
+		}
+		return pit;
+	}*/
+	
+	
+	
+	
+	
+	
+	
+	
     template <class InputIterator, class OutputIterator>
     void process_faces_in_conflict(InputIterator start, InputIterator end, OutputIterator vertices) const
     {
@@ -309,6 +353,7 @@ Stream &write_triangulation_to_off(Stream &out) {
     FaceIt fit=face_begin;
     for(;fit!=face_end;++fit)
     {
+		//show_face(*fit);
       delete_face(*fit);
     }
   }
@@ -375,15 +420,16 @@ Stream &write_edges_to_off(Stream &out,FaceIt face_begin, FaceIt face_end){
             class OutputIteratorBoundaryEdges,
             class OutputIteratorFaces,
             class OutputIteratorInternalEdges>
-  Triple<OutputIteratorBoundaryEdges,
-         OutputIteratorFaces,
-         OutputIteratorInternalEdges>
+	
+  Triple<OutputIteratorBoundaryEdges,OutputIteratorFaces, OutputIteratorInternalEdges>
+	
   find_conflicts(Point p,Face_handle f, 
 		 Triple<OutputIteratorBoundaryEdges,
                         OutputIteratorFaces,
 		        OutputIteratorInternalEdges> it) const
   {
  
+	  CGAL_triangulation_precondition(this->dimension()==2);
     std::stack<Face_handle> Face_stack;
     Face_stack.push(f);
     f->set_in_conflict_flag(1);
@@ -406,25 +452,65 @@ Stream &write_edges_to_off(Stream &out,FaceIt face_begin, FaceIt face_end){
 		  *it.second++ = test;
 	          continue;
 	        }
-     	    test->set_in_conflict_flag(2); // test is on the boundary.
+     	    //test->set_in_conflict_flag(2); // test is on the boundary.
 			 
           }
 			//c->set_in_conflict_flag(2);
           *it.first++ = Edge(c, i);
+			//*it.first ++ =Edge(test, i);
         }
     } while(!Face_stack.empty());
     return it;
   }
   
 
-	template <class OutputItBoundaryEdges>
-	OutputItBoundaryEdges 
-	get_boundary_of_conflicts ( Point p, OutputItBoundaryEdges eit, Face_handle start) const {
-		return Delaunay_triangulation_2<Gt, Tds> ::get_boundary_of_conflicts(p, eit, start);
+	
+	
+	
+	
+	template <class OutputItFaces, class OutputItBoundaryEdges> 
+	std::pair<OutputItFaces,OutputItBoundaryEdges>
+	get_conflicts_and_boundary(const Point  &p, 
+							   OutputItFaces fit, 
+							   OutputItBoundaryEdges eit,
+							   Face_handle start ) const {
+		CGAL_triangulation_precondition( this->dimension() == 2);
+		int li;
+		Locate_type lt;
+		Face_handle fh = this->locate(p,lt,li, start);
+				*fit++ = fh; //put fh in OutputItFaces
+				std::pair<OutputItFaces,OutputItBoundaryEdges>
+				pit = std::make_pair(fit,eit);
+				pit = propagate_conflicts(p,fh,0,pit);
+				pit = propagate_conflicts(p,fh,1,pit);
+				pit = propagate_conflicts(p,fh,2,pit);
+				return pit;    
+		
+		CGAL_triangulation_assertion(false);
+		return std::make_pair(fit,eit);
+	} 
+	
+	
+	
+private:
+	template <class OutputItFaces, class OutputItBoundaryEdges> 
+	std::pair<OutputItFaces,OutputItBoundaryEdges>
+	propagate_conflicts (const Point  &p,
+						 Face_handle fh, 
+						 int i,
+						 std::pair<OutputItFaces,OutputItBoundaryEdges>
+						 pit)  const {
+		Face_handle fn = fh->neighbor(i);
+		if (! test_conflict(p,fn)) {
+			*(pit.second)++ = Edge(fn, fn->index(fh));
+		} else {
+			*(pit.first)++ = fn;
+			int j = fn->index(fh);
+			pit = propagate_conflicts(p,fn,ccw(j),pit);
+			pit = propagate_conflicts(p,fn,cw(j), pit);
+		}
+		return pit;
 	}
-	
-	
-	
 	
 	
 	
@@ -600,8 +686,7 @@ is_valid_face(Face_handle fh) const
 {
   bool result = true;
   CGAL_triangulation_assertion(result);
-	bool test2 = fh->get_in_conflict_flag()==2;
-	bool test1 = fh->get_in_conflict_flag()==1;
+	
 	
 	
 	
@@ -718,11 +803,7 @@ insert(const Point &p, Face_handle start)
 
 	
 	
-/*template <class EdgeIt>
-Vertex_handle star_hole_3(Vertex_handle v, EdgeIt edge_begin,  EdgeIt edge_end) const {
-		return tds.star_hole(v, edge_begin, edge_end);
-	}*/
-	
+
 	
 
 template < class Gt, class Tds >
@@ -736,7 +817,6 @@ create_star_2(const Vertex_handle& v, const Face_handle& c, int li )
   Face_handle cnew;
 
 	bool neg = c->is_negative() || c->neighbor(li)->is_negative();
-	//if (!neg){
   // i1 i2 such that v,i1,i2 positive
   int i1=ccw(li);
   // traversal of the boundary of region in ccw order to create all
@@ -791,16 +871,28 @@ create_star_2(const Vertex_handle& v, const Face_handle& c, int li )
 	
   return cnew;
 }
+	
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 template < class Gt, class Tds >
 typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 	insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) {
 	//TODO point is valide
-	
-		
-		
-		Vertex_handle v;
+	    Vertex_handle v;
 		if( dimension() == -2)
 			return Base::insert_first(p);
 		
@@ -808,8 +900,8 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 			return Base::insert_second(p);
 				
 		if( dimension() == 0)
-			return insert_outside_affine_hull(p);
-		
+			return Base::insert_outside_affine_hull(p);
+				
 		
 		if(dimension() == 1){
 			Face_handle f=edges_begin()->first;
@@ -824,50 +916,68 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 		
 		if (dimension()==2){
 			std::vector<Face_handle> faces;
-			Edge edge;
+			std::vector<Edge> edges;
+			
+			
+			//Edge edge;
 			faces.reserve(32);
-				
+			edges.reserve(32);
 			
-		
 			
-			find_conflicts(p,loc, make_triple(Oneset_iterator<Edge>(edge),
+			
+			
+			/*find_conflicts
+			(p,loc, make_triple(Oneset_iterator<Edge>(edge),
 								std::back_inserter(faces),
-								Emptyset_iterator()));
+								Emptyset_iterator()));*/
 			
 			
 			
 			
 			
-			//get_conflicts(p, Oneset_iterator<Edges> edge);
+			//find_conflicts (p,loc, make_triple(Oneset_iterator<Edge>(edge), std::back_inserter(faces), Emptyset_iterator()));
+			//find_conflicts (p,loc, make_triple(std::back_inserter(edge), std::back_inserter(faces), Emptyset_iterator()));
+			
+			get_conflicts_and_boundary(p, std::back_inserter(faces), std::back_inserter(edges), loc);
+			//get_conflicts_and_boundary(p, faces, edges, loc);
+			//get_conflicts_and_boundary(p, fit, eit, loc);
+			v =this-> _tds.star_hole(edges.begin(), edges.end());
+			v->set_point(p);
 			
 			
+			
+			
+			delete_faces(faces.begin(), faces.end());
+			
+			
+			
+			bool found =update_negative_faces(v);
+			
+			int numb = Base::number_of_negative_faces();
+			
+			
+			//delete_faces(faces.begin(), faces.end());
+			
+			//v->set_face(faces_end());
 		
-			Vertex_handle newv = this->_tds.create_vertex();
-			Face_handle fnew;  
+			//delete_faces(faces.gbegin(), faces.end());
+			int num = number_of_faces();
 			
-		
-			
-			fnew = create_star_2(newv, edge.first, edge.second);
-			
-			
-			
-			
-			newv->set_face(fnew);
-			delete_faces(faces.begin(),faces.end());
-			newv->set_point(p);
-			
-			
-			if( lt != FACE )
-				update_negative_faces(newv);
+			//if( lt != FACE )
+				update_negative_faces(v);
 			
 						
-			return newv;
+			return v;
 		}
-		   
-		   
-		  			
+	}
 	
-  }
+	
+	
+	
+	
+	
+		
+	
 
 template < class Gt, class Tds >
 bool
@@ -892,7 +1002,7 @@ update_negative_faces(Vertex_handle v)
   }
   else{//dimension==2
 
-   /* Face_circulator fc=incident_faces(v,v->face());
+    /*Face_circulator fc=incident_faces(v,v->face());
     Face_circulator done(fc);
     //bool neg_found=false;
 	
@@ -1499,18 +1609,6 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
  
 
 
-
-
-
-
-
-
-
-
-
- 
-
-
 //-------------------------------------------------------------------CLASS DEFINITION--------------------------------------------------------//
 /*
 
@@ -1526,19 +1624,9 @@ public:
 
 	
   
-   //  //template member functions, declared and defined at the end 
-  //  template <class OutputItFaces, class OutputItBoundaryEdges, 
-  //                                       class OutputItHiddenVertices> 
-  //   Triple<OutputItFaces,OutputItBoundaryEdges, OutputItHiddenVertices>
-  //   get_conflicts_and_boundary_and_hidden_vertices (const
-  //   Point  &p, 
-  // 						  OutputItFaces fit, 
-  // 						  OutputItBoundaryEdges eit,
-  // 						  OutputItHiddenVertices vit,  
-  // 						  Face_handle start = 
-  //                                                 Face_handle()) const;
-  // template <class OutputItFaces, class OutputItBoundaryEdges> 
-  // std::pair<OutputItFaces,OutputItBoundaryEdges>
+  
+   template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
   // get_conflicts_and_boundary(const Point  &p, 
   // 		                OutputItFaces fit, 
   // 		                OutputItBoundaryEdges eit,
@@ -1560,13 +1648,7 @@ public:
   // 						OutputItHiddenVertices vit,
   // 						Face_handle start=
   //                                                Face_handle()) const;
-  //   template <class OutputItHiddenVertices> 
-  //   OutputItHiddenVertices
-  //   get_hidden_vertices(const Point  &p, 
-  // 			   OutputItHiddenVertices vit,
-  // 			   Face_handle start= 
-  //                       Face_handle()) const;
-  
+  //     
   // DUAL
   Bare_point dual (Face_handle f) const;
   Object dual(const Edge &e) const ;
@@ -1627,57 +1709,9 @@ public:
        						       start);
       return std::make_pair(pp.first, pp.second);
     }
-  template <class OutputItFaces, class OutputItHiddenVertices> 
-  std::pair<OutputItFaces, OutputItHiddenVertices> 
-  get_conflicts_and_hidden_vertices(const Point  &p, 
-				    OutputItFaces fit, 
-				    OutputItHiddenVertices vit,
-				    Face_handle start = 
-				    Face_handle()) const
-    {
-      Triple<OutputItFaces, Emptyset_iterator,OutputItHiddenVertices> 
-	pp = 
-	get_conflicts_and_boundary_and_hidden_vertices(p,fit,
-						       Emptyset_iterator(), 
-						       vit,
-						       start);
-      return std::make_pair(pp.first,pp.third);
-    }
+ 
 
-
-   template <class OutputItBoundaryEdges, class OutputItHiddenVertices> 
-  std::pair<OutputItBoundaryEdges, OutputItHiddenVertices> 
-  get_boundary_of_conflicts_and_hidden_vertices(const Point  &p, 
-						OutputItBoundaryEdges eit, 
-						OutputItHiddenVertices vit,
-						Face_handle start = 
-						Face_handle()) const
-    {
-      Triple<Emptyset_iterator,OutputItBoundaryEdges,
-	OutputItHiddenVertices> 
-	pp = 
-	get_conflicts_and_boundary_and_hidden_vertices(p,
-						       Emptyset_iterator(), 
-						       eit,vit,
-						       start);
-      return std::make_pair(pp.second,pp.third);
-    }
-
-  template <class OutputItFaces> 
-  OutputItFaces
-  get_conflicts (const Point  &p, 
-		 OutputItFaces fit, 
-		 Face_handle start= Face_handle()) const
-    {
-      Triple<OutputItFaces,Emptyset_iterator,Emptyset_iterator>
-	pp = 
-	get_conflicts_and_boundary_and_hidden_vertices(p, fit, 
-						       Emptyset_iterator(),
-						       Emptyset_iterator(), 
-						       start);
-      return pp.first;
-    }
-  
+     
   template <class OutputItBoundaryEdges> 
   OutputItBoundaryEdges
   get_boundary_of_conflicts(const Point  &p, 
@@ -1693,20 +1727,7 @@ public:
 						       start);
       return pp.second;
     }
-  template <class OutputItHiddenVertices> 
-  OutputItHiddenVertices 
-  get_hidden_vertices(const Point  &p, OutputItHiddenVertices vit,
-		      Face_handle start= Face_handle()) const
-    {
-      Triple<Emptyset_iterator,Emptyset_iterator,
-	OutputItHiddenVertices> 
-	pp = 
-	get_conflicts_and_boundary_and_hidden_vertices(p,Emptyset_iterator(), 
-						       Emptyset_iterator(),vit,
-						       start);
-      return pp.third;
-    }
-
+  
   // nearest power vertex query
   Vertex_handle nearest_power_vertex(const Bare_point& p) const;
 */

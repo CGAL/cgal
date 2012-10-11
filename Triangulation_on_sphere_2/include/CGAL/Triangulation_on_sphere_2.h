@@ -594,6 +594,7 @@ Triangulation_on_sphere_2<Gt,Tds>::
 	
 	
 	
+	
 
   v3->set_point(p3);
   v4->set_point(p4);
