@@ -198,9 +198,9 @@ Point_3<Kernel> to_3d(const Point_2<Kernel> &p) const;
 /// @{
 
 /*! 
-returns either `ON_ORIENTED_BOUNDARY`, or 
-the constant `ON_POSITIVE_SIDE`, or the constant 
-`ON_NEGATIVE_SIDE`, 
+returns either \ref ON_ORIENTED_BOUNDARY, or 
+the constant \ref ON_POSITIVE_SIDE, or the constant 
+\ref ON_NEGATIVE_SIDE, 
 determined by the position of \f$ p\f$ relative to the oriented plane `h`. 
 
 */ 

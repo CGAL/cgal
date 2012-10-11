@@ -160,9 +160,9 @@ bool is_horizontal() const;
 bool is_vertical() const; 
 
 /*! 
-returns `ON_ORIENTED_BOUNDARY`, 
-`ON_NEGATIVE_SIDE`, or the constant 
-`ON_POSITIVE_SIDE`, 
+returns \ref ON_ORIENTED_BOUNDARY, 
+\ref ON_NEGATIVE_SIDE, or the constant 
+\ref ON_POSITIVE_SIDE, 
 depending on the position of \f$ p\f$ relative to the oriented line `l`. 
 
 */ 

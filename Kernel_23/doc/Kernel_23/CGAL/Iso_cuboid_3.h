@@ -171,9 +171,9 @@ are coplanar.
 bool is_degenerate() const; 
 
 /*! 
-returns either `ON_UNBOUNDED_SIDE`, 
-`ON_BOUNDED_SIDE`, or the constant 
-`ON_BOUNDARY`, 
+returns either \ref ON_UNBOUNDED_SIDE,
+\ref ON_BOUNDED_SIDE, or the constant 
+\ref ON_BOUNDARY, 
 depending on where point \f$ p\f$ is. 
 */ 
 Bounded_side bounded_side(const Point_3<Kernel> &p) const; 

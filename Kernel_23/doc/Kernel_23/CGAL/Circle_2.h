@@ -118,8 +118,8 @@ bool is_degenerate( ) const;
 
 /*! 
 
-returns either the constant `ON_ORIENTED_BOUNDARY`, 
-`ON_POSITIVE_SIDE`, or `ON_NEGATIVE_SIDE`, 
+returns either the constant \ref ON_ORIENTED_BOUNDARY, 
+\ref ON_POSITIVE_SIDE, or \ref ON_NEGATIVE_SIDE,
 iff `p` lies on the boundary, properly on the 
 positive side, or properly on the negative side 
 of `c`, resp. 
@@ -129,8 +129,8 @@ oriented_side( const Point_2<Kernel> &p) const;
 
 /*! 
 
-returns `ON_BOUNDED_SIDE`, 
-`ON_BOUNDARY`, or `ON_UNBOUNDED_SIDE` 
+returns \ref ON_BOUNDED_SIDE, 
+\ref ON_BOUNDARY, or \ref ON_UNBOUNDED_SIDE 
 iff `p` lies properly inside, on the boundary, or properly 
 outside of `c`, resp. 
 */ 

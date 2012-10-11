@@ -78,12 +78,12 @@ bool is_degenerate() const;
 Orientation orientation() const; 
 
 /*! 
-\pre : `t` is not degenerate. 
+\pre `t` is not degenerate. 
 */ 
 Oriented_side oriented_side(const Point_3<Kernel> &p) const; 
 
 /*! 
-\pre : `t` is not degenerate. 
+\pre `t` is not degenerate. 
 */ 
 Bounded_side bounded_side(const Point_3<Kernel> &p) const; 
 

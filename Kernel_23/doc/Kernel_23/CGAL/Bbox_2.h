@@ -8,7 +8,6 @@ An object `b` of the class `Bbox_2` is a bounding
 box in the two-dimensional Euclidean plane \f$ \E^2\f$. This class is not templated. 
 
 \sa `CGAL::Bbox_3` 
-\sa `CGAL::do_overlap` 
 
 */
 

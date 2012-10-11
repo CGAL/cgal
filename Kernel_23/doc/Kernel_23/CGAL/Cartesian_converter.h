@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup kernel_conversion
 
 `Cartesian_converter`converts objects from the kernel traits `K1` to 
-the kernel traits `K2` using `Converter` to do the conversion. 
+the kernel traits `K2` using `NTConverter` to do the conversion. 
 Those traits must be of the form 
 `Cartesian<FT1>` and `Cartesian<FT2>` (or the equivalent with 
 `Simple_cartesian`). It then provides the following operators to convert 

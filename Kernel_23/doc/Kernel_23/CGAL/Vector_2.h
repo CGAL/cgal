@@ -8,7 +8,7 @@ vector space \f$ \R^2\f$. Geometrically spoken, a vector is the difference
 of two points \f$ p_2\f$, \f$ p_1\f$ and denotes the direction and the distance 
 from \f$ p_1\f$ to \f$ p_2\f$. 
 
-\cgal defines a symbolic constant `NULL_VECTOR`. We 
+\cgal defines a symbolic constant \ref NULL_VECTOR. We 
 will explicitly state where you can pass this constant as an argument 
 instead of a vector initialized with zeros. 
 

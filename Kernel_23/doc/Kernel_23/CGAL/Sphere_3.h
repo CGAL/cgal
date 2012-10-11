@@ -27,7 +27,7 @@ introduces a variable `c` of type `Sphere_3`.
 It is initialized to the sphere with center `center`, 
 squared radius `squared_radius` and orientation 
 `orientation`. 
-\pre `orientation` \f$ \neq\f$ `COPLANAR`, and furthermore, `squared_radius` \f$ \geq\f$ 0. 
+\pre `orientation` \f$ \neq\f$ \ref COPLANAR, and furthermore, `squared_radius` \f$ \geq\f$ 0. 
 */ 
 Sphere_3( const Point_3<Kernel> & center, 
           const Kernel::FT & squared_radius, 
@@ -52,7 +52,7 @@ const Point_3<Kernel> & s);
 introduces a variable `c` of type `Sphere_3`. 
 It is initialized to the smallest sphere which passes through 
 the points `p`, `q`, and `r`. The orientation of 
-the sphere is `o`. \pre `o` is not `COPLANAR`. 
+the sphere is `o`. \pre `o` is not \ref COPLANAR. 
 */ 
 Sphere_3( const Point_3<Kernel> & p, 
 const Point_3<Kernel> & q, 
@@ -64,7 +64,7 @@ const Orientation& o = COUNTERCLOCKWISE);
 introduces a variable `c` of type `Sphere_3`. 
 It is initialized to the smallest sphere which passes through 
 the points `p` and `q`. The orientation of 
-the sphere is `o`. \pre `o` is not `COPLANAR`. 
+the sphere is `o`. \pre `o` is not \ref COPLANAR. 
 */ 
 Sphere_3( const Point_3<Kernel> & p, 
 const Point_3<Kernel> & q, 
@@ -75,7 +75,7 @@ const Orientation& o = COUNTERCLOCKWISE);
 introduces a variable `c` of type `Sphere_3`. 
 It is initialized to the sphere with center `center`, squared 
 radius zero and orientation `orientation`. 
-\pre `orientation` \f$ \neq\f$ `COPLANAR`. 
+\pre `orientation` \f$ \neq\f$ \ref COPLANAR. 
 \post `c`.`is_degenerate()` = `true`. 
 */ 
 Sphere_3( const Point_3<Kernel> & center, 
@@ -138,8 +138,8 @@ bool is_degenerate( ) const;
 
 /*! 
 
-returns either the constant `ON_ORIENTED_BOUNDARY`, 
-`ON_POSITIVE_SIDE`, or `ON_NEGATIVE_SIDE`, 
+returns either the constant \ref ON_ORIENTED_BOUNDARY, 
+\ref ON_POSITIVE_SIDE, or \ref ON_NEGATIVE_SIDE, 
 iff `p` lies on the boundary, properly on the 
 positive side, or properly on the negative side 
 of `c`, resp. 
@@ -149,8 +149,8 @@ oriented_side( const Point_3<Kernel> & p) const;
 
 /*! 
 
-returns `ON_BOUNDED_SIDE`, 
-`ON_BOUNDARY`, or `ON_UNBOUNDED_SIDE` 
+returns \ref ON_BOUNDED_SIDE, 
+\ref ON_BOUNDARY, or \ref ON_UNBOUNDED_SIDE 
 iff `p` lies properly inside, on the boundary, or properly 
 outside of `c`, resp. 
 */ 

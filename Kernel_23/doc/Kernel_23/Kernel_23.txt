@@ -333,7 +333,7 @@ classes we not only get cleaner code, but also type checking by the
 compiler which avoids ambiguous expressions. Hence, it pays twice to
 make this distinction.
 
-\cgal defines a symbolic constant `ORIGIN` of type `Origin`
+\cgal defines a symbolic constant \ref ORIGIN of type `Origin`
 which denotes the point at the origin. This constant is used in the conversion 
 between points and vectors. Subtracting it from a point \f$ p\f$ results in the 
 locus vector of \f$ p\f$.

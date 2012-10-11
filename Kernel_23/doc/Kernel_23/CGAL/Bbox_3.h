@@ -8,7 +8,6 @@ An object `b` of the class `Bbox_3` is a bounding
 box in the three-dimensional Euclidean space \f$ \E^3\f$. 
 
 \sa `CGAL::Bbox_2` 
-\sa `CGAL::do_overlap` 
 
 */
 

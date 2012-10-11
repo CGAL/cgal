@@ -10,7 +10,7 @@ the kernel traits `K2`. Those traits must be of the form
 `Simple_homogeneous`). It then provides the following operators to 
 convert objects from `K1` to `K2`. 
 
-The third template parameter `RT_Converter` is a function object that must 
+The third template parameter `RTConverter` is a function object that must 
 provide `K2::RT operator()(const K1::RT &n);` that 
 converts `n` to an `K2::RT` that has the same value. 
 

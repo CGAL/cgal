@@ -12,7 +12,7 @@ orientations.
 For example, you can ask for the direction 
 orthogonal to an oriented plane, or the direction of an oriented line. 
 Further, they can be used to indicate angles. The slope of a direction 
-is `dy()/dx()`. 
+is `dy()`/`dx()`. 
 
 \sa `Kernel::Direction_2` 
 
@@ -60,7 +60,7 @@ Direction_2(const Kernel::RT &x, const Kernel::RT &y);
 
 /*! 
 returns values, such that `d``== Direction_2<Kernel>(delta(0),delta(1))`. 
-\pre : \f$ 0 \leq i \leq1\f$. 
+\pre \f$ 0 \leq i \leq1\f$. 
 */ 
 Kernel::RT delta(int i) const; 
 

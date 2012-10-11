@@ -22,19 +22,18 @@ The following operations can be applied on points:
 The following declaration creates two points with 
 %Cartesian double coordinates. 
 
-<PRE> 
-
+\code
 Point_2< Cartesian<double> > p, q(1.0, 2.0); 
-</PRE> 
+\endcode
 
-The variable <TT>p</TT> is uninitialized and should first be used on 
+The variable `p` is uninitialized and should first be used on 
 the left hand side of an assignment. 
-<PRE> 
 
+\code
 p = q; 
 
 std::cout << p.x() << " " << p.y() << std::endl; 
-[cccend]</PRE> 
+\endcode
 
 \sa `Kernel::Point_2` 
 
