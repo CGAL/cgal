@@ -1602,7 +1602,7 @@ public:
 
 /*! 
 compute the center of the smallest circle passing through the points `p` and 
-`q`. Note : this is the same as `Kernel::ConstructMidPoint_3`. 
+`q`. Note : this is the same as `Kernel::ConstructMidpoint_3`. 
 */ 
 Kernel::Point_3 operator()(const Kernel::Point_3&p, 
 const Kernel::Point_3&q); 
@@ -1658,7 +1658,7 @@ public:
 /// @{
 
 /*! 
-compute the center of the smallest circle passing through the points `p` and `q`. Note : this is the same as `Kernel::ConstructMidPoint_2`. 
+compute the center of the smallest circle passing through the points `p` and `q`. Note : this is the same as `Kernel::ConstructMidpoint_2`. 
 */ 
 Kernel::Point_2 operator()(const Kernel::Point_2&p, 
 const Kernel::Point_2&q); 
