@@ -13,3 +13,7 @@ data/test_spherical_remove/test12.txt
 data/test_spherical_remove/test13.txt
 data/test_spherical_remove/test14.txt
 data/test_spherical_remove/test15.txt
+data/test_spherical_remove/test16.txt
+data/test_spherical_remove/test17.txt
+data/test_spherical_remove/test18.txt
+data/test_spherical_remove/test19.txt
