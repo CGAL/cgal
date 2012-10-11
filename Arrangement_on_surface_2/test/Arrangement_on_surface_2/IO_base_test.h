@@ -92,7 +92,7 @@ template <>
 template <typename stream>
 bool
 IO_base_test<Geom_traits>::
-read_xcurve(stream& is, Traits::X_monotone_curve_2& xcv)
+read_xcurve(stream& is, Geom_traits::X_monotone_curve_2& xcv)
 {
   unsigned int num_points;
   is >> num_points;
@@ -113,7 +113,7 @@ read_xcurve(stream& is, Traits::X_monotone_curve_2& xcv)
 
 template <>
 template <typename stream>
-bool IO_base_test<Geom_traits>::read_curve(stream& is, Traits::Curve_2& cv)
+bool IO_base_test<Geom_traits>::read_curve(stream& is, Geom_traits::Curve_2& cv)
 {
   unsigned int num_points;
   is >> num_points;
