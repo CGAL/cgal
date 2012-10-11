@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup nt_gmp
 
 An object of the class `Gmpq` is an arbitrary precision rational 
-number based on the <span class="textsc">Gnu</span> Multiple Precision Arithmetic Library. 
+number based on the <span class="textsc">Gmp</span> library. 
 
 \models ::Field 
 \models ::RealEmbeddable 
@@ -29,50 +29,42 @@ creates an uninitialized `Gmpq` `q`.
 Gmpq(); 
 
 /*! 
-creates a `Gmpq` initialized with 
-`i`. 
+creates a `Gmpq` initialized with `i`. 
 */ 
 Gmpq(int i); 
 
 /*! 
-creates a `Gmpq` initialized with 
-`n`. 
+creates a `Gmpq` initialized with `n`. 
 */ 
 Gmpq(Gmpz n); 
 
 /*! 
-creates a `Gmpq` initialized with 
-`f`. 
+creates a `Gmpq` initialized with `f`. 
 */ 
 Gmpq(Gmpfr f); 
 
 /*! 
-creates a `Gmpq` initialized with 
-`n/d`. 
+creates a `Gmpq` initialized with `n/d`. 
 */ 
 Gmpq(int n, int d); 
 
 /*! 
-creates a `Gmpq` initialized with 
-`n/d`. 
+creates a `Gmpq` initialized with `n/d`. 
 */ 
 Gmpq(signed long n, unsigned long d); 
 
 /*! 
-creates a `Gmpq` initialized with 
-`n/d`. 
+creates a `Gmpq` initialized with `n/d`. 
 */ 
 Gmpq(unsigned long n, unsigned long d); 
 
 /*! 
-creates a `Gmpq` initialized with 
-`n/d`. 
+creates a `Gmpq` initialized with `n/d`. 
 */ 
 Gmpq(Gmpz n, Gmpz d); 
 
 /*! 
-creates a `Gmpq` initialized with 
-`d`. 
+creates a `Gmpq` initialized with `d`. 
 */ 
 Gmpq(double d); 
 
@@ -117,7 +109,7 @@ Gmpz denominator() const;
 }; /* end Gmpq */
 
 /*! 
-writes `q` to the ostream `out`, in the form \f$ n/d\f$. 
+writes `q` to the ostream `out`, in the form `n/d`. 
 \relates Gmpq 
 */ 
 std::ostream& operator<<(std::ostream& out, const Gmpq& q); 
@@ -125,7 +117,7 @@ std::ostream& operator<<(std::ostream& out, const Gmpq& q);
 /*! 
 reads a number from `in`, then converts it to a 
 `Gmpq`. The number may be an integer, a rational number in 
-the form \f$ n/d\f$, or a floating-point number. 
+the form `n/d`, or a floating-point number. 
 \relates Gmpq 
 */ 
 std::istream& operator>>(std::istream& in, Gmpq& q); 

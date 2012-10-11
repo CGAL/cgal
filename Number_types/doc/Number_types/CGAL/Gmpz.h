@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup nt_gmp
 
 An object of the class `Gmpz` is an arbitrary precision integer 
-based on the <span class="textsc">Gnu</span> Multiple Precision Arithmetic Library. 
+based on the <span class="textsc">Gmp</span> Library. 
 
 \models ::EuclideanRing 
 \models ::RealEmbeddable 
@@ -28,8 +28,7 @@ creates an uninitialized multiple precision integer `z`.
 Gmpz(); 
 
 /*! 
-creates a multiple-precision integer initialized with 
-`i`. 
+creates a multiple-precision integer initialized with `i`. 
 */ 
 Gmpz(int i); 
 
@@ -65,12 +64,12 @@ postfix decrement.
 Gmpz operator--(int); 
 
 /*! 
-rightshift by i, where \f$ i>=0\f$. 
+rightshift by `i`, where `i >= 0`. 
 */ 
 Gmpz & operator>>=(const long& i); 
 
 /*! 
-leftshift by i, where \f$ i>=0\f$. 
+leftshift by `i`, where  `i >= 0`. 
 */ 
 Gmpz & operator<<=(const long& i); 
 
@@ -125,13 +124,13 @@ double to_double() const;
 }; /* end Gmpz */
 
 /*! 
-rightshift by \f$ i\f$. 
+rightshift by `i`. 
 \relates Gmpz 
 */ 
 Gmpz operator>>(const Gmpz& a, unsigned long i); 
 
 /*! 
-leftshift by \f$ i\f$. 
+leftshift by `i`. 
 \relates Gmpz 
 */ 
 Gmpz operator<<(const Gmpz& a, unsigned long i); 

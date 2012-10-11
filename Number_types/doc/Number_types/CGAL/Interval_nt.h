@@ -4,6 +4,8 @@ namespace CGAL {
 /*!
 \ingroup nt_cgal
 
+The class `Interval_nt` provides an interval arithmetic number type.
+
 This section describes briefly what interval arithmetic is, its implementation 
 in \cgal, and its possible use by geometric programs. 
 The main reason for having interval arithmetic in \cgal is its integration 

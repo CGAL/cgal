@@ -1,5 +1,4 @@
 
-namespace CGAL {
 
 /*!
 \ingroup nt_builtin
@@ -14,15 +13,13 @@ Due to overflow `int` is considered as not exact.
 
 class int {
 }; /* end int */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup nt_builtin
 
-The fundamental type `long int` is an `RealEmbeddable` 
-`EuclideanRing`. Due to overflow `long int` is considered as not exact. 
+The fundamental type `long int` is a model of the concepts `RealEmbeddable` 
+and `EuclideanRing`. Due to overflow `long int` is considered as not exact. 
 
 \models ::EuclideanRing 
 \models ::RealEmbeddable 
@@ -31,15 +28,13 @@ The fundamental type `long int` is an `RealEmbeddable`
 
 class long_int {
 }; /* end long int */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup nt_builtin
 
-The fundamental type `short int` is an `RealEmbeddable` 
-`EuclideanRing`. Due to overflow `short int` is considered as not exact. 
+The fundamental type `short int` is a model of the concepts `RealEmbeddable` 
+and `EuclideanRing`. Due to overflow `short int` is considered as not exact. 
 
 \models ::EuclideanRing 
 \models ::RealEmbeddable 
@@ -48,4 +43,3 @@ The fundamental type `short int` is an `RealEmbeddable`
 
 class short_int {
 }; /* end short int */
-} /* end namespace CGAL */
