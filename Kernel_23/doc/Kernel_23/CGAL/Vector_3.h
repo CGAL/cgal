@@ -36,12 +36,12 @@ typedef Hidden_type Cartesian_const_iterator;
 /// @{
 
 /*! 
-introduces the vector \f$ b-a\f$. 
+introduces the vector `b-a`. 
 */ 
 Vector_3(const Point_3<Kernel> &a, const Point_3<Kernel> &b); 
 
 /*! 
-introduces the vector \f$ s.target()-s.source()\f$. 
+introduces the vector `s.target()-s.source()`. 
 */ 
 Vector_3(const Segment_3<Kernel> &s); 
 
@@ -61,22 +61,22 @@ introduces a null vector `v`.
 Vector_3(const Null_vector &NULL_VECTOR); 
 
 /*! 
-introduces a vector `v` initialized to \f$ (x, y, z)\f$. 
+introduces a vector `v` initialized to `(x, y, z)`. 
 */ 
 Vector_3(int x, int y, int z); 
 
 /*! 
-introduces a vector `v` initialized to \f$ (x, y, z)\f$. 
+introduces a vector `v` initialized to `(x, y, z). 
 */ 
 Vector_3(double x, double y, double z); 
 
 /*! 
-introduces a vector `v` initialized to \f$ (hx/hw, hy/hw, hz/hw)\f$. 
+introduces a vector `v` initialized to `(hx/hw, hy/hw, hz/hw).
 */ 
 Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1)); 
 
 /*! 
-introduces a vector `v` initialized to \f$ (x, y, z)\f$. 
+introduces a vector `v` initialized to `(x, y, z)`. 
 */ 
 Vector_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z); 
 
@@ -129,17 +129,17 @@ returns the homogenizing coordinate.
 Kernel::RT hw() const; 
 
 /*! 
-returns the `x`-coordinate of `v`, that is \f$ hx/hw\f$. 
+returns the `x`-coordinate of `v`, that is `hx()`/`hw()`. 
 */ 
 Kernel::FT x() const; 
 
 /*! 
-returns the `y`-coordinate of `v`, that is \f$ hy/hw\f$. 
+returns the `y`-coordinate of `v`, that is `hy()`/`hw()`. 
 */ 
 Kernel::FT y() const; 
 
 /*! 
-returns the `z` coordinate of `v`, that is \f$ hz/hw\f$. 
+returns the `z` coordinate of `v`, that is `hz()`/`hw()`. 
 */ 
 Kernel::FT z() const; 
 

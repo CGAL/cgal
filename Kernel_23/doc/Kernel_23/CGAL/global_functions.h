@@ -561,10 +561,10 @@ const CGAL::Point_3<Kernel>&r);
 /*!
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
 \f$ \theta_1\f$ is the dihedral angle, in \f$ [0, \pi]\f$, of the tetrahedron
-\f$ (a_1, b_1, c_1, d_1)\f$ at the edge \f$ (a_1, b_1)\f$, and \f$ \theta_2\f$ is
+`(a_1, b_1, c_1, d_1)`at the edge `(a_1, b_1)`, and \f$ \theta_2\f$ is
 the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = cosine\f$.
 The result is the same as `compare_dihedral_angle(b1-a1, c1-a1, d1-a1, cosine)`.
-\pre \f$ a_1\f$, \f$ b_1\f$, \f$ c_1\f$ are not collinear, and \f$ a_1\f$, \f$ b_1\f$, \f$ d_1\f$ are not collinear.
+\pre `a_1`, `b_1`, `c_1` are not collinear, and `a_1`, `b_1`, `d_1` are not collinear.
 */
 template <typename Kernel>
 Comparison_result compare_dihedral_angle(const CGAL::Point_3<Kernel>& a1,
@@ -575,11 +575,11 @@ const Kernel::FT& cosine);
 
 /*!
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
-\f$ \theta_i\f$ is the dihedral angle in the tetrahedron \f$ (a_i, b_i,
-c_i, d_i)\f$ at the edge \f$ (a_i, b_i)\f$. These two angles are computed
+\f$ \theta_i\f$ is the dihedral angle in the tetrahedron `(a_i, b_i,
+c_i, d_i)`at the edge `(a_i, b_i)`. These two angles are computed
 in \f$ [0, \pi]\f$.
 The result is the same as `compare_dihedral_angle(b1-a1, c1-a1, d1-a1, b2-a2, c2-a2, d2-a2)`.
-\pre For \f$ i \in\{1,2\}\f$, \f$ a_i\f$, \f$ b_i\f$, \f$ c_i\f$ are not collinear, and \f$ a_i\f$, \f$ b_i\f$, \f$ d_i\f$ are not collinear.
+\pre For \f$ i \in\{1,2\}\f$, `a_i`, `b_i`, `c_i` are not collinear, and `a_i`, `b_i`, `d_i` are not collinear.
 */
 template <typename Kernel>
 Comparison_result compare_dihedral_angle(const CGAL::Point_3<Kernel>& a1,
@@ -594,10 +594,10 @@ const CGAL::Point_3<Kernel>& d2);
 /*!
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
 \f$ \theta_1\f$ is the dihedral angle, in \f$ [0, \pi]\f$, between the
-vectorial planes defined by \f$ (u_1, v_1)\f$ and \f$ (u_1, w_1)\f$, and
+vectorial planes defined by `(u_1, v_1)` and `(u_1, w_1)`, and
 \f$ \theta_2\f$ is the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) =
 cosine\f$.
-\pre \f$ u_1\f$ and \f$ v_1\f$ are not collinear, and \f$ u_1\f$ and \f$ w_1\f$ are not collinear.
+\pre `u_1` and `v_1` are not collinear, and `u_1` and `w_1` are not collinear.
 */
 template <typename Kernel>
 Comparison_result
@@ -609,9 +609,9 @@ const Kernel::FT& cosine);
 /*!
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
 \f$ \theta_i\f$ is the dihedral angle between the vectorial planes
-defined by \f$ (u_i, v_i)\f$ and \f$ (u_i, w_i)\f$. These two angles are
+defined by  `(u_i, v_i)` and `(u_i, w_i)`. These two angles are
 computed in \f$ [0, \pi]\f$.
-\pre For \f$ i \in\{1,2\}\f$, \f$ u_i\f$ and \f$ v_i\f$ are not collinear, and \f$ u_i\f$ and \f$ w_i\f$ are not collinear.
+\pre For \f$ i \in\{1,2\}\f$, `u_i` and `v_i` are not collinear, and `u_i` and `w_i` are not collinear.
 */
 template <typename Kernel>
 Comparison_result

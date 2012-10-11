@@ -38,7 +38,7 @@ const Point_3<Kernel> &q);
 introduces an iso-oriented cuboid `c` with diagonal 
 opposite vertices `p` and `q`. The `int` argument value 
 is only used to distinguish the two overloaded functions. 
-\pre \f$ p.x()<=q.x()\f$, \f$ p.y()<=q.y()\f$ and \f$ p.z()<=q.z()\f$. 
+\pre `p.x()<=q.x()`, `p.y()<=q.y()`and `p.z()<=q.z()`. 
 */ 
 Iso_cuboid_3(const Point_3<Kernel> &p, 
 const Point_3<Kernel> &q, int); 

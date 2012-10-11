@@ -31,9 +31,9 @@ const Point_3<Kernel> &r);
 /// @{
 
 /*! 
-Test for equality: two triangles t and \f$ t_2\f$ are equal, iff there 
-exists a cyclic permutation of the vertices of \f$ t2\f$, such that 
-they are equal to the vertices of `t`. 
+Test for equality: two triangles `t1` and `t2` are equal, iff there 
+exists a cyclic permutation of the vertices of  t2`, such that 
+they are equal to the vertices of `t1`. 
 */ 
 bool operator==(const Triangle_3<Kernel> &t2) const; 
 
@@ -90,7 +90,7 @@ returns a bounding box containing `t`.
 Bbox_3 bbox() const; 
 
 /*! 
-returns the triangle obtained by applying \f$ at\f$ on the three 
+returns the triangle obtained by applying `at` on the three 
 vertices of `t`. 
 */ 
 Triangle_3<Kernel> transform(const Aff_transformation_3<Kernel> &at) const; 

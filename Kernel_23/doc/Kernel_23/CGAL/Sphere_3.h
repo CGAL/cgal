@@ -206,7 +206,7 @@ Sphere_3<Kernel> opposite() const;
 
 /*! 
 
-returns the sphere obtained by applying \f$ at\f$ on `c`. 
+returns the sphere obtained by applying `at` on `c`. 
 \pre `at` is an orthogonal transformation. 
 */ 
 Sphere_3<Kernel> orthogonal_transform( 

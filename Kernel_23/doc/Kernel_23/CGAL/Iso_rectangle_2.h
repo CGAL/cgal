@@ -39,7 +39,7 @@ const Point_2<Kernel> &q);
 introduces an iso-oriented rectangle `r` with diagonal 
 opposite vertices `p` and `q`. The `int` argument value 
 is only used to distinguish the two overloaded functions. 
-\pre \f$ p.x()<=q.x()\f$ and \f$ p.y()<=q.y()\f$. 
+\pre `p.x()<=q.x()` and `p.y()<=q.y()`. 
 */ 
 Iso_rectangle_2(const Point_2<Kernel> &p, 
 const Point_2<Kernel> &q, 

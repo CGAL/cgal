@@ -34,12 +34,12 @@ typedef Hidden_type Cartesian_const_iterator;
 /// @{
 
 /*! 
-introduces the vector \f$ b-a\f$. 
+introduces the vector `b-a`. 
 */ 
 Vector_2(const Point_2<Kernel> &a, const Point_2<Kernel> &b); 
 
 /*! 
-introduces the vector \f$ s.target()-s.source()\f$. 
+introduces the vector `s.target()-s.source()`. 
 */ 
 Vector_2(const Segment_2<Kernel> &s); 
 
@@ -59,23 +59,23 @@ introduces a null vector `v`.
 Vector_2(const Null_vector &NULL_VECTOR); 
 
 /*! 
-introduces a vector `v` initialized to \f$ (x,y)\f$. 
+introduces a vector `v` initialized to `(x,y)`. 
 */ 
 Vector_2(int x, int y); 
 
 /*! 
-introduces a vector `v` initialized to \f$ (x,y)\f$. 
+introduces a vector `v` initialized to `(x,y)`. 
 */ 
 Vector_2(double x, double y); 
 
 /*! 
-introduces a vector `v` initialized to \f$ (hx/hw,hy/hw)\f$. 
+introduces a vector `v` initialized to `(hx/hw,hy/hw)`. 
 \pre \f$ hw\neq0\f$. 
 */ 
 Vector_2(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = RT(1)); 
 
 /*! 
-introduces a vector `v` initialized to \f$ (x,y)\f$. 
+introduces a vector `v` initialized to `(x,y)`. 
 */ 
 Vector_2(const Kernel::FT &x, const Kernel::FT &y); 
 
@@ -123,12 +123,12 @@ returns the homogenizing coordinate.
 Kernel::RT hw() const; 
 
 /*! 
-returns the `x`-coordinate of `v`, that is \f$ hx/hw\f$. 
+returns the `x`-coordinate of `v`, that is `hx()`/`hw()`. 
 */ 
 Kernel::FT x() const; 
 
 /*! 
-returns the `y`-coordinate of `v`, that is \f$ hy/hw\f$. 
+returns the `y`-coordinate of `v`, that is `hy()`/`hw()`. 
 */ 
 Kernel::FT y() const; 
 

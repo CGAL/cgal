@@ -28,7 +28,7 @@ public:
 /// @{
 
 /*! 
-introduces a tetrahedron `t` with vertices \f$ p_0\f$, \f$ p_1\f$, \f$ p_2\f$ and \f$ p_3\f$. 
+introduces a tetrahedron `t` with vertices `p_0`, `p_1`, `p_2` and `p_3`. 
 */ 
 Tetrahedron_3(const Point_3<Kernel> &p0, 
 const Point_3<Kernel> &p1, 
@@ -133,7 +133,7 @@ returns a bounding box containing `t`.
 Bbox_3 bbox() const; 
 
 /*! 
-returns the tetrahedron obtained by applying \f$ at\f$ on the three 
+returns the tetrahedron obtained by applying `at` on the three 
 vertices of `t`. 
 */ 
 Tetrahedron_3<Kernel> transform(const Aff_transformation_3<Kernel> &at) const; 

@@ -44,24 +44,24 @@ introduces a point with %Cartesian coordinates\f$ (0,0,0)\f$.
 Point_3(const Origin &ORIGIN); 
 
 /*! 
-introduces a point `p` initialized to \f$ (x,y,z)\f$. 
+introduces a point `p` initialized to `(x,y,z)`. 
 */ 
 Point_3(int x, int y, int z); 
 
 /*! 
-introduces a point `p` initialized to \f$ (x,y,z)\f$ 
+introduces a point `p` initialized to `(x,y,z)`
 provided `RT` supports it. 
 */ 
 Point_3(double x, double y, double z); 
 
 /*! 
-introduces a point `p` initialized to \f$ (hx/hw,hy/hw, hz/hw)\f$. 
+introduces a point `p` initialized to `(hx/hw,hy/hw, hz/hw)`. 
 \pre `hw` \f$ \neq\f$ 0. 
 */ 
 Point_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1)); 
 
 /*! 
-introduces a point `p` initialized to \f$ (x,y,z)\f$. 
+introduces a point `p` initialized to `(x,y,z)`. 
 */ 
 Point_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z); 
 
@@ -112,17 +112,17 @@ returns the homogenizing coordinate.
 Kernel::RT hw() const; 
 
 /*! 
-returns the %Cartesian \f$ x\f$ coordinate, that is \f$ hx/hw\f$. 
+returns the %Cartesian \f$ x\f$ coordinate, that is `hx()`/`hw()`. 
 */ 
 Kernel::FT x() const; 
 
 /*! 
-returns the %Cartesian \f$ y\f$ coordinate, that is \f$ hy/hw\f$. 
+returns the %Cartesian \f$ y\f$ coordinate, that is `hy()`/`hw()`. 
 */ 
 Kernel::FT y() const; 
 
 /*! 
-returns the %Cartesian \f$ z\f$ coordinate, that is \f$ hz/hw\f$. 
+returns the %Cartesian \f$ z\f$ coordinate, that is `hz()`/`hw()`. 
 */ 
 Kernel::FT z() const; 
 
