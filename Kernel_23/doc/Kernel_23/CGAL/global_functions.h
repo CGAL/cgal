@@ -10,7 +10,7 @@ namespace CGAL {
 
 /*!
 returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
-on the angle formed by the two vectors \f$ u\f$ and \f$ v\f$.
+on the angle formed by the two vectors `u` and `v`.
 */
 template <typename Kernel>
 Angle angle(const Vector_2<Kernel>&u, 
@@ -19,7 +19,7 @@ const Vector_2<Kernel>&v);
 /*!
 
 returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
-on the angle formed by the three points \f$ p\f$, \f$ q\f$, \f$ r\f$ (\f$ q\f$ being the vertex of
+on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of
 the angle). The returned value is the same as `angle(p - q, r - q)`.
 */
 template <typename Kernel>
@@ -30,7 +30,7 @@ const Point_2<Kernel>& r);
 /*!
 
 returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
-on the angle formed by the two vectors \f$ pq\f$, \f$ rs\f$. The returned value is
+on the angle formed by the two vectors `pq`, `rs`. The returned value is
 the same as `angle(q - p, s - r)`.
 */
 template <typename Kernel>
@@ -42,7 +42,7 @@ const Point_2<Kernel>& s);
 /*!
 
 returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
-on the angle formed by the three points \f$ p\f$, \f$ q\f$, \f$ r\f$ (\f$ q\f$ being the vertex of
+on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of
 the angle).
 */
 template <typename Kernel>
@@ -70,8 +70,8 @@ Vector_3<Kernel> unit_normal( const Point_3<Kernel>& p, const Point_3<Kernel>& q
 /// @{
 
 /*!
-returns the signed area of the triangle defined by the points \f$ p\f$,
-\f$ q\f$ and \f$ r\f$. 
+returns the signed area of the triangle defined by the points `p`,
+`q` and `r`. 
 */
 template <typename Kernel>
 Kernel::FT area(const Point_2<Kernel>& p,
@@ -150,8 +150,8 @@ const Point_3<Kernel> &r);
 /// @{
 
 /*!
-compute the barycenter of the points \f$ p1\f$ and \f$ p2\f$ with corresponding
-weights \f$ w1\f$ and \f$ 1-w1\f$.
+compute the barycenter of the points `p1` and `p2` with corresponding
+weights `w1` and `1-w1`.
 */
 template <typename Kernel>
 Point_2<Kernel>
@@ -159,8 +159,8 @@ barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
 const Point_2<Kernel>& p2);
 
 /*!
-compute the barycenter of the points \f$ p1\f$ and \f$ p2\f$ with corresponding
-weights \f$ w1\f$ and \f$ w2\f$. \pre w1+w2 != 0.
+compute the barycenter of the points `p1` and `p2` with corresponding
+weights `w1` and `w2`. \pre `w1+w2 != 0`.
 */
 template <typename Kernel>
 Point_2<Kernel>
@@ -168,8 +168,8 @@ barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
 const Point_2<Kernel>& p2, const Kernel::FT&w2);
 
 /*!
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$ and \f$ p3\f$ with corresponding
-weights \f$ w1\f$, \f$ w2\f$ and \f$ 1-w1-w2\f$.
+compute the barycenter of the points `p1`, `p2` and `p3` with corresponding
+weights `w1`, `w2` and `1-w1-w2`.
 */
 template <typename Kernel>
 Point_2<Kernel>
@@ -178,8 +178,8 @@ const Point_2<Kernel>& p2, const Kernel::FT&w2,
 const Point_2<Kernel>& p3);
 
 /*!
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$ and \f$ p3\f$ with corresponding
-weights \f$ w1\f$, \f$ w2\f$ and \f$ w3\f$. \pre w1+w2+w3 != 0.
+compute the barycenter of the points `p1`, `p2` and `p3` with corresponding
+weights `w1`, `w2` and `w3`. \pre `w1+w2+w3 != 0`.
 */
 template <typename Kernel>
 Point_2<Kernel>
@@ -188,8 +188,8 @@ const Point_2<Kernel>& p2, const Kernel::FT&w2,
 const Point_2<Kernel>& p3, const Kernel::FT&w3);
 
 /*!
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$, \f$ p3\f$ and \f$ p4\f$ with corresponding
-weights \f$ w1\f$, \f$ w2\f$, \f$ w3\f$ and \f$ 1-w1-w2-w3\f$.
+compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding
+weights `w1`, `w2`, `w3` and `1-w1-w2-w3`.
 */
 template <typename Kernel>
 Point_2<Kernel>
@@ -199,8 +199,8 @@ const Point_2<Kernel>& p3, const Kernel::FT&w3,
 const Point_2<Kernel>& p4);
 
 /*!
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$, \f$ p3\f$ and \f$ p4\f$ with corresponding
-weights \f$ w1\f$, \f$ w2\f$, \f$ w3\f$ and \f$ w4\f$. \pre w1+w2+w3+w4 != 0.
+compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding
+weights `w1`, `w2`, `w3` and `w4`. \pre `w1+w2+w3+w4 != 0`.
 */
 template <typename Kernel>
 Point_2<Kernel>
@@ -210,8 +210,8 @@ const Point_2<Kernel>& p3, const Kernel::FT&w3,
 const Point_2<Kernel>& p4, const Kernel::FT&w4);
 
 /*!
-compute the barycenter of the points \f$ p1\f$ and \f$ p2\f$ with corresponding
-weights \f$ w1\f$ and \f$ 1-w1\f$.
+compute the barycenter of the points `p1` and `p2` with corresponding
+weights `w1` and `1-w1`.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -219,8 +219,8 @@ barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
 const Point_3<Kernel>& p2);
 
 /*!
-compute the barycenter of the points \f$ p1\f$ and \f$ p2\f$ with corresponding
-weights \f$ w1\f$ and \f$ w2\f$. \pre w1+w2 != 0.
+compute the barycenter of the points `p1` and `p2` with corresponding
+weights `w1` and `w2`. \pre `w1+w2 != 0`.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -228,8 +228,8 @@ barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
 const Point_3<Kernel>& p2, const Kernel::FT&w2);
 
 /*!
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$ and \f$ p3\f$ with corresponding
-weights \f$ w1\f$, \f$ w2\f$ and \f$ 1-w1-w2\f$.
+compute the barycenter of the points `p1`, `p2` and `p3` with corresponding
+weights `w1`, `w2` and `1-w1-w2`.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -238,8 +238,8 @@ const Point_3<Kernel>& p2, const Kernel::FT&w2,
 const Point_3<Kernel>& p3);
 
 /*!
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$ and \f$ p3\f$ with corresponding
-weights \f$ w1\f$, \f$ w2\f$ and \f$ w3\f$. \pre w1+w2+w3 != 0.
+compute the barycenter of the points `p1`, `p2` and `p3` with corresponding
+weights `w1`, `w2` and `w3`. \pre `w1+w2+w3 != 0`.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -248,8 +248,8 @@ const Point_3<Kernel>& p2, const Kernel::FT&w2,
 const Point_3<Kernel>& p3, const Kernel::FT&w3);
 
 /*!
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$, \f$ p3\f$ and \f$ p4\f$ with corresponding
-weights \f$ w1\f$, \f$ w2\f$, \f$ w3\f$ and \f$ 1-w1-w2-w3\f$.
+compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding
+weights `w1`, `w2`, `w3` and `1-w1-w2-w3`.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -259,8 +259,8 @@ const Point_3<Kernel>& p3, const Kernel::FT&w3,
 const Point_3<Kernel>& p4);
 
 /*!
-compute the barycenter of the points \f$ p1\f$, \f$ p2\f$, \f$ p3\f$ and \f$ p4\f$ with corresponding
-weights \f$ w1\f$, \f$ w2\f$, \f$ w3\f$ and \f$ w4\f$. \pre w1+w2+w3+w4 != 0.
+compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding
+weights `w1`, `w2`, `w3` and `w4`. \pre `w1+w2+w3+w4 != 0`.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -285,7 +285,7 @@ Line_2<Kernel> bisector(const Point_2<Kernel> &p,
 const Point_2<Kernel> &q);
 
 /*!
-constructs the bisector of the two lines \f$ l1\f$ and \f$ l2\f$.
+constructs the bisector of the two lines `l1` and `l2`.
 In the general case, the bisector has the direction of the vector which
 is the sum of the normalized directions of the two lines, and which passes
 through the intersection of `l1` and `l2`.
@@ -309,7 +309,7 @@ Plane_3<Kernel> bisector(const Point_3<Kernel> &p,
 const Point_3<Kernel> &q);
 
 /*!
-constructs the bisector of the two planes \f$ h1\f$ and \f$ h2\f$.
+constructs the bisector of the two planes `h1` and `h2`.
 In the general case, the bisector has a normal vector which has the same
 direction as the sum of the normalized normal vectors of the two planes, and
 passes through the intersection of `h1` and `h2`.
@@ -331,7 +331,7 @@ const Plane_3<Kernel> &h2);
 /// @{
 
 /*!
-compute the centroid of the points \f$ p\f$, \f$ q\f$, and \f$ r\f$.
+compute the centroid of the points `p`, `q`, and `r`.
 */
 template <typename Kernel>
 Point_2<Kernel>
@@ -340,7 +340,7 @@ const Point_2<Kernel>& q,
 const Point_2<Kernel>& r);
 
 /*!
-compute the centroid of the points \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$.
+compute the centroid of the points `p`, `q`, `r`, and `s`.
 */
 template <typename Kernel>
 Point_2<Kernel>
@@ -350,14 +350,14 @@ const Point_2<Kernel>& r,
 const Point_2<Kernel>& s);
 
 /*!
-compute the centroid of the triangle \f$ t\f$.
+compute the centroid of the triangle `t`.
 */
 template <typename Kernel>
 Point_2<Kernel>
 centroid( const Triangle_2<Kernel>& t);
 
 /*!
-compute the centroid of the points \f$ p\f$, \f$ q\f$, and \f$ r\f$.
+compute the centroid of the points `p`, `q`, and `r`.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -366,7 +366,7 @@ const Point_3<Kernel>& q,
 const Point_3<Kernel>& r);
 
 /*!
-compute the centroid of the points \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$.
+compute the centroid of the points `p`, `q`, `r`, and `s`.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -376,14 +376,14 @@ const Point_3<Kernel>& r,
 const Point_3<Kernel>& s);
 
 /*!
-compute the centroid of the triangle \f$ t\f$.
+compute the centroid of the triangle `t`.
 */
 template <typename Kernel>template <typename Kernel>
 Point_3<Kernel>
 centroid( const Triangle_3<Kernel>& t);
 
 /*!
-compute the centroid of the tetrahedron \f$ t\f$.
+compute the centroid of the tetrahedron `t`.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -396,8 +396,8 @@ centroid( const Tetrahedron_3<Kernel>& t);
 /// @{
 
 /*!
-compute the center of the smallest circle passing through the points \f$ p\f$ and
-\f$ q\f$. Note: this is the same as `CGAL::midpoint(p, q)` but is provided
+compute the center of the smallest circle passing through the points `p` and
+`q`. Note: this is the same as `CGAL::midpoint(p, q)` but is provided
 for homogeneity. 
 */
 template <typename Kernel>
@@ -406,8 +406,8 @@ circumcenter( const Point_2<Kernel>& p,
 const Point_2<Kernel>& q);
 
 /*!
-compute the center of the circle passing through the points \f$ p\f$, \f$ q\f$, and \f$ r\f$.
-\pre \f$ p\f$, \f$ q\f$, and \f$ r\f$ are not collinear.
+compute the center of the circle passing through the points `p`, `q`, and `r`.
+\pre `p`, `q`, and `r` are not collinear.
 */
 template <typename Kernel>
 Point_2<Kernel>
@@ -416,16 +416,16 @@ const Point_2<Kernel>& q,
 const Point_2<Kernel>& r);
 
 /*!
-compute the center of the circle passing through the vertices of \f$ t\f$.
-\pre \f$ t\f$ is not degenerate.
+compute the center of the circle passing through the vertices of `t`.
+\pre `t` is not degenerate.
 */
 template <typename Kernel>
 Point_2<Kernel>
 circumcenter( const Triangle_2<Kernel>& t);
 
 /*!
-compute the center of the smallest sphere passing through the points \f$ p\f$ and
-\f$ q\f$. Note: this is the same as `CGAL::midpoint(p, q)` but is provided
+compute the center of the smallest sphere passing through the points `p` and
+`q`. Note: this is the same as `CGAL::midpoint(p, q)` but is provided
 for homogeneity. 
 */
 template <typename Kernel>
@@ -434,8 +434,8 @@ circumcenter( const Point_3<Kernel>& p,
 const Point_3<Kernel>& q);
 
 /*!
-compute the center of the circle passing through the points \f$ p\f$, \f$ q\f$, and \f$ r\f$.
-\pre \f$ p\f$, \f$ q\f$, and \f$ r\f$ are not collinear.
+compute the center of the circle passing through the points `p`, `q`, and `r`.
+\pre `p`, `q`, and `r` are not collinear.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -444,16 +444,16 @@ const Point_3<Kernel>& q,
 const Point_3<Kernel>& r);
 
 /*!
-compute the center of the circle passing through the vertices of \f$ t\f$.
-\pre \f$ t\f$ is not degenerate.
+compute the center of the circle passing through the vertices of `t`.
+\pre `t` is not degenerate.
 */
 template <typename Kernel>
 Point_3<Kernel>
 circumcenter( const Triangle_3<Kernel>& t);
 
 /*!
-compute the center of the sphere passing through the points \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$.
-\pre \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$ are not coplanar.
+compute the center of the sphere passing through the points `p`, `q`, `r`, and `s`.
+\pre `p`, `q`, `r`, and `s` are not coplanar.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -463,8 +463,8 @@ const Point_3<Kernel>& r,
 const Point_3<Kernel>& s);
 
 /*!
-compute the center of the sphere passing through the vertices of \f$ t\f$.
-\pre \f$ t\f$ is not degenerate.
+compute the center of the sphere passing through the vertices of `t`.
+\pre `t` is not degenerate.
 */
 template <typename Kernel>
 Point_3<Kernel>
@@ -535,7 +535,7 @@ const Point_3<Kernel> &r);
 /// @{
 
 /*!
-returns `true`, iff \f$ p\f$, \f$ q\f$, and \f$ r\f$ are collinear.
+returns `true`, iff `p`, `q`, and `r` are collinear.
 */
 template <typename Kernel>
 bool collinear(const Point_2<Kernel> &p, 
@@ -543,7 +543,7 @@ const Point_2<Kernel> &q,
 const Point_2<Kernel> &r);
 
 /*!
-returns `true`, iff \f$ p\f$, \f$ q\f$, and \f$ r\f$ are collinear.
+returns `true`, iff `p`, `q`, and `r` are collinear.
 */
 template <typename Kernel>
 bool collinear(const Point_3<Kernel> &p,
@@ -901,19 +901,19 @@ described below.
 /// @{
 
 /*!
-compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
 Comparison_result compare_x(const Point_2<Kernel> &p, const Point_2<Kernel> &q);
 
 /*!
-compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
 Comparison_result compare_x(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
 /*!
-compares the \f$ x\f$-coordinates of \f$ p\f$ and the intersection 
-of lines \f$ l1\f$ and \f$ l2\f$.
+compares the \f$ x\f$-coordinates of `p` and the intersection 
+of lines `l1` and `l2`.
 See Figure \ref figcompare_x (a).
 */
 template <typename Kernel>
@@ -922,8 +922,8 @@ Comparison_result compare_x(const Point_2<Kernel> &p,
                             const Line_2<Kernel> &l2);
 
 /*!
-compares the \f$ x\f$-coordinates of  the intersection of line \f$ l\f$
-with line \f$ h1\f$ and with line \f$ h2\f$.
+compares the \f$ x\f$-coordinates of  the intersection of line `l`
+with line `h1` and with line `h2`.
 
 See Figure \ref figcompare_x (b).
 */
@@ -932,8 +932,8 @@ Comparison_result compare_x(const Line_2<Kernel> &l,
                             const Line_2<Kernel> &h1,
                             const Line_2<Kernel> &h2);
 /*!
-compares the \f$ x\f$-coordinates of the intersection of lines \f$ l1\f$
-and \f$ l2\f$ and  the intersection of lines \f$ h1\f$ and \f$ h2\f$.
+compares the \f$ x\f$-coordinates of the intersection of lines `l1`
+and `l2` and  the intersection of lines `h1` and `h2`.
 
 See Figure \ref figcompare_x (c).
 */
@@ -961,14 +961,14 @@ is provided.
 /// @{
 
 /*!
-compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename CircularKernel>
 Comparison_result 
   compare_x(const Circular_arc_point_2<CircularKernel> &p,
             const Circular_arc_point_2<CircularKernel> &q);
 /*!
-compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename CircularKernel>
 Comparison_result 
@@ -993,7 +993,7 @@ is provided.
 /// @{
 
 /*!
-compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
@@ -1001,7 +1001,7 @@ Comparison_result
             const Circular_arc_point_3<SphericalKernel> &q);
 
 /*!
-compares the \f$ x\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
@@ -1145,7 +1145,7 @@ Comparison_result
 /// @{
 
 /*!
-compares the \f$ x\f$-coordinates of \f$ p\f$ and the horizontal projection
+compares the \f$ x\f$-coordinates of `p` and the horizontal projection
 of `p` on `h`.
 See Figure \ref figcomparexaty (a).
 \pre `h` is not horizontal.
@@ -1166,8 +1166,8 @@ const Line_2<Kernel> &h1,
 const Line_2<Kernel> &h2);
 
 /*!
-Let \f$ p\f$ be the intersection of lines \f$ l1\f$ and \f$ l2\f$.
-This function compares the \f$ x\f$-coordinates of \f$ p\f$ and 
+Let `p` be the intersection of lines `l1` and `l2`.
+This function compares the \f$ x\f$-coordinates of `p` and 
 the horizontal projection of `p` on `h`.
 See Figure \ref figcomparexaty (c).
 \pre `l1` and `l2` intersect and are not horizontal; `h` is not horizontal.
@@ -1178,7 +1178,7 @@ const Line_2<Kernel> &l2,
 const Line_2<Kernel> &h);
 
 /*!
-Let \f$ p\f$ be the intersection of lines \f$ l1\f$ and \f$ l2\f$. This 
+Let `p` be the intersection of lines `l1` and `l2`. This 
 function compares the \f$ x\f$-coordinates of the horizontal projection of 
 `p` on `h1` and on `h2`
 See Figure \ref figcomparexaty (d).
@@ -1210,7 +1210,7 @@ const Line_2<Kernel> &h2);
 /// @{
 
 /*!
-  compares the \f$y\f$-coordinates of \f$p\f$ and the vertical projection
+  compares the \f$ y\f$-coordinates of  `p` and the vertical projection
   of `p` on `h`.
   See Figure \ref figcompareyatx (d).
 
@@ -1221,7 +1221,7 @@ Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
                                  const Line_2<Kernel> &h);
 
 /*!
-  compares the \f$y\f$-coordinates of the vertical projection 
+  compares the \f$ y\f$-coordinates of the vertical projection 
   of `p` on `h1` and on `h2`.
   See Figure \ref figcompareyatx (e).
 
@@ -1234,8 +1234,8 @@ Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
 
 
 /*!
-  Let \f$p\f$ be the `intersection` of lines \f$l1\f$ and \f$l2\f$.
-  This function compares the \f$y\f$-coordinates of \f$p\f$ and 
+  Let `p` be the `intersection` of lines `l1` and `l2`.
+  This function compares the \f$ y\f$-coordinates of `p` and 
   the vertical projection of `p` on `h`
   See Figure \ref figcompareyatx (f).
 
@@ -1247,8 +1247,8 @@ Comparison_result compare_y_at_x(const Line_2<Kernel> &l1,
                                  const Line_2<Kernel> &h);
 
 /*!
-  Let \f$p\f$ be the `intersection` of lines \f$l1\f$ and \f$l2\f$. This function 
-  compares the \f$y\f$-coordinates of the vertical projection of `p` on 
+  Let `p` be the `intersection` of lines `l1` and `l2`. This function 
+  compares the \f$ y\f$-coordinates of the vertical projection of `p` on 
   `h1` and on `h2`.
   See Figure \ref figcompareyatx (g).
   \pre `l1` and `l2` intersect; `h1` and  `h2` are not vertical.
@@ -1260,7 +1260,7 @@ Comparison_result compare_y_at_x(const Line_2<Kernel> &l1,
                                  const Line_2<Kernel> &h2);
 
 /*!
-  compares the \f$y\f$-coordinates of \f$p\f$ and the vertical projection
+  compares the \f$ y\f$-coordinates of `p` and the vertical projection
   of `p` on `s`.  If `s` is vertical, then return
   `CGAL::EQUAL` when `p` lies on `s`, `CGAL::SMALLER` when `p` lies
   under {s}, and `CGAL::LARGER` otherwise.
@@ -1271,7 +1271,7 @@ Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
                                  const Segment_2<Kernel> &s);
 
 /*!
-  compares the \f$y\f$-coordinates of the vertical projection 
+  compares the \f$ y\f$-coordinates of the vertical projection 
   of `p` on `s1` and on `s2`.  If `s1` or `s2`
   is vertical, then return `CGAL::EQUAL` if they intersect, otherwise return
   `CGAL::SMALLER` if `s1` lies below `s2`, and return `CGAL::LARGER`
@@ -1342,21 +1342,21 @@ global function are available.
 */
 /// @{
 /*!
-  compares Cartesian \f$ y\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+  compares Cartesian \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
 Comparison_result compare_y(const Point_2<Kernel> &p,
                             const Point_2<Kernel> &q);
 /*!
-  compares Cartesian \f$ y\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+  compares Cartesian \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
 Comparison_result compare_y(const Point_3<Kernel> &p,
                             const Point_3<Kernel> &q);
 
 /*!
-  compares the \f$ y\f$-coordinates of \f$ p\f$ and the intersection of lines
-  \f$ l1\f$ and \f$ l2\f$.
+  compares the \f$ y\f$-coordinates of `p` and the intersection of lines
+  `l1` and `l2`.
   See Figure \ref figcompare13 (a).
 */
 template <typename Kernel>
@@ -1365,8 +1365,8 @@ Comparison_result compare_y(const Point_2<Kernel> &p,
                             const Line_2<Kernel> &l2);
 /*!
 
-  compares the \f$ y\f$-coordinates of the intersection of line \f$ l\f$
-  with line \f$ h1\f$ and with line \f$ h2\f$.
+  compares the \f$ y\f$-coordinates of the intersection of line `l`
+  with line `h1` and with line `h2`.
   See Figure \ref figcompare13 (b).
 */
 template <typename Kernel>
@@ -1374,8 +1374,8 @@ Comparison_result compare_y(const Line_2<Kernel> &l,
                             const Line_2<Kernel> &h1,
                             const Line_2<Kernel> &h2);
 /*!
-  compares the \f$ y\f$-coordinates of the intersection of lines \f$ l1\f$
-  and \f$ l2\f$ and  the intersection of lines \f$ h1\f$ and \f$ h2\f$.
+  compares the \f$ y\f$-coordinates of the intersection of lines `l1`
+  and `l2` and  the intersection of lines `h1` and `h2`.
   See Figure \ref figcompare13 (c).
 */
 template <typename Kernel>
@@ -1401,7 +1401,7 @@ versions are provided.
 */
 /// @{
 /*!
-  compares the \f$ y\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+  compares the \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename CircularKernel>
 Comparison_result 
@@ -1409,7 +1409,7 @@ compare_y(const Circular_arc_point_2<CircularKernel> &p,
           const Circular_arc_point_2<CircularKernel> &q);
 
 /*!
-  compares the \f$ y\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+  compares the \f$ y\f$-coordinates of `p` and `q`.
 */template <typename CircularKernel>
 Comparison_result 
 compare_y(const Circular_arc_point_2<CircularKernel> &p,
@@ -1432,14 +1432,14 @@ is provided.
 */
 /// @{
 /*!
-compares the \f$ y\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
   compare_y(const Circular_arc_point_3<SphericalKernel> &p,
             const Circular_arc_point_3<SphericalKernel> &q);
 /*!
-compares the \f$ y\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
@@ -1537,7 +1537,7 @@ described below.
 /// @{
 
 /*!
-compares the \f$ z\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ z\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
 Comparison_result compare_z(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
@@ -1560,14 +1560,14 @@ function is provided.
 
 
 /*!
-compares the \f$ z\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ z\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
 compare_z(const Circular_arc_point_3<SphericalKernel> &p, const Circular_arc_point_3<SphericalKernel> &q);
 
 /*!
-compares the \f$ z\f$-coordinates of \f$ p\f$ and \f$ q\f$.
+compares the \f$ z\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
@@ -1607,7 +1607,7 @@ compare_yx(const Point_2<Kernel>& p, const Point_2<Kernel>& q);
 /// @{
 
 /*!
-returns `true`, if \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$ are coplanar.
+returns `true`, if `p`, `q`, `r`, and `s` are coplanar.
 */
 template <typename Kernel>
 bool coplanar(const Point_3<Kernel> &p,
@@ -1625,11 +1625,11 @@ const Point_3<Kernel>&s);
 /// @{
 
 /*!
-Let \f$ P\f$ be the plane defined by the points `p`, `q`,
+Let `p` be the plane defined by the points `p`, `q`,
 and `r`. Note that the order defines the orientation of
-\f$ P\f$. The function computes the orientation of points `p`, 
-`q`, and `s` in \f$ P\f$: Iff `p`, `q`, `s` are
-collinear, `CGAL::COLLINEAR` is returned. Iff \f$ P\f$ and the plane 
+`p`. The function computes the orientation of points `p`, 
+`q`, and `s` in `p`: Iff `p`, `q`, `s` are
+collinear, `CGAL::COLLINEAR` is returned. Iff `p` and the plane 
 defined by `p`, `q`, and `s` have the same orientation, 
 `CGAL::POSITIVE` is returned; otherwise `CGAL::NEGATIVE` is returned. 
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear.
@@ -1642,10 +1642,10 @@ const Point_3<Kernel>& s);
 
 /*!
 If `p,q,r` are collinear, then `CGAL::COLLINEAR` is returned.
-If not, then `p,q,r` define a plane \f$ P\f$. The return value in this case is
+If not, then `p,q,r` define a plane `p`. The return value in this case is
 either `CGAL::POSITIVE` or `CGAL::NEGATIVE`, but we don't specify it explicitly.
-However, we guarantee that all calls to this predicate over 3 points in \f$ P\f$
-will return a coherent orientation if considered a 2D orientation in \f$ P\f$.
+However, we guarantee that all calls to this predicate over 3 points in `p`
+will return a coherent orientation if considered a 2D orientation in `p`.
 */
 template <typename Kernel>
 Orientation coplanar_orientation(const Point_3<Kernel>& p,
@@ -1681,7 +1681,7 @@ const Point_3<Kernel>& s);
 /// @{
 
 /*!
-returns the cross product of \f$ u\f$ and \f$ v\f$.
+returns the cross product of `u` and `v`.
 */
 template <typename Kernel>
 Vector_3<Kernel> cross_product( const Vector_3<Kernel>& u, 
@@ -1698,14 +1698,14 @@ const Vector_3<Kernel>& v);
 /// @{
 
 /*!
-returns the determinant of \f$ v\f$ and \f$ w\f$.
+returns the determinant of `v` and `w`.
 */
 template <typename Kernel>
 Kernel::FT determinant(const Vector_2<Kernel>& v,
 const Vector_2<Kernel>& w);
 
 /*!
-returns the determinant of \f$ u\f$, \f$ v\f$ and \f$ w\f$.
+returns the determinant of `u`, `v` and `w`.
 */
 template <typename Kernel>
 Kernel::FT determinant(const Vector_3<Kernel>& u,
@@ -2125,14 +2125,14 @@ Point_3<Kernel> max_vertex( const Iso_cuboid_3<Kernel>& ic );
 /// @{
 
 /*!
-computes the midpoint of the segment \f$ pq\f$.
+computes the midpoint of the segment `pq`.
 */
 template <typename Kernel>
 Point_2<Kernel> midpoint( const Point_2<Kernel>& p,
 const Point_2<Kernel>& q );
 
 /*!
-computes the midpoint of the segment \f$ pq\f$.
+computes the midpoint of the segment `pq`.
 */
 template <typename Kernel>
 Point_3<Kernel> midpoint( const Point_3<Kernel>& p, const Point_3<Kernel>& q );
@@ -2180,10 +2180,10 @@ Vector_3<Kernel> normal( const Point_3<Kernel>& p, const Point_3<Kernel>& q, con
 /// @{
 
 /*!
-returns `CGAL::LEFT_TURN`, if \f$ r\f$ lies to the left of the oriented 
-line \f$ l\f$ defined by \f$ p\f$ and \f$ q\f$, returns `CGAL::RIGHT_TURN` if \f$ r\f$ 
-lies to the right of \f$ l\f$, and returns `CGAL::COLLINEAR` if \f$ r\f$ lies
-on \f$ l\f$.
+returns `CGAL::LEFT_TURN`, if `r` lies to the left of the oriented 
+line `l` defined by `p` and `q`, returns `CGAL::RIGHT_TURN` if `r` 
+lies to the right of `l`, and returns `CGAL::COLLINEAR` if `r` lies
+on `l`.
 */
 template <typename Kernel>
 Orientation orientation(const Point_2<Kernel>& p,
@@ -2191,19 +2191,19 @@ const Point_2<Kernel>& q,
 const Point_2<Kernel>& r);
 
 /*!
-returns `CGAL::LEFT_TURN` if \f$ u\f$ and \f$ v\f$ form a left turn,
-returns `CGAL::RIGHT_TURN` if \f$ u\f$ and \f$ v\f$ form a right turn,
-and returns `CGAL::COLLINEAR` if \f$ u\f$ and \f$ v\f$ are collinear.
+returns `CGAL::LEFT_TURN` if `u` and `v` form a left turn,
+returns `CGAL::RIGHT_TURN` if `u` and `v` form a right turn,
+and returns `CGAL::COLLINEAR` if `u` and `v` are collinear.
 */
 template <typename Kernel>
 Orientation orientation(const Vector_2<Kernel>& u,
 const Vector_2<Kernel>& v);
 
 /*!
-returns `CGAL::POSITIVE`, if \f$ s\f$ lies on the positive side of the oriented 
-plane \f$ h\f$ defined by \f$ p\f$, \f$ q\f$, and \f$ r\f$, returns `CGAL::NEGATIVE` if \f$ s\f$ 
-lies on the negative side of \f$ h\f$, and returns `CGAL::COPLANAR` if \f$ s\f$ lies
-on \f$ h\f$.
+returns `CGAL::POSITIVE`, if `s` lies on the positive side of the oriented 
+plane `h` defined by `p`, `q`, and `r`, returns `CGAL::NEGATIVE` if `s` 
+lies on the negative side of `h`, and returns `CGAL::COPLANAR` if `s` lies
+on `h`.
 */
 template <typename Kernel>
 Orientation orientation(const Point_3<Kernel> &p,
@@ -2212,8 +2212,8 @@ const Point_3<Kernel>&r,
 const Point_3<Kernel>&s);
 
 /*!
-returns `CGAL::NEGATIVE` if \f$ u\f$, \f$ v\f$ and \f$ w\f$ are negatively oriented,
-and returns `CGAL::COPLANAR` if \f$ u\f$, \f$ v\f$ and \f$ w\f$ are coplanar.
+returns `CGAL::NEGATIVE` if `u`, `v` and `w` are negatively oriented,
+and returns `CGAL::COPLANAR` if `u`, `v` and `w` are coplanar.
 */
 template <typename Kernel>
 Orientation orientation(const Vector_3<Kernel> &u,
@@ -2320,7 +2320,7 @@ const Segment_3<Kernel>& s2);
 
 /*!
 returns the radical line of the two circles. 
-\pre \f$ c1\f$ and \f$ c2\f$ are not cocentric.
+\pre `c1` and `c2` are not cocentric.
 */
 template <typename Kernel>
 Line_2<Kernel> radical_line(const Circle_2<Kernel>& c1,
@@ -2360,8 +2360,8 @@ const Point_2<Kernel> &r);
 
 /*!
 returns the relative position of point `t`
-to the circle defined by \f$ p\f$, \f$ q\f$ and \f$ r\f$. The order
-of the points \f$ p\f$, \f$ q\f$ and \f$ r\f$ does not matter.
+to the circle defined by `p`, `q` and `r`. The order
+of the points `p`, `q` and `r` does not matter.
 \pre `p, q` and `r` are not collinear.
 */
 template <typename Kernel>
@@ -2373,7 +2373,7 @@ const Point_2<Kernel> &t);
 
 /*!
 returns the position of the point `t` relative to the circle
-that has \f$ pq\f$ as its diameter.
+that has `pq` as its diameter.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_circle(
@@ -2394,8 +2394,8 @@ const Point_2<Kernel> &t);
 
 /*!
 returns the relative position of point `t`
-to the sphere defined by \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$. The order
-of the points \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$ does not matter.
+to the sphere defined by `p`, `q`, `r`, and `s`. The order
+of the points `p`, `q`, `r`, and `s` does not matter.
 \pre `p, q, r` and `s` are not coplanar.
 */
 template <typename Kernel>
@@ -2408,7 +2408,7 @@ const Point_3<Kernel> &t);
 
 /*!
 returns the position of the point `t` relative to the sphere
-passing through \f$ p\f$, \f$ q\f$, and \f$ r\f$ and whose center is in the plane defined
+passing through `p`, `q`, and `r` and whose center is in the plane defined
 by these three points.
 */
 template <typename Kernel>
@@ -2420,7 +2420,7 @@ const Point_3<Kernel> &t);
 
 /*!
 returns the position of the point `t` relative to the sphere
-that has \f$ pq\f$ as its diameter.
+that has `pq` as its diameter.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_sphere(
@@ -2439,13 +2439,13 @@ const Point_3<Kernel> &t);
 
 /*!
 returns the relative position of point `test`
-to the oriented circle defined by \f$ p\f$, \f$ q\f$ and \f$ r\f$.
-The order of the points \f$ p\f$, \f$ q\f$ and \f$ r\f$ is important,
+to the oriented circle defined by `p`, `q` and `r`.
+The order of the points `p`, `q` and `r` is important,
 since it determines the orientation of the implicitly
 constructed circle.
 
-If \f$ p\f$, \f$ q\f$ and \f$ r\f$ are collinear, the circle degenerates in a line.
-`CGAL::ON_ORIENTED_BOUNDARY` is returned if \f$ test\f$ is also collinear or if two
+If `p`, `q` and `r` are collinear, the circle degenerates in a line.
+`CGAL::ON_ORIENTED_BOUNDARY` is returned if `test` is also collinear or if two
 points are identical, 
 otherwise, `side_of_oriented_circle(r, q, test, p)` is returned.
 
@@ -2469,17 +2469,17 @@ const Point_2<Kernel> &test);
 /// @{
 
 /*!
-returns the relative position of point \f$ test\f$ to the oriented sphere defined
-by \f$ p\f$, \f$ q\f$, \f$ r\f$ and \f$ s\f$. The order of the points \f$ p\f$, \f$ q\f$, \f$ r\f$, and \f$ s\f$ is important,
+returns the relative position of point `test` to the oriented sphere defined
+by `p`, `q`, `r` and `s`. The order of the points `p`, `q`, `r`, and `s` is important,
 since it determines the orientation of the implicitly constructed
-sphere. If the points \f$ p\f$, \f$ q\f$, \f$ r\f$ and \f$ s\f$ are positive oriented, positive side
+sphere. If the points `p`, `q`, `r` and `s` are positive oriented, positive side
 is the bounded interior of the sphere.
 
 In case of degeneracies, `CGAL::ON_ORIENTED_BOUNDARY` is returned
 if all points are coplanar. Otherwise, there is a cyclic permutation of the five points
 that puts four non coplanar points first, it is used to answer the predicate:
-e.g. `side_of_oriented_sphere(q, r, s, test, p)` is returned if \f$ q\f$, \f$ r\f$, \f$ s\f$,
-and \f$ test\f$ are non coplanar. 
+e.g. `side_of_oriented_sphere(q, r, s, test, p)` is returned if `q`, `r`, `s`,
+and `test` are non coplanar. 
 */
 template <typename Kernel>
 Oriented_side side_of_oriented_sphere(
@@ -2497,8 +2497,8 @@ const Point_3<Kernel> &test);
 /// @{
 
 /*!
-returns the squared area of the triangle defined by the points \f$ p\f$,
-\f$ q\f$ and \f$ r\f$. 
+returns the squared area of the triangle defined by the points `p`,
+`q` and `r`. 
 */
 template <typename Kernel>
 Kernel::FT squared_area(const Point_3<Kernel>& p,
@@ -2518,7 +2518,7 @@ const Point_3<Kernel>& r);
 
 /*!
 compute the squared radius of the circle passing through the points
-\f$ p\f$, \f$ q\f$, and \f$ r\f$. \pre \f$ p\f$, \f$ q\f$, and \f$ r\f$ are not collinear.
+`p`, `q`, and `r`. \pre `p`, `q`, and `r` are not collinear.
 */
 template <typename Kernel>
 FT
@@ -2527,8 +2527,8 @@ const Point_2<Kernel>& q,
 const Point_2<Kernel>& r);
 
 /*!
-compute the squared radius of the smallest circle passing through \f$ p\f$,
-and \f$ q\f$, i.e.\ one fourth of the squared distance between \f$ p\f$ and \f$ q\f$.
+compute the squared radius of the smallest circle passing through `p`,
+and `q`, i.e.\ one fourth of the squared distance between `p` and `q`.
 */
 template <typename Kernel>
 FT
@@ -2536,7 +2536,7 @@ squared_radius( const Point_2<Kernel>& p,
 const Point_2<Kernel>& q);
 
 /*!
-compute the squared radius of the smallest circle passing through \f$ p\f$, 
+compute the squared radius of the smallest circle passing through `p`, 
 i.e.\ \f$ 0\f$.
 */
 template <typename Kernel>
@@ -2544,8 +2544,8 @@ FT
 squared_radius( const Point_2<Kernel>& p);
 
 /*!
-compute the squared radius of the sphere passing through the points \f$ p\f$,
-\f$ q\f$, \f$ r\f$ and \f$ s\f$. \pre \f$ p\f$, \f$ q\f$, \f$ r\f$ and \f$ s\f$ are not coplanar.
+compute the squared radius of the sphere passing through the points `p`,
+`q`, `r` and `s`. \pre `p`, `q`, `r` and `s` are not coplanar.
 */
 template <typename Kernel>
 FT
@@ -2555,8 +2555,8 @@ const Point_3<Kernel>& r,
 const Point_3<Kernel>& s);
 
 /*!
-compute the squared radius of the sphere passing through the points \f$ p\f$,
-\f$ q\f$, and \f$ r\f$ and whose center is in the same plane as those three points.
+compute the squared radius of the sphere passing through the points `p`,
+`q`, and `r` and whose center is in the same plane as those three points.
 */
 template <typename Kernel>
 FT
@@ -2565,8 +2565,8 @@ const Point_3<Kernel>& q,
 const Point_3<Kernel>& r);
 
 /*!
-compute the squared radius of the smallest circle passing through \f$ p\f$,
-and \f$ q\f$, i.e.\ one fourth of the squared distance between \f$ p\f$ and \f$ q\f$.
+compute the squared radius of the smallest circle passing through `p`,
+and `q`, i.e.\ one fourth of the squared distance between `p` and `q`.
 */
 template <typename Kernel>
 FT
@@ -2574,7 +2574,7 @@ squared_radius( const Point_3<Kernel>& p,
 const Point_3<Kernel>& q);
 
 /*!
-compute the squared radius of the smallest circle passing through \f$ p\f$, 
+compute the squared radius of the smallest circle passing through `p`, 
 i.e.\ \f$ 0\f$.
 */
 template <typename Kernel>
