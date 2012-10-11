@@ -951,12 +951,8 @@ Comparison_result compare_x(const CGAL::Line_2<Kernel> &l1,
 \details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel.
 
 \code
-#include <CGALCGAL/global_functions_circular_kernel_2.h>
+#include <CGAL/global_functions_circular_kernel_2.h>
 \endcode
-
-If this kernel is used, in addition to the function and the
-combination of 2D types described above, another version of the function
-is provided.
 */
 /// @{
 
@@ -985,10 +981,6 @@ Comparison_result
 \code
 #include <CGAL/global_functions_spherical_kernel_3.h>
 \endcode
-
-If this kernel is used, in addition to the function and the
-combination of 2D types described above, another version of the function
-is provided.
 */
 /// @{
 
@@ -1064,10 +1056,6 @@ compare_xy(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 \code
 #include <CGAL/global_functions_circular_kernel_2.h>
 \endcode
-
-If this kernel is used, in addition to the function and the
-combination of 2D types described above, another version of the
-function is provided.
 */
 /// @{
 
@@ -1099,10 +1087,6 @@ compare_xy(const CGAL::Circular_arc_point_2<CircularKernel> &p,
 \code
 #include <CGAL/global_functions_spherical_kernel_3.h>
 \endcode
-
-If this kernel is used, in addition to the function and the
-combination of 2D types described above, another version of the function
-is provided.
 */
 /// @{
 
@@ -1290,10 +1274,6 @@ Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
   \code 
   #include <CGAL/global_functions_circular_kernel_2.h>
   \endcode
-
-  If this kernel is used, in addition to the function and the
-  combination of 2D types described above, another version of the function
-  is provided.
 */
 /// @{
 
@@ -1394,10 +1374,6 @@ Comparison_result compare_y(const CGAL::Line_2<Kernel> &l1,
 \code
 #include <CGAL/global_functions_circular_kernel_2.h>
 \endcode
-
-If the circular kernel is used, in addition to the function and the
-combination of 2D types of the linear kernel the following overloaded
-versions are provided.
 */
 /// @{
 /*!
@@ -1425,10 +1401,6 @@ compare_y(const CGAL::Circular_arc_point_2<CircularKernel> &p,
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>
 \endcode
-
-If this kernel is used, in addition to the function and the
-combination of 2D types described above, another version of the function
-is provided.
 */
 /// @{
 /*!
@@ -1492,11 +1464,6 @@ compare_xyz(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>
 \endcode
-
-If this kernel is used, in addition to the function and the
-combination of 2D types described above, another version of the
-function is provided.
-
 */
 /// @{
 
@@ -1534,6 +1501,11 @@ described below.
 \sa `CGAL::compare_yx` 
 \sa `CGAL::compare_y_at_x` 
 */
+
+/*!
+\addtogroup compare_z_linear compare_z (2D/3D Linear Kernel)
+\ingroup compare_z
+*/
 /// @{
 
 /*!
@@ -1542,8 +1514,11 @@ compares the \f$ z\f$-coordinates of `p` and `q`.
 template <typename Kernel>
 Comparison_result compare_z(const CGAL::Point_3<Kernel> &p, const CGAL::Point_3<Kernel> &q);
 
+/// @}
+
 /*!
-\name With the 3D Spherical Kernel
+\addtogroup compare_z_spherical compare_z (3D Spherical Kernel)
+\ingroup compare_z
 
 \details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel
 
@@ -1551,13 +1526,13 @@ Comparison_result compare_z(const CGAL::Point_3<Kernel> &p, const CGAL::Point_3<
 #include <CGAL/global_functions_circular_kernel_3.h>
 \endcode
 
-If this kernel is used, in addition to the function and the
-combination of 2D types described above, another version of the
-function is provided.
+*/
+/*!
+
+
 
 */
 /// @{
-
 
 /*!
 compares the \f$ z\f$-coordinates of `p` and `q`.
@@ -1573,7 +1548,6 @@ template <typename SphericalKernel>
 Comparison_result 
 compare_z(const CGAL::Circular_arc_point_3<SphericalKernel> &p, const CGAL::Point_3<SphericalKernel> &q);
 
-/// @}
 /// @}
 
 /// \addtogroup compare_yx compare_yx
@@ -1960,7 +1934,6 @@ const CGAL::Point_3<Kernel>& t);
 
 /// \addtogroup left_turn left_turn
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::collinear` 
 /// \sa `CGAL::orientation` 
 /// \sa `CGAL::right_turn` 
@@ -2002,7 +1975,6 @@ const CGAL::Point_2<Kernel>& q);
 
 /// \addtogroup lexicographically_xy_larger_or_equal lexicographically_xy_larger_or_equal
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::compare_xy` 
 /// \sa `CGAL::lexicographically_xy_larger` 
 /// \sa `CGAL::lexicographically_xy_smaller` 
@@ -2023,7 +1995,6 @@ const CGAL::Point_2<Kernel>& q);
 
 /// \addtogroup lexicographically_xy_smaller lexicographically_xy_smaller
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::compare_xy` 
 /// \sa `CGAL::lexicographically_xy_larger` 
 /// \sa `CGAL::lexicographically_xy_larger_or_equal` 
@@ -2045,7 +2016,6 @@ const CGAL::Point_2<Kernel>& q);
 
 /// \addtogroup lexicographically_xy_smaller_or_equal lexicographically_xy_smaller_or_equal
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::compare_xy` 
 /// \sa `CGAL::lexicographically_xy_larger` 
 /// \sa `CGAL::lexicographically_xy_larger_or_equal` 
@@ -2066,7 +2036,6 @@ const CGAL::Point_2<Kernel>& q);
 
 /// \addtogroup lexicographically_xyz_smaller lexicographically_xyz_smaller
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::compare_xyz` 
 /// \sa `CGAL::lexicographically_xyz_smaller_or_equal` 
 
@@ -2085,7 +2054,6 @@ const CGAL::Point_3<Kernel>& q);
 
 /// \addtogroup lexicographically_xyz_smaller_or_equal lexicographically_xyz_smaller_or_equal
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::compare_xyz` 
 /// \sa `CGAL::lexicographically_xyz_smaller` 
 
@@ -2172,7 +2140,6 @@ CGAL::Vector_3<Kernel> normal( const CGAL::Point_3<Kernel>& p, const CGAL::Point
 
 /// \addtogroup orientation orientation
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::collinear` 
 /// \sa `CGAL::left_turn` 
 /// \sa `CGAL::right_turn` 
@@ -2332,7 +2299,6 @@ const CGAL::Circle_2<Kernel>& c2);
 
 /// \addtogroup right_turn right_turn
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::collinear` 
 /// \sa `CGAL::left_turn` 
 /// \sa `CGAL::orientation` 
@@ -2352,7 +2318,6 @@ const CGAL::Point_2<Kernel> &r);
 
 /// \addtogroup side_of_bounded_circle side_of_bounded_circle
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::coplanar_side_of_bounded_circle` 
 /// \sa `CGAL::side_of_oriented_circle` 
 
@@ -2387,7 +2352,6 @@ const CGAL::Point_2<Kernel> &t);
 
 /// \addtogroup side_of_bounded_sphere side_of_bounded_sphere
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::side_of_oriented_sphere` 
 
 /// @{
@@ -2432,7 +2396,6 @@ const CGAL::Point_3<Kernel> &t);
 
 /// \addtogroup side_of_oriented_circle side_of_oriented_circle
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::side_of_bounded_circle` 
 
 /// @{
@@ -2463,7 +2426,6 @@ const CGAL::Point_2<Kernel> &test);
 
 /// \addtogroup side_of_oriented_sphere side_of_oriented_sphere
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::side_of_bounded_sphere` 
 
 /// @{
@@ -2478,7 +2440,7 @@ is the bounded interior of the sphere.
 In case of degeneracies, `CGAL::ON_ORIENTED_BOUNDARY` is returned
 if all points are coplanar. Otherwise, there is a cyclic permutation of the five points
 that puts four non coplanar points first, it is used to answer the predicate:
-e.g. `side_of_oriented_sphere(q, r, s, test, p)` is returned if `q`, `r`, `s`,
+e.g. `CGAL::side_of_oriented_sphere(q, r, s, test, p)` is returned if `q`, `r`, `s`,
 and `test` are non coplanar. 
 */
 template <typename Kernel>
@@ -2509,8 +2471,7 @@ const CGAL::Point_3<Kernel>& r);
 
 /// \addtogroup squared_radius squared_radius
 /// \ingroup kernel_global_function
-
-/// \sa `CGAL::CGAL::Circle_2<Kernel>` 
+/// \sa `CGAL::Circle_2<Kernel>` 
 /// \sa `CGAL::Circle_3<Kernel>` 
 /// \sa `CGAL::Sphere_3<Kernel>` 
 
@@ -2586,8 +2547,7 @@ squared_radius( const CGAL::Point_3<Kernel>& p);
 
 /// \addtogroup volume volume
 /// \ingroup kernel_global_function
-
-/// \sa `CGAL::CGAL::Tetrahedron_3<Kernel>` 
+/// \sa `CGAL::Tetrahedron_3<Kernel>` 
 
 /// @{
 
@@ -2605,7 +2565,6 @@ Kernel::FT volume(const CGAL::Point_3<Kernel> & p0, const CGAL::Point_3<Kernel> 
 
 /// \addtogroup x_equal x_equal
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::compare_x` 
 /// \sa `CGAL::y_equal` 
 /// \sa `CGAL::z_equal` 
@@ -2634,7 +2593,6 @@ const CGAL::Point_3<Kernel> &q);
 
 /// \addtogroup y_equal y_equal
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::compare_y` 
 /// \sa `CGAL::x_equal` 
 /// \sa `CGAL::z_equal` 
@@ -2662,7 +2620,6 @@ const CGAL::Point_3<Kernel> &q);
 
 /// \addtogroup z_equal z_equal
 /// \ingroup kernel_global_function
-
 /// \sa `CGAL::compare_z` 
 /// \sa `CGAL::x_equal` 
 /// \sa `CGAL::y_equal` 

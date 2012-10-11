@@ -3,6 +3,15 @@ namespace CGAL {
 /*!
 \addtogroup squared_distance squared_distance
 \ingroup kernel_global_function
+2D functions:
+\code
+#include <squared_distance_2.h>
+\endcode
+3D functions:
+\code
+#include <squared_distance_3.h>
+\endcode  
+
 */
 /// @{
 
@@ -32,8 +41,6 @@ following:
 - `Ray_3`
 - `Segment_3`
 - `Plane_3`
-
-\note For the 3D functionality \ref squared_distance_3.h has to be included.
 
 \sa `CGAL::compare_distance_to_point` 
 \sa `CGAL::compare_signed_distance_to_line` 
