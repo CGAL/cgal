@@ -3,8 +3,6 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
-A model `fo` of this type must provide: 
-
 \sa `CircularKernel::ConstructLine_2`
 \sa `CircularKernel::ConstructCircle_2`
 
@@ -13,7 +11,8 @@ A model `fo` of this type must provide:
 class CircularKernel::GetEquation {
 public:
 
-/// \name Operations 
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

@@ -3,16 +3,19 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
-A model `fo` of this type must provide operators to construct 
-a bounding box of geometric objects: 
+A function object concept to construct a bounding box of geometric objects: 
+
+\refines Kernel::ConstructBbox_2
 
 */
 
 class CircularKernel::ConstructBbox_2 {
 public:
 
-/// \name See Also 
+/// \name Operations
+/// A model of this concept must provide: 
 /// @{
+
 
 /*! 
 

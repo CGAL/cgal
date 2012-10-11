@@ -5,14 +5,13 @@
 
 To test whether a point lies in the vertical range of a curve. 
 
-An object `fo` of this type must provide: 
-
 */
 
 class CircularKernel::InXRange_2 {
 public:
 
 /// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

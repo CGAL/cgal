@@ -16,10 +16,17 @@ in two variables `x` and `y` that are models of concept
 class AlgebraicKernelForCircles::RootForCircles_2_2 {
 public:
 
+/// \name Operations
+/// A model of this concept must provide: 
+/// @{
+
 /*! 
 
 */ 
 bool operator ==( const AlgebraicKernelForCircles::RootForCircles_2_2 & p, 
                   const AlgebraicKernelForCircles::RootForCircles_2_2 & q); 
+
+/// @}
+
 }; /* end AlgebraicKernelForCircles::RootForCircles_2_2 */
 

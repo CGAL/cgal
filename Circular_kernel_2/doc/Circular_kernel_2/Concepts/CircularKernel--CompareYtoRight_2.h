@@ -3,16 +3,17 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
-An object `fo` of this type must provide operators that compare vertically 
-two arcs on the right side of a common point `p`: 
+A function object concept to compare vertically two arcs on the right side of a common point `p`: 
 
 */
 
 class CircularKernel::CompareYtoRight_2 {
 public:
 
-/// \name See Also 
+/// \name Operations
+/// A model of this concept must provide: 
 /// @{
+
 
 /*! 
 For two circular arcs. 

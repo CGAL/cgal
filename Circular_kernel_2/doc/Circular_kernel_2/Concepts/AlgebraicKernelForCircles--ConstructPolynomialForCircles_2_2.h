@@ -3,8 +3,6 @@
 \ingroup PkgCircularKernel2AlgebraicConcepts
 \cgalconcept
 
-A model `fo` of this type must provide: 
-
 \sa `CircularKernel::ConstructCircle_2`
 \sa `CircularKernel::GetEquation`
 
@@ -13,7 +11,8 @@ A model `fo` of this type must provide:
 class AlgebraicKernelForCircles::ConstructPolynomialForCircles_2_2 {
 public:
 
-/// \name See Also 
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

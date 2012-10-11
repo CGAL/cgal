@@ -22,10 +22,17 @@ are of a type that is a model of the concept
 class AlgebraicKernelForCircles::PolynomialForCircles_2_2 {
 public:
 
+/// \name Operations
+/// A model of this concept must provide: 
+/// @{
+
 /*! 
 
 */ 
 bool operator ==(AlgebraicKernelForCircles::const PolynomialForCircles_2_2 & p, 
-                 const AlgebraicKernelForCircles::PolynomialForCircles_2_2 & q); 
+                 const AlgebraicKernelForCircles::PolynomialForCircles_2_2 & q);
+
+/// @}
+
 }; /* end AlgebraicKernelForCircles::PolynomialForCircles_2_2 */
 

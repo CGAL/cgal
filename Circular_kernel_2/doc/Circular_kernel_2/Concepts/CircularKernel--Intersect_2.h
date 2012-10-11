@@ -5,7 +5,7 @@
 
 \refines `Kernel::Intersect_2`
 
-\sa `CGAL::intersection`
+\sa \ref CGAL::intersection
 
 */
 
@@ -13,26 +13,25 @@ class CircularKernel::Intersect_2 {
 public:
 
 /// \name Operations
-/// A model `fo` of this type must provide: where `Type_1` and
-/// `Type_2` can both be either <UL> <LI> `CircularKernel::Line_2` or
-/// <LI> `CircularKernel::Line_arc_2` or <LI>
-/// `CircularKernel::Circle_2` or <LI>
-/// `CircularKernel::Circular_arc_2`. </UL> Depending on the types
-/// `Type_1` and `Type_2`, these elements can be assigned to <UL> <LI>
-/// `std::pair<CircularKernel::Circular_arc_point_2, unsigned>`, where
-/// the unsigned integer is the multiplicity of the corresponding
-/// intersection point between `obj_1` and `obj_2`, <LI>
-/// `CircularKernel::Circular_arc_2` in case of an overlap of two
-/// circular arcs, <LI> `CircularKernel::Line_arc_2` in case of an
-/// overlap of two line segments or <LI> `CircularKernel::Line_2` or
-/// `CircularKernel::Circle_2` in case of two equal input lines or
-/// circles. </UL>
+/// A model of this concept must provide:
 /// @{
 
 /*! 
 Copies in the output iterator the intersection elements between the 
 two objects. `intersections` iterates on 
-elements of type `CGAL::Object`, in lexicographic order. 
+elements of type `CGAL::Object`, in lexicographic order.
+
+`Type_1` and `Type_2` can both be either:
+- `CircularKernel::Line_2`
+- `CircularKernel::Line_arc_2`
+- `CircularKernel::Circle_2`
+-`CircularKernel::Circular_arc_2`.
+
+Depending on the types `Type_1` and `Type_2`, these elements can be assigned to
+- `std::pair<CircularKernel::Circular_arc_point_2, unsigned>`, where the unsigned integer is the multiplicity of the corresponding intersection point between `obj_1` and `obj_2`, 
+- `CircularKernel::Circular_arc_2` in case of an overlap of two circular arcs, 
+- `CircularKernel::Line_arc_2` in case of an overlap of two line segments or 
+- `CircularKernel::Line_2` or `CircularKernel::Circle_2` in case of two equal input lines or circles.
 */ 
 template < class OutputIterator > 
 OutputIterator 

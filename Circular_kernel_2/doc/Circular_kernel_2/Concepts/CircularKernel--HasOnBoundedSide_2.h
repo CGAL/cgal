@@ -13,8 +13,8 @@
 class CircularKernel::HasOnBoundedSide_2 {
 public:
 
-/// \name Operations 
-/// An object `fo` of this type must provide:
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

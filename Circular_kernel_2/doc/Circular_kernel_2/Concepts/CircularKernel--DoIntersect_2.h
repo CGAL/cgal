@@ -15,15 +15,17 @@ class CircularKernel::DoIntersect_2 {
 public:
 
 /// \name Operations
-/// An object `fo` of this type must provide: for all pairs `Type1`
-/// and `Type2`, where the types `Type1` and `Type2` can be any of the
-/// following: <UL> <LI> `CircularKernel::Line_2` <LI>
-/// `CircularKernel::Line_arc_2` <LI> `CircularKernel::Circle_2` <LI>
-/// `CircularKernel::Circular_arc_2` </UL>
+/// A model of this concept must provide:
 /// @{
 
 /*! 
-determines if two geometric objects of type Type1 and Type2 intersect or not. 
+determines if two geometric objects of type `Type1` and `Type2` intersect or not,
+for all pairs `Type1` and `Type2`, where the types `Type1` and `Type2` can be any of the
+following: 
+- `CircularKernel::Line_2`
+- `CircularKernel::Line_arc_2`
+- `CircularKernel::Circle_2`
+- `CircularKernel::Circular_arc_2`
 */ 
 bool operator() 
 (const Type1 & obj1, const Type2 & obj2); 

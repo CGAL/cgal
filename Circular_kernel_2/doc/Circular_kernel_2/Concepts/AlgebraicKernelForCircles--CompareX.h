@@ -1,9 +1,7 @@
 
 /*!
-\ingroup PkgCircularKernel2GeometricConcepts
+\ingroup PkgCircularKernel2AlgebraicConcepts
 \cgalconcept
-
-A model `fo` of this type must provide: 
 
 \sa `AlgebraicKernelForCircles::CompareY`
 \sa `AlgebraicKernelForCircles::CompareXY`
@@ -14,7 +12,8 @@ A model `fo` of this type must provide:
 class AlgebraicKernelForCircles::CompareX {
 public:
 
-/// \name See Also 
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

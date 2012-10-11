@@ -3,13 +3,6 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
-A model `fo` of this type must provide: 
-
-For the sake of completeness, the `operator()` must also be 
-defined for a 
-`Line_arc_2`. In this case, the input line arc itself is the only 
-arc returned through the `OutputIterator`. 
-
 \sa `CircularKernel::MakeXMonotone_2`
 
 */
@@ -17,7 +10,8 @@ arc returned through the `OutputIterator`.
 class CircularKernel::MakeXYMonotone_2 {
 public:
 
-/// \name See Also 
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

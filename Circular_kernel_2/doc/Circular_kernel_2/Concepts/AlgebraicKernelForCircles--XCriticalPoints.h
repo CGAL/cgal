@@ -11,7 +11,7 @@ class AlgebraicKernelForCircles::XCriticalPoints {
 public:
 
 /// \name Operations
-/// A model `fo` of this type must provide:
+/// A model of this concept must provide: 
 /// @{
 
 /*! 

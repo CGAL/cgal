@@ -14,8 +14,8 @@
 class CircularKernel::CompareXY_2 {
 public:
 
-/// \name Operations 
-/// An object `fo` of this type must provide in addition:
+/// \name Operations
+/// A model of this concept must provide: 
 /// @{
 
 /*! 

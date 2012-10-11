@@ -3,14 +3,13 @@
 \ingroup PkgCircularKernel2AlgebraicConcepts
 \cgalconcept
 
-A model `fo` of this type must provide: 
-
 */
 
 class AlgebraicKernelForCircles::SignAt {
 public:
 
 /// \name Operations
+/// A model of this concept must provide: 
 /// @{
 
 /*! 

@@ -3,14 +3,13 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
-A model `fo` of this type must provide: 
-
 */
 
 class CircularKernel::Split_2 {
 public:
 
-/// \name See Also 
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

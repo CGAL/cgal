@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgCircularKernel2GeometricConcepts
+\ingroup PkgCircularKernel2AlgebraicConcepts
 \cgalconcept
 
 \sa `AlgebraicKernelForCircles::CompareX`
@@ -13,7 +13,7 @@ class AlgebraicKernelForCircles::CompareY {
 public:
 
 /// \name Operations
-/// A model `fo` of this type must provide:
+/// A model of this concept must provide:
 /// @{
 
 /*! 

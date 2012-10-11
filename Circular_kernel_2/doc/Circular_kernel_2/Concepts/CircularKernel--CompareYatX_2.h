@@ -3,15 +3,15 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
-An object `fo` of this type must provide two operators that compare 
-a point `p` and an arc `a` on the vertical line passing through `p`. 
+A function object concept to compare a point `p` and an arc `a` on the vertical line passing through `p`. 
 
 */
 
 class CircularKernel::CompareYatX_2 {
 public:
 
-/// \name See Also 
+/// \name Operations
+/// A model of this concept must provide: 
 /// @{
 
 /*! 

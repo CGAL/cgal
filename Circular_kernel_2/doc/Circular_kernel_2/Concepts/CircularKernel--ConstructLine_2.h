@@ -13,7 +13,7 @@ class CircularKernel::ConstructLine_2 {
 public:
 
 /// \name Operations
-///  A model `fo` of this type must provide:
+/// A model of this concept must provide:
 /// @{
 
 /*! 

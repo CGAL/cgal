@@ -3,14 +3,13 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
-An object `fo` of this type must provide: 
-
 */
 
 class CircularKernel::IsXMonotone_2 {
 public:
 
-/// \name Operations 
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

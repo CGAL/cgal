@@ -17,10 +17,7 @@ class CircularKernel::Equal_2 {
 public:
 
 /// \name Operations
-/// An object `fo` of this type must provide in addition: For the
-/// sake of completeness, the `operator()` must also be defined for a
-/// `Line_arc_2` and a `Circular_arc_2` as arguments (in any order),
-/// and it always returns `false`.
+/// A model of this concept must provide:
 /// @{
 
 /*! 
