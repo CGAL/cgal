@@ -128,48 +128,25 @@ bool do_intersect(Type1 obj1, Type2 obj2, Type3 obj3);
 \ingroup kernel_global_function
 
 \brief 
-\details Depending on which \cgal kernel is used, different versions of this
-global function are available.
+\details Depending on which \cgal kernel is used, different overloads of this global
+function are available.
 */
 
 
 /*!
-\addtogroup intersection_linear intersection (Linear Kernel)
+\addtogroup intersection_linear intersection (2D/3D Linear Kernel)
 \ingroup intersection
-\brief
-
-### Example ###
-
-The following example demonstrates the most common use of 
-`intersection` routines with the 2D and 3D Linear %Kernel.
 
 \code
 #include <CGAL/intersections.h>
-
-void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
-{
-    CGAL::Object result = CGAL::intersection(seg, line);
-    if (const CGAL::Point_2<Kernel> *ipoint = CGAL::object_cast<CGAL::Point_2<Kernel> >(&result)) {
-        // handle the point intersection case with *ipoint.
-    } else
-        if (const CGAL::Segment_2<Kernel> *iseg = CGAL::object_cast<CGAL::Segment_2<Kernel> >(&result)) {
-            // handle the segment intersection case with *iseg.
-        } else {
-            // handle the no intersection case.
-        }
-}
 \endcode
 
-Examples illustrating the use of this function in the case of the 2D
-Circular %Kernel and the 3D Spherical %Kernel are presented respectively
-in Chapters \ref Chapter_2D_Circular_Geometry_Kernel and \ref
-Chapter_3D_Spherical_Geometry_Kernel.
-
-
+\sa intersection_circular
+\sa intersection_spherical
 \sa `CGAL::do_intersect` 
 \sa `CGAL::Object` 
 
-\details See Chapter  \ref chapterkernel23
+\details See Chapter  \ref chapterkernel23 for details on a linear kernel instantiation.
 */
 /// @{
 
@@ -363,6 +340,29 @@ p    <TD>Point_3, or Segment_3</TD>
 </TR>
 </TABLE>
 </DIV>
+
+### Example ###
+
+The following example demonstrates the most common use of 
+`intersection` routines with the 2D and 3D Linear %Kernel.
+
+\code
+#include <CGAL/intersections.h>
+
+void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
+{
+    CGAL::Object result = CGAL::intersection(seg, line);
+    if (const CGAL::Point_2<Kernel> *ipoint = CGAL::object_cast<CGAL::Point_2<Kernel> >(&result)) {
+        // handle the point intersection case with *ipoint.
+    } else
+        if (const CGAL::Segment_2<Kernel> *iseg = CGAL::object_cast<CGAL::Segment_2<Kernel> >(&result)) {
+            // handle the segment intersection case with *iseg.
+        } else {
+            // handle the no intersection case.
+        }
+}
+\endcode
+
 */
 Object intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);
 
@@ -377,17 +377,22 @@ Object intersection(const Plane_3<Kernel>& pl1,
 /// @}
 
 /*!
-\addtogroup intersection_circular intersection (Circular Kernel)
+\addtogroup intersection_circular intersection (2D Circular Kernel)
 \ingroup intersection
-\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel
 
 \code
 #include <CGAL/Circular_kernel_intersections.h>
 \endcode
 
-If this kernel is used, in addition to the function and the
-combination of 2D types described above, another version of the function
-is provided.
+\sa intersection_linear
+\sa intersection_spherical
+\sa `CGAL::do_intersect` 
+\sa `CGAL::Object`
+
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel for details on a circular kernel instantiation.
+
+When using a circular kernel, in addition to the function overloads documented \ref intersection_linear "here",
+the following function overloads are also available.
 
 Since both the number of intersections, if any, and their type,
 depend on the arguments, the function returns an output
@@ -431,17 +436,22 @@ intersection(const Type1 &obj1, const Type2 &obj2,
 /// @}
 
 /*!
-\addtogroup intersection_spherical intersection (Spherical Kernel)
+\addtogroup intersection_spherical intersection (3D Spherical Kernel)
 \ingroup intersection
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel
 
 \code
 #include <CGAL/Spherical_kernel_intersections.h>
 \endcode
 
-If this kernel is used, in addition to the function and the
-combination of 3D types described above, two other versions of the function
-are provided.
+\sa intersection_linear
+\sa intersection_circular
+\sa `CGAL::do_intersect` 
+\sa `CGAL::Object`
+
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel for details on a spherical kernel instantiation.
+
+When using a spherical kernel, in addition to the function overloads documented \ref intersection_linear "here",
+the following function overloads are also available.
 
 Since both the number of intersections, if any, and their type,
 depend on the arguments, the functions return an output
