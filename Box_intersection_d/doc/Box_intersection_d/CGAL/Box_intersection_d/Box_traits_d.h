@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Box_intersection_d {
 /*!
-\ingroup PkgBoxIntersectionD
+\ingroup PkgBoxIntersectionDClasses
 
 This is the default traits class for the intersection algorithms for 
 iso-oriented boxes. There are actually three versions depending on the 
@@ -24,9 +24,9 @@ const-pointer `const B*`, where `B` is a model of the
 
 \models ::BoxIntersectionTraits_d 
 
-\sa `CGAL::box_intersection_d` 
-\sa `CGAL::box_self_intersection_d` 
-\sa `CGAL::box_intersection_all_pairs_d` 
+\sa `CGAL::box_intersection_d()` 
+\sa `CGAL::box_self_intersection_d()` 
+\sa `CGAL::box_intersection_all_pairs_d()` 
 \sa `BoxIntersectionBox_d` 
 \sa `CGAL::Box_intersection_d::Box_d<NT,int D,IdPolicy>` 
 
@@ -46,5 +46,18 @@ Box_traits_d();
 /// @}
 
 }; /* end Box_traits_d */
+
+
+/*!
+\ingroup PkgBoxIntersectionDFunctions
+*/
+enum Setting  { COMPLETE, BIPARTITE };
+
+/*!
+\ingroup PkgBoxIntersectionDFunctions
+*/
+enum Topology { HALF_OPEN, CLOSED };
+
+
 } /* Box_intersection_d */
 } /* end namespace CGAL */

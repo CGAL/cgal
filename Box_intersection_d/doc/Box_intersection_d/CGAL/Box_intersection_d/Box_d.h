@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Box_intersection_d {
 /*!
-\ingroup PkgBoxIntersectionD
+\ingroup PkgBoxIntersectionDClasses
 
 `Box_d` is a generic iso-oriented bounding box in dimension \f$ D\f$. 
 It provides in each dimension an interval with lower and upper 
@@ -29,14 +29,14 @@ the box and automatically created and assigned at construction
 time of the box. Note that copying a box (copy-constructor and 
 assignment) does not create a new `id`-number but keeps 
 the old one, which is the behavior needed by the 
-`CGAL::box_self_intersection` algorithm. This is therefore 
+`CGAL::box_self_intersection_3()` algorithm. This is therefore 
 the safe default implementation. 
 <LI>`ID_FROM_BOX_ADDRESS`: casts the address of the box into a 
 `std::ptrdiff_t` to create the `id`-number. Works fine 
 if the intersection algorithms work effectively with pointers 
 to boxes, but not in the case where the algorithms work with 
 box values, because the algorithms modify the order of the 
-boxes, and the `CGAL::box_self_intersection` algorithm 
+boxes, and the `CGAL::box_self_intersection_d()` algorithm 
 creates copies of the boxes that would not have identical 
 `id`-numbers. 
 </UL> 

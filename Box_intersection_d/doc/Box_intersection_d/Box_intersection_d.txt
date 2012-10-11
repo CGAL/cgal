@@ -40,7 +40,7 @@ and \cite cgal:ze-fsbi-02 for more details.
 \section secboxintersdef Definition 
 
 A \f$ d\f$-dimensional iso-oriented box is defined as the
-Cartesian product of \f$ d\f$ intervals. We call the
+%Cartesian product of \f$ d\f$ intervals. We call the
 box <I>half-open</I> if the \f$ d\f$ intervals \f$ \{ [lo_i,hi_i) \,|\, 0 \leq
 i < d\}\f$ are half-open intervals, and we call the box <I>closed</I> if
 the \f$ d\f$ intervals \f$ \{ [lo_i,hi_i] \,|\, 0 \leq i < d\}\f$ are closed
@@ -288,7 +288,7 @@ just converting from the `double` to the `float`
 representation incurs rounding that needs to be controlled properly,
 otherwise the box might shrink and one might miss intersections.
 
-\section secboxintersparams Example Using the topology and the cutoff Parameters 
+\section secboxintersparams Example Using the Topology and the Cutoff Parameters 
 
 Boxes can be interpreted by the box intersection algorithm as closed
 or as half-open boxes, see also Section \ref secboxintersdef. Closed
@@ -411,7 +411,7 @@ remainder of the example stays the same and we omit the part from the
 previous example for brevity that illustrates the half-open box topology.
 
 The requirements for the box implementation are best studied on
-page \ref ccRef_BoxIntersectionBox_d in the Reference Manual. In a
+the reference manual page of `BoxIntersectionBox_d`. In a
 nutshell, we have to define the type `NT` for the box coordinates
 and the type `ID` for the `id`-number. Member functions
 give access to the coordinates and the `id`-number. A static
@@ -435,7 +435,7 @@ from above, i.e., points are reported if their distance is smaller
 than `2*eps`.
 
 The requirements for the box traits class are best studied on
-page \ref ccRef_BoxIntersectionTraits_d in the Reference Manual. In a
+the reference manual page of  `BoxIntersectionTraits_d`. In a
 nutshell, we have to define the type `NT` for the box coordinates,
 the type `ID` for the `id`-number, and the type `Box_parameter`
 similar to the box handle, here `Point_3*` since we work with the pointers.

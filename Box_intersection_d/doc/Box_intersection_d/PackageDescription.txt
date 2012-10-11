@@ -1,9 +1,27 @@
 /// \defgroup PkgBoxIntersectionD Intersecting Sequences of dD Iso-oriented Boxes Reference
 /// \defgroup PkgBoxIntersectionDConcepts Concepts
 /// \ingroup PkgBoxIntersectionD
+
+/// \defgroup PkgBoxIntersectionDClasses Classes
+/// \ingroup PkgBoxIntersectionD
+
+/// \defgroup PkgBoxIntersectionD_box_intersection_d box_intersection_d
+/// \ingroup PkgBoxIntersectionD
+
+
+/// \defgroup PkgBoxIntersectionD_box_intersection_all_pairs_d box_intersection_all_pairs_d
+/// \ingroup PkgBoxIntersectionD
+
+/// \defgroup PkgBoxIntersectionD_box_self_intersection_d box_self_intersection_d
+/// \ingroup PkgBoxIntersectionD
+
+/// \defgroup PkgBoxIntersectionD_box_self_intersection_all_pairs_d box_self_intersection_all_pairs_d
+/// \ingroup PkgBoxIntersectionD
 /*!
 \addtogroup PkgBoxIntersectionD
-\todo check generated documentation
+
+\todo de-math and change D to d for the dimension
+
 \PkgDescriptionBegin{Intersecting Sequences of dD Iso-oriented Boxes,PkgBoxIntersectionDSummary}
 \PkgPicture{box_inters-small.gif}
 \PkgAuthors{Lutz Kettner, Andreas Meyer, and Afra Zomorodian}

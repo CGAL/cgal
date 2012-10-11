@@ -1,13 +1,12 @@
 namespace CGAL {
 
 /*!
-  \page box_intersection_all_pairs_d box_intersection_all_pairs_d
+  \addtogroup  PkgBoxIntersectionD_box_intersection_all_pairs_d
 
   The function `box_intersection_all_pairs_d` computes the pairwise intersecting boxes 
   between two sequences of iso-oriented boxes in arbitrary dimension. 
   It does so by comparing all possible pairs of boxes and is thus 
-  inferior to the fast `CGAL::box_intersection_d` algorithm on page 
-  \ref ccRef_CGALbox_intersection_d. 
+  inferior to the fast `CGAL::box_intersection_d` algorithm. 
 
   The sequences of boxes are given with two forward iterator ranges. The 
   sequences are not modified. For each intersecting pair of boxes a 
@@ -21,7 +20,7 @@ namespace CGAL {
   either our box type or a pointer type to our box type. 
 
   A \f$ d\f$-dimensional iso-oriented box is defined as the 
-  Cartesian product of \f$ d\f$ intervals. We call the 
+  %Cartesian product of \f$ d\f$ intervals. We call the 
   box <I>half-open</I> if the \f$ d\f$ intervals \f$ \{ [lo_i,hi_i) \,|\, 0 \leq 
   i < d\}\f$ are half-open intervals, and we call the box <I>closed</I> if 
   the \f$ d\f$ intervals \f$ \{ [lo_i,hi_i] \,|\, 0 \leq i < d\}\f$ are closed 
@@ -65,7 +64,7 @@ namespace CGAL {
 */
 
 /*!
-  \page box_intersection_d box_intersection_d
+  \addtogroup  PkgBoxIntersectionD_box_intersection_d
 
   The function `box_intersection_d` computes the pairwise intersecting boxes 
   between two sequences of iso-oriented boxes in arbitrary dimension. 
@@ -87,7 +86,7 @@ namespace CGAL {
   const pointer) to the box type. 
 
   A \f$ d\f$-dimensional iso-oriented box is defined as the 
-  Cartesian product of \f$ d\f$ intervals. We call the 
+  %Cartesian product of \f$ d\f$ intervals. We call the 
   box <I>half-open</I> if the \f$ d\f$ intervals \f$ \{ [lo_i,hi_i) \,|\, 0 \leq 
   i < d\}\f$ are half-open intervals, and we call the box <I>closed</I> if 
   the \f$ d\f$ intervals \f$ \{ [lo_i,hi_i] \,|\, 0 \leq i < d\}\f$ are closed 
@@ -210,14 +209,13 @@ namespace CGAL {
 */
 
 /*!
-  \ingroup PkgBoxIntersectionD
+  \ingroup PkgBoxIntersectionD_box_intersection_all_pairs_d
 
   Invocation of box intersection with default box traits
   `CGAL::Box_intersection_d::Box_traits_d<Box_handle>`, where
   `Box_handle` corresponds to the iterator value type of
   `ForwardIterator1`.
 
-  See \ref box_intersection_all_pairs_d.
 */
 template< class ForwardIterator1, 
           class ForwardIterator2, 
@@ -226,14 +224,13 @@ void box_intersection_all_pairs_d(
   ForwardIterator1 begin1, ForwardIterator1 end1,
   ForwardIterator2 begin2, ForwardIterator2 end2,
   Callback callback,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
+  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
 
 /*!
-  \ingroup PkgBoxIntersectionD
+  \ingroup PkgBoxIntersectionD_box_intersection_all_pairs_d
 
   Invocation with custom box traits.
 
-  See \ref box_intersection_all_pairs_d.
 */
 template< class ForwardIterator1,
           class ForwardIterator2,
@@ -243,21 +240,20 @@ void box_intersection_all_pairs_d(
   ForwardIterator2 begin2, ForwardIterator2 end2,
   Callback callback,
   BoxTraits box_traits,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
+  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
 
 } /* namespace CGAL */
 
 namespace CGAL {
 
 /*!
-  \ingroup PkgBoxIntersectionD
+  \ingroup PkgBoxIntersectionD_box_intersection_d
 
   Invocation of box intersection with default box traits
   `CGAL::Box_intersection_d::Box_traits_d<Box_handle>`, where
   `Box_handle` corresponds to the iterator value type of
   `RandomAccessIterator1`.
 
-  See \ref box_intersection_d.
 
 */
 template< class RandomAccessIterator1, 
@@ -268,15 +264,13 @@ void box_intersection_d(
   RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
   Callback callback,
   std::ptrdiff_t cutoff = 10,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
-  Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE);
+  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED,
+  CGAL::Box_intersection_d::Setting setting = CGAL::Box_intersection_d::BIPARTITE);
 
 /*!
-  \ingroup PkgBoxIntersectionD
+  \ingroup PkgBoxIntersectionD_box_intersection_d
 
   Invocation with custom box traits.
-
-  See \ref box_intersection_d.
 
 */
 template< class RandomAccessIterator1,
@@ -288,20 +282,19 @@ void box_intersection_d(
   Callback callback,
   BoxTraits box_traits,
   std::ptrdiff_t cutoff = 10,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
-  Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE);
+  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED,
+  CGAL::Box_intersection_d::Setting setting = CGAL::Box_intersection_d::BIPARTITE);
 
 } /* namespace CGAL */
 
 namespace CGAL {
 
 /*!
-  \page box_self_intersection_all_pairs_d box_self_intersection_all_pairs_d
+  \addtogroup  PkgBoxIntersectionD_box_self_intersection_all_pairs_d
   The function `box_self_intersection_all_pairs_d` computes the pairwise intersecting boxes 
   in a sequence of iso-oriented boxes in arbitrary dimension. 
   It does so by comparing all possible pairs of boxes and is thus 
-  inferior to the fast `CGAL::box_self_intersection_d` algorithm on 
-  page \ref ccRef_CGALbox_self_intersection_d. 
+  inferior to the fast `CGAL::box_self_intersection_d` algorithm. 
 
   The sequence of boxes is given with a forward iterator range. The 
   sequences are not modified. For each intersecting pair of boxes a 
@@ -314,7 +307,7 @@ namespace CGAL {
   either our box type or a pointer type to our box type. 
 
   A \f$ d\f$-dimensional iso-oriented box is defined as the 
-  Cartesian product of \f$ d\f$ intervals. We call the 
+  %Cartesian product of \f$ d\f$ intervals. We call the 
   box <I>half-open</I> if the \f$ d\f$ intervals \f$ \{ [lo_i,hi_i) \,|\, 0 \leq 
   i < d\}\f$ are half-open intervals, and we call the box <I>closed</I> if 
   the \f$ d\f$ intervals \f$ \{ [lo_i,hi_i] \,|\, 0 \leq i < d\}\f$ are closed 
@@ -367,27 +360,25 @@ namespace CGAL {
 */
 
 /*!
-  \ingroup PkgBoxIntersectionD
+  \ingroup PkgBoxIntersectionD_box_self_intersection_all_pairs_d
 
   Invocation of box intersection with default box traits
   `CGAL::Box_intersection_d::Box_traits_d<Box_handle>`, where
   `Box_handle` corresponds to the iterator value type of
   `ForwardIterator`.
 
-  See \ref box_self_intersection_all_pairs_d.
 
 */
 template< class ForwardIterator, class Callback >
 void box_self_intersection_all_pairs_d(
   ForwardIterator begin, ForwardIterator end,
   Callback callback,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
+  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
 
 /*!
-  \ingroup PkgBoxIntersectionD
+  \ingroup PkgBoxIntersectionD_box_self_intersection_all_pairs_d
   Invocation with custom box traits.
 
-  See \ref box_self_intersection_all_pairs_d.
 
 */
 template< class ForwardIterator,
@@ -396,14 +387,14 @@ void box_self_intersection_all_pairs_d(
   ForwardIterator begin, ForwardIterator end,
   Callback callback,
   BoxTraits box_traits,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
+  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
 
 } /* namespace CGAL */
 
 namespace CGAL {
 
 /*!
-  \page box_self_intersection_d box_self_intersection_d
+  \addtogroup  PkgBoxIntersectionD_box_self_intersection_d 
   The function `box_self_intersection_d` computes the pairwise intersecting boxes 
   in a sequence of iso-oriented boxes in arbitrary dimension. 
   The sequence of boxes is given with as a random-access iterator 
@@ -413,8 +404,7 @@ namespace CGAL {
   box from the sequence, the second argument is a copy of a box from the 
   sequence. The performance of the algorithm can be tuned with a 
   `cutoff` parameter, see the implementation section of the 
-  `CGAL::box_intersection_d` function on page 
-  \ref ccRef_CGALbox_intersection_d. 
+  `CGAL::box_intersection_d` function. 
 
   The algorithm creates a second copy of the boxes and reorders the 
   boxes in the course of the algorithm. Now, depending on the size of a 
@@ -426,7 +416,7 @@ namespace CGAL {
   box type. 
 
   A \f$ d\f$-dimensional iso-oriented box is defined as the 
-  Cartesian product of \f$ d\f$ intervals. We call the 
+  %Cartesian product of \f$ d\f$ intervals. We call the 
   box <I>half-open</I> if the \f$ d\f$ intervals \f$ \{ [lo_i,hi_i) \,|\, 0 \leq 
   i < d\}\f$ are half-open intervals, and we call the box <I>closed</I> if 
   the \f$ d\f$ intervals \f$ \{ [lo_i,hi_i] \,|\, 0 \leq i < d\}\f$ are closed 
@@ -483,7 +473,7 @@ namespace CGAL {
   ### Implementation ###
 
   See the implementation section of the `CGAL::box_intersection_d` 
-  function on page \ref ccRef_CGALbox_intersection_d. 
+  function.
 
   ### Example ###
 
@@ -505,14 +495,12 @@ namespace CGAL {
 */
 
 /*!
-  \ingroup PkgBoxIntersectionD
+  \ingroup PkgBoxIntersectionD_box_self_intersection_d
 
   Invocation of box intersection with default box traits
   `CGAL::Box_intersection_d::Box_traits_d<Box_handle>`, where
   `Box_handle` corresponds to the iterator value type of
   `RandomAccessIterator`.
-
-  See \ref box_self_intersection_d.
 
 */
 template< class RandomAccessIterator, class Callback >
@@ -520,15 +508,12 @@ void box_self_intersection_d(
   RandomAccessIterator begin, RandomAccessIterator end,
   Callback callback,
   std::ptrdiff_t cutoff = 10,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
+  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
 
 /*!
-  \ingroup PkgBoxIntersectionD
+  \ingroup PkgBoxIntersectionD_box_self_intersection_d
 
   Invocation with custom box traits.
-
-  See \ref box_self_intersection_d.
-
 */
 template< class RandomAccessIterator,
           class Callback, class BoxTraits >
@@ -537,6 +522,6 @@ void box_self_intersection_d(
   Callback callback,
   BoxTraits box_traits,
   std::ptrdiff_t cutoff = 10,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED);
+  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
 
 } /* namespace CGAL */

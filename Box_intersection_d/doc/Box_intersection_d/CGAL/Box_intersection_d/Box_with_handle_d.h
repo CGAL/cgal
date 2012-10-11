@@ -2,7 +2,7 @@ namespace CGAL {
 namespace Box_intersection_d {
 
 /*!
-\ingroup PkgBoxIntersectionD
+\ingroup PkgBoxIntersectionDClasses
 
 `Box_with_handle_d` is a generic iso-oriented bounding box in dimension \f$ D\f$ 
 that stores additionally a handle to some underlying geometric object. 
@@ -32,14 +32,14 @@ the box and automatically created and assigned at construction
 time of the box. Note that copying a box (copy-constructor and 
 assignment) does not create a new `id`-number but keeps 
 the old one, which is the behavior needed by the 
-`CGAL::box_self_intersection` algorithm. This is therefore 
+`CGAL::box_self_intersection_d()` algorithm. This is therefore 
 the safe default implementation. 
 <LI>`ID_FROM_BOX_ADDRESS`: casts the address of the box into a 
 `std::ptrdiff_t` to create the `id`-number. Works fine 
 if the intersection algorithms work effectively with pointers 
 to boxes, but not in the case where the algorithms work with 
 box values, because the algorithms modify the order of the 
-boxes, and the `CGAL::box_self_intersection` algorithm 
+boxes, and the `CGAL::box_self_intersection_d()` algorithm 
 creates copies of the boxes that would not have identical 
 `id`-numbers. 
 <LI>`ID_FROM_HANDLE`: casts the address of the value of the 
@@ -98,8 +98,8 @@ Box_with_handle_d();
 
 /*! 
 initializes to the 
-complete or the empty space. If empty, all interval starting(end) 
-points will be set to positive(negative) infinity, sets handle to \f$ h\f$. 
+complete or the empty space. If empty, all interval starting (end) 
+points will be set to positive (negative) infinity, sets handle to \f$ h\f$. 
 */ 
 Box_with_handle_d(bool complete, Handle h); 
 
