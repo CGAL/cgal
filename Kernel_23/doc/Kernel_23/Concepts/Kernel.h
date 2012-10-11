@@ -1702,7 +1702,7 @@ public:
 introduces a sphere initialized to the sphere with center `center`, 
 squared radius `squared_radius` and orientation 
 `orientation`. 
-\pre `orientation` \f$ \neq\f$ `COPLANAR`, and furthermore, `squared_radius` \f$ \geq\f$ 0. 
+\pre `orientation` \f$ \neq\f$ \ref CGAL::COPLANAR, and furthermore, `squared_radius` \f$ \geq\f$ 0. 
 */ 
 Kernel::Sphere_3 operator()(const Kernel::Point_3 & center, 
 const Kernel::FT & squared_radius, 
@@ -1723,7 +1723,7 @@ const Kernel::Point_3 & s);
 /*! 
 introduces a sphere initialized to the smallest sphere which passes 
 through the points `p`, `q`, and `r`. The orientation of 
-the sphere is `o`. \pre `o` is not `COPLANAR`. 
+the sphere is `o`. \pre `o` is not \ref CGAL::COPLANAR. 
 */ 
 Kernel::Sphere_3 operator()(const Kernel::Point_3 & p, 
 const Kernel::Point_3 & q, 
@@ -1733,7 +1733,7 @@ const Orientation& o = COUNTERCLOCKWISE);
 /*! 
 introduces a sphere initialized to the smallest sphere which passes 
 through the points `p` and `q`. The orientation of 
-the sphere is `o`. \pre `o` is not `COPLANAR`. 
+the sphere is `o`. \pre `o` is not \ref CGAL::COPLANAR. 
 */ 
 Kernel::Sphere_3 operator()(const Kernel::Point_3 & p, 
 const Kernel::Point_3 & q, 
@@ -1742,7 +1742,7 @@ const Orientation & o = COUNTERCLOCKWISE);
 /*! 
 introduces a sphere `s` initialized to the sphere with center 
 `center`, squared radius zero and orientation `orientation`. 
-\pre `orientation` \f$ \neq\f$ `COPLANAR`. 
+\pre `orientation` \f$ \neq\f$ \ref CGAL::COPLANAR. 
 \post `s.is_degenerate()` = `true`. 
 */ 
 Kernel::Sphere_3 operator()( const Kernel::Point_3 & center, 
@@ -2199,8 +2199,8 @@ const Kernel::Line_2 &h2);
 /*! 
 compares the `y`-coordinates of `p` and the vertical projection 
 of `p` on `s`. If `s` is vertical, then return 
-`EQUAL` when `p` lies on `s`, `SMALLER` when `p` lies 
-under s, and `LARGER` otherwise. 
+\ref CGAL::EQUAL when `p` lies on `s`, \ref CGAL::SMALLER when `p` lies 
+under s, and \ref CGAL::LARGER otherwise. 
 
 \pre `p` is within the x range of `s`. 
 */ 
@@ -2210,8 +2210,8 @@ const Kernel::Segment_2 &s);
 /*! 
 This function compares the \f$ y\f$-coordinates of the vertical projection 
 of `p` on `s1` and on `s2`. If `s1` or `s2` 
-is vertical, then return `EQUAL` if they intersect, otherwise return 
-`SMALLER` if `s1` lies below `s2`, and return `LARGER` 
+is vertical, then return \ref CGAL::EQUAL if they intersect, otherwise return 
+\ref CGAL::SMALLER if `s1` lies below `s2`, and return \ref CGAL::LARGER 
 otherwise. 
 
 \pre `p` is within the x range of `s1` and `s2`. 
@@ -2692,27 +2692,27 @@ public:
 /// @{
 
 /*! 
-returns either `ON_UNBOUNDED_SIDE`, 
-`ON_BOUNDED_SIDE`, or the constant 
-`ON_BOUNDARY`, depending on where point `p` is relative to 
+returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
+\ref CGAL::ON_BOUNDED_SIDE, or the constant 
+\ref CGAL::ON_BOUNDARY, depending on where point `p` is relative to 
 circle `c`. 
 */ 
 Bounded_side operator()(const Kernel::Circle_2&c, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns either `ON_UNBOUNDED_SIDE`, 
-`ON_BOUNDED_SIDE`, or the constant 
-`ON_BOUNDARY`, depending on where point `p` is relative to 
+returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
+\ref CGAL::ON_BOUNDED_SIDE, or the constant 
+\ref CGAL::ON_BOUNDARY, depending on where point `p` is relative to 
 triangle `t`. 
 */ 
 Bounded_side operator()(const Kernel::Triangle_2& t, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns either `ON_UNBOUNDED_SIDE`, 
-`ON_BOUNDED_SIDE`, or the constant 
-`ON_BOUNDARY`, depending on where point `p` is relative to 
+returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
+\ref CGAL::ON_BOUNDED_SIDE, or the constant 
+\ref CGAL::ON_BOUNDARY, depending on where point `p` is relative to 
 rectangle `r`. 
 */ 
 Bounded_side operator()(const Kernel::Iso_rectangle_2& r, 
@@ -3303,24 +3303,24 @@ public:
 
 
 /*! 
-returns `ON_ORIENTED_BOUNDARY`, 
-`ON_NEGATIVE_SIDE`, or the constant `ON_POSITIVE_SIDE`, 
+returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+\ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
 depending on the position of `p` relative to the oriented circle `c`. 
 */ 
 Oriented_side operator()(const Kernel::Circle_2&c, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns `ON_ORIENTED_BOUNDARY`, 
-`ON_NEGATIVE_SIDE`, or the constant `ON_POSITIVE_SIDE`, 
+returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+\ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
 depending on the position of `p` relative to the oriented line `l`. 
 */ 
 Oriented_side operator()(const Kernel::Line_2&l, 
 const Kernel::Point_2&p); 
 
 /*! 
-returns `ON_ORIENTED_BOUNDARY`, 
-`ON_NEGATIVE_SIDE`, or the constant `ON_POSITIVE_SIDE`, 
+returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+\ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
 depending on the position of `p` relative to the oriented triangle `t`. 
 */ 
 Oriented_side operator()(const Kernel::Triangle_2&t, 
@@ -3704,7 +3704,7 @@ public:
 /// @{
 
 /*! 
-returns `OBTUSE`, `RIGHT` or `ACUTE` depending 
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
 on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of 
 the angle). 
 */ 
@@ -6081,27 +6081,27 @@ public:
 /// @{
 
 /*! 
-returns either `ON_UNBOUNDED_SIDE`, 
-`ON_BOUNDED_SIDE`, or the constant 
-`ON_BOUNDARY`, depending on where point `p` is with 
+returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
+\ref CGAL::ON_BOUNDED_SIDE, or the constant 
+\ref CGAL::ON_BOUNDARY, depending on where point `p` is with 
 respect to sphere `s`. 
 */ 
 Bounded_side operator()(const Kernel::Sphere_3& s, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns either `ON_UNBOUNDED_SIDE`, 
-`ON_BOUNDED_SIDE`, or the constant 
-`ON_BOUNDARY`, depending on where point `p` is with 
+returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
+\ref CGAL::ON_BOUNDED_SIDE, or the constant 
+\ref CGAL::ON_BOUNDARY, depending on where point `p` is with 
 respect to tetrahedron `t`. 
 */ 
 Bounded_side operator()(const Kernel::Tetrahedron_3& t, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns either `ON_UNBOUNDED_SIDE`, 
-`ON_BOUNDED_SIDE`, or the constant 
-`ON_BOUNDARY`, depending on where point `p` is with 
+returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
+\ref CGAL::ON_BOUNDED_SIDE, or the constant 
+\ref CGAL::ON_BOUNDARY, depending on where point `p` is with 
 respect to iso-cuboid `c`. 
 */ 
 Bounded_side operator()(const Kernel::Iso_cuboid_3& c, 
@@ -6185,9 +6185,9 @@ public:
 
 /*! 
 introduces a direction orthogonal to `d`. If `o` is 
-`CLOCKWISE`, `d` is rotated clockwise; if `o` is 
-`COUNTERCLOCKWISE`, `d` is rotated counterclockwise. 
-\pre `o` is not `COLLINEAR`. 
+\ref CGAL::CLOCKWISE, `d` is rotated clockwise; if `o` is 
+\ref CGAL::COUNTERCLOCKWISE, `d` is rotated counterclockwise. 
+\pre `o` is not \ref CGAL::COLLINEAR. 
 */ 
 Kernel::Direction_2 operator()(const Kernel::Direction_2& d, 
 Orientation o); 
@@ -6366,9 +6366,9 @@ public:
 /// @{
 
 /*! 
-returns `LEFT_TURN`, if `r` lies to the left of the oriented 
-line `l` defined by `p` and `q`, returns `RIGHT_TURN` if `r` 
-lies to the right of `l`, and returns `COLLINEAR` if `r` lies 
+returns \ref CGAL::LEFT_TURN, if `r` lies to the left of the oriented 
+line `l` defined by `p` and `q`, returns \ref CGAL::RIGHT_TURN if `r` 
+lies to the right of `l`, and returns \ref CGAL::COLLINEAR if `r` lies 
 on `l`. 
 */ 
 Orientation operator()(const Kernel::Point_2&p, 
@@ -6376,9 +6376,9 @@ const Kernel::Point_2&q,
 const Kernel::Point_2&r); 
 
 /*! 
-returns `LEFT_TURN` if `u` and `v` form a left turn, 
-returns `RIGHT_TURN` if `u` and `v` form a right turn, 
-and returns `COLLINEAR` if `u` and `v` are collinear. 
+returns \ref CGAL::LEFT_TURN if `u` and `v` form a left turn, 
+returns \ref CGAL::RIGHT_TURN if `u` and `v` form a right turn, 
+and returns \ref CGAL::COLLINEAR if `u` and `v` are collinear. 
 */ 
 Orientation operator()(const Kernel::Vector_2&u, 
 const Kernel::Vector_2&v); 
@@ -6997,7 +6997,7 @@ constructed sphere. If the points `p`, `q`, `r` and `s`
 are positive oriented, positive side is the bounded interior 
 of the sphere. 
 
-In case of degeneracies, `ON_ORIENTED_BOUNDARY` is returned 
+In case of degeneracies, \ref CGAL::ON_ORIENTED_BOUNDARY is returned 
 if all points are coplanar. Otherwise, there is a cyclic permutation of the five points 
 that puts four non coplanar points first, it is used to answer the predicate: 
 e.g. `side_of_oriented_sphere(q, r, s, t, p)` is returned if `q`, `r`, `s`, 
@@ -7588,9 +7588,9 @@ public:
 /// @{
 
 /*! 
-returns `POSITIVE`, if `s` lies on the positive side of the oriented 
-plane `h` defined by `p`, `q`, and `r`, returns `NEGATIVE` if `s` 
-lies on the negative side of `h`, and returns `COPLANAR` if `s` lies 
+returns \ref CGAL::POSITIVE, if `s` lies on the positive side of the oriented 
+plane `h` defined by `p`, `q`, and `r`, returns \ref CGAL::NEGATIVE if `s` 
+lies on the negative side of `h`, and returns \ref CGAL::COPLANAR if `s` lies 
 on `h`. 
 */ 
 Orientation operator()(const Kernel::Point_3&p, 
@@ -7599,9 +7599,9 @@ const Kernel::Point_3&r,
 const Kernel::Point_3&s); 
 
 /*! 
-returns `POSITIVE` if `u`, `v` and `w` are positively oriented, 
-returns `NEGATIVE` if `u`, `v` and `w` are negatively oriented, 
-and returns `COPLANAR` if `u`, `v` and `w` are coplanar. 
+returns \ref CGAL::POSITIVE if `u`, `v` and `w` are positively oriented, 
+returns \ref CGAL::NEGATIVE if `u`, `v` and `w` are negatively oriented, 
+and returns \ref CGAL::COPLANAR if `u`, `v` and `w` are coplanar. 
 */ 
 Orientation operator()(const Kernel::Vector_3&u, 
 const Kernel::Vector_3&v, 
@@ -7988,24 +7988,24 @@ public:
 /// @{
 
 /*! 
-returns `ON_ORIENTED_BOUNDARY`, 
-`ON_NEGATIVE_SIDE`, or the constant `ON_POSITIVE_SIDE`, 
+returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+\ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
 depending on the position of `p` relative to the oriented plane `h`. 
 */ 
 Oriented_side operator()(const Kernel::Plane_3&h, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns `ON_ORIENTED_BOUNDARY`, 
-`ON_NEGATIVE_SIDE`, or the constant `ON_POSITIVE_SIDE`, 
+returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+\ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
 depending on the position of `p` relative to the oriented tetrahedron `t`. 
 */ 
 Oriented_side operator()(const Kernel::Tetrahedron_3&t, 
 const Kernel::Point_3&p); 
 
 /*! 
-returns `ON_ORIENTED_BOUNDARY`, 
-`ON_NEGATIVE_SIDE`, or the `ON_POSITIVE_SIDE`, 
+returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+\ref CGAL::ON_NEGATIVE_SIDE, or the \ref CGAL::ON_POSITIVE_SIDE, 
 depending on the position of `p` relative to the oriented sphere `s`. 
 */ 
 Oriented_side operator()(const Kernel::Sphere_3& s, 
@@ -8067,7 +8067,7 @@ introduces a variable of type `Kernel::Circle_2`.
 It is initialized to the circle with center `center`, 
 squared radius `squared_radius` and orientation 
 `orientation`. 
-\pre `orientation` \f$ \neq\f$ `COLLINEAR`, and further, `squared_radius` \f$ \geq\f$ 0. 
+\pre `orientation` \f$ \neq\f$ \ref CGAL::COLLINEAR, and further, `squared_radius` \f$ \geq\f$ 0. 
 */ 
 Kernel::Circle_2 operator()( Kernel::Point_2 const& center, 
 Kernel::FT const& squared_radius, 
@@ -8092,7 +8092,7 @@ Kernel::Point_2 const& r);
 introduces a variable of type `Kernel::Circle_2`. 
 It is initialized to the circle with diameter `pq` 
 and orientation `orientation`. 
-\pre `orientation` \f$ \neq\f$ `COLLINEAR`. 
+\pre `orientation` \f$ \neq\f$ \ref CGAL::COLLINEAR. 
 */ 
 Kernel::Circle_2 operator()( Kernel::Point_2 const& p, 
 Kernel::Point_2 const& q, 
@@ -8104,7 +8104,7 @@ Orientation const& orientation
 introduces a variable of type `Kernel::Circle_2`. 
 It is initialized to the circle with center `center`, squared 
 radius zero and orientation `orientation`. 
-\pre `orientation` \f$ \neq\f$ `COLLINEAR`. 
+\pre `orientation` \f$ \neq\f$ \ref CGAL::COLLINEAR. 
 \post .`is_degenerate()` = `true`. 
 */ 
 Kernel::Circle_2 operator()( Kernel::Point_2 const& center, 
@@ -8275,14 +8275,14 @@ public:
 
 
 /*! 
-returns `OBTUSE`, `RIGHT` or `ACUTE` depending 
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
 on the angle formed by the two vectors `u` and `v`. 
 */ 
 Angle operator()(const Kernel::Vector_2&u, 
 const Kernel::Vector_2&v); 
 
 /*! 
-returns `OBTUSE`, `RIGHT` or `ACUTE` depending 
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
 on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of 
 the angle). The returned value is the same as `operator()(p - q, r - q)`. 
 */ 
@@ -8291,7 +8291,7 @@ const Kernel::Point_2&q,
 const Kernel::Point_2&r); 
 
 /*! 
-returns `OBTUSE`, `RIGHT` or `ACUTE` depending 
+returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
 on the angle formed by the two vectors `pq`, `rs`. The returned value is 
 the same as `operator()(q - p, s - r)`. 
 */ 
@@ -8474,8 +8474,8 @@ public:
 
 /*! 
 returns `v` rotated clockwise by 90 degrees, if `o` is 
-`CLOCKWISE`, and rotated counterclockwise otherwise. 
-\pre `o` is not `COLLINEAR`. 
+\ref CGAL::CLOCKWISE, and rotated counterclockwise otherwise. 
+\pre `o` is not \ref CGAL::COLLINEAR. 
 
 */ 
 Kernel::Vector_2 operator()(const Kernel::Vector_2& v, 
@@ -8509,9 +8509,9 @@ Let `p` be the plane defined by the points `p`, `q`,
 and `r`. Note that the order defines the orientation of 
 `p`. The function computes the orientation of points `p`, 
 `q`, and `s` in `p`: Iff `p`, `q`, `s` are 
-collinear, `COLLINEAR` is returned. Iff `p` and the plane 
+collinear, \ref CGAL::COLLINEAR is returned. Iff `p` and the plane 
 defined by `p`, `q`, and `s` have the same orientation, 
-`POSITIVE` is returned; otherwise `NEGATIVE` is returned. 
+\ref CGAL::POSITIVE is returned; otherwise \ref CGAL::NEGATIVE is returned. 
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear. 
 */ 
 Orientation operator()(const Kernel::Point_3&p, 
@@ -8520,9 +8520,9 @@ const Kernel::Point_3&r,
 const Kernel::Point_3&s); 
 
 /*! 
-If `p,q,r` are collinear, then `COLLINEAR` is returned. 
+If `p,q,r` are collinear, then \ref CGAL::COLLINEAR is returned. 
 If not, then `p,q,r` define a plane `p`. The return value in this case is 
-either `POSITIVE` or `NEGATIVE`, but we don't specify it explicitly. 
+either \ref CGAL::POSITIVE or \ref CGAL::NEGATIVE, but we don't specify it explicitly. 
 However, we guarantee that all calls to this predicate over 3 points in `p` 
 will return a coherent orientation if considered a 2D orientation in `p`. 
 */ 
@@ -8912,7 +8912,7 @@ since it determines the orientation of the implicitly
 constructed circle. 
 
 If `p`, `q` and `r` are collinear, the circle degenerates in a line. 
-`ON_ORIENTED_BOUNDARY` is returned if `t` is also collinear or if two 
+\ref CGAL::ON_ORIENTED_BOUNDARY is returned if `t` is also collinear or if two 
 points are identical, 
 otherwise, `side_of_oriented_circle(r, q, t, p)` is returned. 
 
