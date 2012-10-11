@@ -13,8 +13,8 @@ returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the two vectors `u` and `v`.
 */
 template <typename Kernel>
-Angle angle(const Vector_2<Kernel>&u, 
-const Vector_2<Kernel>&v);
+Angle angle(const CGAL::Vector_2<Kernel>&u, 
+const CGAL::Vector_2<Kernel>&v);
 
 /*!
 
@@ -23,9 +23,9 @@ on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of
 the angle). The returned value is the same as `angle(p - q, r - q)`.
 */
 template <typename Kernel>
-Angle angle(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r);
+Angle angle(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r);
 
 /*!
 
@@ -34,10 +34,10 @@ on the angle formed by the two vectors `pq`, `rs`. The returned value is
 the same as `angle(q - p, s - r)`.
 */
 template <typename Kernel>
-Angle angle(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r,
-const Point_2<Kernel>& s);
+Angle angle(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r,
+const CGAL::Point_2<Kernel>& s);
 
 /*!
 
@@ -46,9 +46,9 @@ on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of
 the angle).
 */
 template <typename Kernel>
-Angle angle(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r);
+Angle angle(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r);
 
 /// @}
 
@@ -60,7 +60,7 @@ const Point_3<Kernel>& r);
 computes the unit normal vector for the vectors `q-p` and `r-p`.
 \pre The points `p`, `q`, and `r` must not be collinear.
 */
-Vector_3<Kernel> unit_normal( const Point_3<Kernel>& p, const Point_3<Kernel>& q, const Point_3<Kernel>& r );
+CGAL::Vector_3<Kernel> unit_normal( const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q, const CGAL::Point_3<Kernel>& r );
 
 /// @}
 
@@ -74,9 +74,9 @@ returns the signed area of the triangle defined by the points `p`,
 `q` and `r`. 
 */
 template <typename Kernel>
-Kernel::FT area(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r);
+Kernel::FT area(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r);
 
 /// @}
 
@@ -95,9 +95,9 @@ Note that `true` is returned, if `q==p` or
 `q==r`.
 */
 template <typename Kernel>
-bool are_ordered_along_line(const Point_2<Kernel> &p, 
-const Point_2<Kernel> &q, 
-const Point_2<Kernel> &r);
+bool are_ordered_along_line(const CGAL::Point_2<Kernel> &p, 
+const CGAL::Point_2<Kernel> &q, 
+const CGAL::Point_2<Kernel> &r);
 
 /*!
 returns `true`, iff the three points are collinear and 
@@ -106,9 +106,9 @@ Note that `true` is returned, if `q==p` or
 `q==r`.
 */
 template <typename Kernel>
-bool are_ordered_along_line(const Point_3<Kernel> &p, 
-const Point_3<Kernel> &q, 
-const Point_3<Kernel> &r);
+bool are_ordered_along_line(const CGAL::Point_3<Kernel> &p, 
+const CGAL::Point_3<Kernel> &q, 
+const CGAL::Point_3<Kernel> &r);
 
 
 /// @}
@@ -127,9 +127,9 @@ Note that `false` is returned, if `q==p` or
 `q==r`.
 */
 template <typename Kernel>
-bool are_strictly_ordered_along_line(const Point_2<Kernel> &p, 
-const Point_2<Kernel> &q, 
-const Point_2<Kernel> &r);
+bool are_strictly_ordered_along_line(const CGAL::Point_2<Kernel> &p, 
+const CGAL::Point_2<Kernel> &q, 
+const CGAL::Point_2<Kernel> &r);
 
 /*!
 returns `true`, iff the three points are collinear and 
@@ -138,9 +138,9 @@ Note that `false` is returned, if `q==p` or
 `q==r`.
 */
 template <typename Kernel>
-bool are_strictly_ordered_along_line(const Point_3<Kernel> &p, 
-const Point_3<Kernel> &q, 
-const Point_3<Kernel> &r);
+bool are_strictly_ordered_along_line(const CGAL::Point_3<Kernel> &p, 
+const CGAL::Point_3<Kernel> &q, 
+const CGAL::Point_3<Kernel> &r);
 
 /// @}
 
@@ -154,120 +154,120 @@ compute the barycenter of the points `p1` and `p2` with corresponding
 weights `w1` and `1-w1`.
 */
 template <typename Kernel>
-Point_2<Kernel>
-barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
-const Point_2<Kernel>& p2);
+CGAL::Point_2<Kernel>
+barycenter( const CGAL::Point_2<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_2<Kernel>& p2);
 
 /*!
 compute the barycenter of the points `p1` and `p2` with corresponding
 weights `w1` and `w2`. \pre `w1+w2 != 0`.
 */
 template <typename Kernel>
-Point_2<Kernel>
-barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
-const Point_2<Kernel>& p2, const Kernel::FT&w2);
+CGAL::Point_2<Kernel>
+barycenter( const CGAL::Point_2<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_2<Kernel>& p2, const Kernel::FT&w2);
 
 /*!
 compute the barycenter of the points `p1`, `p2` and `p3` with corresponding
 weights `w1`, `w2` and `1-w1-w2`.
 */
 template <typename Kernel>
-Point_2<Kernel>
-barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
-const Point_2<Kernel>& p2, const Kernel::FT&w2,
-const Point_2<Kernel>& p3);
+CGAL::Point_2<Kernel>
+barycenter( const CGAL::Point_2<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_2<Kernel>& p2, const Kernel::FT&w2,
+const CGAL::Point_2<Kernel>& p3);
 
 /*!
 compute the barycenter of the points `p1`, `p2` and `p3` with corresponding
 weights `w1`, `w2` and `w3`. \pre `w1+w2+w3 != 0`.
 */
 template <typename Kernel>
-Point_2<Kernel>
-barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
-const Point_2<Kernel>& p2, const Kernel::FT&w2,
-const Point_2<Kernel>& p3, const Kernel::FT&w3);
+CGAL::Point_2<Kernel>
+barycenter( const CGAL::Point_2<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_2<Kernel>& p2, const Kernel::FT&w2,
+const CGAL::Point_2<Kernel>& p3, const Kernel::FT&w3);
 
 /*!
 compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding
 weights `w1`, `w2`, `w3` and `1-w1-w2-w3`.
 */
 template <typename Kernel>
-Point_2<Kernel>
-barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
-const Point_2<Kernel>& p2, const Kernel::FT&w2,
-const Point_2<Kernel>& p3, const Kernel::FT&w3,
-const Point_2<Kernel>& p4);
+CGAL::Point_2<Kernel>
+barycenter( const CGAL::Point_2<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_2<Kernel>& p2, const Kernel::FT&w2,
+const CGAL::Point_2<Kernel>& p3, const Kernel::FT&w3,
+const CGAL::Point_2<Kernel>& p4);
 
 /*!
 compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding
 weights `w1`, `w2`, `w3` and `w4`. \pre `w1+w2+w3+w4 != 0`.
 */
 template <typename Kernel>
-Point_2<Kernel>
-barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
-const Point_2<Kernel>& p2, const Kernel::FT&w2,
-const Point_2<Kernel>& p3, const Kernel::FT&w3,
-const Point_2<Kernel>& p4, const Kernel::FT&w4);
+CGAL::Point_2<Kernel>
+barycenter( const CGAL::Point_2<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_2<Kernel>& p2, const Kernel::FT&w2,
+const CGAL::Point_2<Kernel>& p3, const Kernel::FT&w3,
+const CGAL::Point_2<Kernel>& p4, const Kernel::FT&w4);
 
 /*!
 compute the barycenter of the points `p1` and `p2` with corresponding
 weights `w1` and `1-w1`.
 */
 template <typename Kernel>
-Point_3<Kernel>
-barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
-const Point_3<Kernel>& p2);
+CGAL::Point_3<Kernel>
+barycenter( const CGAL::Point_3<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_3<Kernel>& p2);
 
 /*!
 compute the barycenter of the points `p1` and `p2` with corresponding
 weights `w1` and `w2`. \pre `w1+w2 != 0`.
 */
 template <typename Kernel>
-Point_3<Kernel>
-barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
-const Point_3<Kernel>& p2, const Kernel::FT&w2);
+CGAL::Point_3<Kernel>
+barycenter( const CGAL::Point_3<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_3<Kernel>& p2, const Kernel::FT&w2);
 
 /*!
 compute the barycenter of the points `p1`, `p2` and `p3` with corresponding
 weights `w1`, `w2` and `1-w1-w2`.
 */
 template <typename Kernel>
-Point_3<Kernel>
-barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
-const Point_3<Kernel>& p2, const Kernel::FT&w2,
-const Point_3<Kernel>& p3);
+CGAL::Point_3<Kernel>
+barycenter( const CGAL::Point_3<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_3<Kernel>& p2, const Kernel::FT&w2,
+const CGAL::Point_3<Kernel>& p3);
 
 /*!
 compute the barycenter of the points `p1`, `p2` and `p3` with corresponding
 weights `w1`, `w2` and `w3`. \pre `w1+w2+w3 != 0`.
 */
 template <typename Kernel>
-Point_3<Kernel>
-barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
-const Point_3<Kernel>& p2, const Kernel::FT&w2,
-const Point_3<Kernel>& p3, const Kernel::FT&w3);
+CGAL::Point_3<Kernel>
+barycenter( const CGAL::Point_3<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_3<Kernel>& p2, const Kernel::FT&w2,
+const CGAL::Point_3<Kernel>& p3, const Kernel::FT&w3);
 
 /*!
 compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding
 weights `w1`, `w2`, `w3` and `1-w1-w2-w3`.
 */
 template <typename Kernel>
-Point_3<Kernel>
-barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
-const Point_3<Kernel>& p2, const Kernel::FT&w2,
-const Point_3<Kernel>& p3, const Kernel::FT&w3,
-const Point_3<Kernel>& p4);
+CGAL::Point_3<Kernel>
+barycenter( const CGAL::Point_3<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_3<Kernel>& p2, const Kernel::FT&w2,
+const CGAL::Point_3<Kernel>& p3, const Kernel::FT&w3,
+const CGAL::Point_3<Kernel>& p4);
 
 /*!
 compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding
 weights `w1`, `w2`, `w3` and `w4`. \pre `w1+w2+w3+w4 != 0`.
 */
 template <typename Kernel>
-Point_3<Kernel>
-barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
-const Point_3<Kernel>& p2, const Kernel::FT&w2,
-const Point_3<Kernel>& p3, const Kernel::FT&w3,
-const Point_3<Kernel>& p4, const Kernel::FT&w4);
+CGAL::Point_3<Kernel>
+barycenter( const CGAL::Point_3<Kernel>& p1, const Kernel::FT&w1,
+const CGAL::Point_3<Kernel>& p2, const Kernel::FT&w2,
+const CGAL::Point_3<Kernel>& p3, const Kernel::FT&w3,
+const CGAL::Point_3<Kernel>& p4, const Kernel::FT&w4);
 
 /// @}
 
@@ -281,8 +281,8 @@ The bisector is oriented in such a way that `p` lies on its
 positive side. \pre `p` and `q` are not equal.
 */
 template <typename Kernel>
-Line_2<Kernel> bisector(const Point_2<Kernel> &p,
-const Point_2<Kernel> &q);
+CGAL::Line_2<Kernel> bisector(const CGAL::Point_2<Kernel> &p,
+const CGAL::Point_2<Kernel> &q);
 
 /*!
 constructs the bisector of the two lines `l1` and `l2`.
@@ -296,8 +296,8 @@ This function requires that `Kernel::RT` supports the `sqrt()`
 operation.
 */
 template <typename Kernel>
-Line_2<Kernel> bisector(const Line_2<Kernel> &l1,
-const Line_2<Kernel> &l2);
+CGAL::Line_2<Kernel> bisector(const CGAL::Line_2<Kernel> &l1,
+const CGAL::Line_2<Kernel> &l2);
 
 /*!
 constructs the bisector plane of the two points `p` and `q`.
@@ -305,8 +305,8 @@ The bisector is oriented in such a way that `p` lies on its
 positive side. \pre `p` and `q` are not equal.
 */
 template <typename Kernel>
-Plane_3<Kernel> bisector(const Point_3<Kernel> &p,
-const Point_3<Kernel> &q);
+CGAL::Plane_3<Kernel> bisector(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel> &q);
 
 /*!
 constructs the bisector of the two planes `h1` and `h2`.
@@ -320,8 +320,8 @@ This function requires that `Kernel::RT` supports the `sqrt()`
 operation.
 */
 template <typename Kernel>
-Plane_3<Kernel> bisector(const Plane_3<Kernel> &h1,
-const Plane_3<Kernel> &h2);
+CGAL::Plane_3<Kernel> bisector(const CGAL::Plane_3<Kernel> &h1,
+const CGAL::Plane_3<Kernel> &h2);
 
 /// @}
 
@@ -334,60 +334,60 @@ const Plane_3<Kernel> &h2);
 compute the centroid of the points `p`, `q`, and `r`.
 */
 template <typename Kernel>
-Point_2<Kernel>
-centroid( const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r);
+CGAL::Point_2<Kernel>
+centroid( const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r);
 
 /*!
 compute the centroid of the points `p`, `q`, `r`, and `s`.
 */
 template <typename Kernel>
-Point_2<Kernel>
-centroid( const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r,
-const Point_2<Kernel>& s);
+CGAL::Point_2<Kernel>
+centroid( const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r,
+const CGAL::Point_2<Kernel>& s);
 
 /*!
 compute the centroid of the triangle `t`.
 */
 template <typename Kernel>
-Point_2<Kernel>
-centroid( const Triangle_2<Kernel>& t);
+CGAL::Point_2<Kernel>
+centroid( const CGAL::Triangle_2<Kernel>& t);
 
 /*!
 compute the centroid of the points `p`, `q`, and `r`.
 */
 template <typename Kernel>
-Point_3<Kernel>
-centroid( const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r);
+CGAL::Point_3<Kernel>
+centroid( const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r);
 
 /*!
 compute the centroid of the points `p`, `q`, `r`, and `s`.
 */
 template <typename Kernel>
-Point_3<Kernel>
-centroid( const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r,
-const Point_3<Kernel>& s);
+CGAL::Point_3<Kernel>
+centroid( const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
+const CGAL::Point_3<Kernel>& s);
 
 /*!
 compute the centroid of the triangle `t`.
 */
 template <typename Kernel>template <typename Kernel>
-Point_3<Kernel>
-centroid( const Triangle_3<Kernel>& t);
+CGAL::Point_3<Kernel>
+centroid( const CGAL::Triangle_3<Kernel>& t);
 
 /*!
 compute the centroid of the tetrahedron `t`.
 */
 template <typename Kernel>
-Point_3<Kernel>
-centroid( const Tetrahedron_3<Kernel>& t);
+CGAL::Point_3<Kernel>
+centroid( const CGAL::Tetrahedron_3<Kernel>& t);
 
 /// @}
 
@@ -401,27 +401,27 @@ compute the center of the smallest circle passing through the points `p` and
 for homogeneity. 
 */
 template <typename Kernel>
-Point_2<Kernel>
-circumcenter( const Point_2<Kernel>& p,
-const Point_2<Kernel>& q);
+CGAL::Point_2<Kernel>
+circumcenter( const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q);
 
 /*!
 compute the center of the circle passing through the points `p`, `q`, and `r`.
 \pre `p`, `q`, and `r` are not collinear.
 */
 template <typename Kernel>
-Point_2<Kernel>
-circumcenter( const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r);
+CGAL::Point_2<Kernel>
+circumcenter( const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r);
 
 /*!
 compute the center of the circle passing through the vertices of `t`.
 \pre `t` is not degenerate.
 */
 template <typename Kernel>
-Point_2<Kernel>
-circumcenter( const Triangle_2<Kernel>& t);
+CGAL::Point_2<Kernel>
+circumcenter( const CGAL::Triangle_2<Kernel>& t);
 
 /*!
 compute the center of the smallest sphere passing through the points `p` and
@@ -429,46 +429,46 @@ compute the center of the smallest sphere passing through the points `p` and
 for homogeneity. 
 */
 template <typename Kernel>
-Point_3<Kernel>
-circumcenter( const Point_3<Kernel>& p,
-const Point_3<Kernel>& q);
+CGAL::Point_3<Kernel>
+circumcenter( const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q);
 
 /*!
 compute the center of the circle passing through the points `p`, `q`, and `r`.
 \pre `p`, `q`, and `r` are not collinear.
 */
 template <typename Kernel>
-Point_3<Kernel>
-circumcenter( const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r);
+CGAL::Point_3<Kernel>
+circumcenter( const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r);
 
 /*!
 compute the center of the circle passing through the vertices of `t`.
 \pre `t` is not degenerate.
 */
 template <typename Kernel>
-Point_3<Kernel>
-circumcenter( const Triangle_3<Kernel>& t);
+CGAL::Point_3<Kernel>
+circumcenter( const CGAL::Triangle_3<Kernel>& t);
 
 /*!
 compute the center of the sphere passing through the points `p`, `q`, `r`, and `s`.
 \pre `p`, `q`, `r`, and `s` are not coplanar.
 */
 template <typename Kernel>
-Point_3<Kernel>
-circumcenter( const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r,
-const Point_3<Kernel>& s);
+CGAL::Point_3<Kernel>
+circumcenter( const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
+const CGAL::Point_3<Kernel>& s);
 
 /*!
 compute the center of the sphere passing through the vertices of `t`.
 \pre `t` is not degenerate.
 */
 template <typename Kernel>
-Point_3<Kernel>
-circumcenter( const Tetrahedron_3<Kernel>& t);
+CGAL::Point_3<Kernel>
+circumcenter( const CGAL::Tetrahedron_3<Kernel>& t);
 
 /// @}
 
@@ -484,18 +484,18 @@ returns `true`, iff `q` lies between `p`
 and `r`. \pre `p, q` and `r` are collinear.
 */
 template <typename Kernel>
-bool collinear_are_ordered_along_line(const Point_2<Kernel> &p,
-const Point_2<Kernel> &q,
-const Point_2<Kernel> &r);
+bool collinear_are_ordered_along_line(const CGAL::Point_2<Kernel> &p,
+const CGAL::Point_2<Kernel> &q,
+const CGAL::Point_2<Kernel> &r);
 
 /*!
 returns `true`, iff `q` lies between `p` 
 and `r`. \pre `p, q` and `r` are collinear.
 */
 template <typename Kernel>
-bool collinear_are_ordered_along_line(const Point_3<Kernel> &p,
-const Point_3<Kernel> &q,
-const Point_3<Kernel> &r);
+bool collinear_are_ordered_along_line(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel> &q,
+const CGAL::Point_3<Kernel> &r);
 
 /// @}
 
@@ -511,9 +511,9 @@ returns `true`, iff `q` lies strictly between
 `p` and `r`. \pre `p, q` and `r` are collinear.
 */
 template <typename Kernel>
-bool collinear_are_strictly_ordered_along_line(const Point_2<Kernel> &p,
-const Point_2<Kernel> &q,
-const Point_2<Kernel> &r);
+bool collinear_are_strictly_ordered_along_line(const CGAL::Point_2<Kernel> &p,
+const CGAL::Point_2<Kernel> &q,
+const CGAL::Point_2<Kernel> &r);
 
 /*!
 returns `true`, iff `q` lies strictly between `p` 
@@ -521,9 +521,9 @@ and `r`. \pre `p, q` and `r` are collinear.
 */
 template <typename Kernel>
 bool collinear_are_strictly_ordered_along_line(
-const Point_3<Kernel> &p,
-const Point_3<Kernel> &q,
-const Point_3<Kernel> &r);
+const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel> &q,
+const CGAL::Point_3<Kernel> &r);
 
 /// @}
 
@@ -538,17 +538,17 @@ const Point_3<Kernel> &r);
 returns `true`, iff `p`, `q`, and `r` are collinear.
 */
 template <typename Kernel>
-bool collinear(const Point_2<Kernel> &p, 
-const Point_2<Kernel> &q, 
-const Point_2<Kernel> &r);
+bool collinear(const CGAL::Point_2<Kernel> &p, 
+const CGAL::Point_2<Kernel> &q, 
+const CGAL::Point_2<Kernel> &r);
 
 /*!
 returns `true`, iff `p`, `q`, and `r` are collinear.
 */
 template <typename Kernel>
-bool collinear(const Point_3<Kernel> &p,
-const Point_3<Kernel>&q,
-const Point_3<Kernel>&r);
+bool collinear(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel>&q,
+const CGAL::Point_3<Kernel>&r);
 
 /// @}
 
@@ -567,10 +567,10 @@ The result is the same as `compare_dihedral_angle(b1-a1, c1-a1, d1-a1, cosine)`.
 \pre \f$ a_1\f$, \f$ b_1\f$, \f$ c_1\f$ are not collinear, and \f$ a_1\f$, \f$ b_1\f$, \f$ d_1\f$ are not collinear.
 */
 template <typename Kernel>
-Comparison_result compare_dihedral_angle(const Point_3<Kernel>& a1,
-const Point_3<Kernel>& b1, 
-const Point_3<Kernel>& c1,
-const Point_3<Kernel>& d1, 
+Comparison_result compare_dihedral_angle(const CGAL::Point_3<Kernel>& a1,
+const CGAL::Point_3<Kernel>& b1, 
+const CGAL::Point_3<Kernel>& c1,
+const CGAL::Point_3<Kernel>& d1, 
 const Kernel::FT& cosine);
 
 /*!
@@ -582,14 +582,14 @@ The result is the same as `compare_dihedral_angle(b1-a1, c1-a1, d1-a1, b2-a2, c2
 \pre For \f$ i \in\{1,2\}\f$, \f$ a_i\f$, \f$ b_i\f$, \f$ c_i\f$ are not collinear, and \f$ a_i\f$, \f$ b_i\f$, \f$ d_i\f$ are not collinear.
 */
 template <typename Kernel>
-Comparison_result compare_dihedral_angle(const Point_3<Kernel>& a1,
-const Point_3<Kernel>& b1, 
-const Point_3<Kernel>& c1,
-const Point_3<Kernel>& d1, 
-const Point_3<Kernel>& a2, 
-const Point_3<Kernel>& b2, 
-const Point_3<Kernel>& c2,
-const Point_3<Kernel>& d2);
+Comparison_result compare_dihedral_angle(const CGAL::Point_3<Kernel>& a1,
+const CGAL::Point_3<Kernel>& b1, 
+const CGAL::Point_3<Kernel>& c1,
+const CGAL::Point_3<Kernel>& d1, 
+const CGAL::Point_3<Kernel>& a2, 
+const CGAL::Point_3<Kernel>& b2, 
+const CGAL::Point_3<Kernel>& c2,
+const CGAL::Point_3<Kernel>& d2);
 
 /*!
 compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
@@ -601,9 +601,9 @@ cosine\f$.
 */
 template <typename Kernel>
 Comparison_result
-compare_dihedral_angle(const Vector_3<Kernel>& u1,
-const Vector_3<Kernel>& v1, 
-const Vector_3<Kernel>& w1,
+compare_dihedral_angle(const CGAL::Vector_3<Kernel>& u1,
+const CGAL::Vector_3<Kernel>& v1, 
+const CGAL::Vector_3<Kernel>& w1,
 const Kernel::FT& cosine);
 
 /*!
@@ -615,12 +615,12 @@ computed in \f$ [0, \pi]\f$.
 */
 template <typename Kernel>
 Comparison_result
-compare_dihedral_angle(const Vector_3<Kernel>& u1,
-const Vector_3<Kernel>& v1, 
-const Vector_3<Kernel>& w1,
-const Vector_3<Kernel>& u2, 
-const Vector_3<Kernel>& v2, 
-const Vector_3<Kernel>& w2);
+compare_dihedral_angle(const CGAL::Vector_3<Kernel>& u1,
+const CGAL::Vector_3<Kernel>& v1, 
+const CGAL::Vector_3<Kernel>& w1,
+const CGAL::Vector_3<Kernel>& u2, 
+const CGAL::Vector_3<Kernel>& v2, 
+const CGAL::Vector_3<Kernel>& w2);
 
 /// @}
 
@@ -647,9 +647,9 @@ to `p` than `r`, `CGAL::LARGER`, iff
 */
 template <typename Kernel>
 Comparison_result
-compare_distance_to_point(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r);
+compare_distance_to_point(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r);
 
 /*!
 compares the distances of points `q` and
@@ -661,15 +661,15 @@ to `p` than `r`, `CGAL::LARGER`, iff
 */
 template <typename Kernel>
 Comparison_result
-compare_distance_to_point(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r);
+compare_distance_to_point(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r);
 
 /// @}
 
 
 
-/// \addtogroup compare_lexicographically_linear compare_lexicographically (Linear Kernel)
+/// \addtogroup compare_lexicographically_linear compare_lexicographically
 /// \ingroup kernel_global_function
 /// @{
 
@@ -681,7 +681,7 @@ are compared. This is the same function as `compare_xy` and exists for compatibi
 */
 template <typename Kernel>
 Comparison_result
-compare_lexicographically(const Point_2<Kernel>& p, const Point_2<Kernel>& q);
+compare_lexicographically(const CGAL::Point_2<Kernel>& p, const CGAL::Point_2<Kernel>& q);
 
 /*!
 Compares the Cartesian coordinates of points `p` and
@@ -692,7 +692,7 @@ are compared, and if both \f$ x\f$- and \f$ y\f$- coordinate are equal,
 */
 template <typename Kernel>
 Comparison_result
-compare_lexicographically(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
+compare_lexicographically(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 
 /// @}
 
@@ -718,9 +718,9 @@ and `CGAL::EQUAL` iff both are equal.
 */
 template <typename Kernel>
 Comparison_result
-compare_signed_distance_to_line(const Line_2<Kernel>& l,
-const Point_2<Kernel>& p,
-const Point_2<Kernel>& q);
+compare_signed_distance_to_line(const CGAL::Line_2<Kernel>& l,
+const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q);
 
 /*!
 returns `CGAL::LARGER`
@@ -732,10 +732,10 @@ and `CGAL::EQUAL` iff both are equal, where
 */
 template <typename Kernel>
 Comparison_result
-compare_signed_distance_to_line(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r,
-const Point_2<Kernel>& s);
+compare_signed_distance_to_line(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r,
+const CGAL::Point_2<Kernel>& s);
 
 /*!
 returns `CGAL::LARGER`
@@ -746,9 +746,9 @@ and `CGAL::EQUAL` iff both are equal.
 */
 template <typename Kernel>
 Comparison_result
-compare_signed_distance_to_plane(const Plane_3<Kernel>& h,
-const Point_3<Kernel>& p,
-const Point_3<Kernel>& q);
+compare_signed_distance_to_plane(const CGAL::Plane_3<Kernel>& h,
+const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q);
 
 /*!
 returns `CGAL::LARGER`
@@ -761,11 +761,11 @@ and `CGAL::EQUAL` iff both are equal, where
 */
 template <typename Kernel>
 Comparison_result
-compare_signed_distance_to_plane(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r,
-const Point_3<Kernel>& s,
-const Point_3<Kernel>& t);
+compare_signed_distance_to_plane(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
+const CGAL::Point_3<Kernel>& s,
+const CGAL::Point_3<Kernel>& t);
 
 /// @}
 
@@ -779,15 +779,15 @@ const Point_3<Kernel>& t);
 compares the slopes of the lines `l1` and `l2`
 */
 template <typename Kernel>
-Comparison_result compare_slopes(const Line_2<Kernel> &l1,
-const Line_2<Kernel> &l2);
+Comparison_result compare_slopes(const CGAL::Line_2<Kernel> &l1,
+const CGAL::Line_2<Kernel> &l2);
 
 /*!
 compares the slopes of the segments `s1` and `s2`
 */
 template <typename Kernel>
-Comparison_result compare_slopes(const Segment_2<Kernel> &s1,
-const Segment_2<Kernel> &s2);
+Comparison_result compare_slopes(const CGAL::Segment_2<Kernel> &s1,
+const CGAL::Segment_2<Kernel> &s2);
 
 /// @}
 
@@ -810,8 +810,8 @@ compares the squared distance of points `p` and
 */
 template <typename Kernel>
 Comparison_result
-compare_squared_distance(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
+compare_squared_distance(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
 const typename Kernel::FT& d2);
 
 /*!
@@ -820,8 +820,8 @@ compares the squared distance of points `p` and
 */
 template <typename Kernel>
 Comparison_result
-compare_squared_distance(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
+compare_squared_distance(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
 const typename Kernel::FT& d2);
 
 /// @}
@@ -837,7 +837,7 @@ This returns the opposite sign of `sr`.
 */
 template <typename Kernel>
 Comparison_result
-compare_squared_radius(const Point_3<Kernel>& p,
+compare_squared_radius(const CGAL::Point_3<Kernel>& p,
 const typename Kernel::FT& sr);
 
 /*!
@@ -846,8 +846,8 @@ points `p` and `q` to `sr`.
 */
 template <typename Kernel>
 Comparison_result
-compare_squared_radius(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
+compare_squared_radius(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
 const typename Kernel::FT& sr);
 
 /*!
@@ -856,9 +856,9 @@ points `p`, `q`, and `r` to `sr`.
 */
 template <typename Kernel>
 Comparison_result
-compare_squared_radius(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r,
+compare_squared_radius(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
 const typename Kernel::FT& sr);
 
 /*!
@@ -867,10 +867,10 @@ points `p`, `q`, `r`, and `r` to `sr`.
 */
 template <typename Kernel>
 Comparison_result
-compare_squared_radius(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r,
-const Point_3<Kernel>& s,
+compare_squared_radius(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
+const CGAL::Point_3<Kernel>& s,
 const typename Kernel::FT& sr);
 
 /// @}
@@ -893,7 +893,7 @@ described below.
 */
 
 /*!
-\addtogroup compare_x_linear compare_x (Linear Kernel)
+\addtogroup compare_x_linear compare_x (2D/3D Linear Kernel)
 \ingroup compare_x
 \anchor figcompare_x
 \image html compare1.gif 
@@ -904,22 +904,22 @@ described below.
 compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
-Comparison_result compare_x(const Point_2<Kernel> &p, const Point_2<Kernel> &q);
+Comparison_result compare_x(const CGAL::Point_2<Kernel> &p, const CGAL::Point_2<Kernel> &q);
 
 /*!
 compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
-Comparison_result compare_x(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
+Comparison_result compare_x(const CGAL::Point_3<Kernel> &p, const CGAL::Point_3<Kernel> &q);
 /*!
 compares the \f$ x\f$-coordinates of `p` and the intersection 
 of lines `l1` and `l2`.
 See Figure \ref figcompare_x (a).
 */
 template <typename Kernel>
-Comparison_result compare_x(const Point_2<Kernel> &p,
-                            const Line_2<Kernel> &l1,
-                            const Line_2<Kernel> &l2);
+Comparison_result compare_x(const CGAL::Point_2<Kernel> &p,
+                            const CGAL::Line_2<Kernel> &l1,
+                            const CGAL::Line_2<Kernel> &l2);
 
 /*!
 compares the \f$ x\f$-coordinates of  the intersection of line `l`
@@ -928,9 +928,9 @@ with line `h1` and with line `h2`.
 See Figure \ref figcompare_x (b).
 */
 template <typename Kernel>
-Comparison_result compare_x(const Line_2<Kernel> &l,
-                            const Line_2<Kernel> &h1,
-                            const Line_2<Kernel> &h2);
+Comparison_result compare_x(const CGAL::Line_2<Kernel> &l,
+                            const CGAL::Line_2<Kernel> &h1,
+                            const CGAL::Line_2<Kernel> &h2);
 /*!
 compares the \f$ x\f$-coordinates of the intersection of lines `l1`
 and `l2` and  the intersection of lines `h1` and `h2`.
@@ -938,15 +938,15 @@ and `l2` and  the intersection of lines `h1` and `h2`.
 See Figure \ref figcompare_x (c).
 */
 template <typename Kernel>
-Comparison_result compare_x(const Line_2<Kernel> &l1,
-                                        const Line_2<Kernel> &l2,
-                                        const Line_2<Kernel> &h1,
-                                        const Line_2<Kernel> &h2);
+Comparison_result compare_x(const CGAL::Line_2<Kernel> &l1,
+                                        const CGAL::Line_2<Kernel> &l2,
+                                        const CGAL::Line_2<Kernel> &h1,
+                                        const CGAL::Line_2<Kernel> &h2);
 
 /// @}
 
 /*!
-\addtogroup compare_x_circular compare_x (Circular Kernel)
+\addtogroup compare_x_circular compare_x (2D Circular Kernel)
 \ingroup compare_x
 \details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel.
 
@@ -965,20 +965,20 @@ compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename CircularKernel>
 Comparison_result 
-  compare_x(const Circular_arc_point_2<CircularKernel> &p,
-            const Circular_arc_point_2<CircularKernel> &q);
+  compare_x(const CGAL::Circular_arc_point_2<CircularKernel> &p,
+            const CGAL::Circular_arc_point_2<CircularKernel> &q);
 /*!
 compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename CircularKernel>
 Comparison_result 
-  compare_x(const Circular_arc_point_2<CircularKernel> &p,
-            const Point_2<CircularKernel> &q);
+  compare_x(const CGAL::Circular_arc_point_2<CircularKernel> &p,
+            const CGAL::Point_2<CircularKernel> &q);
 
 /// @}
 
 /*!
-\addtogroup compare_x_spherical compare_x (Spherical Kernel)
+\addtogroup compare_x_spherical compare_x (3D Spherical Kernel)
 \ingroup compare_x
 \details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
 
@@ -997,16 +997,16 @@ compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
-  compare_x(const Circular_arc_point_3<SphericalKernel> &p,
-            const Circular_arc_point_3<SphericalKernel> &q);
+  compare_x(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
+            const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 
 /*!
 compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
-  compare_x(const Circular_arc_point_3<SphericalKernel> &p,
-            const Point_3<SphericalKernel> &q);
+  compare_x(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
+            const CGAL::Point_3<SphericalKernel> &q);
 
 /// @}
 
@@ -1029,7 +1029,7 @@ global function are available.
 
 
 /*!
-\addtogroup compare_xy_linear compare_xy (Linear Kernel)
+\addtogroup compare_xy_linear compare_xy (2D/3D Linear Kernel)
 \ingroup compare_xy
 */
 /// @{
@@ -1042,7 +1042,7 @@ are compared.
 */
 template <typename Kernel>
 Comparison_result
-compare_xy(const Point_2<Kernel>& p, const Point_2<Kernel>& q);
+compare_xy(const CGAL::Point_2<Kernel>& p, const CGAL::Point_2<Kernel>& q);
 
 /*!
 Compares the Cartesian coordinates of points `p` and `q`
@@ -1052,12 +1052,12 @@ compared, if they are equal, \f$ y\f$-coordinates are compared.
 */
 template <typename Kernel>
 Comparison_result
-compare_xy(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
+compare_xy(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 
 /// @}
 
 /*!
-\addtogroup compare_xy_circular compare_xy (Circular Kernel)
+\addtogroup compare_xy_circular compare_xy (2D Circular Kernel)
 \ingroup compare_xy
 \details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel.
 
@@ -1077,8 +1077,8 @@ Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
 */
 template <typename CircularKernel>
 Comparison_result 
-  compare_xy(const Circular_arc_point_2<CircularKernel> &p,
-            const Circular_arc_point_2<CircularKernel> &q);
+  compare_xy(const CGAL::Circular_arc_point_2<CircularKernel> &p,
+            const CGAL::Circular_arc_point_2<CircularKernel> &q);
 
 /*!
 Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
@@ -1086,13 +1086,13 @@ Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
 */
 template <typename CircularKernel>
 Comparison_result 
-compare_xy(const Circular_arc_point_2<CircularKernel> &p,
-            const Point_2<CircularKernel> &q);
+compare_xy(const CGAL::Circular_arc_point_2<CircularKernel> &p,
+            const CGAL::Point_2<CircularKernel> &q);
 
 /// @}
 
 /*!
-\addtogroup compare_xy_spherical compare_xy (Spherical Kernel)
+\addtogroup compare_xy_spherical compare_xy (3D Spherical Kernel)
 \ingroup compare_xy
 \details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
 
@@ -1113,8 +1113,8 @@ Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
 */
 template <typename SphericalKernel>
 Comparison_result 
-  compare_xy(const Circular_arc_point_3<SphericalKernel> &p,
-            const Circular_arc_point_3<SphericalKernel> &q);
+  compare_xy(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
+            const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 /*!
 
 Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
@@ -1122,8 +1122,8 @@ Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
 */
 template <typename SphericalKernel>
 Comparison_result 
-  compare_xy(const Circular_arc_point_3<SphericalKernel> &p,
-            const Point_3<SphericalKernel> &q);
+  compare_xy(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
+            const CGAL::Point_3<SphericalKernel> &q);
 
 /// @}
 
@@ -1151,8 +1151,8 @@ See Figure \ref figcomparexaty (a).
 \pre `h` is not horizontal.
 */
 template <typename Kernel>
-Comparison_result compare_x_at_y(const Point_2<Kernel> &p,
-const Line_2<Kernel> &h);
+Comparison_result compare_x_at_y(const CGAL::Point_2<Kernel> &p,
+const CGAL::Line_2<Kernel> &h);
 
 /*!
 This function compares the \f$ x\f$-coordinates of the horizontal projection 
@@ -1161,9 +1161,9 @@ See Figure \ref figcomparexaty (b).
 \pre `h1` and `h2` are not horizontal.
 */
 template <typename Kernel>
-Comparison_result compare_x_at_y(const Point_2<Kernel> &p,
-const Line_2<Kernel> &h1,
-const Line_2<Kernel> &h2);
+Comparison_result compare_x_at_y(const CGAL::Point_2<Kernel> &p,
+const CGAL::Line_2<Kernel> &h1,
+const CGAL::Line_2<Kernel> &h2);
 
 /*!
 Let `p` be the intersection of lines `l1` and `l2`.
@@ -1173,9 +1173,9 @@ See Figure \ref figcomparexaty (c).
 \pre `l1` and `l2` intersect and are not horizontal; `h` is not horizontal.
 */
 template <typename Kernel>
-Comparison_result compare_x_at_y(const Line_2<Kernel> &l1,
-const Line_2<Kernel> &l2,
-const Line_2<Kernel> &h);
+Comparison_result compare_x_at_y(const CGAL::Line_2<Kernel> &l1,
+const CGAL::Line_2<Kernel> &l2,
+const CGAL::Line_2<Kernel> &h);
 
 /*!
 Let `p` be the intersection of lines `l1` and `l2`. This 
@@ -1185,10 +1185,10 @@ See Figure \ref figcomparexaty (d).
 \pre `l1` and `l2` intersect and are not horizontal; `h1` and `h2` are not horizontal.
 */
 template <typename Kernel>
-Comparison_result compare_x_at_y(const Line_2<Kernel> &l1,
-const Line_2<Kernel> &l2,
-const Line_2<Kernel> &h1,
-const Line_2<Kernel> &h2);
+Comparison_result compare_x_at_y(const CGAL::Line_2<Kernel> &l1,
+const CGAL::Line_2<Kernel> &l2,
+const CGAL::Line_2<Kernel> &h1,
+const CGAL::Line_2<Kernel> &h2);
 
 /// @}
 
@@ -1217,8 +1217,8 @@ const Line_2<Kernel> &h2);
   \pre `h` is not vertical.
 */
 template <typename Kernel>
-Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
-                                 const Line_2<Kernel> &h);
+Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
+                                 const CGAL::Line_2<Kernel> &h);
 
 /*!
   compares the \f$ y\f$-coordinates of the vertical projection 
@@ -1228,9 +1228,9 @@ Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
   \pre `h1` and `h2` are not vertical.
 */
 template <typename Kernel>
-Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
-                                 const Line_2<Kernel> &h1,
-                                 const Line_2<Kernel> &h2);
+Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
+                                 const CGAL::Line_2<Kernel> &h1,
+                                 const CGAL::Line_2<Kernel> &h2);
 
 
 /*!
@@ -1242,9 +1242,9 @@ Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
   \pre `l1`, `l2` intersect and `h` is not vertical.
 */
 template <typename Kernel>
-Comparison_result compare_y_at_x(const Line_2<Kernel> &l1,
-                                 const Line_2<Kernel> &l2,
-                                 const Line_2<Kernel> &h);
+Comparison_result compare_y_at_x(const CGAL::Line_2<Kernel> &l1,
+                                 const CGAL::Line_2<Kernel> &l2,
+                                 const CGAL::Line_2<Kernel> &h);
 
 /*!
   Let `p` be the `intersection` of lines `l1` and `l2`. This function 
@@ -1254,10 +1254,10 @@ Comparison_result compare_y_at_x(const Line_2<Kernel> &l1,
   \pre `l1` and `l2` intersect; `h1` and  `h2` are not vertical.
 */
 template <typename Kernel>
-Comparison_result compare_y_at_x(const Line_2<Kernel> &l1,
-                                 const Line_2<Kernel> &l2,
-                                 const Line_2<Kernel> &h1,
-                                 const Line_2<Kernel> &h2);
+Comparison_result compare_y_at_x(const CGAL::Line_2<Kernel> &l1,
+                                 const CGAL::Line_2<Kernel> &l2,
+                                 const CGAL::Line_2<Kernel> &h1,
+                                 const CGAL::Line_2<Kernel> &h2);
 
 /*!
   compares the \f$ y\f$-coordinates of `p` and the vertical projection
@@ -1267,8 +1267,8 @@ Comparison_result compare_y_at_x(const Line_2<Kernel> &l1,
   \pre `p` is within the x range of `s`.
 */
 template <typename Kernel>
-Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
-                                 const Segment_2<Kernel> &s);
+Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
+                                 const CGAL::Segment_2<Kernel> &s);
 
 /*!
   compares the \f$ y\f$-coordinates of the vertical projection 
@@ -1279,9 +1279,9 @@ Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
   \pre `p` is within the x range of `s1` and `s2`.
 */
 template <typename Kernel>
-Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
-                                 const Segment_2<Kernel> &s1,
-                                 const Segment_2<Kernel> &s2);
+Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
+                                 const CGAL::Segment_2<Kernel> &s1,
+                                 const CGAL::Segment_2<Kernel> &s2);
 
 /*!
   \name With the 2D Circular Kernel
@@ -1300,14 +1300,14 @@ Comparison_result compare_y_at_x(const Point_2<Kernel> &p,
 /// Same as above, for a point and a circular arc.
 template <typename CircularKernel>
 Comparison_result 
-compare_y_at_x(const Circular_arc_point_2<CircularKernel> &p, 
-               const Circular_arc_2<CircularKernel> &a);
+compare_y_at_x(const CGAL::Circular_arc_point_2<CircularKernel> &p, 
+               const CGAL::Circular_arc_2<CircularKernel> &a);
 
 /// Same as above, for a point and a line segment.
 template <typename CircularKernel>
 Comparison_result 
-compare_y_at_x(const Circular_arc_point_2<CircularKernel> &p, 
-               const Line_arc_2<CircularKernel> &a);
+compare_y_at_x(const CGAL::Circular_arc_point_2<CircularKernel> &p, 
+               const CGAL::Line_arc_2<CircularKernel> &a);
 
 
 /// @}
@@ -1332,7 +1332,7 @@ global function are available.
 */
 
 /*!
-\addtogroup compary_y_linear compare_y (Linear Kernel)
+\addtogroup compary_y_linear compare_y (2D/3D Linear Kernel)
 \ingroup compare_y
 \details See Chapter \ref chapterkernel23
 
@@ -1345,14 +1345,14 @@ global function are available.
   compares Cartesian \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
-Comparison_result compare_y(const Point_2<Kernel> &p,
-                            const Point_2<Kernel> &q);
+Comparison_result compare_y(const CGAL::Point_2<Kernel> &p,
+                            const CGAL::Point_2<Kernel> &q);
 /*!
   compares Cartesian \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
-Comparison_result compare_y(const Point_3<Kernel> &p,
-                            const Point_3<Kernel> &q);
+Comparison_result compare_y(const CGAL::Point_3<Kernel> &p,
+                            const CGAL::Point_3<Kernel> &q);
 
 /*!
   compares the \f$ y\f$-coordinates of `p` and the intersection of lines
@@ -1360,9 +1360,9 @@ Comparison_result compare_y(const Point_3<Kernel> &p,
   See Figure \ref figcompare13 (a).
 */
 template <typename Kernel>
-Comparison_result compare_y(const Point_2<Kernel> &p,
-                            const Line_2<Kernel> &l1,
-                            const Line_2<Kernel> &l2);
+Comparison_result compare_y(const CGAL::Point_2<Kernel> &p,
+                            const CGAL::Line_2<Kernel> &l1,
+                            const CGAL::Line_2<Kernel> &l2);
 /*!
 
   compares the \f$ y\f$-coordinates of the intersection of line `l`
@@ -1370,24 +1370,24 @@ Comparison_result compare_y(const Point_2<Kernel> &p,
   See Figure \ref figcompare13 (b).
 */
 template <typename Kernel>
-Comparison_result compare_y(const Line_2<Kernel> &l,
-                            const Line_2<Kernel> &h1,
-                            const Line_2<Kernel> &h2);
+Comparison_result compare_y(const CGAL::Line_2<Kernel> &l,
+                            const CGAL::Line_2<Kernel> &h1,
+                            const CGAL::Line_2<Kernel> &h2);
 /*!
   compares the \f$ y\f$-coordinates of the intersection of lines `l1`
   and `l2` and  the intersection of lines `h1` and `h2`.
   See Figure \ref figcompare13 (c).
 */
 template <typename Kernel>
-Comparison_result compare_y(const Line_2<Kernel> &l1,
-                            const Line_2<Kernel> &l2,
-                            const Line_2<Kernel> &h1,
-                            const Line_2<Kernel> &h2);
+Comparison_result compare_y(const CGAL::Line_2<Kernel> &l1,
+                            const CGAL::Line_2<Kernel> &l2,
+                            const CGAL::Line_2<Kernel> &h1,
+                            const CGAL::Line_2<Kernel> &h2);
 
 /// @}
 
 /*!
-\addtogroup compare_y_circular compare_y (Circular Kernel)
+\addtogroup compare_y_circular compare_y (2D Circular Kernel)
 \ingroup compare_y
 \details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel.
 
@@ -1405,20 +1405,20 @@ versions are provided.
 */
 template <typename CircularKernel>
 Comparison_result 
-compare_y(const Circular_arc_point_2<CircularKernel> &p,
-          const Circular_arc_point_2<CircularKernel> &q);
+compare_y(const CGAL::Circular_arc_point_2<CircularKernel> &p,
+          const CGAL::Circular_arc_point_2<CircularKernel> &q);
 
 /*!
   compares the \f$ y\f$-coordinates of `p` and `q`.
 */template <typename CircularKernel>
 Comparison_result 
-compare_y(const Circular_arc_point_2<CircularKernel> &p,
-          const Point_2<CircularKernel> &q);
+compare_y(const CGAL::Circular_arc_point_2<CircularKernel> &p,
+          const CGAL::Point_2<CircularKernel> &q);
 
 /// @}
 
 /*!
-\addtogroup compare_y_spherical compare_y (Spherical Kernel)
+\addtogroup compare_y_spherical compare_y (3D Spherical Kernel)
 \ingroup compare_y
 \details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
 
@@ -1436,15 +1436,15 @@ compares the \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
-  compare_y(const Circular_arc_point_3<SphericalKernel> &p,
-            const Circular_arc_point_3<SphericalKernel> &q);
+  compare_y(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
+            const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 /*!
 compares the \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
-  compare_y(const Circular_arc_point_3<SphericalKernel> &p,
-            const Point_3<SphericalKernel> &q);
+  compare_y(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
+            const CGAL::Point_3<SphericalKernel> &q);
 /// @}
 
 
@@ -1466,7 +1466,7 @@ global function are available.
 */
 
 /*!
-\addtogroup compare_xyz_linear compare_xyz (Linear Kernel)
+\addtogroup compare_xyz_linear compare_xyz (2D/3D Linear Kernel)
 \ingroup compare_xyz
 */
 /// @{
@@ -1480,12 +1480,12 @@ are compared, and if both \f$ x\f$- and \f$ y\f$- coordinate are equal,
 */
 template <typename Kernel>
 Comparison_result
-compare_xyz(const Point_3<Kernel>& p, const Point_3<Kernel>& q);
+compare_xyz(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 
 /// @}
 
 /*!
-\addtogroup compare_xyz_spherical compare_xyz (Spherical Kernel)
+\addtogroup compare_xyz_spherical compare_xyz (3D Spherical Kernel)
 \ingroup compare_xyz
 \details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel
 
@@ -1504,16 +1504,16 @@ function is provided.
 */
 template <typename SphericalKernel>
 Comparison_result 
-compare_xyz(const Circular_arc_point_3<SphericalKernel> &p,
-const Circular_arc_point_3<SphericalKernel> &q);
+compare_xyz(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
+const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 
 /*!
 Compares the Cartesian coordinates of points `p` and `q` lexicographically.
 */
 template <typename SphericalKernel>
 Comparison_result 
-compare_xyz(const Circular_arc_point_3<SphericalKernel> &p,
-const Point_3<SphericalKernel> &q);
+compare_xyz(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
+const CGAL::Point_3<SphericalKernel> &q);
 
 /// @}
 
@@ -1540,7 +1540,7 @@ described below.
 compares the \f$ z\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
-Comparison_result compare_z(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
+Comparison_result compare_z(const CGAL::Point_3<Kernel> &p, const CGAL::Point_3<Kernel> &q);
 
 /*!
 \name With the 3D Spherical Kernel
@@ -1564,14 +1564,14 @@ compares the \f$ z\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
-compare_z(const Circular_arc_point_3<SphericalKernel> &p, const Circular_arc_point_3<SphericalKernel> &q);
+compare_z(const CGAL::Circular_arc_point_3<SphericalKernel> &p, const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 
 /*!
 compares the \f$ z\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
 Comparison_result 
-compare_z(const Circular_arc_point_3<SphericalKernel> &p, const Point_3<SphericalKernel> &q);
+compare_z(const CGAL::Circular_arc_point_3<SphericalKernel> &p, const CGAL::Point_3<SphericalKernel> &q);
 
 /// @}
 /// @}
@@ -1595,7 +1595,7 @@ are compared.
 */
 template <typename Kernel>
 Comparison_result
-compare_yx(const Point_2<Kernel>& p, const Point_2<Kernel>& q);
+compare_yx(const CGAL::Point_2<Kernel>& p, const CGAL::Point_2<Kernel>& q);
 
 /// @}
 
@@ -1610,10 +1610,10 @@ compare_yx(const Point_2<Kernel>& p, const Point_2<Kernel>& q);
 returns `true`, if `p`, `q`, `r`, and `s` are coplanar.
 */
 template <typename Kernel>
-bool coplanar(const Point_3<Kernel> &p,
-const Point_3<Kernel>&q,
-const Point_3<Kernel>&r,
-const Point_3<Kernel>&s);
+bool coplanar(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel>&q,
+const CGAL::Point_3<Kernel>&r,
+const CGAL::Point_3<Kernel>&s);
 
 /// @}
 
@@ -1635,10 +1635,10 @@ defined by `p`, `q`, and `s` have the same orientation,
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear.
 */
 template <typename Kernel>
-Orientation coplanar_orientation(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r,
-const Point_3<Kernel>& s);
+Orientation coplanar_orientation(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
+const CGAL::Point_3<Kernel>& s);
 
 /*!
 If `p,q,r` are collinear, then `CGAL::COLLINEAR` is returned.
@@ -1648,9 +1648,9 @@ However, we guarantee that all calls to this predicate over 3 points in `p`
 will return a coherent orientation if considered a 2D orientation in `p`.
 */
 template <typename Kernel>
-Orientation coplanar_orientation(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r);
+Orientation coplanar_orientation(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r);
 
 /// @}
 
@@ -1668,10 +1668,10 @@ by `p`, `q`, and `r` on which `s` lies.
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear.
 */
 template <typename Kernel>
-Bounded_side coplanar_side_of_bounded_circle(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r,
-const Point_3<Kernel>& s);
+Bounded_side coplanar_side_of_bounded_circle(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
+const CGAL::Point_3<Kernel>& s);
 
 /// @}
 
@@ -1684,8 +1684,8 @@ const Point_3<Kernel>& s);
 returns the cross product of `u` and `v`.
 */
 template <typename Kernel>
-Vector_3<Kernel> cross_product( const Vector_3<Kernel>& u, 
-const Vector_3<Kernel>& v);
+CGAL::Vector_3<Kernel> cross_product( const CGAL::Vector_3<Kernel>& u, 
+const CGAL::Vector_3<Kernel>& v);
 
 /// @}
 
@@ -1701,16 +1701,16 @@ const Vector_3<Kernel>& v);
 returns the determinant of `v` and `w`.
 */
 template <typename Kernel>
-Kernel::FT determinant(const Vector_2<Kernel>& v,
-const Vector_2<Kernel>& w);
+Kernel::FT determinant(const CGAL::Vector_2<Kernel>& v,
+const CGAL::Vector_2<Kernel>& w);
 
 /*!
 returns the determinant of `u`, `v` and `w`.
 */
 template <typename Kernel>
-Kernel::FT determinant(const Vector_3<Kernel>& u,
-const Vector_3<Kernel>& v,
-const Vector_3<Kernel>& w);
+Kernel::FT determinant(const CGAL::Vector_3<Kernel>& u,
+const CGAL::Vector_3<Kernel>& v,
+const CGAL::Vector_3<Kernel>& w);
 
 /// @}
 
@@ -1724,9 +1724,9 @@ constructs the line which is at the same distance from the three points
 \pre `p`, `q` and `r` are not collinear.
 */
 template <typename Kernel>
-Line_3<Kernel> equidistant_line(const Point_3<Kernel> &p,
-const Point_3<Kernel> &q,
-const Point_3<Kernel> &r);
+CGAL::Line_3<Kernel> equidistant_line(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel> &q,
+const CGAL::Point_3<Kernel> &r);
 
 /// @}
 
@@ -1749,9 +1749,9 @@ and `p`.
 */
 template <typename Kernel>
 bool
-has_larger_distance_to_point(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r);
+has_larger_distance_to_point(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r);
 
 /*!
 returns `true` iff the distance between `q`
@@ -1760,9 +1760,9 @@ and `p`.
 */
 template <typename Kernel>
 bool
-has_larger_distance_to_point(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r);
+has_larger_distance_to_point(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r);
 
 /// @}
 
@@ -1786,9 +1786,9 @@ and `l` is larger than the signed distance of
 */
 template <typename Kernel>
 bool
-has_larger_signed_distance_to_line(const Line_2<Kernel>& l,
-const Point_2<Kernel>& p,
-const Point_2<Kernel>& q);
+has_larger_signed_distance_to_line(const CGAL::Line_2<Kernel>& l,
+const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q);
 
 /*!
 returns `true` iff the signed distance of `r`
@@ -1798,10 +1798,10 @@ through points `p` and `q`.
 */
 template <typename Kernel>
 bool
-has_larger_signed_distance_to_line(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r,
-const Point_2<Kernel>& s);
+has_larger_signed_distance_to_line(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r,
+const CGAL::Point_2<Kernel>& s);
 
 /// @}
 
@@ -1825,9 +1825,9 @@ and `h` is larger than the signed distance of
 */
 template <typename Kernel>
 bool
-has_larger_signed_distance_to_plane(const Plane_3<Kernel>& h,
-const Point_3<Kernel>& p,
-const Point_3<Kernel>& q);
+has_larger_signed_distance_to_plane(const CGAL::Plane_3<Kernel>& h,
+const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q);
 
 /*!
 returns `true` iff the signed distance of `s`
@@ -1837,11 +1837,11 @@ plane through `p`, `q` and `r`.
 */
 template <typename Kernel>
 bool
-has_larger_signed_distance_to_plane(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r,
-const Point_3<Kernel>& s,
-const Point_3<Kernel>& t);
+has_larger_signed_distance_to_plane(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
+const CGAL::Point_3<Kernel>& s,
+const CGAL::Point_3<Kernel>& t);
 
 /// @}
 
@@ -1864,9 +1864,9 @@ and `p`.
 */
 template <typename Kernel>
 bool
-has_smaller_distance_to_point(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r);
+has_smaller_distance_to_point(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r);
 
 /*!
 returns `true` iff the distance between `q`
@@ -1875,9 +1875,9 @@ and `p`.
 */
 template <typename Kernel>
 bool
-has_smaller_distance_to_point(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r);
+has_smaller_distance_to_point(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r);
 
 /// @}
 
@@ -1900,9 +1900,9 @@ and `l` is smaller than the signed distance of
 */
 template <typename Kernel>
 bool
-has_smaller_signed_distance_to_line(const Line_2<Kernel>& l,
-const Point_2<Kernel>& p,
-const Point_2<Kernel>& q);
+has_smaller_signed_distance_to_line(const CGAL::Line_2<Kernel>& l,
+const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q);
 
 /*!
 returns `true` iff the signed distance of `r`
@@ -1912,10 +1912,10 @@ oriented line through `p` and `q`.
 */
 template <typename Kernel>
 bool
-has_smaller_signed_distance_to_line(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r,
-const Point_2<Kernel>& s);
+has_smaller_signed_distance_to_line(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r,
+const CGAL::Point_2<Kernel>& s);
 
 /// @}
 
@@ -1938,9 +1938,9 @@ and `h` is smaller than the signed distance of
 */
 template <typename Kernel>
 bool
-has_smaller_signed_distance_to_plane(const Plane_3<Kernel>& h,
-const Point_3<Kernel>& p,
-const Point_3<Kernel>& q);
+has_smaller_signed_distance_to_plane(const CGAL::Plane_3<Kernel>& h,
+const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q);
 
 /*!
 returns `true` iff the signed distance of `p`
@@ -1950,11 +1950,11 @@ plane through `p`, `q` and `r`.
 */
 template <typename Kernel>
 bool
-has_smaller_signed_distance_to_plane(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r,
-const Point_3<Kernel>& s,
-const Point_3<Kernel>& t);
+has_smaller_signed_distance_to_plane(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
+const CGAL::Point_3<Kernel>& s,
+const CGAL::Point_3<Kernel>& t);
 
 /// @}
 
@@ -1971,9 +1971,9 @@ const Point_3<Kernel>& t);
 returns `true` iff `p`, `q`, and `r` form a left turn.
 */
 template <typename Kernel>
-bool left_turn(const Point_2<Kernel> &p,
-const Point_2<Kernel> &q,
-const Point_2<Kernel> &r);
+bool left_turn(const CGAL::Point_2<Kernel> &p,
+const CGAL::Point_2<Kernel> &q,
+const CGAL::Point_2<Kernel> &r);
 
 /// @}
 
@@ -1993,8 +1993,8 @@ than `q` with respect to \f$ xy\f$ order.
 */
 template <typename Kernel>
 bool
-lexicographically_xy_larger(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q);
+lexicographically_xy_larger(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q);
 
 /// @}
 
@@ -2016,8 +2016,8 @@ than `q` with respect to \f$ xy\f$ order.
 */
 template <typename Kernel>
 bool
-lexicographically_xy_larger_or_equal(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q);
+lexicographically_xy_larger_or_equal(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q);
 
 /// @}
 
@@ -2037,8 +2037,8 @@ than `q` with respect to \f$ xy\f$ order.
 */
 template <typename Kernel>
 bool
-lexicographically_xy_smaller(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q);
+lexicographically_xy_smaller(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q);
 
 /// @}
 
@@ -2059,8 +2059,8 @@ than `q` with respect to \f$ xy\f$ order.
 */
 template <typename Kernel>
 bool 
-lexicographically_xy_smaller_or_equal(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q);
+lexicographically_xy_smaller_or_equal(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q);
 
 /// @}
 
@@ -2078,8 +2078,8 @@ than `q` with respect to \f$ xyz\f$ order.
 */
 template <typename Kernel>
 bool
-lexicographically_xyz_smaller(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q);
+lexicographically_xyz_smaller(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q);
 
 /// @}
 
@@ -2097,8 +2097,8 @@ than `q` with respect to \f$ xyz\f$ order.
 */
 template <typename Kernel>
 bool 
-lexicographically_xyz_smaller_or_equal(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q);
+lexicographically_xyz_smaller_or_equal(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q);
 
 /// @}
 
@@ -2110,13 +2110,13 @@ const Point_3<Kernel>& q);
 computes the vertex with the lexicographically largest coordinates of the iso rectangle `ir`.
 */
 template <typename Kernel>
-Point_2<Kernel> max_vertex( const Iso_box_2<Kernel>& ir );
+CGAL::Point_2<Kernel> max_vertex( const CGAL::Iso_rectangle_2<Kernel>& ir );
 
 /*!
 computes the vertex with the lexicographically largest coordinates of the iso cuboid `ic`.
 */
 template <typename Kernel>
-Point_3<Kernel> max_vertex( const Iso_cuboid_3<Kernel>& ic );
+CGAL::Point_3<Kernel> max_vertex( const CGAL::Iso_cuboid_3<Kernel>& ic );
 
 /// @}
 
@@ -2128,14 +2128,14 @@ Point_3<Kernel> max_vertex( const Iso_cuboid_3<Kernel>& ic );
 computes the midpoint of the segment `pq`.
 */
 template <typename Kernel>
-Point_2<Kernel> midpoint( const Point_2<Kernel>& p,
-const Point_2<Kernel>& q );
+CGAL::Point_2<Kernel> midpoint( const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q );
 
 /*!
 computes the midpoint of the segment `pq`.
 */
 template <typename Kernel>
-Point_3<Kernel> midpoint( const Point_3<Kernel>& p, const Point_3<Kernel>& q );
+CGAL::Point_3<Kernel> midpoint( const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q );
 
 /// @}
 
@@ -2147,13 +2147,13 @@ Point_3<Kernel> midpoint( const Point_3<Kernel>& p, const Point_3<Kernel>& q );
 computes the vertex with the lexicographically smallest coordinates of the iso rectangle `ir`.
 */
 template <typename Kernel>
-Point_2<Kernel> min_vertex( const Iso_box_2<Kernel>& ir );
+CGAL::Point_2<Kernel> min_vertex( const CGAL::Iso_rectangle_2<Kernel>& ir );
 
 /*!
 computes the vertex with the lexicographically smallest coordinates of the iso cuboid `ic`.
 */
 template <typename Kernel>
-Point_3<Kernel> min_vertex( const Iso_cuboid_3<Kernel>& ic );
+CGAL::Point_3<Kernel> min_vertex( const CGAL::Iso_cuboid_3<Kernel>& ic );
 
 /// @}
 
@@ -2166,7 +2166,7 @@ computes the normal vector for the vectors `q-p` and `r-p`.
 \pre The points `p`, `q`, and `r` must not be collinear.
 */
 template <typename Kernel>
-Vector_3<Kernel> normal( const Point_3<Kernel>& p, const Point_3<Kernel>& q, const Point_3<Kernel>& r );
+CGAL::Vector_3<Kernel> normal( const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q, const CGAL::Point_3<Kernel>& r );
 
 /// @}
 
@@ -2186,9 +2186,9 @@ lies to the right of `l`, and returns `CGAL::COLLINEAR` if `r` lies
 on `l`.
 */
 template <typename Kernel>
-Orientation orientation(const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r);
+Orientation orientation(const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r);
 
 /*!
 returns `CGAL::LEFT_TURN` if `u` and `v` form a left turn,
@@ -2196,8 +2196,8 @@ returns `CGAL::RIGHT_TURN` if `u` and `v` form a right turn,
 and returns `CGAL::COLLINEAR` if `u` and `v` are collinear.
 */
 template <typename Kernel>
-Orientation orientation(const Vector_2<Kernel>& u,
-const Vector_2<Kernel>& v);
+Orientation orientation(const CGAL::Vector_2<Kernel>& u,
+const CGAL::Vector_2<Kernel>& v);
 
 /*!
 returns `CGAL::POSITIVE`, if `s` lies on the positive side of the oriented 
@@ -2206,19 +2206,19 @@ lies on the negative side of `h`, and returns `CGAL::COPLANAR` if `s` lies
 on `h`.
 */
 template <typename Kernel>
-Orientation orientation(const Point_3<Kernel> &p,
-const Point_3<Kernel>&q,
-const Point_3<Kernel>&r,
-const Point_3<Kernel>&s);
+Orientation orientation(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel>&q,
+const CGAL::Point_3<Kernel>&r,
+const CGAL::Point_3<Kernel>&s);
 
 /*!
 returns `CGAL::NEGATIVE` if `u`, `v` and `w` are negatively oriented,
 and returns `CGAL::COPLANAR` if `u`, `v` and `w` are coplanar.
 */
 template <typename Kernel>
-Orientation orientation(const Vector_3<Kernel> &u,
-const Vector_3<Kernel> &v,
-const Vector_3<Kernel> &w);
+Orientation orientation(const CGAL::Vector_3<Kernel> &u,
+const CGAL::Vector_3<Kernel> &v,
+const CGAL::Vector_3<Kernel> &w);
 
 /// @}
 
@@ -2234,16 +2234,16 @@ computes an orthogonal vector of the plane `p`, which is directed to
 the positive side of this plane.
 */
 template <typename Kernel>
-Vector_3<Kernel> orthogonal_vector( const Plane_3<Kernel>& p);
+CGAL::Vector_3<Kernel> orthogonal_vector( const CGAL::Plane_3<Kernel>& p);
 
 /*!
 computes an orthogonal vector of the plane defined by `p`, `q` and `r`,
 which is directed to the positive side of this plane.
 */
 template <typename Kernel>
-Vector_3<Kernel> orthogonal_vector( const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r );
+CGAL::Vector_3<Kernel> orthogonal_vector( const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r );
 
 /// @}
 
@@ -2258,56 +2258,56 @@ returns `true`, if `l1` and `l2` are parallel or if one
 of those (or both) is degenerate.
 */
 template <typename Kernel>
-bool parallel(const Line_2<Kernel>& l1,
-const Line_2<Kernel>& l2);
+bool parallel(const CGAL::Line_2<Kernel>& l1,
+const CGAL::Line_2<Kernel>& l2);
 
 /*!
 returns `true`, if `r1` and `r2` are parallel or if one
 of those (or both) is degenerate.
 */
 template <typename Kernel>
-bool parallel(const Ray_2<Kernel>& r1,
-const Ray_2<Kernel>& r2);
+bool parallel(const CGAL::Ray_2<Kernel>& r1,
+const CGAL::Ray_2<Kernel>& r2);
 
 /*!
 returns `true`, if `s1` and `s2` are parallel or if one
 of those (or both) is degenerate.
 */
 template <typename Kernel>
-bool parallel(const Segment_2<Kernel>& s1,
-const Segment_2<Kernel>& s2);
+bool parallel(const CGAL::Segment_2<Kernel>& s1,
+const CGAL::Segment_2<Kernel>& s2);
 
 /*!
 returns `true`, if `l1` and `l2` are parallel or if one
 of those (or both) is degenerate.
 */
 template <typename Kernel>
-bool parallel(const Line_3<Kernel>& l1,
-const Line_3<Kernel>& l2);
+bool parallel(const CGAL::Line_3<Kernel>& l1,
+const CGAL::Line_3<Kernel>& l2);
 
 /*!
 returns `true`, if `h1` and `h2` are parallel or if one
 of those (or both) is degenerate.
 */
 template <typename Kernel>
-bool parallel(const Plane_3<Kernel>& h1,
-const Plane_3<Kernel>& h2);
+bool parallel(const CGAL::Plane_3<Kernel>& h1,
+const CGAL::Plane_3<Kernel>& h2);
 
 /*!
 returns `true`, if `r1` and `r2` are parallel or if one
 of those (or both) is degenerate.
 */
 template <typename Kernel>
-bool parallel(const Ray_3<Kernel>& r1,
-const Ray_3<Kernel>& r2);
+bool parallel(const CGAL::Ray_3<Kernel>& r1,
+const CGAL::Ray_3<Kernel>& r2);
 
 /*!
 returns `true`, if `s1` and `s2` are parallel or if one
 of those (or both) is degenerate.
 */
 template <typename Kernel>
-bool parallel(const Segment_3<Kernel>& s1,
-const Segment_3<Kernel>& s2);
+bool parallel(const CGAL::Segment_3<Kernel>& s1,
+const CGAL::Segment_3<Kernel>& s2);
 
 /// @}
 
@@ -2323,8 +2323,8 @@ returns the radical line of the two circles.
 \pre `c1` and `c2` are not cocentric.
 */
 template <typename Kernel>
-Line_2<Kernel> radical_line(const Circle_2<Kernel>& c1,
-const Circle_2<Kernel>& c2);
+CGAL::Line_2<Kernel> radical_line(const CGAL::Circle_2<Kernel>& c1,
+const CGAL::Circle_2<Kernel>& c2);
 
 /// @}
 
@@ -2343,9 +2343,9 @@ const Circle_2<Kernel>& c2);
 returns `true` iff `p`, `q`, and `r` form a right turn.
 */
 template <typename Kernel>
-bool right_turn(const Point_2<Kernel> &p,
-const Point_2<Kernel> &q,
-const Point_2<Kernel> &r);
+bool right_turn(const CGAL::Point_2<Kernel> &p,
+const CGAL::Point_2<Kernel> &q,
+const CGAL::Point_2<Kernel> &r);
 
 /// @}
 
@@ -2366,10 +2366,10 @@ of the points `p`, `q` and `r` does not matter.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_circle(
-const Point_2<Kernel> &p, 
-const Point_2<Kernel> &q,
-const Point_2<Kernel> &r, 
-const Point_2<Kernel> &t);
+const CGAL::Point_2<Kernel> &p, 
+const CGAL::Point_2<Kernel> &q,
+const CGAL::Point_2<Kernel> &r, 
+const CGAL::Point_2<Kernel> &t);
 
 /*!
 returns the position of the point `t` relative to the circle
@@ -2377,9 +2377,9 @@ that has `pq` as its diameter.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_circle(
-const Point_2<Kernel> &p, 
-const Point_2<Kernel> &q,
-const Point_2<Kernel> &t);
+const CGAL::Point_2<Kernel> &p, 
+const CGAL::Point_2<Kernel> &q,
+const CGAL::Point_2<Kernel> &t);
 
 /// @}
 
@@ -2400,11 +2400,11 @@ of the points `p`, `q`, `r`, and `s` does not matter.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_sphere(
-const Point_3<Kernel> &p, 
-const Point_3<Kernel> &q,
-const Point_3<Kernel> &r, 
-const Point_3<Kernel> &s, 
-const Point_3<Kernel> &t);
+const CGAL::Point_3<Kernel> &p, 
+const CGAL::Point_3<Kernel> &q,
+const CGAL::Point_3<Kernel> &r, 
+const CGAL::Point_3<Kernel> &s, 
+const CGAL::Point_3<Kernel> &t);
 
 /*!
 returns the position of the point `t` relative to the sphere
@@ -2413,10 +2413,10 @@ by these three points.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_sphere(
-const Point_3<Kernel> &p, 
-const Point_3<Kernel> &q,
-const Point_3<Kernel> &r, 
-const Point_3<Kernel> &t);
+const CGAL::Point_3<Kernel> &p, 
+const CGAL::Point_3<Kernel> &q,
+const CGAL::Point_3<Kernel> &r, 
+const CGAL::Point_3<Kernel> &t);
 
 /*!
 returns the position of the point `t` relative to the sphere
@@ -2424,9 +2424,9 @@ that has `pq` as its diameter.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_sphere(
-const Point_3<Kernel> &p, 
-const Point_3<Kernel> &q,
-const Point_3<Kernel> &t);
+const CGAL::Point_3<Kernel> &p, 
+const CGAL::Point_3<Kernel> &q,
+const CGAL::Point_3<Kernel> &t);
 
 /// @}
 
@@ -2452,10 +2452,10 @@ otherwise, `side_of_oriented_circle(r, q, test, p)` is returned.
 */
 template <typename Kernel>
 Oriented_side side_of_oriented_circle(
-const Point_2<Kernel> &p, 
-const Point_2<Kernel> &q,
-const Point_2<Kernel> &r, 
-const Point_2<Kernel> &test);
+const CGAL::Point_2<Kernel> &p, 
+const CGAL::Point_2<Kernel> &q,
+const CGAL::Point_2<Kernel> &r, 
+const CGAL::Point_2<Kernel> &test);
 
 /// @}
 
@@ -2483,11 +2483,11 @@ and `test` are non coplanar.
 */
 template <typename Kernel>
 Oriented_side side_of_oriented_sphere(
-const Point_3<Kernel> &p, 
-const Point_3<Kernel> &q,
-const Point_3<Kernel> &r, 
-const Point_3<Kernel> &s, 
-const Point_3<Kernel> &test);
+const CGAL::Point_3<Kernel> &p, 
+const CGAL::Point_3<Kernel> &q,
+const CGAL::Point_3<Kernel> &r, 
+const CGAL::Point_3<Kernel> &s, 
+const CGAL::Point_3<Kernel> &test);
 
 /// @}
 
@@ -2501,16 +2501,16 @@ returns the squared area of the triangle defined by the points `p`,
 `q` and `r`. 
 */
 template <typename Kernel>
-Kernel::FT squared_area(const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r);
+Kernel::FT squared_area(const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r);
 
 /// @}
 
 /// \addtogroup squared_radius squared_radius
 /// \ingroup kernel_global_function
 
-/// \sa `CGAL::Circle_2<Kernel>` 
+/// \sa `CGAL::CGAL::Circle_2<Kernel>` 
 /// \sa `CGAL::Circle_3<Kernel>` 
 /// \sa `CGAL::Sphere_3<Kernel>` 
 
@@ -2522,9 +2522,9 @@ compute the squared radius of the circle passing through the points
 */
 template <typename Kernel>
 FT
-squared_radius( const Point_2<Kernel>& p,
-const Point_2<Kernel>& q,
-const Point_2<Kernel>& r);
+squared_radius( const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q,
+const CGAL::Point_2<Kernel>& r);
 
 /*!
 compute the squared radius of the smallest circle passing through `p`,
@@ -2532,8 +2532,8 @@ and `q`, i.e.\ one fourth of the squared distance between `p` and `q`.
 */
 template <typename Kernel>
 FT
-squared_radius( const Point_2<Kernel>& p,
-const Point_2<Kernel>& q);
+squared_radius( const CGAL::Point_2<Kernel>& p,
+const CGAL::Point_2<Kernel>& q);
 
 /*!
 compute the squared radius of the smallest circle passing through `p`, 
@@ -2541,7 +2541,7 @@ i.e.\ \f$ 0\f$.
 */
 template <typename Kernel>
 FT
-squared_radius( const Point_2<Kernel>& p);
+squared_radius( const CGAL::Point_2<Kernel>& p);
 
 /*!
 compute the squared radius of the sphere passing through the points `p`,
@@ -2549,10 +2549,10 @@ compute the squared radius of the sphere passing through the points `p`,
 */
 template <typename Kernel>
 FT
-squared_radius( const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r,
-const Point_3<Kernel>& s);
+squared_radius( const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r,
+const CGAL::Point_3<Kernel>& s);
 
 /*!
 compute the squared radius of the sphere passing through the points `p`,
@@ -2560,9 +2560,9 @@ compute the squared radius of the sphere passing through the points `p`,
 */
 template <typename Kernel>
 FT
-squared_radius( const Point_3<Kernel>& p,
-const Point_3<Kernel>& q,
-const Point_3<Kernel>& r);
+squared_radius( const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q,
+const CGAL::Point_3<Kernel>& r);
 
 /*!
 compute the squared radius of the smallest circle passing through `p`,
@@ -2570,8 +2570,8 @@ and `q`, i.e.\ one fourth of the squared distance between `p` and `q`.
 */
 template <typename Kernel>
 FT
-squared_radius( const Point_3<Kernel>& p,
-const Point_3<Kernel>& q);
+squared_radius( const CGAL::Point_3<Kernel>& p,
+const CGAL::Point_3<Kernel>& q);
 
 /*!
 compute the squared radius of the smallest circle passing through `p`, 
@@ -2579,7 +2579,7 @@ i.e.\ \f$ 0\f$.
 */
 template <typename Kernel>
 FT
-squared_radius( const Point_3<Kernel>& p);
+squared_radius( const CGAL::Point_3<Kernel>& p);
 
 /// @}
 
@@ -2587,7 +2587,7 @@ squared_radius( const Point_3<Kernel>& p);
 /// \addtogroup volume volume
 /// \ingroup kernel_global_function
 
-/// \sa `CGAL::Tetrahedron_3<Kernel>` 
+/// \sa `CGAL::CGAL::Tetrahedron_3<Kernel>` 
 
 /// @{
 
@@ -2597,8 +2597,8 @@ Computes the signed volume of the tetrahedron defined by the four points
 */
 
 template <typename Kernel>
-Kernel::FT volume(const Point_3<Kernel> & p0, const Point_3<Kernel> & p1,
-                   const Point_3<Kernel> & p2, const Point_3<Kernel> & p3);
+Kernel::FT volume(const CGAL::Point_3<Kernel> & p0, const CGAL::Point_3<Kernel> & p1,
+                   const CGAL::Point_3<Kernel> & p2, const CGAL::Point_3<Kernel> & p3);
 
 /// @}
 
@@ -2617,16 +2617,16 @@ returns `true`, iff `p` and `q`
 have the same `x`-coordinate.
 */
 template <typename Kernel>
-bool x_equal(const Point_2<Kernel> &p,
-const Point_2<Kernel> &q);
+bool x_equal(const CGAL::Point_2<Kernel> &p,
+const CGAL::Point_2<Kernel> &q);
 
 /*!
 returns `true`, iff `p` and `q`
 have the same `x`-coordinate.
 */
 template <typename Kernel>
-bool x_equal(const Point_3<Kernel> &p,
-const Point_3<Kernel> &q);
+bool x_equal(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel> &q);
 
 /// @}
 
@@ -2646,16 +2646,16 @@ returns `true`, iff `p` and `q`
 have the same `y`-coordinate.
 */
 template <typename Kernel>
-bool y_equal(const Point_2<Kernel> &p,
-const Point_2<Kernel> &q);
+bool y_equal(const CGAL::Point_2<Kernel> &p,
+const CGAL::Point_2<Kernel> &q);
 
 /*!
 returns `true`, iff `p` and `q`
 have the same `y`-coordinate.
 */
 template <typename Kernel>
-bool y_equal(const Point_3<Kernel> &p,
-const Point_3<Kernel> &q);
+bool y_equal(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel> &q);
 
 /// @}
 
@@ -2674,8 +2674,8 @@ returns `true`, iff `p` and `q`
 have the same `z`-coordinate.
 */
 template <typename Kernel>
-bool z_equal(const Point_3<Kernel> &p,
-const Point_3<Kernel> &q);
+bool z_equal(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel> &q);
 
 /// @}
 
