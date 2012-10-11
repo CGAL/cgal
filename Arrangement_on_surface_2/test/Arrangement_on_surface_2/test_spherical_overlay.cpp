@@ -263,14 +263,14 @@ bool test_one_file(std::ifstream& in, bool verbose)
   isolated_points.clear();
   xcurves.clear();
   init_arr(arr2);
-  
+
   // Read the number of cells left.
   unsigned int num_vertices_left, num_edges_left, num_faces_left;
   in >> num_vertices_left >> num_edges_left >> num_faces_left;  
   
   Arrangement arr;
   Overlay_traits overlay_traits;
-  std::cout << "overlaying" << " ... ";
+  std::cout << "overlaying" << " ... "; std::cout.flush();
   CGAL::overlay(arr1, arr2, arr, overlay_traits);
   std::cout << "overlaid" << std::endl;
   
