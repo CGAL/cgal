@@ -930,6 +930,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_rational_function_tr
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_spherical_merge.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_spherical_removal.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_spherical_removal.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_topol_traits.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.h -text
