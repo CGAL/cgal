@@ -192,14 +192,17 @@ information. However, this package allows to associate any information
 to the cells of the combinatorial map. A specific information, which
 is often used in practice, consists in adding linear geometry to a
 combinatorial map by associating a point to each vertex of the map:
-this is the object of the `Linear_cell_complex` package (when an
-object has a point associated to each vertex, each edge is thus a
-straight line segment, which explains the name "linear geometry"). The
-`Linear_cell_complex` package  can for example be useful to describe
-3D buildings as set of walls, rooms, doors and windows (both
+this is the object of the \ref ChapterLinearCellComplex
+"Linear cell complex" package (when an object has a point associated to each
+vertex, each edge is thus a straight line segment, which explains the
+name "linear geometry"). The \ref ChapterLinearCellComplex 
+"Linear cell complex" package  can for example be useful to describe 3D
+buildings as set of walls, rooms, doors and windows (both
 combinatorial and geometrical descriptions) and all the adjacency
 relations between these elements allowing for example to move a camera
 in a given building from rooms to rooms by traversing doors.
+
+\todo Solve the problem with the links to linear cell complex package that do not work.
 
 # Data Structure Presentation #
 \anchor sec_presentation
@@ -216,7 +219,7 @@ Section \ref secsoftwaredesign "Software Design".
 A <I>d</I>D combinatorial map is a set of darts <I>D</I>. A dart
 <I>d0</I> is an element that can be <I>linked</I> with <I>d</I>+1
 darts by pointers called \f$ \beta_i\f$, with 0\f$ \leq\f$<I>i</I>\f$
-\leq\f$<I>d</I>. Dart <I>d0</I> is said <I>i-free</I> when \f$
+\leq\f$<I>d</I>. %Dart <I>d0</I> is said <I>i-free</I> when \f$
 \beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$. Each \f$ \beta_i\f$, for
 2\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>, is its own inverse, i.e., if
 dart <I>d0</I> is not <I>i</I>-free, then \f$ \beta_i\f$(\f$
@@ -279,25 +282,30 @@ vertex, one edge, one facet and one volume.
 The second important property is that cells of a combinatorial map
 correspond to specific <I>orbits</I>. Given a set  <I>S</I>\f$
 \subseteq\f${\f$ \beta_1\f$,...,\f$ \beta_d\f$} and a dart
-<I>d0</I>, the <I>orbit</I> \f$ \langle{}\f$<I>S</I>\f$
-\rangle{}\f$(<I>d0</I>) is the set of darts that can be reached from
+<I>d0</I>, the <I>orbit</I> \f$ \langle{}\f$ <I>S</I>\f$ \rangle{}\f$(<I>d0</I>) 
+is the set of darts that can be reached from
 <I>d0</I> by following any combination of any \f$ \beta_i\f$'s in
 <I>S</I> and their inverses (to simplify notations, we can use for
-example \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \beta_4\f$\f$
-\rangle{}\f$(<I>d0</I>) to denote \f$ \langle{}\f$<I>S</I>\f$
-\rangle{}\f$(<I>d0</I>) with <I>S</I>={\f$ \beta_1\f$,\f$
-\beta_4\f$}).
+example 
+\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \beta_4\f$\f$\rangle{}\f$(<I>d0</I>) 
+to denote \f$ \langle{}\f$ <I>S</I>\f$
+\rangle{}\f$(<I>d0</I>) with 
+<I>S</I>={\f$ \beta_1\f$,\f$ \beta_4\f$}).
 
 Given a dart <I>d0</I>, in general, \f$ \beta_i\f$(<I>d0</I>) (with
 1\f$ \leq\f$<I>i</I>\f$ \leq\f$d) belongs to the same cells as
 <I>d0</I>, only the <I>i</I>-cell and 0-cell are different. There are
-two exceptions: (1) if <I>d0</I> is <I>i</I>-free, then \f$
-\beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$; (2) if \f$
+two exceptions:
+<ol type="1">
+<li>if <I>d0</I> is <I>i</I>-free, then \f$
+\beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$;</li>
+<li>if \f$
 \beta_i\f$(<I>d0</I>) belongs to the same <I>i</I>-cell as <I>d0</I>
 (case of multi-incidence). For example if an edge is an isolated loop,
 it is incident twice to the same vertex, then given a dart <I>d0</I>
 belonging to this edge, \f$ \beta_1\f$(<I>d0</I>) goes to the next
-edge, which is in fact the same edge.
+edge, which is in fact the same edge.</li>
+</ol>
 
 Since \f$ \beta_i\f$(<I>d0</I>) (with 1\f$ \leq\f$<I>i</I>\f$
 \leq\f$<I>d</I>) allows to change the current <I>i</I>-cell, all the
@@ -535,8 +543,8 @@ correspond to a quasi-manifold? As we can see in
 
 \anchor figure8
 \image html problems-cmaps.png
-<center><b>Figure 8: Two examples of darts linked together by some \f$
-\beta_0\f$, \f$ \beta_1\f$, \f$ \beta_2\f$ and \f$ \beta_3\f$ which
+<center><b>Figure 8: Two examples of darts linked together by some
+\f$ \beta_1\f$, \f$ \beta_2\f$ and \f$ \beta_3\f$ which
 does not represent a 3D quasi-manifold, and thus which are not 3D
 combinatorial map. Left: In this example, all the darts are
 3-free except \f$ \beta_3\f$(1)=5 and \f$ \beta_3\f$(4)=6 (and
@@ -606,12 +614,14 @@ The class `Combinatorial_map<d,Items,Alloc>` is a model of the
 for the dimension of the combinatorial map (an  `unsigned int`), an
 items class (a model of the  `CombinatorialMapItems` concept), and an
 allocator which must be a model of the allocator concept of the
-\stl. Default classes are provided for the items and the allocator
+\stl. %Default classes are provided for the items and the allocator
 classes.
 
 The main role of the class `Combinatorial_map` is the storage and the
 management of darts. It allows to create or remove an isolated dart
-from the combinatorial map. The `Dart_handle` type defines a handle to
+from the combinatorial map. The 
+\link CombinatorialMap::Dart_handle `Dart_handle`\endlink
+type defines a handle to
 the type of used darts (given in the items class).
 `Combinatorial_map` provides several <I>ranges</I> which allow to
 iterate over specific subsets of darts of the combinatorial map (see
@@ -622,7 +632,9 @@ sseclinkdarts "Sewing Orbits and Linking Darts"). We said that a
 dart <I>d0</I> is <I>i</I>-free  if \f$
 \beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$. The \f$ \varnothing\f$
 constant is represented in the class `Combinatorial_map` through a
-`static const Dart_handle`  called `null_dart_handle`. Finally, some
+`static const Dart_handle`  called 
+\link CombinatorialMap::null_dart_handle `null_dart_handle`\endlink. 
+Finally, some
 high level operations are defined as global functions taking a
 `Combinatorial_map` as argument (see Section 
 \ref ssecoperations "Removal and Insertion Operations")
@@ -637,19 +649,28 @@ attributes. We can use `Combinatorial_map::Attribute_handle<i>::type`
 for a handle to the <I>i</I>-attributes (and the const version
 `Combinatorial_map::Attribute_const_handle<i>::type`) and
 `Combinatorial_map::Attribute_type<i>::type` for the type of the
-<I>i</I>-attributes.
+<I>i</I>-attributes. 
+
+\todo Add links to the corresponding types in CombinatorialMap concept asap the types were defined correctly in the concept.
 
 ## Combinatorial Map Items ##
 \anchor ssecitem
 
 The `CombinatorialMapItems` concept defines dart and attribute types
 of a combinatorial map. It contains one inner class named
-`Dart_wrapper`, having one template parameter, `CMap`, a model of
-`CombinatorialMap` concept. The `Dart_wrapper<CMap>` class provides
-two local types: `Dart` which must be a model of the `Dart` concept,
-and `Attributes` which defines the attributes and their types.
+\link CombinatorialMapItems::DartWrapper `Dart_wrapper`\endlink,
+having one template parameter, `CMap`, a model of
+`CombinatorialMap` concept. The 
+\link CombinatorialMapItems::DartWrapper `Dart_wrapper<CMap>`\endlink
+class provides two local types: 
+\link CombinatorialMapItems::DartWrapper::Dart `Dart`\endlink
+which must be a model of the `::Dart` concept, and 
+\link CombinatorialMapItems::DartWrapper::Attributes `Attributes`\endlink
+which defines the attributes and their types.
 
-The `Attributes` tuple must contain at most <I>d</I>+1 types (one for
+The 
+\link CombinatorialMapItems::DartWrapper::Attributes `Attributes`\endlink
+tuple must contain at most <I>d</I>+1 types (one for
 each possible cell dimension of the combinatorial map). Each type of
 the tuple must be either a model of the `CellAttribute` concept or
 `void`. The first type corresponds to 0-attributes, the second to
@@ -664,17 +685,18 @@ is <I>k</I>, with <I>k</I>\f$ <\f$<I>dimension+1</I>, \f$
 
 The class `Combinatorial_map_min_items<d>` is a model of the
 `CombinatorialMapItems` concept which can be used for default
-behaviors.  It defines `CGAL::Dart<d,CMap>` as type of dart, and
+behaviors.  It defines `Dart<d,CMap>` as type of dart, and
 `Attributes` as empty tuple.
 
 ## Darts ##
 \anchor ssecdarts
 
-The class `Dart<d,CMap>`, a model of the `Dart` concept, defines a
+The class `Dart<d,CMap>`, a model of the `::Dart` concept, defines a
 <I>d</I>D dart. It has two template parameters standing for the
 dimension of the combinatorial map, and a model of the
-`CombinatorialMap` concept, which provides the two types `Dart_handle`
-and `Dart_const_handle`.
+`CombinatorialMap` concept, which provides the two types 
+\link CombinatorialMap::Dart_handle `Dart_handle`\endlink and 
+\link CombinatorialMap::Dart_const_handle `Dart_const_handle`\endlink.
 
 Each instance `d0` of `Dart<d,CMap>` stores the \f$ \beta_i\f$
 pointers in an array of <I>d</I>+1 `Dart_handle` (because we describe
@@ -689,7 +711,7 @@ dart is <I>i</I>-free.
 
 Note that the use of the `Dart` class is not hard wired in the
 combinatorial map class. Users can provide their own model of the
-`Dart` concept, and pass it to the combinatorial map with the help of
+`::Dart` concept, and pass it to the combinatorial map with the help of
 a custom item class.
 
 ## Cell Attributes ##
@@ -763,6 +785,8 @@ struct Example_items_3
 typedef CGAL::Combinatorial_map<3, Example_items_3> Example_custom_cmap3;
 
 \endcode
+
+\todo Remove link for Dart typedef in the code (here % does not work).
 
 # Iteration and Creation Operations # {#Combinatorial_mapIteration}
 
