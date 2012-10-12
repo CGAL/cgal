@@ -1059,12 +1059,11 @@ class Reconstruction_from_parallel_slices_3{
           on_edge.push_back(itl->first);
         std::sort(on_edge.begin(),on_edge.end(),Compare_distance_to_point(it->first.first->point()));
         Vertex_handle_2 prev=it->first.first;
-        CGAL_assertion( CGAL::squared_distance(prev->point(),on_edge[0]) < CGAL::squared_distance(prev->point(),on_edge[1]) );
-        #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
-        #warning TODO do not insert point if too close from the previous one!
-        #endif
+        CGAL_assertion( CGAL::squared_distance(prev->point(),on_edge[0]) <= CGAL::squared_distance(prev->point(),on_edge[1]) );
+
         for (std::size_t i=0;i<on_edge.size();++i)
         {
+          if (i!=0 && squared_distance(on_edge[i-1],on_edge[i])<m_min_point_squared_distance) continue;
           Vertex_handle_2 vh=cdtB.insert(on_edge[i]);
           vh->info().z = it->first.first->info().z;
           cdtB.insert_constraint(prev,vh);
@@ -3605,6 +3604,9 @@ template <class Slice_writer>
 const double Reconstruction_from_parallel_slices_3<Slice_writer>::m_bbox_ratio_ma_filtering=10;
 #endif
 
+#ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
+#warning TODO have something that depends on the model!!
+#endif
 template <class Slice_writer>
 const double Reconstruction_from_parallel_slices_3<Slice_writer>::m_min_point_squared_distance=1;
 
