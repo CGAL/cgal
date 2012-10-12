@@ -86,15 +86,17 @@ disabled.
 typedef Hidden_type Attributes; 
 
 template<unsigned int i> 
-struct Attribute_type {
-  /*! 
-  Type of <I>i</I>-attributes, a model of `CellAttribute` concept. 
-  `Attribute_type<i>::type::Dart_handle` is equal to `Dart_handle`, and 
-  `Attribute_type<i>::type::Dart_const_handle` is equal to `Dart_const_handle`. 
-  \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> and <I>i</I>-attributes are non void. 
-  */ 
-  typedef Hidden_type type;
-};
+struct Attribute_type
+{ typedef Hidden_type type; };
+  
+/*! 
+ Type of <I>i</I>-attributes, a model of `CellAttribute` concept. 
+ `Attribute_type<i>::type::Dart_handle` is equal to `Dart_handle`, and 
+ `Attribute_type<i>::type::Dart_const_handle` is equal to `Dart_const_handle`. 
+ \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> and <I>i</I>-attributes are non void. 
+ */ 
+template<unsigned int i> 
+typedef Hidden_type Attribute_type<i>::type;
 
 template<unsigned int i> 
 struct Attribute_handle {
