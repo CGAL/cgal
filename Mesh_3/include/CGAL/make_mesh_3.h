@@ -139,10 +139,6 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria)
   typedef typename Initial_points_vector::iterator Ipv_iterator;
   typedef typename C3T3::Vertex_handle Vertex_handle;
   
-#ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
-  CGAL::default_random = CGAL::Random(0);
-#endif
-
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
   domain.construct_initial_points_object()(std::back_inserter(initial_points));
@@ -453,6 +449,10 @@ void make_mesh_3_impl(C3T3& c3t3,
                       const parameters::internal::Lloyd_options& lloyd,
                       const bool with_features)
 {
+#ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+  CGAL::default_random = CGAL::Random(0);
+#endif
+
   // Initialize c3t3
   internal::Mesh_3::C3t3_initializer< 
     C3T3,
