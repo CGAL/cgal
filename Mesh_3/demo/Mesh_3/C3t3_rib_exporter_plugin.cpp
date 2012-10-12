@@ -99,11 +99,14 @@ private:
   
   void write_facets(const C3t3& c3t3, std::ofstream& out);
   void write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
+  void write_surface_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
   void write_cells_intersecting_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
   void write_cells_on_the_positive_side_of_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
   
   void write_triangle(const Point_3& p, const Point_3& q, const Point_3& r, 
                       const QColor& color, const QColor& edge_color, std::ofstream& out);
+  void write_tetrahedron (const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s,
+                          const QColor& color, const QColor& edge_color, std::ofstream& out);
   
   void write_point(const Point_3& p, std::ofstream& out);
   void write_point_sphere(const Point_3& p, std::ofstream& out);
@@ -388,7 +391,8 @@ save(const Scene_c3t3_item& c3t3_item, const QFileInfo& fileInfo)
       
     case MESH:
       rib_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl;
-      write_facets(c3t3_item.c3t3(), rib_file);
+      //write_facets(c3t3_item.c3t3(), rib_file);
+      write_surface_cells(c3t3_item.c3t3(), c3t3_item.plane(), rib_file);
       break;
       
     case TRIANGULATION:
@@ -701,6 +705,139 @@ write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
   }
 }
 
+void
+C3t3_rib_exporter_plugin::
+write_surface_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
+{
+  typedef Kernel::Oriented_side Side;
+
+  for ( C3t3::Cells_in_complex_iterator it_cell = c3t3.cells_in_complex_begin(),
+       end = c3t3.cells_in_complex_end() ; it_cell != end ; ++it_cell )
+  {
+    C3t3::Cell_handle c = it_cell;
+
+    // Compute the number of surface vertices in c
+    // Keep one of them in memory
+    int num_2D_vertices = 0;
+    int last_2D_vertex_index = -1;
+    for (int i = 0 ; i < 4 ; ++i)
+    {
+      if (c3t3.in_dimension(c->vertex(i)) == 2)
+      {
+        ++num_2D_vertices;
+        last_2D_vertex_index = i;
+      }
+    }
+      
+    //const int TRANSPARENCY_ALPHA_VALUE = 100;
+    CGAL::Bbox_3 bbox = c3t3.bbox();
+    float relPos = (c->circumcenter().x() - bbox.xmin()) / (bbox.xmax() - bbox.xmin());
+    float TRANSPARENCY_ALPHA_VALUE = 
+      1.f - 
+      (relPos < 0.25f ? 
+        0.0f : 
+        (relPos > 0.75f ? 
+          1.0f :
+          (relPos - 0.25f)*1.0f/0.5f
+        )
+      );
+
+
+    /*
+    // ONLY SURFACE FACETS ARE TRANSPARENT
+    if (num_2D_vertices >= 3)
+    {
+      QColor basecolor = subdomain_map_[c3t3.subdomain_index(c)];
+      QColor facecolor = basecolor.darker(150);
+      QColor edgecolor = facecolor.darker(150);
+            
+      for (int i = 0 ; i < 4 ; ++i)
+      {
+        if (c3t3.in_dimension(c->vertex((i+1)%4)) == 2
+            && c3t3.in_dimension(c->vertex((i+2)%4)) == 2
+            && c3t3.in_dimension(c->vertex((i+3)%4)) == 2)
+        {
+          facecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE); // CJTODO TEMP
+          edgecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE);
+        }
+        else
+        {
+          facecolor.setAlpha(255); // CJTODO TEMP
+          edgecolor.setAlpha(255);
+        }
+
+        write_triangle(c->vertex((i+1)%4)->point(), 
+                       c->vertex((i+2)%4)->point(), 
+                       c->vertex((i+3)%4)->point(), 
+                       facecolor, edgecolor, out );
+      }
+    }*/
+
+    
+    // SURFACE CELLS ARE TRANSPARENT
+    if (num_2D_vertices >= 2)
+    {
+      QColor basecolor = subdomain_map_[c3t3.subdomain_index(c)];
+      QColor facecolor = basecolor.darker(150);
+      QColor edgecolor = facecolor.darker(150);
+      
+      /*
+      // Transparency on the negative side of the plane
+      const Side s0 = plane.oriented_side(c->vertex(0)->point());
+      const Side s1 = plane.oriented_side(c->vertex(1)->point());
+      const Side s2 = plane.oriented_side(c->vertex(2)->point());
+      const Side s3 = plane.oriented_side(c->vertex(3)->point());
+      if(   s0 == CGAL::ON_NEGATIVE_SIDE && s1 == CGAL::ON_NEGATIVE_SIDE 
+         && s2 == CGAL::ON_NEGATIVE_SIDE && s3 == CGAL::ON_NEGATIVE_SIDE )
+      {
+        facecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE); // CJTODO TEMP
+        edgecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE);
+      }
+      else
+      {
+        facecolor.setAlpha(255); // CJTODO TEMP
+        edgecolor.setAlpha(255);
+      }*/
+      
+      facecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE); // CJTODO TEMP
+      edgecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE);
+         
+      for (int i = 0 ; i < 4 ; ++i)
+      {
+        write_triangle(c->vertex((i+1)%4)->point(), 
+                       c->vertex((i+2)%4)->point(), 
+                       c->vertex((i+3)%4)->point(), 
+                       facecolor, edgecolor, out );
+      }
+    }
+    else if (num_2D_vertices == 1)
+    {
+      QColor basecolor = subdomain_map_[c3t3.subdomain_index(c)];
+      QColor facecolor = basecolor.darker(150);
+      QColor edgecolor = facecolor.darker(150);
+            
+      for (int i = 0 ; i < 4 ; ++i)
+      {
+        if (i == last_2D_vertex_index)
+        {
+          facecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE); // CJTODO TEMP
+          edgecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE);
+        }
+        else
+        {
+          facecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE); // CJTODO TEMP
+          edgecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE);
+        }
+
+        write_triangle(c->vertex((i+1)%4)->point(), 
+                       c->vertex((i+2)%4)->point(), 
+                       c->vertex((i+3)%4)->point(), 
+                       facecolor, edgecolor, out );
+      }
+    }
+  }
+}
+
 
 void
 C3t3_rib_exporter_plugin::
@@ -826,6 +963,36 @@ write_triangle (const Point_3& p, const Point_3& q, const Point_3& r,
   add_vertex(r,edge_color);
 }
 
+void
+C3t3_rib_exporter_plugin::
+write_tetrahedron (const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s,
+                   const QColor& color, const QColor& edge_color, std::ofstream& out)
+{
+  // Color
+  write_color(color, true, out);
+  
+  // Triangle
+  out << "Polygon \"P\" [";
+  write_point(p,out);
+  write_point(q,out);
+  write_point(r,out);
+  write_point(s,out);
+  out << "]" << std::endl;
+  
+  // Edges (will be drawn later on)
+  add_edge(p,q,edge_color);
+  add_edge(p,r,edge_color);
+  add_edge(q,r,edge_color);
+  add_edge(s,p,edge_color);
+  add_edge(s,q,edge_color);
+  add_edge(s,r,edge_color);
+
+  // Vertices (will be drawn later on)
+  add_vertex(p,edge_color);
+  add_vertex(q,edge_color);
+  add_vertex(r,edge_color);
+  add_vertex(s,edge_color);
+}
 
 void
 C3t3_rib_exporter_plugin::
