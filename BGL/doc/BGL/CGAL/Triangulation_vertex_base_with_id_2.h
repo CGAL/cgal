@@ -11,7 +11,7 @@ index vertices for \sc{Bgl} algorithms.
 Note that the user is in charge to set the index correctly before 
 running a graph algorithm. 
 
-\tparam `TriangulationTraits_2 is the geometric traits class
+\tparam TriangulationTraits_2 is the geometric traits class
 and must be a model of `TriangulationTraits_2` which provides the `Point_2`.
 
 \tparam TriangulationVertexBase_2 must be a vertex base class from which 
