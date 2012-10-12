@@ -3,7 +3,8 @@
 /*!
 \ingroup nt_builtin
 
-The fundamental type `int` is an `RealEmbeddable` `EuclideanRing`. 
+The fundamental type `int` is a model of the concepts 
+and `RealEmbeddable` `EuclideanRing`. 
 Due to overflow `int` is considered as not exact. 
 
 \models ::EuclideanRing 
