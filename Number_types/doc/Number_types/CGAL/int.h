@@ -4,7 +4,7 @@
 \ingroup nt_builtin
 
 The fundamental type `int` is a model of the concepts 
-and `RealEmbeddable` `EuclideanRing`. 
+RealEmbeddable` and `EuclideanRing`. 
 Due to overflow `int` is considered as not exact. 
 
 \models ::EuclideanRing 
