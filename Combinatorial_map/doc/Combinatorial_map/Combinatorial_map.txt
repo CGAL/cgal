@@ -820,22 +820,30 @@ combinatorial map defines range classes which are all models of the
 
 There are three different categories of dart range classes:
 <UL>
-<LI>`Dart_range`: range of all the darts of a combinatorial map;
-<LI>`Dart_of_orbit_range<Beta...>`: range of all the darts of the
-orbit \f$ \langle{}\f$`Beta...`\f$ \rangle{}\f$(<I>d0</I>) for a given
+
+<LI>\link CombinatorialMap::Dart_range `Dart_range`\endlink: 
+      range of all the darts of a combinatorial map;
+
+<LI>\link CombinatorialMap::Dart_of_orbit_range `Dart_of_orbit_range<Beta...>`\endlink:
+range of all the darts of the orbit 
+\f$ \langle{}\f$`Beta...`\f$ \rangle{}\f$(<I>d0</I>) for a given
 <I>d0</I>. `Beta...` is a sequence of integers  \f$ i_1\f$,...,
 \f$ i_k\f$,  each \f$ i_j\f$\f$ \in\f${0, ...,
 <I>d</I>}.  These integers must satisfy: \f$ i_1\f$\f$ <\f$\f$
 i_2\f$\f$ <\f$...\f$ <\f$\f$ i_k\f$, and (\f$ i_1\f$\f$
 \neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$1)  (for example
-`Dart_of_orbit_range<1,2>` for the orbit \f$ \langle{}\f$\f$
+\link CombinatorialMap::Dart_of_orbit_range `Dart_of_orbit_range<1,2>`\endlink
+for the orbit \f$ \langle{}\f$\f$
 \beta_1\f$,\f$ \beta_2\f$\f$ \rangle{}\f$(<I>d0</I>));	
-<LI>`Dart_of_cell_range<i,dim>`: range of all the darts of the
+
+<LI>\link CombinatorialMap::Dart_of_cell_range `Dart_of_cell_range<i,dim>`\endlink:
+range of all the darts of the
 <I>i</I>-cell containing a given dart. The <I>i</I>-cell is considered
 in dimension `dim` (with 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>d</I>,
 <I>dim</I>=<I>d</I> by default),  with 0\f$ \leq\f$<I>i</I>\f$
 \leq\f$<I>dim+1</I>. If <I>i</I>=<I>dim+1</I>,
-`Dart_of_cell_range<i,dim>` is the range of all the darts of the
+\link CombinatorialMap::Dart_of_cell_range `Dart_of_cell_range<i,dim>`\endlink
+is the range of all the darts of the
 connected component containing a given dart. 
 </UL>
 
@@ -846,27 +854,36 @@ There are also two different classes of ranges containing one dart per
 dimension `dim` (with  0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>d</I>,
 <I>dim=d</I> by default).
 <UL>
-<LI>`One_dart_per_cell_range<i,dim>`: range containing one dart of
+<LI>\link CombinatorialMap::One_dart_per_cell_range `One_dart_per_cell_range<i,dim>`\endlink:
+range containing one dart of
 each <I>i</I>-cell of the combinatorial map, 0\f$ \leq\f$<I>i</I>\f$
-\leq\f$<I>dim+1</I> (for example `One_dart_per_cell_range<2>` for the
-range of one dart per 2-cell of the combinatorial map);
-<LI>`One_dart_per_incident_cell_range<i,j,dim>`: range containing one
+\leq\f$<I>dim+1</I> (for example 
+\link CombinatorialMap::One_dart_per_cell_range `One_dart_per_cell_range<2>`\endlink
+for the range of one dart per 2-cell of the combinatorial map);
+
+<LI>\link CombinatorialMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<i,j,dim>`\endlink:
+range containing one
 dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing a
 given dart, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and  0\f$
 \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> (for example
-`One_dart_per_incident_cell_range<0,3>` for the range of one dart per
+\link CombinatorialMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<0,3>`\endlink
+for the range of one dart per
 vertex of the volume incident to the starting dart).  If
 <I>i</I>=<I>j</I>, the range contains only the given dart.
 </UL>
 
-The iterators of the `Dart_range` are bidirectional iterators,  while
+The iterators of the \link CombinatorialMap::Dart_range `Dart_range`\endlink
+are bidirectional iterators,  while
 the iterators of the other four ranges are forward iterators.  The
 value type of all these iterators is `Dart` thus all these  iterators
-can be directly used as `Dart_handle`.
+can be directly used as \link CombinatorialMap::Dart_handle `Dart_handle`\endlink.
 
 Additionally, there is a range over non void <I>i</I>-attributes:
-`Attribute_range<i>::type`, having a bidirectional iterator with value
-type `Attribute_type<i>::type`.
+\link CombinatorialMap::Attribute_range `Attribute_range<i>::type`\endlink, 
+having a bidirectional iterator with value
+type \link CombinatorialMap::Attribute_type Attribute_type<i>::type`\endlink.
+
+\todo Correct the links to CombinatorialMap::Attribute_type asap the doc of CMap concept is ok.
 
 For each range, there is an associated const range, a model of the
 `ConstRange` concept. You can find some examples of ranges in Section
@@ -881,19 +898,20 @@ map are not modified. Note that the dimension of the combinatorial map
 must be large enough: darts must contain all the \f$ \beta\f$ pointers
 used by the operation. All these functions take an instance of
 `CombinatorialMap` as first parameter (called `cm`) and return a
-`Dart_handle` to a new dart created during the operation.
+\link CombinatorialMap::Dart_handle `Dart_handle`\endlink to a new dart
+created during the operation.
 
 <UL>
-<LI>`make_edge<CMap>(cm)`: creates an isolated edge (two darts linked
+<LI>`::make_edge<CMap>(cm)`: creates an isolated edge (two darts linked
 by \f$ \beta_2\f$); dimension must be greater or equal than two;
-<LI>`make_combinatorial_polygon<CMap>(cm,lg)`: creates an isolated
+<LI>`::make_combinatorial_polygon<CMap>(cm,lg)`: creates an isolated
 combinatorial polygon of length `lg` (`lg` darts linked by \f$
 \beta_1\f$), for `lg>0`; dimension must be greater or equal than one;
-<LI>`make_combinatorial_tetrahedron<CMap>(cm)`: creates an isolated
+<LI>`::make_combinatorial_tetrahedron<CMap>(cm)`: creates an isolated
 combinatorial tetrahedron (four combinatorial triangles linked
 together by \f$ \beta_2\f$); dimension must be greater or equal than
 two;
-<LI>`make_combinatorial_hexahedron<CMap>(cm)`: creates an isolated
+<LI>`::make_combinatorial_hexahedron<CMap>(cm)`: creates an isolated
 combinatorial hexahedron (six combinatorial quadrangles linked
 together by \f$ \beta_2\f$); dimension must be greater or equal than
 two.
@@ -908,12 +926,13 @@ algorithm, for example,  iteration over a given range. Users can also
 mark specific parts of a combinatorial map (for example mark all the
 darts belonging to objects having specific semantics). To answer these
 needs, a `CombinatorialMap` has a certain number of Boolean marks
-(fixed by the constant `NB_MARKS`). When one wants to use a Boolean
+(fixed by the constant \link CombinatorialMap::NB_MARKS `NB_MARKS`\endlink).
+When one wants to use a Boolean
 mark, the following methods are available (with `cm` an instance of a
 combinatorial map):
 <ul>
-<li> get a new free mark: `int m = cm.get_new_mark()` (return -1 if no
-mark is available);
+<li> get a new free mark: `int m = cm.get_new_mark()` 
+     (return -1 if no mark is available);
 <li> set mark `m` for a given dart `d0`: `cm.mark(dh0,m)`;
 <li> unset mark `m` for a given dart `d0`: `cm.unmark(dh0,m)`;
 <li> test if a given dart `d0` is marked for `m`:
@@ -925,6 +944,8 @@ mark is available);
 <li> free mark `m`: `cm.free_mark(m)`. This method unmarks all the
   darts of `cm` for `m` before freeing it.
 </ul>
+
+\todo make the links for all the methods above (why they are not automatically generated?)
 
 It is important to free a mark when it is no longer needed, otherwise
 you may at some point run out of marks.
@@ -958,24 +979,8 @@ Section \ref sseclinkdarts "Sewing Orbits and Linking Darts");
 The `CombinatorialMap` defines two groups of methods to modify the
 \f$ \beta\f$ pointers of existing darts.
 
-\anchor figure10
-\image html exemple-3d-sew.png
-<center><b>Figure 10: Example of 3-sew operation. Left: A 3D combinatorial
-map containing two volumes that are not connected, with
-2-attributes. Each attribute contains a color in RGB format, and there
-are four 2-cells associated with attributes. Associations between
-darts and attributes are drawn with red segments. Right: The 3D
-combinatorial map obtained as result of `sew<3>(1,5)` (or
-`sew<3>(2,8)`, or `sew<3>(3,7)`, or `sew<3>(4,6)`). Darts (1,5),
-(2,8), (3,7) and (4,6) are linked together by \f$ \beta_3\f$. The two
-2-cells <I>c1</I>={1,2,3,4} and <I>c2</I>={5,6,7,8} are merged after
-the sew into the 2-cell {1,2,3,4,5,6,7,8}. We are in the case where
-the two attributes are non NULL, thus the first one is kept, and all
-the darts of <I>c2</I> are associated with the first attribute.
-</b></center>
-
-
-- The `sew` and `unsew` methods iterate over two orbits in
+<ul>
+<li> The `sew` and `unsew` methods iterate over two orbits in
   order to link or unlink specific darts two by two. Intuitively, a
   `sew<i>` operation glues two <I>i</I>-cells by identifying two of
   their <I>(i-1)</I>-cells (see example in \ref figure10 "Figure 10"
@@ -985,12 +990,13 @@ the darts of <I>c2</I> are associated with the first attribute.
   These methods guarantee that given a valid combinatorial map and a
   possible operation we obtain a valid combinatorial map as result of
   the operation.
-- \advanced The `link_beta` and `unlink_beta` methods only modify
+<li> \advanced The `link_beta` and `unlink_beta` methods only modify
   the pointer of two darts: the obtained combinatorial maps may be not
   valid. These operations can be useful to use low level operations
   in a specific algorithm, for example to modify locally a
   combinatorial map in a really fast way. In such a case, additional
   operations may be needed to restore the validity conditions.
+</ul>
 
 Linking two darts <I>d1</I> and <I>d2</I> by \f$ \beta_i\f$, with 2\f$
 \leq\f$<I>i</I>\f$ \leq\f$<I>d</I> and <I>d1</I>\f$ \neq\f$<I>d2</I>,
@@ -1011,6 +1017,22 @@ modification is \f$ \beta_1\f$(<I>d0</I>)=\f$ \varnothing\f$ (and thus
 \f$ \beta_0\f$(\f$ \beta_1\f$(<I>d0</I>))=\f$ \varnothing\f$ by
 definition of \f$ \beta_0\f$). Note that is it possible to unlink a
 given dart for \f$ \beta_i\f$ only if it is not <I>i</I>-free.
+
+\anchor figure10
+\image html exemple-3d-sew.png
+<center><b>Figure 10: Example of 3-sew operation. Left: A 3D combinatorial
+map containing two volumes that are not connected, with
+2-attributes. Each attribute contains a color in RGB format, and there
+are four 2-cells associated with attributes. Associations between
+darts and attributes are drawn with red segments. Right: The 3D
+combinatorial map obtained as result of `sew<3>(1,5)` (or
+`sew<3>(2,8)`, or `sew<3>(3,7)`, or `sew<3>(4,6)`). Darts (1,5),
+(2,8), (3,7) and (4,6) are linked together by \f$ \beta_3\f$. The two
+2-cells <I>c1</I>={1,2,3,4} and <I>c2</I>={5,6,7,8} are merged after
+the sew into the 2-cell {1,2,3,4,5,6,7,8}. We are in the case where
+the two attributes are non NULL, thus the first one is kept, and all
+the darts of <I>c2</I> are associated with the first attribute.
+</b></center>
 
 The `sew<i>(dh1,dh2)` method consists mainly to link two by two
 several darts by \f$ \beta_i\f$. This operation is possible only if
