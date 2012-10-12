@@ -8,7 +8,6 @@ A model of `RealEmbeddableTraits` is associated to a number type
 to the concept `RealEmbeddable`. 
 
 \hasModel `CGAL::Real_embeddable_traits<T>`
-
 */
 
 class RealEmbeddableTraits {
@@ -26,7 +25,7 @@ typedef Hidden_type Type;
 /*! 
 Tag indicating whether the associated type is real embeddable. 
 
-This is either `CGAL::Tag_true` or `CGAL::Tag_false`. 
+This is either \link Tag_true `Tag_true`\endlink or \link Tag_false `Tag_false`\endlink. 
 */ 
 typedef Hidden_type Is_real_embeddable; 
 
