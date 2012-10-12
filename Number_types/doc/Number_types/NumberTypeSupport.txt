@@ -163,10 +163,7 @@ interval type, since it also carries the error of a computed value.
 As for \leda, the most sophisticated number type in <span class="textsc">Core</span> is `CORE::Expr`, 
 which is in its functionality equivalent to `leda_real`. 
 
-The files <TT>CGAL/CORE_BigInt.h</TT>, <TT>CGAL/CORE_BigRat.h</TT>,
-<TT>CGAL/CORE_BigFloat.h</TT> and <TT>CGAL/CORE_Expr.h</TT> provide the
-necessary functions to make these classes compliant to the \cgal number type
-requirements.
+
 
 
 # Interval arithmetic # {#Number_typesInterval}
@@ -182,8 +179,7 @@ separation bound of the polynomial.
 
 For intervals of machine double-precision numbers, \cgal provides
 the class `Interval_nt`. For intervals of floating-point
-arbitrary-precision numbers, the class `Gmpfi` is provided in the
-file <TT>CGAL/Gmpfi.h</TT>.
+arbitrary-precision numbers, \cgal provides the class `Gmpfi`.
 
 Endpoints of `Gmpfi` intervals are represented as `Gmpfr`
 numbers. Each interval has an associated <I>precision</I>, which is
