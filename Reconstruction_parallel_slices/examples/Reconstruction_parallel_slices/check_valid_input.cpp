@@ -177,7 +177,7 @@ int main(int ,char** argv){
       points.clear();
       read_ok=read_polygon(points,cc,poly_elev,input);
     }
-    while (read_ok && !set_polygon(poly,points,elev,cc,bad));
+    while (read_ok && !set_polygon(poly,points,poly_elev,cc,bad));
     
     if (!read_ok || poly_elev!=elev){
       //check for self-intersection in the slice
