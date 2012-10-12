@@ -257,6 +257,9 @@ protected:
 // -----------------------------------
 // Odt
 // -----------------------------------
+
+#ifndef CGAL_MESH_3_DEMO_DISABLE_ODT
+
 struct Odt_parameters
 {
   double time_limit;
@@ -361,12 +364,16 @@ cgal_code_odt_mesh_3(Scene_c3t3_item& c3t3_item,
   
   return cgal_code_optimization(c3t3_item, p, create_new_item);
 }
+#endif
 
 
 
 // -----------------------------------
 // Lloyd
 // -----------------------------------
+
+#ifndef CGAL_MESH_3_DEMO_DISABLE_LLOYD
+
 struct Lloyd_parameters
 {
   double time_limit;
@@ -471,12 +478,16 @@ cgal_code_lloyd_mesh_3(Scene_c3t3_item& c3t3_item,
   
   return cgal_code_optimization(c3t3_item, p, create_new_item);
 }
+#endif
 
 
 
 // -----------------------------------
 // Perturbation
 // -----------------------------------
+
+#ifndef CGAL_MESH_3_DEMO_DISABLE_PERTURBER
+
 struct Perturb_parameters
 {
   double time_limit;
@@ -609,11 +620,14 @@ cgal_code_perturb_mesh_3(Scene_c3t3_item& c3t3_item,
   
   return cgal_code_optimization(c3t3_item, p, create_new_item);
 }
-
+#endif
 
 // -----------------------------------
 // Exudation
 // -----------------------------------
+
+#ifndef CGAL_MESH_3_DEMO_DISABLE_EXUDER
+
 struct Exude_parameters
 {
   double time_limit;
@@ -744,3 +758,4 @@ cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
   
   return new Optimizer_thread(p_opt_function, p_result_item);
 }
+#endif
