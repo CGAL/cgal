@@ -353,7 +353,7 @@ Stream &write_triangulation_to_off(Stream &out) {
     FaceIt fit=face_begin;
     for(;fit!=face_end;++fit)
     {
-		//show_face(*fit);
+	  //show_face(*fit);
       delete_face(*fit);
     }
   }
@@ -477,8 +477,13 @@ Stream &write_edges_to_off(Stream &out,FaceIt face_begin, FaceIt face_end){
 		CGAL_triangulation_precondition( this->dimension() == 2);
 		int li;
 		Locate_type lt;
-		Face_handle fh = this->locate(p,lt,li, start);
+		//Face_handle fh = this->locate(p,lt,li, start);
+		Face_handle fh = start;
+		bool test = test_conflict(p, fh);
+		CGAL_triangulation_precondition(test == true);
+		//if(test_conflict(p, fh))
 				*fit++ = fh; //put fh in OutputItFaces
+		fh->set_in_conflict_flag(1);
 				std::pair<OutputItFaces,OutputItBoundaryEdges>
 				pit = std::make_pair(fit,eit);
 				pit = propagate_conflicts(p,fh,0,pit);
@@ -501,10 +506,15 @@ private:
 						 std::pair<OutputItFaces,OutputItBoundaryEdges>
 						 pit)  const {
 		Face_handle fn = fh->neighbor(i);
+		if (fn->get_in_conflict_flag() ==1){
+			return pit;
+		}
+		
 		if (! test_conflict(p,fn)) {
 			*(pit.second)++ = Edge(fn, fn->index(fh));
 		} else {
 			*(pit.first)++ = fn;
+			fn->set_in_conflict_flag(1);
 			int j = fn->index(fh);
 			pit = propagate_conflicts(p,fn,ccw(j),pit);
 			pit = propagate_conflicts(p,fn,cw(j), pit);
@@ -773,6 +783,9 @@ inline bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 test_conflict(const Point  &p, Face_handle fh) const
 {
+	
+	Orientation orient = power_test(fh, p);
+	Orientation orientFace = orientation(fh);
     return(power_test(fh,p) != ON_NEGATIVE_SIDE);
 }  
 
@@ -910,7 +923,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 			Vertex_handle v3=f->neighbor(0)->vertex(1);
 			Orientation orient=orientation(v1->point(),v2->point(),v3->point()) ;
 			v = insert_outside_affine_hull_regular(p,orient==COLLINEAR);
-			update_negative_faces(v);
+			//update_negative_faces(v);
 			return v;
 		}
 		
@@ -932,7 +945,8 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 								Emptyset_iterator()));*/
 			
 			
-			
+			int numPos = this->number_of_faces();
+			int numNeg = this->number_of_negative_faces();
 			
 			
 			//find_conflicts (p,loc, make_triple(Oneset_iterator<Edge>(edge), std::back_inserter(faces), Emptyset_iterator()));
@@ -963,7 +977,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 			//delete_faces(faces.gbegin(), faces.end());
 			int num = number_of_faces();
 			
-			//if( lt != FACE )
+			if( lt != FACE )
 				update_negative_faces(v);
 			
 						
@@ -1002,7 +1016,7 @@ update_negative_faces(Vertex_handle v)
   }
   else{//dimension==2
 
-    /*Face_circulator fc=incident_faces(v,v->face());
+    Face_circulator fc=incident_faces(v,v->face());
     Face_circulator done(fc);
     //bool neg_found=false;
 	
@@ -1015,21 +1029,21 @@ update_negative_faces(Vertex_handle v)
       else{
 	fc->negative()=false;
       }
-    }while(++fc!=done);*/
+    }while(++fc!=done);
 	  
-	  Faces_iterator fit;
+	 /* Faces_iterator fit;
 	  int numb =0;
 	  for(fit = faces_begin(); fit != faces_end(); fit++) {
 		  
 		 // if(orientation(fit->vertex(0)->point(),fit->vertex(1)->point(),fit->vertex(2)->point())==NEGATIVE){
 		  Orientation orient = orientation(fit);
-		  if(orientation(fit) == NEGATIVE){
+		  if(orientation(fit) == POSITIVE){
 			  fit->negative()=true;
 			  neg_found=true;
 			  numb ++;
 			  this->_negative=fit;
 		  }
-	  }
+	  }*/
 	  
 	  
 	  
@@ -1552,7 +1566,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
     return nv;
   }
   else{ //dimension=1
-    bool conform;
+    bool conform = false;
     Face_handle f = (edges_begin())->first;
  
     if(plane){//points coplanar with geom_traits->sphere
@@ -1566,35 +1580,53 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
       const Point p1=f->vertex(1)->point();
       const Point p2=fn->vertex(1)->point();
 
-      Oriented_side side = oriented_side(p0,p1,p2,p);
+      //
+		Orientation orient = orientation(p0, p1, p2);
+		//Oriented_side side = oriented_side(p0,p1,p2,p);
+		Orientation orient2 = power_test(p0, p1, p2, p);
+		//conform = (orient =orient2==POSITIVE);
+		
+		if(orient==POSITIVE)
+			if(orient2=POSITIVE)
+				conform =true;
+		
+	
+		
+		
+		
+		
+		
  
-      conform=( side == ON_POSITIVE_SIDE );
+      //conform=( orient == orient2 );
+		//conform = (orient2 == ON_POSITIVE_SIDE);
+		
     }
 
 	 Vertex_handle v = this->_tds.insert_dim_up( f->vertex(0), conform);
 	  //f->
     v->set_point(p);
-	 
+	  
 		
 		
-    //this->_negative=faces_begin();
+    this->_negative=faces_begin();
 
 	 
     //seting negative faces if needed
     //TODO: Probably there is a bug in the context of neg_found
-    /*bool neg_found=false;
+    bool neg_found=false;
     	
 		Faces_iterator fit;
 		int numb =0;
 		for(fit = faces_begin(); fit != faces_end(); fit++) {
 		
-			if(orientation(fit->vertex(0)->point(),fit->vertex(1)->point(),fit->vertex(2)->point())==POSITIVE){
+			//if(orientation(fit->vertex(0)->point(),fit->vertex(1)->point(),fit->vertex(2)->point())==NEGATIVE){
+			if(orientation(fit)==NEGATIVE){
 				fit->negative()=true;
 				neg_found=true;
 				numb ++;
 				this->_negative=fit;
-		}*/
-		//}
+		}
+		}
 		
 		
 		

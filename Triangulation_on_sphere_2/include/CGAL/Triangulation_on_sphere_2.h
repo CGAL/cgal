@@ -1704,7 +1704,7 @@ compare_y(const Point& p, const Point& q) const
   return geom_traits().compare_y_2_object()(p,q);
 }
 */
-template <class Gt, class Tds >
+/*template <class Gt, class Tds >
 Oriented_side
 Triangulation_on_sphere_2<Gt, Tds>::
 oriented_side(const Point &p0, const Point &p1,
@@ -1746,14 +1746,49 @@ oriented_side(const Point &p0, const Point &p1,
     else
       return ON_POSITIVE_SIDE;
   }
-}
+}*/
 
-	
-	
-/*	template <class Gt, class Tds >
+	/*template <class Gt, class Tds >
 	Oriented_side
 	Triangulation_on_sphere_2<Gt, Tds>::
-	oriented_side2(const Point &p0, const Point &p1,
+	oriented_side(const Point &p0, const Point &p1,
+				  const Point &p2, const Point &p) const
+	{
+		Orientation o1 = orientation(p0, p1, p),
+		o2 = orientation(p1, p2, p),
+		o3 = orientation(p2, p0, p);
+		
+		//if(orientation(p0, p1, p2)==POSITIVE &&orientation(p0, p1, p2, p)==POSITIVE ){
+			//return ON_POSITIVE_SIDE;
+		//	//}
+		if(orientation(p0, p1, p2)==NEGATIVE &&geom_traits().power_test_2_object()(p0, p1, p2, p)== NEGATIVE ){
+			return ON_POSITIVE_SIDE;
+		}
+		
+			
+			if (o1 == COLLINEAR){
+				if (o2 == COLLINEAR ||  o3 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
+				return ON_NEGATIVE_SIDE;
+			}
+			if (o2 == COLLINEAR){
+				if (o1 == COLLINEAR ||  o3 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
+				return ON_NEGATIVE_SIDE;
+			}
+			if (o3 == COLLINEAR){
+				if (o2 == COLLINEAR ||  o1 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
+				return ON_NEGATIVE_SIDE;
+			}
+			
+			return ON_NEGATIVE_SIDE;
+		
+				//return ON_NEGATIVE_SIDE;
+		
+	}	*/
+	
+	template <class Gt, class Tds >
+	Oriented_side
+	Triangulation_on_sphere_2<Gt, Tds>::
+	oriented_side(const Point &p0, const Point &p1,
 				  const Point &p2, const Point &p) const
 	{
 		Orientation o1 = orientation(p0, p1, p),
@@ -1792,7 +1827,7 @@ oriented_side(const Point &p0, const Point &p1,
 				return ON_POSITIVE_SIDE;
 		}
 	}
-*/	
+	
 	
 	
 	
