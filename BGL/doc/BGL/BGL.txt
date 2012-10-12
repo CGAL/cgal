@@ -15,7 +15,7 @@ faces as edges of the dual graph.
 
 As the scope of \cgal is geometry and not graph algorithms, we
 provide the necessary classes and functions that allow to use the
-algorithms of the <A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library (\sc{Bgl})</A> \cite cgal:sll-bgl-02 for \cgal data structures.
+algorithms of the <A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library (BGL)</A> \cite cgal:sll-bgl-02 for \cgal data structures.
 
 # A Short Introduction to the Boost Graph Library # {#BGLA}
 
