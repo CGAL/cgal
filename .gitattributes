@@ -4535,7 +4535,6 @@ Number_types/doc/Number_types/CGAL/NT_converter.h -text
 Number_types/doc/Number_types/CGAL/Number_type_checker.h -text
 Number_types/doc/Number_types/CGAL/Quotient.h -text
 Number_types/doc/Number_types/CGAL/Rational_traits.h -text
-Number_types/doc/Number_types/CGAL/Root_of_2.h -text
 Number_types/doc/Number_types/CGAL/Root_of_traits.h -text
 Number_types/doc/Number_types/CGAL/Sqrt_extension.h -text
 Number_types/doc/Number_types/CGAL/double.h -text
