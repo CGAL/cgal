@@ -94,19 +94,35 @@ public:
 
   // Constructors
   // We DO NOT INITIALIZE m_erase_counter since it is managed by the Compact_container
-  Triangulation_lazy_ds_cell_base_3() {}
+  Triangulation_lazy_ds_cell_base_3() 
+  {
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
+  }
 
   Triangulation_lazy_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3)
     : Triangulation_ds_cell_base_3<TDS>(v0, v1, v2, v3)
-  {}
+  {
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
+  }
 
   Triangulation_lazy_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3,
                             Cell_handle   n0, Cell_handle   n1,
                             Cell_handle   n2, Cell_handle   n3)
     : Triangulation_ds_cell_base_3<TDS>(v0, v1, v2, v3, n0, n1, n2, n3)
-  {}
+  {
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
+  }
 
   // Erase counter (cf. Compact_container)
 
@@ -122,6 +138,11 @@ public:
   {
     ++this->m_erase_counter;
   }
+
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+  int mark;
+  int mark2;
+#endif
 };
 
 // Specialization for TDS = void

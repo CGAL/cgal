@@ -287,6 +287,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
 #ifndef CGAL_MESH_3_VERBOSE
   // Scan surface and refine it
   initialize();
+
 #ifdef MESH_3_PROFILING
   std::cerr << "Refining facets...";
   WallClockTimer t;
@@ -298,6 +299,16 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
   CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_time", facet_ref_time);
 # endif
+#endif
+
+#if defined(CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END)
+  std::cerr << std::endl
+    << "===============================================================" << std::endl
+    << "=== CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END ===" << std::endl;
+  display_number_of_bad_elements();
+  std::cerr 
+    << "===============================================================" 
+    << std::endl << std::endl;
 #endif
 
   // Then activate facet to surface visitor (surface could be
@@ -318,6 +329,11 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_refin_time", cell_ref_time);
 # endif
 #endif
+  
+  std::cerr
+    << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
+    << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
+    << "Tets    : " << r_c3t3_.number_of_cells_in_complex() << std::endl;
 
 #else // ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Start surface scan...";
@@ -393,8 +409,15 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   timer.stop();
   elapsed_time += timer.time();
 
-#ifdef CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
+#if defined(CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END) \
+ || defined(SHOW_REMAINING_BAD_ELEMENT_IN_RED)
+  std::cerr << std::endl
+    << "===============================================================" << std::endl
+    << "=== CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END ===" << std::endl;
   display_number_of_bad_elements();
+  std::cerr 
+    << "===============================================================" 
+    << std::endl << std::endl;
 #endif
 
   return elapsed_time;
@@ -406,6 +429,10 @@ void
 Mesher_3<C3T3,MC,MD>::
 initialize()
 {
+#ifdef MESH_3_PROFILING
+  std::cerr << "Initializing... ";
+  WallClockTimer t;
+#endif
   //=====================================
   // Bounding box estimation
   //=====================================
@@ -420,7 +447,7 @@ initialize()
   ++it;
   for( ; it != it_end ; ++it)
     estimated_bbox = estimated_bbox + it->first.bbox();
-
+  
   Base::set_bbox(estimated_bbox);
 
   //========================================
@@ -470,41 +497,46 @@ initialize()
     std::cerr << "done." << std::endl;
     std::cerr
       << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
-      << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
-      << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
+      << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
+      << "Tets    : " << r_c3t3_.number_of_cells_in_complex() << std::endl;
 # endif
     */
 
 # ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
-    const Bbox_3 &bbox = estimated_bbox;
+   const Bbox_3 &bbox = estimated_bbox;
 
-    // Compute radius for far sphere
-    const double& xdelta = bbox.xmax()-bbox.xmin();
-    const double& ydelta = bbox.ymax()-bbox.ymin();
-    const double& zdelta = bbox.zmax()-bbox.zmin();
-    const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
-                                  ydelta*ydelta +
-                                  zdelta*zdelta);
-    const Vector center(
-      bbox.xmin() + 0.5*xdelta,
-      bbox.ymin() + 0.5*ydelta,
-      bbox.zmin() + 0.5*zdelta);
-#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
-#   endif
-    Random_points_on_sphere_3<Point> random_point(radius);
-    const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-      std::thread::hardware_concurrency()
-      *Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
-    for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-      r_c3t3_.triangulation().insert(*random_point + center);
+   // Compute radius for far sphere
+   const double& xdelta = bbox.xmax()-bbox.xmin();
+   const double& ydelta = bbox.ymax()-bbox.ymin();
+   const double& zdelta = bbox.zmax()-bbox.zmin();
+   const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
+                                 ydelta*ydelta +
+                                 zdelta*zdelta);
+   const Vector center(
+     bbox.xmin() + 0.5*xdelta,
+     bbox.ymin() + 0.5*ydelta,
+     bbox.zmin() + 0.5*zdelta);
+#  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+   std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
+#  endif
+   Random_points_on_sphere_3<Point> random_point(radius);
+   const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
+     std::thread::hardware_concurrency()
+     *Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
+   for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
+     r_c3t3_.triangulation().insert(*random_point + center);
 
-#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << "done." << std::endl;
-#   endif
+#  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+   std::cerr << "done." << std::endl;
+#  endif
 
 # endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+    
+#ifdef MESH_3_PROFILING
+    double init_time = t.elapsed();
+    std::cerr << "done in " << init_time << " seconds." << std::endl;
+#endif
 
     // Scan triangulation
     facets_mesher_.scan_triangulation();
@@ -517,7 +549,7 @@ initialize()
 #endif // CGAL_LINKED_WITH_TBB
   {
 #ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-
+    
     /*std::cerr << "A little bit of refinement... ";
 
     // Start by a little bit of refinement to get a coarse mesh
@@ -529,8 +561,8 @@ initialize()
     std::cerr << "done." << std::endl;
     std::cerr
       << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
-      << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
-      << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;*/
+      << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
+      << "Tets    : " << r_c3t3_.number_of_cells_in_complex() << std::endl;*/
 
     // Compute radius for far sphere
     //const Bbox_3 &bbox = r_c3t3_.bbox();
@@ -545,14 +577,23 @@ initialize()
       bbox.xmin() + 0.5*xdelta,
       bbox.ymin() + 0.5*ydelta,
       bbox.zmin() + 0.5*zdelta);
+# ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
+# endif
     Random_points_on_sphere_3<Point> random_point(radius);
     const int NUM_PSEUDO_INFINITE_VERTICES = 12*2;
     for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
       r_c3t3_.triangulation().insert(*random_point + center);
+# ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "done." << std::endl;
+# endif
 
 #endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+    
+#ifdef MESH_3_PROFILING
+    double init_time = t.elapsed();
+    std::cerr << "done in " << init_time << " seconds." << std::endl;
+#endif
 
     // Scan triangulation
     facets_mesher_.scan_triangulation();

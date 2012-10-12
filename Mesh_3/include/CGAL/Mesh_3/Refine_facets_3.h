@@ -67,6 +67,49 @@ namespace Mesh_3 {
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Is_facet_bad, Is_facet_bad, true)
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Facet_badness, Facet_badness, false)
 
+//====== CJTODO TEMP
+template <typename Facet>
+class ExplicitFacet
+{
+public:
+  ExplicitFacet(const Facet &f)
+  {
+    for (int i = 0, j = 0; i < 4; ++i)
+    {
+      if (i != f.second)
+      {
+        points.insert(f.first->vertex(i)->point().x());
+        points.insert(f.first->vertex(i)->point().y());
+        points.insert(f.first->vertex(i)->point().z());
+      }
+    }
+  }
+
+  std::multiset<double> points;
+  
+  bool operator<(const ExplicitFacet& other) const
+  {
+    if (points.size() != other.points.size())
+    {
+      std::cerr << "************************ ERROR: points.size() != other.points.size() ************" << std::endl;
+      return true;
+    }
+
+    for (std::multiset<double>::const_iterator it = points.begin(), it_other = other.points.begin() ;
+      it != points.end() ; ++it)
+    {
+      if (*it > *it_other)
+        return false;
+      if (*it < *it_other)
+        return true;
+    }
+    return false;
+  }
+};
+#include <set>
+//====== /CJTODO TEMP
+
+
 // template class, used when use_facet_badness = false
 template <typename Facet_criteria,
           bool use_facet_badness = (!Has_Is_facet_bad<Facet_criteria>::value) &&
@@ -108,10 +151,12 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
       int f2_saved_erase_counter = boost::get<3>(f);
       //f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1
 
-      if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
+      /*if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
       {
+#ifdef LINKED_WITH_TBB
         tbb::queuing_mutex mut;
         tbb::queuing_mutex::scoped_lock l(mut);
+#endif
 
         std::stringstream sstr;
         Facet facet = boost::get<0>(f);
@@ -132,7 +177,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
 
         std::string s = sstr.str();
         //std::cerr << s << std::endl;
-      }
+      }*/
 #endif
       return (boost::get<0>(f).first->get_erase_counter() == boost::get<1>(f)
         && boost::get<2>(f).first->get_erase_counter() == boost::get<3>(f) );
@@ -813,15 +858,17 @@ scan_triangulation_impl()
 #ifdef CGAL_MESH_3_VERY_VERBOSE
   std::cerr
     << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
-    << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
-    << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
+    << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
+    << "Tets    : " << r_c3t3_.number_of_cells_in_complex() << std::endl;
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_base_of<Parallel_tag, Ct>::value)
   {
-    std::cerr << "Scanning triangulation for bad facets (in parallel)...";
+    std::cerr << "Scanning triangulation for bad facets (in parallel) - "
+      "number of finite facets = "
+      << r_c3t3_.triangulation().number_of_finite_facets() << "...";
     add_to_TLS_lists(true);
     // PARALLEL_DO
     tbb::parallel_do(r_tr_.finite_facets_begin(), r_tr_.finite_facets_end(),
@@ -837,7 +884,9 @@ scan_triangulation_impl()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-    std::cerr << "Scanning triangulation for bad facets (sequential)...";
+    std::cerr << "Scanning triangulation for bad facets (sequential) - "
+      "number of finite facets = " 
+      << r_c3t3_.triangulation().number_of_finite_facets() << "...";
     for(Finite_facet_iterator facet_it = r_tr_.finite_facets_begin();
         facet_it != r_tr_.finite_facets_end();
         ++facet_it)
@@ -852,12 +901,15 @@ scan_triangulation_impl()
   }
 
 #ifdef MESH_3_PROFILING
-  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+  std::cerr << "scan done in " << t.elapsed() << " seconds." << std::endl;
+#endif
+  
+  std::cerr << "Number of bad facets: " << C_::size() << std::endl;
+  
+#ifdef MESH_3_PROFILING
   std::cerr << "Refining... ";
   Base_ML::m_timer.reset();
 #endif
-
-  std::cerr << "Number of bad facets: " << C_::size() << std::endl;
 }
 
 
@@ -869,19 +921,149 @@ get_number_of_bad_elements_impl()
 {
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
-  int count = 0;
+  int count = 0, count_num_bad_surface_facets = 0;
+  int num_internal_facets_that_should_be_on_surface = 0;
+  std::cerr << "Scanning triangulation for bad facets - "
+    "number of finite facets = " 
+    << r_c3t3_.triangulation().number_of_finite_facets() << "...";
+  int num_tested_facets = 0;
   for(Finite_facet_iterator facet_it = r_tr_.finite_facets_begin();
       facet_it != r_tr_.finite_facets_end();
       ++facet_it)
   {
-    Facet_properties properties = compute_facet_properties(*facet_it);
+    Facet facet = *facet_it;
+    Facet_properties properties = compute_facet_properties(facet);
+    
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    //facet.first->mark = 0;
+#endif
+
+    // On surface?
     if ( properties )
     {
-      const Is_facet_bad is_facet_bad = r_criteria_(*facet_it);
+      // This facet should be on surface...
+      if (!is_facet_on_surface(facet))
+      {
+        std::cerr << "\n\n*** The facet f is on surface but is NOT MARKED ON SURFACE. " << std::endl;
+        
+        // CJTODO DEBUG
+        Cell_handle c = facet.first;
+        int ind = facet.second;
+        Cell_handle mc = mirror_facet(facet).first;
+        int mind = mirror_facet(facet).second;
+        
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+        c->mark2 = ind;
+#endif
+
+        // c and mc are the cells adjacent to f
+        // browse each facet ff of c and mc, and mark it if it is "on surface"
+        int num_erroneous_surface_facets_in_c = 0;
+        int num_erroneous_surface_facets_in_mc = 0;
+        int num_real_surface_facets_in_c = 0;
+        int num_real_surface_facets_in_mc = 0;
+        for (int i = 0 ; i < 4 ; ++i)
+        {
+          if (i != ind)
+          {
+            const Facet f1(c, i);
+            if (is_facet_on_surface(f1))
+            {
+              std::cerr << "*** f1 is " << (r_criteria_(f1) ? "bad" : "good") << std::endl;
+
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+              c->mark = i;
+#endif
+              if (compute_facet_properties(f1))
+                ++num_real_surface_facets_in_c;
+              else
+                ++num_erroneous_surface_facets_in_c;
+            }
+          }
+          if (i != mind)
+          {
+            const Facet f2(c, i);
+            if (is_facet_on_surface(f2))
+            {
+              std::cerr << "*** f2 is " << (r_criteria_(f2) ? "bad" : "good") << std::endl;
+
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+              mc->mark = i;
+#endif
+              if (compute_facet_properties(f2))
+                ++num_real_surface_facets_in_mc;
+              else
+                ++num_erroneous_surface_facets_in_mc;
+            }
+          }
+        }
+
+        std::cerr 
+          << "*** Num of erroneous surface facets in c: " << num_erroneous_surface_facets_in_c << std::endl
+          << "*** Num of erroneous surface facets in mc: " << num_erroneous_surface_facets_in_mc << std::endl
+          << "*** Num of real surface facets in c: " << num_real_surface_facets_in_c << std::endl
+          << "*** Num of real surface facets in mc: " << num_real_surface_facets_in_mc << std::endl;
+
+        typedef typename MD::Subdomain Subdomain;
+        const bool is_c_in_domain = r_oracle_.is_in_domain_object()(r_tr_.dual(c));
+        const bool is_mc_in_domain = r_oracle_.is_in_domain_object()(r_tr_.dual(mc));
+        
+        std::cerr << "*** Is in complex? c is marked in domain: " << r_c3t3_.is_in_complex(c) 
+          << " / c is really in domain: " << is_c_in_domain
+          << " / mc is marked in domain: " << r_c3t3_.is_in_complex(mc)
+          << " / mc is really in domain: " << is_mc_in_domain
+          << std::endl;
+        
+
+        // ... if it's not, count it
+        ++num_internal_facets_that_should_be_on_surface;
+
+      }
+      
+      const Surface_patch_index& surface_index = CGAL::cpp0x::get<0>(*properties);
+      const Index& surface_center_index = CGAL::cpp0x::get<1>(*properties);
+      const Point& surface_center = CGAL::cpp0x::get<2>(*properties);
+
+      // Facet is on surface: set facet properties
+      //set_facet_surface_center(facet, surface_center, surface_center_index);
+      //set_facet_on_surface(facet, surface_index);
+
+      const Is_facet_bad is_facet_bad = r_criteria_(facet);
       if ( is_facet_bad )
+      {
         ++count;
+        if (is_facet_on_surface(facet))
+          ++count_num_bad_surface_facets;
+
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+        //facet.first->mark = facet.second;
+#endif
+      }
+      ++ num_tested_facets;
+    }
+    // Not on surface?
+    else
+    {
+      // Facet is not on surface
+      //remove_facet_from_surface(facet);
+
+      // Marked on surface?
+      if (is_facet_on_surface(facet))
+      {
+        std::cerr << "************** The facet is marked on surface whereas it's not! **************" << std::endl;
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+        facet.first->mark = facet.second;
+#endif
+      }
     }
   }
+
+  /*std::cerr << "done (" << num_internal_facets_that_should_be_on_surface 
+    << " facets which were internal facets were added to the surface)." << std::endl;*/
+  std::cerr << "done (" << num_internal_facets_that_should_be_on_surface 
+    << " facets that should be on surface are actually internal facets)." << std::endl;
+  std::cerr << std::endl << "Num_tested_facets = " << num_tested_facets << std::endl;
+  std::cerr << std::endl << "Num bad surface-marked facets = " << count_num_bad_surface_facets << std::endl;
 
   return count;
 }
@@ -1263,6 +1445,7 @@ treat_new_facet(Facet& facet)
 
     // Insert facet into refinement queue if needed
     const Is_facet_bad is_facet_bad = r_criteria_(facet);
+
     if ( is_facet_bad )
     {
       insert_bad_facet(facet, *is_facet_bad);
