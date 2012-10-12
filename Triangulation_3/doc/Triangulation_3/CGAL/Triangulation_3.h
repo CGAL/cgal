@@ -30,10 +30,8 @@ class Triangulation_3 : public Triangulation_utils_3 {
 public:
 
   /*!
-  \ingroup PkgTriangulation3
   The enum `Locate_type` is defined by `Triangulation_3` to specify 
   which case occurs when locating a point in the triangulation.
-  \sa CGAL::Triangulation_3
   */
   enum Locate_type {VERTEX=0, EDGE, FACET, CELL, OUTSIDE_CONVEX_HULL, OUTSIDE_AFFINE_HULL};
 
