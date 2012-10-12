@@ -62,8 +62,8 @@ A combinatorial map is an edge-centered data structure describing the
 cells and the incidence and adjacency relations, using only one basic
 element called <I>dart</I>, and a set of <I>pointers</I> between these
 darts. A dart can be thought as a part of an oriented edge (1-cell),
-together with a part of incident cells of dimensions 0, 2, 3, \f$
-\ldots\f$ , <I>d</I>. When a dart <I>d0</I> describes a part of an
+together with a part of incident cells of dimensions 0, 2, 3, ...,
+<I>d</I>. When a dart <I>d0</I> describes a part of an
 <I>i</I>-cell <I>c</I>, we say that <I>d0</I> <I>belongs</I> to
 <I>c</I>, and that <I>c</I> <I>contains</I> <I>d0</I>. Let us look at
 the example in \ref figure2 "Figure 2" showing the 2D and 3D
@@ -278,7 +278,7 @@ vertex, one edge, one facet and one volume.
 
 The second important property is that cells of a combinatorial map
 correspond to specific <I>orbits</I>. Given a set  <I>S</I>\f$
-\subseteq\f${\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_d\f$} and a dart
+\subseteq\f${\f$ \beta_1\f$,...,\f$ \beta_d\f$} and a dart
 <I>d0</I>, the <I>orbit</I> \f$ \langle{}\f$<I>S</I>\f$
 \rangle{}\f$(<I>d0</I>) is the set of darts that can be reached from
 <I>d0</I> by following any combination of any \f$ \beta_i\f$'s in
@@ -306,8 +306,8 @@ darts that can be reached from <I>d0</I> by using any combination of
 \leq\f$<I>d</I> and <I>j</I>\f$ \neq\f$<I>i</I> and their inverse are
 contained in the same <I>i</I>-cell as <I>d0</I>. The <I>i</I>-cell
 containing <I>d0</I> is defined in terms of orbit by \f$
-\langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-1}\f$,\f$
-\beta_{i+1}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$
+\langle{}\f$\f$ \beta_1\f$,...,\f$ \beta_{i-1}\f$,\f$
+\beta_{i+1}\f$,...,\f$ \beta_d\f$\f$
 \rangle{}\f$(<I>d0</I>).
 
 There is a special case for vertices. Given a dart <I>d0</I>, the set
@@ -320,7 +320,7 @@ by \f$ \langle{}\f${\f$ \beta_i\f$\f$ \circ\f$\f$ \beta_j\f$\f$
 |\f$\f$ \forall\f$<I>i,j</I>: 1\f$ \leq\f$<I>i</I>\f$ <\f$<I>j</I>\f$
 \leq\f$<I>d</I>}\f$ \rangle{}\f$(<I>d0</I>).
 
-Orbit \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$
+Orbit \f$ \langle{}\f$\f$ \beta_1\f$,...,\f$ \beta_d\f$\f$
 \rangle{}\f$(<I>d0</I>) is the <I>connected component</I> containing
 dart <I>d0</I>. A combinatorial map is <I>connected</I> if this set is
 equal to the set of all the darts of the combinatorial map.
@@ -401,8 +401,8 @@ consider the <I>i</I>-cells as if the combinatorial map was in
 <I>d'</I> dimension. For that, we only take into account the \f$
 \beta_j\f$s for <I>j</I>\f$ \leq\f$<I>d'</I>. The <I>i</I>-cell
 containing <I>d0</I> in dimension <I>d'</I> is the orbit \f$
-\langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-1}\f$,\f$
-\beta_{i+1}\f$,\f$ \ldots\f$,\f$ \beta_{d'}\f$\f$
+\langle{}\f$\f$ \beta_1\f$,...,\f$ \beta_{i-1}\f$,\f$
+\beta_{i+1}\f$,...,\f$ \beta_{d'}\f$\f$
 \rangle{}\f$(<I>d0</I>), and  the 0-cell is the orbit \f$
 \langle{}\f${\f$ \beta_i\f$\f$ \circ\f$\f$ \beta_j\f$\f$ |\f$\f$
 \forall\f$<I>i,j</I>:  2\f$ \leq\f$<I>i</I>\f$ <\f$<I>j</I>\f$
@@ -799,10 +799,10 @@ There are three different categories of dart range classes:
 <LI>`Dart_range`: range of all the darts of a combinatorial map;
 <LI>`Dart_of_orbit_range<Beta...>`: range of all the darts of the
 orbit \f$ \langle{}\f$`Beta...`\f$ \rangle{}\f$(<I>d0</I>) for a given
-<I>d0</I>. `Beta...` is a sequence of integers  \f$ i_1\f$,\f$
-\ldots\f$,\f$ i_k\f$,  each \f$ i_j\f$\f$ \in\f${0, \f$ \ldots\f$
-,<I>d</I>}.  These integers must satisfy: \f$ i_1\f$\f$ <\f$\f$
-i_2\f$\f$ <\f$\f$ \ldots\f$\f$ <\f$\f$ i_k\f$, and (\f$ i_1\f$\f$
+<I>d0</I>. `Beta...` is a sequence of integers  \f$ i_1\f$,...,
+\f$ i_k\f$,  each \f$ i_j\f$\f$ \in\f${0, ...,
+<I>d</I>}.  These integers must satisfy: \f$ i_1\f$\f$ <\f$\f$
+i_2\f$\f$ <\f$...\f$ <\f$\f$ i_k\f$, and (\f$ i_1\f$\f$
 \neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$1)  (for example
 `Dart_of_orbit_range<1,2>` for the orbit \f$ \langle{}\f$\f$
 \beta_1\f$,\f$ \beta_2\f$\f$ \rangle{}\f$(<I>d0</I>));	
@@ -991,14 +991,14 @@ given dart for \f$ \beta_i\f$ only if it is not <I>i</I>-free.
 The `sew<i>(dh1,dh2)` method consists mainly to link two by two
 several darts by \f$ \beta_i\f$. This operation is possible only if
 there is a bijection <I>f</I> between all the darts of the orbit
-<I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$
-\beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$
+<I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,...,\f$
+\beta_{i-2}\f$,\f$ \beta_{i+2}\f$,...,\f$ \beta_d\f$\f$
 \rangle{}\f$(<I>d1</I>) and <I>D2</I>=\f$ \langle{}\f$\f$
-\beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$
-\ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>d2</I>) satisfying:
+\beta_1\f$,...,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,...,
+\f$ \beta_d\f$\f$ \rangle{}\f$(<I>d2</I>) satisfying:
 <I>f</I>(<I>d1</I>)=<I>d2</I>, and for all <I>e</I>\f$
-\in\f$<I>D1</I>,  for all <I>j</I>\f$ \in\f${1,\f$
-\ldots\f$,i-2,i+2,\f$ \ldots\f$,<I>d</I>}, <I>f</I>(\f$
+\in\f$<I>D1</I>,  for all <I>j</I>\f$ \in\f${1,...,
+i-2,i+2,...,<I>d</I>}, <I>f</I>(\f$
 \beta_j\f$(<I>e</I>))=\f$
 \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)). Intuitively, this condition
 ensures the validity of the combinatorial map by verifying that
@@ -1048,8 +1048,8 @@ belonging to the 2-cell containing dart 1 become associated to the
 same 2-attribute after the operation.
 
 Similarly, `unsew<i>(dh0)` operation unlinks \f$ \beta_i\f$ for all
-the darts in the orbit  \f$ \langle{}\f$\f$ \beta_1\f$,\f$
-\ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$
+the darts in the orbit  \f$ \langle{}\f$\f$ \beta_1\f$,...,
+\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,...,\f$
 \beta_d\f$\f$ \rangle{}\f$(<I>d0</I>),  and thus guarantees to obtain
 a valid combinatorial map. This operation is possible for any non
 <I>i</I>-free dart.
@@ -1087,7 +1087,7 @@ darts (1,5), (2,8), (3,7) and (4,6)), but associations between darts
 and attributes are not valid. Indeed, we have kept the four initial
 attributes and all the associations between darts and attributes, thus
 two darts belonging to the same 2-cell (for example darts 1 and 5) are
-associated with two different attributes.\\ We can also use the
+associated with two different attributes. We can also use the
 `link_beta<i>(dh1,dh2,update_attributes=true)` which links `d1` and
 `d2` by \f$ \beta_i\f$ without modifying the other links.  Association
 between darts and attributes are only modified for darts `d1` and
@@ -1423,7 +1423,7 @@ Let <I>E</I> be a set, and <I>p</I> a partial permutation on
 Now we can give the definition of a combinatorial map in any
 dimension.  Let <I>d</I>\f$ \geq\f$ 0. A <I>d</I>-dimensional
 combinatorial map (or  <I>d</I>-map) is a (d+1)-tuple
-<I>M</I>=(<I>D</I>,\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_d\f$)
+<I>M</I>=(<I>D</I>,\f$ \beta_1\f$,...,\f$ \beta_d\f$)
 where:
 <OL>
 <LI><I>D</I> is a finite set of darts;
@@ -1444,23 +1444,23 @@ the fact that it is a quasi-manifold. This definition allows us to
 verify the validity of a given combinatorial map by checking if each
 item of the definition is satisfied.
 
-Given a set of partial permutations  <I>S</I>={\f$ f_1\f$,\f$
-\ldots\f$,\f$ f_k\f$},  we denote by \f$ \langle{}\f$<I>S</I>\f$
-\rangle{}\f$ the <I>permutation group</I> generated by {\f$ f_1\f$,\f$
-\ldots\f$,\f$ f_k\f$}  and whose group operation is the composition of
-partial permutations.  The orbit \f$ \langle{}\f$\f$ f_1\f$,\f$
-\ldots\f$,\f$ f_k\f$\f$ \rangle{}\f$(<I>a</I>)  is the set of darts
+Given a set of partial permutations  <I>S</I>={\f$ f_1\f$,...,
+\f$ f_k\f$},  we denote by \f$ \langle{}\f$<I>S</I>\f$
+\rangle{}\f$ the <I>permutation group</I> generated by {\f$ f_1\f$,...,
+\f$ f_k\f$}  and whose group operation is the composition of
+partial permutations.  The orbit \f$ \langle{}\f$\f$ f_1\f$,...,
+\f$ f_k\f$\f$ \rangle{}\f$(<I>a</I>)  is the set of darts
 which can be obtained from <I>a</I> by elements of \f$
-\langle{}\f$<I>S</I>\f$ \rangle{}\f$: \f$ \langle{}\f$\f$ f_1\f$,\f$
-\ldots\f$,\f$ f_k\f$\f$ \rangle{}\f$(<I>a</I>)={\f$
+\langle{}\f$<I>S</I>\f$ \rangle{}\f$: \f$ \langle{}\f$\f$ f_1\f$,...,
+\f$ f_k\f$\f$ \rangle{}\f$(<I>a</I>)={\f$
 \phi\f$(<I>a</I>)\f$ |\f$\f$ \phi\f$\f$ \in\f$\f$
 \langle{}\f$<I>S</I>\f$ \rangle{}\f$}\f$ \setminus\f${\f$
 \varnothing\f$}.
 
 Let <I>d0</I>\f$ \in\f$<I>D</I> be a dart. Given <I>i</I>, 1\f$
 \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>, the <I>i</I>-cell containing
-<I>d0</I> is  \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$
-\beta_{i-1}\f$,\f$ \beta_{i+1}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$
+<I>d0</I> is  \f$ \langle{}\f$\f$ \beta_1\f$,...,\f$
+\beta_{i-1}\f$,\f$ \beta_{i+1}\f$,...,\f$ \beta_d\f$\f$
 \rangle{}\f$(<I>d0</I>).  The <I>0</I>-cell containing <I>d0</I> is
 \f$ \langle{}\f${\f$ \beta_i\f$\f$ \circ\f$\f$ \beta_j\f$\f$ |\f$\f$
 \forall\f$<I>i,j</I>: 1\f$ \leq\f$<I>i</I>\f$ <\f$<I>j</I>\f$
