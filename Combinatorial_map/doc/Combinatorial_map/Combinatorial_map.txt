@@ -39,13 +39,13 @@ adjacency and incidence relations.
 \anchor figure1
 \image html objects2d-3d.png
 <center><b>Figure 1: Example of subdivided objects that can be
-described by combinatorial maps. <B>Left</B>: A 2D object composed of
+described by combinatorial maps. Left: A 2D object composed of
 three facets (2-cells), named <I>f1</I>, <I>f2</I> and <I>f3</I>, nine
 edges (1-cells) and seven vertices (0-cells). <I>f1</I> and <I>f2</I>
 are adjacent along edge <I>e1</I>, thus <I>e1</I> is incident both to
 <I>f1</I> and <I>f2</I>. Vertex <I>v1</I> is incident to edge
 <I>e1</I>, thus <I>v1</I> is incident to <I>f1</I> and <I>f2</I> by
-transitivity. <B>Right</B>: A 3D object (only partially represented
+transitivity. Right: A 3D object (only partially represented
 for vertices and edges) composed of three volumes (3-cells), named
 <I>vol1</I>, <I>vol2</I> and <I>vol3</I>, twelve facets (2-cells)
 (there is one facet <I>f4</I> between <I>vol1</I> and <I>vol2</I>, and
@@ -74,8 +74,8 @@ figure1 "Figure 1".
 \image html cmaps2d-3d.png
 <center><b>
 Figure 2: Combinatorial maps representing the objects given in \ref
-figure1 "Figure 1". <B>Left</B>: The 2D combinatorial map which
-contains 12 darts. <B>Right</B>: The 3D combinatorial map which
+figure1 "Figure 1". Left: The 2D combinatorial map which
+contains 12 darts. Right: The 3D combinatorial map which
 contains 54 darts (18 for each volume).
 </b></center>
 
@@ -126,9 +126,9 @@ describing edge <I>e4</I>.
 \image html cmaps2d-3d-zoom.png
 <center><b>
 Figure 3: Two zooms on the 3D combinatorial map given in \ref figure2 "Figure 2" (Right).
-<B>Left</B>: Zoom around the central edge
+Left: Zoom around the central edge
 <I>e4</I> which details the six darts belonging to the
-edge. <B>Right</B>: Zoom around the facet between volumes <I>vol2</I>
+edge. Right: Zoom around the facet between volumes <I>vol2</I>
 and <I>vol3</I> which details the eight darts belonging to the facet.
 </b></center>
 
@@ -249,8 +249,8 @@ for example \f$ \beta_3\f$(10)=\f$ \varnothing\f$ and \f$
 \anchor figure4
 \image html cmap3d-example2.png
 <center><b>
-Figure 4: Example of a 3D combinatorial map. <B>Left</B>: A 3D object made of
-two volumes adjacent along facet <I>f2</I>. <B>Right</B>: The
+Figure 4: Example of a 3D combinatorial map. Left: A 3D object made of
+two volumes adjacent along facet <I>f2</I>. Right: The
 corresponding 3D combinatorial map. Darts are drawn with arrows,
 sometimes numbered. Two darts linked by \f$ \beta_1\f$ are drawn
 consecutively (for example \f$ \beta_1\f$(10)=11), and two darts
@@ -460,12 +460,12 @@ combinatorial map has 2-attributes containing a color in RGB format.
 <center><b>Figure 5: Example of combinatorial maps with attributes. Attributes
 are represented by black rectangles containing an information, and
 association between darts and attributes are represented by small
-lines. <B>Left</B>: A 2D combinatorial map with 1-attributes
+lines. Left: A 2D combinatorial map with 1-attributes
 containing a double, for example corresponding to the length of the
 1-cell, and 2-attributes containing a color in RGB format. Only three
 edges of the combinatorial map, among the nine, are associated to a
 1-attribute. All the 2-cells are associated to a
-2-attribute. <B>Right</B>: A 3D combinatorial map with 2-attributes
+2-attribute. Right: A 3D combinatorial map with 2-attributes
 containing a color in RGB format. Only three 2-cells of the
 combinatorial map, among the ten, are associated to a 2-attribute.
 </b></center>
@@ -517,12 +517,12 @@ not possible to describe non quasi-manifold objects as those shown in
 
 \anchor figure7 
 \image html nonmanifolds.png
-<center><b>Figure 7: Three examples of non quasi-manifold objects. <B>Left</B>:
+<center><b>Figure 7: Three examples of non quasi-manifold objects. Left:
 A 2D object which is not a quasi-manifold since the two 2-cells share
-a common vertex but no common 1-cell. <B>Middle</B>: A 3D object which
+a common vertex but no common 1-cell. Middle: A 3D object which
 is not a quasi-manifold since is it not only composed by 3D cells
 glued together (there is an isolated 2-cell in dark
-gray). <B>Right</B>: A 3D object which is not a quasi-manifold since
+gray). Right: A 3D object which is not a quasi-manifold since
 the two 3-cells share a common edge but no common 2-cell.
 </b></center>
 
@@ -538,9 +538,9 @@ correspond to a quasi-manifold? As we can see in
 <center><b>Figure 8: Two examples of darts linked together by some \f$
 \beta_0\f$, \f$ \beta_1\f$, \f$ \beta_2\f$ and \f$ \beta_3\f$ which
 does not represent a 3D quasi-manifold, and thus which are not 3D
-combinatorial map. <B>Left</B>: In this example, all the darts are
+combinatorial map. Left: In this example, all the darts are
 3-free except \f$ \beta_3\f$(1)=5 and \f$ \beta_3\f$(4)=6 (and
-vice-versa). <B>Right</B>: In this example, darts linked by \f$
+vice-versa). Right: In this example, darts linked by \f$
 \beta_3\f$ are not in the same order in both 3-cells.
 </b></center>
 
@@ -936,11 +936,11 @@ The `CombinatorialMap` defines two groups of methods to modify the
 
 \anchor figure10
 \image html exemple-3d-sew.png
-<center><b>Figure 10: Example of 3-sew operation. <B>Left</B>: A 3D combinatorial
+<center><b>Figure 10: Example of 3-sew operation. Left: A 3D combinatorial
 map containing two volumes that are not connected, with
 2-attributes. Each attribute contains a color in RGB format, and there
 are four 2-cells associated with attributes. Associations between
-darts and attributes are drawn with red segments. <B>Right</B>: The 3D
+darts and attributes are drawn with red segments. Right: The 3D
 combinatorial map obtained as result of `sew<3>(1,5)` (or
 `sew<3>(2,8)`, or `sew<3>(3,7)`, or `sew<3>(4,6)`). Darts (1,5),
 (2,8), (3,7) and (4,6) are linked together by \f$ \beta_3\f$. The two
@@ -1128,7 +1128,7 @@ and \ref figure14 "Figure 14").
 \anchor figure11
 \image html insert-vertex.png
 <center><b>Figure 11: Example of `insert_cell_0_in_cell_1` and `remove_cell<0>`
-operations. <B>Left</B>: Initial combinatorial map. <B>Right</B>:
+operations. Left: Initial combinatorial map. Right:
 After the insertion of a 0-cell in the 1-cell containing dart
 `d1`. Now if we remove the 0-cell containing dart `d2`, we obtain the
 initial combinatorial map.  </b></center>
@@ -1167,7 +1167,7 @@ between <I>d1</I> and <I>d3</I>.
 \anchor figure13
 \image html insert-edge.png
 <center><b>Figure 13: Example of `insert_cell_1_in_cell_2` and `remove_cell<1>`
-operations. <B>Left</B>: Initial combinatorial map. <B>Right</B>:
+operations. Left: Initial combinatorial map. Right:
 After the insertion of two 1-cells: a first one between the two
 0-cells containing darts `d2` and `d3`, and a second one incident to
 the 0-cell containing dart `d1`. Now if we remove the two 1-cells
@@ -1287,10 +1287,10 @@ all the inserted elements.
 
 \anchor figure15 
 \image html example-insertions.png
-<center><b>Figure 15: Example of high level operations. <B>Left</B>: Initial 3D
+<center><b>Figure 15: Example of high level operations. Left: Initial 3D
 combinatorial map after the creation of the combinatorial
-hexahedron. <B>Middle</B>: Combinatorial map obtained after the two
-1-cell insertions. The two 2-cells were split in two. <B>Right</B>:
+hexahedron. Middle: Combinatorial map obtained after the two
+1-cell insertions. The two 2-cells were split in two. Right:
 Combinatorial map obtained after the 2-cell insertion. The 3-cell was
 split in two.  </b></center>
 
