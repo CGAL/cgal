@@ -32,36 +32,6 @@
 \PkgManuals{Chapter_3D_Triangulations,PkgTriangulation3}
 \PkgDescriptionEnd
 
-A three-dimensional triangulation is a three-dimensional simplicial
-complex, pure connected and without singularities \cite by-ag-98. Its
-cells (\f$ 3\f$-faces) are such that two cells either do not intersect or
-share a common facet (\f$ 2\f$-face), edge (\f$ 1\f$-face) or vertex (\f$ 0\f$-face).
 
-The basic 3D-triangulation class of \cgal is primarily designed to
-represent the triangulations of a set of points \f$ A\f$ in \f$ \R^3\f$.  It can
-be viewed as a partition of the convex hull of \f$ A\f$ into tetrahedra
-whose vertices are the points of \f$ A\f$.  Together with the unbounded
-cell having the convex hull boundary as its frontier, the triangulation
-forms a partition of \f$ \R^3\f$.
-
-In order to deal
-only with tetrahedra, which is convenient for many applications, the
-unbounded cell can be subdivided into tetrahedra by considering that
-each convex hull facet is incident to an `infinite cell` having as
-fourth vertex an auxiliary vertex called the `infinite vertex`.  In
-that way, each facet is incident to exactly two cells and special cases
-at the boundary of the convex hull are simple to deal with.
-
-A triangulation is a collection of vertices and cells that are linked
-together through incidence and adjacency relations. Each cell gives
-access to its four incident vertices and to its four adjacent
-cells. Each vertex gives access to one of its incident cells.
-
-The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
-orientation, the positive orientation being defined by the orientation
-of the underlying Euclidean space \f$ \R^3\f$. The neighbors of a cell are also
-indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by \f$ i\f$
-is opposite to the vertex with the same index. See
-Figure  \ref Triangulation3figorient.
 */
 
