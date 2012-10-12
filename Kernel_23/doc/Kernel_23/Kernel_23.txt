@@ -159,8 +159,8 @@ type `int` is not a FieldNumberType. However, for some
 computations with %Cartesian representation, no
 division operation is needed, i.e., a `RingNumberType` is sufficient in
 this case. With `Cartesian<FieldNumberType>`, both
-`Cartesian<FieldNumberType>::FT` and
-`Cartesian<FieldNumberType>::RT` are mapped to
+\link Cartesian::FT Cartesian<FieldNumberType>::FT\endlink and
+\link Cartesian::RT Cartesian<FieldNumberType>::RT\endlink are mapped to
 `FieldNumberType`.
 
 `Cartesian<FieldNumberType>` uses reference counting internally to
@@ -173,8 +173,8 @@ stored within the class and hence direct access to the coordinates is
 possible. Depending on the algorithm, it can also be slightly more or
 less efficient than `Cartesian<FieldNumberType>`. Again, in
 `Simple_cartesian<FieldNumberType>` both
-`Simple_cartesian<FieldNumberType>::FT` and
-`Simple_cartesian<FieldNumberType>::RT` are mapped to
+\link Simple_cartesian::FT Simple_cartesian<FieldNumberType>::FT \endlink and
+\link Simple_cartesian::RT Simple_cartesian<FieldNumberType>::RT \endlink are mapped to
 `FieldNumberType`.
 
 ## %Homogeneous Kernels ##
@@ -198,9 +198,9 @@ divisions. This number type can be viewed as an adaptor which turns a
 `RingNumberType` into a `FieldNumberType`. It maintains numbers as
 quotients, i.e., a numerator and a denominator. With
 `Homogeneous<RingNumberType>`,
-`Homogeneous<RingNumberType>::FT` is equal to
+\link Homogeneous::FT Homogeneous<RingNumberType>::FT \endlink is equal to
 `Quotient<RingNumberType>`, while
-`Homogeneous<RingNumberType>::RT` is equal to
+\link Homogeneous::RT Homogeneous<RingNumberType>::RT\endlink is equal to
 `RingNumberType`.
 
 `Homogeneous<RingNumberType>` uses reference counting internally
@@ -213,9 +213,9 @@ stored within the class and hence direct access to the coordinates is
 possible. Depending on the algorithm, it can also be slightly more or
 less efficient than `Homogeneous<RingNumberType>`. Again, in
 `Simple_homogeneous<RingNumberType>` the type
-`Simple_homogeneous<RingNumberType>::FT` is equal to
+\link Simple_homogeneous::FT Simple_homogeneous<RingNumberType>::FT \endlink is equal to
 `Quotient<RingNumberType>` while
-`Simple_homogeneous<RingNumberType>::RT` is equal to
+\link Simple_homogeneous::RT Simple_homogeneous<RingNumberType>::RT \endlink is equal to
 `RingNumberType`.
 
 ## Naming Conventions ##
