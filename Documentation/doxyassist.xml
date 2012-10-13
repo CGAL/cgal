@@ -1059,6 +1059,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Nef_2.tag</string>
           <string name="IMAGE_PATH">../Nef_2/doc/Nef_2/fig</string>
           <string name="EXAMPLE_PATH">../Nef_2/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
+            {/list>
         </doxygen>
       </project>
 
