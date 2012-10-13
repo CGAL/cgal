@@ -1135,6 +1135,7 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
             <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
+            <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
           </list>
         </doxygen>
       </project>
