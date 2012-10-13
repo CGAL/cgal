@@ -62,7 +62,7 @@ Nef polyhedra are parameterized by a so-called extended geometric
 kernel. There are three kernels, one based on a homogeneous 
 representation of extended points called 
 `Extended_homogeneous<RT>` where `RT` is a ring type providing 
-additionally a `gcd` operation, one based on a Cartesian 
+additionally a `gcd` operation, one based on a %Cartesian 
 representation of extended points called `Extended_cartesian<NT>` 
 where `NT` is a field type, and finally 
 `Filtered_extended_homogeneous<RT>` (an optimized version of the 
@@ -77,17 +77,11 @@ map to corresponding types of the standard \cgal geometry kernel
 (type equality in pseudo-code notation): 
 
 \code{.cpp}
-CGAL::Nef_polyhedron_2<
-  CGAL::Extended_cartesian< FT > 
->::Point == CGAL::Cartesian<FT>::Point_2 
+CGAL::Nef_polyhedron_2< CGAL::Extended_cartesian< FT > >::Point == CGAL::Cartesian<FT>::Point_2 
 
-CGAL::Nef_polyhedron_2< 
-  CGAL::Extended_homogeneous< RT > 
->::Point == CGAL::Homogeneous< RT >::Point_2
+CGAL::Nef_polyhedron_2< CGAL::Extended_homogeneous< RT > >::Point == CGAL::Homogeneous< RT >::Point_2
 
-CGAL::Nef_polyhedron_2< 
-  CGAL::Filtered_extended_homogeneous<RT> 
->::Point == CGAL::Homogeneous<RT>::Point_2 
+CGAL::Nef_polyhedron_2< CGAL::Filtered_extended_homogeneous<RT> >::Point == CGAL::Homogeneous<RT>::Point_2 
 \endcode 
 
 The same holds for the types `Line` and `Direction` in the 
@@ -102,7 +96,7 @@ public:
 /// @{
 
 /*! 
-the oriented lines modeling halfplanes 
+the oriented lines modeling halfplanes. 
 */ 
 typedef Hidden_type Line; 
 

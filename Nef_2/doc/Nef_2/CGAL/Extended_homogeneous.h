@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgNef2
 
 The class `Extended_homogeneous` serves as a traits class for the class 
-`CGAL::Nef_polyhedron_2<T>`. It uses a polynomial component 
+`Nef_polyhedron_2<T>`. It uses a polynomial component 
 representation based on a Euclidean ring number type `RT`. 
 
 \models ::ExtendedKernelTraits_2 
@@ -20,9 +20,6 @@ your number type is not one of the built-in number types, one of
 the number types distrubuted with \cgal or one of the \leda 
 number types. 
 
-### Operations ###
-
-Fits all operation requirements of the concept. 
 
 \sa `CGAL::Extended_cartesian<FT>` 
 \sa `CGAL::Filtered_extended_homogeneous<RT>` 
