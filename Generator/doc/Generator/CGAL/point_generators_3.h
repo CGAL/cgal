@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgGenerators
 
-\brie  generates a given number of points on a cubic 
+\brief generates a given number of points on a cubic 
 grid whose size is determined by the number of points to be generated. 
 
 The function creates the first \f$ n\f$ points on the regular \f$ \lceil n^{1/3}\,\rceil\times\lceil n^{1/3}\,\rceil\times\lceil n^{1/3}\,\rceil\f$ 
