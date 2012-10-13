@@ -29,14 +29,14 @@ the box and automatically created and assigned at construction
 time of the box. Note that copying a box (copy-constructor and 
 assignment) does not create a new `id`-number but keeps 
 the old one, which is the behavior needed by the 
-`CGAL::box_self_intersection_3()` algorithm. This is therefore 
+`box_self_intersection_d()` algorithm. This is therefore 
 the safe default implementation. 
 <LI>`ID_FROM_BOX_ADDRESS`: casts the address of the box into a 
 `std::ptrdiff_t` to create the `id`-number. Works fine 
 if the intersection algorithms work effectively with pointers 
 to boxes, but not in the case where the algorithms work with 
 box values, because the algorithms modify the order of the 
-boxes, and the `CGAL::box_self_intersection_d()` algorithm 
+boxes, and the `box_self_intersection_d()` algorithm 
 creates copies of the boxes that would not have identical 
 `id`-numbers. 
 </UL> 
@@ -78,13 +78,13 @@ typedef std::size_t ID;
 /// @{
 
 /*! 
-Default constructor. No particular initialization. 
+%Default constructor. No particular initialization. 
 */ 
 Box_d(); 
 
 /*! 
-initializes to the complete or 
-the empty space. If empty, all interval starting(end) points will be 
+Constructor initialized to the complete or the empty space. 
+If empty, all interval starting(end) points will be 
 set to positive(negative) infinity. 
 */ 
 Box_d(bool complete); 
@@ -97,13 +97,13 @@ intervals to [`lo[i]`,`hi[i]`], \f$ 0 \leq i < D\f$.
 Box_d(NT lo[D], NT hi[D]); 
 
 /*! 
-constructs from bbox 
+constructs from `bbox`. 
 \requires \f$ D=2\f$ and `NT`\f$ \equiv\f$`double`. 
 */ 
 Box_d( const Bbox_2& bbox); 
 
 /*! 
-constructs from bbox 
+constructs from `bbox`. 
 \requires \f$ D=3\f$ and `NT`\f$ \equiv\f$`double`. 
 */ 
 Box_d( const Bbox_3& bbox); 
