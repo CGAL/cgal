@@ -26,7 +26,7 @@ The first parameter requires one of the following exact kernels:
 `Homogeneous`, `Simple_homogeneous` 
 parametrized with `Gmpz`, `leda_integer` or any other number type 
 modeling \f$\mathbb{Z}\f$, or `Cartesian`, `Simple_cartesian` parametrized with 
-`Gmpq`, `leda_rational`,`Quotient<Gmpz>` or any other number 
+`Gmpq`, `leda_rational`, `Quotient<Gmpz>` or any other number 
 type modeling \f$\mathbb{Q}\f$. 
 
 The second parameter and the third parameter are for future considerations. 
@@ -48,7 +48,7 @@ structure.
 
 A Nef polyhedron `N` can be visualized in an open GL window. The
 output operator is defined in the file
-`CGAL/IO/Nef_-poly-hedron_2_-Win-dow_-stream.h`.
+`CGAL/IO/Nef_polyhedron_2_Window-stream.h`.
 
 ### Implementation ###
 
@@ -147,7 +147,7 @@ p);
 
 /*! 
 Returns a sphere circle 
-in the oppostie direction of `c`. 
+in the opposite direction of `c`. 
 */ 
 Sphere_circle opposite() ; 
 
@@ -351,15 +351,14 @@ half-circle.
 bool is_long() ; 
 
 /*! 
-return true iff `s` is 
-degenerate, 
-i.e. source and target are the same. 
+return true iff `s` is degenerate, 
+i.e.\ source and target are the same. 
 */ 
 bool is_degenerate() ; 
 
 /*! 
-return true iff `s` is a 
-perfect half-circle, i.e. `source().antipode == target()`. 
+return true iff `s` is a perfect half-circle, 
+i.e.\ `source().antipode == target()`. 
 */ 
 bool is_halfcircle() ; 
 
@@ -434,32 +433,32 @@ SFace_cycle_iterator();
 /// @{
 
 /*! 
-returns true if `sfc` represents a `SVertex_handle`. 
+returns true if the iterator represents a `SVertex_handle`. 
 */ 
 bool is_svertex() const; 
 
 /*! 
-returns true if `sfc` represents a `SHalfedge_handle`. 
+returns true if the iterator represents a `SHalfedge_handle`. 
 */ 
 bool is_shalfedge() const; 
 
 /*! 
-returns true if `sfc` represents a `SHalfloop_handle`. 
+returns true if the iterator represents a `SHalfloop_handle`. 
 */ 
 bool is_shalfloop() const; 
 
 /*! 
-casts `sfc` to `SVertex_handle`. 
+casts the iterator to `SVertex_handle`. 
 */ 
 operator SVertex_handle() const; 
 
 /*! 
-casts `sfc` to `SHalfedge_handle`. 
+casts the iterator to `SHalfedge_handle`. 
 */ 
 operator SHalfedge_handle() const; 
 
 /*! 
-casts `sfc` to `SHalfloop_handle`. 
+casts the iterator to `SHalfloop_handle`. 
 */ 
 operator SHalfloop_handle() const; 
 
@@ -523,7 +522,7 @@ const handle to SFace.
 typedef Hidden_type SFace_const_handle; 
 
 /*! 
-const iterator over the entries to all sface cycles of a sface. 
+const iterator over the entries to all `sface` cycles of a `sface`. 
 */ 
 typedef Hidden_type SFace_cycle_const_iterator; 
 
@@ -533,12 +532,12 @@ typedef Hidden_type SFace_cycle_const_iterator;
 /// @{
 
 /*! 
-the mark of `sf` . 
+the mark of the `sface`. 
 */ 
 const Mark& mark() const; 
 
 /*! 
-iterator over the entries to all sface cycles of `sf` . 
+iterator over the entries to all sface cycles of the `sface` . 
 */ 
 SFace_cycle_const_iterator sface_cycle_begin() const; 
 
@@ -630,22 +629,22 @@ typedef Hidden_type SFace_const_handle;
 /// @{
 
 /*! 
-the mark of `se` . 
+the mark of the `sedge`. 
 */ 
 const Mark& mark() const; 
 
 /*! 
-the sphere circle of `se` . 
+the sphere circle of the `sedge`. 
 */ 
 const Sphere_circle& circle() const; 
 
 /*! 
-the twin of `se` . 
+the twin of the `sedge`. 
 */ 
 SHalfedge_const_handle twin() const; 
 
 /*! 
-the source svertex of `se` . 
+the source svertex of the `sedge`. 
 */ 
 SVertex_const_handle source() const; 
 
@@ -655,38 +654,38 @@ equals `twin()->source()`.
 SVertex_const_handle target() const; 
 
 /*! 
-the SHalfedge previous to `se` in a sface cycle. 
+the SHalfedge previous to the `sedge` in a sface cycle. 
 */ 
 SHalfedge_const_handle sprev() const; 
 
 /*! 
-the next SHalfedge of `se` in a sface cycle. 
+the next SHalfedge of the `sedge` in a sface cycle. 
 */ 
 SHalfedge_const_handle snext() const; 
 
 /*! 
-the edge before `se` in the cyclic ordered adjacency list of source(). 
+the edge before the `sedge` in the cyclic ordered adjacency list of `source()`. 
 */ 
 SHalfedge_const_handle cyclic_adj_pred() const; 
 
 /*! 
-the edge after `se` in the cyclic ordered adjacency list of source(). 
+the edge after the `sedge` in the cyclic ordered adjacency list of `source()`. 
 */ 
 SHalfedge_const_handle cyclic_adj_succ() const; 
 
 /*! 
-the incident sface of `se` . 
+the incident `sface` of the `sedge`. 
 */ 
 SFace_const_handle incident_sface() const; 
 
 /*! 
-determines whether `se` is 
+determines whether the `sedge` is 
 in an outer sface cycle. 
 */ 
 bool in_outer_sface_cycle() const; 
 
 /*! 
-determines whether `se` is 
+determines whether the `sedge` is 
 in an inner sface cycle. 
 */ 
 bool in_inner_sface_cycle() const; 
@@ -753,22 +752,22 @@ typedef Hidden_type SFace_const_handle;
 /// @{
 
 /*! 
-the mark of `se` . 
+the mark of the halfloop. 
 */ 
 const Mark& mark() const; 
 
 /*! 
-the sphere circle of `se` . 
+the sphere circle of the halfloop. 
 */ 
 const Sphere_circle& circle() const; 
 
 /*! 
-the twin of `se` . 
+the twin of the halfloop. 
 */ 
 SHalfloop_const_handle twin() const; 
 
 /*! 
-the incident sface of `se` . 
+the incident sface of the halfloop. 
 */ 
 SFace_const_handle incident_sface() const; 
 
@@ -782,7 +781,7 @@ SFace_const_handle incident_sface() const;
 Figure \ref figureNefS2SVertexIncidences illustrates the incidence of a svertex on a sphere map. 
 
 The member function 
-`out_sedge` returns the first outgoing shalfedge, and `incident_sface` 
+`out_sedge()` returns the first outgoing shalfedge, and `incident_sface()` 
 returns the incident sface. 
 
 ### Creation ###
@@ -834,32 +833,32 @@ typedef Hidden_type SFace_const_handle;
 /// @{
 
 /*! 
-the mark of `e` . 
+the mark of the `svertex`. 
 */ 
 const Mark& mark() const; 
 
 /*! 
-the sphere point of `e` . 
+the sphere point of the `svertex`. 
 */ 
 const Sphere_point& point() const; 
 
 /*! 
-returns |true| if `e` has no adjacent sedges. 
+returns |true| if the `svertex` has no adjacent sedges. 
 */ 
 bool is_isolated() const; 
 
 /*! 
-the twin of `e` . 
+the twin of the `svertex`. 
 */ 
 SVertex_const_handle twin() const; 
 
 /*! 
-the first out sedge of `e` . 
+the first out sedge of  the `svertex`. 
 */ 
 SHalfedge_const_handle out_sedge() const; 
 
 /*! 
-the incident sface of `e` . 
+the incident sface of  the `svertex`. 
 */ 
 SFace_const_handle incident_sface() const; 
 

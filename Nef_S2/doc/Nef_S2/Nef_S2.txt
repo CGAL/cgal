@@ -58,7 +58,7 @@ We introduce geometric objects that are part of the spherical surface
 `Nef_polyhedron_S2::Sphere_circle`, `Nef_polyhedron_S2::Sphere_segment`, and `Nef_polyhedron_S2::Sphere_direction`.
 `Nef_polyhedron_S2::Sphere_point`s are points on \f$ S_2\f$, `Nef_polyhedron_S2::Sphere_circle`s are
 oriented great circles of \f$ S_2\f$, `Nef_polyhedron_S2::Sphere_segment`s are oriented
-parts of `Nef_polyhedron_S2::Sphere_circles` bounded by a pair of
+parts of `Nef_polyhedron_S2::Sphere_circle` bounded by a pair of
 `Nef_polyhedron_S2::Sphere_point`s, and `Nef_polyhedron_S2::Sphere_direction`s are directions that
 are part of great circles. (a direction is usually defined to be a
 vector without length, that floats around in its underlying space and
@@ -124,9 +124,9 @@ it is.
 The macro `CGAL_forall_sface_cycles_of` is equivalent to a for-loop
 on the range `[sf->sface_cycles_begin(), sf->sface_cycles_end())`. An 
 `Nef_polyhedron_S2::SFace_cycle_const_iterator` either represents a `Nef_polyhedron_S2::SVertex_const_handle`,
-a `Nef_polyhedron_S2::SHalfede_const_handle` or a `Nef_polyhedron_S2::SHalfloop_const_handle`. In order
+a `Nef_polyhedron_S2::SHalfedge_const_handle` or a `Nef_polyhedron_S2::SHalfloop_const_handle`. In order
 to find out which handle type is represented, the functions
-`Nef_polyhedron_S2::is_svertex()`, `Nef_polyhedron_S2::is_shafledge()` and `Nef_polyhedron_S2::is_shalfloop()` are provided.
+`Nef_polyhedron_S2::is_svertex()`, `Nef_polyhedron_S2::is_shalfedge()` and `Nef_polyhedron_S2::is_shalfloop()` are provided.
 Afterwards the iterator can be casted to the proper handle type.
 
 \cgalexample{Nef_S2/nef_s2_exploration.cpp}
@@ -140,7 +140,7 @@ retrieved. `locate` returns an instance of type `Nef_polyhedron_S2::Object_handl
 is a container for any handle type. Here, it either a 
 `Nef_polyhedron_S2::SVertex_const_handle`, a `Nef_polyhedron_S2::SHalfedge_const_handle`, 
 a `Nef_polyhedron_S2::SHafloop_const_handle` or a `Nef_polyhedron_S2::SFace_const_handle`. The function 
-`CGAL::assign` performs the cast operation and returns a boolean which
+`assign()` performs the cast operation and returns a Boolean which
 indicates whether the cast was successful or not.
 
 \cgalexample{Nef_S2/nef_s2_point_location.cpp}
