@@ -182,7 +182,7 @@ two input polygons. The example listed below tests whether the two
 triangles depicted on the right intersect. It uses, as do the other
 example programs in this chapter, the auxiliary header file
 `bso_rational_nt.h`, which defines the type `Number_type` as
-<span class="textsc">Gmp</span>'s rational number-type (`CGAL::Gmpq`), or as the
+<span class="textsc">Gmp</span>'s rational number-type (`Gmpq`), or as the
 number type `Quotient<MP_Float>` that is included in the support
 library of \cgal, based on whether the <span class="textsc">Gmp</span> library is installed
 or not. It also uses the function `print_polygon.h` listed above,

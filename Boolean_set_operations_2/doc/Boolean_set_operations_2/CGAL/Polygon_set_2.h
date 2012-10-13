@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Polygon_set_2` represents sets of linear polygons with holes. 
 The first two template parameters (`Kernel` and `Container`) 
-are used to instantiate the type `CGAL::Polygon_2<Kernel,Container>`. 
+are used to instantiate the type `Polygon_2<Kernel,Container>`. 
 This type is used to represent the outer boundary of every set member 
 and the boundaries of all holes of every set member. 
 

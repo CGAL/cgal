@@ -41,7 +41,7 @@ typedef Hidden_type Size;
 /// @{
 
 /*! 
-returns the number of edges of `polygon`. 
+returns the number of edges of the general polygon. 
 */ 
 Size size(); 
 
@@ -51,7 +51,7 @@ Size size();
 /// @{
 
 /*! 
-clears `polygon`. 
+clears the polygon. 
 */ 
 void clear(); 
 
@@ -67,12 +67,12 @@ void reverse_orientation();
 /// @{
 
 /*! 
-returns `true` if `polygon` is empty, and `false` otherwise. 
+returns `true` if the polygon is empty, and `false` otherwise. 
 */ 
 bool is_empty(); 
 
 /*! 
-returns the orientation of `polygon`. 
+returns the orientation of the polygon. 
 \pre `is_simple()`. 
 */ 
 Orientation orientation(); 
@@ -82,7 +82,7 @@ Orientation orientation();
 }; /* end General_polygon_2 */
 
 /*!
-This operator imports a General_polygon from the input stream `in`.
+This operator imports a general polygon from the input stream `in`.
 
 An ASCII and a binary format exist. The stream detects the format
 automatically and can read both.
@@ -99,7 +99,7 @@ std::istream& operator>>(std::istream& in, CGAL::General_polygon_2<ArrTraits>& P
 
 
 /*!
-This operator exports a General_polygon to the output stream `out`.
+This operator exports a general polygon to the output stream `out`.
 
 An ASCII and a binary format exist. The format can be selected with
 the \cgal modifiers for streams, `set_ascii_mode` and `set_binary_mode`

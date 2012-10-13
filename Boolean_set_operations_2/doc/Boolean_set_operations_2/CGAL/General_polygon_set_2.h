@@ -51,7 +51,7 @@ vertices.
 
 \sa `Arrangement_2` 
 \sa `ArrangementXMonotoneTraits_2` 
-\sa `Nef_2` 
+\sa `Nef_polyhedron_2` 
 
 */
 template< typename Traits, typename Dcel >
@@ -67,12 +67,12 @@ the traits class in use.
 typedef Hidden_type Traits_2; 
 
 /*! 
-the general polygon type. Must model the `GpsTraitsGeneralPolygon_2` Concept. 
+the general polygon type. Must model the `GpsTraitsGeneralPolygon_2` concept. 
 */ 
 typedef Hidden_type Polygon_2; 
 
 /*! 
-the general polygon with holes type. Must model the `GpsTraitsGeneralPolygonWithHoles_2` Concept. 
+the general polygon with holes type. Must model the `GpsTraitsGeneralPolygonWithHoles_2` concept. 
 */ 
 typedef Hidden_type Polygon_with_holes_2; 
 
@@ -217,8 +217,7 @@ void complement(const Polygon_set_2 & other);
 /// @} 
 
 /// \name Univariate Operations 
-
-In the following univariate and bivariate methods the result is placed in `gps` after it is cleared.
+/// In the following univariate and bivariate methods the result is placed in `gps` after it is cleared.
 /// @{
 
 /*! 

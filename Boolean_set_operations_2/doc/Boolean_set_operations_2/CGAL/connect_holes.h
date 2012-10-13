@@ -5,6 +5,11 @@ namespace CGAL {
 \ingroup PkgBooleanSetOperations2
 \anchor ref_bso_connect_holes 
 
+
+*/
+
+/// @{
+/*!
 Connects the holes of `pwh` with its outer boundary. This is done 
 by locating the topmost vertex in each hole in the polygon with holes 
 `pwh`, and connecting it by a vertical segment to the polygon 
@@ -16,10 +21,7 @@ and moves to the holes using the auxiliary vertical segments that
 were added to connect the polygon with its holes. The value-type 
 of `oi` is `Kernel::Point_2`. 
 \pre The input polygon with holes `pwh` is bounded (namely it has a valid outer boundary). 
-
 */
-
-/// @{
 template <class Kernel, class Container,
 class OutputIterator>
 OutputIterator

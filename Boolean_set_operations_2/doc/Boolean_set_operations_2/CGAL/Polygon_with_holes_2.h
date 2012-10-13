@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Polygon_with_holes_2` models the concept `GeneralPolygonWithHoles_2`. 
 It represents a linear polygon with holes. It is parameterized with two 
 types (`Kernel` and `Container`) that are used to instantiate 
-the type `CGAL::Polygon_2<Kernel,Container>`. The latter is used to 
+the type `Polygon_2<Kernel,Container>`. The latter is used to 
 represents the outer boundary and the boundary of the holes (if any exist). 
 
 \models ::GeneralPolygonWithHoles_2 
@@ -42,8 +42,8 @@ std::istream& operator>>(std::istream& in, CGAL::Polygon_with_holes_2<Kernel, Co
 This operator exports a polygon with holes to the output stream `out`.
 
 An ASCII and a binary format exist. The format can be selected with
-the \cgal modifiers for streams, `set_ascii_mode` and `set_binary_mode`
-respectively. The modifier `set_pretty_mode` can be used to allow for (a
+the \cgal modifiers for streams, `set_ascii_mode()` and `set_binary_mode()`
+respectively. The modifier `set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
 be free of comments. The default for writing is ASCII without
 comments.

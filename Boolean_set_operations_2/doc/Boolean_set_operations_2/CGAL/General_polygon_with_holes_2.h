@@ -30,7 +30,7 @@ typedef Polygon General_polygon_2;
 }; /* end General_polygon_with_holes_2 */
 
 /*!
-This operator imports a General_polygon_with_holes from the input stream `in`.
+This operator imports a General_polygon_with_holes_2 from the input stream `in`.
 
 An ASCII and a binary format exist. The stream detects the format
 automatically and can read both.
@@ -51,8 +51,8 @@ std::istream& operator>>(std::istream& in, CGAL::General_polygon_with_holes_2<Po
 This operator exports a General_polygon_with_holes_2 to the output stream `out`.
 
 An ASCII and a binary format exist. The format can be selected with
-the \cgal modifiers for streams, `set_ascii_mode` and `set_binary_mode`
-respectively. The modifier `set_pretty_mode` can be used to allow for (a
+the \cgal modifiers for streams, `set_ascii_mode(0` and `set_binary_mode()`
+respectively. The modifier `set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
 be free of comments. The default for writing is ASCII without
 comments.
