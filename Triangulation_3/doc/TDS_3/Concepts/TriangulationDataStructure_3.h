@@ -40,24 +40,21 @@ the dimension of the triangulation is lower than 3
 Thus, a 3D-triangulation data structure can store a triangulation of a 
 topological sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.<BR> 
 
-
-<BR> 
+ 
 
 The second template parameter of the basic triangulation class 
 (see Chapter \ref chapterTriangulation3 
 ) 
-`Triangulation_3` is a triangulation data structure class. (See 
+`CGAL::Triangulation_3` is a triangulation data structure class. (See 
 Chapter \ref chapterTDS3.) 
 
-To ensure all the *flexibility* of the class `Triangulation_3`, a 
+To ensure all the *flexibility* of the class `CGAL::Triangulation_3`, a 
 model of a triangulation data structure must be templated by the base vertex 
 and the base cell classes (see \ref TDS3secintro): 
 `TriangulationDataStructure_3<TriangulationVertexBase_3,TriangulationCellBase_3>`. 
 The optional functionalities related to geometry are compulsory for 
-this use as a template parameter of `Triangulation_3`.<BR> 
+this use as a template parameter of `CGAL::Triangulation_3`.
 
-
-<BR> 
 
 A class that satisfies the requirements for a triangulation data structure 
 class must provide the following types and operations. 
@@ -68,10 +65,10 @@ The information stored in the `iostream` is:
 the dimension, the number of vertices, the number of cells, 
 the indices of the vertices of each cell, then the indices of the 
 neighbors of each cell, where the index corresponds to the preceding 
-list of cells. When dimension \f$ <\f$ 3, the same information is stored 
+list of cells. When dimension < 3, the same information is stored 
 for faces of maximal dimension instead of cells. 
 
-\hasModel CGAL::Triangulation_data_structure_3 
+\hasModel `CGAL::Triangulation_data_structure_3` 
 
 \sa `TriangulationDataStructure_3::Vertex` 
 \sa `TriangulationDataStructure_3::Cell` 

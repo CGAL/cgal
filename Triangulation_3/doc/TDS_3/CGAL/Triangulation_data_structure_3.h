@@ -10,7 +10,7 @@ geometric functionalities to be used as a parameter for a
 3D-geometric triangulation (see Chapter \ref chapterTriangulation3). 
 
 The vertices and cells are stored in two nested containers, which are 
-implemented using `CGAL::Compact_container`. The class may offer some 
+implemented using `Compact_container`. The class may offer some 
 flexibility for the choice of container in the future, in the form of 
 additional template parameters. 
 
@@ -46,12 +46,12 @@ public:
 /*! 
 Vertex container type. 
 */ 
-typedef CGAL::Compact_container<Vertex> Vertex_range; 
+typedef Compact_container<Vertex> Vertex_range; 
 
 /*! 
 Cell container type. 
 */ 
-typedef CGAL::Compact_container<Cell> Cell_range; 
+typedef Compact_container<Cell> Cell_range; 
 
 /// @} 
 

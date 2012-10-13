@@ -4,10 +4,11 @@
 \cgalconcept
 
 At the base level 
-(see Sections \ref Triangulation3secdesign and \ref TDS3secdesign), 
+(see the Software Design sections of the Chapters \ref Triangulation3secdesign "Triangulation" 
+and  \ref TDS3secdesign "Triangulation Datastructure"), 
 a cell stores handles to its four vertices and to its four neighbor cells. 
-The vertices and neighbors are indexed 0, 1, 2 and 3. Neighbor \f$ i\f$ 
-lies opposite to vertex \f$ i\f$. 
+The vertices and neighbors are indexed 0, 1, 2 and 3. Neighbor `i` 
+lies opposite to vertex `i`. 
 
 Since the Triangulation data structure is the class which defines the handle 
 types, the cell base class has to be somehow parameterized by the Triangulation 
