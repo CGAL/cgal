@@ -1081,6 +1081,9 @@ namespace for the XML file to be processed properly.  -->
             <item>../Nef_S2/doc/Nef_S2/fig/halfspace.gif</item>
             <item>../Nef_S2/doc/Nef_S2/fig/complex.gif</item>
           </list>
+          <list name="TAGFILES" append="true">
+            <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
+          </list>
         </doxygen>
       </project>
 
