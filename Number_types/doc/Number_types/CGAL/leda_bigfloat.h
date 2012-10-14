@@ -1,5 +1,5 @@
 
-namespace CGAL {
+
 
 /*!
 \ingroup nt_leda
@@ -24,4 +24,4 @@ public:
 /// @}
 
 }; /* end leda_bigfloat */
-} /* end namespace CGAL */
+
