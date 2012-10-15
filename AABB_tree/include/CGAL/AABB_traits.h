@@ -68,9 +68,6 @@ public:
   /// Constructor
   AABB_traits() { };
 
-  /// Non-virtual Destructor
-  ~AABB_traits() { };
-
   typedef typename GeomTraits::Compute_squared_distance_3 Squared_distance;
   Squared_distance squared_distance_object() const { return GeomTraits().compute_squared_distance_3_object(); }
   

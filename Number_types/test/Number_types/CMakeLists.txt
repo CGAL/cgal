@@ -81,7 +81,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Gmpfi.cpp" )
   create_single_source_cgal_program( "Gmpfr_bug.cpp" )
   create_single_source_cgal_program( "Quotient_new.cpp" )
-  create_single_source_cgal_program( "Coercion_traits.cpp" )
+  create_single_source_cgal_program( "test_nt_Coercion_traits.cpp" )
 
 else( CGAL_FOUND )
 

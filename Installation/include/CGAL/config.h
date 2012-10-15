@@ -111,12 +111,10 @@
 #if defined(BOOST_NO_VARIADIC_TEMPLATES)
 #define CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES 1
 #endif
-#if !defined(BOOST_HAS_TR1_ARRAY)
+// never use TR1
 #define CGAL_CFG_NO_TR1_ARRAY 1
-#endif
-#if !defined(BOOST_HAS_TR1_TUPLE)
+// never use TR1
 #define CGAL_CFG_NO_TR1_TUPLE 1
-#endif
 #if !defined(__GNUC__)
 #define CGAL_CFG_NO_STATEMENT_EXPRESSIONS 1
 #endif

@@ -47,6 +47,8 @@
 
 #include <boost/type_traits/is_base_of.hpp>
 
+#include <string>
+
 namespace CGAL {
 
 enum Mesher_level_conflict_status {

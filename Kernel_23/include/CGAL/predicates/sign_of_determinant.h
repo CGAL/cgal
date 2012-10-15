@@ -27,6 +27,7 @@
 #define CGAL_PREDICATES_SIGN_OF_DETERMINANT_H
 
 #include <CGAL/determinant.h>
+#include <CGAL/number_utils_classes.h>
 
 namespace CGAL {
 

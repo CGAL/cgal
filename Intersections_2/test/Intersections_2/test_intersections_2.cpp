@@ -21,10 +21,6 @@
 #include <iostream>
 #include <cassert>
 
-#ifdef NDEBUG
-#  error The test-suite needs no NDEBUG defined
-#endif
-
 const double epsilon = 0.001;
 
 struct randomint {

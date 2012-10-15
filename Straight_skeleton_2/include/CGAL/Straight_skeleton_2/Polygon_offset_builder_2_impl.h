@@ -256,7 +256,7 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
   mVisitor.on_offset_contour_started();
   
   Halfedge_const_handle lHook = aSeed ;
-
+  std::vector <Halfedge_const_handle > visited_hooks;
   do
   {
     CGAL_POLYOFFSET_TRACE(1,"STEP " << mStepID ) ;
@@ -272,6 +272,8 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
       CGAL_POLYOFFSET_TRACE(1,"B" << lLastHook->id() << " and B" << lHook->id() << " visited." ) ;
 
       lHook = lHook->opposite();
+      
+      visited_hooks.push_back(lLastHook);
     }
     
   }
@@ -287,6 +289,13 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
   
   if ( lComplete )
     *aOut++ = lPoly ;
+  else
+  {
+    for (std::size_t k=0;k<visited_hooks.size();++k)
+    {
+      GetBisectorData( visited_hooks[k] ).IsVisited=false;
+    }
+  }
 
   return aOut ;
 }

@@ -26,7 +26,7 @@
 #ifndef CGAL_HANDLE_FOR_VIRTUAL_H
 #define CGAL_HANDLE_FOR_VIRTUAL_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <typeinfo>
 #include <cstddef>
 

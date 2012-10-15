@@ -26,6 +26,8 @@
 #ifndef CGAL_IPOWER_H
 #define CGAL_IPOWER_H
 
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 
 template <typename NT>

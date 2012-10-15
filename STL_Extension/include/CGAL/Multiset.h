@@ -25,6 +25,7 @@
 #include <CGAL/multiset_assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/memory.h>
+#include <CGAL/number_utils_classes.h>
 #include <iterator>
 
 namespace CGAL {

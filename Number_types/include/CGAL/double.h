@@ -25,8 +25,9 @@
 #ifndef CGAL_DOUBLE_H
 #define CGAL_DOUBLE_H
 
-#include <CGAL/number_type_basic.h>
-
+#include <CGAL/utils.h>
+#include <CGAL/utils_classes.h>
+#include <CGAL/number_utils.h>
 #include <utility>
 #include <cmath>
 #include <math.h> // for nextafter

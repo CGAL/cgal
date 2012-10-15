@@ -948,3 +948,65 @@ if( WITH_CPACK AND EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
     
 endif()
 
+
+if ( CGAL_BRANCH_BUILD )
+  option(CGAL_ENABLE_CHECK_HEADERS 
+    "Enable the special targets \"check_pkg_headers\", and \"check_pkg_<package>_headers\" for each package"
+    FALSE)
+
+  if(CGAL_ENABLE_CHECK_HEADERS)
+
+    if(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
+      execute_process(COMMAND 
+        ${CMAKE_CXX_COMPILER} -x c++ -fsyntax-only ${CMAKE_CURRENT_SOURCE_DIR}/config/support/test_syntaxonly.cpp
+        ERROR_QUIET
+        RESULT_VARIABLE ok)
+      if(ok EQUAL 0)
+        set(CGAL_CHECK_SYNTAX_ONLY ON CACHE INTERNAL "")
+      else()
+        set(CGAL_CHECK_SYNTAX_ONLY OFF CACHE INTERNAL "")
+      endif()
+    endif(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
+
+    if(NOT CGAL_CHECK_SYNTAX_ONLY)
+      message(FATAL_ERROR "Your compiler does not seem to support -fsyntax-only.
+You must disable CGAL_ENABLE_CHECK_HEADERS.")
+    endif()
+
+    ## Fill the variable include_options with all the -I and -isystem options
+    set(include_options)
+    foreach (incdir ${CGAL_INCLUDE_DIRS})
+      list(APPEND include_options "-I${incdir}")
+    endforeach()
+    foreach (incdir ${CGAL_3RD_PARTY_INCLUDE_DIRS})
+      list(APPEND include_options "-isystem${incdir}")
+    endforeach()
+    include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
+
+    ## Loop on package and headers
+    set(check_pkg_target_list)
+    foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
+      if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
+        set(depends "")
+        file(GLOB ${package}_HEADERS 
+          RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include" 
+          "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h")
+        foreach(header ${${package}_HEADERS})
+          string(REPLACE "/" "__" header2 "${header}")
+          string(REPLACE "." "_" header2 "${header2}")
+          add_custom_command(OUTPUT check_${header2}
+            COMMAND ${CMAKE_CXX_COMPILER} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_DEFINITIONS} ${include_options} -x c++ -fsyntax-only "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+            COMMAND ${CMAKE_COMMAND} -E touch check_${header2}
+            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+            VERBATIM
+            COMMENT "Check header ${header}"
+            )
+          list(APPEND depends check_${header2})
+        endforeach() # look on headers
+        add_custom_target(check_pkg_${package}_headers DEPENDS ${depends})
+        list(APPEND check_pkg_target_list check_pkg_${package}_headers)
+      endif() # if the package has an include directory
+    endforeach() # loop on packages
+    add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
+  endif()
+endif( CGAL_BRANCH_BUILD )
