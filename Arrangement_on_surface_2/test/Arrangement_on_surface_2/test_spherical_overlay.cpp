@@ -1,4 +1,5 @@
 // #define CGAL_IDENTIFICATION_XY  2
+// #define CGAL_SL_VERBOSE 1
 
 #include <string>
 #include <cstring>
@@ -228,11 +229,22 @@ void construct_arr(Arrangement& arr,
                    Curve_iterator xcurves_begin, Curve_iterator xcurves_end,
                    Point_iterator points_begin, Point_iterator points_end)
 {
+#if 1
+  // Insert the curves incrementally.
+  Curve_iterator cit;
+  for (cit = xcurves_begin; cit != xcurves_end; ++cit) {
+    std::cout << "inserting " << *cit << " ... ";
+    std::cout.flush();
+    CGAL::insert_non_intersecting_curve(arr, *cit);
+    std::cout << "inserted" << std::endl;
+  }
+#else
   // Insert the curves aggregately.
   std::cout << "inserting x-monotone curves" << " ... ";
   std::cout.flush();
   CGAL::insert_non_intersecting_curves(arr, xcurves_begin, xcurves_end);
   std::cout << "inserted" << std::endl;
+#endif
   
   // Insert the isolated points.
   std::cout << "inserting isolated vertices" << " ... ";
