@@ -137,7 +137,7 @@ enum Mode {GENERAL, REGULARIZED};
 /// @{
 
 /*! 
-Introduces an empty \f$ \alpha\f$-shape `A` for a positive \f$ \alpha\f$-value 
+Introduces an empty \f$ \alpha\f$-shape for a positive \f$ \alpha\f$-value 
 `alpha`. 
 \pre `alpha` \f$ \geq~0\f$. 
 */ 
@@ -145,7 +145,7 @@ Alpha_shape_2(FT alpha = 0,
 Mode m = GENERAL); 
 
 /*! 
-Builds an alpha shape `A` of mode `m` from the triangulation `dt` 
+Builds an alpha shape of mode `m` from the triangulation `dt` 
 for a positive \f$ \alpha\f$-value `alpha`. 
 \attention This operation destroys the triangulation. 
 \pre `alpha` \f$ \geq~0\f$. 
@@ -158,7 +158,7 @@ Mode m = GENERAL);
 /*! 
 Initializes the family of alpha-shapes with the points in the range 
 \f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$ and 
-introduces an \f$ \alpha\f$-shape `A` for a positive \f$ \alpha\f$-value 
+introduces an \f$ \alpha\f$-shape for a positive \f$ \alpha\f$-value 
 `alpha`. 
 \pre The `value_type` of `first` and `last` is `Point`. 
 `alpha` \f$ \geq0\f$. 
@@ -221,14 +221,14 @@ Returns the number of different alpha-values.
 size_type number_of_alphas() const; 
 
 /*! 
-Sets `A` to its general or regularized version. 
+Sets the mode to its general or regularized version. 
 Returns the previous mode. 
 */ 
 Mode 
 set_mode(Mode m = GENERAL ); 
 
 /*! 
-Returns whether `A` is general or regularized. 
+Returns whether the mode is general or regularized. 
 */ 
 Mode 
 get_mode(void) const; 
@@ -264,20 +264,20 @@ Alpha_shape_edges_iterator alpha_shape_edges_end();
 
 /*! 
 Locates a point `p` in the underlying triangulation and Classifies the 
-associated k-face with respect to `A`. 
+associated k-face with respect to the alpha shape. 
 */ 
 Classification_type 
 classify(const Point& p, 
 const FT& alpha = get_alpha()) const; 
 
 /*! 
-Classifies the face `f` of the underlying triangulation with respect to `A`. 
+Classifies the face `f` of the underlying triangulation with respect to the alpha shape. 
 */ 
 Classification_type 
 classify(Face_handle f, const FT& alpha = get_alpha()) const; 
 
 /*! 
-Classifies the edge `e` of the underlying triangulation with respect to `A`. 
+Classifies the edge `e` of the underlying triangulation with respect to the alpha shape.
 */ 
 Classification_type 
 classify(Edge e, const FT& alpha = get_alpha()) const; 
@@ -285,13 +285,13 @@ classify(Edge e, const FT& alpha = get_alpha()) const;
 /*! 
 Classifies the edge of the face `f` opposite to the vertex with index 
 `i` 
-of the underlying triangulation with respect to `A`. 
+of the underlying triangulation with respect to the alpha shape. 
 */ 
 Classification_type 
 classify(Face_handle f, int i, const FT& alpha = get_alpha()) const; 
 
 /*! 
-Classifies the vertex `v` of the underlying triangulation with respect to `A`. 
+Classifies the vertex `v` of the underlying triangulation with respect to the alpha shape. 
 */ 
 Classification_type 
 classify(Vertex_handle v, const FT& alpha = get_alpha()) const; 
@@ -337,29 +337,27 @@ Alpha_iterator alpha_upper_bound(const FT& alpha) const;
 /// @{
 
 /*! 
-Returns the number of solid components of `A`, that is, the number of 
-components of its 
-regularized version. 
+Returns the number of solid components of the alpha shape, that is, the number of 
+components of its regularized version. 
 */ 
 size_type number_of_solid_components(const FT& alpha = get_alpha()) const; 
 
 /*! 
 Returns an iterator pointing to the first element with \f$ \alpha\f$-value 
-such that `A` satisfies the following two properties: 
+such that the alpha shape satisfies the following two properties: 
 
-`nb_components` equals the number of solid components and 
-
-all data points are either on the boundary or in the interior of the regularized version of `A`. 
+- `nb_components` equals the number of solid components and 
+- all data points are either on the boundary or in the interior of the regularized version of the alpha shape. 
 
 If no such value is found, the iterator points to the first element with 
-\f$ \alpha\f$-value such that `A` satisfies the second property. 
+\f$ \alpha\f$-value such that the alpha shape satisfies the second property. 
 */ 
 Alpha_iterator find_optimal_alpha(size_type nb_components) const; 
 
 /*! 
-Inserts the alpha shape `A` for the current \f$ \alpha\f$-value into the stream `os`. 
+Inserts the alpha shape for the current \f$ \alpha\f$-value into the stream `os`. 
 
-\ref CGAL/IO/io.h must be included.
+\pre CGAL/IO/io.h must be included.
 
 \pre The insert operator must be defined for `Point`. 
 \relates Alpha_shape_2 
