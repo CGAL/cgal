@@ -781,8 +781,6 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   
   // ... thus the value should now have changed
   CGAL_assertion(!check_swapped_predecessors);
-  if (swap_preds)
-    res = res->twin();
 #else
   res = m_arr_access.insert_at_vertices_ex (_curve(cv), prev1, prev2, LARGER, 
                                             new_face_created, check_swapped_predecessors);
@@ -796,6 +794,9 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   {
     Halfedge_handle he = res;
     
+    if (swap_preds)
+      he = he->twin();
+
     CGAL_assertion(he->direction() == ARR_RIGHT_TO_LEFT);
 
     Indices_list& list_ref = m_he_indices_table[he];
