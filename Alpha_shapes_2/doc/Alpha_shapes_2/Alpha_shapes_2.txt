@@ -40,7 +40,7 @@ that the \f$ \alpha\f$-shape degenerates to the point-set \f$ S\f$ for
 will prevent us even from moving the spoon between two points since
 it's way too large. So we will never spoon up ice-cream lying in the
 inside of the convex hull of \f$ S\f$, and hence the \f$ \alpha\f$-shape for
-\f$ \alpha \rightarrow \infty\f$ is the convex hull of \f$ S\f$.\footnote{ice cream, ice cream!!! The wording of this introductory paragraphs is borrowed from Kaspar Fischer's " Introduction to Alpha Shapes" which can be found at http://people.inf.ethz.ch/fischerk/pubs/as.pdf. The picture has been taken from Walter Luh's homepage at http://www.stanford.edu/&wtilde;luh/cs448b/alphashapes.html.}
+\f$ \alpha \rightarrow \infty\f$ is the convex hull of \f$ S\f$.
 
 # Definitions # {#Alpha_shapes_2Definitions}
 
@@ -77,7 +77,7 @@ finite number of different \f$ \alpha\f$-shapes and corresponding
 
 \section I1_SectAlpha_Shape_2 Functionality 
 
-The class `CGAL::Alpha_shape_2<Dt>` represents the family of
+The class `Alpha_shape_2<Dt>` represents the family of
 \f$ \alpha\f$-shapes of points in a plane for <I>all</I> positive
 \f$ \alpha\f$. It maintains the underlying triangulation `Dt` which
 represents connectivity and order among squared radius of its faces. Each
@@ -86,7 +86,7 @@ that specifies for which values of \f$ \alpha\f$ the face belongs to the
 \f$ \alpha\f$-shape. There are links between the intervals and the
 \f$ k\f$-dimensional faces of the triangulation.
 
-The class `CGAL::Alpha_shape_2<Dt>` provides functions to set and
+The class `Alpha_shape_2<Dt>` provides functions to set and
 get the current \f$ \alpha\f$-value, as well as an iterator that enumerates
 the \f$ \alpha\f$-values where the \f$ \alpha\f$-shape changes.
 
@@ -114,23 +114,23 @@ points cannot be inserted or removed.
 
 We currently do not specify concepts for the underlying triangulation
 type. Models that work for a basic alpha-shape are the classes
-`CGAL::Delaunay_triangulation_2` and 
-`CGAL::Triangulation_hierarchy_2` templated with a Delaunay
+`Delaunay_triangulation_2` and 
+`Triangulation_hierarchy_2` templated with a Delaunay
 triangulation. A model that works for a weighted alpha-shape is 
-the class `CGAL::Regular_triangulation_2`.
+the class `Regular_triangulation_2`.
 
 The triangulation needs a geometric traits class as argument.
 The requirements of this class are described in the 
-concept `CGAL::AlphaShapeTraits_2` for which
+concept `AlphaShapeTraits_2` for which
 the \cgal kernels
-and `CGAL::Weighted_alpha_shape_euclidean_traits_2` are models.
+and `Weighted_alpha_shape_euclidean_traits_2` are models.
 
 There are no requirements on the triangulation data structure.
 However it must be parameterized with 
 vertex and face classes, which are model of the concepts
 `AlphaShapeVertex_2` and `AlphaShapeFace_2`,
-by default the classes `CGAL::Alpha_shape_vertex_base_2<Gt>` 
-and `CGAL::Alpha_shape_face_base_2<Gt>`.
+by default the classes `Alpha_shape_vertex_base_2<Gt>` 
+and `Alpha_shape_face_base_2<Gt>`.
 
 # Examples # {#Alpha_shapes_2Examples}
 
@@ -144,9 +144,9 @@ For the geometric traits class we can use a \cgal kernel.
 
 For the triangulation data structure traits, we have to
 choose the vertex and face classes needed for alpha shapes,
-namely `CGAL::Alpha_shape_vertex_base_2<Gt, Dv>` and `CGAL::Alpha_shape_face_base_2<Gt,Df>`.
-As default vertex and face type they use `CGAL::Triangulation_vertex_base_2<Gt>`
-and `CGAL::Triangulation_face_base_2<Gt>` respectively.
+namely `Alpha_shape_vertex_base_2<Gt, Dv>` and `Alpha_shape_face_base_2<Gt,Df>`.
+As default vertex and face type they use `Triangulation_vertex_base_2<Gt>`
+and `Triangulation_face_base_2<Gt>` respectively.
 
 The following code snippet shows how to obtain a basic
 alpha shape type.
@@ -190,7 +190,7 @@ typedef CGAL::Alpha_shape_2<Ht> Alpha_shape_2;
 
 A weighted alpha shape, needs a regular triangulation as
 underlying triangulation `Dt`, and it needs a particular
-face class, namely `CGAL::Regular_triangulation_face_base_2<Gt>`.
+face class, namely `Regular_triangulation_face_base_2<Gt>`.
 Note that there is no special weighted alpha shape class.
 
 \code{.cpp}

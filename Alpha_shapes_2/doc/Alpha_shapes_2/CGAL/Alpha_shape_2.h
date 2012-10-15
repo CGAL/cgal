@@ -19,13 +19,13 @@ for <I>weighted</I> Alpha Shapes.
 ### Parameters ###
 
 The template parameter `Dt` has to be either `Delaunay_triangulation_2` or `Regular_triangulation_2`. 
-Note that `DT::Geom_traits`, `DT::Vertex` and `DT::Face` must model the concepts `AlphaShapeTraits_2`, 
-`AlphaShapeVertex_2` and `AlphaShapeFace_2` respectively. 
+Note that `Dt::Geom_traits`, `Dt::Vertex` and `Dt::Face` must be model the concepts `AlphaShapeTraits_2`, 
+`AlphaShapeVertex_2` and `AlphaShapeFace_2`, respectively. 
 
 The template parameter `ExactAlphaComparisonTag` is a tag that, when set to 
-`CGAL::Tag_true`, triggers exact comparisons between alpha values. This is useful 
+\link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. This is useful 
 when the underlying triangulation is instantiated with an exact predicates inexact constructions 
-kernel. By default the `ExactAlphaComparisonTag` is set to `CGAL::Tag_false` as it induces a small 
+kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_false`\endlink as it induces a small 
 overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
 the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
 
@@ -35,7 +35,7 @@ Inherits from `Dt`.
 
 This class is the underlying triangulation class. 
 
-The modifying functions `insert` and `remove` will overwrite 
+The modifying functions `Alpha_shape_2::insert()` and `Alpha_shape_2::remove()` will overwrite 
 the inherited functions. At the moment, only the static version is implemented. 
 
 ### I/O ###
@@ -53,12 +53,12 @@ The cross links between the intervals and the \f$ k\f$-dimensional faces of the
 triangulation are realized using methods in the \f$ k\f$-dimensional faces 
 themselves. 
 
-`A.alpha_find` uses linear search, while 
-`A.alpha_lower_bound` and `A.alpha_upper_bound` 
+`Alpha_shape_2::alpha_find()` uses linear search, while 
+`Alpha_shape_2::alpha_lower_bound()` and `Alpha_shape_2::alpha_upper_bound()` 
 use binary search. 
-`A.number_of_solid_components` performs a graph traversal and takes time 
+`Alpha_shape_2::number_of_solid_components` performs a graph traversal and takes time 
 linear in the number of faces of the underlying triangulation. 
-`A.find_optimal_alpha` uses binary search and takes time 
+`Alpha_shape_2::find_optimal_alpha` uses binary search and takes time 
 \f$ O(n \log n)\f$, where \f$ n\f$ is the number of points. 
 
 */

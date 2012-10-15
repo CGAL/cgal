@@ -4,7 +4,7 @@
 
 /*!
 \addtogroup PkgAlphaShape2
-\todo check generated documentation
+
 \PkgDescriptionBegin{2D Alpha Shapes,PkgAlphaShape2Summary}
 \PkgPicture{alpha-detail.png}
 \PkgAuthors{Tran Kai Frank Da}
@@ -31,10 +31,10 @@ triangulation and the other on its generalization, the regular triangulation,
 replacing the natural distance by the power to weighted points. The metric used
 determines an underlying triangulation of the alpha shape and thus, the version
 computed. 
-The <I>basic alpha shape</I> (cf.  \ref I1_SectClassicAS2D ) is associated with the Delaunay triangulation
-(cf.  \ref Section_2D_Triangulations_Delaunay ). 
+The <I>basic alpha shape</I> (cf.  \ref I1_SectClassicAS2D) is associated with the Delaunay triangulation
+(cf. Section \ref Section_2D_Triangulations_Delaunay "Delaunay Triangulations"). 
 The <I>weighted alpha shape</I> (cf.  \ref I1_SectWeightedAS2D ) is associated with the regular triangulation
-(cf.  \ref Section_2D_Triangulations_Regular ).
+(cf. Section \ref Section_2D_Triangulations_Regular "Regular Triangulations").
 
 There is a close connection between alpha shapes and the underlying
 triangulations. More precisely, the \f$ \alpha\f$-complex of \f$ S\f$ is a
