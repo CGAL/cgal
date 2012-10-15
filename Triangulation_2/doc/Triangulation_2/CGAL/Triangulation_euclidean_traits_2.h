@@ -9,7 +9,7 @@ class of basic and Delaunay triangulations.
 The template parameter `K` has to 
 be instantiated by a model of the `Kernel` concept. 
 The class `Triangulation_euclidean_traits_2` uses types 
-and predicates defined `K`. 
+and predicates defined in `K`. 
 
 \models ::TriangulationTraits_2 
 \models ::DelaunayTriangulationTraits_2 
