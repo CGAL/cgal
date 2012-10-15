@@ -3519,8 +3519,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
     m_geom_traits->parameter_space_in_x_2_object(); 
   typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
     m_geom_traits->parameter_space_in_y_2_object(); 
-  typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
-    m_geom_traits->compare_y_at_x_right_2_object();  
+  // typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
+  //   m_geom_traits->compare_y_at_x_right_2_object();  
 
   // IDEA EBEB 2012-07-28 store indices of local_minima with CCB in DCEL:
   // - determine values upon insertion of a curve
