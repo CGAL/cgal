@@ -59,7 +59,7 @@
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.004	  0.004	  1
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.005	  0.005	  1
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.006	  0.006	  1
-#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.007	  0.007	  1
+D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.007	  0.007	  1
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.008	  0.008	  1
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.010	  0.010	  1
 
@@ -211,4 +211,4 @@
 #For the "facet surfaces that are not marked on the surface in the C3T3" bug:
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.068 0.02	30
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.068	0.068	2
-D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.068 0.01	15
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.068 0.01	15

@@ -36,7 +36,7 @@ namespace po = boost::program_options;
 // BENCHMARK GENERAL PARAMETERS
 // ==========================================================================
 
-#define MESH_3_POLYHEDRON_WITH_FEATURES
+//#define MESH_3_POLYHEDRON_WITH_FEATURES
 //#define MESH_3_IMPLICIT_WITH_FEATURES
 //#define MESH_3_BENCHMARK_EXPORT_TO_MAYA
 //#define MESH_3_BENCHMARK_EXPORT_TO_MESH
