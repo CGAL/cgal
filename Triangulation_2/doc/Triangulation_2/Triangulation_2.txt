@@ -234,8 +234,8 @@ operations (predicate or constructions) on those objects.
 <LI> the second parameter stands for a
 <B>triangulation data structure</B> class. The concept
 of triangulation data structure is described in
-Section \ref TDS_2D_Concept of
-Chapter \ref Chapter_2D_Triangulation_Data_Structure.
+Section \ref TDS_2D_Concept "Concepts" of
+Chapter \ref Chapter_2D_Triangulation_Data_Structure "2D Triangulation Data Structure".
 The triangulation data structure defines the types
 used to represent the faces and vertices of the triangulation,
 as well as additional types (handles, iterators and circulators)
@@ -256,7 +256,7 @@ Those default vertex and face base classes
 can be replaced by 
 user customized base classes in order, for example, to deal
 with additional properties attached to the vertices or faces
-of a triangulation. See section \ref Section_2D_Triangulations_Flexibility
+of a triangulation. See Section \ref Section_2D_Triangulations_Flexibility
 for more details on the way to make use of this flexibility.
 </UL>
 
@@ -496,7 +496,7 @@ are defined to represent the dual Voronoi diagram.
 The class `Delaunay_triangulation_2<Traits,Tds>`
 overwrites the member functions that insert, move, or remove a point
 in the triangulation to maintain the Delaunay property.
-It also has a member function (`Vertex_handle nearest_vertex(const Point& p)`)
+It also has a member function (`Vertex_handle` `Delaunay_triangulation_2::nearest_vertex``(const Point& p)`)
 to answer nearest neighbor queries
 and member functions to construct the elements (vertices and edges)
 of the dual Voronoi diagram.
@@ -531,11 +531,8 @@ are models of the concept `DelaunayTriangulationTraits_2`
 for the euclidean metric.
 The traits class for terrains,
 `Projection_traits_xy_3<R>`,
-
 `Projection_traits_yz_3<R>`, and
-
 `Projection_traits_xz_3<R>` 
-
 are also models of `DelaunayTriangulationTraits_2`
 except that they do not fulfill
 the requirements for the duality functions and nearest vertex
@@ -748,11 +745,11 @@ and uses a `Weighted_point` type
 derived from the type `Point_2` of
 `Triangulation_euclidean_traits_2<Rep>`.
 
-<B>Note that, since the type `Weighted_point` is not defined 
+\attention Note that, since the type `Weighted_point` is not defined 
 in \cgal kernels, plugging a filtered kernel such as 
 `Exact_predicates_exact_constructions_kernel` in
 `Regular_triangulation_euclidean_traits_2<K,Weight>` will in fact
-not provide exact predicates on weighted points.</B>
+not provide exact predicates on weighted points.
 To solve this, there is also another model of the traits concept,
 `Regular_triangulation_filtered_traits_2<FK>`, which is providing filtered
 predicates (exact and efficient). The argument `FK` must be a
@@ -838,13 +835,11 @@ The third parameter `Itag` is the intersection tag
 which serves to choose how intersecting constraints
 are dealt with. This parameter has to be instantiated
 by one of the following classes:
-`CGAL::No_intersection_tag` when input constraints do not
+- `No_intersection_tag` when input constraints do not
 intersect 
-
-`CGAL::Exact_predicates_tag` if the geometric traits provides
+- `Exact_predicates_tag` if the geometric traits provides
 exact predicates but approximate constructions 
-
-`CGAL::Exact_intersections_tag` when an exact predicates
+- `Exact_intersections_tag` when an exact predicates
 and exact constructions are provided.
 
 The class `Constrained_triangulation_2<Traits,Tds, Itag>`
@@ -921,7 +916,7 @@ handle intersecting input constraints. One of them
 is designed to be designed to be robust
 when used in conjunction with a geometric traits
 providing exact predicates and approximate constructions
-(such as a `CGAL::Filtered_Kernel` or any kernel providing
+(such as a `CGAL::Filtered_kernel` or any kernel providing
 filtered exact predicates). The third version is designed to be used
 with an exact arithmetic number type.
 
@@ -937,7 +932,7 @@ are dealt with. It can be instantiated with one of the following
 classes: `CGAL::No_intersection_tag`,
 `CGAL::Exact_predicates_tag`,
 `CGAL::Exact_intersections_tag` 
-(see Section \ref Section_2D_Triangulations_Constrained.
+(see Section \ref Section_2D_Triangulations_Constrained).
 
 A constrained Delaunay triangulation is not a Delaunay
 triangulation but it is a constrained triangulation.
@@ -1158,8 +1153,8 @@ and he was lead to use himself
 The new solution to resolve the template dependency
 is based on a rebind mechanism similar to the mechanism used in the 
 standard allocator class std::allocator. The rebind mechanism
-is described in Section \ref TDS_2D_default 
-of Chapter \ref Chapter_2D_Triangulation_Data_Structure.
+is described in Section \ref TDS_2D_default "The Default Triangulation Data Structure" 
+of Chapter \ref Chapter_2D_Triangulation_Data_Structure "Triangulation Data Structure".
 For now, we will just notice that the design
 requires
 the existence in the vertex and face base classes 
@@ -1184,7 +1179,7 @@ can be used. Those classes have
 a template parameter `Info` devoted to
 handle additional information.
 The following examples shows how to add a 
-`CGAL::Color` in the triangulation faces.
+`Color` in the triangulation faces.
 
 \cgalexample{Triangulation_2/colored_face.cpp}
 

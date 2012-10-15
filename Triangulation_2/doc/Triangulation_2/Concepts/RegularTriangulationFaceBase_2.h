@@ -48,7 +48,7 @@ public:
 /// @{
 
 /*! 
-An std list of hidden vertices. 
+An `std::list` of hidden vertices. 
 */ 
 typedef std::list<Vertex_handle> Vertex_list; 
 

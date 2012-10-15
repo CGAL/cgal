@@ -1,6 +1,31 @@
 
 namespace CGAL {
 
+
+/*!
+\ingroup PkgTriangulation2TriangulationClasses
+
+Intersection tag for constrained triangulations, when input constraints do not intersect.
+*/
+struct No_intersection_tag{};
+
+
+/*!
+\ingroup PkgTriangulation2TriangulationClasses
+
+Intersection tag for constrained triangulations, if an exact predicates and exact constructions are provided.
+*/
+struct Exact_intersections_tag{};
+
+
+/*!
+\ingroup PkgTriangulation2TriangulationClasses
+
+Intersection tag for constrained triangulations, if the geometric traits provides exact predicates but approximate constructions.
+*/
+
+struct Exact_predicates_tag{};
+
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
 
@@ -70,17 +95,15 @@ of the concept `TriangulationDataStructure_2`.
 The third parameter `Itag` is the intersection tag 
 which serves to choose between the different 
 strategies to deal with constraints intersections. 
-\cgal provides three valid types for this parameter : 
+\cgal provides three valid types for this parameter: 
 
-`CGAL::No_intersection_tag` disallows intersections of 
+- `No_intersection_tag` disallows intersections of 
 input constraints, 
-
-`CGAL::Exact_predicates_tag` is to be used when the traits 
+- `Exact_predicates_tag` is to be used when the traits 
 class 
 provides exact predicates but approximate constructions of the 
 intersection points. 
-
-`CGAL::Exact_intersections_tag` is to be used in conjunction 
+- `Exact_intersections_tag` is to be used in conjunction 
 with an exact arithmetic type. 
 
 The information about constrained edges is stored in the 
@@ -101,11 +124,11 @@ If `Gt` is the geometric traits
 parameter, 
 the default for 
 `ConstrainedTriangulationFaceBase_2` is the class 
-`CGAL::Constrained_triangulation_face_base_2<Gt>` 
+`Constrained_triangulation_face_base_2<Gt>` 
 and the default for the 
 triangulation data structure parameter is the class 
-`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Constrained_triangulation_face_base_2<Gt> >`. 
-The default intersection tag is `CGAL::No_intersection_tag`. 
+`Triangulation_data_structure_2 < Triangulation_vertex_base_2<Gt>, Constrained_triangulation_face_base_2<Gt> >`. 
+The default intersection tag is `No_intersection_tag`. 
 
 \sa `CGAL::Triangulation_2<Traits,Tds>`
 \sa `TriangulationDataStructure_2`
@@ -283,7 +306,7 @@ is_valid(bool verbose = false, int level = 0) const;
 }; /* end Constrained_triangulation_2 */
 
 /*! 
-Writes the triangulation as for `CGAL::Triangulation_2<Traits,Tds>` and, for each face f, and integers i=0,1,2, 
+Writes the triangulation as for `Triangulation_2<Traits,Tds>` and, for each face f, and integers i=0,1,2, 
 write "C" or "N" depending whether edge 
 `(f,i)` is constrained or not. 
 \relates Constrained_triangulation_2 

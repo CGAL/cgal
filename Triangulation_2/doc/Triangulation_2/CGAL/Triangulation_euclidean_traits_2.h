@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Triangulation_euclidean_traits_2` can be used to instantiate the geometric traits 
 class of basic and Delaunay triangulations. 
-The templated parameter `K` has to 
+The template parameter `K` has to 
 be instantiated by a model of the `Kernel` concept. 
 The class `Triangulation_euclidean_traits_2` uses types 
 and predicates defined `K`. 

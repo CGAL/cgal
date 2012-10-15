@@ -5,14 +5,13 @@
 
 The concept `RegularTriangulationTraits_2` describe the requirements 
 for the traits class of regular triangulations. It refines the 
-concept `TriangulationTraits_2` 
-providing the type 
-`Weighted_point_2` and the `power-test` predicate on those 
+concept `TriangulationTraits_2` requiring the type 
+`CGAL::Weighted_point` and the *power test* predicate on those 
 weighted points. 
 A weighted point is basically 
 a point augmented with a scalar weight. It can be seen as a circle 
 when the weight is interpreted as a square radius. 
-The `power-test` on weighted points 
+The power test on weighted points 
 is the fundamental test to build regular triangulations 
 as the `side_of_oriented_circle` test is the fundamental test 
 of Delaunay triangulations. 

@@ -126,7 +126,7 @@ the vertex base class has to be a model
 of `RegularTriangulationVertexBase_2`. 
 \cgal provides a default 
 instantiation for the `Tds` parameter by the class 
-`CGAL::Triangulation_data_structure_2 < CGAL::Reugular_triangulation_vertex_base_2<Traits>, CGAL::Regular_Triangulation_face_base_2<Traits> >`. 
+`CGAL::Triangulation_data_structure_2 < CGAL::Regular_triangulation_vertex_base_2<Traits>, CGAL::Regular_triangulation_face_base_2<Traits> >`. 
 
 \sa `CGAL::Triangulation_2<Traits,Tds>`
 \sa `TriangulationDataStructure_2`

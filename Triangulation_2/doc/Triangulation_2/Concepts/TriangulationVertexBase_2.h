@@ -10,7 +10,7 @@ triangulations.
 
 The concept `TriangulationVertexBase_2` refines the concept 
 `TriangulationDSVertexBase_2` 
-adding geometric information : 
+adding geometric information: 
 the vertex base of a triangulation stores a point. 
 
 \refines ::TriangulationDSVertexBase_2 

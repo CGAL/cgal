@@ -4,21 +4,20 @@
 \cgalconcept
 
 In addition to the requirements of the concept `TriangulationTraits_2`
-described ::TriangulationTraits_2 not supported, the concept
-`DelaunayTriangulationTraits_2` provide a predicate to check the empty
+the concept
+`DelaunayTriangulationTraits_2` requires a predicate to check the empty
 circle property. The corresponding predicate type is called type
 `Side_of_oriented_circle_2`.
 
 The additional types `Line_2`, 
 `Ray_2` and the constructor objects 
-`Construct_ray_2` 
+`Construct_ray_2`, 
 `Construct_circumcenter_2`, `Construct_bisector_2`, 
 `Construct_midpoint` 
 are used to build the dual Voronoi diagram 
 and are required only if the dual functions are called. 
 The additional predicate type `Compare_distance_2` is 
-required if calls to 
-`nearest_vertex(..)` are issued. 
+required if the  method `nearest_vertex()` is used. 
 
 \refines ::TriangulationTraits_2 
 
@@ -57,11 +56,10 @@ Predicate type.
 Provides the operator : 
 
 `Oriented_side operator()(Point p, Point q, Point r, Point s)` 
-which takes four points \f$ p, q, r, s\f$ as arguments and returns 
+which takes four points `p, q, r, s` as arguments and returns 
 `ON_POSITIVE_SIDE`, `ON_NEGATIVE_SIDE` or, 
 `ON_ORIENTED_BOUNDARY` according to the position of points `s` 
-with respect to the oriented circle through \f$ p,q\f$ 
-and \f$ r\f$. 
+with respect to the oriented circle through `p, q` and `r`. 
 */ 
 typedef Hidden_type Side_of_oriented_circle_2; 
 

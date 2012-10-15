@@ -32,13 +32,12 @@ The desired version can be selected through the instantiation of the
 third template parameter `Itag` which can be one of the 
 following : 
 
-`CGAL::No_intersection_tag` if intersections of 
+- `No_intersection_tag` if intersections of 
 input constraints are disallowed, 
-
-`CGAL::Exact_predicates_tag` allows intersections between input
+- `Exact_predicates_tag` allows intersections between input
 constraints and is to be used when the traits class provides exact
 predicates but approximate constructions of the intersection points,
-`CGAL::Exact_intersections_tag` allows intersections between input
+- `Exact_intersections_tag` allows intersections between input
 constraints and is to be used in conjunction with an exact arithmetic
 type.
 
@@ -81,11 +80,11 @@ If `Gt` is the geometric traits
 parameter, 
 the default for 
 `ConstrainedTriangulationFaceBase_2` is the class 
-`CGAL::Constrained_triangulation_face_base_2<Gt>` 
+`Constrained_triangulation_face_base_2<Gt>` 
 and the default for the 
 triangulation data structure parameter is the class 
-`CGAL::Triangulation_data_structure_2< CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Constrained_triangulation_face_base_2<Gt> >`. 
-The default intersection tag is `CGAL::No_intersection_tag`. 
+`Triangulation_data_structure_2< CGAL::Triangulation_vertex_base_2<Gt>, Constrained_triangulation_face_base_2<Gt> >`. 
+The default intersection tag is `No_intersection_tag`. 
 
 ### Types ###
 

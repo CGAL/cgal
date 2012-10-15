@@ -31,7 +31,7 @@ data. As proved in \cite d-iirdt-98, this structure has an optimal behavior
 when it is built for Delaunay triangulations. 
 However it can be used as well for other triangulations. 
 The class `Triangulation_hierarchy_2` is templated by a parameter 
-which is to be instantiated by anyone of the \cgal triangulation 
+which can be instantiated by any of the \cgal triangulation 
 classes. 
 
 ### Types ###

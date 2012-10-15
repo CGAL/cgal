@@ -8,15 +8,13 @@ The class `Regular_triangulation_face_base_2` is a model of the concept
 `RegularTriangulationFaceBase_2`. It is the default face base class 
 of regular triangulations. 
 
-### Parameters ###
-
-The template parameters `Traits` has to be a model 
+\tparam Traits has to be a model 
 of `RegularTriangulationTraits_2`. 
 
-The template parameter `Fb` has to be a model 
+\tparam Fb has to be a model 
 of `TriangulationFaceBase_2`. By default, this parameter is 
 instantiated by 
-`CGAL::Triangulation_face_base_2<Traits>`. 
+`Triangulation_face_base_2<Traits>`. 
 
 \models ::RegularTriangulationFaceBase_2 
 

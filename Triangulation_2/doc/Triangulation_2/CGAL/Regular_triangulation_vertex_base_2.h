@@ -8,14 +8,12 @@ The class `Regular_triangulation_vertex_base_2` is a model of the concept
 `RegularTriangulationVertexBase_2`. It is the default 
 vertex base class of regular triangulations. 
 
-### Parameters ###
-
-The template parameters `Traits` has to be a model 
+\tparam Traits has to be a model 
 of `RegularTriangulationTraits_2`. 
 
-The template parameters `Vb` has to be a model 
+\tparam Vb has to be a model 
 of the concept `TriangulationVertexBase_2` and is by default 
-instantiated by `CGAL::Triangulation_vertex_base_2<Traits>`. 
+instantiated by `Triangulation_vertex_base_2<Traits>`. 
 
 \models ::RegularTriangulationVertexBase_2 
 

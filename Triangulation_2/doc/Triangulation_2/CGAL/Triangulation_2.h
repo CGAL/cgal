@@ -229,7 +229,7 @@ typedef Tds::difference_type difference_type;
 
 /// \name Handles, Iterators, and Circulators
 /// The vertices and faces of the triangulations are accessed through
-/// `handles`, `iterators` and `circulators`. The handles are models
+/// handles, iterators and circulators. The handles are models
 /// of the concept `Handle` which basically offers the two dereference
 /// operators and `->`. The iterators and circulators are all
 /// bidirectional and non-mutable. The circulators and iterators are
@@ -342,40 +342,38 @@ default constructor.
 Triangulation_2(); 
 
 /*! 
-Introduces an empty triangulation `t`. 
+Introduces an empty triangulation. 
 */ 
 Triangulation_2( 
 const Traits& gt = Traits() ); 
 
 /*! 
 Copy constructor. All the vertices and faces are duplicated. 
-After the copy, `t` and `tr` 
-refer to different triangulations : 
-if `tr` is modified, `t` is not. 
+After the copy, `*this` and `tr` 
+refer to different triangulations: 
+if `tr` is modified, `*this` is not. 
 */ 
 Triangulation_2( 
 const Triangulation_2& tr); 
 
 /*! 
 Assignment. All the vertices and faces are duplicated. 
-After the assignment, `t` and `tr` 
-refer to different triangulations : 
-if `tr` is modified, `t` is not. 
+After the assignment, `*this` and `tr` 
+refer to different triangulations: 
+if `tr` is modified, `*this` is not. 
 */ 
 Triangulation_2 operator=(const Triangulation_2<Traits,Tds>& tr); 
 
 /*! 
-The triangulations `tr` and `t` are swapped. 
-`t.swap(tr)` should be preferred to `t` = `tr` or to 
-`t(tr)` if `tr` is deleted after that. 
+The triangulations `tr` and `*this` are swapped. 
+This method should be used instead of assignment of copy construtor.
+if `tr` is deleted after that. 
 */ 
 void swap(Triangulation_2& tr); 
 
 /*! 
 Deletes all faces and finite vertices 
-resulting 
-in an 
-empty triangulation. 
+resulting in an empty triangulation. 
 */ 
 void clear(); 
 
@@ -1109,7 +1107,7 @@ is_valid(bool verbose = false, int level = 0) const;
 }; /* end Triangulation_2 */
 
 /*! 
-Inserts the triangulation `t` into the stream `os`. 
+Inserts the triangulation into the stream `os`. 
 \pre The insert operator must be defined for `Point`. 
 \relates Triangulation_2 
 */ 
@@ -1118,7 +1116,8 @@ const Triangulation_2<Traits,Tds>& T);
 
 /*! 
 Reads a triangulation from stream `is` and assigns it 
-to `t`. \pre The extract operator must be defined for `Point`. 
+to the triangulation. 
+\pre The extract operator must be defined for `Point`. 
 \relates Triangulation_2 
 */ 
 istream& operator>>(istream& is, 

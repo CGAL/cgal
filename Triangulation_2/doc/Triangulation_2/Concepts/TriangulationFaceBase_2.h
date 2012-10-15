@@ -10,8 +10,7 @@ or a Delaunay triangulation.
 
 This concept refines the concept `TriangulationDSFaceBase_2` 
 and could add geometric information. In fact, 
-currently the triangulations of 
-CGAL do not store any geometric information in the faces 
+currently the triangulations do not store any geometric information in the faces 
 and, thus this concept is just equal to `TriangulationDSFaceBase_2` 
 and only provided for symmetry with the vertex case. 
 

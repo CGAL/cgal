@@ -10,20 +10,18 @@ triangulation data structure of a triangulation class.
 It provides an easy way to add some user defined information 
 in the faces of a triangulation. 
 
-### Parameters ###
-
-The first template argument is the information the user would like to add 
+\tparam Info  is the information the user would like to add 
 to a face. It has to be `DefaultConstructible` and `Assignable`. 
 
-The second template argument is a geometric traits class 
+\tparam Traits  is a geometric traits class 
 and is actually not used in `Triangulation_face_base_with_info_2` . 
 
-The third parameter is a face base class from which 
+\tparam Fb  is a face base class from which 
 `Triangulation_face_base_with_info_2` derives. 
 
 \models Because `Triangulation_face_base_with_info_2` derives from the class instantiating its third 
 parameter, it will be a model of the same face base concept as its parameter: 
-`TriangulationFaceBase_2`,  `ConstrainedTriangulationFaceBase_2`, or ::RegularTriangulationFaceBase_2 
+`TriangulationFaceBase_2`,  `ConstrainedTriangulationFaceBase_2`, or `RegularTriangulationFaceBase_2` 
 
 \sa `CGAL::Triangulation_face_base_2<Traits,Fb>` 
 \sa `CGAL::Constrained_triangulation_face_base_2<Traits,Fb>` 

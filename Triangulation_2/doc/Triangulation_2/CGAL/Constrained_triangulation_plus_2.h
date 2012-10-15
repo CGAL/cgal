@@ -114,7 +114,7 @@ typedef Context_iterator;
 /// @{
 
 /*! 
-Introduces an empty triangulation `ctp`.
+Introduces an empty triangulation.
 */ 
 Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits()); 
 
@@ -157,9 +157,9 @@ Constrained_triangulation_plus_2 operator=(const
 Constrained_triangulation_plus_2& tr); 
 
 /*! 
-The triangulations `tr` and `ctp` are swapped. 
-This operation should be preferred to `ctp` = `tr` or to 
-`t(tr)` if `tr` is deleted after that. 
+The triangulations `tr` and this triangulation are swapped. 
+This operation should be preferred to the assignment or to 
+the copy constructor if `tr` is deleted after that. 
 */ 
 void swap(Constrained_triangulation_plus_2 tr); 
 

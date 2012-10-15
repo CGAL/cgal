@@ -5,7 +5,7 @@
 
 The concept `TriangulationTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template
-parameter of the class `Triangulation_2<Traits,Tds>`.  This concept
+parameter of the class `CGAL::Triangulation_2<Traits,Tds>`.  This concept
 provides the types of the geometric primitives used in the
 triangulation and some function object types for the required
 predicates on those primitives.

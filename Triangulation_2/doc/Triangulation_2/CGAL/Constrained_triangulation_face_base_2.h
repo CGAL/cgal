@@ -10,13 +10,12 @@ of constrained triangulations.
 
 \models ::ConstrainedTriangulationFaceBase_2 
 
-### Parameters ###
 
-The first template parameter is a geometric traits. 
+\tparam Traits must be a geometric traits. 
 
-The second template parameter has to be a model 
+\tparam Fb must be a model 
 of the concept `TriangulationFaceBase_2`. 
-Its default is `CGAL::Triangulation_face_base_2<Traits>` 
+Its default is `Triangulation_face_base_2<Traits>` 
 
 ### Inherits From ###
 
