@@ -1255,14 +1255,27 @@ march_locate_2D(Face_handle c,
 {
   CGAL_triangulation_assertion(!c->is_negative());
 
+	
+		
   Face_handle prev = Face_handle();
   bool first=true;
 
   while (1) {
+	  
+	  const Point & p0 = c->vertex( 0 )->point();
+	  const Point & p1 = c->vertex( 1 )->point();
+	  const Point & p2 = c->vertex( 2 )->point();
     if ( c->is_negative() ) {
       lt = OUTSIDE_CONVEX_HULL;
       li = 4;
-      return c;
+		//Orientation orient = oriented_side(p0, p1, p2,t);
+		
+		//if(orient==NEGATIVE)
+			//return prev;
+		return c;
+		
+		
+		
     }
   
     
@@ -1276,9 +1289,9 @@ march_locate_2D(Face_handle c,
     // we do not need randomness
     int left_first =rng.template get_bits<1>();
 
-    const Point & p0 = c->vertex( 0 )->point();
+    /*const Point & p0 = c->vertex( 0 )->point();
     const Point & p1 = c->vertex( 1 )->point();
-    const Point & p2 = c->vertex( 2 )->point();
+    const Point & p2 = c->vertex( 2 )->point();*/
     Orientation o0, o1, o2;
   
     /************************FIRST*************************/
@@ -1704,7 +1717,8 @@ compare_y(const Point& p, const Point& q) const
   return geom_traits().compare_y_2_object()(p,q);
 }
 */
-/*template <class Gt, class Tds >
+	
+template <class Gt, class Tds >
 Oriented_side
 Triangulation_on_sphere_2<Gt, Tds>::
 oriented_side(const Point &p0, const Point &p1,
@@ -1744,9 +1758,18 @@ oriented_side(const Point &p0, const Point &p1,
     if(o1==NEGATIVE && o2==NEGATIVE && o3==NEGATIVE )
       return ON_NEGATIVE_SIDE;
     else
-      return ON_POSITIVE_SIDE;
+      //return ON_POSITIVE_SIDE;
+		return ON_NEGATIVE_SIDE;
   }
-}*/
+}
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/*template <class Gt, class Tds >
 	Oriented_side
@@ -1785,7 +1808,7 @@ oriented_side(const Point &p0, const Point &p1,
 		
 	}	*/
 	
-	template <class Gt, class Tds >
+	/*template <class Gt, class Tds >
 	Oriented_side
 	Triangulation_on_sphere_2<Gt, Tds>::
 	oriented_side(const Point &p0, const Point &p1,
@@ -1831,7 +1854,7 @@ oriented_side(const Point &p0, const Point &p1,
 	
 	
 	
-	
+	*/
 	
 	
 

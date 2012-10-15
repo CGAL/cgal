@@ -475,11 +475,28 @@ Stream &write_edges_to_off(Stream &out,FaceIt face_begin, FaceIt face_end){
 							   OutputItBoundaryEdges eit,
 							   Face_handle start ) const {
 		CGAL_triangulation_precondition( this->dimension() == 2);
-		int li;
-		Locate_type lt;
+		//int li;
+		//Locate_type lt;
 		//Face_handle fh = this->locate(p,lt,li, start);
 		Face_handle fh = start;
+		Face_handle tmp;
 		bool test = test_conflict(p, fh);
+		
+		if(!test){
+			for (int i = 0; i<=2 ; i++) {
+				tmp = fh -> neighbor(i);
+				if(test_conflict(p, tmp)){
+					fh = tmp;
+					break;
+				}
+				   }
+				   }
+				   
+			
+		 test = test_conflict(p, fh);
+			
+			
+		
 		CGAL_triangulation_precondition(test == true);
 		//if(test_conflict(p, fh))
 				*fit++ = fh; //put fh in OutputItFaces
@@ -807,11 +824,8 @@ insert(const Point &p, Face_handle start)
   Locate_type lt;
   int li;
   Face_handle loc = locate(p, lt, li, start);
-  #ifdef HOLE_APPROACH
   return insert_hole_approach_2(p, lt, loc, li);
-  #else
-  return insert(p, lt, loc, li);
-  #endif
+ 
 }
 
 	
@@ -913,7 +927,8 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 			return Base::insert_second(p);
 				
 		if( dimension() == 0)
-			return Base::insert_outside_affine_hull(p);
+			//return Base::insert_outside_affine_hull(p);
+			return insert_outside_affine_hull_regular(p);
 				
 		
 		if(dimension() == 1){
@@ -937,25 +952,9 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 			edges.reserve(32);
 			
 			
-			
-			
-			/*find_conflicts
-			(p,loc, make_triple(Oneset_iterator<Edge>(edge),
-								std::back_inserter(faces),
-								Emptyset_iterator()));*/
-			
-			
-			int numPos = this->number_of_faces();
-			int numNeg = this->number_of_negative_faces();
-			
-			
-			//find_conflicts (p,loc, make_triple(Oneset_iterator<Edge>(edge), std::back_inserter(faces), Emptyset_iterator()));
-			//find_conflicts (p,loc, make_triple(std::back_inserter(edge), std::back_inserter(faces), Emptyset_iterator()));
-			
-			get_conflicts_and_boundary(p, std::back_inserter(faces), std::back_inserter(edges), loc);
-			//get_conflicts_and_boundary(p, faces, edges, loc);
-			//get_conflicts_and_boundary(p, fit, eit, loc);
-			v =this-> _tds.star_hole(edges.begin(), edges.end());
+						
+						get_conflicts_and_boundary(p, std::back_inserter(faces), std::back_inserter(edges), loc);
+						v =this-> _tds.star_hole(edges.begin(), edges.end());
 			v->set_point(p);
 			
 			
@@ -963,20 +962,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 			
 			delete_faces(faces.begin(), faces.end());
 			
-			
-			
-			bool found =update_negative_faces(v);
-			
-			int numb = Base::number_of_negative_faces();
-			
-			
-			//delete_faces(faces.begin(), faces.end());
-			
-			//v->set_face(faces_end());
-		
-			//delete_faces(faces.gbegin(), faces.end());
-			int num = number_of_faces();
-			
+					
 			if( lt != FACE )
 				update_negative_faces(v);
 			
@@ -1542,6 +1528,9 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
     nv->set_point(p);
 	  
 
+	  Orientation o = orientation(edges_begin()->first->vertex(0)->point(),
+								  edges_begin()->first->vertex(1)->point(),
+								  edges_begin()->first->neighbor(0)->vertex(1)->point());
     CGAL_triangulation_assertion( orientation(edges_begin()->first->vertex(0)->point(),
 					      edges_begin()->first->vertex(1)->point(),
 					      edges_begin()->first->neighbor(0)->vertex(1)->point())
@@ -1586,9 +1575,13 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 		Orientation orient2 = power_test(p0, p1, p2, p);
 		//conform = (orient =orient2==POSITIVE);
 		
-		if(orient==POSITIVE)
-			if(orient2=POSITIVE)
+		CGAL_triangulation_assertion(orient);
+		
+		if(orient2==POSITIVE)
+			//if(orient2=NEGATIVE)
 				conform =true;
+		
+		
 		
 	
 		
