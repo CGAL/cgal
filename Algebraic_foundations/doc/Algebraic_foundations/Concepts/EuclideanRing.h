@@ -12,13 +12,10 @@ In particular, \f$ r\f$ is chosen to be \f$ 0\f$ if possible.
 Moreover, `CGAL::Algebraic_structure_traits< EuclideanRing >` is a model of 
 `AlgebraicStructureTraits` providing: 
 
-- `CGAL::Algebraic_structure_traits< EuclideanRing >::Algebraic_type` derived from `Unique_factorization_domain_tag` 
-
-- `CGAL::Algebraic_structure_traits< EuclideanRing >::Mod` 
-
-- `CGAL::Algebraic_structure_traits< EuclideanRing >::Div` 
-
-- `CGAL::Algebraic_structure_traits< EuclideanRing >::Div_mod` 
+- `CGAL::Algebraic_structure_traits< EuclideanRing >::Algebraic_type` derived from `CGAL::Unique_factorization_domain_tag` 
+- `CGAL::Algebraic_structure_traits< EuclideanRing >::Mod` which is a model of `AlgebraicStructureTraits::Mod`
+- `CGAL::Algebraic_structure_traits< EuclideanRing >::Div` which is a model of `AlgebraicStructureTraits::Div` 
+- `CGAL::Algebraic_structure_traits< EuclideanRing >::Div_mod` which is a model of `AlgebraicStructureTraits::DivMod`
 
 ### Remarks ###
 
