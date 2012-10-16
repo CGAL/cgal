@@ -206,6 +206,25 @@ public:
   Orientation orientation(const Face_handle f) const;
   //Comparison_result compare_x(const Point& p, const Point& q) const;
   //Comparison_result compare_y(const Point& p, const Point& q) const;
+	Oriented_side power_test(const Point &p,
+							 const Point &q,
+							 const Point &r,
+							 const Point &s) const;
+	Oriented_side power_test(const Point &p,
+							 const Point &q,
+							 const Point &r) const;
+	Oriented_side power_test(const Point &p,
+							 const Point &r) const;
+	Oriented_side power_test(const Face_handle &f, 
+							 const Point &p) const;
+	Oriented_side power_test(const Face_handle& f, int i,
+							 const Point &p) const;
+	
+	
+	
+	
+	
+	
   
   Oriented_side
   oriented_side(const Point &p0, const Point &p1,
@@ -1265,18 +1284,24 @@ march_locate_2D(Face_handle c,
 	  const Point & p0 = c->vertex( 0 )->point();
 	  const Point & p1 = c->vertex( 1 )->point();
 	  const Point & p2 = c->vertex( 2 )->point();
-    if ( c->is_negative() ) {
-      lt = OUTSIDE_CONVEX_HULL;
-      li = 4;
-		//Orientation orient = oriented_side(p0, p1, p2,t);
+	  
+	   
+	  if( power_test(c,t)!=ON_NEGATIVE_SIDE){
+		  if (c ->is_negative()){
+			  lt = OUTSIDE_CONVEX_HULL;
+			  li = 4;
+		      return c;
+		  }
 		
-		//if(orient==NEGATIVE)
-			//return prev;
-		return c;
+		  else {
+			  lt = FACE;
+			  li = 4;		  
+			  return c;
+		  }
+	  }
+
 		
-		
-		
-    }
+
   
     
     // Instead of testing c's edges in a random order we do the following
@@ -1288,10 +1313,6 @@ march_locate_2D(Face_handle c,
     // In the very beginning we do not have a prev, but for the first step 
     // we do not need randomness
     int left_first =rng.template get_bits<1>();
-
-    /*const Point & p0 = c->vertex( 0 )->point();
-    const Point & p1 = c->vertex( 1 )->point();
-    const Point & p2 = c->vertex( 2 )->point();*/
     Orientation o0, o1, o2;
   
     /************************FIRST*************************/
@@ -1758,13 +1779,63 @@ oriented_side(const Point &p0, const Point &p1,
     if(o1==NEGATIVE && o2==NEGATIVE && o3==NEGATIVE )
       return ON_NEGATIVE_SIDE;
     else
-      //return ON_POSITIVE_SIDE;
-		return ON_NEGATIVE_SIDE;
+      return ON_NEGATIVE_SIDE;
   }
 }
 	
 	
 	
+	template < class Gt, class Tds >
+	Oriented_side
+	Triangulation_on_sphere_2<Gt,Tds>::
+	power_test(const Face_handle &f, const Point &p) const
+	{
+		return power_test(f->vertex(0)->point(),
+						  f->vertex(1)->point(),
+						  f->vertex(2)->point(),p);
+	}
+	
+	template < class Gt, class Tds >
+	Oriented_side
+	Triangulation_on_sphere_2<Gt,Tds>::
+	power_test(const Face_handle& f, int i,
+			   const Point &p) const
+	{
+		CGAL_triangulation_precondition (
+										 orientation(f->vertex(ccw(i))->point(),
+													 f->vertex( cw(i))->point(),
+													 p)
+										 == COLLINEAR);
+		return  power_test(f->vertex(ccw(i))->point(),
+						   f->vertex( cw(i))->point(),
+						   p);
+	}
+	
+	template < class Gt, class Tds >
+	inline
+	Oriented_side
+	Triangulation_on_sphere_2<Gt,Tds>::
+	power_test(const Point &p,
+			   const Point &q,
+			   const Point &r,
+			   const Point &s) const
+	{
+		return geom_traits().power_test_2_object()(p,q,r,s);
+	}
+	
+	template < class Gt, class Tds >
+	inline
+	Oriented_side
+	Triangulation_on_sphere_2<Gt,Tds>::
+	power_test(const Point &p,
+			   const Point &q,
+			   const Point &r) const
+	{
+		if(number_of_vertices()==2)
+			if(orientation_1(p,q)==COLLINEAR)
+				return ON_POSITIVE_SIDE;
+		return geom_traits().power_test_2_object()(p,q,r);
+	}
 	
 	
 	
