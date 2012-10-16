@@ -346,7 +346,9 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
   if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY) {
     if (!this->is_status_line_empty()) {
       Status_line_iterator prev = iter; 
-      --prev;
+      for (unsigned i = 0; i < event->number_of_right_curves(); i++) {
+        --prev;
+      }
       // move items from top face to last inserted curve
       Indices_list& list_ref = (*prev)->halfedges_indices_list();
       list_ref.clear();
@@ -834,6 +836,7 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   {
     // EBEB: Fixed by checking whether at least one of 
     // EBEB: res + res->twin() lies on a inner ccb
+    // TODO EBEB 2012-10-16 this seems to be an long story
     if (res->is_on_inner_ccb() || res->twin()->is_on_inner_ccb()) {
       // In case a new face has been created (pointed by the new halfedge
       // we obtained), we have to examine the holes and isolated vertices
