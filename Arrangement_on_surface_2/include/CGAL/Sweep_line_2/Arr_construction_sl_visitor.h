@@ -305,8 +305,8 @@ template <class Hlpr>
 bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
     (Event* event, Status_line_iterator iter, bool /* flag */)
 {
-#if 0
-    std::cout << "CGAL_CSLV after_handle_event" << std::endl;
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
+  std::cout << std::endl << "CGAL_CSLV after_handle_event: " << event << std::endl;
 #endif
 
   // Check if the event represents an isolated vertex.
@@ -332,7 +332,7 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
     {
       // The vertex is not located below any valid curve, so we use the helper
       // class to mark that this index should belong to the current top face.
-#if 0
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
         std::cout << "CGAL_CSLV adding a " << m_sc_counter << std::endl;
 #endif
       m_helper.add_subcurve_in_top_face (m_sc_counter);
@@ -342,7 +342,7 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
     return (true);
   }
 
-  // TODO only compile with non-oblivious
+  // TODO EBEB 2012-10-16 only compile when lr-identification
   if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY) {
     if (!this->is_status_line_empty()) {
       Status_line_iterator prev = iter; 
@@ -351,8 +351,15 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
       Indices_list& list_ref = (*prev)->halfedges_indices_list();
       list_ref.clear();
       list_ref.splice(list_ref.end(), m_helper.halfedge_indices_list());
+
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
+      for (typename Indices_list::const_iterator it = list_ref.begin();
+           it != list_ref.end(); it++) {
+        std::cout << "moved " << *it << " from top to below" << std::endl;
+      }
+#endif
     }
-  } else
+  }
 
   // Check if the event has only incident subcurves from its right.
   if (!event->has_left_curves())
@@ -376,7 +383,7 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
     {
       // The vertex is not located below any valid curve, so we use the helper
       // class to mark that this index should belong to the current top face.
-#if 0
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
         std::cout << "CGAL_CSLV adding b " << m_sc_counter << std::endl;
 #endif
       m_helper.add_subcurve_in_top_face (m_sc_counter);
@@ -427,7 +434,7 @@ void Arr_construction_sl_visitor<Hlpr>::
 add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
-    std::cout << "CGAL_CSLV add_subcurve: " << cv << std::endl;
+  std::cout << std::endl << "CGAL_CSLV add_subcurve: " << cv << std::endl;
 #endif
 
   // Obtain all information to perform the insertion of the subcurve into
@@ -445,6 +452,7 @@ add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
       std::cout << "CGAL_CSLG lastevent: " << last_event->point() << std::endl;
   }
   if (he_left != invalid_he) {
+      std::cout << "he_left    : " << &(*he_left) << std::endl;
       if (!he_left->is_fictitious()) {
           std::cout << "he_leftcv  : " << he_left->curve() << std::endl;
       } else {
@@ -456,6 +464,7 @@ add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
       std::cout << "he_left    : invalid" << std::endl;
   }
   if (he_right != invalid_he) {
+      std::cout << "he_right   : " << &(*he_right) << std::endl;
       if (!he_right->is_fictitious()) {
           std::cout << "he_rightcv : " << he_right->curve() << std::endl;
       } else {
@@ -538,19 +547,30 @@ add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
     }
   }
 
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
+  std::cout << "CGAL_CSLV res: " << &(*res) << " with face " << &(*res->face()) << " is " << res->direction() << std::endl;
+  std::cout << "CGAL_CSLV twi: " << &(*res->twin()) << " with face " << &(*res->twin()->face()) << " is " << res->twin()->direction() << std::endl;
+#endif
+
   // Make sure that res is a halfedge that is always directed from left to
   // right (thus its twin is directed from right to left).
-  if (res->direction() != ARR_LEFT_TO_RIGHT)
+  if (res->direction() != ARR_LEFT_TO_RIGHT) {
     res = res->twin();
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
+    std::cout << "CGAL_CSLV twined!" << std::endl;
+#endif
+  }
 
   // Update the last event with the inserted halfegde (if necessary)
   // and check if we have to update the auxiliary information on the location 
   // of holes.
-  if (last_event->number_of_left_curves() == 0 &&  
+  if ((last_event->number_of_left_curves() == 0) &&
       last_event->is_curve_largest((Subcurve*)sc))
   {
-      if (last_event->vertex_handle() == m_invalid_vertex)
-          last_event->set_halfedge_handle(res->twin());
+
+    if (last_event->vertex_handle() == m_invalid_vertex) {
+      last_event->set_halfedge_handle(res->twin());
+    }
     
     // If sc has valid index, insert its index to m_sc_he_table.
     if(sc->has_valid_index())
@@ -561,8 +581,9 @@ add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
   }
 
   // Update the halfedge handle associated with the current event.
-  if (this->current_event()->vertex_handle() == m_invalid_vertex)
+  if (this->current_event()->vertex_handle() == m_invalid_vertex) {
       this->current_event()->set_halfedge_handle(res);
+  }
 
   // In case the event has no more right subcurves associated with it, we can
   // deallocate it. Note that we inform the helper class before deallocating
@@ -1024,7 +1045,7 @@ relocate_in_new_face (Halfedge_handle he)
 
     for (itr = indices_list.begin(); itr != indices_list.end(); ++itr)
     {
-#if 0
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
       std::cout << "itr: " << *itr << std::endl;
       std::cout << "m_sc_counter: " << m_sc_counter << std::endl;
       std::cout << "m_sc_he_table: " << m_sc_he_table.size() << std::endl;
@@ -1089,7 +1110,7 @@ template <class Hlpr>
 void Arr_construction_sl_visitor<Hlpr>::
 _map_new_halfedge (unsigned int i, Halfedge_handle he)
 {
-#if 0
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
   std::cout << "map " << i << " to " << he->curve() << " " 
             << he->direction() << std::endl;
 #endif
