@@ -76,7 +76,11 @@ struct No_structural_filtering_3_tag {};
 
 template <bool filter>
 struct Structural_filtering_selector_3 {
+#ifdef FORCE_STRUCTURAL_FILTERING
+  typedef Structural_filtering_3_tag  Tag;
+#else
   typedef No_structural_filtering_3_tag  Tag;
+#endif
 };
 
 template <>
@@ -598,13 +602,14 @@ public:
   locate(const Point & p,
 	 Locate_type & lt, int & li, int & lj,
 	 Cell_handle start = Cell_handle()) const;
-// CJTODO: attention, ce #else va loin => j'ai mis try_lock_vertex, etc Ã  l'intÃ©rieur => BUG ?
+// CJTODO: attention, ce #else va loin => j'ai mis try_lock_vertex, etc à l'intérieur => BUG ?
 #else // no CGAL_NO_STRUCTURAL_FILTERING
 #  ifndef CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 #    define CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
 #  endif // no CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 
 
+public:
   // LOCKS (CONCURRENCY)
 
   bool try_lock_vertex(Vertex_handle vh, int lock_radius = 0) const
@@ -687,12 +692,11 @@ public:
     return success;
   }
 
-protected:
   Cell_handle
   inexact_locate(const Point& p,
                  Cell_handle start,
                  int max_num_cells = CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
-
+protected:
   Cell_handle
   exact_locate(const Point& p,
                Locate_type& lt,
@@ -723,6 +727,7 @@ protected:
     return exact_locate(p, lt, li, lj, start, p_could_lock_zone);
   }
 
+public:
   Orientation
   inexact_orientation(const Point &p, const Point &q,
                       const Point &r, const Point &s) const
@@ -1058,7 +1063,7 @@ protected:
 
     // To store the boundary cells, in case we need to rollback
     // CJTODO: make it static TLS (for performance)
-    // CJTODO: useless car dÃ©jÃ  fait dans Regular_tri_3::find_conflicts?
+    // CJTODO: useless car déjà fait dans Regular_tri_3::find_conflicts?
 
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
@@ -2268,7 +2273,7 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 #ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
             if (p_could_lock_zone)
             {
-              //previous->unlock(); CJTODO: On en dÃ©verrouille TROP, non ?
+              //previous->unlock(); CJTODO: On en déverrouille TROP, non ?
               //c->lock(); // WARNING: not atomic! => DEADLOCKS?
               if (!try_lock_element(c))
               {

@@ -27,6 +27,10 @@
 #ifndef CGAL_MESH_3_MESHER_3_H
 #define CGAL_MESH_3_MESHER_3_H
 
+#include <CGAL/Mesh_3/config.h>
+
+#include <CGAL/Mesh_3/Dump_c3t3.h>
+
 #include<CGAL/Mesh_3/Refine_facets_3.h>
 #include<CGAL/Mesh_3/Refine_cells_3.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
@@ -182,7 +186,7 @@ public:
   ~Mesher_3() { }
 
   /// Launch mesh refinement
-  double refine_mesh();
+  double refine_mesh(std::string dump_after_refine_surface_prefix = "");
 
   /// Debug
   std::string debug_info() const;
@@ -274,7 +278,7 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
 
 template<class C3T3, class MC, class MD>
 double
-Mesher_3<C3T3,MC,MD>::refine_mesh()
+Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 {
   CGAL::Timer timer;
   timer.start();
@@ -314,6 +318,8 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   // Then activate facet to surface visitor (surface could be
   // refined again if it is encroached)
   facets_visitor_.activate();
+
+  dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
 
   // Then scan volume and refine it
   cells_mesher_.scan_triangulation();
@@ -374,6 +380,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   nbsteps = 0;
 
   facets_visitor_.activate();
+  dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
   std::cerr << "Start volume scan...";
   cells_mesher_.scan_triangulation();
   std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";

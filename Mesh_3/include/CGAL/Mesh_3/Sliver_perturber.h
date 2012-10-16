@@ -25,6 +25,8 @@
 #ifndef CGAL_MESH_3_SLIVER_PERTURBER_H
 #define CGAL_MESH_3_SLIVER_PERTURBER_H
 
+#include <CGAL/Mesh_3/config.h>
+
 
 #ifdef CGAL_MESH_3_VERBOSE
   #define CGAL_MESH_3_PERTURBER_VERBOSE
@@ -44,6 +46,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
 
+#include <boost/format.hpp>
 #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
 #include <boost/pending/relaxed_heap.hpp>
 #else
@@ -53,6 +56,7 @@
 #include <boost/lambda/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
+#include <boost/unordered_map.hpp> 
 
 namespace CGAL {
 
@@ -103,13 +107,23 @@ private:
     typedef unsigned int id_type;
     
     /// Constructor
+    PVertex()
+    : vertex_handle_()
+    , incident_sliver_nb_(0)
+    , min_value_(SliverCriterion::max_value)
+    , try_nb_(0)
+    , p_perturbation_(NULL)
+    , id_() 
+    { }
+
     PVertex(const Vertex_handle& vh, id_type id)
     : vertex_handle_(vh)
     , incident_sliver_nb_(0)
     , min_value_(SliverCriterion::max_value)
     , try_nb_(0)
     , p_perturbation_(NULL)
-    , id_(id) { }
+    , id_(id) 
+    { }
     
     /// Associated vertex
     const Vertex_handle& vertex() const { return vertex_handle_; }
@@ -133,14 +147,15 @@ private:
     
     /// Min sliver value
     const FT& min_value() const { return min_value_; }
-    void set_min_value(const FT& min_value) { min_value_ = min_value; }
-    
+    void set_min_value(const FT& min_value){ min_value_ = min_value; }
+
     /// Try nb
     const unsigned int& try_nb() const { return try_nb_; }
     void set_try_nb(const unsigned int& try_nb) { try_nb_ = try_nb; }
     void increment_try_nb() { ++try_nb_; }
     
     /// Id
+    void set_id(const id_type& id) { id_ = id; }
     id_type id() const { return id_; }
     
     /// Operators
@@ -163,8 +178,7 @@ private:
       // perturbation type (smallest first)
       else if ( perturbation() != pv.perturbation() )
         return *perturbation() < *pv.perturbation();
-      else
-        return false; // all characteristics are the same!
+      return ( id() < pv.id() ); // all characteristics are the same!
     }
     
   private:
@@ -233,6 +247,15 @@ public:
   double time_limit() const { return time_limit_; }
  
 private:
+
+  struct VHash 
+  {
+    std::size_t operator()(Vertex_handle vh) const
+    {
+	  	return boost::hash_value(&*vh);
+    }
+  };
+
   // -----------------------------------
   // Private methods
   // -----------------------------------
@@ -349,9 +372,8 @@ Sliver_perturber(C3T3& c3t3,
   , helper_(c3t3_,domain_)
   , next_perturbation_order_(0)
   , time_limit_(-1)
-  , running_time_()
-{
-}
+  , running_time_() 
+{}
   
   
   
@@ -410,15 +432,24 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
             << "Total perturbation time: " << running_time_.time() << "s";
   std::cerr << std::endl << "Perturbation statistics:" << std::endl;
   print_final_perturbations_statistics();
-  std::cerr << std::endl;
 #endif
-  
-  if ( is_time_limit_reached() )
+ 
+  if ( is_time_limit_reached() ) {
+#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+    std::cerr << "Perturbation return code: TIME_LIMIT_REACHED\n\n";
+#endif // CGAL_MESH_3_PERTURBER_VERBOSE
     return TIME_LIMIT_REACHED;
+  }
   
-  if ( !perturbation_ok )
+  if ( !perturbation_ok ) {
+#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+    std::cerr << "Perturbation return code: CANT_IMPROVE_ANYMORE\n\n";
+#endif // CGAL_MESH_3_PERTURBER_VERBOSE
     return CANT_IMPROVE_ANYMORE;
-  
+  }
+#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+  std::cerr << "Perturbation return code: BOUND_REACHED\n\n";
+#endif // CGAL_MESH_3_PERTURBER_VERBOSE
   return BOUND_REACHED;
 }
 
@@ -492,8 +523,15 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
     CGAL_assertion(pv.is_perturbable());
     
     // Get pvertex slivers list
+#ifdef CGAL_NEW_INCIDENT_SLIVERS
+    Cell_vector slivers;
+    helper_.new_incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound,
+                               std::back_inserter(slivers));
+#else
     Cell_vector slivers =
       helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound);
+#endif
+
     CGAL_assertion(!slivers.empty());
     
     // Perturb vertex
@@ -587,7 +625,67 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 }
   
   
+#ifdef CGAL_FASTER_BUILD_QUEUE
+
+template <typename C3T3, typename Md, typename Sc, typename V_>
+int
+Sliver_perturber<C3T3,Md,Sc,V_>::
+build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
+{
+  CGAL_precondition(pqueue.empty());
   
+#ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
+  CGAL::Timer timer;
+  timer.start();
+  std::cerr << "Build pqueue...";
+#endif
+
+  int pqueue_size = 0;
+
+  typedef boost::unordered_map<Vertex_handle,PVertex,VHash> M;
+  M vpm;
+  for ( typename Tr::Finite_cells_iterator cit = tr_.finite_cells_begin();
+       cit != tr_.finite_cells_end() ;
+       ++cit )
+  {
+    if(helper_.is_sliver(cit, sliver_criterion_, sliver_bound))
+    {
+      double d = cit->sliver_value();
+      for(int i=0; i< 4; i++){
+        Vertex_handle vh = cit->vertex(i);
+        PVertex& pv = vpm[vh];
+        if(pv.sliver_nb() ==0)
+        {
+          pv.set_vertex(vh);
+          pv.set_id( get_pvertex_id(vh));
+          pv.set_sliver_nb(1);
+          pv.set_min_value(d);
+          pv.set_perturbation(&perturbation_vector_.front());
+        } 
+        else 
+        {
+          pv.set_sliver_nb(pv.sliver_nb()+1);
+          if(d < pv.min_value())
+            pv.set_min_value(d);
+        }
+      }
+    }
+  }
+
+  for( typename M::iterator vit = vpm.begin();
+       vit != vpm.end() ;
+       ++vit )
+    pqueue_size += update_priority_queue(vit->second, pqueue);    
+      
+#ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
+  std::cerr << "done (" << pqueue_size << " vertices inserted in "
+            << timer.time() << "s)\n";
+#endif
+  
+  return pqueue_size;
+}
+  
+#else // not CGAL_FASTER_BUILD_QUEUE
   
 template <typename C3T3, typename Md, typename Sc, typename V_>
 int
@@ -619,9 +717,9 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
   
   return pqueue_size;
 }
-  
-  
-  
+#endif // not CGAL_FASTER_BUILD_QUEUE  
+
+ 
 template <typename C3T3, typename Md, typename Sc, typename V_>
 int
 Sliver_perturber<C3T3,Md,Sc,V_>::
@@ -696,8 +794,13 @@ void
 Sliver_perturber<C3T3,Md,Sc,V_>::
 update_pvertex(PVertex& pv, const FT& sliver_bound) const
 {
+#ifdef CGAL_NEW_INCIDENT_SLIVERS
+  Cell_vector slivers;
+  helper_.new_incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound, std::back_inserter(slivers));
+#else
   Cell_vector slivers =
     helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound);
+#endif
   
   pv.set_sliver_nb(static_cast<unsigned int>(slivers.size()));
   pv.set_min_value(helper_.min_sliver_value(slivers, sliver_criterion_));

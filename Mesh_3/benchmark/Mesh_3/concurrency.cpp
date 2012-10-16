@@ -18,6 +18,8 @@
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
+#include <CGAL/Mesh_3/config.h>
+
 #ifdef WINVER
   const char * const BENCHMARK_CONFIG_FILENAME =
     "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";

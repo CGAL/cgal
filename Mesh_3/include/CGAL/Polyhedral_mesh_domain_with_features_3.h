@@ -26,6 +26,8 @@
 #ifndef CGAL_POLYHEDRAL_MESH_DOMAIN_WITH_FEATURES_3_H
 #define CGAL_POLYHEDRAL_MESH_DOMAIN_WITH_FEATURES_3_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_polyhedron_3.h>

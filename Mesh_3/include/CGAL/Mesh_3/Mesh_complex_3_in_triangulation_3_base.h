@@ -25,6 +25,8 @@
 #ifndef CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H
 #define CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Mesh_3/utilities.h>
 #include <CGAL/iterator.h>
 #include <CGAL/IO/File_medit.h>
@@ -32,6 +34,8 @@
 #include <CGAL/Bbox_3.h>
 #include <iostream>
 #include <fstream>
+#include <CGAL/Mesh_3/io_signature.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/atomic.h>
 #endif
@@ -381,7 +385,7 @@ public:
   }
 
   /// Returns past-the-end iterator on facet of the 2D complex
-  Facets_in_complex_iterator facets_in_complex_end() const
+  Facets_in_complex_iterator facets_in_complex_end(const Surface_patch_index = Surface_patch_index()) const
   {
     return CGAL::filter_iterator(tr_.finite_facets_end(),
                                  Facet_iterator_not_in_complex(*this));
@@ -493,6 +497,13 @@ public:
   std::istream &
   operator>> (std::istream& is,
               Mesh_complex_3_in_triangulation_3_base<Tr2,Ct2> &c3t3);
+
+  static
+  std::string io_signature()
+  {
+    return
+      Get_io_signature<Tr>()();
+  }
 private:
 
   // Sequential: non-atomic

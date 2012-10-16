@@ -740,7 +740,33 @@ private:
 
 	return it;
   }
+  
+  void just_incident_cells_3(Vertex_handle v,
+                             std::vector<Cell_handle>& cells) const
+  {
+    CGAL_triangulation_precondition(dimension() == 3);
 
+    Cell_handle d = v->cell();
+    cells.push_back(d);
+    d->tds_data().mark_in_conflict();
+    int head=0;
+    int tail=1;
+    do {
+      Cell_handle c = cells[head];
+
+      for (int i=0; i<4; ++i) {
+        if (c->vertex(i) == v)
+          continue;
+        Cell_handle next = c->neighbor(i);
+        if (! next->tds_data().is_clear())
+          continue;			
+        cells.push_back(next);
+        ++tail;
+        next->tds_data().mark_in_conflict();
+      }
+      ++head;
+    } while(head != tail);
+  }
 
   template <class OutputIterator>
   void
@@ -930,8 +956,13 @@ public:
   OutputIterator
   incident_cells(Vertex_handle v, OutputIterator cells, Filter f = Filter()) const
   {
+#ifdef CGAL_TDS_3_NOT_JUST_INCIDENT_CELLS
     return visit_incident_cells<Cell_extractor<OutputIterator, Filter>,
       OutputIterator>(v, cells, f);
+#else
+    return visit_just_incident_cells<Cell_extractor<OutputIterator, Filter>,
+      OutputIterator>(v, cells, f);
+#endif
   }
 
   template <class OutputIterator>
@@ -939,6 +970,20 @@ public:
   incident_cells(Vertex_handle v, OutputIterator cells) const
   {
     return incident_cells<False_filter>(v, cells);
+  }
+
+  // This version only works for vectors and only in 3D
+  void incident_cells_3(Vertex_handle v,
+                        std::vector<Cell_handle>& cells) const
+  {
+    just_incident_cells_3(v, cells);  
+    typename std::vector<Cell_handle>::iterator cit,end;
+    for(cit = cells.begin(), end = cells.end();
+	      cit != end;
+	      ++cit)
+    {
+      (*cit)->tds_data().clear();
+    }
   }
 
   template <class Filter, class OutputIterator>
@@ -1052,6 +1097,37 @@ public:
     tmp_cells.reserve(64);
     if ( dimension() == 3 )
     incident_cells_3(v, v->cell(), std::make_pair(std::back_inserter(tmp_cells), visit.facet_it()));
+    else
+    incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
+
+    typename std::vector<Cell_handle>::iterator cit;
+    for(cit = tmp_cells.begin();
+	cit != tmp_cells.end();
+	++cit)
+    {
+      (*cit)->tds_data().clear();
+      visit(*cit);
+    }
+    return visit.result();
+  }
+
+  template <class Visitor, class OutputIterator, class Filter>
+  OutputIterator
+  visit_just_incident_cells(Vertex_handle v, OutputIterator output, Filter f) const
+  {
+    CGAL_triangulation_precondition( v != Vertex_handle() );
+    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+
+    if ( dimension() < 2 )
+    return output;
+
+    Visitor visit(v, output, this, f);
+
+    std::vector<Cell_handle> tmp_cells;
+    tmp_cells.reserve(64);
+
+    if ( dimension() == 3 )
+      just_incident_cells_3(v, tmp_cells);
     else
     incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 

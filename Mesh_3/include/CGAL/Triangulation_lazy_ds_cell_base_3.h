@@ -132,7 +132,7 @@ public:
   }
   void set_erase_counter(unsigned int c)
   {
-	this->m_erase_counter = c;
+	  this->m_erase_counter = c;
   }
   void increment_erase_counter()
   {

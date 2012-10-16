@@ -28,6 +28,8 @@
 #define CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H
 
 #include <CGAL/number_utils.h> // for to_double
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
 #include <cmath>
 

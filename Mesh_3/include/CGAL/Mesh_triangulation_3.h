@@ -1,4 +1,5 @@
 // Copyright (c) 2006-2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2011      GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -30,6 +31,11 @@
 
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
+
+#ifdef CGAL_COMPACT_MESH_VERTEX_CELL
+#include <CGAL/Compact_mesh_vertex_base_3.h>
+#include <CGAL/Compact_mesh_cell_base_3.h>
+#endif // CGAL_COMPACT_MESH_VERTEX_CELL
 
 namespace CGAL {
   
@@ -65,8 +71,13 @@ struct Mesh_triangulation_3
 {
 private:
   typedef GT                                                    Geom_traits;
+#ifdef CGAL_COMPACT_MESH_VERTEX_CELL
+  typedef Compact_mesh_vertex_base_3<Geom_traits, MD>           Vertex_base;
+  typedef Compact_mesh_cell_base_3<Geom_traits, MD>             Cell_base;
+#else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
   typedef Mesh_vertex_base_3<Geom_traits, MD>                   Vertex_base;
   typedef Mesh_cell_base_3<Geom_traits, MD, Cb, Sequential_tag> Cell_base;
+#endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
   typedef Triangulation_data_structure_3<Vertex_base,Cell_base> Tds;
   typedef Regular_triangulation_3<Geom_traits, Tds>             Triangulation;
 

@@ -26,6 +26,8 @@
 #ifndef CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
 #define CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Bbox_3.h>
 
 #include <CGAL/point_generators_3.h>
@@ -235,7 +237,9 @@ public:
 
     Intersection operator()(const Segment_3& s) const
     {
+#ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       CGAL_precondition(r_domain_.do_intersect_surface_object()(s));
+#endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       return this->operator()(s.source(),s.target());
     }
 

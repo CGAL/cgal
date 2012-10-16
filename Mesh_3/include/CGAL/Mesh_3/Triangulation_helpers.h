@@ -71,6 +71,12 @@ public:
    */
   bool no_topological_change(const Tr& tr,
                              const Vertex_handle& v,
+                             const Point_3& p,
+                             Cell_vector& cells_tos) const;
+
+
+  bool no_topological_change(const Tr& tr,
+                             const Vertex_handle& v,
                              const Point_3& p) const;
   
 private:
@@ -103,14 +109,17 @@ bool
 Triangulation_helpers<Tr>::
 no_topological_change(const Tr& tr,
                       const Vertex_handle& v0,
-                      const Point_3& p) const
+                      const Point_3& p,
+                      Cell_vector& cells_tos) const
 {
   bool np = true;
   Point_3 fp = v0->point();
   v0->set_point(p);
   
-  Cell_vector cells_tos;
-  tr.incident_cells(v0, std::back_inserter(cells_tos));
+/// @TODO: One can do the same checks without the set_point.
+/// In the following orientation or side_of_power_sphere tests, just
+/// replace v0->point() by p.
+
   if(!well_oriented(tr, cells_tos)) 
   {
     // Reset (restore) v0
@@ -166,7 +175,24 @@ no_topological_change(const Tr& tr,
   return np;
 }
   
+
+template<typename Tr>
+bool
+Triangulation_helpers<Tr>::
+no_topological_change(const Tr& tr,
+                      const Vertex_handle& v0,
+                      const Point_3& p) const
+{
+  Cell_vector cells_tos;
+  cells_tos.reserve(64);
+  tr.incident_cells(v0, std::back_inserter(cells_tos));
+  return no_topological_change(tr, v0, p, cells_tos);
+}
+
   
+/// This function well_oriented is called by no_topological_change after a
+/// v->set_point(p)
+/// @TODO: One can do the same checks without the set_point.
 template<typename Tr>
 bool
 Triangulation_helpers<Tr>::

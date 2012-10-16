@@ -2785,14 +2785,23 @@ Mesh_3/examples/Mesh_3/mesh_3D_image.cpp -text
 Mesh_3/examples/Mesh_3/mesh_polyhedral_domain.cpp -text
 Mesh_3/examples/Mesh_3/old_stuff/inputs/cube.mesh -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/old_stuff/inputs/tangle.mesh -text svneol=unset#application/octet-stream
+Mesh_3/include/CGAL/Compact_mesh_cell_base_3.h -text
+Mesh_3/include/CGAL/Compact_mesh_vertex_base_3.h -text
 Mesh_3/include/CGAL/IO/File_maya.h -text
 Mesh_3/include/CGAL/Mesh_3/Concurrent_mesher_config.h -text
+Mesh_3/include/CGAL/Mesh_3/Has_features.h -text
 Mesh_3/include/CGAL/Mesh_3/Locking_data_structures.h -text
+Mesh_3/include/CGAL/Mesh_3/Profile_counter.h -text
 Mesh_3/include/CGAL/Mesh_3/Profiling_tools.h -text
+Mesh_3/include/CGAL/Mesh_3/Robust_intersection_kernel.h -text
 Mesh_3/include/CGAL/Mesh_3/Worksharing_data_structures.h -text
+Mesh_3/include/CGAL/Mesh_3/config.h -text
+Mesh_3/include/CGAL/Mesh_3/io_signature.h -text
 Mesh_3/include/CGAL/Meshes/Filtered_deque_container.h -text
 Mesh_3/include/CGAL/Meshes/Filtered_multimap_container.h -text
+Mesh_3/include/CGAL/Prevent_deref.h -text
 Mesh_3/include/CGAL/Triangulation_lazy_ds_cell_base_3.h -text
+Mesh_3/include/CGAL/internal/Mesh_3/get_index.h -text
 Mesh_3/package_info/Mesh_3/description.txt -text
 Mesh_3/package_info/Mesh_3/long_description.txt -text
 Mesh_3/package_info/Mesh_3/maintainer -text
@@ -2801,6 +2810,7 @@ Mesh_3/test/Mesh_3/XML_exporter.h -text
 Mesh_3/test/Mesh_3/data/cube.off -text svneol=unset#application/octet-stream
 Mesh_3/test/Mesh_3/data/liver.inr.gz -text
 Mesh_3/test/Mesh_3/data/sphere.off -text svneol=unset#application/octet-stream
+Mesh_3/test/Mesh_3/test_c3t3_io.cpp -text
 Mesh_3/test/Mesh_3/test_concurrent_compact_container.cpp -text
 Minkowski_sum_2/benchmark/Minkowski_sum_2/print_utils.h -text
 Minkowski_sum_2/benchmark/Minkowski_sum_2/sum_by_decomposition.cpp -text

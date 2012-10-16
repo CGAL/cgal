@@ -43,7 +43,8 @@ class Triangulation_cell_base_with_circumcenter_3
   typedef typename GT::Point_3                         Point_3;
 
   mutable Point_3 * circumcenter_;
-
+  
+public:
   void invalidate_circumcenter()
   {
       if (circumcenter_) {
@@ -52,7 +53,6 @@ class Triangulation_cell_base_with_circumcenter_3
       }
   }
 
-public:
   typedef typename Cb::Vertex_handle                   Vertex_handle;
   typedef typename Cb::Cell_handle                     Cell_handle;
 
