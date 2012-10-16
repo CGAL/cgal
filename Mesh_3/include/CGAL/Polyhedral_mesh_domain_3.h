@@ -688,7 +688,7 @@ Construct_initial_points::operator()(OutputIterator pts,
     Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
     if(CGAL::cpp0x::get<2>(intersection) != 0) {
 #else
-    if(r_domain.do_intersect_surface_object()(ray_shot)) {
+    if(r_domain_.do_intersect_surface_object()(ray_shot)) {
       Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
 #endif
       *pts++ = std::make_pair(CGAL::cpp0x::get<0>(intersection),
