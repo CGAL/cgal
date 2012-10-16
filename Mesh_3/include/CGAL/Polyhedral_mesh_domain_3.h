@@ -683,8 +683,14 @@ Construct_initial_points::operator()(OutputIterator pts,
   while ( i > 0 )
   {
     const Ray_3 ray_shot = ray(center, vector(CGAL::ORIGIN,*random_point));
+
+#ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
     if(CGAL::cpp0x::get<2>(intersection) != 0) {
+#else
+    if(r_domain.do_intersect_surface_object()(ray_shot)) {
+      Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
+#endif
       *pts++ = std::make_pair(CGAL::cpp0x::get<0>(intersection),
                               CGAL::cpp0x::get<1>(intersection));
         
@@ -697,7 +703,6 @@ Construct_initial_points::operator()(OutputIterator pts,
         % n;
 #endif
     }
-
     ++random_point;
   }
   
