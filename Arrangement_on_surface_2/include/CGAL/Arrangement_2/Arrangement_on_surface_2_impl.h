@@ -574,7 +574,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
   } else {
     std::cout << "prev : fictitious" << std::endl;
   }
-  std::cout << "dir  : " << prev ->direction() << std::endl;
+  std::cout << "dir  : " << prev->direction() << std::endl;
 #endif
 
   CGAL_precondition_code
@@ -2791,7 +2791,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
       curr->set_outer_ccb(new_oc);
     
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-    std::cout << "he2 (=> prev1) defines new outer CCB" << std::endl;
+    std::cout << "(=> prev1=" << &(*prev1) << ") he2= " << &(*he2) << "  defines new outer CCB" << std::endl;
+    std::cout << "he2dir  : " << he2->direction() << std::endl;
     std::cout << "prev1->face(): " << (prev1->is_on_inner_ccb() ? 
                                        prev1->inner_ccb()->face() :
                                        prev1->outer_ccb()->face())
@@ -2824,7 +2825,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
           ic1->set_halfedge(he1);
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-        std::cout << "he1 (=> prev2) defines new inner CCB" << std::endl;
+        std::cout << "(=> prev2=" << &(*prev2) << ") he1= " << &(*he1) << "  defines new inner CCB" << std::endl;
+        std::cout << "he1dir  : " << he1->direction() << std::endl;
         std::cout << "prev2->face(): " << (prev2->is_on_inner_ccb() ? 
                                            prev2->inner_ccb()->face() :
                                            prev2->outer_ccb()->face())
@@ -2857,7 +2859,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
           curr->set_outer_ccb(f_oc);
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-        std::cout << "he1 (=> prev2) defines adjacent outer CCB" << std::endl;
+        std::cout << "(=> prev2=" << &(*prev2) << ") he1= " << &(*he1) << "  defines new outer CCB" << std::endl;
+        std::cout << "he1dir  : " << he1->direction() << std::endl;
         std::cout << "prev2->face(): " << (prev2->is_on_inner_ccb() ? 
                                            prev2->inner_ccb()->face() :
                                            prev2->outer_ccb()->face())
