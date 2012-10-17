@@ -98,6 +98,11 @@ public:
     Left_side_category, Bottom_side_category, 
     Top_side_category, Right_side_category >::result
   Are_all_sides_oblivious_tag;
+
+  typedef typename Arr_has_identified_sides< 
+    Left_side_category, Bottom_side_category >::result
+  Has_identified_sides_tag;
+
   
 public:
   typedef typename Topology_traits::Dcel            Dcel;
@@ -1629,11 +1634,20 @@ protected:
                                                  const DHalfedge* e2) const;
 
   /*
+   * Updates the indices according to boundary locations
    */
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                   int& x_index, int& y_index) const;
+                   int& x_index, int& y_index,  boost::mpl::bool_< true >) const;
+
+  /*
+   * Updates the indices according to boundary locations (i.e. does nothing)
+   */
+  void
+  _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
+                   Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
+                   int& x_index, int& y_index,  boost::mpl::bool_< false >) const;
 
   /*!
    * Compute the signs (in left/right and bottom/top) of a path

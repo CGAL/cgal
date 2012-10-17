@@ -403,7 +403,9 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
                                  new_face_created, dummy_swapped_predecessors);
 
     if (new_face_created) {
+      // TODO EBEB 2012-10-17 is this the valid assertion or can we see an outer-outer case
       CGAL_assertion(! new_he->is_on_inner_ccb());
+
       // In case a new face has been created (pointed by the new halfedge we
       // obtained), we have to examine the holes and isolated vertices in the
       // existing face (pointed by the twin halfedge) and move the relevant
@@ -413,7 +415,6 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     
     // TODO EBEB 2012-08-05
     // is order of the two boundary-edges really irrelevant here?
-    
   }
 
   // Return a handle to the new halfedge directed from left to right.
@@ -630,7 +631,9 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
                                  new_face_created, dummy_swapped_predecessors);
 
     if (new_face_created) {
+      // TODO EBEB 2012-10-17 is this the valid assertion or can we see an outer-outer case
       CGAL_assertion(! new_he->is_on_inner_ccb());
+
       // In case a new face has been created (pointed by the new halfedge we
       // obtained), we have to examine the holes and isolated vertices in the
       // existing face (pointed by the twin halfedge) and move the relevant
@@ -850,7 +853,9 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
                                  new_face_created, dummy_swapped_predecessors);
 
     if (new_face_created) {
+      // TODO EBEB 2012-10-17 is this the valid assertion or can we see an outer-outer case
       CGAL_assertion(! new_he->is_on_inner_ccb());
+
       // In case a new face has been created (pointed by the new halfedge we
       // obtained), we have to examine the holes and isolated vertices in the
       // existing face (pointed by the twin halfedge) and move the relevant
@@ -3305,15 +3310,21 @@ _split_edge(DHalfedge* e, DVertex* v,
   return he1;
 }
 
+
 template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                  Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                 int& x_index, int& y_index) const
-{
-  // TODO EBEB 2012-08-07
-  // compile only if identification(s) take place (tag dispatch!)
+                 int& x_index, int& y_index,  boost::mpl::bool_< true >) const {
+  // nothing if no identification
+}
 
+template <typename GeomTraits, typename TopTraits>
+void Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
+                 Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
+                 int& x_index, int& y_index,  boost::mpl::bool_< false >) const
+{
   // If we cross the identification curve in x, then we must update the
   // x_index. Note that a crossing takes place in the following cases:
   //                .                                  .
@@ -3448,7 +3459,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   }
 
   _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                   x_index, y_index);
+                   x_index, y_index, 
+                   Has_identified_sides_tag());
   
   const DHalfedge* he = he_away;
   while (he != he_to) {
@@ -3480,7 +3492,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
       *local_mins_it++  = std::make_pair(he, x_index);
     
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index);
+                     x_index, y_index, 
+                     Has_identified_sides_tag());
       
     // Move to the next halfedge.
     he = he->next();
@@ -3499,7 +3512,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
     *local_mins_it++  = std::make_pair(he_to, x_index);
 
   _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                   x_index, y_index);
+                   x_index, y_index,
+                   Has_identified_sides_tag());
 
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
@@ -3596,7 +3610,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
     }
     
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
-                     x_index, y_index);
+                     x_index, y_index, 
+                     Has_identified_sides_tag());
 
     // iterate
     he_curr = he_next;
@@ -3890,7 +3905,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
       ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
        is_identified(Top_side_category())))
   {
-    // TODO EBEB 2010-10-08 is this code really executed or should it be part of top traits?
+    // TODO here EBEB 2010-10-08 is this code really executed or should it be part of top traits?
 
     // Both current and next curves are incident to the identification curve.
     // As v_min is the leftmost vertex, we now that their left ends must have
