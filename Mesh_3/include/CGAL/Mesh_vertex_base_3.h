@@ -63,10 +63,15 @@ public:
   typedef typename GT::FT                         FT;
 
   // Constructor
-  Mesh_vertex_base_3() : Surface_mesh_vertex_base_3<GT, Vb>()
-                       , index_()
-                       , dimension_(-1)
-                       , meshing_info_(0)
+  Mesh_vertex_base_3() 
+    : Surface_mesh_vertex_base_3<GT, Vb>()
+    , index_()
+    , dimension_(-1)
+    , meshing_info_(0)
+#ifdef CGAL_INTRUSIVE_LIST
+    , next_intrusive_()
+    , previous_intrusive_()
+#endif //CGAL_INTRUSIVE_LIST
   {}
 
   // Default copy constructor and assignment operator are ok
@@ -111,6 +116,16 @@ public:
       Get_io_signature<int>()() + "+" +
       Get_io_signature<Index>()();
   }
+  
+#ifdef CGAL_INTRUSIVE_LIST
+public:
+  Vertex_handle next_intrusive() const { return next_intrusive_; }
+  Vertex_handle& next_intrusive() { return next_intrusive_; }
+
+  Vertex_handle previous_intrusive() const { return previous_intrusive_; }
+  Vertex_handle& previous_intrusive() { return previous_intrusive_; }
+#endif
+
 private:
   // Index of the lowest dimensional face of the input 3D complex
   // that contains me
@@ -120,6 +135,11 @@ private:
   int dimension_;
   // Stores info needed by optimizers
   FT meshing_info_;
+
+#ifdef CGAL_INTRUSIVE_LIST
+  Vertex_handle next_intrusive_;
+  Vertex_handle previous_intrusive_;
+#endif
 };  // end class Mesh_vertex_base_3
 
 template<class GT,
