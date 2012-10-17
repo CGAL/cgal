@@ -46,7 +46,7 @@ class Arr_middle_edges_landmarks_generator :
 {
 public:
   typedef Arrangement_                                  Arrangement_2;
-  typedef Arr_middle_edges_landmarks_generator<Arrangement_2, earest_neighbor_>
+  typedef Arr_middle_edges_landmarks_generator<Arrangement_2, Nearest_neighbor_>
                                                         Self;
   typedef Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor_>
                                                         Base;
