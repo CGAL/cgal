@@ -74,7 +74,7 @@ protected:
 };
 #endif // CGAL_LINKED_WITH_TBB
 
-template < typename Concurrency_tag = Parallel_tag, typename TDS = void >  // CJTODO remettre Sequential_tag
+template < typename Concurrency_tag = Sequential_tag, typename TDS = void >
 class Triangulation_lazy_ds_cell_base_3
   : public Triangulation_lazy_ds_cell_base_3_base<Concurrency_tag>,
     public Triangulation_ds_cell_base_3<TDS>
