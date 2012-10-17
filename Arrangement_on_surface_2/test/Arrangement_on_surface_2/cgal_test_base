@@ -158,13 +158,36 @@ compile_test()
     fi
 }
 
+my_run_test()
+{
+  # $1 - executable name
+  # $2 - test substring name
+
+  basedata=`basename "$5"`
+  OUTPUTFILE=ProgramOutput.$1.`echo $3 | tr '/' '.'`.$6
+  rm -f $OUTPUTFILE
+  COMMAND="./$1"
+  if [ -f $1.cmd ] ; then
+    COMMAND="$COMMAND `cat $1.cmd`"
+  elif [ -f $1.$2.cmd ] ; then
+    COMMAND="$COMMAND `cat $1.$2.cmd`"
+  fi
+  if [ -f $1.cin ] ; then
+    COMMAND="cat $1.cin | $COMMAND"
+  elif [ -f $1.$2.cin ] ; then
+    COMMAND="cat $1.$2.cin | $COMMAND"
+  fi
+  echo "Executing $1 ($2) ... "
+  if eval $COMMAND $2 > $OUTPUTFILE 2>&1 ; then
+    echo "   successful execution of $1 ($2)" >> $ERRORFILE
+  else
+    echo "   ERROR:    execution of $1 ($2)" >> $ERRORFILE
+    cat $OUTPUTFILE >> $FULL_ERROR_DESCRIPTION_FILE
+  fi
+}
+
 run_test()
 {
-  #local name=$1;
-  #local datafile=$2;
-  #local traits_type=$3
-
-
     basedata=`basename "$5"`
     OUTPUTFILE=ProgramOutput.$1.`echo $5 | tr '/' '.'`.$6
 #  dirdata=`dirname "$datafile"`
@@ -746,27 +769,28 @@ test_construction_segments()
 #---------------------------------------------------------------------#
 test_point_location_segments()
 {
-  compile_test test_point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
+  compile_test test_point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segments
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed point location of segments" >> $ERRORFILE
   else
-    OUTPUTFILE=ProgramOutput.test_point_location_segments.$PLATFORM
-    rm -f $OUTPUTFILE
-    COMMAND="./test_point_location"
-    if [ -f test_point_location_segments.cmd ] ; then
-      COMMAND="$COMMAND `cat test_point_location_segments.cmd`"
-    fi
-    if [ -f test_point_location_segments.cin ] ; then
-      COMMAND="cat test_point_location_segments.cin | $COMMAND"
-    fi
-    echo "Executing point location of segments ..."
-    echo
-    ulimit -t 3600 2> /dev/null
-    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-      echo "   successful execution of point location of segments" >> $ERRORFILE
-    else
-      echo "   ERROR:    execution of point location of segments" >> $ERRORFILE
-    fi
+    my_run_test test_point_location segments
+    # OUTPUTFILE=ProgramOutput.test_point_location_segments.$PLATFORM
+    # rm -f $OUTPUTFILE
+    # COMMAND="./test_point_location"
+    # if [ -f test_point_location_segments.cmd ] ; then
+    #   COMMAND="$COMMAND `cat test_point_location_segments.cmd`"
+    # fi
+    # if [ -f test_point_location_segments.cin ] ; then
+    #   COMMAND="cat test_point_location_segments.cin | $COMMAND"
+    # fi
+    # echo "Executing point location of segments ..."
+    # echo
+    # ulimit -t 3600 2> /dev/null
+    # if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+    #   echo "   successful execution of point location of segments" >> $ERRORFILE
+    # else
+    #   echo "   ERROR:    execution of point location of segments" >> $ERRORFILE
+    # fi
   fi
   clean_tests
 }
@@ -1272,62 +1296,62 @@ if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
     configure
 fi
 
-if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-    compile_and_run construction_test_suite_generator
-fi
+# if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
+#     compile_and_run construction_test_suite_generator
+# fi
 
-test_segment_traits
-test_non_caching_segment_traits
-test_polyline_traits
-test_non_caching_polyline_traits
-test_linear_traits
-test_conic_traits
+# test_segment_traits
+# test_non_caching_segment_traits
+# test_polyline_traits
+# test_non_caching_polyline_traits
+# test_linear_traits
+# test_conic_traits
 
-test_line_arc_traits 		# "line arcs" (segments) only
-test_circular_arc_traits 	# circular arcs only
-test_circular_line_arc_traits 	# for both
+# test_line_arc_traits 		# "line arcs" (segments) only
+# test_circular_arc_traits 	# circular arcs only
+# test_circular_line_arc_traits 	# for both
 
-test_circle_segments_traits
-test_bezier_traits
+# test_circle_segments_traits
+# test_bezier_traits
 
-test_spherical_arc_traits
+# test_spherical_arc_traits
 
-test_rational_arc_traits
+# test_rational_arc_traits
 
-test_algebraic_traits_core
-test_algebraic_traits_gmp
-test_algebraic_traits_leda
+# test_algebraic_traits_core
+# test_algebraic_traits_gmp
+# test_algebraic_traits_leda
 
-compile_and_run test_insertion
-compile_and_run test_unbounded_rational_insertion
-compile_and_run test_rational_function_traits_2
-compile_and_run test_removal
-compile_and_run test_iso_verts
+# compile_and_run test_insertion
+# compile_and_run test_unbounded_rational_insertion
+# compile_and_run test_rational_function_traits_2
+# compile_and_run test_removal
+# compile_and_run test_iso_verts
 
-compile_and_run test_vert_ray_shoot_vert_segments
+# compile_and_run test_vert_ray_shoot_vert_segments
 
-test_construction_segments
+# test_construction_segments
 
-compile_and_run test_overlay
+# compile_and_run test_overlay
 
 test_point_location_segments
-test_point_location_circle_segments
-test_point_location_linear
+# test_point_location_circle_segments
+# test_point_location_linear
 
-test_point_location_dynamic_segments
+# test_point_location_dynamic_segments
 
-compile_and_run test_dual
-compile_and_run test_do_intersect
-compile_and_run test_zone
+# compile_and_run test_dual
+# compile_and_run test_do_intersect
+# compile_and_run test_zone
 
-compile_and_run test_observer
-compile_and_run test_do_equal
+# compile_and_run test_observer
+# compile_and_run test_do_equal
 
-test_segment_traits_adaptor
-test_linear_traits_adaptor
-test_spherical_arcs_traits_adaptor
+# test_segment_traits_adaptor
+# test_linear_traits_adaptor
+# test_spherical_arcs_traits_adaptor
 
-compile_and_run test_spherical_removal
+# compile_and_run test_spherical_removal
 
 # if any error occured then append the full error description file to error file
 

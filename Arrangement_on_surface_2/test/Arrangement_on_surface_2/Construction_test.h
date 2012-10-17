@@ -1,0 +1,470 @@
+#ifndef CGAL_CONSTRUCTION_TEST_H
+#define CGAL_CONSTRUCTION_TEST_H
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+#include <CGAL/basic.h>
+#include <CGAL/Timer.h>
+#include <CGAL/Arrangement_on_surface_2.h>
+
+#include "utils.h"
+#include "IO_base_test.h"
+
+/*! Construction test */
+template <typename T_Geom_traits, typename T_Topol_traits>
+class Construction_test :
+  public IO_base_test<typename T_Geom_traits::Base_traits_2>
+{
+private:
+  typedef T_Geom_traits                                 Geom_traits;
+  typedef T_Topol_traits                                Topol_traits;
+  typedef IO_base_test<Geom_traits>                     Base;
+
+public:
+  typedef typename Geom_traits::Base_traits_2           Base_geom_traits;
+  typedef typename Base_geom_traits::Point_2            Base_point_2;
+  typedef typename Base_geom_traits::Curve_2            Base_curve_2;
+  typedef typename Base_geom_traits::X_monotone_curve_2 Base_x_monotone_curve_2;
+
+  typedef typename Geom_traits::Point_2                 Point_2;
+  typedef typename Geom_traits::Curve_2                 Curve_2;
+  typedef typename Geom_traits::X_monotone_curve_2      X_monotone_curve_2;
+  
+  typedef typename std::vector<Curve_2>                 Curve_container;
+  typedef typename std::vector<Point_2>                 Point_container;
+  typedef typename std::vector<X_monotone_curve_2>      Xcurve_container;
+      
+  typedef CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>
+                                                        Arrangement;
+  typedef typename Arrangement::Vertex_handle           Vertex_handle;
+  typedef typename Arrangement::Halfedge_handle         Halfedge_handle;
+
+  typedef typename Arrangement::Vertex_iterator         Vertex_iterator;
+  typedef typename Arrangement::Edge_iterator           Edge_iterator;
+  typedef typename Arrangement::Face_iterator           Face_iterator;
+
+  typedef typename Arrangement::Vertex_const_iterator   Vertex_const_iterator;
+  typedef typename Arrangement::Edge_const_iterator     Edge_const_iterator;
+  typedef typename Arrangement::Face_const_iterator     Face_const_iterator;
+
+private:
+  /*! Verbosity */
+  int m_verbose_level;
+
+  /*! The arrangement */
+  Arrangement m_arr;  
+
+  unsigned int m_num_vertices;
+  unsigned int m_num_edges;
+  unsigned int m_num_faces;
+  
+  /*! The input data file of points*/
+  std::string m_filename;
+
+  Curve_container m_curves;
+  Point_container m_isolated_points;
+  Point_container m_points;
+  Xcurve_container m_xcurves;
+
+public:
+  /*! Constructor */
+  Construction_test();
+
+  /*! Destructor */
+  virtual ~Construction_test() { clear(); }
+
+  void set_verbose_level(int verbose_level) { m_verbose_level = verbose_level; }
+  void set_filename(const char* filename) { m_filename.assign(filename); }
+
+  /*! Initialize the test */
+  virtual bool init();
+
+  /*! Perform the test */
+  virtual bool perform();
+
+  /*! Clear the data structures */
+  virtual void clear();
+  
+protected:
+  // A functor that tests whether two points are equal
+  class Point_equal {
+  public:
+    Point_equal(const Geom_traits& traits) : m_traits(traits) {}
+    bool operator()(const Point_2& p1, const Point_2& p2)
+    { return (m_traits.equal_2_object()(p1, p2)); }
+
+  private:
+    const Geom_traits& m_traits;
+  };
+
+  // A functor that tests whether two c-monotone curves are equal
+  class Curve_equal {
+  public:
+    Curve_equal(const Geom_traits& traits) : m_traits(traits) {}
+    bool operator()(const X_monotone_curve_2& c1, const X_monotone_curve_2& c2)
+    { return (m_traits.equal_2_object()(c1, c2) && (c1.data() == c2.data())); }
+
+  private:
+    const Geom_traits& m_traits;
+  };
+
+  bool test1();
+  bool test2();
+  bool test3();
+  bool test4();
+  bool test5();
+  bool test6();
+  bool test7();
+  bool test8();
+  bool test9();
+
+  // A predicate that verifies the results
+  bool are_same_results();
+};
+
+/*! Constructor */
+template <typename T_Geom_traits, typename T_Topol_traits>
+Construction_test<T_Geom_traits, T_Topol_traits>::Construction_test() :
+  m_verbose_level(0),
+  m_arr(NULL)
+{}
+
+/*! Clear the data structures */
+template<class T_Geom_traits, typename T_Topol_traits>
+void Construction_test<T_Geom_traits, T_Topol_traits>::clear()
+{
+  m_curves.clear();
+  m_isolated_points.clear();
+  m_filename.clear();
+  m_points.clear();
+}
+
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
+{
+  const Geom_traits* traits = m_arr.geometry_traits();
+
+  if (m_verbose_level > 1) {
+    std::cout << "# vertices, edge, faces obtained: ("
+              << m_arr.number_of_vertices() << ","
+              << m_arr.number_of_edges() << ","
+              << m_arr.number_of_faces() << ")"
+              << ", expected: ("
+              << m_num_vertices << ","
+              << m_num_edges << ","
+              << m_num_faces << ")" << std::endl;
+  }
+  
+  if (m_arr.number_of_vertices() != m_num_vertices) return false;
+  if (m_arr.number_of_edges() != m_num_edges) return false;
+  if (m_arr.number_of_faces() != m_num_faces) return false;
+
+  std::vector<Point_2> pts(m_arr.number_of_vertices());
+  typename std::vector<Point_2>::iterator pit = pts.begin();
+  Vertex_iterator vit;
+  for (vit = m_arr.vertices_begin(); vit != m_arr.vertices_end(); ++vit)
+    *pit++ = vit->point();
+  
+  Point_compare<Geom_traits> pt_compare;
+  std::sort(pts.begin(), pts.end(), pt_compare);
+  Point_equal point_eq(*traits);
+
+  if (m_verbose_level > 2) {
+    pit = pts.begin();
+    vit = m_arr.vertices_begin();
+    unsigned int i = 0;
+    for (; vit != m_arr.vertices_end(); ++vit) 
+      std::cout << "Point[" << i++ << "] obtained: (" << vit->point() << ")"
+                << ", expected: (" << *pit++ << ")" << std::endl;
+  }
+  
+  if (! std::equal(pts.begin(), pts.end(), m_points.begin(), point_eq))
+    return false;
+
+  std::vector<X_monotone_curve_2> curves_res(m_arr.number_of_edges());
+  unsigned i = 0;
+  Edge_iterator eit;
+  for (eit = m_arr.edges_begin(); eit != m_arr.edges_end(); ++eit, ++i)
+    curves_res[i] = eit->curve();    
+  Curve_compare<Geom_traits> curve_compare;
+  std::sort(curves_res.begin(), curves_res.end(), curve_compare);
+  Curve_equal curve_eq(*traits);
+  if (! std::equal(curves_res.begin(), curves_res.end(),
+                   m_xcurves.begin(), curve_eq))
+    return false;
+  
+  return true;
+}
+
+// Perform the test
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::init()
+{
+  unsigned int i;
+  
+  // Read the input curves and isolated vertices.
+  std::ifstream p_stream(m_filename.c_str());
+  if (!p_stream.is_open()) {
+    std::cerr << "Cannot open file " << m_filename << "!" << std::endl;
+    return false;
+  }
+
+  unsigned int num_of_curves;
+  p_stream >> num_of_curves;
+  for (i = 0; i < num_of_curves; ++i) {
+    Base_curve_2 base_cv;
+    this->read_curve(p_stream, base_cv);
+    m_curves.push_back(Curve_2(base_cv, 1));
+  }
+
+  unsigned int num_of_isolated_points;
+  p_stream >> num_of_isolated_points;
+  for (i = 0; i < num_of_isolated_points; ++i) {
+    Point_2 point;
+    this->read_point(p_stream, point);
+    m_isolated_points.push_back(point);
+  }
+
+  // Read the points and curves that correspond to the arrangement vertices
+  // and edges, respectively.
+  p_stream >> m_num_vertices >> m_num_edges >> m_num_faces;
+
+  m_points.resize(m_num_vertices);
+  for (i = 0; i < m_num_vertices; ++i) {
+    Point_2 point;
+    this->read_point(p_stream, point);
+    m_points[i] = point;
+  }
+
+  m_xcurves.resize(m_num_edges);
+  for (i = 0; i < m_num_edges; ++i) { 
+    Base_x_monotone_curve_2 base_xcv;
+    this->read_xcurve(p_stream, base_xcv);
+    unsigned int k;
+    p_stream >> k;
+    m_xcurves[i] = Curve_2(base_xcv, k);
+  }
+  p_stream.close();
+
+  return true;
+}
+
+// Test incremental construction.
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::test1()
+{
+  typename Curve_container::const_iterator cit;
+  for (cit = m_curves.begin(); cit != m_curves.end(); ++cit)
+    CGAL::insert(m_arr, *cit);
+  typename Point_container::const_iterator pit;
+  for (pit = m_isolated_points.begin(); pit != m_isolated_points.end(); ++pit)
+    CGAL::insert_point(m_arr, *pit);
+  if (! are_same_results() || ! CGAL::is_valid(m_arr)) {
+    std::cerr << "ERROR : The incremental insertion test failed." << std::endl;
+    return false;
+  }
+
+  if (m_verbose_level > 0)
+    std::cout << "(1) Passed incremental insertion." << std::endl;
+  m_arr.clear();
+  return true;
+}
+
+// Test aggregate construction.
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::test2()
+{
+  CGAL::insert(m_arr, m_curves.begin(), m_curves.end());
+  // When creating insert_points, this call should be fixed to insert_points.
+  typename Point_container::const_iterator pit;
+  for (pit = m_isolated_points.begin(); pit != m_isolated_points.end(); ++pit)
+    CGAL::insert_point(m_arr, *pit);
+  if (! are_same_results() || ! CGAL::is_valid(m_arr)) {
+    std::cerr << "ERROR : The aggregated construction test failed." << std::endl;
+    return false;
+  }
+
+  if (m_verbose_level > 0)
+    std::cout << "(2) Passed aggregated construction." << std::endl;
+  m_arr.clear();
+  return true;
+}
+
+// Test the insertion of half of the curves aggregatley followed by the
+// insertion of the rest aggregatley (test the addition visitor).
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::test3()
+{
+  unsigned int n = m_curves.size() / 2;
+  CGAL::insert(m_arr, m_curves.begin(), m_curves.begin() + n);
+  CGAL::insert(m_arr, m_curves.begin() + n, m_curves.end());
+  // When creating insert_points, this call should be fixed to insert_points.
+  typename Point_container::const_iterator pit;
+  for (pit = m_isolated_points.begin(); pit != m_isolated_points.end(); ++pit)
+  CGAL::insert_point(m_arr, *pit);
+  if (! are_same_results() || ! CGAL::is_valid(m_arr)) {
+    std::cerr << "ERROR : The aggregated insertion test failed." << std::endl;
+    return false;
+  }
+
+  if (m_verbose_level > 0)
+    std::cout << "(3) Passed aggregated insertion." << std::endl;
+  m_arr.clear();
+  return true;
+}
+
+// Test the insertion of the interior-disjoint subcurves incrementally.
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::test4()
+{
+  unsigned int i;
+  for (i = 0; i < m_xcurves.size(); ++i)
+    CGAL::insert(m_arr, m_xcurves[i]);
+  for (i = 0; i < m_isolated_points.size(); ++i)
+    CGAL::insert_point(m_arr, m_isolated_points[i]);
+  if (! are_same_results() || ! CGAL::is_valid(m_arr)) {
+    std::cerr << "ERROR : The incremental x-monotone test failed." << std::endl;
+    return false;
+  }
+
+  if (m_verbose_level > 0)
+    std::cout << "(4) Passed incremental x-monotone insertion." << std::endl;
+  m_arr.clear();
+  return true;
+}
+
+// Test the insertion of the interior-disjoint subcurves aggregatley.
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::test5()
+{
+  CGAL::insert(m_arr, m_xcurves.begin(), m_xcurves.end());
+  for (unsigned i = 0; i < m_isolated_points.size(); ++i)
+    CGAL::insert_point(m_arr, m_isolated_points[i]);
+  if (! are_same_results() || ! CGAL::is_valid(m_arr)) {
+    std::cerr << "ERROR : The aggregated x-monotone construction test failed." 
+              << std::endl;
+    return false;
+  }
+
+  if (m_verbose_level > 0)
+    std::cout << "(5) Passed aggregated x-monotone construction." << std::endl;
+  m_arr.clear();
+  return true;
+}
+
+// Test the insertion of half of the interior-disjoint subcurves aggregatley
+// followed by the insertion of the rest aggregatley with
+// insert_x_monotone_curves(test the addition visitor).
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::test6()
+{
+  CGAL::insert(m_arr, m_xcurves.begin(),
+               m_xcurves.begin() + (m_num_edges/2));
+  CGAL::insert(m_arr, m_xcurves.begin() + (m_num_edges/2),
+               m_xcurves.end());
+  for (unsigned i = 0; i < m_isolated_points.size(); ++i)
+    CGAL::insert_point(m_arr, m_isolated_points[i]);
+  if (! are_same_results() || ! CGAL::is_valid(m_arr)) {
+    std::cout << "ERROR : The aggregated x-monotone inertion test failed." 
+              << std::endl;
+     return false;
+  }
+
+  if (m_verbose_level > 0)
+    std::cout << "(6) Passed aggregated x-monotone insertion." << std::endl;
+  m_arr.clear();
+  return true;
+}
+
+// Test the insertion of the disjoint subcurves incrementally with 
+// insert_non_intersecting_curve.
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::test7()
+{
+  unsigned int i;
+  for (i = 0; i < m_xcurves.size(); ++i)
+    CGAL::insert_non_intersecting_curve(m_arr, m_xcurves[i]);
+  for (i = 0; i < m_isolated_points.size(); ++i)
+    CGAL::insert_point(m_arr, m_isolated_points[i]);
+  if (! are_same_results() || ! CGAL::is_valid(m_arr)) {
+    std::cout << "ERROR : The incremental non-intersecting test failed." 
+              << std::endl;
+    return false;
+  }
+
+  if (m_verbose_level > 0)
+    std::cout << "(7) Passed incremental non-intersecting insertion." 
+              << std::endl;
+  m_arr.clear();
+  return true;
+}
+
+// Test the insertion of the interior-disjoint subcurves aggregatley with
+// insert_non_intersecting_curves.
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::test8()
+{
+  CGAL::insert_non_intersecting_curves(m_arr,
+                                       m_xcurves.begin(), m_xcurves.end());
+  for (unsigned int i = 0; i < m_isolated_points.size(); ++i)
+    CGAL::insert_point(m_arr, m_isolated_points[i]);
+  if (! are_same_results() || ! CGAL::is_valid(m_arr)) {
+    std::cout
+      << "ERROR : The aggregated non-intersecting construction test failed." 
+      << std::endl;
+    return false;
+  }
+
+  if (m_verbose_level > 0)
+    std::cout << "(8) Passed aggregated non-intersecting construction." 
+              << std::endl;
+  m_arr.clear();
+  return true;
+}
+
+// Test the insertion of half of the disjoint subcurves aggregatley followed
+// by the insertion of the rest aggregatley with
+// insert_non_intersecting_curves (test the addition visitor).
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::test9()
+{
+  unsigned int n = m_xcurves.size() / 2;
+  CGAL::insert_non_intersecting_curves(m_arr,
+                                       m_xcurves.begin(), m_xcurves.begin() + n);
+  CGAL::insert_non_intersecting_curves(m_arr,
+                                       m_xcurves.begin() + n, m_xcurves.end());
+  for (unsigned i = 0; i < m_isolated_points.size(); ++i)
+    CGAL::insert_point(m_arr, m_isolated_points[i]);
+  if (! are_same_results() || ! CGAL::is_valid(m_arr)) {
+    std::cout <<"ERROR : The aggregated non-intersecting insertion test failed." 
+              << std::endl;
+    return false;
+  }
+
+  if (m_verbose_level > 0)
+    std::cout << "(9) Passed aggregated non-intersecting insertion." 
+              << std::endl;
+  m_arr.clear();
+  return true;
+}
+
+// Perform the test
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::perform()
+{
+  if (! test1()) return false;
+  if (! test2()) return false;
+  if (! test3()) return false;
+  if (! test4()) return false;  
+  if (! test5()) return false;  
+  if (! test6()) return false;  
+  if (! test7()) return false;  
+  if (! test8()) return false;  
+  if (! test9()) return false;  
+  return true;
+}
+
+#endif
