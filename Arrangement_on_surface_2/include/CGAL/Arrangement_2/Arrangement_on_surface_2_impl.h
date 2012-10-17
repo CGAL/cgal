@@ -3518,7 +3518,10 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
 
-// TODO "documentation"
+// compute locale minima of closed loop (end_is_anchor_opposite = false)
+// when deleting he_anchor and its opposite belonging to different faces
+// or 'loop-about-to-split' (end_is_anchor_opposite = true)
+// when deleting he_anchor and its opposite belonging to same face
 template <typename GeomTraits, typename TopTraits>
 template <typename OutputIterator>
 std::pair< CGAL::Sign, CGAL::Sign > 
