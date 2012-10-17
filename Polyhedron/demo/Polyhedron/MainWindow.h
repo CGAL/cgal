@@ -12,6 +12,7 @@
 #include <QList>
 #include <QFileInfo>
 #include <QStringList>
+#include <QSet>
 
 class Scene;
 class Viewer;
@@ -19,7 +20,6 @@ class QTreeView;
 class QMenu;
 class Polyhedron_demo_io_plugin_interface;
 class Polyhedron_demo_plugin_interface;
-
 class Scene_item;
 
 namespace Ui {
@@ -151,6 +151,9 @@ protected:
 
 private:
   QString strippedName(const QString &fullFileName);
+
+  /// plugin black-list
+  QSet<QString> plugin_blacklist;
 
   Scene* scene;
   Viewer* viewer;
