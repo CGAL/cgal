@@ -716,7 +716,7 @@ construction with segments
 #---------------------------------------------------------------------#
 test_construction_segments()
 {
-  compile_test test_construction $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS test_construction_segments
+  compile_test test_construction $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR: not executed construction of segments" >> $ERRORFILE
   else
@@ -746,7 +746,7 @@ test_construction_segments()
 #---------------------------------------------------------------------#
 test_point_location_segments()
 {
-  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS point_location_segments
+  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR: not executed point location of segments" >> $ERRORFILE
   else
@@ -776,7 +776,7 @@ test_point_location_segments()
 #---------------------------------------------------------------------#
 test_point_location_dynamic_segments()
 {
-  compile_test point_location_dynamic $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS point_location_dynamic_segments
+  compile_test point_location_dynamic $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   point location of segments" >> $ERRORFILE
   else
@@ -806,7 +806,7 @@ test_point_location_dynamic_segments()
 #---------------------------------------------------------------------#
 test_point_location_circle_segments()
 {
-  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS point_location_circle_segments
+  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS segment_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   point_location of circle segments" >> $ERRORFILE
   else
@@ -836,7 +836,7 @@ test_point_location_circle_segments()
 #---------------------------------------------------------------------#
 test_point_location_linear()
 {
-  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS point_location_linear
+  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   point_location of linear objects" >> $ERRORFILE
   else
