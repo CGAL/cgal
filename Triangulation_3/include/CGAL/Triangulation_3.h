@@ -695,6 +695,7 @@ public:
   Cell_handle
   inexact_locate(const Point& p,
                  Cell_handle start,
+                 bool *p_could_lock_zone = 0,
                  int max_num_cells = CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
 protected:
   Cell_handle
@@ -713,7 +714,11 @@ protected:
                  internal::Structural_filtering_3_tag,
                  bool *p_could_lock_zone = 0) const
   {
-    return exact_locate(p, lt, li, lj, inexact_locate(p, start), p_could_lock_zone);
+    Cell_handle ch = inexact_locate(p, start, p_could_lock_zone);
+    if (p_could_lock_zone && *p_could_lock_zone == false)
+      return ch; // = Cell_handle() here
+    else
+      return exact_locate(p, lt, li, lj, ch, p_could_lock_zone);
   }
 
   Cell_handle
@@ -2273,7 +2278,8 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 #ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
             if (p_could_lock_zone)
             {
-              //previous->unlock(); CJTODO: On en déverrouille TROP, non ?
+              //previous->unlock(); // DON'T do that, "c" may be in 
+                                    // the same locking cell as "previous"
               //c->lock(); // WARNING: not atomic! => DEADLOCKS?
               if (!try_lock_element(c))
               {
@@ -2496,9 +2502,13 @@ template <class Gt, class Tds, bool Upm>
 inline
 typename Triangulation_3<Gt, Tds, Upm>::Cell_handle
 Triangulation_3<Gt, Tds, Upm>::
-inexact_locate(const Point & t, Cell_handle start, int n_of_turns) const
+inexact_locate(const Point & t, Cell_handle start,
+               bool *p_could_lock_zone, int n_of_turns) const
 {
   CGAL_triangulation_expensive_assertion(start == Cell_handle() || tds().is_simplex(start) );
+  
+  if (p_could_lock_zone)
+    *p_could_lock_zone = true;
 
   if(dimension() < 3) return start;
 
@@ -2519,6 +2529,19 @@ inexact_locate(const Point & t, Cell_handle start, int n_of_turns) const
   // Remembers the previous cell to avoid useless orientation tests.
   Cell_handle previous = Cell_handle();
   Cell_handle c = start;
+  
+#ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+    if (p_could_lock_zone)
+    {
+      // CJTODO: useless? already locked buy Mesher_level?
+      //c->lock(); // WARNING: not atomic! => DEADLOCKS?
+      if (!try_lock_element(c))
+      {
+        *p_could_lock_zone = false;
+        return Cell_handle();
+      }
+    }
+#endif
 
   // Now treat the cell c.
   try_next_cell:
@@ -2552,6 +2575,19 @@ inexact_locate(const Point & t, Cell_handle start, int n_of_turns) const
     }
     previous = c;
     c = next;
+#ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+    if (p_could_lock_zone)
+    {
+      //previous->unlock(); // DON'T do that, "c" may be in 
+                            // the same locking cell as "previous"
+      //c->lock(); // WARNING: not atomic! => DEADLOCKS?
+      if (!try_lock_element(c))
+      {
+        *p_could_lock_zone = false;
+        return Cell_handle();
+      }
+    }
+#endif
     if(n_of_turns) goto try_next_cell;
   }
 
