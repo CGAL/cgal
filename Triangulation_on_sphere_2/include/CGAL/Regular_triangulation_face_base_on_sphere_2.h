@@ -91,6 +91,10 @@ public:
     return vlist;
   }
 
+	
+	bool is_valid(bool  verbose  = false, int  level  = 0) const
+	{return true;}
+	
 
 
 };
