@@ -581,7 +581,7 @@ template <>
 template <typename stream>
 bool IO_base_test<Geom_traits>::read_point(stream& is, Point_2& p)
 {
-  Traits::Construct_point_2 construct_point_2 =
+  Geom_traits::Construct_point_2 construct_point_2 =
     m_traits.construct_point_2_object();
 
   Rational x, y;
@@ -593,7 +593,7 @@ bool IO_base_test<Geom_traits>::read_point(stream& is, Point_2& p)
 template <typename stream>
 bool read_rational_to_real(stream& is, Algebraic_real_1& r)
 {
-  static Traits::Algebraic_kernel_d_1 algebraic_kernel;
+  static Geom_traits::Algebraic_kernel_d_1 algebraic_kernel;
   Rational rat;
   is >> rat;
   r = algebraic_kernel.construct_algebraic_real_1_object()(rat);
@@ -620,7 +620,7 @@ template <typename stream>
 bool IO_base_test<Geom_traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
 {  
   //curve constructor  
-  const Traits::Construct_x_monotone_curve_2
+  const Geom_traits::Construct_x_monotone_curve_2
     ctr_x_monotone_curve =
     m_traits.construct_x_monotone_curve_2_object();
   
@@ -717,7 +717,7 @@ template <typename stream>
 bool IO_base_test<Geom_traits>::read_curve(stream& is, Curve_2& cv)
 {  
   //curve constructor
-  const Traits::Construct_curve_2  construct_curve_2 =
+  const Geom_traits::Construct_curve_2  construct_curve_2 =
     m_traits.construct_curve_2_object();
 
   // Get the arc type:
@@ -837,9 +837,9 @@ bool IO_base_test<Geom_traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
     Rational(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).y());
   Point_2 B_ps(B_psx, B_psy);
   Point_2 B_pt(B_ptx, B_pty);
-  Traits::Make_x_monotone_2 make_x_monotone =
+  Geom_traits::Make_x_monotone_2 make_x_monotone =
     this->m_traits.make_x_monotone_2_object();
-  make_x_monotone (tmp_cv, std::front_inserter (x_objs));
+  make_x_monotone(tmp_cv, std::front_inserter (x_objs));
   xoit = x_objs.begin();
   if (CGAL::assign(xcv, *xoit))
     return true;
@@ -863,8 +863,8 @@ bool IO_base_test<Geom_traits>::read_curve(stream& is, Curve_2& cv)
 template <>
 template <typename stream>
 bool IO_base_test<Geom_traits>::read_point(stream& is, Point_2& p) {
-  Traits traits;
-  Traits::Construct_point_2 construct_point_2 =
+  Geom_traits traits;
+  Geom_traits::Construct_point_2 construct_point_2 =
     traits.construct_point_2_object();
   char type;
   is >> type;
@@ -876,27 +876,27 @@ bool IO_base_test<Geom_traits>::read_point(stream& is, Point_2& p) {
      break;
     }
    case 'b': {
-     Traits::Bound x,y;
+     Geom_traits::Bound x,y;
      is >> x >> y;
      p=construct_point_2(x, y);
      break;
     }
    case 'c': {
-     Traits::Coefficient x, y;
+     Geom_traits::Coefficient x, y;
      is >> x >> y;
      p = construct_point_2(x, y);
      break;
     }
    case 'a': {
-     Traits::Algebraic_real_1 x, y;
+     Geom_traits::Algebraic_real_1 x, y;
      is >> x >> y;
      p = construct_point_2(x, y);
      break;
     }
    case 's': {
-     Traits::Algebraic_real_1 x;
+     Geom_traits::Algebraic_real_1 x;
      is >> x;
-     Traits::X_monotone_curve_2 xcv;
+     Geom_traits::X_monotone_curve_2 xcv;
      CGAL::swallow(is,'(');
      CGAL_assertion_code(bool check=)
        read_xcurve(is, xcv);
@@ -907,9 +907,9 @@ bool IO_base_test<Geom_traits>::read_point(stream& is, Point_2& p) {
      break;
     }
    case 'g': {
-     Traits::Algebraic_real_1 x;
+     Geom_traits::Algebraic_real_1 x;
      is >> x;
-     Traits::Curve_2 c;
+     Geom_traits::Curve_2 c;
      CGAL_assertion_code(bool check = )
        read_curve(is,c);
      CGAL_assertion(check);
@@ -930,10 +930,10 @@ bool IO_base_test<Geom_traits>::read_point(stream& is, Point_2& p) {
 template <>
 template <typename stream>
 bool IO_base_test<Geom_traits>::read_xcurve(stream& is, 
-                                            Traits::X_monotone_curve_2& xcv)
+                                            Geom_traits::X_monotone_curve_2& xcv)
 {
-  Traits traits;
-  Traits::Construct_x_monotone_segment_2 construct_segment_2 =
+  Geom_traits traits;
+  Geom_traits::Construct_x_monotone_segment_2 construct_segment_2 =
     traits.construct_x_monotone_segment_2_object();
   char type;
   is >> type;
@@ -954,7 +954,7 @@ bool IO_base_test<Geom_traits>::read_xcurve(stream& is,
      read_point(is,end_right);
      CGAL_assertion(check);
      CGAL::swallow(is,')');
-     std::vector<Traits::X_monotone_curve_2> xcvs;
+     std::vector<Geom_traits::X_monotone_curve_2> xcvs;
      construct_segment_2(cv, end_left, end_right, std::back_inserter(xcvs));
      CGAL_assertion(xcvs.size() == 1);
      xcv = xcvs[0];
@@ -972,17 +972,17 @@ bool IO_base_test<Geom_traits>::read_xcurve(stream& is,
      CGAL_assertion(check);
      CGAL::swallow(is,')');
      std::string site_of_p_string;
-     Traits::Site_of_point site_of_p;
+     Geom_traits::Site_of_point site_of_p;
      is >> site_of_p_string;
-     if (site_of_p_string=="MIN_ENDPOINT") {
-       site_of_p=Traits::MIN_ENDPOINT;
+     if (site_of_p_string == "MIN_ENDPOINT") {
+       site_of_p = Geom_traits::MIN_ENDPOINT;
      } else if (site_of_p_string=="MAX_ENDPOINT") {
-       site_of_p=Traits::MAX_ENDPOINT;
+       site_of_p = Geom_traits::MAX_ENDPOINT;
      } else {
        CGAL_assertion(site_of_p_string=="POINT_IN_INTERIOR");
-       site_of_p=Traits::POINT_IN_INTERIOR;
+       site_of_p = Geom_traits::POINT_IN_INTERIOR;
      }
-     std::vector<Traits::X_monotone_curve_2> xcvs;
+     std::vector<Geom_traits::X_monotone_curve_2> xcvs;
      construct_segment_2(cv, p, site_of_p, std::back_inserter(xcvs));
      CGAL_assertion(xcvs.size() == 1);
      xcv = xcvs[0];
@@ -999,9 +999,9 @@ bool IO_base_test<Geom_traits>::read_xcurve(stream& is,
 template <>
 template <typename stream>
 bool IO_base_test<Geom_traits>::read_curve(stream& is, Curve_2& cv) {
-  Traits traits;
-  Traits::Polynomial_2 p;
-  Traits::Construct_curve_2 construct_curve_2 =
+  Geom_traits traits;
+  Geom_traits::Polynomial_2 p;
+  Geom_traits::Construct_curve_2 construct_curve_2 =
     traits.construct_curve_2_object();
   is >> p;
   cv = construct_curve_2(p);
@@ -1120,7 +1120,7 @@ Circular_kernel::Line_arc_2 read_line(char type, stream& is)
 #if TEST_GEOM_TRAITS == CIRCULAR_ARC_GEOM_TRAITS || \
   TEST_GEOM_TRAITS == CIRCULAR_LINE_ARC_GEOM_TRAITS
 template <typename stream>
-Circular_kernel::Circular_arc_2 read_arc(char type,stream& is)
+Circular_kernel::Circular_arc_2 read_arc(char type, stream& is)
 {
   if (type == 'b' || type == 'B') {
     Circular_kernel::Circle_2 circle, circle1, circle2;
@@ -1164,7 +1164,7 @@ template <>
 template <typename stream>
 bool IO_base_test<Geom_traits>::read_point(stream& is, Point_2& p)
 {
-  return read_arc_point<Traits, stream>(is, p);
+  return read_arc_point<Geom_traits, stream>(is, p);
 }
 
 /*! Read an x-monotone line arc curve */
@@ -1206,7 +1206,7 @@ template <>
 template <typename stream>
 bool IO_base_test<Geom_traits>::read_point(stream& is, Point_2& p)
 {
-  return read_arc_point<Traits, stream>(is, p);
+  return read_arc_point<Geom_traits, stream>(is, p);
 }
 
 /*! Read an x-monotone circular arc curve */
@@ -1254,7 +1254,7 @@ template <>
 template <typename stream>
 bool IO_base_test<Geom_traits>::read_point(stream& is, Point_2& p)
 {
-  return read_arc_point<Traits, stream>(is, p);
+  return read_arc_point<Geom_traits, stream>(is, p);
 }
 
 /*! Read an x-monotone circular-line arc curve */

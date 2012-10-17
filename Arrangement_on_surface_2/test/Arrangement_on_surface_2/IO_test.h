@@ -256,7 +256,7 @@ bool IO_test<T_Geom_traits>::read_xcurves(const char* filename,
     xcurves.push_back(xcv);
     line_stream.clear();
   }
-  p_stream.close();
+  xcv_stream.close();
   return true;
 }
 
@@ -282,7 +282,7 @@ IO_test<T_Geom_traits>::read_curves(const char* filename, Curves_vector& curves)
     curves.push_back(cv);
     line_stream.clear();
   }
-  p_stream.close();
+  cv_stream.close();
   return true;
 }
 
