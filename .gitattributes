@@ -2358,7 +2358,6 @@ Documentation/hacks.js -text
 Documentation/header.html -text
 Documentation/header_package.html -text
 Documentation/how_to_cite_cgal.bib -text
-Documentation/jquery.footnotes.min.js -text
 Documentation/pkglist_filter.sh -text
 Documentation/stylesheet.css -text
 Documentation/testsuite.py -text

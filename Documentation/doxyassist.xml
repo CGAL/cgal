@@ -1555,7 +1555,6 @@ namespace for the XML file to be processed properly.  -->
           <item>PkgManuals{2}=\ref \1 &quot;User Manual&quot; \ref \2 &quot;Reference Manual\&quot;</item>
         </list>
         <list name="HTML_EXTRA_FILES" append="true">
-          <item>jquery.footnotes.min.js</item>
           <item>hacks.js</item>
           <item>cgal_stylesheet.css</item>
         </list>

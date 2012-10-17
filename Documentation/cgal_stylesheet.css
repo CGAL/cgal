@@ -128,9 +128,13 @@ span.footnoteContent p, span.footnoteContent div {
 
 /* footnote support end */
 
+dl
+{
+        padding: 0 0 0 0;
+}
+
 dl.section, dl.hasModels, dl.debugs, dl.models, dl.refines, dl.requires
 {
-    padding: 0 0 0 0;
     margin-left: 0px;
     padding-left: 0px;
 }
