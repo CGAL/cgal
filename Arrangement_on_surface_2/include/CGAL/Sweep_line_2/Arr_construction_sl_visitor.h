@@ -342,7 +342,7 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
     return (true);
   }
 
-  // TODO EBEB 2012-10-16 only compile when lr-identification
+  // TODO EBEB 2012-10-16 compile only when non-oblivious
   if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY) {
     if (!this->is_status_line_empty()) {
       Status_line_iterator prev = iter; 
@@ -834,17 +834,13 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   
   if (new_face_created)
   {
-    // EBEB: Fixed by checking whether at least one of 
-    // EBEB: res + res->twin() lies on a inner ccb
-    // TODO EBEB 2012-10-16 this seems to be an long story
-    if (res->is_on_inner_ccb() || res->twin()->is_on_inner_ccb()) {
-      // In case a new face has been created (pointed by the new halfedge
-      // we obtained), we have to examine the holes and isolated vertices
-      // in the existing face (pointed by the twin halfedge) and relocate
-      // the relevant features in the new face.
-      CGAL_assertion(res->face() != res->twin()->face());
-      this->relocate_in_new_face (res);
-    }
+    // TODO EBEB 2012-10-17 needs a tests for outer-outer insertion
+    // In case a new face has been created (pointed by the new halfedge
+    // we obtained), we have to examine the holes and isolated vertices
+    // in the existing face (pointed by the twin halfedge) and relocate
+    // the relevant features in the new face.
+    CGAL_assertion(res->face() != res->twin()->face());
+    this->relocate_in_new_face (res);
   }
 
   return (res);
