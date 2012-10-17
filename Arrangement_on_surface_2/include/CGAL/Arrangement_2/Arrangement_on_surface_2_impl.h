@@ -2384,7 +2384,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   if (allow_swap_of_predecessors) {
     bool swap_predecessors = false;
 
-    // TODO EBEB 2012-08-05 reuse hole1/hole2 later, or keep it local here?
+    // Comment EBEB 2012-08-05 hole1/hole2 appear later as ic1/ic2, but we keep
+    // them here, as the usage is rather local to decide swapping
     DInner_ccb* hole1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : NULL;
     DInner_ccb* hole2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : NULL;
     
