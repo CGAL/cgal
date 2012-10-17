@@ -4,7 +4,7 @@ namespace CGAL {
 
 \mainpage 3D %Fast Intersection and Distance Computation (AABB Tree)
 \anchor Chapter_3D_Fast_Intersection_and_Distance_Computation
-\tableofcontents
+\autotoc
 
 \authors Pierre Alliez, Stephane Tayeb, and Camille Wormser
 

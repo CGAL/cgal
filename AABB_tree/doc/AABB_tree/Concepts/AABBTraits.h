@@ -12,7 +12,6 @@ The concept `AABBTraits` provides the geometric primitive types and methods for 
 \sa `AABBPrimitive` 
 
 */
-
 class AABBTraits {
 public:
 
@@ -40,10 +39,13 @@ Bounding box type.
 */ 
 typedef Hidden_type Bounding_box; 
 
-/*! 
-
-*/ 
-typedef Hidden_type enum Axis { X_AXIS, Y_AXIS, Z_AXIS }; 
+  /*! 
+  */ 
+  enum Axis { 
+    X_AXIS,
+    Y_AXIS,
+    Z_AXIS
+  };
 
 /*! 
 

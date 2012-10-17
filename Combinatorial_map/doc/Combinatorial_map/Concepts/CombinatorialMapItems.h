@@ -48,6 +48,9 @@ struct Exemple_Item_3
 class CombinatorialMapItems {
 public:
   
+  /*!
+    \cgalconcept
+  */
   template<typename CMap>
   struct DartWrapper {
     /*! 
