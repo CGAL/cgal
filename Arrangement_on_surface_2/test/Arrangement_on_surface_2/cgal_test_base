@@ -104,81 +104,109 @@ COMPARE_CW_AROUND_POINT=27
 
 configure()
 {
-    echo "Configuring... "
-    rm -rf CMakeCache.txt CMakeFiles/
+  echo "Configuring... "
+  rm -rf CMakeCache.txt CMakeFiles/
     
-    if eval 'cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
-                                     -DCGAL_DIR="$CGAL_DIR" \
-                                     -DCGAL_CXX_FLAGS:STRING="$TESTSUITE_CXXFLAGS -I../../include" \
-                                     -DCGAL_EXE_LINKER_FLAGS="$TESTSUITE_LDFLAGS" \
-                                     -DCMAKE_BUILD_TYPE=NOTFOUND \
-                                     .' ; then
+  if eval 'cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+                                    -DCGAL_DIR="$CGAL_DIR" \
+                                    -DCGAL_CXX_FLAGS:STRING="$TESTSUITE_CXXFLAGS -I../../include" \
+                                    -DCGAL_EXE_LINKER_FLAGS="$TESTSUITE_LDFLAGS" \
+                                    -DCMAKE_BUILD_TYPE=NOTFOUND \
+                                    .' ; then
         
-	echo "   successful configuration" >> $ERRORFILE
-    else
-	echo "   ERROR:    configuration" >> $ERRORFILE
-    fi
+    echo "   successful configuration" >> $ERRORFILE
+  else
+    echo "   ERROR:    configuration" >> $ERRORFILE
+  fi
 }
 
-
-compile_test()
+compile_test_with_traits()
 {
-    local name=$1;
-    local nt=$2;
-    local kernel=$3;
-    local traits=$4;
-    local traits_type=$5
+  local name=$1;
+  local nt=$2;
+  local kernel=$3;
+  local traits=$4;
+  local type=$5;
+  
+  TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$traits";
 
-    TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$traits ";
+  echo $TESTSUITE_CXXFLAGS;
 
-    echo $TESTSUITE_CXXFLAGS;
-
-    echo "Compiling $name $traits_type ... "
-    if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-        export TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$traits"
-        configure
-	if eval '${MAKE_CMD} VERBOSE=1 -fMakefile  \
-            $name' ; then
-	    echo "   successful compilation of $name $traits_type" >> $ERRORFILE;
-	    res=1;
-	else
-	    echo "   ERROR:    compilation of $name $traits_type" >> $ERRORFILE;
-	    res=0;
-	fi
+  echo "Compiling $name $type ... "
+  if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
+    export TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$traits"
+    configure
+    if eval '${MAKE_CMD} VERBOSE=1 -fMakefile  \
+      $name' ; then
+      echo "   successful compilation of $name $type" >> $ERRORFILE;
+      SUCCESS="y"
     else
-	if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
-           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
-           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $name'; then
-	    echo "   successful compilation of $name $traits_type" >> $ERRORFILE;
-	    res=1;
-	else
-	    echo "   ERROR:    compilation of $name $traits_type" >> $ERRORFILE;
-	    res=0;
-	fi
+      echo "   ERROR:    compilation of $name $type" >> $ERRORFILE;
+      SUCCESS=""
     fi
+  else
+    if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+      TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+      TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $name'; then
+      echo "   successful compilation of $name $type" >> $ERRORFILE;
+      SUCCESS="y"
+    else
+      echo "   ERROR:    compilation of $name $type" >> $ERRORFILE;
+      SUCCESS=""
+    fi
+  fi
 }
 
-my_run_test()
+run_test()
+{
+  # $1 - executable name
+
+  basedata=`basename "$5"`
+  OUTPUTFILE="ProgramOutput.$1"
+  rm -f $OUTPUTFILE
+  COMMAND="./$1"
+  if [ -f $1.cmd ] ; then
+    COMMAND="$COMMAND `cat $1.cmd`"
+  fi
+  if [ -f $1.cin ] ; then
+    COMMAND="cat $1.cin | $COMMAND"
+  fi
+  OUTPUTFILE="$OUTPUTFILE.$PLATFORM"
+  echo "Executing $1 ($2) ... "
+  ulimit -t 3600 2> /dev/null
+  if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+    echo "   successful execution of $1" >> $ERRORFILE
+  else
+    echo "   ERROR:    execution of $1" >> $ERRORFILE
+    cat $OUTPUTFILE >> $FULL_ERROR_DESCRIPTION_FILE
+  fi
+}
+
+run_test_with_traits()
 {
   # $1 - executable name
   # $2 - test substring name
 
   basedata=`basename "$5"`
-  OUTPUTFILE=ProgramOutput.$1.`echo $3 | tr '/' '.'`.$6
+  OUTPUTFILE="ProgramOutput.$1"
   rm -f $OUTPUTFILE
   COMMAND="./$1"
   if [ -f $1.cmd ] ; then
     COMMAND="$COMMAND `cat $1.cmd`"
   elif [ -f $1.$2.cmd ] ; then
     COMMAND="$COMMAND `cat $1.$2.cmd`"
+    OUTPUTFILE=$OUTPUTFILE.`echo $2 | tr '/' '.'`
   fi
   if [ -f $1.cin ] ; then
     COMMAND="cat $1.cin | $COMMAND"
   elif [ -f $1.$2.cin ] ; then
     COMMAND="cat $1.$2.cin | $COMMAND"
+    OUTPUTFILE=$OUTPUTFILE.`echo $2 | tr '/' '.'`
   fi
+  OUTPUTFILE="$OUTPUTFILE.$PLATFORM"
   echo "Executing $1 ($2) ... "
-  if eval $COMMAND $2 > $OUTPUTFILE 2>&1 ; then
+  ulimit -t 3600 2> /dev/null
+  if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
     echo "   successful execution of $1 ($2)" >> $ERRORFILE
   else
     echo "   ERROR:    execution of $1 ($2)" >> $ERRORFILE
@@ -186,20 +214,20 @@ my_run_test()
   fi
 }
 
-run_test()
+run_test_alt()
 {
-    basedata=`basename "$5"`
-    OUTPUTFILE=ProgramOutput.$1.`echo $5 | tr '/' '.'`.$6
-#  dirdata=`dirname "$datafile"`
-    rm -f $OUTPUTFILE
-    COMMAND="./$1"
-    echo "Executing $1 $5 $6 ... "
-    if eval $COMMAND $2 $3 $4 $5 $6 > $OUTPUTFILE 2>&1 ; then
-	echo "   successful execution of $5 $6" >> $ERRORFILE
-    else
-	echo "   ERROR:    execution of $5 $6" >> $ERRORFILE
-	cat $OUTPUTFILE >> $FULL_ERROR_DESCRIPTION_FILE
-    fi
+  basedata=`basename "$5"`
+  OUTPUTFILE=ProgramOutput.$1.`echo $5 | tr '/' '.'`.$6
+  #  dirdata=`dirname "$datafile"`
+  rm -f $OUTPUTFILE
+  COMMAND="./$1"
+  echo "Executing $1 $5 $6 ... "
+  if eval $COMMAND $2 $3 $4 $5 $6 > $OUTPUTFILE 2>&1 ; then
+    echo "   successful execution of $5 $6" >> $ERRORFILE
+  else
+    echo "   ERROR:    execution of $5 $6" >> $ERRORFILE
+    cat $OUTPUTFILE >> $FULL_ERROR_DESCRIPTION_FILE
+  fi
 }
 
 run_trapped_test()
@@ -207,134 +235,115 @@ run_trapped_test()
   #local name=$1;
   #local datafile=$2;
 
-    if [ "${OSTYPE}" != "cygwin" ]; then
-	ulimit -t 1200
-	run_test $1 $2 $3 $4 $5 $6
-    else
-	run_test $1 $2 $3 $4 $5 $6 &
-	WPID=$!
-	trap "kill -9 $WPID" INT
-	(sleep 1200; kill -9 $WPID) > /dev/null 2>&1 &
-	SPID=$!
-	wait $WPID > /dev/null 2>&1
-#    RES=$?
-	kill -9 $SPID > /dev/null 2>&1
-#    return $RES
-    fi
+  if [ "${OSTYPE}" != "cygwin" ]; then
+    ulimit -t 1200
+    run_test_alt $1 $2 $3 $4 $5 $6
+  else
+    run_test_alt $1 $2 $3 $4 $5 $6 &
+    WPID=$!
+    trap "kill -9 $WPID" INT
+    (sleep 1200; kill -9 $WPID) > /dev/null 2>&1 &
+    SPID=$!
+    wait $WPID > /dev/null 2>&1
+    # RES=$?
+    kill -9 $SPID > /dev/null 2>&1
+    # return $RES
+  fi
 }
 
 clean_tests()
 {
-    if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-    #
-    # The clean target generated by CMake under cygwin 
-    # always fails for some reason
-    #
-	if ! ( uname | grep -q "CYGWIN" ) ; then
-	    make -fMakefile clean
-	fi
+  if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
+  #
+  # The clean target generated by CMake under cygwin 
+  # always fails for some reason
+  #
+    if ! ( uname | grep -q "CYGWIN" ) ; then
+      make -fMakefile clean
     fi
-    eval "make clean > /dev/null 2>&1"
+  fi
+  eval "make clean > /dev/null 2>&1"
 }
 
 compile_and_run()
 {
-    if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-	echo "Compiling $1 ... "
-	SUCCES="y"
+  if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
+    echo "Compiling $1 ... "
+    SUCCESS="y"
 	
-	if eval '${MAKE_CMD} VERBOSE=1 -fMakefile $1' ; then
-	    echo "   successful compilation of $1" >> $ERRORFILE
-	else
-	    echo "   ERROR:    compilation of $1" >> $ERRORFILE
-	    SUCCES=""
-	fi
-	
-	if [ -n "$DO_RUN" ] ; then
-	    if [ -n "${SUCCES}" ] ; then
-		OUTPUTFILE=ProgramOutput.$1.$PLATFORM
-		rm -f $OUTPUTFILE
-		COMMAND="./$1"
-		if [ -f $1.cmd ] ; then
-		    COMMAND="$COMMAND `cat $1.cmd`"
-		fi
-		if [ -f $1.cin ] ; then
-		    COMMAND="cat $1.cin | $COMMAND"
-		fi
-		echo "Executing $1 ... "
-		echo
-		ulimit -t 3600 2> /dev/null
-		if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-		    echo "   successful execution   of $1" >> $ERRORFILE
-		else
-		    echo "   ERROR:    execution   of $1" >> $ERRORFILE
-		fi
-	    else
-		echo   "   ERROR:    not executed   $1" >> $ERRORFILE
-	    fi
-	fi
+    if eval '${MAKE_CMD} VERBOSE=1 -fMakefile $1' ; then
+      echo "   successful compilation of $1" >> $ERRORFILE
     else
-	
-	local name=$1;
-	
-	echo "Compiling $name ... "
-	SUCCES="y"
-  #TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS"
-	TESTSUITE_CXXFLAGS=""
-	TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS"
-	if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
-           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
-           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $name' ; then
-	    echo "   successful compilation of $name" >> $ERRORFILE
-	else
-	    echo "   ERROR:    compilation of $name" >> $ERRORFILE
-	    SUCCES=""
-	fi
-	
-	if [ -n "${SUCCES}" ] ; then
-	    OUTPUTFILE=ProgramOutput.$name.$PLATFORM
-	    rm -f $OUTPUTFILE
-	    COMMAND="./$name"
-	    if [ -f $name.cmd ] ; then
-		COMMAND="$COMMAND `cat $name.cmd`"
-	    fi
-	    if [ -f $name.cin ] ; then
-		COMMAND="cat $name.cin | $COMMAND"
-	    fi
-	    echo "Executing $name ... "
-	    echo " "
-	    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-		echo "   successful execution of $name" >> $ERRORFILE
-	    else
-		echo "   ERROR:    execution of $name" >> $ERRORFILE
-		cat $OUTPUTFILE >> $FULL_ERROR_DESCRIPTION_FILE
-	    fi
-	else
-	    echo   "   ERROR:    not executed $name" >> $ERRORFILE
-	fi
+      echo "   ERROR:    compilation of $1" >> $ERRORFILE
+      SUCCESS=""
     fi
-
-    clean_tests
+	
+    if [ -n "$DO_RUN" ] ; then
+      if [ -n "${SUCCESS}" ] ; then
+        run_test $1
+      else
+         echo "   ERROR:    not executed   $1" >> $ERRORFILE
+      fi
+    fi
+  else
+    local name=$1;
+    echo "Compiling $name ... "
+    SUCCESS="y"
+    #TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS"
+    TESTSUITE_CXXFLAGS=""
+    TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS"
+    if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+      TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+      TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $name' ; then
+      echo "   successful compilation of $name" >> $ERRORFILE
+    else
+      echo "   ERROR:    compilation of $name" >> $ERRORFILE
+      SUCCESS=""
+    fi
+	
+    if [ -n "${SUCCESS}" ] ; then
+      OUTPUTFILE=ProgramOutput.$name.$PLATFORM
+      rm -f $OUTPUTFILE
+      COMMAND="./$name"
+      if [ -f $name.cmd ] ; then
+        COMMAND="$COMMAND `cat $name.cmd`"
+      fi
+      if [ -f $name.cin ] ; then
+        COMMAND="cat $name.cin | $COMMAND"
+      fi
+      echo "Executing $name ... "
+      echo " "
+      if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+        echo "   successful execution of $name" >> $ERRORFILE
+      else
+        echo "   ERROR:    execution of $name" >> $ERRORFILE
+        cat $OUTPUTFILE >> $FULL_ERROR_DESCRIPTION_FILE
+      fi
+    else
+      echo "   ERROR:    not executed $name" >> $ERRORFILE
+    fi
+  fi
+  clean_tests
 }
 
 compile_and_run_trapped_test()
 {
-    local name=$1;
+  local name=$1;
 
-    if [ "${OSTYPE}" != "cygwin" ]; then
-	ulimit -t 1200
-	compile_and_run $1
-    else
-	compile_and_run $1 &
-	WPID=$!
-	trap "kill -9 $WPID" INT
-	(sleep 1200; kill -9 $WPID) > /dev/null 2>&1 &
-	SPID=$!
-	wait $WPID > /dev/null 2>&1
-#    RES=$?
-	kill -9 $SPID > /dev/null 2>&1
-#    return $RES
-    fi
+  if [ "${OSTYPE}" != "cygwin" ]; then
+    ulimit -t 1200
+    compile_and_run $1
+  else
+    compile_and_run $1 &
+    WPID=$!
+    trap "kill -9 $WPID" INT
+    (sleep 1200; kill -9 $WPID) > /dev/null 2>&1 &
+    SPID=$!
+    wait $WPID > /dev/null 2>&1
+    # RES=$?
+    kill -9 $SPID > /dev/null 2>&1
+    # return $RES
+  fi
 }
 
 execute_commands_old_structure()
@@ -689,15 +698,17 @@ execute_commands_traits_adaptor()
 test_segment_traits_adaptor()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits_adaptor $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits_adaptor
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed test_traits_adaptor segment_traits" >> $ERRORFILE
-    else
-	execute_commands_traits_adaptor segments segments_traits_adaptor \
-	    COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT \
-	    ARE_MERGEABLE MERGE IS_IN_X_RANGE IS_BETWEEN_CW
-    fi
-    clean_tests
+  compile_test_with_traits test_traits_adaptor \
+    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS \
+    segments
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_traits_adaptor segments segments_traits_adaptor \
+      COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT \
+      ARE_MERGEABLE MERGE IS_IN_X_RANGE IS_BETWEEN_CW
+  else
+    echo "   ERROR:    not executed test_traits_adaptor segment_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -705,16 +716,18 @@ test_segment_traits_adaptor()
 #---------------------------------------------------------------------#
 test_linear_traits_adaptor()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits_adaptor $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear_traits_adaptor
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed test_traits_adaptor linear_traits" >> $ERRORFILE
-    else
-	execute_commands_traits_adaptor linear linear_traits_adaptor \
-	    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
-	    COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT
-    fi
-    clean_tests
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits_adaptor \
+    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS \
+    linear
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_traits_adaptor linear linear_traits_adaptor \
+      COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
+      COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT
+  else
+    echo "   ERROR:    not executed test_traits_adaptor linear_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -722,46 +735,49 @@ test_linear_traits_adaptor()
 #---------------------------------------------------------------------#
 test_spherical_arcs_traits_adaptor()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits_adaptor $CGAL_GMPQ_NT $CARTESIAN_KERNEL $GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS spherical_arcs_traits_adaptor
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed test_traits_adaptor spherical_arcs_traits" >> $ERRORFILE
-    else
-	execute_commands_traits_adaptor spherical_arcs spherical_arcs_traits_adaptor \
-	    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
-	    COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT
-    fi
-    clean_tests
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits_adaptor \
+    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS \
+    "spherical arcs"
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_traits_adaptor spherical_arcs spherical_arcs_traits_adaptor \
+      COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
+      COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT
+  else
+    echo "   ERROR:    not executed test_traits_adaptor spherical_arcs_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
-construction with segments
+# compile and run test with traits
+#---------------------------------------------------------------------#
+compile_and_run_with_traits()
+{
+  local name=$1;
+  local nt=$2;
+  local kernel=$3;
+  local traits=$4;
+  local type=$5;
+
+  compile_test_with_traits $name $nt $kernel $traits $type
+  if [ -n "${SUCCESS}" ] ; then
+    if [ -n "$DO_RUN" ] ; then
+      run_test_with_traits $name $type
+    fi
+  else
+    echo "   ERROR:    not executed construction of segments" >> $ERRORFILE
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# construction with segments
 #---------------------------------------------------------------------#
 test_construction_segments()
 {
-  compile_test test_construction $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
-  if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR:    not executed construction of segments" >> $ERRORFILE
-  else
-    OUTPUTFILE=ProgramOutput.test_construction_segments.$PLATFORM
-    rm -f $OUTPUTFILE
-    COMMAND="./test_construction"
-    if [ -f test_construction_segments.cmd ] ; then
-      COMMAND="$COMMAND `cat test_construction_segments.cmd`"
-    fi
-    if [ -f test_construction_segments.cin ] ; then
-      COMMAND="cat test_construction_segments.cin | $COMMAND"
-    fi
-    echo "Executing construction of segments ..."
-    echo
-    ulimit -t 3600 2> /dev/null
-    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-      echo "   successful execution of construction of segments" >> $ERRORFILE
-    else
-      echo "   ERROR:    execution of construction of segments" >> $ERRORFILE
-    fi
-  fi
-  clean_tests
+  compile_and_run_with_traits test_construction \
+    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segments
 }
 
 #---------------------------------------------------------------------#
@@ -769,60 +785,17 @@ test_construction_segments()
 #---------------------------------------------------------------------#
 test_point_location_segments()
 {
-  compile_test test_point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segments
-  if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR:    not executed point location of segments" >> $ERRORFILE
-  else
-    my_run_test test_point_location segments
-    # OUTPUTFILE=ProgramOutput.test_point_location_segments.$PLATFORM
-    # rm -f $OUTPUTFILE
-    # COMMAND="./test_point_location"
-    # if [ -f test_point_location_segments.cmd ] ; then
-    #   COMMAND="$COMMAND `cat test_point_location_segments.cmd`"
-    # fi
-    # if [ -f test_point_location_segments.cin ] ; then
-    #   COMMAND="cat test_point_location_segments.cin | $COMMAND"
-    # fi
-    # echo "Executing point location of segments ..."
-    # echo
-    # ulimit -t 3600 2> /dev/null
-    # if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-    #   echo "   successful execution of point location of segments" >> $ERRORFILE
-    # else
-    #   echo "   ERROR:    execution of point location of segments" >> $ERRORFILE
-    # fi
-  fi
-  clean_tests
+  compile_and_run_with_traits test_point_location \
+    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segments
 }
 
 #---------------------------------------------------------------------#
-# point location with segments
+# point location dynamic with segments
 #---------------------------------------------------------------------#
 test_point_location_dynamic_segments()
 {
-  compile_test test_point_location_dynamic $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
-  if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR:    not executed   point location of segments" >> $ERRORFILE
-  else
-    OUTPUTFILE=ProgramOutput.test_point_location_dynamic_segments.$PLATFORM
-    rm -f $OUTPUTFILE
-    COMMAND="./test_point_location_dynamic"
-    if [ -f test_point_location_dynamic_segments.cmd ] ; then
-      COMMAND="$COMMAND `cat test_point_location_dynamic_segments.cmd`"
-    fi
-    if [ -f test_point_location_dynamic_segments.cin ] ; then
-      COMMAND="cat test_point_location_dynamic_segments.cin | $COMMAND"
-    fi
-    echo "Executing point location of segments ..."
-    echo
-    ulimit -t 3600 2> /dev/null
-    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-      echo "   successful execution   of point location of segments" >> $ERRORFILE
-    else
-      echo "   ERROR:    execution   of point location of segments" >> $ERRORFILE
-    fi
-  fi
-  clean_tests
+  compile_and_run_with_traits test_point_location_dynamic \
+    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segments
 }
 
 #---------------------------------------------------------------------#
@@ -830,29 +803,9 @@ test_point_location_dynamic_segments()
 #---------------------------------------------------------------------#
 test_point_location_circle_segments()
 {
-  compile_test test_point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS segment_traits
-  if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR:    not executed point_location of circle segments" >> $ERRORFILE
-  else
-    OUTPUTFILE=ProgramOutput.test_point_location_circle_segments.$PLATFORM
-    rm -f $OUTPUTFILE
-    COMMAND="./test_point_location"
-    if [ -f test_point_location_circle_segments.cmd ] ; then
-      COMMAND="$COMMAND `cat test_point_location_circle_segments.cmd`"
-    fi
-    if [ -f test_point_location_circle_segments.cin ] ; then
-      COMMAND="cat test_point_location_circle_segments.cin | $COMMAND"
-    fi
-    echo "Executing test_point_location of circle segments ..."
-    echo
-    ulimit -t 3600 2> /dev/null
-    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-      echo "   successful execution of test_point_location of circle segments" >> $ERRORFILE
-    else
-      echo "   ERROR:    execution of test_point_location of circle segments" >> $ERRORFILE
-    fi
-  fi
-  clean_tests
+  compile_and_run_with_traits test_point_location \
+    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS \
+    circle_segments
 }
 
 #---------------------------------------------------------------------#
@@ -860,29 +813,8 @@ test_point_location_circle_segments()
 #---------------------------------------------------------------------#
 test_point_location_linear()
 {
-  compile_test test_point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear_traits
-  if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR:    not executed test_point_location of linear objects" >> $ERRORFILE
-  else
-    OUTPUTFILE=ProgramOutput.test_point_location_linear.$PLATFORM
-    rm -f $OUTPUTFILE
-    COMMAND="./test_point_location"
-    if [ -f test_point_location_linear.cmd ] ; then
-      COMMAND="$COMMAND `cat test_point_location_linear.cmd`"
-    fi
-    if [ -f test_point_location_linear.cin ] ; then
-      COMMAND="cat test_point_location_linear.cin | $COMMAND"
-    fi
-    echo "Executing test_point_location of linear objects ..."
-    echo
-    ulimit -t 3600 2> /dev/null
-    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-      echo "   successful execution of test_point_location of linear objects" >> $ERRORFILE
-    else
-      echo "   ERROR:    execution of test_point_location of linear objects" >> $ERRORFILE
-    fi
-  fi
-  clean_tests
+  compile_and_run_with_traits test_point_location \
+    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear
 }
 
 #---------------------------------------------------------------------#
@@ -890,23 +822,25 @@ test_point_location_linear()
 #---------------------------------------------------------------------#
 test_segment_traits()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits segment_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure segments segment_traits \
-	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR \
-	    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
+  # function   executable  numbe-type  kernel traits
+  compile_test_with_traits test_traits \
+    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS \
+    segments
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure segments segment_traits \
+      VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR \
+      COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
 
-	execute_commands_new_structure segments segment_traits \
-	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT ARE_MERGEABLE
+    execute_commands_new_structure segments segment_traits \
+      IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT ARE_MERGEABLE
 
-	run_trapped_test test_traits \
-	    data/segments/vertex.pt data/segments/xcurves \
-	    data/empty.zero data/segments/vertex segment_traits
-    fi
-    clean_tests
+    run_trapped_test test_traits \
+      data/segments/vertex.pt data/segments/xcurves \
+      data/empty.zero data/segments/vertex segment_traits
+  else
+    echo "   ERROR:    not executed   test_traits segment_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -914,24 +848,25 @@ test_segment_traits()
 #---------------------------------------------------------------------#
 test_non_caching_segment_traits()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_SEGMENT_GEOM_TRAITS non_caching_segment_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits non_caching_segment_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure segments non_caching_segment_traits \
-	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR \
-	    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE ASSERTIONS
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_SEGMENT_GEOM_TRAITS \
+    "non caching segments"
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure segments non_caching_segment_traits \
+      VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR \
+      COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE ASSERTIONS
 
-	execute_commands_new_structure segments segment_traits \
-	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    execute_commands_new_structure segments segment_traits \
+      IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
 
-	run_trapped_test test_traits \
-	    data/segments/vertex.pt data/segments/xcurves \
-	    data/empty.zero data/segments/vertex non_caching_segment_traits
-
-    fi
-    clean_tests
+    run_trapped_test test_traits \
+      data/segments/vertex.pt data/segments/xcurves \
+      data/empty.zero data/segments/vertex non_caching_segment_traits
+  else
+    echo "   ERROR:    not executed   test_traits non_caching_segment_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -939,16 +874,17 @@ test_non_caching_segment_traits()
 #---------------------------------------------------------------------#
 test_polyline_traits()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $POLYLINE_GEOM_TRAITS polyline_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure polylines polyline_traits \
-	    CONSTRUCTOR COMPARE_Y_AT_X_LEFT \
-	    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
-    fi
-    clean_tests
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $POLYLINE_GEOM_TRAITS polylines
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure polylines polyline_traits \
+      CONSTRUCTOR COMPARE_Y_AT_X_LEFT \
+      COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
+  else
+    echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -956,16 +892,18 @@ test_polyline_traits()
 #---------------------------------------------------------------------#
 test_non_caching_polyline_traits()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_POLYLINE_GEOM_TRAITS non_caching_polyline_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits non_caching_polyline_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure polylines non_caching_polyline_traits \
-	    CONSTRUCTOR COMPARE_Y_AT_X_LEFT \
-	    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
-    fi
-    clean_tests
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_POLYLINE_GEOM_TRAITS \
+    "non caching polylines"
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure polylines non_caching_polyline_traits \
+      CONSTRUCTOR COMPARE_Y_AT_X_LEFT \
+      COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
+  else
+    echo "   ERROR:    not executed   test_traits non_caching_polyline_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -973,40 +911,42 @@ test_non_caching_polyline_traits()
 #---------------------------------------------------------------------#
 test_linear_traits()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits linear_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure linear/segments linear_traits.segments \
-	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS \
+    linear
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure linear/segments linear_traits.segments \
+      VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
+      COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE
 	    
-	execute_commands_new_structure linear/segments linear_traits.segments \
-	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    execute_commands_new_structure linear/segments linear_traits.segments \
+      IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
 
-	run_trapped_test test_traits \
-	    data/linear/segments/vertex.pt data/linear/segments/xcurves \
-	    data/empty.zero data/linear/segments/vertex linear_traits.segments
+    run_trapped_test test_traits \
+      data/linear/segments/vertex.pt data/linear/segments/xcurves \
+      data/empty.zero data/linear/segments/vertex linear_traits.segments
 
-	execute_commands_old_structure linear/rays linear_traits.rays \
-	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE
+    execute_commands_old_structure linear/rays linear_traits.rays \
+      VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
+      COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE
 
-	execute_commands_new_structure linear/rays linear_traits.rays \
-	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
+    execute_commands_new_structure linear/rays linear_traits.rays \
+      IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
 
-	run_trapped_test test_traits \
-	    data/linear/rays/vertex.pt data/linear/rays/xcurves \
-	    data/empty.zero data/linear/rays/vertex linear_traits.rays
+    run_trapped_test test_traits \
+      data/linear/rays/vertex.pt data/linear/rays/xcurves \
+      data/empty.zero data/linear/rays/vertex linear_traits.rays
 
-	execute_commands_new_structure linear/lines linear_traits.lines \
-	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT \
-	    SPLIT MERGE \
-	    PARAMETER_SPACE_X PARAMETER_SPACE_Y \
-	    COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY
-    fi
-    clean_tests
+    execute_commands_new_structure linear/lines linear_traits.lines \
+      IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT \
+      SPLIT MERGE \
+      PARAMETER_SPACE_X PARAMETER_SPACE_Y \
+      COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY
+  else
+    echo "   ERROR:    not executed   test_traits linear_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1014,23 +954,24 @@ test_linear_traits()
 #---------------------------------------------------------------------#
 test_conic_traits()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $CORE_CONIC_GEOM_TRAITS conic_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits conic_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure conics conic_traits \
-	    INTERSECT SPLIT MERGE COMPARE_Y_AT_X_LEFT \
-	    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $CORE_EXPR_NT $CARTESIAN_KERNEL $CORE_CONIC_GEOM_TRAITS conics
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure conics conic_traits \
+      INTERSECT SPLIT MERGE COMPARE_Y_AT_X_LEFT \
+      COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
 
-	execute_commands_new_structure conics conic_traits \
-	    INTERSECT SPLIT MERGE
+    execute_commands_new_structure conics conic_traits \
+      INTERSECT SPLIT MERGE
 
-	run_trapped_test test_traits \
-	    data/conics/compare.pt data/empty.zero \
-	    data/empty.zero data/conics/compare conic_traits
-    fi
-    clean_tests
+    run_trapped_test test_traits \
+      data/conics/compare.pt data/empty.zero \
+      data/empty.zero data/conics/compare conic_traits
+  else
+    echo "   ERROR:    not executed   test_traits conic_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1038,27 +979,29 @@ test_conic_traits()
 #---------------------------------------------------------------------#
 test_line_arc_traits()
 {
-# function     executable  number type           kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINE_ARC_GEOM_TRAITS line_arc_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure circular_lines line_arc_traits \
-	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
+  # function     executable  number type           kernel            traits
+  compile_test_with_traits test_traits \
+    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINE_ARC_GEOM_TRAITS \
+    linear
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure circular_lines line_arc_traits \
+      VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
+      ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
 
-	execute_commands_new_structure circular_lines line_arc_traits \
-	    IS_VERTICAL COMPARE_Y_AT_X
+    execute_commands_new_structure circular_lines line_arc_traits \
+      IS_VERTICAL COMPARE_Y_AT_X
 
-	run_trapped_test test_traits \
-	    data/circular_lines/compare.pt data/empty.zero \
-	    data/empty.zero data/circular_lines/compare line_arc_traits
+    run_trapped_test test_traits \
+      data/circular_lines/compare.pt data/empty.zero \
+      data/empty.zero data/circular_lines/compare line_arc_traits
 
-	run_trapped_test test_traits \
-	    data/circular_lines/vertex.pt data/circular_lines/xcurves \
-	    data/empty.zero data/circular_lines/vertex line_arc_traits
-    fi
-    clean_tests
+    run_trapped_test test_traits \
+      data/circular_lines/vertex.pt data/circular_lines/xcurves \
+      data/empty.zero data/circular_lines/vertex line_arc_traits
+  else
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1066,19 +1009,21 @@ test_line_arc_traits()
 #---------------------------------------------------------------------#
 test_circular_arc_traits()
 {
-# function     executable  number type           kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_ARC_GEOM_TRAITS circular_arc_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure circular_arcs circular_arc_traits \
-	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
+  # function     executable  number type           kernel            traits
+  compile_test_with_traits test_traits \
+    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_ARC_GEOM_TRAITS \
+    "circular arcs"
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure circular_arcs circular_arc_traits \
+      VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
+      ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
 
-	execute_commands_new_structure circular_arcs circular_arc_traits \
-	    VERTEX IS_VERTICAL COMPARE_Y_AT_X
-    fi
-    clean_tests
+    execute_commands_new_structure circular_arcs circular_arc_traits \
+      VERTEX IS_VERTICAL COMPARE_Y_AT_X
+  else
+    echo   "   ERROR:    not executed   test_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1086,23 +1031,25 @@ test_circular_arc_traits()
 #---------------------------------------------------------------------#
 test_circular_line_arc_traits()
 {
-# function     executable  number type           kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_LINE_ARC_GEOM_TRAITS circular_line_arc_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits circular_line_arc_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure circular_line_arcs circular_line_arc_traits \
-	    VERTEX IS_VERTICAL CONSTRUCTOR COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
+  # function     executable  number type           kernel            traits
+  compile_test_with_traits test_traits \
+    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_LINE_ARC_GEOM_TRAITS \
+    "linear obects and circular arcs"
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure circular_line_arcs circular_line_arc_traits \
+      VERTEX IS_VERTICAL CONSTRUCTOR COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
+      ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
 
-	execute_commands_new_structure circular_line_arcs circular_line_arc_traits \
-	    IS_VERTICAL COMPARE_Y_AT_X
+    execute_commands_new_structure circular_line_arcs circular_line_arc_traits \
+      IS_VERTICAL COMPARE_Y_AT_X
 
-	run_trapped_test test_traits \
-	    data/circular_line_arcs/vertex.pt data/circular_line_arcs/xcurves \
-	    data/empty.zero data/circular_line_arcs/vertex circular_line_arc_traits
-    fi
-    clean_tests
+    run_trapped_test test_traits \
+      data/circular_line_arcs/vertex.pt data/circular_line_arcs/xcurves \
+      data/empty.zero data/circular_line_arcs/vertex circular_line_arc_traits
+  else
+    echo "   ERROR:    not executed   test_traits circular_line_arc_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1110,35 +1057,37 @@ test_circular_line_arc_traits()
 #---------------------------------------------------------------------#
 test_circle_segments_traits()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS circle_segments_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits circle_segments_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure circle_segments circle_segments_traits \
-	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS \
+    "segments and circular arcs"
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure circle_segments circle_segments_traits \
+      VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
+      COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE
 	    
-	run_trapped_test test_traits \
-	    data/circle_segments/points data/circle_segments/xcurves.8 \
-	    data/empty.zero data/circle_segments/vertex circle_segments_traits
-	run_trapped_test test_traits \
-	    data/empty.zero data/circle_segments/xcurves.8 \
-	    data/empty.zero data/circle_segments/is_vertical circle_segments_traits
-	run_trapped_test test_traits \
-	    data/circle_segments/points data/circle_segments/xcurves.8 \
-	    data/empty.zero data/circle_segments/compare_y_at_x circle_segments_traits
-	run_trapped_test test_traits \
-	    data/circle_segments/points data/circle_segments/xcurves.16 \
-	    data/empty.zero data/circle_segments/compare_y_at_x_left circle_segments_traits
-	run_trapped_test test_traits \
-	    data/circle_segments/points data/circle_segments/xcurves.16 \
-	    data/empty.zero data/circle_segments/compare_y_at_x_right circle_segments_traits
-	run_trapped_test test_traits \
-	    data/empty.zero data/circle_segments/constructor.xcv \
-	    data/empty.zero data/circle_segments/constructor circle_segments_traits
-    fi
-    clean_tests
+    run_trapped_test test_traits \
+      data/circle_segments/points data/circle_segments/xcurves.8 \
+      data/empty.zero data/circle_segments/vertex circle_segments_traits
+    run_trapped_test test_traits \
+      data/empty.zero data/circle_segments/xcurves.8 \
+      data/empty.zero data/circle_segments/is_vertical circle_segments_traits
+    run_trapped_test test_traits \
+      data/circle_segments/points data/circle_segments/xcurves.8 \
+      data/empty.zero data/circle_segments/compare_y_at_x circle_segments_traits
+    run_trapped_test test_traits \
+      data/circle_segments/points data/circle_segments/xcurves.16 \
+      data/empty.zero data/circle_segments/compare_y_at_x_left circle_segments_traits
+    run_trapped_test test_traits \
+      data/circle_segments/points data/circle_segments/xcurves.16 \
+      data/empty.zero data/circle_segments/compare_y_at_x_right circle_segments_traits
+    run_trapped_test test_traits \
+      data/empty.zero data/circle_segments/constructor.xcv \
+      data/empty.zero data/circle_segments/constructor circle_segments_traits
+  else
+    echo "   ERROR:    not executed   test_traits circle_segments_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1146,16 +1095,18 @@ test_circle_segments_traits()
 #---------------------------------------------------------------------#
 test_bezier_traits()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $BEZIER_GEOM_TRAITS bezier_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits bezier_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure bezier bezier_traits \
-	    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT SPLIT \
-	    CONSTRUCTOR ASSERTIONS ARE_MERGEABLE
-    fi
-    clean_tests
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $CORE_EXPR_NT $CARTESIAN_KERNEL $BEZIER_GEOM_TRAITS \
+    "Bezier curves"
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure bezier bezier_traits \
+      COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT SPLIT \
+      CONSTRUCTOR ASSERTIONS ARE_MERGEABLE
+  else
+    echo   "   ERROR:    not executed   test_traits bezier_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1163,26 +1114,28 @@ test_bezier_traits()
 #---------------------------------------------------------------------#
 test_spherical_arc_traits()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits $CGAL_GMPQ_NT $CARTESIAN_KERNEL $GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS spherical_arc_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits spherical_arc_traits" >> $ERRORFILE
-    else
-	execute_commands_old_structure spherical_arcs spherical_arc_traits \
-	    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT \
-	    CONSTRUCTOR \
-	    COMPARE MAKE_X_MONOTONE SPLIT MERGE ASSERTIONS ARE_MERGEABLE
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS \
+    "Geodesic arcs on the sphere"
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_old_structure spherical_arcs spherical_arc_traits \
+      COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT \
+      CONSTRUCTOR \
+      COMPARE MAKE_X_MONOTONE SPLIT MERGE ASSERTIONS ARE_MERGEABLE
 
-	execute_commands_new_structure spherical_arcs spherical_arc_traits \
-	    INTERSECT \
-	    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY \
-	    COMPARE_Y_NEAR_BOUNDARY
+    execute_commands_new_structure spherical_arcs spherical_arc_traits \
+      INTERSECT \
+      COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY \
+      COMPARE_Y_NEAR_BOUNDARY
 
-	run_trapped_test test_traits \
-	    data/spherical_arcs/compare.pt data/spherical_arcs/compare.xcv \
-	    data/empty.zero data/spherical_arcs/compare spherical_arc_traits
-    fi
-    clean_tests
+    run_trapped_test test_traits \
+      data/spherical_arcs/compare.pt data/spherical_arcs/compare.xcv \
+      data/empty.zero data/spherical_arcs/compare spherical_arc_traits
+  else
+    echo "   ERROR:    not executed   test_traits spherical_arc_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1190,21 +1143,22 @@ test_spherical_arc_traits()
 #---------------------------------------------------------------------#
 test_rational_arc_traits()
 {
-# function     executable  number type   kernel            traits
-    compile_test test_traits $CORE_INT_NT $UNIVARIATE_ALGEBRAIC_KERNEL $RATIONAL_ARC_GEOM_TRAITS rational_arc_traits
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits rational_arc_traits" >> $ERRORFILE
-    else
-	run_trapped_test test_traits \
-	    data/compare.pt data/empty.zero \
-	    data/empty.zero data/compare rational_arc_traits
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $CORE_INT_NT $UNIVARIATE_ALGEBRAIC_KERNEL $RATIONAL_ARC_GEOM_TRAITS \
+    "rational arcs"
+  if [ -n "${SUCCESS}" ] ; then
+    run_trapped_test test_traits \
+      data/compare.pt data/empty.zero \
+      data/empty.zero data/compare rational_arc_traits
 
-	execute_commands_new_structure rational_arcs rational_arc_traits \
-	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT SPLIT MERGE \
-	    COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY
-	    
-    fi
-    clean_tests
+    execute_commands_new_structure rational_arcs rational_arc_traits \
+      VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT SPLIT MERGE \
+      COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY
+  else
+    echo "   ERROR:    not executed   test_traits rational_arc_traits" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1212,19 +1166,20 @@ test_rational_arc_traits()
 #---------------------------------------------------------------------#
 test_algebraic_traits_gmp()
 {
-#TODO: Adapt
+  #TODO: Adapt
 
-# function     executable  number type   kernel            traits
-    compile_test test_traits $CGAL_GMPZ_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic_traits_gmp
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits algebraic_traits_gmp" >> $ERRORFILE
-    else
-	execute_commands_new_structure algebraic algebraic_traits_gmp \
-	    COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
-	    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT \
-	    PARAMETER_SPACE_X PARAMETER_SPACE_Y
-    fi
-    clean_tests
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $CGAL_GMPZ_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_new_structure algebraic algebraic_traits_gmp \
+      COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
+      MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT \
+      PARAMETER_SPACE_X PARAMETER_SPACE_Y
+  else
+    echo   "   ERROR:    not executed   test_traits algebraic_traits_gmp" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1232,19 +1187,20 @@ test_algebraic_traits_gmp()
 #---------------------------------------------------------------------#
 test_algebraic_traits_leda()
 {
-#TODO: Adapt
+  #TODO: Adapt
 
-# function     executable  number type   kernel            traits
-    compile_test test_traits $LEDA_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic_traits_leda
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits algebraic_traits_leda" >> $ERRORFILE
-    else
-	execute_commands_new_structure algebraic algebraic_traits_leda \
-	    COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
-	    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT \
-	    PARAMETER_SPACE_X PARAMETER_SPACE_Y
-    fi
-    clean_tests
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $LEDA_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_new_structure algebraic algebraic_traits_leda \
+      COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
+      MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT \
+      PARAMETER_SPACE_X PARAMETER_SPACE_Y
+  else
+    echo "   ERROR:    not executed   test_traits algebraic_traits_leda" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 
@@ -1253,19 +1209,20 @@ test_algebraic_traits_leda()
 #---------------------------------------------------------------------#
 test_algebraic_traits_core()
 {
-#TODO: Adapt
+  #TODO: Adapt
 
-# function     executable  number type   kernel            traits
-    compile_test test_traits $CORE_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic_traits_core
-    if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits algebraic_traits_core" >> $ERRORFILE
-    else
-	execute_commands_new_structure algebraic algebraic_traits_core \
-	    COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
-	    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT \
-	    PARAMETER_SPACE_X PARAMETER_SPACE_Y
-    fi
-    clean_tests
+  # function     executable  number type   kernel            traits
+  compile_test_with_traits test_traits \
+    $CORE_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic
+  if [ -n "${SUCCESS}" ] ; then
+    execute_commands_new_structure algebraic algebraic_traits_core \
+      COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
+      MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT \
+      PARAMETER_SPACE_X PARAMETER_SPACE_Y
+  else
+    echo "   ERROR:    not executed   test_traits algebraic_traits_core" >> $ERRORFILE
+  fi
+  clean_tests
 }
 
 #---------------------------------------------------------------------#
@@ -1296,62 +1253,62 @@ if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
     configure
 fi
 
-# if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-#     compile_and_run construction_test_suite_generator
-# fi
+if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
+    compile_and_run construction_test_suite_generator
+fi
 
-# test_segment_traits
-# test_non_caching_segment_traits
-# test_polyline_traits
-# test_non_caching_polyline_traits
-# test_linear_traits
-# test_conic_traits
+test_segment_traits
+test_non_caching_segment_traits
+test_polyline_traits
+test_non_caching_polyline_traits
+test_linear_traits
+test_conic_traits
 
-# test_line_arc_traits 		# "line arcs" (segments) only
-# test_circular_arc_traits 	# circular arcs only
-# test_circular_line_arc_traits 	# for both
+test_line_arc_traits 		# "line arcs" (segments) only
+test_circular_arc_traits 	# circular arcs only
+test_circular_line_arc_traits 	# for both
 
-# test_circle_segments_traits
-# test_bezier_traits
+test_circle_segments_traits
+test_bezier_traits
 
-# test_spherical_arc_traits
+test_spherical_arc_traits
 
-# test_rational_arc_traits
+test_rational_arc_traits
 
-# test_algebraic_traits_core
-# test_algebraic_traits_gmp
-# test_algebraic_traits_leda
+test_algebraic_traits_core
+test_algebraic_traits_gmp
+test_algebraic_traits_leda
 
-# compile_and_run test_insertion
-# compile_and_run test_unbounded_rational_insertion
-# compile_and_run test_rational_function_traits_2
-# compile_and_run test_removal
-# compile_and_run test_iso_verts
+compile_and_run test_insertion
+compile_and_run test_unbounded_rational_insertion
+compile_and_run test_rational_function_traits_2
+compile_and_run test_removal
+compile_and_run test_iso_verts
 
-# compile_and_run test_vert_ray_shoot_vert_segments
+compile_and_run test_vert_ray_shoot_vert_segments
 
-# test_construction_segments
+test_construction_segments
 
-# compile_and_run test_overlay
+compile_and_run test_overlay
 
 test_point_location_segments
-# test_point_location_circle_segments
-# test_point_location_linear
+test_point_location_circle_segments
+test_point_location_linear
 
-# test_point_location_dynamic_segments
+test_point_location_dynamic_segments
 
-# compile_and_run test_dual
-# compile_and_run test_do_intersect
-# compile_and_run test_zone
+compile_and_run test_dual
+compile_and_run test_do_intersect
+compile_and_run test_zone
 
-# compile_and_run test_observer
-# compile_and_run test_do_equal
+compile_and_run test_observer
+compile_and_run test_do_equal
 
-# test_segment_traits_adaptor
-# test_linear_traits_adaptor
-# test_spherical_arcs_traits_adaptor
+test_segment_traits_adaptor
+test_linear_traits_adaptor
+test_spherical_arcs_traits_adaptor
 
-# compile_and_run test_spherical_removal
+compile_and_run test_spherical_removal
 
 # if any error occured then append the full error description file to error file
 
