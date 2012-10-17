@@ -174,7 +174,7 @@ run_test()
     if eval $COMMAND $2 $3 $4 $5 $6 > $OUTPUTFILE 2>&1 ; then
 	echo "   successful execution of $5 $6" >> $ERRORFILE
     else
-	echo "   ERROR: execution of $5 $6" >> $ERRORFILE
+	echo "   ERROR:    execution of $5 $6" >> $ERRORFILE
 	cat $OUTPUTFILE >> $FULL_ERROR_DESCRIPTION_FILE
     fi
 }
@@ -281,13 +281,13 @@ compile_and_run()
 	    echo "Executing $name ... "
 	    echo " "
 	    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-		echo "   successful execution   of $name" >> $ERRORFILE
+		echo "   successful execution of $name" >> $ERRORFILE
 	    else
-		echo "   ERROR:    execution   of $name" >> $ERRORFILE
+		echo "   ERROR:    execution of $name" >> $ERRORFILE
 		cat $OUTPUTFILE >> $FULL_ERROR_DESCRIPTION_FILE
 	    fi
 	else
-	    echo   "   ERROR:    not executed   $name" >> $ERRORFILE
+	    echo   "   ERROR:    not executed $name" >> $ERRORFILE
 	fi
     fi
 
@@ -668,7 +668,7 @@ test_segment_traits_adaptor()
 # function     executable  number type   kernel            traits
     compile_test test_traits_adaptor $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits_adaptor
     if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits_adaptor segment_traits" >> $ERRORFILE
+	echo   "   ERROR:    not executed test_traits_adaptor segment_traits" >> $ERRORFILE
     else
 	execute_commands_traits_adaptor segments segments_traits_adaptor \
 	    COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT \
@@ -685,7 +685,7 @@ test_linear_traits_adaptor()
 # function     executable  number type   kernel            traits
     compile_test test_traits_adaptor $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear_traits_adaptor
     if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits_adaptor linear_traits" >> $ERRORFILE
+	echo   "   ERROR:    not executed test_traits_adaptor linear_traits" >> $ERRORFILE
     else
 	execute_commands_traits_adaptor linear linear_traits_adaptor \
 	    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
@@ -702,7 +702,7 @@ test_spherical_arcs_traits_adaptor()
 # function     executable  number type   kernel            traits
     compile_test test_traits_adaptor $CGAL_GMPQ_NT $CARTESIAN_KERNEL $GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS spherical_arcs_traits_adaptor
     if [ ${res} -eq 0 ] ; then
-	echo   "   ERROR:    not executed   test_traits_adaptor spherical_arcs_traits" >> $ERRORFILE
+	echo   "   ERROR:    not executed test_traits_adaptor spherical_arcs_traits" >> $ERRORFILE
     else
 	execute_commands_traits_adaptor spherical_arcs spherical_arcs_traits_adaptor \
 	    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
@@ -718,7 +718,7 @@ test_construction_segments()
 {
   compile_test test_construction $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
   if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR: not executed construction of segments" >> $ERRORFILE
+    echo   "   ERROR:    not executed construction of segments" >> $ERRORFILE
   else
     OUTPUTFILE=ProgramOutput.test_construction_segments.$PLATFORM
     rm -f $OUTPUTFILE
@@ -735,7 +735,7 @@ test_construction_segments()
     if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
       echo "   successful execution of construction of segments" >> $ERRORFILE
     else
-      echo "   ERROR: execution of construction of segments" >> $ERRORFILE
+      echo "   ERROR:    execution of construction of segments" >> $ERRORFILE
     fi
   fi
   clean_tests
@@ -746,18 +746,18 @@ test_construction_segments()
 #---------------------------------------------------------------------#
 test_point_location_segments()
 {
-  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
+  compile_test test_point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
   if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR: not executed point location of segments" >> $ERRORFILE
+    echo   "   ERROR:    not executed point location of segments" >> $ERRORFILE
   else
-    OUTPUTFILE=ProgramOutput.point_location_segments.$PLATFORM
+    OUTPUTFILE=ProgramOutput.test_point_location_segments.$PLATFORM
     rm -f $OUTPUTFILE
-    COMMAND="./point_location"
-    if [ -f point_location_segments.cmd ] ; then
-      COMMAND="$COMMAND `cat point_location_segments.cmd`"
+    COMMAND="./test_point_location"
+    if [ -f test_point_location_segments.cmd ] ; then
+      COMMAND="$COMMAND `cat test_point_location_segments.cmd`"
     fi
-    if [ -f point_location_segments.cin ] ; then
-      COMMAND="cat point_location_segments.cin | $COMMAND"
+    if [ -f test_point_location_segments.cin ] ; then
+      COMMAND="cat test_point_location_segments.cin | $COMMAND"
     fi
     echo "Executing point location of segments ..."
     echo
@@ -765,7 +765,7 @@ test_point_location_segments()
     if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
       echo "   successful execution of point location of segments" >> $ERRORFILE
     else
-      echo "   ERROR: execution of point location of segments" >> $ERRORFILE
+      echo "   ERROR:    execution of point location of segments" >> $ERRORFILE
     fi
   fi
   clean_tests
@@ -776,18 +776,18 @@ test_point_location_segments()
 #---------------------------------------------------------------------#
 test_point_location_dynamic_segments()
 {
-  compile_test point_location_dynamic $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
+  compile_test test_point_location_dynamic $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segment_traits
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   point location of segments" >> $ERRORFILE
   else
-    OUTPUTFILE=ProgramOutput.point_location_dynamic_segments.$PLATFORM
+    OUTPUTFILE=ProgramOutput.test_point_location_dynamic_segments.$PLATFORM
     rm -f $OUTPUTFILE
-    COMMAND="./point_location_dynamic"
-    if [ -f point_location_dynamic_segments.cmd ] ; then
-      COMMAND="$COMMAND `cat point_location_dynamic_segments.cmd`"
+    COMMAND="./test_point_location_dynamic"
+    if [ -f test_point_location_dynamic_segments.cmd ] ; then
+      COMMAND="$COMMAND `cat test_point_location_dynamic_segments.cmd`"
     fi
-    if [ -f point_location_dynamic_segments.cin ] ; then
-      COMMAND="cat point_location_dynamic_segments.cin | $COMMAND"
+    if [ -f test_point_location_dynamic_segments.cin ] ; then
+      COMMAND="cat test_point_location_dynamic_segments.cin | $COMMAND"
     fi
     echo "Executing point location of segments ..."
     echo
@@ -806,26 +806,26 @@ test_point_location_dynamic_segments()
 #---------------------------------------------------------------------#
 test_point_location_circle_segments()
 {
-  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS segment_traits
+  compile_test test_point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS segment_traits
   if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR:    not executed   point_location of circle segments" >> $ERRORFILE
+    echo   "   ERROR:    not executed point_location of circle segments" >> $ERRORFILE
   else
-    OUTPUTFILE=ProgramOutput.point_location_circle_segments.$PLATFORM
+    OUTPUTFILE=ProgramOutput.test_point_location_circle_segments.$PLATFORM
     rm -f $OUTPUTFILE
-    COMMAND="./point_location"
-    if [ -f point_location_circle_segments.cmd ] ; then
-      COMMAND="$COMMAND `cat point_location_circle_segments.cmd`"
+    COMMAND="./test_point_location"
+    if [ -f test_point_location_circle_segments.cmd ] ; then
+      COMMAND="$COMMAND `cat test_point_location_circle_segments.cmd`"
     fi
-    if [ -f point_location_circle_segments.cin ] ; then
-      COMMAND="cat point_location_circle_segments.cin | $COMMAND"
+    if [ -f test_point_location_circle_segments.cin ] ; then
+      COMMAND="cat test_point_location_circle_segments.cin | $COMMAND"
     fi
-    echo "Executing point_location of circle segments ..."
+    echo "Executing test_point_location of circle segments ..."
     echo
     ulimit -t 3600 2> /dev/null
     if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-      echo "   successful execution   of point_location of circle segments" >> $ERRORFILE
+      echo "   successful execution of test_point_location of circle segments" >> $ERRORFILE
     else
-      echo "   ERROR:    execution   of point_location of circle segments" >> $ERRORFILE
+      echo "   ERROR:    execution of test_point_location of circle segments" >> $ERRORFILE
     fi
   fi
   clean_tests
@@ -836,26 +836,26 @@ test_point_location_circle_segments()
 #---------------------------------------------------------------------#
 test_point_location_linear()
 {
-  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear_traits
+  compile_test test_point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear_traits
   if [ ${res} -eq 0 ] ; then
-    echo   "   ERROR:    not executed   point_location of linear objects" >> $ERRORFILE
+    echo   "   ERROR:    not executed test_point_location of linear objects" >> $ERRORFILE
   else
-    OUTPUTFILE=ProgramOutput.point_location_linear.$PLATFORM
+    OUTPUTFILE=ProgramOutput.test_point_location_linear.$PLATFORM
     rm -f $OUTPUTFILE
-    COMMAND="./point_location"
-    if [ -f point_location_linear.cmd ] ; then
-      COMMAND="$COMMAND `cat point_location_linear.cmd`"
+    COMMAND="./test_point_location"
+    if [ -f test_point_location_linear.cmd ] ; then
+      COMMAND="$COMMAND `cat test_point_location_linear.cmd`"
     fi
-    if [ -f point_location_linear.cin ] ; then
-      COMMAND="cat point_location_linear.cin | $COMMAND"
+    if [ -f test_point_location_linear.cin ] ; then
+      COMMAND="cat test_point_location_linear.cin | $COMMAND"
     fi
-    echo "Executing point_location of linear objects ..."
+    echo "Executing test_point_location of linear objects ..."
     echo
     ulimit -t 3600 2> /dev/null
     if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-      echo "   successful execution   of point_location of linear objects" >> $ERRORFILE
+      echo "   successful execution of test_point_location of linear objects" >> $ERRORFILE
     else
-      echo "   ERROR:    execution   of point_location of linear objects" >> $ERRORFILE
+      echo "   ERROR:    execution of test_point_location of linear objects" >> $ERRORFILE
     fi
   fi
   clean_tests
