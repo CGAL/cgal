@@ -230,6 +230,7 @@ IO_test<T_Geom_traits>::read_points(const char* filename, Points_vector& points)
     points.push_back(p);
     line_stream.clear();
   }
+  p_stream.close();
   return true;
 }
 
@@ -255,6 +256,7 @@ bool IO_test<T_Geom_traits>::read_xcurves(const char* filename,
     xcurves.push_back(xcv);
     line_stream.clear();
   }
+  p_stream.close();
   return true;
 }
 
@@ -280,6 +282,7 @@ IO_test<T_Geom_traits>::read_curves(const char* filename, Curves_vector& curves)
     curves.push_back(cv);
     line_stream.clear();
   }
+  p_stream.close();
   return true;
 }
 

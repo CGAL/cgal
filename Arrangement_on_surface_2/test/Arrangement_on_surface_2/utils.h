@@ -2,7 +2,9 @@
 #include <iostream>
 #include <CGAL/enum.h>
 
-template <class Traits>
+// TODO: Add constructors that acceps a pointer to the traits object
+
+template <typename Traits>
 class Point_compare
 {
   typedef typename Traits::Point_2      Point_2;
@@ -12,15 +14,12 @@ public:
   {
     Traits tr;
     CGAL::Comparison_result res = tr.compare_xy_2_object()(p1, p2);
-    if(res == CGAL::SMALLER)
-      return true;
-    
-    return false;
+    return (res == CGAL::SMALLER) ? true : false;
   }
 };
 
 
-template <class Traits>
+template <typename Traits>
 class Curve_compare
 {
   typedef typename Traits::X_monotone_curve_2    X_monotone_curve_2;
@@ -43,9 +42,6 @@ public:
 
     CGAL_assertion(res == CGAL::EQUAL);
     res = tr.compare_y_at_x_right_2_object()(c1, c2, c1_left);
-    if(res == CGAL::SMALLER)
-      return true;
-
-    return false;
+    return (res == CGAL::SMALLER) ? true : false;
   }
 };

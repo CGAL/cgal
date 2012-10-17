@@ -9,13 +9,13 @@ public:
   typedef typename Geom_traits::X_monotone_curve_2      X_monotone_curve_2;
   typedef typename Geom_traits::Curve_2                 Curve_2;
 
-  template <class stream>
+  template <typename stream>
   bool read_point(stream& is, Point_2&);
 
-  template <class stream>
+  template <typename stream>
   bool read_xcurve(stream& is, X_monotone_curve_2&);
 
-  template <class stream>
+  template <typename stream>
   bool read_curve(stream& is, Curve_2&);
 
 protected:

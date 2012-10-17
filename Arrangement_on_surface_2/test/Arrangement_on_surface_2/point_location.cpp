@@ -130,11 +130,12 @@ int main(int argc, char* argv[])
 #endif
 
   if (argc < 4) {
-    std::cout << "Usage: " << argv[0]
+    std::cerr << "Usage: " << argv[0]
               << " point-file xcurve-file curve-file query-file" << std::endl;
-    std::cout << "point-file  - the input point file" << std::endl;
-    std::cout << "xcurve-file - the input x-monotone curves file" << std::endl;
-    std::cout << "curve-file  - the input curve file" << std::endl;
+    std::cerr << "point-file  - the input point file" << std::endl;
+    std::cerr << "xcurve-file - the input x-monotone curves file" << std::endl;
+    std::cerr << "curve-file  - the input curve file" << std::endl;
+    std::cerr << "query-file  - the input query point file" << std::endl;
     return -1;
   }
 
