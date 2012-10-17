@@ -155,3 +155,40 @@ div.groupText {
 {
     font: 200% Tahoma, Arial,sans-serif;
 }
+
+/* fix the back button by hacking the layout */
+#top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+#doc-content {
+    padding-top: 91px;
+    overflow: visible;
+}
+
+#side-nav {
+    position: fixed;
+}
+
+#titlearea {
+    background: white;
+}
+
+/* this adjusts the anchors inside the doc-content div by the height of */
+/* the header. this is necessary because anchors are not adjusted by the */
+/* height of the position: fixed top div. */
+#doc-content a.anchor {
+    padding-top: 91px; 
+    margin-top: -91px;
+}

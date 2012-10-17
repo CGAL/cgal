@@ -5,6 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
 <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
 <link href="$relpath$../../CGAL.CGAL/html/stylesheet.css" rel="stylesheet" type="text/css" />
 <link href="$relpath$../../CGAL.CGAL/html/cgal_stylesheet.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="$relpath$../../CGAL.CGAL/html/jquery.js"></script>
@@ -17,7 +18,11 @@
 <!-- </script> -->
 <script src="$relpath$../../MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 <script src="$relpath$../../CGAL.CGAL/html/hacks.js" type="text/javascript"></script>
-$treeview
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript">
+  $(document).ready(initResizable);
+</script>
 $search
 </head>
 <body>
