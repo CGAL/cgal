@@ -123,6 +123,8 @@ protected slots:
   void on_actionSetPolyhedronA_triggered();
   void on_actionSetPolyhedronB_triggered();
 
+  //Preferences edition
+  void on_actionPreferences_triggered();
   // save as...
   void on_actionSaveAs_triggered(); 
   void save(QString filename, Scene_item* item);

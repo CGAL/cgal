@@ -24,6 +24,8 @@
 #include <QInputDialog>
 #include <QTreeView>
 #include <QMap>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 #include <stdexcept>
 
@@ -38,6 +40,7 @@
 #include "Polyhedron_demo_io_plugin_interface.h"
 
 #include "ui_MainWindow.h"
+#include "ui_Preferences.h"
 
 #include "Show_point_dialog.h"
 
@@ -1195,6 +1198,58 @@ void MainWindow::on_actionSetPolyhedronB_triggered()
 {
   int i = getSelectedSceneItemIndex();
   scene->setItemB(i);
+}
+void MainWindow::on_actionPreferences_triggered()
+{
+  QDialog dialog(this);
+  Ui::PreferencesDialog prefdiag;
+  prefdiag.setupUi(&dialog);
+  
+  
+  QStandardItemModel* iStandardModel = new QStandardItemModel(this);
+  //add blacklisted plugins
+  Q_FOREACH(QString name, plugin_blacklist)
+  {
+    QStandardItem* item =  new QStandardItem(name);
+    item->setCheckable(true);
+    item->setCheckState(Qt::Checked);
+    iStandardModel->appendRow(item);
+  }
+  
+  //add operations plugins
+  Q_FOREACH(PluginNamePair pair,plugins){
+    QStandardItem* item =  new QStandardItem(pair.second);
+    item->setCheckable(true);
+    iStandardModel->appendRow(item);
+  }
+  
+  //add io-plugins
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins)
+  {
+    QStandardItem* item =  new QStandardItem(plugin->name());
+    item->setCheckable(true);
+    if ( plugin_blacklist.contains(plugin->name()) ) item->setCheckState(Qt::Checked);
+    iStandardModel->appendRow(item);
+  }
+
+  //Setting the model
+  prefdiag.listView->setModel(iStandardModel);
+  
+  dialog.exec();  
+  
+  if ( dialog.result() )
+  {
+    plugin_blacklist.clear();
+    for (int k=0,k_end=iStandardModel->rowCount();k<k_end;++k)
+    {
+      QStandardItem* item=iStandardModel->item(k);
+      if (item->checkState()==Qt::Checked)
+        plugin_blacklist.insert(item->text());
+    }
+  }
+  
+  for (int k=0,k_end=iStandardModel->rowCount();k<k_end;++k) delete iStandardModel->item(k);
+  delete iStandardModel;
 }
 
 void MainWindow::on_actionSetBackgroundColor_triggered()
