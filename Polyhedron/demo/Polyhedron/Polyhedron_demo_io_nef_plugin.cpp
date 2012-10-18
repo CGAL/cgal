@@ -12,7 +12,7 @@ class Polyhedron_demo_io_nef_plugin :
 
 public:
   QString nameFilters() const;
-  QString name() const { return "Polyhedron_demo_io_nef_plugin"; }
+  QString name() const { return "io_nef_plugin"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);
 
