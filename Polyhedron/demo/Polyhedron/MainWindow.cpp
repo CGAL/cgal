@@ -978,10 +978,8 @@ void MainWindow::readSettings()
     // enable anti-aliasing 
     ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
     // read plugin blacklist
-    QString blacklist=settings.value("plugin_blacklist",QString()).toString();
-    Q_FOREACH(QString name, blacklist.split("|") ) {
-      if ( !name.isEmpty() ) plugin_blacklist.insert(name);
-    }
+    QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
+    Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
   }
   this->readState("MainWindow", Size|State);
 }
@@ -994,15 +992,9 @@ void MainWindow::writeSettings()
     settings.setValue("antialiasing", 
                       ui->actionAntiAliasing->isChecked());
     //setting plugin blacklist
-    QString bl_value;
-    Q_FOREACH(QString name, plugin_blacklist)
-    {
-      //even after the last name we append a | but it does not matter as the reading
-      //takes this into account
-      bl_value.append(name).append('|');
-    }
-    if ( !bl_value.isEmpty() )
-      settings.setValue("plugin_blacklist",bl_value);
+    QStringList blacklist;
+    Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
+    if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
   }
   std::cerr << "Write setting... done.\n";
 }
