@@ -995,6 +995,7 @@ void MainWindow::writeSettings()
     QStringList blacklist;
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
     if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
+    else settings.remove("plugin_blacklist");
   }
   std::cerr << "Write setting... done.\n";
 }
