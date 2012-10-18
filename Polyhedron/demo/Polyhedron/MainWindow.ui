@@ -636,7 +636,7 @@
   </action>
   <action name="actionPreferences">
    <property name="text">
-    <string>Preferences</string>
+    <string>&amp;Preferences</string>
    </property>
   </action>
  </widget>
