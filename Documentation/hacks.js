@@ -1,6 +1,6 @@
 function generate_autotoc() {
     var toc = $("#autotoc").append('<ul></ul>');
-    if(toc.length > 1) { // an autotoc has been requested
+    if(toc.length > 0) { // an autotoc has been requested
         toc = toc.find('ul');
         $("h1, h2, h3").each(function(i) {
             var current = $(this);

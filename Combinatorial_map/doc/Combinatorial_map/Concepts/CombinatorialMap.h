@@ -96,7 +96,7 @@ struct Attribute_type
  \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> and <I>i</I>-attributes are non void. 
  */ 
 template<unsigned int i> 
-typedef Hidden_type Attribute_type<i>::type;
+typedef  Attribute_type<i>::type;
 
 template<unsigned int i> 
 struct Attribute_handle {

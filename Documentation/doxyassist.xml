@@ -1046,6 +1046,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Circulator/doc/Circulator/fig</string>
           <string name="EXAMPLE_PATH">../Circulator/examples</string>
           <list name="TAGFILES" append="false">
+            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
+            <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
           </list>
         </doxygen>
       </project>

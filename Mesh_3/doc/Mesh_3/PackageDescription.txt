@@ -36,7 +36,7 @@
 \PkgAuthors{Pierre Alliez, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
 \PkgDesc{This package is devoted to the generation of  isotropic simplicial meshes discretizing 3D domains. The domain to be meshed is a region of 3D space that has to be bounded. The region may be connected or  composed of multiple components and/or subdivided in several subdomains.  The domain is input as an oracle able to answer  queries, of a few different types, on the domain. Boundary and subdivision surfaces  are either smooth or piecewise smooth surfaces, formed with planar or curved surface patches. Surfaces may exhibit 1-dimensional features (e.g. crease edges) and 0-dimensional features (e.g. singular points as corners  tips, cusps or darts), that have to be fairly approximated in the mesh. }
 \PkgSince{3.5}
-\PkgDependsOn{\ref PkgTriangulation3}
+\PkgDependsOn{\ref PkgTriangulation3Summary}
 \PkgBib{cgal:rty-m3}
 \PkgLicense{\ref licensesGPL  "GPL"}
 \PkgDemo{3D Mesh Generation,mesh_3.zip}

@@ -9,8 +9,8 @@
 \PkgAuthor{Fernando Cacciola}
 \PkgDesc{This package provides an algorithm to simplify a triangulated surface mesh  by edge collapsing.  It is an implementation of the Turk/Lindstrom <I>memoryless</I>  mesh simplification algorithm.}
 \PkgSince{3.3}
-\PkgDependsOn{\ref PkgBGL}
-\PkgDependsOn{\ref PkgPolyhedron}
+\PkgDependsOn{\ref PkgBGLSummary}
+\PkgDependsOn{\ref PkgPolyhedronSummary}
 \PkgBib{cgal:c-tsms-12}
 \PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{Operations on Polyhedra,polyhedron_3.zip}

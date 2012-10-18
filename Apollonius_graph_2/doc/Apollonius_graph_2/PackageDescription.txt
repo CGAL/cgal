@@ -9,7 +9,7 @@
 \PkgAuthors{Menelaos Karavelas and Mariette Yvinec}
 \PkgDesc{Algorithms for computing the Apollonius graph in two dimensions. The Apollonius graph is the dual of the Apollonius diagram, also known as the <I>additively weighted Voronoi diagram</I>. The latter can be thought of as the Voronoi diagram of a set of disks under the Euclidean metric, and it is a generalization of the standard Voronoi diagram for points. The algorithms provided are dynamic.}
 \PkgSince{3.0}
-\PkgDependsOn{\ref PkgTDS2}
+\PkgDependsOn{\ref PkgTDS2Summary}
 \PkgBib{cgal:ky-ag2}
 \PkgLicense{\ref licensesGPL  "GPL"}
 \PkgDemo{2D Apollonius Graph,apollonius_graph_2.zip}
@@ -23,15 +23,15 @@ point of the plane from a disk is defined as the Euclidean
 distance of the point and the center of the circle, minus the radius
 of the disk.
 
-\cgal provides the class `CGAL::Apollonius_graph_2<Gt,Agds>` for
+\cgal provides the class `CGAL::Apollonius_graph_2<Gt,Agds>` for
 computing the 2D Apollonius graph. The two template parameters must be
-models of the `ApolloniusGraphTraits_2` and
-`ApolloniusGraphDataStructure_2` concepts. The first concept is
+models of the `ApolloniusGraphTraits_2` and
+`ApolloniusGraphDataStructure_2` concepts. The first concept is
 related to the geometric objects and predicates associated with
 Apollonius graphs, whereas the second concept refers to the data
 structure used to represent the Apollonius graph. The classes
-`Apollonius_graph_traits_2<K,Method_tag>` and
-`Triangulation_data_structure_2<Vb,Fb>` are models of the
+`Apollonius_graph_traits_2<K,Method_tag>` and
+`Triangulation_data_structure_2<Vb,Fb>` are models of the
 aforementioned concepts.
 */
 

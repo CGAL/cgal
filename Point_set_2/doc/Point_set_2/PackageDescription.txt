@@ -13,7 +13,7 @@
 \PkgAuthor{Matthias B&auml;sken}
 \PkgDesc{This package supports circular, triangular, and isorectangular range search queries as well as (k) nearest neighbor search queries on 2D point sets. In contrast to the spatial searching package, this package uses a  Delaunay triangulation as underlying data structure.}
 \PkgSince{2.1}
-\PkgDependsOn{\ref PkgTriangulation2}
+\PkgDependsOn{\ref PkgTriangulation2Summary}
 \PkgBib{cgal:b-ss2}
 \PkgLicense{\ref licensesGPL  "GPL"}
 \PkgManuals{Chapter_2D_Range_and_Neighbor_Search,PkgPointSet2}
