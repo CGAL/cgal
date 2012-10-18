@@ -38,7 +38,7 @@ namespace CGAL {
 template< class GT,
           class MD,
           class Cb,
-          typename Concurrency_tag>
+          typename Concurrency_tag = Sequential_tag>
 class Mesh_cell_base_3
 : public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb, Concurrency_tag>
 {
