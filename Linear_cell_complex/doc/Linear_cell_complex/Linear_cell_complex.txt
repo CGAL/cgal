@@ -86,7 +86,7 @@ UML diagram of the main classes of the package. Gray elements come from the \ref
 </b></center>
 
 
-\section  sseclinearcellcomplex Linear Cell Complex
+# Linear Cell Complex # {#sseclinearcellcomplex}
 
 The `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>` class
 is a model of the `CombinatorialMap` concept. It guarantees that
@@ -192,7 +192,7 @@ linear cell complex. As for a combinatorial map, it is also possible
 to use low level operations but additional operations may be needed to
 restore the validity conditions.
 
-\subsection sseclcclinkdarts Sewing and Unsewing 
+## Sewing and Unsewing ## {#sseclcclinkdarts}
 
 As explained in the combinatorial map user manual,
 Section \ref sseclinkdarts, it is possible to glue two <I>i</I>-cells
