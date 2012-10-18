@@ -117,7 +117,7 @@ class Polyhedron_demo_gocad_plugin :
 
 public:
   QString nameFilters() const;
-  QString name() const { return "Polyhedron_demo_gocad_plugin"; }
+  QString name() const { return "gocad_plugin"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);
 
