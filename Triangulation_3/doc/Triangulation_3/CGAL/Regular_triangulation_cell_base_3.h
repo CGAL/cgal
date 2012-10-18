@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3VertexFaceClasses
+\ingroup PkgTriangulation3VertexCellClasses
 
 The class `Regular_triangulation_cell_base_3` is a model of the concept 
 `RegularTriangulationCellBase_3`. It is the default face base class 

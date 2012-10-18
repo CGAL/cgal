@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3Miscellaneous
+\ingroup PkgTriangulation3VertexCellClasses
 
 \anchor refTriangulationSimplex 
 

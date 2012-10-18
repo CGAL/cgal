@@ -10,11 +10,7 @@
 /// \defgroup PkgTriangulation3TraitsClasses Traits Classes
 /// \ingroup PkgTriangulation3
 
-/// \defgroup PkgTriangulation3VertexFaceClasses Vertex and Face Classes
-/// \ingroup PkgTriangulation3
-
-
-/// \defgroup PkgTriangulation3Miscellaneous Miscellaneous
+/// \defgroup PkgTriangulation3VertexCellClasses Vertex and Cell Classes
 /// \ingroup PkgTriangulation3
 
 

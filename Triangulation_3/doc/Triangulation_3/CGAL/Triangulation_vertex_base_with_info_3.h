@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulation3VertexFaceClasses
+\ingroup PkgTriangulation3VertexCellClasses
 
 The class `Triangulation_vertex_base_with_info_3` is a model of the concept 
 `TriangulationVertexBase_3`, the base vertex of a 3D-triangulation. 
