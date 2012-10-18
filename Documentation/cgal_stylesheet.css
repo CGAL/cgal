@@ -173,7 +173,10 @@ div.groupText {
 }
 
 #doc-content {
+    /* this is the header/footer padding */
+    /* so the content does not hide behind them */
     padding-top: 91px;
+    padding-bottom: 32px;
     overflow: visible;
 }
 
@@ -191,4 +194,13 @@ div.groupText {
 #doc-content a.anchor {
     padding-top: 91px; 
     margin-top: -91px;
+}
+
+#doc-content .anchor {
+    padding-top: 91px; 
+    margin-top: -91px;
+}
+
+#MSearchResultsWindow {
+    z-index: 2;
 }

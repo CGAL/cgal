@@ -21,6 +21,13 @@
 <script type="text/javascript" src="resize.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
+  resizeHeight = function() {
+    var headerHeight = header.height();
+    var footerHeight = footer.height();
+    var windowHeight = $(window).height() - headerHeight - footerHeight;
+    navtree.css({height:windowHeight + "px"});
+    sidenav.css({height:windowHeight + "px",top: headerHeight+"px"});
+  }
   $(document).ready(initResizable);
 </script>
 $search

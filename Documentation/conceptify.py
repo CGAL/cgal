@@ -21,7 +21,7 @@ def conceptify_nested_classes(d):
 def conceptify(d):
     # fix the title
     title = d(".title")
-    title.html(re.sub("Class Reference", "Concept Reference", title.html()))
+    title.html(re.sub("Class( Template)? Reference", "Concept Reference", title.html()))
     # remove the include
     include_statement = d(".contents").children().eq(0)
     # should check that this is really the div we think it is
@@ -30,7 +30,7 @@ def conceptify(d):
     conceptify_nested_classes(d)
     
 def write_out_html(d, fn):
-    f = open(fn, 'w')
+    f = open(fn, 'w', encoding='utf-8')
     # this is the normal doxygen doctype, which is thrown away by pyquery
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
     print(d, file=f)
@@ -40,7 +40,10 @@ def write_out_html(d, fn):
 def clean_doc():
     duplicate_files=glob.glob('./output/CGAL.CGAL.*/html/jquery.js')
     duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/html/dynsections.js'))
+    duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/html/resize.js'))
     duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/html/stylesheet.css'))
+    # kill _all_, including the one in CGAL.CGAL tabs.css files
+    duplicate_files.extend(glob.glob('./output/CGAL.CGAL*/html/tabs.css'))
     # left-over by doxygen?
     duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/bib2xhtml.pl'))
     duplicate_files.extend(glob.glob('./output/CGAL.CGAL.*/cgal_manual.bib'))
@@ -54,14 +57,14 @@ def clean_doc():
 # from http://stackoverflow.com/a/1597755/105672
 def re_replace_in_file(pat, s_after, fname):
     # first, see if the pattern is even in the file.
-    with open(fname) as f:
+    with open(fname, encoding='utf-8') as f:
         if not any(re.search(pat, line) for line in f):
             return # pattern does not occur in file so we are done.
 
     # pattern is in the file, so perform replace operation.
-    with open(fname) as f:
+    with open(fname, encoding='utf-8') as f:
         out_fname = fname + ".tmp"
-        out = open(out_fname, "w")
+        out = open(out_fname, "w", encoding='utf-8')
         for line in f:
             out.write(re.sub(pat, s_after, line))
         out.close()
