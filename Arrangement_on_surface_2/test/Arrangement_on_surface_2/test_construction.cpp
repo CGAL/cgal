@@ -65,8 +65,9 @@ int main()
 
 #else
 
-#include <CGAL/Arr_curve_data_traits_2.h>
 #include "test_geom_traits.h"
+
+#include <CGAL/Arr_curve_data_traits_2.h>
 
 // Define Geom_traits to be the curve-data-traits of the base geom traits.
 typedef CGAL::Arr_curve_data_traits_2<Base_geom_traits,
@@ -78,13 +79,12 @@ typedef Geom_traits::Curve_2            Curve_2;
 typedef Geom_traits::X_monotone_curve_2 X_monotone_curve_2;
 
 #include "test_topol_traits.h"
-
 #include "Construction_test.h"
 
 bool test(const char* filename, int verbose_level)
 {
-
-  Construction_test<Geom_traits, Topol_traits> construction_test;
+  Geom_traits geom_traits;
+  Construction_test<Geom_traits, Topol_traits> construction_test(geom_traits);
   construction_test.set_verbose_level(verbose_level);
   construction_test.set_filename(filename);
   if (!construction_test.init()) return false;

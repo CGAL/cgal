@@ -20,7 +20,10 @@ public:
   typedef typename Base::X_monotone_curve_2              X_monotone_curve_2;
   typedef typename Base::Curve_2                         Curve_2;
   
-  typedef typename Base::Arrangement_2                   Arrangement_2;
+  typedef typename Base::Arrangement                     Arrangement;
+
+  /*! Constructor */
+  Point_location_dynamic_test(const Geom_traits& geom_traits);
   
   /*! Destructor */
   virtual ~Point_location_dynamic_test()
@@ -52,6 +55,14 @@ private:
   /*! The input data file of commands*/
   std::string m_filename_commands;
 };
+
+/*!
+ * Constructor. 
+ */
+template <typename T_Geom_traits, typename T_Topol_traits>
+Point_location_dynamic_test<T_Geom_traits, T_Topol_traits>::
+Point_location_dynamic_test(const Geom_traits& geom_traits) :
+  Base(geom_traits) {}
 
 /*! Clear the data structures */
 template <typename T_Geom_traits, typename T_Topol_traits>
@@ -142,7 +153,7 @@ remove(const X_monotone_curve_2& xcv)
   const Geom_traits* traits = this->m_arr->geometry_traits();
   typename Geom_traits::Equal_2 equal = traits->equal_2_object();
 
-  typename Arrangement_2::Edge_iterator eit;
+  typename Arrangement::Edge_iterator eit;
   for (eit = this->m_arr->edges_begin(); eit != this->m_arr->edges_end(); ++eit)
   {
     const X_monotone_curve_2& xcv_arr = eit->curve();

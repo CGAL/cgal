@@ -120,7 +120,7 @@ protected:
   /*! Compare two points */
   bool compare_points(const Point_2& exp_answer, const Point_2& real_answer)
   {
-    typename Traits::Equal_2 equal = this->m_traits.equal_2_object();
+    typename Traits::Equal_2 equal = this->m_geom_traits.equal_2_object();
     if (equal(exp_answer, real_answer)) return true;
 
     std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
@@ -133,7 +133,7 @@ protected:
   bool compare_curves(const X_monotone_curve_2& exp_answer,
                       const X_monotone_curve_2& real_answer)
   {
-    typename Traits::Equal_2 equal = this->m_traits.equal_2_object();
+    typename Traits::Equal_2 equal = this->m_geom_traits.equal_2_object();
     if (equal(exp_answer, real_answer)) return true;
 
     std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
@@ -156,7 +156,7 @@ protected:
 
 public:
   /*! Constructor */
-  Traits_base_test();
+  Traits_base_test(const Traits& traits);
 
   /*! Destructor */
   virtual ~Traits_base_test();
@@ -176,7 +176,8 @@ public:
  * Accepts test data file name.
  */
 template <class T_Traits>
-Traits_base_test<T_Traits>::Traits_base_test() :
+Traits_base_test<T_Traits>::Traits_base_test(const Traits& traits) :
+  Base(traits),
   m_abort_on_error(false)       // run all tests
 {
   m_violation_map[PRECONDITION] = std::string("precondition");

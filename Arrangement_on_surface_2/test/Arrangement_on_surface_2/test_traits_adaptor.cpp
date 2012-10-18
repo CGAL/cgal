@@ -10,7 +10,8 @@
 
 int main (int argc, char * argv[])
 {
-  Traits_adaptor_test<Geom_traits> test;
+  Geom_traits traits;
+  Traits_adaptor_test<Geom_traits> test(traits);
   if (!test.parse(argc, argv)) return -1;
   if (!test.init()) return -1;
   if (!test.perform()) return -1;

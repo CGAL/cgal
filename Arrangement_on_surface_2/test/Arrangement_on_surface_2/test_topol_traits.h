@@ -29,7 +29,7 @@ typedef CGAL::Arr_unb_planar_topology_traits_2<Geom_traits>     Topol_traits;
 #define TOPOL_TRAITS_TYPE "Unbounded Planar"
 
 #elif TEST_TOPOL_TRAITS == SPHERICAL_TOPOL_TRAITS
-typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits>      Topol_traits_2;
+typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits>      Topol_traits;
 #define TOPOL_TRAITS_TYPE "Spherical"
 
 #else

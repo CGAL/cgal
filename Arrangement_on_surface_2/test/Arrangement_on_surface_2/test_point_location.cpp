@@ -69,7 +69,8 @@ int main()
 bool test1(const char* points_filename, const char* xcurves_filename,
            const char* curves_filename, const char* queries_filename)
 {
-  Point_location_test<Geom_traits, Topol_traits> pl_test;
+  Geom_traits geom_traits;
+  Point_location_test<Geom_traits, Topol_traits> pl_test(geom_traits);
   pl_test.set_filenames(points_filename, xcurves_filename,
                         curves_filename, queries_filename);
   
@@ -103,7 +104,8 @@ bool test2(Point_location_test<Geom_traits, Topol_traits>& pl_test)
 bool test3(const char* points_filename, const char* xcurves_filename,
            const char* curves_filename, const char* queries_filename)
 {
-  Point_location_test<Geom_traits, Topol_traits> pl_test;
+  Geom_traits geom_traits;
+  Point_location_test<Geom_traits, Topol_traits> pl_test(geom_traits);
   pl_test.set_filenames(points_filename, xcurves_filename,
                         curves_filename, queries_filename);
   
@@ -160,7 +162,8 @@ int main(int argc, char* argv[])
 
 #if TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS  
   // Test 2
-  Point_location_test<Geom_traits, Topol_traits> pl_test;
+  Geom_traits geom_traits;
+  Point_location_test<Geom_traits, Topol_traits> pl_test(geom_traits);
   if (!pl_test.allocate_arrangement()) {
     std::cout << "ERROR : allocating arrangement!" << std::endl;
     return -1;

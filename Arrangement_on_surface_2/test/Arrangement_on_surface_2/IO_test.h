@@ -23,7 +23,7 @@ public:
   typedef typename std::vector<Curve_2>                 Curves_vector;
 
   /*! Constructor */
-  IO_test();
+  IO_test(const Geom_traits& traits);
 
   /*! Destructor */
   virtual ~IO_test();
@@ -115,7 +115,10 @@ protected:
  * Accepts test data file name.
  */
 template <typename T_Geom_traits>
-IO_test<T_Geom_traits>::IO_test() : m_eol_printed(true) {}
+IO_test<T_Geom_traits>::IO_test(const T_Geom_traits& traits) :
+  Base(traits),
+  m_eol_printed(true)
+{}
 
 /*!
  * Destructor. 

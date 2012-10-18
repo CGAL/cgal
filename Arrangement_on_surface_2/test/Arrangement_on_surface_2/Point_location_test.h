@@ -21,12 +21,11 @@
 /*! Point location test */
 template <typename T_Geom_traits, typename T_Topol_traits>
 class Point_location_test : public IO_test<T_Geom_traits> {
-private:
+public:
   typedef T_Geom_traits                                 Geom_traits;
   typedef T_Topol_traits                                Topol_traits;
   typedef IO_test<Geom_traits>                          Base;
 
-public:
   typedef typename Base::Point_2                        Point_2;
   typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
   typedef typename Base::Curve_2                        Curve_2;
@@ -36,57 +35,70 @@ public:
   typedef typename Base::Curves_vector                  Curves_vector;
   
   typedef CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>
-                                                        Arrangement_2;
+                                                        Arrangement;
 
-  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
-  typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
+  typedef typename Arrangement::Halfedge_handle         Halfedge_handle;
+  typedef typename Arrangement::Edge_const_iterator     Edge_const_iterator;
+  typedef typename Arrangement::Vertex_const_iterator   Vertex_const_iterator;
 
   typedef typename Points_vector::iterator              Point_iterator;
   typedef std::vector<CGAL::Object>                     Objects_vector;
   typedef Objects_vector::iterator                      Object_iterator;
   
 protected:
-  typedef typename CGAL::Arr_naive_point_location<Arrangement_2>     
+  typedef typename CGAL::Arr_naive_point_location<Arrangement>     
                                                     Naive_point_location;
-  typedef typename CGAL::Arr_simple_point_location<Arrangement_2>     
+  typedef typename CGAL::Arr_simple_point_location<Arrangement>     
                                                     Simple_point_location;
-  typedef typename CGAL::Arr_walk_along_line_point_location<Arrangement_2> 
+  typedef typename CGAL::Arr_walk_along_line_point_location<Arrangement> 
                                                     Walk_point_location;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2> 
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement> 
                                                     Lm_point_location;
-  typedef typename CGAL::Arr_random_landmarks_generator<Arrangement_2>
+  typedef typename CGAL::Arr_random_landmarks_generator<Arrangement>
                                                     Random_lm_generator;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2,
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
                                                       Random_lm_generator> 
                                                     Lm_random_point_location;
-  typedef typename CGAL::Arr_grid_landmarks_generator<Arrangement_2>
+  typedef typename CGAL::Arr_grid_landmarks_generator<Arrangement>
                                                     Grid_lm_generator;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2,
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
                                                       Grid_lm_generator> 
                                                     Lm_grid_point_location;
-  typedef typename CGAL::Arr_halton_landmarks_generator<Arrangement_2>
+  typedef typename CGAL::Arr_halton_landmarks_generator<Arrangement>
                                                     Halton_lm_generator;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2,
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
                                                       Halton_lm_generator> 
                                                     Lm_halton_point_location;
-  typedef typename CGAL::Arr_middle_edges_landmarks_generator<Arrangement_2>
+  typedef typename CGAL::Arr_middle_edges_landmarks_generator<Arrangement>
                                                     Middle_edges_generator;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2,
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
                                                       Middle_edges_generator> 
     Lm_middle_edges_point_location;
-  typedef typename CGAL::Arr_landmarks_specified_points_generator<Arrangement_2>
+  typedef typename CGAL::Arr_landmarks_specified_points_generator<Arrangement>
     Specified_points_generator;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2,
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
                                                       Specified_points_generator> 
     Lm_specified_points_point_location;
-  typedef typename CGAL::Arr_trapezoid_ric_point_location<Arrangement_2> 
+  typedef typename CGAL::Arr_trapezoid_ric_point_location<Arrangement> 
     Trapezoid_ric_point_location;
 
-  //   typedef CGAL::Arr_triangulation_point_location<Arrangement_2> 
+  //   typedef CGAL::Arr_triangulation_point_location<Arrangement> 
   //     Triangulation_point_location;
 
   // ===> Add new point location type here <===
+
+protected:
+  /*! The geometry traits */
+  const Geom_traits& m_geom_traits;
+  
+  /*! The arrangement */
+  Arrangement* m_arr;  
+
+  /*! The input data file of the query points*/
+  std::string m_filename_queries;
+
+  /*! The query points */
+  Points_vector m_query_points;
 
   Naive_point_location* m_naive_pl;                              // 0
   Simple_point_location* m_simple_pl;                            // 1
@@ -113,7 +125,7 @@ protected:
   
 public:
   /*! Constructor */
-  Point_location_test();
+  Point_location_test(const Geom_traits& geom_traits);
 
   /*! Destructor */
   virtual ~Point_location_test()
@@ -169,24 +181,17 @@ public:
     timer.stop();
     std::cout << type << " location took " << timer.time() << std::endl;
   }
-
-  /*! The arrangement */
-  Arrangement_2* m_arr;  
-
-private:
-  /*! The input data file of the query points*/
-  std::string m_filename_queries;
-
-  /*! The query points */
-  Points_vector m_query_points;
 };
 
 /*!
  * Constructor. 
- * Accepts test data file name.
  */
 template <typename T_Geom_traits, typename T_Topol_traits>
-Point_location_test<T_Geom_traits, T_Topol_traits>::Point_location_test() :
+Point_location_test<T_Geom_traits, T_Topol_traits>::
+Point_location_test(const Geom_traits& geom_traits) :
+  Base(geom_traits),
+  m_geom_traits(geom_traits),
+  m_arr(NULL),
   m_naive_pl(NULL), 
   m_simple_pl(NULL), 
   m_walk_pl(NULL), 
@@ -203,8 +208,7 @@ Point_location_test<T_Geom_traits, T_Topol_traits>::Point_location_test() :
   m_grid_g(NULL), 
   m_halton_g(NULL), 
   m_middle_edges_g(NULL), 
-  m_specified_points_g(NULL),
-  m_arr(NULL)
+  m_specified_points_g(NULL)
 {}
 
 /*! Set the file names */
@@ -326,7 +330,7 @@ deallocate_pl_strategies()
 template <typename T_Geom_traits, typename T_Topol_traits>
 bool Point_location_test<T_Geom_traits, T_Topol_traits>::allocate_arrangement()
 {
-  if (!(m_arr = new Arrangement_2())) return false;
+  if (!(m_arr = new Arrangement(&m_geom_traits))) return false;
   return true;
 }
 
@@ -559,9 +563,9 @@ template <typename T_Geom_traits, typename T_Topol_traits>
 bool Point_location_test<T_Geom_traits, T_Topol_traits>::perform()
 {
   Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES];
-  typename Arrangement_2::Vertex_const_handle    vh_ref, vh_curr;
-  typename Arrangement_2::Halfedge_const_handle  hh_ref, hh_curr;
-  typename Arrangement_2::Face_const_handle      fh_ref, fh_curr;
+  typename Arrangement::Vertex_const_handle    vh_ref, vh_curr;
+  typename Arrangement::Halfedge_const_handle  hh_ref, hh_curr;
+  typename Arrangement::Face_const_handle      fh_ref, fh_curr;
   
   // Locate the points in the list using all point location strategies.
 

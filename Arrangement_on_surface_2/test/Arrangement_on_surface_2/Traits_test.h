@@ -237,7 +237,7 @@ private:
 
 public:
   /*! Constructor */
-  Traits_test();
+  Traits_test(const T_Traits& traits);
 
   /*! Destructor */
   ~Traits_test();
@@ -248,7 +248,7 @@ public:
  * Accepts test data file name.
  */
 template <typename T_Traits>
-Traits_test<T_Traits>::Traits_test()
+Traits_test<T_Traits>::Traits_test(const T_Traits& traits) : Base(traits)
 {
   typedef T_Traits Traits;
   
@@ -332,8 +332,8 @@ bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream& str_stream)
             << this->m_points[id2] << " ) ? " << exp_answer << " ";
 
   unsigned int real_answer =
-    this->m_traits.compare_x_2_object()(this->m_points[id1],
-                                        this->m_points[id2]);
+    this->m_geom_traits.compare_x_2_object()(this->m_points[id1],
+                                             this->m_points[id2]);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -349,8 +349,8 @@ bool Traits_test<T_Traits>::compare_xy_wrapper(std::istringstream& str_stream)
             << this->m_points[id2] << " ) ? " << exp_answer << " ";
 
   unsigned int real_answer =
-    this->m_traits.compare_xy_2_object()(this->m_points[id1],
-                                         this->m_points[id2]);
+    this->m_geom_traits.compare_xy_2_object()(this->m_points[id1],
+                                              this->m_points[id2]);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -367,7 +367,7 @@ bool Traits_test<T_Traits>::min_vertex_wrapper(std::istringstream& str_stream)
             << exp_answer << " ";
 
   Point_2 real_answer =
-    this->m_traits.construct_min_vertex_2_object()(this->m_xcurves[id1]);
+    this->m_geom_traits.construct_min_vertex_2_object()(this->m_xcurves[id1]);
   return this->compare_points(exp_answer, real_answer);
 }
 
@@ -384,7 +384,7 @@ bool Traits_test<T_Traits>::max_vertex_wrapper(std::istringstream& str_stream)
             << exp_answer << " ";
 
   Point_2 real_answer =
-    this->m_traits.construct_max_vertex_2_object()(this->m_xcurves[id1]);
+    this->m_geom_traits.construct_max_vertex_2_object()(this->m_xcurves[id1]);
   return this->compare_points(exp_answer, real_answer);
 }
 
@@ -398,7 +398,8 @@ Traits_test<T_Traits>::is_vertical_wrapper(std::istringstream& str_stream)
   std::cout << "Test: is_vertical( " << this->m_xcurves[id] << " ) ? "
             << exp_answer << " ";
   
-  bool real_answer = this->m_traits.is_vertical_2_object()(this->m_xcurves[id]);
+  bool real_answer =
+    this->m_geom_traits.is_vertical_2_object()(this->m_xcurves[id]);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -418,7 +419,7 @@ Traits_test<T_Traits>::compare_y_at_x_wrapper(std::istringstream& str_stream)
             << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
 
   unsigned int real_answer =
-    this->m_traits.compare_y_at_x_2_object()(this->m_points[id1],
+    this->m_geom_traits.compare_y_at_x_2_object()(this->m_points[id1],
                                              this->m_xcurves[id2]);
   return this->compare(exp_answer, real_answer);
 }
@@ -460,7 +461,7 @@ compare_y_at_x_left_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true)
             << this->m_xcurves[id2] << ", " << this->m_points[id3] << " ) ? "
             << exp_answer << " ";
 
-  unsigned int real_answer = this->m_traits.compare_y_at_x_left_2_object()
+  unsigned int real_answer = this->m_geom_traits.compare_y_at_x_left_2_object()
     (this->m_xcurves[id1], this->m_xcurves[id2], this->m_points[id3]);
   return this->compare(exp_answer, real_answer);
 }
@@ -485,7 +486,7 @@ compare_y_at_x_right_wrapper(std::istringstream& str_stream)
             << exp_answer << " ";
 
   unsigned int real_answer =
-    this->m_traits.compare_y_at_x_right_2_object()
+    this->m_geom_traits.compare_y_at_x_right_2_object()
     (this->m_xcurves[id1], this->m_xcurves[id2], this->m_points[id3]);
   return this->compare(exp_answer, real_answer);
 }
@@ -503,7 +504,8 @@ Traits_test<T_Traits>::equal_points_wrapper(std::istringstream& str_stream)
   std::cout << "Test: equal( " << this->m_points[id1] << ", "
             << this->m_points[id2] << " ) ? " << exp_answer << " ";
 
-  bool real_answer = this->m_traits.equal_2_object()(this->m_points[id1], this->m_points[id2]);
+  bool real_answer = this->m_geom_traits.equal_2_object()(this->m_points[id1],
+                                                          this->m_points[id2]);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -520,7 +522,8 @@ Traits_test<T_Traits>::equal_curves_wrapper(std::istringstream& str_stream)
   std::cout << "Test: equal( " << this->m_xcurves[id1] << ", "
             << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
 
-  bool real_answer = this->m_traits.equal_2_object()(this->m_xcurves[id1], this->m_xcurves[id2]);
+  bool real_answer = this->m_geom_traits.equal_2_object()(this->m_xcurves[id1],
+                                                          this->m_xcurves[id2]);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -545,8 +548,8 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream& str_stream)
   std::cout << "Test: make_x_monotone( " << this->m_curves[id]
             << " ) ? ";
   std::vector<CGAL::Object> object_vec;
-  this->m_traits.make_x_monotone_2_object()(this->m_curves[id],
-                                      std::back_inserter(object_vec));
+  this->m_geom_traits.make_x_monotone_2_object()(this->m_curves[id],
+                                                 std::back_inserter(object_vec));
   unsigned int num;
   str_stream >> num;
   if (!this->compare(num, (unsigned int)object_vec.size(), "size"))
@@ -601,9 +604,9 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream& str_stream)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   std::vector<CGAL::Object> object_vec;
-  this->m_traits.intersect_2_object()(this->m_xcurves[id1],
-                                      this->m_xcurves[id2],
-                                      std::back_inserter(object_vec));
+  this->m_geom_traits.intersect_2_object()(this->m_xcurves[id1],
+                                           this->m_xcurves[id2],
+                                           std::back_inserter(object_vec));
   std::cout << "Test: intersect( " << this->m_xcurves[id1] << ","
             << this->m_xcurves[id2] << " ) ? ";
   unsigned int num;
@@ -661,8 +664,8 @@ bool Traits_test<T_Traits>::split_wrapper(std::istringstream& str_stream)
   std::cout << "Test: split( " << this->m_xcurves[id1] << ","
             << this->m_points[id2] << " ) ? ";
 
-  this->m_traits.split_2_object()(this->m_xcurves[id1], this->m_points[id2],
-                                  cv1, cv2);
+  this->m_geom_traits.split_2_object()(this->m_xcurves[id1], this->m_points[id2],
+                                       cv1, cv2);
   return this->compare_curves(this->m_xcurves[id3], cv1) &&
     this->compare_curves(this->m_xcurves[id4], cv2);
 }
@@ -698,8 +701,8 @@ are_mergeable_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true)
             << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
 
   bool real_answer =
-    this->m_traits.are_mergeable_2_object()(this->m_xcurves[id1],
-                                            this->m_xcurves[id2]);
+    this->m_geom_traits.are_mergeable_2_object()(this->m_xcurves[id1],
+                                                 this->m_xcurves[id2]);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -734,7 +737,8 @@ bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream& str_stream,
   std::cout << "Test: merge( " << this->m_xcurves[id1] << ", "
             << this->m_xcurves[id2] << " ) ? " << this->m_xcurves[id] << " ";
 
-  this->m_traits.merge_2_object()(this->m_xcurves[id1], this->m_xcurves[id2], cv);
+  this->m_geom_traits.merge_2_object()(this->m_xcurves[id1],
+                                       this->m_xcurves[id2], cv);
   return this->compare_curves(this->m_xcurves[id], cv);
 }
 
@@ -823,9 +827,9 @@ parameter_space_in_x_wrapper_imp(std::istringstream& str_stream,
                 "TOP_BOUNDARY":"INTERIOR")))) << " ";
 
   real_answer = (curves_op) ?
-    this->m_traits.parameter_space_in_x_2_object()(this->m_xcurves[id],
-                                                   cv_end) :
-    this->m_traits.parameter_space_in_x_2_object()(this->m_points[id]);
+    this->m_geom_traits.parameter_space_in_x_2_object()(this->m_xcurves[id],
+                                                        cv_end) :
+    this->m_geom_traits.parameter_space_in_x_2_object()(this->m_points[id]);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -876,7 +880,7 @@ compare_y_near_boundary_wrapper_imp(std::istringstream& str_stream,
                (exp_answer == CGAL::LARGER ? "LARGER" : "EQUAL")) << " ";
 
   CGAL::Comparison_result real_answer = 
-    this->m_traits.compare_y_near_boundary_2_object()
+    this->m_geom_traits.compare_y_near_boundary_2_object()
     (this->m_xcurves[id1], this->m_xcurves[id2], cv_end);
   return this->compare(exp_answer, real_answer);
 }
@@ -943,9 +947,9 @@ parameter_space_in_y_wrapper_imp(std::istringstream& str_stream,
                 "TOP_BOUNDARY" : "INTERIOR")))) << " ";
 
   CGAL::Arr_parameter_space real_answer = (curves_op) ?
-    this->m_traits.parameter_space_in_y_2_object()(this->m_xcurves[id],
-                                                   cv_end) :
-    this->m_traits.parameter_space_in_y_2_object()(this->m_points[id]);
+    this->m_geom_traits.parameter_space_in_y_2_object()(this->m_xcurves[id],
+                                                        cv_end) :
+    this->m_geom_traits.parameter_space_in_y_2_object()(this->m_points[id]);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -1002,7 +1006,7 @@ compare_x_near_limit_wrapper_imp(std::istringstream& str_stream,
                (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
   
   CGAL::Comparison_result real_answer = 
-    this->m_traits.compare_x_near_limit_2_object()
+    this->m_geom_traits.compare_x_near_limit_2_object()
     (this->m_xcurves[id1], this->m_xcurves[id2], cv_end);
   return this->compare(exp_answer, real_answer);
 }
@@ -1085,9 +1089,9 @@ compare_x_at_limit_wrapper_imp(std::istringstream& str_stream,
                (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
 
   real_answer = (curves_op) ?
-    this->m_traits.compare_x_at_limit_2_object()
+    this->m_geom_traits.compare_x_at_limit_2_object()
     (this->m_points[id1], this->m_xcurves[id2], cv_end1) :
-    this->m_traits.compare_x_at_limit_2_object()
+    this->m_geom_traits.compare_x_at_limit_2_object()
     (this->m_xcurves[id1], cv_end1,this->m_xcurves[id2], cv_end2);
   return this->compare(exp_answer, real_answer);
 }
@@ -1145,7 +1149,7 @@ compare_x_near_boundary_wrapper_imp(std::istringstream& str_stream,
                (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
   
   CGAL::Comparison_result real_answer = 
-    this->m_traits.compare_x_near_boundary_2_object()
+    this->m_geom_traits.compare_x_near_boundary_2_object()
     (this->m_xcurves[id1], this->m_xcurves[id2], cv_end);    
   return this->compare(exp_answer, real_answer);
 }
@@ -1231,9 +1235,9 @@ compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
                (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
 
   real_answer = (curves_op) ?
-    this->m_traits.compare_x_on_boundary_2_object()
+    this->m_geom_traits.compare_x_on_boundary_2_object()
     (this->m_points[id1], this->m_xcurves[id2], cv_end1) :
-    this->m_traits.compare_x_on_boundary_2_object()
+    this->m_geom_traits.compare_x_on_boundary_2_object()
     (this->m_xcurves[id1], cv_end1,this->m_xcurves[id2], cv_end2);
   return this->compare(exp_answer, real_answer);
 }

@@ -70,7 +70,8 @@ bool test1(const char* points_filename, const char* xcurves_filename,
            const char* curves_filename, const char* commands_filename,
            const char* queries_filename)
 {
-  Point_location_dynamic_test<Geom_traits, Topol_traits> pl_test;
+  Geom_traits geom_traits;
+  Point_location_dynamic_test<Geom_traits, Topol_traits> pl_test(geom_traits);
   pl_test.set_filenames(points_filename, xcurves_filename, curves_filename,
                         commands_filename, queries_filename);
   

@@ -120,21 +120,15 @@ configure()
   fi
 }
 
-compile_test_with_traits()
+compile_test_with_flags()
 {
   local name=$1;
-  local nt=$2;
-  local kernel=$3;
-  local traits=$4;
-  local type=$5;
-  
-  TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$traits";
-
-  echo $TESTSUITE_CXXFLAGS;
+  local type=$2;
+  local flags=$3;
 
   echo "Compiling $name $type ... "
   if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-    export TESTSUITE_CXXFLAGS="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$traits"
+    export TESTSUITE_CXXFLAGS="$flags"
     configure
     if eval '${MAKE_CMD} VERBOSE=1 -fMakefile  \
       $name' ; then
@@ -267,27 +261,18 @@ clean_tests()
 
 compile_and_run()
 {
-  if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-    echo "Compiling $1 ... "
-    SUCCESS="y"
-	
+  local name=$1;
+
+  echo "Compiling $name ... "
+  if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then	
     if eval '${MAKE_CMD} VERBOSE=1 -fMakefile $1' ; then
       echo "   successful compilation of $1" >> $ERRORFILE
+      SUCCESS="y"
     else
       echo "   ERROR:    compilation of $1" >> $ERRORFILE
       SUCCESS=""
     fi
-	
-    if [ -n "$DO_RUN" ] ; then
-      if [ -n "${SUCCESS}" ] ; then
-        run_test $1
-      else
-         echo "   ERROR:    not executed   $1" >> $ERRORFILE
-      fi
-    fi
   else
-    local name=$1;
-    echo "Compiling $name ... "
     SUCCESS="y"
     #TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS"
     TESTSUITE_CXXFLAGS=""
@@ -300,7 +285,17 @@ compile_and_run()
       echo "   ERROR:    compilation of $name" >> $ERRORFILE
       SUCCESS=""
     fi
-	
+  fi
+
+  if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then  
+    if [ -n "$DO_RUN" ] ; then
+      if [ -n "${SUCCESS}" ] ; then
+        run_test $1
+      else
+         echo "   ERROR:    not executed   $1" >> $ERRORFILE
+      fi
+    fi
+  else
     if [ -n "${SUCCESS}" ] ; then
       OUTPUTFILE=ProgramOutput.$name.$PLATFORM
       rm -f $OUTPUTFILE
@@ -697,10 +692,12 @@ execute_commands_traits_adaptor()
 #---------------------------------------------------------------------#
 test_segment_traits_adaptor()
 {
-# function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits_adaptor \
-    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS \
-    segments
+  local nt=$QUOTIENT_MP_FLOAT_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits_adaptor segments "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_traits_adaptor segments segments_traits_adaptor \
       COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT \
@@ -716,10 +713,12 @@ test_segment_traits_adaptor()
 #---------------------------------------------------------------------#
 test_linear_traits_adaptor()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits_adaptor \
-    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS \
-    linear
+  local nt=$QUOTIENT_MP_FLOAT_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$LINEAR_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits_adaptor linear "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_traits_adaptor linear linear_traits_adaptor \
       COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
@@ -735,10 +734,13 @@ test_linear_traits_adaptor()
 #---------------------------------------------------------------------#
 test_spherical_arcs_traits_adaptor()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits_adaptor \
-    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS \
-    "spherical arcs"
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS;
+  local topol_traits=$SPHERICAL_TOPOL_TRAITS
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits -DTEST_TOPOL_TRAITS=$topol_traits";
+
+  compile_test_with_flags test_traits_adaptor geodesic_arcs_on_sphere "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_traits_adaptor spherical_arcs spherical_arcs_traits_adaptor \
       COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
@@ -752,15 +754,13 @@ test_spherical_arcs_traits_adaptor()
 #---------------------------------------------------------------------#
 # compile and run test with traits
 #---------------------------------------------------------------------#
-compile_and_run_with_traits()
+compile_and_run_with_flags()
 {
   local name=$1;
-  local nt=$2;
-  local kernel=$3;
-  local traits=$4;
-  local type=$5;
+  local type=$2;
+  local flags=$3;
 
-  compile_test_with_traits $name $nt $kernel $traits $type
+  compile_test_with_flags $name $type "$flags"
   if [ -n "${SUCCESS}" ] ; then
     if [ -n "$DO_RUN" ] ; then
       run_test_with_traits $name $type
@@ -776,8 +776,24 @@ compile_and_run_with_traits()
 #---------------------------------------------------------------------#
 test_construction_segments()
 {
-  compile_and_run_with_traits test_construction \
-    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segments
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_construction segments "$flags"    
+}
+
+#---------------------------------------------------------------------#
+# construction with geodesic arcs on the sphere
+#---------------------------------------------------------------------#
+test_construction_spherical_arcs()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS;
+  local topol_traits=$SPHERICAL_TOPOL_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits -DTEST_TOPOL_TRAITS=$topol_traits";
+  compile_and_run_with_flags test_construction geodesic_arcs_on_sphere "$flags"
 }
 
 #---------------------------------------------------------------------#
@@ -785,8 +801,11 @@ test_construction_segments()
 #---------------------------------------------------------------------#
 test_point_location_segments()
 {
-  compile_and_run_with_traits test_point_location \
-    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segments
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_point_location segments "$flags"
 }
 
 #---------------------------------------------------------------------#
@@ -794,8 +813,11 @@ test_point_location_segments()
 #---------------------------------------------------------------------#
 test_point_location_dynamic_segments()
 {
-  compile_and_run_with_traits test_point_location_dynamic \
-    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS segments
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_point_location_dynamic segments "$flags"
 }
 
 #---------------------------------------------------------------------#
@@ -803,9 +825,11 @@ test_point_location_dynamic_segments()
 #---------------------------------------------------------------------#
 test_point_location_circle_segments()
 {
-  compile_and_run_with_traits test_point_location \
-    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS \
-    circle_segments
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$CIRCLE_SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_point_location circle_segments "$flags"
 }
 
 #---------------------------------------------------------------------#
@@ -813,8 +837,11 @@ test_point_location_circle_segments()
 #---------------------------------------------------------------------#
 test_point_location_linear()
 {
-  compile_and_run_with_traits test_point_location \
-    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS linear
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$LINEAR_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_point_location linear "$flags"
 }
 
 #---------------------------------------------------------------------#
@@ -822,10 +849,12 @@ test_point_location_linear()
 #---------------------------------------------------------------------#
 test_segment_traits()
 {
-  # function   executable  numbe-type  kernel traits
-  compile_test_with_traits test_traits \
-    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $SEGMENT_GEOM_TRAITS \
-    segments
+  local nt=$QUOTIENT_MP_FLOAT_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits segments "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure segments segment_traits \
       VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR \
@@ -848,10 +877,12 @@ test_segment_traits()
 #---------------------------------------------------------------------#
 test_non_caching_segment_traits()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_SEGMENT_GEOM_TRAITS \
-    "non caching segments"
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$NON_CACHING_SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits non_caching_segments "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure segments non_caching_segment_traits \
       VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR \
@@ -874,9 +905,12 @@ test_non_caching_segment_traits()
 #---------------------------------------------------------------------#
 test_polyline_traits()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $POLYLINE_GEOM_TRAITS polylines
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$POLYLINE_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits polylines "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure polylines polyline_traits \
       CONSTRUCTOR COMPARE_Y_AT_X_LEFT \
@@ -892,10 +926,12 @@ test_polyline_traits()
 #---------------------------------------------------------------------#
 test_non_caching_polyline_traits()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $NON_CACHING_POLYLINE_GEOM_TRAITS \
-    "non caching polylines"
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$NON_CACHING_POLYLINE_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits non_caching_polylines "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure polylines non_caching_polyline_traits \
       CONSTRUCTOR COMPARE_Y_AT_X_LEFT \
@@ -911,10 +947,12 @@ test_non_caching_polyline_traits()
 #---------------------------------------------------------------------#
 test_linear_traits()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINEAR_GEOM_TRAITS \
-    linear
+  local nt=$QUOTIENT_MP_FLOAT_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$LINEAR_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits linear "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure linear/segments linear_traits.segments \
       VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
@@ -954,9 +992,12 @@ test_linear_traits()
 #---------------------------------------------------------------------#
 test_conic_traits()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $CORE_EXPR_NT $CARTESIAN_KERNEL $CORE_CONIC_GEOM_TRAITS conics
+  local nt=$CORE_EXPR_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$CORE_CONIC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits conics "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure conics conic_traits \
       INTERSECT SPLIT MERGE COMPARE_Y_AT_X_LEFT \
@@ -979,10 +1020,12 @@ test_conic_traits()
 #---------------------------------------------------------------------#
 test_line_arc_traits()
 {
-  # function     executable  number type           kernel            traits
-  compile_test_with_traits test_traits \
-    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $LINE_ARC_GEOM_TRAITS \
-    linear
+  local nt=$QUOTIENT_MP_FLOAT_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$LINE_ARC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits line_arcs "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure circular_lines line_arc_traits \
       VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
@@ -1009,10 +1052,12 @@ test_line_arc_traits()
 #---------------------------------------------------------------------#
 test_circular_arc_traits()
 {
-  # function     executable  number type           kernel            traits
-  compile_test_with_traits test_traits \
-    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_ARC_GEOM_TRAITS \
-    "circular arcs"
+  local nt=$QUOTIENT_MP_FLOAT_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$CIRCULAR_ARC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits circular_arcs "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure circular_arcs circular_arc_traits \
       VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
@@ -1031,10 +1076,12 @@ test_circular_arc_traits()
 #---------------------------------------------------------------------#
 test_circular_line_arc_traits()
 {
-  # function     executable  number type           kernel            traits
-  compile_test_with_traits test_traits \
-    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCULAR_LINE_ARC_GEOM_TRAITS \
-    "linear obects and circular arcs"
+  local nt=$QUOTIENT_MP_FLOAT_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$CIRCULAR_LINE_ARC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits circular_line_arcs "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure circular_line_arcs circular_line_arc_traits \
       VERTEX IS_VERTICAL CONSTRUCTOR COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
@@ -1057,10 +1104,12 @@ test_circular_line_arc_traits()
 #---------------------------------------------------------------------#
 test_circle_segments_traits()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $QUOTIENT_MP_FLOAT_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_GEOM_TRAITS \
-    "segments and circular arcs"
+  local nt=$QUOTIENT_MP_FLOAT_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$CIRCLE_SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits circle_segments "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure circle_segments circle_segments_traits \
       VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
@@ -1095,10 +1144,12 @@ test_circle_segments_traits()
 #---------------------------------------------------------------------#
 test_bezier_traits()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $CORE_EXPR_NT $CARTESIAN_KERNEL $BEZIER_GEOM_TRAITS \
-    "Bezier curves"
+  local nt=$CORE_EXPR_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$BEZIER_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits Bezier "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure bezier bezier_traits \
       COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT SPLIT \
@@ -1114,10 +1165,13 @@ test_bezier_traits()
 #---------------------------------------------------------------------#
 test_spherical_arc_traits()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $CGAL_GMPQ_NT $CARTESIAN_KERNEL $GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS \
-    "Geodesic arcs on the sphere"
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS;
+  local topol_traits=$SPHERICAL_TOPOL_TRAITS
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits -DTEST_TOPOL_TRAITS=$topol_traits";
+
+  compile_test_with_flags test_traits geodesic_arcs_on_sphere "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_old_structure spherical_arcs spherical_arc_traits \
       COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT \
@@ -1143,10 +1197,12 @@ test_spherical_arc_traits()
 #---------------------------------------------------------------------#
 test_rational_arc_traits()
 {
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $CORE_INT_NT $UNIVARIATE_ALGEBRAIC_KERNEL $RATIONAL_ARC_GEOM_TRAITS \
-    "rational arcs"
+  local nt=$CORE_INT_NT;
+  local kernel=$UNIVARIATE_ALGEBRAIC_KERNEL;
+  local geom_traits=$RATIONAL_ARC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits rational_arcs "$flags"
   if [ -n "${SUCCESS}" ] ; then
     run_trapped_test test_traits \
       data/compare.pt data/empty.zero \
@@ -1168,9 +1224,12 @@ test_algebraic_traits_gmp()
 {
   #TODO: Adapt
 
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $CGAL_GMPZ_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic
+  local nt=$CGAL_GMPZ_NT;
+  local kernel=$UNIVARIATE_ALGEBRAIC_KERNEL;
+  local geom_traits=$ALGEBRAIC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits algebraic "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_new_structure algebraic algebraic_traits_gmp \
       COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
@@ -1189,9 +1248,12 @@ test_algebraic_traits_leda()
 {
   #TODO: Adapt
 
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $LEDA_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic
+  local nt=$LEDA_INT_NT;
+  local kernel=$UNIVARIATE_ALGEBRAIC_KERNEL;
+  local geom_traits=$ALGEBRAIC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits algebraic "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_new_structure algebraic algebraic_traits_leda \
       COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
@@ -1211,9 +1273,12 @@ test_algebraic_traits_core()
 {
   #TODO: Adapt
 
-  # function     executable  number type   kernel            traits
-  compile_test_with_traits test_traits \
-    $CORE_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_GEOM_TRAITS algebraic
+  local nt=$CORE_INT_NT;
+  local kernel=$UNIVARIATE_ALGEBRAIC_KERNEL;
+  local geom_traits=$ALGEBRAIC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits algebraic "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_new_structure algebraic algebraic_traits_core \
       COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
@@ -1288,6 +1353,7 @@ compile_and_run test_iso_verts
 compile_and_run test_vert_ray_shoot_vert_segments
 
 test_construction_segments
+test_construction_spherical_arcs
 
 compile_and_run test_overlay
 
