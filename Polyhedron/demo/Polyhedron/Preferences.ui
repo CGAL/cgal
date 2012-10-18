@@ -52,7 +52,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Check plugin you don't want to load at start up</string>
+    <string>Tick plugins you don't want to load at start up</string>
    </property>
   </widget>
  </widget>
