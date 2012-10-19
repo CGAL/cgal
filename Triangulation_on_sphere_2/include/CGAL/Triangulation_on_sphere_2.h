@@ -1904,6 +1904,7 @@ show_all() const
   Faces_iterator fi;
   for(fi = faces_begin(); fi != faces_end(); fi++) {
     show_face(fi);
+	  std::cerr<<"   ------------   " <<std::endl;
   }
 
   
@@ -1920,6 +1921,7 @@ show_all() const
   }
   return;
 }
+	
 
 template <class Gt, class Tds >
 int
