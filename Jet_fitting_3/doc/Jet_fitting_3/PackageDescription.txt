@@ -13,6 +13,7 @@
 \PkgSummaryEnd
 \PkgShortInfoBegin
 \PkgSince{3.3}
+\PkgDependsOn{Solvers from \ref thirdpartyEigen.} 
 \PkgBib{cgal:pc-eldp}
 \PkgLicense{\ref licensesGPL  "GPL"}
 \PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
