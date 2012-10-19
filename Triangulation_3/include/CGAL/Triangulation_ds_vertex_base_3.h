@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/internal/Dummy_tds_3.h>
 
-#if defined(LINIKED_WITH_TBB) && defined(CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX)
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX)
 # include <tbb/atomic.h>
 #endif
 
