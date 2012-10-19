@@ -330,7 +330,7 @@ and its number of connected components.
 
 Example of output for a 3D combinatorial map containing two disjoint
 combinatorial tetrahedra: 
-<TT>#Darts=24, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #ccs=2</TT>
+<TT>\#Darts=24, \#0-cells=8, \#1-cells=12, \#2-cells=8, \#3-cells=2, \#ccs=2</TT>
 */ 
 std::ostream& display_characteristics(std::ostream & os) const; 
 
@@ -496,7 +496,8 @@ the sew, the two associated attributes <I>attr1</I> and <I>attr2</I> are
 considered. If one attribute is 
 NULL and the other not, the non NULL attribute is associated to all 
 the darts of the resulting cell. When the two attributes are non 
-NULL, functor `Attribute_type<i>::type::On_merge` is called on 
+NULL, functor \ref CellAttribute::On_merge "Attribute_type<i>::type::On_merge"
+is called on 
 the two attributes <I>attr1</I> and <I>attr2</I>. Then, the attribute 
 <I>attr1</I> is associated to all darts of the resulting 
 <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from `cm`. 
@@ -519,7 +520,8 @@ attributes are updated to ensure the validity of `cm`: for each
 operation, if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>, then 
 this attribute is duplicated into <I>attr2</I>, and all the darts 
 belonging to <I>c2</I> are associated with this new attribute. Finally, 
-the functor `Attribute_type<i>::type::On_split` is called on the 
+the functor \ref CellAttribute::On_split "Attribute_type<i>::type::On_split"
+is called on the 
 two attributes <I>attr1</I> and <I>attr2</I>. 
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, `*dh`\f$ \in\f$`cm.darts()` and `dh` is not <I>i</I>-free. 
 
