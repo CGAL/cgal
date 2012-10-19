@@ -2166,12 +2166,9 @@ test_dim_down(Vertex_handle v)
   //it goes down to 1 iff
   // 1) There is only 4 vertices
   //and/or
-  // 2) every vertices appart from v are coplanar with _sphere
-  CGAL_triangulation_precondition(dimension() == 2);
-  bool  dim1 = true; 
-  if(number_of_vertices()==4)
-    return dim1;
- 
+  // 2) every vertices appart from v are coplanar 
+  	
+	bool dim1=true;
   Face_circulator fc=incident_faces(v,v->face());
   Face_circulator done(fc);
   
