@@ -15,7 +15,7 @@ public:
 /// @{
 
 /*! 
-Default constructor creating combinatorial map `cm`. 
+Default constructor creating an empty combinatorial map. 
 */ 
 CombinatorialMap(); 
 
@@ -25,17 +25,17 @@ CombinatorialMap();
 /// @{
 
 /*! 
-Dart type, a model of the `Dart` concept. 
+%Dart type, a model of the `Dart` concept. 
 */ 
 typedef Hidden_type Dart; 
 
 /*! 
-Dart handle type, equal to `Dart::Dart_handle`. 
+%Dart handle type, equal to `Dart::Dart_handle`. 
 */ 
 typedef Hidden_type Dart_handle; 
 
 /*! 
-Dart const handle type, equal to `Dart::Dart_const_handle`. 
+%Dart const handle type, equal to `Dart::Dart_const_handle`. 
 */ 
 typedef Hidden_type Dart_const_handle; 
 
@@ -50,18 +50,18 @@ typedef Hidden_type size_type;
 /// @{
 
 /*! 
-The dimension <I>d</I> of `cm`, equal to `Dart::dimension`.
+The dimension <I>d</I> of the combinatorial map, equal to `Dart::dimension`.
 */ 
 static unsigned int dimension; 
 
 /*! 
-The number of available Boolean marks of `cm`. 
+The number of available Boolean marks of the combinatorial map. 
 */ 
 static size_type NB_MARKS; 
 
 /*! 
-The null dart handle constant: a dart `d0` 
-is <I>i</I>-free if `d0.beta(i)==null_dart_handle`. 
+The null dart handle constant.
+A dart `d0` is <I>i</I>-free if `d0.beta(i)==null_dart_handle`. 
 Note that `*null_dart_handle`\f$ \notin\f$`cm.darts()`. 
 */ 
 static Dart_handle null_dart_handle; 
@@ -72,7 +72,8 @@ static Dart_handle null_dart_handle;
 /// @{
 
 /*! 
-The tuple of attributes, containing at most <I>dimension+1</I> types
+The tuple of cell attributes.
+It contains at most <I>dimension+1</I> types
 (one for each possible cell of the combinatorial map). Each type of
 the tuple must be either a model of the `CellAttribute` concept or
 `void`.  The first type corresponds to 0-attributes, the second to
@@ -123,13 +124,13 @@ struct Attribute_const_handle {
 /// @{
 
 /*! 
-Range of all the darts of `cm`. 
+Range of all the darts of the combinatorial map. 
 This type is a model of `Range` concept, its iterator type is bidirectional and its value type is `Dart`. 
 */ 
 typedef Hidden_type Dart_range; 
 
 /*! 
-Const range of all the darts of `cm`. 
+Const range of all the darts of the combinatorial map. 
 This type is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is `Dart`. 
 */ 
 typedef Hidden_type Dart_const_range; 
@@ -138,7 +139,8 @@ typedef Hidden_type Dart_const_range;
 template<unsigned int i> 
 struct Attribute_range {
 /*! 
-Range of all the <I>i</I>-attributes (which must be non void), with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
+Range of all the <I>i</I>-attributes.
+The <I>i</I>-attributes must be non void, and 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
 This type is a model of `Range` concept, its iterator type is bidirectional and its value type is `Attribute_type<i>::type`. 
 */ 
   typedef Hidden_type type;
@@ -148,7 +150,8 @@ This type is a model of `Range` concept, its iterator type is bidirectional and 
 template<unsigned int i> 
 struct Attribute_const_range {
 /*! 
-Const range of all the <I>i</I>-attributes (which must be non void), with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
+Const range of all the <I>i</I>-attributes.
+The <I>i</I>-attributes must be non void, and 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
 This type is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is `Attribute_type<i>::type`. 
 */ 
   typedef Hidden_type type;
@@ -169,8 +172,9 @@ template<unsigned int ... Beta>
 using Dart_of_orbit_const_range = Hidden_type;
 
 /*! 
-Range of all the darts of an <I>i</I>-cell in <I>dim</I> dimension 
-(with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>). If <I>i==dim+1</I>, 
+Range of all the darts of an <I>i</I>-cell.
+Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and
+ 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>. If <I>i==dim+1</I>, 
 range of all the darts of a connected component. 
 This type is a model of `Range` concept, its iterator type is forward and its value type is `Dart`. 
 */ 
@@ -178,8 +182,9 @@ template<unsigned int i,unsigned int dim=dimension>
 using Dart_of_cell_range = Hidden_type;
 
 /*! 
-Const range of all the darts of the <I>i</I>-cell in <I>dim</I> dimension 
-(with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>). If <I>i==dim+1</I>, 
+Const range of all the darts of the <I>i</I>-cell.
+Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and
+ 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>. If <I>i==dim+1</I>, 
 range of all the darts of a connected component. 
 This type is a model of `ConstRange` concept, its iterator type is forward and its value type is `Dart`. 
 */ 
@@ -188,9 +193,9 @@ using Dart_of_cell_const_range = Hidden_type;
 
 /*! 
 Range of one dart of each <I>i</I>-cell incident to one <I>j</I>-cell. 
-Cells are considered in <I>dim</I> dimension 
-(with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 
-0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>). If <I>i</I>==<I>dim+1</I>, 
+Cells are considered in <I>dim</I> dimension,
+with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 
+0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>. If <I>i</I>==<I>dim+1</I>, 
 consider each connected component instead of each <I>i</I>-cell. If <I>j</I>==<I>dim+1</I>, 
 consider one connected component instead of one <I>j</I>-cell.	 
 This type is a model of `Range` concept, its iterator type is forward and its value type is `Dart`. 
@@ -200,9 +205,9 @@ using One_dart_per_incident_cell_range = Hidden_type;
 
 /*! 
 Const range of one dart of each <I>i</I>-cell incident to one <I>j</I>-cell. 
-Cells are considered in <I>dim</I> dimension 
-(with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 
-0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>). If <I>i==dim+1</I>, 
+Cells are considered in <I>dim</I> dimension, 
+with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 
+0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>. If <I>i==dim+1</I>, 
 consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1</I>, 
 consider one connected component instead of one <I>j</I>-cell. 
 This type is a model of `ConstRange` concept, its iterator type is forward and its value type is `Dart`. 
@@ -211,9 +216,9 @@ template<unsigned int i,unsigned int j,unsigned int dim=dimension>
 using One_dart_per_incident_cell_const_range = Hidden_type;
 
 /*! 
-Range of one dart of each <I>i</I>-cell of `cm`. 
-Cells are considered in <I>dim</I> dimension 
-(with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>). 
+Range of one dart of each <I>i</I>-cell of the combinatorial map. 
+Cells are considered in <I>dim</I> dimension,
+with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>. 
 If <I>i==dim+1</I>, consider each connected component instead of each <I>i</I>-cell. 
 This type is a model of `Range` concept, its iterator type is forward and its value type is `Dart`. 
 */ 
@@ -221,9 +226,9 @@ template<unsigned int i,unsigned int dim=dimension>
 using One_dart_per_cell_range = Hidden_type;
 
 /*! 
-Const range of one dart of each <I>i</I>-cell of `cm`. 
-Cells are considered in <I>dim</I> dimension 
-(with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>). 
+Const range of one dart of each <I>i</I>-cell of the combinatorial map. 
+Cells are considered in <I>dim</I> dimension,
+with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>. 
 If <I>i==dim+1</I>, consider each connected component instead of each <I>i</I>-cell. 
 This type is a model of `ConstRange` concept, its iterator type is forward and its value type is `Dart`. 
 */ 
@@ -236,15 +241,15 @@ using One_dart_per_cell_const_range = Hidden_type;
 /// @{
 
 /*! 
-Returns true iff `cm` is empty, i.e.\ it contains no dart.
+Returns true iff the combinatorial map is empty, i.e.\ it contains no dart.
 */ 
 bool is_empty() const; 
 
 /*! 
-Returns true iff `cm` is valid. 
+Returns true iff the combinatorial map is valid. 
 
-A combinatorial map `cm` is valid (see Sections \ref
-sseccombimapanddarts and \ref sseccombimapvalidity) if for all dart
+A combinatorial map is valid (see Sections \ref
+sseccombimapanddarts and \ref sseccombimapvalidity) if for all its darts `d`
 handle <I>dh</I> such that \f$\in\f$`cm.darts()`:
 
 - `dh->is_free(0)`, or `dh->beta(0)->beta(1)==dh`; 
@@ -252,29 +257,31 @@ handle <I>dh</I> such that \f$\in\f$`cm.darts()`:
 - \f$ \forall\f$<I>i</I>, 2\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>: 
   `dh->is_free(i)`, or `dh->beta(i)->beta(i)==dh`; 
 - \f$ \forall\f$<I>i</I>,<I>j</I>, 0\f$ \leq\f$<I>i</I>\f$ <\f$<I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dimension</I> such that <I>j</I>\f$ \geq\f$ 3: `dh->beta(i)->beta(j)==null_dart_handle` or `dh->beta(i)->beta(j)->beta(i)->beta(j)==dh`;
-- \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> such that <I>i</I>-attributes are non void: \f$ \forall\f$<I>dh2</I> such that belong to the same <I>i</I>-cell than `dh2->attribute<i>()==dh->attribute<i>()`. 
+- \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I> such that <I>i</I>-attributes are non void: \f$ \forall\f$<I>dh2</I> such that belong to the same <I>i</I>-cell than `dh2->attribute<i>()==dh->attribute<i>()`.
+\todo Replace the use of dart functions by corresponding mathematical notions.
 */ 
 bool is_valid() const; 
 
-/*! 
-Returns true iff `cm` is wihout <I>i</I>-boundary 
-(i.e.\ there is no `i`-free dart). 
+/*!
+Returns true iff the combinatorial map is without <I>i</I>-boundary.
+
+The map is without <I>i</I>-boundary if there is no `i`-free dart. 
 \pre 1\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
 */ 
 bool is_without_boundary(unsigned int i) const; 
 
 /*! 
-Returns true iff `cm` is without boundary in all dimensions. 
+Returns true iff the combinatorial map is without boundary in all dimensions. 
 */ 
 bool is_without_boundary() const; 
 
 /*! 
-Returns the number of darts in `cm`.
+Returns the number of darts in the combinatorial map.
 */ 
 size_type number_of_darts() const; 
 
 /*! 
-Returns the number of <I>i</I>-attributes in `cm`. 
+Returns the number of <I>i</I>-attributes in the combinatorial map. 
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and <I>i</I>-attributes are non void. 
 */ 
 template <unsigned int i>
@@ -313,7 +320,7 @@ Dart_const_handle beta(Dart_const_handle dh, int i, int j) const;
 
 /*! 
 Returns true iff `dh1` can be <I>i</I>-sewn with `dh2` by 
-keeping `cm` valid, i.e.\ if there is 
+keeping the combinatorial map valid, i.e.\ if there is 
 a bijection <I>f</I> between all the darts of the orbit 
 <I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>dh1</I>) and 
 <I>D2</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>dh2</I>) 
@@ -324,7 +331,7 @@ satisfying: <I>f</I>(<I>dh1</I>)=<I>dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1
 template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const; 
 
 /*! 
-Displays on `os` the characteristics of `cm`: its number of darts, 
+Displays on `os` the characteristics of the combinatorial map: its number of darts, 
 its number of <I>i</I>-cells, for each <I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$CMap::<I>dimension</I>, 
 and its number of connected components. 
 
@@ -340,23 +347,23 @@ std::ostream& display_characteristics(std::ostream & os) const;
 /// @{
 
 /*! 
-Returns a range of all the darts in `cm`. 
+Returns a range of all the darts in the combinatorial map. 
 */ 
 Dart_range& darts(); 
 
 /*! 
-Returns a const range of all the darts in `cm`. 
+Returns a const range of all the darts in the combinatorial map. 
 */ 
 Dart_const_range& darts() const; 
 
 /*! 
-Returns a range of all the <I>i</I>-attributes in `cm`. 
+Returns a range of all the <I>i</I>-attributes in the combinatorial map. 
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and <I>i</I>-attributes are non void. 
 */ 
 template<unsigned int i> Attribute_range<i>::type & attributes(); 
 
 /*! 
-Returns a const range of all the <I>i</I>-attributes in `cm`. 
+Returns a const range of all the <I>i</I>-attributes in the combinatorial map. 
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and <I>i</I>-attributes are non void. 
 */ 
 template<unsigned int i> Attribute_const_range<i>::type & attributes() const; 
@@ -408,17 +415,17 @@ consider the connected component containing `dh` instead of the <I>j</I>-cell.
 template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_incident_cell_const_range one_dart_per_incident_cell(Dart_const_handle dh) const; 
 
 /*! 
-Returns a range of one dart of each <I>i</I>-cell in `cm`. 
+Returns a range of one dart of each <I>i</I>-cell in the combinatorial map. 
 Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>, 
-range of one dart of each connected component in `cm`. 
+range of one dart of each connected component in the combinatorial map. 
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>. 
 */ 
 template<unsigned int i,unsigned int dim=dimension> One_dart_per_cell_range one_dart_per_cell(); 
 
 /*! 
-Returns a const range of one dart of each <I>i</I>-cell in `cm`. 
+Returns a const range of one dart of each <I>i</I>-cell in the combinatorial map. 
 Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>, 
-const range of one dart of each connected component in `cm`. 
+const range of one dart of each connected component in the combinatorial map. 
 \pre Same as for the non const version. 
 */ 
 template<unsigned int i,unsigned int dim=dimension> One_dart_per_cell_const_range one_dart_per_cell() const; 
@@ -429,7 +436,7 @@ template<unsigned int i,unsigned int dim=dimension> One_dart_per_cell_const_rang
 /// @{
 
 /*! 
-Creates a new dart in `cm`, and returns the corresponding handle. 
+Creates a new dart in the combinatorial map, and returns the corresponding handle. 
 Calls the constructor of dart having `T1` as parameter. 
 A new dart is initialized to be <I>i</I>-free, 
 \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and to have no associated 
@@ -442,14 +449,14 @@ template<typename T1>
 Dart_handle create_dart(T1 t1); 
 
 /*! 
-Removes `*dh` from `cm`. 
+Removes `*dh` from the combinatorial map. 
 \pre `*dh`\f$ \in\f$`cm.darts()`. 
 
 */ 
 void erase_dart(Dart_handle dh); 
 
 /*! 
-Creates a new <I>i</I>-attribute in `cm`, and returns the corresponding handle. 
+Creates a new <I>i</I>-attribute in the combinatorial map, and returns the corresponding handle. 
 Calls the constructor of <I>i</I>-attribute having `T1` as parameter. 
 Overloads of this member function are defined that take from zero to nine arguments. 
 With zero argument, `create_attribute<i>()` creates a new <I>i</I>-attribute by using the default constructor. 
@@ -458,7 +465,7 @@ With zero argument, `create_attribute<i>()` creates a new <I>i</I>-attribute by 
 template<unsigned int i,typename T1> Attribute_handle<i>::type create_attribute(T1 t1); 
 
 /*! 
-Removes the <I>i</I>-attribute `*ah` from `cm`. 
+Removes the <I>i</I>-attribute `*ah` from the combinatorial map. 
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, <I>i</I>-attributes are non void, and `*ah`\f$ \in\f$`cm.attributes<i>()`. 
 */ 
 template <unsigned int i> void erase_attribute(Attribute_handle<i>::type ah); 
@@ -471,7 +478,7 @@ containing `dh` to `ah`.
 template <unsigned int i> void set_attribute(Dart_handle dh, Attribute_handle<i>::type ah); 
 
 /*! 
-Deletes all the darts and all the attributes of `cm`. 
+Deletes all the darts and all the attributes of the combinatorial map. 
 */ 
 void clear(); 
 
@@ -490,7 +497,7 @@ satisfying: <I>f</I>(<I>dh1</I>)=<I>dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1
 <I>f</I>(\f$ \beta_j\f$(<I>e</I>))=\f$ \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)). 
 
 If `update_attributes` is `true`, when necessary, non void 
-attributes are updated to ensure the validity of `cm`: for each 
+attributes are updated to ensure the validity of the combinatorial map: for each 
 <I>j</I>-cells <I>c1</I> and <I>c2</I> which are merged into one <I>j</I>-cell during 
 the sew, the two associated attributes <I>attr1</I> and <I>attr2</I> are 
 considered. If one attribute is 
@@ -500,11 +507,11 @@ NULL, functor \ref CellAttribute::On_merge "Attribute_type<i>::type::On_merge"
 is called on 
 the two attributes <I>attr1</I> and <I>attr2</I>. Then, the attribute 
 <I>attr1</I> is associated to all darts of the resulting 
-<I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from `cm`. 
+<I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the combinatorial map. 
 \pre `cm.is_sewable<i>(dh1,dh2)`. 
 
 \advanced If `update_attributes` is `false`, non void attributes are
-not updated; thus `cm` can be no more valid after this modification.
+not updated; thus the combinatorial map can be no more valid after this modification.
 
 */ 
 template <unsigned int i> void sew(Dart_handle dh1, 
@@ -515,7 +522,7 @@ Unlinks by \f$ \beta_i\f$ all the darts in the
 orbit 
 \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(`dh`). If 
 `update_attributes` is `true`, when necessary, non void 
-attributes are updated to ensure the validity of `cm`: for each 
+attributes are updated to ensure the validity of the combinatorial map: for each 
 <I>j</I>-cell <I>c</I> split in two <I>j</I>-cells <I>c1</I> and <I>c2</I> by the 
 operation, if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>, then 
 this attribute is duplicated into <I>attr2</I>, and all the darts 
@@ -526,14 +533,14 @@ two attributes <I>attr1</I> and <I>attr2</I>.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, `*dh`\f$ \in\f$`cm.darts()` and `dh` is not <I>i</I>-free. 
 
 \advanced If `update_attributes` is `false`, non void attributes are
-not updated thus `cm` can be no more valid after this modification.
+not updated thus the combinatorial map can be no more valid after this modification.
 */ 
 template <unsigned int i> void unsew(Dart_handle dh, bool 
 update_attributes=true); 
 
 /*! 
 Links `dh1` and `dh2` by \f$ \beta_i\f$. 
-`cm` can be no more valid after this modification. If 
+The combinatorial map can be no more valid after this modification. If 
 `update_attributes` is true, non void attributes of `dh1` and 
 `dh2` are updated: if one dart has an attribute and the second 
 dart not, the non null attribute is associated to the dart having a null attribute. 
@@ -545,7 +552,7 @@ template <unsigned int i> void link_beta(Dart_handle dh1, Dart_handle dh2, bool 
 
 /*! 
 Unlinks `dh` and \f$ \beta_i\f$(`dh`) by \f$ \beta_i\f$. 
-`cm` can be no more valid after this modification. 
+The combinatorial map can be no more valid after this modification. 
 Attributes of `dh` and \f$ \beta_i\f$(`dh`) 
 are not modified. 
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, `*dh`\f$ \in\f$`cm.darts()`, and `dh` is not <I>i</I>-free. 
@@ -564,7 +571,7 @@ index. Returns -1 if there is no more available free mark.
 int get_new_mark() const; 
 
 /*! 
-Returns true iff `amark` is a reserved mark of `cm`. 
+Returns true iff `amark` is a reserved mark of the combinatorial map. 
 \pre 0\f$ \leq\f$<I>amark</I>\f$ <\f$`NB_MARKS`. 
 */ 
 bool is_reserved(int amark) const; 
@@ -588,7 +595,7 @@ Unmarks `dh` for the mark `amark`.
 void unmark(Dart_const_handle dh, int amark) const; 
 
 /*! 
-Inverse the mark `amark` for all the darts of `cm`. 
+Inverse the mark `amark` for all the darts of the combinatorial map. 
 All the marked darts become unmarked and all the unmarked darts 
 become marked. 
 \pre `is_reserved(amark)`. 
@@ -596,7 +603,7 @@ become marked.
 void negate_mark(int amark) const; 
 
 /*! 
-Unmarks all the darts of `cm` for `amark`. 
+Unmarks all the darts of the combinatorial map for `amark`. 
 \pre `is_reserved(amark)`. 
 */ 
 void unmark_all(int amark) const; 
