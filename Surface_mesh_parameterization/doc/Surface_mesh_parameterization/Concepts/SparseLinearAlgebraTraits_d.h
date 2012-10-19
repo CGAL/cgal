@@ -26,6 +26,7 @@
 /// is used to solve sparse linear systems `A*X = B`.
 ///
 /// \refines LinearAlgebraTraits_d
+/// \hasModel CGAL::Eigen_solver_traits<T>
 
 class SparseLinearAlgebraTraits_d
 {

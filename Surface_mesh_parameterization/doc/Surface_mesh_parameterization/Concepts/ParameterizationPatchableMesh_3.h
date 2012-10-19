@@ -25,13 +25,13 @@
 /// thus is a concept of a 3D surface mesh.
 ///
 /// ParameterizationPatchableMesh_3 adds support for patches and virtual seams.
-/// "Patches" are a subset of a 3D mesh. "Virtual seams" are the ability
+/// <i>Patches</i> are a subset of a 3D mesh. <i>Virtual seams</i> are the ability
 /// to behave as if the surface was cut following a certain path.
 ///
 /// This mainly means that:
 /// - vertices can be tagged as inside or outside the patch to parameterize.
 /// - the fields specific to parameterizations (`index`, `u`, `v`, `is_parameterized`)
-///   can be set per "corner" (aka half-edge).
+///   can be set per <i>corner</i> (aka half-edge).
 ///
 /// This allows to parameterize any 3D surface by decomposing it as a list of topological disks.
 ///
@@ -74,7 +74,7 @@ public:
 
     // CORNER INTERFACE
 
-    /// Get the 2D position (= `(u,v)` pair) of corners at the "right"
+    /// Get the 2D position (= `(u,v)` pair) of corners at the <i>right</i>
     /// of the `prev_vertex` -> `vertex` -> `next_vertex` line.
     /// Default value is undefined.
     Point_2 get_corners_uv(Vertex_const_handle vertex,
@@ -82,7 +82,7 @@ public:
                            Vertex_const_handle next_vertex) const;
 
 
-    /// Set the 2D position (= `(u,v)` pair) of corners at the "right"
+    /// Set the 2D position (= `(u,v)` pair) of corners at the <i>right</i>
     /// of the `prev_vertex` -> `vertex` -> `next_vertex` line.
     /// Default value is undefined.
     void set_corners_uv(Vertex_handle vertex,
@@ -90,14 +90,14 @@ public:
                         Vertex_const_handle next_vertex,
                         const Point_2& uv);
 
-    /// Get `is_parameterized` field of corners at the "right"
+    /// Get `is_parameterized` field of corners at the <i>right</i>
     /// of the `prev_vertex` -> `vertex` -> `next_vertex` line.
     /// Default value is undefined.
     bool are_corners_parameterized(Vertex_const_handle vertex,
                                    Vertex_const_handle prev_vertex,
                                    Vertex_const_handle next_vertex) const;
 
-    /// Set `is_parameterized` field of corners at the "right"
+    /// Set `is_parameterized` field of corners at the <i>right</i>
     /// of the `prev_vertex` -> `vertex` -> `next_vertex` line.
     /// Default value is undefined.
     void set_corners_parameterized(Vertex_handle vertex,
@@ -105,14 +105,14 @@ public:
                                    Vertex_const_handle next_vertex,
                                    bool parameterized);
 
-    /// Get `index` of corners at the "right"
+    /// Get `index` of corners at the <i>right</i>
     /// of the `prev_vertex` -> `vertex` -> `next_vertex line`.
     /// Default value is undefined.
     int get_corners_index(Vertex_const_handle vertex,
                           Vertex_const_handle prev_vertex,
                           Vertex_const_handle next_vertex) const;
 
-    /// Set `is_parameterized` field of corners at the "right"
+    /// Set `is_parameterized` field of corners at the <i>right</i>
     /// of the `prev_vertex` -> `vertex` -> `next_vertex` line.
     /// Default value is undefined.
     void set_corners_index(Vertex_handle vertex,
@@ -120,14 +120,14 @@ public:
                            Vertex_const_handle next_vertex,
                            int index);
 
-    /// Get all purpose tag of corners at the "right"
+    /// Get all purpose tag of corners at the <i>right</i>
     /// of the `prev_vertex` -> `vertex` -> `next_vertex` line.
     /// Default value is undefined.
     int get_corners_tag(Vertex_const_handle vertex,
                         Vertex_const_handle prev_vertex,
                         Vertex_const_handle next_vertex) const;
 
-    /// Set all purpose tag of corners at the "right"
+    /// Set all purpose tag of corners at the <i>right</i>
     /// of the `prev_vertex` -> `vertex` -> `next_vertex` line.
     /// Default value is undefined.
     void set_corners_tag(Vertex_handle vertex,

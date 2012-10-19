@@ -22,7 +22,7 @@
 /// \ingroup PkgSurfaceParameterizationConcepts
 /// \cgalconcept
 /// BorderParameterizer_3 is a concept of class that parameterizes a given type of mesh,
-/// 'Adaptor', which is a model of the ParameterizationMesh_3 concept.
+/// <i>Adaptor</i>, which is a model of the ParameterizationMesh_3 concept.
 ///
 /// Models of BorderParameterizer_3 know only the
 /// ParameterizationMesh_3 class. They do not know the parameterization algorithm
@@ -45,7 +45,7 @@ public:
     // Construction and destruction are undefined
 
     /// Assign to mesh's border vertices a 2D position (i.e.\ a `(u,v)` pair)
-    /// on border's shape. Mark them as "parameterized".
+    /// on border's shape. Mark them as <i>parameterized</i>.
     Error_code parameterize_border (Adaptor& mesh);
 
     /// Indicate if border's shape is convex.

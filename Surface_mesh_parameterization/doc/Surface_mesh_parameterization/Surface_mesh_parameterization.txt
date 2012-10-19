@@ -40,7 +40,7 @@ data structure.
 
 Since parameterizing meshes require efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
-a unified interface to linear solver libraries (<span class="textsc">Eigen</span> and <span class="textsc">Taucs</span>),
+a unified interface to a linear solver library (<span class="textsc">Eigen</span>),
 and propose a separate package devoted to OpenNL sparse
 linear solver.
 
@@ -115,13 +115,13 @@ where the user can specify a parameterization method:
 Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (ParameterizationMesh_3 & mesh, ParameterizerTraits_3 parameterizer);
 \endcode
 
-It computes a one-to-one mapping from a 3D triangle surface 'mesh' to a
+It computes a one-to-one mapping from a 3D triangle surface mesh to a
 simple 2D domain. The mapping is piecewise linear on the triangle
 mesh. The result is a pair `(u,v)` of parameter coordinates for each
 vertex of the input mesh.  One-to-one mapping may be guaranteed or
 not, depending on the chosen `ParametizerTraits_3` algorithm.
 <br>
-Th 'mesh' must be a triangle surface mesh with one
+The mesh must be a triangle surface mesh with one
 connected component, and the mesh border must be mapped onto a convex
 polygon (for fixed border parameterizations).
 
@@ -418,7 +418,7 @@ Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer()
 
 Parameterizing triangle meshes requires both efficient representation
 of sparse matrices and efficient iterative or direct linear
-solvers. We provide links to libraries (<span class="textsc">Eigen</span>, <span class="textsc">Taucs</span>)
+solvers. We provide links to <span class="textsc">Eigen</span> library
 and include a separate package devoted to OpenNL sparse linear solver.
 
 ## List of Solvers ##
@@ -437,11 +437,6 @@ supports exact number types.
 <LI>An interface to all sparse solvers from the \ref thirdpartyEigen library is provided through the class
 `CGAL::Eigen_solver_traits<T>`. This solver traits class can be used for an iterative or a direct,
 symmetric or general sparse solvers. The <span class="textsc">Eigen</span> solver to be used must be given as template parameter.
-
-<LI>An interface to sparse solvers from the\ref thirdpartyTaucs library is provided through the classes
-`CGAL::Taucs_solver_traits<T>` (out-of-core general sparse solver) and 
-`CGAL::Taucs_symmetric_solver_traits<T>` (direct symmetric sparse solver).
-\ref thirdpartyTaucs is no longer maintained and we recommend to use \ref thirdpartyEigen instead.
 
 </UL>
 
@@ -675,7 +670,7 @@ This package's entry point is:
 
 \code{.cpp}
 
-// Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a
+// Compute a one-to-one mapping from a 3D triangle surface mesh to a
 // 2D circle, using Floater Mean Value Coordinates algorithm.
 // A one-to-one mapping is guaranteed.
 template <class ParameterizationMesh_3>
@@ -686,14 +681,14 @@ Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3> parameterizer;
 return parameterizer.parameterize(mesh);
 }
 
-// Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a
+// Compute a one-to-one mapping from a 3D triangle surface mesh to a
 // simple 2D domain.
 // One-to-one mapping may be guaranteed or not,
 // depending on the chosen ParametizerTraits_3 algorithm.
 template <class ParameterizationMesh_3, class ParameterizerTraits_3>
 typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
 parameterize(ParameterizationMesh_3& mesh, // 3D mesh, model of ParameterizationMesh_3
-ParameterizerTraits_3 parameterizer) // Parameterization method for 'mesh'
+ParameterizerTraits_3 parameterizer) // Parameterization method for mesh
 {
 return parameterizer.parameterize(mesh);
 }
@@ -871,7 +866,7 @@ It may be easily generalized.
 ## Reusing Sparse Linear Algebra ##
 
 The `SparseLinearAlgebraTraits_d` concept and the traits classes
-for <span class="textsc">Eigen</span>, OpenNL and <span class="textsc">Taucs</span> are independent of the rest of the
+for <span class="textsc">Eigen</span> and OpenNL are independent of the rest of the
 `Surface_mesh_parameterization` package, and may be reused by
 \cgal developers for other purposes.
 

@@ -28,8 +28,8 @@
 /// Vertices represent points in 3d-space. Facets are planar polygons without holes
 /// defined by the circular sequence of vertices along their border.
 /// The surface itself can have holes. The vertices
-/// along the border of a hole are called "border vertices".
-/// A surface is "closed" if it contains no border vertices.
+/// along the border of a hole are called <i>border vertices</i>.
+/// A surface is <i>closed</i> if it contains no border vertices.
 ///
 /// The surface must be an oriented 2-manifold with border vertices, i.e.
 /// the neighborhood of each point on the surface is either
@@ -85,7 +85,7 @@ public:
     /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
     typedef Hidden_type Vertex_iterator;
     typedef Hidden_type Vertex_const_iterator;
-    /// Iterator over vertices of the mesh "main border".
+    /// Iterator over vertices of the mesh <i>main border</i>.
     /// Model of the ForwardIterator concept.
     typedef Hidden_type Border_vertex_iterator;
     typedef Hidden_type Border_vertex_const_iterator;
@@ -123,11 +123,11 @@ public:
     /// Index vertices of the mesh from 0 to count_mesh_vertices()-1.
     void  index_mesh_vertices ();
 
-    /// Get iterator over first vertex of mesh's "main border".
+    /// Get iterator over first vertex of mesh's <i>main border</i>.
     Border_vertex_iterator  mesh_main_border_vertices_begin ();
     Border_vertex_const_iterator  mesh_main_border_vertices_begin () const;
 
-    /// Get iterator over past-the-end vertex of mesh's "main border".
+    /// Get iterator over past-the-end vertex of mesh's <i>main border</i>.
     Border_vertex_iterator  mesh_main_border_vertices_end ();
     Border_vertex_const_iterator  mesh_main_border_vertices_end () const;
 
@@ -172,10 +172,10 @@ public:
     /// Set the 2D position (u/v pair) of a vertex. Default value is undefined.
     void  set_vertex_uv (Vertex_handle vertex, const Point_2& uv);
 
-    /// Get "is parameterized" field of vertex. Default value is undefined.
+    /// Get <i>is parameterized</i> field of vertex. Default value is undefined.
     bool  is_vertex_parameterized (Vertex_const_handle vertex) const;
  
-    /// Set "is parameterized" field of vertex. Default value is undefined.
+    /// Set <i>is parameterized</i> field of vertex. Default value is undefined.
     void  set_vertex_parameterized (Vertex_handle vertex, bool parameterized);
 
     /// Get vertex index. Default value is undefined.
@@ -196,8 +196,8 @@ public:
     /// Return true if a vertex belongs to the unique mesh's main border.
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const;
 
-    /// Get circulator over the vertices incident to 'vertex'.
-    /// 'start_position' defines the optional initial position of the circulator.
+    /// Get circulator over the vertices incident to `vertex`.
+    /// `start_position` defines the optional initial position of the circulator.
     Vertex_around_vertex_circulator vertices_around_vertex_begin(
                             Vertex_handle vertex,
                             Vertex_handle start_position = Vertex_handle());

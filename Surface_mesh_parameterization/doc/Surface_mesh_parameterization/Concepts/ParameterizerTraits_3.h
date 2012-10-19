@@ -22,7 +22,7 @@
 /// \ingroup PkgSurfaceParameterizationConcepts
 /// \cgalconcept
 /// ParameterizerTraits_3 is a concept of parameterization object
-/// for a given type of mesh, 'Adaptor', which is a model of the
+/// for a given type of mesh, `Adaptor`, which is a model of the
 /// ParameterizationMesh_3 concept.
 ///
 
@@ -49,13 +49,13 @@ public:
 
 // Public operations
 public:
-    /// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
+    /// Compute a one-to-one mapping from a triangular 3D surface `mesh`
     /// to a piece of the 2D space.
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
     ///
-    /// \pre 'mesh' must be a surface with one connected component and no hole.
-    /// \pre 'mesh' must be a triangular mesh.
+    /// \pre `mesh` must be a surface with one connected component and no hole.
+    /// \pre `mesh` must be a triangular mesh.
     Error_code  parameterize (Adaptor& mesh);
 };
 

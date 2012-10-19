@@ -26,14 +26,14 @@ namespace SparseLinearAlgebraTraits_d {
 /// is a concept of a vector that can be multiplied by a sparse matrix.
 ///
 /// \refines LinearAlgebraTraits_d::Vector
-/// \hasModel CGAL::Taucs_vector<T>
+/// \hasModel CGAL::Eigen_vector<T>
 /// \hasModel OpenNL::FullVector<T> in OpenNL package
 class Vector
 {
 // Public types
 public:
 
-    typedef xxx NT;
+    typedef Hidden_type NT;
 
 // Public operations
 public:
@@ -63,14 +63,13 @@ public:
 /// is a concept of a sparse matrix class.
 ///
 /// \refines LinearAlgebraTraits_d::Matrix
-/// \hasModel Taucs_matrix<T>
-/// \hasModel Taucs_symmetric_matrix<T>
+/// \hasModel Eigen_sparse_matrix<T>
 /// \hasModel OpenNL::SparseMatrix<T> in OpenNL package
 class Matrix
 {
 // Public types
 public:
-    typedef xxx NT;
+    typedef Hidden_type NT;
 
 // Public operations
 public:
@@ -101,7 +100,7 @@ public:
     /// Write access to a matrix coefficient: a_ij <- val.
     ///
     /// Optimization:
-    /// - Caller can optimize this call by setting 'new_coef' to true
+    /// - Caller can optimize this call by setting `new_coef` to true
     ///   if the coefficient does not already exist in the matrix.
     ///
     /// \pre 0 <= i < row_dimension().
