@@ -19,13 +19,17 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKerneldSummary}
 \PkgPicture{Algebraic_kernel_d.png}
+\PkgSummaryBegin
 \PkgAuthors{Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Pe&ntilde;aranda, and Monique Teillaud}
 \PkgDesc{Real solving of polynomials is a fundamental problem with a wide application range.  This package is targeted to provide black-box implementations of state-of-the-art  algorithms to determine, compare and approximate real roots of univariate polynomials and bivariate polynomial systems. Such a black-box is called an <I>Algebraic Kernel</I>.  So far the package only provides models for the univariate kernel. Nevertheless,  it already defines concepts for the bivariate kernel, since this settles the interface for upcoming implementations.}
+\PkgManuals{Chapter_Algebraic_Kernel,PkgAlgebraicKerneld}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.6}
 \PkgDependsOn{Some models depend on \ref thirdpartyRS.}
 \PkgBib{cgal:bht-ak}
 \PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgManuals{Chapter_Algebraic_Kernel,PkgAlgebraicKerneld}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 */
 

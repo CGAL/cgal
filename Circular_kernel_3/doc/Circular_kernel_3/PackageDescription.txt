@@ -22,12 +22,16 @@
 \addtogroup PkgSphericalKernel3
 \PkgDescriptionBegin{3D Spherical Geometry Kernel,PkgSphericalKernel3Summary}
 \PkgPicture{segment_sphere_intersection_detail.png}
+\PkgSummaryBegin
 \PkgAuthors{Pedro Machado Manh&atilde;es de Castro, Fr&eacute;d&eacute;ric Cazals, S&eacute;bastien Loriot, and Monique Teillaud}
 \PkgDesc{This package is an extension of the linear \cgal Kernel. It offers functionalities on spheres, circles, circular arcs and line segments, in the 3D space or restricted on a reference sphere.}
+\PkgManuals{Chapter_3D_Spherical_Geometry_Kernel,PkgSphericalKernel3}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.4}
 \PkgBib{cgal:cclt-sgk3}
 \PkgLicense{\ref licensesGPL "GPL"}
-\PkgManuals{Chapter_3D_Spherical_Geometry_Kernel,PkgSphericalKernel3}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 */
 

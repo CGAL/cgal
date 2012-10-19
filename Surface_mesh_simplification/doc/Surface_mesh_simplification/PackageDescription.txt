@@ -6,15 +6,19 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Triangulated Surface Mesh Simplification,PkgSurfaceMeshSimplificationSummary}
 \PkgPicture{detail.png}
+\PkgSummaryBegin
 \PkgAuthor{Fernando Cacciola}
 \PkgDesc{This package provides an algorithm to simplify a triangulated surface mesh  by edge collapsing.  It is an implementation of the Turk/Lindstrom <I>memoryless</I>  mesh simplification algorithm.}
+\PkgManuals{Chapter_Triangulated_Surface_Mesh_Simplification,PkgSurfaceMeshSimplification}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.3}
 \PkgDependsOn{\ref PkgBGLSummary}
 \PkgDependsOn{\ref PkgPolyhedronSummary}
 \PkgBib{cgal:c-tsms-12}
 \PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
-\PkgManuals{Chapter_Triangulated_Surface_Mesh_Simplification,PkgSurfaceMeshSimplification}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 */
 

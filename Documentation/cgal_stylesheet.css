@@ -68,18 +68,28 @@ a.el {
     font-weight: normal;
 }
 
-.PkgDescription {
+.PkgSummary {
     width: 60%;
 }
 
-.PkgSummary {
+.PkgShortInfo {
     width: 20%;
 }
 
-.PkgDescription, .PkgSummary, .PkgImage, .PkgImage .image {
+.PkgSummary, .PkgShortInfo, .PkgImage, .PkgImage .image {
     display:inline-block;
     padding:5px;
     vertical-align:middle;
+}
+
+.PkgAuthors {
+    font-style: italic;
+}
+
+.PkgDescription {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: justify;
 }
 
 /* footnote support */

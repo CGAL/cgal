@@ -5,12 +5,16 @@
 \addtogroup PkgProfilingTools
 \PkgDescriptionBegin{Profiling tools\, Hash Map\, Union-find\, Modifiers,PkgProfilingToolsSummary}
 \PkgPicture{stopwatch.png}
+\PkgSummaryBegin
 \PkgAuthors{Lutz Kettner, Sylvain Pion, and Michael Seel}
 \PkgDesc{This package provides classes for profiling time and memory consumption, profiling macros,  a hash map, a union find data structure and a modifier.}
+\PkgManuals{Chapter_Profiling_Tools_Hash_Map_Union-find_Modifiers,PkgProfilingTools}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.2}
 \PkgBib{cgal:kps-pthum}
 \PkgLicense{\ref licensesLGPL  "LGPL"}
-\PkgManuals{Chapter_Profiling_Tools_Hash_Map_Union-find_Modifiers,PkgProfilingTools}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 

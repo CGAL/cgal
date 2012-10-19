@@ -4,14 +4,18 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Surface Reconstruction from Point Sets,PkgSurfaceReconstructionFromPointSetsSummary}
 \PkgPicture{surface_reconstruction_points_detail.png}
+\PkgSummaryBegin
 \PkgAuthors{Pierre Alliez, Laurent Saboret, Ga&euml;l Guennebaud}
 \PkgDesc{This \cgal package implements a surface reconstruction method: Poisson Surface Reconstruction. It takes as input a set of points with oriented normals and computes an implicit function. The \cgal surface mesh generator can then be used to extract an iso-surface from this function. }
+\PkgManuals{Chapter_Surface_Reconstruction_from_Point_Sets,PkgSurfaceReconstructionFromPointSets}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.5}
 \PkgDependsOn{\ref thirdpartyEigen or \ref thirdpartyTaucs}
 \PkgBib{cgal:asg-srps}
 \PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{Surface Reconstruction,surface_reconstruction_points_3.zip}
-\PkgManuals{Chapter_Surface_Reconstruction_from_Point_Sets,PkgSurfaceReconstructionFromPointSets}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 This \cgal component implements a state-of-the-art surface

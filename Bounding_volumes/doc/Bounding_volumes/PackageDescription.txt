@@ -6,13 +6,17 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Bounding Volumes,PkgBoundingVolumesSummary}
 \PkgPicture{minCircle.png}
+\PkgSummaryBegin
 \PkgAuthors{Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr}
 \PkgDesc{This package     provides algorithms for computing optimal bounding volumes of     point sets. In d-dimensional space, the smallest enclosing sphere,     ellipsoid (approximate), and annulus can be computed. In     3-dimensional space, the smallest enclosing strip is available as     well, and in 2-dimensional space, there are algorithms for a number     of additional volumes (rectangles, parallelograms, \f$ k=2,3,4\f$     axis-aligned rectangles). The smallest enclosing     sphere algorithm can also be applied to a set of      d-dimensional spheres.}
+\PkgManuals{Chapter_Bounding_Volumes,PkgBoundingVolumes}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{1.1}
 \PkgBib{cgal:fghhs-bv}
 \PkgLicense{\ref licensesGPL  "GPL"}
 \PkgDemo{2D Bounding Volumes,bounding_volumes_2.zip}
-\PkgManuals{Chapter_Bounding_Volumes,PkgBoundingVolumes}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 The optimization code uses infix `OPTIMISATION` in the assertions,

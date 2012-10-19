@@ -6,13 +6,17 @@
 \todo check generated documentation
 \PkgDescriptionBegin{2D Minkowski Sums,PkgMinkowskiSum2Summary}
 \PkgPicture{Minkowski_sum_2/fig/Minkowski_sum_2.png}
+\PkgSummaryBegin
 \PkgAuthor{Ron Wein}
 \PkgDesc{This package consists of functions that compute the Minkowski sum of two simple straight-edge polygons in the plane. It also contains functions for computing the Minkowski sum of a polygon and a disc, an operation known as <I>offsetting</I> or <I>dilating</I> a polygon. The package can compute the exact representation of the offset polygon, or provide a guaranteed approximation of the offset.}
+\PkgManuals{Chapter_2D_Minkowski_Sums,PkgMinkowskiSum2}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.3}
 \PkgDependsOn{\ref PkgArrangement2Summary}
 \PkgBib{cgal:w-rms2}
 \PkgLicense{\ref licensesGPL "GPL"}
-\PkgManuals{Chapter_2D_Minkowski_Sums,PkgMinkowskiSum2}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 This package consist of functions for computing the Minkowksi sum

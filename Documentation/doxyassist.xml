@@ -31,7 +31,7 @@ namespace for the XML file to be processed properly.  -->
         <string name="LAYOUT_FILE">DoxygenLayoutPackage.xml</string>
         <list name="ALIASES" append="true">
           <item>PkgDescriptionBegin{2}=\details </item>
-          <item>PkgManuals{2}=</item>
+          <item>PkgManuals{2}=&lt;BR&gt;</item>
         </list>
         <string name="HTML_HEADER">header_package.html</string>
       </doxygen>
@@ -1556,7 +1556,7 @@ namespace for the XML file to be processed properly.  -->
         <bool name="GENERATE_BUGLIST">false</bool>
         <list name="ALIASES" append="true">
           <item>PkgDescriptionBegin{2}=\subsection \2 \1</item>
-          <item>PkgManuals{2}=\ref \1 &quot;User Manual&quot; \ref \2 &quot;Reference Manual\&quot;</item>
+          <item>PkgManuals{2}=&lt;div class=&quot;PkgManuals&quot;&gt; &lt;span style=&quot;float: left;&quot;&gt; \ref \1 &quot;User Manual&quot; &lt;/span&gt; &lt;span style=&quot;float: right;&quot;&gt;\ref \2 &quot;Reference Manual&quot; &lt;/span&gt; &lt;/div&gt;</item>
         </list>
         <list name="HTML_EXTRA_FILES" append="true">
           <item>hacks.js</item>

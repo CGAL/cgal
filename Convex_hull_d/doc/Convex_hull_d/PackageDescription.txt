@@ -6,12 +6,16 @@
 \todo check generated documentation
 \PkgDescriptionBegin{dD Convex Hulls and Delaunay Triangulations,PkgConvexHullDSummary}
 \PkgPicture{convex_hull_d-teaser.png}
+\PkgSummaryBegin
 \PkgAuthors{Susan Hert and Michael Seel}
 \PkgDesc{This package provides functions for computing convex hulls and Delaunay triangulations in \f$ d\f$-dimensional Euclidean space.}
+\PkgManuals{Chapter_dD_Convex_Hulls_and_Delaunay_Triangulations,PkgConvexHullD}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{2.3}
 \PkgBib{cgal:hs-chdt3}
 \PkgLicense{\ref licensesGPL "GPL"}
-\PkgManuals{Chapter_dD_Convex_Hulls_and_Delaunay_Triangulations,PkgConvexHullD}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 A subset \f$ S \subseteq \R^d\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$

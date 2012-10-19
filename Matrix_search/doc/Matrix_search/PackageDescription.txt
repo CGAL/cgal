@@ -8,12 +8,16 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Monotone and Sorted Matrix Search,PkgMatrixSearchSummary}
 \PkgPicture{matrix.png}
+\PkgSummaryBegin
 \PkgAuthor{Michael Hoffmann}
 \PkgDesc{This package provides a matrix search framework, which is the underlying technique for the computation of all furthest neighbors for the vertices of a convex polygon,  maximal k-gons inscribed into a planar point set, and computing rectangular p-centers.}
+\PkgManuals{Chapter_Monotone_and_Sorted_Matrix_Search,PkgMatrixSearch}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{1.1}
 \PkgBib{cgal:h-msms}
 \PkgLicense{\ref licensesGPL "GPL"}
-\PkgManuals{Chapter_Monotone_and_Sorted_Matrix_Search,PkgMatrixSearch}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 This chapter describes concepts, classes, and functions for 

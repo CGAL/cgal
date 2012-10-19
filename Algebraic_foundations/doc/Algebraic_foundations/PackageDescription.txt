@@ -47,19 +47,22 @@
 /*!
 \addtogroup PkgAlgebraicFoundations
 \todo check generated documentation
+
 \PkgDescriptionBegin{Algebraic Foundations,PkgAlgebraicFoundationsSummary}
 \PkgPicture{Algebraic_foundations2.png}
+\PkgSummaryBegin
 \PkgAuthor{Michael Hemmer}
 \PkgDesc{This package defines what algebra means for \cgal, in terms of concepts, classes and functions. The main features are: (i) explicit concepts for interoperability of types  (ii) separation between algebraic types (not necessarily embeddable into the reals), and number types (embeddable into the reals).}
+\PkgManuals{Chapter_Algebraic_Foundations,PkgAlgebraicFoundations}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.3}
 \PkgBib{cgal:h-af}
 \PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgManuals{Chapter_Algebraic_Foundations,PkgAlgebraicFoundations}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
-
 \ref AlgebraicFoundationsClassified  "Classified Reference Pages"
-
 
 */
 

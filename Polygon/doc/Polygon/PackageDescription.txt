@@ -11,13 +11,17 @@
 
 \PkgDescriptionBegin{2D Polygons,PkgPolygon2Summary}
 \PkgPicture{polygon.png}
+\PkgSummaryBegin
 \PkgAuthors{Geert-Jan Giezeman and Wieger Wesselink}
 \PkgDesc{This package provides a 2D polygon class and operations on sequences of points, like bounding box, extremal points, signed area, simplicity and convexity test, orientation, and point location.  The demo includes operations on polygons, such as computing a convex  partition, and the straight skeleton.}
+\PkgManuals{Chapter_2D_Polygon,PkgPolygon2}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{0.9}
 \PkgBib{cgal:gw-p2}
 \PkgLicense{\ref licensesLGPL "LGPL"}
 \PkgDemo{Operations on Polygons,polygon.zip}
-\PkgManuals{Chapter_2D_Polygon,PkgPolygon2}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 ## Assertions ##

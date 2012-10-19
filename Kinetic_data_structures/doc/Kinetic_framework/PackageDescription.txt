@@ -22,13 +22,17 @@
 \addtogroup PkgKdsFramework
 \todo check generated documentation
 \PkgDescriptionBegin{Kinetic Framework,PkgKdsFrameworeSummary}
+\PkgSummaryBegin
 \PkgAuthor{Daniel Russel}
 \PkgDesc{Kinetic data structures allow combinatorial geometric structures to be maintained as the primitives move. The package provides a framework to ease implementing and debugging kinetic data structures. The package supports exact or inexact operations on primitives which move along polynomial trajectories.  }
+\PkgManuals{Chapter_Kinetic_Framework,PkgKdsFramework}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.2}
 \PkgDependsOn{Two dimensional visualization depends on \ref thirdpartyQt\, three dimensional visualization depends on \ref thirdpartyCoin.}
 \PkgBib{cgal:r-kdsf}
 \PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgManuals{Chapter_Kinetic_Framework,PkgKdsFramework}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 Kinetic data structures are a way of adding motion to classical

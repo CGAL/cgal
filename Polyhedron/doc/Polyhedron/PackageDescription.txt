@@ -6,14 +6,18 @@
 \todo check generated documentation
 \PkgDescriptionBegin{3D Polyhedral Surface,PkgPolyhedronSummary}
 \PkgPicture{Polyhedron-teaser-small.gif}
+\PkgSummaryBegin
 \PkgAuthor{Lutz Kettner}
 \PkgDesc{Polyhedral surfaces in three dimensions are composed of vertices, edges, facets and an incidence relationship on them. The organization beneath is a halfedge data structure, which restricts the class of representable surfaces to orientable 2-manifolds - with and without boundary. If the surface is closed we call it a polyhedron.}
+\PkgManuals{Chapter_3D_Polyhedral_Surfaces,PkgPolyhedron}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{1.0}
 \PkgDependsOn{\ref PkgHDSSummary}
 \PkgBib{cgal:k-ps}
 \PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
-\PkgManuals{Chapter_3D_Polyhedral_Surfaces,PkgPolyhedron}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 Polyhedral surfaces in three dimensions are composed of vertices,

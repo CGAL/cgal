@@ -6,12 +6,16 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Polynomial,PkgPolynomialSummary}
 \PkgPicture{Polynomial.png}
+\PkgSummaryBegin
 \PkgAuthor{Michael Hemmer}
 \PkgDesc{This package introduces a concept for univariate and multivariate  polynomials in \f$ d\f$ variables. Though the concept is written for an arbitrary  number of variables, the number of variables is considered as fixed for a  particular model of this concept.}
+\PkgManuals{Chapter_Polynomial,PkgPolynomial}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.3}
 \PkgBib{cgal:h-p}
 \PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgManuals{Chapter_Polynomial,PkgPolynomial}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 */
 

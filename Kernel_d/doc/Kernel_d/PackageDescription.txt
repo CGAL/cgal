@@ -24,12 +24,16 @@
 \todo check generated documentation
 \PkgDescriptionBegin{dD Geometry Kernel,PkgKernelDSumamry}
 \PkgPicture{hypercube.png}
+\PkgSummaryBegin
 \PkgAuthor{Michael Seel}
 \PkgDesc{The dD Kernel contains objects of constant size, such as point, vector, direction, line, ray, segment, circle in d dimensional Euclidean space, as well as predicates and constructions for these objects.}
+\PkgManuals{Chapter_dD_Geometry_Kernel,PkgKernelD}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{1.1}
 \PkgBib{cgal:s-gkd}
 \PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgManuals{Chapter_dD_Geometry_Kernel,PkgKernelD}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 */
 

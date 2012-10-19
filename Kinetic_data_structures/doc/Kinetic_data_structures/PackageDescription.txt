@@ -21,13 +21,17 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Kinetic Data Structures,PkgKdsSummary}
 \PkgPicture{kdsDetail.png}
+\PkgSummaryBegin
 \PkgAuthor{Daniel Russel}
 \PkgDesc{Kinetic data structures allow combinatorial structures to be maintained as the primitives move. The package provides implementations of kinetic data structures for Delaunay triangulations in two and three dimensions, sorting of points in one dimension and regular triangulations in three dimensions. The package supports exact or inexact operations on primitives which move along polynomial trajectories.  }
+\PkgManuals{Chapter_Kinetic_Data_Structures,PkgKds}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.2}
 \PkgDependsOn{\ref PkgKdsFrameworkSummary. Two dimensional visualization depends on \ref thirdpartyQt\, three dimensional visualization depends on \ref thirdpartyCoin.}
 \PkgBib{cgal:r-kds}
 \PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgManuals{Chapter_Kinetic_Data_Structures,PkgKds}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 Kinetic data structures are a way of adding motion to classical

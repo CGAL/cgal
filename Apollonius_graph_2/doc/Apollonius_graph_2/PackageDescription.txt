@@ -6,14 +6,18 @@
 \todo check generated documentation
 \PkgDescriptionBegin{2D Apollonius Graphs (Delaunay Graphs of Disks),PkgApolloniusGraph2Summary}
 \PkgPicture{CircleVoronoi.png}
+\PkgSummaryBegin
 \PkgAuthors{Menelaos Karavelas and Mariette Yvinec}
 \PkgDesc{Algorithms for computing the Apollonius graph in two dimensions. The Apollonius graph is the dual of the Apollonius diagram, also known as the <I>additively weighted Voronoi diagram</I>. The latter can be thought of as the Voronoi diagram of a set of disks under the Euclidean metric, and it is a generalization of the standard Voronoi diagram for points. The algorithms provided are dynamic.}
+\PkgManuals{Chapter_2D_Apollonius_Graphs,PkgApolloniusGraph2}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.0}
 \PkgDependsOn{\ref PkgTDS2Summary}
 \PkgBib{cgal:ky-ag2}
 \PkgLicense{\ref licensesGPL  "GPL"}
 \PkgDemo{2D Apollonius Graph,apollonius_graph_2.zip}
-\PkgManuals{Chapter_2D_Apollonius_Graphs,PkgApolloniusGraph2}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 An Apollonius graph is the dual of the Apollonius diagram, also known

@@ -6,12 +6,16 @@
 
 \PkgDescriptionBegin{Interval Skip List,PkgIntervalSkipListSummary}
 \PkgPicture{Interval_skip_list/fig/query.png}
+\PkgSummaryBegin
 \PkgAuthor{Andreas Fabri}
 \PkgDesc{An interval skip list is a data structure for finding all intervals that contain a point, and for stabbing queries, that is for answering the question whether a given point is contained in an interval or not. For a triangulated terrain, this allows to quickly identify the triangles which intersect an iso line. }
+\PkgManuals{Chapter_Interval_Skip_List,PkgIntervalSkipList}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.0}
 \PkgBib{cgal:f-isl}
 \PkgLicense{\ref licensesGPL  "GPL"}
-\PkgManuals{Chapter_Interval_Skip_List,PkgIntervalSkipList}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 This chapter presents the interval skip list introduced by Hanson \cite h-islds-91,

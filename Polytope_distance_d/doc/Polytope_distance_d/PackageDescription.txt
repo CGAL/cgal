@@ -7,12 +7,16 @@
 \todo check generated documentation
 \PkgDescriptionBegin{Optimal Distances,PkgOptimalDistancesSummary}
 \PkgPicture{dist.png}
+\PkgSummaryBegin
 \PkgAuthors{Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr}
 \PkgDesc{This package provides algorithms for computing the distance between the convex hulls of two point sets in d-dimensional space, without explicitely constructing the convex hulls.   It further provides an algorithm to compute the width of a point set, and the furthest point for each vertex of a convex polygon. }
+\PkgManuals{Chapter_Optimal_Distances,PkgOptimalDistances}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{1.1}
 \PkgBib{cgal:fghhs-od}
 \PkgLicense{\ref licensesGPL  "GPL"}
-\PkgManuals{Chapter_Optimal_Distances,PkgOptimalDistances}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 The optimization code uses infix `OPTIMISATION` in the assertions,

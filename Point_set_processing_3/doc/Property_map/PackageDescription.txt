@@ -5,12 +5,16 @@
 
 \PkgDescriptionBegin{CGAL and Boost Property Maps,PkgProperty_mapSummary}
 \PkgPicture{property_map.png}
+\PkgSummaryBegin
 \PkgAuthors{Andreas Fabri and Laurent Saboret}
 \PkgDesc{This package provides a framework for interfacing \cgal data structures with algorithms expecting Boost Property Maps.}
+\PkgManuals{Chapter_CGAL_and_Boost_Property_Maps,PkgProperty_map}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.5}
 \PkgBib{cgal:fs-cbpm}
 \PkgLicense{\ref licensesGPL "GPL"}
-\PkgManuals{Chapter_CGAL_and_Boost_Property_Maps,PkgProperty_map}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 */

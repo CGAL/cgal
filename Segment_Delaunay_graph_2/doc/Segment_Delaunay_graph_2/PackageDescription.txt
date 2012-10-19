@@ -6,14 +6,18 @@
 \todo check generated documentation
 \PkgDescriptionBegin{2D Segment Delaunay Graphs,PkgSegmentDelaunayGraph2Summary}
 \PkgPicture{svd.png}
+\PkgSummaryBegin
 \PkgAuthor{Menelaos Karavelas}
 \PkgDesc{An algorithm for computing the dual of a Voronoi diagram of a set       of segments under the Euclidean metric. It is a generalization of the       standard Voronoi diagram for points.  The algorithms provided are       dynamic.}
+\PkgManuals{Chapter_2D_Segment_Delaunay_Graphs,PkgSegmentDelaunayGraph2}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.1}
 \PkgDependsOn{\ref PkgTDS2Summary}
 \PkgBib{cgal:k-sdg2}
 \PkgLicense{\ref licensesGPL}
 \PkgDemo{2D Segment Voronoi Diagram,segment_voronoi_diagram_2.zip}
-\PkgManuals{Chapter_2D_Segment_Delaunay_Graphs,PkgSegmentDelaunayGraph2}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 \cgal provides the class

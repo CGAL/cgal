@@ -5,12 +5,16 @@
 \addtogroup PkgCGALIpelets
 \PkgDescriptionBegin{CGAL Ipelets,PkgCGALIpeletsSummary}
 \PkgPicture{ipeico.jpg}
+\PkgSummaryBegin
 \PkgAuthors{S&eacute;bastien Loriot and Sylvain Pion}
 \PkgDesc{This package provides  a generic framework to easily write ipelets (plug-in's) using \cgal for the the Ipe extensible drawing editor.}
+\PkgManuals{Chapter_CGAL_Ipelets,PkgCGALIpelets}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.5}
 \PkgBib{cgal:lp-gi}
 \PkgLicense{\ref licensesLGPL  "LGPL"}
-\PkgManuals{Chapter_CGAL_Ipelets,PkgCGALIpelets}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 */
 

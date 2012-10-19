@@ -5,13 +5,17 @@
 \addtogroup PkgGenerators
 \PkgDescriptionBegin{Geometric Object Generators,PkgGeneratorsSummary}
 \PkgPicture{dice.png}
+\PkgSummaryBegin
 \PkgAuthors{Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr}
 \PkgDesc{This package provides a variety of generators for geometric objects. They are useful as synthetic test data sets, e.g. for testing algorithms on degenerate object sets and for performance analysis. }
+\PkgManuals{Chapter_Geometric_Object_Generators,PkgGenerators}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{1.0}
 \PkgBib{cgal:dhhk-gog}
 \PkgLicense{\ref licensesLGPL  "LGPL"}
 \PkgDemo{Generators,generator.zip}
-\PkgManuals{Chapter_Geometric_Object_Generators,PkgGenerators}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 This chapter describes the functions and classes provided in \cgal

@@ -33,12 +33,16 @@
 \addtogroup PkgKernel23
 \PkgDescriptionBegin{2D and 3D Linear Geometry Kernel,PkgKernel23Summary}
 \PkgPicture{pointSegmentTriangle.png}
+\PkgSummaryBegin
 \PkgAuthors{Herv&eacute; Br&ouml;nnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra}
 \PkgDesc{This package contains kernels each containing objects of  constant size, such as point, vector, direction, line, ray, segment, circle as well as predicates and constructions for these objects. The kernels mainly differ in the way they handle robustness issues.}
+\PkgManuals{Chapter_2D_and_3D_Geometry_Kernel,PkgKernel23}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{0.9}
 \PkgBib{cgal:bfghhkps-lgk23}
 \PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgManuals{Chapter_2D_and_3D_Geometry_Kernel,PkgKernel23}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 */
 

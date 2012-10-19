@@ -218,14 +218,24 @@ ALIASES += "debug=\par \"Debug\""
 ALIASES += "advanced=\par \"Advanced\""
 
 ALIASES += "PkgPicture{1}=<div class=\"PkgImage\"> \n \image html \1 \n</div>"
-ALIASES += "PkgAuthor{1}=<div class=\"PkgDescription\"><I>\1</I><BR><BR>"
-ALIASES += "PkgAuthors{1}=<div class=\"PkgDescription\"><I>\1</I><BR><BR>"
-ALIASES += "PkgDesc{1}=\1</div><div class=\"PkgSummary\">"
+
+ALIASES += "PkgSummaryBegin=<div class=\"PkgSummary\">"
+ALIASES += "PkgSummaryEnd=</div>"
+
+ALIASES += "PkgShortInfoBegin=<div class=\"PkgShortInfo\">"
+ALIASES += "PkgShortInfoEnd=</div>"
+
+ALIASES += "PkgAuthor{1}=<div class=\"PkgAuthors\">\1</div>"
+ALIASES += "PkgAuthors{1}=<div class=\"PkgAuthors\">\1</div>"
+
+ALIASES += "PkgDesc{1}=<div class=\"PkgDescription\">\1</div>"
+
 ALIASES += "PkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>"
 ALIASES += "PkgDependsOn{1}=<B>Depends on:</B> \1<BR>"
 ALIASES += "PkgLicense{1}=<B>License:</B> \1<BR>"
 ALIASES += "PkgDemo{2}=<B>Demo:</B> <a href=\"http://www.cgal.org/demo/4.0.2/\2\">\1</a><BR>"
-ALIASES += "PkgDescriptionEnd=\n\n</div>"
+ALIASES += "PkgDescriptionEnd="
+
 # this alias controls linking to the how to cite page, it is also
 # responsible for adding the -YY{a,b} suffix to a cite
 ALIASES += "PkgBib{1}=<B>BibTeX:</B> <a href=\"../../CGAL.CGAL/html/how_to_cite_cgal.html#\1-12b\">\1-12b</a><BR>"

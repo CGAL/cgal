@@ -28,13 +28,17 @@
 \todo check generated documentation
 \PkgDescriptionBegin{3D Surface Mesh Generation,PkgSurfaceMesher3Summary}
 \PkgPicture{segmented_head-small.png}
+\PkgSummaryBegin
 \PkgAuthors{Laurent Rineau and Mariette Yvinec}
 \PkgDesc{This package provides functions to generate surface  meshes that interpolate smooth surfaces. The  meshing algorithm is based on Delaunay refinement and provides some guarantees on the resulting mesh: the user is able to control the size and shape of the mesh elements and  the accuracy of the surface approximation. There is no restriction on the topology and number of components of input surfaces. The surface mesh generator may also be used for non smooth surfaces but without guarantee.  Currently, implementations are provided for implicit surfaces described as the zero level set of some function and surfaces described as a gray level set in a three-dimensional image.}
+\PkgManuals{Chapter_3D_Surface_Mesh_Generation,PkgSurfaceMesher3}
+\PkgSummaryEnd
+\PkgShortInfoBegin
 \PkgSince{3.2}
 \PkgBib{cgal:ry-smg}
 \PkgLicense{\ref licensesGPL}
 \PkgDemo{Surface Mesh Generator,surface_mesher.zip}
-\PkgManuals{Chapter_3D_Surface_Mesh_Generation,PkgSurfaceMesher3}
+\PkgShortInfoEnd
 \PkgDescriptionEnd
 
 The surface mesh generation package offers a function template
