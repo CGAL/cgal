@@ -2886,7 +2886,6 @@ Jet_fitting_3/clean_tree.csh eol=lf
 Jet_fitting_3/demo/Jet_fitting_3/README_visu -text
 Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
 Jet_fitting_3/doc/Jet_fitting_3/CGAL/Eigen_svd.h -text
-Jet_fitting_3/doc/Jet_fitting_3/CGAL/Lapack/Linear_algebra_lapack.h -text
 Jet_fitting_3/doc/Jet_fitting_3/CGAL/Monge_via_jet_fitting.h -text
 Jet_fitting_3/doc/Jet_fitting_3/Concepts/DataKernel.h -text
 Jet_fitting_3/doc/Jet_fitting_3/Concepts/LocalKernel.h -text

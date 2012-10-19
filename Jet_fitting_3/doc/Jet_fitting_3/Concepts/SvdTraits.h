@@ -16,7 +16,6 @@
   the `LocalKernel` concept : `LocalKernel::FT`. 
 
   \hasModel `CGAL::Eigen_svd`
-  \hasModel `CGAL::Lapack_svd`
 
   \sa `LocalKernel` 
 

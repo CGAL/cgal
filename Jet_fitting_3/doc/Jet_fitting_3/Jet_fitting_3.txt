@@ -17,8 +17,7 @@ This package allows the estimation of local differential quantities of
 a surface from a point sample, given either as a mesh or as point
 cloud.
 
-Note that this package either needs the third party library
-\ref thirdpartyEigen, or \ref thirdpartyLapack and \ref thirdpartyBlas to be installed to compile the example code.
+Note that this package needs the third party library \ref thirdpartyEigen to be installed to compile the example code..
 
 \section secintro Introduction 
 

@@ -14,7 +14,7 @@ for the polynomial fitting and for the Monge form.
 
 The default for the template `LocalKernel` is 
 `Cartesian<double>` and the default for `SvdTraits` is `Eigen_svd` if `CGAL_EIGEN3_ENABLED` 
-is defined and `Lapack_svd` otherwise. 
+is defined. 
 
 ### Parameters ###
 
@@ -27,7 +27,6 @@ computations. Parameter `SvdTraits` features the linear
 algebra algorithm required by the fitting method. 
 
 \sa `Eigen_svd`
-\sa `Lapack_svd`
 \sa `Monge_form`
 
 */
