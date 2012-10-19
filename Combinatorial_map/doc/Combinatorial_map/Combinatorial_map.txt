@@ -201,8 +201,6 @@ combinatorial and geometrical descriptions) and all the adjacency
 relations between these elements allowing for example to move a camera
 in a given building from rooms to rooms by traversing doors.
 
-\todo Solve the problem with the links to linear cell complex package that do not work.
-
 # Data Structure Presentation # {#sec_presentation}
 
 In this section, we describe <I>d</I>D combinatorial maps in terms of data
