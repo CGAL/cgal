@@ -160,7 +160,7 @@ sparse linear solvers:
 \PkgSummaryEnd
 \PkgShortInfoBegin
 \PkgSince{3.2}
-\PkgDependsOn{Solvers as \ref thirdpartyEigen or \ref thirdpartyTaucs.}
+\PkgDependsOn{Solvers as \ref thirdpartyEigen.}
 \PkgBib{cgal:sal-pptsm2}
 \PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
