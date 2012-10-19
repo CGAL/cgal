@@ -77,7 +77,7 @@ It contains at most <I>dimension+1</I> types
 (one for each possible cell of the combinatorial map). Each type of
 the tuple must be either a model of the `CellAttribute` concept or
 `void`.  The first type corresponds to 0-attributes, the second to
-1-attributes and so on.  If the \f$ i^{\mbox{th}}\f$ type in the tuple
+1-attributes and so on.  If the <i>i <sup>th</sup></i> type in the tuple
 is `void`, <I>(i-1)</I>-attributes are disabled. Otherwise,
 <I>(i-1)</I>-attributes are enabled and have the given type. If the
 size of the tuple is <I>k</I>, with <I>k</I>\f$
