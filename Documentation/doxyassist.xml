@@ -320,6 +320,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Combinatorial_map/doc/Combinatorial_map/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+            <item>./tags/Linear_cell_complex.tag=../../CGAL.CGAL.Linear-Cell-Complex/html</item>
           </list>
         </doxygen>
       </project>
