@@ -118,7 +118,7 @@ public:
   }
 
 protected:
-  /// Stores visited facets (4 first bits)
+  /// Stores visited facets
   bool visited_facets[4];
 };
 #endif // CGAL_LINKED_WITH_TBB

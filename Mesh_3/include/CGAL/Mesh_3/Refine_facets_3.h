@@ -155,7 +155,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
 
       /*if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
       {
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
         tbb::queuing_mutex mut;
         tbb::queuing_mutex::scoped_lock l(mut);
 #endif
