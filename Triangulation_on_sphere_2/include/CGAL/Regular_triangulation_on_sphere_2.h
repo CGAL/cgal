@@ -76,7 +76,7 @@ public:
   using Base::EDGE;
   using Base::OUTSIDE_CONVEX_HULL;
   using Base::orientation;
-  using Base::insert_four_init_vertices;
+
 
 	
 	
