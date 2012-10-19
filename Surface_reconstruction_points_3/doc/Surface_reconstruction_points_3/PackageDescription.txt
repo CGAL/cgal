@@ -11,7 +11,7 @@
 \PkgSummaryEnd
 \PkgShortInfoBegin
 \PkgSince{3.5}
-\PkgDependsOn{\ref thirdpartyEigen or \ref thirdpartyTaucs}
+\PkgDependsOn{\ref thirdpartyEigen}
 \PkgBib{cgal:asg-srps}
 \PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{Surface Reconstruction,surface_reconstruction_points_3.zip}

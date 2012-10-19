@@ -231,8 +231,7 @@ public:
     \tparam SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver. 
 
     If \sc{Eigen} 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED`
-    is defined, the default solver is `Eigen::ConjugateGradient`,
-    otherwise, it is TAUCS Multifrontal Supernodal Cholesky Factorization.
+    is defined, the default solver is `Eigen::ConjugateGradient`.
 
     \return false if the linear solver fails. 
   */ 
