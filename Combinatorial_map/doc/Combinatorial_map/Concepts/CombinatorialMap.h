@@ -7,6 +7,7 @@ The concept `CombinatorialMap` defines a <I>d</I>-dimensional combinatorial map.
 \hasModel `CGAL::Combinatorial_map<d,Items,Alloc>`
 
 */
+ //@{
 class CombinatorialMap {
 public:
 
@@ -617,6 +618,6 @@ Frees `amark`.
 void free_mark(int amark) const; 
 
 /// @}
-
 }; /* end CombinatorialMap */
+//@}
 
