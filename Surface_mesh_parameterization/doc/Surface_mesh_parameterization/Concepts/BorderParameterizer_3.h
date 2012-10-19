@@ -28,7 +28,16 @@
 /// ParameterizationMesh_3 class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-
+///
+/// \hasModel `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
+/// \hasModel `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
+/// \hasModel `CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
+/// \hasModel `CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>`
+/// \hasModel `CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>`
+///
+///
+///\sa `ParameterizerTraits_3`
+///\sa `ParameterizationMesh_3`
 
 class BorderParameterizer_3
 {

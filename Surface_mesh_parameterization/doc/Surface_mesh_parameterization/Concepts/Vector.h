@@ -63,8 +63,13 @@ public:
 /// is a concept of a sparse matrix class.
 ///
 /// \refines LinearAlgebraTraits_d::Matrix
-/// \hasModel Eigen_sparse_matrix<T>
-/// \hasModel OpenNL::SparseMatrix<T> in OpenNL package
+/// \hasModel `CGAL::Eigen_sparse_matrix<T>`
+/// \hasModel `CGAL::Eigen_sparse_symmetric_matrix<T>`
+/// \hasModel `OpenNL::SparseMatrix<T>` in OpenNL package
+///
+/// \sa `SparseLinearAlgebraTraits_d`
+/// \sa `SparseLinearAlgebraTraits_d::Vector`
+
 class Matrix
 {
 // Public types

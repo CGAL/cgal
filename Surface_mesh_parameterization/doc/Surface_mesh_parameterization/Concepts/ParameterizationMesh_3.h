@@ -48,7 +48,7 @@
 /// \hasModel `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
 /// \hasModel `CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>`
 ///
-
+/// \sa `ParameterizationPatchableMesh_3`
 
 class ParameterizationMesh_3
 {
@@ -73,7 +73,7 @@ public:
     /// Handle to a facet. Model of the Handle concept.
     typedef Hidden_type Facet_handle;
     typedef Hidden_type Facet_const_handle;
-    /// Iterator over all mesh facets. Model of the ForwardIterator concept.
+    /// %Iterator over all mesh facets. Model of the ForwardIterator concept.
     typedef Hidden_type Facet_iterator;
     typedef Hidden_type Facet_const_iterator;
 
@@ -82,10 +82,10 @@ public:
     /// Handle to a vertex. Model of the Handle concept.
     typedef Hidden_type Vertex_handle;
     typedef Hidden_type Vertex_const_handle;
-    /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
+    /// %Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
     typedef Hidden_type Vertex_iterator;
     typedef Hidden_type Vertex_const_iterator;
-    /// Iterator over vertices of the mesh <i>main border</i>.
+    /// %Iterator over vertices of the mesh <i>main border</i>.
     /// Model of the ForwardIterator concept.
     typedef Hidden_type Border_vertex_iterator;
     typedef Hidden_type Border_vertex_const_iterator;
@@ -109,11 +109,11 @@ public:
     /// Indicate if the mesh matches the ParameterizationMesh_3 concept.
     bool is_valid() const;
 
-    /// Get iterator over first vertex of mesh.
+    /// %Get iterator over first vertex of mesh.
     Vertex_iterator  mesh_vertices_begin ();
     Vertex_const_iterator  mesh_vertices_begin () const;
 
-    /// Get iterator over past-the-end vertex of mesh.
+    /// %Get iterator over past-the-end vertex of mesh.
     Vertex_iterator  mesh_vertices_end ();
     Vertex_const_iterator  mesh_vertices_end () const;
 
@@ -123,11 +123,11 @@ public:
     /// Index vertices of the mesh from 0 to count_mesh_vertices()-1.
     void  index_mesh_vertices ();
 
-    /// Get iterator over first vertex of mesh's <i>main border</i>.
+    /// %Get iterator over first vertex of mesh's <i>main border</i>.
     Border_vertex_iterator  mesh_main_border_vertices_begin ();
     Border_vertex_const_iterator  mesh_main_border_vertices_begin () const;
 
-    /// Get iterator over past-the-end vertex of mesh's <i>main border</i>.
+    /// %Get iterator over past-the-end vertex of mesh's <i>main border</i>.
     Border_vertex_iterator  mesh_main_border_vertices_end ();
     Border_vertex_const_iterator  mesh_main_border_vertices_end () const;
 
@@ -135,11 +135,11 @@ public:
     /// Return an empty list if not found.
     std::list<Vertex_handle> get_border(Vertex_handle seed_vertex);
 
-    /// Get iterator over first facet of mesh
+    /// %Get iterator over first facet of mesh
     Facet_iterator  mesh_facets_begin ();
     Facet_const_iterator  mesh_facets_begin () const;
 
-    /// Get iterator over past-the-end facet of mesh.
+    /// %Get iterator over past-the-end facet of mesh.
     Facet_iterator  mesh_facets_end ();
     Facet_const_iterator  mesh_facets_end () const;
 
@@ -154,7 +154,7 @@ public:
 
     // FACET INTERFACE
 
-    /// Get circulator over facet's vertices.
+    /// %Get circulator over facet's vertices.
     Vertex_around_facet_circulator facet_vertices_begin(Facet_handle facet);
     Vertex_around_facet_const_circulator  facet_vertices_begin(Facet_const_handle facet) const;
 
@@ -163,28 +163,28 @@ public:
 
     // VERTEX INTERFACE
 
-    /// Get the 3D position of a vertex.
+    /// %Get the 3D position of a vertex.
     Point_3  get_vertex_position (Vertex_const_handle vertex) const;
 
-    /// Getthe 2D position (u/v pair) of a vertex. Default value is undefined.
+    /// %Get the 2D position (u/v pair) of a vertex. Default value is undefined.
     Point_2  get_vertex_uv (Vertex_const_handle vertex) const;
 
     /// Set the 2D position (u/v pair) of a vertex. Default value is undefined.
     void  set_vertex_uv (Vertex_handle vertex, const Point_2& uv);
 
-    /// Get <i>is parameterized</i> field of vertex. Default value is undefined.
+    /// %Get <i>is parameterized</i> field of vertex. Default value is undefined.
     bool  is_vertex_parameterized (Vertex_const_handle vertex) const;
  
     /// Set <i>is parameterized</i> field of vertex. Default value is undefined.
     void  set_vertex_parameterized (Vertex_handle vertex, bool parameterized);
 
-    /// Get vertex index. Default value is undefined.
+    /// %Get vertex index. Default value is undefined.
     int  get_vertex_index (Vertex_const_handle vertex) const;
 
     /// Set vertex index. Default value is undefined.
     void  set_vertex_index (Vertex_handle vertex, int index);
 
-    /// Get vertex' all purpose tag. Default value is undefined.
+    /// %Get vertex' all purpose tag. Default value is undefined.
     int  get_vertex_tag(Vertex_const_handle vertex) const;
 
     /// Set vertex' all purpose tag. Default value is undefined.
@@ -196,7 +196,7 @@ public:
     /// Return true if a vertex belongs to the unique mesh's main border.
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const;
 
-    /// Get circulator over the vertices incident to `vertex`.
+    /// %Get circulator over the vertices incident to `vertex`.
     /// `start_position` defines the optional initial position of the circulator.
     Vertex_around_vertex_circulator vertices_around_vertex_begin(
                             Vertex_handle vertex,
