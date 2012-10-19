@@ -40,6 +40,9 @@ namespace CGAL {
 template <typename Concurrency_tag>
 class Compact_mesh_cell_base_3_base
 {
+  Compact_mesh_cell_base_3_base()
+    : bits_(0) {}
+
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)\
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 public:  
@@ -61,6 +64,32 @@ protected:
   typedef unsigned int              Erase_counter_type;
   Erase_counter_type                m_erase_counter;
 #endif
+
+public:
+  /// Marks \c facet as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet <4);
+    bits_ |= (1 << facet);
+    std::cerr << "OUCH" << std::endl;
+  }
+
+  /// Marks \c facet as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    bits_ &= (15 & ~(1 << facet));
+  }
+
+  /// Returns \c true if \c facet is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( (bits_ & (1 << facet)) != 0 );
+  }
+
+private:
+  char bits_;
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -68,7 +97,19 @@ protected:
 template <>
 class Compact_mesh_cell_base_3_base<Parallel_tag>
 {
+
 public: 
+  Compact_mesh_cell_base_3_base()
+# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+    : m_localization_id(0)
+# endif
+  {
+    visited_facets[0] = 
+      visited_facets[1] = 
+      visited_facets[2] = 
+      visited_facets[3] = false;
+  }
+
   // Erase counter (cf. Compact_container)
   unsigned int get_erase_counter() const
   {
@@ -83,11 +124,28 @@ public:
     ++this->m_erase_counter;
   }
 
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-  Compact_mesh_cell_base_3_base()
-  : m_localization_id(0)
-  {}
+  /// Marks \c facet as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    visited_facets[facet] = true;
+  }
 
+  /// Marks \c facet as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    visited_facets[facet] = false;
+  }
+
+  /// Returns \c true if \c facet is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return visited_facets[facet];
+  }
+
+# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
   int get_localization_id() const
   {
     return m_localization_id;
@@ -96,7 +154,7 @@ public:
   {
     m_localization_id = id;
   }
-#endif
+# endif
 
 protected:
   typedef tbb::atomic<unsigned int> Erase_counter_type;
@@ -105,6 +163,10 @@ protected:
 #ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
   int                               m_localization_id;
 #endif
+
+private:
+  /// Stores visited facets
+  bool visited_facets[4];
 };
 #endif // CGAL_LINKED_WITH_TBB
 
@@ -169,7 +231,6 @@ public:
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
-    , bits_(0)
     , sliver_cache_validity_(false)
   {
   }
@@ -178,7 +239,6 @@ public:
     : circumcenter_(NULL)
     , sliver_value_(rhs.sliver_value_)
     , subdomain_index_(rhs.subdomain_index_) 
-    , bits_(0) 
     , sliver_cache_validity_(false)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
@@ -208,8 +268,7 @@ public:
 #endif
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
-    , subdomain_index_() 
-    , bits_(0) 
+    , subdomain_index_()
     , sliver_cache_validity_(false)
   {
 #ifdef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
@@ -240,7 +299,6 @@ public:
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
-    , bits_(0) 
     , sliver_cache_validity_(false)
   {
 #ifdef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
@@ -445,27 +503,6 @@ public:
     return surface_index_table_[facet];
   }
 
-  /// Marks \c facet as visited
-  void set_facet_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet <4);
-    bits_ |= (1 << facet);
-  }
-
-  /// Marks \c facet as not visited
-  void reset_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    bits_ &= (15 & ~(1 << facet));
-  }
-
-  /// Returns \c true if \c facet is marked as visited
-  bool is_facet_visited (const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return ( (bits_ & (1 << facet)) != 0 );
-  }
-
   /// Sets surface center of \c facet to \c point
   void set_facet_surface_center(const int facet, const Point& point)
   {
@@ -571,7 +608,6 @@ public:
 #endif
 
   TDS_data      _tds_data;
-  char bits_;
   mutable bool sliver_cache_validity_;
 
 
