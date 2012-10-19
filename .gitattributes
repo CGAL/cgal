@@ -51,6 +51,9 @@ AABB_tree/test/AABB_tree/data/cube.off -text
 AABB_tree/test/AABB_tree/data/finger.off -text
 AABB_tree/test/AABB_tree/data/pinion.off -text
 AABB_tree/test/AABB_tree/data/tetrahedron.off -text
+Advancing_front_surface_reconstruction/doc_tex/Advancing_front_surface_reconstruction/main.aux -text
+Advancing_front_surface_reconstruction/examples/Advancing_front_surface_reconstruction/data/Kniesmoothed.xyz -text
+Advancing_front_surface_reconstruction/examples/Advancing_front_surface_reconstruction/data/hand_pierre_wt-shuffled.xyz -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations2.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/algebraic_structures.tex -text
