@@ -25,7 +25,7 @@
 \PkgSummaryEnd
 \PkgShortInfoBegin
 \PkgSince{3.3}
-\PkgDependsOn{Solvers as \ref thirdpartyEigen\, or \ref thirdpartyLapack and \ref thirdpartyBlas.} 
+\PkgDependsOn{Solvers from \ref thirdpartyEigen.} 
 \PkgBib{cgal:cp-arutsm}
 \PkgLicense{\ref licensesGPL "GPL"}
 \PkgShortInfoEnd
