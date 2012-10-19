@@ -319,8 +319,9 @@ Overloads of this member function are defined that take from one to nine integer
 Dart_const_handle beta(Dart_const_handle dh, int i, int j) const; 
 
 /*! 
-Returns true iff `dh1` can be <I>i</I>-sewn with `dh2` by 
-keeping the combinatorial map valid, i.e.\ if there is 
+Returns true iff `dh1` can be <I>i</I>-sewn with `dh2` by keeping the combinatorial map valid.
+
+True if there is 
 a bijection <I>f</I> between all the darts of the orbit 
 <I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>dh1</I>) and 
 <I>D2</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>dh2</I>) 
@@ -331,7 +332,8 @@ satisfying: <I>f</I>(<I>dh1</I>)=<I>dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1
 template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const; 
 
 /*! 
-Displays on `os` the characteristics of the combinatorial map: its number of darts, 
+Displays on `os` the number of elements of the combinatorial map.
+Its number of darts, 
 its number of <I>i</I>-cells, for each <I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$CMap::<I>dimension</I>, 
 and its number of connected components. 
 
@@ -397,8 +399,8 @@ const range of all the darts of the connected component containing `dh`.
 template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_const_range darts_of_cell(Dart_const_handle dh) const; 
 
 /*! 
-Returns a range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell 
-containing `dh`. Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>, 
+Returns a range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing `dh`.
+Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>, 
 consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1</I>, 
 consider the connected component containing `dh` instead of the <I>j</I>-cell. 
 \pre `*dh`\f$ \in\f$`cm.darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$<I>dimension</I>. 
@@ -406,8 +408,8 @@ consider the connected component containing `dh` instead of the <I>j</I>-cell.
 template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_incident_cell_range one_dart_per_incident_cell(Dart_handle dh); 
 
 /*! 
-Returns a const range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell 
-containing `dh`. Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>, 
+Returns a const range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing `dh`.
+Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>, 
 consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1</I>, 
 consider the connected component containing `dh` instead of the <I>j</I>-cell. 
 \pre Same as for the non const version. 
@@ -471,9 +473,9 @@ Removes the <I>i</I>-attribute `*ah` from the combinatorial map.
 template <unsigned int i> void erase_attribute(Attribute_handle<i>::type ah); 
 
 /*! 
-Associates the <I>i</I>-attribute of all the darts of the <I>i</I>-cell 
-containing `dh` to `ah`. 
-\pre `*dh`\f$ \in\f$`cm.darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, <I>i</I>-attributes are non void, and `*ah`\f$ \in\f$`cm.attributes<i>()`. 
+Associates the <I>i</I>-attribute of all the darts of the <I>i</I>-cell containing `dh` to `ah`. 
+\pre `*dh`\f$ \in\f$`cm.darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>,
+<I>i</I>-attributes are non void, and `*ah`\f$ \in\f$`cm.attributes<i>()`. 
 */ 
 template <unsigned int i> void set_attribute(Dart_handle dh, Attribute_handle<i>::type ah); 
 
@@ -487,7 +489,8 @@ void clear();
 /// \name Operations 
 /// @{
 /*! 
-Links by \f$ \beta_i\f$ 
+  <I>i</I>-sew darts `dh1` and `dh2`, by keeping the combinatorial map valid.
+  Links by \f$ \beta_i\f$ 
 two by two all the darts of the orbit 
 <I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(`dh1`) and 
 <I>D2</I>=\f$ \langle{}\f$\f$ \beta_0\f$,\f$ \beta_2\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$	(`dh2`) 
