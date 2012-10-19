@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTDS3
+\ingroup PkgTDS3Classes
 
 The class `Triangulation_ds_vertex_base_3` can be used as the base vertex 
 for a 3D-triangulation data structure, it is a model of the concept 
@@ -27,9 +27,6 @@ example) tuned for a specific application.
 */
 template< >
 class Triangulation_ds_vertex_base_3 {
-public:
-
-/// @}
 
 }; /* end Triangulation_ds_vertex_base_3 */
 } /* end namespace CGAL */

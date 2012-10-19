@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTDS3
+\ingroup PkgTDS3Classes
 
 The class `Triangulation_ds_cell_base_3` is a model for the concept 
 `TriangulationDSCellBase_3` to be used by 

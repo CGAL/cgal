@@ -1,6 +1,11 @@
 /// \defgroup PkgTDS3 3D Triangulation Data Structure Reference
+
 /// \defgroup PkgTDS3Concepts Concepts
 /// \ingroup PkgTDS3
+
+/// \defgroup PkgTDS3Classes Classes
+/// \ingroup PkgTDS3
+
 /*!
 \addtogroup PkgTDS3
 \todo check generated documentation

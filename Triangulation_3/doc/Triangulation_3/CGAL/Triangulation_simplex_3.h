@@ -4,8 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3VertexCellClasses
 
-\anchor refTriangulationSimplex 
-
 The class `Triangulation_simplex_3` stores a simplex of any dimension 
 defined by the `Triangulation_3` class. It also defines the 
 operator less such that simplices can be stored in a `map` or a 

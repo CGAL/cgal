@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTDS3
+\ingroup PkgTDS3Classes
 
 The class `Triangulation_utils_3` defines operations on the indices of vertices 
 and neighbors within a cell. 

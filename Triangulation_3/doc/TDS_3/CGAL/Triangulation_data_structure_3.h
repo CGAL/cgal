@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTDS3
+\ingroup PkgTDS3Classes
 
 The class `Triangulation_data_structure_3` stores a 3D-triangulation data 
 structure and provides the optional 
