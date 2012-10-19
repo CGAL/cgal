@@ -1,0 +1,83 @@
+
+namespace CGAL {
+
+/*!
+\ingroup PkgSurfaceParameterization
+
+The class `Eigen_solver_traits` provides an interface to the sparse solvers of <span class="textsc">Eigen</span>. 
+The version 3.1 (or greater) of <span class="textsc">Eigen</span> must be available on the system. 
+
+CONVERRORIsModel: `SparseLinearAlgebraTraits_d`. 
+
+Parameters 
+-------------- 
+
+`T`: a sparse solver of <span class="textsc">Eigen</span>. The default solver is the iterative bi-congugate gradient stabilized solver 
+`Eigen::BiCGSTAB` for `double`. 
+
+CONVERRORSeeAlso: \ref ::CGAL::Eigen_sparse_matrix<T> 
+CONVERRORSeeAlso: \ref ::CGAL::Eigen_sparse_symmetric_matrix<T> 
+CONVERRORSeeAlso: \ref ::CGAL::Eigen_vector<T> 
+CONVERRORSeeAlso: <A HREF="http://eigen.tuxfamily.org"><TT>http://eigen.tuxfamily.org</TT></A> 
+
+Example 
+-------------- 
+
+The instantiation of this class assumes an <span class="textsc">Eigen</span> sparse solver is provided. Here are few examples: 
+
+\code{.cpp} 
+
+typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix; 
+
+//iterative general solver 
+typedef CGAL::Eigen_solver_traits< Eigen::BiCGSTAB<EigenMatrix> > Iterative_general_solver; 
+
+//iterative symmetric solver 
+typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Iterative_symmetric_solver; 
+
+//direct symmetric solver 
+typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver; 
+
+\endcode 
+
+*/
+template< typename T >
+class Eigen_solver_traits {
+public:
+
+/// \name Types 
+/// @{
+
+/*! 
+
+*/ 
+typedef typename T::Scalar NT; 
+
+/*! 
+
+*/ 
+typedef CGAL::Eigen_vector<NT> Vector; 
+
+/*! 
+If `T` is `Eigen::ConjugateGradient<M>` or `Eigen::SimplicialCholesky<M>`, `Matrix` is `CGAL::Eigen_sparse_symmetric_matrix<T>` 
+and `CGAL::Eigen_sparse_matrix<T>` otherwise. 
+
+*/ 
+typedef Hidden_type Matrix; 
+
+/// @} 
+
+/// \name Operations 
+/// @{
+
+/*! 
+
+Returns a reference to the internal <span class="textsc">Eigen</span> solver. This function can be used for example to set specific parameters of the solver. 
+
+*/ 
+T& solver(); 
+
+/// @}
+
+}; /* end Eigen_solver_traits */
+} /* end namespace CGAL */
