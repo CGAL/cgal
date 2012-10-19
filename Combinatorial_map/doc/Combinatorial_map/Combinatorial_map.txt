@@ -6,6 +6,7 @@ namespace CGAL {
 \anchor ChapterCombinatorialMap
 
 \author Guillaume Damiand
+\autotoc
 
 # Introduction # {#Combinatorial_mapIntroduction}
 
@@ -15,10 +16,10 @@ obtained by taking <I>d</I>D cells, and allowing to glue <I>d</I>D
 cells along <I>(d-1)</I>D cells. It provides a description of all the
 cells of the subdivision (for example vertices and edges), together
 with incidence and adjacency relationships. This package is a
-generalization of the halfedge data structure to higher
-dimension. Indeed, a 2D combinatorial map is equivalent to a halfedge
-data structure: there is a one-to-one mapping between elements of both
-data structures, halfedges corresponding to darts.
+generalization of the \ref chapterHalfedgeDS "halfedge data structure" 
+to higher dimension. Indeed, a 2D combinatorial map is equivalent to a 
+halfedge data structure: there is a one-to-one mapping between elements 
+of both data structures, halfedges corresponding to darts.
 
 We denote <I>i</I>-cell for an <I>i</I>-dimensional cell (for example
 in 3D, 0-cells are <I>vertices</I>, 1-cells are <I>edges</I>, 2-cells
