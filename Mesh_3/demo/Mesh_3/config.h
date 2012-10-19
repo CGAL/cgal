@@ -65,8 +65,6 @@
   // Concurrency activation
   // ==========================================================================
 
-  // In case some code uses CGAL_PROFILE, it needs to be concurrent
-# define CGAL_CONCURRENT_PROFILE
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
 //#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 

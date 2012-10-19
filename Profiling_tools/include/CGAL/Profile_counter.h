@@ -56,6 +56,12 @@
 #include <string>
 #include <map>
 
+// Automatically define CGAL_CONCURRENT_PROFILE if we're linked with TBB
+#ifdef CGAL_LINKED_WITH_TBB
+# ifndef CGAL_CONCURRENT_PROFILE
+#   define CGAL_CONCURRENT_PROFILE
+# endif
+#endif
 
 #ifdef CGAL_CONCURRENT_PROFILE
 # include "tbb/concurrent_hash_map.h"
