@@ -521,6 +521,7 @@ template <unsigned int i> void sew(Dart_handle dh1,
 Dart_handle dh2, bool update_attributes=true); 
 
 /*! 
+  <I>i</I>-unsew darts `dh` and \f$ \beta_i\f$`(dh)`, by keeping the combinatorial map valid.
 Unlinks by \f$ \beta_i\f$ all the darts in the 
 orbit 
 \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(`dh`). If 
