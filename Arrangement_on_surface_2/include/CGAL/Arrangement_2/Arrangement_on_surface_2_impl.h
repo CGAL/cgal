@@ -398,13 +398,19 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
 
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    bool dummy_swapped_predecessors = false;
+    bool check_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, fict_prev1, fict_prev2, SMALLER,
-                                 new_face_created, dummy_swapped_predecessors);
-
+                                 new_face_created, check_swapped_predecessors);
+    // Comment EBEB 2012-10-21: Swapping does not take place as there is no local minumum so far
+    CGAL_assertion(!check_swapped_predecessors);
+    // usually one would expect to have an new_he (and its twin) lying on the same
+    // _inner_ CCB ...
+    
     if (new_face_created) {
-      // TODO EBEB 2012-10-17 is this the valid assertion or can we see an outer-outer case
-      CGAL_assertion(! new_he->is_on_inner_ccb());
+      // ... but in case that a new face got created new_he should lie on an outer CCB
+      CGAL_assertion(new_he->is_on_outer_ccb());
+      // Note! new_he is not needed to define the new outer CCB of the new face
+      // Here, it can be the outer ccb of the old face, as there is also not swapping taking place!
 
       // In case a new face has been created (pointed by the new halfedge we
       // obtained), we have to examine the holes and isolated vertices in the
@@ -413,11 +419,10 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
       _relocate_in_new_face(new_he);
     }
     
-    // TODO EBEB 2012-08-05
-    // is order of the two boundary-edges really irrelevant here?
   }
 
   // Return a handle to the new halfedge directed from left to right.
+  CGAL_postcondition(new_he->direction() == ARR_LEFT_TO_RIGHT);
   return (Halfedge_handle(new_he));
 }
 
@@ -502,6 +507,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     }
 
     // Return a handle to the new halfedge directed from v1 to v2.
+    CGAL_postcondition(new_he->direction() == ARR_LEFT_TO_RIGHT);
     return (Halfedge_handle(new_he));
   }
 
@@ -534,11 +540,19 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    bool dummy_swapped_predecessors = false;
+    bool check_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
-                                 new_face_created, dummy_swapped_predecessors);
+                                 new_face_created, check_swapped_predecessors);
+    // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
+    // merges the CCB as an "interior" extension into an outer CCB of a face
+    // incident the parameter space's boundary.
+    CGAL_assertion(!check_swapped_predecessors);
+
     if (new_face_created) {
-      CGAL_assertion(! new_he->is_on_inner_ccb());
+      CGAL_assertion(new_he->is_on_outer_ccb());
+      // Note! new_he is not needed to define the new outer CCB of the new face
+      // Here, it can be the outer ccb of the old face, as there is also not swapping taking place!
+
       // In case a new face has been created (pointed by the new halfedge we
       // obtained), we have to examine the holes and isolated vertices in the
       // existing face (pointed by the twin halfedge) and move the relevant
@@ -546,12 +560,10 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
       _relocate_in_new_face(new_he);
     }
 
-    // TODO EBEB 2012-08-05
-    // is order of the two boundary-edges really irrelevant here?
-
   }
 
   // Return a handle to the halfedge directed toward the new vertex v2.
+  CGAL_postcondition(new_he->direction() == ARR_LEFT_TO_RIGHT);
   return (Halfedge_handle(new_he));
 }
 
@@ -626,13 +638,18 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    bool dummy_swapped_predecessors = false;
+    bool check_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
-                                 new_face_created, dummy_swapped_predecessors);
+                                 new_face_created, check_swapped_predecessors);
+    // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
+    // merges the CCB as an "interior" extension into an outer CCB of a face
+    // incident the parameter space's boundary.
+    CGAL_assertion(!check_swapped_predecessors);
 
     if (new_face_created) {
-      // TODO EBEB 2012-10-17 is this the valid assertion or can we see an outer-outer case
-      CGAL_assertion(! new_he->is_on_inner_ccb());
+      CGAL_assertion(new_he->is_on_outer_ccb());
+      // Note! new_he is not needed to define the new outer CCB of the new face
+      // Here, it can be the outer ccb of the old face, as there is also not swapping taking place!
 
       // In case a new face has been created (pointed by the new halfedge we
       // obtained), we have to examine the holes and isolated vertices in the
@@ -641,12 +658,10 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
       _relocate_in_new_face(new_he);
     }
 
-    // TODO EBEB 2012-08-05
-    // is order of the two boundary-edges really irrelevant here?
-  
   }
 
   // Return a handle to the halfedge directed toward the new vertex v2.
+  CGAL_postcondition(new_he->direction() == ARR_LEFT_TO_RIGHT);
   return (Halfedge_handle(new_he));
 }
 
@@ -726,6 +741,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
       _insert_from_vertex(cv, fict_prev1, v2, SMALLER);
     
     // Return a handle to the new halfedge whose target is the new vertex v1.
+    CGAL_postcondition(new_he->opposite()->direction() == ARR_RIGHT_TO_LEFT);
     return (Halfedge_handle(new_he->opposite()));
   }
 
@@ -757,12 +773,19 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    bool dummy_swapped_predecessors = false;
+    bool check_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
-                                 new_face_created, dummy_swapped_predecessors);
+                                 new_face_created, check_swapped_predecessors);
+    // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
+    // merges the CCB as an "interior" extension into an outer CCB of a face
+    // incident the parameter space's boundary.
+    CGAL_assertion(!check_swapped_predecessors);
 
     if (new_face_created) {
-      CGAL_assertion(! new_he->is_on_inner_ccb());
+      CGAL_assertion(new_he->is_on_outer_ccb());
+      // Note! new_he is not needed to define the new outer CCB of the new face
+      // Here, it can be the outer ccb of the old face, as there is also not swapping taking place!
+
       // In case a new face has been created (pointed by the new halfedge we
       // obtained), we have to examine the holes and isolated vertices in the
       // existing face (pointed by the twin halfedge) and move the relevant
@@ -770,11 +793,10 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
       _relocate_in_new_face(new_he);
     }
 
-    // TODO EBEB 2012-08-05
-    // is order of the two boundary-edges really irrelevant here?
   }
 
   // Return a handle to the halfedge directed toward the new vertex v1.
+  CGAL_postcondition(new_he->direction() == ARR_RIGHT_TO_LEFT);
   return (Halfedge_handle(new_he));
 }
 
@@ -790,7 +812,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
                          Halfedge_handle prev)
 {
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-  std::cout << "Aos_2: insert_from_right_vertexs (interface)" << std::endl;
+  std::cout << "Aos_2: insert_from_right_vertex (interface)" << std::endl;
   std::cout << "cv   : " << cv << std::endl;
   if (!prev->is_fictitious())
     std::cout << "prev : " << prev ->curve() << std::endl;
@@ -848,13 +870,18 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
-    bool dummy_swapped_predecessors = false;
+    bool check_swapped_predecessors = false;
     new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
-                                 new_face_created, dummy_swapped_predecessors);
+                                 new_face_created, check_swapped_predecessors);
+    // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
+    // merges the CCB as an "interior" extension into an outer CCB of a face
+    // incident the parameter space's boundary.
+    CGAL_assertion(!check_swapped_predecessors);
 
     if (new_face_created) {
-      // TODO EBEB 2012-10-17 is this the valid assertion or can we see an outer-outer case
-      CGAL_assertion(! new_he->is_on_inner_ccb());
+      CGAL_assertion(new_he->is_on_outer_ccb());
+      // Note! new_he is not needed to define the new outer CCB of the new face
+      // Here, it can be the outer ccb of the old face, as there is also not swapping taking place!
 
       // In case a new face has been created (pointed by the new halfedge we
       // obtained), we have to examine the holes and isolated vertices in the
@@ -863,12 +890,10 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
       _relocate_in_new_face(new_he);
     }
 
-    // TODO EBEB 2012-08-05
-    // is order of the two boundary-edges really irrelevant here?
-
   }
 
   // Return a handle to the halfedge directed toward the new vertex v1.
+  CGAL_postcondition(new_he->direction() == ARR_RIGHT_TO_LEFT);
   return (Halfedge_handle(new_he));
 }
 
@@ -1401,9 +1426,10 @@ insert_at_vertices(const X_monotone_curve_2& cv,
                         swapped_predecessors);
 
   if (new_face_created) {
-    // TODO EBEB 2012-10-05 why is here no assertion for inner_ccb - or:
-    // why don't we have to remove the assertion in the previous cases?
-
+    // Comment EBEB 2012-10-21: Here we allow swapping, as there might be 
+    // a local minima (or other needs), and thus new_he can lie on an inner CCB.
+    // In fact we cannot expect new_he to lie on an inner or on an outer CCB.
+    
     // In case a new face has been created (pointed by the new halfedge we
     // obtained), we have to examine the holes and isolated vertices in the
     // existing face (pointed by the twin halfedge) and move the relevant
@@ -2435,6 +2461,10 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
         CGAL_assertion(local_mins1.size() > 0);
         CGAL_assertion(local_mins2.size() > 0);
         
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+        std::cout << "decide swap" << std::endl;
+#endif
+
         bool cond = (local_mins1.size() < local_mins2.size());
         swap_predecessors =
           !(cond ?
@@ -3787,15 +3817,6 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
   // std::cout << "cv_dir: " << cv_dir << std::endl;
   // std::cout << "he_away: " << he_away->opposite()->vertex()->point()
   //           << " => " << he_away->vertex()->point() << std::endl;
-
-  // Go over all halfedges of along boundary of the face which will eventually
-  // contain prev1: As the new face is not constructed yet, this traversal
-  // is simulated by going from prev2's target vertex to prev1's target vertex
-  // (the source of prev1's successor) and then returning over the new curve.
-  // During the traversal we locate the leftmost halfedge along the boundary
-  // (i.e, the one with the lexicographically smallest target vertex, which is
-  // also the lowest halfedge incident to this vertex we encountered during
-  // our traversal).
 
   // this implements search for leftmost vertex using local minima (plus cv's
   // ends)
