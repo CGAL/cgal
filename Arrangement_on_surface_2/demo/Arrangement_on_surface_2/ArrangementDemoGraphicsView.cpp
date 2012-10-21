@@ -8,8 +8,8 @@ ArrangementDemoGraphicsView( QWidget* parent ):
     QGraphicsView( parent ),
     showGrid( false ),
     gridSize( 50 ),
-    gridColor( ::Qt::white ),
-    backgroundColor( ::Qt::black )
+    gridColor( ::Qt::black ),
+    backgroundColor( ::Qt::white )
 {
     QMatrix m( 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
     this->setMatrix( m );

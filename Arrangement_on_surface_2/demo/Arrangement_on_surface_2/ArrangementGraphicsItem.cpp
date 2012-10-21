@@ -11,7 +11,8 @@ ArrangementGraphicsItemBase( ):
     visible_vertices( true ),
     verticesPen( QPen( ::Qt::blue, 3. ) ),
     edgesPen( QPen( ::Qt::blue, 1. ) ),
-    scene( NULL )
+    scene( NULL ),
+    backgroundColor( ::Qt::white )
 {
     this->verticesPen.setCosmetic( true );
     this->verticesPen.setCapStyle( ::Qt::SquareCap );
@@ -74,6 +75,13 @@ setVisibleEdges( const bool b )
 {
     this->visible_edges = b;
     this->update( );
+}
+
+void
+ArrangementGraphicsItemBase::
+setBackgroundColor( QColor color )
+{
+    this->backgroundColor = color;
 }
 
 #if 0

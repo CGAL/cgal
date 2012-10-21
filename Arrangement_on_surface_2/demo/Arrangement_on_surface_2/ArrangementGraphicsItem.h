@@ -49,6 +49,7 @@ public:
     void setVisibleVertices( const bool b );
     bool visibleEdges( ) const;
     void setVisibleEdges( const bool b );
+    void setBackgroundColor( QColor color );
 //    void setScene( QGraphicsScene* scene_ );
 
 protected:
@@ -63,6 +64,8 @@ protected:
     bool visible_vertices;
 
     QGraphicsScene* scene;
+
+    QColor backgroundColor;
 
 }; // class ArrangementGraphicsItemBase
 
@@ -108,6 +111,7 @@ protected:
     template < class Coefficient_ >
     void paint( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
 
+
     void paintFaces( QPainter* painter )
     {
         typename Traits::Left_side_category category;
@@ -127,7 +131,17 @@ protected:
 
     void paintFaces( QPainter* painter, CGAL::Arr_open_side_tag )
     {
+        for( Face_iterator fi = this->arr->faces_begin( ); fi != this->arr->faces_end( ); ++fi )
+        {
+            if ( fi->is_fictitious( ) )
+            {
+                std::cout << "setting fictitious face not visited" << std::endl;
+            }
+            fi->set_visited( false );
+        }
 
+        Face_handle fictitiousFace = this->arr->fictitious_face( );
+        this->paintFace( fictitiousFace, painter );
     }
 
 #if 0
@@ -175,6 +189,11 @@ protected:
             {
                 std::cout << "unbounded face has " << holes << " holes" << std::endl;
                 std::cout << "unbounded face has " << inner_faces << " inner faces" << std::endl;
+            }
+            if ( f->is_fictitious( ) )
+            {
+                std::cout << "fictitious face has " << holes << " holes" << std::endl;
+                std::cout << "fictitious face has " << inner_faces << " inner faces" << std::endl;
             }
         }
     }
@@ -229,7 +248,7 @@ protected:
             QPolygonF pgn (pts);
 
             // FIXME: get the bg color
-            QColor color = ::Qt::black;
+            QColor color = this->backgroundColor;
             if ( f->color().isValid() )
             {
                 color = f->color();
@@ -242,7 +261,7 @@ protected:
         else
         {
             QRectF rect = this->viewportRect( );
-            QColor color = ::Qt::black;
+            QColor color = this->backgroundColor;
             painter->fillRect( rect, color );
         }
     }
@@ -294,7 +313,7 @@ protected:
             // fill the face according to its color (stored at any of her
             // incidents curves)
             QBrush oldBrush = painter->brush( );
-            QColor def_bg_color = ::Qt::black;
+            QColor def_bg_color = this->backgroundColor;
             if (! f->color().isValid())
             {
                 painter->setBrush( def_bg_color );
@@ -309,7 +328,7 @@ protected:
         else
         {
             QRectF rect = this->viewportRect( );
-            QColor color = ::Qt::black;
+            QColor color = this->backgroundColor;
             painter->fillRect( rect, color );
         }
     }
@@ -407,7 +426,7 @@ protected:
             // fill the face according to its color (stored at any of her
             // incidents curves)
             QBrush oldBrush = painter->brush( );
-            QColor def_bg_color = ::Qt::black;
+            QColor def_bg_color = this->backgroundColor;
             if (! f->color().isValid())
             {
                 painter->setBrush( def_bg_color );
@@ -422,10 +441,303 @@ protected:
         else
         {
             QRectF rect = this->viewportRect( );
-            QColor color = ::Qt::black;
+            QColor color = this->backgroundColor;
             painter->fillRect( rect, color );
         }
     }
+
+    template < class CircularKernel >
+    void paintFace( Face_handle f, QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+    {
+        if ( f->is_unbounded( ) )
+        {
+            QRectF rect = this->viewportRect( );
+            QColor color = this->backgroundColor;
+            if ( f->color().isValid() )
+                color = f->color();
+            painter->fillRect( rect, color );
+            return;
+        }
+        QPainterPath path;
+        bool isFirstArc = true;
+        Ccb_halfedge_circulator cc=f->outer_ccb();
+        do
+        {
+            if ( this->antenna( cc ) )
+                continue;
+            
+            if ( isFirstArc )
+            {
+                isFirstArc = false;
+                X_monotone_curve_2 c = cc->curve( );
+
+                QPointF source( to_double(c.source().x()), to_double(c.source().y()) );
+                QPointF target( to_double(c.target().x()), to_double(c.target().y()) );
+                if ( ! this->isProperOrientation( cc ) )
+                {
+                    std::swap( source, target );
+                }
+
+                QPointF circleCenter( to_double(c.supporting_circle().center().x()),
+                    to_double(c.supporting_circle().center().y()) );
+                //this->drawDiagnosticArc( circleCenter, source, target, painter );
+
+                std::swap( source, target );
+                double asource = atan2( -(source - circleCenter).y(), (source - circleCenter).x() );
+                double atarget = atan2( -(target - circleCenter).y(), (target - circleCenter).x() );
+                double aspan = atarget - asource;
+                std::swap( source, target );
+
+                path.moveTo( source );
+                path.arcTo( convert(c.supporting_circle().bbox()), asource * 180/M_PI, aspan * 180/M_PI );
+                path.lineTo( target );
+            }
+            else
+            {
+                X_monotone_curve_2 c = cc->curve( );
+                QPointF source( to_double(c.source().x()), to_double(c.source().y()) );
+                QPointF target( to_double(c.target().x()), to_double(c.target().y()) );
+                if ( ! this->pathTouchingSource( path, c ) )
+                    std::swap( source, target );
+
+                QPointF circleCenter( to_double(c.supporting_circle().center().x()),
+                    to_double(c.supporting_circle().center().y()) );
+                //this->drawDiagnosticArc( circleCenter, source, target, painter );
+
+                std::swap( source, target );
+                double asource = atan2( -(source - circleCenter).y(), (source - circleCenter).x() );
+                double atarget = atan2( -(target - circleCenter).y(), (target - circleCenter).x() );
+                double aspan = atarget - asource;
+                std::swap( source, target );
+
+                path.arcTo( convert(c.supporting_circle().bbox()), asource * 180/M_PI, aspan * 180/M_PI );
+                path.lineTo( target );
+            }
+        } while (++cc != f->outer_ccb());
+        
+        if ( f->color().isValid() )
+        {
+            QPen savePen = painter->pen();
+            QBrush saveBrush = painter->brush();
+            QPen pen = painter->pen();
+            pen.setColor( f->color() );
+
+            painter->setPen( pen );
+            painter->setBrush( f->color() );
+            painter->drawPath( path );
+            painter->setPen( savePen );
+            painter->setBrush( saveBrush );
+        }
+    }
+
+    void drawDiagnosticArc( QPointF c, QPointF s, QPointF t, QPainter* qp )
+    {
+        QBrush saveBrush = qp->brush( );
+        double r = QLineF( c, s ).length();
+        QRectF bb( c.x() - r, c.y() - r, 2*r, 2*r );
+
+        QPainterPath path;
+        // because we flipped the y-axis in our view, we need to flip our angles
+        // with respect to the y-axis. we can do this by flipping s and t, then
+        // negating their y-values
+        std::swap( s, t );
+        double as = atan2( -(s - c).y(), (s - c).x() );
+        double at = atan2( -(t - c).y(), (t - c).x() );
+        double aspan = at - as;
+
+        path.moveTo( c );
+        path.lineTo( s );
+        path.arcTo( bb, as * 180/M_PI, aspan * 180/M_PI );
+        path.closeSubpath( );
+        qp->drawEllipse( bb );
+
+        qp->setBrush( ::Qt::red );
+        qp->fillPath( path, qp->brush() );
+        qp->setBrush( saveBrush );
+
+    }
+
+    /**
+    Return false if the tip of the given curve doesn't align with either of the
+    endpoints of the next curve.
+    */
+    bool isProperOrientation( Ccb_halfedge_circulator cc )
+    {
+        Ccb_halfedge_circulator ccnext = cc;
+        Halfedge_handle he = cc;
+        X_monotone_curve_2 thisCurve = he->curve( );
+        ccnext++;
+        while ( this->antenna( ccnext ) ) ccnext++;
+        Halfedge_handle next_he = ccnext;
+        X_monotone_curve_2 nextCurve = next_he->curve( );
+
+        QPointF thisTarget( to_double(thisCurve.target().x()), to_double(thisCurve.target().y()) );
+        QPointF nextSource( to_double(nextCurve.source().x()), to_double(nextCurve.source().y()) );
+        QPointF nextTarget( to_double(nextCurve.target().x()), to_double(nextCurve.target().y()) );
+        double dist1 = QLineF( thisTarget, nextSource ).length();
+        double dist2 = QLineF( thisTarget, nextTarget ).length();
+        bool res = ( dist1 < 1e-2 || dist2 < 1e-2 );
+
+        return res;
+    }
+
+    bool pathTouchingSource( const QPainterPath& path, X_monotone_curve_2 c )
+    {
+        QPointF a = path.currentPosition( );
+        QPointF b( to_double(c.source().x()), to_double(c.source().y()) );
+        QPointF d( to_double(c.target().x()), to_double(c.target().y()) );
+        bool res = (QLineF( a, b ).length() < 1e-2);
+
+        return res;
+    }
+
+#if 0
+    template < class CircularKernel >
+    void paintFace( Face_handle f, QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+    {
+        std::cout << "face begin" << std::endl;
+        if (! f->is_unbounded())  // f is not the unbounded face
+        {
+            QBrush oldBrush = painter->brush( );
+            QColor def_bg_color = this->backgroundColor;
+            if (! f->color().isValid())
+            {
+                painter->setBrush( def_bg_color );
+            }
+            else
+            {
+                painter->setBrush( f->color( ) );
+            }
+
+            // approach: draw a closed path with arcs
+            QPainterPath path;
+            //path.setFillRule( ::Qt::WindingFill );
+
+            bool isFirstArc = true;
+            Ccb_halfedge_circulator cc=f->outer_ccb();
+            do 
+            {
+                if (this->antenna(cc))
+                    continue;
+
+                Halfedge_handle he = cc;
+                X_monotone_curve_2 c = he->curve(); // circular arc
+
+                const typename CircularKernel::Circle_2& circ = c.supporting_circle();
+                const typename CircularKernel::Point_2& center = circ.center();
+                QPointF source( to_double(c.source().x()), to_double(c.source().y()) );
+                QPointF target( to_double(c.target().x()), to_double(c.target().y()) );
+
+                if ( isFirstArc )
+                {
+                    isFirstArc = false;
+                    // make sure we are going the right way
+                    Ccb_halfedge_circulator ccnext = cc;
+                    ccnext++;
+                    while ( this->antenna( ccnext ) ) ccnext++;
+                    Halfedge_handle next_he = ccnext;
+                    X_monotone_curve_2 next_c = next_he->curve( );
+                    QPointF next_source( to_double(next_c.source().x()), to_double(next_c.source().y()) );
+                    QPointF next_target( to_double(next_c.target().x()), to_double(next_c.target().y()) );
+                    std::cout << "next curve's points: " << std::endl
+                        << "  s: " << next_source.x( ) << " " << next_source.y( ) << std::endl
+                        << "  t: " << next_target.x( ) << " " << next_target.y( ) << std::endl;
+                    double dist1 = QLineF( target, next_source ).length();
+                    double dist2 = QLineF( target, next_target ).length();
+                    if ( dist1 > 1e-2 && dist2 > 1e-2 )
+                    {
+                        std::cout << "swapping first curve points" << std::endl;
+                        std::swap( source, target );
+                    }
+
+                    path.moveTo( source );
+                }
+                else
+                {
+                    //bool source_is_left = (source.x() < target.x());
+                    double dist = QLineF( path.currentPosition(), source ).length( );
+                    if ( dist > 1e-2 )
+                    {
+                        std::cout << "swapping source and target " << dist << std::endl;
+                        std::swap( source, target );
+                    }
+                }
+                std::cout << "currentPosition: " << path.currentPosition().x() << ", " << path.currentPosition().y() << std::endl;
+                std::stringstream ss;
+                ss << "  source: " << to_double(source.x( )) << ", " << to_double(source.y()) << std::endl
+                    << "  target: " << to_double(target.x( )) << ", " << to_double(target.y()) << std::endl;
+
+#if 0
+                source = QPointF( to_double(c.source().x()), to_double(c.source().y()) );
+                target = QPointF( to_double(c.target().x()), to_double(c.target().y()) );
+                double asource = std::atan2( -to_double(source.y() - center.y()),
+                             to_double(source.x() - center.x())); 
+                double atarget = std::atan2( -to_double(target.y() - center.y()),
+                             to_double(target.x() - center.x()));
+#endif
+                double asource = std::atan2( to_double(source.y() - center.y()), to_double(source.x() - center.x()) );
+                double atarget = std::atan2( to_double(target.y() - center.y()), to_double(target.x() - center.x()) );
+
+                ss << "  asource: " << (asource * 180/M_PI) << std::endl
+                    << "  atarget: " << (atarget * 180/M_PI) << std::endl;
+
+                //std::swap(asource, atarget);
+                double aspan = atarget - asource;
+                ss << "  aspan: " << (aspan * 180/M_PI) << std::endl;
+
+                if(aspan < 0.)
+                  aspan += 2 * CGAL_PI;
+
+                const double coeff = 180*16/CGAL_PI;
+                double circR = sqrt(to_double(circ.squared_radius()));
+
+#if 0
+                painter->drawEllipse( to_double( center.x() - circR ), to_double( center.y() - circR ),
+                    2*circR, 2*circR );
+#endif
+                QPointF curPos = path.currentPosition( );
+                //path.lineTo( to_double(target.x( )), to_double(target.y()) );
+
+#if 0
+                ss << "drawing line from " << curPos.x( ) << ", " << curPos.y( ) << " to "
+                    << to_double(target.x( )) << ", " << to_double(target.y());
+#endif
+                std::cout << ss.str( ) << std::endl;
+                path.arcTo( convert(circ.bbox()), asource * 180/CGAL_PI, aspan *180/CGAL_PI );
+#if 0
+                qp->drawArc(convert(circ.bbox()), 
+                    (int)(asource * coeff), 
+                         (int)(aspan * coeff));
+#endif
+            } while (++cc != f->outer_ccb());
+
+            // fill the face according to its color (stored at any of her
+            // incidents curves)
+#if 0
+            painter->drawPolygon( pgn );
+#endif
+            path.closeSubpath( );
+#if 0
+            QPainterPathStroker stroker;
+            QPainterPath fillablePath = stroker.createStroke( path );
+#endif
+            painter->fillPath( path, painter->brush() );
+#if 0
+            QPolygonF fillIt = path.toFillPolygon( );
+            painter->drawPolygon( fillIt );
+#endif
+            //painter->drawPath( path );
+            //painter->fillPath( path, painter->brush() );
+            painter->setBrush( oldBrush );
+        }
+        else
+        {
+            QRectF rect = this->viewportRect( );
+            QColor color = this->backgroundColor;
+            painter->fillRect( rect, color );
+        }
+    }
+#endif
 
     //void cacheCurveBoundingRects( );
     void updateBoundingBox( );
@@ -506,7 +818,9 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::
 paint( QPainter* painter, CGAL::Arr_linear_traits_2< Kernel_ > traits )
 {
     this->updateBoundingBox( );
+    this->paintFaces( painter );
     painter->setPen( this->verticesPen );
+
     this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
     this->painterostream.setScene( this->scene );
 
@@ -531,6 +845,8 @@ paint( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > trai
 {
     typedef Kernel_point_2 Non_arc_point_2;
     typedef typename Traits::Point_2 Arc_point_2;
+
+    this->paintFaces( painter );
 
     painter->setPen( this->verticesPen );
     this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
