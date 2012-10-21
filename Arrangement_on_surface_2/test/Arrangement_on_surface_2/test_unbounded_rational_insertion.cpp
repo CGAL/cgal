@@ -109,12 +109,14 @@ int main()
   // If a failure has already occured, abort.
   if (result < 0) return result;
   
+  std::cout << std::endl;
+
   // Construct the 2nd arrangement.
   Arrangement_2 arr2(&traits);
   insert(arr2, c2);
   
   if (!arr2.is_valid()) {
-    std::cerr << "The first arrangement is not valid!" << std::endl;
+    std::cerr << "The second arrangement is not valid!" << std::endl;
     return -1;
   }
 
