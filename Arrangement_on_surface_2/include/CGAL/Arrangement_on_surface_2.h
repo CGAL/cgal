@@ -1333,7 +1333,7 @@ public:
    *         curve directed from prev1 to v2.
    */
   Halfedge_handle insert_at_vertices(const X_monotone_curve_2& cv, 
-                                     Halfedge_handle h1, 
+                                     Halfedge_handle prev1, 
                                      Vertex_handle v2);
 
   /*!

@@ -2019,7 +2019,7 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _insert_isolated_vertex(DFace* f, DVertex* v)
 {
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-  std::cout << "Aos_2: _insert_isolated_verteex (internal)" << std::endl;
+  std::cout << "Aos_2: _insert_isolated_vertex (internal)" << std::endl;
   if (!v->has_null_point())
     std::cout << "v->point: " << v->point() << std::endl;
   std::cout << "face   : " << f << std::endl;
