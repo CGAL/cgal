@@ -113,16 +113,16 @@ int main()
   Arrangement_2 arr2(&traits);
   insert(arr2, c2);
   
-  if (!arr1.is_valid()) {
+  if (!arr2.is_valid()) {
     std::cerr << "The first arrangement is not valid!" << std::endl;
     return -1;
   }
 
-  sizes[0] = arr1.number_of_vertices();
-  sizes[1] = arr1.number_of_vertices_at_infinity();
-  sizes[2] = arr1.number_of_edges();
-  sizes[3] = arr1.number_of_faces();
-  sizes[4] = arr1.number_of_unbounded_faces();
+  sizes[0] = arr2.number_of_vertices();
+  sizes[1] = arr2.number_of_vertices_at_infinity();
+  sizes[2] = arr2.number_of_edges();
+  sizes[3] = arr2.number_of_faces();
+  sizes[4] = arr2.number_of_unbounded_faces();
 
   for (i = 0; i < 5; ++ i) {
     if (expected_sizes[i] != sizes[i]) {
