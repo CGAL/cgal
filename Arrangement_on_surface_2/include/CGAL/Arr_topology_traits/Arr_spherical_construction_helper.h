@@ -145,8 +145,8 @@ public:
                       (event->number_of_right_curves() == 1)) ||
                      ((event->number_of_left_curves() == 1) &&
                       (event->number_of_right_curves() == 0)));
-      Arr_curve_end ind = (event->number_of_left_curves() == 0 &&
-                       event->number_of_right_curves() == 1) ?
+      Arr_curve_end ind = ((event->number_of_left_curves() == 0) &&
+                           (event->number_of_right_curves() == 1)) ?
         ARR_MIN_END : ARR_MAX_END;
 
       const X_monotone_curve_2 & xc = (ind == ARR_MIN_END) ?
@@ -198,8 +198,8 @@ public:
 
     if (ps_x == ARR_LEFT_BOUNDARY) {
       // The event has only right curves.
-      CGAL_assertion(event->number_of_left_curves() == 0 &&
-                     event->number_of_right_curves() >= 1);
+      CGAL_assertion((event->number_of_left_curves() == 0) &&
+                     (event->number_of_right_curves() >= 1));
       const X_monotone_curve_2 & xc =
         (*(event->right_curves_begin()))->last_curve();
       DVertex* v = m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
@@ -218,8 +218,8 @@ public:
 
     if (ps_x == ARR_RIGHT_BOUNDARY) {
        // The event has only left curves.
-      CGAL_assertion(event->number_of_left_curves() == 1 &&
-                     event->number_of_right_curves() == 0);
+      CGAL_assertion((event->number_of_left_curves() >= 1) &&
+                     (event->number_of_right_curves() == 0));
       const X_monotone_curve_2 & xc =
         (*(event->left_curves_begin()))->last_curve();
       DVertex * v = m_top_traits->discontinuity_vertex(xc, ARR_MAX_END);
