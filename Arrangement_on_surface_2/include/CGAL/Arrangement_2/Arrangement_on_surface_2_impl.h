@@ -3316,7 +3316,7 @@ template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                  Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                 int& x_index, int& y_index,  boost::mpl::bool_< true >) const {
+                 int& x_index, int& y_index,  boost::mpl::bool_< false >) const {
   // nothing if no identification
 }
 
@@ -3324,7 +3324,7 @@ template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                  Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                 int& x_index, int& y_index,  boost::mpl::bool_< false >) const
+                 int& x_index, int& y_index,  boost::mpl::bool_< true >) const
 {
   // If we cross the identification curve in x, then we must update the
   // x_index. Note that a crossing takes place in the following cases:
