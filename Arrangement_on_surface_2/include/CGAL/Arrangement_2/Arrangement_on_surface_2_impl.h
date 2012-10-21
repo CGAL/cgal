@@ -297,7 +297,7 @@ insert_in_face_interior(const Point_2& p, Face_handle f)
   DFace* p_f = _face(f);
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-  std::cout << "Aos_2: insert_in_face_interior(interface)" << std::endl;
+  std::cout << "Aos_2: insert_in_face_interior (interface)" << std::endl;
   std::cout << "pt   : " << p << std::endl;
   std::cout << "face : " << &(*f) << std::endl;
 #endif
@@ -381,7 +381,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
   else {
     // Both vertices are inserted using their predecessor halfedges.
 
-    // This is a bug fix and we could not think of a better one. 
+    // Comment: 
     // In case the inserted curve has two vertical asymptotes at the top 
     // it happens that fict_prev1 is split by the max end and becomes the 
     // prev edge, which is fict_prev2. Since both pointers are equal they 
@@ -390,9 +390,13 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     // Note that this only happens at the top. At the bottom everything 
     // goes fine since the insertion order is reverted with respect to the 
     // orientation of the edges. 
-    // TODO EBEB 2012-08-05 evaluate this bugfix again,
-    //   check, in particular, whether needed in other "insert_..." functions, 
-    //   too or whether it should be delayed to "_insert_at_vertices"?
+    // 
+    // In the other function such a fix is not needed, as at most one
+    // curve-end reaches the boundary. It is also not possible to delay
+    // it to _insert_at_vertices, as that expects the two predecessor 
+    // halfedges as input. An early detecting is also not possible
+    // (i.e.~in _place_and_set_curve_end), as that needs to know to be
+    // called from here!
     if (fict_prev1 == fict_prev2)
       fict_prev1 = fict_prev1->next();
 
