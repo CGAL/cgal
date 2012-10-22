@@ -602,11 +602,6 @@ private:
   // The index of the cell of the input complex that contains me
   Subdomain_index subdomain_index_;
 
-#ifndef CGAL_UNDOABLE_INSERT_USE_MAP
-public:
-  int undoable_insert_marker;
-#endif
-
   TDS_data      _tds_data;
   mutable bool sliver_cache_validity_;
 
