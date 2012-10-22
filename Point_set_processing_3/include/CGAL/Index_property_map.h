@@ -71,7 +71,7 @@ struct Compare_iterator_address
 /// and get() requires a lookup in the map.
 ///
 /// @heading Is Model for the Concepts:
-/// Model of the boost::ReadablePropertyMap concept.
+/// Model of the <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> concept.
 ///
 /// @heading Parameters:
 /// @param Iter iterator over input elements.
