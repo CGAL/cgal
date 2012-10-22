@@ -1806,6 +1806,7 @@ Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgramQt4.cmake -text
 Installation/cmake/modules/CGAL_GeneratorSpecificSettings.cmake -text
 Installation/cmake/modules/CGAL_Locate_CGAL_TAUCS.cmake -text
 Installation/cmake/modules/CGAL_Macros.cmake -text
+Installation/cmake/modules/CGAL_SCM.cmake -text
 Installation/cmake/modules/CGAL_SetupBoost.cmake -text
 Installation/cmake/modules/CGAL_SetupDependencies.cmake -text
 Installation/cmake/modules/CGAL_SetupFlags.cmake -text
