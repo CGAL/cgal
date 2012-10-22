@@ -296,9 +296,14 @@ bool test_one_file(std::ifstream& in, int verbose_level)
   init_arr(arr2, verbose_level);
 
   // Read the number of cells left.
-  unsigned int num_vertices_left, num_edges_left, num_faces_left;
-  in >> num_vertices_left >> num_edges_left >> num_faces_left;  
-  
+  unsigned int num_vertices, num_edges, num_faces;
+  in >> num_vertices >> num_edges >> num_faces;
+
+  // Read the expected face data:
+  std::vector<int> fdata(num_faces);
+  std::copy(std::istream_iterator<int>(in), std::istream_iterator<int>(),
+            fdata.begin());
+
   Arrangement arr;
   Overlay_traits overlay_traits;
   if (verbose_level > 2) std::cout << "overlaying" << " ... "; std::cout.flush();
@@ -306,9 +311,9 @@ bool test_one_file(std::ifstream& in, int verbose_level)
   if (verbose_level > 2) std::cout << "overlaid" << std::endl;
   
   // Verify the resulting arrangement.
-  unsigned int num_vertices = arr.number_of_vertices();
-  unsigned int num_edges = arr.number_of_edges();
-  unsigned int num_faces = arr.number_of_faces();
+  unsigned int num_vertices_res = arr.number_of_vertices();
+  unsigned int num_edges_res = arr.number_of_edges();
+  unsigned int num_faces_res = arr.number_of_faces();
 
   if (verbose_level > 0) std::cout << "Arrangement Output: " << std::endl;
 
@@ -328,16 +333,30 @@ bool test_one_file(std::ifstream& in, int verbose_level)
       std::cout << fit->data() << std::endl;
   }
   
-  if ((num_vertices != num_vertices_left) ||
-      (num_edges != num_edges_left) ||
-      (num_faces != num_faces_left))
+  if ((num_vertices_res != num_vertices) ||
+      (num_edges_res != num_edges) ||
+      (num_faces_res != num_faces))
   {
-    std::cerr << " Failed. The number of arrangement cells is incorrect:"
+    std::cerr << "ERROR: The number of arrangement cells is incorrect:"
               << std::endl
               << "   V = " << arr.number_of_vertices()
               << ", E = " << arr.number_of_edges() 
               << ", F = " << arr.number_of_faces() 
               << std::endl;
+    arr.clear();
+    return false;
+  }
+
+  std::vector<int> fdata_res(num_faces);
+  std::vector<int>::iterator it = fdata_res.begin();
+  Face_iterator fit;
+  for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
+     *it++ = fit->data();
+  std::sort(fdata_res.begin(), fdata_res.end());
+  if (! std::equal(fdata_res.begin(), fdata_res.end(), fdata.begin())) {
+    std::cerr << "ERROR: Incorrect face data:" << std::endl;
+    std::copy(fdata_res.begin(), fdata_res.end(),
+              std::ostream_iterator<int>(std::cout, "\n"));  
     arr.clear();
     return false;
   }
