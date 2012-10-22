@@ -77,6 +77,9 @@ public:
   using Base::OUTSIDE_CONVEX_HULL;
   using Base::orientation;
   using Base ::show_all;
+  using Base ::show_face;
+	using Base ::show_vertex;
+  using Base::clear;
 
 
 	
@@ -95,8 +98,7 @@ public:
     : Base(Gt(gt))
   {}
 
-  void clear();
-	
+ 
   //CHECK
   bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid_face(Face_handle fh) const;
@@ -139,6 +141,10 @@ public:
   //INSERTION
   Vertex_handle insert(const Point &p, Locate_type  lt, Face_handle loc, int li );
   Vertex_handle insert(const Point &p, Face_handle f = Face_handle() );
+	Vertex_handle insert_first(const Point &p);
+	Vertex_handle insert_second(const Point &p);
+	
+	
   Vertex_handle insert_outside_affine_hull_regular(const Point& p,bool plane=false);
   Vertex_handle insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) ;
   Vertex_handle insert_in_plane_triangulation(const Point &p);
@@ -146,6 +152,7 @@ public:
   //REMOVAL
   void remove_degree_3(Vertex_handle v, Face_handle f = Face_handle());
   void remove(Vertex_handle v);
+	void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
   bool test_dim_down(Vertex_handle v);
   bool test_dim_up(Point p);
@@ -202,6 +209,7 @@ void delete_faces(FaceIt face_begin, FaceIt face_end)
       }
     return out;
   }
+	
   template <class Stream>
   Stream &write_triangulation_to_off_2(Stream &out,Stream &out2){
 
@@ -359,15 +367,6 @@ private:
 
 	
 };
-//------------------------------------------------------------------PREDICATES---------------------------------------------------------------------//
-template < class Gt, class Tds >
-void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
-clear()
-{
-  Base::clear();
- 
-}
 
 //----------------------------------------------------------------------CHECK---------------------------------------------------------------//
 template < class Gt, class Tds >
@@ -442,6 +441,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
    return result;
 }
 
+	
 template < class Gt, class Tds >
 bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
@@ -555,6 +555,35 @@ insert_in_plane_triangulation(const Point &p){
 		
 	}
 	
+
+	template <class Gt, class Tds >
+	typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
+	Regular_triangulation_on_sphere_2<Gt,Tds>::
+	insert_first(const Point& p)
+	{
+		CGAL_triangulation_precondition(number_of_vertices() == 0);
+		Vertex_handle v =this-> _tds.insert_first();
+		v->set_point(p);
+		return  v;
+	}
+	
+	template <class Gt, class Tds >
+	typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
+	Regular_triangulation_on_sphere_2<Gt,Tds>::
+	insert_second(const Point& p)
+	{
+		CGAL_triangulation_precondition(number_of_vertices() == 1);
+		
+		Vertex_handle v =this-> _tds.insert_second();
+		v->set_point(p);
+		return v;
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 
@@ -566,10 +595,10 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 	//!!!!!!!!!!!!TODO point is valide!!!!!!!!!!!!!!!!!!!!!!!!
 	    Vertex_handle v;
 		if( dimension() == -2)
-			return Base::insert_first(p);
+			return insert_first(p);
 		
 		if( dimension() == -1)
-			return Base::insert_second(p);
+			return insert_second(p);
 				
 		if( dimension() == 0)
 			return insert_outside_affine_hull_regular(p);
@@ -699,6 +728,18 @@ CGAL_triangulation_precondition( v != Vertex_handle() );
 
 	
 	
+	template <class Gt, class Tds >
+	void
+	Regular_triangulation_on_sphere_2<Gt, Tds>::
+	remove_1D(Vertex_handle v)
+	{
+		this->_tds.remove_1D(v);
+		update_negative_faces();
+	}
+	
+	
+	
+	
 template < class Gt, class Tds >
 void
 Regular_triangulation_on_sphere_2<Gt,Tds>::
@@ -724,15 +765,8 @@ bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 test_dim_down(Vertex_handle v)
 {
-  //test the dimensionality of the resulting triangulation
-  //upon removing of vertex v
-  //it goes down to 1 iff
-  // 1) There is only 4 vertices
-  //and/or
-  // 2) every vertices appart from v are coplanar 
-	//CGAL_triangulation_precondition(dimension() == 2);
-
-  bool  dim1 = true; 
+	CGAL_triangulation_precondition(dimension()==2);
+	bool  dim1 = true; 
   if(number_of_vertices()==4){
     return dim1;
   }

@@ -143,25 +143,6 @@ public:
  
 
   
-  //------------------------------------------------------------------------INSERTION-----------------------------------------------
-  Vertex_handle insert_first(const Point& p);
-  Vertex_handle insert_second(const Point& p);
-  Vertex_handle insert_in_edge(const Point& p, Face_handle f,int i);
-  Vertex_handle insert_in_face(const Point& p, Face_handle f);
-  Vertex_handle insert_outside_convex_hull(const Point& p, Face_handle f);
-  Vertex_handle insert_outside_affine_hull(const Point& p);
-  Vertex_handle insert_outside_convex_hull_1(const Point& p, Face_handle f);
-  Vertex_handle insert_outside_convex_hull_2(const Point& p, Face_handle f);
-  Vertex_handle insert(const Point &p, Face_handle start = Face_handle() );                 
-  Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li );  
-  Vertex_handle push_back(const Point& a);
-
-  //FLIPS
-  void flip(Face_handle f, int i);     
-
-  // MOVE
-  bool move(Vertex_handle v, const Point &p);    
-
  //--------------------------------------------------------------TRAVERSING : ITERATORS AND CIRCULATORS------------------------------------------- 
   Faces_iterator faces_begin() const;
   Faces_iterator faces_end() const;
@@ -210,12 +191,6 @@ public:
 	Oriented_side power_test(const Face_handle& f, int i,
 							 const Point &p) const;
 	
-	
-	
-	
-	
-	
-  
   Oriented_side
   oriented_side(const Point &p0, const Point &p1,
 	       const Point &p2, const Point &p) const;
@@ -238,19 +213,9 @@ public:
   void show_vertex(Vertex_handle vh) const;
   void show_face(Face_handle fh) const;
 
-  //-----------------------------------------------------------PROTECTED REMOVE------------------------------------------------
-  //protected :
-  void fill_hole(Vertex_handle v, std::list<Edge> & hole);
-  void remove_2D(Vertex_handle v);
-  bool test_dim_down(Vertex_handle v);
-  void remove_1D(Vertex_handle v);
-
-  bool update_negative_faces(Vertex_handle v=Vertex_handle());
-
-  
+ 
   //----------------------------------------------------------PUBLIC REMOVE---------------------------------------------------
-  void remove(Vertex_handle  v);
-  void make_hole(Vertex_handle v, std::list<Edge> & hole);
+ void make_hole(Vertex_handle v, std::list<Edge> & hole);
   
   Face_handle create_face(Face_handle f1, int i1,
 			  Face_handle f2, int i2,
@@ -268,7 +233,7 @@ public:
   Face_handle create_face(Face_handle);
   void delete_face(Face_handle f);
   void delete_vertex(Vertex_handle v);
-  void remove_degree_3(Vertex_handle  v, Face_handle f = Face_handle());
+ 
 
   //           IN/OUT
   Vertex_handle file_input(std::istream& is);
@@ -276,86 +241,7 @@ public:
 
    /*---------------------------------------------------------------------TEMPLATE MEMBERS--------------------------------------*/
  public: 
-template < class InputIterator >
-int insert(InputIterator first, InputIterator last)
-{
-  int n = number_of_vertices();
-
-  std::vector<Point> points (first, last);
-  std::random_shuffle (points.begin(), points.end());
-  spatial_sort (points.begin(), points.end(), geom_traits());
-  Face_handle f;
-  for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
-          p != end; ++p)
-      f = insert (*p, f)->face();
-
-  return number_of_vertices() - n;
-}
-  /*
-template < class InputIterator >
-bool move(InputIterator first, InputIterator last)
-{
-  bool blocked = false;
-  std::map<Vertex_handle, int> hash;
-  std::list< std::pair<Vertex_handle, Point> > to_move(first, last);
-  while(!to_move.empty()) {
-    std::pair<Vertex_handle, Point> pp = to_move.front();
-    to_move.pop_front();
-    if(!move(pp.first, pp.second)) {
-      if(hash[pp.first] == 3) break;
-      else if(hash[pp.first] == 2) blocked = true;
-      hash[pp.first]++;
-      to_move.push_back(pp);
-    }
-  }
-  return !blocked;
-}
-
-bool well_oriented(Vertex_handle v)
-{
-  typedef typename Geom_traits::Orientation_2   Orientation_2; 
-  Orientation_2 orientation_2 = geom_traits().orientation_2_object();
-  Face_circulator fc = incident_faces(v), done(fc);
-  do {
-      Vertex_handle v0 = fc->vertex(0);
-      Vertex_handle v1 = fc->vertex(1);
-      Vertex_handle v2 = fc->vertex(2);
-      if(orientation_2(v0->point(),v1->point(),v2->point()) 
-        != COUNTERCLOCKWISE) return false;
-  } while(++fc != done);
-  return true;
-}
-  
-bool from_convex_hull(Vertex_handle v) {
-  Vertex_circulator vc = incident_vertices(v), done(vc);
-  do { if(is_infinite(vc)) return true; } while(++vc != done);
-  return false;
-  }*/
-/*
-template < class Stream >
-Stream&  draw_triangulation(Stream& os) const 
-{
-  Finite_edges_iterator it = edges_begin();
-  for( ;it != edges_end() ; ++it) {
-    os << segment(it);
-  }
-  return os;
-  }*/
-
-protected :
-
-  template<class EdgeIt>
-  Vertex_handle star_hole( const Point& p, 
-			   EdgeIt edge_begin,
-			   EdgeIt edge_end) {
-    std::list<Face_handle> empty_list;
-    return star_hole(p, 
-		     edge_begin, 
-		     edge_end, 
-		     empty_list.begin(),
-		     empty_list.end());
-  }
-
+ 
   template<class EdgeIt, class FaceIt>
   Vertex_handle star_hole( const Point& p, 
 			   EdgeIt edge_begin,
@@ -576,456 +462,6 @@ is_face(Vertex_handle v1,
   return _tds.is_face(v1, v2, v3, fr);
 }
 
-
-
-// -----------------------------------------------------------------------INSERTION------------------------------------------------------//
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-insert_first(const Point& p)
-{
-  CGAL_triangulation_precondition(number_of_vertices() == 0);
-  Vertex_handle v = _tds.insert_first();
-  v->set_point(p);
-  return  v;
-}
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-insert_second(const Point& p)
-{
-  CGAL_triangulation_precondition(number_of_vertices() == 1);
-
-  Vertex_handle v = _tds.insert_second();
-  v->set_point(p);
-  return v;
-}
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-insert_outside_convex_hull_1(const Point& p, Face_handle f)
-{
-  CGAL_triangulation_precondition( f->is_negative() && dimension()==1);
-  CGAL_triangulation_precondition( !collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),p) );
-  f->negative()=false;
-
-  Vertex_handle v=_tds.insert_in_edge(f, 2);
-  
-  //update negative edge if needed
-  Face_handle ff=v->face();
-  int i=ff->index(v);
-  int j=(i+1)%2;
-  Vertex_handle u=ff->vertex(j);
-  Face_handle fn= ff->neighbor(j);
-  Vertex_handle w= fn->vertex(i);
-  if( collinear_between(p,u->point(),w->point()) )
-    ff->negative()=true;
-  else if( collinear_between(p,w->point(),u->point()) )
-    fn->negative()=true;
-
-   return v;
-}
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-insert_outside_convex_hull_2(const Point& p, Face_handle f)
-{ 
-  int li=-1;
-  Face_handle prev;
-
-  CGAL_triangulation_precondition(orientation(f)!=POSITIVE);
-    
-  std::list<Face_handle> cwlist;   
-  std::list<Face_handle> ccwlist;
-
-  //finding every negative faces 
-  Face_circulator fc = incident_faces(pivot(), f);
-  prev=fc;
-  bool done = false;
-  while(! done) {
-    fc--;
-    if(fc->is_negative()){
-      ccwlist.push_back(fc);
-    }else {  
-      done=true;
-    }
-  }
-
-  fc = incident_faces(pivot(), f);
-  done = false;
-  while(! done) {
-    fc++;
-    if(fc->is_negative()){
-      cwlist.push_back(fc);
-    }else {  
-      done=true;
-    }
-  }
- 
-   
-  Vertex_handle v = _tds.insert_in_face(f);
-  v->set_point(p);
- 
-  _pivot=v;
-  
-  //flipping faces in order to restore the convex hull
-  Face_handle fh;
-  while ( ! cwlist.empty()) {
-    fh = cwlist.front();
-    if(fh->neighbor(0)->has_vertex(v))
-      li=0;
-    else if(fh->neighbor(1)->has_vertex(v))
-      li=1;
-    else li=2;
-    _tds.flip( fh, li);
-    cwlist.pop_front();
-  }
-
-  while ( ! ccwlist.empty()) {
-    fh = ccwlist.front();
-    if(fh->neighbor(0)->has_vertex(v))
-      li=0;
-    else if(fh->neighbor(1)->has_vertex(v))
-      li=1;
-    else li=2;
-    _tds.flip( fh, li);
-    ccwlist.pop_front();
-  }
-
-  //check if the convex_hull contains _sphere and updates negative faces
-  _full_sphere=true;
-
-  fc = incident_faces(pivot(), pivot()->face());
-  Face_circulator fdone(fc);
-  do{
-    if( orientation(fc->vertex(0)->point(),fc->vertex(1)->point(),fc->vertex(2)->point()) != POSITIVE ){
-      fc->negative()=true;
-      _full_sphere=false;
-      _negative=fc;
-    }
-    else fc->negative()=false;
-    ++fc;
-  }
-  while(fc!= fdone);
-  return v;
-}
-
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-insert_outside_affine_hull(const Point& p)
-{
-  if(dimension()==-1){
-  Vertex_handle v = _tds.insert_dim_up(vertices_begin(), false);
-  v->set_point(p);
-  return v;
-  }
-  if(dimension()==0){
-    Vertex_handle v=vertices_begin();
-     Vertex_handle u=v->face()->neighbor(0)->vertex(0);
-     Vertex_handle nv;
-
-     //orientation is given by the 2 first points
-     if( collinear_between(v->point(),u->point(),p) ) 
-       nv=_tds.insert_dim_up(v,false);
-     else
-       nv=_tds.insert_dim_up(v,true);
-
-     nv->set_point(p);
-
-    //seting negative edge if needed
-     bool done=false;
-     Edges_iterator eit=edges_begin();
-     
-     do{
-       Face_handle f=eit->first;
-       Face_handle fn=f->neighbor(0);
-       Point q=fn->vertex(1)->point();
-       if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q)){
-	 f->negative()=true;
-	 done=true;//std::cout<<"neg found"<<std::endl;
-       }
-       ++eit;
-     }while( eit!=edges_end() && !done );
-     
-     return nv;
-  }
-  //dimension=1
-  bool conform;
-
-  Face_handle f = (edges_begin())->first;
-  Orientation orient = orientation( f->vertex(0)->point(),
-				    f->vertex(1)->point(),
-				    p);
-  // CGAL_triangulation_precondition(orient != COLLINEAR);
-  conform = ( orient == COUNTERCLOCKWISE);
-  
-  Vertex_handle v = _tds.insert_dim_up( vertices_begin(), conform);
-  v->set_point(p);
-  _pivot=vertices_begin();
-
-  //seting negative faces if needed
-  bool neg_found;
-  Face_circulator fc = incident_faces(vertices_begin(),vertices_begin()->face()), done(fc);
-  do {
-    if(orientation(fc->vertex(0)->point(),fc->vertex(1)->point(),fc->vertex(2)->point())!=POSITIVE){
-      fc->negative()=true;
-      neg_found=true;
-      _negative=fc;
-    }
-  } 
-  while(++fc != done);
-
-  fc = incident_faces(v);
-  done=fc;
-  do {
-    if(orientation(fc->vertex(0)->point(),fc->vertex(1)->point(),fc->vertex(2)->point())!=POSITIVE){
-      fc->negative()=true;
-      neg_found=true;
-      _negative=fc;
-    }
-  } 
-  while(++fc != done);
-
-
-  if(neg_found)
-    _full_sphere=true; 
- 
-  return v;
-}
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-insert(const Point &p, Face_handle start)
-{
-  Locate_type lt;
-  int li;
-  Face_handle loc = locate (p, lt, li, start);
-  return insert(p, lt, loc, li);
-}
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-insert_outside_convex_hull(const Point& p, Face_handle f)
-{
-  CGAL_triangulation_precondition(dimension() >= 1);
-  Vertex_handle v;
-  if (dimension() == 1)  v=insert_outside_convex_hull_1(p, f);
-  else{
-    v=insert_outside_convex_hull_2(p, f);;
-  }
-  v->set_point(p);
-  return v;
-}
-
- 
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-insert(const Point& p, Locate_type lt, Face_handle loc, int li)
-  // insert a point p, whose localisation is known (lt, f, i)
-{
-  if(number_of_vertices() == 0) {
-    return(insert_first(p));
-  }
-  if(number_of_vertices()==1) {
-    if (lt == VERTEX) return vertices_begin();
-    else return(insert_second(p));
-  }
-  switch(lt) {
-  case FACE:
-    return insert_in_face(p,loc);
-  case EDGE:
-    return insert_in_edge(p,loc,li);
-  case OUTSIDE_CONVEX_HULL:  
-    return  insert_outside_convex_hull(p,loc);
-    case OUTSIDE_AFFINE_HULL: {
-      Vertex_handle v=insert_outside_affine_hull(p);
-      return v;  
-    }break;
-  case VERTEX:
-    return loc->vertex(li);
-  }
-  CGAL_triangulation_assertion(false);  // locate step failed
-  return Vertex_handle();
-}
-
-  
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-insert_in_edge(const Point& p, Face_handle f,int i)
-{
-  bool boundary=false;
-  
-  Face_handle fn=f->neighbor(i);
-  if(fn->is_negative()) boundary=true;
-
-  Vertex_handle v = _tds.insert_in_edge(f,i);
-  v->set_point(p);
-
-  //update negative faces if needed
-  if(boundary && dimension()==2){
-    Face_circulator fc = incident_faces(v, v->face());
-    Face_circulator fdone(fc);
-    do{
-      if( orientation(fc->vertex(0)->point(),fc->vertex(1)->point(),fc->vertex(2)->point()) != POSITIVE ){
-	fc->negative()=true;
-	_negative=fc;
-      }
-      else fc->negative()=false;
-      ++fc;
-    }while(fc !=fdone);
-  }
-  return v;
- }
-  
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-insert_in_face(const Point& p, Face_handle f)
-{
-  CGAL_triangulation_precondition(oriented_side(f,p) ==   ON_POSITIVE_SIDE);
-  Vertex_handle v= _tds.insert_in_face(f);
-  v->set_point(p);
-  return v;
-}
-
-template <class Gt, class Tds >
-inline
-typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt,Tds>::
-push_back(const Point &p)
-{
-  return insert(p);
-}
-
-//------------FLIPS-----------//
-template <class Gt, class Tds >
-void
-Triangulation_on_sphere_2<Gt, Tds>::
-flip(Face_handle f, int i)
-{
-  CGAL_triangulation_precondition ( f != Face_handle() );
-  CGAL_triangulation_precondition (i == 0 || i == 1 || i == 2);
-  CGAL_triangulation_precondition( dimension()==2); 
-     
-  /*CGAL_triangulation_precondition( 
-                  orientation(f->vertex(i)->point(),
-			      f->vertex(cw(i))->point(),
-			      mirror_vertex(f,i)->point()) == RIGHT_TURN &&
-                  orientation(f->vertex(i)->point(),
-			      f->vertex(ccw(i))->point(),
-			      mirror_vertex(f,i)->point()) ==  LEFT_TURN); */
-  _tds.flip(f, i);
-  return;
-}
-/*
-template <class Gt, class Tds >
-bool
-Triangulation_on_sphere_2<Gt, Tds>::
-move(Vertex_handle v, const Point &p) {
-  const int dim = dimension();
-
-  if(dim == 2) {
-    Point ant = v->point();
-    v->set_point(p);
-    if(well_oriented(v)) {
-      if(!from_convex_hull(v)) {
-        return true;
-      }
-    }
-    v->set_point(ant);
-  }
-
-  Locate_type lt;
-  int li;
-  Vertex_handle inserted;
-  Face_handle loc = locate(p, lt, li);
-
-  if(lt == VERTEX) return false;
-
-  if(dim < 0) return true;
-
-  if(dim == 0) {
-    v->point() = p;
-    return true;
-  }
-
-  if((loc != NULL) && (dim == 1)) {
-    if(loc->has_vertex(v)) {
-      v->point() = p;
-    } else {
-      inserted = insert(p, lt, loc, li);
-      Face_handle f = v->face();
-      int i = f->index(v);
-      if (i==0) {f = f->neighbor(1);}
-      CGAL_triangulation_assertion(f->index(v) == 1);
-      Face_handle g= f->neighbor(0);
-      f->set_vertex(1, g->vertex(1));
-      f->set_neighbor(0, g->neighbor(0));
-      g->neighbor(0)->set_neighbor(1,f);
-      g->vertex(1)->set_face(f);
-      delete_face(g);
-      Face_handle f_ins = inserted->face();
-      i = f_ins->index(inserted);
-      if (i==0) {f_ins = f_ins->neighbor(1);}
-      CGAL_triangulation_assertion(f_ins->index(inserted) == 1);
-      Face_handle g_ins = f_ins->neighbor(0);
-      f_ins->set_vertex(1, v);
-      g_ins->set_vertex(0, v);
-      std::swap(*v, *inserted);
-      delete_vertex(inserted);
-    }
-    return true;
-  }
-
-  if((loc != NULL) && test_dim_down(v)) {
-    v->point() = p;
-    int i = loc->index(v);
-    Face_handle locl;
-    int i_locl;
-    if(is_infinite(loc)) {
-      int i_inf = loc->index(infinite_vertex());
-      locl = loc->neighbor(i_inf);
-      i_locl = locl->index(v);
-    } else { locl = loc; i_locl = i; }
-    if(orientation(p, locl->vertex(ccw(i_locl))->point(),
-                      locl->vertex(cw(i_locl))->point()) == COLLINEAR) {
-      _tds.dim_2D_1D(loc, i);
-    }
-    return true;
-  }
-
-  inserted = insert(p, lt, loc, li);
-
-  std::list<Edge> hole;
-  make_hole(v, hole);
-  fill_hole(v, hole);
-
-  // fixing pointer
-  Face_circulator fc = incident_faces(inserted), done(fc);
-  std::list<Face_handle> faces_pt;
-  do { faces_pt.push_back(fc); } while(++fc != done);
-  while(!faces_pt.empty()) {
-    Face_handle f = faces_pt.front();
-    faces_pt.pop_front();
-    int i = f->index(inserted);
-    f->set_vertex(i, v);
-  }
-  std::swap(*v, *inserted);
-  delete_vertex(inserted);
-
-  return true;
-}
-*/
-
 //---------------------------------------------------------------------------/POINT LOCATION---------------------------------------//
 
 template <class Gt, class Tds >    
@@ -1242,7 +678,7 @@ march_locate_2D(Face_handle c,
 	}
 	o0 = orientation(p0,p1,t);
       }
-    }//std::cout<<"no n"<<std::endl;
+    }
    
     else {
       if(c->neighbor(0) == prev){
@@ -1293,7 +729,7 @@ march_locate_2D(Face_handle c,
     int sum = ( o0 == COLLINEAR )
       + ( o1 == COLLINEAR )
       + ( o2 == COLLINEAR );
-    //std::cout<<"sum :"<<sum<<std::endl;
+    
     switch (sum) {
     case 0:
     case -1:
@@ -1326,9 +762,7 @@ march_locate_2D(Face_handle c,
       }
     }
   
-    //std::cout<<"lt :"<<lt<<std::endl;
- 
-    return c;
+   return c;
     
   }
 } 
@@ -1997,193 +1431,15 @@ show_face(Face_handle fh) const
     break;
   }
   return;
+	
+	
+		
+	
+	
 }
 
- /*-------------------------------------------------------------------------PROTECTED REMOVE--------------------------------*/
-template <class Gt, class Tds >
-void
-Triangulation_on_sphere_2<Gt,Tds>::
-remove_2D(Vertex_handle v)
-{
-  if (test_dim_down(v)) {  
-    Face_handle f=v->face();
-    int i=f->index(v);
-    f->set_vertex(i,v);
-    delete_vertex(v); 
-  }
- 
-  else {
-    std::list<Edge> hole;
-    make_hole(v, hole);
-    fill_hole(v, hole);
-    delete_vertex(v);
-  }
-  return;       
-}
-
-template <class Gt, class Tds >
-bool
-Triangulation_on_sphere_2<Gt,Tds>::
-test_dim_down(Vertex_handle v)
-{
-  //test the dimensionality of the resulting triangulation
-  //upon removing of vertex v
-  //it goes down to 1 iff
-  // 1) There is only 4 vertices
-  //and/or
-  // 2) every vertices appart from v are coplanar 
-  	
-	bool dim1=true;
-  Face_circulator fc=incident_faces(v,v->face());
-  Face_circulator done(fc);
-  
-  do{					     
-    int i=fc->index(v);
-    Face_handle f=fc->neighbor(i);
-    if(orientation(f->vertex(0)->point(),
-		   f->vertex(1)->point(),
-		   f->vertex(2)->point())
-       !=COLLINEAR)
-      dim1=false;
-  }while(++fc!=done && !dim1);
-
-  return dim1;
-}
-
-template <class Gt, class Tds >
-void
-Triangulation_on_sphere_2<Gt, Tds>::						     
-fill_hole ( Vertex_handle v, std::list< Edge > & hole )
-{
-  // uses the fact that the hole is starshaped
-  // with repect to v->point()
-  typedef std::list<Edge> Hole;
-
-  Face_handle  ff, fn;
-  int ii , in; 
-  Vertex_handle v0, v1, v2;
-  Bounded_side side;
-
-  //stack algorithm to create faces
-  // create face v0,v1,v2
-  //if v0,v1,v2 are finite vertices
-  // and form a left_turn
-  // and triangle v0v1v2 does not contain v->point()
-  if( hole.size() != 3) {
-    typename Hole::iterator hit = hole.begin();
-    typename Hole::iterator next= hit; 
-    while( hit != hole.end() && hole.size() != 3) {
-      ff = (*hit).first;  
-      ii = (*hit).second;
-      v0 = ff->vertex(cw(ii));
-      v1 = ff->vertex(ccw(ii));
-      next=hit; next++;
-	if(next == hole.end()) next=hole.begin();
-	fn = (*next).first; 
-	in = (*next).second;
-	v2 = fn->vertex(ccw(in));	
-	if ( orientation(v0->point(), v1->point(), v2->point()) == LEFT_TURN ) {
-	  side =  bounded_side(v0->point(), 
-			       v1->point(), 
-			       v2->point(),
-			       v->point());
-
-	  if( side == ON_UNBOUNDED_SIDE || 
-	      (side == ON_BOUNDARY && orientation(v0->point(),
-					     v->point(),
-					     v2->point()) == COLLINEAR/* &&                             //The tes collinear between seems unusefull
-				      collinear_between(v0->point(),v->point(),v2->point())*/ ))       //in case of a removal (other cases??)
-	    {
-	      //create face
-	      Face_handle  newf = create_face(ff,ii,fn,in); 
-	      typename Hole::iterator tempo=hit;
-	      hit = hole.insert(hit,Edge(newf,1)); //push newf
-	      hole.erase(tempo); //erase ff
-	      hole.erase(next); //erase fn
-	      if (hit != hole.begin() ) --hit;
-	      continue;
-	    }
-	}
-      ++hit; 
-    } 
-  }
-
-  // either the hole has only three edges
-  // or all its vertices are reflex or flat
-  // except may be one vertex whose corresponding ear 
-  // includes the vertex being removed
-
-  // deal with the last left_turn if any
-  if(hole.size() != 3) {
-    typename Hole::iterator hit=hole.begin();
-    while(hit != hole.end()) {
-      ff = (*hit).first;  ii = (*hit).second;
-      hit++;
-      if(hit != hole.end()) { fn = (*hit).first; in = (*hit).second;}
-      else { fn = ((hole.front()).first); in = (hole.front()).second;}
-      if ( orientation(ff->vertex(cw(ii))->point(),
-		       fn->vertex(cw(in))->point(),
-		       fn->vertex(ccw(in))->point()) == LEFT_TURN) {
-	  create_face(ff,ii,fn,in);
-	  break;
-	}
-    }
-  }
-
-  // deal with a reflex chain of convex hull edges
-  if(hole.size() != 3) {
-    //create faces
-    while(hole.size() != 3){
-      ff = (hole.front()).first;
-      ii = (hole.front()).second;
-      hole.pop_front();
-      fn = (hole.front()).first;
-      in = (hole.front()).second;
-      hole.pop_front();
-      Face_handle  newf = create_face(ff,ii,fn,in);
-      hole.push_front(Edge(newf,1));
-    }
-  }
-    
-  // now hole has three edges
-  typename Hole::iterator hit;
-  hit = hole.begin();
-  //  I don't know why the following yelds a segmentation fault
-  //    create_face( (*hit).first, (*hit).second,
-  // 	     (* ++hit).first, (*hit).second,
-  // 	     (* ++hit).first, (*hit).second);
-  ff = (*hit).first;      ii = (*hit).second;
-  fn = (* ++hit).first;   in = (*hit).second;
-  Face_handle f3 = (* ++hit).first;
-  int i3 = (*hit).second;
-  create_face(ff,ii,fn,in,f3,i3);
-}
 
  /*---------------------------------------------------------------------PUBLIC REMOVE-------------------------------------*/
-
-template <class Gt, class Tds >
-void
-Triangulation_on_sphere_2<Gt,Tds>::      
-remove(Vertex_handle  v)
-{
-  CGAL_triangulation_precondition( v != Vertex_handle());
-    
-  if  (number_of_vertices() == 1);    // remove_first(v);
-  else if (number_of_vertices() == 3)   _tds.remove_dim_down(v);
-  else   if ( dimension() == 1) remove_1D(v);
-  else  remove_2D(v);
-  return;
-}
-
-template <class Gt, class Tds >
-inline void
-Triangulation_on_sphere_2<Gt, Tds>::
-remove_1D(Vertex_handle v)
-{
-  _tds.remove_1D(v);
-  update_negative_faces();
-}
-
 
 template <class Gt, class Tds >
 void
@@ -2219,45 +1475,6 @@ make_hole ( Vertex_handle v, std::list<Edge> & hole)
   }
   return;
 }
-
-template < class Gt, class Tds >
-bool
-Triangulation_on_sphere_2<Gt,Tds>::
-update_negative_faces(Vertex_handle v)
-{
-  if(dimension()==1){
-    Edges_iterator eit=edges_begin();
-    do{
-      Face_handle f=eit->first;
-      Face_handle fn=f->neighbor(0);
-      Point q=fn->vertex(1)->point();
-      if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q))
-	 f->negative()=true;
-      else 
-	f->negative()=false;
-      ++eit;
-    }while( eit!=edges_end());
-  }
-  else{//dimension==2
-
-    Face_circulator fc=incident_faces(v,v->face());
-    Face_circulator done(fc);
-    bool neg_found=false;
-	
-    do{
-      if(orientation(fc)!=POSITIVE){
-	fc->negative()=true;
-	neg_found=true;
-      }
-      else{
-	fc->negative()=false;
-      }
-    }while(++fc!=done);
-
-    return neg_found;
-  }
-}
-
 template <class Gt, class Tds >    
 inline
 void
@@ -2275,17 +1492,6 @@ Triangulation_on_sphere_2<Gt, Tds>::
 delete_vertex(Vertex_handle v)
 {
   _tds.delete_vertex(v);
-}
-
-
-template <class Gt, class Tds >
-inline void 
-Triangulation_on_sphere_2<Gt,Tds>::
-remove_degree_3(Vertex_handle  v, Face_handle f)
-{
-  if (f == Face_handle()) f=v->face();
-  _tds.remove_degree_3(v, f);
-  return;
 }
 
 template <class Gt, class Tds >    
@@ -2472,151 +1678,16 @@ public:
 
  Oriented_side
  side_of_oriented_circle(Face_handle f, const Point & p) const; 
+*/
 
 
 
 
-protected:
   
 
 
   
-  //----------------------------------------------------------PUBLIC REMOVE---------------------------------------------------
-  void remove(Vertex_handle  v);
-  void make_hole(Vertex_handle v, std::list<Edge> & hole);
   
-  Face_handle create_face(Face_handle f1, int i1,
-			  Face_handle f2, int i2,
-			  Face_handle f3, int i3);
-  
-  Face_handle create_face(Face_handle f1, int i1,
-			  Face_handle f2, int i2);
-  Face_handle create_face();
-  
-  Face_handle create_face(Face_handle f, int i, Vertex_handle v);
-  Face_handle create_face(Vertex_handle v1, Vertex_handle v2,Vertex_handle v3);
-  Face_handle create_face(Vertex_handle v1, Vertex_handle v2,Vertex_handle v3,
-			  Face_handle f1, Face_handle f2, Face_handle f3);
-
-  Face_handle create_face(Face_handle);
-  void delete_face(Face_handle f);
-  void delete_vertex(Vertex_handle v);
-  void remove_degree_3(Vertex_handle  v, Face_handle f = Face_handle());
-
-  //           IN/OUT
-  Vertex_handle file_input(std::istream& is);
-  void file_output(std::ostream& os) const;
-
-//---------------------------------------------------------------------TEMPLATE MEMBERS--------------------------------------
-
- public: 
-template < class InputIterator >
-int insert(InputIterator first, InputIterator last)
-{
-  int n = number_of_vertices();
-
-  std::vector<Point> points (first, last);
-  std::random_shuffle (points.begin(), points.end());
-  spatial_sort (points.begin(), points.end(), geom_traits());
-  Face_handle f;
-  for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
-          p != end; ++p)
-      f = insert (*p, f)->face();
-
-  return number_of_vertices() - n;
-}
-
-template < class InputIterator >
-bool move(InputIterator first, InputIterator last)
-{
-  bool blocked = false;
-  std::map<Vertex_handle, int> hash;
-  std::list< std::pair<Vertex_handle, Point> > to_move(first, last);
-  while(!to_move.empty()) {
-    std::pair<Vertex_handle, Point> pp = to_move.front();
-    to_move.pop_front();
-    if(!move(pp.first, pp.second)) {
-      if(hash[pp.first] == 3) break;
-      else if(hash[pp.first] == 2) blocked = true;
-      hash[pp.first]++;
-      to_move.push_back(pp);
-    }
-  }
-  return !blocked;
-}
-
-bool well_oriented(Vertex_handle v)
-{
-  typedef typename Geom_traits::Orientation_2   Orientation_2; 
-  Orientation_2 orientation_2 = geom_traits().orientation_2_object();
-  Face_circulator fc = incident_faces(v), done(fc);
-  do {
-      Vertex_handle v0 = fc->vertex(0);
-      Vertex_handle v1 = fc->vertex(1);
-      Vertex_handle v2 = fc->vertex(2);
-      if(orientation_2(v0->point(),v1->point(),v2->point()) 
-        != COUNTERCLOCKWISE) return false;
-  } while(++fc != done);
-  return true;
-}
-  
-bool from_convex_hull(Vertex_handle v) {
-  Vertex_circulator vc = incident_vertices(v), done(vc);
-  do { if(is_infinite(vc)) return true; } while(++vc != done);
-  return false;
-  }*/
-/*
-template < class Stream >
-Stream&  draw_triangulation(Stream& os) const 
-{
-  Finite_edges_iterator it = edges_begin();
-  for( ;it != edges_end() ; ++it) {
-    os << segment(it);
-  }
-  return os;
-  }*/
- /*
-protected :
-
-  template<class EdgeIt>
-  Vertex_handle star_hole( const Point& p, 
-			   EdgeIt edge_begin,
-			   EdgeIt edge_end) {
-    std::list<Face_handle> empty_list;
-    return star_hole(p, 
-		     edge_begin, 
-		     edge_end, 
-		     empty_list.begin(),
-		     empty_list.end());
-  }
-
-  template<class EdgeIt, class FaceIt>
-  Vertex_handle star_hole( const Point& p, 
-			   EdgeIt edge_begin,
-			   EdgeIt edge_end,
-			   FaceIt face_begin,
-			   FaceIt face_end) {
-    typedef typename Triangulation_data_structure::Edge  Tds_Edge;
-    typedef typename Triangulation_data_structure::Face  Tds_Face;
-    Vertex_handle v = _tds.star_hole( edge_begin, edge_end,
-				      face_begin, face_end);
-    v->set_point(p);
-    return v;
-  }
- 
-  template<class FaceIt>
-  void delete_faces(FaceIt face_begin, FaceIt face_end)
-  {
-    FaceIt fit=face_begin;
-    for(;fit!=face_end;++fit)
-    {
-      delete_face(*fit);
-    }
-  }
-
-};
- */
-
 } //namespace CGAL
     
 
