@@ -51,7 +51,7 @@ namespace CGAL {
 // Private section
 // ----------------------------------------------------------------------------
 namespace internal {
-
+/// \cond SKIP_IN_MANUAL
 
 /// Generalization of std::distance() to compute the distance between 2 integers
 inline std::size_t
@@ -126,14 +126,12 @@ public:
 /// It does not orient normals that are already oriented.
 /// It does not propagate the orientation if the angle between 2 normals > angle_max.
 ///
-/// @commentheading Preconditions:
-/// - Normals must be unit vectors.
-/// - 0 < angle_max <= PI/2.
+/// \pre Normals must be unit vectors
+/// \pre `0 < angle_max <= PI/2`
 ///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
-/// @param NormalPMap is a model of boost::ReadWritePropertyMap.
-/// @param Kernel Geometric traits class.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam NormalPMap is a model of boost::ReadWritePropertyMap.
+/// @tparam Kernel Geometric traits class.
 
 template <typename ForwardIterator, ///< Input point iterator
           typename NormalPMap, ///< property map ForwardIterator -> Normal
@@ -191,11 +189,10 @@ private:
 
 /// Orients the normal of the point with maximum Z towards +Z axis.
 ///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
-/// @param NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
+/// @tparam Kernel Geometric traits class.
 ///
 /// @return iterator over the top point.
 template <typename ForwardIterator,
@@ -246,16 +243,14 @@ mst_find_source(
 /// - we add the edge (i, j) if either vertex i is in the k-neighborhood of vertex j,
 ///   or vertex j is in the k-neighborhood of vertex i.
 ///
-/// @commentheading Preconditions:
-/// - Normals must be unit vectors.
-/// - k >= 2.
+/// \pre Normals must be unit vectors.
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
-/// @param IndexPMap is a model of boost::ReadablePropertyMap with an integral value_type.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
-/// @param NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam IndexPMap is a model of boost::ReadablePropertyMap with an integral value_type.
+/// @tparam PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
+/// @tparam Kernel Geometric traits class.
 ///
 /// @return the Riemannian graph
 template <typename ForwardIterator,
@@ -389,15 +384,13 @@ create_riemannian_graph(
 /// - vertices contain the corresponding input point iterator.
 /// - we add the edge (predecessor[i], i) for each element of the MST.
 ///
-/// @commentheading Preconditions:
-/// - Normals must be unit vectors.
+/// \pre Normals must be unit vectors.
 ///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
-/// @param IndexPMap is a model of boost::ReadablePropertyMap with an integral value_type.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
-/// @param NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam IndexPMap is a model of boost::ReadablePropertyMap with an integral value_type.
+/// @tparam PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
+/// @tparam Kernel Geometric traits class.
 ///
 /// @return the MST graph.
 template <typename ForwardIterator,
@@ -485,6 +478,7 @@ create_mst_graph(
     return mst_graph;
 }
 
+/// \endcond
 
 } /* namespace internal */
 
@@ -493,24 +487,22 @@ create_mst_graph(
 // Public section
 // ----------------------------------------------------------------------------
 
-
-/// Orients the normals of the [first, beyond) range of points using the propagation
+/// \ingroup PkgPointSetProcessing
+/// Orients the normals of the `[first, beyond)` range of points using the propagation
 /// of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
 ///
 /// This method modifies the order of input points so as to pack all sucessfully oriented points first,
 /// and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
 /// For this reason it should not be called on sorted containers.
 ///
-/// @commentheading Preconditions:
-/// - Normals must be unit vectors.
-/// - k >= 2.
+/// \pre Normals must be unit vectors
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @param NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return iterator over the first point with an unoriented normal.

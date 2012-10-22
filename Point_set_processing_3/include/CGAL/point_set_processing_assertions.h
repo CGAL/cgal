@@ -20,6 +20,9 @@
 //
 // Generated from script create_assertions.sh
 
+
+/// \cond SKIP_IN_MANUAL
+
 /// @file point_set_processing_assertions.h
 /// Define checking macros for the Point_set_processing_3 package
 
@@ -362,3 +365,5 @@
 #  define CGAL_point_set_processing_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_point_set_processing_expensive_exactness_warnings 1
 #endif // CGAL_POINT_SET_PROCESSING_NO_WARNINGS
+
+/// \endcond

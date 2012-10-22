@@ -40,15 +40,15 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 namespace internal {
 
+/// \cond SKIP_IN_MANUAL
 
 /// Estimates normal direction using linear least
 /// squares fitting of a plane on the K nearest neighbors.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param Kernel Geometric traits class.
-/// @param Tree KD-tree.
+/// @tparam Kernel Geometric traits class.
+/// @tparam Tree KD-tree.
 ///
 /// @return Computed normal. Orientation is random.
 template < typename Kernel,
@@ -93,6 +93,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   return plane.orthogonal_vector();
 }
 
+/// \endcond
 
 } /* namespace internal */
 
@@ -101,19 +102,18 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 // Public section
 // ----------------------------------------------------------------------------
 
-
-/// Estimates normal directions of the [first, beyond) range of points
+/// \ingroup PkgPointSetProcessing
+/// Estimates normal directions of the `[first, beyond)` range of points
 /// by linear least squares fitting of a plane over the k nearest neighbors.
 /// The output normals are randomly oriented.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param InputIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam InputIterator iterator over input points.
+/// @tparam PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
-/// @param NormalPMap is a model of boost::WritablePropertyMap with a value_type = Vector_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam NormalPMap is a model of boost::WritablePropertyMap with a value_type = Vector_3<Kernel>.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 
 // This variant requires all parameters.

@@ -39,17 +39,17 @@ namespace CGAL {
 
 
 //===================================================================================
+/// \ingroup PkgPointSetProcessing
 /// Reads points (positions + normals, if available) from a .off ASCII stream.
 /// The function expects for each point a line with the x y z position,
 /// optionally followed by the nx ny nz normal.
 /// Faces are ignored.
 ///
-/// @commentheading Template Parameters:
-/// @param OutputIterator iterator over output points.
-/// @param PointPMap is a model of boost::WritablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam OutputIterator iterator over output points.
+/// @tparam PointPMap is a model of boost::WritablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
-/// @param NormalPMap is a model of boost::WritablePropertyMap with a value_type = Vector_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam NormalPMap is a model of boost::WritablePropertyMap with a value_type = Vector_3<Kernel>.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return true on success.
@@ -194,16 +194,16 @@ read_off_points_and_normals(
 
 
 //===================================================================================
+/// \ingroup PkgPointSetProcessing
 /// Reads points (position only) from a .off ASCII stream.
 /// The function expects for each point a line with the x y z position.
 /// If the position is followed by the nx ny nz normal, then the normal will be ignored.
 /// Faces are ignored.
 ///
-/// @commentheading Template Parameters:
-/// @param OutputIterator iterator over output points.
-/// @param PointPMap is a model of boost::WritablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam OutputIterator iterator over output points.
+/// @tparam PointPMap is a model of boost::WritablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return true on success.

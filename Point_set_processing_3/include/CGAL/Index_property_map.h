@@ -35,12 +35,12 @@
 
 namespace CGAL {
 
-
+/// \cond SKIP_IN_MANUAL
+  
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
 namespace internal {
-
 
 /// Functor for operator< that compares iterators address.
 template <typename Iterator>
@@ -62,7 +62,7 @@ struct Compare_iterator_address
 
 
 /// Template class "index" property map, which associates a 0-based index (unsigned int) 
-/// to the [first, beyond) range of elements.
+/// to the `[first, beyond)` range of elements.
 /// 
 /// 2 specializations exist:
 /// - if Iter is a random access iterator (typically vector and deque), 
@@ -153,11 +153,10 @@ private:
 
 /// Free function to create an Index_property_map property map.
 ///
-/// @commentheading Template Parameters:
-/// @param Iter iterator over input elements.
+/// @tparam Iter iterator over input elements.
 ///
 /// @return an "index" property map, which associates a 0-based index (unsigned int) 
-/// to the [first, beyond) range of elements.
+/// to the `[first, beyond)` range of elements.
 template <class Iter>
 Index_property_map<Iter>
 make_index_property_map(
@@ -167,6 +166,7 @@ make_index_property_map(
   return Index_property_map<Iter>(first, beyond);
 }
 
+/// \endcond
 
 } // namespace CGAL
 

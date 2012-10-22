@@ -38,16 +38,16 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 namespace internal {
 
+/// \cond SKIP_IN_MANUAL
 
 /// Smoothes one point position using linear least
 /// squares fitting of a plane (PCA) on the K
 /// nearest neighbors.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param Kernel Geometric traits class.
-/// @param Tree KD-tree.
+/// @tparam Kernel Geometric traits class.
+/// @tparam Tree KD-tree.
 ///
 /// @return computed point
 template <typename Kernel,
@@ -93,6 +93,7 @@ pca_smooth_point(
   return plane.projection(query);
 }
 
+/// \endcond
 
 } /* namespace internal */
 
@@ -101,19 +102,18 @@ pca_smooth_point(
 // Public section
 // ----------------------------------------------------------------------------
 
-
-/// Smoothes the [first, beyond) range of points using pca on the k
+/// \ingroup PkgPointSetProcessing
+/// Smoothes the `[first, beyond)` range of points using pca on the k
 /// nearest neighbors and reprojection onto the plane.
 /// As this method relocates the points, it
 /// should not be called on containers sorted w.r.t. point locations.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param InputIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam InputIterator iterator over input points.
+/// @tparam PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 
 // This variant requires all parameters.

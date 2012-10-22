@@ -29,7 +29,7 @@
 
 namespace CGAL {
 
-
+/// \cond SKIP_IN_MANUAL
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
@@ -84,11 +84,10 @@ public:
 
 /// Laplacian smooth of one point w.r.t. the k nearest neighbors.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param Kernel Geometric traits class.
-/// @param Tree KD-tree.
+/// @tparam Kernel Geometric traits class.
+/// @tparam Tree KD-tree.
 ///
 /// @return computed point
 template <typename Kernel,
@@ -130,11 +129,10 @@ laplacian_smooth_point(
 
 /// Improved Laplacian smooth of one point w.r.t. the k nearest neighbors.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param Kernel Geometric traits class.
-/// @param Tree KD-tree.
+/// @tparam Kernel Geometric traits class.
+/// @tparam Tree KD-tree.
 ///
 /// @return computed point
 template <typename Kernel,
@@ -187,13 +185,12 @@ improved_laplacian_smooth_point(
 /// As this method relocates the points, it
 /// should not be called on containers sorted w.r.t. point locations.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 
 // This variant requires all parameters.
@@ -328,6 +325,9 @@ improved_laplacian_smooth_point_set(
     iter_number,
     alpha, beta);
 }
+/// @endcond
+
+
 /// @endcond
 
 

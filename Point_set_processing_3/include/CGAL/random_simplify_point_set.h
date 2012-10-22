@@ -30,18 +30,17 @@
 
 namespace CGAL {
 
-
+/// \ingroup PkgPointSetProcessing
 /// Randomly deletes a user-specified fraction of the input points.
 ///
 /// This method modifies the order of input points so as to pack all remaining points first,
 /// and returns an iterator over the first point to remove (see erase-remove idiom).
 /// For this reason it should not be called on sorted containers.
 ///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return iterator over the first point to remove.

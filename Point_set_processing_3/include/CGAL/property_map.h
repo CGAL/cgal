@@ -52,8 +52,7 @@ struct Dereference_property_map
 
   /// Access a property map element.
   ///
-  /// @commentheading Template Parameters:
-  /// @param Iter Type convertible to key_type.
+  /// @tparam Iter Type convertible to key_type.
   template <class Iter>
   reference operator[](Iter it) const { return reference(*it); }
 };
@@ -96,8 +95,7 @@ struct First_of_pair_property_map
 
   /// Access a property map element.
   ///
-  /// @commentheading Template Parameters:
-  /// @param Iter Type convertible to key_type.
+  /// @tparam Iter Type convertible to key_type.
   template <class Iter>
   reference operator[](Iter pair) const { return reference(pair->first); }
 };
@@ -134,8 +132,7 @@ struct Second_of_pair_property_map
 
   /// Access a property map element.
   ///
-  /// @commentheading Template Parameters:
-  /// @param Iter Type convertible to key_type.
+  /// @tparam Iter Type convertible to key_type.
   template <class Iter>
   reference operator[](Iter pair) const { return reference(pair->second); }
 };
@@ -177,8 +174,7 @@ struct Nth_of_tuple_property_map
 
   /// Access a property map element.
   ///
-  /// @commentheading Template Parameters:
-  /// @param Iter Type convertible to key_type.
+  /// @tparam Iter Type convertible to key_type.
   template <class Iter>
   reference operator[](Iter tuple) const { return (reference) tuple->template get<N>(); }
 };

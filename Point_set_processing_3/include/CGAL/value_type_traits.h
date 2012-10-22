@@ -24,6 +24,7 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 /// Traits class to get the value type of any iterator,
 /// including an output iterator.
@@ -45,6 +46,7 @@ struct value_type_traits<std::back_insert_iterator<T> >
   typedef typename T::value_type type;
 };
 
+/// \endcond
 
 } //namespace CGAL
 
