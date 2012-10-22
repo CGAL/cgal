@@ -26,7 +26,8 @@
 
 namespace CGAL {
 
-
+/// \cond SKIP_IN_MANUAL
+  
 /// This class inherits from Filter_iterator<> +
 /// adds a conversion to handle/const handle.
 /// See Filter_iterator<> documentation.
@@ -87,6 +88,7 @@ public:
   /// @}
 };
 
+/// \endcond
 
 } //namespace CGAL
 

@@ -28,6 +28,7 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 // Forward reference
 template<class ParameterizationPatchableMesh_3> class Param_mesh_patch_vertex_const_handle;
@@ -433,6 +434,7 @@ private:
 
 }; // Param_mesh_patch_vertex_const_handle
 
+/// \endcond
 
 } //namespace CGAL
 

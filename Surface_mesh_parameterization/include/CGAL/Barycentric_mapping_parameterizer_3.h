@@ -29,8 +29,8 @@ namespace CGAL {
 
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
-/// The class Barycentric_mapping_parameterizer_3 implements Tutte Barycentric Mapping algorithm  \cite t-hdg-63.
-/// This algorithm is also called "Tutte Uniform Weights" by other authors.
+/// The class Barycentric_mapping_parameterizer_3 implements <i>Tutte Barycentric Mapping algorithm</i> \cite t-hdg-63.
+/// This algorithm is also called <i>Tutte Uniform Weights</i> by other authors.
 ///
 /// One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 ///
@@ -38,8 +38,8 @@ namespace CGAL {
 /// parameterization algorithm Fixed_border_parameterizer_3::parameterize().
 /// - It provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
 ///   parameters that make sense.
-/// - It implements compute_w_ij() to compute w_ij = (i,j) coefficient of matrix A
-///   for j neighbor vertex of i based on Tutte Barycentric Mapping method.
+/// - It implements compute_w_ij() to compute `w_ij = (i,j)` coefficient of matrix A
+///   for `j` neighbor vertex of `i` based on Tutte Barycentric Mapping method.
 /// - It implements an optimized version of is_one_to_one_mapping().
 ///
 /// \models ParameterizerTraits_3
@@ -134,7 +134,7 @@ private:
 public:
     /// Constructor
     Barycentric_mapping_parameterizer_3(Border_param border_param = Border_param(),
-                                        ///< Object that maps the surface's border to 2D space.
+                                        ///< object that maps the surface's border to 2D space.
                                         Sparse_LA sparse_la = Sparse_LA())
                                         ///< Traits object to access a sparse linear system.
     :   Fixed_border_parameterizer_3<Adaptor,

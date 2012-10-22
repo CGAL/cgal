@@ -26,7 +26,7 @@
 namespace CGAL {
 
 
-/// \ingroup  PkgSurfaceParameterizationMethods
+/// \ingroup  PkgSurfaceParameterizationMainFunction
 ///
 /// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
 /// 2D circle, using Floater Mean Value Coordinates algorithm.
@@ -47,7 +47,7 @@ parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of Parameterizat
 }
 
 
-/// \ingroup  PkgSurfaceParameterizationMethods
+/// \ingroup  PkgSurfaceParameterizationMainFunction
 ///
 /// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
 /// simple 2D domain.

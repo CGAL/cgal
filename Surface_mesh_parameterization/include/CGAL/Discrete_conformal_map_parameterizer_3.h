@@ -31,9 +31,9 @@ namespace CGAL {
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class Discrete_conformal_map_parameterizer_3
-/// implements the *Discrete Conformal Map (DCM)* parameterization \cite cgal:eddhls-maam-95.
-/// This algorithm is also called "Discrete Conformal Parameterization (DCP)",
-/// "Discrete Harmonic Map" or "Fixed Conformal Parameterization" by other authors.
+/// implements the <i>Discrete Conformal Map (DCM)</i> parameterization \cite cgal:eddhls-maam-95.
+/// This algorithm is also called <i>Discrete Conformal Parameterization (DCP)</i>,
+/// <i>Discrete Harmonic Map</i> or <i>Fixed Conformal Parameterization</i> by other authors.
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///

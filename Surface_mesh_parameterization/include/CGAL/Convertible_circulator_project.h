@@ -26,11 +26,11 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 /// This class inherits from Circulator_project<> +
 /// adds a conversion to handle/const handle.
 /// See Circulator_project<> documentation.
-
 template<class C,               ///< Internal circulator.
          class Fct,             ///< Conversion functor.
          class Ref,
@@ -86,7 +86,7 @@ public:
   /// @}
 
 };
-
+/// \endcond
 
 } //namespace CGAL
 

@@ -32,7 +32,7 @@ namespace CGAL {
 // Class Circular_border_parameterizer_3
 //
 
-/// \ingroup  PkgSurfaceParameterizationBorder
+/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
 ///
 /// This is the base class of strategies that parameterize the border
 /// of a 3D surface onto a circle.
@@ -102,7 +102,7 @@ public:
     // Default constructor, copy constructor and operator =() are fine
 
     /// Assign to mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
-    /// on border's shape. Mark them as "parameterized".
+    /// on border's shape. Mark them as <i>parameterized</i>.
     typename Parameterizer_traits_3<Adaptor>::Error_code
                                         parameterize_border(Adaptor& mesh);
 
@@ -205,7 +205,7 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 // Class Circular_border_uniform_parameterizer_3
 //
 
-/// \ingroup  PkgSurfaceParameterizationBorder
+/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
 ///
 /// This class parameterizes the border of a 3D surface onto a circle
 /// in a uniform manner: points are equally spaced.
@@ -285,7 +285,7 @@ protected:
 // Class Circular_border_arc_length_parameterizer_3
 //
 
-/// \ingroup  PkgSurfaceParameterizationBorder
+/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
 ///
 /// This class parameterizes the border of a 3D surface onto a circle,
 /// with an arc-length parameterization: (u,v) values are

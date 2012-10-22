@@ -32,7 +32,7 @@
 
 namespace CGAL {
 
-
+/// @cond SKIP_IN_MANUAL
 // Forward declaration
 template<class T> struct Taucs_traits;
 
@@ -454,7 +454,7 @@ template<> struct Taucs_traits<taucs_dcomplex> {
 template<> struct Taucs_traits<taucs_scomplex> {
     enum { TAUCS_FLAG = TAUCS_SCOMPLEX };
 };
-
+/// @endcond
 
 } //namespace CGAL
 

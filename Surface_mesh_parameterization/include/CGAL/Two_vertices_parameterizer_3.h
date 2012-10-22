@@ -36,7 +36,7 @@ namespace CGAL {
 //
 
 
-/// \ingroup  PkgSurfaceParameterizationBorder
+/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
 ///
 /// The class `Two_vertices_parameterizer_3`
 /// parameterizes two extreme vertices of a 3D surface.
@@ -97,7 +97,7 @@ private:
 public:
     // Default constructor, copy constructor and operator =() are fine.
 
-    /// Map two extreme vertices of the 3D mesh and mark them as "parameterized".
+    /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
     typename Parameterizer_traits_3<Adaptor>::Error_code
                                         parameterize_border(Adaptor& mesh);
 

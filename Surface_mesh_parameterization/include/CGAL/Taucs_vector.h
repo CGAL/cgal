@@ -24,6 +24,7 @@
 
 namespace CGAL {
 
+/// @cond SKIP_IN_MANUAL
 
 /// The class Taucs_vector
 /// is a C++ wrapper around TAUCS' vector type, which is a simple array.
@@ -111,7 +112,7 @@ private:
     int m_dimension;    ///< Vector size.
     T* m_element;       ///< Array of m_dimension T elements.
 };
-
+/// @endcond
 
 } //namespace CGAL
 

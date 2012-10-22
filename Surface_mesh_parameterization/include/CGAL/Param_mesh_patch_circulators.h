@@ -34,6 +34,7 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 /// Class Mesh_patch_vertex_around_vertex_cir
 /// represents a (clockwise) circulator around a vertex
@@ -614,6 +615,7 @@ private:
 
 }; // Mesh_patch_vertex_around_facet_cir
 
+/// \endcond
 
 } //namespace CGAL
 

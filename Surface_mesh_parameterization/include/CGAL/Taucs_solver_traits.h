@@ -49,6 +49,7 @@
 
 namespace CGAL {
 
+/// @cond SKIP_IN_MANUAL
 
 /// \ingroup  PkgSurfaceParameterizationAlgebra
 ///
@@ -343,7 +344,7 @@ private:
         return ( ::CGAL::abs(a) < 10.0 * (std::numeric_limits<NT>::min)());
     }
 };
-
+/// @endcond
 
 } //namespace CGAL
 

@@ -39,11 +39,11 @@ namespace CGAL {
 
 /// \ingroup  PkgSurfaceParameterizationMesh
 ///
-/// Parameterization_mesh_patch_3 is a Decorator class to "virtually" cut a patch
+/// Parameterization_mesh_patch_3 is a Decorator class to <i>virtually</i> cut a patch
 /// in a ParameterizationPatchableMesh_3 3D surface. Only the patch is exported,
 /// making the 3D surface look like a topological disk.
 ///
-/// The input mesh can be of any genus, but it has to come with a "seam" that
+/// The input mesh can be of any genus, but it has to come with a <i>seam</i> that
 /// describes the border of a topological disc. This border may be an actual
 /// border of the mesh or a virtual border.
 ///
@@ -69,7 +69,7 @@ public:
     /// Export template parameter.
     typedef ParameterizationPatchableMesh_3 Adaptor;
 
-
+    #ifndef DOXYGEN_RUNNING
     /// \name Types implementing the ParameterizationMesh_3 interface
     /// @{
 
@@ -143,19 +143,19 @@ public:
                                             Vertex_around_vertex_const_circulator;
 
     /// @} // end of Types implementing the ParameterizationMesh_3 interface
-
+    #endif //DOXYGEN_RUNNING
 // Public operations
 public:
 
     /// Create a Decorator for an existing ParameterizationPatchableMesh_3 mesh.
-    /// The input mesh can be of any genus, but it has to come with a "seam" that
+    /// The input mesh can be of any genus, but it has to come with a <i>seam</i> that
     /// describes the border of a topological disc. This border may be an actual
     /// border of the mesh or a virtual border.
     ///
     /// \pre `first_seam_vertex -> end_seam_vertex` defines the outer seam,
-    ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
-    /// \pre The "seam" is given as a container of `Adaptor::Vertex_handle` elements.
-    /// \pre The "seam" is implicitely a loop. The first vertex must *not* be
+    ///   i.e. Parameterization_mesh_patch_3 will export the <i>right</i> of the seam.
+    /// \pre The <i>seam</i> is given as a container of `Adaptor::Vertex_handle` elements.
+    /// \pre The <i>seam</i> is implicitely a loop. The first vertex must *not* be
     ///   duplicated at the end.
     template<class InputIterator>
     Parameterization_mesh_patch_3(Adaptor& mesh,
@@ -307,7 +307,7 @@ public:
 #endif
     }
 
-    /// Get iterator over first vertex of mesh's main border (aka "seam").
+    /// Get iterator over first vertex of mesh's main border (aka <i>seam</i>).
     Border_vertex_iterator  mesh_main_border_vertices_begin() {
         return m_seam_begin;
     }
@@ -315,7 +315,7 @@ public:
         return (Border_vertex_const_iterator) m_seam_begin;
     }
 
-    /// Get iterator over past-the-end vertex of mesh's main border (aka "seam").
+    /// Get iterator over past-the-end vertex of mesh's main border (aka <i>seam</i>).
     Border_vertex_iterator  mesh_main_border_vertices_end() {
         return mesh_vertices_end();
     }
@@ -593,9 +593,9 @@ private:
     /// (outer seam edges are marked BORDER).
     ///
     /// \pre first_seam_vertex -> end_seam_vertex defines the outer seam,
-    ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
-    /// \pre The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// \pre The "seam" is implicitely a loop. The first vertex should *not* be
+    ///   i.e. Parameterization_mesh_patch_3 will export the <i>right</i> of the seam.
+    /// \pre The <i>seam</i> is given as a container of Adaptor::Vertex_handle elements.
+    /// \pre The <i>seam</i> is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
     template<class InputIterator>
     void set_mesh_seaming(InputIterator first_seam_vertex,
@@ -737,9 +737,9 @@ private:
     // Check that the seam is valid, i.e. that the cut mesh is 2-manifold.
     ///
     /// \pre first_seam_vertex -> end_seam_vertex defines the outer seam,
-    ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
-    /// \pre The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// \pre The "seam" is implicitely a loop. The first vertex should *not* be
+    ///   i.e. Parameterization_mesh_patch_3 will export the <i>right</i> of the seam.
+    /// \pre The <i>seam</i> is given as a container of Adaptor::Vertex_handle elements.
+    /// \pre The <i>seam</i> is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
     /// \pre The seaming flag of all vertices and edges to INNER, BORDER or OUTER
     ///   w.r.t. the first_seam_vertex -> end_seam_vertex border is set
@@ -1042,6 +1042,8 @@ private:
     };
 
 // Friends
+    
+    #ifndef DOXYGEN_RUNNING
     friend class Param_mesh_patch_vertex<Adaptor>;
     friend class Param_mesh_patch_vertex_handle<Adaptor>;
     friend class Param_mesh_patch_vertex_const_handle<Adaptor>;
@@ -1061,7 +1063,7 @@ private:
                                                      Vertex_const_handle,
                                                      typename Adaptor::Vertex_around_vertex_const_circulator,
                                                      typename Adaptor::Vertex_const_handle>;
-
+    #endif
 }; // Parameterization_mesh_patch_3
 
 

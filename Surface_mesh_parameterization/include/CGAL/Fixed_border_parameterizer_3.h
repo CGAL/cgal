@@ -57,7 +57,7 @@ namespace CGAL {
 ///   for j neighbor vertex of i.
 /// - They may implement an optimized version of `is_one_to_one_mapping()`.
 ///
-/// @todo `Fixed_border_parameterizer_3` should remove border vertices
+// @todo `Fixed_border_parameterizer_3` should remove border vertices
 /// from the linear systems in order to have a symmetric positive definite
 /// matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 ///

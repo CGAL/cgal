@@ -156,7 +156,7 @@ public:
 public:
 
     //******************************************************************
-    // INTERFACE SPECIFIC TO Polyhedron_ex
+    // Interface specific to Polyhedron_ex
     //******************************************************************
 
     // Create an adaptator for an existing Polyhedron_ex mesh.

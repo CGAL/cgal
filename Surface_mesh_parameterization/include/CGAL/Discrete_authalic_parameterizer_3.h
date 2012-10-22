@@ -32,7 +32,7 @@ namespace CGAL {
 ///
 /// The class `Discrete_authalic_parameterizer_3`
 /// implements the *Discrete Authalic Parameterization* algorithm \cite cgal:dma-ipsm-02.
-/// This method is sometimes called "DAP" or just "Authalic parameterization".
+/// This method is sometimes called <i>DAP</i> or just <i>Authalic parameterization</i>.
 ///
 /// DAP is a weak area-preserving parameterization. It is a compromise between
 /// area-preserving and angle-preserving.

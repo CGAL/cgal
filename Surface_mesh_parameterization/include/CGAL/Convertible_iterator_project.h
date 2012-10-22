@@ -26,6 +26,7 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 /// This class inherits from Iterator_project<> +
 /// adds a conversion to handle/const handle.
@@ -83,6 +84,7 @@ public:
 
 };
 
+/// \endcond
 
 } //namespace CGAL
 
