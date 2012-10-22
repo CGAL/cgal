@@ -51,7 +51,7 @@ DEF SNAP Snapshot {
   quality 98
   sequence FALSE
   dirName "."
-  fileName "test01"
+  fileName "test03"
 }
 
 Transform {
@@ -174,7 +174,7 @@ Transform {
 
     # The discontinuity arc:
     DEF DISCONTINUITY_SWITCH Switch {
-      whichChoice -1
+      whichChoice 0
       children [
         Shape {
 	  appearance USE BOUNDARY_APP
@@ -183,7 +183,7 @@ Transform {
 	    beginCap TRUE
 	    endCap TRUE
 	    loop FALSE
-	    crossSectionRadius 0.025
+	    crossSectionRadius 0.01
 	    spine [
 		   0 0 1,
 		   -0.0980171 0 0.995185,
