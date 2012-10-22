@@ -176,7 +176,7 @@ run_test()
   fi
 }
 
-run_test_with_traits()
+run_test_with_flags()
 {
   # $1 - executable name
   # $2 - test substring name
@@ -763,7 +763,7 @@ compile_and_run_with_flags()
   compile_test_with_flags $name $type "$flags"
   if [ -n "${SUCCESS}" ] ; then
     if [ -n "$DO_RUN" ] ; then
-      run_test_with_traits $name $type
+      run_test_with_flags $name $type
     fi
   else
     echo "   ERROR:    not executed construction of segments" >> $ERRORFILE
