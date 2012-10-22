@@ -1275,9 +1275,10 @@ namespace for the XML file to be processed properly.  -->
       <project>
         <name>Point Set Processing</name>
         <input>../Point_set_processing_3/doc/Point_set_processing_3</input>
+        <input>../Point_set_processing_3/include</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Point_set_processing_3/doc/Point_set_processing_3</string>
-          <string name="STRIP_FROM_INC_PATH">../Point_set_processing_3/doc/Point_set_processing_3</string>
+          <string name="STRIP_FROM_INC_PATH">../Point_set_processing_3/include</string>
           <string name="GENERATE_TAGFILE">./tags/Point_set_processing_3.tag</string>
           <string name="IMAGE_PATH">../Point_set_processing_3/doc/Point_set_processing_3/fig</string>
           <string name="EXAMPLE_PATH">../Point_set_processing_3/examples</string>
