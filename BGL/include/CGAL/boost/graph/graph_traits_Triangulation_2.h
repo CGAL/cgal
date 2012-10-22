@@ -490,7 +490,7 @@ namespace boost {
 
   // see struct property_map in Polyehdron for an explanation
   template <class Gt, class Tds, class Tag>
-  struct property_map<const const CGAL::Triangulation_2<Gt,Tds>, Tag> {
+  struct property_map<const CGAL::Triangulation_2<Gt,Tds>, Tag> {
     typedef typename 
       T2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
     typedef typename map_gen::type type;
