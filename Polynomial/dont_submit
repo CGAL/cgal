@@ -1,8 +1,6 @@
 include/CGAL/Polynomial/polynomial_functions.h
 test/Polynomial/polynomial_functions.cpp
 
-include/CGAL/Polynomial/polynomial_gcd_ntl.h
-
 include/CGAL/Polynomial/wang.h
 include/CGAL/Polynomial/Wang_traits.h
 
