@@ -6131,6 +6131,7 @@ Subdivision_method_3/test/Subdivision_method_3/data/corner_with_hole.off -text s
 Subdivision_method_3/test/Subdivision_method_3/data/corner_with_sharp_edge.off -text svneol=unset#application/octet-stream
 Subdivision_method_3/test/Subdivision_method_3/data/cross.off -text svneol=unset#application/octet-stream
 Subdivision_method_3/test/Subdivision_method_3/data/quint_tris.off -text svneol=unset#application/octet-stream
+Surface_mesh_parameterization/doc/Surface_mesh_parameterization/Concepts/PolyhedronTraitsWithKernel_3.h -text
 Surface_mesh_parameterization/doc/Surface_mesh_parameterization/PackageDescription.txt -text
 Surface_mesh_parameterization/doc/Surface_mesh_parameterization/Surface_mesh_parameterization.txt -text
 Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/LSCM.png -text svneol=unset#image/png

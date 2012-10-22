@@ -1,37 +1,52 @@
-// Copyright (c) 2005  INRIA (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-//
-//
-// Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
+/*!
+\ingroup PkgSurfaceParameterizationConcepts
+\cgalconcept
 
-/// \ingroup PkgSurfaceParameterizationConcepts
-/// \cgalconcept
-/// ParameterizerTraits_3 is a concept of parameterization object
-/// for a given type of mesh, `Adaptor`, which is a model of the
-/// ParameterizationMesh_3 concept.
-///
+`ParameterizerTraits_3` is a concept of parameterization object for a given type of mesh, `Adaptor`, which is a model of the `ParameterizationMesh_3` concept. 
 
-class ParameterizerTraits_3
-{
-// Public types
+Design Pattern 
+-------------- 
+
+`ParameterizerTraits_3` models are Strategies \cite cgal:ghjv-dpero-95 : they implement a strategy of surface parameterization for models of `ParameterizationMesh_3`. 
+
+Creation 
+-------------- 
+
+Construction and destruction are undefined. 
+
+\hasModel `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
+\hasModel `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\hasModel `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\hasModel `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\hasModel `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\hasModel `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\hasModel `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+
+\sa `ParameterizationMesh_3`
+
+*/
+
+class ParameterizerTraits_3 {
 public:
+
+/// \name Types 
+/// @{
+
+/*! 
+
+Export the type of mesh to parameterize. 
+
+*/ 
+typedef Hidden_type Adaptor; 
+
+/// @} 
+
+/// \name Constants 
+/// @{
+
     /// List of errors detected by this package
-    enum Error_code {
+  enum Error_code {
     OK,                             ///< Success
     ERROR_EMPTY_MESH,               ///< Input mesh is empty
     ERROR_NON_TRIANGULAR_MESH,      ///< Input mesh is not triangular
@@ -43,19 +58,21 @@ public:
     ERROR_OUT_OF_MEMORY,            ///< Not enough memory
     ERROR_WRONG_PARAMETER           ///< A method received an unexpected parameter
     };
+/// @} 
 
-    /// the type of mesh to parameterize.
-    typedef Hidden_type Adaptor;
+/// \name Operations 
+/// @{
 
-// Public operations
-public:
-    /// Compute a one-to-one mapping from a triangular 3D surface `mesh`
-    /// to a piece of the 2D space.
-    /// The mapping is linear by pieces (linear in each triangle).
-    /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
-    ///
-    /// \pre `mesh` must be a surface with one connected component and no hole.
-    /// \pre `mesh` must be a triangular mesh.
-    Error_code  parameterize (Adaptor& mesh);
-};
+/*! 
+
+Compute a one-to-one mapping from a triangular 3D surface `mesh` to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface. 
+
+\pre `mesh` must be a surface with one connected component and no hole. `mesh` must be a triangular mesh. 
+
+*/ 
+Error_code parameterize(Adaptor& mesh); 
+
+/// @}
+
+}; /* end ParameterizerTraits_3 */
 
