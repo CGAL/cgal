@@ -1,8 +1,5 @@
 /// \defgroup PkgPointSetProcessing Point Set Processing Reference
 
-/// \defgroup PkgPointSetProcessingConcepts Concepts
-/// \ingroup PkgPointSetProcessing
-
 /*!
 \addtogroup PkgPointSetProcessing
 \todo check generated documentation
@@ -15,7 +12,7 @@
 \PkgSummaryEnd
 \PkgShortInfoBegin
 \PkgSince{3.5}
-\PkgDependsOn{\ref thirdpartyLapack}
+\PkgDependsOn{\ref thirdpartyEigen "Eigen"}
 \PkgBib{cgal:ass-psp}
 \PkgLicense{\ref licensesGPL "GPL"}
 \PkgDemo{Surface Reconstruction,surface_reconstruction_points_3.zip}
