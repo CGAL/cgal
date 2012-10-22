@@ -132,8 +132,8 @@ jet_smooth_point_set(
   PointPMap point_pmap, ///< property map InputIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
   const Kernel& /*kernel*/, ///< geometric traits.
-  unsigned int degree_fitting = 2,
-  unsigned int degree_monge = 2)
+  unsigned int degree_fitting = 2, ///< fitting degree
+  unsigned int degree_monge = 2)  ///< Monge degree
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;

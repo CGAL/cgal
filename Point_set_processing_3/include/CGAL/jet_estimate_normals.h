@@ -135,7 +135,7 @@ jet_estimate_normals(
   NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
   unsigned int k, ///< number of neighbors.
   const Kernel& /*kernel*/, ///< geometric traits.
-  unsigned int degree_fitting = 2)
+  unsigned int degree_fitting = 2) ///< fitting degree
 {
   CGAL_TRACE("Calls jet_estimate_normals()\n");
 

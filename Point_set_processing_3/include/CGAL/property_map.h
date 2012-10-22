@@ -17,6 +17,9 @@
 //
 // Author(s)     : Andreas Fabri and Laurent Saboret
 
+//WARNING: The documentation is not generated using this file
+/// \cond SKIP_IN_MANUAL
+
 #ifndef CGAL_POINT_SET_PROPERTY_MAP_H
 #define CGAL_POINT_SET_PROPERTY_MAP_H
 
@@ -193,5 +196,7 @@ make_nth_of_tuple_property_map(Iter)
 
 
 } // namespace CGAL
+
+/// \endcond
 
 #endif // CGAL_POINT_SET_PROPERTY_MAP_H
