@@ -40,7 +40,7 @@ data structure.
 
 Since parameterizing meshes require efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
-a unified interface to a linear solver library (<span class="textsc">Eigen</span>),
+a unified interface to a linear solver library (\ref thirdpartyEigen "Eigen"),
 and propose a separate package devoted to OpenNL sparse
 linear solver.
 
@@ -100,7 +100,7 @@ meshes that are not topological disks.
 
 ## %Default Parameterization Example ##
 
-`Simple_parameterization.cpp` applies the default parameterization to a
+In the following example, we apply the default parameterization to a
 `CGAL::Polyhedron_3<Traits>` mesh (must be a topological disk).
 Eventually, it extracts the result from halfedges and prints it.
 
@@ -207,7 +207,7 @@ Tutte \cite t-hdg-63. In parameter space, each vertex is
 placed at the barycenter of its neighbors to achieve the so-called
 convex combination condition. This algorithm amounts to solve one
 sparse linear solver for each set of parameter coordinates, with a
-#vertices x #vertices sparse and symmetric positive definite matrix
+\#vertices x \#vertices sparse and symmetric positive definite matrix
 (if the border vertices are eliminated from the linear system).
 A coefficient \f$ (i, j)\f$ of the matrix is set to 1 for an edge linking
 the vertex \f$ v_i\f$ to the vertex \f$ v_j\f$, to minus the degree of the
@@ -230,7 +230,7 @@ Polthier \cite cgal:pp-cdmsc-93. A one-to-one mapping is guaranteed
 only when the two following conditions are fulfilled: the barycentric mapping
 condition (each vertex in parameter space is a convex combination if
 its neighboring vertices), and the border is convex.
-This method solves two #vertices x #vertices sparse linear
+This method solves two \#vertices x \#vertices sparse linear
 systems. The matrix (the same for both systems) is sparse and symmetric definite
 positive (if the border vertices are eliminated from the linear system
 and if the mesh contains no hole),
@@ -250,7 +250,7 @@ vertices. The barycentric coordinates are this time unconditionally
 positive, by deriving an application of the mean theorem for harmonic
 functions. This method is in essence an approximation of the discrete conformal
 maps, with a guaranteed one-to-one mapping when the border is convex.
-This method solves two #vertices x #vertices sparse linear systems. The matrix (the
+This method solves two \#vertices x \#vertices sparse linear systems. The matrix (the
 same for both systems) is asymmetric.
 
 \anchor Surface_mesh_parameterizationfigfloater
@@ -266,7 +266,7 @@ a weak formulation of an area-preserving method, and in essence
 locally minimizes the area distortion. A one-to-one mapping is
 guaranteed only if the convex combination condition is fulfilled and
 the border is convex. This method solves two
-#vertices x #vertices sparse linear systems. The matrix (the same
+\#vertices x \#vertices sparse linear systems. The matrix (the same
 for both systems) is asymmetric.
 
 \anchor Surface_mesh_parameterizationfigauthalic
@@ -327,7 +327,7 @@ It corresponds to a conformal method with a free border (at least two
 vertices have to be constrained to obtain a unique solution), which
 allows further lowering of the angle distortion. A one-to-one mapping
 is not guaranteed by this method. It solves a (2 \f$ \times\f$
-#triangles) \f$ \times\f$ #vertices sparse linear system in the least squares sense,
+\#triangles) \f$ \times\f$ \#vertices sparse linear system in the least squares sense,
 which implies solving a symmetric matrix.
 
 \anchor Surface_mesh_parameterizationfigLSCM
@@ -355,10 +355,10 @@ in the current version of this package.
 
 ## Discrete Authalic Parameterization Example ##
 
-`Authalic_parameterization.cpp` computes a Discrete Authalic parameterization
+In the following example, we compute a Discrete Authalic parameterization
 over a `CGAL::Polyhedron_3<Traits>` mesh. Specifying a specific surface parameterization
 instead of the default one means using the second parameter of `CGAL::parameterize()`. The
-differences with the first example `Simple_parameterization.cpp` are:
+differences with the first example  \ref Surface_mesh_parameterization/Simple_parameterization.cpp "Simple_parameterization.cpp" are:
 
 \code{.cpp}
 
@@ -381,12 +381,12 @@ Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer()
 
 ## Square Border Arc Length Parameterization Example ##
 
-`Square_border_parameterization.cpp` computes a Floater mean value coordinates
+In the following example, we compute a Floater mean value coordinates
 parameterization with a square border arc length parameterization.
 Specifying a specific border parameterization
 instead of the default one means using the second parameter of
 `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`.
-The differences with the first example `Simple_parameterization.cpp` are:
+The differences with the first example \ref Surface_mesh_parameterization/Simple_parameterization.cpp "Simple_parameterization.cpp" are:
 
 \code{.cpp}
 
@@ -418,36 +418,31 @@ Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer()
 
 Parameterizing triangle meshes requires both efficient representation
 of sparse matrices and efficient iterative or direct linear
-solvers. We provide links to <span class="textsc">Eigen</span> library
+solvers. We provide links to \ref thirdpartyEigen "Eigen" library
 and include a separate package devoted to OpenNL sparse linear solver.
 
 ## List of Solvers ##
 
-\todo Move solvers in their own package. 
-
 We provide an interface to several sparse linear solvers, as models
 of the `SparseLinearAlgebraTraits_d` concept:
 
-<UL>
-<LI>An interface to sparse solvers from the \ref thirdpartyOpenNL library \cite cgal:l-nmdgp-05 is provided through classes
+- An interface to sparse solvers from the `OpenNL` library \cite cgal:l-nmdgp-05 is provided through classes
 `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` and 
 `OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>`. The OpenNL library version shipped with \cgal is a lightweight default sparse linear solver. It does not support large systems, but it is portable and
 supports exact number types.
 
-<LI>An interface to all sparse solvers from the \ref thirdpartyEigen library is provided through the class
+- An interface to all sparse solvers from the \ref thirdpartyEigen "Eigen" library is provided through the class
 `CGAL::Eigen_solver_traits<T>`. This solver traits class can be used for an iterative or a direct,
-symmetric or general sparse solvers. The <span class="textsc">Eigen</span> solver to be used must be given as template parameter.
+symmetric or general sparse solvers. The \ref thirdpartyEigen "Eigen" solver to be used must be given as template parameter.
 
-</UL>
+## Eigen Solver Example ##
 
-## <span class="textsc">Eigen</span> Solver Example ##
-
-The example `examples/Surface_mesh_parameterization/Eigen_parameterization.cpp` computes the
+The example \ref Surface_mesh_parameterization/Eigen_parameterization.cpp "Eigen_parameterization.cpp" computes the
 default parameterization method (Floater mean value coordinates with a circular border),
-but specifically instantiates an <span class="textsc">Eigen</span> solver. Specifying a specific solver
+but specifically instantiates an \ref thirdpartyEigen "Eigen" solver. Specifying a specific solver
 instead of the default one (OpenNL) means using the third parameter of
 `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`. The differences with the first
-example `examples/Surface_mesh_parameterization/Simple_parameterization.cpp` are:
+example \ref Surface_mesh_parameterization/Simple_parameterization.cpp "Simple_parameterization.cpp" are:
 
 \code{.cpp}
 
@@ -495,7 +490,7 @@ in the input mesh is taken as default border, all other borders being considered
 This package does not provide any algorithm to transform an arbitrary mesh
 into a topological disk, the user being responsible
 for generating such a cut graph. Nevertheless, we provide in
-`polyhedron_ex_parameterization.cpp`
+\ref Surface_mesh_parameterization/polyhedron_ex_parameterization.cpp "polyhedron_ex_parameterization.cpp"
 a simple cutting algorithm for the sake of completeness.
 
 ## Applying a Cut ##
@@ -528,11 +523,11 @@ Note that this class is a decorator which adds <I>on the fly</I>
 the necessary fields to unmodified \cgal data structures (using STL
 maps). For better performances, it is recommended to use \cgal data
 structures enriched with the proper fields. See `Polyhedron_ex`
-class in `polyhedron_ex_parameterization.cpp` example.
+class in \ref Surface_mesh_parameterization/polyhedron_ex_parameterization.cpp "polyhedron_ex_parameterization.cpp" example.
 
 ## Cutting a Mesh Example ##
 
-`Mesh_cutting_parameterization.cpp` <I>virtually</I> cuts a
+In the following example, we <I>virtually</I> cut a
 `CGAL::Polyhedron_3<Traits>` mesh
 to make it a topological disk, then applies the default parameterization:
 
@@ -555,7 +550,7 @@ thus the output traversal is specific to the way the (u,v) fields are implemente
 
 ## EPS Output Example ##
 
-`Complete_parameterization_example.cpp` is a complete parameterization
+The follwing example is a complete parameterization
 example which outputs the resulting parameterization to a EPS file. It gets the \f$ (u,v)\f$ fields computed by a parameterization method over a `CGAL::Polyhedron_3<Traits>` mesh with a
 `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>` adaptor:
 
@@ -723,7 +718,7 @@ disk and on piecewise linear mappings onto planar domains.
 A consequence is that the skeleton of all parameterization methods of this
 package is the same:
 <UL>
-<LI>Allocate a sparse linear system \f$ A.X = B\f$
+<LI>Allocate a sparse linear system \f$ A \times X = B\f$
 <LI>Parameterize the mesh border and initialize \f$ B\f$
 <LI>Parameterize the inner points of the mesh and set \f$ A\f$ coefficients
 <LI>Solve the system
@@ -737,8 +732,8 @@ On the other hand, there are several differences among methods:
 while free border methods parameterize only two vertices.
 <LI>Some methods create symmetric definite positive systems,
 which may be solved more efficiently than general systems.
-<LI>Most parameterization methods use two #vertices x #vertices systems,
-where Least Squares Conformal Maps uses one (2 * #triangles) x #vertices system.
+<LI>Most parameterization methods use two \#vertices x \#vertices systems,
+where Least Squares Conformal Maps uses one (2 * \#triangles) x \#vertices system.
 <LI>Most parameterization methods invert the \f$ A\f$ matrix,
 when Least Squares Conformal Maps solves the system in the least squares sense.
 </UL>
@@ -850,7 +845,7 @@ Computing a cutting path that transforms a closed mesh of arbitrary genus into
 a topological disk is a research topic on its own. This package does
 not intend to cover this topic at the moment.
 
-# Extending the Package and Reusing Code # {Surface_mesh_parameterizationExtending}
+# Extending the Package and Reusing Code #
 
 ## Reusing Mesh Adaptors ##
 
@@ -866,7 +861,7 @@ It may be easily generalized.
 ## Reusing Sparse Linear Algebra ##
 
 The `SparseLinearAlgebraTraits_d` concept and the traits classes
-for <span class="textsc">Eigen</span> and OpenNL are independent of the rest of the
+for \ref thirdpartyEigen "Eigen" and OpenNL are independent of the rest of the
 `Surface_mesh_parameterization` package, and may be reused by
 \cgal developers for other purposes.
 
@@ -896,6 +891,13 @@ Square, circular and two-points border parameterizations are good starting point
 
 Obviously, this package would benefit of having robust algorithms
 which transform arbitrary meshes into topological disks.
+
+\example Surface_mesh_parameterization/Simple_parameterization.cpp
+\example Surface_mesh_parameterization/Mesh_cutting_parameterization.cpp
+\example Surface_mesh_parameterization/Complete_parameterization_example.cpp
+\example Surface_mesh_parameterization/Eigen_parameterization.cpp
+\example Surface_mesh_parameterization/polyhedron_ex_parameterization.cpp
+
 
 */ 
 } /* namespace CGAL */

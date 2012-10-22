@@ -1,98 +1,110 @@
 /// \defgroup PkgSurfaceParameterization Planar Parameterization of Triangulated Surface Meshes Reference
+
+
+/*!
+\addtogroup PkgSurfaceParameterization
+\PkgDescriptionBegin{Planar Parameterization of Triangulated Surface Meshes,PkgSurfaceParameterizationSummary}
+\PkgPicture{bimbaDetail.png}
+\PkgSummaryBegin
+\PkgAuthors{Laurent Saboret, Pierre Alliez and Bruno L&eacute;vy}
+\PkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from a suitable domain to the surface. In this package, we focus on triangulated surfaces that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.  This package implements several surface mesh parameterization methods, such as least squares conformal maps, discrete conformal map, discrete authalic parameterization, Floater mean value coordinates or Tutte barycentric mapping.}
+\PkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes,PkgSurfaceParameterization}
+\PkgSummaryEnd
+\PkgShortInfoBegin
+\PkgSince{3.2}
+\PkgDependsOn{Solvers as \ref thirdpartyEigen.}
+\PkgBib{cgal:sal-pptsm2}
+\PkgLicense{\ref licensesGPL "GPL"}
+\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\PkgShortInfoEnd
+\PkgDescriptionEnd
+
+Output
+----------------
+
+A `(u,v)` pair is computed for each inner vertex (i.e. its halfedges share the same `(u,v)` pair), while a `(u,v)` pair is computed for each border halfedge. The user must iterate over the mesh halfedges to get the result. 
+
+Checks and Assertions
+----------------
+
+The package performs the next checks:
+
+For <i>fixed</i> border parameterizations:
+ - Preconditions:
+    - check that the border is mapped onto a convex polygon.
+    - check that the input mesh is triangular.
+    - check that the input mesh is a surface with one connected component.
+ - Postconditions:
+    - check one-to-one mapping.
+
+For <i>free</i> border parameterizations:
+
+ - Preconditions:
+    - check that the input mesh is triangular.
+    - check that the input mesh is a surface with one connected component.
+ -Postconditions:
+    - check one-to-one mapping.
+
+Assertions are optional checks. The assertion flags for the package
+use `SURFACE_MESH_PARAMETERIZATION` in their names (e.g. `CGAL_SURFACE_MESH_PARAMETERIZATION_NO_ASSERTIONS`).
+*/
+
+/// \defgroup PkgSurfaceParameterizationMainFunction Main Function
+/// \ingroup PkgSurfaceParameterization
+
 /// \defgroup PkgSurfaceParameterizationConcepts Concepts
 /// \ingroup PkgSurfaceParameterization
 
-/*! \defgroup PkgSurfaceParameterizationMethods Surface Parameterization Methods
+/*!
+ \defgroup PkgSurfaceParameterizationMethods Surface Parameterization Methods
  \ingroup PkgSurfaceParameterization
 
 This \cgal package implements several parameterization methods:
 
-<UL>
-
-<LI>Fixed border:
-
-<UL>
-
-<LI>Tutte Barycentric Mapping \cite t-hdg-63.
-    One-to-one mapping is guaranteed for convex border.
-
-<LI>Floater Mean Value Coordinates \cite cgal:f-mvc-03.
-    One-to-one mapping is guaranteed for convex border.
-
-<LI>Discrete Conformal Map \cite cgal:eddhls-maam-95.
+ - Fixed border:
+  - Tutte Barycentric Mapping \cite t-hdg-63.
+     One-to-one mapping is guaranteed for convex border.
+  - Floater Mean Value Coordinates \cite cgal:f-mvc-03.
+     One-to-one mapping is guaranteed for convex border.
+  - Discrete Conformal Map \cite cgal:eddhls-maam-95.
     Conditionally guaranteed if all weights are positive and border is convex.
-
-<LI>Discrete Authalic parameterization \cite cgal:dma-ipsm-02.
+  - Discrete Authalic parameterization \cite cgal:dma-ipsm-02.
     Conditionally guaranteed if all weights are positive and border is convex.
-
-</UL>
-
-<LI>Free border:
-
-<UL>
-
-<LI>Least Squares Conformal Maps \cite cgal:lprm-lscm-02.
-
-</UL>
-
-</UL>
+ - Free border:
+  - Least Squares Conformal Maps \cite cgal:lprm-lscm-02.
 */
 
-
-/*! \defgroup PkgSurfaceParameterizationBorder Border Parameterization Methods
-    \ingroup PkgSurfaceParameterization
+/*!
+ \defgroup PkgSurfaceParameterizationBorderParameterizationMethods Border Parameterization Methods
+ \ingroup PkgSurfaceParameterization
 
 Border parameterization methods define a
 set of constraints (a constraint specifies two (u,v) coordinates for
 each instance of a vertex along the border).
 
 This package implements all common border parameterization methods:
-<UL>
-
-<LI>For fixed border methods:
-
-<UL>
-
-<LI>the user can select a border
-        parameterization among two common methods: uniform or
-        arc-length parameterizations.
-
-<LI>one convex shape specified by:
-
-<UL>
-
-<LI>one shape among a set of standard ones (circle, square).
-
-</UL>
-
-</UL>
-
-<LI>For free border methods: at least two constraints (the pinned
+ - For fixed border methods:
+   - the user can select a border
+      parameterization among two common methods: uniform or
+      arc-length parameterizations.
+   - one convex shape specified by:
+    - one shape among a set of standard ones (circle, square).
+ - For free border methods: at least two constraints (the pinned
 vertices).
-
-</UL>
-
-
 */
+
+
 
 /*! \defgroup PkgSurfaceParameterizationMesh Mesh
     \ingroup PkgSurfaceParameterization
 
 The general definition of input meshes handled directly by `CGAL::parameterize()` is:
 
-<UL>
-
-<LI>Model of `ParameterizationMesh_3`.
-
-<LI>Triangulated.
-
-<LI>2-manifold.
-
-<LI>Oriented.
-
-<LI>Homeomorphic to a disc (may have holes).
-
-</UL>
+ - Model of `ParameterizationMesh_3`.
+ - Triangulated.
+ - 2-manifold.
+ - Oriented.
+ - Homeomorphic to a disc (may have holes).
 
 This package provides a model of the `ParameterizationMesh_3` concept
 to access `CGAL::Polyhedron_3<Traits>`: 
@@ -120,8 +132,10 @@ cut), as long as this condition is fulfilled.
 
 The package provides an interface with `CGAL::Polyhedron_3<Traits>`: 
 
-\ref ::CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>
+`CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
 */
+
+
 
 /*! \defgroup PkgSurfaceParameterizationAlgebra Sparse Linear Algebra
  \ingroup PkgSurfaceParameterization
@@ -130,40 +144,15 @@ Since parameterizing meshes requires
 efficient representation of sparse matrices and efficient iterative or
 direct linear solvers, we provide an interface to several
 sparse linear solvers:
-<UL>
-<LI><span class="textsc">Eigen</span> 3.1 (or greater) is the library recommended by \cgalfor solving sparse systems.
-<LI>OpenNL (authored by Bruno L&eacute;vy) is shipped with \cgaland is the default solver.
-<LI><span class="textsc">Taucs</span> is a direct solver for sparse symmetric matrices.
-    It also includes an out-of-core general solver.
-</UL>
-
-`OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
-
-`OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
-
- 
-
+ - <span class="textsc">Eigen</span> 3.1 (or greater) is the library recommended by CGAL solving sparse systems.
+ - OpenNL (authored by Bruno Lévy) is shipped with CGAL is the default solver.
+  - `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
+  - `OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
 */
-
-/// \defgroup PkgSurfaceParameterizationHelper Helper
-/// \ingroup PkgSurfaceParameterization
 
 /*!
-\addtogroup PkgSurfaceParameterization
-\todo check generated documentation
-\PkgDescriptionBegin{Planar Parameterization of Triangulated Surface Meshes,PkgSurfaceParameterizationSummary}
-\PkgPicture{bimbaDetail.png}
-\PkgSummaryBegin
-\PkgAuthors{Laurent Saboret, Pierre Alliez and Bruno L&eacute;vy}
-\PkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from a suitable domain to the surface. In this package, we focus on triangulated surfaces that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.  This package implements several surface mesh parameterization methods, such as least squares conformal maps, discrete conformal map, discrete authalic parameterization, Floater mean value coordinates or Tutte barycentric mapping.}
-\PkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes,PkgSurfaceParameterization}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.2}
-\PkgDependsOn{Solvers as \ref thirdpartyEigen.}
-\PkgBib{cgal:sal-pptsm2}
-\PkgLicense{\ref licensesGPL "GPL"}
-\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\defgroup PkgSurfaceParameterizationHelper Helper Class
+\ingroup PkgSurfaceParameterization
 */
+
+
