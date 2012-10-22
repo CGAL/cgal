@@ -143,28 +143,7 @@ public:
  
 
   
- //--------------------------------------------------------------TRAVERSING : ITERATORS AND CIRCULATORS------------------------------------------- 
-  Faces_iterator faces_begin() const;
-  Faces_iterator faces_end() const;
-  Vertices_iterator vertices_begin() const;
-  Vertices_iterator vertices_end() const;
-  Edges_iterator edges_begin() const;
-  Edges_iterator edges_end() const; 
-  Face_circulator incident_faces( Vertex_handle v, Face_handle f = Face_handle()) const;
-  Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f = Face_handle()) const;
-  Edge_circulator incident_edges(Vertex_handle v, Face_handle f = Face_handle()) const;
-
- 
-  size_type degree(Vertex_handle v) const;
   
-  Vertex_handle mirror_vertex(Face_handle f, int i) const;
-  int mirror_index(Face_handle v, int i) const;
-  /*
-  Line_face_circulator    line_walk(const Point& p,
-				    const Point& q,
-				    Face_handle f = Face_handle()) const;
-  */
-
   //-----------------------------------------------------------------LOCATION-------------------------------------------------
   Face_handle march_locate_2D(Face_handle c, const Point& t,Locate_type& lt, int& li) const; 
   Face_handle march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
@@ -239,6 +218,70 @@ public:
   Vertex_handle file_input(std::istream& is);
   void file_output(std::ostream& os) const;
 
+	
+	//--------------------------------------------------------------TRAVERSING : ITERATORS AND CIRCULATORS------------------------------------------- 
+	Faces_iterator faces_begin() const {
+		return _tds.faces_begin();
+	}
+	
+	Faces_iterator faces_end() const {
+		return _tds.faces_end();
+	}
+	
+	Vertices_iterator vertices_begin() const{
+		return _tds.vertices_begin();
+	}
+	
+	Vertices_iterator vertices_end() const {
+		return _tds.vertices_end();
+	}
+	
+	Edges_iterator edges_begin() const{
+		return _tds.edges_begin();
+	}
+	
+	Edges_iterator edges_end() const{
+		return _tds.edges_end();
+	}
+	
+	Face_circulator incident_faces( Vertex_handle v, Face_handle f = Face_handle()) const{
+		return _tds.incident_faces(v,f);
+	}
+	
+	
+	Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f = Face_handle()) const{
+		return _tds.incident_vertices(v,f);
+	}
+	
+	
+	Edge_circulator incident_edges(Vertex_handle v, Face_handle f = Face_handle()) const{
+		return _tds.incidet_edges(v,f);
+	}
+	
+	
+	size_type degree(Vertex_handle v) const {
+		return _tds.degree(v);
+	}
+	
+	Vertex_handle mirror_vertex(Face_handle f, int i) const{
+		return _tds.mirror_vertex(f,i);
+	}
+	
+	int mirror_index(Face_handle v, int i) const{
+		return _tds.mirror_index(v,i);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
    /*---------------------------------------------------------------------TEMPLATE MEMBERS--------------------------------------*/
  public: 
  
@@ -265,6 +308,8 @@ public:
       delete_face(*fit);
     }
   }
+	
+
 
 };
 
@@ -821,16 +866,7 @@ locate(const Point& p,
   }
  
   if(start->is_negative()){
-	  
-   /* if(!start->neighbor(0)->is_negative())
-      start=start->neighbor(0);
-    else if(!start->neighbor(1)->is_negative())
-      start=start->neighbor(1);
-    else {
-		bool test = start->is_negative();
 	
-      start=start->neighbor(2);
-	}*/
 	  for (Faces_iterator it = this->_tds.face_iterator_base_begin(); it != faces_end(); it++) {  
 	  
 		  if(!it->is_negative()){
@@ -894,75 +930,7 @@ locate(const Point &p,
 
 
  //--------------------------------------------------------------------ITERATORS AND CIRCULATORS--------------------------------------
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt, Tds>::Faces_iterator
-Triangulation_on_sphere_2<Gt, Tds>::
-faces_begin() const
-{
-  return _tds.faces_begin();
-} 
-
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt, Tds>::Faces_iterator
-Triangulation_on_sphere_2<Gt, Tds>::
-faces_end() const
-{
-  return _tds.faces_end();;
-}
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt, Tds>::Vertices_iterator
-Triangulation_on_sphere_2<Gt, Tds>::
-vertices_begin() const
-{
-  return _tds.vertices_begin();
-}
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt, Tds>::Vertices_iterator
-Triangulation_on_sphere_2<Gt, Tds>::
-vertices_end() const
-{
-  return _tds.vertices_end();
-}
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt, Tds>::Edges_iterator
-Triangulation_on_sphere_2<Gt, Tds>::
-edges_begin() const
-{
-  return _tds.edges_begin();
-}
-
-template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt, Tds>::Edges_iterator
-Triangulation_on_sphere_2<Gt, Tds>::
-edges_end() const
-{
-  return _tds.edges_end();
-}
-
-template <class Gt, class Tds >
-inline
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_circulator
-Triangulation_on_sphere_2<Gt, Tds>::
-incident_faces(Vertex_handle v, Face_handle f) const
-{
-  return _tds.incident_faces(v,f);
-} 
-
-
-template <class Gt, class Tds >
-inline
-typename Triangulation_on_sphere_2<Gt, Tds>::Vertex_circulator
-Triangulation_on_sphere_2<Gt, Tds>::  
-incident_vertices(Vertex_handle v, Face_handle f) const
-{
-  return _tds.incident_vertices(v,f);
-}
-
-template <class Gt, class Tds >
+/*template <class Gt, class Tds >
 inline
 typename Triangulation_on_sphere_2<Gt, Tds>::size_type
 Triangulation_on_sphere_2<Gt, Tds>::    
@@ -988,7 +956,7 @@ mirror_vertex(Face_handle f, int i) const
 {
   return _tds.mirror_vertex(f,i);
 }
-
+*/
 
 //------------------------------------------------------------------------------PREDICATES-----------------------------------------------------------------
 template <class Gt, class Tds >
@@ -1603,90 +1571,7 @@ operator>>(std::istream& is, Triangulation_on_sphere_2<Gt, Tds> &tr)
 
  
 
-/*--------------------------------------------------------------------------------2D     PROTOTYPES--------------------------------------------------*/
-  
-    /*
-
  
-
-
- // GEOMETRIC FEATURES AND CONSTRUCTION
-  Triangle triangle(Face_handle f) const;
-  Segment segment(Face_handle f, int i) const;
-  Segment segment(const Edge& e) const;
-  Segment segment(const Edge_circulator& ec) const;
-  Segment segment(const All_edges_iterator& ei) const;
-  Segment segment(const Finite_edges_iterator& ei) const;
-  Point circumcenter(Face_handle  f) const; 
-  Point circumcenter(const Point& p0, 
-		     const Point& p1, 
-		     const Point& p2) const;
-  
-
-  //MOVE - INSERTION - DELETION - Flip
-public:
-
-  
-
-
-//   template < class InputIterator >
-//   int insert(InputIterator first, InputIterator last);
-
- 
-  void remove_first(Vertex_handle  v);
-  void remove_second(Vertex_handle v);
-
-
-
-
-  // POINT LOCATION
-
-  Face_handle
-
-
-  Face_handle
-  march_locate_2D_LFC(Face_handle start,
-		  const Point& t,
-		  Locate_type& lt,
-		  int& li) const;
-
-  void
-  compare_walks(const Point& p,
-		Face_handle c1, Face_handle c2,
-		Locate_type& lt1, Locate_type& lt2,
-		int li1, int li2) const;
-
-  Face_handle
-  locate(const Point& p,
-	 Locate_type& lt,
-	 int& li,
-	 Face_handle start = Face_handle()) const;
-
-  Face_handle
-  locate(const Point &p,
-	 Face_handle start = Face_handle()) const;
-    
-
-  
- 
-
-  // IO
-// template < class Stream >
-// Stream&  draw_triangulation(Stream& os) const;
-
- //PREDICATES
-
- Oriented_side
- side_of_oriented_circle(Face_handle f, const Point & p) const; 
-*/
-
-
-
-
-  
-
-
-  
   
 } //namespace CGAL
     
