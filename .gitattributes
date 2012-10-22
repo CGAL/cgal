@@ -4763,18 +4763,6 @@ Point_set_2/doc/Point_set_2/Point_set_2.txt -text
 Point_set_2/doc/Point_set_2/examples.txt -text
 Point_set_2/doc/Point_set_2/fig/point_set.png -text svneol=unset#image/png
 Point_set_2/doc_tex/Point_set_2/point_set.png -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/IO/read_off_points.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/IO/read_xyz_points.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/IO/write_off_points.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/IO/write_xyz_points.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/compute_average_spacing.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/grid_simplify_point_set.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/jet_estimate_normals.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/jet_smooth_point_set.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/mst_orient_normals.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/pca_estimate_normals.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/random_simplify_point_set.h -text
-Point_set_processing_3/doc/Point_set_processing_3/CGAL/remove_outliers.h -text
 Point_set_processing_3/doc/Point_set_processing_3/PackageDescription.txt -text
 Point_set_processing_3/doc/Point_set_processing_3/Point_set_processing_3.txt -text
 Point_set_processing_3/doc/Point_set_processing_3/examples.txt -text
