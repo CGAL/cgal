@@ -40,7 +40,12 @@ public:
                                                         Arrangement;
   typedef typename Arrangement::Vertex_handle           Vertex_handle;
   typedef typename Arrangement::Halfedge_handle         Halfedge_handle;
+  typedef typename Arrangement::Face_handle             Face_handle;
 
+  typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
+  typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename Arrangement::Face_const_handle       Face_const_handle;
+  
   typedef typename Arrangement::Vertex_iterator         Vertex_iterator;
   typedef typename Arrangement::Edge_iterator           Edge_iterator;
   typedef typename Arrangement::Face_iterator           Face_iterator;
@@ -128,6 +133,7 @@ protected:
   bool test9();
 
   // A predicate that verifies the results
+  bool is_interior(Vertex_const_handle vh);
   bool are_same_results();
 };
 
@@ -170,6 +176,14 @@ void Construction_test<T_Geom_traits, T_Topol_traits>::clear()
 }
 
 template <typename T_Geom_traits, typename T_Topol_traits>
+bool Construction_test<T_Geom_traits, T_Topol_traits>::
+is_interior(Vertex_const_handle vh)
+{
+  return ((vh->parameter_space_in_x() == CGAL::ARR_INTERIOR) &&
+          (vh->parameter_space_in_y() == CGAL::ARR_INTERIOR));
+}
+
+template <typename T_Geom_traits, typename T_Topol_traits>
 bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
 {
   if (m_verbose_level > 1) {
@@ -187,50 +201,43 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
   if (m_arr->number_of_edges() != m_num_edges) return false;
   if (m_arr->number_of_faces() != m_num_faces) return false;
 
-  std::vector<Point_2> points_res(m_arr->number_of_vertices());
-  typename std::vector<Point_2>::iterator pit = points_res.begin();
-  Vertex_iterator vit;
-  for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit)
-    *pit++ = vit->point();
-  
+  Point_container points_res(m_num_vertices);
+  typename Point_container::iterator pit = points_res.begin();
+  Vertex_const_iterator vit;
+  for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit) {
+    if (is_interior(vit))
+      *pit++ = vit->point();
+  }
   Point_compare<Geom_traits> pt_compare;
-  std::sort(points_res.begin(), points_res.end(), pt_compare);
+  std::sort(points_res.begin(), pit, pt_compare);
 
   if (m_verbose_level > 2) {
-    std::copy(points_res.begin(), points_res.end(),
+    std::copy(points_res.begin(), pit,
               std::ostream_iterator<Point_2>(std::cout, "\n"));  
-
-    if (m_verbose_level > 3) {
-      pit = points_res.begin();
-      vit = m_arr->vertices_begin();
-      unsigned int i = 0;
-      for (; vit != m_arr->vertices_end(); ++vit) 
-        std::cout << "Point[" << i++ << "] obtained: (" << vit->point() << ")"
-                  << ", expected: (" << *pit++ << ")" << std::endl;
-    }
   }
   
   Point_equal point_eq(m_geom_traits);
-  if (! std::equal(points_res.begin(), points_res.end(), m_points.begin(),
-                   point_eq))
+  if (! std::equal(points_res.begin(), pit, m_points.begin(), point_eq))
     return false;
 
   std::vector<X_monotone_curve_2> curves_res(m_arr->number_of_edges());
-  unsigned i = 0;
-  Edge_iterator eit;
-  for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit, ++i)
-    curves_res[i] = eit->curve();    
+  typename Xcurve_container::iterator xcit = curves_res.begin();
+
+  Edge_const_iterator eit;
+  for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) {
+    if (is_interior(eit->source()) && is_interior(eit->target()))
+      *xcit++ = eit->curve();
+  }
   Curve_compare<Geom_traits> curve_compare;
-  std::sort(curves_res.begin(), curves_res.end(), curve_compare);
+  std::sort(curves_res.begin(), xcit, curve_compare);
 
   if (m_verbose_level > 2) {
-    std::copy(curves_res.begin(), curves_res.end(),
+    std::copy(curves_res.begin(), xcit,
               std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));  
   }
   
   Curve_equal curve_eq(m_geom_traits);
-  if (! std::equal(curves_res.begin(), curves_res.end(),
-                   m_xcurves.begin(), curve_eq))
+  if (! std::equal(curves_res.begin(), xcit, m_xcurves.begin(), curve_eq))
     return false;
   
   return true;

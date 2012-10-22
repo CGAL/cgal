@@ -71,8 +71,8 @@ int main()
 
 // Define Geom_traits to be the curve-data-traits of the base geom traits.
 typedef CGAL::Arr_curve_data_traits_2<Base_geom_traits,
-                                        unsigned int,
-                                        std::plus<unsigned int> >  
+                                      unsigned int,
+                                      std::plus<unsigned int> >  
                                                         Geom_traits;
 typedef Geom_traits::Point_2            Point_2;
 typedef Geom_traits::Curve_2            Curve_2;
@@ -106,18 +106,18 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  // Replace with normalbetter parsing!
+  // TBD: Replace with better parsing!
   int i = 1;
   int verbose_level = 0;
   if (argc > 2) {
-    if (std::strncmp(argv[1], "-v", 2) == 0) {
+    if ((argc > 3) && (std::strncmp(argv[1], "-v", 2) == 0)) {
       verbose_level = atoi(argv[2]);
       i += 2;
     }
   }
   
   int success = 0;
-  for (; i < argc; i++) {
+  for (; i < argc; ++i) {
     const char* filename = argv[i];
 
     if (!test(filename, verbose_level)) {
