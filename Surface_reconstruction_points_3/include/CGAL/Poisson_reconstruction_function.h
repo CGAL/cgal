@@ -52,6 +52,8 @@ namespace CGAL {
 /*!
 \ingroup PkgSurfaceReconstructionFromPointSets
 
+\brief Implementation of the Poisson Surface Reconstruction method.
+  
 Given a set of 3D points with oriented normals sampled on the boundary
 of a 3D solid, the Poisson Surface Reconstruction method \cite Kazhdan06 
 solves for an approximate indicator function of the inferred
@@ -67,9 +69,6 @@ Delaunay triangulation instead of an adaptive octree.
 
 \models `ImplicitFunction`
 
-### Example ###
-
-See \ref Surface_reconstruction_points_3/poisson_reconstruction_example.cpp "poisson_reconstruction_example.cpp" 
 */
 template <class Gt>
 class Poisson_reconstruction_function
@@ -151,11 +150,11 @@ public:
     \tparam InputIterator iterator over input points. 
 
     \tparam PointPMap is a model of `boost::ReadablePropertyMap` with
-      a `value_type = Point_3`.  It can be omitted if `InputIterator`
-      `value_type` is convertible to `Point_3`. 
+      a `value_type = Point`.  It can be omitted if `InputIterator`
+      `value_type` is convertible to `Point`. 
     
     \tparam NormalPMap is a model of `boost::ReadablePropertyMap`
-      with a `value_type = Vector_3`.
+      with a `value_type = Vector`.
   */ 
   template <typename InputIterator,
             typename PointPMap,
@@ -221,7 +220,7 @@ public:
   }
 
   /*! 
-    The function `compute_implicit_function`() must be called after the
+    This function must be called after the
     insertion of oriented points. It computes the piecewise linear scalar
     function operator() by: applying Delaunay refinement, solving for
     operator() at each vertex of the triangulation with a sparse linear
@@ -230,8 +229,8 @@ public:
 
     \tparam SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver. 
 
-    If \sc{Eigen} 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED`
-    is defined, the default solver is `Eigen::ConjugateGradient`.
+    If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED`
+    is defined, the default solver is `CGAL::Eigen_solver_traits`<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> >`.
 
     \return false if the linear solver fails. 
   */ 

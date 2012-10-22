@@ -1,7 +1,6 @@
 /// \defgroup PkgSurfaceReconstructionFromPointSets Surface Reconstruction from Point Sets Reference
 /*!
 \addtogroup PkgSurfaceReconstructionFromPointSets
-\todo check generated documentation
 \PkgDescriptionBegin{Surface Reconstruction from Point Sets,PkgSurfaceReconstructionFromPointSetsSummary}
 \PkgPicture{surface_reconstruction_points_detail.png}
 \PkgSummaryBegin

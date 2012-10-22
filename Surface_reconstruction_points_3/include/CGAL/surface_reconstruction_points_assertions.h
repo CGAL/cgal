@@ -20,6 +20,8 @@
 //
 // Generated from script create_assertions.sh
 
+/// \cond SKIP_IN_MANUAL
+
 /// @file surface_reconstruction_points_assertions.h
 /// Define checking macros for the Surface_reconstruction_points_3 package
 
@@ -362,3 +364,5 @@
 #  define CGAL_surface_reconstruction_points_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_surface_reconstruction_points_expensive_exactness_warnings 1
 #endif // CGAL_SURFACE_RECONSTRUCTION_POINTS_NO_WARNINGS
+
+/// \endcond
