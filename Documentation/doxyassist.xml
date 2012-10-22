@@ -1282,6 +1282,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Point_set_processing_3.tag</string>
           <string name="IMAGE_PATH">../Point_set_processing_3/doc/Point_set_processing_3/fig</string>
           <string name="EXAMPLE_PATH">../Point_set_processing_3/examples</string>
+          <list name="EXCLUDE_PATTERNS" append="true">
+            <item>property_map.h</item>
+          </list>
           <list name="TAGFILES" append="true">
             <item>./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGAL.Surface-Reconstruction-from-Point-Sets/html</item>
             <item>./tags/Property_map.tag=../../CGAL.CGAL.CGAL-and-Boost-Property-Maps/html</item>
