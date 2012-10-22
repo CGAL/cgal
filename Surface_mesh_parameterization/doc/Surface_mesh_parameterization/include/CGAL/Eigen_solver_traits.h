@@ -2,28 +2,28 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceParameterization
+\ingroup PkgSurfaceParameterizationAlgebra
 
-The class `Eigen_solver_traits` provides an interface to the sparse solvers of <span class="textsc">Eigen</span>. 
-The version 3.1 (or greater) of <span class="textsc">Eigen</span> must be available on the system. 
+The class `Eigen_solver_traits` provides an interface to the sparse solvers of \ref thirdpartyEigen "Eigen".
+The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system. 
 
-CONVERRORIsModel: `SparseLinearAlgebraTraits_d`. 
+\models `SparseLinearAlgebraTraits_d`
 
 Parameters 
 -------------- 
 
-`T`: a sparse solver of <span class="textsc">Eigen</span>. The default solver is the iterative bi-congugate gradient stabilized solver 
+`T`: a sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver 
 `Eigen::BiCGSTAB` for `double`. 
 
-CONVERRORSeeAlso: \ref ::CGAL::Eigen_sparse_matrix<T> 
-CONVERRORSeeAlso: \ref ::CGAL::Eigen_sparse_symmetric_matrix<T> 
-CONVERRORSeeAlso: \ref ::CGAL::Eigen_vector<T> 
-CONVERRORSeeAlso: <A HREF="http://eigen.tuxfamily.org"><TT>http://eigen.tuxfamily.org</TT></A> 
+\sa `CGAL::Eigen_sparse_matrix<T>`
+\sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
+\sa `CGAL::Eigen_vector<T>`
+\sa http://eigen.tuxfamily.org
 
 Example 
 -------------- 
 
-The instantiation of this class assumes an <span class="textsc">Eigen</span> sparse solver is provided. Here are few examples: 
+The instantiation of this class assumes an \ref thirdpartyEigen "Eigen" sparse solver is provided. Here are few examples: 
 
 \code{.cpp} 
 
@@ -72,7 +72,7 @@ typedef Hidden_type Matrix;
 
 /*! 
 
-Returns a reference to the internal <span class="textsc">Eigen</span> solver. This function can be used for example to set specific parameters of the solver. 
+Returns a reference to the internal \ref thirdpartyEigen "Eigen" solver. This function can be used for example to set specific parameters of the solver. 
 
 */ 
 T& solver(); 

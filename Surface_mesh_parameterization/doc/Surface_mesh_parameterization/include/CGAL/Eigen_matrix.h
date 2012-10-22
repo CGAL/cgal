@@ -2,22 +2,23 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceParameterization
+\ingroup PkgSurfaceParameterizationAlgebra
 
-The class `Eigen_sparse_matrix` is a C++ wrapper around Eigen's matrix type `Eigen::SparseMatrix` 
+The class `Eigen_sparse_matrix` is a C++ wrapper around \ref thirdpartyEigen "Eigen" matrix type `Eigen::SparseMatrix` 
 that represents general matrices, be they symmetric or not. 
-The version 3.1 (or greater) of <span class="textsc">Eigen</span> must be available on the system. 
+The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system. 
 
-CONVERRORIsModel: Model of the `SparseLinearAlgebraTraits_d::Matrix` concept. 
+\models `SparseLinearAlgebraTraits_d::Matrix` 
 
 Parameters 
 -------------- 
 
 `T`: Number type. 
 
-CONVERRORSeeAlso: \ref ::CGAL::Eigen_solver_traits<T> 
-CONVERRORSeeAlso: \ref ::CGAL::Eigen_sparse_symmetric_matrix<T> 
-CONVERRORSeeAlso: \ref ::CGAL::Eigen_vector<T> 
+\sa `CGAL::Eigen_solver_traits<T>`
+\sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
+\sa `CGAL::Eigen_vector<T>`
+\sa http://eigen.tuxfamily.org
 
 */
 template< typename T >
@@ -28,7 +29,7 @@ public:
 /// @{
 
 /*! 
-The internal matrix type from <span class="textsc">Eigen</span>. 
+The internal matrix type from \ref thirdpartyEigen "Eigen". 
 */ 
 typedef Hidden_type EigenType; 
 
@@ -40,22 +41,23 @@ typedef Hidden_type EigenType;
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceParameterization
+\ingroup PkgSurfaceParameterizationAlgebra
 
-The class `Eigen_sparse_symmetric_matrix` is a C++ wrapper around <span class="textsc">Eigen</span>'s matrix type `Eigen::SparseMatrix`. 
+The class `Eigen_sparse_symmetric_matrix` is a C++ wrapper around \ref thirdpartyEigen "Eigen" matrix type `Eigen::SparseMatrix`. 
 
 As the matrix is symmetric only the lower triangle part is stored. 
 
-CONVERRORIsModel: Model of the `SparseLinearAlgebraTraits_d::Matrix` concept. 
+\models `SparseLinearAlgebraTraits_d::Matrix` 
 
 Parameters 
 -------------- 
 
 `T`: Number type. 
 
-CONVERRORSeeAlso: \ref ::CGAL::Eigen_solver_traits<T> 
-CONVERRORSeeAlso: \ref ::CGAL::Eigen_sparse_symmetric_matrix<T> 
-CONVERRORSeeAlso: \ref ::CGAL::Eigen_vector<T> 
+\sa `CGAL::Eigen_solver_traits<T>`
+\sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
+\sa `CGAL::Eigen_vector<T>`
+\sa http://eigen.tuxfamily.org
 
 */
 template< typename T >
@@ -66,7 +68,7 @@ public:
 /// @{
 
 /*! 
-The internal matrix type from <span class="textsc">Eigen</span>. 
+The internal matrix type from \ref thirdpartyEigen "Eigen". 
 */ 
 typedef Hidden_type EigenType; 
 
