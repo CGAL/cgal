@@ -51,7 +51,7 @@ DEF SNAP Snapshot {
   quality 98
   sequence FALSE
   dirName "."
-  fileName "test01"
+  fileName "test02"
 }
 
 Transform {
@@ -96,7 +96,9 @@ Transform {
 		aosVertexPointSize 6
 		aosIsolatedVertexStyle "disc"
 #	        insertionStrategy "increment"
-		aosMarkedEdgeIndex 1
+		aosMarkedEdgeIndex 100
+		aosMarkedVertexIndex 0
+		aosMarkedVertexStyle "none"
 		coord DEF COORD ExactCoordinate {
 		  ratPoint [0  0  -1, 1  1  0, -1  1  0, -1  0  0
 			    -1  -1  0, 1  -1  0, 0  0  1]
@@ -126,16 +128,12 @@ Transform {
 		aosVertexPointSize 6
 		aosIsolatedVertexStyle "disc"
 #	        insertionStrategy "increment"
-		aosMarkedEdgeIndex 1
+		aosMarkedEdgeIndex 100
+		aosMarkedVertexIndex 0
+		aosMarkedVertexStyle "none"
 		coord DEF COORD2 ExactCoordinate {
-		  ratPoint [
-2  1  0
-0  0  1
--1  2  0
-0  0  -1
-1  -2  0
--2  -1  0
--1  0  0			   ]
+		  ratPoint [2  1  0, 0  0  1, -1  2  0, 0  0  -1
+			    1  -2  0, -2  -1  0, -1  0  0]
 		}
 		# pointIndex [6 7]
 		curveIndex [1 0, 2 1, 2 0, 3 2, 3 0, 4 3
@@ -182,7 +180,7 @@ Transform {
 
     # The discontinuity arc:
     DEF DISCONTINUITY_SWITCH Switch {
-      whichChoice -1
+      whichChoice 0
       children [
         Shape {
 	  appearance USE BOUNDARY_APP
@@ -191,7 +189,7 @@ Transform {
 	    beginCap TRUE
 	    endCap TRUE
 	    loop FALSE
-	    crossSectionRadius 0.025
+	    crossSectionRadius 0.01
 	    spine [
 		   0 0 1,
 		   -0.0980171 0 0.995185,
