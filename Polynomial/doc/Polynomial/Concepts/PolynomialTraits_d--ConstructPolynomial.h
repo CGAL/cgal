@@ -70,14 +70,14 @@ result_type operator()(InputIterator begin, InputIterator end);
 /*! 
 
 Constructs a `Polynomial_d` from a given iterator range of 
-`std::pair<Exponent_vector, PolynomialTraits_d::Innermost_coefficient_type>`. 
+`std::pair<CGAL::Exponent_vector, PolynomialTraits_d::Innermost_coefficient_type>`. 
 
 The optional parameter `is_sorted` indicates whether the given iterator range is 
 already sorted. 
 
-\pre The value type of `InputIterator` is `std::pair<Exponent_vector, PolynomialTraits_d::Innermost_coefficient_type>`. 
-\pre Each `Exponent_vector` must have size \f$ d\f$. 
-\pre All appearing `Exponent_vector`s are different. 
+\pre The value type of `InputIterator` is `std::pair<CGAL::Exponent_vector, PolynomialTraits_d::Innermost_coefficient_type>`. 
+\pre Each `CGAL::Exponent_vector` must have size \f$ d\f$. 
+\pre All appearing `CGAL::Exponent_vector`s are different. 
 
 */ 
 template < class InputIterator > 

@@ -17,5 +17,7 @@
 \PkgLicense{\ref licensesLGPL "LGPL"}
 \PkgShortInfoEnd
 \PkgDescriptionEnd
+
+\ref PolynomialClassified  "Classified Reference Pages"
 */
 

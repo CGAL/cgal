@@ -31,7 +31,7 @@ public:
 /*! 
 
 */ 
-typedef Exponent_vector result_type; 
+  typedef CGAL::Exponent_vector result_type; 
 
 /*! 
 
