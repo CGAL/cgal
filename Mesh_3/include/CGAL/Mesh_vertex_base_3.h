@@ -50,6 +50,7 @@ class Mesh_vertex_base_3
 {
 public:
   typedef Surface_mesh_vertex_base_3<GT, Vb> Mvb3_base;
+  typedef typename Mvb3_base::Vertex_handle Vertex_handle;
 
   // To get correct vertex type in TDS
   template < class TDS3 >
