@@ -111,6 +111,7 @@ namespace for the XML file to be processed properly.  -->
           <bool name="SHOW_INCLUDE_FILES">false</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+            <item>./tags/Kernel_d.tag=../../CGAL.CGAL.dD-Geometry-Kernel/html</item>
           </list>
         </doxygen>
       </project>
@@ -132,6 +133,7 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Surface_mesher.tag=../../CGAL.CGAL.3D-Surface-Mesh-Generation/html</item>
             <item>./tags/Point_set_processing_3.tag=../../CGAL.CGAL.Point-Set-Processing/html</item>
+            <item>./tags/Surface_mesh_parameterization.tag=../../CGAL.CGAL.Planar-Parameterization-of-Triangulated-Surface-Meshes/html</item>
           </list>
         </doxygen>
       </project>
