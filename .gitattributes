@@ -867,6 +867,9 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_overl
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_overlay/test02.wrl -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_overlay/test03.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_overlay/test03.wrl -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_overlay/test04.jpg -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_overlay/test04.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_overlay/test04.wrl -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test01.jpg -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test01.wrl -text
