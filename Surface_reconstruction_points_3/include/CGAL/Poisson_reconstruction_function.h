@@ -69,7 +69,7 @@ Delaunay triangulation instead of an adaptive octree.
 
 ### Example ###
 
-See \ref poisson_reconstruction_example.cpp. 
+See \ref Surface_reconstruction_points_3/poisson_reconstruction_example.cpp "poisson_reconstruction_example.cpp" 
 */
 template <class Gt>
 class Poisson_reconstruction_function

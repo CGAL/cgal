@@ -99,7 +99,7 @@ For details see: `CGAL::Poisson_reconstruction_function<GeomTraits>`
 
 ## Example ##
 
-`poisson_reconstruction_example.cpp` reads a point set, creates a Poisson implicit function and reconstructs a surface.
+The following example reads a point set, creates a Poisson implicit function and reconstructs a surface.
 
 \cgalexample{Surface_reconstruction_points_3/poisson_reconstruction_example.cpp}
 
@@ -108,7 +108,7 @@ For details see: `CGAL::Poisson_reconstruction_function<GeomTraits>`
 
 The computed implicit functions can be iso-contoured to reconstruct a
 surface by using the \cgal surface mesh generator 
-\cite cgal:ry-gsddrm-06 \cite cgal:bo-pgsms-05:
+\cite cgal:ry-gsddrm-06 \cite cgal:bo-pgsms-05 :
 
 `make_surface_mesh()` 
 
@@ -127,12 +127,12 @@ a three dimensional triangulation.
 `SurfaceMeshComplex_2InTriangulation_3` defines the methods to traverse the reconstructed surface, and e.g. convert it to a triangle soup.
 
 Other \cgal components provide functions to write the reconstructed
-surface mesh to the Object File Format (OFF) \cite cgal:p-gmgv16-96
+surface mesh to the %Object File Format (OFF) \cite cgal:p-gmgv16-96
 and to convert it to a polyhedron (when it is manifold):
-- `CGAL::output_surface_facets_to_off` 
-- `CGAL::output_surface_facets_to_polyhedron` 
+- `output_surface_facets_to_off()` 
+- `output_surface_facets_to_polyhedron()` 
 
-See `poisson_reconstruction_example.cpp` example above.
+See \ref Surface_reconstruction_points_3/poisson_reconstruction_example.cpp "poisson_reconstruction_example.cpp" example above.
 
 # Case Studies # {#surface_reconstruction_section_case_studies}
 
@@ -185,7 +185,7 @@ outliers do not always create a failure, see Figure
 The algorithm works well even when the inferred surface is composed of
 several connected components, provided that both all normals are
 properly estimated and oriented (the current \cgal normal orienter
-algorithm may fail in some cases, see `CGAL::mst_orient_normals()`),
+algorithm may fail in some cases, see `mst_orient_normals()`),
 and that the final contouring algorithm is properly seeded for each
 component. When the inferred surface is composed of several nested
 connected components care should be taken to orient the normals of
@@ -200,7 +200,7 @@ function over the tetrahedra of a 3D Delaunay triangulation
 constructed from the input points then refined through Delaunay
 refinement. For this reason, any iso-surface is also piecewise linear
 and hence may contain sharp creases. As the contouring algorithm
-`CGAL::make_surface_mesh()` expects a smooth implicit function these
+`make_surface_mesh()` expects a smooth implicit function these
 sharp creases may create spurious clusters of vertices in the final
 reconstructed surface mesh when setting a small mesh sizing or surface
 approximation error parameter (see Figure
@@ -209,8 +209,8 @@ approximation error parameter (see Figure
 One way to avoid these spurious clusters consists of adjusting the
 mesh sizing and surface approximation parameters large enough compared
 to the average sampling density (obtained through
-`CGAL::compute_average_spacing()`) so that the contouring algorithm
-"perceives" a smooth iso-surface. We recommend to use the following
+`compute_average_spacing()`) so that the contouring algorithm
+<i>perceives</i> a smooth iso-surface. We recommend to use the following
 contouring parameters:
 
 - Max triangle radius: at least 100 times the average spacing.
@@ -283,7 +283,7 @@ parameters set for contouring the iso-surface is large with respect to
 the noise level the output surface mesh will appear smooth (not
 shown). If the user wants to produce a smooth and detailed output
 surface mesh, we recommend to apply smoothing through
-`CGAL::jet_smooth_point_set()` ((see Figure 
+`jet_smooth_point_set()` ((see Figure 
 \ref Surface_reconstruction_points_3fignoise, bottom).
 
 \anchor Surface_reconstruction_points_3fignoise
@@ -292,7 +292,7 @@ surface mesh, we recommend to apply smoothing through
 For a large number of outliers the failure cases (not shown) translate
 into spurious small connected components and massive distortion near
 the inferred surface. In this case the outliers must be removed
-through `CGAL::remove_outliers()`.
+through `remove_outliers()`.
 
 ## Sharp Creases ##
 
@@ -306,3 +306,4 @@ into smoothed sharp creases.
 */ 
 } /* namespace CGAL */
 
+/// \example Surface_reconstruction_points_3/poisson_reconstruction_example.cpp
