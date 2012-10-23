@@ -28,15 +28,15 @@ if ( "${CGAL_SCM_NAME}" STREQUAL "git" )
   #message ("====GPD: ${GIT_PARENT_DIR}")
 
   find_program(GIT_EXECUTABLE git DOC "git command line client")
-  EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} --git-dir=${GIT_PARENT_DIR}/.git symbolic-ref HEAD 
+  EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} --git-dir=${GIT_PARENT_DIR}/.git symbolic-ref HEAD
      OUTPUT_VARIABLE CGAL_GIT_BRANCH_OUT
      OUTPUT_STRIP_TRAILING_WHITESPACE)
 
   string ( REGEX REPLACE "refs/heads/" "" CGAL_GIT_BRANCH ${CGAL_GIT_BRANCH_OUT})
-  # message( STATUS "Git branch ${CGAL_GIT_BRANCH}") 
+  # message( STATUS "Git branch ${CGAL_GIT_BRANCH}")
 
  set ( CGAL_SCM_BRANCH_NAME "${CGAL_GIT_BRANCH}" )
 
 endif()
-  
+
 endif()
