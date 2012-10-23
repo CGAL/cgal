@@ -377,6 +377,16 @@ struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>, Tag>
   typedef typename map_gen::const_type const_type;
 };
 
+// This partial specialization shouldn't be needed but is due to a bug in Boost 1.51.
+template<class Gt, class I, CGAL_HDS_PARAM_, class A, class Tag>
+struct property_map<const CGAL::Polyhedron_3<Gt,I,HDS,A>, Tag> 
+{
+  typedef typename CGAL::Polyhedron_property_map<Tag>::
+      template bind_<Gt,I,HDS,A> map_gen;
+  typedef typename map_gen::type       type;
+  typedef typename map_gen::const_type const_type;
+};
+
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class PropertyTag, class Key>
 inline
 typename property_traits<typename property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>,PropertyTag>::type>::reference
