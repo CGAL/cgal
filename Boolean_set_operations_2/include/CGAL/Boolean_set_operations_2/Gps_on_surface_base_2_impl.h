@@ -385,10 +385,9 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
       arr.insert_at_vertices(*temp, curr_he, first_he);*/
     bool new_face_created = false;
     bool dummy_swapped_predecessors = false;
-    Halfedge_handle he = accessor.insert_at_vertices_ex (*temp,
-                                                         curr_he,
-                                                         first_he,
-                                                         cmp_ends(*temp),
+    Halfedge_handle he = accessor.insert_at_vertices_ex (curr_he,
+                                                         *temp, (cmp_ends(*temp) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                         first_he->next(),
                                                          new_face_created,
                                                          dummy_swapped_predecessors);
     // TODO EBEB 2012-08-06 do we have to care if order has been swapped,
@@ -422,10 +421,9 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
   bool new_face_created = false;
   bool dummy_swapped_predecessors = false;
   Halfedge_handle last_he = 
-    accessor.insert_at_vertices_ex (last_cv,
-                                    curr_he,
-                                    first_he,
-                                    cmp_ends(last_cv),
+    accessor.insert_at_vertices_ex (curr_he,
+                                    last_cv, ( cmp_ends(last_cv) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                    first_he->next(),
                                     new_face_created,
                                     dummy_swapped_predecessors);
   // TODO EBEB 2012-08-06 do we have to care if order has been swapped,

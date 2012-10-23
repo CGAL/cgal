@@ -369,15 +369,15 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
 
   if ((fict_prev1 == NULL) && (fict_prev2 == NULL))
     // Both vertices represent valid points.
-    new_he = _insert_in_face_interior(cv, p_f, v1, v2, SMALLER);
+    new_he = _insert_in_face_interior(p_f, cv, ARR_LEFT_TO_RIGHT, v1, v2);
   else if ((fict_prev1 == NULL) && (fict_prev2 != NULL)) {
     // v1 represents a valid point and v2 is inserted using its predecessor.
-    new_he = _insert_from_vertex(cv, fict_prev2, v1, LARGER);
+    new_he = _insert_from_vertex(fict_prev2, cv, ARR_RIGHT_TO_LEFT, v2);
     new_he = new_he->opposite();
   }
   else if ((fict_prev1 != NULL) && (fict_prev2 == NULL))
     // v1 is inserted using its predecessor and v2 represents a valid point.
-    new_he = _insert_from_vertex(cv, fict_prev1, v2, SMALLER);
+    new_he = _insert_from_vertex(fict_prev1, cv, ARR_LEFT_TO_RIGHT, v2);
   else {
     // Both vertices are inserted using their predecessor halfedges.
 
@@ -403,7 +403,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     // Note that in this case we may create a new face.
     bool new_face_created = false;
     bool check_swapped_predecessors = false;
-    new_he = _insert_at_vertices(cv, fict_prev1, fict_prev2, SMALLER,
+    new_he = _insert_at_vertices(fict_prev1, cv, ARR_LEFT_TO_RIGHT, fict_prev2->next(),
                                  new_face_created, check_swapped_predecessors);
     // Comment EBEB 2012-10-21: Swapping does not take place as there is no local minumum so far
     CGAL_assertion(!check_swapped_predecessors);
@@ -504,9 +504,9 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     // v1 is smaller than v2).
     DHalfedge* new_he;
     if (fict_prev2 == NULL)
-      new_he = _insert_in_face_interior(cv, p_f, v1, v2, SMALLER);
+      new_he = _insert_in_face_interior(p_f, cv, ARR_LEFT_TO_RIGHT, v1, v2);
     else {
-      new_he = _insert_from_vertex(cv, fict_prev2, v1, LARGER);
+      new_he = _insert_from_vertex(fict_prev2, cv, ARR_RIGHT_TO_LEFT, v1);
       new_he = new_he->opposite();
     }
 
@@ -539,13 +539,13 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 
   if (fict_prev2 == NULL)
     // Insert the halfedge given the predecessor halfedge of v1.
-    new_he = _insert_from_vertex(cv, prev1, v2, SMALLER);
+    new_he = _insert_from_vertex(prev1, cv, ARR_LEFT_TO_RIGHT, v2);
   else {
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
     bool check_swapped_predecessors = false;
-    new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
+    new_he = _insert_at_vertices(prev1, cv, ARR_LEFT_TO_RIGHT, fict_prev2->next(),
                                  new_face_created, check_swapped_predecessors);
     // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
     // merges the CCB as an "interior" extension into an outer CCB of a face
@@ -637,13 +637,13 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 
   if (fict_prev2 == NULL)
     // Insert the halfedge given the predecessor halfedge of the left vertex.
-    new_he = _insert_from_vertex(cv, prev1, v2, SMALLER);
+    new_he = _insert_from_vertex(prev1, cv, ARR_LEFT_TO_RIGHT, v2);
   else {
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
     bool check_swapped_predecessors = false;
-    new_he = _insert_at_vertices(cv, prev1, fict_prev2, SMALLER,
+    new_he = _insert_at_vertices(prev1, cv, ARR_LEFT_TO_RIGHT, fict_prev2->next(),
                                  new_face_created, check_swapped_predecessors);
     // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
     // merges the CCB as an "interior" extension into an outer CCB of a face
@@ -741,8 +741,8 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
     // Create the edge connecting the two vertices (note that we know that
     // v1 is smaller than v2).
     DHalfedge* new_he = (fict_prev1 == NULL) ?
-      _insert_in_face_interior(cv, p_f, v1, v2, SMALLER) :
-      _insert_from_vertex(cv, fict_prev1, v2, SMALLER);
+      _insert_in_face_interior(p_f, cv, ARR_LEFT_TO_RIGHT, v1, v2) :
+      _insert_from_vertex(fict_prev1, cv, ARR_LEFT_TO_RIGHT, v2);
     
     // Return a handle to the new halfedge whose target is the new vertex v1.
     CGAL_postcondition(new_he->opposite()->direction() == ARR_RIGHT_TO_LEFT);
@@ -772,13 +772,13 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 
   if (fict_prev1 == NULL)
     // Insert the halfedge given the predecessor halfedge of v2.
-    new_he = _insert_from_vertex(cv, prev2, v1, LARGER);
+    new_he = _insert_from_vertex(prev2, cv, ARR_RIGHT_TO_LEFT, v1);
   else {
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
     bool check_swapped_predecessors = false;
-    new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
+    new_he = _insert_at_vertices(prev2, cv, ARR_RIGHT_TO_LEFT, fict_prev1->next(),
                                  new_face_created, check_swapped_predecessors);
     // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
     // merges the CCB as an "interior" extension into an outer CCB of a face
@@ -869,13 +869,13 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 
   if (fict_prev1 == NULL)
     // Insert the halfedge given the predecessor halfedge of the right vertex.
-    new_he = _insert_from_vertex(cv, prev2, v1, LARGER);
+    new_he = _insert_from_vertex(prev2, cv, ARR_RIGHT_TO_LEFT, v1);
   else {
     // Insert the halfedge given the two predecessor halfedges.
     // Note that in this case we may create a new face.
     bool new_face_created = false;
     bool check_swapped_predecessors = false;
-    new_he = _insert_at_vertices(cv, prev2, fict_prev1, LARGER,
+    new_he = _insert_at_vertices(prev2, cv, ARR_RIGHT_TO_LEFT, fict_prev1->next(),
                                  new_face_created, check_swapped_predecessors);
     // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
     // merges the CCB as an "interior" extension into an outer CCB of a face
@@ -1060,8 +1060,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
         CGAL_precondition(f != Face_handle());
 
       // Perform the insertion.
-      Comparison_result  res = (ind1 == ARR_MIN_END) ? SMALLER : LARGER;
-      DHalfedge* new_he = _insert_in_face_interior(cv, f1, p_v1, p_v2, res);
+      Arr_halfedge_direction cv_dir = (ind1 == ARR_MIN_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+      DHalfedge* new_he = _insert_in_face_interior(f1, cv, cv_dir, p_v1, p_v2);
 
       return (Halfedge_handle(new_he));
     }
@@ -1083,8 +1083,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 
     // Perform the insertion. Note that the returned halfedge is directed
     // toward v1 (and not toward v2), so we return its twin.
-    Comparison_result  res = (ind2 == ARR_MIN_END) ? SMALLER : LARGER;
-    DHalfedge* new_he = _insert_from_vertex(cv, prev2, p_v1, res);
+    Arr_halfedge_direction cv_dir = (ind2 == ARR_MIN_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+    DHalfedge* new_he = _insert_from_vertex(prev2, cv, cv_dir, p_v1);
 
     return (Halfedge_handle(new_he->opposite()));
   }
@@ -1120,8 +1120,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
        "The inserted curve should not intersect the existing arrangement.");
 
     // Perform the insertion.
-    Comparison_result  res = (ind1 == ARR_MIN_END) ? SMALLER : LARGER;
-    DHalfedge* new_he = _insert_from_vertex(cv, prev1, p_v2, res);
+    Arr_halfedge_direction cv_dir = (ind1 == ARR_MIN_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+    DHalfedge* new_he = _insert_from_vertex(prev1, cv, cv_dir, p_v2);
 
     return (Halfedge_handle(new_he));
   }
@@ -1271,8 +1271,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     }
 
     // Perform the insertion.
-    Comparison_result  res = (ind2 == ARR_MAX_END) ? SMALLER : LARGER;
-    DHalfedge* new_he = _insert_from_vertex(cv, _halfedge(prev1), p_v2, res);
+    Arr_halfedge_direction cv_dir = (ind2 == ARR_MAX_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+    DHalfedge* new_he = _insert_from_vertex(_halfedge(prev1), cv, cv_dir, p_v2);
 
     return (Halfedge_handle(new_he));
   }
@@ -1426,7 +1426,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   bool new_face_created = false;
   bool swapped_predecessors = false;
   DHalfedge* new_he =
-    _insert_at_vertices(cv, p_prev1, p_prev2, res, new_face_created,
+    _insert_at_vertices(p_prev1, cv, (res == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT), p_prev2->next(), 
+                        new_face_created,
                         swapped_predecessors);
 
   if (new_face_created) {
@@ -2211,14 +2212,16 @@ _place_and_set_curve_end(DFace* f,
 template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DHalfedge*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_insert_in_face_interior(const X_monotone_curve_2& cv,
-                         DFace* f, DVertex* v1, DVertex* v2,
-                         Comparison_result res)
+_insert_in_face_interior(DFace* f,
+                         const X_monotone_curve_2& cv, 
+                         Arr_halfedge_direction cv_dir, 
+                         DVertex* v1, DVertex* v2)
 {
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "Aos_2: _insert_in_face_interior (internal)" << std::endl;
-  std::cout << "cv   : " << cv << std::endl;
-  std::cout << "face   : " << f << std::endl;
+  std::cout << "face  : " << f << std::endl;
+  std::cout << "cv    : " << cv << std::endl;
+  std::cout << "cv_dir: " << cv_dir << std::endl;
   if (!v1->has_null_point())
     std::cout << "v1->point: " << v1->point() << std::endl;
   if (!v2->has_null_point())
@@ -2250,10 +2253,7 @@ _insert_in_face_interior(const X_monotone_curve_2& cv,
   v1->set_halfedge(he1);
   v2->set_halfedge(he2);
 
-  // Set the direction of the halfedges: res indicates the direction of he2,
-  // as it is the comparison result between its source (v1) and target (v2).
-  const Arr_halfedge_direction cv_dir =
-    (res == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+  // Set the direction of the halfedges
   he2->set_direction(cv_dir);
 
   // Create a handle to the new halfedge pointing at the curve target.
@@ -2284,33 +2284,33 @@ _insert_in_face_interior(const X_monotone_curve_2& cv,
 template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DHalfedge*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_insert_from_vertex(const X_monotone_curve_2& cv,
-                    DHalfedge* prev, DVertex* v,
-                    Comparison_result cmp)
+_insert_from_vertex(DHalfedge* he_to, const X_monotone_curve_2& cv, 
+                    Arr_halfedge_direction cv_dir,
+                    DVertex* v)
 {
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "Aos_2: _insert_from_vertex (internal)" << std::endl;
-  std::cout << "cv   : " << cv << std::endl;
-  if (!prev->has_null_curve())
-    std::cout << "prev: " << prev->curve() << std::endl;
+  if (!he_to->has_null_curve())
+    std::cout << "he_to: " << he_to->curve() << std::endl;
   else
-    std::cout << "prev: fictitious" << std::endl;
-  std::cout << "pref: " << (prev->is_on_inner_ccb() ? 
-                            prev->inner_ccb()->face() :
-                            prev->outer_ccb()->face()) << std::endl;
+    std::cout << "he_to: fictitious" << std::endl;
+  std::cout << "f_to: " << (he_to->is_on_inner_ccb() ? 
+                            he_to->inner_ccb()->face() :
+                            he_to->outer_ccb()->face()) << std::endl;
+  std::cout << "cv    : " << cv << std::endl;
+  std::cout << "cv_dir: " << cv_dir << std::endl;
   if (!v->has_null_point())
     std::cout << "v->point: " << v->point() << std::endl;
-  std::cout << "cmp  : " << cmp << std::endl;
 #endif
 
   // Get the incident face of the previous halfedge. Note that this will also
   // be the incident face of the two new halfedges we are about to create.
-  DInner_ccb* ic = (prev->is_on_inner_ccb()) ? prev->inner_ccb() : NULL;
-  DOuter_ccb* oc = (ic == NULL) ? prev->outer_ccb() : NULL;
+  DInner_ccb* ic = (he_to->is_on_inner_ccb()) ? he_to->inner_ccb() : NULL;
+  DOuter_ccb* oc = (ic == NULL) ? he_to->outer_ccb() : NULL;
 
-  // The first vertex is the one that the prev halfedge points to.
+  // The first vertex is the one that the he_to halfedge points to.
   // The second vertex is given by v.
-  DVertex* v1 = prev->vertex();
+  DVertex* v1 = he_to->vertex();
   DVertex* v2 = v;
 
   // Notify the observers that we are about to create a new edge.
@@ -2344,14 +2344,11 @@ _insert_from_vertex(const X_monotone_curve_2& cv,
 
   // Link the new halfedges around the existing vertex v1.
   he2->set_next(he1);
-  he1->set_next(prev->next());
+  he1->set_next(he_to->next());
 
-  prev->set_next(he2);
+  he_to->set_next(he2);
 
-  // Set the direction of the halfedges: res indicates the direction of he2,
-  // as it is the comparison result between its source and target (v).
-  const Arr_halfedge_direction cv_dir =
-    (cmp == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+  // Set the direction of the halfedges
   he2->set_direction(cv_dir);
 
   // Notify the observers that we have created a new edge.
@@ -2371,13 +2368,10 @@ _insert_from_vertex(const X_monotone_curve_2& cv,
 template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DHalfedge*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-// TODO EBEB 2012-07-27
-// change signature to (prev1, cv, cv_dir, prev2, new_face,
-//                      swapped_predecessors, allow_swap_of_predecessors)
-// and similar for other _insert... functions
-_insert_at_vertices(const X_monotone_curve_2& cv,
-                    DHalfedge* prev1, DHalfedge* prev2,
-                    Comparison_result cmp,
+_insert_at_vertices(DHalfedge* he_to, 
+                    const X_monotone_curve_2& cv,
+                    Arr_halfedge_direction cv_dir,
+                    DHalfedge* he_away,
                     bool& new_face,
                     bool& swapped_predecessors,
                     bool allow_swap_of_predecessors /* = true */)
@@ -2385,21 +2379,53 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "_insert_at_vertices: " << cv << std::endl;
 #endif
-  // the function adds he1 and he2 in this way:
+  // Comment: This is how the situation looks
+  //    ----to--->  >>cv_dir>>  ---away--->
+  //               o ===cv=== 0
+  //    <-tonext--              <-awaynext-
+  // or to be read from right to left ...
+  // this way, he_to and he_away lie 
+  // BEFORE insertion on the same inner ccb and
+  // AFTER insertion on the same outer ccb
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  std::cout << "Aos_2: _insert_at_vertices (internal)" << std::endl;
+  
+  if (!he_to->has_null_curve())
+    std::cout << "he_to: " << he_to->curve() << std::endl;
+  else
+    std::cout << "he_to: fictitious" << std::endl;
+  std::cout << "dir1 : " << he_to->direction() << std::endl;
+  std::cout << "f_to : " << (he_to->is_on_inner_ccb() ? 
+                            he_to->inner_ccb()->face() :
+                            he_to->outer_ccb()->face()) << std::endl;
+  std::cout << "cv    : " << cv << std::endl;
+  std::cout << "cv_dir: " << cv_dir << std::endl;
+  if (!he_away->has_null_curve())
+    std::cout << "he_away: " << he_away->curve() << std::endl;
+  else
+    std::cout << "he_away: fictitious" << std::endl;
+  std::cout << "dir 2 : " << he_away->direction() << std::endl;
+  std::cout << "f_away: " << (he_away->is_on_inner_ccb() ? 
+                             he_away->inner_ccb()->face() :
+                             he_away->outer_ccb()->face()) << std::endl;
+#endif
+
+  CGAL_precondition(he_to != NULL);
+  CGAL_precondition(he_away != NULL);
+
+  // TODO EBEB 2012-10-21 rewrite the code in terms of he_to and he_away instead of prev1 and prev2
+  // the remainder of the function we deal with this situation adds he1 and he2 in this way:
   //    ----prev1---> ( --he2--> ) ---p2next--->
   //                  o ===cv=== 0
   //    <---p1next--- ( <--he1-- ) <---prev2----
+  DHalfedge* prev1 = he_to;
+  DHalfedge* prev2 = he_away->prev();
 
   CGAL_precondition(prev1 != NULL);
   CGAL_precondition(prev2 != NULL);
   CGAL_precondition(prev1 != prev2); 
 
-  // Set the direction of the halfedges: res indicates the direction of he2,
-  // as it is the comparison result between its source and target.
-  // TODO EBEB 2012-08-06 cv_dir will become part of signature
-  Arr_halfedge_direction cv_dir =
-    (cmp == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
-  
   // in general we do not swap ... 
   swapped_predecessors = false;
 
@@ -2525,7 +2551,6 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   std::cout << "pref2: " << (prev2->is_on_inner_ccb() ? 
                              prev2->inner_ccb()->face() :
                              prev2->outer_ccb()->face()) << std::endl;
-  std::cout << "cmp   : " << cmp << std::endl;
   std::cout << "cv_dir: " << cv_dir << std::endl;
 #endif
 

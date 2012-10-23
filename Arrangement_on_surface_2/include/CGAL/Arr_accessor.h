@@ -399,11 +399,10 @@ public:
    * The two halfedges should be given such that in case a new face is formed,
    * it will be the incident face of the halfedge directed from the first
    * vertex to the second vertex.
+   * \param he_to The reference halfedge pointing to the first vertex.
    * \param cv the given curve.
-   * \param prev1 The reference halfedge for the first vertex.
-   * \param prev2 The reference halfedge for the second vertex.
-   * \param res The comparsion result between the points associated with the
-   *            target vertex of prev and the target vertex of prev2.
+   * \param cv_dir the direction of the curve
+   * \param he_away The reference halfedge pointing away from the second vertex.
    * \param new_face Output - whether a new face has been created.
    * \param swapped_predecessors Output - whether roles of prev1 and prev2 have been switched
    * \param allow_swap_of_predecessors - set to false if no swapping should take place at all
@@ -412,18 +411,17 @@ public:
    *         In case a new face has been created, it is given as the incident
    *         face of this halfedge.
    */
-  Halfedge_handle insert_at_vertices_ex (const X_monotone_curve_2& cv,
-                                         Halfedge_handle prev1, 
-                                         Halfedge_handle prev2,
-                                         Comparison_result res,
+  Halfedge_handle insert_at_vertices_ex (Halfedge_handle he_to, 
+                                         const X_monotone_curve_2& cv,
+                                         Arr_halfedge_direction cv_dir,
+                                         Halfedge_handle he_away,
                                          bool& new_face,
                                          bool& swapped_predecessors,
                                          bool allow_swap_of_predecessors = true)
   {
-    DHalfedge*  he = p_arr->_insert_at_vertices (cv,
-                                                 p_arr->_halfedge (prev1),
-                                                 p_arr->_halfedge (prev2),
-                                                 res, 
+    DHalfedge*  he = p_arr->_insert_at_vertices (p_arr->_halfedge (he_to),
+                                                 cv, cv_dir,
+                                                 p_arr->_halfedge (he_away),
                                                  new_face, swapped_predecessors,
                                                  allow_swap_of_predecessors);
 
@@ -437,19 +435,18 @@ public:
    * place for the curve in the circular list around this vertex. The other
    * endpoint corrsponds to a free vertex (a newly created vertex or an
    * isolated vertex).
+   * \param he_to The reference halfedge. We should represent cv as a pair
+   *              of edges, one of them should become he_to's successor.
    * \param cv The given x-monotone curve.
-   * \param prev The reference halfedge. We should represent cv as a pair
-   *             of edges, one of them should become prev's successor.
+   * \param cv_dir The direction of the curve.
    * \param v The free vertex that corresponds to the other endpoint.
-   * \param res The comparsion result between the points associated with
-   *            the target vertex of prev and the vertex v.
    * \return A handle to one of the halfedges corresponding to the inserted
    *         curve, whose target is the vertex v.
    */
-  Halfedge_handle insert_from_vertex_ex (const X_monotone_curve_2& cv,
-                                         Halfedge_handle prev,
-                                         Vertex_handle v,
-                                         Comparison_result res)
+  Halfedge_handle insert_from_vertex_ex (Halfedge_handle he_to,
+                                         const X_monotone_curve_2& cv,
+                                         Arr_halfedge_direction cv_dir, 
+                                         Vertex_handle v)
   {
     DVertex    *p_v = p_arr->_vertex (v);
 
@@ -465,7 +462,7 @@ public:
     }
 
     DHalfedge*  he =
-      p_arr->_insert_from_vertex (cv, p_arr->_halfedge (prev), p_v, res);
+      p_arr->_insert_from_vertex (p_arr->_halfedge (he_to), cv, cv_dir, p_v);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
@@ -476,20 +473,19 @@ public:
    * endpoints correspond to free arrangement vertices (newly created vertices
    * or existing isolated vertices), so a new hole is formed in the face
    * that contains the two vertices.
-   * \param cv The given x-monotone curve.
    * \param f The face containing the two end vertices.
+   * \param cv The given x-monotone curve.
+   * \param cv_dir The direction of the curve.
    * \param v1 The free vertex that corresponds to the left endpoint of cv.
    * \param v2 The free vertex that corresponds to the right endpoint of cv.
-   * \param res The comparsion result between the points associated with the
-   *            vertices v1 and v2.
    * \return A handle to one of the halfedges corresponding to the inserted
    *         curve, directed from v1 to v2.
    */
-  Halfedge_handle insert_in_face_interior_ex (const X_monotone_curve_2& cv,
-                                              Face_handle f,
+  Halfedge_handle insert_in_face_interior_ex (Face_handle f,
+                                              const X_monotone_curve_2& cv,
+                                              Arr_halfedge_direction cv_dir, 
                                               Vertex_handle v1,
-                                              Vertex_handle v2,
-                                              Comparison_result res)
+                                              Vertex_handle v2)
   {
     DVertex    *p_v1 = p_arr->_vertex (v1);
     DVertex    *p_v2 = p_arr->_vertex (v2);
@@ -516,11 +512,10 @@ public:
       p_arr->_dcel().delete_isolated_vertex (iv2);
     }
 
-    DHalfedge*  he = p_arr->_insert_in_face_interior (cv,
-                                                      p_arr->_face (f),
+    DHalfedge*  he = p_arr->_insert_in_face_interior (p_arr->_face (f),
+                                                      cv, cv_dir,
                                                       p_v1,
-                                                      p_v2,
-                                                      res);
+                                                      p_v2);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));

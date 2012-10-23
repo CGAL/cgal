@@ -600,11 +600,10 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_in_face_interior
   // halfedge we see.
   Face_handle   f = _ray_shoot_up(sc);
 
-  return (this->m_arr_access.insert_in_face_interior_ex (cv.base(),
-                                                         f,
+  return (this->m_arr_access.insert_in_face_interior_ex (f,
+                                                         cv.base(), ARR_LEFT_TO_RIGHT,
                                                          v1,
-                                                         v2,
-                                                         SMALLER));
+                                                         v2));
 }
 
 //-----------------------------------------------------------------------------
@@ -647,9 +646,7 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_from_left_vertex
   }
 
   // Perform the insertion using the vertex v.
-  return (this->m_arr_access.insert_from_vertex_ex (cv.base(),
-                                                    prev, v,
-                                                    SMALLER));
+  return (this->m_arr_access.insert_from_vertex_ex (prev, cv.base(), ARR_LEFT_TO_RIGHT, v));
 }
 
 //-----------------------------------------------------------------------------
@@ -692,9 +689,7 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_from_right_vertex
   }
 
   // Perform the insertion using the vertex v.
-  return (this->m_arr_access.insert_from_vertex_ex (cv.base(),
-                                                    prev, v,
-                                                    LARGER));
+  return (this->m_arr_access.insert_from_vertex_ex (prev, cv.base(), ARR_RIGHT_TO_LEFT, v));
 }
 
 //-----------------------------------------------------------------------------
@@ -713,10 +708,9 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_at_vertices
   // Perform the insertion.
   new_face_created = false;
   bool swapped_predecessors = false;
-  Halfedge_handle  new_he = this->m_arr_access.insert_at_vertices_ex (cv.base(),
-                                                                      prev1,
-                                                                      prev2,
-                                                                      LARGER,
+  Halfedge_handle  new_he = this->m_arr_access.insert_at_vertices_ex (prev1,
+                                                                      cv.base(), ARR_RIGHT_TO_LEFT,
+                                                                      prev2->next(),
                                                                       new_face_created,
                                                                       swapped_predecessors,
                                                                       true /* this allows to swap prev1/prev2

@@ -1799,17 +1799,18 @@ protected:
    * endpoints correspond to free arrangement vertices (newly created vertices
    * or existing isolated vertices), so a new inner CCB is formed in the face
    * that contains the two vertices.
-   * \param cv The given x-monotone curve.
    * \param f The face containing the two end vertices.
+   * \param cv The given x-monotone curve.
+   * \param cv_dir The direction of the curve
    * \param v1 The free vertex that corresponds to the left endpoint of cv.
    * \param v2 The free vertex that corresponds to the right endpoint of cv.
-   * \param res The comparison result of the points associated with v1 and v2.
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve, directed from v1 to v2.
    */
-  DHalfedge* _insert_in_face_interior(const X_monotone_curve_2& cv, DFace* f,
-                                      DVertex* v1, DVertex* v2,
-                                      Comparison_result res);
+  DHalfedge* _insert_in_face_interior(DFace* f,
+                                      const X_monotone_curve_2& cv, 
+                                      Arr_halfedge_direction cv_dir, 
+                                      DVertex* v1, DVertex* v2);
 
   /*! 
    * Insert an x-monotone curve into the arrangement, such that one of its
@@ -1817,17 +1818,17 @@ protected:
    * place for the curve in the circular list around this vertex. The other
    * endpoint corrsponds to a free vertex (a newly created vertex or an
    * isolated vertex).
+   * \param he_to The reference halfedge. We should represent cv as a pair
+   *              of edges, one of them should become he_to's successor.
    * \param cv The given x-monotone curve.
-   * \param prev The reference halfedge. We should represent cv as a pair
-   *             of edges, one of them should become prev's successor.
+   * \param cv_dir The direction of cv.
    * \param v The free vertex that corresponds to the other endpoint.
-   * \param res The comparison result of the points associated with prev's
-   *            target and v.
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve, whose target is the vertex v.
    */
-  DHalfedge* _insert_from_vertex(const X_monotone_curve_2& cv, DHalfedge* prev,
-                                 DVertex* v, Comparison_result res);
+  DHalfedge* _insert_from_vertex(DHalfedge* he_to, const X_monotone_curve_2& cv, 
+                                 Arr_halfedge_direction cv_dir,
+                                 DVertex* v);
 
   /*!
    * Insert an x-monotone curve into the arrangement, where the end vertices
@@ -1835,9 +1836,10 @@ protected:
    * The two halfedges should be given such that in case a new face is formed,
    * it will be the incident face of the halfedge directed from the first
    * vertex to the second vertex.
+   * \param he_to The reference halfedge pointing to the insertion vertex
    * \param cv the given curve.
-   * \param prev1 The reference halfedge for the first vertex.
-   * \param prev2 The reference halfedge for the second vertex.
+   * \param cv_dir the direction of the curve
+   * \param he_away The reference halfedge for the second vertex.
    * \param res The comparison result of the points associated with prev1's
    *            target vertex and prev2's target vertex.
    * \param new_face Output - whether a new face has been created.
@@ -1848,9 +1850,10 @@ protected:
    *         In case a new face has been created, it is given as the incident
    *         face of this halfedge.
    */
-  DHalfedge* _insert_at_vertices(const X_monotone_curve_2& cv,
-                                 DHalfedge* prev1, DHalfedge* prev2,
-                                 Comparison_result res, 
+  DHalfedge* _insert_at_vertices(DHalfedge* he_to, 
+                                 const X_monotone_curve_2& cv,
+                                 Arr_halfedge_direction cv_dir,
+                                 DHalfedge* he_away,
                                  bool& new_face,
                                  bool& swapped_predecessors,
                                  bool allow_swap_of_predecessors = true);

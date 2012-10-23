@@ -679,8 +679,8 @@ insert_in_face_interior (const X_monotone_curve_2& cv, Subcurve* sc)
   // Perform the insertion between the two (currently isolated) vertices in
   // the interior of the current top face, as given by the helper class.
   Halfedge_handle  res =
-    m_arr_access.insert_in_face_interior_ex (_curve(cv), m_helper.top_face(),
-                                             v1, v2, SMALLER);
+    m_arr_access.insert_in_face_interior_ex (m_helper.top_face(), _curve(cv), ARR_LEFT_TO_RIGHT,
+                                             v1, v2);
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
@@ -792,20 +792,20 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
 
   bool check_swapped_predecessors = true;
 #if 1
-  res = (! swap_preds) ?
+  res = (swap_preds) ?
+    // if swapping prev2 will become outer of new split face (it it exists)
+    m_arr_access.insert_at_vertices_ex (prev2, _curve(cv), ARR_LEFT_TO_RIGHT, prev1->next(),
+                                        new_face_created, check_swapped_predecessors, false) :
     // usually prev1 is outer of new split face (it it exists)
     // order is determined by top-traits helper!
     // "false" disallows swapping of prev1/preve2! ...
-    m_arr_access.insert_at_vertices_ex (_curve(cv), prev1, prev2, LARGER, 
-                                        new_face_created, check_swapped_predecessors, false) :
-    // if swapping prev2 will become outer of new split face (it it exists)
-    m_arr_access.insert_at_vertices_ex (_curve(cv), prev2, prev1, SMALLER, 
+    m_arr_access.insert_at_vertices_ex (prev1, _curve(cv), ARR_RIGHT_TO_LEFT, prev2->next(),
                                         new_face_created, check_swapped_predecessors, false);
   
   // ... thus the value should now have changed
   CGAL_assertion(!check_swapped_predecessors);
 #else
-  res = m_arr_access.insert_at_vertices_ex (_curve(cv), prev1, prev2, LARGER, 
+  res = m_arr_access.insert_at_vertices_ex (prev1, _curve(cv), ARR_RIGHT_TO_LEFT, prev2->next(),
                                             new_face_created, check_swapped_predecessors);
   if (check_swapped_predecessors)
     res = res->twin();
@@ -898,7 +898,7 @@ Arr_construction_sl_visitor<Hlpr>::insert_from_right_vertex
   // Insert the curve given its left vertex and the predecessor around the
   // right vertex.
   Halfedge_handle  res =
-    m_arr_access.insert_from_vertex_ex (_curve(cv), prev, v, LARGER);
+    m_arr_access.insert_from_vertex_ex (prev, _curve(cv), ARR_RIGHT_TO_LEFT, v);
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
@@ -969,7 +969,7 @@ insert_from_left_vertex (const X_monotone_curve_2& cv,
   // Insert the curve given its right vertex and the predecessor around the
   // left vertex.
   Halfedge_handle  res =
-    m_arr_access.insert_from_vertex_ex (_curve(cv), prev, v, SMALLER);
+    m_arr_access.insert_from_vertex_ex (prev, _curve(cv), ARR_LEFT_TO_RIGHT, v);
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
