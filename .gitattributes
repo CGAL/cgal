@@ -2205,13 +2205,7 @@ Convex_decomposition_3/doc/Convex_decomposition_3/Convex_decomposition_3.txt -te
 Convex_decomposition_3/doc/Convex_decomposition_3/PackageDescription.txt -text
 Convex_decomposition_3/doc/Convex_decomposition_3/examples.txt -text
 Convex_decomposition_3/doc/Convex_decomposition_3/fig/Convex_decomposition_3-teaser.png -text svneol=unset#image/png
-Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes.gif -text svneol=unset#image/gif
-Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes.pdf -text svneol=unset#application/pdf
-Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes2.png -text svneol=unset#image/png
-Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes_cylindrical.gif -text svneol=unset#image/gif
-Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes_cylindrical.pdf -text svneol=unset#application/pdf
-Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes_vertical.gif -text svneol=unset#image/gif
-Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes_vertical.pdf -text svneol=unset#application/pdf
+Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes_all_in_one.png -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/PkgDescription.tex -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/teaser.png -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes.gif -text

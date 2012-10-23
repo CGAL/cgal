@@ -2,7 +2,6 @@
 
 /*!
 \addtogroup PkgConvexDecomposition3
-\todo check generated documentation
 \PkgDescriptionBegin{Convex Decomposition of Polyhedra,PkgConvexDecomposition3Summary}
 \PkgPicture{Convex_decomposition_3/fig/Convex_decomposition_3-teaser.png}
 \PkgSummaryBegin

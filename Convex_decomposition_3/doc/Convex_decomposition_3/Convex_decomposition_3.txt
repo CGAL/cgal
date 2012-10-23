@@ -3,12 +3,11 @@ namespace CGAL {
 /*!
 
 \mainpage Convex Decomposition of Polyhedra
-\anchor Chapter_Convex_Decomposition_of_Polyhedra
 \anchor chapterConvexDecomposition3
 \autotoc
 \author Peter Hachenberger
 
-# Introduction # {#Convex_decomposition_3Introduction}
+# Introduction #
 
 For many applications on non-convex polyhedra, there are efficient
 solutions that first decompose the polyhedron into convex pieces. As
@@ -26,17 +25,7 @@ The bound of \f$ O(r^2)\f$ convex pieces is worst-case
 optimal \cite c-cpplb-84.
 
 \anchor figverticalDecomposition
-\image latex two_cubes "" width=0.245 
-\image latex two_cubes_cylindrical "" width=0.25 
-\image latex two_cubes_vertical "" width=0.27
-
-\htmlonly
-<center>
-<img src="two_cubes.gif" border=0 alt="decomposition example" width=250>&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="two_cubes_cylindrical.gif" border=0 alt="decomposition after first step" width=250>&nbsp;&nbsp;&nbsp;
-<img src="two_cubes_vertical.gif" border=0 alt="final decomposition" width=250>
-</center>
-\endhtmlonly
+\image html two_cubes_all_in_one.png
 
 <CENTER><B>
 Vertical decomposition based on the insertion of vertical facets
@@ -54,7 +43,7 @@ illustrates the two steps.
 At the moment our implementation is restricted to the decomposition of
 bounded polyhedra. An extension to unbounded polyhedra is planned.
 
-# Interface and Usage # {#Convex_decomposition_3Interface}
+# Interface and Usage #
 
 An instance of `Nef_polyhedron_3` represents a subdivision of the
 three-dimensional space into vertices, edges, facets, and

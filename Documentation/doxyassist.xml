@@ -628,12 +628,6 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Nef_3.tag=../../3D-Boolean-Operations-on-Nef-Polyhedra/html</item>
           </list>
-          
-          <list name="HTML_EXTRA_FILES" append="true">
-            <item>../Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes.gif</item>
-            <item>../Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes_cylindrical.gif</item>
-            <item>../Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes_vertical.gif</item>
-          </list>
         </doxygen>
       </project>
 
