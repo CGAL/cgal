@@ -4772,7 +4772,6 @@ Point_set_processing_3/doc/Point_set_processing_3/fig/mst_orient_normals.jpg -te
 Point_set_processing_3/doc/Point_set_processing_3/fig/pipeline.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc/Point_set_processing_3/fig/point_set_processing.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc/Point_set_processing_3/fig/point_set_processing_detail.png -text svneol=unset#image/png
-Point_set_processing_3/doc/Property_map/CGAL/property_map.h -text
 Point_set_processing_3/doc/Property_map/PackageDescription.txt -text
 Point_set_processing_3/doc/Property_map/Property_map.txt -text
 Point_set_processing_3/doc/Property_map/examples.txt -text
