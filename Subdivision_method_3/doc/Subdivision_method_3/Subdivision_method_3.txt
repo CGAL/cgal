@@ -119,7 +119,7 @@ without much effort.
 \cgalexample{Subdivision_method_3/CatmullClark_subdivision.cpp}
 
 This example demonstrates the use of the Catmull-Clark subdivision method
-on a `Polyhedron_3`. The polyhedron is restricted in the Cartesian
+on a `Polyhedron_3`. The polyhedron is restricted in the %Cartesian
 space, where most subdivision applications are designed to work.
 There is only one line deserving a detailed explanation:
 
@@ -286,7 +286,7 @@ masks in `Subdivision_method_3`.
 This default implementation assumes the <I>types</I> 
 (such as `Point_3` and `Facet_handle`) are defined 
 within `Polyhedron_3`. `CatmullClark_mask_3` 
-is designed to work on a `Polyhedron_3` with the `Cartesian` 
+is designed to work on a `Polyhedron_3` with the %Cartesian
 kernel. You may need to rewrite the geometry computation
 to match the kernel geometry of your application.
 
@@ -547,7 +547,7 @@ on a polyhedral mesh.
 # Other Subdivision Methods # {#Subdivision_method_3Other}
 
 `Subdivision_method_3` supports four practical subdivision methods on a
-Cartesian `Polyhedron_3`. More subdivision methods can be supported
+`Polyhedron_3` with points with %Cartesian coordinates. More subdivision methods can be supported
 through the specialization of refinement hosts with custom geometry masks. 
 The following example develops a subdivision method 
 generating an improved Loop subdivision surface. 
