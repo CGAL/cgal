@@ -40,13 +40,13 @@ public:
 /// @{
 
 /*! 
-introduces an uninitialized variable `fo`. 
+%Default constructor.
 
 */ 
 Exponent_vector(); 
 
 /*! 
-The copy constructor 
+The copy constructor. 
 
 */ 
 Exponent_vector(const Exponent_vector & ev_); 
@@ -154,10 +154,10 @@ operator<(const Exponent_vector &ev1, const Exponent_vector &ev2);
 }; /* end Exponent_vector */
 
 /*! 
-Returns true if all entries of ev are not negative. 
+Returns true if all entries of exponent vector `ev` are not negative. 
 \relates Exponent_vector 
 */ 
-bool is_valid(ev); 
+bool is_valid(const Exponent_vector& ev); 
 
 
 } /* end namespace CGAL */

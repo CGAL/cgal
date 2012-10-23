@@ -3,7 +3,7 @@
 \ingroup PkgPolynomialConcepts
 \cgalconcept
 
-This `AdaptableBinaryFunction` computes the square-free part of 
+This `AdaptableUnaryFunction` computes the square-free part of 
 a polynomial of type `PolynomialTraits_d::Polynomial_d` 
 <I>up to a constant factor</I>. 
 

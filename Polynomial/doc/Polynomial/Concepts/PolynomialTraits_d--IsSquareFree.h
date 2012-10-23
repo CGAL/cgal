@@ -3,7 +3,7 @@
 \ingroup PkgPolynomialConcepts
 \cgalconcept
 
-This `AdaptableBinaryFunction` computes whether the given 
+This `AdaptableUnaryFunction` computes whether the given 
 a polynomial of type `PolynomialTraits_d::Polynomial_d` 
 is square free. 
 

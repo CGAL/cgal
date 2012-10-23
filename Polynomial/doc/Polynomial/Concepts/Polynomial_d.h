@@ -14,8 +14,8 @@ all functionality related to polynomials is provided by the traits.
 
 \refines ::IntegralDomainWithoutDivision 
 
-The algebraic structure of ::Polynomial_d depends on the 
-algebraic structure of ::Innermost_coefficient_type: 
+The algebraic structure of `Polynomial_d` depends on the 
+algebraic structure of `PolynomialTraits_d::Innermost_coefficient_type`: 
 
 Innermost_coefficient_type       | %Polynomial_d 
 ---------------------------------|--------------------------------

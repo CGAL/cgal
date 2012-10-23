@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgPolynomialClasses
 
 An instance of the data type `Polynomial` represents a 
-polynomial \f$ p = a_0 + a_1*x + ...a_i*x^i\f$ from the ring \f$ Coeff[x]\f$. 
+polynomial \f$ p = a_0 + a_1*x + ...a_i*x^i\f$ from the ring \f$ \mathrm{Coeff}[x]\f$. 
 `Coeff` can itself be an instance of `Polynomial`, yielding a form of 
 multivariate polynomials. 
 
@@ -61,7 +61,7 @@ the zero polynomial is represented by a single zero coefficient.
 \models ImplicitInteroperable with int 
 \models ImplicitInteroperable with Coeff 
 \models Fraction if Coeff is model of ::Fraction 
-\models LessThanComparable if Coeff is model of LessThanComparable 
+\models LessThanComparable if Coeff is model of `LessThanComparable` 
 \models Modularizable if `Coeff` is model of `Modularizable`
 */
 template< typename Coeff >

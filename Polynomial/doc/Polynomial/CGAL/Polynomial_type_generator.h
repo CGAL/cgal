@@ -10,7 +10,7 @@ This class template provides a convenient way to obtain the type representing a 
 
 `d` must be of type int. 
 
-\sa CGAL::Polynomial<Coeff> 
+\sa `CGAL::Polynomial<Coeff>` 
 
 */
 template< typename T, typename d >
