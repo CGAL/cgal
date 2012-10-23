@@ -7,7 +7,7 @@ This `AdaptableUnaryFunction` computes the content of a
 `PolynomialTraits_d::Polynomial_d` 
 with respect to the univariate (recursive) view on the 
 polynomial <I>up to a constant factor (utcf)</I>, that is, 
-it computes the \f$ gcd\_utcf\f$ of all coefficients with respect to one variable. 
+it computes the \f$ \mathrm{gcd\_utcf}\f$ of all coefficients with respect to one variable. 
 
 Remark: This is called `UnivariateContentUpToConstantFactor` for 
 symmetric reasons with respect to `PolynomialTraits_d::UnivariateContent` 

@@ -42,9 +42,9 @@ typedef CGAL::Sign result_type;
 
 /*! 
 
-Returns the sign of \f$ p\f$ at the given homogeneous point, where \f$ begin\f$ is 
+Returns the sign of \f$ p\f$ at the given homogeneous point, where `begin` is 
 referring to the innermost variable. 
-\pre (end-begin==`PolynomialTraits_d::d`+1) 
+\pre (`end-begin`==`PolynomialTraits_d::d`+1) 
 \pre `std::iterator_traits< InputIterator >::value_type` is `ExplicitInteroperable` with `PolynomialTraits_d::Innermost_coefficient_type`. 
 
 */ 

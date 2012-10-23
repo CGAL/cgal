@@ -15,7 +15,7 @@ For instance the total degree of \f$ p = x_0^2x_1^3+x_1^4\f$ is \f$ 5\f$.
 
 The total degree of the zero polynomial is set to \f$ 0\f$. 
 From the mathematical point of view this should 
-be \f$ -inf\f$, but this would imply an inconvenient return type. 
+be \f$ -\infty\f$, but this would imply an inconvenient return type. 
 
 \refines ::AdaptableUnaryFunction 
 \refines ::CopyConstructible 

@@ -43,7 +43,7 @@ public:
 Substitutes each variable of \f$ p\f$ by the values given in the iterator range, 
 where \f$ p\f$ is interpreted as a homogeneous polynomial in all variables. 
 The begin iterator refers to the innermost variable \f$ x_0\f$. 
-\pre (end-begin == `PolynomialTraits_d::d`)+1 
+\pre (`end-begin` == `PolynomialTraits_d::d`)+1 
 
 */ 
 template<class Input_iterator> 

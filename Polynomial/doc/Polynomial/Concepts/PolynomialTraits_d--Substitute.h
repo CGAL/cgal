@@ -36,7 +36,7 @@ public:
 
 Substitutes each variable of \f$ p\f$ by the values given in the iterator range, 
 where begin refers to the innermost variable \f$ x_0\f$. 
-\pre (end-begin == `PolynomialTraits_d::d`) 
+\pre (`end-begin` == `PolynomialTraits_d::d`) 
 
 */ 
 template<class Input_iterator> 
