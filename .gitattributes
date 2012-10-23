@@ -3575,7 +3575,6 @@ Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
 Scripts/developer_scripts/cgal_generate_cmake_script -text
 Scripts/developer_scripts/cgal_generate_cmake_script.cmake -text
-Scripts/developer_scripts/cgal_git_svn_clone -text
 Scripts/developer_scripts/cgal_git_update_hooks_for_client -text
 Scripts/developer_scripts/cgal_header_clean_up.py -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
