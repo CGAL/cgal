@@ -81,6 +81,7 @@ configure()
   echo "Configuring... "
 
   if eval 'cmake "\$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \\
+                                     -DCMAKE_BUILD_TYPE=Debug  \\
                                      -DCGAL_DIR="\$CGAL_DIR" \\
                                      .' ; then
 
