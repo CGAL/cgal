@@ -4574,8 +4574,8 @@ Triangulation_on_sphere_2/include/CGAL/Triangulation_sphere_traits_2.h -text
 Triangulation_on_sphere_2/include/CGAL/algebraic_kernel_for_spheres_extensions_ntC3.h -text
 Triangulation_on_sphere_2/include/CGAL/static_in_cone_ntC3.h -text
 Triangulation_on_sphere_2/test/bugs_minimal_examples.cpp -text
+Triangulation_on_sphere_2/test/test_random.cpp -text
 Triangulation_on_sphere_2/test/test_regular_sphere_traits.cpp -text
-Triangulation_on_sphere_2/test/test_regular_triangulation_on_sphere_2.cpp -text
 Triangulation_on_sphere_2/test/test_triangulation_on_sphere_2.cpp -text
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
 wininst/developer_scripts/CGAL.bmp -text svneol=unset#image/bmp

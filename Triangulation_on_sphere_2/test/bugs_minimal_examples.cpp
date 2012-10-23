@@ -63,10 +63,7 @@ Vertex_handle v4 = rtos.insert(p4);
 	rtos.is_valid();
 	rtos.remove(v5);*/
 	
-	
-	
-	
-	
+		
 	//insert   coplanar Points. Points are coplanar but not coplanar with the center of the sphere
 	rtos.clear();
 	Point_3 p0 = Point_3(0,0,radius);
@@ -82,7 +79,7 @@ Vertex_handle v4 = rtos.insert(p4);
 	Vertex_handle v22 = rtos.insert(p22);
 	Vertex_handle v23 = rtos.insert(p23);
 	rtos.show_vertex(v23);
-
+	
 	
 	
 	Vertex_handle v24 = rtos.insert(p24); 
@@ -131,6 +128,11 @@ Vertex_handle v4 = rtos.insert(p4);
 	rtos.remove(v26);
 	rtos.is_valid();
 	rtos.show_all();
+	
+	
+	rtos.remove(v27);
+	
+	
 	
 	
 	

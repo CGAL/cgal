@@ -31,7 +31,7 @@ class Regular_triangulation_on_sphere_2
 {
 
    typedef Regular_triangulation_on_sphere_2<Gt, Tds>                         Self;
-	typedef Triangulation_on_sphere_2<Gt,Tds>                                 Base;
+   typedef Triangulation_on_sphere_2<Gt,Tds>                                  Base;
 
 	
    
@@ -41,7 +41,6 @@ public:
   typedef Tds                                  Triangulation_data_structure;
   typedef Gt                                   Geom_traits;
   typedef typename Gt::Point_2                 Point;
-
   typedef typename Base::size_type             size_type;
   typedef typename Base::Face_handle           Face_handle;
   typedef typename Base::Vertex_handle         Vertex_handle;
@@ -80,6 +79,7 @@ public:
   using Base ::show_face;
   using Base ::show_vertex;
   using Base::clear;
+  using Base::delete_faces;
  #endif
 
  public: 
@@ -93,10 +93,10 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid_face(Face_handle fh,bool verbose = false, int level = 0 ) const;
   bool is_valid_vertex(Vertex_handle fh, bool verbose = false, int level = 0) const;
+  bool is_plane() const;
 
   
-  bool test_conflict(const Point  &p, Face_handle fh) const;
-  bool update_negative_faces(Vertex_handle v=Vertex_handle());
+  
 
   bool check_neighboring()
   {
@@ -137,52 +137,21 @@ public:
   Vertex_handle insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) ;
   Vertex_handle insert_in_plane_triangulation(const Point &p);
 	
+  bool test_conflict(const Point  &p, Face_handle fh) const;
+  bool update_negative_faces(Vertex_handle v=Vertex_handle());
+	
   //REMOVAL
   void remove_degree_3(Vertex_handle v, Face_handle f = Face_handle());
   void remove(Vertex_handle v);
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
   bool test_dim_down(Vertex_handle v);
-  bool test_dim_up(Point p);
+  bool test_dim_up(const Point &p)const;
   void fill_hole_regular(std::list<Edge> & hole);
 
 
   //TEMPLATE MEMBERS
   //----------------------------------------------------------------------HOLE APPROACH
-	
-		
-template < class InputIterator >
-int insert(InputIterator first, InputIterator last)
-  {
-      int n = number_of_vertices();
-
-      std::vector<Point> points (first, last);
-      std::random_shuffle (points.begin(), points.end());
-      //~ spatial_sort (points.begin(), points.end(), geom_traits());
-      spatial_sort (points.begin(), points.end());
-
-      Face_handle hint;
-      for (typename std::vector<Point>::const_iterator p = points.begin(),
-		      end = points.end();
-              p != end; ++p)
-          hint = insert (*p, hint)->face();
-
-      return number_of_vertices() - n;
-  }
-
-
-template<class FaceIt>
-void delete_faces(FaceIt face_begin, FaceIt face_end)
-	{
-		FaceIt fit=face_begin;
-		for(;fit!=face_end;++fit)
-		{
-			delete_face(*fit);
-		}
-	}	
-	
-	
-	
 	
 template <class Stream>
 Stream &write_vertices(Stream &out,std::vector<Vertex_handle> &t)
@@ -198,11 +167,11 @@ Stream &write_vertices(Stream &out,std::vector<Vertex_handle> &t)
     return out;
   }
 	
-  template <class Stream>
-  Stream &write_triangulation_to_off_2(Stream &out,Stream &out2){
+template <class Stream>
+ Stream &write_triangulation_to_off_2(Stream &out,Stream &out2){
 
     // Points of triangulation
-    for (Faces_iterator it = this->_tds.face_iterator_base_begin(); it != faces_end(); it++) {  
+ for (Faces_iterator it = this->_tds.face_iterator_base_begin(); it != faces_end(); it++) {  
     if(!it->is_negative()
        /*(t.orientation(it->vertex(0)->point(),it->vertex(1)->point(),it->vertex(2)->point())==1)*/
        ){//assert(orientation(it)==POSITIVE);
@@ -306,18 +275,31 @@ Stream &write_edges_to_off(Stream &out,FaceIt face_begin, FaceIt face_end){
   return out;
 }
 
-
+template < class InputIterator >
+int insert(InputIterator first, InputIterator last)
+{
+	int n = number_of_vertices();
+		
+	std::vector<Point> points (first, last);
+	std::random_shuffle (points.begin(), points.end());
+		//~ spatial_sort (points.begin(), points.end(), geom_traits());
+	spatial_sort (points.begin(), points.end());
+		
+	Face_handle hint;
+	for (typename std::vector<Point>::const_iterator p = points.begin(),end = points.end(); p != end; ++p)
+		hint = insert (*p, hint)->face();
+		
+	return number_of_vertices() - n;
+}
 
 template <class OutputItFaces, class OutputItBoundaryEdges> 
 std::pair<OutputItFaces,OutputItBoundaryEdges>
 get_conflicts_and_boundary(const Point  &p, OutputItFaces fit, OutputItBoundaryEdges eit, 
-						   Face_handle start ) const {
+						   Face_handle fh ) const {
 		CGAL_triangulation_precondition( dimension() == 2);
-	    Face_handle fh = start;
-	   CGAL_triangulation_precondition(test_conflict(p,fh));  
+	    CGAL_triangulation_precondition(test_conflict(p,fh));  
 		
-		Face_handle tmp;
-	   *fit++ = fh; //put fh in OutputItFaces
+		*fit++ = fh; //put fh in OutputItFaces
 		fh->set_in_conflict_flag(1);
 				std::pair<OutputItFaces,OutputItBoundaryEdges>
 				pit = std::make_pair(fit,eit);
@@ -351,65 +333,84 @@ propagate_conflicts (const Point  &p, Face_handle fh, int i,
 		}
 		return pit;
 	}
-	
 
 	
 };
 
 //----------------------------------------------------------------------CHECK---------------------------------------------------------------//
+template <class Gt, class Tds>
+bool
+Regular_triangulation_on_sphere_2<Gt, Tds>::
+is_plane()const{
+	bool plane = true;
+	
+	if(dimension()==2)
+		return false;
+	
+	if(number_of_vertices() > 3){
+	Vertices_iterator it1 = vertices_begin(),
+	it2(it1), it3(it1), it4(it1);
+	++it2;
+	++it3; ++it3;
+	++it4; ++it4; ++it4;
+	 while( it4 != vertices_end()) {
+		Orientation s = Base ::power_test(  it1->point(),it2->point(),it3->point(), it4->point()); 
+		plane = plane && s == ON_ORIENTED_BOUNDARY ;
+		++it1 ; ++it2; ++it3;++it4;
+		 if (!plane)
+			 return plane;
+	 }return true;
+	}
+	
+	
+	if(number_of_vertices()==3)
+		return true;
+		
+	
+	
+	return plane;
+}
+	
+		
+		
+	
+	
+	
+	
+	
 template < class Gt, class Tds >
 bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
-  is_valid(bool verbose, int level ) const //int level
+is_valid(bool verbose, int level ) const //int level
 {
 	bool result = true;
 	
 	if ( !this-> _tds.is_valid(verbose,level) ) {
 		if (verbose)
 			std::cerr << "invalid data structure" << std::endl;
-		CGAL_triangulation_assertion(false);
-	return false;
+	 CGAL_triangulation_assertion(false);
+	 return false;
 	}
-	
-		
-	for(Faces_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
-		result = result &&  is_valid_face(fit, verbose, level);
-		CGAL_triangulation_assertion(result);
-	}
-	  
-  for(Vertices_iterator vit = vertices_begin(); vit != vertices_end(); ++vit) {
-    result = result && is_valid_vertex(vit);
-  }CGAL_triangulation_assertion(result);
+			
+	for(Faces_iterator fit = faces_begin(); fit != faces_end(); ++fit) 
+		is_valid_face(fit, verbose, level);
+			  
+   for(Vertices_iterator vit = vertices_begin(); vit != vertices_end(); ++vit) 
+        is_valid_vertex(vit);
+
 
    switch(dimension()) {
    case 0 :
      break;
    case 1:
-      if (number_of_vertices() > 3 ) {
-       Vertices_iterator it1 = vertices_begin(),
-	 it2(it1), it3(it1), it4(it1);
-       ++it2;
-       ++it3; ++it3;
-		  ++it4; ++it4; ++it4;
-       while( it4 != vertices_end()) {
-	  
-		   Orientation s = Base ::power_test(  it1->point(),it2->point(),it3->point(), it4->point()); 
-	 result = result && s == ON_ORIENTED_BOUNDARY ;
-	 CGAL_triangulation_assertion(result);
-		   ++it1 ; ++it2; ++it3;++it4;
-       }
-      }
-     break;
+	CGAL_triangulation_assertion(this->is_plane()); 
+		   break;
    case 2 :
     for(Faces_iterator it=faces_begin(); it!=faces_end(); it++) {
       Orientation s = orientation(it->vertex(0)->point(),  it->vertex(1)->point(), it->vertex(2)->point());
 	  result = result && ( s == LEFT_TURN || it->is_negative());	
-		
-      CGAL_triangulation_assertion(result);
-      
-
-     
-    }
+	CGAL_triangulation_assertion(result);
+	}
    
      result = result && (number_of_faces() == 2*(number_of_vertices()) - 4 );
      CGAL_triangulation_assertion( result);
@@ -417,10 +418,9 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
    }
   
    // in any dimension
-   if(verbose) {
-     std::cerr << " number of vertices " << number_of_vertices() << "\t"
-	      	       << std::endl;
-   }
+   if(verbose) 
+     std::cerr << " number of vertices " << number_of_vertices() << "\t" << std::endl;
+   
      CGAL_triangulation_assertion( result);
    return result;
 }
@@ -431,20 +431,19 @@ bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 is_valid_vertex(Vertex_handle vh, bool verbose, int level) const
 {
-  bool result = true;
-    result = result && vh->face()->has_vertex(vh);
-	    
-     if ( !result ) 
-	      if(verbose) {
-       std::cerr << " from is_valid_vertex " << std::endl;
+	bool result = vh->face()->has_vertex(vh);
+	if ( !result ) {
+	 if(verbose) {
+	   std::cerr << " from is_valid_vertex " << std::endl;
        std::cerr << "normal vertex " << &(*vh) << std::endl;
        std::cerr << vh->point() << " " << std::endl;
        std::cerr << "vh_>face " << &*(vh->face())  << " " << std::endl;
-		 show_face(vh->face());
+	  show_face(vh->face());
      }
-
-  CGAL_triangulation_assertion(result);
-  return result;
+  CGAL_triangulation_assertion(false);
+  return false;
+	}
+return true;
 }
 
 template < class Gt, class Tds >
@@ -452,23 +451,19 @@ bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 is_valid_face(Face_handle fh, bool verbose, int level) const
 {
-  bool result = true;
-  CGAL_triangulation_assertion(result);
-		
-  result = fh->get_in_conflict_flag()==0;
-
-  typename Vertex_list::iterator vlit = fh->vertex_list().begin(),
-	                            vldone = fh->vertex_list().end();
-  for (; vlit != vldone; vlit++)    {
-	  result = result && Base::power_test(fh, (*vlit)->point()) == ON_NEGATIVE_SIDE;
+   bool result = fh->get_in_conflict_flag()==0;
+  	for (int i = 0; i<+2; i++)    {
+	   Orientation test = Base::power_test(fh, fh->vertex(i)->point());
+	  result = result && test == ON_ORIENTED_BOUNDARY;
 	  CGAL_triangulation_assertion(result); 
-  
-    result = result && ((*vlit)->face() == fh);
-	  if (!result)   
-		  if (verbose)
-			  show_face(fh);
+	}
+	if (!result)   
+		if (verbose){
+			std::cerr<<" from is_valid_face "<<std::endl;
+			std::cerr<<" face "<<std::endl;
+			show_face(fh);
+		}
     CGAL_triangulation_assertion(result); 
-  }
   return result;
 }
 
@@ -483,6 +478,8 @@ test_conflict(const Point  &p, Face_handle fh) const
 
 //----------------------------------------------------------------------INSERTION-------------------------------------------------------------//
 
+	
+	
 template < class Gt, class Tds >
 typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_on_sphere_2<Gt,Tds>::
@@ -490,16 +487,18 @@ insert(const Point &p, Face_handle start)
 {
   Locate_type lt;
   int li;
-  Face_handle loc = locate(p, lt, li, start);
+  Face_handle loc = Base::locate(p, lt, li, start);
+	
   return insert_hole_approach_2(p, lt, loc, li);
- 
 }
 
+	
 template < class Gt, class Tds>
 typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_on_sphere_2<Gt, Tds>::
 insert_in_plane_triangulation(const Point &p){
-		
+	
+	CGAL_triangulation_precondition(!test_dim_up(p));
 	CGAL_triangulation_precondition(dimension()==1);
 		Face_handle loc;
 		Edges_iterator eit=edges_begin();
@@ -509,10 +508,9 @@ insert_in_plane_triangulation(const Point &p){
 			Vertex_handle v2 = f -> vertex(1);
 			if(orientation(v1->point(), v2->point(), p)==RIGHT_TURN){
 				loc = f;
-				break;
+			break;
 				
-			}
-			eit++;
+			} eit++;
 		}while( eit!=edges_end());
 		
 		Vertex_handle v0 = loc->vertex(0);
@@ -545,7 +543,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 insert_first(const Point& p)
 {
 	CGAL_triangulation_precondition(number_of_vertices() == 0);
-	Vertex_handle v =this-> _tds.insert_first();
+	Vertex_handle v =this->_tds.insert_first();
 	v->set_point(p);
 	return  v;
 }
@@ -556,8 +554,7 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 insert_second(const Point& p)
 {
 	CGAL_triangulation_precondition(number_of_vertices() == 1);
-		
-	Vertex_handle v =this-> _tds.insert_second();
+	Vertex_handle v =this->_tds.insert_second();
 	v->set_point(p);
 	return v;
 }
@@ -570,18 +567,20 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) {
 		
 	//!!!!!!!!!!!!TODO point is valide!!!!!!!!!!!!!!!!!!!!!!!!
-	    Vertex_handle v;
-		if( dimension() == -2)
+	
+	Vertex_handle v;
+	switch (dimension()){
+		case -2 :
 			return insert_first(p);
 		
-		if( dimension() == -1)
+		case -1:
 			return insert_second(p);
 				
-		if( dimension() == 0)
+		case 0:
 			return insert_outside_affine_hull_regular(p);
 				
 		
-		if(dimension() == 1){
+		case 1:
 			if(test_dim_up(p)){
 			Face_handle f=edges_begin()->first;
 			Vertex_handle v1=f->vertex(0);
@@ -591,24 +590,17 @@ insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) 
 			v = insert_outside_affine_hull_regular(p,orient==COLLINEAR);
 			return v;
 			} 
-			
 			else {
 			 v= insert_in_plane_triangulation(p);	
-				return v;
-		}
-		}
-		
-		if (dimension()==2){
+			return v;
+		    }
+			
+		case 2:
 			std::vector<Face_handle> faces;
 			std::vector<Edge> edges;
-			
-			
-			
 			faces.reserve(32);
 			edges.reserve(32);
-			
-			
-						
+									
 			get_conflicts_and_boundary(p, std::back_inserter(faces), std::back_inserter(edges), loc);
 			v =this->_tds.star_hole(edges.begin(), edges.end());
 			v->set_point(p);
@@ -618,11 +610,9 @@ insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) 
 			//if( lt != FACE )
 				update_negative_faces(v);
 												
-			return v;
-		}
-	}
-
-	
+			return v;		
+	      }
+}	
 	
 template <class Gt, class Tds >
 typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
@@ -737,16 +727,15 @@ update_negative_faces(Vertex_handle v)
 
     Face_circulator fc=incident_faces(v,v->face());
     Face_circulator done(fc);
-    //bool neg_found=false;
-	
+    	
     do{
       if(orientation(fc)==NEGATIVE){
-	fc->negative()=true;
-	neg_found=true;
-	this->_negative=fc;
+	     fc->negative()=true;
+	     neg_found=true;
+	     this->_negative=fc;
       }
       else{
-	fc->negative()=false;
+	     fc->negative()=false;
       }
     }while(++fc!=done);
 	
@@ -777,15 +766,15 @@ Regular_triangulation_on_sphere_2<Gt,Tds>::
 remove(Vertex_handle v )
 {
 CGAL_triangulation_precondition( v != Vertex_handle() );
-	if(number_of_vertices()<=3){
+	if(number_of_vertices()<=3)
 		this->_tds.remove_dim_down(v);
-	}
-	else if(dimension()==2) {
+	
+	else if(dimension()==2) 
 		remove_2D (v);
-	}
-	else {
+	
+	else 
 		remove_1D(v);
-	}
+	
 }
 
 	
@@ -817,7 +806,7 @@ remove_2D(Vertex_handle v)
     std::list<Edge> hole;
     make_hole(v, hole);
     fill_hole_regular(hole);
-    delete_vertex(v);
+    //delete_vertex(v);
   }
   return;   
 }
@@ -852,7 +841,7 @@ test_dim_down(Vertex_handle v)
 template <class Gt, class Tds >
 bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
-test_dim_up(Point p){
+test_dim_up(const Point &p) const{
 	// dimension of triangulation increase from 1 to 2 iff the new vertex in not coplanar with the old vertices
 		
 	//first three points of triangulation

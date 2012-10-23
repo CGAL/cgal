@@ -23,12 +23,13 @@
 #include <CGAL/Random.h>
 
 #include <CGAL/spatial_sort.h>
+#include <CGaL/Triangulation_2.h>
 
 
 
 //TO DO
-//oriented_side
-//insertion, location, removal dim 0,1
+
+//, location,  dim 0,1
 //March locate 2D improve code and cases Vertex and Edge of boundary
 //Line face circulator & marchlocate LFC
 //includes_edge
@@ -58,10 +59,14 @@ class Triangulation_on_sphere_2
   friend std::istream& operator>> <>
                (std::istream& is, Triangulation_on_sphere_2 &tr);
   typedef Triangulation_on_sphere_2<Gt,Tds>             Self;
+	
 
 public:
   typedef Tds                                     Triangulation_data_structure;
   typedef Gt                                      Geom_traits;
+typedef Triangulation_2<Gt, Tds>						Triangulation_2;	
+	
+	
   typedef typename Geom_traits::Point_2           Point;
   typedef typename Geom_traits::Orientation_2     Orientation_2;
   typedef typename Geom_traits::Coradial_sphere_2 Coradial_sphere_2;
@@ -158,8 +163,8 @@ size_type number_of_faces() const{return _tds.number_of_faces();}
   Oriented_side power_test(const Point &p, const Point &r) const;
   Oriented_side power_test(const Face_handle &f,const Point &p) const;
   Oriented_side power_test(const Face_handle& f, int i, const Point &p) const;
-  Oriented_side oriented_side(const Point &p0, const Point &p1,const Point &p2, const Point &p) const;
-  Bounded_side bounded_side(const Point &p0, const Point &p1,const Point &p2, const Point &p) const;
+  //Oriented_side oriented_side(const Point &p0, const Point &p1,const Point &p2, const Point &p) const;
+  //Bounded_side bounded_side(const Point &p0, const Point &p1,const Point &p2, const Point &p) const;
   Oriented_side oriented_side(Face_handle f, const Point &p) const;
   bool xy_equal(const Point& p, const Point& q) const;
   bool collinear_between(const Point& p, const Point& q, const Point& r) const;
@@ -258,13 +263,8 @@ size_type number_of_faces() const{return _tds.number_of_faces();}
   {
     FaceIt fit=face_begin;
     for(;fit!=face_end;++fit)
-    {
-      delete_face(*fit);
-    }
+        delete_face(*fit);    
   }
-	
-
-
 };
 
 
@@ -331,8 +331,6 @@ swap(Triangulation_on_sphere_2 &tr)
   tr._gt = t; 
 }
 
-//ACCESS FUNCTION
-
 //CHECKING
 
 template <class Gt, class Tds >
@@ -397,10 +395,7 @@ is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const
 template <class Gt, class Tds >
 inline bool 
 Triangulation_on_sphere_2<Gt, Tds>::
-is_face(Vertex_handle v1, 
-	Vertex_handle v2, 
-	Vertex_handle v3,
-	Face_handle &fr) const
+is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,Face_handle &fr) const
 {
   return _tds.is_face(v1, v2, v3, fr);
 }
@@ -410,9 +405,7 @@ is_face(Vertex_handle v1,
 template <class Gt, class Tds >    
 typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::
-march_locate_1D(const Point& t,
-		Locate_type& lt,
-		int& li) const
+march_locate_1D(const Point& t, Locate_type& lt, int& li) const
 {
   Face_handle f = edges_begin()->first;
 
@@ -542,10 +535,6 @@ march_locate_2D(Face_handle c,
 		  }
 	  }
 
-		
-
-  
-    
     // Instead of testing c's edges in a random order we do the following
     // until we find a neighbor to go further:
     // As we come from prev we do not have to check the edge leading to prev
@@ -855,154 +844,48 @@ orientation(const Face_handle f) const
   return  orientation(f->vertex(0)->point(),f->vertex(1)->point(),f->vertex(2)->point());
 }
 
-	
-	
-/*	
-template <class Gt, class Tds >
+template < class Gt, class Tds >
 Oriented_side
-Triangulation_on_sphere_2<Gt, Tds>::
-oriented_side(const Point &p0, const Point &p1,const Point &p2, const Point &p) const {
-  Orientation o1 = orientation(p0, p1, p),
-              o2 = orientation(p1, p2, p),
-              o3 = orientation(p2, p0, p);
-
-  if(orientation(p0, p1, p2)==POSITIVE){
-    if(o1==POSITIVE)
-      if(o2==POSITIVE)
-	     if(o3==POSITIVE)
-	  return ON_POSITIVE_SIDE;
-
- if (o1 == COLLINEAR){
-      if (o2 == COLLINEAR ||  o3 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
-      return ON_NEGATIVE_SIDE;
-    }
-    if (o2 == COLLINEAR){
-      if (o1 == COLLINEAR ||  o3 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
-      return ON_NEGATIVE_SIDE;
-    }
-    if (o3 == COLLINEAR){
-      if (o2 == COLLINEAR ||  o1 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
-      return ON_NEGATIVE_SIDE;
-    }
-	  
-	  if(o1 == COLLINEAR || o2==COLLINEAR || o3==COLLINEAR)
-		  return ON_ORIENTED_BOUNDARY;
-    return ON_NEGATIVE_SIDE;
-	  
-  }else{
-    if(o1==POSITIVE && o2==POSITIVE && o3==POSITIVE)
-	  return ON_POSITIVE_SIDE;
-
-    if(o1==NEGATIVE && o2==NEGATIVE && o3==NEGATIVE )
-      return ON_NEGATIVE_SIDE;
-    else
-      return ON_NEGATIVE_SIDE;
-  }
-}*/
+Triangulation_on_sphere_2<Gt,Tds>::
+power_test(const Face_handle &f, const Point &p) const
+{
+return power_test(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(),p);
+}
 	
-	
-	
-	template < class Gt, class Tds >
-	Oriented_side
-	Triangulation_on_sphere_2<Gt,Tds>::
-	power_test(const Face_handle &f, const Point &p) const
-	{
-		return power_test(f->vertex(0)->point(),
-						  f->vertex(1)->point(),
-						  f->vertex(2)->point(),p);
-	}
-	
-	template < class Gt, class Tds >
-	Oriented_side
-	Triangulation_on_sphere_2<Gt,Tds>::
-	power_test(const Face_handle& f, int i,
-			   const Point &p) const
-	{
-		CGAL_triangulation_precondition (
-										 orientation(f->vertex(ccw(i))->point(),
-													 f->vertex( cw(i))->point(),
-													 p)
+template < class Gt, class Tds >
+Oriented_side
+Triangulation_on_sphere_2<Gt,Tds>::
+power_test(const Face_handle& f, int i, const Point &p) const
+{
+	CGAL_triangulation_precondition ( orientation(f->vertex(ccw(i))->point(),
+												  f->vertex( cw(i))->point(),  p)
 										 == COLLINEAR);
-		return  power_test(f->vertex(ccw(i))->point(),
-						   f->vertex( cw(i))->point(),
-						   p);
-	}
 	
-	template < class Gt, class Tds >
-	inline
-	Oriented_side
-	Triangulation_on_sphere_2<Gt,Tds>::
-	power_test(const Point &p,
-			   const Point &q,
-			   const Point &r,
-			   const Point &s) const
-	{
-		return geom_traits().power_test_2_object()(p,q,r,s);
-	}
+		return  power_test(f->vertex(ccw(i))->point(), f->vertex( cw(i))->point(), p);
+}
 	
-	template < class Gt, class Tds >
-	inline
-	Oriented_side
-	Triangulation_on_sphere_2<Gt,Tds>::
-	power_test(const Point &p,
-			   const Point &q,
-			   const Point &r) const
-	{
-		if(number_of_vertices()==2)
-			if(orientation_1(p,q)==COLLINEAR)
+template < class Gt, class Tds >
+inline
+Oriented_side
+Triangulation_on_sphere_2<Gt,Tds>::
+power_test(const Point &p, const Point &q, const Point &r, const Point &s) const
+{
+	return geom_traits().power_test_2_object()(p,q,r,s);
+}
+	
+template < class Gt, class Tds >
+inline
+Oriented_side
+Triangulation_on_sphere_2<Gt,Tds>::
+power_test(const Point &p, const Point &q, const Point &r) const
+{
+	if(number_of_vertices()==2)
+		if(orientation_1(p,q)==COLLINEAR)
 				return ON_POSITIVE_SIDE;
-		return geom_traits().power_test_2_object()(p,q,r);
-	}
+	return geom_traits().power_test_2_object()(p,q,r);
+}
 	
 		
-/*
-template <class Gt, class Tds >
-Bounded_side
-Triangulation_on_sphere_2<Gt, Tds>::
-bounded_side(const Point &p0, const Point &p1,
-	     const Point &p2, const Point &p) const
-{
-  // return position of point p with respect to triangle p0p1p2, depends on the orientation of the vertives
-  CGAL_triangulation_precondition( orientation(p0, p1, p2) != COLLINEAR);
-  Orientation o1 = orientation(p0, p1, p),
-              o2 = orientation(p1, p2, p),
-              o3 = orientation(p2, p0, p);
-    
-  if (o1 == COLLINEAR){
-    if (o2 == COLLINEAR ||  o3 == COLLINEAR) return ON_BOUNDARY;
-    if (o2 == ON_NEGATIVE_SIDE && o3 == ON_NEGATIVE_SIDE)        return ON_BOUNDARY;
-    return ON_UNBOUNDED_SIDE;
-  }
-
-  if (o2 == COLLINEAR){
-    if (o3 == COLLINEAR)                     return ON_BOUNDARY;
-    if (o3 == ON_NEGATIVE_SIDE && o1 == ON_NEGATIVE_SIDE)        return ON_BOUNDARY;
-    return ON_UNBOUNDED_SIDE;
-  }
-
-  if (o3 == COLLINEAR){
-    if (o1 == ON_NEGATIVE_SIDE && o2 == ON_NEGATIVE_SIDE)        return ON_BOUNDARY;
-    return ON_UNBOUNDED_SIDE;
-  }
-
-  // from here none ot, o1, o2 and o3 are known to be non null
-    if (o1 == o2 && o2 == o3)  return ON_BOUNDED_SIDE;
-    return ON_UNBOUNDED_SIDE;
-}
-
-
-template <class Gt, class Tds >
-Oriented_side
-Triangulation_on_sphere_2<Gt, Tds>::
-oriented_side(Face_handle f, const Point &p) const
-{
-  CGAL_triangulation_precondition ( dimension()==2); 
-  return oriented_side(f->vertex(0)->point(),
-		       f->vertex(1)->point(),
-		       f->vertex(2)->point(),
-		       p);
-}
-*/
 template <class Gt, class Tds >
 bool
 Triangulation_on_sphere_2<Gt, Tds>::
@@ -1015,8 +898,7 @@ template <class Gt, class Tds >
 bool
 Triangulation_on_sphere_2<Gt, Tds>::
 collinear_between(const Point& p, const Point& q, const Point& r) const
-{
-  // return true if r lies inside the cone defined by trait.sphere, p and q
+{  // return true if r lies inside the cone defined by trait.sphere, p and q
   return geom_traits().inside_cone_2_object()(p,q,r);
 }
 //------------------------------------------------------------------------------DEBUG-------------------------------------------------
@@ -1026,6 +908,7 @@ void
 Triangulation_on_sphere_2<Gt, Tds>::
 show_all() const
 {
+	//Triangulation_2::show_all();
   std::cerr<< "AFFICHE TOUTE LA TRIANGULATION :"<<std::endl;
   std::cerr << std::endl<<"====> "<< this; 
   std::cerr <<  " dimension " <<  dimension() << std::endl;
@@ -1071,7 +954,8 @@ number_of_negative_faces()
 {
   int nb=0;
   for(Faces_iterator it=faces_begin();it!=faces_end();++it)
-    {if(it->is_negative())nb++;}
+    if(it->is_negative())
+		nb++;
   return nb;
 }
 
@@ -1152,36 +1036,10 @@ template <class Gt, class Tds >
 void
 Triangulation_on_sphere_2<Gt, Tds>::
 make_hole ( Vertex_handle v, std::list<Edge> & hole)
-{                
-  std::list<Face_handle> to_delete;
-
-  Face_handle  f, fn;
-  int i, in ;
-  Vertex_handle  vv;
-      
-  Face_circulator fc = incident_faces(v);
-  Face_circulator done(fc);
-  do {
-    f = fc; fc++;
-    i = f->index(v);
-    fn = f->neighbor(i);
-    in = fn->index(f);
-    vv = f->vertex(cw(i));
-    if( vv->face()==  f) vv->set_face(fn);
-    vv = f->vertex(ccw(i));
-    if( vv->face()== f) vv->set_face(fn);
-    fn->set_neighbor(in, Face_handle());
-    hole.push_back(Edge(fn,in));
-    to_delete.push_back(f);
-  }
-  while(fc != done);
-
-  while (! to_delete.empty()){
-    delete_face(to_delete.front());
-    to_delete.pop_front();
-  }
-  return;
+{     
+	return this->_tds.make_hole(v, hole);
 }
+	
 template <class Gt, class Tds >    
 inline
 void
