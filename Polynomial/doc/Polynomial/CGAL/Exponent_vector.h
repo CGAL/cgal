@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialClasses
 
 For a given (multivariate) monomial the vector of its exponents is called the 
 exponent vector. The class `Exponent_vector` is meant to represent 

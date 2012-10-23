@@ -1,6 +1,12 @@
 /// \defgroup PkgPolynomial Polynomial Reference
 /// \defgroup PkgPolynomialConcepts Concepts
 /// \ingroup PkgPolynomial
+
+/// \defgroup PkgPolynomialClasses Classes
+/// \ingroup PkgPolynomial
+
+/// \defgroup PkgPolynomialFunctions Functions
+/// \ingroup PkgPolynomial
 /*!
 \addtogroup PkgPolynomial
 \todo check generated documentation

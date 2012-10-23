@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialClasses
 
 A model of concept `PolynomialTraits_d` 
 

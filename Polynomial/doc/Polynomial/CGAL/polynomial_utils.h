@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `canonicalize` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -23,7 +23,7 @@ canonicalize(const Polynomial_d& p);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `compare` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -42,7 +42,7 @@ compare(const Polynomial_d& p, const Polynomial_d& q);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `degree` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -65,7 +65,7 @@ index = Polynomial_traits_d<Polynomial_d>::d-1);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `degree_vector` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -87,7 +87,7 @@ degree_vector(const Polynomial_d& p);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `differentiate` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -110,7 +110,7 @@ index = Polynomial_traits_d<Polynomial_d>::d-1 );
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `evaluate_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -135,7 +135,7 @@ Polynomial_traits_d<Polynomial_d>::Coefficient_type v);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `evaluate` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -158,7 +158,7 @@ Polynomial_traits_d<Polynomial_d>::Coefficient_type x);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `gcd_up_to_constant_factor` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -180,7 +180,7 @@ gcd_up_to_constant_factor(const Polynomial_d& p, const Polynomial_d& q);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `get_coefficient` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -203,7 +203,7 @@ get_coefficient(const Polynomial_d& p, int i);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `get_innermost_coefficient` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -226,7 +226,7 @@ get_innermost_coefficient(const Polynomial_d& p, Exponent_vector ev);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `innermost_leading_coefficient` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -249,7 +249,7 @@ innermost_leading_coefficient(const Polynomial_d& p);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `integral_division_up_to_constant_factor` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -271,7 +271,7 @@ integral_division_up_to_constant_factor(const Polynomial_d& p, const Polynomial_
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `invert` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -293,7 +293,7 @@ invert(const Polynomial_d& p, int index = Polynomial_traits_d<Polynomial_d>::d-1
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `is_square_free` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -315,7 +315,7 @@ is_square_free(const Polynomial_d& p);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `is_zero_at_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -338,7 +338,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `is_zero_at` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -361,7 +361,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `leading_coefficient` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -383,7 +383,7 @@ leading_coefficient(const Polynomial_d& p);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `make_square_free` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -405,7 +405,7 @@ make_square_free(const Polynomial_d& p);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `move` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -427,7 +427,7 @@ move(const Polynomial_d& p, int i, int j);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `multivariate_content` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -449,7 +449,7 @@ multivariate_content(const Polynomial_d& p);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `negate` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -471,7 +471,7 @@ negate(const Polynomial_d& p, int index = Polynomial_traits_d<Polynomial_d>::d-1
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 \brief computes the number of distinct real roots of \f$f\f$.
 
@@ -519,7 +519,7 @@ template<typename Polynomial_d>
 int number_of_real_roots(Polynomial_d f);
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 \brief computes the number of distinct real roots of \f$ f\f$ whose principal
 Sturm-Habicht coefficients are passed by the iterator range.
@@ -569,7 +569,7 @@ int number_of_real_roots(InputIterator start,InputIterator end);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `permute` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -589,7 +589,7 @@ permute(const Polynomial_d& p, InputIterator begin, InputIterator end );
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 computes the polynomial subresultants of \f$ p\f$ and \f$ q\f$, 
 with respect to the outermost variable. Each element is of type
@@ -614,7 +614,7 @@ OutputIterator out);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 computes the polynomial subresultants of \f$ p\f$ and \f$ q\f$, 
 `sres_out`, with respect to the outermost variable, and
@@ -646,7 +646,7 @@ OutputIterator3 coQ_out);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 computes the principal Sturm-Habicht coefficients of \f$ f\f$
 with respect to the outermost variable. Each element is of type
@@ -671,7 +671,7 @@ OutputIterator out);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 computes the principal subresultants of \f$ p\f$ and \f$ q\f$, 
 with respect to the outermost variable. Each element is of type
@@ -696,7 +696,7 @@ OutputIterator out);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `pseudo_division` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -718,7 +718,7 @@ Polynomial_d& q, Polynomial_d& r, Polynomial_traits_d<Polynomial_d>::Coefficient
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `pseudo_division_quotient` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -741,7 +741,7 @@ pseudo_division_quotient(const Polynomial_d& p, const Polynomial_d& q);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `pseudo_division_remainder` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -762,7 +762,7 @@ pseudo_division_remainder(const Polynomial_d& p, const Polynomial_d& q);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `resultant` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -783,7 +783,7 @@ resultant(const Polynomial_d& p, const Polynomial_d& q);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `scale_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -808,7 +808,7 @@ int index = Polynomial_traits_d<Polynomial_d>::d-1);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `scale` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -832,7 +832,7 @@ int index = Polynomial_traits_d<Polynomial_d>::d-1);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `shift` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -852,7 +852,7 @@ shift(const Polynomial_d& p, int i, int index = Polynomial_traits_d<Polynomial_d
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `sign_at_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -875,7 +875,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `sign_at` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -898,7 +898,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `square_free_factorize` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -922,7 +922,7 @@ OutputIterator it,
 Polynomial_traits_d<Polynomial>::Innermost_coefficient& a);
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `square_free_factorize` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -944,7 +944,7 @@ square_free_factorize(const Polynomial_d& p, OutputIterator it);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `square_free_factorize_up_to_constant_factor` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -966,7 +966,7 @@ square_free_factorize_up_to_constant_factor(const Polynomial_d& p, OutputIterato
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 computes the Sturm-Habicht-sequence of \f$ f\f$
 with respect to the outermost variable. Each element is of type
@@ -989,7 +989,7 @@ OutputIterator out);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 computes the Sturm-Habicht sequence of \f$ f\f$
 `stha_out`, with respect to the outermost variable, and
@@ -1020,7 +1020,7 @@ OutputIterator3 cofx_out);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `substitute_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -1045,7 +1045,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `substitute` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -1071,7 +1071,7 @@ const Polynomial_d& p, InputIterator begin, InputIterator end);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `swap` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -1093,7 +1093,7 @@ swap(const Polynomial_d& p, int i, int j);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `total_degree` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -1115,7 +1115,7 @@ total_degree(const Polynomial_d& p);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `translate_homogeneous` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -1141,7 +1141,7 @@ int index = Polynomial_traits_d<Polynomial_d>::d-1);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `translate` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -1166,7 +1166,7 @@ int index = Polynomial_traits_d<Polynomial_d>::d-1);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `univariate_content` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 
@@ -1188,7 +1188,7 @@ univariate_content(const Polynomial_d& p);
 
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialFunctions
 
 For a given `Polynomial_d` the function `univariate_content_up_to_constant_factor` adapts the 
 according functor in `Polynomial_traits_d<Polynomial_d>`. 

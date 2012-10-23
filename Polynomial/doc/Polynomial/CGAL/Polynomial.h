@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolynomial
+\ingroup PkgPolynomialClasses
 
 An instance of the data type `Polynomial` represents a 
 polynomial \f$ p = a_0 + a_1*x + ...a_i*x^i\f$ from the ring \f$ Coeff[x]\f$. 
