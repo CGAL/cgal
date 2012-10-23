@@ -126,7 +126,7 @@ In general a polynomial is constructed using the functor
 <UL>
 <LI>The polynomial is constructed from an iterator range with value type 
 `CGAL::Polynomial_traits_d::Coefficient_type`, 
-where the \f$ begin\f$ iterator refers to the constant term 
+where the `begin` iterator refers to the constant term 
 (constant with respect to the outermost variable). 
 <LI>The polynomial is constructed from an iterator range with value type 
 `std::pair< CGAL::Exponent_vector, CGAL::Polynomial_traits_d::Innermost_coefficient_type>`,
