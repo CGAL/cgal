@@ -4,7 +4,7 @@
 
 /*!
 \addtogroup PkgSkinSurface3
-\todo check generated documentation
+
 \PkgDescriptionBegin{3D Skin Surface Meshing,PkgSkinSurface3Summary}
 \PkgPicture{small.png}
 \PkgSummaryBegin
@@ -20,11 +20,7 @@
 \PkgShortInfoEnd
 \PkgDescriptionEnd
 
-Skin surfaces form a class of tangent continuous surfaces defined by a
-set of balls and a scalar called the shrink factor. The skin surface
-package constructs a triangular mesh isotopic to the skin surface,
-using the algorithm described in \cite cgal:kv-mssct-05. The mesh is
-stored in a `CGAL::Polyhedron_3`.
+
 
 */
 
