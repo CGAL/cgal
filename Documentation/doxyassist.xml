@@ -203,7 +203,7 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Surface_mesher.tag=../../CGAL.CGAL.3D-Surface-Mesh-Generation/html</item>
             <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>         
-            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+            <item>./tags/Miscellany.tag=../../CGAL.CGAL.Profiling-tools--Hash-Map--Union-find--Modifiers/html</item>
           </list>
         </doxygen>
       </project>
