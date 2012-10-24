@@ -2,13 +2,9 @@
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/Delaunay_hyperbolic_triangulation_2.h>
-
 #include <CGAL/Triangulation_hyperbolic_traits_2.h>
-
 #include <CGAL/Timer.h>
-
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Triangulation_hyperbolic_traits_2<K> Gt;
@@ -26,24 +22,38 @@ int main()
   
   std::ifstream f("points.cin");
   
+  // read radius of the enclosing sphere
+  FT r;
+  f >> r;
+  
   Point_2 p;
   while(f >> p) {
     pts.push_back(p);
   }
   f.close();
   
-  // Radius of the Poincare Disk
-  FT r = 100;
+  //
+  std::vector<Point_2> pts2;
+  std::ifstream f2("points2.cin");
+  f2 >> r;
   
-  timer.start();
+  while(f2 >> p) {
+    pts2.push_back(p);
+  }
+  f2.close();
   
   HDt hdt = HDt(Gt(r));
+  hdt.insert(pts2.begin(), pts2.end());
+  //
+  
+  timer.start();
   
   hdt.insert(pts.begin(), pts.end());
   
   timer.stop();
   
   std::cout << "H^2" << std::endl;
+  std::cout << "Radius: " << r << std::endl;
   std::cout << "Number of points: " << hdt.number_of_vertices() << std::endl;
   std::cout << "Time: " << timer.time() << std::endl;
   
