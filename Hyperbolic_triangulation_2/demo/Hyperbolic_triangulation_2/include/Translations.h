@@ -48,13 +48,13 @@ public:
   static Hyperbolic_isometry& c()
   {
     compute();
-    return g[2].first;
+    return g[5].first;
   }
   
   static Hyperbolic_isometry& d()
   {
     compute();
-    return g[3].first;
+    return g[6].first;
   }
   
   static const Vector& get_vector_of_translations()

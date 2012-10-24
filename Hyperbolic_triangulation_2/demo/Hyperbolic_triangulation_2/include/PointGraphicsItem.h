@@ -74,7 +74,7 @@ template <typename T>
 PointGraphicsItem<T>::PointGraphicsItem(Point p)
 : m_painter(0), m_p(p), bb(0,0,0,0), bb_initialized(false)
 {
-  setVertexPen(QPen(::Qt::green, 3.));
+  setVertexPen(QPen(::Qt::black, 4.));
   
   updateBoundingBox();
   setZValue(3);
