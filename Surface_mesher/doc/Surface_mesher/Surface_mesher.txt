@@ -288,7 +288,7 @@ guarantees nothing else.
 
 # Output # {#Surface_mesherOutput}
 
-This \cgal component also provides functions to write the reconstructed surface mesh to the Object File Format (OFF) \cite cgal:p-gmgv16-96 and to convert it to a polyhedron (when it is manifold): 
+This \cgal component also provides functions to write the reconstructed surface mesh to the %Object File Format (OFF) \cite cgal:p-gmgv16-96 and to convert it to a polyhedron (when it is manifold): 
 
 - `output_surface_facets_to_off()` 
 - `output_surface_facets_to_polyhedron()` 
