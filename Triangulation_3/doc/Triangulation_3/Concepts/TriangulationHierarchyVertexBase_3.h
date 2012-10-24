@@ -9,7 +9,7 @@ it, `Triangulation_hierarchy_3` has been deprecated as well.
 The vertex base used by `Triangulation_hierarchy_3` must provide 
 access to two vertex handles for linking between the levels of the hierarchy. 
 
-\refines ::TriangulationVertexBase_3 
+\refines `TriangulationVertexBase_3` 
 
 \hasModel CGAL::Triangulation_hierarchy_vertex_base_3 
 

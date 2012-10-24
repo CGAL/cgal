@@ -32,7 +32,7 @@ of the concept `RegularTriangulationCellBase_3`, which refines
 the concept `TriangulationCellBase_3` by adding 
 in the cell a container to store hidden points. 
 
-\refines ::TriangulationCellBase_3 
+\refines `TriangulationCellBase_3` 
 
 \hasModel CGAL::Regular_triangulation_cell_base_3 
 

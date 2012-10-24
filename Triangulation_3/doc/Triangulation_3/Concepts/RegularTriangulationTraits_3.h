@@ -8,7 +8,7 @@ The concept `RegularTriangulationTraits_3` is the first template parameter of th
 segments...) forming the triangulation together with a few geometric 
 predicates and constructions on these objects. 
 
-\refines ::TriangulationTraits_3 
+\refines `TriangulationTraits_3` 
 
 In addition to the requirements described for the traits class of 
   Triangulation_3, the geometric traits class of 

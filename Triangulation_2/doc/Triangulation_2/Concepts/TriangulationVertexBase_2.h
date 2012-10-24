@@ -13,7 +13,7 @@ The concept `TriangulationVertexBase_2` refines the concept
 adding geometric information: 
 the vertex base of a triangulation stores a point. 
 
-\refines ::TriangulationDSVertexBase_2 
+\refines `TriangulationDSVertexBase_2` 
 
 \hasModel `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
 

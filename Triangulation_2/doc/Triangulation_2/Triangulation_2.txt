@@ -139,9 +139,9 @@ is the complementary of the convex hull.
 In many applications, such as Kirkpatrick's hierarchy
 or incremental Delaunay construction, it is convenient to
 deal with only triangular faces. Therefore, 
-a fictitious vertex, called the `infinite vertex`
+a fictitious vertex, called the *infinite vertex*
 is added to the triangulation as well as
-`infinite edges` and `infinite faces` incident to it..
+*infinite edges* and *infinite faces* incident to it.
 Each infinite edge
 is incident to the infinite vertex and to a vertex of the convex hull.
 Each infinite face is incident to the infinite vertex
@@ -163,7 +163,7 @@ single point, is represented by two vertices that is
 topologically equivalent to a \f$ 0\f$-sphere.
 
 Note that
-the `infinite vertex` has no significant
+the *infinite vertex* has no significant
 coordinates and that no geometric predicate can be applied on it
 nor on an infinite face.
 

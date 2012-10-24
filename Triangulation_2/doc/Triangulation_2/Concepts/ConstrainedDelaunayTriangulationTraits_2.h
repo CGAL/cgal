@@ -15,8 +15,8 @@ The concept `ConstrainedDelaunayTriangulationTraits_2` refines both the concept
 `DelaunayTriangulationTraits_2` and the concept 
 `ConstrainedTriangulationTraits_2`. 
 
-\refines ::DelaunayTriangulationTraits_2 
-\refines ::ConstrainedTriangulationTraits_2 
+\refines `DelaunayTriangulationTraits_2` 
+\refines `ConstrainedTriangulationTraits_2` 
 
 \hasModel All \cgal Kernels
 \hasModel `CGAL::Projection_traits_xy_3<K>` 

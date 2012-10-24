@@ -13,7 +13,7 @@ has to be a model of the concept
 providing functionalities to deal with 
 constraints. 
 
-\refines ::TriangulationFaceBase_2 
+\refines `TriangulationFaceBase_2` 
 
 ### Types ###
 

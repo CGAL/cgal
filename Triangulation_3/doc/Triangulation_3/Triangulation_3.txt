@@ -51,7 +51,8 @@ is opposite to the vertex with the same index.
 \image html orient.gif "Orientation of a cell (3-dimensional case)."
 
 As in the underlying combinatorial triangulation (see
-Chapter \ref chapterTDS3), edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces)
+Chapter \ref chapterTDS3 "3D Triangulation Data Structure"), 
+edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces)
 are not explicitly 
 represented: a facet is given by a cell and an index (the facet
 `i` of a cell `c` is the facet of `c` that is opposite to

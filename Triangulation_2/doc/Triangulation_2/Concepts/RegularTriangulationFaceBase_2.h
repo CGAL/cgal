@@ -32,7 +32,7 @@ of the concept `RegularTriangulationFaceBase_2` , which refines
 the concept `TriangulationFaceBase_2` by adding 
 in the face a list to store hidden vertices. 
 
-\refines ::TriangulationFaceBase_2 
+\refines `TriangulationFaceBase_2` 
 
 \hasModel `CGAL::Regular_triangulation_face_base_2` 
 

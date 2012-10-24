@@ -4,7 +4,7 @@
 \cgalconcept
 
 The concept `WeightedPoint` is needed by 
-`Regular_triangulation_euclidean_traits_3`. 
+`CGAL::Regular_triangulation_euclidean_traits_3`. 
 It must fulfill the following requirements: 
 
 \hasModel `CGAL::Weighted_point`

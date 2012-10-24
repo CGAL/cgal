@@ -17,7 +17,7 @@ traits class is
 also required to provide additional types 
 to compute the squared distance between a point and a line 
 
-\refines ::TriangulationTraits_2 
+\refines `TriangulationTraits_2` 
 
 \hasModel All \cgal Kernels
 \hasModel `CGAL::Projection_traits_xy_3<K>` 
