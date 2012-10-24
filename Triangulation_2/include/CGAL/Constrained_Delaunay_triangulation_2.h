@@ -268,6 +268,7 @@ public:
 		      Face_handle fh, 
 		      int i,
 		      std::pair<OutputItFaces,OutputItBoundaryEdges>  pit)  const {
+#ifdef CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
    Face_handle fn = fh->neighbor(i);
    
    if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
@@ -278,6 +279,25 @@ public:
      pit = propagate_conflicts(p,fn,ccw(j),pit);
      pit = propagate_conflicts(p,fn,cw(j), pit);
    }
+#else // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+    std::stack<std::pair<Face_handle, int> > stack;
+    stack.push(std::make_pair(fh, i));
+    while(!stack.empty()) {
+      const Face_handle fh = stack.top().first;
+      const int i = stack.top().second;
+      stack.pop();
+      const Face_handle fn = fh->neighbor(i);
+      if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
+        *(pit.second)++ = Edge(fn, fn->index(fh));
+      } else {
+        *(pit.first)++ = fn;
+        int j = fn->index(fh);
+        stack.push(std::make_pair(fn, cw(j)));
+        stack.push(std::make_pair(fn,ccw(j)));
+      }
+    }
+#endif // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+
    return pit;
  }
 
@@ -384,7 +404,7 @@ public:
 template < class Gt, class Tds, class Itag >
 bool 
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-is_flipable(Face_handle f, int i, bool perturb) const
+is_flipable(Face_handle f, int i, bool perturb /* = true */) const
   // determines if edge (f,i) can be flipped 
 {
   Face_handle ni = f->neighbor(i); 
@@ -469,12 +489,28 @@ Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 propagating_flip(Face_handle& f,int i)
 // similar to the corresponding function in Delaunay_triangulation_2.h 
 { 
+#ifdef CGAL_TRIANGULATION_2_USE_OLD_PROPAGATING_FLIP
   if (!is_flipable(f,i)) return;
   Face_handle ni = f->neighbor(i); 
   flip(f, i); // flip for constrained triangulations
   propagating_flip(f,i); 
   i = ni->index(f->vertex(i)); 
   propagating_flip(ni,i); 
+#else // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATING_FLIP
+  const Vertex_handle v = f->vertex(i);
+  std::stack<Face_handle> stack;
+  stack.push(f);
+  while(!stack.empty()) {
+    Face_handle f = stack.top();
+    stack.pop();
+    const int i = f->index(v);
+    if (!is_flipable(f,i,true)) continue;
+    const Face_handle n = f->neighbor(i);
+    flip(f, i); // flip for constrained triangulations
+    stack.push(n);
+    stack.push(f);
+  }
+#endif // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATING_FLIP
 } 
 
  template < class Gt, class Tds, class Itag > 

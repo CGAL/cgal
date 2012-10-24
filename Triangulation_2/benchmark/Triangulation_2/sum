@@ -1,0 +1,15 @@
+#!/usr/bin/env perl
+
+use strict;
+
+my %sum;
+my $c;
+
+while(<>) {
+    /([0-9.]+) seconds \((.*)\)/ && { $sum{$2} += $1 }
+}
+
+foreach $c (sort { $sum{$a} cmp $sum{$b} } (keys(%sum)))
+{
+    print "$sum{$c} : $c\n"
+} 

@@ -27,6 +27,8 @@
 
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Small_stack.h>
+#include <vector>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
@@ -35,6 +37,10 @@
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+
+#ifdef CGAL_HAS_THREADS
+#  include <boost/thread/tss.hpp>
+#endif
 
 namespace CGAL {
 
@@ -175,7 +181,23 @@ public:
 #endif
 
 private:
-  void propagating_flip(Face_handle& f,int i);
+
+#ifdef BENCH_CLASS_LOCAL
+#if defined( BENCH_STACK )
+ mutable std::stack<Face_handle> stack;
+#elif defined( BENCH_VECTOR )
+mutable  std::vector<Face_handle> stack;
+#elif defined( BENCH_SMALL_VECTOR )
+ mutable Small_stack<Face_handle> stack;
+#elif defined( BENCH_ARRAY )
+ mutable Face_handle stack[10];
+ mutable int TOP;
+#else
+#error "Choose a stack type"
+#endif
+#endif // #ifdef BENCH_CLASS_LOCAL
+
+  void propagating_flip(const Face_handle f,const int i);
   void remove_2D(Vertex_handle v );
 
 // auxilliary functions for remove
@@ -438,10 +460,11 @@ private:
   template <class OutputItFaces, class OutputItBoundaryEdges> 
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   propagate_conflicts (const Point  &p,
-		       Face_handle fh, 
-		       int i,
+		       const Face_handle fh, 
+		       const int i,
 		       std::pair<OutputItFaces,OutputItBoundaryEdges>
 		       pit)  const {
+#ifdef CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
     Face_handle fn = fh->neighbor(i);
     if (! test_conflict(p,fn)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
@@ -451,6 +474,41 @@ private:
       pit = propagate_conflicts(p,fn,ccw(j),pit);
       pit = propagate_conflicts(p,fn,cw(j), pit);
     }
+#else // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+
+#ifdef CGAL_HAS_THREADS  
+    static boost::thread_specific_ptr< std::vector<std::pair<Face_handle,int> > > stack_safe_ptr;
+  if (stack_safe_ptr.get() == NULL) {
+    stack_safe_ptr.reset(new std::vector<std::pair<Face_handle,int> >());
+  }
+  std::vector<std::pair<Face_handle,int> >& stack=* stack_safe_ptr.get();
+#else
+  static std::stack<std::pair<Face_handle, int> > stack;
+#endif
+
+    stack.push_back(std::make_pair(fh, i));
+#ifdef CGAL_PROFILE
+    std::size_t S = 0;
+#endif
+    while(!stack.empty()) {
+#ifdef CGAL_PROFILE
+      S = (std::max)(S, stack.size());
+#endif
+      const Face_handle fh = stack.back().first;
+      const int i = stack.back().second;
+      stack.pop_back();
+      const Face_handle fn = fh->neighbor(i);
+      if (! test_conflict(p,fn)) {
+        *(pit.second)++ = Edge(fn, fn->index(fh));
+      } else {
+        *(pit.first)++ = fn;
+        int j = fn->index(fh);
+        stack.push_back(std::make_pair(fn, cw(j)));
+        stack.push_back(std::make_pair(fn,ccw(j)));
+      }
+    }
+  CGAL_HISTOGRAM_PROFILER("propagate_conflicts stack size ", S);
+#endif // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
     return pit;
   }
 
@@ -876,18 +934,100 @@ restore_Delaunay(Vertex_handle v)
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-propagating_flip(Face_handle& f,int i)
+propagating_flip(const Face_handle f, const int i)
 {
+
+#ifdef CGAL_TRIANGULATION_2_USE_OLD_PROPAGATING_FLIP
   Face_handle n = f->neighbor(i);
-      
   if ( ON_POSITIVE_SIDE != 
        side_of_oriented_circle(n,  f->vertex(i)->point(), true) ) {          
     return;
   }
   this->flip(f, i);
   propagating_flip(f,i);
-  i = n->index(f->vertex(i));
-  propagating_flip(n,i);
+  propagating_flip(n,n->index(f->vertex(i)));
+#else // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATING_FLIP
+  
+#ifndef BENCH_CLASS_LOCAL  
+#ifdef CGAL_HAS_THREADS  
+  static boost::thread_specific_ptr< std::vector<Face_handle> > stack_safe_ptr;
+  if (stack_safe_ptr.get() == NULL) {
+    stack_safe_ptr.reset(new std::vector<Face_handle>());
+  }
+  std::vector<Face_handle>& stack=* stack_safe_ptr.get();
+#else
+  static std::vector<Face_handle> stack;
+#endif
+#endif
+
+  
+#if  defined ( BENCH_CLASS_LOCAL ) && defined (BENCH_ARRAY )
+  const Vertex_handle v = f->vertex(i);
+
+  const Point& p = v->point();
+  stack[0] = f;
+  TOP=0;
+  while(TOP>-1) {
+    const Face_handle& f = stack[TOP];
+
+    const int i = f->index(v);
+    const Face_handle& n = f->neighbor(i);
+      
+    if ( ON_POSITIVE_SIDE != 
+         side_of_oriented_circle(n, p, true) ) {
+      --TOP;      
+    } else {
+      this->flip(f, i);
+      ++TOP;
+      stack[TOP] = n;
+    }
+  }
+#endif
+  
+#if ( ! defined ( BENCH_CLASS_LOCAL ) ) ||   defined( BENCH_VECTOR ) || defined( BENCH_SMALL_VECTOR )
+  const Vertex_handle& v = f->vertex(i);
+  const Point& p = v->point();
+
+  stack.push_back(f);
+  while(!stack.empty()) {
+    const Face_handle& f = stack.back();
+
+    const int i = f->index(v);
+    const Face_handle& n = f->neighbor(i);
+      
+    if ( ON_POSITIVE_SIDE != 
+         side_of_oriented_circle(n, p, true) ) {
+      stack.pop_back();      
+    } else {
+      this->flip(f, i);
+      stack.push_back(n);
+    }
+  }
+#endif
+  
+
+#if  defined ( BENCH_CLASS_LOCAL ) &&  defined( BENCH_STACK )
+  const Vertex_handle& v = f->vertex(i);
+  const Point& p = v->point();
+
+  stack.push(f);
+  while(!stack.empty()) {
+    const Face_handle& f = stack.top();
+
+    const int i = f->index(v);
+    const Face_handle& n = f->neighbor(i);
+      
+    if ( ON_POSITIVE_SIDE != 
+         side_of_oriented_circle(n, p, true) ) {
+      stack.pop();      
+    } else {
+      this->flip(f, i);
+      stack.push(n);
+    }
+  }
+#endif
+  
+#endif // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATING_FLIP
 }
 
 

@@ -1,0 +1,2 @@
+#!/bin/sh
+for o in STACK VECTOR SMALL_VECTOR ARRAY; do mkdir build-$o; pushd build-$o; cmake ..; cmake -D CMAKE_CXX_FLAGS:STRING="-DBENCH_CLASS_LOCAL -DBENCH_$o -frounding-math -Wall" -D CMAKE_BUILD_TYPE:STRING=Release .; make VERBOSE=1 ; popd; done
