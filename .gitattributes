@@ -3075,6 +3075,43 @@ Periodic_2_triangulation_2/demo/Periodic_2_triangulation_2/qt4/icons/triangulati
 Periodic_2_triangulation_2/demo/Periodic_2_triangulation_2/qt4/icons/triangulation.png -text
 Periodic_2_triangulation_2/demo/Periodic_2_triangulation_2/qt4/include/CGAL/Qt/PeriodicTriangulationGraphicsItem.h -text
 Periodic_2_triangulation_2/demo/Periodic_2_triangulation_2/resources/CGAL.qrc -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/CGAL/Periodic_2_Delaunay_triangulation_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/CGAL/Periodic_2_Delaunay_triangulation_traits_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/CGAL/Periodic_2_offset_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/CGAL/Periodic_2_triangulation_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/CGAL/Periodic_2_triangulation_ds_face_base_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/CGAL/Periodic_2_triangulation_hierarchy_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/CGAL/Periodic_2_triangulation_traits_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/Classified.txt -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/Concepts/Periodic_2DelaunayTriangulationTraits_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/Concepts/Periodic_2Offset_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/Concepts/Periodic_2TriangulationDSFaceBase_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/Concepts/Periodic_2TriangulationTraits_2.h -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/PackageDescription.txt -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/Periodic_2_triangulation_2.txt -text
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/flips.gif -text svneol=unset#image/gif
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/flips.pdf -text svneol=unset#application/pdf
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/insert1.gif -text svneol=unset#image/gif
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/insert1.pdf -text svneol=unset#application/pdf
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/insert2.gif -text svneol=unset#image/gif
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/insert2.pdf -text svneol=unset#application/pdf
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/it_STORED.png -text svneol=unset#image/png
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/it_STORED_COVER_DOMAIN.jpg -text svneol=unset#image/jpeg
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/it_STORED_COVER_DOMAIN_small.jpg -text svneol=unset#image/jpeg
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/it_STORED_small.png -text svneol=unset#image/png
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/it_UNIQUE.png -text svneol=unset#image/png
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/it_UNIQUE_COVER_DOMAIN.jpg -text svneol=unset#image/jpeg
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/it_UNIQUE_COVER_DOMAIN_small.jpg -text svneol=unset#image/jpeg
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/it_UNIQUE_small.jpg -text svneol=unset#image/jpeg
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/it_UNIQUE_small.png -text svneol=unset#image/png
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/offsets.gif -text svneol=unset#image/gif
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/offsets.pdf -text svneol=unset#application/pdf
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/orient.gif -text svneol=unset#image/gif
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/orient.pdf -text svneol=unset#application/pdf
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/p2Delaunay2.png -text svneol=unset#image/png
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/p2Delaunay2_small.png -text svneol=unset#image/png
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/remove.gif -text svneol=unset#image/gif
+Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig/remove.pdf -text svneol=unset#application/pdf
 Periodic_2_triangulation_2/doc_tex/Periodic_2_triangulation_2/insert1.pdf -text
 Periodic_2_triangulation_2/doc_tex/Periodic_2_triangulation_2/insert2.pdf -text
 Periodic_2_triangulation_2/doc_tex/Periodic_2_triangulation_2/offsets.fig -text
