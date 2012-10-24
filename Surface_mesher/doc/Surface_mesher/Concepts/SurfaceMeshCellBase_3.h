@@ -22,13 +22,12 @@ The concept `SurfaceMeshCellBase_3` describes the cell base type
 required in this triangulation type. 
 
 \refines ::TriangulationCellBase_3 
-
-\refines The concept SurfaceMeshCellBase_3 adds four markers to mark
+The concept `SurfaceMeshCellBase_3` adds four markers to mark
 the facets of the triangulation that belong to the two dimensional
 complex, and four markers that are helpers used in some operations to
 mark for instance the facets that have been visited.
-
-\refines This concept also provides storage for the center of a
+<br>
+This concept also provides storage for the center of a
 Delaunay surface ball. Given a surface and a 3D Delaunay
 triangulation, a Delaunay surface ball is a ball circumscribed to a
 facet of the triangulation and centered on the surface and empty of

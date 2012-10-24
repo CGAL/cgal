@@ -12,10 +12,10 @@ algorithm provides a map \f$ f : \R^3 \longrightarrow \R\f$.
 The class `Gray_level_image_3` is a 3D gray image loader and a model 
 of the concept `ImplicitFunction`. 
 An object of the class `Gray_level_image_3` is created with a parameter 
-`iso` and then its `operator()` implements 
+`iso_value` and then its `operator()` implements 
 the function `sign of (f(p) - iso)`, for \f$ p \in \R^3\f$. 
 Plugging such a function in the creation of the `Implicit_surface_3` 
-object given as parameter to `make_surface_mesh` yields 
+object given as parameter to `make_surface_mesh()` yields 
 a mesh approximating the level with value `iso` 
 in the input 3D gray image. 
 
@@ -62,12 +62,20 @@ typedef Point_ Point;
 /*! 
 `filename` is the path to a file of a type supported by <I>ImageIO</I>. 
 
-`iso_value` is an isovalue of \f$ f\f$. 
+`iso_value` is an isovalue of the interpolation function \f$ f\f$. 
 
 */ 
 Gray_level_image_3(const char* filename, FT iso_value); 
 
 /// @}
 
+
+/// \name Operations
+/// @{
+
+/*! Returns the sign of  \f$ f(p)\f$  - `iso_value`. 
+ */
+  FT operator(const Point& p) const;
+/// @
 }; /* end Gray_level_image_3 */
 } /* end namespace CGAL */

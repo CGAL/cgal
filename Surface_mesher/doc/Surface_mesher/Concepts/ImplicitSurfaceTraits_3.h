@@ -4,7 +4,7 @@
 \cgalconcept
 
 The concept `ImplicitSurfaceTraits_3` describes the requirements of the traits class to 
-be plugged as `Traits` in `Implicit_surface_3<Traits, Function>`. 
+be plugged as `Traits` in `CGAL::Implicit_surface_3<Traits, Function>`. 
 
 When `make_surface_mesh` is called 
 with a surface of type `CGAL::Implicit_surface_3<Traits,Function>`, 
@@ -66,7 +66,7 @@ The sphere type.
 typedef Hidden_type Sphere_3; 
 
 /*! 
-A function object that provides the operator 
+A function object providing the operator 
 
 `FT operator()(Vector_3 v, Vector_3 w)` which returns the scalar 
 (inner) product of the two vectors `v` and `w`. 
@@ -74,7 +74,7 @@ A function object that provides the operator
 typedef Hidden_type Compute_scalar_product_3; 
 
 /*! 
-A function object that provides the operator 
+A function object providing the operator 
 
 `FT operator()(Point_3, Point_3)` which returns the squared distance 
 between two points. 
@@ -108,16 +108,16 @@ typedef Hidden_type Construct_midpoint_3;
 /*! 
 A function object providing the following operators: 
 
-`Point_3 operator()(const Line_3& l,int i);` which returns an 
+`Point_3 operator()(const Line_3& l,int i)` which returns an 
 arbitrary point on `l`. It holds `point(i) == point(j)`, iff 
 `i==j`. Furthermore, is directed from `point(i)` to 
 `point(j)`, for all `i` \f$ <\f$ `j`. 
 
-`Point_3 operator()(const Ray_3& r,int i);` which returns a point on 
+`Point_3 operator()(const Ray_3& r,int i)` which returns a point on 
 `r`. `point(0)` is the source, `point(i)`, with 
 \f$ i>0\f$, is different from the source. \pre \f$ i \geq0\f$. 
 
-`Point_3 operator()(const Segment_3& s,int i);` which returns source 
+`Point_3 operator()(const Segment_3& s,int i)` which returns source 
 or target of `s`: `point(0)` returns the source of `s`, 
 `point(1)` returns the target of `s`. The parameter 
 `i` is taken modulo 2, which gives easy access to the other end 
@@ -127,10 +127,10 @@ point.
 typedef Hidden_type Construct_point_on_3; 
 
 /*! 
-A function object providing the operators 
+A function object providing the operator 
 
-`Segment_3 operator()(const Point_3 &p, const Point_3 &q);` which 
-returns a segment with source \f$ p\f$ and target \f$ q\f$. It is directed from the 
+`Segment_3 operator()(const Point_3 &p, const Point_3 &q)` which 
+returns a segment with source `p` and target `q`. It is directed from the 
 source towards the target. 
 */ 
 typedef Hidden_type Construct_segment_3; 
@@ -162,8 +162,8 @@ typedef Hidden_type Construct_vector_3;
 /*! 
 A function object providing the operator 
 
-`bool operator()(const Sphere_3&s, const Point_3&p);` which 
-returns true iff \f$ p\f$ lies on the bounded side of \f$ s\f$. 
+`bool operator()(const Sphere_3&s, const Point_3&p)` which 
+returns true iff `p` lies on the bounded side of `s`. 
 */ 
 typedef Hidden_type Has_on_bounded_side_3; 
 

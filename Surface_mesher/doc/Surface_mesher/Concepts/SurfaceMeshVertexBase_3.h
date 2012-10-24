@@ -22,8 +22,7 @@ The concept `SurfaceMeshVertexBase_3` describes the vertex base type
 required in this triangulation type. 
 
 \refines ::TriangulationVertexBase_3 
-
-\refines The surface mesher algorithm issues frequent queries about
+The surface mesher algorithm issues frequent queries about
 the status of the vertices with respect to the two dimensional complex
 that represents the current surface approximation.  The class
 SurfaceMeshVertexBase_3 offers a caching mechanism to answer more
@@ -35,7 +34,7 @@ components of the adjacency graph of those facets.
 \hasModel `CGAL::Surface_mesh_vertex_base_3<Gt,Vb>` 
 \hasModel `CGAL::Surface_mesh_default_triangulation_3::Vertex` 
 
-\sa `CGAL::SurfaceMesherComplex_2InTriangulation_3` 
+\sa `SurfaceMeshComplex_2InTriangulation_3` 
 \sa `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>` 
 \sa `CGAL::Surface_mesh_default_triangulation_3`
 

@@ -11,12 +11,12 @@ complex embedded in a three dimensional triangulation.
 
 The class `Surface_mesh_complex_2_in_triangulation_3` is a model of the concept `SurfaceMeshComplex_2InTriangulation_3` 
 and can be plugged as the template parameter `C2T3` 
-in the function template `make_surface_mesh`. 
+in the function template `make_surface_mesh()`. 
 
-The template parameter `Tr` has to be instantiated 
+\tparam Tr has to be instantiated 
 with a model of the concept `SurfaceMeshTriangulation_3`. 
 (Any three dimensional triangulation of 
-\cgal is a model of `Triangulation_3` 
+\cgal is a model of `Tr` 
 provided that its vertex and cell base class be models 
 of the concept `SurfaceMeshVertexBase_3` and 
 `SurfaceMeshCellBase_3` 

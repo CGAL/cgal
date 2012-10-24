@@ -23,8 +23,7 @@ depends on the order according to which bad facets
 are handled. Therefore, the meshing algorithm 
 needs to be able to quantify the facet qualities and to compare 
 the qualities of different faces. 
-The concept `SurfaceMeshFacetsCriteria_3` 
-defines a type `Quality` designed to measure 
+The type `SurfaceMeshFacetsCriteria_3::Quality` measures 
 the quality of a mesh facet. 
 Typically this quality 
 is a multicomponent variable. Each component corresponds to 
@@ -32,7 +31,7 @@ one criterion and measures how much the facet deviates from
 meeting this criterion. Then, the comparison operator on qualities 
 is just a lexicographical comparison. The meshing algorithm handles facets 
 with lowest quality first. The qualities are computed by a function 
-`is_bad(Facet f, Quality& q)`. 
+`is_bad(const Facet& f, const Quality& q)`. 
 
 \hasModel `CGAL::Surface_mesh_default_criteria_3<Tr>` 
 
@@ -74,7 +73,7 @@ Assigns the quality
 of the facet `f` to `q`, and returns `true` is `f` does 
 not meet the criteria. 
 */ 
-bool is_bad (const Facet& f, Quality& q); 
+bool is_bad (const Facet& f, const Quality& q); 
 
 /// @}
 

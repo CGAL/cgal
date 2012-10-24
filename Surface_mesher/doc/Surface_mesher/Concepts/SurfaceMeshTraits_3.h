@@ -6,9 +6,9 @@
 The concept `SurfaceMeshTraits_3` describes the knowledge that is required on the 
 surface to be meshed. A model of this concept 
 implements an oracle that is able to tell whether a segment 
-(or a ray, or a line) intersects the surface or not 
+(or a ray, or a line) intersects the surface or not, 
 and to compute some intersection 
-points if any. The concept `SurfaceMeshTraits_3` also includes a constructor able to provide 
+points if any exists. The concept `SurfaceMeshTraits_3` also includes a funcctor able to provide 
 a small set of initial points on the surface. 
 
 \hasModel `CGAL::Surface_mesh_traits_generator_3::Type` 
@@ -68,13 +68,13 @@ A model of this type provides the following operators
 to construct initial points on the surface: 
 
 `template <class OutputIteratorPoints>` 
-
+<br>
 `OutputIteratorPoints operator()(OutputIteratorPoints pts)` 
 
 which outputs a set of points on the surface, 
 
 `template <class OutputIteratorPoints>` 
-
+<br>
 `OutputIteratorPoints operator() (OutputIteratorPoints pts, int n)` 
 
 which outputs a set of `n` points on the surface. 

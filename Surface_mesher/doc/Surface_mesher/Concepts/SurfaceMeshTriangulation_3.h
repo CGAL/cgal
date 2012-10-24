@@ -10,12 +10,12 @@ the three dimensional triangulation
 embedding the surface mesh. 
 Thus, this concept describes the requirements 
 for the triangulation type `SurfaceMeshC2T3::Triangulation` 
-nested in the model of `SurfaceMeshComplex2InTriangulation3` 
+nested in the model of `SurfaceMeshComplex_2InTriangulation_3` 
 plugged as the template parameter `SurfaceMeshC2T3` of 
 `CGAL::make_surface_mesh()`. It also describes 
 the requirements for the triangulation type 
 plugged in the class 
-`Surface_mesh_complex_2_in_triangulation_3<Tr>`. 
+`CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>`. 
 
 \hasModel Any 3D Delaunay triangulation class of \cgal 
 
@@ -94,7 +94,7 @@ typedef Hidden_type Geom_traits;
 /// @{
 
 /*! 
-default constructor. 
+%Default constructor. 
 */ 
 SurfaceMeshTriangulation_3(); 
 
@@ -143,12 +143,12 @@ const DelaunayTriangulationTraits_3 & geom_traits() const;
 /// @{
 
 /*! 
-Returns the dual of facet `f`, which is 
+Returns the dual of facet `f`.
 
-in dimension 3: either a segment, if the two cells incident to `f` 
+In dimension 3: either a segment, if the two cells incident to `f` 
 are finite, or a ray, if one of them is infinite; 
 
-in dimension 2: a point. 
+In dimension 2: a point. 
 */ 
 Object dual(Facet f) const; 
 
@@ -156,26 +156,27 @@ Object dual(Facet f) const;
 
 /// \name Queries 
 /// A point `p` is said to be in conflict with a cell `c` in dimension
-/// 3 (resp. a facet `f` in dimension 2) iff `t`.`side_of_sphere(c,
-/// p)` (resp. `t`.`side_of_circle(f, p)`) returns
-/// `ON_BOUNDED_SIDE`. The set of cells (resp. facets in dimension 2)
+/// 3 (resp.\ a facet `f` in dimension 2) iff `t.side_of_sphere(c, p)` 
+/// (resp.\ `t.side_of_circle(f, p)`) returns
+/// `ON_BOUNDED_SIDE`. The set of cells (resp.\ facets in dimension 2)
 /// which are in conflict with `p` is connected, and it forms a
 /// hole. 
 /// @{
 
 /*! 
 Computes the conflict hole induced by `p`. The starting cell 
-(resp. facet) `c` must be in conflict. 
+(resp.\ facet) `c` must be in conflict. 
+
 Then this function returns respectively in the output iterators: 
 
-- `cit`: the cells (resp. facets) in conflict. 
+- `cit`: the cells (resp.\ facets) in conflict. 
 
-- `bfit`: the facets (resp. edges) on the boundary, that is, the facets 
-(resp. edges) `(t, i)` where the cell (resp. facet) `t` is in 
+- `bfit`: the facets (resp.\ edges) on the boundary, that is, the facets 
+(resp.\ edges) `(t, i)` where the cell (resp. facet) `t` is in 
 conflict, but `t->neighbor(i)` is not. 
 
-- `ifit`: the facets (resp. edges) inside the hole, that is, delimiting 
-two cells (resp facets) in conflict. 
+- `ifit`: the facets (resp.\ edges) inside the hole, that is, delimiting 
+two cells (resp.\ facets) in conflict. 
 
 Returns the `Triple` composed of the resulting output iterators. 
 */ 
@@ -198,9 +199,7 @@ OutputIteratorInternalFacets ifit);
 /// @{
 
 /*! 
-Starts at an arbitrary finite vertex. Then `++` and `-` will 
-iterate over finite vertices. Returns `finite_vertices_end()` when 
-`t.number_of_vertices() == 0`. 
+Starts at an arbitrary finite vertex. 
 */ 
 Finite_vertices_iterator finite_vertices_begin() const; 
 
@@ -210,9 +209,7 @@ Past-the-end iterator
 Finite_vertices_iterator finite_vertices_end() const; 
 
 /*! 
-Starts at an arbitrary finite edge. Then `++` and `-` will 
-iterate over finite edges. Returns `finite_edges_end()` when 
-`t.dimension() < 1`. 
+Starts at an arbitrary finite edge.
 */ 
 Finite_edges_iterator finite_edges_begin() const; 
 
@@ -222,9 +219,7 @@ Past-the-end iterator
 Finite_edges_iterator finite_edges_end() const; 
 
 /*! 
-Starts at an arbitrary finite facet. Then `++` and `-` will 
-iterate over finite facets. Returns `finite_facets_end()` when 
-`t.dimension() < 2`. 
+Starts at an arbitrary finite facet. 
 */ 
 Finite_facets_iterator finite_facets_begin() const; 
 
@@ -269,18 +264,18 @@ bool is_edge(Vertex_handle u, Vertex_handle v,
 Cell_handle & c, int & i, int & j) const; 
 
 /*! 
-`true`, iff vertex `v` is the infinite vertex. 
+Returns `true`, iff vertex `v` is the infinite vertex. 
 */ 
 bool is_infinite(const Vertex_handle v) const; 
 
 /*! 
-`true`, iff `c` is incident to the infinite vertex. 
+Returns `true`, iff `c` is incident to the infinite vertex. 
 \pre `t.dimension() == 3`. 
 */ 
 bool is_infinite(const Cell_handle c) const; 
 
 /*! 
-Returns the same facet viewed from the other adjacent cell. 
+Returns the same facet seen from the other adjacent cell. 
 */ 
 Facet mirror_facet(Facet f) const; 
 

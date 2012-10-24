@@ -67,7 +67,7 @@ in the traits class.)
 The meshing algorithm requires that the initial set of points 
 includes at least one point 
 on each connected components of the surface to be meshed. 
-one. 
+
 
 \sa `SurfaceMeshComplex_2InTriangulation_3` 
 \sa `SurfaceMeshCellBase_3` 
@@ -98,7 +98,7 @@ or is a surface type for which a specialization
 of the traits generator `Surface_mesh_traits_generator_3<Surface>` 
 is provided. 
 Currently, the library provides partial specializations 
-of `Surface_mesher_traits_generator_3<Surface>` 
+of `Surface_mesh_traits_generator_3<Surface>` 
 for implicit surfaces (`Implicit_surface_3<Traits, Function>`) and 
 gray level images (`Gray_level_image_3<FT, Point>`). 
 
@@ -144,7 +144,7 @@ namespace CGAL {
 The class `Manifold_tag` is a tag class used to monitor the 
 surface meshing algorithm. When instantiated with the tag 
 `Manifold_tag` the function template 
-`CGAL::make_surface_mesh` 
+`make_surface_mesh()` 
 ensures that the output mesh is a manifold surface 
 without boundary. 
 
@@ -170,7 +170,7 @@ namespace CGAL {
 The class `Manifold_with_boundary_tag` is a tag class used to monitor the 
 surface meshing algorithm. When instantiated with the tag 
 `Manifold_with_boundary_tag`, the function template 
-`CGAL::make_surface_mesh` 
+`make_surface_mesh()` 
 ensures that the output mesh is a manifold surface 
 but it may have boundaries. 
 
@@ -196,7 +196,7 @@ namespace CGAL {
 The class `Non_manifold_tag` is a tag class used to monitor the 
 surface meshing algorithm. When instantiated with the tag 
 `Non_manifold_tag` the function template 
-`CGAL::make_surface_mesh` 
+`make_surface_mesh()` 
 does not ensure that the output mesh is a manifold surface. 
 The manifold property of output mesh 
 may nevertheless result from the choice of 

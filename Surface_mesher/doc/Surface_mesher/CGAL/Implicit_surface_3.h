@@ -15,20 +15,21 @@ that provides a traits class, model of the concept
 `SurfaceMeshTraits_3`, 
 to be used by the surface mesher. 
 
-The parameter `Traits` is a geometric traits class that must be a model of
+\tparam Traits must be a geometric traits class that must be a model of
 `ImplicitSurfaceTraits_3`. That concept defines all the types, predicates
 and constructors that the `Traits` has to provide to implement the surface
 mesh traits
  `Surface_mesh_traits_generator_3<Implicit_surface_3<Traits, Function> >`.
 
 
-The template parameter `Function` stands for a model 
-of the concept `ImplicitFunction`. 
-The number type `Function::FT` has to match 
+\tparam Function must be a of the concept `ImplicitFunction`. 
+
+\requires The number type `Function::FT` has to match 
 the type `Traits::FT`. 
 
+\models `Surface_3`
+
 \sa `make_surface_mesh`
-\sa `Surface_3` 
 \sa `Surface_mesh_traits_generator_3<Surface>`
 \sa `ImplicitSurfaceTraits_3`
 \sa `ImplicitFunction`

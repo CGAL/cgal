@@ -11,12 +11,10 @@ in a triangulation class `Tr`
 plugged in a `Surface_mesh_complex_2_in_triangulation_3<Tr>` 
 class. 
 
-The first template parameter is the geometric traits class. 
+\tparam Gt is the geometric traits class. 
 
-The second template parameter is a base class. It 
-has to be a model of the concept `TriangulationCellBase_3` 
-and 
-defaults to `Triangulation_cell_base_3 <GT>`. 
+\tparam Cb must be a model of the concept `TriangulationCellBase_3` 
+and defaults to `Triangulation_cell_base_3 <GT>`. 
 
 \models ::SurfaceMeshCellBase_3 
 

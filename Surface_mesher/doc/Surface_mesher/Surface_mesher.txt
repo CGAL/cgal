@@ -40,7 +40,7 @@ The size and shape criteria guide the behavior of
 the refinement process and control its termination.
 They also condition the size and shape of the elements in the final
 mesh. Naturally, those criteria can be customized to satisfy
-the user needs. The `Surface mesh generation` package offers
+the user needs. The Surface mesh generation package offers
 a set of standard criteria that can be scaled through
 three numerical values. Also the user can also plug in its own
 set of refinement criteria.
@@ -104,17 +104,17 @@ through this traits class only.
 The traits class is required to be a model
 of the concept `SurfaceMeshTraits_3`.
 The difference between the two overloaded versions of
-`CGAL::make_surface_mesh`
+`make_surface_mesh()`
 can be explained as follows
 <UL>
 <LI>In the first overloaded version
-of `CGAL::make_surface_mesh`, the surface type is given
+of `make_surface_mesh()`, the surface type is given
 as template parameter (`Surface`) and the `surface`
 to be meshed is passed as parameter to the mesh generator.
 In that case the surface mesh generator traits type
 is automatically generated from the surface type
 by an auxiliary class called the `Surface_mesh_traits_generator_3`.
-<LI>In the second overloaded version of `CGAL::make_surface_mesh`,
+<LI>In the second overloaded version of `make_surface_mesh()`,
 the surface mesh generator traits type is provided
 by the template parameter `SurfaceMeshTraits_3`
 and the surface type is obtained from this traits type.
@@ -145,11 +145,11 @@ can be used to enforce the manifold property
 of the output mesh while avoiding
 an over-refinement of the mesh. Further details on this
 subject are given in
-Section \ref SurfaceMesher_section_variations.
+Section \ref SurfaceMesher_section_criteria.
 
 A call to
-`make_surface_mesh(c2t3,surface, criteria, tag)` launches
-the meshing process with an initial
+\link make_surface_mesh() `make_surface_mesh(c2t3,surface, criteria, tag)` \endlink
+launches the meshing process with an initial
 set of points which is the union of two subsets:
 the set of vertices in the initial triangulation pointed to by `c2t3`,
 and a set of points provided by the `Construct_initial_points()` functor
@@ -168,7 +168,7 @@ given as the zero level set of a function \f$ \R^3 \longrightarrow \R\f$.
 More precisely,
 the surface to be meshed is created
 by the constructor
-of the class `Implicit_surface_3<Kernel, Function>`
+of the class `Implicit_surface_3<Traits, Function>`
 from a pointer to the function (`sphere_function`)
 and a bounding sphere.
 
@@ -205,7 +205,7 @@ The code is quite similar to the previous example.
 
 The main difference with the previous code
 is that the function used to define the surface
-is an object of type `CGAL::Gray_level_image_3` created from
+is an object of type `Gray_level_image_3` created from
 an image file and a numerical value that is the
 gray value of the level one wishes to mesh.
 
@@ -236,7 +236,7 @@ The guarantees on the output mesh depend on the mesh criteria.
 Theoretical guarantees are given in \cite cgal:bo-pgsms-05.
 First, the meshing algorithm is proved to terminate
 if the lower bound on facets angles is
-not bigger than \f$ 30\f$ degrees.
+not bigger than `30` degrees.
 Furthermore, the output mesh
 is guaranteed to be homeomorphic to the surface,
 and there is a guaranteed bound
@@ -245,8 +245,8 @@ between the mesh and the surface
 if the radius bound is everywhere smaller than
 \f$ \epsilon\f$ times the local feature size.
 Here \f$ \epsilon\f$ is a constant that has to be
-less than 0.16, and the local feature size
-\f$ lfs(x)\f$ is defined on each point \f$ x\f$ of the surface
+less than `0.16`, and the local feature size
+\f$ \mathrm{lfs}(x)\f$ is defined on each point \f$ x\f$ of the surface
 as the distance from \f$ x\f$ to the medial axis.
 Note that the radius bound need not be uniform,
 although it is a uniform bound in the default criteria.
@@ -267,14 +267,14 @@ no homeomorphism with the input surface is guaranteed,
 and the output mesh is not even guaranteed to be manifold.
 To remedy this problem and give a more flexible
 meshing algorithm, the function template
-`CGAL::make_surface_mesh` has a tag template parameter
+`make_surface_mesh()` has a tag template parameter
 allowing to slightly change the behavior of the refinement process.
 This feature allows, for instance, to run the meshing
 algorithm with a relaxed size criteria, more coherent
 with the size of the mesh expected by the user,
 and still have a guarantee that
 the output mesh forms a manifold surface.
-The function `CGAL::make_surface_mesh` has specialized versions
+The function `make_surface_mesh()` has specialized versions
 for the following tag types: 
 
 `Manifold_tag`: the output mesh is guaranteed to be a manifold
@@ -290,9 +290,8 @@ guarantees nothing else.
 
 This \cgal component also provides functions to write the reconstructed surface mesh to the Object File Format (OFF) \cite cgal:p-gmgv16-96 and to convert it to a polyhedron (when it is manifold): 
 
-`CGAL::output_surface_facets_to_off` 
-
-`CGAL::output_surface_facets_to_polyhedron` 
+- `output_surface_facets_to_off()` 
+- `output_surface_facets_to_polyhedron()` 
 
 # Undocumented Features Available in Demos # {#Surface_mesherUndocumented}
 
@@ -300,13 +299,12 @@ The Polyhedron demo has a feature that allows to remesh a polyhedral
 surface, using the 3D Surface Mesh Generator. That has been implemented as
 a special model of `SurfaceMeshTraits_3`, for polyhedra. That traits
 class is not yet documented because its interface and code have not yet
-been stabilized. It will probably be shipped with next release of \cgal.
+been stabilized. 
 
 The Surface Mesh Generator demo allows to mesh not only gray level images,
 but also segmented images, when voxels are labelled with a domain
 index. Such images are for example the result of a segmentation of 3D
-medical images. This feature is not yet ready to be documented in current
-release, but will probably be in next release of \cgal.
+medical images. 
 
 # Design and Implementation History # {#Surface_mesherDesign}
 
