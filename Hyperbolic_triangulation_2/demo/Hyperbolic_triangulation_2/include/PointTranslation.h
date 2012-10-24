@@ -108,10 +108,11 @@ PointTranslation<DT, Translation>::mousePressEvent(QGraphicsSceneMouseEvent *eve
     return;
   }
   
+  // Oct 2012. Commented for a while
   // translate chosen point
-  Point translated_point = do_point_translation();
+  //Point translated_point = do_point_translation();
   // insert to the triangulation
-  insert_point(translated_point);
+  //insert_point(translated_point);
 }
 
 
