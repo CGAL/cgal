@@ -1,4 +1,4 @@
-Debian packages for CGAL 4.0 are now available as well. Simply add
+Debian packages for CGAL 4.1 are now available as well. Simply add
 
   deb ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/debian squeeze main
   deb-src ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/debian squeeze main
@@ -9,8 +9,8 @@ Debian packages for CGAL 4.0 are now available as well. Simply add
 to /etc/apt/sources list (you only need the pair of lines corresponding
 to the release you are using). For sid, packages should be available
 from the official Debian repository in a few days. The packages are called
-libcgal9, libcgal-dev, libcgal-demo, and libcgal-ipelets. (Note: the
-repository component has changed from "non-free" to "main".)
+libcgal10, libcgal-dev, libcgal-qt4-10. libcgal-qt4-dev, libcgal-demo, and
+libcgal-ipelets.
 
 In case you want to download the packages manually, have a look at
 ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/debian/pool/main/c/cgal/
