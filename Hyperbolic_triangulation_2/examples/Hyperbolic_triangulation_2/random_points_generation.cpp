@@ -20,7 +20,7 @@ int main()
 {
   typedef CGAL::Creator_uniform_2<FT, Point_2> Creator;
   
-  FT r = 0;
+  FT r = 1;
   cout << "Please, enter radius of the disk:" << std::endl;
   cin >> r;
   assert(r > 0);
@@ -41,8 +41,11 @@ int main()
   ofstream output;
   output.open(file_name.c_str());
   
+  // write radius to the file
+  output << r << std::endl;
+  
   // write random points to the file
-  for (int i=0 ; i < nb ; i++) {
+  for(int i = 0; i < nb ; i++) {
     output << *in_disk << std::endl;
     in_disk++;
   }
