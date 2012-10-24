@@ -19,7 +19,7 @@ where `C3T3` is the model of `MeshComplex_3InTriangulation_3`
 used in the mesh generation process, 
 and `C3T3::Triangulation` its nested triangulation type. 
 
-\models ::MeshCriteria_3 
+\models `MeshCriteria_3`
 
 ### Example ###
 
@@ -102,7 +102,7 @@ Cell_criteria cell_criteria);
 parameters (from <I>Boost.Parameter</I>) for convenient criteria 
 construction.
 
-\tparam FT should be a model of `Field`
+\tparam FT must be a model of `Field`
 \tparam Fieldi (\f$ i\in\{1..4\}\f$) should be either a model 
 of the concept `Field` or a model of the concept `MeshDomainField_3`
 
@@ -113,27 +113,27 @@ function (e.g. `parameters::facet_size`).
 
 The description of each parameter is as follows: 
 
--`edge_size`: a scalar field (resp. a constant) providing a space varying 
+- `edge_size`: a scalar field (resp. a constant) providing a space varying 
 (resp. a uniform) 
 upper bound for the lengths of curve segment edges. 
 
--`facet_angle`: a lower bound for the angles (in degrees) of the 
+- `facet_angle`: a lower bound for the angles (in degrees) of the 
 surface mesh facets. 
 
--`facet_size`: a scalar field (resp. a constant) describing 
+- `facet_size`: a scalar field (resp. a constant) describing 
 a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls. 
 
--`facet_distance`: a scalar field (resp. a constant) describing a space varying (resp. a uniform) 
+- `facet_distance`: a scalar field (resp. a constant) describing a space varying (resp. a uniform) 
 upper bound for the same distance. 
 
--`facet_topology`: the set of topological constraints 
+- `facet_topology`: the set of topological constraints 
 which have to be verified by each surface facet. The default value is 
 `CGAL::FACET_VERTICES_ON_SURFACE`. See `Mesh_facet_topology` manual page to 
 get all possible values. 
 
--`cell_radius_edge_ratio`: an upper bound for the radius-edge ratio of the mesh tetrahedra. 
+- `cell_radius_edge_ratio`: an upper bound for the radius-edge ratio of the mesh tetrahedra. 
 
--`cell_size`: a scalar field (resp. a constant) describing 
+- `cell_size`: a scalar field (resp. a constant) describing 
 a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra. 
 
 Note that each size or distance parameter can be specified using two ways: either as 

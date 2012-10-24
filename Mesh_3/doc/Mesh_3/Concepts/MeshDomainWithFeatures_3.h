@@ -10,7 +10,7 @@ the domain through different queries, the concept `MeshDomainWithFeatures_3` als
 subdomains, surface patches, curve segments 
 and corners according to their respective dimensions 3,2,1 and 0. 
 
-\refines ::MeshDomain_3 
+\refines `MeshDomain_3`
 
 \hasModel `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>`
 \hasModel `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
@@ -46,7 +46,7 @@ does not approximate a 1-dimensional feature of the input domain.
 typedef Hidden_type Curve_segment_index; 
 
 /*! 
-Type of indices for corners (i.e. 0-dimensional features) 
+Type of indices for corners (i.e.\ 0-dimensional features) 
 of the input domain. 
 Must be a model of CopyConstructible, Assignable, DefaultConstructible and 
 LessThanComparable. 
@@ -120,9 +120,8 @@ bool is_cycle(const Point_3& p, const Curve_segment_index& ci) const;
 /// @{
 
 /*! 
-Fills `corners` with 
-the corners of the 
-input domain. `corners` value type must be `std::pair<Corner_index,Point_3>`. 
+Fills `corners` with the corners of the input domain. 
+The value type of `corners` must be `std::pair<Corner_index,Point_3>`. 
 */ 
 template <typename OutputIterator> 
 OutputIterator 

@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgMesh_3Domains
 
 The class `Triangle_accessor_3` is a model for the concept `TriangleAccessor_3`. It is 
-designed to serve as accessor for objects of type `CGAL::Polyhedron_3<K>`. 
+designed to serve as accessor for objects of type `Polyhedron_3<K>`. 
 
 \attention Actually, the class `Triangle_accessor_3` is a partial specialization of the class 
 template `template<typename Polyhedron, typename K> 
@@ -14,9 +14,8 @@ specialization of this class to handle one's own polyhedron data structure.
 
 \tparam K is the geometric traits class. 
 
-\models ::TriangleAccessor_3 
+\models `TriangleAccessor_3`
 
-\sa `TriangleAccessor_3` 
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>` 
 
 */

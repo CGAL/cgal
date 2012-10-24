@@ -142,12 +142,12 @@ Copy constructor. Embedded triangulation is duplicated.
 MeshComplex_3InTriangulation_3(const MeshComplex_3InTriangulation_3 & rhs); 
 
 /*! 
-Assignment operator. Embedded triangulation is duplicated, and the former triangulation of `c3t3` is deleted. 
+Assignment operator. Embedded triangulation is duplicated, and the former triangulation of the 3D complex is deleted. 
 */ 
 MeshComplex_3InTriangulation_3& operator= (const MeshComplex_3InTriangulation_3 & rhs); 
 
 /*! 
-Swaps `c3t3` and `rhs`. 
+Swaps the 3D complex and `rhs`. 
 */ 
 void swap(MeshComplex_3InTriangulation_3 & rhs); 
 

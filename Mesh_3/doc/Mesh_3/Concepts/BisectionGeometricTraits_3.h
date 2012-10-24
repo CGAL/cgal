@@ -111,16 +111,16 @@ typedef Hidden_type Construct_midpoint_3;
 /*! 
 Function object providing the following operators: 
 
-`Point_3 operator()(Line_3 l,int i);` which returns an 
+`Point_3 operator()(Line_3 l,int i)` which returns an 
 arbitrary point on `l`. It holds `point(i) == point(j)`, iff 
 `i==j`. Furthermore, is directed from `point(i)` to 
-`point(j)`, for all `i` \f$ <\f$ `j`. 
+`point(j)`, for all `i` < `j`. 
 
-`Point_3 operator()(Ray_3 r,int i);` which returns a point on 
+`Point_3 operator()(Ray_3 r,int i)` which returns a point on 
 `r`. `point(0)` is the source, `point(i)`, with 
 \f$ i>0\f$, is different from the source. \pre \f$ i \geq0\f$. 
 
-`Point_3 operator()(Segment_3 s,int i);` which returns either source 
+`Point_3 operator()(Segment_3 s,int i)` which returns either source 
 or target of `s`: `point(0)` returns the source of `s`, 
 `point(1)` returns the target of `s`. Parameter 
 `i` is taken modulo 2, which gives easy access to the other end 
@@ -132,8 +132,8 @@ typedef Hidden_type Construct_point_on_3;
 /*! 
 Function object providing the operator 
 
-`Segment_3 operator()(Point_3 p, Point_3 q);` which 
-returns a segment with source \f$ p\f$ and target \f$ q\f$, directed from the 
+`Segment_3 operator()(Point_3 p, Point_3 q)` which 
+returns a segment with source `p` and target `q`, directed from the 
 source to the target. 
 */ 
 typedef Hidden_type Construct_segment_3; 
@@ -165,8 +165,8 @@ typedef Hidden_type Construct_vector_3;
 /*! 
 Function object providing the operator 
 
-`bool operator()(Sphere_3 s, Point_3 p);` which 
-returns true iff \f$ p\f$ lies on the bounded side of \f$ s\f$. 
+`bool operator()(Sphere_3 s, Point_3 p)` which 
+returns true iff `p` lies on the bounded side of `s. 
 */ 
 typedef Hidden_type Has_on_bounded_side_3; 
 

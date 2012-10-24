@@ -16,9 +16,8 @@ and functors required to implement the intersection tests and intersection compu
 for polyhedral boundary surfaces. This parameter has to be 
 instantiated with a model of the concept `IntersectionGeometricTraits_3`. 
 
-\models ::MeshDomainWithFeatures_3 
+\models `MeshDomainWithFeatures_3` 
 
-\sa `MeshDomainWithFeatures_3` 
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>` 
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>` 
 \sa `CGAL::Mesh_polyhedron_3<IGT>` 

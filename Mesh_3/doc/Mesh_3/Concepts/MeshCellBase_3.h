@@ -27,13 +27,13 @@ and empty of triangulation vertices.
 In the following we call `surface center` 
 of a surface facet, the center of its biggest Delaunay surface ball. 
 
-\refines ::RegularTriangulationCellBase_3 
+\refines `RegularTriangulationCellBase_3` 
 
 \hasModel `CGAL::Mesh_cell_base_3<MD,Gt,Cb>` 
 
 \sa `CGAL::make_mesh_3` 
 \sa `MeshDomain_3` 
-\sa `Complex_3InTriangulation_3` 
+\sa `MeshComplex_3InTriangulation_3` 
 
 */
 

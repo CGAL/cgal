@@ -4,7 +4,7 @@
 
 The concept `MeshVertexBase_3` describes the requirements 
 for the `Vertex` type of the triangulation 
-used by a 3D mesh generation process. The type `MeshVertexBase_3` refines both the concept `RegularTriangulationVertexBase_3` 
+used by a 3D mesh generation process. The type `MeshVertexBase_3` refines both the concept `TriangulationVertexBase_3` 
 and 
 the concept `SurfaceMeshVertexBase_3`. 
 It provides additional members to store and retrieve 
@@ -15,8 +15,8 @@ to an integer representing the dimension of the lowest dimensional face
 of the input 3D complex on which the vertex lies, 
 and to an index characteristic of this face. 
 
-\refines ::TriangulationVertexBase_3 
-\refines ::SurfaceMeshVertexBase_3 
+\refines `TriangulationVertexBase_3` 
+\refines `SurfaceMeshVertexBase_3`
 
 \hasModel `CGAL::Mesh_vertex_base_3<MD,Gt,Vb>` 
 

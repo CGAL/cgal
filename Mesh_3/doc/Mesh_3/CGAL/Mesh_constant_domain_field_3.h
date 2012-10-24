@@ -17,7 +17,7 @@ in the meshing process.
 \tparam Index is the type of index of the vertices of the triangulation. 
 It must match the type `Index` of the model of `MeshDomain_3` used in the meshing process. 
 
-\models ::MeshDomainField_3 
+\models `MeshDomainField_3` 
 
 \sa `MeshDomainField_3` 
 

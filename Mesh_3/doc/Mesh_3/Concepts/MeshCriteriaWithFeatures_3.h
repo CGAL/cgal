@@ -12,9 +12,9 @@ additionnally encapsulates the
 concept `MeshEdgeCriteria_3`, 
 that describes the requirements, in terms of sizing, for the discretization of the domain \f$ 1\f$-dimensional features. 
 
-\refines ::MeshDomain_3 
+\refines `MeshDomain_3` 
 
-\hasModel` CGAL::Mesh_criteria_3<Tr>`
+\hasModel `CGAL::Mesh_criteria_3<Tr>`
 
 \sa `MeshCriteria_3` 
 \sa `MeshEdgeCriteria_3` 

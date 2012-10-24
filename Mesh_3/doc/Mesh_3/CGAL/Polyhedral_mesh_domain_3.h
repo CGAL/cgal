@@ -27,9 +27,8 @@ surface. It must be a model of the concept
 `Triangle_accessor_3<Polyhedron,IGT>`. The type `IGT::Triangle_3` must 
 be identical to the type `TriangleAccessor::Triangle_3`. 
 
-\models ::MeshDomain_3 
+\models `MeshDomain_3` 
 
-\sa `MeshDomain_3` 
 \sa `TriangleAccessor_3` 
 \sa `IntersectionGeometricTraits_3` 
 \sa `CGAL::Triangle_accessor_3<Polyhedron_3<K>,K>` 

@@ -3,7 +3,7 @@
 \cgalconcept
 
 The concept `LabeledImage_3` describes the requirements for the second template 
-parameter of the class `Labeled_image_mesh_domain_3<Image,BGT>` 
+parameter of the class `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` 
 which represents mesh domains defined by 3D labeled images. A 3D labeled 
 image is a 3D array of elements of an integral 
 type `Type`. `Type` can be `bool`, `char`, `short`, 

@@ -119,10 +119,12 @@ A function object to construct
 a set of initial points on the surface of the domain. Provides the 
 following operators: 
 
-`template<typename OutputIterator>\\ 
+`template<typename OutputIterator>
+<br> 
 OutputIterator operator()(OutputIterator pts)` 
 
-`template<typename OutputIterator>\\ 
+`template<typename OutputIterator>
+<br>
 OutputIterator operator()(int n, OutputIterator pts)` 
 
 Those two operators output a set of (`n`) surface points to the 
