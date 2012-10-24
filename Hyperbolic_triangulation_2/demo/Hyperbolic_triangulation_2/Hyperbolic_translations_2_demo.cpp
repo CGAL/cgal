@@ -28,6 +28,7 @@
 // experiment
 #include "GroupOfIndex2.h"
 #include "OriginalDomainNeighbors.h"
+#include "OriginalDomainNeighborsCommon.h"
 //
 
 // GraphicsView items and event filters (input classes)
@@ -37,7 +38,7 @@
 #include "TriangulationConflictZone.h"
 #include "TriangulationRemoveVertex.h"
 #include "TriangulationPointInputAndConflictZone.h"
-#include <CGAL/Qt/TriangulationGraphicsItem.h>
+#include <CGAL/Qt/TriangulationGraphicsItemWithColorInfo.h>
 #include <CGAL/Qt/VoronoiGraphicsItem.h>
 
 // for viewportsBbox
@@ -98,6 +99,17 @@ private:
   // experiment
   typedef CGAL::Qt::OriginalDomainNeighbors<Delaunay, Hyperbolic_isometry> OriginalDomainNeighbors;
   typedef Group_of_index_2<Hyperbolic_isometry> Group_of_index_2;
+  
+  
+  // Oct 2012
+  typedef IsometryWithInfo<Gt, TranslationInfo<std::wstring> > TranslationWithInfo;
+  typedef CGAL::Qt::OriginalDomainNeighborsCommon<Delaunay, TranslationWithInfo> OriginalDomainNeighborsWithInfo;
+  
+  std::vector<TranslationWithInfo> cloud_of_translations;
+  
+  OriginalDomainNeighborsWithInfo *odnwi;
+  OriginalDomainNeighborsWithInfo *odnwi2;
+  //
   
   // delete later, for some experiments
   Group_of_index_2::List words;
@@ -221,6 +233,44 @@ void GenerateWordsOfLengthLessThan4(const TList& input, TList& output)
   
 }
 
+
+template<class TList>
+void GenerateWordsOfLengthLessThan4_2(const TList& input, TList& output)
+{
+  typedef typename TList::value_type Val_type;
+  
+  std::copy(input.begin(), input.end(), std::insert_iterator<TList>(output, output.end()));
+  
+  typename TList::const_iterator gi, gj, gk, gl;
+  gi = input.begin();
+  int i, j, k;
+  for(i = 0, gi = input.begin(); gi != input.end(); i++, gi++) {
+    for(j = 0, gj = input.begin(); gj != input.end(); j++, gj++) {
+      if(inverses(i, j)) {
+        continue;
+      }
+      
+      Val_type el = (*gi) * (*gj);
+      output.push_back(el);
+    }
+  }
+  
+  for(i = 0, gi = input.begin(); gi != input.end(); i++, gi++) {
+    for(j = 0, gj = input.begin(); gj != input.end(); j++, gj++) {
+      for(k = 0, gk = input.begin(); gk != input.end(); k++, gk++) {
+        if(inverses(i, j) || inverses(j, k)) {
+          continue;
+        }
+        
+        Val_type el = (*gi) * (*gj) * (*gk);
+        output.push_back(el);
+      }
+    }
+  }
+  
+}
+
+
 MainWindow::MainWindow()
   : DemosMainWindow(), dt(K(1))
 {
@@ -294,6 +344,35 @@ MainWindow::MainWindow()
   trs_b->info().setString(L"b");
   trs_c->info().setString(L"c");
   trs_d->info().setString(L"d");
+  
+  // temp things
+  TranslationWithInfo tr_a(Translations::a(), TranslationInfo<std::wstring>(L"a") );
+  TranslationWithInfo tr_b(Translations::b(), TranslationInfo<std::wstring>(L"b") );
+  TranslationWithInfo tr_c(Translations::c(), TranslationInfo<std::wstring>(L"c") );
+  TranslationWithInfo tr_d(Translations::d(), TranslationInfo<std::wstring>(L"d") );
+  
+  TranslationWithInfo tr_inv_a(Translations::a().inverse(), TranslationInfo<std::wstring>(L"a̅") );
+  TranslationWithInfo tr_inv_b(Translations::b().inverse(), TranslationInfo<std::wstring>(L"b̅") );
+  TranslationWithInfo tr_inv_c(Translations::c().inverse(), TranslationInfo<std::wstring>(L"c̅") );
+  TranslationWithInfo tr_inv_d(Translations::d().inverse(), TranslationInfo<std::wstring>(L"d̅") );
+                                               
+  std::vector<TranslationWithInfo> translations_with_info;
+  translations_with_info.push_back(tr_a);
+  translations_with_info.push_back(tr_b);
+  translations_with_info.push_back(tr_inv_a);
+  translations_with_info.push_back(tr_inv_b);
+  translations_with_info.push_back(tr_c);
+  translations_with_info.push_back(tr_d);
+  translations_with_info.push_back(tr_inv_c);
+  translations_with_info.push_back(tr_inv_d);
+  
+  GenerateWordsOfLengthLessThan4_2(translations_with_info, cloud_of_translations);
+  std::cout << "size of cloud " << cloud_of_translations.size() << std::endl;
+  
+  odnwi = new OriginalDomainNeighborsWithInfo(scene, &dt, this);
+  QObject::connect(odnwi, SIGNAL(modelChanged()),
+                   this, SIGNAL(changed()));
+  //
   
   QObject::connect(trs_a, SIGNAL(modelChanged()),
                    this, SIGNAL(changed()));
@@ -405,13 +484,25 @@ MainWindow::processInput(CGAL::Object o)
     //}
     
     //delete
-    if(disk->contains(qp)){
+    /*if(disk->contains(qp)){
       std::cout << "inserted point " << p << std::endl;
       odn2 = new OriginalDomainNeighbors(scene, &dt, this, p, 1);
       QObject::connect(odn2, SIGNAL(modelChanged()), this, SIGNAL(changed()));
       
       odn2->assign(g4.begin(), g4.end());
       odn2->assign(words.begin(), words.end());
+    }*/
+    
+    // Oct 2012
+    
+    if(disk->contains(qp)){
+      std::cout << "inserted point " << p << std::endl;
+      odnwi2 = new OriginalDomainNeighborsWithInfo(scene, &dt, this, p, 1);
+      QObject::connect(odnwi2, SIGNAL(modelChanged()),
+                       this, SIGNAL(changed()));
+      
+      //odnwi2->assign(g4.begin(), g4.end());
+      odnwi2->assign(cloud_of_translations.begin(), cloud_of_translations.end());
     }
   }
   emit(changed());
@@ -524,8 +615,11 @@ MainWindow::on_actionG16_toggled(bool checked)
     // odn->assign(g16.begin(), g16.end());
     
     // Delete! Add all the words of length less than 4 + some words of length 4.
-    odn->assign(g4.begin(), g4.end());    
-    odn->assign(words.begin(), words.end());    
+    //odn->assign(g4.begin(), g4.end());    
+    //odn->assign(words.begin(), words.end());
+    
+    // Oct 2012
+    odnwi->assign(cloud_of_translations.begin(), cloud_of_translations.end());
   }
 }
 
