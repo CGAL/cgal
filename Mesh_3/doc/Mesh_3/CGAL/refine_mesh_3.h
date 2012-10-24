@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgMesh_3Functions
 
-The function `refine_mesh_3` is a 3D 
+The function `refine_mesh_3()` is a 3D 
 mesh generator. It produces simplicial meshes which discretize 
 3D domains. 
 
@@ -25,7 +25,7 @@ By default, only the perturber and the exuder are activated.
 Note that the benefits of the exuder will be lost if the mesh 
 is further refined afterward. 
 
-\attention The function template `refine_mesh_3` may be used to refine a previously 
+\attention The function template `refine_mesh_3()` may be used to refine a previously 
 computed mesh, e.g.: 
 
 \code{.cpp}
@@ -57,7 +57,7 @@ respectively.
 
 \tparam MeshDomain_3 is required to be a model of 
 the concept `MeshDomain_3` or of the refined concept 
-`MeshDomainWithFeatures_3` if \f$ 0\f$ and \f$ 1\f$-dimensional features 
+`MeshDomainWithFeatures_3` if 0 and 1-dimensional features 
 of the input complex have to be accurately represented in the mesh. 
 The argument `domain` 
 is the sole link through which the domain 
@@ -73,7 +73,7 @@ form the rules which drive the refinement process. All mesh elements
 satisfy those criteria at the end of the refinement process. 
 In addition, if the domain has features, the argument 
 `criteria` provides a sizing field to guide the discretization 
-of \f$ 1\f$-dimensional exposed features. 
+of 1-dimensional exposed features. 
 
 The four additional parameters are optimization parameters. 
 They control which optimization processes are performed 
@@ -85,26 +85,26 @@ to generate appropriate value of this parameter.
 
 
 \param lloyd  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
-trigger or not a call to `CGAL::lloyd_optimize_mesh_3` function and to set the 
+trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
-`CGAL::lloyd_optimize_mesh_3` is used for this parameter. 
+`lloyd_optimize_mesh_3()` is used for this parameter. 
 
 \param odt `parameters::odt()` and `parameters::no_odt()` are designed to 
-trigger or not a call to `CGAL::odt_optimize_mesh_3` function and 
+trigger or not a call to `odt_optimize_mesh_3()` function and 
 to set the parameters of this optimizer 
 If one parameter is not set, the default value of 
-`CGAL::odt_optimize_mesh_3` is used for this parameter. 
+`odt_optimize_mesh_3()` is used for this parameter. 
 
 \param perturb `parameters::perturb()` and `parameters::no_perturb()` are designed to 
-trigger or not a call to `CGAL::perturb_mesh_3` function and 
+trigger or not a call to `perturb_mesh_3()` function and 
 to set the parameters of this optimizer. If one parameter is not set, the default value of 
-`CGAL::perturb_mesh_3` is used for this parameter, except for the time bound which is set to be 
+`perturb_mesh_3()` is used for this parameter, except for the time bound which is set to be 
 equal to the refinement CPU time. 
 
 \param exude `parameters::exude()` and `parameters::no_exude()` are designed to 
-trigger or not a call to `CGAL::exude_mesh_3` function and to override to set the 
+trigger or not a call to `exude_mesh_3()` function and to override to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
-`CGAL::exude_mesh_3` is used for this parameter, except for the time bound which is set to be 
+`exude_mesh_3()` is used for this parameter, except for the time bound which is set to be 
 equal to the refinement CPU time. 
 
 
@@ -114,7 +114,7 @@ is not passed, its default value is used. The default values are
 Note that whatever may be the optimization processes activated, 
 they are always launched in the order that is a suborder 
 of the following (see user manual for further details): 
-`lloyd`, `odt`, `perturb`, `exude`. 
+*lloyd*, *odt*, *perturb*, *exude*. 
 
 Beware that optimization of the mesh is obtained 
 by perturbing mesh vertices and modifying the mesh connectivity 
@@ -157,15 +157,15 @@ namespace parameters {
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::exude` allows the user to trigger a call to `exude_mesh_3` in the 
-`make_mesh_3` and `refine_mesh_3` mesh generation functions. 
+The function `parameters::exude` allows the user to trigger a call to `exude_mesh_3()` in the 
+`make_mesh_3()` and `refine_mesh_3()` mesh generation functions. 
 It also allows the user to pass parameters 
-to the optimization function `exude_mesh_3` through these mesh generation functions. 
+to the optimization function `exude_mesh_3()` through these mesh generation functions. 
 
 ### Parameters ##
 
 The parameters are named parameters. They are the same (i.e. they have the same 
-name and the same default values) as the parameters of `CGAL::exude_mesh_3` 
+name and the same default values) as the parameters of `exude_mesh_3()` 
 function. See its manual page for further details. 
 
 ### Example ##
@@ -196,13 +196,13 @@ parameters::internal::Exude_options exude(
 \ingroup PkgMesh_3Parameters
 
 The function `parameters::features` provides a value of internal type `Features` 
-to specify if \f$ 0\f$ and \f$ 1\f$-dimensional features have to be taken into account. 
+to specify if 0 and 1-dimensional features have to be taken into account. 
 The provided value is a default value that triggers the representation 
 of corners and curve segments in the mesh when the domain is a model 
 of `MeshDomainWithFeatures_3`. 
 
 Provides a `Features_options` value such that 
-\f$ 0\f$ and \f$ 1\f$-dimensional input features are taken into account 
+0 and 1-dimensional input features are taken into account 
 if domain is a model of the refined concept `MeshDomainWithFeatures_3`. 
 
 \sa `CGAL::make_mesh_3`
@@ -216,15 +216,15 @@ parameters::internal::Features_options features();
 \ingroup PkgMesh_3Parameters
 
 The function `parameters::lloyd` allows the user to trigger a call of 
-`lloyd_optimize_mesh_3` in the mesh generation functions 
-`make_mesh_3` and `refine_mesh_3`. It also allows the user to pass 
+`lloyd_optimize_mesh_3()` in the mesh generation functions 
+`make_mesh_3()` and `refine_mesh_3()`. It also allows the user to pass 
 parameters to the optimization function 
-`lloyd_optimize_mesh_3` through these mesh generation functions. 
+`lloyd_optimize_mesh_3()` through these mesh generation functions. 
 
 ### Parameters ## 
 
 The parameters are named parameters. They are the same (i.e. they have the same 
-name and the same default values) as the parameters of the `lloyd_optimize_mesh_3` 
+name and the same default values) as the parameters of the `lloyd_optimize_mesh_3()` 
 function. See its manual page for further details. 
 
 ### Example ## 
@@ -258,7 +258,7 @@ double parameters::freeze_bound = 0.01);
 \ingroup PkgMesh_3Parameters
 
 The function `parameters::no_exude` allows the user to tell the mesh generation functions 
-`make_mesh_3` and `refine_mesh_3` that no exudation must be done. 
+`make_mesh_3()` and `refine_mesh_3()` that no exudation must be done. 
 
 ### Example ##
 
@@ -281,14 +281,14 @@ parameters::internal::Exude_options no_exude();
 \ingroup PkgMesh_3Parameters
 
 The function `parameters::no_features` allows the user to prevent the handling 
-of \f$ 0\f$ and \f$ 1\f$ dimensional features. This is useful when the 
+of 0 and 1-dimensional features. This is useful when the 
 domain is a model of `MeshDomainWithFeatures_3` 
 and the user does not want corners and curve segments 
 to be accurately represented 
 in the mesh. 
 
 Return a `Features_options` value that prevents the mesh generator 
-to take into account \f$ 0\f$ and \f$ 1\f$-dimensional input features. 
+to take into account 0 and 1-dimensional input features. 
 
 \sa `CGAL::make_mesh_3`, 
 \sa `CGAL::refine_mesh_3`, 
@@ -301,7 +301,7 @@ parameters::internal::Features_options no_features();
 \ingroup PkgMesh_3Parameters
 
 The function `parameters::no_lloyd` allows the user to tell the mesh generation functions 
-`make_mesh_3` and `refine_mesh_3` that no lloyd optimization must be done. 
+`make_mesh_3()` and `refine_mesh_3()` that no lloyd optimization must be done. 
 
 ### Example ##
 
@@ -324,7 +324,7 @@ parameters::internal::Lloyd_options no_lloyd();
 \ingroup PkgMesh_3Parameters
 
 The function `parameters::no_odt` allows the user to tell the mesh generation functions 
-`make_mesh_3` and `refine_mesh_3` that no odt optimization must be done. 
+`make_mesh_3()` and `refine_mesh_3()` that no odt optimization must be done. 
 
 ### Example ##
 
@@ -347,7 +347,7 @@ parameters::internal::Odt_options no_odt();
 \ingroup PkgMesh_3Parameters
 
 The function `parameters::no_perturb` allows the user to tell mesh generation global functions 
-`make_mesh_3` and `refine_mesh_3` that no perturbation must be done. 
+`make_mesh_3()` and `refine_mesh_3()` that no perturbation must be done. 
 
 ### Example ##
 
@@ -370,15 +370,15 @@ parameters::internal::Perturb_options no_perturb();
 \ingroup PkgMesh_3Parameters
 
 The function `parameters::odt` allows the user to trigger a call to 
-`CGAL::odt_optimize_mesh_3` in 
-`CGAL::make_mesh_3` and `CGAL::refine_mesh_3` mesh optimization functions. It also 
+`CGAL::odt_optimize_mesh_3()` in 
+`CGAL::make_mesh_3()` and `CGAL::refine_mesh_3()` mesh optimization functions. It also 
 allows the user to pass parameters to the optimization function 
-`CGALodt_optimize_mesh_3` through these mesh generation functions. 
+`odt_optimize_mesh_3()` through these mesh generation functions. 
 
 ### Parameters ##
 
 The parameters are named parameters. They are the same (i.e. they have the same 
-name and the same default values) as the parameters of `odt_optimize_mesh_3` 
+name and the same default values) as the parameters of `odt_optimize_mesh_3()` 
 function. See its manual page for further details. 
 
 ### Example ##
@@ -411,15 +411,15 @@ double parameters::freeze_bound = 0.01);
 \ingroup PkgMesh_3Parameters
 
 The function `parameters::perturb` allows the user to trigger a call to 
-`perturb_mesh_3` in 
-`make_mesh_3` and `refine_mesh_3` mesh generation functions. It also 
+`perturb_mesh_3()` in 
+`make_mesh_3()` and `refine_mesh_3()` mesh generation functions. It also 
 allows the user to pass parameters 
-to the optimization function `perturb_mesh_3` through these mesh generation functions. 
+to the optimization function `perturb_mesh_3()` through these mesh generation functions. 
 
 ### Parameters ##
 
 The parameters are named parameters. They are the same (i.e. they have the same 
-name and the same default values) as the parameters of `perturb_mesh_3` 
+name and the same default values) as the parameters of `perturb_mesh_3()` 
 function. See its manual page for further details. 
 
 ### Example ##

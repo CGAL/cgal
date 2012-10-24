@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgMesh_3Functions
 
-The function `make_mesh_3` is a 3D 
+The function `make_mesh_3()` is a 3D 
 mesh generator. It produces simplicial meshes which discretize 
 3D domains. 
 
@@ -59,21 +59,21 @@ form the rules which drive the refinement process. All mesh elements
 satisfy those criteria at the end of the refinement process. 
 In addition, if the domain has features, the argument 
 `criteria` provides a sizing field to guide the discretization 
-of \f$ 1\f$-dimensional exposed features. 
+of 1-dimensional exposed features. 
 
 \param features allows 
-the user to specify if \f$ 0\f$ and \f$ 1\f$-dimensional features actually have to be 
+the user to specify if 0 and 1-dimensional features actually have to be 
 taken into account or not 
 when the domain is a model of `MeshDomainWithFeatures_3`. 
 The type `Features` of this parameter is an internal undescribed type. 
 The library provides functions to construct appropriate values of that type. 
 <UL> 
 <LI>`parameters::features(domain)` sets `features` according to the domain, 
-i.e. \f$ 0\f$ and\f$ 1\f$-dimensional features are taken into account if `domain` is a 
+i.e. 0 and 1-dimensional features are taken into account if `domain` is a 
 `MeshDomainWithFeatures_3`. This is the default behavior 
 if parameter `features` is not specified. 
 <LI>`parameters::no_features()` prevents the representation 
-of \f$ 0\f$ and \f$ 1\f$-dimensional features in the mesh. 
+of 0 and 1-dimensional features in the mesh. 
 </UL> 
 
 The four additional parameters are optimization parameters. 
@@ -85,15 +85,15 @@ functions for each optimization parameter
 to generate appropriate value of this parameter. 
 
 \param lloyd  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
-trigger or not a call to `CGAL::lloyd_optimize_mesh_3` function and to set the 
+trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
-`CGAL::lloyd_optimize_mesh_3` is used for this parameter. 
+`lloyd_optimize_mesh_3()` is used for this parameter. 
 
 \param odt `parameters::odt()` and `parameters::no_odt()` are designed to 
 trigger or not a call to `CGAL::odt_optimize_mesh_3` function and 
 to set the parameters of this optimizer 
 If one parameter is not set, the default value of 
-`CGAL::odt_optimize_mesh_3` is used for this parameter. 
+`odt_optimize_mesh_3()` is used for this parameter. 
 
 \param perturb `parameters::perturb()` and `parameters::no_perturb()` are designed to 
 trigger or not a call to `CGAL::perturb_mesh_3` function and 
@@ -102,9 +102,9 @@ to set the parameters of this optimizer. If one parameter is not set, the defaul
 equal to the refinement CPU time. 
 
 \param exude `parameters::exude()` and `parameters::no_exude()` are designed to 
-trigger or not a call to `CGAL::exude_mesh_3` function and to override to set the 
+trigger or not a call to `exude_mesh_3()` function and to override to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
-`CGAL::exude_mesh_3` is used for this parameter, except for the time bound which is set to be 
+`exude_mesh_3()` is used for this parameter, except for the time bound which is set to be 
 equal to the refinement CPU time. 
 
 
@@ -115,7 +115,7 @@ is not passed, its default value is used. The default values are
 Note that whatever may be the optimization processes activated, 
 they are always launched in the order that is a suborder 
 of the following (see user manual for further details): 
-`lloyd`, `odt`, `perturb`, `exude`. 
+*lloyd*, *odt*, *perturb*, *exude*. 
 
 Also beware, that optimization of the mesh is obtained 
 by perturbing mesh vertices and modifying the mesh connectivity 

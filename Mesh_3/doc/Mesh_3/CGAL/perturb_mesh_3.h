@@ -9,9 +9,9 @@ by changing the mesh vertices positions.
 
 The perturber tries to improve the dihedral angles of the worst cells in the mesh 
 degree by degree: the 
-step number <I>n</I> is considered as successful 
+step number `n` is considered as successful 
 if after this step the worst tetrahedron of the mesh has a minimal dihedral 
-angle larger than <I>n</I> degrees. 
+angle larger than `n` degrees. 
 The perturber exits if this is not the case. 
 
 \pre `time_limit` \f$ \geq\f$ 0 and 0 \f$ \leq\f$ `sliver_bound` \f$ \leq\f$ 180 
@@ -35,24 +35,24 @@ provided that the names of the parameters are used
 \param parameters::time_limit 
 is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
-measured using `CGAL::Timer`. 
-The default value is `0` and means that there is no time limit. 
+measured using `Timer`. 
+The default value is 0 and means that there is no time limit. 
 
 \param parameters::sliver_bound 
 is designed to give, in degree, a targeted 
 lower bound on dihedral angles of mesh cells. 
-The function `perturb_mesh_3` runs as long as steps are successful 
+The function `perturb_mesh_3()` runs as long as steps are successful 
 and step number `sliver_bound` (after which 
 the worst tetrahedron in the mesh has a smallest angle larger than 
 `sliver_bound` degrees) has not been reached. 
-The default value is `0` and means that there is no targeted bound: 
+The default value is 0 and means that there is no targeted bound: 
 the perturber then runs as long as 
 steps are successful. 
 
 
 ### Return Values ##
 
-The function `perturb_mesh_3` returns a value of type `CGAL::Mesh_optimization_return_code` 
+The function `perturb_mesh_3()` returns a value of type `Mesh_optimization_return_code` 
 which is: 
 <UL> 
 <LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached. 

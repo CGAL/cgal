@@ -3,15 +3,15 @@ namespace CGAL {
 /*!
 \ingroup PkgMesh_3Functions
 
-The function `odt_optimize_mesh_3` is a mesh optimization process 
+The function `odt_optimize_mesh_3()` is a mesh optimization process 
 based on the minimization of a global energy function. 
 
-In `odt_optimize_mesh_3`, the minimized global energy may be interpreted 
+In `odt_optimize_mesh_3()`, the minimized global energy may be interpreted 
 as the \f$ L^1\f$-norm of the error achieved 
 when the function \f$ x^2\f$ is interpolated on the mesh domain 
 using a piecewise linear function which is linear in each mesh cell. 
 
-The optimizer `odt_optimize_mesh_3` works in iterative steps. 
+The optimizer `odt_optimize_mesh_3()` works in iterative steps. 
 At each iteration, mesh vertices are moved into 
 positions that bring to zero the energy gradient 
 and the Delaunay triangulation is updated. 
@@ -42,11 +42,11 @@ provided that the names of the parameters are used
 \param parameters::time_limit 
 is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
-measured using `CGAL::Timer`. 
-The default value is `0` and means that there is no time limit. 
+measured using `Timer`. 
+The default value is 0 and means that there is no time limit. 
 
 \param parameters::max_iteration_number sets a limit on the 
-number of performed iterations. The default value of `0` means that there is 
+number of performed iterations. The default value of 0 means that there is 
 no limit on the number of performed iterations. 
 
 \param parameters::convergence is a stopping criterion based on convergence: 
@@ -65,12 +65,12 @@ moves, unfreezes the neighboring vertices.
 
 ### Return Values ##
 
-The function `odt_optimize_mesh_3` returns a value of type `CGAL::Mesh_optimization_return_code` 
+The function `odt_optimize_mesh_3()` returns a value of type `Mesh_optimization_return_code` 
 which is: 
 <UL> 
 <LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached. 
-<LI>`CGAL::MAX_ITERATION_NUMBER_REACHED` when `odt_optimize_mesh_3` stops because it has performed `max_iteration_number` iterations. 
-<LI>`CGAL::CONVERGENCE_REACHED` when `odt_optimize_mesh_3` stops because the convergence criterion 
+<LI>`CGAL::MAX_ITERATION_NUMBER_REACHED` when `odt_optimize_mesh_3()` stops because it has performed `max_iteration_number` iterations. 
+<LI>`CGAL::CONVERGENCE_REACHED` when `odt_optimize_mesh_3()` stops because the convergence criterion 
 is achieved. 
 </UL> 
 
