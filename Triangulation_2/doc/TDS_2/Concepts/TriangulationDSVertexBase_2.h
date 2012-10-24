@@ -73,7 +73,9 @@ This type `Other` will be the actual base
 of the class `CGAL::Triangulation_data_structure_2::Vertex`. 
 */ 
 template <typename TDS2> 
-struct Rebind_TDS {};
+struct Rebind_TDS {
+  typedef Hidden_type Other;
+};
 
 /*! 
 

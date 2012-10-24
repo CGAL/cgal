@@ -17,7 +17,7 @@ and \ref TDS_2D_default ),
 a face stores handles 
 on its three vertices and on the three neighboring faces. 
 The vertices and neighbors are indexed 0,1 and 2. 
-Neighbor \f$ i\f$ lies opposite to vertex \f$ i\f$. 
+Neighbor `i` lies opposite to vertex `i`. 
 
 Since the `CGAL::Triangulation_data_structure_2` is the class 
 which defines the handle 
@@ -44,7 +44,7 @@ which is the <I>rebound</I> version of the base class.
 This <I>rebound</I> base class is the class 
 that the `CGAL::Triangulation_data_structure_2` 
 actually uses as a base class for the class 
-`Triangulation_data_structure_2::Face`. 
+`CGAL::Triangulation_data_structure_2::Face`. 
 
 \hasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
 \hasModel `CGAL::Triangulation_face_base_2<Traits,Fb>` 
@@ -75,7 +75,10 @@ This type `Other` will be the actual base
 of the class `CGAL::Triangulation_data_structure_2::Face`. 
 */ 
 template <typename TDS2> 
-struct Rebind_TDS {};
+struct Rebind_TDS {
+
+  typedef Hidden_type Other;
+};
 
 /*! 
 

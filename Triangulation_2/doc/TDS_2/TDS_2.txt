@@ -226,8 +226,7 @@ structure.
 
 \code{.cpp}
 
-template < class TDS = an internal type faking a triangulation data 
-structure >
+template < class TDS = an internal type faking a triangulation data structure >
 class Vertex_base
 {
 public:
@@ -241,7 +240,7 @@ typedef Vertex_base<TDS2> Other;
 \endcode
 
 Imagine an analog `Face_base` class.
-The triangulation data structure is then instantiate as follows:
+The triangulation data structure is then instantiated as follows:
 
 \code{.cpp}
 
@@ -251,7 +250,7 @@ typedef Triangulation_data_structure< Vertex_base<>, Face_base<> > TDS;
 
 ## Making Use of the Flexibility ##
 
-There is several possibilities to make use
+There are several possibilities to make use
 of the flexibility offered by 
 the triangulation data structure.
 <UL>
@@ -259,8 +258,8 @@ the triangulation data structure.
 in vertices and faces, additional information
 which do not depend on types defined by the
 triangulated data structure, predefined classes 
-`Triangulation_vertex_base_with_info`
-and `Triangulation_face_base_with_info` can be plugged in.
+`Triangulation_vertex_base_with_info_2`
+and `Triangulation_face_base_with_info_2` can be plugged in.
 Those classes have a template parameter `Info` to be instantiated
 by a user defined type. They
 store a data member of this type and gives access to it.
@@ -302,7 +301,7 @@ public :
 };
 \endcode
 
-<LI> At last the user can write his own base classes.
+<LI>Finally, the user can write his own base classes.
 If the triangulation data structure is used alone, 
 the requirements for the base classes are described by the concepts
 `TriangulationDSVertexBase_2` 
@@ -315,8 +314,9 @@ basic and Delaunay triangulations are `TriangulationVertexBase_2`
 and `TriangulationFaceBase_2`.
 </UL>
 
-See section \ref Section_2D_Triangulations_Flexibility 
-for examples of using the triangulation data structure flexibility.
+See section \ref Section_2D_Triangulations_Flexibility "Flexibility"
+of the chapter on 2D triangulations
+for examples which make use of the flexilibity of the triangulation data structure.
 
 */ 
 } /* namespace CGAL */

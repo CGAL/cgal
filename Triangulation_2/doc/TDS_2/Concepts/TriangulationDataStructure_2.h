@@ -120,12 +120,12 @@ typedef Hidden_type Point;
 /// @{
 
 /*! 
-returns the geometric information of `v`. 
+returns the geometric information of the vertex. 
 */ 
 Point point() const; 
 
 /*! 
-returns a face of the triangulation having `v` as vertex. 
+returns a face of the triangulation having `*this` as a vertex. 
 */ 
 Face_handle face() const; 
 
@@ -184,17 +184,16 @@ face class of a
 A `TriangulationDataStructure_2::Face` stores three handles to its three vertices 
 and three handles to its three neighbors. 
 The vertices are indexed 0,1, and 2 in counterclockwise order. 
-The neighbor indexed \f$ i\f$ lies 
-opposite to vertex i. 
+The neighbor indexed `i` lies 
+opposite to vertex `i`. 
 
 In degenerate cases, 
 when the triangulation data structure stores a 
-simplicial complex of dimension \f$ 0\f$ and \f$ 1\f$, 
+simplicial complex of dimension `0` and `1`, 
 the type `TriangulationDataStructure_2::Face` is used to store the faces 
-of maximal dimension of the complex 
-: i.e. a vertex in dimension \f$ 0\f$, an edge in dimension \f$ 1\f$. 
-Only vertices and neighbors with index \f$ 0\f$ are set in the first case, 
-only vertices and neighbors with index \f$ 0\f$ or \f$ 1\f$ are set in the second case. 
+of maximal dimension of the complex, i.e., a vertex in dimension `0`, an edge in dimension `1`. 
+Only vertices and neighbors with index `0` are set in the first case, 
+only vertices and neighbors with index `0` or `1` are set in the second case. 
 
 ### Types ###
 
@@ -204,7 +203,7 @@ except the iterators and the circulators.
 
 ### Creation ###
 
-The methods `create_face` and 
+The methods `create_face()` and 
 `delete_face()` 
 have to be used to 
 define new faces and to delete non longer used faces. 
@@ -223,24 +222,24 @@ public:
 /// @{
 
 /*! 
-returns the vertex `i` of `f`. 
+returns the vertex `i` of the face. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Vertex_handle vertex(int i) const; 
 
 /*! 
-returns the index of vertex `v` in `f`. \pre `v` is a vertex of `f`. 
+returns the index of vertex `v` in the face. \pre `v` is a vertex of the face. 
 */ 
 int index(Vertex_handle v) const; 
 
 /*! 
-returns `true` if `v` is a vertex of `f`. 
+returns `true` if `v` is a vertex of the face. 
 */ 
 bool has_vertex(Vertex_handle v) const; 
 
 /*! 
-returns `true` if `v` is a vertex of `f`, and 
-computes the index `i` of `v` in `f`. 
+returns `true` if `v` is a vertex of the face, and 
+computes the index `i` of `v` in it. 
 */ 
 bool has_vertex(Vertex_handle v, int& i) const; 
 
@@ -252,7 +251,7 @@ bool has_vertex(Vertex_handle v, int& i) const;
 /// @{
 
 /*! 
-returns the neighbor `i` of `f`. 
+returns the neighbor `i` of the face. 
 \pre \f$ 0\leq i \leq2\f$. 
 
 */ 
@@ -260,17 +259,17 @@ Face_handle neighbor(int i) const;
 
 /*! 
 returns the index of face `n`. 
-\pre `n` is a neighbor of `f`. 
+\pre `n` is a neighbor of the face. 
 */ 
 int index(Face_handle n) const; 
 
 /*! 
-returns `true` if `n` is a neighbor of `f`. 
+returns `true` if `n` is a neighbor of the face. 
 */ 
 bool has_neighbor(Face_handle n) const; 
 
 /*! 
-returns `true` if `n` is a neighbor of `f`, and 
+returns `true` if `n` is a neighbor of the face, and 
 compute the index `i` of `n`. 
 */ 
 bool has_neighbor(Face_handle n, int& i) const; 
@@ -325,7 +324,7 @@ Face_handle n2);
 returns `true` if the function 
 `is_valid()` of the base class 
 returns `true` and if, for each index \f$ i\f$, \f$ 0 \le i < 3\f$, 
-face \f$ f\f$ is a neighbor of its neighboring face `neighbor(i)` 
+the face is a neighbor of its neighboring face `neighbor(i)` 
 and shares with this neighbor the vertices `cw(i)` and `ccw(i)` 
 in correct reverse order. 
 */ 
@@ -392,7 +391,9 @@ data structure that only changes the vertex type. It has to define a type
 one whose `TriangulationDSVertexBase_2` will be `Vb2`. 
 */ 
 template <typename Vb2> 
-struct Rebind_vertex {};
+struct Rebind_vertex {
+  typedef Hidden_type Other;
+};
 
 /*! 
 This nested template class allows to get the type of a triangulation 
@@ -401,7 +402,9 @@ data structure that only changes the face type. It has to define a type
 one whose `TriangulationDSFaceBase_2` will be `Fb2`. 
 */ 
 template <typename Fb2> 
-struct Rebind_face {};
+struct Rebind_face {
+  typedef Hidden_type Other;
+};
 
 /*! 
 The edge type. 
@@ -492,7 +495,7 @@ TriangulationDataStructure_2& operator=( const
 TriangulationDataStructure_2& tds1); 
 
 /*! 
-`tds1` is copied into `tds`. If \f$ v\, !\!= NULL\f$, the vertex of `tds` 
+`tds1` is copied into `tds`. If `v != NULL`, the vertex of `tds` 
 corresponding to `v` is returned, otherwise `Vertex_handle()` 
 is returned. 
 \pre The optional argument `v` is a vertex of `tds1`. 
@@ -568,7 +571,7 @@ bool is_vertex(Vertex_handle v) const;
 
 /*! 
 returns `true` if `(fh,i)` is an edge of `tds`. Returns `false` when 
-`dimension()` \f$ <1\f$ . 
+`dimension() < 1`. 
 */ 
 bool is_edge(Face_handle fh, int i) const; 
 
@@ -589,7 +592,7 @@ int &i) const;
 
 /*! 
 returns `true` if `fh` is a face of `tds`. Returns `false` when 
-`dimension()` \f$ <2\f$ . 
+`dimension() < 2`. 
 */ 
 bool is_face(Face_handle fh) const; 
 
@@ -765,10 +768,10 @@ void remove_dim_down(Vertex_handle v);
 /*! 
 must be called when the displacement of a vertex decreases the dimension of the triangulation data structure.
 
-The link of a vertex \f$ v\f$ is formed by the edges disjoint from \f$ v\f$ 
-that are included in the faces incident to \f$ v\f$. 
+The link of a vertex `v` is formed by the edges disjoint from `v` 
+that are included in the faces incident to `v`. 
 When the link of `v = f->vertex(i)` contains all the other vertices 
-of the two-dimensional triangulation data structure (\f$ \mathbb{S}^2\f$), `dim_down` crushes the two-dimensional 
+of the two-dimensional triangulation data structure (\f$ \mathbb{S}^2\f$), `dim_down()` crushes the two-dimensional 
 data-structure (\f$ \mathbb{S}^2\f$) onto the one-dimensional data structure (\f$ \mathbb{S}^1\f$) formed by the link of `v` 
 augmented with the vertex `v` itself; this one is placed on the edge `(f, i)`
 (see Fig. \ref figtdsdim_down_2). 

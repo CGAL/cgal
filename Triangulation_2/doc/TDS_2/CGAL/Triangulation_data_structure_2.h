@@ -10,7 +10,7 @@ It can be used to represent an orientable 2D triangulation
 embedded in a space of any dimension. 
 
 The vertices and faces are stored in two nested containers, which are 
-implemented using `CGAL::Compact_container`. The class may offer some 
+implemented using `Compact_container`. The class may offer some 
 flexibility for the choice of container in the future, in the form of 
 additional template parameters. 
 
@@ -35,7 +35,22 @@ template< typename Vb, typename Fb >
 class Triangulation_data_structure_2 {
 public:
 
-/// \name Types 
+
+/// \name Types
+
+/// @{
+
+  typedef Triangulation_data_structure_2<Vb,Fb>  Tds;
+
+/// The vertex type.
+  typedef  typename Vb::template Rebind_TDS<Tds>::Other  Vertex;
+
+/// The face type.
+  typedef  typename Fb::template Rebind_TDS<Tds>::Other  Face;
+
+/// @}
+
+/// \name  
 /// \advanced In addition to the interface documented in the concept,
 /// the class offers the following types.
 /// @{
@@ -43,12 +58,12 @@ public:
 /*! 
 Vertex container type. 
 */ 
-typedef CGAL::Compact_container<Vertex> Vertex_range; 
+typedef Compact_container<Vertex> Vertex_range; 
 
 /*! 
 Face container type. 
 */ 
-typedef CGAL::Compact_container<Face> Face_range; 
+typedef Compact_container<Face> Face_range; 
 
 /// @} 
 
