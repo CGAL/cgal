@@ -80,8 +80,7 @@ concept `IntegralDomainWithoutDivision`.
 However, a model of `Polynomial_d` has to be accompanied by a traits class 
 `CGAL::Polynomial_traits_d<Polynomial_d>` being a model of 
 `PolynomialTraits_d`. 
-In principal the traits class provides all further functionalities 
-on polynomials.
+This traits class provides all further functionalities on polynomials.
 
 Given a \f$ d\f$-variate polynomial over some base ring \f$ R\f$ there are at least 
 two different possible views on such a polynomial.
@@ -108,8 +107,8 @@ It is derived from `std::vector<int>` and used to identify multivariate
 monomials. For instance the exponent vector containing the sequence 
 \f$ [3,2,4]\f$ corresponds to the trivariate monomial \f$ x_0^3x_1^2x_2^4\f$. 
 Note that a vector with negative exponents is considered as invalid. 
-However, we decided to in principal allow negative exponents as they may 
-appear as intermediate results, in particular we did <B>not</B> derive from 
+However, we  allow negative exponents as they may 
+appear as intermediate results, in particular we did *not* derive from 
 `std::vector<unsigned int>`.
 
 # Constructing a Multivariate Polynomial # {#PolynomialConstructing}

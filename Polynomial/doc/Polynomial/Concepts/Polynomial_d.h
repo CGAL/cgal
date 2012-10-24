@@ -6,7 +6,7 @@
 A model of `Polynomial_d` is representing a multivariate 
 polynomial in \f$ d \geq 1\f$ variables over some basic ring \f$ R\f$. 
 This type is denoted as the innermost coefficient. 
-A model of `Polynomial_d` accompanied by a traits class 
+A model of `Polynomial_d` must be accompanied by a traits class 
 `CGAL::Polynomial_traits_d<Polynomial_d>`, which is a model of 
 `PolynomialTraits_d`. 
 Please have a look at the concept `PolynomialTraits_d`, since nearly 
@@ -27,7 +27,7 @@ Innermost_coefficient_type       | %Polynomial_d
 
 
 \note In case the polynomial is univariate and the innermost
-coefficient is a Field the polynomial is model of EuclideanRing.
+coefficient is a `Field` the polynomial is model of `EuclideanRing`.
 
 \sa \ref ::AlgebraicStructureTraits 
 \sa \ref ::PolynomialTraits_d 
