@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsGeometricObjects
 \cgalconcept
@@ -13,10 +13,11 @@ Represents a point in the plane.
 
 */
 
-class ArrTraits::Point_2 {
+class Point_2 {
 public:
 
 /// @}
 
 }; /* end ArrTraits::Point_2 */
 
+}

@@ -48,6 +48,10 @@ def conceptify(d):
 
     conceptify_nested_classes(d)
     
+# just an alias
+def conceptify_ns(d):
+    conceptify_nested_classes(d)
+
 def write_out_html(d, fn):
     f = open(fn, 'w', encoding='utf-8')
     # this is the normal doxygen doctype, which is thrown away by pyquery
@@ -101,6 +105,15 @@ for fn in class_files:
     ident = d('#nav-path .navelem').eq(0).children().eq(0)
     if ident and ident.attr('href') == 'namespaceCGAL.html':
         ident.attr('href', '../../CGAL.CGAL/html/namespaceCGAL.html')
+    write_out_html(d, fn)
+
+namespace_files=glob.glob('./output/CGAL.CGAL.*/html/namespace*.html')
+for fn in namespace_files:
+    d = pq(filename=fn, parser='html')
+    ident = d('#CGALConceptNS')
+    if ident.size() == 1:
+        conceptify_ns(d);
+        d.remove("#CGALConceptNS")
     write_out_html(d, fn)
 
 # in a group we only need to change the nested-classes

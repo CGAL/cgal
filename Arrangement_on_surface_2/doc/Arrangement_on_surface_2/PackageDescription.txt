@@ -3,6 +3,10 @@
 /// \defgroup PkgArrangement2Concepts Concepts
 /// \ingroup PkgArrangement2
 
+/// \cgalconceptnamespace
+/// The namespace containing concepts specific to Arrangements.
+namespace ArrTraits {}
+
 /// \defgroup PkgArrangement2ConceptsDCEL DCEL Concepts
 /// \ingroup PkgArrangement2Concepts
 

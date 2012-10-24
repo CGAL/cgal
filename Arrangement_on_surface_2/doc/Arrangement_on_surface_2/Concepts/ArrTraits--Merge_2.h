@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrTraits::Merge_2 {
+class Merge_2 {
 public:
 
 /// \name Has Models 
@@ -28,3 +28,4 @@ ArrTraits::X_monotone_curve_2& xc);
 
 }; /* end ArrTraits::Merge_2 */
 
+}

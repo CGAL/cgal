@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrTraits::ParameterSpaceInY_2 {
+class ParameterSpaceInY_2 {
 public:
 
 /// \name Has Models 
@@ -38,3 +38,4 @@ Arr_curve_end ce);
 
 }; /* end ArrTraits::ParameterSpaceInY_2 */
 
+}

@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsGeometricObjects
 \cgalconcept
@@ -13,10 +13,11 @@ Represents a planar (weakly) \f$ x\f$-monotone curve.
 
 */
 
-class ArrTraits::XMonotoneCurve_2 {
+class XMonotoneCurve_2 {
 public:
 
 /// @}
 
 }; /* end ArrTraits::XMonotoneCurve_2 */
 
+}

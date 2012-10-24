@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrTraits::IsVertical_2 {
+class IsVertical_2 {
 public:
 
 /// \name Has Models 
@@ -24,3 +24,4 @@ bool operator()(ArrTraits::X_monotone_curve_2 xc);
 
 }; /* end ArrTraits::IsVertical_2 */
 
+}

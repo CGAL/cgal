@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrTraits::CompareXNearLimit_2 {
+class CompareXNearLimit_2 {
 public:
 
 /// \name Has Models 
@@ -41,3 +41,4 @@ Arr_curve_end ce);
 
 }; /* end ArrTraits::CompareXNearLimit_2 */
 
+}

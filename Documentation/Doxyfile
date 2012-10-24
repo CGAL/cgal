@@ -208,6 +208,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
 # this sets the include file of a concept to a non-existing file and
 # thus removes its include statement
 ALIASES += "cgalconcept=\details <div id=\"CGALConcept\"></div>\n \brief"
+ALIASES += "cgalconceptnamespace=\details <div id=\"CGALConceptNS\"></div>\n \brief"
 
 ALIASES += "refines=\xrefitem refines \"Refines\" \"Refinement Relationships\""
 ALIASES += "requires=\xrefitem requires \"Requires\" \"Type Requirements\""

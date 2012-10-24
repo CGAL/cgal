@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrTraits::MakeXMonotone_2 {
+class MakeXMonotone_2 {
 public:
 
 /// \name Has Models 
@@ -32,3 +32,4 @@ OutputIterator oi);
 
 }; /* end ArrTraits::MakeXMonotone_2 */
 
+}

@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrTraits::AreMergeable_2 {
+class AreMergeable_2 {
 public:
 
 /// \name Has Models 
@@ -29,3 +29,4 @@ ArrTraits::X_monotone_curve_2 xc2);
 
 }; /* end ArrTraits::AreMergeable_2 */
 
+}

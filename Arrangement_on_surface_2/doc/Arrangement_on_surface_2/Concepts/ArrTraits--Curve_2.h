@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsGeometricObjects
 \cgalconcept
@@ -12,10 +12,11 @@ represents a general planar curve.
 
 */
 
-class ArrTraits::Curve_2 {
+class Curve_2 {
 public:
 
 /// @}
 
 }; /* end ArrTraits::Curve_2 */
 
+}

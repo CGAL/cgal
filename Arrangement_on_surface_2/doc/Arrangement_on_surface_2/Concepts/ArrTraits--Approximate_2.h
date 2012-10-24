@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrTraits::Approximate_2 {
+class Approximate_2 {
 public:
 
 /// \name Has Models 
@@ -26,3 +26,4 @@ int i);
 
 }; /* end ArrTraits::Approximate_2 */
 
+}

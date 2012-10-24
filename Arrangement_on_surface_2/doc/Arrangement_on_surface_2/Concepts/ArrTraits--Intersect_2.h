@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrTraits::Intersect_2 {
+class Intersect_2 {
 public:
 
 /// \name Has Models 
@@ -35,3 +35,4 @@ Output_iterator& oi);
 
 }; /* end ArrTraits::Intersect_2 */
 
+}

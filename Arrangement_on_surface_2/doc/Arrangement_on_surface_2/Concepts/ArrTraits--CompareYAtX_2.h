@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrTraits::CompareYAtX_2 {
+class CompareYAtX_2 {
 public:
 
 /// \name Has Models 
@@ -27,3 +27,4 @@ ArrTraits::X_monotone_curve_2 xc);
 
 }; /* end ArrTraits::CompareYAtX_2 */
 
+}

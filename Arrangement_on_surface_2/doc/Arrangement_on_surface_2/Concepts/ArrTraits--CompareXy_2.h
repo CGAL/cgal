@@ -1,4 +1,4 @@
-
+namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
 \cgalconcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrTraits::CompareXy_2 {
+class CompareXy_2 {
 public:
 
 /// \name Has Models 
@@ -26,3 +26,4 @@ ArrTraits::Point_2 p2);
 
 }; /* end ArrTraits::CompareXy_2 */
 
+}
