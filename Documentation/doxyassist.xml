@@ -533,7 +533,6 @@ namespace for the XML file to be processed properly.  -->
             <item>../Filtered_kernel/examples</item>
           </list>
           <string name="IMAGE_PATH">../Kernel_23/doc/Kernel_23/fig</string>
-          <bool name="SORT_GROUP_NAMES">true</bool>
           <list name="TAGFILES" append="false">
             <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
             <item>./tags/Kernel_d.tag=../../CGAL.CGAL.dD-Geometry-Kernel/html</item>

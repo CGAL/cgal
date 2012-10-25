@@ -1,8 +1,8 @@
 namespace CGAL {
 
 /*!
-\addtogroup rational_rotation_approximation rational_rotation_approximation
-\ingroup kernel_global_function
+\addtogroup rational_rotation_approximation
+
 */
 
 /*!

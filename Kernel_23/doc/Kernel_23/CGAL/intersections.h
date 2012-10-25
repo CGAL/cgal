@@ -1,8 +1,7 @@
 namespace CGAL {
 
 /*!
-\defgroup do_intersect do_intersect
-\ingroup kernel_global_function
+\addtogroup do_intersect
 
 \brief 
 \details Depending on which \cgal kernel is used, different overloads of this global
@@ -170,8 +169,7 @@ bool do_intersect(Type1<SphericalKernel> obj1, Type2<SphericalKernel> obj2, Type
 
 
 /*!
-\defgroup intersection intersection
-\ingroup kernel_global_function
+\addtogroup intersection
 
 \brief 
 \details Depending on which \cgal kernel is used, different overloads of this global

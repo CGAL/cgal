@@ -1,8 +1,8 @@
 namespace CGAL {
 
 /*!
-\addtogroup squared_distance squared_distance
-\ingroup kernel_global_function
+\addtogroup squared_distance
+
 \code
 #include <squared_distance_2.h> //for 2D functions
 #include <squared_distance_3.h> //for 3D functions
