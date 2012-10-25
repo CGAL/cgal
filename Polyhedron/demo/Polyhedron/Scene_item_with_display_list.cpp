@@ -48,7 +48,7 @@ void Scene_item_with_display_list::draw(int i) const
       }
     }
     // draw the item in a display list
-    ::glNewList(display_list[i],GL_COMPILE_AND_EXECUTE);
+    ::glNewList(display_list[i],GL_COMPILE);
     if(i == 0) {
       direct_draw();
     }
@@ -56,6 +56,7 @@ void Scene_item_with_display_list::draw(int i) const
       direct_draw_edges();
     }
     ::glEndList();
+    ::glCallList(display_list[i]);
     display_list_built[i] = true;
   }
   else {

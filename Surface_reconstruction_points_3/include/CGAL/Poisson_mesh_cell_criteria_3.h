@@ -113,7 +113,6 @@ public:
       typedef typename Tr::Geom_traits Geom_traits;
       typedef typename Geom_traits::Compute_squared_radius_3 Radius;
       typedef typename Geom_traits::Compute_squared_distance_3 Distance;
-      typedef typename Geom_traits::FT FT;
 
       Radius radius = Geom_traits().compute_squared_radius_3_object();
       Distance distance = Geom_traits().compute_squared_distance_3_object();

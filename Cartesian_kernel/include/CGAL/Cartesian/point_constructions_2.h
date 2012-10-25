@@ -26,6 +26,7 @@
 #define CGAL_CARTESIAN_POINT_CONSTRUCTIONS_2_H
 
 #include <CGAL/Cartesian/Point_2.h>
+#include <CGAL/Cartesian/Line_2.h>
 
 namespace CGAL {
 

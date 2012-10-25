@@ -30,9 +30,7 @@ namespace CGAL {
 
 template < class Traits,
            class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class HDS, class Alloc>
 std::ostream&
 operator<<( std::ostream& out, const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
@@ -45,9 +43,7 @@ operator<<( std::ostream& out, const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
 
 template < class Traits,
            class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class HDS, class Alloc>
 std::istream& operator>>(std::istream& in,
                          Polyhedron_3<Traits,Items,HDS,Alloc>& P) {

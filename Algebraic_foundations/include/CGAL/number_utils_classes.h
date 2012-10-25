@@ -28,7 +28,8 @@
 #ifndef CGAL_NUMBER_UTILS_CLASSES_H
 #define CGAL_NUMBER_UTILS_CLASSES_H 1
 
-#include <CGAL/number_type_basic.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/Algebraic_structure_traits.h>
 #include <algorithm>
 #include <utility>
 

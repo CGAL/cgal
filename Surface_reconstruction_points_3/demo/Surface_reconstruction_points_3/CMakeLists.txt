@@ -3,12 +3,10 @@
 project( Point_set_demo )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 #option(POINT_SET_DEMO_ENABLE_FORWARD_DECL "In the Point Set demo, enable " OFF)
@@ -46,8 +44,8 @@ find_package(TAUCS)
 # Find BLAS and LAPACK only (optional), for Jet Fitting
 find_package(LAPACK)
 
-# Find Eigen3 (requires 3.1.0-alpha1 or greater)
-find_package(Eigen3 3.0.91)
+# Find Eigen3 (requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0)
 
 # Find Glew (optional), for splatting
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)

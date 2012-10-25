@@ -27,6 +27,7 @@
 #include <CGAL/Taucs_fix.h>
 #include <CGAL/assertions.h>
 
+#include <cstring>
 #include <vector>
 
 namespace CGAL {
@@ -322,9 +323,9 @@ public:
               int nb_elements = m_columns[col].size(); // Number of non null elements of the column
 
               // Fast copy of column indices and values
-              memcpy(&m_matrix->rowind[first_index], &m_columns[col].m_indices[0], nb_elements*sizeof(int));
+	      std::memcpy(&m_matrix->rowind[first_index], &m_columns[col].m_indices[0], nb_elements*sizeof(int));
               T* taucs_values = (T*) m_matrix->values.v;
-              memcpy(&taucs_values[first_index], &m_columns[col].m_values[0],  nb_elements*sizeof(T));
+	      std::memcpy(&taucs_values[first_index], &m_columns[col].m_values[0],  nb_elements*sizeof(T));
 
               // Start of next column will be:
               m_matrix->colptr[col+1] = first_index + nb_elements;

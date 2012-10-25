@@ -29,6 +29,9 @@
 #define CGAL_ALGEBRAIC_NUMBER_TRAITS_H 1
 
 #include <numeric> // for std::accumulate
+#include <functional> // for std::unary_function
+#include <CGAL/tags.h>
+#include <CGAL/Algebraic_structure_traits.h>
 
 namespace CGAL {
 

@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
@@ -54,7 +54,7 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
   typedef typename Traits::Active_points_1_table TTable;
   typedef typename Traits::Kinetic_kernel::Compare_x_1 KLess;
   typedef typename Traits::Instantaneous_kernel::Compare_x_1 IComp;
- 
+
   //typedef typename Traits::Instantaneous_kernel::Compare_x_1 ILess;
 
   typedef Sort<Traits, Visitor> This;
@@ -69,7 +69,7 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
   // STL algorithms want less rather than compare. So we need to convert.
   struct ILess {
     ILess(IComp ic): ic_(ic){}
-  
+
     bool operator()(Object_key a, Object_key b) const {
       bool ret=( ic_(a,b) == CGAL::SMALLER);
       return ret;
@@ -113,16 +113,16 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
     }
     Less less_;
     }*/
-  
+
   typedef Swap_event<This,iterator, typename KLess::result_type> Event;
   friend class Swap_event<This,iterator, typename KLess::result_type>;
   // Redirects the Simulator notifications to function calls
   CGAL_KINETIC_DECLARE_LISTENERS(typename Traits::Simulator,
 				 typename Active_objects_table)
 public:
-  
+
   // Register this KDS with the MovingObjectTable and the Simulator
-  Sort(Traits tr, Visitor v=Visitor()/*, 
+  Sort(Traits tr, Visitor v=Visitor()/*,
        typedef Active_objects_table::Handle aot,
        Kinetic_less kless=tr.kinetic_kernel_object().is_less_x_1_object(),
        Instantaneous_less iless*/): compare_(tr.kinetic_kernel_object().compare_x_1_object()),
@@ -161,9 +161,9 @@ public:
 				   k, iless_);
     CGAL_LOG(Log::LOTS, "\nInserting " << k);
     if (it != sorted_.end()) {
-      CGAL_LOG(Log::LOTS, " before " << it->object() <<std::endl); 
+      CGAL_LOG(Log::LOTS, " before " << it->object() <<std::endl);
     } else {
-      CGAL_LOG(Log::LOTS, " before end" <<std::endl); 
+      CGAL_LOG(Log::LOTS, " before end" <<std::endl);
     }
     /*if (it != sorted_.end()) {
       v_.remove_edge(prior(it), it);
@@ -172,7 +172,7 @@ public:
     sorted_.insert(it, OD(k));
 
 
-    rebuild_certificate(prior(it)); 
+    rebuild_certificate(prior(it));
     //v_.create_edge(prior(it), it);
     if (prior(it) != sorted_.begin()) {
       rebuild_certificate(prior(prior(it)));
@@ -227,9 +227,9 @@ public:
       simulator_->delete_event(n->event());
       n->set_event(Event_key());
     }
-    
+
     it->swap(*n);
-    
+
     CGAL_LOG(Log::LOTS, "Updating next certificate " << std::endl);
     if (n != sorted_.end()) {
       rebuild_certificate(n);
@@ -241,14 +241,14 @@ public:
     } else {
       it->set_event(simulator_->null_event());
     }
-    
-   
+
+
     CGAL_LOG(Log::LOTS, "Updating prev certificate " << std::endl);
     if (it != sorted_.begin()) {
       rebuild_certificate(prior(it));
     }
     v_.post_swap(it, n);
-    
+
     CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM));
   }
 
@@ -261,18 +261,18 @@ public:
 	std::cerr << "ERROR: objects " << it->object() << " and "
 		  << next(it)->object() << " are out of order.\n";
 	std::cerr << "Kinetic are " << aot_->at(it->object()) << " and " << aot_->at(*next(it)) << std::endl;
-	std::cerr << "Time is " << ik_.time() << std::endl; 
-	/*std::cerr << "Static are " << ik_.current_coordinates_object()(it->object()) << " and " 
+	std::cerr << "Time is " << ik_.time() << std::endl;
+	/*std::cerr << "Static are " << ik_.current_coordinates_object()(it->object()) << " and "
 	  << ik_.current_coordinates_object()(next(it)->object()) << std::endl;*/
 	std::cerr << "ERROR: order is ";
 #else
 	if (warned_.find(*it) == warned_.end() ||
 	    warned_[*it].find(*next(it)) == warned_[*it].end()) {
-	  std::cerr << "WARNING: objects " << it->object() << " and "
+	  std::cerr << "NUMERIC ISSUE: objects " << it->object() << " and "
 		    << next(it)->object() << " are out of order.\n";
 	  std::cerr << aot_->at(it->object()) << " and " << aot_->at(next(it)->object()) << std::endl;
-	  std::cerr << "Time is " << ik_.time() << std::endl; 
-	  std::cerr << "WARNING: order is ";
+	  std::cerr << "Time is " << ik_.time() << std::endl;
+	  std::cerr << "NUMERIC ISSUE: order is ";
 	}
 #endif
 	write(std::cerr);
@@ -288,25 +288,25 @@ public:
 	  }
 	}
       }
-      if (compare_.sign_at(  aot_->at(it->object()), 
+      if (compare_.sign_at(  aot_->at(it->object()),
                              aot_->at(next(it)->object()),
                              simulator_->current_time()) == CGAL::LARGER) {
 #ifdef CGAL_KINETIC_CHECK_EXACTNESS
 	std::cerr << "ERROR: kinetic objects " << it->object() << " and "
 		  << next(it)->object() << " are out of order.\n";
 	std::cerr << "Kinetic are " << aot_->at(it->object()) << " and " << aot_->at(*next(it)) << std::endl;
-	std::cerr << "Time is " <<ik_.time() << std::endl; 
-	/*std::cerr << "Static are " << ik_.current_coordinates_object()(it->object()) << " and " 
+	std::cerr << "Time is " <<ik_.time() << std::endl;
+	/*std::cerr << "Static are " << ik_.current_coordinates_object()(it->object()) << " and "
 	  << ik_.current_coordinates_object()(next(it)->object()) << std::endl;*/
 	std::cerr << "ERROR: order is ";
 #else
 	if (warned_.find(*it) == warned_.end() ||
 	    warned_[*it].find(*next(it)) == warned_[*it].end()) {
-	  std::cerr << "WARNING: objects " << it->object() << " and "
+	  std::cerr << "NUMERIC ISSUE: objects " << it->object() << " and "
 		    << next(it)->object() << " are out of order.\n";
 	  std::cerr << aot_->at(it->object()) << " and " << aot_->at(next(it)->object()) << std::endl;
-	  std::cerr << "Time is " <<ik_.time() << std::endl; 
-	  std::cerr << "WARNING: order is ";
+	  std::cerr << "Time is " <<ik_.time() << std::endl;
+	  std::cerr << "NUMERIC ISSUE: order is ";
 	}
 #endif
 	write(std::cerr);
@@ -336,7 +336,7 @@ public:
     CGAL_LOG_WRITE(Log::LOTS, write(LOG_STREAM));
     CGAL_LOG(Log::LOTS, std::endl);
 
-    
+
     //typename Instantaneous_kernel::Less_x_1 less= ik_.less_x_1_object();
     for (typename std::list<OD>::const_iterator it
 	   = sorted_.begin(); it->object() != sorted_.back().object(); ++it) {
@@ -371,7 +371,7 @@ public:
     //iterator it =  std::equal_range(sorted_.begin(), sorted_.end(),k).first;
     CGAL_precondition(it != sorted_.end());
     CGAL_precondition(it->object() == k);
-    
+
     v_.pre_remove_vertex(it);
     if (next(it) != Iterator(end())) {
       simulator_->delete_event(it->event());
@@ -453,7 +453,7 @@ public:
     if (s_.will_fail()) out <<  " next is " << s_.failure_time();
     else out << " out of failures";
   }
-  void audit(typename Sort::Event_key 
+  void audit(typename Sort::Event_key
 #ifndef NDEBUG
 	     tk
 #endif

@@ -56,7 +56,7 @@ class Extended_homogeneous : public
 geometry\footnote{It is called extended geometry for simplicity,
 though it is not a real geometry in the classical sense.}. Let |\Mvar|
 be an instance of the data type |\Mname|.  The central notion of
-extended geomtry are extended points. An extended point represents
+extended geometry are extended points. An extended point represents
 either a standard affine point of the Cartesian plane or a
 non-standard point representing the equivalence class of rays where
 two rays are equivalent if one is contained in the other.

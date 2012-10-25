@@ -2,6 +2,17 @@
 
 # export DH_VERBOSE=1
 
+# See http://wiki.debian.org/Hardening#Notes_for_packages_using_CMake
+CFLAGS   := $(CFLAGS) $(CPPFLAGS)
+CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS)
+
+# The build system links all four libraries against all dependencies.
+LDFLAGS  += -Wl,--as-needed
+
+ifeq ($(DEB_BUILD_ARCH),alpha)
+  IEEE_FPU_OPTION = -mieee -mfp-rounding-mode=d
+endif
+
 %:
 	dh $@
 
@@ -9,18 +20,17 @@ override_dh_auto_configure:
 	mkdir -p static
 	cd static && QTDIR= cmake .. \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
-	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=FALSE \
-	  -DWITH_CGAL_Qt3=OFF -DWITH_demos=OFF -DWITH_examples=OFF
+	  -DWITH_CGAL_Qt3=OFF -DWITH_demos=OFF -DWITH_examples=OFF \
+	  -DCGAL_ENABLE_PRECONFIG=OFF -DBUILD_SHARED_LIBS=FALSE
 	mkdir -p shared
 	cd shared && QTDIR= cmake .. \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
-	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=TRUE \
-	  -DWITH_CGAL_Qt3=OFF -DWITH_demos=OFF -DWITH_examples=OFF
+	  -DWITH_CGAL_Qt3=OFF -DWITH_demos=OFF -DWITH_examples=OFF \
+	  -DCGAL_ENABLE_PRECONFIG=OFF -DBUILD_SHARED_LIBS=TRUE -DCMAKE_SKIP_RPATH=TRUE 
 	mkdir -p shared/demo/CGAL_ipelets
 	cd shared/demo/CGAL_ipelets && QTDIR= cmake ../../../demo/CGAL_ipelets \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
-	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=TRUE \
-	  -DWITH_CGAL_Qt3=OFF -DCGAL_DIR=$(CURDIR)/shared   
+	  -DCGAL_DIR=$(CURDIR)/shared   
 
 override_dh_auto_build:
 	$(MAKE) -C static
@@ -59,21 +69,28 @@ override_dh_install:
 
 	dh_install --sourcedir=debian/tmp --list-missing
 
-	mkdir -p debian/libcgal-demo/usr/share/doc
-	ln -s libcgal9 debian/libcgal-demo/usr/share/doc/libcgal-demo
+	mkdir -p  debian/libcgal-qt4-dev/usr/include/CGAL
+	mv debian/libcgal-dev/usr/include/CGAL/Qt debian/libcgal-qt4-dev/usr/include/CGAL
+
+	mkdir -p debian/libcgal-qt4-10/usr/share/doc
+	ln -s libcgal10 debian/libcgal-qt4-10/usr/share/doc/libcgal-qt4-10
 	mkdir -p debian/libcgal-dev/usr/share/doc
-	ln -s libcgal9 debian/libcgal-dev/usr/share/doc/libcgal-dev
+	ln -s libcgal10 debian/libcgal-dev/usr/share/doc/libcgal-dev
+	mkdir -p debian/libcgal-qt4-dev/usr/share/doc
+	ln -s libcgal10 debian/libcgal-qt4-dev/usr/share/doc/libcgal-qt4-dev
+	mkdir -p debian/libcgal-demo/usr/share/doc
+	ln -s libcgal10 debian/libcgal-demo/usr/share/doc/libcgal-demo
 	mkdir -p debian/libcgal-ipelets/usr/share/doc
-	ln -s libcgal9 debian/libcgal-ipelets/usr/share/doc/libcgal-ipelets
+	ln -s libcgal10 debian/libcgal-ipelets/usr/share/doc/libcgal-ipelets
 
 override_dh_installdocs:
-	dh_installdocs -plibcgal9 debian/copyright
+	dh_installdocs -plibcgal10 debian/copyright
 
 override_dh_installchangelogs:
-	dh_installchangelogs -plibcgal9
+	dh_installchangelogs -plibcgal10
 
-override_dh_shlibdeps:
-	dh_shlibdeps -a -ldebian/libcgal9/usr/lib
+override_dh_shlibdeps: # TODO Is that really needed?
+	dh_shlibdeps -a -ldebian/libcgal10/usr/lib
 
 override_dh_gencontrol:
 	dh_gencontrol -- -VIpe-Version=`dpkg-awk 'Package:^ipe$$' -- Version | grep Version | sed 's/Version: //;s/-[^-]*$$//'`

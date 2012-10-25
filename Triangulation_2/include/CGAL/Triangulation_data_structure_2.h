@@ -63,6 +63,17 @@ class Triangulation_data_structure_2
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
 
 public:
+  // Tools to change the Vertex and Face types of the TDS.
+  template < typename Vb2 >
+  struct Rebind_vertex {
+    typedef Triangulation_data_structure_2<Vb2, Fb>  Other;
+  };
+
+  template < typename Fb2 >
+  struct Rebind_face {
+    typedef Triangulation_data_structure_2<Vb, Fb2>  Other;
+  };
+
   typedef Vertex_base                                Vertex;
   typedef Face_base                                  Face;
   
@@ -2033,7 +2044,7 @@ off_file_input( std::istream& is, bool verbose)
   typedef typename Vb::Point   Point;
 
   // read vertices
-  int i;
+  std::size_t i;
   for ( i = 0; i < scanner.size_of_vertices(); i++) {
     Point p;
     file_scan_vertex( scanner, p);
@@ -2063,14 +2074,14 @@ off_file_input( std::istream& is, bool verbose)
       return vinf;
     }
 
-    for ( int j = 0; j < no; ++j) {
+    for ( std::size_t j = 0; j < no; ++j) {
       std::size_t index;
       scanner.scan_facet_vertex_index( index, i);
       fh->set_vertex(j, vvh[index]);
       vvh[index]->set_face(fh);
     }
 
-    for (int ih  = 0; ih < no; ++ih) {
+    for (std::size_t ih  = 0; ih < no; ++ih) {
 	set_adjacency(fh, ih, edge_map);
     }
   }

@@ -151,7 +151,7 @@ public:
    *                    arrangement (a vertex, halfedge, or face handle).
    * \return The nearest landmark point.
    */
-  virtual Point_2 closest_landmark (Point_2 p, Object &obj)
+  virtual Point_2 closest_landmark (const Point_2& p, Object &obj)
   {
     CGAL_assertion(updated);
     return (nn.find_nearest_neighbor(p, obj));

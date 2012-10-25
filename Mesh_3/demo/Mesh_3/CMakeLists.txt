@@ -3,12 +3,10 @@
 project( Mesh_3_demo )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 # Let plugins be compiled in the same directory as the executable.
@@ -45,6 +43,8 @@ find_package(OpenGL)
 # Find GLEW (for OpenGL-1.5 and OpenGL extensions)
 find_package(GLEW)
 
+# Find everybodies darling
+find_package(Boost COMPONENTS thread system)
 
 # Find QGLViewer
 if(QT4_FOUND)
@@ -53,7 +53,7 @@ if(QT4_FOUND)
 endif(QT4_FOUND)
 
 
-if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
   # Add directory containing implicit function plugin source files
   add_subdirectory("implicit_functions")
@@ -118,7 +118,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   set(VIEWER_LIB "${MESH_3_LIB_PREFIX}viewer")
   add_library(${VIEWER_LIB} SHARED
     ${DEMO_SRC_DIR}/Viewer.cpp Viewer_moc.cpp)
-  target_link_libraries(${VIEWER_LIB} ${QGLVIEWER_LIBRARIES})
+  target_link_libraries(${VIEWER_LIB} ${QGLVIEWER_LIBRARIES} ${QT_LIBRARIES} ${OPENGL_LIBRARIES})
   set_target_properties(${VIEWER_LIB} PROPERTIES DEFINE_SYMBOL viewer_EXPORTS)
 
   set(SCENE_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_item")
@@ -128,11 +128,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     ${DEMO_SRC_DIR}/Scene_item_with_display_list.cpp
     ${DEMO_SRC_DIR}/Plugin_helper.cpp)
   set_target_properties(${SCENE_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_item_EXPORTS)
+  target_link_libraries(${SCENE_ITEM_LIB} ${QT_LIBRARIES} ${OPENGL_LIBRARIES})
 
   set(SCENE_SEGMENTED_IMAGE_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_segmented_image_item")
   add_library(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} SHARED
     Scene_segmented_image_item.cpp Scene_segmented_image_item.moc)
-  target_link_libraries(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${SCENE_ITEM_LIB})
+  target_link_libraries(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES})
   set_target_properties(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_segmented_image_item_EXPORTS)
 
   if(GLEW_FOUND)
@@ -142,25 +143,25 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   set(SCENE_POLYHEDRON_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_polyhedron_item")
   add_library(${SCENE_POLYHEDRON_ITEM_LIB} SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
-  target_link_libraries(${SCENE_POLYHEDRON_ITEM_LIB} ${SCENE_ITEM_LIB})
+  target_link_libraries(${SCENE_POLYHEDRON_ITEM_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES})
   set_target_properties(${SCENE_POLYHEDRON_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_polyhedron_item_EXPORTS)
 
   set(POLYGON_SOUP_LIB "${MESH_3_LIB_PREFIX}polygon_soup")
   add_library(${POLYGON_SOUP_LIB} SHARED
     Scene_polygon_soup.cpp Scene_polygon_soup.moc)
-  target_link_libraries(${POLYGON_SOUP_LIB} ${SCENE_ITEM_LIB})
+  target_link_libraries(${POLYGON_SOUP_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES})
   set_target_properties(${POLYGON_SOUP_LIB} PROPERTIES DEFINE_SYMBOL polygon_soup_EXPORTS)
 
   set(SCENE_C3T3_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_c3t3_item")
   add_library(${SCENE_C3T3_ITEM_LIB} SHARED
     Scene_c3t3_item.cpp Scene_c3t3_item.moc)
-  target_link_libraries(${SCENE_C3T3_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} )
+  target_link_libraries(${SCENE_C3T3_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} ${QT_LIBRARIES} ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
   set_target_properties(${SCENE_C3T3_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_c3t3_item_EXPORTS)
 
   set(SCENE_IMPLICIT_FUNCTION_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_implicit_function_item")
   add_library(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} SHARED
     Scene_implicit_function_item.cpp Scene_implicit_function_item.moc Color_ramp.cpp)
-  target_link_libraries(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} )
+  target_link_libraries(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} ${QT_LIBRARIES})
   set_target_properties(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_implicit_function_item_EXPORTS)
 
 
@@ -290,7 +291,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
                         ${OPENGL_glu_LIBRARY})
 
 
-else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
   set(MESH_3_MISSING_DEPS "")
 
@@ -310,9 +311,21 @@ else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     set(MESH_3_MISSING_DEPS "QGLViewer, ${MESH_3_MISSING_DEPS}")
   endif()
 
+  if(NOT QGLVIEWER_FOUND)
+    set(MESH_3_MISSING_DEPS "QGLViewer, ${MESH_3_MISSING_DEPS}")
+  endif()
+
+  if(NOT QGLVIEWER_FOUND)
+    set(MESH_3_MISSING_DEPS "QGLViewer, ${MESH_3_MISSING_DEPS}")
+  endif()
+
+  if(NOT Boost_FOUND)
+    set(MESH_3_MISSING_DEPS "Boost, ${MESH_3_MISSING_DEPS}")
+  endif()
+
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
 
 

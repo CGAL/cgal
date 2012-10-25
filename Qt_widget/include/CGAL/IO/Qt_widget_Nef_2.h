@@ -87,31 +87,16 @@ template <typename T>
 CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
 {
     typedef Nef_polyhedron_2<T> Polyhedron;
-    typedef typename T::RT RT;
     typedef typename T::Standard_RT Standard_RT;
     typedef typename T::Standard_segment_2
       Standard_segment_2;
-    typedef typename T::Standard_line_2
-      Standard_line_2;
     typedef typename T::Standard_point_2
       Standard_point_2;
     typedef typename Polyhedron::Explorer TExplorer;
     typedef typename TExplorer::Halfedge_around_face_const_circulator 
       Halfedge_around_face_const_circulator;
-    typedef typename TExplorer::Hole_const_iterator
-      Hole_const_iterator;
-    typedef typename TExplorer::Isolated_vertex_const_iterator
-      Isolated_vertex_const_iterator;
 
-    typedef typename TExplorer::Ray Ray;
     typedef typename TExplorer::Point Point;
-
-    typedef typename TExplorer::Vertex_const_handle
-      Vertex_const_handle;
-    typedef typename TExplorer::Halfedge_const_handle
-      Halfedge_const_handle;
-    typedef typename TExplorer::Face_const_handle
-      Face_const_handle;
 
     typedef typename TExplorer::Vertex_const_iterator
       Vertex_const_iterator;
@@ -198,6 +183,8 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
       ws.get_painter().drawPolygon(array);
       ws.setRasterOp(old_raster);
 /*
+      typedef typename TExplorer::Isolated_vertex_const_iterator
+      Isolated_vertex_const_iterator;
       Isolated_vertex_const_iterator iv_it;
       for (iv_it = D.isolated_vertices_begin(fit); 
         iv_it != D.isolated_vertices_end(fit); ++iv_it) {

@@ -27,6 +27,8 @@
 
 #include <CGAL/Handle_for_virtual.h>
 #include <CGAL/determinant.h>
+#include <CGAL/aff_transformation_tags.h>
+#include <ostream>
 
 namespace CGAL {
 

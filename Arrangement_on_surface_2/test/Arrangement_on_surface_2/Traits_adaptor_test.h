@@ -3,13 +3,13 @@
 
 #include "Traits_base_test.h"
 
-template <class T_Traits>
+template <typename T_Traits>
 class Traits_adaptor_test : public Traits_base_test<T_Traits> {
 private:
   /*! A map between (strings) commands and (member functions) operations */
   typedef bool (Traits_adaptor_test::* Wrapper)(std::istringstream &);
-  typedef std::map<std::string, Wrapper>        Wrapper_map;
-  typedef typename Wrapper_map::iterator        Wrapper_iter;
+  typedef std::map<std::string, Wrapper> Wrapper_map;
+  typedef typename Wrapper_map::iterator Wrapper_iter;
   Wrapper_map m_wrappers;
   
   virtual bool exec(std::istringstream & str_stream,
@@ -49,7 +49,7 @@ private:
 
 public:
   /*! Constructor */
-  Traits_adaptor_test(int argc, char * argv[]);
+  Traits_adaptor_test();
 
   /*! Destructor */
   virtual ~Traits_adaptor_test();
@@ -59,9 +59,8 @@ public:
  * Constructor. 
  * Accepts test data file name.
  */
-template <class T_Traits>
-Traits_adaptor_test<T_Traits>::Traits_adaptor_test(int argc, char * argv[]) :
-  Traits_base_test<T_Traits>(argc, argv)
+template <typename T_Traits>
+Traits_adaptor_test<T_Traits>::Traits_adaptor_test()
 {
   typedef T_Traits Traits;
 
@@ -85,10 +84,10 @@ Traits_adaptor_test<T_Traits>::Traits_adaptor_test(int argc, char * argv[]) :
  * Destructor. 
  * Declares as virtual.
  */
-template <class T_Traits>
+template <typename T_Traits>
 Traits_adaptor_test<T_Traits>::~Traits_adaptor_test() {}
 
-template <class T_Traits>
+template <typename T_Traits>
 bool Traits_adaptor_test<T_Traits>::
 ta_compare_y_at_x_left_wrapper(std::istringstream & str_stream)
 {
@@ -96,15 +95,15 @@ ta_compare_y_at_x_left_wrapper(std::istringstream & str_stream)
   return ta_compare_y_at_x_left_wrapper_imp(str_stream, Has_left_category());
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool Traits_adaptor_test<T_Traits>::
-ta_compare_y_at_x_left_wrapper_imp (std::istringstream &, CGAL::Tag_false)
+ta_compare_y_at_x_left_wrapper_imp(std::istringstream &, CGAL::Tag_false)
 {
   CGAL_error();
   return false;
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool
 Traits_adaptor_test<T_Traits>::
 ta_compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
@@ -124,7 +123,7 @@ ta_compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
   return this->compare(exp_answer, real_answer);
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool Traits_adaptor_test<T_Traits>::
 ta_is_in_x_range_wrapper(std::istringstream & str_stream)
 {
@@ -149,7 +148,7 @@ ta_is_in_x_range_wrapper(std::istringstream & str_stream)
   return this->compare(exp_answer, real_answer);
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool Traits_adaptor_test<T_Traits>::
 ta_compare_y_position_wrapper(std::istringstream & str_stream)
 {
@@ -165,7 +164,7 @@ ta_compare_y_position_wrapper(std::istringstream & str_stream)
   return this->compare(exp_answer, real_answer);
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool Traits_adaptor_test<T_Traits>::
 ta_is_between_cw_wrapper(std::istringstream & str_stream)
 {
@@ -192,7 +191,7 @@ ta_is_between_cw_wrapper(std::istringstream & str_stream)
   return this->compare(exp_answer, real_answer);
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool Traits_adaptor_test<T_Traits>::
 ta_compare_cw_around_point_wrapper(std::istringstream & str_stream)
 {
@@ -218,7 +217,7 @@ ta_compare_cw_around_point_wrapper(std::istringstream & str_stream)
   return this->compare(exp_answer, real_answer);
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool Traits_adaptor_test<T_Traits>::
 ta_are_mergeable_wrapper(std::istringstream & str_stream)
 {
@@ -226,7 +225,7 @@ ta_are_mergeable_wrapper(std::istringstream & str_stream)
   return ta_are_mergeable_wrapper_imp(str_stream, Has_merge_category());
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool
 Traits_adaptor_test<T_Traits>::
 ta_are_mergeable_wrapper_imp(std::istringstream &, CGAL::Tag_false)
@@ -235,7 +234,7 @@ ta_are_mergeable_wrapper_imp(std::istringstream &, CGAL::Tag_false)
   return false;
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool Traits_adaptor_test<T_Traits>::
 ta_are_mergeable_wrapper_imp (std::istringstream & str_stream, CGAL::Tag_true)
 {
@@ -251,7 +250,7 @@ ta_are_mergeable_wrapper_imp (std::istringstream & str_stream, CGAL::Tag_true)
   return this->compare(exp_answer, real_answer);
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool Traits_adaptor_test<T_Traits>::ta_merge_wrapper
 (std::istringstream & str_stream)
 {
@@ -259,19 +258,19 @@ bool Traits_adaptor_test<T_Traits>::ta_merge_wrapper
   return ta_merge_wrapper_imp(str_stream, Has_merge_category());
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool
 Traits_adaptor_test<T_Traits>::
-ta_merge_wrapper_imp (std::istringstream &, CGAL::Tag_false)
+ta_merge_wrapper_imp(std::istringstream &, CGAL::Tag_false)
 {
   CGAL_error();
   return false;
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool
 Traits_adaptor_test<T_Traits>::
-ta_merge_wrapper_imp (std::istringstream & str_stream, CGAL::Tag_true)
+ta_merge_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_true)
 {
   typedef T_Traits                              Traits;
   typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;

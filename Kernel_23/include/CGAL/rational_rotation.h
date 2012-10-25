@@ -27,6 +27,7 @@
 #define CGAL_RATIONAL_ROTATION_H
 
 #include <algorithm>
+#include <CGAL/number_type_basic.h>
 
 namespace CGAL {
 

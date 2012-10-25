@@ -157,7 +157,6 @@ namespace CircularFunctors {
     if(A2.supporting_line().is_vertical())
       return CGAL::SMALLER;
     
-    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef typename CK::Polynomial_1_2       Polynomial_1_2;
     typedef typename CK::Root_of_2            Root_of_2;
 
@@ -418,8 +417,7 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
     typedef typename CK::Line_arc_2               Line_arc_2;
     typedef typename CK::Point_2                  Point_2;
-    typedef typename CK::Root_of_2                Root_of_2;
-    typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
+    // typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
 
 #ifdef CGAL_CK_EXPLOIT_IDENTITY
     bool a1s_a2s = a1.source().equal_ref(a2.source());
@@ -757,8 +755,6 @@ namespace CircularFunctors {
     typedef typename CK::Line_arc_2               Line_arc_2;
     typedef typename CK::Point_2                  Point_2;
     typedef typename CK::Line_2                   Line_2;
-    typedef typename CK::Root_of_2                Root_of_2;
-    typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
 
     if(LinearFunctors::non_oriented_equal<CK>(l, la.supporting_line())) {
       *res++ = make_object(la);
@@ -784,7 +780,6 @@ namespace CircularFunctors {
   {
     typedef typename CK::Circular_arc_2 Circular_arc_2;
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-    typedef typename CK::Line_2 Line_2;
     typedef std::vector<CGAL::Object > solutions_container;
 
     solutions_container solutions;

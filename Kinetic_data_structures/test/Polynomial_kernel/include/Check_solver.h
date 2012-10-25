@@ -36,7 +36,7 @@ public:
   /*void time_estimate(const Fn &, const Rt& , False){
   }
 
- 
+
   void time_estimate(const Fn &q, const Rt& start, True){
     Root_stack s= k_.root_stack_object(q, start, std::numeric_limits<Rt>::infinity());
     CGAL::Timer timer;
@@ -92,7 +92,7 @@ public:
 	if (reps==0  && verbose) {
 	  //comp.push_back(CGAL::to_double(r));
 	  if (last_root > s.top()) {
-	    std::cerr << "WARNING last root was " << last_root << " and current root is "
+	    std::cerr << "NUMERIC ISSUE last root was " << last_root << " and current root is "
 		      << s.top() << std::endl;
 	  }
 	  CGAL_assertion(last_root<= s.top());
@@ -103,13 +103,13 @@ public:
 	    int i=0;
 	    }*/
 	  roots.push_back(s.top());
-	  
+
 	  std::cout << "<" << CGAL::to_double(s.top());
 	  //if (iem(s.top())) { std::cout <<"E";}
 	  std::cout << "> " << std::flush;
 	  /*}
 	    else {
-	    
+
 	    }*/
 	}
 	s.pop();
@@ -152,11 +152,11 @@ public:
 	  std::cout << std::endl;
 	  for (unsigned int i=0; i< taken_maple.size(); ++i) {
 	    if (!taken_maple[i])
-	      std::cerr << "WARNING Missing " << roots_b[i] << std::endl;
+	      std::cerr << "NUMERIC ISSUE Missing " << roots_b[i] << std::endl;
 	  }
 
 	  for (unsigned int i=0; i< taken_solver.size(); ++i) {
-	    if (!taken_solver[i]) std::cerr << "WARNING Extra " << roots[i] << std::endl;
+	    if (!taken_solver[i]) std::cerr << "NUMERIC ISSUE Extra " << roots[i] << std::endl;
 	  }
 	}
 

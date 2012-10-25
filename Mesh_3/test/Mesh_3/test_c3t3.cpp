@@ -34,6 +34,7 @@
 #include <iostream>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/IO/File_tetgen.h>
 
 
 
@@ -366,6 +367,10 @@ struct Tester
     assert ( std::distance(patch_fit_bis,fend) == 1 );
     assert ( c3t3.surface_patch_index(*patch_fit) == surface_patch_index );
     assert ( c3t3.surface_patch_index(*patch_fit_bis) == surface_patch_index_bis );
+
+    std::ofstream out_medit("test-medit.mesh");
+    CGAL::output_to_medit(out_medit, c3t3);
+    CGAL::output_to_tetgen("test-tetgen", c3t3);
   }
 };
 

@@ -1,10 +1,11 @@
 # This module setups the compiler for the TAUCS libraries.
 # It assumes that find_package(TAUCS) was already called.
 
-if ( TAUCS_FOUND AND NOT CGAL_TAUCS_SETUP )
+if ( TAUCS_FOUND AND NOT TAUCS_SETUP )
 
+  message( STATUS "UseTAUCS" )
   message( STATUS "TAUCS include:     ${TAUCS_INCLUDE_DIR}" )
-  include_directories ( ${TAUCS_INCLUDE_DIR} )
+  include_directories ( SYSTEM ${TAUCS_INCLUDE_DIR} )
 
   message( STATUS "TAUCS definitions: ${TAUCS_DEFINITIONS}" )
   add_definitions( ${TAUCS_DEFINITIONS} "-DCGAL_USE_TAUCS" )
@@ -22,7 +23,7 @@ if ( TAUCS_FOUND AND NOT CGAL_TAUCS_SETUP )
   include( ${LAPACK_USE_FILE} )
 
   # Setup is done
-  set ( CGAL_TAUCS_SETUP TRUE )
+  set ( TAUCS_SETUP TRUE )
 
   add_definitions(-DCGAL_TAUCS_ENABLED)
 

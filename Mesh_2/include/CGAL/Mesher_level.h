@@ -21,6 +21,8 @@
 #ifndef CGAL_MESHER_LEVEL_H
 #define CGAL_MESHER_LEVEL_H
 
+#include <string>
+
 namespace CGAL {
 
 enum Mesher_level_conflict_status {

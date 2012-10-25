@@ -1,0 +1,79 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_vertex_index_map.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_vertex_index_map<Arrangement>}
+\label{arr_ref:arr_vertex_index_map}
+
+\ccDefinition
+%============
+
+\ccClassTemplateName{} maintains a mapping of vertex handles of an
+attached arrangement object to indices (of type \ccc{unsigned int}).
+This class template is a model of the \boost{} concept
+\ccc{ReadablePropertyMap}. A mapping between vertex handles and indices
+enables convenient usage of property-map classes supplied by \boost{}.
+For example, the property-map class templates
+\ccc{boost::vector_property_map}, which is based on \ccc{std::vector},
+and \ccc{boost::iterator_property_map}, which can be used to implement
+a property map based on a native C\hbox{\tt ++} array, require the
+user to supply a mapping such as \ccClassTemplateName{}.
+
+As new vertices might be inserted into the attached arrangement, and
+existing vertices might be removed, the notification mechanism is used
+to dynamically maintain the mapping of vertex handles to indices.
+
+\ccRefines{DefaultConstructible, CopyConstructible, Assignable}
+
+\ccIsModel
+  \ccc{boost::ReadablePropertyMap}
+  
+\ccInheritsFrom\ccc{Arr_observer<Arrangement>}
+
+\ccInclude{CGAL/Arr_vertex_index_map.h}
+
+\ccTypes
+%=======
+
+\ccNestedType{Arrangement_2}{the type of the attached arrangement.}
+
+\ccNestedType{category}{\ccc{boost::readable_property_map_tag}}
+\ccGlue
+\ccNestedType{value_type}{\ccc{unsigned int}}
+\ccGlue
+\ccNestedType{reference}{\ccc{unsigned int}}
+\ccGlue
+\ccNestedType{key_type}{V\ccc{ertex_handle}}
+
+\ccTypedef{typedef typename Arrangement_2::Vertex_handle Vertex_handle;}
+    {The vertex handle type.}
+
+\ccTypedef{typedef Unique_hash_map<Vertex_handle, value_type> Index_map;}
+    {The type of mapping of vertices to indices.}
+
+\ccCreation
+\ccCreationVariable{vertex_index_map}
+%===================================
+
+\ccConstructor{Arr_vertex_index_map();} 
+    {constructs a map that is unattached to any arrangement instance.}
+ 
+\ccConstructor{Arr_vertex_index_map(Arrangement_2& arr);} 
+    {constructs a map and attaches it to the given arrangement \ccc{arr}.}
+
+\ccSeeAlso
+%=========
+\ccc{Arr_observer<Arrangement>}\lcTex{ 
+     (\ccRefPage{Arr_observer<Arrangement>})}\\
+\ccc{Arr_face_index_map<Arrangement>}\lcTex{ 
+     (\ccRefPage{Arr_face_index_map<Arrangement>})}
+  
+\end{ccRefClass}
+
+\ccRefPageEnd

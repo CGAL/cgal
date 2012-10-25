@@ -1,1 +1,0 @@
-IO package: support for iostream (io modes, tags)

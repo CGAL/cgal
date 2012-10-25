@@ -30,6 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <CGAL/circulator_bases.h>
+#include <CGAL/use.h>
 
 // These are name redefinitions for backwards compatibility
 // with the pre iterator-traits style adaptors.
@@ -743,6 +744,7 @@ public:
 // OPERATIONS
 
     bool operator==( Nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == NULL);
         return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
     }
@@ -876,6 +878,7 @@ public:
 // OPERATIONS
 
     bool operator==( Nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == NULL);
         return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
     }
@@ -1028,6 +1031,7 @@ public:
 // OPERATIONS
 
     bool operator==( Nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == NULL);
         return empty;
     }

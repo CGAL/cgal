@@ -24,7 +24,14 @@
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/RS/functors_1.h>
 
-template <class _C,class _G=CGAL::Rsgcd_1>
+template <class _C,
+          class _G=
+#ifdef CGAL_RS_USE_UGCD
+                   CGAL::Modgcd_1
+#else
+                   CGAL::Rsgcd_1
+#endif
+>
 struct Algebraic_kernel_rs_1{
 
         typedef _C                                      Coefficient;
