@@ -1369,9 +1369,6 @@ public:
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
             ++bcounter;
 #endif
-            // CJTODO TEMP
-            if (!derivd.is_zombie(ce))
-              int i = 0;
           }
         }
         else
