@@ -9,9 +9,9 @@ requirements for the vertex base class of the
 site of the segment Delaunay graph and provides access to one of its 
 incident faces through a `Face_handle`. 
 
-\refines ::DefaultConstructible 
-\refines ::CopyConstructible 
-\refines ::Assignable 
+\refines `DefaultConstructible` 
+\refines `CopyConstructible` 
+\refines `Assignable` 
 
 \hasModel `CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>`
 

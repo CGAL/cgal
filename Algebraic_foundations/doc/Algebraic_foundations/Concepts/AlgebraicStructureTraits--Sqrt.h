@@ -5,7 +5,7 @@
 
 `AdaptableUnaryFunction` providing the square root. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 

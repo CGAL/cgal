@@ -10,9 +10,9 @@ is square free.
 Note that this statement does cover constant factors, 
 i.e., whether the multivariate content contains a square. 
 
-\refines ::AdaptableUnaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableUnaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

@@ -15,7 +15,7 @@ that is similar to that of \cgal's arrangements.
 
 \tparam AP must be a model of the `AdaptationPolicy_2` concept.  The third template parameter defaults to `CGAL::Identity_policy_2<DG,AT>`. 
 
-\refines ::DefaultConstructible, \refines ::CopyConstructible, \refines ::Assignable 
+\refines `DefaultConstructible,` \refines `CopyConstructible,` \refines `Assignable` 
 
  
 \sa `CGAL::Delaunay_triangulation_2<Traits,Tds>` 

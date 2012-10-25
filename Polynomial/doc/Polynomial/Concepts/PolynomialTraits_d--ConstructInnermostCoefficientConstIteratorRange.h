@@ -6,9 +6,9 @@
 This `AdaptableUnaryFunction` returns a const iterator range over all 
 innermost coefficients of the given polynomial. 
 
-\refines ::AdaptableUnaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableUnaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

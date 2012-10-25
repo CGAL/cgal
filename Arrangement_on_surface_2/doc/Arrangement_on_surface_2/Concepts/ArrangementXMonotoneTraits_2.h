@@ -16,7 +16,7 @@ A model of this refined concept therefore needs to compute the intersections
 (and possibly overlaps) between two \f$ x\f$-monotone curves and to support 
 curve splitting. 
 
-\refines ::ArrangementBasicTraits_2 
+\refines `ArrangementBasicTraits_2` 
 
 \hasModel `CGAL::Arr_segment_traits_2<Kernel>`
 \hasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`

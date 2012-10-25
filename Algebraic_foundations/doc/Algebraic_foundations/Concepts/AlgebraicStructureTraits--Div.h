@@ -6,7 +6,7 @@
 `AdaptableBinaryFunction` computes the integral quotient of division 
 with remainder. 
 
-\refines ::AdaptableBinaryFunction 
+\refines `AdaptableBinaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 \sa ::AlgebraicStructureTraits::Mod 

@@ -14,7 +14,7 @@ If the traits class is also a model of
 also required to have a direction, namely one of these two endpoint serves 
 as its <I>source</I> and the other as its <I>target</I>. 
 
-\refines ::ArrangementXMonotoneTraits_2 
+\refines `ArrangementXMonotoneTraits_2` 
 
 \hasModel `CGAL::Arr_segment_traits_2<Kernel>` 
 \hasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>` 

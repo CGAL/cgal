@@ -10,9 +10,9 @@ one position while \f$ x_i\f$ is moved to the former position of \f$ x_j\f$.
 
 This function may be used to make a certain variable the outer most variable. 
 
-\refines ::AdaptableFunctor 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableFunctor` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

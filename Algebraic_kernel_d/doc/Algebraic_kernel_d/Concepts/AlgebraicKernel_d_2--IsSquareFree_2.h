@@ -5,7 +5,7 @@
 
 Computes whether the given bivariate polynomial is square free. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa `AlgebraicKernel_d_2::MakeSquareFree_2`
 \sa `AlgebraicKernel_d_2::SquareFreeFactorize_2`

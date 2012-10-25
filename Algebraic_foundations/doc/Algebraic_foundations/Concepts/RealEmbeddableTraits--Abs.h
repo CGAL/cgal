@@ -5,7 +5,7 @@
 
 `AdaptableUnaryFunction` computes the absolute value of a number. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa ::RealEmbeddableTraits 
 

@@ -6,9 +6,9 @@
 This `AdaptableUnaryFunction` computes the leading coefficient 
 of a `PolynomialTraits_d::Polynomial_d`. 
 
-\refines ::AdaptableUnaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableUnaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

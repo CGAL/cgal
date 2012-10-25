@@ -9,7 +9,7 @@ traits class.
 It means, the metric has to be Euclidean for Delaunay triangulation or the power 
 metric for regular triangulation. 
 
-\refines ::TriangulationTraits_2 
+\refines `TriangulationTraits_2` 
 
 \hasModel Kernel
 \hasModel `CGAL::Projection_traits_xy_3<K>` 

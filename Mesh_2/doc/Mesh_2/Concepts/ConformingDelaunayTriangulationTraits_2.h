@@ -15,7 +15,7 @@ the concept `::FieldWithSqrt`. This field type and the
 constructors are used by the conforming algorithm to compute Steiner 
 points on constrained edges. 
 
-\refines ::DelaunayTriangulationTraits_2 
+\refines `DelaunayTriangulationTraits_2` 
 
 \hasModel Any model of `Kernel` concept. In particular, all \cgal kernels. 
 

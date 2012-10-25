@@ -7,7 +7,7 @@ The concept `AlphaShapeTraits_3` describes the requirements
 for the geometric traits class 
 of the underlying Delaunay triangulation of a basic alpha shape. 
 
-\refines ::DelaunayTriangulationTraits_3 
+\refines `DelaunayTriangulationTraits_3` 
 
 In addition to the requirements described in the concept
 ::DelaunayTriangulationTraits_3, the geometric traits class of a

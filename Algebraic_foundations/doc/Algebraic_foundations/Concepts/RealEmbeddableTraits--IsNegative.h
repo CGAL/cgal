@@ -5,7 +5,7 @@
 
 `AdaptableUnaryFunction`, returns true in case the argument is negative. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa ::RealEmbeddableTraits 
 

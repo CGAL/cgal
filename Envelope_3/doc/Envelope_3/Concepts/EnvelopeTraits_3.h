@@ -14,7 +14,7 @@ respectively, and some constructions and predicates on these types.
 Note however, that these operations usually involve the projection of 
 3D objects onto the \f$ xy\f$-plane. 
 
-\refines ::ArrangementXMonotoneTraits_2 
+\refines `ArrangementXMonotoneTraits_2` 
 
 \hasModel `CGAL::Env_triangle_traits_3<Kernel>` 
 \hasModel `CGAL::Env_sphere_traits_3<ConicTraits>` 

@@ -12,7 +12,7 @@ a vertex provides access to one of its incident cells through a handle.
 
 
 
-\refines ::TriangulationDSVertexBase_3 
+\refines `TriangulationDSVertexBase_3` 
 
  
 

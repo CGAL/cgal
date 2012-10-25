@@ -8,8 +8,8 @@ The concept `RingNumberType` combines the requirements of the concepts
 A model of `RingNumberType` can be used as a template parameter 
 for Homogeneous kernels. 
 
-\refines ::IntegralDomainWithoutDivision 
-\refines ::RealEmbeddable 
+\refines `IntegralDomainWithoutDivision` 
+\refines `RealEmbeddable` 
 
 \hasModel \cpp built-in number types 
 \hasModel `CGAL::Gmpq` 

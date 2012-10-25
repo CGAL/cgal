@@ -16,9 +16,9 @@ Hence in general it is not possible to invert the leading coefficient of \f$ g\f
 Instead \f$ f\f$ is extended by \f$ D\f$ allowing integral divisions in the internal 
 computation. 
 
-\refines ::AdaptableFunctor 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableFunctor` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

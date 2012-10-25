@@ -12,9 +12,9 @@ where \f$ D = leading\_coefficient(g)^{max(0, degree(f)-degree(g)+1)}\f$
 
 This functor computes \f$ q\f$. 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

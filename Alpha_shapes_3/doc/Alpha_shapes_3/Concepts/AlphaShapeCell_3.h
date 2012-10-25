@@ -7,7 +7,7 @@ This concept describes the requirements for the base cell of an alpha shape.
 
 \sa `CGAL::Alpha_status` 
 
-\refines ::TriangulationCellBase_3
+\refines `TriangulationCellBase_3`
 
 \hasModel `CGAL::Alpha_shape_cell_base_3`
 */

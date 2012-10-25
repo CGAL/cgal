@@ -3,7 +3,7 @@
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalconcept
 
-\refines ::GpsTraitsGeneralPolygonWithHoles_2 
+\refines `GpsTraitsGeneralPolygonWithHoles_2` 
 
 A model of this concept represents a general polygon with holes. The 
 concept requires the ability to access the general polygon that 

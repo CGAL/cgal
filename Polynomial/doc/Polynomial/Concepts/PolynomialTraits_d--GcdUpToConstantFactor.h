@@ -18,9 +18,9 @@ This functor computes \f$ gcd\_utcf(f,g) = D * gcd(f,g)\f$,
 for some \f$ D \in R\f$ such that \f$ gcd\_utcf(f,g) \in R[x_0,\dots,x_{d-1}]\f$. 
 Hence, \f$ gcd\_utcf(f,g)\f$ may not be a divisor of \f$ f\f$ and \f$ g\f$ in \f$ R[x_0,\dots,x_{d-1}]\f$. 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

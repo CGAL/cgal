@@ -6,9 +6,9 @@
 This `AdaptableUnaryFunction` computes the derivative of a 
 `PolynomialTraits_d::Polynomial_d` with respect to one variable. 
 
-\refines ::AdaptableUnaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableUnaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

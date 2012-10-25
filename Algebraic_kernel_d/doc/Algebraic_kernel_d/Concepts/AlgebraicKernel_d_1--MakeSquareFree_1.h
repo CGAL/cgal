@@ -5,7 +5,7 @@
 
 Returns a square free part of a univariate polynomial. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa `AlgebraicKernel_d_1::IsSquareFree_1`
 \sa `AlgebraicKernel_d_1::SquareFreeFactorize_1`

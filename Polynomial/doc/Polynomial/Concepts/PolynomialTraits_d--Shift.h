@@ -9,9 +9,9 @@ by the given power of the specified variable.
 This functor is provided for efficiency reasons, since multiplication by some variable 
 will in general correspond to a shift of coefficients in the internal representation. 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

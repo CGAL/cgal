@@ -15,9 +15,9 @@ and `PolynomialTraits_d::MultivariateContent`.
 However, a concept `PolynomialTraits_d::MultivariateContentUpToConstantFactor` 
 does not exist since the result is trivial. 
 
-\refines ::AdaptableUnaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableUnaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

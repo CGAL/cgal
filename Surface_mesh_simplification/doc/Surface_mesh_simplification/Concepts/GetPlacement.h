@@ -12,8 +12,8 @@ The placement returned is a `boost::optional` value (i.e., it can
 be absent). An absent result indicates that the remaining vertex 
 must be kept in place, not moved to a new position. 
 
-\refines ::DefaultConstructible 
-\refines ::CopyConstructible 
+\refines `DefaultConstructible` 
+\refines `CopyConstructible` 
 
 \hasModel `CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>`
 \hasModel `CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>`

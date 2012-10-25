@@ -26,9 +26,9 @@ The result is written in an output range,
 starting with the \f$ 0\f$-th Sturm-Habicht polynomial (which is equal to 
 the discriminant of \f$ f\f$ up to a multiple of the leading coefficient). 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

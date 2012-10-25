@@ -187,7 +187,7 @@ r
 
 </TABLE> 
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 \sa ::AlgebraicStructureTraits 
 \sa ::AlgebraicStructureTraits::Mod 

@@ -6,9 +6,9 @@
 This `AdaptableUnaryFunction` computes the innermost leading coefficient 
 of a `PolynomialTraits_d::Polynomial_d` \f$ p\f$. The innermost leading coefficient is recursively defined as the innermost leading coefficient of the leading coefficient of \f$ p\f$. In case \f$ p\f$ is univariate it coincides with the leading coefficient. 
 
-\refines ::AdaptableUnaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableUnaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

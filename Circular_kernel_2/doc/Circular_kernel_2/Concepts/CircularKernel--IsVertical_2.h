@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
-\refines ::Kernel::IsVertical_2 
+\refines `Kernel::IsVertical_2` 
 */
 
 class CircularKernel::IsVertical_2 {

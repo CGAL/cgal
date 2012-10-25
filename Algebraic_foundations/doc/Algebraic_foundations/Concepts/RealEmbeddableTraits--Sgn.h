@@ -5,7 +5,7 @@
 
 This `AdaptableUnaryFunction` computes the sign of a real embeddable number. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa ::RealEmbeddableTraits 
 

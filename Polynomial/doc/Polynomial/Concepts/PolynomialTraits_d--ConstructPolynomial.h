@@ -6,9 +6,9 @@
 This `AdaptableFunctor` provides several operators 
 to construct objects of type `PolynomialTraits_d::Polynomial_d`. 
 
-\refines ::AdaptableFunctor 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableFunctor` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

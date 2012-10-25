@@ -7,9 +7,9 @@ This `AdaptableFunctor` returns whether a
 `PolynomialTraits_d::Polynomial_d` \f$ p\f$ is zero at a given Cartesian point, 
 which is represented as an iterator range. 
 
-\refines ::AdaptableFunctor 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableFunctor` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

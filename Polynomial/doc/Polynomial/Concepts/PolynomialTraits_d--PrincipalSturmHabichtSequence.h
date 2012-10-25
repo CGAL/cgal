@@ -19,9 +19,9 @@ In case that `PolynomialTraits_d::Coefficient_type` is `RealEmbeddable`, the fun
 on the resulting sequence to count the number of distinct real roots of 
 the polynomial \f$ f\f$. 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

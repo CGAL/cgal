@@ -8,7 +8,7 @@ requirements for the halfedge type of the
 `HalfedgeDSHalfedge` concept. 
 The `StraightSkeletonHalfedge_2` concept requires no geometric embedding at all. The only geometric embedding used by the Straight Skeleton Data Structure are the 2D points in the contour and skeleton vertices. However, for any halfedge, there is a 2D segment implicitly given by its `source` and `target` vertices. 
 
-\refines ::HalfedgeDSHalfedge 
+\refines `HalfedgeDSHalfedge` 
 
 \hasModel CGAL::Straight_skeleton_halfedge_base_2
 

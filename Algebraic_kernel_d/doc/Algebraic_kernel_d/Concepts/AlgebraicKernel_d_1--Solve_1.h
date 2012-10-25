@@ -5,8 +5,8 @@
 
 Computes the real roots of a univariate polynomial. 
 
-\refines ::Assignable 
-\refines ::CopyConstructible 
+\refines `Assignable` 
+\refines `CopyConstructible` 
 
 */
 

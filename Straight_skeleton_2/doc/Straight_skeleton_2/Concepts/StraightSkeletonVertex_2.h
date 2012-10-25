@@ -6,7 +6,7 @@ The concept `StraightSkeletonVertex_2` describes the requirements for the vertex
 `StraightSkeleton_2` concept. It is a refinement of the `HalfedgeDSVertex` concept 
 with support for storage of the incident halfedge. The `StraightSkeletonVertex_2` concept requires the geometric embedding to be a 2D point. 
 
-\refines ::HalfedgeDSVertex 
+\refines `HalfedgeDSVertex` 
 
 \hasModel CGAL::Straight_skeleton_vertex_base_2
 

@@ -6,7 +6,7 @@ Requirements of a traits class to be
 used with the function `optimal_convex_partition_2` that computes 
 an optimal convex partition of a polygon. 
 
-\refines ::PartitionTraits_2 
+\refines `PartitionTraits_2` 
 
 \hasModel `CGAL::Partition_traits_2<R>` 
 

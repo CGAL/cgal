@@ -5,7 +5,7 @@
 
 This concept describes the requirements for the base cell of a alpha shape with a fixed value alpha. 
 
-\refines ::TriangulationCellBase_3. 
+\refines `TriangulationCellBase_3.` 
 
 \hasModel `CGAL::Fixed_alpha_shape_cell_base_3`
 

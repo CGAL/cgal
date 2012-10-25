@@ -7,7 +7,7 @@ used to represent a straight skeleton. It refines the concept
 `HalfedgeDS` and adds additional requirements on the nested types 
 `Vertex`, `Halfedge`, and `Face` of the halfedge data structure. 
 
-\refines ::HalfedgeDS 
+\refines `HalfedgeDS` 
 
 \hasModel CGAL::Straight_skeleton_2
 

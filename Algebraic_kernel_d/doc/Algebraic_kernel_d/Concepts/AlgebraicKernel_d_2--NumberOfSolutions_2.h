@@ -5,7 +5,7 @@
 
 Computes the number of real solutions of the given bivariate polynomial system. 
 
-\refines ::AdaptableBinaryFunction 
+\refines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicKernel_d_2::ConstructAlgebraicReal_2`
 

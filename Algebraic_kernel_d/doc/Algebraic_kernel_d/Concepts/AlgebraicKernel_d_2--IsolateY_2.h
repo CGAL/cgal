@@ -6,7 +6,7 @@
 Computes an isolating interval for the second coordinate of an `AlgebraicKernel_d_2::Algebraic_real_2` 
 with respect to the real roots of a univariate polynomial. 
 
-\refines ::AdaptableBinaryFunction 
+\refines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicKernel_d_2::IsolateX_2`
 \sa `AlgebraicKernel_d_2::ComputePolynomialX_2`

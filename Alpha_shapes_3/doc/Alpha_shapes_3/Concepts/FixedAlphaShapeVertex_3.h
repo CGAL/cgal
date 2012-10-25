@@ -5,7 +5,7 @@
 
 This concept describes the requirements for the base vertex of a alpha shape with a fixed value alpha. 
 
-\refines ::TriangulationVertexBase_3. 
+\refines `TriangulationVertexBase_3.` 
 
 
 \hasModel `CGAL::Fixed_alpha_shape_vertex_base_3`

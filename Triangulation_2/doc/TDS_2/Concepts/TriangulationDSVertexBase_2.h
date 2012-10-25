@@ -42,7 +42,7 @@ that the `CGAL::Triangulation_data_structure_2`
 actually uses as a base class for the class 
 of `CGAL::Triangulation_data_structure_2::Vertex`. 
 
-\refines ::TriangulationDataStructure_2::Vertex 
+\refines `TriangulationDataStructure_2::Vertex` 
 
 \hasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>`
 \hasModel `CGAL::Triangulation_vertex_base_2<Traits,Vb>`

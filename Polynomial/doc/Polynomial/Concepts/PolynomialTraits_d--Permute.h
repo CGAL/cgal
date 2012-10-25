@@ -15,9 +15,9 @@ change the order of the variables such that
 \f$ x_0 \mapsto x_2\f$, \f$ x_1 \mapsto x_0\f$, \f$ x_2 \mapsto x_1\f$ and \f$ x_3 \mapsto x_3\f$. 
 In this case the iterator range should contain the sequence \f$ [2,0,1,3]\f$. 
 
-\refines ::AdaptableFunctor 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableFunctor` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

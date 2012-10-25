@@ -8,7 +8,7 @@ a policy clone idiom in form of a rebind struct-template.
 
 Instantiate a dcel class with many different possible types without ad-hoc limitations on type of the dcel classes. 
 
-\refines ::ArrangementDcel 
+\refines `ArrangementDcel` 
 
 \hasModel `CGAL::Arr_default_dcel<Traits>` 
 \hasModel `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>` 

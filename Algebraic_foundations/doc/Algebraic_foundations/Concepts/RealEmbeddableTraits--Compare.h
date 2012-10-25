@@ -5,7 +5,7 @@
 
 `AdaptableBinaryFunction` compares two real embeddable numbers. 
 
-\refines ::AdaptableBinaryFunction 
+\refines `AdaptableBinaryFunction` 
 
 \sa ::RealEmbeddableTraits 
 

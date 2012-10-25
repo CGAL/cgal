@@ -5,7 +5,7 @@
 
 This `AdaptableUnaryFunction` may simplify a given object. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 

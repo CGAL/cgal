@@ -10,9 +10,9 @@ for a given polynomial \f$ p\f$ and constant \f$ c\f$ it computes \f$ p(x+c)\f$.
 Note that this functor operates on the polynomial in the univariate view, that is, 
 the polynomial is considered as a univariate polynomial in one specific variable. 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa ::Polynomial_d 
 \sa ::PolynomialTraits_d 

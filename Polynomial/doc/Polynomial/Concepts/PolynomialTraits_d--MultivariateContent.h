@@ -10,9 +10,9 @@ view on the polynomial, that is, it computes the gcd of all innermost coefficien
 This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is a 
 `Field` or a `UniqueFactorizationDomain`. 
 
-\refines ::AdaptableUnaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableUnaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

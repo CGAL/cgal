@@ -16,9 +16,9 @@ The degree of the zero polynomial is set to \f$ 0\f$.
 From the mathematical point of view this should 
 be \f$ -infinity\f$, but this would imply an inconvenient return type. 
 
-\refines ::AdaptableUnaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableUnaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

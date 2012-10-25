@@ -41,9 +41,9 @@ which is a variant of the Euclidean Algorithm.
 More sophisticated methods may use modular arithmetic and interpolation. 
 For more information we refer to, e.g., \cite gg-mca-99. 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

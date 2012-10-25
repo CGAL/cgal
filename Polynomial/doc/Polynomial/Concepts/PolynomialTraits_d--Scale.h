@@ -10,9 +10,9 @@ it computes \f$ p(c\cdot x)\f$.
 Note that this functor operates on the polynomial in the univariate view, that is, 
 the polynomial is considered as a univariate polynomial in one specific variable. 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

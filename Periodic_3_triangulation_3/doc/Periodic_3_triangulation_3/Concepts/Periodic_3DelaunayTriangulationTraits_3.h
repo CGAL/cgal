@@ -13,7 +13,7 @@ work with point-offset pairs. In most cases the offsets will be
 can be used directly. For efficiency reasons we maintain for each 
 functor the version without offsets. 
 
-\refines ::DelaunayTriangulationTraits_3 
+\refines `DelaunayTriangulationTraits_3` 
 
 \hasModel CGAL::Periodic_3_triangulation_traits_3 
 

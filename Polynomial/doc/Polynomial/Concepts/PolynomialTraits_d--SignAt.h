@@ -10,9 +10,9 @@ as an iterator range.
 This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is 
 `RealEmbeddable`. 
 
-\refines ::AdaptableFunctor 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableFunctor` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

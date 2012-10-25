@@ -16,7 +16,7 @@ Design Pattern
 
 `ParameterizationPatchableMesh_3` is an Adaptor \cite cgal:ghjv-dpero-95 : it changes the interface of a 3D mesh to match the interface expected by class `Parameterization_mesh_patch_3`. 
 
-\refines ::ParameterizationMesh_3 
+\refines `ParameterizationMesh_3` 
 
 
 Creation 

@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalconcept
 
-\refines ::Kernel 
+\refines `Kernel` 
 
 \hasModel `CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>` 
 \hasModel `CGAL::Exact_circular_kernel_2` 

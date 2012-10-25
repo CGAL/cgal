@@ -5,7 +5,7 @@
 
 To test whether a point lies on a curve. 
 
-\refines ::Kernel::HasOn_2 
+\refines `Kernel::HasOn_2` 
 */
 
 class CircularKernel::HasOn_2 {

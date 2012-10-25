@@ -36,7 +36,7 @@ instantiated with the model is initialized with an implicit bounding
 rectangle. When the parameter space is bounded, it is the exact 
 geometric embedding of the implicit bounding rectangle. 
 
-\refines ::ArrangementBasicTraits_2 
+\refines `ArrangementBasicTraits_2` 
 
 \hasModel `CGAL::Arr_linear_traits_2<Kernel>`
 \hasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>` 

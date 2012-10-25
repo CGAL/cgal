@@ -11,9 +11,9 @@ the concept `SegmentDelaunayGraphSite_2`. It also provides
 constructions for sites and several function object 
 types for the predicates. 
 
-\refines ::DefaultConstructible 
-\refines ::CopyConstructible 
-\refines ::Assignable 
+\refines `DefaultConstructible` 
+\refines `CopyConstructible` 
+\refines `Assignable` 
 
 \hasModel `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>` 
 \hasModel `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>` 

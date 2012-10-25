@@ -16,7 +16,7 @@ such that \f$ q_1\f$ and \f$ q_2\f$ are coprime.
 
 It returns true if \f$ p_1\f$ and \f$ p_2\f$ are already coprime. 
 
-\refines ::AdaptableFunctor with five arguments 
+\refines `AdaptableFunctor` with five arguments 
 
 \sa `AlgebraicKernel_d_1::IsCoprime_1`
 

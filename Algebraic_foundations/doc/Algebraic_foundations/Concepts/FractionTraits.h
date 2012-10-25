@@ -90,7 +90,7 @@ FractionTraits::Denominator_type & d);
 
 `AdaptableBinaryFunction`, returns the fraction of its arguments. 
 
-\refines ::AdaptableBinaryFunction 
+\refines `AdaptableBinaryFunction` 
 
 \sa `Fraction` 
 \sa `FractionTraits` 
@@ -145,7 +145,7 @@ This can be considered as a relaxed version of `AlgebraicStructureTraits::Gcd`,
 this is needed because it is not guaranteed that `FractionTraits::Denominator_type` is a model of 
 `UniqueFactorizationDomain`. 
 
-\refines ::AdaptableBinaryFunction 
+\refines `AdaptableBinaryFunction` 
 
 \sa `Fraction` 
 \sa `FractionTraits` 

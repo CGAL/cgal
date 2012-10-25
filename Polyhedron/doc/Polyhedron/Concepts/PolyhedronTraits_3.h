@@ -9,8 +9,8 @@ structure `CGAL::Polyhedron_3<Traits>`. This concept is a subset of
 the 3d kernel traits and any \cgal kernel model can be used directly 
 as template argument. 
 
-\refines ::CopyConstructible
-\refines ::Assignable
+\refines `CopyConstructible`
+\refines `Assignable`
 
 \hasModel `CGAL::Polyhedron_traits_3<Kernel>`
 \hasModel `CGAL::Polyhedron_traits_with_normals_3<Kernel>`

@@ -6,7 +6,7 @@
 `AdaptableFunctor` computes a real root of a square-free univariate 
 polynomial. 
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 \sa ::FieldWithRootOf 
 \sa ::AlgebraicStructureTraits 

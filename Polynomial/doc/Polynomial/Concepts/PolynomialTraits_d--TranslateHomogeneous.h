@@ -10,9 +10,9 @@ that is, it computes \f$ b^{degree(p)}\cdot p(x+a/b)\f$.
 Note that this functor operates on the polynomial in the univariate view, that is, 
 the polynomial is considered as a univariate homogeneous polynomial in one specific variable. 
 
-\refines ::AdaptableFunctor 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableFunctor` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

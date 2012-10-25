@@ -30,11 +30,11 @@ Moreover, `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >` is
 - `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Simplify`  which is a model of `AlgebraicStructureTraits::Simplify`
 - `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Unit_part`  which is a model of `AlgebraicStructureTraits::`UnitPart`
 
-\refines ::Assignable 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
-\refines ::EqualityComparable 
-\refines ::FromIntConstructible 
+\refines `Assignable` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
+\refines `EqualityComparable` 
+\refines `FromIntConstructible` 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 

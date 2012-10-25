@@ -9,9 +9,9 @@ order with preference to the outermost variable.
 This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is 
 `RealEmbeddable`. 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

@@ -10,7 +10,7 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithSqrt >` is a model of `Alg
 - `CGAL::Algebraic_structure_traits< FieldWithSqrt >::Algebraic_type` derived from `CGAL::Field_with_sqrt_tag` 
 - `CGAL::Algebraic_structure_traits< FieldWithSqrt >::Sqrt`  which is a model of `AlgebraicStructureTraits::Sqrt` 
 
-\refines ::Field 
+\refines `Field` 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 

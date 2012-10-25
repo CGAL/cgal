@@ -6,9 +6,9 @@
 This concept defines the requirements for traits classes of 
 `CGAL::Approximate_min_ellipsoid_d<Traits>`. 
 
-\refines ::DefaultConstructible 
-\refines ::CopyConstructible 
-\refines ::Assignable 
+\refines `DefaultConstructible` 
+\refines `CopyConstructible` 
+\refines `Assignable` 
 
 \hasModel `CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>` 
 \hasModel `CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET>` 

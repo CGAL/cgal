@@ -11,7 +11,7 @@ support the point for vertices and the optional plane equation for
 facets. Note that the items class uses face instead of facet. Only the
 polyhedral surface renames faces to facets.
 
-\refines ::HalfedgeDSItems
+\refines `HalfedgeDSItems`
 
 \hasModel `CGAL::Polyhedron_items_3`
 \hasModel `CGAL::Polyhedron_min_items_3`

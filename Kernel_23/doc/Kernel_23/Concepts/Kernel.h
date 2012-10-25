@@ -733,7 +733,7 @@ public:
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_2<Kernel>` 
 
@@ -764,7 +764,7 @@ Kernel::Vector_2 operator()(const Kernel::Vector_2 &v, const Kernel::FT& scale);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Line_3<Kernel>` 
 \sa `CGAL::Plane_3<Kernel>` 
@@ -819,7 +819,7 @@ int i);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::midpoint` 
 
@@ -846,7 +846,7 @@ const Kernel::Point_2& q );
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 
@@ -875,7 +875,7 @@ const Kernel::Point_3& p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Object` 
 \sa `Kernel::Assign_2` 
@@ -906,7 +906,7 @@ Object_2 operator()(const T& t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeHx_2 {
@@ -935,7 +935,7 @@ Kernel::FT operator()(const Kernel::Vector_2& v) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with four arguments) 
+\refines `AdaptableFunctor` (with four arguments) 
 
 \sa `CGAL::coplanar` 
 
@@ -964,7 +964,7 @@ const Kernel::Point_3&s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_xy` 
 
@@ -993,7 +993,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Line_2<Kernel>` 
 \sa `CGAL::Ray_2<Kernel>` 
@@ -1031,7 +1031,7 @@ bool operator()(const Kernel::Segment_2&o);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_2<Kernel>` 
 
@@ -1058,7 +1058,7 @@ const Kernel::RT s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::z_equal` 
 
@@ -1085,7 +1085,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Line_2<Kernel>` 
 
@@ -1112,7 +1112,7 @@ const Kernel::Point_2& p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 
@@ -1194,7 +1194,7 @@ Kernel::Plane_3 operator()(const Kernel::Circle_3 &c);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Line_3<Kernel>` 
 
@@ -1221,7 +1221,7 @@ Kernel::Line_3 operator()(const Kernel::Line_3& l);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Ray_2<Kernel>` 
 
@@ -1247,7 +1247,7 @@ Kernel::Ray_2 operator()(const Kernel::Ray_2& r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_3<Kernel>` 
 
@@ -1274,7 +1274,7 @@ const Kernel::RT s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with four arguments) 
+\refines `AdaptableFunctor` (with four arguments) 
 
 \sa `CGAL::coplanar_side_of_bounded_circle` 
 
@@ -1305,7 +1305,7 @@ const Kernel::Point_3&s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 \sa `CGAL::Sphere_3<Kernel>` 
@@ -1347,7 +1347,7 @@ const Kernel::Point_3&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Vector_2<Kernel>` 
 \sa `CGAL::Segment_2<Kernel>` 
@@ -1379,7 +1379,7 @@ Kernel::FT operator()(const Kernel::Segment_2& s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 
@@ -1405,7 +1405,7 @@ Kernel::Point_2 operator()(const Kernel::Circle_2 & c);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeHy_2 {
@@ -1434,7 +1434,7 @@ Kernel::FT operator()(const Kernel::Vector_2& v) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_x` 
 
@@ -1462,7 +1462,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Ray_2<Kernel>` 
 \sa `CGAL::Segment_2<Kernel>` 
@@ -1500,7 +1500,7 @@ const Kernel::Point_2&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Vector_3<Kernel>` 
 \sa `CGAL::Segment_3<Kernel>` 
@@ -1532,7 +1532,7 @@ Kernel::FT operator()(const Kernel::Segment_3& s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Segment_2<Kernel>` 
 
@@ -1560,7 +1560,7 @@ Kernel::Segment_2 operator()(const Kernel::Point_2 &p, const Kernel::Point_2 &q)
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_y` 
 
@@ -1588,7 +1588,7 @@ const Kernel::Point_2&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with four arguments) 
+\refines `AdaptableFunctor` (with four arguments) 
 
 \sa `CGAL::circumcenter` 
 
@@ -1645,7 +1645,7 @@ Kernel::Point_3 operator()(const Kernel::Triangle_3&t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::circumcenter` 
 
@@ -1686,7 +1686,7 @@ Kernel::Point_2 operator()(const Kernel::Triangle_2&t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with four arguments) 
+\refines `AdaptableFunctor` (with four arguments) 
 
 \sa `CGAL::Sphere_3<Kernel>` 
 
@@ -1763,7 +1763,7 @@ Kernel::Sphere_3 operator()( const Kernel::Circle_3 &c);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Triangle_3<Kernel>` 
 
@@ -1789,7 +1789,7 @@ Kernel::Plane_3 operator()(const Kernel::Triangle_3& t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Iso_rectangle_2<Kernel>` 
 \sa `CGAL::Segment_2<Kernel>` 
@@ -1825,7 +1825,7 @@ Kernel::Segment_2 &s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeYmax_2 {
@@ -1849,7 +1849,7 @@ Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::x_equal` 
 
@@ -1876,7 +1876,7 @@ const Kernel::Point_2&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::squared_distance` 
 
@@ -1911,7 +1911,7 @@ Kernel::FT operator()(Type1 obj1, Type2 obj2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::are_strictly_ordered_along_line` 
 
@@ -1942,7 +1942,7 @@ const Kernel::Point_3&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
 \sa `CGAL::Segment_3<Kernel>` 
@@ -1978,7 +1978,7 @@ Kernel::Segment_3 &s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Direction_3<Kernel>` 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
@@ -2083,7 +2083,7 @@ const Kernel::Iso_cuboid_3& y);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 
@@ -2110,7 +2110,7 @@ Kernel::Plane_3 operator()(const Kernel::Plane_3& p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::has_smaller_distance_to_point` 
 
@@ -2141,7 +2141,7 @@ const Kernel::Point_3&r);
 
 \image html compare2.gif
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \anchor fig-compare2
 \sa `CGAL::compare_y_at_x` 
@@ -2229,7 +2229,7 @@ const Kernel::Segment_2 &s2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeDy_2 {
@@ -2253,7 +2253,7 @@ Kernel::FT operator()(const Kernel::Direction_2& v) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::compare_distance_to_point` 
 \sa `CGAL::compare_squared_distance` 
@@ -2290,7 +2290,7 @@ const Kernel::FT&d2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Triangle_3<Kernel>` 
 
@@ -2323,7 +2323,7 @@ const Kernel::Point_3& r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::x_equal` 
 
@@ -2350,7 +2350,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Direction_3<Kernel>` 
 
@@ -2392,7 +2392,7 @@ Kernel::Direction_3 operator()(const Kernel::Segment_3 &s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `Kernel::ConstructBarycenter_3` 
 \sa `CGAL::centroid` 
@@ -2440,7 +2440,7 @@ Kernel::Point_3 operator()(const Kernel::Tetrahedron_3&t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Ray_3<Kernel>` 
 
@@ -2489,7 +2489,7 @@ const Kernel::Line_3 &l);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Segment_3<Kernel>` 
 
@@ -2517,7 +2517,7 @@ Kernel::Segment_3 operator()(const Kernel::Point_3 &p, const Kernel::Point_3 &q)
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Circle_3<Kernel>` 
 
@@ -2543,7 +2543,7 @@ double operator()(const Kernel::Circle_3& c);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_2<Kernel>` 
 \sa `CGAL::determinant` 
@@ -2571,7 +2571,7 @@ const Kernel::Vector_2& w);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Ray_2<Kernel>` 
 
@@ -2620,7 +2620,7 @@ const Kernel::Line_2 &l);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::collinear` 
 
@@ -2648,7 +2648,7 @@ const Kernel::Point_2&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::left_turn` 
 
@@ -2677,7 +2677,7 @@ const Kernel::Point_2&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 \sa `CGAL::Triangle_2<Kernel>` 
@@ -2796,7 +2796,7 @@ double operator()(const Kernel::Circle_3& c);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `Kernel::CompareSquaredDistance_3` 
 \sa `CGAL::compare_distance_to_point` 
@@ -2848,7 +2848,7 @@ const Type4& obj4);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_xy` 
 
@@ -2879,7 +2879,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Triangle_3<Kernel>` 
 
@@ -2914,7 +2914,7 @@ const Kernel::Point_3& r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 */
 class ConstructBbox_3 {
@@ -2975,7 +2975,7 @@ CGAL::Bbox_3 operator()(const Kernel::Sphere_3
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_slopes` 
 
@@ -3009,7 +3009,7 @@ const Kernel::Segment_2& s2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_xy` 
 
@@ -3038,7 +3038,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `Kernel::ConstructCentroid_2` 
 \sa `CGAL::centroid` 
@@ -3116,7 +3116,7 @@ const Kernel::Point_2& p4, const Kernel::FT&w4);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Line_2<Kernel>` 
 
@@ -3144,7 +3144,7 @@ const Kernel::Point_2& p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeY_3 {
@@ -3173,7 +3173,7 @@ Kernel::FT operator()(const Kernel::Vector_3& v) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::do_intersect` 
 
@@ -3211,7 +3211,7 @@ bool operator()(Type1 obj1, Type2 obj2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_yx` 
 
@@ -3240,7 +3240,7 @@ const Kernel::Point_2&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Iso_rectangle_2<Kernel>` 
 \sa `CGAL::Segment_2<Kernel>` 
@@ -3287,7 +3287,7 @@ Kernel::Point_2 operator()(const Kernel::Triangle_2
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 \sa `CGAL::Line_2<Kernel>` 
@@ -3335,7 +3335,7 @@ const Kernel::Point_2&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with four arguments) 
+\refines `AdaptableFunctor` (with four arguments) 
 
 \sa `CGAL::side_of_bounded_circle` 
 
@@ -3376,7 +3376,7 @@ const Kernel::Point_2&t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_2<Kernel>` 
 \sa `Kernel::ConstructScaledVector_2` 
@@ -3437,7 +3437,7 @@ Kernel::Vector_2 operator()(const Null_vector &NULL_VECTOR);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Point_2<Kernel>` 
 
@@ -3465,7 +3465,7 @@ Kernel::Point_2 operator()(const Origin &ORIGIN);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 
@@ -3496,7 +3496,7 @@ int index);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 */
 class LessRotateCCW_2 {
@@ -3528,7 +3528,7 @@ const Kernel::Point_2&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Vector_3<Kernel>` 
 
@@ -3555,7 +3555,7 @@ Kernel::Vector_3 operator()(const Kernel::Vector_3& v);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeA_2 {
@@ -3579,7 +3579,7 @@ Kernel::FT operator()(const Kernel::Line_2& l) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_2<Kernel>` 
 
@@ -3606,7 +3606,7 @@ const Kernel::Vector_2 &v2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 \sa `CGAL::Iso_rectangle_2<Kernel>` 
@@ -3662,7 +3662,7 @@ bool operator()(const Kernel::Triangle_2&o);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_x` 
 
@@ -3691,7 +3691,7 @@ const Kernel::Point_2&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::angle` 
 
@@ -3721,7 +3721,7 @@ const Kernel::Point_3&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Line_2<Kernel>` 
 \sa `CGAL::Ray_2<Kernel>` 
@@ -3763,7 +3763,7 @@ const Kernel::Point_2&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeDx_2 {
@@ -3788,7 +3788,7 @@ Kernel::FT operator()(const Kernel::Direction_2& v) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::Circle_3<Kernel>` 
 
@@ -3871,7 +3871,7 @@ Kernel::Sphere_3 const& sphere);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Object` 
 \sa `Kernel::Object_3` 
@@ -3902,7 +3902,7 @@ bool operator()(T& t, const Kernel::Object_3&o);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_y` 
 
@@ -3930,7 +3930,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_3<Kernel>` 
 
@@ -3957,7 +3957,7 @@ const Kernel::Vector_3 &v2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::are_ordered_along_line` 
 
@@ -3988,7 +3988,7 @@ const Kernel::Point_3&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::parallel` 
 
@@ -4030,7 +4030,7 @@ const Kernel::Segment_2&s2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Circle_3<Kernel>` 
 \sa `CGAL::Line_3<Kernel>` 
@@ -4118,7 +4118,7 @@ const Kernel::Point_3&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with four arguments) 
+\refines `AdaptableFunctor` (with four arguments) 
 
 \sa `CGAL::Tetrahedron_3<Kernel>` 
 
@@ -4178,7 +4178,7 @@ const Kernel::FT &x) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 \sa `CGAL::Line_2<Kernel>` 
@@ -4221,7 +4221,7 @@ const Kernel::Point_2&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::squared_distance` 
 
@@ -4256,7 +4256,7 @@ Kernel::FT operator()(Type1 obj1, Type2 obj2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeZ_3 {
@@ -4285,7 +4285,7 @@ Kernel::FT operator()(const Kernel::Vector_3& v) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Line_2<Kernel>` 
 
@@ -4339,7 +4339,7 @@ Kernel::Line_2 operator()(const Kernel::Ray_2 &r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Circle_3<Kernel>` 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
@@ -4414,7 +4414,7 @@ bool operator()(const Kernel::Triangle_3&o);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Segment_2<Kernel>` 
 
@@ -4442,7 +4442,7 @@ Kernel::Segment_2 &s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two argument) 
+\refines `AdaptableFunctor` (with two argument) 
 
 \sa `CGAL::Sphere_3<Kernel>` 
 
@@ -4471,7 +4471,7 @@ const Kernel::Sphere_3& sphere2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::are_ordered_along_line` 
 
@@ -4505,7 +4505,7 @@ const Kernel::Point_2&r);
 \anchor fig-compare_x_at_y_2
 \image html compare_x_at_y.gif
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::compare_x_at_y` 
 
@@ -4588,7 +4588,7 @@ public:
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_yx` 
 \sa `Kernel::CompareXY_2` 
@@ -4619,7 +4619,7 @@ const Kernel::Point_2&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Point_3<Kernel>` 
 
@@ -4645,7 +4645,7 @@ Kernel::Point_3 operator()(const Origin &ORIGIN);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 \sa `CGAL::Iso_rectangle_2<Kernel>` 
@@ -4686,7 +4686,7 @@ const Kernel::Point_2&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Vector_2<Kernel>` 
 
@@ -4712,7 +4712,7 @@ Kernel::Vector_2 operator()(const Kernel::Vector_2& v);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::collinear_are_ordered_along_line` 
 
@@ -4741,7 +4741,7 @@ const Kernel::Point_3&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::has_smaller_signed_distance_to_plane` 
 
@@ -4782,7 +4782,7 @@ const Kernel::Point_3& r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::Triangle_2<Kernel>` 
 
@@ -4810,7 +4810,7 @@ const Kernel::Point_2 &r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::lexicographically_xyz_smaller` 
 
@@ -4843,7 +4843,7 @@ const Kernel::Point_3&q);
 
 \image html IsoCuboid.gif
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
 \sa `CGAL::Segment_3<Kernel>` 
@@ -4898,7 +4898,7 @@ Kernel::Tetrahedron_3 &t, int i);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::collinear` 
 
@@ -4926,7 +4926,7 @@ const Kernel::Point_3&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::do_intersect` 
 
@@ -4970,7 +4970,7 @@ bool operator()(Type1 obj1, Type2 obj2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Circle_3<Kernel>` 
 
@@ -4996,7 +4996,7 @@ Kernel::FT operator()(const Kernel::Circle_3& c);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 */
 class ConstructBbox_2 {
@@ -5045,7 +5045,7 @@ CGAL::Bbox_2 operator()(const Kernel::Circle_2
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `Kernel::CartesianConstIterator_3` 
 
@@ -5090,7 +5090,7 @@ Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Vector_3
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 \sa `CGAL::Direction_2<Kernel>` 
@@ -5174,7 +5174,7 @@ const Kernel::Iso_rectangle_2& y);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::cross_product` 
 \sa `CGAL::determinant` 
@@ -5202,7 +5202,7 @@ const Kernel::Vector_3 &w);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeC_2 {
@@ -5226,7 +5226,7 @@ Kernel::FT operator()(const Kernel::Line_2& l) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
 \sa `CGAL::Sphere_3<Kernel>` 
@@ -5267,7 +5267,7 @@ const Kernel::Point_3&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 \sa `CGAL::Line_2<Kernel>` 
@@ -5309,7 +5309,7 @@ const Kernel::Point_2&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Sphere_3<Kernel>` 
 
@@ -5336,7 +5336,7 @@ Kernel::Sphere_3 operator()(const Kernel::Sphere_3& s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_xy` 
 \sa `Kernel::CompareYX_2` 
@@ -5367,7 +5367,7 @@ const Kernel::Point_2&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 
@@ -5441,7 +5441,7 @@ public:
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::y_equal` 
 
@@ -5468,7 +5468,7 @@ const Kernel::Point_2&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Iso_rectangle_2<Kernel>` 
 \sa `CGAL::Segment_2<Kernel>` 
@@ -5504,7 +5504,7 @@ Kernel::Segment_2 &s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeB_2 {
@@ -5528,7 +5528,7 @@ Kernel::FT operator()(const Kernel::Line_2& l) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_xyz` 
 
@@ -5558,7 +5558,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 
@@ -5585,7 +5585,7 @@ Kernel::Circle_2 operator()(const Kernel::Circle_2& c);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Iso_rectangle_2<Kernel>` 
 \sa `CGAL::Triangle_2<Kernel>` 
@@ -5625,7 +5625,7 @@ Kernel::FT operator()(const Kernel::Triangle_2& t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `Kernel::ConstructBarycenter_2` 
 \sa `CGAL::centroid` 
@@ -5668,7 +5668,7 @@ Kernel::Point_2 operator()(const Kernel::Triangle_2&t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_y` 
 
@@ -5696,7 +5696,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two or three arguments) 
+\refines `AdaptableFunctor` (with two or three arguments) 
 
 \sa `CGAL::intersection` 
 
@@ -5761,7 +5761,7 @@ Kernel::Plane_3 pl3);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 \sa `CGAL::Sphere_3<Kernel>` 
@@ -5803,7 +5803,7 @@ const Kernel::Point_3&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::equidistant_line` 
 
@@ -5833,7 +5833,7 @@ const Kernel::Point_3&r );
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeY_2 {
@@ -5862,7 +5862,7 @@ Kernel::FT operator()(const Kernel::Vector_2& v) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
 
@@ -5918,7 +5918,7 @@ const Kernel::Point_3 &close);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::y_equal` 
 
@@ -5948,7 +5948,7 @@ const Kernel::Point_3&q);
 \anchor fig-compare12
 \image html compare1.gif
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_x` 
 
@@ -6005,7 +6005,7 @@ const Kernel::Line_2 &h2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Segment_2<Kernel>` 
 
@@ -6032,7 +6032,7 @@ Kernel::Segment_2 operator()(const Kernel::Segment_2& s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_3<Kernel>` 
 
@@ -6066,7 +6066,7 @@ const Kernel::FT& scale);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
 \sa `CGAL::Sphere_3<Kernel>` 
@@ -6119,7 +6119,7 @@ const Kernel::Point_3&p);
 
 \sa `CGAL::Vector_2<Kernel>` 
 
-\refines ::AdaptableFunctor (with two arguments)
+\refines `AdaptableFunctor` (with two arguments)
 
 */
 class ComputeScalarProduct_2 {
@@ -6144,7 +6144,7 @@ const Kernel::Vector_2& w);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Circle_3<Kernel>` 
 
@@ -6171,7 +6171,7 @@ Kernel::FT operator()(const Kernel::Circle_3& c);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Direction_2<Kernel>` 
 
@@ -6202,7 +6202,7 @@ Orientation o);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::parallel` 
 
@@ -6252,7 +6252,7 @@ const Kernel::Segment_3&s2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Triangle_2<Kernel>` 
 
@@ -6281,7 +6281,7 @@ Kernel::Triangle_2 operator()(const Kernel::Triangle_2& t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::lexicographically_xy_smaller` 
 
@@ -6311,7 +6311,7 @@ const Kernel::Point_2&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
 \sa `CGAL::Sphere_3<Kernel>` 
@@ -6353,7 +6353,7 @@ const Kernel::Point_3&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::orientation` 
 
@@ -6393,7 +6393,7 @@ const Kernel::Vector_2&v);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 \sa `Kernel::ConstructCrossProductVector_3` 
@@ -6430,7 +6430,7 @@ const Kernel::Point_3& q, const Kernel::Point_3& r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::collinear_are_ordered_along_line` 
 
@@ -6460,7 +6460,7 @@ const Kernel::Point_2&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 \sa `CGAL::Iso_rectangle_2<Kernel>` 
@@ -6502,7 +6502,7 @@ const Kernel::Point_2&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::has_smaller_distance_to_point` 
 
@@ -6564,7 +6564,7 @@ public:
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_3<Kernel>` 
 \sa `Kernel::ConstructScaledVector_3` 
@@ -6625,7 +6625,7 @@ Kernel::Vector_3 operator()(const Null_vector &NULL_VECTOR);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 \sa `CGAL::squared_radius` 
@@ -6673,7 +6673,7 @@ Kernel::FT operator()(const Kernel::Point_2& p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_3<Kernel>` 
 
@@ -6701,7 +6701,7 @@ const Kernel::Vector_3& w);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeX_2 {
@@ -6731,7 +6731,7 @@ Kernel::FT operator()(const Kernel::Vector_2& v) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Ray_3<Kernel>` 
 
@@ -6758,7 +6758,7 @@ Kernel::Ray_3 operator()(const Kernel::Ray_3& r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
 \sa `CGAL::Segment_3<Kernel>` 
@@ -6797,7 +6797,7 @@ Kernel::Segment_3 &s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeYmin_2 {
@@ -6819,7 +6819,7 @@ Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Ray_2<Kernel>` 
 
@@ -6848,7 +6848,7 @@ Kernel::Ray_2 &r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Direction_3<Kernel>` 
 
@@ -6876,7 +6876,7 @@ Kernel::Direction_3& d);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor` (with four arguments)
+\refines `AdaptableFunctor`` (with four arguments)
 
 \sa `CGAL::has_smaller_signed_distance_to_line` 
 
@@ -6919,7 +6919,7 @@ const Kernel::Point_2&s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::compare_squared_radius` 
 
@@ -6976,7 +6976,7 @@ const Kernel::FT& sr);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with five arguments) 
+\refines `AdaptableFunctor` (with five arguments) 
 
 \sa `CGAL::side_of_oriented_sphere` 
 
@@ -7019,7 +7019,7 @@ const Kernel::Point_3&t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::midpoint` 
 
@@ -7047,7 +7047,7 @@ const Kernel::Point_3& q );
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_x` 
 
@@ -7076,7 +7076,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 
@@ -7181,7 +7181,7 @@ const K::Vector_3& w2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_z` 
 
@@ -7212,7 +7212,7 @@ const Kernel::Point_3&q);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::collinear_are_strictly_ordered_along_line` 
 
@@ -7242,7 +7242,7 @@ const Kernel::Point_2&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Object` 
 \sa `Kernel::Assign_2` 
@@ -7274,7 +7274,7 @@ Object_3 operator()(const T& t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Direction_2<Kernel>` 
 
@@ -7316,7 +7316,7 @@ Kernel::Direction_2 operator()(const Kernel::Segment_2 &s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_3<Kernel>` 
 
@@ -7344,7 +7344,7 @@ const Kernel::Vector_3 &v2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::normal` 
 \sa `CGAL::unit_normal` 
@@ -7375,7 +7375,7 @@ const Kernel::Point_3& r );
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Sphere_3<Kernel>` 
 \sa `CGAL::Circle_3<Kernel>` 
@@ -7408,7 +7408,7 @@ Kernel::Point_3 operator()(const Kernel::Circle_3 & c);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `Kernel::CompareDistance_3` 
 \sa `CGAL::compare_distance_to_point` 
@@ -7445,7 +7445,7 @@ const Kernel::FT&d2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::Vector_3<Kernel>` 
 \sa `CGAL::determinant` 
@@ -7478,7 +7478,7 @@ const Kernel::Vector_3& w);
 \anchor fig-compare14
 \image html compare1.gif
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::compare_y` 
 
@@ -7538,7 +7538,7 @@ const Kernel::Line_2 &h2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Segment_2<Kernel>` 
 \sa `CGAL::Ray_2<Kernel>` 
@@ -7575,7 +7575,7 @@ Kernel::Ray_2 &r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with four arguments) 
+\refines `AdaptableFunctor` (with four arguments) 
 
 \sa `CGAL::orientation` 
 
@@ -7626,7 +7626,7 @@ Orientation operator()(const Kernel::Sphere_3&s);
 \sa `CGAL::compare_distance_to_point` 
 \sa `CGAL::compare_squared_distance` 
 
-\refines ::AdaptableFunctor (with three arguments)
+\refines `AdaptableFunctor` (with three arguments)
 
 */
 class CompareDistance_2 {
@@ -7678,7 +7678,7 @@ const Type4& obj4);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Line_3<Kernel>` 
 
@@ -7733,7 +7733,7 @@ Kernel::Line_3 operator()(const Kernel::Ray_3 &r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Direction_2<Kernel>` 
 
@@ -7761,7 +7761,7 @@ Kernel::Direction_2& d);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::collinear_are_strictly_ordered_along_line` 
 
@@ -7791,7 +7791,7 @@ const Kernel::Point_3&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Line_2<Kernel>` 
 \sa `CGAL::Ray_2<Kernel>` 
@@ -7841,7 +7841,7 @@ int i);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
 \sa `CGAL::Sphere_3<Kernel>` 
@@ -7883,7 +7883,7 @@ const Kernel::Point_3&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeXmax_2 {
@@ -7907,7 +7907,7 @@ Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::intersection` 
 
@@ -7941,7 +7941,7 @@ Kernel::Object_2 operator()(Type1 obj1, Type2 obj2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Object` 
 \sa `Kernel::Object_2` 
@@ -7973,7 +7973,7 @@ bool operator()(T& t, const Kernel::Object_2&o);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 \sa `CGAL::Sphere_3<Kernel>` 
@@ -8021,7 +8021,7 @@ const Kernel::Point_3& p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 */
 class CompareAngleWithXAxis_2 {
@@ -8049,7 +8049,7 @@ Kernel::Direction_2& d, const Kernel::Direction_2& e);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 
@@ -8121,7 +8121,7 @@ Orientation const& orientation
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Line_3<Kernel>` 
 \sa `CGAL::Plane_3<Kernel>` 
@@ -8156,7 +8156,7 @@ const Kernel::Point_3& p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeX_3 {
@@ -8185,7 +8185,7 @@ Kernel::FT operator()(const Kernel::Vector_3& v) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::are_strictly_ordered_along_line` 
 
@@ -8218,7 +8218,7 @@ const Kernel::Point_2&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::bisector` 
 
@@ -8310,7 +8310,7 @@ const Kernel::Point_2&s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_2<Kernel>` 
 
@@ -8339,7 +8339,7 @@ const Kernel::Vector_2 &v2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Line_2<Kernel>` 
 \sa `CGAL::Ray_2<Kernel>` 
@@ -8379,7 +8379,7 @@ bool operator()(const Kernel::Segment_2&o);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
 \sa `CGAL::Tetrahedron_3<Kernel>` 
@@ -8422,7 +8422,7 @@ const Kernel::Point_3& p3);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Point_2<Kernel>` 
 
@@ -8459,7 +8459,7 @@ const Kernel::Vector_2& v);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Vector_2<Kernel>` 
 
@@ -8491,7 +8491,7 @@ Orientation o);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with four arguments) 
+\refines `AdaptableFunctor` (with four arguments) 
 
 \sa `CGAL::coplanar_orientation` 
 
@@ -8540,7 +8540,7 @@ const Kernel::Point_3&r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `Kernel::ConstructCentroid_3` 
 \sa `CGAL::centroid` 
@@ -8621,7 +8621,7 @@ const Kernel::Point_3& p4, const Kernel::FT&w4);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Sphere_3<Kernel>` 
 \sa `CGAL::Circle_3<Kernel>` 
@@ -8685,7 +8685,7 @@ Kernel::FT operator()(const Kernel::Point_3& p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with five arguments) 
+\refines `AdaptableFunctor` (with five arguments) 
 
 \sa `CGAL::side_of_bounded_sphere` 
 
@@ -8738,7 +8738,7 @@ const Kernel::Point_3&t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Point_3<Kernel>` 
 
@@ -8775,7 +8775,7 @@ const Kernel::Vector_3& v);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Segment_3<Kernel>` 
 
@@ -8804,7 +8804,7 @@ Kernel::Segment_3 operator()(const Kernel::Segment_3& s);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor 
+\refines `AdaptableFunctor` 
 
 */
 class ComputeXmin_2 {
@@ -8828,7 +8828,7 @@ Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const;
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::Direction_2<Kernel>` 
 
@@ -8862,7 +8862,7 @@ const Kernel::Direction_2&d2);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `CGAL::Line_2<Kernel>` 
 
@@ -8891,7 +8891,7 @@ Kernel::Line_2 operator()(const Kernel::Line_2& l);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with four arguments) 
+\refines `AdaptableFunctor` (with four arguments) 
 
 \sa `CGAL::side_of_oriented_circle` 
 
@@ -8931,7 +8931,7 @@ const Kernel::Point_2&t);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::Triangle_3<Kernel>` 
 
@@ -8961,7 +8961,7 @@ const Kernel::Point_3 &r);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 
@@ -8992,7 +8992,7 @@ const Kernel::Point_3& p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Circle_2<Kernel>` 
 \sa `CGAL::Iso_rectangle_2<Kernel>` 
@@ -9035,7 +9035,7 @@ const Kernel::Point_2&p);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Iso_rectangle_2<Kernel>` 
 
@@ -9089,7 +9089,7 @@ const Kernel::Point_2 &top);
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with one argument) 
+\refines `AdaptableFunctor` (with one argument) 
 
 \sa `Kernel::CartesianConstIterator_2` 
 
@@ -9137,7 +9137,7 @@ Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Vector_2
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with three arguments) 
+\refines `AdaptableFunctor` (with three arguments) 
 
 \sa `CGAL::normal` 
 \sa `CGAL::unit_normal` 
@@ -9167,7 +9167,7 @@ const Kernel::Point_3& r );
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalconcept
 
-\refines ::AdaptableFunctor (with two arguments) 
+\refines `AdaptableFunctor` (with two arguments) 
 
 \sa `CGAL::Plane_3<Kernel>` 
 

@@ -12,7 +12,7 @@ refines the concept `SegmentDelaunayGraphVertexBase_2`, by
 adding two vertex handles to the correponding vertices for the 
 next and previous level graphs. 
 
-\refines ::SegmentDelaunayGraphVertexBase_2 
+\refines `SegmentDelaunayGraphVertexBase_2` 
 
 ### Types ###
 

@@ -5,7 +5,7 @@
 
 The concept `SparseLinearAlgebraTraits_d` is used to solve sparse linear systems <I>A\f$ \times \f$ X = B</I>. 
 
-\refines ::LinearAlgebraTraits_d 
+\refines `LinearAlgebraTraits_d` 
 
 \hasModel `CGAL::Eigen_solver_traits<T>`
 \hasModel `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package 
@@ -72,7 +72,7 @@ bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);
 
 `SparseLinearAlgebraTraits_d::Vector` is a concept of a vector that can be multiplied by a sparse matrix. 
 
-\refines ::LinearAlgebraTraits_d::Vector 
+\refines `LinearAlgebraTraits_d::Vector` 
 
 \hasModel `CGAL::Eigen_vector<T>`
 \hasModel `OpenNL::FullVector<T>` in `OpenNL` package 
@@ -147,7 +147,7 @@ NT& operator[](int row);
 
 `SparseLinearAlgebraTraits_d::Matrix` is a concept of a sparse matrix class. 
 
-\refines ::LinearAlgebraTraits_d::Matrix 
+\refines `LinearAlgebraTraits_d::Matrix` 
 
 \hasModel `CGAL::Eigen_sparse_matrix<T>`
 \hasModel `CGAL::Eigen_sparse_symmetric_matrix<T>`

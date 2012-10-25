@@ -15,7 +15,7 @@ In this case
 \link CGAL::Coercion_traits::Are_implicit_interoperable  `CGAL::Coercion_traits<A,B>::Are_implicit_interoperable`\endlink
 is `CGAL::Tag_true`. 
 
-\refines ::ExplicitInteroperable 
+\refines `ExplicitInteroperable` 
 
 \sa `CGAL::Coercion_traits<A,B>` 
 \sa `ExplicitInteroperable` 

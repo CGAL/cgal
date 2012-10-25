@@ -11,7 +11,7 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithKthRoot >` is a model of `
 
 - `CGAL::Algebraic_structure_traits< FieldWithKthRoot >::Kth_root` 
 
-\refines ::FieldWithSqrt 
+\refines `FieldWithSqrt` 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 

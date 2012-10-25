@@ -6,7 +6,7 @@
 `AdaptableUnaryFunction`, 
 returns true in case the argument is the one of the ring. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 

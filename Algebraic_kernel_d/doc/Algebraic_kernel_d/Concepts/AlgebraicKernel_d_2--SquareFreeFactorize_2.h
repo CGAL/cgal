@@ -14,8 +14,8 @@ and a constant factor \f$ c\f$, such that
 The factor multiplicity pairs \f$ <q_i,m_i>\f$ are written to the 
 given output iterator. The constant factor \f$ c\f$ is not computed. 
 
-\refines ::Assignable 
-\refines ::CopyConstructible 
+\refines `Assignable` 
+\refines `CopyConstructible` 
 
 \sa `AlgebraicKernel_d_2::IsSquareFree_2`
 \sa `AlgebraicKernel_d_2::MakeSquareFree_2`

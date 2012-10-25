@@ -6,7 +6,7 @@
 `AdaptableUnaryFunction` providing the inverse element with 
 respect to multiplication of a `Field`. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 

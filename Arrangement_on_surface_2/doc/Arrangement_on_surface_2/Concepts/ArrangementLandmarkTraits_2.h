@@ -13,7 +13,7 @@ is used to approximate the coordinates of `Point_2` instances. It is
 recommended to define the approximated number type as the built-in 
 `double` type. 
 
-\refines ::ArrangementTraits_2 
+\refines `ArrangementTraits_2` 
 
 \hasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>` 
 \hasModel `CGAL::Arr_segment_traits_2<Kernel>` 

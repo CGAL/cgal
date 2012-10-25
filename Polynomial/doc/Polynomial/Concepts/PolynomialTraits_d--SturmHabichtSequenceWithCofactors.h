@@ -16,9 +16,9 @@ The result is written in three output ranges, each of length \f$ \min\{n,m\}+1\f
 starting with the \f$ 0\f$-th Sturm-Habicht polynomial \f$ \mathrm{Stha_0(f)}\f$ 
 and the corresponding cofactors. 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

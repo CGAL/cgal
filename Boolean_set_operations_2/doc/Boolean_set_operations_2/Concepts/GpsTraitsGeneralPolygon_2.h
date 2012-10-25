@@ -5,9 +5,9 @@
 
 A model of this concept represents a simple general polygon. 
 
-\refines ::DefaultConstructible
-\refines ::CopyConstructible
-\refines ::Assignable
+\refines `DefaultConstructible`
+\refines `CopyConstructible`
+\refines `Assignable`
 
 \generalizes ::GeneralPolygon_2 
 

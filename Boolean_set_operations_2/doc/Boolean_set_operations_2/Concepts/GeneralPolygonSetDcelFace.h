@@ -7,7 +7,7 @@ A face record in a <span class="textsc">Dcel</span> data structure used by the
 `General_polygon_set_2` and `Polygon_set_2` class-templates 
 to represent the underlying internal `Arrangement_2` data structure. 
 
-\refines ::ArrangementDcelFace 
+\refines `ArrangementDcelFace` 
 
 \sa `ArrangementDcel` 
 \sa `ArrangementDcelVertex` 

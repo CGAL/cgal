@@ -32,7 +32,7 @@ returned.
 We only describe the additional requirements with respect to the 
 `ApolloniusGraphDataStructure_2` concept. 
 
-\refines ::ApolloniusGraphDataStructure_2 
+\refines `ApolloniusGraphDataStructure_2` 
 
 \hasModel `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 

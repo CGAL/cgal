@@ -11,8 +11,8 @@ An <I>absent</I> cost indicates that the edge should not be collapsed.
 This could be the result of a computational limitation (such as overflow), 
 or can be intentionally returned to prevent the edge from being collapsed. 
 
-\refines ::DefaultConstructible 
-\refines ::CopyConstructible 
+\refines `DefaultConstructible` 
+\refines `CopyConstructible` 
 
 \hasModel `CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>`
 \hasModel `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>`

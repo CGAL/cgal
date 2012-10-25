@@ -22,9 +22,9 @@ The result is written in an output range, starting with the \f$ 0\f$-th subresul
 \f$ \mathrm{Sres}_0(p,q)\f$ 
 (aka as the resultant of \f$ p\f$ and \f$ q\f$). 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

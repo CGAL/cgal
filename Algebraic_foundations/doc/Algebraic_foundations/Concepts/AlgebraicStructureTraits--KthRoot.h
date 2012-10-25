@@ -5,7 +5,7 @@
 
 `AdaptableBinaryFunction` providing the k-th root. 
 
-\refines ::AdaptableBinaryFunction 
+\refines `AdaptableBinaryFunction` 
 
 \sa ::FieldWithRootOf 
 \sa ::AlgebraicStructureTraits 

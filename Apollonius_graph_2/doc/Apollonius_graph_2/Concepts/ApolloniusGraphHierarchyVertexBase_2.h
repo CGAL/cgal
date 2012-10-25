@@ -12,7 +12,7 @@ refines the concept `ApolloniusGraphVertexBase_2`, by
 adding two vertex handles to the corresponding vertices for the 
 next and previous level graphs. 
 
-\refines ::ApolloniusGraphVertexBase_2 
+\refines `ApolloniusGraphVertexBase_2` 
 
 ### Types ###
 

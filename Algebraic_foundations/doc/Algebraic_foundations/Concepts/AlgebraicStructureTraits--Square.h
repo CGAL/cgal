@@ -5,7 +5,7 @@
 
 `AdaptableUnaryFunction`, computing the square of the argument. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 

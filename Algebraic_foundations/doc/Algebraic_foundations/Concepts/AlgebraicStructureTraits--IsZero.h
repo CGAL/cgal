@@ -5,7 +5,7 @@
 
 `AdaptableUnaryFunction`, returns true in case the argument is the zero element of the ring. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 \sa ::RealEmbeddableTraits::IsZero 

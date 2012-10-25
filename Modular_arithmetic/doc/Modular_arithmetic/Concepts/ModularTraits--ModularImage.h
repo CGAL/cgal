@@ -10,7 +10,7 @@ with respect to a homomorphism \f$ \varphi\f$ from the
 The homomorphism preserves the mapping of `int` into both types 
 , i.e., \f$ \varphi(Type(i)) == Residue\_type(i)\f$. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa `ModularTraits` 
 

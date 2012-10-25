@@ -5,7 +5,7 @@
 
 `AdaptableUnaryFunction`, returns true in case the argument is 0. 
 
-\refines ::AdaptableUnaryFunction 
+\refines `AdaptableUnaryFunction` 
 
 \sa ::RealEmbeddableTraits 
 \sa ::AlgebraicStructureTraits::IsZero 

@@ -6,9 +6,9 @@
 This `AdaptableBinaryFunction` provides access to coefficients of a 
 `PolynomialTraits_d::Polynomial_d`. 
 
-\refines ::AdaptableBinaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableBinaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

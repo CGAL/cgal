@@ -10,9 +10,9 @@ where the monomial order is the lexicographic order giving outer
 variables a higher priority. In particular, this is the monomial 
 that belongs to the innermost leading coefficient of \f$ p\f$. 
 
-\refines ::AdaptableUnaryFunction 
-\refines ::CopyConstructible 
-\refines ::DefaultConstructible 
+\refines `AdaptableUnaryFunction` 
+\refines `CopyConstructible` 
+\refines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

@@ -12,7 +12,7 @@ having only triangular faces.
 It can have any number of connected components, boundaries 
 (borders and holes) and handles (arbitrary genus). 
 
-\refines ::HalfedgeGraph 
+\refines `HalfedgeGraph` 
 
 ### Valid Expressions ###
 

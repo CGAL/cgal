@@ -8,7 +8,7 @@ The concept `LinearCellComplexItems` refines the concept of
 0-attributes are enabled, and associated with attributes that are 
 models of the `CellAttributeWithPoint` concept. 
 
-\refines ::CombinatorialMapItems 
+\refines `CombinatorialMapItems` 
 
 \requires The first type in `Attributes` must be a model of the 
 `CellAttributeWithPoint` concept. 

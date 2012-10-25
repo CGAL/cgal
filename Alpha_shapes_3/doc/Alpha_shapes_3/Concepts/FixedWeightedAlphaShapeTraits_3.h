@@ -6,7 +6,7 @@
 The concept `FixedWeightedAlphaShapeTraits_3` describes the requirements 
 for the geometric traits class of the underlying regular triangulation of a weighted alpha shape with fixed alpha value. 
 
-\refines ::RegularTriangulationTraits_3 
+\refines `RegularTriangulationTraits_3` 
 
 In addition to the requirements described in the concept
 ::RegularTriangulationTraits_3, the geometric traits class of a
