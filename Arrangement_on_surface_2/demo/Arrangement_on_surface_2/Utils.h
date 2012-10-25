@@ -661,7 +661,7 @@ public:
         if ( CGAL::assign( res, o ) ) // TODO: handle failure case
         {
             Point_2 p = res.first;
-            std::cout << "approx y: " << p.to_double( ).second << std::endl;
+            // std::cout << "approx y: " << p.to_double( ).second << std::endl;
             CoordinateType coord = p.y( );
             return coord;
         }

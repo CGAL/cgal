@@ -525,32 +525,33 @@ protected: // methods
         }
 
 #if 0
-        std::cout << "pointList size: " << pointList.size( ) << std::endl;
-        if ( intersections.size( ) % 2 == 0 )
-        { // either both curve endpoints are in view or both are out
-            if ( this->clippingRect.contains( qendpt1 ) )
-            {
-                if ( this->clippingRect.contains( qendpt2 ) )
-                {
-                    std::cout << "both endpoints are in view" << std::endl;
-                }
-            }
-            else if ( !this->clippingRect.contains( qendpt2 ) )
-            {
-                std::cout << "both endpoints are out of view" << std::endl;
-            }
-        }
-        else
-        { // one curve endpoint is in view
-            if ( this->clippingRect.contains( qendpt1 ) )
-            {
-                std::cout << "left endpoint is in view" << std::endl;
-            }
-            else if ( this->clippingRect.contains( qendpt2 ) )
-            {
-                std::cout << "right endpoint is in view" << std::endl;
-            }
-        }
+        // std::cout << "pointList size: " << pointList.size( ) << std::endl;
+        // if ( intersections.size( ) % 2 == 0 )
+        // {
+        //   // either both curve endpoints are in view or both are out
+        //     if ( this->clippingRect.contains( qendpt1 ) )
+        //     {
+        //         if ( this->clippingRect.contains( qendpt2 ) )
+        //         {
+        //             std::cout << "both endpoints are in view" << std::endl;
+        //         }
+        //     }
+        //     else if ( !this->clippingRect.contains( qendpt2 ) )
+        //     {
+        //         std::cout << "both endpoints are out of view" << std::endl;
+        //     }
+        // }
+        // else
+        // { // one curve endpoint is in view
+        //     if ( this->clippingRect.contains( qendpt1 ) )
+        //     {
+        //         std::cout << "left endpoint is in view" << std::endl;
+        //     }
+        //     else if ( this->clippingRect.contains( qendpt2 ) )
+        //     {
+        //         std::cout << "right endpoint is in view" << std::endl;
+        //     }
+        // }
 
         std::vector< X_monotone_curve_2 > res;
         res.push_back( curve );
@@ -600,12 +601,7 @@ protected: // methods
             {
                 Point_2 pt = pair.first;
                 QPointF qpt = this->convert( pt );
-                std::cout << "("
-                    << pt.x( )
-                    << " "
-                    << pt.y( )
-                    << ")"
-                    << std::endl;
+                // std::cout << "(" << pt.x( ) << " " << pt.y( ) < ")" << std::endl;
             }
         }
     }

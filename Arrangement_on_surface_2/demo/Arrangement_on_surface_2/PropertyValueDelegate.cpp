@@ -48,7 +48,7 @@ void PropertyValueDelegate::setModelData( QWidget* editor, QAbstractItemModel* m
     DeleteCurveModeItemEditor* modeEditor = 0;
     if ( colorEditor = qobject_cast< ColorItemEditor* >( editor ) )
     {
-        std::cout << "set color model data" << std::endl;
+      // std::cout << "set color model data" << std::endl;
         model->setData( index, colorEditor->color( ), Qt::DisplayRole );
         model->setData( index, colorEditor->color( ), Qt::DecorationRole );
         model->setData( index, QVariant::fromValue( colorEditor->color( ) ), Qt::UserRole );
@@ -85,7 +85,7 @@ bool PropertyValueDelegate::eventFilter( QObject *object, QEvent *event )
 
 void PropertyValueDelegate::commit( )
 {
-    std::cout << "commit selection" << std::endl;
+  // std::cout << "commit selection" << std::endl;
     QWidget* editor = qobject_cast< QWidget* >( sender( ) );
     if ( editor )
     {

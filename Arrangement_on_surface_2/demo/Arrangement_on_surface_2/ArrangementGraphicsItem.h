@@ -133,10 +133,10 @@ protected:
     {
         for( Face_iterator fi = this->arr->faces_begin( ); fi != this->arr->faces_end( ); ++fi )
         {
-            if ( fi->is_fictitious( ) )
-            {
-                std::cout << "setting fictitious face not visited" << std::endl;
-            }
+            // if ( fi->is_fictitious( ) )
+            // {
+            //     std::cout << "setting fictitious face not visited" << std::endl;
+            // }
             fi->set_visited( false );
         }
 
@@ -185,16 +185,16 @@ protected:
                 } while ( ++cc != *hit );
                 holes++;
             }// for
-            if ( f->is_unbounded( ) )
-            {
-                std::cout << "unbounded face has " << holes << " holes" << std::endl;
-                std::cout << "unbounded face has " << inner_faces << " inner faces" << std::endl;
-            }
-            if ( f->is_fictitious( ) )
-            {
-                std::cout << "fictitious face has " << holes << " holes" << std::endl;
-                std::cout << "fictitious face has " << inner_faces << " inner faces" << std::endl;
-            }
+            // if ( f->is_unbounded( ) )
+            // {
+            //     std::cout << "unbounded face has " << holes << " holes" << std::endl;
+            //     std::cout << "unbounded face has " << inner_faces << " inner faces" << std::endl;
+            // }
+            // if ( f->is_fictitious( ) )
+            // {
+            //     std::cout << "fictitious face has " << holes << " holes" << std::endl;
+            //     std::cout << "fictitious face has " << inner_faces << " inner faces" << std::endl;
+            // }
         }
     }
 
@@ -595,7 +595,7 @@ protected:
     template < class CircularKernel >
     void paintFace( Face_handle f, QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
     {
-        std::cout << "face begin" << std::endl;
+        // std::cout << "face begin" << std::endl;
         if (! f->is_unbounded())  // f is not the unbounded face
         {
             QBrush oldBrush = painter->brush( );
@@ -639,9 +639,11 @@ protected:
                     X_monotone_curve_2 next_c = next_he->curve( );
                     QPointF next_source( to_double(next_c.source().x()), to_double(next_c.source().y()) );
                     QPointF next_target( to_double(next_c.target().x()), to_double(next_c.target().y()) );
-                    std::cout << "next curve's points: " << std::endl
-                        << "  s: " << next_source.x( ) << " " << next_source.y( ) << std::endl
-                        << "  t: " << next_target.x( ) << " " << next_target.y( ) << std::endl;
+                    // std::cout << "next curve's points: " << std::endl
+                    //           << "  s: " << next_source.x( )
+                    //           << " " << next_source.y( ) << std::endl
+                    //           << "  t: " << next_target.x( )
+                    //           << " " << next_target.y( ) << std::endl;
                     double dist1 = QLineF( target, next_source ).length();
                     double dist2 = QLineF( target, next_target ).length();
                     if ( dist1 > 1e-2 && dist2 > 1e-2 )
@@ -656,13 +658,15 @@ protected:
                 {
                     //bool source_is_left = (source.x() < target.x());
                     double dist = QLineF( path.currentPosition(), source ).length( );
-                    if ( dist > 1e-2 )
-                    {
-                        std::cout << "swapping source and target " << dist << std::endl;
-                        std::swap( source, target );
-                    }
+                    // if ( dist > 1e-2 )
+                    // {
+                    //     std::cout << "swapping source and target " << dist
+                    //               << std::endl;
+                    //     std::swap( source, target );
+                    // }
                 }
-                std::cout << "currentPosition: " << path.currentPosition().x() << ", " << path.currentPosition().y() << std::endl;
+                // std::cout << "currentPosition: " << path.currentPosition().x()
+                //           << ", " << path.currentPosition().y() << std::endl;
                 std::stringstream ss;
                 ss << "  source: " << to_double(source.x( )) << ", " << to_double(source.y()) << std::endl
                     << "  target: " << to_double(target.x( )) << ", " << to_double(target.y()) << std::endl;
@@ -702,7 +706,7 @@ protected:
                 ss << "drawing line from " << curPos.x( ) << ", " << curPos.y( ) << " to "
                     << to_double(target.x( )) << ", " << to_double(target.y());
 #endif
-                std::cout << ss.str( ) << std::endl;
+                // std::cout << ss.str( ) << std::endl;
                 path.arcTo( convert(circ.bbox()), asource * 180/CGAL_PI, aspan *180/CGAL_PI );
 #if 0
                 qp->drawArc(convert(circ.bbox()), 

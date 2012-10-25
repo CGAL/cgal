@@ -36,7 +36,7 @@ void
 GraphicsViewSegmentInputBase::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 { 
-    std::cout << "GraphicsViewSegmentInputBase::mousePressEvent" << std::endl;
+  // std::cout << "GraphicsViewSegmentInputBase::mousePressEvent" << std::endl;
 }
 
 bool 

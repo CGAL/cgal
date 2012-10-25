@@ -401,7 +401,8 @@ protected:
                 double x2 = CGAL::to_double( this->points[ 1 ].x( ) ); 
                 double y2 = CGAL::to_double( this->points[ 1 ].y( ) ); 
                 Curve_2 res = Curve_2( Rat_segment_2( Rat_point_2( x1, y1 ), Rat_point_2( x2, y2 ) ) );
-                //std::cout << "res is " << ( (res.is_valid( ))? "" : "not ") << "valid" << std::endl;
+                // std::cout << "res is " << ( (res.is_valid( ))? "" : "not ")
+                //           << "valid" << std::endl;
                 this->points.clear( );
                 this->pointsGraphicsItem.clear( );
 
@@ -415,7 +416,7 @@ protected:
                 }
                 this->circleItem = NULL;
 
-                std::cout << "TODO: Add the circle" << std::endl;
+                // std::cout << "TODO: Add the circle" << std::endl;
                 double x1 = CGAL::to_double( this->points[ 0 ].x( ) ); 
                 double y1 = CGAL::to_double( this->points[ 0 ].y( ) ); 
                 double x2 = CGAL::to_double( this->points[ 1 ].x( ) ); 
@@ -479,7 +480,8 @@ protected:
                     }
                     else
                     {
-                        std::cout << "Oops, points don't specify a valid conic. Try again!" << std::endl;
+                        std::cout << "Oops, points don't specify a valid conic."
+                                  << " Try again!" << std::endl;
                     }
 
                     // TODO: make a valid curve and insert it
@@ -507,7 +509,8 @@ protected:
                         Curve_2 res( p1, p2, p3, p4, p5 );
                         if ( res.is_valid( ) )
                         {
-                            std::cout << "Meow, valid 5 point conic!" << std::endl;
+                            std::cout << "Meow, valid 5 point conic!"
+                                      << std::endl;
                             emit generate( CGAL::make_object( res ) );
                         }
                         else
@@ -600,7 +603,7 @@ protected: // methods
         QRectF clippingRect = this->viewportRect( );
         if ( !clippingRect.isValid( ) )
         {
-            std::cout << "Warning: not valid clipping rect" << std::endl;
+            std::cout << "Warning: invalid clipping rect" << std::endl;
         }
         this->convert = Converter< Kernel >( clippingRect );
 
@@ -762,19 +765,20 @@ protected:
                 if ( isOn )
                 {
                     Curve_2 res( circle, pp1, pp3 );
-                    std::cout << res << std::endl;
+                    // std::cout << res << std::endl;
                     emit generate( CGAL::make_object( res ) );
                 }
                 else
                 {
                     Curve_2 res( circle, pp3, pp1 );
-                    std::cout << res << std::endl;
+                    // std::cout << res << std::endl;
                     emit generate( CGAL::make_object( res ) );
                 }
             }
             else
             {
-                std::cout << "Oops, points don't specify a valid circular arc. Try again!" << std::endl;
+                std::cout << "Oops, points don't specify a valid circular arc."
+                          << " Try again!" << std::endl;
             }
 
             this->points.clear( );
@@ -835,7 +839,7 @@ public:
             {
                 return;
             }
-            std::cout << "Algebraic traits curve insert stub" << std::endl;
+            // std::cout << "Algebraic traits curve insert stub" << std::endl;
         }
     }
 

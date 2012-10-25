@@ -59,7 +59,7 @@ void
 GraphicsViewCurveInputBase::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 { 
-    std::cout << "GraphicsViewCurveInputBase::mousePressEvent" << std::endl;
+  // std::cout << "GraphicsViewCurveInputBase::mousePressEvent" << std::endl;
 }
 
 bool 

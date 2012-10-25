@@ -153,7 +153,7 @@ highlightNearestCurve( QGraphicsSceneMouseEvent* event )
     {
         X_monotone_curve_2 curve = hei->curve( );
         double dist = CGAL::to_double( this->squaredDistance( p, curve ) );
-        std::cout << dist << std::endl;
+        // std::cout << dist << std::endl;
         if ( isFirst || dist < minDist )
         {
             isFirst = false;
@@ -172,7 +172,7 @@ highlightNearestCurve( QGraphicsSceneMouseEvent* event )
     //if ( isFirst )
     if ( this->removableHalfedge == Halfedge_handle( ) )
     {
-        std::cout << "no curve found" << std::endl;
+        // std::cout << "no curve found" << std::endl;
         return;
     }
 

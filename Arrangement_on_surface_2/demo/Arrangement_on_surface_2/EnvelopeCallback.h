@@ -219,7 +219,7 @@ updateEnvelope( bool lower, TTraits traits )
             }
             else
             {
-                std::cout << "handle unbounded curve" << std::endl;
+                // std::cout << "handle unbounded curve" << std::endl;
                 v = e->right( );
                 e = v->right( );
                 continue;
@@ -231,7 +231,8 @@ updateEnvelope( bool lower, TTraits traits )
             }
             else
             {
-                std::cout << "pRight is null; should never get here..." << std::endl;
+                // std::cout << "pRight is null; should never get here..."
+                //           << std::endl;
             }
             X_monotone_curve_2 curve =
                 this->construct_x_monotone_subcurve_2( e->curve( ), leftPoint, rightPoint );
@@ -303,7 +304,7 @@ updateEnvelope( bool lower, CGAL::Arr_circular_arc_traits_2< CircularKernel > tr
             }
             else
             {
-                std::cout << "handle unbounded curve" << std::endl;
+                // std::cout << "handle unbounded curve" << std::endl;
                 v = e->right( );
                 e = v->right( );
                 continue;
@@ -315,7 +316,8 @@ updateEnvelope( bool lower, CGAL::Arr_circular_arc_traits_2< CircularKernel > tr
             }
             else
             {
-                std::cout << "pRight is null; should never get here..." << std::endl;
+                // std::cout << "pRight is null; should never get here..."
+                //           << std::endl;
             }
             X_monotone_curve_2 curve =
                 this->construct_x_monotone_subcurve_2( e->curve( ), leftPoint, rightPoint );
@@ -335,7 +337,7 @@ void
 EnvelopeCallback< Arr_, Traits >::
 updateEnvelope( bool lower, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
 {
-    std::cout << "alg seg envelope stub" << std::endl;
+  // std::cout << "alg seg envelope stub" << std::endl;
 }
 
 template < class Arr_, class Traits >
@@ -345,12 +347,12 @@ showLowerEnvelope( bool show )
 {
     if ( show )
     {
-        std::cout << "Show lower envelope" << std::endl;
+        // std::cout << "Show lower envelope" << std::endl;
         this->scene->addItem( this->lowerEnvelope );
     }
     else
     {
-        std::cout << "Hide lower envelope" << std::endl;
+        // std::cout << "Hide lower envelope" << std::endl;
         this->scene->removeItem( this->lowerEnvelope );
     }
 }
@@ -362,12 +364,12 @@ showUpperEnvelope( bool show )
 {
     if ( show )
     {
-        std::cout << "Show upper envelope" << std::endl;
+        // std::cout << "Show upper envelope" << std::endl;
         this->scene->addItem( this->upperEnvelope );
     }
     else
     {
-        std::cout << "Hide upper envelope" << std::endl;
+        // std::cout << "Hide upper envelope" << std::endl;
         this->scene->removeItem( this->upperEnvelope );
     }
 }

@@ -71,7 +71,7 @@ mousePressEvent( QMouseEvent* e )
     QColor selectedColor = QColorDialog::getColor( this->m_color );
     if ( selectedColor.isValid( ) )
     {
-        std::cout << selectedColor.name( ).toStdString( ) << std::endl;
+      // std::cout << selectedColor.name( ).toStdString( ) << std::endl;
         this->setColor( selectedColor );
     }
 

@@ -16,9 +16,7 @@ Callback( QObject* parent ):
 void 
 Callback::
 reset( )
-{
-
-}
+{}
 
 bool 
 Callback::

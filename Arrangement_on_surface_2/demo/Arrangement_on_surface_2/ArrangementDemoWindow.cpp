@@ -511,7 +511,7 @@ openDatFile( QString filename )
     // Creates an ofstream object named inputFile
     if (! inputFile.is_open() ) // Always test file open
     {
-        std::cout << "Error opening input file" << std::endl;
+        std::cerr << "Error opening input file" << std::endl;
         return;
     }
 
@@ -662,7 +662,7 @@ updateConicType( QAction* newType )
     bool isLinearArr = CGAL::assign( lin_arr, this->arrangements[ this->ui->tabWidget->currentIndex( ) ] );
     if ( isConicArr )
     {
-        std::cout << "do something conic arr related" << std::endl;
+      // std::cout << "do something conic arr related" << std::endl;
         typedef CGAL::Qt::GraphicsViewCurveInput< typename Conic_arr::Geometry_traits_2 > ConicCurveInputCallback;
         ConicCurveInputCallback* curveInputCallback = ( ConicCurveInputCallback* ) activeTab->getCurveInputCallback( );
         if ( newType == this->ui->actionConicSegment )
@@ -817,13 +817,14 @@ on_actionOpen_triggered( )
     CGAL::Qt::ArrangementGraphicsItemBase* agi = currentTab->getArrangementGraphicsItem( );
     QRectF bb = agi->boundingRect( );
     QGraphicsView* view = currentTab->getView( );
-    std::cout << bb.left( ) << " " << bb.bottom( ) << ", " << bb.right( ) << " " << bb.top( ) << std::endl;
+    // std::cout << bb.left( ) << " " << bb.bottom( ) << ", " << bb.right( )
+    //           << " " << bb.top( ) << std::endl;
     if ( std::isinf(bb.left( )) || 
         std::isinf(bb.right( )) || 
         std::isinf(bb.top( )) || 
         std::isinf(bb.bottom( )) )
     {
-        std::cout << "unbounded; using default bb" << std::endl;
+      // std::cout << "unbounded; using default bb" << std::endl;
         bb = QRectF( -100, -100, 200, 200 );
         view->setSceneRect( bb );
     }
@@ -888,7 +889,7 @@ void
 ArrangementDemoWindow::
 on_tabWidget_currentChanged( )
 {
-    std::cout << "Tab changed" << std::endl;
+  // std::cout << "Tab changed" << std::endl;
     // disable the callback for the previously active tab
     this->resetCallbackState( this->lastTabIndex );
     this->removeCallback( this->lastTabIndex );
@@ -1032,60 +1033,58 @@ on_actionCloseTab_triggered( )
     this->arrangements.erase( this->arrangements.begin( ) + currentTabIndex );
 }
 
-void
-ArrangementDemoWindow::
-on_actionPrintConicCurves_triggered( )
+void ArrangementDemoWindow::on_actionPrintConicCurves_triggered( )
 {
-    int currentTabIndex = this->ui->tabWidget->currentIndex( );
-    Conic_arr* arr;
-    if ( currentTabIndex == -1 )
-        return;
-    CGAL::Object o = this->arrangements[ currentTabIndex ];
-    if ( ! CGAL::assign( arr, o ) )
-        return;
-    typedef typename Conic_arr::Curve_iterator Curve_iterator;
-    std::cout << arr->number_of_curves( ) << std::endl;
-    for ( Curve_iterator it = arr->curves_begin( ); it != arr->curves_end( ); ++it )
-    {
-        std::cout << *it << std::endl;
-        if ( it->is_full_conic( ) )
-        {
-            std::cout << "F ";
-            std::cout << it->r( ) << " ";
-            std::cout << it->s( ) << " ";
-            std::cout << it->t( ) << " ";
-            std::cout << it->u( ) << " ";
-            std::cout << it->v( ) << " ";
-            std::cout << it->w( ) << " ";
-            std::cout << std::endl;
-        }
-        else if ( it->orientation( ) == CGAL::COLLINEAR )
-        {
-            std::cout << "S ";
-            std::cout << it->source( ) << " ";
-            std::cout << it->target( ) << " ";
-            std::cout << std::endl;
-        }
-        else
-        {
-            std::cout << "A ";
-            std::cout << it->r( ) << " ";
-            std::cout << it->s( ) << " ";
-            std::cout << it->t( ) << " ";
-            std::cout << it->u( ) << " ";
-            std::cout << it->v( ) << " ";
-            std::cout << it->w( ) << " ";
-            if ( it->orientation( ) == CGAL::COUNTERCLOCKWISE )
-                std::cout << "1 ";
-            else if ( it->orientation( ) == CGAL::CLOCKWISE )
-                std::cout << "-1 ";
-            else
-                std::cout << "0 ";
-            std::cout << it->source( ) << " ";
-            std::cout << it->target( ) << " ";
-            std::cout << std::endl;
-        }
-    }
+    // int currentTabIndex = this->ui->tabWidget->currentIndex( );
+    // Conic_arr* arr;
+    // if ( currentTabIndex == -1 )
+    //     return;
+    // CGAL::Object o = this->arrangements[ currentTabIndex ];
+    // if ( ! CGAL::assign( arr, o ) )
+    //     return;
+    // typedef typename Conic_arr::Curve_iterator Curve_iterator;
+    // // std::cout << arr->number_of_curves( ) << std::endl;
+    // Curve_iterator it;
+    // for (it = arr->curves_begin(); it != arr->curves_end(); ++it) {
+    //     std::cout << *it << std::endl;
+    //     if ( it->is_full_conic( ) )
+    //     {
+    //         std::cout << "F ";
+    //         std::cout << it->r( ) << " ";
+    //         std::cout << it->s( ) << " ";
+    //         std::cout << it->t( ) << " ";
+    //         std::cout << it->u( ) << " ";
+    //         std::cout << it->v( ) << " ";
+    //         std::cout << it->w( ) << " ";
+    //         std::cout << std::endl;
+    //     }
+    //     else if ( it->orientation( ) == CGAL::COLLINEAR )
+    //     {
+    //         std::cout << "S ";
+    //         std::cout << it->source( ) << " ";
+    //         std::cout << it->target( ) << " ";
+    //         std::cout << std::endl;
+    //     }
+    //     else
+    //     {
+    //         std::cout << "A ";
+    //         std::cout << it->r( ) << " ";
+    //         std::cout << it->s( ) << " ";
+    //         std::cout << it->t( ) << " ";
+    //         std::cout << it->u( ) << " ";
+    //         std::cout << it->v( ) << " ";
+    //         std::cout << it->w( ) << " ";
+    //         if ( it->orientation( ) == CGAL::COUNTERCLOCKWISE )
+    //             std::cout << "1 ";
+    //         else if ( it->orientation( ) == CGAL::CLOCKWISE )
+    //             std::cout << "-1 ";
+    //         else
+    //             std::cout << "0 ";
+    //         std::cout << it->source( ) << " ";
+    //         std::cout << it->target( ) << " ";
+    //         std::cout << std::endl;
+    //     }
+    // }
 }
 
 void

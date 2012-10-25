@@ -68,7 +68,7 @@ public:
         Superclass( parent ),
         arrangement( arrangement_ )
     {
-        std::cout << this->scene->views( ).size( ) << std::endl;
+        // std::cout << this->scene->views( ).size( ) << std::endl;
         // set up demo components
         this->arrangementGraphicsItem = new CGAL::Qt::ArrangementGraphicsItem< Arrangement >( this->arrangement );
         this->curveInputCallback = new ArrangementCurveInputCallback< Arrangement >( this->arrangement, this );

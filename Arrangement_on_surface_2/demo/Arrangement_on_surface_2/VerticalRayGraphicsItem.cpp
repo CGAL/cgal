@@ -46,7 +46,7 @@ paint( QPainter* painter,
         painter->drawLine( line );
         // TODO: draw arrowhead
         this->drawArrowhead( painter, targetY, isShootingUp );
-        std::cout << "drawing the ray to " << targetY << std::endl;
+        // std::cout << "drawing the ray to " << targetY << std::endl;
     }
     else
     {
@@ -85,7 +85,7 @@ boundingRect( ) const
             ymax = this->m_source.y( ) + 1e9;
         }
     }
-    std::cout << ymin << " " << ymax << std::endl;
+    // std::cout << ymin << " " << ymax << std::endl;
 
     QRectF res( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
     return res;
@@ -182,7 +182,7 @@ void
 VerticalRayGraphicsItem::
 modelChanged( )
 {
-    std::cout << "ray changed" << std::endl;
+  // std::cout << "ray changed" << std::endl;
 
     if ( this->m_source.isNull( ) || // uninitialized
         this->m_source.y( ) == this->m_targetY ) // degenerate
@@ -238,13 +238,13 @@ drawArrowhead( QPainter* painter, double targetY, bool isShootingUp )
         if (view->horizontalScrollBar( ) &&
                 view->horizontalScrollBar( )->isVisible( ) )
         {
-            std::cout << view->horizontalScrollBar( )->height( ) << std::endl;
+          // std::cout << view->horizontalScrollBar( )->height( ) << std::endl;
             pt.setY( pt.y( ) - view->horizontalScrollBar( )->height( ) - 5 );
             arrowTip = view->mapToScene( pt );
         }
         else
         {
-            std::cout << "no scroll bar " << std::endl;
+          // std::cout << "no scroll bar " << std::endl;
             pt.setY( pt.y( ) - 5 );
             arrowTip = view->mapToScene( pt );
         }

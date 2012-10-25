@@ -224,7 +224,7 @@ void
 SplitEdgeCallback< Arr_ >::
 splitEdges( const Point_2& clickedPoint, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
 {
-    std::cout << "Circular arc split edges stub" << std::endl;
+  // std::cout << "Circular arc split edges stub" << std::endl;
 }
 
 template < class Arr_ >
@@ -233,7 +233,7 @@ void
 SplitEdgeCallback< Arr_ >::
 splitEdges( const Point_2& clickedPoint, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
 {
-    std::cout << "Algebraic segment split edges stub" << std::endl;
+  // std::cout << "Algebraic segment split edges stub" << std::endl;
 }
 
 template < class Arr_ >
