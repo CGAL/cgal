@@ -1,7 +1,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgKernel23
+/// \addtogroup kernel_dimension
 /// Tools to handle the dimension of a kernel.
 /// @{
 
