@@ -28,6 +28,9 @@
 /// \defgroup kernel_enums Enumerations and Related Functions
 /// \ingroup PkgKernel23
 
+/// \ingroup kernel_conversion Cartesian/Homogenous Conversion
+/// \ingroup PkgKernel23
+
 /// \defgroup kernel_dimension Dimension Handling
 /// \ingroup PkgKernel23
 

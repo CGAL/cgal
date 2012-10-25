@@ -1,8 +1,7 @@
 namespace CGAL {
 
 /*!
-\addtogroup kernel_conversion Cartesian/Homogenous Conversion
-\ingroup PkgKernel23
+\ingroup kernel_conversion
 
 Functions to convert between %Cartesian and homogeneous kernels.
 
