@@ -51,6 +51,7 @@ namespace po = boost::program_options;
 //#define CGAL_MESH_3_VERBOSE
 //#define CGAL_MESH_3_VERY_VERBOSE
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+#define CGAL_MESH_3_OPTIMIZER_VERBOSE
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 
 #define MESH_3_PROFILING
@@ -615,7 +616,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   );
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(), no_perturb(), no_exude());
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -688,7 +689,7 @@ bool make_mesh_3D_images(const std::string &input_filename,
   );
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(), no_perturb(), no_exude());
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -790,7 +791,7 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
   );
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(), no_perturb(), no_exude());
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
