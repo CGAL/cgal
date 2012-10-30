@@ -30,7 +30,7 @@
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h> 
 
 #include <CGAL/Polyhedral_mesh_domain_3.h>
-
+#include <CGAL/property_map.h>
 #include <boost/optional.hpp>
 
 #include <fstream>
@@ -575,19 +575,20 @@ void sew_3_marked_darts( Combinatorial_map_3& final_map,
   while(not_top!=start);
 }
 
-template<class Tag>
-struct Halfedge_marker{
-  template <class Halfedge_handle>
-  static void mark(Halfedge_handle){}
+template<class Polyhedron>
+struct Dummy_edge_mark_property_map{
+  typedef bool value_type;
+  typedef value_type reference;
+  typedef typename Polyhedron::Halfedge_const_handle key_type;
+  typedef boost::read_write_property_map_tag category;  
+
+  Dummy_edge_mark_property_map(){}
+
+  friend reference get(Dummy_edge_mark_property_map,key_type) {return false;}
+  friend void put(Dummy_edge_mark_property_map,key_type,value_type) {}
 };
 
-template<>
-struct Halfedge_marker<Tag_true>{
-  template <class Halfedge_handle>
-  static void mark(Halfedge_handle h){h->set_mark();}
-};
-
-template<class Polyhedron,class Kernel=typename Polyhedron::Traits::Kernel,class Mark_intersection_halfedges=Tag_false>
+template<class Polyhedron,class Kernel=typename Polyhedron::Traits::Kernel,class EdgeMarkPropertyMap=Dummy_edge_mark_property_map<Polyhedron> >
 class Node_visitor_refine_polyhedra{
 //typedefs  
   typedef typename Polyhedron::Halfedge_handle                         Halfedge_handle;
@@ -1178,8 +1179,9 @@ bool coplanar_triangles_case_handled(Halfedge_handle first_hedge,Halfedge_handle
 //===//
   bool do_not_build_cmap; //set to true in the case only the corefinement must be done
   int number_coplanar_vertices; //number of intersection points between coplanar facets, see fixes XSL_TAG_CPL_VERT
+  EdgeMarkPropertyMap m_edge_mark_pmap;     //property map to mark halfedge of the original polyhedra that are on the intersection
 public:
-  Node_visitor_refine_polyhedra (Combinatorial_map_3_* ptr=NULL,bool do_not_build_cmap_=false):do_not_build_cmap(do_not_build_cmap_)
+  Node_visitor_refine_polyhedra (Combinatorial_map_3_* ptr=NULL,bool do_not_build_cmap_=false,EdgeMarkPropertyMap pmap=EdgeMarkPropertyMap()):do_not_build_cmap(do_not_build_cmap_),m_edge_mark_pmap(pmap)
   {
     if (ptr!=NULL){
       final_map_comes_from_outside=true;
@@ -1416,9 +1418,6 @@ public:
     typedef std::map<Halfedge_const_handle,std::pair<int,int>,Cmp_unik_ad > Border_halfedges_map;
     Border_halfedges_map border_halfedges;
     
-    //Additionnal stuct to mark halfedge of the original polyhedra that are on the intersection
-    typedef Halfedge_marker<Mark_intersection_halfedges> Marker;
-    
     //store for each triangle facet which boundary is intersected by the other surface,
     //original vertices (and halfedges in the refined mesh pointing on these vertices)
     typedef std::map<Face_handle,Polyhedron_face_boundary,Cmp_handle> Faces_boundary;
@@ -1465,7 +1464,7 @@ public:
               }
               std::pair<int,int> edge_pair(*it_id,node_id_of_first);
               border_halfedges.insert( std::make_pair(hedge,edge_pair) );
-              Marker::mark(hedge);
+              put(m_edge_mark_pmap,hedge,true);
               update_edge_per_polyline(poly,edge_pair,hedge); 
               //save the fact that we already handle this edge
               already_done.insert(std::make_pair(node_id_of_first,*it_id));
@@ -1772,7 +1771,7 @@ public:
         //CGAL_assertion(it_poly_hedge!=edge_to_hedge.end());
         if( it_poly_hedge!=edge_to_hedge.end() ){
           border_halfedges.insert( std::make_pair(Halfedge_const_handle(it_poly_hedge->second),*it_cst) );
-          Marker::mark(it_poly_hedge->second);
+          put(m_edge_mark_pmap,it_poly_hedge->second,true);
           update_edge_per_polyline(P,it_poly_hedge->first,it_poly_hedge->second);
         }
         else{
@@ -1783,7 +1782,7 @@ public:
           CGAL_assertion( it_poly_hedge!=edge_to_hedge.end() );
 
           border_halfedges.insert( std::make_pair(Halfedge_const_handle(it_poly_hedge->second),opposite_pair) );
-          Marker::mark(it_poly_hedge->second);
+          put(m_edge_mark_pmap,it_poly_hedge->second,true);
           update_edge_per_polyline(P,it_poly_hedge->first,it_poly_hedge->second);          
         }
       }
