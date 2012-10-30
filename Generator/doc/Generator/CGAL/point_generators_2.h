@@ -1,8 +1,9 @@
 namespace CGAL {
 
-/*!
-\ingroup PkgGenerators
+/// \addtogroup PkgGenerators
+/// @{
 
+/*!
 \brief perturbs each point in a given range of points by a random amount.
 
 The function perturbs the points in the range \f$ [first,last)\f$ by
@@ -10,9 +11,7 @@ replacing each point with a random point from the `xeps` \f$ \times\f$
 `yeps` rectangle centered at the original point.  Two random numbers
 are needed from `rnd` for each point.
 
- 
-
-###Requires ###
+### Requires ###
 
 - `Creator` must be a function object accepting two 
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
@@ -40,12 +39,8 @@ void perturb_points_2( ForwardIterator first, ForwardIterator last,
 double xeps, double yeps = xeps, Random& rnd = default_random,
 Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
 
-} /* namespace CGAL */
-
-namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 \brief generates a set of points equally spaced on 
 a segment given the endpoints of the segment.
@@ -66,12 +61,8 @@ template <class P, class OutputIterator>
 OutputIterator points_on_segment_2( const P& p, const P& q, std::size_t n,
 OutputIterator o);
 
-} /* namespace CGAL */
-
-namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 \brief generates a given number of points on a square 
 grid whose size is determined by the number of points to be generated. 
@@ -81,7 +72,7 @@ The function creates the first \f$ n\f$ points on the regular \f$ \lceil\sqrt{n}
 the \f$ n\f$ points. 
 
 
-###Requires###
+### Requires ###
 
 - `Creator` must be a function object accepting two 
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
@@ -106,12 +97,8 @@ template <class OutputIterator, Creator creator>
 OutputIterator
 points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
                          Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
-} /* namespace CGAL */
-
-namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 randomly chooses two points from the range \f$ [first,last)\f$,
 creates a random third point on the segment connecting these two
@@ -121,7 +108,7 @@ in the range \f$ [first,last)\f$.
 Three random numbers are needed from `rnd` for each point.
 Returns the value of `first2` after inserting the \f$ n\f$ points.
 
-###Requires ###
+### Requires ###
 
 - `Creator` must be a function object accepting two 
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
@@ -148,12 +135,9 @@ RandomAccessIterator last,
 std::size_t n, OutputIterator first2, Random& rnd = default_random,
 Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
 
-} /* namespace CGAL */
-
-namespace CGAL {
+/// @}
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_in_disc_2` is an input iterator creating points uniformly 
 distributed in an open disc. The default `Creator` is 
@@ -219,12 +203,8 @@ default_random);
 /// @}
 
 }; /* end Random_points_in_disc_2 */
-} /* end namespace CGAL */
-
-namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_in_square_2` is an input iterator creating points uniformly 
 distributed in a half-open square. The default `Creator` is 
@@ -291,12 +271,8 @@ default_random);
 /// @}
 
 }; /* end Random_points_in_square_2 */
-} /* end namespace CGAL */
-
-namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_on_circle_2` is an input iterator creating points uniformly 
 distributed on a circle. The default `Creator` is 
@@ -370,7 +346,6 @@ default_random);
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_on_segment_2` is an input iterator creating points uniformly 
 distributed on a segment. The default `Creator` is 
@@ -440,7 +415,6 @@ Random& rnd = default_random);
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_on_square_2` is an input iterator creating points uniformly 
 distributed on the boundary of a square. The default `Creator` is 
@@ -512,7 +486,6 @@ default_random);
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Points_on_segment_2` is a generator for points on a segment whose 
 endpoints are specified upon construction. The points are equally spaced. 

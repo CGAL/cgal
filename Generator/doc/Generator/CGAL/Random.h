@@ -1,10 +1,6 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
-
-\anchor secrandom_numbers_generator 
-
 The class `Random` is a random numbers generator. It generates 
 uniformly distributed random `bool`, `int` and `double`. 
 It can be used as the random number generating function object in the 

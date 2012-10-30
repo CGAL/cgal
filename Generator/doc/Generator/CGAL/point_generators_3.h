@@ -2,7 +2,6 @@ namespace CGAL {
 
 /*!
 \ingroup PkgGenerators
-
 \brief generates a given number of points on a cubic 
 grid whose size is determined by the number of points to be generated. 
 
@@ -35,12 +34,8 @@ points_on_cube_grid_3( double a, std::size_t n, OutputIterator o,
 Creator creator = 
 Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>);
 
-} /* namespace CGAL */
-
-namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_in_cube_3` is an input iterator creating points uniformly 
 distributed in a half-open cube. The default `Creator` is 
@@ -108,7 +103,6 @@ default_random);
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_in_sphere_3` is an input iterator creating points uniformly 
 distributed in an open sphere. The default `Creator` is 
@@ -176,7 +170,6 @@ default_random);
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_on_sphere_3` is an input iterator creating points uniformly 
 distributed on a sphere. The default `Creator` is 

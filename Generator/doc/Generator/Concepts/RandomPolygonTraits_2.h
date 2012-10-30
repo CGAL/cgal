@@ -1,5 +1,4 @@
 /*!
-\ingroup PkgGeneratorsConcepts
 \cgalconcept
 
 The concept `RandomPolygonTraits_2` describes the requirements for the traits 

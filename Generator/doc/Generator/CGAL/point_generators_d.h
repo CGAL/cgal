@@ -35,12 +35,8 @@ OutputIterator
 points_on_cube_grid_d(int dim, double a, std::size_t n, OutputIterator o,
 Creator creator);
 
-} /* namespace CGAL */
-
-namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_in_ball_d` is an input iterator creating points uniformly 
 distributed in an open ball in any dimension. 
@@ -110,7 +106,6 @@ Random_points_in_ball_d(int dim, double r);
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_in_cube_d` is an input iterator creating points uniformly 
 distributed in an half-open cube. 
@@ -182,7 +177,6 @@ default_random);
 namespace CGAL {
 
 /*!
-\ingroup PkgGenerators
 
 The class `Random_points_on_sphere_d` is an input iterator creating points uniformly 
 distributed on a sphere. 

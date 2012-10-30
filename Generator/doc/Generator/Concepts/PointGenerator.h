@@ -1,5 +1,4 @@
 /*!
-\ingroup PkgGeneratorsConcepts
 \cgalconcept
 
 The concept `PointGenerator` defines the requirements for a point generator, 

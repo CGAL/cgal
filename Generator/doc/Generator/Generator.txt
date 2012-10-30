@@ -94,7 +94,8 @@ for the example output.
 \anchor figurePointGenerator
 \image html generators_prog1.png "Output of example program for point generators."
 </center>
-# Example Generating Grid Points # {#GeneratorExample}
+
+# Example Generating Grid Points # {#GeneratorExampleGridPoints}
 
 The second example demonstrates the point generators with integer
 points. Floating point arithmetic is sufficient to produce
