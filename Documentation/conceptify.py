@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # Copyright (c) 2012 GeometryFactory (France). All rights reserved.
 # All rights reserved.
 #
@@ -20,6 +20,7 @@
 # Author(s)     : Philipp Moeller
 
 import argparse
+import codecs
 import os
 import re
 import glob
@@ -53,10 +54,11 @@ def conceptify_ns(d):
     conceptify_nested_classes(d)
 
 def write_out_html(d, fn):
-    f = open(fn, 'w', encoding='utf-8')
+    f = codecs.open(fn, 'w', encoding='utf-8')
     # this is the normal doxygen doctype, which is thrown away by pyquery
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
-    print(d, file=f)
+    f.write(d.html())
+    f.write('\n')
     f.close()
 
 # remove duplicate files
@@ -80,14 +82,14 @@ def clean_doc():
 # from http://stackoverflow.com/a/1597755/105672
 def re_replace_in_file(pat, s_after, fname):
     # first, see if the pattern is even in the file.
-    with open(fname, encoding='utf-8') as f:
+    with codecs.open(fname, encoding='utf-8') as f:
         if not any(re.search(pat, line) for line in f):
             return # pattern does not occur in file so we are done.
 
     # pattern is in the file, so perform replace operation.
-    with open(fname, encoding='utf-8') as f:
+    with codecs.open(fname, encoding='utf-8') as f:
         out_fname = fname + ".tmp"
-        out = open(out_fname, "w", encoding='utf-8')
+        out = codecs.open(out_fname, "w", encoding='utf-8')
         for line in f:
             out.write(re.sub(pat, s_after, line))
         out.close()
