@@ -664,6 +664,14 @@ class Node_visitor_refine_polyhedra{
     P.delegate( delegated );
     CGAL_assertion(P.is_valid());
     
+    //update marker tags. If the edge was marked, then the resulting edges in the split must be marked
+    if ( get(m_edge_mark_pmap,hedge) )
+    {
+      CGAL_assertion( get(m_edge_mark_pmap,hedge->opposite()) );
+      put(m_edge_mark_pmap,hedge->prev(),true);
+      put(m_edge_mark_pmap,hedge->opposite()->next(),true);
+    }
+    
     Vertex_handle v=boost::prior(P.vertices_end());
     CGAL_assertion(v->point()==point);
     return v;
