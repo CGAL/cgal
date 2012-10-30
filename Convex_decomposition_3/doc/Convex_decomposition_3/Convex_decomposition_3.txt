@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage Convex Decomposition of Polyhedra
+\anchor Chapter_Convex_Decomposition_of_Polyhedra
 \anchor chapterConvexDecomposition3
 \autotoc
 \author Peter Hachenberger
