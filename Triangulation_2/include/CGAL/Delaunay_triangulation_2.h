@@ -441,6 +441,11 @@ public:
   }
 
 private:
+  
+
+
+
+#ifdef CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
   template <class OutputItFaces, class OutputItBoundaryEdges> 
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   propagate_conflicts (const Point  &p,
@@ -448,7 +453,6 @@ private:
 		       const int i,
 		       std::pair<OutputItFaces,OutputItBoundaryEdges>
 		       pit)  const {
-#ifdef CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
     Face_handle fn = fh->neighbor(i);
     if (! test_conflict(p,fn)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
@@ -458,43 +462,60 @@ private:
       pit = propagate_conflicts(p,fn,ccw(j),pit);
       pit = propagate_conflicts(p,fn,cw(j), pit);
     }
-#else // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
-
-#ifdef CGAL_HAS_THREADS  
-    static boost::thread_specific_ptr< std::vector<std::pair<Face_handle,int> > > stack_safe_ptr;
-  if (stack_safe_ptr.get() == NULL) {
-    stack_safe_ptr.reset(new std::vector<std::pair<Face_handle,int> >());
+    return pit;
   }
-  std::vector<std::pair<Face_handle,int> >& stack=* stack_safe_ptr.get();
-#else
-  static std::stack<std::pair<Face_handle, int> > stack;
-#endif
-
-    stack.push_back(std::make_pair(fh, i));
-#ifdef CGAL_PROFILE
-    std::size_t S = 0;
-#endif
-    while(!stack.empty()) {
-#ifdef CGAL_PROFILE
-      S = (std::max)(S, stack.size());
-#endif
-      const Face_handle fh = stack.back().first;
-      const int i = stack.back().second;
-      stack.pop_back();
-      const Face_handle fn = fh->neighbor(i);
+#else // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  non_recursive_propagate_conflicts ( const Point  &p,
+                                      const Face_handle fh, 
+                                      const int i,
+		                      std::pair<OutputItFaces,OutputItBoundaryEdges> pit)  const 
+  {
+    std::stack<std::pair<Face_handle, int> > stack;
+    stack.push( std::make_pair(fh,i) );
+    while ( !stack.empty() )
+    {
+      const Face_handle fh=stack.top().first;
+      const int i=stack.top().second;
+      stack.pop();
+      Face_handle fn = fh->neighbor(i);
       if (! test_conflict(p,fn)) {
         *(pit.second)++ = Edge(fn, fn->index(fh));
       } else {
         *(pit.first)++ = fn;
         int j = fn->index(fh);
-        stack.push_back(std::make_pair(fn, cw(j)));
-        stack.push_back(std::make_pair(fn,ccw(j)));
+        stack.push( std::make_pair(fn,ccw(j)) );
+        stack.push( std::make_pair(fn,cw(j)) );
       }
     }
-  CGAL_HISTOGRAM_PROFILER("propagate_conflicts stack size ", S);
-#endif // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
     return pit;
   }
+
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  propagate_conflicts (const Point  &p,
+		       const Face_handle fh, 
+		       const int i,
+		       std::pair<OutputItFaces,OutputItBoundaryEdges>
+		       pit,
+                       int depth=0)  const 
+  {
+    if (depth == 100)
+      return non_recursive_propagate_conflicts(p, fh, i, pit);
+
+    Face_handle fn = fh->neighbor(i);
+    if (! test_conflict(p,fn)) {
+      *(pit.second)++ = Edge(fn, fn->index(fh));
+    } else {
+      *(pit.first)++ = fn;
+      int j = fn->index(fh);
+      pit = propagate_conflicts(p,fn,ccw(j),pit,depth+1);
+      pit = propagate_conflicts(p,fn,cw(j), pit,depth+1);
+    }
+    return pit;
+  }
+#endif // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
 
 protected:
 

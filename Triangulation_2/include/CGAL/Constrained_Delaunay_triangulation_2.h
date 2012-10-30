@@ -120,7 +120,7 @@ public:
   void flip(Face_handle& f, int i);
   void flip_around(Vertex_handle va);
   void flip_around(List_vertices & new_vertices);
-#ifdef CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
+#ifndef CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
   void non_recursive_propagating_flip(Face_handle f,int i);
   void propagating_flip(Face_handle f,int i, int depth=0);
 #else
@@ -267,24 +267,34 @@ public:
 public:
 // made  public for the need of Mesh_2
 // but not documented
- template <class OutputItFaces, class OutputItBoundaryEdges> 
- std::pair<OutputItFaces,OutputItBoundaryEdges>
- propagate_conflicts (const Point  &p,
-		      Face_handle fh, 
-		      int i,
-		      std::pair<OutputItFaces,OutputItBoundaryEdges>  pit)  const {
 #ifdef CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
-   Face_handle fn = fh->neighbor(i);
-   
-   if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
-     *(pit.second)++ = Edge(fn, fn->index(fh));
-   } else {
-     *(pit.first)++ = fn;
-     int j = fn->index(fh);
-     pit = propagate_conflicts(p,fn,ccw(j),pit);
-     pit = propagate_conflicts(p,fn,cw(j), pit);
-   }
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  propagate_conflicts (const Point  &p,
+                      Face_handle fh, 
+                      int i,
+                      std::pair<OutputItFaces,OutputItBoundaryEdges>  pit)  const 
+  {
+     Face_handle fn = fh->neighbor(i);
+     
+     if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
+       *(pit.second)++ = Edge(fn, fn->index(fh));
+     } else {
+       *(pit.first)++ = fn;
+       int j = fn->index(fh);
+       pit = propagate_conflicts(p,fn,ccw(j),pit);
+       pit = propagate_conflicts(p,fn,cw(j), pit);
+     }
+     return pit;
+  }
 #else // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  non_recursive_propagate_conflicts (const Point  &p,
+                                     Face_handle fh, 
+                                     int i,
+                                     std::pair<OutputItFaces,OutputItBoundaryEdges>  pit)  const 
+  {
     std::stack<std::pair<Face_handle, int> > stack;
     stack.push(std::make_pair(fh, i));
     while(!stack.empty()) {
@@ -301,10 +311,33 @@ public:
         stack.push(std::make_pair(fn,ccw(j)));
       }
     }
+    return pit;
+  }
+
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  propagate_conflicts (const Point  &p,
+                      Face_handle fh, 
+                      int i,
+                      std::pair<OutputItFaces,OutputItBoundaryEdges>  pit,
+                      int depth=0)  const 
+  {
+    if ( depth==100) return non_recursive_propagate_conflicts(p,fh,i,pit);
+    Face_handle fn = fh->neighbor(i);
+ 
+    if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
+      *(pit.second)++ = Edge(fn, fn->index(fh));
+    } else {
+      *(pit.first)++ = fn;
+      int j = fn->index(fh);
+      pit = propagate_conflicts(p,fn,ccw(j),pit,depth+1);
+      pit = propagate_conflicts(p,fn,cw(j), pit,depth+1);
+    }
+     return pit;
+  }
 #endif // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
 
-   return pit;
- }
+
 
 
 public:
@@ -507,8 +540,8 @@ non_recursive_propagating_flip(Face_handle f , int i)
     flip(f,i);
     if ( !is_flipable(f,i) ) edges.pop();
 
-    i = n->index(vp);
-    if ( is_flipable(n,i) ) edges.push( Edge(n,i) );
+    i = ni->index(vp);
+    if ( is_flipable(ni,i) ) edges.push( Edge(ni,i) );
   }
 }
 
