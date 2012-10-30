@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Classes
 
 The class `Straight_skeleton_2` provides a model for the 
 `StraightSkeleton_2` concept which is the class 

@@ -1,9 +1,9 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Functions
 
-The function `arrange_offset_polygons_2` arranges the sequence of `Polygon_2` objects obtained by `create_offset_polygons_2` into `Polygon_with_holes_2` objects by determining geometric parent-hole relationships using a simple algorithm based on the particular characteristics of offset polygons. 
+The function `arrange_offset_polygons_2()` arranges the sequence of `Polygon_2` objects obtained by `create_offset_polygons_2()` into `Polygon_with_holes_2` objects by determining geometric parent-hole relationships using a simple algorithm based on the particular characteristics of offset polygons. 
 
 The function determines parent-hole relationships among the polygons given by `[begin,end]` creating 
 `boost::shared_ptr< Polygon_with_holes_2<K> >` objects added to the output sequence given `out`.

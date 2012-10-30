@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Functions
 
 The function `convert_straight_skeleton_2` converts a straight skeleton instantiated using certain traits into another straight skeleton instantiated using a different traits. 
 
@@ -24,7 +24,7 @@ convert_straight_skeleton_2( Source_skeleton const& s
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Classes
 
 The class `Straight_skeleton_converter_2` converts a straight skeleton instantiated using certain traits into another straight skeleton instantiated using a different traits. 
 
@@ -94,7 +94,7 @@ boost::shared_ptr<Target_skeleton> operator()( Source_skeleton const& s) const;
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Classes
 
 `Straight_skeleton_items_converter_2` is a model of the `StraightSkeletonItemsConverter_2` concept 
 

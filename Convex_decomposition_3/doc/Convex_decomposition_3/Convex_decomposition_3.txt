@@ -26,14 +26,8 @@ The bound of \f$ O(r^2)\f$ convex pieces is worst-case
 optimal \cite c-cpplb-84.
 
 \anchor figverticalDecomposition
-\image html two_cubes_all_in_one.png
+\image html two_cubes_all_in_one.png "Vertical decomposition based on the insertion of vertical facets (viewed from the top). Left: Non-convex polyhedron. Middle: Non-vertical reflex edges have been resolved. Right: Vertical reflex edges have been resolved. The sub-volumes are convex."
 
-<CENTER><B>
-Vertical decomposition based on the insertion of vertical facets
-(viewed from the top). Left: Non-convex polyhedron. Middle:
-Non-vertical reflex edges have been resolved. Right: Vertical reflex
-edges have been resolved. The sub-volumes are convex.
-</B></CENTER>
 
 Our decomposition runs in two steps. In the first step, each
 non-vertical reflex edge \f$ e\f$ is resolved by insertion of vertical
@@ -63,8 +57,7 @@ polyhedron and therefore selected, but in case of the open unit cube
 \f$ [0,1)^3\f$ they are unselected. Each item has its own selection mark,
 which allows the correct representation of Nef polyhedra, which are
 closed under Boolean and topological operations. Details can be found
-in the chapter on 3D Boolean operations on Nef
-polyhedra \ref chapterNef3.
+in Chapter \ref chapterNef3 "3D Boolean Operations on Nef Polyhedra".
 
 Usually, an instance of `Nef_polyhedron_3` does not contain any
 redundant items. However, the function `::convex_decomposition_3`

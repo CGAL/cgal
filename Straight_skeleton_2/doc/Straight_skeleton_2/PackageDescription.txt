@@ -1,6 +1,13 @@
 /// \defgroup PkgStraightSkeleton2 2D Straight Skeleton and Polygon Offsetting Reference
 /// \defgroup PkgStraightSkeleton2Concepts Concepts
 /// \ingroup PkgStraightSkeleton2
+
+/// \defgroup PkgStraightSkeleton2Classes Classes
+/// \ingroup PkgStraightSkeleton2
+
+/// \defgroup PkgStraightSkeleton2Functions Functions
+/// \ingroup PkgStraightSkeleton2
+
 /*!
 \addtogroup PkgStraightSkeleton2
 \todo check generated documentation

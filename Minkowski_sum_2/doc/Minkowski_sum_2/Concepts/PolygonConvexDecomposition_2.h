@@ -6,10 +6,10 @@ A model of the `PolygonConvexDecomposition_2` concept is capable of decomposing 
 polygon \f$ P\f$ into a set of convex sub-polygons \f$ P_1, \ldots, P_k\f$, such 
 that \f$ \cup_{i=1}^{k}{P_k} = P\f$. 
 
-\hasModel Small_side_angle_bisector_decomposition_2<Kernel,Container> 
-\hasModel Optimal_convex_decomposition_2<Kernel,Container> 
-\hasModel Hertel_Mehlhorn_convex_decomposition_2<Kernel,Container> 
-\hasModel Greene_convex_decomposition_2<Kernel,Container> 
+\hasModel `CGAL::Small_side_angle_bisector_decomposition_2<Kernel,Container>`
+\hasModel `CGAL::Optimal_convex_decomposition_2<Kernel,Container>`
+\hasModel `CGAL::Hertel_Mehlhorn_convex_decomposition_2<Kernel,Container>` 
+\hasModel `CGAL::Greene_convex_decomposition_2<Kernel,Container`
 
 */
 

@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Eigen_svd` provides an algorithm to solve in the least 
 square sense a linear system with a singular value decomposition using 
-\ref thirdpartyEigen. The field type is `double`. 
+\ref thirdpartyEigen Eigen. The field type is `double`. 
 
 \models ::SvdTraits 
 

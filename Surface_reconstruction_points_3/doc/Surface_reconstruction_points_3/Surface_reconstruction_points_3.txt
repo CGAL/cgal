@@ -38,7 +38,7 @@ and 6) Surface reconstruction.
 
 \cgal provides algorithms for all steps listed above except alignment. 
 
-Chapter \ref chappoint_set_processing_3 Point_set_processing_3
+Chapter \ref chappoint_set_processing_3 "Point Set Processing"
 describes algorithms to pre-process the point set before
 reconstruction with functions devoted to the simplification, outlier
 removal, smoothing, normal estimation and normal orientation.
@@ -95,7 +95,7 @@ class Poisson_reconstruction_function {
 };
 \endcode
 
-For details see: `CGAL::Poisson_reconstruction_function<GeomTraits>`
+For details see: `Poisson_reconstruction_function<GeomTraits>`
 
 ## Example ##
 

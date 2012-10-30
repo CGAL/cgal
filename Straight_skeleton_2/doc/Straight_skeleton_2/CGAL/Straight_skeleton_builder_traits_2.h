@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Classes
 
 The class `Straight_skeleton_builder_traits_2` provides a model for the 
 `StraightSkeletonBuilderTraits_2` concept which is the traits class 

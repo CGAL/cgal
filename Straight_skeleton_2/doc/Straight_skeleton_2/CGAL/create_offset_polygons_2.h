@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Functions
 
 returns a container with all the outer offset polygons at distance \f$
 offset\f$ of the 2D polygon \f$ poly\f$.  A temporary straight
@@ -44,7 +44,7 @@ create_exterior_skeleton_and_offset_polygons_2
 }
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Functions
 returns a container with all the inner offset polygons at distance \f$ offset\f$ of the 2D polygon with holes whose outer boundary is `outer_boundary` and its holes are given by `[holes_begin,holes_end]`.
 A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions `create_interior_straight_skeleton_2` and `create_offset_polygons_2` instead.
 
@@ -79,7 +79,7 @@ create_interior_skeleton_and_offset_polygons_2 ( FT             offset
                                                ) ;
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Functions
 
 returns a container with all the inner offset polygons at distance \f$ offset\f$ of the 2D polygon `poly`.
 A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions `create_interior_straight_skeleton_2` and `create_offset_polygons_2` instead.

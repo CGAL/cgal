@@ -76,8 +76,8 @@ allowing filtered exact comparisons (that is, interval arithmetic is first used 
 resorting to exact arithmetic). Access to the interval containing the exact value is provided through the function 
 `FT::Approximate_nt approx() const` where `FT::Approximate_nt` is `Interval_nt<Protected>` 
 with `Protected=true`. Access to the exact value is provided through the function 
-`FT::Exact_nt exact() const` where `FT::Exact_nt` depends on the configuration of CGAL 
-(it is `CGAL::Gmpq` if `gmp` is available and `CGAL::Quotient<CGAL::MP_Float>` otherwise). 
+`FT::Exact_nt exact() const` where `FT::Exact_nt` depends on the configuration of %CGAL 
+(it is `Gmpq` if `gmp` is available and `Quotient<CGAL::MP_Float>` otherwise). 
 It must be noted that an object of type `FT` is valid as long as the alpha shapes class that creates 
 it is valid and has not been modified. 
 For convenience, classical comparison operators are provided for the type `FT`. 
@@ -329,7 +329,7 @@ Output all the faces of the triangulation
 in increasing order of the alpha value for which they appear 
 in the alpha complex. In case of equal alpha value 
 lower dimensional faces are output first. 
-The value type of the OutputIterator has to be a CGAL::Object 
+The value type of the OutputIterator has to be an `Object` 
 */ 
 template<class OutputIterator> 
 OutputIterator filtration(OutputIterator it); 

@@ -6,7 +6,7 @@ namespace CGAL {
 /*!
 \brief perturbs each point in a given range of points by a random amount.
 
-The function perturbs the points in the range \f$ [first,last)\f$ by
+The function perturbs the points in the range `[first,last)` by
 replacing each point with a random point from the `xeps` \f$ \times\f$
 `yeps` rectangle centered at the original point.  Two random numbers
 are needed from `rnd` for each point.
@@ -100,11 +100,11 @@ points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
 
 /*!
 
-randomly chooses two points from the range \f$ [first,last)\f$,
+randomly chooses two points from the range `[first,last)`,
 creates a random third point on the segment connecting these two
 points, writes it to `first2`, and repeats this \f$ n\f$ times, thus
 writing \f$ n\f$ points to `first2` that are collinear with points
-in the range \f$ [first,last)\f$.
+in the range `[first,last)`.
 Three random numbers are needed from `rnd` for each point.
 Returns the value of `first2` after inserting the \f$ n\f$ points.
 

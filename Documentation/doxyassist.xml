@@ -180,6 +180,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Jet_fitting_3.tag</string>
           <string name="IMAGE_PATH">../Jet_fitting_3/doc/Jet_fitting_3/fig</string>
           <string name="EXAMPLE_PATH">../Jet_fitting_3/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
+          </list>
         </doxygen>
       </project>
 
@@ -501,6 +504,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Partition_2/doc/Partition_2/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
           </list>
         </doxygen>
       </project>
@@ -712,7 +716,9 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
             <item>./tags/Polygon.tag=../../CGAL.CGAL.Polygon/html</item>
+            <item>./tags/Partition_2.tag=../../CGAL.CGAL.2D-Polygon-Partitioning/html</item>
             <item>./tags/Boolean_set_operations_2.tag=../../CGAL.CGAL.2D-Regularized-Boolean-Set-Operations/html</item>
+            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
           </list>
         </doxygen>
       </project>
@@ -732,6 +738,7 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Nef_3.tag=../../CGAL.CGAL.3D-Boolean-Operations-on-Nef-Polyhedra/html</item>
             <item>./tags/Convex_decomposition_3.tag=../../CGAL.CGAL.Convex-Decomposition-of-Polyhedra/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
       </project>
@@ -862,6 +869,7 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
             <item>./tags/Inscribed_areas.tag=../../CGAL.CGAL.Inscribed-Areas/html</item>
+            <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
           </list>
         </doxygen>
       </project>
@@ -946,6 +954,11 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Modular_arithmetic.tag</string>
           <string name="IMAGE_PATH">../Modular_arithmetic/doc/Modular_arithmetic/fig</string>
           <string name="EXAMPLE_PATH">../Modular_arithmetic/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Polynomial.tag=../../CGAL.CGAL.Polynomial/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
+            <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
+            </list>
         </doxygen>
       </project>
 
@@ -978,6 +991,7 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
             <item>./tags/Periodic_3_triangulation_3.tag=../../CGAL.CGAL.3D-Periodic-Triangulations/html</item>
             <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
       </project>

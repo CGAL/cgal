@@ -44,7 +44,7 @@ namespace CGAL {
 
 The function `convex_decomposition_3` inserts additional facets 
 into the given `Nef_polyhedron_3` `N`, such that each bounded 
-marked volume (the outer volume is unbouned) is subdivided into convex 
+marked volume (the outer volume is unbounded) is subdivided into convex 
 pieces. The modified polyhedron represents a decomposition into 
 \f$ O(r^2)\f$ convex pieces, where \f$ r\f$ is the number of edges that have two 
 adjacent facets that span an angle of more than 180 degrees with 

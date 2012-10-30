@@ -17,7 +17,7 @@ This package allows the estimation of local differential quantities of
 a surface from a point sample, given either as a mesh or as point
 cloud.
 
-Note that this package needs the third party library \ref thirdpartyEigen to be installed to compile the example code..
+Note that this package needs the third party library \ref thirdpartyEigen "Eigen" to be installed to compile the example code..
 
 \section secintro Introduction 
 
@@ -70,7 +70,7 @@ for convenience the results are returned with this original number
 type. A reasonable choice for this internal number type is for example
 the `double` type.
 
-## Smooth Surfaces, \f$ d\f$-Jets and the Monge Form ##
+## Smooth Surfaces, d-Jets and the Monge Form ##
 
 To present the method, we shall need the following notions. Consider a
 smooth surface. About one of its points, consider a coordinate system
@@ -141,7 +141,7 @@ approximation reduces to linear algebra operations.
 <LI>Finally, we compute the Monge coefficients : \f$ k_i, b_i, c_i\f$.
 </OL>
 
-Further details can be found in section \ref secdetails and in
+Further details can be found in section \ref Jet_fitting_3Mathematical and in
 \cite cgal:cp-edqpf-05 (section 6).
 
 \subsection secdegcases Degenerate Cases 
@@ -183,14 +183,14 @@ is performed; and if \f$ N >N_d\f$, approximation is used.
 
 As explained in Section \ref secintro , the output consists of a
 coordinate system, the Monge basis, together with the Monge
-coefficients which are stored in the `Monge_form` class. In
+coefficients which are stored in the `Monge_via_jet_fitting::Monge_form` class. In
 addition, more information on the computational issues are stored in
 the `Monge_via_jet_fitting` class.
 
-The `Monge_form` class provides the following information.
+The `Monge_via_jet_fitting::Monge_form` class provides the following information.
 
 <UL>
-<LI>Origin. This is the point on the fitted polynomial surface
+<LI>%Origin. This is the point on the fitted polynomial surface
 where the differential quantities have been computed. In the
 approximation case, it differs from the input point \f$ p\f$ : it is the
 projection of \f$ p\f$ onto the fitted surface following the \f$ z\f$-direction
@@ -221,14 +221,14 @@ In addition, the class `Monge_via_jet_fitting` stores
 
 ## Template Parameters ##
 
-## Template parameter <TT>DataKernel</TT> ##
+## Template parameter DataKernel ##
 
 This concept provides the types for the input sample points, together
 with \f$ 3d\f$ vectors and a number type. It is used as template for the
 class `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. Typically, one can use
 `CGAL::Cartesian<double>`.
 
-## Template parameter <TT>LocalKernel</TT> ##
+## Template parameter LocalKernel ##
 
 This is a parameter of the class 
 `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. 
@@ -237,19 +237,19 @@ computations and to store the PCA basis data.
 
 Input points of type
 `DataKernel::Point_3` are converted to
-`LocalKernel::Point_3`. For output of the `Monge_form` class,
-these types are converted back to `Data_Kernel` ones. Typically,
+`LocalKernel::Point_3`. For output of the `Monge_via_jet_fitting::Monge_form` class,
+these types are converted back to `DataKernel` ones. Typically,
 one can use
 `CGAL::Cartesian<double>` which is the default.
 
-## Template parameter <TT>SvdTraits</TT> ##
+## Template parameter SvdTraits ##
 
 This concept provides the number, vector and matrix types for algebra
 operations required by the fitting method in
 `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>` 
 . The main method is a linear solver using a singular value decomposition.
 
-## Compatibility requirements ##
+## Compatibility Requirements ##
 
 To solve the fitting problem, the sample points are first converted
 from the `DataKernel` to the `LocalKernel` (this is done using
@@ -280,7 +280,7 @@ illustrates the computation of local differential quantities for all
 vertices of a given mesh. The neighborhood of a given vertex is
 computed using rings on the triangulation. Results are twofold:
 <UL>
-<LI>a human readable text file featuring the `Monge_form` and
+<LI>a human readable text file featuring the `Monge_via_jet_fitting::Monge_form` and
 numerical informations on the computation : condition number and the
 PCA basis;
 <LI>another text file that records raw data (better for a vizualization

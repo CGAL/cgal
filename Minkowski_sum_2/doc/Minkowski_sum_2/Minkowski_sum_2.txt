@@ -98,7 +98,7 @@ consumes less space.
 
 \subsection mink_ssecsum_conv Computing Minkowski Sum using Convolutions 
 
-The function `minkowski_sum_2 (P, Q)` accepts two simple polygons \f$ P\f$
+The function \link minkowski_sum_2() `minkowski_sum_2(P, Q)`\endlink accepts two simple polygons \f$ P\f$
 and \f$ Q\f$, represented using the `Polygon_2<Kernel,Container>`
 class-template and uses the convolution method in order to compute and
 return their Minkowski sum \f$ S = P \oplus Q\f$.
@@ -149,7 +149,7 @@ the fastest running times for Minkowski-sum computations.
 \subsection mink_ssecdecomp Decomposition Strategies 
 
 In order to compute Minkowski sums using the decomposition method, it is
-possible to call the function `minkowski_sum_2 (P, Q, decomp)`, where
+possible to call the function \link minkowski_sum_2() `minkowski_sum_2(P, Q, decomp)`\endlink, where
 `decomp` is an instance of a class that models the concept
 `PolygonConvexDecomposition_2`, namely it should provide a method named
 `decompose()` that receives a planar polygon and returns a range
@@ -162,26 +162,26 @@ package, while the fourth is an implementation of a decomposition algorithm
 introduced in \cite cgal:afh-pdecm-02. The convex decompositions that it
 creates usually yield efficient running times for Minkowski sum computations:
 <UL>
-<LI>The class `Optimal_convex_decomposition<Kernel>` uses the
+<LI>The class `Optimal_convex_decomposition_2<Kernel>` uses the
 dynamic-programming algorithm of Greene \cite g-dpcp-83 for computing an
 optimal decomposition of a polygon into a minimal number of convex
 sub-polygons. The main drawback of this strategy is that it runs in \f$ O(n^4)\f$
 time and \f$ O(n^3)\f$ in the worst case,where \f$ n\f$ is the number of vertices in
 the input polygon.
-<LI>The class `Hertel_Mehlhorn_convex_decomposition<Kernel>` implements the
+<LI>The class `Hertel_Mehlhorn_convex_decomposition_2<Kernel>` implements the
 approximation algorithm suggested by Hertel and Mehlhorn \cite hm-ftsp-83,
 which triangulates the input polygon and proceeds by throwing away
 unnecessary triangulation edges.
 This algorithm requires \f$ O(n)\f$ time and space and guarantees that
 the number of sub-polygons it generates is not more than four
 times the optimum.
-<LI>The class `Greene_convex_decomposition<Kernel>` is an implementation of
+<LI>The class `Greene_convex_decomposition_2<Kernel>` is an implementation of
 Greene's approximation algorithm \cite g-dpcp-83, which computes a
 convex decomposition of the polygon based on its partitioning into
 \f$ y\f$-monotone polygons. This algorithm runs in \f$ O(n \log n)\f$ time
 and \f$ O(n)\f$ space, and has the same approximation guarantee as
 Hertel and Mehlhorn's algorithm.
-<LI>The class `Small_side_angle_bisector_convex_decomposition<Kernel>` uses
+<LI>The class `Small_side_angle_bisector_decomposition_2<Kernel>` uses
 a heuristic improvement to the angle-bisector decomposition method
 suggested by Chazelle and Dobkin \cite cd-ocd-85, which runs in
 \f$ O(n^2)\f$ time. It starts by examining each pair of reflex vertices
@@ -320,7 +320,7 @@ The two line segments \f$ o'_1 q'\f$ and \f$ q' o'_2\f$ approximate the original
 offset edge \f$ o_1 o_2\f$.
 </OL>
 
-The function `approximated_offset_2 (P, r, eps)` accepts a polygon
+The function \link approximated_offset_2() `approximated_offset_2(P, r, eps)`\endlink accepts a polygon
 \f$ P\f$, an offset radius \f$ r\f$ and \f$ \varepsilon > 0\f$. It constructs an
 approximation for the offset of \f$ P\f$ by the radius \f$ r\f$ using the procedure
 explained above. Furthermore, it is guaranteed that the approximation error,
@@ -356,7 +356,7 @@ considerably speeds up the construction of the offset.
 
 As we previously mentioned, it is possible to represent offset polygons
 in an exact manner, if we treat their edges as arcs of conic curves with
-rational coefficients. The function `offset_polygon_2 (P, r, traits)`
+rational coefficients. The function \link offset_polygon_2() `offset_polygon_2(P, r, traits)`\endlink
 computes the offset of the polygon \f$ P\f$ by a rational radius \f$ r\f$ in an
 exact manner. The `traits` parameter should be an instance of an
 arrangement-traits class that is capable of handling conic arcs in an
@@ -404,7 +404,7 @@ orientation, as done in case of ofsetting a polygon).
 As in case of the offset functions, the Minkowski-sum package contains two
 functions for insetting a simple polygon:
 
-The function `approximated_inset_2 (P, r, eps, oi)` accepts a polygon
+The function \link approximated_inset_2() `approximated_inset_2(P, r, eps, oi)`\endlink accepts a polygon
 \f$ P\f$, an inset radius \f$ r\f$ and \f$ \varepsilon > 0\f$. It constructs an
 approximation for the inset of \f$ P\f$ by the radius \f$ r\f$, with the approximation
 error bounded by \f$ \varepsilon\f$. The function returns its output via the
@@ -414,12 +414,13 @@ the polygons that approximates the inset polygon.
 
 \cgalexample{Minkowski_sum_2/approx_inset.cpp}
 
-Similarly, the function `inset_polygon_2 (P, r, traits, oi)` computes
+Similarly, the function 
+\link inset_polygon_2() `inset_polygon_2(P, r, traits, oi)` \endlink computes
 the exact inset of \f$ P\f$ with radius \f$ r\f$, and returns its output via the given
 output iterator `oi`. The `traits` parameter should be an instance of
 an arrangement-traits class that is capable of handling conic arcs in an
 exact manner, whereas `oi`'s value-type must be
-`Gps_traits_2::Polygons_2`.
+`Gps_traits_2::Polygon_2`.
 
 \cgalexample{Minkowski_sum_2/exact_inset.cpp}
 
@@ -428,8 +429,11 @@ functions that use convex polygon decomposition to compute insets, as this
 method cannot be easily generalized for inset computations.
 
 In this context let us mention that there exist overloaded versions of the
-functions `approximated_offset_2 (P, r, eps)` and
-`offset_polygon_2 (P, r, traits)` that accept a <I>polygon with holes</I>
+functions 
+\link approximated_offset_2() `approximated_offset_2(P, r, eps)`\endlink
+ and
+\link offset_polygon_2() `offset_polygon_2(P, r, traits)`\endlink
+that accept a <I>polygon with holes</I>
 \f$ P\f$ and computed its offset. This ofset is obtain by taking the outer offset
 of \f$ P\f$'s outer boundary, and computing the inner offsets of \f$ P\f$'s holes.
 The former polygon defines the output boundary of \f$ P \oplus B_r\f$, and the latter

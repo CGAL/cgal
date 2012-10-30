@@ -363,11 +363,11 @@ the polynomials \f$ P_1\f$ and \f$ P_2\f$.
 Three functions (provided as members and also as global functions)
 enable the computation of different types of ridges :
 <UL>
-<LI>`compute_max_ridges` (resp. `compute_min_ridges`)
+<LI>`compute_max_ridges()` (resp. `compute_min_ridges()`)
 outputs ridges of types \ref MAX_ELLIPTIC_RIDGE and
 \ref MAX_HYPERBOLIC_RIDGE (resp. `MIN_ELLIPTIC_RIDGE` and
 \ref MIN_HYPERBOLIC_RIDGE).
-<LI>`compute_crest_ridges` outputs ridges of types
+<LI>`compute_crest_ridges()` outputs ridges of types
 \ref MAX_CREST_RIDGE and \ref MIN_CREST_RIDGE.
 </UL>
 
@@ -440,7 +440,7 @@ approximation possible. \f$ a\f$ may be an integer greater than 1, the value
 0 (which is the default) means that the minimum number of rings is
 collected to make the approximation possible. (Alternatively option \f$ p\f$
 allows the specification of a constant number of neighbors);
-<LI>\f$ t\f$, the `CGAL::Ridge_order` for the distinction between elliptic and
+<LI>\f$ t\f$, the `Ridge_order` for the distinction between elliptic and
 hyperbolic ridges, \f$ t\f$ is 3 (default) or 4;
 <LI>\f$ u\f$, the parameter for umbilic patch size, \f$ u \geq 1\f$ (default is 1).
 </UL>
@@ -493,35 +493,35 @@ Vertex2Vector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_m
 
 int main(int argc, char *argv[])
 { 
-//compute differential quantities with the jet fitting package
-...
-//initialize the property maps
-...
-//---------------------------------------------------------------------------
-//Ridges
-//--------------------------------------------------------------------------
-Ridge_approximation ridge_approximation(P, 
-vertex2k1_pm, vertex2k2_pm,
-vertex2b0_pm, vertex2b3_pm,
-vertex2P1_pm, vertex2P2_pm,
-vertex2d1_pm, vertex2d2_pm);
-std::vector<Ridge_line*> ridge_lines;
-back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
+  //compute differential quantities with the jet fitting package
+  ...
+  //initialize the property maps
+  ...
+  //---------------------------------------------------------------------------
+  //Ridges
+  //--------------------------------------------------------------------------
+  Ridge_approximation ridge_approximation(P, 
+                                          vertex2k1_pm, vertex2k2_pm,
+                                          vertex2b0_pm, vertex2b3_pm,
+                                          vertex2P1_pm, vertex2P2_pm,
+                                          vertex2d1_pm, vertex2d2_pm);
+  std::vector<Ridge_line*> ridge_lines;
+  back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
 
-//Find MAX_RIDGE, MIN_RIDGE, CREST or all ridges
-ridge_approximation.compute_max_ridges(ii, tag_order); 
-ridge_approximation.compute_min_ridges(ii, tag_order); 
-ridge_approximation.compute_crest_ridges(ii, tag_order); 
+  //Find MAX_RIDGE, MIN_RIDGE, CREST or all ridges
+  ridge_approximation.compute_max_ridges(ii, tag_order); 
+  ridge_approximation.compute_min_ridges(ii, tag_order); 
+  ridge_approximation.compute_crest_ridges(ii, tag_order); 
 
-//---------------------------------------------------------------------------
-// UMBILICS
-//--------------------------------------------------------------------------
-Umbilic_approximation umbilic_approximation(P, 
-vertex2k1_pm, vertex2k2_pm,
-vertex2d1_pm, vertex2d2_pm);
-std::vector<Umbilic*> umbilics;
-back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
-umbilic_approximation.compute(umb_it, umb_size);
+  //---------------------------------------------------------------------------
+  // UMBILICS
+  //--------------------------------------------------------------------------
+  Umbilic_approximation umbilic_approximation(P, 
+                                              vertex2k1_pm, vertex2k2_pm,
+                                              vertex2d1_pm, vertex2d2_pm);
+  std::vector<Umbilic*> umbilics;
+  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+  umbilic_approximation.compute(umb_it, umb_size);
 }
 
 \endcode

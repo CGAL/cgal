@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Functions
 
 Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons.
 The function computes the convolution cycles of the two polygons and
@@ -19,7 +19,7 @@ minkowski_sum_2 (const Polygon_2<Kernel,Container>& P,
 const Polygon_2<Kernel,Container>& Q);
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Functions
 
 Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons.
 If the input polygons `P` and `Q` are not convex, the function

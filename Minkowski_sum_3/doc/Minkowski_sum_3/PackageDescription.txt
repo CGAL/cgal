@@ -12,7 +12,7 @@
 \PkgSummaryEnd
 \PkgShortInfoBegin
 \PkgSince{3.5}
-\PkgDependsOn{\ref PkgNef2Summary\, \ref PkgNefS2Summary\, \ref PkgNef3Summary\, \ref PkgConvexDecomposition3Summary}
+\PkgDependsOn{\ref \ref PkgNef3Summary\, \ref PkgConvexDecomposition3Summary}
 \PkgBib{cgal:h-msp3}
 \PkgLicense{\ref licensesGPL  "GPL"}
 \PkgDemo{Operations on Polyhedra,polyhedron_3.zip}

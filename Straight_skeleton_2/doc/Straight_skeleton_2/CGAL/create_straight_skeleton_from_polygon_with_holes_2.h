@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Functions
 
 returns a new `Straight_skeleton_2<K>` in the interior of the 2D polygon with holes `poly_with_holes`.
 

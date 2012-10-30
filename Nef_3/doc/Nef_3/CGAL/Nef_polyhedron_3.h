@@ -448,11 +448,12 @@ public:
 /*!
   \ingroup PkgNef3
 
-  Figures \ref figureNef3HalfedgeIncidences 
+  An sface is described by its boundaries.
+ Figures \ref figureNef3HalfedgeIncidences 
   and \ref figureNef3HalfloopIncidences 
-  illustrate the incidences of an sface. An sface is described 
-  by its boundaries. An entry item to each boundary cycle can be accessed 
-  using the iterator range (`sface_cycles_begin()`/`sface_cycles_end()`). 
+  illustrate the incidences of an sface.
+ An entry item to each boundary cycle can be accessed 
+  using the iterator range `[sface_cycles_begin(), sface_cycles_end())`. 
   Additionally, `Nef_polyhedron_S2` provides the macro 
   `CGAL_forall_sface_cylces_of`. The iterators are of type 
   `SFace_cycle_const_iterator` and represent either a shalfedge, a shalfloop, 
@@ -825,8 +826,7 @@ public:
 
   A vertex is a point in the 3-dimensional space. Its incidence 
   structure can be accessed creating a sphere map of the vertex. 
-  This is done by the member function `get_sphere_map` of 
-  the class `Nef_polyhedron_3`. 
+  This is done by the member function `Nef_polyhedron_3::get_sphere_map()`. 
 
   ### Creation ###
 

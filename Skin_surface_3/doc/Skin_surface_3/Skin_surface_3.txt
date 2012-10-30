@@ -42,8 +42,7 @@ of balls.
 \section secskindefinition Definition of a Skin Surface 
 
 \anchor figtwoPoints
-\image html convexTwoPoints.png "Convex combinations of two weighted points (the two dashed circles)."
-\image html skinTwoPoints.png "The skin curve of the weighted points. The smaller circles form a subset of the weighted points whose boundary is the skin curve."
+\image html convexTwoPoints.png "Left: Convex combinations of two weighted points (the two dashed circles).  Right: The skin curve of the weighted points. The smaller circles form a subset of the weighted points whose boundary is the skin curve."
 
 This section first briefly reviews skin surfaces. For a more thorough
 introduction to skin surfaces, we refer to \cite cgal:e-dssd-99 where

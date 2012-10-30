@@ -16,14 +16,15 @@ The default for the template `LocalKernel` is
 `Cartesian<double>` and the default for `SvdTraits` is `Eigen_svd` if `CGAL_EIGEN3_ENABLED` 
 is defined. 
 
-### Parameters ###
-
-The class `Monge_via_jet_fitting` has three template parameters. Parameter 
-`DataKernel` provides the geometric classes and tools 
+\tparam DataKernel provides the geometric classes and tools 
 corresponding to the input points, and also members of the 
-`Monge_form` class. Parameter `LocalKernel` provides 
+`Monge_form` class. 
+
+\tparam LocalKernel provides 
 the geometric classes and tools required by local 
-computations. Parameter `SvdTraits` features the linear 
+computations. 
+
+\tparam SvdTraits features the linear 
 algebra algorithm required by the fitting method. 
 
 \sa `Eigen_svd`
@@ -175,7 +176,7 @@ typedef typename Local_kernel::FT FT;
 typedef typename Local_kernel::Vector_3 Vector_3; 
 
 /*! 
-see the section below. 
+see the page `Monge_via_jet_fitting::Monge_form`. 
 */ 
 typedef Hidden_type Monge_form; 
 

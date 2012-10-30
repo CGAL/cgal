@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Classes
 
 The class `Dummy_straight_skeleton_builder_2_visitor` provides a model for the 
 `StraightSkeletonBuilder_2_Visitor` concept which is the visitor 
@@ -29,7 +29,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Classes
 
 The class `Straight_skeleton_builder_2` encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter, `Gt`, must be a model of the `StraightSkeletonBuilderTraits_2` concept, its second template parameter, `Ss`, must be a model of the `StraightSkeleton_2` concept, and its third template paramter, `Visitor`, must be a model of the `StraightSkeletonBuilder_2_Visitor` concept. If this last parameter is ommitted, the class `CGAL::Dummy_straight_skeleton_builder_2_visitor<Skel>` is used. 
 

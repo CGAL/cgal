@@ -1,6 +1,11 @@
 /// \defgroup PkgMinkowskiSum2 2D Minkowski Sums Reference
 /// \defgroup PkgMinkowskiSum2Concepts Concepts
 /// \ingroup PkgMinkowskiSum2
+/// \defgroup PkgMinkowskiSum2Classes Classes
+/// \ingroup PkgMinkowskiSum2
+/// \defgroup PkgMinkowskiSum2Functions Functions
+/// \ingroup PkgMinkowskiSum2
+
 /*!
 \addtogroup PkgMinkowskiSum2
 \todo check generated documentation

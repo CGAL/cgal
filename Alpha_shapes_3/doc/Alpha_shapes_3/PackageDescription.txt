@@ -22,7 +22,7 @@
 Alpha shapes definition is based on an underlying
 triangulation that may be a Delaunay triangulation 
 in case of basic alpha shapes or a regular triangulation 
-(cf.  \ref Triangulation3secclassRegulartriangulation )
+(cf. Section \ref Triangulation3secclassRegulartriangulation "3D Regular Triangulation")
 in case of weighted alpha shapes.
 
 Let us consider the basic case with a Delaunay triangulation.

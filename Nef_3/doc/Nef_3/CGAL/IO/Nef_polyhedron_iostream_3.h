@@ -15,7 +15,7 @@ output iterators of Nef polyhedra parametrized with
 either of these kernels are compatible as long as the Nef polyhedron is bounded. 
 An unbounded Nef polyhedron can only be read by a Nef polyhedron parametrized with 
 an extended kernel. It is also recommended to use the \cgal stream modifier 
-`set_ascii_mode`. 
+`set_ascii_mode()`. 
 
 \sa `CGAL::Nef_polyhedron_3<Traits>` 
 
@@ -32,8 +32,8 @@ using a proprietary file format. It includes the complete incidence
 structure, the geometric data, and the marks of each item.
 
 Using \cgal stream modifiers the following output formats can be
-chosen: `ASCII(set_ascii_mode)`, `binary(set_binary_mode)` or
-`pretty(set_pretty_mode)`. The mandatory format is the ASCII
+chosen: ASCII (`set_ascii_mode()`), binary (`set_binary_mode()`) or
+pretty (`set_pretty_mode()`). The mandatory format is the ASCII
 format. It is recommended to use this format for file input and
 output.
 
@@ -46,8 +46,8 @@ parametrized with any exact number type that models \f$\mathbb{Z}\f$
 (e.g. `Gmpz` or `leda_integer`).
 
 A bounded `Nef_polyhedron_3<Extended_homogeneous>` is automatically
-written as though `Nef_polyhedron_3<CGAL::Homogeneous>` or
-`Nef_polyhedron_3<CGAL::Simple_homogeneous>` is used. As a result, the
+written as though `Nef_polyhedron_3<Homogeneous>` or
+`Nef_polyhedron_3<Simple_homogeneous>` is used. As a result, the
 input operator of each of these types can read the output.
 
 \sa `CGAL::Nef_polyhedron_3<Traits>`

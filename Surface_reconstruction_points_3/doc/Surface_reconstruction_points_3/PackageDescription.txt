@@ -5,7 +5,7 @@
 \PkgPicture{surface_reconstruction_points_detail.png}
 \PkgSummaryBegin
 \PkgAuthors{Pierre Alliez, Laurent Saboret, Ga&euml;l Guennebaud}
-\PkgDesc{This \cgal package implements a surface reconstruction method: Poisson Surface Reconstruction. It takes as input a set of points with oriented normals and computes an implicit function. The \cgal surface mesh generator can then be used to extract an iso-surface from this function. }
+\PkgDesc{This package implements a surface reconstruction method: Poisson Surface Reconstruction. It takes as input a set of points with oriented normals and computes an implicit function. The \cgal surface mesh generator can then be used to extract an iso-surface from this function.  }
 \PkgManuals{Chapter_Surface_Reconstruction_from_Point_Sets,PkgSurfaceReconstructionFromPointSets}
 \PkgSummaryEnd
 \PkgShortInfoBegin
@@ -17,16 +17,8 @@
 \PkgShortInfoEnd
 \PkgDescriptionEnd
 
-This \cgal component implements a state-of-the-art surface
-reconstruction method: Poisson Surface Reconstruction. The input is an
-unorganized point set, possibly with attributes such as unoriented or
-oriented normals. The output is either an implicit function (ready for
-evaluation by any contouring algorithm), or a surface mesh generated
-by the \cgal surface mesh generator.
 
-Note that since reconstruction methods often require pre-processing a
-point set (through reduction, smoothing, outlier removal, normal
-estimation, normal orientation), we provide components devoted to
-these tasks in the Point Set Processing component.
+
+
 */
 

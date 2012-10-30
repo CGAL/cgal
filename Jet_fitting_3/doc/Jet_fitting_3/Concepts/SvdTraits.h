@@ -50,7 +50,7 @@ public:
     FT operator()(size_t i); 
 
     /*! 
-      set the \f$ i^{th}\f$ entry to \f$ value\f$. 
+      set the \f$ i^{th}\f$ entry to `value`. 
     */ 
     void set(size_t i, const FT value); 
 
@@ -106,7 +106,7 @@ public:
     square) using a singular value decomposition and returns the condition 
     number of \f$ M\f$. The solution is stored in \f$ B\f$. 
   */ 
-  FT solve(Matrix& M, Vector& B); 
+  FT solve(const Matrix& M, Vector& B); 
 
   /// @}
 

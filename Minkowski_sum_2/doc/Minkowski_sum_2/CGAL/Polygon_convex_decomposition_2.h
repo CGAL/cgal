@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Classes
 
 \anchor mink_refGreene_decomp 
 
@@ -33,7 +33,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Classes
 
 \anchor mink_refHM_decomp 
 
@@ -68,7 +68,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Classes
 
 \anchor mink_refopt_decomp 
 

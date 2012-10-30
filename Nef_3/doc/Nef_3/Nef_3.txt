@@ -74,7 +74,7 @@ a simple OpenGL-based visualizer for debugging and illustrations.
 # Definition # {#Nef_3Definition}
 
 The theory of Nef polyhedra has been developed for arbitrary
-dimensions. The class `CGAL::Nef_polyhedron_3` implements a
+dimensions. The class `Nef_polyhedron_3` implements a
 boundary representation for the 3-dimensional case.
 
 <B>Definition:</B> A <I>Nef-poly-he-dron</I> in dimension \f$ d\f$ is a point set \f$ P \subseteq
@@ -228,7 +228,7 @@ indicates whether the face is part of the solid or if it is
 excluded. We call the resulting data structure <I>Selective Nef
 Complex</I>, <I>SNC</I> for short \cite cgal:ghhkm-bosnc-03. However, in
 \cgal we identify the names and call the <I>SNC</I> data structure
-`CGAL::Nef_polyhedron_3`.
+`Nef_polyhedron_3`.
 
 \section sectionNef_3InfiBox Infimaximal Box 
 
@@ -242,7 +242,7 @@ our implementation) to consider bounded Nef polyhedra only. Bounded
 Nef polyhedra are also closed under Boolean set operations. However, one
 needs to start with bounded primitives; the conceptually nice
 halfspaces cannot be used. Instead, we offer a construction from oriented
-2-manifolds represented in a `CGAL::Polyhedron_3`, see
+2-manifolds represented in a `Polyhedron_3`, see
 Section \ref subsectionNef_3Polyhedron below.
 
 In order to handle unbounded Nef polyhedra conceptually in the same
@@ -260,12 +260,12 @@ are points whose coordinates are \f$ -R\f$ or \f$ R\f$ in at least one
 dimension, and linear functions \f$ f(R)\f$ for the other dimensions. Such
 extended points (and developed from there also extended segments etc)
 are provided in \cgal with extended
-kernels - `CGAL::Extended_cartesian` and
-`CGAL::Extended_homogeneous`. They are regular \cgal kernels
+kernels - `Extended_cartesian` and
+`Extended_homogeneous`. They are regular \cgal kernels
 with a polynomial type as coordinate number type.
 
 As long as an extended kernel is used, the full functionality provided
-by the `CGAL::Nef_polyhedron_3` class is available. If a kernel that 
+by the `Nef_polyhedron_3` class is available. If a kernel that 
 does not use polynomials to represent coordinates is used, it is not 
 possible to create or load unbounded Nef
 polyhedra, but all other operations work as expected. We provided both
@@ -294,10 +294,10 @@ of the `interior` and the `closure` operations.
 # Example Programs # {#Nef_3Example}
 
 The following example gives a first impression of how to instantiate
-and use `Nef_polyhedron_3`. We use the `CGAL::Cartesian`
-kernel. All Cartesian and homogeneous kernels of \cgal are suitable
+and use `Nef_polyhedron_3`. We use the `Cartesian`
+kernel. All %Cartesian and homogeneous kernels of \cgal are suitable
 if the number type parameter follows the usual requirements of being a
-model of the `CGAL::FieldNumberType` concept for the Cartesian
+model of the `CGAL::FieldNumberType` concept for the %Cartesian
 kernels, or the `CGAL::RingNumberType` concept for the homogeneous
 kernels, respectively. Note however, that in the current state, the
 Nef polyhedron works only with \cgal kernels. The implementation
@@ -320,9 +320,9 @@ all points of \f$ \mathbb{R}^3\f$ belong to the polyhedron. We can create a
 halfspace defined by a plane bounding it. It is only available if an
 extended kernel is used. The halfspace constructor has a second
 parameter that specifies whether the defining plane belongs to the
-point set (`Nef_polyhedron::INCLUDED`) or not
-(`Nef_polyhedron::EXCLUDED`). The default value is
-`Nef_polyhedron::INCLUDED`. Additionally, we can create a
+point set (`Nef_polyhedron_3::INCLUDED`) or not
+(`Nef_polyhedron_3::EXCLUDED`). The default value is
+`Nef_polyhedron_3::INCLUDED`. Additionally, we can create a
 `Nef_polyhedron_3` from a `Polyhedron_3`, see the Section
 \ref subsectionNef_3Polyhedron below.
 
@@ -369,7 +369,7 @@ rotated and scaled. The usage is shown in the following example:
 \anchor subsectionNef_3Polyhedron
 
 `Nef_polyhedron_3` provides an interface for the conversion between
-polyhedral surfaces represented with the `CGAL::Polyhedron_3` class
+polyhedral surfaces represented with the `Polyhedron_3` class
 and `Nef_polyhedron_3`. `Polyhedron_3` represents orientable
 2-manifold objects with boundaries. However, we exclude surfaces with
 boundaries from the conversion to `Nef_polyhedron_3` since they
@@ -417,11 +417,11 @@ type for input and output operations.
 
 We recommend the use of the \cgal kernels `Homogeneous`, 
 `Exact_predicates_exact_constructions_kernel`, or `Extended_homogeneous`.
-The Homogeneous kernel provides reliable fast performance. In combination with
+The homogeneous kernel provides reliable fast performance. In combination with
 `leda_integer` it is the fastest kernel for `Nef_polyhedron_3`. The
 `Exact_predicates_exact_constructions_kernel` uses filtering. In non-degenerate
-scenarios it's faster than the `Homogeneous` kernel. The most
-important advantage of the filtered kernel is that it is a Cartesian
+scenarios it's faster than the Homogeneous kernel. The most
+important advantage of the filtered kernel is that it is a %Cartesian
 kernel, which allows the proper handling of OFF files using
 floating-point coordinates.
 
@@ -538,7 +538,7 @@ Nef polyhedron and returns the item the point belongs to. The
 which is a polymorphic handle type representing any handle type, no
 matter if it is mutable or const. For further usage of the result,
 the `Object_handle` has to be casted to the concrete handle type.
-The `CGAL::assign` function performs such a cast. It returns a
+The `assign()` function performs such a cast. It returns a
 Boolean that reports the success or the failure of of the cast.
 Looking at the possible return values of the `locate` function,
 the `Object_handle` can represent a `Vertex_const_handle`, a

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStraightSkeleton2
+\ingroup PkgStraightSkeleton2Classes
 
 The class `Polygon_offset_builder_2` encapsulates the construction of inward offset contours of a 2D simple polygon with holes. The construction is based on the straight skeleton of the interior of the polygon. Its first template parameter, `Ss`, must be a model of the `StraightSkeleton_2` concept, its second template parameter, `Gt`, must be a model of the `StraightSkeletonBuilderTraits_2` concept, and its third template parameter must be a model of the `VertexContainer_2` concept. 
 
@@ -67,11 +67,11 @@ OutputIterator must be a model of the <I>OutputIterator</I> category whose `valu
 
 The method returns an OutputIterator past-the-end of the resulting sequence, which contains each offset contour generated. 
 
-You can call `construct_offset_contours` with different offset distances (there is no need to construct the builder again). If you call it with an offset distance so large that there are no offset contours at that distance, no contour is inserted into the output sequence and the returned iterator will be equal to `out`. 
+You can call `construct_offset_contours()` with different offset distances (there is no need to construct the builder again). If you call it with an offset distance so large that there are no offset contours at that distance, no contour is inserted into the output sequence and the returned iterator will be equal to `out`. 
 
-For any given input polygon, its offset polygons at a certain distance are composed of several contours. This method returns all such contours in an unspecified order and with no parental relationship between them (that is why it is called `construct_offset_contours` and not `construct_offset_polygons`). 
+For any given input polygon, its offset polygons at a certain distance are composed of several contours. This method returns all such contours in an unspecified order and with no parental relationship between them (that is why it is called `construct_offset_contours()` and not `construct_offset_polygons()`). 
 
-Those offset contours in the resulting sequence which are oriented counter-clockwise are outer contours and those oriented clockwise are holes. It is up to the user to match each hole to its parent in order to reconstruct the parent-hole relationship of the conceptual output. It is sufficient to test each hole against each parent as there won't be a hole inside a hole, a parent inside any other contour, or a hole inside more than one parent. The recommended insideness test is to perform a regularized Boolean set operation. `do_intersect` from the `Boolean Set Operations` package will work fine in our case since it is guaranteed that no hole would cross halfway outside any parent (in the presence of such cases, subtracting the parent from the hole works better as it correctly rejects halfway holes). 
+Those offset contours in the resulting sequence which are oriented counter-clockwise are outer contours and those oriented clockwise are holes. It is up to the user to match each hole to its parent in order to reconstruct the parent-hole relationship of the conceptual output. It is sufficient to test each hole against each parent as there won't be a hole inside a hole, a parent inside any other contour, or a hole inside more than one parent. The recommended insideness test is to perform a regularized Boolean set operation. The function `do_intersect()` from Chapter \ref Chapter_2D_Regularized_Boolean_Set-Operations "2D Regularized Boolean Set-Operations" will work fine in our case since it is guaranteed that no hole would cross halfway outside any parent (in the presence of such cases, subtracting the parent from the hole works better as it correctly rejects halfway holes). 
 
 If there are degenerate, or nearly degenerate vertices; that is, vertices whose internal or external angle approaches `0`, numerical overflow may prevent some of the polygon contours to be constructed. If that happens, the failed contour just won't be added into the resulting sequence. 
 
