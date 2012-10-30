@@ -23,14 +23,14 @@ The polyhedral surface is realized as a container class that manages
 vertices, halfedges, facets with their incidences, and that maintains
 the combinatorial integrity of them. It is based on the highly
 flexible design of the halfedge data structure, see the introduction
-in Chapter \ref chapterHalfedgeDS and \cite k-ugpdd-99. However, the
+in Chapter \ref chapterHalfedgeDS "Halfedge Data Structure" and \cite k-ugpdd-99. However, the
 polyhedral surface can be used and understood without knowing the
 underlying design. Some of the examples in this chapter introduce also
 gradually into first applications of this flexibility.
 
 # Definition # {#PolyhedronDefinition}
 
-A polyhedral surface `CGAL::Polyhedron_3<PolyhedronTraits_3>` in
+A polyhedral surface `Polyhedron_3<PolyhedronTraits_3>` in
 three dimensions consists of vertices \f$ V\f$, edges \f$ E\f$, facets \f$ F\f$ and
 an incidence relation on them. Each edge is represented by two
 halfedges with opposite orientations. The incidences stored with a
@@ -70,12 +70,12 @@ operations that create or close holes in the surface.
 Other intersections besides the incidence relation are not allowed.
 However, this is not automatically verified in the operations, since
 self intersections are not easy to check
-efficiently. `CGAL::Polyhedron_3<PolyhedronTraits_3>` does only
+efficiently. `Polyhedron_3<PolyhedronTraits_3>` does only
 maintain the combinatorial integrity of the polyhedral surface (using
 Euler operations) and does not consider the coordinates of the points
 or any other geometric information.
 
-`CGAL::Polyhedron_3<PolyhedronTraits_3>` can represent polyhedral
+`Polyhedron_3<PolyhedronTraits_3>` can represent polyhedral
 surfaces as well as polyhedra. The interface is designed in such a way
 that it is easy to ignore border edges and work only with polyhedra.
 
@@ -166,7 +166,7 @@ compute plane equations.
 
 This example computes the plane equations of a polyhedral surface.
 The actual computation is implemented in the
-`compute_plane_equations` function. Depending on the arithmetic
+`compute_plane_equations()` function. Depending on the arithmetic
 (exact/inexact) and the shape of the facets (convex/non-convex)
 different methods are useful. We assume here strictly convex facets
 and exact arithmetic. In our example a homogeneous representation with
@@ -191,8 +191,8 @@ CGAL::HalfedgeDS_default> Polyhedron;
 
 \endcode
 
-The `CGAL::Polyhedron_items_3` class contains the types used for
-vertices, edges, and facets. The `CGAL::HalfedgeDS_default` class
+The `Polyhedron_items_3` class contains the types used for
+vertices, edges, and facets. The `HalfedgeDS_default` class
 defines the halfedge data structure used, which is a list-based
 representation in this case. An alternative is a vector-based
 representation. Using a vector provides random
@@ -231,18 +231,24 @@ since it takes linear time for non random-access iterators, which
 leads to quadratic runtime. For better runtime the vertex index needs
 to be stored separately and computed once before writing the
 facets. It can be stored, for example, in the vertex itself or in a
-hash-structure. See also the following Section \ref sectionPolyIO for 
-file I/O.
+hash-structure. See also Section \ref PolyhedronFile.
 
 \cgalexample{Polyhedron/polyhedron_prog_off.cpp}
 
 ## Example Using Euler Operators to Build a Cube ##
 
 Euler operators are the natural way of modifying polyhedral surfaces.
-We provide a set of operations for polyhedra: `split_facet()`, 
-`join_facet()`, `split_vertex()`, `join_vertex()`,
-`split_loop()`, and `join_loop()`. We add further convenient
-operators, such as `split_edge()`. However, they could be implemented 
+We provide a set of operations for polyhedra: 
+\link Polyhedron_3::split_facet() split_facet()\endlink, 
+\link Polyhedron_3::join_facet()  `join_facet()`\endlink, 
+\link Polyhedron_3::split_vertex()  `split_vertex()`\endlink, 
+\link Polyhedron_3::join_vertex()  `join_vertex()`\endlink,
+\link Polyhedron_3::split_loop()  `split_loop()`\endlink, and 
+\link Polyhedron_3::join_loop() `join_loop()`\endlink. 
+We add further convenient
+operators, such as 
+\link Polyhedron_3::split_edge() `split_edge()`\endlink. 
+However, they could be implemented 
 using the six operators above. Furthermore, we provide more operators
 to work with polyhedral surfaces with border edges, for example, creating
 and deleting holes. We refer to the references manual for the 
@@ -269,11 +275,11 @@ surface and its point coordinates. It ignores a possible plane
 equation or any user-added attributes, such as color.
 
 The default file format supported in \cgal for output as well as for
-input is the Object File Format, OFF, with file extension <TT>.off</TT>,
+input is the %Object File Format, OFF, with file extension <TT>.off</TT>,
 which is also understood by Geomview \cite cgal:p-gmgv16-96. For OFF
 an ASCII and a binary format exist. The format can be selected with
-the \cgal modifiers for streams, `set_ascii_mode` and
-`set_binary_mode` respectively. The modifier `set_pretty_mode`
+the \cgal modifiers for streams, `set_ascii_mode()` and
+`set_binary_mode()` respectively. The modifier `set_pretty_mode()`
 can be used to allow for (a few) structuring comments in the
 output. Otherwise, the output would be free of comments. The default
 for writing is ASCII without comments. Both, ASCII and binary format,
@@ -329,7 +335,7 @@ const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 All these file formats have in common that they represent a surface as
 a set of facets. Each facet is a list of indices pointing into a set
 of vertices. Vertices are represented as coordinate triples. The
-file I/O for polyhedral surfaces `CGAL::Polyhedron_3` imposes certain 
+file I/O for polyhedral surfaces `Polyhedron_3` imposes certain 
 restrictions on these formats. They must represent a permissible 
 polyhedral surface, e.g., a 2-manifold and no isolated vertices, see 
 Section \ref sectionPolyIntro.
@@ -437,13 +443,13 @@ typedef My_face<Refs> Face;
 
 When we use our new items class with the polyhedral surface, our new
 face class is used in the halfedge data structure and the color
-attribute is available in the type `Polyhedron::Facet`. However,
-`Polyhedron::Facet` is not the same type as our local face 
+attribute is available in the type `Polyhedron_3::Facet`. However,
+`Polyhedron_3::Facet` is not the same type as our local face 
 typedef for `My_face`, but it is derived therefrom. Thus,
 everything that we put in the local face type except constructors is
-then available in the `Polyhedron::Facet` type. For more
-details, see the Chapter \ref chapterHalfedgeDS on the halfedge data
-structure design.
+then available in the `Polyhedron_::Facet` type. For more
+details, see the Chapter \ref chapterHalfedgeDS "Halfedge Data Structure" 
+on the halfedge data structure design.
 
 Pulling all pieces together, the full example program illustrates how easy
 the color attribute can be accessed once it is defined.
@@ -454,8 +460,8 @@ We come back to the first template parameter, `Refs`, of the
 wrapper classes. This parameter provides us with local types that
 allow us to make further references between vertices, halfedges, and
 facets, which have not already been prepared for in the current
-design. These local types are  `Vertex_handle`,
-`Halfedge_handle`, `Face_handle`, and there respective
+design. These local types are  `Polyhedron_3::Vertex_handle`,
+`Polyhedron_3::Halfedge_handle`, `Polyhedron_3::Facet_handle`, and there respective
 \f$ \ldots\f$ `_const_handle`. We add now a new vertex reference to a
 face class as follows. Encapsulation and access functions could be
 added for a more thorough design, but we omit that here for the sake
@@ -483,7 +489,7 @@ illustrating further the design of the halfedge data structure.
 
 This program reads a polyhedral surface from the standard input and
 writes a refined polyhedral surface to the standard output. Input and
-output are in the Object File Format, OFF, with the common file
+output are in the %Object File Format, OFF, with the common file
 extension <TT>.off</TT>, which is also understood by
 Geomview \cite cgal:p-gmgv16-96.
 
@@ -516,7 +522,7 @@ OFF files used here.
 
 ## Example Using the Incremental Builder and Modifier Mechanism ##
 
-A utility class `CGAL::Polyhedron_incremental_builder_3` helps in
+A utility class `Polyhedron_incremental_builder_3` helps in
 creating polyhedral surfaces from a list of points followed by a list
 of facets that are represented as indices into the point list. This is
 particularly useful for implementing file reader for common file
@@ -530,14 +536,14 @@ internal halfedge data structure as a parameter and can modify it. On
 return, the polyhedron can check the halfedge data structure for
 validity. Such a modifier object must always return with a halfedge
 data structure that is a valid polyhedral surface. The validity check is
-implemented as an expensive postcondition at the end of the `delegate()`
+implemented as an expensive postcondition at the end of the `Polyhedron_3::delegate()`
 member function, i.e., it is not called by default, only when expensive
 checks are activated.
 
 In this example, `Build_triangle` is such a function object
-derived from `CGAL::Modifier_base<HalfedgeDS>`. The `delegate()`
+derived from `Modifier_base<HalfedgeDS>`. The `Polyhedron_3::delegate()`
 member function of the polyhedron accepts this function object and calls
-its `operator()` with a reference to its internally used halfedge 
+its `Modifier_base::operator()()` with a reference to its internally used halfedge 
 data structure. Thus, this member function in `Build_triangle` can 
 create the triangle in the halfedge data structure.
 

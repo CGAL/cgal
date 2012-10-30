@@ -88,7 +88,7 @@ namespace CGAL {
 /*!
 \ingroup PkgHandlesAndCirculatorsFunctions
 
-The distance of a circulator `c` to a circulator`d` is the number of
+The distance of a circulator `c` to a circulator `d` is the number of
 elements in the range `[c, d)`. It is defined to be zero
 for a circulator on an empty sequence and it returns the size of the data
 structure when applied to a range of the form `[c, c)`.
@@ -608,12 +608,7 @@ namespace CGAL {
 /*!
 \ingroup PkgHandlesAndCirculatorsFunctions
 
-if the iterator category of `I` belongs to an iterator.
-
-The following function distinguishes between circulators and
-iterators. It is based on iterator
-traits \cite cgal:ansi-is14882-98, \cite cgal:m-tnutt-95
-and `Circulator_traits`.
+This function matches for type `I` if the iterator category of `I` belongs to an iterator.
 
 \sa `Circulator_tag`
 \sa `Circulator_traits`
@@ -626,12 +621,7 @@ Iterator_tag query_circulator_or_iterator( const I& i);
 /*!
 \ingroup PkgHandlesAndCirculatorsFunctions
 
-if the iterator category of `C` belongs to a circulator.
-
-The following function distinguishes between circulators and
-iterators. It is based on iterator
-traits \cite cgal:ansi-is14882-98, \cite cgal:m-tnutt-95
-and `Circulator_traits`.
+This functiona matches for type `C` if the iterator category of `C` belongs to a circulator.
 
 \sa `Circulator_tag`
 \sa `Circulator_traits`

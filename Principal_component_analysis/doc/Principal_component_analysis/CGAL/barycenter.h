@@ -1,8 +1,8 @@
 namespace CGAL {
 
 /*!
-\defgroup PkgPrincipalComponentAnalysisDBary barycenter
-\ingroup PkgPrincipalComponentAnalysisD
+\ingroup PkgPrincipalComponentAnalysisDBary
+
 
 The function `barycenter` computes the barycenter (weighted center of
 mass) of a set of 2D or 3D weighted points. The weight associated to

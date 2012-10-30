@@ -16,13 +16,11 @@ and the \f$ k\f$-dimensional faces of the triangulation.
 Note that this class is at the same time used for <I>basic</I> and 
 for <I>weighted</I> Alpha Shapes. 
 
-### Parameters ###
-
-The template parameter `Dt` has to be either `Delaunay_triangulation_2` or `Regular_triangulation_2`. 
+\tparam Dt must be either `Delaunay_triangulation_2` or `Regular_triangulation_2`. 
 Note that `Dt::Geom_traits`, `Dt::Vertex` and `Dt::Face` must be model the concepts `AlphaShapeTraits_2`, 
 `AlphaShapeVertex_2` and `AlphaShapeFace_2`, respectively. 
 
-The template parameter `ExactAlphaComparisonTag` is a tag that, when set to 
+\tparam ExactAlphaComparisonTag is a tag that, when set to 
 \link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. This is useful 
 when the underlying triangulation is instantiated with an exact predicates inexact constructions 
 kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_false`\endlink as it induces a small 

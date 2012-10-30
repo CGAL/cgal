@@ -635,7 +635,8 @@ attribute, and provides methods to associate attributes and cells.  A
 range is defined for each <I>i</I>-attribute allowing to iterate over
 all the <I>i</I>-attributes of the combinatorial map. Finally,
 `Combinatorial_map` defines several types allowing to manage the
-attributes. We can use `Combinatorial_map::Attribute_handle<i>::type`
+attributes. We can use 
+\link CombinatorialMap::Attribute_handle `Combinatorial_map::Attribute_handle<i>::type`\endlink
 for a handle to the <I>i</I>-attributes (and the const version
 `Combinatorial_map::Attribute_const_handle<i>::type`) and
 `Combinatorial_map::Attribute_type<i>::type` for the type of the

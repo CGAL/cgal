@@ -37,8 +37,7 @@ typedef Hidden_type Is_y_monotone_2;
 /*! 
 
 */ 
-YMonotonePartitionIsValidTraits_2(YMonotonePartitionIsValidTraits_2& tr 
-); 
+YMonotonePartitionIsValidTraits_2(YMonotonePartitionIsValidTraits_2 tr ); 
 
 /// @} 
 
@@ -51,7 +50,7 @@ YMonotonePartitionIsValidTraits_2(YMonotonePartitionIsValidTraits_2& tr
 /*! 
 
 */ 
-Is_y_monotone_2 is_y_monotone_2_object(YMonotonePartitionIsValidTraits_2 t); 
+Is_y_monotone_2 is_y_monotone_2_object(YMonotonePartitionIsValidTraits_2 tr); 
 
 /// @}
 

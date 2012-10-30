@@ -117,18 +117,18 @@ public:
 
     A halfedge is an oriented edge 
     between two vertices. It is always paired with a halfedge pointing in 
-    the opposite direction. The `opposite()` member function returns 
+    the opposite direction. The `Halfedge::opposite()` member function returns 
     this halfedge of opposite orientation. If a halfedge is incident to a 
-    facet the `next()` member function points to the successor 
-    halfedge around this facet. For border edges the `next()` member 
+    facet the `Halfedge::next()` member function points to the successor 
+    halfedge around this facet. For border edges the `Halfedge::next()` member 
     function points to the successor halfedge along the hole. For more 
     than two border edges at a vertex, the next halfedge along a hole is 
     not uniquely defined, but a consistent assignment of the next halfedge 
     will be maintained in the data structure. An invariant is that 
-    successive assignments of the form `h = h->next()` cycle 
+    successive assignments of the form `h = h->%next()` cycle 
     counterclockwise around the facet (or hole) and traverse all halfedges 
     incident to this facet (or hole). A similar invariant is that successive 
-    assignments of the form `h = h->next()->opposite()` cycle 
+    assignments of the form `h = h->%next()->%opposite()` cycle 
     clockwise around the vertex and traverse all halfedges incident to 
     this vertex. Two circulators are provided for these circular orders. 
 
@@ -136,20 +136,20 @@ public:
     \image html poly_optional.gif
     <center><b>The three classes `Vertex`, `Halfedge`, and `Facet` of the polyhedral surface. Member functions with shaded background are mandatory. The others are optionally supported.</b></center>
 
-    The incidences encoded in `opposite()` and `next()` are 
+    The incidences encoded in `Halfedge::opposite()` and `Halfedge::next()` are 
     available for each instantiation of polyhedral surfaces. The other 
     incidences are optionally available as indicated with type tags. The 
-    `prev()` member function points to the preceding halfedge around 
+    `Halfedge::prev()` member function points to the preceding halfedge around 
     the same facet. It is always available, though it might perform a 
-    search around the facet using the `next()` member function to find 
+    search around the facet using the `Halfedge::next()` member function to find 
     the previous halfedge if the underlying halfedge data structure does 
-    not provide an efficient `prev()` member function for halfedges. 
+    not provide an efficient `Halfedge::prev()` member function for halfedges. 
     Handles to the incident vertex and facet are optionally stored. 
 
     The circulators are assignable to the `Halfedge_handle`. The 
     circulators are bidirectional if the halfedge provided to the 
     polyhedron with the `Items` template argument provides a member 
-    function `prev()`, otherwise they are of the forward category. 
+    function `Halfedge::prev()`, otherwise they are of the forward category. 
 
     \sa `CGAL::Polyhedron_3::Vertex` 
     \sa `CGAL::Polyhedron_3::Facet` 
@@ -157,7 +157,7 @@ public:
 
     ### Implementation ###
 
-    The member functions `prev()` and `prev_on_vertex()` work in 
+    The member functions `Halfedge::prev()` and `Halfedge::prev_on_vertex()` work in 
     constant time if `Supports_halfedge_prev` \f$ \equiv\f$ 
     `CGAL::Tag_true`. Otherwise both methods search for the previous 
     halfedge around the incident facet. 
@@ -315,7 +315,7 @@ public:
     /*! 
 
       the previous halfedge around the vertex (counterclockwise). 
-      Is equal to `h.opposite()->prev()`. 
+      Is equal to `h.%opposite()->%prev()`. 
     */ 
     Halfedge_const_handle prev_on_vertex() const; 
 
@@ -325,7 +325,7 @@ public:
     bool is_border() const; 
 
     /*! 
-      is true if `h` or `h.opposite()` is a border halfedge. 
+      is true if this or the opposite halfedge is a border halfedge. 
     */ 
     bool is_border_edge() const; 
 
@@ -396,7 +396,7 @@ public:
     Vertex_handle vertex(); 
 
     /*! 
-      the incident vertex of `h`. 
+      the incident vertex of the halfedge. 
     */ 
     Vertex_const_handle vertex() const; 
 
@@ -411,7 +411,7 @@ public:
     Facet_handle facet(); 
 
     /*! 
-      the incident facet of `h`. If `h` is a border halfedge 
+      the incident facet of  the halfedge. If the hafedge is a border halfedge 
       the result is default construction of the handle. 
     */ 
     Facet_const_handle facet() const; 
@@ -431,7 +431,7 @@ public:
     halfedges, vertices, and facets. The circulator is assignable to the 
     `Halfedge_handle`. The circulator is bidirectional if the 
     halfedge provided to the polyhedron with the `Items` template 
-    argument provides a member function `prev()`, otherwise it is 
+    argument provides a member function `Halfedge::prev()`, otherwise it is 
     of the forward category. 
 
     \sa `CGAL::Polyhedron_3::Vertex` 
@@ -553,7 +553,7 @@ public:
 
     /*! 
 
-      an incident halfedge that points to `f`. 
+      an incident halfedge that points to the facet. 
     */ 
     Halfedge_const_handle halfedge() const; 
 
@@ -569,7 +569,7 @@ public:
 
     /*! 
       sets incident halfedge to `h`. 
-      \pre `h` is incident, i.e., `h->facet() ==` `f`. 
+      \pre `h` is incident, i.e., `h->facet() ==` `*this`. 
     */ 
     void set_halfedge( Halfedge_handle h); 
 
@@ -606,7 +606,7 @@ public:
     halfedges, vertices, and facets. The circulator is assignable to the 
     `Halfedge_handle`. The circulator is bidirectional if the 
     halfedge provided to the polyhedron with the `Items` template 
-    argument provides a member function `prev()`, otherwise it is 
+    argument provides a member function `Halfedge::prev()`, otherwise it is 
     of the forward category. 
 
     \sa `CGAL::Polyhedron_3::Halfedge` 
@@ -808,7 +808,7 @@ public:
 
   /*! 
     circulator category of all circulators; 
-    bidirectional category if the `Items::Halfedge` provides a `prev()` 
+    bidirectional category if the `Items::Halfedge` provides a `Halfedge::prev()` 
     member function, otherwise forward category. 
   */ 
   typedef Hidden_type circulator_category; 
@@ -908,8 +908,8 @@ public:
   /// @} 
 
   /// \name Types for Tagging Optional Features 
-  /// The following types are equal to either `CGAL::Tag_true` or
-  /// `CGAL::Tag_false`, depending on whether the named feature is
+  /// The following types are equal to either  \link CGAL::Tag_true `Tag_true` \endlink or
+  ///  \link CGAL::Tag_false `Tag_false` \endlink, depending on whether the named feature is
   /// supported or not.
   /// @{
 
@@ -959,12 +959,12 @@ public:
   /// @{
 
   /*! 
-
+    %Default constructor.
    */ 
   Polyhedron_3(const Traits& traits = Traits()); 
 
   /*! 
-    a polyhedron `P` with storage reserved 
+    Cosntructor  of a polyhedron with storage reserved 
     for `v` vertices, `h` halfedges, and `f` facets. The 
     reservation sizes are a hint for optimizing storage 
     allocation. 
@@ -1028,7 +1028,7 @@ public:
   /// @{
 
   /*! 
-    returns true if `P` is empty. 
+    returns true if the polyhedron is empty. 
   */ 
   bool empty() const; 
 
@@ -1207,11 +1207,11 @@ public:
     splits the facet incident to `h` and `g` into two facets 
     with a new diagonal between the two vertices denoted by `h` and 
     `g` respectively. The second (new) facet is a copy of the 
-    first facet. Returns `h->next()` after the 
+    first facet. Returns `h->%next()` after the 
     operation, i.e., the new diagonal. The new face is to the right of the 
     new diagonal, the old face is to the left. The time is 
     proportional to the distance from `h` to `g` around the facet. 
-    \pre `h` and `g` are incident to the same facet. `h != g` (no loops). `h->next() != g` and `g->next() != h` (no multi-edges). 
+    \pre `h` and `g` are incident to the same facet. `h != g` (no loops). `h->%next() != g` and `g->%next() != h` (no multi-edges). 
 
     \image html euler_facet.gif
 
@@ -1221,11 +1221,11 @@ public:
 
   /*! 
     joins the two facets incident to `h`. The facet incident to 
-    `h->opposite()` gets removed. Both facets might be 
+    `h->%opposite()` gets removed. Both facets might be 
     holes. Returns the predecessor of `h` around the facet. The invariant 
     `join_facet( split_facet( h, g))` returns `h` and keeps 
     the polyhedron unchanged. The time is proportional to the size of the 
-    facet removed and the time to compute `h->prev()`. 
+    facet removed and the time to compute `h->%prev()`. 
     \pre The degree of both vertices incident to `h` is at least three (no antennas). 
 
     \requires     `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`.
@@ -1239,11 +1239,11 @@ public:
     splits the vertex incident to `h` and `g` into two vertices, 
     the old vertex remains and a new copy is created, 
     and connects them with a new edge. Let `hnew` be 
-    `h->next()->opposite()` after the split, i.e., a halfedge 
+    `h->%next()->%opposite()` after the split, i.e., a halfedge 
     of the new edge. The split regroups the halfedges around the two 
-    vertices. The halfedge sequence `hnew`, `g->next()->opposite()`, 
+    vertices. The halfedge sequence `hnew`, `g->%next()->%opposite()`, 
     \f$ \ldots\f$ , `h` remains around the old vertex, while the 
-    halfedge sequence `hnew->opposite()`, `h->next()->opposite()` 
+    halfedge sequence `hnew->%opposite()`, `h->%next()->%opposite()` 
     (before the split), \f$ \ldots\f$ , `g` is regrouped around the new 
     vertex. The split returns `hnew`, i.e., the new halfedge incident 
     to the old vertex. The time is proportional to the distance from 
@@ -1255,9 +1255,9 @@ public:
     ### Note ###
 
     A special application of the split is 
-    `split_vertex(h,h->next()->opposite())` which is equivalent to an 
-    edge split of the halfedge `h->next()` that creates a new 
-    vertex on the halfedge `h->next()`. See also `split_edge(h)` 
+    `split_vertex(h,h->%next()->%opposite())` which is equivalent to an 
+    edge split of the halfedge `h->%next()` that creates a new 
+    vertex on the halfedge `h->%next()`. See also `split_edge(h)` 
     below. 
   */ 
   Halfedge_handle split_vertex( Halfedge_handle h, 
@@ -1266,11 +1266,11 @@ public:
   /*! 
     joins the two vertices incident to `h`. The vertex denoted by 
     `h->opposite()` gets removed. Returns the predecessor of 
-    `h` around the vertex, i.e., `h->opposite()->prev()`. 
+    `h` around the vertex, i.e., `h->%opposite()->%prev()`. 
     The invariant `join_vertex( split_vertex( h, g))` returns 
     `h` and keeps the polyhedron unchanged. 
     The time is proportional to the degree of the vertex removed and 
-    the time to compute `h->prev()` and `h->opposite()->prev()`. 
+    the time to compute `h->%prev()` and `h->%opposite()->%prev()`. 
     \pre The size of both facets incident to `h` is at least four (no multi-edges). 
 
     \requires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
@@ -1282,11 +1282,11 @@ public:
   /*! 
 
     splits the halfedge `h` into two halfedges inserting a new vertex 
-    that is a copy of `h->opposite()->vertex()`. Is equivalent to 
-    `split_vertex( h->prev(), h->opposite())`. The call of `prev()` 
+    that is a copy of `h->%opposite()->%vertex()`. Is equivalent to 
+    `split_vertex( h->%prev(), h->%opposite())`. The call of `%prev()` 
     can make this method slower than a direct call of `split_vertex()` 
     if the previous halfedge is already known and computing it would be 
-    costly when the halfedge data structure does not support the `prev()` 
+    costly when the halfedge data structure does not support the `%prev()` 
     member function. Returns the new halfedge `hnew` pointing to the 
     inserted vertex. The new halfedge is followed by the old halfedge, i.e., 
     `hnew->next() == h`. 
@@ -1305,7 +1305,7 @@ public:
     a copy of `h->vertex()`, and connects it to each vertex incident 
     to `h->facet()` splitting `h->facet()` into triangles. 
     `h` remains incident to the original facet, all other triangles 
-    are copies of this facet. Returns the halfedge `h->next()` 
+    are copies of this facet. Returns the halfedge `h->%next()` 
     after the operation, i.e., a halfedge pointing to the new vertex. 
     The time is proportional to the size of the facet. 
     \pre `h` is not a border halfedge. 
@@ -1316,11 +1316,11 @@ public:
   Halfedge_handle create_center_vertex( Halfedge_handle h); 
 
   /*! 
-    reverses `create_center_vertex`. Erases the 
+    reverses `create_center_vertex()`. Erases the 
     vertex pointed to by `g` and all incident halfedges thereby 
     merging all incident facets. Only `g->facet()` remains. 
     The neighborhood of `g->vertex()` may not be triangulated, 
-    it can have larger facets. Returns the halfedge `g->prev()`. 
+    it can have larger facets. Returns the halfedge `g->%prev()`. 
     Thus, the invariant `h == erase_center_vertex( create_center_vertex(h))` holds if `h` is not a border halfedge. 
     The time is proportional to the sum of the size of all incident facets. 
     \pre None of the incident facets of `g->vertex()` is a hole. There are at least two distinct facets incident to the facets that are incident to `g->vertex()`. (This prevents the operation from collapsing a volume into two facets glued together with opposite orientations, such as would happen with any vertex of a tetrahedron.) 
@@ -1343,8 +1343,8 @@ public:
     new halfedges (one copy for each halfedge in the cycle), and two new 
     triangles are created. `h,i,j` will be incident to the first new triangle. 
     The return value will be the halfedge incident to the second new triangle 
-    which is the copy of `h-opposite()`. 
-    \pre `h`, `i`, `j` denote distinct, consecutive vertices of the polyhedron and form a cycle: i.e., `h->vertex() == i->opposite()->vertex()`, \f$ \ldots\f$ , `j->vertex() == h->opposite()->vertex()`. The six facets incident to `(h,i,j)` are all distinct. 
+    which is the copy of `h-%opposite()`. 
+    \pre `h`, `i`, `j` denote distinct, consecutive vertices of the polyhedron and form a cycle: i.e., `h->vertex() == i->%opposite()->vertex()`, \f$ \ldots\f$ , `j->vertex() == h->%opposite()->vertex()`. The six facets incident to `(h,i,j)` are all distinct. 
 
     \image html euler_loop.gif 
   */ 
@@ -1471,7 +1471,7 @@ public:
     halfedges</I>. An halfedge is a <I>border edge</I> if itself or its
     opposite halfedge are border halfedges. The only requirement to work
     with border halfedges is that the `Halfedge` class provides a member
-    function `is_border()` returning a `bool`. Usually, the halfedge data
+    function `Halfedge::is_border()` returning a `bool`. Usually, the halfedge data
     structure supports facets and a `NULL` facet pointer will indicate a
     border halfedge, but this is not the only possibility. The
     `is_border()` predicate divides the edges into two classes, the border
@@ -1545,7 +1545,7 @@ public:
     consistent. If `verbose` is `true`, statistics are 
     printed to `cerr`. For `level == 1` the normalization of the 
     border edges is checked too. This method checks in particular level 3 of 
-    `CGAL::Halfedge_data_structure_decorator::is_valid` from 
+    `CGAL::Halfedge_data_structure_decorator::is_valid()` from 
     `CGAL::HalfedgeDS_const_decorator` and that each facet is at least 
     a triangle and that the two incident facets of a non-border edge are 
     distinct. 
@@ -1565,9 +1565,7 @@ public:
   bool normalized_border_is_valid( bool verbose = false) const; 
 
   /*!  
-    \advanced calls the `operator()` of the modifier `m`. See
-    `CGAL::Modifier_base` for a description of modifier design and its
-    usage.
+    \advanced calls the `Modifier_base::operator()()` of the modifier `m`.
     \pre The polyhedral surface must be valid when the modifier returns from execution. 
   */ 
   void delegate( CGAL::Modifier_base<HDS>& m); 

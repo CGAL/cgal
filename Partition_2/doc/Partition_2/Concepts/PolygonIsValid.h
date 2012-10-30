@@ -31,7 +31,7 @@ public:
 for validity of the polygon. 
 
 */ 
-PolygonIsValid(const Traits& t); 
+PolygonIsValid(const Traits tr); 
 
 /// @} 
 

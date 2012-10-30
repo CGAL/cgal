@@ -1,8 +1,7 @@
 namespace CGAL {
 
 /*!
-\defgroup PkgPrincipalComponentAnalysisDLLSF3 linear_least_square_fitting_3
-\ingroup PkgPrincipalComponentAnalysisD
+\ingroup PkgPrincipalComponentAnalysisDLLSF3
 
 The function `linear_least_squares_fitting_3` computes the best
 fitting 3D line or plane (in the least squares sense) of a set of 3D

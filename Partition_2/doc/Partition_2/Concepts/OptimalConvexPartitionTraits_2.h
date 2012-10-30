@@ -98,8 +98,7 @@ typedef Hidden_type Assign_2;
 /*! 
 
 */ 
-OptimalConvexPartitionTraits_2(OptimalConvexPartitionTraits_2& tr 
-); 
+OptimalConvexPartitionTraits_2(OptimalConvexPartitionTraits_2 tr); 
 
 /// @} 
 

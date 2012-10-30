@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPolygonPartitioning2
 
-Class that derives a traits class for `::partition_is_valid_2` from 
+Class that derives a traits class for `partition_is_valid_2()` from 
 a given traits class by defining the validity testing function object 
 in terms of a supplied template parameter. 
 
@@ -16,7 +16,7 @@ in terms of a supplied template parameter.
 
 ### Example ###
 
-See the example presented with the function `optimal_convex_partition_2` 
+See the example presented with the function `optimal_convex_partition_2()` 
 for an illustration of the use of this traits class. 
 
 */

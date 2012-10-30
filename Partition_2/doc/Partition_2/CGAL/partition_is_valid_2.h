@@ -22,14 +22,14 @@ returns `false`.
 
 - `Traits` is a model of the concept 
   `ConvexPartitionIsValidTraits_2`. 
-- `InputIterator::value_type` should be `Traits::Point_2`, 
+- `std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
   which should also be the type of the points stored in an object 
   of type `Traits::Polygon_2`. 
--`ForwardIterator::value_type` should be `Traits::Polygon_2`. 
+- `std::iterator_traits<ForwardIterator>::value_type` should be `Traits::Polygon_2`. 
 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `InputIterator::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::greene_approx_convex_partition_2` 
@@ -39,7 +39,7 @@ with the representation type determined by `InputIterator::value_type`.
 
 ### Implementation ###
 
-This function calls `::partition_is_valid_2` using the function object 
+This function calls `partition_is_valid_2()` using the function object 
 `Is_convex_2` to determine the convexity of each partition polygon. 
 Thus the time required by this function is \f$ O(n \log n + e \log e)\f$ where 
 \f$ n\f$ is the total number of vertices in the partition polygons and \f$ e\f$ the 
@@ -47,7 +47,7 @@ total number of edges.
 
 ### Example ###
 
-See the example presented with the function `::approx_convex_partition_2` 
+See the example presented with the function `approx_convex_partition_2()` 
 for an illustration of the use of this function. 
 
 */
@@ -84,14 +84,14 @@ tested by `Traits::Is_valid()`.
   `PartitionIsValidTraits_2` and the 
   concept defining the requirements for the validity test 
   implemented by `Traits::Is_valid()`. 
-- `InputIterator::value_type` should be `Traits::Point_2`, 
+- `std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
   which should also be the type of the points stored in an object 
   of type `Traits::Polygon_2`. 
-- `ForwardIterator::value_type` should be 
+- `std::iterator_traits<ForwardIterator>::value_type` should be 
   `Traits::Polygon_2`. 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `InputIterator::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::greene_approx_convex_partition_2` 
@@ -110,7 +110,7 @@ by `Traits::Is_valid()` to test if partition polygon \f$ p_i\f$ is valid.
 
 ### Example ###
 
-See the example presented with the function `::optimal_convex_partition_2` 
+See the example presented with the function `optimal_convex_partition_2()` 
 for an illustration of the use of this function. 
 */
 
@@ -144,14 +144,14 @@ returns false.
 
 - `Traits` is a model of the concept 
   `YMonotonePartitionIsValidTraits_2`. 
-- `InputIterator::value_type` should be `Traits::Point_2`, 
+- `std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
   which should also be the type of the points stored in an object 
   of type `Traits::Polygon_2`. 
-- `ForwardIterator::value_type` should be 
+- `std::iterator_traits<ForwardIterator>::value_type` should be 
   `Traits::Polygon_2`. 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `InputIterator::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
 
 \sa `CGAL::y_monotone_partition_2` 
 \sa `CGAL::is_y_monotone_2` 
@@ -160,7 +160,7 @@ with the representation type determined by `InputIterator::value_type`.
 
 ### Implementation ###
 
-This function uses the function `::partition_is_valid_2` together with 
+This function uses the function `partition_is_valid_2()` together with 
 the function object `Is_y_monotone_2` to determine if each polygon 
 is \f$ y\f$-monotone or not. Thus the time required is \f$ O(n \log n + e \log e)\f$ 
 where \f$ n\f$ is the total number of vertices of the partition polygons and 
@@ -168,7 +168,7 @@ where \f$ n\f$ is the total number of vertices of the partition polygons and
 
 ### Example ###
 
-See the example presented with the function `::y_monotone_partition_2` 
+See the example presented with the function `y_monotone_partition_2()` 
 for an illustration of the use of this function. 
 
 */

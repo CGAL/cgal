@@ -47,7 +47,7 @@ typedef Hidden_type Less_yx_2;
 /*! 
 
 */ 
-IsYMonotoneTraits_2(IsYMonotoneTraits_2& tr); 
+IsYMonotoneTraits_2(IsYMonotoneTraits_2 tr); 
 
 /// @} 
 

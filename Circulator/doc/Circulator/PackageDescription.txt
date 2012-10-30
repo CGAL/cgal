@@ -6,6 +6,10 @@
 /// \defgroup PkgHandlesAndCirculatorsAdapter Adapters for Iterators and Containers
 /// \ingroup PkgHandlesAndCirculators
 
+
+/// \defgroup PkgHandlesAndCirculatorsFunctions Functions
+/// \ingroup PkgHandlesAndCirculators
+
 /// \defgroup PkgHandlesAndCirculatorsTags Compile Time Tags
 /// \ingroup PkgHandlesAndCirculators
 

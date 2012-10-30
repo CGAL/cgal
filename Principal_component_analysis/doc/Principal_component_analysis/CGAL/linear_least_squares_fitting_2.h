@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPrincipalComponentAnalysisD
+\ingroup PkgPrincipalComponentAnalysisDLLSF2
 
 \brief computes the best fitting 2D line of a 2D object set in the range [`first`,`beyond`). The value returned is a fitting quality between \f$ 0\f$ and \f$ 1\f$, where \f$ 0\f$ means that the variance is the same along any line (a horizontal line going through the centroid is output by default), and \f$ 1\f$ means that the variance is null orthogonally to the best fitting line (hence the fit is perfect).
 

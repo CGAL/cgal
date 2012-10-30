@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Combinatorial_map_min_items` is a model of the `CombinatorialMapItems` 
 concept. It defines the type of darts which is a 
-`CGAL::Dart<d,CMap>`. The `Combinatorial_map_min_items` has a 
+`Dart<d,CMap>`. The `Combinatorial_map_min_items` has a 
 template argument for the dimension of the combinatorial map. 
 In this class, no attribute is enabled. 
 
@@ -15,7 +15,7 @@ In this class, no attribute is enabled.
 ### Example ###
 
 The following example shows the implementation of the 
-`CGAL::Combinatorial_map_min_items` class. 
+`Combinatorial_map_min_items` class. 
 
 \code{.cpp} 
 template <unsigned int d> 
@@ -30,8 +30,8 @@ struct Combinatorial_map_min_items
 }; 
 \endcode 
 
-\sa `CGAL::Combinatorial_map<d,Items,Alloc>`
-\sa `CGAL::Dart<d,CMap>`
+\sa `Combinatorial_map<d,Items,Alloc>`
+\sa `Dart<d,CMap>`
 
 */
 template< typename d >

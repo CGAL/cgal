@@ -37,7 +37,7 @@ typedef Hidden_type Is_convex_2;
 /*! 
 
 */ 
-ConvexPartitionIsValidTraits_2(ConvexPartitionIsValidTraits_2& tr); 
+ConvexPartitionIsValidTraits_2(ConvexPartitionIsValidTraits_2 tr); 
 
 /// @} 
 
@@ -50,7 +50,7 @@ ConvexPartitionIsValidTraits_2(ConvexPartitionIsValidTraits_2& tr);
 /*! 
 
 */ 
-Is_convex_2 is_convex_2_object(ConvexPartitionIsValidTraits_2 t); 
+Is_convex_2 is_convex_2_object(ConvexPartitionIsValidTraits_2 tr); 
 
 /// @}
 

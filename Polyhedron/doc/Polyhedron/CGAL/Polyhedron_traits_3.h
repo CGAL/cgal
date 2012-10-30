@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Polyhedron_traits_3` is a model of the `PolyhedronTraits_3` 
 concept. It defines the geometric types and primitive operations used 
 in the polyhedral surface data structure 
-`CGAL::Polyhedron_3<PolyhedronTraits_3>` in terms of the \cgal `Kernel`. It keeps a local copy of the kernel which makes 
+`Polyhedron_3<PolyhedronTraits_3>` in terms of the \cgal `Kernel`. It keeps a local copy of the kernel which makes 
 it suitable for kernels with local state. 
 
 \models ::PolyhedronTraits_3 

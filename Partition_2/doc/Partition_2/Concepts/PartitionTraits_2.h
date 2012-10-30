@@ -104,7 +104,7 @@ PartitionTraits_2();
 /*! 
 
 */ 
-PartitionTraits_2(PartitionTraits_2& tr); 
+PartitionTraits_2(PartitionTraits_2 tr); 
 
 /// @} 
 

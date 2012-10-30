@@ -70,7 +70,7 @@ CellAttribute();
 
 /*! 
 Constructor initializing the information of `ca` by the 
-copy contructor `Info(info)`. 
+copy constructor `Info(info)`. 
 Defined only if `Info` is different from `void`. 
 */ 
 Cell_attribute(const Info& info); 

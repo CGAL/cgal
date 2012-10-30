@@ -1,5 +1,20 @@
 /// \defgroup PkgPrincipalComponentAnalysisD Principal Component Analysis Reference
 
+/// \defgroup PkgPrincipalComponentAnalysisDBary barycenter
+/// \ingroup PkgPrincipalComponentAnalysisD
+
+/// \defgroup PkgPrincipalComponentAnalysisDbb bounding_box
+/// \ingroup PkgPrincipalComponentAnalysisD
+
+/// \defgroup PkgPrincipalComponentAnalysisDCentroid centroid
+/// \ingroup PkgPrincipalComponentAnalysisD
+
+/// \defgroup PkgPrincipalComponentAnalysisDLLSF2 linear_least_square_fitting_2
+/// \ingroup PkgPrincipalComponentAnalysisD
+
+/// \defgroup PkgPrincipalComponentAnalysisDLLSF3 linear_least_square_fitting_3
+/// \ingroup PkgPrincipalComponentAnalysisD
+
 /*!
 \addtogroup PkgPrincipalComponentAnalysisD
 \todo check generated documentation

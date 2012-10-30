@@ -23,16 +23,16 @@ counterclockwise-oriented polygon.
 and, for the purposes of checking the postcondition that the partition 
 produced is valid, it should also be a model of 
 the concept `ConvexPartitionIsValidTraits_2`. 
-<LI>`OutputIterator::value_type` should be `Traits::Polygon_2`. 
-<LI>`InputIterator::value_type` should be `Traits::Point_2`, 
+<LI>`std::iterator_traits<OutputIterator>::value_type` should be `Traits::Polygon_2`. 
+<LI>`std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
 which should also be the type of the points stored in an object 
 of type `Traits::Polygon_2`. 
-<LI>Points in the range \f$ [first, beyond)\f$ must define a simple polygon 
+<LI>Points in the range `[first, beyond)` must define a simple polygon 
 whose vertices are oriented counterclockwise. 
 </OL> 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `InputIterator1::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator1>::value_type`. 
 
 \sa `CGAL::convex_partition_is_valid_2` 
 \sa `CGAL::greene_approx_convex_partition_2` 
@@ -45,7 +45,7 @@ with the representation type determined by `InputIterator1::value_type`.
 
 This function implements the algorithm of Hertel and Mehlhorn 
 \cite hm-ftsp-83 and is based on the class 
-`CGAL::Constrained_triangulation_2`. Given a triangulation of 
+`Constrained_triangulation_2`. Given a triangulation of 
 the polygon, the function requires \f$ O(n)\f$ time and 
 space for a polygon with \f$ n\f$ vertices. 
 
@@ -97,16 +97,16 @@ be a model of `YMonotonePartitionIsValidTraits_2`.
 For the purpose of checking 
 the postcondition that the convex partition is valid, `Traits` 
 must also be a model of `ConvexPartitionIsValidTraits_2`. 
-<LI>`OutputIterator::value_type` is equivalent to 
+<LI>`std::iterator_traits<OutputIterator>::value_type` is equivalent to 
 `Traits::Polygon_2`. 
-<LI>`InputIterator::value_type` is equivalent to 
+<LI>`std::iterator_traits<InputIterator>::value_type` is equivalent to 
 `Traits::Point_2`, 
 which should also be equivalent to the type of the points stored in 
 an object of type `Traits::Polygon_2`. 
 </OL> 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `InputIterator::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::convex_partition_is_valid_2` 
@@ -119,7 +119,7 @@ with the representation type determined by `InputIterator::value_type`.
 This function implements the approximation algorithm of 
 Greene \cite g-dpcp-83 and requires \f$ O(n \log n)\f$ time and \f$ O(n)\f$ space 
 to produce a convex partitioning given a \f$ y\f$-monotone partitioning of a 
-polygon with \f$ n\f$ vertices. The function `::y_monotone_partition_2` 
+polygon with \f$ n\f$ vertices. The function `y_monotone_partition_2()` 
 is used to produce the monotone partition. 
 
 ### Example ###
@@ -166,15 +166,15 @@ For the purposes of checking the
 postcondition that the partition is valid, `Traits` should 
 also be a model of `ConvexPartitionIsValidTraits_2`. 
 
-<LI>`OutputIterator::value_type` should be 
+<LI>`std::iterator_traits<OutputIterator>::value_type` should be 
 `Traits::Polygon_2`. 
-<LI>`InputIterator::value_type` should be `Traits::Point_2`, 
+<LI>`std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
 which should also be the type of the points stored in an object 
 of type `Traits::Polygon_2`. 
 </OL> 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `InputIterator::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::convex_partition_is_valid_2` 
@@ -197,10 +197,10 @@ traits class and stores the partition polygons in the list
 It then asserts that the partition produced is valid. The 
 traits class used for testing the validity is derived from the 
 traits class used to produce the partition with the function object 
-class `CGAL::Is_convex_2` used 
+class `Is_convex_2` used 
 to define the required `Is_valid` type. 
 (Note that this assertion is superfluous unless the 
-postcondition checking for `::optimal_convex_partition_2` has been 
+postcondition checking for `optimal_convex_partition_2()` has been 
 turned off.) 
 
 \cgalexample{Partition_2/optimal_convex_partition_2.cpp} 
@@ -237,15 +237,15 @@ the resulting sequence of polygons is returned.
 and, for the purposes 
 of checking the postcondition that the partition is valid, it should 
 also be a model of `YMonotonePartitionIsValidTraits_2`. 
-<LI>`OutputIterator::value_type` should be 
+<LI>`std::iterator_traits<OutputIterator>::value_type` should be 
 `Traits::Polygon_2`. 
-<LI>`InputIterator::value_type` should be `Traits::Point_2`, 
+<LI>`std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
 which should also be the type of the points stored in an object 
 of type `Traits::Polygon_2`. 
 </OL> 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `InputIterator::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::greene_approx_convex_partition_2` 
@@ -267,7 +267,7 @@ traits class and stores the partition polygons in the list
 `partition_polys`. It then asserts that each partition polygon 
 produced is, in fact, \f$ y\f$-monotone and that the partition is valid. 
 (Note that these assertions are superfluous unless the postcondition 
-checking for `::y_monotone_partition_2` has been turned off.) 
+checking for `y_monotone_partition_2()` has been turned off.) 
 
 \cgalexample{Partition_2/y_monotone_partition_2.cpp} 
 

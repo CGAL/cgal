@@ -1,8 +1,7 @@
 namespace CGAL {
 
 /*!
-\defgroup PkgPrincipalComponentAnalysisDbb bounding_box
-\ingroup PkgPrincipalComponentAnalysisD
+\ingroup PkgPrincipalComponentAnalysisDbb
 
 The function `bounding_box` computes the axis-aligned bounding box of
 a set of 2D or 3D points. The bounding box is returned either as an

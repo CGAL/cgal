@@ -59,7 +59,7 @@ YMonotonePartitionTraits();
 /*! 
 
 */ 
-YMonotonePartitionTraits(const YMonotonePartitionTraits& tr); 
+YMonotonePartitionTraits(const YMonotonePartitionTraits tr); 
 
 /// @} 
 

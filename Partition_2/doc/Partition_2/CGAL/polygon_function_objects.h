@@ -36,7 +36,7 @@ Is_convex_2(const Traits& t);
 
 /*! 
 
-returns `true` iff the points of type `Triats::Point_2` 
+returns `true` iff the points of type `Traits::Point_2` 
 in the range [`first`,`beyond`) define a convex polygon. 
 
 */ 

@@ -86,7 +86,7 @@ typedef Hidden_type Orientation_2;
 /*! 
 
 */ 
-PartitionIsValidTraits_2(PartitionIsValidTraits_2& tr); 
+PartitionIsValidTraits_2(PartitionIsValidTraits_2 tr); 
 
 /// @} 
 

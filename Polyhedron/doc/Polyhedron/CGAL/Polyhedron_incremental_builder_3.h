@@ -7,7 +7,7 @@ namespace CGAL {
 The auxiliary class `Polyhedron_incremental_builder_3` supports the incremental 
 construction of polyhedral surfaces, which is for example convenient 
 when constructing polyhedral surfaces from file formats, such as the 
-Object File Format (OFF) \cite cgal:p-gmgv16-96, 
+%Object File Format (OFF) \cite cgal:p-gmgv16-96, 
 OpenInventor \cite cgal:w-impoo-94 or 
 VRML \cite cgal:bpp-vrml-95, \cite cgal:vrmls-96. 
 `Polyhedron_incremental_builder_3` needs access to the internal halfedge data 
@@ -19,7 +19,7 @@ the halfedge data structures, but it is specifically bound to the
 definition of polyhedral surfaces given here. During construction all 
 conditions of polyhedral surfaces are checked and in case of violation 
 an error status is set. A diagnostic message will be issued to 
-`cerr` if the `verbose` flag has been set at construction 
+`std::cerr` if the `verbose` flag has been set at construction 
 time. 
 
 The incremental construction starts with a list of all point 

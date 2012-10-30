@@ -1,8 +1,7 @@
 namespace CGAL {
 
 /*!
-\defgroup PkgPrincipalComponentAnalysisDCentroid centroid
-\ingroup PkgPrincipalComponentAnalysisD
+\ingroup PkgPrincipalComponentAnalysisDCentroid
 
 The function `centroid` computes the (uniform) center of mass of a set
 of 2D or 3D bounded objects. In 2D these objects include points,

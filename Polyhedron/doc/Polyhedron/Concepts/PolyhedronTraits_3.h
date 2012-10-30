@@ -5,9 +5,8 @@
 
 Required types and member functions for the `PolyhedronTraits_3` concept. This 
 geometric traits concept is used in the polyhedral surface data 
-structure `CGAL::Polyhedron_3<Traits>`. This concept is a subset of 
-the 3d kernel traits and any \cgal kernel model can be used directly 
-as template argument. 
+structure `CGAL::Polyhedron_3<Traits>`. Any \cgal kernel is a model of this concept 
+and can be used directly as template argument. 
 
 \refines `CopyConstructible`
 \refines `Assignable`

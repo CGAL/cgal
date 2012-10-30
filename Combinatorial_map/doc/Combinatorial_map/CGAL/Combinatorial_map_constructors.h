@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgCombinatorialMapsConstructions
 
-Creates an combinatorial hexahedron (six combinatorial quadrangles linked 
+Creates a combinatorial hexahedron (six combinatorial quadrangles linked 
 together by \f$ \beta_2\f$), and adds it in `cm`. 
 Returns a handle on one dart of this combinatorial hexahedron.
 \pre `CMap::dimension` \f$\geq\f$ 2.
