@@ -2204,4 +2204,3 @@ optimization flags switched on, and vcproj files for Release
 and Debug modes.
 
 */ 
-} /* namespace CGAL */

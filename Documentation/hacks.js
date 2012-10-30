@@ -27,6 +27,7 @@ $(document).ready(function() {
         // documentation of a package
         NAVTREE[0][2][1][1] = modules[0][1];
         NAVTREE[0][2][1][2] = modules[0][2];
+        // override gotoNode from navtree.js
         gotoNode = function (o,subIndex,root,hash,relpath) {
             var nti = navTreeSubIndices[subIndex][root+hash];
             if(nti && (nti[0] === 1 && nti[0])) {

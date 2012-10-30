@@ -2,6 +2,8 @@
 
 while read -r line         
 do     
+    # the multiple -e are to work-around for MacOS BSD sed.
+    # don't touch it unless you have a Mac to test it.
     pkg=$(echo ${line} | sed -n -e '/\\package_listing{[^}]*}/ { s/\\package_listing{\([^}]*\)}/\1/;' -e 'p' -e '}')
 
     if [ -n "${pkg}" ]; then

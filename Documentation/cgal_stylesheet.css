@@ -167,6 +167,7 @@ div.groupText {
 }
 
 /* fix the back button by hacking the layout */
+/* this becomes unnecessary with the latest doxygen, r834 */
 #top {
     position: fixed;
     top: 0;

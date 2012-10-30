@@ -45,11 +45,6 @@ to work around the fact that doxygen does not supported sections that
 have no label in a TOC. This command simply becomes a normal toc in
 LaTex.
 
-### Top Nav-Bar ###
-
-A simple customization in `header.html` with impact on resizing
-functionality.
-
 ### Reference Manual link in the tree view  ###
 
 This hack fiddles with the internal structures and functions of the
