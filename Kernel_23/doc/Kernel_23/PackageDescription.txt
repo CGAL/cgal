@@ -51,3 +51,5 @@
 \PkgDescriptionEnd
 */
 
+/// \cgalconceptnamespace
+namespace Kernel {}

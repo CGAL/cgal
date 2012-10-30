@@ -1,4 +1,5 @@
-namespace CGAL {
+/// \cgalconceptnamespace
+namespace Kernel {
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
