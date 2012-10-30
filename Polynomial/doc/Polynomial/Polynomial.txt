@@ -78,7 +78,7 @@ structure, that is, the ring operations \f$ \{+, -, \cdot\}\f$ are
 provided due to the fact that `Polynomial_d` refines at least the 
 concept `IntegralDomainWithoutDivision`. 
 However, a model of `Polynomial_d` has to be accompanied by a traits class 
-`CGAL::Polynomial_traits_d<Polynomial_d>` being a model of 
+`Polynomial_traits_d<Polynomial_d>` being a model of 
 `PolynomialTraits_d`. 
 This traits class provides all further functionalities on polynomials.
 
@@ -97,12 +97,12 @@ the polynomial as an element of \f$ R [x_0,\dots,x_{d-1}]\f$.
 According to these two different views the traits class is required to provide 
 two different coefficient types:
 <UL>
-<LI>`CGAL::Polynomial_traits_d::Coefficient_type` representing \f$ R[x_0,\dots,x_{d-2}]\f$.
-<LI>`CGAL::Polynomial_traits_d::Innermost_coefficient_type` representing the base ring \f$ R\f$.
+<LI>`Polynomial_traits_d::Coefficient_type` representing \f$ R[x_0,\dots,x_{d-2}]\f$.
+<LI>`Polynomial_traits_d::Innermost_coefficient_type` representing the base ring \f$ R\f$.
 </UL>
 
 Another important type which is introduced by this package is 
-`CGAL::Exponent_vector`. 
+`Exponent_vector`. 
 It is derived from `std::vector<int>` and used to identify multivariate 
 monomials. For instance the exponent vector containing the sequence 
 \f$ [3,2,4]\f$ corresponds to the trivariate monomial \f$ x_0^3x_1^2x_2^4\f$. 
@@ -120,15 +120,15 @@ refines `IntegralDomainWithoutDivision` which in turn refines
 constant polynomials.
 
 In general a polynomial is constructed using the functor 
-`CGAL::Polynomial_traits_d::Construct_polynomial` a model of 
+`Polynomial_traits_d::Construct_polynomial` a model of 
 `PolynomialTraits_d::ConstructPolynomial`. Basically there are two options:
 <UL>
 <LI>The polynomial is constructed from an iterator range with value type 
-`CGAL::Polynomial_traits_d::Coefficient_type`, 
+`Polynomial_traits_d::Coefficient_type`, 
 where the `begin` iterator refers to the constant term 
 (constant with respect to the outermost variable). 
 <LI>The polynomial is constructed from an iterator range with value type 
-`std::pair< CGAL::Exponent_vector, CGAL::Polynomial_traits_d::Innermost_coefficient_type>`,
+`std::pair<Exponent_vector, Polynomial_traits_d::Innermost_coefficient_type>`,
 where each pair defines the coefficient for the monomial defined by 
 the exponent vector. 
 </UL>
@@ -137,7 +137,7 @@ However, in some cases it might be more convenient to just construct
 the polynomials representing the different variables and to obtain the 
 final polynomial using 
 algebraic expressions. The most elegant way to construct a certain variable is 
-`CGAL::Polynomial_traits_d::Shift` being a model of 
+`Polynomial_traits_d::Shift` being a model of 
 `PolynomialTraits_d::Shift`.
 
 ## Example ##
@@ -236,7 +236,7 @@ structure of the innermost coefficient, for instance, a gcd is available
 if and only if the innermost coefficient is a `Field` or a 
 `UniqueFactorizationDomain`. Hence, we can not provide a \f$ gcd\f$ if the 
 innermost coefficient is just an `IntegralDomain` since it is simply 
-not well defined\footnote{An example for such a number type is the template `CGAL::Sqrt_extension<NT,ROOT>` representing an algebraic extension of degree two. This is just an `IntegralDomain` if NT is not a `Field`. }.
+not well defined\footnote{An example for such a number type is the template `Sqrt_extension<NT,ROOT>` representing an algebraic extension of degree two. This is just an `IntegralDomain` if NT is not a `Field`. }.
 However, if we would consider the polynomial over the quotient field of the 
 integral domain the \f$ gcd\f$ would be well defined. The only problem is
 that the result can not be represented over the ring since it contains 
@@ -365,7 +365,7 @@ reference pages.
 The principal Sturm-Habicht sequence allows to count the number of
 real roots of a polynomial using the function
 <UL>
-<LI>\ref ::CGAL::number_of_real_roots.
+<LI>number_of_real_roots().
 </UL>
 As input, this function requires an iterator range that represents
 the principal Sturm-Habicht coefficients. 
@@ -379,7 +379,7 @@ and its (principal) Sturm-Habicht coefficients
 Sturm-Habicht sequence for \f$ f_{t_0}\f$. The same holds for (principal)
 subresultants. Thus, it is enough in such situations to compute
 the sequence once for the parameter \f$ t\f$, and call 
-`CGAL::number_of_real_roots` for each specialized parameter
+`number_of_real_roots()` for each specialized parameter
 value.
 
 We finally remark that computing subresultants and Sturm-Habicht sequences
@@ -402,7 +402,7 @@ of a polynomial using its principal Sturm-Habicht coefficients.
 This package is the result of the integration process of the NumeriX library 
 of <span class="textsc">Exacus</span> \cite beh-eeeafcs-05 into \cgal.
 
-The class `CGAL::Polynomial<Coeff>` had been started by Michael Seel within 
+The class `Polynomial<Coeff>` had been started by Michael Seel within 
 CGAL as part of the Nef_2 package. As part of the <span class="textsc">Exacus</span> project 
 it got significantly improved by Arno Eigenwillig and Michael Hemmer.
 
@@ -410,7 +410,7 @@ However, due to the recursive definition the class was rather restricted to the
 univariate view. Moreover, it is clear that depending on the context 
 other classes that are symmetric in all variables or dedicated 
 for sparse polynomials may be more efficient. As a consequence this package 
-introduced the `CGAL::Polynomial_traits_d<Polynomial_d>` giving also
+introduced the `Polynomial_traits_d<Polynomial_d>` giving also
 the symmetric view on polynomials and the opportunity to introduce and use
 other classes representing polynomials within \cgal.
 
