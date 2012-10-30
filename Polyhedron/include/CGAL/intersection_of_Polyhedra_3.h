@@ -215,6 +215,12 @@ public:
   template <class Point_3>
   Split_halfedge_at_point( Halfedge_handle h,const Point_3& point):hedge(h),vertex(point){}
 
+  //   new_hedge    hedge
+  //  ----------->   ----------->
+  //               v
+  //  <-----------   <-----------
+  //   new_opposite     opposite 
+  //  
   void operator()( HDS& hds) {
     
     Vertex_handle v=hds.vertices_push_back(vertex);
