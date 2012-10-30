@@ -749,7 +749,7 @@ void reverse();
 /// @{ 
 /*! 
 sorts the list `ipl` according to the 
-`operator<` in time \f$ O(n \logn)\f$ where `n = size()`. 
+`operator<` in time \f$ O(n \log n)\f$ where `n = size()`. 
 It is stable. 
 \pre a suitable `operator<` for the type `T`. 
 */ 
