@@ -741,6 +741,7 @@ namespace for the XML file to be processed properly.  -->
         <input>../Generator/doc/Generator</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Generator/doc/Generator/</string>
+          <string name="STRIP_FROM_PATH">../Generator/doc/Generator/</string>
           <string name="GENERATE_TAGFILE">./tags/Generator.tag</string>
           <string name="EXAMPLE_PATH">../Generator/examples</string>
           <string name="IMAGE_PATH">../Generator/doc/Generator/fig</string>
@@ -752,6 +753,7 @@ namespace for the XML file to be processed properly.  -->
         <input>../Geomview/doc/Geomview</input>
         <doxygen>
           <string name="STRIP_FROM_INC_PATH">../Geomview/doc/Geomview/</string>
+          <string name="STRIP_FROM_PATH">../Geomview/doc/Geomview/</string>
           <string name="GENERATE_TAGFILE">./tags/Geomview.tag</string>
           <string name="EXAMPLE_PATH">../Geomview/demo</string>
           <string name="IMAGE_PATH">../Geomview/doc/Geomview/fig</string>
