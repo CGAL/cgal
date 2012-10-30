@@ -1,5 +1,5 @@
 
-namespace CGAL {
+
 
 /*!
 \ingroup nt_gmp
@@ -19,9 +19,9 @@ See the <span class="textsc">Gmp</span> documentation for additional details.
 
 class mpq_class {
 }; /* end mpq_class */
-} /* end namespace CGAL */
 
-namespace CGAL {
+
+
 
 /*!
 \ingroup nt_gmp
@@ -40,4 +40,4 @@ See the <span class="textsc">Gmp</span> documentation for additional details.
 
 class mpz_class {
 }; /* end mpz_class */
-} /* end namespace CGAL */
+

@@ -38,7 +38,7 @@ the destructor take care of restoring the value automatically.
 The related class `Set_ieee_double_precision` allows to similarly protect 
 a block of code from excess precision on some machines (x86 typically with 
 the traditional FPU, not the more recent SSE2). Note that 
-`Protect_FPU_rounding_mode`, when changing rounding modes, also sets the precision 
+`Protect_FPU_rounding`, when changing rounding modes, also sets the precision 
 to the correct 64 bit precision, hence providing a similar effect to 
 `Set_ieee_double_precision`. This notably affects the `Residue` class. 
 
