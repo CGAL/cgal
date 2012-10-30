@@ -189,6 +189,30 @@ void extract_connected_components(const Polyhedron& P,const Adjacency_criterium&
   }
 }
 
+template <class Polyhedron, class Adjacency_criterium, class Face_marker>
+void mark_connected_components(Polyhedron& P, const Adjacency_criterium& adjacent, Face_marker& face_marker)
+{
+  typedef typename Polyhedron::Facet_handle Facet_handle;
+  typedef ::CGAL::Union_find<Facet_handle> UF;
+  typedef typename UF::handle UF_handle;
+  typedef std::map<Facet_handle,std::list<Facet_handle>,Compare_handle_ptr<Polyhedron> > Result;
+  typedef std::map<Facet_handle,UF_handle,Compare_handle_ptr<Polyhedron> > Facet_to_handle_map;
+  
+  UF uf;
+  Facet_to_handle_map map_f2h;
+  Result result;
+  
+  extract_connected_components(P,adjacent,uf,map_f2h,result);
+  
+  for (typename Result::iterator it=result.begin();it!=result.end();++it)
+  {
+    face_marker.start_new_connected_component();
+    typedef std::list<Facet_handle> Facets;
+    const Facets& facets=it->second;
+    face_marker.mark(facets.begin(),facets.end());
+  }
+}
+
 template <class Polyhedron,class Output_iterator>
 void extract_connected_components(const Polyhedron& P,Output_iterator out)
 {
