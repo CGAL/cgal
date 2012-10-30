@@ -81,9 +81,9 @@ The extension of a `UniqueFactorizationDomain` or
 `EuclideanRing` is just an `IntegralDomain`, since the extension in general destroys the unique factorization property. For instance consider \f$ \Z[\sqrt{10}]\f$, the extension of \f$ \Z\f$ by \f$ \sqrt{10}\f$: in \f$ \Z[\sqrt{10}]\f$ the element 10 has two different factorizations \f$ \sqrt{10} \cdot \sqrt{10}\f$ and \f$ 2 \cdot 5\f$. In particular, the factorization is not unique. 
 
 If `NT` is a model of `RealEmbeddable` the type `Sqrt_extension` is also considered as `RealEmbeddable`. However, by default it is not allowed to compare values from different extensions for efficiency reasons. In case such a comparison becomes necessary, use the member function compare with the according Boolean flag. 
-If such a comparison is a very frequent case, override the default of `DifferentExtensionComparable` by giving `CGAL::Tag_true` as third template parameter. This effects the behavior of compare functions as well as the compare operators. 
+If such a comparison is a very frequent case, override the default of `DifferentExtensionComparable` by giving \tag_true as third template parameter. This effects the behavior of compare functions as well as the compare operators. 
 
-The fourth template argument, `FilterPredicates`, triggers an internal filter that may speed up comparisons and sign computations. In case `FilterPredicates` is set to `CGAL::Tag_true` the type first computes a double interval containing the represented number and tries to perform the comparison or sign computation using this interval. Once computed, this interval is stored by the corresponding `Sqrt_extension` object for further usage. Note that this internal filter is switched off by default, since it may conflict with other filtering methods, such as `CGAL::Lazy_exact_nt<Sqrt_extension>`. 
+The fourth template argument, `FilterPredicates`, triggers an internal filter that may speed up comparisons and sign computations. In case `FilterPredicates` is set to \tag_true the type first computes a double interval containing the represented number and tries to perform the comparison or sign computation using this interval. Once computed, this interval is stored by the corresponding `Sqrt_extension` object for further usage. Note that this internal filter is switched off by default, since it may conflict with other filtering methods, such as `CGAL::Lazy_exact_nt<Sqrt_extension>`. 
 
 In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as `FilterPredicates` have no effect. 
 
@@ -103,8 +103,8 @@ In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as 
 \sa ::ImplicitInteroperable 
 \sa ::Fraction 
 \sa ::RootOf_2 
-\sa ::CGAL::Tag_true 
-\sa ::CGAL::Tag_false 
+\sa \tag_true
+\sa \tag_false
 
 */
 template< typename NT, typename ROOT, 

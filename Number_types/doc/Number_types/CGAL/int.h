@@ -1,46 +1,14 @@
-
-
 /*!
+\file int.h
 \ingroup nt_builtin
 
-The fundamental type `int` is a model of the concepts 
-RealEmbeddable` and `EuclideanRing`. 
-Due to overflow `int` is considered as not exact. 
+This header provides all necessary functions so the fundamental types
+`int`, `long int`, and `short int` become models of their respective algebraic concepts.
 
-\models ::EuclideanRing 
-\models ::RealEmbeddable 
+- `int` is a model of `RealEmbeddable` and `EuclideanRing`,
+- `long int` is a model of `RealEmbeddable` and `EuclideanRing`
+- `short int` is a model of `RealEmbeddable` and `EuclideanRing`
 
-*/
-
-class int {
-}; /* end int */
-
-
-/*!
-\ingroup nt_builtin
-
-The fundamental type `long int` is a model of the concepts `RealEmbeddable` 
-and `EuclideanRing`. Due to overflow `long int` is considered as not exact. 
-
-\models ::EuclideanRing 
-\models ::RealEmbeddable 
+Due to overflow neither of those types is considered as exact.
 
 */
-
-class long_int {
-}; /* end long int */
-
-
-/*!
-\ingroup nt_builtin
-
-The fundamental type `short int` is a model of the concepts `RealEmbeddable` 
-and `EuclideanRing`. Due to overflow `short int` is considered as not exact. 
-
-\models ::EuclideanRing 
-\models ::RealEmbeddable 
-
-*/
-
-class short_int {
-}; /* end short int */
