@@ -2957,6 +2957,8 @@ Kernel_23/doc/Kernel_23/CGAL/intersections.h -text
 Kernel_23/doc/Kernel_23/CGAL/rational_rotation.h -text
 Kernel_23/doc/Kernel_23/CGAL/squared_distance_2.h -text
 Kernel_23/doc/Kernel_23/CGAL/squared_distance_3.h -text
+Kernel_23/doc/Kernel_23/Concepts/FunctionObjectConcepts.h -text
+Kernel_23/doc/Kernel_23/Concepts/GeomObjects.h -text
 Kernel_23/doc/Kernel_23/Concepts/Kernel.h -text
 Kernel_23/doc/Kernel_23/Kernel_23.txt -text
 Kernel_23/doc/Kernel_23/PackageDescription.txt -text
