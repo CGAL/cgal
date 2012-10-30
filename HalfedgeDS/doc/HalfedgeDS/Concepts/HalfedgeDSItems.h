@@ -13,9 +13,8 @@ uses the halfedge data structure as internal representation. `Traits`
 is not used by the halfedge data structure itself. These three member 
 class templates provide a local type named `Vertex`, `Halfedge`, 
 and `Face` respectively. The requirements on these 
-types are described on page \ref HalfedgeDSVertex, 
-page \ref HalfedgeDSHalfedge, and 
-page \ref HalfedgeDSFace respectively. 
+types are described on the manual pages of the concepts `HalfedgeDSVertex`, 
+`HalfedgeDSHalfedge`, and `HalfedgeDSFace` respectively. 
 
 \hasModel CGAL::HalfedgeDS_min_items 
 \hasModel CGAL::HalfedgeDS_items_2 

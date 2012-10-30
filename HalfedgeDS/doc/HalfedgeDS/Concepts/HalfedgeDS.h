@@ -33,7 +33,7 @@ for the incidences, the mandatory and optional member functions
 possible for vertices, halfedges, and faces. 
 
 \anchor figureOptionalMethods 
-\image html hds_optional_small.gif "The three classes `Vertex`, `Halfedge`, and `Face` of the halfedge data structure. Member functions with shaded background are mandatory. The others are optionally supported."
+\image html hds_optional_small.gif "The three classes Vertex, Halfedge, and Face of the halfedge data structure. Member functions with shaded background are mandatory. The others are optionally supported."
 
 A `HalfedgeDS` organizes the internal storage of its items. Examples 
 are a list-based or a vector-based storage. The `HalfedgeDS` exhibits 
@@ -325,8 +325,10 @@ operator=( const HalfedgeDS<Traits,Items,Alloc>& hds2);
 /*! 
 reserves storage for `v` vertices, `h` halfedges, and `f` faces. 
 If all capacities are already greater or equal than the requested sizes 
-nothing happens. Otherwise, `hds` will be resized and all handles, 
-iterators and circulators invalidate. \pre If resizing is necessary `hds` contains no dangling handles. 
+nothing happens. Otherwise, the halfedge data structure will be resized and all handles, 
+iterators and circulators are invalid. 
+
+\pre If resizing is necessary the halfedge data structure contains no dangling handles. 
 */ 
 void reserve( size_type v, size_type h, size_type f); 
 
@@ -366,12 +368,12 @@ space reserved for faces.
 Size capacity_of_faces() const; 
 
 /*! 
-bytes used for `hds`. 
+bytes used for the halfedge data structure. 
 */ 
 size_t bytes() const; 
 
 /*! 
-bytes reserved for `hds`. 
+bytes reserved for the halfedge data structure. 
 */ 
 size_t bytes_reserved() const; 
 
@@ -420,26 +422,26 @@ faces respectively.
 /// @{
 
 /*! 
-appends a copy of `v` to `hds`. Returns a handle of the new vertex. 
+appends a copy of `v` to the halfedge data structure. Returns a handle of the new vertex. 
 */ 
 Vertex_handle vertices_push_back( const Vertex& v); 
 
 /*! 
-appends a copy of `h` and a copy of `g` to `hds` and makes them 
+appends a copy of `h` and a copy of `g` to the halfedge data structure and makes them 
 opposite to each other. Returns a handle of the copy of `h`. 
 */ 
 Halfedge_handle edges_push_back( const Halfedge& h, 
 const Halfedge& g); 
 
 /*! 
-appends a copy of `h` and a copy of `h->opposite()` to `hds` and 
-makes them opposite to each other. Returns a handle of the copy of `h`. 
-\pre `h->opposite()` denotes a halfedge. 
+appends a copy of `h` and a copy of  \link HalfedgeDSHalfedge::opposite() `h->opposite()`\endlink  
+to the halfedge data structure and makes them opposite to each other. Returns a handle of the copy of `h`. 
+\pre  \link HalfedgeDSHalfedge::opposite() `h->opposite()`\endlink  denotes a halfedge. 
 */ 
 Halfedge_handle edges_push_back( const Halfedge& h); 
 
 /*! 
-appends a copy of `f` to `hds`. Returns a handle of the new face. 
+appends a copy of `f` to the halfedge data structure. Returns a handle of the new face. 
 */ 
 Face_handle faces_push_back( const Face& f); 
 
@@ -447,9 +449,9 @@ Face_handle faces_push_back( const Face& f);
 
 /*! \name Removal 
 Erasing single elements is optional and indicated with the type tag 
-`Supports_removal`. The `pop_back` and the `clear` member 
+`Supports_removal`. The three `pop_back()` and the `clear()` member 
 functions are mandatory. If vertices or faces are not supported 
-for a `HalfedgeDS` the `pop_back` and the `clear` member 
+for a `HalfedgeDS` the three `pop_back()` and the `clear()` member 
 functions must be provided as null operations. 
 */
 /// @{
@@ -496,7 +498,7 @@ void edges_pop_back();
 
 /*! 
 
-removes the pair of halfedges `h` and `h->opposite()` 
+removes the pair of halfedges `h` and \link HalfedgeDSHalfedge::opposite() `h->opposite()`\endlink 
 if `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void edges_erase( Halfedge_handle h); 
@@ -565,11 +567,11 @@ incident to an open region are called <I>border halfedges</I>. A
 halfedge is a <I>border edge</I> if the halfedge itself or its 
 opposite halfedge is a border halfedge. The only requirement to work 
 with border halfedges is that the 
-`Halfedge` class provides a member function `is_border()` 
+`Halfedge` class provides a member function `HalfedgeDSHalfedge::is_border()` 
 returning a `bool`. Usually, the halfedge data structure 
 supports faces and the value of the default constructor of the face 
 handle will indicate a border halfedge, but this may not be the only 
-possibility. The `is_border()` predicate divides the edges into 
+possibility. The `HalfedgeDSHalfedge::is_border()` predicate divides the edges into 
 two classes, the border edges and the non-border edges. The 
 following normalization reorganizes the sequential storage of the 
 edges such that the non-border edges precede the border edges, and 

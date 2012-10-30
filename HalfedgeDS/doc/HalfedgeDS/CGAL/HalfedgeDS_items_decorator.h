@@ -37,7 +37,7 @@ the implementation given here runs in time proportional to the size of the
 incident face. For const-correctness a second implementation with signature 
 `Halfedge_const_handle prev() const;` is needed. 
 
-Note also the use of the static member function `halfedge_handle()` 
+Note also the use of the static member function `HalfedgeDS::halfedge_handle()` 
 of the halfedge data structure. It converts a pointer to the halfedge 
 into a halfedge handle. This conversion encapsulates possible 
 adjustments for hidden data members in the true halfedge type, such as 
@@ -229,42 +229,42 @@ Halfedge_handle get_face_halfedge( Face_handle f);
 /// @{
 
 /*! 
-makes `h->opposite()` the successor of `h`. 
+makes `h->%opposite()` the successor of `h`. 
 */ 
 void close_tip( Halfedge_handle h) const; 
 
 /*! 
-makes `h->opposite()` the successor of `h` and sets the 
+makes `h->%opposite()` the successor of `h` and sets the 
 incident vertex of `h` to `v`. 
 */ 
 void close_tip( Halfedge_handle h, Vertex_handle v) const; 
 
 /*! 
 inserts the tip of the edge `h` into the halfedges around the vertex 
-pointed to by `v`. Halfedge `h->opposite()` is the new successor of 
-`v` and `h->next()` will be set to `v->next()`. The vertex of `h` 
+pointed to by `v`. Halfedge `h->%opposite()` is the new successor of 
+`v` and `h->%next()` will be set to `v->next()`. The vertex of `h` 
 will be set to the vertex `v` refers to if vertices are supported. 
 */ 
 void insert_tip( Halfedge_handle h, Halfedge_handle v) const; 
 
 /*! 
-removes the edge `h->next()->opposite()` from the halfedge 
+removes the edge `h->%next()->%opposite()` from the halfedge 
 circle around the vertex referred to by `h`. The new successor 
-halfedge of `h` will be `h->next()->opposite()->next()`. 
+halfedge of `h` will be `h->%next()->%opposite()->%next()`. 
 */ 
 void remove_tip( Halfedge_handle h) const; 
 
 /*! 
-inserts the halfedge `h` between `f` and `f->next()`. 
+inserts the halfedge `h` between `f` and `f->%next()`. 
 The face of `h` will be the one `f` refers to if faces 
 are supported. 
 */ 
 void insert_halfedge( Halfedge_handle h, Halfedge_handle f) const; 
 
 /*! 
-removes edge `h->next()` from the halfedge circle around 
+removes edge `h->%next()` from the halfedge circle around 
 the face referred to by `h`. The new successor of `h` will be 
-`h->next()->next()`. 
+`h->%next()->%next()`. 
 */ 
 void remove_halfedge( Halfedge_handle h) const; 
 

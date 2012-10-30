@@ -21,7 +21,7 @@ depicts the relationship between a halfedge and its incident
 halfedges, vertices, and faces. 
 
 \anchor figureHalfedgeDSOptionalMethods 
-\image html hds_optional.gif "The three classes `Vertex`, `Halfedge`, and `Face` of the halfedge data structure. Member functions with shaded background are mandatory. The others are optionally supported."  
+\image html hds_optional.gif "The three classes Vertex, Halfedge, and Face of the halfedge data structure. Member functions with shaded background are mandatory. The others are optionally supported."  
 
 For the protection of the integrity of the data structure classes such 
 as `CGAL::Polyhedron_3` are allowed to redefine the modifying member 
@@ -104,18 +104,17 @@ typedef Hidden_type Halfedge_const_handle;
 typedef Hidden_type Face_const_handle; 
 
 /*! 
-`CGAL::Tag_true` or 
-`CGAL::Tag_false`. 
+\link CGAL::Tag_true `CGAL::Tag_true`\endlink or \link CGAL::Tag_false `CGAL::Tag_false`\endlink. 
 */ 
 typedef Hidden_type Supports_halfedge_prev; 
 
 /*! 
-~ 
+\link CGAL::Tag_true `CGAL::Tag_true`\endlink or \link CGAL::Tag_false `CGAL::Tag_false`\endlink.  
 */ 
 typedef Hidden_type Supports_halfedge_vertex; 
 
 /*! 
-~ 
+\link CGAL::Tag_true `CGAL::Tag_true`\endlink or \link CGAL::Tag_false `CGAL::Tag_false`\endlink. 
 */ 
 typedef Hidden_type Supports_halfedge_face; 
 
@@ -167,7 +166,7 @@ sets next halfedge to `h`.
 void set_next( Halfedge_handle h); 
 
 /*! 
-is true if `h` is a border halfedge. 
+is true if the halfedge is a border halfedge. 
 */ 
 bool is_border() const; 
 
@@ -222,7 +221,7 @@ void set_vertex( Vertex_handle v);
 Face_handle face(); 
 
 /*! 
-the incident face of `h`. If `h` is a border halfedge 
+the incident face of the halfedge. If the halfedge is a border halfedge 
 the result is default construction of the handle. 
 */ 
 Face_const_handle face() const; 

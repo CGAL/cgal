@@ -5,7 +5,7 @@ namespace CGAL {
 
 The class `HalfedgeDS_vertex_min_base` is a model of the `HalfedgeDSVertex` 
 concept. `Refs` is an instantiation of a `HalfedgeDS`. It is 
-equivalent to `CGAL::HalfedgeDS_vertex_base< Refs, CGAL::Tag_false>`. 
+equivalent to `HalfedgeDS_vertex_base< Refs, CGAL::Tag_false>`. 
 It is empty besides the required type definitions. It can be used for deriving 
 own vertices. 
 

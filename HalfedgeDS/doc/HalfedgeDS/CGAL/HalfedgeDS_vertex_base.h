@@ -10,30 +10,28 @@ defaults that allow to select various flavors of vertices. The
 declaration is best explained with the two following declarations, 
 essentially hiding an implementation dependent default setting: 
 
-`template <class Refs, class T = CGAL::Tag_true>` 
-
-<span class="mbox"></span> `class HalfedgeDS_vertex_base;` 
+`template <class Refs, class T = CGAL::Tag_true>`
+<BR>
+`class HalfedgeDS_vertex_base;` 
 
 `template <class Refs, class T, class Point>` 
+<BR>
+`class HalfedgeDS_vertex_base;` 
 
-<span class="mbox"></span> `class HalfedgeDS_vertex_base;` 
-
-`HalfedgeDS_vertex_base` defines a vertex including a reference to an incident halfedge. 
-
-`CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_false>` is a vertex 
-without a reference to an incident halfedge. It is empty besides the 
-required type definitions. It can be used for deriving own vertex 
-implementations. See also `CGAL::HalfedgeDS_vertex_min_base<Refs>`. 
-
-`CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,Point>` is a vertex 
-with a reference to an incident halfedge and it stores a point of type 
-`Point`. It can be used as a vertex for a model of the 
-`PolyhedronItems_3` concept. 
-
-`CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_false,Point>` is a vertex 
-without a reference to an incident halfedge and it stores a point of 
-type `Point`. It can be used as a vertex for a model of the 
-`PolyhedronItems_3` concept. 
+Let us look at some instantiations
+- `HalfedgeDS_vertex_base` defines a vertex including a reference to an incident halfedge. 
+- `HalfedgeDS_vertex_base<Refs,CGAL::Tag_false>` is a vertex 
+  without a reference to an incident halfedge. It is empty besides the 
+  required type definitions. It can be used for deriving own vertex 
+  implementations. See also `CGAL::HalfedgeDS_vertex_min_base<Refs>`. 
+- `HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,Point>` is a vertex 
+  with a reference to an incident halfedge and it stores a point of type 
+  `Point`. It can be used as a vertex for a model of the 
+  `PolyhedronItems_3` concept. 
+- `HalfedgeDS_vertex_base<Refs,CGAL::Tag_false,Point>` is a vertex 
+  without a reference to an incident halfedge and it stores a point of 
+  type `Point`. It can be used as a vertex for a model of the 
+  `PolyhedronItems_3` concept. 
 
 \models ::HalfedgeDSVertex 
 

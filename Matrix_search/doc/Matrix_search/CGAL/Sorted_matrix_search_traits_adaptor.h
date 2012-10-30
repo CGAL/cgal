@@ -10,8 +10,8 @@ arbitrary feasibility test and matrix classes `F` resp.\ `M`.
 
 \models ::SortedMatrixSearchTraits 
 
-\tparam `M` must be a model for `BasicMatrix`
-\tparam `F` must define a copy constructor and a monotone `bool operator()( const Value&)`.
+\tparam M must be a model for `BasicMatrix`
+\tparam F must define a copy constructor and a monotone `bool operator()( const Value&)`.
 
 */
 template< typename F, typename M >
@@ -36,24 +36,24 @@ m);
 /*! 
 typedef to `M`. 
 */ 
-typedef Hidden_type Matrix; 
+typedef M Matrix; 
 
 /*! 
 typedef to `Matrix::Value`. 
 */ 
-typedef Hidden_type Value; 
+typedef Matrix::Value Value; 
 
 /*! 
 typedef to 
 `std::less<Value>`. 
 */ 
-typedef Hidden_type Compare_strictly; 
+typedef std::less<Value> Compare_strictly; 
 
 /*! 
 typedef to 
 `std::less_equal<Value>`. 
 */ 
-typedef Hidden_type Compare_non_strictly; 
+typedef std::less_equal<Value> Compare_non_strictly; 
 
 /// @} 
 

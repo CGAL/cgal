@@ -178,7 +178,7 @@ face incident to `h` from `hds` and changes all halfedges
 incident to the face into border edges or removes them from the 
 halfedge data structure if they were already border edges. If this 
 creates isolated vertices they get removed as well. See 
-`make_hole(h)` for a more specialized variant. 
+`make_hole()` for a more specialized variant. 
 \pre `h->is_border() == false`. 
 
 \requires If faces are supported, `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 

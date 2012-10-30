@@ -19,7 +19,7 @@ correspondent with respect to one prime only.
 
 # Residue and Modularizable # {#Modular_arithmetic_residue}
 
-First of all, this package introduces a type `CGAL::Residue`.
+First of all, this package introduces a type `Residue`.
 It represents \f$ \Z_{/p\Z}\f$ for some prime \f$ p\f$. 
 The prime number \f$ p\f$ is stored in a static member variable. 
 The class provides static member functions to change this value. 
@@ -36,15 +36,15 @@ The initial value of \f$ p\f$ is 67111067.
 Moreover, the package introduces the concept `Modularizable`. 
 An algebraic structure `T` is considered as `Modularizable` if there 
 is a mapping from `T` into an algebraic structure that is based on 
-the type `CGAL::Residue`. 
+the type `Residue`. 
 For scalar types, e.g. Integers, this mapping is just the canonical 
-homomorphism into \f$ \Z_{/p\Z}\f$ represented by `CGAL::Residue`. 
+homomorphism into \f$ \Z_{/p\Z}\f$ represented by `Residue`. 
 For compound types, e.g. Polynomials, the mapping is applied to the 
 coefficients of the compound type. 
-The mapping is provided by the class `CGAL::Modular_traits<T>`.
-The class `CGAL::Modular_traits<T>` is designed such that the concept 
+The mapping is provided by the class `Modular_traits<T>`.
+The class `Modular_traits<T>` is designed such that the concept 
 `Modularizable` can be considered as optional, i.e., 
-`CGAL::Modular_traits<T>` provides a tag that can be used for dispatching.
+`Modular_traits<T>` provides a tag that can be used for dispatching.
 
 ## Example ## {#Modular_arithmetic_example}
 
@@ -63,12 +63,12 @@ that the coefficient type is `Modularizable` and that it is not.
 If the type is not `Modularizable` the filter is just not applied and the 
 function returns true. 
 
-Further note that the implementation of class `CGAL::Residue` requires a mantissa 
+Further note that the implementation of class `Residue` requires a mantissa 
 precision according to the IEEE Standard for Floating-Point Arithmetic (IEEE 754). 
 However, on some processors the traditional FPU uses an extended precision. Hence, it 
 is indispensable that the proper mantissa length is enforced before performing 
 any arithmetic operations. Moreover, it is required that numbers are rounded to the 
-next nearest value. This can be ensured using `CGAL::Protect_FPU_rounding` with 
+next nearest value. This can be ensured using `Protect_FPU_rounding` with 
 `CGAL_FE_TONEAREST`, which also enforces the required precision as a side effect.
 
 
@@ -76,7 +76,7 @@ next nearest value. This can be ensured using `CGAL::Protect_FPU_rounding` with
 
 # Design and Implementation History # {#Modular_arithmeticDesign}
 
-The class `CGAL::Residue` is based on the C-code of Sylvain Pion et. al. 
+The class `Residue` is based on the C-code of Sylvain Pion et. al. 
 as it was presented in \cite bepp-sdrns-99.
 
 The remaining part of the package is the result of the integration process

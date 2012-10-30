@@ -20,9 +20,9 @@ which can not be represented.
 
 \hasModel `int` 
 \hasModel `long` 
-\hasModel `CORE::BigInt` 
+\hasModel `CGAL::CORE::BigInt` 
 \hasModel `CGAL::Gmpz` 
-\hasModel `leda::integer` 
+\hasModel `leda_integer` 
 \hasModel `mpz_class` 
 
 The following types are `Modularizable` iff their template arguments are. 

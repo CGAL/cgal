@@ -24,6 +24,9 @@ actions. If a particular feature is not supported nothing is done.
 Note that for example the creation of new halfedges is mandatory for 
 all halfedge data structures and will not appear here again. 
 
+\tparam HDS must be a model of `HalfedgeDS`
+
+
 ### Example ###
 
 The following program fragment illustrates the implementation of a 
@@ -83,8 +86,8 @@ unequal to their respective default construction value. For all
 halfedges `h`: The opposite halfedge is different from `h` and the 
 opposite of the opposite is equal to `h`. The next of the previous 
 halfedge is equal to `h`. For all vertices `v`: the incident vertex 
-of the incident halfedge of`v` is equal to`v`. The halfedges 
-around`v` starting with the incident halfedge of`v` form a cycle. 
+of the incident halfedge of `v` is equal to `v`. The halfedges 
+around `v` starting with the incident halfedge of `v` form a cycle. 
 For all faces `f`: the incident face of the incident halfedge of `f` 
 is equal to `f`. The halfedges around `f` starting with the incident 
 halfedge of `f` form a cycle. Redundancies among internal variables 
@@ -106,7 +109,7 @@ be reached through the faces must be equal to the number of all
 halfedges, i.e., all halfedges surrounding a face must form a single 
 cycle (no holes in faces). 
 <DT><B>Level 4</B><DD> 
-All tests of level 3 and `normalized_border_is_valid`. 
+All tests of level 3 and `normalized_border_is_valid()`. 
 </DL> 
 */
 /// @{
@@ -124,7 +127,7 @@ representation, which is when enumerating all halfedges with the
 halfedge iterator the following holds: The non-border edges precede the 
 border edges. For border edges, the second halfedge is a border halfedge. 
 (The first halfedge may or may not be a border halfedge.) The halfedge 
-iterator `border_halfedges_begin()` denotes the first border 
+iterator `HalfedgeDS::border_halfedges_begin()` denotes the first border 
 edge. If `verbose` is `true`, statistics are written to `cerr`. 
 
 */ 

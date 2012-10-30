@@ -29,7 +29,7 @@ geometric interpretation is added by classes built on top of the
 halfedge data structure. These classes might be more convenient to
 use than the halfedge data structure directly, since the halfedge data
 structure is meant as an implementation layer. See for example the
-`CGAL::Polyhedron_3` class in Chapter \ref chapterPolyhedron.
+`Polyhedron_3` class in Chapter \ref chapterPolyhedron "Polyhedral Surface".
 
 The data structure provided here is also known as the
 FE-structure \cite w-ebdss-85, as
@@ -50,7 +50,7 @@ releases. Files and identifier names are disjoint with the old design
 which allows for both versions to co-exists. However, classes using a
 halfedge data structure can only use one design. For example the
 polyhedral surface `Polyhedron_3` uses by default the new
-design. See Chapter \ref chapterPolyhedron for how to still select
+design. See Chapter \ref chapterPolyhedron "Polyhedral Surface" for how to still select
 the old implementation.
 
 # Software Design # {#HalfedgeDSSoftware}
@@ -61,7 +61,7 @@ the old implementation.
 
 Figure \ref figureHalfedgeDSDesign
 illustrates the responsibilities of the three layers of the software
-design, with the `CGAL::Polyhedron_3` as an example for the top
+design, with the `Polyhedron_3` as an example for the top
 layer. The items provide the space for the information that is
 actually stored, i.e., with member variables and access member
 functions in `Vertex`, `Halfedge`, and `Face`
@@ -85,7 +85,7 @@ also provided to serve as defaults; for polyhedra they provide all
 optional incidences, a three-dimensional point in the vertex type and
 a plane equation in the face type.
 
-The `Halfedge_data_structure`, concept `HalfedgeDS`, is
+The Halfedge data structure concept `HalfedgeDS`, is
 responsible for the storage organization of the items. Currently,
 implementations using internally a bidirectional list or a
 vector are provided. The `HalfedgeDS` defines the handles and iterators
@@ -109,11 +109,11 @@ example, the polyhedron. They add, for example, the Euler operations
 and partial operations from which further Euler operations can be
 built, such as inserting an edge into the ring of edges at a
 vertex. Furthermore, the helper classes contain adaptive
-functionality. For example, if the `prev()` member function is not
-provided for halfedges, the `find_prev()` member function of a helper
+functionality. For example, if the `HalfedgeDSHalfedge::prev()` member function is not
+provided for halfedges, the `HalfedgeDS_items_decorator::find_prev()` member function of a helper
 class searches in the positive direction along the face for the
-previous halfedge. But if the `prev()` member function is provided,
-the `find_prev()` member function simply calls it. This distinction is
+previous halfedge. But if the `HalfedgeDSHalfedge::prev()` member function is provided,
+the `HalfedgeDS_items_decorator::find_prev()` member function simply calls it. This distinction is
 resolved at compile time with a technique called <I>compile-time
 tags</I>, similar to iterator tags in \cite cgal:sl-stl-95.
 
@@ -137,7 +137,7 @@ design.
 
 \anchor sectionHdsExamples
 
-## The Default Halfedge Data Structure ##
+## The %Default Halfedge Data Structure ##
 
 The following example program uses the default halfedge data structure
 and the decorator class. The default halfedge data structure uses a
@@ -153,7 +153,7 @@ of two halfedges, one vertex and two faces, and checks its validity.
 ## A Minimal Halfedge Data Structure ##
 
 The following program defines a minimal halfedge data structure using
-the minimal items class `CGAL::HalfedgeDS_min_items` and a
+the minimal items class `HalfedgeDS_min_items` and a
 list-based halfedge data structure. The result is a data structure
 maintaining only halfedges with next and opposite pointers. No
 vertices or faces are stored. The data structure represents an <I>undirected graph</I>.
@@ -174,7 +174,7 @@ in a consistent, i.e., <I>valid</I>, state.
 
 \cgalexample{HalfedgeDS/hds_prog_vector.cpp}
 
-## Example Adding Color to Faces ##
+## Example Adding %Color to Faces ##
 
 This example re-uses the base class available for faces and adds a
 member variable `color`.
@@ -203,9 +203,9 @@ store this bit as the least significant bit in the next halfedge
 handle. Furthermore, we do not implement a pointer to the previous
 halfedge. What remains are three pointers per halfedge.
 
-\advanced We use the static member function `halfedge_handle()` to convert
+\advanced We use the static member function `HalfedgeDS::halfedge_handle()` to convert
 from pointers to halfedge handles. The same solution can be applied to
-the list-based halfedge data structure `CGAL::HalfedgeDS_list`,
+the list-based halfedge data structure `HalfedgeDS_list`,
 see <TT>examples/HalfedgeDS/hds_prog_compact2.cpp</TT>. Here is the
 example for the vector-based data structure.
 

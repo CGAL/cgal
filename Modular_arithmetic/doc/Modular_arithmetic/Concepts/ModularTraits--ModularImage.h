@@ -8,7 +8,7 @@ with respect to a homomorphism \f$ \varphi\f$ from the
 `ModularTraits::Type` into the `ModularTraits::Residue_type`. 
 
 The homomorphism preserves the mapping of `int` into both types 
-, i.e., \f$ \varphi(Type(i)) == Residue\_type(i)\f$. 
+, i.e., \f$ \varphi(\mathrm{Type}(i)) == \mathrm{Residue\_type}(i)\f$. 
 
 \refines `AdaptableUnaryFunction` 
 

@@ -7,7 +7,7 @@ namespace CGAL {
 
 \author Michael Hoffmann
 
-`CGAL::monotone_matrix_search` and `CGAL::sorted_matrix_search` 
+`monotone_matrix_search()` and `sorted_matrix_search()` 
 are techniques that deal with the problem of efficiently finding
 largest entries in matrices with certain structural properties. Many
 concrete problems can be modelled as matrix search problems, and for
@@ -21,10 +21,10 @@ computing rectangular \f$ p\f$-centers.
 
 In the following program we build a random vector \f$ a = 
 (a_i)_{i = 1,\,\ldots,\,5}\f$ (elements drawn uniformly from \f$ \{ 
-0,\,\ldots,\,99 \}\f$) and construct a Cartesian matrix \f$ M\f$ 
+0,\,\ldots,\,99 \}\f$) and construct a %Cartesian matrix \f$ M\f$ 
 containing as elements all sums \f$ a_i + a_j,\: i,\,j \in 
 \{1,\,\ldots,\,5\}\f$. If \f$ a\f$ is sorted, \f$ M\f$ is sorted as well. So 
-we can apply `sorted_matrix_search` to compute the upper bound 
+we can apply `sorted_matrix_search()` to compute the upper bound 
 for the maximal entry of \f$ a\f$ in \f$ M\f$. 
 
 \cgalexample{Matrix_search/sorted_matrix_search.cpp} 

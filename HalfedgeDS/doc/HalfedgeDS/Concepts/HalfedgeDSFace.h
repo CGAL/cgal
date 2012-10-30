@@ -115,7 +115,7 @@ Halfedge_handle halfedge();
 
 /*! 
 
-incident halfedge that points to `f`. 
+incident halfedge that points to the face. 
 */ 
 Halfedge_const_handle halfedge() const; 
 

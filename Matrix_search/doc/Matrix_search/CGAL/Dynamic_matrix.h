@@ -20,7 +20,7 @@ matrix search.
 ### Implementation ###
 
 All operations take constant time except for 
-`extract_all_even_rows` which needs time linear in the number 
+`extract_all_even_rows()` which needs time linear in the number 
 of rows. 
 
 */
@@ -33,7 +33,7 @@ public:
 
 /*! 
 initializes 
-`d` to `m`. `m` is <I>not</I> copied, we only 
+the dynamic matrix to `m`. `m` is <I>not</I> copied, we only 
 store a reference. 
 */ 
 Dynamic_matrix( const M& m); 
@@ -69,15 +69,15 @@ void replace_column( int old, int new);
 
 /*! 
 returns 
-a new matrix consisting of all rows of `d` with even index, 
-(i.e.\ first row is row \f$ 0\f$ of `d`, second row is row \f$ 2\f$ of 
-`d` etc.). \pre `number_of_rows()` \f$ > 0\f$. 
+a new matrix consisting of all rows of the dynmic matrix with even index, 
+(i.e.\ first row is row \f$ 0\f$ of the dynamic matrix, second row is row \f$ 2\f$ of 
+the dynamic matrix, etc.). \pre `number_of_rows()` \f$ > 0\f$. 
 */ 
 Matrix* extract_all_even_rows() const; 
 
 /*! 
 deletes the 
-rightmost columns, such that `d` becomes quadratic. 
+rightmost columns, such that the dynamic matrix becomes quadratic. 
 \pre `number_of_columns()` \f$ \ge\f$ `number_of_rows()`. \post `number_of_rows()` \f$ ==\f$ `number_of_columns()`. 
 */ 
 void shrink_to_quadratic_size(); 
