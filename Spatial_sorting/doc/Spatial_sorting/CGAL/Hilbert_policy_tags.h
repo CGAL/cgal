@@ -6,30 +6,26 @@ namespace CGAL {
 
 `Hilbert_policy` is a policy class which can be used to parameterize a strategy policy 
 in order to specify the strategy for spatial sorting. 
-`Hilbert_policy<Median>` 
-or 
-`Hilbert_policy<Middle>` 
-can be passed to 
-as parameter to 
-`hilbert_sort` to choose the sorting policy. 
+`Hilbert_policy<Median>`  or  `Hilbert_policy<Middle>` 
+can be passed  as parameter to 
+`hilbert_sort()` to choose the sorting policy. 
 
-### Parameters ###
 
-`Tag` can only be either `Median` or `Middle` currently. 
+\tparam Tag must be either `Median` or `Middle`.
 
 \models ::DefaultConstructible, CopyConstructible 
 
 \sa `Median` 
 \sa `Middle` 
-\sa `Hilbert_sort__median_policy` 
-\sa `Hilbert_sort__middle_policy` 
+\sa `Hilbert_sort_median_policy` 
+\sa `Hilbert_sort_middle_policy` 
 
 */
 template< typename Tag >
 class Hilbert_policy {
 public:
 
-/// @}
+
 
 }; /* end Hilbert_policy */
 } /* end namespace CGAL */
@@ -41,19 +37,9 @@ namespace CGAL {
 
 A typedef to `Hilbert_policy<Median>`. 
 
-\sa `Median` 
-\sa `Middle` 
-\sa `Hilbert_policy` 
-\sa `Hilbert_sort__middle_policy` 
-
 */
 
-class Hilbert_sort_median_policy {
-public:
-
-/// @}
-
-}; /* end Hilbert_sort_median_policy */
+  typedef Hilbert_policy<Median>  Hilbert_sort_median_policy;
 } /* end namespace CGAL */
 
 namespace CGAL {
@@ -63,19 +49,9 @@ namespace CGAL {
 
 A typedef to `Hilbert_policy<Middle>`. 
 
-\sa `Median` 
-\sa `Middle` 
-\sa `Hilbert_sort__median_policy` 
-\sa `Hilbert_policy` 
-
 */
 
-class Hilbert_sort_middle_policy {
-public:
-
-/// @}
-
-}; /* end Hilbert_sort_middle_policy */
+  typedef  Hilbert_policy<Middle> Hilbert_sort_middle_policy;
 } /* end namespace CGAL */
 
 namespace CGAL {
@@ -101,7 +77,6 @@ as parameter to
 class Median {
 public:
 
-/// @}
 
 }; /* end Median */
 } /* end namespace CGAL */
@@ -129,7 +104,6 @@ as parameter to
 class Middle {
 public:
 
-/// @}
 
 }; /* end Middle */
 } /* end namespace CGAL */

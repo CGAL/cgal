@@ -8,10 +8,9 @@ reorder of the keys instead of the points, the comparisons being done on the ass
 In other words, the traits provides to a spatial sort algorithm a point type which is a key, 
 while the actual point type is `Base_traits::Point_d`. 
 
-### Requirements ###
 
-`Base_traits` is a model for `SpatialSortingTraits_d`. 
-`PointPropertyMap` is a model of <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</A> 
+\tparam Base_traits must be a model for `SpatialSortingTraits_d`. 
+\tparam PointPropertyMap must be a model of <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</A> 
 with `Base_traits::Point_d` as `value_type`. 
 
 \models ::SpatialSortingTraits_d 

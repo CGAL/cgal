@@ -141,9 +141,8 @@ as an alternative.
 
 \cgalexample{Spatial_sorting/myPoint.cpp}
 
-## Sorting Arbitrary Types ##
+## Sorting Arbitrary Types ##  {#secsort_any_type}
 
-\anchor secsort_any_type
 The spatial sorting traits class provides a point type and
 functors for comparing, for example, the `x`-coordinates
 of two points.
@@ -157,9 +156,9 @@ which allows to obtain a point from whatever you want to sort.
 
 The following examples illustrate the usage of these traits class adapters.
 
-## Sorting Using Pairs of Points and Integers ##
+## Sorting Using Pairs of Points and Integers ## {#secsort_any_type_2}
 
-\anchor secsort_any_type_2
+
 In this example program, the sorted sequence of points is retrieved 
 using a vector of pairs of points and integers.
 \cgalexample{Spatial_sorting/sp_sort_using_property_map_2.cpp}
