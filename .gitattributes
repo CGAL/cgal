@@ -2305,6 +2305,7 @@ Documentation/Customizations.txt -text
 Documentation/Doxyfile -text
 Documentation/DoxygenLayout.xml -text
 Documentation/DoxygenLayoutPackage.xml -text
+Documentation/TODO.txt -text
 Documentation/biblio/README.txt -text
 Documentation/biblio/cgal_manual.bib -text
 Documentation/biblio/how_to_cite.html -text
