@@ -9,7 +9,7 @@ namespace CGAL {
 \authors Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner
 
 All classes in the \cgal kernel provide input and output operators for
-IO streams. Classes external to \cgal are also supported, by means of `CGAL::oformat` (Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
+IO streams. Classes external to \cgal are also supported, by means of `oformat()` (Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
 The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
 characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw ascii, a raw binary and a
@@ -98,7 +98,7 @@ int main()
 
 \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams
-as `cin`, as well as from `std::istringstream` and `std::ifstream`.
+as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
 The input operator is defined for all classes in the \cgal `Kernel`.
 Let `is` be an input stream.
 
@@ -140,7 +140,7 @@ main()
 
 ## Using Output Formatting ##
 
-To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat` can be used. For types with a `Output_rep` specialization, the respective output routine of `Output_rep` will be called by `oformat`. Otherwise, the stream output operator will be called.
+To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat()` can be used. For types with a `Output_rep` specialization, the respective output routine of `Output_rep` will be called by `oformat()`. Otherwise, the stream output operator will be called.
 
 Example
 --------------
@@ -172,7 +172,7 @@ stream output operator.
 
 Instead of putting `T` directly into an output stream,
 `T` is wrapped into an output representation `Output_rep`. For
-convenience, a function `oformat` exists which constructs an instance
+convenience, a function `oformat()` exists which constructs an instance
 of `Output_rep`.
 
 If you do not specialize `Output_rep` for `T`, `T`'s
