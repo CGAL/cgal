@@ -1403,7 +1403,7 @@ namespace for the XML file to be processed properly.  -->
         <string name="EXAMPLE_PATH">../Convex_hull_2/examples</string>
 
         <list name="FILTER_PATTERNS" append="false">
-          <item>*.txt=./pkglist_filter.sh</item>
+          <item>*.txt=./pkglist_filter</item>
         </list>
         <list name="IMAGE_PATH" append="false">
           <item>./doc/fig</item>

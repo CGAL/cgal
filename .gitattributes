@@ -2353,6 +2353,8 @@ Documentation/hacks.js -text
 Documentation/header.html -text
 Documentation/header_package.html -text
 Documentation/how_to_cite_cgal.bib -text
+Documentation/pkglist_filter -text
+Documentation/pkglist_filter.bat eol=crlf
 Documentation/pkglist_filter.sh -text
 Documentation/resources/ftv2cl.png -text
 Documentation/resources/ftv2cpt.png -text

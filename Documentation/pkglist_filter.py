@@ -6,10 +6,10 @@ import os
 import sys
 
 def main(argv):
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+#    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
     pattern = re.compile(r"\\package_listing{([^}]*)}")
     f = codecs.open(argv[1], 'r', encoding='utf-8')
-    for line in f.readlines():
+    for line in f:
         match = pattern.match(line)
         if(match):
             pkg = match.group(1)
@@ -22,13 +22,13 @@ def main(argv):
                 filename="../" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
             pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
             do_print=False
-            for l in pkgdesc.readlines():
+            for l in pkgdesc:
                 do_print = do_print or re.match(".*PkgDescriptionBegin.*", l)
                 if(do_print):
-                    sys.stdout.write(l)
+                    sys.stdout.write(l.encode('utf-8'))
                 do_print = do_print and (not re.match(".*PkgDescriptionEnd.*", l))
         else:
-            sys.stdout.write(line)
+            sys.stdout.write(line.encode('utf-8'))
 
 if __name__ == "__main__":
     main(sys.argv)
