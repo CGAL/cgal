@@ -2354,6 +2354,9 @@ Documentation/header.html -text
 Documentation/header_package.html -text
 Documentation/how_to_cite_cgal.bib -text
 Documentation/pkglist_filter.sh -text
+Documentation/resources/ftv2cl.png -text
+Documentation/resources/ftv2cpt.png -text
+Documentation/resources/ftv2ns.png -text
 Documentation/stylesheet.css -text
 Documentation/testsuite.py -text
 Envelope_2/doc/Envelope_2/CGAL/Envelope_diagram_1.h -text

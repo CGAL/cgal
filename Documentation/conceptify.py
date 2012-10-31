@@ -26,6 +26,10 @@ import re
 import glob
 from pyquery import PyQuery as pq
 from lxml import etree
+from os import path
+from sys import argv
+from sys import stderr
+import shutil
 
 def conceptify_nested_classes(d):
     # change nested classes to nested concepts
@@ -95,6 +99,11 @@ def re_replace_in_file(pat, s_after, fname):
         out.close()
         os.rename(out_fname, fname)
 
+def is_concept_file(filename):
+  d = pq(filename=filename, parser='html')
+  ident = d('#CGALConcept')
+  return ident.size() == 1
+
 def main():
     parser = argparse.ArgumentParser(
         description='''This script makes adjustments to the doxygen output. 
@@ -103,8 +112,37 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     parser.add_argument('--output', metavar='/path/to/doxygen/output', required=True)
     
     args = parser.parse_args()
+    resources_absdir=path.join( path.dirname(path.abspath(argv[0]) ),"resources")
     os.chdir(args.output)
 
+
+    #replace icons with CGAL colored ones
+    annotated_files=glob.glob('./CGAL.CGAL*/html/annotated.html')
+    for fn in annotated_files:
+      has_concepts=False
+      dir_name=path.dirname(fn)
+      try:
+        shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join(dir_name,"ftv2cl.png"))
+        shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join(dir_name,"ftv2ns.png"))
+        shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join(dir_name,"ftv2cpt.png"))
+      except:
+        stderr.write("Error: Cannot copy resources files\n")
+      d = pq(filename=fn, parser='html')
+      tr_tags = d('table.directory tr')
+      for tr in tr_tags:
+        img_tags=pq(tr)('img')
+        for i in img_tags:
+          img=pq(i)
+          icon_name=img.attr("src")
+          if icon_name=="ftv2cl.png":
+            links=pq(tr)('a.el')
+            if links.size()>0 and is_concept_file( path.join(dir_name,pq(links[0]).attr("href")) ):
+              has_concepts=True
+              img.attr("src","ftv2cpt.png")
+      if has_concepts:
+        write_out_html(d,fn)
+    
+    
     class_files=glob.glob('./CGAL.CGAL.*/html/class*.html')
     for fn in class_files:
         d = pq(filename=fn, parser='html')
