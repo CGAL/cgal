@@ -50,16 +50,16 @@ Mehlhorn and N&auml;her in \cite mn-lpcgc-00.
 In this section we present a generic variant of a two dimensional point set
 data type supporting various geometric queries.
 
-The `CGAL::Point_set_2` class in this section is inherited
+The `Point_set_2` class in this section is inherited
 from the two-dimensional \cgal <I>Delaunay Triangulation</I> data type.
 
-The `CGAL::Point_set_2` class depends on two template parameters `T1` and `T2`.
-They are used as template parameters for the `CGAL::Delaunay_triangulation_2`
-class `CGAL::Point_set_2` is inherited from. `T1` is a model for the
+The `Point_set_2` class depends on two template parameters `T1` and `T2`.
+They are used as template parameters for the `Delaunay_triangulation_2`
+class `Point_set_2` is inherited from. `T1` is a model for the
 geometric traits and `T2` is a model for the triangulation data structure that the Delaunay triangulation
 expects.
 
-The `CGAL::Point_set_2` class supports the following kinds of queries:
+The `Point_set_2` class supports the following kinds of queries:
 <UL>
 <LI>circular range search
 <LI>triangular range search

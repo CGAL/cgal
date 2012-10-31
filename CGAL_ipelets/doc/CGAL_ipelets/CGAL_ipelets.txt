@@ -24,13 +24,13 @@ of ipelets: alpha-shape, arrangements, Voronoi diagrams, convex hulls, Hilbert c
 
 \section seccgal_ipelets CGAL Ipelets 
 
-The class `CGAL::Ipelet_base` derives from the class `Ipelets` from Ipe
+The class `Ipelet_base` derives from the class `Ipelets` from Ipe
 and has one template parameter indicating 
 which kernel must be used within the ipelet. 
-In practice, we recommend to use either `CGAL::Exact_predicates_exact_constructions_kernel`
-or `CGAL::Exact_predicates_inexact_constructions_kernel`.
+In practice, we recommend to use either `Exact_predicates_exact_constructions_kernel`
+or `Exact_predicates_inexact_constructions_kernel`.
 
-Two main methods are provided by the `CGAL::Ipelet_base` class.
+Two main methods are provided by the `Ipelet_base` class.
 The first one, `read_active_objects` retrieves all
 primitives selected in Ipe when calling an ipelet, and converts them into equivalent \cgal objects.
 The second method, `draw_in_ipe` draws \cgal objects in the Ipe
@@ -42,7 +42,7 @@ must follow the definition of the ipelet class, in the same file source file.
 
 # Example # {#CGAL_ipeletsExample}
 
-The following example shows how the class `CGAL::Ipelet_base` can be used to easily
+The following example shows how the class `Ipelet_base` can be used to easily
 interface the \cgal 2D Delaunay triangulation with Ipe.
 
 \cgalexample{CGAL_ipelets/simple_triangulation.cpp}

@@ -219,7 +219,7 @@ public:
 
 # Colors # {#IOstreamColors}
 
-An object of the class `CGAL::Color` is a color available
+An object of the class `Color` is a color available
 for drawing operations in many \cgal output streams.
 
 Each color is defined by a triple of integers `(r,g,b)` with

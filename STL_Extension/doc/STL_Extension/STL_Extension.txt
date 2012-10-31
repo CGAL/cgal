@@ -145,7 +145,7 @@ and `Compact_location` are also provided.
 
 In \cpp, it is possible to specify defaults at the end of a template parameter
 list. Specifying that one wishes to use the default is simply done by omitting
-it. This is however possible only at the end of the list. `CGAL::Default`
+it. This is however possible only at the end of the list. `Default`
 provides a simple mechanism that performs something equivalent anywhere in the
 sequence.
 
@@ -272,8 +272,8 @@ management. Thus, the categories do not apply for static assertions.
 As stated above, if a postcondition, precondition or assertion is
 violated, an exception is thrown, and if nothing is done to catch it,
 the program will abort.
-This behavior can be changed by means of the function `CGAL::set_error_behaviour()`
-and the enum `CGAL::Failure_behaviour`.
+This behavior can be changed by means of the function `set_error_behaviour()`
+and the enum `Failure_behaviour`.
 
 The `THROW_EXCEPTION` value is the default, which throws an exception.
 
@@ -288,9 +288,9 @@ totally disabling them).
 \advanced If the `EXIT_WITH_SUCCESS` value is set, the program will stop and
 return a value corresponding to successful execution and not dump the core.
 
-The value that is returned by `CGAL::set_error_behaviour` is the value that was in use before.
+The value that is returned by `set_error_behaviour()` is the value that was in use before.
 
-For warnings we provide `CGAL::set_warning_behaviour()` which works in the same way.
+For warnings we provide `set_warning_behaviour()` which works in the same way.
 The only difference is that for warnings the default value is
 `CONTINUE`.
 
@@ -314,7 +314,7 @@ The name of a particular module is documented with that module.
 Normally, error messages are written to the standard error output.
 It is possible to do something different with them.
 To that end you can register your own handler using
-`CGAL::set_error_handler(Failure_function handler)`
+`set_error_handler(Failure_function handler)`
 This function should be declared as follows.
 
 

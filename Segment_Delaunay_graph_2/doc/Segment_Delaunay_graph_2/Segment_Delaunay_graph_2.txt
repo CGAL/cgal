@@ -415,7 +415,7 @@ filtering for the predicates involved in the computation of
 segment Delaunay graphs:
 <OL>
 <LI>The user can define his/her kernel using as number type, a
-number type of the form `CGAL::Filtered_exact<CT,ET>`. Then this
+number type of the form `Filtered_exact<CT,ET>`. Then this
 kernel can be entered as the first template parameter in the
 `Segment_Delaunay_graph_2<K,MTag>` or
 `Segment_Delaunay_graph_without_intersections_2<K,MTag>` class.
@@ -442,13 +442,13 @@ Let's consider once more the classes
 The template parameter `MTag` provides another degree of freedom
 to the user, who can indicate the type of arithmetic operations to
 be used in the evaluation of the predicates. More specifically, in
-both classes, `MTag` can be `CGAL::Field_with_sqrt_tag`, in
+both classes, `MTag` can be `Field_with_sqrt_tag`, in
 which case the predicates will be evaluated using all four basic
 arithmetic operations plus square roots; this requires, of course,
 that the number type used in the kernel `K` supports these
-operations exactly. The second choices are `CGAL::Field_tag` for
+operations exactly. The second choices are `Field_tag` for
 the `Segment_Delaunay_graph_2<K,MTag>` class, and
-`CGAL::Euclidean_ring_tag` for the
+`Euclidean_ring_tag` for the
 `Segment_Delaunay_graph_without_intersections_2<K,MTag>`
 class. In the first case we indicate that we want the predicates to be
 computed using only the four basic arithmetic operations, whereas in
@@ -467,10 +467,10 @@ calculations involving each of the corresponding kernels `CK`,
 `FK` and `EK`. When the
 `Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` is
 used the possible values for `CM`, `FM` and `EM` are
-`CGAL::Field_with_sqrt_tag` and `CGAL::Field_tag`, whereas if the 
+`Field_with_sqrt_tag` and `Field_tag`, whereas if the 
 `Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
-class is used, the possible values are `CGAL::Field_with_sqrt_tag` and
-`CGAL::Euclidean_ring_tag`. The semantics are the same as in the case of the 
+class is used, the possible values are `Field_with_sqrt_tag` and
+`Euclidean_ring_tag`. The semantics are the same as in the case of the 
 `Segment_Delaunay_graph_2<K,MTag>` and 
 `Segment_Delaunay_graph_without_intersections_2<K,MTag>` classes.
 

@@ -10,9 +10,8 @@ namespace CGAL {
 
 This chapter describes how to compute the distance between the convex
 hulls of two given point sets in \f$ d\f$-dimensional Euclidean space
-(`CGAL::Polytope_distance_d<Traits>`). Moreover, it is possible to
-compute the width of a point set in three dimensions
-(`CGAL::Width_3<Traits>`).
+(`Polytope_distance_d<Traits>`). Moreover, it is possible to
+compute the width of a point set in three dimensions (`Width_3<Traits>`).
 
 \image html polydist.gif
 

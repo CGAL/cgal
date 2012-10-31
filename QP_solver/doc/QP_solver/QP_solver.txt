@@ -767,14 +767,14 @@ fixed multiples of the numbers in the table below, and they might
 vary with the random choices). The default choice of the pricing 
 strategy in that case is `QP_PARTIAL_FILTERED_DANTZIG`.
 
-strategy                            | runtime in seconds
---------------------------          | ------------------
-`CGAL::QP_CHOOSE_DEFAULT`           | 0.32
-`CGAL::QP_DANTZIG`                  | 10.7
-`CGAL::QP_PARTIAL_DANTZIG`          | 3.72
-`CGAL::QP_BLAND`                    | 3.65
-`CGAL::QP_FILTERED_DANTZIG`         | 0.43
-`CGAL::QP_PARTIAL_FILTERED_DANTZIG` | 0.32
+Strategy                      | Runtime in seconds
+--------------------------    | ------------------
+`QP_CHOOSE_DEFAULT`           | 0.32
+`QP_DANTZIG`                  | 10.7
+`QP_PARTIAL_DANTZIG`          | 3.72
+`QP_BLAND`                    | 3.65
+`QP_FILTERED_DANTZIG`         | 0.43
+`QP_PARTIAL_FILTERED_DANTZIG` | 0.32
 
 We clearly see the effect of filtering: we gain a factor of ten,
 roughly, compared to the next best non-filtered variant.
@@ -785,14 +785,14 @@ The filtering effect is amplified if the points/dimension ratio becomes
 larger. This is what you might see in dimension three, with one million
 points.
 
-strategy                            | runtime in seconds
---------------------------          | ------------------
-`CGAL::QP_CHOOSE_DEFAULT`           | 1.34
-`CGAL::QP_DANTZIG`                  | 47.6
-`CGAL::QP_PARTIAL_DANTZIG`          | 15.6
-`CGAL::QP_BLAND`                    | 16.02
-`CGAL::QP_FILTERED_DANTZIG`         | 1.89
-`CGAL::QP_PARTIAL_FILTERED_DANTZIG` | 1.34
+Strategy                      | Runtime in seconds
+--------------------------    | ------------------
+`QP_CHOOSE_DEFAULT`           | 1.34
+`QP_DANTZIG`                  | 47.6
+`QP_PARTIAL_DANTZIG`          | 15.6
+`QP_BLAND`                    | 16.02
+`QP_FILTERED_DANTZIG`         | 1.89
+`QP_PARTIAL_FILTERED_DANTZIG` | 1.34
 
 In general, if your problem has a high variable/constraint or
 constraint/variable ratio, then filtering will typically pay off. 
@@ -805,14 +805,14 @@ see the issue discussed in Section \ref secQPcustomizationfiltering).
 Conversely, the filtering effect deteriorates if the points/dimension ratio 
 becomes smaller.
 
-strategy                            | runtime in seconds
---------------------------          | ------------------
-`CGAL::QP_CHOOSE_DEFAULT`           | 3.05
-`CGAL::QP_DANTZIG`                  | 78.4
-`CGAL::QP_PARTIAL_DANTZIG`          | 45.9
-`CGAL::QP_BLAND`                    | 33.2
-`CGAL::QP_FILTERED_DANTZIG`         | 3.36
-`CGAL::QP_PARTIAL_FILTERED_DANTZIG` | 3.06
+Strategy                      | Runtime in seconds
+--------------------------    | ------------------
+`QP_CHOOSE_DEFAULT`           | 3.05
+`QP_DANTZIG`                  | 78.4
+`QP_PARTIAL_DANTZIG`          | 45.9
+`QP_BLAND`                    | 33.2
+`QP_FILTERED_DANTZIG`         | 3.36
+`QP_PARTIAL_FILTERED_DANTZIG` | 3.06
 
 ## \f$ d=500\f$, \f$ n=1,000\f$ ##
 
@@ -821,14 +821,14 @@ longer a clear winner. The reason is that in this case,
 the necessary exact calculations with multiprecision numbers
 dominate the overall runtime.
 
-strategy                            | runtime in seconds
---------------------------          | ------------------
-`CGAL::QP_CHOOSE_DEFAULT`           | 2.65
-`CGAL::QP_DANTZIG`                  | 5.55
-`CGAL::QP_PARTIAL_DANTZIG`          | 5.6
-`CGAL::QP_BLAND`                    | 4.46
-`CGAL::QP_FILTERED_DANTZIG`         | 2.65
-`CGAL::QP_PARTIAL_FILTERED_DANTZIG` | 2.61
+Strategy                      | Runtime in seconds
+--------------------------    | ------------------
+`QP_CHOOSE_DEFAULT`           | 2.65
+`QP_DANTZIG`                  | 5.55
+`QP_PARTIAL_DANTZIG`          | 5.6
+`QP_BLAND`                    | 4.46
+`QP_FILTERED_DANTZIG`         | 2.65
+`QP_PARTIAL_FILTERED_DANTZIG` | 2.61
 
 In general, if you have a program where the number of variables
 and the number of constraints have the same order of magnitude, then 

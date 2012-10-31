@@ -916,7 +916,7 @@ handle intersecting input constraints. One of them
 is designed to be designed to be robust
 when used in conjunction with a geometric traits
 providing exact predicates and approximate constructions
-(such as a `CGAL::Filtered_kernel` or any kernel providing
+(such as a `Filtered_kernel` or any kernel providing
 filtered exact predicates). The third version is designed to be used
 with an exact arithmetic number type.
 
@@ -929,9 +929,9 @@ As in the case of constraints triangulation, the third parameter
 `Itag` is the intersection tag
 and serves to choose how intersecting constraints
 are dealt with. It can be instantiated with one of the following
-classes: `CGAL::No_intersection_tag`,
-`CGAL::Exact_predicates_tag`,
-`CGAL::Exact_intersections_tag` 
+classes: `No_intersection_tag`,
+`Exact_predicates_tag`,
+`Exact_intersections_tag` 
 (see Section \ref Section_2D_Triangulations_Constrained).
 
 A constrained Delaunay triangulation is not a Delaunay
@@ -1019,7 +1019,7 @@ constrained edge, the set of input constraints that overlap it.
 The class `Constrained_triangulation_plus_2<Tr>`
 is especially useful when the base constrained triangulation class
 handles intersections of constraints and uses an exact number type,
-i.e. when its intersection tag is `CGAL::Exact_intersections_tag`.
+i.e. when its intersection tag is `Exact_intersections_tag`.
 Indeed in this case, the `Constrained_triangulation_plus_2<Tr>`
 is specially designed to avoid cascading in the computations of
 intersection points.

@@ -286,7 +286,7 @@ If the user does not need to add a type in a vertex that depends on the
 `TriangulationDataStructure_3` (e.g. a `Vertex_handle` or
 `Cell_handle`), then he can use the
 `Triangulation_vertex_base_with_info_3` class to add his own information
-easily in the vertices. The example below shows how to add a `CGAL::Color`
+easily in the vertices. The example below shows how to add a `Color`
 this way.
 
 \cgalexample{Periodic_3_triangulation_3/colored_vertices.cpp}

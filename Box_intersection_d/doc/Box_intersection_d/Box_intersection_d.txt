@@ -53,8 +53,8 @@ interpretation when comparing boxes, which is selected with the two
 possible values for the `topology` parameter:
 
 <UL>
-<LI>`CGAL::Box_intersection_d::HALF_OPEN` and
-<LI>`CGAL::Box_intersection_d::CLOSED`.
+<LI>`Box_intersection_d::HALF_OPEN` and
+<LI>`Box_intersection_d::CLOSED`.
 </UL>
 
 The number type of the interval boundaries must be one of the built-in
@@ -132,8 +132,8 @@ to the box type (see the previous paragraph for the value versus
 pointer nature of the box handle).
 
 Two implementations of iso-oriented boxes are provided;
-`CGAL::Box_intersection_d::Box_d` as a plain box, and
-`CGAL::Box_intersection_d::Box_with_handle_d` as a box plus a
+`Box_intersection_d::Box_d` as a plain box, and
+`Box_intersection_d::Box_with_handle_d` as a box plus a
 handle that can be used to point to the full geometry that is
 approximated by the box. Both implementations have template parameters
 for the number type used for the interval bounds, for the fixed
@@ -170,8 +170,8 @@ void box_intersection_d(RandomAccessIterator1 begin1, RandomAccessIterator1 end1
 \section secboxintersectminimal Minimal Example for Intersecting Boxes 
 
 The box implementation provided with
-`CGAL::Box_intersection_d::Box_d<double,2>` has a dedicated
-constructor for the \cgal bounding box type `CGAL::Bbox_2`
+`Box_intersection_d::Box_d<double,2>` has a dedicated
+constructor for the \cgal bounding box type `Bbox_2`
 (similar for dimension 3). We use this in our minimal example to
 create easily nine two-dimensional `boxes` in a grid layout of \f$ 3
 \times 3\f$ boxes. Additionally we pick the center box and the box in
@@ -204,7 +204,7 @@ triangles in a vector called `triangles`.
 Next we create a vector for the bounding boxes of the triangles called
 `boxes`. For the boxes we choose the type
 `Box_with_handle_d<double,3,Iterator>` that works nicely together
-with the \cgal bounding boxes of type `CGAL::Bbox_3`. In
+with the \cgal bounding boxes of type `Bbox_3`. In
 addition, each box stores the iterator to the corresponding triangle.
 
 The default policy of this box type uses for the `id`-number the 
@@ -283,7 +283,7 @@ version above that copies the boxes becomes 300% faster.
 
 Note that switching to the built-in type `float` is supported by
 the box intersection algorithm, but the interfacing with the \cgal 
-bounding box `CGAL::Bbox_3` would not be that easy. In particular,
+bounding box `Bbox_3` would not be that easy. In particular,
 just converting from the `double` to the `float`
 representation incurs rounding that needs to be controlled properly,
 otherwise the box might shrink and one might miss intersections.
@@ -299,8 +299,8 @@ closed or half-open boxes is selected with the `topology`
 parameter and its two values:
 
 <UL>
-<LI>`CGAL::Box_intersection_d::HALF_OPEN` and
-<LI>`CGAL::Box_intersection_d::CLOSED`.
+<LI>`Box_intersection_d::HALF_OPEN` and
+<LI>`Box_intersection_d::CLOSED`.
 </UL>
 
 The example program uses a two-dimensional box with `int`

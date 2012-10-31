@@ -307,7 +307,7 @@ The following example program uses the predefined `Range_tree_2` data structure 
 class `Range_tree_map_traits_2` which has two template
 arguments specifying the
 type of the point data in each dimension
-(`CGAL::Cartesian<double>`) and the value type of the
+(`Cartesian<double>`) and the value type of the
 2-dimensional point data (`char`). Therefore the `Range_tree_2` is defined on 2-dimensional point data each of which is
 associated with a character.
 Then, a few data items are created and put into a list. After
@@ -440,7 +440,7 @@ the number of reported intervals.
 
 One possible application of a two-dimensional segment tree is the
 following. Given a set of convex polygons in two-dimensional
-space (CGAL::Polygon_2), we want to determine all polygons
+space (Polygon_2), we want to determine all polygons
 that intersect a given rectangular query window. Therefore, we define a
 two-dimensional segment tree, where the two-dimensional interval of
 a data item corresponds to the bounding box of a polygon and the
@@ -455,9 +455,9 @@ The following example program uses the predefined `Segment_tree_2` data structur
 class `Segment_tree_map_traits_2` which has two template arguments
 specifying the
 type of the point data in each dimension
-(`CGAL::Cartesian<double>`) and the value type of the
+(`Cartesian<double>`) and the value type of the
 2-dimensional point data (`char`). Therefore the `Segment_tree_2` is defined on 2-dimensional point data
-(`CGAL::Point_2<Cartesian<double> >`) each of which is
+(`Point_2<Cartesian<double> >`) each of which is
 associated with a character.
 Then, a few data items are created and put into a list. After
 that the tree is constructed according to that list, a window

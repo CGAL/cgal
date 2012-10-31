@@ -156,7 +156,7 @@ Streamlines are represented as polylines, and are obtained by
 iterative integration from the seed point. A polyline is represented as a range of points. The computation is
 processed via a list of Delaunay triangulation vertices.
 
-To implement the triangular grid, the class `CGAL::Delaunay_triangulation_2` is used. The priority queue used
+To implement the triangular grid, the class `Delaunay_triangulation_2` is used. The priority queue used
 to store candidate seed points is taken from the Standard Template
 Library \cite cgal:sgcsi-stlpg-97.
 

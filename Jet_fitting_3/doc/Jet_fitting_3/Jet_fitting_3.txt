@@ -226,7 +226,7 @@ In addition, the class `Monge_via_jet_fitting` stores
 This concept provides the types for the input sample points, together
 with \f$ 3d\f$ vectors and a number type. It is used as template for the
 class `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. Typically, one can use
-`CGAL::Cartesian<double>`.
+`Cartesian<double>`.
 
 ## Template parameter LocalKernel ##
 
@@ -240,7 +240,7 @@ Input points of type
 `LocalKernel::Point_3`. For output of the `Monge_via_jet_fitting::Monge_form` class,
 these types are converted back to `DataKernel` ones. Typically,
 one can use
-`CGAL::Cartesian<double>` which is the default.
+`Cartesian<double>` which is the default.
 
 ## Template parameter SvdTraits ##
 
@@ -253,14 +253,14 @@ operations required by the fitting method in
 
 To solve the fitting problem, the sample points are first converted
 from the `DataKernel` to the `LocalKernel` (this is done using
-the `CGAL::Cartesian_converter`). Then change of coordinate
+the `Cartesian_converter`). Then change of coordinate
 systems and linear algebra operations are performed with this
 kernel. This implies that the number types `LocalKernel::FT` and
 `SvdTraits::FT` must be identical.
 Second the Monge basis and coefficients, computed with the
 `LocalKernel`, are converted back to the `DataKernel` 
-(this is done using the `CGAL::Cartesian_converter` and the
-`CGAL::NT_converter`).
+(this is done using the `Cartesian_converter` and the
+`NT_converter`).
 
 # Examples # {#Jet_fitting_3Examples}
 

@@ -297,8 +297,8 @@ The following example gives a first impression of how to instantiate
 and use `Nef_polyhedron_3`. We use the `Cartesian`
 kernel. All %Cartesian and homogeneous kernels of \cgal are suitable
 if the number type parameter follows the usual requirements of being a
-model of the `CGAL::FieldNumberType` concept for the %Cartesian
-kernels, or the `CGAL::RingNumberType` concept for the homogeneous
+model of the `FieldNumberType` concept for the %Cartesian
+kernels, or the `RingNumberType` concept for the homogeneous
 kernels, respectively. Note however, that in the current state, the
 Nef polyhedron works only with \cgal kernels. The implementation
 makes use of \cgal specific functions in kernel objects, and does not

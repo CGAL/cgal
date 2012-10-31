@@ -103,7 +103,7 @@ First of all the type `AlgebraicKernel_d_1::Polynomial_1` is required
 to be a model of the concept `Polynomial_1`, which is defined
 in the Polynomial package (see chapter \ref Chapter_Polynomial).
 This implies that all essential functionality is provided via
-`CGAL::Polynomial_traits_d`. However, the algebraic kernel also
+`Polynomial_traits_d`. However, the algebraic kernel also
 provides several function objects to handle polynomials:
 
 `AlgebraicKernel_d_1::Is_square_free_1` - determines whether a polynomial is square free,
@@ -122,7 +122,7 @@ allows for instance internal caching by the kernel.
 
 Also note that `AlgebraicKernel_d_1::Square_free_factorize_1` only computes the square free 
 factorization up to a constant factor. This is a slight modification with respect to its 
-counterpart in `CGAL::Polynomial_traits_d`. In this way it was possible that the concepts just require 
+counterpart in `Polynomial_traits_d`. In this way it was possible that the concepts just require 
 the coefficient type to be a model of `IntegralDomain`, instead of `Field` or `UniqueFactorizationDomain`. 
 For more details see also:
 
@@ -239,13 +239,13 @@ additional functors that may allow a model to bypass this issue:
 ## Generic Algebraic Kernels ##
 
 The package provides generic models of the univariate and bivariate algebraic 
-kernel, namely `CGAL::Algebraic_kernel_d_1<Coeff>` and `CGAL::Algebraic_kernel_d_2<Coeff>`,
+kernel, namely `Algebraic_kernel_d_1<Coeff>` and `Algebraic_kernel_d_2<Coeff>`,
 respectively. Both kernels support a large set of number types as their 
 template argument, which defines the supported coefficient type. The supported 
-types are, for instance, `CGAL::Gmpz` and `CGAL::Gmpq` as well as the corresponding types
+types are, for instance, `Gmpz` and `Gmpq` as well as the corresponding types
 of LEDA and CORE.
 
-The `CGAL::Algebraic_kernel_d_1<Coeff>` represents an algebraic real root by a square 
+The `Algebraic_kernel_d_1<Coeff>` represents an algebraic real root by a square 
 free polynomial and an isolating interval that uniquely defines the root. 
 The current method to isolate roots is the Bitstream Descartes
 method \cite eigenwillig-phd-08. 
@@ -253,7 +253,7 @@ The used method to refine the approximation of an algebraic real root is a
 slightly modified (filtered) version of the one presented in \cite abbott-qir-06. 
 The method has quadratic convergence.
 
-`CGAL::Algebraic_kernel_d_2<Coeff>` is based on an algorithm computing a 
+`Algebraic_kernel_d_2<Coeff>` is based on an algorithm computing a 
 geometric-topological analysis of a single curve \cite ekw-fast-07 and of a
 pair of curves \cite ek-exact-08.
 The main idea behind both analyses is to compute the critical
@@ -286,19 +286,19 @@ time-consuming step, and should be avoided for efficiency reasons if possible.
 ## Algebraic Kernels Based on RS ##
 
 The package offers two univariate algebraic kernels that are based on 
-the library RS \cite cgal:r-rs, namely `CGAL::Algebraic_kernel_rs_gmpz_d_1`
-and `CGAL::Algebraic_kernel_rs_gmpq_d_1`. As the names indicate, 
+the library RS \cite cgal:r-rs, namely `Algebraic_kernel_rs_gmpz_d_1`
+and `Algebraic_kernel_rs_gmpq_d_1`. As the names indicate, 
 the kernels are based on the library RS \cite cgal:r-rs and support univariate 
-polynomials over `CGAL::Gmpz` or `CGAL::Gmpq`, respectively.
+polynomials over `Gmpz` or `Gmpq`, respectively.
 
-In general we encourage to use `CGAL::Algebraic_kernel_rs_gmpz_d_1`
-instead of `CGAL::Algebraic_kernel_rs_gmpq_d_1`. This is caused by
+In general we encourage to use `Algebraic_kernel_rs_gmpz_d_1`
+instead of `Algebraic_kernel_rs_gmpq_d_1`. This is caused by
 the fact that the most efficient way to compute operations (such as gcd)
 on polynomials with rational coefficients is to use the corresponding
 implementation for polynomials with integer coefficients. That is,
-the `CGAL::Algebraic_kernel_rs_gmpq_d_1` is slightly slower due to
+the `Algebraic_kernel_rs_gmpq_d_1` is slightly slower due to
 overhead caused by the necessary conversions. However, since this may
-not always be a major issue, the `CGAL::Algebraic_kernel_rs_gmpq_d_1`
+not always be a major issue, the `Algebraic_kernel_rs_gmpq_d_1`
 is provided for convenience.
 
 The core of both kernels is the implementation of the interval Descartes 
@@ -311,9 +311,9 @@ interfaces between layers. Specifically, working with
 only one number type allows to optimize some polynomial operations
 as well as memory handling. The implementation of these kernels
 make heavy use of the <span class="textsc">Mpfr</span> \cite cgal:mt-mpfr and <span class="textsc">Mpfi</span> \cite cgal:r-mpfi
-libraries, and of their \cgal interfaces, `CGAL::Gmpfr` and `CGAL::Gmpfi`.
+libraries, and of their \cgal interfaces, `Gmpfr` and `Gmpfi`.
 The algebraic numbers (roots of the polynomials) are represented
-in the two RS kernels by a `CGAL::Gmpfi` interval and a pointer to
+in the two RS kernels by a `Gmpfi` interval and a pointer to
 the polynomial of which they are roots. See \cite cgal:lpt-wea-09 
 for more details on the implementation, tests of these kernels,
 comparisons with other algebraic kernels and discussions about the
@@ -371,7 +371,7 @@ initial contributions.
 The two generic models where initially developed as part of the <span class="textsc">Exacus</span> \cite beh+-eeeafcs-05 project. 
 However, the models are now fully integrated into the \cgal library, 
 since also the relevant layers of <span class="textsc">Exacus</span> are now part of \cgal.
-The main authors for `CGAL::Algebraic_kernel_d_1<Coeff>` and `CGAL::Algebraic_kernel_d_2<Coeff>` are 
+The main authors for `Algebraic_kernel_d_1<Coeff>` and `Algebraic_kernel_d_2<Coeff>` are 
 Michael Hemmer and Michael Kerber, respectively. Notwithstanding, the authors also want to emphasize the 
 contribution of all authors of the <span class="textsc">Exacus</span> project, 
 particularly the contribution of Arno Eigenwillig, Sebastian Limbach and Pavel Emeliyanenko.

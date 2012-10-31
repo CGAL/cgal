@@ -18,7 +18,7 @@ then we obtain the smallest enclosing sphere problem already mentioned
 above.
 
 In the following example a smallest enclosing circle
-(`CGAL::Min_circle_2<Traits>`) is constructed from points 
+(`Min_circle_2<Traits>`) is constructed from points 
 on a line and written to standard output. The example
 shows that it is advisable to switch on random shuffling 
 in order to deal with a <i>bad</i> order of the input points. 
@@ -26,16 +26,16 @@ in order to deal with a <i>bad</i> order of the input points.
 \cgalexample{Min_circle_2/min_circle_2.cpp}
 
 Other classes for which we provide solutions are ellipses
-(`CGAL::Min_ellipse_2<Traits>`), rectangles
-(`CGAL::min_rectangle_2`), parallelograms
-(`CGAL::min_parallelogram_2`) and strips (`CGAL::min_strip_2`)
+(`Min_ellipse_2<Traits>`), rectangles
+(`min_rectangle_2()`), parallelograms
+(`min_parallelogram_2()`) and strips (`min_strip_2()`)
 in the plane, with appropriate optimality criteria. For arbitrary
 dimensions we provide smallest enclosing spheres for points
-(`CGAL::Min_sphere_d<Traits>`) and spheres for spheres
-(`CGAL::Min_sphere_of_spheres_d<Traits>`), smallest enclosing
-annuli (`CGAL::Min_annulus_d<Traits>`), and approximate
+(`Min_sphere_d<Traits>`) and spheres for spheres
+(`Min_sphere_of_spheres_d<Traits>`), smallest enclosing
+annuli (`Min_annulus_d<Traits>`), and approximate
 minimum-volume enclosing ellipsoid with user-specified
-approximation ratio (`CGAL::Approximate_min_ellipsoid_d<Traits>`).
+approximation ratio (`Approximate_min_ellipsoid_d<Traits>`).
 
 \image html annulus.gif
 
@@ -75,7 +75,7 @@ more advanced bounding volumes might give better results in some
 cases. It can also make sense to consider several center points
 instead of just one. For example, we provide algorithms to cover a
 planar point set with between two and four minimal boxes
-(`CGAL::rectangular_p_center_2`). Below is an example covering with
+(`rectangular_p_center_2()`). Below is an example covering with
 three boxes; the center points are shown in red.
 
 \image html pcenter.gif

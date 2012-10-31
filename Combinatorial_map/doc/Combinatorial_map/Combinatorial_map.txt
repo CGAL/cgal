@@ -1360,9 +1360,11 @@ the darts of the two triangles are all 2-free. In the 4D case, the
 In this example, we also illustrate how to use the basic methods to
 build "by hand" some specific configuration in a combinatorial map. In
 fact, these functions are already present in the package: function
-`make_triangle(cm)` is equivalent to
-`CGAL::make_combinatorial_polygon(cm,3)` and `make_tetrahedron(cm)` is
-equivalent to `CGAL::make_combinatorial_tetrahedron(cm)`. If we want
+\link make_triangle() `make_triangle(cm)` \endlink is equivalent to
+\link make_combinatorial_polygon() `make_combinatorial_polygon(cm,3)`\endlink 
+and \link make_tetrahedron() `make_tetrahedron(cm)` \endlink is
+equivalent to \link make_combinatorial_tetrahedron() `make_combinatorial_tetrahedron(cm)`\endlink. 
+If we want
 to create a 4D simplex, we must create five 3D simplexes, and sew them
 correctly two by two by \f$ \beta_3\f$ (and so on if you want to
 create higher dimensional combinatorial map).
@@ -1378,8 +1380,8 @@ The output is:
 
 In the following example, we illustrate how to specify the
 2-attributes in a 3D combinatorial map. For that, we define our own
-item class using `CGAL::Dart<3,CMap>` as type of dart, and
-`CGAL::Cell_attribute<CMap,int,CGAL::Tag_true,Sum_functor,Divide_by_two_functor>`
+item class using `Dart<3,CMap>` as type of dart, and
+\link Cell_attribute `Cell_attribute<CMap,int,Tag_true,Sum_functor,Divide_by_two_functor>`\endlink
 as attributes which contain an `int` and which are associated to
 2-cells of the combinatorial map.
 
@@ -1405,7 +1407,7 @@ cube with an attribute having 13 as value. During the `cm.sew<3>`, two
 two associated 2-attributes, and the value of the new 2-cell is the
 sum of the two previous one: 20.
 
-Then we call `CGAL::insert_cell_0_in_cell_2` on a dart which belong to
+Then we call `insert_cell_0_in_cell_2()` on a dart which belong to
 this 2-cell. This method splits the existing 2-cell in <I>k</I>
 2-cells, <I>k</I> being the number of 1-cells of the initial 2-cell (4
 in this example). These splits are made consecutively, thus for the

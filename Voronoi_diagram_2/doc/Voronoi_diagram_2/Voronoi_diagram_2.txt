@@ -292,8 +292,8 @@ specifically it defines an `Edge_rejector` and a
 `Face_rejector` functor that answer the question: "Should this
 edge (face) of the Voronoi diagram be rejected?". In addition to the
 edge and face rejectors the adaptation policy defines a tag, the
-`Has_inserter` tag. This tag is either set to `CGAL::Tag_true`
-or to `CGAL::Tag_false`. Semantically it determines if the adaptor
+`Has_inserter` tag. This tag is either set to \tag_true
+or to \tag_false. Semantically it determines if the adaptor
 is allowed to insert sites in an on-line fashion (on-line removals are
 not yet supported). In the former case, i.e., when on-line site
 insertions are allowed, an additional functor is required, the
@@ -312,7 +312,7 @@ Delaunay graph. The Voronoi diagram provided by the adaptor is the
 true dual (from the graph-theoretical point of view) of the
 triangulated Delaunay graph adapted. This policy assumes that the
 Delaunay graph adapted allows for on-line insertions, and the
-`Has_inserter` tag is set to `CGAL::Tag_true`. A default site
+`Has_inserter` tag is set to `Tag_true`. A default site
 inserter functor is also provided.
 
 The second type of policy we provide is called
@@ -381,9 +381,9 @@ modifications.
 The way we indicate if we allow on-line insertions of sites is via the
 `Has_inserter` tag (as mentioned, on-line removals are currently not
 supported). The `Has_inserter` tag has two possible values,
-namely, `CGAL::Tag_true` and `CGAL::Tag_false`. The value
-`CGAL::Tag_true` indicates that the Delaunay graph allows for
-on-line insertions, whereas the value `CGAL::Tag_false` indicates
+namely, `Tag_true` and `Tag_false`. The value
+`Tag_true` indicates that the Delaunay graph allows for
+on-line insertions, whereas the value `Tag_false` indicates
 the opposite. Note that these values <I>do not</I> indicate if the
 Delaunay graph supports on-line insertions, but rather whether the
 Voronoi diagram adaptor should be able to perform on-line insertions
@@ -394,14 +394,14 @@ non-mutable, the Voronoi diagram adaptor cannot perform on-line
 insertions of sites. In this case not only degeneracy removal
 policies, but rather every single adaptation policy for
 adapting the Delaunay graph in question should have the
-`Has_inserter` tag set to `CGAL::Tag_false`.
+`Has_inserter` tag set to `Tag_false`.
 
 If the Delaunay graph is mutable, i.e., on-line site insertions as are
 allowed, we can choose between two types of adaptation policies, those
 that allow these on-line insertions and those that do not. In the
 former case the `Has_inserter` tag should be set to
-`CGAL::Tag_true`, whereas in the latter to
-`CGAL::Tag_false`. In other words, even if the Delaunay graph is
+`Tag_true`, whereas in the latter to
+`Tag_false`. In other words, even if the Delaunay graph is
 mutable, we can choose (by properly determining the value of the
 `Has_inserter` tag) if the adaptor should be mutable as well. At a
 first glance it may seem excessive to restrict existing
@@ -418,9 +418,9 @@ results, and ideally we would like to do this in an efficient manner.
 The inherent dilemma in the above discussion is whether the Voronoi
 diagram adaptor should be able to perform on-line insertions of
 sites. The answer to this question in this framework is given by the
-`Has_inserter` tag. If the tag is set to `CGAL::Tag_false` the
+`Has_inserter` tag. If the tag is set to `Tag_false` the
 adaptor cannot insert sites on-line, whereas if the tag is set to
-`CGAL::Tag_true` the adaptor can add sites on-line. In other
+`Tag_true` the adaptor can add sites on-line. In other
 words, the `Has_inserter` tag determines how the Voronoi diagram
 adaptor should behave, and this is enough from the adaptor's point of
 view.
@@ -430,7 +430,7 @@ there: "Should the policy allow for on-line insertions or not?" The
 answer really depends on what are the consequences of such a
 choice. For a policy that has no state, such as our degeneracy removal
 policies, it is natural to set the `Has_inserter` tag to
-`CGAL::Tag_true`. For our caching degeneracy removal policies, our
+`Tag_true`. For our caching degeneracy removal policies, our
 choice was made on the grounds of whether we can update the cached
 results efficiently when insertions are performed. For \cgal's
 Apollonius graphs, Delaunay triangulation and regular triangulations

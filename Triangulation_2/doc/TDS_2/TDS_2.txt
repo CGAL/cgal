@@ -144,8 +144,7 @@ see Figure \ref TDS_2D_Fig_insertion,
 
 \section TDS_2D_default The Default Triangulation Data Structure 
 
-\cgal provides the class
-`CGAL::Triangulation_data_structure_2<Vb,Fb>`
+\cgal provides the class `Triangulation_data_structure_2<Vb,Fb>`
 as a default triangulation data structure.
 
 ## Flexibility ##

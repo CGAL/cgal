@@ -811,8 +811,8 @@ file `point_location_utils.h`, accepts a point-location object
 (whose type can be any of the models to the
 `ArrangementPointLocation_2` concept) and a query point, and
 prints out the result of the point-location query for the given
-point. Observe how we use the function `CGAL::assign()` is order
-to cast the resulting `CGAL::Object` into a handle to an arrangement
+point. Observe how we use the function `assign()` is order
+to cast the resulting `Object` into a handle to an arrangement
 feature. The point-location object `pl` is assumed to be already
 associated with an arrangement:
 
@@ -2600,7 +2600,7 @@ algebraic curves).
 The template argument `Coefficient` determines 
 the type of the scalar coefficients of the polynomial. 
 Currently supported types are `leda_integer`, `CORE::BigInt`, 
-and any instance of `CGAL::Sqrt_extension<A,B>` 
+and any instance of `Sqrt_extension<A,B>` 
 instantiated with one of the integral types above.
 
 The traits class defines a type `Curve_2` for algebraic curves.

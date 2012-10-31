@@ -16,8 +16,8 @@ computing maximal inscribed \f$ k\f$-gons (triangles, quadrilaterals,
 \f$ \dots\f$ ) of a planar point set \f$ P\f$. Maximal \f$ k\f$-gons are convex, and it
 is known that their vertices can be chosen to be vertices of the
 convex hull of \f$ P\f$. Hence, the functions
-`CGAL::maximum_area_inscribed_k_gon_2` and
-`CGAL::maximum_perimeter_inscribed_k_gon_2` operate on convex polygons
+`maximum_area_inscribed_k_gon_2()` and
+`maximum_perimeter_inscribed_k_gon_2()` operate on convex polygons
 only. The example below shows that the largest area triangle (green)
 and the largest perimeter triangle (orange, containing the top point)
 of a point set are different in general.
@@ -40,7 +40,7 @@ allows to increase it easily.
 We further provide an algorithm for computing the maximal area
 inscribed axis parallel rectangle for a point set.
 
-Given a set of points in the plane, the class `CGAL::Largest_empty_iso_rectangle_2<T>`
+Given a set of points in the plane, the class `Largest_empty_iso_rectangle_2<T>`
 is a data structure that maintains an iso-rectangle with the largest area among
 all iso-rectangles that are inside a given iso-rectangles, and
 that do not contain any point of the point set.

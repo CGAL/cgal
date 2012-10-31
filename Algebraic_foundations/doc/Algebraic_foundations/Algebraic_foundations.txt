@@ -190,19 +190,19 @@ functions or just via implicit constructor calls.
 This level of interoperability is reflected by the concept 
 `ImplicitInteroperable`. However, within template code the result type, 
 or so called coercion type, of a mixed arithmetic operation may be unclear.
-Therefore, the package introduces `CGAL::Coercion_traits`
-giving access to the coercion type via `CGAL::Coercion_traits<A,B>::Type`
+Therefore, the package introduces `Coercion_traits`
+giving access to the coercion type via `Coercion_traits<A,B>::Type`
 for two interoperable types `A` and `B`.
 
 Some trivial example are `int` and `double` with coercion type double 
-or `CGAL::Gmpz` and `CGAL::Gmpq` with coercion type `CGAL::Gmpq`.
+or `Gmpz` and `Gmpq` with coercion type `Gmpq`.
 However, the coercion type is not necessarily one of the input types,
 e.g. the coercion type of a polynomial 
 with integer coefficients that is multiplied by a rational type 
 is supposed to be a polynomial with rational coefficients.
 
-`CGAL::Coercion_traits` is also
-required to provide a functor `CGAL::Coercion_traits<A,B>::Cast()`, that 
+`Coercion_traits` is also
+required to provide a functor `Coercion_traits<A,B>::Cast()`, that 
 converts from an input type into the coercion type. This is in fact the core
 of the more basic concept `ExplicitInteroperable`. 
 `ExplicitInteroperable` has been introduced to cover more complex cases 
@@ -242,11 +242,11 @@ denominator and a compound numerator with a simpler coefficient type
 (e.g. integer instead of rational). Often operations can be performed faster on 
 these denominator-free multiples. In case a type is a `Fraction` 
 the relevant functionality as well as the numerator and denominator 
-type are provided by `CGAL::Fraction_traits`. In particular 
-`CGAL::Fraction_traits` provides a tag `Is_fraction` that can be
+type are provided by `Fraction_traits`. In particular 
+`Fraction_traits` provides a tag `Is_fraction` that can be
 used for dispatching.
 
-A related class is `CGAL::Rational_traits` which has been kept for backward 
+A related class is `Rational_traits` which has been kept for backward 
 compatibility reasons. However, we recommend to use `Fraction_traits` since
 it is more general and offers dispatching functionality.
 

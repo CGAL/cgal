@@ -286,7 +286,7 @@ not.
 \image html apollonius-vertex_conflict-false.gif
 \image html apollonius-vertex_conflict-true.gif
 <center><b>
-The `Vertex_conflict_2` predicate. The left-most, bottom-most and top-most circles define the tritangent circle in the middle. We want to determine the sign of the distance of the left-most circle from the one in the middle. The almost horizontal curve is the bisector of the top-most and bottom-most circles. Left: the predicate returns `CGAL::NEGATIVE`. Right: the predicate returns `CGAL::POSITIVE`.
+The `Vertex_conflict_2` predicate. The left-most, bottom-most and top-most circles define the tritangent circle in the middle. We want to determine the sign of the distance of the left-most circle from the one in the middle. The almost horizontal curve is the bisector of the top-most and bottom-most circles. Left: the predicate returns `NEGATIVE`. Right: the predicate returns `POSITIVE`.
 </b></center>
 
 What we essentially want to compute when we construct incrementally a
@@ -370,31 +370,31 @@ concept. The second template parameter is a tag that indicates what
 operations are allowed in the computations that take place within the
 traits class.
 The two possible values of the `Method_tag` parameter are
-`CGAL::Ring_tag` and `CGAL::Sqrt_field_tag`. When
-`CGAL::Ring_tag` is used, only ring operations are used during the
-evaluation of the predicates, whereas if `CGAL::Sqrt_field_tag` is
+`Ring_tag` and `Sqrt_field_tag`. When
+`Ring_tag` is used, only ring operations are used during the
+evaluation of the predicates, whereas if `Sqrt_field_tag` is
 chosen, all four field operations, as well as square roots, are used
 during the predicate evaluation.
 
 The `Apollonius_graph_traits_2<K,Method_tag>` class provides exact
 predicates if the number type in the kernel `K` is an exact number
 type. This is to be associated with the type of operations allowed for
-the predicate evaluation. For example `CGAL::MP_Float` as number
-type, with `CGAL::Ring_tag` as tag will give exact predicates,
-whereas `CGAL::MP_Float` with `CGAL::Sqrt_field_tag` will give
+the predicate evaluation. For example `MP_Float` as number
+type, with `Ring_tag` as tag will give exact predicates,
+whereas `MP_Float` with `Sqrt_field_tag` will give
 inexact predicates.
 
 Since using an exact number type may be too slow, the
 `Apollonius_graph_traits_2<K,Method_tag>` class is designed to
 support the dynamic filtering of \cgal through the
-`CGAL::Filtered_exact<CT,ET>` mechanism. In particular if `CT`
+`Filtered_exact<CT,ET>` mechanism. In particular if `CT`
 is an inexact number type that supports the operations denoted by the
 tag `Method_tag` and `ET` is an exact number type for these
 operations, then kernel with number type
-`CGAL::Filtered_exact<CT,ET>` will yield exact predicates for the
+`Filtered_exact<CT,ET>` will yield exact predicates for the
 Apollonius graph traits. To give a concrete example,
 `CGAL::Filtered_exact<double,CGAL::MP_Float>` with 
-`CGAL::Ring_tag` will produce exact predicates.
+`Ring_tag` will produce exact predicates.
 
 Another possibility for fast and exact predicate evaluation is to use
 the

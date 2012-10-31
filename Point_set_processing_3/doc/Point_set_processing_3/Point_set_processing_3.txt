@@ -58,9 +58,9 @@ The following classes described in Chapter \ref chapterProperty_map
 provide property maps for the implementations of points with normals
 listed above:
 
-- `CGAL::Dereference_property_map<T>` 
-- `CGAL::First_of_pair_property_map<Pair>` and `CGAL::Second_of_pair_property_map<Pair>` 
-- `CGAL::Nth_of_tuple_property_map<N, Tuple>` 
+- `Dereference_property_map<T>` 
+- `First_of_pair_property_map<Pair>` and `Second_of_pair_property_map<Pair>` 
+- `Nth_of_tuple_property_map<N, Tuple>` 
 
 `Dereference_property_map<Point_3>` is the default value of the
 position property map expected by all functions in this component.
@@ -78,10 +78,10 @@ point coordinates `x y z` per line or three point coordinates and
 three normal vector coordinates `x y z nx ny nz` per line), and OFF
 (%Object File Format) \cite cgal:p-gmgv16-96.
 
-- `CGAL::read_xyz_points` 
-- `CGAL::read_off_points` 
-- `CGAL::write_off_points` 
-- `CGAL::write_xyz_points` 
+- `read_xyz_points()` 
+- `read_off_points()` 
+- `write_off_points()` 
+- `write_xyz_points()` 
 
 ## Example ##
 
@@ -92,7 +92,7 @@ in pairs and accessed through property maps.
 
 # Analysis #
 
-Function `CGAL::compute_average_spacing()` computes the average
+Function `compute_average_spacing()` computes the average
 spacing of all input points to their `k` nearest neighbor points,
 `k` being specified by the user. As it provides an order of a
 point set density, this function is used downstream the surface
@@ -117,7 +117,7 @@ found in other \cgal components:
 
 # Outlier Removal #
 
-Function `CGAL::remove_outliers()` deletes a user-specified fraction
+Function `remove_outliers()` deletes a user-specified fraction
 of outliers from an input point set. More specifically, it sorts the
 input points in increasing order of average squared distances to their
 `k` nearest neighbors and deletes the points with largest value.
@@ -125,7 +125,7 @@ input points in increasing order of average squared distances to their
 ## Example ##
 
 The following example reads a point set and removes 5% of the
-points. It uses the `CGAL::Dereference_property_map<Point_3>` property
+points. It uses the `Dereference_property_map<Point_3>` property
 map (optional as it is the default position property map of all
 functions in this component.)
 \cgalexample{Point_set_processing_3/remove_outliers_example.cpp}
@@ -136,15 +136,15 @@ functions in this component.)
 Two simplification functions are devised to reduce an input point set,
 either randomly or using a grid-based clustering approach.
 
-Function `CGAL::random_simplify_point_set()` randomly deletes a
+Function `random_simplify_point_set()` randomly deletes a
 user-specified fraction of points from the input point set. This
 algorithm is fast.
 
-Function `CGAL::grid_simplify_point_set()` considers a regular grid
+Function `grid_simplify_point_set()` considers a regular grid
 covering the bounding box of the input point set, and clusters all
 points sharing the same cell of the grid by picking as representant
 one arbitrarily chosen point. This algorithm is slower than
-`CGAL::random_simplify_point_set()`.
+`random_simplify_point_set()`.
 
 ## Example ##
 
@@ -157,7 +157,7 @@ The following example reads a point set and simplifies it by clustering.
 # Smoothing #
 
 
-Function `CGAL::jet_smooth_point_set` smooths the input point set by
+Function `jet_smooth_point_set` smooths the input point set by
 projecting each point onto a smooth parametric surface patch
 (so-called jet surface) fitted over its `k` nearest neighbors.
 
@@ -174,19 +174,19 @@ Assuming a point set sampled over an inferred surface \f$ S\f$, two
 functions provide an estimate of the normal to \f$ S\f$ at each
 point. The result is an unoriented normal vector for each input point.
 
-Function `CGAL::jet_estimate_normals()` estimates the normal direction
+Function `jet_estimate_normals()` estimates the normal direction
 at each point from the input set by fitting a jet surface over its `k`
 nearest neighbors. The default jet is a quadric surface. This
 algorithm is well suited to point sets scattered over curved surfaces.
 
-Function `CGAL::pca_estimate_normals()` estimates the normal direction
+Function `pca_estimate_normals()` estimates the normal direction
 at each point from the set by linear least squares fitting of a plane
 over its `k` nearest neighbors. This algorithm is simpler and
-faster than `CGAL::jet_estimate_normals()`.
+faster than `jet_estimate_normals()`.
 
 # Normal Orientation #
 
-Function `CGAL::mst_orient_normals()` orients the normals of a set of
+Function `mst_orient_normals()` orients the normals of a set of
 points with unoriented normals using the method described by Hoppe et
 al. in <I>Surface reconstruction from unorganized points</I> \cite cgal:hddms-srup-92. 
 More specifically, this method constructs a
