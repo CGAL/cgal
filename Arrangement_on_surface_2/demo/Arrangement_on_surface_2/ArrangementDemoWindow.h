@@ -26,82 +26,82 @@
 
 namespace Ui
 {
-    class ArrangementDemoWindow;
+  class ArrangementDemoWindow;
 }
 
 class QActionGroup;
 
 class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
 {
-Q_OBJECT
-public:
+  Q_OBJECT
+  public:
 #if 0
-    typedef Seg_traits::Point_2 Point;
-    typedef Seg_traits::Segment_2 Segment;
+  typedef Seg_traits::Point_2 Point;
+  typedef Seg_traits::Segment_2 Segment;
 #endif
-    typedef enum TraitsType {
-        SEGMENT_TRAITS,
-        POLYLINE_TRAITS,
-        CONIC_TRAITS,
-        LINEAR_TRAITS,
-        CIRCULAR_ARC_TRAITS,
-        ALGEBRAIC_TRAITS
-    } TraitsType;
+  typedef enum TraitsType {
+    SEGMENT_TRAITS,
+    POLYLINE_TRAITS,
+    CONIC_TRAITS,
+    LINEAR_TRAITS,
+    CIRCULAR_ARC_TRAITS,
+    ALGEBRAIC_TRAITS
+  } TraitsType;
     
-    ArrangementDemoWindow(QWidget* parent = 0);
-    ~ArrangementDemoWindow();
+  ArrangementDemoWindow(QWidget* parent = 0);
+  ~ArrangementDemoWindow();
 
-    ArrangementDemoTabBase* makeTab( TraitsType tt );
-    ArrangementDemoTabBase* getTab( int tabIndex ) const;
-    ArrangementDemoTabBase* getCurrentTab( ) const;
+  ArrangementDemoTabBase* makeTab( TraitsType tt );
+  ArrangementDemoTabBase* getTab( int tabIndex ) const;
+  ArrangementDemoTabBase* getCurrentTab( ) const;
 
-    std::vector< QString > getTabLabels( ) const;
-    std::vector< CGAL::Object > getArrangements( ) const;
+  std::vector< QString > getTabLabels( ) const;
+  std::vector< CGAL::Object > getArrangements( ) const;
 
-    template < class ArrType >
-    void makeOverlayTab( ArrType* arr1, ArrType* arr2 );
+  template < class ArrType >
+  void makeOverlayTab( ArrType* arr1, ArrType* arr2 );
     
 public slots:
-    void updateMode( QAction* a );
-    void updateEnvelope( QAction* a );
-    void updateSnapping( QAction* a );
-    void updateConicType( QAction* a );
-    void on_actionNewTab_triggered( );
-    void on_actionSaveAs_triggered( );
-    void on_actionOpen_triggered( );
-    void on_actionQuit_triggered( );
-    void on_tabWidget_currentChanged( );
-    void on_actionOverlay_triggered( );
-    void on_actionCloseTab_triggered( );
-    void on_actionPrintConicCurves_triggered( );
-    void on_actionZoomIn_triggered( );
-    void on_actionZoomOut_triggered( );
-    void on_actionPreferences_triggered( );
-    void on_actionFillColor_triggered( );
+  void updateMode( QAction* a );
+  void updateEnvelope( QAction* a );
+  void updateSnapping( QAction* a );
+  void updateConicType( QAction* a );
+  void on_actionNewTab_triggered( );
+  void on_actionSaveAs_triggered( );
+  void on_actionOpen_triggered( );
+  void on_actionQuit_triggered( );
+  void on_tabWidget_currentChanged( );
+  void on_actionOverlay_triggered( );
+  void on_actionCloseTab_triggered( );
+  void on_actionPrintConicCurves_triggered( );
+  void on_actionZoomIn_triggered( );
+  void on_actionZoomOut_triggered( );
+  void on_actionPreferences_triggered( );
+  void on_actionFillColor_triggered( );
     
 
 signals:
-    void modelChanged( );
+  void modelChanged( );
 
 protected:
-    void setupUi( );
-    void resetCallbackState( int tabIndex );
-    void removeCallback( int tabIndex );
-    void updateFillColorSwatch( );
+  void setupUi( );
+  void resetCallbackState( int tabIndex );
+  void removeCallback( int tabIndex );
+  void updateFillColorSwatch( );
 
-    void openArrFile( QString filename );
-    void openDatFile( QString filename );
+  void openArrFile( QString filename );
+  void openDatFile( QString filename );
 
-    std::vector< ArrangementDemoTabBase* > tabs;
-    std::vector< CGAL::Object > arrangements;
-    std::vector< QAction* > activeModes; // for the current tab
-    int lastTabIndex;
+  std::vector< ArrangementDemoTabBase* > tabs;
+  std::vector< CGAL::Object > arrangements;
+  std::vector< QAction* > activeModes; // for the current tab
+  int lastTabIndex;
 
-    Ui::ArrangementDemoWindow* ui;
-    QActionGroup* modeGroup;
-    QActionGroup* envelopeGroup;
-    QActionGroup* snapGroup;
-    QActionGroup* conicTypeGroup;
+  Ui::ArrangementDemoWindow* ui;
+  QActionGroup* modeGroup;
+  QActionGroup* envelopeGroup;
+  QActionGroup* snapGroup;
+  QActionGroup* conicTypeGroup;
 };
 
 template < class ArrType >
@@ -109,22 +109,22 @@ void
 ArrangementDemoWindow::
 makeOverlayTab( ArrType* arr1, ArrType* arr2 )
 {
-    QString tabLabel = QString( "Overlay Tab" );
+  QString tabLabel = QString( "Overlay Tab" );
 
-    ArrangementDemoTabBase* demoTab;
-    ArrType* overlayArr = new ArrType;
-    CGAL::Arr_default_overlay_traits< ArrType > defaultTraits;
+  ArrangementDemoTabBase* demoTab;
+  ArrType* overlayArr = new ArrType;
+  CGAL::Arr_default_overlay_traits< ArrType > defaultTraits;
 
-    CGAL::overlay( *arr1, *arr2, *overlayArr, defaultTraits );
+  CGAL::overlay( *arr1, *arr2, *overlayArr, defaultTraits );
 
-    demoTab = new ArrangementDemoTab< ArrType >( overlayArr, 0 );
-    this->arrangements.push_back( CGAL::make_object( overlayArr ) );
-    this->tabs.push_back( demoTab );
+  demoTab = new ArrangementDemoTab< ArrType >( overlayArr, 0 );
+  this->arrangements.push_back( CGAL::make_object( overlayArr ) );
+  this->tabs.push_back( demoTab );
 
-    QGraphicsView* view = demoTab->getView( );
-    this->addNavigation( view );
-    this->ui->tabWidget->addTab( demoTab, tabLabel );
-    this->lastTabIndex = this->ui->tabWidget->currentIndex( );
+  QGraphicsView* view = demoTab->getView( );
+  this->addNavigation( view );
+  this->ui->tabWidget->addTab( demoTab, tabLabel );
+  this->lastTabIndex = this->ui->tabWidget->currentIndex( );
 }
 
 #endif // ARRANGEMENT_DEMO_WINDOW_H

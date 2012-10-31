@@ -50,24 +50,24 @@ class QMouseEvent;
 
 class ColorItemEditor : public QPushButton
 {
-Q_OBJECT
-Q_PROPERTY(QColor color READ color WRITE setColor USER true)
+  Q_OBJECT
+  Q_PROPERTY(QColor color READ color WRITE setColor USER true)
 
 public:
-    ColorItemEditor(QWidget *widget = 0);
+  ColorItemEditor(QWidget *widget = 0);
 
 public:
-    QColor color( ) const;
-    void setColor( QColor c );
+  QColor color( ) const;
+  void setColor( QColor c );
 
 signals:
-    void confirmed( );
+  void confirmed( );
 
 protected:
-    void mousePressEvent( QMouseEvent* e );
+  void mousePressEvent( QMouseEvent* e );
 
 private:
-    QColor m_color;
+  QColor m_color;
 }; // ColorItemEditor
 
 #endif // COLORLISTEDITOR_H

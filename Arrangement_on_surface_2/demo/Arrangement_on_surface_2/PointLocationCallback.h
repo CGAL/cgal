@@ -17,72 +17,81 @@
 #include "Utils.h"
 
 /**
-Supports visualization of point location on arrangements.
+   Supports visualization of point location on arrangements.
 
-The template parameter is a CGAL::Arrangement_with_history_2 of some type.
+   The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
 template < class Arr_ >
 class PointLocationCallback : public CGAL::Qt::Callback
 {
 public:
-    typedef Arr_ Arrangement;
-    typedef typename Arrangement::Halfedge_handle Halfedge_handle;
-    typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
-    typedef typename Arrangement::Face_handle Face_handle;
-    typedef typename Arrangement::Face_const_handle Face_const_handle;
-    typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
-    typedef typename Arrangement::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
-    typedef typename Arrangement::Geometry_traits_2 Traits;
-    typedef typename Arrangement::Curve_handle Curve_handle;
-    typedef typename Arrangement::Originating_curve_iterator Originating_curve_iterator;
-    typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
-    typedef typename Arrangement::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
-    typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
-    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-    typedef typename Kernel::Point_2 Kernel_point_2;
-    typedef typename Traits::Point_2 Point_2;
-    typedef typename Kernel::Segment_2 Segment_2;
-    typedef typename CGAL::Arr_trapezoid_ric_point_location< Arrangement > TrapezoidPointLocationStrategy;
-    typedef typename CGAL::Arr_simple_point_location< Arrangement > SimplePointLocationStrategy;
-    typedef typename CGAL::Arr_walk_along_line_point_location< Arrangement > WalkAlongLinePointLocationStrategy;
-    typedef typename Supports_landmarks< Arrangement >::LandmarksType LandmarksPointLocationStrategy;
+  typedef Arr_ Arrangement;
+  typedef typename Arrangement::Halfedge_handle Halfedge_handle;
+  typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
+  typedef typename Arrangement::Face_handle Face_handle;
+  typedef typename Arrangement::Face_const_handle Face_const_handle;
+  typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
+  typedef typename Arrangement::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
+  typedef typename Arrangement::Geometry_traits_2 Traits;
+  typedef typename Arrangement::Curve_handle Curve_handle;
+  typedef typename Arrangement::Originating_curve_iterator
+    Originating_curve_iterator;
+  typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
+  typedef typename Arrangement::Ccb_halfedge_const_circulator
+    Ccb_halfedge_const_circulator;
+  typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
+  typedef typename Kernel::Point_2 Kernel_point_2;
+  typedef typename Traits::Point_2 Point_2;
+  typedef typename Kernel::Segment_2 Segment_2;
+  typedef typename CGAL::Arr_trapezoid_ric_point_location< Arrangement >
+    TrapezoidPointLocationStrategy;
+  typedef typename CGAL::Arr_simple_point_location< Arrangement >
+    SimplePointLocationStrategy;
+  typedef typename CGAL::Arr_walk_along_line_point_location< Arrangement >
+    WalkAlongLinePointLocationStrategy;
+  typedef typename Supports_landmarks< Arrangement >::LandmarksType
+    LandmarksPointLocationStrategy;
 
-    PointLocationCallback( Arrangement* arr_, QObject* parent_ );
-    void reset( );
-    void setScene( QGraphicsScene* scene_ );
+  PointLocationCallback( Arrangement* arr_, QObject* parent_ );
+  void reset( );
+  void setScene( QGraphicsScene* scene_ );
 
 protected:
-    void mousePressEvent( QGraphicsSceneMouseEvent *event );
-    void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
-    void highlightPointLocation( QGraphicsSceneMouseEvent *event );
-    void highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_oblivious_side_tag );
-    void highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_open_side_tag );
-    Face_const_handle getFace( const CGAL::Object& o );
-    CGAL::Object locate( const Kernel_point_2& point );
-    CGAL::Object locate( const Kernel_point_2& point, CGAL::Tag_false /*supportsLandmarks*/ );
-    CGAL::Object locate( const Kernel_point_2& point, CGAL::Tag_true /*doesNotSupportLandmarks*/ );
+  void mousePressEvent( QGraphicsSceneMouseEvent *event );
+  void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
+  void highlightPointLocation( QGraphicsSceneMouseEvent *event );
+  void highlightPointLocation( QGraphicsSceneMouseEvent *event,
+                               CGAL::Arr_oblivious_side_tag );
+  void highlightPointLocation( QGraphicsSceneMouseEvent *event,
+                               CGAL::Arr_open_side_tag );
+  Face_const_handle getFace( const CGAL::Object& o );
+  CGAL::Object locate( const Kernel_point_2& point );
+  CGAL::Object locate( const Kernel_point_2& point, CGAL::Tag_false /*supportsLandmarks*/ );
+  CGAL::Object locate( const Kernel_point_2& point, CGAL::Tag_true /*doesNotSupportLandmarks*/ );
 
-    using Callback::scene;
-    CGAL::Qt::Converter< Kernel > convert;
-    CGAL::Object pointLocationStrategy;
-    Arrangement* arr;
-    CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;
-    Arr_construct_point_2< Traits > toArrPoint;
+  using Callback::scene;
+  CGAL::Qt::Converter< Kernel > convert;
+  CGAL::Object pointLocationStrategy;
+  Arrangement* arr;
+  CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;
+  Arr_construct_point_2< Traits > toArrPoint;
 }; // class PointLocationCallback
 
 
 template < class Arr_ >
 PointLocationCallback< Arr_ >::
 PointLocationCallback( Arrangement* arr_, QObject* parent_ ):
-    CGAL::Qt::Callback( parent_ ),
-    arr( arr_ ),
-    highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
-    pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) )
+  CGAL::Qt::Callback( parent_ ),
+  arr( arr_ ),
+  highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
+  pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) )
 { 
-    QObject::connect( this, SIGNAL( modelChanged( ) ),
-        this->highlightedCurves, SLOT( modelChanged( ) ) );
+  QObject::connect( this, SIGNAL( modelChanged( ) ),
+                    this->highlightedCurves, SLOT( modelChanged( ) ) );
 }
 
 template < class Arr_ >
@@ -90,12 +99,12 @@ void
 PointLocationCallback< Arr_ >::
 setScene( QGraphicsScene* scene_ )
 {
-    this->scene = scene_;
-    this->highlightedCurves->setScene( scene_ );
-    if ( this->scene )
-    {
-        this->scene->addItem( this->highlightedCurves );
-    }
+  this->scene = scene_;
+  this->highlightedCurves->setScene( scene_ );
+  if ( this->scene )
+  {
+    this->scene->addItem( this->highlightedCurves );
+  }
 }
 
 template < class Arr_ >
@@ -103,8 +112,8 @@ void
 PointLocationCallback< Arr_ >::
 reset( )
 {
-    this->highlightedCurves->clear( );
-    emit modelChanged( );
+  this->highlightedCurves->clear( );
+  emit modelChanged( );
 }
 
 template < class Arr_ >
@@ -112,7 +121,7 @@ void
 PointLocationCallback< Arr_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
-    this->highlightPointLocation( event );
+  this->highlightPointLocation( event );
 }
 
 template < class Arr_ >
@@ -126,10 +135,10 @@ void
 PointLocationCallback< Arr_ >::
 highlightPointLocation( QGraphicsSceneMouseEvent* event )
 {
-    typename Traits::Left_side_category category;
-    this->highlightPointLocation( event, category );
+  typename Traits::Left_side_category category;
+  this->highlightPointLocation( event, category );
 
-    emit modelChanged( );
+  emit modelChanged( );
 }
 
 template < class Arr_ >
@@ -137,66 +146,67 @@ void
 PointLocationCallback< Arr_ >::
 highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_oblivious_side_tag )
 {
-    Kernel_point_2 point = this->convert( event->scenePos( ) );
+  Kernel_point_2 point = this->convert( event->scenePos( ) );
 
-    CGAL::Object pointLocationResult = this->locate( point );
-    Face_const_handle face = this->getFace( pointLocationResult );
-    this->highlightedCurves->clear( );
-    if ( ! face->is_unbounded( ) )
-    { // it is an interior face; highlight its border
-        Ccb_halfedge_const_circulator cc = face->outer_ccb( );
-        do
-        {
-            X_monotone_curve_2 curve = cc->curve( );
-            this->highlightedCurves->insert( curve );
-        } while ( ++cc != face->outer_ccb( ) );
+  CGAL::Object pointLocationResult = this->locate( point );
+  Face_const_handle face = this->getFace( pointLocationResult );
+  this->highlightedCurves->clear( );
+  if ( ! face->is_unbounded( ) )
+  { // it is an interior face; highlight its border
+    Ccb_halfedge_const_circulator cc = face->outer_ccb( );
+    do
+    {
+      X_monotone_curve_2 curve = cc->curve( );
+      this->highlightedCurves->insert( curve );
+    } while ( ++cc != face->outer_ccb( ) );
+  }
+  Hole_const_iterator hit; 
+  Hole_const_iterator eit = face->holes_end( );
+  for ( hit = face->holes_begin( ); hit != eit; ++hit )
+  { // highlight any holes inside this face
+    Ccb_halfedge_const_circulator cc = *hit;
+    do
+    {
+      X_monotone_curve_2 curve = cc->curve( );
+      this->highlightedCurves->insert( curve );
+      cc++;
     }
-    Hole_const_iterator hit; 
-    Hole_const_iterator eit = face->holes_end( );
-    for ( hit = face->holes_begin( ); hit != eit; ++hit )
-    { // highlight any holes inside this face
-        Ccb_halfedge_const_circulator cc = *hit;
-        do
-        {
-            X_monotone_curve_2 curve = cc->curve( );
-            this->highlightedCurves->insert( curve );
-            cc++;
-        }
-        while ( cc != *hit );
-    }
+    while ( cc != *hit );
+  }
 }
 
 template < class Arr_ >
 void 
 PointLocationCallback< Arr_ >::
-highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_open_side_tag )
+highlightPointLocation( QGraphicsSceneMouseEvent *event,
+                        CGAL::Arr_open_side_tag )
 {
-    Kernel_point_2 point = this->convert( event->scenePos( ) );
-    CGAL::Object pointLocationResult = this->locate( point );
-    Face_const_handle face = this->getFace( pointLocationResult );
-    this->highlightedCurves->clear( );
-        Ccb_halfedge_const_circulator cc = face->outer_ccb( );
+  Kernel_point_2 point = this->convert( event->scenePos( ) );
+  CGAL::Object pointLocationResult = this->locate( point );
+  Face_const_handle face = this->getFace( pointLocationResult );
+  this->highlightedCurves->clear( );
+  Ccb_halfedge_const_circulator cc = face->outer_ccb( );
+  do
+  {
+    if ( ! cc->is_fictitious( ) )
+    {
+      X_monotone_curve_2 curve = cc->curve( );
+      this->highlightedCurves->insert( curve );
+    }
+  } while ( ++cc != face->outer_ccb( ) );
+  Hole_const_iterator hit; 
+  Hole_const_iterator eit = face->holes_end( );
+  for ( hit = face->holes_begin( ); hit != eit; ++hit )
+  { // highlight any holes inside this face
+    Ccb_halfedge_const_circulator cc = *hit;
     do
     {
-        if ( ! cc->is_fictitious( ) )
-        {
-            X_monotone_curve_2 curve = cc->curve( );
-            this->highlightedCurves->insert( curve );
-        }
-    } while ( ++cc != face->outer_ccb( ) );
-    Hole_const_iterator hit; 
-    Hole_const_iterator eit = face->holes_end( );
-    for ( hit = face->holes_begin( ); hit != eit; ++hit )
-    { // highlight any holes inside this face
-        Ccb_halfedge_const_circulator cc = *hit;
-        do
-        {
-            X_monotone_curve_2 curve = cc->curve( );
-            this->highlightedCurves->insert( curve );
-            cc++;
-        }
-        while ( cc != *hit );
+      X_monotone_curve_2 curve = cc->curve( );
+      this->highlightedCurves->insert( curve );
+      cc++;
     }
+    while ( cc != *hit );
+  }
 }
 
 template < class Arr_ >
@@ -204,21 +214,21 @@ typename PointLocationCallback< Arr_ >::Face_const_handle
 PointLocationCallback< Arr_ >::
 getFace( const CGAL::Object& obj )
 {
-    Face_const_handle f;
-    if ( CGAL::assign( f, obj ) )
-        return f;
+  Face_const_handle f;
+  if ( CGAL::assign( f, obj ) )
+    return f;
 
-    Halfedge_const_handle he;
-    if (CGAL::assign( he, obj ))
-        return (he->face( ));
+  Halfedge_const_handle he;
+  if (CGAL::assign( he, obj ))
+    return (he->face( ));
 
-    Vertex_const_handle v;
-    CGAL_assertion(CGAL::assign( v, obj ));
-    CGAL::assign( v, obj );
-    if ( v->is_isolated( ) )
-        return v->face( );
-    Halfedge_around_vertex_const_circulator eit = v->incident_halfedges( );
-    return  (eit->face( ));
+  Vertex_const_handle v;
+  CGAL_assertion(CGAL::assign( v, obj ));
+  CGAL::assign( v, obj );
+  if ( v->is_isolated( ) )
+    return v->face( );
+  Halfedge_around_vertex_const_circulator eit = v->incident_halfedges( );
+  return  (eit->face( ));
 }
 
 template < class Arr_ >
@@ -226,8 +236,8 @@ CGAL::Object
 PointLocationCallback< Arr_ >::
 locate( const Kernel_point_2& point )
 {
-    typename Supports_landmarks< Arrangement >::Tag supportsLandmarks;
-    return this->locate( point, supportsLandmarks );
+  typename Supports_landmarks< Arrangement >::Tag supportsLandmarks;
+  return this->locate( point, supportsLandmarks );
 }
 
 template < class Arr_ >
@@ -235,31 +245,31 @@ CGAL::Object
 PointLocationCallback< Arr_ >::
 locate( const Kernel_point_2& pt, CGAL::Tag_true )
 {
-    CGAL::Object pointLocationResult;
-    WalkAlongLinePointLocationStrategy* walkStrategy;
-    TrapezoidPointLocationStrategy* trapezoidStrategy;
-    SimplePointLocationStrategy* simpleStrategy;
-    LandmarksPointLocationStrategy* landmarksStrategy;
+  CGAL::Object pointLocationResult;
+  WalkAlongLinePointLocationStrategy* walkStrategy;
+  TrapezoidPointLocationStrategy* trapezoidStrategy;
+  SimplePointLocationStrategy* simpleStrategy;
+  LandmarksPointLocationStrategy* landmarksStrategy;
 
-    Point_2 point = this->toArrPoint( pt );
+  Point_2 point = this->toArrPoint( pt );
 
-    if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
-    {
-        pointLocationResult = walkStrategy->locate( point );
-    }
-    else if ( CGAL::assign( trapezoidStrategy, this->pointLocationStrategy ) )
-    {
-        pointLocationResult = trapezoidStrategy->locate( point );
-    }
-    else if ( CGAL::assign( simpleStrategy, this->pointLocationStrategy ) )
-    {
-        pointLocationResult = simpleStrategy->locate( point );
-    }
-    else if ( CGAL::assign( landmarksStrategy, this->pointLocationStrategy ) )
-    {
-        pointLocationResult = landmarksStrategy->locate( point );
-    }
-    return pointLocationResult;
+  if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = walkStrategy->locate( point );
+  }
+  else if ( CGAL::assign( trapezoidStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = trapezoidStrategy->locate( point );
+  }
+  else if ( CGAL::assign( simpleStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = simpleStrategy->locate( point );
+  }
+  else if ( CGAL::assign( landmarksStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = landmarksStrategy->locate( point );
+  }
+  return pointLocationResult;
 }
 
 template < class Arr_ >
@@ -267,26 +277,26 @@ CGAL::Object
 PointLocationCallback< Arr_ >::
 locate( const Kernel_point_2& pt, CGAL::Tag_false )
 {
-    CGAL::Object pointLocationResult;
-    WalkAlongLinePointLocationStrategy* walkStrategy;
-    TrapezoidPointLocationStrategy* trapezoidStrategy;
-    SimplePointLocationStrategy* simpleStrategy;
+  CGAL::Object pointLocationResult;
+  WalkAlongLinePointLocationStrategy* walkStrategy;
+  TrapezoidPointLocationStrategy* trapezoidStrategy;
+  SimplePointLocationStrategy* simpleStrategy;
 
-    Point_2 point = this->toArrPoint( pt );
+  Point_2 point = this->toArrPoint( pt );
 
-    if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
-    {
-        pointLocationResult = walkStrategy->locate( point );
-    }
-    else if ( CGAL::assign( trapezoidStrategy, this->pointLocationStrategy ) )
-    {
-        pointLocationResult = trapezoidStrategy->locate( point );
-    }
-    else if ( CGAL::assign( simpleStrategy, this->pointLocationStrategy ) )
-    {
-        pointLocationResult = simpleStrategy->locate( point );
-    }
-    return pointLocationResult;
+  if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = walkStrategy->locate( point );
+  }
+  else if ( CGAL::assign( trapezoidStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = trapezoidStrategy->locate( point );
+  }
+  else if ( CGAL::assign( simpleStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = simpleStrategy->locate( point );
+  }
+  return pointLocationResult;
 }
 
 #endif // POINT_LOCATION_CALLBACK_H

@@ -1,51 +1,54 @@
 #ifndef VERTICAL_RAY_GRAPHICS_ITEM_H
 #define VERTICAL_RAY_GRAPHICS_ITEM_H
+
 #include <CGAL/Qt/GraphicsItem.h>
 #include <QPen>
 #include <QColor>
 
-/**
-Represents a vertical ray in the scene. The ray doesn't necessarily extend to
-infinity, but it's called a ray because it has an arrowhead at its target end.
-
-If it is designated that the ray extends to infinity, we'll clip the ray to the
-boundary of the visible viewport.
-*/
+/*
+ * Represents a vertical ray in the scene. The ray doesn't necessarily extend
+ * to infinity, but it's called a ray because it has an arrowhead at its target
+ * end.
+ *
+ * If it is designated that the ray extends to infinity, we'll clip the ray to
+ * the boundary of the visible viewport.
+ */
 class VerticalRayGraphicsItem : public CGAL::Qt::GraphicsItem
 {
 public:
-    VerticalRayGraphicsItem( );
+  VerticalRayGraphicsItem( );
 
-    virtual void paint( QPainter* painter,
-        const QStyleOptionGraphicsItem* option,
-        QWidget* widget );
-    virtual QRectF boundingRect( ) const;
+  virtual void paint( QPainter* painter,
+                      const QStyleOptionGraphicsItem* option,
+                      QWidget* widget );
+  virtual QRectF boundingRect( ) const;
 
-    const QPointF& source( ) const;
-    void setSource( const QPointF& src );
-    double targetY( ) const;
-    void setTargetY( double y );
-    bool isInfinite( ) const;
-    void setIsInfinite( bool b );
+  const QPointF& source( ) const;
+  void setSource( const QPointF& src );
+  double targetY( ) const;
+  void setTargetY( double y );
+  bool isInfinite( ) const;
+  void setIsInfinite( bool b );
 
-    const QColor& color( ) const;
-    void setColor( const QColor& color );
-    int width( ) const;
-    void setWidth( int width );
+  const QColor& color( ) const;
+  void setColor( const QColor& color );
+  int width( ) const;
+  void setWidth( int width );
 
-    void reset( );
+  void reset( );
 
 public slots:
-    virtual void modelChanged( );
+  virtual void modelChanged( );
 
 protected:
-    QRectF viewportRect( ) const;
-    void drawArrowhead( QPainter* painter, double targetY, bool isShootingUp );
+  QRectF viewportRect( ) const;
+  void drawArrowhead( QPainter* painter, double targetY, bool isShootingUp );
 
-    QPointF m_source;
-    double m_targetY;
-    bool m_isInfinite;
-    QColor m_color;
-    int m_width;
+  QPointF m_source;
+  double m_targetY;
+  bool m_isInfinite;
+  QColor m_color;
+  int m_width;
 }; // class VerticalRayGraphicsItem
+
 #endif // VERTICAL_RAY_GRAPHICS_ITEM_H

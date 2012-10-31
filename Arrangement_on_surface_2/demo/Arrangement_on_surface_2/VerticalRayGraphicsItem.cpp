@@ -6,262 +6,231 @@
 
 VerticalRayGraphicsItem::
 VerticalRayGraphicsItem( ):
-    m_source( QPointF( ) ), // null point ie. (+0.0, +0.0)
-    m_targetY( 0.0 ),
-    m_isInfinite( false ),
-    m_color( ::Qt::green ),
-    m_width( 1.0 )
+  m_source( QPointF( ) ), // null point ie. (+0.0, +0.0)
+  m_targetY( 0.0 ),
+  m_isInfinite( false ),
+  m_color( ::Qt::green ),
+  m_width( 1.0 )
+{}
+
+void VerticalRayGraphicsItem::paint( QPainter* painter,
+                                     const QStyleOptionGraphicsItem* option,
+                                     QWidget* widget )
 {
+  QPen rayPen( this->m_color, this->m_width );
+  painter->setPen( rayPen );
 
-}
-
-void 
-VerticalRayGraphicsItem::
-paint( QPainter* painter,
-    const QStyleOptionGraphicsItem* option,
-    QWidget* widget )
-{
-    QPen rayPen( this->m_color, this->m_width );
-    painter->setPen( rayPen );
-
-    if ( this->m_source.isNull( ) && this->m_targetY == 0.0 )
+  if ( this->m_source.isNull( ) && this->m_targetY == 0.0 )
+  {
+    return;
+  }
+  bool isShootingUp = ( this->m_source.y( ) < this->m_targetY ); // -y towards the top
+  if ( this->m_isInfinite )
+  {
+    QRectF clipRect = this->viewportRect( );
+    double targetY = this->m_targetY;
+    if ( isShootingUp && this->m_isInfinite )
     {
-        return;
+      targetY = clipRect.top( );
     }
-    bool isShootingUp = ( this->m_source.y( ) < this->m_targetY ); // -y towards the top
-    if ( this->m_isInfinite )
+    else if ( this->m_isInfinite )
     {
-        QRectF clipRect = this->viewportRect( );
-        double targetY = this->m_targetY;
-        if ( isShootingUp && this->m_isInfinite )
-        {
-            targetY = clipRect.top( );
-        }
-        else if ( this->m_isInfinite )
-        {
-            targetY = clipRect.bottom( );
-        }
-        QPointF target( this->m_source.x( ), targetY );
-        QLineF line( this->m_source, target );
-        painter->drawLine( line );
-        // TODO: draw arrowhead
-        this->drawArrowhead( painter, targetY, isShootingUp );
-        // std::cout << "drawing the ray to " << targetY << std::endl;
+      targetY = clipRect.bottom( );
     }
-    else
-    {
-        QPointF target( this->m_source.x( ), this->m_targetY );
-        QLineF line( this->m_source, target );
-        painter->drawLine( line );
-        this->drawArrowhead( painter, this->m_targetY, isShootingUp );
-    }
+    QPointF target( this->m_source.x( ), targetY );
+    QLineF line( this->m_source, target );
+    painter->drawLine( line );
+    // TODO: draw arrowhead
+    this->drawArrowhead( painter, targetY, isShootingUp );
+    // std::cout << "drawing the ray to " << targetY << std::endl;
+  }
+  else
+  {
+    QPointF target( this->m_source.x( ), this->m_targetY );
+    QLineF line( this->m_source, target );
+    painter->drawLine( line );
+    this->drawArrowhead( painter, this->m_targetY, isShootingUp );
+  }
 }
 
 QRectF 
 VerticalRayGraphicsItem::
 boundingRect( ) const
 {
-    if ( this->m_source.isNull( ) || // uninitialized
-        this->m_source.y( ) == this->m_targetY ) // degenerate
+  if ( this->m_source.isNull( ) || // uninitialized
+       this->m_source.y( ) == this->m_targetY ) // degenerate
+  {
+    return QRectF( );
+  }
+
+  double xmin = this->m_source.x( ) - 5;
+  double xmax = this->m_source.x( ) + 5;
+  bool isShootingUp = ( this->m_source.y( ) > this->m_targetY ); // -y towards the top
+  double ymin = ( isShootingUp )? this->m_targetY : this->m_source.y( );
+  double ymax = ( isShootingUp )? this->m_source.y( ) : this->m_targetY;
+  if ( this->m_isInfinite )
+  {
+    if ( isShootingUp )
     {
-        return QRectF( );
+      //ymin = -std::numeric_limits< float >::max( );
+      ymin = this->m_source.y( ) - 1e9;
     }
-
-    double xmin = this->m_source.x( ) - 5;
-    double xmax = this->m_source.x( ) + 5;
-    bool isShootingUp = ( this->m_source.y( ) > this->m_targetY ); // -y towards the top
-    double ymin = ( isShootingUp )? this->m_targetY : this->m_source.y( );
-    double ymax = ( isShootingUp )? this->m_source.y( ) : this->m_targetY;
-    if ( this->m_isInfinite )
+    else
     {
-        if ( isShootingUp )
-        {
-            //ymin = -std::numeric_limits< float >::max( );
-            ymin = this->m_source.y( ) - 1e9;
-        }
-        else
-        {
-            //ymax = std::numeric_limits< float >::max( );
-            ymax = this->m_source.y( ) + 1e9;
-        }
+      //ymax = std::numeric_limits< float >::max( );
+      ymax = this->m_source.y( ) + 1e9;
     }
-    // std::cout << ymin << " " << ymax << std::endl;
+  }
+  // std::cout << ymin << " " << ymax << std::endl;
 
-    QRectF res( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
-    return res;
+  QRectF res( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
+  return res;
 }
 
-const QPointF& 
-VerticalRayGraphicsItem::
-source( ) const
+const QPointF& VerticalRayGraphicsItem::source( ) const
 {
-    return this->m_source;
+  return this->m_source;
 }
 
-void 
-VerticalRayGraphicsItem::
-setSource( const QPointF& src )
+void VerticalRayGraphicsItem::setSource( const QPointF& src )
 {
-    this->prepareGeometryChange( );
+  this->prepareGeometryChange( );
 
-    this->m_source = src;
+  this->m_source = src;
 }
 
-double 
-VerticalRayGraphicsItem::
-targetY( ) const
+double VerticalRayGraphicsItem::targetY( ) const
 {
-    return this->m_targetY;
+  return this->m_targetY;
 }
 
-void 
-VerticalRayGraphicsItem::
-setTargetY( double y )
+void VerticalRayGraphicsItem::setTargetY( double y )
 {
-    this->prepareGeometryChange( );
+  this->prepareGeometryChange( );
 
-    this->m_targetY = y;
+  this->m_targetY = y;
 }
 
-bool 
-VerticalRayGraphicsItem::
-isInfinite( ) const
+bool VerticalRayGraphicsItem::isInfinite( ) const
 {
-    return this->m_isInfinite;
+  return this->m_isInfinite;
 }
 
 void 
 VerticalRayGraphicsItem::
 setIsInfinite( bool b )
 {
-    this->prepareGeometryChange( );
-
-    this->m_isInfinite = b;
+  this->prepareGeometryChange( );
+  this->m_isInfinite = b;
 }
 
-const QColor&
-VerticalRayGraphicsItem::
-color( ) const
+const QColor& VerticalRayGraphicsItem::color( ) const
 {
-    return this->m_color;
+  return this->m_color;
 }
 
-void 
-VerticalRayGraphicsItem::
-setColor( const QColor& color )
+void  VerticalRayGraphicsItem::setColor( const QColor& color )
 {
-    this->m_color = color;
+  this->m_color = color;
 }
 
-int 
-VerticalRayGraphicsItem::
-width( ) const
+int VerticalRayGraphicsItem::width( ) const
 {
-    return this->m_width;
+  return this->m_width;
 }
 
-void 
-VerticalRayGraphicsItem::
-setWidth( int width )
+void VerticalRayGraphicsItem::setWidth( int width )
 {
-    this->m_width = width;
+  this->m_width = width;
 }
 
-void
-VerticalRayGraphicsItem::
-reset( )
+void VerticalRayGraphicsItem::reset( )
 {
-    this->prepareGeometryChange( );
+  this->prepareGeometryChange( );
 
-    this->m_source = QPointF( ); // null point ie. (+0.0, +0.0)
-    this->m_targetY = ( 0.0 );
-    this->m_isInfinite = ( false );
+  this->m_source = QPointF( ); // null point ie. (+0.0, +0.0)
+  this->m_targetY = ( 0.0 );
+  this->m_isInfinite = ( false );
 }
 
-void 
-VerticalRayGraphicsItem::
-modelChanged( )
+void VerticalRayGraphicsItem::modelChanged( )
 {
   // std::cout << "ray changed" << std::endl;
 
-    if ( this->m_source.isNull( ) || // uninitialized
-        this->m_source.y( ) == this->m_targetY ) // degenerate
-    {
-        this->hide( );
-    }
-    else
-    {
-        this->show( );
-    }
-    this->update( );
+  if ( this->m_source.isNull( ) || // uninitialized
+       this->m_source.y( ) == this->m_targetY ) // degenerate
+  {
+    this->hide( );
+  }
+  else
+  {
+    this->show( );
+  }
+  this->update( );
 }
 
 // FIXME: there must be a way to get this info from just a QPainter object...
 // doing it this way assumes we've only added this item to exactly one view...
-QRectF
-VerticalRayGraphicsItem::
-viewportRect( ) const
+QRectF VerticalRayGraphicsItem::viewportRect( ) const
 {
-    QRectF res;
-    if ( this->scene( ) == NULL )
-    {
-        return res;
-    }
-
-    QList< QGraphicsView* > views = this->scene( )->views( );
-    if ( views.size( ) == 0 )
-    {
-        return res;
-    }
-    // assumes the first view is the right one
-    QGraphicsView* viewport = views.first( );
-    QPointF p1 = viewport->mapToScene( 0, 0 );
-    QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
-    res = QRectF( p1, p2 );
-
+  QRectF res;
+  if ( this->scene( ) == NULL )
+  {
     return res;
+  }
+
+  QList< QGraphicsView* > views = this->scene( )->views( );
+  if ( views.size( ) == 0 )
+  {
+    return res;
+  }
+  // assumes the first view is the right one
+  QGraphicsView* viewport = views.first( );
+  QPointF p1 = viewport->mapToScene( 0, 0 );
+  QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
+  res = QRectF( p1, p2 );
+
+  return res;
 }
 
-void
-VerticalRayGraphicsItem::
-drawArrowhead( QPainter* painter, double targetY, bool isShootingUp )
+void VerticalRayGraphicsItem::drawArrowhead( QPainter* painter,
+                                             double targetY, bool isShootingUp )
 {
-    if ( this->scene( ) == 0 || this->scene( )->views( ).size( ) == 0 )
+  if ( this->scene( ) == 0 || this->scene( )->views( ).size( ) == 0 )
+  {
+    return;
+  }
+  QGraphicsView* view = this->scene( )->views( ).first( );
+  QPointF arrowTip( this->m_source.x( ), targetY );
+  QPoint pt = view->mapFromScene( arrowTip );
+  if ( ! isShootingUp && this->m_isInfinite )
+  {
+    if (view->horizontalScrollBar( ) &&
+        view->horizontalScrollBar( )->isVisible( ) )
     {
-        return;
+      // std::cout << view->horizontalScrollBar( )->height( ) << std::endl;
+      pt.setY( pt.y( ) - view->horizontalScrollBar( )->height( ) - 5 );
+      arrowTip = view->mapToScene( pt );
     }
-    QGraphicsView* view = this->scene( )->views( ).first( );
-    QPointF arrowTip( this->m_source.x( ), targetY );
-    QPoint pt = view->mapFromScene( arrowTip );
-    if ( ! isShootingUp && this->m_isInfinite )
+    else
     {
-        if (view->horizontalScrollBar( ) &&
-                view->horizontalScrollBar( )->isVisible( ) )
-        {
-          // std::cout << view->horizontalScrollBar( )->height( ) << std::endl;
-            pt.setY( pt.y( ) - view->horizontalScrollBar( )->height( ) - 5 );
-            arrowTip = view->mapToScene( pt );
-        }
-        else
-        {
-          // std::cout << "no scroll bar " << std::endl;
-            pt.setY( pt.y( ) - 5 );
-            arrowTip = view->mapToScene( pt );
-        }
+      // std::cout << "no scroll bar " << std::endl;
+      pt.setY( pt.y( ) - 5 );
+      arrowTip = view->mapToScene( pt );
     }
+  }
 
-    int dy = -1;
-    if ( isShootingUp )
-    {
-        dy = 1;
-    }
-    QPoint leftPt( pt.x( ) - 3, pt.y( ) + 3*dy );
-    QPoint rightPt( pt.x( ) + 3, pt.y( ) + 3*dy );
-    QPointF left = view->mapToScene( leftPt );
-    QPointF right = view->mapToScene( rightPt );
-    QLineF leftEdge( left, arrowTip );
-    QLineF rightEdge( arrowTip, right );
-    painter->drawLine( leftEdge );
-    painter->drawLine( rightEdge );
+  int dy = -1;
+  if ( isShootingUp )
+  {
+    dy = 1;
+  }
+  QPoint leftPt( pt.x( ) - 3, pt.y( ) + 3*dy );
+  QPoint rightPt( pt.x( ) + 3, pt.y( ) + 3*dy );
+  QPointF left = view->mapToScene( leftPt );
+  QPointF right = view->mapToScene( rightPt );
+  QLineF leftEdge( left, arrowTip );
+  QLineF rightEdge( arrowTip, right );
+  painter->drawLine( leftEdge );
+  painter->drawLine( rightEdge );
 }
-

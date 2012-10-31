@@ -1,5 +1,6 @@
 #ifndef CGAL_QT_GRAPHICS_VIEW_SEGMENT_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_SEGMENT_INPUT_H
+
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <QGraphicsLineItem>
@@ -14,23 +15,23 @@ namespace Qt {
 class GraphicsViewSegmentInputBase : public GraphicsViewInput, public ISnappable
 {
 public:
-    virtual void setScene( QGraphicsScene* scene_ );
-    QGraphicsScene* getScene( ) const;
+  virtual void setScene( QGraphicsScene* scene_ );
+  QGraphicsScene* getScene( ) const;
 
-    void setSnappingEnabled( bool b );
-    void setSnapToGridEnabled( bool b );
+  void setSnappingEnabled( bool b );
+  void setSnapToGridEnabled( bool b );
 
 protected:
-    GraphicsViewSegmentInputBase( QObject* parent_ );
-    virtual void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
-    virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );
-    virtual bool eventFilter( QObject* obj, QEvent* event );
+  GraphicsViewSegmentInputBase( QObject* parent_ );
+  virtual void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
+  virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );
+  virtual bool eventFilter( QObject* obj, QEvent* event );
 
-    QRectF viewportRect( ) const;
+  QRectF viewportRect( ) const;
 
-    QGraphicsScene* scene;
-    bool snappingEnabled;
-    bool snapToGridEnabled;
+  QGraphicsScene* scene;
+  bool snappingEnabled;
+  bool snapToGridEnabled;
 
 }; // class GraphicsViewSegmentInputBase
 
@@ -38,33 +39,33 @@ template < class K_ >
 class GraphicsViewSegmentInput: public GraphicsViewSegmentInputBase
 {
 public:
-    typedef K_ Kernel;
-    typedef typename Kernel::Point_2 Point_2;
-    typedef typename Kernel::Segment_2 Segment_2;
+  typedef K_ Kernel;
+  typedef typename Kernel::Point_2 Point_2;
+  typedef typename Kernel::Segment_2 Segment_2;
 
-    GraphicsViewSegmentInput( QObject* parent );
+  GraphicsViewSegmentInput( QObject* parent );
 
 protected:
-    void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
-    void mousePressEvent( QGraphicsSceneMouseEvent* event );
+  void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
+  void mousePressEvent( QGraphicsSceneMouseEvent* event );
 
-    // override this to snap to the points you like
-    virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event );
+  // override this to snap to the points you like
+  virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event );
 
-    Converter< Kernel > convert;
-    Point_2 p1;
-    Point_2 p2;
-    bool second;
+  Converter< Kernel > convert;
+  Point_2 p1;
+  Point_2 p2;
+  bool second;
 
-    QGraphicsLineItem segmentGuide;
+  QGraphicsLineItem segmentGuide;
 }; // class GraphicsViewSegmentInput
 
 
 template < class K_ >
 GraphicsViewSegmentInput< K_ >::
 GraphicsViewSegmentInput( QObject* parent ):
-    GraphicsViewSegmentInputBase( parent ),
-    second( false )
+  GraphicsViewSegmentInputBase( parent ),
+  second( false )
 { }
 
 template < class K_ >
@@ -72,8 +73,8 @@ typename GraphicsViewSegmentInput< K_ >::Point_2
 GraphicsViewSegmentInput< K_ >::
 snapPoint( QGraphicsSceneMouseEvent* event )
 {
-    Point_2 clickedPoint = this->convert( event->scenePos( ) );
-    return clickedPoint;
+  Point_2 clickedPoint = this->convert( event->scenePos( ) );
+  return clickedPoint;
 }
 
 template < class K_ >
@@ -81,13 +82,13 @@ void
 GraphicsViewSegmentInput< K_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
-    if ( this->second )
-    {
-        Point_2 clickedPoint = this->snapPoint( event );
-        Segment_2 segment( this->p1, clickedPoint );
-        QLineF qSegment = this->convert( segment );
-        this->segmentGuide.setLine( qSegment );
-    }
+  if ( this->second )
+  {
+    Point_2 clickedPoint = this->snapPoint( event );
+    Segment_2 segment( this->p1, clickedPoint );
+    QLineF qSegment = this->convert( segment );
+    this->segmentGuide.setLine( qSegment );
+  }
 }
 
 template < class K_ >
@@ -95,30 +96,31 @@ void
 GraphicsViewSegmentInput< K_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
-    if ( !this->second )
+  if ( !this->second )
+  {
+    this->second = true;
+    this->p1 = this->snapPoint( event );
+    QPointF pt = this->convert( this->p1 );
+    this->segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+    if ( this->scene != NULL )
     {
-        this->second = true;
-        this->p1 = this->snapPoint( event );
-        QPointF pt = this->convert( this->p1 );
-        this->segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
-        if ( this->scene != NULL )
-        {
-            this->scene->addItem( &( this->segmentGuide ) );
-        }
+      this->scene->addItem( &( this->segmentGuide ) );
     }
-    else
+  }
+  else
+  {
+    this->second = false;
+    this->p2 = this->snapPoint( event );
+    if ( this->scene != NULL )
     {
-        this->second = false;
-        this->p2 = this->snapPoint( event );
-        if ( this->scene != NULL )
-        {
-            this->scene->removeItem( &( this->segmentGuide ) );
-        }
-        Segment_2 res( this->p1, this->p2 );
-        emit generate( CGAL::make_object( res ) );
+      this->scene->removeItem( &( this->segmentGuide ) );
     }
+    Segment_2 res( this->p1, this->p2 );
+    emit generate( CGAL::make_object( res ) );
+  }
 }
 
 } // namespace Qt
 } // namespace CGAL
+
 #endif // CGAL_QT_GRAPHICS_VIEW_SEGMENT_INPUT_H

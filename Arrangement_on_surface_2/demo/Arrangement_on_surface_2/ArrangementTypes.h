@@ -273,23 +273,24 @@ typedef CGAL::Arr_landmarks_point_location<Lin_arr>
 #include <CGAL/Arr_circular_arc_traits_2.h>
 
 // Circular arcs:
-typedef CGAL::Exact_circular_kernel_2                   CircularKernel;
-typedef CGAL::Arr_circular_arc_traits_2< CircularKernel >       Arc_traits;
-typedef Arc_traits::Curve_2                             Arr_arc_2;
-typedef Arc_traits::X_monotone_curve_2                  Arr_xarc_2;
-typedef Arc_traits::Point_2                             Arr_arc_point_2;
-typedef Dcel<Arc_traits>                                Arc_dcel;
-typedef CGAL::Arrangement_with_history_2<Arc_traits,
-                                         Arc_dcel>      Arc_arr;
-typedef Arc_arr::Halfedge                               Arc_halfedge;
-typedef Arc_arr::Halfedge_handle                        Arc_halfedge_handle;
-typedef Arc_arr::Face_handle                            Arc_face_handle;
-typedef Arc_arr::Ccb_halfedge_circulator                Arc_ccb_halfedge_circulator;
-typedef Arc_arr::Hole_iterator                          Arc_holes_iterator;
-typedef Arc_arr::Face_iterator                          Arc_face_iterator;
-typedef std::list<Arr_arc_2*>                           Arr_arc_list;
-typedef Arr_arc_list::const_iterator                    Arr_arc_const_iter;
-typedef Arr_arc_list::iterator                          Arr_arc_iter;
+typedef CGAL::Exact_circular_kernel_2                     CircularKernel;
+typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > Arc_traits;
+typedef Arc_traits::Curve_2                               Arr_arc_2;
+typedef Arc_traits::X_monotone_curve_2                    Arr_xarc_2;
+typedef Arc_traits::Point_2                               Arr_arc_point_2;
+typedef Dcel<Arc_traits>                                  Arc_dcel;
+typedef CGAL::Arrangement_with_history_2<Arc_traits, Arc_dcel>
+                                                          Arc_arr;
+typedef Arc_arr::Halfedge                                 Arc_halfedge;
+typedef Arc_arr::Halfedge_handle                          Arc_halfedge_handle;
+typedef Arc_arr::Face_handle                              Arc_face_handle;
+typedef Arc_arr::Ccb_halfedge_circulator
+  Arc_ccb_halfedge_circulator;
+typedef Arc_arr::Hole_iterator                            Arc_holes_iterator;
+typedef Arc_arr::Face_iterator                            Arc_face_iterator;
+typedef std::list<Arr_arc_2*>                             Arr_arc_list;
+typedef Arr_arc_list::const_iterator                      Arr_arc_const_iter;
+typedef Arr_arc_list::iterator                            Arr_arc_iter;
 
 //point location
 typedef CGAL::Arr_trapezoid_ric_point_location<Arc_arr>
@@ -305,8 +306,9 @@ typedef CGAL::Arr_landmarks_point_location<Arc_arr>
 
 typedef Nt_traits::Integer Coefficient;
 typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > Alg_seg_traits;
-typedef Dcel< Alg_seg_traits > Alg_seg_dcel;
-typedef CGAL::Arrangement_with_history_2< Alg_seg_traits, Alg_seg_dcel > Alg_seg_arr;
+typedef Dcel< Alg_seg_traits >                            Alg_seg_dcel;
+typedef CGAL::Arrangement_with_history_2< Alg_seg_traits, Alg_seg_dcel >
+                                                          Alg_seg_arr;
 
 template <class Arrangement_>
 class My_observer : public CGAL::Arr_observer<Arrangement_>
