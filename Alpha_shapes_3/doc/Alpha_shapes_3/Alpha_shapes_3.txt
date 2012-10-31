@@ -74,11 +74,10 @@ the alpha shapes correspond strictly to the above definition.
 The regularized mode provides a regularized version of the alpha shapes.
 It corresponds to the domain covered by a regularized version
 of the alpha complex where singular faces are removed 
-(See Figure \ref figgenregex for an example).
+(See \cgal_figure_ref{figgenregex} for an example).
 
-\anchor figgenregex
-\image html gen-reg-ex.png
-<center><b>Comparison of general and regularized alpha-shape. <B>Left:</B> Some points are taken on the surface of a torus, three points being taken relatively far from the surface of the torus; <B>Middle:</B> The general alpha-shape (for a large enough alpha value) contains the singular triangle facet of the three isolated points; <B>Right:</B> The regularized version (for the same value of alpha) does not contains any singular facet.</b></center>
+\cgal_image{figgenregex,gen-reg-ex.png} 
+Comparison of general and regularized alpha-shape. <B>Left:</B> Some points are taken on the surface of a torus, three points being taken relatively far from the surface of the torus; <B>Middle:</B> The general alpha-shape (for a large enough alpha value) contains the singular triangle facet of the three isolated points; <B>Right:</B> The regularized version (for the same value of alpha) does not contains any singular facet.
 
 
 The alpha shapes of a set of points 
@@ -173,12 +172,9 @@ to the alpha shape. A \f$ k\f$-face on the boundary of the alpha complex
 is said to be: `REGULAR` if it is a subface of the alpha-complex which
 is a subface of a \f$ (k+1)\f$-face of the alpha complex, and `SINGULAR` otherwise.
 A \f$ k\f$-face of the alpha complex which is not on the boundary of the alpha complex
-is said to be `INTERIOR`. See Figure \ref figclassif for a 2D illustration.
+is said to be `INTERIOR`. See \cgal_figure_ref{figclassif} for a 2D illustration.
 
-\anchor figclassif
-\image html classif.png
-
-<center><b>Classification of simplices, a 2D example. <B>Left:</B> The 2D
+\cgal_image{figclassif,classif.png} Classification of simplices, a 2D example. <B>Left:</B> The 2D
 Delaunay triangulation of a set of points; <B>Right:</B>
 Classification of simplices for a given alpha (the squared radius of
 the red circle). `INTERIOR`, `REGULAR` and `SINGULAR` simplices are
@@ -187,9 +183,9 @@ are not depicted. The vertex `s` and the edge `tu` are `SINGULAR`
 since all higher dimension simplices they are incident to are
 `EXTERIOR`. The facet `pqr` is `EXTERIOR` because the squared radius
 of its circumscribed circle is larger than alpha.
-</b></center>
 
-The classes provide also output iterators to get for a given \f$ alpha\f$ value
+
+The classes provide also output iterators to get for a given `alpha` value
 the vertices, edges, facets and cells of the different types
 (`EXTERIOR`, `SINGULAR`, `REGULAR` or 
 `INTERIOR`).

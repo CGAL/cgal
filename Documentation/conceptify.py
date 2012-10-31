@@ -116,6 +116,31 @@ def rearrange_img(i, dir_name):
     srcpath=img.attr("src")
     img.attr("src", "../../CGAL.CGAL/html/" + string.split(srcpath, '/')[-1])
 
+class figure_anchor_info:
+  def __init__(self):
+    self.next_index=1
+    self.anchor_map={}
+
+
+def collect_figure_anchors(i,infos):
+  anchor_name=pq(this).attr('id')
+  if re.match("fig__.+",anchor_name) != None:
+    infos.anchor_map[anchor_name]=infos.next_index
+    infos.next_index+=1
+
+def update_figure_ref(i,infos):
+  link = pq(this)
+  link_name=link.text()
+  if re.match("fig__.+",link_name) != None:
+    link.text( "Figure "+str(infos.anchor_map[link_name]) )
+
+def automagically_number_figure(filename):
+  infos=figure_anchor_info()
+  d = pq(filename=filename, parser='html')
+  d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
+  d('a.el').each( lambda i: update_figure_ref(i,infos) )
+  write_out_html(d, filename)
+
 def main():
     parser = argparse.ArgumentParser(
         description='''This script makes adjustments to the doxygen output. 
@@ -127,6 +152,10 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     resources_absdir=path.join( path.dirname(path.abspath(argv[0]) ),"resources")
     os.chdir(args.output)
 
+    #number figure
+    main_pages=glob.glob('./CGAL.CGAL.*/html/index.html')
+    for fn in main_pages:
+      automagically_number_figure(fn)
 
     #replace icons with CGAL colored ones
     shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("CGAL.CGAL/html/", "ftv2cl.png"))

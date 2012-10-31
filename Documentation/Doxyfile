@@ -203,7 +203,10 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cpp=<I>C++</I>" \
                          "cpp11=*C++11*" \
                          "CC=*C++*" \
-                         "cgalexample{1}=<br><b>File</b> \ref \1 \include \1"
+                         "cgalexample{1}=<br><b>File</b> \ref \1 \include \1" \
+                         "cgal_figure_anchor{1}=\anchor fig__\1" \
+                         "cgal_figure_ref{1}=\ref fig__\1" \
+                         "cgal_image{2}=\anchor fig__\1 \n \image html \2 \n \ref fig__\1   "
 
 # this sets the include file of a concept to a non-existing file and
 # thus removes its include statement
