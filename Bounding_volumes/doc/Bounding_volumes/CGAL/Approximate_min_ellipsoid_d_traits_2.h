@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Approximate_min_ellipsoid_d_traits_2` is a traits class for 
 `CGAL::Approximate_min_ellipsoid_d<Traits>` using the 
-\f$ 2\f$-di-men-sional \cgal kernel. In order to use this class, 
+2-dimensional \cgal kernel. In order to use this class, 
 an exact number-type `ET` has to be provided which 
 `Approximate_min_ellipsoid_d<Traits>` will use for its internal 
 exact computations. 
