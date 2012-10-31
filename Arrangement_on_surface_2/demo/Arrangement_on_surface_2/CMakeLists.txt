@@ -109,4 +109,4 @@ target_link_libraries( arrangement_2b
     ${QT_LIBRARIES}
 )
 
-add_subdirectory( tests )
+# add_subdirectory( tests )
