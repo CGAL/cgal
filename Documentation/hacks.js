@@ -2,10 +2,25 @@ function generate_autotoc() {
     var toc = $("#autotoc").append('<ul></ul>');
     if(toc.length > 0) { // an autotoc has been requested
         toc = toc.find('ul');
+        var indices = new Array();
+        indices[0] = 0;
+        indices[1] = 0;
+        indices[2] = 0;
+
         $("h1, h2, h3").each(function(i) {
             var current = $(this);
             var levelTag = current[0].tagName.charAt(1);
             var cur_id = current.attr("id");
+
+            indices[levelTag-1]+=1;  
+            var prefix=indices[0];
+            if (levelTag >1) prefix+="."+indices[1];
+            if (levelTag >2) prefix+="."+indices[2];
+            current.html(prefix + "   " + current.text());
+            for(var l = levelTag; l < 3; ++l){
+                indices[l] = 0;
+            }
+
             if(cur_id == undefined) {
                 current.attr('id', 'title' + i);
                 current.addClass('anchor');
@@ -15,29 +30,9 @@ function generate_autotoc() {
                 toc.append("<li class='level" + levelTag + "'><a id='" + cur_id + "' href='#title" +
                            i + "' title='" + current.prop("tagName") + "'>" + current.text() + "</a></li>");
             }
+
         });
     }
-}
-
-function number_h1h2h3() {
-    var indices = new Array();
-    indices[0] = 0;
-    indices[1] = 0;
-    indices[2] = 0;
-  
-    $("h1, h2, h3").each(function(i){
-        var current = $(this);
-        var levelTag = current[0].tagName.charAt(1);
-        var cur_id = current.attr("id");
-        indices[levelTag-1]+=1;  
-        var prefix=indices[0];
-        if (levelTag >1) prefix+="."+indices[1];
-        if (levelTag >2) prefix+="."+indices[2];
-        current.html(prefix+" - "+current.text());
-        for(var l = levelTag; l < 3; ++l){
-            indices[l] = 0;
-        }
-    });
 }
 
 // throw a stick at the modules array and hijack gotoNode 
@@ -69,7 +64,6 @@ $(document).ready(function() {
     // set-up footnote generation
     $("#doc-content").append('<ol id="autoFootnotes0" class="footnotesList"></ol>');
     $("body").footnotes();
-    number_h1h2h3();
     generate_autotoc();
 });
 

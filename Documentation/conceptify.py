@@ -20,16 +20,17 @@
 # Author(s)     : Philipp Moeller
 
 import argparse
-import codecs
-import os
-import re
 import glob
-from pyquery import PyQuery as pq
+import codecs
 from lxml import etree
+import os
 from os import path
+from pyquery import PyQuery as pq
+import re
+import shutil
+import string
 from sys import argv
 from sys import stderr
-import shutil
 
 def conceptify_nested_classes(d):
     # change nested classes to nested concepts
@@ -79,7 +80,9 @@ def clean_doc():
     duplicate_files.extend(glob.glob('./CGAL.CGAL.*/citelist.doc'))
     duplicate_files.extend(glob.glob('./CGAL.CGAL.*/doxygen.bst'))
     duplicate_files.extend(glob.glob('./CGAL.CGAL.*/geom.bib'))
-
+    duplicate_files.extend(glob.glob('./CGAL.CGAL.*/ftv2cl.png'))
+    duplicate_files.extend(glob.glob('./CGAL.CGAL.*/ftv2ns.png'))
+    
     for fn in duplicate_files:
         os.remove(fn)
 
@@ -104,6 +107,15 @@ def is_concept_file(filename):
   ident = d('#CGALConcept')
   return ident.size() == 1
 
+def rearrange_img(i, dir_name):
+    img = pq(this)
+    if img.attr("src") == "ftv2cl.png":
+        links=pq(this).parent().parent()('a.el')
+        if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
+            img.attr("src","ftv2cpt.png")
+    srcpath=img.attr("src")
+    img.attr("src", "../../CGAL.CGAL/html/" + string.split(srcpath, '/')[-1])
+
 def main():
     parser = argparse.ArgumentParser(
         description='''This script makes adjustments to the doxygen output. 
@@ -117,31 +129,17 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
 
     #replace icons with CGAL colored ones
+    shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("CGAL.CGAL/html/", "ftv2cl.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join("CGAL.CGAL/html/", "ftv2ns.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join("CGAL.CGAL/html/", "ftv2cpt.png"))
+
     annotated_files=glob.glob('./CGAL.CGAL*/html/annotated.html')
     for fn in annotated_files:
-      has_concepts=False
       dir_name=path.dirname(fn)
-      try:
-        shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join(dir_name,"ftv2cl.png"))
-        shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join(dir_name,"ftv2ns.png"))
-        shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join(dir_name,"ftv2cpt.png"))
-      except:
-        stderr.write("Error: Cannot copy resources files\n")
       d = pq(filename=fn, parser='html')
-      tr_tags = d('table.directory tr')
-      for tr in tr_tags:
-        img_tags=pq(tr)('img')
-        for i in img_tags:
-          img=pq(i)
-          icon_name=img.attr("src")
-          if icon_name=="ftv2cl.png":
-            links=pq(tr)('a.el')
-            if links.size()>0 and is_concept_file( path.join(dir_name,pq(links[0]).attr("href")) ):
-              has_concepts=True
-              img.attr("src","ftv2cpt.png")
-      if has_concepts:
-        write_out_html(d,fn)
-    
+      tr_tags = d('table.directory tr img')
+      tr_tags.each(lambda i: rearrange_img(i, dir_name))
+      write_out_html(d,fn)
     
     class_files=glob.glob('./CGAL.CGAL.*/html/class*.html')
     for fn in class_files:
