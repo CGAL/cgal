@@ -1360,9 +1360,9 @@ the darts of the two triangles are all 2-free. In the 4D case, the
 In this example, we also illustrate how to use the basic methods to
 build "by hand" some specific configuration in a combinatorial map. In
 fact, these functions are already present in the package: function
-\link make_triangle() `make_triangle(cm)` \endlink is equivalent to
+`make_triangle(cm)` is equivalent to
 \link make_combinatorial_polygon() `make_combinatorial_polygon(cm,3)`\endlink 
-and \link make_tetrahedron() `make_tetrahedron(cm)` \endlink is
+and `make_tetrahedral(cm)`  is
 equivalent to \link make_combinatorial_tetrahedron() `make_combinatorial_tetrahedron(cm)`\endlink. 
 If we want
 to create a 4D simplex, we must create five 3D simplexes, and sew them
