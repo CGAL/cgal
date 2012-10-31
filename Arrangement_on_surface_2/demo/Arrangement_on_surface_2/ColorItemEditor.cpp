@@ -44,36 +44,29 @@
 
 #include "ColorItemEditor.h"
 
-ColorItemEditor::
-ColorItemEditor( QWidget *widget ) : QPushButton( widget )
+ColorItemEditor::ColorItemEditor( QWidget* widget ) : QPushButton( widget )
 { 
-    this->setText( tr("Select a color") );
+  this->setText( tr("Select a color") );
 }
 
-QColor
-ColorItemEditor::
-color( ) const
+QColor ColorItemEditor::color( ) const
 {
-    return this->m_color;
+  return this->m_color;
 }
 
-void
-ColorItemEditor::
-setColor( QColor color )
+void ColorItemEditor::setColor( QColor color )
 {
-    this->m_color = color;
+  this->m_color = color;
 }
 
-void
-ColorItemEditor::
-mousePressEvent( QMouseEvent* e )
+void ColorItemEditor::mousePressEvent( QMouseEvent* e )
 {
-    QColor selectedColor = QColorDialog::getColor( this->m_color );
-    if ( selectedColor.isValid( ) )
-    {
-      // std::cout << selectedColor.name( ).toStdString( ) << std::endl;
-        this->setColor( selectedColor );
-    }
+  QColor selectedColor = QColorDialog::getColor( this->m_color );
+  if ( selectedColor.isValid( ) )
+  {
+    // std::cout << selectedColor.name( ).toStdString( ) << std::endl;
+    this->setColor( selectedColor );
+  }
 
-    emit confirmed( );
+  emit confirmed( );
 }

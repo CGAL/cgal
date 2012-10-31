@@ -1,3 +1,22 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef CGAL_ARRANGEMENTS_DEMO_UTILS_H
 #define CGAL_ARRANGEMENTS_DEMO_UTILS_H
 
@@ -460,8 +479,10 @@ public: // methods
 };
 
 template < class Coefficient_ >
-class Compute_squared_distance_2< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > > :
-  public Compute_squared_distance_2_base< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
+class Compute_squared_distance_2< CGAL::Arr_algebraic_segment_traits_2<
+                                    Coefficient_ > > :
+  public Compute_squared_distance_2_base< CGAL::Arr_algebraic_segment_traits_2<
+                                            Coefficient_ > >
 {
 public:
   typedef Coefficient_ Coefficient;
@@ -517,12 +538,15 @@ protected:
                               const CoordinateType& x, TTraits traits_,
                               CGAL::Arr_oblivious_side_tag )
   {
-    typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
+    typedef typename TTraits::Construct_x_monotone_curve_2
+      Construct_x_monotone_curve_2;
+    Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
       traits_.construct_x_monotone_curve_2_object( );
     CoordinateType res( 0 );
     CGAL::Bbox_2 clipRect = curve.bbox( );
     Point_2 p1c1( x, CoordinateType( clipRect.ymin( ) - 1 ) ); // clicked point
-    Point_2 p2c1( x, CoordinateType( clipRect.ymax( ) + 1 ) ); // upper bounding box
+    // upper bounding box
+    Point_2 p2c1( x, CoordinateType( clipRect.ymax( ) + 1 ) ); 
 
     const X_monotone_curve_2 verticalLine =
       construct_x_monotone_curve_2( p1c1, p2c1 );
@@ -589,7 +613,8 @@ public:
   typedef typename Traits::Point_2 Arc_point_2;
   typedef typename Kernel::Segment_2 Segment_2;
   typedef typename Kernel::Line_arc_2 Line_arc_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2; // Circular_arc_2
+  // Circular_arc_2
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2; 
   typedef typename Traits::Intersect_2 Intersect_2;
   typedef typename Traits::Multiplicity Multiplicity;
   typedef std::pair< typename Traits::Point_2, Multiplicity > IntersectionResult;
@@ -643,7 +668,8 @@ protected:
 };
 
 template < class Coefficient_ >
-class Arr_compute_y_at_x_2< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > > : public QGraphicsSceneMixin
+class Arr_compute_y_at_x_2< CGAL::Arr_algebraic_segment_traits_2<
+                              Coefficient_ > > : public QGraphicsSceneMixin
 {
 public:
   typedef Coefficient_ Coefficient;
@@ -654,7 +680,8 @@ public:
   typedef typename Traits::Multiplicity Multiplicity;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
-  CoordinateType operator() ( const X_monotone_curve_2& curve, const CoordinateType& x )
+  CoordinateType operator() ( const X_monotone_curve_2& curve,
+                              const CoordinateType& x )
   {
     CGAL::Object o;
     CGAL::Oneset_iterator< CGAL::Object > oi( o );
@@ -750,7 +777,8 @@ public:
     We assume pLeft and pRight don't lie on the curve and always do a vertical
     projection.
   */
-  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve, const Point_2& pLeft, const Point_2& pRight )
+  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
+                                  const Point_2& pLeft, const Point_2& pRight )
   {
     Point_2 pMin = this->construct_min_vertex_2( curve );
     Point_2 pMax = this->construct_max_vertex_2( curve );
@@ -793,7 +821,8 @@ protected:
 }; // class Construct_x_monotone_subcurve_2
 
 template < class CircularKernel >
-class Construct_x_monotone_subcurve_2< CGAL::Arr_circular_arc_traits_2< CircularKernel > >
+class Construct_x_monotone_subcurve_2< CGAL::Arr_circular_arc_traits_2<
+                                         CircularKernel > >
 {
 public:
   typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > ArrTraits;
@@ -870,7 +899,9 @@ protected:
  * which is not necessarily available.
  */
 template < class RatKernel, class AlgKernel, class NtTraits >
-class Construct_x_monotone_subcurve_2< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
+class Construct_x_monotone_subcurve_2< CGAL::Arr_conic_traits_2< RatKernel,
+                                                                 AlgKernel,
+                                                                 NtTraits > >
 {
 public:
   typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > ArrTraits;
@@ -917,7 +948,8 @@ public: // typedefs
 
 public: // methods
   // curve can be unbounded. if curve is unbounded to the left, pLeft is a point on the left edge of viewport.
-  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve, const Point_2& pLeft, const Point_2& pRight )
+  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
+                                  const Point_2& pLeft, const Point_2& pRight )
   {
     if ( curve.is_segment( ) )
     {
@@ -938,7 +970,8 @@ protected:
 };
 
 template < class Coefficient_ >
-class Construct_x_monotone_subcurve_2< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
+class Construct_x_monotone_subcurve_2< CGAL::Arr_algebraic_segment_traits_2<
+                                         Coefficient_ > >
 {
 public: // typedefs
   typedef Coefficient_ Coefficient;
@@ -950,7 +983,8 @@ public: // typedefs
   typedef typename Kernel::Segment_2 Segment_2;
 
 public: // methods
-  // curve can be unbounded. if curve is unbounded to the left, pLeft is a point on the left edge of viewport.
+  // curve can be unbounded. if curve is unbounded to the left, pLeft is a
+  // point on the left edge of viewport.
   X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
                                   const Point_2& pLeft, const Point_2& pRight )
   {
@@ -1196,7 +1230,8 @@ public:
           vit != this->arrangement->vertices_end( ); ++vit )
     {
       Arc_point_2 point = vit->point( );
-      Non_arc_point_2 point2( CGAL::to_double(point.x( )), CGAL::to_double(point.y()) );
+      Non_arc_point_2 point2( CGAL::to_double(point.x( )),
+                              CGAL::to_double(point.y()) );
       FT dist = this->compute_squared_distance_2( clickedPoint, point2 );
       if ( first || ( dist < minDist ) )
       {
@@ -1435,19 +1470,22 @@ public: // typedefs
   typedef typename Arrangement::Geometry_traits_2 ArrTraits;
   typedef Compute_squared_distance_2< ArrTraits > Point_curve_distance;
   typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef CGAL::Arr_walk_along_line_point_location< Arrangement > Point_location_strategy;
+  typedef CGAL::Arr_walk_along_line_point_location< Arrangement >
+    Point_location_strategy;
   typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
   typedef typename Kernel::Point_2 Point_2;
   typedef typename Arrangement::Face_const_handle Face_const_handle;
   typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
-  typedef typename Arrangement::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
+  typedef typename Arrangement::Ccb_halfedge_const_circulator
+    Ccb_halfedge_const_circulator;
   typedef typename Point_curve_distance::FT FT;
   typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
-  typedef typename Arrangement::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
+  typedef typename Arrangement::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
 
 public: // constructors
-  Find_nearest_edge( Arrangement* arr_ ):
+  Find_nearest_edge( Arrangement* arr_ ) :
     Find_nearest_edge_base( ),
     arr( arr_ ),
     pointLocationStrategy( Point_location_strategy( *arr_ ) )
@@ -1456,7 +1494,8 @@ public: // constructors
 public: // member methods
   Halfedge_const_handle operator()( const Point_2& queryPt )
   {
-    CGAL::Object pointLocationResult = this->pointLocationStrategy.locate( queryPt );
+    CGAL::Object pointLocationResult =
+      this->pointLocationStrategy.locate( queryPt );
     Face_const_handle face = this->getFace( pointLocationResult );
     bool first = 1;
     X_monotone_curve_2 closestCurve;

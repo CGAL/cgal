@@ -1,3 +1,22 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef MERGE_EDGE_CALLBACK_H
 #define MERGE_EDGE_CALLBACK_H
 
@@ -15,7 +34,7 @@
 
    The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
-template < class Arr_ >
+template < typename Arr_ >
 class MergeEdgeCallback : public CGAL::Qt::Callback
 {
 public:
@@ -39,11 +58,11 @@ public:
   void reset( );
 
 protected:
-  void mousePressEvent( QGraphicsSceneMouseEvent *event );
-  void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
-  Halfedge_handle getNearestMergeableCurve( QGraphicsSceneMouseEvent *event );
+  void mousePressEvent( QGraphicsSceneMouseEvent* event );
+  void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
+  Halfedge_handle getNearestMergeableCurve( QGraphicsSceneMouseEvent* event );
   Halfedge_handle getNearestMergeableCurve( Halfedge_handle h,
-                                            QGraphicsSceneMouseEvent *event );
+                                            QGraphicsSceneMouseEvent* event );
 
   Compute_squared_distance_2< Traits > squaredDistance;
   CGAL::Qt::Converter< Kernel > convert;
@@ -56,9 +75,9 @@ protected:
 }; // class MergeEdgeCallback
 
 
-template < class Arr_ >
-MergeEdgeCallback< Arr_ >::
-MergeEdgeCallback( Arrangement* arr_, QObject* parent_ ):
+template < typename Arr_ >
+MergeEdgeCallback< Arr_ >::MergeEdgeCallback( Arrangement* arr_,
+                                              QObject* parent_ ):
   CGAL::Qt::Callback( parent_ ),
   arr( arr_ ),
   scene( NULL ),
@@ -72,10 +91,8 @@ MergeEdgeCallback( Arrangement* arr_, QObject* parent_ ):
                     this->highlightedCurve2, SLOT( modelChanged( ) ) );
 }
 
-template < class Arr_ >
-void 
-MergeEdgeCallback< Arr_ >::
-setScene( QGraphicsScene* scene_ )
+template < typename Arr_ >
+void MergeEdgeCallback< Arr_ >::setScene( QGraphicsScene* scene_ )
 {
   this->scene = scene_;
   this->highlightedCurve->setScene( scene_ );
@@ -87,18 +104,14 @@ setScene( QGraphicsScene* scene_ )
   }
 }
 
-template < class Arr_ >
-QGraphicsScene* 
-MergeEdgeCallback< Arr_ >::
-getScene( ) const
+template < typename Arr_ >
+QGraphicsScene* MergeEdgeCallback< Arr_ >::getScene( ) const
 {
   return this->scene;
 }
 
-template < class Arr_ >
-void
-MergeEdgeCallback< Arr_ >::
-reset( )
+template < typename Arr_ >
+void MergeEdgeCallback< Arr_ >::reset( )
 {
   this->isFirst = true;
   this->highlightedCurve->clear( );
@@ -107,10 +120,8 @@ reset( )
   emit modelChanged( );
 }
 
-template < class Arr_ >
-void 
-MergeEdgeCallback< Arr_ >::
-mousePressEvent( QGraphicsSceneMouseEvent* event )
+template < typename Arr_ >
+void MergeEdgeCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
   if ( this->isFirst )
   { // save the first edge if mergeable
@@ -133,10 +144,8 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
   emit modelChanged( );
 }
 
-template < class Arr_ >
-void 
-MergeEdgeCallback< Arr_ >::
-mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+template < typename Arr_ >
+void MergeEdgeCallback<Arr_>::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
   if ( this->isFirst )
   {
@@ -159,7 +168,7 @@ mouseMoveEvent( QGraphicsSceneMouseEvent* event )
   }
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 typename MergeEdgeCallback< Arr_ >::Halfedge_handle
 MergeEdgeCallback< Arr_ >::
 getNearestMergeableCurve( QGraphicsSceneMouseEvent* event )
@@ -206,7 +215,7 @@ getNearestMergeableCurve( QGraphicsSceneMouseEvent* event )
   return nearestHei;
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 typename MergeEdgeCallback< Arr_ >::Halfedge_handle
 MergeEdgeCallback< Arr_ >::
 getNearestMergeableCurve( Halfedge_handle h, QGraphicsSceneMouseEvent* event )

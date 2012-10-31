@@ -1,5 +1,25 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef CGAL_QT_GRAPHICS_VIEW_CURVE_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_CURVE_INPUT_H
+
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
@@ -358,7 +378,8 @@ protected:
         QPointF pt = this->convert( clickedPoint );
         if ( this->scene != NULL )
         {
-          QGraphicsEllipseItem* ellipse = this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
+          QGraphicsEllipseItem* ellipse =
+            this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
           ellipse->setZValue( 100 );
           QPen pen = ellipse->pen( );
           pen.setColor( this->color );
@@ -706,7 +727,7 @@ protected: // fields
    user-guided generation of circular arc curves.
 */
 template < class CircularKernel >
-class GraphicsViewCurveInput< CGAL::Arr_circular_arc_traits_2< CircularKernel > >:
+class GraphicsViewCurveInput<CGAL::Arr_circular_arc_traits_2<CircularKernel> > :
   public GraphicsViewCurveInputBase
 {
 public:
@@ -724,8 +745,7 @@ public:
   { }
 
 protected:
-  void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
-  { }
+  void mouseMoveEvent( QGraphicsSceneMouseEvent* event ) { }
 
   void mousePressEvent( QGraphicsSceneMouseEvent* event )
   {
@@ -876,4 +896,5 @@ protected:
 
 } // namespace Qt
 } // namespace CGAL
+
 #endif // CGAL_QT_GRAPHICS_VIEW_SEGMENT_INPUT_H

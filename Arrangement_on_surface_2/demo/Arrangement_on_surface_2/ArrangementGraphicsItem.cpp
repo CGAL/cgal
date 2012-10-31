@@ -1,114 +1,111 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #include "ArrangementGraphicsItem.h"
 
 namespace CGAL {
 namespace Qt {
 
-ArrangementGraphicsItemBase::
-ArrangementGraphicsItemBase( ):
-    bb( 0, 0, 0, 0 ),
-    bb_initialized( false ),
-    visible_edges( true ),
-    visible_vertices( true ),
-    verticesPen( QPen( ::Qt::blue, 3. ) ),
-    edgesPen( QPen( ::Qt::blue, 1. ) ),
-    scene( NULL ),
-    backgroundColor( ::Qt::white )
+ArrangementGraphicsItemBase::ArrangementGraphicsItemBase( ) :
+  bb( 0, 0, 0, 0 ),
+  bb_initialized( false ),
+  visible_edges( true ),
+  visible_vertices( true ),
+  verticesPen( QPen( ::Qt::blue, 3. ) ),
+  edgesPen( QPen( ::Qt::blue, 1. ) ),
+  scene( NULL ),
+  backgroundColor( ::Qt::white )
 {
-    this->verticesPen.setCosmetic( true );
-    this->verticesPen.setCapStyle( ::Qt::SquareCap );
-    this->edgesPen.setCosmetic( true );
+  this->verticesPen.setCosmetic( true );
+  this->verticesPen.setCapStyle( ::Qt::SquareCap );
+  this->edgesPen.setCosmetic( true );
 }
 
-const QPen&
-ArrangementGraphicsItemBase::
-getVerticesPen( ) const
+const QPen& ArrangementGraphicsItemBase::getVerticesPen( ) const
 {
-    return this->verticesPen;
+  return this->verticesPen;
 }
 
-const QPen& 
-ArrangementGraphicsItemBase::
-getEdgesPen( ) const
+const QPen& ArrangementGraphicsItemBase::getEdgesPen( ) const
 {
-    return this->edgesPen;
+  return this->edgesPen;
 }
 
-void 
-ArrangementGraphicsItemBase::
-setVerticesPen( const QPen& pen )
+void ArrangementGraphicsItemBase::setVerticesPen( const QPen& pen )
 {
-    this->verticesPen = pen;
+  this->verticesPen = pen;
 }
 
-void 
-ArrangementGraphicsItemBase::
-setEdgesPen( const QPen& pen )
+void ArrangementGraphicsItemBase::setEdgesPen( const QPen& pen )
 {
-    this->edgesPen = pen;
+  this->edgesPen = pen;
 }
 
-bool 
-ArrangementGraphicsItemBase::
-visibleVertices( ) const
+bool ArrangementGraphicsItemBase::visibleVertices( ) const
 {
-    return this->visible_vertices;
+  return this->visible_vertices;
 }
 
-void 
-ArrangementGraphicsItemBase::
-setVisibleVertices( const bool b )
+void ArrangementGraphicsItemBase::setVisibleVertices( const bool b )
 {
-    this->visible_vertices = b;
-    this->update( );
+  this->visible_vertices = b;
+  this->update( );
 }
 
-bool 
-ArrangementGraphicsItemBase::
-visibleEdges( ) const
+bool ArrangementGraphicsItemBase::visibleEdges( ) const
 {
-    return this->visible_edges;
+  return this->visible_edges;
 }
 
-void 
-ArrangementGraphicsItemBase::
-setVisibleEdges( const bool b )
+void ArrangementGraphicsItemBase::setVisibleEdges( const bool b )
 {
-    this->visible_edges = b;
-    this->update( );
+  this->visible_edges = b;
+  this->update( );
 }
 
-void
-ArrangementGraphicsItemBase::
-setBackgroundColor( QColor color )
+void ArrangementGraphicsItemBase::setBackgroundColor( QColor color )
 {
-    this->backgroundColor = color;
+  this->backgroundColor = color;
 }
 
 #if 0
-void
-ArrangementGraphicsItemBase::
-setScene( QGraphicsScene* scene_ )
+void ArrangementGraphicsItemBase::setScene( QGraphicsScene* scene_ )
 {
-    this->scene = scene_;
+  this->scene = scene_;
 }
 
-QRectF
-ArrangementGraphicsItemBase::
-getViewportRect( ) const
+QRectF ArrangementGraphicsItemBase::getViewportRect( ) const
 {
-    QRectF clipRect;
-    if ( this->scene == NULL || this->scene->views( ).size( ) == 0 )
-    {
-        return clipRect;
-    }
-
-    QGraphicsView* view = this->scene->views( ).first( );
-    QPointF p1 = view->mapToScene( 0, 0 );
-    QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
-    clipRect = QRectF( p1, p2 );
-
+  QRectF clipRect;
+  if ( this->scene == NULL || this->scene->views( ).size( ) == 0 )
+  {
     return clipRect;
+  }
+
+  QGraphicsView* view = this->scene->views( ).first( );
+  QPointF p1 = view->mapToScene( 0, 0 );
+  QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
+  clipRect = QRectF( p1, p2 );
+
+  return clipRect;
 }
+
 #endif
 
 } // namespace Qt

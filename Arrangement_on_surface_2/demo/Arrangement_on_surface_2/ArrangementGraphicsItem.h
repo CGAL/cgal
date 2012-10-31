@@ -1,4 +1,4 @@
-// Copyright (c) 2008  GeometryFactory Sarl (France).
+// Copyright (c) 2008, 2012  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -11,6 +11,11 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #ifndef CGAL_QT_ARRANGEMENT_GRAPHICS_ITEM_H
 #define CGAL_QT_ARRANGEMENT_GRAPHICS_ITEM_H
@@ -70,7 +75,7 @@ protected:
 
 }; // class ArrangementGraphicsItemBase
 
-template < class Arr_, class ArrTraits = typename Arr_::Geometry_traits_2 >
+template <typename Arr_, typename ArrTraits = typename Arr_::Geometry_traits_2>
 class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
 {
   typedef Arr_ Arrangement;
@@ -100,17 +105,20 @@ public:
 public:
   void modelChanged( );
   QRectF boundingRect( ) const;
-  virtual void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
+  virtual void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
+                      QWidget* widget );
 
 protected:
-  template < class TTraits >
+  template < typename TTraits >
   void paint( QPainter* painter, TTraits traits );
-  template < class Kernel_ >
+  template < typename Kernel_ >
   void paint( QPainter* painter, CGAL::Arr_linear_traits_2< Kernel_ > traits );
-  template < class CircularKernel >
-  void paint( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
-  template < class Coefficient_ >
-  void paint( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
+  template < typename CircularKernel >
+  void paint( QPainter* painter,
+              CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
+  template < typename Coefficient_ >
+  void paint( QPainter* painter,
+              CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
 
 
   void paintFaces( QPainter* painter )
@@ -121,7 +129,8 @@ protected:
 
   void paintFaces( QPainter* painter, CGAL::Arr_oblivious_side_tag )
   {
-    for( Face_iterator fi = this->arr->faces_begin( ); fi != this->arr->faces_end( ); ++fi )
+    for( Face_iterator fi = this->arr->faces_begin( );
+         fi != this->arr->faces_end( ); ++fi )
     {
       fi->set_visited( false );
     }
@@ -132,7 +141,8 @@ protected:
 
   void paintFaces( QPainter* painter, CGAL::Arr_open_side_tag )
   {
-    for( Face_iterator fi = this->arr->faces_begin( ); fi != this->arr->faces_end( ); ++fi )
+    for( Face_iterator fi = this->arr->faces_begin( );
+         fi != this->arr->faces_end( ); ++fi )
     {
       // if ( fi->is_fictitious( ) )
       // {
@@ -146,18 +156,22 @@ protected:
   }
 
 #if 0
-  template < class TTraits >
+  template < typename TTraits >
   void paintFaces( QPainter* painter, TTraits traits ) { }
-  template < class Kernel_ >
-  void paintFaces( QPainter* painter, CGAL::Arr_segment_traits_2< Kernel_ > ) { }
-  template < class Kernel_ >
-  void paintFaces( QPainter* painter, CGAL::Arr_polyline_traits_2< Kernel_ > ) { }
-  template < class RatKernel, class AlgKernel, class NtTraits >
-  void paintFaces( QPainter* painter, CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > ) { }
-  template < class CircularKernel >
-  void paintFaces( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits ) { }
-  template < class Coefficient_ >
-  void paintFaces( QPainter* painter, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits ) { }
+  template < typename Kernel_ >
+  void paintFaces(QPainter* painter, CGAL::Arr_segment_traits_2<Kernel_>) {}
+  template < typename Kernel_ >
+  void paintFaces(QPainter* painter, CGAL::Arr_polyline_traits_2<Kernel_>) {}
+  template < typename RatKernel, class AlgKernel, class NtTraits >
+  void paintFaces(QPainter* painter, CGAL::Arr_conic_traits_2<RatKernel,
+                                                               AlgKernel,
+                                                               NtTraits >) {}
+  template < typename CircularKernel >
+  void paintFaces(QPainter* painter,
+                  CGAL::Arr_circular_arc_traits_2<CircularKernel > traits) {}
+  template < typename Coefficient_ >
+  void paintFaces(QPainter* painter,
+                  CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits) {}
 #endif
 
   void paintFace( Face_handle f, QPainter* painter )
@@ -224,9 +238,9 @@ protected:
     return (twin->face() == h->face());
   }
 
-  template < class Traits >
+  template < typename Traits >
   void paintFace( Face_handle f, QPainter* painter, Traits traits ) { }
-  template < class Kernel_ >
+  template < typename Kernel_ >
   void paintFace( Face_handle f, QPainter* painter,
                   CGAL::Arr_segment_traits_2< Kernel_ > )
   {
@@ -268,7 +282,7 @@ protected:
     }
   }
 
-  template < class Kernel_ >
+  template < typename Kernel_ >
   void paintFace( Face_handle f, QPainter* painter,
                   CGAL::Arr_polyline_traits_2< Kernel_ > )
   {
@@ -337,7 +351,7 @@ protected:
     }
   }
 
-  template < class RatKernel, class AlgKernel, class NtTraits >
+  template < typename RatKernel, typename AlgKernel, typename NtTraits >
   void paintFace( Face_handle f, QPainter* painter,
                   CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > )
   {
@@ -453,8 +467,9 @@ protected:
     }
   }
 
-  template < class CircularKernel >
-  void paintFace( Face_handle f, QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+  template < typename CircularKernel >
+  void paintFace( Face_handle f, QPainter* painter,
+                  CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
   {
     if ( f->is_unbounded( ) )
     {
@@ -608,7 +623,7 @@ protected:
   }
 
 #if 0
-  template < class CircularKernel >
+  template < typename CircularKernel >
   void paintFace( Face_handle f, QPainter* painter,
                   CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
   {
@@ -771,11 +786,11 @@ protected:
 
   //void cacheCurveBoundingRects( );
   void updateBoundingBox( );
-  template < class TTraits >
+  template < typename TTraits >
   void updateBoundingBox( TTraits traits );
-  template < class Kernel_ >
+  template < typename Kernel_ >
   void updateBoundingBox( CGAL::Arr_linear_traits_2< Kernel_ > traits );
-  template < class Coefficient_ >
+  template < typename Coefficient_ >
   void updateBoundingBox( CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
 
   Arrangement* arr;
@@ -784,7 +799,7 @@ protected:
   std::map< Curve_iterator, CGAL::Bbox_2 > curveBboxMap;
 }; // class ArrangementGraphicsItem
 
-  template < class Arr_, class ArrTraits >
+  template < typename Arr_, class ArrTraits >
   ArrangementGraphicsItem< Arr_, ArrTraits >::
   ArrangementGraphicsItem( Arrangement* arr_ ):
     arr( arr_ ),
@@ -797,7 +812,7 @@ protected:
     this->setZValue( 3 );
   }
 
-  template < class Arr_, class ArrTraits >
+  template < typename Arr_, typename ArrTraits >
   QRectF 
   ArrangementGraphicsItem< Arr_, ArrTraits >::
   boundingRect( ) const
@@ -806,44 +821,46 @@ protected:
     return rect;
   }
 
-  template < class Arr_, class ArrTraits >
+  template < typename Arr_, typename ArrTraits >
   void 
   ArrangementGraphicsItem< Arr_, ArrTraits >::
-  paint(QPainter *painter,
-        const QStyleOptionGraphicsItem *option,
-        QWidget * /*widget*/)
+  paint(QPainter* painter,
+        const QStyleOptionGraphicsItem* option,
+        QWidget*  /*widget*/)
   {
     this->paint( painter, ArrTraits( ) );
   }
 
-  template < class Arr_, class ArrTraits >
-  template < class TTraits >
-  void
-  ArrangementGraphicsItem< Arr_, ArrTraits >::
+  template < typename Arr_, typename ArrTraits >
+  template < typename TTraits >
+  void ArrangementGraphicsItem< Arr_, ArrTraits >::
   paint( QPainter* painter, TTraits traits )
   {
     this->paintFaces( painter );
 
     painter->setPen( this->verticesPen );
-    this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
+    this->painterostream =
+      ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
     this->painterostream.setScene( this->scene );
 
-    for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
+    for ( Vertex_iterator it = this->arr->vertices_begin( );
+          it != this->arr->vertices_end( ); ++it )
     {
       Point_2 p = it->point( );
       Kernel_point_2 pt( p.x( ), p.y( ) );
       this->painterostream << pt;
     }
     painter->setPen( this->edgesPen );
-    for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
+    for ( Edge_iterator it = this->arr->edges_begin( );
+          it != this->arr->edges_end( ); ++it )
     {
       X_monotone_curve_2 curve = it->curve( );
       this->painterostream << curve;
     }
   }
 
-  template < class Arr_, class ArrTraits >
-  template < class Kernel_ >
+  template < typename Arr_, typename ArrTraits >
+  template < typename Kernel_ >
   void
   ArrangementGraphicsItem< Arr_, ArrTraits >::
   paint( QPainter* painter, CGAL::Arr_linear_traits_2< Kernel_ > traits )
@@ -852,27 +869,31 @@ protected:
     this->paintFaces( painter );
     painter->setPen( this->verticesPen );
 
-    this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
+    this->painterostream =
+      ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
     this->painterostream.setScene( this->scene );
 
-    for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
+    for ( Vertex_iterator it = this->arr->vertices_begin( );
+          it != this->arr->vertices_end( ); ++it )
     {
       Point_2 pt = it->point( );
       this->painterostream << pt;
     }
     painter->setPen( this->edgesPen );
-    for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
+    for ( Edge_iterator it = this->arr->edges_begin( );
+          it != this->arr->edges_end( ); ++it )
     {
       X_monotone_curve_2 curve = it->curve( );
       this->painterostream << curve;
     }
   }
 
-  template < class Arr_, class ArrTraits >
-  template < class CircularKernel >
+  template < typename Arr_, typename ArrTraits >
+  template < typename CircularKernel >
   void
   ArrangementGraphicsItem< Arr_, ArrTraits >::
-  paint( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+  paint( QPainter* painter,
+         CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
   {
     typedef Kernel_point_2 Non_arc_point_2;
     typedef typename Traits::Point_2 Arc_point_2;
@@ -884,22 +905,24 @@ protected:
       ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
     this->painterostream.setScene( this->scene );
 
-    for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
+    for ( Vertex_iterator it = this->arr->vertices_begin( );
+          it != this->arr->vertices_end( ); ++it )
     {
       Arc_point_2 pt = it->point( );
       Non_arc_point_2 pt2(CGAL::to_double(pt.x( )), CGAL::to_double(pt.y()) );
       this->painterostream << pt2;
     }
     painter->setPen( this->edgesPen );
-    for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
+    for ( Edge_iterator it = this->arr->edges_begin( );
+          it != this->arr->edges_end( ); ++it )
     {
       X_monotone_curve_2 curve = it->curve( );
       this->painterostream << curve;
     }
   }
 
-  template < class Arr_, class ArrTraits >
-  template < class Coefficient_ >
+  template < typename Arr_, typename ArrTraits >
+  template < typename Coefficient_ >
   void
   ArrangementGraphicsItem< Arr_, ArrTraits >::
   paint( QPainter* painter,
@@ -919,7 +942,8 @@ protected:
       ArrangementPainterOstream< Traits >( painter, clipRect );
     this->painterostream.setScene( this->scene );
 
-    for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
+    for ( Vertex_iterator it = this->arr->vertices_begin( );
+          it != this->arr->vertices_end( ); ++it )
     {
       Point_2 p = it->point( );
       //std::pair< double, double > approx = p.to_double( );
@@ -928,7 +952,8 @@ protected:
       this->painterostream << p;
     }
     painter->setPen( this->edgesPen );
-    for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
+    for ( Edge_iterator it = this->arr->edges_begin( );
+          it != this->arr->edges_end( ); ++it )
     {
       X_monotone_curve_2 curve = it->curve( );
       this->painterostream << curve;
@@ -937,15 +962,15 @@ protected:
 
   // We let the bounding box only grow, so that when vertices get removed
   // the maximal bbox gets refreshed in the GraphicsView
-  template < class Arr_, class ArrTraits >
+  template < typename Arr_, typename ArrTraits >
   void 
   ArrangementGraphicsItem< Arr_, ArrTraits >::updateBoundingBox( )
   {
     this->updateBoundingBox( ArrTraits( ) );
   }
 
-  template < class Arr_, class ArrTraits >
-  template < class TTraits >
+  template < typename Arr_, typename ArrTraits >
+  template < typename TTraits >
   void 
   ArrangementGraphicsItem< Arr_, ArrTraits >::updateBoundingBox(TTraits traits)
   {
@@ -973,8 +998,8 @@ protected:
       this->bb = this->bb + this->curveBboxMap[ it ];
     }
   }
-  template < class Arr_, class ArrTraits >
-  template < class Kernel_ >
+  template < typename Arr_, typename ArrTraits >
+  template < typename Kernel_ >
   void
   ArrangementGraphicsItem< Arr_, ArrTraits >::
   updateBoundingBox( CGAL::Arr_linear_traits_2< Kernel_ > traits )
@@ -1018,11 +1043,10 @@ protected:
     }
   }
 
-  template < class Arr_, class ArrTraits >
-  template < class Coefficient_ >
-  void
-  ArrangementGraphicsItem< Arr_, ArrTraits >::
-  updateBoundingBox( CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
+  template < typename Arr_, typename ArrTraits >
+  template < typename Coefficient_ >
+  void ArrangementGraphicsItem< Arr_, ArrTraits >::
+  updateBoundingBox(CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits)
   {
     this->prepareGeometryChange( );
     if ( this->arr->number_of_vertices( ) == 0 )
@@ -1054,9 +1078,8 @@ protected:
     }
   }
 
-  template < class Arr_, class ArrTraits >
-  void 
-  ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
+  template < typename Arr_, typename ArrTraits >
+  void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
   {
     if ( this->arr->is_empty( ) )
     {
@@ -1075,8 +1098,8 @@ protected:
      updateBoundingBox
   */
 #if 0
-  template < class Arr_, class Kernel_ >
-  class ArrangementGraphicsItem< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > >  :
+  template < typename Arr_, typename Kernel_ >
+  class ArrangementGraphicsItem< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > > :
     public ArrangementGraphicsItemBase
   {
     typedef Arr_ Arrangement;
@@ -1128,20 +1151,24 @@ protected:
 
     // @override QGraphicsItem::paint
 #if 0
-    virtual void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )
+    virtual void paint( QPainter* painter,
+                        const QStyleOptionGraphicsItem* option,
+                        QWidget* widget )
     {
       this->updateBoundingBox( );
       painter->setPen( this->verticesPen );
       this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
       this->painterostream.setScene( this->scene );
 
-      for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
+      for ( Vertex_iterator it = this->arr->vertices_begin( );
+            it != this->arr->vertices_end( ); ++it )
       {
         Point_2 pt = it->point( );
         this->painterostream << pt;
       }
       painter->setPen( this->edgesPen );
-      for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
+      for ( Edge_iterator it = this->arr->edges_begin( );
+            it != this->arr->edges_end( ); ++it )
       {
         X_monotone_curve_2 curve = it->curve( );
         this->painterostream << curve;

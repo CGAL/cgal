@@ -1,5 +1,25 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef POINT_LOCATION_CALLBACK_H
 #define POINT_LOCATION_CALLBACK_H
+
 #include "Callback.h"
 #include <QEvent>
 #include <QGraphicsItem>
@@ -21,7 +41,7 @@
 
    The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
-template < class Arr_ >
+template < typename Arr_ >
 class PointLocationCallback : public CGAL::Qt::Callback
 {
 public:
@@ -70,8 +90,10 @@ protected:
                                CGAL::Arr_open_side_tag );
   Face_const_handle getFace( const CGAL::Object& o );
   CGAL::Object locate( const Kernel_point_2& point );
-  CGAL::Object locate( const Kernel_point_2& point, CGAL::Tag_false /*supportsLandmarks*/ );
-  CGAL::Object locate( const Kernel_point_2& point, CGAL::Tag_true /*doesNotSupportLandmarks*/ );
+  CGAL::Object locate( const Kernel_point_2& point,
+                       CGAL::Tag_false /*supportsLandmarks*/ );
+  CGAL::Object locate( const Kernel_point_2& point,
+                       CGAL::Tag_true /*doesNotSupportLandmarks*/ );
 
   using Callback::scene;
   CGAL::Qt::Converter< Kernel > convert;
@@ -82,9 +104,9 @@ protected:
 }; // class PointLocationCallback
 
 
-template < class Arr_ >
+template < typename Arr_ >
 PointLocationCallback< Arr_ >::
-PointLocationCallback( Arrangement* arr_, QObject* parent_ ):
+PointLocationCallback( Arrangement* arr_, QObject* parent_ ) :
   CGAL::Qt::Callback( parent_ ),
   arr( arr_ ),
   highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
@@ -94,7 +116,7 @@ PointLocationCallback( Arrangement* arr_, QObject* parent_ ):
                     this->highlightedCurves, SLOT( modelChanged( ) ) );
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 void
 PointLocationCallback< Arr_ >::
 setScene( QGraphicsScene* scene_ )
@@ -107,7 +129,7 @@ setScene( QGraphicsScene* scene_ )
   }
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 void
 PointLocationCallback< Arr_ >::
 reset( )
@@ -116,7 +138,7 @@ reset( )
   emit modelChanged( );
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 void 
 PointLocationCallback< Arr_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
@@ -124,15 +146,13 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
   this->highlightPointLocation( event );
 }
 
-template < class Arr_ >
-void 
-PointLocationCallback< Arr_ >::
+template < typename Arr_ >
+void PointLocationCallback< Arr_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 { }
 
-template < class Arr_ >
-void 
-PointLocationCallback< Arr_ >::
+template < typename Arr_ >
+void PointLocationCallback< Arr_ >::
 highlightPointLocation( QGraphicsSceneMouseEvent* event )
 {
   typename Traits::Left_side_category category;
@@ -141,10 +161,10 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
   emit modelChanged( );
 }
 
-template < class Arr_ >
-void 
-PointLocationCallback< Arr_ >::
-highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_oblivious_side_tag )
+template < typename Arr_ >
+void PointLocationCallback< Arr_ >::
+highlightPointLocation( QGraphicsSceneMouseEvent *event,
+                        CGAL::Arr_oblivious_side_tag )
 {
   Kernel_point_2 point = this->convert( event->scenePos( ) );
 
@@ -175,9 +195,8 @@ highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_oblivious_sid
   }
 }
 
-template < class Arr_ >
-void 
-PointLocationCallback< Arr_ >::
+template < typename Arr_ >
+void PointLocationCallback< Arr_ >::
 highlightPointLocation( QGraphicsSceneMouseEvent *event,
                         CGAL::Arr_open_side_tag )
 {
@@ -209,10 +228,9 @@ highlightPointLocation( QGraphicsSceneMouseEvent *event,
   }
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 typename PointLocationCallback< Arr_ >::Face_const_handle
-PointLocationCallback< Arr_ >::
-getFace( const CGAL::Object& obj )
+PointLocationCallback< Arr_ >::getFace( const CGAL::Object& obj )
 {
   Face_const_handle f;
   if ( CGAL::assign( f, obj ) )
@@ -231,19 +249,16 @@ getFace( const CGAL::Object& obj )
   return  (eit->face( ));
 }
 
-template < class Arr_ >
-CGAL::Object
-PointLocationCallback< Arr_ >::
-locate( const Kernel_point_2& point )
+template < typename Arr_ >
+CGAL::Object PointLocationCallback<Arr_>::locate(const Kernel_point_2& point)
 {
   typename Supports_landmarks< Arrangement >::Tag supportsLandmarks;
   return this->locate( point, supportsLandmarks );
 }
 
-template < class Arr_ >
-CGAL::Object
-PointLocationCallback< Arr_ >::
-locate( const Kernel_point_2& pt, CGAL::Tag_true )
+template < typename Arr_ >
+CGAL::Object PointLocationCallback< Arr_ >::locate( const Kernel_point_2& pt,
+                                                    CGAL::Tag_true )
 {
   CGAL::Object pointLocationResult;
   WalkAlongLinePointLocationStrategy* walkStrategy;
@@ -272,10 +287,9 @@ locate( const Kernel_point_2& pt, CGAL::Tag_true )
   return pointLocationResult;
 }
 
-template < class Arr_ >
-CGAL::Object
-PointLocationCallback< Arr_ >::
-locate( const Kernel_point_2& pt, CGAL::Tag_false )
+template < typename Arr_ >
+CGAL::Object PointLocationCallback< Arr_ >::locate( const Kernel_point_2& pt,
+                                                    CGAL::Tag_false )
 {
   CGAL::Object pointLocationResult;
   WalkAlongLinePointLocationStrategy* walkStrategy;

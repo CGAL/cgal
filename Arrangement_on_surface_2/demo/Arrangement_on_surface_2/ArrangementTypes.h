@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005,2012 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -18,6 +18,7 @@
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Alex Tsui <alextsui05@gmail.com>
 
 #ifndef ARRANGEMENT_DEMO_TYPES_H
 #define ARRANGEMENT_DEMO_TYPES_H
@@ -81,7 +82,6 @@ class Face_with_color : public CGAL::Arr_face_base
   bool      m_visited;
 
 public:
-
   Face_with_color() : CGAL::Arr_face_base(), m_color(), m_visited(false)
   { }
 
@@ -99,7 +99,6 @@ class Dcel :
 {
 
 public:
-
    /*! \struct
    * An auxiliary structure for rebinding the DCEL with a new traits class.
    */
@@ -120,8 +119,8 @@ typedef Seg_traits::Curve_2                             Arr_seg_2;
 typedef Seg_traits::X_monotone_curve_2                  Arr_xseg_2;
 typedef Seg_traits::Point_2                             Arr_seg_point_2;
 typedef Dcel<Seg_traits>                                Seg_dcel;
-typedef CGAL::Arrangement_with_history_2<Seg_traits,
-                                         Seg_dcel>      Seg_arr;
+typedef CGAL::Arrangement_with_history_2<Seg_traits, Seg_dcel>
+                                                        Seg_arr;
 typedef Seg_arr::Halfedge                               Seg_halfedge;
 typedef Seg_arr::Halfedge_handle                        Seg_halfedge_handle;
 typedef Seg_arr::Face_handle                            Seg_face_handle;
@@ -134,7 +133,7 @@ typedef Arr_seg_list::const_iterator                    Arr_seg_const_iter;
 typedef Arr_seg_list::iterator                          Arr_seg_iter;
 
 
-//point location
+// point location
 typedef CGAL::Arr_trapezoid_ric_point_location<Seg_arr>
   Seg_trap_point_location;
 typedef CGAL::Arr_simple_point_location<Seg_arr>
@@ -144,11 +143,7 @@ typedef CGAL::Arr_walk_along_line_point_location<Seg_arr>
 typedef CGAL::Arr_landmarks_point_location<Seg_arr>
   Seg_lanmarks_point_location;
 
-
-
-
 // Polyline
-
 typedef CGAL::Arr_polyline_traits_2<Seg_traits>         Pol_traits;
 
 typedef Pol_traits::Curve_2                             Arr_pol_2;
@@ -170,7 +165,7 @@ typedef std::list<Arr_pol_2*>                            Arr_pol_list;
 typedef Arr_pol_list::const_iterator                     Arr_pol_const_iter;
 typedef Arr_pol_list::iterator                           Arr_pol_iter;
 
-//point location
+// point location
 typedef CGAL::Arr_trapezoid_ric_point_location<Pol_arr>
   Pol_trap_point_location;
 typedef CGAL::Arr_simple_point_location<Pol_arr>
@@ -228,7 +223,7 @@ typedef std::list<Arr_xconic_2*>                         Arr_xconic_list;
 typedef Arr_xconic_list::const_iterator                  Arr_xconic_const_iter;
 typedef Arr_xconic_list::iterator                        Arr_xconic_iter;
 
-//point location
+// point location
 typedef CGAL::Arr_trapezoid_ric_point_location<Conic_arr>
   Conic_trap_point_location;
 typedef CGAL::Arr_simple_point_location<Conic_arr>
@@ -319,8 +314,7 @@ public:
   typedef CGAL::Arr_observer<Arrangement>     Arr_observer;
   typedef typename Arrangement::Face_handle   Face_handle;
 
-  My_observer (Arrangement& arr) : Arr_observer (arr)
-  {}
+  My_observer (Arrangement& arr) : Arr_observer (arr) {}
 
    virtual void after_split_face (Face_handle  f ,
                                   Face_handle  new_f ,

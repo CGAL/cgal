@@ -1,3 +1,22 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef SPLIT_EDGE_CALLBACK_H
 #define SPLIT_EDGE_CALLBACK_H
 
@@ -106,9 +125,9 @@ protected:
     snapToGridStrategy;
 }; // class SplitEdgeCallback
 
-template < class Arr_ >
-SplitEdgeCallback< Arr_ >::
-SplitEdgeCallback( Arrangement* arr_, QObject* parent ):
+template < typename Arr_ >
+SplitEdgeCallback< Arr_ >::SplitEdgeCallback( Arrangement* arr_,
+                                              QObject* parent ):
   SplitEdgeCallbackBase( parent ),
   arr( arr_ ),
   hasFirstPoint( false ),
@@ -126,10 +145,8 @@ SplitEdgeCallback( Arrangement* arr_, QObject* parent ):
                     this, SLOT( slotModelChanged( ) ) );
 }
 
-template < class Arr_ >
-void 
-SplitEdgeCallback< Arr_ >::
-setScene( QGraphicsScene* scene_ )
+template < typename Arr_ >
+void SplitEdgeCallback< Arr_ >::setScene( QGraphicsScene* scene_ )
 {
   this->scene = scene_;
   this->snapToVertexStrategy.setScene( scene_ );
@@ -140,10 +157,8 @@ setScene( QGraphicsScene* scene_ )
   }
 }
 
-template < class Arr_ >
-void 
-SplitEdgeCallback< Arr_ >::
-setColor( QColor c )
+template < typename Arr_ >
+void SplitEdgeCallback< Arr_ >::setColor( QColor c )
 {
   this->color = c;
 
@@ -152,37 +167,31 @@ setColor( QColor c )
   this->segmentGuide.setPen( pen );
 }
 
-template < class Arr_ >
-void
-SplitEdgeCallback< Arr_ >::
-reset( )
+template < typename Arr_ >
+void SplitEdgeCallback< Arr_ >::reset( )
 {
   this->hasFirstPoint = false;
   this->segmentGuide.setLine( 0, 0, 0, 0 );
   emit modelChanged( );
 }
 
-template < class Arr_ >
-void
-SplitEdgeCallback< Arr_ >::
-slotModelChanged( )
+template < typename Arr_ >
+void SplitEdgeCallback< Arr_ >::slotModelChanged( )
 {
   this->segmentGuide.update( );
 }
 
-template < class Arr_ >
-void 
-SplitEdgeCallback< Arr_ >::
-mousePressEvent( QGraphicsSceneMouseEvent* event )
+template < typename Arr_ >
+void
+SplitEdgeCallback< Arr_ >::mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
   Point_2 clickedPoint = this->snapPoint( event );
   this->splitEdges( clickedPoint, Traits( ) );
 }
 
-template < class Arr_ >
-template < class TTraits >
-void
-SplitEdgeCallback< Arr_ >::
+template < typename Arr_ >
+template < typename TTraits >
+void SplitEdgeCallback< Arr_ >::
 splitEdges( const Point_2& clickedPoint, TTraits traits )
 {
   typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
@@ -227,18 +236,17 @@ splitEdges( const Point_2& clickedPoint, TTraits traits )
   emit modelChanged( );
 }
 
-template < class Arr_ >
-template < class CircularKernel >
-void
-SplitEdgeCallback< Arr_ >::
+template < typename Arr_ >
+template < typename CircularKernel >
+void SplitEdgeCallback< Arr_ >::
 splitEdges( const Point_2& clickedPoint,
             CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
 {
   // std::cout << "Circular arc split edges stub" << std::endl;
 }
 
-template < class Arr_ >
-template < class Coefficient_ >
+template < typename Arr_ >
+template < typename Coefficient_ >
 void
 SplitEdgeCallback< Arr_ >::
 splitEdges( const Point_2& clickedPoint,
@@ -247,20 +255,18 @@ splitEdges( const Point_2& clickedPoint,
   // std::cout << "Algebraic segment split edges stub" << std::endl;
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 void 
-SplitEdgeCallback< Arr_ >::
-mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+SplitEdgeCallback< Arr_ >::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
   Point_2 clickedPoint = this->snapPoint( event );
   this->updateGuide( clickedPoint, this->traits );
 }
 
-template < class Arr_ >
-template < class TTraits >
-void
-SplitEdgeCallback< Arr_ >::
-updateGuide( const Point_2& clickedPoint, TTraits traits )
+template < typename Arr_ >
+template < typename TTraits >
+void SplitEdgeCallback< Arr_ >::updateGuide( const Point_2& clickedPoint,
+                                             TTraits traits )
 {
   if ( this->hasFirstPoint )
   { // provide visual feedback for where the split line is
@@ -276,17 +282,19 @@ updateGuide( const Point_2& clickedPoint, TTraits traits )
   }
 }
 
-template < class Arr_ >
-template < class CircularKernel >
-void
-SplitEdgeCallback< Arr_ >::
-updateGuide( const Point_2& clickedPoint, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+template < typename Arr_ >
+template < typename CircularKernel >
+void SplitEdgeCallback< Arr_ >::
+updateGuide( const Point_2& clickedPoint,
+             CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
 {
   if ( this->hasFirstPoint )
   { // provide visual feedback for where the split line is
     Point_2 currentPoint = clickedPoint;
-    typename CircularKernel::Point_2 pt1( CGAL::to_double( this->p1.x( ) ), CGAL::to_double( this->p1.y( ) ) );
-    typename CircularKernel::Point_2 pt2( CGAL::to_double( currentPoint.x( ) ), CGAL::to_double( currentPoint.y( ) ) );
+    typename CircularKernel::Point_2 pt1( CGAL::to_double( this->p1.x( ) ),
+                                          CGAL::to_double( this->p1.y( ) ) );
+    typename CircularKernel::Point_2 pt2( CGAL::to_double( currentPoint.x( ) ),
+                                          CGAL::to_double( currentPoint.y( ) ) );
     Segment_2 currentSegment( pt1, pt2 );
     QLineF qSegment = this->convert( currentSegment );
     this->segmentGuide.setLine( qSegment );
@@ -294,19 +302,18 @@ updateGuide( const Point_2& clickedPoint, CGAL::Arr_circular_arc_traits_2< Circu
   }
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 typename SplitEdgeCallback< Arr_ >::Point_2
-SplitEdgeCallback< Arr_ >::
-snapPoint( QGraphicsSceneMouseEvent* event )
+SplitEdgeCallback< Arr_ >::snapPoint( QGraphicsSceneMouseEvent* event )
 {
   return this->snapPoint( event, Traits( ) );
 }
 
-template < class Arr_ >
-template < class TTraits >
+template < typename Arr_ >
+template < typename TTraits >
 typename SplitEdgeCallback< Arr_ >::Point_2
-SplitEdgeCallback< Arr_ >::
-snapPoint( QGraphicsSceneMouseEvent *event, TTraits traits )
+SplitEdgeCallback< Arr_ >::snapPoint( QGraphicsSceneMouseEvent *event,
+                                      TTraits traits )
 {
   if ( this->snapToGridEnabled )
   {
@@ -325,10 +332,9 @@ snapPoint( QGraphicsSceneMouseEvent *event, TTraits traits )
   }
 }
 
-template < class Arr_ >
-template < class CircularKernel >
-typename SplitEdgeCallback< Arr_ >::Point_2
-SplitEdgeCallback< Arr_ >::
+template < typename Arr_ >
+template < typename CircularKernel >
+typename SplitEdgeCallback< Arr_ >::Point_2 SplitEdgeCallback< Arr_ >::
 snapPoint( QGraphicsSceneMouseEvent* event,
            CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
 {

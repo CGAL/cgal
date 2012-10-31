@@ -1,11 +1,30 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #include "VerticalRayGraphicsItem.h"
+
 #include <limits>
 #include <QPainter>
 #include <QGraphicsView>
 #include <QScrollBar>
 
-VerticalRayGraphicsItem::
-VerticalRayGraphicsItem( ):
+VerticalRayGraphicsItem::VerticalRayGraphicsItem( ) :
   m_source( QPointF( ) ), // null point ie. (+0.0, +0.0)
   m_targetY( 0.0 ),
   m_isInfinite( false ),
@@ -24,7 +43,8 @@ void VerticalRayGraphicsItem::paint( QPainter* painter,
   {
     return;
   }
-  bool isShootingUp = ( this->m_source.y( ) < this->m_targetY ); // -y towards the top
+  // -y towards the top
+  bool isShootingUp = ( this->m_source.y( ) < this->m_targetY );
   if ( this->m_isInfinite )
   {
     QRectF clipRect = this->viewportRect( );
@@ -53,9 +73,7 @@ void VerticalRayGraphicsItem::paint( QPainter* painter,
   }
 }
 
-QRectF 
-VerticalRayGraphicsItem::
-boundingRect( ) const
+QRectF VerticalRayGraphicsItem::boundingRect( ) const
 {
   if ( this->m_source.isNull( ) || // uninitialized
        this->m_source.y( ) == this->m_targetY ) // degenerate
@@ -65,7 +83,8 @@ boundingRect( ) const
 
   double xmin = this->m_source.x( ) - 5;
   double xmax = this->m_source.x( ) + 5;
-  bool isShootingUp = ( this->m_source.y( ) > this->m_targetY ); // -y towards the top
+  // -y towards the top
+  bool isShootingUp = ( this->m_source.y( ) > this->m_targetY );
   double ymin = ( isShootingUp )? this->m_targetY : this->m_source.y( );
   double ymax = ( isShootingUp )? this->m_source.y( ) : this->m_targetY;
   if ( this->m_isInfinite )
@@ -116,9 +135,7 @@ bool VerticalRayGraphicsItem::isInfinite( ) const
   return this->m_isInfinite;
 }
 
-void 
-VerticalRayGraphicsItem::
-setIsInfinite( bool b )
+void VerticalRayGraphicsItem::setIsInfinite( bool b )
 {
   this->prepareGeometryChange( );
   this->m_isInfinite = b;

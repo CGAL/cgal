@@ -1,9 +1,29 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H
 #define CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H
 
 #include <QRectF>
 
-#include <CGAL/Kernel/global_functions.h> // TODO: should be included in PainterOstream.h
+// TODO: should be included in PainterOstream.h
+#include <CGAL/Kernel/global_functions.h>
 #include <CGAL/Qt/PainterOstream.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -21,7 +41,7 @@ class QPainter;
 namespace CGAL {
 namespace Qt {
 
-template < class ArrTraits >
+template < typename ArrTraits >
 class ArrangementPainterOstreamBase : public QGraphicsSceneMixin
 {
 public: // typedefs
@@ -52,7 +72,7 @@ public: // constructors
   }
 
 public: // methods
-  template < class T >
+  template < typename T >
   ArrangementPainterOstreamBase& operator<<( const T& t )
   {
     this->painterOstream << t;
@@ -110,7 +130,7 @@ protected: // fields
 
 }; // class ArrangementPainterOstreamBase
 
-template < class ArrTraits >
+template < typename ArrTraits >
 class ArrangementPainterOstream:
     public ArrangementPainterOstreamBase< ArrTraits >
 {
@@ -120,7 +140,7 @@ public:
   { }
 };
 
-template < class Kernel_ >
+template < typename Kernel_ >
 class ArrangementPainterOstream< CGAL::Arr_segment_traits_2< Kernel_ > >:
   public ArrangementPainterOstreamBase< CGAL::Arr_segment_traits_2< Kernel_ > >
 {
@@ -184,7 +204,7 @@ public: // methods
     return *this;
   }
 
-  template < class T >
+  template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
     (*(static_cast< Superclass* >(this)) << p);
@@ -192,7 +212,7 @@ public: // methods
   }
 };
 
-template < class SegmentTraits >
+template < typename SegmentTraits >
 class ArrangementPainterOstream< CGAL::Arr_polyline_traits_2< SegmentTraits > > :
   public ArrangementPainterOstreamBase< CGAL::Arr_polyline_traits_2< SegmentTraits > >
 {
@@ -249,7 +269,7 @@ public: // methods
     return *this;
   }
 
-  template < class T >
+  template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
     (*(static_cast< Superclass* >(this)) << p);
@@ -257,28 +277,32 @@ public: // methods
   }
 };
 
-template < class RatKernel, class AlgKernel, class NtTraits >
-class ArrangementPainterOstream< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >:
-  public ArrangementPainterOstreamBase< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
+template < typename RatKernel, class AlgKernel, class NtTraits >
+class ArrangementPainterOstream<CGAL::Arr_conic_traits_2<RatKernel, AlgKernel,
+                                                         NtTraits > >:
+  public ArrangementPainterOstreamBase< CGAL::Arr_conic_traits_2<RatKernel,
+                                                                 AlgKernel,
+                                                                 NtTraits> >
 {
 public: // typedefs
   typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > Traits;
-  typedef ArrangementPainterOstreamBase< Traits > Superclass;
-  typedef typename Superclass::Point_2 Point_2;
-  typedef typename Superclass::Segment_2 Segment_2;
-  typedef typename Superclass::Ray_2 Ray_2;
-  typedef typename Superclass::Line_2 Line_2;
-  typedef typename Superclass::Triangle_2 Triangle_2;
-  typedef typename Superclass::Iso_rectangle_2 Iso_rectangle_2;
-  typedef typename Superclass::Circle_2 Circle_2;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
-  typedef typename Traits::Point_2 Intersection_point_2;
-  typedef typename Traits::Intersect_2 Intersect_2;
-  typedef typename Traits::Multiplicity Multiplicity;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-  typedef typename Kernel::FT FT;
+  typedef ArrangementPainterOstreamBase< Traits >       Superclass;
+  typedef typename Superclass::Point_2                  Point_2;
+  typedef typename Superclass::Segment_2                Segment_2;
+  typedef typename Superclass::Ray_2                    Ray_2;
+  typedef typename Superclass::Line_2                   Line_2;
+  typedef typename Superclass::Triangle_2               Triangle_2;
+  typedef typename Superclass::Iso_rectangle_2          Iso_rectangle_2;
+  typedef typename Superclass::Circle_2                 Circle_2;
+  typedef typename Traits::Curve_2                      Curve_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename Traits::Construct_x_monotone_curve_2
+    Construct_x_monotone_curve_2;
+  typedef typename Traits::Point_2                      Intersection_point_2;
+  typedef typename Traits::Intersect_2                  Intersect_2;
+  typedef typename Traits::Multiplicity                 Multiplicity;
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+  typedef typename Kernel::FT                           FT;
 
 public: // inner classes
   // utility class to use with std::sort on an Intersect_2 result set.
@@ -296,10 +320,11 @@ public: // inner classes
   };
 
 public: // constructors
-  ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
+  ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()) :
     Superclass( p, clippingRectangle ),
-    //intersect_2( this->traits.intersect_2_object( ) ), // Why doesn't this work?
-    construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) )
+    //intersect_2( this->traits.intersect_2_object( ) ),
+    // Why doesn't this work?
+    construct_x_monotone_curve_2(this->traits.construct_x_monotone_curve_2_object())
   { }
 
 public: // methods
@@ -358,10 +383,12 @@ public: // methods
           return *this;
         }
 
-        std::pair< double, double >* app_pts = new std::pair< double, double >[ n + 1 ];
-        std::pair< double, double >* end_pts = subcurve.polyline_approximation( n, app_pts );
-        std::pair< double, double >* p_curr = app_pts;
-        std::pair< double, double >* p_next = p_curr + 1;
+        std::pair<double, double>* app_pts =
+          new std::pair<double, double>[n + 1];
+        std::pair<double, double>* end_pts =
+          subcurve.polyline_approximation(n, app_pts);
+        std::pair<double, double>* p_curr = app_pts;
+        std::pair<double, double>* p_next = p_curr + 1;
         int count = 0;
         do
         {
@@ -397,10 +424,11 @@ public: // methods
         return *this;
       }
 
-      std::pair< double, double >* app_pts = new std::pair< double, double >[ n + 1 ];
-      std::pair< double, double >* end_pts = curve.polyline_approximation( n, app_pts );
-      std::pair< double, double >* p_curr = app_pts;
-      std::pair< double, double >* p_next = p_curr + 1;
+      std::pair<double, double>* app_pts = new std::pair<double, double>[n + 1];
+      std::pair<double, double>* end_pts =
+        curve.polyline_approximation(n, app_pts);
+      std::pair<double, double>* p_curr = app_pts;
+      std::pair<double, double>* p_next = p_curr + 1;
       int count = 0;
       do
       {
@@ -438,7 +466,7 @@ public: // methods
     return *this;
   }
 
-  template < class T >
+  template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
     (*(static_cast< Superclass* >(this)) << p);
@@ -486,7 +514,8 @@ protected: // methods
     intersect_2( right, curve, std::back_inserter( intersections ) );
 
     this->filterIntersectionPoints( intersections );
-    //std::cout << "total intersections: " << intersections.size( ) << std::endl;
+    //std::cout << "total intersections: " << intersections.size( )
+    //          << std::endl;
     //this->printIntersectResult( intersections );
 
     Point_2 leftEndpt = curve.source( );
@@ -522,7 +551,8 @@ protected: // methods
     {
       Point_2 p1 = *pointListItr++;
       Point_2 p2 = *pointListItr++;
-      X_monotone_curve_2 subcurve = construct_x_monotone_subcurve_2( curve, p1, p2 );
+      X_monotone_curve_2 subcurve =
+        construct_x_monotone_subcurve_2( curve, p1, p2 );
       clippings.push_back( subcurve );
     }
 
@@ -614,7 +644,7 @@ protected: // members
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
 };
 
-template < class Kernel_ >
+template < typename Kernel_ >
 class ArrangementPainterOstream< CGAL::Arr_linear_traits_2< Kernel_ > >:
   public ArrangementPainterOstreamBase< CGAL::Arr_linear_traits_2< Kernel_ > >
 {
@@ -701,7 +731,7 @@ public: // methods
     return *this;
   }
 
-  template < class T >
+  template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
     (*(static_cast< Superclass* >(this)) << p);
@@ -709,9 +739,11 @@ public: // methods
   }
 };
 
-template < class CircularKernel >
-class ArrangementPainterOstream< CGAL::Arr_circular_arc_traits_2< CircularKernel > >:
-  public ArrangementPainterOstreamBase< CGAL::Arr_circular_arc_traits_2< CircularKernel > >
+template < typename CircularKernel >
+class ArrangementPainterOstream< CGAL::Arr_circular_arc_traits_2<
+                                   CircularKernel > >:
+  public ArrangementPainterOstreamBase< CGAL::Arr_circular_arc_traits_2<
+                                          CircularKernel > >
 {
 public:
   typedef CircularKernel Kernel;
@@ -760,7 +792,7 @@ public: // methods
     return *this;
   }
 
-  template < class T >
+  template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
     (*(static_cast< Superclass* >(this)) << p);
@@ -768,9 +800,11 @@ public: // methods
   }
 };
 
-template < class Coefficient_ >
-class ArrangementPainterOstream< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >:
-  public ArrangementPainterOstreamBase< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
+template < typename Coefficient_ >
+class ArrangementPainterOstream< CGAL::Arr_algebraic_segment_traits_2<
+                                   Coefficient_ > >:
+  public ArrangementPainterOstreamBase< CGAL::Arr_algebraic_segment_traits_2<
+                                          Coefficient_ > >
 {
 public:
   typedef Coefficient_ Coefficient;
@@ -910,7 +944,7 @@ public: // methods
     return *this;
   }
 
-  template < class T >
+  template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
     (*(static_cast< Superclass* >(this)) << p);
@@ -918,7 +952,6 @@ public: // methods
   }
 
 protected:
-
   void setupFacade( )
   {
     typedef Curve_renderer_facade<CKvA_2> Facade;
@@ -932,4 +965,5 @@ protected:
 
 } // namespace Qt
 } // namespace CGAL
+
 #endif // CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H

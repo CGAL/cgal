@@ -1,17 +1,36 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #include "PointsGraphicsItem.h"
+
 #include <limits>
 #include <QPen>
 #include <QPainter>
 
-PointsGraphicsItem::
-PointsGraphicsItem( ):
+PointsGraphicsItem::PointsGraphicsItem( ) :
   pointRadius( 3.0 ),
   color( ::Qt::blue )
 { }
 
-void
-PointsGraphicsItem::
-paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
+void PointsGraphicsItem::paint( QPainter* painter,
+                                const QStyleOptionGraphicsItem* option,
+                                QWidget* widget )
 {
   double scale = painter->worldTransform( ).m11( );
   double radius = this->pointRadius;
@@ -28,9 +47,7 @@ paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widge
   painter->setPen( savePen );
 }
 
-QRectF
-PointsGraphicsItem::
-boundingRect( ) const
+QRectF PointsGraphicsItem::boundingRect( ) const
 {
   if ( this->points.size( ) == 0 )
   {
@@ -55,45 +72,34 @@ boundingRect( ) const
   return res;
 }
 
-void
-PointsGraphicsItem::
-clear( )
+void PointsGraphicsItem::clear( )
 {
   this->prepareGeometryChange( );
 
   this->points.clear( );
 }
 
-void 
-PointsGraphicsItem::
-setColor( QColor c )
+void PointsGraphicsItem::setColor( QColor c )
 {
   this->color = c;
 }
-QColor 
-PointsGraphicsItem::
-getColor( ) const
+
+QColor PointsGraphicsItem::getColor( ) const
 {
   return this->color;
 }
 
-void 
-PointsGraphicsItem::
-setPointRadius( double d )
+void PointsGraphicsItem::setPointRadius( double d )
 {
   this->pointRadius = d;
 }
 
-double 
-PointsGraphicsItem::
-getPointRadius( ) const
+double PointsGraphicsItem::getPointRadius( ) const
 {
   return this->pointRadius;
 }
 
-void
-PointsGraphicsItem::
-modelChanged( )
+void PointsGraphicsItem::modelChanged( )
 {
   if ( this->points.size( ) == 0 )
   {

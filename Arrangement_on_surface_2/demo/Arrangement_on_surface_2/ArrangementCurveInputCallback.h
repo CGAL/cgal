@@ -1,3 +1,22 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef ARRANGEMENT_CURVE_INPUT_CALLBACK_H
 #define ARRANGEMENT_CURVE_INPUT_CALLBACK_H
 
@@ -10,22 +29,22 @@
 #include "GraphicsViewCurveInput.h"
 #include "Utils.h"
 
-template < class Arr_, class ArrTraits = typename Arr_::Geometry_traits_2 >
+template <typename Arr_, typename ArrTraits = typename Arr_::Geometry_traits_2>
 class ArrangementCurveInputCallback:
   public CGAL::Qt::GraphicsViewCurveInput< typename Arr_::Geometry_traits_2 >
 {
 public:
   typedef Arr_ Arrangement;
   typedef ArrTraits Traits;
-  typedef CGAL::Qt::GraphicsViewCurveInput< Traits > Superclass;
-  typedef typename Arrangement::Vertex_iterator Vertex_iterator;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-  typedef typename Kernel::Point_2 Kernel_point_2;
-  typedef typename ArrTraitsAdaptor< Traits >::Point_2 Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::FT FT;
+  typedef CGAL::Qt::GraphicsViewCurveInput< Traits >    Superclass;
+  typedef typename Arrangement::Vertex_iterator         Vertex_iterator;
+  typedef typename Traits::Curve_2                      Curve_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
+  typedef typename ArrTraitsAdaptor< Traits >::Point_2  Point_2;
+  typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename Kernel::FT                           FT;
 
   ArrangementCurveInputCallback( Arrangement* arrangement_, QObject* parent ):
     Superclass( parent ),

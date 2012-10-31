@@ -1,6 +1,27 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef FILL_FACE_CALLBACK_H
 #define FILL_FACE_CALLBACK_H
+
 #include "Callback.h"
+
 #include <QEvent>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
@@ -91,8 +112,7 @@ protected:
 
 
 template < class Arr_ >
-FillFaceCallback< Arr_ >::
-FillFaceCallback( Arrangement* arr_, QObject* parent_ ):
+FillFaceCallback<Arr_>::FillFaceCallback(Arrangement* arr_, QObject* parent_):
   FillFaceCallbackBase( parent_ ),
   arr( arr_ ),
   pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) )
@@ -101,17 +121,13 @@ FillFaceCallback( Arrangement* arr_, QObject* parent_ ):
 }
 
 template < class Arr_ >
-void
-FillFaceCallback< Arr_ >::
-reset( )
+void FillFaceCallback< Arr_ >::reset( )
 {
   emit modelChanged( );
 }
 
 template < class Arr_ >
-void 
-FillFaceCallback< Arr_ >::
-mousePressEvent( QGraphicsSceneMouseEvent* event )
+void FillFaceCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
   this->fillFace( event );
   emit modelChanged( );
@@ -119,8 +135,7 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
 
 template < class Arr_ >
 void 
-FillFaceCallback< Arr_ >::
-mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+FillFaceCallback< Arr_ >::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 { }
 
 template < class Arr_ >
@@ -140,8 +155,7 @@ fillFace( QGraphicsSceneMouseEvent* event )
 
 template < class Arr_ >
 typename FillFaceCallback< Arr_ >::Face_const_handle
-FillFaceCallback< Arr_ >::
-getFace( const CGAL::Object& obj )
+FillFaceCallback< Arr_ >::getFace( const CGAL::Object& obj )
 {
   Face_const_handle f;
   if ( CGAL::assign( f, obj ) )
@@ -161,9 +175,7 @@ getFace( const CGAL::Object& obj )
 }
 
 template < class Arr_ >
-CGAL::Object
-FillFaceCallback< Arr_ >::
-locate( const Kernel_point_2& point )
+CGAL::Object FillFaceCallback< Arr_ >::locate( const Kernel_point_2& point )
 {
   typename Supports_landmarks< Arrangement >::Tag supportsLandmarks;
   return this->locate( point, supportsLandmarks );
@@ -171,8 +183,7 @@ locate( const Kernel_point_2& point )
 
 template < class Arr_ >
 CGAL::Object
-FillFaceCallback< Arr_ >::
-locate( const Kernel_point_2& pt, CGAL::Tag_true )
+FillFaceCallback< Arr_ >::locate( const Kernel_point_2& pt, CGAL::Tag_true )
 {
   CGAL::Object pointLocationResult;
   WalkAlongLinePointLocationStrategy* walkStrategy;
@@ -203,8 +214,7 @@ locate( const Kernel_point_2& pt, CGAL::Tag_true )
 
 template < class Arr_ >
 CGAL::Object
-FillFaceCallback< Arr_ >::
-locate( const Kernel_point_2& pt, CGAL::Tag_false )
+FillFaceCallback< Arr_ >::locate( const Kernel_point_2& pt, CGAL::Tag_false )
 {
   CGAL::Object pointLocationResult;
   WalkAlongLinePointLocationStrategy* walkStrategy;

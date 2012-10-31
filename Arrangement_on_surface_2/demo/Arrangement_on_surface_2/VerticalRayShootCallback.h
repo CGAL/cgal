@@ -1,3 +1,22 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef VERTICAL_RAY_SHOOT_CALLBACK_H
 #define VERTICAL_RAY_SHOOT_CALLBACK_H
 
@@ -139,7 +158,7 @@ VerticalRayShootCallback< Arr_ >::
 VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ ):
   VerticalRayShootCallbackBase( parent_ ),
   arr( arr_ ),
-  //    construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
+  // construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
   intersectCurves( this->traits.intersect_2_object( ) ),
   pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) ),
   highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
@@ -158,9 +177,7 @@ VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ ):
 }
 
 template < class Arr_ >
-void
-VerticalRayShootCallback< Arr_ >::
-setScene( QGraphicsScene* scene_ )
+void VerticalRayShootCallback< Arr_ >::setScene( QGraphicsScene* scene_ )
 {
   this->scene = scene_;
   this->highlightedCurves->setScene( scene_ );
@@ -174,17 +191,13 @@ setScene( QGraphicsScene* scene_ )
 
 
 template < class Arr_ >
-void
-VerticalRayShootCallback< Arr_ >::
-slotModelChanged( )
+void VerticalRayShootCallback< Arr_ >::slotModelChanged( )
 {
   this->activeRay->update( );
 }
 
 template < class Arr_ >
-void
-VerticalRayShootCallback< Arr_ >::
-reset( )
+void VerticalRayShootCallback< Arr_ >::reset( )
 {
   this->activeRay->setLine( 0, 0, 0, 0 );
   this->rayGraphicsItem.reset( );
@@ -193,22 +206,19 @@ reset( )
 }
 
 template < class Arr_ >
-void 
-VerticalRayShootCallback< Arr_ >::
+void VerticalRayShootCallback< Arr_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
   this->highlightPointLocation( event );
 }
 
 template < class Arr_ >
-void 
-VerticalRayShootCallback< Arr_ >::
+void VerticalRayShootCallback< Arr_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 { }
 
 template < class Arr_ >
-void 
-VerticalRayShootCallback< Arr_ >::
+void VerticalRayShootCallback< Arr_ >::
 highlightPointLocation( QGraphicsSceneMouseEvent* event )
 {
   this->highlightedCurves->clear( );
@@ -258,7 +268,8 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
     Arr_compute_y_at_x_2< Traits > compute_y_at_x_2;
     compute_y_at_x_2.setScene( this->getScene( ) );
     CoordinateType x( this->queryPt.x( ) );
-    double yApprox = CGAL::to_double( compute_y_at_x_2.approx( halfedge->curve( ), x ) );
+    double yApprox =
+      CGAL::to_double( compute_y_at_x_2.approx( halfedge->curve( ), x ) );
     FT yInt( yApprox );
     Kernel_point_2 p2( this->queryPt.x( ), yInt );
     Segment_2 seg( this->queryPt, p2 );
@@ -282,8 +293,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
 
 template < class Arr_ >
 typename VerticalRayShootCallback< Arr_ >::Face_const_handle
-VerticalRayShootCallback< Arr_ >::
-getFace( const CGAL::Object& obj )
+VerticalRayShootCallback< Arr_ >::getFace( const CGAL::Object& obj )
 {
   Face_const_handle f;
   if ( CGAL::assign( f, obj ) )
@@ -304,8 +314,7 @@ getFace( const CGAL::Object& obj )
 
 template < class Arr_ >
 CGAL::Object
-VerticalRayShootCallback< Arr_ >::
-rayShootUp( const Kernel_point_2& pt )
+VerticalRayShootCallback< Arr_ >::rayShootUp( const Kernel_point_2& pt )
 {
   CGAL::Object pointLocationResult;
   WalkAlongLinePointLocationStrategy* walkStrategy;
@@ -338,8 +347,7 @@ rayShootUp( const Kernel_point_2& pt )
 
 template < class Arr_ >
 CGAL::Object
-VerticalRayShootCallback< Arr_ >::
-rayShootDown( const Kernel_point_2& pt )
+VerticalRayShootCallback< Arr_ >::rayShootDown( const Kernel_point_2& pt )
 {
   CGAL::Object pointLocationResult;
   WalkAlongLinePointLocationStrategy* walkStrategy;

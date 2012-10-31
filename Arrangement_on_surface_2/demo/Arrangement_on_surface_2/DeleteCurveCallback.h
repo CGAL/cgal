@@ -1,6 +1,27 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef DELETE_CURVE_CALLBACK_H
 #define DELETE_CURVE_CALLBACK_H
+
 #include "Callback.h"
+
 //#include <QEvent>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -16,7 +37,7 @@
 
    The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
-template < class Arr_ >
+template < typename Arr_ >
 class DeleteCurveCallback : public CGAL::Qt::Callback
 {
 public:
@@ -53,7 +74,7 @@ protected:
 }; // class DeleteCurveCallback
 
 
-template < class Arr_ >
+template < typename Arr_ >
 DeleteCurveCallback< Arr_ >::
 DeleteCurveCallback( Arrangement* arr_, QObject* parent_ ):
   CGAL::Qt::Callback( parent_ ),
@@ -65,10 +86,8 @@ DeleteCurveCallback( Arrangement* arr_, QObject* parent_ ):
                     this->highlightedCurve, SLOT( modelChanged( ) ) );
 }
 
-template < class Arr_ >
-void 
-DeleteCurveCallback< Arr_ >::
-setScene( QGraphicsScene* scene_ )
+template < typename Arr_ >
+void DeleteCurveCallback< Arr_ >::setScene( QGraphicsScene* scene_ )
 {
   this->scene = scene_;
   this->highlightedCurve->setScene( scene_ );
@@ -78,28 +97,23 @@ setScene( QGraphicsScene* scene_ )
   }
 }
 
-template < class Arr_ >
-QGraphicsScene* 
-DeleteCurveCallback< Arr_ >::
-getScene( ) const
+template < typename Arr_ >
+QGraphicsScene* DeleteCurveCallback< Arr_ >::getScene( ) const
 {
   return this->scene;
 }
 
-template < class Arr_ >
-void
-DeleteCurveCallback< Arr_ >::
-reset( )
+template < typename Arr_ >
+void DeleteCurveCallback< Arr_ >::reset( )
 {
   this->highlightedCurve->clear( );
   this->removableHalfedge = Halfedge_handle( );
   emit modelChanged( );
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 void 
-DeleteCurveCallback< Arr_ >::
-mousePressEvent( QGraphicsSceneMouseEvent* event )
+DeleteCurveCallback< Arr_ >::mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
   if ( this->removableHalfedge == Halfedge_handle( ) )
   {
@@ -130,15 +144,14 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
   this->reset( );
 }
 
-template < class Arr_ >
-void 
-DeleteCurveCallback< Arr_ >::
+template < typename Arr_ >
+void DeleteCurveCallback< Arr_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
   this->highlightNearestCurve( event );
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 void 
 DeleteCurveCallback< Arr_ >::
 highlightNearestCurve( QGraphicsSceneMouseEvent* event )
@@ -186,7 +199,7 @@ highlightNearestCurve( QGraphicsSceneMouseEvent* event )
   { // highlight the originating curve
     Originating_curve_iterator ocit, temp;
     ocit = this->arr->originating_curves_begin( this->removableHalfedge );
-    while ( ocit != this->arr->originating_curves_end( this->removableHalfedge ) )
+    while (ocit != this->arr->originating_curves_end(this->removableHalfedge))
     {
       temp = ocit;
       ++temp;
