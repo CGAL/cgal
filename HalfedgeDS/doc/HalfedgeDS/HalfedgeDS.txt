@@ -44,14 +44,7 @@ of these different data structures together with a thorough
 description of the design implemented here can be found
 in \cite k-ugpdd-99.
 
-The design presented here is a revised and incompatible version of the
-previous design \cite k-ddsps-98 as used in \cgal R2.2 and earlier
-releases. Files and identifier names are disjoint with the old design
-which allows for both versions to co-exists. However, classes using a
-halfedge data structure can only use one design. For example the
-polyhedral surface `Polyhedron_3` uses by default the new
-design. See Chapter \ref chapterPolyhedron "Polyhedral Surface" for how to still select
-the old implementation.
+
 
 # Software Design # {#HalfedgeDSSoftware}
 
