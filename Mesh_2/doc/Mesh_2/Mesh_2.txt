@@ -70,8 +70,8 @@ conforming Gabriel triangulation by adding vertices. The user is advised to
 make a copy of the input triangulation in the case where the original
 triangulation has to be preserved for other computations
 
-The algorithm used by `::make_conforming_Delaunay_2` and
-`::make_conforming_Gabriel_2` builds internal data structures that would be
+The algorithm used by `make_conforming_Delaunay_2()` and
+`make_conforming_Gabriel_2()` builds internal data structures that would be
 computed twice if the two functions are called consecutively on the same
 triangulation. In order to avoid these data to be constructed twice, the
 advanced user can use the class `Triangulation_conformer_2<CDT>` to

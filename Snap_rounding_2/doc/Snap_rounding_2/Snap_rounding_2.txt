@@ -32,7 +32,7 @@ arrangement of \f$ \S\f$ denoted \f$ \A(\S)\f$ is the subdivision of the plane
 into vertices, edges, and faces induced by \f$ \S\f$. A <I>vertex</I> of the arrangement is either a segment endpoint or
 the intersection of two segments. Given an arrangement of segments
 whose vertices are represented with arbitrary-precision coordinates,
-the function`::snap_rounding_2` proceeds as follows. We tile the plane
+the function `snap_rounding_2()` proceeds as follows. We tile the plane
 with a grid of unit squares, <I>pixels</I>, each centered at a point
 with integer coordinates. A pixel is <I>hot</I> if it contains a
 vertex of the arrangement. Each vertex of the arrangement is replaced

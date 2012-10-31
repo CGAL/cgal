@@ -60,13 +60,13 @@ closed under Boolean and topological operations. Details can be found
 in Chapter \ref chapterNef3 "3D Boolean Operations on Nef Polyhedra".
 
 Usually, an instance of `Nef_polyhedron_3` does not contain any
-redundant items. However, the function `::convex_decomposition_3`
+redundant items. However, the function `convex_decomposition_3()`
 subdivides selected volumes of a given `Nef_polyhedron_3` by
 selected facets. These additional facets are therefore redundant,
 i.e., their insertion alters the representation of the polyhedron, but
 not the polyhedron itself.
 
-When `::convex_decomposition_3` resolved all reflex edges, the
+When `convex_decomposition_3()` resolved all reflex edges, the
 selected sub-volumes have become convex. Each of them is represented
 by a separate volume item and can therefore be traversed
 separately \ref subsectionNef_3ShellExploration. Another possibility
