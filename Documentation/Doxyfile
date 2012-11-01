@@ -206,8 +206,14 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalexample{1}=<br><b>File</b> \ref \1 \include \1" \
                          "cgal_figure_anchor{1}=\anchor fig__\1" \
                          "cgal_figure_ref{1}=\ref fig__\1" \
-                         "cgal_image{2}=\anchor fig__\1 \n \image html \2 \n \ref fig__\1   "
-
+                         "cgal_figure_begin{2}=\anchor fig__\1 \n \image html \2 \n \ref fig__\1   " \
+                         "cgal_figure_begin{3}=\anchor fig__\1 \n \htmlonly <center> <img src=\"\2\" align=middle> <img src=\"\3\" align=middle> </center>  <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                         "cgal_figure_begin{4}=\anchor fig__\1 \n \htmlonly <center> <img src=\"\2\" align=middle> <img src=\"\3\" align=middle> <img src=\"\4\" align=middle> </center>  <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                         "cgal_figure_begin{5}=\anchor fig__\1 \n \htmlonly <center> <img src=\"\2\" align=middle> <img src=\"\3\" align=middle> <img src=\"\4\" align=middle> <img src=\"\5\" align=middle> </center>  <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                         "cgal_figure_end=\htmlonly </div> \endhtmlonly" \
+                         "cgal_figure_caption_begin{1}=\htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                         "cgal_figure_caption_end=\htmlonly </div> \endhtmlonly"
+                         
 # this sets the include file of a concept to a non-existing file and
 # thus removes its include statement
 ALIASES += "cgalconcept=\details <div id=\"CGALConcept\"></div>\n \brief"

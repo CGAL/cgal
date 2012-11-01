@@ -157,6 +157,10 @@ dl.requires dt a, dl.todo dt a, dl.bug dt a, dl.test dt a
     color: black;
 }
 
+div.cgal_figure_caption {
+	text-align: center;
+}
+
 div.groupText {
     font-style: none;
 }
