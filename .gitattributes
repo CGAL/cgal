@@ -2312,7 +2312,6 @@ Documentation/biblio/how_to_cite.html -text
 Documentation/biblio/how_to_cite_cgal.txt -text
 Documentation/biblio/makebiblio -text
 Documentation/cgal_stylesheet.css -text
-Documentation/conceptify.py -text
 Documentation/doc/Developer_manual/Chapter_checks.txt -text
 Documentation/doc/Developer_manual/Chapter_code_format.txt -text
 Documentation/doc/Developer_manual/Chapter_debugging.txt -text
@@ -2353,6 +2352,7 @@ Documentation/hacks.js -text
 Documentation/header.html -text
 Documentation/header_package.html -text
 Documentation/how_to_cite_cgal.bib -text
+Documentation/html_output_post_processing.py -text
 Documentation/pkglist_filter -text
 Documentation/pkglist_filter.bat eol=crlf
 Documentation/pkglist_filter.sh -text

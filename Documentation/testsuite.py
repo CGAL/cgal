@@ -142,7 +142,7 @@ def main():
         # two runs are required, one to build the tags, the next to actually use them
         run_doxyassist(doxyassist, doxygen)
         run_doxyassist(doxyassist, doxygen)
-        subprocess.call(['./conceptify.py', '--output', './output'])
+        subprocess.call(['./html_output_post_processing.py', '--output', './output'])
 
     d, sum=write_report()
     version_string,version_date=get_version()
