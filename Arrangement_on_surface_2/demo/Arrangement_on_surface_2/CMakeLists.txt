@@ -54,13 +54,13 @@ include_directories( ./ )
 # Arrangement package includes
 include_directories( BEFORE ../../include )
 
-qt4_wrap_ui( arrangement_2b_uis
+qt4_wrap_ui( arrangement_2_uis
     ArrangementDemoWindow.ui
     NewTabDialog.ui
     OverlayDialog.ui
     ArrangementDemoPropertiesDialog.ui
 )
-qt4_wrap_cpp( arrangement_2b_mocs
+qt4_wrap_cpp( arrangement_2_mocs
     ArrangementDemoWindow.h
     ArrangementDemoTab.h
     Callback.h
@@ -72,11 +72,11 @@ qt4_wrap_cpp( arrangement_2b_mocs
     PropertyValueDelegate.h
     #PropertyValueDelegate.cpp
 )
-qt4_add_resources( arrangement_2b_resources
+qt4_add_resources( arrangement_2_resources
     ArrangementDemoWindow.qrc
 )
-add_executable( arrangement_2b
-    arrangement_2b.cpp
+add_executable( arrangement_2
+    arrangement_2.cpp
     ArrangementGraphicsItem.cpp
     ArrangementDemoWindow.cpp
     ArrangementDemoTab.cpp
@@ -98,12 +98,12 @@ add_executable( arrangement_2b
     DeleteCurveModeItemEditor.cpp
     PointsGraphicsItem.cpp
     VerticalRayGraphicsItem.cpp
-   ${arrangement_2b_mocs}
-   ${arrangement_2b_uis}
-   ${arrangement_2b_resources}
+   ${arrangement_2_mocs}
+   ${arrangement_2_uis}
+   ${arrangement_2_resources}
 )
 
-target_link_libraries( arrangement_2b
+target_link_libraries( arrangement_2
     ${CGAL_LIBRARIES}
     ${CGAL_3RD_PARTY_LIBRARIES}
     ${QT_LIBRARIES}
