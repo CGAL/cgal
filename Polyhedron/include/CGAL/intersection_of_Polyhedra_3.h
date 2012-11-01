@@ -174,17 +174,17 @@ struct Compare_handle_pairs{
   }
 };
 
-template<class Polyhedron,class Node_vector,class Is_const>
+template<class Polyhedron,class Nodes_vector,class Is_const>
 struct Order_along_a_halfedge{
   typedef typename Polyhedron_types<Polyhedron,Is_const>::Halfedge_handle Halfedge_handle;
-  const Node_vector& nodes;
+  const Nodes_vector& nodes;
   Halfedge_handle hedge;
   
-  Order_along_a_halfedge(Halfedge_handle hedge_,const Node_vector& nodes_):nodes(nodes_),hedge(hedge_){}
+  Order_along_a_halfedge(Halfedge_handle hedge_,const Nodes_vector& nodes_):nodes(nodes_),hedge(hedge_){}
   bool operator()(int i,int j) const {
     //returns true, iff q lies strictly between p and r.
     try{
-      typename Node_vector::Protector p;
+      typename Nodes_vector::Protector p;
       return CGAL::collinear_are_strictly_ordered_along_line(nodes.to_interval(hedge->vertex()->point()),
                                                              nodes.interval_node(j),
                                                              nodes.interval_node(i));
@@ -340,12 +340,12 @@ class Node_visitor_for_polyline_split{
 
   //sort node ids so that we can split the hedge
   //consecutively
-  template <class Node_vector>
-  void sort_vertices_along_hedge(std::vector<int>& node_ids,Halfedge_handle hedge,const Node_vector& nodes)
+  template <class Nodes_vector>
+  void sort_vertices_along_hedge(std::vector<int>& node_ids,Halfedge_handle hedge,const Nodes_vector& nodes)
   {
     std::sort(node_ids.begin(),
               node_ids.end(),
-              internal_IOP::Order_along_a_halfedge<Polyhedron,Node_vector,Is_polyhedron_const>(hedge,nodes)
+              internal_IOP::Order_along_a_halfedge<Polyhedron,Nodes_vector,Is_polyhedron_const>(hedge,nodes)
     );
   }
   
@@ -420,8 +420,8 @@ public:
   }
     
   //split_halfedges
-  template <class Node_vector>
-  void finalize(const Node_vector& nodes){
+  template <class Nodes_vector>
+  void finalize(const Nodes_vector& nodes){
     typedef std::map<std::pair<Halfedge_handle,Polyhedron*>,
                      std::vector<int>,internal_IOP::Compare_handles<Polyhedron,Is_polyhedron_const> >  Halfedges_to_split;
     
@@ -524,21 +524,21 @@ namespace internal_IOP{
   //The third template parameter indicates whether an
   //exact representation is required
   template <class Polyhedron,class Kernel,class Node_storage,bool Has_exact_constructions=!boost::is_floating_point<typename Kernel::FT>::value>
-  class Triangle_segment_intersection_point;
+  class Triangle_segment_intersection_points;
   
   
   //Store only the double version of the intersection points.
   template <class Polyhedron,class Kernel>
-  class Triangle_segment_intersection_point<Polyhedron,Kernel,No_predicates_on_constructions,false>
+  class Triangle_segment_intersection_points<Polyhedron,Kernel,No_predicates_on_constructions,false>
   {
   //typedefs
-    typedef std::vector <typename Kernel::Point_3>             Node_vector;
+    typedef std::vector <typename Kernel::Point_3>             Nodes_vector;
     typedef typename Polyhedron::Halfedge_const_handle         Halfedge_handle;
     typedef typename Polyhedron::Facet_const_handle            Facet_handle;
     typedef CGAL::Exact_predicates_exact_constructions_kernel  Exact_kernel;
     typedef CGAL::Cartesian_converter<Exact_kernel,Kernel>     Exact_to_double;    
   //members
-    Node_vector nodes;
+    Nodes_vector nodes;
     Exact_kernel ek;
     Exact_to_double exact_to_double;
   public:
@@ -575,7 +575,7 @@ namespace internal_IOP{
       nodes.push_back(p);
     }    
   }; // end specialization
-     // Triangle_segment_intersection_point<Polyhedron,Kernel,No_predicates_on_constructions,false>
+     // Triangle_segment_intersection_points<Polyhedron,Kernel,No_predicates_on_constructions,false>
 
 
   //second specializations: store an exact copy of the points so that we can answer exactly predicates
@@ -584,7 +584,7 @@ namespace internal_IOP{
   //In the former case, we were using facet and halfedge while in the latter
   //triple of vertex_handle and pair of vertex_handle
   template <class Polyhedron,class Kernel>
-  class Triangle_segment_intersection_point<Polyhedron,Kernel,Predicates_on_constructions,false>
+  class Triangle_segment_intersection_points<Polyhedron,Kernel,Predicates_on_constructions,false>
   {
   //typedefs
   public: 
@@ -662,18 +662,18 @@ namespace internal_IOP{
       inodes.push_back( double_to_interval(p) );
     }
   }; // end specialization
-     // Triangle_segment_intersection_point<Polyhedron,Kernel,Predicates_on_constructions,false>
+     // Triangle_segment_intersection_points<Polyhedron,Kernel,Predicates_on_constructions,false>
   
   //Third specialization: The kernel already has exact constructions.
   template <class Polyhedron,class Kernel,class Node_storage>
-  class Triangle_segment_intersection_point<Polyhedron,Kernel,Node_storage,true>
+  class Triangle_segment_intersection_points<Polyhedron,Kernel,Node_storage,true>
   {
   //typedefs
-    typedef std::vector <typename Kernel::Point_3>             Node_vector;
+    typedef std::vector <typename Kernel::Point_3>             Nodes_vector;
     typedef typename Polyhedron::Halfedge_const_handle         Halfedge_handle;
     typedef typename Polyhedron::Facet_const_handle            Facet_handle;
   //members
-    Node_vector nodes;
+    Nodes_vector nodes;
     Kernel k;
   public:
     typedef Kernel Ikernel;
@@ -706,7 +706,7 @@ namespace internal_IOP{
     const typename Kernel::Point_3& to_exact(const typename Kernel::Point_3& p) const { return p; }
 
   }; // end specialization
-     // Triangle_segment_intersection_point<Polyhedron,Kernel,Node_storage,true>
+     // Triangle_segment_intersection_points<Polyhedron,Kernel,Node_storage,true>
   
 }
 
@@ -752,8 +752,8 @@ class Intersection_of_Polyhedra_3{
                    std::set<int>,Compare_handle_pairs>       Facets_to_nodes_map;//Indeed the boundary of the intersection of two coplanar triangles may contain several segments.
   typedef std::set<Facet_pair,Compare_handle_pairs>          Coplanar_facets_set;//any insertion should be done with make_sorted_pair_of_facets
   typedef typename Kernel::Point_3                           Node;
-  typedef internal_IOP::Triangle_segment_intersection_point
-            <Polyhedron,Kernel,Node_storage_type>            Node_vector;
+  typedef internal_IOP::Triangle_segment_intersection_points
+            <Polyhedron,Kernel,Node_storage_type>            Nodes_vector;
 
   typedef typename internal_IOP::
     Intersection_types<Polyhedron,Use_const_polyhedron>
@@ -795,7 +795,7 @@ class Intersection_of_Polyhedra_3{
   Edge_to_intersected_facets  edge_to_sfacet; //Associate a segment to a filtered set of facets that may be intersected
   Facets_to_nodes_map         f_to_node;      //Associate a pair of triangle to their intersection points
   Coplanar_facets_set         coplanar_facets;//Contains all pairs of triangular facets intersecting that are coplanar
-  Node_vector                 nodes;          //Contains intersection points of polyhedra
+  Nodes_vector                nodes;          //Contains intersection points of polyhedra
   Node_visitor*               visitor;
   bool                        is_default_visitor; //indicates whether the visitor need to be deleted
   #ifdef USE_DETECTION_MULTIPLE_DEFINED_EDGES
@@ -1029,7 +1029,7 @@ class Intersection_of_Polyhedra_3{
   void add_new_node(Halfedge_handle edge,
                     Facet_handle facet,
                     const Intersection_result& inter_res,
-                    Node_vector& nodes)
+                    Nodes_vector& nodes)
   {
     bool is_vertex_coplanar = CGAL::cpp0x::get<2>(inter_res);
     if (is_vertex_coplanar)
@@ -1540,7 +1540,7 @@ class Intersection_of_Polyhedra_3{
 
 
   template <class Output_iterator>
-  void construct_polylines(Node_vector& nodes,Output_iterator out){
+  void construct_polylines(Nodes_vector& nodes,Output_iterator out){
     typedef std::map<int,Graph_node> Graph;
     Graph graph;
     
@@ -1668,18 +1668,18 @@ class Intersection_of_Polyhedra_3{
   };
   
   template <class Output_iterator>
-  inline void construct_polylines_with_info(Node_vector& nodes,Output_iterator out){
+  inline void construct_polylines_with_info(Nodes_vector& nodes,Output_iterator out){
     return construct_polylines_with_info(nodes,out,typename Is_dispatch_based_ouput_iterator<Output_iterator>::type());
   }
     
   template <class Output_iterator>
-  void construct_polylines_with_info(Node_vector& nodes,Output_iterator out,boost::false_type){
+  void construct_polylines_with_info(Nodes_vector& nodes,Output_iterator out,boost::false_type){
     construct_polylines_with_info(nodes,
                                   dispatch_or_drop_output<std::vector<typename Kernel::Point_3> >(out),boost::true_type());
   }
   
   template <template<class V_,class O_> class Dispatch_based_output_it,class V,class O>
-  void construct_polylines_with_info(Node_vector& nodes,
+  void construct_polylines_with_info(Nodes_vector& nodes,
                                      Dispatch_based_output_it<V,O> out,boost::true_type)
   {
     typedef typename Facets_to_nodes_map::value_type Edge;
