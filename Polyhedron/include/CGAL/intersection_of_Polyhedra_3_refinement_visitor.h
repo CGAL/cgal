@@ -150,9 +150,9 @@ namespace CGAL
     
   public:
     
-    template <class Nodes_map,class Triangulation>
+    template <class Nodes_vector,class Triangulation>
     Triangulate_a_face( Face_handle face,
-                        const Nodes_map& nodes,
+                        const Nodes_vector& nodes,
                         const std::vector<int>& node_ids,
                         std::map<int,Vertex_handle>& node_to_polyhedron_vertex,
                         std::map<std::pair<int,int>,Halfedge_handle>& edge_to_hedge,
