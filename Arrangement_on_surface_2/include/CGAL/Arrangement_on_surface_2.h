@@ -94,15 +94,19 @@ public:
 
   // maybe remove this in a future version (that supports complete handling
   // of all sides)
-  typedef typename Arr_are_all_sides_oblivious_tag< 
-    Left_side_category, Bottom_side_category, 
-    Top_side_category, Right_side_category >::result
-  Are_all_sides_oblivious_tag;
+  typedef typename Arr_are_all_sides_oblivious_tag<Left_side_category,
+                                                   Bottom_side_category, 
+                                                   Top_side_category,
+                                                   Right_side_category>::result
+    Are_all_sides_oblivious_category;
 
-  typedef typename Arr_has_identified_sides< 
-    Left_side_category, Bottom_side_category >::result
-  Has_identified_sides_tag;
+  typedef typename Arr_has_identified_sides<Left_side_category,
+                                            Bottom_side_category>::result
+    Has_identified_sides_category;
 
+  typedef typename Arr_two_sides_category<Bottom_side_category,
+                                          Top_side_category>::result
+    Top_or_bottom_sides_category;
   
 public:
   typedef typename Topology_traits::Dcel            Dcel;
@@ -1639,7 +1643,7 @@ protected:
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                   int& x_index, int& y_index,  boost::mpl::bool_< true >) const;
+                   int& x_index, int& y_index,  boost::mpl::bool_<true>) const;
 
   /*
    * Updates the indices according to boundary locations (i.e. does nothing)
@@ -1647,10 +1651,55 @@ protected:
   void
   _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
                    Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                   int& x_index, int& y_index,  boost::mpl::bool_< false >) const;
+                   int& x_index, int& y_index,  boost::mpl::bool_<false>) const;
 
+  /*
+   * Is the first given x-monotone curve above the second given?
+   * \param xcv1 the first given curve
+   * \param ps_y1 the parameter space in y of xcv1
+   * \param xcv2 the second given curve
+   * \param Arr_identified_side_tag used for dispatching to ensure that this
+   *        function is invoked when the bottom and top boundaries are
+   *        identified
+   */
+  bool _is_above(const X_monotone_curve_2& xcv1,
+                 const X_monotone_curve_2& xcv2,
+                 const Point_2& point,
+                 Arr_parameter_space ps_y1,
+                 Arr_has_identified_side_tag) const;
+
+  /*
+   * Is the first given x-monotone curve above the second given?
+   * \param xcv1 the first given curve
+   * \param ps_y1 the parameter space in y of xcv1
+   * \param xcv2 the second given curve
+   * \param Arr_contracted_side_tag used for dispatching to ensure that this
+   *        function is invoked when the bottom or top boundaries are
+   *        contracted
+   */
+  bool _is_above(const X_monotone_curve_2& xcv1,
+                 const X_monotone_curve_2& xcv2,
+                 const Point_2& point,
+                 Arr_parameter_space ps_y1,
+                 Arr_has_contracted_side_tag) const;
+
+  /*
+   * Is the first given x-monotone curve above the second given?
+   * \param xcv1 the first given curve
+   * \param ps_y1 the parameter space in y of xcv1
+   * \param xcv2 the second given curve
+   * \param Arr_oblivious_side_tag used for dispatching to ensure that this
+   *        function is invoked when the bottom and top boundaries are neither
+   *        identified nor contracted
+   */
+  bool _is_above(const X_monotone_curve_2& xcv1,
+                 const X_monotone_curve_2& xcv2,
+                 const Point_2& point,
+                 Arr_parameter_space ps_y1,
+                 Arr_boundary_cond_tag) const;
+  
   /*!
-   * Compute the signs (in left/right and bottom/top) of a path
+   * Computes the signs (in left/right and bottom/top) of a path
    * induced by the sequence he_to=>cv,cv_dir=>he_away, and reports
    * as side-effect the halfedges pointing to local minima copied
    * to an outputiterator.
@@ -1719,9 +1768,9 @@ protected:
   template <typename InputIterator>
   bool _defines_outer_ccb_of_new_face(const DHalfedge* he_to, 
                                       const X_monotone_curve_2& cv,
-                                      Arr_halfedge_direction cv_dir,
                                       const DHalfedge* he_away,
-                                      InputIterator lm_begin, InputIterator lm_end) const;
+                                      InputIterator lm_begin,
+                                      InputIterator lm_end) const;
 
   /*!
    * Move a given outer CCB from one face to another.
