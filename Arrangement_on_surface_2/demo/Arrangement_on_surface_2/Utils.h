@@ -30,15 +30,20 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
 #include <QGraphicsScene>
-#include "ArrangementTypes.h"
 #include <CGAL/Arr_walk_along_line_point_location.h>
+
+#include "ArrangementTypes.h"
 
 class QGraphicsScene;
 
 class QGraphicsSceneMixin
 {
 public:
+  /*! Costructor */
   QGraphicsSceneMixin( ) : scene( 0 ) { }
+
+  /*! Destructor (virtual) */
+  ~QGraphicsSceneMixin() {}
 
   virtual void setScene( QGraphicsScene* scene_ ) { this->scene = scene_; }
 
@@ -363,8 +368,10 @@ public:
 };
 
 template < class CircularKernel >
-class Compute_squared_distance_2< CGAL::Arr_circular_arc_traits_2< CircularKernel > > :
-  public Compute_squared_distance_2_base< CGAL::Arr_circular_arc_traits_2< CircularKernel > >
+class Compute_squared_distance_2< CGAL::Arr_circular_arc_traits_2<
+                                    CircularKernel > > :
+  public Compute_squared_distance_2_base< CGAL::Arr_circular_arc_traits_2<
+                                            CircularKernel > >
 {
 public: // typedefs
   typedef CircularKernel Kernel;
@@ -392,15 +399,16 @@ class Compute_squared_distance_2< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel
   public Compute_squared_distance_2_base< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
 {
 public:
-  typedef AlgKernel Kernel;
+  typedef AlgKernel                                     Kernel;
   typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > Traits;
-  typedef Compute_squared_distance_2_base< Traits > Superclass;
-  typedef typename Traits::Point_2 Conic_point_2; // _Conic_point_2< AlgKernel > : public AlgKernel::Point_2
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef Compute_squared_distance_2_base< Traits >     Superclass;
+  // _Conic_point_2< AlgKernel > : public AlgKernel::Point_2
+  typedef typename Traits::Point_2                      Conic_point_2;
+  typedef typename Kernel::FT                           FT;
+  typedef typename Kernel::Point_2                      Point_2;
+  typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename Traits::Curve_2                      Curve_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
 public: // methods
   double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
@@ -505,14 +513,14 @@ class Arr_compute_y_at_x_2 : public QGraphicsSceneMixin
 {
 public:
   typedef ArrTraits Traits;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
   typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
   //typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Line_2 Line_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Traits::Multiplicity Multiplicity;
-  typedef typename Traits::Intersect_2 Intersect_2;
+  typedef typename Kernel::Point_2                      Point_2;
+  typedef typename Kernel::Line_2                       Line_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename Traits::Multiplicity                 Multiplicity;
+  typedef typename Traits::Intersect_2                  Intersect_2;
   typedef std::pair< typename Traits::Point_2, Multiplicity >
     IntersectionResult;
 
@@ -594,7 +602,6 @@ protected:
     return res;
   }
 
-
 protected:
   Traits traits;
   Intersect_2 intersectCurves;
@@ -606,17 +613,17 @@ class Arr_compute_y_at_x_2< CGAL::Arr_circular_arc_traits_2<CircularKernel> > :
 {
 public:
   typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > Traits;
-  typedef CircularKernel Kernel;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Root_of_2 Root_of_2;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Traits::Point_2 Arc_point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::Line_arc_2 Line_arc_2;
+  typedef CircularKernel                                Kernel;
+  typedef typename Kernel::FT                           FT;
+  typedef typename Kernel::Root_of_2                    Root_of_2;
+  typedef typename Kernel::Point_2                      Point_2;
+  typedef typename Traits::Point_2                      Arc_point_2;
+  typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename Kernel::Line_arc_2                   Line_arc_2;
   // Circular_arc_2
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2; 
-  typedef typename Traits::Intersect_2 Intersect_2;
-  typedef typename Traits::Multiplicity Multiplicity;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2; 
+  typedef typename Traits::Intersect_2                  Intersect_2;
+  typedef typename Traits::Multiplicity                 Multiplicity;
   typedef std::pair< typename Traits::Point_2, Multiplicity > IntersectionResult;
 
   Arr_compute_y_at_x_2( ):
@@ -674,11 +681,11 @@ class Arr_compute_y_at_x_2< CGAL::Arr_algebraic_segment_traits_2<
 public:
   typedef Coefficient_ Coefficient;
   typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > Traits;
-  typedef typename Traits::Algebraic_real_1 CoordinateType;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::Intersect_2 Intersect_2;
-  typedef typename Traits::Multiplicity Multiplicity;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Traits::Algebraic_real_1             CoordinateType;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Traits::Intersect_2                  Intersect_2;
+  typedef typename Traits::Multiplicity                 Multiplicity;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
   CoordinateType operator() ( const X_monotone_curve_2& curve,
                               const CoordinateType& x )
@@ -749,17 +756,17 @@ class Construct_x_monotone_subcurve_2
 {
 public:
   typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
-  typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename ArrTraits::Split_2 Split_2;
-  typedef typename ArrTraits::Intersect_2 Intersect_2;
-  typedef typename ArrTraits::Multiplicity Multiplicity;
-  typedef typename ArrTraits::Construct_min_vertex_2 Construct_min_vertex_2;
-  typedef typename ArrTraits::Construct_max_vertex_2 Construct_max_vertex_2;
-  typedef typename ArrTraits::Compare_x_2 Compare_x_2;
-  typedef typename Kernel::FT FT;
+  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
+  typedef typename ArrTraits::Split_2                   Split_2;
+  typedef typename ArrTraits::Intersect_2               Intersect_2;
+  typedef typename ArrTraits::Multiplicity              Multiplicity;
+  typedef typename ArrTraits::Construct_min_vertex_2    Construct_min_vertex_2;
+  typedef typename ArrTraits::Construct_max_vertex_2    Construct_max_vertex_2;
+  typedef typename ArrTraits::Compare_x_2               Compare_x_2;
+  typedef typename Kernel::FT                           FT;
   typedef typename ArrTraitsAdaptor< ArrTraits >::CoordinateType CoordinateType;
-  typedef typename ArrTraits::Point_2 Point_2;
-  typedef typename Kernel::Point_2 Kernel_point_2;
+  typedef typename ArrTraits::Point_2                   Point_2;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
   //typedef typename Kernel::Line_2 Line_2;
   //typedef typename Kernel::Compute_y_at_x_2 Compute_y_at_x_2;
 
@@ -826,16 +833,16 @@ class Construct_x_monotone_subcurve_2< CGAL::Arr_circular_arc_traits_2<
 {
 public:
   typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > ArrTraits;
-  typedef typename ArrTraits::Intersect_2 Intersect_2;
-  typedef typename ArrTraits::Split_2 Split_2;
-  typedef typename ArrTraits::Compare_x_2 Compare_x_2;
-  typedef typename ArrTraits::Construct_min_vertex_2 Construct_min_vertex_2;
-  typedef typename ArrTraits::Construct_max_vertex_2 Construct_max_vertex_2;
-  typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename CircularKernel::Point_2 Non_arc_point_2;
-  typedef typename ArrTraits::Point_2 Arc_point_2;
-  typedef typename CircularKernel::FT FT;
-  typedef typename CircularKernel::Root_of_2 Root_of_2;
+  typedef typename ArrTraits::Intersect_2               Intersect_2;
+  typedef typename ArrTraits::Split_2                   Split_2;
+  typedef typename ArrTraits::Compare_x_2               Compare_x_2;
+  typedef typename ArrTraits::Construct_min_vertex_2    Construct_min_vertex_2;
+  typedef typename ArrTraits::Construct_max_vertex_2    Construct_max_vertex_2;
+  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
+  typedef typename CircularKernel::Point_2              Non_arc_point_2;
+  typedef typename ArrTraits::Point_2                   Arc_point_2;
+  typedef typename CircularKernel::FT                   FT;
+  typedef typename CircularKernel::Root_of_2            Root_of_2;
   typedef typename CircularKernel::Root_for_circles_2_2 Root_for_circles_2_2;
 
 public:
@@ -847,7 +854,9 @@ public:
     construct_max_vertex_2( this->traits.construct_max_vertex_2_object( ) )
   { }
 
-  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve, const Arc_point_2& pLeft, const Arc_point_2& pRight )
+  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
+                                  const Arc_point_2& pLeft,
+                                  const Arc_point_2& pRight )
   {
     Arc_point_2 pMin = this->construct_min_vertex_2( curve );
     Arc_point_2 pMax = this->construct_max_vertex_2( curve );
@@ -976,11 +985,11 @@ class Construct_x_monotone_subcurve_2< CGAL::Arr_algebraic_segment_traits_2<
 public: // typedefs
   typedef Coefficient_ Coefficient;
   typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > ArrTraits;
-  typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
-  typedef typename ArrTraits::Point_2 Point_2;
+  typedef typename ArrTraits::Point_2                   Point_2;
   //typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
+  typedef typename Kernel::Segment_2                    Segment_2;
 
 public: // methods
   // curve can be unbounded. if curve is unbounded to the left, pLeft is a
@@ -1010,8 +1019,7 @@ protected:
 }; // class SnapStrategy
 
 template < class ArrTraits >
-SnapStrategy< ArrTraits >::
-SnapStrategy( QGraphicsScene* scene_ )
+SnapStrategy< ArrTraits >::SnapStrategy( QGraphicsScene* scene_ )
 { 
   this->scene = scene_;
 }
@@ -1025,7 +1033,7 @@ public:
   typedef typename Kernel::Point_2 Kernel_point_2;
   typedef SnapStrategy< ArrTraits > Superclass;
 
-  SnapToGridStrategy( ):
+  SnapToGridStrategy( ) :
     Superclass( NULL ),
     gridSize( 50 )
   { }
@@ -1143,15 +1151,15 @@ class SnapToArrangementVertexStrategy:
 {
 public:
   typedef Arr_ Arrangement;
-  typedef typename Arrangement::Geometry_traits_2 Traits;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-  typedef SnapStrategy< Traits > Superclass;
-  typedef typename Arrangement::Vertex_iterator Vertex_iterator;
+  typedef typename Arrangement::Geometry_traits_2       Traits;
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+  typedef SnapStrategy< Traits >                        Superclass;
+  typedef typename Arrangement::Vertex_iterator         Vertex_iterator;
   typedef typename Kernel::Compute_squared_distance_2
     Compute_squared_distance_2;
-  typedef typename Kernel::FT FT;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Kernel::Point_2 Kernel_point_2;
+  typedef typename Kernel::FT                           FT;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
 
   SnapToArrangementVertexStrategy( ):
     Superclass( NULL ),
@@ -1210,7 +1218,8 @@ public:
   }
 
   template < class CircularKernel >
-  Point_2 snapPoint( const Kernel_point_2& clickedPoint, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+  Point_2 snapPoint( const Kernel_point_2& clickedPoint,
+                     CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
   {
     typedef Kernel_point_2 Non_arc_point_2;
     typedef typename CircularKernel::Circular_arc_point_2 Arc_point_2;
@@ -1270,10 +1279,10 @@ protected:
 template < class ArrTraits >
 class Arr_construct_point_2
 {
-  typedef typename ArrTraits::Point_2 Point_2;
+  typedef typename ArrTraits::Point_2                            Point_2;
   typedef typename ArrTraitsAdaptor< ArrTraits >::CoordinateType CoordinateType;
-  typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
-  typedef typename Kernel::Point_2 Kernel_point_2;
+  typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel         Kernel;
+  typedef typename Kernel::Point_2                               Kernel_point_2;
 
 public:
   Point_2 operator()( const Kernel_point_2& pt )
@@ -1311,7 +1320,11 @@ protected:
 };
 
 class Find_nearest_edge_base : public QGraphicsSceneMixin
-{ };
+{
+public:
+  /*! Destructor (virtual) */
+  ~Find_nearest_edge_base() {}
+};
 
 template < class Arr_, class ArrTraits = typename Arr_::Geometry_traits_2 >
 class Find_nearest_edge : public Find_nearest_edge_base
@@ -1324,14 +1337,14 @@ public: // typedefs
   typedef CGAL::Arr_walk_along_line_point_location< Arrangement >
     Point_location_strategy;
   typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Arrangement::Face_const_handle Face_const_handle;
-  typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
+  typedef typename Kernel::Point_2                      Point_2;
+  typedef typename Arrangement::Face_const_handle       Face_const_handle;
+  typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
   typedef typename Arrangement::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
   typedef typename Point_curve_distance::FT FT;
-  typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
+  typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
   typedef typename Arrangement::Halfedge_around_vertex_const_circulator
     Halfedge_around_vertex_const_circulator;
 
@@ -1467,20 +1480,20 @@ class Find_nearest_edge< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > >: public Fi
 {
 public: // typedefs
   typedef Arr_ Arrangement;
-  typedef typename Arrangement::Geometry_traits_2 ArrTraits;
-  typedef Compute_squared_distance_2< ArrTraits > Point_curve_distance;
-  typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Arrangement::Geometry_traits_2       ArrTraits;
+  typedef Compute_squared_distance_2< ArrTraits >       Point_curve_distance;
+  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
   typedef CGAL::Arr_walk_along_line_point_location< Arrangement >
     Point_location_strategy;
   typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
   typedef typename Kernel::Point_2 Point_2;
-  typedef typename Arrangement::Face_const_handle Face_const_handle;
-  typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
+  typedef typename Arrangement::Face_const_handle       Face_const_handle;
+  typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
   typedef typename Arrangement::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
   typedef typename Point_curve_distance::FT FT;
-  typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
+  typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
   typedef typename Arrangement::Halfedge_around_vertex_const_circulator
     Halfedge_around_vertex_const_circulator;
 

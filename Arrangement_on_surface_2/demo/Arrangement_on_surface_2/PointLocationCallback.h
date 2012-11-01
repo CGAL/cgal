@@ -72,7 +72,7 @@ public:
   typedef typename CGAL::Arr_simple_point_location< Arrangement >
     SimplePointLocationStrategy;
   typedef typename CGAL::Arr_walk_along_line_point_location< Arrangement >
-    WalkAlongLinePointLocationStrategy;
+    Walk_pl_strategy;
   typedef typename Supports_landmarks< Arrangement >::LandmarksType
     LandmarksPointLocationStrategy;
 
@@ -103,14 +103,14 @@ protected:
   Arr_construct_point_2< Traits > toArrPoint;
 }; // class PointLocationCallback
 
-
+/*! Constructor */
 template < typename Arr_ >
 PointLocationCallback< Arr_ >::
 PointLocationCallback( Arrangement* arr_, QObject* parent_ ) :
   CGAL::Qt::Callback( parent_ ),
+  pointLocationStrategy( CGAL::make_object( new Walk_pl_strategy( *arr_ ) ) ),
   arr( arr_ ),
-  highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
-  pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) )
+  highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) )
 { 
   QObject::connect( this, SIGNAL( modelChanged( ) ),
                     this->highlightedCurves, SLOT( modelChanged( ) ) );
@@ -261,7 +261,7 @@ CGAL::Object PointLocationCallback< Arr_ >::locate( const Kernel_point_2& pt,
                                                     CGAL::Tag_true )
 {
   CGAL::Object pointLocationResult;
-  WalkAlongLinePointLocationStrategy* walkStrategy;
+  Walk_pl_strategy* walkStrategy;
   TrapezoidPointLocationStrategy* trapezoidStrategy;
   SimplePointLocationStrategy* simpleStrategy;
   LandmarksPointLocationStrategy* landmarksStrategy;
@@ -292,7 +292,7 @@ CGAL::Object PointLocationCallback< Arr_ >::locate( const Kernel_point_2& pt,
                                                     CGAL::Tag_false )
 {
   CGAL::Object pointLocationResult;
-  WalkAlongLinePointLocationStrategy* walkStrategy;
+  Walk_pl_strategy* walkStrategy;
   TrapezoidPointLocationStrategy* trapezoidStrategy;
   SimplePointLocationStrategy* simpleStrategy;
 

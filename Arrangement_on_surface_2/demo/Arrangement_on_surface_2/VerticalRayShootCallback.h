@@ -59,46 +59,45 @@ protected:
  *
  * The template parameter is a CGAL::Arrangement_with_history_2 of some type.
  */
-template < class Arr_ >
+template < typename Arr_ >
 class VerticalRayShootCallback : public VerticalRayShootCallbackBase
 {
 public:
   typedef VerticalRayShootCallbackBase Superclass;
   typedef Arr_ Arrangement;
-  typedef typename Arrangement::Halfedge_handle Halfedge_handle;
-  typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
-  typedef typename Arrangement::Face_handle Face_handle;
-  typedef typename Arrangement::Face_const_handle Face_const_handle;
-  typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
+  typedef typename Arrangement::Halfedge_handle         Halfedge_handle;
+  typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename Arrangement::Halfedge_iterator       Halfedge_iterator;
+  typedef typename Arrangement::Face_handle             Face_handle;
+  typedef typename Arrangement::Face_const_handle       Face_const_handle;
+  typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
   typedef typename Arrangement::Halfedge_around_vertex_const_circulator
     Halfedge_around_vertex_const_circulator;
-  typedef typename Arrangement::Geometry_traits_2 Traits;
-  typedef typename Arrangement::Curve_handle Curve_handle;
+  typedef typename Arrangement::Geometry_traits_2       Traits;
+  typedef typename Arrangement::Curve_handle            Curve_handle;
   typedef typename Arrangement::Originating_curve_iterator
     Originating_curve_iterator;
-  typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
+  typedef typename Arrangement::Induced_edge_iterator   Induced_edge_iterator;
   typedef typename Arrangement::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
-  typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  // typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
-  typedef typename Traits::Intersect_2 Intersect_2;
-  typedef typename Traits::Multiplicity Multiplicity;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
+  typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename Traits::Intersect_2                  Intersect_2;
+  typedef typename Traits::Multiplicity                 Multiplicity;
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
   typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
-  typedef typename Kernel::Point_2 Kernel_point_2;
-  typedef typename Traits::Point_2 Point_2;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
+  typedef typename Traits::Point_2                      Point_2;
   typedef std::pair< typename Traits::Point_2, Multiplicity >
-    IntersectionResult;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::FT FT;
+                                                        IntersectionResult;
+  typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename Kernel::FT                           FT;
   typedef typename CGAL::Arr_trapezoid_ric_point_location< Arrangement >
     TrapezoidPointLocationStrategy;
   typedef typename CGAL::Arr_simple_point_location< Arrangement >
     SimplePointLocationStrategy;
   typedef typename CGAL::Arr_walk_along_line_point_location< Arrangement >
-    WalkAlongLinePointLocationStrategy;
+    Walk_pl_strategy;
   typedef typename CGAL::Arr_landmarks_point_location< Arrangement >
     LandmarksPointLocationStrategy;
 
@@ -142,7 +141,6 @@ protected:
   using Superclass::shootingUp;
   Traits traits;
   Arrangement* arr;
-  //Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
   Intersect_2 intersectCurves;
   CGAL::Qt::Converter< Kernel > convert;
   CGAL::Object pointLocationStrategy;
@@ -153,14 +151,13 @@ protected:
   VerticalRayGraphicsItem rayGraphicsItem;
 }; // class VerticalRayShootCallback
 
-template < class Arr_ >
+template < typename Arr_ >
 VerticalRayShootCallback< Arr_ >::
 VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ ):
   VerticalRayShootCallbackBase( parent_ ),
   arr( arr_ ),
-  // construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
   intersectCurves( this->traits.intersect_2_object( ) ),
-  pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) ),
+  pointLocationStrategy( CGAL::make_object( new Walk_pl_strategy( *arr_ ) ) ),
   highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
   activeRay( new QGraphicsLineItem )
 {
@@ -176,7 +173,7 @@ VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ ):
                     this, SLOT( slotModelChanged( ) ) );
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 void VerticalRayShootCallback< Arr_ >::setScene( QGraphicsScene* scene_ )
 {
   this->scene = scene_;
@@ -190,13 +187,13 @@ void VerticalRayShootCallback< Arr_ >::setScene( QGraphicsScene* scene_ )
 }
 
 
-template < class Arr_ >
+template < typename Arr_ >
 void VerticalRayShootCallback< Arr_ >::slotModelChanged( )
 {
   this->activeRay->update( );
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 void VerticalRayShootCallback< Arr_ >::reset( )
 {
   this->activeRay->setLine( 0, 0, 0, 0 );
@@ -205,19 +202,19 @@ void VerticalRayShootCallback< Arr_ >::reset( )
   emit modelChanged( );
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 void VerticalRayShootCallback< Arr_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
   this->highlightPointLocation( event );
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 void VerticalRayShootCallback< Arr_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 { }
 
-template < class Arr_ >
+template < typename Arr_ >
 void VerticalRayShootCallback< Arr_ >::
 highlightPointLocation( QGraphicsSceneMouseEvent* event )
 {
@@ -291,7 +288,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
   emit modelChanged( );
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 typename VerticalRayShootCallback< Arr_ >::Face_const_handle
 VerticalRayShootCallback< Arr_ >::getFace( const CGAL::Object& obj )
 {
@@ -312,12 +309,12 @@ VerticalRayShootCallback< Arr_ >::getFace( const CGAL::Object& obj )
   return  (eit->face( ));
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 CGAL::Object
 VerticalRayShootCallback< Arr_ >::rayShootUp( const Kernel_point_2& pt )
 {
   CGAL::Object pointLocationResult;
-  WalkAlongLinePointLocationStrategy* walkStrategy;
+  Walk_pl_strategy* walkStrategy;
   TrapezoidPointLocationStrategy* trapezoidStrategy;
   SimplePointLocationStrategy* simpleStrategy;
   LandmarksPointLocationStrategy* landmarksStrategy;
@@ -345,12 +342,12 @@ VerticalRayShootCallback< Arr_ >::rayShootUp( const Kernel_point_2& pt )
   return pointLocationResult;
 }
 
-template < class Arr_ >
+template < typename Arr_ >
 CGAL::Object
 VerticalRayShootCallback< Arr_ >::rayShootDown( const Kernel_point_2& pt )
 {
   CGAL::Object pointLocationResult;
-  WalkAlongLinePointLocationStrategy* walkStrategy;
+  Walk_pl_strategy* walkStrategy;
   TrapezoidPointLocationStrategy* trapezoidStrategy;
   SimplePointLocationStrategy* simpleStrategy;
   LandmarksPointLocationStrategy* landmarksStrategy;

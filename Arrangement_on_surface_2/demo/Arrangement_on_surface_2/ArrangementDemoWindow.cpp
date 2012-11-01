@@ -43,7 +43,8 @@ ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
   this->setupUi( );
 
   // set up the demo window
-  ArrangementDemoTabBase* demoTab = this->makeTab( SEGMENT_TRAITS ); 
+  // ArrangementDemoTabBase* demoTab =
+  this->makeTab( SEGMENT_TRAITS ); 
   this->setupStatusBar( );
   this->setupOptionsMenu( );
   this->addAboutDemo( ":/help/about.html" );
@@ -135,7 +136,8 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
   return demoTab;
 }
 
-ArrangementDemoTabBase* ArrangementDemoWindow::getTab( int tabIndex ) const
+ArrangementDemoTabBase* ArrangementDemoWindow::getTab( unsigned int tabIndex )
+  const
 {
   if ( tabIndex < 0 || tabIndex > this->tabs.size( ) )
   {
@@ -333,8 +335,10 @@ void ArrangementDemoWindow::removeCallback( int tabIndex )
   ArrangementDemoTabBase* activeTab = this->tabs[ tabIndex ];
   QGraphicsScene* activeScene = activeTab->getScene( );
   QGraphicsView* activeView = activeTab->getView( );
+#if 0
   QAction* activeMode = this->activeModes[ tabIndex ];
-
+#endif
+  
   activeScene->removeEventFilter( activeTab->getCurveInputCallback( ) );
   activeView->setDragMode( QGraphicsView::NoDrag );
   activeScene->removeEventFilter( activeTab->getDeleteCurveCallback( ) );
@@ -458,8 +462,8 @@ void ArrangementDemoWindow::openArrFile( QString filename )
     tab->setArrangement( conic );
 #endif
     typedef ArrangementDemoTab< Conic_arr > TabType;
-    Conic_reader< typename Conic_arr::Geometry_traits_2 > conicReader;
-    std::vector< typename Conic_arr::Curve_2 > curve_list;
+    Conic_reader< Conic_arr::Geometry_traits_2 > conicReader;
+    std::vector< Conic_arr::Curve_2 > curve_list;
     CGAL::Bbox_2 bbox;
     conicReader.read_data( filename.toStdString( ).c_str( ),
                            std::back_inserter( curve_list ), bbox );
@@ -505,7 +509,7 @@ void ArrangementDemoWindow::openDatFile( QString filename )
   Seg_arr* seg;
   Pol_arr* pol;
   Conic_arr* conic;
-  Alg_seg_arr* alg;
+  // Alg_seg_arr* alg;
 
   // Creates an ofstream object named inputFile
   if (! inputFile.is_open() ) // Always test file open
@@ -578,7 +582,7 @@ void ArrangementDemoWindow::openDatFile( QString filename )
   else if ( CGAL::assign( conic, arr ) )
   {
     conic->clear( );
-    Conic_reader< typename Conic_arr::Geometry_traits_2 > reader;
+    Conic_reader< Conic_arr::Geometry_traits_2 > reader;
     std::list<Arr_conic_2> curve_list;
     CGAL::Bbox_2 bbox;
     reader.read_data( filename.toStdString().c_str(),
@@ -599,8 +603,8 @@ void ArrangementDemoWindow::updateEnvelope( QAction* newMode )
   if ( this->ui->tabWidget->currentIndex( ) == -1 ) return;
   ArrangementDemoTabBase* activeTab =
     this->tabs[ this->ui->tabWidget->currentIndex( ) ];
-  QGraphicsScene* activeScene = activeTab->getScene( );
-  QGraphicsView* activeView = activeTab->getView( );
+  // QGraphicsScene* activeScene = activeTab->getScene( );
+  // QGraphicsView* activeView = activeTab->getView( );
 
   bool show = newMode->isChecked( );
   if ( newMode == this->ui->actionLowerEnvelope )
@@ -650,8 +654,8 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
 {
   ArrangementDemoTabBase* activeTab =
     this->tabs[ this->ui->tabWidget->currentIndex( ) ];
-  QGraphicsScene* activeScene = activeTab->getScene( );
-  ArrangementDemoGraphicsView* activeView = activeTab->getView( );
+  // QGraphicsScene* activeScene = activeTab->getScene( );
+  // ArrangementDemoGraphicsView* activeView = activeTab->getView( );
   Conic_arr* conic_arr;
   Lin_arr* lin_arr;
   bool isConicArr =
@@ -663,7 +667,7 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
   if ( isConicArr )
   {
     // std::cout << "do something conic arr related" << std::endl;
-    typedef typename Conic_arr::Geometry_traits_2       Conic_geom_traits;
+    typedef Conic_arr::Geometry_traits_2       Conic_geom_traits;
     typedef CGAL::Qt::GraphicsViewCurveInput<Conic_geom_traits>
       ConicCurveInputCallback;
     ConicCurveInputCallback* curveInputCallback =
@@ -693,7 +697,7 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
   }
   else if ( isLinearArr )
   {
-    typedef typename Lin_arr::Geometry_traits_2         Line_geom_traits;
+    typedef Lin_arr::Geometry_traits_2         Line_geom_traits;
     typedef CGAL::Qt::GraphicsViewCurveInput<Line_geom_traits>
       LinearCurveInputCallback;
     LinearCurveInputCallback* curveInputCallback =
@@ -756,7 +760,7 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered( )
     CGAL::write( *conic, ofs, arrFormatter );
 #endif
     ofs << conic->number_of_curves( ) << std::endl;
-    for ( typename Conic_arr::Curve_iterator it = conic->curves_begin( );
+    for ( Conic_arr::Curve_iterator it = conic->curves_begin( );
           it != conic->curves_end( ); ++it )
     {
       if ( it->is_full_conic( ) )
@@ -907,8 +911,8 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
   if ( this->ui->tabWidget->currentIndex( ) != -1 )
     arr = this->arrangements[ this->ui->tabWidget->currentIndex( ) ];
 
-  Seg_arr* seg;
-  Pol_arr* pol;
+  // Seg_arr* seg;
+  // Pol_arr* pol;
   Conic_arr* conic;
   Lin_arr* lin;
   if ( CGAL::assign( conic, arr ) )

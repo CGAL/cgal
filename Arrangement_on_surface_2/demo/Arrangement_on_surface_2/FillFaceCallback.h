@@ -85,7 +85,7 @@ public:
   typedef typename CGAL::Arr_simple_point_location< Arrangement >
     SimplePointLocationStrategy;
   typedef typename CGAL::Arr_walk_along_line_point_location< Arrangement >
-    WalkAlongLinePointLocationStrategy;
+    Walk_pl_strategy;
   typedef typename Supports_landmarks< Arrangement >::LandmarksType
     LandmarksPointLocationStrategy;
 
@@ -101,8 +101,10 @@ protected:
 
   Face_const_handle getFace( const CGAL::Object& o );
   CGAL::Object locate( const Kernel_point_2& point );
-  CGAL::Object locate( const Kernel_point_2& point, CGAL::Tag_false /*supportsLandmarks*/ );
-  CGAL::Object locate( const Kernel_point_2& point, CGAL::Tag_true /*doesNotSupportLandmarks*/ );
+  CGAL::Object locate( const Kernel_point_2& point,
+                       CGAL::Tag_false/*supportsLandmarks*/ );
+  CGAL::Object locate( const Kernel_point_2& point,
+                       CGAL::Tag_true /*doesNotSupportLandmarks*/ );
 
   CGAL::Qt::Converter< Kernel > convert;
   CGAL::Object pointLocationStrategy;
@@ -110,15 +112,13 @@ protected:
   Arr_construct_point_2< Traits > toArrPoint;
 }; // class FillFaceCallback
 
-
+/*! Constructor */
 template < class Arr_ >
 FillFaceCallback<Arr_>::FillFaceCallback(Arrangement* arr_, QObject* parent_):
   FillFaceCallbackBase( parent_ ),
-  arr( arr_ ),
-  pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) )
-{
-
-}
+  pointLocationStrategy( CGAL::make_object( new Walk_pl_strategy( *arr_ ) ) ),
+  arr( arr_ )
+{ }
 
 template < class Arr_ >
 void FillFaceCallback< Arr_ >::reset( )
@@ -186,7 +186,7 @@ CGAL::Object
 FillFaceCallback< Arr_ >::locate( const Kernel_point_2& pt, CGAL::Tag_true )
 {
   CGAL::Object pointLocationResult;
-  WalkAlongLinePointLocationStrategy* walkStrategy;
+  Walk_pl_strategy* walkStrategy;
   TrapezoidPointLocationStrategy* trapezoidStrategy;
   SimplePointLocationStrategy* simpleStrategy;
   LandmarksPointLocationStrategy* landmarksStrategy;
@@ -217,7 +217,7 @@ CGAL::Object
 FillFaceCallback< Arr_ >::locate( const Kernel_point_2& pt, CGAL::Tag_false )
 {
   CGAL::Object pointLocationResult;
-  WalkAlongLinePointLocationStrategy* walkStrategy;
+  Walk_pl_strategy* walkStrategy;
   TrapezoidPointLocationStrategy* trapezoidStrategy;
   SimplePointLocationStrategy* simpleStrategy;
 

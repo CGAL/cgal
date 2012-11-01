@@ -204,7 +204,8 @@ protected:
       this->points.push_back( clickedPoint );
 
       QPointF pt = this->convert( clickedPoint );
-      QGraphicsLineItem* lineItem = new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+      QGraphicsLineItem* lineItem =
+        new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
       lineItem->setZValue( 100 );
       QPen pen = lineItem->pen( );
       pen.setColor( this->color );
@@ -239,7 +240,8 @@ protected:
       else
       { // start the next segment
         QPointF pt = this->convert( clickedPoint );
-        QGraphicsLineItem* lineItem = new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+        QGraphicsLineItem* lineItem =
+          new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
         lineItem->setZValue( 100 );
         QPen pen = lineItem->pen( );
         pen.setColor( this->color );
@@ -264,43 +266,45 @@ protected:
   std::vector< Point_2 > points;
 
   std::vector< QGraphicsLineItem* > polylineGuide;
-}; // class GraphicsViewCurveInput< CGAL::Arr_polyline_traits_2< SegmentTraits > >
+};
+
+  // class GraphicsViewCurveInput< CGAL::Arr_polyline_traits_2<SegmentTraits> >
 
 /**
    Specialization of GraphicsViewCurveInput for Arr_conic_traits_2; handles
    user-guided generation of conic curves.
 */
 template < class RatKernel, class AlgKernel, class NtTraits >
-class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >:
+class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2<
+                                RatKernel, AlgKernel, NtTraits > >:
   public GraphicsViewCurveInputBase
 {
 public:
   typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > Traits;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::Point_2 Point_2; // basically, an AlgKernel::Point_2 with metadata
-  typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
-  typedef AlgKernel Kernel;
-  //typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename RatKernel::FT Rat_FT;
-  typedef typename RatKernel::Point_2 Rat_point_2;
-  typedef typename RatKernel::Segment_2 Rat_segment_2;
-  typedef typename RatKernel::Circle_2 Rat_circle_2;
-  typedef enum ConicType
-    {
-      CONIC_SEGMENT,
-      CONIC_CIRCLE,
-      CONIC_ELLIPSE,
-      CONIC_THREE_POINT,
-      CONIC_FIVE_POINT
-    } ConicType;
+  typedef typename Traits::Curve_2                      Curve_2;
+  // basically, an AlgKernel::Point_2 with metadata
+  typedef typename Traits::Point_2                      Point_2;
+  typedef AlgKernel                                     Kernel;
+  // typedef typename Kernel::Point_2 Point_2;
+  typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename RatKernel::FT                        Rat_FT;
+  typedef typename RatKernel::Point_2                   Rat_point_2;
+  typedef typename RatKernel::Segment_2                 Rat_segment_2;
+  typedef typename RatKernel::Circle_2                  Rat_circle_2;
+  typedef enum ConicType {
+    CONIC_SEGMENT,
+    CONIC_CIRCLE,
+    CONIC_ELLIPSE,
+    CONIC_THREE_POINT,
+    CONIC_FIVE_POINT
+  } ConicType;
 
-  GraphicsViewCurveInput( QObject* parent ):
+  /*! Constructor */
+  GraphicsViewCurveInput( QObject* parent ) :
     GraphicsViewCurveInputBase( parent ),
-    construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
-    conicType( CONIC_SEGMENT ),
     circleItem( NULL ),
-    ellipseItem( NULL )
+    ellipseItem( NULL ),
+    conicType( CONIC_SEGMENT )
   { }
 
   void setConicType( ConicType conicType_ )
@@ -335,7 +339,8 @@ protected:
       double radius = sqrt( (p1.x( ) - p2.x( ))*(p1.x( ) - p2.x( ))
                             + (p1.y( ) - p2.y( ))*(p1.y( ) - p2.y( )) );
       double d = radius * sqrt( 2.0 );
-      this->circleItem->setRect( p1.x( ) - radius, p1.y( ) - radius, 2*radius, 2*radius );
+      this->circleItem->setRect( p1.x( ) - radius, p1.y( ) -
+                                 radius, 2*radius, 2*radius );
     }
     if ( this->ellipseItem != NULL )
     {
@@ -392,7 +397,8 @@ protected:
         QPointF pt = this->convert( clickedPoint );
         if ( this->scene != NULL )
         {
-          QGraphicsEllipseItem* ellipse = this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
+          QGraphicsEllipseItem* ellipse =
+            this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
           ellipse->setZValue( 100 );
           QPen pen = ellipse->pen( );
           pen.setColor( this->color );
@@ -415,12 +421,12 @@ protected:
         }
         this->polylineGuide.clear( );
 
-        //Curve_2 res = this->construct_x_monotone_curve_2( this->points[ 0 ], this->points[ 1 ] );
         double x1 = CGAL::to_double( this->points[ 0 ].x( ) ); 
         double y1 = CGAL::to_double( this->points[ 0 ].y( ) ); 
         double x2 = CGAL::to_double( this->points[ 1 ].x( ) ); 
         double y2 = CGAL::to_double( this->points[ 1 ].y( ) ); 
-        Curve_2 res = Curve_2( Rat_segment_2( Rat_point_2( x1, y1 ), Rat_point_2( x2, y2 ) ) );
+        Curve_2 res = Curve_2( Rat_segment_2( Rat_point_2( x1, y1 ),
+                                              Rat_point_2( x2, y2 ) ) );
         // std::cout << "res is " << ( (res.is_valid( ))? "" : "not ")
         //           << "valid" << std::endl;
         this->points.clear( );
@@ -568,9 +574,11 @@ protected:
   QGraphicsEllipseItem* ellipseItem;
 
   Traits traits;
-  Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
   ConicType conicType;
-}; // class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
+};
+
+// class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< 
+//                                 RatKernel, AlgKernel, NtTraits > >
 
 /**
    Specialization of GraphicsViewCurveInput for Arr_linear_traits_2; handles

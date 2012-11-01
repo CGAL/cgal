@@ -25,10 +25,10 @@ namespace Qt {
 ArrangementGraphicsItemBase::ArrangementGraphicsItemBase( ) :
   bb( 0, 0, 0, 0 ),
   bb_initialized( false ),
-  visible_edges( true ),
-  visible_vertices( true ),
   verticesPen( QPen( ::Qt::blue, 3. ) ),
   edgesPen( QPen( ::Qt::blue, 1. ) ),
+  visible_edges( true ),
+  visible_vertices( true ),
   scene( NULL ),
   backgroundColor( ::Qt::white )
 {

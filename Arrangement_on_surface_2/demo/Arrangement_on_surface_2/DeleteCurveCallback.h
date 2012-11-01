@@ -42,18 +42,18 @@ class DeleteCurveCallback : public CGAL::Qt::Callback
 {
 public:
   typedef Arr_ Arrangement;
-  typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement::Halfedge_handle Halfedge_handle;
-  typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
-  typedef typename Arrangement::Geometry_traits_2 Traits;
-  typedef typename Arrangement::Curve_handle Curve_handle;
+  typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename Arrangement::Halfedge_handle         Halfedge_handle;
+  typedef typename Arrangement::Halfedge_iterator       Halfedge_iterator;
+  typedef typename Arrangement::Geometry_traits_2       Traits;
+  typedef typename Arrangement::Curve_handle            Curve_handle;
   typedef typename Arrangement::Originating_curve_iterator
   Originating_curve_iterator;
-  typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-  typedef typename Kernel::Point_2 Point;
-  typedef typename Kernel::Segment_2 Segment;
+  typedef typename Arrangement::Induced_edge_iterator   Induced_edge_iterator;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+  typedef typename Kernel::Point_2                      Point;
+  typedef typename Kernel::Segment_2                    Segment;
 
   DeleteCurveCallback( Arrangement* arr_, QObject* parent_ );
   void setScene( QGraphicsScene* scene_ );
@@ -73,14 +73,14 @@ protected:
   Halfedge_handle removableHalfedge;
 }; // class DeleteCurveCallback
 
-
+/*! Constructor */
 template < typename Arr_ >
 DeleteCurveCallback< Arr_ >::
-DeleteCurveCallback( Arrangement* arr_, QObject* parent_ ):
+DeleteCurveCallback( Arrangement* arr_, QObject* parent_ ) :
   CGAL::Qt::Callback( parent_ ),
-  arr( arr_ ),
   scene( NULL ),
-  highlightedCurve( new CGAL::Qt::CurveGraphicsItem< Traits >( ) )
+  highlightedCurve( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
+  arr( arr_ )
 {
   QObject::connect( this, SIGNAL( modelChanged( ) ),
                     this->highlightedCurve, SLOT( modelChanged( ) ) );

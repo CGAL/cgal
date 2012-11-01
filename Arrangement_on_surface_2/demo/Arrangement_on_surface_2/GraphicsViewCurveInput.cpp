@@ -50,8 +50,8 @@ void GraphicsViewCurveInputBase::setSnapToGridEnabled( bool b )
   this->snapToGridEnabled = b;
 }
 
-GraphicsViewCurveInputBase::
-GraphicsViewCurveInputBase( QObject* parent ):
+/*! Constructor */
+GraphicsViewCurveInputBase::GraphicsViewCurveInputBase( QObject* parent ) :
     GraphicsViewInput( parent ),
 //    scene( NULL ),
     snappingEnabled( false ),

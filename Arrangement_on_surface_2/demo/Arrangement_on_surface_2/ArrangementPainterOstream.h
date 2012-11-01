@@ -44,7 +44,8 @@ namespace Qt {
 template < typename ArrTraits >
 class ArrangementPainterOstreamBase : public QGraphicsSceneMixin
 {
-public: // typedefs
+public:
+  // typedefs
   typedef ArrTraits Traits;
   typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
   typedef typename Kernel::Point_2 Point_2;
@@ -55,13 +56,14 @@ public: // typedefs
   typedef typename Kernel::Iso_rectangle_2 Iso_rectangle_2;
   typedef typename Kernel::Circle_2 Circle_2;
 
-public: // constructors
+public:
+  /*! Constructor */
   ArrangementPainterOstreamBase( QPainter* p,
-                                 QRectF clippingRectangle = QRectF( ) ):
+                                 QRectF clippingRectangle = QRectF( ) ) :
     painterOstream( p, clippingRectangle ),
     qp( p ),
     convert( clippingRectangle ),
-    //      scene( NULL ),
+    // scene( NULL ),
     clippingRect( QRectF( ) ), // null rectangle
     scale( 1.0 )
   {
@@ -71,7 +73,10 @@ public: // constructors
     }
   }
 
-public: // methods
+  /*! Destructor (virtual) */
+  ~ArrangementPainterOstreamBase() {}
+  
+  // methods
   template < typename T >
   ArrangementPainterOstreamBase& operator<<( const T& t )
   {
@@ -120,7 +125,8 @@ protected: // methods
   }
 #endif
 
-protected: // fields
+protected:
+  // fields
   PainterOstream< Kernel > painterOstream;
   QPainter* qp;
   Converter< Kernel > convert;
@@ -135,9 +141,13 @@ class ArrangementPainterOstream:
     public ArrangementPainterOstreamBase< ArrTraits >
 {
 public:
-  ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
+  /*! Constructor */
+  ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()):
     ArrangementPainterOstreamBase< ArrTraits >( p, clippingRectangle )
   { }
+
+  /*! Destructor (virtual) */
+  ~ArrangementPainterOstream() {}
 };
 
 template < typename Kernel_ >

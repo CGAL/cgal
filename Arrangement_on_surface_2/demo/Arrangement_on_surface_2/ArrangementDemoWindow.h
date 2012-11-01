@@ -69,7 +69,7 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
   ~ArrangementDemoWindow();
 
   ArrangementDemoTabBase* makeTab( TraitsType tt );
-  ArrangementDemoTabBase* getTab( int tabIndex ) const;
+  ArrangementDemoTabBase* getTab( unsigned int tabIndex ) const;
   ArrangementDemoTabBase* getCurrentTab( ) const;
 
   std::vector< QString > getTabLabels( ) const;
