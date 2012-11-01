@@ -33,7 +33,7 @@ LC_CTYPE=en_US.UTF-8
 40 21 * * * cd $HOME/CGAL/releases-and-testsuites-with-cmake/CGAL-I/doc_tex; nice -19 $HOME/bin/cgal_manual -testsuite || true
 
 # Doxygen Test suite, at 9:05pm
-20 21  * * * time $HOME/CGAL/python-3.3/bin/python3 $HOME/CGAL/doxy-port-pmoeller/Documentation/testsuite.py --doxyassist $HOME/CGAL/doxyassist/doxyassist.py --doxygen $HOME/CGAL/doxygen-svn/bin/doxygen --documentation $HOME/CGAL/doxy-port-pmoeller/Documentation --publish /var/CGAL/www/Members/Doxygen_test/ --do-update --do-purge-rebuild
+20 21  * * * time $HOME/CGAL/python-3.3/bin/python3 $HOME/CGAL/doxy-port-pmoeller/Documentation/testsuite.py --doxyassist $HOME/CGAL/doxyassist/doxyassist.py --doxygen $HOME/Git/doxygen-fixes/bin/doxygen --documentation $HOME/CGAL/doxy-port-pmoeller/Documentation --publish /var/CGAL/www/Members/Doxygen_test/ --do-update --do-purge-rebuild
 
 # Dump the crontab to SVN every hour at minute 18
 18 * * * * $HOME/bin/dump_crontab
