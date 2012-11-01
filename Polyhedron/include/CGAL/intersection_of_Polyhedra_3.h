@@ -1,4 +1,4 @@
-// Copyright (c) 2011 GeometryFactory (France).
+// Copyright (c) 2010-2012 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -78,7 +78,8 @@ namespace CGAL{
 //  -- at least one triangle contains S
 // Indeed, the intersection points of S and T will be found using segments
 // of T or segments adjacent to S.
-
+//
+// -- Sebastien Loriot, 2010/04/07
 
 namespace internal_IOP {
   //an enum do decide which kind of intersection points are needed
@@ -573,9 +574,10 @@ namespace internal_IOP{
     {
       nodes.push_back(p);
     }    
-  };
-  
-  
+  }; // end specialization
+     // Triangle_segment_intersection_point<Polyhedron,Kernel,No_predicates_on_constructions,false>
+
+
   //second specializations: store an exact copy of the points so that we can answer exactly predicates
   //FYI, it used to have two specializations (one in the case the polyhedron
   //can be edited and on if it cannot) building exact representation on demand.
@@ -659,7 +661,8 @@ namespace internal_IOP{
       enodes.push_back(to_exact(p));
       inodes.push_back( double_to_interval(p) );
     }
-  };  
+  }; // end specialization
+     // Triangle_segment_intersection_point<Polyhedron,Kernel,Predicates_on_constructions,false>
   
   //Third specialization: The kernel already has exact constructions.
   template <class Polyhedron,class Kernel,class Node_storage>
@@ -702,7 +705,8 @@ namespace internal_IOP{
     const typename Kernel::Point_3& to_interval(const typename Kernel::Point_3& p) const { return p; }
     const typename Kernel::Point_3& to_exact(const typename Kernel::Point_3& p) const { return p; }
 
-  };  
+  }; // end specialization
+     // Triangle_segment_intersection_point<Polyhedron,Kernel,Node_storage,true>
   
 }
 
@@ -840,10 +844,20 @@ class Intersection_of_Polyhedra_3{
     void operator()( const Box* fb, const Box* eb) const {
       Halfedge_handle fh = fb->handle();
       Halfedge_handle eh = eb->handle();
-      
+
+      // The following call to map::insert() attempts an insertion of a pair
+      // into 'edge_to_sfacet'. If 'eh' is already inserted in the map,
+      // then the result 'res' is the current entry in the map for 'eh'.
       typename Edge_to_intersected_facets::iterator res=
         edge_to_sfacet.insert(std::make_pair(eh,Facet_set())).first;
+
       res->second.insert(fh->facet());
+      // That could have been shortened to:
+      //
+      //       edge_to_sfacet[eh].insert(fh->facet())
+      //
+      // -- Laurent Rineau, 2012/11/01
+
       visitor.add_filtered_intersection(eh,fh,polyhedron_edge,polyhedron_triangle);
     }
   };
@@ -935,10 +949,12 @@ class Intersection_of_Polyhedra_3{
     CGAL::box_intersection_d( facet_box_ptr.begin(), facet_box_ptr.end(),
                               edge_box_ptr.begin(), edge_box_ptr.end(),
     #ifdef DO_NOT_HANDLE_COPLANAR_FACETS
+                              // Note that 'edge_to_sfacet' is passed by
+                              // non-const reference, here, to be filled.
                               Map_edge_facet_bbox_intersection(edge_to_sfacet,P,Q,*visitor),
-    #else
+    #else // not DO_NOT_HANDLE_COPLANAR_FACETS
                               Map_edge_facet_bbox_intersection_extract_coplanar(edge_to_sfacet,coplanar_facets,P,Q,*visitor),
-    #endif
+    #endif // not DO_NOT_HANDLE_COPLANAR_FACETS
                               std::ptrdiff_t(2000)
     );
   }
@@ -1155,7 +1171,7 @@ class Intersection_of_Polyhedra_3{
     for (Hedge_iterator it=begin;it!=end;++it)
       check_coplanar_edge(*it,additional_edge,type);
   }
-  #endif
+  #endif // USE_DETECTION_MULTIPLE_DEFINED_EDGES
   
   void print_type_debug(internal_IOP::Intersection_type type,bool cpl,bool opp_cpl)
   {
@@ -1377,12 +1393,13 @@ class Intersection_of_Polyhedra_3{
             fset.erase(fset.begin());
             CGAL_assertion(!cgal_do_intersect_debug(edge,facet));
           break;
-          
+
+          // Case when the edge pierces the facet in its interior.
           case internal_IOP::FACET:
           {
             CGAL_assertion(cgal_do_intersect_debug(edge,facet));
             CGAL_assertion(facet==CGAL::cpp0x::get<1>(res)->face());
-            
+
             int node_id=++current_node;
             add_new_node(edge,facet,res,nodes);
             visitor->new_node_added(node_id,internal_IOP::FACET,edge,facet->halfedge(),CGAL::cpp0x::get<2>(res),CGAL::cpp0x::get<3>(res));
@@ -1397,9 +1414,10 @@ class Intersection_of_Polyhedra_3{
                 if(it_ets!=edge_to_sfacet.end()) it_ets->second.erase(facet);
               }
             }
-          }
+          } // end case FACET
           break;
-          
+
+          // Case when the edge intersect one edge of the facet.
           case internal_IOP::EDGE:
           {
             CGAL_assertion(cgal_do_intersect_debug(edge,facet));
@@ -1416,9 +1434,9 @@ class Intersection_of_Polyhedra_3{
               else
                 cip_handle_case_edge(node_id,&fset,*it_edge,edge_intersected);
             }
-          }
-          break;        
-          
+          } // end case EDGE
+          break;
+
           case internal_IOP::VERTEX:
           {
             CGAL_assertion(cgal_do_intersect_debug(edge,facet));
@@ -1436,12 +1454,12 @@ class Intersection_of_Polyhedra_3{
               else
                 cip_handle_case_vertex(node_id,&fset,*it_edge,vertex_intersected);
             }
-          }
-          break;          
+          } // end case VERTEX
+          break;
 
-        }
-      }
-    }
+        } // end switch on the type of the intersection
+      } // end loop on all facets that intersect the edge
+    } // end loop on all entries (edges) in 'edge_to_sfacet'
     CGAL_assertion(nodes.size()==unsigned(current_node+1));
   }
   
@@ -1463,7 +1481,7 @@ class Intersection_of_Polyhedra_3{
         f_to_node.erase(res);
     }
   }
-  #else
+  #else // not USE_DETECTION_MULTIPLE_DEFINED_EDGES
   void remove_duplicated_intersecting_edges()
   {
     std::set< std::pair<int,int> > already_seen;
@@ -1491,7 +1509,7 @@ class Intersection_of_Polyhedra_3{
     )
       f_to_node.erase(*it);
   }
-  #endif
+  #endif // not USE_DETECTION_MULTIPLE_DEFINED_EDGES
 
 
   struct Graph_node{
@@ -1820,12 +1838,13 @@ class Intersection_of_Polyhedra_3{
     //first handle coplanar triangles
     compute_intersection_of_coplanar_facets(current_node);
     visitor->set_number_of_intersection_points_from_coplanar_facets(current_node+1);
-    #endif
+    #endif // not DO_NOT_HANDLE_COPLANAR_FACETS
     //print_edge_to_sfacet_debug();
     //compute intersection points of segments and triangles.
     //build node of the graph
     //build connectivity info
-    compute_intersection_points(current_node);
+    compute_intersection_points(current_node); // 'current_node' is passed by
+                                               // non-const reference
     
     if (!build_polylines){
       visitor->finalize(nodes);
@@ -1957,3 +1976,12 @@ intersection_Polyhedron_3_Polyhedron_3(const Polyhedron& P, const Polyhedron& Q,
 }// namespace CGAL
 
 #endif //CGAL_INTERSECTION_OF_POLYHEDRA_3_H
+
+/*
+  // Local variables for Emacs:
+  //   - set special indentation of case labels, compared to usual C/C++
+  //     indentation styles.
+  Local Variables:
+  c-file-offsets:((case-label . +))
+  End:
+*/
