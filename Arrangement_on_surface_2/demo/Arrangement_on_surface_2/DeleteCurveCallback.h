@@ -113,7 +113,7 @@ void DeleteCurveCallback< Arr_ >::reset( )
 
 template < typename Arr_ >
 void 
-DeleteCurveCallback< Arr_ >::mousePressEvent( QGraphicsSceneMouseEvent* event )
+DeleteCurveCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* /* event */)
 {
   if ( this->removableHalfedge == Halfedge_handle( ) )
   {

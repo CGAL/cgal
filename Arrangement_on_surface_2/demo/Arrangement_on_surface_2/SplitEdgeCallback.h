@@ -25,8 +25,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <CGAL/Qt/Converter.h>
-#include "CurveGraphicsItem.h"
 #include <CGAL/Arrangement_with_history_2.h>
+
+#include "CurveGraphicsItem.h"
 #include "Utils.h"
 #include "ISnappable.h"
 
@@ -239,18 +240,17 @@ splitEdges( const Point_2& clickedPoint, TTraits traits )
 template < typename Arr_ >
 template < typename CircularKernel >
 void SplitEdgeCallback< Arr_ >::
-splitEdges( const Point_2& clickedPoint,
-            CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+splitEdges(const Point_2& /* clickedPoint */,
+           CGAL::Arr_circular_arc_traits_2< CircularKernel > /* traits */)
 {
   // std::cout << "Circular arc split edges stub" << std::endl;
 }
 
 template < typename Arr_ >
 template < typename Coefficient_ >
-void
-SplitEdgeCallback< Arr_ >::
-splitEdges( const Point_2& clickedPoint,
-            CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
+void SplitEdgeCallback< Arr_ >::
+splitEdges(const Point_2& /* clickedPoint */,
+           CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > /* traits */)
 {
   // std::cout << "Algebraic segment split edges stub" << std::endl;
 }
@@ -265,8 +265,8 @@ SplitEdgeCallback< Arr_ >::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 
 template < typename Arr_ >
 template < typename TTraits >
-void SplitEdgeCallback< Arr_ >::updateGuide( const Point_2& clickedPoint,
-                                             TTraits traits )
+void SplitEdgeCallback<Arr_>::updateGuide(const Point_2& clickedPoint,
+                                          TTraits /* traits */)
 {
   if ( this->hasFirstPoint )
   { // provide visual feedback for where the split line is
@@ -285,8 +285,8 @@ void SplitEdgeCallback< Arr_ >::updateGuide( const Point_2& clickedPoint,
 template < typename Arr_ >
 template < typename CircularKernel >
 void SplitEdgeCallback< Arr_ >::
-updateGuide( const Point_2& clickedPoint,
-             CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+updateGuide(const Point_2& clickedPoint,
+            CGAL::Arr_circular_arc_traits_2< CircularKernel > /* traits */)
 {
   if ( this->hasFirstPoint )
   { // provide visual feedback for where the split line is
@@ -312,8 +312,8 @@ SplitEdgeCallback< Arr_ >::snapPoint( QGraphicsSceneMouseEvent* event )
 template < typename Arr_ >
 template < typename TTraits >
 typename SplitEdgeCallback< Arr_ >::Point_2
-SplitEdgeCallback< Arr_ >::snapPoint( QGraphicsSceneMouseEvent *event,
-                                      TTraits traits )
+SplitEdgeCallback<Arr_>::snapPoint(QGraphicsSceneMouseEvent* event,
+                                   TTraits /* traits */)
 {
   if ( this->snapToGridEnabled )
   {
@@ -335,8 +335,8 @@ SplitEdgeCallback< Arr_ >::snapPoint( QGraphicsSceneMouseEvent *event,
 template < typename Arr_ >
 template < typename CircularKernel >
 typename SplitEdgeCallback< Arr_ >::Point_2 SplitEdgeCallback< Arr_ >::
-snapPoint( QGraphicsSceneMouseEvent* event,
-           CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+snapPoint(QGraphicsSceneMouseEvent* event,
+          CGAL::Arr_circular_arc_traits_2<CircularKernel> /* traits */)
 {
   if ( this->snapToGridEnabled )
   {

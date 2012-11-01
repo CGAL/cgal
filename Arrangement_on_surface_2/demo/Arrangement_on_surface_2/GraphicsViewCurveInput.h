@@ -223,7 +223,7 @@ protected:
 
       if ( event->button( ) == ::Qt::RightButton )
       { // finalize polyline input
-        for ( int i = 0; i < this->polylineGuide.size( ); ++i )
+        for ( unsigned int i = 0; i < this->polylineGuide.size( ); ++i )
         {
           if ( this->scene != NULL )
           {
@@ -338,7 +338,7 @@ protected:
       QPointF p2 = this->convert( this->snapPoint( event ) );
       double radius = sqrt( (p1.x( ) - p2.x( ))*(p1.x( ) - p2.x( ))
                             + (p1.y( ) - p2.y( ))*(p1.y( ) - p2.y( )) );
-      double d = radius * sqrt( 2.0 );
+      // double d = radius * sqrt( 2.0 );
       this->circleItem->setRect( p1.x( ) - radius, p1.y( ) -
                                  radius, 2*radius, 2*radius );
     }
@@ -411,7 +411,7 @@ protected:
     {
       if ( this->conicType == CONIC_SEGMENT )
       {
-        for ( int i = 0; i < this->polylineGuide.size( ); ++i )
+        for ( unsigned int i = 0; i < this->polylineGuide.size( ); ++i )
         {
           if ( this->scene != NULL )
           {
@@ -467,7 +467,7 @@ protected:
         double y1 = CGAL::to_double( bb.ymin( ) );
         double x2 = CGAL::to_double( bb.xmax( ) );
         double y2 = CGAL::to_double( bb.ymax( ) );
-        double sq_rad = CGAL::square(x2 - x1) + CGAL::square(y2 - y1);
+        // double sq_rad = CGAL::square(x2 - x1) + CGAL::square(y2 - y1);
 
         Rat_FT a = CORE::abs( Rat_FT(x1) - Rat_FT(x2) )/2;
         Rat_FT b = CORE::abs( Rat_FT(y1) - Rat_FT(y2) )/2;
@@ -753,7 +753,7 @@ public:
   { }
 
 protected:
-  void mouseMoveEvent( QGraphicsSceneMouseEvent* event ) { }
+  void mouseMoveEvent(QGraphicsSceneMouseEvent* /* event */) {}
 
   void mousePressEvent( QGraphicsSceneMouseEvent* event )
   {
@@ -778,7 +778,7 @@ protected:
         CGAL::make_x_monotone( arc, std::back_inserter( subarcs ) );
         typename CircularKernel::Has_on_2 has_on;
         bool isOn = false;
-        for ( int i = 0; i < subarcs.size( ); ++i )
+        for ( unsigned int i = 0; i < subarcs.size( ); ++i )
         {
           Circular_arc_2 subarc;
           if ( CGAL::assign( subarc, subarcs[ i ] ) )

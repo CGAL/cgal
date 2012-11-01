@@ -52,7 +52,7 @@ protected:
 /**
    Updates and draws the lower and upper envelopes of an observed arrangement.
 */
-template < class Arr_, class Traits = typename Arr_::Geometry_traits_2 >
+template < typename Arr_, typename Traits = typename Arr_::Geometry_traits_2 >
 class EnvelopeCallback : public EnvelopeCallbackBase
 {
 public:
@@ -61,13 +61,13 @@ public:
   //typedef typename Arrangement::Geometry_traits_2 Traits;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   //typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-  typedef typename Kernel::Point_2 Kernel_point_2;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::Ray_2 Ray_2;
-  typedef typename Kernel::Line_2 Line_2;
-  typedef CGAL::Envelope_diagram_1< Traits > Diagram_1;
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename Kernel::Ray_2                        Ray_2;
+  typedef typename Kernel::Line_2                       Line_2;
+  typedef CGAL::Envelope_diagram_1< Traits >            Diagram_1;
 
   /**
      Construct an envelope callback observing the given arrangement.
@@ -142,14 +142,14 @@ protected:
   */
   void updateEnvelope( bool lower );
 
-  template < class TTraits >
+  template < typename TTraits >
   void updateEnvelope( bool lower, TTraits traits );
 
-  template < class CircularKernel >
+  template < typename CircularKernel >
   void updateEnvelope(bool lower,
                       CGAL::Arr_circular_arc_traits_2<CircularKernel> traits);
 
-  template < class Coefficient_ >
+  template < typename Coefficient_ >
   void updateEnvelope(bool lower,
                       CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits);
 
@@ -160,7 +160,7 @@ protected:
   using CGAL::Qt::Callback::scene;
 }; // class EnvelopeCallback
 
-template < class Arr_, class Traits >
+template < typename Arr_, typename Traits >
 EnvelopeCallback< Arr_, Traits >::
 EnvelopeCallback( Arrangement* arr_, QObject* parent ):
   EnvelopeCallbackBase( parent ),
@@ -172,28 +172,23 @@ EnvelopeCallback( Arrangement* arr_, QObject* parent ):
   this->upperEnvelope->hide( );
 }
 
-template < class Arr_, class Traits >
-void
-EnvelopeCallback< Arr_, Traits >::
-slotModelChanged( )
+template < typename Arr_, typename Traits >
+void EnvelopeCallback< Arr_, Traits >::slotModelChanged( )
 {
   this->updateEnvelope( true );
   this->updateEnvelope( false );
 }
 
-template < class Arr_, class Traits >
-void
-EnvelopeCallback< Arr_, Traits >::
-updateEnvelope( bool lower )
+template < typename Arr_, typename Traits >
+void EnvelopeCallback< Arr_, Traits >::updateEnvelope( bool lower )
 {
   this->updateEnvelope( lower, Traits( ) );
 }
 
-template < class Arr_, class Traits >
-template < class TTraits >
-void
-EnvelopeCallback< Arr_, Traits >::
-updateEnvelope( bool lower, TTraits traits )
+template < typename Arr_, typename Traits >
+template < typename TTraits >
+void EnvelopeCallback< Arr_, Traits >::updateEnvelope(bool lower,
+                                                      TTraits /* traits */)
 {
   CGAL::Qt::CurveGraphicsItem< Traits >* envelopeToUpdate;
   if ( lower )
@@ -273,12 +268,12 @@ updateEnvelope( bool lower, TTraits traits )
   envelopeToUpdate->modelChanged( );
 }
 
-template < class Arr_, class Traits >
-template < class CircularKernel >
+template < typename Arr_, typename Traits >
+template < typename CircularKernel >
 void
 EnvelopeCallback< Arr_, Traits >::
-updateEnvelope( bool lower,
-                CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+updateEnvelope(bool lower,
+               CGAL::Arr_circular_arc_traits_2< CircularKernel > /* traits */)
 {
   typedef Kernel_point_2 Non_arc_point_2;
   typedef typename Traits::Point_2 Arc_point_2;
@@ -294,7 +289,8 @@ updateEnvelope( bool lower,
   envelopeToUpdate->clear( );
 
   std::list< X_monotone_curve_2 > curves;
-  for ( Edge_iterator eit = this->arr->edges_begin( ); eit != this->arr->edges_end( ); ++eit )
+  for ( Edge_iterator eit =
+          this->arr->edges_begin( ); eit != this->arr->edges_end( ); ++eit )
   {
     curves.push_back( eit->curve( ) );
   }
@@ -358,19 +354,17 @@ updateEnvelope( bool lower,
   envelopeToUpdate->modelChanged( );
 }
 
-template < class Arr_, class Traits >
-template < class Coefficient_ >
-void
-EnvelopeCallback< Arr_, Traits >::
-updateEnvelope( bool lower,
-                CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits )
+template < typename Arr_, typename Traits >
+template < typename Coefficient_ >
+void EnvelopeCallback< Arr_, Traits >::
+updateEnvelope(bool /* lower */,
+               CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > /* traits */)
 {
   // std::cout << "alg seg envelope stub" << std::endl;
 }
 
-template < class Arr_, class Traits >
-void
-EnvelopeCallback< Arr_, Traits >::showLowerEnvelope( bool show )
+template < typename Arr_, typename Traits >
+void EnvelopeCallback< Arr_, Traits >::showLowerEnvelope( bool show )
 {
   if ( show )
   {
@@ -384,9 +378,8 @@ EnvelopeCallback< Arr_, Traits >::showLowerEnvelope( bool show )
   }
 }
 
-template < class Arr_, class Traits >
-void
-EnvelopeCallback< Arr_, Traits >::showUpperEnvelope( bool show )
+template < typename Arr_, typename Traits >
+void EnvelopeCallback< Arr_, Traits >::showUpperEnvelope( bool show )
 {
   if ( show )
   {

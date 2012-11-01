@@ -59,9 +59,9 @@ public: // ctors
   }
 
 public: // methods
-  virtual void paint( QPainter* painter,
-                      const QStyleOptionGraphicsItem* option,
-                      QWidget* widget )
+  virtual void paint(QPainter* painter,
+                     const QStyleOptionGraphicsItem* /* option */,
+                     QWidget* /* widget */)
   {
     // draw the curves
     QPen edgesPen( this->m_edgeColor, this->m_edgeWidth );
@@ -70,7 +70,7 @@ public: // methods
     this->painterOstream =
       ArrangementPainterOstream< Traits >( painter, clippingRectangle );
     this->painterOstream.setScene( this->getScene( ) );
-    for ( int i = 0; i < this->curves.size( ); ++i )
+    for ( unsigned int i = 0; i < this->curves.size( ); ++i )
     {
       X_monotone_curve_2 curve = this->curves[ i ];
       this->painterOstream << curve;
@@ -79,7 +79,7 @@ public: // methods
     // draw the points
     QPen verticesPen( this->m_vertexColor, this->m_vertexRadius );
     painter->setPen( verticesPen );
-    for ( int i = 0; i < this->points.size( ); ++i )
+    for ( unsigned int i = 0; i < this->points.size( ); ++i )
     {
       Point_2 arrPoint = this->points[ i ];
       Kernel_point_2 point( CGAL::to_double( arrPoint.x( ) ),
@@ -188,15 +188,15 @@ protected: // methods
       this->boundingBoxInitialized = true;
     }
 
-    for ( int i = 1; i < this->curves.size( ); ++i )
+    for ( unsigned int i = 1; i < this->curves.size( ); ++i )
     {
       this->boundingBox = this->boundingBox + this->curves[ i ].bbox( );
     }
 
-    for ( int i = 0; i < this->points.size( ); ++i )
+    for ( unsigned int i = 0; i < this->points.size( ); ++i )
     {
       Point_2 pt = this->points[ i ];
-      Kernel_point_2 point( CGAL::to_double( pt.x( ) ), CGAL::to_double( pt.y( ) ) );
+      Kernel_point_2 point(CGAL::to_double(pt.x()), CGAL::to_double(pt.y()));
       this->boundingBox = this->boundingBox + point.bbox( );
     }
   }
@@ -227,15 +227,15 @@ class CurveGraphicsItem< CGAL::Arr_linear_traits_2< Kernel_ > > :
 {
 public: // typedefs
   // known curve types
-  typedef CGAL::Arr_linear_traits_2< Kernel_ > Traits;
+  typedef CGAL::Arr_linear_traits_2< Kernel_ >          Traits;
   typedef Kernel_ Kernel;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::Line_2 Line_2;
-  typedef typename Kernel::Ray_2 Ray_2;
-  typedef typename Kernel::Point_2 Kernel_point_2;
+  typedef typename Traits::Curve_2                      Curve_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename Kernel::Line_2                       Line_2;
+  typedef typename Kernel::Ray_2                        Ray_2;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
 
 public: // ctors
   CurveGraphicsItem( ):
@@ -247,18 +247,20 @@ public: // ctors
   }
 
 public: // methods
-  virtual void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
+  virtual void paint(QPainter* painter,
+                     const QStyleOptionGraphicsItem* /* option */,
+                     QWidget* /* widget */)
   {
     QRectF clippingRectangle = this->viewportRect( );
     painter->setPen( QPen( ::Qt::red, 0. ) );
     this->painterOstream =
       ArrangementPainterOstream< Traits >( painter, clippingRectangle );
-    for ( int i = 0; i < this->curves.size( ); ++i )
+    for ( unsigned int i = 0; i < this->curves.size( ); ++i )
     {
       X_monotone_curve_2 curve = this->curves[ i ];
       this->painterOstream << curve;
     }
-    for ( int i = 0; i < this->points.size( ); ++i )
+    for ( unsigned int i = 0; i < this->points.size( ); ++i )
     {
       Point_2 arrPoint = this->points[ i ];
       Kernel_point_2 point( CGAL::to_double( arrPoint.x( ) ),
@@ -270,7 +272,6 @@ public: // methods
   void insert( const X_monotone_curve_2& curve )
   {
     this->curves.push_back( curve );
-
     this->updateBoundingBox( );
   }
 
@@ -372,7 +373,7 @@ protected: // methods
     this->convert = CGAL::Qt::Converter< Kernel >( clipRect );
 
     bool first = 1;
-    for ( int i = 0; i < curves.size( ); ++i )
+    for ( unsigned int i = 0; i < curves.size( ); ++i )
     {
       X_monotone_curve_2 curve = curves[ i ];
       if ( curve.is_segment( ) )

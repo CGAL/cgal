@@ -135,7 +135,7 @@ void FillFaceCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 template < class Arr_ >
 void 
-FillFaceCallback< Arr_ >::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+FillFaceCallback< Arr_ >::mouseMoveEvent(QGraphicsSceneMouseEvent* /* event */)
 { }
 
 template < class Arr_ >

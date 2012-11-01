@@ -414,10 +414,10 @@ public: // methods
   double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
   {
     // Get the co-ordinates of the curve's source and target.
-    double sx = CGAL::to_double( c.source( ).x( ) ),
-      sy = CGAL::to_double( c.source( ).y( ) ),
-      tx = CGAL::to_double( c.target( ).x( ) ),
-      ty = CGAL::to_double( c.target( ).y( ) );
+    // double sx = CGAL::to_double( c.source( ).x( ) );
+    // double sy = CGAL::to_double( c.source( ).y( ) );
+    // double tx = CGAL::to_double( c.target( ).x( ) );
+    // double ty = CGAL::to_double( c.target( ).y( ) );
 
     if ( c.orientation( ) == CGAL::COLLINEAR )
     {
@@ -432,7 +432,7 @@ public: // methods
     {
       // If the curve is monotone, than its source and its target has the
       // extreme x co-ordinates on this curve.
-      bool is_source_left = (sx < tx);
+      // bool is_source_left = (sx < tx);
       //int  x_min = is_source_left ? (*w).x_pixel(sx) : (*w).x_pixel(tx);
       //int  x_max = is_source_left ? (*w).x_pixel(tx) : (*w).x_pixel(sx);
       //double   prev_x = is_source_left ? sx : tx;
@@ -443,7 +443,7 @@ public: // methods
 
       bool first = true;
       FT min_dist( 100000000 );
-      AlgKernel ker;
+      // AlgKernel ker;
 
       int n = 100;
       if ( this->scene != NULL && this->scene->views( ).size( ) != 0 )
@@ -501,7 +501,8 @@ public:
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
 public:
-  double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
+  double operator()(const Point_2& /* p */,
+                    const X_monotone_curve_2& /* c */) const
   {
     double res = 0.0;
     return res;
@@ -515,14 +516,14 @@ public:
   typedef ArrTraits Traits;
   typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
   typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
-  //typedef typename Kernel::FT FT;
+  // typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_2                      Point_2;
   typedef typename Kernel::Line_2                       Line_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Multiplicity                 Multiplicity;
   typedef typename Traits::Intersect_2                  Intersect_2;
   typedef std::pair< typename Traits::Point_2, Multiplicity >
-    IntersectionResult;
+                                                        IntersectionResult;
 
   Arr_compute_y_at_x_2( ):
     intersectCurves( this->traits.intersect_2_object( ) )
@@ -580,7 +581,7 @@ protected:
     typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
       traits_.construct_x_monotone_curve_2_object( );
     CoordinateType res( 0 );
-    QRectF clipRect = this->viewportRect( );
+    // QRectF clipRect = this->viewportRect( );
     Line_2 line = curve.supporting_line( );
     // FIXME: get a better bounding box for an unbounded segment
     Point_2 p1c1( x, CoordinateType( -10000000 ) ); // clicked point
@@ -956,7 +957,8 @@ public: // typedefs
   typedef typename Kernel::Segment_2 Segment_2;
 
 public: // methods
-  // curve can be unbounded. if curve is unbounded to the left, pLeft is a point on the left edge of viewport.
+  // curve can be unbounded. if curve is unbounded to the left,
+  // pLeft is a point on the left edge of viewport.
   X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
                                   const Point_2& pLeft, const Point_2& pRight )
   {
@@ -1029,9 +1031,9 @@ class SnapToGridStrategy : public SnapStrategy< ArrTraits >
 {
 public:
   typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
-  typedef typename ArrTraits::Point_2 Point_2;
-  typedef typename Kernel::Point_2 Kernel_point_2;
-  typedef SnapStrategy< ArrTraits > Superclass;
+  typedef typename ArrTraits::Point_2                   Point_2;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
+  typedef SnapStrategy< ArrTraits >                     Superclass;
 
   SnapToGridStrategy( ) :
     Superclass( NULL ),
@@ -1049,7 +1051,7 @@ public:
   }
 
   template < class TTraits >
-  Point_2 snapPoint( QGraphicsSceneMouseEvent* event, TTraits traits )
+  Point_2 snapPoint(QGraphicsSceneMouseEvent* event, TTraits /* traits */)
   {
     QPointF clickedPoint = event->scenePos( );
     QRectF viewportRect = this->viewportRect( );
@@ -1092,8 +1094,8 @@ public:
   }
 
   template < class CircularKernel >
-  Point_2 snapPoint( QGraphicsSceneMouseEvent* event,
-                     CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+  Point_2 snapPoint(QGraphicsSceneMouseEvent* event,
+                    CGAL::Arr_circular_arc_traits_2<CircularKernel> /* traits */)
   {
     QPointF clickedPoint = event->scenePos( );
     QRectF viewportRect = this->viewportRect( );
@@ -1150,7 +1152,7 @@ class SnapToArrangementVertexStrategy:
   public SnapStrategy< typename Arr_::Geometry_traits_2 >
 {
 public:
-  typedef Arr_ Arrangement;
+  typedef Arr_                                          Arrangement;
   typedef typename Arrangement::Geometry_traits_2       Traits;
   typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
   typedef SnapStrategy< Traits >                        Superclass;
@@ -1178,7 +1180,7 @@ public:
   }
 
   template < class TTraits >
-  Point_2 snapPoint( const Kernel_point_2& clickedPoint, TTraits traits )
+  Point_2 snapPoint(const Kernel_point_2& clickedPoint, TTraits /* traits */)
   {
     Point_2 initialPoint( CGAL::to_double(clickedPoint.x()),
                           CGAL::to_double(clickedPoint.y()) );
@@ -1218,8 +1220,8 @@ public:
   }
 
   template < class CircularKernel >
-  Point_2 snapPoint( const Kernel_point_2& clickedPoint,
-                     CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+  Point_2 snapPoint(const Kernel_point_2& clickedPoint,
+                    CGAL::Arr_circular_arc_traits_2<CircularKernel> /* traits */)
   {
     typedef Kernel_point_2 Non_arc_point_2;
     typedef typename CircularKernel::Circular_arc_point_2 Arc_point_2;
@@ -1298,7 +1300,7 @@ public:
 
 protected:
   template < class T, class TTraits >
-  Point_2 operator()( const T& x, const T& y, TTraits traits )
+  Point_2 operator()(const T& x, const T& y, TTraits /* traits */)
   {
     CoordinateType xx( x );
     CoordinateType yy( y );
@@ -1307,8 +1309,9 @@ protected:
   }
 
   template < class T, class CircularKernel >
-  Point_2 operator()( const T& x, const T& y,
-                      CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+  Point_2 operator()(const T& x, const T& y,
+                     CGAL::Arr_circular_arc_traits_2<CircularKernel>
+                     /* traits */)
   {
     typedef typename CircularKernel::Root_for_circles_2_2 Root_for_circles_2_2;
     CoordinateType xx( x );
@@ -1335,7 +1338,7 @@ public: // typedefs
   typedef Compute_squared_distance_2< ArrTraits > Point_curve_distance;
   typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
   typedef CGAL::Arr_walk_along_line_point_location< Arrangement >
-    Point_location_strategy;
+                                                        Point_location_strategy;
   typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
   typedef typename Kernel::Point_2                      Point_2;
   typedef typename Arrangement::Face_const_handle       Face_const_handle;
@@ -1343,7 +1346,7 @@ public: // typedefs
   typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
   typedef typename Arrangement::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
-  typedef typename Point_curve_distance::FT FT;
+  typedef typename Point_curve_distance::FT             FT;
   typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
   typedef typename Arrangement::Halfedge_around_vertex_const_circulator
     Halfedge_around_vertex_const_circulator;
@@ -1407,7 +1410,7 @@ public: // member methods
 #endif
     Hole_const_iterator hit; 
     Hole_const_iterator eit = face->holes_end( );
-    int counter = 0;
+    // int counter = 0;
     for ( hit = face->holes_begin( ); hit != eit; ++hit )
     { // check any holes inside this face
       Ccb_halfedge_const_circulator cc = *hit;
@@ -1465,18 +1468,18 @@ protected: // member fields
 
 #if 0
 template < class Arr_, class Coefficient_ >
-class Find_nearest_edge< Arr_, CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >: public Find_nearest_edge_base
+class Find_nearest_edge< Arr_, CGAL::Arr_algebraic_segment_traits_2<
+                                 Coefficient_ > >: public Find_nearest_edge_base
 {
 public:
   Halfedge_const_handle operator()( const Point_2& queryPt )
-  {
-
-  }
+  { }
 };
 #endif
 
 template < class Arr_, class Kernel_ >
-class Find_nearest_edge< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > >: public Find_nearest_edge_base
+class Find_nearest_edge< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > > :
+  public Find_nearest_edge_base
 {
 public: // typedefs
   typedef Arr_ Arrangement;
@@ -1484,15 +1487,15 @@ public: // typedefs
   typedef Compute_squared_distance_2< ArrTraits >       Point_curve_distance;
   typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
   typedef CGAL::Arr_walk_along_line_point_location< Arrangement >
-    Point_location_strategy;
+                                                        Point_location_strategy;
   typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
-  typedef typename Kernel::Point_2 Point_2;
+  typedef typename Kernel::Point_2                      Point_2;
   typedef typename Arrangement::Face_const_handle       Face_const_handle;
   typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
   typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
   typedef typename Arrangement::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
-  typedef typename Point_curve_distance::FT FT;
+  typedef typename Point_curve_distance::FT             FT;
   typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
   typedef typename Arrangement::Halfedge_around_vertex_const_circulator
     Halfedge_around_vertex_const_circulator;

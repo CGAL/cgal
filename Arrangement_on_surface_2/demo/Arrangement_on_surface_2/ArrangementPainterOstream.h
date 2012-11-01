@@ -248,7 +248,7 @@ public: // constructors
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
   {
-    for ( int i = 0; i < curve.size( ); ++i )
+    for ( unsigned int i = 0; i < curve.size( ); ++i )
     {
       Segment_2 segment = curve[ i ];
       this->painterOstream << segment;
@@ -374,7 +374,7 @@ public: // methods
       {
         visibleParts = this->visibleParts( curve );
       }
-      for ( int i = 0; i < visibleParts.size( ); ++i )
+      for ( unsigned int i = 0; i < visibleParts.size( ); ++i )
       {
         X_monotone_curve_2 subcurve = visibleParts[ i ];
         int n;
@@ -513,10 +513,10 @@ protected: // methods
     intersect_2( left, curve, std::back_inserter( leftIntersections ) );
     intersect_2( top, curve, std::back_inserter( topIntersections ) );
     intersect_2( right, curve, std::back_inserter( rightIntersections ) );
-    int total = bottomIntersections.size( )
-      + leftIntersections.size( )
-      + topIntersections.size( )
-      + rightIntersections.size( );
+    // int total = bottomIntersections.size( )
+    //   + leftIntersections.size( )
+    //   + topIntersections.size( )
+    //   + rightIntersections.size( );
 
     intersect_2( bottom, curve, std::back_inserter( intersections ) );
     intersect_2( left, curve, std::back_inserter( intersections ) );
@@ -537,7 +537,7 @@ protected: // methods
     QPointF qendpt1 = this->convert( leftEndpt );
     QPointF qendpt2 = this->convert( rightEndpt );
     std::list< Point_2 > pointList;
-    for ( int i = 0; i < intersections.size( ); ++i )
+    for ( unsigned int i = 0; i < intersections.size( ); ++i )
     {
       CGAL::Object o = intersections[ i ];
       std::pair< Intersection_point_2, Multiplicity > pair;
@@ -557,7 +557,7 @@ protected: // methods
     Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
     std::vector< X_monotone_curve_2 > clippings;
     typename std::list< Point_2 >::iterator pointListItr = pointList.begin( );
-    for ( int i = 0; i < pointList.size( ); i += 2 )
+    for ( unsigned int i = 0; i < pointList.size( ); i += 2 )
     {
       Point_2 p1 = *pointListItr++;
       Point_2 p2 = *pointListItr++;
@@ -608,7 +608,7 @@ protected: // methods
     std::vector< std::pair< Intersection_point_2, Multiplicity > > tmp;
 
     // filter out the non-intersection point results
-    for ( int i = 0; i < res.size( ); ++i )
+    for ( unsigned int i = 0; i < res.size( ); ++i )
     {
       CGAL::Object obj = res[ i ];
       std::pair< Intersection_point_2, Multiplicity > pair;
@@ -624,7 +624,7 @@ protected: // methods
     std::sort( tmp.begin( ), tmp.end( ), compare_intersection_point_result );
 
     // box up the sorted elements
-    for ( int i = 0; i < tmp.size( ); ++i )
+    for ( unsigned int i = 0; i < tmp.size( ); ++i )
     {
       std::pair< Intersection_point_2, Multiplicity > pair = tmp[ i ];
       CGAL::Object o = CGAL::make_object( pair );
@@ -845,10 +845,9 @@ public: // methods
     if(points.empty()) 
       return *this;
             
-    QPainter *ppnt = this->qp;
+    // QPainter *ppnt = this->qp;
     QGraphicsView* view = this->scene->views( ).first( );
-    int height = view->height();
-
+    // int height = view->height();
     // std::cerr << ws.width() << " and " <<  ws.height() << "\n";
     typename std::list<Coord_vec_2>::const_iterator lit = points.begin();
     //ppnt->moveTo((*p1).first, height - (*p1).second);

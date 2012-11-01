@@ -211,7 +211,7 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
 
 template < typename Arr_ >
 void VerticalRayShootCallback< Arr_ >::
-mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+mouseMoveEvent(QGraphicsSceneMouseEvent* /* event */)
 { }
 
 template < typename Arr_ >
@@ -251,8 +251,8 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
   {
     Kernel_point_2 p2( FT( this->queryPt.x( ) ), y2 );
     Segment_2 lineSegment( this->queryPt, p2 );
-    QLineF qLineSegment = this->convert( lineSegment );
-    //this->activeRay->setLine( qLineSegment );
+    // QLineF qLineSegment = this->convert( lineSegment );
+    // this->activeRay->setLine( qLineSegment );
     this->rayGraphicsItem.setSource( event->scenePos( ) );
     this->rayGraphicsItem.setTargetY( CGAL::to_double( y2 ) );
     this->rayGraphicsItem.setIsInfinite( true );
@@ -270,8 +270,8 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
     FT yInt( yApprox );
     Kernel_point_2 p2( this->queryPt.x( ), yInt );
     Segment_2 seg( this->queryPt, p2 );
-    QLineF qseg = this->convert( seg );
-    //this->activeRay->setLine( qseg );
+    // QLineF qseg = this->convert( seg );
+    // this->activeRay->setLine( qseg );
     this->rayGraphicsItem.setSource( event->scenePos( ) );
     this->rayGraphicsItem.setTargetY( CGAL::to_double( yInt ) );
     this->rayGraphicsItem.setIsInfinite( false );

@@ -148,7 +148,7 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
 
 template < typename Arr_ >
 void PointLocationCallback< Arr_ >::
-mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+mouseMoveEvent(QGraphicsSceneMouseEvent* /* event */)
 { }
 
 template < typename Arr_ >

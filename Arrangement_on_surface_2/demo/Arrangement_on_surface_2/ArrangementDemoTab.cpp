@@ -23,9 +23,9 @@
 
 ArrangementDemoTabBase::ArrangementDemoTabBase( QWidget* parent ) :
   QWidget( parent ),
-  layout( new QGridLayout( this ) ),
   graphicsView( new ArrangementDemoGraphicsView( this ) ),
   scene( new QGraphicsScene( -100, -100, 100, 100 ) ),
+  layout( new QGridLayout( this ) ),
   arrangementGraphicsItem( NULL ),
   curveInputCallback( NULL ),
   deleteCurveCallback( NULL ),

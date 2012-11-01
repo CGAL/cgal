@@ -102,8 +102,8 @@ signals:
 
 protected:
   void setupUi( );
-  void resetCallbackState( int tabIndex );
-  void removeCallback( int tabIndex );
+  void resetCallbackState( unsigned int tabIndex );
+  void removeCallback( unsigned int tabIndex );
   void updateFillColorSwatch( );
 
   void openArrFile( QString filename );
@@ -112,7 +112,7 @@ protected:
   std::vector< ArrangementDemoTabBase* > tabs;
   std::vector< CGAL::Object > arrangements;
   std::vector< QAction* > activeModes; // for the current tab
-  int lastTabIndex;
+  unsigned int lastTabIndex;
 
   Ui::ArrangementDemoWindow* ui;
   QActionGroup* modeGroup;

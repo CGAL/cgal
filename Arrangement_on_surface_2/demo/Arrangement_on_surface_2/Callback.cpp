@@ -60,13 +60,13 @@ bool Callback::eventFilter( QObject* object, QEvent* event )
   return QObject::eventFilter( object, event );
 }
 
-void Callback::mousePressEvent( QGraphicsSceneMouseEvent* event ) { }
+  void Callback::mousePressEvent(QGraphicsSceneMouseEvent* /* event */) { }
 
-void Callback::mouseMoveEvent( QGraphicsSceneMouseEvent* event ) { }
+  void Callback::mouseMoveEvent(QGraphicsSceneMouseEvent* /* event */) { }
 
-void Callback::mouseReleaseEvent( QGraphicsSceneMouseEvent* event ) { }
+  void Callback::mouseReleaseEvent(QGraphicsSceneMouseEvent* /* event */) { }
 
-void Callback::keyPressEvent( QKeyEvent* event ) { }
+  void Callback::keyPressEvent(QKeyEvent* /* event */)  { }
 
 void Callback::slotModelChanged( ) { }
 

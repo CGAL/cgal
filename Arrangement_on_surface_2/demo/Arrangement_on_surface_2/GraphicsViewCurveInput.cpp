@@ -63,11 +63,11 @@ GraphicsViewCurveInputBase::GraphicsViewCurveInputBase( QObject* parent ) :
 }
 
 void
-GraphicsViewCurveInputBase::mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+GraphicsViewCurveInputBase::mouseMoveEvent(QGraphicsSceneMouseEvent* /* event */)
 { }
 
-void
-GraphicsViewCurveInputBase::mousePressEvent( QGraphicsSceneMouseEvent* event )
+void GraphicsViewCurveInputBase::
+mousePressEvent(QGraphicsSceneMouseEvent* /* event */)
 { 
   // std::cout << "GraphicsViewCurveInputBase::mousePressEvent" << std::endl;
 }

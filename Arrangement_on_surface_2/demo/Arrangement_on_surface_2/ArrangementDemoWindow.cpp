@@ -37,7 +37,7 @@
 
 ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
   CGAL::Qt::DemosMainWindow( parent ),
-  lastTabIndex( -1 ),
+  lastTabIndex(static_cast<unsigned int>(-1)),
   ui( new Ui::ArrangementDemoWindow )
 {
   this->setupUi( );
@@ -139,13 +139,8 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
 ArrangementDemoTabBase* ArrangementDemoWindow::getTab( unsigned int tabIndex )
   const
 {
-  if ( tabIndex < 0 || tabIndex > this->tabs.size( ) )
-  {
-    return NULL;
-  }
-
-  ArrangementDemoTabBase* tab = this->tabs[ tabIndex ];
-  return tab;
+  if (tabIndex > this->tabs.size()) return NULL;
+  return this->tabs[tabIndex];
 }
 
 ArrangementDemoTabBase* ArrangementDemoWindow::getCurrentTab( ) const
@@ -222,8 +217,8 @@ void ArrangementDemoWindow::updateMode( QAction* newMode )
   // QWidget* widget = this->ui->tabWidget->currentWidget( );
   // ArrangementDemoTabBase* demoTab =
   //   static_cast< ArrangementDemoTabBase* >( widget );
-  const int TabIndex = this->ui->tabWidget->currentIndex( );
-  if ( TabIndex == -1 ) return;
+  const unsigned int TabIndex = this->ui->tabWidget->currentIndex( );
+  if (TabIndex == static_cast<unsigned int>(-1)) return;
   ArrangementDemoTabBase* activeTab = this->tabs[ TabIndex ];
   QGraphicsScene* activeScene = activeTab->getScene( );
   QGraphicsView* activeView = activeTab->getView( );
@@ -278,23 +273,18 @@ void ArrangementDemoWindow::updateMode( QAction* newMode )
   this->updateFillColorSwatch( );
 }
 
-void ArrangementDemoWindow::resetCallbackState( int tabIndex )
+void ArrangementDemoWindow::resetCallbackState( unsigned int tabIndex )
 {
-  if ( tabIndex == -1 )
-  {
-    return;
-  }
+  if (tabIndex == static_cast<unsigned int>(-1)) return;
 
   ArrangementDemoTabBase* activeTab = this->tabs[ tabIndex ];
   QAction* activeMode = this->activeModes[ tabIndex ];
 
   // unhook the old active mode
   if ( activeMode == this->ui->actionInsert )
-  {
-  }
+  {  }
   else if ( activeMode == this->ui->actionDrag )
-  {
-  }
+  {  }
   else if ( activeMode == this->ui->actionDelete )
   {
     activeTab->getDeleteCurveCallback( )->reset( );
@@ -325,12 +315,9 @@ void ArrangementDemoWindow::resetCallbackState( int tabIndex )
   }
 }
 
-void ArrangementDemoWindow::removeCallback( int tabIndex )
+void ArrangementDemoWindow::removeCallback( unsigned int tabIndex )
 {
-  if ( tabIndex == -1 )
-  {
-    return;
-  }
+  if (tabIndex == static_cast<unsigned int>(-1)) return;
 
   ArrangementDemoTabBase* activeTab = this->tabs[ tabIndex ];
   QGraphicsScene* activeScene = activeTab->getScene( );
@@ -388,9 +375,8 @@ void ArrangementDemoWindow::removeCallback( int tabIndex )
 
 void ArrangementDemoWindow::updateFillColorSwatch( )
 {
-  int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if ( currentTabIndex == -1 )
-    return;
+  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
+  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
   ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
   FillFaceCallbackBase* fillFaceCallback = currentTab->getFillFaceCallback( );
   QColor fillColor = fillFaceCallback->getColor( );
@@ -1033,11 +1019,10 @@ void ArrangementDemoWindow::on_actionOverlay_triggered( )
 
 void ArrangementDemoWindow::on_actionCloseTab_triggered( )
 {
-  int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if ( ! this->ui->tabWidget->count( ) || currentTabIndex == -1 )
-  {
+  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
+  if (! this->ui->tabWidget->count() ||
+      (currentTabIndex == static_cast<unsigned int>(-1)))
     return;
-  }
 
   // delete the tab
   this->ui->tabWidget->removeTab( currentTabIndex );
@@ -1051,8 +1036,7 @@ void ArrangementDemoWindow::on_actionPrintConicCurves_triggered( )
 {
   // int currentTabIndex = this->ui->tabWidget->currentIndex( );
   // Conic_arr* arr;
-  // if ( currentTabIndex == -1 )
-  //     return;
+  // if (currentTabIndex == static_cast<unsigned int>(-1)) return;
   // CGAL::Object o = this->arrangements[ currentTabIndex ];
   // if ( ! CGAL::assign( arr, o ) )
   //     return;
@@ -1103,10 +1087,8 @@ void ArrangementDemoWindow::on_actionPrintConicCurves_triggered( )
 
 void ArrangementDemoWindow::on_actionZoomIn_triggered( )
 {
-  int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if ( currentTabIndex == -1 )
-    return;
-
+  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
+  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
   ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
   QGraphicsView* view = currentTab->getView( );
   view->scale( 2.0, 2.0 );
@@ -1114,10 +1096,8 @@ void ArrangementDemoWindow::on_actionZoomIn_triggered( )
 
 void ArrangementDemoWindow::on_actionZoomOut_triggered( )
 {
-  int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if ( currentTabIndex == -1 )
-    return;
-
+  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
+  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
   ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
   QGraphicsView* view = currentTab->getView( );
   view->scale( 0.5, 0.5 );
@@ -1125,14 +1105,15 @@ void ArrangementDemoWindow::on_actionZoomOut_triggered( )
 
 void ArrangementDemoWindow::on_actionPreferences_triggered( )
 {
-  int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if ( currentTabIndex == -1 )
-    return;
+  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
+  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
   ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
-  CGAL::Qt::ArrangementGraphicsItemBase* agi = currentTab->getArrangementGraphicsItem( );
+  CGAL::Qt::ArrangementGraphicsItemBase* agi =
+    currentTab->getArrangementGraphicsItem( );
   ArrangementDemoGraphicsView* view = currentTab->getView( );
   EnvelopeCallbackBase* envelopeCallback = currentTab->getEnvelopeCallback( );
-  VerticalRayShootCallbackBase* verticalRayShootCallback = currentTab->getVerticalRayShootCallback( );
+  VerticalRayShootCallbackBase* verticalRayShootCallback =
+    currentTab->getVerticalRayShootCallback( );
   SplitEdgeCallbackBase* splitEdgeCallback = currentTab->getSplitEdgeCallback( );
     
 #if 0
@@ -1210,9 +1191,8 @@ void ArrangementDemoWindow::on_actionPreferences_triggered( )
 
 void ArrangementDemoWindow::on_actionFillColor_triggered( )
 {
-  int currentTabIndex = this->ui->tabWidget->currentIndex( );
-  if ( currentTabIndex == -1 )
-    return;
+  unsigned int currentTabIndex = this->ui->tabWidget->currentIndex( );
+  if (currentTabIndex == static_cast<unsigned int>(-1)) return;
   ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
   FillFaceCallbackBase* fillFaceCallback = currentTab->getFillFaceCallback( );
   QColor fillColor = fillFaceCallback->getColor( );
@@ -1221,7 +1201,6 @@ void ArrangementDemoWindow::on_actionFillColor_triggered( )
   if ( selectedColor.isValid( ) )
   {
     fillFaceCallback->setColor( selectedColor );
-
     this->updateFillColorSwatch( );
   }
 }
