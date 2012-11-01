@@ -407,7 +407,7 @@ public:
                   const X_monotone_curve_2& cv, Arr_curve_end ind,
                   Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
   {
-    CGAL_assertion (ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR);
+    CGAL_assertion ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR));
 
     if (ind == ARR_MIN_END)
     {

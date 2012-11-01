@@ -148,7 +148,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 template <class Arrangement>
 typename Arr_trapezoid_ric_point_location<Arrangement>::Face_const_handle 
 Arr_trapezoid_ric_point_location<Arrangement>::
-_get_unbounded_face(const Td_map_item& item, const Point_2& p,
+_get_unbounded_face(const Td_map_item& /* item */, const Point_2& /* p */,
                     Arr_all_sides_oblivious_tag) const
 {
   //there's only one unbounded face

@@ -887,10 +887,10 @@ public:
       // In case of a full conic (an ellipse or a circle), compute the
       // horizontal and vertical tangency points and use them to bound the arc.
       Point_2   tan_ps[2];
-      int       n_tan_ps;
+      CGAL_assertion_code(int n_tan_ps);
 
-      n_tan_ps = vertical_tangency_points (tan_ps);
-      CGAL_assertion (n_tan_ps == 2);
+      CGAL_assertion_code(n_tan_ps = vertical_tangency_points(tan_ps));
+      CGAL_assertion(n_tan_ps == 2);
 
       if (CGAL::to_double(tan_ps[0].x()) < CGAL::to_double(tan_ps[1].x()))
       {
@@ -903,8 +903,8 @@ public:
         x_max = CGAL::to_double(tan_ps[0].x());
       }
 
-      n_tan_ps = horizontal_tangency_points (tan_ps);
-      CGAL_assertion (n_tan_ps == 2);
+      CGAL_assertion_code(n_tan_ps = horizontal_tangency_points(tan_ps));
+      CGAL_assertion(n_tan_ps == 2);
 
       if (CGAL::to_double(tan_ps[0].y()) < CGAL::to_double(tan_ps[1].y()))
       {
