@@ -267,7 +267,7 @@ public:
 public:
 // made  public for the need of Mesh_2
 // but not documented
-#ifdef CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+#ifdef CGAL_CDT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
   template <class OutputItFaces, class OutputItBoundaryEdges> 
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   propagate_conflicts (const Point  &p,
@@ -287,7 +287,7 @@ public:
      }
      return pit;
   }
-#else // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+#else // NO CGAL_CDT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
   template <class OutputItFaces, class OutputItBoundaryEdges> 
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   non_recursive_propagate_conflicts (const Point  &p,
@@ -335,7 +335,7 @@ public:
     }
      return pit;
   }
-#endif // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+#endif // NO CGAL_CDT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
 
 
 
