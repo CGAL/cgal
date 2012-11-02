@@ -101,5 +101,3 @@ unless src_package_subdir.empty? || tgt_build_root.empty? then
 else
   RDoc::usage
 end
-
-     

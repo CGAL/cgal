@@ -18,6 +18,15 @@ public:
   virtual void init(QMainWindow* mw, Scene_interface* sc, Messages_interface*) {
     init(mw, sc);
   };
+
+  //! Checks the current state of the `Scene` or `MainWindow` and decides
+  //! if the plugin can function, given that state.  It's actions are
+  //! visible in contextmenus, if this returns true, not visible
+  //! otherwise.  
+  //!
+  //! @returns \c true, if the plugin is applicable, \c false
+  //! otherwise
+  virtual bool applicable() const = 0;
   virtual QList<QAction*> actions() const = 0;
 };
 

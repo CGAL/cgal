@@ -591,7 +591,7 @@ public:
       // Classifies a point `p' with respect to `A'.
       Locate_type type;
       int i;
-      Face_handle pFace = locate(p, type, i);
+      Face_handle pFace = this->locate(p, type, i);
       switch (type) 
 	{
 	case VERTEX            : return classify(pFace->vertex(i), alpha);
@@ -680,7 +680,7 @@ public:
     }
 
   size_type 
-  number_solid_components(const Type_of_alpha& alpha) const
+  number_solid_components(const Type_of_alpha& /* alpha */) const
     {
       return number_of_solid_components(get_alpha());
     }

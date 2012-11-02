@@ -27,6 +27,7 @@
 
 #include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
+#include <CGAL/enum.h>
 #include <vector>
 #include <functional>
 

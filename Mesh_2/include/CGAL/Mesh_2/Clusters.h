@@ -296,9 +296,6 @@ public:
   {
     typedef typename Cluster_map::const_iterator Iterator;
     typedef std::pair<Iterator, Iterator> Range;
-    typedef typename Range::first_type Clusters_iterator;
-    typedef Pair_get_first<typename Cluster_vertices_map::value_type>
-      Get_first;
 
     Range range = cluster_map.equal_range(vh);
     Iterator first = range.first;

@@ -36,7 +36,7 @@ namespace CGAL {
   {
     typename Map::Dart_handle d1 = amap.create_dart();
     typename Map::Dart_handle d2 = amap.create_dart();
-    amap.template basic_link_beta<2>(d1, d2);
+    amap.basic_link_beta_for_involution(d1, d2, 2);
     return d1;
   }
 
@@ -56,11 +56,11 @@ namespace CGAL {
     for ( unsigned int nb=1; nb<alg; ++nb )
     {
       typename Map::Dart_handle cur = amap.create_dart();
-      amap.template basic_link_beta<1>(prev, cur);
+      amap.basic_link_beta_1(prev, cur);
       prev=cur;
     }
   
-    amap.template basic_link_beta<1>(prev, start);
+    amap.basic_link_beta_1(prev, start);
     return start;
   }
 
@@ -80,12 +80,12 @@ namespace CGAL {
                                  typename Map::Dart_handle d3,
                                  typename Map::Dart_handle d4)
   {
-    amap.basic_link_beta(d1, d2, 2);
-    amap.basic_link_beta(d3, d2->beta(0), 2);
-    amap.basic_link_beta(d1->beta(1), d3->beta(0), 2);
-    amap.basic_link_beta(d4, d2->beta(1), 2);
-    amap.basic_link_beta(d4->beta(0), d3->beta(1), 2);
-    amap.basic_link_beta(d4->beta(1), d1->beta(0), 2);
+    amap.basic_link_beta_for_involution(d1, d2, 2);
+    amap.basic_link_beta_for_involution(d3, d2->beta(0), 2);
+    amap.basic_link_beta_for_involution(d1->beta(1), d3->beta(0), 2);
+    amap.basic_link_beta_for_involution(d4, d2->beta(1), 2);
+    amap.basic_link_beta_for_involution(d4->beta(0), d3->beta(1), 2);
+    amap.basic_link_beta_for_involution(d4->beta(1), d1->beta(0), 2);
 
     return d1;
   }
@@ -125,21 +125,33 @@ namespace CGAL {
                                 typename Map::Dart_handle d5,
                                 typename Map::Dart_handle d6)
   {
-    amap.basic_link_beta(d1,                   d4->beta(1)->beta(1), 2);
-    amap.basic_link_beta(d1->beta(1),          d6->beta(0)         , 2);
-    amap.basic_link_beta(d1->beta(1)->beta(1), d2                  , 2);
-    amap.basic_link_beta(d1->beta(0),          d5                  , 2);
+    amap.basic_link_beta_for_involution(d1,
+                                        d4->beta(1)->beta(1), 2);
+    amap.basic_link_beta_for_involution(d1->beta(1),
+                                        d6->beta(0)         , 2);
+    amap.basic_link_beta_for_involution(d1->beta(1)->beta(1),
+                                        d2                  , 2);
+    amap.basic_link_beta_for_involution(d1->beta(0),
+                                        d5                  , 2);
 
-    amap.basic_link_beta(d3,                   d2->beta(1)->beta(1), 2);
-    amap.basic_link_beta(d3->beta(1),          d6->beta(1)         , 2);
-    amap.basic_link_beta(d3->beta(1)->beta(1), d4                  , 2);
-    amap.basic_link_beta(d3->beta(0),          d5->beta(1)->beta(1), 2);
+    amap.basic_link_beta_for_involution(d3,
+                                        d2->beta(1)->beta(1), 2);
+    amap.basic_link_beta_for_involution(d3->beta(1),
+                                        d6->beta(1)         , 2);
+    amap.basic_link_beta_for_involution(d3->beta(1)->beta(1),
+                                        d4                  , 2);
+    amap.basic_link_beta_for_involution(d3->beta(0),
+                                        d5->beta(1)->beta(1), 2);
 
-    amap.basic_link_beta(d6,                   d4->beta(1)         , 2);
-    amap.basic_link_beta(d6->beta(1)->beta(1), d2->beta(1)         , 2);
+    amap.basic_link_beta_for_involution(d6,
+                                        d4->beta(1)         , 2);
+    amap.basic_link_beta_for_involution(d6->beta(1)->beta(1),
+                                        d2->beta(1)         , 2);
 
-    amap.basic_link_beta(d5->beta(0),          d4->beta(0)         , 2);
-    amap.basic_link_beta(d5->beta(1),          d2->beta(0)         , 2);
+    amap.basic_link_beta_for_involution(d5->beta(0),
+                                        d4->beta(0)         , 2);
+    amap.basic_link_beta_for_involution(d5->beta(1),
+                                        d2->beta(0)         , 2);
 
     return d1;
   }

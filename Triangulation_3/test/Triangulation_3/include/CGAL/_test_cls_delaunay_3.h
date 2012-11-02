@@ -33,6 +33,7 @@
 #include "_test_remove_cluster.h"
 
 #include <CGAL/Random.h>
+#include <CGAL/Testsuite/use.h>
 
 // Accessory set of functions to differentiate between
 // Delaunay::nearest_vertex[_in_cell] and
@@ -897,6 +898,7 @@ _test_cls_delaunay_3(const Triangulation &)
   {
     Cell_handle c = T4.finite_cells_begin();
     Point p = T4.dual(c);
+    (void)p;
     Facet f = Facet(c, 2);
     CGAL::Object o = T4.dual(f);
     o = T4.dual(f.first, f.second);
@@ -1073,6 +1075,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(TM_0.dimension() == 1);
 
   Vertex_handle tmv5 = TM_0.insert(Point(0,2,0));
+  CGAL_USE(tmv5);
   Vertex_handle tmv6 = TM_0.insert(Point(1,0,0));
   assert(TM_0.dimension() == 3);
 

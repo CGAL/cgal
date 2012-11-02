@@ -24,11 +24,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Unique_hash_map.h>
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-#  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
-#else
-#  define CGAL_HDS_PARAM_ class HDS
-#endif
+#define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
 namespace CGAL {
 
@@ -374,6 +370,16 @@ CGAL::Polyhedron_vertex_index_map_external<Gt,I,HDS,A> get(CGAL::vertex_external
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class Tag>
 struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>, Tag> 
+{
+  typedef typename CGAL::Polyhedron_property_map<Tag>::
+      template bind_<Gt,I,HDS,A> map_gen;
+  typedef typename map_gen::type       type;
+  typedef typename map_gen::const_type const_type;
+};
+
+// This partial specialization shouldn't be needed but is due to a bug in Boost 1.51.
+template<class Gt, class I, CGAL_HDS_PARAM_, class A, class Tag>
+struct property_map<const CGAL::Polyhedron_3<Gt,I,HDS,A>, Tag> 
 {
   typedef typename CGAL::Polyhedron_property_map<Tag>::
       template bind_<Gt,I,HDS,A> map_gen;

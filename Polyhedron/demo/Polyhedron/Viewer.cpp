@@ -1,4 +1,6 @@
 #include "Viewer.h"
+#include <CGAL/gl.h>
+#include <CGAL/check_gl_error.h>
 #include "Scene_draw_interface.h"
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -122,7 +124,9 @@ void Viewer::keyPressEvent(QKeyEvent* e)
       return;
     }
   }
-  QGLViewer::keyPressEvent(e);
+  //forward the event to the scene (item handling of the event)
+  if (! d->scene->keyPressEvent(e) )
+    QGLViewer::keyPressEvent(e);
 }
 
 void Viewer::turnCameraBy180Degres() {
@@ -166,14 +170,14 @@ void Viewer_impl::draw_aux(bool with_names)
   {
     ::glDisable(GL_BLEND);
     ::glDisable(GL_LINE_SMOOTH);
-    ::glDisable(GL_POLYGON_SMOOTH_HINT);
-    ::glBlendFunc(GL_ONE, GL_ZERO);
     ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+    ::glBlendFunc(GL_ONE, GL_ZERO);
   }
   if(with_names)
     scene->drawWithNames();
   else
     scene->draw();
+  CGAL::check_gl_error(__FILE__, __LINE__);
 }
 
 void Viewer::drawWithNames()

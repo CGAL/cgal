@@ -23,58 +23,12 @@
 
 namespace CGAL {
 
-template <class Traits,class X_curve_plus>
-const typename Td_traits<Traits,X_curve_plus>::Point&
-Td_traits<Traits,X_curve_plus>::point_at_left_top_infinity(){
-  /*
-  static typename Td_traits<Traits,X_curve_plus>::Point
-    Td_traits<Traits,X_curve_plus>::POINT_AT_LEFT_TOP_INFINITY;
-  return Td_traits<Traits,X_curve_plus>::POINT_AT_LEFT_TOP_INFINITY;
-  */
-  //  static Point POINT_AT_LEFT_TOP_INFINITY;
-  if (!POINT_AT_LEFT_TOP_INFINITY)
-    POINT_AT_LEFT_TOP_INFINITY = new Point();
-  return *POINT_AT_LEFT_TOP_INFINITY;
-}
+template <class Traits,class Arrangement_on_surface_2>
+typename Td_traits<Traits,Arrangement_on_surface_2>::Vertex_const_handle
+Td_traits<Traits,Arrangement_on_surface_2>::m_empty_vtx_handle = Vertex_const_handle();
 
-template <class Traits,class X_curve_plus>
-const typename Td_traits<Traits,X_curve_plus>::Point&
-Td_traits<Traits,X_curve_plus>::point_at_right_bottom_infinity(){
-  /*
-  static typename Td_traits<Traits,X_curve_plus>::Point
-    Td_traits<Traits,X_curve_plus>::POINT_AT_RIGHT_BOTTOM_INFINITY;
-  return Td_traits<Traits,X_curve_plus>::POINT_AT_RIGHT_BOTTOM_INFINITY;
-  */
-  //  static Point POINT_AT_RIGHT_BOTTOM_INFINITY;
-  if (!POINT_AT_RIGHT_BOTTOM_INFINITY)
-    POINT_AT_RIGHT_BOTTOM_INFINITY = new Point();
-  return *POINT_AT_RIGHT_BOTTOM_INFINITY;
-}
-
-template <class Traits,class X_curve_plus>
-const typename Td_traits<Traits,X_curve_plus>::X_curve&
-Td_traits<Traits,X_curve_plus>::curve_at_infinity(){
-  /*
-  static typename typename Traits::X_curveTraits::X_curve 
-    Td_traits<Traits,X_curve_plus>::CURVE_AT_INFINITY;
-  return Td_traits<Traits,X_curve_plus>::CURVE_AT_INFINITY;
-  */
-  //  static X_curve CURVE_AT_INFINITY;
-  if (!CURVE_AT_INFINITY)
-    CURVE_AT_INFINITY = new X_curve();
-  return *CURVE_AT_INFINITY;
-}
-
-template <class Traits,class X_curve_plus>
-typename Td_traits<Traits,X_curve_plus>::Point *
-Td_traits<Traits,X_curve_plus>::POINT_AT_LEFT_TOP_INFINITY = 0;
-
-template <class Traits,class X_curve_plus>
-typename Td_traits<Traits,X_curve_plus>::Point *
-Td_traits<Traits,X_curve_plus>::POINT_AT_RIGHT_BOTTOM_INFINITY = 0;
-
-template <class Traits,class X_curve_plus>
-typename Td_traits<Traits,X_curve_plus>::X_curve *
-Td_traits<Traits,X_curve_plus>::CURVE_AT_INFINITY = 0;
+template <class Traits,class Arrangement_on_surface_2>
+typename Td_traits<Traits,Arrangement_on_surface_2>::Halfedge_const_handle
+Td_traits<Traits,Arrangement_on_surface_2>::m_empty_he_handle = Halfedge_const_handle();
 
 } //namespace CGAL

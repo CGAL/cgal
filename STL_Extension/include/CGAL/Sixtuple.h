@@ -25,6 +25,8 @@
 #ifndef CGAL_SIXTUPLE_H
 #define CGAL_SIXTUPLE_H
 
+#include <CGAL/config.h>
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 namespace CGAL {

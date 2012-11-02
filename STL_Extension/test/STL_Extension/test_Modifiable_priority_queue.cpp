@@ -1,4 +1,4 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Modifiable_priority_queue.h>
 #include <iostream>
 #include <functional> 

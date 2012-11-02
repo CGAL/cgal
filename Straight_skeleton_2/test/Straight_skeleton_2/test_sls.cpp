@@ -491,7 +491,7 @@ void dump_skeleton_to_dxf( ISls const& aSkeleton
                          , Color      aContourBisectorColor
                          , Color      aSkeletonBisectorColor
                          , Color      aPeakBisectorColor
-                         , Color      aInfiniteBisectorColor
+                         , Color      /*aInfiniteBisectorColor*/
                          , string     aLayer
                          , DxfStream& rDXF 
                          )

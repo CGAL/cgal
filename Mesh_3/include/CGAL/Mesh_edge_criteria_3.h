@@ -111,7 +111,7 @@ public:
   // as int.
   template < typename Sizing_field >
   Mesh_edge_criteria_3(const Sizing_field& size,
-                       typename Sizing_field::FT dummy = 0 )
+                       typename Sizing_field::FT /*dummy*/ = 0 )
     : p_size_(new internal::Mesh_3::Sizing_field_container<Sizing_field>(size))
   {}
   

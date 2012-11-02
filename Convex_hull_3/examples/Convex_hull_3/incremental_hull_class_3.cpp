@@ -1,25 +1,3 @@
-// Copyright (c) 2002-2011  Max Planck Institut fuer Informatik (Germany).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL: svn+ssh://sloriot@scm.gforge.inria.fr/svn/cgal/branches/experimental-packages/Faster_static_convex_hull_3/demo/Convex_hull_3/incremental_hull_3_demo.cpp $
-// $Id: incremental_hull_3_demo.cpp 44910 2008-08-12 12:58:18Z spion $
-//
-//
-// Author(s)     : Susan Hert
-//
-
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Convex_hull_d.h>

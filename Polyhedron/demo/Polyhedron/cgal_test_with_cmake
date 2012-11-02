@@ -105,19 +105,28 @@ else
       scene_c2t3_item \
       scene_edit_polyhedron_item \
       scene_nef_polyhedron_item \
+      scene_combinatorial_map_item \
+      scene_plane_item \
+      scene_polyline_item \
       scene_polygon_soup_item \
       scene_polyhedron_item \
       scene_textured_polyhedron_item \
+      scene_points_with_normal_item\
       convex_hull_plugin \
+      corefinement_plugin \
       cut_plugin \
       edit_polyhedron_plugin \
       inside_out_plugin \
+      intersection_plugin \
       kernel_plugin \
       mesh_3_plugin \
       mesh_simplification_plugin \
       nef_plugin \
       off_plugin \
+      xyz_plugin \
+      polylines_io_plugin \
       off_to_nef_plugin \
+      off_to_xyz_plugin \
       orient_soup_plugin \
       parameterization_plugin \
       pca_plugin \
@@ -125,6 +134,11 @@ else
       self_intersection_plugin \
       subdivision_methods_plugin \
       triangulate_facets_plugin \
+      point_set_average_spacing_plugin \
+      point_set_outliers_removal_plugin \
+      point_set_simplification_plugin \
+      point_set_smoothing_plugin \
+      poisson_plugin \
       trivial_plugin
   do
       if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 

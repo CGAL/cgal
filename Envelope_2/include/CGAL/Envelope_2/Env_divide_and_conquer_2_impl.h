@@ -33,16 +33,14 @@ namespace CGAL {
 //
 template <class Traits, class Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_construct_envelope_non_vertical (Curve_pointer_iterator begin,
-                                  Curve_pointer_iterator end,
-                                  Envelope_diagram_1& out_d)
+_construct_envelope_non_vertical(Curve_pointer_iterator begin,
+                                 Curve_pointer_iterator end,
+                                 Envelope_diagram_1& out_d)
 {
   out_d.clear();
   
   if (begin == end)
-  {
     return;
-  }
   
   // Check if the range contains just a single curve.
   Curve_pointer_iterator    iter = begin;
@@ -51,7 +49,7 @@ _construct_envelope_non_vertical (Curve_pointer_iterator begin,
   if (iter == end)
   {
     // Construct a singleton diagram, which matches a single curve.
-    _construct_singleton_diagram (*(*begin), out_d);
+    _construct_singleton_diagram(*(*begin), out_d);
   }
   else
   {
@@ -65,13 +63,11 @@ _construct_envelope_non_vertical (Curve_pointer_iterator begin,
     Envelope_diagram_1   d1;
     Envelope_diagram_1   d2;
     
-    _construct_envelope_non_vertical (begin, div_it,
-                                      d1);
+    _construct_envelope_non_vertical(begin, div_it, d1);
     
-    _construct_envelope_non_vertical (div_it, end,
-                                      d2);
+    _construct_envelope_non_vertical(div_it, end, d2);
 
-    _merge_envelopes (d1, d2, out_d);
+    _merge_envelopes(d1, d2, out_d);
 
     // Print the minimization diagram.
     /* RWRW:
@@ -103,20 +99,20 @@ _construct_envelope_non_vertical (Curve_pointer_iterator begin,
 //
 template <class Traits, class Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_construct_singleton_diagram (const X_monotone_curve_2& cv,
-                              Envelope_diagram_1& out_d)
+_construct_singleton_diagram(const X_monotone_curve_2& cv,
+                             Envelope_diagram_1& out_d)
 {
-  CGAL_assertion (out_d.leftmost() == out_d.rightmost());
-  CGAL_assertion (out_d.leftmost()->is_empty());
+  CGAL_assertion(out_d.leftmost() == out_d.rightmost());
+  CGAL_assertion(out_d.leftmost()->is_empty());
   
   // Check if the given curve is bounded from the left and from the right.
-  if (traits->parameter_space_in_x_2_object() (cv, ARR_MIN_END) != ARR_INTERIOR)
+  if (traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END) != ARR_INTERIOR)
   {
-    if (traits->parameter_space_in_x_2_object() (cv, ARR_MAX_END) != ARR_INTERIOR)
+    if (traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END) != ARR_INTERIOR)
     {
       // The curve is defined over (-oo, oo), so its diagram contains
       // only a single edge.
-      out_d.leftmost()->add_curve (cv);
+      out_d.leftmost()->add_curve(cv);
       
       return;
     }
@@ -124,47 +120,47 @@ _construct_singleton_diagram (const X_monotone_curve_2& cv,
     // The curve is defined over (-oo, x], where x is finite.
     // Create a vertex and associate it with the right endpoint of cv.
     CGAL_precondition
-      (traits->parameter_space_in_y_2_object() (cv, ARR_MAX_END) == ARR_INTERIOR);
+      (traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END) == ARR_INTERIOR);
     
-    Vertex_handle  v = 
-      out_d.new_vertex (traits->construct_max_vertex_2_object() (cv));
-    Edge_handle    e_right = out_d.new_edge();
+    Vertex_handle v =
+      out_d.new_vertex(traits->construct_max_vertex_2_object()(cv));
+    Edge_handle   e_right = out_d.new_edge();
     
-    v->add_curve (cv);
-    v->set_left (out_d.leftmost());
-    v->set_right (e_right);
+    v->add_curve(cv);
+    v->set_left(out_d.leftmost());
+    v->set_right(e_right);
     
     // The leftmost edge is associated with cv, and the rightmost is empty.
-    out_d.leftmost()->add_curve (cv);
-    out_d.leftmost()->set_right (v);
+    out_d.leftmost()->add_curve(cv);
+    out_d.leftmost()->set_right(v);
     
-    e_right->set_left (v);
-    out_d.set_rightmost (e_right);
+    e_right->set_left(v);
+    out_d.set_rightmost(e_right);
     
     return;
   }
   
-  if (traits->parameter_space_in_x_2_object() (cv, ARR_MAX_END) != ARR_INTERIOR)
+  if (traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END) != ARR_INTERIOR)
   {
     // The curve is defined over [x, +oo), where x is finite.
     // Create a vertex and associate it with the left endpoint of cv.
     CGAL_precondition
-      (traits->parameter_space_in_y_2_object() (cv, ARR_MIN_END) == ARR_INTERIOR);
+      (traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END) == ARR_INTERIOR);
     
     Vertex_handle  v = 
-      out_d.new_vertex (traits->construct_min_vertex_2_object() (cv));
+      out_d.new_vertex(traits->construct_min_vertex_2_object()(cv));
     Edge_handle    e_left = out_d.new_edge();
     
-    v->add_curve (cv);
-    v->set_left (e_left);
-    v->set_right (out_d.rightmost());
+    v->add_curve(cv);
+    v->set_left(e_left);
+    v->set_right(out_d.rightmost());
     
     // The rightmost edge is associated with cv, and the leftmost is empty.
-    out_d.rightmost()->add_curve (cv);
-    out_d.rightmost()->set_left (v);
+    out_d.rightmost()->add_curve(cv);
+    out_d.rightmost()->set_left(v);
     
-    e_left->set_right (v);
-    out_d.set_leftmost (e_left);
+    e_left->set_right(v);
+    out_d.set_leftmost(e_left);
     
     return;
   }
@@ -176,35 +172,35 @@ _construct_singleton_diagram (const X_monotone_curve_2& cv,
   //      -oo -------------(+)============(+)------------ +oo
   //
   CGAL_precondition
-    (traits->parameter_space_in_y_2_object() (cv, ARR_MIN_END) == ARR_INTERIOR);
+    (traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END) == ARR_INTERIOR);
   CGAL_precondition
-    (traits->parameter_space_in_y_2_object() (cv, ARR_MAX_END) == ARR_INTERIOR);
+    (traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END) == ARR_INTERIOR);
   
   Vertex_handle  v1 = 
-    out_d.new_vertex (traits->construct_min_vertex_2_object() (cv));
+    out_d.new_vertex(traits->construct_min_vertex_2_object()(cv));
   Vertex_handle  v2 = 
-    out_d.new_vertex (traits->construct_max_vertex_2_object() (cv));
+    out_d.new_vertex(traits->construct_max_vertex_2_object()(cv));
   Edge_handle    e_left = out_d.new_edge();
   Edge_handle    e_right = out_d.new_edge();
   Edge_handle    e = out_d.leftmost();
   
-  v1->add_curve (cv);
-  v1->set_left (e_left);
-  v1->set_right (e);
+  v1->add_curve(cv);
+  v1->set_left(e_left);
+  v1->set_right(e);
   
-  v2->add_curve (cv);
-  v2->set_left (e);
-  v2->set_right (e_right);
+  v2->add_curve(cv);
+  v2->set_left(e);
+  v2->set_right(e_right);
   
-  e->add_curve (cv);
-  e->set_left (v1);
-  e->set_right (v2);
+  e->add_curve(cv);
+  e->set_left(v1);
+  e->set_right(v2);
   
-  e_left->set_right (v1);
-  e_right->set_left (v2);
+  e_left->set_right(v1);
+  e_right->set_left(v2);
   
-  out_d.set_leftmost (e_left);
-  out_d.set_rightmost (e_right);
+  out_d.set_leftmost(e_left);
+  out_d.set_rightmost(e_right);
   
   return;
 }
@@ -214,9 +210,9 @@ _construct_singleton_diagram (const X_monotone_curve_2& cv,
 //
 template <class Traits, class Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_merge_envelopes (const Envelope_diagram_1& d1,
-                  const Envelope_diagram_1& d2,
-                  Envelope_diagram_1& out_d)
+_merge_envelopes(const Envelope_diagram_1& d1,
+                 const Envelope_diagram_1& d2,
+                 Envelope_diagram_1& out_d)
 {
   Edge_const_handle    e1 = d1.leftmost();
   bool                 is_leftmost1 = true;
@@ -262,7 +258,7 @@ _merge_envelopes (const Envelope_diagram_1& d1,
     {
       v1 = e1->right();
       v2 = e2->right();
-      res_v = _compare_vertices (v1, v2, same_x);
+      res_v = _compare_vertices(v1, v2, same_x);
       next_v = (res_v == SMALLER) ? v1 : v2;
     }
     
@@ -270,43 +266,36 @@ _merge_envelopes (const Envelope_diagram_1& d1,
     if (! e1->is_empty() && ! e2->is_empty())
     {
       // Both edges are not empty, and there are curves defined on them.
-      _merge_two_intervals (e1, is_leftmost1,
-                            e2, is_leftmost2,
-                            next_v, next_exists,
-                            res_v, out_d);
+      _merge_two_intervals(e1, is_leftmost1, e2, is_leftmost2,
+                           next_v, next_exists, res_v, out_d);
       
     }
     else if (! e1->is_empty() && e2->is_empty())
     {
       // e1 is not empty but e2 is empty:
-      _merge_single_interval (e1, e2,
-                              next_v, next_exists,
-                              res_v,
-                              out_d);
+      _merge_single_interval(e1, e2, next_v, next_exists, res_v, out_d);
     }
     else if (e1->is_empty() && ! e2->is_empty())
     {
       // e1 is empty and e2 is not empty:
-      _merge_single_interval (e2, e1,
-                              next_v, next_exists,
-                              CGAL::opposite(res_v),
-                              out_d);
+      _merge_single_interval(e2, e1, next_v, next_exists,
+                             CGAL::opposite(res_v), out_d);
     }
     else
     {
       // Both edges are empty: append an empty edge to out_d:
       if (next_exists)
       {
-        Vertex_handle  new_v = _append_vertex (out_d, next_v->point(), e1);
+        Vertex_handle  new_v = _append_vertex(out_d, next_v->point(), e1);
         switch(res_v)
         {
         case SMALLER:
-          new_v->add_curves (v1->curves_begin(), v1->curves_end()); break;
+          new_v->add_curves(v1->curves_begin(), v1->curves_end()); break;
         case LARGER:
-          new_v->add_curves (v2->curves_begin(), v2->curves_end()); break;
+          new_v->add_curves(v2->curves_begin(), v2->curves_end()); break;
         case EQUAL:
-          new_v->add_curves (v1->curves_begin(), v1->curves_end());
-          new_v->add_curves (v2->curves_begin(), v2->curves_end());
+          new_v->add_curves(v1->curves_begin(), v1->curves_end());
+          new_v->add_curves(v2->curves_begin(), v2->curves_end());
           break;
         }
       }
@@ -359,12 +348,12 @@ _merge_envelopes (const Envelope_diagram_1& d1,
 //
 template <class Traits, class Diagram>
 Comparison_result Envelope_divide_and_conquer_2<Traits,Diagram>::
-_compare_vertices (Vertex_const_handle v1,
-                   Vertex_const_handle v2,
-                   bool& same_x) const
+_compare_vertices(Vertex_const_handle v1,
+                  Vertex_const_handle v2,
+                  bool& same_x) const
 {
-  Comparison_result   res = traits->compare_x_2_object() (v1->point(),
-                                                          v2->point());
+  Comparison_result res =
+    traits->compare_x_2_object()(v1->point(), v2->point());
   
   if (res != EQUAL)
   {
@@ -377,12 +366,11 @@ _compare_vertices (Vertex_const_handle v1,
   }
 
   // In case the x-coordinates of the two vertices are equal:
-  res = traits->compare_xy_2_object() (v1->point(),
-                                       v2->point());
+  res = traits->compare_xy_2_object()(v1->point(), v2->point());
 
   // In case of upper envlope we take the opposite result
   if (env_type == UPPER)
-    return CGAL::opposite (res);
+    return CGAL::opposite(res);
   return res;
 }
 
@@ -392,16 +380,16 @@ _compare_vertices (Vertex_const_handle v1,
 //
 template <class Traits, class Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_merge_single_interval (Edge_const_handle e, Edge_const_handle other_edge,
-                        Vertex_const_handle v, bool v_exists,
-                        Comparison_result origin_of_v,
-                        Envelope_diagram_1& out_d)
+_merge_single_interval(Edge_const_handle e, Edge_const_handle other_edge,
+                       Vertex_const_handle v, bool v_exists,
+                       Comparison_result origin_of_v,
+                       Envelope_diagram_1& out_d)
 {
   if (! v_exists)
   {
     // The non-empty edge e is unbounded from the right, so we simply have
     // to update the rightmost edge in out_d.
-    out_d.rightmost()->add_curves (e->curves_begin(), e->curves_end());
+    out_d.rightmost()->add_curves(e->curves_begin(), e->curves_end());
     return;
   }
   
@@ -410,37 +398,37 @@ _merge_single_interval (Edge_const_handle e, Edge_const_handle other_edge,
   if (origin_of_v == SMALLER)
   {
     // The non-empty edge ends at v, so we simply insert it to out_d.
-    new_v = _append_vertex (out_d, v->point(), e);
-    new_v->add_curves (v->curves_begin(), v->curves_end());
+    new_v = _append_vertex(out_d, v->point(), e);
+    new_v->add_curves(v->curves_begin(), v->curves_end());
     
     return;
   }
 
   if (origin_of_v == EQUAL) // the edges have vertices at the same place.
   {
-    new_v = _append_vertex (out_d, v->point(), e);
-    new_v->add_curves (e->right()->curves_begin(), e->right()->curves_end());
-    new_v->add_curves (other_edge->right()->curves_begin(), 
-                       other_edge->right()->curves_end());
+    new_v = _append_vertex(out_d, v->point(), e);
+    new_v->add_curves(e->right()->curves_begin(), e->right()->curves_end());
+    new_v->add_curves(other_edge->right()->curves_begin(), 
+                      other_edge->right()->curves_end());
     return;
   }
 
   // If v is not on e, we should insert it to the merged diagram only if it
   // is below (or above, in case of an upper envelope) the curves of e.
-  Comparison_result  res = traits->compare_y_at_x_2_object() (v->point(),
-                                                              e->curve());
+  Comparison_result res =
+    traits->compare_y_at_x_2_object()(v->point(), e->curve());
   
   if ((res == EQUAL) ||
       (env_type == LOWER && res == SMALLER) ||
       (env_type == UPPER && res == LARGER))
   {
-    new_v = _append_vertex (out_d, v->point(), e);
-    new_v->add_curves (v->curves_begin(), v->curves_end());
+    new_v = _append_vertex(out_d, v->point(), e);
+    new_v->add_curves(v->curves_begin(), v->curves_end());
 
     if (res == EQUAL)
       {
         // In case of equality, append e's curves to those of the new vertex.
-        new_v->add_curves (e->curves_begin(), e->curves_end());
+        new_v->add_curves(e->curves_begin(), e->curves_end());
       }
   }
 }
@@ -463,41 +451,39 @@ _merge_single_interval (Edge_const_handle e, Edge_const_handle other_edge,
 template <class Traits, class Diagram>
 Comparison_result Envelope_divide_and_conquer_2<Traits,Diagram>::
 compare_y_at_end(const X_monotone_curve_2& xcv1,
-                                   const X_monotone_curve_2& xcv2,
-                                   Arr_curve_end curve_end) const
+                 const X_monotone_curve_2& xcv2,
+                 Arr_curve_end curve_end) const
 {
-  CGAL_precondition (traits->is_in_x_range_2_object() (xcv1, xcv2));
+  CGAL_precondition(traits->is_in_x_range_2_object()(xcv1, xcv2));
 
   typedef typename Traits::Compare_xy_2               Compare_xy_2;
   typedef typename Traits::Compare_y_at_x_2           Compare_y_at_x_2;
   typedef typename Traits::Construct_min_vertex_2     Construct_min_vertex_2;
   typedef typename Traits::Construct_max_vertex_2     Construct_max_vertex_2;
 
-  Compare_y_at_x_2       compare_y_at_x = traits->compare_y_at_x_2_object();
+  Compare_y_at_x_2  compare_y_at_x = traits->compare_y_at_x_2_object();
   Construct_min_vertex_2 min_vertex =
     traits->construct_min_vertex_2_object();
   Construct_max_vertex_2 max_vertex =
     traits->construct_max_vertex_2_object();
   
   // First check whether any of the curves is defined at x boundary.
-  const Arr_parameter_space ps_x1 = traits->parameter_space_in_x_2_object()
-    (xcv1, curve_end);
-  const Arr_parameter_space ps_x2 = traits->parameter_space_in_x_2_object()
-    (xcv2, curve_end);
+  const Arr_parameter_space ps_x1 =
+    traits->parameter_space_in_x_2_object()(xcv1, curve_end);
+  const Arr_parameter_space ps_x2 =
+    traits->parameter_space_in_x_2_object()(xcv2, curve_end);
   Comparison_result         res;
   
-  if (ps_x1 != ARR_INTERIOR)
-  {
-    if (ps_x2 != ARR_INTERIOR)
-    {
+  if (ps_x1 != ARR_INTERIOR) {
+    if (ps_x2 != ARR_INTERIOR) {
       // Compare the relative position of the curves at x boundary.
-      return (traits->compare_y_near_boundary_2_object()
-              (xcv1, xcv2, curve_end));
+      return (traits->compare_y_near_boundary_2_object()(xcv1, xcv2,
+                                                         curve_end));
     }
     
     // Check if the left end of xcv2 lies at y boundary.
-    const Arr_parameter_space ps_y2 =  traits->parameter_space_in_y_2_object()
-      (xcv2, curve_end);
+    const Arr_parameter_space ps_y2 =
+      traits->parameter_space_in_y_2_object()(xcv2, curve_end);
     
     if (ps_y2 == ARR_BOTTOM_BOUNDARY)
       return (LARGER);          // xcv2 is obviously below xcv1.
@@ -506,16 +492,14 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
           
     // Compare the position of the left end of xcv2 (which is a normal
     // point) to xcv1.
-    if (curve_end == ARR_MIN_END)
-      res = compare_y_at_x (min_vertex (xcv2), xcv1);
-    else
-      res = compare_y_at_x (max_vertex (xcv2), xcv1);
+    res = (curve_end == ARR_MIN_END) ?
+      compare_y_at_x(min_vertex(xcv2), xcv1) :
+      compare_y_at_x(max_vertex(xcv2), xcv1);
 
     // Swap the result.
     return CGAL::opposite(res);
   }
-  else if (ps_x2 != ARR_INTERIOR)
-  {
+  else if (ps_x2 != ARR_INTERIOR) {
     // Check if the left end of xcv1 lies at y boundary.
     const Arr_parameter_space ps_y1 =  traits->parameter_space_in_y_2_object()
       (xcv1, curve_end);
@@ -527,39 +511,35 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
     
     // Compare the position of the left end of xcv1 (which is a normal
     // point) to xcv2.
-    if (curve_end == ARR_MIN_END)
-      res = compare_y_at_x (min_vertex (xcv1), xcv2);
-    else
-      res = compare_y_at_x (max_vertex (xcv1), xcv2);
-    
+    res = (curve_end == ARR_MIN_END) ?
+      compare_y_at_x(min_vertex(xcv1), xcv2) :
+      compare_y_at_x(max_vertex(xcv1), xcv2);
     return (res);
   }
   
   // Check if the left curve end lies at y = +/- oo.
-  const Arr_parameter_space ps_y1 =  traits->parameter_space_in_y_2_object()
-    (xcv1, curve_end);
-  const Arr_parameter_space ps_y2 =  traits->parameter_space_in_y_2_object()
-    (xcv2, curve_end);
+  const Arr_parameter_space ps_y1 =
+    traits->parameter_space_in_y_2_object()(xcv1, curve_end);
+  const Arr_parameter_space ps_y2 =
+    traits->parameter_space_in_y_2_object()(xcv2, curve_end);
   Comparison_result         l_res;
   
-  if (ps_y1 != ARR_INTERIOR)
-  {
-    if (ps_y2 != ARR_INTERIOR)
-    {
+  if (ps_y1 != ARR_INTERIOR) {
+    if (ps_y2 != ARR_INTERIOR) {
       // The curve ends have boundary conditions with oposite signs in y,
       // we readily know their relative position (recall that they do not
       // instersect).
-      if (ps_y1 == ARR_BOTTOM_BOUNDARY && ps_y2 == ARR_TOP_BOUNDARY)
+      if ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY))
         return (SMALLER);
-      else if (ps_y1 == ARR_TOP_BOUNDARY && ps_y2 == ARR_BOTTOM_BOUNDARY)
+      else if ((ps_y1 == ARR_TOP_BOUNDARY) && (ps_y2 == ARR_BOTTOM_BOUNDARY))
         return (LARGER);
 
       // Both curves have vertical asymptotes with the same sign in y.
       // Check which asymptote is the rightmost. Note that in this case
       // the vertical asymptotes cannot be equal.
-      l_res = traits->compare_x_curve_ends_2_object()
-        (xcv1, curve_end, xcv2, curve_end);
-      CGAL_assertion (l_res != EQUAL);
+      l_res = traits->compare_x_curve_ends_2_object()(xcv1, curve_end,
+                                                      xcv2, curve_end);
+      CGAL_assertion(l_res != EQUAL);
       
       if (ps_y1 == ARR_TOP_BOUNDARY)
         return (l_res);
@@ -569,46 +549,34 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
 
     // xcv1 has a vertical asymptote and xcv2 has a normal left endpoint.
     // Compare the x-positions of this endpoint and the asymptote.
-    const Point_2&  left2 = 
+    const Point_2& left2 =
       (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
         
-    l_res = traits->compare_x_point_curve_end_2_object()
-      (left2, xcv1, curve_end);
+    l_res =
+      traits->compare_x_point_curve_end_2_object()(left2, xcv1, curve_end);
     
-    if (l_res == LARGER)
-    {
+    if (l_res == LARGER) {
       // left2 lies in the x-range of xcv1, so it is safe to compare:
-      res = compare_y_at_x (left2, xcv1);
-      
+      res = compare_y_at_x(left2, xcv1);
       return CGAL::opposite(res);
     }
     else
-    {
-      if (ps_y1 == ARR_BOTTOM_BOUNDARY)
-        return (SMALLER);          // xcv1 is obviously below xcv2.
-      else
-        return (LARGER);           // xcv2 is obviously above xcv1.
-    }
+      // xcv1 is below or above xcv2.
+      return ((ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER);
   }
-  else if (ps_y2 != ARR_INTERIOR)
-  {
+  else if (ps_y2 != ARR_INTERIOR) {
     // xcv2 has a vertical asymptote and xcv1 has a normal left endpoint.
     // Compare the x-positions of this endpoint and the asymptote.
     const Point_2&  left1 = 
       (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
         
-    l_res = traits->compare_x_point_curve_end_2_object()
-      (left1, xcv2, curve_end);
+    l_res =
+      traits->compare_x_point_curve_end_2_object()(left1, xcv2, curve_end);
     
-    if (l_res == LARGER)
-    {
-      // left1 lies in the x-range of xcv2, so it is safe to compare:
-      return (compare_y_at_x (left1, xcv2));
-    }
-    else
-    {
-      return (ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER;
-    }
+    return ((l_res == LARGER) ?
+            // left1 lies in the x-range of xcv2, so it is safe to compare:
+            (compare_y_at_x(left1, xcv2)) :
+            ((ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER));
   }
 
   // In this case we compare two normal points.
@@ -622,18 +590,13 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
 
   // Locate the rightmost point of left1 and left2 and compare its position
   // to the other curve.
-  l_res = compare_xy (left1, left2);
+  l_res = compare_xy(left1, left2);
   
-  if (l_res != SMALLER)
-  {
+  return ((l_res != SMALLER) ?
     // left1 is in the x-range of xcv2:
-    return compare_y_at_x (left1, xcv2);
-  }
-  else
-  {
+          compare_y_at_x(left1, xcv2) : 
     // left2 is in the x-range of xcv1:
-    return CGAL::opposite(compare_y_at_x (left2, xcv1));
-  }
+          CGAL::opposite(compare_y_at_x(left2, xcv1)));
 }
 /*@}*/
 
@@ -642,11 +605,11 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
 //
 template <class Traits, class Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_merge_two_intervals (Edge_const_handle e1, bool is_leftmost1, 
-                      Edge_const_handle e2, bool is_leftmost2,
-                      Vertex_const_handle v, bool v_exists,
-                      Comparison_result origin_of_v,
-                      Envelope_diagram_1& out_d)
+_merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, 
+                     Edge_const_handle e2, bool is_leftmost2,
+                     Vertex_const_handle v, bool v_exists,
+                     Comparison_result origin_of_v,
+                     Envelope_diagram_1& out_d)
 {
   typedef std::pair<Point_2, typename Traits::Multiplicity>  Intersection_point;
 
@@ -658,28 +621,26 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   current_res = compare_y_at_end(e1->curve(), e2->curve(), ARR_MIN_END);
   // Flip the result in case of an upper envelope.
   if (env_type == UPPER)
-    current_res = CGAL::opposite (current_res);
+    current_res = CGAL::opposite(current_res);
 
-  
   // Use the current rightmost of the two left vertices as a reference point.
   // This is the rightmost vertex in the current minimization diagram (out_d).
   // The intersection points/curves that interest us are the ones in
   // [v_leftmost, v].
-  boost::optional<Vertex_const_handle>  v_leftmost;
+  boost::optional<Vertex_const_handle>  v_leftmost =
+    boost::optional<Vertex_const_handle>();
 
-  if (is_leftmost1 == true)
-  {
+  if (is_leftmost1 == true) {
     if (is_leftmost2 == false)
       v_leftmost = e2->left();
   }
-  else
-  {
+  else {
     if (is_leftmost2 == true)
       v_leftmost = e1->left();
     else
     {
-      if ((traits->compare_xy_2_object() (e1->left()->point(),
-                                          e2->left()->point()) == LARGER))
+      if ((traits->compare_xy_2_object()(e1->left()->point(),
+                                         e2->left()->point()) == LARGER))
         v_leftmost = e1->left();
       else
         v_leftmost = e2->left();
@@ -694,17 +655,16 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   const X_monotone_curve_2*         intersection_curve;
   const Intersection_point*         intersection_point;
   
-  traits->intersect_2_object() (e1->curve(), e2->curve(),
-                                std::back_inserter(objects));
+  traits->intersect_2_object()(e1->curve(), e2->curve(),
+                               std::back_inserter(objects));
   
-  while (! objects.empty())
-  {
+  while (! objects.empty()) {
     // Pop the xy-lexicographically smallest intersection object.
     obj = objects.front();
     objects.pop_front();
     
-    if ((intersection_point = CGAL::object_cast<Intersection_point>(&obj)) 
-        != NULL)
+    if ((intersection_point = CGAL::object_cast<Intersection_point>(&obj)) !=
+        NULL)
     {
       // We have a simple intersection point.
       bool is_in_x_range = true; // true if the intersection point is to the 
@@ -722,8 +682,7 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
       
       // check if we arrived at the rightmost point (stop if indeed we are
       // there).
-      if (is_in_x_range && v_exists)
-      {
+      if (is_in_x_range && v_exists) {
         Comparison_result res = traits->compare_xy_2_object() 
           (intersection_point->first, v->point());
         
@@ -738,24 +697,19 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
       
       // Create a new vertex in the output diagram that corrsponds to the
       // current intersection point.
-      if (is_in_x_range)
-      {
-        Vertex_handle        new_v;
-        
+      if (is_in_x_range) {
         CGAL_assertion(current_res != EQUAL);
 
-        if (current_res == SMALLER)
-          new_v = _append_vertex (out_d, intersection_point->first, e1);
-        else
-          new_v = _append_vertex (out_d, intersection_point->first, e2);
+        Vertex_handle new_v = (current_res == SMALLER) ?
+          _append_vertex(out_d, intersection_point->first, e1) :
+          _append_vertex(out_d, intersection_point->first, e2);
         
         // if we are at v, then this is a special case that is handled after
         // the loop. We need to add the curves from the original vertices.
-        if (equal_at_v == false)
-        {
+        if (equal_at_v == false) {
           // Note that the new vertex is incident to all curves in e1 and in e2.
-          new_v->add_curves (e1->curves_begin(), e1->curves_end());
-          new_v->add_curves (e2->curves_begin(), e2->curves_end());
+          new_v->add_curves(e1->curves_begin(), e1->curves_end());
+          new_v->add_curves(e2->curves_begin(), e2->curves_end());
         }
         
         // Update the handle to the rightmost vertex in the output diagram.
@@ -769,34 +723,31 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
       // Get the curve order immediately to the right of the intersection
       // point. Note that in case of even (non-zero) multiplicity the order
       // remains the same.
-      if (current_res != EQUAL && intersection_point->second % 2 == 1)
-      {
+      if ((current_res != EQUAL) && (intersection_point->second % 2 == 1)) {
         // Odd multiplicity: flip the current comparison result.
-        current_res = CGAL::opposite (current_res);
+        current_res = CGAL::opposite(current_res);
       }
       // if we are at v, then we may not be able to call compare_y_at_x_right_2.
-      else if ((intersection_point->second == 0 || current_res == EQUAL) 
-	       && equal_at_v == false)
+      else if (((intersection_point->second == 0) || (current_res == EQUAL)) &&
+               (equal_at_v == false))
       {
         // The multiplicity is unknown, so we have to compare the curves to
         // the right of their intersection point.
-        current_res = traits->compare_y_at_x_right_2_object() 
-          (e1->curve(),
-           e2->curve(),
-           intersection_point->first);
+        current_res =
+          traits->compare_y_at_x_right_2_object()(e1->curve(), e2->curve(),
+                                                  intersection_point->first);
         // Flip the result in case of an upper envelope.
         if (env_type == UPPER)
           current_res = CGAL::opposite (current_res);
       }
     }
-    else
-    {
+    else {
       // We have an x-monotone curve representing an overlap of the two
       // curves.
       intersection_curve = CGAL::object_cast<X_monotone_curve_2>(&obj);
       
       if (intersection_curve == NULL)
-        CGAL_error_msg ("unrecognized intersection object.");
+        CGAL_error_msg("unrecognized intersection object.");
 
       // Get the endpoints of the overlapping curves.
       const bool  has_left = 
@@ -808,16 +759,16 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
       Point_2     p_left, p_right;
       
       if (has_left)
-        p_left = traits->construct_min_vertex_2_object() (*intersection_curve);
+        p_left = traits->construct_min_vertex_2_object()(*intersection_curve);
       
       if (has_right)
-        p_right = traits->construct_max_vertex_2_object() (*intersection_curve);
+        p_right = traits->construct_max_vertex_2_object()(*intersection_curve);
 
       bool is_in_x_range = true;
       // Check if the overlapping curve is not relevant to our range.
       if (v_leftmost && has_right &&
-          traits->compare_xy_2_object() (p_right, 
-                                         (*v_leftmost)->point()) != LARGER)
+          (traits->compare_xy_2_object()(p_right, (*v_leftmost)->point()) !=
+           LARGER))
       {
         // The right point of the overlappinf curve is to the left of the
         // current rightmost vertex in out_d, so we skip it and continue
@@ -826,16 +777,13 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
         is_in_x_range = false;
       }
       
-      if (is_in_x_range && v_exists && has_left)
-      {
-        Comparison_result res = traits->compare_xy_2_object() (p_left, 
-                                                               v->point());
+      if (is_in_x_range && v_exists && has_left) {
+        Comparison_result res =
+          traits->compare_xy_2_object()(p_left, v->point());
         
         // v is an intersection points, so both curves are equal there:
         if (res == EQUAL)
-        {
           equal_at_v = true;
-        }
         
         // We passed the next vertex, so we can stop here.
         if (res == LARGER)
@@ -845,28 +793,24 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
       // There is an overlap between the range [u, v] and intersection_curve.
       if (is_in_x_range && has_left && 
           (! v_leftmost ||
-           traits->compare_xy_2_object() (p_left, 
-                                          (*v_leftmost)->point()) == LARGER))
+           (traits->compare_xy_2_object()(p_left, (*v_leftmost)->point()) ==
+            LARGER)))
       {
         // Create an output edge that represent the portion of [u, v] to the
         // left of the overlapping curve.
-        Vertex_handle        new_v;
+        CGAL_assertion(current_res != EQUAL);
 
-        CGAL_assertion (current_res != EQUAL);
-
-        if (current_res == SMALLER)
-          new_v = _append_vertex (out_d, p_left, e1);
-        else
-          new_v = _append_vertex (out_d, p_left, e2);
+        Vertex_handle new_v = (current_res == SMALLER) ?
+          _append_vertex(out_d, p_left, e1) :
+          _append_vertex(out_d, p_left, e2);
         
         // if we are at v, then this is a special case that is handled after
         // the loop. We need to add the curves from the original vertices.
-        if (equal_at_v == false)
-        {
+        if (equal_at_v == false) {
           // Note that the new vertex is incident to all curves in e1 and
           // in e2.
-          new_v->add_curves (e1->curves_begin(), e1->curves_end());
-          new_v->add_curves (e2->curves_begin(), e2->curves_end());
+          new_v->add_curves(e1->curves_begin(), e1->curves_end());
+          new_v->add_curves(e2->curves_begin(), e2->curves_end());
         }
         
         // Update the handle to the rightmost vertex in the output diagram.
@@ -875,39 +819,33 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
       
       if (is_in_x_range && has_right &&
           (! v_exists ||
-           traits->compare_xy_2_object() (p_right, 
-                                          v->point()) == SMALLER))
+           (traits->compare_xy_2_object()(p_right, v->point()) == SMALLER)))
       {
         // Create an edge that represents the overlapping curve.
-        Vertex_handle        new_v;
+        Vertex_handle new_v = _append_vertex(out_d, p_right, e1);
+        new_v->left()->add_curves(e2->curves_begin(), e2->curves_end());
         
-        new_v = _append_vertex (out_d, p_right, e1);
-        new_v->left()->add_curves (e2->curves_begin(), e2->curves_end());
-        
-
         // We are not at v becuase p_right is smaller than v.
         // The special case that we are at v is handled in the next
         // condition.
         // If we were at v, then this was a special case that is handled
         // later.
-        CGAL_assertion (equal_at_v == false);
-        new_v->add_curves (e1->curves_begin(), e1->curves_end());
-        new_v->add_curves (e2->curves_begin(), e2->curves_end());
+        CGAL_assertion(equal_at_v == false);
+        new_v->add_curves(e1->curves_begin(), e1->curves_end());
+        new_v->add_curves(e2->curves_begin(), e2->curves_end());
         
         // Update the handle to the rightmost vertex in the output diagram.
         v_leftmost = new_v;
       }
       
       if (has_right == false || 
-          (v_exists && traits->compare_xy_2_object() (p_right, 
-                                                      v->point()) != SMALLER))
+          (v_exists && traits->compare_xy_2_object()(p_right, v->point()) !=
+           SMALLER))
       {
         // The overlapping curves reaches v.
-        if (v_exists)
-        {
-          Vertex_handle        new_v;
-          new_v = _append_vertex (out_d, v->point(), e1);
-          new_v->left()->add_curves (e2->curves_begin(), e2->curves_end());
+        if (v_exists) {
+          Vertex_handle new_v = _append_vertex(out_d, v->point(), e1);
+          new_v->left()->add_curves(e2->curves_begin(), e2->curves_end());
         }
         
         equal_at_v = true;
@@ -918,21 +856,19 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
       // We arrive here only if we are not at v and the overlap has a right
       // endpoint.
       // Compare the curves to the right of p_right.
-      current_res = traits->compare_y_at_x_right_2_object() (e1->curve(),
-                                                             e2->curve(),
-                                                             p_right);
+      current_res =
+        traits->compare_y_at_x_right_2_object()(e1->curve(), e2->curve(),
+                                                p_right);
       // Flip the result in case of an upper envelope.
       if (env_type == UPPER)
         current_res = CGAL::opposite (current_res);
       
     }
-    
   } // End of the traversal over the intersection objects.
 
 
   // Handle the portion after the intersection objects.
-  if (equal_at_v)
-  {
+  if (equal_at_v) {
     CGAL_assertion (v_exists);
 
     // v_leftmost should be our vertex at v.
@@ -941,17 +877,15 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
 
     Vertex_handle v_to_be_updated = out_d.rightmost()->left();
 
-    if (origin_of_v == EQUAL)
-    {
+    if (origin_of_v == EQUAL) {
       // If the vertices of the edge are the same, we have to get the 
       // curves from there:
-      v_to_be_updated->add_curves (e1->right()->curves_begin(), 
-                                   e1->right()->curves_end());
-      v_to_be_updated->add_curves (e2->right()->curves_begin(), 
-                                   e2->right()->curves_end());
+      v_to_be_updated->add_curves(e1->right()->curves_begin(), 
+                                  e1->right()->curves_end());
+      v_to_be_updated->add_curves(e2->right()->curves_begin(), 
+                                  e2->right()->curves_end());
     }
-    else
-    {
+    else {
       // We add the curves from the original vertex and from the edge of the
       // other diagram.
       Edge_const_handle e = (origin_of_v == SMALLER) ? e2 : e1;
@@ -963,21 +897,20 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
     return;
   }
   
-  if (! v_exists)
-  {
+  if (! v_exists) {
     // Both edges are unbounded from the right, so we simply have
     // to update the rightmost edge in out_d.
     switch (current_res)
     {
     case SMALLER:
-      out_d.rightmost()->add_curves (e1->curves_begin(), e1->curves_end());
+      out_d.rightmost()->add_curves(e1->curves_begin(), e1->curves_end());
       return;
     case LARGER:
-      out_d.rightmost()->add_curves (e2->curves_begin(), e2->curves_end());
+      out_d.rightmost()->add_curves(e2->curves_begin(), e2->curves_end());
       return;
     case EQUAL:
-      out_d.rightmost()->add_curves (e1->curves_begin(), e1->curves_end());
-      out_d.rightmost()->add_curves (e2->curves_begin(), e2->curves_end());
+      out_d.rightmost()->add_curves(e1->curves_begin(), e1->curves_end());
+      out_d.rightmost()->add_curves(e2->curves_begin(), e2->curves_end());
       return;
     default:
       CGAL_error_msg("should not reach here.");
@@ -994,90 +927,79 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   // Second diagram of the two segments: [(0, 0), (1, 1)], [(1, 0), (2, 1)]
   
   // Check if we need to insert v into the diagram.
-  if (current_res == SMALLER)
-  {    
+  if (current_res == SMALLER) {    
     // The final part of the interval is taken from e1.
     Vertex_handle        new_v;
 
-    if (origin_of_v == SMALLER)
-    {
+    if (origin_of_v == SMALLER) {
       // In case v is also from e1, append it to the merged diagram.
-      new_v = _append_vertex (out_d, v->point(), e1);
-      new_v->add_curves (v->curves_begin(), v->curves_end());
+      new_v = _append_vertex(out_d, v->point(), e1);
+      new_v->add_curves(v->curves_begin(), v->curves_end());
     }
-    else
-    {
+    else {
       // if origin_of_v is EQUAL then the two diagram have a vertex at
       // exact same place.
-      if (origin_of_v == EQUAL)
-      {
-        new_v = _append_vertex (out_d, v->point(), e1);
-        new_v->add_curves (v->curves_begin(), v->curves_end());
+      if (origin_of_v == EQUAL) {
+        new_v = _append_vertex(out_d, v->point(), e1);
+        new_v->add_curves(v->curves_begin(), v->curves_end());
         
         // adding the curves of the vertex of the first diagram (vertices are
         // equal...)
-        new_v->add_curves (e1->right()->curves_begin(), 
-                           e1->right()->curves_end());
+        new_v->add_curves(e1->right()->curves_begin(), 
+                          e1->right()->curves_end());
       }
-      else
-      {
+      else {
         // If v is from e2, check if it below (or above, in case of an upper
         // envelope) cv1 to insert it.
         const Comparison_result  res = 
-          traits->compare_y_at_x_2_object() (v->point(),
-                                             e1->curve());
+          traits->compare_y_at_x_2_object()(v->point(), e1->curve());
         
         if (res == EQUAL ||
-            (env_type == LOWER && res == SMALLER) ||
-            (env_type == UPPER && res == LARGER))
+            ((env_type == LOWER) && (res == SMALLER)) ||
+            ((env_type == UPPER) && (res == LARGER)))
           {
-            new_v = _append_vertex (out_d, v->point(), e1);
-            new_v->add_curves (v->curves_begin(), v->curves_end());
+            new_v = _append_vertex(out_d, v->point(), e1);
+            new_v->add_curves(v->curves_begin(), v->curves_end());
             
             if (res == EQUAL)
-              new_v->add_curves (e1->curves_begin(), e1->curves_end());
+              new_v->add_curves(e1->curves_begin(), e1->curves_end());
           }
       }
     }
   }
-  else
-  {
+  else {
     // The final part of the interval is taken from e2.
     Vertex_handle        new_v;
 
-    if (origin_of_v != SMALLER)
-    {
+    if (origin_of_v != SMALLER) {
       // In case v is also from e2, append it to the merged diagram.
-      new_v = _append_vertex (out_d, v->point(), e2);
-      new_v->add_curves (v->curves_begin(), v->curves_end());
+      new_v = _append_vertex(out_d, v->point(), e2);
+      new_v->add_curves(v->curves_begin(), v->curves_end());
       
       // if origin_of_v is EQUAL then the two diagram have a vertex at
       // exact same place.
-      if (origin_of_v == EQUAL)
-      {
+      if (origin_of_v == EQUAL) {
         // adding the curves of the vertex of the first diagram (vertices are
         // equal...)
-        new_v->add_curves (e1->right()->curves_begin(), 
-                           e1->right()->curves_end());
+        new_v->add_curves(e1->right()->curves_begin(),
+                          e1->right()->curves_end());
       }
     }
-    else
-    {
+    else {
       // If v is from e1, check if it below (or above, in case of an upper
       // envelope) cv2 to insert it.
       const Comparison_result  res = 
-        traits->compare_y_at_x_2_object() (v->point(),
-                                           e2->curve());
+        traits->compare_y_at_x_2_object()(v->point(), e2->curve());
       
       if (res == EQUAL ||
-          (env_type == LOWER && res == SMALLER) ||
-          (env_type == UPPER && res == LARGER))
+          ((env_type == LOWER) && (res == SMALLER)) ||
+          ((env_type == UPPER) && (res == LARGER)))
       {
-        new_v = _append_vertex (out_d, v->point(), e2);
-        new_v->add_curves (v->curves_begin(), v->curves_end());
+        new_v = _append_vertex(out_d, v->point(), e2);
+        new_v->add_curves(v->curves_begin(), v->curves_end());
         
         if (res == EQUAL)
-          new_v->add_curves (e2->curves_begin(), e2->curves_end());
+          new_v->add_curves(e2->curves_begin(), e2->curves_end());
       }
     }
   }
@@ -1090,36 +1012,34 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
 //
 template <class Traits, class Diagram>
 typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_handle
-Envelope_divide_and_conquer_2<Traits,Diagram>::_append_vertex
-        (Envelope_diagram_1& diag,
-         const Point_2& p, Edge_const_handle e)
+Envelope_divide_and_conquer_2<Traits,Diagram>::
+_append_vertex(Envelope_diagram_1& diag,
+               const Point_2& p, Edge_const_handle e)
 {
   // Create the new vertex and the new edge.
-  Vertex_handle   new_v = diag.new_vertex (p);
+  Vertex_handle   new_v = diag.new_vertex(p);
   Edge_handle     new_e = diag.new_edge();
   
   if (! e->is_empty())
-    new_e->add_curves (e->curves_begin(), e->curves_end());
+    new_e->add_curves(e->curves_begin(), e->curves_end());
   
   // Connect the new vertex.
-  new_v->set_left (new_e);
-  new_v->set_right (diag.rightmost());
+  new_v->set_left(new_e);
+  new_v->set_right(diag.rightmost());
   
-  if (diag.leftmost() != diag.rightmost())
-  {
+  if (diag.leftmost() != diag.rightmost()) {
     // The diagram is not empty. Connect the new edge to the left of the
     // rightmost edge of the diagram.
-    new_e->set_right (new_v);
-    new_e->set_left (diag.rightmost()->left());
-    diag.rightmost()->left()->set_right (new_e);
-    diag.rightmost()->set_left (new_v);
+    new_e->set_right(new_v);
+    new_e->set_left(diag.rightmost()->left());
+    diag.rightmost()->left()->set_right(new_e);
+    diag.rightmost()->set_left(new_v);
   }
-  else
-  {
+  else {
     // The diagram is empty: Make the new edge the leftmost.
-    new_e->set_right (new_v);
-    diag.set_leftmost (new_e);
-    diag.rightmost()->set_left (new_v);      
+    new_e->set_right(new_v);
+    diag.set_leftmost(new_e);
+    diag.rightmost()->set_left(new_v);      
   }
   
   return (new_v);
@@ -1131,26 +1051,26 @@ Envelope_divide_and_conquer_2<Traits,Diagram>::_append_vertex
 //
 template <class Traits, class Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_merge_vertical_segments (Curve_pointer_vector& vert_vec,
-                          Envelope_diagram_1& out_d)
+_merge_vertical_segments(Curve_pointer_vector& vert_vec,
+                         Envelope_diagram_1& out_d)
 {
   // Sort the vertical segments by their increasing x-coordinate.
-  Less_vertical_segment  les_vert (traits);
+  Less_vertical_segment  les_vert(traits);
 
-  std::sort (vert_vec.begin(), vert_vec.end(), les_vert);
+  std::sort(vert_vec.begin(), vert_vec.end(), les_vert);
 
   // Proceed on the diagram and on the sorted sequence of vertical segments
   // and merge them into the diagram.
   typename Traits_adaptor_2::Compare_x_2             comp_x =
-                                      traits->compare_x_2_object();
+    traits->compare_x_2_object();
   typename Traits_adaptor_2::Compare_xy_2            comp_xy =
-                                      traits->compare_xy_2_object();
+    traits->compare_xy_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2        comp_y_at_x =
-                                      traits->compare_y_at_x_2_object();
+    traits->compare_y_at_x_2_object();
   typename Traits_adaptor_2::Construct_min_vertex_2  min_vertex =
-                                      traits->construct_min_vertex_2_object();
+    traits->construct_min_vertex_2_object();
   typename Traits_adaptor_2::Construct_max_vertex_2  max_vertex =
-                                      traits->construct_max_vertex_2_object();
+    traits->construct_max_vertex_2_object();
 
   Edge_handle             e = out_d.leftmost();
   Vertex_handle           v = Vertex_handle();
@@ -1161,22 +1081,19 @@ _merge_vertical_segments (Curve_pointer_vector& vert_vec,
   bool                    on_v;
   Point_2                 p;
 
-  while (iter != vert_vec.end())
-  {
+  while (iter != vert_vec.end()) {
     // Check if the current vertical segment is on the x-range of the current
     // edge.
-    if (e != out_d.rightmost())
-    {
+    if (e != out_d.rightmost()) {
       // The current edge is not the rightmost one: we compare the x-coordinate
       // of the vertical segment to its right vertex.
       v = e->right();
 
-      res = comp_x (min_vertex (**iter), v->point());
+      res = comp_x(min_vertex(**iter), v->point());
       in_e_range = (res != LARGER);
       on_v = (res == EQUAL);
     }
-    else
-    {
+    else {
       // This is the rightmost edge, so the vertical segment must lie on its
       // x-range.
       in_e_range = true;
@@ -1185,8 +1102,7 @@ _merge_vertical_segments (Curve_pointer_vector& vert_vec,
     
     // If the current vertical segment is not in the x-range of the current
     // edge, we proceed to the next edge.
-    if (! in_e_range)
-    {
+    if (! in_e_range) {
       e = v->right();
       continue;
     }
@@ -1196,44 +1112,38 @@ _merge_vertical_segments (Curve_pointer_vector& vert_vec,
     // we construct an upper envelope). 
     std::list<X_monotone_curve_2>    env_cvs;
 
-    env_cvs.push_back (**iter);
+    env_cvs.push_back(**iter);
     next = iter;
     ++next;
-    while (next != vert_vec.end() &&
-           comp_x (min_vertex (**iter), min_vertex (**next)) == EQUAL)
+    while ((next != vert_vec.end()) &&
+           (comp_x(min_vertex(**iter), min_vertex(**next)) == EQUAL))
     {
-      if (env_type == LOWER)
-      {
+      if (env_type == LOWER) {
         // Compare the lower endpoints of both curves.
-        res = comp_xy (min_vertex (env_cvs.front()), min_vertex (**next));
+        res = comp_xy(min_vertex(env_cvs.front()), min_vertex(**next));
 
         // Update the list of vertical segments with minimal endpoints as
         // necessary.
-        if (res == EQUAL)
-        {
-          env_cvs.push_back (**next);
+        if (res == EQUAL) {
+          env_cvs.push_back(**next);
         }
-        if (res == LARGER)
-        {
+        if (res == LARGER) {
           env_cvs.clear();
-          env_cvs.push_back (**next);
+          env_cvs.push_back(**next);
         }
       }
-      else
-      {
+      else {
         // Compare the upper endpoints of both curves.
-        res = comp_xy (max_vertex (env_cvs.front()), max_vertex (**next));
+        res = comp_xy(max_vertex(env_cvs.front()), max_vertex(**next));
 
         // Update the list of vertical segments with maximal endpoints as
         // necessary.
-        if (res == EQUAL)
-        {
-          env_cvs.push_back (**next);
+        if (res == EQUAL) {
+          env_cvs.push_back(**next);
         }
-        if (res == SMALLER)
-        {
+        if (res == SMALLER) {
           env_cvs.clear();
-          env_cvs.push_back (**next);
+          env_cvs.push_back(**next);
         }
       }
 
@@ -1241,27 +1151,23 @@ _merge_vertical_segments (Curve_pointer_vector& vert_vec,
     }
 
     // Compare the endpoint to the diagram feature.
-    if (env_type == LOWER)
-      p = min_vertex (env_cvs.front());
-    else
-      p = max_vertex (env_cvs.front());
+    p = (env_type == LOWER) ?
+      min_vertex(env_cvs.front()) : max_vertex(env_cvs.front());
 
-    if (on_v)
-    {
+    if (on_v) {
       // Compare p to the current vertex.
-      res = comp_xy (p, v->point());
+      res = comp_xy(p, v->point());
 
-      if (res == EQUAL)
-      {
+      if (res == EQUAL) {
         // Add curves to the current vertex.
-        v->add_curves (env_cvs.begin(), env_cvs.end());
+        v->add_curves(env_cvs.begin(), env_cvs.end());
       }
       else if ((env_type == LOWER && res == SMALLER) ||
                (env_type == UPPER && res == LARGER))
       {
         // Replace the list of curves associated with the vertex.
         v->clear_curves();
-        v->add_curves (env_cvs.begin(), env_cvs.end());
+        v->add_curves(env_cvs.begin(), env_cvs.end());
       }
     }
     else
@@ -1269,26 +1175,24 @@ _merge_vertical_segments (Curve_pointer_vector& vert_vec,
       // p lies in the interior of the current edge.
       Vertex_handle   new_v;
 
-      if (e->is_empty())
-      {
+      if (e->is_empty()) {
         // Split the empty edge and associate the new vertex with the
         // vertical segments.
-        new_v = _split_edge (out_d, p, e);
-        new_v->add_curves (env_cvs.begin(), env_cvs.end());
+        new_v = _split_edge(out_d, p, e);
+        new_v->add_curves(env_cvs.begin(), env_cvs.end());
       }
-      else
-      {
+      else {
         // Compare p with the current curve.
-        res = comp_y_at_x (p, e->curve());
+        res = comp_y_at_x(p, e->curve());
         
-        if ((env_type == LOWER && res != LARGER) ||
-            (env_type == UPPER && res != SMALLER))
+        if (((env_type == LOWER) && (res != LARGER)) ||
+            ((env_type == UPPER) && (res != SMALLER)))
         {
-          new_v = _split_edge (out_d, p, e);
-          new_v->add_curves (env_cvs.begin(), env_cvs.end());
+          new_v = _split_edge(out_d, p, e);
+          new_v->add_curves(env_cvs.begin(), env_cvs.end());
 
           if (res == EQUAL)
-            new_v->add_curve (e->curve());
+            new_v->add_curve(e->curve());
         }
       }
     }
@@ -1305,29 +1209,28 @@ _merge_vertical_segments (Curve_pointer_vector& vert_vec,
 //
 template <class Traits, class Diagram>
 typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_handle
-Envelope_divide_and_conquer_2<Traits,Diagram>::_split_edge
-    (Envelope_diagram_1& diag,
-     const Point_2& p, Edge_handle e)
+Envelope_divide_and_conquer_2<Traits,Diagram>::
+_split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_handle e)
 {
   // Create the new vertex and the new edge.
-  Vertex_handle   new_v = diag.new_vertex (p);
+  Vertex_handle   new_v = diag.new_vertex(p);
   Edge_handle     new_e = diag.new_edge();
   
   // Duplicate the curves container associated with e.
   if (! e->is_empty())
-    new_e->add_curves (e->curves_begin(), e->curves_end());
+    new_e->add_curves(e->curves_begin(), e->curves_end());
   
   // Connect the new vertex between e and new_e.
-  new_v->set_left (e);
-  new_v->set_right (new_e);
+  new_v->set_left(e);
+  new_v->set_right(new_e);
   
-  new_e->set_left (new_v);
+  new_e->set_left(new_v);
   if (e != diag.rightmost())
-    new_e->set_right (e->right());
+    new_e->set_right(e->right());
   else
-    diag.set_rightmost (new_e);
+    diag.set_rightmost(new_e);
 
-  e->set_right (new_v);
+  e->set_right(new_v);
 
   // Return the new vertex.
   return (new_v);

@@ -1,0 +1,5 @@
+# The next entry is disabled here because it overlaps with the corresponding
+# entry in libcgal-dev.install. The files are moved in debian/rules.
+# usr/include/CGAL/Qt
+usr/lib/libCGAL_Qt4.a
+usr/lib/libCGAL_Qt4.so

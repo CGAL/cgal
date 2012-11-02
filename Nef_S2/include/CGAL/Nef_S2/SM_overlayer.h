@@ -336,12 +336,12 @@ void link_as_target_and_append(SVertex_handle v, SHalfedge_handle e)
 SHalfedge_handle new_halfedge_pair_at_source(SVertex_handle v)
 { return G.new_shalfedge_pair_at_source(v,Graph::BEFORE); }
 
-void supporting_segment(SHalfedge_handle e, ITERATOR it) {}
-void halfedge_below(SVertex_handle v, SHalfedge_handle e) {}
-void trivial_segment(SVertex_handle v, ITERATOR it) {}
-void starting_segment(SVertex_handle v, ITERATOR it) {}
-void passing_segment(SVertex_handle v, ITERATOR it) {}
-void ending_segment(SVertex_handle v, ITERATOR it) {}
+void supporting_segment(SHalfedge_handle /*e*/, ITERATOR /*it*/) {}
+void halfedge_below(SVertex_handle /*v*/, SHalfedge_handle /*e*/) {}
+void trivial_segment(SVertex_handle /*v*/, ITERATOR /*it*/) {}
+void starting_segment(SVertex_handle /*v*/, ITERATOR /*it*/) {}
+void passing_segment(SVertex_handle /*v*/, ITERATOR /*it*/) {}
+void ending_segment(SVertex_handle /*v*/, ITERATOR /*it*/) {}
 
 
 }; // SMO_decorator

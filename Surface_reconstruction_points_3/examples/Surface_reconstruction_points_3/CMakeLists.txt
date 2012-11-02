@@ -3,12 +3,10 @@
 project( Surface_reconstruction_points_3_example )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 # Require packages new or improved since CGAL 3.5 beta 1
@@ -21,7 +19,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/mo
 include_directories (BEFORE . include ../../include)
 
 # Find CGAL
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET COMPONENTS Core Eigen3 MPFI )
 
 if ( CGAL_FOUND )
 
@@ -54,7 +52,7 @@ if ( CGAL_FOUND )
   ADD_DEFINITIONS( "-DDEBUG_TRACE" ) # turn on traces
 
 
-  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+#  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
   endif()

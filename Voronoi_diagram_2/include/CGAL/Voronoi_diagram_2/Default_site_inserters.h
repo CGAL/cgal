@@ -127,7 +127,7 @@ class Default_caching_site_inserter<AT,Null_functor>
 {
 public:
   Default_caching_site_inserter() {}
-  template<typename T> Default_caching_site_inserter(T t) {}
+  template<typename T> Default_caching_site_inserter(T /*t*/) {}
 };
 
 //===========================================================================

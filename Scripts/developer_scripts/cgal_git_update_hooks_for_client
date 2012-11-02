@@ -1,0 +1,36 @@
+if [ ! -e .git -o ! -e CMakeLists.txt ];
+then
+  echo "Call $0 from root directory of the CGAL repository"
+  exit
+fi
+
+branch=$(git symbolic-ref HEAD)
+branch=${branch/refs\/heads\//}
+
+if [ ! -e .git ];
+then
+  echo "Call $0 from root directory of the CGAL repository"
+  exit
+fi
+
+if [ "$branch" != "master" ];
+then
+  echo "Call $0 from branch 'master'"
+  exit
+fi
+
+echo -n "Fetching from origin ... "
+git fetch
+echo "done"
+
+echo "Updating hooks ... "
+
+cd .git/hooks
+if [ ! -e .git ];
+then
+  git init
+fi
+if git pull .. remotes/origin/hooks-for-clients; then
+  echo "Hooks updated."
+fi
+cd ../..

@@ -40,9 +40,16 @@
 // - test whether stopping constant propagation only in functions taking
 //   double as arguments, improves performance.
 
-#include <CGAL/number_type_basic.h>
+#include <utility> // for std::pair
+#include <CGAL/number_type_config.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/utils_classes.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Interval_traits.h>
+#include <CGAL/double.h>
+#include <CGAL/FPU.h>
+#include <CGAL/IO/io.h>
 #include <iostream>
 
 namespace CGAL {
@@ -70,6 +77,46 @@ public:
 
   Interval_nt(int i)
     : _inf(i), _sup(i) {}
+
+  Interval_nt(unsigned i)
+    : _inf(i), _sup(i) {}
+
+  Interval_nt(long long i)
+    : _inf((double)i), _sup((double)i)
+  {
+    // gcc ignores -frounding-math when converting integers to floats.
+#ifdef __GNUC__
+    long long safe = 1LL << 52; // Use numeric_limits?
+    bool exact = ((long long)_inf == i) || (i <= safe && i >= -safe);
+    if (!(__builtin_constant_p(exact) && exact))
+#endif
+      *this += smallest();
+  }
+
+  Interval_nt(unsigned long long i)
+    : _inf((double)i), _sup((double)i)
+  {
+#ifdef __GNUC__
+    unsigned long long safe = 1ULL << 52; // Use numeric_limits?
+    bool exact = ((unsigned long long)_inf == i) || (i <= safe);
+    if (!(__builtin_constant_p(exact) && exact))
+#endif
+      *this += smallest();
+  }
+
+  Interval_nt(long i)
+  {
+    *this = (sizeof(int)==sizeof(long)) ?
+      Interval_nt((int)i) :
+      Interval_nt((long long)i);
+  }
+
+  Interval_nt(unsigned long i)
+  {
+    *this = (sizeof(int)==sizeof(long)) ?
+      Interval_nt((unsigned)i) :
+      Interval_nt((unsigned long long)i);
+  }
 
   Interval_nt(double d)
     : _inf(d), _sup(d) { CGAL_assertion(is_finite(d)); }
@@ -1374,5 +1421,30 @@ public:
 };
 
 } //namespace CGAL
+
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<bool b> struct NumTraits<CGAL::Interval_nt<b> >
+  {
+    typedef CGAL::Interval_nt<b> Real;
+    typedef CGAL::Interval_nt<b> NonInteger;
+    typedef CGAL::Interval_nt<b> Nested;
+
+    static inline Real epsilon() { return 0; }
+
+    // Costs could depend on b.
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 0,
+      ReadCost = 2,
+      AddCost = 2,
+      MulCost = 10
+    };
+  };
+}
+#endif
 
 #endif // CGAL_INTERVAL_NT_H

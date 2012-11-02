@@ -120,7 +120,12 @@ public:
   void flip(Face_handle& f, int i);
   void flip_around(Vertex_handle va);
   void flip_around(List_vertices & new_vertices);
-  void propagating_flip(Face_handle& f,int i);
+#ifndef CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
+  void non_recursive_propagating_flip(Face_handle f,int i);
+  void propagating_flip(Face_handle f,int i, int depth=0);
+#else
+  void propagating_flip(Face_handle f,int i);
+#endif
   void propagating_flip(List_edges & edges);
 
   // CONFLICTS
@@ -262,24 +267,77 @@ public:
 public:
 // made  public for the need of Mesh_2
 // but not documented
- template <class OutputItFaces, class OutputItBoundaryEdges> 
- std::pair<OutputItFaces,OutputItBoundaryEdges>
- propagate_conflicts (const Point  &p,
-		      Face_handle fh, 
-		      int i,
-		      std::pair<OutputItFaces,OutputItBoundaryEdges>  pit)  const {
-   Face_handle fn = fh->neighbor(i);
-   
-   if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
-     *(pit.second)++ = Edge(fn, fn->index(fh));
-   } else {
-     *(pit.first)++ = fn;
-     int j = fn->index(fh);
-     pit = propagate_conflicts(p,fn,ccw(j),pit);
-     pit = propagate_conflicts(p,fn,cw(j), pit);
-   }
-   return pit;
- }
+#ifdef CGAL_CDT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  propagate_conflicts (const Point  &p,
+                      Face_handle fh, 
+                      int i,
+                      std::pair<OutputItFaces,OutputItBoundaryEdges>  pit)  const 
+  {
+     Face_handle fn = fh->neighbor(i);
+     
+     if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
+       *(pit.second)++ = Edge(fn, fn->index(fh));
+     } else {
+       *(pit.first)++ = fn;
+       int j = fn->index(fh);
+       pit = propagate_conflicts(p,fn,ccw(j),pit);
+       pit = propagate_conflicts(p,fn,cw(j), pit);
+     }
+     return pit;
+  }
+#else // NO CGAL_CDT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  non_recursive_propagate_conflicts (const Point  &p,
+                                     Face_handle fh, 
+                                     int i,
+                                     std::pair<OutputItFaces,OutputItBoundaryEdges>  pit)  const 
+  {
+    std::stack<std::pair<Face_handle, int> > stack;
+    stack.push(std::make_pair(fh, i));
+    while(!stack.empty()) {
+      const Face_handle fh = stack.top().first;
+      const int i = stack.top().second;
+      stack.pop();
+      const Face_handle fn = fh->neighbor(i);
+      if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
+        *(pit.second)++ = Edge(fn, fn->index(fh));
+      } else {
+        *(pit.first)++ = fn;
+        int j = fn->index(fh);
+        stack.push(std::make_pair(fn, cw(j)));
+        stack.push(std::make_pair(fn,ccw(j)));
+      }
+    }
+    return pit;
+  }
+
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  propagate_conflicts (const Point  &p,
+                      Face_handle fh, 
+                      int i,
+                      std::pair<OutputItFaces,OutputItBoundaryEdges>  pit,
+                      int depth=0)  const 
+  {
+    if ( depth==100) return non_recursive_propagate_conflicts(p,fh,i,pit);
+    Face_handle fn = fh->neighbor(i);
+ 
+    if ( fh->is_constrained(i) || ! test_conflict(p,fn)) {
+      *(pit.second)++ = Edge(fn, fn->index(fh));
+    } else {
+      *(pit.first)++ = fn;
+      int j = fn->index(fh);
+      pit = propagate_conflicts(p,fn,ccw(j),pit,depth+1);
+      pit = propagate_conflicts(p,fn,cw(j), pit,depth+1);
+    }
+     return pit;
+  }
+#endif // NO CGAL_CDT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
+
+
 
 
 public:
@@ -384,7 +442,7 @@ public:
 template < class Gt, class Tds, class Itag >
 bool 
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-is_flipable(Face_handle f, int i, bool perturb) const
+is_flipable(Face_handle f, int i, bool perturb /* = true */) const
   // determines if edge (f,i) can be flipped 
 {
   Face_handle ni = f->neighbor(i); 
@@ -463,22 +521,70 @@ flip_around(List_vertices& new_vertices)
 }
 
 
-template < class Gt, class Tds, class Itag >
-void 
+#ifndef CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
+template <class Gt, class Tds, class Itag >
+void
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-propagating_flip(Face_handle& f,int i)
-// similar to the corresponding function in Delaunay_triangulation_2.h 
-{ 
+non_recursive_propagating_flip(Face_handle f , int i)
+{
+  std::stack<Edge> edges;
+  const Vertex_handle& vp = f->vertex(i);
+  edges.push(Edge(f,i));
+
+  while(! edges.empty()){
+    const Edge& e = edges.top();
+    f = e.first;
+    i = e.second;
+
+    Face_handle ni = f->neighbor(i);
+    flip(f,i);
+    if ( !is_flipable(f,i) ) edges.pop();
+
+    i = ni->index(vp);
+    if ( is_flipable(ni,i) ) edges.push( Edge(ni,i) );
+  }
+}
+
+template <class Gt, class Tds, class Itag >
+void
+Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
+propagating_flip(Face_handle f,int i, int depth)
+{
   if (!is_flipable(f,i)) return;
-  Face_handle ni = f->neighbor(i); 
+#ifdef CGAL_CDT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
+  non_recursive_propagating_flip(f,i);
+#else
+  int max_depth = 100;
+  if(depth==max_depth){
+    non_recursive_propagating_flip(f,i);
+    return;
+  }
+
+  Face_handle ni = f->neighbor(i);
   flip(f, i); // flip for constrained triangulations
-  propagating_flip(f,i); 
-  i = ni->index(f->vertex(i)); 
-  propagating_flip(ni,i); 
-} 
+  propagating_flip(f,i);
+  i = ni->index(f->vertex(i));
+  propagating_flip(ni,i);
+#endif
+}
+#else 
+template < class Gt, class Tds, class Itag >
+void
+Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
+propagating_flip(Face_handle f,int i)
+// similar to the corresponding function in Delaunay_triangulation_2.h
+{
+  if (!is_flipable(f,i)) return;
+  Face_handle ni = f->neighbor(i);
+  flip(f, i); // flip for constrained triangulations
+  propagating_flip(f,i);
+  i = ni->index(f->vertex(i));
+  propagating_flip(ni,i);
+}
+#endif
 
  template < class Gt, class Tds, class Itag > 
- void  
+ void
  Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>:: 
  propagating_flip(List_edges & edges) {
     propagating_flip(edges,Emptyset_iterator());

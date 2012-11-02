@@ -66,17 +66,16 @@ if (EIGEN3_INCLUDE_DIR)
                     "set to ${EIGEN3_INCLUDE_DIR}, but that path does not contains the file "
                     "signature_of_eigen3_matrix_library and is considered as invalid.")
   endif()
-  
-  
+
+
 
 else (EIGEN3_INCLUDE_DIR)
 
   find_path(EIGEN3_INCLUDE_DIR NAMES signature_of_eigen3_matrix_library
-      HINTS
-      $ENV{EIGEN3_INC_DIR}
-      PATHS
-      ${KDE4_INCLUDE_DIR}
-      PATH_SUFFIXES eigen3 eigen
+      HINTS ENV EIGEN3_INC_DIR
+            ENV EIGEN3_DIR
+      PATHS ${KDE4_INCLUDE_DIR}
+      PATH_SUFFIXES include eigen3 eigen
     )
 
   if(EIGEN3_INCLUDE_DIR)
@@ -91,7 +90,7 @@ else (EIGEN3_INCLUDE_DIR)
   # Add variables to cache
   set( EIGEN3_INCLUDE_DIR   "${EIGEN3_INCLUDE_DIR}"
          CACHE PATH "Directories	containing the Eigen3 header files" FORCE )
-  
- 
+
+
 endif(EIGEN3_INCLUDE_DIR)
 

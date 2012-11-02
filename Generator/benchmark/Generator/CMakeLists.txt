@@ -5,12 +5,10 @@
 project( Generator_example )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 find_package(CGAL QUIET COMPONENTS Core )
@@ -20,10 +18,10 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
   find_package(Boost REQUIRED program_options)
-  
-  include_directories(${Boost_INCLUDE_DIRS})
-  link_libraries(${Boost_LIBRARIES})
-
+  include_directories(${Boost_PROGRAM_OPTIONS_INCLUDE_DIR})
+  add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
+  list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
+ 
   include( CGAL_CreateSingleSourceCGALProgram )
 
   include_directories (BEFORE ../../include)

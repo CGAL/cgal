@@ -26,6 +26,10 @@
 */
 
 #include <cassert>
+#include <CGAL/tags.h>
+#include <CGAL/number_type_config.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Algebraic_structure_traits.h>
 
 // These are test functions for the Coercion_traits
 namespace CGAL {

@@ -51,7 +51,8 @@
 #ifndef CGAL_INTERVAL_TRAITS_H
 #define CGAL_INTERVAL_TRAITS_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/tags.h>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 

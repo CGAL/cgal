@@ -33,8 +33,6 @@ namespace LinearFunctors {
   typename CK::Polynomial_1_2
   get_equation( const typename CK::Line_2 & L )
   {
-    typedef typename CK::RT RT;
- 
     return typename CK::Polynomial_1_2(L.a(),L.b(),L.c());
   }
   

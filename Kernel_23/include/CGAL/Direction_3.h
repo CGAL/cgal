@@ -104,25 +104,25 @@ public:
   Vector_3 vector() const { return to_vector(); }
 
 
-  typename Qualified_result_of<typename R::Compute_dx_3, Direction_3>::type
+  typename boost::result_of<typename R::Compute_dx_3(Direction_3)>::type
   dx() const
   {
     return R().compute_dx_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_dy_3, Direction_3>::type
+  typename boost::result_of<typename R::Compute_dy_3(Direction_3)>::type
   dy() const
   {
     return R().compute_dy_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_dz_3, Direction_3>::type
+  typename boost::result_of<typename R::Compute_dz_3(Direction_3)>::type
   dz() const
   {
     return R().compute_dz_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_dx_3, Direction_3>::type
+  typename boost::result_of<typename R::Compute_dx_3(Direction_3)>::type
   delta(int i) const
   {
     CGAL_kernel_precondition( i >= 0 && i <= 2 );

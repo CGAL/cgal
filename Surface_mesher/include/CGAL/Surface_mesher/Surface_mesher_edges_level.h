@@ -95,12 +95,8 @@ namespace Surface_mesher {
     typedef typename Tr::Cell_handle Cell_handle;
     typedef typename GT::Point_3 Point_3;
     typedef typename GT::Triangle_3 Triangle_3;
-    typedef typename GT::Sphere_3 Sphere_3;
-    typedef typename GT::Ray_3 Ray_3;
-    typedef typename GT::Line_3 Line_3;
     typedef typename GT::Vector_3 Vector_3;
     typedef typename GT::FT FT;
-    typedef typename Surface_mesh_traits::Surface_3 Surface_3;
     typedef typename Surface_mesh_traits::Intersection_point Intersection_point;
 
     typename GT::Construct_midpoint_3 midpoint = 
