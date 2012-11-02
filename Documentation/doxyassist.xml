@@ -1160,6 +1160,7 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
             <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
             <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
       </project>
