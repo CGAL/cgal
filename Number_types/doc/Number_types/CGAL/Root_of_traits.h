@@ -33,7 +33,7 @@ namespace CGAL {
 /*!
 \ingroup nt_ralgebraic
 
-The function `make_root_of_2` constructs an algebraic number of degree 2 over a 
+The function `make_root_of_2()` constructs an algebraic number of degree 2 over a 
 ring number type. 
 
 Returns the smallest real root of the polynomial \f$ aX^2+bX+c\f$ if
@@ -55,7 +55,7 @@ make_root_of_2(const RT& a, const RT& b, const RT& c, bool s);
 /*!
 \ingroup nt_ralgebraic
 
-The function `make_root_of_2` constructs an algebraic number of degree 2 over a 
+The function `make_root_of_2()` constructs an algebraic number of degree 2 over a 
 ring number type. 
 
 Constructs the number \f$ \alpha+ \beta\sqrt{\gamma}\f$. 
@@ -81,7 +81,7 @@ namespace CGAL {
 /*!
 \ingroup nt_ralgebraic
 
-The function `make_sqrt` constructs a square root of a given value of type \f$ RT\f$. 
+The function `make_sqrt()` constructs a square root of a given value of type \f$ RT\f$. 
 Depending on the type \f$ RT\f$ the square root may be returned in a new type that 
 can represent algebraic extensions of degree \f$ 2\f$. 
 
