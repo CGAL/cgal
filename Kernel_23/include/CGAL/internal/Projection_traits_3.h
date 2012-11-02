@@ -1,4 +1,3 @@
-<<<<<<< variant A
 // Copyright (c) 1997-2010  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
