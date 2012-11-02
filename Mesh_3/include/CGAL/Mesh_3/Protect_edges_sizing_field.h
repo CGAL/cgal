@@ -355,7 +355,9 @@ insert_corners()
           nearest =  (*it)->point();
         }
       }
-      const FT nearest_sq_dist = CGAL::squared_distance( nearest, p);
+      typename Gt::Compute_squared_distance_3 squared_distance = 
+        c3t3_.triangulation().geom_traits().compute_squared_distance_3_object();
+      const FT nearest_sq_dist = squared_distance( nearest, p);
       
       w = (std::min)(w, nearest_sq_dist / FT(9));
     }
@@ -806,8 +808,6 @@ non_adjacent_but_intersect(const Vertex_handle& va, const Vertex_handle& vb) con
 {
   if ( ! c3t3_.is_in_complex(va,vb) )
   {
-    typedef typename Gt::Sphere_3 Sphere_3;
-    
     typename Gt::Construct_sphere_3 sphere = 
       c3t3_.triangulation().geom_traits().construct_sphere_3_object();
     
@@ -847,6 +847,12 @@ change_ball_size(const Vertex_handle& v, const FT size)
     c3t3_.remove_from_complex(v,vit->first);
   }
   
+  
+  // Store point data
+  Index index = v->index();
+  int dim = v->in_dimension();
+  Bare_point p = v->point().point();
+
   // Remove v from corners
   boost::optional<Corner_index> corner_index;
   if ( c3t3_.is_in_complex(v) )
@@ -854,12 +860,6 @@ change_ball_size(const Vertex_handle& v, const FT size)
     corner_index = c3t3_.corner_index(v);
     c3t3_.remove_from_complex(v);
   }
-  
-  // Store point data
-  Index index = v->index();
-  int dim = v->in_dimension();
-  Bare_point p = v->point().point();  
-  
   // Change v size
   c3t3_.triangulation().remove(v);
   Vertex_handle new_v = insert_point(p, size*size, dim, index);

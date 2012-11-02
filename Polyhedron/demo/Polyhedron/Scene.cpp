@@ -62,7 +62,7 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item)
   emit updated();
   itemChanged(index);
   QAbstractListModel::reset();
- return item;
+  return item;
 }
 
 int
@@ -112,6 +112,9 @@ Scene::erase(QList<int> indices)
   QAbstractListModel::reset();
 
   int index = max_index + 1 - indices.size();
+  if(index >= m_entries.size()) {
+    index = m_entries.size() - 1;
+  }
   if(index >= 0)
     return index;
   if(!m_entries.isEmpty())
@@ -169,6 +172,18 @@ void Scene::initializeGL()
 #if QT_VERSION < 0x040300
 #  define lighter light
 #endif
+
+bool 
+Scene::keyPressEvent(QKeyEvent* e){
+  bool res=false;
+  for (QList<int>::iterator it=selected_items_list.begin(),endit=selected_items_list.end();
+       it!=endit;++it)
+  {
+    Scene_item* item=m_entries[*it];
+    res |= item->keyPressEvent(e);
+  }
+  return res;
+}
 
 void 
 Scene::draw()
@@ -238,6 +253,19 @@ Scene::draw_aux(bool with_names)
         
         item.draw_edges();
       }
+      else{
+        if( item.renderingMode() == PointsPlusNormals ){
+        ::glDisable(GL_LIGHTING);
+        ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        ::glPointSize(2.f);
+        ::glLineWidth(1.0f);
+        if(index == selected_item)
+          CGALglcolor(item.color().lighter(120));
+        else
+          CGALglcolor(item.color());
+        item.draw_edges();
+        }
+      }
       if(with_names) {
         ::glPopName();
       }
@@ -253,7 +281,7 @@ Scene::draw_aux(bool with_names)
     Scene_item& item = *m_entries[index];
     if(item.visible())
     {
-      if(item.renderingMode() == Points)
+      if(item.renderingMode() == Points  || item.renderingMode() == PointsPlusNormals)
       {
         ::glDisable(GL_LIGHTING);
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);

@@ -29,9 +29,10 @@ Io_c3t3_plugin::nameFilters() const
 
 
 bool
-Io_c3t3_plugin::canSave(const Scene_item*)
+Io_c3t3_plugin::canSave(const Scene_item* item)
 {
-  return true;
+  const Scene_c3t3_item* c3t3_item = qobject_cast<const Scene_c3t3_item*>(item);
+  return c3t3_item != NULL;
 }
 
 bool

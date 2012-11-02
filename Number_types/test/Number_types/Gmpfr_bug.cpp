@@ -18,6 +18,7 @@
 
 #ifdef CGAL_USE_MPFI
 
+#include <cassert> // for the assert macro
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpfr.h>

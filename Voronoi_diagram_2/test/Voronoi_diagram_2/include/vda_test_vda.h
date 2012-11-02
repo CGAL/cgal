@@ -25,6 +25,7 @@
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
 #include <cassert>
 #include "helper_functions.h"
+#include <CGAL/Testsuite/use.h>
 
 //==========================================================================
 //==========================================================================
@@ -607,11 +608,13 @@ void test_vda(const VDA& vda)
   Site_iterator sit;
   for (sit = vda.sites_begin(); sit != vda.sites_end(); ++sit) {
     typename AT::Site_2 s = *sit;
+    CGAL_USE(s);
   }
 
   if ( vda.sites_begin() != vda.sites_end() ) {
     for (sit = --vda.sites_end(); sit != vda.sites_begin(); --sit) {
       typename AT::Site_2 s = *sit;
+      CGAL_USE(s);
     }
   }
 }

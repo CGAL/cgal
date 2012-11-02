@@ -1,12 +1,30 @@
 #include "Show_point_dialog.h"
 #include "ui_Show_point_dialog.h"
 
+#include <QClipboard>
+
 Show_point_dialog::Show_point_dialog(QWidget* parent)
   : QDialog(parent)
   , ui(new Ui::Show_point_dialog)
   , m_has_correct_coordinates(false)
 {
   ui->setupUi(this);
+
+  QClipboard::Mode mode = QClipboard::Selection; 
+  while(true) {
+    QString clipboard_text = QApplication::clipboard()->text(mode);
+    
+    interprete_string(clipboard_text);
+    if(m_has_correct_coordinates) {
+      ui->lineEdit->setText(clipboard_text);
+      ui->lineEdit->selectAll();
+      break;
+    } else {
+      interprete_string(ui->lineEdit->text());
+    }
+    if(mode == QClipboard::Selection) mode = QClipboard::Clipboard;
+    else break;
+  }
 
   connect(ui->lineEdit, SIGNAL(textChanged(const QString&)),
           this, SLOT(interprete_string(const QString&)));

@@ -26,6 +26,9 @@
 #define CGAL_ISO_CUBOIDH3_H
 
 #include <CGAL/array.h>
+#include <CGAL/enum.h>
+#include <CGAL/kernel_config.h>
+#include <CGAL/kernel_assertions.h>
 
 namespace CGAL {
 

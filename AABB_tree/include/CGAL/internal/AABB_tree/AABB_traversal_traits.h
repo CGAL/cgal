@@ -21,13 +21,10 @@
 #ifndef CGAL_AABB_TRAVERSAL_TRAITS_H
 #define CGAL_AABB_TRAVERSAL_TRAITS_H
 
-#include <CGAL/AABB_tree.h>
 #include <CGAL/internal/AABB_tree/AABB_node.h>
 #include <boost/optional.hpp>
 
 namespace CGAL { 
-
-template <typename AABBTraits> class AABB_tree;
 
 namespace internal { namespace AABB_tree {
 
@@ -67,14 +64,13 @@ template<typename AABBTraits, typename Query>
 class First_intersection_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Point_3 Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   typedef typename boost::optional<Object_and_primitive_id> Result;
@@ -110,14 +106,13 @@ template<typename AABBTraits, typename Query, typename Output_iterator>
 class Listing_intersection_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Point_3 Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   Listing_intersection_traits(Output_iterator out_it)
@@ -152,14 +147,13 @@ template<typename AABBTraits, typename Query, typename Output_iterator>
 class Listing_primitive_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Point_3 Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   Listing_primitive_traits(Output_iterator out_it)
@@ -192,14 +186,13 @@ template<typename AABBTraits, typename Query>
 class First_primitive_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Point_3 Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   First_primitive_traits()
@@ -237,14 +230,13 @@ template<typename AABBTraits, typename Query>
 class Do_intersect_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Point_3 Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   Do_intersect_traits()
@@ -278,14 +270,13 @@ template <typename AABBTraits>
 class Projection_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Point_3 Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   Projection_traits(const Point& hint,

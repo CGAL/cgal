@@ -1,0 +1,36 @@
+Min_quadrilateral_2
+-------------------
+Algorithms to compute the minimum enclosing rectangle/parallelogram
+(arbitrary orientation) and the minimum enclosing strip of a convex 
+point set.
+
+Min_sphere_of_spheres_d
+-----------------------
+Algorithms for computing the smallest enclosing sphere of spheres
+in arbitrary dimensionMatrix_search
+Algorithms for searching in monotone and sorted matrices and
+applications: computing extremal polygons, all furthest neighbors for
+the vertices of a convex polygon and rectangular p-centers.
+
+Approximate_min_ellipsoid_d
+---------------------------
+Algorithm for a (1+eps)-approximation to the minimum-volume enclosing
+ellipsoid of points in arbitrary dimension
+
+Min_ellipse_2
+-------------
+Algorithm for computing the smallest enclosing ellipse of points in the plane
+
+Min_circle_2
+------------
+Algorithm for computing the smallest enclosing circle of points in the plane
+
+Min_sphere_d
+------------
+Algorithms for computing the smallest enclosing sphere of points in
+arbitrary dimension
+
+Min_annulus_d
+-------------
+Algorithm for computing the smallest enclosing annulus of points in
+arbitrary dimension

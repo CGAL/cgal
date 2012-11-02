@@ -208,7 +208,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     typedef  std::vector<std::pair<Algebraic_real_1,unsigned int> > ROOTS;
     ROOTS roots;
     Polynomial_1 p1 = (x-1)*(x-2)*(x-2);
-    std::back_insert_iterator<ROOTS> biit =
+    // std::back_insert_iterator<ROOTS> biit =
       solve_1(p1,std::back_inserter(roots));
     Algebraic_real_1 ar = roots[1].first;
     Polynomial_1 p2 = compute_polynomial_1(ar);
@@ -290,63 +290,120 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     assert(compare_1(bound,Algebraic_real_1(1)) == LARGER  );
     assert(compare_1(bound,Algebraic_real_1(2)) == SMALLER );
   }
-  { // Approximate_absolute_1
-    {
-      std::list<Algebraic_real_1> roots;
-      solve_1((x*x-2),true,std::back_inserter(roots));
-      Algebraic_real_1 root = (CGAL::max)(roots.front(),roots.back());
-      BInterval bi = approximate_absolute_1(root,5);
-      assert(compare_1(bi.first ,root) != LARGER );
-      assert(compare_1(Algebraic_real_1(bi.second),root) != SMALLER);
-      assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
-      assert((bi.second - bi.first) * ipower(Bound(2),5) <= Bound(1) );
-    }{
-      std::list<Algebraic_real_1> roots;
-      solve_1((x*x-3),true,std::back_inserter(roots));
-      Algebraic_real_1 root = (CGAL::min)(roots.front(),roots.back());
-      BInterval bi = approximate_absolute_1(root,-5);
-      assert(compare_1(bi.first ,root) != LARGER );
-      assert(compare_1(bi.second,root) != SMALLER);
-      assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
-      assert((bi.second - bi.first) <= ipower(Bound(2),5) );
-    }
-  }
 
-  { // Approximate_relative_1
-    {
-      std::list<Algebraic_real_1> roots;
-      solve_1((x*x-2),true,std::back_inserter(roots));
-      Algebraic_real_1 root = (CGAL::max)(roots.front(),roots.back());
-      BInterval bi = approximate_relative_1(root,5);
-      assert(compare_1(bi.first ,root) != LARGER );
-      assert(compare_1(bi.second,root) != SMALLER);
-      assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
-      assert((bi.second - bi.first * ipower(Bound(2),5))
-          <= (CGAL::max)(abs(bi.first),abs(bi.second)));
-    }{
-      std::list<Algebraic_real_1> roots;
-      solve_1((x*x-30),true,std::back_inserter(roots));
-      Algebraic_real_1 root = (CGAL::min)(roots.front(),roots.back());
-      BInterval bi = approximate_relative_1(root,-5);
-      assert(compare_1(bi.first ,root) != LARGER );
-      assert(compare_1(bi.second,root) != SMALLER);
-      assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
-      assert((bi.second - bi.first)
-          <= (CGAL::max)(abs(bi.first),abs(bi.second)) * ipower(Bound(2),5));
-    }
-    {
-      std::list<Algebraic_real_1> roots;
-      solve_1((300*x*x-2),true,std::back_inserter(roots));
-      Algebraic_real_1 root = (CGAL::min)(roots.front(),roots.back());
-      BInterval bi = approximate_relative_1(root,5);
-      assert(compare_1(bi.first ,root) != LARGER );
-      assert(compare_1(bi.second,root) != SMALLER);
-      assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
-      assert((bi.second - bi.first) * ipower(Bound(2),5)
-          <= (CGAL::max)(abs(bi.first),abs(bi.second)) );
-    }
-  }
+  CGAL::set_pretty_mode(std::cerr);
 
+  // Approximations
+  bool all_right = true;
+  std::cout << "start test_approximation (takes a while) " << std::flush;
+  Coefficient c = CGAL::ipower(Coefficient(2), 2500) + 1;
+  // we choose coefficients: small, large, (close to) power of two
+  std::vector< int > coeffs;
+  coeffs.push_back(1);
+  coeffs.push_back(13);
+  //coeffs.push_back(255);
+  //coeffs.push_back(499);
+  //coeffs.push_back(512);
+  //coeffs.push_back(10000);
+  //coeffs.push_back(3);
+  //coeffs.push_back(7);
+  //coeffs.push_back(64);
+  //coeffs.push_back(100);
+  coeffs.push_back(1023);
+  //coeffs.push_back(4096);
+  std::vector< int > precs;
+  //precs.push_back(0);
+  //precs.push_back(1);
+  //precs.push_back(2);
+  //precs.push_back(4);
+  precs.push_back(8);
+  //precs.push_back(13);
+  //  precs.push_back(1023);
+  //  precs.push_back(2048);
+  //precs.push_back(53);
+  //precs.push_back(3);
+  //precs.push_back(64);
+  //precs.push_back(106);
+  //precs.push_back(424);
+  for (typename std::vector< int >::const_iterator c0i = coeffs.begin(); 
+       c0i != coeffs.end(); c0i++) {
+    for (typename std::vector< int >::const_iterator c2i = coeffs.begin(); 
+         c2i != coeffs.end(); c2i++) {
+      // we basically test a quadratic polynomial (with choosen small and large 
+      // quadratic and constant coefficient, which is disturbed by a root close to zero).
+      //Polynomial_1 poly((*c2i*x*x - *c0i) * (c*x-1));
+      Polynomial_1 poly((*c2i*x*x - *c0i) * (c*x-1));
+      std::list<Algebraic_real_1> roots;
+      solve_1(poly,true,std::back_inserter(roots));
+      for (typename std::vector< int >::const_iterator pi = precs.begin(); 
+           pi != precs.end(); pi++) {
+        // all three roots are approximated with various precisions
+        long p = *pi;
+        { // Approximate_absolute_1 with positive p
+          for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
+               rit != roots.end(); rit++) {
+            BInterval bi = approximate_absolute_1(*rit,p);
+            assert(compare_1(bi.first ,*rit) != LARGER );
+            assert(compare_1(bi.second,*rit) != SMALLER);
+            assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
+            if (!((bi.second - bi.first) * (p == 0 ? Bound(1) : ipower(Bound(2),p-1)) 
+                  <= (p == 0 ? Bound(2) : Bound(1)) )) {
+              all_right = false;
+              std::cerr << "ERROR: Approximate_absolute_1 fails for prec = " << p 
+                        << " of this root: " << *rit << std::endl;
+            }
+          }
+        }
+        { // Approximate_absolute_1 with negative p
+          for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
+               rit != roots.end(); rit++) {
+            BInterval bi = approximate_absolute_1(*rit,-p);
+            assert(compare_1(bi.first ,*rit) != LARGER );
+            assert(compare_1(bi.second,*rit) != SMALLER);
+            assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
+            if (!((bi.second - bi.first) <= ipower(Bound(2),1-(-p)) )) {
+              all_right = false;
+              std::cerr << "ERROR: Approximate_absolute_1 fails for prec = " << -p 
+                        << " of this root: " << *rit << std::endl;
+            }
+          }
+        }
+        { // Approximate_relative_1 with positive p
+          for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
+               rit != roots.end(); rit++) {
+            BInterval bi = approximate_relative_1(*rit,p);
+            assert(compare_1(bi.first ,*rit) != LARGER );
+            assert(compare_1(bi.second,*rit) != SMALLER);
+            assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
+            if (!((bi.second - bi.first) * (p == 0 ? Bound(1) : ipower(Bound(2),p-1))
+                  <= (p == 0 ? Bound(2) : Bound(1)) * (CGAL::max)(abs(bi.first),abs(bi.second)))) {
+              all_right = false;
+              std::cerr << "ERROR: Approximate_relative_1 fails for prec = " << p 
+                        << " of this root: " << *rit << std::endl;
+
+            }
+          }
+        }
+        { // Approximate_relative_1 with negative p
+          for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
+               rit != roots.end(); rit++) {
+            BInterval bi = approximate_relative_1(*rit,-p);
+            assert(compare_1(bi.first ,*rit) != LARGER );
+            assert(compare_1(bi.second,*rit) != SMALLER);
+            assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
+            if (!((bi.second - bi.first) <= 
+                  ipower(Bound(2),1-(-p)) * (CGAL::max)(abs(bi.first),abs(bi.second)))) {
+              all_right = false;
+              std::cerr << "ERROR: Approximate_relative_1 fails for prec = " << -p 
+                        << " of this root: " << *rit << std::endl;
+            }
+          }
+        }
+      }
+    } 
+  }
+  assert(all_right); // some approximation was not good enough
+  std::cout << " ok" << std::endl;
   { 
     
 #define CGAL_TEST_ALGEBRAIC_REAL_IO(_f)         \
@@ -355,25 +412,21 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     ss>>CGAL::iformat(alg2);			\
     assert(alg1==alg2)
     
-    
-    const typename Algebraic_kernel_d_1::Construct_algebraic_real_1 construct_algreal_1 =
-      ak_1.construct_algebraic_real_1_object();
-
     Algebraic_real_1 alg1,alg2;
     std::stringstream ss;
     CGAL::set_ascii_mode(ss);         
     
     // test construction from int, Coefficient and Bound
-    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(int(2)));
-    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(Coefficient(2)));
-    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(Bound(2)));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(int(2)));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(Coefficient(2)));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(Bound(2)));
     
   // construction by index
     Polynomial_1 x = CGAL::shift(Polynomial_1(1),1); // the monom x
-    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(x*x-2,1));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(x*x-2,1));
     
     // construction by isolating interval
-    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(x*x-2,Bound(0),Bound(2)));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(x*x-2,Bound(0),Bound(2)));
 #undef CGAL_TEST_ALGEBRAIC_REAL_IO
   }
 }

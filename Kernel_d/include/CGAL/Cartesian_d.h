@@ -342,7 +342,7 @@ public:
   static  RT FT_numerator(const FT &r)
   { return r; }
   
-  static  RT FT_denominator(const FT &r)
+  static  RT FT_denominator(const FT & /*r*/)
   { return RT(1); }
 
   // special stuff for traits class character :

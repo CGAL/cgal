@@ -90,7 +90,6 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
                          const Traits& ch_traits)
 {
   typedef  typename Traits::Less_xy_2      Less_xy;
-  typedef  typename Traits::Left_turn_2    Left_turn;
   typedef  typename Traits::Equal_2        Equal_2;  
 
   Less_xy  smaller_xy    = ch_traits.less_xy_2_object();

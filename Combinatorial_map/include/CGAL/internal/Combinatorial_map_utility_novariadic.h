@@ -1634,7 +1634,75 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<>,n>{
   static void run(const T1&,const T2&,const T3&,const T4&,const T5&,const T6&,
                   const T7&,const T8&,const T9&){}
 };
-    
+
+template<typename Dart_handle>
+struct Beta_functor
+{
+  static Dart_handle run(Dart_handle ADart, int B)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->beta(B);
+  }
+
+  static Dart_handle run(Dart_handle ADart, int B1, int B2)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->beta(B1)->beta(B2);
+  }
+
+  static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->beta(B1)->beta(B2)->beta(B3);
+  }
+
+  static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4);
+  }
+
+  static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4,
+                         int B5)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4)->beta(B5);
+  }
+
+  static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4,
+                         int B5, int B6)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4)->beta(B5)->
+      beta(B6);
+  }
+
+  static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4,
+                         int B5, int B6, int B7)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4)->beta(B5)->
+      beta(B6)->beta(B7);
+  }
+
+  static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4,
+                         int B5, int B6, int B7, int B8)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4)->beta(B5)->
+      beta(B6)->beta(B7)->beta(B8);
+  }
+
+  static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5, int B6,
+                         int B7, int B8, int B9)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4)->beta(B5)->
+      beta(B6)->beta(B7)->beta(B8)->beta(B9);
+  }
+};
+
+
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 #endif //CGAL_INTERNAL_COMBINATORIAL_MAP_UTILITY_NOVARIADIC_H

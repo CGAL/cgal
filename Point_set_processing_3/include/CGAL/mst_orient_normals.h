@@ -28,6 +28,7 @@
 #include <CGAL/Index_property_map.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/use.h>
 
 #include <iterator>
 #include <list>
@@ -53,7 +54,7 @@ namespace internal {
 
 
 /// Generalization of std::distance() to compute the distance between 2 integers
-inline int
+inline std::size_t
 distance(std::size_t _First, std::size_t _Last)
 {
   // return int difference
@@ -208,7 +209,7 @@ mst_find_source(
     ForwardIterator beyond,  ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3
-    const Kernel& kernel)    ///< geometric traits.
+    const Kernel& /*kernel*/)    ///< geometric traits.
 {
     CGAL_TRACE("  mst_find_source()\n");
 
@@ -271,7 +272,7 @@ create_riemannian_graph(
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3
     IndexPMap index_pmap, ///< property map ForwardIterator -> index
     unsigned int k, ///< number of neighbors
-    const Kernel& kernel) ///< geometric traits.
+    const Kernel& /*kernel*/) ///< geometric traits.
 {
     // Input points types
     typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -296,7 +297,7 @@ create_riemannian_graph(
     CGAL_point_set_processing_precondition(k >= 2);
 
     // Number of input points
-    const int num_input_points = distance(first, beyond);
+    const std::size_t num_input_points = distance(first, beyond);
 
     long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Creates KD-tree\n");
@@ -338,7 +339,7 @@ create_riemannian_graph(
     Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
     for (ForwardIterator it = first; it != beyond; it++)
     {
-        unsigned int it_index = get(index_pmap,it);
+        std::size_t it_index = get(index_pmap,it);
         Vector it_normal_vector = get(normal_pmap,it);
 
         // Gather set of (k+1) neighboring points.
@@ -349,13 +350,13 @@ create_riemannian_graph(
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
         Neighbor_search search(*tree, point_wrapper, k+1);
         Search_iterator search_iterator = search.begin();
-        for(unsigned int i=0;i<(k+1);i++)
+        for(std::size_t i=0;i<(k+1);i++)
         {
             if(search_iterator == search.end())
                 break; // premature ending
 
             ForwardIterator neighbor = search_iterator->first;
-            unsigned int neighbor_index = get(index_pmap,neighbor);
+            std::size_t neighbor_index = get(index_pmap,neighbor);
             if (neighbor_index > it_index) // undirected graph
             {
                 // Add edge
@@ -417,12 +418,13 @@ create_mst_graph(
     const Riemannian_graph<ForwardIterator>& riemannian_graph, ///< graph connecting each vertex to its knn
     ForwardIterator source_point) ///< source point (with an oriented normal)
 {
+    // prevents warnings
+    CGAL_USE(point_pmap);
+    CGAL_USE(k);
+    CGAL_USE(kernel);
+
     // Bring private stuff to scope
     using namespace internal;
-
-    // Input points types
-    typedef typename boost::property_traits<PointPMap>::value_type Point;
-    typedef typename boost::property_traits<NormalPMap>::value_type Vector;
 
     // Riemannian_graph types
     typedef internal::Riemannian_graph<ForwardIterator> Riemannian_graph;
@@ -435,13 +437,13 @@ create_mst_graph(
     CGAL_point_set_processing_precondition(first != beyond);
 
     // Number of input points
-    const int num_input_points = boost::num_vertices(riemannian_graph);
+    const std::size_t num_input_points = boost::num_vertices(riemannian_graph);
 
     long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Calls boost::prim_minimum_spanning_tree()\n");
 
     // Computes Minimum Spanning Tree.
-    unsigned int source_point_index = get(index_pmap, source_point);
+    std::size_t source_point_index = get(index_pmap, source_point);
     Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
     typedef std::vector<typename Riemannian_graph::vertex_descriptor> PredecessorMap;
     PredecessorMap predecessor(num_input_points);
@@ -467,7 +469,7 @@ create_mst_graph(
         mst_graph[v].is_oriented = (it == source_point);
     }
     // add edges
-    for (unsigned int i=0; i < predecessor.size(); i++) // add edges
+    for (std::size_t i=0; i < predecessor.size(); i++) // add edges
     {
         if (i != predecessor[i])
         {
@@ -535,8 +537,6 @@ mst_orient_normals(
 
     // Input points types
     typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point; // actual type of input points
-    typedef typename boost::property_traits<NormalPMap>::value_type Vector;
-
     // Property map ForwardIterator -> index
     typedef Index_property_map<ForwardIterator> IndexPMap;
 
@@ -592,7 +592,7 @@ mst_orient_normals(
 
     // Traverse the point set along the MST to propagate source_point's orientation
     Propagate_normal_orientation<ForwardIterator, NormalPMap, Kernel> orienter;
-    unsigned int source_point_index = get(index_pmap, source_point);
+    std::size_t source_point_index = get(index_pmap, source_point);
     boost::breadth_first_search(mst_graph,
                                 boost::vertex(source_point_index, mst_graph), // source
                                 visitor(boost::make_bfs_visitor(orienter)));
@@ -601,7 +601,7 @@ mst_orient_normals(
     std::deque<Enriched_point> oriented_points, unoriented_points;
     for (ForwardIterator it = first; it != beyond; it++)
     {
-        unsigned int it_index = get(index_pmap,it);
+        std::size_t it_index = get(index_pmap,it);
         typename MST_graph::vertex_descriptor v = boost::vertex(it_index, mst_graph);
         if (mst_graph[v].is_oriented)
           oriented_points.push_back(*it);

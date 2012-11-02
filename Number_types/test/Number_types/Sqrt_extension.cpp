@@ -726,7 +726,20 @@ void sqrt_extension_test(){
     scalar_factor_traits_test<AT,ACDE_TAG>();
     test_algebraic_extension_traits<AT,ACDE_TAG>();
 
-    test_get_arithmetic_kernel<AT,ACDE_TAG>();    
+    test_get_arithmetic_kernel<AT,ACDE_TAG>();
+}
+
+#include <CGAL/internal/Exact_type_selector.h>
+void test_nt_converter()
+{
+  typedef CGAL::internal::Exact_type_selector<int>::Type NT;
+  typedef CGAL::Sqrt_extension<double,double> Source;
+  typedef CGAL::Sqrt_extension<NT,NT> Target;
+  
+  CGAL::NT_converter<Source,Target> converter;
+  
+  Source s;
+  Target t=converter(s);
 }
 
 int main(){ 
@@ -739,7 +752,8 @@ int main(){
   sqrt_extension_test<CGAL::CORE_arithmetic_kernel,CGAL::Tag_false>();
   sqrt_extension_test<CGAL::CORE_arithmetic_kernel,CGAL::Tag_true>();
 #endif // CGAL_HAS_CORE_ARITHMETIC_KERNEL
-    return 0;
+  test_nt_converter();
+  return 0;
 }
 
 

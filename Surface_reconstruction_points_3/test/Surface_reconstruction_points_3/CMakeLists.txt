@@ -3,12 +3,10 @@
 project( Surface_reconstruction_points_3_test )
 
 cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 # Require packages new or improved since CGAL 3.5 beta 1
@@ -52,7 +50,7 @@ if ( CGAL_FOUND )
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" ) # turn on traces
 
-  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (NOT EIGEN3_FOUND)
     find_package(TAUCS)
     if(TAUCS_FOUND)

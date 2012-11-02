@@ -22,6 +22,7 @@
 #ifndef CGAL_PARAMETERIZATION_MESH_PATCH_3_H
 #define CGAL_PARAMETERIZATION_MESH_PATCH_3_H
 
+#include <cstdio>
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Convertible_iterator_project.h>

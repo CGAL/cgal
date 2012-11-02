@@ -237,7 +237,7 @@ private:
 
 public:
   /*! Constructor */
-  Traits_test(int argc, char * argv[]);
+  Traits_test();
 
   /*! Destructor */
   ~Traits_test();
@@ -248,8 +248,7 @@ public:
  * Accepts test data file name.
  */
 template <typename T_Traits>
-Traits_test<T_Traits>::Traits_test(int argc, char * argv[]) :
-  Traits_base_test<T_Traits>(argc, argv)
+Traits_test<T_Traits>::Traits_test()
 {
   typedef T_Traits Traits;
   

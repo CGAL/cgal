@@ -152,7 +152,13 @@ set -x
 cd ${TMPDIR} || return
 
 # Update the working copy
-svn update ${SOURCES_DIR}
+if [ -d "${SOURCES_DIR}/.git" ]; then
+    pushd "${SOURCES_DIR}"
+    git pull
+    popd
+else
+    svn update ${SOURCES_DIR}
+fi
 if [ -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
     svn update ${CANDIDATES_DIR}
 fi
@@ -272,7 +278,13 @@ if [ -n "$DO_PUBLIC" ]; then
     rm -rf bench* Bench* test package_info developer_scripts doc_tex winutils include/CGAL/Test include/CGAL/Testsuite/
     rm -f examples/*/cgal_test* demo/*/cgal_test*
     find . -name .scm-urls -exec rm '{}' '+'
+
+    # Modify the version numbers in <CGAL/version.h>
     sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
+
+    # Patch the date and CGAL version in man(1) pages
+    sed -i -e "s/@DATE@/`date '+%B %Y'`/; s/@CGAL_VERSION@/$public_release_version/" auxiliary/*.1
+
     echo -n $public_release_version > VERSION 2>&1
     cd ..
 

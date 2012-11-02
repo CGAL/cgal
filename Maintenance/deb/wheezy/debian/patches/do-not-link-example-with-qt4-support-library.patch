@@ -1,0 +1,12 @@
+Description: Avoid -lCGAL_Qt4 in linker command of Linear_cell_complex example
+--- cgal-4.1~beta1.orig/examples/Linear_cell_complex/CMakeLists.txt
++++ cgal-4.1~beta1/examples/Linear_cell_complex/CMakeLists.txt
+@@ -12,7 +12,7 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR
+   endif()
+ endif()
+ 
+-find_package(CGAL QUIET COMPONENTS Core Qt4)
++find_package(CGAL QUIET COMPONENTS Core)
+ 
+ # For Gprof.
+ # ADD_DEFINITIONS("-pg")

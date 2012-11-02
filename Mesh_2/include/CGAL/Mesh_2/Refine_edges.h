@@ -24,6 +24,8 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
 #include <CGAL/Meshes/Filtered_queue_container.h>
+#include <CGAL/tags.h>
+#include <CGAL/assertions.h>
 
 #include <utility>
 #include <iterator>
@@ -422,12 +424,6 @@ public:
     zone.fh = triangulation_ref_impl().locate(p, zone.locate_type, zone.i, edge.first);
 
     const Face_handle n = f->neighbor(i);
-    CGAL_assertion_msg(zone.locate_type != Tr::FACE ||
-                       zone.fh == f || zone.fh == n,
-                       "Your data set contains at least a vertex that is "
-                       "very close to \n"
-                       "  a constrained edge! "
-                       "Mesh_2 cannot mesh that sort of data set.");
 
     const bool f_does_conflict = (zone.locate_type == Tr::EDGE) ||
       triangulation_ref_impl().test_conflict(p, f);
