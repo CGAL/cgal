@@ -175,7 +175,7 @@ public:
 #endif
 
 private:
-#ifndef CGAL_USE_DT2_RECURSIVE_PROPAGATING_FLIP
+#ifndef CGAL_DT2_USE_RECURSIVE_PROPAGATING_FLIP
   void non_recursive_propagating_flip(Face_handle f,int i);
   void propagating_flip(const Face_handle& f,int i, int depth=0);
 #else
@@ -445,7 +445,7 @@ private:
 
 
 
-#ifdef CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+#ifdef CGAL_DT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
   template <class OutputItFaces, class OutputItBoundaryEdges> 
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   propagate_conflicts (const Point  &p,
@@ -464,7 +464,7 @@ private:
     }
     return pit;
   }
-#else // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+#else // NO CGAL_DT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
   template <class OutputItFaces, class OutputItBoundaryEdges> 
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   non_recursive_propagate_conflicts ( const Point  &p,
@@ -515,7 +515,7 @@ private:
     }
     return pit;
   }
-#endif // NO CGAL_TRIANGULATION_2_USE_OLD_PROPAGATE_CONFLICTS
+#endif // NO CGAL_DT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
 
 protected:
 
@@ -936,7 +936,7 @@ restore_Delaunay(Vertex_handle v)
   return;
 }
 
-#ifndef CGAL_USE_DT2_RECURSIVE_PROPAGATING_FLIP
+#ifndef CGAL_DT2_USE_RECURSIVE_PROPAGATING_FLIP
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::

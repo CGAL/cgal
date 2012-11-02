@@ -521,7 +521,7 @@ flip_around(List_vertices& new_vertices)
 }
 
 
-#ifndef CGAL_DT2_USE_RECURSIVE_PROPAGATING_FLIP
+#ifndef CGAL_CDT2_USE_RECURSIVE_PROPAGATING_FLIP
 template <class Gt, class Tds, class Itag >
 void
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
@@ -551,7 +551,7 @@ Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 propagating_flip(Face_handle f,int i, int depth)
 {
   if (!is_flipable(f,i)) return;
-#ifdef CGAL_DT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
+#ifdef CGAL_CDT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
   non_recursive_propagating_flip(f,i);
 #else
   int max_depth = 100;
