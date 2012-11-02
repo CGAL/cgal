@@ -31,7 +31,7 @@ fi;
 echo Cleaning $REPO_DIR
 
 #define regular expression to match generated files
-REGEXP='ProgramOutput\.|CMakeFiles|CMakeLists.txt|\.moc$|CMakeCache\.txt|error\.txt|cmake_install\.cmake|Makefile|doc_html|doc_pdf|\.pdflg$|\.ilg$|\.cgallog$|\.blg$|\.bak$|\.hax$|\.aux$|\.maf$|\.hlg$|\.out$|demo.*\/qrc_.*\.cxx|demo.*\/ui_.*\.h'
+REGEXP='ProgramOutput\.|CMakeFiles|CMakeLists.txt|\.moc$|CMakeCache\.txt|error\.txt|cmake_install\.cmake|Makefile|doc_html|doc_pdf|\.pdflg$|\.ilg$|\.cgallog$|\.blg$|\.bak$|\.hax$|\.aux$|\.maf$|\.hlg$|\.out$|demo.*\/qrc_.*\.cxx|demo.*\/ui_.*\.h|\.noheader|\.filename|\.depends|\.tmp'
 
 
 INITIAL=`svn status --no-ignore $1| awk '{if ($1 =="?" || $1=="I" ) print $2 }'`

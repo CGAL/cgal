@@ -30,6 +30,7 @@ if [ ! -e .git ];
 then
   git init
 fi
-git pull .. origin/hooks-for-clients
-echo "Hooks updated."
+if git pull .. remotes/origin/hooks-for-clients; then
+  echo "Hooks updated."
+fi
 cd ../..
