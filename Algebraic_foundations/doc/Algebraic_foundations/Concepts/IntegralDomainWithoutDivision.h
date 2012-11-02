@@ -28,7 +28,7 @@ Moreover, `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >` is
 - `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Is_one`  which is a model of `AlgebraicStructureTraits::IsOne`
 - `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Square`  which is a model of `AlgebraicStructureTraits::Square`
 - `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Simplify`  which is a model of `AlgebraicStructureTraits::Simplify`
-- `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Unit_part`  which is a model of `AlgebraicStructureTraits::`UnitPart`
+- `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Unit_part`  which is a model of `AlgebraicStructureTraits::UnitPart`
 
 \refines `Assignable` 
 \refines `CopyConstructible` 
