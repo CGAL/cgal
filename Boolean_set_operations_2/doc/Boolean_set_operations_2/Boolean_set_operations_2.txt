@@ -365,7 +365,7 @@ A central component in the Boolean set-operations package is the
 this class represents a point set formed by the collection of several 
 disconnected polygons with holes. It employs the `Arrangement_2` class 
 to represent this point set in the plane as a planar arrangement; see 
-Chapter \ref chapterArrangement_on_surface_2. The instantiated `Dcel`
+Chapter \ref chapterArrangement_on_surface_2 "2D Arrangements". The instantiated `Dcel`
 type is used to represent the underlying internal arrangement. It must model
 the concept `GeneralPolygonSetDcel`, and defaults to `Gps_default_dcel`.
 You can override this default, with a different <span class="textsc">Dcel</span> class, typically
@@ -727,7 +727,7 @@ typedef CGAL::General_polygon_set_2<Traits_2> General_polygon_set_2;
 \image html tnr_m_g.gif
 
 Instantiating the arrangement-traits `Arr_traits_2` above with the
-traits class that handle B&eacute;zier curves `Arr_bezier_traits_2`,
+traits class that handle B&eacute;zier curves `Arr_Bezier_curve_traits_2`,
 results with the definition of a general-polygon set type that can be
 used to perform Boolean set-operations on point sets bounded by B&eacute;zier
 curves.
