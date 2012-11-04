@@ -2252,7 +2252,7 @@ private:
     }
     if (traits->is_td_edge(item))
     { 
-      bool is_active = traits->is_active(item);
+      // bool is_active = traits->is_active(item);
       // if the map item represents an edge
       const X_monotone_curve_2& he_cv = *(boost::apply_visitor(cv_for_edge_visitor(), item));
       

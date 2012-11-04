@@ -1403,10 +1403,10 @@ Trapezoidal_decomposition_2<Td_traits>
                                     (Curve_end(*p_cv,ARR_MIN_END), 
                                      Curve_end(he_cv,ARR_MIN_END));
 
-          CGAL_warning(bool is_max_equal =
-                       traits->equal_curve_end_2_object()
-                       (Curve_end(*p_cv,ARR_MAX_END), 
-                        Curve_end(he_cv,ARR_MAX_END)));
+          CGAL_warning_code(bool is_max_equal =
+                            traits->equal_curve_end_2_object()
+                            (Curve_end(*p_cv,ARR_MAX_END), 
+                             Curve_end(he_cv,ARR_MAX_END)));
 
           CGAL_warning (is_min_equal || is_max_equal);
 
