@@ -13,9 +13,9 @@ model of the concept `SegmentDelaunayGraphTraits_2`.
 The second template argument indicates whether 
 or not to use the simple storage site that does not support 
 intersecting segments, or the full storage site, that supports 
-intersecting segments. The possible values are `CGAL::Tag_true` 
-and `CGAL::Tag_false`. `CGAL::Tag_true` indicates that the 
-full storage site is to be used, whereas `CGAL::Tag_false` 
+intersecting segments. The possible values are `Tag_true` 
+and `Tag_false`. `Tag_true` indicates that the 
+full storage site is to be used, whereas `Tag_false` 
 indicates that the simple storage site is to be used. 
 
 \models ::SegmentDelaunayGraphVertexBase_2 

@@ -28,13 +28,13 @@ the filtering kernel fails to produce an answer.
 
 The second, fourth and sixth template parameters correspond to how 
 predicates are evaluated. There are two predefined possible values for 
-these parameters, namely `CGAL::Field_with_sqrt_tag` and 
-`CGAL::Field_tag`. The first one must be used when the number type 
+these parameters, namely `Field_with_sqrt_tag` and 
+`Field_tag`. The first one must be used when the number type 
 used in the representation supports the exact evaluation of signs of 
 expressions involving all four basic operations and square roots, 
 whereas the second one requires that only field operations are 
 exact. Finally, in order to get exact constructions `CM` 
-must be set to `CGAL::Field_with_sqrt_tag` and the number type in 
+must be set to `Field_with_sqrt_tag` and the number type in 
 `CK` must support operations involing divisions and square roots 
 (as well as the other three basic operations of course). 
 The way the predicates are evaluated is discussed in 
@@ -42,16 +42,16 @@ The way the predicates are evaluated is discussed in
 part). 
 
 The default values for the template parameters are as follows: 
-`CM = CGAL::Field_with_sqrt_tag` (it is assumed that 
-`CGAL::Cartesian<double>` or `CGAL::Simple_cartesian<double>` 
+`CM = Field_with_sqrt_tag` (it is assumed that 
+`Cartesian<double>` or `Simple_cartesian<double>` 
 will be the entry for the template parameter `CK`), 
-`EM = CGAL::Field_tag`, 
-`FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >`, 
-`FM = CGAL::Field_with_sqrt_tag`. If the <span class="textsc">Gmp</span> package is 
+`EM = Field_tag`, 
+`FK = Simple_cartesian<Interval_nt<false> >`, 
+`FM = Field_with_sqrt_tag`. If the <span class="textsc">Gmp</span> package is 
 installed with \cgal, the template parameter `EK` has the default 
-value: `EK = CGAL::Simple_cartesian<CGAL::Gmpq>`, otherwise its 
+value: `EK = Simple_cartesian<Gmpq>`, otherwise its 
 default value is 
-`EK = CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> >`. 
+`EK = Simple_cartesian<Quotient<MP_Float> >`. 
 
 \models ::SegmentDelaunayGraphTraits_2 
 \models ::DefaultConstructible 
@@ -178,14 +178,14 @@ the filtering kernel fails to produce an answer.
 
 The second, fourth and sixth template parameters 
 correspond to how predicates are evaluated. There are two predefined 
-possible values for these parameters, namely `CGAL::Field_with_sqrt_tag` 
-and `CGAL::Euclidean_ring_tag`. The first one must be used when the number 
+possible values for these parameters, namely `Field_with_sqrt_tag` 
+and `Euclidean_ring_tag`. The first one must be used when the number 
 type used in the representation supports the exact evaluation of signs 
 of expressions involving all four basic operations and square roots, 
 whereas the second requires the exact evaluation of signs of ring-type 
 expressions, i.e., expressions involving only additions, subtractions 
 and multiplications. Finally, in order to get exact constructions 
-`CM` must be set to `CGAL::Field_with_sqrt_tag` and the number type 
+`CM` must be set to `Field_with_sqrt_tag` and the number type 
 in `CK` must support operations involing divisions and square 
 roots (as well as the other three basic operations of course). 
 The way the predicates are evaluated is discussed in 
@@ -194,7 +194,7 @@ part).
 
 The default values for the template parameters are as follows: 
 `CM = CGAL::Field_with_sqrt_tag` (it is assumed that 
-`CGAL::Cartesian<double>` or `CGAL::Simple_cartesian<double>` 
+`Cartesian<double>` or `Simple_cartesian<double>` 
 will be the entry for the template parameter `CK`), 
 `EM = CGAL::Euclidean_ring_tag`, 
 `FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >`, 

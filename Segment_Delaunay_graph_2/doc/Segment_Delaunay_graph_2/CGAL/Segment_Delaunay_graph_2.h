@@ -787,8 +787,8 @@ void clear();
 
 /*! 
 The segment Delaunay graphs 
-`other` and `sdg` are swapped. `sdg`.`swap(other)` should 
-be preferred to `sdg``= other` or to `sdg``(other)` if 
+`other` and `*this` are swapped. For a segment Delaunay graph `sdg`, the operation
+`sdg`.`swap(other)` should  be preferred to `sdg``= other` or to `sdg``(other)` if 
 `other` is deleted afterwards. 
 */ 
 void swap(Segment_Delaunay_graph_2<Gt,DS> 

@@ -44,12 +44,12 @@ data structure must be a model of the
 concept. The third template parameter defaults to 
 `Triangulation_data_structure_2< Segment_Delaunay_graph_hierarchy_vertex_base_2< Segment_Delaunay_graph_vertex_base_2<Gt> >, Triangulation_face_base_2<Gt> >`. The second template 
 parameter controls whether or not segments are added in the upper 
-levels of the hierarchy. It's possible values are `CGAL::Tag_true` 
-and `CGAL::Tag_false`. If it is set to `CGAL::Tag_true`, 
+levels of the hierarchy. It's possible values are `Tag_true` 
+and `Tag_false`. If it is set to `Tag_true`, 
 segments are also inserted in the upper levels of the hierarchy. The 
-value `CGAL::Tag_false` indicates that only points are to be 
+value `Tag_false` indicates that only points are to be 
 inserted in the upper levels of the hierarchy. The default value for 
-the second template parameter is `CGAL::Tag_false`. 
+the second template parameter is `Tag_false`. 
 
 The `Segment_Delaunay_graph_hierarchy_2` class derives publicly from the 
 `Segment_Delaunay_graph_2<Gt,DS>` class. The interface is 

@@ -9,14 +9,14 @@ The class `Segment_Delaunay_graph_traits_2` provides a model for the
 This class has two template parameters. The first template parameter 
 must be a model of the `Kernel` concept. The second template 
 parameter corresponds to how predicates are evaluated. There are two 
-possible values for `MTag`, namely `CGAL::Field_with_sqrt_tag` and 
-`CGAL::Field_tag`. The first one must be used when the number type 
+possible values for `MTag`, namely `Field_with_sqrt_tag` and 
+`Field_tag`. The first one must be used when the number type 
 used in the representation supports the exact evaluation of signs of 
 expressions involving all four basic operations and square roots, 
 whereas the second one requires the exact evaluation of signs of 
 field-type expressions, i.e., expressions involving additions, 
 subtractions, multiplications and divisions. The default value for 
-`MTag` is `CGAL::Field_tag`. 
+`MTag` is `Field_tag`. 
 The way the predicates are evaluated is discussed in 
 \cite b-ecvdl-96 and \cite cgal:k-reisv-04 (the geometric filtering 
 part). 
@@ -82,13 +82,13 @@ This class has two template parameters.
 The first template parameter must be a model of the `Kernel` 
 concept. The second template parameter corresponds to how predicates 
 are evaluated. There are two possible values for `MTag`, namely 
-`CGAL::Field_with_sqrt_tag` and `CGAL::Euclidean_ring_tag`. The first one 
+`Field_with_sqrt_tag` and `Euclidean_ring_tag`. The first one 
 must be used when the number type used in the representation supports 
 the exact evaluation of signs of expressions involving all four basic 
 operations and square roots, whereas the second one requires the exact 
 evaluation of signs of ring-type expressions, i.e., expressions 
 involving only additions, subtractions and multiplications. The 
-default value for `MTag` is `CGAL::Euclidean_ring_tag`. 
+default value for `MTag` is `Euclidean_ring_tag`. 
 The way the predicates are evaluated is discussed in 
 \cite b-ecvdl-96 and \cite cgal:k-reisv-04 (the geometric filtering 
 part). 
