@@ -54,6 +54,9 @@ public:
   typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits_2::Point_2                      Point_2;
 
+  typedef typename Event::Subcurve_iterator               Subcurve_iterator;
+
+
   // The input arrangements (the "red" and the "blue" one):
   typedef ArrangementRed_                                 Arrangement_red_2;
   typedef typename Arrangement_red_2::Face_const_handle   Face_handle_red;
@@ -113,62 +116,110 @@ public:
                      event->number_of_right_curves() != 0) ?
       ARR_MIN_END : ARR_MAX_END;
 
-    const Subcurve  *sc = (ind == ARR_MIN_END) ?
-      (*(event->right_curves_begin())) :
-      (*(event->left_curves_begin()));
-
-    if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY)
-    {
-      // The curve is incident to the north pole.
-      switch (sc->color()) {
-       case Traits_2::RED :
-        if (ind == ARR_MIN_END)
-          m_red_nf = sc->red_halfedge_handle()->twin()->face();
-        else
-          m_red_nf = sc->red_halfedge_handle()->face();
-        break;
+    Subcurve_iterator it_red, it_blue, it_end;
+    if (ind == ARR_MIN_END) {
+      it_blue = it_red = event->right_curves_begin();
+      it_end = event->right_curves_end();
+    } else {
+      it_blue = it_red = event->left_curves_begin();
+      it_end = event->left_curves_end();
+    }
+    
+    // red arrangement
+    while (it_red != it_end && (*it_red)->color() == Traits_2::BLUE) {
+      it_red++;
+    }
+    
+    if (it_red != it_end) {
+      const Subcurve *sc_red = *it_red;
+      if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY)
+      {
+        // The curve is incident to the north pole.
+        switch (sc_red->color()) {
+        case Traits_2::RED :
+          if (ind == ARR_MIN_END)
+            m_red_nf = sc_red->red_halfedge_handle()->twin()->face();
+          else
+            m_red_nf = sc_red->red_halfedge_handle()->face();
+          break;
           
-       case Traits_2::BLUE :
-        if (ind == ARR_MIN_END)
-          m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
-        else
-          m_blue_nf = sc->blue_halfedge_handle()->face();
-        break;
-
-       case Traits_2::RB_OVERLAP :
-        if (ind == ARR_MIN_END)
-        {
-          m_red_nf = sc->red_halfedge_handle()->twin()->face();
-          m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
+        case Traits_2::RB_OVERLAP :
+          if (ind == ARR_MIN_END)
+            m_red_nf = sc_red->red_halfedge_handle()->twin()->face();
+          else
+            m_red_nf = sc_red->red_halfedge_handle()->face();
+          break;
+          
+        case Traits_2::BLUE :
+          break;
         }
-        else
-        {
-          m_red_nf = sc->red_halfedge_handle()->face();
-          m_blue_nf = sc->blue_halfedge_handle()->face();
+      }
+      else
+      {
+        // The curve extends to the right from the curve of discontinuity.
+        CGAL_assertion (ind == ARR_MIN_END);
+        switch (sc_red->color()) {
+        case Traits_2::RED :
+          m_red_nf = sc_red->red_halfedge_handle()->twin()->face();
+          break;
+        case Traits_2::RB_OVERLAP :
+          m_red_nf = sc_red->red_halfedge_handle()->twin()->face();
+          break;
+        case Traits_2::BLUE :
+          break;
         }
-        break;
       }
     }
-    else
-    {
-      // The curve extends to the right from the curve of discontinuity.
-      CGAL_assertion (ind == ARR_MIN_END);
-      switch (sc->color()) {
-       case Traits_2::RED :
-        m_red_nf = sc->red_halfedge_handle()->twin()->face();
-        break;
+    
+    // blue arrangement
+    
+    while (it_blue != it_end && (*it_blue)->color() == Traits_2::RED) {
+      it_blue++;
+    }
+    
+    if (it_blue != it_end) {
+      const Subcurve *sc_blue = *it_blue;
+      if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY)
+      {
+        // The curve is incident to the north pole.
+        switch (sc_blue->color()) {
+        case Traits_2::BLUE :
+          if (ind == ARR_MIN_END)
+            m_blue_nf = sc_blue->blue_halfedge_handle()->twin()->face();
+          else
+            m_blue_nf = sc_blue->blue_halfedge_handle()->face();
+          break;
           
-       case Traits_2::BLUE :
-        m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
-        break;
+        case Traits_2::RB_OVERLAP :
+          if (ind == ARR_MIN_END)
+            m_blue_nf = sc_blue->blue_halfedge_handle()->twin()->face();
+          else
+            m_blue_nf = sc_blue->blue_halfedge_handle()->face();
+          break;
 
-       case Traits_2::RB_OVERLAP :
-        m_red_nf = sc->red_halfedge_handle()->twin()->face();
-        m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
-        break;
+        case Traits_2::RED :
+          break;
+        }
+      }
+      else
+      {
+        // The curve extends to the right from the curve of discontinuity.
+        CGAL_assertion (ind == ARR_MIN_END);
+        switch (sc_blue->color()) {
+        case Traits_2::BLUE :
+          m_blue_nf = sc_blue->blue_halfedge_handle()->twin()->face();
+          break;
+          
+        case Traits_2::RB_OVERLAP :
+          m_blue_nf = sc_blue->blue_halfedge_handle()->twin()->face();
+          break;
+          
+        case Traits_2::RED :
+          break;
+        }
       }
     }
-
+    
     return;
   }
   //@}
