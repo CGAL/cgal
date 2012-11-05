@@ -43,7 +43,7 @@ it's way too large. So we will never spoon up ice-cream lying in the
 inside of the convex hull of \f$ S\f$, and hence the alpha shape for
 \f$ \alpha \rightarrow \infty\f$ is the convex hull of \f$ S\f$.
 
-# Definitions # {#Alpha_shapes_3Definitions}
+\section Alpha_shapes_3Definitions Definitions
 
 More precisely, the definition of alpha shapes is based on an underlying
 triangulation that may be a Delaunay triangulation 
@@ -117,9 +117,9 @@ input weighted points. Once again the alpha shape is then defined as
 the domain covered by a the alpha complex and comes in general and
 regularized versions.
 
-\section I1_SectAlpha_Shape_3 Functionality 
+\section Alpha_Shape_3Functionality Functionality
 
-## Family of Alpha Shapes ##
+\subsection AlphaShape_3DFamilyOfAlphaShapes Family of Alpha Shapes
 
 The class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` represents the whole
 family of alpha shapes for a given set of points.
@@ -151,7 +151,7 @@ of the regularized version of the alpha shape (no singular faces).
 The current implementation is static, that is after its construction
 points cannot be inserted or removed.
 
-## Alpha Shape for a Fixed Alpha ##
+\subsection AlphaShape_3DAlphaShapeForAFixedAlpha Alpha Shape for a Fixed Alpha
 
 Given a value of alpha, the class `Fixed_alpha_shape_3<Dt>` represents one 
 alpha shape for a given set of points.
@@ -162,7 +162,7 @@ a classification type.<BR>
 The current implementation of this class is dynamic, that is after its construction
 points can be inserted or removed.
 
-## Classification and Iterators ##
+\subsection AlphaShape_3DClassificationAndIterators Classification and Iterators
 
 Both classes provide member functions to classify for a (given) value
 of \f$ alpha\f$ the different faces of the triangulation as
@@ -190,7 +190,7 @@ the vertices, edges, facets and cells of the different types
 (`EXTERIOR`, `SINGULAR`, `REGULAR` or 
 `INTERIOR`).
 
-\section I1_SectDtClass3D Concepts and Models 
+\section AlphaShape3D_ConceptAndModels Concepts and Models
 
 We currently do not specify concepts for the underlying triangulation
 type. Models that work for a familly alpha-shapes are the instantiations
@@ -235,7 +235,7 @@ and it must be parameterized with vertex and cell classes, which are model of th
 The package provides models `Fixed_alpha_shape_vertex_base_3<Gt>` 
 and `Fixed_alpha_shape_cell_base_3<Gt>`, respectively.
 
-# Alpha_shape_3 or Fixed_alpha_shape_3 # {#Alpha_shapes_3Alpha}
+\section Alpha_shapes_3AlphaShape3OrFixedAlphaShape3 Alpha_shape_3 or Fixed_alpha_shape_3
 
 The class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` represents the whole family
 of alpha shapes for a given set of points while the class `Fixed_alpha_shape_3<Dt>`
@@ -264,16 +264,16 @@ Using `Exact_predicates_exact_constructions_kernel`, building
 the regular triangulation requires 0.19s and then the class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` 
 requires 0.90s.
 
-# Examples # {#Alpha_shapes_3Examples}
+\section Alpha_shapes_3Examples Examples
 
-\subsection I1_SectClassicAS3D Example for Basic Alpha-Shapes 
+\subsection AlphaShape_3DExampleForBasicAlphaShapes Example for Basic Alpha-Shapes
 
 This example builds a basic alpha shape using a Delaunay triangulation
 as underlying triangulation.
 
 \cgalexample{Alpha_shapes_3/ex_alpha_shapes_3.cpp}
 
-## Building Basic Alpha Shapes for Many Points ##
+\subsection AlphaShape_3DBuildingBasicAlphaShapesForManyPoints Building Basic Alpha Shapes for Many Points
 
 When many points are input in the alpha shape, say more than 10 000,
 it may pay off to use a Delaunay triangulation with `Fast_location`
@@ -282,7 +282,7 @@ queries (cf. Section \ref Triangulation3seclocpol "The Location Policy Parameter
 
 \cgalexample{Alpha_shapes_3/ex_alpha_shapes_with_fast_location_3.cpp}
 
-\subsection I1_SectWeightedAS3D Example for Weighted Alpha-Shapes 
+\subsection AlphaShape_3DExampleforWeightedAlphaShapes Example for Weighted Alpha-Shapes
 
 The following examples build a weighted alpha shape requiring a
 regular triangulation as underlying triangulation.
@@ -290,13 +290,13 @@ The alpha shape is built in `GENERAL` mode.
 
 \cgalexample{Alpha_shapes_3/ex_weighted_alpha_shapes_3.cpp}
 
-\subsection I1_SectFxWeightedAS3D Example for Fixed Weighted Alpha-Shapes 
+\subsection AlphaShape_3DExampleForFixedWeightedAlphaShapes Example for Fixed Weighted Alpha-Shapes
 
 Same example as previous but using a fixed value of alpha.
 
 \cgalexample{Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp}
 
-## Building an Alpha Shapes with Exact Comparisons of Alpha Values ##
+\subsection AlphaShape_3DBuildingAnAlphaShapesWithExactComparisonsOfAlphaValues Building an Alpha Shapes with Exact Comparisons of Alpha Values
 
 On some platforms, the alpha shapes of the set of points of this example
 cannot be computed when using a traits with inexact constructions. To be able to compute
@@ -304,7 +304,7 @@ them with a traits with inexact constructions, the tag
 `ExactAlphaComparisonTag` is set to `Tag_true`.
 \cgalexample{Alpha_shapes_3/ex_alpha_shapes_exact_alpha.cpp}
 
-\subsection l1_SectPeriodicAS3D Example for Periodic Alpha Shapes 
+\subsection AlphaShape_3DExampleForPeriodicAlphaShapes Example for Periodic Alpha Shapes
 
 The following example shows how to use the periodic Delaunay
 triangulation (Chapter \ref Chapter_3D_Periodic_Triangulations "3D Periodic Triangulations") as underlying
