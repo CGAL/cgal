@@ -164,7 +164,7 @@ fill_hole(InputIterator pbegin, InputIterator pend,
           InputIterator qbegin, InputIterator qend, 
           OutputIterator out)
 {
-  typedef CGAL::Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
+  typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
   typedef Fill_hole<Kernel> Fill;
   typename Fill::Polyline_3 P(pbegin, pend);
   typename Fill::Polyline_3 Q(qbegin, qend);

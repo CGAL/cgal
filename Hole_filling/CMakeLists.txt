@@ -23,6 +23,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "fill.cpp" )
   create_single_source_cgal_program( "poly.cpp" )
+  create_single_source_cgal_program( "fillPolyline.cpp" )
 
 else()
   
