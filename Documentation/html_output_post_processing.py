@@ -28,7 +28,6 @@ from os import path
 from pyquery import PyQuery as pq
 import re
 import shutil
-import string
 from sys import argv
 from sys import stderr
 
@@ -114,7 +113,7 @@ def rearrange_img(i, dir_name):
         if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
             img.attr("src","ftv2cpt.png")
     srcpath=img.attr("src")
-    img.attr("src", "../../CGAL.CGAL/html/" + string.split(srcpath, '/')[-1])
+    img.attr("src", "../../CGAL.CGAL/html/" + srcpath.split('/')[-1])
 
 class figure_anchor_info:
   def __init__(self):
