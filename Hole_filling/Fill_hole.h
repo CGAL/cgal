@@ -157,7 +157,12 @@ public:
 
 };
 
-
+/*!
+Creates triangles to fill the hole defined by points in the range `(pbegin,pend)`.
+The range `(qbegin,qend)` indicate for each pair of consecutive points in the aforementioned range,
+the third point of the facet this segment is incident to. Triangles are put into `out`
+using the indices of the input points in the range `(pbegin,pend)`.
+*/
 template <typename InputIterator, typename OutputIterator>
 OutputIterator
 fill_hole(InputIterator pbegin, InputIterator pend, 
@@ -173,6 +178,26 @@ fill_hole(InputIterator pbegin, InputIterator pend,
   }
   if(! Q.empty() && (Q.front() != Q.back())){
     Q.push_back(Q.front());
+  }
+  Fill fill;
+  return fill(P,Q,out);
+}
+
+/*!
+Creates triangles to fill the hole defined by points in the range `(pbegin,pend)`.
+Triangles are put into `out` using the indices of the input points in the range `(pbegin,pend)`.
+*/
+template <typename InputIterator, typename OutputIterator>
+OutputIterator
+fill_hole(InputIterator pbegin, InputIterator pend, 
+          OutputIterator out)
+{
+  typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
+  typedef Fill_hole<Kernel> Fill;
+  typename Fill::Polyline_3 P(pbegin, pend);
+  typename Fill::Polyline_3 Q;
+  if(P.front() != P.back()){
+    P.push_back(P.front());
   }
   Fill fill;
   return fill(P,Q,out);

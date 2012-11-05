@@ -1745,6 +1745,7 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_vertex.gif -text svneol=unset#image/
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
+Hole_filling/CMakeLists.txt -text
 Hole_filling/data/U.cgal -text
 Hole_filling/data/U.off -text svneol=unset#application/octet-stream
 Hole_filling/data/mech-holes-shark.off -text svneol=unset#application/octet-stream
