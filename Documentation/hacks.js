@@ -16,7 +16,7 @@ function generate_autotoc() {
             var prefix=indices[0];
             if (levelTag >1) prefix+="."+indices[1];
             if (levelTag >2) prefix+="."+indices[2];
-            current.html(prefix + "   " + current.text());
+            current.html(prefix + "   " + current.html());
             for(var l = levelTag; l < 3; ++l){
                 indices[l] = 0;
             }
