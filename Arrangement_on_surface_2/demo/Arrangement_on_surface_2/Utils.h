@@ -43,7 +43,7 @@ public:
   QGraphicsSceneMixin( ) : scene( 0 ) { }
 
   /*! Destructor (virtual) */
-  ~QGraphicsSceneMixin() {}
+  virtual ~QGraphicsSceneMixin() {}
 
   virtual void setScene( QGraphicsScene* scene_ ) { this->scene = scene_; }
 
@@ -241,9 +241,9 @@ class Compute_squared_distance_2_base : public QGraphicsSceneMixin
 public:
   typedef CGAL::Cartesian< double > InexactKernel;
 
-public: // ctors
-  Compute_squared_distance_2_base( )
-  { }
+public:
+  // ctors
+  Compute_squared_distance_2_base( ) { }
 
 public: // methods
 
@@ -395,8 +395,12 @@ public: // methods
 };
 
 template < class RatKernel, class AlgKernel, class NtTraits >
-class Compute_squared_distance_2< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > > :
-  public Compute_squared_distance_2_base< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
+class Compute_squared_distance_2< CGAL::Arr_conic_traits_2< RatKernel,
+                                                            AlgKernel,
+                                                            NtTraits > > :
+  public Compute_squared_distance_2_base< CGAL::Arr_conic_traits_2< RatKernel,
+                                                                    AlgKernel,
+                                                                    NtTraits > >
 {
 public:
   typedef AlgKernel                                     Kernel;
@@ -525,10 +529,14 @@ public:
   typedef std::pair< typename Traits::Point_2, Multiplicity >
                                                         IntersectionResult;
 
-  Arr_compute_y_at_x_2( ):
+  /*! Constructor */
+  Arr_compute_y_at_x_2( ) :
     intersectCurves( this->traits.intersect_2_object( ) )
   { }
 
+  /*! Destructor (virtual) */
+  virtual ~Arr_compute_y_at_x_2() {}
+  
   CoordinateType operator() ( const X_monotone_curve_2& curve,
                               const CoordinateType& x )
   {
@@ -625,11 +633,16 @@ public:
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2; 
   typedef typename Traits::Intersect_2                  Intersect_2;
   typedef typename Traits::Multiplicity                 Multiplicity;
-  typedef std::pair< typename Traits::Point_2, Multiplicity > IntersectionResult;
+  typedef std::pair< typename Traits::Point_2, Multiplicity >
+                                                        IntersectionResult;
 
-  Arr_compute_y_at_x_2( ):
+  /*! Constructor */
+  Arr_compute_y_at_x_2( ) :
     intersectCurves( this->traits.intersect_2_object( ) )
   { }
+
+  /*! Destructor (virtual) */
+  virtual ~Arr_compute_y_at_x_2() {}
 
   Root_of_2 operator() ( const X_monotone_curve_2& curve, const FT& x )
   {
@@ -1035,16 +1048,20 @@ public:
   typedef typename Kernel::Point_2                      Kernel_point_2;
   typedef SnapStrategy< ArrTraits >                     Superclass;
 
+  /*! Constructors */
   SnapToGridStrategy( ) :
     Superclass( NULL ),
     gridSize( 50 )
   { }
 
-  SnapToGridStrategy( QGraphicsScene* scene ):
+  SnapToGridStrategy( QGraphicsScene* scene ) :
     Superclass( scene ),
     gridSize( 50 )
   { }
 
+  /*! Destructors (virtual) */
+  ~SnapToGridStrategy() {}
+  
   Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
   {
     return this->snapPoint( event, ArrTraits( ) );
@@ -1326,7 +1343,7 @@ class Find_nearest_edge_base : public QGraphicsSceneMixin
 {
 public:
   /*! Destructor (virtual) */
-  ~Find_nearest_edge_base() {}
+  virtual ~Find_nearest_edge_base() {}
 };
 
 template < class Arr_, class ArrTraits = typename Arr_::Geometry_traits_2 >
@@ -1339,7 +1356,7 @@ public: // typedefs
   typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
   typedef CGAL::Arr_walk_along_line_point_location< Arrangement >
                                                         Point_location_strategy;
-  typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
+  typedef typename ArrTraitsAdaptor<ArrTraits>::Kernel  Kernel;
   typedef typename Kernel::Point_2                      Point_2;
   typedef typename Arrangement::Face_const_handle       Face_const_handle;
   typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
@@ -1351,12 +1368,16 @@ public: // typedefs
   typedef typename Arrangement::Halfedge_around_vertex_const_circulator
     Halfedge_around_vertex_const_circulator;
 
-public: // constructors
-  Find_nearest_edge( Arrangement* arr_ ):
+public:
+  /*! constructor */
+  Find_nearest_edge( Arrangement* arr_ ) :
     Find_nearest_edge_base( ),
     arr( arr_ ),
     pointLocationStrategy( Point_location_strategy( *arr_ ) )
   { }
+
+  /*! Destructor (virtual) */
+  virtual ~Find_nearest_edge() {}
 
 public: // member methods
   Halfedge_const_handle operator()( const Point_2& queryPt )
@@ -1468,8 +1489,8 @@ protected: // member fields
 
 #if 0
 template < class Arr_, class Coefficient_ >
-class Find_nearest_edge< Arr_, CGAL::Arr_algebraic_segment_traits_2<
-                                 Coefficient_ > >: public Find_nearest_edge_base
+class Find_nearest_edge<Arr_, CGAL::Arr_algebraic_segment_traits_2<
+                                Coefficient_> >: public Find_nearest_edge_base
 {
 public:
   Halfedge_const_handle operator()( const Point_2& queryPt )

@@ -38,7 +38,7 @@ void PointsGraphicsItem::paint( QPainter* painter,
   QPen savePen = painter->pen( );
   painter->setBrush( QBrush( this->color ) );
 
-  for ( int i = 0; i < this->points.size( ); ++i )
+  for ( unsigned int i = 0; i < this->points.size( ); ++i )
   {
     QPointF pt = this->points[ i ];
     painter->drawEllipse( pt, radius, radius );
@@ -57,7 +57,7 @@ QRectF PointsGraphicsItem::boundingRect( ) const
   double xmax = -std::numeric_limits< double >::max( );
   double ymin = std::numeric_limits< double >::max( );
   double ymax = -std::numeric_limits< double >::max( );
-  for ( int i = 0; i < this->points.size( ); ++i )
+  for ( unsigned int i = 0; i < this->points.size( ); ++i )
   {
     QPointF pt = this->points[ i ];
     double x = pt.x( );

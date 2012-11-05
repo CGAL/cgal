@@ -74,7 +74,7 @@ public:
   }
 
   /*! Destructor (virtual) */
-  ~ArrangementPainterOstreamBase() {}
+  virtual ~ArrangementPainterOstreamBase() {}
   
   // methods
   template < typename T >
@@ -147,12 +147,12 @@ public:
   { }
 
   /*! Destructor (virtual) */
-  ~ArrangementPainterOstream() {}
+  virtual ~ArrangementPainterOstream() {}
 };
 
 template < typename Kernel_ >
-class ArrangementPainterOstream< CGAL::Arr_segment_traits_2< Kernel_ > >:
-  public ArrangementPainterOstreamBase< CGAL::Arr_segment_traits_2< Kernel_ > >
+class ArrangementPainterOstream<CGAL::Arr_segment_traits_2< Kernel_> >:
+  public ArrangementPainterOstreamBase<CGAL::Arr_segment_traits_2<Kernel_> >
 {
 public: // typedefs
   typedef Kernel_ Kernel;
@@ -169,8 +169,8 @@ public: // typedefs
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
 public: // constructors
-  ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
-    Superclass( p, clippingRectangle )
+  ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()) :
+    Superclass(p, clippingRectangle)
   { }
 
 public: // methods
@@ -223,25 +223,27 @@ public: // methods
 };
 
 template < typename SegmentTraits >
-class ArrangementPainterOstream< CGAL::Arr_polyline_traits_2< SegmentTraits > > :
-  public ArrangementPainterOstreamBase< CGAL::Arr_polyline_traits_2< SegmentTraits > >
+class ArrangementPainterOstream<CGAL::Arr_polyline_traits_2<SegmentTraits> > :
+  public ArrangementPainterOstreamBase<CGAL::Arr_polyline_traits_2<
+                                         SegmentTraits> >
 {
 public: // typedefs
-  typedef ArrangementPainterOstreamBase< CGAL::Arr_polyline_traits_2< SegmentTraits > > Superclass;
-  typedef typename Superclass::Traits Traits;
-  typedef typename Superclass::Kernel Kernel;
-  typedef typename Superclass::Point_2 Point_2;
-  typedef typename Superclass::Segment_2 Segment_2;
-  typedef typename Superclass::Ray_2 Ray_2;
-  typedef typename Superclass::Line_2 Line_2;
-  typedef typename Superclass::Triangle_2 Triangle_2;
-  typedef typename Superclass::Iso_rectangle_2 Iso_rectangle_2;
-  typedef typename Superclass::Circle_2 Circle_2;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef ArrangementPainterOstreamBase<CGAL::Arr_polyline_traits_2<
+                                          SegmentTraits> > Superclass;
+  typedef typename Superclass::Traits                   Traits;
+  typedef typename Superclass::Kernel                   Kernel;
+  typedef typename Superclass::Point_2                  Point_2;
+  typedef typename Superclass::Segment_2                Segment_2;
+  typedef typename Superclass::Ray_2                    Ray_2;
+  typedef typename Superclass::Line_2                   Line_2;
+  typedef typename Superclass::Triangle_2               Triangle_2;
+  typedef typename Superclass::Iso_rectangle_2          Iso_rectangle_2;
+  typedef typename Superclass::Circle_2                 Circle_2;
+  typedef typename Traits::Curve_2                      Curve_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
 public: // constructors
-  ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
+  ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()):
     Superclass( p, clippingRectangle )
   { }
 
@@ -334,7 +336,8 @@ public: // constructors
     Superclass( p, clippingRectangle ),
     //intersect_2( this->traits.intersect_2_object( ) ),
     // Why doesn't this work?
-    construct_x_monotone_curve_2(this->traits.construct_x_monotone_curve_2_object())
+    construct_x_monotone_curve_2(this->
+                                 traits.construct_x_monotone_curve_2_object())
   { }
 
 public: // methods
@@ -659,21 +662,21 @@ class ArrangementPainterOstream< CGAL::Arr_linear_traits_2< Kernel_ > >:
   public ArrangementPainterOstreamBase< CGAL::Arr_linear_traits_2< Kernel_ > >
 {
 public: // typedefs
-  typedef Kernel_ Kernel;
-  typedef CGAL::Arr_linear_traits_2< Kernel > Traits;
-  typedef ArrangementPainterOstreamBase< Traits > Superclass;
-  typedef typename Superclass::Point_2 Point_2;
-  typedef typename Superclass::Segment_2 Segment_2;
-  typedef typename Superclass::Ray_2 Ray_2;
-  typedef typename Superclass::Line_2 Line_2;
-  typedef typename Superclass::Triangle_2 Triangle_2;
-  typedef typename Superclass::Iso_rectangle_2 Iso_rectangle_2;
-  typedef typename Superclass::Circle_2 Circle_2;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef Kernel_                                       Kernel;
+  typedef CGAL::Arr_linear_traits_2< Kernel >           Traits;
+  typedef ArrangementPainterOstreamBase< Traits >       Superclass;
+  typedef typename Superclass::Point_2                  Point_2;
+  typedef typename Superclass::Segment_2                Segment_2;
+  typedef typename Superclass::Ray_2                    Ray_2;
+  typedef typename Superclass::Line_2                   Line_2;
+  typedef typename Superclass::Triangle_2               Triangle_2;
+  typedef typename Superclass::Iso_rectangle_2          Iso_rectangle_2;
+  typedef typename Superclass::Circle_2                 Circle_2;
+  typedef typename Traits::Curve_2                      Curve_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
 public: // constructors
-  ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
+  ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()) :
     Superclass( p, clippingRectangle )
   { }
 
@@ -756,18 +759,18 @@ class ArrangementPainterOstream< CGAL::Arr_circular_arc_traits_2<
                                           CircularKernel > >
 {
 public:
-  typedef CircularKernel Kernel;
-  typedef CGAL::Arr_circular_arc_traits_2< Kernel > Traits;
-  typedef ArrangementPainterOstreamBase< Traits > Superclass;
-  typedef typename Superclass::Point_2 Point_2;
-  typedef typename Superclass::Segment_2 Segment_2;
-  typedef typename Superclass::Ray_2 Ray_2;
-  typedef typename Superclass::Line_2 Line_2;
-  typedef typename Superclass::Triangle_2 Triangle_2;
-  typedef typename Superclass::Iso_rectangle_2 Iso_rectangle_2;
-  typedef typename Superclass::Circle_2 Circle_2;
-  typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef CircularKernel                                Kernel;
+  typedef CGAL::Arr_circular_arc_traits_2< Kernel >     Traits;
+  typedef ArrangementPainterOstreamBase< Traits >       Superclass;
+  typedef typename Superclass::Point_2                  Point_2;
+  typedef typename Superclass::Segment_2                Segment_2;
+  typedef typename Superclass::Ray_2                    Ray_2;
+  typedef typename Superclass::Line_2                   Line_2;
+  typedef typename Superclass::Triangle_2               Triangle_2;
+  typedef typename Superclass::Iso_rectangle_2          Iso_rectangle_2;
+  typedef typename Superclass::Circle_2                 Circle_2;
+  typedef typename Traits::Curve_2                      Curve_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 public: // constructors
   ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()):
     Superclass( p, clippingRectangle )
@@ -817,12 +820,13 @@ class ArrangementPainterOstream< CGAL::Arr_algebraic_segment_traits_2<
                                           Coefficient_ > >
 {
 public:
-  typedef Coefficient_ Coefficient;
-  typedef typename CGAL::Arr_algebraic_segment_traits_2< Coefficient > Traits;
-  typedef ArrangementPainterOstreamBase< Traits > Superclass;
-  typedef typename Traits::CKvA_2 CKvA_2;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef Coefficient_                                  Coefficient;
+  typedef typename CGAL::Arr_algebraic_segment_traits_2< Coefficient >
+                                                        Traits;
+  typedef ArrangementPainterOstreamBase< Traits >       Superclass;
+  typedef typename Traits::CKvA_2                       CKvA_2;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
 public: // constructors
   ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()):
