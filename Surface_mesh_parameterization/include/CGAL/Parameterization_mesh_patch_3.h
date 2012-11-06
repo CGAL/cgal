@@ -825,9 +825,19 @@ private:
         typename Adaptor::Vertex_around_facet_const_circulator
                             cir = m_mesh_adaptor.facet_vertices_begin(facet);
         CGAL_surface_mesh_parameterization_assertion(cir != NULL);
-        return (m_mesh_adaptor.get_vertex_seaming(cir) == OUTER) ?
-               OUTER :
-               INNER;
+
+        bool is_inner_facet = true;
+        typename Adaptor::Vertex_around_facet_const_circulator cir_end = cir;
+        do
+        {
+            is_inner_facet &=
+                (m_mesh_adaptor.get_vertex_seaming(cir) != OUTER);
+            ++cir;
+        } while ( cir != cir_end );
+
+        return (is_inner_facet)?
+               INNER :
+               OUTER;
     }
 
     /// Get/set vertex seaming flag,
