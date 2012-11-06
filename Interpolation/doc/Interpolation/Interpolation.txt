@@ -253,7 +253,7 @@ by the barycentric coordinate property. The first example in
 Subsection \ref subsecinterpol_examples shows how the function is
 called.
 
-## Sibson's \f$ C^1\f$ Continuous Interpolant ##
+\subsection InterpolationSibson Sibson's C^1 Continuous Interpolant
 
 In \cite s-bdnni-81, Sibson describes a second interpolation method
 that relies also on the function gradient \f$ \mathbf{g_i}\f$ for all \f$ \mathbf{p_i} \in \mathcal{P}\f$. It is \f$ C^1\f$ continuous with gradient \f$ \mathbf{g_i}\f$ at
@@ -295,7 +295,7 @@ computation needed to compute the distance \f$ \|\mathbf{x} -
 around \f$ f(0)\f$, the faster the interpolant approaches \f$ \xi_i\f$ as
 \f$ \mathbf{x} \rightarrow \mathbf{p_i}\f$.
 
-## Farin's \f$ C^1\f$ Continuous Interpolant ##
+\subsection InterpolationFarin Farin's C^1 Continuous Interpolant
 
 Farin \cite f-sodt-90 extended Sibson's work and realizes a \f$ C^1\f$
 continuous interpolant by embedding natural neighbor coordinates in
@@ -340,7 +340,7 @@ type of natural neighbor coordinate (i.e. `natural_neighbor_coordinates_2()`, `r
 
 \cgalexample{Interpolation/linear_interpolation_2.cpp}
 
-## Example for Sibson's \f$ C^1\f$ Interpolation Scheme with Gradient Estimation ##
+\subsection InterpolationExampleSibson Example for Sibson's C^1 Interpolation Scheme with Gradient Estimation
 
 \cgalexample{Interpolation/sibson_interpolation_2.cpp}
 

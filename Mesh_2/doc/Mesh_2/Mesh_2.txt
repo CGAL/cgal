@@ -251,7 +251,7 @@ unbounded component.
 
 \cgalexample{Mesh_2/mesh_global.cpp}
 
-## Example Using the Class <TT>Delaunay_mesher_2<CDT></TT> ##
+\subsection Mesh_2ExampleUsingtheClass Example Using the Class Delaunay_mesher_2<CDT>
 
 This example uses the class `Delaunay_mesher_2<CDT>` and calls
 the `refine_mesh()` member function twice, changing the size and

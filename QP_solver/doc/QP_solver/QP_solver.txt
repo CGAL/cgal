@@ -779,7 +779,7 @@ Strategy                      | Runtime in seconds
 We clearly see the effect of filtering: we gain a factor of ten,
 roughly, compared to the next best non-filtered variant.
 
-## \f$ d=3\f$, \f$ n=1,000,000\f$ ##
+\subsection QP_solverBenchd3 d=3, n=1,000,000
 
 The filtering effect is amplified if the points/dimension ratio becomes
 larger. This is what you might see in dimension three, with one million
@@ -800,7 +800,7 @@ In such cases, it might be beneficial to encode your problem using
 input type `double` in order to profit from the filtering (but 
 see the issue discussed in Section \ref secQPcustomizationfiltering).
 
-## \f$ d=100\f$, \f$ n=100,000\f$ ##
+\subsection QP_solverBenchd100 d=100, n=100,000
 
 Conversely, the filtering effect deteriorates if the points/dimension ratio 
 becomes smaller.
@@ -814,7 +814,7 @@ Strategy                      | Runtime in seconds
 `QP_FILTERED_DANTZIG`         | 3.36
 `QP_PARTIAL_FILTERED_DANTZIG` | 3.06
 
-## \f$ d=500\f$, \f$ n=1,000\f$ ##
+\subsection QP_solverBenchd500 d=500, n=1,000
 
 If the points/dimension ratio tends to a constant, filtering is no
 longer a clear winner. The reason is that in this case, 

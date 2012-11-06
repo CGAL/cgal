@@ -39,7 +39,7 @@ Make sure not to have include statements nested between
 Otherwise all names defined in the file included will be 
 added to namespace `CGAL`.
 
-# Namespace <TT>internal</TT> #
+\section Developer_manualNamespaceinternal Namespace internal
 
 All names introduced by \cgal which are not documented to the user
 should be under an `internal` subnamespace of `CGAL`, <I>e.g.</I>:
