@@ -967,7 +967,7 @@ insert_balls(const Vertex_handle& vp,
     pt_dist = d_signF * step_size;
     norm_step_size = step_size;
   } else {
-    CGAL_assertion(dleft_frac >= 1);
+    CGAL_assertion(n==0 || dleft_frac >= 1);
   }
   
   // Launch balls
