@@ -255,8 +255,8 @@ public:
     }
 
     /// @return the decorated mesh.
-    Adaptor&       get_decorated_mesh()       { return *m_mesh_adaptor; }
-    const Adaptor& get_decorated_mesh() const { return *m_mesh_adaptor; }
+    Adaptor&       get_decorated_mesh()       { return m_mesh_adaptor; }
+    const Adaptor& get_decorated_mesh() const { return m_mesh_adaptor; }
 
     ////////////////////////////////////////////////////////////////////
     /// @subheading Methods implementing the ParameterizationMesh_3 interface
