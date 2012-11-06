@@ -927,6 +927,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_construction.geodesi
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_data_traits.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_extended_topol_traits.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_overlay.cpp -text
