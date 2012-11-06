@@ -100,6 +100,7 @@ protected:
   template < class CircularKernel >
   void splitEdges( const Point_2& pt,
                    CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
+
   template < class Coefficient_ >
   void splitEdges( const Point_2& pt,
                    CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits);

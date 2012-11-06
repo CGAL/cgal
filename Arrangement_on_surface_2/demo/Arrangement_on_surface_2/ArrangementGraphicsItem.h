@@ -27,7 +27,8 @@
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Arr_circular_arc_traits_2.h>
-//#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_algebraic_segment_traits_2.h>
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -57,10 +58,10 @@ public:
   bool visibleEdges( ) const;
   void setVisibleEdges( const bool b );
   void setBackgroundColor( QColor color );
-  //    void setScene( QGraphicsScene* scene_ );
+  // void setScene( QGraphicsScene* scene_ );
 
 protected:
-  //    QRectF getViewportRect( ) const;
+  // QRectF getViewportRect( ) const;
 
   CGAL::Bbox_2 bb;
   bool bb_initialized;
@@ -101,25 +102,32 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
   typedef typename Kernel::Segment_2                    Segment_2;
 
 public:
+  /*! Constructor */
   ArrangementGraphicsItem( Arrangement* t_ );
 
+  /*! Destructor (virtual) */
+  ~ArrangementGraphicsItem() {}
+  
 public:
   void modelChanged( );
   QRectF boundingRect( ) const;
-  virtual void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,
-                      QWidget* widget );
+  virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+                     QWidget* widget);
 
 protected:
   template < typename TTraits >
   void paint( QPainter* painter, TTraits traits );
+
   template < typename Kernel_ >
   void paint( QPainter* painter, CGAL::Arr_linear_traits_2< Kernel_ > traits );
+
   template < typename CircularKernel >
   void paint( QPainter* painter,
               CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
-  template < typename Coefficient_ >
-  void paint( QPainter* painter,
-              CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
+
+  // template < typename Coefficient_ >
+  // void paint( QPainter* painter,
+  //             CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
 
 
   void paintFaces( QPainter* painter )
@@ -159,17 +167,22 @@ protected:
 #if 0
   template < typename TTraits >
   void paintFaces( QPainter* painter, TTraits traits ) { }
+
   template < typename Kernel_ >
   void paintFaces(QPainter* painter, CGAL::Arr_segment_traits_2<Kernel_>) {}
+
   template < typename Kernel_ >
   void paintFaces(QPainter* painter, CGAL::Arr_polyline_traits_2<Kernel_>) {}
+
   template < typename RatKernel, class AlgKernel, class NtTraits >
-  void paintFaces(QPainter* painter, CGAL::Arr_conic_traits_2<RatKernel,
-                                                               AlgKernel,
-                                                               NtTraits >) {}
+  void paintFaces(QPainter* painter,
+                  CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits >)
+  {}
+
   template < typename CircularKernel >
   void paintFaces(QPainter* painter,
                   CGAL::Arr_circular_arc_traits_2<CircularKernel > traits) {}
+
   template < typename Coefficient_ >
   void paintFaces(QPainter* painter,
                   CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits) {}
@@ -203,13 +216,16 @@ protected:
       }// for
       // if ( f->is_unbounded( ) )
       // {
-      //     std::cout << "unbounded face has " << holes << " holes" << std::endl;
-      //     std::cout << "unbounded face has " << inner_faces << " inner faces" << std::endl;
+      //   std::cout << "unbounded face has " << holes << " holes" << std::endl;
+      //   std::cout << "unbounded face has " << inner_faces << " inner faces"
+      //             << std::endl;
       // }
       // if ( f->is_fictitious( ) )
       // {
-      //     std::cout << "fictitious face has " << holes << " holes" << std::endl;
-      //     std::cout << "fictitious face has " << inner_faces << " inner faces" << std::endl;
+      //   std::cout << "fictitious face has " << holes << " holes"
+      //             << std::endl;
+      //   std::cout << "fictitious face has " << inner_faces << " inner faces"
+      //             << std::endl;
       // }
     }
   }
@@ -789,13 +805,18 @@ protected:
 #endif
 
   //void cacheCurveBoundingRects( );
-  void updateBoundingBox( );
-  template < typename TTraits >
-  void updateBoundingBox( TTraits traits );
-  template < typename Kernel_ >
-  void updateBoundingBox( CGAL::Arr_linear_traits_2< Kernel_ > traits );
-  template < typename Coefficient_ >
-  void updateBoundingBox( CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > traits );
+
+  void updateBoundingBox();
+
+  template < typename TTraits>
+  void updateBoundingBox(TTraits traits );
+
+  template < typename Kernel_>
+  void updateBoundingBox(CGAL::Arr_linear_traits_2<Kernel_> traits);
+
+  // template < typename Coefficient_>
+  // void updateBoundingBox(CGAL::Arr_algebraic_segment_traits_2<Coefficient_>
+  //                        traits);
 
   Arrangement* arr;
   ArrangementPainterOstream< Traits > painterostream;
@@ -923,6 +944,7 @@ protected:
     }
   }
 
+#if 0
   template < typename Arr_, typename ArrTraits >
   template < typename Coefficient_ >
   void ArrangementGraphicsItem< Arr_, ArrTraits >::
@@ -960,6 +982,7 @@ protected:
       this->painterostream << curve;
     }
   }
+#endif
 
   // We let the bounding box only grow, so that when vertices get removed
   // the maximal bbox gets refreshed in the GraphicsView
@@ -1044,6 +1067,7 @@ protected:
     }
   }
 
+#if 0
   template < typename Arr_, typename ArrTraits >
   template < typename Coefficient_ >
   void ArrangementGraphicsItem< Arr_, ArrTraits >::
@@ -1058,8 +1082,10 @@ protected:
     }
     else
     {
-      //std::pair< double, double > approx = this->arr->vertices_begin( )->point( ).to_double( );
-      //this->bb = CGAL::Bbox_2( approx.first, approx.second, approx.first, approx.second );
+      //std::pair< double, double > approx =
+      //  this->arr->vertices_begin( )->point( ).to_double( );
+      //this->bb = CGAL::Bbox_2( approx.first, approx.second, 
+      //                         approx.first, approx.second );
       this->bb = CGAL::Bbox_2( 0, 0, 0, 0 );
       this->bb_initialized = true;
     }
@@ -1079,6 +1105,7 @@ protected:
       }
     }
   }
+#endif
 
   template < typename Arr_, typename ArrTraits >
   void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )

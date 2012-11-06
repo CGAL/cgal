@@ -74,7 +74,7 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
   Conic_arr* conic_arr;
   Lin_arr* lin_arr;
   Arc_arr* arc_arr;
-  Alg_seg_arr* alg_seg_arr;
+  // Alg_seg_arr* alg_seg_arr;
   CGAL::Object arr;
 
   switch ( tt )
@@ -110,13 +110,12 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
     arr = CGAL::make_object( arc_arr );
     tabLabel = QString( "%1 - Circular Arc" ).arg( tabLabelCounter++ );
     break;
-   case ALGEBRAIC_TRAITS:
-    alg_seg_arr = new Alg_seg_arr;
-    demoTab = new ArrangementDemoTab< Alg_seg_arr >( alg_seg_arr, 0 );
-    arr = CGAL::make_object( alg_seg_arr );
-    tabLabel = QString( "%1 - Algebraic" ).arg( tabLabelCounter++ );
-    break;
-
+   // case ALGEBRAIC_TRAITS:
+   //  alg_seg_arr = new Alg_seg_arr;
+   //  demoTab = new ArrangementDemoTab< Alg_seg_arr >( alg_seg_arr, 0 );
+   //  arr = CGAL::make_object( alg_seg_arr );
+   //  tabLabel = QString( "%1 - Algebraic" ).arg( tabLabelCounter++ );
+   //  break;
   }
 
   this->arrangements.push_back( arr );
@@ -409,7 +408,7 @@ void ArrangementDemoWindow::openArrFile( QString filename )
   Seg_arr* seg;
   Pol_arr* pol;
   Conic_arr* conic;
-  Alg_seg_arr* alg;
+  // Alg_seg_arr* alg;
   if ( CGAL::assign( seg, arr ) )
   {
     typedef CGAL::Arr_text_formatter<Seg_arr>           Seg_text_formatter;
@@ -461,19 +460,19 @@ void ArrangementDemoWindow::openArrFile( QString filename )
     //QMessageBox::information( this, "Oops",
     //  "Reading conic arrangement not supported" );
   }
-  else if ( CGAL::assign( alg, arr ) )
-  {
-    typedef CGAL::Arr_text_formatter< Alg_seg_arr >     Seg_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Seg_text_formatter>
-      ArrFormatter;
-    typedef ArrangementDemoTab< Alg_seg_arr >           TabType;
+  // else if ( CGAL::assign( alg, arr ) )
+  // {
+  //   typedef CGAL::Arr_text_formatter< Alg_seg_arr >     Seg_text_formatter;
+  //   typedef CGAL::Arr_with_history_text_formatter<Seg_text_formatter>
+  //     ArrFormatter;
+  //   typedef ArrangementDemoTab< Alg_seg_arr >           TabType;
 
-    ArrFormatter arrFormatter;
-    CGAL::read( *alg, ifs, arrFormatter );
-    this->arrangements[ index ] = CGAL::make_object( alg );
-    TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-    tab->setArrangement( alg );
-  }
+  //   ArrFormatter arrFormatter;
+  //   CGAL::read( *alg, ifs, arrFormatter );
+  //   this->arrangements[ index ] = CGAL::make_object( alg );
+  //   TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+  //   tab->setArrangement( alg );
+  // }
   ifs.close( );
 }
 
@@ -871,10 +870,10 @@ void ArrangementDemoWindow::on_actionNewTab_triggered( )
     {
       this->makeTab( CIRCULAR_ARC_TRAITS );
     }
-    else if ( id == ALGEBRAIC_TRAITS )
-    {
-      this->makeTab( ALGEBRAIC_TRAITS );
-    }
+    // else if ( id == ALGEBRAIC_TRAITS )
+    // {
+    //   this->makeTab( ALGEBRAIC_TRAITS );
+    // }
     else
     {
       std::cout << "Sorry, this trait is not yet supported" << std::endl;
@@ -963,8 +962,8 @@ void ArrangementDemoWindow::on_actionOverlay_triggered( )
       Lin_arr* lin_arr2;
       Arc_arr* arc_arr;
       Arc_arr* arc_arr2;
-      Alg_seg_arr* alg_arr;
-      Alg_seg_arr* alg_arr2;
+      // Alg_seg_arr* alg_arr;
+      // Alg_seg_arr* alg_arr2;
       if ( CGAL::assign( seg_arr, arrs[ 0 ] ) &&
            CGAL::assign( seg_arr2, arrs[ 1 ] ) )
       {
@@ -990,11 +989,11 @@ void ArrangementDemoWindow::on_actionOverlay_triggered( )
       {
         this->makeOverlayTab( arc_arr, arc_arr2 );
       }
-      if ( CGAL::assign( alg_arr, arrs[ 0 ] ) &&
-           CGAL::assign( alg_arr2, arrs[ 1 ] ) )
-      {
-        this->makeOverlayTab( alg_arr, alg_arr2 );
-      }
+      // if ( CGAL::assign( alg_arr, arrs[ 0 ] ) &&
+      //      CGAL::assign( alg_arr2, arrs[ 1 ] ) )
+      // {
+      //   this->makeOverlayTab( alg_arr, alg_arr2 );
+      // }
 
 #if 0
       if ( CGAL::assign( conic_arr, arrs[ 0 ] ) ||

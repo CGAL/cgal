@@ -20,16 +20,16 @@
 #ifndef CGAL_ARRANGEMENTS_DEMO_UTILS_H
 #define CGAL_ARRANGEMENTS_DEMO_UTILS_H
 
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arr_circular_arc_traits_2.h>
-#include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Qt/Converter.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Arr_circular_arc_traits_2.h>
+#include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 
 #include "ArrangementTypes.h"
@@ -227,12 +227,12 @@ class ArrTraitsAdaptor< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
 {
 public:
   typedef Coefficient_ Coefficient;
-  typedef typename CGAL::Arr_algebraic_segment_traits_2< Coefficient >
-    ArrTraits;
-  typedef typename ArrTraits::Point_2 Point_2; // CKvA_2
-  typedef typename ArrTraits::Algebraic_real_1 CoordinateType;
-  typedef CGAL::Cartesian< typename ArrTraits::Bound > Kernel;
-  //typedef typename ArrTraits::CKvA_2 Kernel;
+  typedef typename CGAL::Arr_algebraic_segment_traits_2<Coefficient>
+                                                        ArrTraits;
+  typedef typename ArrTraits::Point_2                   Point_2; // CKvA_2
+  typedef typename ArrTraits::Algebraic_real_1          CoordinateType;
+  typedef CGAL::Cartesian< typename ArrTraits::Bound >  Kernel;
+  //typedef typename ArrTraits::CKvA_2                  Kernel;
 };
 
 template < class ArrTraits >
@@ -497,12 +497,13 @@ class Compute_squared_distance_2< CGAL::Arr_algebraic_segment_traits_2<
                                             Coefficient_ > >
 {
 public:
-  typedef Coefficient_ Coefficient;
-  typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > Traits;
-  typedef typename Traits::Bound FT; // unused
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef Coefficient_                                  Coefficient;
+  typedef CGAL::Arr_algebraic_segment_traits_2<Coefficient>
+                                                        Traits;
+  typedef typename Traits::Bound                        FT; // unused
+  typedef typename ArrTraitsAdaptor<Traits>::Kernel     Kernel;
+  typedef typename Kernel::Point_2                      Point_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
 public:
   double operator()(const Point_2& /* p */,
@@ -586,7 +587,8 @@ protected:
                               const CoordinateType& x, TTraits traits_,
                               CGAL::Arr_open_side_tag )
   {
-    typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
+    typename TTraits::Construct_x_monotone_curve_2
+      construct_x_monotone_curve_2 =
       traits_.construct_x_monotone_curve_2_object( );
     CoordinateType res( 0 );
     // QRectF clipRect = this->viewportRect( );
@@ -769,7 +771,7 @@ template < class ArrTraits >
 class Construct_x_monotone_subcurve_2
 {
 public:
-  typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
+  typedef typename ArrTraitsAdaptor<ArrTraits>::Kernel  Kernel;
   typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename ArrTraits::Split_2                   Split_2;
   typedef typename ArrTraits::Intersect_2               Intersect_2;
@@ -778,7 +780,8 @@ public:
   typedef typename ArrTraits::Construct_max_vertex_2    Construct_max_vertex_2;
   typedef typename ArrTraits::Compare_x_2               Compare_x_2;
   typedef typename Kernel::FT                           FT;
-  typedef typename ArrTraitsAdaptor< ArrTraits >::CoordinateType CoordinateType;
+  typedef typename ArrTraitsAdaptor< ArrTraits >::CoordinateType
+                                                        CoordinateType;
   typedef typename ArrTraits::Point_2                   Point_2;
   typedef typename Kernel::Point_2                      Kernel_point_2;
   //typedef typename Kernel::Line_2 Line_2;
@@ -846,7 +849,7 @@ class Construct_x_monotone_subcurve_2< CGAL::Arr_circular_arc_traits_2<
                                          CircularKernel > >
 {
 public:
-  typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > ArrTraits;
+  typedef CGAL::Arr_circular_arc_traits_2<CircularKernel> ArrTraits;
   typedef typename ArrTraits::Intersect_2               Intersect_2;
   typedef typename ArrTraits::Split_2                   Split_2;
   typedef typename ArrTraits::Compare_x_2               Compare_x_2;
@@ -1493,8 +1496,7 @@ class Find_nearest_edge<Arr_, CGAL::Arr_algebraic_segment_traits_2<
                                 Coefficient_> >: public Find_nearest_edge_base
 {
 public:
-  Halfedge_const_handle operator()( const Point_2& queryPt )
-  { }
+  Halfedge_const_handle operator()( const Point_2& queryPt ) { }
 };
 #endif
 

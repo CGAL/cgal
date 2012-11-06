@@ -37,27 +37,26 @@
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/Arrangement_with_history_2.h>
-#include <CGAL/squared_distance_2.h>
-#include <CGAL/point_generators_2.h>
-#include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Bbox_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
-
+#include <CGAL/Arrangement_with_history_2.h>
+#include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
 #include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_landmarks_point_location.h>
+#include <CGAL/squared_distance_2.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/Bbox_2.h>
 
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Polygon_2.h>
 
 // Coordinate related typedef - using inexact number type
-typedef float                                              Coord_type;
-typedef CGAL::Cartesian<Coord_type>                        Coord_kernel;
-typedef Coord_kernel::Point_2                              Coord_point;
-typedef Coord_kernel::Segment_2                            Coord_segment;
-typedef Coord_kernel::Circle_2                             Coord_circle;
+typedef float                                           Coord_type;
+typedef CGAL::Cartesian<Coord_type>                     Coord_kernel;
+typedef Coord_kernel::Point_2                           Coord_point;
+typedef Coord_kernel::Segment_2                         Coord_segment;
+typedef Coord_kernel::Circle_2                          Coord_circle;
 
 
 typedef CGAL::Polygon_2<Coord_kernel> My_polygon;
@@ -65,14 +64,14 @@ typedef CGAL::Polygon_2<Coord_kernel> My_polygon;
 
 #ifdef CGAL_USE_GMP
   #include <CGAL/Gmpq.h>
-  typedef CGAL::Gmpq                                         NT;
+  typedef CGAL::Gmpq                                    NT;
 #else
   #include <CGAL/MP_Float.h>
   #include <CGAL/Quotient.h>
-  typedef CGAL::Quotient<CGAL::MP_Float>                     NT;
+  typedef CGAL::Quotient<CGAL::MP_Float>                NT;
 #endif
 // instead of
-//typedef CGAL::Cartesian<NT>                                Kernel;
+//typedef CGAL::Cartesian<NT>                           Kernel;
 // workaround for VC++
 struct Kernel : public CGAL::Cartesian<NT> {};
 
@@ -82,8 +81,7 @@ class Face_with_color : public CGAL::Arr_face_base
   bool      m_visited;
 
 public:
-  Face_with_color() : CGAL::Arr_face_base(), m_color(), m_visited(false)
-  { }
+  Face_with_color() : CGAL::Arr_face_base(), m_color(), m_visited(false) { }
 
   QColor color() const { return m_color; }
   void set_color(const QColor& c) { m_color = c; }
@@ -94,15 +92,15 @@ public:
 template <class Traits>
 class Dcel :
   public CGAL::Arr_dcel_base<CGAL::Arr_vertex_base<typename Traits::Point_2>,
-                             CGAL::Arr_halfedge_base<typename Traits::X_monotone_curve_2>,
+                             CGAL::Arr_halfedge_base<
+                               typename Traits::X_monotone_curve_2>,
                              Face_with_color>
 {
-
 public:
    /*! \struct
    * An auxiliary structure for rebinding the DCEL with a new traits class.
    */
-  template<typename T>
+  template <typename T>
   struct rebind
   {
     typedef Dcel<T> other;
@@ -111,7 +109,6 @@ public:
   // CREATION
   Dcel() {}
 };
-
 
 // Segments:
 typedef CGAL::Arr_segment_traits_2<Kernel>              Seg_traits;
@@ -182,16 +179,15 @@ typedef CGAL::Arr_landmarks_point_location<Pol_arr>
 
 #include <CGAL/CORE_algebraic_number_traits.h>
 
-typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-typedef Nt_traits::Rational                           Rational;
-typedef Nt_traits::Algebraic                          Algebraic; // this is a number type
-typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
+typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
+typedef Nt_traits::Rational                             Rational;
+typedef Nt_traits::Algebraic                            Algebraic;
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
 
 // instead of
-typedef CGAL::Arr_conic_traits_2<Rat_kernel,
-                                 Alg_kernel,
-                                 Nt_traits>           Conic_traits;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                        Conic_traits;
 // workaround for VC++
 /*
 struct Conic_traits: public CGAL::Arr_conic_traits_2<Rat_kernel,
@@ -199,17 +195,17 @@ struct Conic_traits: public CGAL::Arr_conic_traits_2<Rat_kernel,
                                                      Nt_traits>   {};
 */
 
-typedef  Conic_traits::Curve_2                    Arr_conic_2;
-typedef  Conic_traits::Rat_point_2                Rat_point_2;
-typedef  Conic_traits::Rat_segment_2              Rat_segment_2;
-typedef  Conic_traits::Rat_circle_2               Rat_circle_2;
-typedef  Conic_traits::Rat_line_2                 Rat_line_2;
+typedef  Conic_traits::Curve_2                          Arr_conic_2;
+typedef  Conic_traits::Rat_point_2                      Rat_point_2;
+typedef  Conic_traits::Rat_segment_2                    Rat_segment_2;
+typedef  Conic_traits::Rat_circle_2                     Rat_circle_2;
+typedef  Conic_traits::Rat_line_2                       Rat_line_2;
 
 typedef Conic_traits::X_monotone_curve_2                Arr_xconic_2;
 typedef Conic_traits::Point_2                           Arr_conic_point_2;
 typedef Dcel<Conic_traits>                              Conic_dcel;
-typedef CGAL::Arrangement_with_history_2<Conic_traits,
-                                         Conic_dcel>    Conic_arr;
+typedef CGAL::Arrangement_with_history_2<Conic_traits, Conic_dcel>
+                                                        Conic_arr;
 typedef Conic_arr::Halfedge_handle                      Conic_halfedge_handle;
 typedef Conic_arr::Face_handle                          Conic_face_handle;
 typedef Conic_arr::Ccb_halfedge_circulator
@@ -219,9 +215,9 @@ typedef Conic_arr::Hole_iterator                        Conic_holes_iterator;
 typedef Conic_arr::Halfedge                             Conic_halfedge;
 typedef Conic_arr::Face_iterator                        Conic_face_iterator;
 
-typedef std::list<Arr_xconic_2*>                         Arr_xconic_list;
-typedef Arr_xconic_list::const_iterator                  Arr_xconic_const_iter;
-typedef Arr_xconic_list::iterator                        Arr_xconic_iter;
+typedef std::list<Arr_xconic_2*>                        Arr_xconic_list;
+typedef Arr_xconic_list::const_iterator                 Arr_xconic_const_iter;
+typedef Arr_xconic_list::iterator                       Arr_xconic_iter;
 
 // point location
 typedef CGAL::Arr_trapezoid_ric_point_location<Conic_arr>
@@ -241,12 +237,13 @@ typedef Lin_traits::Curve_2                             Arr_lin_2;
 typedef Lin_traits::X_monotone_curve_2                  Arr_xlin_2;
 typedef Lin_traits::Point_2                             Arr_lin_point_2;
 typedef Dcel<Lin_traits>                                Lin_dcel;
-typedef CGAL::Arrangement_with_history_2<Lin_traits,
-                                         Lin_dcel>      Lin_arr;
+typedef CGAL::Arrangement_with_history_2<Lin_traits, Lin_dcel>
+                                                        Lin_arr;
 typedef Lin_arr::Halfedge                               Lin_halfedge;
 typedef Lin_arr::Halfedge_handle                        Lin_halfedge_handle;
 typedef Lin_arr::Face_handle                            Lin_face_handle;
-typedef Lin_arr::Ccb_halfedge_circulator                Lin_ccb_halfedge_circulator;
+typedef Lin_arr::Ccb_halfedge_circulator
+  Lin_ccb_halfedge_circulator;
 typedef Lin_arr::Hole_iterator                          Lin_holes_iterator;
 typedef Lin_arr::Face_iterator                          Lin_face_iterator;
 typedef std::list<Arr_lin_2*>                           Arr_lin_list;
@@ -300,7 +297,7 @@ typedef CGAL::Arr_landmarks_point_location<Arc_arr>
 #endif
 
 typedef Nt_traits::Integer Coefficient;
-typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > Alg_seg_traits;
+typedef CGAL::Arr_algebraic_segment_traits_2<Coefficient> Alg_seg_traits;
 typedef Dcel< Alg_seg_traits >                            Alg_seg_dcel;
 typedef CGAL::Arrangement_with_history_2< Alg_seg_traits, Alg_seg_dcel >
                                                           Alg_seg_arr;
@@ -310,9 +307,9 @@ class My_observer : public CGAL::Arr_observer<Arrangement_>
 {
 public:
 
-  typedef Arrangement_                        Arrangement;
-  typedef CGAL::Arr_observer<Arrangement>     Arr_observer;
-  typedef typename Arrangement::Face_handle   Face_handle;
+  typedef Arrangement_                                  Arrangement;
+  typedef CGAL::Arr_observer<Arrangement>               Arr_observer;
+  typedef typename Arrangement::Face_handle             Face_handle;
 
   My_observer (Arrangement& arr) : Arr_observer (arr) {}
 

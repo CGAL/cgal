@@ -20,26 +20,28 @@
 #ifndef CGAL_QT_GRAPHICS_VIEW_CURVE_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_CURVE_INPUT_H
 
+#include <iostream>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_circular_arc_traits_2.h>
+#include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
 #include <QEvent>
 #include <QGraphicsLineItem>
 #include <QGraphicsSceneMouseEvent>
-#include <iostream>
+
 #include "Callback.h"
 #include "ISnappable.h"
-#include <CGAL/CORE_algebraic_number_traits.h>
 #include "PointsGraphicsItem.h"
 
 namespace CGAL {
 namespace Qt {
 
-class GraphicsViewCurveInputBase:
+class GraphicsViewCurveInputBase :
     public GraphicsViewInput, public ISnappable, public QGraphicsSceneMixin
 {
 public:
@@ -68,14 +70,14 @@ protected:
 
 }; // class GraphicsViewCurveInputBase
 
-template < class ArrTraits >
+template < typename ArrTraits >
 class GraphicsViewCurveInput : public GraphicsViewCurveInputBase { };
 
 /**
    Specialization of GraphicsViewCurveInput for Arr_segment_traits_2; handles
    user-guided generation of line segment curves.
 */
-template < class Kernel_ >
+template < typename Kernel_ >
 class GraphicsViewCurveInput< CGAL::Arr_segment_traits_2< Kernel_ > >:
   public GraphicsViewCurveInputBase
 {
@@ -167,7 +169,7 @@ protected:
    Specialization of GraphicsViewCurveInput for Arr_polyline_traits_2; handles
    user-guided generation of line segment curves.
 */
-template < class SegmentTraits >
+template < typename SegmentTraits >
 class GraphicsViewCurveInput< CGAL::Arr_polyline_traits_2< SegmentTraits > >:
   public GraphicsViewCurveInputBase
 {
@@ -274,7 +276,7 @@ protected:
    Specialization of GraphicsViewCurveInput for Arr_conic_traits_2; handles
    user-guided generation of conic curves.
 */
-template < class RatKernel, class AlgKernel, class NtTraits >
+template < typename RatKernel, typename AlgKernel, typename NtTraits >
 class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2<
                                 RatKernel, AlgKernel, NtTraits > >:
   public GraphicsViewCurveInputBase
@@ -584,7 +586,7 @@ protected:
    Specialization of GraphicsViewCurveInput for Arr_linear_traits_2; handles
    user-guided generation of line segment curves.
 */
-template < class Kernel_ >
+template < typename Kernel_ >
 class GraphicsViewCurveInput< CGAL::Arr_linear_traits_2< Kernel_ > >:
   public GraphicsViewCurveInputBase
 {
@@ -734,7 +736,7 @@ protected: // fields
    Specialization of GraphicsViewCurveInput for Arr_circular_arc_traits_2; handles
    user-guided generation of circular arc curves.
 */
-template < class CircularKernel >
+template < typename CircularKernel >
 class GraphicsViewCurveInput<CGAL::Arr_circular_arc_traits_2<CircularKernel> > :
   public GraphicsViewCurveInputBase
 {
@@ -825,16 +827,19 @@ protected:
   std::vector< Point_2 > points;
 }; // class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
 
-template < class Coefficient_ >
-class GraphicsViewCurveInput< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >:
+#if 0
+template < typename Coefficient_ >
+class GraphicsViewCurveInput<CGAL::Arr_algebraic_segment_traits_2<
+                               Coefficient_> > :
   public GraphicsViewCurveInputBase
 {
-  typedef Coefficient_ Coefficent;
-  typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > Traits;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
-  typedef Traits::Point_2 Point_2;
-  typedef Kernel::Point_2 Kernel_point_2;
-  typedef Kernel::Segment_2 Segment_2;
+  typedef Coefficient_                                  Coefficent;
+  typedef CGAL::Arr_algebraic_segment_traits_2<Coefficient>
+                                                        Traits;
+  typedef typename ArrTraitsAdaptor<Traits>::Kernel     Kernel;
+  typedef Traits::Point_2                               Point_2;
+  typedef Kernel::Point_2                               Kernel_point_2;
+  typedef Kernel::Segment_2                             Segment_2;
 
 public:
   GraphicsViewCurveInput( QObject* parent ):
@@ -901,6 +906,7 @@ protected:
   bool second;
   QGraphicsLineItem segmentGuide;
 };
+#endif
 
 } // namespace Qt
 } // namespace CGAL

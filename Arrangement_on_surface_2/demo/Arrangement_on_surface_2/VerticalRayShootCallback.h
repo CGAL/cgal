@@ -20,7 +20,6 @@
 #ifndef VERTICAL_RAY_SHOOT_CALLBACK_H
 #define VERTICAL_RAY_SHOOT_CALLBACK_H
 
-#include "Callback.h"
 #include <QEvent>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
@@ -35,6 +34,7 @@
 #include <CGAL/Arr_landmarks_point_location.h>
 #include <vector>
 
+#include "Callback.h"
 #include "Utils.h"
 #include "VerticalRayGraphicsItem.h"
 

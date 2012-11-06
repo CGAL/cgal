@@ -73,7 +73,7 @@ void PropertyValueDelegate::setModelData( QWidget* editor,
 {
   ColorItemEditor* colorEditor = 0;
   DeleteCurveModeItemEditor* modeEditor = 0;
-  if ( colorEditor = qobject_cast< ColorItemEditor* >( editor ) )
+  if (colorEditor = (qobject_cast<ColorItemEditor*>(editor)))
   {
     // std::cout << "set color model data" << std::endl;
     model->setData( index, colorEditor->color( ), Qt::DisplayRole );
@@ -81,7 +81,7 @@ void PropertyValueDelegate::setModelData( QWidget* editor,
     model->setData( index, QVariant::fromValue( colorEditor->color( ) ),
                     Qt::UserRole );
   }
-  else if ( modeEditor = qobject_cast< DeleteCurveModeItemEditor* >( editor ) )
+  else if (modeEditor = (qobject_cast<DeleteCurveModeItemEditor*>(editor)))
   {
     model->setData( index, DeleteCurveMode::ToString( modeEditor->mode( ) ),
                     Qt::DisplayRole );
@@ -102,11 +102,11 @@ bool PropertyValueDelegate::eventFilter( QObject* object, QEvent* event )
   if (event->type() == QEvent::FocusOut ||
       (event->type() == QEvent::Hide && editor->isWindow()))
   {
-    if ( colorEditor = qobject_cast< ColorItemEditor* >( editor ) )
+    if (colorEditor = (qobject_cast<ColorItemEditor*>(editor)))
     {
       return false;
     }
-    if ( modeEditor = qobject_cast< DeleteCurveModeItemEditor* >( editor ) )
+    if (modeEditor = (qobject_cast<DeleteCurveModeItemEditor*>(editor)))
     {
       return false;
     }

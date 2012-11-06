@@ -91,15 +91,24 @@ public:
   {
     // std::cout << this->scene->views( ).size( ) << std::endl;
     // set up demo components
-    this->arrangementGraphicsItem = new CGAL::Qt::ArrangementGraphicsItem< Arrangement >( this->arrangement );
-    this->curveInputCallback = new ArrangementCurveInputCallback< Arrangement >( this->arrangement, this );
-    this->deleteCurveCallback = new DeleteCurveCallback< Arrangement >( this->arrangement, this );
-    this->pointLocationCallback = new PointLocationCallback< Arrangement >( this->arrangement, this );
-    this->verticalRayShootCallback = new VerticalRayShootCallback< Arrangement >( this->arrangement, this );
-    this->mergeEdgeCallback = new MergeEdgeCallback< Arrangement >( this->arrangement, this );
-    this->splitEdgeCallback = new SplitEdgeCallback< Arrangement >( this->arrangement, this );
-    this->envelopeCallback = new EnvelopeCallback< Arrangement >( this->arrangement, this );
-    this->fillFaceCallback = new FillFaceCallback< Arrangement >( this->arrangement, this );
+    this->arrangementGraphicsItem =
+      new CGAL::Qt::ArrangementGraphicsItem<Arrangement>(this->arrangement);
+    this->curveInputCallback =
+      new ArrangementCurveInputCallback<Arrangement>(this->arrangement, this);
+    this->deleteCurveCallback =
+      new DeleteCurveCallback<Arrangement>( this->arrangement, this );
+    this->pointLocationCallback =
+      new PointLocationCallback<Arrangement>( this->arrangement, this );
+    this->verticalRayShootCallback =
+      new VerticalRayShootCallback<Arrangement>( this->arrangement, this );
+    this->mergeEdgeCallback =
+      new MergeEdgeCallback<Arrangement>( this->arrangement, this );
+    this->splitEdgeCallback =
+      new SplitEdgeCallback<Arrangement>( this->arrangement, this );
+    this->envelopeCallback =
+      new EnvelopeCallback<Arrangement>( this->arrangement, this );
+    this->fillFaceCallback =
+      new FillFaceCallback<Arrangement>( this->arrangement, this );
 
     this->scene->addItem( this->arrangementGraphicsItem );
     this->arrangementGraphicsItem->setScene( this->scene );
@@ -114,12 +123,18 @@ public:
 
     // set up callbacks
     this->scene->installEventFilter( this->curveInputCallback );
-    QObject::connect( this->curveInputCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
-    QObject::connect( this->deleteCurveCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
-    QObject::connect( this->fillFaceCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
-    QObject::connect( this, SIGNAL( modelChanged( ) ), this->arrangementGraphicsItem, SLOT( modelChanged( ) ) );
-    QObject::connect( this, SIGNAL( modelChanged( ) ), this->envelopeCallback, SLOT( slotModelChanged( ) ) );
-    // TODO: Add a connection to update the demo window when the fill color changes
+    QObject::connect(this->curveInputCallback, SIGNAL(modelChanged()), this,
+                     SIGNAL(modelChanged()));
+    QObject::connect(this->deleteCurveCallback, SIGNAL(modelChanged()), this,
+                     SIGNAL(modelChanged()));
+    QObject::connect(this->fillFaceCallback, SIGNAL(modelChanged()), this,
+                     SIGNAL(modelChanged()));
+    QObject::connect(this, SIGNAL(modelChanged()),
+                     this->arrangementGraphicsItem, SLOT(modelChanged()));
+    QObject::connect(this, SIGNAL(modelChanged()), this->envelopeCallback,
+                     SLOT(slotModelChanged()));
+    // TODO: Add a connection to update the demo window when the fill color
+    //       changes
   }
 
   void setArrangement( Arrangement* newArr )
@@ -137,16 +152,25 @@ public:
 
     this->arrangement = newArr;
 
-    this->arrangementGraphicsItem = new CGAL::Qt::ArrangementGraphicsItem< Arrangement >( this->arrangement );
+    this->arrangementGraphicsItem =
+      new CGAL::Qt::ArrangementGraphicsItem<Arrangement>( this->arrangement );
 
-    this->curveInputCallback = new ArrangementCurveInputCallback< Arrangement >( this->arrangement, this );
-    this->deleteCurveCallback = new DeleteCurveCallback< Arrangement >( this->arrangement, this );
-    this->pointLocationCallback = new PointLocationCallback< Arrangement >( this->arrangement, this );
-    this->verticalRayShootCallback = new VerticalRayShootCallback< Arrangement >( this->arrangement, this );
-    this->mergeEdgeCallback = new MergeEdgeCallback< Arrangement >( this->arrangement, this );
-    this->splitEdgeCallback = new SplitEdgeCallback< Arrangement >( this->arrangement, this );
-    this->envelopeCallback = new EnvelopeCallback< Arrangement >( this->arrangement, this );
-    this->fillFaceCallback = new FillFaceCallback< Arrangement >( this->arrangement, this );
+    this->curveInputCallback =
+      new ArrangementCurveInputCallback<Arrangement>(this->arrangement, this);
+    this->deleteCurveCallback =
+      new DeleteCurveCallback<Arrangement>( this->arrangement, this );
+    this->pointLocationCallback =
+      new PointLocationCallback<Arrangement>( this->arrangement, this );
+    this->verticalRayShootCallback =
+      new VerticalRayShootCallback<Arrangement>( this->arrangement, this );
+    this->mergeEdgeCallback =
+      new MergeEdgeCallback<Arrangement>( this->arrangement, this );
+    this->splitEdgeCallback =
+      new SplitEdgeCallback<Arrangement>( this->arrangement, this );
+    this->envelopeCallback =
+      new EnvelopeCallback<Arrangement>( this->arrangement, this );
+    this->fillFaceCallback =
+      new FillFaceCallback<Arrangement>( this->arrangement, this );
 
     this->scene->addItem( this->arrangementGraphicsItem );
     this->arrangementGraphicsItem->setScene( this->scene );
@@ -159,13 +183,19 @@ public:
     this->envelopeCallback->setScene( this->scene );
     this->fillFaceCallback->setScene( this->scene );
 
-    this->scene->installEventFilter( this->curveInputCallback );
-    QObject::connect( this->curveInputCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
-    QObject::connect( this->deleteCurveCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
-    QObject::connect( this->fillFaceCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
-    QObject::connect( this, SIGNAL( modelChanged( ) ), this->arrangementGraphicsItem, SLOT( modelChanged( ) ) );
-    QObject::connect( this, SIGNAL( modelChanged( ) ), this->envelopeCallback, SLOT( slotModelChanged( ) ) );
-    // TODO: Add a connection to update the demo window when the fill color changes
+    this->scene->installEventFilter(this->curveInputCallback);
+    QObject::connect(this->curveInputCallback, SIGNAL(modelChanged()), this,
+                     SIGNAL(modelChanged()));
+    QObject::connect(this->deleteCurveCallback, SIGNAL(modelChanged()), this,
+                     SIGNAL(modelChanged()));
+    QObject::connect(this->fillFaceCallback, SIGNAL(modelChanged()), this,
+                     SIGNAL(modelChanged()));
+    QObject::connect(this, SIGNAL(modelChanged()),
+                     this->arrangementGraphicsItem, SLOT(modelChanged()));
+    QObject::connect(this, SIGNAL(modelChanged()), this->envelopeCallback,
+                     SLOT(slotModelChanged()));
+    // TODO: Add a connection to update the demo window when the fill color
+    //       changes
 
     emit modelChanged( );
   }

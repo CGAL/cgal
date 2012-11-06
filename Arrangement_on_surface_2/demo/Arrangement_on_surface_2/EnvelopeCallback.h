@@ -56,11 +56,12 @@ template < typename Arr_, typename Traits = typename Arr_::Geometry_traits_2 >
 class EnvelopeCallback : public EnvelopeCallbackBase
 {
 public:
-  typedef Arr_ Arrangement;
-  typedef typename Arrangement::Edge_iterator Edge_iterator;
-  //typedef typename Arrangement::Geometry_traits_2 Traits;
+  typedef Arr_                                          Arrangement;
+  typedef typename Arrangement::Edge_iterator           Edge_iterator;
+  // typedef typename Arrangement::Geometry_traits_2    Traits;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  //typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
+  // typedef typename Traits::Construct_x_monotone_curve_2
+  //   Construct_x_monotone_curve_2;
   typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
   typedef typename Kernel::Point_2                      Kernel_point_2;
   typedef typename Traits::Point_2                      Point_2;
@@ -151,8 +152,9 @@ protected:
 
   template < typename Coefficient_ >
   void updateEnvelope(bool lower,
-                      CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits);
-
+                      CGAL::Arr_algebraic_segment_traits_2<Coefficient_>
+                      traits);
+  
   Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
   Arrangement* arr;
   CGAL::Qt::CurveGraphicsItem< Traits >* lowerEnvelope;
@@ -161,8 +163,8 @@ protected:
 }; // class EnvelopeCallback
 
 template < typename Arr_, typename Traits >
-EnvelopeCallback< Arr_, Traits >::
-EnvelopeCallback( Arrangement* arr_, QObject* parent ):
+EnvelopeCallback<Arr_, Traits>::EnvelopeCallback(Arrangement* arr_,
+                                                 QObject* parent) :
   EnvelopeCallbackBase( parent ),
   arr( arr_ ),
   lowerEnvelope( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
@@ -255,7 +257,8 @@ void EnvelopeCallback< Arr_, Traits >::updateEnvelope(bool lower,
         //           << std::endl;
       }
       X_monotone_curve_2 curve =
-        this->construct_x_monotone_subcurve_2(e->curve(), leftPoint, rightPoint);
+        this->construct_x_monotone_subcurve_2(e->curve(),
+                                              leftPoint, rightPoint);
       envelopeToUpdate->insert( curve );
       envelopeToUpdate->insert( leftPoint );
       envelopeToUpdate->insert( rightPoint );
@@ -270,8 +273,7 @@ void EnvelopeCallback< Arr_, Traits >::updateEnvelope(bool lower,
 
 template < typename Arr_, typename Traits >
 template < typename CircularKernel >
-void
-EnvelopeCallback< Arr_, Traits >::
+void EnvelopeCallback< Arr_, Traits >::
 updateEnvelope(bool lower,
                CGAL::Arr_circular_arc_traits_2< CircularKernel > /* traits */)
 {
@@ -358,7 +360,7 @@ template < typename Arr_, typename Traits >
 template < typename Coefficient_ >
 void EnvelopeCallback< Arr_, Traits >::
 updateEnvelope(bool /* lower */,
-               CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > /* traits */)
+               CGAL::Arr_algebraic_segment_traits_2<Coefficient_> /* traits */)
 {
   // std::cout << "alg seg envelope stub" << std::endl;
 }
