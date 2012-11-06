@@ -20,7 +20,7 @@ and can be used for any orientable triangulated surface
 without boundary, whatever may be the dimensionality
 of the space the triangulation is embedded in.
 
-## A Data Structure Based on Faces and Vertices ##
+\subsection TDS_2ADataStructureBasedonFacesandVertices A Data Structure Based on Faces and Vertices
 
 The representation of \cgal 2D triangulations is based on faces and vertices,
 Edges are only implicitly 
@@ -63,7 +63,7 @@ will have an implicit representation.
 The 2D triangulation data structure can represent simplicial complexes
 of dimension 2, 1 or 0.
 
-## The Set of Faces and Vertices ##
+\subsection TDS_2TheSetofFacesandVertices The Set of Faces and Vertices
 
 The set of faces maintained by a 2D triangulation 
 data structure is such that each edge
@@ -147,7 +147,7 @@ see Figure \ref TDS_2D_Fig_insertion,
 \cgal provides the class `Triangulation_data_structure_2<Vb,Fb>`
 as a default triangulation data structure.
 
-## Flexibility ##
+\subsection TDS_2Flexibility Flexibility
 
 In order to provide flexibility, the default triangulation data
 structure is templated by two parameters 
@@ -162,7 +162,7 @@ This design allows the user to plug in the
 triangulation data structure
 his own vertex or face classes tuned for his application.
 
-## The Cyclic Dependency of Template Parameters ##
+\subsection TDS_2TheCyclicDependencyofTemplateParameters The Cyclic Dependency of Template Parameters
 
 Since adjacency and incidence relation are stored in vertices and
 faces,
@@ -179,7 +179,7 @@ See figure \ref TDS_2D_Fig_three_levels_2.
 \anchor TDS_2D_Fig_three_levels_2
 \image html threelevels2.gif "The cyclic dependency in triangulations software design."
 
-## The Rebind Mechanism ##
+\subsection TDS_2TheRebindMechanism The Rebind Mechanism
 
 The solution proposed by \cgal to resolve this cyclic dependency
 is based on a rebind mechanism similar to the mechanism used in the 
@@ -247,7 +247,7 @@ typedef Triangulation_data_structure< Vertex_base<>, Face_base<> > TDS;
 
 \endcode
 
-## Making Use of the Flexibility ##
+\subsection TDS_2MakingUseoftheFlexibility Making Use of the Flexibility
 
 There are several possibilities to make use
 of the flexibility offered by 

@@ -1,9 +1,9 @@
 /*! \page  PolynomialClassified  Classified Reference Pages
 
 
-# %Polynomial_d #
+\section PolynomialPolynomiald %Polynomial_d
 
-## Concepts ##
+\subsection PolynomialConcepts Concepts
 
 - `Polynomial_d`
 - `PolynomialTraits_d`
@@ -72,14 +72,14 @@
 - `PolynomialTraits_d::SturmHabichtSequenceWithCofactors`
 - `PolynomialTraits_d::PrincipalSturmHabichtSequence`
 
-## Classes ##
+\subsection PolynomialClasses Classes
 
 - `CGAL::Polynomial<Coeff>`
 - `CGAL::Polynomial_traits_d<Polynomial_d>`
 - `CGAL::Exponent_vector`
 - `CGAL::Polynomial_type_generator<T,d>`
 
-## Functions ##
+\subsection PolynomialFunctions Functions
 
 - `CGAL::get_coefficient`
 - `CGAL::get_innermost_coefficient`
@@ -140,7 +140,7 @@
 - `CGAL::principal_sturm_habicht_sequence`
 - `CGAL::number_of_real_roots`
 
-# Alphabetical List of Reference Pages #
+\section PolynomialAlphabeticalListofReferencePages Alphabetical List of Reference Pages
 
 - \ref CGAL::canonicalize "canonicalize"
 - \ref CGAL::compare "compare"

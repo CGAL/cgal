@@ -39,7 +39,7 @@ reader may want to refer to the paper by Karavelas
 \cite cgal:k-reisv-04 for the general idea as well as the details of
 the algorithm implemented.
 
-##Definitions##
+\subsection Segment_Delaunay_graph_2Definitions Definitions
 Before describing the details of the
 implementation we make a brief introduction to the theory of segment
 Delaunay graphs and segment Voronoi diagrams.  The segment Voronoi
@@ -140,7 +140,7 @@ no real meaning. What has real meaning is the set of sites that
 correspond to cells of the Voronoi diagram and this is the set of
 output sites.
 
-##Degenerate Dimensions##
+\subsection Segment_Delaunay_graph_2DegenerateDimensions Degenerate Dimensions
 
 The dimension of the segment Delaunay graph is in general 2. The
 exceptions to this rule are as follows:
@@ -180,7 +180,7 @@ for the corresponding template parameter is provided, so the user
 does not need to specify it.
 </UL>
 
-##Strongly Intersecting Sites and their Representation##
+\subsection Segment_Delaunay_graph_2StronglyIntersecting Strongly Intersecting Sites and their Representation
 
 As we have mentioned above, the segment Delaunay graph package of
 \cgal is designed to support the computation of the segment Voronoi
@@ -307,7 +307,7 @@ to be represented by up to 6 handles (which are very lightweight
 objects) instead of 6 points, which are, compared to handles of
 course, very heavy objects.
 
-##Optimizing Memory Allocation##
+\subsection Segment_Delaunay_graph_2OptimizingMemory Optimizing Memory Allocation
 
 There are applications where we know beforehand that the input
 consists of only weakly intersecting sites. In these cases the site
@@ -358,7 +358,7 @@ of the size of the input. What we want to focus in the remainder of
 this section are the different kinds of filtering techniques that we
 have employed in our implementation.
 
-##Geometric Filtering##
+\subsection Segment_Delaunay_graph_2GeometricFiltering Geometric Filtering
 
 Our representation of sites is coupled very naturally, with what we
 call <I>geometric filtering</I>. The technique
@@ -517,7 +517,7 @@ for inputs consisting of more than about 1,000 sites.
 
 \section secsdg2examples Examples 
 
-## First Example ##
+\subsection Segment_Delaunay_graph_2FirstExample First Example
 
 The following example shows how to use the segment Delaunay graph traits
 in conjunction with the `Filtered_exact<CT,ET>` mechanism. In
@@ -527,7 +527,7 @@ site-related quantities.
 
 \cgalexample{Segment_Delaunay_graph_2/sdg-count-sites.cpp}
 
-## Second Example ##
+\subsection Segment_Delaunay_graph_2SecondExample Second Example
 
 The following example shows how to use the segment Delaunay graph
 hierarchy along with the filtered traits class that supports
@@ -535,7 +535,7 @@ intersecting sites.
 
 \cgalexample{Segment_Delaunay_graph_2/sdg-filtered-traits.cpp}
 
-## Third Example ##
+\subsection Segment_Delaunay_graph_2ThirdExample Third Example
 
 The following example demonstrates how to recover the defining sites
 for the edges of the Voronoi diagram (which are the duals of the

@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Lutz Kettner, Andreas Meyer, and Afra Zomorodian
 
-# Introduction # {#Box_intersection_dIntroduction}
+\section Box_intersection_dIntroduction Introduction
 
 Simple questions on geometric primitives, such as intersection and
 distance computations, can themselves become quite expensive if the
@@ -80,7 +80,7 @@ second argument a box from the second sequence. In the complete case,
 the second argument is a box from an internal copy of the first
 sequence.
 
-# Software Design # {#Box_intersection_dSoftware}
+\section Box_intersection_dSoftware Software Design
 
 The box intersection algorithm is implemented as a family of generic
 functions; the functions for the complete case accept one iterator
@@ -189,7 +189,7 @@ for the change of the `topology` parameter and its effect.
 
 \cgalexample{Box_intersection_d/minimal.cpp}
 
-# Example for Finding Intersecting 3D Triangles # {#Box_intersection_dExample}
+\section Box_intersection_dExample_1 Example for Finding Intersecting 3D Triangles
 
 The conventional application of the axis-aligned box intersection
 algorithm will start from complex geometry, here 3D triangles,
@@ -234,7 +234,7 @@ example program in the \cgal distribution.
 
 \cgalexample{Box_intersection_d/triangle_self_intersect.cpp}
 
-# Example for Using Pointers to Boxes # {#Box_intersection_dExample}
+\section Box_intersection_dExample_2 Example for Using Pointers to Boxes
 
 We modify the previous example, finding intersecting 3D triangles,
 and add an additional vector `ptr` that stores pointers to the bounding
@@ -390,7 +390,7 @@ important.
 \anchor fig_benchmark
 \image html benchmark.gif "Runtime comparison between the scanning and the streaming algorithm."
 
-# Example Using a Custom Box Implementation # {#Box_intersection_dExample}
+\section Box_intersection_dExample_3 Example Using a Custom Box Implementation
 
 The example in the previous Section \ref secboxintersparams uses
 an array to provide the coordinates and then creates another array for
@@ -457,7 +457,7 @@ stored in the `boxes` so far.
 
 \cgalexample{Box_intersection_d/proximity_custom_box_traits.cpp}
 
-# Design and Implementation History # {#Box_intersection_dDesign}
+\section Box_intersection_dDesign Design and Implementation History
 
 Lutz Kettner and Andreas Meyer implemented the algorithms starting
 from the publication \cite cgal:ze-fsbi-02. We had access to the

@@ -7,7 +7,7 @@ namespace CGAL {
 \autotoc
 \author Michael Hemmer
 
-# Introduction # {#Algebraic_foundationsIntroduction}
+\section Algebraic_foundationsIntroduction Introduction
 
 \cgal is targeting towards exact computation with non-linear objects, 
 in particular objects defined on algebraic curves and surfaces. 
@@ -21,7 +21,7 @@ the real axis, or <I>real embeddable</I> for short.
 Moreover, the package introduces the notion of <I>interoperable</I> types which 
 allows an explicit handling of mixed operations. 
 
-# Algebraic Structures # {#Algebraic_foundationsAlgebraic}
+\section Algebraic_foundationsAlgebraic Algebraic Structures
 
 The algebraic structure concepts introduced within this section are 
 motivated by their well known counterparts in traditional algebra, 
@@ -82,9 +82,9 @@ e.g., `CGAL::sqrt(x)`. This is realized via function templates using
 the according functor of the traits class. For an overview see 
 Section \ref PkgAlgebraicFoundations in the reference manual.
 
-## Tags in Algebraic Structure Traits ##
+\subsection Algebraic_foundationsTagsinAlgebraicStructure Tags in Algebraic Structure Traits
 
-## Algebraic Category ##
+\subsection Algebraic_foundationsAlgebraicCategory Algebraic Category
 
 For a type `AS`, `Algebraic_structure_traits<AS>` 
 provides several tags. The most important tag is the `Algebraic_category` 
@@ -99,7 +99,7 @@ The tags are derived from each other such that they reflect the
 hierarchy of the algebraic structure concept, e.g., 
 `Field_with_sqrt_tag` is derived from `Field_tag`. 
 
-## Exact and Numerical Sensitive ##
+\subsection Algebraic_foundationsExactandNumericalSensitive Exact and Numerical Sensitive
 
 Moreover, `Algebraic_structure_traits<AS>` provides the tags `Is_exact` 
 and `Is_numerical_sensitive`, which are both `Boolean_tag`s. 
@@ -127,7 +127,7 @@ category tags reflect the algebraic structure hierarchy.
 
 \cgalexample{Algebraic_foundations/algebraic_structure_dispatch.cpp}
 
-# Real Embeddable # {#Algebraic_foundationsReal}
+\section Algebraic_foundationsRealE Real Embeddable
 
 \anchor secRealEmbeddable
 
@@ -162,7 +162,7 @@ and a subset of the real numbers and hence has characteristic zero.
 In case the type is a model of `Field` and `RealEmbeddable` it is a 
 superset of the rational numbers.
 
-# Real Number Types # {#Algebraic_foundationsReal}
+\section Algebraic_foundationsRealN Real Number Types
 
 Every \cgal `Kernel` comes with two <I>real number types</I>
 (number types embeddable into the real numbers). One of them is a
@@ -178,7 +178,7 @@ concepts `Field` and `RealEmbeddable`, while
 distinct structures and are therefore not listed in the concept
 hierarchy of Figure \ref figConceptHierarchyOfAlgebraicStructures.
 
-# Interoperability # {#Algebraic_foundationsInteroperability}
+\section Algebraic_foundationsInteroperability Interoperability
 
 This section introduces two concepts for interoperability of types, 
 namely `ImplicitInteroperable` and `ExplicitInteroperable`. While 
@@ -215,7 +215,7 @@ coercion type `C` they are valid argument types for all binary functors
 provided by `Algebraic_structure_traits` and `Real_embeddable_traits` of
 `C`. This is also true for the according global functions.
 
-## Examples ##
+\subsection Algebraic_foundationsExamples Examples
 
 The following example illustrates how two write code for 
 `ExplicitInteroperable` types.
@@ -230,7 +230,7 @@ types a variant that avoids the explicit cast is selected.
 
 \cgalexample{Algebraic_foundations/implicit_interoperable_dispatch.cpp}
 
-# Fractions # {#Algebraic_foundationsFractions}
+\section Algebraic_foundationsFractions Fractions
 
 Beyond the need for performing algebraic operations on objects as a 
 whole, there are also number types which one would like to decompose into 
@@ -250,7 +250,7 @@ A related class is `Rational_traits` which has been kept for backward
 compatibility reasons. However, we recommend to use `Fraction_traits` since
 it is more general and offers dispatching functionality.
 
-## Examples ##
+\subsection Algebraic_foundationsExamples_1 Examples
 
 The following example show a simple use of `Fraction_traits`:
 \cgalexample{Algebraic_foundations/fraction_traits.cpp}
@@ -262,7 +262,7 @@ compute the 'least' common multiple of the denominators.
 
 \cgalexample{Algebraic_foundations/integralize.cpp}
 
-# Design and Implementation History # {#Algebraic_foundationsDesign}
+\section Algebraic_foundationsDesign Design and Implementation History
 
 The package is part of \cgal since release 3.3. Of course the package is based 
 on the former Number type support of CGAL. This goes back to Stefan Schirra and Andreas Fabri. But on the other hand the package is to a large extend influenced 

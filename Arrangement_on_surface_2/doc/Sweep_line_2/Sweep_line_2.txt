@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Baruch Zukerman, Ron Wein, and Efi Fogel
 
-# Introduction # {#Sweep_line_2Introduction}
+\section Sweep_line_2Introduction Introduction
 
 Let \f$ {\mathcal C} = \{C_1, C_2, \ldots, C_n\}\f$ be a set of curves.
 We wish to compute all intersection points between
@@ -38,7 +38,7 @@ The complexity of the sweep-line algorithm is \f$ O((n + k)\log{n})\f$ where \f$
 is the number of the input curves and \f$ k\f$ is the number of
 intersection points induced by these curves.
 
-# Example # {#Sweep_line_2Example}
+\section Sweep_line_2Example Example
 
 The simple program listed below computes intersection points induced by 
 a set of four input segments illustrated in figure \ref SL_secsimple.
@@ -48,7 +48,7 @@ a set of four input segments illustrated in figure \ref SL_secsimple.
 
 \cgalexample{Arrangement_on_surface_2/sweep_line.cpp}
 
-# Design and Implementation History # {#Sweep_line_2Design}
+\section Sweep_line_2Design Design and Implementation History
 
 The current version of the sweep-line algorithm was written by
 Baruch Zukerman, based on previous implementations by Ester Ezra and

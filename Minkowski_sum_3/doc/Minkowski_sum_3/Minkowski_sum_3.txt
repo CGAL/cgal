@@ -7,7 +7,7 @@ namespace CGAL {
 \anchor chapterMinkowskiSum3
 \author Peter Hachenberger
 
-# Introduction # {#Minkowski_sum_3Introduction}
+\section Minkowski_sum_3Introduction Introduction
 
 \anchor figspoonStar
 \image html spoon_star.gif "The Minkowski sum of a spoon and a star."
@@ -51,7 +51,7 @@ the Minkowski sum of two Nef polyhedra. We do not support arbitrary
 Nef polyhedra, yet. The restrictions are discussed in detail in
 Section \ref Minkowski_sum_3Features.
 
-# Decomposition Method # {#Minkowski_sum_3Decomposition}
+\section Minkowski_sum_3Decomposition Decomposition Method
 
 The decomposition method for computing the Minkowski sum of non-convex
 polyhedra makes use of the fact that Minkowski sums of convex
@@ -172,7 +172,7 @@ ball2
 
 </CENTER>
 
-# Features and Restrictions # {#Minkowski_sum_3Features}
+\section Minkowski_sum_3Features Features and Restrictions
 
 \anchor sectionMinkowskiSum_3Restrictions
 
@@ -250,7 +250,7 @@ selection mark. If there are two facets that are adjacent to the outer
 volume, but have different selections marks, we cannot set a common
 selection mark without spoiling the correctness of the Minkowski sum.
 
-# Usage # {#Minkowski_sum_3Usage}
+\section Minkowski_sum_3Usage Usage
 
 The function `minkowski_sum_3()` should be used with the
 `Exact_predicates_exact_constructions_kernel`, which often is
@@ -265,7 +265,7 @@ the function itself to keep the memory usage as small as possible.
 
 \cgalexample{Minkowski_sum_3/cube_offset.cpp}
 
-# Glide # {#Minkowski_sum_3Glide}
+\section Minkowski_sum_3Glide Glide
 
 \image html glide.gif "The region swept by a star that moves along a polygonal path."
 

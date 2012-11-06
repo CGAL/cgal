@@ -10,7 +10,7 @@ namespace CGAL {
 This chapter describes algorithms which for a given point set compute
 the "best" inscribed object from a specific class.
 
-# Maximal inscribes k-gons # {#Inscribed_areasMaximal}
+\section Inscribed_areasMaximal Maximal inscribes k-gons
  We provide algorithms for
 computing maximal inscribed \f$ k\f$-gons (triangles, quadrilaterals,
 \f$ \dots\f$ ) of a planar point set \f$ P\f$. Maximal \f$ k\f$-gons are convex, and it
@@ -35,7 +35,7 @@ return to the departure airfield. To score simply based on the total
 distance flown is not a good measure, since circling in thermals
 allows to increase it easily.
 
-# Largest Empty Rectange # {#Inscribed_areasLargest}
+\section Inscribed_areasLargest Largest Empty Rectange
 
 We further provide an algorithm for computing the maximal area
 inscribed axis parallel rectangle for a point set.

@@ -30,7 +30,7 @@ Polynomial Fitting</I>.
 
 Note that this package needs the third party library \ref thirdpartyEigen for linear algebra operations.
 
-## Overview ##
+\subsection Ridges_3Overview Overview
 
 Section \ref smooth presents the basics of the theory of ridges and
 umbilics on smooth surfaces. Sections \ref ridgemesh and
@@ -173,7 +173,7 @@ Index \f$1/2\f$ umbilic or elliptic umbilic.
 \anchor umbilics
 \image html lemon.png "Elliptic and hyperbolic umbilics."
 
-# Approximating Ridges on Triangulated Surface Meshes # {#Ridges_3Approximating}
+\section Ridges_3Approximating Approximating Ridges on Triangulated Surface Meshes
 
 \anchor ridgemesh
 
@@ -274,7 +274,7 @@ the <I>strength </I> which is the integral of the curvature along the
 ridge line
 \cite cgal:ybs-rvlmi-04.
 
-# Approximating Umbilics on Triangulated Surface Meshes # {#Ridges_3Approximating}
+\section Ridges_3Approximating_1 Approximating Umbilics on Triangulated Surface Meshes
 
 \anchor umbilicmesh
 
@@ -323,7 +323,7 @@ on the boundary of its patch. This functionality is not provided, and
 the interested reader is referred to \cite cgal:cp-tdare-05 for more
 details.
 
-# Software Design # {#Ridges_3Software}
+\section Ridges_3Software Software Design
 
 \anchor soft
 
@@ -349,7 +349,7 @@ Output of ridges or umbilics are provided via output iterator.
 Approximation of ridges and umbilics are performed by two independent
 classes, which we now further describe.
 
-## Ridge Approximation ##
+\subsection Ridges_3RidgeApproximation Ridge Approximation
 
 The main class is
 `Ridge_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`.
@@ -391,7 +391,7 @@ If one chooses to use only third order quantities, the quantities
 \f$ P_i\f$ do not have to be defined. Then the sharpness will not be
 defined.
 
-## %Umbilic Approximation ##
+\subsection Ridges_3UmbilicApproximation %Umbilic Approximation
 
 The main class is
 `Umbilic_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`.
@@ -407,7 +407,7 @@ type : \ref ELLIPTIC_UMBILIC, \ref HYPERBOLIC_UMBILIC or
 to and the list of half-edges representing the contour of the
 neighborhood.
 
-## Models for the Property Map Concepts ##
+\subsection Ridges_3ModelsforthePropertyMapConcepts Models for the Property Map Concepts
 
 The class
 `Vertex2Data_Property_Map_with_std_map<TriangulatedSurfaceMesh>`
@@ -416,11 +416,11 @@ enables the definition of models for the concepts
 `Vertex2VectorPropertyMap` 
 using `std::maps` and `boost::associative_property_map`.
 
-# Examples # {#Ridges_3Examples}
+\section Ridges_3Examples Examples
 
 \anchor examples
 
-## Example program ##
+\subsection Ridges_3Exampleprogram Example program
 
 The following program computes ridges and umbilics from an off
 file.\footnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce Figure \ref figmechanical_crest_filteredintro, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the Jet fitting package to estimate the differential
@@ -526,7 +526,7 @@ int main(int argc, char *argv[])
 
 \endcode
 
-## Example: Ridges and Umbilics on an Ellipsoid ##
+\subsection Ridges_3ExampleRidgesandUmbilicsonanEllipsoid Example: Ridges and Umbilics on an Ellipsoid
 
 For Figure \ref ellipsoidridgesexample, the data have been computed as follows:
 
@@ -557,7 +557,7 @@ Ridges on the ellipsoid, normals pointing outward. Color coding :
 \ref MIN_ELLIPTIC_RIDGE are red and \ref MIN_HYPERBOLIC_RIDGE are yellow.
 </b></center>
 
-## Example: Filtering of Crest Ridges on a Mechanical Part ##
+\subsection Ridges_3ExampleFilteringofCrestRidgesona Example: Filtering of Crest Ridges on a Mechanical Part
 
 Figure \ref figmechanical_crest_filteredintro illustrates the filtering 
 of crest ridges on a mechanical model, and has been computed as follows:

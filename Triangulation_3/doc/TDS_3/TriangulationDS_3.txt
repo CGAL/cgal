@@ -184,7 +184,7 @@ itself, which the Figure \ref TDS3figlayers illustrates.
 \anchor TDS3figlayers
 \image html design_tds.gif "Triangulation Data Structure software design."
 
-## Flexibility of the Design ##
+\subsection TDS_3FlexibilityoftheDesign Flexibility of the Design
 
 In order for the user to be able to add his own data in the vertices and cells,
 the design of the TDS is split into two layers:
@@ -297,21 +297,21 @@ typedef Triangulation_vertex_base_3<GT, Vb2> Other;
 
 \section TDS3secexamples Examples 
 
-## Incremental Construction ##
+\subsection TDS_3IncrementalConstruction Incremental Construction
 
 The following example shows how to construct a 3D triangulation data
 structure by inserting vertices.
 
 \cgalexample{Triangulation_3/tds.cpp}
 
-## Cross-Linking Between a 2D and a 3D Data Structures ##
+\subsection TDS_3CrossLinkingBetweena2Danda3DDataStructures Cross-Linking Between a 2D and a 3D Data Structures
 
 This example program illustrates how to setup a 2D and a 3D triangulation data
 structures whose vertices respectively store vertex handles of the other one.
 
 \cgalexample{Triangulation_3/linking_2d_and_3d.cpp}
 
-# Design and Implementation History # {#TDS_3Design}
+\section TDS_3Design Design and Implementation History
 
 Monique Teillaud introduced the triangulation of the topological
 sphere \f$ S^d\f$ in \f$ \R^{d+1}\f$ to manage the underlying graph of geometric

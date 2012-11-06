@@ -7,7 +7,7 @@ namespace CGAL {
 
 \authors Peter Hachenberger and Lutz Kettner
 
-# Introduction # {#Nef_S2Introduction}
+\section Nef_S2Introduction Introduction
 
 Nef polyhedra are defined as a subset of the d-dimensional space obtained by
 a finite number of set complement and set intersection operations on
@@ -51,7 +51,7 @@ analogous to their counterparts in `Nef_polyhedron_S2`. Additionally,
 there is the \em shalfloop representing the great circles. The
 incidences are illustrated in the figure above.
 
-# Restricted Spherical Geometry # {#Nef_S2Restricted}
+\section Nef_S2Restricted Restricted Spherical Geometry
 
 We introduce geometric objects that are part of the spherical surface
 \f$ S_2\f$ and operations on them. We define types `Nef_polyhedron_S2::Sphere_point`,
@@ -78,9 +78,9 @@ segment, two segments intersect in at most one interior point
 (non-degenerately), or three non-cocircular sphere points can be
 qualified as being positively or negatively oriented.
 
-# Example Programs # {#sectionNef_S2Examples}
+\section sectionNef_S2Examples Example Programs
 
-## First Example ##
+\subsection Nef_S2FirstExample First Example
 
 In this first example `Nef_polyhedron_S2` is parametrized with a %CGAL
 Kernel as traits class. The types comprising the spherical geometry can be
@@ -92,7 +92,7 @@ including the boundary, \f$ N2\f$ is another halfsphere without the boundary, an
 
 \cgalexample{Nef_S2/nef_s2_simple.cpp}
 
-## Construction and Combinations ##
+\subsection Nef_S2ConstructionandCombinations Construction and Combinations
 
 Th example shows the different types of constructors: \f$ N1\f$ is the complete
 sphere, \f$ N2\f$ is a halfsphere which includes the boundary, \f$ N3\f$ is created
@@ -107,7 +107,7 @@ if \f$ N5\f$ is not equal to \f$ N4\f$.
 
 \cgalexample{Nef_S2/nef_s2_construction.cpp}
 
-## Exploration ##
+\subsection Nef_S2Exploration Exploration
 
 By recursively composing binary and unary operations one can end with
 a very complex rectilinear structure. `Nef_polyhedron_S2` allows 
@@ -131,7 +131,7 @@ Afterwards the iterator can be casted to the proper handle type.
 
 \cgalexample{Nef_S2/nef_s2_exploration.cpp}
 
-## Point Location ##
+\subsection Nef_S2PointLocation Point Location
 
 Using the `locate` function, it is possible to retrive an item at a
 certain location on the sphere. In the following example, the item at 
@@ -145,7 +145,7 @@ indicates whether the cast was successful or not.
 
 \cgalexample{Nef_S2/nef_s2_point_location.cpp}
 
-## Visualization ##
+\subsection Nef_S2Visualization Visualization
 
 `Nef_polyhedron_S2` provides an interface for OpenGL visualization via a
 Qt widget. The usage is shown in the following example:

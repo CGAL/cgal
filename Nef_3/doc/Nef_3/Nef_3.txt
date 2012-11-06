@@ -15,7 +15,7 @@ namespace CGAL {
 \autotoc
 \authors Peter Hachenberger and Lutz Kettner
 
-# Introduction # {#Nef_3Introduction}
+\section Nef_3Introduction Introduction
 
 In solid modeling, two major representation schemes are used:
 <I>constructive solid geometry</I> (CSG) and <I>boundary
@@ -71,7 +71,7 @@ transformations and a point location query operation. We have a custom
 file format for storing and reading Nef polyhedra from files. We offer
 a simple OpenGL-based visualizer for debugging and illustrations.
 
-# Definition # {#Nef_3Definition}
+\section Nef_3Definition Definition
 
 The theory of Nef polyhedra has been developed for arbitrary
 dimensions. The class `Nef_polyhedron_3` implements a
@@ -291,7 +291,7 @@ Regularized polyhedral sets are a subclass of Nef polyhedra. We provide the
 `regularization` operation as a shortcut for the consecutive execution
 of the `interior` and the `closure` operations.
 
-# Example Programs # {#Nef_3Example}
+\section Nef_3Example Example Programs
 
 The following example gives a first impression of how to instantiate
 and use `Nef_polyhedron_3`. We use the `Cartesian`
@@ -312,7 +312,7 @@ is the complement of the full space.
 
 \cgalexample{Nef_3/nef_3_simple.cpp}
 
-## Construction and Comparison ##
+\subsection Nef_3ConstructionandComparison Construction and Comparison
 
 This example shows the various constructors. We can create the empty
 set, which is also the default constructor, and the full space, i.e.
@@ -339,7 +339,7 @@ operators are therefore trivial to implement.
 
 \cgalexample{Nef_3/nef_3_construction.cpp}
 
-## Point Set Operations ##
+\subsection Nef_3PointSetOperations Point Set Operations
 
 As explained in the introduction, Nef polyhedra are closed under all
 Boolean set operations. The class `Nef_polyhedron_3` provides
@@ -357,14 +357,14 @@ one selects all boundary items.
 
 \cgalexample{Nef_3/point_set_operations.cpp}
 
-## Transformation ##
+\subsection Nef_3Transformation Transformation
 
 Using the `std::transform` function, a Nef polyhedron can be translated, 
 rotated and scaled. The usage is shown in the following example:
 
 \cgalexample{Nef_3/transformation.cpp}
 
-## The Interface between %Polyhedron_3 and %Nef_polyhedron_3 ##
+\subsection Nef_3TheInterfacebetweenPolyhedron3andNefpolyhedron3 The Interface between %Polyhedron_3 and %Nef_polyhedron_3
 
 \anchor subsectionNef_3Polyhedron
 
@@ -388,7 +388,7 @@ see Section \ref sectionPolyIO.
 
 \cgalexample{Nef_3/interface_polyhedron.cpp}
 
-## Using an Extended Kernel ##
+\subsection Nef_3UsinganExtendedKernel Using an Extended Kernel
 
 The provided extended kernels are used the same way as any other
 \cgal kernel. The essential difference is, that coordinates are not
@@ -403,7 +403,7 @@ the symbolical value, large but finite, for the size of the infimaximal box.
 
 \cgalexample{Nef_3/extended_kernel.cpp}
 
-# File I/O # {#Nef_3File}
+\section Nef_3File File I/O
 
 \anchor sectionNef_3IO
 
@@ -442,9 +442,9 @@ standard kernel.
 
 \cgalexample{Nef_3/nefIO.cpp}
 
-# Further Example Programs # {#Nef_3Further}
+\section Nef_3Further Further Example Programs
 
-## Exploring a Sphere Map ##
+\subsection Nef_3ExploringaSphereMap Exploring a Sphere Map
 
 A sphere map is explored by using the function `get_sphere_map`, which 
 returns the sphere map of the specified vertex as a `Nef_polyhedron_S2`.
@@ -530,7 +530,7 @@ The example program uses the `Shell_explorer` for each shell of
 the given Nef polyhedron once and reports the smallest vertex of each
 shell to the standard output.
 
-## Point Location ##
+\subsection Nef_3PointLocation Point Location
 
 The `locate(Point_3 p)` function locates the point `p` in the
 Nef polyhedron and returns the item the point belongs to. The
@@ -547,7 +547,7 @@ the `Object_handle` can represent a `Vertex_const_handle`, a
 
 \cgalexample{Nef_3/nef_3_point_location.cpp}
 
-# Visualization # {#Nef_3Visualization}
+\section Nef_3Visualization Visualization
 
 With the `Qt_widget_OpenGL` class an interface to OpenGL
 visualization via Qt is offered. The class knows how to handle
@@ -557,7 +557,7 @@ a basis for writing Qt widgets displaying 3D objects.
 A user can derive a new class from `Qt_widget_OpenGL` 
 which implements the drawing method and configures the context menus.
 
-## Visualizing a 3D Nef polyhedron ##
+\subsection Nef_3Visualizinga3DNefpolyhedron Visualizing a 3D Nef polyhedron
 
 `Qt_widget_Nef_3` implements the drawing methods for displaying 
 instances of
@@ -569,7 +569,7 @@ how to start the viewer.
 
 \cgalexample{Nef_3/visualization_SNC.cpp}
 
-## Visualizing a Sphere Map ##
+\subsection Nef_3VisualizingaSphereMap Visualizing a Sphere Map
 
 `Qt_widget_Nef_S2` is a widget implemented on the basis of 
 `Qt_widget_OpenGL`. It can be used to visualize the sphere map 

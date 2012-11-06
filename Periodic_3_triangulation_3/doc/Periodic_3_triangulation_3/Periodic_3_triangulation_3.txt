@@ -134,7 +134,7 @@ data structure, is `locally valid`
 <B>(c)</B> Any cell has its vertices ordered according to positive
 orientation. See Figure \ref P3Triangulation3figorient.
 
-# Delaunay Triangulation # {#Periodic_3_triangulation_3Delaunay}
+\section Periodic_3_triangulation_3Delaunay Delaunay Triangulation
 
 The class `Periodic_3_Delaunay_triangulation_3` implements Delaunay
 triangulations of point sets in \f$ \mathbb T_c^3\f$.
@@ -149,7 +149,7 @@ five points are co-spherical. Note however that the \cgal implementation compute
 This implementation is fully dynamic: it supports both insertions of
 points and vertex removal.
 
-# Triangulation Hierarchy # {#Periodic_3_triangulation_3Triangulation}
+\section Periodic_3_triangulation_3Triangulation Triangulation Hierarchy
 
 The class `Periodic_3_triangulation_hierarchy_3` is the adaptation
 of the hierarchical structure described in
@@ -253,7 +253,7 @@ all the triangulation classes, so it does not need to be specified by
 the user unless he wants to use a different triangulation data
 structure or a different vertex or cell base class.
 
-## Flexibility of the Design ##
+\subsection Periodic_3_triangulation_3Flexibilityofthe Flexibility of the Design
 
 `Periodic_3_triangulation_3` uses the
 `TriangulationDataStructure_3` in essentially the same way as
@@ -265,7 +265,7 @@ also Example \ref P3Triangulation3secexamplescolor.
 
 \section P3Triangulation3secexamples Examples 
 
-## Basic Example ##
+\subsection Periodic_3_triangulation_3BasicExample Basic Example
 
 This example shows the incremental construction of a 3D Delaunay
 triangulation, the location of a point and how to perform elementary
@@ -275,7 +275,7 @@ data structure.
 
 \cgalexample{Periodic_3_triangulation_3/simple_example.cpp}
 
-## Changing the Vertex Base ##
+\subsection Periodic_3_triangulation_3ChangingtheVertex Changing the Vertex Base
 
 The following two examples show how the user can plug his own vertex base in a
 triangulation. Changing the cell base is similar.
@@ -291,7 +291,7 @@ this way.
 
 \cgalexample{Periodic_3_triangulation_3/colored_vertices.cpp}
 
-## Adding Handles ##
+\subsection Periodic_3_triangulation_3AddingHandles Adding Handles
 
 If the user needs to add a type in a vertex that depends on the
 `TriangulationDataStructure_3` (e.g. a `Vertex_handle` or
@@ -300,7 +300,7 @@ as the following example shows.
 
 \cgalexample{Periodic_3_triangulation_3/periodic_adding_handles.cpp}
 
-## The 27-sheeted Covering Space ##
+\subsection Periodic_3_triangulation_3The27sheetedCovering The 27-sheeted Covering Space
 
 The user can check at any time whether a triangulation would be a
 simplicial complex in \f$ \mathbb T_c^3\f$ and force a conversion if
@@ -315,7 +315,7 @@ covering space anymore, so the triangulation is not <I>extensible</I>.
 
 \cgalexample{Periodic_3_triangulation_3/covering.cpp}
 
-## Large Point Set ##
+\subsection Periodic_3_triangulation_3LargePointSet Large Point Set
 
 For large point sets there are two optimizations available. Firstly,
 there is spatial sorting that sorts the input points according to a
@@ -335,7 +335,7 @@ mode because of the relatively large number of points.
 
 \cgalexample{Periodic_3_triangulation_3/large_point_set.cpp}
 
-## Geometric Access ##
+\subsection Periodic_3_triangulation_3GeometricAccess Geometric Access
 
 There might be applications that need the geometric primitives of a
 triangulation as an input but do not require a simplicial complex. For
@@ -355,13 +355,13 @@ exact.
 
 \cgalexample{Periodic_3_triangulation_3/geometric_access.cpp}
 
-## Periodic Alpha Shapes ##
+\subsection Periodic_3_triangulation_3PeriodicAlphaShapes Periodic Alpha Shapes
 
 It is possible to use `Periodic_3_Delaunay_triangulation_3`
 as underlying triangulation for computing alpha shapes (cf. Chapter \ref Chapter_3D_Alpha_Shapes). For an example see
 Section \ref l1_SectPeriodicAS3D.
 
-# Design and Implementation History # {#Periodic_3_triangulation_3Design}
+\section Periodic_3_triangulation_3Design Design and Implementation History
 
 In 2006, Nico Kruithof started to work with Monique Teillaud on the 3D
 Periodic Triangulations package.

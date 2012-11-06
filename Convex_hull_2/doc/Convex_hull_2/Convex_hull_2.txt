@@ -7,7 +7,7 @@ namespace CGAL {
 \autotoc
 \authors Susan Hert and Stefan Schirra
 
-# Introduction # {#Convex_hull_2Introduction}
+\section Convex_hull_2Introduction Introduction
 
 A subset \f$ S \subseteq \R^2\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
 in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained
@@ -68,7 +68,7 @@ The linear-time algorithm of Melkman for producing the convex hull of
 simple polygonal chains (or polygons) is available through the function
 `ch_melkman()`. 
 
-# Example using Graham-Andrew's Algorithm # {#Convex_hull_2Example}
+\section Convex_hull_2Example Example using Graham-Andrew's Algorithm
 
 In the following example a convex hull is constructed from point data read 
 from standard input using `Graham_Andrew` algorithm. The resulting convex 
@@ -78,7 +78,7 @@ function like `ch_bykat()`.
 
 \cgalexample{Convex_hull_2/ch_from_cin_to_cout.cpp}
 
-# Extreme Points and Hull Subsequences # {#Convex_hull_2Extreme}
+\section Convex_hull_2Extreme Extreme Points and Hull Subsequences
 
 In addition to the functions for producing convex hulls, there are a
 number of functions for computing sets and sequences of points related
@@ -103,7 +103,7 @@ Finally, a set of functions (`ch_nswe_point()`, `ch_ns_point()`,
 is provided for computing extreme points of a 
 2D point set in the coordinate directions. 
 
-# Traits Classes # {#Convex_hull_2Traits}
+\section Convex_hull_2Traits Traits Classes
 
 Each of the functions used to compute convex hulls or extreme points
 is parameterized by a traits class, which specifies the types and geometric
@@ -120,7 +120,7 @@ In addition, the 2D and 3D Linear Geometric Kernel provides three projective tra
 which may be used to compute the convex hull of a set of three-dimensional
 points projected into each of the three coordinate planes.
 
-# Convexity Checking # {#Convex_hull_2Convexity}
+\section Convex_hull_2Convexity Convexity Checking
 
 The functions `is_ccw_strongly_convex_2()` and `is_cw_strongly_convex_2()`
 check whether a given sequence of 2D points forms a (counter)clockwise strongly

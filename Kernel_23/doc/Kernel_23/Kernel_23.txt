@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Herv&eacute; Br&ouml;nnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra
 
-# Introduction # {#kernel_intro}
+\section kernel_intro Introduction
 
 \cgal, the *Computational Geometry Algorithms Library*, is written in 
 \cpp and consists of three major parts.
@@ -41,7 +41,7 @@ The \cgal kernel further contains basic operations such as affine
 transformations, detection and computation of intersections, and distance 
 computations.
 
-## Robustness ##
+\subsection Kernel_23Robustness Robustness
 
 The correctness proof of nearly all geometric algorithms presented
 in theory papers assumes exact computation with real numbers.
@@ -77,7 +77,7 @@ and storage space.
 See the dedicated chapter
 for more details on number types and their capabilities and performance.
 
-# Kernel Representations # {#kernel_rep}
+\section kernel_rep Kernel Representations
 
 Our object of study is the \f$ d\f$-dimensional affine Euclidean space. 
 Here we are mainly concerned with cases \f$ d=2\f$ and \f$ d=3\f$.
@@ -107,7 +107,7 @@ In \cgal we do not compute in projective geometry. Rather, we use
 homogeneous coordinates to avoid division operations,
 since the additional coordinate can serve as a common denominator.
 
-## Genericity Through Parameterization ##
+\subsection Kernel_23GenericityThroughParameterization Genericity Through Parameterization
 
 Almost all the kernel objects (and the corresponding functions) are
 templates with a parameter that allows the user to choose the
@@ -147,7 +147,7 @@ weaker. This type must fulfill the requirements on what is called a
 defined with semantics (approximately) corresponding to those of a
 ring in a mathematical sense. 
 
-## %Cartesian Kernels ##
+\subsection Kernel_23CartesianKernels %Cartesian Kernels
 
 With `Cartesian<FieldNumberType>` you can choose a
 %Cartesian representation of coordinates. When you
@@ -177,7 +177,7 @@ less efficient than `Cartesian<FieldNumberType>`. Again, in
 \link Simple_cartesian::RT Simple_cartesian<FieldNumberType>::RT \endlink are mapped to
 `FieldNumberType`.
 
-## %Homogeneous Kernels ##
+\subsection Kernel_23HomogeneousKernels %Homogeneous Kernels
 
 %Homogeneous coordinates permit to avoid division operations in
 numerical computations, since the additional coordinate can serve as a
@@ -218,7 +218,7 @@ less efficient than `Homogeneous<RingNumberType>`. Again, in
 \link Simple_homogeneous::RT Simple_homogeneous<RingNumberType>::RT \endlink is equal to
 `RingNumberType`.
 
-## Naming Conventions ##
+\subsection Kernel_23NamingConventions Naming Conventions
 
 The use of kernel classes not only avoids problems, it also makes all
 \cgal classes very uniform. They always consist of:
@@ -236,7 +236,7 @@ parameterized with a number type, such as
 `Homogeneous<leda_integer>`.
 </OL>
 
-## %Kernel as a Traits Class ##
+\subsection Kernel_23KernelasaTraitsClass %Kernel as a Traits Class
 
 Algorithms and data structures in the basic library of \cgal are
 parameterized by a traits class that subsumes the objects on which the
@@ -249,7 +249,7 @@ algorithm. In some other cases, the algorithms or data structures
 needs more than is provided by the kernel concept. In these cases, a
 kernel can not be used as a traits class.
 
-## Choosing a %Kernel and Predefined Kernels ##
+\subsection Kernel_23ChoosingaKernelandPredefinedKernels Choosing a %Kernel and Predefined Kernels
 
 If you start with integral %Cartesian coordinates,
 many geometric computations will involve integral numerical values
@@ -288,7 +288,7 @@ type <TT>double</TT>, because they need speed and can live with
 approximate results, or even algorithms that, from time to time,
 crash or compute incorrect results due to accumulated rounding errors.
 
-###Predefined Kernels###
+\subsubsection Kernel_23PredefinedKernels Predefined Kernels
 
 For the user's convenience, \cgal provides 3 typedefs to generally useful
 kernels.
@@ -316,9 +316,9 @@ faster than both `Exact_predicates_exact_constructions_kernel` and
 </UL>
 </UL>
 
-# Kernel Geometry # {#Kernel_23Kernel}
+\section Kernel_23Kernel Kernel Geometry
 
-## Points and Vectors ##
+\subsection Kernel_23PointsandVectors Points and Vectors
 
 In \cgal we strictly distinguish between points, vectors and directions.
 A *point* is a point in the Euclidean space
@@ -357,7 +357,7 @@ q = p_1 + (p_2 - p_1) / 2.0;
 Note that these constructions do not involve any performance overhead for 
 the conversion with the currently available representation classes.
 
-## %Kernel Objects ##
+\subsection Kernel_23KernelObjects %Kernel Objects
 
 Besides points (`Point_2<Kernel>`, `Point_3<Kernel>`, `Point_d<Kernel>`), 
 vectors (`Vector_2<Kernel>`, `Vector_3<Kernel>`), and 
@@ -395,7 +395,7 @@ so they are not part of the kernel.
 As with any Jordan curves, triangles, iso-oriented rectangles and circles
 separate the plane into two regions, one bounded and one unbounded.
 
-## Orientation and Relative Position ##
+\subsection Kernel_23OrientationandRelativePosition Orientation and Relative Position
 
 Geometric objects in \cgal have member functions that test the
 position of a point relative to the object. Full dimensional objects
@@ -422,9 +422,9 @@ space or a segment in two-dimensional space, there is only a test whether a
 point belongs to the object or not. This member function, which takes a 
 point as an argument and returns a Boolean value, is called `has_on()`
 
-# Predicates and Constructions # {#Kernel_23Predicates}
+\section Kernel_23Predicates Predicates and Constructions
 
-## Predicates ##
+\subsection Kernel_23Predicates_1 Predicates
 
 Predicates are at the heart of a geometry kernel. They are basic units
 for the composition of geometric algorithms and encapsulate decisions. 
@@ -443,7 +443,7 @@ especially for comparing %Cartesian coordinates
 (e.g. `lexicographically_xy_smaller`), in-circle and in-sphere tests,
 and predicates to compare distances.
 
-## Constructions ##
+\subsection Kernel_23Constructions Constructions
 
 Functions and function objects that generate objects that are neither 
 of type `bool` nor enum types are called constructions.
@@ -486,7 +486,7 @@ a specific number type and platform, avoiding it is always cheaper.
 especially integer types and rationals.
 </UL>
 
-## Polymorphic Return Values ##
+\subsection Kernel_23PolymorphicReturnValues Polymorphic Return Values
 
 Some functions can return different types of objects. A typical
 \cpp solution to this problem is to derive all possible return
@@ -548,7 +548,7 @@ return Object();
 }
 \endcode
 
-## Constructive Predicates ##
+\subsection Kernel_23ConstructivePredicates Constructive Predicates
 
 For testing where a point \f$ p\f$ lies with respect to a plane defined by three
 points \f$ q\f$, \f$ r\f$ and \f$ s\f$, one may be tempted to construct the plane
@@ -568,13 +568,13 @@ For the above test, the recommended way to get the result is to use
 If several tests are to be made with the same
 plane, it pays off to construct the plane and to use `oriented_side(p)`.
 
-# Extensible Kernel # {#sectionextensiblekernel}
+\section sectionextensiblekernel Extensible Kernel
 
 This manual section describe how users can plug user defined
 geometric classes in existing \cgal kernels. This is best
 illustrated by an example.
 
-## Introduction ##
+\subsection Kernel_23Introduction Introduction
 
 \cgal defines the concept of a geometry kernel. Such a kernel provides types,
 construction objects and generalized predicates. Most implementations
@@ -585,7 +585,7 @@ parametrized with a geometric traits class.
 In most cases this geometric traits class must be a model of the \cgal geometry
 kernel concept (but there are some exceptions).
 
-## An Extensive Example ##
+\subsection Kernel_23AnExtensiveExample An Extensive Example
 
 Assume you have the following point class, where the coordinates are
 stored in an array of `doubles`, where we have another data member
@@ -639,7 +639,7 @@ made robust by plugging it in the `Filtered_kernel`.
 
 \cgalexample{Kernel_23/MyKernel.cpp}
 
-## Limitations ##
+\subsection Kernel_23Limitations Limitations
 
 The point class must have member functions `x()` and `y()`
 (and `z()` for the 3d point). We will probably
@@ -649,7 +649,7 @@ access.
 As we enforce type equality between `MyKernel::Point_2` and `Point_2<MyKernel>`,
 the constructor with the color as third argument is not available.
 
-# Projection Traits Classes # {#sectionprojectiontraits}
+\section sectionprojectiontraits Projection Traits Classes
 
 It is sometimes useful to apply 2D algorithms to the projection of 3D points on
 a plane. Examples are
@@ -662,7 +662,7 @@ which are a model of traits class concepts of 2D triangulations,
 2D polygon and 2D convex hull traits classes. The projection traits classes 
 are listed in the "Is Model for the Concepts" sections of the concepts. 
 
-# Design and Implementation History # {#Kernel_23Design}
+\section Kernel_23Design Design and Implementation History
 
 At a meeting at Utrecht University in January 1995,
 Olivier Devillers, Andreas Fabri, Wolfgang Freiseisen,
@@ -716,7 +716,7 @@ Manh&atilde;es de Castro and Monique Teillaud introduced 3D circles. In 2010,
 Pierre Alliez, St&eacute;phane Tayeb and Camille Wormser added intersection constructions 
 for 3D triangles and efficient intersection tests for bounding boxes.
 
-## Acknowledgment ##
+\subsection Kernel_23Acknowledgment Acknowledgment
 
 This work was supported
 by the Graduiertenkolleg 'Algorithmische Diskrete Mathematik',

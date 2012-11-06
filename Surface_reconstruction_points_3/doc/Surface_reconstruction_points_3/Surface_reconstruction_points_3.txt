@@ -7,7 +7,7 @@ namespace CGAL {
 
 \authors Pierre Alliez, Laurent Saboret, Ga&euml;l Guennebaud
 
-# Introduction # {#Surface_reconstruction_points_3Introduction}
+\section Surface_reconstruction_points_3Introduction Introduction
 
 This \cgal component implements a surface reconstruction method which
 takes as input point sets with oriented normals and computes an
@@ -26,7 +26,7 @@ function of the inferred solid (Poisson Surface Reconstruction -
 referred to as Poisson). Poisson is a two steps process: it requires
 solving for the implicit function before function evaluation.
 
-# Common Reconstruction Pipeline # {#Surface_reconstruction_points_3Common}
+\section Surface_reconstruction_points_3Common Common Reconstruction Pipeline
 
 Surface reconstruction from point sets is often a sequential process
 with the following steps: 1) Scanning and scan alignment produce a set
@@ -46,7 +46,7 @@ removal, smoothing, normal estimation and normal orientation.
 \anchor Surface_reconstruction_points_3figpipeline
 \image html pipeline.jpg "Common surface reconstruction pipeline."
 
-# Poisson # {#Surface_reconstruction_points_3Poisson}
+\section Surface_reconstruction_points_3Poisson Poisson
 
 Given a set of 3D points with oriented normals (denoted oriented
 points in the sequel) sampled on the boundary of a 3D solid, the
@@ -71,7 +71,7 @@ the triangulation using a sparse linear solver. Eventually, the \cgal
 surface mesh generator extracts an isosurface with function value set
 by default to be the median value of \f$ f\f$ at all input points.
 
-## Interface ##
+\subsection Surface_reconstruction_points_3Interface Interface
 
 The class template declaration is:
 
@@ -97,13 +97,13 @@ class Poisson_reconstruction_function {
 
 For details see: `Poisson_reconstruction_function<GeomTraits>`
 
-## Example ##
+\subsection Surface_reconstruction_points_3Example Example
 
 The following example reads a point set, creates a Poisson implicit function and reconstructs a surface.
 
 \cgalexample{Surface_reconstruction_points_3/poisson_reconstruction_example.cpp}
 
-# Contouring # {#Surface_reconstruction_points_3Contouring}
+\section Surface_reconstruction_points_3Contouring Contouring
 
 
 The computed implicit functions can be iso-contoured to reconstruct a
@@ -117,7 +117,7 @@ The parameter `Tag` affects the behavior of `make_surface_mesh()`:
 - `Manifold_with_boundary_tag`: the output mesh is guaranteed to be manifold and may have boundaries.
 - `Non_manifold_tag`: the output mesh has no guarantee and hence is outputted as a polygon soup.
 
-# Output # {#Surface_reconstruction_points_3Output}
+\section Surface_reconstruction_points_3Output Output
 
 The surface reconstructed by `make_surface_mesh()` is required to be a
 model of the concept `SurfaceMeshComplex_2InTriangulation_3`, a data
@@ -134,7 +134,7 @@ and to convert it to a polyhedron (when it is manifold):
 
 See \ref Surface_reconstruction_points_3/poisson_reconstruction_example.cpp "poisson_reconstruction_example.cpp" example above.
 
-# Case Studies # {#surface_reconstruction_section_case_studies}
+\section surface_reconstruction_section_case_studies Case Studies
 
 The surface reconstruction problem being inherently ill-posed, the
 proposed algorithm does not pretend to reconstruct all kinds of
@@ -143,7 +143,7 @@ user with some hints about the ideal sampling and contouring
 conditions, and depicts some failure cases when these conditions are
 not matched.
 
-## Ideal Conditions ##
+\subsection Surface_reconstruction_points_3IdealConditions Ideal Conditions
 
 The user must keep in mind that the poisson surface reconstruction
 algorithm comprises two phases (computing the implicit function from
@@ -151,7 +151,7 @@ the input point set and contouring an iso-surface of this
 function). Both require some care in terms of sampling conditions and
 parameter tuning.
 
-## Point Set ##
+\subsection Surface_reconstruction_points_3PointSet Point Set
 
 Ideally the current implementation of the Poisson surface
 reconstruction method expects a dense 3D oriented point set (typically
@@ -192,7 +192,7 @@ connected components care should be taken to orient the normals of
 each component in alternation (inward/outward) so that the final
 contouring stage picks a proper contouring value.
 
-## Contouring Parameters ##
+\subsection Surface_reconstruction_points_3ContouringP Contouring Parameters
 
 Our implementation of the Poisson surface reconstruction algorithm
 computes an implicit function represented as a piecewise linear
@@ -219,14 +219,14 @@ contouring parameters:
 \anchor Surface_reconstruction_points_3figcontouring_bad
 \image html contouring_bad.jpg "Left: surface reconstructed with approximation distance = 0.25 * average spacing. Right: surface reconstructed with approximation distance = 0.15 * average spacing. Notice the spurious cluster on the chick."
 
-## Degraded Conditions ##
+\subsection Surface_reconstruction_points_3DegradedConditions Degraded Conditions
 
 The conditions listed above are rather restrictive and in practice not
 all of them are met in the applications. We now illustrates the
 behavior of the algorithm when the conditions are not met in terms of
 sampling, wrongly oriented normals, noise and sharp creases.
 
-## Sparse Sampling ##
+\subsection Surface_reconstruction_points_3SparseSampling Sparse Sampling
 
 The reconstruction algorithm expects a sufficiently dense point
 set. Although there is no formal proof of correctness of the algorithm
@@ -242,7 +242,7 @@ undersampled features (see Figure
 \anchor Surface_reconstruction_points_3figsampling
 \image html sampling.jpg "Left: 50K points sampled on the Neptune trident. The reconstruction (not shown) is successful in this case. Right: point set simplified to 1K points then reconstructed (all input points are depicted with normals). The thin feature is not reconstructed."
 
-## Large Holes ##
+\subsection Surface_reconstruction_points_3LargeHoles Large Holes
 
 The reconstruction is devised to solve for an implicit function which
 is an approximate indicator function of an inferred solid. For this
@@ -259,7 +259,7 @@ are filled (see Figure
 \anchor Surface_reconstruction_points_3figholes_bad
 \image html holes_bad.jpg "Left: 65K points sampled on a hand with no data captured at the wrist base. Right: reconstructed surface mesh. The surface is properly closed on the fingers and also closed at the wrist but in a less plausible manner."
 
-## Wrongly Oriented Normals ##
+\subsection Surface_reconstruction_points_3WronglyOriented Wrongly Oriented Normals
 
 The Poisson surface reconstruction approaches solves for an implicit
 function whose gradient best matches a set of input normals. Because
@@ -272,7 +272,7 @@ hence to spurious geometric or even topological distortion (see Figure
 \anchor Surface_reconstruction_points_3figflipped_normals
 \image html flipped_normals.jpg "Left: points sampled on a sphere with a cluster of wrongly oriented normals. Right: reconstructed surface mesh with a spurious bump."
 
-## Noise and Outliers ##
+\subsection Surface_reconstruction_points_3NoiseandOutliers Noise and Outliers
 
 A large amount of noise inevitably impacts on the reconstruction (see
 Figure \ref Surface_reconstruction_points_3fignoise, top) and the
@@ -294,7 +294,7 @@ into spurious small connected components and massive distortion near
 the inferred surface. In this case the outliers must be removed
 through `remove_outliers()`.
 
-## Sharp Creases ##
+\subsection Surface_reconstruction_points_3SharpCreases Sharp Creases
 
 The current reconstruction algorithm is not able to recover the sharp
 creases and corners present in the inferred surface. This translates

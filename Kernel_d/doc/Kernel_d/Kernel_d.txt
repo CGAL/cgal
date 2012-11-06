@@ -6,7 +6,7 @@ namespace CGAL {
 \autotoc
 \author Michael Seel
 
-# Introduction # {#Kernel_dIntroduction}
+\section Kernel_dIntroduction Introduction
 
 This part of the reference manual covers the higher-dimensional
 kernel. The kernel contains objects of constant size, such as point,
@@ -21,7 +21,7 @@ of intersections, and distance computations. Note that this section
 partly recapitulates facts already mentioned for the lower-dimensional
 kernel.
 
-## Robustness ##
+\subsection Kernel_dRobustness Robustness
 
 The correctness proof of nearly all geometric algorithms presented in
 theory papers assumes exact computation with real numbers. This leads
@@ -52,7 +52,7 @@ Of course you have to pay for the exactness in terms of execution time
 and storage space. See the dedicated chapter for more details
 on number types and their capabilities and performance.
 
-## Genericity ##
+\subsection Kernel_dGenericity Genericity
 
 To increase generic usage of objects and predicates the
 higher-dimensional kernel makes heavy use of iterator ranges as
@@ -69,7 +69,7 @@ This extends the syntax of random access iterators to input iterators.
 If we index the tuple as above then we require that
 \f$ ++^{(d+1)}\mathit{first} = \mathit{last}\f$.
 
-# Kernel Representations # {#Kernel_dKernel}
+\section Kernel_dKernel Kernel Representations
 
 Our object of study is the \f$ d\f$-dimensional affine Euclidean space,
 where \f$ d\f$ is a parameter of our geometry. Objects in that space are
@@ -100,7 +100,7 @@ In \cgal, we do not compute in projective geometry. Rather, we use
 homogeneous coordinates to avoid division operations,
 since the additional coordinate can serve as a common denominator.
 
-## Genericity through Parameterization ##
+\subsection Kernel_dGenericitythroughParameterization Genericity through Parameterization
 
 Almost all the kernel objects (and the corresponding functions) are
 templates with a parameter that allows the user to choose the
@@ -150,7 +150,7 @@ must be available as well. It must work for exact (i.e., no
 remainder) integer divisions only. Furthermore, both number types
 should fulfill \cgal's requirements on a number type.
 
-## %Cartesian %Kernel ##
+\subsection Kernel_dCartesianKernel %Cartesian %Kernel
 
 With `Cartesian_d<FieldNumberType,LinearAlgebra>` you can choose
 %Cartesian representation of coordinates. The type
@@ -170,7 +170,7 @@ and `Cartesian_d<FieldNumberType>::RT` are mapped to number type
 type `LinearAlgebra`. `Cartesian_d<FieldNumberType>` uses
 reference counting internally to save copying costs.
 
-## %Homogeneous %Kernel ##
+\subsection Kernel_dHomogeneousKernel %Homogeneous %Kernel
 
 As we mentioned before, homogeneous coordinates permit to avoid
 division operations in numerical computations, since the additional
@@ -206,7 +206,7 @@ circumvented. With `Homogeneous_d<RingNumberType>`,
 `Homogeneous_d<RingNumberType,LinearAlgebra>::LA` is mapped to the
 type `LinearAlgebra`.
 
-## Naming conventions ##
+\subsection Kernel_dNamingconventions Naming conventions
 
 The use of representation classes not only avoids problems, it also
 makes all \cgal classes very uniform. They <B>always</B> consist of:
@@ -222,7 +222,7 @@ parameterized with a number type, such as
 `Cartesian_d<double>` or `Homogeneous_d<leda_integer>`.
 </OL>
 
-## %Kernel as a Traits Class ##
+\subsection Kernel_dKernelasaTraitsClass %Kernel as a Traits Class
 
 Algorithms and data structures in the basic library of \cgal are
 parameterized by a traits class that subsumes the objects on which the
@@ -235,7 +235,7 @@ algorithm. In some other cases, the algorithms or data structures
 needs more than is provided by a kernel. In these cases, a kernel can
 not be used as a traits class.
 
-## Choosing a %Kernel ##
+\subsection Kernel_dChoosingaKernel Choosing a %Kernel
 
 If you start with integral %Cartesian coordinates,
 many geometric computations will involve integral numerical values
@@ -267,16 +267,16 @@ they need speed and can live with approximate results, or even
 algorithms that, from time to time, crash or compute incorrect results
 due to accumulated rounding errors.
 
-## Inclusion of Header Files ##
+\subsection Kernel_dInclusionofHeaderFiles Inclusion of Header Files
 
 You need just to include a representation class to obtain the
 geometric objects of the kernel that you would like to use with the
 representation class, i.e., `CGAL/Cartesian_d.h` or
 `CGAL/Homogeneous_d.h`
 
-# Kernel Geometry # {#Kernel_dKernel}
+\section Kernel_dKernel_1 Kernel Geometry
 
-## Points and Vectors ##
+\subsection Kernel_dPointsandVectors Points and Vectors
 
 In \cgal, we strictly distinguish between points, vectors and
 directions. A <I>point</I> is a point in the Euclidean space \f$ \E^d\f$, a
@@ -317,7 +317,7 @@ Note that these constructions do not involve any performance overhead
 for the conversion with the currently available representation
 classes.
 
-## %Kernel Objects ##
+\subsection Kernel_dKernelObjects %Kernel Objects
 
 Besides points (`Point_d<R>`), vectors (`Vector_d<R>`), and
 directions (`Direction_d<R>`), \cgal provides lines, rays,
@@ -340,7 +340,7 @@ whose orientation can be reversed (segments, lines, hyperplanes,
 spheres) there is also a global function `weak_equality` that
 allows to test for point set equality disregarding the orientation.
 
-## Orientation and Relative Position ##
+\subsection Kernel_dOrientationandRelativePosition Orientation and Relative Position
 
 Geometric objects in \cgal have member functions that test the
 position of a point relative to the object. Full dimensional objects
@@ -367,9 +367,9 @@ space, there is only a test whether a point belongs to the object or
 not. This member function, which takes a point as an argument and
 returns a Boolean value, is called `has_on()`
 
-# Predicates and Constructions # {#Kernel_dPredicates}
+\section Kernel_dPredicates Predicates and Constructions
 
-## Predicates ##
+\subsection Kernel_dPredicates_1 Predicates
 
 Predicates are at the heart of a geometry kernel. They are basic units
 for the composition of geometric algorithms and encapsulate
@@ -388,7 +388,7 @@ given order, especially for comparing %Cartesian coordinates
 (e.g. `lexicographically_xy_smaller`), in-sphere tests, and
 predicates to compare distances.
 
-## Constructions ##
+\subsection Kernel_dConstructions Constructions
 
 Functions and function objects that generate objects that are neither
 of type `bool` nor enum types are called constructions.
@@ -429,7 +429,7 @@ always cheaper.
 defined, especially integer types and rationals.
 </UL>
 
-## Intersection and Polymorphic Return Values ##
+\subsection Kernel_dIntersectionandPolymorphicReturn Intersection and Polymorphic Return Values
 
 Intersections on kernel objects currently cover only those objects
 that are part of flats (`Segment_d<R>`, `Ray_d<R>`,
@@ -448,7 +448,7 @@ Therefore, there is no automatic conversion from these classes to
 `make_object()`. This encapsulation mechanism requires the use of
 `object_cast` to unwrap the encapsulated class.
 
-### Example ###
+\subsubsection Kernel_dExample Example
 
 In the following example, the object type is used as a return value for
 the intersection computation, as there are
@@ -468,7 +468,7 @@ if (const Point *p = object_cast<Point>(&obj) ) {
 // there was no intersection 
 \endcode
 
-## Constructive Predicates ##
+\subsection Kernel_dConstructivePredicates Constructive Predicates
 
 For testing where a point \f$ p\f$ lies with respect to a hyperplane
 defined by an array \f$ P\f$ of points \f$ p_1\f$, ... , \f$ p_d\f$, one may be
@@ -491,7 +491,7 @@ For exact number types like `leda_real`, the situation is
 different. If several tests are to be made with the same plane, it
 pays off to construct the plane and to use `oriented_side(p)`.
 
-# Design and Implementation History # {#Kernel_dDesign}
+\section Kernel_dDesign Design and Implementation History
 
 This higher-dimensional kernel is the result of a long evolving
 development. A first version of the kernel was offered as a LEDA
@@ -507,7 +507,7 @@ evolution of the low-dimensional kernel. The kernel was revised
 based on suggestions by Herv&eacute; Br&ouml;nnimann, Michael Hoffmann, and
 Stefan Schirra.
 
-## Acknowledgments ##
+\subsection Kernel_dAcknowledgments Acknowledgments
 
 This work was supported by ESPRIT IV Long Term Research Projects
 No. 21957 (CGAL) and No. 28155 (GALIA).

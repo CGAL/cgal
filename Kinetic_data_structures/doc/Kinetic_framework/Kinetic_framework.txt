@@ -158,7 +158,7 @@ queue causes a 20% reduction in running time relative to a binary
 heap for Delaunay triangulations with degree 3 polynomial motions and
 20 points.
 
-## The %Kinetic::Kernel ##
+\subsection Kinetic_frameworkTheKineticKernel The %Kinetic::Kernel
 
 The `Kinetic::Kernel` is structured very much like static %CGAL
 kernels. It defines a number of primitives, which in the model
@@ -252,7 +252,7 @@ We describe some coding conventions used, graphical display,
 notification and reference management support in the framework in the
 following sections.
 
-## Reference Management ##
+\subsection Kinetic_frameworkReferenceManagement Reference Management
 
 A number of objects need to maintain pointers to other independent
 objects. For example, each kinetic data structure must have access to
@@ -324,7 +324,7 @@ The exact models, which we implement the numerics for, handle
 non-square-free polynomials and polynomials with arbitrary field
 number type coefficients and are quite robust.
 
-## %Kinetic::FunctionKernel Customized for %Kinetic Data Structures ##
+\subsection Kinetic_frameworkKineticFunctionKernelCustomized %Kinetic::FunctionKernel Customized for %Kinetic Data Structures
 
 There are several modifications we can make to how the roots are
 handled to optimize for the case of kinetic data structures. The
@@ -386,7 +386,7 @@ We will first explain in detail how a typical kinetic data structure
 uses the various pieces of the framework, then move on to showing the
 actual code for a simpler data structure.
 
-## Using the Pieces of the Package ##
+\subsection Kinetic_frameworkUsingthePiecesofthePackage Using the Pieces of the Package
 
 Here we will explain how the kinetic sorting data structure uses the
 various pieces of the package. A schematic of its relationship to the

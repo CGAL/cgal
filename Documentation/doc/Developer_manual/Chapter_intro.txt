@@ -28,7 +28,7 @@ projects 21957 (CGAL) and 28155 (GALIA).
 
 The primary design goals of \cgal are described in \cite fgkss-dccga-00:
 
-## Correctness ##
+\subsection Developer_manualCorrectness Correctness
 
 A library component is correct if it behaves according to its
 specification. 
@@ -47,7 +47,7 @@ Also, an algorithm handling only non-degenerate cases can be
 correct with respect to its specification, although in \cgal we would
 like to provide algorithms handling degeneracies.
 
-## Robustness ##
+\subsection Developer_manualRobustness Robustness
 
 A design goal particularly relevant for the implementation of
 geometric algorithms is robustness.  Many implementations of geometric
@@ -55,7 +55,7 @@ algorithms lack robustness because of precision problems; see
 Chapter  \ref chaprobustness  for a discussion of robustness issues within 
 \cgal.
 
-## Flexibility ##
+\subsection Developer_manualFlexibility Flexibility
 
 The different needs of the potential application areas demand 
 flexibility in the library. Four sub-issues of flexibility can be identified.
@@ -90,7 +90,7 @@ foundation for all \cpp platforms.
 So it is easy and natural to gain openness by following this standard.
 There are important libraries outside the standard, and \cgal should be easily adaptable to them as well.
 
-## Ease of Use ##
+\subsection Developer_manualEaseofUse Ease of Use
 
 Many different qualities can contribute to the ease of use of a
 library. Which qualities are most important differs according to 
@@ -161,7 +161,7 @@ should be provided in the library in addition to the general
 algorithms handling all degeneracies. Of course, it needs to be
 clearly documented which degeneracies are handled and which are not.
 
-## Efficiency ##
+\subsection Developer_manualEfficiency Efficiency
 
 For most geometric algorithms theoretical results for the time and space
 complexity are known. Also, the theoretic interest in efficiency for

@@ -10,7 +10,7 @@ namespace CGAL {
 
 \image html Illustration-Simplification-ALL.jpg
 
-# Introduction # {#Surface_mesh_simplificationIntroduction}
+\section Surface_mesh_simplificationIntroduction Introduction
 
 Surface mesh simplification is the process of reducing the number of faces used in the surface while 
 keeping the overall shape, volume and boundaries preserved as much as possible. 
@@ -47,7 +47,7 @@ Furthermore, the API uses the so-called `named-parameters` technique which allow
 to pass only the relevant parameters, in any order, omitting those parameters whose
 default is appropriate.
 
-# Overview of the Simplification Process # {#Surface_mesh_simplificationOverview}
+\section Surface_mesh_simplificationOverview Overview of the Simplification Process
 
 The free function that implements the simplification algorithm takes not only the surface
 and the desired stop predicate but a number of additional parameters which control and
@@ -103,7 +103,7 @@ only edges by considering certain vertex pairs as forming a pseudo-edge and proc
 both edges and pseudo-edges in the same way as in \cite cgal:lt-fmeps-98, \cite cgal:lt-ems-99 ( 
 which is the algorithm implemented here). However, contracting an arbitrary vertex-pair may result in a non-manifold surface, but the current state of this package can only deal with manifold surfaces, thus, it can only collapse edges. That is, this package cannot be used as a framework for vertex contraction.
 
-# Cost Strategy # {#Surface_mesh_simplificationCost}
+\section Surface_mesh_simplificationCost Cost Strategy
 
 The specific way in which the collapse cost and vertex placement is
 calculated is called the <I>cost strategy</I>. The user can choose 
@@ -156,7 +156,7 @@ is about to be collapsed, that is, after all previous collapses.
 Thus, the transitive path of minimal local changes yields at
 the end a global change reasonably close to the absolute minimum.
 
-## Cost Strategy Policies ##
+\subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
 
 The cost strategy used by the algorithm is selected by means of two policies: 
 `GetPlacement` and `GetCost`.
@@ -198,9 +198,9 @@ must be called several times just as well. Caching the placement can only avoid 
 very last call, when the edge is collapsed, but not all the previous calls which
 are needed because the placement (and cost) changes.
 
-# API # {#Surface_mesh_simplificationAPI}
+\section Surface_mesh_simplificationAPI API
 
-## API Overview ##
+\subsection Surface_mesh_simplificationAPIOverview API Overview
 
 Since the algorithm is free from robustness issues there is no need for exact predicates nor constructions and `Simple_cartesian<double>` can be used safely.
 \footnote{In the current version, 3.3, the LindstromTurk policies are not implemented for homogeneous coordinates, so a %Cartesian kernel must be used.}
@@ -208,7 +208,7 @@ Since the algorithm is free from robustness issues there is no need for exact pr
 The simplification algorithm is implemented as the free template function 
 `Surface_mesh_simplification::edge_collapse()`. The function has two mandatory and several optional parameters.
 
-## Mandatory Parameters ##
+\subsection Surface_mesh_simplificationMandatoryParameters Mandatory Parameters
 
 There are two main parameters to the algorithm: the surface to be simplified (in-place) and the stop predicate.
 
@@ -228,7 +228,7 @@ The stop predicate is called after each edge is selected for processing, <I>befo
 it is classified as collapsible or not (thus before it is collapsed). If the stop predicate 
 returns `true` the algorithm terminates.
 
-## Optional Named Parameters ##
+\subsection Surface_mesh_simplificationOptionalNamed Optional Named Parameters
 
 The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cite cgal:sll-bgl-02 or the following site: <A HREF="http://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>http://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
@@ -241,7 +241,7 @@ That is, you give each parameter a name by wrapping it into a function whose nam
 When you use named parameters, the ordering is irrelevant, so this: `f(name(n).age(a).gender(g))` is equivalent to this:
 `f(age(a).gender(g).name(n))`, and you can just omit any named parameter that has a default value.
 
-## Sample Call ##
+\subsection Surface_mesh_simplificationSampleCall Sample Call
 
 \code{.cpp}
 
@@ -268,16 +268,16 @@ int r = edge_collapse(surface
 
 \endcode
 
-## Examples ##
+\subsection Surface_mesh_simplificationExamples Examples
 
-## Example Using a Default Polyhedron ##
+\subsection Surface_mesh_simplificationExampleUsinga Example Using a Default Polyhedron
 
 The following example illustrates the simplest of the cases. It uses
 an ordinary polyhedron and only one of the optional parameters.
 The unspecified cost strategy defaults to Lindstrom-Turk.
 \cgalexample{Surface_mesh_simplification/edge_collapse_polyhedron.cpp}
 
-## Example Using an Enriched Polyhedron ##
+\subsection Surface_mesh_simplificationExampleUsingan Example Using an Enriched Polyhedron
 
 The following example is equivalent to the previous example but using an
 enriched polyhedron whose halfedges support an `id` field to
@@ -287,7 +287,7 @@ and how to use a visitor object to track the simplification process.
 
 \cgalexample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
 
-## Example with edges marked as non-removable ##
+\subsection Surface_mesh_simplificationExamplewithedges Example with edges marked as non-removable
 
 The following example shows how to use the optional named parameter `edge_is_border_map` to prevent
 edges from being removed even if they are not really borders.

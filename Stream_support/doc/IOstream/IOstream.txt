@@ -51,7 +51,7 @@ bool is_binary(std::ios& s);
 bool is_pretty(std::ios& s);
 \endcode
 
-# Output Operator # {#IOstreamOutput}
+\section IOstreamOutput Output Operator
 
 \cgal defines output operators for classes that are derived
 from the class `ostream`. This allows to write to ostreams
@@ -66,7 +66,7 @@ ostream& operator<<(ostream& os, Class c);
 \endcode
 
 
-## Example ##
+\subsection IOstreamExample Example
 
 \code{.cpp}
 #include <iostream>
@@ -94,7 +94,7 @@ int main()
 }
 \endcode
 
-# Input Operator # {#IOstreamInput}
+\section IOstreamInput Input Operator
 
 \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams
@@ -107,7 +107,7 @@ Let `is` be an input stream.
 istream& operator>>(istream& is, Class c);
 \endcode
 
-## Example ##
+\subsection IOstreamExample_1 Example
 
 \code{.cpp}
 #include <iostream>
@@ -136,9 +136,9 @@ main()
 }
 \endcode
 
-# IO for Non-CGAL Types # {#seciofornoncgaltypes}
+\section seciofornoncgaltypes IO for Non-CGAL Types
 
-## Using Output Formatting ##
+\subsection IOstreamUsingOutputFormatting Using Output Formatting
 
 To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat()` can be used. For types with a `Output_rep` specialization, the respective output routine of `Output_rep` will be called by `oformat()`. Otherwise, the stream output operator will be called.
 
@@ -161,7 +161,7 @@ std::cout << CGAL::oformat( myobject, My_formatting_tag() );
 For a list of formatting tags supported by the type `T`, please
 refer to the documentation of the respective type.
 
-## Customizing Output Formatting ##
+\subsection IOstreamCustomizingOutputFormatting Customizing Output Formatting
 
 In some situations, you want to control the output formatting for a
 type `T`. For external types (third party libraries etc.),
@@ -217,7 +217,7 @@ public:
 };
 \endcode
 
-# Colors # {#IOstreamColors}
+\section IOstreamColors Colors
 
 An object of the class `Color` is a color available
 for drawing operations in many \cgal output streams.
@@ -229,7 +229,7 @@ There are a 11 predefined `Color` constants available:
 `DEEPBLUE`, `BLUE`, `PURPLE`, `VIOLET`, `ORANGE`,
 and `YELLOW`.
 
-# Stream Support # {#IOstreamStream}
+\section IOstreamStream Stream Support
 
 Three classes are provided by \cgal as adaptors to input and output stream
 iterators. The class `Istream_iterator` is an input iterator adaptor and 

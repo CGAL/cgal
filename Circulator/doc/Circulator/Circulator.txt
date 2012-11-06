@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Olivier Devillers, Lutz Kettner, Sylvain Pion, Michael Seel, and Mariette Yvinec
 
-# Handles # {#CirculatorHandles}
+\section CirculatorHandles Handles
 
 Most data structures in \cgal use the concept of `Handle` in their user
 interface to refer to the elements they store. This concept describes what is
@@ -21,7 +21,7 @@ object is not part of a logical sequence.
 <b>Model for a handle</b> A simple pointer `T*`, an iterator or a circulator with value type
 `T`, are also handles.
 
-# Ranges # {#CirculatorRanges}
+\section CirculatorRanges Ranges
 
 Most data structures in \cgal use the concept of an iterator range. The
 `Range` and `ConstRange` concepts encapsulate the access to the first
@@ -29,7 +29,7 @@ and the past-the-end iterators of an iterator range. STL containers are models
 of `Range`. The Boost.Range library provides good support around this
 concept as well.
 
-# Circulators # {#circulatorsCirculators}
+\section circulatorsCirculators Circulators
 
 An introduction to the concept of circulators is given here. A couple
 of adaptors are presented that convert between iterators and
@@ -40,7 +40,7 @@ classes, the circulator tags, and the support for generic algorithms
 that work for iterators as well as for circulators please refer to the
 reference pages. Note that circulators are not part of \stl, but of \cgal.
 
-## Introduction ## {#sectionIntroduction}
+\subsection sectionIntroduction Introduction
 
 The concept of iterators in \stl is tailored for linear
 sequences \cite cgal:ansi-is14882-98, \cite cgal:ms-strg-96. In contrast, circular
@@ -145,7 +145,7 @@ interpreted as the empty range like for iterators,
 which is different than the full range that it should denote for
 circulators.
 
-## Adaptors Between Iterators and Circulators ## {#sectionCirculatorAdaptor}
+\subsection sectionCirculatorAdaptor Adaptors Between Iterators and Circulators
 
 Algorithms working on iterator ranges can not be applied to circulator
 ranges in full generality, only to subranges as pointed out in the 
@@ -181,7 +181,7 @@ typedef CGAL::Circulator_from_iterator< std::vector<int>::iterator > Circulator;
 Circulator c( v.begin(), v.end());
 \endcode
 
-## Functions on Circulators ## {#sectionCirculatorFunctions}
+\subsection sectionCirculatorFunctions Functions on Circulators
 
 Several functions deal with circulators and circulator ranges. The type
 `C` denotes a circulator. The type `IC` denotes either a circulator

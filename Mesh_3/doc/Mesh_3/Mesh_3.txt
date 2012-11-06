@@ -10,7 +10,7 @@ namespace CGAL {
 \anchor figuremultilabel_mesher
 \image html multilabel_mesher.jpg "Cut-view of a multi-domain 3D mesh generated from a segmented image."
 
-# Introduction # {#Mesh_3_section_intro}
+\section Mesh_3_section_intro Introduction
 
 This package is devoted to the generation of isotropic simplicial
 meshes discretizing 3D domains.
@@ -54,7 +54,7 @@ the boundary and subdivision surface patches may form \cite cgal:cdl-pdma-07, \c
 The Delaunay refinement is followed by a mesh optimization phase
 to remove slivers and provide a good quality mesh.
 
-## Input Domain ##
+\subsection Mesh_3InputDomain Input Domain
 
 The domain to be meshed is assumed to be bounded
 and representable as a pure
@@ -126,7 +126,7 @@ domains bounded by isosurfaces of implicit functions, polyhedral domains
 and domains defined through 3D labeled images. 
 Currently, 1-dimensional features may be defined as segments and polyline segments.
 
-## Output Mesh ##
+\subsection Mesh_3OutputMesh Output Mesh
 
 The resulting mesh is output as a subcomplex of a 3D Delaunay triangulation,
 in a class providing various iterators
@@ -145,7 +145,7 @@ Such mesh facets are called <I>surface facets</I> in the following.
 The 1-dimensional exposed features are approximated by sequences of mesh edges
 and the 0-dimensional exposed features are represented by mesh vertices.
 
-## Delaunay Refinement ##
+\subsection Mesh_3DelaunayRefinement Delaunay Refinement
 \anchor introsecparam
 
 The mesh generation algorithm is mainly a Delaunay refinement process.
@@ -176,7 +176,7 @@ ratio of surface facets end mesh cells, where the radius edge ratio of
 a simplex (triangle or tetrahedron) is the
 the ratio between its circumradius and its shortest edge.
 
-## Protection of 0 and 1-dimensional Exposed Features ##
+\subsection Mesh_3Protectionof0and1dimensionalExposed Protection of 0 and 1-dimensional Exposed Features
 
 If the domain description includes 0 dimensional features,
 the corresponding points are inserted into the Delaunay triangulation 
@@ -216,7 +216,7 @@ thus ensuring an accurate approximation of the 1-dimensional features.
 2) that the refinement process will never try to insert a refinement point in the union of the
 protecting balls, which ensures the termination of the refinement process.
 
-## Optimization Phase ##
+\subsection Mesh_3OptimizationPhase Optimization Phase
 
 Any tetrahedron that is quasi degenerate has a big radius edge ratio except
 those belonging to the family of slivers. A sliver is easily obtained 
@@ -280,9 +280,9 @@ optimization processes.
 \anchor figureoptimization
 \image html optimization.jpg "Compared effect of a global optimizer and the perturber. The left part shows the distribution of dihedral angles of mesh cells, right after Delaunay refinement (top), after some ODT smoothing (middle) and after perturbation (bottom). The numbers under the histograms give the measure in degrees of the smallest and biggest dihedral angles in the mesh."
 
-# Interface # {#Mesh_3_section_interface}
+\section Mesh_3_section_interface Interface
 
-## The Global %Functions ##
+\subsection Mesh_3TheGlobalFunctions The Global %Functions
 
 A 3D mesh generation process is launched through a call
 to one of the two following functions:
@@ -318,7 +318,7 @@ of 0 and 1-dimensional features does not rely on Delaunay
 refinement, the function `refine_mesh_3()` has no parameter
 to preserve features.
 
-## The Data Structure ##
+\subsection Mesh_3TheDataStructure The Data Structure
 
 The template parameter `C3T3` is required to be a model of
 the concept 
@@ -335,7 +335,7 @@ This triangulation is required to be a `Regular_triangulation_3`.
 with vertex and cell base classes that are respectively models of the
 concepts `MeshVertexBase_3` and `MeshCellBase_3`.
 
-## The Domain Oracle and the Features Parameter ##
+\subsection Mesh_3TheDomainOracleandtheFeaturesParameter The Domain Oracle and the Features Parameter
 
 The template parameter `MeshDomain_3` is required to be a model of
 the concept `MeshDomain_3`. The argument `domain` of type
@@ -378,7 +378,7 @@ of 0 and 1-dimensional features in the mesh. This is useful to get a smooth and 
 of a domain with features.
 </UL>
 
-## The Meshing Criteria ##
+\subsection Mesh_3TheMeshingCriteria The Meshing Criteria
 
 The template parameter `MeshCriteria` must be a model of the concept
 `MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3`
@@ -471,7 +471,7 @@ the sampling of 1-dimensional features with protecting balls centers.
 protecting ball centers that are consecutive on a 1-feature.
 </UL>
 
-## The Optimization Parameters ##
+\subsection Mesh_3TheOptimizationParameters The Optimization Parameters
 
 The four additional parameters are optimization parameters.
 They control which optimization processes are performed
@@ -529,9 +529,9 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3);
 Note that the global functions activating the optimization processes or launching
 those processes have themselves parameters (see details in reference pages) to tune the optimization process.
 
-# Examples # {#Mesh_3_section_examples}
+\section Mesh_3_section_examples Examples
 
-## 3D Domains Bounded by Isosurfaces ##
+\subsection Mesh_33DDomainsBoundedbyIsosurfaces 3D Domains Bounded by Isosurfaces
 
 The following code produces a 3D mesh for a domain whose boundary surface
 is an isosurface defined by an implicit
@@ -546,7 +546,7 @@ constructor of the `Mesh_criteria` instance.
 \anchor figureimplicit_domain
 \image html implicit_domain.jpg "Cut view of a 3D mesh produced from an implicit domain"
 
-## 3D Polyhedral Domains ##
+\subsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
 
 \anchor Mesh_3_subsection_examples_polyhedral
 
@@ -562,7 +562,7 @@ shows the resulting mesh.
 \image html polyhedral_domain_2.jpg "View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files."
 </CENTER>
 
-## Domains From Segmented 3D Images ##
+\subsection Mesh_3DomainsFromSegmented3DImages Domains From Segmented 3D Images
 
 \anchor Mesh_3_subsection_examples_3d_image
 The following code produces a 3D mesh from
@@ -582,9 +582,9 @@ The resulting mesh is shown in Figure \ref figureliver_3d_image_mesh.
 \anchor figureliver_3d_image_mesh
 \image html liver.jpg "Cut view of a 3D mesh produced from a segmented liver image. Code from subsection \ref Mesh_3_subsection_examples_3d_image generates this file."
 
-## Using Variable Sizing %Field ##
+\subsection Mesh_3UsingVariableSizingField Using Variable Sizing %Field
 
-## Sizing %Field as an Analytical %Function ##
+\subsection Mesh_3SizingFieldasanAnalyticalFunction Sizing %Field as an Analytical %Function
 
 \anchor Mesh_3_subsubsection_examples_sphere_variable
 
@@ -596,7 +596,7 @@ The following example shows how to use an analytical function as sizing field.
 \anchor figuresphere_variable_mesh
 \image html sphere_variable.jpg "Cut view of a 3D mesh produced from an implicit sphere with non-constant sizing field. Code from subsection \ref Mesh_3_subsubsection_examples_sphere_variable generates this file."
 
-## Different Sizing %Field for Different Subdomains ##
+\subsection Mesh_3DifferentSizingFieldforDifferentSubdomains Different Sizing %Field for Different Subdomains
 
 \anchor Mesh_3_subsubsection_examples_3d_image_variable
 
@@ -608,11 +608,11 @@ a 3D medical image.
 \anchor figureliver_variable_mesh
 \image html liver_variable.jpg "View of a 3D mesh produced from a 3D image with different size for different organs. Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_variable generates this file."
 
-## Meshing Domains with Sharp Features ##
+\subsection Mesh_3MeshingDomainswithSharpFeatures Meshing Domains with Sharp Features
 
 \anchor Mesh_3_subsection_example_polyhedral_with_edges
 
-## 3D Polyhedral Domain with Edges ##
+\subsection Mesh_33DPolyhedralDomainwithEdges 3D Polyhedral Domain with Edges
 
 The following example shows how to generate a mesh from a polyhedral
 surface. The output mesh conforms to the sharp features of the input surface.
@@ -622,7 +622,7 @@ surface. The output mesh conforms to the sharp features of the input surface.
 \anchor figurefandisk_mesh
 \image html fandisk.jpg "View of a 3D mesh with sharp features. Code from subsection \ref Mesh_3_subsection_example_polyhedral_with_edges generates this mesh."
 
-## Implicit Domain With 1D Features ##
+\subsection Mesh_3ImplicitDomainWith1DFeatures Implicit Domain With 1D Features
 
 The following example shows how to generate a mesh from an implicit
 domain. We add by hand the intersection of the spheres as a sharp feature.
@@ -632,7 +632,7 @@ domain. We add by hand the intersection of the spheres as a sharp feature.
 \anchor figuretwo_spheres_mesh
 \image html twospheres.jpg "View of a 3D mesh with sharp features generated from two intersected implicit spheres. On the left, one can see the mesh without feature preservation, and on the right the mesh with feature preservation."
 
-## Tuning Mesh Optimization ##
+\subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 
 \anchor Mesh_3_subsection_examples_optimization
 
@@ -643,7 +643,7 @@ two optimization steps are performed, a perturbation and a sliver exudation.
 The following examples show how to disable default optimization steps 
 and how to tune the parameters of optimization steps.
 
-## Disabling Exudation and Tuning Perturbation ##
+\subsection Mesh_3DisablingExudationandTuningPerturbation Disabling Exudation and Tuning Perturbation
 
 In this first example, we show how to disable the exudation step.
 The optimization phase after the refinement includes only
@@ -658,7 +658,7 @@ through a call to `perturb_mesh_3()` with tuned parameters.
 
 \cgalexample{Mesh_3/mesh_optimization_example.cpp}
 
-## Using Lloyd Global Optimization ##
+\subsection Mesh_3UsingLloydGlobalOptimization Using Lloyd Global Optimization
 
 In this second example, we show how to call the Lloyd optimization on the
 mesh, followed by a call to exudation. We set a time bound of 30s for the Lloyd optimization. 
@@ -666,7 +666,7 @@ We set a time bound of 10s and a sliver bound of 10 degrees for the exuder.
 
 \cgalexample{Mesh_3/mesh_optimization_lloyd_example.cpp}
 
-# Performances # {#Mesh_3Performances}
+\section Mesh_3Performances Performances
 
 We provide here some benchmarks of the performances of the mesh generation engine. The machine
 used is a PC running Linux64 with two Intel Xeon CPU X5450 clocked at 3.00 GHz
@@ -676,7 +676,7 @@ architectures.
 
 Those benchmarks have been done using \cgal v3.8.
 
-## Delaunay Refinement ##
+\subsection Mesh_3DelaunayRefinement_1 Delaunay Refinement
 
 We study the refinement part of the mesh generation engine in this section. We
 give the CPU time (measured by `Timer`) using the 3 provided oracles. In all experiments, we produce well
@@ -684,7 +684,7 @@ shaped elements: we set the facet angle bound and the radius edge bound to their
 theoretical limit (resp. 30 degrees and 2). We also use the same uniform sizing field for facets
 and cells.
 
-## Implicit %Function ##
+\subsection Mesh_3ImplicitFunction Implicit %Function
 
 We mesh an analytical sphere of radius 1.
 
@@ -775,7 +775,7 @@ vertices/second
 
 </CENTER>
 
-## Polyhedral Domain ##
+\subsection Mesh_3PolyhedralDomain Polyhedral Domain
 
 \anchor figuremesh_3_benchmark_polyhedral
 \image html bench_polyhedral.jpg "View of polyhedral mesh generation result (size = 0.005)."
@@ -871,7 +871,7 @@ vertices/second
 
 </CENTER>
 
-## 3D Image ##
+\subsection Mesh_33DImage 3D Image
 
 \anchor figuremesh_3_benchmark_3d_image
 \image html bench_3d.jpg "View of 3d image mesh generation result (size = 4)."
@@ -955,9 +955,9 @@ vertices/second
 
 </CENTER>
 
-# Design and Implementation History # {#Mesh_3DesignAndImpl}
+\section Mesh_3DesignAndImpl Design and Implementation History
 
-## Theoretical Foundations ##
+\subsection Mesh_3TheoreticalFoundations Theoretical Foundations
 
 The \cgal mesh generation package implements a meshing engine based 
 on the method of Delaunay refinement introduced by Chew \cite c-gqmgc-93 and Ruppert \cite r-draq2d-95
@@ -982,7 +982,7 @@ and Tournois et al. \cite cgal:twad-iropitmg-09,
 while the exudation process is, the now famous, optimization by weighting described
 in Edelsbrunner et al. \cite cgal:cdeft-slive-00.
 
-## Implementation History ##
+\subsection Mesh_3ImplementationHistory Implementation History
 
 Work on the package `Mesh_3` started during the PhD thesis of Laurent Rineau
 advised by Mariette Yvinec. A code prototype, together

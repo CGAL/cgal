@@ -7,7 +7,7 @@ namespace CGAL {
 
 \author Guillaume Damiand
 
-# Introduction # {#Linear_cell_complexIntroduction}
+\section Linear_cell_complexIntroduction Introduction
 
 A <I>d</I>D linear cell complex allows to represent an orientable
 subdivided <I>d</I>D object having linear geometry: each vertex of the
@@ -61,7 +61,7 @@ ambient space to describe a surface in 3D space (<I>d</I>=2,
 combinatorial map in a 3D ambient space (<I>d</I>=<I>d2</I>=3) and so
 on.
 
-# Software Design # {#Linear_cell_complexSoftware}
+\section Linear_cell_complexSoftware Software Design
 
 The diagram in Figure \ref figdiagram_class_lcc shows the main
 classes of the package. `Linear_cell_complex` is the main
@@ -86,7 +86,7 @@ UML diagram of the main classes of the package. Gray elements come from the \ref
 </b></center>
 
 
-# Linear Cell Complex # {#sseclinearcellcomplex}
+\section sseclinearcellcomplex Linear Cell Complex
 
 The `Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>` class
 is a model of the `CombinatorialMap` concept. It guarantees that
@@ -119,7 +119,7 @@ Examples of `Linear_cell_complex`. Gray disks show the attributes associated to 
 </b></center>
 
 
-## Cell Attributes ##
+\subsection Linear_cell_complexCellAttributes Cell Attributes
 \anchor ssecattributewp
 
 The `Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>`
@@ -129,7 +129,7 @@ attribute associated with a cell, which can contain an information
 (depending on whether `Info_==void` or not), but which always
 contains a point, an instance of `LCC::Point`.
 
-## Linear Cell Complex Traits ##
+\subsection Linear_cell_complexLinearCellComplexTraits Linear Cell Complex Traits
 \anchor sseclcctraits
 
 The `LinearCellComplexTraits` geometric traits concept defines the
@@ -146,7 +146,7 @@ are obtained from `K` that, depending on `d`, is a model of
 the concept `Kernel` if `d==2` or `d==3`, and a model of
 the concept `Kernel_d` otherwise.
 
-## Linear Cell Complex Items ##
+\subsection Linear_cell_complexLinearCellComplexItems Linear Cell Complex Items
 \anchor sseclccitem
 
 The `LinearCellComplexItems` concept refines the
@@ -160,7 +160,7 @@ and instances of `Cell_attribute_with_point`
 (which contain no information) associated to each vertex. All other
 attributes are void.
 
-# Operations # {#Linear_cell_complexOperations}
+\section Linear_cell_complexOperations Operations
 
 Several operations defined in the combinatorial maps package can be
 used on a linear cell complex. This is the case for all the iteration
@@ -191,7 +191,7 @@ linear cell complex. As for a combinatorial map, it is also possible
 to use low level operations but additional operations may be needed to
 restore the validity conditions.
 
-## Sewing and Unsewing ## {#sseclcclinkdarts}
+\subsection sseclcclinkdarts Sewing and Unsewing
 
 As explained in the combinatorial map user manual,
 Section \ref sseclinkdarts, it is possible to glue two <I>i</I>-cells
@@ -235,7 +235,7 @@ vertices (this behavior can be modified thanks to the functor
 has removed the four \f$ \beta_3\f$ links, and has duplicated the 0-attributes
 since vertices are split in two after the unsew operation.
 
-## Construction Operations ##
+\subsection Linear_cell_complexConstructionOperations Construction Operations
 \anchor ssecconstructionsop
 
 There are several member functions allowing to insert specific
@@ -262,7 +262,7 @@ Lastly, the function \link\import_from_polyhedron_3() `import_from_plane_graph(l
 `ais`, a `std::istream` (see the reference manual for the file
 format).
 
-## Modification Operations ##
+\subsection Linear_cell_complexModificationOperations Modification Operations
 \anchor ssecmodifop
 
 Some methods are defined in `Linear_cell_complex` class
@@ -314,9 +314,9 @@ Example of `insert_dangling_cell_1_in_cell_2`, `insert_cell_1_in_cell_2` and `re
 Some examples of use of these operations are given in
 Section \ref ssec5dexample.
 
-# Examples # {#Linear_cell_complexExamples}
+\section Linear_cell_complexExamples Examples
 
-## A 3D Linear Cell Complex ##
+\subsection Linear_cell_complexA3DLinearCellComplex A 3D Linear Cell Complex
 \anchor ssec3Dlcc
 
 This example uses a 3-dimensional linear cell complex. It creates two
@@ -354,7 +354,7 @@ the number of cells of the linear cell complex, the number of
 connected components, and finally a Boolean to show the validity of
 the linear cell complex.
 
-## A 4D Linear Cell Complex ##
+\subsection Linear_cell_complexA4DLinearCellComplex A 4D Linear Cell Complex
 \anchor ssec5dexample
 
 This example uses a 4-dimensional linear cell complex embedded in a
@@ -375,7 +375,7 @@ The output is:
 #Darts=24, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #4-cells=2, #ccs=2, valid=1
 \endverbatim
 
-## A 3D Linear Cell Complex with Colored Vertices ##
+\subsection Linear_cell_complexA3DLinearCellComplexwith A 3D Linear Cell Complex with Colored Vertices
 
 \anchor ssecexemplecolorvertices
 
@@ -437,7 +437,7 @@ set its color manually by using the result of
 `insert_barycenter_in_cell<2>` which is a dart incident to the
 new vertex.
 
-# Design and Implementation History # {#Linear_cell_complexDesign}
+\section Linear_cell_complexDesign Design and Implementation History
 
 This package was developed by Guillaume Damiand, with the help of
 Andreas Fabri, S&eacute;bastien Loriot and Laurent Rineau. Monique

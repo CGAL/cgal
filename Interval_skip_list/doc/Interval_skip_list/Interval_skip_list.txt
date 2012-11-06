@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \author Andreas Fabri
 
-# Definition # {#Interval_skip_listDefinition}
+\section Interval_skip_listDefinition Definition
 
 An interval skip list is a data structure for finding all intervals 
 that contain a point, and for stabbing queries, that is for answering 
@@ -23,7 +23,7 @@ The data structure was introduced by Hanson \cite h-islds-91, and it is called
 interval skip list, because it is an extension of the randomized list
 structure known as skip list \cite p-slpab-90.
 
-# Example Programs # {#Interval_skip_listExample}
+\section Interval_skip_listExample Example Programs
 
 \anchor sectionIntervalskiplistExamples
 
@@ -31,7 +31,7 @@ We give two examples. The first one uses a basic interval class. In
 the second example we create an interval skip list for the \f$ z\f$-ranges
 of the faces of a terrain, allowing to answer level queries.
 
-## First Example with Simple %Interval ##
+\subsection Interval_skip_listFirstExamplewithSimple First Example with Simple %Interval
 
 The first example reads two numbers `n` and `d` from `std::cin`.
 It creates `n` intervals of length `d` with the left endpoint at `n`.
@@ -43,7 +43,7 @@ class. In this example we use the class `Interval_skip_list_interval`.
 
 \cgalexample{Interval_skip_list/intervals.cpp}
 
-## Example with Faces of a Triangulated Terrain ##
+\subsection Interval_skip_listExamplewithFacesofaTriangulated Example with Faces of a Triangulated Terrain
 
 The second example creates an interval skip list that allows to find all the faces
 of a terrain intersected by an horizontal plane at a given height.

@@ -121,7 +121,7 @@ the local validity of a given triangulation. This does not always
 ensure global validity \cite mnssssu-cgpvg-96, \cite dlpt-ccpps-98 but it is 
 sufficient for practical cases.
 
-# Delaunay Triangulation # {#Triangulation_3Delaunay}
+\section Triangulation_3Delaunay Delaunay Triangulation
 
 The class `Delaunay_triangulation_3` represents a three-dimensional
 Delaunay triangulation.
@@ -333,7 +333,7 @@ performed internally by the constructor taking a range of points.
 Prior to \cgal 3.6, this functionality was available through the
 `Triangulation_hierarchy_3` class, which is now deprecated.
 
-## Flexibility of the Design ##
+\subsection Triangulation_3FlexibilityoftheDesign Flexibility of the Design
 
 In order to satisfy as many uses as possible, a design has been selected that
 allows to exchange different parts to meet the users' needs, while still
@@ -398,7 +398,7 @@ Section \ref TDS3secdesign provides more detailed information.
 
 \section Triangulation3secexamples Examples 
 
-## Basic Example ##
+\subsection Triangulation_3BasicExample Basic Example
 
 This example shows the incremental construction of a 3D triangulation, the
 location of a point and how to perform elementary operations on indices in a
@@ -406,7 +406,7 @@ cell. It uses the default parameter of the `Triangulation_3` class.
 
 \cgalexample{Triangulation_3/simple_triangulation_3.cpp}
 
-## Changing the Vertex Base ##
+\subsection Triangulation_3ChangingtheVertexBase Changing the Vertex Base
 
 The following two examples show how the user can plug his own vertex base in a
 triangulation. Changing the cell base is similar.
@@ -422,7 +422,7 @@ this way.
 
 \cgalexample{Triangulation_3/color.cpp}
 
-## Adding Handles ##
+\subsection Triangulation_3AddingHandles Adding Handles
 
 When the user needs to add a type in a vertex which depends on the
 `TriangulationDataStructure_3` (e.g. a `Vertex_handle` or
@@ -431,7 +431,7 @@ as the following example shows.
 
 \cgalexample{Triangulation_3/adding_handles_3.cpp}
 
-## Setting Information While Inserting a %Range of Points ##
+\subsection Triangulation_3SettingInformationWhileInserting Setting Information While Inserting a %Range of Points
 
 The most efficient method to insert (weighted) points in a
 Delaunay (or regular) triangulation is to provide an iterator
@@ -444,21 +444,21 @@ doing the same operation: set an unsigned integer as the information
 of each vertex. The value of this unsigned integer is the initial order
 of the corresponding point given in the range.
 
-## Using an %Iterator Over Pairs ##
+\subsection Triangulation_3UsinganIteratorOverPairs Using an %Iterator Over Pairs
 
 Each point and its information are gathered into a pair. We provide
 the constructor of the triangulation (which is calling the `insert` function)
 with a range of such pairs.
 \cgalexample{Triangulation_3/info_insert_with_pair_iterator.cpp}
 
-## Using the Boost Zip %Iterator ##
+\subsection Triangulation_3UsingtheBoostZipIterator Using the Boost Zip %Iterator
 
 Information and points are in separate containers. We use
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
 \cgalexample{Triangulation_3/info_insert_with_zip_iterator.cpp}
 
-## Using the Boost Transform %Iterator ##
+\subsection Triangulation_3UsingtheBoostTransformIterator Using the Boost Transform %Iterator
 
 We define a functor `Auto_count` used together with
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
@@ -478,11 +478,11 @@ simplices can be stored in a set.
 
 \cgalexample{Triangulation_3/fast_location_3.cpp}
 
-## Finding the Cells in Conflict with a Point in a Delaunay Triangulation ##
+\subsection Triangulation_3FindingtheCellsinConflict Finding the Cells in Conflict with a Point in a Delaunay Triangulation
 
 \cgalexample{Triangulation_3/find_conflicts_3.cpp}
 
-## Regular Triangulation ##
+\subsection Triangulation_3RegularTriangulation Regular Triangulation
 
 This example shows the building of a regular triangulation. In this
 triangulation, points have an associated weight, and some points can
@@ -503,7 +503,7 @@ articles \cite d-hdvdl-89, \cite e-dpssdt-02, \cite geometrica-5986i, \cite pris
 have proved such good complexity bounds for specific point distributions, such
 as points distributed on surfaces under some conditions.
 
-## Running Time ##
+\subsection Triangulation_3RunningTime Running Time
 
 There are several algorithms provided in this package. We will focus here on
 the following ones and give practical numbers on their efficiency :
@@ -722,7 +722,7 @@ CAPTION Running times in seconds for algorithms on 3D triangulations.
 More benchmarks comparing \cgal to other software can be found
 in \cite msri52:liu-snoeyink-05.
 
-## Memory Usage ##
+\subsection Triangulation_3MemoryUsage Memory Usage
 
 We give here some indication about the memory usage of the triangulations.
 Those structures being intensively based on pointers, the size almost doubles
@@ -804,7 +804,7 @@ points, as measured empirically using `Memory_sizer` for large triangulations
 CAPTION Memory usage in bytes per point for large data sets. 
 \anchor Triangulation3figmemory
 
-## Variability Depending on the Data Sets and the %Kernel ##
+\subsection Triangulation_3VariabilityDependingonthe Variability Depending on the Data Sets and the %Kernel
 
 Besides the complexity of the Delaunay triangulation that varies with the
 distribution of the points, another critical aspect affects the efficiency :
@@ -966,7 +966,7 @@ Number of points
 <b>Data sets used in the benchmark of Figure \ref Triangulation3figkernelsanddatasets.</b>
 </CENTER>
 
-# Design and Implementation History # {#Triangulation_3Design}
+\section Triangulation_3Design Design and Implementation History
 
 Monique Teillaud started to work on the 3D triangulation packages in
 1997, following the design of the 2D triangulation packages. The

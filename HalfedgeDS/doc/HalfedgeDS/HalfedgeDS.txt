@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \author Lutz Kettner
 
-# Introduction # {#HalfedgeDSIntroduction}
+\section HalfedgeDSIntroduction Introduction
 
 A halfedge data structure (abbreviated as `HalfedgeDS`, or
 `HDS` for template parameters) is an edge-centered data structure
@@ -46,7 +46,7 @@ in \cite k-ugpdd-99.
 
 
 
-# Software Design # {#HalfedgeDSSoftware}
+\section HalfedgeDSSoftware Software Design
 
 \anchor figureHalfedgeDSDesign
 \image html hds_design_col.gif "Responsibilities of the different layers in the halfedge data-structure design."
@@ -126,11 +126,11 @@ the `HalfedgeDS`, which gives us the coherent type
 structure in this design, especially if compared to our previous
 design.
 
-# Example Programs # {#HalfedgeDSExample}
+\section HalfedgeDSExample Example Programs
 
 \anchor sectionHdsExamples
 
-## The %Default Halfedge Data Structure ##
+\subsection HalfedgeDSTheDefaultHalfedgeDataStructure The %Default Halfedge Data Structure
 
 The following example program uses the default halfedge data structure
 and the decorator class. The default halfedge data structure uses a
@@ -143,7 +143,7 @@ of two halfedges, one vertex and two faces, and checks its validity.
 
 \cgalexample{HalfedgeDS/hds_prog_default.cpp}
 
-## A Minimal Halfedge Data Structure ##
+\subsection HalfedgeDSAMinimalHalfedgeDataStructure A Minimal Halfedge Data Structure
 
 The following program defines a minimal halfedge data structure using
 the minimal items class `HalfedgeDS_min_items` and a
@@ -153,7 +153,7 @@ vertices or faces are stored. The data structure represents an <I>undirected gra
 
 \cgalexample{HalfedgeDS/hds_prog_graph.cpp}
 
-## The %Default with a Vector Instead of a List ##
+\subsection HalfedgeDSTheDefaultwithaVectorInsteadof The %Default with a Vector Instead of a List
 
 The default halfedge data structure uses a list internally and the
 maximal base classes. We change the list to a vector representation
@@ -167,14 +167,14 @@ in a consistent, i.e., <I>valid</I>, state.
 
 \cgalexample{HalfedgeDS/hds_prog_vector.cpp}
 
-## Example Adding %Color to Faces ##
+\subsection HalfedgeDSExampleAddingColortoFaces Example Adding %Color to Faces
 
 This example re-uses the base class available for faces and adds a
 member variable `color`.
 
 \cgalexample{HalfedgeDS/hds_prog_color.cpp}
 
-## Example Defining a More %Compact Halfedge ##
+\subsection HalfedgeDSExampleDefiningaMoreCompactHalfedge Example Defining a More %Compact Halfedge
 
 \advanced The halfedge data structure as presented here is slightly less space
 efficient as, for example, the winged-edge data
@@ -204,14 +204,14 @@ example for the vector-based data structure.
 
 \cgalexample{HalfedgeDS/hds_prog_compact.cpp}
 
-## Example Using the Halfedge %Iterator ##
+\subsection HalfedgeDSExampleUsingtheHalfedgeIterator Example Using the Halfedge %Iterator
 
 Two edges are created in the default halfedge data structure.
 The halfedge iterator is used to count the halfedges.
 
 \cgalexample{HalfedgeDS/hds_prog_halfedge_iterator.cpp}
 
-## Example for an Adapter to Build an Edge %Iterator ##
+\subsection HalfedgeDSExampleforanAdaptertoBuildanEdge Example for an Adapter to Build an Edge %Iterator
 
 Three edges are created in the default halfedge data structure.
 The adapter `N_step_adaptor` is used to declare the edge

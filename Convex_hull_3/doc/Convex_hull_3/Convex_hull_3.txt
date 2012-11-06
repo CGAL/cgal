@@ -12,7 +12,7 @@ namespace CGAL {
 \image latex chull_bimba.png "The convex hull of a model made of 192135 points." width=12cm
 \image html chull_bimba.png "The convex hull of a model made of 192135 points."
 
-# Introduction # {#Convex_hull_3Introduction}
+\section Convex_hull_3Introduction Introduction
 
 A subset \f$ S \subseteq \R^3\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
 in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained
@@ -31,7 +31,7 @@ in one of three ways in \cgal: using a static algorithm,
 using an incremental construction algorithm, or using a
 triangulation to get a fully dynamic computation.
 
-# Static Convex Hull Construction # {#secconvex_hull_3}
+\section secconvex_hull_3 Static Convex Hull Construction
 
 The function 
 `convex_hull_3()` provides an 
@@ -46,7 +46,7 @@ iterators defining the set of points whose convex hull is to be computed
 and a traits class defining the geometric types and predicates used in
 computing the hull.
 
-## Traits Class ##
+\subsection Convex_hull_3TraitsClass Traits Class
 
 The function `convex_hull_3()` is parameterized by a traits class,
 which specifies the types and geometric primitives to be used in the
@@ -56,7 +56,7 @@ the traits `Convex_hull_traits_3<R>` should be used
 (`R` being the input kernel). Note that the default traits class takes this into
 account.
 
-## Convexity Checking ##
+\subsection Convex_hull_3ConvexityChecking Convexity Checking
 
 The function `is_strongly_convex_3()`
 implements the algorithm of Mehlhorn <I>et al.</I> \cite mnssssu-cgpvg-96 
@@ -64,7 +64,7 @@ to determine if the vertices of a given polytope constitute a strongly convex
 point set or not. This function is used in postcondition testing for
 `convex_hull_3()`.
 
-## Example ##
+\subsection Convex_hull_3Example Example
 
 The following program computes the convex hull of a set of 250 random
 points chosen from a sphere of radius 100. We assume that the points are
@@ -75,7 +75,7 @@ of the convex hull.
 
 \cgalexample{Convex_hull_3/quickhull_3.cpp}
 
-# Incremental Convex Hull Construction # {#Convex_hull_3Incremental}
+\section Convex_hull_3Incremental Incremental Convex Hull Construction
 
 The function `convex_hull_incremental_3()` provides an
 interface similar to `convex_hull_3()` for the `d`-dimensional 
@@ -101,11 +101,11 @@ you can instantiate the class `Convex_hull_d<K>` with the adapter
 traits class `Convex_hull_d_traits_3<K>`, as shown in the following
 example.
 
-## Example ##
+\subsection Convex_hull_3Example_1 Example
 
 \cgalexample{Convex_hull_3/incremental_hull_class_3.cpp}
 
-# Dynamic Convex Hull Construction # {#Convex_hull_3Dynamic}
+\section Convex_hull_3Dynamic Dynamic Convex Hull Construction
 
 Fully dynamic maintenance of a convex hull can be achieved by using the
 class `Delaunay_triangulation_3`. This class supports insertion
@@ -120,11 +120,11 @@ remaining on the hull are determined. Notice that the vertices incident to the
 infinite vertex of the triangulation are on the convex hull but it may be that
 not all of them are vertices of the hull.
 
-## Example ##
+\subsection Convex_hull_3Example_2 Example
 
 \cgalexample{Convex_hull_3/dynamic_hull_3.cpp}
 
-# Performance # {#Convex_hull_3Performance}
+\section Convex_hull_3Performance Performance
 
 In the following, we compare the running times of the three approaches to compute 3D convex hulls.
 For the static version (using `convex_hull_3()`) and the dynamic version

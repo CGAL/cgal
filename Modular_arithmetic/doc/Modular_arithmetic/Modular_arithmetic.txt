@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Michael Hemmer and Sylvain Pion
 
-# Introduction # {#Modular_arithmeticIntroduction}
+\section Modular_arithmeticIntroduction Introduction
 
 Modular arithmetic is a fundamental tool in modern algebra systems. 
 In conjunction with the Chinese remainder theorem it serves as the 
@@ -17,7 +17,7 @@ Moreover, it can serve as a very efficient filter, since it is often
 possible to exclude that some value is zero by computing its modular 
 correspondent with respect to one prime only.
 
-# Residue and Modularizable # {#Modular_arithmetic_residue}
+\section Modular_arithmetic_residue Residue and Modularizable
 
 First of all, this package introduces a type `Residue`.
 It represents \f$ \Z_{/p\Z}\f$ for some prime \f$ p\f$. 
@@ -46,7 +46,7 @@ The class `Modular_traits<T>` is designed such that the concept
 `Modularizable` can be considered as optional, i.e., 
 `Modular_traits<T>` provides a tag that can be used for dispatching.
 
-## Example ## {#Modular_arithmetic_example}
+\subsection Modular_arithmetic_example Example
 
 In the following example modular arithmetic is used as a filter on order
 to avoid unnecessary gcd computations of polynomials. 
@@ -74,7 +74,7 @@ next nearest value. This can be ensured using `Protect_FPU_rounding` with
 
 \cgalexample{Modular_arithmetic/modular_filter.cpp}
 
-# Design and Implementation History # {#Modular_arithmeticDesign}
+\section Modular_arithmeticDesign Design and Implementation History
 
 The class `Residue` is based on the C-code of Sylvain Pion et. al. 
 as it was presented in \cite bepp-sdrns-99.

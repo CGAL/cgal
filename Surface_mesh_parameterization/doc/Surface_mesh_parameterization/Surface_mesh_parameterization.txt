@@ -9,7 +9,7 @@ namespace CGAL {
 
 \authors Laurent Saboret, Pierre Alliez and Bruno L&eacute;vy
 
-# Introduction # {#Surface_mesh_parameterizationIntroduction}
+\section Surface_mesh_parameterizationIntroduction Introduction
 
 Parameterizing a surface amounts to finding a one-to-one mapping from
 a suitable domain to the surface. A good mapping is the one which
@@ -58,9 +58,9 @@ triangulated surfaces.
 Texture mapping via Least Squares Conformal Maps parameterization. Top: original mesh and texture. Bottom: parameterizedmesh (left: parameter space, right: textured mesh).
 </b></center>
 
-# Basics # {#Surface_mesh_parameterizationBasics}
+\section Surface_mesh_parameterizationBasics Basics
 
-## %Default Surface Parameterization ##
+\subsection Surface_mesh_parameterizationDefaultSurface %Default Surface Parameterization
 
 From the user point of view, the simplest entry point to this package
 is the following function:
@@ -98,7 +98,7 @@ to access `Polyhedron_3<Traits>`:
 We will see later that `parameterize()` can support <I>indirectly</I>
 meshes that are not topological disks.
 
-## %Default Parameterization Example ##
+\subsection Surface_mesh_parameterizationDefaultParameterization %Default Parameterization Example
 
 In the following example, we apply the default parameterization to a
 `Polyhedron_3<Traits>` mesh (must be a topological disk).
@@ -106,7 +106,7 @@ Eventually, it extracts the result from halfedges and prints it.
 
 \cgalexample{Surface_mesh_parameterization/Simple_parameterization.cpp}
 
-## Enhanced %parameterize() Function ##
+\subsection Surface_mesh_parameterizationEnhancedparameterize Enhanced %parameterize() Function
 
 This package provides a second `parameterize()` entry point
 where the user can specify a parameterization method:
@@ -127,9 +127,9 @@ polygon (for fixed border parameterizations).
 
 
 
-## Introduction to the Package Concepts ##
+\subsection Surface_mesh_parameterizationIntroductionPC Introduction to the Package Concepts
 
-## The %ParameterizerTraits_3 Concept ##
+\subsection Surface_mesh_parameterizationTheParameterizerTraits3 The %ParameterizerTraits_3 Concept
 
 This \cgal package implements 
 surface parameterization methods, such as Least Squares Conformal Maps,
@@ -144,7 +144,7 @@ the input mesh type, a border parameterization and a solver:
 \anchor Surface_mesh_parameterizationfigparameterizer_class_diagram_simplified
 \image html parameterizer_class_diagram_simplified.png "A parameterizer UML class diagram (simplified)."
 
-## The %BorderParameterizer_3 Concept ##
+\subsection Surface_mesh_parameterizationTheBorderParameterizer3 The %BorderParameterizer_3 Concept
 
 Parameterization methods for
 borders are used as traits classes modifying the behavior of
@@ -153,12 +153,12 @@ They are provided as models of the `BorderParameterizer_3` concept.
 See Sections \ref secBorderParameterizationsforFixedMethods
 and \ref secBorderParameterizationsforFreeMethods.
 
-## The %SparseLinearAlgebraTraits_d Concept ##
+\subsection Surface_mesh_parameterizationTheSparseLinearAlgebraTraitsd The %SparseLinearAlgebraTraits_d Concept
 
 This package solves sparse linear systems using solvers which are models
 of `SparseLinearAlgebraTraits_d`. See Section \ref secSparseLinearAlgebra.
 
-## The %ParameterizationMesh_3 and %ParameterizationPatchableMesh_3 Concepts ##
+\subsection Surface_mesh_parameterizationTheParameterizationMesh3 The %ParameterizationMesh_3 and %ParameterizationPatchableMesh_3 Concepts
 
 As described in Section \ref secInputMeshforparameterize
 the input meshes handled by `parameterize()`
@@ -191,14 +191,14 @@ Parameterization, Floater Mean Value Coordinates or Tutte Barycentric
 Mapping. These methods are provided as models of the
 `ParameterizerTraits_3` concept.
 
-## Fixed Border Surface Parameterizations ##
+\subsection Surface_mesh_parameterizationFixedBorder Fixed Border Surface Parameterizations
 
 Fixed Border Surface Parameterizations need a set of constraints: two
 (u,v) coordinates for each vertex along the border.
 Such border parameterizations are described in Section
 \ref secBorderParameterizationsforFixedMethods.
 
-## Tutte Barycentric Mapping ##
+\subsection Surface_mesh_parameterizationTutteBarycentric Tutte Barycentric Mapping
 
 `Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
@@ -218,7 +218,7 @@ this method does not minimize angles nor areas distortion.
 \anchor Surface_mesh_parameterizationfiguniform
 \image html uniform.png "Left: Tutte barycentric mapping parameterization (the red line depicts the cut graph). Right: parameter space."
 
-## Discrete Conformal Map ##
+\subsection Surface_mesh_parameterizationDiscreteConformal Discrete Conformal Map
 
 `Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
@@ -239,7 +239,7 @@ thus can be efficiently solved using dedicated linear solvers.
 \anchor Surface_mesh_parameterizationfigconformal
 \image html conformal.png "Left: discrete conformal map. Right: parameter space."
 
-## Floater Mean Value Coordinates ##
+\subsection Surface_mesh_parameterizationFloaterMean Floater Mean Value Coordinates
 
 `Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
@@ -256,7 +256,7 @@ same for both systems) is asymmetric.
 \anchor Surface_mesh_parameterizationfigfloater
 \image html floater.png "Floater Mean Value Coordinates"
 
-## Discrete Authalic Parameterization ##
+\subsection Surface_mesh_parameterizationDiscreteAuthalic Discrete Authalic Parameterization
 
 `Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
@@ -315,9 +315,9 @@ parameterization is commonly used for texture mapping.
 \anchor Surface_mesh_parameterizationfigcircular_border
 \image html border.png "Left: Julius Cesar mask parameterization with Authalic/circular border. Right: Julius Cesar mask's image with Floater/square border."
 
-## Free Border Surface Parameterizations ##
+\subsection Surface_mesh_parameterizationFreeBorderSurface Free Border Surface Parameterizations
 
-## Least Squares Conformal Maps ##
+\subsection Surface_mesh_parameterizationLeastSquares Least Squares Conformal Maps
 
 `LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
@@ -353,7 +353,7 @@ in the current version of this package.
 
 </UL>
 
-## Discrete Authalic Parameterization Example ##
+\subsection Surface_mesh_parameterizationDiscreteAuthalic_1 Discrete Authalic Parameterization Example
 
 In the following example, we compute a Discrete Authalic parameterization
 over a `Polyhedron_3<Traits>` mesh. Specifying a specific surface parameterization
@@ -379,7 +379,7 @@ Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer()
 
 \endcode
 
-## Square Border Arc Length Parameterization Example ##
+\subsection Surface_mesh_parameterizationSquareBorder Square Border Arc Length Parameterization Example
 
 In the following example, we compute a Floater mean value coordinates
 parameterization with a square border arc length parameterization.
@@ -421,7 +421,7 @@ of sparse matrices and efficient iterative or direct linear
 solvers. We provide links to \ref thirdpartyEigen "Eigen" library
 and include a separate package devoted to OpenNL sparse linear solver.
 
-## List of Solvers ##
+\subsection Surface_mesh_parameterizationListofSolvers List of Solvers
 
 We provide an interface to several sparse linear solvers, as models
 of the `SparseLinearAlgebraTraits_d` concept:
@@ -435,7 +435,7 @@ supports exact number types.
 `Eigen_solver_traits<T>`. This solver traits class can be used for an iterative or a direct,
 symmetric or general sparse solvers. The \ref thirdpartyEigen "Eigen" solver to be used must be given as template parameter.
 
-## Eigen Solver Example ##
+\subsection Surface_mesh_parameterizationEigenSolver Eigen Solver Example
 
 The example \ref Surface_mesh_parameterization/Eigen_parameterization.cpp "Eigen_parameterization.cpp" computes the
 default parameterization method (Floater mean value coordinates with a circular border),
@@ -476,7 +476,7 @@ Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer()
 
 \section secCuttingaMesh Cutting a Mesh 
 
-## Computing a Cut Graph ##
+\subsection Surface_mesh_parameterizationComputingaCut Computing a Cut Graph
 
 All surface parameterization methods proposed in this package only
 deal with meshes which are homeomorphic (topologically equivalent) to discs.
@@ -493,7 +493,7 @@ for generating such a cut graph. Nevertheless, we provide in
 \ref Surface_mesh_parameterization/polyhedron_ex_parameterization.cpp "polyhedron_ex_parameterization.cpp"
 a simple cutting algorithm for the sake of completeness.
 
-## Applying a Cut ##
+\subsection Surface_mesh_parameterizationApplyingaCut Applying a Cut
 
 The surface parameterization classes in this package only <I>directly</I> support
 surfaces which are homeomorphic to disks (models of
@@ -525,7 +525,7 @@ maps). For better performances, it is recommended to use \cgal data
 structures enriched with the proper fields. See `Polyhedron_ex`
 class in \ref Surface_mesh_parameterization/polyhedron_ex_parameterization.cpp "polyhedron_ex_parameterization.cpp" example.
 
-## Cutting a Mesh Example ##
+\subsection Surface_mesh_parameterizationCuttingaMesh Cutting a Mesh Example
 
 In the following example, we <I>virtually</I> cut a
 `Polyhedron_3<Traits>` mesh
@@ -533,7 +533,7 @@ to make it a topological disk, then applies the default parameterization:
 
 \cgalexample{Surface_mesh_parameterization/Mesh_cutting_parameterization.cpp}
 
-# Output # {#Surface_mesh_parameterizationOutput}
+\section Surface_mesh_parameterizationOutput Output
 
 Parameterization methods compute \f$ (u,v)\f$ fields for each vertex
 of the input mesh, with the seam vertices being virtually duplicated (thanks
@@ -548,7 +548,7 @@ The user has to iterate over the mesh halfedges to get the result.
 Note that \f$ (u,v)\f$ fields do not exist in `Polyhedron_3<Traits>`,
 thus the output traversal is specific to the way the (u,v) fields are implemented by the adaptor.
 
-## EPS Output Example ##
+\subsection Surface_mesh_parameterizationEPSOutputExample EPS Output Example
 
 The follwing example is a complete parameterization
 example which outputs the resulting parameterization to a EPS file. It gets the \f$ (u,v)\f$ fields computed by a parameterization method over a `Polyhedron_3<Traits>` mesh with a
@@ -556,9 +556,9 @@ example which outputs the resulting parameterization to a EPS file. It gets the 
 
 \cgalexample{Surface_mesh_parameterization/Complete_parameterization_example.cpp}
 
-# Complexity and Guarantees # {#Surface_mesh_parameterizationComplexity}
+\section Surface_mesh_parameterizationComplexity Complexity and Guarantees
 
-## Parameterization Methods and Guarantees ##
+\subsection Surface_mesh_parameterizationParameterization Parameterization Methods and Guarantees
 
 <UL>
 
@@ -599,7 +599,7 @@ and is therefore non-singular (Gram theorem).
 
 </UL>
 
-## Precision ##
+\subsection Surface_mesh_parameterizationPrecision Precision
 
 Two algorithms of this package construct the sparse linear system(s)
 using trigonometric functions, and are this incompatible with exact arithmetic:
@@ -621,7 +621,7 @@ is the only solver supported by this package which
 computes exact results, when used with an exact arithmetic. This package is
 intended to be used mainly with a \cgal %Cartesian kernel with doubles.
 
-## OpenNL's BICGSTAB Solver with an Exact Arithmetic ##
+\subsection Surface_mesh_parameterizationOpenNLsBICGSTAB OpenNL's BICGSTAB Solver with an Exact Arithmetic
 
 The BICGSTAB conjugate gradient is in disguise a direct solver.
 In a nutshell, it computes a vector basis
@@ -629,7 +629,7 @@ orthogonal with respect to the matrix, and the coordinates of the solution in th
 Each iteration computes one component of the basis and one coordinate, therefore the algorithm
 converges to the solution in \f$ n\f$ iterations, where \f$ n\f$ is the dimension of the matrix. More precisely, it is shown to converge in \f$ k\f$ iteration, where \f$ k\f$ is the number of distinct eigenvalues of the matrix.
 
-## Solvers with a Floating Point Arithmetic ##
+\subsection Surface_mesh_parameterizationSolverswith Solvers with a Floating Point Arithmetic
 
 <I>OpenNL's BICGSTAB example:</I>
 
@@ -640,7 +640,7 @@ on the shape of the triangles. The optimum is when the triangles are equilateral
 in less than 10 iterations). The worst case is obtained when the mesh has a large number of skinny triangles (near-singular Jacobian matrix of the triangle). In this case, the spectrum of the matrix
 is wide (many different eigenvalues), and the solver requires nearly \f$ 5n\f$ iterations to converge.
 
-## Algorithmic Complexity ##
+\subsection Surface_mesh_parameterizationAlgorithmic Algorithmic Complexity
 
 In this package, we focus on piecewise linear mappings onto a planar
 domain. All surface parameterization methods are based on solving one (or two)
@@ -657,9 +657,9 @@ Since convergence is reached after \f$ k\f$ iterations, the complexity is \f$ O(
 Therefore, best case complexity is \f$ O(n)\f$ (equilateral triangles),
 and worst case complexity is \f$ O(n^2)\f$ (skinny triangles).
 
-# Software Design # {#Surface_mesh_parameterizationSoftware}
+\section Surface_mesh_parameterizationSoftware Software Design
 
-## Global Function %parameterize() ##
+\subsection Surface_mesh_parameterizationGlobalFunction Global Function %parameterize()
 
 This package's entry point is:
 
@@ -706,7 +706,7 @@ with a default `ParameterizerTraits_3` argument equal to
 The reason is simply that this is not allowed by the C++ standard (see
 \cite cgal:ansi-is14882-98, paragraph 14.1/9).
 
-## No Common Parameterization Algorithm ##
+\subsection Surface_mesh_parameterizationNoCommonParameterization No Common Parameterization Algorithm
 
 `ParameterizerTraits_3` models modify the behavior of the global function
 `parameterize()` - hence the <I>Traits</I> in the name.
@@ -757,7 +757,7 @@ with default values adapted to the method.
 \note `Parameterizer_traits_3<ParameterizationMesh_3>` is the (pure virtual)
 superclass of all surface parameterization classes.
 
-## %Fixed_border_parameterizer_3 Class ##
+\subsection Surface_mesh_parameterizationFixedborderparameterizer3 %Fixed_border_parameterizer_3 Class
 
 Linear fixed border parameterization algorithms are very close. They mainly
 differ by the energy that they try to minimize, i.e. by the value of the \f$ w_{ij}\f$
@@ -777,13 +777,13 @@ of matrix \f$ A\f$ for \f$ v_j\f$ neighbor vertex of \f$ v_i\f$,
 See `Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 class as an example.
 
-## Border Parameterizations ##
+\subsection Surface_mesh_parameterizationBorderParameterizations Border Parameterizations
 
 Border Parameterizations are models of the `BorderParameterizer_3` concept.
 To simplify the implementation, `BorderParameterizer_3` models know only the
 `ParameterizationMesh_3` mesh class. They do not know the parameterization algorithm or the sparse linear solver used.
 
-## %ParameterizationMesh_3 and %ParameterizationPatchableMesh_3 Concepts ##
+\subsection Surface_mesh_parameterizationParameterizationMesh3 %ParameterizationMesh_3 and %ParameterizationPatchableMesh_3 Concepts
 
 All parameterization methods are templated by the kind of mesh they are applied on.
 The mesh type must be a model of `ParameterizationMesh_3`.
@@ -826,7 +826,7 @@ This mainly means that:
 can be set <I>per corner</I> (which is a more general way of saying <I>per half-edge</I>).
 </UL>
 
-## %SparseLinearAlgebraTraits_d Concept ##
+\subsection Surface_mesh_parameterizationSparseLinearAlgebraTraitsd %SparseLinearAlgebraTraits_d Concept
 
 This package solves sparse linear systems using solvers which are models
 of `SparseLinearAlgebraTraits_d`.
@@ -836,7 +836,7 @@ in `Kernel_d`.
 The goal is to adapt easily code written for dense matrices to sparse ones,
 and vice-versa.
 
-## Cutting a Mesh ##
+\subsection Surface_mesh_parameterizationCuttingaMesh_1 Cutting a Mesh
 
 In this package, we focus on triangulated surfaces that are homeomorphic to a
 disk.
@@ -845,9 +845,9 @@ Computing a cutting path that transforms a closed mesh of arbitrary genus into
 a topological disk is a research topic on its own. This package does
 not intend to cover this topic at the moment.
 
-# Extending the Package and Reusing Code #
+\section Surface_mesh_parameterizationExtendingthe Extending the Package and Reusing Code
 
-## Reusing Mesh Adaptors ##
+\subsection Surface_mesh_parameterizationReusingMesh Reusing Mesh Adaptors
 
 `ParameterizationMesh_3` defines a concept to access to a
 general polyhedral mesh.
@@ -858,14 +858,14 @@ defines the accessors to fields specific to the parameterization domain
 
 It may be easily generalized.
 
-## Reusing Sparse Linear Algebra ##
+\subsection Surface_mesh_parameterizationReusingSparse Reusing Sparse Linear Algebra
 
 The `SparseLinearAlgebraTraits_d` concept and the traits classes
 for \ref thirdpartyEigen "Eigen" and OpenNL are independent of the rest of the
 `Surface_mesh_parameterization` package, and may be reused by
 \cgal developers for other purposes.
 
-## Adding New Parameterization Methods ##
+\subsection Surface_mesh_parameterizationAddingNewParameterization Adding New Parameterization Methods
 
 Implementing a new fixed border linear parameterization is easy. Most
 of the code of the fixed border methods is factorized in the
@@ -882,12 +882,12 @@ parameterization method provides a good starting point.
 Implementing <I>non</I> linear parameterizations is a natural extension
 to this package, although only the mesh adaptors can be reused.
 
-## Adding New Border Parameterization Methods ##
+\subsection Surface_mesh_parameterizationAddingNewBorder Adding New Border Parameterization Methods
 
 Implementing a new border parameterization method is easy.
 Square, circular and two-points border parameterizations are good starting points.
 
-## Mesh Cutting ##
+\subsection Surface_mesh_parameterizationMeshCutting Mesh Cutting
 
 Obviously, this package would benefit of having robust algorithms
 which transform arbitrary meshes into topological disks.

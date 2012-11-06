@@ -34,7 +34,7 @@ at \f$ \mathbf{p_i}\f$. It is denoted \f$ \mathbf{g_i}= \nabla
 
 \section seccoordinates Natural Neighbor Coordinates 
 
-## Introduction ##
+\subsection InterpolationIntroduction Introduction
 
 Natural neighbor interpolation has been introduced by Sibson
 \cite s-bdnni-81 to interpolate multivariate scattered data. Given
@@ -106,7 +106,7 @@ neighbor coordinates on well sampled point set surfaces. See
 Section \ref secsurface and the reference page
 `surface_neighbor_coordinates_3()` for further information.
 
-## Implementation ##
+\subsection InterpolationImplementation Implementation
 
 Given a Delaunay triangulation or a Regular triangulation, the
 vertices in conflict with the query point are determined. The areas
@@ -116,13 +116,13 @@ returned. If the query point is already located and/or the boundary
 edges of the conflict zone are already determined, alternative
 functions allow to avoid the re-computation.
 
-## Example for Natural Neighbor Coordinates ##
+\subsection InterpolationExampleforNaturalNeighborCoordinates Example for Natural Neighbor Coordinates
 
 The signature of all coordinate computation functions is about the
 same.
 \cgalexample{Interpolation/nn_coordinates_2.cpp}
 
-## Example for Regular Neighbor Coordinates ##
+\subsection InterpolationExampleforRegularNeighborCoordinates Example for Regular Neighbor Coordinates
 
 For regular neighbor coordinates, it is sufficient to replace the name
 of the function and the type of triangulation passed as parameter. A
@@ -145,7 +145,7 @@ concepts are based on the definition of Boissonnat and Fl&ouml;totto
 contain a thorough description of the requirements and the
 mathematical properties.
 
-## Introduction ##
+\subsection InterpolationIntroduction_1 Introduction
 
 Two observations lead to the definition of surface neighbors and
 surface neighbor coordinates: First, it is clear that the tangent
@@ -169,9 +169,9 @@ computation of power diagrams via the dual regular triangulation are
 well known and for example provided by \cgal in the class
 `Regular_triangulation_2<Gt, Tds>`.
 
-## Implementation ##
+\subsection InterpolationImplementation_1 Implementation
 
-## Voronoi Intersection Diagrams ##
+\subsection InterpolationVoronoiIntersectionDiagrams Voronoi Intersection Diagrams
 
 In \cgal, the regular triangulation dual to the intersection of a \f$ 3D\f$
 Voronoi diagram with a plane \f$ \mathcal{H}\f$ can be computed by
@@ -192,7 +192,7 @@ This approach allows to avoid the explicit constructions of the
 projected points and the weights which are very prone to rounding
 errors.
 
-## Natural Neighbor Coordinates on Surfaces ##
+\subsection InterpolationNaturalNeighborCoordinateson Natural Neighbor Coordinates on Surfaces
 
 The computation of natural neighbor coordinates on surfaces is based
 upon the computation of regular neighbor coordinates with respect to
@@ -219,7 +219,7 @@ point) can still influence the result. This allows to iteratively
 enlarge the set of input points until the range is sufficient to
 certify the result.
 
-## Surface Neighbors ##
+\subsection InterpolationSurfaceNeighbors Surface Neighbors
 
 The surface neighbors of the query point are its neighbors in the
 regular triangulation that is dual to \f$ {\rm Vor}(\mathcal{P}) \cap
@@ -229,15 +229,15 @@ regular triangulation is computed and the same kind of filtering of
 the data points as well as the certification described above is
 provided.
 
-## Example for Surface Neighbor Coordinates ##
+\subsection InterpolationExampleforSurfaceNeighborCoordinates Example for Surface Neighbor Coordinates
 
 \cgalexample{Interpolation/surface_neighbor_coordinates_3.cpp}
 
 \section secinterpolation Interpolation Methods 
 
-## Introduction ##
+\subsection InterpolationIntroduction_2 Introduction
 
-## Linear Precision Interpolation ##
+\subsection InterpolationLinearPrecisionInterpolation Linear Precision Interpolation
 
 Sibson \cite s-bdnni-81 defines a very simple interpolant that
 re-produces linear functions exactly. The interpolation of
@@ -306,7 +306,7 @@ approximated from the function values by Sibson's method
 \cite s-bdnni-81 (see Section \ref sgradient_fitting) which is exact only
 for spherical quadrics.
 
-## Quadratic Precision Interpolants ##
+\subsection InterpolationQuadraticPrecisionInterpolants Quadratic Precision Interpolants
 
 Knowing the gradient \f$ \mathbf{g_i}\f$ for all \f$ \mathbf{p_i} \in
 \mathcal{P}\f$, we formulate a very simple interpolant that reproduces

@@ -7,7 +7,7 @@ namespace CGAL {
 \autotoc
 \authors Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein
 
-# Introduction # {#stl_intro}
+\section stl_intro Introduction
 
 \cgal is designed in the spirit of the generic programming paradigm
 to work together with the Standard Template Library (\stl)
@@ -26,7 +26,7 @@ Finally, tags and policy classes to specify complexity trade-offs of data-struct
 and a class which helps specifying that the default types in template
 parameter lists are desired is also provided.
 
-# Doubly-Connected List Managing Items in Place # {#stl_doubly}
+\section stl_doubly Doubly-Connected List Managing Items in Place
 
 The class `In_place_list<T,bool>` manages a
 sequence of items in place in a doubly-connected list. Its goals are
@@ -44,7 +44,7 @@ This used to simplify mutually pointed data structures like a halfedge
 data structure for planar maps or polyhedral surfaces (the current design
 does not need this anymore). The usual iterators are also available.
 
-# Compact Container # {#stl_compact}
+\section stl_compact Compact Container
 
 The class `Compact_container<T, Allocator>` is an \stl like container
 which provides a very compact storage for its elements. It achieves this goal
@@ -73,7 +73,7 @@ This container has been developed in order to efficiently handle large data
 structures like the triangulation and halfedge data structures. It can
 probably be useful for other kinds of graphs as well.
 
-# Multiset with Extended Functionality # {#stl_multi}
+\section stl_multi Multiset with Extended Functionality
 
 The class `Multiset<Type,Compare,Allocator>` represents a
 multi-set of elements of type `Type`, represented as a red-black tree
@@ -103,14 +103,14 @@ looking up keys whose type may differ from `Type`, as long as users supply
 a comparison functor `CompareKey`, between the keys and set elements;
 and catenating and splitting sets.
 
-# Polymorphic Object # {#stl_polyobject}
+\section stl_polyobject Polymorphic Object
 
 The class `Object` can store an object of whatever other type.
 It can be used by a function to return objects of different types.
 A mechanism to extract the stored object based on its type is also provided.
 This class is similar to `boost::any`.
 
-# Uncertainty Management # {#stl_uncertainty}
+\section stl_uncertainty Uncertainty Management
 
 The class `Uncertain<T>` represents a range of values of type `T`.
 `T` is allowed to stand for `bool`, or \cgal's enumeration types
@@ -131,7 +131,7 @@ filtered by `Filtered_predicate`, know about it.
 
 It can also be used in other contexts as well, as it is a general tool.
 
-# Complexity Tags and Policies # {#stl_complexity}
+\section stl_complexity Complexity Tags and Policies
 
 Some data structures and algorithms can be implemented with different
 complexity trade-offs between memory usage and time complexity. \cgal provides
@@ -141,7 +141,7 @@ these tags and allows to specify the complexity of point location (currently in
 `Delaunay_triangulation_3` only). Convenient typedefs `Fast_location`
 and `Compact_location` are also provided.
 
-# Default Arguments in Template Parameter Lists # {#stl_defaults}
+\section stl_defaults Default Arguments in Template Parameter Lists
 
 In \cpp, it is possible to specify defaults at the end of a template parameter
 list. Specifying that one wishes to use the default is simply done by omitting
@@ -149,7 +149,7 @@ it. This is however possible only at the end of the list. `Default`
 provides a simple mechanism that performs something equivalent anywhere in the
 sequence.
 
-# C++ 11 Wrappers # {#stl_wrappers}
+\section stl_wrappers C++ 11 Wrappers
 
 Wrappers for the classes `array` and `tuple` which, based on
 availability, either use the version of <I>Boost</I> or the one
@@ -159,7 +159,7 @@ for backward compatibility. Those are documented for completeness and
 implementers. They are not intended to be used by users of the
 library.
 
-# Checks # {#secchecks}
+\section secchecks Checks
 
 Much of the \cgal code contains checks.
 For example, all checks used in the kernel code are prefixed by
@@ -267,7 +267,7 @@ with some exact number type.
 By definition, static assertions are both inexpensive and unaffected by precision
 management. Thus, the categories do not apply for static assertions.
 
-## Altering the Failure Behavior # {#stl_alteriung}
+\subsection stl_alteriung Altering the Failure Behavior
 
 As stated above, if a postcondition, precondition or assertion is
 violated, an exception is thrown, and if nothing is done to catch it,
@@ -295,7 +295,7 @@ The only difference is that for warnings the default value is
 `CONTINUE`.
 
 
-## Control at a Finer Granularity## {#stl_control}
+\subsection stl_control Control at a Finer Granularity
 
 The compile time flags as described up to now all operate on the whole
 library.
@@ -309,7 +309,7 @@ expensive checks in the convex hull module.
 The name of a particular module is documented with that module.
 
 
-## Customizing how Errors are Reported## {#stl_customizing}
+\subsection stl_customizing Customizing how Errors are Reported
 
 Normally, error messages are written to the standard error output.
 It is possible to do something different with them.
@@ -334,7 +334,7 @@ it if you want.
 
 
 
-### Example ### {#stl_failure_example}
+\subsubsection stl_failure_example Example
 
 \code{.cpp}
 #include <CGAL/assertions.h>

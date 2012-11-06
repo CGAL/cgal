@@ -19,7 +19,7 @@ prefix `CGAL_`.
 At the beginning of 1999, it was decided to drop prefix `CGAL_` and to 
 introduce namespace `CGAL`.
 
-# Namespace CGAL #
+\section Developer_manualNamespaceCGAL Namespace CGAL
 
 All names introduced by \cgal should be in namespace `CGAL`, <I>e.g.</I>: 
 \code{.cpp}
@@ -59,7 +59,7 @@ class Some_further_class_local_to_Package;
 }}}} // namespace CGAL::internal::Package::tags
 \endcode
 
-# Note on global template functions #
+\section Developer_manualNoteonglobaltemplatefunctions Note on global template functions
 
 According to the resolutions of the following issues in the forthcoming
 \cpp-standard (
@@ -73,7 +73,7 @@ name lookup
 </TT>, the namespace `CGAL::NTS` does not need to be used anymore 
 (currently `CGAL_NTS` macro boils down to `CGAL::`).
 
-# Requirements and recommendations #
+\section Developer_manualRequirementsandrecommendations_1 Requirements and recommendations
 
 Requirements:
 <UL>

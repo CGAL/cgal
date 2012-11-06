@@ -382,7 +382,7 @@ the precondition of the mesh characteristics before the refinement.
 For details of the refinement implementation, 
 interested users should refer to \cite cgal:sp-mrbee-05.
 
-# Geometry Policy # {#Subdivision_method_3Geometry}
+\section Subdivision_method_3Geometry Geometry Policy
 
 A geometry policy defines a set of geometry masks. 
 Each geometry mask is realized as a member function
@@ -504,7 +504,7 @@ The source codes of `CatmullClark_mask_3`, `Loop_mask_3`,
 `DooSabin_mask_3`, and `Sqrt3_mask_3` are
 the best sources of learning these stencil interfaces.
 
-# The Four Subdivision Methods # {#Subdivision_method_3The}
+\section Subdivision_method_3The The Four Subdivision Methods
 
 `Subdivision_method_3` supports Catmull-Clark, Loop, 
 Doo-Sabin and \f$ \sqrt{3}\f$ subdivisions by specializing
@@ -544,7 +544,7 @@ The following example demonstrates the use of Doo-Sabin subdivision
 on a polyhedral mesh.
 \cgalexample{Subdivision_method_3/DooSabin_subdivision.cpp}
 
-# Other Subdivision Methods # {#Subdivision_method_3Other}
+\section Subdivision_method_3Other Other Subdivision Methods
 
 `Subdivision_method_3` supports four practical subdivision methods on a
 `Polyhedron_3` with points with %Cartesian coordinates. More subdivision methods can be supported

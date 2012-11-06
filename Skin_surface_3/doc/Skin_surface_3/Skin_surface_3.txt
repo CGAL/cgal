@@ -118,7 +118,7 @@ wrap around the (unshrunk) input balls, we can first increase the
 weights of the input balls by multiplying them with a factor \f$ 1/s\f$ and
 then compute the skin surface.
 
-# The Interface # {#Skin_surface_3The}
+\section Skin_surface_3The The Interface
 
 The interface to the skin surface package consists of one main
 function, taking a set of weighted points and a shrink factor and
@@ -204,7 +204,7 @@ void subdivide_skin_surface_mesh_3 (const SkinSurface_3 &skinsurface,
                                     int iterations = 1);
 \endcode
 
-# Timings # {#Skin_surface_3Timings}
+\section Skin_surface_3Timings Timings
 
 The timings of the construction of the coarse mesh and the first
 subdivision are given in seconds and were done on a Pentium 4, 3.5
@@ -245,16 +245,16 @@ Gramicidin A
 
 </CENTER>
 
-# Example Programs # {#Skin_surface_3Example}
+\section Skin_surface_3Example Example Programs
 
-## Meshing a Skin Surface ##
+\subsection Skin_surface_3MeshingaSkinSurface Meshing a Skin Surface
 
 The following example shows the construction of a coarse mesh of the
 skin surface using the function `make_skin_surface_mesh_3()`. The
 output is a `Polyhedron_3`.
 \cgalexample{Skin_surface_3/skin_surface_simple.cpp}
 
-## Meshing and Subdividing a Skin Surface ##
+\subsection Skin_surface_3MeshingandSubdividingaSkin Meshing and Subdividing a Skin Surface
 
 The following example shows the construction of mesh of the skin
 surface by explicitly performing different steps of the algorithm. It

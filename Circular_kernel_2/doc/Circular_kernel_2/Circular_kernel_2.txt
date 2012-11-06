@@ -7,7 +7,7 @@ namespace CGAL {
 
 \authors Pedro Machado Manh&atilde;es de Castro, Sylvain Pion, and Monique Teillaud
 
-# Introduction # {#Circular_kernel_2Introduction}
+\section Circular_kernel_2Introduction Introduction
 
 The goal of the circular kernel is to offer to the user a large set of
 functionalities on circles and circular arcs in the plane. All the
@@ -20,7 +20,7 @@ arrangement of circular arcs and these line segments are
 defined. Three traits classes are provided for the \cgal arrangement
 package.
 
-# Software Design # {#Circular_kernel_2Software}
+\section Circular_kernel_2Software Software Design
 
 The design is done in such a way that the algebraic concepts and the
 geometric concepts are clearly separated. `Circular_kernel_2`
@@ -57,7 +57,7 @@ that is based on similar techniques as
 `Exact_predicates_exact_constructions_kernel`. 
 </UL>
 
-# Examples # {#Circular_kernel_2Examples}
+\section Circular_kernel_2Examples Examples
 
 The first example shows how to construct circles or circular arcs from
 points, and how to compute intersections between them using the global
@@ -69,7 +69,7 @@ The following example shows how to use a functor of the kernel.
 
 \cgalexample{Circular_kernel_2/functor_has_on_2.cpp}
 
-# Design and Implementation History # {#Circular_kernel_2Design}
+\section Circular_kernel_2Design Design and Implementation History
 
 The first pieces of prototype code were comparisons of algebraic
 numbers of degree 2, written by Olivier Devillers

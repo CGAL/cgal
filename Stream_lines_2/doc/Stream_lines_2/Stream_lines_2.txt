@@ -73,7 +73,7 @@ Several numeric methods have been
 proposed to solve this equation. In this package, the Euler, and the
 Second Order Runge-Kutta algorithm are implemented.
 
-## Euler Integrator ##
+\subsection Stream_lines_2EulerIntegrator Euler Integrator
 
 \anchor euler_fig
 \image html euler_integrator.gif "Euler integrator."
@@ -86,7 +86,7 @@ can be done forward (resp. backward) by specifying a positive
 constructed by successive integration from a seed point both forward
 and backward.
 
-## Second Order Runge-Kutta Integrator ##
+\subsection Stream_lines_2SecondOrderRungeKuttaIntegrator Second Order Runge-Kutta Integrator
 
 \anchor runge_kutta_fig
 \image html runge_kutta_integrator.gif "Runge-Kutta second order integrator (The empty circle represents the intermediate point, and the gray disk represents the Euler integrated point)."

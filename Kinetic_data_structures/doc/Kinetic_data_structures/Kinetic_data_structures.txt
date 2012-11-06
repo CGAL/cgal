@@ -41,14 +41,14 @@ Section \ref secquick_hints which covers quick hints.
 This section gives quick answers to some questions people might have.
 It presumes knowledge of kinetic data structures and this framework.
 
-## How do I store extra information allow with, for example, a kinetic %Point_2? ##
+\subsection Kinetic_data_structuresHowdoIstoreextrainformation How do I store extra information allow with, for example, a kinetic %Point_2?
 
 See the example
 \ref defining_a_simulation_traits.cpp to see how
 to define a new `SimulationTraits` class where the
 `Active-Objects-Table` contains extra data along with the point.
 
-## Where is the best place to look if I want to write my own kinetic data structure? ##
+\subsection Kinetic_data_structuresWhereisthebestplace Where is the best place to look if I want to write my own kinetic data structure?
 
 We provide two simple kinetic data structures, first most trivial is
 \ref trivial_kds.cpp and a slightly more
@@ -56,7 +56,7 @@ complicated one is:
 
 \ref CGAL/Kinetic/Sort.h
 
-## How can I use kinetic data structures to update Delaunay triangulations? ##
+\subsection Kinetic_data_structuresHowcanIusekinetic How can I use kinetic data structures to update Delaunay triangulations?
 
 We are working on that one, but you will have to wait.
 
@@ -291,7 +291,7 @@ arrangements of \f$ x\f$-monotone curves on top of the
 lines of code. This sweepline code is presented in
 Section \ref seckds_sweepline_example.
 
-## Creating %Kinetic Primitives ##
+\subsection Kinetic_data_structuresCreatingKineticPrimitives Creating %Kinetic Primitives
 
 One key part of the framework not shown is how to create kinetic
 primitives (rather than just reading them in from a file). There are

@@ -422,19 +422,19 @@ nearest neighbor queries.
 
 \section secapollonius2examples Examples 
 
-## First Example ##
+\subsection Apollonius_graph_2FirstExample First Example
 
 \cgalexample{Apollonius_graph_2/ag2_exact_traits.cpp}
 
-## Second Example ##
+\subsection Apollonius_graph_2SecondExample Second Example
 
 \cgalexample{Apollonius_graph_2/ag2_exact_traits_sqrt.cpp}
 
-## Third Example ##
+\subsection Apollonius_graph_2ThirdExample Third Example
 
 \cgalexample{Apollonius_graph_2/ag2_filtered_traits_no_hidden.cpp}
 
-## Fourth Example ##
+\subsection Apollonius_graph_2FourthExample Fourth Example
 
 \cgalexample{Apollonius_graph_2/ag2_hierarchy.cpp}
 

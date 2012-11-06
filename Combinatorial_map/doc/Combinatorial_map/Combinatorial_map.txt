@@ -8,7 +8,7 @@ namespace CGAL {
 \author Guillaume Damiand
 \autotoc
 
-# Introduction # {#Combinatorial_mapIntroduction}
+\section Combinatorial_mapIntroduction Introduction
 
 A <I>d</I>-dimensional combinatorial map is a data structure
 representing an orientable subdivided <I>d</I>-dimensional object
@@ -202,7 +202,7 @@ combinatorial and geometrical descriptions) and all the adjacency
 relations between these elements allowing for example to move a camera
 in a given building from rooms to rooms by traversing doors.
 
-# Data Structure Presentation # {#sec_presentation}
+\section sec_presentation Data Structure Presentation
 
 In this section, we describe <I>d</I>D combinatorial maps in terms of data
 structure and operations. Mathematical definitions are provided in
@@ -210,7 +210,7 @@ Section \ref sec_definition "Mathematical Definitions", and a package
 description is given in
 Section \ref secsoftwaredesign "Software Design".
 
-## Combinatorial Map and Darts ## {#sseccombimapanddarts}
+\subsection sseccombimapanddarts Combinatorial Map and Darts
 
 A <I>d</I>D combinatorial map is a set of darts <I>D</I>. A dart
 <I>d0</I> is an element that can be <I>linked</I> with <I>d</I>+1
@@ -259,7 +259,7 @@ with a little gray segment joining them (for example \f$
 segments (for example \f$ \beta_3\f$(1)=5).
 </b></center>
 
-## Cells as Sets of Darts ## {#sseccellsinmap}
+\subsection sseccellsinmap Cells as Sets of Darts
 
 A cell in a <I>d</I>D combinatorial map is implicitly represented by a
 subset of darts.  In this section, we will see how to retrieve all
@@ -420,7 +420,7 @@ obtain the set of darts {1,2,3,4}. Intuitively we "forget" \f$
 \beta_3\f$ and we obtain the set of darts of the facet containing dart
 1 restricted to the volume containing this dart.
 
-## How to Associate Information to Cells ## {#ssecassociateattributes}
+\subsection ssecassociateattributes How to Associate Information to Cells
 
 Combinatorial maps only describe the cells of the subdvision, and all
 the incidence and adjacency relations between these cells. This is not
@@ -471,7 +471,7 @@ containing a color in RGB format. Only three 2-cells of the
 combinatorial map, among the ten, are associated to a 2-attribute.
 </b></center>
 
-## Combinatorial Map Properties ## {#sseccombimapvalidity}
+\subsection sseccombimapvalidity Combinatorial Map Properties
 
 There are some conditions that a combinatorial map must satisfy to be
 valid. Some of them have already been given about the \f$ \beta\f$
@@ -579,7 +579,7 @@ example to modify locally a combinatorial map in a really fast way. In
 such a case, additional operations may be needed to restore these
 validity conditions.
 
-# Software Design # {#secsoftwaredesign}
+\section secsoftwaredesign Software Design
 
 The diagram in \ref figure9 "Figure 9" shows the different
 classes of the package. `Combinatorial_map` is the main class
@@ -597,7 +597,7 @@ accessed through <I>handles</I>. A handle is a model of the
 \anchor figure9
 \image html Diagramme_class.png "Figure 9: UML diagram of the main classes of the package. k is the number of non void attributes."
 
-## Combinatorial Maps ## {#sseccombinatorialmap}
+\subsection sseccombinatorialmap Combinatorial Maps
 
 The class `Combinatorial_map<d,Items,Alloc>` is a model of the
 `CombinatorialMap` concept. It has three template parameters standing
@@ -644,7 +644,7 @@ for a handle to the <I>i</I>-attributes (and the const version
 
 \todo Add links to the corresponding types in CombinatorialMap concept asap the types were defined correctly in the concept.
 
-## Combinatorial Map Items ## {#ssecitem}
+\subsection ssecitem Combinatorial Map Items
 
 The `CombinatorialMapItems` concept defines dart and attribute types
 of a combinatorial map. It contains one inner class named
@@ -678,7 +678,7 @@ The class `Combinatorial_map_min_items<d>` is a model of the
 behaviors.  It defines `Dart<d,CMap>` as type of dart, and
 `Attributes` as empty tuple.
 
-## Darts ## {#ssecdarts}
+\subsection ssecdarts Darts
 
 The class `Dart<d,CMap>`, a model of the `::Dart` concept, defines a
 <I>d</I>D dart. It has two template parameters standing for the
@@ -703,7 +703,7 @@ combinatorial map class. Users can provide their own model of the
 `::Dart` concept, and pass it to the combinatorial map with the help of
 a custom item class.
 
-## Cell Attributes ## {#ssecattributes}
+\subsection ssecattributes Cell Attributes
 
 The class `Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`, a model of
 the `CellAttribute` concept, represents an attribute associated with a
@@ -745,7 +745,7 @@ What we said for the dart also holds for the cell attribute. The
 combinatorial map can be used with any user defined model of the
 `CellAttribute` concept.
 
-## Example of Combinatorial Map Definition ## {#ssecexampledef}
+\subsection ssecexampledef Example of Combinatorial Map Definition
 
 Here comes an example of two combinatorial map definitions. The first
 case `Example_cmap4` defines a 4D combinatorial map which uses all the
@@ -775,7 +775,7 @@ typedef CGAL::Combinatorial_map<3, Example_items_3> Example_custom_cmap3;
 
 \todo Remove link for Dart typedef in the code (here % does not work).
 
-# Iteration and Creation Operations # {#Combinatorial_mapIteration}
+\section Combinatorial_mapIteration Iteration and Creation Operations
 
 An important operation in combinatorial maps consists in iterating
 over specific subsets of darts or over attributes. For that, several
@@ -793,7 +793,7 @@ following, we denote by
 `dh0`, `dh1`, `dh2` the dart handles for the darts `d0`, `d1`, `d2`,
 respectively. That is `d0 == *dh0`.
 
-## Iterating over Orbits, Cells, and Attributes ## {#ssecrange}
+\subsection ssecrange Iterating over Orbits, Cells, and Attributes
 
 The combinatorial map offers iterators to traverse the darts of a
 specific orbit, to traverse all darts of one cell, or one dart per
@@ -875,7 +875,7 @@ For each range, there is an associated const range, a model of the
 `ConstRange` concept. You can find some examples of ranges in Section
 \ref ssecexample3DCM "A 3D Combinatorial Map".
 
-## Construction Operations ## {#ssecconstruction}
+\subsection ssecconstruction Construction Operations
 
 Several global functions allow to create specific configurations of
 darts into a combinatorial map. Existing darts in the combinatorial
@@ -902,7 +902,7 @@ together by \f$ \beta_2\f$); dimension must be greater or equal than
 two.
 </UL>
 
-## Boolean Marks ## {#ssecadvmarks}
+\subsection ssecadvmarks Boolean Marks
 
 \advanced It is often necessary to mark darts, for example to retrieve
 in <I>O(1)</I> if a given dart was already processed during a specific
@@ -942,7 +942,7 @@ to know which darts come from the first and second tetrahedron.
 
 \cgalexample{Combinatorial_map/map_3_marks.cpp}
 
-# Modification Operations # {#ssecmodoperations}
+\section ssecmodoperations Modification Operations
 
 Several operations allow to modify a given combinatorial map.
 There are two main categories of modification operations:
@@ -957,7 +957,7 @@ Section \ref sseclinkdarts "Sewing Orbits and Linking Darts");
 \ref ssecoperations "Removal and Insertion Operations").
 </UL>
 
-## Sewing Orbits and Linking Darts ## {#sseclinkdarts}
+\subsection sseclinkdarts Sewing Orbits and Linking Darts
 
 The `CombinatorialMap` defines two groups of methods to modify the
 \f$ \beta\f$ pointers of existing darts.
@@ -1143,7 +1143,7 @@ attributes.  In \ref figure10 "Figure 10" (Left), if we call
 no longer valid (for example dart 2 is 3-free and we should have \f$
 \beta_3\f$(2)=8).
 
-## Removal and Insertion Operations ## {#ssecoperations}
+\subsection ssecoperations Removal and Insertion Operations
 
 The following high level operations are defined as global functions
 taking an instance `cm` of `CombinatorialMap` as first argument. All
@@ -1240,9 +1240,9 @@ dart `d5`, we obtain the initial combinatorial map.  </b></center>
 Some examples of use of these operations are given in Section \ref
 ssecexempleoperations "High Level Operations".
 
-# Examples # {#Combinatorial_mapExamples}
+\section Combinatorial_mapExamples Examples
 
-## A 3D Combinatorial Map ## {#ssecexample3DCM}
+\subsection ssecexample3DCM A 3D Combinatorial Map
 
 In this example, a 3-dimensional combinatorial map is constructed. Two
 combinatorial tetrahedra are created, then the numbers of cells of the
@@ -1283,7 +1283,7 @@ for (CMap_3::Dart_of_orbit_range<1,2>::const_iterator
 
 \endcode
 
-## High Level Operations ##
+\subsection Combinatorial_mapHighLevelOperations High Level Operations
 
 \anchor ssecexempleoperations
 
@@ -1333,7 +1333,7 @@ hexahedron. Middle: Combinatorial map obtained after the two
 Combinatorial map obtained after the 2-cell insertion. The 3-cell was
 split in two.  </b></center>
 
-## A 4D Combinatorial Map ##
+\subsection Combinatorial_mapA4DCombinatorialMap A 4D Combinatorial Map
 
 In this example, a 4-dimensional combinatorial map is used. Two
 tetrahedral cells are created and sewn by \f$ \beta_4\f$. Then the
@@ -1376,7 +1376,7 @@ The output is:
 #Darts=24, #0-cells=4, #1-cells=6, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, valid=1
 \endverbatim
 
-## Combinatorial Map With Attributes ## {#sseccombimapwithcolor}
+\subsection sseccombimapwithcolor Combinatorial Map With Attributes
 
 In the following example, we illustrate how to specify the
 2-attributes in a 3D combinatorial map. For that, we define our own
@@ -1420,7 +1420,7 @@ contained in 2-attributes in an `int`). At the end, we obtain five
 2-attributes with 7 as value, five 2-attributes with 13 as value, and
 four 2-attributes having respectively 2, 2, 5 and 10 as values.
 
-# Mathematical Definitions # {#sec_definition}
+\section sec_definition Mathematical Definitions
 
 The initial definition of combinatorial map in any dimension is given
 in \cite cgal:l-tmbrc-91, \cite l-ndgcm-94. But it allows only to
@@ -1504,7 +1504,7 @@ Let <I>d0</I>\f$ \in\f$<I>D</I> be a dart. Given <I>i</I>, 1\f$
 \forall\f$<I>i,j</I>: 1\f$ \leq\f$<I>i</I>\f$ <\f$<I>j</I>\f$
 \leq\f$<I>d</I>}\f$ \rangle{}\f$(<I>d0</I>).
 
-# Design and Implementation History # {#Combinatorial_mapDesign}
+\section Combinatorial_mapDesign Design and Implementation History
 
 The code of this package is inspired by Moka, a 3D topological modeler
 mainly developed by Fr&eacute;d&eacute;ric Vidil and Guillaume Damiand

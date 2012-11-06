@@ -12,7 +12,7 @@ namespace CGAL {
 
 \image html lwrenv.gif The lower envelope of a set of line segments and hyperbolic arc. 
 
-# Introduction # {#Envelope_2Introduction}
+\section Envelope_2Introduction Introduction
 
 A continuous curve \f$ C\f$ in \f$ {\mathbb R}^2\f$ is called <I>\f$ x\f$-monotone</I>, if
 every vertical line intersects it at a single point at most. For
@@ -145,9 +145,9 @@ a traits class that models this concepts must also defines a
 provide a functor for subdividing such curves into \f$ x\f$-monotone
 subcurves.
 
-# Examples # {#Envelope_2Examples}
+\section Envelope_2Examples Examples
 
-## Example for Envelope of Line Segments ##
+\subsection Envelope_2ExampleforEnvelopeofLineSegments Example for Envelope of Line Segments
 
 The following example demonstrates how to compute and traverse the
 minimization diagram of line segments, as illustrated in
@@ -158,7 +158,7 @@ We use these labels when we print the minimization diagram.
 
 \cgalexample{Envelope_2/envelope_segments.cpp}
 
-## Example for Computing the Convex Hull with Envelopes ##
+\subsection Envelope_2ExampleforComputingtheConvexHull Example for Computing the Convex Hull with Envelopes
 
 The next example computes the convex hull of a set of input points
 by constructing envelopes of unbounded curves, in our case lines
@@ -187,7 +187,7 @@ diagrams.
 A set of four circles, as constructed in \ref Envelope_2/ex_envelope_circles.cpp. The lower envelope and the upper envelope are shown using thick dashed lines of different colors respectively.
 </b></center>
 
-## Example for Envelope of Non-Linear Curves ##
+\subsection Envelope_2ExampleforEnvelopeofNonLinearCurves Example for Envelope of Non-Linear Curves
 
 We conclude by an example of envelopes of non-linear curves. 
 We use the `Arr_circle_segment_traits_2` class to construct the

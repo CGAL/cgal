@@ -7,7 +7,7 @@ namespace CGAL {
 \autotoc
 \authors Andreas Fabri and Sylvain Pion
 
-# Definition # {#GeomviewDefinition}
+\section GeomviewDefinition Definition
 
 This chapter presents the \cgal interface to Geomview \footnote{http://www.geomview.org/}, which is a
 viewer for three-dimensional objects, originally developed at the Geometry
@@ -27,7 +27,7 @@ Input is only provided for points.
 Polyhedron and 2D and 3D triangulations have output
 operators for the `Geomview_stream`.
 
-# Implementation # {#GeomviewImplementation}
+\section GeomviewImplementation Implementation
 
 The constructor forks a process and establishes two pipes between the
 processes. The forked process is then overlaid with Geomview. The
@@ -44,7 +44,7 @@ to parse this expression.
 In order to implement further insert and extract operators you should
 take a look at the implementation and at the Geomview manual.
 
-# Example # {#GeomviewExample}
+\section GeomviewExample Example
 
 The following program ouputs successively a 2D
 Delaunay triangulation (projected), a 3D Delaunay, and a terrain

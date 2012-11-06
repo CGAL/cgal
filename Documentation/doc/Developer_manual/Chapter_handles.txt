@@ -4,7 +4,7 @@
 
 \author Stefan Schirra (<TT>stschirr@mpi-sb.mpg.de</TT>)
 
-# Reference counting #
+\section Developer_manualReferencecounting Reference counting
 
 As of release 2.1, a reference counting scheme is used for
 the kernel objects in the kernels `Cartesian` and 
@@ -39,7 +39,7 @@ which is used to separate an interface from its implementation.
 The intent of this design pattern is to allow for exchanging implementations
 of member functions hidden to the user, especially at runtime.
 
-# Handle & Rep #
+\section Developer_manualHandleRep Handle & Rep
 
 The two classes `Handle` and 
 `Rep` provide reference counting
@@ -84,7 +84,7 @@ typedef Leda_like_rep    Rep;
 \anchor figHandleRep
 \image html handle_rep.gif "UML class diagram for Handle & Rep scheme."
 
-# Using Handle & Rep #
+\section Developer_manualUsingHandleRep Using Handle & Rep
 
 In order to make use of the reference counting provided by the
 classes `Handle` and `Rep`, your interface class (the class providing
@@ -140,7 +140,7 @@ Note that this scheme is meant for non-modifiable types. You are not allowed
 to modify data in the representation object, because the data are possibly
 shared with other `My_geo_object` objects.
 
-# Templated handles #
+\section Developer_manualTemplatedhandles Templated handles
 
 Factoring out the common functionality in base classes enables re-use of 
 the code, but there is also a major drawback. The `Handle` class does not
@@ -177,7 +177,7 @@ interface can be inherited from class `Ref_counted`.
 
 Kernel objects have used such a handle/rep scheme since release 2.2.
 
-# Using templated handles #
+\section Developer_manualUsingtemplatedhandles Using templated handles
 
 In order to make use of the reference counting provided by the
 classes `Handle_for` and `Ref_counted`, your representation class, 
@@ -252,7 +252,7 @@ My_geo_object::set_x(double d)
 \endcode
 You get this functionality by including \ref CGAL/Handle_for.h
 
-# Allocation #
+\section Developer_manualAllocation Allocation
 
 Class `Handle_for` has two template parameters. Besides the
 type of the stored object, there is also a parameter specifying an

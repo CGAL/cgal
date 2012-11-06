@@ -7,7 +7,7 @@ namespace CGAL {
 \autotoc
 \authors Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Pe&ntilde;aranda, and Monique Teillaud
 
-# Introduction # {#Algebraic_kernel_dIntroduction}
+\section Algebraic_kernel_dIntroduction Introduction
 
 Real solving of polynomials is a fundamental problem with a wide application range. 
 This package is targeted at providing black-box implementations of state-of-the-art 
@@ -18,11 +18,11 @@ the algebraic kernels is expressed in concepts. The main concepts provided by th
 `AlgebraicKernel_d_1` for univariate polynomial systems and `AlgebraicKernel_d_2` 
 for bivariate polynomial systems, the latter being a refinement of the first.
 
-# Algebraic Kernel Concepts # {#Algebraic_kernel_dAlgebraic}
+\section Algebraic_kernel_dAlgebraic Algebraic Kernel Concepts
 
-## Univariate Algebraic %Kernel ##
+\subsection Algebraic_kernel_dUnivariateAlgebraicKernel Univariate Algebraic %Kernel
 
-## Major Types ##
+\subsection Algebraic_kernel_dMajorTypes Major Types
 
 First of all, the univariate algebraic kernel provides construction, comparison and 
 approximation of real roots of univariate polynomials. 
@@ -37,7 +37,7 @@ Thus, the major public types the `AlgebraicKernel_d_1` provides are:
 `AlgebraicKernel_d_1::Bound` - the type which is used to approximate these algebraic reals, 
 in particular, it is used to represent the boundaries of isolating intervals. 
 
-## Construction of Algebraic Real Numbers ##
+\subsection Algebraic_kernel_dConstructionofAlgebraic Construction of Algebraic Real Numbers
 
 The kernel provides two different function objects to construct an
 `AlgebraicKernel_d_1::Algebraic_real_1`. The most general way
@@ -53,7 +53,7 @@ isolating interval or the index of the root. A related function object
 is `AlgebraicKernel_d_1::Number_of_solutions_1` computing the number
 of real roots of a polynomial.
 
-## Comparison and Approximation of Algebraic Real Numbers ##
+\subsection Algebraic_kernel_dComparisonandApproximation Comparison and Approximation of Algebraic Real Numbers
 
 An `AlgebraicKernel_d_1::Algebraic_real_1` is model of
 `RealEmbeddable`, for instance, it is possible to compare two
@@ -76,7 +76,7 @@ a given univariate polynomial,
 A related function object is `AlgebraicKernel_d_1::Bound_between_1`, which computes 
 a number that isolates two algebraic real numbers.
 
-## Interplay with Polynomials ##
+\subsection Algebraic_kernel_dInterplaywithPolynomials Interplay with Polynomials
 
 It is also possible to retrieve a representing polynomial from an
 algebraic real using `AlgebraicKernel_d_1::Compute_polynomial_1`, 
@@ -97,7 +97,7 @@ using `AlgebraicKernel_d_1::Is_zero_at_1`. Note that this operation
 can be significantly less expensive, in particular if the polynomial
 is not zero at the given algebraic real.
 
-## Auxiliary Functionality for Polynomials ##
+\subsection Algebraic_kernel_dAuxiliaryFunctionality Auxiliary Functionality for Polynomials
 
 First of all the type `AlgebraicKernel_d_1::Polynomial_1` is required
 to be a model of the concept `Polynomial_1`, which is defined
@@ -129,7 +129,7 @@ For more details see also:
 - \ref PolynomialTraits_d::SquareFreeFactorize 
 - \ref PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor
 
-## Design Rationale ##
+\subsection Algebraic_kernel_dDesignRationale Design Rationale
 
 Most implementations of an `AlgebraicKernel_d_1` will represent
 an algebraic real number by the root of a square free polynomial and
@@ -154,7 +154,7 @@ there is no way to directly ask for the refinement of the current
 isolating interval since this would impose a state to every object of
 an `AlgebraicKernel_d_1::Algebraic_real_1`.
 
-## Bivariate Algebraic %Kernel ##
+\subsection Algebraic_kernel_dBivariateAlgebraicKernel Bivariate Algebraic %Kernel
 
 The concept `AlgebraicKernel_d_2` is a refinement of `AlgebraicKernel_d_1`, 
 that is, a model of `AlgebraicKernel_d_2` is also a model of `AlgebraicKernel_d_1`. 
@@ -234,9 +234,9 @@ additional functors that may allow a model to bypass this issue:
 
 `AlgebraicKernel_d_2::Bound_between_y_2`.
 
-# Models # {#Algebraic_kernel_dModels}
+\section Algebraic_kernel_dModels Models
 
-## Generic Algebraic Kernels ##
+\subsection Algebraic_kernel_dGenericAlgebraicKernels Generic Algebraic Kernels
 
 The package provides generic models of the univariate and bivariate algebraic 
 kernel, namely `Algebraic_kernel_d_1<Coeff>` and `Algebraic_kernel_d_2<Coeff>`,
@@ -283,7 +283,7 @@ is not stored internally in terms of an `Algebraic_real_1` object.
 Querying such a representation by calling `Compute_y_2` is a
 time-consuming step, and should be avoided for efficiency reasons if possible.
 
-## Algebraic Kernels Based on RS ##
+\subsection Algebraic_kernel_dAlgebraicKernelsBasedon Algebraic Kernels Based on RS
 
 The package offers two univariate algebraic kernels that are based on 
 the library RS \cite cgal:r-rs, namely `Algebraic_kernel_rs_gmpz_d_1`
@@ -319,15 +319,15 @@ for more details on the implementation, tests of these kernels,
 comparisons with other algebraic kernels and discussions about the
 efficiency.
 
-# Examples # {#Algebraic_kernel_dExamples}
+\section Algebraic_kernel_dExamples Examples
 
-## Construction of Algebraic Real Numbers ## {#CGALAK1ConstructionExamples}
+\subsection CGALAK1ConstructionExamples Construction of Algebraic Real Numbers
 
 The following example illustrates the construction of `AlgebraicKernel_d_1::Algebraic_real_1` 
 using `AlgebraicKernel_d_1::Construct_algebraic_real_1`:
 <SMALL>\cgalexample{Algebraic_kernel_d/Construct_algebraic_real_1.cpp}</SMALL>
 
-## Solving Univariate Polynomials ## {#CGALAK1Solving}
+\subsection CGALAK1Solving Solving Univariate Polynomials
 
 The following example illustrates the construction of `AlgebraicKernel_d_1::Algebraic_real_1` 
 using `AlgebraicKernel_d_1::Solve_1`: <SMALL>\cgalexample{Algebraic_kernel_d/Solve_1.cpp} </SMALL>
@@ -347,7 +347,7 @@ The following example illustrates the isolation of `AlgebraicKernel_d_1::Algebra
 The following example illustrates the sign evaluation of `AlgebraicKernel_d_1::Algebraic_real_1` numbers in polynomials:
 <SMALL>\cgalexample{Algebraic_kernel_d/Sign_at_1.cpp}</SMALL>
 
-# Design and Implementation History # {#Algebraic_kernel_dDesign}
+\section Algebraic_kernel_dDesign Design and Implementation History
 
 This package is clearly split into a univariate and bivariate
 kernel. However, with respect to its history the package splits into

@@ -439,7 +439,7 @@ of \f$ P\f$'s outer boundary, and computing the inner offsets of \f$ P\f$'s hole
 The former polygon defines the output boundary of \f$ P \oplus B_r\f$, and the latter
 define the holes within the result.
 
-# Acknowledgements # {#Minkowski_sum_2Acknowledgements}
+\section Minkowski_sum_2Acknowledgements Acknowledgements
 
 Andreas Fabri and Laurent Rineau helped tracing and solving several bugs in
 the approximated offset function. They have also suggested a few algorithmic

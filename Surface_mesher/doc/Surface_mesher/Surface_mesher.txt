@@ -157,11 +157,11 @@ of the traits class. This initial set of points is required
 to include at least one point on each connected component of the surface
 to be meshed.
 
-# Examples # {#Surface_mesherExamples}
+\section Surface_mesherExamples Examples
 
 \anchor SurfaceMesher_section_example
 
-## Meshing Isosurfaces Defined by Implicit Functions ##
+\subsection Surface_mesherMeshingIsosurfacesDefinedby Meshing Isosurfaces Defined by Implicit Functions
 
 The first code example meshes a sphere
 given as the zero level set of a function \f$ \R^3 \longrightarrow \R\f$.
@@ -196,7 +196,7 @@ Figure \ref figureSurface_mesherspheresurface.
 
 \cgalexample{Surface_mesher/mesh_an_implicit_function.cpp}
 
-## Meshing Isosurfaces Defined as Gray Levels in 3D Images ##
+\subsection Surface_mesherMeshingIsosurfacesDefinedas Meshing Isosurfaces Defined as Gray Levels in 3D Images
 
 In this example the surface to be meshed is defined
 as the locus of points with a given gray level
@@ -286,14 +286,14 @@ manifold but may have boundaries.
 `Non_manifold_tag`: the algorithm relies on the given criteria and
 guarantees nothing else.
 
-# Output # {#Surface_mesherOutput}
+\section Surface_mesherOutput Output
 
 This \cgal component also provides functions to write the reconstructed surface mesh to the %Object File Format (OFF) \cite cgal:p-gmgv16-96 and to convert it to a polyhedron (when it is manifold): 
 
 - `output_surface_facets_to_off()` 
 - `output_surface_facets_to_polyhedron()` 
 
-# Undocumented Features Available in Demos # {#Surface_mesherUndocumented}
+\section Surface_mesherUndocumented Undocumented Features Available in Demos
 
 The Polyhedron demo has a feature that allows to remesh a polyhedral
 surface, using the 3D Surface Mesh Generator. That has been implemented as
@@ -306,7 +306,7 @@ but also segmented images, when voxels are labelled with a domain
 index. Such images are for example the result of a segmentation of 3D
 medical images. 
 
-# Design and Implementation History # {#Surface_mesherDesign}
+\section Surface_mesherDesign Design and Implementation History
 
 The algorithm implemented in this package is mainly based on the work of
 Jean-Daniel Boissonnat and Steve Oudot \cite cgal:bo-pgsms-05. Steve Oudot

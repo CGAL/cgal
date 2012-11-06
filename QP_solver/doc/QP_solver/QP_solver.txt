@@ -70,7 +70,7 @@ case the quadratic program is <I>infeasible</I>, or there might be
 feasible solutions of arbitrarily small objective function value, in
 which case the program is <I>unbounded</I>.
 
-# Design, Efficiency, and Robustness # {#QP_solverDesign}
+\section QP_solverDesign Design, Efficiency, and Robustness
 
 The design of the package is quite simple. The linear
 or quadratic program to be solved is supplied in form of an object 
@@ -100,7 +100,7 @@ in the solution (whether it says "optimally solved", "infeasible",
 or "unbounded"), you can verify it yourself by using the certificates.
 Section \ref secQPcertificates says more about this.
 
-## Efficiency ##
+\subsection QP_solverEfficiency Efficiency
 
 The concept `QuadraticProgram` (as well as the
 other specialized ones) require a <I>dense interface</I> 
@@ -262,7 +262,7 @@ function at this optimal solution is \f$ 2^2 + 4(3-4)^2 = 8\f$.
 \anchor figQPfirst_qp
 \image html first_qp.png "A quadratic program in two variables"
 
-## Constructing a Program from Data ##
+\subsection QP_solverConstructingaProgramfromData Constructing a Program from Data
 
 Here is how this quadratic program can be solved in \cgal 
 according to the first way (letting the model take care of
@@ -297,7 +297,7 @@ If <TT>GMP</TT> is not installed, the values are of course the same,
 but numerator and denominator might have a common divisor that is not
 factored out.
 
-## Constructing a Program from a Stream ##
+\subsection QP_solverConstructingaProgramfromaStream Constructing a Program from a Stream
 
 Here, the program data must be available in `MPSFormat` (the
 `MPSFormat` page shows how our running example looks like in
@@ -308,7 +308,7 @@ as before.
 
 \cgalexample{QP_solver/first_qp_from_mps.cpp}
 
-## Constructing a Program from Iterators ##
+\subsection QP_solverConstructingaProgramfromIterators Constructing a Program from Iterators
 
 The following program again solves our running example from above,
 with the same output, but this time with iterators over data stored 
@@ -378,7 +378,7 @@ general quadratic or linear program), but all predefined models make
 it easy to specify all sorts of default bounds, covering the free 
 case.
 
-## The Linear Programming Solver ##
+\subsection QP_solverTheLinearProgrammingSolver The Linear Programming Solver
 
 Let's go back to our first quadratic program from above and change it 
 into a linear program by simply removing the quadratic part of the
@@ -426,7 +426,7 @@ variable values:
 1: 11/3
 \endverbatim
 
-## The Nonnegative Quadratic Programming Solver ##
+\subsection QP_solverTheNonnegativeQuadraticProgramming The Nonnegative Quadratic Programming Solver
 
 If we go back to our first quadratic program and
 remove the constraint \f$ y\leq 4\f$, we arrive at a nonnegative quadratic
@@ -465,7 +465,7 @@ variable values:
 
 \ref QP_solver/first_nonnegative_qp_from_iterators.cpp
 
-## The Nonnegative Linear Programming Solver ##
+\subsection QP_solverTheNonnegativeLinearProgramming The Nonnegative Linear Programming Solver
 
 Finally, a dedicated model and function is available for nonnnegative linear
 programs as well. Let's take our linear program from above and remove
@@ -575,7 +575,7 @@ readable code.
 
 \cgalexample{QP_solver/solve_convex_hull_containment_lp2.h}
 
-# Important Variables and Constraints # {#QP_solverImportant}
+\section QP_solverImportant Important Variables and Constraints
 
 If you have a solution \f$ \qpx^*\f$ of a linear or quadratic program,
 the "important" variables are typically the ones that are not on

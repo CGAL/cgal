@@ -164,7 +164,7 @@ to extend the \sc{Dcel} features; see Section \ref arr_secex_dcel for
 further explanations and examples.
 </UL>
 
-## A Simple Program ##
+\subsection Arrangement_on_surface_2ASimpleProgram A Simple Program
 
 \image html triangle.gif
 
@@ -1850,7 +1850,7 @@ in the incremental version, or a range of `Curve_2` objects in the
 aggregated version. In all other cases it is sufficient to use a model
 of the `ArrangementXMonotoneTraits_2` concept.
 
-## Supporting Unbounded Curves ##
+\subsection Arrangement_on_surface_2SupportingUnbounded Supporting Unbounded Curves
 
 An arrangement that supports unbounded \f$ x\f$-monotone curves maintains
 an implicit bounding rectangle in the \sc{Dcel} structure; see
@@ -2373,7 +2373,7 @@ special cases, such as circular arcs or line segments. The
 also support basic access functions such as `source()`,
 `target()` and `orientation()`.
 
-## Examples for Arrangements of Conics ##
+\subsection Arrangement_on_surface_2ExamplesforArrangements Examples for Arrangements of Conics
 
 \anchor arr_figex_14
 \image html ex_14.gif "An arrangement of mixed conic arcs, as constructed in conics.cpp"
@@ -2780,7 +2780,7 @@ between two \f$ x\f$-monotone curves \f$ c_1\f$ and \f$ c_2\f$ with associated d
 \f$ S_1\f$ and \f$ S_2\f$, respectively, the overlapping subcurve is associated with
 the consolidated set \f$ S_1 \cup S_2\f$.
 
-## Examples ##
+\subsection Arrangement_on_surface_2Examples Examples
 
 \anchor arr_figex_17
 \image html ex_17.gif
@@ -3467,7 +3467,7 @@ the I/O format. The package contains a template called,
 an arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
 and defines a simple textual input/output format.
 
-## Output Qt-widget Stream ##
+\subsection Arrangement_on_surface_2OutputQtwidgetStream Output Qt-widget Stream
 \anchor arr_ssecqt_stream
 You can display the drawings of arrangements in a graphical window
 powered by <span class="textsc">Qt</span> interactively. All you need to do is follow the
@@ -3713,7 +3713,7 @@ be avoided by storing the results obtained by the first call, and
 reusing them when needed.
 </OL>
 
-# Design and Implementation History # {#Arrangement_on_surface_2Design}
+\section Arrangement_on_surface_2Design Design and Implementation History
 
 The code of this package is the result of a long development process.
 Initially (and until version 3.1), the code was spread among several

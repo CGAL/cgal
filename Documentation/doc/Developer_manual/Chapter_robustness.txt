@@ -35,7 +35,7 @@ are involved.
 If roots of polynomials are needed, then the solution is to use 
  `leda_real` provided by LEDA or `CORE::Expr` provided by CORE.
 
-# The role of predicates and constructions #
+\section Developer_manualTheroleofpredicatesandconstructions The role of predicates and constructions
 
 \cgal favors encapsulation of the basic arithmetic operations, the lowest
 level in geometric computing, into units on a higher level, namely,
@@ -62,7 +62,7 @@ integers or rationals. The efficiency relies on the use of speedy
 floating-point arithmetic in order to filter out reliable floating-point 
 computations. Interval arithmetic is largely used in such filter steps.
 
-# Requirements and recommendations #
+\section Developer_manualRequirementsandrecommendations Requirements and recommendations
 
 Recommendations:
 <UL>

@@ -52,7 +52,7 @@ representation corresponding to an homogeneous point
 representation to \f$ (x,y,z,w)\f$  for any \f$ \alpha\neq 0\f$. 
 Internally, \cgal always maintains a non-negative homogenizing coordinate.
 
-# Kernel design and conventions # {#Compiler Workarounds}
+\section Developer_manualKerneldesignandconventions Kernel design and conventions
 
 Each kernel object is provided as both a stand-alone class, which is 
 parameterized by a kernel class (`Geo_object_D<K>`), and as a type 
@@ -88,7 +88,7 @@ function `bounded_side(Point_d)` returning an object of type
 the same object with opposite orientation.
 </UL>
 
-# Number-type based predicates # {#Developer_manualNumber}
+\section Developer_manualNumber Number-type based predicates
 
 For a number of predicates, there are versions that operate on
 the coordinates directly, not on the geometric objects. These

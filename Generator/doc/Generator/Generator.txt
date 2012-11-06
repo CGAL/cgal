@@ -8,7 +8,7 @@ namespace CGAL {
 \autotoc
 \authors Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr 
 
-# Introduction # {#GeneratorIntroduction}
+\section GeneratorIntroduction Introduction
 
 A variety of generators for geometric objects are provided in \cgal.
 They are useful as synthetic test data sets, e.g. for testing
@@ -58,7 +58,7 @@ point set of a given size where the points are drawn from a specific
 domain and `random_polygon_2()` generates a random simple polygon from
 points drawn from a specific domain.
 
-## %Random Perturbations ##
+\subsection GeneratorRandomPerturbations %Random Perturbations
 
 Degenerate input sets like grid points can be randomly perturbed by a
 small amount to produce <I>quasi</I>-degenerate test sets. This
@@ -66,7 +66,7 @@ challenges numerical stability of algorithms using inexact arithmetic and
 exact predicates to compute the sign of expressions slightly off from zero.
 For this the function `perturb_points_2()` is provided.
 
-## Adding Degeneracies ##
+\subsection GeneratorAddingDegeneracies Adding Degeneracies
 
 For a given point set certain kinds of degeneracies can be produced
 by adding new points. The `random_selection()` function is
@@ -74,13 +74,13 @@ useful for generating multiple copies of identical points.
 The function `random_collinear_points_2()` adds collinearities to
 a point set.
 
-## Support Functions and Classes for Generators ##
+\subsection GeneratorSupportFunctionsandClassesforGenerators Support Functions and Classes for Generators
 
 The function `random_selection()` chooses `n` items at random from a random
 access iterator range which is useful to produce degenerate input data
 sets with multiple entries of identical items.
 
-# Example Generating Degenerate Point Sets # {#GeneratorExample}
+\section GeneratorExample_1 Example Generating Degenerate Point Sets
 
 We want to generate a test set of 1000 points, where 60% are chosen
 randomly in a small disc, 20% are from a larger grid, 10% are duplicates
@@ -95,7 +95,7 @@ for the example output.
 \image html generators_prog1.png "Output of example program for point generators."
 </center>
 
-# Example Generating Grid Points # {#GeneratorExampleGridPoints}
+\section GeneratorExampleGridPoints Example Generating Grid Points
 
 The second example demonstrates the point generators with integer
 points. Floating point arithmetic is sufficient to produce
@@ -107,7 +107,7 @@ for the example output.
 \anchor figureIntegerPointGenerator
 \image html generators_prog2.png "Output of example program for point generators working"
 
-# Examples Generating Segments # {#secsegment_example}
+\section secsegment_example Examples Generating Segments
 
 The following two examples illustrate the use of the generic functions
 from Section \ref STLAlgos like
@@ -136,7 +136,7 @@ objects until they are used.
 \anchor figureSegmentGeneratorFan
 \image html Segment_generator_prog2.png "Output of example program for the generic segment generator using pre-computed point locations."
 
-# Example Generating Point Sets in `d` Dimensions # {#GeneratorExample}
+\section GeneratorExample_2 Example Generating Point Sets in `d` Dimensions
 
 The following example generates points inside a cube in dimension 5
 (examples for ball and sphere are available in the example directory) :
@@ -199,7 +199,7 @@ Generating 20 grid points in 4D
 
 \image html hypergrid.gif
 
-# Design and Implementation History # {#GeneratorDesign}
+\section GeneratorDesign Design and Implementation History
 
 Lutz Kettner coded generators in 2D and 3D
 For points <I>in</I> and <I>on</I> sphere, points are generated in a cube up

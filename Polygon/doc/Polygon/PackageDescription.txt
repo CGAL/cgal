@@ -24,7 +24,7 @@
 \PkgShortInfoEnd
 \PkgDescriptionEnd
 
-## Assertions ##
+\subsection PolygonAssertions Assertions
 
 The assertion flags for the polygons and polygon operations use 
 `POLYGON` in their names (<I>e.g.</I>, `CGAL_POLYGON_NO_ASSERTIONS`).

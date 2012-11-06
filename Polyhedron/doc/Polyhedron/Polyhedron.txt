@@ -28,7 +28,7 @@ polyhedral surface can be used and understood without knowing the
 underlying design. Some of the examples in this chapter introduce also
 gradually into first applications of this flexibility.
 
-# Definition # {#PolyhedronDefinition}
+\section PolyhedronDefinition Definition
 
 A polyhedral surface `Polyhedron_3<PolyhedronTraits_3>` in
 three dimensions consists of vertices \f$ V\f$, edges \f$ E\f$, facets \f$ F\f$ and
@@ -79,7 +79,7 @@ or any other geometric information.
 surfaces as well as polyhedra. The interface is designed in such a way
 that it is easy to ignore border edges and work only with polyhedra.
 
-# Example Programs # {#PolyhedronExample}
+\section PolyhedronExample Example Programs
 
 \anchor sectionPolyExamples
 
@@ -90,7 +90,7 @@ This design is not a prerequisite to understand the following examples.
 See also the Section \ref sectionPolyAdvanced below for some advanced 
 examples.
 
-## First Example Using Defaults ##
+\subsection PolyhedronFirstExampleUsingDefaults First Example Using Defaults
 
 The first example instantiates a polyhedron using a kernel as traits
 class. It creates a tetrahedron and stores the reference to one of its
@@ -111,7 +111,7 @@ level of a polyhedral surface. The next example adds the geometry.
 
 \cgalexample{Polyhedron/polyhedron_prog_simple.cpp}
 
-## Example with Geometry in Vertices ##
+\subsection PolyhedronExamplewithGeometryinVertices Example with Geometry in Vertices
 
 We add geometry to the our construction of a tetrahedron. Four points
 are passed as arguments to the construction. This example demonstrates
@@ -145,7 +145,7 @@ std::ostream_iterator<Point_3>(std::cout,"\n"));
 
 \endcode
 
-## Example for Affine Transformation ##
+\subsection PolyhedronExampleforAffineTransformation Example for Affine Transformation
 
 An affine transformation `A` can act as a functor transforming points
 and a point iterator is conveniently defined for polyhedral surfaces.
@@ -158,7 +158,7 @@ std::transform( P.points_begin(), P.points_end(), P.points_begin(), A);
 
 \endcode
 
-## Example Computing Plane Equations ##
+\subsection PolyhedronExampleComputingPlaneEquations Example Computing Plane Equations
 
 The polyhedral surface has already provisions to store a plane
 equation for each facet. However, it does not provide a function to
@@ -216,7 +216,7 @@ that only the polyhedron can guarantee.
 
 \cgalexample{Polyhedron/polyhedron_prog_vector.cpp}
 
-## Example with %Circulator Writing %Object File Format (OFF) ##
+\subsection PolyhedronExamplewithCirculatorWritingObject Example with %Circulator Writing %Object File Format (OFF)
 
 We create a tetrahedron and write it to `std::cout` using the
 %Object File Format (OFF) \cite cgal:p-gmgv16-96. This example makes use
@@ -235,7 +235,7 @@ hash-structure. See also Section \ref PolyhedronFile.
 
 \cgalexample{Polyhedron/polyhedron_prog_off.cpp}
 
-## Example Using Euler Operators to Build a Cube ##
+\subsection PolyhedronExampleUsingEulerOperatorstoBuild Example Using Euler Operators to Build a Cube
 
 Euler operators are the natural way of modifying polyhedral surfaces.
 We provide a set of operations for polyhedra: 
@@ -265,7 +265,7 @@ are also marked in the program code.
 
 \cgalexample{Polyhedron/polyhedron_prog_cube.cpp}
 
-# File I/O # {#PolyhedronFile}
+\section PolyhedronFile File I/O
 
 \anchor sectionPolyIO
 
@@ -347,7 +347,7 @@ into VRML 1.0 output.
 
 \cgalexample{Polyhedron_IO/polyhedron2vrml.cpp}
 
-# Extending Vertices, Halfedges, and Facets # {#PolyhedronExtending}
+\section PolyhedronExtending Extending Vertices, Halfedges, and Facets
 
 \anchor sectionPolyExtend
 
@@ -481,11 +481,11 @@ Vertex_handle vertex_ref;
 More advanced examples can be found in the Section \ref sectionHdsExamples
 illustrating further the design of the halfedge data structure.
 
-# Advanced Example Programs # {#PolyhedronAdvanced}
+\section PolyhedronAdvanced Advanced Example Programs
 
 \anchor sectionPolyAdvanced
 
-## Example Creating a Subdivision Surface ##
+\subsection PolyhedronExampleCreatingaSubdivisionSurface Example Creating a Subdivision Surface
 
 This program reads a polyhedral surface from the standard input and
 writes a refined polyhedral surface to the standard output. Input and
@@ -520,7 +520,7 @@ OFF files used here.
 
 \cgalexample{Polyhedron/polyhedron_prog_subdiv.cpp}
 
-## Example Using the Incremental Builder and Modifier Mechanism ##
+\subsection PolyhedronExampleUsingtheIncrementalBuilder Example Using the Incremental Builder and Modifier Mechanism
 
 A utility class `Polyhedron_incremental_builder_3` helps in
 creating polyhedral surfaces from a list of points followed by a list

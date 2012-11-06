@@ -21,7 +21,7 @@ they aim for similarity with the names used in the \stl. Deviations from the
 given rules should be avoided; however, exceptions are possible if
 there are <I>convincing</I> reasons.
 
-## General rules ##
+\subsection Developer_manualGeneralrules General rules
 
 <UL>
 <LI>Words in the names of everything except concepts should be separated by
@@ -57,7 +57,7 @@ there are <I>convincing</I> reasons.
       
 </UL>
 
-## Geometric objects ##
+\subsection Developer_manualGeometricobjects Geometric objects
 
 <UL>
 <LI>All geometric objects have the dimension as a suffix (<I>e.g.</I>, `Vector_2`
@@ -68,7 +68,7 @@ there are <I>convincing</I> reasons.
      template parameter (<I>e.g.</I>, `Point<d>`).
 </UL>
 
-## Geometric data structures and algorithms ##
+\subsection Developer_manualGeometricdatastructuresand Geometric data structures and algorithms
 
 <UL>
 <LI>Names for geometric data structures and algorithms should follow
@@ -91,7 +91,7 @@ there are <I>convincing</I> reasons.
       function `edges_circulator` returns an `Edge_circulator`.
 </UL>
 
-## Kernel traits ##
+\subsection Developer_manualKerneltraits Kernel traits
 
 All types in the kernel concept are functor types. We distinguish the
 following four categories:
@@ -185,7 +185,7 @@ function should be the (uncapitalized) name of the
 functor followed by the suffix `_object`.For example, the function that returns an instance of the
 `Less_xy_2` functor is called `less_xy_2_object`.
 
-## File names ##
+\subsection Developer_manualFilenames File names
 
 <UL>
 <LI>File names should be chosen in the "spirit" of the naming rules given
@@ -343,7 +343,7 @@ or from the demos web page).
 For the test-suite and the documentation source, these are not distributed at
 the moment, so there is no policy for now.
 
-## GPL version ##
+\subsection Developer_manualGPLversion GPL version
 
 Here follows what this gives for a file under the GPL :
 
@@ -370,7 +370,7 @@ Here follows what this gives for a file under the GPL :
 //                 Sylvain Pion
 \endcode
 
-## LGPL version ##
+\subsection Developer_manualLGPLversion LGPL version
 
 Here follows what this gives for a file under the LGPL :
 

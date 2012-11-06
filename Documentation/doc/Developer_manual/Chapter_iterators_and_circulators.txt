@@ -264,7 +264,7 @@ into a Delaunay triangulation data structure:
 
 \endcode
 
-# Writing code with and for iterators, circulators, and handles #
+\section Developer_manualWritingcodewithandforiterators Writing code with and for iterators, circulators, and handles
 
 Because you should write generic code for \cgal, algorithms that require
 a sequence of data for input should be written to take an iterator 

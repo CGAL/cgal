@@ -8,7 +8,7 @@ namespace CGAL {
 
 \authors Christophe Delage and Olivier Devillers
 
-# Introduction # {#Spatial_sortingIntroduction}
+\section Spatial_sortingIntroduction Introduction
 
 Many geometric algorithms implemented in \cgal are incremental, and thus their
 speed is dependent on the order of insertion. This package provides sorting
@@ -67,7 +67,7 @@ a space filling curve as illustrated in Figure \ref Spatial_sorting_fig_Hilbert_
 \anchor Spatial_sorting_fig_Hilbert_middle
 \image html Hilbert-middle.gif "Hilbert sort with middle policy"
 
-## Examples ##
+\subsection Spatial_sortingExamples Examples
 
 The code to use Hilbert sort is as simple as the following example:
 
@@ -115,7 +115,7 @@ order and a space filling curve order \cite acr-icb-03.
 \cgal provides spatial sorting for points in 2D, 3D and higher dimensions,
 with the middle and the median policies for Hilbert sort in the buckets.
 
-## Basic Example ##
+\subsection Spatial_sortingBasicExample Basic Example
 
 The following example shows that, on particular input, spatial sort
 runs much faster than a bad order or than Hilbert sort (below results
@@ -130,7 +130,7 @@ Delaunay with median spatial sort... done in 0.022415 seconds.
 
 \cgalexample{Spatial_sorting/small_example_delaunay_2.cpp}
 
-## Using Your Own Point Type ##
+\subsection Spatial_sortingUsingYourOwnPointType Using Your Own Point Type
 
 If you want to sort points of your own point type,
 you only have to provide functors that compare
@@ -141,7 +141,7 @@ as an alternative.
 
 \cgalexample{Spatial_sorting/myPoint.cpp}
 
-## Sorting Arbitrary Types ##  {#secsort_any_type}
+\subsection secsort_any_type Sorting Arbitrary Types
 
 The spatial sorting traits class provides a point type and
 functors for comparing, for example, the `x`-coordinates
@@ -156,20 +156,20 @@ which allows to obtain a point from whatever you want to sort.
 
 The following examples illustrate the usage of these traits class adapters.
 
-## Sorting Using Pairs of Points and Integers ## {#secsort_any_type_2}
+\subsection secsort_any_type_2 Sorting Using Pairs of Points and Integers
 
 
 In this example program, the sorted sequence of points is retrieved 
 using a vector of pairs of points and integers.
 \cgalexample{Spatial_sorting/sp_sort_using_property_map_2.cpp}
 
-## Sorting Using Indices of Points ##
+\subsection Spatial_sortingSortingUsingIndicesofPoints Sorting Using Indices of Points
 
 In this example program, the sorted sequence of points is retrieved 
 using the indices of the points in a vector of points.
 \cgalexample{Spatial_sorting/sp_sort_using_property_map_3.cpp}
 
-## Sorting Using Indices of Pairs of Points and Integers ##
+\subsection Spatial_sortingSortingUsingIndicesofPairs Sorting Using Indices of Pairs of Points and Integers
 
 In this example program, the sorted sequence of points is retrieved 
 using the indices of the points in a vector of pairs of points and integers.

@@ -7,7 +7,7 @@ namespace CGAL {
 \autotoc
 \author Michael Hemmer
 
-# Fundamentals # {#PolynomialFundamentals}
+\section PolynomialFundamentals Fundamentals
 
 Note that this is just a very brief introduction to polynomials. 
 For a quick reference we refer to the Wikipedia or for a more elaborate 
@@ -65,7 +65,7 @@ have the same total degree.
 For example, \f$ h = x^5 + 7x^2y^1z^2 + 13x^1y^2z^2\f$ is a homogeneous polynomial 
 of degree \f$ 5\f$, in three variables.
 
-# General Design # {#PolynomialGeneral}
+\section PolynomialGeneral General Design
 
 The package introduces a concept `Polynomial_d`, a concept for multivariate 
 polynomials in \f$ d\f$ variables. Though the concept is written for an arbitrary 
@@ -111,7 +111,7 @@ However, we  allow negative exponents as they may
 appear as intermediate results, in particular we did *not* derive from 
 `std::vector<unsigned int>`.
 
-# Constructing a Multivariate Polynomial # {#PolynomialConstructing}
+\section PolynomialConstructing Constructing a Multivariate Polynomial
 
 First of all the concept `Polynomial_d` requires that the model is 
 constructible from int. This is due to the fact that `Polynomial_d` 
@@ -140,13 +140,13 @@ algebraic expressions. The most elegant way to construct a certain variable is
 `Polynomial_traits_d::Shift` being a model of 
 `PolynomialTraits_d::Shift`.
 
-## Example ##
+\subsection PolynomialExample Example
 
 The following example illustrates different ways to construct a 
 bivariate polynomial:
 \cgalexample{Polynomial/construction.cpp}
 
-# Coefficient Access # {#PolynomialCoefficient}
+\section PolynomialCoefficient Coefficient Access
 
 In order to obtain a certain coefficient the traits class provides 
 several functors. 
@@ -168,13 +168,13 @@ it returns the (innermost) coefficient of the leading multivariate monomial.
 See also `PolynomialTraits_d::DegreeVector`. 
 </UL>
 
-## Example ##
+\subsection PolynomialExample_1 Example
 
 The following example illustrates the application of the functors 
 discussed above:
 \cgalexample{Polynomial/coefficient_access.cpp}
 
-# Degree, Total Degree and Degree Vector # {#PolynomialDegree}
+\section PolynomialDegree Degree, Total Degree and Degree Vector
 
 There are three functors in `PolynomialTraits_d` 
 related to the degree of a polynomial. 
@@ -194,13 +194,13 @@ where the monomial order is lexicographic and starts with the outermost
 variable. See also `PolynomialTraits_d::InnermostLeadingCoefficient`. 
 </UL>
 
-## Example ##
+\subsection PolynomialExample_2 Example
 
 The following example illustrates the application of the functors discussed 
 above:
 \cgalexample{Polynomial/degree.cpp}
 
-# Changing the Order of Variables # {#PolynomialChanging}
+\section PolynomialChanging Changing the Order of Variables
 
 Given for instance a bivariate polynomial it is conceivable that one wants to 
 interchange the role of \f$ x\f$ and \f$ y\f$. That is one wants to interpret the 
@@ -220,13 +220,13 @@ For such a case the polynomial traits provides `PolynomialTraits_d::Move`.
 Of course there is also a general method to interchange the order of 
 variables, namely `PolynomialTraits_d::Permute`.
 
-## Example ##
+\subsection PolynomialExample_3 Example
 
 The following example illustrates the application of the functors discussed 
 above:
 \cgalexample{Polynomial/swap_move.cpp}
 
-# GCD and More # {#PolynomialGCD}
+\section PolynomialGCD GCD and More
 
 Since the concept `PolynomialTraits_d` refines the concept 
 `AlgebraicStructureTraits` the polynomial traits provides functors for 
@@ -291,13 +291,13 @@ The concepts for the related functors are:
 `PolynomialTraits_d::PseudoDivisionRemainder`
 </UL>
 
-## Example ##
+\subsection PolynomialExample_4 Example
 
 The following example illustrates the application of some functors 
 discussed above:
 \cgalexample{Polynomial/gcd_up_to_constant_factor.cpp}
 
-# Evaluation and Substitution # {#PolynomialEvaluation}
+\section PolynomialEvaluation Evaluation and Substitution
 
 Of course, it should also be possible to evaluate a polynomial 
 or substitute its variables. We also require a special functor to 
@@ -338,13 +338,13 @@ than their equivalent implementation using substitution:
 <LI>`PolynomialTraits_d::Shift`<LI>`PolynomialTraits_d::Negate`<LI>`PolynomialTraits_d::Invert`<LI>`PolynomialTraits_d::Translate`<LI>`PolynomialTraits_d::TranslateHomogeneous`<LI>`PolynomialTraits_d::Scale`<LI>`PolynomialTraits_d::ScaleHomogeneous`
 </UL>
 
-## Example ##
+\subsection PolynomialExample_5 Example
 
 The following example illustrates the application of some functors 
 discussed above:
 \cgalexample{Polynomial/substitute.cpp}
 
-# Resultants, Subresultants and Sturm-Habicht Sequences # {#PolynomialResultants}
+\section PolynomialResultants Resultants, Subresultants and Sturm-Habicht Sequences
 
 The `PolynomialTraits_d` concept also provides more sophisticated functors
 for computations with polynomials -
@@ -389,7 +389,7 @@ for built-in integers except for toy examples.
 To avoid overflows, one should use arbitrary size integer types
 in real applications.
 
-## Example ##
+\subsection PolynomialExample_6 Example
 
 The following example illustrates how two compute resultants of two
 polynomials, and how to count the number of distinct real roots
@@ -397,7 +397,7 @@ of a polynomial using its principal Sturm-Habicht coefficients.
 
 \cgalexample{Polynomial/subresultants.cpp}
 
-# Design and Implementation History # {#PolynomialDesign}
+\section PolynomialDesign Design and Implementation History
 
 This package is the result of the integration process of the NumeriX library 
 of <span class="textsc">Exacus</span> \cite beh-eeeafcs-05 into \cgal.

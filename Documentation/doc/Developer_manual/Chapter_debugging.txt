@@ -55,7 +55,7 @@ template parameters for two different instantiations of a class, say,
 and then compare the results from using the two different
 instantiations.
 
-## An example: Traits class binary cross-checker ##
+\subsection Developer_manualAnexampleTraitsclassbinary An example: Traits class binary cross-checker
 
 As a more concrete example, assume that you have a traits class concept 
 that requires a nested type `X_curve` and a function

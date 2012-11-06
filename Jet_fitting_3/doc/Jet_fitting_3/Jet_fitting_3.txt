@@ -21,7 +21,7 @@ Note that this package needs the third party library \ref thirdpartyEigen "Eigen
 
 \section secintro Introduction 
 
-## Overview ##
+\subsection Jet_fitting_3Overview Overview
 
 Consider a sampled smooth surface, and assume we are given a
 collection of points \f$ P\f$ about a given sample \f$ p\f$. We aim at
@@ -70,7 +70,7 @@ for convenience the results are returned with this original number
 type. A reasonable choice for this internal number type is for example
 the `double` type.
 
-## Smooth Surfaces, d-Jets and the Monge Form ##
+\subsection Jet_fitting_3SmoothSurfacesdJetsandtheMonge Smooth Surfaces, d-Jets and the Monge Form
 
 To present the method, we shall need the following notions. Consider a
 smooth surface. About one of its points, consider a coordinate system
@@ -119,7 +119,7 @@ The Monge coordinate system can be computed from any \f$ d\f$-jet (\f$ d\geq
 characterize the local geometry of the surface in a canonical way, and
 are the quantities returned by our algorithm.
 
-## Algorithm ##
+\subsection Jet_fitting_3Algorithm Algorithm
 
 Based on the above concepts, the algorithm consists of 4 steps.
 <OL>
@@ -164,9 +164,9 @@ be relevant. To inform the user of these issues, we provide the PCA
 results and the condition number of the fitting. In any case, it is up
 to the user to judge if the result meets its need.
 
-# Software Design # {#Jet_fitting_3Software}
+\section Jet_fitting_3Software Software Design
 
-## Options and Interface Specifications ##
+\subsection Jet_fitting_3OptionsandInterfaceSpecifications Options and Interface Specifications
 
 The fitting strategy performed by the class
 `Monge_via_jet_fitting` requires the following parameters:
@@ -179,7 +179,7 @@ The fitting strategy performed by the class
 is performed; and if \f$ N >N_d\f$, approximation is used.
 </UL>
 
-## Output ##
+\subsection Jet_fitting_3Output Output
 
 As explained in Section \ref secintro , the output consists of a
 coordinate system, the Monge basis, together with the Monge
@@ -219,16 +219,16 @@ In addition, the class `Monge_via_jet_fitting` stores
 <LI>the coordinate system of the PCA (in which the fitting is performed).
 </UL>
 
-## Template Parameters ##
+\subsection Jet_fitting_3TemplateParameters Template Parameters
 
-## Template parameter DataKernel ##
+\subsection Jet_fitting_3TemplateparameterDataKernel Template parameter DataKernel
 
 This concept provides the types for the input sample points, together
 with \f$ 3d\f$ vectors and a number type. It is used as template for the
 class `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. Typically, one can use
 `Cartesian<double>`.
 
-## Template parameter LocalKernel ##
+\subsection Jet_fitting_3TemplateparameterLocalKernel Template parameter LocalKernel
 
 This is a parameter of the class 
 `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. 
@@ -242,14 +242,14 @@ these types are converted back to `DataKernel` ones. Typically,
 one can use
 `Cartesian<double>` which is the default.
 
-## Template parameter SvdTraits ##
+\subsection Jet_fitting_3TemplateparameterSvdTraits Template parameter SvdTraits
 
 This concept provides the number, vector and matrix types for algebra
 operations required by the fitting method in
 `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>` 
 . The main method is a linear solver using a singular value decomposition.
 
-## Compatibility Requirements ##
+\subsection Jet_fitting_3CompatibilityRequirements Compatibility Requirements
 
 To solve the fitting problem, the sample points are first converted
 from the `DataKernel` to the `LocalKernel` (this is done using
@@ -262,9 +262,9 @@ Second the Monge basis and coefficients, computed with the
 (this is done using the `Cartesian_converter` and the
 `NT_converter`).
 
-# Examples # {#Jet_fitting_3Examples}
+\section Jet_fitting_3Examples Examples
 
-## Single Estimation about a Point of a Point Cloud ##
+\subsection Jet_fitting_3SingleEstimationaboutaPoint Single Estimation about a Point of a Point Cloud
 
 The first example illustrates the computation of the local
 differential quantities from a set of points given in a text file as
@@ -273,7 +273,7 @@ is performed. The user has to specify a file for the input points and
 the degrees \f$ d\f$ and \f$ d'\f$.
 \cgalexample{Jet_fitting_3/Single_estimation.cpp}
 
-## On a Mesh ##
+\subsection Jet_fitting_3OnaMesh On a Mesh
 
 The second example (cf Mesh_estimation.cpp in the example directory)
 illustrates the computation of local differential quantities for all
@@ -297,7 +297,7 @@ provide illustrations of principal directions of curvature.
 
 <center><b>Principal directions of curvature and normals at vertices of a mesh of the graph of the function \f$ f(x,y)=2x^2+y^2\f$.</b></center>
 
-# Mathematical and Algorithmic Details # {#Jet_fitting_3Mathematical}
+\section Jet_fitting_3Mathematical Mathematical and Algorithmic Details
 
 \anchor secdetails
 In this Section, we detail the mathematics involved, in order to
@@ -309,7 +309,7 @@ fitting-basis \f$ (f_x,f_y,f_z)\f$, the Monge basis \f$ (d_1,d_2,n)\f$.
 \anchor figjet_fitting_basis
 \image html jet_fitting_basis.gif "The three bases involved in the estimation."
 
-## Computing a Basis for the Fitting ##
+\subsection Jet_fitting_3ComputingaBasisfortheFitting Computing a Basis for the Fitting
 
 <B>Input : samples
 Output : fitting-basis</B>
@@ -434,7 +434,7 @@ is that it works directly on the rectangular system and gives the
 condition number of the system. For more on these alternatives, see
 \cite gl-mc-83 (Chap. 5).
 
-## Principal Curvature / Directions ##
+\subsection Jet_fitting_3PrincipalCurvatureDirections Principal Curvature / Directions
 
 <B>Input : coefficients of the fit \f$ A_{i,j}\f$, 
 fitting-basis 
@@ -483,7 +483,7 @@ translated by \f$ p\f$, i.e. the coordinates of the origin point are
 \f$ P_{W\rightarrow F}^{-1} (0,0,A_{0,0}) +p\f$.
 </UL>
 
-## Computing Higher Order Monge Coefficients ##
+\subsection Jet_fitting_3ComputingHigherOrderMongeCoefficients Computing Higher Order Monge Coefficients
 
 <B>Input : coefficients of the fit, Monge basis wrt fitting-basis (\f$ P_{F
 \rightarrow M}\f$)

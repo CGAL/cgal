@@ -167,7 +167,7 @@ a given line.
 Both types of criteria are defined in an object `criteria` passed as
 parameter of the meshing functions.
 
-## The Meshing Algorithm ##
+\subsection Mesh_2TheMeshingAlgorithm The Meshing Algorithm
 
 The input to a meshing problem is a <span class="textsc">Pslg</span> and a set of seeds
 describing the domain to be meshed, and a set of size and shape
@@ -240,7 +240,7 @@ Once the mesh is constructed, one can determine which faces of the
 triangulation are in the mesh domain using the `is_in_domain()` member
 function of the face type (see the concept `DelaunayMeshFaceBase_2`).
 
-## Example Using the Global Function ##
+\subsection Mesh_2ExampleUsingtheGlobalFunction Example Using the Global Function
 
 The following example inserts several segments into a constrained
 triangulation and then meshes it using the global function
@@ -262,7 +262,7 @@ built twice.
 
 \cgalexample{Mesh_2/mesh_class.cpp}
 
-## Example Using Seeds ##
+\subsection Mesh_2ExampleUsingSeeds Example Using Seeds
 
 This example uses the global function `refine_Delaunay_mesh_2` but
 defines a domain by using one seed. The size and shape criteria are the

@@ -10,7 +10,7 @@ namespace CGAL {
 \autotoc
 \authors Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman
 
-# Introduction # {#Envelope_3Introduction}
+\section Envelope_3Introduction Introduction
 
 A continuous surface \f$ S\f$ in \f$ {\mathbb R}^3\f$ is called <I>\f$ xy\f$-monotone</I>,
 if every line parallel to the \f$ z\f$-axis intersects it at a single point
@@ -81,7 +81,7 @@ post-processing on the resulting diagram. The post-processing stage is
 non-trivial and involves the projection of intersection curves onto
 the \f$ xy\f$-plane - see \cite cgal:m-rgece-06 for more details.
 
-# The Envelope-Traits Concept # {#Envelope_3The}
+\section Envelope_3The The Envelope-Traits Concept
 
 The implementation of the envelope-computation algorithm is generic and
 can handle arbitrary surfaces. It is parameterized with a traits class,
@@ -206,9 +206,9 @@ package includes a traits-class decorator that enables users to attach
 external (non-geometric) data to surfaces. The usage of the various
 traits classes is demonstrated in the next section.
 
-# Examples # {#Envelope_3Examples}
+\section Envelope_3Examples Examples
 
-## Example for Envelope of Triangles ##
+\subsection Envelope_3ExampleforEnvelopeofTriangles Example for Envelope of Triangles
 
 <CENTER>
 \anchor env3_figex_tri
@@ -233,7 +233,7 @@ printing the diagrams, we just output the labels of the triangles:
 
 \cgalexample{Envelope_3/envelope_triangles.cpp}
 
-## Example for Envelope of Spheres ##
+\subsection Envelope_3ExampleforEnvelopeofSpheres Example for Envelope of Spheres
 
 The next example demonstrates how to instantiate and use the
 envelope-traits class for spheres, based on the
@@ -243,7 +243,7 @@ constructs their lower envelope:
 
 \cgalexample{Envelope_3/envelope_spheres.cpp}
 
-## Example for Envelope of Planes ##
+\subsection Envelope_3ExampleforEnvelopeofPlanes Example for Envelope of Planes
 
 The next example demonstrates how to instantiate and use the
 envelope-traits class for planes, based on the
