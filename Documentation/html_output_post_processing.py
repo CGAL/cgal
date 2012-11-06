@@ -192,7 +192,12 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     #if doxyassist.xml was provided, copy figures
     if args.doxyassist_xml:
       copy_all_non_pdf_figures(args.doxyassist_xml,args.output)
-    
+    else:
+      #try to guess a default
+      guess=path.join(path.dirname(path.abspath(argv[0])),"doxyassist.xml")
+      if path.exists(guess):
+        copy_all_non_pdf_figures(guess,args.output)
+  
     resources_absdir=path.join( path.dirname(path.abspath(argv[0]) ),"resources")
     os.chdir(args.output)
 
