@@ -30,6 +30,7 @@ import re
 import shutil
 from sys import argv
 from sys import stderr
+from xml.dom.minidom import parseString
 
 def conceptify_nested_classes(d):
     # change nested classes to nested concepts
@@ -140,14 +141,58 @@ def automagically_number_figure(filename):
   d('a.el').each( lambda i: update_figure_ref(i,infos) )
   write_out_html(d, filename)
 
+#the usage of <img> with htmlonly results in needing extra figures.
+#This function is more conveninent than editing the HTML_EXTRA_FILES
+#fields in doxyassist,xml
+#This function copies all non pdf image from fig directory to the output directory
+#if it does not already exist.
+def copy_all_non_pdf_figures(doxyassist_xml,output_dir):
+  #read file and close it
+  f = file(doxyassist_xml)
+  data = f.read()
+  f.close()
+
+  dom = parseString(data)
+
+  pkgs = dom.getElementsByTagName('project')
+  #strip first and last project's
+  pkgs.pop(0)
+  pkgs.pop(len(pkgs)-1)
+  for pkg in pkgs:
+    #get name of package and get target path
+    name_tag=pkg.getElementsByTagName('name')[0]
+    target=path.join(
+        path.join(output_dir,"CGAL.CGAL."+re.sub(r'[, ()]', '-', name_tag.firstChild.nodeValue)),
+        "html"
+      )
+
+    #get figure path
+    strings=pkg.getElementsByTagName('string')
+    
+    for s in strings:
+      if s.attributes['name'].nodeValue=='IMAGE_PATH':
+        src=s.firstChild.nodeValue
+
+    figures=glob.glob(path.join(src,'*.*'))
+    for f in figures:
+      target_file=path.join(target,path.basename(f) )
+      if path.splitext(f)[1]!='.pdf' and not path.exists(target_file):
+        shutil.copy(f,target_file)
+
 def main():
     parser = argparse.ArgumentParser(
         description='''This script makes adjustments to the doxygen output. 
 It replaces some text in specifically marked classes with the appropriate text for a concept, 
 removes some unneeded files, and performs minor repair on some glitches.''')
     parser.add_argument('--output', metavar='/path/to/doxygen/output', required=True)
+    parser.add_argument('--doxyassist_xml', metavar='/path/to/doxyassist.xml', required=False)
     
     args = parser.parse_args()
+    
+    #if doxyassist.xml was provided, copy figures
+    if args.doxyassist_xml:
+      copy_all_non_pdf_figures(args.doxyassist_xml,args.output)
+    
     resources_absdir=path.join( path.dirname(path.abspath(argv[0]) ),"resources")
     os.chdir(args.output)
 
