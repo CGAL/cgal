@@ -1039,6 +1039,10 @@ namespace for the XML file to be processed properly.  -->
             <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-entire_edge.gif</item>
             <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-interior.gif</item>
             <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-both_vertices.gif</item>
+            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_diagram.gif</item>
+            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_graph.gif</item>
+            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-false.gif</item>
+            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-true.gif</item>
           </list>
           <list name="TAGFILES" append="true">
             <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.Voronoi_diagram_2/html</item>
