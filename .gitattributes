@@ -2313,6 +2313,8 @@ Documentation/biblio/how_to_cite_cgal.txt -text
 Documentation/biblio/makebiblio -text
 Documentation/cgal_stylesheet.css -text
 Documentation/conceptify.py -text
+Documentation/conversion_tools/check_duplicated_section_anchor.py -text
+Documentation/conversion_tools/markup_replacement.py -text
 Documentation/doc/Developer_manual/Chapter_checks.txt -text
 Documentation/doc/Developer_manual/Chapter_code_format.txt -text
 Documentation/doc/Developer_manual/Chapter_debugging.txt -text
