@@ -372,8 +372,8 @@ operator()(const bool refine)
     std::cerr << "refine_balls() done. Nb of points in triangulation: "
               << c3t3_.triangulation().number_of_vertices() << std::endl;
 #endif
-    CGAL_assertion(c3t3_.is_valid());
-  }
+    CGAL_assertion(minimal_size_ > 0 || c3t3_.is_valid());
+ }
   
   // debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
 
@@ -473,11 +473,17 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   
   // Insert point
   CGAL_assertion_code(size_type nb_vertices_before = c3t3_.triangulation().number_of_vertices());
-  Vertex_handle v = c3t3_.triangulation().insert(Weighted_point(p,w*weight_modifier));
+
+  typename Tr::Locate_type lt;
+  int li, lj;
+  const typename Tr::Cell_handle ch = c3t3_.triangulation().locate(p, lt, li, lj);
+  Vertex_handle v = c3t3_.triangulation().insert(Weighted_point(p,w*weight_modifier),
+                                                 lt, ch, li, lj);
   
   // If point insertion created an hidden ball, fail
   CGAL_assertion ( Vertex_handle() != v );
-  CGAL_assertion ( c3t3_.triangulation().number_of_vertices() == (nb_vertices_before+1) );
+  CGAL_assertion ( lt == Tr::VERTEX ||
+                   c3t3_.triangulation().number_of_vertices() == (nb_vertices_before+1) );
 
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "Insertion of ";
@@ -533,14 +539,17 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
   if ( tr.dimension() > 2 ) 
   {
     // Check that new point will not be inside a power sphere
-    Cell_handle ch = tr.locate(p);
+
+    typename Tr::Locate_type lt;
+    int li, lj;
+    Cell_handle ch = tr.locate(p, lt, li, lj);
     Vertex_handle nearest_vh = tr.nearest_power_vertex(p, ch);
     FT sq_d = sq_distance(p, nearest_vh->point().point());
-    CGAL_assertion( sq_d > 0 );
-    
     while ( nearest_vh->point().weight() > sq_d &&
             ! is_special(nearest_vh) )
     {
+      CGAL_assertion( minimal_size_ >0 || sq_d > 0 );
+
       bool special_ball = false;
       if(minimal_weight_ != Weight() && sq_d < minimal_weight_) {
         sq_d = minimal_weight_;
@@ -552,12 +561,11 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
       // Adapt size
       Vertex_handle new_vh = change_ball_size(nearest_vh, CGAL::sqrt(sq_d),
                                               special_ball);
-      ch = tr.locate(p,new_vh);
+      ch = tr.locate(p, lt, li, lj, new_vh);
       
       // Iterate
       nearest_vh = tr.nearest_power_vertex(p, ch);
       sq_d = sq_distance(p, nearest_vh->point().point());
-      CGAL_assertion( sq_d > 0 );
     }
 
     if( is_special(nearest_vh) && nearest_vh->point().weight() > sq_d )
@@ -601,7 +609,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
         insert_a_special_ball = true;
         min_sq_d = minimal_weight_;
         if( ! is_special(*it) ) {
-          change_ball_size(*it, minimal_size_, true); // special ball
+          ch = change_ball_size(*it, minimal_size_, true)->cell(); // special ball
         }
       } else {
         if(sq_d < min_sq_d) {
@@ -624,12 +632,16 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
       add_handle_to_unchecked = true;
     }
 
-    using CGAL::Mesh_3::internal::weight_modifier;
-    CGAL_assertion_code(std::vector<Vertex_handle> hidden_vertices;);
-    CGAL_assertion_code(tr.vertices_inside_conflict_zone(Weighted_point(p, w*weight_modifier),
-                                                         ch,
-                                                         std::back_inserter(hidden_vertices)));
-    CGAL_assertion(hidden_vertices.empty());
+    if(lt != Tr::VERTEX) {
+      using CGAL::Mesh_3::internal::weight_modifier;
+      CGAL_assertion_code(std::vector<Vertex_handle> hidden_vertices;);
+      CGAL_assertion_code(ch = tr.locate(p, lt, li, lj, ch););
+      CGAL_assertion_code(tr.vertices_inside_conflict_zone(Weighted_point(p, w*weight_modifier),
+                                                           ch,
+                                                           std::back_inserter(hidden_vertices)));
+
+      CGAL_assertion(hidden_vertices.empty());
+    }
   }
   else // tr.dimension() <= 2
   {
@@ -989,7 +1001,9 @@ insert_balls(const Vertex_handle& vp,
     Vertex_handle new_vertex = smart_insert_point(new_point, point_weight, dim, index);
     
     // Add edge to c3t3
-    c3t3_.add_to_complex(prev, new_vertex, curve_index);
+    if(!c3t3_.is_in_complex(prev, new_vertex)) {
+      c3t3_.add_to_complex(prev, new_vertex, curve_index);
+    }
     prev = new_vertex;
     
     // Step size
@@ -1005,7 +1019,9 @@ insert_balls(const Vertex_handle& vp,
   // then (prev,vp) == (prev,vq)
   if ( vp != vq || n > 1 )
   {
-    c3t3_.add_to_complex(prev, vq, curve_index);
+    if(!c3t3_.is_in_complex(prev, vq)) {
+      c3t3_.add_to_complex(prev, vq, curve_index);
+    }
   }
 }
   
@@ -1271,8 +1287,13 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, OutputIterator out)
   // Get incident vertices along c3t3 edge
   Incident_vertices incident_vertices;
   c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(incident_vertices));
-  CGAL_assertion(incident_vertices.size() == 2);
-  
+  CGAL_assertion(v->is_special()
+                 || incident_vertices.size() == 0
+                 || incident_vertices.size() == 2);
+  if(incident_vertices.size() == 0) return out;
+  // The size of 'incident_vertices' can be 0 if v is a ball that covers
+  // entirely a closed curve.
+
   // Walk along edge to find the edge piece which is not correctly sampled
   typedef std::list<Vertex_handle> Vertex_list;
   Vertex_list to_repopulate;
