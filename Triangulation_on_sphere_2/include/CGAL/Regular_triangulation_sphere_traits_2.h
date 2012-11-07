@@ -17,6 +17,7 @@ class Power_test_2
   typedef typename K::Point_2   Point_2;
   typedef typename K::Oriented_side     Oriented_side;
   typedef typename K::Comparison_result Comparison_result;
+//typedef   typename K::
 
   Power_test_2(const Point_2& sphere);
 

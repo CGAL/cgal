@@ -22,6 +22,12 @@ public:
   {
     return coplanar_orientation(_sphere,p,q);
   }
+	
+ Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+ {
+	return coplanar_orientation(_sphere,p,q,r);
+ }
+	
 
 protected :
  Point_2  _sphere;
@@ -49,6 +55,14 @@ public:
   {
     return orientation(_sphere,p,q,test);
   }
+	
+	Comparison_result operator()(const Point_2& p, const Point_2& q,
+								 const Point_2& r, const Point_2 & s) const
+	{
+		return orientation(p,q,r,s);
+	}
+	
+	
 
 protected :
  Point_2  _sphere;
@@ -127,8 +141,9 @@ class Triangulation_sphere_traits_2 : public R
   typedef Segment_2    Segment;
   typedef Triangle_2   Triangle;
 
-  typedef typename K::Compare_x_3   Compare_x_2;
-  typedef typename K::Compare_y_3   Compare_y_2;
+  typedef typename K::Compare_x_3   Compare_x_3;
+  typedef typename K::Compare_y_3   Compare_y_3;
+	typedef typename K::Compare_z_3 Compare_z_3;
 
   typedef CGAL::Orientation_sphere_2<Traits> Orientation_2;
   typedef CGAL::Orientation_sphere_1<Traits> Orientation_1;
@@ -154,6 +169,8 @@ class Triangulation_sphere_traits_2 : public R
   inside_cone_2_object() const {
     return Inside_cone_2(_sphere);
   }
+	
+
   
  public:
   Triangulation_sphere_traits_2(const Point_2& sphere=Point_2(0,0,0));  

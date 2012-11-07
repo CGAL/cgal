@@ -67,7 +67,9 @@ template<class Kernel>
 class Power_test_on_sphere{
   typedef typename Kernel::Weighted_point_3    Weighted_point_3;
   typedef typename Kernel::FT                  FT;
-  
+	typedef typename Kernel::Compare_x_3                Compare_x_3;
+	typedef typename Kernel::Compare_y_3                Compare_y_3;
+	typedef typename Kernel::Compare_z_3                Compare_z_3;
   FT radius_;
   
 public:

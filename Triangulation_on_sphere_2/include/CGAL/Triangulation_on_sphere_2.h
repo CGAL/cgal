@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <utility>
 #include <iostream>
-
 #include <CGAL/iterator.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
@@ -64,7 +63,7 @@ class Triangulation_on_sphere_2
 public:
   typedef Tds                                     Triangulation_data_structure;
   typedef Gt                                      Geom_traits;
-typedef Triangulation_2<Gt, Tds>						Triangulation_2;	
+//typedef Triangulation_2<Gt, Tds>						Triangulation_2;	
 	
 	
   typedef typename Geom_traits::Point_2           Point;
@@ -94,7 +93,8 @@ typedef Triangulation_2<Gt, Tds>						Triangulation_2;
 		    EDGE, //1
 		    FACE, //2
 		    OUTSIDE_CONVEX_HULL, //3
-		    OUTSIDE_AFFINE_HULL};//4 
+	        OUTSIDE_AFFINE_HULL,//4 
+	  CONTOUR};//5
 
 protected:
 
@@ -156,19 +156,18 @@ size_type number_of_faces() const{return _tds.number_of_faces();}
   Orientation orientation(const Point& p, const Point& q, const Point& r) const;
   Orientation orientation_1(const Point& p, const Point& q) const;
   Orientation orientation(const Face_handle f) const;
+	Orientation orientation(const Face_handle f, const Point& p)const;
+   Orientation orientation(const Point&p, const Point& q, const Point& r, const Point &s) const;
   //Comparison_result compare_x(const Point& p, const Point& q) const;
   //Comparison_result compare_y(const Point& p, const Point& q) const;
-  Oriented_side power_test(const Point &p,const Point &q, const Point &r, const Point &s) const;
-  Oriented_side power_test(const Point &p,const Point &q, const Point &r) const;
-  Oriented_side power_test(const Point &p, const Point &r) const;
-  Oriented_side power_test(const Face_handle &f,const Point &p) const;
-  Oriented_side power_test(const Face_handle& f, int i, const Point &p) const;
+  Comparison_result compare_xyz(const Point& p, const Point& q) const;
+	bool equal (const Point& p, const Point& q) const;
   //Oriented_side oriented_side(const Point &p0, const Point &p1,const Point &p2, const Point &p) const;
   //Bounded_side bounded_side(const Point &p0, const Point &p1,const Point &p2, const Point &p) const;
   Oriented_side oriented_side(Face_handle f, const Point &p) const;
   bool xy_equal(const Point& p, const Point& q) const;
   bool collinear_between(const Point& p, const Point& q, const Point& r) const;
- 
+	Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r ) const;
 
   //------------------------------------------------------------------DEBUG---------------------------------------------------
   void show_all() const;
@@ -407,12 +406,14 @@ typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::
 march_locate_1D(const Point& t, Locate_type& lt, int& li) const
 {
+		
+	
   Face_handle f = edges_begin()->first;
 
   //first check if the circle is coplanar with o
   Orientation pqr = orientation(f->vertex(0)->point(), 
-				f->vertex(1)->point(),
-				f->neighbor(0)->vertex(1)->point());
+				                f->vertex(1)->point(),
+								f->neighbor(0)->vertex(1)->point());
   if( pqr != ON_ORIENTED_BOUNDARY ){
     if(xy_equal(t,f->vertex(0)->point())){
       lt = VERTEX;
@@ -466,7 +467,7 @@ march_locate_1D(const Point& t, Locate_type& lt, int& li) const
       return f;
     }
     if (!collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),t)) {
-      lt = OUTSIDE_CONVEX_HULL;
+		lt = OUTSIDE_CONVEX_HULL;
       li = 4;
       return f;
     }
@@ -507,7 +508,45 @@ march_locate_2D(Face_handle c,
 		Locate_type& lt,
 	        int& li) const
 {
-  CGAL_triangulation_assertion(!c->is_negative());
+	
+	CGAL_triangulation_assertion(!c->is_negative());
+	
+	Face_handle prev = Face_handle();
+	bool first=true;
+	
+	while (1) {
+		if ( c->is_negative() ) {
+			if(orientation(c, t)==ON_POSITIVE_SIDE){ //conflict with the corresponding face
+			   lt = OUTSIDE_CONVEX_HULL;
+			   li = 4;
+			   return c;
+		     }
+			else {//one of the neighbour face has to be in conflict with
+				Face_handle next = Face_handle();
+				for(int i=0; i<=2 ; i++){
+					next=c->neighbor(i);
+					Orientation orient =orientation(next, t);
+					 if(orientation(next, t)==ON_POSITIVE_SIDE){
+						lt = CONTOUR;
+						li = 5;
+						return next;
+					}
+				}
+				CGAL_triangulation_precondition(false);
+				
+			}
+		}
+		
+	
+		const Point & p0 = c->vertex( 0 )->point();
+		const Point & p1 = c->vertex( 1 )->point();
+		const Point & p2 = c->vertex( 2 )->point();
+		
+	
+	
+	
+	
+  /*CGAL_triangulation_assertion(!c->is_negative());
 
 	
 		
@@ -520,8 +559,8 @@ march_locate_2D(Face_handle c,
 	  const Point & p1 = c->vertex( 1 )->point();
 	  const Point & p2 = c->vertex( 2 )->point();
 	  
-	   
-	  if( power_test(c,t)!=ON_NEGATIVE_SIDE){
+	
+	  if(orientation(p0,p1,p2,t)!=ON_NEGATIVE_SIDE){
 		  if (c ->is_negative()){
 			  lt = OUTSIDE_CONVEX_HULL;
 			  li = 4;
@@ -533,7 +572,7 @@ march_locate_2D(Face_handle c,
 			  li = 4;		  
 			  return c;
 		  }
-	  }
+	  }*/
 
     // Instead of testing c's edges in a random order we do the following
     // until we find a neighbor to go further:
@@ -764,7 +803,7 @@ locate(const Point& p,
 	  }
 
   }
-
+	
 #if ( ! defined(CGAL_ZIG_ZAG_WALK)) && ( ! defined(CGAL_LFC_WALK))
 #define CGAL_ZIG_ZAG_WALK
 #endif
@@ -819,6 +858,38 @@ locate(const Point &p,
  
 //------------------------------------------------------------------------------PREDICATES-----------------------------------------------------------------
 template <class Gt, class Tds >
+Comparison_result
+Triangulation_on_sphere_2< Gt,  Tds>::
+compare_xyz(const Point &p, const Point &q) const
+{
+		return geom_traits().compare_xyz_3_object()(p, q);
+}
+
+	
+template <class Gt, class Tds >	
+bool
+Triangulation_on_sphere_2<Gt, Tds>::
+equal(const Point &p, const Point &q) const
+{
+		return compare_xyz(p, q) == EQUAL;
+}
+	
+
+template <class Gt, class Tds >
+inline
+Orientation
+Triangulation_on_sphere_2<Gt, Tds>::
+coplanar_orientation(const Point& p, const Point& q,const Point& r ) const
+{
+	return geom_traits().orientation_1_object()(p,q,r);
+}
+	
+	
+	
+	
+	
+	
+template <class Gt, class Tds >
 inline
 Orientation
 Triangulation_on_sphere_2<Gt, Tds>::
@@ -827,6 +898,16 @@ orientation(const Point& p, const Point& q,const Point& r ) const
   return geom_traits().orientation_2_object()(p,q,r);
 }
 
+template <class Gt, class Tds >
+inline
+Orientation
+Triangulation_on_sphere_2<Gt, Tds>::
+orientation(const Face_handle fh,const Point& r ) const
+{
+	return orientation(fh->vertex(0)->point(), fh->vertex(1)->point(), fh->vertex(2)->point(),r);
+}	
+	
+	
 template <class Gt, class Tds >
 inline
 Orientation
@@ -844,45 +925,13 @@ orientation(const Face_handle f) const
   return  orientation(f->vertex(0)->point(),f->vertex(1)->point(),f->vertex(2)->point());
 }
 
-template < class Gt, class Tds >
-Oriented_side
-Triangulation_on_sphere_2<Gt,Tds>::
-power_test(const Face_handle &f, const Point &p) const
+
+template <class Gt, class Tds>
+Orientation
+Triangulation_on_sphere_2<Gt, Tds>::
+orientation(const Point&p, const Point &q, const Point &r, const Point & s)const
 {
-return power_test(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(),p);
-}
-	
-template < class Gt, class Tds >
-Oriented_side
-Triangulation_on_sphere_2<Gt,Tds>::
-power_test(const Face_handle& f, int i, const Point &p) const
-{
-	CGAL_triangulation_precondition ( orientation(f->vertex(ccw(i))->point(),
-												  f->vertex( cw(i))->point(),  p)
-										 == COLLINEAR);
-	
-		return  power_test(f->vertex(ccw(i))->point(), f->vertex( cw(i))->point(), p);
-}
-	
-template < class Gt, class Tds >
-inline
-Oriented_side
-Triangulation_on_sphere_2<Gt,Tds>::
-power_test(const Point &p, const Point &q, const Point &r, const Point &s) const
-{
-	return geom_traits().power_test_2_object()(p,q,r,s);
-}
-	
-template < class Gt, class Tds >
-inline
-Oriented_side
-Triangulation_on_sphere_2<Gt,Tds>::
-power_test(const Point &p, const Point &q, const Point &r) const
-{
-	if(number_of_vertices()==2)
-		if(orientation_1(p,q)==COLLINEAR)
-				return ON_POSITIVE_SIDE;
-	return geom_traits().power_test_2_object()(p,q,r);
+	return geom_traits().orientation_2_object()(p,q,r,s);
 }
 	
 		

@@ -44,7 +44,7 @@ bool is_ok(K::Point_3 p, std::vector<K::Point_3> po, double minDist2, int ind)
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =10000;
+	nu_of_pts =100000;
 	radius=6000000;
 	//radius = 1;
 	//double minDist = radius*2e-25;
@@ -106,21 +106,22 @@ int main(){
 		
 		
 	for (int count=0; count<nu_of_pts*2; count++) {
-		std::cout<< "================= point number   "<< count+1 <<" =================="<<std::endl;
+		//std::cout<< "================= point number   "<< count+1 <<" =================="<<std::endl;
 		K::Point_3 p = points.at(count);
-		if(is_ok(p, points, minDist2, count)){
+		//if(is_ok(p, points, minDist2, count)){
 			Vertex_handle v = tos.insert(p);
 			vertices.push_back(v);			
-		}
-		else {
-			std::cout<<"invalide point"<<std::endl;
-			invalid ++;
-		}
+		//}
+		//else {
+		//	std::cout<<"invalide point"<<std::endl;
+		//	invalid ++;
+		//}
 		
-		//tos.is_valid(true);
+	
 	}
+		t.stop();
 	tos.is_valid();
-		std::cout<<"starting to remove"<<std::endl;
+	/*	std::cout<<"starting to remove"<<std::endl;
 		
 	//==remove points=============================
 		std::random_shuffle(vertices.begin(), vertices.end());
@@ -129,11 +130,12 @@ int main(){
 			tos.remove(vertices.at(i));
 			std::cout<<tos.number_of_vertices()<<std::endl;
 			//tos.is_valid();
-		}
+		}*/
 		
-		t.stop();
-		tos.show_all();
+		
+		//tos.show_all();
 		std::cout<<"running time"<< t.time()<<std::endl;
+		std::cout<<"number of points"<<std::endl;
 	}
 
 

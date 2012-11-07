@@ -22,12 +22,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#include <CGAL/Triangulation_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Regular_triangulation_sphere_traits_2<K>             Gt;
 typedef CGAL::Regular_triangulation_on_sphere_2<Gt>              RTOS;
-
+//typedef CGAL::Triangulation_2<Gt> RTOS;
 
 
 
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 	//DTOS_exact dtos;
 	RTOS rtos;
 	// insert and remove 5 coplanar points. Points are also coplanar with the center of the sphere
-	/*Point_3 p1=Point_3(radius/sqrt(2), radius/sqrt(2), 0);
+	Point_3 p1=Point_3(radius/sqrt(2), radius/sqrt(2), 0);
 	Point_3 p2 = Point_3(-1*radius/sqrt(2), radius/sqrt(2), 0);
 	Point_3 p3 = Point_3(-1*radius/sqrt(2), -1*radius/sqrt(2), 0);
 	Point_3 p4 = Point_3(radius/sqrt(2), -1*radius/sqrt(2), 0);
@@ -61,11 +61,13 @@ Vertex_handle v4 = rtos.insert(p4);
 	rtos.remove(v3);
 	rtos.remove(v4);
 	rtos.is_valid();
-	rtos.remove(v5);*/
+	rtos.remove(v5);
 	
 		
 	//insert   coplanar Points. Points are coplanar but not coplanar with the center of the sphere
 	rtos.clear();
+	Point_3 p27 = Point_3(0,0,radius);
+	Vertex_handle v27 = rtos.insert(p27);
 	Point_3 p0 = Point_3(0,0,radius);
 	Point_3 p21 = Point_3(1/sqrt(2),1/sqrt(2),sqrt(radius2-1));
 	Point_3 p22 = Point_3(-1/sqrt(2), -1/sqrt(2), sqrt(radius2-1));
@@ -96,8 +98,8 @@ Vertex_handle v4 = rtos.insert(p4);
 	
 	
 	//insert 5th point not coplanar
-	Point_3 p27 = Point_3(0,0,radius);
-	Vertex_handle v27 = rtos.insert(p27);
+	//Point_3 p27 = Point_3(0,0,radius);
+	//Vertex_handle v27 = rtos.insert(p27);
 	rtos.show_all();
 	rtos.is_valid();
 	
