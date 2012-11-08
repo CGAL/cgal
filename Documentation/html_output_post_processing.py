@@ -137,8 +137,13 @@ def automagically_number_figure(filename):
   infos=figure_anchor_info()
   d = pq(filename=filename, parser='html')
   d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
-  d('a.el').each( lambda i: update_figure_ref(i,infos) )
   write_out_html(d, filename)
+  #reference manual pages might also contain references to figures
+  all_pages=glob.glob(path.join(path.dirname( path.abspath(filename) ),'*.html'))
+  for fname in ref_man_pages:
+    d = pq(filename=fname, parser='html')
+    d('a.el').each( lambda i: update_figure_ref(i,infos) )    
+    write_out_html(d, fname)
 
 def main():
     parser = argparse.ArgumentParser(
