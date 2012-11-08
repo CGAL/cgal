@@ -1289,10 +1289,14 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, OutputIterator out)
   c3t3_.adjacent_vertices_in_complex(v, std::back_inserter(incident_vertices));
   CGAL_assertion(v->is_special()
                  || incident_vertices.size() == 0
+                 || incident_vertices.size() == 1
                  || incident_vertices.size() == 2);
   if(incident_vertices.size() == 0) return out;
   // The size of 'incident_vertices' can be 0 if v is a ball that covers
-  // entirely a closed curve.
+  // entirely a closed curve. 
+  // The size can also be 1 if the curve is a cycle, and the temporary
+  // mesh is only two balls on the cycle: then each ball has only one
+  // neighbor.
 
   // Walk along edge to find the edge piece which is not correctly sampled
   typedef std::list<Vertex_handle> Vertex_list;
