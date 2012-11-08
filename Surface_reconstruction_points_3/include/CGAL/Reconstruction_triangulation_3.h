@@ -375,7 +375,6 @@ public:
     InputIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map to access the position of an input point.
     NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
-    Point_type type, // = INPUT,
     Visitor visitor)
   {
     if(! points.empty()){
@@ -446,14 +445,12 @@ public:
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
     NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
-    Point_type type,// = INPUT,
     Visitor visitor)
   {
     return insert(
       first,beyond,
       make_dereference_property_map(first),
       normal_pmap,
-      type,
       visitor);
   }
 

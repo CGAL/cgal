@@ -250,7 +250,6 @@ public:
       first,beyond,
       point_pmap,
       normal_pmap,
-      Triangulation::INPUT,
       visitor);
 
     // Prints status
@@ -279,7 +278,6 @@ public:
     m_tr->insert(
       first,beyond,
       normal_pmap,
-      Triangulation::INPUT,
       visitor);
 
     // Prints status
