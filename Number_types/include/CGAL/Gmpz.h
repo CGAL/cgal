@@ -208,7 +208,6 @@ class Modular_traits< Gmpz > {
 #  pragma warning(pop)
 #endif
 
-#ifdef CGAL_EIGEN3_ENABLED
 namespace Eigen {
   template<class> struct NumTraits;
   template<> struct NumTraits<CGAL::Gmpz>
@@ -230,7 +229,6 @@ namespace Eigen {
     };
   };
 }
-#endif
 
 
 //since types are included by Gmp_coercion_traits.h:
