@@ -1,4 +1,4 @@
-namespace CGAL {
+\namespace CGAL {
 /*!
 
 \mainpage 3D Triangulation Data Structure
@@ -48,10 +48,11 @@ needed.
 The four vertices of a cell are indexed with 0, 1, 2 and 3. The
 neighbors of a cell are also indexed with 0, 1, 2, 3 
 in such a way that the neighbor indexed by \f$ i\f$ is opposite to the vertex
-with the same index (see Figure \ref TDS3figrepres).
+with the same index (see \cgal_figure_ref{TDS3figrepres}).
 
-\anchor TDS3figrepres
-\image html repres.gif "Representation."
+\cgal_figure_begin{TDS3figrepres,repres.gif}
+Representation.
+\cgal_figure_end
 
 Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly
 represented: a facet is given by a cell and an index (the facet
@@ -80,26 +81,29 @@ the boundary of a 4-dimensional simplex, which has 5 vertices. A
 geometric embedding consists in choosing one of these vertices to be
 infinite, thus four of the five 3-cells become infinite: the geometric
 triangulation has one finite tetrahedron remaining, each of its facets
-being incident to an infinite cell. See Figure \ref TDS3figtoposimplex4.
+being incident to an infinite cell. See \cgal_figure_ref{TDS3figtoposimplex4}.
 
-\anchor TDS3figtoposimplex4
-\image html topo-simplex4.gif "4D simplex and a 3D geometric embedding."
+\cgal_figure_begin{TDS3figtoposimplex4,topo-simplex4.gif]
+4D simplex and a 3D geometric embedding.
+\cgal_figure_end
 
 <LI><I>dimension 2.</I> We have 4 vertices forming one 3-dimensional
 simplex, i.e. the boundary of a tetrahedron. The geometric embedding in
 the plane results from choosing one of these vertices to be infinite,
 then the geometric triangulation has one finite triangle whose edges are
-incident to the infinite triangles. See Figure \ref TDS3figtoposimplex3.
+incident to the infinite triangles. See \cgal_figure_ref{TDS3figtoposimplex3}.
 
-\anchor TDS3figtoposimplex3
-\image html topo-simplex3.gif "3D simplex and a 2D geometric embedding."
+\cgal_figure_begin{TDS3figtoposimplex3,topo-simplex3.gif}
+3D simplex and a 2D geometric embedding.
+\cgal_figure_end
 
 <LI><I>dimension 1.</I> A 2-dimensional simplex (a triangle) has 3
 vertices. The geometric embedding is an edge whose vertices are linked
-to an infinite point. See Figure \ref TDS3figtoposimplex2.
+to an infinite point. See \cgal_figure_ref{TDS3figtoposimplex2}.
 
-\anchor TDS3figtoposimplex2
-\image html topo-simplex2.gif "2D simplex and a 1D geometric embedding."
+\cgal_figure_begin{TDS3figtoposimplex2,topo-simplex2.gif}
+2D simplex and a 1D geometric embedding.
+\cgal_figure_end
 
 </UL>
 
@@ -151,7 +155,7 @@ v_3^1)\f$, and the vertices of \f$ c_2\f$ are numbered \f$ (v_0^2 = v, v_1^2 = u
 v_2^2 = w, v_3^2)\f$, up to positive permutations of \f$ (0,1,2,3)\f$. In
 other words, if we embed the triangulation in \f$ \R^3\f$, then the fourth
 vertices \f$ v_3^1\f$ and \f$ v_3^2\f$ of \f$ c_1\f$ and \f$ c_2\f$ see the common facet
-in opposite orientations. See Figure \ref TDS3figcomborient.
+in opposite orientations. See \cgal_figure_ref{TDS3figcomborient}.
 
 The set \f$ \sigma\f$\f$ _4\f$ of permutations of
 \f$ (0,1,2,3)\f$ has cardinality 24, and the set of positive permutations
@@ -160,8 +164,9 @@ are up to 12 different orderings of the four vertices of a cell. Note
 that cyclic permutations are negative and so do not preserve the
 orientation of a cell.
 
-\anchor TDS3figcomborient
-\image html comborient.gif "Coherent orientations of two cells (3-dimensional case)."
+\cgal_figure_begin{TDS3figcomborient,comborient.gif}
+Coherent orientations of two cells (3-dimensional case).
+\cgal_figure_end
 
 The method `Triangulation_data_structure_3::is_valid()` method checks
 the local validity of a given triangulation data structure.
@@ -179,10 +184,11 @@ Section \ref Triangulation3secdesign explains other important parts of the
 design related to the geometry.
 
 We focus here on the design of the triangulation data structure (TDS)
-itself, which the Figure \ref TDS3figlayers illustrates.
+itself, which the \cgal_figure_ref{TDS3figlayers} illustrates.
 
-\anchor TDS3figlayers
-\image html design_tds.gif "Triangulation Data Structure software design."
+\cgal_figure_begin{TDS3figlayers,design_tds.gif}
+Triangulation Data Structure software design.
+\cgal_figure_end
 
 \subsection TDS_3FlexibilityoftheDesign Flexibility of the Design
 

@@ -22,8 +22,9 @@ half-the-width-of-a-pixel away from any non-incident edge
 \cite cgal:hp-isr-02. This package supports both methods. Algorithmic
 details and experimental results are given in \cite cgal:hp-isr-02.
 
-\anchor figsr1
-\image html sr1.gif "An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)"
+\cgal_figure_begin[figsr1,sr1.gif}
+An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)
+\cgal_figure_end
 
 \section Snap_rounding_2What What is Snap Rounding/Iterated Snap Rounding
 
@@ -39,7 +40,7 @@ vertex of the arrangement. Each vertex of the arrangement is replaced
 by the center of the hot pixel containing it and each edge \f$ e\f$ is
 replaced by the polygonal chain through the centers of the hot pixels
 met by \f$ e\f$, in the same order as they are met by \f$ e\f$. 
-Figure \ref figsr1 demonstrates the results of SR.
+\cgal_figure_ref{figsr1} demonstrates the results of SR.
 
 In a snap-rounded arrangement, the distance between a vertex and
 a non-incident edge can be extremely small compared with the width of a
@@ -47,7 +48,7 @@ pixel in the grid used for rounding. ISR
 is a modification of SR which makes a vertex and a
 non-incident edge well separated (the distance between each is at least
 half-the-width-of-a-pixel). However, the guaranteed quality of the
-approximation in ISR degrades. Figure \ref figisr_vs_sr depicts
+approximation in ISR degrades. \cgal_figure_ref{figisr_vs_sr} depicts
 the results of SR and ISR on the same input.
 Conceptually, the ISR procedure is equivalent to repeated application
 of SR, namely we apply SR to the original set of segments, then we use
@@ -85,8 +86,9 @@ description of the requirements is given by the concept
 `SnapRoundingTraits_2`. The class `Snap_rounding_traits_2` is a model of
 this concept.
 
-\anchor figisr_vs_sr
-\image html isr_vs_sr.gif "An arrangement of segments before (a), after SR (b) and ISR (c) (hot pixels are shaded)."
+\cgal_figure_begin{figisr_vs_sr,isr_vs_sr.gif}
+An arrangement of segments before (a), after SR (b) and ISR (c) (hot pixels are shaded).
+\cgal_figure_end
 
 \section Snap_rounding_2Four Four Line Segment Example
 

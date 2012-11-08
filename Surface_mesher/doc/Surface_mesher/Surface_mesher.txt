@@ -189,10 +189,11 @@ Given this surface type, the surface mesh generator will use
 an automatically generated traits class.
 
 The resulting mesh is shown in
-Figure \ref figureSurface_mesherspheresurface.
+\cgal_figure_ref{figureSurface_mesherspheresurface}.
 
-\anchor figureSurface_mesherspheresurface
-\image html sphere-surface.png "Surface mesh of a sphere"
+\cgal_figure_begin{figureSurface_mesherspheresurface,sphere-surface.png}
+Surface mesh of a sphere
+\cgal_figure_end
 
 \cgalexample{Surface_mesher/mesh_an_implicit_function.cpp}
 
@@ -220,11 +221,12 @@ Also note that the center of the bounding sphere is required to be
 internal a point where the function has a negative value.
 
 The chosen iso-value of this 3D image corresponds to a head skull. The
-resulting mesh is shown in Figure \ref figureSurface_mesherskull.
+resulting mesh is shown in \cgal_figure_ref{figureSurface_mesherskull}.
 
 
-\anchor figureSurface_mesherskull
-\image html skull-surface.png "Surface mesh of an iso-contour extracted from a gray level 3D image"
+\cgal_figure_begin{figureSurface_mesherskull,skull-surface.png}
+Surface mesh of an iso-contour extracted from a gray level 3D image
+\cgal_figure_end
 
 \cgalexample{Surface_mesher/mesh_a_3d_gray_image.cpp}
 

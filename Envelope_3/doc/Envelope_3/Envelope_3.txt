@@ -102,29 +102,30 @@ these two types may be the same). Any model of the envelope-traits
 concept must also support the following operations on these spacial
 types:
 
-<CENTER>
-\anchor env3_figcomp_over
+\cgal_figure_anchor{env3_figcomp_over}
+<CENTER> 
 <TABLE border="0">
 <TR>
 <TD>
-\image html compare_over_point.gif ""
+\image html compare_over_point.gif
 </TD>
 <TD>
-\image html compare_over_curve.gif ""
+\image html compare_over_curve.gif
 </TD>
 </TR>
 <TR align="center"><TD>(a)</TD><TD>(b)</TD></TR>
 </TABLE>
-
-<B>(a) The spheres \f$ S_1\f$ and \f$ S_2\f$ have only one
+</CENTER>
+\cgal_figure_caption_begin{env3_figcomp_over}
+(a) The spheres \f$ S_1\f$ and \f$ S_2\f$ have only one
 two-dimensional point \f$ p\f$ in their common \f$ xy\f$-definition
 range. They do not necessarily intersect over this point, and the
 envelope-construction algorithm needs to determine their relative \f$
 z\f$-order over \f$ p\f$. (b) The \f$ z\f$-order of the surfaces \f$
 S_1\f$ and \f$ S_2\f$ should be determined over the \f$ x\f$-monotone
 curve \f$ c\f$. The comparison is performed over the <I>interior</I>
-of \f$ c\f$, excluding its endpoints.</B>
-</CENTER>
+of \f$ c\f$, excluding its endpoints.
+\cgal_figure_caption_end
 
 
 <UL>
@@ -170,7 +171,7 @@ range, determine the \f$ z\f$-order of \f$ S_1\f$ and \f$ S_2\f$ over \f$ p\f$,
 namely compare \f$ S_1(x_0,y_0)\f$ and \f$ S_2(x_0,y_0)\f$.
 This operation is used only in degenerate situations, in order to
 determine the surface inducing the envelope over a vertex (see
-Figure \ref env3_figcomp_over (a) for an illustration of a situation
+\cgal_figure_ref{env3_figcomp_over} (a) for an illustration of a situation
 when this operation is used).
 <LI>Given two \f$ xy\f$-monotone surfaces \f$ S_1\f$ and \f$ S_2\f$, and a
 planar \f$ x\f$-monotone curve \f$ c\f$, which is a part of their projected
@@ -194,7 +195,7 @@ This operation is used by the algorithm to determine which surface
 induce the envelope over an edge associated with the \f$ x\f$-monotone
 curve \f$ c\f$, or of a face incident to \f$ c\f$, in situations where the
 previous predicate cannot be used, as \f$ c\f$ is <I>not</I> an intersection
-curve of \f$ S_1\f$ and \f$ S_2\f$ (see Figure \ref env3_figcomp_over (b) for
+curve of \f$ S_1\f$ and \f$ S_2\f$ (see \cgal_figure_ref{env3_figcomp_over} (b) for
 an illustration of a situation where this operation is used).
 </UL>
 
@@ -210,8 +211,8 @@ traits classes is demonstrated in the next section.
 
 \subsection Envelope_3ExampleforEnvelopeofTriangles Example for Envelope of Triangles
 
+\cgal_figure_anchor{env3_figex_tri}
 <CENTER>
-\anchor env3_figex_tri
 <TABLE border="0">
 <TR>
 <TD>\image html ex_triangles.gif</TD>
@@ -219,17 +220,20 @@ traits classes is demonstrated in the next section.
 <TD>\image html ex_tri_ue.gif</TD>
 <TR ALIGN="center"><TD>(a)</TD><TD>(b)</TD><TD>(c)</TD></TR>
 </TABLE>
-<B>(a) Two triangles in \f$ {\mathbb R}^3\f$, as given in `envelope_triangles.cpp`. (b) Their lower envelope. (c) Their upper envelope.</B>
 </CENTER>
+\cgal_figure_caption_begin{env3_figex_tri}
+(a) Two triangles in \f$ {\mathbb R}^3\f$, as given in `envelope_triangles.cpp`. (b) Their lower envelope. (c) Their upper envelope.
+\cgal_figure_caption_end
 
 The following example shows how to use the envelope-traits class
 for 3D triangles and how to traverse the envelope diagram. It
 constructs the lower and upper envelopes of the two triangles,
-as depicted in Figure \ref env3_figex_tri (a) and prints the
+as depicted in \cgal_figure_ref{env3_figex_tri} (a) and prints the
 triangles that induce each face and each edge in the output diagrams.
 For convenience, we use the traits-class decorator
 `Env_surface_data_traits_3` to label the triangles. When
 printing the diagrams, we just output the labels of the triangles:
+
 
 \cgalexample{Envelope_3/envelope_triangles.cpp}
 

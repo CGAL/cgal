@@ -40,14 +40,11 @@ interior, its boundary, and its closure, and also composed operations
 like regularization (defined to be the closure of the interior or a
 point set).
 
-\anchor nefexamples
-\image html halfplane.gif
-
-<center><b>
+\cgal_figure_begin{nefexamples,halfplane.gif}
 Two Nef polyhedra in the plane. A closed halfspace on the left and a
 complex polyhedron on the right. Note that the points on the squared
 boundary are at infinity.
-</b></center>
+\cgal_figure_end
 
 \section Nef_2Construction Construction and Composition
 

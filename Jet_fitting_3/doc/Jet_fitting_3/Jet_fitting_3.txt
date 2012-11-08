@@ -7,11 +7,9 @@ namespace CGAL {
 \autotoc
 \authors Marc Pouget and Fr&eacute;d&eacute;ric Cazals
 
-\anchor figjet3figdavid
-\image html david-dirmaxkmin-white-back.jpg
-<center>
-<div class="caption">Principal directions associated with \f$k_{max}\f$ scaled by \f$ k_{min}\f$.</div>
-</center>
+\cgal_figure_begin{figjet3figdavid,david-dirmaxkmin-white-back.jpg}
+Principal directions associated with \f$k_{max}\f$ scaled by \f$ k_{min}\f$.
+\cgal_figure_end
 
 This package allows the estimation of local differential quantities of
 a surface from a point sample, given either as a mesh or as point
@@ -287,15 +285,13 @@ PCA basis;
 post-processing).
 </UL>
 
-Figs.
-\ref figjet3figdavid and
-\ref figjet3figellipticparaboloid 
+\cgal_figure_ref{figjet3figdavid} and
+\cgal_figure_ref{figjet3figellipticparaboloid}
 provide illustrations of principal directions of curvature.
 
-\anchor figjet3figellipticparaboloid
-\image html ppal_curv_poly2x2+y2.jpg "" width=600px
-
-<center><b>Principal directions of curvature and normals at vertices of a mesh of the graph of the function \f$ f(x,y)=2x^2+y^2\f$.</b></center>
+\cgal_figure_begin{figjet3figellipticparaboloid,ppal_curv_poly2x2+y2.jpg}
+Principal directions of curvature and normals at vertices of a mesh of the graph of the function \f$ f(x,y)=2x^2+y^2\f$.
+\cgal_figure_end
 
 \section Jet_fitting_3Mathematical Mathematical and Algorithmic Details
 
@@ -306,8 +302,9 @@ To begin with, observe the fitting problem involves three relevant
 direct orthonormal basis: the world-basis \f$ (w_x,w_y,w_z)\f$, the
 fitting-basis \f$ (f_x,f_y,f_z)\f$, the Monge basis \f$ (d_1,d_2,n)\f$.
 
-\anchor figjet_fitting_basis
-\image html jet_fitting_basis.gif "The three bases involved in the estimation."
+\cgal_figure_begin{figjet_fitting_basis,jet_fitting_basis.gif}
+The three bases involved in the estimation.
+\cgal_figure_end
 
 \subsection Jet_fitting_3ComputingaBasisfortheFitting Computing a Basis for the Fitting
 

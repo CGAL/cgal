@@ -38,11 +38,14 @@ The orientation of a polygon with holes is the orientation of its outer contour.
 
 Throughout the rest of this chapter the term <I>polygon</I> will be used as a shortcut for <I>polygon with holes</I>.
 
-\anchor Validpolygons
-\image html valid_polygons.png "Fig. 1: Examples of strictly simple polygons: One with no holes and two edges coincident (left) and one with 2 holes (right)." 
+\cgal_figure_begin{Validpolygons,valid_polygons.png}
+Examples of strictly simple polygons: One with no holes and two edges coincident (left) and one with 2 holes (right).
+\cgal_figure_end
 
-\anchor Invalidpolygons
-\image html invalid_polygons.png "Fig. 2: Examples of non-simple polygons: One folding into itself, that is, non-planar (left), one with a vertex touching an edge (middle), and one with a hole crossing into the outside (right)" 
+\cgal_figure_begin{Invalidpolygons,invalid_polygons.png}
+Examples of non-simple polygons: One folding into itself, that is, non-planar (left), one with a vertex touching an edge (middle), and one with a hole crossing into the outside (right)
+\cgal_figure_end
+
 
 \subsection Straight_skeleton_2InwardOffsetofaNondegenerate Inward Offset of a Non-degenerate Strictly-Simple Polygon with Holes
 
@@ -64,11 +67,13 @@ The <I>2D straight skeleton</I> of a non-degenerate strictly-simple polygon with
 
 These regions are bounded by angular bisectors of the supporting lines of the contour edges and each such region is itself a non-convex non-degenerate strictly-simple polygon.
 
-\anchor ComplexSLS
-\image html complex_skeleton.png "Fig. 3: Straight skeleton of a complex shaggy contour"
+\cgal_figure_begin{ComplexSLS,complex_skeleton.png}
+Straight skeleton of a complex shaggy contour
+\cgal_figure_end
 
-\anchor MoreSLS
-\image html simple_skeleton_0.png "Fig. 4: Other examples: A vertex-event (left), the case of several collinear edges (middle), and the case of a validly simple polygon with tangent edges (right)."
+\cgal_figure_begin{MoreSLS,simple_skeleton_0.png}
+Other examples: A vertex-event (left), the case of several collinear edges (middle), and the case of a validly simple polygon with tangent edges (right).
+\cgal_figure_end
 
 \subsection Straight_skeleton_2AngularBisectingLines Angular Bisecting Lines and Offset Bisectors
 
@@ -237,8 +242,9 @@ If the polygon <I>is</I> convex, the straight skeleton is exactly equivalent to 
 Contour vertices have time zero.
 
 
-\anchor Simplepolyoffsets
-\image html fig6.png "Fig. 5: Straight Skeleton Data Structure" width=12cm 
+\cgal_figure_begin{Simplepolyoffsets,fig6.png}
+Straight Skeleton Data Structure
+\cgal_figure_end
 
 \section Straight_skeleton_2API API
 
@@ -415,11 +421,9 @@ This \cgal packages provides a helper function to compute the required separatio
 If you use this function to place the outer frame you are guaranteed to obtain an offset contour corresponding exclusively to the frame, which you can always identify as the one with the largest area and which you can simple remove from the result (to keep just the relevant outer contours).
 
 
-\anchor Exterior
-\image html exterior_skeleton.png
-\image html exterior_offset.png
-
-<CENTER><B>Fig. 7: Exterior skeleton obtained using a frame (left) and 2 sample exterior offset contours (right)</B></CENTER>
+\cgal_figure_begin{Exterior,exterior_skeleton.png,exterior_offset.png}
+Exterior skeleton obtained using a frame (left) and 2 sample exterior offset contours (right)
+\cgal_figure_end
 
 \section Straight_skeleton_2Straight Straight Skeletons, Medial Axis and Voronoi Diagrams
 

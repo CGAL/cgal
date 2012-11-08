@@ -46,8 +46,9 @@ some member functions.
 
 \include Polygon.cpp
 
-\image latex pgn_algos.gif "A polygon and some points"
-\image html pgn_algos.gif "A polygon and some points"
+\cgal_figure_begin{polygon2_algo,pgn_algos.gif}
+A polygon and some points
+\cgal_figure_end
 
 \subsection Algorithms Operating on Sequences of Points
 

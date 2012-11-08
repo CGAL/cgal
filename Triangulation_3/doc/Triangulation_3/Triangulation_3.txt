@@ -43,7 +43,7 @@ cells. Each vertex gives access to one of its incident cells.
 The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
 orientation, the positive orientation being defined by the orientation
 of the underlying Euclidean space \f$ \R^3\f$ (see
-Figure \ref Triangulation3figorient). The neighbors of a cell are also
+\cgal_figure_ref{Triangulation3figorient}). The neighbors of a cell are also
 indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index.
 
@@ -59,7 +59,7 @@ represented: a facet is given by a cell and an index (the facet
 the vertex with index `i`) and an edge is given by a cell and two
 indices (the edge `(i,j)` of a cell `c` is the edge whose
 endpoints are the vertices of `c` with indices `i` and
-`j`). See Figure \ref TDS3figrepres.
+`j`). See \cgal_figure_ref{TDS3figrepres}.
 
 <b>Degenerate Dimensions</b>
 
@@ -102,7 +102,7 @@ data structure, is `locally valid`
 (see Section \ref TDS3secintro of Chapter \ref chapterTDS3)
 
 <B>(c)</B> Any cell has its vertices ordered according to positive
-orientation. See Figure \ref Triangulation3figorient.
+orientation. See \cgal_figure_ref{Triangulation3figorient}.
 
 When the triangulation is degenerated into a triangulation of
 dimension 2, the geometric validity reduces to:
@@ -153,10 +153,11 @@ defined as
 where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$. 
 \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$
 are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{z}^{(w)})}
-= 0\f$ (see Figure \ref Triangulation3figortho).
+= 0\f$ (see \cgal_figure_ref{Triangulation3figortho)}.
 
-\anchor Triangulation3figortho
-\image html ortho.gif "Orthogonal weighted points (picture in 2D)."
+\cgal_figure_begin{Triangulation3figortho,ortho.gif]
+Orthogonal weighted points (picture in 2D).
+\cgal_figure_end
 
 Four weighted points have a unique common orthogonal weighted point
 called the <I>power sphere</I>. The weighted point orthogonal to
@@ -191,12 +192,13 @@ The implementation of 3D regular triangulation supports insertions of weighted p
 
 The main classes `Triangulation_3`, `Delaunay_triangulation_3` and
 `Regular_triangulation_3` are connected to each other by the
-derivation diagram shown in Figure \ref t3_derivation. This diagram
+derivation diagram shown in \cgal_figure_ref{t3_derivation}. This diagram
 also shows another class: `Triangulation_utils_3`, which provides
 a set of tools operating on the indices of vertices in cells.
 
-\anchor t3_derivation
-\image html derivation.gif "Derivation diagram of the 3D triangulation classes."
+\cgal_figure_begin{t3_derivation,derivation.gif}
+Derivation diagram of the 3D triangulation classes.
+\cgal_figure_end
 
 The three main classes (`Triangulation_3`, `Delaunay_triangulation_3`
 and `Regular_triangulation_3`) provide high-level geometric functionality
@@ -282,10 +284,11 @@ possibility to customize the vertices and cells used by the triangulation data
 structure, and hence by the geometric triangulation using it. Depending on the
 kind of triangulation used, the requirements on the vertex and cell base
 classes vary, and are expressed by various concepts, following the refinement
-diagram shown in Figure \ref T3concepthierarchy.
+diagram shown in \cgal_figure_ref{T3concepthierarchy}.
 
-\anchor T3concepthierarchy
-\image html concept_hierarchy.gif "Concepts refinement hierarchy for the vertex and cell base classes parameters."
+\cgal_figure_begin{T3concepthierarchy,concept_hierarchy.gif}
+Concepts refinement hierarchy for the vertex and cell base classes parameters.
+\cgal_figure_end
 
 A default value for the triangulation data structure parameter is provided in
 all the triangulation classes, so it need not be specified by the user unless
@@ -345,12 +348,13 @@ interchanged with alternate implementations.
 The most useful flexibility is the ability given to the user to add his own
 data in the vertices and cells by providing his own vertex and cell base
 classes to `Triangulation_data_structure_3`. The
-Figure \ref T3figlayers shows in more detail the flexibility that is
+\cgal_figure_ref{T3figlayers} shows in more detail the flexibility that is
 provided, and the place where the user can insert his own vertex and/or cell
 base classes.
 
-\anchor T3figlayers
-\image html design.gif "Triangulation software design."
+\cgal_figure_begin{T3figlayers,design.gif}
+Triangulation software design.
+\cgal_figure_end
 
 The design of the triangulation data structure gives the possibility to store
 any kind of data, including handles (an entity akin to pointers) directly in
@@ -525,7 +529,7 @@ case) :
 `Triangulation_cell_base_3` instead of `Regular_triangulation_cell_base_3`).
 </UL>
 
-Figure \ref Triangulation3figbenchmarks shows, for all these types of
+\cgal_figure_ref{Triangulation3figbenchmarks} shows, for all these types of
 triangulations, the times in seconds taken to build a triangulation from a
 given number of points, then the average time to perform one point location in
 triangulations of various sizes, and the average time to perform one vertex
@@ -744,7 +748,7 @@ memory usage (doing fresh copies of the data structures are one way out in such
 cases). The asymptotic memory overhead of `Compact_container` for its
 internal bookkeeping is otherwise on the order of \f$ O(\sqrt{n})\f$.
 
-Figure \ref Triangulation3figmemory shows the number of bytes used per
+\cgal_figure_ref{Triangulation3figmemory} shows the number of bytes used per
 points, as measured empirically using `Memory_sizer` for large triangulations
 (\f$ 10^6\f$ random points).
 
@@ -838,11 +842,11 @@ output of another algorithm which has this requirement, for example). This
 will slow down the computations by a factor of 4 to 5 at least, and it can be
 much more.
 
-Figure \ref Triangulation3figkernelsanddatasets gives more detailed
+\cgal_figure_ref{Triangulation3figkernelsanddatasets} gives more detailed
 timings about various kernels one the following data sets : random points in a
 cube, random points on the surface of an ellipsoid, points scanned on the
 surface of a Buddha statue, points on a molecular surface, and points scanned
-on a dryer handle. See Figure \ref Triangulation3figdatasets for pictures of
+on a dryer handle. See \cgal_figure_ref{Triangulation3figdatasets} for pictures of
 the last 3 objects, which respectively illustrate volumic data, surfacic data,
 and data with many degenerate cases. This last data set exhibits an infinite
 loop with an inexact kernel, and of course we are not sure whether what is
@@ -955,16 +959,10 @@ Number of points
 <b>Running times (seconds) for various kernels and data sets.</b>
 </CENTER>
 
-<CENTER> 
-\anchor Triangulation3figdatasets
-<table>
-<tr>
-<td width="30%">\image html api1_01.gif
-<td width="30%">\image html b35-1.gif
-<td width="30%">\image html HD.gif
-</table>
-<b>Data sets used in the benchmark of Figure \ref Triangulation3figkernelsanddatasets.</b>
-</CENTER>
+ 
+\cgal_figure_begin{Triangulation3figdatasets,api1_01.gif,b35-1.gif,HD.gif}
+Data sets used in the benchmark of \cgal_figure_ref{Triangulation3figkernelsanddatasets}.
+\cgal_figure_end
 
 \section Triangulation_3Design Design and Implementation History
 

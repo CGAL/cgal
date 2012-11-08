@@ -8,8 +8,9 @@ namespace CGAL {
 \authors Marc Pouget and Fr&eacute;d&eacute;ric Cazals
 \autotoc
 
-\anchor davidcrest
-\image html david_crest.jpg "Crest ridges on the David, model provided by the Digital Michelangelo Project."
+\cgal_figure_begin{davidcrest,david_crest.jpg}
+Crest ridges on the David, model provided by the Digital Michelangelo Project.
+\cgal_figure_end
 
 This chapter describes the \cgal package for the approximating the
 ridges and umbilics of a smooth surface discretized by a triangle
@@ -53,8 +54,8 @@ corresponding principal directions of curvature are well defined, and
 we denote them \f$ d_1\f$ and \f$ d_2\f$.
 In local coordinates, we denote \f$ \langle , \rangle\f$ the inner product
 induced by the ambient Euclidean space, and \f$ dk_1\f$, \f$ dk_2\f$ the
-gradients of the principal curvatures. Ridges, illustrated in Figure
-\ref ellipsoidridges for the standard ellipsoid, are defined by:
+gradients of the principal curvatures. Ridges, illustrated in
+\cgal_figure_ref{ellipsoidridges} for the standard ellipsoid, are defined by:
 
 <B>Definition.</B> <EM>\anchor defridgeextrema
 A non umbilical point is called
@@ -73,24 +74,22 @@ differential properties. Using fourth-order differential quantities, a
 ridge point can further be qualified as <I>elliptic</I> if it
 corresponds to a maximum of \f$ k_1\f$ or a minimum of \f$ k_2\f$, or <I>hyperbolic</I> otherwise. Hence we end up with four types of ridges, namely:
 \ref MAX_ELLIPTIC_RIDGE, \ref MAX_HYPERBOLIC_RIDGE, \ref MIN_ELLIPTIC_RIDGE,
-\ref MIN_HYPERBOLIC_RIDGE, which are illustrated in Figure \ref ellipsoidridges.
+\ref MIN_HYPERBOLIC_RIDGE, which are illustrated in \cgal_figure_ref{ellipsoidridges}.
 Also of interest are the <I>crest lines</I>, a crest line being an
 elliptic ridge which is a maximum of \f$ \max(|k_1|,|k_2|)\f$. Crest lines
 form a subset of elliptic ridges, and can be seen as the visually most
 salient curves on a surface.
 Hence we provide the two additional ridge types
 \ref MAX_CREST_RIDGE and \ref MIN_CREST_RIDGE, which are illustrated in
-Figure \ref davidcrest.
+\cgal_figure_ref{davidcrest}.
 
-\anchor ellipsoidridges
-\image html ellipsoid_ridges.png"
-<center><b>
+\cgal_figure_begin{ellipsoidridges,ellipsoid_ridges.png}
 Ridges on the ellipsoid, normals pointing outward. Color coding:
 \ref MAX_ELLIPTIC_RIDGE are blue, \ref MAX_HYPERBOLIC_RIDGE are green,
 \ref MIN_ELLIPTIC_RIDGE are red and \ref MIN_HYPERBOLIC_RIDGE are
 yellow. The red line is also the \ref MIN_CREST_RIDGE and this is the
 only crest ridge of the ellipsoid.
-</b></center>
+\cgal_figure_end
 
 At any point of the surface which is not an umbilic, principal
 directions \f$ d_1, d_2\f$ are well defined, and these (non oriented)
@@ -147,11 +146,11 @@ Hence ridge types are characterized by
 <LI>\ref MIN_CREST_RIDGE if \f$ b_3=0\f$ and \f$ P_2<0\f$ and \f$ |k_2|>|k_1|\f$
 </UL>
 
-As illustrated in Figures \ref index_umbilic and \ref umbilics, the
+As illustrated in \cgal_figure_ref{index_umbilic} and \cgal_figure_ref{umbilics}, the
 patterns made by curvature lines around an umbilic can be
 characterized using the notion of an <I>index</I> associated to the
 principal directions - see also \cite cgal:cp-ssulc-05.
-As depicted in Figure \ref index_umbilic, consider a small circuit \f$ C\f$ around the
+As depicted in \cgal_figure_ref{index_umbilic}, consider a small circuit \f$ C\f$ around the
 umbilic, and a point \f$ p \in C\f$. Starting from an initial orientation
 \f$ u\f$ of a tangent vector to the curvature line through point \f$ p\f$,
 propagate <I>by continuity</I> this orientation around the circuit. The
@@ -164,14 +163,13 @@ then it is called a
 Otherwise the umbilic is qualified
 \ref NON_GENERIC_UMBILIC.
 
-\anchor index_umbilic
-\image html index_umbilic.png 
-<center><b>
+\cgal_figure_begin{index_umbilic,index_umbilic.png }
 Index \f$1/2\f$ umbilic or elliptic umbilic.
-</b></center>
+\cgal_figure_end
 
-\anchor umbilics
-\image html lemon.png "Elliptic and hyperbolic umbilics."
+\cgal_figure_begin{umbilics,lemon.png}
+Elliptic and hyperbolic umbilics.
+\cgal_figure_end
 
 \section Ridges_3Approximating Approximating Ridges on Triangulated Surface Meshes
 
@@ -423,7 +421,7 @@ using `std::maps` and `boost::associative_property_map`.
 \subsection Ridges_3Exampleprogram Example program
 
 The following program computes ridges and umbilics from an off
-file.\footnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce Figure \ref figmechanical_crest_filteredintro, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the Jet fitting package to estimate the differential
+file.\footnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgal_figure_ref{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the Jet fitting package to estimate the differential
 quantities. 
 The default output file gives rough data for visualization purpose, a
 verbose output file may also be asked for. Parameters are
@@ -528,7 +526,7 @@ int main(int argc, char *argv[])
 
 \subsection Ridges_3ExampleRidgesandUmbilicsonanEllipsoid Example: Ridges and Umbilics on an Ellipsoid
 
-For Figure \ref ellipsoidridgesexample, the data have been computed as follows:
+For \cgal_figure_ref{ellipsoidridgesexample}, the data have been computed as follows:
 
 \code{.cpp}
 
@@ -548,35 +546,29 @@ Umbilic at location (0.81413 0.0018689 0.290339) of type elliptic
 
 \endcode
 
-\anchor ellipsoidridgesexample
-\image html ellipsoid_ridges.png
-
-<center><b>
+\cgal_figure_begin{ellipsoidridgesexample,ellipsoid_ridges.png}
 Ridges on the ellipsoid, normals pointing outward. Color coding :
 \ref MAX_ELLIPTIC_RIDGE are blue, \ref MAX_HYPERBOLIC_RIDGE are green,
 \ref MIN_ELLIPTIC_RIDGE are red and \ref MIN_HYPERBOLIC_RIDGE are yellow.
-</b></center>
+\cgal_figure_end
 
 \subsection Ridges_3ExampleFilteringofCrestRidgesona Example: Filtering of Crest Ridges on a Mechanical Part
 
-Figure \ref figmechanical_crest_filteredintro illustrates the filtering 
+\cgal_figure_ref{figmechanical_crest_filteredintro} illustrates the filtering 
 of crest ridges on a mechanical model, and has been computed as follows:
 
 \code{.cpp}
 ./Compute_Ridges_Umbilics -f data/mecanic.off -d 4 -m 4 -a 4 -t 4
 \endcode
 
-\anchor figmechanical_crest_filteredintro 
-\image html mecanic-sub1_crest-jpg.png
-
-<center><b>
+\cgal_figure_begin{figmechanical_crest_filteredintro,mecanic-sub1_crest-jpg.png}
 Mechanical part (37k pts). Left: All crest lines. Middle:  crests filtered
 with the strength threshold 1. Right: crests filtered with the
 sharpness threshold 100 000. Notice that any point on a flat or
 cylindrical part lies on two ridges, so that the noise observed on the
 first two figures is unavoidable. It is however easily filtered out with
 the sharpness as can be seen on the right figure.
-</b></center>
+\cgal_figure_end
 
 */ 
 } /* namespace CGAL */

@@ -20,12 +20,10 @@ described.
 
 \section secsdg2definitions Definitions 
 
-\anchor figsvd
-\image html svd-weakly-bw.jpg 
-\image html svd-strongly-bw.gif
-
-<center><b>The segment Voronoi diagram for a set of weakly (left) and
-strongly (right) intersecting sites.</b></center>
+\cgal_figure_begin{figsvd,svd-weakly-bw.jpg,svd-strongly-bw.gif}
+The segment Voronoi diagram for a set of weakly (left) and
+strongly (right) intersecting sites.
+\cgal_figure_end
 
 The 2D segment Delaunay graph package of \cgal is designed to
 compute the Delaunay graph of a set of possibly intersecting segments
@@ -62,7 +60,7 @@ it is a generalization of the Voronoi diagram for points.
 In many applications the restriction that sites are non-intersecting
 is too strict. Often we want to allow segments that touch at their
 endpoints, or even segments that overlap or intersect properly at
-their interior (for example, see Fig. \ref figsvd). Allowing such
+their interior (for example, see \cgal_figure_ref{figsvd}). Allowing such
 configurations poses certain problems. More specifically, when we allow
 segments to touch at their endpoints we may end up with pairs of
 segments whose bisector is two-dimensional. If we allow pairs of
@@ -227,7 +225,7 @@ and that segments that are not part of the input are always supported
 by input segments.
 
 For example, let us consider the configuration in
-Fig. \ref figsdg2siterep. We assume that the segments
+\cgal_figure_ref{figsdg2siterep}. We assume that the segments
 \f$ t_i=p_iq_i\f$, \f$ i=1,2,3\f$, are inserted in that order. Upon the
 insertion of \f$ t_2\f$, our algorithm will split the segment \f$ t_1\f$ into
 the subsegments
@@ -256,10 +254,7 @@ More precisely, \f$ s_1s_2\f$ is represented by the segments \f$ t_1\f$ (the
 supporting segment of \f$ s_1q_1\f$), \f$ t_2\f$ (it defines \f$ s_1\f$ along with
 \f$ t_1\f$) and \f$ t_3\f$ (it defines \f$ s_2\f$ along with \f$ t_1\f$).
 
-\anchor figsdg2siterep
-\image html sdg-rep.gif
-
-<center><b>
+\cgal_figure_begin{figsdg2siterep,sdg-rep.gif}
 Site representation. The point \f$ s_1\f$ is represented by the four
 points \f$ p_1\f$, \f$ q_1\f$, \f$ p_2\f$ and \f$ q_2\f$. The segment
 \f$ p_1s_1\f$ is represented by the points \f$ p_1\f$, \f$ q_1\f$, \f$
@@ -269,7 +264,7 @@ segment \f$ s_1s_2\f$ is represented by the six points: \f$ p_1\f$,
 \f$ q_1\f$, \f$ p_2\f$, \f$ q_2\f$, \f$ p_3\f$ and \f$ q_3\f$. The
 remaining (non-input) points and segments in the figure are
 represented similarly.
-</b></center>
+\cgal_figure_end
 
 The five different presentations, two for points (coordinates; two
 input segments) and three for segments (two input points; two input

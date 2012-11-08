@@ -41,8 +41,9 @@ of balls.
 
 \section secskindefinition Definition of a Skin Surface 
 
-\anchor figtwoPoints
-\image html convexTwoPoints.png "Left: Convex combinations of two weighted points (the two dashed circles).  Right: The skin curve of the weighted points. The smaller circles form a subset of the weighted points whose boundary is the skin curve."
+\cgal_figure_begin{figtwoPoints,convexTwoPoints.png}
+Left: Convex combinations of two weighted points (the two dashed circles).  Right: The skin curve of the weighted points. The smaller circles form a subset of the weighted points whose boundary is the skin curve.
+\cgal_figure_end
 
 This section first briefly reviews skin surfaces. For a more thorough
 introduction to skin surfaces, we refer to \cite cgal:e-dssd-99 where
@@ -67,7 +68,7 @@ of the ball is imaginary and the zero-set is empty.
 
 We can take convex combinations of weighted points by taking convex
 combinations of their distance functions.
-Figure \ref figtwoPoints (left) shows weighted points that
+\cgal_figure_ref{figtwoPoints} (left) shows weighted points that
 are obtained as convex combinations of the dashed circles. For further
 reading on the space of circles and spheres we refer to
 \cite p-gcc-70.
@@ -81,8 +82,8 @@ combination with the unweighted point centered at \f$ p\f$, formally
 \f$ \ssWpoint{P}^s\f$ is the set obtained by shrinking every weighted point
 of \f$ \ssWpoint{P}\f$ by a factor \f$ s\f$: \f$ \ssWpoint{P}^s = \{\ssWpoint{p}^s
 \mid \ssWpoint{p}\in \ssWpoint{P}\}\f$. The shrunk weighted points of
-Figure \ref figtwoPoints (left) are shown in
-Figure \ref figtwoPoints (right).
+\cgal_figure_ref{figtwoPoints} (left) are shown in
+\cgal_figure_ref{figtwoPoints} (right).
 
 We now define the skin surface \f$ \mbox{skn}^{s}(\ssWpoint{P})\f$
 associated with a set of weighted points \f$ \ssWpoint{P}\f$. Consider the

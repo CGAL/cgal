@@ -7,8 +7,9 @@ namespace CGAL {
 \authors Pierre Alliez, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
 \autotoc
 
-\anchor figuremultilabel_mesher
-\image html multilabel_mesher.jpg "Cut-view of a multi-domain 3D mesh generated from a segmented image."
+\cgal_figure_begin{figuremultilabel_mesher,multilabel_mesher.jpg}
+Cut-view of a multi-domain 3D mesh generated from a segmented image.
+\cgal_figure_end
 
 \section Mesh_3_section_intro Introduction
 
@@ -247,7 +248,9 @@ In the case of the odt-smoother, the interpolation is linear in each cell
 of the Delaunay triangulation of the mesh vertices,
 hence the name odt which is an abbreviation for *optimal Delaunay triangulation*.
 
-\image html paraboloid.jpg "The one dimensional illustration of the mesh energy minimized by Lloyd (right)  and ODT (left) smoothers."
+\cgal_figure_begin{mesh_3paraboloid,paraboloid.jpg}
+The one dimensional illustration of the mesh energy minimized by Lloyd (right)  and ODT (left) smoothers.
+\cgal_figure_end
 
 
 The Lloyd optimizer is known to be blind to the occurrence of slivers in the mesh 
@@ -257,7 +260,7 @@ Both of them are global optimizers,
 meaning that they try to improve
 the whole mesh rather than focusing on the worst elements. However, both are empirically known
 to be very efficient as a preliminary step of optimization, as they tend to enhance the
-efficiency of the perturber and/or exuder applied next, see Figure \ref figureoptimization 
+efficiency of the perturber and/or exuder applied next, see \cgal_figure_ref{figureoptimization} 
 
 The perturber and the exuder focus on improving the worst mesh elements.
 The perturber \cite cgal:tsa-ps3dd-09 improves the meshes by local changes
@@ -277,8 +280,9 @@ is granted at the end of the Delaunay refinement, this may no longer be true aft
 some optimization processes. Also beware that the default behavior does involve some
 optimization processes.
 
-\anchor figureoptimization
-\image html optimization.jpg "Compared effect of a global optimizer and the perturber. The left part shows the distribution of dihedral angles of mesh cells, right after Delaunay refinement (top), after some ODT smoothing (middle) and after perturbation (bottom). The numbers under the histograms give the measure in degrees of the smallest and biggest dihedral angles in the mesh."
+\cgal_figure_begin{figureoptimization,optimization.jpg}
+Compared effect of a global optimizer and the perturber. The left part shows the distribution of dihedral angles of mesh cells, right after Delaunay refinement (top), after some ODT smoothing (middle) and after perturbation (bottom). The numbers under the histograms give the measure in degrees of the smallest and biggest dihedral angles in the mesh.
+\cgal_figure_end
 
 \section Mesh_3_section_interface Interface
 
@@ -436,17 +440,25 @@ It provides an upper bound on the circumradii of the
 mesh tetrahedra. 
 </UL>
 
-Figure \ref figureparameters shows how the mesh generation process
+\cgal_figure_ref{figureparameters} shows how the mesh generation process
 behaves with respect to these parameters.
 
+\cgal_figure_anchor{figureparameters}
 <CENTER>
-\anchor figureparameters
-<IMG border="0" height="250px" src="./implicit_domain.jpg"><BR/>
-<IMG border="0" height="250px" src="./implicit_domain_3.jpg">
-<IMG border="0" height="250px" src="./implicit_domain_4.jpg">
-<IMG border="0" height="250px" src="./implicit_domain_5.jpg"><BR/>
-
-<B>
+<TABLE BORDER=0>
+<TR>
+<TD> </TD>
+<TD><IMG border="0" height="250px" src="./implicit_domain.jpg"> </TD>
+</TR>
+<TD> </TD>
+<TR>
+<TD><IMG border="0" height="250px" src="./implicit_domain_3.jpg"></TD>
+<TD><IMG border="0" height="250px" src="./implicit_domain_4.jpg"></TD>
+<TD><IMG border="0" height="250px" src="./implicit_domain_5.jpg"></TD>
+</TR>
+</TABLE>
+</CENTER>
+\cgal_figure_caption_begin{figureparameters}
 Top: the mesh is obtained using the parameters \f$ (25,0.15,0.05)\f$
 for the angular bound, radius bound and distance bound of surface
 facets and \f$ (4,0.2) \f$ for the radius-edge bound and radius bound
@@ -460,8 +472,7 @@ achieving a precise approximation. Bottom right : the mesh is obtained
 from the previous one by fixing <I>radius bound</I> of surface facets
 to \f$ 0.01\f$. The surface mesh is then denser to achieve the size
 bound.
-</B>
-</CENTER>
+\cgal_figure_caption_end
 
 If the domain has 1-dimensional exposed features, the `criteria` includes
 a sizing field to guide 
@@ -535,7 +546,7 @@ those processes have themselves parameters (see details in reference pages) to t
 
 The following code produces a 3D mesh for a domain whose boundary surface
 is an isosurface defined by an implicit
-function. Figure \ref figureimplicit_domain shows a cut view of the
+function. \cgal_figure_ref{figureimplicit_domain} shows a cut view of the
 resulting mesh.
 
 Note the use of named parameters (from Boost library) in the
@@ -543,24 +554,23 @@ constructor of the `Mesh_criteria` instance.
 
 \cgalexample{Mesh_3/mesh_implicit_sphere.cpp}
 
-\anchor figureimplicit_domain
-\image html implicit_domain.jpg "Cut view of a 3D mesh produced from an implicit domain"
+\cgal_figure_begin{figureimplicit_domain,implicit_domain.jpg}
+Cut view of a 3D mesh produced from an implicit domain
+\cgal_figure_end
 
 \subsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
 
 \anchor Mesh_3_subsection_examples_polyhedral
 
 The following code produces a 3D mesh for a domain
-defined by polyhedral surfaces. Figure \ref figurepolyhedral_domain 
+defined by polyhedral surfaces. \cgal_figure_ref{figurepolyhedral_domain} 
 shows the resulting mesh.
 
 \cgalexample{Mesh_3/mesh_polyhedral_domain.cpp}
 
-<CENTER>
-\anchor figurepolyhedral_domain
-\image html polyhedral_domain.jpg
-\image html polyhedral_domain_2.jpg "View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files."
-</CENTER>
+\cgal_figure_begin{figurepolyhedral_domain,polyhedral_domain.jpg,polyhedral_domain_2.jpg}
+View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files."
+\cgal_figure_end
 
 \subsection Mesh_3DomainsFromSegmented3DImages Domains From Segmented 3D Images
 
@@ -575,12 +585,13 @@ where each subdomain corresponds to a specific tissue.
 In the following example, the image is read from the file
 `liner.inr.gz` which is encoded in the format of the library Inrimage
 `http://inrimage.gforge.inria.fr/`.
-The resulting mesh is shown in Figure \ref figureliver_3d_image_mesh.
+The resulting mesh is shown in \cgal_figure_ref{figureliver_3d_image_mesh}.
 
 \cgalexample{Mesh_3/mesh_3D_image.cpp}
 
-\anchor figureliver_3d_image_mesh
-\image html liver.jpg "Cut view of a 3D mesh produced from a segmented liver image. Code from subsection \ref Mesh_3_subsection_examples_3d_image generates this file."
+\cgal_figure_begin{figureliver_3d_image_mesh,liver.jpg}
+Cut view of a 3D mesh produced from a segmented liver image. Code from subsection \ref Mesh_3_subsection_examples_3d_image generates this file.
+\cgal_figure_end
 
 \subsection Mesh_3UsingVariableSizingField Using Variable Sizing %Field
 
@@ -593,8 +604,9 @@ The following example shows how to use an analytical function as sizing field.
 \cgalexample{Mesh_3/mesh_implicit_sphere_variable_size.cpp}
 
 
-\anchor figuresphere_variable_mesh
-\image html sphere_variable.jpg "Cut view of a 3D mesh produced from an implicit sphere with non-constant sizing field. Code from subsection \ref Mesh_3_subsubsection_examples_sphere_variable generates this file."
+\cgal_figure_begin{figuresphere_variable_mesh,sphere_variable.jpg}
+Cut view of a 3D mesh produced from an implicit sphere with non-constant sizing field. Code from subsection \ref Mesh_3_subsubsection_examples_sphere_variable generates this file.
+\cgal_figure_end
 
 \subsection Mesh_3DifferentSizingFieldforDifferentSubdomains Different Sizing %Field for Different Subdomains
 
@@ -605,8 +617,9 @@ a 3D medical image.
 
 \cgalexample{Mesh_3/mesh_3D_image_variable_size.cpp}
 
-\anchor figureliver_variable_mesh
-\image html liver_variable.jpg "View of a 3D mesh produced from a 3D image with different size for different organs. Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_variable generates this file."
+\cgal_figure_begin{figureliver_variable_mesh,liver_variable.jpg}
+View of a 3D mesh produced from a 3D image with different size for different organs. Code from subsection \ref Mesh_3_subsubsection_examples_3d_image_variable generates this file.
+\cgal_figure_end
 
 \subsection Mesh_3MeshingDomainswithSharpFeatures Meshing Domains with Sharp Features
 
@@ -619,8 +632,9 @@ surface. The output mesh conforms to the sharp features of the input surface.
 
 \cgalexample{Mesh_3/mesh_polyhedral_domain_with_features.cpp}
 
-\anchor figurefandisk_mesh
-\image html fandisk.jpg "View of a 3D mesh with sharp features. Code from subsection \ref Mesh_3_subsection_example_polyhedral_with_edges generates this mesh."
+\cgal_figure_begin{figurefandisk_mesh,fandisk.jpg}
+View of a 3D mesh with sharp features. Code from subsection \ref Mesh_3_subsection_example_polyhedral_with_edges generates this mesh.
+\cgal_figure_end
 
 \subsection Mesh_3ImplicitDomainWith1DFeatures Implicit Domain With 1D Features
 
@@ -629,8 +643,9 @@ domain. We add by hand the intersection of the spheres as a sharp feature.
 
 \cgalexample{Mesh_3/mesh_two_implicit_spheres_with_balls.cpp}
 
-\anchor figuretwo_spheres_mesh
-\image html twospheres.jpg "View of a 3D mesh with sharp features generated from two intersected implicit spheres. On the left, one can see the mesh without feature preservation, and on the right the mesh with feature preservation."
+\cgal_figure_begin{figuretwo_spheres_mesh,twospheres.jpg}
+View of a 3D mesh with sharp features generated from two intersected implicit spheres. On the left, one can see the mesh without feature preservation, and on the right the mesh with feature preservation.
+\cgal_figure_end
 
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 
@@ -777,11 +792,12 @@ vertices/second
 
 \subsection Mesh_3PolyhedralDomain Polyhedral Domain
 
-\anchor figuremesh_3_benchmark_polyhedral
-\image html bench_polyhedral.jpg "View of polyhedral mesh generation result (size = 0.005)."
+\cgal_figure_begin{figuremesh_3_benchmark_polyhedral,bench_polyhedral.jpg}
+View of polyhedral mesh generation result (size = 0.005).
+\cgal_figure_end
 
 We mesh a volume bounded by a closed triangulated surface made of about 50,000 vertices and 100,000 triangles.
-Picture \ref figuremesh_3_benchmark_polyhedral shows the mesh obtained when
+\cgal_figure_ref{figuremesh_3_benchmark_polyhedral} shows the mesh obtained when
 size is set to 0.005.
 
 <CENTER>
@@ -873,12 +889,13 @@ vertices/second
 
 \subsection Mesh_33DImage 3D Image
 
-\anchor figuremesh_3_benchmark_3d_image
-\image html bench_3d.jpg "View of 3d image mesh generation result (size = 4)."
+\cgal_figure_begin{figuremesh_3_benchmark_3d_image,bench_3d.jpg}
+View of 3d image mesh generation result (size = 4).
+\cgal_figure_end
 
 We mesh image number 2 from the 3D-IRCADb-01 (available at <A href="http://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php">http://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php</A>) public database.
 The size of this image is 512x512x172 voxels (about 45M voxels). The size of the voxels
-is 0.78mm x 0.78mm x 1.6mm. Picture \ref figuremesh_3_benchmark_3d_image 
+is 0.78mm x 0.78mm x 1.6mm. \cgal_figure_ref{figuremesh_3_benchmark_3d_image} 
 shows the mesh obtained for size set to 4.
 
 <CENTER>

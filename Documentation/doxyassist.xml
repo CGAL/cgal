@@ -197,7 +197,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Mesh_3/examples</string>
           
           <list name="HTML_EXTRA_FILES" append="true">
-            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain.jpg</item>
             <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_3.jpg</item>
             <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_4.jpg</item>
             <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_5.jpg</item>

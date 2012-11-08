@@ -89,18 +89,15 @@ printed.
 
 \cgalexample{Mesh_2/conforming.cpp}
 
-See Figure \ref Conformexampleconform
+See \cgal_figure_ref{Conformexampleconform}
 
-\anchor Conformexampleconform
+\cgal_figure_begin{Conformexampleconform,example-conform-Delaunay-Gabriel.png}
+Initial triangulation and the corresponding Delaunay and Gabriel triangulation.
+\cgal_figure_end
 
-\image html example-conform-Delaunay-Gabriel.png "Initial triangulation and the corresponding Delaunay and Gabriel triangulation."
-
-\image latex example-conform.png "Initial triangulation." width=8cm
-\anchor ConformexampleconformDelaunay
-\image latex example-conform-Delaunay.png "The corresponding conforming Delaunay triangulation." width=8cm
-
-\anchor ConformexampleconformGabriel
-\image latex example-conform-Gabriel.png "The corresponding conforming Gabriel triangulation." width=8cm
+\cgal_figure_beginConformexampleconformDelaunay,example-conform-Delaunay.png}
+The corresponding conforming Delaunay triangulation.
+\cgal_figure_end
 
 \section secMesh_2_meshes Meshes 
 
@@ -124,28 +121,28 @@ cover the boundary of the domain.
 The <span class="textsc">Pslg</span> divides the plane into several connected components. By
 default, the domain is the union of the bounded connected components. 
 
-See Figure \ref Domain for an example of a domain
+See \cgal_figure_ref{Domain} for an example of a domain
 defined without using seed points, and a possible mesh of it. 
 
-\anchor Domain
-\image latex domain-domain-mesh.png "A domain defined without seed points and the generated mesh." width=8cm
-\image html domain-domain-mesh.png "A domain defined without seed points and the generated mesh."
+\cgal_figure_begin{Domain,latex domain-domain-mesh.png}
+A domain defined without seed points and the generated mesh.
+\cgal_figure_end
 
 
-The
-user can override this default by providing a set of seed points. Either
+
+The user can override this default by providing a set of seed points. Either
 seed points mark components to be meshed or they mark components not to be
 meshed (holes).
 
 See
-Figure \ref Domainseeds for another domain defined with the same <span class="textsc">Pslg</span> and two seed points used to define holes. 
+\cgal_figure_ref{Domainseeds} for another domain defined with the same <span class="textsc">Pslg</span> and two seed points used to define holes. 
 In the corresponding mesh these
 two holes are triangulated but not meshed.
 
 
-\anchor Domainseeds
-\image latex domain-seeds-domain-seeds-mesh.png "A domain with two seeds points defining holes and the generated mesh." width=8cm
-\image html domain-seeds-domain-seeds-mesh.png "A domain with two seeds points defining holes and the generated mesh."
+\cgal_figure_begin{Domainseeds,domain-seeds-domain-seeds-mesh.png}
+A domain with two seeds points defining holes and the generated mesh.
+\cgal_figure_end
 
 \subsection secMesh_2_criteria Shape and Size Criteria 
 

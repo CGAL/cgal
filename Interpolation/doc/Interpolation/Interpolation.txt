@@ -45,11 +45,9 @@ associated to \f$ \mathcal{P}\f$ are defined from the Voronoi diagram of
 Voronoi cell of \f$ \mathbf{x}\f$ "steals" some parts from the existing
 cells.
 
-\anchor fignn_coords
-\image html nn_coords.gif
-<center><b>
-\f$ 2D\f$ example: \f$ \mathbf{x}\f$ has five natural neighbors \f$ \mathbf{p_1},\ldots, \mathbf{p_5}\f$. The natural neighbor coordinate \f$ \lambda_3(\mathbf{x})\f$ is the ratio of the area of the pink polygon, \f$ \pi_3(\mathbf{x})\f$, over the area of the total highlighted zone. 
-</b></center>
+\cgal_figure_begin{fignn_coords,nn_coords.gif}
+2D example: \f$ \mathbf{x}\f$ has five natural neighbors \f$ \mathbf{p_1},\ldots, \mathbf{p_5}\f$. The natural neighbor coordinate \f$ \lambda_3(\mathbf{x})\f$ is the ratio of the area of the pink polygon, \f$ \pi_3(\mathbf{x})\f$, over the area of the total highlighted zone. 
+\cgal_figure_end
 
 Let \f$ \pi(\mathbf{x})\f$ denote the volume of the potential Voronoi cell
 of \f$ \mathbf{x}\f$ and \f$ \pi_i(\mathbf{x})\f$ denote the volume of the
@@ -60,7 +58,7 @@ with respect to the data point \f$ \mathbf{p_i}\in \mathcal{P}\f$ is defined by
 \lambda_i(\mathbf{x}) =
 \frac{\pi_i(\mathbf{x})}{\pi(\mathbf{x})}. \f]
 A two-dimensional example
-is depicted in Figure \ref fignn_coords.
+is depicted in \cgal_figure_ref{fignn_coords}.
 
 Various papers (\cite s-vidt-80, \cite f-sodt-90,
 \cite cgal:p-plcbd-93, \cite b-scaps-97, \cite hs-vbihc-00) show that

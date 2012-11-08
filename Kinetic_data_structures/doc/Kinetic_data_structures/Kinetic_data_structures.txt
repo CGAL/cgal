@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Kinetic Data Structures
+\mainpage %Kinetic Data Structures
 \anchor Chapter_Kinetic_Data_Structures
 \anchor chapterkds
 \autotoc
@@ -171,7 +171,7 @@ familiarity is useful. Here we presented a quick overview of the
 framework.
 
 The framework is structured around five main concepts. See
-Figure \ref figkds_uml_usage for a schematic of how a kinetic data
+\cgal_figure_ref{figkds_uml_usage} for a schematic of how a kinetic data
 structure interacts with the various parts. The main concepts are
 
 <UL>
@@ -203,16 +203,14 @@ algebraic operations for manipulating event times. The
 \ref seckds_algebraic_kernel.
 </UL>
 
-\anchor figkds_uml_usage
-\image html sort_usage_pct.gif
-<center><b>
+\cgal_figure_begin{figkds_uml_usage,sort_usage_pct.gif}
 The figure shows the interaction between the `Kinetic::Sort<Traits,
 Visitor>` kinetic data structure and the various pieces of our
 package. Other, more complicated, kinetic data structures will also
 use the `Kinetic::InstantaneousKernel` in order to insert/remove
 geometric primitives and audit themselves. `Kinetic::Sort<Traits,
 Visitor>` uses the sorting functionality in the \stl instead.
-</b></center>
+\cgal_figure_end
 
 For simplicity, we added an additional concept, that of
 `Kinetic::SimulationTraits`, which wraps together a particular set of
@@ -243,7 +241,7 @@ two dimensional points.
 - `Kinetic::Delaunay_triangulation_3<Traits,Visitor, Triangulation>` maintain the Delaunay triangulation of a set of
 three dimensional points.
 - `Kinetic::Regular_triangulation_3<Traits, Visitor, Triangulation>` maintain the regular triangulation of a set of waiting three dimensional points.
-- `Kinetic::Enclosing_box_2<Traits>` and `Kinetic::Enclosing_box_3<Traits>`</B><DD> restrict points to stay within a box by bouncing them off the walls.
+- `Kinetic::Enclosing_box_2<Traits>` and `Kinetic::Enclosing_box_3<Traits>` restrict points to stay within a box by bouncing them off the walls.
 
 
 \subsection seckds_sort_example A Simple Example 
@@ -402,47 +400,27 @@ to the `Active_points_1_table` to get the coordinates of the
 points.
 
 Finally, the example shows how to use the graphical interface elements
-provided, see Figure \ref figkds_qtwidget_capture. Our package includes
+provided, see \cgal_figure_ref{figkds_qtwidget_capture}. Our package includes
 <TT>Qt</TT> widgets for displaying kinetic geometry in two and three
 dimensions. In addition to being able to play and pause the
 simulation, the user can step through events one at a time and reverse
 the simulation to retrace what had happened. The three-dimensional
 visualization support is based on the Coin library http://www.coin3d.org.
 
-\anchor figkds_delaunay_events 
-\image html delaunay_0.gif
-\image html delaunay_1.gif
-\image html delaunay_2.gif
-\image html delaunay_3.gif
-\image html delaunay_4.gif
-\image html delaunay_5.gif
-\image html delaunay_6.gif
-\image html delaunay_7.gif
-\image html delaunay_8.gif
-
-<center><b>
-
-The state of the two dimensional Delaunay triangulation
-immediately following the first events is shown. Green edges are ones
-which were just created. The pictures are screen shots from
-`demo/Kinetic_data_structures/Kinetic_Delaunay_triangulation_2.cpp`.
-
-<I>Some events from a Delaunay triangulation kinetic data
-structure:</I> The state of the two dimensional Delaunay triangulation
+\cgal_figure_begin{figkds_delaunay_events,delaunay_0.gif,delaunay_1.gif,delaunay_2.gif,delaunay_3.gif,delaunay_4.gif,delaunay_5.gif,delaunay_6.gif,delaunay_7.gif,delaunay_8.gif}
+Some events from a Delaunay triangulation kinetic data
+structure: The state of the two dimensional Delaunay triangulation
 immediately following the first events is shown. Green edges are ones
 which were just created. The pictures are screen shots from
 `demo/Kinetic_data_structures/Kinetic_Delaunay_triangulation_2.cpp`
+\cgal_figure_end
 
-</b></center>
-
-\anchor figkds_qtwidget_capture 
-\image html qt_widget_marked_pct.gif
-<center><b>
+\cgal_figure_begin{figkds_qtwidget_capture,qt_widget_marked_pct.gif}
 The figure shows the graphical user interface for controlling
 two-dimensional kinetic data structures. It is built on top of the
 `Qt_widget` and adds buttons to play, pause, step through and run the
 simulation backwards.
-</b></center>
+\cgal_figure_end
 
 \subsection seckds_sweepline_example Extending Kinetic Data Structures 
 

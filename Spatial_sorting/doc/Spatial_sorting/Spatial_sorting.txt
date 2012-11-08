@@ -56,16 +56,18 @@ and
 </BLOCKQUOTE>
 
 Then each square is subdivided in the same way recursively.
-Figure \ref Spatial_sorting_fig_Hilbert8 illustrates this process.
+\cgal_figure_ref{Spatial_sorting_fig_Hilbert8} illustrates this process.
 
-\anchor Spatial_sorting_fig_Hilbert8
-\image html Hilbert8.gif "Hilbert mapping"
+\cgal_figure_begin{Spatial_sorting_fig_Hilbert8,Hilbert8.gif}
+Hilbert mapping
+\cgal_figure_end
 
 Now given a set of 2D points, they can be sorted in the order they have on such
-a space filling curve as illustrated in Figure \ref Spatial_sorting_fig_Hilbert_middle :
+a space filling curve as illustrated in \cgal_figure_ref{Spatial_sorting_fig_Hilbert_middle} :
 
-\anchor Spatial_sorting_fig_Hilbert_middle
-\image html Hilbert-middle.gif "Hilbert sort with middle policy"
+\cgal_figure_begin{Spatial_sorting_fig_Hilbert_middle,Hilbert-middle.gif}
+Hilbert sort with middle policy
+\cgal_figure_end
 
 \subsection Spatial_sortingExamples Examples
 
@@ -78,10 +80,11 @@ as above, we subdivide it
 by splitting at the median point (in \f$ x\f$ or \f$ y\f$ directions alternating),
 we construct a 2-d tree adapted to the point set. This tree can be visited in a
 similar manner and we get also a suitable ordering of the points
-(see Figure \ref Spatial_sorting_fig_Hilbert_median).
+(see \cgal_figure_ref{Spatial_sorting_fig_Hilbert_median}).
 
-\anchor Spatial_sorting_fig_Hilbert_median
-\image html Hilbert-median.gif "Hilbert sort with median policy"
+\cgal_figure_begin{Spatial_sorting_fig_Hilbert_median,Hilbert-median.gif}
+Hilbert sort with median policy
+\cgal_figure_end
 
 
 \cgal provides Hilbert sorting for points in 2D, 3D and higher dimensions,

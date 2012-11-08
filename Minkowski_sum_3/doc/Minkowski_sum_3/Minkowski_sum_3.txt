@@ -9,14 +9,15 @@ namespace CGAL {
 
 \section Minkowski_sum_3Introduction Introduction
 
-\anchor figspoonStar
-\image html spoon_star.gif "The Minkowski sum of a spoon and a star."
+\cgal_figure_begin{figspoonStar,spoon_star.gif}
+The Minkowski sum of a spoon and a star.
+\cgal_figure_end
 
 The Minkowski sum of two point sets \f$ P\f$ and \f$ Q\f$ in \f$ \mathbb{R}^d\f$, denoted by
 \f$ P \oplus Q\f$, is defined as the set \f$ \{p+q:p \in P, q \in Q
 \}\f$. Minkowski sums are used in a wide range of applications such as
 robot motion planning \cite l-rmp-91 and computer-aided
-design \cite cgal:ek-sicad-99. Figure \ref figmotionPlanning shows
+design \cite cgal:ek-sicad-99. \cgal_figure_ref{figmotionPlanning} shows
 an example how Minkowski sums can be used to plan the motion of a
 translational robot. We want to know which are legal positions of the
 robot, and where can the robot go to from a specified starting
@@ -29,12 +30,13 @@ describes all legal positions of the robot, i.e., all positions where
 it does not intersect an obstacle.
 
 
-\anchor figmotionPlanning
-\image html motion_planning.gif "Can the robot enter the room? The Minkowski sum of the inverted robot and the obstacle describes the illegal positions of the robot with respect to the obstacle. Since the boundary of the Minkowski sum describes legal positions, there is a path for the robot between the outer area and the room."
+\cgal_figure_begin{figmotionPlanning,motion_planning.gif}
+Can the robot enter the room? The Minkowski sum of the inverted robot and the obstacle describes the illegal positions of the robot with respect to the obstacle. Since the boundary of the Minkowski sum describes legal positions, there is a path for the robot between the outer area and the room.
+\cgal_figure_end
 
 The Minkowski sum can be illustrated as follows. Pick an arbitrary
 reference point \f$ r\f$ of \f$ P\f$ (black dot in the lower left corner of the
-robot in Figure \ref figmotionPlanning ). Then place the inverted set
+robot in \cgal_figure_ref{figmotionPlanning} ). Then place the inverted set
 \f$ -P\f$ on \f$ Q\f$, such that \f$ -r\f$ is on the boundary of \f$ Q\f$. Finally, move
 \f$ -P\f$ along the complete boundary of \f$ Q\f$. The union of \f$ Q\f$ and the
 points swept by \f$ -P\f$ is the Minkowski sum of \f$ P\f$ and \f$ Q\f$.
@@ -59,7 +61,9 @@ polyhedra are rather easy to compute. It decomposes both polyhedra
 into convex pieces, computes all pairwise Minkowski sums of the convex
 pieces, and merges the pairwise sums \cite bkos-cgaa-97.
 
-\image html decomposition_method.gif "The decomposition method decomposes both input polyhedra into convex parts, computes all pairwise Minkowski sums of the convex parts, and merges the pairwise sums."
+\cgal_figure_begin{Mink3decomp,decomposition_method.gif}
+The decomposition method decomposes both input polyhedra into convex parts, computes all pairwise Minkowski sums of the convex parts, and merges the pairwise sums.
+\cgal_figure_end
 
 Minkowski sum are inherently complex to compute. Using the
 decomposition method, each polyhedron might be divided into a
@@ -77,7 +81,7 @@ processor and 4 GB RAM. The code was compiled with
 g++ 3.2 and compiler options -O2. The
 `Nef_polyhedron_3` class was instantiated with the geometric
 kernel `Homogeneous<leda_integer>`. The Minkowski sum of the spoon
-and the star is illustrated in Figure \ref figspoonStar.
+and the star is illustrated in \cgal_figure_ref{figspoonStar}.
 
 <CENTER>
 <TABLE CELLSPACING=5 >
@@ -185,7 +189,7 @@ as an open set. Then the Minkowski sum will also be an open set and
 tight passages will occur as lower-dimensional exclusions, i.e., as
 facets, lines, or vertices that are, in contrast to the volume around
 them, not part of the resulting point
-set. Figure \ref figmotionPlanning shows such a tight passage
+set. \cgal_figure_ref{figmotionPlanning} shows such a tight passage
 scenario.
 
 Our implementation uses `Nef_polyhedron_3` to model the input
@@ -267,7 +271,9 @@ the function itself to keep the memory usage as small as possible.
 
 \section Minkowski_sum_3Glide Glide
 
-\image html glide.gif "The region swept by a star that moves along a polygonal path."
+\cgal_figure_begin{Mink3glide,glide.gif}
+The region swept by a star that moves along a polygonal path.
+\cgal_figure_end
 
 With the function `minkowski_sum_3()` it is also possible to realize
 other interesting geometric operations like the glide operation, which
@@ -280,4 +286,3 @@ function `minkowski_sum_3()`.
 
 */ 
 } /* namespace CGAL */
-

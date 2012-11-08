@@ -20,14 +20,15 @@ can be processed with functions devoted to the simplification, outlier
 removal, smoothing, normal estimation and normal orientation. The
 processing of point sets is often needed in applications dealing with
 measurement data, such as surface reconstruction from laser scanned
-data (see Figure \ref Point_set_processing_3figintroduction).
+data (see \cgal_figure_ref{Point_set_processing_3figintroduction}).
 
-\anchor Point_set_processing_3figintroduction
-\image html introduction.jpg "Point set processing. Left: 275K points sampled on the statue of an elephant with a Minolta laser scanner. Right: point set after clean-up and simplification to 17K points."
+\cgal_figure_begin{Point_set_processing_3figintroduction,introduction.jpg}
+Point set processing. Left: 275K points sampled on the statue of an elephant with a Minolta laser scanner. Right: point set after clean-up and simplification to 17K points.
+\cgal_figure_end
 
 In the context of surface reconstruction we can position the elements
 of this component along the common surface reconstruction pipeline
-(Figure \ref Point_set_processing_3figpipeline) which involves the
+(\cgal_figure_ref{Point_set_processing_3figpipeline}) which involves the
 following steps: 
 -# Scanning and scan alignment to produce a set of
 points or points with normals (alignment is not covered in \cgal);
@@ -39,8 +40,9 @@ by the acquisition device; and
 -# Surface reconstruction. Chapter \ref Chapter_Surface_Reconstruction_from_Point_Sets "Surface Reconstruction from Point Sets"
 deals with surface reconstruction from point sets with normal attributes.
 
-\anchor Point_set_processing_3figpipeline
-\image html pipeline.jpg "Point set processing pipeline for surface reconstruction. The algorithms listed in gray are available from other CGAL components (bounding volumes and principal component analysis)."
+\cgal_figure_begin{Point_set_processing_3figpipeline,pipeline.jpg}
+Point set processing pipeline for surface reconstruction. The algorithms listed in gray are available from other CGAL components (bounding volumes and principal component analysis).
+\cgal_figure_end
 
 \section Point_set_processing_3InputOutput Input/Output
 
@@ -151,8 +153,9 @@ one arbitrarily chosen point. This algorithm is slower than
 The following example reads a point set and simplifies it by clustering.
 \cgalexample{Point_set_processing_3/grid_simplification_example.cpp}
 
-\anchor Point_set_processing_3figgrid_simplification
-\image html grid_simplification.jpg "Point set simplification through grid-based clustering. Removed points are depicted in red. Notice how low-density areas (in green) are not simplified."
+\cgal_figure_begin{Point_set_processing_3figgrid_simplification,grid_simplification.jpg}
+Point set simplification through grid-based clustering. Removed points are depicted in red. Notice how low-density areas (in green) are not simplified.
+\cgal_figure_end
 
 \section Point_set_processing_3Smoothing Smoothing
 
@@ -196,8 +199,9 @@ within a minimum spanning tree computed over this graph. The result is
 an oriented normal vector for each input unoriented normal, except for
 the normals which could not be successfully oriented.
 
-\anchor Point_set_processing_3figmst_orient_normals
-\image html  mst_orient_normals.jpg "Normal orientation of a sampled cube surface. Left: unoriented normals. Right: orientation of right face normals is propagated to bottom face."
+\cgal_figure_begin{Point_set_processing_3figmst_orient_normals,mst_orient_normals.jpg}
+Normal orientation of a sampled cube surface. Left: unoriented normals. Right: orientation of right face normals is propagated to bottom face.
+\cgal_figure_end
 
 \subsection Point_set_processing_3Example_5 Example
 

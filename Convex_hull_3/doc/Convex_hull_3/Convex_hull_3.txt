@@ -8,9 +8,9 @@ namespace CGAL {
 \autotoc
 \authors Susan Hert and Stefan Schirra
 
-\anchor figchbimba
-\image latex chull_bimba.png "The convex hull of a model made of 192135 points." width=12cm
-\image html chull_bimba.png "The convex hull of a model made of 192135 points."
+\cgal_figure_begin{figchbimba,chull_bimba.png}
+The convex hull of a model made of 192135 points.
+\cgal_figure_end
 
 \section Convex_hull_3Introduction Introduction
 
@@ -134,7 +134,7 @@ used was `Exact_predicates_inexact_constructions_kernel`. For the incremental ve
 
 To compute the convex hull of a million of random points in a unit ball the static approach needed 1.63s, while 
 the dynamic and incremental approaches needed 9.50s and 11.54s respectively.
-To compute the convex hull of the model of Figure \ref figchbimba featuring 192135 points, 
+To compute the convex hull of the model of \cgal_figure_ref{figchbimba} featuring 192135 points, 
 the static approach needed 0.18s, while the dynamic and incremental approaches needed 1.90s and 6.80s respectively.
 
 The measurements have been performed using \cgal 3.9, using the <span class="textsc">Gnu</span> \cpp compiler version 4.3.5, under Linux (Debian distribution),

@@ -83,17 +83,16 @@ range of <I>arbitrary</I> (not necessarily \f$ x\f$-monotone) curves.
 In this section we explain more on the structure of the envelope
 diagram these functions output.
 
-\anchor env2_figmin_diag
-\image html min_diag.gif 
-<CENTER>
-<B>The lower envelope of eight line segments, labeled \f$ A, \ldots, H\f$, 
+\cgal_figure_begin{env2_figmin_diag,min_diag.gif}
+The lower envelope of eight line segments, labeled \f$ A, \ldots, H\f$, 
 as constructed in `envelope_segments.cpp`. The minimization
 diagram is shown at the bottom, where each diagram vertex points to
 the point associated with it, and the labels of the segment that
 induce a diagram edge are displayed below this edge. Note that there
 exists one edge that represents an overlap (i.e., there are two
 segments that induce it), and there are also a few edges that
-represent empty intervals."</B></CENTER>
+represent empty intervals.
+\cgal_figure_end
 
 A minimization diagram or a maximization diagram is represented by
 a model of the concept `EnvelopeDiagram_1`. This concept defines
@@ -103,7 +102,7 @@ The important property of this subdivision is that the identity of
 the curves that induce the lower envelope (or the upper envelope)
 over each cell is fixed.
 
-Figure \ref env2_figmin_diag shows the lower envelope of a set of
+\cgal_figure_ref{env2_figmin_diag} shows the lower envelope of a set of
 eight line segments, and sketches the structure of their minimization
 diagram. Each diagram vertex \f$ v\f$ is associated with a point \f$
 p_v\f$ on the envelope, which corresponds to either a curve endpoint
@@ -126,7 +125,7 @@ while each additional vertex comes along with an additional edge. It
 is possible to directly access the <I>leftmost</I> edge, representing
 the unbounded interval that starts at \f$ -\infty\f$, and the <I>rightmost</I>
 edge, representing the unbounded interval that ends at \f$ \infty\f$.
-(In the example depicted in Figure \ref env2_figmin_diag we have
+(In the example depicted in \cgal_figure_ref{env2_figmin_diag} we have
 only bounded curves, so the leftmost and rightmost edges represent
 empty intervals. This is not the case when we deal, for example, with
 envelopes of sets of lines.)
@@ -151,7 +150,7 @@ subcurves.
 
 The following example demonstrates how to compute and traverse the
 minimization diagram of line segments, as illustrated in
-Figure \ref env2_figmin_diag. We use the curve-data traits
+\cgal_figure_ref{env2_figmin_diag}. We use the curve-data traits
 instantiated by the `Arr_segment_traits_2` class, in order to
 attach a label (a `char` in this case) to each input segment.
 We use these labels when we print the minimization diagram.
@@ -181,18 +180,16 @@ diagrams.
 
 \cgalexample{Envelope_2/convex_hull.cpp}
 
-\anchor env2_figex_circ
-\image html ex_circle.gif 
-<center><b>
+\cgal_figure_begin{env2_figex_circ,ex_circle.gif}
 A set of four circles, as constructed in \ref Envelope_2/ex_envelope_circles.cpp. The lower envelope and the upper envelope are shown using thick dashed lines of different colors respectively.
-</b></center>
+\cgal_figure_end
 
 \subsection Envelope_2ExampleforEnvelopeofNonLinearCurves Example for Envelope of Non-Linear Curves
 
 We conclude by an example of envelopes of non-linear curves. 
 We use the `Arr_circle_segment_traits_2` class to construct the
 lower and the upper envelopes of a set of four circles, as depicted
-in Figure \ref env2_figex_circ. Note that unlike the two previous
+in \cgal_figure_ref{env2_figex_circ}. Note that unlike the two previous
 examples, here our curves are not \f$ x\f$-monotone, so we use the functions
 that compute envelopes of arbitrary curves.
 

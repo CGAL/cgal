@@ -25,14 +25,14 @@ interior of the polyhedron. Those edges are also called reflex edges.
 The bound of \f$ O(r^2)\f$ convex pieces is worst-case
 optimal \cite c-cpplb-84.
 
-\anchor figverticalDecomposition
-\image html two_cubes_all_in_one.png "Vertical decomposition based on the insertion of vertical facets (viewed from the top). Left: Non-convex polyhedron. Middle: Non-vertical reflex edges have been resolved. Right: Vertical reflex edges have been resolved. The sub-volumes are convex."
-
+\cgal_figure_begin{figverticalDecomposition,two_cubes_all_in_one.png}
+Vertical decomposition based on the insertion of vertical facets (viewed from the top). Left: Non-convex polyhedron. Middle: Non-vertical reflex edges have been resolved. Right: Vertical reflex edges have been resolved. The sub-volumes are convex.
+\cgal_figure_end
 
 Our decomposition runs in two steps. In the first step, each
 non-vertical reflex edge \f$ e\f$ is resolved by insertion of vertical
 facets through \f$ e\f$. In the second step, we do the same with the
-vertical reflex edges. Figure \ref figverticalDecomposition 
+vertical reflex edges. \cgal_figure_ref{figverticalDecomposition}
 illustrates the two steps.
 
 At the moment our implementation is restricted to the decomposition of

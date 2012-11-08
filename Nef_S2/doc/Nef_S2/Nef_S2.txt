@@ -20,16 +20,11 @@ operations. Also, Nef polyhedra are closed under topological unary
 set operations. Given a Nef polyhedron one can determine its interior, its
 boundary, and its closure.
 
-\anchor nefsexamples
-\htmlonly
-<center>
-<IMG BORDER=0 SRC="halfspace.gif" ALIGN=middle ALT="a halfplane"> <IMG BORDER=0 SRC="complex.gif" ALIGN=middle ALT="a complex polyhedron">
-</center>
-\endhtmlonly
-
-<center><b>Two spherical Nef polyhedra. A closed halfspace on the left
+\cgal_figure_begin{nefsexamples,halfspace.gif,complex.gif}
+Two spherical Nef polyhedra. A closed halfspace on the left
 and a complex polyhedron on the right. The different colors indicate
-selected and unselected regions, lines and points.</b></center>
+selected and unselected regions, lines and points.
+\cgal_figure_end
 
 Additionally, a d-dimensional Nef polyhedron has the property, that its boundary
 is a (d-1)-dimensional Nef polyhedron. This property can be used as a way to

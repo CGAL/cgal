@@ -77,8 +77,9 @@ a file scanner could be performed more efficiently on the internal
 halfedge data structure than by using the high-level Euler operators
 of the polyhedron.
 
-\anchor figureModifierDesign
-\image html modifier_small.gif "Class diagram for the modifier. It illustrates the safe access to an internal representation through an high-level interface."
+\cgal_figure_begin{figureModifierDesign,modifier_small.gif}
+Class diagram for the modifier. It illustrates the safe access to an internal representation through an high-level interface.
+\cgal_figure_end
 
 The solution provided here is inspired by the strategy
 pattern \cite cgal:ghjv-dpero-95, though it serves a different intent. 

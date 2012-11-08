@@ -247,7 +247,7 @@ Our running example is the following quadratic program in two variables:
 \end{array}
 \f]
 
-Figure \ref figQPfirst_qp shows a picture. It
+\cgal_figure_ref{figQPfirst_qp} shows a picture. It
 depicts the five inequalities of the program, along with the
 <I>feasible region</I> (green), the set of points that satisfy all the
 five constraints. The dashed elliptic curves represent <I>contour lines</I> 
@@ -259,8 +259,9 @@ the point \f$ (0,4)\f$, and the minimum within the feasible region appears
 at the point \f$ (2,3)\f$ marked with a black dot. The value of the objective
 function at this optimal solution is \f$ 2^2 + 4(3-4)^2 = 8\f$.
 
-\anchor figQPfirst_qp
-\image html first_qp.png "A quadratic program in two variables"
+\cgal_figure_begin{figQPfirst_qp,first_qp.png}
+A quadratic program in two variables
+\cgal_figure_end
 
 \subsection QP_solverConstructingaProgramfromData Constructing a Program from Data
 
@@ -395,7 +396,7 @@ objective function:
 \end{array}
 \f]
 
-Figure \ref figQPfirst_lp shows how this looks like. We will not
+\cgal_figure_ref{figQPfirst_lp} shows how this looks like. We will not
 visualize a linear objective function with contour lines but with
 arrows instead. The arrow represents the (direction) of the vector \f$ -c\f$,
 and we are looking for a feasible solution that is "extreme" in the direction
@@ -404,8 +405,9 @@ two constraints \f$ x_1+x_2\leq 7\f$ and \f$ -x_1+x_2\leq 4\f$, the point
 \f$ (10/3,11/3)\f$ marked with a black dot. The optimal objective function
 value is \f$ -32(11/3)+64=-160/3\f$.
 
-\anchor figQPfirst_lp
-\image html first_lp.png "A linear program in two variables"
+\cgal_figure_begin{figQPfirst_lp,first_lp.png}
+A linear program in two variables
+\cgal_figure_end
 
 Here is \cgal code for solving it, using the dedicated LP solver, and
 according to the three ways for constructing a program that we have
@@ -441,13 +443,14 @@ program:
 \end{array}
 \f]
 
-Figure \ref figQPfirst_nonnegative_qp contains 
+\cgal_figure_ref{figQPfirst_nonnegative_qp} contains 
 the illustration; since the constraint \f$ y\leq 4\f$ was 
 redundant, the feasible region and the optimal solution do 
 not change.
 
-\anchor figQPfirst_nonnegative_qp
-\image html first_nonnegative_qp.png "A nonnegative quadratic program in two variables"
+\cgal_figure_begin{figQPfirst_nonnegative_qp,first_nonnegative_qp.png}
+A nonnegative quadratic program in two variables
+\cgal_figure_end
 
 The following programs (using the dedicated solver for nonnegative
 quadratic programs) will therefore again output

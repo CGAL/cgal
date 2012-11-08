@@ -10,7 +10,7 @@ As of release 2.1, a reference counting scheme is used for
 the kernel objects in the kernels `Cartesian` and 
 `Homogeneous`. 
 All copies of an object share a common representation object storing
-the data associated with a kernel object; see Figure  \ref figrefcounted .
+the data associated with a kernel object; see \cgal_figure_ref{figrefcounted}.
 
 The motivation is to save space by avoiding storing the same data more 
 than once and to save time in the copying procedure. 
@@ -21,8 +21,9 @@ bad in terms of cache efficiency.
 Thus there are also non-reference-counting kernels available
 `Simple_cartesian` and `Simple_homogeneous`.
 
-\anchor figrefcounted 
-\image html reference_counting.gif "Objects using reference counting (bottom) share common representation; copying creates a new handle (drawn at the right) pointing to the same  representation as the object copied. Without reference counting (top)  all data are copied to the new object (drawn at the right);"
+\cgal_figure_begin{figrefcounted,reference_counting.gif}
+Objects using reference counting (bottom) share common representation; copying creates a new handle (drawn at the right) pointing to the same  representation as the object copied. Without reference counting (top)  all data are copied to the new object (drawn at the right);
+\cgal_figure_end
 
 The reference counting in the kernel objects is not visible to a user
 and does not affect the interface of the objects. 
@@ -43,7 +44,7 @@ of member functions hidden to the user, especially at runtime.
 
 The two classes `Handle` and 
 `Rep` provide reference counting
-functionality; see Figure  \ref figHandleRep . By deriving from these classes, 
+functionality; see \cgal_figure_ref{figHandleRep} . By deriving from these classes, 
 the reference counting functionality is inherited. 
 The class `Rep` provides a counter; representation classes 
 derive from this class. 
@@ -81,8 +82,9 @@ typedef Leda_like_handle Handle;
 typedef Leda_like_rep    Rep;
 \endcode
 
-\anchor figHandleRep
-\image html handle_rep.gif "UML class diagram for Handle & Rep scheme."
+\cgal_figure_begin{figHandleRep,handle_rep.gif}
+UML class diagram for Handle & Rep scheme.
+\cgal_figure_end
 
 \section Developer_manualUsingHandleRep Using Handle & Rep
 
@@ -168,12 +170,13 @@ to manage its internal reference counting:
 <LI>`bool is_shared`
 
 </UL>
-See the UML class diagram in Figure  \ref figHandleFor.
+See the UML class diagram in \cgal_figure_ref{figHandleFor}.
 The reference counting functionality and the required
 interface can be inherited from class `Ref_counted`.
 
-\anchor figHandleFor
-\image html handle_allocate.gif "UML diagram for templated handles."
+\cgal_figure_begin{figHandleFor,handle_allocate.gif}
+UML diagram for templated handles.
+\cgal_figure_end
 
 Kernel objects have used such a handle/rep scheme since release 2.2.
 

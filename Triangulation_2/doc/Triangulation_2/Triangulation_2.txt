@@ -167,8 +167,9 @@ the *infinite vertex* has no significant
 coordinates and that no geometric predicate can be applied on it
 nor on an infinite face.
 
-\anchor Triangulation_2D_Fig_infinite_vertex
-\image html infinite.gif "Infinite vertex and infinite faces"
+\cgal_figure_begin{Triangulation_2D_Fig_infinite_vertex,infinite.gif}
+Infinite vertex and infinite faces
+\cgal_figure_end
 
 \subsection Triangulation_2ARepresentationBasedonFaces A Representation Based on Faces and Vertices
 
@@ -192,7 +193,7 @@ The three vertices of a face are indexed with 0, 1 and 2
 in counterclockwise order. The neighbors of a face are also 
 indexed with 0,1,2 in such a way that the neighbor indexed by `i`
 is opposite to the vertex with the same index.
-See Figure \ref Triangulation_2D_Fig_neighbors1, 
+See \cgal_figure_ref{Triangulation_2D_Fig_neighbors1}, 
 the functions `ccw(i)`
 and `cw(i)` shown on this figure
 compute respectively \f$ i+1\f$ and \f$ i-1\f$ modulo 3.
@@ -204,8 +205,9 @@ of a face `f` which is opposed to the vertex indexed `i`,
 can be represented as well as an edge of the `neighbor(i)` of 
 `f`.
 
-\anchor Triangulation_2D_Fig_neighbors1
-\image html rep_bis.gif "Vertices and neighbors."
+\cgal_figure_begin{Triangulation_2D_Fig_neighbors1,rep_bis.gif}
+Vertices and neighbors.
+\cgal_figure_end
 
 \section Section_2D_Triangulations_Software_Design Software Design 
 
@@ -260,13 +262,14 @@ of a triangulation. See Section \ref Section_2D_Triangulations_Flexibility
 for more details on the way to make use of this flexibility.
 </UL>
 
-The Figure \ref Triangulation_2D_Fig_three_levels summarizes the design of the
+The \cgal_figure_ref{Triangulation_2D_Fig_three_levels} summarizes the design of the
 triangulation package, showing the three layers
 (base classes, triangulation data structure and triangulation)
 forming this design.
 
-\anchor Triangulation_2D_Fig_three_levels
-\image html threelevels.gif "The triangulations software design."
+\cgal_figure_begin{Triangulation_2D_Fig_three_levels,threelevels.gif}
+The triangulations software design.
+\cgal_figure_end
 
 The top triangulation level, responsible for the geometric 
 embedding of the triangulation comes in different flavors 
@@ -274,7 +277,7 @@ according to the different kind of triangulations:
 basic, Delaunay, regular, constrained or constrained Delaunay.
 Each kind of triangulations correspond to a different
 class. 
-Figure \ref Triangulation_2D_Fig_derivation_tree summarizes the derivation dependencies
+\cgal_figure_ref{Triangulation_2D_Fig_derivation_tree summarizes} the derivation dependencies
 of \cgal 2D triangulations classes.
 Any 2D triangulation class is parametrized by
 a geometric traits and a triangulation data structure.
@@ -290,8 +293,9 @@ classes requires base classes implementing
 refinements 
 of the basic concepts.
 
-\anchor Triangulation_2D_Fig_derivation_tree
-\image html derivation_tree.gif "The derivation tree of 2D triangulations."
+\cgal_figure_begin{\anchor Triangulation_2D_Fig_derivation_tree,derivation_tree.gif}
+The derivation tree of 2D triangulations.
+\cgal_figure_end
 
 \section Section_2D_Triangulations_Basic Basic Triangulations 
 
@@ -366,10 +370,11 @@ The triangulation can be modified by several functions:
 insertion of a point, removal of a vertex, displacement of a vertex,
 flipping of an edge. The flipping of an edge
 is possible when the union of the two incident faces
-forms a convex quadrilateral (see Figure \ref Triangulation_2D_fig_flip_bis).
+forms a convex quadrilateral (see \cgal_figure_ref{Triangulation_2D_fig_flip_bis}).
 
-\anchor Triangulation_2D_fig_flip_bis
-\image html Flip.gif "Flip. "
+\cgal_figure_begin{Triangulation_2D_fig_flip_bis,Flip.gif}
+Flip.
+\cgal_figure_end
 
 \subsection Triangulation_2Implementation Implementation
 
@@ -601,8 +606,9 @@ of this diagram
 The following code computes the Delaunay triangulation of a set of points and prints the Voronoi edges 
 restricted to a given rectangle.
 
-\anchor figurecropped_voronoi
-\image html cropped_voronoi.png "Voronoi diagram (in red) of the black points restricted to the blue rectangle."
+\cgal_figure_begin{figurecropped_voronoi,cropped_voronoi.png}
+Voronoi diagram (in red) of the black points restricted to the blue rectangle.
+\cgal_figure_end
 
 \cgalexample{Triangulation_2/print_cropped_voronoi.cpp}
 
@@ -827,7 +833,7 @@ section \ref Section_2D_Triangulations_Constrained_Plus.
 </UL>
 </UL>
 
-\image html constraints.gif "
+\image html constraints.gif
 
 A constrained triangulation is represented in the \cgal library as an
 object of the class `Constrained_triangulation_2<Traits,Tds,Itag>`.
@@ -888,8 +894,9 @@ derives from the class
 `Triangulation_face_base_2<Traits>`
 and adds three Boolean data members to store the status of its edges.
 
-\anchor Triangulation_2D_Fig_constrained
-\image html poisson_del_poisson.png "Constrained and Constrained Delaunay triangulation: the constraining edges are the green edges, a constrained triangulation is shown on the left, the constrained Delaunay triangulation with two examples of circumcircles is shown on the right."
+\cgal_figure_begin{Triangulation_2D_Fig_constrained,poisson_del_poisson.png}
+Constrained and Constrained Delaunay triangulation: the constraining edges are the green edges, a constrained triangulation is shown on the left, the constrained Delaunay triangulation with two examples of circumcircles is shown on the right.
+\cgal_figure_end
 
 
 \section Section_2D_Triangulations_Constrained_Delaunay Constrained Delaunay Triangulations 
@@ -986,8 +993,9 @@ The following code inserts two nested polygons into a constrained Delaunay trian
 are inside the domain delimited by these polygons. Note that the following code does not work if the 
 boundaries of the polygons intersect.
 
-\anchor figuretri_domain
-\image html tri_domain.png "Triangulation (in blue) of the domain delimited by the red polygons."
+\cgal_figure_begin{figuretri_domain,tri_domain.png}
+Triangulation (in blue) of the domain delimited by the red polygons.
+\cgal_figure_end
 
 \cgalexample{Triangulation_2/polygon_triangulation.cpp}
 
@@ -1138,8 +1146,9 @@ by the triangulation data structure. Thus the vertex and base
 classes have to be themselves parameterized by the triangulation data
 structure, and there is a cyclic dependency on template parameter.
 
-\anchor Triangulation_2D_Fig_three_levels_2
-\image html threelevels2.gif "The cyclic dependency in triangulations software design. "
+\cgal_figure_begin{Triangulation_2D_Fig_three_levels_2,threelevels2.gif}
+The cyclic dependency in triangulations software design.
+\cgal_figure_end
 
 Previously, this cyclic dependency was avoided by 
 using only `void*` pointers in the interface of base classes.

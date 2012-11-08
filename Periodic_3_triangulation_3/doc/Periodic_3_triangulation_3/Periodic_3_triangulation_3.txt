@@ -56,10 +56,11 @@ represents the number of periods a representative in the original
 domain must be translated in \f$ x\f$-, \f$ y\f$-, and \f$ z\f$-direction.
 The vector \f$ (0,0,0)\f$ corresponds to the representative in the original
 domain. To specify a \f$ k\f$-simplex we need \f$ k+1\f$ point-offset pairs
-(cf. Fig. \ref P3Triangulation3figoffsets).
+(cf. \cgal_figure_ref{P3Triangulation3figoffsets}).
 
-\anchor P3Triangulation3figoffsets
-\image html offsets.gif "Offsets in a cell."
+\cgal_figure_begin{P3Triangulation3figoffsets,offsets.gif}
+Offsets in a cell.
+\cgal_figure_end
 
 \section P3Triangulation3secintro Representation 
 
@@ -73,11 +74,11 @@ The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
 orientation. The orientation of a simplex in \f$ \mathbb T_c^3\f$ is
 defined as the orientation of the corresponding simplex in \f$ \mathbb
 R^3\f$ given by representatives determined by the respective offsets
-(see Figure \ref P3Triangulation3figorient).
+(see \cgal_figure_ref{P3Triangulation3figorient}).
 
-\image html orient.gif "Orientation of a cell."
-
-\anchor P3Triangulation3figorient
+\cgal_figure_begin{P3Triangulation3figorient,orient.gif}
+Orientation of a cell.
+\cgal_figure_end
 
 As in the underlying combinatorial triangulation (see
 Chapter \ref chapterTDS3), the neighbors of a cell are indexed with
@@ -96,10 +97,11 @@ cube of edge length \f$ 3c\f$. Any point set constructed in this way has a
 triangulation in \f$ \mathbb R^3/G'\f$ with \f$ G'=((3c\cdot\mathbb Z)^3,+)\f$
 \cite cgal:ct-c3pt-09. So we compute the triangulation in this
 space, which is a <I>27-sheeted covering space</I> of \f$ \mathbb T_c^3\f$
-(see Figure \ref P3Triangulation3figcovering).
+(see \cgal_figure_ref{P3Triangulation3figcovering}).
 
-\anchor P3Triangulation3figcovering
-\image html it_UNIQUE_small.jpg The same periodic triangulation in the 1-sheeted covering space and the 27-sheeted covering space. 
+\cgal_figure_begin{P3Triangulation3figcovering,it_UNIQUE_small.jpg}
+The same periodic triangulation in the 1-sheeted covering space and the 27-sheeted covering space.
+\cgal_figure_end
 
 The machinery that manages the copies is largely hidden from the
 user. However there are some effects that cannot be ignored. For
@@ -132,7 +134,7 @@ data structure, is `locally valid`
 (see Section \ref TDS3secintro of Chapter \ref chapterTDS3)
 
 <B>(c)</B> Any cell has its vertices ordered according to positive
-orientation. See Figure \ref P3Triangulation3figorient.
+orientation. See \cgal_figure_ref{P3Triangulation3figorient}.
 
 \section Periodic_3_triangulation_3Delaunay Delaunay Triangulation
 

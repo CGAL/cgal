@@ -41,7 +41,7 @@ The three vertices of a face are indexed with 0, 1 and 2.
 The neighbors of a face are also 
 indexed with 0,1,2 in such a way that the neighbor indexed by `i`
 is opposite to the vertex with the same index.
-See Figure \ref TDS_2D_Fig_neighbors1, 
+See \cgal_figure_ref{TDS_2D_Fig_neighbors1}, 
 the functions `ccw(i)`
 and `cw(i)` shown on this figure
 compute respectively \f$ i+1\f$ and \f$ i-1\f$ modulo 3.
@@ -51,8 +51,8 @@ of a face `f` which is opposed to the vertex indexed `i`,
 can be represented as well as an edge of the `neighbor(i)` of 
 `f`.
 
-\anchor TDS_2D_Fig_neighbors1
-\image html rep_bis.gif
+\cgal_figure_begin{TDS_2D_Fig_neighbors1,rep_bis.gif}
+\cgal_figure_end
 
 This kind or representation of simplicial complexes extends in any
 dimension. More precisely, in dimension \f$ d\f$, the data structure
@@ -132,15 +132,16 @@ to perform the following combinatorial transformation of the triangulation:
 <UL>
 <LI>flip of two adjacent faces, 
 <LI>addition of a new vertex splitting a given face 
-see Figure \ref TDS_2D_Fig_insertion,
+see \cgal_figure_ref{TDS_2D_Fig_insertion},
 <LI>addition of a new vertex splitting a given edge,
 <LI>addition of a new vertex raising by one the dimension of a degenerate - lower dimensional triangulation, 
 <LI>removal of a vertex incident to three faces, 
 <LI>removal of a vertex lowering the dimension of the triangulation
 </UL>
 
-\anchor TDS_2D_Fig_insertion
-\image html Three.gif "Insertion of a new vertex, splitting a face"
+\cgal_figure_begin{TDS_2D_Fig_insertion,Three.gif}
+Insertion of a new vertex, splitting a face
+\cgal_figure_end
 
 \section TDS_2D_default The Default Triangulation Data Structure 
 
@@ -174,10 +175,11 @@ by the triangulation data structure. Because the triangulation
 data structure 
 is itself templated by the vertex and face classes this induces
 a cyclic dependency.
-See figure \ref TDS_2D_Fig_three_levels_2.
+See \cgal_figure_{TDS_2D_Fig_three_levels_2}.
 
-\anchor TDS_2D_Fig_three_levels_2
-\image html threelevels2.gif "The cyclic dependency in triangulations software design."
+\cgal_figure_begin{TDS_2D_Fig_three_levels_2,threelevels2.gif}
+The cyclic dependency in triangulations software design.
+\cgal_figure_end
 
 \subsection TDS_2TheRebindMechanism The Rebind Mechanism
 

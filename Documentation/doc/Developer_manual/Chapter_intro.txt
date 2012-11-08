@@ -184,11 +184,11 @@ templates in \cpp.\footnote{In appropriate places, however, \cgal does  and shou
 In the overall design of \cgal three major layers can be identified, the
 layer of algorithms and data structures, the kernel layer and the
 arithmetic and algebra layer.
-(Figure  \ref figgenericCGAL ).
+(\cgal_figure_ref{figgenericCGAL} ).
 
-\anchor figgenericCGAL
-\image html generic_cgal.gif 
-<center><b>The generic design of \cgal.</b></center>
+\cgal_figure_begin{figgenericCGAL,generic_cgal.gif}
+The generic design of \cgal.
+\cgal_figure_end
 
 Algorithms and data structures in \cgal are parameterized by the 
 types of objects and operations they use. They work with any concrete 
