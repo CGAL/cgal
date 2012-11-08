@@ -305,35 +305,22 @@ site at infinity with the vertex corresponding to a (finite) circle;
 otherwise it is a finite edge.
 
 \cgal_figure_anchor{figag2edgeconflict}
-\htmlonly
-<center>
-<img border=1 src="./apollonius-left_vertex.gif" align=middle
-alt="In conflict with a neighborhood of the left-most vertex of the
-Apollonius edge"
-title="In conflict with a neighborhood of the left-most vertex of the Apollonius edge">
-<img border=1 src="./apollonius-right_vertex.gif" align=middle
-alt="In conflict with a neighborhood of the right-most vertex of the
-Apollonius edge"
-title="In conflict with a neighborhood of the right-most vertex of the Apollonius edge">
-<BR>
-<BR>
-<img border=1 src="./apollonius-no_conflict.gif" align=middle
-alt="No conflict" title="No conflict">
-<img border=1 src="./apollonius-entire_edge.gif" align=middle
-alt="In conflict with the entire Apollonius edge"
-title="In conflict with the entire Apollonius edge">
-<BR>
-<BR>
-<img border=1 src="./apollonius-interior.gif" align=middle
-alt="In conflict with a portion of the interior of the Apollonius
-edge"
-title="In conflict with a portion of the interior of the Apollonius edge">
-<img border=1 src="./apollonius-both_vertices.gif" align=middle
-alt="In conflict with (disjoint) neighborhoods of the vertices of
-the Apollonius edge"
-title="In conflict with (disjoint) neighborhoods of the vertices of the Apollonius edge">
-</center>
-\endhtmlonly
+<CENTER>
+<TABLE BORDER>
+<TR>
+<TD>\image html ./apollonius-left_vertex.gif</TD>
+<TD>\image html ./apollonius-right_vertex.gif</TD>
+</TR>
+<TR>
+<TD>\image html ./apollonius-no_conflict.gif</TD>
+<TD>\image html ./apollonius-entire_edge.gif</TD>
+</TR>
+<TR>
+<TD>\image html ./apollonius-interior.gif</TD>
+<TD>\image html ./apollonius-both_vertices.gif</TD>
+</TR>
+</TABLE>
+</CENTER>
 \cgal_figure_caption_begin{figag2edgeconflict}
 The 6 possible outcomes of the
 `Finite_edge_interior_conflict_2` predicate. Top left: only a
