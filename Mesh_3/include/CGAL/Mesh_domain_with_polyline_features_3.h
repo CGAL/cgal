@@ -63,8 +63,9 @@ public:
   /// Add a point at the end of the polyline
   void add_point(const Point_3& p)
   {
-    CGAL_assertion( points_.empty() || p != end_point() );
-    points_.push_back(p);
+    if( points_.empty() || p != end_point() ) {
+      points_.push_back(p);
+    }
   }
   
   /// Returns the starting point of the polyline
