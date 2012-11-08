@@ -413,7 +413,7 @@ public:
     
     // Prints status
     CGAL_TRACE_STREAM << "Delaunay refinement: " << "added ";
-    for(int i = 0; i < NB.size()-1; i++){
+    for(std::size_t i = 0; i < NB.size()-1; i++){
       CGAL_TRACE_STREAM << NB[i] << " + "; 
     } 
     CGAL_TRACE_STREAM << NB.back() << " Steiner points, "
@@ -523,7 +523,7 @@ public:
   {
     m_Bary->resize(m_tr->number_of_cells());
 
-    for(int i=0; i< m_Bary->size();i++){
+    for(std::size_t i=0; i< m_Bary->size();i++){
       (*m_Bary)[i][0]=-1;
     }
   }

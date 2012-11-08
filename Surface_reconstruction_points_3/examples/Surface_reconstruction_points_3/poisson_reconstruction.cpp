@@ -308,7 +308,10 @@ int main(int argc, char * argv[])
       if (solver_name == "eigen")
       {
         std::cerr << "Use Eigen 3\n";
-        if ( ! function.compute_implicit_function() )
+        CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_sparse_symmetric_matrix<double>::EigenType> > solver;
+        if ( ! function.compute_implicit_function(solver, visitor, 
+                                                approximation_ratio,
+                                                average_spacing_ratio) )
         {
           std::cerr << "Error: cannot compute implicit function" << std::endl;
           return EXIT_FAILURE;
