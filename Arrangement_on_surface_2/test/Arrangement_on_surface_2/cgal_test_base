@@ -1382,8 +1382,7 @@ test_construction_segments
 test_construction_spherical_arcs
 
 test_overlay_segments
-compile_and_run test_spherical_overlay
-# test_overlay_spherical_arcs
+test_overlay_spherical_arcs
 
 test_point_location_segments
 test_point_location_circle_segments

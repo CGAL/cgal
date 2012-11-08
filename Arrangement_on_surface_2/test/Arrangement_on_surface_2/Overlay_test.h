@@ -271,8 +271,6 @@ Overlay_test<T_Geom_traits, T_Topol_traits>::
 Overlay_test(const Geom_traits& geom_traits) :
   Base(geom_traits),
   m_geom_traits(geom_traits),
-  m_arr1(NULL),
-  m_arr2(NULL),
   m_verbose_level(0)
 {}
 
@@ -521,7 +519,6 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init()
   
   // Expected arrangement.
   Formatter formatter;
-  Arrangement arr_result;
   CGAL::read(m_arr, p_stream, formatter);
   
   p_stream.close();
@@ -766,6 +763,10 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::perform()
   Overlay_traits overlay_traits;
   CGAL::overlay(m_arr1, m_arr2, arr, overlay_traits);
 
+  // Generate the output for debugging purposes
+  // Formatter formatter;
+  // CGAL::write(arr, std::cout, formatter);
+  
   // Verify the resulting arrangement:
   if (!equivalent_arr(arr, m_arr)) {
     arr.clear();
