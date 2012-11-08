@@ -1032,18 +1032,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Apollonius_graph_2.tag</string>
           <string name="IMAGE_PATH">../Apollonius_graph_2/doc/Apollonius_graph_2/fig</string>
           <string name="EXAMPLE_PATH">../Apollonius_graph_2/examples</string>
-          <list name="HTML_EXTRA_FILES" append="true">
-            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-left_vertex.gif</item>
-            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-right_vertex.gif</item>
-            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-no_conflict.gif</item>
-            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-entire_edge.gif</item>
-            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-interior.gif</item>
-            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-both_vertices.gif</item>
-            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_diagram.gif</item>
-            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_graph.gif</item>
-            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-false.gif</item>
-            <item>../Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-true.gif</item>
-          </list>
           <list name="TAGFILES" append="true">
             <item>./tags/Voronoi_diagram_2.tag=../../CGAL.CGAL.Voronoi_diagram_2/html</item>
             <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
