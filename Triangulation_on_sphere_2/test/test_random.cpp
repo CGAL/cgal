@@ -41,10 +41,11 @@ bool is_ok(K::Point_3 p, std::vector<K::Point_3> po, double minDist2, int ind)
 }
 
 
+
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =100000;
+	nu_of_pts =10000;
 	radius=6000000;
 	//radius = 1;
 	//double minDist = radius*2e-25;
@@ -53,7 +54,7 @@ int main(){
 	int invalid = 0;
 	int random = 0;
 	CGAL::Timer t;
-	
+
 	
 	for(int i=1; i<= 1; i++){
 		
@@ -63,7 +64,8 @@ int main(){
 	CGAL::Random random(nu_of_pts);
 	typedef CGAL::Creator_uniform_3<double, K::Point_3> Creator;
     CGAL::Random_points_on_sphere_3<K::Point_3, Creator> on_sphere(radius);
-	RTOS tos;
+	RTOS rtos;
+	RTOS rtos2;
 		
 	std::vector<K::Point_3> points;
 	std::vector<Vertex_handle> vertices;
@@ -108,32 +110,25 @@ int main(){
 	for (int count=0; count<nu_of_pts*2; count++) {
 		//std::cout<< "================= point number   "<< count+1 <<" =================="<<std::endl;
 		K::Point_3 p = points.at(count);
-		//if(is_ok(p, points, minDist2, count)){
-			Vertex_handle v = tos.insert(p);
-			vertices.push_back(v);			
-		//}
-		//else {
-		//	std::cout<<"invalide point"<<std::endl;
-		//	invalid ++;
-		//}
-		
-	
+		Vertex_handle v = rtos.insert(p);
+		vertices.push_back(v);			
+			
 	}
 		t.stop();
-	tos.is_valid();
-	/*	std::cout<<"starting to remove"<<std::endl;
+	rtos.is_valid();
+		std::cout<<"starting to remove"<<std::endl;
 		
 	//==remove points=============================
 		std::random_shuffle(vertices.begin(), vertices.end());
 	
 		for( int i=0; i< (int)vertices.size(); i++){
-			tos.remove(vertices.at(i));
-			std::cout<<tos.number_of_vertices()<<std::endl;
+			rtos.remove(vertices.at(i));
+			std::cout<<rtos.number_of_vertices()<<std::endl;
 			//tos.is_valid();
-		}*/
+		}
 		
 		
-		//tos.show_all();
+		//rtos.show_all();
 		std::cout<<"running time"<< t.time()<<std::endl;
 		std::cout<<"number of points"<<std::endl;
 	}

@@ -168,7 +168,7 @@ size_type number_of_faces() const{return _tds.number_of_faces();}
   bool xy_equal(const Point& p, const Point& q) const;
   bool collinear_between(const Point& p, const Point& q, const Point& r) const;
 	Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r ) const;
-
+Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r, const Point& s ) const;
   //------------------------------------------------------------------DEBUG---------------------------------------------------
   void show_all() const;
   void show_vertex(Vertex_handle vh) const;
@@ -884,6 +884,14 @@ coplanar_orientation(const Point& p, const Point& q,const Point& r ) const
 	return geom_traits().orientation_1_object()(p,q,r);
 }
 	
+	template <class Gt, class Tds >
+	inline
+	Orientation
+	Triangulation_on_sphere_2<Gt, Tds>::
+	coplanar_orientation(const Point& p, const Point& q,const Point& r, const  Point &s ) const
+	{
+		return geom_traits().orientation_1_object()(p,q,r,s);
+	}
 	
 	
 	

@@ -26,8 +26,14 @@ public:
  Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
  {
 	return coplanar_orientation(_sphere,p,q,r);
+	 //return coplanar_orientation(p,q,r,_sphere);
  }
-	
+
+	Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r,const Point_2& s) const
+	{
+		return coplanar_orientation(p,q,r,s);
+		//return coplanar_orientation(p,q,r,_sphere);
+	}
 
 protected :
  Point_2  _sphere;
@@ -149,6 +155,7 @@ class Triangulation_sphere_traits_2 : public R
   typedef CGAL::Orientation_sphere_1<Traits> Orientation_1;
   typedef CGAL::Coradial_sphere_2<Traits>    Coradial_sphere_2;
   typedef CGAL::Inside_cone_2<Traits>        Inside_cone_2;
+	
   
   Orientation_1
   orientation_1_object() const {
@@ -170,6 +177,8 @@ class Triangulation_sphere_traits_2 : public R
     return Inside_cone_2(_sphere);
   }
 	
+ 
+ 
 
   
  public:

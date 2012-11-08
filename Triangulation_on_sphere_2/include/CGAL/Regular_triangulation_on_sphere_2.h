@@ -82,6 +82,7 @@ public:
   using Base::clear;
   using Base::delete_faces;
   using Base::compare_xyz;
+	using Base::coplanar_orientation;
 
  #endif
 
@@ -402,46 +403,53 @@ propagate_conflicts (const Point  &p, Face_handle fh, int i,
 		Oriented_side os = geom_traits().power_test_2_object()(p0,p1,p2,p);
 		if(os!=ON_ORIENTED_BOUNDARY || !perturb)
 			return os;
-		/*
-		//We are now in a degenerate case => we do a symbolic perturbation
-		// We sort the points lexicographically.
-		const Point * points[5] = {&p0, &p1, &p2, &p};
-		std::sort(points, points+4, Perturbation_order(this) );
-		
-		if(points[0]== &p) return ON_POSITIVE_SIDE;
-		//Orientation o1 =  coplanar_orientation(p[1],p[2],p);
-		//Orientation o2 =  coplanar_orientation( points[1], points[2],p[0]);
-		//if(o1==COLLINEAR) return ON_NEGATIVE_SIDE;
-		//if(o1 != 02) return ON_POSITIVE_SIDE;
-		   return ON_NEGATIVE_SIDE;
-		   
-		
-	}*/
-		// We are now in a degenerate case => we do a symbolic perturbation.
+				// We are now in a degenerate case => we do a symbolic perturbation.
 		
 		// We sort the points lexicographically.
-		const Point * points[4] = {&p0, &p1, &p2, &p};
-		std::sort(points, points+4, Perturbation_order(this) );
+		const Point * points[3] = {&p0, &p1, &p2};
+		std::sort(points, points+3, Perturbation_order(this) );
 		
-		// We successively look whether the leading monomial, then 2nd monomial
-		// of the determinant has non null coefficient.
-		// 2 iterations are enough if p0p1p2 is positive (cf paper)
-		for (int i=3; i>0; --i) {
-			if (points[i] == &p)
-				return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
-			// and "conceptually" positively oriented
-			Orientation o;
-			if (points[i] == &p2 && (o = orientation(p0,p1,p)) != COLLINEAR )
-				return Oriented_side(o);
-			if (points[i] == &p1 && (o = orientation(p0,p,p2)) != COLLINEAR )
-				return Oriented_side(o);
-			if (points[i] == &p0 && (o = orientation(p,p1,p2)) != COLLINEAR )
-				return Oriented_side(o);
+		//p smalest point?
+		
+		if(&p < points[0] ){
+		         return ON_POSITIVE_SIDE;
 		}
-		// CGAL_triangulation_assertion(false);
-		//no reason for such precondition and it invalidates fast removal in Delaunay
+		
+		if(points[0] == &p0){
+				//if(coplanar_orientation(p0,p1,p)!=coplanar_orientation(p0,p1,p2))
+			if(coplanar_orientation(p0,p1,p,p2)==ON_NEGATIVE_SIDE)
+					return ON_NEGATIVE_SIDE;
+				//if(coplanar_orientation(p0, p2,p) ==coplanar_orientation(p0, p2, p1))
+			if(coplanar_orientation(p0,p2,p,p1)==ON_NEGATIVE_SIDE)
+				   return ON_NEGATIVE_SIDE;
+				   return ON_POSITIVE_SIDE;
+		}
+				
+		if(points[0] == &p1){
+			//if(coplanar_orientation(p1,p0,p)!=coplanar_orientation(p1,p0,p2))
+			if(coplanar_orientation(p1,p0,p,p2))
+				return ON_NEGATIVE_SIDE;
+			//if(coplanar_orientation(p1, p2,p) ==coplanar_orientation(p1, p2, p1))
+			   if(coplanar_orientation(p1,p2,p,p0))
+				return ON_NEGATIVE_SIDE;
+			return ON_POSITIVE_SIDE;
+		}		
+		if(points[0] == &p){
+			//if(coplanar_orientation(p2,p1,p)!=coplanar_orientation(p2,p1,p0))
+			if(coplanar_orientation(p2,p1,p,p2))
+				return ON_NEGATIVE_SIDE;
+			//if(coplanar_orientation(p2, p0,p) ==coplanar_orientation(p2, p0, p1))
+			   if(coplanar_orientation(p2,p0,p1,p))
+				return ON_NEGATIVE_SIDE;
+			return ON_POSITIVE_SIDE;		
+		}
+				
+	
 		return ON_NEGATIVE_SIDE;
+								
 	}
+	
+						
 	
 	template < class Gt, class Tds >
 	inline
@@ -650,11 +658,16 @@ insert_in_plane_triangulation(const Point &p){
 	else {
 		
 		Edges_iterator eit=edges_begin();
+		Point po = Point(0,0,0);
+		
 		do{
 			Face_handle f=eit->first;
 			Vertex_handle v1 = f->vertex(0);
 			Vertex_handle v2 = f -> vertex(1);
-			if(coplanar_orientation(v1->point(), v2->point(), p)==RIGHT_TURN){
+			bool conflict = Base::collinear_between(v1->point(), v2->point(), p);
+			//Orientation o=coplanar_orientation(v1->point(), v2->point(), p);
+			//if(o ==RIGHT_TURN){
+			if(conflict){
 				loc = f;
 				break;
 				
@@ -770,7 +783,7 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 {
 		
 		if(dimension()==0){
-			Vertex_handle v=vertices_begin();
+			Vertex_handle v = vertices_begin();			
 			Vertex_handle u=v->face()->neighbor(0)->vertex(0);
 			Vertex_handle nv;
 			
@@ -830,7 +843,18 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 				
 			}
 			
-			Vertex_handle v = this->_tds.insert_dim_up( f->vertex(0), conform);
+			//find smalest certex
+			Vertex_handle w=vertices_begin();
+			Vertices_iterator vi;
+			for( vi = vertices_begin(); vi != vertices_end(); vi++){
+				if(compare_xyz(w->point(), vi->point())<0)
+					w=vi;
+			}
+			
+			
+			
+			//Vertex_handle v = this->_tds.insert_dim_up( f->vertex(0), conform);
+			Vertex_handle v = this->_tds.insert_dim_up( w, conform);
 			v->set_point(p);
 	  		
 			this->_negative=faces_begin();
