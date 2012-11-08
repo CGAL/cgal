@@ -382,7 +382,7 @@ public:
 	template<typename Tr>
 	bool AABB_tree<Tr>::accelerate_distance_queries() const
 	{
-		CGAL_assertion(!m_primitives.empty());
+    //		CGAL_assertion(!m_primitives.empty());
     #ifdef CGAL_HAS_THREADS
     //this ensures that this function will be done once
     boost::mutex::scoped_lock scoped_lock(kd_tree_mutex);
