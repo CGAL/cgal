@@ -79,13 +79,10 @@ of the line passing through the poles. A vector \f$ M\f$ whose direction is diff
 line defines a unique meridian on that sphere. The plane of that meridian is defined by the
 direction of \f$ M\f$ and the two poles. The sense of \f$ M\f$ disambiguates the choice among the
 pair of meridians thus defined.
-On Fig. \ref figdefmeridian, the normal vectors \f$ n_0\f$ and \f$ n_1\f$ define 
+On \cgal_figure_ref{figdefmeridian}, the normal vectors \f$ n_0\f$ and \f$ n_1\f$ define 
 two meridians of \f$ S\f$: the circular arcs \f$ A_0\f$ and \f$ A_1\f$ respectively.
 
-\anchor figdefmeridian
-\image html def_meridian.png
-
-<center><b>
+\cgal_figure_begin{figdefmeridian,def_meridian.png}
 Definition of two meridians on \f$ S\f$, a sphere of center \f$
 c\f$. The intersection of the plane \f$ P\f$ (passing through the two
 poles of \f$ S\f$) and the sphere \f$ S\f$ is a circle. The two poles
@@ -93,7 +90,7 @@ of \f$ S\f$ split that circle into two circular arcs \f$ A_0\f$ and
 \f$ A_1\f$, each being a meridian of \f$ S\f$. The \f$
 \theta\f$-coordinates of meridians \f$ A_0\f$ and \f$ A_1\f$ are \f$
 \theta_0\f$ and \f$ \theta_1= \theta_0 + \pi\f$ respectively.
-</b></center>
+\cgal_figure_end
 
 <I>Types of circles on a sphere.</I>
 Given a sphere, a circle on that sphere is termed
@@ -101,13 +98,11 @@ Given a sphere, a circle on that sphere is termed
 it goes through the two poles of that sphere and <I>threaded</I> if
 it separates the sphere into two connected components, each
 containing one pole. Any other circle is termed <I>normal</I>. These
-definitions are illustrated on Fig. \ref figdefcircles.
+definitions are illustrated on \cgal_figure_ref{figdefcircles}.
 
-\anchor figdefcircles
-\image html def_circles_extreme_pt.png
-<center><b>
+\cgal_figure_begin{figdefcircles,def_circles_extreme_pt.png}
 The four types of circles on a sphere. Black dots are the \f$ \theta\f$-extremal points.
-</b></center>
+\cgal_figure_end
 
 <I>\f$ \theta\f$-extremal points.</I>
 Given a sphere one has:

@@ -11,13 +11,15 @@ namespace CGAL {
 
 \section bso_secintro Introduction 
 
-\image html teaser.gif "Examples of Boolean set-operations on general polygons."
+\cgal_figure_begin{figteaser,teaser.gif}
+Examples of Boolean set-operations on general polygons.
+\cgal_figure_end
 
 This package consists of the implementation of Boolean set-operations
 on point sets bounded by weakly \f$ x\f$-monotone curves\footnote{A continuous planar curve \f$ C\f$ is <I>weakly \f$ x\f$-monotone</I> if every vertical line intersects it at most once, or if it is vertical. Hereafter we refer to weakly \f$ x\f$-monotone curves as \f$ x\f$-monotone curves.} in 2-dimensional Euclidean space. In particular,
 it contains the implementation of <I>regularized</I> Boolean set-operations,
 intersection predicates, and point containment predicates.
-Figure \ref figteaser shows simple examples of such operations.
+\cgal_figure_ref{figteaser} shows simple examples of such operations.
 
 Ordinary Boolean set-operations, which distinguish between the
 interior and the boundary of a polygon, are not implemented within this
@@ -60,8 +62,9 @@ can be arbitrary weakly \f$ x\f$-monotone curves.
 
 \section bso_secbso_def Terms and Definitions 
 
-\anchor figsimpleDefsExamples
-\image html simpleDefsExamples.gif "Examples of polygons. (a) A simple polygon. (b) A relatively simple polygon (c) A polygon that is neither simple nor relatively simple."
+\cgal_figure_begin{simpleDefsExamples,simpleDefsExamples.gif}
+Examples of polygons. (a) A simple polygon. (b) A relatively simple polygon (c) A polygon that is neither simple nor relatively simple.
+\cgal_figure_end
 
 
 <UL>
@@ -173,7 +176,6 @@ following sections.
 
 \subsection Boolean_set_operations_2ASimpleExample A Simple Example
 
-\anchor figexample
 \image html triangles.gif
 
 Testing whether two polygons intersect results with a Boolean value, 
@@ -192,17 +194,17 @@ which is located in the header file `print_utils.h`.
 
 \subsection bso_ssecpolygons_with_holes Polygons with Holes 
 
-\anchor figsimple
-
-\image html simple.gif "Operations on simple polygons. (a) The union of two polygons, resulting in a point set whose outer boundary is defined by a simple polygon and contains a polygonal hole in its interior. (b) The intersection (darkly shaded) of two polygons (lightly shaded), resulting in two disjoint polygons. (c) The complement (darkly shaded) of a simple polygon (lightly shaded)." 
+\cgal_figure_begin{figsimple,simple.gif}
+Operations on simple polygons. (a) The union of two polygons, resulting in a point set whose outer boundary is defined by a simple polygon and contains a polygonal hole in its interior. (b) The intersection (darkly shaded) of two polygons (lightly shaded), resulting in two disjoint polygons. (c) The complement (darkly shaded) of a simple polygon (lightly shaded).
+\cgal_figure_end
 
 In many cases a binary operation that operates on two simple
 polygons that have no holes may result in a set of polygons that
-contain holes in their interior (see Figure \ref figsimple (a)), 
-or a set of disjoint polygons (see Figure \ref figsimple (b); a similar
+contain holes in their interior (see \cgal_figure_ref{figsimple} (a)), 
+or a set of disjoint polygons (see \cgal_figure_ref{figsimple} (b); a similar
 set may result from the union, or the symmetric difference, of two disjoint
 polygons). Moreover, the complement of a simple polygon is an unbounded set
-that contains a hole; see Figure \ref figsimple (c).
+that contains a hole; see \cgal_figure_ref{figsimple} (c).
 
 Regular sets are closed under regularized Boolean set-operations.
 These operations accept as input, and may result as output, polygons
@@ -226,7 +228,6 @@ related to the definition of regularized Boolean set-operations, being
 the closure of the interior of the corresponding ordinary operation as
 explained next.
 
-\anchor figunique
 \image html unique.gif
 
 Consider, for example, the regular set depicted on the right, which is
@@ -311,7 +312,7 @@ output polygons to its associated container.
 The following example demonstrates the usage of the free functions
 `join()` and `intersection()` for computing the union and the
 intersection of the two simple polygons depicted in
-Figure \ref figsimple (b). The example uses the auxiliary function
+\cgal_figure_ref{figsimple} (b). The example uses the auxiliary function
 `print_polygon_with_holes()` listed above, which is located in
 the header file `print_utils.h` under the examples folder.
 
@@ -328,7 +329,6 @@ on simple polygons. The only exception is `complement(P, oi)`, which
 outputs a range of polygons with holes that represents the complement
 of the polygon with holes \f$ P\f$.
 
-\anchor figsym_diff
 \image html symm_diff.gif
 
 The following example demonstrates how to compute the symmetric
@@ -420,12 +420,11 @@ representation for some operation, and the reconstruction of the
 internal representation for the succeeding operation could be time
 consuming.
 
-\anchor figsequence
 \image html sequence.gif
 
 The next example performs a sequence of three Boolean set-operations.
 First, it computes the union of two simple polygons depicted in
-Figure \ref figsimple (a). It then computes the complement of the result
+\cgal_figure_ref{figsimple} (a). It then computes the complement of the result
 of the union operation. Finally, it computes the intersection of the result
 of the complement operation with a rectangle, confining the final result to 
 the area of the rectangle. The resulting set \f$ S\f$ is comprised of two
@@ -517,7 +516,6 @@ S.join (begin, end);
 
 \section bso_secbso_gen Boolean Set-Operations on General Polygons 
 
-\anchor figgeneral_polygon
 \image general_polygon.gif
 
 In previous sections only ordinary (linear) polygons were dealt with. Namely, closed
@@ -544,7 +542,6 @@ defines the \f$ k\f$th polygon vertex.
 edges of a general polygon.
 </UL>
 
-\anchor figgeneral_polygon_with_holes
 \image html general_polygon_with_holes.gif
 
 The concept `GeneralPolygonWithHoles_2` is defined in an analogous
@@ -655,7 +652,6 @@ The circle-segment traits class provides predicates and constructions
 on non-linear objects; yet, it uses only rational arithmetic and is
 very efficient as a consequence.
 
-\anchor figcircle_recs
 \image html circles_rects.gif
 
 The following example uses the `Gps_circle_segment_traits_2` class
@@ -723,7 +719,6 @@ typedef CGAL::Gps_traits_2<Arr_traits_2, General_polygon_2> Traits_2;
 typedef CGAL::General_polygon_set_2<Traits_2> General_polygon_set_2;
 \endcode
 
-\anchor figconics
 \image html tnr_m_g.gif
 
 Instantiating the arrangement-traits `Arr_traits_2` above with the
@@ -766,7 +761,6 @@ is of the same order of magnitude as the complexity of the result. If
 this is not the case, computing the result incrementally may prove
 faster.
 
-\anchor figdisks
 \image html disks.gif
 
 The next example computes the union of eight unit discs whose centers are

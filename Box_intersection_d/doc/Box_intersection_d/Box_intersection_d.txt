@@ -381,14 +381,15 @@ box intersection is reported to an empty dummy callback.
 For each box set, a near-optimal cutoff parameter is determined using
 an adaptive approximation. The runtime required for streaming is
 compared against usual scanning. Results on a Xeon 2.4GHz with 4GB
-main memory can be seen in Figure \ref fig_benchmark. For a small
+main memory can be seen in \cgal_figure_ref{fig_benchmark}. For a small
 number of boxes, pure scanning is still faster than streaming with
 optimal cutoff, which would just delegate the box sets to the scanning
 algorithm. As there are more and more boxes, the overhead becomes less
 important.
 
-\anchor fig_benchmark
-\image html benchmark.gif "Runtime comparison between the scanning and the streaming algorithm."
+\cgal_figure_begin{fig_benchmark,benchmark.gif}
+Runtime comparison between the scanning and the streaming algorithm.
+\cgal_figure_end
 
 \section Box_intersection_dExample_3 Example Using a Custom Box Implementation
 

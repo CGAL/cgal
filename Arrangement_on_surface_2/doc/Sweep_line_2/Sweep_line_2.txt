@@ -41,10 +41,11 @@ intersection points induced by these curves.
 \section Sweep_line_2Example Example
 
 The simple program listed below computes intersection points induced by 
-a set of four input segments illustrated in figure \ref SL_secsimple.
+a set of four input segments illustrated in \cgal_figure_ref{SL_secsimple}.
 
-\anchor SL_secsimple
-\image html sl_simple.gif "Four input segments"
+\cgal_figure_begin{SL_secsimple,sl_simple.gif}
+Four input segments
+\cgal_figure_end
 
 \cgalexample{Arrangement_on_surface_2/sweep_line.cpp}
 

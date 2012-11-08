@@ -41,8 +41,9 @@ well the as id (here the face handle) of the intersected
 primitives. Similarly, each distance query can return the closest
 point from the point query as well as the id of the closest primitive.
 
-\image latex anchor.png "AABB tree. Left: surface triangle mesh of a mechanical part. Right AABB tree constructed."
-\image html anchor.png "AABB tree. Left: surface triangle mesh of a mechanical part. Right AABB tree constructed."
+\cgal_figure_begin{aabbtree_meca,anchor.png}
+Left: surface triangle mesh of a mechanical part. Right AABB tree constructed.
+\cgal_figure_end
 
 \section aabb_tree_interface Interface
 
@@ -190,8 +191,8 @@ option which maximizes speed.
 \subsection aabb_tree_perf_cons Construction
 
 The surface triangle mesh chosen for benchmarking the tree
-construction is the knot model (14,400 triangles) depicted by Figure
-\ref figAABB-tree-bench. We measure the tree construction time (both
+construction is the knot model (14,400 triangles) depicted by 
+\cgal_figure_ref{figAABB-tree-bench}. We measure the tree construction time (both
 AABB tree alone and AABB tree with internal KD-tree) for this model as
 well as for three denser versions subdivided through the Loop
 subdivision scheme which multiplies the number of triangles by four.
@@ -259,15 +260,15 @@ the intersection functions which enumerate all intersections.
 |   AABB_tree::all_intersections()                  |  46,507 |  38,471 |  36,374 |   2,644 |
 
 
-Curve \ref figAABB-tree-bench plots the number of queries per second
+Curve of \cgal_figure_ref{figAABB-tree-bench} plots the number of queries per second
 (here the `AABB_tree::all_intersections()` function with random segment
 queries) against the number of input triangles for the knot triangle
 surface mesh.
 
 
-\anchor figAABB-tree-bench
-\image latex bench.png "Number of queries per second against number of triangles for the knot model with 14K (shown), 57K, 230K and 921K triangles. We call the `all_intersections` function with segment queries randomly chosen within the bounding box."
-\image html bench.png "Number of queries per second against number of triangles for the knot model with 14K (shown), 57K, 230K and 921K triangles. We call the `all_intersections` function with segment queries randomly chosen within the bounding box."
+\cgal_figure_begin{figAABB-tree-bench,bench.png}
+Number of queries per second against number of triangles for the knot model with 14K (shown), 57K, 230K and 921K triangles. We call the `all_intersections` function with segment queries randomly chosen within the bounding box.
+\cgal_figure_end
 
 The following table measures the number of `AABB_tree::all_intersections()`
 queries per second against several kernels. We use the 14,400 triangle

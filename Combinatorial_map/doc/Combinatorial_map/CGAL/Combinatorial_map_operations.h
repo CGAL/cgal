@@ -7,7 +7,7 @@ Inserts a 0-cell in the 1-cell containing `dh`.
 Returns a handle on one dart belonging to the new 0-cell. 
 \pre `CMap::dimension`\f$ \geq\f$ 1 and `*dh`\f$ \in\f$`cm.darts()`.
 
-See example in Figure \ref figinsertvertex.
+See example in \cgal_figure_ref{figinsertvertex}.
 
 If 1-attributes are non void, 
 `Attribute_type<1>::type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 1-attribute associated
@@ -36,7 +36,7 @@ The 2-cell is split in triangles, one for each initial edge of the facet.
 Returns a handle on one dart belonging to the new 0-cell.
 \pre `CMap::dimension`\f$ \geq\f$ 2 and `*dh`\f$ \in\f$`cm.darts()`.
 
-See example in Figure \ref figtriangulate.
+See example in \cgal_figure_ref{figtriangulate}.
 
 If 2-attributes are non void, 
 `Attribute_type<2>::type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated
@@ -66,7 +66,7 @@ Inserts a 1-cell in the 2-cell containing `dh1` and `dh2`.
 Returns \f$ \beta_0\f$(`dh1`), a handle on one dart belonging to the new 1-cell. 
 \pre `is_insertable_cell_1_in_cell_2<Map>(cm,dh1,dh2)`.
 
-See example in Figure \ref figinsertedge.
+See example in \cgal_figure_ref{figinsertedge}.
 
 If 2-attributes are non void, 
 `Attribute_type<2>::type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated
@@ -98,7 +98,7 @@ by the range `[afirst,alast)`.
 Returns a handle on one dart belonging to the new 2-cell. 
 \pre `is_insertable_cell_2_in_cell_3<Map>(cm,afirst,alast)`.
 
-See example in Figure \ref figinsertface.
+See example in \cgal_figure_ref{figinsertface}.
 
 If 3-attributes are non void, 
 `Attribute_type<3>::type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 3-attribute associated
@@ -130,7 +130,7 @@ being attached only by one of its extremity to the 0-cell containing `dh`.
 Returns a handle on one dart belonging to the new 1-cell.
 \pre `CMap::dimension`\f$ \geq\f$ 2 and `*dh`\f$ \in\f$`cm.darts()`.
 
-See example in Figure \ref figinsertedge.
+See example in \cgal_figure_ref{figinsertedge}.
 
 
 \sa `CGAL::insert_cell_0_in_cell_1<CMap>`
@@ -224,7 +224,7 @@ Removes the <I>i</I>-cell containing `dh`.
 Returns the number of darts removed from `cm`.
 \pre `is_removable<CMap,i>(cm,dh)`.
 
-See examples in Figures \ref figinsertvertex, \ref figinsertedge and \ref figinsertface. 
+See examples in \cgal_figure_ref{figinsertvertex}, \cgal_figure_ref{figinsertedge} and \cgal_figure_ref{figinsertface}. 
 
 If `i`\f$ <\f$`CMap::dimension`, and <I>i+1</I>-attributes are
 non void, and if there are two distinct (<I>i+1</I>)-cells around dart

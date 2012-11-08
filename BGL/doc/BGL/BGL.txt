@@ -284,14 +284,12 @@ kept synchronized with the number of vertices in the arrangement, so it
 should not be reused in calls to \sc{Bgl} functions in case the arrangement
 is modified in between these calls.
 
-\anchor figex_bgl
-\image html ex_bgl.gif
-<center><b>
+\cgal_figure_begin{figex_bgl,ex_bgl.gif}
 An arrangement of 7 line segments, as constructed by `ex_bgl_primal_adapter.cpp` and `ex_bgl_dual_adapter.cpp`. The breadth-first visit times for the arrangement faces, starting from the unbounded face \f$ f_0\f$, are shown is brackets.
-</b></center>
+\cgal_figure_end
 
 In the following example we construct an arrangement of 7 line segments,
-as shown in Figure \ref figex_bgl,
+as shown in \cgal_figure_ref{figex_bgl},
 then use Dijkstra's shortest-paths algorithm from the \sc{Bgl} to compute
 the graph distance of all vertices from the leftmost vertex in the
 arrangement \f$ v_0\f$. Note the usage of the `Arr_vertex_index_map` and
@@ -328,7 +326,7 @@ efficient mapping of face handles to indices. We also provide the template
 data with the arrangement faces.
 
 In the following example we construct the same arrangement as in
-example `ex_bgl_primal_adapter.cpp` (see Figure \ref arr_figex_bgl),
+example `ex_bgl_primal_adapter.cpp` (see \cgal_figure_ref{arr_figex_bgl}),
 and perform breadth-first search on the graph faces, starting from the
 unbounded face. We extend the \sc{Dcel} faces
 with an unsigned integer, marking the discover time of the face and use a
