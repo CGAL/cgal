@@ -493,7 +493,6 @@ public:
   /// 'ImplicitFunction' interface: evaluates the implicit function at a given 3D query point.
   FT operator()(const Point& p) const
   {
-    static int I=0;
     m_hint = m_tr->locate(p ,m_hint); 
 
     if(m_tr->is_infinite(m_hint)) {
