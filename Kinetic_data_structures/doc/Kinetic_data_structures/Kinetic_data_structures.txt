@@ -407,13 +407,32 @@ simulation, the user can step through events one at a time and reverse
 the simulation to retrace what had happened. The three-dimensional
 visualization support is based on the Coin library http://www.coin3d.org.
 
-\cgal_figure_begin{figkds_delaunay_events,delaunay_0.gif,delaunay_1.gif,delaunay_2.gif,delaunay_3.gif,delaunay_4.gif,delaunay_5.gif,delaunay_6.gif,delaunay_7.gif,delaunay_8.gif}
+
+\cgal_figure_anchor{figkds_delaunay_events}
+<CENTER>
+<TABLE border=0>
+<TR>
+<TD>\image html delaunay_0.gif</TD>
+<TD>\image html delaunay_1.gif</TD>
+<TD>\image html delaunay_2.gif</TD>
+<TD>\image html delaunay_3.gif</TD>
+<TD>\image html delaunay_4.gif</TD>
+</TR>
+<TR>
+<TD>\image html delaunay_5.gif</TD>
+<TD>\image html delaunay_6.gif</TD>
+<TD>\image html delaunay_7.gif</TD>
+<TD>\image html delaunay_8.gif</TD>
+</TR>
+</TABLE>
+</CENTER>
+\cgal_figure_caption_begin{figkds_delaunay_events}
 Some events from a Delaunay triangulation kinetic data
 structure: The state of the two dimensional Delaunay triangulation
 immediately following the first events is shown. Green edges are ones
 which were just created. The pictures are screen shots from
 `demo/Kinetic_data_structures/Kinetic_Delaunay_triangulation_2.cpp`
-\cgal_figure_end
+\cgal_figure_caption_end
 
 \cgal_figure_begin{figkds_qtwidget_capture,qt_widget_marked_pct.gif}
 The figure shows the graphical user interface for controlling
