@@ -579,7 +579,7 @@ template<class Polyhedron>
 struct Dummy_edge_mark_property_map{
   typedef bool value_type;
   typedef value_type reference;
-  typedef typename Polyhedron::Halfedge_const_handle key_type;
+  typedef std::pair<typename Polyhedron::Halfedge_handle,Polyhedron*> key_type;
   typedef boost::read_write_property_map_tag category;  
 
   Dummy_edge_mark_property_map(){}
@@ -665,11 +665,11 @@ class Node_visitor_refine_polyhedra{
     CGAL_assertion(P.is_valid());
     
     //update marker tags. If the edge was marked, then the resulting edges in the split must be marked
-    if ( get(m_edge_mark_pmap,hedge) )
+    if ( get(m_edge_mark_pmap,std::make_pair(hedge,&P)) )
     {
-      CGAL_assertion( get(m_edge_mark_pmap,hedge->opposite()) );
-      put(m_edge_mark_pmap,hedge->prev(),true);
-      put(m_edge_mark_pmap,hedge->opposite()->next(),true);
+      CGAL_assertion( get(m_edge_mark_pmap,std::make_pair(hedge->opposite(),&P)) );
+      put(m_edge_mark_pmap,std::make_pair(hedge->prev(),&P),true);
+      put(m_edge_mark_pmap,std::make_pair(hedge->opposite()->next(),&P),true);
     }
     
     Vertex_handle v=boost::prior(P.vertices_end());
@@ -1472,7 +1472,7 @@ public:
               }
               std::pair<int,int> edge_pair(*it_id,node_id_of_first);
               border_halfedges.insert( std::make_pair(hedge,edge_pair) );
-              put(m_edge_mark_pmap,hedge,true);
+              put(m_edge_mark_pmap,std::make_pair(hedge,poly),true);
               update_edge_per_polyline(poly,edge_pair,hedge); 
               //save the fact that we already handle this edge
               already_done.insert(std::make_pair(node_id_of_first,*it_id));
@@ -1779,7 +1779,7 @@ public:
         //CGAL_assertion(it_poly_hedge!=edge_to_hedge.end());
         if( it_poly_hedge!=edge_to_hedge.end() ){
           border_halfedges.insert( std::make_pair(Halfedge_const_handle(it_poly_hedge->second),*it_cst) );
-          put(m_edge_mark_pmap,it_poly_hedge->second,true);
+          put(m_edge_mark_pmap,std::make_pair(it_poly_hedge->second,P),true);
           update_edge_per_polyline(P,it_poly_hedge->first,it_poly_hedge->second);
         }
         else{
@@ -1790,7 +1790,7 @@ public:
           CGAL_assertion( it_poly_hedge!=edge_to_hedge.end() );
 
           border_halfedges.insert( std::make_pair(Halfedge_const_handle(it_poly_hedge->second),opposite_pair) );
-          put(m_edge_mark_pmap,it_poly_hedge->second,true);
+          put(m_edge_mark_pmap,std::make_pair(it_poly_hedge->second,P),true);
           update_edge_per_polyline(P,it_poly_hedge->first,it_poly_hedge->second);          
         }
       }
