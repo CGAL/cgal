@@ -664,6 +664,8 @@ insert_in_plane_triangulation(const Point &p){
 			Face_handle f=eit->first;
 			Vertex_handle v1 = f->vertex(0);
 			Vertex_handle v2 = f -> vertex(1);
+			
+			//ERROR
 			bool conflict = Base::collinear_between(v1->point(), v2->point(), p);
 			//Orientation o=coplanar_orientation(v1->point(), v2->point(), p);
 			//if(o ==RIGHT_TURN){
@@ -1016,7 +1018,7 @@ bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 test_dim_up(const Point &p) const{
 	// dimension of triangulation increase from 1 to 2 iff the new vertex in not coplanar with the old vertices
-		
+	std::cout<<p<<std::endl;
 	//first three points of triangulation
 	Face_handle f=edges_begin()->first;
 	Vertex_handle v1=f->vertex(0);

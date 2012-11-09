@@ -10,6 +10,11 @@
 #include <cmath>
 
 
+	
+
+
+
+
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
@@ -22,7 +27,7 @@ typedef RTOS::Faces_iterator                            Face_iterator;
 typedef RTOS::Vertices_iterator                           Vertex_iterator;
 typedef RTOS::Locate_type                                 Locate_type;
 typedef RTOS::Edge                                               Edge;
-
+                              
 
 
 
@@ -41,25 +46,78 @@ bool is_ok(K::Point_3 p, std::vector<K::Point_3> po, double minDist2, int ind)
 }
 
 
+bool has_face(Face_handle fh, Vertex_handle v0, Vertex_handle v1, Vertex_handle v2){
+	bool test1, test2, test3;
+	
+	
+	for(int i=0;i<=2; i++){
+		std::cout<<v0->point()<<std::endl;
+		std::cout<<fh->vertex(i)->point()<<std::endl;
+		test1 = (v0->point()==fh->vertex(i)->point());
+		if(test1) 
+			break;
+		}
+	if(!test1) return false;
+	
+	for(int i=0;i<=2; i++){
+		test2 = v1->point()==fh->vertex(i)->point();
+		if(test2) break;
+	}
+	if(!test2)return false;
+	
+	for(int i=0; i<=2; i++){
+		test3 = v2->point()==fh->vertex(i)->point();
+		if(test3)break;
+	}	
+	if(!test3) return false;
+	
+	return true;
+}
+	
+
+
+
+bool are_equal(RTOS triA, RTOS triB){
+	bool test = false;
+	Face_iterator fiA;
+	Face_iterator fiB;
+	fiA = triA.faces_begin();
+	fiB = triB.faces_begin();
+    for( ; fiA != triA.faces_end(); ++fiA ){
+		//**face of fiA in fiB?
+		for( ; fiB != triB.faces_end(); ++fiB ){
+			test = has_face(fiB, fiA->vertex(0), fiA->vertex(1), fiA->vertex(2));
+			if(has_face) break;
+			}
+		CGAL_assertion(has_face);
+		//**	
+	}
+	return true;
+}
+
+
+
+
+
 
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =10000;
+	nu_of_pts =10;
 	radius=6000000;
 	//radius = 1;
 	//double minDist = radius*2e-25;
 	double minDist = radius * pow (2, -25);
 	double minDist2 = pow(minDist, 2);
 	int invalid = 0;
-	int random = 0;
+	//int random = 0;
 	CGAL::Timer t;
 
 	
-	for(int i=1; i<= 1; i++){
+	//for(int i=1; i<= 1; i++){
 		
-		random++;
-		std::cout<<" *************************  run  "<< random << "**********************"<<std::endl;
+		//random++;
+		//std::cout<<" *************************  run  "<< random << "**********************"<<std::endl;
 		
 	CGAL::Random random(nu_of_pts);
 	typedef CGAL::Creator_uniform_3<double, K::Point_3> Creator;
@@ -101,8 +159,7 @@ int main(){
 		on_sphere++;
 	}
 	
-
-		
+	
 	t.start();
 	//====insert new points============
 		
@@ -114,29 +171,47 @@ int main(){
 		vertices.push_back(v);			
 			
 	}
-		t.stop();
 	rtos.is_valid();
-		std::cout<<"starting to remove"<<std::endl;
-		
-	//==remove points=============================
-		std::random_shuffle(vertices.begin(), vertices.end());
 	
-		for( int i=0; i< (int)vertices.size(); i++){
-			rtos.remove(vertices.at(i));
-			std::cout<<rtos.number_of_vertices()<<std::endl;
-			//tos.is_valid();
-		}
+	
+	
+	//*****second triangulation*******
+	std::random_shuffle(points.begin(), points.end());
+	std::vector<Vertex_handle> vertices2;
+	vertices2.reserve(nu_of_pts*2);
+	
+	for (int count=0; count<nu_of_pts*2; count++) {
+		//std::cout<< "================= point number   "<< count+1 <<" =================="<<std::endl;
+		K::Point_3 p = points.at(count);
+		Vertex_handle v = rtos2.insert(p);
+		vertices2.push_back(v);			
 		
-		
-		//rtos.show_all();
+	}
+	rtos2.is_valid();
+	
+	
+			//rtos.show_all();
+	t.stop();
 		std::cout<<"running time"<< t.time()<<std::endl;
 		std::cout<<"number of points"<<std::endl;
-	}
-
-
-
-
-
+	//}
+	std::cout<<"comparing"<<std::endl;
+	are_equal(rtos, rtos2);
 
 	
+	/*
+	 //==remove points=============================
+	 std::random_shuffle(vertices.begin(), vertices.end());
+	 
+	 for( int i=0; i< (int)vertices.size(); i++){
+	 rtos.remove(vertices.at(i));
+	 std::cout<<rtos.number_of_vertices()<<std::endl;
+	 //tos.is_valid();
+	 }
+	 
+	 */
+	
+	
+
+
 }
