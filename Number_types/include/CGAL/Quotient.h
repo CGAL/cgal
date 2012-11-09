@@ -853,7 +853,6 @@ public:
 
 } //namespace CGAL
 
-#ifdef CGAL_EIGEN3_ENABLED
 namespace Eigen {
   template<class> struct NumTraits;
   template<class NT> struct NumTraits<CGAL::Quotient<NT> >
@@ -875,6 +874,5 @@ namespace Eigen {
     };
   };
 }
-#endif
 
 #endif  // CGAL_QUOTIENT_H

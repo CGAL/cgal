@@ -22,7 +22,6 @@
 #ifndef CGAL_SQRT_EXTENSION_EIGEN_NUMTRAITS_H
 #define CGAL_SQRT_EXTENSION_EIGEN_NUMTRAITS_H
 
-#ifdef CGAL_EIGEN3_ENABLED
 namespace Eigen {
   template<class> struct NumTraits;
   template <class NT,class ROOT, class ACDE_TAG, class FP_TAG>
@@ -45,6 +44,5 @@ namespace Eigen {
     };
   };
 }
-#endif
 
 #endif

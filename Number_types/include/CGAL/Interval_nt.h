@@ -1422,7 +1422,6 @@ public:
 
 } //namespace CGAL
 
-#ifdef CGAL_EIGEN3_ENABLED
 namespace Eigen {
   template<class> struct NumTraits;
   template<bool b> struct NumTraits<CGAL::Interval_nt<b> >
@@ -1445,6 +1444,5 @@ namespace Eigen {
     };
   };
 }
-#endif
 
 #endif // CGAL_INTERVAL_NT_H
