@@ -219,11 +219,10 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     for fn in filesjs_files:
         re_replace_in_file('^.*\[ "Concepts",.*$', '', fn)
 
-    dynsections_files=glob.glob('./CGAL.CGAL.*/html/dynsections.js')
-    for fn in filesjs_files:
-        re_replace_in_file("'src','ftv2",
-                           "'src','../../CGAL.CGAL/html/ftv2",
-                           fn)
+    #Rewrite the path of some images
+    re_replace_in_file("'src','ftv2",
+                       "'src','../../CGAL.CGAL/html/ftv2",
+                       'CGAL.CGAL/html/dynsections.js')
 
     # external is placed by doxygen to mark a class from a tagfile, this
     # is more confusing then helpful in our case
