@@ -228,7 +228,6 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # external is placed by doxygen to mark a class from a tagfile, this
     # is more confusing then helpful in our case
 
-    # TODO change the color of icons for concepts here
     re_replace_in_file('\[external\]', '', './CGAL.CGAL/html/annotated.html')
 
     # fix class/concept mismatch in generated pages
