@@ -2,7 +2,7 @@
 
 cd $HOME/CGAL/next/Maintenance/infrastructure/cgal.geometryfactory.com/
 crontab -l >| crontab
-if [ -d .git ]; then
+if [ -d ../../../.git ]; then
     git pull 2> /dev/null
     git add crontab
     git commit -m 'updated crontab (automated commit)' && git push origin master
