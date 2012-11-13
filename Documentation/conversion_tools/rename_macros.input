@@ -29,6 +29,6 @@ PkgDemo cgalPkgDemo
 PkgDescriptionEnd cgalPkgDescriptionEnd
 PkgBib cgalPkgBib
 footnote cgalFootnote
-autotoc cgalAutotoc
+autotoc cgalAutoToc
 tag_true cgalTagTrue
 tag_false cgalTagFalse
