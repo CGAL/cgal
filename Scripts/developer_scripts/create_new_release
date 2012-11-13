@@ -21,6 +21,7 @@ DO_TAG=""                # If set, svn tag is called anyway
 NO_TESTUITE=""           # If set, the LATEST file is not updated
 SOURCES_DIR="$PWD/trunk" # SVN working copy directory, default is "$PWD/trunk"
 VERBOSE=""               # Verbose mode (displays log to standard err)
+SCM=svn
 
 SOURCES_DIR_HAS_BEEN_SET=
 CANDIDATES_DIR_HAS_BEEN_SET=
@@ -155,14 +156,15 @@ cd ${TMPDIR} || return
 if [ -d "${SOURCES_DIR}/.git" ]; then
     pushd "${SOURCES_DIR}"
     git pull
+    CGAL_GIT_HASH=`git rev-parse HEAD`
     popd
 else
     svn update ${SOURCES_DIR}
+    CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`
 fi
-if [ -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
+if [ "$SCM" = "svn" -a -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
     svn update ${CANDIDATES_DIR}
 fi
-CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`
 
 # Set the major/minor/bugfix release numbers
 NUMBERS_DIR=${SOURCES_DIR}/Maintenance/release_building
@@ -222,6 +224,7 @@ fi
 # Add the SVN revision to version.h
 cd "${release_name}"
 sed -i -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISION/" include/CGAL/version.h
+sed -i -e "s/define CGAL_GIT_HASH .*/define CGAL_GIT_HASH $CGAL_GIT_HASH/" include/CGAL/version.h
 cd ..
 # Make the release tarball
 tar -cf "${release_name}.tar" "${release_name}"
@@ -247,7 +250,7 @@ if [ -n "$DO_TAG" ]; then
     if [ -n "$NO_TESTSUITE" ]; then
         TAG_MSG_EXTRA=" (no testsuite)"
     fi
-    svn cp -m "Internal release tag for $release_name$TAG_MSG_EXTRA (automated commit)" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name
+    [ "$SCM" = "svn" ] && svn cp -m "Internal release tag for $release_name$TAG_MSG_EXTRA (automated commit)" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name
 fi
 
 # Build the SRPM
