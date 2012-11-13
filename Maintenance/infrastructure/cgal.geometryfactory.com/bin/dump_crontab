@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-cd $HOME/CGAL/next/Maintenance/infrastructure/cgal.geometryfactory.com/
+cd $HOME/infrastructure
 crontab -l >| crontab
 if [ -d ../../../.git ]; then
     git pull --quiet
