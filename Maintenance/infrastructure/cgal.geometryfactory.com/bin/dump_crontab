@@ -3,10 +3,14 @@
 cd $HOME/CGAL/next/Maintenance/infrastructure/cgal.geometryfactory.com/
 crontab -l >| crontab
 if [ -d ../../../.git ]; then
-    git pull 2> /dev/null
+    git pull --quiet
     git add crontab
-    git commit -m 'updated crontab (automated commit)' && git push origin master
+    if git commit -m 'updated crontab (automated commit)' > /dev/null; then
+        git push origin master
+    else
+        true
+    fi
 else
-    svn add -q crontab 
+    svn add -q crontab
     [ -n "`svn st crontab`" ] && svn ci -m 'updated crontab (automated commit)' crontab
 fi
