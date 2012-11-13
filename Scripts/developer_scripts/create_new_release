@@ -158,6 +158,7 @@ if [ -d "${SOURCES_DIR}/.git" ]; then
     git pull
     CGAL_GIT_HASH=`git rev-parse HEAD`
     popd
+    SCM=git
 else
     svn update ${SOURCES_DIR}
     CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`

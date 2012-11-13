@@ -207,6 +207,7 @@ sub install_packages() {
   }
   close(LOG_CONFLICTS);
   unlink 'temppack.tar';
+  [ -d .git ] && git status --short -b >> .scm-urls
   # foreach my $file (sort keys(%files)) {
   #   print "$files{$file}: $file\n";
   # }
