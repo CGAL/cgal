@@ -26,7 +26,9 @@ PkgSince cgalPkgSince
 PkgDependsOn cgalPkgDependsOn
 PkgLicense cgalPkgLicense
 PkgDemo cgalPkgDemo
+PkgDescriptionBegin cgalPkgDescriptionBegin
 PkgDescriptionEnd cgalPkgDescriptionEnd
+PkgManuals cgalPkgManuals
 PkgBib cgalPkgBib
 footnote cgalFootnote
 autotoc cgalAutoToc

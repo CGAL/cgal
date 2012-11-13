@@ -19,4 +19,4 @@ done > /tmp/rename_macros.sed
 
 sed -i -f /tmp/rename_macros.sed ../Doxyfile
 
-echo "Do not forget to manually update ../pkglist_filter.py"
+echo "Do not forget to manually update ../pkglist_filter.py and ../doxyassist.xml"
