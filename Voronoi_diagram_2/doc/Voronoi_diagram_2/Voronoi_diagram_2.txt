@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 2D Voronoi Diagram Adaptor
 \anchor Chapter_2D_Voronoi_Diagram_Adaptor
 \anchor chaptervda
-\autotoc
+\cgalAutoToc
 
 \author Menelaos Karavelas
 
@@ -292,8 +292,8 @@ specifically it defines an `Edge_rejector` and a
 `Face_rejector` functor that answer the question: "Should this
 edge (face) of the Voronoi diagram be rejected?". In addition to the
 edge and face rejectors the adaptation policy defines a tag, the
-`Has_inserter` tag. This tag is either set to \tag_true
-or to \tag_false. Semantically it determines if the adaptor
+`Has_inserter` tag. This tag is either set to \cgalTagTrue
+or to \cgalTagFalse. Semantically it determines if the adaptor
 is allowed to insert sites in an on-line fashion (on-line removals are
 not yet supported). In the former case, i.e., when on-line site
 insertions are allowed, an additional functor is required, the
@@ -486,7 +486,7 @@ the Voronoi diagram destroyed because of the site inserted.
 In this section we present an example that shows how to perform point
 location queries.
 
-\cgalexample{Voronoi_diagram_2/vd_2_point_location.cpp}
+\cgalExample{Voronoi_diagram_2/vd_2_point_location.cpp}
 
 */ 
 } /* namespace CGAL */

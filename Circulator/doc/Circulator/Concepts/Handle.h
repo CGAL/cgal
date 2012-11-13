@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgHandlesAndCirculatorsConcepts
-\cgalconcept
+\cgalConcept
 
 Most data structures in \cgal use the concept of `Handle` in their user 
 interface to refer to the elements they store. This concept describes what is 
@@ -16,20 +16,20 @@ Like iterators, the handle can be passed as template argument to
 the type of the element pointed to. 
 The `iterator_category` is `void`. 
 
-\refines DefaultConstructible
-\refines CopyConstructible
-\refines Assignable
-\refines EqualityComparable 
+\cgalRefines DefaultConstructible
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
+\cgalRefines EqualityComparable 
 
 The default constructed object must be unique as far as the equality 
 operator is concerned (this serves the same purpose as NULL for pointers). 
 (Note that this is not a generally supported feature of iterators of 
 standard containers.) 
 
-\hasModel T* (pointer)
-\hasModel const T* (const pointers)
-\hasModel `Iterator`
-\hasModel `Circulator`
+\cgalHasModel T* (pointer)
+\cgalHasModel const T* (const pointers)
+\cgalHasModel `Iterator`
+\cgalHasModel `Circulator`
 */
 class Handle {
 public:

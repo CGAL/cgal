@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsMiscellaneousConcepts
-\cgalconcept
+\cgalConcept
 
 A model of the concept `FromDoubleConstructible` is required 
 to be constructible from the type `double`. 

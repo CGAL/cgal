@@ -1,9 +1,9 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
-\refines `Kernel::Intersect_3`
+\cgalRefines `Kernel::Intersect_3`
 
 */
 class SphericalKernel::Intersect_3 {

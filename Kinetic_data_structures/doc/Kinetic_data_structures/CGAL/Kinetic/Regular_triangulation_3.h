@@ -23,7 +23,7 @@ vertex base.
 
 ### Example ###
 
-\cgalexample{Kinetic_data_structures/Kinetic_regular_triangulation_3.cpp} 
+\cgalExample{Kinetic_data_structures/Kinetic_regular_triangulation_3.cpp} 
 
 */
 template< typename Traits, typename Visitor, typename Triangulation >

@@ -11,8 +11,8 @@ concept. The class `Dummy_straight_skeleton_builder_2_visitor` has only one temp
 This class is the default visitor parameter of the straight skeleton builder. 
 All its methods are empty. 
 
-\models ::StraightSkeletonBuilder_2_Visitor 
-\models ::DefaultConstructible 
+\cgalModels ::StraightSkeletonBuilder_2_Visitor 
+\cgalModels ::DefaultConstructible 
 
 \sa `CGAL::Straight_skeleton_builder_2<Gt,Ss,Visitor>` 
 

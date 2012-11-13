@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulation2Concepts
-\cgalconcept
+\cgalConcept
 
 The regular triangulation of a set of weighted points does not 
 necessarily 
@@ -32,9 +32,9 @@ of the concept `RegularTriangulationFaceBase_2` , which refines
 the concept `TriangulationFaceBase_2` by adding 
 in the face a list to store hidden vertices. 
 
-\refines `TriangulationFaceBase_2` 
+\cgalRefines `TriangulationFaceBase_2` 
 
-\hasModel `CGAL::Regular_triangulation_face_base_2` 
+\cgalHasModel `CGAL::Regular_triangulation_face_base_2` 
 
 \sa `TriangulationFaceBase_2` 
 \sa `RegularTriangulationVertexBase_2` 

@@ -12,8 +12,8 @@ The polyhedron `P` is cleared and the convex hull of the set of 3D points is sto
 
 \pre `T.dimension()`==3.
 
-\requires `Triangulation` is a \cgal 3D triangulation. 
-\requires `Polyhedron` is an instantiation of `CGAL::Polyhedron_3<Traits>`. 
+\cgalRequires `Triangulation` is a \cgal 3D triangulation. 
+\cgalRequires `Polyhedron` is an instantiation of `CGAL::Polyhedron_3<Traits>`. 
 
 \sa `CGAL::convex_hull_3` 
 */

@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3SecondaryConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `BisectionGeometricTraits_3` describes a geometric traits class 
 that provides the basic types and operations 
@@ -16,7 +16,7 @@ function from \f$ \mathbb{R}^3\f$ to \f$ \mathbb{R}\f$), the do-intersect predic
 is computed by evaluations of the function values at both end points 
 of the segment. 
 
-\hasModel Any \cgal Kernel.
+\cgalHasModel Any \cgal Kernel.
 
 \sa `ImplicitSurfaceTraits_3` 
 \sa `IntersectionGeometricTraits_3` 

@@ -17,9 +17,9 @@ A `Quotient<NT>` `q` is represented as a pair of
 
 `NT` must be a model of concept `RealEmbeddable`. 
 
-\models ::Field 
-\models ::RealEmbeddable 
-\models ::Fraction 
+\cgalModels ::Field 
+\cgalModels ::RealEmbeddable 
+\cgalModels ::Fraction 
 
 ### Operations ###
 

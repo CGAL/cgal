@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulation2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template
@@ -10,11 +10,11 @@ provides the types of the geometric primitives used in the
 triangulation and some function object types for the required
 predicates on those primitives.
 
-\hasModel All the \cgal Kernels 
-\hasModel `CGAL::Triangulation_euclidean_traits_2<K>`
-\hasModel `CGAL::Projection_traits_xy_3<K>`
-\hasModel `CGAL::Projection_traits_yz_3<K>`
-\hasModel `CGAL::Projection_traits_xz_3<K>`
+\cgalHasModel All the \cgal Kernels 
+\cgalHasModel `CGAL::Triangulation_euclidean_traits_2<K>`
+\cgalHasModel `CGAL::Projection_traits_xy_3<K>`
+\cgalHasModel `CGAL::Projection_traits_yz_3<K>`
+\cgalHasModel `CGAL::Projection_traits_xz_3<K>`
 
 \sa `CGAL::Triangulation_2<Traits,Tds>` 
 

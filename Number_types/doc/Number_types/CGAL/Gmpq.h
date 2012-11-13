@@ -7,9 +7,9 @@ namespace CGAL {
 An object of the class `Gmpq` is an arbitrary precision rational 
 number based on the <span class="textsc">Gmp</span> library. 
 
-\models ::Field 
-\models ::RealEmbeddable 
-\models ::Fraction 
+\cgalModels ::Field 
+\cgalModels ::RealEmbeddable 
+\cgalModels ::Fraction 
 
 ### Implementation ###
 

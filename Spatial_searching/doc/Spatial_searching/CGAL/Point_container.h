@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup AdvancedClasses
 
-A custom container for points used to build a tree. \advanced Each
+A custom container for points used to build a tree. \cgalAdvanced Each
 point container holds the points from a rectangle associated with a
 node of the tree.  In the remainder of this reference page this
 rectangle is called the associated rectangle.  Provides a method to

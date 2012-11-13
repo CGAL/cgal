@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTDS3Concepts
-\cgalconcept
+\cgalConcept
 
 At the bottom level of 3D-triangulations 
 (see Sections \ref Triangulation3secdesign and \ref TDS3secdesign), 
@@ -24,10 +24,10 @@ cell classes. The <I>rebound</I> base classes so obtained are the classes which
 are used as base classes for the final vertex and cell classes. 
 More information can be found in Section \ref TDS3secdesign. 
 
-\hasModel CGAL::Triangulation_ds_vertex_base_3 
-\hasModel CGAL::Triangulation_vertex_base_3 
-\hasModel CGAL::Triangulation_vertex_base_with_info_3 
-\hasModel CGAL::Triangulation_hierarchy_vertex_base_3 
+\cgalHasModel CGAL::Triangulation_ds_vertex_base_3 
+\cgalHasModel CGAL::Triangulation_vertex_base_3 
+\cgalHasModel CGAL::Triangulation_vertex_base_with_info_3 
+\cgalHasModel CGAL::Triangulation_hierarchy_vertex_base_3 
 
 \sa `TriangulationVertexBase_3` 
 \sa `TriangulationHierarchyVertexBase_3` 
@@ -108,7 +108,7 @@ void set_cell(Cell_handle c);
 /// @{
 
 /*! 
-\debug Performs any desired test on a vertex. Checks that the 
+\cgalDebug Performs any desired test on a vertex. Checks that the 
 pointer to an incident cell is not the default constructed handle. 
 */ 
 bool is_valid(bool verbose=false, int level=0) const; 

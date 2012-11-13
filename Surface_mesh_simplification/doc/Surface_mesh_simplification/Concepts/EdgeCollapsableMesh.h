@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceMeshSimplificationConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `EdgeCollapsableMesh` describes the requirements for the type of 
 triangulated surface mesh that can be passed to the 
@@ -12,7 +12,7 @@ having only triangular faces.
 It can have any number of connected components, boundaries 
 (borders and holes) and handles (arbitrary genus). 
 
-\refines `HalfedgeGraph` 
+\cgalRefines `HalfedgeGraph` 
 
 ### Valid Expressions ###
 
@@ -30,7 +30,7 @@ Then, after the collapse of `(v0v1,v1v0)` the following holds:
 <UL> 
 <LI>The edge `e` is no longer in `mesh`. 
 <LI>One of \f$ \{\f$`v0,v1`\f$ \}\f$ is no longer in `mesh` while the other remains. 
-\footnote{Even though it would appear that v0 can always be the vertex being removed, there is a case when removing the edge `e` <I>requires</I> `v1` to be removed as well. See figure \ref CollapseFigure5.} 
+\cgalFootnote{Even though it would appear that v0 can always be the vertex being removed, there is a case when removing the edge `e` <I>requires</I> `v1` to be removed as well. See figure \ref CollapseFigure5.} 
 Let `vgone` be the removed vertex and `vkept` be the remaining vertex. 
 <LI>If `e` was a border edge, that is `get(is_border, e, mesh) == true`, then `next_edge(ep) == en`, and `prev_edge(en) == ep`. 
 <LI>If `e` was not a border edge, that is `get(is_border, e, mesh) == false`, then `ep` and `epo` are no longer in `mesh` while `en` and `eno` are kept in `mesh`. 
@@ -68,7 +68,7 @@ This figure illustrates the single exceptional case when removing \f$
 remains.
 </b></center>
 
-\hasModel `CGAL::Polyhedron_3<Traits>` (If it has only triangular faces, and via 
+\cgalHasModel `CGAL::Polyhedron_3<Traits>` (If it has only triangular faces, and via 
 <I>External Adaptation</I>, which is described in \cite cgal:sll-bgl-02 
 and this <span class="textsc">Bgl</span> web page: <A HREF="http://www.boost.org/libs/graph/doc/leda_conversion.html"><TT>http://www.boost.org/libs/graph/doc/leda_conversion.html</TT></A>). 
 

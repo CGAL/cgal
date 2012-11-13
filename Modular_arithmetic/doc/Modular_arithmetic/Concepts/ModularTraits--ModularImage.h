@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgModularArithmeticConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableUnaryFunction` computes the modular image of the given value 
 with respect to a homomorphism \f$ \varphi\f$ from the 
@@ -10,7 +10,7 @@ with respect to a homomorphism \f$ \varphi\f$ from the
 The homomorphism preserves the mapping of `int` into both types 
 , i.e., \f$ \varphi(\mathrm{Type}(i)) == \mathrm{Residue\_type}(i)\f$. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa `ModularTraits` 
 

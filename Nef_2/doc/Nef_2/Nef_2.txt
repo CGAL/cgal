@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 2D Boolean Operations on Nef Polygons
 \anchor Chapter_2D_Boolean_Operations_on_Nef_Polygons
 \anchor chapnef2
-\autotoc
+\cgalAutoToc
 \author Michael Seel
 
 \section Nef_2Introduction Introduction
@@ -40,11 +40,11 @@ interior, its boundary, and its closure, and also composed operations
 like regularization (defined to be the closure of the interior or a
 point set).
 
-\cgal_figure_begin{nefexamples,halfplane.gif}
+\cgalFigureBegin{nefexamples,halfplane.gif}
 Two Nef polyhedra in the plane. A closed halfspace on the left and a
 complex polyhedron on the right. Note that the points on the squared
 boundary are at infinity.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Nef_2Construction Construction and Composition
 
@@ -59,7 +59,7 @@ standard two-dimensional \cgal kernel (`Point_2<K>`
 and `Line_2<K>`). Their user interface is thus defined in
 the corresponding reference pages.
 
-\cgalexample{Nef_2/nef_2_construction.cpp}
+\cgalExample{Nef_2/nef_2_construction.cpp}
 
 Planar halfspaces (as used in the definition) are modelled by oriented
 lines. In the previous example `N1` is the Nef polyhedron

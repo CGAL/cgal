@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsMiscellaneousConcepts
-\cgalconcept
+\cgalConcept
 
 A model of the concept `FromIntConstructible` is required 
 to be constructible from int. 
 
-\hasModel int 
-\hasModel long 
-\hasModel double 
+\cgalHasModel int 
+\cgalHasModel long 
+\cgalHasModel double 
 
 */
 

@@ -1,11 +1,11 @@
 namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
-\cgalconcept
+\cgalConcept
 
-\refines Functor 
+\cgalRefines Functor 
 
-\hasModel ArrangementLandmarkTraits_2::Construct_x_monotone_curve_2 
+\cgalHasModel ArrangementLandmarkTraits_2::Construct_x_monotone_curve_2 
 
 */
 

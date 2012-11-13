@@ -1,17 +1,17 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 Concept for line segments supported by a line that is a model of 
 `Kernel::Line_3`, and whose endpoints are models of the 
 `SphericalKernel::CircularArcPoint_3` concept. 
 
-\refines `CopyConstructible`
-\refines `Assignable`
-\refines `DefaultConstructible`
+\cgalRefines `CopyConstructible`
+\cgalRefines `Assignable`
+\cgalRefines `DefaultConstructible`
 
-\hasModel `CGAL::Line_arc_3<SphericalKernel>`
+\cgalHasModel `CGAL::Line_arc_3<SphericalKernel>`
 
 */
 

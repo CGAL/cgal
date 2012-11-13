@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 \sa `CircularKernel::ConstructLine_2`
 \sa `CircularKernel::ConstructCircle_2`

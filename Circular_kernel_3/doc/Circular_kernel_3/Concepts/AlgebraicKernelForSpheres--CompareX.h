@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSphericalKernel3AlgebraicConcepts
-\cgalconcept
+\cgalConcept
 
 \sa `AlgebraicKernelForSpheres::CompareY`
 \sa `AlgebraicKernelForSpheres::CompareZ`

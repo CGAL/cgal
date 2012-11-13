@@ -3,16 +3,16 @@
 
 /*!
 \ingroup PkgMesh2Concepts
-\cgalconcept
+\cgalConcept
 
 
 The concept `DelaunayMeshTraits_2` refines the concept 
 `ConformingDelaunayTriangulationTraits_2`. It provides a construction 
 object `Construct_circumcenter_2`. 
 
-\refines `ConformingDelaunayTriangulationTraits_2` 
+\cgalRefines `ConformingDelaunayTriangulationTraits_2` 
 
-\hasModel Any model of the `Kernel` concept. In particular, all \cgal kernels. 
+\cgalHasModel Any model of the `Kernel` concept. In particular, all \cgal kernels. 
 
 
 */

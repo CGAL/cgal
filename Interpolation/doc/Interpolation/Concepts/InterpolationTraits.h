@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgInterpolation2Concepts
-\cgalconcept
+\cgalConcept
 
 Most interpolation functions are parameterized by a traits class that 
 defines the primitives used in the interpolation algorithms. The concept 
 `InterpolationTraits` defines this common set of requirements. 
 
-\hasModel `CGAL::Interpolation_traits_2<K>`
-\hasModel `CGAL::Interpolation_gradient_fitting_traits_2<K>`
+\cgalHasModel `CGAL::Interpolation_traits_2<K>`
+\cgalHasModel `CGAL::Interpolation_gradient_fitting_traits_2<K>`
 
 \sa `GradientFittingTraits` 
 \sa CGAL::sibson_c1_interpolation()

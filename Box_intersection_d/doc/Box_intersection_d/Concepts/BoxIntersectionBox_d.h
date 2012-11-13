@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgBoxIntersectionDConcepts
-\cgalconcept
+\cgalConcept
 
 The `BoxIntersectionBox_d` concept is used in the context of the intersection 
 algorithms for sequences of iso-oriented boxes. These algorithms come 
@@ -8,10 +8,10 @@ with a default traits class that assumes that the boxes are a model of
 this `BoxIntersectionBox_d` concept. This concept defines the access functions to 
 the dimension, the `id`-number, and the boundaries of the box. 
 
-\refines `Assignable.` 
+\cgalRefines `Assignable.` 
 
-\hasModel CGAL::Box_intersection_d::Box_d
-\hasModel CGAL::Box_intersection_d::Box_with_handle_d
+\cgalHasModel CGAL::Box_intersection_d::Box_d
+\cgalHasModel CGAL::Box_intersection_d::Box_with_handle_d
 
 \sa `CGAL::box_intersection_d` 
 \sa `CGAL::box_self_intersection_d` 

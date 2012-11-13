@@ -16,7 +16,7 @@ must be instantiated with models of the concepts
 `ArrangementDcelVertex`, `ArrangementDcelHalfedge`, 
 and `ArrangementDcelFace` respectively. 
 
-\models ::ArrangementDcel 
+\cgalModels ::ArrangementDcel 
 
 */
 template< typename V, typename H, typename F >
@@ -29,7 +29,7 @@ public:
 The basic <span class="textsc">Dcel</span> face type. Serves as a basis class for an extended 
 face record with auxiliary data fields. 
 
-\models ::ArrangementDcelFace 
+\cgalModels ::ArrangementDcelFace 
 
 */
 class Arr_face_base {
@@ -43,7 +43,7 @@ The basic <span class="textsc">Dcel</span> halfedge type. Serves as a basis clas
 extended halfedge record with auxiliary data fields. The `Curve` 
 parameter is the type of \f$ x\f$-monotone curves associated with the vertices. 
 
-\models ::ArrangementDcelHalfedge 
+\cgalModels ::ArrangementDcelHalfedge 
 
 */
 template< typename Curve >
@@ -58,7 +58,7 @@ The basic <span class="textsc">Dcel</span> vertex type. Serves as a basis class 
 vertex record with auxiliary data fields. The `Point` parameter is 
 the type of points associated with the vertices. 
 
-\models ::ArrangementDcelVertex 
+\cgalModels ::ArrangementDcelVertex 
 
 */
 template< typename Point >

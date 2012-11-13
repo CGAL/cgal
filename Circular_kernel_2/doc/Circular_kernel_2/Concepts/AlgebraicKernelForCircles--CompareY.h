@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgCircularKernel2AlgebraicConcepts
-\cgalconcept
+\cgalConcept
 
 \sa `AlgebraicKernelForCircles::CompareX`
 \sa `AlgebraicKernelForCircles::CompareXY`

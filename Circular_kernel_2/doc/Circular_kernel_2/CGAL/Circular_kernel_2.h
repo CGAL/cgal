@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgCircularKernel2GeometricClasses
 
-\models ::CircularKernel 
+\cgalModels ::CircularKernel 
 
 ### Parameters ###
 

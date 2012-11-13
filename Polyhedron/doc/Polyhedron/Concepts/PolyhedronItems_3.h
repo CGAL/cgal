@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgPolyhedronConcepts
-\cgalconcept
+\cgalConcept
 
 The `PolyhedronItems_3` concept refines the `HalfedgeDSItems`
 concept. In addition to the requirements stated there, a model for
@@ -11,10 +11,10 @@ support the point for vertices and the optional plane equation for
 facets. Note that the items class uses face instead of facet. Only the
 polyhedral surface renames faces to facets.
 
-\refines `HalfedgeDSItems`
+\cgalRefines `HalfedgeDSItems`
 
-\hasModel `CGAL::Polyhedron_items_3`
-\hasModel `CGAL::Polyhedron_min_items_3`
+\cgalHasModel `CGAL::Polyhedron_items_3`
+\cgalHasModel `CGAL::Polyhedron_min_items_3`
 
 \sa `CGAL::Polyhedron_3<Traits>`
 \sa `HalfedgeDSItems` 
@@ -59,7 +59,7 @@ typedef CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true, Plane> Face;
 
 class PolyhedronItems_3 {
 public:
-  /// \cgalconcept
+  /// \cgalConcept
   class Vertex {
   public:
     /// \name Types in PolyhedronItems_3::Vertex_wrapper<Refs,Traits>::Vertex
@@ -80,7 +80,7 @@ public:
     /// @}
   };
 
-  /// \cgalconcept
+  /// \cgalConcept
   class Face {
   public:
     /*!

@@ -9,7 +9,7 @@ This class provides a model of the `Kinetic::InstantaneousKernel` for
 use with general Cartesian Geometry. It provides all the predicates 
 needed for Delaunay triangulations and regular triangulations. 
 
-\models ::Kinetic::InstantaneousKernel 
+\cgalModels ::Kinetic::InstantaneousKernel 
 
 */
 template< typename SimulationTraits >

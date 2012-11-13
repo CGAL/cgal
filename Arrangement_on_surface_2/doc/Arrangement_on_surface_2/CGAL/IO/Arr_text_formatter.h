@@ -18,8 +18,8 @@ defined by the `Arrangement` template-parameter, as well as the `VertexData`,
 `HalfedgeData` and `FaceData` types, can all be written to an input stream using 
 the `<<` operator and read from an input stream using the `>>` operator. 
 
-\models ::ArrangementInputFormatter 
-\models ::ArrangementOutputFormatter 
+\cgalModels ::ArrangementInputFormatter 
+\cgalModels ::ArrangementOutputFormatter 
 
 \sa `read` 
 \sa `write` 
@@ -52,8 +52,8 @@ The `Arr_face_extended_text_formatter` class assumes that the nested `Point_2` a
 defined by the `Arrangement` template-parameter and that the `FaceData` type 
 can all be written to an input stream using the `<<` operator and read from an input stream using the `>>` operator. 
 
-\models ::ArrangementInputFormatter 
-\models ::ArrangementOutputFormatter 
+\cgalModels ::ArrangementInputFormatter 
+\cgalModels ::ArrangementOutputFormatter 
 
 \sa `read` 
 \sa `write` 
@@ -85,8 +85,8 @@ defined by the `Arrangement` template-parameter can both be written to an input
 stream using the `<<` operator and read from an input stream using the `>>` 
 operator. 
 
-\models ::ArrangementInputFormatter 
-\models ::ArrangementOutputFormatter 
+\cgalModels ::ArrangementInputFormatter 
+\cgalModels ::ArrangementOutputFormatter 
 
 \sa `read` 
 \sa `write` 

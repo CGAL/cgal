@@ -13,7 +13,7 @@ by a `d`-dim square with side length \f$ \epsilon\f$.
 Expects for the template argument a model of the concept 
 `SearchTraits`, for example `CGAL::Search_traits_2<CGAL::Simple_cartesian<double> >`. 
 
-\models ::FuzzyQueryItem 
+\cgalModels ::FuzzyQueryItem 
 
 \sa `FuzzyQueryItem` 
 

@@ -47,7 +47,7 @@ The following example program computes the minimal and
 maximal element of the sequence ` (3,\,6,\,5)`. Hence the output is 
 `min = 3, max = 6`. 
 
-\cgalexample{STL_Extension/min_max_element_example.cpp} 
+\cgalExample{STL_Extension/min_max_element_example.cpp} 
 
 \returns a pair of iterators where
 the first component refers to the minimal and the second component
@@ -75,7 +75,7 @@ especially for large and/or complex sequences.
 second component refers to the maximal element in the range
 [`first`, `last`). 
 
-\requires `CompareMin` and `CompareMax` are adaptable binary
+\cgalRequires `CompareMin` and `CompareMax` are adaptable binary
 function objects: `VT` \f$ \times\f$ `VT` \f$ \rightarrow\f$ `bool` where `VT`
 is the value type of `ForwardIterator`.
 */

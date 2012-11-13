@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsBi
-\cgalconcept
+\cgalConcept
 
 Compares the second coordinated of `AlgebraicKernel_d_2::Algebraic_real_2`s. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicKernel_d_2::CompareX_2`
 \sa `AlgebraicKernel_d_2::CompareXY_2`

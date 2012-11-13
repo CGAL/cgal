@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTDS2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationDSVertexBase_2` describes the requirements for the 
 vertex base class of a `Triangulation_data_structure_2<Vb,Fb>`. 
@@ -42,13 +42,13 @@ that the `CGAL::Triangulation_data_structure_2`
 actually uses as a base class for the class 
 of `CGAL::Triangulation_data_structure_2::Vertex`. 
 
-\refines `TriangulationDataStructure_2::Vertex` 
+\cgalRefines `TriangulationDataStructure_2::Vertex` 
 
-\hasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>`
-\hasModel `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
-\hasModel `CGAL::Regular_triangulation_vertex_base_2<Traits,Vb>`
-\hasModel `CGAL::Triangulation_hierarchy_vertex_base_2<Vb>`
-\hasModel `CGAL::Triangulation_vertex_base_with_info_2<Info,Traits,Vb>`
+\cgalHasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>`
+\cgalHasModel `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
+\cgalHasModel `CGAL::Regular_triangulation_vertex_base_2<Traits,Vb>`
+\cgalHasModel `CGAL::Triangulation_hierarchy_vertex_base_2<Vb>`
+\cgalHasModel `CGAL::Triangulation_vertex_base_with_info_2<Info,Traits,Vb>`
 
 \sa `TriangulationVertexBase_2` 
 \sa `TriangulationDSFaceBase_2` 

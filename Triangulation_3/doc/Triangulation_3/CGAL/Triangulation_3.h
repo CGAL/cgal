@@ -283,9 +283,9 @@ const TriangulationDataStructure_3 & tds() const;
 
 /*! 
 Returns a reference to the triangulation data structure. 
-\advanced This method is mainly a help for users implementing their own triangulation algorithms.
+\cgalAdvanced This method is mainly a help for users implementing their own triangulation algorithms.
 
-\advanced The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
+\cgalAdvanced The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
 */ 
 TriangulationDataStructure_3 & tds(); 
 
@@ -1256,7 +1256,7 @@ Facet mirror_facet(Facet f) const;
 /// @{
 
 /*! 
-\debug Checks the combinatorial validity of the triangulation. Checks also the 
+\cgalDebug Checks the combinatorial validity of the triangulation. Checks also the 
 validity of its geometric embedding (see 
 Section \ref Triangulation3secintro). 
 When `verbose` is set to true, 
@@ -1266,7 +1266,7 @@ bool
 is_valid(bool verbose = false) const; 
 
 /*! 
-\debug Checks the combinatorial validity of the cell by calling the 
+\cgalDebug Checks the combinatorial validity of the cell by calling the 
 `is_valid` method of the `TriangulationDataStructure_3` cell class. Also checks the 
 geometric validity of `c`, if `c` is finite. (See 
 Section \ref Triangulation3secintro.) 

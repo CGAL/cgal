@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3SecondaryConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `LabeledImage_3` describes the requirements for the second template 
 parameter of the class `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` 
@@ -12,7 +12,7 @@ associated to a 3D axis-aligned regular grid, in
 \f$ \mathbb{R}^3\f$. A cell of this grid is denoted by <I>voxel</I>. A voxel is 
 an iso-cuboid of size `vx()`, `vy()`, and `vz()`. 
 
-\hasModel `CGAL::Image_3<Kernel, T>`, for any \cgal kernel `K` and any integral type `T`
+\cgalHasModel `CGAL::Image_3<Kernel, T>`, for any \cgal kernel `K` and any integral type `T`
 
 */
 

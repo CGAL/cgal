@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDLinAlgConcepts
-\cgalconcept
+\cgalConcept
 
 The data type `LinearAlgebraTraits_d` encapsulates two classes 
 `Matrix`, `Vector` and many functions of basic linear algebra. 
@@ -13,8 +13,8 @@ correct. For example, if the linear system solver declares a linear
 system \f$ A x = b\f$ unsolvable it also returns a vector \f$ c\f$ such that 
 \f$ c^T A = 0\f$ and \f$ c^T b \neq 0\f$. 
 
-\hasModel `CGAL::Linear_algebraHd<RT>`
-\hasModel `CGAL::Linear_algebraCd<FT>`
+\cgalHasModel `CGAL::Linear_algebraHd<RT>`
+\cgalHasModel `CGAL::Linear_algebraCd<FT>`
 
 */
 

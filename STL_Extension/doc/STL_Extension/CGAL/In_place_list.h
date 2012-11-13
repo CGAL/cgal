@@ -95,7 +95,7 @@ in `T`.
 
 ### Example ###
 
-\cgalexample{STL_Extension/in_place_list_prog.cpp} 
+\cgalExample{STL_Extension/in_place_list_prog.cpp} 
 
 
 */

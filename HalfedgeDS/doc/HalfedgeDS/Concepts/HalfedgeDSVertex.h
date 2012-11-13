@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgHDSConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `HalfedgeDSVertex` defines the requirements for the local `Vertex` 
 type in the `HalfedgeDS` concept. It is also required in 
@@ -21,8 +21,8 @@ halfedge data structure they must be derived from a base class `Base`
 where the modifying member functions are still public. (The protection 
 could be bypassed by an user, but not by accident.) 
 
-\hasModel `CGAL::HalfedgeDS_vertex_base<Refs>` 
-\hasModel `CGAL::HalfedgeDS_vertex_min_base<Refs>` 
+\cgalHasModel `CGAL::HalfedgeDS_vertex_base<Refs>` 
+\cgalHasModel `CGAL::HalfedgeDS_vertex_min_base<Refs>` 
 
 \sa `HalfedgeDS<Traits,Items,Alloc>` 
 \sa `HalfedgeDSItems` 

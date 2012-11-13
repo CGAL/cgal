@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgPeriodic3Triangulation3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `Periodic_3Offset_3` describes a three-dimensional integer vector 
 with some specialized access functions and operations. 
 
-\hasModel CGAL::Periodic_3_offset_3 
+\cgalHasModel CGAL::Periodic_3_offset_3 
 
 \sa `Periodic_3DelaunayTriangulationTraits_3` 
 

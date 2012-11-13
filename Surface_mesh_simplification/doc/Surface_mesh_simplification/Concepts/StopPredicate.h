@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgSurfaceMeshSimplificationConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `StopPredicate` describes the requirements for the predicate which indicates if the simplification process must finish. 
 
-\hasModel `CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>`
-\hasModel `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>`
 
 */
 

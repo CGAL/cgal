@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulation2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `ConstrainedDelaunayTriangulationTraits_2` defines the requirements for the geometric 
 traits class of a constrained Delaunay triangulation 
@@ -15,13 +15,13 @@ The concept `ConstrainedDelaunayTriangulationTraits_2` refines both the concept
 `DelaunayTriangulationTraits_2` and the concept 
 `ConstrainedTriangulationTraits_2`. 
 
-\refines `DelaunayTriangulationTraits_2` 
-\refines `ConstrainedTriangulationTraits_2` 
+\cgalRefines `DelaunayTriangulationTraits_2` 
+\cgalRefines `ConstrainedTriangulationTraits_2` 
 
-\hasModel All \cgal Kernels
-\hasModel `CGAL::Projection_traits_xy_3<K>` 
-\hasModel `CGAL::Projection_traits_yz_3<K>` 
-\hasModel `CGAL::Projection_traits_xz_3<K>` 
+\cgalHasModel All \cgal Kernels
+\cgalHasModel `CGAL::Projection_traits_xy_3<K>` 
+\cgalHasModel `CGAL::Projection_traits_yz_3<K>` 
+\cgalHasModel `CGAL::Projection_traits_xz_3<K>` 
 
 
 \sa `TriangulationTraits_2` 

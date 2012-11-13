@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 A model for this must provide: 
 
@@ -19,7 +19,7 @@ whether the vectors in `A = tuple [first,last)` are linearly
 independent.
 
 \pre The objects in `A` are of the same dimension. 
-\requires The value type of `ForwardIterator` is `Kernel_d::Vector_d`. 
+\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Vector_d`. 
 */ 
 template <class ForwardIterator> bool 
 operator()(ForwardIterator first, ForwardIterator last); 

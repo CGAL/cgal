@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableUnaryFunction` computes a double approximation of a real 
 embeddable number. 
@@ -9,7 +9,7 @@ embeddable number.
 Remark: In order to control the quality of approximation one has to resort 
 to methods that are specific to NT. There are no general guarantees whatsoever. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa ::RealEmbeddableTraits 
 

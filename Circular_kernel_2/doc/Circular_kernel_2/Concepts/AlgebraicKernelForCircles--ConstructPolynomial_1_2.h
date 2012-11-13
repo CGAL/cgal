@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgCircularKernel2AlgebraicConcepts
-\cgalconcept
+\cgalConcept
 
 \sa `CircularKernel::ConstructLine_2`
 \sa `CircularKernel::GetEquation`

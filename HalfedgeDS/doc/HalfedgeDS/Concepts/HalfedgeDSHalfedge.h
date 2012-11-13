@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgHDSConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `HalfedgeDSHalfedge` defines the requirements for the local `Halfedge` 
 type in the `HalfedgeDS` concept. It is also required in 
@@ -32,8 +32,8 @@ more protection is provided for the `set_opposite()` member
 function. The base class `Base_base` provides access to it. (The 
 protection could be bypassed also by an user, but not by accident.) 
 
-\hasModel ::CGAL::HalfedgeDS_halfedge_base
-\hasModel ::CGAL::HalfedgeDS_halfedge_min_base
+\cgalHasModel ::CGAL::HalfedgeDS_halfedge_base
+\cgalHasModel ::CGAL::HalfedgeDS_halfedge_min_base
 
 \sa `HalfedgeDS<Traits,Items,Alloc>` 
 \sa `HalfedgeDSItems` 

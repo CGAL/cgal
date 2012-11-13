@@ -14,9 +14,9 @@ This number type is provided by the
 \cgal defines the necessary functions so that this class complies to the 
 requirements on number types. 
 
-\models ::FieldWithRootOf 
-\models ::RealEmbeddable 
-\models ::FromDoubleConstructible 
+\cgalModels ::FieldWithRootOf 
+\cgalModels ::RealEmbeddable 
+\cgalModels ::FromDoubleConstructible 
 
 */
 class Expr {

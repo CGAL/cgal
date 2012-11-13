@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceMeshSimplificationConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `GetCost` describes the requirements for the <I>policy function object</I> 
 which gets the <I>collapse cost</I> of an edge. 
@@ -11,11 +11,11 @@ An <I>absent</I> cost indicates that the edge should not be collapsed.
 This could be the result of a computational limitation (such as overflow), 
 or can be intentionally returned to prevent the edge from being collapsed. 
 
-\refines `DefaultConstructible` 
-\refines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
+\cgalRefines `CopyConstructible` 
 
-\hasModel `CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>`
-\hasModel `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>`
 
 */
 

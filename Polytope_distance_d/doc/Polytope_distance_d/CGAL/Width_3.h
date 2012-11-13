@@ -50,7 +50,7 @@ extended by only one new point.
 
 <b>Large Numbers.</b> 
 
-\advanced Because there is no need for dividing values during the algorithm, the 
+\cgalAdvanced Because there is no need for dividing values during the algorithm, the 
 numbers can get really huge (all the computations are made using a lot 
 of multiplications). Therefore it is strongly recommended to use a 
 number type that can handle numbers of arbitrary length (e.g., 
@@ -63,7 +63,7 @@ the underlying number type provides the 'modulo' operation.
 
 <b>Information Output during the Computations.</b> 
 
-\advanced If during the algorithm the program should output some information 
+\cgalAdvanced If during the algorithm the program should output some information 
 (e.g., during the debugging phase) you can turn on the output 
 information by giving the compiler flag <span class="textsc">debug</span>. In the file 
 <TT>width_assertions.h</TT> you can turn on/off the output of some 
@@ -74,7 +74,7 @@ that the \f$ <\!<\f$-operator has to been overloaded for `Point_3`,
 
 ### Example ###
 
-\cgalexample{Polytope_distance_d/width_simplex.cpp} 
+\cgalExample{Polytope_distance_d/width_simplex.cpp} 
 
 */
 template< typename Traits >
@@ -126,7 +126,7 @@ creates a variable `width` initialized to the width of \f$ \mathcal{S}\f$ -
 with \f$ \mathcal{S}\f$ being the set of points in the range 
 [`first`,`beyond`). 
 
-\requires The value type of `InputIterator` is `Point_3`. 
+\cgalRequires The value type of `InputIterator` is `Point_3`. 
 */ 
 template < class InputIterator > 
 Width_3( InputIterator first, InputIterator beyond); 
@@ -137,7 +137,7 @@ the width of the polyhedron \f$ P\f$. Note that the vertex point coordinates
 are altered! 
 \pre \f$ P\f$ is a convex polyhedron. 
 
-\requires `Polyhedron` is a 
+\cgalRequires `Polyhedron` is a 
 `CGAL::Polyhedron_3` with facets supporting plane equations 
 where `Polyhedron::Point_3` \f$ \equiv\f$ `Point_3` and 
 `Polyhedron::Plane_3` \f$ \equiv\f$ `Plane_3`. 

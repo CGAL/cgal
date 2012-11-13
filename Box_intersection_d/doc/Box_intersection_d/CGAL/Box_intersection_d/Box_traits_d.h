@@ -22,7 +22,7 @@ const-pointer `const B*`, where `B` is a model of the
 `BoxIntersectionBox_d` concept. 
 </UL> 
 
-\models ::BoxIntersectionTraits_d 
+\cgalModels ::BoxIntersectionTraits_d 
 
 \sa `CGAL::box_intersection_d()` 
 \sa `CGAL::box_self_intersection_d()` 

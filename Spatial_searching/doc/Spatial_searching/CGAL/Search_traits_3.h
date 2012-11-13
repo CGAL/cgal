@@ -11,8 +11,8 @@ and the search classes. `Kernel` must be a \cgal kernel.
 Expects for the template argument a model of the concept `Kernel`, 
 for example `CGAL::Cartesian<double>` or `CGAL::Simple_cartesian<CGAL::Gmpq>`. 
 
-\models ::SearchTraits
-\models ::RangeSearchTraits
+\cgalModels ::SearchTraits
+\cgalModels ::RangeSearchTraits
 
 \sa `Search_traits_2<Kernel>` 
 \sa `Search_traits<Point,CartesianConstIterator,ConstructCartesianConstIterator` 

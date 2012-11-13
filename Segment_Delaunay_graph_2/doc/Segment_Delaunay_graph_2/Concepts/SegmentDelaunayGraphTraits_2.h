@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSegmentDelaunayGraph2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `SegmentDelaunayGraphTraits_2` provides the traits 
 requirements for the `Segment_Delaunay_graph_2<Gt,DS>` and 
@@ -11,14 +11,14 @@ the concept `SegmentDelaunayGraphSite_2`. It also provides
 constructions for sites and several function object 
 types for the predicates. 
 
-\refines `DefaultConstructible` 
-\refines `CopyConstructible` 
-\refines `Assignable` 
+\cgalRefines `DefaultConstructible` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `Assignable` 
 
-\hasModel `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>` 
-\hasModel `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>` 
-\hasModel `CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` 
-\hasModel `CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>` 
+\cgalHasModel `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>` 
+\cgalHasModel `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>` 
+\cgalHasModel `CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` 
+\cgalHasModel `CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>` 
 
 \sa `SegmentDelaunayGraphSite_2` 
 \sa `CGAL::Segment_Delaunay_graph_2<Gt,DS>` 

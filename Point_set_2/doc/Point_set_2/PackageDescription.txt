@@ -8,20 +8,20 @@
 /*!
 \addtogroup PkgPointSet2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Range and Neighbor Search,PkgPointSet2Summary}
-\PkgPicture{Point_set_2/fig/point_set.png}
-\PkgSummaryBegin
-\PkgAuthor{Matthias B&auml;sken}
-\PkgDesc{This package supports circular, triangular, and isorectangular range search queries as well as (k) nearest neighbor search queries on 2D point sets. In contrast to the spatial searching package, this package uses a  Delaunay triangulation as underlying data structure.}
-\PkgManuals{Chapter_2D_Range_and_Neighbor_Search,PkgPointSet2}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{2.1}
-\PkgDependsOn{\ref PkgTriangulation2Summary}
-\PkgBib{cgal:b-ss2}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{2D Range and Neighbor Search,PkgPointSet2Summary}
+\cgalPkgPicture{Point_set_2/fig/point_set.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Matthias B&auml;sken}
+\cgalPkgDesc{This package supports circular, triangular, and isorectangular range search queries as well as (k) nearest neighbor search queries on 2D point sets. In contrast to the spatial searching package, this package uses a  Delaunay triangulation as underlying data structure.}
+\cgalPkgManuals{Chapter_2D_Range_and_Neighbor_Search,PkgPointSet2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.1}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgBib{cgal:b-ss2}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 The two dimensional point set is a class for geometric queries.  It
 supports circular, triangular and iso rectangular range searches and

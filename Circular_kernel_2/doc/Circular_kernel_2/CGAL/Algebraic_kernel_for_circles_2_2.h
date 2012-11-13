@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgCircularKernel2AlgebraicClasses
 
-\models ::AlgebraicKernelForCircles 
+\cgalModels ::AlgebraicKernelForCircles 
 
 */
 template< typename RT >

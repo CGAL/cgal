@@ -10,7 +10,7 @@ which returns `true` when the number of current edges drops below a certain thre
  
 \tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
-\models ::StopPredicate 
+\cgalModels ::StopPredicate 
 
 \sa `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>` 
 

@@ -19,7 +19,7 @@ where `C3T3` is the model of `MeshComplex_3InTriangulation_3`
 used in the mesh generation process, 
 and `C3T3::Triangulation` its nested triangulation type. 
 
-\models `MeshCriteria_3`
+\cgalModels `MeshCriteria_3`
 
 ### Example ###
 

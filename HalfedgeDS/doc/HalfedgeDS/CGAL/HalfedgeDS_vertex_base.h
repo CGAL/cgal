@@ -33,7 +33,7 @@ Let us look at some instantiations
   type `Point`. It can be used as a vertex for a model of the 
   `PolyhedronItems_3` concept. 
 
-\models ::HalfedgeDSVertex 
+\cgalModels ::HalfedgeDSVertex 
 
 \sa `HalfedgeDS<Traits,Items,Alloc>` 
 \sa `HalfedgeDSItems` 

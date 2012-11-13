@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableBinaryFunction` evaluates 
 `PolynomialTraits_d::Polynomial_d` with respect to one variable. 
 
-\refines `AdaptableBinaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

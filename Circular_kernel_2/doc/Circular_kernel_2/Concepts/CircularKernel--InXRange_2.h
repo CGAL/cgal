@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 To test whether a point lies in the vertical range of a curve. 
 

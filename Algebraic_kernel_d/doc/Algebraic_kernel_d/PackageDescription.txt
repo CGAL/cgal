@@ -17,19 +17,19 @@
 /*!
 \addtogroup PkgAlgebraicKerneld
 \todo check generated documentation
-\PkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKerneldSummary}
-\PkgPicture{Algebraic_kernel_d.png}
-\PkgSummaryBegin
-\PkgAuthors{Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Pe&ntilde;aranda, and Monique Teillaud}
-\PkgDesc{Real solving of polynomials is a fundamental problem with a wide application range.  This package is targeted to provide black-box implementations of state-of-the-art  algorithms to determine, compare and approximate real roots of univariate polynomials and bivariate polynomial systems. Such a black-box is called an *Algebraic %Kernel*.  So far the package only provides models for the univariate kernel. Nevertheless,  it already defines concepts for the bivariate kernel, since this settles the interface for upcoming implementations.}
-\PkgManuals{Chapter_Algebraic_Kernel,PkgAlgebraicKerneld}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.6}
-\PkgDependsOn{Some models depend on \ref thirdpartyRS.}
-\PkgBib{cgal:bht-ak}
-\PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKerneldSummary}
+\cgalPkgPicture{Algebraic_kernel_d.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Pe&ntilde;aranda, and Monique Teillaud}
+\cgalPkgDesc{Real solving of polynomials is a fundamental problem with a wide application range.  This package is targeted to provide black-box implementations of state-of-the-art  algorithms to determine, compare and approximate real roots of univariate polynomials and bivariate polynomial systems. Such a black-box is called an *Algebraic %Kernel*.  So far the package only provides models for the univariate kernel. Nevertheless,  it already defines concepts for the bivariate kernel, since this settles the interface for upcoming implementations.}
+\cgalPkgManuals{Chapter_Algebraic_Kernel,PkgAlgebraicKerneld}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.6}
+\cgalPkgDependsOn{Some models depend on \ref thirdpartyRS.}
+\cgalPkgBib{cgal:bht-ak}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

@@ -1,9 +1,9 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
-\refines `Kernel::IsVertical_2` 
+\cgalRefines `Kernel::IsVertical_2` 
 */
 
 class CircularKernel::IsVertical_2 {

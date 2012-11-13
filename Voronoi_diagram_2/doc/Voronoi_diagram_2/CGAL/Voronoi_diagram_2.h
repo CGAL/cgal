@@ -15,7 +15,7 @@ that is similar to that of \cgal's arrangements.
 
 \tparam AP must be a model of the `AdaptationPolicy_2` concept.  The third template parameter defaults to `CGAL::Identity_policy_2<DG,AT>`. 
 
-\refines `DefaultConstructible,` \refines `CopyConstructible,` \refines `Assignable` 
+\cgalRefines `DefaultConstructible,` \cgalRefines `CopyConstructible,` \cgalRefines `Assignable` 
 
  
 \sa `CGAL::Delaunay_triangulation_2<Traits,Tds>` 
@@ -40,11 +40,11 @@ public:
     `Voronoi_diagram_2<DG,AT,AP>` class for Voronoi faces. Below we 
     present its interface. 
 
-    \models `DefaultConstructible`
-    \models `CopyConstructible`
-    \models `Assignable`
-    \models `EqualityComparable`
-    \models `LessThanComparable` 
+    \cgalModels `DefaultConstructible`
+    \cgalModels `CopyConstructible`
+    \cgalModels `Assignable`
+    \cgalModels `EqualityComparable`
+    \cgalModels `LessThanComparable` 
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` 
@@ -168,11 +168,11 @@ public:
     `Voronoi_diagram_2<DG,AT,AP>` class for Voronoi halfedges. 
     Below we present its interface. 
 
-    \models `DefaultConstructible`
-    \models `CopyConstructible`
-    \models `Assignable`
-    \models `EqualityComparable`
-    \models `LessThanComparable`
+    \cgalModels `DefaultConstructible`
+    \cgalModels `CopyConstructible`
+    \cgalModels `Assignable`
+    \cgalModels `EqualityComparable`
+    \cgalModels `LessThanComparable`
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` 
@@ -408,11 +408,11 @@ public:
     The class `Vertex` is the Voronoi vertex class provided by the class 
     `Voronoi_diagram_2<DG,AT,AP>` class. Below we present its interface. 
 
-    \models `DefaultConstructible`
-    \models `CopyConstructible`
-    \models `Assignable`, 
-    \models `EqualityComparable`
-    \models `LessThanComparable`
+    \cgalModels `DefaultConstructible`
+    \cgalModels `CopyConstructible`
+    \cgalModels `Assignable`, 
+    \cgalModels `EqualityComparable`
+    \cgalModels `LessThanComparable`
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` 

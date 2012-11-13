@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulation3Concepts
-\cgalconcept
+\cgalConcept
 
 \deprecated This concept is deprecated since \cgal 3.6, as the only class using 
 it, `Triangulation_hierarchy_3` has been deprecated as well. 
@@ -9,9 +9,9 @@ it, `Triangulation_hierarchy_3` has been deprecated as well.
 The vertex base used by `Triangulation_hierarchy_3` must provide 
 access to two vertex handles for linking between the levels of the hierarchy. 
 
-\refines `TriangulationVertexBase_3` 
+\cgalRefines `TriangulationVertexBase_3` 
 
-\hasModel CGAL::Triangulation_hierarchy_vertex_base_3 
+\cgalHasModel CGAL::Triangulation_hierarchy_vertex_base_3 
 
 */
 

@@ -5,21 +5,21 @@
 /*!
 \addtogroup PkgAlphaShape2
 
-\PkgDescriptionBegin{2D Alpha Shapes,PkgAlphaShape2Summary}
-\PkgPicture{alpha-detail.png}
-\PkgSummaryBegin
-\PkgAuthors{Tran Kai Frank Da}
-\PkgDesc{This package offers  a data structure encoding the whole family of alpha-complexes related to a given 2D Delaunay or regular triangulation. In particular, the data structure allows to retrieve   the alpha-complex for any alpha value, the whole spectrum of critical alpha values and a filtration on the triangulation faces (this filtration is based on the first  alpha value for which each face is included on the alpha-complex).}
-\PkgManuals{Chapter_2D_Alpha_Shapes,PkgAlphaShape2}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{2.1}
-\PkgDependsOn{\ref PkgTriangulation2Summary}
-\PkgBib{cgal:d-as2}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgDemo{2D Alpha Shapes,alpha_shapes_2.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{2D Alpha Shapes,PkgAlphaShape2Summary}
+\cgalPkgPicture{alpha-detail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Tran Kai Frank Da}
+\cgalPkgDesc{This package offers  a data structure encoding the whole family of alpha-complexes related to a given 2D Delaunay or regular triangulation. In particular, the data structure allows to retrieve   the alpha-complex for any alpha value, the whole spectrum of critical alpha values and a filtration on the triangulation faces (this filtration is based on the first  alpha value for which each face is included on the alpha-complex).}
+\cgalPkgManuals{Chapter_2D_Alpha_Shapes,PkgAlphaShape2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.1}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgBib{cgal:d-as2}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{2D Alpha Shapes,alpha_shapes_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 This chapter presents a framework for alpha shapes. The description is based on
 the articles \cite em-tdas-94, \cite e-was-92. Alpha shapes are

@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsBi
-\cgalconcept
+\cgalConcept
 
 Computes the sign of a bivariate polynomial 
 `AlgebraicKernel_d_2::Polynomial_2` at a value of type 
 `AlgebraicKernel_d_2::Algebraic_real_2`. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicKernel_d_2::IsZeroAt_2`
 \sa `AlgebraicKernel_d_1::SignAt_1`

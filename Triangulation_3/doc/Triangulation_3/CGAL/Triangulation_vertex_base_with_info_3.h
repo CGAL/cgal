@@ -21,8 +21,8 @@ The third template argument is a vertex base class from which
 `Triangulation_vertex_base_with_info_3` derives. It has the default 
 value `Triangulation_vertex_base_3<TriangulationTraits_3>`. 
 
-\models ::TriangulationVertexBase_3 
-\models ::TriangulationVertexBaseWithInfo_3 
+\cgalModels ::TriangulationVertexBase_3 
+\cgalModels ::TriangulationVertexBaseWithInfo_3 
 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
 \sa `CGAL::Triangulation_vertex_base_3` 

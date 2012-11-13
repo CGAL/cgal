@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 A model for this must provide: 
 
@@ -20,7 +20,7 @@ independent.
 
 \pre The objects are of the same dimension. 
 
-\requires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
+\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
 */ 
 template <class ForwardIterator> bool 
 operator()(ForwardIterator first, ForwardIterator last); 

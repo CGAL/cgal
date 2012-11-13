@@ -1,14 +1,14 @@
 
 /*!
   \ingroup PkgRidges_3Concepts
-  \cgalconcept
+  \cgalConcept
 
   The concept `TriangulatedSurfaceMesh` describes an oriented surface (possibly with 
   boundary) embedded in the 3 space. It is combinatorially based on a 
   halfedge data structure with triangular faces, geometrically 3d points 
   associated to the vertices define the embedding. 
 
-  \hasModel `CGAL::Polyhedron_3` with the restriction that faces are triangular.
+  \cgalHasModel `CGAL::Polyhedron_3` with the restriction that faces are triangular.
 
   ### Creation ###
 
@@ -28,7 +28,7 @@ public:
   typedef Hidden_type Traits; 
 
   /*! 
-    \cgalconcept
+    \cgalConcept
     Opaque type representing a facet of the `TriangulatedSurfaceMesh` . 
   */ 
   class Facet {
@@ -39,7 +39,7 @@ public:
   };
 
   /*! 
-    \cgalconcept
+    \cgalConcept
     Opaque type representing a vertex of the `TriangulatedSurfaceMesh` . 
   */ 
   class Vertex {
@@ -52,7 +52,7 @@ public:
 
 
   /*! 
-    \cgalconcept
+    \cgalConcept
     Opaque type representing a halfedge of the `TriangulatedSurfaceMesh` . 
   */ 
   class Halfedge {

@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `MeshComplex_3InTriangulation_3` describes a data structure 
 to represent and maintain a 3D complex embedded in a 3D triangulation. 
@@ -42,7 +42,7 @@ the current approximation of each subdomain
 and each boundary surface patch. 
 The data structure encodes the final mesh at the end of the meshing process. 
 
-\hasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
+\cgalHasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
 
 \sa `MeshDomain_3` 
 \sa `MeshComplexWithFeatures_3InTriangulation_3` 

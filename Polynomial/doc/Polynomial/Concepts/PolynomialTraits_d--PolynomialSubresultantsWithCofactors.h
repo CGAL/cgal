@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 <B>Note:</B> This functor is optional! 
 
@@ -16,9 +16,9 @@ the <I>cofactors</I> of \f$ \mathrm{Sres}_i(p,q)\f$.
 The result is written in three output ranges, each of length \f$ \min\{n,m\}+1\f$, 
 starting with the \f$ 0\f$-th subresultant and the corresponding cofactors. 
 
-\refines `AdaptableBinaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

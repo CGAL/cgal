@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `MeshDomain_3` describes the knowledge required on the 
 object to be discretized. 
@@ -29,9 +29,9 @@ A segment, ray or line is said to intersect properly the domain boundary
 if it includes points which are strictly inside 
 and strictly outside the domain (resp. the subdomain). 
 
-\hasModel `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>` 
-\hasModel `CGAL::Implicit_mesh_domain_3<Function,BGT>` 
-\hasModel `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` 
+\cgalHasModel `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>` 
+\cgalHasModel `CGAL::Implicit_mesh_domain_3<Function,BGT>` 
+\cgalHasModel `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` 
 
 \sa `MeshVertexBase_3` 
 \sa `MeshCellBase_3` 

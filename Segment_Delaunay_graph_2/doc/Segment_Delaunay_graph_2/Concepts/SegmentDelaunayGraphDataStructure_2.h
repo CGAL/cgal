@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSegmentDelaunayGraph2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `SegmentDelaunayGraphDataStructure_2` refines the 
 concept `ApolloniusGraphDataStructure_2`. In addition 
@@ -32,9 +32,9 @@ returned.
 We only describe the additional requirements with respect to the 
 `ApolloniusGraphDataStructure_2` concept. 
 
-\refines `ApolloniusGraphDataStructure_2` 
+\cgalRefines `ApolloniusGraphDataStructure_2` 
 
-\hasModel `CGAL::Triangulation_data_structure_2<Vb,Fb>`
+\cgalHasModel `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 
 \sa `TriangulationDataStructure_2` 
 \sa `ApolloniusGraphDataStructure_2` 

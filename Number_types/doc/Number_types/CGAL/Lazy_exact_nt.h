@@ -19,9 +19,9 @@ number type `NT`.
 Note that some filtering mechanism is available at the predicate level 
 using `Filtered_predicate` and `Filtered_kernel`. 
 
-\models ::IntegralDomainWithoutDivision same as `NT` 
-\models ::RealEmbeddable 
-\models ::Fraction, if NT is a ::Fraction
+\cgalModels ::IntegralDomainWithoutDivision same as `NT` 
+\cgalModels ::RealEmbeddable 
+\cgalModels ::Fraction, if NT is a ::Fraction
 
 ### Example ###
 

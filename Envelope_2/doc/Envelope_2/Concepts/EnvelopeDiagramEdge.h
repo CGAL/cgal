@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgEnvelope2Concepts
-\cgalconcept
+\cgalConcept
 
 An edge record in an envelope diagram, which represents a continuous portion 
 of the \f$ x\f$-axis. It is associated with a (possibly empty) set of curves that 

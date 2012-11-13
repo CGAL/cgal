@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 2D Conforming Triangulations and Meshes
 \anchor Chapter_2D_Conforming_Triangulations_and_Meshes
 \anchor userchapter2DMeshes
-\autotoc
+\cgalAutoToc
 \author Laurent Rineau
 
 This package implements Shewchuk's algorithm \cite s-mgdsa-00 to construct
@@ -87,17 +87,17 @@ triangulation, makes it conforming Delaunay, and then conforming
 Gabriel. At each step, the number of vertices of the triangulation is
 printed.
 
-\cgalexample{Mesh_2/conforming.cpp}
+\cgalExample{Mesh_2/conforming.cpp}
 
-See \cgal_figure_ref{Conformexampleconform}
+See \cgalFigureRef{Conformexampleconform}
 
-\cgal_figure_begin{Conformexampleconform,example-conform-Delaunay-Gabriel.png}
+\cgalFigureBegin{Conformexampleconform,example-conform-Delaunay-Gabriel.png}
 Initial triangulation and the corresponding Delaunay and Gabriel triangulation.
-\cgal_figure_end
+\cgalFigureEnd
 
-\cgal_figure_beginConformexampleconformDelaunay,example-conform-Delaunay.png}
+\cgalFigureBeginConformexampleconformDelaunay,example-conform-Delaunay.png}
 The corresponding conforming Delaunay triangulation.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section secMesh_2_meshes Meshes 
 
@@ -121,12 +121,12 @@ cover the boundary of the domain.
 The <span class="textsc">Pslg</span> divides the plane into several connected components. By
 default, the domain is the union of the bounded connected components. 
 
-See \cgal_figure_ref{Domain} for an example of a domain
+See \cgalFigureRef{Domain} for an example of a domain
 defined without using seed points, and a possible mesh of it. 
 
-\cgal_figure_begin{Domain,latex domain-domain-mesh.png}
+\cgalFigureBegin{Domain,latex domain-domain-mesh.png}
 A domain defined without seed points and the generated mesh.
-\cgal_figure_end
+\cgalFigureEnd
 
 
 
@@ -135,14 +135,14 @@ seed points mark components to be meshed or they mark components not to be
 meshed (holes).
 
 See
-\cgal_figure_ref{Domainseeds} for another domain defined with the same <span class="textsc">Pslg</span> and two seed points used to define holes. 
+\cgalFigureRef{Domainseeds} for another domain defined with the same <span class="textsc">Pslg</span> and two seed points used to define holes. 
 In the corresponding mesh these
 two holes are triangulated but not meshed.
 
 
-\cgal_figure_begin{Domainseeds,domain-seeds-domain-seeds-mesh.png}
+\cgalFigureBegin{Domainseeds,domain-seeds-domain-seeds-mesh.png}
 A domain with two seeds points defining holes and the generated mesh.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection secMesh_2_criteria Shape and Size Criteria 
 
@@ -246,7 +246,7 @@ provided by the criteria class `Delaunay_mesh_criteria_2<K>`. No seeds are
 given, meaning that the mesh domain covers the whole plane except the
 unbounded component.
 
-\cgalexample{Mesh_2/mesh_global.cpp}
+\cgalExample{Mesh_2/mesh_global.cpp}
 
 \subsection Mesh_2ExampleUsingtheClass Example Using the Class Delaunay_mesher_2<CDT>
 
@@ -257,7 +257,7 @@ function `refine_Delaunay_mesh_2` would be less efficient,
 because some internal structures needed by the algorithm would be
 built twice.
 
-\cgalexample{Mesh_2/mesh_class.cpp}
+\cgalExample{Mesh_2/mesh_class.cpp}
 
 \subsection Mesh_2ExampleUsingSeeds Example Using Seeds
 
@@ -269,7 +269,7 @@ default ones provided by the criteria class
 Once the mesh is constructed, the `is_in_domain()` member function of
 faces is used to count them.
 
-\cgalexample{Mesh_2/mesh_with_seeds.cpp}
+\cgalExample{Mesh_2/mesh_with_seeds.cpp}
 
 */ 
 } /* namespace CGAL */

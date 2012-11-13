@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgArrangement2ConceptsDCEL
-\cgalconcept
+\cgalConcept
 
 An isolated vertex-information record in a <span class="textsc">Dcel</span> data structure, which stores 
 the face that contains the isolated vertex in its interior, along with an 

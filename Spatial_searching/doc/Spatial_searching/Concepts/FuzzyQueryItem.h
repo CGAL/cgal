@@ -1,11 +1,11 @@
 /*!
 \ingroup PkgSpatialSearchingDConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `FuzzyQueryItem` describes the requirements for fuzzy `d`-dimensional spatial objects. 
 
-\hasModel `CGAL::Fuzzy_sphere<Traits>`
-\hasModel `CGAL::Fuzzy_iso_box<Traits>` 
+\cgalHasModel `CGAL::Fuzzy_sphere<Traits>`
+\cgalHasModel `CGAL::Fuzzy_iso_box<Traits>` 
 
 */
 

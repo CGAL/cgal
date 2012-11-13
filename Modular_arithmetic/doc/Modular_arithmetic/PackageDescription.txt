@@ -4,18 +4,18 @@
 /*!
 \addtogroup PkgModularArithmetic
 \todo check generated documentation
-\PkgDescriptionBegin{Modular Arithmetic,PkgModularArithmeticSummary}
-\PkgPicture{Modular_arithmetic.png}
-\PkgSummaryBegin
-\PkgAuthors{Michael Hemmer and Sylvain Pion}
-\PkgDesc{This package provides arithmetic over finite fields. The provided tools are in particular useful for filters based on  modular arithmetic and algorithms based on Chinese remainder. }
-\PkgManuals{Chapter_Modular_Arithmetic,PkgModularArithmetic}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.4}
-\PkgBib{cgal:h-ma}
-\PkgLicense{\ref licensesLGPL  "LGPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{Modular Arithmetic,PkgModularArithmeticSummary}
+\cgalPkgPicture{Modular_arithmetic.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Michael Hemmer and Sylvain Pion}
+\cgalPkgDesc{This package provides arithmetic over finite fields. The provided tools are in particular useful for filters based on  modular arithmetic and algorithms based on Chinese remainder. }
+\cgalPkgManuals{Chapter_Modular_Arithmetic,PkgModularArithmetic}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.4}
+\cgalPkgBib{cgal:h-ma}
+\cgalPkgLicense{\ref licensesLGPL  "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

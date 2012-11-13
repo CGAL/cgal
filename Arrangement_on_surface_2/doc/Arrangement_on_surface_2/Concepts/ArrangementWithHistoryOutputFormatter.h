@@ -1,15 +1,15 @@
 
 /*!
 \ingroup PkgArrangement2Concepts
-\cgalconcept
+\cgalConcept
 
 A model for the `ArrangementWithHistoryOutputFormatter` concept supports a set of functions that enable 
 writing an arrangement-with-history instance to an output stream using a 
 specific format. 
 
-\refines `ArrangementOutputFormatter` 
+\cgalRefines `ArrangementOutputFormatter` 
 
-\hasModel `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
+\cgalHasModel `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
 
 */
 

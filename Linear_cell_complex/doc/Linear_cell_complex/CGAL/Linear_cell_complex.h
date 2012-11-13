@@ -10,7 +10,7 @@ in an ambient space of dimension `d2`. This is a model of the concept of
 each vertex of the map is associated with a 
 model of `CellAttributeWithPoint`. 
 
-\models ::CombinatorialMap 
+\cgalModels ::CombinatorialMap 
 
 \tparam d an integer for the dimension of the combinatorial map, 
 \tparam d2 an integer for the dimension of the ambient space, 
@@ -25,7 +25,7 @@ There are four default template arguments:
 `Items` is equal to `CGAL::Linear_cell_complex_min_items<d>` and 
 `Alloc` is `CGAL_ALLOCATOR(int)`. 
 
-\advanced Note that there is an additional, and undocumented, template
+\cgalAdvanced Note that there is an additional, and undocumented, template
 parameter `CMap` for
 `Linear_cell_complex<d,d2,LCCTraits,Items,Alloc,CMap>` allowing to
 inherit from any model of the `CombinatorialMap` concept.

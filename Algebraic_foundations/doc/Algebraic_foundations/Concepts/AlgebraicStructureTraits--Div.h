@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableBinaryFunction` computes the integral quotient of division 
 with remainder. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 \sa ::AlgebraicStructureTraits::Mod 

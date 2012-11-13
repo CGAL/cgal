@@ -2,13 +2,13 @@ namespace Kernel {
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing circles in two dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Circle_2<Kernel>` 
   \sa `Kernel::BoundedSide_2` 
@@ -33,13 +33,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing circles in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Circle_3<Kernel>` 
   \sa `Kernel::ComputeApproximateArea_3` 
@@ -63,13 +63,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing directions in two dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Direction_2<Kernel>` 
   \sa `Kernel::CompareAngleWithXAxis_2` 
@@ -88,13 +88,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing directions in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Direction_3<Kernel>` 
   \sa `Kernel::ConstructDirection_3` 
@@ -109,13 +109,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
 A type representing isocuboids in three dimensions. 
 
-\refines CopyConstructible
-\refines Assignable
-\refines DefaultConstructible
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
+\cgalRefines DefaultConstructible
 
 \sa `CGAL::Iso_cuboid_3<Kernel>` 
 \sa `Kernel::BoundedSide_3` 
@@ -135,13 +135,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing iso-rectangles in two dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Iso_rectangle_2<Kernel>` 
   \sa `Kernel::ConstructIsoRectangle_2` 
@@ -168,13 +168,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing straight lines (and halfspaces) in two dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Line_2<Kernel>` 
   \sa `Kernel::CompareXAtY_2` 
@@ -205,13 +205,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing straight lines in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Line_3<Kernel>` 
   \sa `Kernel::ComputeSquaredDistance_3` 
@@ -235,13 +235,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing different types of objects in two dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Object` 
   \sa `Kernel::Assign_2` 
@@ -255,13 +255,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing different types of objects in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Object` 
   \sa `Kernel::Assign_3` 
@@ -275,13 +275,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing planes (and half-spaces) in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Plane_3<Kernel>` 
   \sa `Kernel::ComputeSquaredDistance_3` 
@@ -313,13 +313,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing points in two dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible 
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible 
 
   \sa `Kernel::Angle_2` 
   \sa `Kernel::AreOrderedAlongLine_2` 
@@ -372,13 +372,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing points in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `Kernel::Angle_3` 
   \sa `Kernel::AreOrderedAlongLine_3` 
@@ -432,13 +432,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-\cgalconcept
+\cgalConcept
 
 A type representing rays in two dimensions. 
 
-\refines CopyConstructible
-\refines Assignable
-\refines DefaultConstructible
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
+\cgalRefines DefaultConstructible
 
 \sa `CGAL::Ray_2<Kernel>` 
 \sa `Kernel::CollinearHasOn_2` 
@@ -465,13 +465,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing rays in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Ray_3<Kernel>` 
   \sa `Kernel::ComputeSquaredDistance_3` 
@@ -494,13 +494,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing segments in two dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Segment_2<Kernel>` 
   \sa `Kernel::CollinearHasOn_2` 
@@ -529,13 +529,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing segments in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Segment_3<Kernel>` 
   \sa `Kernel::ComputeSquaredDistance_3` 
@@ -560,13 +560,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing spheres in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Sphere_3<Kernel>` 
   \sa `Kernel::BoundedSide_3` 
@@ -591,13 +591,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing tetrahedra in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Tetrahedron_3<Kernel>` 
   \sa `Kernel::BoundedSide_3` 
@@ -623,13 +623,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing triangles in two dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Triangle_2<Kernel>` 
   \sa `Kernel::BoundedSide_2` 
@@ -657,13 +657,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing triangles in three dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Triangle_3<Kernel>` 
   \sa `Kernel::ComputeSquaredArea_3` 
@@ -683,13 +683,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-  \cgalconcept
+  \cgalConcept
 
   A type representing vectors in two dimensions. 
 
-  \refines CopyConstructible
-  \refines Assignable
-  \refines DefaultConstructible
+  \cgalRefines CopyConstructible
+  \cgalRefines Assignable
+  \cgalRefines DefaultConstructible
 
   \sa `CGAL::Vector_2<Kernel>` 
   \sa `Kernel::ComputeDeterminant_2` 
@@ -715,13 +715,13 @@ public:
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
-\cgalconcept
+\cgalConcept
 
 A type representing vectors in three dimensions. 
 
-\refines CopyConstructible
-\refines Assignable
-\refines DefaultConstructible
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
+\cgalRefines DefaultConstructible
 
 \sa `CGAL::Vector_3<Kernel>` 
 \sa `Kernel::ComputeDeterminant_3` 

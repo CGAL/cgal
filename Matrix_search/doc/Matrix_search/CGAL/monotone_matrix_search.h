@@ -35,9 +35,9 @@ of a row \f$ r\f$ is the leftmost element for which
 
 \pre `t` points to a structure of size at least `m.number_of_rows()` 
 
-\requires `Matrix` is a model for `MonotoneMatrixSearchTraits`. 
-\requires Value type of `RandomAccessIC` is `int`. 
-\requires If `compare_strictly` is defined, it is an adaptable 
+\cgalRequires `Matrix` is a model for `MonotoneMatrixSearchTraits`. 
+\cgalRequires Value type of `RandomAccessIC` is `int`. 
+\cgalRequires If `compare_strictly` is defined, it is an adaptable 
 binary function: `Matrix::Value` \f$ \times\f$ 
 `Matrix::Value` \f$ \rightarrow\f$ `bool` describing a strict 
 (non-reflexive) total ordering on `Matrix::Value`. 

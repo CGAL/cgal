@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulation2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationVertexBase_2` describes the requirements for the 
 vertex base class of a triangulation data structure 
@@ -13,9 +13,9 @@ The concept `TriangulationVertexBase_2` refines the concept
 adding geometric information: 
 the vertex base of a triangulation stores a point. 
 
-\refines `TriangulationDSVertexBase_2` 
+\cgalRefines `TriangulationDSVertexBase_2` 
 
-\hasModel `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
+\cgalHasModel `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
 
 \sa `TriangulationDataStructure_2` 
 \sa `TriangulationDataStructure_2::Vertex` 

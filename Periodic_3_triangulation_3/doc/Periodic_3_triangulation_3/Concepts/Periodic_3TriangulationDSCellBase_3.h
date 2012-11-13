@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPeriodic3Triangulation3Concepts
-\cgalconcept
+\cgalConcept
 
 A refinement of the concept `TriangulationDSCellBase_3`
 which adds an API for offsets.
@@ -16,9 +16,9 @@ additionally store an offset for each vertex. Only the last three
 bits of each integer are required to be stored. The remaining part
 does not contain any information.
 
-\refines `TriangulationDSCellBase_3` 
+\cgalRefines `TriangulationDSCellBase_3` 
 
-\hasModel CGAL::Periodic_3_triangulation_ds_cell_base_3 
+\cgalHasModel CGAL::Periodic_3_triangulation_ds_cell_base_3 
 
 \sa `TriangulationDataStructure_3` 
 \sa `TriangulationDSCellBase_3` 

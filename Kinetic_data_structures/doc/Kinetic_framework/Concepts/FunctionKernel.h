@@ -1,7 +1,7 @@
 namespace Kinetic {
 /*!
   \ingroup PkgKdsFrameworkConcepts
-  \cgalconcept
+  \cgalConcept
 
   The concept `Kinetic::FunctionKernel` encapsulates all the methods for representing 
   and handing functions. The set is kept deliberately small to easy use 
@@ -13,8 +13,8 @@ namespace Kinetic {
   reversing time in kinetic data structures and can be omitted if that 
   capability is not needed. 
 
-  \hasModel `POLYNOMIAL::Kernel<RootStack>`
-  \hasModel `POLYNOMIAL::Filtered_kernel<RootStack>`
+  \cgalHasModel `POLYNOMIAL::Kernel<RootStack>`
+  \cgalHasModel `POLYNOMIAL::Filtered_kernel<RootStack>`
 
   \sa `Kinetic::RootEnumerator`
 
@@ -102,7 +102,7 @@ public:
 
   /*!
     \ingroup PkgKdsFrameworkOtherConcepts
-    \cgalconcept
+    \cgalConcept
 
     The concept `Function` represents a function. 
 
@@ -222,7 +222,7 @@ public:
 
   /*!
     \ingroup PkgKdsFrameworkOtherConcepts
-    \cgalconcept
+    \cgalConcept
 
     The concept `ConstructFunction` is used to construct functions. 
 

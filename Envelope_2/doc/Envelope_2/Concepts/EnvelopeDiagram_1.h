@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgEnvelope2Concepts
-\cgalconcept
+\cgalConcept
 
 This concept defines the representation of an envelope diagram of a set 
 of planar curve. The <I>envelope diagram</I> is a subdivision of the \f$ x\f$-axis 

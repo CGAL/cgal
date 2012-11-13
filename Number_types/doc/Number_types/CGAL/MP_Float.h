@@ -18,8 +18,8 @@ limited by the available memory, the exponent is currently represented by a
 (integral valued) `double`, which can overflow in some circumstances. We 
 plan to also have a multiprecision exponent to fix this issue. 
 
-\models `EuclideanRing`
-\models ::RealEmbeddable 
+\cgalModels `EuclideanRing`
+\cgalModels ::RealEmbeddable 
 
 ### Implementation ###
 

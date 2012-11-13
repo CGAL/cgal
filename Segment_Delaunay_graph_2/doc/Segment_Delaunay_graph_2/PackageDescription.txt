@@ -4,21 +4,21 @@
 /*!
 \addtogroup PkgSegmentDelaunayGraph2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Segment Delaunay Graphs,PkgSegmentDelaunayGraph2Summary}
-\PkgPicture{svd.png}
-\PkgSummaryBegin
-\PkgAuthor{Menelaos Karavelas}
-\PkgDesc{An algorithm for computing the dual of a Voronoi diagram of a set       of segments under the Euclidean metric. It is a generalization of the       standard Voronoi diagram for points.  The algorithms provided are       dynamic.}
-\PkgManuals{Chapter_2D_Segment_Delaunay_Graphs,PkgSegmentDelaunayGraph2}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.1}
-\PkgDependsOn{\ref PkgTDS2Summary}
-\PkgBib{cgal:k-sdg2}
-\PkgLicense{\ref licensesGPL}
-\PkgDemo{2D Segment Voronoi Diagram,segment_voronoi_diagram_2.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{2D Segment Delaunay Graphs,PkgSegmentDelaunayGraph2Summary}
+\cgalPkgPicture{svd.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Menelaos Karavelas}
+\cgalPkgDesc{An algorithm for computing the dual of a Voronoi diagram of a set       of segments under the Euclidean metric. It is a generalization of the       standard Voronoi diagram for points.  The algorithms provided are       dynamic.}
+\cgalPkgManuals{Chapter_2D_Segment_Delaunay_Graphs,PkgSegmentDelaunayGraph2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.1}
+\cgalPkgDependsOn{\ref PkgTDS2Summary}
+\cgalPkgBib{cgal:k-sdg2}
+\cgalPkgLicense{\ref licensesGPL}
+\cgalPkgDemo{2D Segment Voronoi Diagram,segment_voronoi_diagram_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 \cgal provides the class
 `CGAL::Segment_Delaunay_graph_2<Gt,DS>` for

@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 \brief
 
-\refines `Kernel::CompareX_3`
+\cgalRefines `Kernel::CompareX_3`
 
 \sa `SphericalKernel::CompareY_3`
 \sa `SphericalKernel::CompareZ_3`

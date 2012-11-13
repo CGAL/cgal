@@ -1,6 +1,6 @@
 /*!
   \ingroup PkgJet_fitting_3Concepts
-  \cgalconcept
+  \cgalConcept
 
   The concept `SvdTraits` describes the set of requirements to be 
   fulfilled by any class used to instantiate the third template 
@@ -15,7 +15,7 @@
   The scalar type, `SvdTraits::FT`, must be the same as that of 
   the `LocalKernel` concept : `LocalKernel::FT`. 
 
-  \hasModel `CGAL::Eigen_svd`
+  \cgalHasModel `CGAL::Eigen_svd`
 
   \sa `LocalKernel` 
 

@@ -12,7 +12,7 @@ provides filtered predicates which are meant to be fast and exact.
 The first argument `FK` must be a model of the `Kernel` concept, and 
 it is also restricted to be an instance of the `Filtered_kernel` template. 
 
-\models ::RegularTriangulationTraits_2 
+\cgalModels ::RegularTriangulationTraits_2 
 
 \sa `CGAL::Regular_triangulation_euclidean_traits_2`
 

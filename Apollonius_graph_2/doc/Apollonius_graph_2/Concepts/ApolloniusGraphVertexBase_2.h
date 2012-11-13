@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgApolloniusGraph2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `ApolloniusGraphVertexBase_2` describes the 
 requirements for the vertex base class of the 
@@ -10,7 +10,7 @@ Apollonius site and provides access to one of its incident faces
 through a `Face_handle`. In addition, it maintains a container of 
 sites. The container stores the hidden sites related to the vertex. 
 
-\hasModel `CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
+\cgalHasModel `CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
 
 \sa `ApolloniusGraphDataStructure_2` 
 \sa `ApolloniusGraphTraits_2` 

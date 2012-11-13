@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 A model for this must provide: 
 
@@ -25,7 +25,7 @@ where `A[i]` denotes the %Cartesian coordinate vector of
 the \f$ i\f$-th point in \f$ A\f$. 
 \pre `size [first,last) == d+1` and `A[i].dimension() == d` \f$ \forall0 \leq i \leq d\f$. 
 
-\requires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
+\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
 */ 
 template <class ForwardIterator> 
 Orientation operator()(ForwardIterator first, ForwardIterator last); 

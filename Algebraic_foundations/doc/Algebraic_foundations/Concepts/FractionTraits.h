@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsFractionsConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `FractionTraits` is associated with a type `Type`. 
 
 In case the associated type is a `Fraction`, a model of `FractionTraits` provides the relevant functionality for decomposing and re-composing as well 
 as the numerator and denominator type. 
 
-\hasModel `CGAL::Fraction_traits<T>`
+\cgalHasModel `CGAL::Fraction_traits<T>`
 
 \sa `FractionTraits::Decompose` 
 \sa `FractionTraits::Compose` 
@@ -56,7 +56,7 @@ typedef Hidden_type Denominator_type;
 
 /*!
 \ingroup PkgAlgebraicFoundationsFractionsConcepts
-\cgalconcept
+\cgalConcept
 
 Functor decomposing a `Fraction` into its numerator and denominator. 
 
@@ -86,11 +86,11 @@ FractionTraits::Denominator_type & d);
 
 /*!
 \ingroup PkgAlgebraicFoundationsFractionsConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableBinaryFunction`, returns the fraction of its arguments. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa `Fraction` 
 \sa `FractionTraits` 
@@ -137,7 +137,7 @@ result_type operator()(first_argument_type n, second_argument_type d);
 
 /*!
 \ingroup PkgAlgebraicFoundationsFractionsConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableBinaryFunction`, finds great common factor of denominators. 
 
@@ -145,7 +145,7 @@ This can be considered as a relaxed version of `AlgebraicStructureTraits::Gcd`,
 this is needed because it is not guaranteed that `FractionTraits::Denominator_type` is a model of 
 `UniqueFactorizationDomain`. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa `Fraction` 
 \sa `FractionTraits` 

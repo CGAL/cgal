@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDLinAlgConcepts
-\cgalconcept
+\cgalConcept
 
 An instance of data type `Matrix` is a matrix of 
 variables of number type `NT`. The types `Matrix` and `Vector` 

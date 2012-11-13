@@ -30,8 +30,8 @@ namespace for the XML file to be processed properly.  -->
         </list>
         <string name="LAYOUT_FILE">DoxygenLayoutPackage.xml</string>
         <list name="ALIASES" append="true">
-          <item>PkgDescriptionBegin{2}=\details </item>
-          <item>PkgManuals{2}=&lt;BR&gt;</item>
+          <item>cgalPkgDescriptionBegin{2}=\details </item>
+          <item>cgalPkgManuals{2}=&lt;BR&gt;</item>
         </list>
         <string name="HTML_HEADER">header_package.html</string>
       </doxygen>
@@ -1567,8 +1567,8 @@ namespace for the XML file to be processed properly.  -->
         <bool name="GENERATE_TESTLIST">false</bool>
         <bool name="GENERATE_BUGLIST">false</bool>
         <list name="ALIASES" append="true">
-          <item>PkgDescriptionBegin{2}=\subsection \2 \1</item>
-          <item>PkgManuals{2}=&lt;div class=&quot;PkgManuals&quot;&gt; &lt;span&gt; \ref \1 &quot;User Manual&quot; &lt;/span&gt; &lt;span style=&quot;padding-left: 20px;&quot;&gt;\ref \2 &quot;Reference Manual&quot; &lt;/span&gt; &lt;/div&gt;</item>
+          <item>cgalPkgDescriptionBegin{2}=\subsection \2 \1</item>
+          <item>cgalPkgManuals{2}=&lt;div class=&quot;PkgManuals&quot;&gt; &lt;span&gt; \ref \1 &quot;User Manual&quot; &lt;/span&gt; &lt;span style=&quot;padding-left: 20px;&quot;&gt;\ref \2 &quot;Reference Manual&quot; &lt;/span&gt; &lt;/div&gt;</item>
         </list>
         <list name="HTML_EXTRA_FILES" append="true">
           <item>hacks.js</item>

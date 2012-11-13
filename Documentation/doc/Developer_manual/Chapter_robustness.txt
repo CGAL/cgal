@@ -54,7 +54,7 @@ computing the lexicographically smaller point for two given points.
 
 \cgal provides generic implementations of geometric primitives. These assume
 "exact computation". This may or may not work, depending on the actual
-numerical input data. \cgal also provides\footnote{at present, for the  dimension 2/3 Cartesian kernel(s) only.}
+numerical input data. \cgal also provides\cgalFootnote{at present, for the  dimension 2/3 Cartesian kernel(s) only.}
 specialization of the primitives
 that (are still fairly generic and) guarantee exact predicate results and
 much higher efficiency than exact number types like arbitrary precision

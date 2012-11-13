@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 */
 
 class SphericalKernel::ConstructCircularTargetVertex_3 {

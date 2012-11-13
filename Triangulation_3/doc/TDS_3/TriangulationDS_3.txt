@@ -5,7 +5,7 @@
 \anchor Chapter_3D_Triangulation_Data_Structure
 \anchor chapterTDS3
 
-\autotoc
+\cgalAutoToc
 \authors Sylvain Pion and Monique Teillaud
 
 A geometric triangulation has two aspects: the combinatorial structure, which
@@ -48,11 +48,11 @@ needed.
 The four vertices of a cell are indexed with 0, 1, 2 and 3. The
 neighbors of a cell are also indexed with 0, 1, 2, 3 
 in such a way that the neighbor indexed by \f$ i\f$ is opposite to the vertex
-with the same index (see \cgal_figure_ref{TDS3figrepres}).
+with the same index (see \cgalFigureRef{TDS3figrepres}).
 
-\cgal_figure_begin{TDS3figrepres,repres.gif}
+\cgalFigureBegin{TDS3figrepres,repres.gif}
 Representation.
-\cgal_figure_end
+\cgalFigureEnd
 
 Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly
 represented: a facet is given by a cell and an index (the facet
@@ -81,29 +81,29 @@ the boundary of a 4-dimensional simplex, which has 5 vertices. A
 geometric embedding consists in choosing one of these vertices to be
 infinite, thus four of the five 3-cells become infinite: the geometric
 triangulation has one finite tetrahedron remaining, each of its facets
-being incident to an infinite cell. See \cgal_figure_ref{TDS3figtoposimplex4}.
+being incident to an infinite cell. See \cgalFigureRef{TDS3figtoposimplex4}.
 
-\cgal_figure_begin{TDS3figtoposimplex4,topo-simplex4.gif]
+\cgalFigureBegin{TDS3figtoposimplex4,topo-simplex4.gif]
 4D simplex and a 3D geometric embedding.
-\cgal_figure_end
+\cgalFigureEnd
 
 <LI><I>dimension 2.</I> We have 4 vertices forming one 3-dimensional
 simplex, i.e. the boundary of a tetrahedron. The geometric embedding in
 the plane results from choosing one of these vertices to be infinite,
 then the geometric triangulation has one finite triangle whose edges are
-incident to the infinite triangles. See \cgal_figure_ref{TDS3figtoposimplex3}.
+incident to the infinite triangles. See \cgalFigureRef{TDS3figtoposimplex3}.
 
-\cgal_figure_begin{TDS3figtoposimplex3,topo-simplex3.gif}
+\cgalFigureBegin{TDS3figtoposimplex3,topo-simplex3.gif}
 3D simplex and a 2D geometric embedding.
-\cgal_figure_end
+\cgalFigureEnd
 
 <LI><I>dimension 1.</I> A 2-dimensional simplex (a triangle) has 3
 vertices. The geometric embedding is an edge whose vertices are linked
-to an infinite point. See \cgal_figure_ref{TDS3figtoposimplex2}.
+to an infinite point. See \cgalFigureRef{TDS3figtoposimplex2}.
 
-\cgal_figure_begin{TDS3figtoposimplex2,topo-simplex2.gif}
+\cgalFigureBegin{TDS3figtoposimplex2,topo-simplex2.gif}
 2D simplex and a 1D geometric embedding.
-\cgal_figure_end
+\cgalFigureEnd
 
 </UL>
 
@@ -155,7 +155,7 @@ v_3^1)\f$, and the vertices of \f$ c_2\f$ are numbered \f$ (v_0^2 = v, v_1^2 = u
 v_2^2 = w, v_3^2)\f$, up to positive permutations of \f$ (0,1,2,3)\f$. In
 other words, if we embed the triangulation in \f$ \R^3\f$, then the fourth
 vertices \f$ v_3^1\f$ and \f$ v_3^2\f$ of \f$ c_1\f$ and \f$ c_2\f$ see the common facet
-in opposite orientations. See \cgal_figure_ref{TDS3figcomborient}.
+in opposite orientations. See \cgalFigureRef{TDS3figcomborient}.
 
 The set \f$ \sigma\f$\f$ _4\f$ of permutations of
 \f$ (0,1,2,3)\f$ has cardinality 24, and the set of positive permutations
@@ -164,9 +164,9 @@ are up to 12 different orderings of the four vertices of a cell. Note
 that cyclic permutations are negative and so do not preserve the
 orientation of a cell.
 
-\cgal_figure_begin{TDS3figcomborient,comborient.gif}
+\cgalFigureBegin{TDS3figcomborient,comborient.gif}
 Coherent orientations of two cells (3-dimensional case).
-\cgal_figure_end
+\cgalFigureEnd
 
 The method `Triangulation_data_structure_3::is_valid()` method checks
 the local validity of a given triangulation data structure.
@@ -184,11 +184,11 @@ Section \ref Triangulation3secdesign explains other important parts of the
 design related to the geometry.
 
 We focus here on the design of the triangulation data structure (TDS)
-itself, which the \cgal_figure_ref{TDS3figlayers} illustrates.
+itself, which the \cgalFigureRef{TDS3figlayers} illustrates.
 
-\cgal_figure_begin{TDS3figlayers,design_tds.gif}
+\cgalFigureBegin{TDS3figlayers,design_tds.gif}
 Triangulation Data Structure software design.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection TDS_3FlexibilityoftheDesign Flexibility of the Design
 
@@ -244,7 +244,7 @@ is to provide the types that can be used by the vertex and cell base classes
 and cell base classes, but parameterized with the real TDS instead of the dummy
 one. Rebinding is performed by a nested template class of the vertex and cell
 base classes (see code below), which provides a type which is the rebound
-vertex or cell base class\footnote{It is logically equivalent to a mechanism that does not exist yet in the C++ language: <I>template typedef</I> or <I>template aliasing</I>}.
+vertex or cell base class\cgalFootnote{It is logically equivalent to a mechanism that does not exist yet in the C++ language: <I>template typedef</I> or <I>template aliasing</I>}.
 
 Here is how it works, schematically:
 
@@ -308,14 +308,14 @@ typedef Triangulation_vertex_base_3<GT, Vb2> Other;
 The following example shows how to construct a 3D triangulation data
 structure by inserting vertices.
 
-\cgalexample{Triangulation_3/tds.cpp}
+\cgalExample{Triangulation_3/tds.cpp}
 
 \subsection TDS_3CrossLinkingBetweena2Danda3DDataStructures Cross-Linking Between a 2D and a 3D Data Structures
 
 This example program illustrates how to setup a 2D and a 3D triangulation data
 structures whose vertices respectively store vertex handles of the other one.
 
-\cgalexample{Triangulation_3/linking_2d_and_3d.cpp}
+\cgalExample{Triangulation_3/linking_2d_and_3d.cpp}
 
 \section TDS_3Design Design and Implementation History
 

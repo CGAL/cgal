@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceMesher3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `ImplicitSurfaceTraits_3` describes the requirements of the traits class to 
 be plugged as `Traits` in `CGAL::Implicit_surface_3<Traits, Function>`. 
@@ -15,7 +15,7 @@ the concept `ImplicitSurfaceTraits_3` provides the types, predicates and constru
 that are passed 
 to the generated model of `SurfaceMeshTraits_3`. 
 
-\hasModel Any \cgal Kernel. 
+\cgalHasModel Any \cgal Kernel. 
 
 \sa `CGAL::Implicit_surface_3<Traits, Function>`
 \sa `CGAL::make_surface_mesh` 

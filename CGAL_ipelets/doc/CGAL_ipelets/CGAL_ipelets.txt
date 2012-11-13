@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage CGAL Ipelets
 \anchor Chapter_CGAL_Ipelets
 \anchor chapcgalipelets
-\autotoc
+\cgalAutoToc
 \author S&eacute;bastien Loriot and Sylvain Pion
 
 \section CGAL_ipeletsIntroduction Introduction
@@ -45,7 +45,7 @@ must follow the definition of the ipelet class, in the same file source file.
 The following example shows how the class `Ipelet_base` can be used to easily
 interface the \cgal 2D Delaunay triangulation with Ipe.
 
-\cgalexample{CGAL_ipelets/simple_triangulation.cpp}
+\cgalExample{CGAL_ipelets/simple_triangulation.cpp}
 
 \image html example.png 
 

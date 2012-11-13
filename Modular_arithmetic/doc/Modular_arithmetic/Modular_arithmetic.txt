@@ -5,7 +5,7 @@ namespace CGAL {
 \mainpage Modular Arithmetic
 \anchor Chapter_Modular_Arithmetic
 \anchor chapmodulararithmetic
-\autotoc
+\cgalAutoToc
 \authors Michael Hemmer and Sylvain Pion
 
 \section Modular_arithmeticIntroduction Introduction
@@ -72,7 +72,7 @@ next nearest value. This can be ensured using `Protect_FPU_rounding` with
 `CGAL_FE_TONEAREST`, which also enforces the required precision as a side effect.
 
 
-\cgalexample{Modular_arithmetic/modular_filter.cpp}
+\cgalExample{Modular_arithmetic/modular_filter.cpp}
 
 \section Modular_arithmeticDesign Design and Implementation History
 

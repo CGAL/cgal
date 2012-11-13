@@ -55,7 +55,7 @@ vertices when creating new facets.
 A modifier class creates a new triangle in the halfedge data structure 
 using the incremental builder. 
 
-\cgalexample{Polyhedron/polyhedron_prog_incr_builder.cpp} 
+\cgalExample{Polyhedron/polyhedron_prog_incr_builder.cpp} 
 
 */
 template< typename HDS >

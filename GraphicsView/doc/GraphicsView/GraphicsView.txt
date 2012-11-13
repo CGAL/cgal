@@ -5,7 +5,7 @@ namespace CGAL {
 \mainpage %CGAL and the %Qt Graphics View Framework
 \anchor Chapter_CGAL_and_the_Qt_Graphics_View_Framework
 \anchor chapterQGraphicsView
-\autotoc
+\cgalAutoToc
 \authors Andreas Fabri and Laurent Rineau
 
 <A HREF="http://qt.nokia.com/">Qt</A> is a <span class="textsc">Gui</span> toolkit for
@@ -49,7 +49,7 @@ classes that have to override member functions adhering to this naming scheme.
 
 \section GraphicsViewOverall Overall Design
 
-In \cgal_figure_ref{graphicsviewuml} you see four classes depicted in grey,
+In \cgalFigureRef{graphicsviewuml} you see four classes depicted in grey,
 that come from the Qt Graphics View Framework. The <A HREF="http://doc.qt.nokia.com/latest/qgraphicsscene.html">`QGraphicsScene`</A>
 contains <A HREF="http://doc.qt.nokia.com/latest/qgraphicsitem.html">`QGraphicsItem`</A>s, which get displayed in any number
 of <A HREF="http://doc.qt.nokia.com/latest/qgraphicsview.html">`QGraphicsView`</A>s. The views are widgets, that is they take screen space
@@ -59,9 +59,9 @@ The fourth class is the <A HREF="http://doc.qt.nokia.com/latest/qobject.html">`Q
 event handling and memory management. First, it allows to add <A HREF="http://doc.qt.nokia.com/latest/signalsandslots.html">signals and
 slots</A>, and to connect them. Second, it allows to install <A HREF="http://doc.qt.nokia.com/latest/eventsandfilters.html">event filters</A>.
 
-\cgal_figure_begin{graphicsviewuml,uml-design.png}
+\cgalFigureBegin{graphicsviewuml,uml-design.png}
 UML Class Diagram with the Qt classes (blue), CGAL classes for using the framework (yellow), CGAL data structures (red), and application classes (green).
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection GraphicsViewVisualizingCGALDatastructures Visualizing %CGAL Datastructures
 

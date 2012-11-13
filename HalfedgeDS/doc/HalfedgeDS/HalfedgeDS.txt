@@ -5,7 +5,7 @@ namespace CGAL {
 \mainpage Halfedge Data Structures
 \anchor Chapter_Halfedge_Data_Structures
 \anchor chapterHalfedgeDS
-\autotoc
+\cgalAutoToc
 \author Lutz Kettner
 
 \section HalfedgeDSIntroduction Introduction
@@ -48,12 +48,12 @@ in \cite k-ugpdd-99.
 
 \section HalfedgeDSSoftware Software Design
 
-\cgal_figure_begin{figureHalfedgeDSDesign,hds_design_col.gif}
+\cgalFigureBegin{figureHalfedgeDSDesign,hds_design_col.gif}
 Responsibilities of the different layers in the halfedge data-structure design.
-\cgal_figure_end
+\cgalFigureEnd
 
 
-\cgal_figure_ref{figureHalfedgeDSDesign}
+\cgalFigureRef{figureHalfedgeDSDesign}
 illustrates the responsibilities of the three layers of the software
 design, with the `Polyhedron_3` as an example for the top
 layer. The items provide the space for the information that is
@@ -95,7 +95,7 @@ There are two different models for the `HalfedgeDS` concept available,
 Therefore we have kept their interface small and factored out common
 functionality into separate helper classes, `HalfedgeDS_decorator`,
 `HalfedgeDS_const_decorator`, and `HalfedgeDS_items_decorator`, which
-are not shown in \cgal_figure_ref{figureHalfedgeDSDesign}, but would be
+are not shown in \cgalFigureRef{figureHalfedgeDSDesign}, but would be
 placed at the side of the `HalfedgeDS` since they broaden that
 interface but do not hide it. These helper classes contain operations
 that are useful to implement the operations in the next layer, for
@@ -142,7 +142,7 @@ of two halfedges, one vertex and two faces, and checks its validity.
 
 \image html loop.gif
 
-\cgalexample{HalfedgeDS/hds_prog_default.cpp}
+\cgalExample{HalfedgeDS/hds_prog_default.cpp}
 
 \subsection HalfedgeDSAMinimalHalfedgeDataStructure A Minimal Halfedge Data Structure
 
@@ -152,7 +152,7 @@ list-based halfedge data structure. The result is a data structure
 maintaining only halfedges with next and opposite pointers. No
 vertices or faces are stored. The data structure represents an <I>undirected graph</I>.
 
-\cgalexample{HalfedgeDS/hds_prog_graph.cpp}
+\cgalExample{HalfedgeDS/hds_prog_graph.cpp}
 
 \subsection HalfedgeDSTheDefaultwithaVectorInsteadof The %Default with a Vector Instead of a List
 
@@ -166,25 +166,25 @@ One can later resize the data structure with further calls to the
 `reserve()` member function, but only if the data structure is 
 in a consistent, i.e., <I>valid</I>, state.
 
-\cgalexample{HalfedgeDS/hds_prog_vector.cpp}
+\cgalExample{HalfedgeDS/hds_prog_vector.cpp}
 
 \subsection HalfedgeDSExampleAddingColortoFaces Example Adding %Color to Faces
 
 This example re-uses the base class available for faces and adds a
 member variable `color`.
 
-\cgalexample{HalfedgeDS/hds_prog_color.cpp}
+\cgalExample{HalfedgeDS/hds_prog_color.cpp}
 
 \subsection HalfedgeDSExampleDefiningaMoreCompactHalfedge Example Defining a More %Compact Halfedge
 
-\advanced The halfedge data structure as presented here is slightly less space
+\cgalAdvanced The halfedge data structure as presented here is slightly less space
 efficient as, for example, the winged-edge data
 structure \cite b-prcv-75, the DCEL \cite mp-fitcp-78 or variants of
 the quad-edge data structure \cite gs-pmgsc-85. On the other hand,
 it does not require any search operations during traversals. A
 comparison can be found in \cite k-ugpdd-99.
 
-\advanced The following example trades traversal time for a compact storage
+\cgalAdvanced The following example trades traversal time for a compact storage
 representation using traditional C techniques (i.e., type casting and
 the assumption that pointers, especially those from <TT>malloc</TT> or
 <TT>new</TT>, point to even addresses). The idea goes as follows: The
@@ -197,20 +197,20 @@ store this bit as the least significant bit in the next halfedge
 handle. Furthermore, we do not implement a pointer to the previous
 halfedge. What remains are three pointers per halfedge.
 
-\advanced We use the static member function `HalfedgeDS::halfedge_handle()` to convert
+\cgalAdvanced We use the static member function `HalfedgeDS::halfedge_handle()` to convert
 from pointers to halfedge handles. The same solution can be applied to
 the list-based halfedge data structure `HalfedgeDS_list`,
 see <TT>examples/HalfedgeDS/hds_prog_compact2.cpp</TT>. Here is the
 example for the vector-based data structure.
 
-\cgalexample{HalfedgeDS/hds_prog_compact.cpp}
+\cgalExample{HalfedgeDS/hds_prog_compact.cpp}
 
 \subsection HalfedgeDSExampleUsingtheHalfedgeIterator Example Using the Halfedge %Iterator
 
 Two edges are created in the default halfedge data structure.
 The halfedge iterator is used to count the halfedges.
 
-\cgalexample{HalfedgeDS/hds_prog_halfedge_iterator.cpp}
+\cgalExample{HalfedgeDS/hds_prog_halfedge_iterator.cpp}
 
 \subsection HalfedgeDSExampleforanAdaptertoBuildanEdge Example for an Adapter to Build an Edge %Iterator
 
@@ -218,7 +218,7 @@ Three edges are created in the default halfedge data structure.
 The adapter `N_step_adaptor` is used to declare the edge
 iterator used in counting the edges.
 
-\cgalexample{HalfedgeDS/hds_prog_edge_iterator.cpp}
+\cgalExample{HalfedgeDS/hds_prog_edge_iterator.cpp}
 
 */ 
 } /* namespace CGAL */

@@ -1,20 +1,20 @@
 
 /*!
 \ingroup PkgTriangulation3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `RegularTriangulationTraits_3` is the first template parameter of the class 
 `Regular_triangulation_3`. It defines the geometric objects (points, 
 segments...) forming the triangulation together with a few geometric 
 predicates and constructions on these objects. 
 
-\refines `TriangulationTraits_3` 
+\cgalRefines `TriangulationTraits_3` 
 
 In addition to the requirements described for the traits class of 
   Triangulation_3, the geometric traits class of 
   Regular_triangulation_3 must fulfill the following requirements. 
 
-\hasModel CGAL::Regular_triangulation_euclidean_traits_3 
+\cgalHasModel CGAL::Regular_triangulation_euclidean_traits_3 
 
 */
 

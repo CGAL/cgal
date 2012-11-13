@@ -1,9 +1,9 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
-\refines `Kernel::ConstructLine_2`
+\cgalRefines `Kernel::ConstructLine_2`
 
 \sa `CircularKernel::GetEquation`
 

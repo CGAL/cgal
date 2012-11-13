@@ -4,12 +4,12 @@ namespace CGAL {
 \mainpage Estimation of Local Differential Properties of Point-Sampled Surfaces
 \anchor Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces
 \anchor chapJetfitting3
-\autotoc
+\cgalAutoToc
 \authors Marc Pouget and Fr&eacute;d&eacute;ric Cazals
 
-\cgal_figure_begin{figjet3figdavid,david-dirmaxkmin-white-back.jpg}
+\cgalFigureBegin{figjet3figdavid,david-dirmaxkmin-white-back.jpg}
 Principal directions associated with \f$k_{max}\f$ scaled by \f$ k_{min}\f$.
-\cgal_figure_end
+\cgalFigureEnd
 
 This package allows the estimation of local differential quantities of
 a surface from a point sample, given either as a mesh or as point
@@ -269,7 +269,7 @@ differential quantities from a set of points given in a text file as
 input. The first point of the list is the one at which the computation
 is performed. The user has to specify a file for the input points and
 the degrees \f$ d\f$ and \f$ d'\f$.
-\cgalexample{Jet_fitting_3/Single_estimation.cpp}
+\cgalExample{Jet_fitting_3/Single_estimation.cpp}
 
 \subsection Jet_fitting_3OnaMesh On a Mesh
 
@@ -285,13 +285,13 @@ PCA basis;
 post-processing).
 </UL>
 
-\cgal_figure_ref{figjet3figdavid} and
-\cgal_figure_ref{figjet3figellipticparaboloid}
+\cgalFigureRef{figjet3figdavid} and
+\cgalFigureRef{figjet3figellipticparaboloid}
 provide illustrations of principal directions of curvature.
 
-\cgal_figure_begin{figjet3figellipticparaboloid,ppal_curv_poly2x2+y2.jpg}
+\cgalFigureBegin{figjet3figellipticparaboloid,ppal_curv_poly2x2+y2.jpg}
 Principal directions of curvature and normals at vertices of a mesh of the graph of the function \f$ f(x,y)=2x^2+y^2\f$.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Jet_fitting_3Mathematical Mathematical and Algorithmic Details
 
@@ -302,9 +302,9 @@ To begin with, observe the fitting problem involves three relevant
 direct orthonormal basis: the world-basis \f$ (w_x,w_y,w_z)\f$, the
 fitting-basis \f$ (f_x,f_y,f_z)\f$, the Monge basis \f$ (d_1,d_2,n)\f$.
 
-\cgal_figure_begin{figjet_fitting_basis,jet_fitting_basis.gif}
+\cgalFigureBegin{figjet_fitting_basis,jet_fitting_basis.gif}
 The three bases involved in the estimation.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Jet_fitting_3ComputingaBasisfortheFitting Computing a Basis for the Fitting
 
@@ -313,7 +313,7 @@ Output : fitting-basis</B>
 
 Performing a PCA requires diagonalizing a symmetric matrix. This
 analysis gives an orthonormal basis whose \f$ z\f$-axis is provided by the
-eigenvector associated to the smallest eigenvalue.\footnote{Another possibility is to choose as z-axis the axis of the world-basis with the least angle with the axis determined with the PCA. Then the change of basis reduces to a permutation of axis.} Note one may have
+eigenvector associated to the smallest eigenvalue.\cgalFootnote{Another possibility is to choose as z-axis the axis of the world-basis with the least angle with the axis determined with the PCA. Then the change of basis reduces to a permutation of axis.} Note one may have
 to swap the orientation of a vector to get a direct basis.
 
 Let us denote \f$ P_{W\rightarrow F}\f$ the matrix that changes coordinates from the

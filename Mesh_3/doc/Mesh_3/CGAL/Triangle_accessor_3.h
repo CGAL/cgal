@@ -14,7 +14,7 @@ specialization of this class to handle one's own polyhedron data structure.
 
 \tparam K is the geometric traits class. 
 
-\models `TriangleAccessor_3`
+\cgalModels `TriangleAccessor_3`
 
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>` 
 

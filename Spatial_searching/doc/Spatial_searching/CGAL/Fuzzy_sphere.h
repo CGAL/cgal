@@ -13,7 +13,7 @@ as inner approximation a sphere with radius \f$ r-\epsilon\f$.
 Expects for the template argument a model of the concept 
 `SearchTraits`, for example `CGAL::Cartesian_d<double>`. 
 
-\models ::FuzzyQueryItem 
+\cgalModels ::FuzzyQueryItem 
 
 \sa `FuzzyQueryItem` 
 

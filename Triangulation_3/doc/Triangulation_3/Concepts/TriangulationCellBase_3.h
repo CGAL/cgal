@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulation3Concepts
-\cgalconcept
+\cgalConcept
 
 The cell base required by the basic triangulation does not need to store any 
 geometric information, so only the requirements of the triangulation data 
@@ -11,11 +11,11 @@ However, for the Delaunay triangulation, the ability to store the circumcenter
 is provided (for optimization reasons), hence an additional requirement only 
 in this case, and only when the dual functions are called. 
 
-\refines `TriangulationDSCellBase_3`
+\cgalRefines `TriangulationDSCellBase_3`
 
-\hasModel CGAL::Triangulation_cell_base_3 
-\hasModel CGAL::Triangulation_cell_base_with_info_3 
-\hasModel CGAL::Triangulation_cell_base_with_circumcenter_3 
+\cgalHasModel CGAL::Triangulation_cell_base_3 
+\cgalHasModel CGAL::Triangulation_cell_base_with_info_3 
+\cgalHasModel CGAL::Triangulation_cell_base_with_circumcenter_3 
 
 \sa `TriangulationVertexBase_3` 
 

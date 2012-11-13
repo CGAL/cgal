@@ -16,21 +16,21 @@
 \addtogroup PkgConvexHull3
 \todo fix or keep the `Default_traits`
 
-\PkgDescriptionBegin{3D Convex Hulls,PkgConvexHull3Summary}
-\PkgPicture{Convex_hull_3/fig/bunny.png}
-\PkgSummaryBegin
-\PkgAuthors{Susan Hert and Stefan Schirra}
-\PkgDesc{This package provides functions  for computing convex hulls in three dimensions as well as functions for checking if sets of points are strongly convex or not. One can compute the convex hull of a set of points in three dimensions in one of three ways: using a static algorithm, using an incremental construction algorithm, or using a triangulation to get a fully dynamic computation.}
-\PkgManuals{Chapter_3D_Convex_Hulls,PkgConvexHull3}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{1.1}
-\PkgDependsOn{All algorithms produce as output a \ref PkgPolyhedronSummary "Polyhedron". The dynamic algorithms depend on \ref PkgTriangulation3Summary "3D Triangulations".} 
-\PkgBib{cgal:hs-ch3}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgDemo{See Polyhedral Surface,polyhedron_3.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{3D Convex Hulls,PkgConvexHull3Summary}
+\cgalPkgPicture{Convex_hull_3/fig/bunny.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Susan Hert and Stefan Schirra}
+\cgalPkgDesc{This package provides functions  for computing convex hulls in three dimensions as well as functions for checking if sets of points are strongly convex or not. One can compute the convex hull of a set of points in three dimensions in one of three ways: using a static algorithm, using an incremental construction algorithm, or using a triangulation to get a fully dynamic computation.}
+\cgalPkgManuals{Chapter_3D_Convex_Hulls,PkgConvexHull3}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{1.1}
+\cgalPkgDependsOn{All algorithms produce as output a \ref PkgPolyhedronSummary "Polyhedron". The dynamic algorithms depend on \ref PkgTriangulation3Summary "3D Triangulations".} 
+\cgalPkgBib{cgal:hs-ch3}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{See Polyhedral Surface,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 Assertions 
 --------------

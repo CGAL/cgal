@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsRealEmbeddableConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableUnaryFunction` computes the absolute value of a number. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa ::RealEmbeddableTraits 
 

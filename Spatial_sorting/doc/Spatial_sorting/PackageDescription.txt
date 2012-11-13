@@ -13,18 +13,18 @@
 /*!
 \addtogroup PkgSpatialSorting
 \todo check generated documentation
-\PkgDescriptionBegin{Spatial Sorting,PkgSpatialSortingSummary}
-\PkgPicture{hilbert.png}
-\PkgSummaryBegin
-\PkgAuthors{Christophe Delage and Olivier Devillers}
-\PkgDesc{This package provides functions for sorting geometric objects in two, three and higher dimensions, in order to improve efficiency of incremental geometric algorithms.}
-\PkgManuals{Chapter_Spatial_Sorting,PkgSpatialSorting}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.3}
-\PkgBib{cgal:dd-ss}
-\PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{Spatial Sorting,PkgSpatialSortingSummary}
+\cgalPkgPicture{hilbert.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Christophe Delage and Olivier Devillers}
+\cgalPkgDesc{This package provides functions for sorting geometric objects in two, three and higher dimensions, in order to improve efficiency of incremental geometric algorithms.}
+\cgalPkgManuals{Chapter_Spatial_Sorting,PkgSpatialSorting}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.3}
+\cgalPkgBib{cgal:dd-ss}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

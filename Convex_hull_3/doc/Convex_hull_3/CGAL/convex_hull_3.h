@@ -19,12 +19,12 @@ are available. The first can be used when it is known that the result
 will be a polyhedron and the second when a degenerate hull 
 may also be possible. 
 
-\requires `InputIterator::value_type` is equivalent to `Traits::Point_3`. 
-\requires `Traits` is a model of the concept `ConvexHullTraits_3`. 
+\cgalRequires `InputIterator::value_type` is equivalent to `Traits::Point_3`. 
+\cgalRequires `Traits` is a model of the concept `ConvexHullTraits_3`. 
 For the purposes of checking the postcondition that the convex hull 
 is valid, `Traits` should also be a model of the concept 
 `IsStronglyConvexTraits_3`. 
-\requires `Polyhedron_3` is a model of `ConvexHullPolyhedron_3`.
+\cgalRequires `Polyhedron_3` is a model of `ConvexHullPolyhedron_3`.
 
 
 If the kernel `R` of the points determined by `InputIterator::value_type` 
@@ -47,7 +47,7 @@ hull is a segment or a polyhedron. Notice that the traits class is not
 necessary in the call to `::convex_hull_3()` but is used in the definition 
 of `Polyhedron_3`. 
 
-\cgalexample{Convex_hull_3/quickhull_3.cpp} 
+\cgalExample{Convex_hull_3/quickhull_3.cpp} 
 
 */
 
@@ -64,12 +64,12 @@ a triangle, or a polyhedron, is stored in `ch_object`.
 \attention This function does not compute the plane equations of the faces of `P`
 in case the result is a polyhedron.
 
-\requires `InputIterator::value_type` is equivalent to `Traits::Point_3`. 
-\requires `Traits` is a model of the concept `ConvexHullTraits_3`. 
+\cgalRequires `InputIterator::value_type` is equivalent to `Traits::Point_3`. 
+\cgalRequires `Traits` is a model of the concept `ConvexHullTraits_3`. 
 For the purposes of checking the postcondition that the convex hull 
 is valid, `Traits` should also be a model of the concept 
 `IsStronglyConvexTraits_3`. 
-\requires `Traits` defines a type `Polyhedron_3` that is a model of 
+\cgalRequires `Traits` defines a type `Polyhedron_3` that is a model of 
 `ConvexHullPolyhedron_3`. 
 
 If the kernel `R` of the points determined by `InputIterator::value_type` 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceMesher3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `SurfaceMeshCellBase_3` describes the cell base type 
 of the three dimensional triangulation used 
@@ -21,7 +21,7 @@ a three dimensional triangulation type
 The concept `SurfaceMeshCellBase_3` describes the cell base type 
 required in this triangulation type. 
 
-\refines `TriangulationCellBase_3` 
+\cgalRefines `TriangulationCellBase_3` 
 The concept `SurfaceMeshCellBase_3` adds four markers to mark
 the facets of the triangulation that belong to the two dimensional
 complex, and four markers that are helpers used in some operations to
@@ -36,8 +36,8 @@ of the restriction to the surface of a three dimensional
 triangulation.  In the following we call surface center of a facet,
 the center of its biggest Delaunay surface ball.
 
-\hasModel `CGAL::Surface_mesh_cell_base_3<Gt,Vb>`
-\hasModel `CGAL::Surface_mesh_default_triangulation_3::Cell`
+\cgalHasModel `CGAL::Surface_mesh_cell_base_3<Gt,Vb>`
+\cgalHasModel `CGAL::Surface_mesh_default_triangulation_3::Cell`
 
 \sa `SurfaceMeshTriangulation_3` 
 \sa `SurfaceMeshComplex_2InTriangulation_3` 

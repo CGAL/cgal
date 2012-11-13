@@ -494,7 +494,7 @@ const Weighted_point& p) const;
 /// @{
 
 /*! 
-\advanced Tests the validity of the triangulation as a
+\cgalAdvanced Tests the validity of the triangulation as a
 `Triangulation_2` and additionally test the regularity of the
 triangulation. This method is useful to debug regular triangulation
 algorithms implemented by the user.

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceMesher3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `SurfaceMeshComplex_2InTriangulation_3` describes a data structure 
 designed to represent a two dimensional pure complex 
@@ -30,7 +30,7 @@ A model of this concept is a type to be plugged as first template
 parameter in the 
 function template `CGAL::make_surface_mesh()`. 
 
-\hasModel `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>` 
+\cgalHasModel `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>` 
 
 \sa `CGAL::make_surface_mesh()`
 

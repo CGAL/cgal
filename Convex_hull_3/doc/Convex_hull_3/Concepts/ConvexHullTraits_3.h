@@ -1,11 +1,11 @@
 /*!
 \ingroup PkgConvexHull3Concepts
-\cgalconcept
+\cgalConcept
 
 Requirements of the traits class of the function `CGAL::convex_hull_3()`. 
 
-\hasModel `CGAL::Convex_hull_traits_3` 
-\hasModel All models of `Kernel`
+\cgalHasModel `CGAL::Convex_hull_traits_3` 
+\cgalHasModel All models of `Kernel`
 
 */
 class ConvexHullTraits_3 {

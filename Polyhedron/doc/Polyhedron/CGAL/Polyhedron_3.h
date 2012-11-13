@@ -105,7 +105,7 @@ class Polyhedron_3;
   This example program instantiates a polyhedron using the default 
   traits class and creates a tetrahedron. 
 
-  \cgalexample{Polyhedron/polyhedron_prog_simple.cpp} 
+  \cgalExample{Polyhedron/polyhedron_prog_simple.cpp} 
 
 */
 template< typename Traits >
@@ -1228,7 +1228,7 @@ public:
     facet removed and the time to compute `h->%prev()`. 
     \pre The degree of both vertices incident to `h` is at least three (no antennas). 
 
-    \requires     `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`.
+    \cgalRequires     `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`.
 
     \image html euler_facet.gif
 
@@ -1273,7 +1273,7 @@ public:
     the time to compute `h->%prev()` and `h->%opposite()->%prev()`. 
     \pre The size of both facets incident to `h` is at least four (no multi-edges). 
 
-    \requires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+    \cgalRequires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
     \image html euler_vertex.gif
   */ 
@@ -1325,7 +1325,7 @@ public:
     The time is proportional to the sum of the size of all incident facets. 
     \pre None of the incident facets of `g->vertex()` is a hole. There are at least two distinct facets incident to the facets that are incident to `g->vertex()`. (This prevents the operation from collapsing a volume into two facets glued together with opposite orientations, such as would happen with any vertex of a tetrahedron.) 
 
-    \requires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+    \cgalRequires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
     \image html euler_center.gif
   */ 
@@ -1360,7 +1360,7 @@ public:
     polyhedron unchanged. 
     \pre The facets denoted by `h` and `g` are different and have equal degree (i.e., number of edges). 
 
-    \requires     `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`. 
+    \cgalRequires     `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`. 
 
     \image html euler_loop.gif
 
@@ -1379,7 +1379,7 @@ public:
     See `erase_facet(h)` for a more generalized variant. 
     \pre None of the incident halfedges of the facet is a border edge. 
 
-    \requires    `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`. 
+    \cgalRequires    `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`. 
   */ 
   Halfedge_handle make_hole( Halfedge_handle h); 
 
@@ -1432,7 +1432,7 @@ public:
     See `make_hole(h)` for a more specialized variant. 
     \pre `h->is_border() == false`. 
 
-    \requires `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`
+    \cgalRequires `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`
 
     \image html add_facet1.gif
 
@@ -1444,7 +1444,7 @@ public:
     removes the vertices, halfedges, and facets that belong to the 
     connected component of `h`. 
 
-    \requires    `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`. 
+    \cgalRequires    `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`. 
   */ 
   void erase_connected_component( Halfedge_handle h); 
 
@@ -1453,7 +1453,7 @@ public:
     Keep `nb_components_to_keep` largest connected components. 
     Returns the number of connected components erased (ignoring isolated vertices). 
 
-    \requires supports vertices, halfedges, and removal operation. 
+    \cgalRequires supports vertices, halfedges, and removal operation. 
   */ 
   unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep); 
 
@@ -1467,7 +1467,7 @@ public:
   /*!
     \name Operations with Border Halfedges 
 
-    \advanced Halfedges incident to a hole are called <I>border
+    \cgalAdvanced Halfedges incident to a hole are called <I>border
     halfedges</I>. An halfedge is a <I>border edge</I> if itself or its
     opposite halfedge are border halfedges. The only requirement to work
     with border halfedges is that the `Halfedge` class provides a member
@@ -1565,7 +1565,7 @@ public:
   bool normalized_border_is_valid( bool verbose = false) const; 
 
   /*!  
-    \advanced calls the `Modifier_base::operator()()` of the modifier `m`.
+    \cgalAdvanced calls the `Modifier_base::operator()()` of the modifier `m`.
     \pre The polyhedral surface must be valid when the modifier returns from execution. 
   */ 
   void delegate( CGAL::Modifier_base<HDS>& m); 

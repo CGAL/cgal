@@ -24,7 +24,7 @@ Note that filtered predicates are automatically used if the
 boolean `Has_filtered_predicates` in the kernel provided as template parameter 
 of that class is set to `true`. 
 
-\models ::RegularTriangulationTraits_3 
+\cgalModels ::RegularTriangulationTraits_3 
 
 ### Operations ###
 

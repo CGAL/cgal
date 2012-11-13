@@ -5,7 +5,7 @@ namespace CGAL {
 \mainpage dD Spatial Searching
 \anchor Chapter_dD_Spatial_Searching
 \anchor ChapterUserSpatialSearching
-\autotoc
+\cgalAutoToc
 \authors Hans Tangelder and Andreas Fabri
 
 \section Spatial_searchingIntroduction Introduction
@@ -239,7 +239,7 @@ range. The value of the iterator is a pair of a point and its square
 distance to the query point. We use square distances, or <I>transformed distances</I> for other distance classes, as they are 
 computationally cheaper.
 
-\cgalexample{Spatial_searching/nearest_neighbor_searching.cpp}
+\cgalExample{Spatial_searching/nearest_neighbor_searching.cpp}
 
 \subsection Spatial_searchingExampleforIncrementalSearching Example for Incremental Searching
 
@@ -253,7 +253,7 @@ the data. We then create the search object, and finally obtain the iterator
 with the `begin()` method. Note that the iterator is of the input
 iterator category, that is one can make only one pass over the data.
 
-\cgalexample{Spatial_searching/distance_browsing.cpp}
+\cgalExample{Spatial_searching/distance_browsing.cpp}
 
 \subsection Spatial_searchingExampleforGeneralNeighbor Example for General Neighbor Searching
 
@@ -265,7 +265,7 @@ we cannot use the orthogonal neighbor search. As in the previous
 examples we first initialize a search tree, create the search object
 with the query, and obtain the result of the search as iterator range.
 
-\cgalexample{Spatial_searching/general_neighbor_searching.cpp}
+\cgalExample{Spatial_searching/general_neighbor_searching.cpp}
 
 \subsection Spatial_searchingExampleforaRangeQuery Example for a %Range Query
 
@@ -274,7 +274,7 @@ This example program illustrates approximate range querying for
 coordinates. The range queries are member functions of the `k-d` 
 tree class.
 
-\cgalexample{Spatial_searching/fuzzy_range_query.cpp}
+\cgalExample{Spatial_searching/fuzzy_range_query.cpp}
 
 \subsection Spatial_searchingExampleforUserDefinedPoint Example for User Defined Point and Distance Class
 
@@ -283,18 +283,18 @@ user defined points and distance classes.
 In this example we assume that the user provides the following 3-dimensional 
 points class.
 
-\cgalexample{Spatial_searching/Point.h}
+\cgalExample{Spatial_searching/Point.h}
 
 We have put the glue layer in this file as well, that is a class that allows to 
 iterate over the %Cartesian coordinates of the point, and a class to construct
 such an iterator for a point. We next need a distance class
-\cgalexample{Spatial_searching/Distance.h}
+\cgalExample{Spatial_searching/Distance.h}
 
 We are ready to put the pieces together.
 The class `Search_traits<..>` which you see in the next file is then a mere 
 wrapper for all these types. The searching itself works exactly as for \cgal kernels.
 
-\cgalexample{Spatial_searching/user_defined_point_and_distance.cpp}
+\cgalExample{Spatial_searching/user_defined_point_and_distance.cpp}
 
 \subsection Spatial_searchingExamplesforUsinganArbitrary Examples for Using an Arbitrary Point Type with Point Property Maps
 
@@ -308,21 +308,21 @@ This is really convenient to associate information to a point or to reduce the s
 In this example program, the search tree stores tuples of point and integer.
 The value type of the iterator of the neighbor searching algorithm is this tuple type.
 
-\cgalexample{Spatial_searching/searching_with_point_with_info.cpp}
+\cgalExample{Spatial_searching/searching_with_point_with_info.cpp}
 
 \subsection Spatial_searchingUsinganIntegerasKeyType Using an Integer as Key Type
 
 In this example program, the search tree stores only integers that refer to points stored within a user vector.
 The point type of the search traits is `std::size_t`.
 
-\cgalexample{Spatial_searching/searching_with_point_with_info_inplace.cpp}
+\cgalExample{Spatial_searching/searching_with_point_with_info_inplace.cpp}
 
 \subsection Spatial_searchingUsingaModelofLvalueProperty Using a Model of L-value Property Map Concept
 
 This example programs uses a <span class="textsc">Boost</span> <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/doc/LvaluePropertyMap.html">LvaluePropertyMap</A>.
 Points are read from a `std::map`. The search tree stores integers of type `std::size_t`. The value type of the iterator of the neighbor searching algorithm is `std::size_t`.
 
-\cgalexample{Spatial_searching/searching_with_point_with_info_pmap.cpp}
+\cgalExample{Spatial_searching/searching_with_point_with_info_pmap.cpp}
 
 \subsection Spatial_searchingExampleforSelectingaSplitting Example for Selecting a Splitting Rule and Setting the Bucket Size
 
@@ -331,7 +331,7 @@ setting the maximal allowed bucket size. The only differences with
 the first example are the declaration of the <I>Fair</I> 
 splitting rule, needed to set the maximal allowed bucket size.
 
-\cgalexample{Spatial_searching/using_fair_splitting_rule.cpp}
+\cgalExample{Spatial_searching/using_fair_splitting_rule.cpp}
 
 \section Spatial_searchingSoftware Software Design
 

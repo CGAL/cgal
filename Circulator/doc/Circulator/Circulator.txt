@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_Handles_Ranges_and_Circulators
 \anchor chapterCirculators
 
-\autotoc
+\cgalAutoToc
 \authors Olivier Devillers, Lutz Kettner, Sylvain Pion, Michael Seel, and Mariette Yvinec
 
 \section CirculatorHandles Handles
@@ -111,7 +111,7 @@ checking in the iterator advance method reduces efficiency. Another
 solution may use more bookkeeping in the iterator, e.g. with a start
 item, a current item, and a kind of winding-number that is zero for
 the `begin()`-iterator and one for the past-the-end
-situation\footnote{This is currently implemented as the adaptor class which provides a pair of iterators for a given circulator.}. We have introduced the concept of circulators
+situation\cgalFootnote{This is currently implemented as the adaptor class which provides a pair of iterators for a given circulator.}. We have introduced the concept of circulators
 that allows light-weight implementations and the \cgal support
 library provides adaptor classes that convert between iterators and
 circulators (with the corresponding penalty in efficiency), so as to

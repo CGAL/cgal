@@ -65,7 +65,7 @@ this is a basic requirement of SR.
 
 \pre <I>pixel_size</I> must have a positive value and <I>number_of_kd_trees</I> must be a positive integer. 
 
-\advanced A basic query used in the algorithm is to report the hot pixels of 
+\cgalAdvanced A basic query used in the algorithm is to report the hot pixels of 
 size \f$ w\f$ that a certain segment \f$ s\f$ intersects. An alternative way to 
 do the same is to query the hot pixels' centers contained in a 
 Minkowski sum of \f$ s\f$ with a pixel of width \f$ w\f$ centered at the origin; 
@@ -76,7 +76,7 @@ in a two-dimensional kd-tree which stores the centers of hot
 pixels. Since \f$ B(M(s))\f$ in general is larger than \f$ M(s)\f$, we still 
 need to filter out the hot pixels which do not intersect \f$ s\f$. 
 
-\advanced While this approach is easy to implement with CGAL, it may incur 
+\cgalAdvanced While this approach is easy to implement with CGAL, it may incur 
 considerable overhead since the area of \f$ B(M(s))\f$ may be much larger 
 than the area of \f$ M(s)\f$, possibly resulting in many redundant hot pixels 
 to filter out. Our heuristic solution, which we describe next, is to 
@@ -86,7 +86,7 @@ pixels, rotated by a different angle in the first quadrant of the
 plane; for our purpose, a rotation by angles outside this quadrant 
 is symmetric to a rotation by an angle in the first quadrant. 
 
-\advanced Given a parameter \f$ c\f$, the angles of rotation are \f$ (i - 1) 
+\cgalAdvanced Given a parameter \f$ c\f$, the angles of rotation are \f$ (i - 1) 
 \frac{\pi}{2c}, i=1,\ldots,c\f$, and we construct a kd-tree 
 corresponding to each of these angles. Then for a query segment \f$ s\f$, 
 we choose the kd-tree for which the area of \f$ B(M(s))\f$ is the smallest, 

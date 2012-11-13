@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsBi
-\cgalconcept
+\cgalConcept
 
 Computes a univariate square free polynomial \f$ p\f$, such that the first coordinate of 
 a given `AlgebraicKernel_d_2::Algebraic_real_2` is a real root of \f$ p\f$. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa `AlgebraicKernel_d_2::ComputePolynomialY_2`
 

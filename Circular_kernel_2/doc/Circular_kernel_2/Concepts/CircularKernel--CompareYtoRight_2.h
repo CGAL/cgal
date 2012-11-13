@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 A function object concept to compare vertically two arcs on the right side of a common point `p`: 
 

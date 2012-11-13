@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 Given numerator \f$ a\f$ and denominator \f$ b\f$ this `AdaptableFunctor` translates a 
 `PolynomialTraits_d::Polynomial_d` \f$ p\f$ with respect to one variable by \f$ a/b\f$, 
@@ -10,9 +10,9 @@ that is, it computes \f$ b^{degree(p)}\cdot p(x+a/b)\f$.
 Note that this functor operates on the polynomial in the univariate view, that is, 
 the polynomial is considered as a univariate homogeneous polynomial in one specific variable. 
 
-\refines `AdaptableFunctor` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableFunctor` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

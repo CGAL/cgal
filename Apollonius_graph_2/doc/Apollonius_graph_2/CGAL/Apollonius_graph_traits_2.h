@@ -20,7 +20,7 @@ default value for `Method_tag` is `CGAL::Ring_tag`.
 The way the predicates are evaluated is discussed in 
 \cite cgal:ke-ppawv-02, \cite cgal:ke-rctac-03. 
 
-\models ::ApolloniusGraphTraits_2 
+\cgalModels ::ApolloniusGraphTraits_2 
 
 \sa `Kernel` 
 \sa `ApolloniusGraphTraits_2` 

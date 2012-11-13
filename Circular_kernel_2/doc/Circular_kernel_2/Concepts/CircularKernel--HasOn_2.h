@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 To test whether a point lies on a curve. 
 
-\refines `Kernel::HasOn_2` 
+\cgalRefines `Kernel::HasOn_2` 
 */
 
 class CircularKernel::HasOn_2 {

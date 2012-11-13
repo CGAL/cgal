@@ -50,7 +50,7 @@ namespace CGAL {
 /// onto a convex polygon (only two pinned vertices are needed to ensure a
 /// unique solution), but one-to-one mapping is *not* guaranteed.
 ///
-/// \models ParameterizerTraits_3
+/// \cgalModels ParameterizerTraits_3
 ///
 ///
 /// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgQPSolverConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `LinearProgram` describes a linear program of the form 
 
@@ -47,9 +47,9 @@ The description is given by appropriate <I>random-access</I>
 iterators over the program data, see below. The program therefore 
 comes in <I>dense</I> representation which includes zero entries. 
 
-\hasModel `CGAL::Quadratic_program<NT>` 
-\hasModel `CGAL::Quadratic_program_from_mps<NT>` 
-\hasModel `CGAL::Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>`
+\cgalHasModel `CGAL::Quadratic_program<NT>` 
+\cgalHasModel `CGAL::Quadratic_program_from_mps<NT>` 
+\cgalHasModel `CGAL::Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>`
 
 
 and the other concepts 

@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3Concepts
-\cgalconcept
+\cgalConcept
 
 The Delaunay refinement process involved in the 
 template functions `make_mesh_3()` and `refine_mesh_3()` 
@@ -12,7 +12,7 @@ while the refinement criteria for surface facets
 are described by the concept `MeshFacetCriteria_3`. 
 The concept `MeshCriteria_3` encapsulates these concepts. 
 
-\hasModel `CGAL::Mesh_criteria_3<Tr>` 
+\cgalHasModel `CGAL::Mesh_criteria_3<Tr>` 
 
 \sa `MeshFacetCriteria_3` 
 \sa `MeshCellCriteria_3` 

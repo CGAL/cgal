@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgArrangement2ConceptsTraits
-\cgalconcept
+\cgalConcept
 
 The concept `ArrangementXMonotoneTraits_2` refines the basic arrangement-traits concept. 
 A model of this concept is able to handle \f$ x\f$-monotone curves that 
@@ -16,22 +16,22 @@ A model of this refined concept therefore needs to compute the intersections
 (and possibly overlaps) between two \f$ x\f$-monotone curves and to support 
 curve splitting. 
 
-\refines `ArrangementBasicTraits_2` 
+\cgalRefines `ArrangementBasicTraits_2` 
 
-\hasModel `CGAL::Arr_segment_traits_2<Kernel>`
-\hasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
-\hasModel `CGAL::Arr_linear_traits_2<Kernel>`
-\hasModel `CGAL::Arr_polyline_traits_2<SegmentTraits>`
-\hasModel `CGAL::Arr_circle_segment_traits_2<Kernel>`
-\hasModel `CGAL::Arr_line_arc_traits_2<CircularKernel>`
-\hasModel `CGAL::Arr_circular_arc_traits_2<CircularKernel>`
-\hasModel `CGAL::Arr_circular_line_arc_traits_2<CircularKernel>`
-\hasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
-\hasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
-\hasModel `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
-\hasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
-\hasModel `CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>`
-\hasModel `CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>`
+\cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>`
+\cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
+\cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
+\cgalHasModel `CGAL::Arr_polyline_traits_2<SegmentTraits>`
+\cgalHasModel `CGAL::Arr_circle_segment_traits_2<Kernel>`
+\cgalHasModel `CGAL::Arr_line_arc_traits_2<CircularKernel>`
+\cgalHasModel `CGAL::Arr_circular_arc_traits_2<CircularKernel>`
+\cgalHasModel `CGAL::Arr_circular_line_arc_traits_2<CircularKernel>`
+\cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
+\cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
+\cgalHasModel `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
+\cgalHasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
+\cgalHasModel `CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>`
+\cgalHasModel `CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>`
 
 \sa `ArrangementBasicTraits_2` 
 

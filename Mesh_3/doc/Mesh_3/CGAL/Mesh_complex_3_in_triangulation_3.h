@@ -27,7 +27,7 @@ Those two last template parameters defaults to `int`, so that they can be ignore
 if the domain used for mesh generation does not include 0 and 1-dimensionnal features (i.e 
 is a model of the concept `MeshDomain_3`). 
 
-\models `MeshComplexWithFeatures_3InTriangulation_3` 
+\cgalModels `MeshComplexWithFeatures_3InTriangulation_3` 
 
 \sa `CGAL::make_mesh_3` 
 \sa `CGAL::refine_mesh_3` 

@@ -1,17 +1,17 @@
 
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
-\cgalconcept
+\cgalConcept
 
 A model of this concept represents a general polygon with holes. 
 
-\refines DefaultConstructible
-\refines CopyConstructible
-\refines Assignable
+\cgalRefines DefaultConstructible
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
 
-\generalizes ::GeneralPolygonWithHoles_2 
+\cgalGeneralizes ::GeneralPolygonWithHoles_2 
 
-\hasModel `GeneralPolygonSetTraits_2::Polygon_with_holes2` 
+\cgalHasModel `GeneralPolygonSetTraits_2::Polygon_with_holes2` 
 
 \sa `GeneralPolygonWithHoles_2` 
 

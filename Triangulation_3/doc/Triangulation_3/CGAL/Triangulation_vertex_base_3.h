@@ -26,7 +26,7 @@ The second template argument is a combinatorial vertex base class from which
 `Triangulation_vertex_base_3` derives. 
 It has the default value `Triangulation_ds_vertex_base_3<>`. 
 
-\models ::TriangulationVertexBase_3 
+\cgalModels ::TriangulationVertexBase_3 
 
 \sa `CGAL::Triangulation_cell_base_3` 
 \sa `CGAL::Triangulation_ds_vertex_base_3` 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgProfilingToolsConcepts
-\cgalconcept
+\cgalConcept
 
 `UniqueHashFunction` is a concept for a hash function with unique hash values. 
 An instance `hash` for a model of the `UniqueHashFunction` concept is a 
@@ -9,7 +9,7 @@ function object. It maps objects of its domain type `Key` to
 the integral image type `std::size_t`. The image values have to 
 be unique for all keys in the domain type `Key`. 
 
-\hasModel `CGAL::Handle_hash_function` 
+\cgalHasModel `CGAL::Handle_hash_function` 
 
 \sa `CGAL::Unique_hash_map<Key,Data,UniqueHashFunction>` 
 

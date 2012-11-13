@@ -16,19 +16,19 @@
 
 /*!
 \addtogroup PkgInterpolation2
-\PkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2Summary}
-\PkgPicture{interpolation.png}
-\PkgSummaryBegin
-\PkgAuthor{Julia Fl&ouml;totto}
-\PkgDesc{This package implements different methods for scattered data interpolation: Given measures of a function on a set of discrete data points, the task is to interpolate this function on an arbitrary query point. The package further offers functions for natural neighbor interpolation.}
-\PkgManuals{Chapter_2D_and_Surface_Function_Interpolation,PkgInterpolation2}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.1}
-\PkgBib{cgal:f-i}
-\PkgLicense{\ref licensesGPL "GPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{2D and Surface Function Interpolation,PkgInterpolation2Summary}
+\cgalPkgPicture{interpolation.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Julia Fl&ouml;totto}
+\cgalPkgDesc{This package implements different methods for scattered data interpolation: Given measures of a function on a set of discrete data points, the task is to interpolate this function on an arbitrary query point. The package further offers functions for natural neighbor interpolation.}
+\cgalPkgManuals{Chapter_2D_and_Surface_Function_Interpolation,PkgInterpolation2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.1}
+\cgalPkgBib{cgal:f-i}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 Scattered data interpolation solves the following problem: given
 measures of a function on a set of discrete data points, the task is

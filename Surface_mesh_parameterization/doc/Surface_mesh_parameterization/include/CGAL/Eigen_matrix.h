@@ -8,7 +8,7 @@ The class `Eigen_sparse_matrix` is a C++ wrapper around \ref thirdpartyEigen "Ei
 that represents general matrices, be they symmetric or not. 
 The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system. 
 
-\models `SparseLinearAlgebraTraits_d::Matrix` 
+\cgalModels `SparseLinearAlgebraTraits_d::Matrix` 
 
 Parameters 
 -------------- 
@@ -47,7 +47,7 @@ The class `Eigen_sparse_symmetric_matrix` is a C++ wrapper around \ref thirdpart
 
 As the matrix is symmetric only the lower triangle part is stored. 
 
-\models `SparseLinearAlgebraTraits_d::Matrix` 
+\cgalModels `SparseLinearAlgebraTraits_d::Matrix` 
 
 Parameters 
 -------------- 

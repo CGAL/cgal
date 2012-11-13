@@ -6,20 +6,20 @@ namespace CGAL {
 
 \anchor chapter_Boolean_set_operations_2
 
-\autotoc
+\cgalAutoToc
 \authors Efi Fogel, Ophir Setter, Ron Wein, Guy Zucker, Baruch Zukerman, and Dan Halperin
 
 \section bso_secintro Introduction 
 
-\cgal_figure_begin{figteaser,teaser.gif}
+\cgalFigureBegin{figteaser,teaser.gif}
 Examples of Boolean set-operations on general polygons.
-\cgal_figure_end
+\cgalFigureEnd
 
 This package consists of the implementation of Boolean set-operations
-on point sets bounded by weakly \f$ x\f$-monotone curves\footnote{A continuous planar curve \f$ C\f$ is <I>weakly \f$ x\f$-monotone</I> if every vertical line intersects it at most once, or if it is vertical. Hereafter we refer to weakly \f$ x\f$-monotone curves as \f$ x\f$-monotone curves.} in 2-dimensional Euclidean space. In particular,
+on point sets bounded by weakly \f$ x\f$-monotone curves\cgalFootnote{A continuous planar curve \f$ C\f$ is <I>weakly \f$ x\f$-monotone</I> if every vertical line intersects it at most once, or if it is vertical. Hereafter we refer to weakly \f$ x\f$-monotone curves as \f$ x\f$-monotone curves.} in 2-dimensional Euclidean space. In particular,
 it contains the implementation of <I>regularized</I> Boolean set-operations,
 intersection predicates, and point containment predicates.
-\cgal_figure_ref{figteaser} shows simple examples of such operations.
+\cgalFigureRef{figteaser} shows simple examples of such operations.
 
 Ordinary Boolean set-operations, which distinguish between the
 interior and the boundary of a polygon, are not implemented within this
@@ -62,9 +62,9 @@ can be arbitrary weakly \f$ x\f$-monotone curves.
 
 \section bso_secbso_def Terms and Definitions 
 
-\cgal_figure_begin{simpleDefsExamples,simpleDefsExamples.gif}
+\cgalFigureBegin{simpleDefsExamples,simpleDefsExamples.gif}
 Examples of polygons. (a) A simple polygon. (b) A relatively simple polygon (c) A polygon that is neither simple nor relatively simple.
-\cgal_figure_end
+\cgalFigureEnd
 
 
 <UL>
@@ -168,7 +168,7 @@ Section \ref bso_secbso_gen.
 
 The basic components of our package are the free (global) functions
 `complement()` that accepts a single `Polygon_2` object, and
-`intersection()`, `join()`,\footnote{The function that computes the union of two polygons is called `join()`, since the word `union` is reserved in \cpp.} `difference()`,
+`intersection()`, `join()`,\cgalFootnote{The function that computes the union of two polygons is called `join()`, since the word `union` is reserved in \cpp.} `difference()`,
 `symmetric_difference()` and the predicate `do_intersect()`
 that accept two `Polygon_2` objects as their input. We explain how
 these functions should be used through several examples in the
@@ -190,21 +190,21 @@ library of \cgal, based on whether the <span class="textsc">Gmp</span> library i
 or not. It also uses the function `print_polygon.h` listed above,
 which is located in the header file `print_utils.h`.
 
-\cgalexample{Boolean_set_operations_2/do_intersect.cpp}
+\cgalExample{Boolean_set_operations_2/do_intersect.cpp}
 
 \subsection bso_ssecpolygons_with_holes Polygons with Holes 
 
-\cgal_figure_begin{figsimple,simple.gif}
+\cgalFigureBegin{figsimple,simple.gif}
 Operations on simple polygons. (a) The union of two polygons, resulting in a point set whose outer boundary is defined by a simple polygon and contains a polygonal hole in its interior. (b) The intersection (darkly shaded) of two polygons (lightly shaded), resulting in two disjoint polygons. (c) The complement (darkly shaded) of a simple polygon (lightly shaded).
-\cgal_figure_end
+\cgalFigureEnd
 
 In many cases a binary operation that operates on two simple
 polygons that have no holes may result in a set of polygons that
-contain holes in their interior (see \cgal_figure_ref{figsimple} (a)), 
-or a set of disjoint polygons (see \cgal_figure_ref{figsimple} (b); a similar
+contain holes in their interior (see \cgalFigureRef{figsimple} (a)), 
+or a set of disjoint polygons (see \cgalFigureRef{figsimple} (b); a similar
 set may result from the union, or the symmetric difference, of two disjoint
 polygons). Moreover, the complement of a simple polygon is an unbounded set
-that contains a hole; see \cgal_figure_ref{figsimple} (c).
+that contains a hole; see \cgalFigureRef{figsimple} (c).
 
 Regular sets are closed under regularized Boolean set-operations.
 These operations accept as input, and may result as output, polygons
@@ -312,11 +312,11 @@ output polygons to its associated container.
 The following example demonstrates the usage of the free functions
 `join()` and `intersection()` for computing the union and the
 intersection of the two simple polygons depicted in
-\cgal_figure_ref{figsimple} (b). The example uses the auxiliary function
+\cgalFigureRef{figsimple} (b). The example uses the auxiliary function
 `print_polygon_with_holes()` listed above, which is located in
 the header file `print_utils.h` under the examples folder.
 
-\cgalexample{Boolean_set_operations_2/simple_join_intersect.cpp}
+\cgalExample{Boolean_set_operations_2/simple_join_intersect.cpp}
 
 \subsection bso_sssecpwh_bops Operations on Polygons with Holes 
 
@@ -337,7 +337,7 @@ rectangle that contains a rectangular hole in its interior, such that
 the symmetric difference between the two sets is a single polygon that
 contains of five holes:
 
-\cgalexample{Boolean_set_operations_2/symmetric_difference.cpp}
+\cgalExample{Boolean_set_operations_2/symmetric_difference.cpp}
 
 In some cases it is convenient to connect the outer boundary of a
 polygon with holes with the holes inside it. The
@@ -349,7 +349,7 @@ points that match the traversal of all vertices in the connected
 polygon (note that there are additional vertices, induced by the
 vertical walls).
 
-\cgalexample{Boolean_set_operations_2/connect_polygon.cpp}
+\cgalExample{Boolean_set_operations_2/connect_polygon.cpp}
 
 \subsection bso_ssecmain_component Operating on Polygon Sets 
 
@@ -424,14 +424,14 @@ consuming.
 
 The next example performs a sequence of three Boolean set-operations.
 First, it computes the union of two simple polygons depicted in
-\cgal_figure_ref{figsimple} (a). It then computes the complement of the result
+\cgalFigureRef{figsimple} (a). It then computes the complement of the result
 of the union operation. Finally, it computes the intersection of the result
 of the complement operation with a rectangle, confining the final result to 
 the area of the rectangle. The resulting set \f$ S\f$ is comprised of two
 components: a polygon with a hole, and a simple polygon contained in the
 interior of this hole.
 
-\cgalexample{Boolean_set_operations_2/sequence.cpp}
+\cgalExample{Boolean_set_operations_2/sequence.cpp}
 
 \subsection bso_ssecinsert_ni Inserting Non Intersecting Polygons 
 
@@ -624,7 +624,7 @@ The traits classes `Arr_segment_traits_2`,
 `Arr_conic_traits_2` and `Arr_rational_arc_traits_2`, which are 
 bundled in the `Arrangement_2` package and distributed with \cgal,
 are all models of the refined concept 
-`ArrangementDirectionalXMonotoneTraits_2`.\footnote{The `Arr_polyline_traits_2` class is <I>not</I> a model of the, `ArrangementDirectionalXMonotoneTraits_2` concept, as the \f$ x\f$-monotone curve it defines is always directed from left to right. Thus, an opposite curve cannot be constructed. However, it is not very useful to construct a polygon whose edges are polylines, as an ordinary polygon with linear edges can represent the same entity.}
+`ArrangementDirectionalXMonotoneTraits_2`.\cgalFootnote{The `Arr_polyline_traits_2` class is <I>not</I> a model of the, `ArrangementDirectionalXMonotoneTraits_2` concept, as the \f$ x\f$-monotone curve it defines is always directed from left to right. Thus, an opposite curve cannot be constructed. However, it is not very useful to construct a polygon whose edges are polylines, as an ordinary polygon with linear edges can represent the same entity.}
 
 Just as with the case of computations using models of the 
 `ArrangementXMonotoneTraits_2` concept, operations are robust only
@@ -663,7 +663,7 @@ are disjoint, their union is computed with the `insert` method,
 while the union with the rectangles is computed with the `join`
 operator.
 
-\cgalexample{Boolean_set_operations_2/circle_segment.cpp}
+\cgalExample{Boolean_set_operations_2/circle_segment.cpp}
 
 \subsection bso_ssecgeneral_polygon_concept General Polygon Set Traits Adapter 
 
@@ -747,7 +747,7 @@ boundary. Note that this function is also responsible for subdividing
 the input B&eacute;zier curves into \f$ x\f$-monotone subcurves, as required by
 the `Gps_traits_2` adapter.
 
-\cgalexample{Boolean_set_operations_2/bezier_traits_adapter.cpp}
+\cgalExample{Boolean_set_operations_2/bezier_traits_adapter.cpp}
 
 \subsection bso_ssecaggregated_gen_ops Example - Aggregated Operations 
 
@@ -768,7 +768,7 @@ placed a unit distance from the origin, as depicted to the right. The example
 also allows users to provide a different number of discs through the command
 line.
 
-\cgalexample{Boolean_set_operations_2/set_union.cpp}
+\cgalExample{Boolean_set_operations_2/set_union.cpp}
 
 */ 
 } /* namespace CGAL */

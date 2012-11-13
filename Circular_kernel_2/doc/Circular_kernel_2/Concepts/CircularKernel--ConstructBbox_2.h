@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 A function object concept to construct a bounding box of geometric objects: 
 
-\refines Kernel::ConstructBbox_2
+\cgalRefines Kernel::ConstructBbox_2
 
 */
 

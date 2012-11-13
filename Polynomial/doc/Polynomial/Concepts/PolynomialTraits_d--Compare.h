@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableBinaryFunction` compares two polynomials, with respect to the lexicographic 
 order with preference to the outermost variable. 
@@ -9,9 +9,9 @@ order with preference to the outermost variable.
 This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is 
 `RealEmbeddable`. 
 
-\refines `AdaptableBinaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

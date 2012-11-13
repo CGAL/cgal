@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableUnaryFunction` computes the unit part of a given ring 
 element. 
@@ -19,7 +19,7 @@ hence the unit-part of a non-zero integer is its sign. For a `Field`, every
 non-zero element is a unit and is its own unit part, its unit normal 
 associate being one. The unit part of zero is, by convention, one. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 

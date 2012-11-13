@@ -16,7 +16,7 @@ Note that this template class is specialized for
 `Regular_triangulation_filtered_traits_2` was used, i.e. you get 
 filtered predicates automatically. 
 
-\models ::RegularTriangulationTraits_2 
+\cgalModels ::RegularTriangulationTraits_2 
 
 \sa `RegularTriangulationTraits_2` 
 \sa `CGAL::Regular_triangulation_filtered_traits_2` 

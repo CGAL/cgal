@@ -15,7 +15,7 @@ the transformed distance \f$ {\sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p}\f$ instead o
 Expects for the template argument a model of the concept 
 `SearchTraits`, for example `CGAL::Search_traits_2<Kernel>`. 
 
-\models ::OrthogonalDistance 
+\cgalModels ::OrthogonalDistance 
 
 \sa `OrthogonalDistance` 
 \sa `CGAL::Euclidean_distance<Traits>` 

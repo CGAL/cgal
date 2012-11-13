@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAABB_treeConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `AABBPrimitive` describes the requirements for the primitives stored in the AABB tree data structure. The concept encapsulates a type for the input datum (a geometric object) and an identifier (id) type through which those primitives are referred to. The concept `AABBPrimitive` also refines the concepts DefaultConstructible and Assignable. 
 
@@ -11,8 +11,8 @@ The concept `AABBPrimitive` describes the requirements for the primitives stored
 
 The `Primitive` type can be, e.g., a wrapper around a `Handle`. Assume for instance that the input objects are the triangle faces of a mesh stored as a `CGAL::Polyhedron_3`. The `Datum` would be a `Triangle_3` and the `Id` would be a polyhedron `Face_handle`. Method `datum()` can return either a `Triangle_3` constructed on the fly from the face handle or a `Triangle_3` stored internally. This provides a way for the user to trade memory for efficiency. 
 
-\hasModel `CGAL::AABB_polyhedron_triangle_primitive<GeomTraits,Polyhedron>`
-\hasModel `CGAL::AABB_polyhedron_segment_primitive<GeomTraits,Polyhedron>` 
+\cgalHasModel `CGAL::AABB_polyhedron_triangle_primitive<GeomTraits,Polyhedron>`
+\cgalHasModel `CGAL::AABB_polyhedron_segment_primitive<GeomTraits,Polyhedron>` 
 
 */
 

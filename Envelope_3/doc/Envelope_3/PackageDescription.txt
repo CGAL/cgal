@@ -4,22 +4,22 @@
 /*!
 \addtogroup PkgEnvelope3
 \todo check generated documentation
-\PkgDescriptionBegin{3D Envelopes,PkgEnvelope3Summary}
-\PkgPicture{Envelope_3/fig/Envelope_3.png}
-\PkgSummaryBegin
-\PkgAuthors{Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman}
-\PkgDesc{This package consits of functions that compute the lower (or upper) envelope of a set of arbitrary surfaces in 3D. The output is represented as an 2D envelope diagram, namely a planar subdivision such that the identity of the surfaces that induce the envelope over each diagram cell is unique.}
-\PkgManuals{Chapter_Envelopes_of_Surfaces_in_3D,PkgEnvelope3}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.3}
-\PkgDependsOn{\ref PkgArrangement2Summary}
-\PkgBib{cgal:mwz-e3}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgDemo{3D Envelopes,envelope_3.zip}
-\PkgDemo{L1 Voronoi Diagram,l1_voronoi_diagram_2.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{3D Envelopes,PkgEnvelope3Summary}
+\cgalPkgPicture{Envelope_3/fig/Envelope_3.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman}
+\cgalPkgDesc{This package consits of functions that compute the lower (or upper) envelope of a set of arbitrary surfaces in 3D. The output is represented as an 2D envelope diagram, namely a planar subdivision such that the identity of the surfaces that induce the envelope over each diagram cell is unique.}
+\cgalPkgManuals{Chapter_Envelopes_of_Surfaces_in_3D,PkgEnvelope3}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.3}
+\cgalPkgDependsOn{\ref PkgArrangement2Summary}
+\cgalPkgBib{cgal:mwz-e3}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{3D Envelopes,envelope_3.zip}
+\cgalPkgDemo{L1 Voronoi Diagram,l1_voronoi_diagram_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 This package consists of functions that compute the lower (or upper)
 envelope of a set of arbitrary surfaces in 3D. The output is

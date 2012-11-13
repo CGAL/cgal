@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `UniqueFactorizationDomain` is an `IntegralDomain` with the 
 additional property 
@@ -23,7 +23,7 @@ is a model of `AlgebraicStructureTraits` providing:
 derived from `CGAL::Unique_factorization_domain_tag` 
 - `CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >::Gcd`  which is a model of `AlgebraicStructureTraits::Gcd`
 
-\refines `IntegralDomain` 
+\cgalRefines `IntegralDomain` 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 

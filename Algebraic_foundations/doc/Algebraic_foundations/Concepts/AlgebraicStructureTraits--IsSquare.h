@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableBinaryFunction` that computes whether the first argument is a square. 
 If the first argument is a square the second argument, which is taken by reference, contains the square root. 
@@ -11,7 +11,7 @@ A ring element \f$ x\f$ is said to be a square iff there exists a ring element \
 that \f$ x= y*y\f$. In case the ring is a `UniqueFactorizationDomain`, 
 \f$ y\f$ is uniquely defined up to multiplication by units. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 

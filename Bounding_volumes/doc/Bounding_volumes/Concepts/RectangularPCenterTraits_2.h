@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgBoundingVolumesConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `RectangularPCenterTraits_2` defines types and operations 
 needed to compute rectilinear \f$ p\f$-centers of a planar point set 
 using the function `CGAL::rectangular_p_center_2`. 
 
-\hasModel `CGAL::Rectangular_p_center_default_traits_2<K>` 
+\cgalHasModel `CGAL::Rectangular_p_center_default_traits_2<K>` 
 
 \sa `CGAL::rectangular_p_center_2` 
 

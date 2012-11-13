@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSphericalKernel3AlgebraicConcepts
-\cgalconcept
+\cgalConcept
 
 \sa `SphericalKernel::ConstructPlane_3`
 \sa `SphericalKernel::GetEquation`

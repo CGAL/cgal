@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_Number_Types
 \anchor Numbertype
 
-\autotoc
+\cgalAutoToc
 \authors Michael Hemmer, Susan Hert, Sylvain Pion, and Stefan Schirra
 
 \section Number_typesIntroduction Introduction
@@ -23,7 +23,7 @@ structure concepts see Section \ref PkgAlgebraicFoundations.
 The built-in number types `float`, `double` and `long double` have
 the required arithmetic and comparison operators. They lack some required
 routines though which are automatically included by \cgal.
-\footnote{The functions can be found in the header files <TT>CGAL/int.h</TT>, <TT>CGAL/float.h</TT>, <TT>CGAL/double.h</TT> and <TT>CGAL/long_long.h</TT>.}
+\cgalFootnote{The functions can be found in the header files <TT>CGAL/int.h</TT>, <TT>CGAL/float.h</TT>, <TT>CGAL/double.h</TT> and <TT>CGAL/long_long.h</TT>.}
 
 All built-in number types of \cpp can represent a discrete (bounded)
 subset of the rational numbers only. We assume that the

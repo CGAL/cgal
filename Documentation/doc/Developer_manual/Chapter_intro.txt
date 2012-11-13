@@ -180,15 +180,15 @@ degeneracies.
 
 The design goals, especially flexibility and efficient robust 
 computation, have led us to opt for the generic programming paradigm using 
-templates in \cpp.\footnote{In appropriate places, however, \cgal does  and should make use of object-oriented solutions and design patterns, as well.}
+templates in \cpp.\cgalFootnote{In appropriate places, however, \cgal does  and should make use of object-oriented solutions and design patterns, as well.}
 In the overall design of \cgal three major layers can be identified, the
 layer of algorithms and data structures, the kernel layer and the
 arithmetic and algebra layer.
-(\cgal_figure_ref{figgenericCGAL} ).
+(\cgalFigureRef{figgenericCGAL} ).
 
-\cgal_figure_begin{figgenericCGAL,generic_cgal.gif}
+\cgalFigureBegin{figgenericCGAL,generic_cgal.gif}
 The generic design of \cgal.
-\cgal_figure_end
+\cgalFigureEnd
 
 Algorithms and data structures in \cgal are parameterized by the 
 types of objects and operations they use. They work with any concrete 

@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsUni
-\cgalconcept
+\cgalConcept
 
 Compares `AlgebraicKernel_d_1::Algebraic_real_1` values. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 */
 class AlgebraicKernel_d_1::Compare_1 {

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `FieldWithRootOf` is a `FieldWithKthRoot` with the possibility to 
 construct it as the root of a univariate polynomial. 
@@ -11,7 +11,7 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithRootOf >` is a model of `A
 - `CGAL::Algebraic_structure_traits< FieldWithRootOf >::Algebraic_type` derived from `CGAL::Field_with_kth_root_tag` 
 - `CGAL::Algebraic_structure_traits< FieldWithRootOf >::Root_of`  which is a model of `AlgebraicStructureTraits::RootOf`
 
-\refines `FieldWithKthRoot` 
+\cgalRefines `FieldWithKthRoot` 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 

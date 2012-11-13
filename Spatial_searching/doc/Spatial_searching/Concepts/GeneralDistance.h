@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgSpatialSearchingDConcepts
-\cgalconcept
+\cgalConcept
 
 Requirements of a distance class defining a distance between a query item 
 denoting a spatial object and a point. 
@@ -8,8 +8,8 @@ To optimize distance computations transformed distances are used,
 e.g., for a Euclidean distance the transformed distance is the squared 
 Euclidean distance. 
 
-\hasModel `CGAL::Manhattan_distance_iso_box_point<Traits>` 
-\hasModel `CGAL::Euclidean_distance_sphere_point<Traits>`
+\cgalHasModel `CGAL::Manhattan_distance_iso_box_point<Traits>` 
+\cgalHasModel `CGAL::Euclidean_distance_sphere_point<Traits>`
 
 */
 

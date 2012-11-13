@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableUnaryFunction`, 
 returns true in case the argument is the one of the ring. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 

@@ -1,11 +1,11 @@
 namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
-\cgalconcept
+\cgalConcept
 
-\refines AdaptableUnaryFunction 
+\cgalRefines AdaptableUnaryFunction 
 
-\hasModel ArrangementBasicTraits_2::Is_vertical_2 
+\cgalHasModel ArrangementBasicTraits_2::Is_vertical_2 
 
 */
 

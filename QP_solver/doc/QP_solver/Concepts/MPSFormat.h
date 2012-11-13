@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgQPSolverConcepts
-\cgalconcept
+\cgalConcept
 
 MPS is a commonly used file format for storing linear and quadratic 
 programs according to the concepts `QuadraticProgram`, 

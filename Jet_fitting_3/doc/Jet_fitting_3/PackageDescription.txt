@@ -4,20 +4,20 @@
 /*!
 \addtogroup PkgJet_fitting_3
 \todo check generated documentation
-\PkgDescriptionBegin{Estimation of Local Differential Properties of Point-Sampled Surfaces,PkgJet_fitting_3Summary}
-\PkgPicture{DavidDetail.png}
-\PkgSummaryBegin
-\PkgAuthors{Marc Pouget  and Fr&eacute;d&eacute;ric Cazals}
-\PkgDesc{For a surface discretized as a point cloud or a mesh, it is desirable to estimate pointwise differential quantities. More precisely, first order properties correspond to the normal or the tangent plane; second order properties provide the principal curvatures and directions, third order properties provide the directional derivatives of the principal curvatures along the curvature lines, etc. This package allows the estimation of local differential quantities of a surface from a point sample.}
-\PkgManuals{Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces,PkgJet_fitting_3}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.3}
-\PkgDependsOn{Solvers from \ref thirdpartyEigen.} 
-\PkgBib{cgal:pc-eldp}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{Estimation of Local Differential Properties of Point-Sampled Surfaces,PkgJet_fitting_3Summary}
+\cgalPkgPicture{DavidDetail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Marc Pouget  and Fr&eacute;d&eacute;ric Cazals}
+\cgalPkgDesc{For a surface discretized as a point cloud or a mesh, it is desirable to estimate pointwise differential quantities. More precisely, first order properties correspond to the normal or the tangent plane; second order properties provide the principal curvatures and directions, third order properties provide the directional derivatives of the principal curvatures along the curvature lines, etc. This package allows the estimation of local differential quantities of a surface from a point sample.}
+\cgalPkgManuals{Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces,PkgJet_fitting_3}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.3}
+\cgalPkgDependsOn{Solvers from \ref thirdpartyEigen.} 
+\cgalPkgBib{cgal:pc-eldp}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

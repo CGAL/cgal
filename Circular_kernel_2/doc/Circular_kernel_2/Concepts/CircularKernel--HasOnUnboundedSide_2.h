@@ -1,9 +1,9 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
-\refines `Kernel::HasOnUnboundedSide_2`
+\cgalRefines `Kernel::HasOnUnboundedSide_2`
 
 \sa `CircularKernel::BoundedSide_2`
 \sa `CircularKernel::HasOnBoundedSide_2`

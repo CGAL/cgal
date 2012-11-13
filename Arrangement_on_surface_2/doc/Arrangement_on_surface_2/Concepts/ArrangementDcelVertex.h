@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgArrangement2ConceptsDCEL
-\cgalconcept
+\cgalConcept
 
 A vertex record in a <span class="textsc">Dcel</span> data structure. A vertex is always associated 
 with a point. However, the vertex record only stores a pointer to the 

@@ -4,7 +4,7 @@
 \mainpage CGAL and the Boost Graph Library
 \anchor Chapter_CGAL_and_the_Boost_Graph_Library
 \anchor chapterBGL
-\autotoc
+\cgalAutoToc
 \authors Andreas Fabri and Fernando Cacciola and Ron Wein
 
 Many geometric data structures can be interpreted as graphs, as they consist of
@@ -169,7 +169,7 @@ surface.  More examples can be found in Chapter
 \ref Chapter_Triangulated_Surface_Mesh_Simplification on surface mesh
 simplification.
 
-\cgalexample{BGL_polyhedron_3/kruskal.cpp}
+\cgalExample{BGL_polyhedron_3/kruskal.cpp}
 
 \subsection BGLExampleUsingVerticesandEdgeswithanID Example: Using Vertices, and Edges with an ID
 
@@ -179,7 +179,7 @@ field stored in a Polyhedron vertex.
 
 The main function illustrates the access to the id() field.
 
-\cgalexample{BGL_polyhedron_3/kruskal_with_stored_id.cpp}
+\cgalExample{BGL_polyhedron_3/kruskal_with_stored_id.cpp}
 
 \section BGLTriangulations Triangulations as Models of the Boost Graph Concept
 
@@ -203,7 +203,7 @@ spanning tree algorithm on it. Because the vertex handles of the triangulation a
 in an array, we have to provide a property map that maps vertex handles to
 int's in the range `[0, t.number_of_vertices())`.
 
-\cgalexample{BGL_triangulation_2/emst.cpp}
+\cgalExample{BGL_triangulation_2/emst.cpp}
 
 \subsection BGLExampleStoringtheVertexIDintheVertex Example: Storing the Vertex ID in the Vertex
 
@@ -222,7 +222,7 @@ It is in the users responsibility to set the indices properly.
 The example further illustrates that the graph traits also works
 for the Delaunay triangulation.
 
-\cgalexample{BGL_triangulation_2/dijkstra_with_internal_properties.cpp}
+\cgalExample{BGL_triangulation_2/dijkstra_with_internal_properties.cpp}
 
 \section BGLArrangements Arrangements as Models of the Boost Graph Concept
 
@@ -284,19 +284,19 @@ kept synchronized with the number of vertices in the arrangement, so it
 should not be reused in calls to \sc{Bgl} functions in case the arrangement
 is modified in between these calls.
 
-\cgal_figure_begin{figex_bgl,ex_bgl.gif}
+\cgalFigureBegin{figex_bgl,ex_bgl.gif}
 An arrangement of 7 line segments, as constructed by `ex_bgl_primal_adapter.cpp` and `ex_bgl_dual_adapter.cpp`. The breadth-first visit times for the arrangement faces, starting from the unbounded face \f$ f_0\f$, are shown is brackets.
-\cgal_figure_end
+\cgalFigureEnd
 
 In the following example we construct an arrangement of 7 line segments,
-as shown in \cgal_figure_ref{figex_bgl},
+as shown in \cgalFigureRef{figex_bgl},
 then use Dijkstra's shortest-paths algorithm from the \sc{Bgl} to compute
 the graph distance of all vertices from the leftmost vertex in the
 arrangement \f$ v_0\f$. Note the usage of the `Arr_vertex_index_map` and
 the `Arr_vertex_property_map` classes. The latter one, instantiated by
 the type `double` is used to map vertices to their distances from \f$ v_0\f$.
 
-\cgalexample{BGL_arrangement_2/primal.cpp}
+\cgalExample{BGL_arrangement_2/primal.cpp}
 
 \subsection arr_sssecbgl_dual Example for the Dual of an Arrangement as Graph 
 
@@ -326,14 +326,14 @@ efficient mapping of face handles to indices. We also provide the template
 data with the arrangement faces.
 
 In the following example we construct the same arrangement as in
-example `ex_bgl_primal_adapter.cpp` (see \cgal_figure_ref{arr_figex_bgl}),
+example `ex_bgl_primal_adapter.cpp` (see \cgalFigureRef{arr_figex_bgl}),
 and perform breadth-first search on the graph faces, starting from the
 unbounded face. We extend the \sc{Dcel} faces
 with an unsigned integer, marking the discover time of the face and use a
 breadth-first-search visitor to obtain these times and update the faces
 accordingly:
 
-\cgalexample{BGL_arrangement_2/dual.cpp}
+\cgalExample{BGL_arrangement_2/dual.cpp}
 
 */ 
 } /* namespace CGAL */

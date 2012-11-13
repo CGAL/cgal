@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3SecondaryConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `IntersectionGeometricTraits_3` provides types and functors 
 required to implement a model of `MeshDomain_3`, 
@@ -9,7 +9,7 @@ forming its boundary.
 The concept `IntersectionGeometricTraits_3` mainly provides the detection 
 and construction of intersections between segments and triangles. 
 
-\hasModel Any `CGAL::Kernel`.
+\cgalHasModel Any `CGAL::Kernel`.
 
 \sa `BisectionGeometricTraits_3` 
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>` 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulation3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationTraits_3` is the first template parameter of the class 
 `Triangulation_3`. It defines the geometric objects (points, segments, 
@@ -9,13 +9,13 @@ triangles and tetrahedra) forming the triangulation together with a few
 geometric predicates and constructions on these objects : lexicographical 
 comparison, orientation in case of coplanar points and orientation in space. 
 
-\hasModel CGAL::Exact_predicates_inexact_constructions_kernel (recommended) 
-\hasModel CGAL::Exact_predicates_exact_constructions_kernel
-\hasModel CGAL::Filtered_kernel 
-\hasModel CGAL::Cartesian 
-\hasModel CGAL::Simple_cartesian 
-\hasModel CGAL::Homogeneous 
-\hasModel CGAL::Simple_homogeneous 
+\cgalHasModel CGAL::Exact_predicates_inexact_constructions_kernel (recommended) 
+\cgalHasModel CGAL::Exact_predicates_exact_constructions_kernel
+\cgalHasModel CGAL::Filtered_kernel 
+\cgalHasModel CGAL::Cartesian 
+\cgalHasModel CGAL::Simple_cartesian 
+\cgalHasModel CGAL::Homogeneous 
+\cgalHasModel CGAL::Simple_homogeneous 
 
 */
 

@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 A model for this must provide: 
 
-\refines `AdaptableFunctor` (with one argument) 
+\cgalRefines `AdaptableFunctor` (with one argument) 
 
 \sa `Kernel_d::CartesianConstIterator_d` 
 

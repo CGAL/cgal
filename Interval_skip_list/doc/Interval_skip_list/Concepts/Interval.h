@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgIntervalSkipListConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `Interval` describes the requirements for the 
 template argument `Interval` of a `Interval_skip_list<Interval>`. 
@@ -9,8 +9,8 @@ The concept does not specify, whether the interval is open or
 closed. It is up to the implementer of a model for this concept 
 to define that. 
 
-\hasModel `CGAL::Interval_skip_list_interval<Value>`
-\hasModel `CGAL::Level_interval` 
+\cgalHasModel `CGAL::Interval_skip_list_interval<Value>`
+\cgalHasModel `CGAL::Level_interval` 
 
 \sa `Interval_skip_list` 
 

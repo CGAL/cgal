@@ -1,10 +1,10 @@
 /*!
 \ingroup PkgStraightSkeleton2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `StraightSkeletonBuilderTraits_2` describes the requirements for the geometric traits class required by the algorithm class `Straight_skeleton_builder_2<Gt,Ss>`. 
 
-\hasModel CGAL::Straight_skeleton_builder_traits_2
+\cgalHasModel CGAL::Straight_skeleton_builder_traits_2
 
 \sa `CGAL::Straight_skeleton_builder_2<Gt,Ss>` 
 \sa `CGAL::Straight_skeleton_builder_traits_2<K>` 

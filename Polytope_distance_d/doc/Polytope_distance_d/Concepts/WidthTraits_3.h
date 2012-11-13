@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgOptimalDistancesConcepts
-\cgalconcept
+\cgalConcept
 
 This concept defines the requirements for traits classes of 
 `Width_3<Traits>`. 
@@ -12,7 +12,7 @@ Whatever the coordinates of the points are, it is required for the
 width-algorithm to have access to the homogeneous representation of 
 points. 
 
-\hasModel CGAL::Width_default_traits_3
+\cgalHasModel CGAL::Width_default_traits_3
 
 \sa `CGAL::Width_3<Traits>` 
 

@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 \brief
 
-\refines `Kernel::ConstructPlane_3`
+\cgalRefines `Kernel::ConstructPlane_3`
 
 \sa `SphericalKernel::GetEquation`
 

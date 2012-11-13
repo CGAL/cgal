@@ -2,7 +2,7 @@ namespace Kinetic {
 
 /*!
   \ingroup PkgKdsFrameworkConcepts
-  \cgalconcept
+  \cgalConcept
 
   The class `Kinetic::Simulator` controls kinetic data structures by maintaining 
   a the current time and ensuring that events are processed when 
@@ -39,7 +39,7 @@ namespace Kinetic {
   \sa `CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, KDS>`
   \sa `CGAL::Kinetic::Simulator_kds_listener<Simulator_listener, KDS>`
 
-  \hasModel `CGAL::Kinetic::Default_simulator<FunctionKernel, EventQueue>`
+  \cgalHasModel `CGAL::Kinetic::Default_simulator<FunctionKernel, EventQueue>`
 
 */
 
@@ -61,14 +61,14 @@ public:
 
   /*!
     \ingroup PkgKdsFrameworkOtherConcepts
-    \cgalconcept
+    \cgalConcept
 
     The concept `Time` represents time in the simulator.
 
     Comparisons with other `Kinetic::Simulator::Time` objects are supported. 
 
-    \hasModel `double`
-    \hasModel `Kinetic::FunctionKernel::Root`
+    \cgalHasModel `double`
+    \cgalHasModel `Kinetic::FunctionKernel::Root`
 
     \sa `Kinetic::Simulator`
 
@@ -89,15 +89,15 @@ public:
 
 /*!
   \ingroup PkgKdsFrameworkOtherConcepts
-  \cgalconcept
+  \cgalConcept
 
   The concept `Event` represents a single event. Models of 
   `Event` should be passed to the `Kinetic::Simulator` when 
   scheduling events which will in turn pass them to the 
   `EventQueue`. 
 
-  \hasModel All over the place.
-  \hasModel `Kinetic::Event_base`
+  \cgalHasModel All over the place.
+  \cgalHasModel `Kinetic::Event_base`
 
   \sa `Kinetic::EventQueue` 
 

@@ -19,23 +19,23 @@
 /*!
 \addtogroup PkgTriangulation2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Triangulation,PkgTriangulation2Summary}
-\PkgPicture{cdt2d-small.png}
-\PkgSummaryBegin
-\PkgAuthor{Mariette Yvinec}
-\PkgDesc{This package  allows to build and handle various triangulations for point sets two dimensions. Any \cgal triangulation covers the convex hull of its vertices. Triangulations are build incrementally  and can be modified by insertion  or removal  of vertices.  They offer point location facilities.  The package provides plain triangulation (whose faces depend on the insertion order of the vertices) and Delaunay triangulations.  Regular triangulations are also provided for sets of weighted points. Delaunay and regular triangulations offer nearest neighbor queries and primitives to build the dual Voronoi and power diagrams.   Finally, constrained and Delaunay constrained triangulations allows to force some constrained segments to appear as edges of the triangulation.  Several versions of constrained and Delaunay constrained triangulations are provided: some of them handle intersections between input constraints segment while others do not. }
-\PkgManuals{Chapter_2D_Triangulations,PkgTriangulation2}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{0.9}
-\PkgDependsOn{\ref PkgTDS2Summary}
-\PkgBib{cgal:y-t2}
-\PkgLicense{\ref licensesGPL "GPL"}
-\PkgDemo{Delaunay Triangulation,delaunay_triangulation_2.zip}
-\PkgDemo{Regular Triangulation,regular_triangulation_2.zip}
-\PkgDemo{Constrained Delaunay Triangulation,constrained_delaunay_triangulation_2.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{2D Triangulation,PkgTriangulation2Summary}
+\cgalPkgPicture{cdt2d-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Mariette Yvinec}
+\cgalPkgDesc{This package  allows to build and handle various triangulations for point sets two dimensions. Any \cgal triangulation covers the convex hull of its vertices. Triangulations are build incrementally  and can be modified by insertion  or removal  of vertices.  They offer point location facilities.  The package provides plain triangulation (whose faces depend on the insertion order of the vertices) and Delaunay triangulations.  Regular triangulations are also provided for sets of weighted points. Delaunay and regular triangulations offer nearest neighbor queries and primitives to build the dual Voronoi and power diagrams.   Finally, constrained and Delaunay constrained triangulations allows to force some constrained segments to appear as edges of the triangulation.  Several versions of constrained and Delaunay constrained triangulations are provided: some of them handle intersections between input constraints segment while others do not. }
+\cgalPkgManuals{Chapter_2D_Triangulations,PkgTriangulation2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{0.9}
+\cgalPkgDependsOn{\ref PkgTDS2Summary}
+\cgalPkgBib{cgal:y-t2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Delaunay Triangulation,delaunay_triangulation_2.zip}
+\cgalPkgDemo{Regular Triangulation,regular_triangulation_2.zip}
+\cgalPkgDemo{Constrained Delaunay Triangulation,constrained_delaunay_triangulation_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 A triangulation is a 2-dimensional simplicial complex which is pure
 connected and without singularities. Thus a triangulation

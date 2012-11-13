@@ -52,7 +52,7 @@ To illustrate the usage of `Min_ellipse_2` and to show that randomization
 can be useful in certain cases, we give an example. The example also 
 shows how the coefficents of the constructed ellipse can be accessed. 
 
-\cgalexample{Min_ellipse_2/min_ellipse_2.cpp} 
+\cgalExample{Min_ellipse_2/min_ellipse_2.cpp} 
 
 */
 template< typename Traits >
@@ -113,7 +113,7 @@ Usually, this will not be necessary, however, the algorithm's
 efficiency depends on the order in which the points are 
 processed, and a bad order might lead to extremely poor 
 performance (see example below). 
-\requires The value type of `first` and `last` is `Point`. 
+\cgalRequires The value type of `first` and `last` is `Point`. 
 */ 
 template < class InputIterator > 
 Min_Ellipse_2( InputIterator first, 
@@ -312,7 +312,7 @@ inserts the points in the range [`first`,`last`)
 into `min_ellipse` and recomputes the smallest enclosing ellipse by 
 calling `insert(p)` for each point `p` in 
 [`first`,`last`). 
-\requires The value type of `first` and `last` is `Point`. 
+\cgalRequires The value type of `first` and `last` is `Point`. 
 */ 
 template < class InputIterator > 
 void insert( InputIterator first, 
@@ -368,7 +368,7 @@ const Traits& traits( ) const;
 /*! 
 
 writes `min_ellipse` to output stream `os`. 
-\requires The output operator is defined for `Point` (and for `Ellipse`, if pretty printing is used). 
+\cgalRequires The output operator is defined for `Point` (and for `Ellipse`, if pretty printing is used). 
 \relates Min_ellipse_2 
 */ 
 std::ostream& 
@@ -378,7 +378,7 @@ const Min_ellipse_2<Traits>& min_ellipse);
 /*! 
 
 reads `min_ellipse` from input stream `is`. 
-\requires The input operator is defined for `Point`. 
+\cgalRequires The input operator is defined for `Point`. 
 \relates Min_ellipse_2 
 */ 
 std::istream& 

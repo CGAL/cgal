@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `Functor` computes a square-free factorization 
 of a `PolynomialTraits_d::Polynomial_d`. 
@@ -15,9 +15,9 @@ The pairs \f$ (g_i,m_i)\f$ are written into the given output iterator.
 This functor is well defined if `PolynomialTraits_d::Polynomial_d` is a 
 `UniqueFactorizationDomain`. 
 
-\refines Assignable
-\refines CopyConstructible
-\refines DefaultConstructible
+\cgalRefines Assignable
+\cgalRefines CopyConstructible
+\cgalRefines DefaultConstructible
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

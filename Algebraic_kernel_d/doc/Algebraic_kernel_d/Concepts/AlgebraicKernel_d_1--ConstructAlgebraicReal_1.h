@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsUni
-\cgalconcept
+\cgalConcept
 
 Constructs `AlgebraicKernel_d_1::Algebraic_real_1`. 
 
-\refines `AdaptableFunctor` 
+\cgalRefines `AdaptableFunctor` 
 
 \sa `AlgebraicKernel_d_2::ConstructAlgebraicReal_2`
 

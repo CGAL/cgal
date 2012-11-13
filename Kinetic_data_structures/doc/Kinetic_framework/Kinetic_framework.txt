@@ -3,7 +3,7 @@ namespace CGAL {
 
 \mainpage Kinetic Framework
 \anchor Chapter_Kinetic_Framework
-\autotoc
+\cgalAutoToc
 
 \author Daniel Russel
 
@@ -36,7 +36,7 @@ the `Kinetic::Kernel`, the `Kinetic::ActiveObjectsTable` and the
 concept is discussed separately in Section
 \ref seckds_algebraic_kernel.
 
-\cgal_figure_ref{figkds_uml_usage_architecture,sort_usage_pct.gif}
+\cgalFigureRef{figkds_uml_usage_architecture,sort_usage_pct.gif}
 The figure, identical to the one in the overview of the previous
 chapter, shows the interaction between the `Kinetic::Sort<Traits, Visitor>` 
 kinetic data structure and the various pieces of our
@@ -44,7 +44,7 @@ framework. Other, more complicated, kinetic data structures will also
 use the `Kinetic::InstantaneousKernel` in order to insert/remove
 geometric primitives and audit themselves. `Kinetic::Sort<Traits, Visitor>` 
 uses the sorting functionality in STL instead.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection seckds_simulator The Kinetic::Simulator 
 
@@ -389,7 +389,7 @@ actual code for a simpler data structure.
 Here we will explain how the kinetic sorting data structure uses the
 various pieces of the package. A schematic of its relationship to the
 various components is shown in the UML diagram in
-\cgal_figure_ref{figkds_uml_usage_architecture}. In this subsection we
+\cgalFigureRef{figkds_uml_usage_architecture}. In this subsection we
 abuse, for reasons of simplicity of presentation, the concept/model
 semantics: when we refer to concepts we actually refer to an instance
 of a model of them.

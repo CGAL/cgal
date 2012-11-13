@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgHDSConcepts
-\cgalconcept
+\cgalConcept
 
 The concept of a halfedge data structure (abbreviated as `HalfedgeDS`, or 
 `HDS` for template parameters) defines an edge-centered data structure 
@@ -66,9 +66,9 @@ allocators internally. A default argument is mandatory for
 from the `<CGAL/memory.h>` header file can be used as default 
 allocator. 
 
-\hasModel CGAL::HalfedgeDS_default 
-\hasModel CGAL::HalfedgeDS_list 
-\hasModel CGAL::HalfedgeDS_vector 
+\cgalHasModel CGAL::HalfedgeDS_default 
+\cgalHasModel CGAL::HalfedgeDS_list 
+\cgalHasModel CGAL::HalfedgeDS_vector 
 
 \sa `HalfedgeDSItems` 
 \sa `CGAL::Polyhedron_3<Traits>` 
@@ -179,7 +179,7 @@ typedef Hidden_type Face_iterator;
 /// @} 
 
 /* \name Types for Tagging Optional Features 
-\advanced The following types are equal to either `CGAL::Tag_true` or 
+\cgalAdvanced The following types are equal to either `CGAL::Tag_true` or 
 `CGAL::Tag_false`, depending on whether the named feature is 
 supported or not. 
 
@@ -560,7 +560,7 @@ void clear();
 /// @} 
 
 /*! \name Operations with Border Halfedges 
-\advanced The following notion of <I>border halfedges</I> is particular useful 
+\cgalAdvanced The following notion of <I>border halfedges</I> is particular useful 
 where the halfedge data structure is used to model surfaces with 
 boundary, i.e., surfaces with missing faces or open regions. Halfedges 
 incident to an open region are called <I>border halfedges</I>. A 

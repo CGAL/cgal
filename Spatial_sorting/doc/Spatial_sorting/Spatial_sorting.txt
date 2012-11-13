@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage Spatial Sorting
 \anchor Chapter_Spatial_Sorting
 \anchor chapspatial_sorting
-\autotoc
+\cgalAutoToc
 
 \authors Christophe Delage and Olivier Devillers
 
@@ -56,35 +56,35 @@ and
 </BLOCKQUOTE>
 
 Then each square is subdivided in the same way recursively.
-\cgal_figure_ref{Spatial_sorting_fig_Hilbert8} illustrates this process.
+\cgalFigureRef{Spatial_sorting_fig_Hilbert8} illustrates this process.
 
-\cgal_figure_begin{Spatial_sorting_fig_Hilbert8,Hilbert8.gif}
+\cgalFigureBegin{Spatial_sorting_fig_Hilbert8,Hilbert8.gif}
 Hilbert mapping
-\cgal_figure_end
+\cgalFigureEnd
 
 Now given a set of 2D points, they can be sorted in the order they have on such
-a space filling curve as illustrated in \cgal_figure_ref{Spatial_sorting_fig_Hilbert_middle} :
+a space filling curve as illustrated in \cgalFigureRef{Spatial_sorting_fig_Hilbert_middle} :
 
-\cgal_figure_begin{Spatial_sorting_fig_Hilbert_middle,Hilbert-middle.gif}
+\cgalFigureBegin{Spatial_sorting_fig_Hilbert_middle,Hilbert-middle.gif}
 Hilbert sort with middle policy
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Spatial_sortingExamples Examples
 
 The code to use Hilbert sort is as simple as the following example:
 
-\cgalexample{Spatial_sorting/hilbert.cpp}
+\cgalExample{Spatial_sorting/hilbert.cpp}
 
 If instead of subdividing the square in a fixed way at its middle point,
 as above, we subdivide it
 by splitting at the median point (in \f$ x\f$ or \f$ y\f$ directions alternating),
 we construct a 2-d tree adapted to the point set. This tree can be visited in a
 similar manner and we get also a suitable ordering of the points
-(see \cgal_figure_ref{Spatial_sorting_fig_Hilbert_median}).
+(see \cgalFigureRef{Spatial_sorting_fig_Hilbert_median}).
 
-\cgal_figure_begin{Spatial_sorting_fig_Hilbert_median,Hilbert-median.gif}
+\cgalFigureBegin{Spatial_sorting_fig_Hilbert_median,Hilbert-median.gif}
 Hilbert sort with median policy
-\cgal_figure_end
+\cgalFigureEnd
 
 
 \cgal provides Hilbert sorting for points in 2D, 3D and higher dimensions,
@@ -103,7 +103,7 @@ Most theoretical results are using the middle policy
 
 This other example illustrates the use of the two different policies
 
-\cgalexample{Spatial_sorting/hilbert_policies.cpp}
+\cgalExample{Spatial_sorting/hilbert_policies.cpp}
 
 \section secspatial_sorting Spatial Sorting 
 
@@ -131,7 +131,7 @@ Delaunay with median hilbert sort... done in 0.822975 seconds.
 Delaunay with median spatial sort... done in 0.022415 seconds.
 \endcode
 
-\cgalexample{Spatial_sorting/small_example_delaunay_2.cpp}
+\cgalExample{Spatial_sorting/small_example_delaunay_2.cpp}
 
 \subsection Spatial_sortingUsingYourOwnPointType Using Your Own Point Type
 
@@ -142,7 +142,7 @@ to associate an extra information to your point you might consider the example o
 \ref secsort_any_type_2
 as an alternative.
 
-\cgalexample{Spatial_sorting/myPoint.cpp}
+\cgalExample{Spatial_sorting/myPoint.cpp}
 
 \subsection secsort_any_type Sorting Arbitrary Types
 
@@ -164,19 +164,19 @@ The following examples illustrate the usage of these traits class adapters.
 
 In this example program, the sorted sequence of points is retrieved 
 using a vector of pairs of points and integers.
-\cgalexample{Spatial_sorting/sp_sort_using_property_map_2.cpp}
+\cgalExample{Spatial_sorting/sp_sort_using_property_map_2.cpp}
 
 \subsection Spatial_sortingSortingUsingIndicesofPoints Sorting Using Indices of Points
 
 In this example program, the sorted sequence of points is retrieved 
 using the indices of the points in a vector of points.
-\cgalexample{Spatial_sorting/sp_sort_using_property_map_3.cpp}
+\cgalExample{Spatial_sorting/sp_sort_using_property_map_3.cpp}
 
 \subsection Spatial_sortingSortingUsingIndicesofPairs Sorting Using Indices of Pairs of Points and Integers
 
 In this example program, the sorted sequence of points is retrieved 
 using the indices of the points in a vector of pairs of points and integers.
-\cgalexample{Spatial_sorting/sp_sort_using_property_map_d.cpp}
+\cgalExample{Spatial_sorting/sp_sort_using_property_map_d.cpp}
 
 */ 
 } /* namespace CGAL */

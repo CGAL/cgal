@@ -25,7 +25,7 @@ The template parameter expects an instantiation of `Nef_polyhedron_3<Traits>`.
 This example reads a 3D Nef polyhedron from standard input and displays it 
 in a Qt widget. 
 
-\cgalexample{Nef_3/visualization_SNC.cpp} 
+\cgalExample{Nef_3/visualization_SNC.cpp} 
 
 */
 template< typename Nef_polyhedron_3 >

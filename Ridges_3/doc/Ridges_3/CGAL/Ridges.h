@@ -294,8 +294,8 @@ The class `Vertex2Data_Property_Map_with_std_map` is a model of the concepts
 created with the `boost::associative_property_map` adaptor from 
 `std::map`. 
 
-\models `Vertex2FTPropertyMap`
-\models `Vertex2VectorPropertyMap`
+\cgalModels `Vertex2FTPropertyMap`
+\cgalModels `Vertex2VectorPropertyMap`
 
 \sa `Ridge_approximation` 
 

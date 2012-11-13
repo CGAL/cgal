@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `FieldWithKthRoot` is a `FieldWithSqrt` that has operations to take k-th roots. 
 
@@ -11,7 +11,7 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithKthRoot >` is a model of `
 
 - `CGAL::Algebraic_structure_traits< FieldWithKthRoot >::Kth_root` 
 
-\refines `FieldWithSqrt` 
+\cgalRefines `FieldWithSqrt` 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 

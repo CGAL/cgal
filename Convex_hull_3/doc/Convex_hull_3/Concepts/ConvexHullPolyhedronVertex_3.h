@@ -1,11 +1,11 @@
 /*!
 \ingroup PkgConvexHull3Concepts
-\cgalconcept
+\cgalConcept
 
 Requirements of the vertex type of the polyhedron built by the 
 function `CGAL::convex_hull_3()`. 
 
-\hasModel CGAL::Polyhedron_3::Vertex
+\cgalHasModel CGAL::Polyhedron_3::Vertex
 
 \sa `CGAL::Polyhedron_3` 
 \sa `ConvexHullPolyhedronFacet_3` 

@@ -41,8 +41,8 @@ The class `Random_points_in_cube_3` is an input iterator creating points uniform
 distributed in a half-open cube. The default `Creator` is 
 `Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 
@@ -108,8 +108,8 @@ The class `Random_points_in_sphere_3` is an input iterator creating points unifo
 distributed in an open sphere. The default `Creator` is 
 `Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 
@@ -178,8 +178,8 @@ The generated points are computed using floating point arithmetic,
 whatever the Kernel is, thus they are on the circle/sphere only up to 
 rounding errors. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 

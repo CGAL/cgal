@@ -16,7 +16,7 @@ if `Alpha_shape_face_base_2` is intended to be used with an alpha-shape class ba
 \link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. See the description 
 provided in the documentation of `Alpha_shape_2` for more details. The default value is \link Tag_false `Tag_false`\endlink. 
 
-\models ::AlphaShapeFace_2 
+\cgalModels ::AlphaShapeFace_2 
 */
 template< typename Traits, typename Fb, typename ExactAlphaComparisonTag >
 class Alpha_shape_face_base_2 : public Fb {

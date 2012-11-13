@@ -132,7 +132,7 @@ All these functions naming parameters are defined in
 `namespace CGAL`. Being non-member functions, they could clash 
 with equally named functions in some other namespace. If that happens, 
 simply qualify the <I>first</I> 
-\footnote{The second and subsequent named parameters shall not be qualified as they are member functions} 
+\cgalFootnote{The second and subsequent named parameters shall not be qualified as they are member functions} 
 named parameter with `CGAL::`, as shown in the examples in the user manual. 
 
 ### Semantics ##

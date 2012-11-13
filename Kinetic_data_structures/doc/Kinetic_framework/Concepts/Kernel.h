@@ -1,7 +1,7 @@
 namespace Kinetic {
 /*!
 \ingroup PkgKdsFrameworkConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `Kinetic::Kernel` acts as the kinetic analog of a \cgal kernel. 
 It provides some set of primitives and predicats acting on them. The 
@@ -9,7 +9,7 @@ predicates are instances of `Kinetic::CertificateGenerator` and
 can be used to either create `Certificate`s or to evaluate 
 instantaneous predicates. 
 
-\hasModel `CGAL::Kinetic::Cartesian<FunctionKernel>`
+\cgalHasModel `CGAL::Kinetic::Cartesian<FunctionKernel>`
 
 */
 

@@ -1,6 +1,6 @@
 /*!
   \ingroup PkgKernel23Concepts
-  \cgalconcept
+  \cgalConcept
 
   The concept of a <I>kernel</I> is defined by a set of requirements on 
   the provision of certain types and access member functions to create 
@@ -15,14 +15,14 @@
   procedures in the kernel. There are also function objects replacing operators, 
   especially for equality testing. 
 
-  \hasModel `CGAL::Cartesian<FieldNumberType>` 
-  \hasModel `CGAL::Homogeneous<RingNumberType>`
-  \hasModel `CGAL::Simple_cartesian<FieldNumberType>` 
-  \hasModel `CGAL::Simple_homogeneous<RingNumberType>` 
-  \hasModel `CGAL::Filtered_kernel<CK>`
-  \hasModel `CGAL::Exact_predicates_exact_constructions_kernel` 
-  \hasModel `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` 
-  \hasModel `CGAL::Exact_predicates_inexact_constructions_kernel`
+  \cgalHasModel `CGAL::Cartesian<FieldNumberType>` 
+  \cgalHasModel `CGAL::Homogeneous<RingNumberType>`
+  \cgalHasModel `CGAL::Simple_cartesian<FieldNumberType>` 
+  \cgalHasModel `CGAL::Simple_homogeneous<RingNumberType>` 
+  \cgalHasModel `CGAL::Filtered_kernel<CK>`
+  \cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel` 
+  \cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` 
+  \cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel`
 
   \sa `Kernel_d` 
 

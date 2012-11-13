@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceMesher3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `SurfaceMeshTraits_3` describes the knowledge that is required on the 
 surface to be meshed. A model of this concept 
@@ -11,7 +11,7 @@ and to compute some intersection
 points if any exists. The concept `SurfaceMeshTraits_3` also includes a funcctor able to provide 
 a small set of initial points on the surface. 
 
-\hasModel `CGAL::Surface_mesh_traits_generator_3::Type` 
+\cgalHasModel `CGAL::Surface_mesh_traits_generator_3::Type` 
 
 \sa `CGAL::make_surface_mesh` 
 

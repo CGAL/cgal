@@ -11,7 +11,7 @@ which returns `true` when the relation between the initial and current number of
 \tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
 
-\models ::StopPredicate 
+\cgalModels ::StopPredicate 
 
 \sa `CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>` 
 

@@ -5,7 +5,7 @@ namespace CGAL {
 \mainpage 2D Straight Skeleton and Polygon Offsetting
 \anchor Chapter_2D_Straight_Skeleton_and_Polygon_Offsetting
 \anchor chapterstraightskeleton2
-\autotoc
+\cgalAutoToc
 \author Fernando Cacciola
 
 \section Straight_skeleton_2Definitions Definitions
@@ -38,13 +38,13 @@ The orientation of a polygon with holes is the orientation of its outer contour.
 
 Throughout the rest of this chapter the term <I>polygon</I> will be used as a shortcut for <I>polygon with holes</I>.
 
-\cgal_figure_begin{Validpolygons,valid_polygons.png}
+\cgalFigureBegin{Validpolygons,valid_polygons.png}
 Examples of strictly simple polygons: One with no holes and two edges coincident (left) and one with 2 holes (right).
-\cgal_figure_end
+\cgalFigureEnd
 
-\cgal_figure_begin{Invalidpolygons,invalid_polygons.png}
+\cgalFigureBegin{Invalidpolygons,invalid_polygons.png}
 Examples of non-simple polygons: One folding into itself, that is, non-planar (left), one with a vertex touching an edge (middle), and one with a hole crossing into the outside (right)
-\cgal_figure_end
+\cgalFigureEnd
 
 
 \subsection Straight_skeleton_2InwardOffsetofaNondegenerate Inward Offset of a Non-degenerate Strictly-Simple Polygon with Holes
@@ -67,13 +67,13 @@ The <I>2D straight skeleton</I> of a non-degenerate strictly-simple polygon with
 
 These regions are bounded by angular bisectors of the supporting lines of the contour edges and each such region is itself a non-convex non-degenerate strictly-simple polygon.
 
-\cgal_figure_begin{ComplexSLS,complex_skeleton.png}
+\cgalFigureBegin{ComplexSLS,complex_skeleton.png}
 Straight skeleton of a complex shaggy contour
-\cgal_figure_end
+\cgalFigureEnd
 
-\cgal_figure_begin{MoreSLS,simple_skeleton_0.png}
+\cgalFigureBegin{MoreSLS,simple_skeleton_0.png}
 Other examples: A vertex-event (left), the case of several collinear edges (middle), and the case of a validly simple polygon with tangent edges (right).
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Straight_skeleton_2AngularBisectingLines Angular Bisecting Lines and Offset Bisectors
 
@@ -242,9 +242,9 @@ If the polygon <I>is</I> convex, the straight skeleton is exactly equivalent to 
 Contour vertices have time zero.
 
 
-\cgal_figure_begin{Simplepolyoffsets,fig6.png}
+\cgalFigureBegin{Simplepolyoffsets,fig6.png}
 Straight Skeleton Data Structure
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Straight_skeleton_2API API
 
@@ -254,7 +254,7 @@ The straight skeleton data structure is defined by the `StraightSkeleton_2` conc
 
 The simplest way to construct a straight skeleton is via the free functions `create_interior_straight_skeleton_2()` and `create_exterior_straight_skeleton_2()`, as shown in the following example:
 
-\cgalexample{Straight_skeleton_2/Create_straight_skeleton_2.cpp}
+\cgalExample{Straight_skeleton_2/Create_straight_skeleton_2.cpp}
 
 The input to these functions is the polygon, which can be given as an iterator pair or directly as a `Polygon_2` object. In the case of the exterior skeleton, a maximum offset must be specified as well (see the ref manual for details on this max offset parameter).
 
@@ -262,23 +262,23 @@ The input to these functions is the polygon, which can be given as an iterator p
 
 If `Polygon_with_holes_2` is used, you can pass an instance of it directly to the function creating the interior skeleton, as shown below. Notice that a different header must be included in this case.
 
-\cgalexample{Straight_skeleton_2/Create_straight_skeleton_from_polygon_with_holes_2.cpp}
+\cgalExample{Straight_skeleton_2/Create_straight_skeleton_from_polygon_with_holes_2.cpp}
 
 \subsection Straight_skeleton_2CreateOffsetPolygonsfrom Create Offset Polygons from a Straight Skeleton
 
 If you already have a straight skeleton instance, the simpler way to generate offset polygons is to call `create_offset_polygons_2()` as shown in the next example, passing the desired offset and the straight skeleton. You can reuse the same skeleton to generate offsets at a different distance, which is recommended because producing the straight skeleton is much slower then generating offset polygons.
 
-\cgalexample{Straight_skeleton_2/Create_offset_polygons_2.cpp}
+\cgalExample{Straight_skeleton_2/Create_offset_polygons_2.cpp}
 
 \subsection Straight_skeleton_2CreateOffsetPolygonsfrom_1 Create Offset Polygons from a Polygon (With or Without Holes)
 
 If you need offset polygons at just one single distance, you can hide away the construction of the straight skeleton by calling directly the functions `create_interior_skeleton_and_offset_polygons_2()` and `create_exterior_skeleton_and_offset_polygons_2()` as shown in the following examples:
 
-\cgalexample{Straight_skeleton_2/Create_skeleton_and_offset_polygons_2.cpp}
+\cgalExample{Straight_skeleton_2/Create_skeleton_and_offset_polygons_2.cpp}
 
 ... and using a `Polygon_with_holes_2` directly when available:
 
-\cgalexample{Straight_skeleton_2/Create_saop_from_polygon_with_holes_2.cpp}
+\cgalExample{Straight_skeleton_2/Create_saop_from_polygon_with_holes_2.cpp}
 
 If the input polygon has holes, there can be holes in the offset polygons. 
 However, the polygons generated by all the offsetting functions shown before
@@ -287,9 +287,9 @@ of `Polygon_2` instead of `Polygon_with_holes_2`.
 If `Polygon_with_holes_2` are available and you need the offsetting to produce them, you can call the function `arrange_offset_polygons_2()` passing the result of any of the offsetting functions described so far. That function arranges the offset polygons detecting and distributing holes within parents.
 As a shortcut, you can use the function `create_interior_skeleton_and_offset_polygons_with_holes_2()` as shown below:
 
-\cgalexample{Straight_skeleton_2/Create_skeleton_and_offset_polygons_with_holes_2.cpp}
+\cgalExample{Straight_skeleton_2/Create_skeleton_and_offset_polygons_with_holes_2.cpp}
 
-\advanced Consider an input polygon with parallel edges separated a
+\cgalAdvanced Consider an input polygon with parallel edges separated a
 distance \f$ 2*t\f$. If you produce an offset polygon at distance \f$
 t\f$, these parallel edges will just collapse each other and vanish
 from the result, keeping the output as a <I>simple polygon</I>, just
@@ -303,7 +303,7 @@ roundoff in the coordinates of the output points will cause parallel
 edges that <I>almost</I> collapse-but not so-to become really
 collinear or even cross each other.
 
-\advanced Thus, it is neccessary to use a kernel with exact constructions if
+\cgalAdvanced Thus, it is neccessary to use a kernel with exact constructions if
 offset polygons must be simple, yet computing a straight skeleton
 using that kernel is very slow, much more than computing the offset
 polygons. To help with this, it is possible to construct the straight
@@ -313,14 +313,14 @@ skeleton to a different kernel via the function
 `convert_straight_skeleton_2()` and input the converted skeleton to the
 offsetting functions.
 
-\advanced All the offsetting functions that take polygons as input (and create
+\cgalAdvanced All the offsetting functions that take polygons as input (and create
 the straight skeleton under the hood) apply that optimization
 automatically: that is, the output polygons are defined over the same
 kernel of the input polygons, whatever that is, yet the straight
 skeleton is constructed with the faster recommended kernel and
 converted if necessary.
 
-\advanced Notice how some of the examples above use
+\cgalAdvanced Notice how some of the examples above use
 `Exact_predicates_exact_constructions_kernel`. In all cases, the
 straight skeleton is constructed using
 `Exact_predicates_inexact_constructions_kernel`.
@@ -392,7 +392,7 @@ by testing each inner contour (which is identified by being clockwise) against e
 This algorithm requires exact predicates but not exact constructions
 Therefore, the `Exact_predicates_inexact_constructions_kernel` should be used.
 
-\cgalexample{Straight_skeleton_2/Low_level_API.cpp}
+\cgalExample{Straight_skeleton_2/Low_level_API.cpp}
 
 \subsection Straight_skeleton_2ExteriorSkeletonsandExterior Exterior Skeletons and Exterior Offset Contours
 
@@ -421,9 +421,9 @@ This \cgal packages provides a helper function to compute the required separatio
 If you use this function to place the outer frame you are guaranteed to obtain an offset contour corresponding exclusively to the frame, which you can always identify as the one with the largest area and which you can simple remove from the result (to keep just the relevant outer contours).
 
 
-\cgal_figure_begin{Exterior,exterior_skeleton.png,exterior_offset.png}
+\cgalFigureBegin{Exterior,exterior_skeleton.png,exterior_offset.png}
 Exterior skeleton obtained using a frame (left) and 2 sample exterior offset contours (right)
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Straight_skeleton_2Straight Straight Skeletons, Medial Axis and Voronoi Diagrams
 

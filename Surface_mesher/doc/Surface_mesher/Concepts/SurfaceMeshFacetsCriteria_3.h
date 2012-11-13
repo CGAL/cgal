@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceMesher3Concepts
-\cgalconcept
+\cgalConcept
 
 The Delaunay refinement process involved in the 
 function template `CGAL::make_surface_mesh()` 
@@ -33,7 +33,7 @@ is just a lexicographical comparison. The meshing algorithm handles facets
 with lowest quality first. The qualities are computed by a function 
 `is_bad(const Facet& f, const Quality& q)`. 
 
-\hasModel `CGAL::Surface_mesh_default_criteria_3<Tr>` 
+\cgalHasModel `CGAL::Surface_mesh_default_criteria_3<Tr>` 
 
 \sa `CGAL::make_surface_mesh()` 
 

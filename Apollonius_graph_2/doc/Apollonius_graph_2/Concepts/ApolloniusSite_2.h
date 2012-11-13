@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgApolloniusGraph2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `ApolloniusSite_2` provides the requirements for an 
 Apollonius site class. 

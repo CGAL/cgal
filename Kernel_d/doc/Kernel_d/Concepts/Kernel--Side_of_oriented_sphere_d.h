@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 A model for this must provide: 
 
@@ -21,7 +21,7 @@ sphere. If the points in \f$ A\f$ are positively oriented, the positive
 side is the bounded interior of the sphere.
 
 \pre `A` contains \f$ d+1\f$ points in \f$ d\f$-space.
-\requires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
+\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
 */ 
 template <class ForwardIterator> Bounded_side 
 operator()( ForwardIterator first, ForwardIterator last, const 

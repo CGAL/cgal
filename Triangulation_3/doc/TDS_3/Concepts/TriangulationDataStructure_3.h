@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTDS3Concepts
-\cgalconcept
+\cgalConcept
 
 3D-triangulation data structures are meant to maintain the 
 combinatorial information for 3D-geometric triangulations. 
@@ -68,7 +68,7 @@ neighbors of each cell, where the index corresponds to the preceding
 list of cells. When dimension < 3, the same information is stored 
 for faces of maximal dimension instead of cells. 
 
-\hasModel `CGAL::Triangulation_data_structure_3` 
+\cgalHasModel `CGAL::Triangulation_data_structure_3` 
 
 \sa `TriangulationDataStructure_3::Vertex` 
 \sa `TriangulationDataStructure_3::Cell` 
@@ -80,7 +80,7 @@ public:
 
 /*!
 \ingroup PkgTDS3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `Vertex` represents the vertex class of a 3D-triangulation 
 data structure. It must define 
@@ -167,10 +167,10 @@ void set_point(const Point & p);
 /// @{
 
 /*! 
-\debug Checks the validity of the vertex. Must check that its incident cell 
+\cgalDebug Checks the validity of the vertex. Must check that its incident cell 
 has this vertex. The validity of the base vertex is also checked. 
 
-\debug When `verbose` is set to `true`, messages are printed to give 
+\cgalDebug When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
 */ 
 bool is_valid(bool verbose = false) const; 
@@ -181,7 +181,7 @@ bool is_valid(bool verbose = false) const;
 
 /*!
 \ingroup PkgTDS3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `Cell` stores 
 four `Vertex_handle`s to its four vertices and four `Cell_handle`s 
@@ -316,7 +316,7 @@ Cell_handle n3);
 /// @{
 
 /*! 
-\debug User defined local validity checking function. 
+\cgalDebug User defined local validity checking function. 
 */ 
 bool is_valid(bool verbose = false, int level = 0) const; 
 
@@ -517,7 +517,7 @@ size_type number_of_edges() const;
 /// @{
 
 /*! 
-\advanced Sets the dimension to `n`. 
+\cgalAdvanced Sets the dimension to `n`. 
 */ 
 void set_dimension(int n); 
 
@@ -861,35 +861,35 @@ void decrease_dimension(Cell_handle c, int i);
 /// @{
 
 /*! 
-\advanced Changes the orientation of all cells of the triangulation data structure. 
+\cgalAdvanced Changes the orientation of all cells of the triangulation data structure. 
 \pre `tds`.`dimension()` \f$ \geq1\f$. 
 */ 
 void reorient(); 
 
 /*! 
-\advanced Adds a copy of the vertex `v` to the triangulation data structure. 
+\cgalAdvanced Adds a copy of the vertex `v` to the triangulation data structure. 
 */ 
 Vertex_handle create_vertex(const Vertex &v = Vertex()); 
 
 /*! 
-\advanced Creates a vertex which is a copy of the one pointed to by `v` 
+\cgalAdvanced Creates a vertex which is a copy of the one pointed to by `v` 
 and adds it to the triangulation data structure. 
 */ 
 Vertex_handle create_vertex(Vertex_handle v); 
 
 /*! 
-\advanced Adds a copy of the cell `c` to the triangulation data structure. 
+\cgalAdvanced Adds a copy of the cell `c` to the triangulation data structure. 
 */ 
 Cell_handle create_cell(const Cell &c = Cell()); 
 
 /*! 
-\advanced Creates a cell which is a copy of the one pointed to by `c` 
+\cgalAdvanced Creates a cell which is a copy of the one pointed to by `c` 
 and adds it to the triangulation data structure. 
 */ 
 Cell_handle create_cell(Cell_handle c); 
 
 /*! 
-\advanced Creates a cell and adds it into the triangulation data 
+\cgalAdvanced Creates a cell and adds it into the triangulation data 
 structure. Initializes the vertices of the cell, its neighbor handles 
 being initialized with the default constructed handle. 
 */ 
@@ -897,7 +897,7 @@ Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
 Vertex_handle v2, Vertex_handle v3); 
 
 /*! 
-\advanced Creates a cell, initializes its vertices and neighbors, and adds it 
+\cgalAdvanced Creates a cell, initializes its vertices and neighbors, and adds it 
 into the triangulation data structure. 
 */ 
 Cell_handle create_cell( Vertex_handle v0, Vertex_handle v1, 
@@ -906,26 +906,26 @@ Cell_handle n0, Cell_handle n1,
 Cell_handle n2, Cell_handle n3); 
 
 /*! 
-\advanced Removes the vertex from the triangulation data structure. 
+\cgalAdvanced Removes the vertex from the triangulation data structure. 
 \pre The vertex is a vertex of `tds`. 
 */ 
 void delete_vertex( Vertex_handle v ); 
 
 /*! 
-\advanced Removes the cell from the triangulation data structure. 
+\cgalAdvanced Removes the cell from the triangulation data structure. 
 \pre The cell is a cell of `tds`. 
 */ 
 void delete_cell( Cell_handle c ); 
 
 /*! 
-\advanced Calls `delete_vertex` over an iterator range of value type 
+\cgalAdvanced Calls `delete_vertex` over an iterator range of value type 
 `Vertex_handle`. 
 */ 
 template <class VertexIt> 
 void delete_vertices(VertexIt first, VertexIt last); 
 
 /*! 
-\advanced Calls `delete_cell` over an iterator range of value type 
+\cgalAdvanced Calls `delete_cell` over an iterator range of value type 
 `Cell_handle`. 
 */ 
 template <class CellIt> 
@@ -1148,18 +1148,18 @@ Facet mirror_facet(Facet f) const;
 /// @{
 
 /*! 
-\debug Checks the combinatorial validity of the triangulation by checking 
+\cgalDebug Checks the combinatorial validity of the triangulation by checking 
 the local validity of all its cells and vertices (see functions below). 
 (See Section \ref TDS3secintro.) Moreover, the Euler relation is 
 tested. 
 
-\debug When `verbose` is set to `true`, messages are printed to give 
+\cgalDebug When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
 */ 
 bool is_valid(bool verbose = false) const; 
 
 /*! 
-\debug Checks the local validity of the adjacency relations of the triangulation. 
+\cgalDebug Checks the local validity of the adjacency relations of the triangulation. 
 It also calls the `is_valid` member function of the vertex. 
 When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
@@ -1167,7 +1167,7 @@ a precise indication on the kind of invalidity encountered.
 bool is_valid(Vertex_handle v, bool verbose = false) const; 
 
 /*! 
-\debug Checks the local validity of the adjacency relations of the triangulation. 
+\cgalDebug Checks the local validity of the adjacency relations of the triangulation. 
 It also calls the `is_valid` member function of the cell. 
 When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 

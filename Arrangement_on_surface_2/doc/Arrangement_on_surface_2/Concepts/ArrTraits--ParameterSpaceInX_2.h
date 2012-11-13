@@ -1,11 +1,11 @@
 namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
-\cgalconcept
+\cgalConcept
 
-\refines AdaptableBinaryFunction 
+\cgalRefines AdaptableBinaryFunction 
 
-\hasModel ArrangementOpenBoundaryTraits_2::Parameter_space_in_x_2 
+\cgalHasModel ArrangementOpenBoundaryTraits_2::Parameter_space_in_x_2 
 
 */
 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 Testing whether the interiors of two curves overlap.
 

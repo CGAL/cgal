@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 Testing equality between objects.
 
-\refines `Kernel::Equal_3`
+\cgalRefines `Kernel::Equal_3`
 
 \sa `SphericalKernel::CompareX_3`
 \sa `SphericalKernel::CompareY_3`

@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 \brief Testing whether two curves intersect. 
 
-\refines `Kernel::DoIntersect_3`
+\cgalRefines `Kernel::DoIntersect_3`
 
 \sa \ref CGAL::do_intersect
 

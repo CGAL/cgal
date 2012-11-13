@@ -46,8 +46,8 @@ take care about setting the rounding mode towards plus infinity before
 doing any computations with the interval class. He can do so using the 
 `Protect_FPU_rounding` class for example. 
 
-\models ::FieldWithSqrt 
-\models ::RealEmbeddable 
+\cgalModels ::FieldWithSqrt 
+\cgalModels ::RealEmbeddable 
 
 ### Example ###
 

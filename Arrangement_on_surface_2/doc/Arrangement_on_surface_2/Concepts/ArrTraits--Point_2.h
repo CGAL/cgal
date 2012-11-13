@@ -1,15 +1,15 @@
 namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsGeometricObjects
-\cgalconcept
+\cgalConcept
 
 Represents a point in the plane. 
 
-\refines DefaultConstructible
-\refines CopyConstructible
-\refines Assignable 
+\cgalRefines DefaultConstructible
+\cgalRefines CopyConstructible
+\cgalRefines Assignable 
 
-\hasModel ArrangementBasicTraits_2::Point_2 
+\cgalHasModel ArrangementBasicTraits_2::Point_2 
 
 */
 

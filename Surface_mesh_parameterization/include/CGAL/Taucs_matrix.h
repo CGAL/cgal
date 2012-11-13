@@ -43,7 +43,7 @@ template<class T> struct Taucs_traits;
 /// This kind of matrix can be either symmetric or not. Symmetric
 /// matrices store only the lower triangle.
 ///
-/// \models SparseLinearAlgebraTraits_d::Matrix
+/// \cgalModels SparseLinearAlgebraTraits_d::Matrix
 ///
 /// @param T Number type. Tested with T = taucs_single or taucs_double.
 /// May also work with T = taucs_dcomplex and taucs_scomplex.
@@ -405,7 +405,7 @@ private:
 ///
 /// Symmetric matrices store only the lower triangle.
 ///
-/// \models SparseLinearAlgebraTraits_d::Matrix
+/// \cgalModels SparseLinearAlgebraTraits_d::Matrix
 ///
 /// @param T Number type. Tested with T = taucs_single or taucs_double.
 /// May also work with T = taucs_dcomplex and taucs_scomplex.

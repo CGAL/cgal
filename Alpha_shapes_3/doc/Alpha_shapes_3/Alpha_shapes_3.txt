@@ -4,7 +4,7 @@ namespace CGAL {
 
 \mainpage 3D Alpha Shapes
 \anchor Chapter_3D_Alpha_Shapes
-\autotoc
+\cgalAutoToc
 \authors Tran Kai Frank Da, S&eacute;bastien Loriot, and Mariette Yvinec
 
 \image html alphashape.gif 
@@ -74,11 +74,11 @@ the alpha shapes correspond strictly to the above definition.
 The regularized mode provides a regularized version of the alpha shapes.
 It corresponds to the domain covered by a regularized version
 of the alpha complex where singular faces are removed 
-(See \cgal_figure_ref{figgenregex} for an example).
+(See \cgalFigureRef{figgenregex} for an example).
 
-\cgal_figure_begin{figgenregex,gen-reg-ex.png} 
+\cgalFigureBegin{figgenregex,gen-reg-ex.png} 
 Comparison of general and regularized alpha-shape. <B>Left:</B> Some points are taken on the surface of a torus, three points being taken relatively far from the surface of the torus; <B>Middle:</B> The general alpha-shape (for a large enough alpha value) contains the singular triangle facet of the three isolated points; <B>Right:</B> The regularized version (for the same value of alpha) does not contains any singular facet.
-\cgal_figure_end
+\cgalFigureEnd
 
 The alpha shapes of a set of points 
 \f$ S\f$ form a discrete family, even though they
@@ -172,9 +172,9 @@ to the alpha shape. A \f$ k\f$-face on the boundary of the alpha complex
 is said to be: `REGULAR` if it is a subface of the alpha-complex which
 is a subface of a \f$ (k+1)\f$-face of the alpha complex, and `SINGULAR` otherwise.
 A \f$ k\f$-face of the alpha complex which is not on the boundary of the alpha complex
-is said to be `INTERIOR`. See \cgal_figure_ref{figclassif} for a 2D illustration.
+is said to be `INTERIOR`. See \cgalFigureRef{figclassif} for a 2D illustration.
 
-\cgal_figure_begin{figclassif,classif.png} Classification of simplices, a 2D example. <B>Left:</B> The 2D
+\cgalFigureBegin{figclassif,classif.png} Classification of simplices, a 2D example. <B>Left:</B> The 2D
 Delaunay triangulation of a set of points; <B>Right:</B>
 Classification of simplices for a given alpha (the squared radius of
 the red circle). `INTERIOR`, `REGULAR` and `SINGULAR` simplices are
@@ -183,7 +183,7 @@ are not depicted. The vertex `s` and the edge `tu` are `SINGULAR`
 since all higher dimension simplices they are incident to are
 `EXTERIOR`. The facet `pqr` is `EXTERIOR` because the squared radius
 of its circumscribed circle is larger than alpha.
-\cgal_figure_end
+\cgalFigureEnd
 
 The classes provide also output iterators to get for a given `alpha` value
 the vertices, edges, facets and cells of the different types
@@ -271,7 +271,7 @@ requires 0.90s.
 This example builds a basic alpha shape using a Delaunay triangulation
 as underlying triangulation.
 
-\cgalexample{Alpha_shapes_3/ex_alpha_shapes_3.cpp}
+\cgalExample{Alpha_shapes_3/ex_alpha_shapes_3.cpp}
 
 \subsection AlphaShape_3DBuildingBasicAlphaShapesForManyPoints Building Basic Alpha Shapes for Many Points
 
@@ -280,7 +280,7 @@ it may pay off to use a Delaunay triangulation with `Fast_location`
 policy as underlying triangulation in order to speed up point location
 queries (cf. Section \ref Triangulation3seclocpol "The Location Policy Parameter").
 
-\cgalexample{Alpha_shapes_3/ex_alpha_shapes_with_fast_location_3.cpp}
+\cgalExample{Alpha_shapes_3/ex_alpha_shapes_with_fast_location_3.cpp}
 
 \subsection AlphaShape_3DExampleforWeightedAlphaShapes Example for Weighted Alpha-Shapes
 
@@ -288,13 +288,13 @@ The following examples build a weighted alpha shape requiring a
 regular triangulation as underlying triangulation.
 The alpha shape is built in `GENERAL` mode.
 
-\cgalexample{Alpha_shapes_3/ex_weighted_alpha_shapes_3.cpp}
+\cgalExample{Alpha_shapes_3/ex_weighted_alpha_shapes_3.cpp}
 
 \subsection AlphaShape_3DExampleForFixedWeightedAlphaShapes Example for Fixed Weighted Alpha-Shapes
 
 Same example as previous but using a fixed value of alpha.
 
-\cgalexample{Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp}
+\cgalExample{Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp}
 
 \subsection AlphaShape_3DBuildingAnAlphaShapesWithExactComparisonsOfAlphaValues Building an Alpha Shapes with Exact Comparisons of Alpha Values
 
@@ -302,7 +302,7 @@ On some platforms, the alpha shapes of the set of points of this example
 cannot be computed when using a traits with inexact constructions. To be able to compute
 them with a traits with inexact constructions, the tag
 `ExactAlphaComparisonTag` is set to `Tag_true`.
-\cgalexample{Alpha_shapes_3/ex_alpha_shapes_exact_alpha.cpp}
+\cgalExample{Alpha_shapes_3/ex_alpha_shapes_exact_alpha.cpp}
 
 \subsection AlphaShape_3DExampleForPeriodicAlphaShapes Example for Periodic Alpha Shapes
 
@@ -324,7 +324,7 @@ covering space is degenerate. In this case an exact constructions
 kernel needs to be used to compute the alpha shapes. Otherwise the
 results will suffer from round-off problems.
 
-\cgalexample{Alpha_shapes_3/ex_periodic_alpha_shapes_3.cpp}
+\cgalExample{Alpha_shapes_3/ex_periodic_alpha_shapes_3.cpp}
 
 */ 
 } /* namespace CGAL */

@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsBi
-\cgalconcept
+\cgalConcept
 
 A model of `AlgebraicKernel_d_2::ApproximateAbsoluteX_2` is an `AdaptableBinaryFunction` that computes an 
 approximation of the \f$ x\f$-coordinate of an `AlgebraicKernel_d_2::Algebraic_real_2` value 
 with respect to a given absolute precision. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicKernel_d_2::ApproximateRelativeX_2`
 \sa `AlgebraicKernel_d_1::ApproximateAbsolute_1`

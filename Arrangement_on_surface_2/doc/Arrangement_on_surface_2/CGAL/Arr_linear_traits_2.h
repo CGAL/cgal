@@ -22,8 +22,8 @@ namespace CGAL {
   hand, when we are given a curve we can find out its actual type and convert 
   it to the respective kernel object (say, to a `Kernel::Ray_2`). 
 
-  \models ::ArrangementTraits_2 
-  \models ::ArrangementLandmarkTraits_2 
+  \cgalModels ::ArrangementTraits_2 
+  \cgalModels ::ArrangementLandmarkTraits_2 
 */
 template< typename Kernel >
 class Arr_linear_traits_2 {

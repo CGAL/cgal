@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableFunctor` provides evaluation of a 
 `PolynomialTraits_d::Polynomial_d` interpreted as a homogeneous polynomial 
@@ -10,9 +10,9 @@ This `AdaptableFunctor` provides evaluation of a
 For instance the polynomial \f$ p = 5x^2y^3 + y\f$ is interpreted as the homogeneous polynomial 
 \f$ p[x](u,v) = 5x^2u^3 + uv^2\f$ and evaluated as such. 
 
-\refines `AdaptableFunctor` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableFunctor` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

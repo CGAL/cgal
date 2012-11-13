@@ -1,11 +1,11 @@
 /*!
 \ingroup PkgMesh_3SecondaryConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangleAccessor_3` represents an accessor to a triangulated polyhedral 
 surface, intersection free and without boundaries. 
 
-\hasModel `CGAL::Triangle_accessor_3<Polyhedron_3<K>,K>` 
+\cgalHasModel `CGAL::Triangle_accessor_3<Polyhedron_3<K>,K>` 
 
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>` 
 \sa `CGAL::make_mesh_3` 

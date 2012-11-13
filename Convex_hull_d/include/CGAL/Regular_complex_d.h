@@ -278,7 +278,7 @@ sequel.
 
 All maximal simplices in a regular simplicial complex have the same
 dimension, which we denote |dcur|.  For each maximal
-simplex\footnote{we drop the adjective maximal in the sequel} in
+simplex\cgalFootnote{we drop the adjective maximal in the sequel} in
 |\Mvar| there is an item of type |RC_simplex_d| and for each vertex
 there is an item of type |rc_vertex|.  Each maximal simplex has |1+dcur| 
 vertices indexed from $0$ to |dcur|. For any simplex $s$ and any

@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `MeshComplexWithFeatures_3InTriangulation_3` describes a data structure 
 to represent and maintain a 3D complex embedded in a 3D triangulation. 
@@ -46,9 +46,9 @@ is then approximated by a subdomain (resp. a surface patch) of the embedded comp
 while the curve segments and corners represent the \f$ 1\f$ and \f$ 0\f$-dimensional features 
 of the input complex. 
 
-\refines `MeshComplex_3InTriangulation_3` 
+\cgalRefines `MeshComplex_3InTriangulation_3` 
 
-\hasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>`
+\cgalHasModel `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>`
 
 \sa `MeshComplex_3InTriangulation_3` 
 \sa `MeshDomainWithFeatures_3` 

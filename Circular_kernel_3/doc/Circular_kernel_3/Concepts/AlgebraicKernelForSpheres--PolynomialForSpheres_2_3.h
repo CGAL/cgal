@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSphericalKernel3AlgebraicConcepts
-\cgalconcept
+\cgalConcept
 
 Concept to represent 
 trivariate polynomials of degree up to 2 capable of storing equations 
@@ -9,11 +9,11 @@ of spheres, whose center's coordinates, as well as the square of the radius,
 are of a type that is a model of the concept 
 `FieldNumberType`. 
 
-\refines `CopyConstructible`
-\refines `Assignable`
-\refines `DefaultConstructible`
+\cgalRefines `CopyConstructible`
+\cgalRefines `Assignable`
+\cgalRefines `DefaultConstructible`
 
-\hasModel CGAL::Polynomial_for_spheres_2_3 
+\cgalHasModel CGAL::Polynomial_for_spheres_2_3 
 
 \sa `AlgebraicKernelForSpheres`
 

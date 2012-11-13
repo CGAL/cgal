@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAABB_treeConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `AABBGeomTraits` defines the requirements for the first template parameter of the class `CGAL::AABB_traits<AABBGeomTraits, AABBPrimitive>`. It provides predicates and constructors to detect and compute intersections between query objects and the primitives stored in the AABB tree. In addition, it contains predicates and constructors to compute distances between a point query and the primitives stored in the AABB tree. 
 
-\hasModel Any Kernel is a model of this traits concept.
+\cgalHasModel Any Kernel is a model of this traits concept.
 
 \sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 

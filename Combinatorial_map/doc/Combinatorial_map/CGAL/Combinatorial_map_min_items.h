@@ -10,7 +10,7 @@ concept. It defines the type of darts which is a
 template argument for the dimension of the combinatorial map. 
 In this class, no attribute is enabled. 
 
-\models ::CombinatorialMapItems 
+\cgalModels ::CombinatorialMapItems 
 
 ### Example ###
 

@@ -4,21 +4,21 @@
 /*!
 \addtogroup PkgPolygonPartitioning2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Polygon Partitioning,PkgPolygonPartitioning2Summary}
-\PkgPicture{Partition_2/fig/Partition_2-teaser-small.png}
-\PkgSummaryBegin
-\PkgAuthor{Susan Hert}
-\PkgDesc{This package provides functions for partitioning polygons in monotone or convex polygons. The algorithms can produce results with the minimal number of polygons, as well as approximations which have no more than four  times the optimal number of convex pieces but they differ in  their runtime complexities.}
-\PkgManuals{Chapter_2D_Polygon_Partitioning,PkgPolygonPartitioning2}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{2.3}
-\PkgBib{cgal:h-pp2}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgDemo{2D Polygon Partition,partition_2.zip}
-\PkgDemo{Operations on Polygons,polygon.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{2D Polygon Partitioning,PkgPolygonPartitioning2Summary}
+\cgalPkgPicture{Partition_2/fig/Partition_2-teaser-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Susan Hert}
+\cgalPkgDesc{This package provides functions for partitioning polygons in monotone or convex polygons. The algorithms can produce results with the minimal number of polygons, as well as approximations which have no more than four  times the optimal number of convex pieces but they differ in  their runtime complexities.}
+\cgalPkgManuals{Chapter_2D_Polygon_Partitioning,PkgPolygonPartitioning2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.3}
+\cgalPkgBib{cgal:h-pp2}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{2D Polygon Partition,partition_2.zip}
+\cgalPkgDemo{Operations on Polygons,polygon.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 The assertion flags for this package use `PARTITION` in their names
 (<I>e.g.</I>, `CGAL_PARTITION_NO_POSTCONDITIONS`).

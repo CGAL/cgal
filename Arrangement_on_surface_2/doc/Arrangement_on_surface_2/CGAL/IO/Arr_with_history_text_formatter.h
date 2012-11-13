@@ -15,8 +15,8 @@ the base arrangement, while the derived class is responsible for reading and
 writing the set of curves inducing the arrangement and maintaining the 
 relations between these curves and the edges they induce. 
 
-\models ::ArrangementWithHistoryInputFormatter 
-\models ::ArrangementWithHistoryOutputFormatter 
+\cgalModels ::ArrangementWithHistoryInputFormatter 
+\cgalModels ::ArrangementWithHistoryOutputFormatter 
 
 \sa `read` 
 \sa `write` 

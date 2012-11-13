@@ -23,7 +23,7 @@ for example `Cartesian_d<double>`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. 
 It has as default value the type, `CGAL::Plane_separator<Traits::FT>`. 
 
-\models ::Splitter 
+\cgalModels ::Splitter 
 
 \sa `Splitter` 
 \sa `SpatialSeparator` 
@@ -81,7 +81,7 @@ the type `CGAL::Search_traits_3< Cartesian<double> >`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>`. 
 
-\models ::Splitter 
+\cgalModels ::Splitter 
 
 \sa `Splitter` 
 \sa `SpatialSeparator` 
@@ -128,7 +128,7 @@ the type `CGAL::Search_traits_3< Cartesian<double> >`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>`. 
 
-\models ::Splitter 
+\cgalModels ::Splitter 
 
 \sa `Splitter`
 \sa `SpatialSeparator` 
@@ -174,7 +174,7 @@ the type `CGAL::Search_traits_3< Cartesian<double> >`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>` 
 
-\models ::Splitter 
+\cgalModels ::Splitter 
 
 \sa `Splitter`
 \sa `SpatialSeparator` 
@@ -219,7 +219,7 @@ the type `CGAL::Search_traits_3< Cartesian<double> >`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>` 
 
-\models ::Splitter 
+\cgalModels ::Splitter 
 
 \sa `Splitter` 
 \sa `SpatialSeparator` 
@@ -282,7 +282,7 @@ for example `CGAL::Cartesian_d<double>`.
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>` 
 
-\models ::Splitter 
+\cgalModels ::Splitter 
 
 \sa `Splitter` 
 \sa `SpatialSeparator` 
@@ -354,7 +354,7 @@ Expects for the first template argument a model of the concept
 Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value 
 the type, `CGAL::Plane_separator<Traits::FT>`. 
 
-\models ::Splitter 
+\cgalModels ::Splitter 
 
 \sa `Splitter` 
 \sa `SpatialSeparator` 

@@ -67,7 +67,7 @@ Delaunay triangulation instead of an adaptive octree.
 
 \tparam Gt Geometric traits class. 
 
-\models `ImplicitFunction`
+\cgalModels `ImplicitFunction`
 
 */
 template <class Gt>

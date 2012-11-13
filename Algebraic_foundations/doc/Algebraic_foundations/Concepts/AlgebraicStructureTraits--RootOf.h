@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableFunctor` computes a real root of a square-free univariate 
 polynomial. 
 
-\refines `AdaptableFunctor` 
+\cgalRefines `AdaptableFunctor` 
 
 \sa ::FieldWithRootOf 
 \sa ::AlgebraicStructureTraits 

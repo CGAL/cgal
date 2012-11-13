@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsUni
-\cgalconcept
+\cgalConcept
 
 Computes the sign of a univariate polynomial 
 `AlgebraicKernel_d_1::Polynomial_1` at a real value of type 
 `AlgebraicKernel_d_1::Algebraic_real_1`. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicKernel_d_1::IsZeroAt_1`
 

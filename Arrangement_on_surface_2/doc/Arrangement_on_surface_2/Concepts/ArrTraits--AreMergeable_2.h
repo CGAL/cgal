@@ -1,11 +1,11 @@
 namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
-\cgalconcept
+\cgalConcept
 
-\refines Functor 
+\cgalRefines Functor 
 
-\hasModel ArrangementXMonotoneTraits_2::Are_mergeable_2 
+\cgalHasModel ArrangementXMonotoneTraits_2::Are_mergeable_2 
 
 */
 

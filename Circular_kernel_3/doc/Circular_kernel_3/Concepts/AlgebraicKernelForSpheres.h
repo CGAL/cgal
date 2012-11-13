@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgSphericalKernel3AlgebraicConcepts
-\cgalconcept
+\cgalConcept
 
 The `AlgebraicKernelForSpheres` concept is meant to provide the 
 curved kernel with all the algebraic functionalities required for the 
 manipulation of spheres, circles, and circular arcs in 3D. 
 
-\hasModel CGAL::Algebraic_kernel_for_spheres_2_3 
+\cgalHasModel CGAL::Algebraic_kernel_for_spheres_2_3 
 
 \sa `SphericalKernel`
 \sa `CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>`

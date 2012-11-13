@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSphericalKernel3AlgebraicClasses
 
-\models ::AlgebraicKernelForSpheres 
+\cgalModels ::AlgebraicKernelForSpheres 
 
 */
 template< typename RT >

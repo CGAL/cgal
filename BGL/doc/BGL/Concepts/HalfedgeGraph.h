@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgBGLConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `HalfedgeGraph` describes the requirements for a graph that is 
 structurally equivalent to a polyhedral surface represented by a 
@@ -24,8 +24,8 @@ modulo a cyclic permutation. The order must be <I>clockwise</I>.
 As the `HalfedgeGraph` is equivalent to a polyhedral surface there must exist an embedding 
 for the vertices and edges such that the ordered edges do not intersect. 
 
-\refines <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">BidirectionalGraph</A> 
-\refines <A HREF="http://www.boost.org/libs/graph/doc/PropertyGraph.html">PropertyGraph</A> 
+\cgalRefines <A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">BidirectionalGraph</A> 
+\cgalRefines <A HREF="http://www.boost.org/libs/graph/doc/PropertyGraph.html">PropertyGraph</A> 
 
 A model of `HalfedgeGraph` must have the <I>interior properties</I>
 `edge_is_border` attached to its edges, and it must have
@@ -35,7 +35,7 @@ A model of `HalfedgeGraph` must have the <I>interior properties</I>
 
 Because (directed) edges must come in pairs, there is the
 additional notion of an <I>undirected edge</I>
-\footnote{The directed edges are not called `halfedges` (as in a `HalfedgeDS`) because from the point of view of this graph, being a refinement of a Bgl graph, each directed edge is an edge in itself. In other words, the unqualified term edge refers to one and only one directed edge and not to a pair.} 
+\cgalFootnote{The directed edges are not called `halfedges` (as in a `HalfedgeDS`) because from the point of view of this graph, being a refinement of a Bgl graph, each directed edge is an edge in itself. In other words, the unqualified term edge refers to one and only one directed edge and not to a pair.} 
 for a pair of opposite directed edges. The number of undirected
 edges is exactly half the number of directed edges. Note that the
 notion of directed and undirected edges does not imply the
@@ -57,7 +57,7 @@ halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterator; | An iterator th
 Following the \sc{Bgl} design, the following graph operations are defined as free 
 rather than member functions. 
 
-\hasModel `CGAL::Polyhedron_3<Traits>`
+\cgalHasModel `CGAL::Polyhedron_3<Traits>`
 */
 class HalfedgeGraph {
 

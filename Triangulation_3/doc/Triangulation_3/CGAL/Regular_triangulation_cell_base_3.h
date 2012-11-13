@@ -18,7 +18,7 @@ of `TriangulationCellBase_3`. By default, this parameter is
 instantiated by 
 `CGAL::Triangulation_cell_base_3<Traits>`. 
 
-\models ::RegularTriangulationCellBase_3 
+\cgalModels ::RegularTriangulationCellBase_3 
 
 \sa `RegularTriangulationCellBase_3` 
 \sa `RegularTriangulationTraits_3` 

@@ -35,7 +35,7 @@ is valid. (Note that the
 assertions are superfluous unless the postcondition checking done 
 by `y_monotone_partition_2()` has been turned off during compilation.) 
 
-\cgalexample{Partition_2/y_monotone_partition_2.cpp} 
+\cgalExample{Partition_2/y_monotone_partition_2.cpp} 
 
 */
 

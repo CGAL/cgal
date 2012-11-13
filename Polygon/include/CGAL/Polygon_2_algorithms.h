@@ -49,10 +49,10 @@ namespace CGAL {
 /// `[first,last)`. In case of a tie, the point
 /// with the smallest `y`-coordinate is taken.
 ///
-/// \requires `Traits` is a model of the concept `PolygonTraits_2`.
+/// \cgalRequires `Traits` is a model of the concept `PolygonTraits_2`.
 /// 	  Only the members `Less_xy_2` and
 /// 	  `less_xy_2_object()` are used.
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
+/// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`,
 ///
 ///
 /// \sa `CGAL::right_vertex_2`
@@ -68,11 +68,11 @@ ForwardIterator left_vertex_2(ForwardIterator first,
 /// `[first,last)`. In case of a tie, the point
 /// with the largest `y`-coordinate is taken.
 /// 
-/// \requires `Traits` is a model of the concept 
+/// \cgalRequires `Traits` is a model of the concept 
 /// 	  `PolygonTraits_2`.
 /// 	  In fact, only the members `Less_xy_2` and
 /// 	  `less_xy_2_object()` are used.
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`.
+/// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
 /// \sa `CGAL::left_vertex_2`
 /// \sa `CGAL::top_vertex_2`
@@ -87,11 +87,11 @@ ForwardIterator right_vertex_2(ForwardIterator first,
 /// `[first,last)`. In case of a tie, the point
 /// with the largest `x`-coordinate is taken.
 ///
-/// \requires `Traits` is a model of the concept 
+/// \cgalRequires `Traits` is a model of the concept 
 /// 	  `PolygonTraits_2`.
 /// 	  Only the members `Less_yx_2` and
 /// 	  `less_yx_2_object()` are used.
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`.
+/// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
 /// \sa `CGAL::left_vertex_2`
 /// \sa `CGAL::right_vertex_2`
@@ -106,11 +106,11 @@ ForwardIterator top_vertex_2(ForwardIterator first,
 /// `[first,last)`. In case of a tie, the point
 /// with the smallest `x`-coordinate is taken.
 ///
-/// \requires `Traits` is a model of the concept 
+/// \cgalRequires `Traits` is a model of the concept 
 /// 	  `PolygonTraits_2`.
 /// 	  Only the members `Less_yx_2` and
 /// 	  `less_yx_2_object()` are used.
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`.
+/// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
 /// \sa `CGAL::left_vertex_2`
 /// \sa `CGAL::right_vertex_2`
@@ -124,11 +124,11 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
 
 /// Returns the bounding box of the range `[first,last)`. 
 /// 
-/// \requires `Traits` is a model of the concept 
+/// \cgalRequires `Traits` is a model of the concept 
 /// 	  `PolygonTraits_2`.
 /// 	  Only the members `Construct_bbox_2` and
 /// 	  `construct_bbox_2_object()` are used.
-/// \requires The value type of `InputIterator` must be `Traits::Point_2`.
+/// \cgalRequires The value type of `InputIterator` must be `Traits::Point_2`.
 /// 
 /// \sa `CGAL::Polygon_2`
 template <class InputIterator, class PolygonTraits>
@@ -144,14 +144,14 @@ Bbox_2 bbox_2(InputIterator first,
 /// The functionality is also available by the `polygon_area_2()` function, which
 /// returns the area instead of taking it as a parameter.
 /// 
-/// \requires `Traits` is a model of the concept 
+/// \cgalRequires `Traits` is a model of the concept 
 /// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Compute_area_2` : Computes the signed area of the
 /// 	    oriented triangle defined by 3 `Point_2` passed as arguments.
 ///   - `FT`
 ///   - `compute_area_2_object()`
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`.
+/// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
 /// \sa `CGAL::polygon_area_2`
 /// \sa `PolygonTraits_2`
@@ -184,12 +184,12 @@ area_2( ForwardIterator first, ForwardIterator last,
 /// The sign is positive for counterclockwise polygons, negative for
 /// clockwise polygons. If the polygon is not simple, the area is not well defined.
 /// 
-/// \requires `Traits` is a model of the concept `PolygonTraits_2`. Only the following members of this traits class are used:
+/// \cgalRequires `Traits` is a model of the concept `PolygonTraits_2`. Only the following members of this traits class are used:
 ///   - `Compute_area_2` : Computes the signed area of the
 /// 	    oriented triangle defined by 3 `Point_2` passed as arguments.
 ///   - `FT`
 ///   - `compute_area_2_object`
-/// \requires `ForwardIterator::value_type` should be `Traits::Point_2`,
+/// \cgalRequires `ForwardIterator::value_type` should be `Traits::Point_2`,
 /// 
 /// 
 /// \sa `PolygonTraits_2 `
@@ -219,14 +219,14 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
 
 /// Checks if the polygon is convex.
 /// 
-/// \requires `Traits` is a model of the concept 
+/// \cgalRequires `Traits` is a model of the concept 
 /// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Less_xy_2`
 ///   - `Orientation_2`
 ///   - `less_xy_2_object`
 ///   - `orientation_2_object`
-/// \requires `ForwardIterator::value_type` should be `PolygonTraits::Point_2`,
+/// \cgalRequires `ForwardIterator::value_type` should be `PolygonTraits::Point_2`,
 ///
 /// \sa `PolygonTraits_2 `
 /// \sa `CGAL::Polygon_2 `
@@ -239,7 +239,7 @@ bool is_convex_2(ForwardIterator first,
 /// iterator range `[first,last)` is simple, that is, if the edges 
 /// do not intersect, except consecutive edges in their common vertex.
 /// 
-/// \requires `Traits` is a model of the concept 
+/// \cgalRequires `Traits` is a model of the concept 
 /// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Point_2`
@@ -247,7 +247,7 @@ bool is_convex_2(ForwardIterator first,
 ///   - `Orientation_2`
 ///   - `less_xy_2_object()`
 ///   - `orientation_2_object()`
-/// \requires The value type of `ForwardIterator` must be `PolygonTraits::Point_2`,
+/// \cgalRequires The value type of `ForwardIterator` must be `PolygonTraits::Point_2`,
 /// 
 /// ### Implementation##
 /// 
@@ -267,7 +267,7 @@ bool is_simple_2(ForwardIterator first,
 // instead of Point, but this is not allowed by g++ 2.7.2.
 ///
 /// Computes on which side of a polygon a point lies.
-/// \requires `Traits` is a model of the concept 
+/// \cgalRequires `Traits` is a model of the concept 
 /// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Less_xy_2`
@@ -278,7 +278,7 @@ bool is_simple_2(ForwardIterator first,
 ///   - `compare_x_2_object()`
 ///   - `compare_y_2_object()`
 ///   - `orientation_2_object()`
-/// \requires The value type of `ForwardIterator` must be `PolygonTraits::Point_2`,
+/// \cgalRequires The value type of `ForwardIterator` must be `PolygonTraits::Point_2`,
 ///
 /// \sa `PolygonTraits_2`
 /// \sa `CGAL::bounded_side_2`
@@ -301,7 +301,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
 /// According to the definition points in the bounded region are inside the polygon.
 /// 
 /// 
-/// \requires `Traits` is a model of the concept 
+/// \cgalRequires `Traits` is a model of the concept 
 /// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Compare_x_2`
@@ -310,7 +310,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
 ///   - `compare_x_2_object()`
 ///   - `compare_y_2_object()`
 ///   - `orientation_2_object()`
-/// \requires The value type of  `ForwardIterator` must be `Traits::Point_2`,
+/// \cgalRequires The value type of  `ForwardIterator` must be `Traits::Point_2`,
 /// 
 /// ### Implementation ###
 /// 
@@ -333,13 +333,13 @@ Bounded_side bounded_side_2(ForwardIterator first,
 /// Computes if a polygon is clockwise or counterclockwise oriented.
 /// \pre `is_simple_2(first, last, traits);`
 /// 
-/// \requires `Traits` is a model of the concept 
+/// \cgalRequires `Traits` is a model of the concept 
 /// 	  `PolygonTraits_2`.
 /// 	  Only the following members of this traits class are used:
 ///   - `Less_xy_2`
 ///   - `less_xy_2_object()`
 ///   - `orientation_2_object()`
-/// \requires The value type of `ForwardIterator` must be `Traits::Point_2`,
+/// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`,
 /// 
 /// 
 /// 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 For a given polynomial \f$ p\f$ this `AdaptableUnaryFunction` computes the 
 unique representative of the set 
@@ -20,9 +20,9 @@ For all other cases the notion of uniqueness is up to the concrete model.
 
 Note that the computed polynomial has the same zero set as the given one. 
 
-\refines `AdaptableUnaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

@@ -30,7 +30,7 @@ intersection tests and intersection computations
 through a bisection method. This parameter must be instantiated 
 with a model of the concept `BisectionGeometricTraits_3`. 
 
-\models `MeshDomain_3`
+\cgalModels `MeshDomain_3`
 
 \sa `BisectionGeometricTraits_3` 
 \sa `CGAL::make_mesh_3`. 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgRangeSegmentTreesDConcepts
-\cgalconcept
+\cgalConcept
 
 A tree traits class gives the range tree and segment tree class the necessary 
 type information of the keys and intervals. Further more, they define function objects that allow to access 

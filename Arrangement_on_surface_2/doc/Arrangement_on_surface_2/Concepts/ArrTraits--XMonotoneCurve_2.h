@@ -1,15 +1,15 @@
 namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsGeometricObjects
-\cgalconcept
+\cgalConcept
 
 Represents a planar (weakly) \f$ x\f$-monotone curve. 
 
-\refines DefaultConstructible
-\refines CopyConstructible
-\refines Assignable 
+\cgalRefines DefaultConstructible
+\cgalRefines CopyConstructible
+\cgalRefines Assignable 
 
-\hasModel ArrangementBasicTraits_2::X_monotone_curve_2 
+\cgalHasModel ArrangementBasicTraits_2::X_monotone_curve_2 
 
 */
 

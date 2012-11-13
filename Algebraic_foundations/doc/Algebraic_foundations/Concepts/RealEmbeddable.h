@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsRealEmbeddableConcepts
-\cgalconcept
+\cgalConcept
 
 A model of this concepts represents numbers that are embeddable on the real 
 axis. The type obeys the algebraic structure and compares two values according 
@@ -38,8 +38,8 @@ If a number type is a model of both `IntegralDomainWithoutDivision` and
 `RealEmbeddable`, it follows that the ring represented by such a number type 
 is a sub-ring of the real numbers and hence has characteristic zero. 
 
-\refines `Equality` Comparable 
-\refines `LessThanComparable` 
+\cgalRefines `Equality` Comparable 
+\cgalRefines `LessThanComparable` 
 
 \sa ::RealEmbeddableTraits 
 

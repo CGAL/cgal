@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgCombinatorialMapsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `CellAttribute` represents a non void attribute associated 
 with a cell of a combinatorial map. It can keep a handle to one 
 dart of its associated cell, and can contain any information. 
 
-\hasModel `CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`
+\cgalHasModel `CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`
 
 \sa `CombinatorialMap` 
 \sa `CombinatorialMapItems` 

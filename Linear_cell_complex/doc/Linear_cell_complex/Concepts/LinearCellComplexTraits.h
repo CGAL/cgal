@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgLinearCellComplexConcepts
-\cgalconcept
+\cgalConcept
 
 Required types and functors for the `LinearCellComplexTraits` concept. This 
 geometric traits concept is used in the `Linear_cell_complex` 
 class. 
 
-\hasModel `CGAL::Linear_cell_complex_traits<d,K>`
+\cgalHasModel `CGAL::Linear_cell_complex_traits<d,K>`
 
 \sa `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
 

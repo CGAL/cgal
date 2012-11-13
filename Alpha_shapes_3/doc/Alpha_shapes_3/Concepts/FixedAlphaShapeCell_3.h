@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgAlphaShapes3Concepts
-\cgalconcept
+\cgalConcept
 
 This concept describes the requirements for the base cell of a alpha shape with a fixed value alpha. 
 
-\refines `TriangulationCellBase_3.` 
+\cgalRefines `TriangulationCellBase_3.` 
 
-\hasModel `CGAL::Fixed_alpha_shape_cell_base_3`
+\cgalHasModel `CGAL::Fixed_alpha_shape_cell_base_3`
 
 */
 

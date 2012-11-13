@@ -6,11 +6,11 @@ namespace CGAL {
 The class `Plane_separator` implements a plane separator, i.e., a
 hyperplane that is used to separate two half spaces. 
 
-\advanced This
+\cgalAdvanced This
 hyperplane is defined by a cutting dimension `d` and a cutting
 value `v` as `xd=v`, where `v` denotes the `d`th coordinate value.
 
-\models ::SpatialSeparator 
+\cgalModels ::SpatialSeparator 
 
 */
 template< typename FT >

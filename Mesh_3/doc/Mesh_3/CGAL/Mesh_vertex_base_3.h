@@ -20,7 +20,7 @@ It must be a model of the concept `RegularTriangulationTraits_3`.
 of the concept `TriangulationVertexBase_3` and defaults to 
 `Triangulation_vertex_base_3<Gt>`. 
 
-\models `MeshVertexBase_3` 
+\cgalModels `MeshVertexBase_3` 
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
 

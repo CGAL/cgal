@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 \brief
 
-\refines `Kernel::BoundedSide_3`
+\cgalRefines `Kernel::BoundedSide_3`
 
 \sa `SphericalKernel::HasOnBoundedSide_3`
 \sa `SphericalKernel::HasOnUnboundedSide_3`

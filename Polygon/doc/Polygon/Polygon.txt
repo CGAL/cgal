@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_Polygon
 
 \authors Geert-Jan Giezeman and Wieger Wesselink
-\autotoc
+\cgalAutoToc
 
 \section Introduction
 
@@ -46,9 +46,9 @@ some member functions.
 
 \include Polygon.cpp
 
-\cgal_figure_begin{polygon2_algo,pgn_algos.gif}
+\cgalFigureBegin{polygon2_algo,pgn_algos.gif}
 A polygon and some points
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Algorithms Operating on Sequences of Points
 

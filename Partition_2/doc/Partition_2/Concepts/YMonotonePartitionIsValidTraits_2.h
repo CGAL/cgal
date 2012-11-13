@@ -1,12 +1,12 @@
 /*!
 \ingroup PkgPolygonPartitioning2Concepts
-\cgalconcept
+\cgalConcept
 
 Requirements of a traits class that is used 
 by `y_monotone_partition_is_valid_2` for testing the validity of a 
 \f$ y\f$-monotone partition of a polygon. 
 
-\hasModel `CGAL::Partition_traits_2<R>` 
+\cgalHasModel `CGAL::Partition_traits_2<R>` 
 
 \sa `CGAL::partition_is_valid_2` 
 \sa `CGAL::y_monotone_partition_2` 

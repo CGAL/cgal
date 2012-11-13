@@ -26,8 +26,8 @@ same when instantiating it using `Default` instead of the type of the default
 argument, even though their interfaces will otherwise be the same. This may 
 have consequences in some cases. 
 
-\models ::DefaultConstructible
-\models ::CopyConstructible 
+\cgalModels ::DefaultConstructible
+\cgalModels ::CopyConstructible 
 
 In order to help the template class writer, `Default` provides a convenient 
 way to extract the desired type for a template parameter which may be defaulted 
@@ -36,7 +36,7 @@ using `Default`. It is enough to fetch the type as
 
 ### Example ###
 
-\cgalexample{STL_Extension/Default.cpp} 
+\cgalExample{STL_Extension/Default.cpp} 
 
 */
 class Default {

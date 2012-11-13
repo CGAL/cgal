@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableUnaryFunction` computes the square-free part of 
 a polynomial of type `PolynomialTraits_d::Polynomial_d` 
@@ -14,9 +14,9 @@ such that \f$ p = a \cdot g_1^{m_1} \cdot ... \cdot g_n^{m_n}\f$, where all \f$ 
 Given this decomposition, the square free part is defined as the product \f$ g_1 \cdot ... \cdot g_n\f$, 
 which is computed by this functor. 
 
-\refines `AdaptableUnaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

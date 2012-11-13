@@ -69,7 +69,7 @@ where `NT` is a field type, and finally
 first). The following example uses the filtered homogeneous kernel to 
 construct the intersection of two halfspaces. 
 
-\cgalexample{Nef_2/nef_2_intersection.cpp} 
+\cgalExample{Nef_2/nef_2_intersection.cpp} 
 
 After line (*) `N3` is the intersection of `N1` and `N2`. 
 The member types of `Nef_polyhedron_2< Extended_homogeneous<NT> >` 
@@ -297,7 +297,7 @@ is a pair of vertices `(v,w)` with incidence operations `v = source(e)`, `w = ta
 `v` is called the adjacency list `A(v)`. 
 
 Edges are paired into twins. For each edge `e = (v,w)` there's an 
-edge `twin(e) = (w,v)` and `twin(twin(e)) == e`\footnote{The existence of the edge pairs makes `P` a bidirected graph, the `twin` links make `P` a map.}. 
+edge `twin(e) = (w,v)` and `twin(twin(e)) == e`\cgalFootnote{The existence of the edge pairs makes `P` a bidirected graph, the `twin` links make `P` a map.}. 
 
 An edge `e = (v,w)` knows two adjacent edges `en = next(e)` 
 and `ep = previous(e)` where `source(en) = w`, 

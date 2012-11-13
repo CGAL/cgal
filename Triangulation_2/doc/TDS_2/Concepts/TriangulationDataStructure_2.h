@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTDS2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationDataStructure_2` describes the requirements for 
 the second template parameter of the basic triangulation class 
@@ -64,7 +64,7 @@ the rank of this item in the output order.
 When dimension \f$ <\f$ 2, the same information is output 
 for faces of maximal dimension instead of faces. 
 
-\hasModel `CGAL::Triangulation_data_structure_2<Vb,Fb>` 
+\cgalHasModel `CGAL::Triangulation_data_structure_2<Vb,Fb>` 
 
 \sa `TriangulationDataStructure_2::Face` 
 \sa `TriangulationDataStructure_2::Vertex` 
@@ -77,7 +77,7 @@ public:
 
 /*!
 \ingroup PkgTDS2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationDataStructure_2::Vertex` describes the type used by a 
 `TriangulationDataStructure_2` to store the vertices. 
@@ -94,7 +94,7 @@ In order to obtain new vertices or destruct unused vertices, the user must
 call the `create_vertex()` and `delete_vertex()` methods of the 
 triangulation data structure. 
 
-\hasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>` 
+\cgalHasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>` 
 
 \sa `TriangulationDataStructure_2` 
 \sa `TriangulationDataStructure_2::Face` 
@@ -135,12 +135,12 @@ Face_handle face() const;
 /// @{
 
 /*! 
-\advanced sets the geometric information to `p`. 
+\cgalAdvanced sets the geometric information to `p`. 
 */ 
 void set_point(const Point& p); 
 
 /*! 
-\advanced sets the incident face to `f`. 
+\cgalAdvanced sets the incident face to `f`. 
 */ 
 void set_face(Face_handle f); 
 
@@ -176,7 +176,7 @@ vertex.
 
 /*!
 \ingroup PkgTDS2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationDataStructure_2::Face` describes the types used to store the faces 
 face class of a 
@@ -208,7 +208,7 @@ The methods `create_face()` and
 have to be used to 
 define new faces and to delete non longer used faces. 
 
-\hasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
+\cgalHasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
 
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationDataStructure_2::Vertex`
@@ -374,13 +374,13 @@ typedef Hidden_type difference_type;
 
 /*! 
 Handle to a vertex.
-\models ::Handle
+\cgalModels ::Handle
 */ 
 typedef Hidden_type Vertex_handle; 
 
 /*! 
 Handle to a face. 
-\models ::Handle
+\cgalModels ::Handle
 */ 
 typedef Hidden_type Face_handle; 
 
@@ -521,7 +521,7 @@ void clear();
 /// @{
 
 /*! 
-  \advanced returns the dimension of the triangulation data structure. 
+  \cgalAdvanced returns the dimension of the triangulation data structure. 
 */ 
 int dimension() const; 
 

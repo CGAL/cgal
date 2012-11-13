@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceParameterizationConcepts
-\cgalconcept
+\cgalConcept
 
 \anchor pagePolyTraitsRef 
 
@@ -12,11 +12,11 @@ additional requirements to the `PolyhedronTraits_3` concept
 required by `CGAL::Polyhedron_3<Traits>` used within the class 
 `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`. 
 
-\refines `PolyhedronTraits_3.` 
+\cgalRefines `PolyhedronTraits_3.` 
 
-\hasModel `CGAL::Polyhedron_traits_3<Kernel>`
-\hasModel `CGAL::Polyhedron_traits_with_normals_3<Kernel>`
-\hasModel All models of the `CGAL::Kernel` concept such as `Simple_cartesian<FieldNumberType>`. 
+\cgalHasModel `CGAL::Polyhedron_traits_3<Kernel>`
+\cgalHasModel `CGAL::Polyhedron_traits_with_normals_3<Kernel>`
+\cgalHasModel All models of the `CGAL::Kernel` concept such as `Simple_cartesian<FieldNumberType>`. 
 
 \sa `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
 \sa `CGAL::Polyhedron_3<Traits>`

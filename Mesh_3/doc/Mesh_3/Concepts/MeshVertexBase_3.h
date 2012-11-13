@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3SecondaryConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `MeshVertexBase_3` describes the requirements 
 for the `Vertex` type of the triangulation 
@@ -15,10 +15,10 @@ to an integer representing the dimension of the lowest dimensional face
 of the input 3D complex on which the vertex lies, 
 and to an index characteristic of this face. 
 
-\refines `TriangulationVertexBase_3` 
-\refines `SurfaceMeshVertexBase_3`
+\cgalRefines `TriangulationVertexBase_3` 
+\cgalRefines `SurfaceMeshVertexBase_3`
 
-\hasModel `CGAL::Mesh_vertex_base_3<MD,Gt,Vb>` 
+\cgalHasModel `CGAL::Mesh_vertex_base_3<MD,Gt,Vb>` 
 
 \sa `CGAL::make_mesh_3` 
 \sa `CGAL::refine_mesh_3` 

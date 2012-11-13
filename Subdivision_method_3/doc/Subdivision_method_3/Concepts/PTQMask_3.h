@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgSurfaceSubdivisionMethods3Concepts
-\cgalconcept
+\cgalConcept
 
 Required member functions for the `PTQMask_3` concept. This 
 policy concept of geometric computations is used in 
@@ -8,7 +8,7 @@ policy concept of geometric computations is used in
 
 \image html LoopBorderMask.png
 
-\hasModel `CGAL::Loop_mask_3<Polyhedron_3>`
+\cgalHasModel `CGAL::Loop_mask_3<Polyhedron_3>`
 
 \sa `CGAL::Subdivision_method_3`
 */

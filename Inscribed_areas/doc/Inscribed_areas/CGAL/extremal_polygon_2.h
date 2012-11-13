@@ -19,9 +19,9 @@ convex polygon (oriented clock- or counterclockwise).
 \pre `k >= t.min_k()`.
 
 
-\requires `Traits` is a model for `ExtremalPolygonTraits_2`. 
-\requires Value type of `RandomAccessIterator` is `Traits::Point_2`. 
-\requires `OutputIterator` accepts `Traits::Point_2` as value 
+\cgalRequires `Traits` is a model for `ExtremalPolygonTraits_2`. 
+\cgalRequires Value type of `RandomAccessIterator` is `Traits::Point_2`. 
+\cgalRequires `OutputIterator` accepts `Traits::Point_2` as value 
 type. 
 
 
@@ -74,9 +74,9 @@ convex polygon (oriented clock- or counterclockwise).
 \pre `k >= 3`.
 
 
-\requires Value type of `RandomAccessIterator` is `K::Point_2` 
+\cgalRequires Value type of `RandomAccessIterator` is `K::Point_2` 
 where `K` is a model for `Kernel`. 
-\requires `OutputIterator` accepts the value type of 
+\cgalRequires `OutputIterator` accepts the value type of 
 `RandomAccessIterator` as value type. 
 
 
@@ -100,7 +100,7 @@ The following code generates a random convex polygon
 `p` with ten vertices and computes the maximum area inscribed 
 five-gon of `p`. 
 
-\cgalexample{Inscribed_areas/extremal_polygon_2_area.cpp} 
+\cgalExample{Inscribed_areas/extremal_polygon_2_area.cpp} 
 
 */
 
@@ -141,11 +141,11 @@ convex polygon (oriented clock- or counterclockwise).
 \pre `k >= 2`. 
  
 
-\requires  Value type of `RandomAccessIterator` is `K::Point_2` 
+\cgalRequires  Value type of `RandomAccessIterator` is `K::Point_2` 
 where `K` is a model for `Kernel`. 
-\requires There is a global function `K::FT CGAL::sqrt(K::FT)` 
+\cgalRequires There is a global function `K::FT CGAL::sqrt(K::FT)` 
 defined that computes the squareroot of a number. 
-\requires `OutputIterator` accepts the value type of 
+\cgalRequires `OutputIterator` accepts the value type of 
 `RandomAccessIterator` as value type. 
 
 
@@ -169,7 +169,7 @@ The following code generates a random convex polygon
 `p` with ten vertices and computes the maximum perimeter inscribed 
 five-gon of `p`. 
 
-\cgalexample{Inscribed_areas/extremal_polygon_2_perimeter.cpp} 
+\cgalExample{Inscribed_areas/extremal_polygon_2_perimeter.cpp} 
 
 */
 

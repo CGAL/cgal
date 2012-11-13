@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableUnaryFunction` computes the content of a 
 `PolynomialTraits_d::Polynomial_d` 
@@ -12,9 +12,9 @@ coefficients with respect to one variable.
 This functor is well defined if `PolynomialTraits_d::Coefficient_type` is 
 a `Field` or a `UniqueFactorizationDomain`. 
 
-\refines `AdaptableUnaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

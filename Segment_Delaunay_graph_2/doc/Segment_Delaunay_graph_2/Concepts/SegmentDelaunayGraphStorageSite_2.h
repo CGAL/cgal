@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSegmentDelaunayGraph2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `SegmentDelaunayGraphStorageSite_2` provides the 
 requirements for the storage sites of a segment Delaunay graph. The 
@@ -9,11 +9,11 @@ storage sites are sites that are used to store the information of a
 site in a more compact form (that uses less storage). This is achieved 
 by storing handles to points instead of points. 
 
-\refines `DefaultConstructible` 
-\refines `CopyConstructible` 
-\refines `Assignable` 
+\cgalRefines `DefaultConstructible` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `Assignable` 
 
-\hasModel `CGAL::Segment_Delaunay_graph_storage_site_2<Gt>` 
+\cgalHasModel `CGAL::Segment_Delaunay_graph_storage_site_2<Gt>` 
 
 \sa `SegmentDelaunayGraphTraits_2` 
 \sa `CGAL::Segment_Delaunay_graph_site_2<K>` 

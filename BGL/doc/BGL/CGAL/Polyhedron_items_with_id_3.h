@@ -13,7 +13,7 @@ the point and the plane equation.
 Vertices and facets both contain a halfedge handle to an incident 
 halfedge. 
 
-\models PolyhedronItems_3 
+\cgalModels PolyhedronItems_3 
 
 ### Operations ###
 

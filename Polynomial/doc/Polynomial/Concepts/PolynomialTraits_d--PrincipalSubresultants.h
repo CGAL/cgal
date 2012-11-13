@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 <B>Note:</B> This functor is optional! 
 
@@ -19,9 +19,9 @@ principal subresultant \f$ \mathrm{sres}_0(p,q)\f$
 ,aka as the resultant of \f$ p\f$ and \f$ q\f$. 
 (Note that \f$ \mathrm{sres}_0(p,q)=\mathrm{Sres}_0(p,q)\f$ by definition) 
 
-\refines `AdaptableBinaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

@@ -1,9 +1,9 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
-\refines Kernel::ConstructBbox_3
+\cgalRefines Kernel::ConstructBbox_3
 
 */
 

@@ -9,7 +9,7 @@ using the two-di-men-sional \cgal kernel.
 
 The template parameter `K` must be a model for `Kernel`. 
 
-\models ::MinEllipse2Traits 
+\cgalModels ::MinEllipse2Traits 
 
 \sa `CGAL::Min_ellipse_2<Traits>` 
 \sa `MinEllipse2Traits` 

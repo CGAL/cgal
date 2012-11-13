@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage STL Extensions for %CGAL
 \anchor Chapter_STL_Extensions_for_CGAL
 
-\autotoc
+\cgalAutoToc
 \authors Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein
 
 \section stl_intro Introduction
@@ -285,7 +285,7 @@ Note that since \cgal 3.4, `CONTINUE` has the same effect as
 not possible anymore to let assertion failures simply continue (except by
 totally disabling them).
 
-\advanced If the `EXIT_WITH_SUCCESS` value is set, the program will stop and
+\cgalAdvanced If the `EXIT_WITH_SUCCESS` value is set, the program will stop and
 return a value corresponding to successful execution and not dump the core.
 
 The value that is returned by `set_error_behaviour()` is the value that was in use before.

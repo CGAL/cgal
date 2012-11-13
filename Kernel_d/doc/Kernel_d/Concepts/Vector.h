@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDLinAlgConcepts
-\cgalconcept
+\cgalConcept
 
 An instance of data type `Vector` is a vector of variables of 
 number type `NT`. Together with the type `Matrix` it realizes 
@@ -60,7 +60,7 @@ Vector(int d, NT x);
 creates an 
 instance `v` of type `Vector`; `v` is initialized to the 
 vector with entries `set [first,last)`. 
-\requires `Forward_iterator` has value type `NT`. 
+\cgalRequires `Forward_iterator` has value type `NT`. 
 */ 
 template <class Forward_iterator> 
 Vector(Forward_iterator first, Forward_iterator last); 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
-\cgalconcept
+\cgalConcept
 
 This concept refines the basic arrangement \f$ x\f$-monotone traits concept. 
 A model of this concept is able to handle <I>directed</I> \f$ x\f$-monotone curves 
@@ -14,15 +14,15 @@ If the traits class is also a model of
 also required to have a direction, namely one of these two endpoint serves 
 as its <I>source</I> and the other as its <I>target</I>. 
 
-\refines `ArrangementXMonotoneTraits_2` 
+\cgalRefines `ArrangementXMonotoneTraits_2` 
 
-\hasModel `CGAL::Arr_segment_traits_2<Kernel>` 
-\hasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>` 
-\hasModel `CGAL::Arr_circle_segment_traits_2<Kernel>` 
-\hasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>` 
-\hasModel `CGAL::Arr_rational_function_traits_2<AlgKernel,NtTraits>` 
-\hasModel `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>` 
-\hasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>` 
+\cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>` 
+\cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>` 
+\cgalHasModel `CGAL::Arr_circle_segment_traits_2<Kernel>` 
+\cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>` 
+\cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgKernel,NtTraits>` 
+\cgalHasModel `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>` 
+\cgalHasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>` 
 
 \sa `ArrangementXMonotoneTraits_2` 
 

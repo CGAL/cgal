@@ -1,10 +1,10 @@
 /*!
 \ingroup PkgStraightSkeleton2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `StraightSkeletonItemsConverter_2` describes the requirements for items converter passed as the third template argument to the class `Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsConverter>`. It converts the `HDS` items from one type of straight skeleton to another 
 
-\hasModel CGAL::Straight_skeleton_items_converter_2
+\cgalHasModel CGAL::Straight_skeleton_items_converter_2
 
 \sa `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>` 
 

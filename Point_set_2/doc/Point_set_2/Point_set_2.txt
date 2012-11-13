@@ -5,7 +5,7 @@ namespace CGAL {
 \mainpage 2D %Range and Neighbor Search
 \anchor Chapter_2D_Range_and_Neighbor_Search
 \anchor chapterPointset2
-\autotoc
+\cgalAutoToc
 \authors Matthias B&auml;sken
 
 \section Point_set_2Introduction Introduction
@@ -76,7 +76,7 @@ First we construct a two dimensional point set `PSet` and initialize it with a f
 Then we perform circular, triangular and isorectangular range search operations on the
 point set.
 
-\cgalexample{Point_set_2/range_search.cpp}
+\cgalExample{Point_set_2/range_search.cpp}
 
 */ 
 } /* namespace CGAL */

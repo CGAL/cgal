@@ -36,7 +36,7 @@ when the query segment is smaller than the error bound.
 The `error_bound` passed as argument to the domain constructor 
 is a relative error bound expressed as a ratio to the bounding sphere radius. 
 
-\models `MeshDomain_3` 
+\cgalModels `MeshDomain_3` 
 
 \sa `BisectionGeometricTraits_3` 
 \sa `CGAL::make_mesh_3`. 

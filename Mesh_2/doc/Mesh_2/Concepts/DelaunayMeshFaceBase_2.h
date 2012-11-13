@@ -3,7 +3,7 @@
 
 /*!
 \ingroup PkgMesh2Concepts
-\cgalconcept
+\cgalConcept
 
 
 The concept `DelaunayMeshFaceBase_2` refines the concept 
@@ -11,9 +11,9 @@ The concept `DelaunayMeshFaceBase_2` refines the concept
 to a Boolean marker, that indicates if the face is in the 
 meshing domain or not. 
 
-\refines `ConstrainedTriangulationFaceBase_2` 
+\cgalRefines `ConstrainedTriangulationFaceBase_2` 
 
-\hasModel `CGAL::Delaunay_mesh_face_base_2<Traits, Fb>` 
+\cgalHasModel `CGAL::Delaunay_mesh_face_base_2<Traits, Fb>` 
 
 
 */

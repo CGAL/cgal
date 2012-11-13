@@ -56,7 +56,7 @@ convex partitioning of a polygon using the default
 traits class and stores the partition polygons in the list 
 `partition_polys`. 
 
-\cgalexample{Partition_2/approx_convex_partition_2.cpp} 
+\cgalExample{Partition_2/approx_convex_partition_2.cpp} 
 
 */
 template <class InputIterator, class OutputIterator, class Traits>
@@ -129,7 +129,7 @@ convex partitioning of a polygon using the default
 traits class and stores the partition polygons in the list 
 `partition_polys`. 
 
-\cgalexample{Partition_2/greene_approx_convex_partition_2.cpp} 
+\cgalExample{Partition_2/greene_approx_convex_partition_2.cpp} 
 
 */
 
@@ -203,7 +203,7 @@ to define the required `Is_valid` type.
 postcondition checking for `optimal_convex_partition_2()` has been 
 turned off.) 
 
-\cgalexample{Partition_2/optimal_convex_partition_2.cpp} 
+\cgalExample{Partition_2/optimal_convex_partition_2.cpp} 
 
 */
 
@@ -269,7 +269,7 @@ produced is, in fact, \f$ y\f$-monotone and that the partition is valid.
 (Note that these assertions are superfluous unless the postcondition 
 checking for `y_monotone_partition_2()` has been turned off.) 
 
-\cgalexample{Partition_2/y_monotone_partition_2.cpp} 
+\cgalExample{Partition_2/y_monotone_partition_2.cpp} 
 
 */
 template <class InputIterator, class OutputIterator, class Traits>

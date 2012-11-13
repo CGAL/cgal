@@ -23,8 +23,8 @@ It is therefore recommended to use the "walk" point-location strategy
 for arrangements that are constantly changing, especially if the number 
 of issued queries is not large. 
 
-\models ::ArrangementPointLocation_2 
-\models ::ArrangementVerticalRayShoot_2 
+\cgalModels ::ArrangementPointLocation_2 
+\cgalModels ::ArrangementVerticalRayShoot_2 
 
 */
 template< typename Arrangement >

@@ -12,7 +12,7 @@ normal vector from `Kernel` for the plane equation in facets. It
 keeps a local copy of the kernel which makes it suitable for kernels 
 with local state. 
 
-\models ::PolyhedronTraits_3 
+\cgalModels ::PolyhedronTraits_3 
 
 \sa `CGAL::Polyhedron_traits_3<Kernel>`
 
@@ -23,7 +23,7 @@ normal vector and no plane equation for each facet. We compute the
 normal vector assuming exact arithmetic (integers in this example) 
 and convex planar facets. 
 
-\cgalexample{Polyhedron/polyhedron_prog_normals.cpp} 
+\cgalExample{Polyhedron/polyhedron_prog_normals.cpp} 
 
 */
 template< typename Kernel >

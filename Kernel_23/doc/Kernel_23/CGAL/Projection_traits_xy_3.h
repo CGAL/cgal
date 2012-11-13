@@ -20,15 +20,15 @@ be instantiated by a model of the `Kernel` concept.
 `Projection_traits_xy_3` uses types 
 and predicates defined in `K`. 
 
-\models The class is a model of several 2D triangulation traits class concepts, 
+\cgalModels The class is a model of several 2D triangulation traits class concepts, 
   except that it does not provide the type and constructors 
   required to build the dual Voronoi diagram.
-\models ::PolygonTraits_2
-\models ::ConvexHullTraits_2
-\models ::TriangulationTraits_2 
-\models ::DelaunayTriangulationTraits_2 
-\models ::ConstrainedTriangulationTraits_2 
-\models ::ConvexHullTraits_2 
+\cgalModels ::PolygonTraits_2
+\cgalModels ::ConvexHullTraits_2
+\cgalModels ::TriangulationTraits_2 
+\cgalModels ::DelaunayTriangulationTraits_2 
+\cgalModels ::ConstrainedTriangulationTraits_2 
+\cgalModels ::ConvexHullTraits_2 
 
 */
 template< typename K >

@@ -13,7 +13,7 @@ An instance of this class represents an extension of the type `NT` by *one* squa
 
 For example, let `Integer` be some type representing \f$ \Z\f$, then 
 `Sqrt_extension<Integer,Integer>` is able to represent \f$ \Z[\sqrt{root}]\f$ 
-for some arbitrary Integer \f$ root\f$. \footnote{\f$ R[a]\f$ denotes the extension of a ring \f$ R\f$ by an element \f$ a\f$. See also: <A HREF="http://mathworld.wolfram.com/ExtensionRing.html"><TT>http://mathworld.wolfram.com/ExtensionRing.html</TT></A>}
+for some arbitrary Integer \f$ root\f$. \cgalFootnote{\f$ R[a]\f$ denotes the extension of a ring \f$ R\f$ by an element \f$ a\f$. See also: <A HREF="http://mathworld.wolfram.com/ExtensionRing.html"><TT>http://mathworld.wolfram.com/ExtensionRing.html</TT></A>}
 The value of \f$ root\f$ is set at 
 construction time, or set to zero if it is not specified. 
 
@@ -81,20 +81,20 @@ The extension of a `UniqueFactorizationDomain` or
 `EuclideanRing` is just an `IntegralDomain`, since the extension in general destroys the unique factorization property. For instance consider \f$ \Z[\sqrt{10}]\f$, the extension of \f$ \Z\f$ by \f$ \sqrt{10}\f$: in \f$ \Z[\sqrt{10}]\f$ the element 10 has two different factorizations \f$ \sqrt{10} \cdot \sqrt{10}\f$ and \f$ 2 \cdot 5\f$. In particular, the factorization is not unique. 
 
 If `NT` is a model of `RealEmbeddable` the type `Sqrt_extension` is also considered as `RealEmbeddable`. However, by default it is not allowed to compare values from different extensions for efficiency reasons. In case such a comparison becomes necessary, use the member function compare with the according Boolean flag. 
-If such a comparison is a very frequent case, override the default of `DifferentExtensionComparable` by giving \tag_true as third template parameter. This effects the behavior of compare functions as well as the compare operators. 
+If such a comparison is a very frequent case, override the default of `DifferentExtensionComparable` by giving \cgalTagTrue as third template parameter. This effects the behavior of compare functions as well as the compare operators. 
 
-The fourth template argument, `FilterPredicates`, triggers an internal filter that may speed up comparisons and sign computations. In case `FilterPredicates` is set to \tag_true the type first computes a double interval containing the represented number and tries to perform the comparison or sign computation using this interval. Once computed, this interval is stored by the corresponding `Sqrt_extension` object for further usage. Note that this internal filter is switched off by default, since it may conflict with other filtering methods, such as `Lazy_exact_nt<Sqrt_extension>`. 
+The fourth template argument, `FilterPredicates`, triggers an internal filter that may speed up comparisons and sign computations. In case `FilterPredicates` is set to \cgalTagTrue the type first computes a double interval containing the represented number and tries to perform the comparison or sign computation using this interval. Once computed, this interval is stored by the corresponding `Sqrt_extension` object for further usage. Note that this internal filter is switched off by default, since it may conflict with other filtering methods, such as `Lazy_exact_nt<Sqrt_extension>`. 
 
 In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as `FilterPredicates` have no effect. 
 
-\models ::Assignable 
-\models ::CopyConstructible 
-\models ::DefaultConstructible 
-\models ::EqualityComparable 
-\models ::ImplicitInteroperable with int
-\models ::ImplicitInteroperable with NT
-\models ::Fraction if NT is a ::Fraction 
-\models ::RootOf_2 
+\cgalModels ::Assignable 
+\cgalModels ::CopyConstructible 
+\cgalModels ::DefaultConstructible 
+\cgalModels ::EqualityComparable 
+\cgalModels ::ImplicitInteroperable with int
+\cgalModels ::ImplicitInteroperable with NT
+\cgalModels ::Fraction if NT is a ::Fraction 
+\cgalModels ::RootOf_2 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 
@@ -103,8 +103,8 @@ In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as 
 \sa ::ImplicitInteroperable 
 \sa ::Fraction 
 \sa ::RootOf_2 
-\sa \tag_true
-\sa \tag_false
+\sa \cgalTagTrue
+\sa \cgalTagFalse
 
 */
 template< typename NT, typename ROOT, 

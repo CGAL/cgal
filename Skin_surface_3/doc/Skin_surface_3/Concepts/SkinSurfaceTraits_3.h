@@ -1,16 +1,16 @@
 
 /*!
 \ingroup PkgSkinSurface3Concepts
-\cgalconcept
+\cgalConcept
 
 Required types and member functions for the `SkinSurfaceTraits_3` concept. 
 This geometric traits concept is used for the construction of a 
 polyhedral mesh approximating a skin surface 
 `CGAL::Skin_surface_3`. 
 
-\refines `RegularTriangulationTraits_3` 
+\cgalRefines `RegularTriangulationTraits_3` 
 
-\hasModel `CGAL::Skin_surface_traits_3<K>` 
+\cgalHasModel `CGAL::Skin_surface_traits_3<K>` 
 
 \sa `CGAL::Skin_surface_3<SkinSurfaceTraits_3>` 
 \sa `CGAL::Skin_surface_traits_3<K>` 

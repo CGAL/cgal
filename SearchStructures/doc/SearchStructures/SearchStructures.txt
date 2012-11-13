@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage dD %Range and Segment Trees
 \anchor Chapter_dD_Range_and_Segment_Trees
 \anchor Trees
-\autotoc
+\cgalAutoToc
 \author Gabriele Neyer
 
 \section SearchStructuresIntroduction Introduction
@@ -160,9 +160,9 @@ functions are non trivial.
 
 The design concept is illustrated in the figure below.
 
-\cgal_figure_begin{Search_rsd,rsd.gif}
+\cgalFigureBegin{Search_rsd,rsd.gif}
 Design of the range and segment tree data structure. The symbol triangle means that the lower class is derived from the upper class.
-\cgal_figure_end
+\cgalFigureEnd
 
 E.g. in order to define a two dimensional multilayer tree, which
 consists of a range tree in the first dimension and a segment
@@ -290,9 +290,9 @@ interval (`window_query`).
 
 The pictures below show a two-dimensional and a `d`-dimensional range tree.
 
-\cgal_figure_begin{Search_range2,range2.gif}
+\cgalFigureBegin{Search_range2,range2.gif}
 A two and a d-dimensional range tree.
-\cgal_figure_end
+\cgalFigureEnd
 
 The 2-dimensional tree is a binary search tree on the first dimension. Each sublayer tree of a vertex `v`  is a binary search tree on the second dimension. The data items in a sublayer tree of `v` are all data items of the subtree of `v`.
 
@@ -421,9 +421,9 @@ contained in a given ` d`-dimensional interval (*window query*).
 An example of a one-dimensional segment tree and an example
 of a two-dimensional segment tree are shown below.
 
-\cgal_figure_begin{Search_segment2,segment2.gif}
+\cgalFigureBegin{Search_segment2,segment2.gif}
 A one and a two dimensional segment tree
-\cgal_figure_end
+\cgalFigureEnd
 
 For the one-dimensional segment
 tree the segments and the corresponding elementary intervals

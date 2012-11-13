@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 2D Apollonius Graphs (Delaunay Graphs of Disks)
 \anchor Chapter_2D_Apollonius_Graphs
 \anchor chapterapollonius2
-\autotoc
+\cgalAutoToc
 \authors Menelaos Karavelas and Mariette Yvinec
 
 This chapter describes the two-dimensional Apollonius graph
@@ -20,9 +20,9 @@ described.
 
 \section secapollonius2definitions Definitions 
 
-\cgal_figure_begin{figapollonius,apollonius_diagram.gif,apollonius_graph.gif}
+\cgalFigureBegin{figapollonius,apollonius_diagram.gif,apollonius_graph.gif}
 The Apollonius diagram (left) and its dual the Apollonius graph (right).
-\cgal_figure_end
+\cgalFigureEnd
 
 The 2D Apollonius graph class of \cgal is designed to compute the
 dual of the <I>Apollonius diagram</I> or, as it is also known, the
@@ -41,7 +41,7 @@ The Apollonius diagram is defined over a set of sites
 \f$ P_i=(c_i,w_i)\f$, \f$ i=1,\ldots,n\f$, where \f$ c_i\f$ is the point and \f$ w_i\f$
 the weight of \f$ P_i\f$. It is a subdivision of the plane into connected
 regions, called <I>cells</I>, associated with the sites (see
-\cgal_figure_ref{figapollonius} (left)). The cell of a 
+\cgalFigureRef{figapollonius} (left)). The cell of a 
 site \f$ P_i\f$ is the locus of points on the plane that are
 closer to \f$ P_i\f$ than any other site \f$ P_j\f$, \f$ j\neq i\f$.
 The distance \f$ \delta(x, P_i)\f$ of a point \f$ x\f$ in the plane to a
@@ -56,7 +56,7 @@ can also happen in the case of the power diagram, whose dual is the
 regular triangulation (see Section
 \ref Section_2D_Triangulations_Regular ). If this is
 the case we call the site <I>hidden</I> (these are the black
-circles in \cgal_figure_ref{figapollonius} ). A site which is not
+circles in \cgalFigureRef{figapollonius} ). A site which is not
 hidden will be referred to as <I>visible</I>.
 
 If all weights \f$ w_i\f$ are non-negative, the Apollonius
@@ -96,7 +96,7 @@ sites as circles.
 
 The Apollonius diagram is a planar graph, and so is its dual, the
 Apollonius graph. There are many ways to embed it on the plane and one
-such way is shown in \cgal_figure_ref{figapollonius} (right).
+such way is shown in \cgalFigureRef{figapollonius} (right).
 The Apollonius graph is uniquely defined once we have
 the Apollonius diagram. If the circles are in <I>general position</I>
 (see precise definition below), then the Apollonius graph is a graph
@@ -115,7 +115,7 @@ line segments that yield a triangulation and, moreover, we may have two
 faces of the graph that have two edges in common, which is not allowed
 in a triangulation. Both of these particularities appear when we
 consider the Apollonius graph of the set of circles in
-\cgal_figure_ref{figapollonius}.
+\cgalFigureRef{figapollonius}.
 
 We would like to finish our brief introduction to the theory of
 Apollonius graphs by discussing the concept of general position. We say
@@ -146,7 +146,7 @@ definition allows us to guarantee that all visible circles have
 cells that are two-dimensional regions.
 Geometrically the fact that a circle is hidden means that it is
 contained in the closure of the disk of another circle (see again
-\cgal_figure_ref{figapollonius} ). Note that a circle contained in the union
+\cgalFigureRef{figapollonius} ). Note that a circle contained in the union
 of several disks, but not in the closure of any one of them, is not
 hidden.
 
@@ -264,9 +264,9 @@ queries for points.
 
 The next geometric predicate is called `Vertex_conflict_2` and it
 involves four circles \f$ P_1\f$, \f$ P_2\f$, \f$ P_3\f$, and \f$ P_4\f$ (see
-\cgal_figure_ref{figag2vc} ). The first three (red circles in
-\cgal_figure_ref{figag2vc} ) define a tritangent circle (yellow
-circle in \cgal_figure_ref{figag2vc} ). What we want to determine is
+\cgalFigureRef{figag2vc} ). The first three (red circles in
+\cgalFigureRef{figag2vc} ) define a tritangent circle (yellow
+circle in \cgalFigureRef{figag2vc} ). What we want to determine is
 the sign of the distance of the green circle from the yellow
 circle. The distance between two circles \f$ K_1=(c_1,r_1)\f$ and
 \f$ K_2=(c_2, r_2)\f$ is defined as the distance of their centers minus
@@ -278,9 +278,9 @@ inserted in the diagram (the green circle). In the Apollonius graph
 it tells us if a triangular face of the diagram is to be destroyed or
 not.
 
-\cgal_figure_begin{figag2vc,apollonius-vertex_conflict-false.gif,apollonius-vertex_conflict-true.gif}
+\cgalFigureBegin{figag2vc,apollonius-vertex_conflict-false.gif,apollonius-vertex_conflict-true.gif}
 The `Vertex_conflict_2` predicate. The left-most, bottom-most and top-most circles define the tritangent circle in the middle. We want to determine the sign of the distance of the left-most circle from the one in the middle. The almost horizontal curve is the bisector of the top-most and bottom-most circles. Left: the predicate returns `NEGATIVE`. Right: the predicate returns `POSITIVE`.
-\cgal_figure_end
+\cgalFigureEnd
 
 What we essentially want to compute when we construct incrementally a
 Voronoi diagram, is whether the object to be inserted destroys an edge
@@ -289,7 +289,7 @@ easy and it amounts to the well known <I>incircle</I> test.
 In the case
 of circles the situation is more complicated. We can have six possible
 outcomes as to what portion of an edge of the Apollonius diagram the
-new circle destroys (see \cgal_figure_ref{figag2edgeconflict} ). The first
+new circle destroys (see \cgalFigureRef{figag2edgeconflict} ). The first
 two can be answered directly by the `Vertex_conflict_2` predicate
 evaluated for the two endpoints of the Apollonius diagram edge. This
 is due to the fact that the value of the `Vertex_conflict_2`
@@ -304,7 +304,7 @@ is infinite if its dual edge in the Apollonius graph connects the
 site at infinity with the vertex corresponding to a (finite) circle; 
 otherwise it is a finite edge.
 
-\cgal_figure_anchor{figag2edgeconflict}
+\cgalFigureAnchor{figag2edgeconflict}
 <CENTER>
 <TABLE BORDER>
 <TR>
@@ -321,7 +321,7 @@ otherwise it is a finite edge.
 </TR>
 </TABLE>
 </CENTER>
-\cgal_figure_caption_begin{figag2edgeconflict}
+\cgalFigureCaptionBegin{figag2edgeconflict}
 The 6 possible outcomes of the
 `Finite_edge_interior_conflict_2` predicate. Top left: only a
 neighborhood around the left-most endpoint of the edge will be
@@ -333,7 +333,7 @@ will be destroyed; the regions near the endpoints remain
 unaffected. Bottom right: The neighborhood around the two endpoints
 will be destroyed, but an interval in the interior of the edge will
 remain in the new diagram.
-\cgal_figure_caption_end
+\cgalFigureCaptionEnd
 
 The last predicate that we want to discuss is called
 `Is_degenerate_edge_2`. It tells us whether an edge in the
@@ -411,19 +411,19 @@ nearest neighbor queries.
 
 \subsection Apollonius_graph_2FirstExample First Example
 
-\cgalexample{Apollonius_graph_2/ag2_exact_traits.cpp}
+\cgalExample{Apollonius_graph_2/ag2_exact_traits.cpp}
 
 \subsection Apollonius_graph_2SecondExample Second Example
 
-\cgalexample{Apollonius_graph_2/ag2_exact_traits_sqrt.cpp}
+\cgalExample{Apollonius_graph_2/ag2_exact_traits_sqrt.cpp}
 
 \subsection Apollonius_graph_2ThirdExample Third Example
 
-\cgalexample{Apollonius_graph_2/ag2_filtered_traits_no_hidden.cpp}
+\cgalExample{Apollonius_graph_2/ag2_filtered_traits_no_hidden.cpp}
 
 \subsection Apollonius_graph_2FourthExample Fourth Example
 
-\cgalexample{Apollonius_graph_2/ag2_hierarchy.cpp}
+\cgalExample{Apollonius_graph_2/ag2_hierarchy.cpp}
 
 */ 
 } /* namespace CGAL */

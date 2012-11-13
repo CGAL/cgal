@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage Triangulated Surface Mesh Simplification
 \anchor Chapter_Triangulated_Surface_Mesh_Simplification
 
-\autotoc
+\cgalAutoToc
 
 \authors Fernando Cacciola
 
@@ -203,7 +203,7 @@ are needed because the placement (and cost) changes.
 \subsection Surface_mesh_simplificationAPIOverview API Overview
 
 Since the algorithm is free from robustness issues there is no need for exact predicates nor constructions and `Simple_cartesian<double>` can be used safely.
-\footnote{In the current version, 3.3, the LindstromTurk policies are not implemented for homogeneous coordinates, so a %Cartesian kernel must be used.}
+\cgalFootnote{In the current version, 3.3, the LindstromTurk policies are not implemented for homogeneous coordinates, so a %Cartesian kernel must be used.}
 
 The simplification algorithm is implemented as the free template function 
 `Surface_mesh_simplification::edge_collapse()`. The function has two mandatory and several optional parameters.
@@ -275,7 +275,7 @@ int r = edge_collapse(surface
 The following example illustrates the simplest of the cases. It uses
 an ordinary polyhedron and only one of the optional parameters.
 The unspecified cost strategy defaults to Lindstrom-Turk.
-\cgalexample{Surface_mesh_simplification/edge_collapse_polyhedron.cpp}
+\cgalExample{Surface_mesh_simplification/edge_collapse_polyhedron.cpp}
 
 \subsection Surface_mesh_simplificationExampleUsingan Example Using an Enriched Polyhedron
 
@@ -285,14 +285,14 @@ store the edge index needed by the algorithm. It also shows how to
 explicitly specify a cost strategy (other than the default)
 and how to use a visitor object to track the simplification process.
 
-\cgalexample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
+\cgalExample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
 
 \subsection Surface_mesh_simplificationExamplewithedges Example with edges marked as non-removable
 
 The following example shows how to use the optional named parameter `edge_is_border_map` to prevent
 edges from being removed even if they are not really borders.
 
-\cgalexample{Surface_mesh_simplification/edge_collapse_constrained_polyhedron.cpp}
+\cgalExample{Surface_mesh_simplification/edge_collapse_constrained_polyhedron.cpp}
 
 */ 
 } /* namespace CGAL */

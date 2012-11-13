@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `FieldWithSqrt` is a `Field` that has operations to take square roots. 
 
@@ -10,7 +10,7 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithSqrt >` is a model of `Alg
 - `CGAL::Algebraic_structure_traits< FieldWithSqrt >::Algebraic_type` derived from `CGAL::Field_with_sqrt_tag` 
 - `CGAL::Algebraic_structure_traits< FieldWithSqrt >::Sqrt`  which is a model of `AlgebraicStructureTraits::Sqrt` 
 
-\refines `Field` 
+\cgalRefines `Field` 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 

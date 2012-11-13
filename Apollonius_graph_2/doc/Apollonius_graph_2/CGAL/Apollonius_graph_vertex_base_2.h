@@ -17,7 +17,7 @@ site can become visible. If `StoreHidden` is set to
 `true`, hidden sites are stored, otherwise they are 
 discarded. By default `StoreHidden` is set to `true`. 
 
-\models ::ApolloniusGraphVertexBase_2 
+\cgalModels ::ApolloniusGraphVertexBase_2 
 
 \sa `ApolloniusGraphVertexBase_2` 
 \sa `ApolloniusGraphDataStructure_2` 

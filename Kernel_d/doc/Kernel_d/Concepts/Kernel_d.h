@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 The concept of a <I>kernel</I> is defined by a set of requirements on 
 the provision of certain types and access member functions to create 
@@ -18,8 +18,8 @@ predicates. The former replace constructors of the kernel classes and
 constructive procedures in the kernel. There are also function objects 
 replacing operators, especially for equality testing. 
 
-\hasModel `CGAL::Cartesian_d<FieldNumberType>`
-\hasModel `CGAL::Homogeneous_d<RingNumberType>` 
+\cgalHasModel `CGAL::Cartesian_d<FieldNumberType>`
+\cgalHasModel `CGAL::Homogeneous_d<RingNumberType>` 
 */
 class Kernel_d {
 public:

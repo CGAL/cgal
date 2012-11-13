@@ -24,7 +24,7 @@ As the convex hull of these points is a subset of the input
 it is safe to provide an array for storing the result which
 has the same size.
 
-\cgalexample{Convex_hull_2/array_convex_hull_2.cpp}
+\cgalExample{Convex_hull_2/array_convex_hull_2.cpp}
 
 
 All \cgal header files are in the subdirectory `include/CGAL`.  All \cgal 
@@ -48,7 +48,7 @@ many points are on the convex hull.
 In the second example we replace the built-in array
 by a `std::vector` of the Standard Template Library.
 
-\cgalexample{Convex_hull_2/vector_convex_hull_2.cpp}
+\cgalExample{Convex_hull_2/vector_convex_hull_2.cpp}
 
 We put some points in the vector calling the `push_back()`
 method of the `std::vector` class.
@@ -80,7 +80,7 @@ and passing the begin/end iterator of the vector to the convex hull
 function, we use helper classes that turn file pointers into
 iterators.
 
-\cgalexample{Convex_hull_2/iostream_convex_hull_2.cpp}
+\cgalExample{Convex_hull_2/iostream_convex_hull_2.cpp}
 
 In the example code you see input and output stream iterators
 templated with the point type.  A `std::istream_iterator<Point_2>`
@@ -163,7 +163,7 @@ compute the convex hull of 3D points projected into the `yz` plane. Using
 the class `CGAL::Projection_traits_yz_3` this is a small modification
 of the previous example.
 
-\cgalexample{Convex_hull_2/convex_hull_yz.cpp}
+\cgalExample{Convex_hull_2/convex_hull_yz.cpp}
 
 Another example would be about a user defined point type, or a point
 type coming from a third party library other than %CGAL. Put the point

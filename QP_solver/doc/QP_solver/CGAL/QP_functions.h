@@ -149,9 +149,9 @@ Example
 
 \ref QP_solver/first_lp.cpp 
 
-\models `Quadratic_program<NT>` 
-\models `Quadratic_program_from_mps<NT>` 
-\models `Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>` 
+\cgalModels `Quadratic_program<NT>` 
+\cgalModels `Quadratic_program_from_mps<NT>` 
+\cgalModels `Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>` 
 
 */
 template <LinearProgram, ET>

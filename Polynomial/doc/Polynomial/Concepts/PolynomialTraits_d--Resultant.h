@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableBinaryFunction` computes the <I>resultant</I> of two polynomials 
 \f$ f\f$ and \f$ g\f$ of type `PolynomialTraits_d::Polynomial_d` with respect to a 
@@ -23,7 +23,7 @@ Note that this is a \f$ (n+m)\times(n+m)\f$ matrix as there are \f$ n\f$ rows fo
 and \f$ m\f$ rows that are used for \f$ g\f$. The blank spaces are supposed to be 
 filled with zeros. 
 
-\advanced Let \f$ L\f$ be the algebraic closure of \f$ A\f$, and write \f$ f\f$ and \f$ g\f$ as 
+\cgalAdvanced Let \f$ L\f$ be the algebraic closure of \f$ A\f$, and write \f$ f\f$ and \f$ g\f$ as 
 \f[ f := f_m \ccProd{i=1}{m}{(x-\alpha_i)},\ \alpha_i \in L \f] 
 and 
 \f[ g := g_n \ccProd{j=1}{n}{(x-\beta_j)},\ \beta_i \in L, \f] then 
@@ -41,9 +41,9 @@ which is a variant of the Euclidean Algorithm.
 More sophisticated methods may use modular arithmetic and interpolation. 
 For more information we refer to, e.g., \cite gg-mca-99. 
 
-\refines `AdaptableBinaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

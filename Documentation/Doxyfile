@@ -203,64 +203,64 @@ ALIASES                =  "sc{1}=<span style=\"font-variant: small-caps;\">\1</s
                           "cpp=<I>C++</I>" \
                           "cpp11=*C++11*" \
                           "CC=*C++*" \
-                          "cgalexample{1}=<br><b>File</b> \ref \1 \include \1" \
-                          "cgal_figure_anchor{1}=\anchor fig__\1" \
-                          "cgal_figure_ref{1}=\ref fig__\1" \
-                          "cgal_figure_begin{2}=\anchor fig__\1 \n \image html \2 \n \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1   " \
-                          "cgal_figure_begin{3}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgal_figure_begin{4}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgal_figure_begin{5}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgal_figure_begin{6}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgal_figure_begin{7}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgal_figure_begin{8}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgal_figure_begin{9}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> <TD> \image html \9 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgal_figure_begin{10}=\anchor fig__\1 \n <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> <TD> \image html \9 \n </TD> <TD> \image html \10 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                         "cgal_figure_end=\htmlonly </div> \endhtmlonly" \
-                         "cgal_figure_caption_begin{1}=\htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                         "cgal_figure_caption_end=\htmlonly </div> \endhtmlonly"
+                          "cgalExample{1}=<br><b>File</b> \ref \1 \include \1" \
+                          "cgalFigureAnchor{1}=\anchor fig__\1" \
+                          "cgalFigureRef{1}=\ref fig__\1" \
+                          "cgalFigureBegin{2}=\anchor fig__\1 \n \image html \2 \n \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1   " \
+                          "cgalFigureBegin{3}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                          "cgalFigureBegin{4}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                          "cgalFigureBegin{5}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                          "cgalFigureBegin{6}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                          "cgalFigureBegin{7}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                          "cgalFigureBegin{8}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                          "cgalFigureBegin{9}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> <TD> \image html \9 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                          "cgalFigureBegin{10}=\anchor fig__\1 \n <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> <TD> \image html \9 \n </TD> <TD> \image html \10 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                         "cgalFigureEnd=\htmlonly </div> \endhtmlonly" \
+                         "cgalFigureCaptionBegin{1}=\htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                         "cgalFigureCaptionEnd=\htmlonly </div> \endhtmlonly"
                          
 # this sets the include file of a concept to a non-existing file and
 # thus removes its include statement
-ALIASES += "cgalconcept=\details <div id=\"CGALConcept\"></div>\n \brief"
-ALIASES += "cgalconceptnamespace=\details <div id=\"CGALConceptNS\"></div>\n \brief"
+ALIASES += "cgalConcept=\details <div id=\"CGALConcept\"></div>\n \brief"
+ALIASES += "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>\n \brief"
 
-ALIASES += "refines=\xrefitem refines \"Refines\" \"Refinement Relationships\""
-ALIASES += "requires=\xrefitem requires \"Requires\" \"Type Requirements\""
-ALIASES += "models=\xrefitem models \"Is Model Of\" \"Is Model Relationships\""
-ALIASES += "generalizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\""
-ALIASES += "hasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\""
-ALIASES += "debug=\par \"Debug\""
-ALIASES += "advanced=\par \"Advanced\""
+ALIASES += "cgalRefines=\xrefitem refines \"Refines\" \"Refinement Relationships\""
+ALIASES += "cgalRequires=\xrefitem requires \"Requires\" \"Type Requirements\""
+ALIASES += "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\""
+ALIASES += "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\""
+ALIASES += "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\""
+ALIASES += "cgalDebug=\par \"Debug\""
+ALIASES += "cgalAdvanced=\par \"Advanced\""
 
-ALIASES += "PkgPicture{1}=<div class=\"PkgImage\"> \n \image html \1 \n</div>"
+ALIASES += "cgalPkgPicture{1}=<div class=\"PkgImage\"> \n \image html \1 \n</div>"
 
-ALIASES += "PkgSummaryBegin=<div class=\"PkgSummary\">"
-ALIASES += "PkgSummaryEnd=</div>"
+ALIASES += "cgalPkgSummaryBegin=<div class=\"PkgSummary\">"
+ALIASES += "cgalPkgSummaryEnd=</div>"
 
-ALIASES += "PkgShortInfoBegin=<div class=\"PkgShortInfo\">"
-ALIASES += "PkgShortInfoEnd=</div>"
+ALIASES += "cgalPkgShortInfoBegin=<div class=\"PkgShortInfo\">"
+ALIASES += "cgalPkgShortInfoEnd=</div>"
 
-ALIASES += "PkgAuthor{1}=<div class=\"PkgAuthors\">\1</div>"
-ALIASES += "PkgAuthors{1}=<div class=\"PkgAuthors\">\1</div>"
+ALIASES += "cgalPkgAuthor{1}=<div class=\"PkgAuthors\">\1</div>"
+ALIASES += "cgalPkgAuthors{1}=<div class=\"PkgAuthors\">\1</div>"
 
-ALIASES += "PkgDesc{1}=<div class=\"PkgDescription\">\1</div>"
+ALIASES += "cgalPkgDesc{1}=<div class=\"PkgDescription\">\1</div>"
 
-ALIASES += "PkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>"
-ALIASES += "PkgDependsOn{1}=<B>Depends on:</B> \1<BR>"
-ALIASES += "PkgLicense{1}=<B>License:</B> \1<BR>"
-ALIASES += "PkgDemo{2}=<B>Demo:</B> <a href=\"http://www.cgal.org/demo/4.0.2/\2\">\1</a><BR>"
-ALIASES += "PkgDescriptionEnd="
+ALIASES += "cgalPkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>"
+ALIASES += "cgalPkgDependsOn{1}=<B>Depends on:</B> \1<BR>"
+ALIASES += "cgalPkgLicense{1}=<B>License:</B> \1<BR>"
+ALIASES += "cgalPkgDemo{2}=<B>Demo:</B> <a href=\"http://www.cgal.org/demo/4.0.2/\2\">\1</a><BR>"
+ALIASES += "cgalPkgDescriptionEnd="
 
 # this alias controls linking to the how to cite page, it is also
 # responsible for adding the -YY{a,b} suffix to a cite
-ALIASES += "PkgBib{1}=<B>BibTeX:</B> <a href=\"../../CGAL.CGAL/html/how_to_cite_cgal.html#\1-12b\">\1-12b</a><BR>"
+ALIASES += "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../../CGAL.CGAL/html/how_to_cite_cgal.html#\1-12b\">\1-12b</a><BR>"
 
 
-ALIASES += "footnote{1}=<span class=\"footnote\">\1</span>"
-ALIASES += "autotoc=\htmlonly <div id=\"autotoc\" class=\"toc\"></div> \endhtmlonly"
+ALIASES += "cgalFootnote{1}=<span class=\"footnote\">\1</span>"
+ALIASES += "cgalAutoToc=\htmlonly <div id=\"autotoc\" class=\"toc\"></div> \endhtmlonly"
 
-ALIASES += "tag_true=\link CGAL::Tag_true `CGAL::Tag_true`\endlink"
-ALIASES += "tag_false=\link CGAL::Tag_false `CGAL::Tag_false`\endlink"
+ALIASES += "cgalTagTrue=\link CGAL::Tag_true `CGAL::Tag_true`\endlink"
+ALIASES += "cgalTagFalse=\link CGAL::Tag_false `CGAL::Tag_false`\endlink"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding

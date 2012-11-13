@@ -7,7 +7,7 @@ The concept `Kinetic::Delaunay_triangulation_recent_edges_visitor_2` provides a 
 `Kinetic::DelaunayTriangulationVisitor_2` which tracks which edges were created in 
 the most recent change. 
 
-\models ::Kinetic::DelaunayTriangulationVisitor_2 
+\cgalModels ::Kinetic::DelaunayTriangulationVisitor_2 
 
 \sa `Kinetic::Delaunay_triangulation_2<Traits, Triangulation, Visitor>` 
 

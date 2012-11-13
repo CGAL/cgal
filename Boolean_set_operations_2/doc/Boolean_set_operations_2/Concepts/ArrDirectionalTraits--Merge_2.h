@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
-\cgalconcept
+\cgalConcept
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
-\hasModel `ArrangementDirectionalXMonotoneTraits_2::Merge_2` 
+\cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::Merge_2` 
 
 */
 

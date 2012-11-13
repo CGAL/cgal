@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableBinaryFunction` computes the integral division 
 of two polynomials of type `PolynomialTraits_d::Polynomial_d` 
@@ -9,9 +9,9 @@ of two polynomials of type `PolynomialTraits_d::Polynomial_d`
 
 \pre \f$ g\f$ divides \f$ f\f$ in \f$ Q(R)[x_0,\dots,x_{d-1}]\f$, where \f$ Q(R)\f$ is the quotient field of the base ring \f$ R\f$, `PolynomialTraits_d::Innermost_coefficient_type`. 
 
-\refines `AdaptableBinaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa \ref ::Polynomial_d 
 \sa \ref ::PolynomialTraits_d 

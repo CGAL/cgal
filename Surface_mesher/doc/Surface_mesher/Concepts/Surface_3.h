@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgSurfaceMesher3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `Surface_3` describes the types of surfaces to be meshed. 
 The surface types 
 are required to be copy constructible 
 and assignable. 
 
-\hasModel `CGAL::Implicit_surface_3<Traits, Function>` 
+\cgalHasModel `CGAL::Implicit_surface_3<Traits, Function>` 
 
 \sa `CGAL::make_surface_mesh`
 \sa `SurfaceMeshTraits_3` 

@@ -3,7 +3,7 @@
 
 /*!
 \ingroup PkgMesh2Concepts
-\cgalconcept
+\cgalConcept
 
 
 The concept `MeshingCriteria_2` defines the meshing criteria to be used in the 
@@ -37,8 +37,8 @@ comparable</I> as the meshing algorithm will order bad triangles by quality,
 to split those with smallest quality first. The predicate `Is_bad` 
 computes the quality of the triangle as a by-product. 
 
-\hasModel `CGAL::Delaunay_mesh_criteria_2<CDT>`
-\hasModel `CGAL::Delaunay_mesh_size_criteria_2<CDT>`
+\cgalHasModel `CGAL::Delaunay_mesh_criteria_2<CDT>`
+\cgalHasModel `CGAL::Delaunay_mesh_size_criteria_2<CDT>`
 
 
 */

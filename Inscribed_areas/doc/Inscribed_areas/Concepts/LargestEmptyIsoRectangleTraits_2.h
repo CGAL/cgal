@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgInscribedAreasConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `LargestEmptyIsoRectangleTraits_2` describes the set of requirements to be 
 fulfilled by any class used to instantiate the template parameter of 
@@ -10,8 +10,8 @@ This concept provides the types of the geometric primitives used in
 this class and some function object types for the required 
 predicates on those primitives. 
 
-\hasModel `CGAL::Cartesian` 
-\hasModel `CGAL::Homogeneous` 
+\cgalHasModel `CGAL::Cartesian` 
+\cgalHasModel `CGAL::Homogeneous` 
 
 \sa `CGAL::Largest_empty_iso_rectangle_2<Traits>` 
 

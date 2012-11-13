@@ -23,7 +23,7 @@ functionalities.
 
 It is parameterized by a model of the concept `TriangulationVertexBase_3`. 
 
-\models ::TriangulationHierarchyVertexBase_3 
+\cgalModels ::TriangulationHierarchyVertexBase_3 
 
 \sa `CGAL::Triangulation_hierarchy_3` 
 \sa `CGAL::Triangulation_vertex_base_3` 

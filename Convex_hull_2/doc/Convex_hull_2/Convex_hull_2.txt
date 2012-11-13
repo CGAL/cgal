@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 2D Convex Hulls and Extreme Points
 \anchor Chapter_2D_Convex_Hulls_and_Extreme_Points
 \anchor chapconvexhull2
-\autotoc
+\cgalAutoToc
 \authors Susan Hert and Stefan Schirra
 
 \section Convex_hull_2Introduction Introduction
@@ -76,7 +76,7 @@ polygon is shown at the standard output console. The same results could be
 achieved by substituting the function `ch_graham_andrew()` by other 
 function like `ch_bykat()`.
 
-\cgalexample{Convex_hull_2/ch_from_cin_to_cout.cpp}
+\cgalExample{Convex_hull_2/ch_from_cin_to_cout.cpp}
 
 \section Convex_hull_2Extreme Extreme Points and Hull Subsequences
 

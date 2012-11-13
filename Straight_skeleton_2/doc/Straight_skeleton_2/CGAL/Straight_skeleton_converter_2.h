@@ -104,10 +104,10 @@ The third template parameter `NTConverter` is a function object that must
 provide `TgtSs:Traits::FT operator()(SrcSs::Traits::FT n)` that converts `n` to an 
 `TgtSs::Traits::FT` which has the same value. The default value of this parameter is `CGAL::NT_converter<SrcSs::Traits::FT, TgtSs::Traits::FT>`. 
 
-\models ::StraightSkeletonItemsConverter_2 
-\models ::DefaultConstructible 
-\models ::CopyConstructible 
-\models ::Assignable 
+\cgalModels ::StraightSkeletonItemsConverter_2 
+\cgalModels ::DefaultConstructible 
+\cgalModels ::CopyConstructible 
+\cgalModels ::Assignable 
 
 \sa `CGAL::Straight_skeleton_2<Traits,Items,Alloc>` 
 \sa `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>` 

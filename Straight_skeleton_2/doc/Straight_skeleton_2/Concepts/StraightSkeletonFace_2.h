@@ -1,14 +1,14 @@
 /*!
 \ingroup PkgStraightSkeleton2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `StraightSkeletonFace_2` describes the requirements for the face type of the 
 `StraightSkeleton_2` concept. It is a refinement of the `HalfedgeDSFace` concept 
 with support for storage of the incident halfedge. 
 
-\refines `HalfedgeDSFace` 
+\cgalRefines `HalfedgeDSFace` 
 
-\hasModel CGAL::Straight_skeleton_face_base_2
+\cgalHasModel CGAL::Straight_skeleton_face_base_2
 
 \sa `StraightSkeleton_2` 
 \sa `CGAL::Straight_skeleton_face_base_2<Refs>` 

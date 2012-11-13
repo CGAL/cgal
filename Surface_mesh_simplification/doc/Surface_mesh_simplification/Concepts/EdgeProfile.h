@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgSurfaceMeshSimplificationConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `EdgeProfile` describes the requirements for a data structure that caches the local topology and geometry in the surroundings of an undirected edge. 
 
 This profile is used by the stop, cost and placement policies. 
 
-\hasModel `CGAL::Surface_mesh_simplification::Edge_profile<ECM>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Edge_profile<ECM>`
 
 */
 

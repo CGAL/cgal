@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSpatialSortingConcepts
-\cgalconcept
+\cgalConcept
 
 All higher dimensional spatial sorting algorithms provided in \cgal are parameterized 
 by a traits class `Traits`, which defines the 
@@ -9,8 +9,8 @@ primitives (objects and predicates) that the sorting algorithms use.
 `SpatialSortingTraits_d` defines the complete set of primitives required in these 
 functions and functors. 
 
-\hasModel Any \cgal `d`-dimensional kernel. 
-\hasModel `CGAL::Spatial_sort_traits_adapter_d<Base_traits,PointPropertyMap>`
+\cgalHasModel Any \cgal `d`-dimensional kernel. 
+\cgalHasModel `CGAL::Spatial_sort_traits_adapter_d<Base_traits,PointPropertyMap>`
 
 */
 

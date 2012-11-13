@@ -135,13 +135,13 @@ CGAL_ipelet(const std::string fct_names[],const std::string help_msg[],const std
 /// @{
 
 /*! 
-\advanced returns a pointer to an Ipe object representing the drawing page. 
+\cgalAdvanced returns a pointer to an Ipe object representing the drawing page. 
 Refer to the Ipe library documentation for more details. 
 */ 
 IpePage* get_ipe_page(); 
 
 /*! 
-\advanced returns a pointer to an Ipe object providing services to Ipelets. 
+\cgalAdvanced returns a pointer to an Ipe object providing services to Ipelets. 
 Refer to the Ipe library documentation for more details. 
 */ 
 IpeletHelper* get_ipelet_helper(); 

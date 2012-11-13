@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `MeshDomainWithFeatures_3` refines the concept `MeshDomain_3`. 
 While the concept 
@@ -10,10 +10,10 @@ the domain through different queries, the concept `MeshDomainWithFeatures_3` als
 subdomains, surface patches, curve segments 
 and corners according to their respective dimensions 3,2,1 and 0. 
 
-\refines `MeshDomain_3`
+\cgalRefines `MeshDomain_3`
 
-\hasModel `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>`
-\hasModel `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
+\cgalHasModel `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>`
+\cgalHasModel `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
 
 \sa `MeshDomain_3` 
 

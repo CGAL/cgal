@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 The circular arc constructed from a circle, a source, and a target, is 
 defined as the set of points of the circle that lie between the source `p1` 

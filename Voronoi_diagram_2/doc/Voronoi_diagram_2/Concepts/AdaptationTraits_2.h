@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgVoronoiDiagramAdaptor2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `AdaptationTraits_2` defines the functors required for 
 accessing geometric information in the Delaunay graph that is needed by the 
@@ -9,12 +9,12 @@ accessing geometric information in the Delaunay graph that is needed by the
 It optionally defines a functor for performing nearest site queries. A 
 tag is provided for determining whether this functor is defined or not. 
 
-\refines `DefaultConstructible,` \refines `CopyConstructible,` \refines `Assignable` 
+\cgalRefines `DefaultConstructible,` \cgalRefines `CopyConstructible,` \cgalRefines `Assignable` 
 
-\hasModel `CGAL::Apollonius_graph_adaptation_traits_2<AG2>`
-\hasModel `CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>`
-\hasModel `CGAL::Regular_triangulation_adaptation_traits_2<RT2>`
-\hasModel `CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>`
+\cgalHasModel `CGAL::Apollonius_graph_adaptation_traits_2<AG2>`
+\cgalHasModel `CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>`
+\cgalHasModel `CGAL::Regular_triangulation_adaptation_traits_2<RT2>`
+\cgalHasModel `CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>`
 
 \sa `DelaunayGraph_2` 
 \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 

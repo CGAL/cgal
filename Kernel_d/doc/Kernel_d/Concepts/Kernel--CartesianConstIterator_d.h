@@ -1,16 +1,16 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 A type representing an iterator to the Cartesian coordinates of a point 
 in `d` dimensions. 
 
-\refines `CopyConstructible`
-\refines `Assignable`
-\refines `DefaultConstructible`
+\cgalRefines `CopyConstructible`
+\cgalRefines `Assignable`
+\cgalRefines `DefaultConstructible`
 
-\models ::BidirectionalIterator 
+\cgalModels ::BidirectionalIterator 
 
 \sa `Kernel_d::ConstructCartesianConstIterator_d` 
 

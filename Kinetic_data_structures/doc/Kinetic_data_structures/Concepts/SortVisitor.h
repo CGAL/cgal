@@ -2,12 +2,12 @@ namespace Kinetic {
 
 /*!
 \ingroup PkgKdsConcepts
-\cgalconcept
+\cgalConcept
 
 This concept is for proxy objects which have functions called on them when a `Kinetic::Sort<Traits, Visitor>`. 
 
-\hasModel `CGAL::Kinetic::Sort_visitor_base`
-\hasModel `CGAL::Kinetic::Sort_event_log_visitor` 
+\cgalHasModel `CGAL::Kinetic::Sort_visitor_base`
+\cgalHasModel `CGAL::Kinetic::Sort_event_log_visitor` 
 
 */
 

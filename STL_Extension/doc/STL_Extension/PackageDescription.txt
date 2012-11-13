@@ -12,18 +12,18 @@
 
 /*!
 \addtogroup PkgStlExtension
-\PkgDescriptionBegin{STL Extensions for CGAL,PkgStlExtensionSummary}
-\PkgPicture{plusplus.png}
-\PkgSummaryBegin
-\PkgAuthors{Michael Hoffmann\, Lutz Kettner\, Sylvain Pion\, and Ron Wein}
-\PkgDesc{\cgal is designed in the spirit of the generic programming paradigm to work together with the Standard Template Library (\stl). This package provides  non-geometric \stl-like algorithms and datastructures that are not in the \stl standard, as well as functions to change the failure behaviour of assertions.}
-\PkgManuals{Chapter_STL_Extensions_for_CGAL,PkgStlExtension}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{1.0}
-\PkgBib{cgal:hkpw-se}
-\PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{STL Extensions for CGAL,PkgStlExtensionSummary}
+\cgalPkgPicture{plusplus.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Michael Hoffmann\, Lutz Kettner\, Sylvain Pion\, and Ron Wein}
+\cgalPkgDesc{\cgal is designed in the spirit of the generic programming paradigm to work together with the Standard Template Library (\stl). This package provides  non-geometric \stl-like algorithms and datastructures that are not in the \stl standard, as well as functions to change the failure behaviour of assertions.}
+\cgalPkgManuals{Chapter_STL_Extensions_for_CGAL,PkgStlExtension}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{1.0}
+\cgalPkgBib{cgal:hkpw-se}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

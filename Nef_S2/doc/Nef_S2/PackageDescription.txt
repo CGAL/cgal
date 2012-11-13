@@ -4,20 +4,20 @@
 /*!
 \addtogroup PkgNefS2
 
-\PkgDescriptionBegin{2D Boolean Operations on Nef Polygons Embedded on the Sphere,PkgNefS2Summary}
-\PkgPicture{Nef_S2-teaser-small.png}
-\PkgSummaryBegin
-\PkgAuthors{Peter Hachenberger and Lutz Kettner}
-\PkgDesc{This package offers the equivalent to 2D Nef Polygons in the plane. Here halfplanes correspond to half spheres delimited by great circles.}
-\PkgManuals{Chapter_2D_Boolean_Operations_on_Nef_Polygons_Embedded_on_the_Sphere,PkgNefS2}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.1}
-\PkgDependsOn{\ref PkgNef2Summary}
-\PkgBib{cgal:hk-bonpes2}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{2D Boolean Operations on Nef Polygons Embedded on the Sphere,PkgNefS2Summary}
+\cgalPkgPicture{Nef_S2-teaser-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Peter Hachenberger and Lutz Kettner}
+\cgalPkgDesc{This package offers the equivalent to 2D Nef Polygons in the plane. Here halfplanes correspond to half spheres delimited by great circles.}
+\cgalPkgManuals{Chapter_2D_Boolean_Operations_on_Nef_Polygons_Embedded_on_the_Sphere,PkgNefS2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.1}
+\cgalPkgDependsOn{\ref PkgNef2Summary}
+\cgalPkgBib{cgal:hk-bonpes2}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 Nef polyhedra are defined as a subset of the d-dimensional space obtained by
 a finite number of set complement and set intersection operations on

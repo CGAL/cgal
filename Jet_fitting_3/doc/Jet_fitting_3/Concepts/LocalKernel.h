@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgJet_fitting_3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `LocalKernel` describes the set of requirements to be 
 fulfilled by any class used to instantiate the second template 
@@ -29,8 +29,8 @@ Only constructors (from 3 scalars and copy constructors) and access
 methods to coordinates `x()`, `y()`, `z()` are needed for the point and 
 vector types. 
 
-\hasModel `CGAL::Cartesian<FieldNumberType>` 
-\hasModel `CGAL::Simple_cartesian<FieldNumberType>` 
+\cgalHasModel `CGAL::Cartesian<FieldNumberType>` 
+\cgalHasModel `CGAL::Simple_cartesian<FieldNumberType>` 
 
 \sa ::DataKernel
 \sa ::SvdTraits

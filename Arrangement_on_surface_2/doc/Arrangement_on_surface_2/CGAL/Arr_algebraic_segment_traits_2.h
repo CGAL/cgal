@@ -22,7 +22,7 @@ the types `leda::integer` and `CORE::BigInt` are supported as well
 as any instance of `CGAL::Sqrt_extension` that is instantiated with 
 one of the integral types above. 
 
-\models ::ArrangementTraits_2 
+\cgalModels ::ArrangementTraits_2 
 
 
 */

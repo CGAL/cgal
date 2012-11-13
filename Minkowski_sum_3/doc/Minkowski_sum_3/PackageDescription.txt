@@ -3,20 +3,20 @@
 /*!
 \addtogroup PkgMinkowskiSum3
 \todo check generated documentation
-\PkgDescriptionBegin{3D Minkowski Sum of Polyhedra,PkgMinkowskiSum3Summary}
-\PkgPicture{Minkowski_sum_3/fig/Minkowski_sum_3_teaser.png}
-\PkgSummaryBegin
-\PkgAuthor{Peter Hachenberger}
-\PkgDesc{This package provides a function, which computes the Minkowski sum of two point sets in \f$ \mathbb{R}^3\f$. These point sets may consist of isolated vertices, isolated edges, surfaces with convex facets without holes, and open and closed solids. Thus, it is possible to compute the configuration space of translational robots (even in tight passage scenarios) as well as several graphics operations, like for instance the glide operation, which computes the point set swept by a polyhedron that moves along a polygonal line.}
-\PkgManuals{Chapter_3D_Minkowski_Sum_of_Polyhedra,PkgMinkowskiSum3}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.5}
-\PkgDependsOn{\ref \ref PkgNef3Summary\, \ref PkgConvexDecomposition3Summary}
-\PkgBib{cgal:h-msp3}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{3D Minkowski Sum of Polyhedra,PkgMinkowskiSum3Summary}
+\cgalPkgPicture{Minkowski_sum_3/fig/Minkowski_sum_3_teaser.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Peter Hachenberger}
+\cgalPkgDesc{This package provides a function, which computes the Minkowski sum of two point sets in \f$ \mathbb{R}^3\f$. These point sets may consist of isolated vertices, isolated edges, surfaces with convex facets without holes, and open and closed solids. Thus, it is possible to compute the configuration space of translational robots (even in tight passage scenarios) as well as several graphics operations, like for instance the glide operation, which computes the point set swept by a polyhedron that moves along a polygonal line.}
+\cgalPkgManuals{Chapter_3D_Minkowski_Sum_of_Polyhedra,PkgMinkowskiSum3}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.5}
+\cgalPkgDependsOn{\ref \ref PkgNef3Summary\, \ref PkgConvexDecomposition3Summary}
+\cgalPkgBib{cgal:h-msp3}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

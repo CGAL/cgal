@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgMatrixSearchConcepts
-\cgalconcept
+\cgalConcept
 
 
 The concept `MonotoneMatrixSearchTraits` is a refinement of 
@@ -21,7 +21,7 @@ add most of the functionality described above to arbitrary
 matrix classes. 
 </UL> 
 
-\hasModel `CGAL::Dynamic_matrix<M>`
+\cgalHasModel `CGAL::Dynamic_matrix<M>`
 
 \sa `CGAL::monotone_matrix_search`
 

@@ -47,7 +47,7 @@ namespace CGAL {
 /// describes the border of a topological disc. This border may be an actual
 /// border of the mesh or a virtual border.
 ///
-/// \models `ParameterizationMesh_3`
+/// \cgalModels `ParameterizationMesh_3`
 ///
 ///
 /// \tparam ParameterizationPatchableMesh_3 3D surface mesh.

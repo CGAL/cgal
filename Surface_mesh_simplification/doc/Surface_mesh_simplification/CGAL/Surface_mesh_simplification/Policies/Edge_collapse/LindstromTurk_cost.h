@@ -10,7 +10,7 @@ It computes the collapse cost following the Lindstrom-Turk strategy
 
 \tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
-\models ::GetCost 
+\cgalModels ::GetCost 
 
 \sa `CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>` 
 

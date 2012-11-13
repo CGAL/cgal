@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsBi
-\cgalconcept
+\cgalConcept
 
 Computes the first coordinate of an 
 `AlgebraicKernel_d_2::AlgebraicReal_2`. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa `AlgebraicKernel_d_2::ComputeY_2`
 

@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgHDSConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `HalfedgeDSItems` wraps the three item types - vertex, 
 halfedge, and face - for a halfedge data structure. A `HalfedgeDSItems` 
@@ -16,9 +16,9 @@ and `Face` respectively. The requirements on these
 types are described on the manual pages of the concepts `HalfedgeDSVertex`, 
 `HalfedgeDSHalfedge`, and `HalfedgeDSFace` respectively. 
 
-\hasModel CGAL::HalfedgeDS_min_items 
-\hasModel CGAL::HalfedgeDS_items_2 
-\hasModel CGAL::Polyhedron_items_3 
+\cgalHasModel CGAL::HalfedgeDS_min_items 
+\cgalHasModel CGAL::HalfedgeDS_items_2 
+\cgalHasModel CGAL::Polyhedron_items_3 
 
 \sa `HalfedgeDS<Traits,Items,Alloc>` 
 \sa `HalfedgeDSVertex` 

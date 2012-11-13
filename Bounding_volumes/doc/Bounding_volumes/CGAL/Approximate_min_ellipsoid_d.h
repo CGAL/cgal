@@ -29,7 +29,7 @@ enclosing ellipsoid of \f$ P\f$.
 Given this notation, an object of class `Approximate_min_ellipsoid_d` represents an 
 \f$ (1+\epsilon)\f$-approximation to \f$ \mel(P)\f$ for a given finite and 
 full-dimensional multiset of points \f$ P\subset\E^d\f$ and a real constant 
-\f$ \epsilon>0\f$.\footnote{A <I>multiset</I> is a set where elements may have multiplicity greater than \f$ 1\f$.} When an 
+\f$ \epsilon>0\f$.\cgalFootnote{A <I>multiset</I> is a set where elements may have multiplicity greater than \f$ 1\f$.} When an 
 `Approximate_min_ellipsoid_d<Traits>` object is constructed, an 
 iterator over the points \f$ P\f$ and the number \f$ \epsilon\f$ have to be 
 specified; the number \f$ \epsilon\f$ defines the <I>desired 
@@ -130,12 +130,12 @@ points and a \f$ 1.01\f$-approximation of \f$ \mel(P)\f$ as an EPS-file, which
 you can view using <TT>gv</TT>, for instance. (In both examples you can 
 change the variables `n` and `d` to experiment with the code.) 
 
-\cgalexample{Approximate_min_ellipsoid_d/ellipsoid.cpp} 
+\cgalExample{Approximate_min_ellipsoid_d/ellipsoid.cpp} 
 
 The second program outputs the approximation in a format suitable 
 for display in Maplesoft's Maple. 
 
-\cgalexample{Approximate_min_ellipsoid_d/ellipsoid_for_maple.cpp} 
+\cgalExample{Approximate_min_ellipsoid_d/ellipsoid_for_maple.cpp} 
 
 */
 template< typename Traits >
@@ -213,7 +213,7 @@ than `eps` in general). In any case, the number
 \f$ 1+\epsilon\f$) can be queried by calling the routine 
 `achieved_epsilon()` discussed below. 
 
-\requires `Iterator` must be a model for concept `InputIterator` with value type `Point`. 
+\cgalRequires `Iterator` must be a model for concept `InputIterator` with value type `Point`. 
 
 \pre The dimension \f$ d\f$ of the input points must be at least \f$ 2\f$, and \f$ \epsilon>0\f$. 
 */ 

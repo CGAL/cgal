@@ -6,7 +6,7 @@ namespace CGAL {
 
 \authors Laurent Rineau and Mariette Yvinec
 
-\autotoc
+\cgalAutoToc
 
 \image html segmented_head.png
 
@@ -189,13 +189,13 @@ Given this surface type, the surface mesh generator will use
 an automatically generated traits class.
 
 The resulting mesh is shown in
-\cgal_figure_ref{figureSurface_mesherspheresurface}.
+\cgalFigureRef{figureSurface_mesherspheresurface}.
 
-\cgal_figure_begin{figureSurface_mesherspheresurface,sphere-surface.png}
+\cgalFigureBegin{figureSurface_mesherspheresurface,sphere-surface.png}
 Surface mesh of a sphere
-\cgal_figure_end
+\cgalFigureEnd
 
-\cgalexample{Surface_mesher/mesh_an_implicit_function.cpp}
+\cgalExample{Surface_mesher/mesh_an_implicit_function.cpp}
 
 \subsection Surface_mesherMeshingIsosurfacesDefinedas Meshing Isosurfaces Defined as Gray Levels in 3D Images
 
@@ -221,14 +221,14 @@ Also note that the center of the bounding sphere is required to be
 internal a point where the function has a negative value.
 
 The chosen iso-value of this 3D image corresponds to a head skull. The
-resulting mesh is shown in \cgal_figure_ref{figureSurface_mesherskull}.
+resulting mesh is shown in \cgalFigureRef{figureSurface_mesherskull}.
 
 
-\cgal_figure_begin{figureSurface_mesherskull,skull-surface.png}
+\cgalFigureBegin{figureSurface_mesherskull,skull-surface.png}
 Surface mesh of an iso-contour extracted from a gray level 3D image
-\cgal_figure_end
+\cgalFigureEnd
 
-\cgalexample{Surface_mesher/mesh_a_3d_gray_image.cpp}
+\cgalExample{Surface_mesher/mesh_a_3d_gray_image.cpp}
 
 \section SurfaceMesher_section_criteria Meshing Criteria, Guarantees and Variations 
 

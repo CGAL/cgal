@@ -41,7 +41,7 @@ The following program displays a random convex 500-gon where the
 points are drawn uniformly from the unit square centered at the 
 origin. 
 
-\cgalexample{Generator/random_convex_set.cpp} 
+\cgalExample{Generator/random_convex_set.cpp} 
 
 */
 template < class OutputIterator, class PointGenerator, class Traits > 

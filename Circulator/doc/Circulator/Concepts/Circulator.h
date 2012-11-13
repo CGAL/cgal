@@ -24,7 +24,7 @@ we recommend the use of 0 instead of `NULL`.
 ## Circulators ## {#circulatorConceptsCirculators}
 
 Similar to \stl iterators, we distinguish between forward,
-bidirectional, and random access circulators\footnote{Input
+bidirectional, and random access circulators\cgalFootnote{Input
 circulators are a contradiction, since any circulator is supposed to
 return once to itself. Output circulators are not supported since they
 would be indistinguishable from output iterators.}. Most requirements
@@ -35,7 +35,7 @@ for the iterator requirements.
 <B>Past-the-end value:</B> There is no past-the-end value for circulators. 
 
 <B>Singular values:</B> There are no singular values for
-circulators\footnote{Since circulators must be implemented as classes
+circulators\cgalFootnote{Since circulators must be implemented as classes
 anyway, there is no need to allow singular values for them. An
 un-initalized circulator does not have a singular value, but is
 supposed to refer to an empty sequence.}
@@ -185,7 +185,7 @@ equivalence classes modulus the length of the sequence. With this in
 mind, the additional requirements for random access iterators hold
 also for random access circulators. The only exception is that the
 random access iterator is required to provide a total order on the
-sequence, which a circulator cannot provide\footnote{One might define
+sequence, which a circulator cannot provide\cgalFootnote{One might define
 an order by splitting the circle at a fixed point, e.g. the start
 circulator provided from the data structure. This is what the adaptor
 to iterators will do. Nonetheless, we do not require this for

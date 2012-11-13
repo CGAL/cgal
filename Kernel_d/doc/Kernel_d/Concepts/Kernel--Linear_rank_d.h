@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 A model for this must provide: 
 
@@ -18,7 +18,7 @@ computes
 the linear rank of the vectors in `A = tuple [first,last)`. 
 \pre \f$ A\f$ contains vectors of the same dimension \f$ d\f$. 
 
-\requires The value type of `ForwardIterator` is `Kernel_d::Vector_d`. 
+\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Vector_d`. 
 */ 
 template <class ForwardIterator> int 
 operator()(ForwardIterator first, ForwardIterator last); 

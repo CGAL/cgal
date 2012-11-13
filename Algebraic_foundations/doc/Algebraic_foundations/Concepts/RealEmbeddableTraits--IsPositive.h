@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableUnaryFunction`, returns true in case the argument is positive. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa ::RealEmbeddableTraits 
 

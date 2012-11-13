@@ -1,15 +1,15 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableUnaryFunction` returns a const iterator range over the 
 coefficients of the given polynomial, with respect to the outermost variable, \f$ x_{d-1}\f$. 
 The range starts with the coefficient for \f$ x_{d-1}^0\f$. 
 
-\refines `AdaptableUnaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa \ref ::Polynomial_d 
 \sa \ref ::PolynomialTraits_d 

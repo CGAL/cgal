@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
-\cgalconcept
+\cgalConcept
 
 This concept defines the minimal set of geometric predicates needed to 
 perform the Boolean-set operations. It refines the directional \f$ x\f$-monotone 
@@ -11,11 +11,11 @@ a type that represents a general polygon and another one that represents
 general polygon with holes. It also requires operations that operate on these 
 types. 
 
-\refines `ArrangementDirectionalXMonotoneTraits_2` 
+\cgalRefines `ArrangementDirectionalXMonotoneTraits_2` 
 
-\hasModel `CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>`
-\hasModel `CGAL::Gps_circle_segment_traits_2<Kernel>`
-\hasModel `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>` 
+\cgalHasModel `CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>`
+\cgalHasModel `CGAL::Gps_circle_segment_traits_2<Kernel>`
+\cgalHasModel `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>` 
 
 \sa `ArrangementDirectionalXMonotoneTraits_2` 
 

@@ -39,7 +39,7 @@ namespace CGAL {
 /// Property map that converts a `T*` pointer (or in general an iterator
 /// over `T` elements) to the `T` object.
 ///
-/// \models `LvaluePropertyMap`
+/// \cgalModels `LvaluePropertyMap`
 template <typename T>
 struct Dereference_property_map
   : public boost::put_get_helper<T&, Dereference_property_map<T> >
@@ -73,7 +73,7 @@ make_dereference_property_map(Iter)
 /// \ingroup PkgProperty_map
 /// Property map that accesses the first item of a `std::pair`. 
 /// \tparam Pair Instance of `std::pair`. 
-/// \models `LvaluePropertyMap`
+/// \cgalModels `LvaluePropertyMap`
 ///
 /// \sa `CGAL::Second_of_pair_property_map<Pair>`
 template <typename Pair>
@@ -110,7 +110,7 @@ make_first_of_pair_property_map(Iter)
 /// 
 /// \tparam Pair Instance of `std::pair`. 
 /// 
-/// \models `LvaluePropertyMap`
+/// \cgalModels `LvaluePropertyMap`
 /// 
 /// \sa `CGAL::First_of_pair_property_map<Pair>`
 template <typename Pair>
@@ -152,7 +152,7 @@ make_second_of_pair_property_map(Iter)
 /// \tparam N Index of the item to access.
 /// \tparam Tuple Instance of `boost::tuple`.
 /// 
-/// \models `LvaluePropertyMap`
+/// \cgalModels `LvaluePropertyMap`
 template <int N, typename Tuple>
 struct Nth_of_tuple_property_map
   : public boost::put_get_helper<typename boost::tuples::element<N,Tuple>::type&,

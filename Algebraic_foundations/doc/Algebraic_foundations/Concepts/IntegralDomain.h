@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 `IntegralDomain` refines `IntegralDomainWithoutDivision` by 
 providing an integral division. 
@@ -16,7 +16,7 @@ Moreover, `CGAL::Algebraic_structure_traits< IntegralDomain >` is a model of
 - `CGAL::Algebraic_structure_traits< IntegralDomain >::Integral_division`  which is a model of `AlgebraicStructureTraits::IntegralDivision`
 - `CGAL::Algebraic_structure_traits< IntegralDomain >::Divides`  which is a model of `AlgebraicStructureTraits::Divides`
 
-\refines `IntegralDomainWithoutDivision` 
+\cgalRefines `IntegralDomainWithoutDivision` 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 

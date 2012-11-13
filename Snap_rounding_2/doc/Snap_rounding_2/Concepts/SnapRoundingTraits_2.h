@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSnapRounding2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `SnapRoundingTraits_2` lists the set of requirements that must be fulfilled by 
 an instance of the `Traits` template-parameter of 
@@ -10,13 +10,13 @@ This concept provides the types of the geometric primitives used in
 this class and some function object types for the required 
 predicates on those primitives. 
 
-\refines `DefaultConstructible`
-\refines `Assignable`
-\refines `CopyConstructible`
-\refines `SweepLineTraits_2`
-\refines An instance of this concept is used as the traits class for the `CGAL::Sweep_line_2::get_intersection_points()` operation. The requirements listed below are induced by components of the `CGAL::snap_rounding_2()` function other than the call to `Sweep_line_2::get_intersection_points()`. Naturally, some of them may already be listed in `SweepLineTraits_2`. 
+\cgalRefines `DefaultConstructible`
+\cgalRefines `Assignable`
+\cgalRefines `CopyConstructible`
+\cgalRefines `SweepLineTraits_2`
+\cgalRefines An instance of this concept is used as the traits class for the `CGAL::Sweep_line_2::get_intersection_points()` operation. The requirements listed below are induced by components of the `CGAL::snap_rounding_2()` function other than the call to `Sweep_line_2::get_intersection_points()`. Naturally, some of them may already be listed in `SweepLineTraits_2`. 
 
-\hasModel `CGAL::Snap_rounding_traits_2<Kernel>` 
+\cgalHasModel `CGAL::Snap_rounding_traits_2<Kernel>` 
 
 \sa `CGAL::Snap_rounding_2<Kernel>` 
 

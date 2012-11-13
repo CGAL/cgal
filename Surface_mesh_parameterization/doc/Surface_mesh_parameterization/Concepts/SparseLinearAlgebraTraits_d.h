@@ -1,15 +1,15 @@
 
 /*!
 \ingroup PkgSurfaceParameterizationConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `SparseLinearAlgebraTraits_d` is used to solve sparse linear systems <I>A\f$ \times \f$ X = B</I>. 
 
-\refines `LinearAlgebraTraits_d` 
+\cgalRefines `LinearAlgebraTraits_d` 
 
-\hasModel `CGAL::Eigen_solver_traits<T>`
-\hasModel `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package 
-\hasModel `OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package 
+\cgalHasModel `CGAL::Eigen_solver_traits<T>`
+\cgalHasModel `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package 
+\cgalHasModel `OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package 
 
 \sa `SparseLinearAlgebraTraits_d::Matrix`
 \sa `SparseLinearAlgebraTraits_d::Vector`
@@ -68,14 +68,14 @@ bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);
 
 /*!
 \ingroup PkgSurfaceParameterizationConcepts
-\cgalconcept
+\cgalConcept
 
 `SparseLinearAlgebraTraits_d::Vector` is a concept of a vector that can be multiplied by a sparse matrix. 
 
-\refines `LinearAlgebraTraits_d::Vector` 
+\cgalRefines `LinearAlgebraTraits_d::Vector` 
 
-\hasModel `CGAL::Eigen_vector<T>`
-\hasModel `OpenNL::FullVector<T>` in `OpenNL` package 
+\cgalHasModel `CGAL::Eigen_vector<T>`
+\cgalHasModel `OpenNL::FullVector<T>` in `OpenNL` package 
 
 \sa `SparseLinearAlgebraTraits_d`
 \sa `SparseLinearAlgebraTraits_d::Matrix`
@@ -143,15 +143,15 @@ NT& operator[](int row);
 
 /*!
 \ingroup PkgSurfaceParameterizationConcepts
-\cgalconcept
+\cgalConcept
 
 `SparseLinearAlgebraTraits_d::Matrix` is a concept of a sparse matrix class. 
 
-\refines `LinearAlgebraTraits_d::Matrix` 
+\cgalRefines `LinearAlgebraTraits_d::Matrix` 
 
-\hasModel `CGAL::Eigen_sparse_matrix<T>`
-\hasModel `CGAL::Eigen_sparse_symmetric_matrix<T>`
-\hasModel `OpenNL::SparseMatrix<T>` in `OpenNL` package 
+\cgalHasModel `CGAL::Eigen_sparse_matrix<T>`
+\cgalHasModel `CGAL::Eigen_sparse_symmetric_matrix<T>`
+\cgalHasModel `OpenNL::SparseMatrix<T>` in `OpenNL` package 
 
 \sa `SparseLinearAlgebraTraits_d`
 \sa `SparseLinearAlgebraTraits_d::Vector`

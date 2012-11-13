@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsUni
-\cgalconcept
+\cgalConcept
 
 Determines whether a given pair of univariate polynomials \f$ p_1, p_2\f$ is coprime, 
 namely if \f$ \deg({\rm gcd}(p_1 ,p_2)) = 0\f$. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicKernel_d_1::MakeCoprime_1`
 

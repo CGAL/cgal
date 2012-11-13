@@ -11,8 +11,8 @@ for the user to call this directly unless the user wants created their
 own simulation traits as it is included as part of the 
 `Kinetic::Regular_triangulation_exact_simulation_traits`. 
 
-\models ::Kinetic::RegularTriangulationTraits_3
-\models ::Kinetic::InstantaneousKernel 
+\cgalModels ::Kinetic::RegularTriangulationTraits_3
+\cgalModels ::Kinetic::InstantaneousKernel 
 
 \sa `Kinetic::Regular_triangulation_3<Traits, Visitor, Triangulation>`
 

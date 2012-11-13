@@ -27,7 +27,7 @@ containing as elements all sums \f$ a_i + a_j,\: i,\,j \in
 we can apply `sorted_matrix_search()` to compute the upper bound 
 for the maximal entry of \f$ a\f$ in \f$ M\f$. 
 
-\cgalexample{Matrix_search/sorted_matrix_search.cpp} 
+\cgalExample{Matrix_search/sorted_matrix_search.cpp} 
 
 */ 
 } /* namespace CGAL */

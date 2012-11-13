@@ -1,12 +1,12 @@
 /*!
 \ingroup PkgConvexHullDConcepts
-\cgalconcept
+\cgalConcept
 
 Requirements of the second traits class to be used with the 
 class `CGAL::Delaunay_d`. 
 
-\hasModel `CGAL::Cartesian_d<FT,LA>` 
-\hasModel `CGAL::Homogeneous_d<RT,LA>` 
+\cgalHasModel `CGAL::Cartesian_d<FT,LA>` 
+\cgalHasModel `CGAL::Homogeneous_d<RT,LA>` 
 
 */
 class DelaunayLiftedTraits_d {

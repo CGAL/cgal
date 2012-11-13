@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgConvexHull2Concepts
-\cgalconcept
+\cgalConcept
 
 All convex hull and extreme point algorithms provided in \cgal are 
 parameterized with a traits class `Traits`, which defines the 
@@ -9,14 +9,14 @@ primitives (objects and predicates) that the convex hull algorithms use.
 functions. The specific subset of these primitives required by each function 
 is specified with each function. 
 
-\hasModel `CGAL::Convex_hull_constructive_traits_2<R>`
-\hasModel `CGAL::Convex_hull_traits_2<R>`
-\hasModel `CGAL::Projection_traits_xy_3<K>`
-\hasModel `CGAL::Projection_traits_yz_3 <K>`
-\hasModel `CGAL::Projection_traits_xz_3<K>`
-\hasModel `CGAL::Convex_hull_projective_xy_traits_2<Point_3>`
-\hasModel `CGAL::Convex_hull_projective_xz_traits_2<Point_3>`
-\hasModel `CGAL::Convex_hull_projective_yz_traits_2<Point_3>`
+\cgalHasModel `CGAL::Convex_hull_constructive_traits_2<R>`
+\cgalHasModel `CGAL::Convex_hull_traits_2<R>`
+\cgalHasModel `CGAL::Projection_traits_xy_3<K>`
+\cgalHasModel `CGAL::Projection_traits_yz_3 <K>`
+\cgalHasModel `CGAL::Projection_traits_xz_3<K>`
+\cgalHasModel `CGAL::Convex_hull_projective_xy_traits_2<Point_3>`
+\cgalHasModel `CGAL::Convex_hull_projective_xz_traits_2<Point_3>`
+\cgalHasModel `CGAL::Convex_hull_projective_yz_traits_2<Point_3>`
 
 \sa `IsStronglyConvexTraits_3` 
 

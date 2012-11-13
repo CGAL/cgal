@@ -143,8 +143,8 @@ The class `Random_points_in_disc_2` is an input iterator creating points uniform
 distributed in an open disc. The default `Creator` is 
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 
@@ -210,8 +210,8 @@ The class `Random_points_in_square_2` is an input iterator creating points unifo
 distributed in a half-open square. The default `Creator` is 
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 
@@ -281,8 +281,8 @@ The generated points are computed using floating point arithmetic,
 whatever the Kernel is, thus they are on the circle/sphere only up to 
 rounding errors. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 
@@ -351,8 +351,8 @@ The class `Random_points_on_segment_2` is an input iterator creating points unif
 distributed on a segment. The default `Creator` is 
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 
@@ -402,7 +402,7 @@ creates an input iterator `g` generating points of type `Point_2` uniformly
 distributed on the segment from \f$ p\f$ to \f$ q\f$ (excluding \f$ q\f$), 
 i.e.\ \f$ *g == (1-\lambda)\, p + \lambda q\f$ where \f$ 0 \le\lambda< 1\f$. 
 A single random number is needed from `rnd` for each point. 
-\requires The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$. 
+\cgalRequires The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$. 
 */ 
 Random_points_on_segment_2( const Point_2& p, const Point_2& q, 
 Random& rnd = default_random); 
@@ -420,8 +420,8 @@ The class `Random_points_on_square_2` is an input iterator creating points unifo
 distributed on the boundary of a square. The default `Creator` is 
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 
@@ -490,7 +490,7 @@ namespace CGAL {
 The class `Points_on_segment_2` is a generator for points on a segment whose 
 endpoints are specified upon construction. The points are equally spaced. 
 
-\models ::PointGenerator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 
@@ -545,7 +545,7 @@ segment defined by \f$ p\f$ and \f$ q\f$. Values of the index parameter \f$ i\f$
 than 0 indicate starting points for the sequence further from \f$ p\f$. 
 Point \f$ p\f$ has index value 0 and \f$ q\f$ has index value \f$ n-1\f$. 
 
-\requires The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$. 
+\cgalRequires The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$. 
 */ 
 Points_on_segment_2( const Point_2& p, const Point_2& q, 
 std::size_t n, std::size_t i = 0); 

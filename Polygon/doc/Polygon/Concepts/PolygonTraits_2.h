@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolygon2Concepts
-\cgalconcept
+\cgalConcept
 
 The `CGAL::Polygon_2` class and the functions that implement the
 functionality found in that class each are parameterized by a traits
@@ -12,10 +12,10 @@ The requirements of `PolygonTraits_2` are a subset of the kernel
 requirements.  We only list the types and methods which are required
 and refer to the description of the kernel concept for details.
 
-\hasModel The kernels supplied by \cgal are models of `PolygonTraits_2`. 
-\hasModel `CGAL::Projection_traits_xy_3<K>`
-\hasModel `CGAL::Projection_traits_yz_3<K>`
-\hasModel `CGAL::Projection_traits_xz_3<K>`
+\cgalHasModel The kernels supplied by \cgal are models of `PolygonTraits_2`. 
+\cgalHasModel `CGAL::Projection_traits_xy_3<K>`
+\cgalHasModel `CGAL::Projection_traits_yz_3<K>`
+\cgalHasModel `CGAL::Projection_traits_xz_3<K>`
 
 \sa `CGAL::Polygon_2<PolygonTraits_2, Container>`
 

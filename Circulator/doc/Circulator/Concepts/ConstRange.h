@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgHandlesAndCirculatorsConcepts
-\cgalconcept
+\cgalConcept
 
 A constant iterator range. Refer to the `Range` concept for more details. 
 
-\refines Boost's Range concept 
+\cgalRefines Boost's Range concept 
 
-\hasModel STL containers 
-\hasModel <A HREF="http://www.boost.org/libs/range/doc/html/range/reference/utilities/iterator_range.html">`boost::iterator_range`</A> 
+\cgalHasModel STL containers 
+\cgalHasModel <A HREF="http://www.boost.org/libs/range/doc/html/range/reference/utilities/iterator_range.html">`boost::iterator_range`</A> 
 
 \sa `Range` 
 

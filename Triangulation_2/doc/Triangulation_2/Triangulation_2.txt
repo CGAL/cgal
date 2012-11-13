@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 2D Triangulations
 \anchor Chapter_2D_Triangulations
 
-\autotoc
+\cgalAutoToc
 \author Mariette Yvinec
 
 \image html tr1dt1.png
@@ -167,9 +167,9 @@ the *infinite vertex* has no significant
 coordinates and that no geometric predicate can be applied on it
 nor on an infinite face.
 
-\cgal_figure_begin{Triangulation_2D_Fig_infinite_vertex,infinite.gif}
+\cgalFigureBegin{Triangulation_2D_Fig_infinite_vertex,infinite.gif}
 Infinite vertex and infinite faces
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Triangulation_2ARepresentationBasedonFaces A Representation Based on Faces and Vertices
 
@@ -193,7 +193,7 @@ The three vertices of a face are indexed with 0, 1 and 2
 in counterclockwise order. The neighbors of a face are also 
 indexed with 0,1,2 in such a way that the neighbor indexed by `i`
 is opposite to the vertex with the same index.
-See \cgal_figure_ref{Triangulation_2D_Fig_neighbors1}, 
+See \cgalFigureRef{Triangulation_2D_Fig_neighbors1}, 
 the functions `ccw(i)`
 and `cw(i)` shown on this figure
 compute respectively \f$ i+1\f$ and \f$ i-1\f$ modulo 3.
@@ -205,9 +205,9 @@ of a face `f` which is opposed to the vertex indexed `i`,
 can be represented as well as an edge of the `neighbor(i)` of 
 `f`.
 
-\cgal_figure_begin{Triangulation_2D_Fig_neighbors1,rep_bis.gif}
+\cgalFigureBegin{Triangulation_2D_Fig_neighbors1,rep_bis.gif}
 Vertices and neighbors.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Section_2D_Triangulations_Software_Design Software Design 
 
@@ -262,14 +262,14 @@ of a triangulation. See Section \ref Section_2D_Triangulations_Flexibility
 for more details on the way to make use of this flexibility.
 </UL>
 
-The \cgal_figure_ref{Triangulation_2D_Fig_three_levels} summarizes the design of the
+The \cgalFigureRef{Triangulation_2D_Fig_three_levels} summarizes the design of the
 triangulation package, showing the three layers
 (base classes, triangulation data structure and triangulation)
 forming this design.
 
-\cgal_figure_begin{Triangulation_2D_Fig_three_levels,threelevels.gif}
+\cgalFigureBegin{Triangulation_2D_Fig_three_levels,threelevels.gif}
 The triangulations software design.
-\cgal_figure_end
+\cgalFigureEnd
 
 The top triangulation level, responsible for the geometric 
 embedding of the triangulation comes in different flavors 
@@ -277,7 +277,7 @@ according to the different kind of triangulations:
 basic, Delaunay, regular, constrained or constrained Delaunay.
 Each kind of triangulations correspond to a different
 class. 
-\cgal_figure_ref{Triangulation_2D_Fig_derivation_tree summarizes} the derivation dependencies
+\cgalFigureRef{Triangulation_2D_Fig_derivation_tree summarizes} the derivation dependencies
 of \cgal 2D triangulations classes.
 Any 2D triangulation class is parametrized by
 a geometric traits and a triangulation data structure.
@@ -293,9 +293,9 @@ classes requires base classes implementing
 refinements 
 of the basic concepts.
 
-\cgal_figure_begin{\anchor Triangulation_2D_Fig_derivation_tree,derivation_tree.gif}
+\cgalFigureBegin{\anchor Triangulation_2D_Fig_derivation_tree,derivation_tree.gif}
 The derivation tree of 2D triangulations.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Section_2D_Triangulations_Basic Basic Triangulations 
 
@@ -370,11 +370,11 @@ The triangulation can be modified by several functions:
 insertion of a point, removal of a vertex, displacement of a vertex,
 flipping of an edge. The flipping of an edge
 is possible when the union of the two incident faces
-forms a convex quadrilateral (see \cgal_figure_ref{Triangulation_2D_fig_flip_bis}).
+forms a convex quadrilateral (see \cgalFigureRef{Triangulation_2D_fig_flip_bis}).
 
-\cgal_figure_begin{Triangulation_2D_fig_flip_bis,Flip.gif}
+\cgalFigureBegin{Triangulation_2D_fig_flip_bis,Flip.gif}
 Flip.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Triangulation_2Implementation Implementation
 
@@ -471,7 +471,7 @@ as geometric traits and the default triangulation data structure.
 The input points are read from a file 
 and inserted in the triangulation.
 Finally points on the convex hull are written to <TT>cout</TT>. 
-\cgalexample{Triangulation_2/triangulation_prog1.cpp}
+\cgalExample{Triangulation_2/triangulation_prog1.cpp}
 
 \section Section_2D_Triangulations_Delaunay Delaunay Triangulations 
 
@@ -591,7 +591,7 @@ of these points.
 The class `Projection_traits_xy_3<K>` is part of the 2D and 3D Linear Geometric Kernel,
 and replaces the class `Triangulation_euclidean_traits_xy_3<K>` which is deprecated.
 
-\cgalexample{Triangulation_2/terrain.cpp}
+\cgalExample{Triangulation_2/terrain.cpp}
 
 \subsection Subsection_2D_Triangulations_Voronoi Example: Voronoi Diagram 
 
@@ -599,18 +599,18 @@ The following code computes the edges of Voronoi diagram
 of a set of data points
 and counts the number of finite edges and the number of rays
 of this diagram
-\cgalexample{Triangulation_2/voronoi.cpp}
+\cgalExample{Triangulation_2/voronoi.cpp}
 
 \subsection Subsection_2D_Triangulations_Cropped_Voronoi Example: Print Voronoi Diagram Edges Restricted to a Rectangle 
 
 The following code computes the Delaunay triangulation of a set of points and prints the Voronoi edges 
 restricted to a given rectangle.
 
-\cgal_figure_begin{figurecropped_voronoi,cropped_voronoi.png}
+\cgalFigureBegin{figurecropped_voronoi,cropped_voronoi.png}
 Voronoi diagram (in red) of the black points restricted to the blue rectangle.
-\cgal_figure_end
+\cgalFigureEnd
 
-\cgalexample{Triangulation_2/print_cropped_voronoi.cpp}
+\cgalExample{Triangulation_2/print_cropped_voronoi.cpp}
 
 \section Section_2D_Triangulations_Regular Regular Triangulations 
 
@@ -786,7 +786,7 @@ The following code creates a regular triangulation
 of a set of weighted points and output the number
 of vertices and the number of hidden vertices.
 
-\cgalexample{Triangulation_2/regular.cpp}
+\cgalExample{Triangulation_2/regular.cpp}
 
 \section Section_2D_Triangulations_Constrained Constrained Triangulations 
 
@@ -894,9 +894,9 @@ derives from the class
 `Triangulation_face_base_2<Traits>`
 and adds three Boolean data members to store the status of its edges.
 
-\cgal_figure_begin{Triangulation_2D_Fig_constrained,poisson_del_poisson.png}
+\cgalFigureBegin{Triangulation_2D_Fig_constrained,poisson_del_poisson.png}
 Constrained and Constrained Delaunay triangulation: the constraining edges are the green edges, a constrained triangulation is shown on the left, the constrained Delaunay triangulation with two examples of circumcircles is shown on the right.
-\cgal_figure_end
+\cgalFigureEnd
 
 
 \section Section_2D_Triangulations_Constrained_Delaunay Constrained Delaunay Triangulations 
@@ -985,7 +985,7 @@ into a triangulation
 and counts the number of constrained edges of the
 resulting triangulation.
 
-\cgalexample{Triangulation_2/constrained.cpp}
+\cgalExample{Triangulation_2/constrained.cpp}
 
 \subsection Subsection_2D_Triangulations_Polygon_triangulation Example: Triangulating a Polygonal Domain 
 
@@ -993,11 +993,11 @@ The following code inserts two nested polygons into a constrained Delaunay trian
 are inside the domain delimited by these polygons. Note that the following code does not work if the 
 boundaries of the polygons intersect.
 
-\cgal_figure_begin{figuretri_domain,tri_domain.png}
+\cgalFigureBegin{figuretri_domain,tri_domain.png}
 Triangulation (in blue) of the domain delimited by the red polygons.
-\cgal_figure_end
+\cgalFigureEnd
 
-\cgalexample{Triangulation_2/polygon_triangulation.cpp}
+\cgalExample{Triangulation_2/polygon_triangulation.cpp}
 
 \section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations Plus 
 
@@ -1039,7 +1039,7 @@ into a triangulation
 and counts the number of constrained edges of the
 resulting triangulation.
 
-\cgalexample{Triangulation_2/constrained_plus.cpp}
+\cgalExample{Triangulation_2/constrained_plus.cpp}
 
 \section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy 
 
@@ -1109,12 +1109,12 @@ for the standard use of a triangulation hierarchy
 to enhance the efficiency
 of a Delaunay triangulation. The program outputs the number of vertices
 at the different levels of the hierarchy.
-\cgalexample{Triangulation_2/hierarchy.cpp}
+\cgalExample{Triangulation_2/hierarchy.cpp}
 
 The following program shows how to use
 a triangulation hierarchy in conjunction with a constrained 
 triangulation plus.
-\cgalexample{Triangulation_2/constrained_hierarchy_plus.cpp}
+\cgalExample{Triangulation_2/constrained_hierarchy_plus.cpp}
 
 \section Section_2D_Triangulations_Flexibility Flexibility 
 
@@ -1146,9 +1146,9 @@ by the triangulation data structure. Thus the vertex and base
 classes have to be themselves parameterized by the triangulation data
 structure, and there is a cyclic dependency on template parameter.
 
-\cgal_figure_begin{Triangulation_2D_Fig_three_levels_2,threelevels2.gif}
+\cgalFigureBegin{Triangulation_2D_Fig_three_levels_2,threelevels2.gif}
 The cyclic dependency in triangulations software design.
-\cgal_figure_end
+\cgalFigureEnd
 
 Previously, this cyclic dependency was avoided by 
 using only `void*` pointers in the interface of base classes.
@@ -1190,7 +1190,7 @@ handle additional information.
 The following examples shows how to add a 
 `Color` in the triangulation faces.
 
-\cgalexample{Triangulation_2/colored_face.cpp}
+\cgalExample{Triangulation_2/colored_face.cpp}
 
 \subsection Triangulation_2AddingHandles Adding Handles
 
@@ -1200,7 +1200,7 @@ or face class when he would like to have
 additional functionalities depending on types provided by the triangulation
 data structure.
 
-\cgalexample{Triangulation_2/adding_handles.cpp}
+\cgalExample{Triangulation_2/adding_handles.cpp}
 
 \subsection Triangulation_2SettingInformationWhileInserting Setting Information While Inserting a %Range of Points
 
@@ -1219,14 +1219,14 @@ of the corresponding point given in the range.
 
 Each point and its information are gathered into a pair. We provide
 the `insert` function of the triangulation with a range of such pairs.
-\cgalexample{Triangulation_2/info_insert_with_pair_iterator_2.cpp}
+\cgalExample{Triangulation_2/info_insert_with_pair_iterator_2.cpp}
 
 \subsection Triangulation_2UsingtheBoostZipIterator Using the Boost Zip Iterator
 
 Information and points are in separate containers. We use
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
-\cgalexample{Triangulation_2/info_insert_with_zip_iterator_2.cpp}
+\cgalExample{Triangulation_2/info_insert_with_zip_iterator_2.cpp}
 
 \subsection Triangulation_2UsingtheBoostTransformIterator Using the Boost Transform Iterator
 
@@ -1234,7 +1234,7 @@ We define a functor `Auto_count` used together with
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
 in the range. Note that this is correct because the iterator
 is dereferenced only once per point during the insertion.
-\cgalexample{Triangulation_2/info_insert_with_transform_iterator_2.cpp}
+\cgalExample{Triangulation_2/info_insert_with_transform_iterator_2.cpp}
 
 \section Triangulation_2Design Design and Implementation History
 

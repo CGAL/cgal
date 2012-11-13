@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 2D Placement of Streamlines
 \anchor Chapter_2D_Placement_of_Streamlines
 \anchor chapterStream_lines_2
-\autotoc
+\cgalAutoToc
 
 \author Abdelkrim Mebarki
 
@@ -20,13 +20,13 @@ implementation of the package, and
 Section \ref Section_2D_Streamlines_Example details two example
 placements.
 
-\cgal_figure_begin{illustration,1.gif}
+\cgalFigureBegin{illustration,1.gif}
 The core idea of the algorithm is to integrate the streamlines from
 the center of the biggest empty cavities in the domain (left). A
 Delaunay triangulation of all the sample points is used to model the
 streamlines and the spaces within the domain (middle). A final result
 is shown (right).
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Section_2D_Streamlines_Definitions Definitions 
 
@@ -73,13 +73,13 @@ Second Order Runge-Kutta algorithm are implemented.
 
 \subsection Stream_lines_2EulerIntegrator Euler Integrator
 
-\cgal_figure_begin{euler_fig,euler_integrator.gif}
+\cgalFigureBegin{euler_fig,euler_integrator.gif}
 Euler integrator.
-\cgal_figure_end
+\cgalFigureEnd
 
 This algorithm approximates the point computation by this formula
 \f[ p_{k+1} = p_k + hv(p_k) \f] where `h` specifies the
-*integration step* (see \cgal_figure_ref{euler_fig}). The integration
+*integration step* (see \cgalFigureRef{euler_fig}). The integration
 can be done forward (resp. backward) by specifying a positive
 (resp. negative) integration step `h`. The streamline is then
 constructed by successive integration from a seed point both forward
@@ -87,9 +87,9 @@ and backward.
 
 \subsection Stream_lines_2SecondOrderRungeKuttaIntegrator Second Order Runge-Kutta Integrator
 
-\cgal_figure_begin{runge_kutta_fig,runge_kutta_integrator.gif}
+\cgalFigureBegin{runge_kutta_fig,runge_kutta_integrator.gif}
 Runge-Kutta second order integrator (The empty circle represents the intermediate point, and the gray disk represents the Euler integrated point).
-\cgal_figure_end
+\cgalFigureEnd
 
 This method introduces an intermediate point \f$ p'_k\f$ between \f$ p_k\f$ and \f$ p_{k+1}\f$ to increase the
 precision of the computation (see \cgal_figure_{runge_kutta_fig}), where:
@@ -130,7 +130,7 @@ farthest point from all previously placed streamlines.
 
 The streamlines are approximated by polylines, whose points are
 inserted to a 2D Delaunay
-triangulation (see \cgal_figure_ref{illustration}). The empty circumscribed
+triangulation (see \cgalFigureRef{illustration}). The empty circumscribed
 circles of the Delaunay triangles provide us with a good approximation
 of the cavities in the domain.
 
@@ -164,10 +164,10 @@ Library \cite cgal:sgcsi-stlpg-97.
 
 The first example illustrates the generation of a 2D streamline
 placement from a vector field defined on a regular grid.
-\cgalexample{Stream_lines_2/stl_regular_field.cpp}
+\cgalExample{Stream_lines_2/stl_regular_field.cpp}
 The second example depicts the generation of a streamline placement from a vector
 field defined on a triangular grid.
-\cgalexample{Stream_lines_2/stl_triangular_field.cpp}
+\cgalExample{Stream_lines_2/stl_triangular_field.cpp}
 
 */ 
 } /* namespace CGAL */

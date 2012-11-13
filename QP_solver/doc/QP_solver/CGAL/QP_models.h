@@ -54,8 +54,8 @@ namespace CGAL {
   some container; an instance of the class `Const_oneset_iterator<T>`, 
   constructed from the value in question, does the job more efficiently. 
 
-  \models ::QuadraticProgram 
-  \models ::LinearProgram 
+  \cgalModels ::QuadraticProgram 
+  \cgalModels ::LinearProgram 
 
   Example 
   -------------- 
@@ -325,10 +325,10 @@ make_quadratic_program_from_iterators (
   some container; an instance of the class `Const_oneset_iterator<T>`, 
   constructed from the value in question, does the job more efficiently. 
 
-  \models ::QuadraticProgram 
-  \models ::LinearProgram 
-  \models ::NonnegativeQuadraticProgram 
-  \models ::NonnegativeLinearProgram 
+  \cgalModels ::QuadraticProgram 
+  \cgalModels ::LinearProgram 
+  \cgalModels ::NonnegativeQuadraticProgram 
+  \cgalModels ::NonnegativeLinearProgram 
 
   Example 
   -------------- 
@@ -419,8 +419,8 @@ public:
   some container; an instance of the class `Const_oneset_iterator<T>`, 
   constructed from the value in question, does the job more efficiently. 
 
-  \models ::QuadraticProgram 
-  \models ::NonnegativeQuadraticProgram 
+  \cgalModels ::QuadraticProgram 
+  \cgalModels ::NonnegativeQuadraticProgram 
 
   Example 
   -------------- 
@@ -520,7 +520,7 @@ public:
   some container; an instance of the class `Const_oneset_iterator<T>`, 
   constructed from the value in question, does the job more efficiently. 
 
-  \models ::QuadraticProgram 
+  \cgalModels ::QuadraticProgram 
 
   Example 
   -------------- 
@@ -625,10 +625,10 @@ public:
   into type `NT`. The constructed program can be further manipulated 
   by using the set-methods below. 
 
-  \models ::QuadraticProgram 
-  \models ::LinearProgram 
-  \models ::NonnegativeQuadraticProgram 
-  \models ::NonnegativeLinearProgram 
+  \cgalModels ::QuadraticProgram 
+  \cgalModels ::LinearProgram 
+  \cgalModels ::NonnegativeQuadraticProgram 
+  \cgalModels ::NonnegativeLinearProgram 
 
   Example 
   -------------- 
@@ -849,10 +849,10 @@ namespace CGAL {
   If you want to read a quadratic program in `MPSFormat` from a stream, 
   please use the model `Quadratic_program_from_mps<NT>`. 
 
-  \models ::QuadraticProgram 
-  \models ::LinearProgram 
-  \models ::NonnegativeQuadraticProgram 
-  \models ::NonnegativeLinearProgram 
+  \cgalModels ::QuadraticProgram 
+  \cgalModels ::LinearProgram 
+  \cgalModels ::NonnegativeQuadraticProgram 
+  \cgalModels ::NonnegativeLinearProgram 
 
   Example 
   -------------- 

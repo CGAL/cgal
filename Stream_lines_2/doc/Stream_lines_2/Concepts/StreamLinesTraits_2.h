@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPlacementOfStreamlines2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `StreamLinesTraits_2` describes the set of requirements for
 the template parameter of the class 
@@ -9,7 +9,7 @@ the template parameter of the class
 This concept provides the types handled by the 
 `CGAL::Stream_lines_2<VectorField_2, Integrator_2>` class. 
 
-\hasModel The kernels of \cgal are models for this traits class. 
+\cgalHasModel The kernels of \cgal are models for this traits class. 
 
 */
 class StreamLinesTraits_2 {

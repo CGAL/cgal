@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgJet_fitting_3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `DataKernel` describes the set of requirements to be 
 fulfilled by any class used to instantiate first template parameter of 
@@ -13,8 +13,8 @@ the class
 Only constructors (from 3 scalars and copy constructors) and access 
 methods to coordinates `x()`, `y()`, `z()` are needed. 
 
-\hasModel `CGAL::Cartesian<FieldNumberType>` 
-\hasModel `CGAL::Simple_cartesian<FieldNumberType>` 
+\cgalHasModel `CGAL::Cartesian<FieldNumberType>` 
+\cgalHasModel `CGAL::Simple_cartesian<FieldNumberType>` 
 
 \sa ::LocalKernel
 

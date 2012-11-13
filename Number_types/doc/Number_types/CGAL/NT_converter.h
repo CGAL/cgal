@@ -5,7 +5,7 @@ namespace CGAL {
 
 A number type converter usable as default, for CGAL::Cartesian_converter and CGAL::Homogeneous_converter.
 
-\models ::AdaptableFunctor 
+\cgalModels ::AdaptableFunctor 
 
 */
 template < class NT1, class NT2 >

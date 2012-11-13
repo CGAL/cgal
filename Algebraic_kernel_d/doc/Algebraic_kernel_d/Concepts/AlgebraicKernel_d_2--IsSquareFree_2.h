@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsBi
-\cgalconcept
+\cgalConcept
 
 Computes whether the given bivariate polynomial is square free. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa `AlgebraicKernel_d_2::MakeSquareFree_2`
 \sa `AlgebraicKernel_d_2::SquareFreeFactorize_2`

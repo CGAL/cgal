@@ -21,8 +21,8 @@ as first argument, and `NT2` as second. The `Comparator` parameter
 has a default value which is a functor calling `operator==` between 
 the two arguments. 
 
-\models `IntegralDomainWithoutDivision` (same as `NT1`) 
-\models ::RealEmbeddable 
+\cgalModels `IntegralDomainWithoutDivision` (same as `NT1`) 
+\cgalModels ::RealEmbeddable 
 
 ### Operations ###
 

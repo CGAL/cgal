@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 
 \sa `SphericalKernel::CompareZAtTheta_3`

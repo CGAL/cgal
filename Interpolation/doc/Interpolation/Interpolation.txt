@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 2D and Surface Function Interpolation
 \anchor Chapter_2D_and_Surface_Function_Interpolation
 \anchor chapinterpolation
-\autotoc
+\cgalAutoToc
 
 \authors Julia Fl&ouml;totto
 
@@ -45,9 +45,9 @@ associated to \f$ \mathcal{P}\f$ are defined from the Voronoi diagram of
 Voronoi cell of \f$ \mathbf{x}\f$ "steals" some parts from the existing
 cells.
 
-\cgal_figure_begin{fignn_coords,nn_coords.gif}
+\cgalFigureBegin{fignn_coords,nn_coords.gif}
 2D example: \f$ \mathbf{x}\f$ has five natural neighbors \f$ \mathbf{p_1},\ldots, \mathbf{p_5}\f$. The natural neighbor coordinate \f$ \lambda_3(\mathbf{x})\f$ is the ratio of the area of the pink polygon, \f$ \pi_3(\mathbf{x})\f$, over the area of the total highlighted zone. 
-\cgal_figure_end
+\cgalFigureEnd
 
 Let \f$ \pi(\mathbf{x})\f$ denote the volume of the potential Voronoi cell
 of \f$ \mathbf{x}\f$ and \f$ \pi_i(\mathbf{x})\f$ denote the volume of the
@@ -58,7 +58,7 @@ with respect to the data point \f$ \mathbf{p_i}\in \mathcal{P}\f$ is defined by
 \lambda_i(\mathbf{x}) =
 \frac{\pi_i(\mathbf{x})}{\pi(\mathbf{x})}. \f]
 A two-dimensional example
-is depicted in \cgal_figure_ref{fignn_coords}.
+is depicted in \cgalFigureRef{fignn_coords}.
 
 Various papers (\cite s-vidt-80, \cite f-sodt-90,
 \cite cgal:p-plcbd-93, \cite b-scaps-97, \cite hs-vbihc-00) show that
@@ -118,14 +118,14 @@ functions allow to avoid the re-computation.
 
 The signature of all coordinate computation functions is about the
 same.
-\cgalexample{Interpolation/nn_coordinates_2.cpp}
+\cgalExample{Interpolation/nn_coordinates_2.cpp}
 
 \subsection InterpolationExampleforRegularNeighborCoordinates Example for Regular Neighbor Coordinates
 
 For regular neighbor coordinates, it is sufficient to replace the name
 of the function and the type of triangulation passed as parameter. A
 special traits class is needed.
-\cgalexample{Interpolation/rn_coordinates_2.cpp}
+\cgalExample{Interpolation/rn_coordinates_2.cpp}
 For surface neighbor coordinates, the surface normal at the query
 point must be provided, see Section \ref secsurface.
 
@@ -229,7 +229,7 @@ provided.
 
 \subsection InterpolationExampleforSurfaceNeighborCoordinates Example for Surface Neighbor Coordinates
 
-\cgalexample{Interpolation/surface_neighbor_coordinates_3.cpp}
+\cgalExample{Interpolation/surface_neighbor_coordinates_3.cpp}
 
 \section secinterpolation Interpolation Methods 
 
@@ -336,11 +336,11 @@ type of natural neighbor coordinate (i.e. `natural_neighbor_coordinates_2()`, `r
 
 \subsection subsecinterpol_examples Example for Linear Interpolation 
 
-\cgalexample{Interpolation/linear_interpolation_2.cpp}
+\cgalExample{Interpolation/linear_interpolation_2.cpp}
 
 \subsection InterpolationExampleSibson Example for Sibson's C^1 Interpolation Scheme with Gradient Estimation
 
-\cgalexample{Interpolation/sibson_interpolation_2.cpp}
+\cgalExample{Interpolation/sibson_interpolation_2.cpp}
 
 An additional example in the distribution compares numerically the errors of the different 
 interpolation functions with respect to a known function. 

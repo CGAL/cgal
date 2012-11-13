@@ -12,9 +12,9 @@ It is unspecified which subset of the kernel is used into the output sequence an
 
 For any given input polygon, it in this traits class (and by extension in the builder class). This is to avoid restricting the choices in the implementation. 
 
-\models ::StraightSkeletonBuilderTraits_2 
-\models ::DefaultConstructible 
-\models ::CopyConstructible 
+\cgalModels ::StraightSkeletonBuilderTraits_2 
+\cgalModels ::DefaultConstructible 
+\cgalModels ::CopyConstructible 
 
 \sa `CGAL::Straight_skeleton_builder_2<Gt,Ssds>` 
 

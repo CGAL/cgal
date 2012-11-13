@@ -1,16 +1,16 @@
 
 /*!
 \ingroup PkgSegmentDelaunayGraph2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `SegmentDelaunayGraphSite_2` provides the 
 requirements for the sites of a segment Delaunay graph. 
 
-\refines `DefaultConstructible` 
-\refines `CopyConstructible` 
-\refines `Assignable` 
+\cgalRefines `DefaultConstructible` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `Assignable` 
 
-\hasModel `CGAL::Segment_Delaunay_graph_site_2<K>` 
+\cgalHasModel `CGAL::Segment_Delaunay_graph_site_2<K>` 
 
 \sa `SegmentDelaunayGraphTraits_2` 
 \sa `CGAL::Segment_Delaunay_graph_site_2<K>` 

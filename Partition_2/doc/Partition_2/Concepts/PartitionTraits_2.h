@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgPolygonPartitioning2Concepts
-\cgalconcept
+\cgalConcept
 
 The polygon partitioning functions are each parameterized by a traits class 
 that defines the primitives used in the algorithms. Many requirements are 
@@ -8,7 +8,7 @@ common
 to all traits classes. The concept `PartitionTraits_2` defines this common set of 
 requirements. 
 
-\hasModel `CGAL::Partition_traits_2<R>` 
+\cgalHasModel `CGAL::Partition_traits_2<R>` 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::greene_approx_convex_partition_2` 

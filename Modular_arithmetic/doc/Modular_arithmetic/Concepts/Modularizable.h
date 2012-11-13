@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgModularArithmeticConcepts
-\cgalconcept
+\cgalConcept
 
 An algebraic structure is called `Modularizable`, if there is a suitable mapping 
 into an algebraic structure which is based on the type `CGAL::Residue`. 
@@ -18,18 +18,18 @@ of denominator, are not `Modularizable`.
 This is due to the fact that the denominator may be zero modulo the prime, 
 which can not be represented. 
 
-\hasModel `int` 
-\hasModel `long` 
-\hasModel `CGAL::CORE::BigInt` 
-\hasModel `CGAL::Gmpz` 
-\hasModel `leda_integer` 
-\hasModel `mpz_class` 
+\cgalHasModel `int` 
+\cgalHasModel `long` 
+\cgalHasModel `CGAL::CORE::BigInt` 
+\cgalHasModel `CGAL::Gmpz` 
+\cgalHasModel `leda_integer` 
+\cgalHasModel `mpz_class` 
 
 The following types are `Modularizable` iff their template arguments are. 
 
-\hasModel `CGAL::Lazy_exact_nt<NT>` 
-\hasModel `CGAL::Sqrt_extension<NT,ROOT>` 
-\hasModel `CGAL::Polynomial<Coeff>` 
+\cgalHasModel `CGAL::Lazy_exact_nt<NT>` 
+\cgalHasModel `CGAL::Sqrt_extension<NT,ROOT>` 
+\cgalHasModel `CGAL::Polynomial<Coeff>` 
 
 \sa `CGAL::Residue` 
 \sa `CGAL::Modular_traits<T>` 

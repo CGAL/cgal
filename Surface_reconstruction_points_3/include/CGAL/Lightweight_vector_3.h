@@ -32,7 +32,7 @@ namespace CGAL {
 /// The purpose of this class is to save memory as the actual vector 
 /// is allocated only when needed.
 ///
-/// \models `Kernel::Vector_3`
+/// \cgalModels `Kernel::Vector_3`
 ///
 /// @tparam Gt   Geometric traits class.
 template<class Gt>

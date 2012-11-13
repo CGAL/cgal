@@ -4,21 +4,21 @@
 /*!
 \addtogroup PkgNef3
 \todo check generated documentation
-\PkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3Summary}
-\PkgPicture{Nef_3-teaser.png}
-\PkgSummaryBegin
-\PkgAuthors{Peter Hachenberger and Lutz Kettner}
-\PkgDesc{3D Nef polyhedra, are a boundary representation for cell-complexes bounded by halfspaces that supports Boolean operations and topological operations in full generality including unbounded cells, mixed dimensional cells (e.g., isolated vertices and antennas). Nef polyhedra distinguish between open and closed sets and can represent non-manifold geometry.}
-\PkgManuals{Chapter_3D_Boolean_Operations_on_Nef_Polyhedra,PkgNef3}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.1}
-\PkgDependsOn{\ref PkgNef2Summary\, \ref PkgNefS2Summary}
-\PkgBib{cgal:hk-bonp3}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgDemo{Operations on Polyhedra,polyhedron_3.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3Summary}
+\cgalPkgPicture{Nef_3-teaser.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Peter Hachenberger and Lutz Kettner}
+\cgalPkgDesc{3D Nef polyhedra, are a boundary representation for cell-complexes bounded by halfspaces that supports Boolean operations and topological operations in full generality including unbounded cells, mixed dimensional cells (e.g., isolated vertices and antennas). Nef polyhedra distinguish between open and closed sets and can represent non-manifold geometry.}
+\cgalPkgManuals{Chapter_3D_Boolean_Operations_on_Nef_Polyhedra,PkgNef3}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.1}
+\cgalPkgDependsOn{\ref PkgNef2Summary\, \ref PkgNefS2Summary}
+\cgalPkgBib{cgal:hk-bonp3}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 A Nef polyhedron is any point set generated from a finite number of
 open halfspaces by set complement and set intersection operations.  In

@@ -53,10 +53,10 @@ value: `EK = Simple_cartesian<Gmpq>`, otherwise its
 default value is 
 `EK = Simple_cartesian<Quotient<MP_Float> >`. 
 
-\models ::SegmentDelaunayGraphTraits_2 
-\models ::DefaultConstructible 
-\models ::CopyConstructible 
-\models ::Assignable 
+\cgalModels ::SegmentDelaunayGraphTraits_2 
+\cgalModels ::DefaultConstructible 
+\cgalModels ::CopyConstructible 
+\cgalModels ::Assignable 
 
 \sa `Kernel` 
 \sa `SegmentDelaunayGraphTraits_2` 
@@ -204,10 +204,10 @@ value: `EK = CGAL::Simple_cartesian<CGAL::Gmpq>`, otherwise its
 default value is 
 `EK = CGAL::Simple_cartesian<CGAL::MP_Float>`. 
 
-\models ::SegmentDelaunayGraphTraits_2 
-\models ::DefaultConstructible 
-\models ::CopyConstructible 
-\models ::Assignable 
+\cgalModels ::SegmentDelaunayGraphTraits_2 
+\cgalModels ::DefaultConstructible 
+\cgalModels ::CopyConstructible 
+\cgalModels ::Assignable 
 
 \sa `Kernel` 
 \sa `SegmentDelaunayGraphTraits_2` 

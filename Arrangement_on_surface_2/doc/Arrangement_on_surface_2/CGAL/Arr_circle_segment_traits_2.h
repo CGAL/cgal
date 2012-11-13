@@ -35,8 +35,8 @@ the `Are_mergeable_2` operation does not enforce the input curves
 to have the same direction as a precondition. Moreover, `Arr_circle_segment_traits_2` 
 supports the merging of curves of opposite directions. 
 
-\models ::ArrangementTraits_2 
-\models ::ArrangementDirectionalXMonotoneTraits_2 
+\cgalModels ::ArrangementTraits_2 
+\cgalModels ::ArrangementDirectionalXMonotoneTraits_2 
 
 
 */

@@ -18,7 +18,7 @@ geometric triangulation, there are additional geometric requirements
 to be fulfilled by the vertex base class, 
 and `Triangulation_ds_vertex_base_2` cannot be plugged in. 
 
-\models ::TriangulationDSVertexBase_2 
+\cgalModels ::TriangulationDSVertexBase_2 
 
 \sa `CGAL::Triangulation_vertex_base_2<Traits,Vb>` 
 \sa `CGAL::Triangulation_ds_face_base_2<Tds>` 

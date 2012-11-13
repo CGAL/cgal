@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsBi
-\cgalconcept
+\cgalConcept
 
 Computes the real zero-dimensional solutions of a bivariate polynomial system. 
 The multiplicity stored in the output iterator is the multiplicity in the system. 
 
-\refines `Assignable` 
-\refines `CopyConstructible` 
+\cgalRefines `Assignable` 
+\cgalRefines `CopyConstructible` 
 */
 class AlgebraicKernel_d_2::Solve_2 {
 public:

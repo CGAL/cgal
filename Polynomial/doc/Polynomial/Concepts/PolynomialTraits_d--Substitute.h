@@ -1,15 +1,15 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `Functor` substitutes all variables of a given multivariate 
 `PolynomialTraits_d::Polynomial_d` by the values given in the 
 iterator range, where begin refers the value for the innermost variable. 
 
-\refines Assignable
-\refines CopyConstructible
-\refines DefaultConstructible
+\cgalRefines Assignable
+\cgalRefines CopyConstructible
+\cgalRefines DefaultConstructible
 
 ### Types ###
 

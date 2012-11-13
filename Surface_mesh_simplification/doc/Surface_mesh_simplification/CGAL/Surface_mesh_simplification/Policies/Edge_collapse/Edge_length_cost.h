@@ -11,7 +11,7 @@ which computes the collapse cost as the squared length of the edge.
 \tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
 
-\models ::GetCost 
+\cgalModels ::GetCost 
 
 */
 template< typename ECM >

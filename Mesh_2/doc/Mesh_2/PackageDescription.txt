@@ -4,20 +4,20 @@
 /// \ingroup PkgMesh2
 /*!
 \addtogroup PkgMesh2
-\PkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2Summary}
-\PkgPicture{Mesh_2/fig/delaunaymesh-small.png}
-\PkgSummaryBegin
-\PkgAuthor{Laurent Rineau}
-\PkgDesc{This package implements a Delaunay refinement algorithm to construct  conforming triangulations and 2D meshes.  Conforming Delaunay triangulations are obtained from constrained Delaunay triangulations by refining constrained edges until they are Delaunay edges. Conforming Gabriel triangulations  are obtained by further refining constrained edges until they become Gabriel edges.  The package provides also a 2D mesh generator that refines triangles and constrained edges until user defined size and shape criteria on triangles are satisfied.  The package can handle intersecting input constraints  and set no restriction on the angle formed  by two constraints sharing an endpoint.}
-\PkgManuals{Chapter_2D_Conforming_Triangulations_and_Meshes,PkgMesh2}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.1}
-\PkgDependsOn{\ref PkgTriangulation2Summary}
-\PkgBib{cgal:r-ctm2}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgDemo{2D Mesh Generator,constrained_delaunay_triangulation_2.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2Summary}
+\cgalPkgPicture{Mesh_2/fig/delaunaymesh-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Laurent Rineau}
+\cgalPkgDesc{This package implements a Delaunay refinement algorithm to construct  conforming triangulations and 2D meshes.  Conforming Delaunay triangulations are obtained from constrained Delaunay triangulations by refining constrained edges until they are Delaunay edges. Conforming Gabriel triangulations  are obtained by further refining constrained edges until they become Gabriel edges.  The package provides also a 2D mesh generator that refines triangles and constrained edges until user defined size and shape criteria on triangles are satisfied.  The package can handle intersecting input constraints  and set no restriction on the angle formed  by two constraints sharing an endpoint.}
+\cgalPkgManuals{Chapter_2D_Conforming_Triangulations_and_Meshes,PkgMesh2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.1}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgBib{cgal:r-ctm2}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{2D Mesh Generator,constrained_delaunay_triangulation_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

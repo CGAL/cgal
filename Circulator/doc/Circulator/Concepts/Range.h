@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgHandlesAndCirculatorsConcepts
-\cgalconcept
+\cgalConcept
 
 \cgal and the STL heavily use the concepts of iterators and iterator ranges 
 to describe linear sequences of elements, and algorithms operating on these. 
@@ -29,10 +29,10 @@ Finally, let us note that ranges, in general (especially in template context)
 need to be passed and returned by (const) reference for efficiency. This is a 
 difference with iterators which are typically passed by value. 
 
-\refines `ConstRange` 
-\refines Boost's Range concept 
+\cgalRefines `ConstRange` 
+\cgalRefines Boost's Range concept 
 
-\hasModel STL containers 
+\cgalHasModel STL containers 
 
 */
 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsInteroperabilityConcepts
-\cgalconcept
+\cgalConcept
 
 Two types `A` and `B` are a model of the `ExplicitInteroperable` 
 concept, if it is possible to derive a superior type for `A` and `B`, 

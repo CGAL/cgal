@@ -1,10 +1,10 @@
 /*!
 \ingroup PkgCombinatorialMapsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `CombinatorialMap` defines a <I>d</I>-dimensional combinatorial map. 
 
-\hasModel `CGAL::Combinatorial_map<d,Items,Alloc>`
+\cgalHasModel `CGAL::Combinatorial_map<d,Items,Alloc>`
 
 */
  //@{
@@ -560,7 +560,7 @@ the two attributes <I>attr1</I> and <I>attr2</I>. Then, the attribute
 <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the combinatorial map. 
 \pre \ref CombinatorialMap::is_sewable "is_sewable<i>(dh1,dh2)". 
 
-\advanced If `update_attributes` is `false`, non void attributes are
+\cgalAdvanced If `update_attributes` is `false`, non void attributes are
 not updated; thus the combinatorial map can be no more valid after this operation.
 
 */ 
@@ -584,7 +584,7 @@ two attributes <I>attr1</I> and <I>attr2</I>.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension",
      `*dh`\f$ \in\f$`darts()` and `*dh` is not <I>i</I>-free. 
 
-\advanced If `update_attributes` is `false`, non void attributes are
+\cgalAdvanced If `update_attributes` is `false`, non void attributes are
 not updated thus the combinatorial map can be no more valid after this operation.
 */ 
 template <unsigned int i> void unsew(Dart_handle dh, bool 

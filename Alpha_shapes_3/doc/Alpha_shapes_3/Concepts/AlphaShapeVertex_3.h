@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgAlphaShapes3Concepts
-\cgalconcept
+\cgalConcept
 
 This concept describe the requirements for the base vertex of an alpha shape. 
 
-\refines `TriangulationVertexBase_3.` 
+\cgalRefines `TriangulationVertexBase_3.` 
 
 
-\hasModel `CGAL::Alpha_shape_vertex_base_3`
+\cgalHasModel `CGAL::Alpha_shape_vertex_base_3`
 
 \sa `CGAL::Alpha_status` 
 

@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableFunctor` computes both integral quotient and remainder 
 of division with remainder. The quotient \f$ q\f$ and remainder \f$ r\f$ are computed 
 such that \f$ x = q*y + r\f$ and \f$ |r| < |y|\f$ with respect to the proper integer norm of 
 the represented ring. 
-\footnote{For integers this norm is the absolute value. 
+\cgalFootnote{For integers this norm is the absolute value. 
 For univariate polynomials this norm is the degree.} 
 In particular, \f$ r\f$ is chosen to be \f$ 0\f$ if possible. 
 Moreover, we require \f$ q\f$ to be minimized with respect to the proper integer norm. 
@@ -187,7 +187,7 @@ r
 
 </TABLE> 
 
-\refines `AdaptableFunctor` 
+\cgalRefines `AdaptableFunctor` 
 
 \sa ::AlgebraicStructureTraits 
 \sa ::AlgebraicStructureTraits::Mod 

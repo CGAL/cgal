@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgTriangulation3Concepts
-\cgalconcept
+\cgalConcept
 
 A type model of this concept can be used as vertex base by a triangulation 
 and provides an additional information storage. 
 
-\refines `TriangulationVertexBase_3` 
+\cgalRefines `TriangulationVertexBase_3` 
 
-\hasModel CGAL::Triangulation_vertex_base_with_info_3 
+\cgalHasModel CGAL::Triangulation_vertex_base_with_info_3 
 
 */
 

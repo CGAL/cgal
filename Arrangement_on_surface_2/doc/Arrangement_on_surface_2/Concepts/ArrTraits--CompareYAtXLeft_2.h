@@ -1,11 +1,11 @@
 namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
-\cgalconcept
+\cgalConcept
 
-\refines AdaptableTernaryFunction 
+\cgalRefines AdaptableTernaryFunction 
 
-\hasModel ArrangementBasicTraits_2::Compare_y_at_x_left_2 
+\cgalHasModel ArrangementBasicTraits_2::Compare_y_at_x_left_2 
 
 */
 

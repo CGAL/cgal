@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceParameterizationConcepts
-\cgalconcept
+\cgalConcept
 
 `BorderParameterizer_3` is a concept of class that parameterizes a given type of mesh, `Adaptor`, which is a model of the `ParameterizationMesh_3` concept. 
 
@@ -17,11 +17,11 @@ Creation
 
 Construction and destruction are undefined. 
 
-\hasModel `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
-\hasModel `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
-\hasModel `CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>` 
-\hasModel `CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>`
-\hasModel `CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>`
+\cgalHasModel `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
+\cgalHasModel `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
+\cgalHasModel `CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>` 
+\cgalHasModel `CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>`
+\cgalHasModel `CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>`
 
 \sa `ParameterizerTraits_3`
 \sa `ParameterizationMesh_3`

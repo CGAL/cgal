@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgVoronoiDiagramAdaptor2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `DelaunayGraph_2` defines the requirements for the 
 first template parameter of the `Voronoi_diagram_2<DG,AT,AP>` 
@@ -9,7 +9,7 @@ class. The `DelaunayGraph_2` concept essentially defines the
 requirements that a class representing a Delaunay graph must obey so 
 that the Voronoi diagram adaptor can adapt it. 
 
-\refines `DefaultConstructible,` \refines `CopyConstructible,` \refines `Assignable` 
+\cgalRefines `DefaultConstructible,` \cgalRefines `CopyConstructible,` \cgalRefines `Assignable` 
 
 ### Traversal of the Delaunay graph ###
 
@@ -18,13 +18,13 @@ iterators and circulators that allow to traverse it (completely or
 partially). All iterators and circulators must be convertible to the 
 corresponding handles. 
 
-\hasModel `CGAL::Delaunay_triangulation_2<Traits,Tds>` 
-\hasModel `CGAL::Regular_triangulation_2<Traits,Tds>` 
-\hasModel `CGAL::Triangulation_hierarchy_2<Tr>` provided that `Tr` is a model of `DelaunayGraph_2` 
-\hasModel `CGAL::Segment_Delaunay_graph_2<Gt,DS>` 
-\hasModel `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>` 
-\hasModel `CGAL::Apollonius_graph_2<Gt,Agds>` 
-\hasModel `CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>` 
+\cgalHasModel `CGAL::Delaunay_triangulation_2<Traits,Tds>` 
+\cgalHasModel `CGAL::Regular_triangulation_2<Traits,Tds>` 
+\cgalHasModel `CGAL::Triangulation_hierarchy_2<Tr>` provided that `Tr` is a model of `DelaunayGraph_2` 
+\cgalHasModel `CGAL::Segment_Delaunay_graph_2<Gt,DS>` 
+\cgalHasModel `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>` 
+\cgalHasModel `CGAL::Apollonius_graph_2<Gt,Agds>` 
+\cgalHasModel `CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>` 
 
 \sa `AdaptationTraits_2` 
 \sa `AdaptationPolicy_2` 

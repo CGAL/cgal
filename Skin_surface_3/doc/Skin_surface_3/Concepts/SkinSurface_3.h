@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSkinSurface3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `SkinSurface_3` defines a skin surface and provides an 
 interface for the dedicated skin surface mesher. 
@@ -9,8 +9,8 @@ The concept requires a constructor from an iterator range of
 weighted points and a shrink factor. By default the input balls are 
 grown in such that the skin surface wraps around the input balls. 
 
-\hasModel `CGAL::Skin_surface_3<SkinSurfaceTraits_3>` 
-\hasModel `CGAL::Union_of_balls_3<SkinSurfaceTraits_3>`
+\cgalHasModel `CGAL::Skin_surface_3<SkinSurfaceTraits_3>` 
+\cgalHasModel `CGAL::Union_of_balls_3<SkinSurfaceTraits_3>`
 
 */
 

@@ -1,13 +1,13 @@
 /*!
 \ingroup PkgPolygonPartitioning2Concepts
-\cgalconcept
+\cgalConcept
 
 Requirements of a traits class to be 
 used with the function `y_monotone_partition_2`. 
 
-\refines `PartitionTraits_2` 
+\cgalRefines `PartitionTraits_2` 
 
-\hasModel `CGAL::Partition_traits_2<R>` 
+\cgalHasModel `CGAL::Partition_traits_2<R>` 
 
 */
 

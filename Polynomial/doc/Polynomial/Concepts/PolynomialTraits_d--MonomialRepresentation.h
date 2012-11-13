@@ -1,16 +1,16 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `Functor` outputs the monomial representation of the given polynomial, 
 that is, it writes all non zero terms of the polynomial as 
 `std::pair<CGAL::Exponent_vector, PolynomialTraits_d::Innermost_coefficient_type>` 
 into the given output iterator. 
 
-\refines \ref Assignable
-\refines \ref CopyConstructible
-\refines \ref DefaultConstructible
+\cgalRefines \ref Assignable
+\cgalRefines \ref CopyConstructible
+\cgalRefines \ref DefaultConstructible
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

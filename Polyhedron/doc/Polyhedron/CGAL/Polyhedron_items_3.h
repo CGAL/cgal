@@ -11,7 +11,7 @@ provide the respective types for the point and the plane equation.
 Vertices and facets both contain a halfedge handle to an incident 
 halfedge. 
 
-\models `PolyhedronItems_3`
+\cgalModels `PolyhedronItems_3`
 
 \sa `CGAL::Polyhedron_3<Traits>` 
 \sa `CGAL::Polyhedron_min_items_3` 
@@ -28,7 +28,7 @@ access to the new member variable.
 See also the `PolyhedronItems_3` concept for another illustrative 
 example. 
 
-\cgalexample{Polyhedron/polyhedron_prog_color.cpp} 
+\cgalExample{Polyhedron/polyhedron_prog_color.cpp} 
 
 */
 

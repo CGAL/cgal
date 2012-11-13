@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgModularArithmeticConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `ModularTraits` is associated to a specific `Type`. 
 In case this associated type is `Modularizable`, this is indicated by the 
 boolean tag `Is_modularizable`. The mapping into the `Residue_type` is 
 provided by the functor `Modular_image`. 
 
-\hasModel CGAL::Modular_traits<T> 
+\cgalHasModel CGAL::Modular_traits<T> 
 
 \sa `CGAL::Residue` 
 \sa `Modularizable` 

@@ -16,7 +16,7 @@ instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vert
 
 \image html CCBorderMask.png
 
-\models ::PQQMask_3
+\cgalModels ::PQQMask_3
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -89,7 +89,7 @@ instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vert
 
 \image html DSCornerMask.png
 
-\models ::DQQMask_3
+\cgalModels ::DQQMask_3
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -141,7 +141,7 @@ instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vert
 
 \image html LoopBorderMask.png
 
-\models ::PTQMask_3
+\cgalModels ::PTQMask_3
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -206,7 +206,7 @@ the computation on the nodes of the stencil.
 \tparam Polyhedron_3 must be a `CGAL::Polyhedron_3`
 instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
 
-\models ::Sqrt3Mask_3
+\cgalModels ::Sqrt3Mask_3
 
 \sa `CGAL::Subdivision_method_3`
 

@@ -1,9 +1,9 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
-\refines `Kernel::Intersect_2`
+\cgalRefines `Kernel::Intersect_2`
 
 \sa \ref CGAL::intersection
 

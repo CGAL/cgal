@@ -4,19 +4,19 @@
 /*!
 \addtogroup PkgConvexHullD
 \todo check generated documentation
-\PkgDescriptionBegin{dD Convex Hulls and Delaunay Triangulations,PkgConvexHullDSummary}
-\PkgPicture{convex_hull_d-teaser.png}
-\PkgSummaryBegin
-\PkgAuthors{Susan Hert and Michael Seel}
-\PkgDesc{This package provides functions for computing convex hulls and Delaunay triangulations in \f$ d\f$-dimensional Euclidean space.}
-\PkgManuals{Chapter_dD_Convex_Hulls_and_Delaunay_Triangulations,PkgConvexHullD}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{2.3}
-\PkgBib{cgal:hs-chdt3}
-\PkgLicense{\ref licensesGPL "GPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{dD Convex Hulls and Delaunay Triangulations,PkgConvexHullDSummary}
+\cgalPkgPicture{convex_hull_d-teaser.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Susan Hert and Michael Seel}
+\cgalPkgDesc{This package provides functions for computing convex hulls and Delaunay triangulations in \f$ d\f$-dimensional Euclidean space.}
+\cgalPkgManuals{Chapter_dD_Convex_Hulls_and_Delaunay_Triangulations,PkgConvexHullD}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.3}
+\cgalPkgBib{cgal:hs-chdt3}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 A subset \f$ S \subseteq \R^d\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
 in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained

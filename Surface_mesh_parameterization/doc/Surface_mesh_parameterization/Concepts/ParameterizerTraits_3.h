@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceParameterizationConcepts
-\cgalconcept
+\cgalConcept
 
 `ParameterizerTraits_3` is a concept of parameterization object for a given type of mesh, `Adaptor`, which is a model of the `ParameterizationMesh_3` concept. 
 
@@ -15,13 +15,13 @@ Creation
 
 Construction and destruction are undefined. 
 
-\hasModel `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
-\hasModel `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\hasModel `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\hasModel `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\hasModel `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\hasModel `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\hasModel `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
+\cgalHasModel `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 \sa `ParameterizationMesh_3`
 

@@ -11,7 +11,7 @@ in the sidedness tests, lines (of type `R::Line_2`) are constructed,
 which is equivalent to the precomputation of subdeterminants of 
 the orientation-determinant for three points. 
 
-\models ::ConvexHullTraits_2 
+\cgalModels ::ConvexHullTraits_2 
 
 \sa `CGAL::Convex_hull_projective_xy_traits_2<Point_3>` 
 \sa `CGAL::Convex_hull_projective_xz_traits_2<Point_3>` 

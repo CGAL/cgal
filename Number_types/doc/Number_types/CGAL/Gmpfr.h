@@ -23,8 +23,8 @@ used is `std::float_round_style`.
 This type is `ImplicitInteroperable` with `Gmpz`, <TT>long</TT>, 
 <TT>unsigned long</TT>, <TT>int</TT>, <TT>double</TT> and <TT>long double</TT>. 
 
-\models ::FieldWithKthRoot 
-\models ::RealEmbeddable 
+\cgalModels ::FieldWithKthRoot 
+\cgalModels ::RealEmbeddable 
 
 ### Comparisons ###
 

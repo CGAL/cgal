@@ -1,15 +1,15 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 Concept for arcs of circles. 
 
-\refines `CopyConstructible`
-\refines `Assignable`
-\refines `DefaultConstructible`
+\cgalRefines `CopyConstructible`
+\cgalRefines `Assignable`
+\cgalRefines `DefaultConstructible`
 
-\hasModel `CGAL::Circular_arc_3<SphericalKernel>`
+\cgalHasModel `CGAL::Circular_arc_3<SphericalKernel>`
 
 */
 

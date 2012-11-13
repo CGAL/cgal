@@ -12,7 +12,7 @@ namespace CGAL {
 \f$
 </span>
 
-\autotoc
+\cgalAutoToc
 \authors Peter Hachenberger and Lutz Kettner
 
 \section Nef_3Introduction Introduction
@@ -310,7 +310,7 @@ while `N1` represents the full space, i.e., the set of all points
 in the 3-dimensional space. The assertion assures that the empty set
 is the complement of the full space.
 
-\cgalexample{Nef_3/nef_3_simple.cpp}
+\cgalExample{Nef_3/nef_3_simple.cpp}
 
 \subsection Nef_3ConstructionandComparison Construction and Comparison
 
@@ -337,7 +337,7 @@ representations are equal. The proof for the reduced W&uuml;rzburg
 structure carries over to our representation and the comparison
 operators are therefore trivial to implement.
 
-\cgalexample{Nef_3/nef_3_construction.cpp}
+\cgalExample{Nef_3/nef_3_construction.cpp}
 
 \subsection Nef_3PointSetOperations Point Set Operations
 
@@ -355,14 +355,14 @@ difference (`operator^`). Additionally, the operators `*=`,
 `boundary()` one deselects all volumes, and with `closure()`
 one selects all boundary items.
 
-\cgalexample{Nef_3/point_set_operations.cpp}
+\cgalExample{Nef_3/point_set_operations.cpp}
 
 \subsection Nef_3Transformation Transformation
 
 Using the `std::transform` function, a Nef polyhedron can be translated, 
 rotated and scaled. The usage is shown in the following example:
 
-\cgalexample{Nef_3/transformation.cpp}
+\cgalExample{Nef_3/transformation.cpp}
 
 \subsection Nef_3TheInterfacebetweenPolyhedron3andNefpolyhedron3 The Interface between %Polyhedron_3 and %Nef_polyhedron_3
 
@@ -386,7 +386,7 @@ The conversion gives us the possibility to use several file formats.
 the (<TT>.off</TT>), OpenInventor (<TT>.iv</TT>), VRML 1.0 and 2.0 (<TT>.wrl</TT>) and Wavefront Advanced Visualizer object format (<TT>.obj</TT>),
 see Section \ref sectionPolyIO.
 
-\cgalexample{Nef_3/interface_polyhedron.cpp}
+\cgalExample{Nef_3/interface_polyhedron.cpp}
 
 \subsection Nef_3UsinganExtendedKernel Using an Extended Kernel
 
@@ -401,7 +401,7 @@ it is an standard vertex or a vertex on the infimaximal box. Furthermore, it
 tests whether any of the vertices is at \f$ (R,R,R)\f$. Recall that \f$ R\f$ was
 the symbolical value, large but finite, for the size of the infimaximal box.
 
-\cgalexample{Nef_3/extended_kernel.cpp}
+\cgalExample{Nef_3/extended_kernel.cpp}
 
 \section Nef_3File File I/O
 
@@ -431,7 +431,7 @@ because they don't apply for the extended kernels, yet. The new
 concepts also speed up `Nef_polyhedron_3` also in combination with
 all other standard kernels. The following example illustrates their usage.
 
-\cgalexample{Nef_3/handling_double_coordinates.cpp}
+\cgalExample{Nef_3/handling_double_coordinates.cpp}
 
 We provide compatibility between the input and output of various
 kernels. For most of the \cgal kernels it is possible to write a file
@@ -440,7 +440,7 @@ possible to write a bounded Nef polyhedron using the
 `Extended_homogeneous` kernel and to read it afterwards using a
 standard kernel.
 
-\cgalexample{Nef_3/nefIO.cpp}
+\cgalExample{Nef_3/nefIO.cpp}
 
 \section Nef_3Further Further Example Programs
 
@@ -454,7 +454,7 @@ Note, that one has to use
 the type `Nef_polyhedron_S2` as specified in `Nef_polyhedron_3` as 
 is shown in the following example.
 
-\cgalexample{Nef_3/exploration_SM.cpp}
+\cgalExample{Nef_3/exploration_SM.cpp}
 
 \subsection subsectionNef_3ShellExploration Exploring Shells 
 
@@ -496,7 +496,7 @@ oriented inwards, too. This shalfloop belongs to the third shell.
 following the well-known visitor pattern \cite cgal:ghjv-dpero-95.
 The interface is illustrated by the following example.
 
-\cgalexample{Nef_3/shell_exploration.cpp}
+\cgalExample{Nef_3/shell_exploration.cpp}
 
 The function `visit_shell_objects(SFace_const_handle sf, Visitor& V)` explores a shell starting at the `sf`. The second argument
 expects any class providing the (possibly empty) functions
@@ -545,7 +545,7 @@ the `Object_handle` can represent a `Vertex_const_handle`, a
 `Halfedge_const_handle`, a `Halffacet_handle`, or a
 `Volume_const_handle`. One of the four casts will succeed.
 
-\cgalexample{Nef_3/nef_3_point_location.cpp}
+\cgalExample{Nef_3/nef_3_point_location.cpp}
 
 \section Nef_3Visualization Visualization
 
@@ -567,7 +567,7 @@ how to start the viewer.
 
 \image html visualization_SNC.png
 
-\cgalexample{Nef_3/visualization_SNC.cpp}
+\cgalExample{Nef_3/visualization_SNC.cpp}
 
 \subsection Nef_3VisualizingaSphereMap Visualizing a Sphere Map
 
@@ -576,7 +576,7 @@ how to start the viewer.
 of a vertex in a `Nef_polyhedron_3` using the interface between
 `Nef_polyhedron_S2` and `Nef_polyhedron_3`.
 
-\cgalexample{Nef_3/visualization_SM.cpp}
+\cgalExample{Nef_3/visualization_SM.cpp}
 
 */ 
 } /* namespace CGAL */

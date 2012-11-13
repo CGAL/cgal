@@ -1,19 +1,19 @@
 
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
-\cgalconcept
+\cgalConcept
 
-\refines `GpsTraitsGeneralPolygonWithHoles_2` 
+\cgalRefines `GpsTraitsGeneralPolygonWithHoles_2` 
 
 A model of this concept represents a general polygon with holes. The 
 concept requires the ability to access the general polygon that 
 represents the outer boundary and the general polygons that represent 
 the holes. 
 
-\hasModel `CGAL::General_polygon_with_holes_2<General_polygon>`
-\hasModel `CGAL::Polygon_with_holes_2<Kernel,Container>`
-\hasModel `CGAL::Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2`
-\hasModel `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>::Polygon_with_holes_2` 
+\cgalHasModel `CGAL::General_polygon_with_holes_2<General_polygon>`
+\cgalHasModel `CGAL::Polygon_with_holes_2<Kernel,Container>`
+\cgalHasModel `CGAL::Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2`
+\cgalHasModel `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>::Polygon_with_holes_2` 
 
 */
 

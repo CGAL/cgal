@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgEnvelope2Concepts
-\cgalconcept
+\cgalConcept
 
 A vertex record in an envelope diagram. It is always associated with a point 
 on the lower (upper) envelope of a non-empty set of curves. A vertex is also 

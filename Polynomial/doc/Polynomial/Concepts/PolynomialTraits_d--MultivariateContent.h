@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableUnaryFunction` computes the content of a 
 `PolynomialTraits_d::Polynomial_d` with respect to the symmetric 
@@ -10,9 +10,9 @@ view on the polynomial, that is, it computes the gcd of all innermost coefficien
 This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is a 
 `Field` or a `UniqueFactorizationDomain`. 
 
-\refines `AdaptableUnaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

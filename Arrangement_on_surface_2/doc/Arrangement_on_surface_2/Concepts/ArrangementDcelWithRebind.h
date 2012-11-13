@@ -1,18 +1,18 @@
 
 /*!
 \ingroup PkgArrangement2ConceptsDCEL
-\cgalconcept
+\cgalConcept
 
 The concept `ArrangementDcelWithRebind` refines the `ArrangementDcel` concept by adding 
 a policy clone idiom in form of a rebind struct-template. 
 
 Instantiate a dcel class with many different possible types without ad-hoc limitations on type of the dcel classes. 
 
-\refines `ArrangementDcel` 
+\cgalRefines `ArrangementDcel` 
 
-\hasModel `CGAL::Arr_default_dcel<Traits>` 
-\hasModel `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>` 
-\hasModel `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>` 
+\cgalHasModel `CGAL::Arr_default_dcel<Traits>` 
+\cgalHasModel `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>` 
+\cgalHasModel `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>` 
 
 */
 

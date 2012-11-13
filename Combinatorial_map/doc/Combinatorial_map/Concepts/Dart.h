@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgCombinatorialMapsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `Dart` defines a <I>d</I>-dimensional dart. A dart mainly 
 stores handles to the darts linked with itself by \f$ \beta_i\f$, \f$ \forall\f$<I>i</I>, 
@@ -16,7 +16,7 @@ within a combinatorial map `cm` by using the method
 \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and having all 
 its attribute handles initialized to NULL, for each non void attribute. 
 
-\hasModel `CGAL::Dart<d,CMap>`
+\cgalHasModel `CGAL::Dart<d,CMap>`
 
 */
 

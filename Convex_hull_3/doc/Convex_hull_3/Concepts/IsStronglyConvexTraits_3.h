@@ -1,13 +1,13 @@
 /*!
 \ingroup PkgConvexHull3Concepts
-\cgalconcept
+\cgalConcept
 
 Requirements of the traits class used by the function 
 `CGAL::is_strongly_convex_3()`, which is used for postcondition checking 
 by `CGAL::convex_hull_3()`. 
 
-\hasModel `CGAL::Convex_hull_traits_3<R>` 
-\hasModel All models of `Kernel`
+\cgalHasModel `CGAL::Convex_hull_traits_3<R>` 
+\cgalHasModel All models of `Kernel`
 
 \sa `ConvexHullTraits_3` 
 \sa `CGAL::is_strongly_convex_3` 

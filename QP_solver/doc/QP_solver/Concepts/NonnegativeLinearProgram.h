@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgQPSolverConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `NonnegativeLinearProgram` describes a linear program of the form 
 
@@ -41,18 +41,18 @@ The description is given by appropriate <I>random-access</I>
 iterators over the program data, see below. The program therefore 
 comes in <I>dense</I> representation which includes zero entries. 
 
-\hasModel Quadratic_program<NT> 
-\hasModel Quadratic_program_from_mps<NT> 
-\hasModel Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it> 
+\cgalHasModel Quadratic_program<NT> 
+\cgalHasModel Quadratic_program_from_mps<NT> 
+\cgalHasModel Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it> 
 
-\requires The value types of all iterator types (nested iterator
+\cgalRequires The value types of all iterator types (nested iterator
 types, respectively, for `A_iterator`) must be convertible to some
 common `IntegralDomain` `ET`.
 
 The models 
-\hasModel `CGAL::Quadratic_program<NT>` 
-\hasModel `CGAL::Quadratic_program_from_mps<NT>` 
-\hasModel `CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
+\cgalHasModel `CGAL::Quadratic_program<NT>` 
+\cgalHasModel `CGAL::Quadratic_program_from_mps<NT>` 
+\cgalHasModel `CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
 
 \sa `QuadraticProgram` 
 \sa `LinearProgram` 

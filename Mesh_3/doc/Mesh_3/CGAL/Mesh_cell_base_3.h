@@ -18,7 +18,7 @@ It has to be a model of the concept `RegularTriangulationTraits_3`.
 of the concept `RegularTriangulationCellBase_3` and defaults to 
 `Regular_triangulation_cell_base_3<Gt>`. 
 
-\models `MeshCellBase_3`
+\cgalModels `MeshCellBase_3`
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
 

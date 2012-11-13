@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgRangeSegmentTreesDConcepts
-\cgalconcept
+\cgalConcept
 
 Defines the requirements that a 
 `Sublayer_type` of class `CGAL::Range_tree_d` 

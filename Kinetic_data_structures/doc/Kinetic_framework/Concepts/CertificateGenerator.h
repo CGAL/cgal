@@ -2,7 +2,7 @@ namespace Kinetic {
 
 /*!
 \ingroup PkgKdsFrameworkOtherConcepts
-\cgalconcept
+\cgalConcept
 
 This functor allows you to create certificate objects of some type. 
 The models of this "concept" take some set of arguments which depend 
@@ -12,7 +12,7 @@ the `Kinetic::Simulator::Time` concept. The functions either
 return a `Certificate` or the corresponding value at the current 
 time (if only a time value rather than an interval is passed). 
 
-\hasModel All over the place.
+\cgalHasModel All over the place.
 
 \sa `Kinetic::KineticKernel` 
 

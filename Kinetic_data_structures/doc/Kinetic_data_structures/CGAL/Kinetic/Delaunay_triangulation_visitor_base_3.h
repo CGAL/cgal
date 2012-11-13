@@ -7,7 +7,7 @@ The concept `Kinetic::Delaunay_triangulation_visitor_base_3` provides a model of
 `Kinetic::DelaunayTriangulationVisitor_3`. You can extend this class if you only 
 want to implement a few methods from `Kinetic::DelaunayTriangulationVisitor_3`. 
 
-\models ::Kinetic::DelaunayTriangulationVisitor_3 
+\cgalModels ::Kinetic::DelaunayTriangulationVisitor_3 
 
 \sa `Kinetic::Delaunay_triangulation_3<Traits, Triangulation, Visitor>` 
 

@@ -99,7 +99,7 @@ iterator end() const;
 
 /*! 
 
-\advanced Inserts statistics of the search process into the output
+\cgalAdvanced Inserts statistics of the search process into the output
 stream `s`.
 
 */ 

@@ -5,7 +5,7 @@ namespace CGAL {
 \mainpage Geometric %Object Generators
 \anchor Chapter_Geometric_Object_Generators
 \anchor chapterGenerators
-\autotoc
+\cgalAutoToc
 \authors Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr 
 
 \section GeneratorIntroduction Introduction
@@ -85,27 +85,27 @@ sets with multiple entries of identical items.
 We want to generate a test set of 1000 points, where 60% are chosen
 randomly in a small disc, 20% are from a larger grid, 10% are duplicates
 points, and 10% collinear points. A random shuffle removes the
-construction order from the test set. See \cgal_figure_ref{figurePointGenerator}
+construction order from the test set. See \cgalFigureRef{figurePointGenerator}
 for the example output.
 
-\cgalexample{Generator/random_degenerate_point_set.cpp}
+\cgalExample{Generator/random_degenerate_point_set.cpp}
 
-\cgal_figure_begin{figurePointGenerator,generators_prog1.png}
+\cgalFigureBegin{figurePointGenerator,generators_prog1.png}
 Output of example program for point generators.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section GeneratorExampleGridPoints Example Generating Grid Points
 
 The second example demonstrates the point generators with integer
 points. Floating point arithmetic is sufficient to produce
-regular integer grids. See \cgal_figure_ref{figureIntegerPointGenerator}
+regular integer grids. See \cgalFigureRef{figureIntegerPointGenerator}
 for the example output.
 
-\cgalexample{Generator/random_grid.cpp}
+\cgalExample{Generator/random_grid.cpp}
 
-\cgal_figure_begin{figureIntegerPointGenerator,generators_prog2.png}
+\cgalFigureBegin{figureIntegerPointGenerator,generators_prog2.png}
 Output of example program for point generators working
-\cgal_figure_end
+\cgalFigureEnd
 
 \section secsegment_example Examples Generating Segments
 
@@ -117,32 +117,32 @@ generators - here two-dimensional segments from two point generators.
 
 We want to generate a test set of 200 segments, where one endpoint is
 chosen randomly from a horizontal segment of length 200, and the other
-endpoint is chosen randomly from a circle of radius 250. See \cgal_figure_ref{figureSegmentGenerator} for the example output.
+endpoint is chosen randomly from a circle of radius 250. See \cgalFigureRef{figureSegmentGenerator} for the example output.
 
-\cgalexample{Generator/random_segments1.cpp}
+\cgalExample{Generator/random_segments1.cpp}
 
-\cgal_figure_begin{figureSegmentGenerator,Segment_generator_prog1.png}
+\cgalFigureBegin{figureSegmentGenerator,Segment_generator_prog1.png}
 Output of example program for the generic segment generator.
-\cgal_figure_end
+\cgalFigureEnd
 
 The second example generates a regular structure of 100 segments; see
-\cgal_figure_ref{figureSegmentGeneratorFan} for the example output. It uses
+\cgalFigureRef{figureSegmentGeneratorFan} for the example output. It uses
 the `Points_on_segment_2` iterator, `Join_input_iterator_2` and
 `Counting_iterator` to avoid any intermediate storage of the generated
 objects until they are used.
 
-\cgalexample{Generator/random_segments2.cpp}
+\cgalExample{Generator/random_segments2.cpp}
 
-\cgal_figure_begin{figureSegmentGeneratorFan,Segment_generator_prog2.png}
+\cgalFigureBegin{figureSegmentGeneratorFan,Segment_generator_prog2.png}
 Output of example program for the generic segment generator using pre-computed point locations.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section GeneratorExample_2 Example Generating Point Sets in `d` Dimensions
 
 The following example generates points inside a cube in dimension 5
 (examples for ball and sphere are available in the example directory) :
 
-\cgalexample{Generator/cube_d.cpp}
+\cgalExample{Generator/cube_d.cpp}
 
 The output of this example looks like:
 \verbatim
@@ -168,7 +168,7 @@ coordinates are in \f$ \{-5, 0, 5\}\f$, but since the number of points
 verifies \f$ 20\leq 3^{d-1}\f$, all
 generated points have the same last coordinate \f$ -5\f$.
 
-\cgalexample{Generator/grid_d.cpp}
+\cgalExample{Generator/grid_d.cpp}
 
 The output of previous example corresponds to the points of this
 figure depicted in red or pink (pink points are "inside" the cube). 

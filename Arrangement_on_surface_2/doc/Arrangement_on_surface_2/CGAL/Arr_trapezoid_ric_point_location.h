@@ -26,8 +26,8 @@ is relatively large.
 
 This strategy supports arbitrary subdivisions, including unbounded ones. 
 
-\models ::ArrangementPointLocation_2 
-\models ::ArrangementVerticalRayShoot_2 
+\cgalModels ::ArrangementPointLocation_2 
+\cgalModels ::ArrangementVerticalRayShoot_2 
 
 */
 template< typename Arrangement >

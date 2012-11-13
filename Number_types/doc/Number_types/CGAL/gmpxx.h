@@ -9,9 +9,9 @@ provided by <span class="textsc">Gmp</span>.
 CGAL provides the necessary functions to make it compliant to the number type 
 concept. 
 
-\models ::Field 
-\models ::RealEmbeddable 
-\models ::Fraction 
+\cgalModels ::Field 
+\cgalModels ::RealEmbeddable 
+\cgalModels ::Fraction 
 
 See the <span class="textsc">Gmp</span> documentation for additional details. 
 
@@ -31,8 +31,8 @@ provided by <span class="textsc">Gmp</span>.
 CGAL provides the necessary functions to make it compliant to the number type 
 concept. 
 
-\models ::EuclideanRing 
-\models ::RealEmbeddable 
+\cgalModels ::EuclideanRing 
+\cgalModels ::RealEmbeddable 
 
 See the <span class="textsc">Gmp</span> documentation for additional details. 
 

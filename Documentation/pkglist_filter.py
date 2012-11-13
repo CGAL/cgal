@@ -23,10 +23,10 @@ def main(argv):
             pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
             do_print=False
             for l in pkgdesc:
-                do_print = do_print or re.match(".*PkgDescriptionBegin.*", l)
+                do_print = do_print or re.match(".*cgalPkgDescriptionBegin.*", l)
                 if(do_print):
                     sys.stdout.write(l.encode('utf-8'))
-                do_print = do_print and (not re.match(".*PkgDescriptionEnd.*", l))
+                do_print = do_print and (not re.match(".*cgalPkgDescriptionEnd.*", l))
         else:
             sys.stdout.write(line.encode('utf-8'))
 

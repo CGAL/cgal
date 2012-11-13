@@ -11,10 +11,10 @@ the model of the `StraightSkeleton_2` concept (the vertex container), the second
 
 This class can be used as a base class allowing users of the straight skeleton data structure to decorate a vertex with additional data. The concrete vertex class must be given in the `HalfedgeDSItems` template parameter of the instantiation of the `HalfedgeDS_default` class used as the model for the `Straight_skeleton_2` concept. 
 
-\models ::StraightSkeletonVertex_2 
-\models ::DefaultConstructible 
-\models ::CopyConstructible 
-\models ::Assignable 
+\cgalModels ::StraightSkeletonVertex_2 
+\cgalModels ::DefaultConstructible 
+\cgalModels ::CopyConstructible 
+\cgalModels ::Assignable 
 
 \sa `StraightSkeletonVertex_2` 
 \sa `StraightSkeletonHalfedge_2` 

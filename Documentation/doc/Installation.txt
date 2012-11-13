@@ -163,7 +163,7 @@ source files
 </CENTER>
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
-distribution of the \sc{Core} library\footnote{<A HREF="http://www.cs.nyu.edu/exact/">`http://www.cs.nyu.edu/exact/`</A>} version 1.7 for
+distribution of the \sc{Core} library\cgalFootnote{<A HREF="http://www.cs.nyu.edu/exact/">`http://www.cs.nyu.edu/exact/`</A>} version 1.7 for
 dealing with algebraic numbers. \sc{Core} is not part of \cgal and has its
 own license.
 
@@ -322,7 +322,7 @@ such as `CMAKE_CXX_FLAGS`.
 The command line tool `cmake` accepts CMake variables as arguments of the form `-D<VAR>:<TYPE>=<VALUE>`, as
 in the example above, but this is only useful if you already know which variables need to be explicitly defined.
 
-\advanced CMake keeps the variables that a user can manipulate in a
+\cgalAdvanced CMake keeps the variables that a user can manipulate in a
 so-called <I>CMake cache</I>, a simple text file named
 `CMakeCache.txt`, whose entries are of the form
 `VARIABLE:TYPE=VALUE`. Advanced users can manually edit this file,
@@ -693,7 +693,7 @@ The "Debug" argument is needed because CMake creates solution files for
 all four configurations, and you need to explicitly choose one when building
 (the other choices are Release, RelWithDebInfo and MinSizeRel).
 
-\advanced The build files produced by CMake are autoconfigured. That
+\cgalAdvanced The build files produced by CMake are autoconfigured. That
 is, if you change any of the dependencies, the build step
 automatically goes all the way back to the configuration step. This
 way, once the target has been configured the very first time by
@@ -725,7 +725,7 @@ make Straight_skeleton_2_demo
 
 </PRE>
 
-\advanced When using `UNIX Makefiles` you can find out the
+\cgalAdvanced When using `UNIX Makefiles` you can find out the
 exact name of the example or demo target of a particular package by
 typing `make help | grep <package>`.
 
@@ -756,7 +756,7 @@ make install # install
 If you use a generator that produces IDE files (for Visual Studio for instance) there will be an optional
 `INSTALL` project, which you will be able to <I>"build"</I> to execute the installation step.
 
-\advanced The files are copied into a directory tree relative to the <I>installation directory</I> determined by the 
+\cgalAdvanced The files are copied into a directory tree relative to the <I>installation directory</I> determined by the 
 CMake variable `CMAKE_INSTALL_PREFIX`. This variable defaults to `/usr/local` under \sc{Unix}-like operating systems
 and <A HREF="C:\ProgramFiles">`C:\Program Files`</A> under Windows. If you want to install to a different location, you must override that CMake
 variable explicitly <I>at the configuration time</I> and not when executing the install step.
@@ -1124,12 +1124,12 @@ provide your own flags and this time they will not be overridden.
 When using the interactive `cmake-gui` the first press on `Configure` unlocks
 the flags, so that you can edit them as needed.
 
-\advanced The locking of flags is controlled by the variable
+\cgalAdvanced The locking of flags is controlled by the variable
 `CGAL_DONT_OVERRIDE_CMAKE_FLAGS` which starts out FALSE and is
 toggled right after the flags have been loaded from
 `CGALConfig.cmake`.
 
-\advanced If you use the command line tool you can specify flags <I>directly</I> by setting the
+\cgalAdvanced If you use the command line tool you can specify flags <I>directly</I> by setting the
 controlling variable right up front:
 
 \code{.sh}

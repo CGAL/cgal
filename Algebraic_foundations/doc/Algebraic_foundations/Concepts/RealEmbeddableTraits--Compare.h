@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableBinaryFunction` compares two real embeddable numbers. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa ::RealEmbeddableTraits 
 

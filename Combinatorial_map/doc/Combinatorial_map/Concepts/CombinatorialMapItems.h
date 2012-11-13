@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgCombinatorialMapsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `CombinatorialMapItems` allows to customize a <I>d</I>D combinatorial map 
 by choosing the type of darts, and by enabling and disabling some 
@@ -40,7 +40,7 @@ struct Exemple_Item_3
 }; 
 \endcode 
 
-\hasModel `CGAL::Combinatorial_map_min_items<d>`
+\cgalHasModel `CGAL::Combinatorial_map_min_items<d>`
 
 \sa `CombinatorialMap` 
 \sa `Dart` 
@@ -49,7 +49,7 @@ class CombinatorialMapItems {
 public:
   
   /*!
-    \cgalconcept
+    \cgalConcept
   */
   template<typename CMap>
   struct DartWrapper {

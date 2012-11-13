@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 This is the most basic concept for algebraic structures considered within CGAL. 
 
@@ -30,11 +30,11 @@ Moreover, `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >` is
 - `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Simplify`  which is a model of `AlgebraicStructureTraits::Simplify`
 - `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Unit_part`  which is a model of `AlgebraicStructureTraits::UnitPart`
 
-\refines `Assignable` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
-\refines `EqualityComparable` 
-\refines `FromIntConstructible` 
+\cgalRefines `Assignable` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
+\cgalRefines `EqualityComparable` 
+\cgalRefines `FromIntConstructible` 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 

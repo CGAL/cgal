@@ -10,7 +10,7 @@ uses the \cgal default allocator as default setting. `HalfedgeDS_default` is a
 list-based representation with bidirectional iterators that supports 
 removal. 
 
-\models `HalfedgeDS<Traits,Items,Alloc>` 
+\cgalModels `HalfedgeDS<Traits,Items,Alloc>` 
 
 \sa `CGAL::HalfedgeDS_list` 
 \sa `CGAL::HalfedgeDS_vector` 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgArrangement2ConceptsTraits
-\cgalconcept
+\cgalConcept
 
 The concept `ArrangementLandmarkTraits_2` refines the general traits concept by adding 
 operations needed for the landmarks point-location strategy, namely - 
@@ -13,13 +13,13 @@ is used to approximate the coordinates of `Point_2` instances. It is
 recommended to define the approximated number type as the built-in 
 `double` type. 
 
-\refines `ArrangementTraits_2` 
+\cgalRefines `ArrangementTraits_2` 
 
-\hasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>` 
-\hasModel `CGAL::Arr_segment_traits_2<Kernel>` 
-\hasModel `CGAL::Arr_linear_traits_2<Kernel>` 
-\hasModel `CGAL::Arr_polyline_traits_2<SegmentTraits>` 
-\hasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>` 
+\cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>` 
+\cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>` 
+\cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>` 
+\cgalHasModel `CGAL::Arr_polyline_traits_2<SegmentTraits>` 
+\cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>` 
 
 \sa `ArrangementTraits_2` 
 

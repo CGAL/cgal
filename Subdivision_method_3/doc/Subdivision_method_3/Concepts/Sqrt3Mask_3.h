@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgSurfaceSubdivisionMethods3Concepts
-\cgalconcept
+\cgalConcept
 
 Required member functions for the `Sqrt3Mask_3` concept. This 
 policy concept of geometric computations is used in 
 `CGAL::Subdivision_method_3::Sqrt3<Polyhedron_3, Mask>`. 
 
-\hasModel `CGAL::Sqrt3_mask_3<Polyhedron_3>`
+\cgalHasModel `CGAL::Sqrt3_mask_3<Polyhedron_3>`
 
 \sa `CGAL::Subdivision_method_3`
 

@@ -1,14 +1,14 @@
 /*!
 \ingroup PkgStraightSkeleton2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `StraightSkeletonVertex_2` describes the requirements for the vertex type of the 
 `StraightSkeleton_2` concept. It is a refinement of the `HalfedgeDSVertex` concept 
 with support for storage of the incident halfedge. The `StraightSkeletonVertex_2` concept requires the geometric embedding to be a 2D point. 
 
-\refines `HalfedgeDSVertex` 
+\cgalRefines `HalfedgeDSVertex` 
 
-\hasModel CGAL::Straight_skeleton_vertex_base_2
+\cgalHasModel CGAL::Straight_skeleton_vertex_base_2
 
 \sa `StraightSkeleton_2` 
 \sa `StraightSkeletonHalfedge_2` 

@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableBinaryFunction` providing the k-th root. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa ::FieldWithRootOf 
 \sa ::AlgebraicStructureTraits 

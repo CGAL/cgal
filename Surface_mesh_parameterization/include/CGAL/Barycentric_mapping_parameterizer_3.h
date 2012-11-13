@@ -42,7 +42,7 @@ namespace CGAL {
 ///   for `j` neighbor vertex of `i` based on Tutte Barycentric Mapping method.
 /// - It implements an optimized version of is_one_to_one_mapping().
 ///
-/// \models ParameterizerTraits_3
+/// \cgalModels ParameterizerTraits_3
 ///
 ///
 /// \tparam ParameterizationMesh_3       3D surface mesh.

@@ -1,9 +1,9 @@
 
 /*!
 \ingroup PkgInscribedAreasConcepts
-\cgalconcept
+\cgalConcept
 
-\advanced The concept `ExtremalPolygonTraits_2` provides the types and
+\cgalAdvanced The concept `ExtremalPolygonTraits_2` provides the types and
 operations needed to compute a maximal \f$ k\f$-gon that can be
 inscribed into a given convex polygon.
 
@@ -12,8 +12,8 @@ inscribed into a given convex polygon.
 precondition checking only. Therefore, they need not to be 
 specified, in case that precondition checking is disabled. 
 
-\hasModel `CGAL::Extremal_polygon_area_traits_2<K>`
-\hasModel `CGAL::Extremal_polygon_perimeter_traits_2<K>`
+\cgalHasModel `CGAL::Extremal_polygon_area_traits_2<K>`
+\cgalHasModel `CGAL::Extremal_polygon_perimeter_traits_2<K>`
 
 \sa `CGAL::maximum_area_inscribed_k_gon_2`
 \sa `CGAL::maximum_perimeter_inscribed_k_gon_2`

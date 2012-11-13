@@ -12,7 +12,7 @@ the base vertex and halfedge types, respectively. Thus, the default
 <span class="textsc">Dcel</span> records store no other information, except for the topological 
 incidence relations and the geometric data attached to vertices and edges. 
 
-\models ::ArrangementDcelWithRebind 
+\cgalModels ::ArrangementDcelWithRebind 
 
 \sa `Arr_dcel_base<V,H,F>` 
 */

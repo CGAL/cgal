@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3SecondaryConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `MeshCellBase_3` describes the requirements 
 for the `Cell` type of the triangulation 
@@ -27,9 +27,9 @@ and empty of triangulation vertices.
 In the following we call `surface center` 
 of a surface facet, the center of its biggest Delaunay surface ball. 
 
-\refines `RegularTriangulationCellBase_3` 
+\cgalRefines `RegularTriangulationCellBase_3` 
 
-\hasModel `CGAL::Mesh_cell_base_3<MD,Gt,Cb>` 
+\cgalHasModel `CGAL::Mesh_cell_base_3<MD,Gt,Cb>` 
 
 \sa `CGAL::make_mesh_3` 
 \sa `MeshDomain_3` 

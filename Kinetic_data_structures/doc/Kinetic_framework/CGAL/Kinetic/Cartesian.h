@@ -9,7 +9,7 @@ This class provides a model of `Kinetic::Kernel` for use with general Cartesian 
 
 The IO format for points is currently \f$ p_0\f$, \f$ p_1\f$, ... \f$ w\f$. \f$ p_i\f$ and \f$ w\f$ are instances of Function. There IO format is typically \f$ c_0+c_1t+c_2t^2+...\f$. Beware of issues with \cgal IO of the coeffients as exact number typles often require that the coefficents be expressed as \f$ a/b\f$ even when \f$ b\f$ is 1. 
 
-\models `Kinetic::Kernel`
+\cgalModels `Kinetic::Kernel`
 
 */
 template< typename FunctionKernel >

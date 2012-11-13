@@ -2,7 +2,7 @@ namespace Kinetic {
 
 /*!
 \ingroup PkgKdsFrameworkOtherConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `Key` is a unique identifier for something in some sort of
 table. In general, they can be only created by the table and are
@@ -11,8 +11,8 @@ table. There are two classes of values for a `Key`, valid and
 invalid. The latter cannot refer to something in a table. Use the
 method `is_valid()` to differentiate.
 
-\hasModel `CGAL::Kinetic::Simulator::Event_key`
-\hasModel `CGAL::Kinetic::Active_objects_vector::Key`
+\cgalHasModel `CGAL::Kinetic::Simulator::Event_key`
+\cgalHasModel `CGAL::Kinetic::Active_objects_vector::Key`
 
 */
 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 A model for this must provide: 
 
@@ -18,7 +18,7 @@ computes
 the affine rank of the points in `A = tuple [first,last)`. 
 \pre The objects are of the same dimension. 
 
-\requires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
+\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
 */ 
 template <class ForwardIterator> int 
 operator()(ForwardIterator first, ForwardIterator last); 

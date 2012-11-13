@@ -20,7 +20,7 @@ exact computations.
 represent any finite `double` value. (Examples of such a 
 number-type are `CGAL::MP_Float`, `CORE::Expr`, and `CGAL::Gmpq`.) 
 
-\models ::ApproximateMinEllipsoid_d_Traits_d 
+\cgalModels ::ApproximateMinEllipsoid_d_Traits_d 
 
 \sa `CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>` 
 \sa `CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>` 

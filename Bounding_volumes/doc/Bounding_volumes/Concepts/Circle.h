@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgBoundingVolumesConcepts
-\cgalconcept
+\cgalConcept
 
 An object of the class `Circle` is a circle in two-dimensional
 Euclidean plane \f$ \E^2\f$. Its boundary splits the plane into a bounded

@@ -106,7 +106,7 @@ components including at least one seed. If
 the bounded components including no seed. Note 
 that the unbounded component of the plane is 
 never meshed. 
-\requires The `value_type` of `begin` and `end` is `Geom_traits::Point_2`. 
+\cgalRequires The `value_type` of `begin` and `end` is `Geom_traits::Point_2`. 
 */ 
 template<class InputIterator> 
 void set_seeds(InputIterator begin, InputIterator end, 
@@ -194,7 +194,7 @@ directly, from the sequence [begin, end], so that the
 algorithm will not scan the whole set of triangles to 
 find bad ones. To use if there is a non-naive way to 
 find bad triangles. 
-\requires The `value_type` of `begin` and `end` is `Face_handle`. 
+\cgalRequires The `value_type` of `begin` and `end` is `Face_handle`. 
 */ 
 template <class InputIterator> 
 void set_bad_faces(InputIterator begin, 
@@ -263,9 +263,9 @@ defined by the traits `criteria`. The domain of the mesh
 covers all the connected components of the plane defined by the
 constrained edges of `t`, except for the unbounded component.
 \pre The template parameter `CDT` must be a model of the concept `ConstrainedDelaunayTriangulation_2`. The geometric traits class of the constrained Delaunay triangulation must be a model of `DelaunayMeshTraits_2`.
-\requires The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
-\requires `Criteria` must be a model of the concept `MeshingCriteria_2`. 
-\requires `CDT::Face_handle` must be the same as `Criteria::Face_handle`. 
+\cgalRequires The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
+\cgalRequires `Criteria` must be a model of the concept `MeshingCriteria_2`. 
+\cgalRequires `CDT::Face_handle` must be the same as `Criteria::Face_handle`. 
 */
 template<class CDT, class Criteria> 
 void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria()); 
@@ -288,7 +288,7 @@ one seed. If `mark=false`, the domain is the
 union of the bounded components including no seed.
 Note that the unbounded component of the plane is
 never meshed.
-\requires The `value_type` of `begin` and `end` is `CDT::Geom_traits::Point_2`.
+\cgalRequires The `value_type` of `begin` and `end` is `CDT::Geom_traits::Point_2`.
 */
 template <class CDT, class Criteria, class InputIterator>
 void refine_Delaunay_mesh_2(CDT& t,

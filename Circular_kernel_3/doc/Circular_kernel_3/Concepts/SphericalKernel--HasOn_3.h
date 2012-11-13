@@ -1,9 +1,9 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
-\refines `Kernel::HasOn_3` 
+\cgalRefines `Kernel::HasOn_3` 
 */
 class SphericalKernel::HasOn_3 {
 public:

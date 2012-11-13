@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSegmentDelaunayGraph2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `SegmentDelaunayGraphVertexBase_2` describes the 
 requirements for the vertex base class of the 
@@ -9,11 +9,11 @@ requirements for the vertex base class of the
 site of the segment Delaunay graph and provides access to one of its 
 incident faces through a `Face_handle`. 
 
-\refines `DefaultConstructible` 
-\refines `CopyConstructible` 
-\refines `Assignable` 
+\cgalRefines `DefaultConstructible` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `Assignable` 
 
-\hasModel `CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>`
+\cgalHasModel `CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>`
 
 \sa `SegmentDelaunayGraphDataStructure_2` 
 \sa `SegmentDelaunayGraphTraits_2` 

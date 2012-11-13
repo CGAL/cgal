@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceParameterizationConcepts
-\cgalconcept
+\cgalConcept
 
 `ParameterizationMesh_3` is a concept for a 3D surface mesh. Its main purpose is to allow the parameterization methods to access meshes in a uniform manner. 
 
@@ -24,8 +24,8 @@ Creation
 Construction and destruction are undefined. 
 
 We provide 2 models of this concept: 
-\hasModel `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
-\hasModel `CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>`
+\cgalHasModel `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
+\cgalHasModel `CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>`
 
 \sa `ParameterizationPatchableMesh_3`
 

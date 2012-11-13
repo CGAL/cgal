@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableUnaryFunction` computes the sign of a real embeddable number. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa ::RealEmbeddableTraits 
 

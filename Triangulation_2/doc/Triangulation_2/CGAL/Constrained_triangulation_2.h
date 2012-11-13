@@ -295,7 +295,7 @@ Make edge `(f,i)` no longer constrained.
 void remove_constrained_edge(Face_handle f, int i); 
 
 /*! 
-\advanced Checks the validity of the triangulation and the consistency
+\cgalAdvanced Checks the validity of the triangulation and the consistency
 of the constrained marks in edges.
 */ 
 bool 

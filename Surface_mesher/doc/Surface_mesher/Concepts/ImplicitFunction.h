@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgSurfaceMesher3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `ImplicitFunction` describes a function object 
 whose `operator()` computes the values of a function 
 \f$ f : \R^3 \longrightarrow \R\f$. 
 
-\hasModel `CGAL::Gray_level_image_3`
-\hasModel any pointer to a function of type `FT (*)(Point)`
+\cgalHasModel `CGAL::Gray_level_image_3`
+\cgalHasModel any pointer to a function of type `FT (*)(Point)`
 
 \sa `CGAL::Implicit_surface_3<Traits, Function>`
 \sa `CGAL::make_surface_mesh` 

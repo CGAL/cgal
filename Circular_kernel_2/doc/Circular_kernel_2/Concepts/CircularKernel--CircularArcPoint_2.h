@@ -1,15 +1,15 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 Concept for points on circles, circular arcs or line arcs. 
 
-\refines CopyConstructible
-\refines Assignable
-\refines DefaultConstructible 
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
+\cgalRefines DefaultConstructible 
 
-\hasModel `CGAL::Circular_arc_point_2<CircularKernel>` 
+\cgalHasModel `CGAL::Circular_arc_point_2<CircularKernel>` 
 */
 class CircularKernel::CircularArcPoint_2 {
 public:

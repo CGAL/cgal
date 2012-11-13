@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgNumberTypesConcepts
-\cgalconcept
+\cgalConcept
 
 Concept to represent algebraic numbers of degree up to 2 over a `RealEmbeddable` `IntegralDomain` `RT`. 
 
@@ -27,14 +27,14 @@ special construction for extensions of degree 2:
 
 - `make_sqrt` 
 
-\refines `DefaultConstructible` 
-\refines `CopyConstructible` 
-\refines `FromIntConstructible` 
-\refines `ImplicitInteroperable` with RT 
-\refines `ImplicitInteroperable` with FT 
+\cgalRefines `DefaultConstructible` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `FromIntConstructible` 
+\cgalRefines `ImplicitInteroperable` with RT 
+\cgalRefines `ImplicitInteroperable` with FT 
 
-\hasModel `double` (not exact) 
-\hasModel CGAL::Sqrt_extension 
+\cgalHasModel `double` (not exact) 
+\cgalHasModel CGAL::Sqrt_extension 
 
 \sa `CGAL::make_root_of_2<RT>` 
 \sa `CGAL::make_sqrt<RT>` 

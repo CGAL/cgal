@@ -3,21 +3,21 @@
 /// \ingroup PkgAlphaShapes3
 /*!
 \addtogroup PkgAlphaShapes3
-\PkgDescriptionBegin{3D Alpha Shapes,PkgAlphaShapes3Summary}
-\PkgPicture{alpha_shapes_3_small.png}
-\PkgSummaryBegin
-\PkgAuthors{Tran Kai Frank Da, S&eacute;bastien Loriot, and Mariette Yvinec}
-\PkgDesc{This package offers a data structure encoding either one alpha-complex or the whole family of alpha-complexes related to a given 3D Delaunay or regular triangulation. In the latter case, the data structure allows to retrieve   the alpha-complex for any alpha value, the whole spectrum of critical alpha values and a filtration on the triangulation faces (this filtration is based on the first  alpha value for which each face is included on the alpha-complex). }
-\PkgManuals{Chapter_3D_Alpha_Shapes,PkgAlphaShapes3}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{2.3}
-\PkgDependsOn{\ref PkgTriangulation3Summary}
-\PkgBib{cgal:dy-as3}
-\PkgLicense{\ref licensesGPL  "GPL"}
-\PkgDemo{3D Alpha Shapes,alpha_shape_3.zip}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{3D Alpha Shapes,PkgAlphaShapes3Summary}
+\cgalPkgPicture{alpha_shapes_3_small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Tran Kai Frank Da, S&eacute;bastien Loriot, and Mariette Yvinec}
+\cgalPkgDesc{This package offers a data structure encoding either one alpha-complex or the whole family of alpha-complexes related to a given 3D Delaunay or regular triangulation. In the latter case, the data structure allows to retrieve   the alpha-complex for any alpha value, the whole spectrum of critical alpha values and a filtration on the triangulation faces (this filtration is based on the first  alpha value for which each face is included on the alpha-complex). }
+\cgalPkgManuals{Chapter_3D_Alpha_Shapes,PkgAlphaShapes3}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.3}
+\cgalPkgDependsOn{\ref PkgTriangulation3Summary}
+\cgalPkgBib{cgal:dy-as3}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{3D Alpha Shapes,alpha_shape_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 Alpha shapes definition is based on an underlying
 triangulation that may be a Delaunay triangulation 

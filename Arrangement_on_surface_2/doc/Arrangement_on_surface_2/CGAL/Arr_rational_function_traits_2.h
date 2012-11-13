@@ -50,9 +50,9 @@ namespace CGAL {
   to have the same direction as a precondition. Moreover, `Arr_rational_function_traits_2` 
   supports the merging of curves of opposite directions. 
 
-  \models ::ArrangementTraits_2 
-  \models ::ArrangementDirectionalXMonotoneTraits_2 
-  \models ::ArrangementOpenBoundaryTraits_2 
+  \cgalModels ::ArrangementTraits_2 
+  \cgalModels ::ArrangementDirectionalXMonotoneTraits_2 
+  \cgalModels ::ArrangementOpenBoundaryTraits_2 
 */
 template< typename AlgebraicKernel_d_1 >
 class Arr_rational_function_traits_2 {
@@ -132,10 +132,10 @@ Functor to construct a `Curve_2`. To enable caching the class is not
 default constructible and must be obtained via the function 
 `construct_curve_2_object()`, which is a member of the traits. 
 
-\models ::Assignable 
-\models ::CopyConstructible 
-\models ::AdaptableBinaryFunction 
-\models ::AdaptableUnaryFunction 
+\cgalModels ::Assignable 
+\cgalModels ::CopyConstructible 
+\cgalModels ::AdaptableBinaryFunction 
+\cgalModels ::AdaptableUnaryFunction 
 
 */
 class Construct_curve_2 {
@@ -287,10 +287,10 @@ Functor to construct a `X_monotone_curve_2`. To enable caching the class
 is not default constructible and must be obtained via the function 
 `construct_x_monotone_curve_2_object()`, which is a member of the traits. 
 
-\models ::Assignable 
-\models ::CopyConstructible 
-\models ::AdaptableBinaryFunction 
-\models ::AdaptableUnaryFunction 
+\cgalModels ::Assignable 
+\cgalModels ::CopyConstructible 
+\cgalModels ::AdaptableBinaryFunction 
+\cgalModels ::AdaptableUnaryFunction 
 
 */
 class Construct_x_monotone_curve_2 {
@@ -458,7 +458,7 @@ const Algebraic_real_1& lower, const Algebraic_real_1& upper); const
 The `Curve_2` class nested within the traits is used 
 to represent rational functions which may be restricted to a certain x-range. 
 
-\models ::ArrTraits::Curve_2 
+\cgalModels ::ArrTraits::Curve_2 
 
 */
 class Curve_2 {
@@ -529,7 +529,7 @@ Algebraic_real_1 right_x() const;
 /*!
 
 
-\models ::ArrTraits::Point_2 
+\cgalModels ::ArrTraits::Point_2 
 
 */
 class Point_2 {
@@ -631,7 +631,7 @@ The `X_monotone_curve_2` class nested within the traits is used
 to represent \f$ x\f$-monotone parts of rational functions. In particular, such an \f$ x\f$-monotone curve 
 may not contain a vertical asymptote in its interior \f$ x\f$-range. 
 
-\models ::ArrTraits::XMonotoneCurve_2 
+\cgalModels ::ArrTraits::XMonotoneCurve_2 
 
 */
 class X_monotone_curve_2 {

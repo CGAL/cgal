@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 A function object concept to compare a point `p` and an arc `a` on the vertical line passing through `p`. 
 

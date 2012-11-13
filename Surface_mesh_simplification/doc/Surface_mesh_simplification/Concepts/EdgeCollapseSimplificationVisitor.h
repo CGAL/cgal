@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceMeshSimplificationConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `EdgeCollapseSimplificationVisitor` describes the requirements for the <I>visitor object</I> which is used to track the edge collapse simplification algorithm. 
 

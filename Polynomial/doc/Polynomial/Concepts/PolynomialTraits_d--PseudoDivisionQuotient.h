@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableBinaryFunction` computes the quotient of the 
 <I>pseudo division</I> of two polynomials \f$ f\f$ and \f$ g\f$. 
@@ -12,9 +12,9 @@ where \f$ D = leading\_coefficient(g)^{max(0, degree(f)-degree(g)+1)}\f$
 
 This functor computes \f$ q\f$. 
 
-\refines `AdaptableBinaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

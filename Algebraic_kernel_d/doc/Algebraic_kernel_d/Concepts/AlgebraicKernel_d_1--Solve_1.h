@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsUni
-\cgalconcept
+\cgalConcept
 
 Computes the real roots of a univariate polynomial. 
 
-\refines `Assignable` 
-\refines `CopyConstructible` 
+\cgalRefines `Assignable` 
+\cgalRefines `CopyConstructible` 
 
 */
 

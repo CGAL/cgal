@@ -1,7 +1,7 @@
 namespace Kinetic {
 /*!
 \ingroup PkgKdsFrameworkOtherConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `Kinetic::Certificate` represents certificate. Its main purpose is 
 to provide a way of creating `Time` objects corresponding to when 

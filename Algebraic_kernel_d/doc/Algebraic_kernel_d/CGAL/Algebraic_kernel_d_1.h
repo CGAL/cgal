@@ -17,7 +17,7 @@ Currently, the following coefficient types are supported:
 
 - `leda_integer`, `leda_rational`. (requires configuration with external library LEDA) 
 
-\advanced The template argument type can also be set to `Sqrt_extension<NT,ROOT>`, where `NT` is 
+\cgalAdvanced The template argument type can also be set to `Sqrt_extension<NT,ROOT>`, where `NT` is 
 one of the types listed above. `ROOT` should be one of the integer types. 
 See also the documentation of `Sqrt_extension<NT,ROOT>`. 
 
@@ -27,7 +27,7 @@ approximation of an algebraic real root is a slightly modified
 (filtered) version of the one presented in \cite abbott-qir-06. The
 method has quadratic convergence.
 
-\models `AlgebraicKernel_d_1`
+\cgalModels `AlgebraicKernel_d_1`
 
 \sa `AlgebraicKernel_d_1` 
 \sa `Polynomial_d` 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableFunctor` computes the <I>pseudo division</I> 
 of two polynomials \f$ f\f$ and \f$ g\f$. 
@@ -16,9 +16,9 @@ Hence in general it is not possible to invert the leading coefficient of \f$ g\f
 Instead \f$ f\f$ is extended by \f$ D\f$ allowing integral divisions in the internal 
 computation. 
 
-\refines `AdaptableFunctor` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableFunctor` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

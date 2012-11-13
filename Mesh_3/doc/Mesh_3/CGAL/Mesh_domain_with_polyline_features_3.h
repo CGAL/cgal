@@ -13,7 +13,7 @@ whose endpoints are the added corners.
 of the domain which should be extended. 
 It has to be a model of the `MeshDomain_3` concept. 
 
-\models `MeshDomainWithFeatures_3` 
+\cgalModels `MeshDomainWithFeatures_3` 
 
 \sa `MeshDomain_3` 
 \sa `MeshPolyline_3` 

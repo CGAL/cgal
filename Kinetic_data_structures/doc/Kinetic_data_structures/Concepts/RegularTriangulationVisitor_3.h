@@ -2,14 +2,14 @@ namespace Kinetic {
 
 /*!
 \ingroup PkgKdsConcepts
-\cgalconcept
+\cgalConcept
 
 This concept is for proxy objects which get notified when a kinetic regular triangulation changes. It inherits all the methods of `DelaunayTriangulationVisitor_3`. 
 
-\refines `Kinetic::DelaunayTriangulationVisitor_3` 
+\cgalRefines `Kinetic::DelaunayTriangulationVisitor_3` 
 
-\hasModel `CGAL::Kinetic::Regular_triangulation_visitor_base_3`
-\hasModel `CGAL::Kinetic::Regular_triangulation_event_log_visitor_3`
+\cgalHasModel `CGAL::Kinetic::Regular_triangulation_visitor_base_3`
+\cgalHasModel `CGAL::Kinetic::Regular_triangulation_event_log_visitor_3`
 
 */
 

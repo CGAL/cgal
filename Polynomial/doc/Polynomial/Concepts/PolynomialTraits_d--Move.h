@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableFunctor` moves a variable at position \f$ i\f$ to a 
 new position \f$ j\f$. The relative order of the other variables is preserved, 
@@ -10,9 +10,9 @@ one position while \f$ x_i\f$ is moved to the former position of \f$ x_j\f$.
 
 This function may be used to make a certain variable the outer most variable. 
 
-\refines `AdaptableFunctor` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableFunctor` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPlacementOfStreamlines2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `Integrator_2` describes the set of requirements for 
 the second template parameter of the class 
@@ -9,8 +9,8 @@ the second template parameter of the class
 provides the operation that integrates a new point from a given point 
 with a predefined step, and according to a specified vector. 
 
-\hasModel `CGAL::Euler_integrator_2<VectorField_2>`
-\hasModel `CGAL::Runge_kutta_integrator_2<VectorField_2>` 
+\cgalHasModel `CGAL::Euler_integrator_2<VectorField_2>`
+\cgalHasModel `CGAL::Runge_kutta_integrator_2<VectorField_2>` 
 
 */
 

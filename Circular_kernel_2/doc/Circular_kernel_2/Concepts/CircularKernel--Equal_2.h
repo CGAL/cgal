@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
 Testing equality between objects. 
 
-\refines `Kernel::Equal_2`
+\cgalRefines `Kernel::Equal_2`
 
 \sa `CircularKernel::CompareX_2`
 \sa `CircularKernel::CompareY_2`

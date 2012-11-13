@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgQPSolverConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `NonnegativeQuadraticProgram` describes a convex quadratic program of the form 
 
@@ -44,11 +44,11 @@ The description is given by appropriate <I>random-access</I>
 iterators over the program data, see below. The program therefore 
 comes in <I>dense</I> representation which includes zero entries. 
 
-\hasModel `CGAL::Quadratic_program<NT>` 
-\hasModel `CGAL::Quadratic_program_from_mps<NT>`
-\hasModel `CGAL::Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>`
+\cgalHasModel `CGAL::Quadratic_program<NT>` 
+\cgalHasModel `CGAL::Quadratic_program_from_mps<NT>`
+\cgalHasModel `CGAL::Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>`
 
-\requires The value types of all iterator types (nested iterator
+\cgalRequires The value types of all iterator types (nested iterator
 types, respectively, for `A_iterator` and `D_iterator`) must be
 convertible to some common `IntegralDomain` `ET`.
 

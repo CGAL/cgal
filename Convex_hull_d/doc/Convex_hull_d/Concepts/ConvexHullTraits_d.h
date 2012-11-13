@@ -1,13 +1,13 @@
 /*!
 \ingroup PkgConvexHullDConcepts
-\cgalconcept
+\cgalConcept
 
 Requirements of the traits class to be used with the 
 class `CGAL::Convex_hull_d`. 
 
-\hasModel `CGAL::Cartesian_d<FT,LA>` 
-\hasModel `CGAL::Homogeneous_d<RT,LA>` 
-\hasModel `CGAL::Convex_hull_d_traits_3<R>` 
+\cgalHasModel `CGAL::Cartesian_d<FT,LA>` 
+\cgalHasModel `CGAL::Homogeneous_d<RT,LA>` 
+\cgalHasModel `CGAL::Convex_hull_d_traits_3<R>` 
 
 */
 class ConvexHullTraits_d {

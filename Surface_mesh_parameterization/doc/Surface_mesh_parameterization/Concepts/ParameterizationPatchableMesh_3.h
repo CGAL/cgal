@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceParameterizationConcepts
-\cgalconcept
+\cgalConcept
 
 `ParameterizationPatchableMesh_3` inherits from concept `ParameterizationMesh_3`, thus is a concept of a 3D surface mesh. 
 
@@ -16,7 +16,7 @@ Design Pattern
 
 `ParameterizationPatchableMesh_3` is an Adaptor \cite cgal:ghjv-dpero-95 : it changes the interface of a 3D mesh to match the interface expected by class `Parameterization_mesh_patch_3`. 
 
-\refines `ParameterizationMesh_3` 
+\cgalRefines `ParameterizationMesh_3` 
 
 
 Creation 
@@ -24,7 +24,7 @@ Creation
 
 Construction and destruction are undefined. 
 
-\hasModel  Adaptator for `Polyhedron_3` is provided: `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
+\cgalHasModel  Adaptator for `Polyhedron_3` is provided: `CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
 
 \sa `ParameterizationMesh_3`
 

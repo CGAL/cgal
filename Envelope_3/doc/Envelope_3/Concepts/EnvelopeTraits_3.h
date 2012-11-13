@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgEnvelope3Concepts
-\cgalconcept
+\cgalConcept
 
 This concept defines the minimal set of geometric predicates and 
 operations needed to compute the envelope of a set of arbitrary 
@@ -14,12 +14,12 @@ respectively, and some constructions and predicates on these types.
 Note however, that these operations usually involve the projection of 
 3D objects onto the \f$ xy\f$-plane. 
 
-\refines `ArrangementXMonotoneTraits_2` 
+\cgalRefines `ArrangementXMonotoneTraits_2` 
 
-\hasModel `CGAL::Env_triangle_traits_3<Kernel>` 
-\hasModel `CGAL::Env_sphere_traits_3<ConicTraits>` 
-\hasModel `CGAL::Env_plane_traits_3<Kernel>` 
-\hasModel `CGAL::Env_surface_data_traits_3<Traits,XyData,SData,Cnv>` 
+\cgalHasModel `CGAL::Env_triangle_traits_3<Kernel>` 
+\cgalHasModel `CGAL::Env_sphere_traits_3<ConicTraits>` 
+\cgalHasModel `CGAL::Env_plane_traits_3<Kernel>` 
+\cgalHasModel `CGAL::Env_surface_data_traits_3<Traits,XyData,SData,Cnv>` 
 
 */
 

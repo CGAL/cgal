@@ -3,7 +3,7 @@
 
 /*!
 \ingroup PkgStlExtensionConcepts
-\cgalconcept
+\cgalConcept
 
 \anchor sectionProjectionFunctionObjects 
 
@@ -12,19 +12,19 @@ The concept `Projection_object` is modeled after the STL
 concept `UnaryFunction`, but takes also care of (const) 
 references. 
 
-\hasModel CGAL::Identity
-\hasModel CGAL::Dereference
-\hasModel CGAL::Get_address
-\hasModel CGAL::Cast_function_object
-\hasModel CGAL::Project_vertex
-\hasModel CGAL::Project_facet
-\hasModel CGAL::Project_point
-\hasModel CGAL::Project_normal
-\hasModel CGAL::Project_plane
-\hasModel CGAL::Project_next
-\hasModel CGAL::Project_prev
-\hasModel CGAL::Project_next_opposite
-\hasModel CGAL::Project_opposite_prev
+\cgalHasModel CGAL::Identity
+\cgalHasModel CGAL::Dereference
+\cgalHasModel CGAL::Get_address
+\cgalHasModel CGAL::Cast_function_object
+\cgalHasModel CGAL::Project_vertex
+\cgalHasModel CGAL::Project_facet
+\cgalHasModel CGAL::Project_point
+\cgalHasModel CGAL::Project_normal
+\cgalHasModel CGAL::Project_plane
+\cgalHasModel CGAL::Project_next
+\cgalHasModel CGAL::Project_prev
+\cgalHasModel CGAL::Project_next_opposite
+\cgalHasModel CGAL::Project_opposite_prev
 
 
 */

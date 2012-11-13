@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceSubdivisionMethods3Concepts
-\cgalconcept
+\cgalConcept
 
 Required member functions for the `PQQMask_3` concept. This 
 policy concept of geometric computations is used in 
@@ -9,7 +9,7 @@ policy concept of geometric computations is used in
 
 \image html CCBorderMask.png
 
-\hasModel `CGAL::CatmullClark_mask_3<Polyhedron_3>`
+\cgalHasModel `CGAL::CatmullClark_mask_3<Polyhedron_3>`
 
 \sa `CGAL::Subdivision_method_3`
 

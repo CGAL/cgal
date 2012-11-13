@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgLinearCellComplexConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `CellAttributeWithPoint` is a refinement of the `CellAttribute` 
 concept, to represent a cell attribute containing a point. 
 
-\refines `CellAttribute` 
+\cgalRefines `CellAttribute` 
 
-\hasModel `CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>`
+\cgalHasModel `CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>`
 
 \sa `LinearCellComplexItems` 
 

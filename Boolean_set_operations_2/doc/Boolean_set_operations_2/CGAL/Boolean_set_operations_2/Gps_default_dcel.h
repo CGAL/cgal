@@ -8,7 +8,7 @@ The class `Gps_default_dcel` is the default <span class="textsc">Dcel</span> cla
 `General_polygon_set_2` and `Polygon_set_2` class-templates 
 to represent the underlying internal `Arrangement_2` data structure. 
 
-\models ::GeneralPolygonSetDcel 
+\cgalModels ::GeneralPolygonSetDcel 
 
 */
 template< typename Traits >

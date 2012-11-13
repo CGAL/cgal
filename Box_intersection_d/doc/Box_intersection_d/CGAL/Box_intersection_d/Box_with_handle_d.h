@@ -56,7 +56,7 @@ that does not store a handle.
 </UL> 
 </UL> 
 
-\models ::BoxIntersectionBox_d 
+\cgalModels ::BoxIntersectionBox_d 
 
 \sa `CGAL::box_intersection_d` 
 \sa `CGAL::box_self_intersection_d` 

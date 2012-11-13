@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
-\refines `Kernel` 
+\cgalRefines `Kernel` 
 
-\hasModel `CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>`
-\hasModel CGAL::Exact_spherical_kernel_3 
+\cgalHasModel `CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>`
+\cgalHasModel CGAL::Exact_spherical_kernel_3 
 
 \sa `Kernel`
 

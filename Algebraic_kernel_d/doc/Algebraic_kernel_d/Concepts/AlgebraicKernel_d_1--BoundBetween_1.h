@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsUni
-\cgalconcept
+\cgalConcept
 
 Computes a number of type 
 `AlgebraicKernel_d_1::Bound` in-between two 
 `AlgebraicKernel_d_1::Algebraic_real_1` values. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 */
 

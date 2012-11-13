@@ -1,18 +1,18 @@
 
 /*!
 \ingroup PkgBoundingVolumesConcepts
-\cgalconcept
+\cgalConcept
 
 This concept defines the requirements for traits classes of 
 `CGAL::Approximate_min_ellipsoid_d<Traits>`. 
 
-\refines `DefaultConstructible` 
-\refines `CopyConstructible` 
-\refines `Assignable` 
+\cgalRefines `DefaultConstructible` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `Assignable` 
 
-\hasModel `CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>` 
-\hasModel `CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET>` 
-\hasModel `CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>` 
+\cgalHasModel `CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>` 
+\cgalHasModel `CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET>` 
+\cgalHasModel `CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>` 
 
 \sa `CGAL::Min_ellipse_2<Traits>` 
 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableFunctor` computes a square-free factorization 
 <I>up to a constant factor (utcf)</I> of a 
@@ -19,9 +19,9 @@ This functor is well defined even though
 `PolynomialTraits_d::Innermost_coefficient_type` may not be a 
 `UniqueFactorizationDomain`. 
 
-\refines Assignable
-\refines CopyConstructible
-\refines DefaultConstructible
+\cgalRefines Assignable
+\cgalRefines CopyConstructible
+\cgalRefines DefaultConstructible
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

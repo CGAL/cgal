@@ -46,7 +46,7 @@ namespace CGAL {
 /// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Discrete Conformal Map method.
 ///
-/// \models ParameterizerTraits_3
+/// \cgalModels ParameterizerTraits_3
 ///
 ///
 /// \param ParameterizationMesh_3       3D surface mesh.

@@ -1,11 +1,11 @@
 namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
-\cgalconcept
+\cgalConcept
 
-\refines AdaptableFunctor 
+\cgalRefines AdaptableFunctor 
 
-\hasModel ArrangementOpenBoundaryTraits_2::Compare_x_at_limit_2 
+\cgalHasModel ArrangementOpenBoundaryTraits_2::Compare_x_at_limit_2 
 
 */
 

@@ -72,7 +72,7 @@ In this manual you will encounter sections marked as follows.
 Some functionality is considered more advanced, for example because it is
 relatively low-level, or requires special care to be properly used.
 
-\advanced Such functionality is identified this way in the manual.
+\cgalAdvanced Such functionality is identified this way in the manual.
 
 \subsection debugging_support Debugging Support Features
 
@@ -80,7 +80,7 @@ Usually related to advanced features that for example may not guarantee
 class invariants, some functionality is provided that helps debugging,
 for example by performing invariants checks on demand.
 
-\debug Such functionality is identified this way in the manual.
+\cgalDebug Such functionality is identified this way in the manual.
 
 \subsection deprecated_code Deprecated Code
 

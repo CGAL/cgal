@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSphericalKernel3GeometricClasses
 
-\models ::SphericalKernel::CircularArc_3 
+\cgalModels ::SphericalKernel::CircularArc_3 
 
 ### I/O ###
 

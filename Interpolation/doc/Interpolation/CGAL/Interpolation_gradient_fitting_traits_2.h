@@ -11,8 +11,8 @@ functions and of Sibson's gradient fitting function when applied on
 a function defined over a two-dimensional domain. The traits class 
 is templated by a kernel class `K`. 
 
-\models ::GradientFittingTraits 
-\models ::InterpolationTraits 
+\cgalModels ::GradientFittingTraits 
+\cgalModels ::InterpolationTraits 
 
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 

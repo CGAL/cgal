@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableUnaryFunction` inverts one variable in a given 
 `PolynomialTraits_d::Polynomial_d`, that is, for a given polynomial 
@@ -13,9 +13,9 @@ the polynomial is considered as a univariate polynomial in one specific variable
 This functor is provided for efficiency reasons, since this operation just inverts the 
 order of the coefficients with respect to the specified variable. 
 
-\refines `AdaptableUnaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

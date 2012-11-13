@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 A model for this must provide: 
 
@@ -20,7 +20,7 @@ it via an iterator range starting in `result`. The returned
 iterator marks the end of the output.
 
 \pre \f$ A\f$ contains vectors of the same dimension \f$ d\f$. 
-\requires The value type of `ForwardIterator` and `OutputIterator` is `Kernel_d::Vector_d`. 
+\cgalRequires The value type of `ForwardIterator` and `OutputIterator` is `Kernel_d::Vector_d`. 
 */ 
 template <class 
 ForwardIterator, class OutputIterator> int 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgApolloniusGraph2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `ApolloniusGraphTraits_2` provides the traits 
 requirements for the `Apollonius_graph_2` class. In particular, 
@@ -10,8 +10,8 @@ it provides a type `Site_2`, which must be a model of the concept
 constructions for sites and several function object 
 types for the predicates. 
 
-\hasModel `CGAL::Apollonius_graph_traits_2<K,Method_tag>` 
-\hasModel `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` 
+\cgalHasModel `CGAL::Apollonius_graph_traits_2<K,Method_tag>` 
+\cgalHasModel `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` 
 
 \sa `CGAL::Apollonius_graph_2<Gt,Agds>` 
 \sa `CGAL::Apollonius_graph_traits_2<K,Method_tag>` 

@@ -1,15 +1,15 @@
 
 /*!
 \ingroup PkgArrangement2Concepts
-\cgalconcept
+\cgalConcept
 
 A model for the `ArrangementWithHistoryInputFormatter` concept supports a set of functions that enable 
 reading an arrangement-with-history instance from an input stream using a 
 specific format. 
 
-\refines `ArrangementInputFormatter` 
+\cgalRefines `ArrangementInputFormatter` 
 
-\hasModel `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
+\cgalHasModel `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
 
 */
 

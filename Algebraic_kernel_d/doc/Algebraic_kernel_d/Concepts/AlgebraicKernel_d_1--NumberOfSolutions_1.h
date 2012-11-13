@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsUni
-\cgalconcept
+\cgalConcept
 
 Computes the number of real solutions of the given univariate polynomial. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa `AlgebraicKernel_d_1::ConstructAlgebraicReal_1`
 

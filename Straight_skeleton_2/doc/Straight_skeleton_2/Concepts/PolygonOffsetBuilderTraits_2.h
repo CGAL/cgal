@@ -1,10 +1,10 @@
 /*!
 \ingroup PkgStraightSkeleton2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `PolygonOffsetBuilderTraits_2` describes the requirements for the geometric traits class required by the algorithm class `Polygon_offset_builder_2<Ss,Gt,Polygon_2>`. 
 
-\hasModel CGAL::Polygon_offset_builder_traits_2
+\cgalHasModel CGAL::Polygon_offset_builder_traits_2
 
 \sa `CGAL::Polygon_offset_builder_2<Ss,Gt,Polygon_2>` 
 \sa `CGAL::Polygon_offset_builder_traits_2<K>` 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPlacementOfStreamlines2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `VectorField_2` describes the set of requirements for
 the first template parameter of the class 
@@ -9,8 +9,8 @@ the first template parameter of the class
 provides the types of the geometric primitives used in the placement 
 of streamlines and some functions for answering different queries. 
 
-\hasModel `CGAL::Regular_grid_2<StreamLinesTraits_2>` 
-\hasModel `CGAL::Triangular_field_2<StreamLinesTraits_2>` 
+\cgalHasModel `CGAL::Regular_grid_2<StreamLinesTraits_2>` 
+\cgalHasModel `CGAL::Triangular_field_2<StreamLinesTraits_2>` 
 
 */
 

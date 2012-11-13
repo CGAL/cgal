@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 For a given `PolynomialTraits_d::Polynomial_d` \f$ p\f$ 
 this `AdaptableUnaryFunction` returns the degree vector, that is, 
@@ -10,9 +10,9 @@ where the monomial order is the lexicographic order giving outer
 variables a higher priority. In particular, this is the monomial 
 that belongs to the innermost leading coefficient of \f$ p\f$. 
 
-\refines `AdaptableUnaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

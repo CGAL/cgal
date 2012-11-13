@@ -22,7 +22,7 @@ to an empty statement. Otherwise, it is defined to
 { static CGAL::Profile_counter tmp(MSG); ++tmp; }
 \endcode
 
-\cgalexample{Profiling_tools/Profile_counter.cpp} 
+\cgalExample{Profiling_tools/Profile_counter.cpp} 
 
 will print at exit: 
 

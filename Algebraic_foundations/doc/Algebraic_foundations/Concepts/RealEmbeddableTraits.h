@@ -1,13 +1,13 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsRealEmbeddableConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `RealEmbeddableTraits` is associated to a number type 
 `Type` and reflects the properties of this type with respect 
 to the concept `RealEmbeddable`. 
 
-\hasModel `CGAL::Real_embeddable_traits<T>`
+\cgalHasModel `CGAL::Real_embeddable_traits<T>`
 */
 
 class RealEmbeddableTraits {

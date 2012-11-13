@@ -1,14 +1,14 @@
 namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsGeometricObjects
-\cgalconcept
+\cgalConcept
 
 represents a general planar curve. 
 
-\refines DefaultConstructible
-\refines CopyConstructible
-\refines Assignable
-\hasModel ArrangementTraits_2::Curve_2 
+\cgalRefines DefaultConstructible
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
+\cgalHasModel ArrangementTraits_2::Curve_2 
 
 */
 

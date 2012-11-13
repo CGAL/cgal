@@ -1,9 +1,9 @@
 
 /*!
 \ingroup PkgSphericalKernel3GeometricConcepts
-\cgalconcept
+\cgalConcept
 
-\refines `Kernel::ComputeApproximateSquaredLength_3` 
+\cgalRefines `Kernel::ComputeApproximateSquaredLength_3` 
 
 */
 

@@ -18,7 +18,7 @@ This base class can be used directly or can serve as a base to derive
 other base classes with some additional attributes (a color for 
 example) tuned for a specific application. 
 
-\models ::TriangulationDSVertexBase_3 
+\cgalModels ::TriangulationDSVertexBase_3 
 
 \sa `CGAL::Triangulation_vertex_base_3` 
 \sa `CGAL::Triangulation_ds_cell_base_3` 

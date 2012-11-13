@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsBi
-\cgalconcept
+\cgalConcept
 
 Returns a square free part of a bivariate polynomial. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa `AlgebraicKernel_d_2::IsSquareFree_2`
 \sa `AlgebraicKernel_d_2::SquareFreeFactorize_2`

@@ -1,7 +1,7 @@
 namespace Kinetic {
 /*!
 \ingroup PkgKdsFrameworkConcepts
-\cgalconcept
+\cgalConcept
 
 This concept ties together the parts needed in order to run a kinetic 
 data structure. We provide several models of this concept: 
@@ -20,10 +20,10 @@ the appropriate dimension as the primitive used in the
 `Kinetic::InstantaneousKernel` and the 
 `Kinetic::ActiveObjectsTable`. 
 
-\hasModel `CGAL::Kinetic::Exact_simulation_traits`
-\hasModel `CGAL::Kinetic::Inexact_simulation_traits`
-\hasModel `CGAL::Kinetic::Regular_triangulation_exact_simulation_traits`
-\hasModel `CGAL::Kinetic::Regular_triangulation_inexact_simulation_traits`
+\cgalHasModel `CGAL::Kinetic::Exact_simulation_traits`
+\cgalHasModel `CGAL::Kinetic::Inexact_simulation_traits`
+\cgalHasModel `CGAL::Kinetic::Regular_triangulation_exact_simulation_traits`
+\cgalHasModel `CGAL::Kinetic::Regular_triangulation_inexact_simulation_traits`
 
 */
 

@@ -1,15 +1,15 @@
 /*!
 \ingroup PkgSpatialSearchingDConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `SearchTraits` defines the requirements for the template 
 parameter of the search classes. 
 
-\hasModel `CGAL::Cartesian_d<FT>` 
-\hasModel `CGAL::Homogeneous_d<RT>` 
-\hasModel `CGAL::Search_traits_2<Kernel>` 
-\hasModel `CGAL::Search_traits_3<Kernel>`
-\hasModel `CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator,ConstructMinVertex,ConstructMaxVertex>`
+\cgalHasModel `CGAL::Cartesian_d<FT>` 
+\cgalHasModel `CGAL::Homogeneous_d<RT>` 
+\cgalHasModel `CGAL::Search_traits_2<Kernel>` 
+\cgalHasModel `CGAL::Search_traits_3<Kernel>`
+\cgalHasModel `CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator,ConstructMinVertex,ConstructMaxVertex>`
 
 \sa `RangeSearchTraits` 
 \sa `CGAL::Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 

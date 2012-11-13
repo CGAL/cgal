@@ -17,7 +17,7 @@ if `Alpha_shape_vertex_base_2` is intended to be used with an alpha-shape class 
 \link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. See the description 
 provided in the documentation of `Alpha_shape_2` for more details. The default value is \link Tag_false `Tag_false`\endlink. 
 
-\models ::AlphaShapeVertex_2 
+\cgalModels ::AlphaShapeVertex_2 
 */
 template< typename Traits, typename Vb, typename ExactAlphaComparisonTag >
 class Alpha_shape_vertex_base_2 : public Vb {

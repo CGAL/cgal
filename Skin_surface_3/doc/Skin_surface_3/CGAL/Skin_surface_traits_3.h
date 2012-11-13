@@ -11,7 +11,7 @@ the `SkinSurfaceTraits_3`.
 The template argument `K` must be a model of the `Kernel` 
 concept. 
 
-\models ::SkinSurfaceTraits_3 
+\cgalModels ::SkinSurfaceTraits_3 
 
 */
 template< typename K >

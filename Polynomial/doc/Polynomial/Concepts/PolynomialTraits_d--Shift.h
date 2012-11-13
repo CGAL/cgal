@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableBinaryFunction` multiplies a `PolynomialTraits_d::Polynomial_d` 
 by the given power of the specified variable. 
@@ -9,9 +9,9 @@ by the given power of the specified variable.
 This functor is provided for efficiency reasons, since multiplication by some variable 
 will in general correspond to a shift of coefficients in the internal representation. 
 
-\refines `AdaptableBinaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgKernelDKernelConcept
-\cgalconcept
+\cgalConcept
 
 A model for this must provide: 
 
@@ -19,7 +19,7 @@ returns the relative position of point
 order of the points of \f$ A\f$ does not matter.
 
 \pre `orientation(first,last)` is not `ZERO`. 
-\requires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
+\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
 */ 
 template <class ForwardIterator> Bounded_side 
 operator()( ForwardIterator first, ForwardIterator last, const 

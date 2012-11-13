@@ -9,8 +9,8 @@ This header provides all necessary functions so the fundamental type
 `FieldWithSqrt`. Due to rounding errors and overflow `float` is
 considered as not exact.
 
-\models ::FieldWithSqrt 
-\models ::RealEmbeddable 
+\cgalModels ::FieldWithSqrt 
+\cgalModels ::RealEmbeddable 
 
 */
 

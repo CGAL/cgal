@@ -10,7 +10,7 @@ functionality, such as handles, iterators, and circulators.
 Specifically, for a `key` value the expression `&*key` must 
 return a unique address. 
 
-\models ::UniqueHashFunction 
+\cgalModels ::UniqueHashFunction 
 
 \sa `CGAL::Unique_hash_map<Key,Data,UniqueHashFunction>` 
 
@@ -44,7 +44,7 @@ Handle_hash_function();
 Returns unique hash value for any `Handle` 
 type for which `&*key` gives a unique address. 
 
-\requires The type 
+\cgalRequires The type 
 `std::iterator_traits<Handle>::value_type` has to be defined 
 (which it is already for pointers, handles, iterators, and 
 circulators). 

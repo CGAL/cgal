@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgArrangement2ConceptsDCEL
-\cgalconcept
+\cgalConcept
 
 A face record in a <span class="textsc">Dcel</span> data structure. A face may either be unbounded, 
 otherwise it has an incident halfedge along the chain defining its outer 

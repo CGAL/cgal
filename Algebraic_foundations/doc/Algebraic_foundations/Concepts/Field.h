@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `Field` is an `IntegralDomain` in which every non-zero element 
 has a multiplicative inverse. 
@@ -17,7 +17,7 @@ Moreover, `CGAL::Algebraic_structure_traits< Field >` is a model of
 
 - `CGAL::Algebraic_structure_traits< FieldWithSqrt >::Inverse` 
 
-\refines `IntegralDomain` 
+\cgalRefines `IntegralDomain` 
 
 \sa ::IntegralDomainWithoutDivision 
 \sa ::IntegralDomain 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgArrangement2ConceptsDCEL
-\cgalconcept
+\cgalConcept
 
 A hole record in a <span class="textsc">Dcel</span> data structure, which stores the face that contains 
 the hole in its interior, along with an iterator for the hole in the holes' 

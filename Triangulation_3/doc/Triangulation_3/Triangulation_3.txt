@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 3D Triangulations
 \anchor Chapter_3D_Triangulations
 \anchor chapterTriangulation3
-\autotoc
+\cgalAutoToc
 
 \authors Sylvain Pion and Monique Teillaud
 
@@ -43,7 +43,7 @@ cells. Each vertex gives access to one of its incident cells.
 The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
 orientation, the positive orientation being defined by the orientation
 of the underlying Euclidean space \f$ \R^3\f$ (see
-\cgal_figure_ref{Triangulation3figorient}). The neighbors of a cell are also
+\cgalFigureRef{Triangulation3figorient}). The neighbors of a cell are also
 indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index.
 
@@ -59,7 +59,7 @@ represented: a facet is given by a cell and an index (the facet
 the vertex with index `i`) and an edge is given by a cell and two
 indices (the edge `(i,j)` of a cell `c` is the edge whose
 endpoints are the vertices of `c` with indices `i` and
-`j`). See \cgal_figure_ref{TDS3figrepres}.
+`j`). See \cgalFigureRef{TDS3figrepres}.
 
 <b>Degenerate Dimensions</b>
 
@@ -102,7 +102,7 @@ data structure, is `locally valid`
 (see Section \ref TDS3secintro of Chapter \ref chapterTDS3)
 
 <B>(c)</B> Any cell has its vertices ordered according to positive
-orientation. See \cgal_figure_ref{Triangulation3figorient}.
+orientation. See \cgalFigureRef{Triangulation3figorient}.
 
 When the triangulation is degenerated into a triangulation of
 dimension 2, the geometric validity reduces to:
@@ -153,11 +153,11 @@ defined as
 where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$. 
 \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$
 are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{z}^{(w)})}
-= 0\f$ (see \cgal_figure_ref{Triangulation3figortho)}.
+= 0\f$ (see \cgalFigureRef{Triangulation3figortho)}.
 
-\cgal_figure_begin{Triangulation3figortho,ortho.gif]
+\cgalFigureBegin{Triangulation3figortho,ortho.gif]
 Orthogonal weighted points (picture in 2D).
-\cgal_figure_end
+\cgalFigureEnd
 
 Four weighted points have a unique common orthogonal weighted point
 called the <I>power sphere</I>. The weighted point orthogonal to
@@ -192,13 +192,13 @@ The implementation of 3D regular triangulation supports insertions of weighted p
 
 The main classes `Triangulation_3`, `Delaunay_triangulation_3` and
 `Regular_triangulation_3` are connected to each other by the
-derivation diagram shown in \cgal_figure_ref{t3_derivation}. This diagram
+derivation diagram shown in \cgalFigureRef{t3_derivation}. This diagram
 also shows another class: `Triangulation_utils_3`, which provides
 a set of tools operating on the indices of vertices in cells.
 
-\cgal_figure_begin{t3_derivation,derivation.gif}
+\cgalFigureBegin{t3_derivation,derivation.gif}
 Derivation diagram of the 3D triangulation classes.
-\cgal_figure_end
+\cgalFigureEnd
 
 The three main classes (`Triangulation_3`, `Delaunay_triangulation_3`
 and `Regular_triangulation_3`) provide high-level geometric functionality
@@ -284,11 +284,11 @@ possibility to customize the vertices and cells used by the triangulation data
 structure, and hence by the geometric triangulation using it. Depending on the
 kind of triangulation used, the requirements on the vertex and cell base
 classes vary, and are expressed by various concepts, following the refinement
-diagram shown in \cgal_figure_ref{T3concepthierarchy}.
+diagram shown in \cgalFigureRef{T3concepthierarchy}.
 
-\cgal_figure_begin{T3concepthierarchy,concept_hierarchy.gif}
+\cgalFigureBegin{T3concepthierarchy,concept_hierarchy.gif}
 Concepts refinement hierarchy for the vertex and cell base classes parameters.
-\cgal_figure_end
+\cgalFigureEnd
 
 A default value for the triangulation data structure parameter is provided in
 all the triangulation classes, so it need not be specified by the user unless
@@ -319,7 +319,7 @@ uses `Compact_location`.
 Note that you can specify the `LocationPolicy` parameter without specifying
 the triangulation data structure, in case you are fine with the default there.
 In this case, the `LocationPolicy` appears as a second parameter after the
-geometric traits.\footnote{The mechanism used behind the scenes to allow this syntactical convenience is called <I>deduced parameters</I>.}
+geometric traits.\cgalFootnote{The mechanism used behind the scenes to allow this syntactical convenience is called <I>deduced parameters</I>.}
 
 The `Fast_location` policy is implemented using a hierarchy of
 triangulations; it changes the behavior of functions `locate`,
@@ -348,13 +348,13 @@ interchanged with alternate implementations.
 The most useful flexibility is the ability given to the user to add his own
 data in the vertices and cells by providing his own vertex and cell base
 classes to `Triangulation_data_structure_3`. The
-\cgal_figure_ref{T3figlayers} shows in more detail the flexibility that is
+\cgalFigureRef{T3figlayers} shows in more detail the flexibility that is
 provided, and the place where the user can insert his own vertex and/or cell
 base classes.
 
-\cgal_figure_begin{T3figlayers,design.gif}
+\cgalFigureBegin{T3figlayers,design.gif}
 Triangulation software design.
-\cgal_figure_end
+\cgalFigureEnd
 
 The design of the triangulation data structure gives the possibility to store
 any kind of data, including handles (an entity akin to pointers) directly in
@@ -408,7 +408,7 @@ This example shows the incremental construction of a 3D triangulation, the
 location of a point and how to perform elementary operations on indices in a
 cell. It uses the default parameter of the `Triangulation_3` class.
 
-\cgalexample{Triangulation_3/simple_triangulation_3.cpp}
+\cgalExample{Triangulation_3/simple_triangulation_3.cpp}
 
 \subsection Triangulation_3ChangingtheVertexBase Changing the Vertex Base
 
@@ -424,7 +424,7 @@ When the user doesn't need to add a type in a vertex which depends on the
 easily in the vertices. The example below shows how to add a `Color`
 this way.
 
-\cgalexample{Triangulation_3/color.cpp}
+\cgalExample{Triangulation_3/color.cpp}
 
 \subsection Triangulation_3AddingHandles Adding Handles
 
@@ -433,7 +433,7 @@ When the user needs to add a type in a vertex which depends on the
 `Cell_handle`), then he has to derive his own vertex base class,
 as the following example shows.
 
-\cgalexample{Triangulation_3/adding_handles_3.cpp}
+\cgalExample{Triangulation_3/adding_handles_3.cpp}
 
 \subsection Triangulation_3SettingInformationWhileInserting Setting Information While Inserting a %Range of Points
 
@@ -453,14 +453,14 @@ of the corresponding point given in the range.
 Each point and its information are gathered into a pair. We provide
 the constructor of the triangulation (which is calling the `insert` function)
 with a range of such pairs.
-\cgalexample{Triangulation_3/info_insert_with_pair_iterator.cpp}
+\cgalExample{Triangulation_3/info_insert_with_pair_iterator.cpp}
 
 \subsection Triangulation_3UsingtheBoostZipIterator Using the Boost Zip %Iterator
 
 Information and points are in separate containers. We use
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
-\cgalexample{Triangulation_3/info_insert_with_zip_iterator.cpp}
+\cgalExample{Triangulation_3/info_insert_with_zip_iterator.cpp}
 
 \subsection Triangulation_3UsingtheBoostTransformIterator Using the Boost Transform %Iterator
 
@@ -468,7 +468,7 @@ We define a functor `Auto_count` used together with
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
 in the range. Note that this is correct because the iterator
 is dereferenced only once per point during the insertion.
-\cgalexample{Triangulation_3/info_insert_with_transform_iterator.cpp}
+\cgalExample{Triangulation_3/info_insert_with_transform_iterator.cpp}
 
 \subsection Triangulation3secsimplex The Simplex Class 
 
@@ -476,15 +476,15 @@ The triangulation defines a `Triangulation_3::Simplex` class that represents a
 simplex (vertex, edge, facet or cell). This example demonstrates how
 simplices can be stored in a set.
 
-\cgalexample{Triangulation_3/simplex.cpp}
+\cgalExample{Triangulation_3/simplex.cpp}
 
 \subsection Triangulation3exfastlocation Fast Point Location for Delaunay Triangulations 
 
-\cgalexample{Triangulation_3/fast_location_3.cpp}
+\cgalExample{Triangulation_3/fast_location_3.cpp}
 
 \subsection Triangulation_3FindingtheCellsinConflict Finding the Cells in Conflict with a Point in a Delaunay Triangulation
 
-\cgalexample{Triangulation_3/find_conflicts_3.cpp}
+\cgalExample{Triangulation_3/find_conflicts_3.cpp}
 
 \subsection Triangulation_3RegularTriangulation Regular Triangulation
 
@@ -494,7 +494,7 @@ be hidden and do not result in vertices in the triangulation.
 Another difference is that a specific traits class has to be used
 (at least at the moment).
 
-\cgalexample{Triangulation_3/regular_3.cpp}
+\cgalExample{Triangulation_3/regular_3.cpp}
 
 \section Triangulation3seccomplexity Complexity and Performance 
 
@@ -529,7 +529,7 @@ case) :
 `Triangulation_cell_base_3` instead of `Regular_triangulation_cell_base_3`).
 </UL>
 
-\cgal_figure_ref{Triangulation3figbenchmarks} shows, for all these types of
+\cgalFigureRef{Triangulation3figbenchmarks} shows, for all these types of
 triangulations, the times in seconds taken to build a triangulation from a
 given number of points, then the average time to perform one point location in
 triangulations of various sizes, and the average time to perform one vertex
@@ -748,7 +748,7 @@ memory usage (doing fresh copies of the data structures are one way out in such
 cases). The asymptotic memory overhead of `Compact_container` for its
 internal bookkeeping is otherwise on the order of \f$ O(\sqrt{n})\f$.
 
-\cgal_figure_ref{Triangulation3figmemory} shows the number of bytes used per
+\cgalFigureRef{Triangulation3figmemory} shows the number of bytes used per
 points, as measured empirically using `Memory_sizer` for large triangulations
 (\f$ 10^6\f$ random points).
 
@@ -842,11 +842,11 @@ output of another algorithm which has this requirement, for example). This
 will slow down the computations by a factor of 4 to 5 at least, and it can be
 much more.
 
-\cgal_figure_ref{Triangulation3figkernelsanddatasets} gives more detailed
+\cgalFigureRef{Triangulation3figkernelsanddatasets} gives more detailed
 timings about various kernels one the following data sets : random points in a
 cube, random points on the surface of an ellipsoid, points scanned on the
 surface of a Buddha statue, points on a molecular surface, and points scanned
-on a dryer handle. See \cgal_figure_ref{Triangulation3figdatasets} for pictures of
+on a dryer handle. See \cgalFigureRef{Triangulation3figdatasets} for pictures of
 the last 3 objects, which respectively illustrate volumic data, surfacic data,
 and data with many degenerate cases. This last data set exhibits an infinite
 loop with an inexact kernel, and of course we are not sure whether what is
@@ -960,9 +960,9 @@ Number of points
 </CENTER>
 
  
-\cgal_figure_begin{Triangulation3figdatasets,api1_01.gif,b35-1.gif,HD.gif}
-Data sets used in the benchmark of \cgal_figure_ref{Triangulation3figkernelsanddatasets}.
-\cgal_figure_end
+\cgalFigureBegin{Triangulation3figdatasets,api1_01.gif,b35-1.gif,HD.gif}
+Data sets used in the benchmark of \cgalFigureRef{Triangulation3figkernelsanddatasets}.
+\cgalFigureEnd
 
 \section Triangulation_3Design Design and Implementation History
 

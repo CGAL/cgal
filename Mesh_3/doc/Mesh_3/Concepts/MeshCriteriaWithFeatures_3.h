@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgMesh_3Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `MeshCriteriaWithFeatures_3` refines the concept `MeshCriteria_3`. 
 The concept `MeshCriteria_3` encapsulates 
@@ -12,9 +12,9 @@ additionnally encapsulates the
 concept `MeshEdgeCriteria_3`, 
 that describes the requirements, in terms of sizing, for the discretization of the domain \f$ 1\f$-dimensional features. 
 
-\refines `MeshDomain_3` 
+\cgalRefines `MeshDomain_3` 
 
-\hasModel `CGAL::Mesh_criteria_3<Tr>`
+\cgalHasModel `CGAL::Mesh_criteria_3<Tr>`
 
 \sa `MeshCriteria_3` 
 \sa `MeshEdgeCriteria_3` 

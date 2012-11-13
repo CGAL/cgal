@@ -4,18 +4,18 @@
 /*!
 \addtogroup PkgGeomview
 \todo check generated documentation
-\PkgDescriptionBegin{Geomview,PkgGeomviewSummary}
-\PkgPicture{geomview.gif}
-\PkgSummaryBegin
-\PkgAuthors{Andreas Fabri and Sylvain Pion}
-\PkgDesc{This package implements an interface to Geomview, an interactive 3D viewing program,  originally developed at the Geometry Center in Minneapolis.}
-\PkgManuals{Chapter_Geomview,PkgGeomview}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{2.0}
-\PkgBib{cgal:fp-gv}
-\PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{Geomview,PkgGeomviewSummary}
+\cgalPkgPicture{geomview.gif}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Andreas Fabri and Sylvain Pion}
+\cgalPkgDesc{This package implements an interface to Geomview, an interactive 3D viewing program,  originally developed at the Geometry Center in Minneapolis.}
+\cgalPkgManuals{Chapter_Geomview,PkgGeomview}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.0}
+\cgalPkgBib{cgal:fp-gv}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

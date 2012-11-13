@@ -3,7 +3,7 @@ namespace CGAL {
 
 \mainpage 2D Boolean Operations on Nef Polygons Embedded on the Sphere
 \anchor Chapter_2D_Boolean_Operations_on_Nef_Polygons_Embedded_on_the_Sphere
-\autotoc
+\cgalAutoToc
 
 \authors Peter Hachenberger and Lutz Kettner
 
@@ -20,11 +20,11 @@ operations. Also, Nef polyhedra are closed under topological unary
 set operations. Given a Nef polyhedron one can determine its interior, its
 boundary, and its closure.
 
-\cgal_figure_begin{nefsexamples,halfspace.gif,complex.gif}
+\cgalFigureBegin{nefsexamples,halfspace.gif,complex.gif}
 Two spherical Nef polyhedra. A closed halfspace on the left
 and a complex polyhedron on the right. The different colors indicate
 selected and unselected regions, lines and points.
-\cgal_figure_end
+\cgalFigureEnd
 
 Additionally, a d-dimensional Nef polyhedron has the property, that its boundary
 is a (d-1)-dimensional Nef polyhedron. This property can be used as a way to
@@ -67,7 +67,7 @@ two `Sphere_segment`s, and two arbitrary `Sphere_segment`s can
 intersect in two points.
 
 If we restrict our geometric objects to a so-called perfect hemisphere
-of \f$ S_2\f$\footnote{A perfect hemisphere of \f$ S_2\f$ is an open half-sphere plus an open half-circle in the boundary of the open half-sphere plus one endpoint of the half-circle.} then the restricted objects
+of \f$ S_2\f$\cgalFootnote{A perfect hemisphere of \f$ S_2\f$ is an open half-sphere plus an open half-circle in the boundary of the open half-sphere plus one endpoint of the half-circle.} then the restricted objects
 behave like in classical geometry, e.g., two points define exactly one
 segment, two segments intersect in at most one interior point
 (non-degenerately), or three non-cocircular sphere points can be
@@ -85,7 +85,7 @@ with the type
 including the boundary, \f$ N2\f$ is another halfsphere without the boundary, and 
 \f$ N3\f$ is the intersection of \f$ N1\f$ and \f$ N2\f$.
 
-\cgalexample{Nef_S2/nef_s2_simple.cpp}
+\cgalExample{Nef_S2/nef_s2_simple.cpp}
 
 \subsection Nef_S2ConstructionandCombinations Construction and Combinations
 
@@ -100,7 +100,7 @@ compared with the union of \f$ N2\f$ and \f$ N3\f$, \f$ N5\f$ is united with \f$
 intersected with \f$ N4\f$. At last, it is tested if \f$ N5\f$ is a subset of \f$ N2\f$ and
 if \f$ N5\f$ is not equal to \f$ N4\f$.
 
-\cgalexample{Nef_S2/nef_s2_construction.cpp}
+\cgalExample{Nef_S2/nef_s2_construction.cpp}
 
 \subsection Nef_S2Exploration Exploration
 
@@ -124,7 +124,7 @@ to find out which handle type is represented, the functions
 `Nef_polyhedron_S2::is_svertex()`, `Nef_polyhedron_S2::is_shalfedge()` and `Nef_polyhedron_S2::is_shalfloop()` are provided.
 Afterwards the iterator can be casted to the proper handle type.
 
-\cgalexample{Nef_S2/nef_s2_exploration.cpp}
+\cgalExample{Nef_S2/nef_s2_exploration.cpp}
 
 \subsection Nef_S2PointLocation Point Location
 
@@ -138,14 +138,14 @@ a `Nef_polyhedron_S2::SHafloop_const_handle` or a `Nef_polyhedron_S2::SFace_cons
 `assign()` performs the cast operation and returns a Boolean which
 indicates whether the cast was successful or not.
 
-\cgalexample{Nef_S2/nef_s2_point_location.cpp}
+\cgalExample{Nef_S2/nef_s2_point_location.cpp}
 
 \subsection Nef_S2Visualization Visualization
 
 `Nef_polyhedron_S2` provides an interface for OpenGL visualization via a
 Qt widget. The usage is shown in the following example:
 
-\cgalexample{Nef_S2/nef_S2.cpp}
+\cgalExample{Nef_S2/nef_S2.cpp}
 
 */ 
 } /* namespace CGAL */

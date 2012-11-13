@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgApolloniusGraph2Concepts
-\cgalconcept
+\cgalConcept
 
 The vertex of an Apollonius graph 
 included in an Apollonius graph hierarchy has to provide 
@@ -12,14 +12,14 @@ refines the concept `ApolloniusGraphVertexBase_2`, by
 adding two vertex handles to the corresponding vertices for the 
 next and previous level graphs. 
 
-\refines `ApolloniusGraphVertexBase_2` 
+\cgalRefines `ApolloniusGraphVertexBase_2` 
 
 ### Types ###
 
 `ApolloniusGraphHierarchyVertexBase_2` does not introduce any 
 types in addition to those of `ApolloniusGraphVertexBase_2`. 
 
-\hasModel CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden> > 
+\cgalHasModel CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden> > 
 
 \sa `ApolloniusGraphDataStructure_2` 
 \sa `ApolloniusGraphVertexBase_2` 

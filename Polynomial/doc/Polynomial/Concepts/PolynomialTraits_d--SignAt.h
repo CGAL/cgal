@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableFunctor` returns the sign of a 
 `PolynomialTraits_d::Polynomial_d` \f$ p\f$ at given Cartesian point represented 
@@ -10,9 +10,9 @@ as an iterator range.
 This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is 
 `RealEmbeddable`. 
 
-\refines `AdaptableFunctor` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableFunctor` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

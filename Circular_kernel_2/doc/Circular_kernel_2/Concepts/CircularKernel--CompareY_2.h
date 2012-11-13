@@ -1,9 +1,9 @@
 
 /*!
 \ingroup PkgCircularKernel2GeometricConcepts
-\cgalconcept
+\cgalConcept
 
-\refines `Kernel::CompareY_2`
+\cgalRefines `Kernel::CompareY_2`
 
 \sa `CircularKernel::CompareX_2`
 \sa `CircularKernel::CompareXY_2`

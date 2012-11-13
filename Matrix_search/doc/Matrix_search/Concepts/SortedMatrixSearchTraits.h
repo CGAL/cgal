@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgMatrixSearchConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `SortedMatrixSearchTraits` defines types and operations 
 needed to compute the smallest entry in a set of sorted matrices 
 that fulfills a certain feasibility criterion using the function 
 `CGAL::sorted_matrix_search`. 
 
-\hasModel `CGAL::Sorted_matrix_search_traits_adaptor<F,M>`
+\cgalHasModel `CGAL::Sorted_matrix_search_traits_adaptor<F,M>`
 
 \sa `CGAL::sorted_matrix_search`
 \sa `BasicMatrix` 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulation3Concepts
-\cgalconcept
+\cgalConcept
 
 The regular triangulation of a set of weighted points does not 
 necessarily 
@@ -32,9 +32,9 @@ of the concept `RegularTriangulationCellBase_3`, which refines
 the concept `TriangulationCellBase_3` by adding 
 in the cell a container to store hidden points. 
 
-\refines `TriangulationCellBase_3` 
+\cgalRefines `TriangulationCellBase_3` 
 
-\hasModel CGAL::Regular_triangulation_cell_base_3 
+\cgalHasModel CGAL::Regular_triangulation_cell_base_3 
 
 \sa `TriangulationCellBase_3` 
 

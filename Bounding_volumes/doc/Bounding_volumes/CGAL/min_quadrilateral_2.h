@@ -28,7 +28,7 @@ omitted, if `ForwardIterator` refers to a two-dimensional point
 type from one the \cgal kernels. In this case, a default traits class 
 (`Min_quadrilateral_default_traits_2<K>`) is used. 
 
-\requires <OL> 
+\cgalRequires <OL> 
 <LI>If `Traits` is specified, it is a model for 
 `MinQuadrilateralTraits_2` and the value type `VT` of 
 `ForwardIterator` is `Traits::Point_2`. Otherwise 
@@ -55,7 +55,7 @@ The following code generates a random convex polygon
 `P` with 20 vertices and computes the minimum enclosing 
 parallelogram of `P`. 
 
-\cgalexample{Min_quadrilateral_2/minimum_enclosing_parallelogram_2.cpp} 
+\cgalExample{Min_quadrilateral_2/minimum_enclosing_parallelogram_2.cpp} 
 
 */
 
@@ -99,7 +99,7 @@ omitted, if `ForwardIterator` refers to a two-dimensional point
 type from one the \cgal kernels. In this case, a default traits class 
 (`Min_quadrilateral_default_traits_2<K>`) is used. 
 
-\requires <OL> 
+\cgalRequires <OL> 
 <LI>If `Traits` is specified, it is a model for 
 `MinQuadrilateralTraits_2` and the value type `VT` of 
 `ForwardIterator` is `Traits::Point_2`. Otherwise `VT` 
@@ -124,7 +124,7 @@ The following code generates a random convex polygon
 `P` with 20 vertices and computes the minimum enclosing 
 rectangle of `P`. 
 
-\cgalexample{Min_quadrilateral_2/minimum_enclosing_rectangle_2.cpp} 
+\cgalExample{Min_quadrilateral_2/minimum_enclosing_rectangle_2.cpp} 
 
 */
 
@@ -167,7 +167,7 @@ point type from one the \cgal kernels. In this case, a default
 traits class (`Min_quadrilateral_default_traits_2<K>`) is 
 used. 
 
-\requires <OL> 
+\cgalRequires <OL> 
 <LI>If `Traits` is specified, it is a model for 
 `MinQuadrilateralTraits_2` and the value type `VT` of 
 `ForwardIterator` is `Traits::Point_2`. Otherwise `VT` 
@@ -192,7 +192,7 @@ The following code generates a random convex polygon
 `P` with 20 vertices and computes the minimum enclosing 
 strip of `P`. 
 
-\cgalexample{Min_quadrilateral_2/minimum_enclosing_strip_2.cpp} 
+\cgalExample{Min_quadrilateral_2/minimum_enclosing_strip_2.cpp} 
 
 */
 

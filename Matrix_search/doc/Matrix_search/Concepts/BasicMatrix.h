@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgMatrixSearchConcepts
-\cgalconcept
+\cgalConcept
 
 
 A class `BasicMatrix` has to provide the following 
 types and operations in order to be a model for 
 `BasicMatrix`. 
 
-\hasModel `CGAL::Dynamic_matrix<M>`
+\cgalHasModel `CGAL::Dynamic_matrix<M>`
 
 \sa `MonotoneMatrixSearchTraits` 
 \sa `SortedMatrixSearchTraits` 

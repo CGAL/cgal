@@ -25,7 +25,7 @@ every time the circumcenter function is called. See
 `CGAL::Triangulation_cell_base_with_circumcenter_3` for a way to cache the 
 circumcenter computation. 
 
-\models ::TriangulationCellBase_3 
+\cgalModels ::TriangulationCellBase_3 
 
 \sa `CGAL::Triangulation_ds_cell_base_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 

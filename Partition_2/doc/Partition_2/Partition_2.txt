@@ -5,7 +5,7 @@ namespace CGAL {
 \mainpage 2D Polygon Partitioning
 \anchor Chapter_2D_Polygon_Partitioning
 \anchor chappolygonpartition
-\autotoc
+\cgalAutoToc
 \author Susan Hert
 
 \section secpartition_2_intro Introduction 
@@ -63,9 +63,9 @@ their runtime complexities. Though the triangulation-based approximation
 algorithm often results in fewer convex pieces, this is not always the case.
 
 
-\cgal_figure_begin{P2_approxvsopti,approximate_optimal_vs_optimal.png}
+\cgalFigureBegin{P2_approxvsopti,approximate_optimal_vs_optimal.png}
 Examples of an approximate optimal convex partition (left) and an optimal convex partition (right).
-\cgal_figure_end
+\cgalFigureEnd
 
 An optimal convex partition can be produced using the function `optimal_convex_partition_2()`.
 

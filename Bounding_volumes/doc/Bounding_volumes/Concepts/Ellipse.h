@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgBoundingVolumesConcepts
-\cgalconcept
+\cgalConcept
 
 An object `ellipse` of the class `Ellipse` is an ellipse in two-dimensional
 Euclidean plane \f$ \E^2\f$. Its boundary splits the plane into a bounded

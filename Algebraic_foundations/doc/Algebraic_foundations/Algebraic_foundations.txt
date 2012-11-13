@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage Algebraic Foundations
 \anchor Chapter_Algebraic_Foundations
 
-\autotoc
+\cgalAutoToc
 \author Michael Hemmer
 
 \section Algebraic_foundationsIntroduction Introduction
@@ -31,11 +31,11 @@ it was not desirable to cover all known algebraic structures,
 e.g., we did not introduce concepts for such basic structures as <I>groups</I> or
 exceptional structures as <I>skew fields</I>.
 
-\cgal_figure_begin{figConceptHierarchyOfAlgebraicStructures,AlgebraicConceptHierarchy.gif}
+\cgalFigureBegin{figConceptHierarchyOfAlgebraicStructures,AlgebraicConceptHierarchy.gif}
 Concept Hierarchy of Algebraic Structures
-\cgal_figure_end
+\cgalFigureEnd
 
-\cgal_figure_ref{figConceptHierarchyOfAlgebraicStructures} shows the refinement 
+\cgalFigureRef{figConceptHierarchyOfAlgebraicStructures} shows the refinement 
 relationship of the algebraic structure concepts. 
 `IntegralDomain`, `UniqueFactorizationDomain`, `EuclideanRing` and 
 `Field` correspond to the algebraic structures with the
@@ -126,7 +126,7 @@ The following example illustrates a dispatch for `Field`s using overloaded
 functions. The example only needs two overloads since the algebraic 
 category tags reflect the algebraic structure hierarchy.
 
-\cgalexample{Algebraic_foundations/algebraic_structure_dispatch.cpp}
+\cgalExample{Algebraic_foundations/algebraic_structure_dispatch.cpp}
 
 \section Algebraic_foundationsRealE Real Embeddable
 
@@ -177,7 +177,7 @@ concepts `Field` and `RealEmbeddable`, while
 `RingNumberType` combines `IntegralDomainWithoutDivision` and
 `RealEmbeddable`. Algebraically, the real number types do not form
 distinct structures and are therefore not listed in the concept
-hierarchy of \cgal_figure_ref{figConceptHierarchyOfAlgebraicStructures}.
+hierarchy of \cgalFigureRef{figConceptHierarchyOfAlgebraicStructures}.
 
 \section Algebraic_foundationsInteroperability Interoperability
 
@@ -221,7 +221,7 @@ provided by `Algebraic_structure_traits` and `Real_embeddable_traits` of
 The following example illustrates how two write code for 
 `ExplicitInteroperable` types.
 
-\cgalexample{Algebraic_foundations/interoperable.cpp}
+\cgalExample{Algebraic_foundations/interoperable.cpp}
 
 The following example illustrates a dispatch for `ImplicitInteroperable` and 
 `ExplicitInteroperable` types. 
@@ -229,7 +229,7 @@ The binary function (that just multiplies its two arguments) is supposed to
 take two `ExplicitInteroperable` arguments. For `ImplicitInteroperable`
 types a variant that avoids the explicit cast is selected.
 
-\cgalexample{Algebraic_foundations/implicit_interoperable_dispatch.cpp}
+\cgalExample{Algebraic_foundations/implicit_interoperable_dispatch.cpp}
 
 \section Algebraic_foundationsFractions Fractions
 
@@ -254,14 +254,14 @@ it is more general and offers dispatching functionality.
 \subsection Algebraic_foundationsExamples_1 Examples
 
 The following example show a simple use of `Fraction_traits`:
-\cgalexample{Algebraic_foundations/fraction_traits.cpp}
+\cgalExample{Algebraic_foundations/fraction_traits.cpp}
 
 The following example illustrates the integralization of a vector, 
 i.e., the coefficient vector of a polynomial. Note that for minimizing 
 coefficient growth `Fraction_traits<Type>::Common_factor` is used to 
 compute the 'least' common multiple of the denominators.
 
-\cgalexample{Algebraic_foundations/integralize.cpp}
+\cgalExample{Algebraic_foundations/integralize.cpp}
 
 \section Algebraic_foundationsDesign Design and Implementation History
 

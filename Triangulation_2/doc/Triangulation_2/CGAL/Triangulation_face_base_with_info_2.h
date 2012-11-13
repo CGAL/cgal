@@ -19,7 +19,7 @@ and is actually not used in `Triangulation_face_base_with_info_2` .
 \tparam Fb  is a face base class from which 
 `Triangulation_face_base_with_info_2` derives. 
 
-\models Because `Triangulation_face_base_with_info_2` derives from the class instantiating its third 
+\cgalModels Because `Triangulation_face_base_with_info_2` derives from the class instantiating its third 
 parameter, it will be a model of the same face base concept as its parameter: 
 `TriangulationFaceBase_2`,  `ConstrainedTriangulationFaceBase_2`, or `RegularTriangulationFaceBase_2` 
 

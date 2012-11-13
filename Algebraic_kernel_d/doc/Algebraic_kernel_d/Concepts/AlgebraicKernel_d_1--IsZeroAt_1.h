@@ -1,12 +1,12 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsUni
-\cgalconcept
+\cgalConcept
 
 Computes whether an `AlgebraicKernel_d_1::Polynomial_1` 
 is zero at a given `AlgebraicKernel_d_1::Algebraic_real_1`. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicKernel_d_1::SignAt_1`
 

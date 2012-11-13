@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgArrangement2ConceptsTraits
-\cgalconcept
+\cgalConcept
 
 Several predicates are required to handle \f$ x\f$-monotone curves that 
 approach infinity and thus approach the boundary of the parameter 
@@ -31,18 +31,18 @@ concept are expected to be open on the right, open at the bottom, or
 open at the top, the corresponding nested type must be convertible to 
 `Arr_open_side_tag`. A model of the concept `ArrangementOpenBoundaryTraits_2` must have 
 all the four categories convertible to 
-`Arr_open_side_tag`.\footnote{We intend to introduce more concepts that require only a subset of the categories to be convertible to `Arr_open_side_tag`.} In this case the <span class="textsc">Dcel</span> of the arrangement 
+`Arr_open_side_tag`.\cgalFootnote{We intend to introduce more concepts that require only a subset of the categories to be convertible to `Arr_open_side_tag`.} In this case the <span class="textsc">Dcel</span> of the arrangement 
 instantiated with the model is initialized with an implicit bounding 
 rectangle. When the parameter space is bounded, it is the exact 
 geometric embedding of the implicit bounding rectangle. 
 
-\refines `ArrangementBasicTraits_2` 
+\cgalRefines `ArrangementBasicTraits_2` 
 
-\hasModel `CGAL::Arr_linear_traits_2<Kernel>`
-\hasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>` 
-\hasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>` 
-\hasModel `CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>` 
-\hasModel `CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>` 
+\cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
+\cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>` 
+\cgalHasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>` 
+\cgalHasModel `CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>` 
+\cgalHasModel `CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>` 
 
 \sa `ArrangementBasicTraits_2` 
 \sa `ArrangementXMonotoneTraits_2` 

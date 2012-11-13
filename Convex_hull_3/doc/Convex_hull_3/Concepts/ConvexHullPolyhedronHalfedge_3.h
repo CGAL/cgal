@@ -1,11 +1,11 @@
 /*!
 \ingroup PkgConvexHull3Concepts
-\cgalconcept
+\cgalConcept
 
 Requirements of the halfedge type required for the polyhedron built 
 by the function `CGAL::convex_hull_3()`. 
 
-\hasModel CGAL::Polyhedron_3::Halfedge 
+\cgalHasModel CGAL::Polyhedron_3::Halfedge 
 
 \sa `CGAL::Polyhedron_3` 
 \sa `ConvexHullPolyhedronVertex_3` 

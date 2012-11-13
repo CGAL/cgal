@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage Linear and Quadratic Programming Solver
 \anchor Chapter_Linear_and_Quadratic_Programming_Solver
 \anchor QPsolver
-\autotoc
+\cgalAutoToc
 
 \authors Kaspar Fischer, Bernd G&auml;rtner, Sven Sch&ouml;nherr, and Frans Wessendorp
 
@@ -247,7 +247,7 @@ Our running example is the following quadratic program in two variables:
 \end{array}
 \f]
 
-\cgal_figure_ref{figQPfirst_qp} shows a picture. It
+\cgalFigureRef{figQPfirst_qp} shows a picture. It
 depicts the five inequalities of the program, along with the
 <I>feasible region</I> (green), the set of points that satisfy all the
 five constraints. The dashed elliptic curves represent <I>contour lines</I> 
@@ -259,9 +259,9 @@ the point \f$ (0,4)\f$, and the minimum within the feasible region appears
 at the point \f$ (2,3)\f$ marked with a black dot. The value of the objective
 function at this optimal solution is \f$ 2^2 + 4(3-4)^2 = 8\f$.
 
-\cgal_figure_begin{figQPfirst_qp,first_qp.png}
+\cgalFigureBegin{figQPfirst_qp,first_qp.png}
 A quadratic program in two variables
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection QP_solverConstructingaProgramfromData Constructing a Program from Data
 
@@ -283,7 +283,7 @@ of the matrix \f$ 2D\f$ have to be provided, rather than \f$ D\f$. Although
 this is common to almost all quadratic programming solvers, it 
 can easily be overlooked by a novice.
 
-\cgalexample{QP_solver/first_qp.cpp}
+\cgalExample{QP_solver/first_qp.cpp}
 
 Asuming that <TT>GMP</TT> is installed, the 
 output of the of the above program is:
@@ -307,7 +307,7 @@ your working directory contains the file <TT>first_qp.mps</TT>,
 the following program will read and solve it, with the same output
 as before.
 
-\cgalexample{QP_solver/first_qp_from_mps.cpp}
+\cgalExample{QP_solver/first_qp_from_mps.cpp}
 
 \subsection QP_solverConstructingaProgramfromIterators Constructing a Program from Iterators
 
@@ -319,7 +319,7 @@ approaches (program from data/stream) are clearly preferable,
 but Section \ref secQPiterators shows an
 example where it makes sense to use the iterator-based approach.
 
-\cgalexample{QP_solver/first_qp_from_iterators.cpp}
+\cgalExample{QP_solver/first_qp_from_iterators.cpp}
 
 <B>Note 1:</B> The example shows an interesting feature of this approach:
 not all data need to come from containers. Here, the iterator over the
@@ -396,7 +396,7 @@ objective function:
 \end{array}
 \f]
 
-\cgal_figure_ref{figQPfirst_lp} shows how this looks like. We will not
+\cgalFigureRef{figQPfirst_lp} shows how this looks like. We will not
 visualize a linear objective function with contour lines but with
 arrows instead. The arrow represents the (direction) of the vector \f$ -c\f$,
 and we are looking for a feasible solution that is "extreme" in the direction
@@ -405,9 +405,9 @@ two constraints \f$ x_1+x_2\leq 7\f$ and \f$ -x_1+x_2\leq 4\f$, the point
 \f$ (10/3,11/3)\f$ marked with a black dot. The optimal objective function
 value is \f$ -32(11/3)+64=-160/3\f$.
 
-\cgal_figure_begin{figQPfirst_lp,first_lp.png}
+\cgalFigureBegin{figQPfirst_lp,first_lp.png}
 A linear program in two variables
-\cgal_figure_end
+\cgalFigureEnd
 
 Here is \cgal code for solving it, using the dedicated LP solver, and
 according to the three ways for constructing a program that we have
@@ -443,14 +443,14 @@ program:
 \end{array}
 \f]
 
-\cgal_figure_ref{figQPfirst_nonnegative_qp} contains 
+\cgalFigureRef{figQPfirst_nonnegative_qp} contains 
 the illustration; since the constraint \f$ y\leq 4\f$ was 
 redundant, the feasible region and the optimal solution do 
 not change.
 
-\cgal_figure_begin{figQPfirst_nonnegative_qp,first_nonnegative_qp.png}
+\cgalFigureBegin{figQPfirst_nonnegative_qp,first_nonnegative_qp.png}
 A nonnegative quadratic program in two variables
-\cgal_figure_end
+\cgalFigureEnd
 
 The following programs (using the dedicated solver for nonnegative
 quadratic programs) will therefore again output
@@ -545,7 +545,7 @@ through a fixed column of the constraint matrix \f$ A\f$. We get this
 from transforming the iterator through the points using a functor 
 that maps a point to an iterator through its homogeneous coordinates.
 
-\cgalexample{QP_solver/solve_convex_hull_containment_lp.h}
+\cgalExample{QP_solver/solve_convex_hull_containment_lp.h}
 
 To see this in action, let us call it with \f$ p_1=(0,0), p_2=(10,0),
 p_3=(0,10)\f$ fixed (they define a triangle) and all integral points \f$ p\f$
@@ -554,7 +554,7 @@ in \f$ [0,10]^2\f$. We know that \f$ p\f$ is in the convex hull of
 most. As the exact type, we use `MP_Float` or `Gmpzf` 
 (which is faster and preferable if <TT>GMP</TT> is installed).
 
-\cgalexample{QP_solver/convex_hull_containment.cpp}
+\cgalExample{QP_solver/convex_hull_containment.cpp}
 
 \subsection secQPmakers Using Makers 
 
@@ -576,7 +576,7 @@ version of
 that shows how this works. In effect, you get shorter and more
 readable code.
 
-\cgalexample{QP_solver/solve_convex_hull_containment_lp2.h}
+\cgalExample{QP_solver/solve_convex_hull_containment_lp2.h}
 
 \section QP_solverImportant Important Variables and Constraints
 
@@ -597,7 +597,7 @@ the ones that contribute to the convex combinations of all 25 lattice
 points in \f$ [0,4]^2\f$. If the lattice point in question is not in the 4-gon, 
 we simply output this fact.
 
-\cgalexample{QP_solver/important_variables.cpp}
+\cgalExample{QP_solver/important_variables.cpp}
 
 It turns out that exactly three of the four points contribute to any
 convex combination, even through there are lattice points that lie
@@ -665,7 +665,7 @@ we solve it and ask for a certificate. Finally, we verify the certificate
 by simply checking the inequalities of the second system in Farkas
 Lemma.
 
-\cgalexample{QP_solver/infeasibility_certificate.cpp}
+\cgalExample{QP_solver/infeasibility_certificate.cpp}
 
 There are similar certificates for optimality and unboundedness
 that you can see in action in the programs
@@ -714,7 +714,7 @@ the file <TT>cycling.mps</TT> (which is in the example directory as well),
 and then solves it in verbose mode, using <I>Bland's rule</I>, see
 `Quadratic_program_pricing_strategy`.
 
-\cgalexample{QP_solver/cycling.cpp}
+\cgalExample{QP_solver/cycling.cpp}
 
 If you comment the line 
 
@@ -751,7 +751,7 @@ parameter of type `Quadratic_program_options` to the function
 `solve_convex_hull_containment_lp` that we pass on to the solution
 function:
 
-\cgalexample{QP_solver/solve_convex_hull_containment_lp3.h}
+\cgalExample{QP_solver/solve_convex_hull_containment_lp3.h}
 
 Now let us test containment of the origin in the convex hull
 of \f$ n\f$ random points in \f$ [0,1]^d\f$ (it will most likely not be contained,
@@ -760,7 +760,7 @@ below, we use \f$ d=10\f$ and \f$ n=100,000\f$, and we comment on some other
 combinations of \f$ n\f$ and \f$ d\f$ below (feel free to experiment with still other
 values).
 
-\cgalexample{QP_solver/convex_hull_containment_benchmarks.cpp}
+\cgalExample{QP_solver/convex_hull_containment_benchmarks.cpp}
 
 If you compile with the macros <TT>NDEBUG</TT> or
 <TT>CGAL_QP_NO_ASSERTIONS</TT> set (this is essential for good

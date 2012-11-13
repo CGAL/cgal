@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes
 
 \anchor chapsurface_mesh_parameterization
-\autotoc
+\cgalAutoToc
 
 \authors Laurent Saboret, Pierre Alliez and Bruno L&eacute;vy
 
@@ -52,9 +52,9 @@ students developing algorithms around parameterization of triangle
 meshes for geometry processing as well as for signal mapping on
 triangulated surfaces.
 
-\cgal_figure_begin{Surface_mesh_parameterizationfigintroduction,introduction.jpg}
+\cgalFigureBegin{Surface_mesh_parameterizationfigintroduction,introduction.jpg}
 Texture mapping via Least Squares Conformal Maps parameterization. Top: original mesh and texture. Bottom: parameterizedmesh (left: parameter space, right: textured mesh).
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Surface_mesh_parameterizationBasics Basics
 
@@ -102,7 +102,7 @@ In the following example, we apply the default parameterization to a
 `Polyhedron_3<Traits>` mesh (must be a topological disk).
 Eventually, it extracts the result from halfedges and prints it.
 
-\cgalexample{Surface_mesh_parameterization/Simple_parameterization.cpp}
+\cgalExample{Surface_mesh_parameterization/Simple_parameterization.cpp}
 
 \subsection Surface_mesh_parameterizationEnhancedparameterize Enhanced %parameterize() Function
 
@@ -139,9 +139,9 @@ Mapping. These methods are provided as models of the
 Each of these surface parameterization methods is templated by
 the input mesh type, a border parameterization and a solver:
 
-\cgal_figure_begin{Surface_mesh_parameterizationfigparameterizer_class_diagram_simplified,parameterizer_class_diagram_simplified.png}
+\cgalFigureBegin{Surface_mesh_parameterizationfigparameterizer_class_diagram_simplified,parameterizer_class_diagram_simplified.png}
 A parameterizer UML class diagram (simplified).
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Surface_mesh_parameterizationTheBorderParameterizer3 The %BorderParameterizer_3 Concept
 
@@ -214,9 +214,9 @@ vertex \f$ v_i\f$ for a diagonal element, and to 0 for any other matrix
 entry. Although a bijective mapping is guaranteed when the border is convex,
 this method does not minimize angles nor areas distortion.
 
-\cgal_figure_begin{Surface_mesh_parameterizationfiguniform,uniform.png}
+\cgalFigureBegin{Surface_mesh_parameterizationfiguniform,uniform.png}
 Left: Tutte barycentric mapping parameterization (the red line depicts the cut graph). Right: parameter space.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Surface_mesh_parameterizationDiscreteConformal Discrete Conformal Map
 
@@ -236,9 +236,9 @@ positive (if the border vertices are eliminated from the linear system
 and if the mesh contains no hole),
 thus can be efficiently solved using dedicated linear solvers.
 
-\cgal_figure_begin{Surface_mesh_parameterizationfigconformal,conformal.png}
+\cgalFigureBegin{Surface_mesh_parameterizationfigconformal,conformal.png}
 Left: discrete conformal map. Right: parameter space.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Surface_mesh_parameterizationFloaterMean Floater Mean Value Coordinates
 
@@ -254,9 +254,9 @@ maps, with a guaranteed one-to-one mapping when the border is convex.
 This method solves two \#vertices x \#vertices sparse linear systems. The matrix (the
 same for both systems) is asymmetric.
 
-\cgal_figure_begin{Surface_mesh_parameterizationfigfloater,floater.png}
+\cgalFigureBegin{Surface_mesh_parameterizationfigfloater,floater.png}
 Floater Mean Value Coordinates
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Surface_mesh_parameterizationDiscreteAuthalic Discrete Authalic Parameterization
 
@@ -271,9 +271,9 @@ the border is convex. This method solves two
 \#vertices x \#vertices sparse linear systems. The matrix (the same
 for both systems) is asymmetric.
 
-\cgal_figure_begin{Surface_mesh_parameterizationfigauthalic,authalic.png}
+\cgalFigureBegin{Surface_mesh_parameterizationfigauthalic,authalic.png}
 Discrete Authalic Parameterization
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection secBorderParameterizationsforFixedMethods Border Parameterizations for Fixed Methods 
 
@@ -315,9 +315,9 @@ parameterization is commonly used for texture mapping.
 
 `Square_border_uniform_parameterizer_3<ParameterizationMesh_3>` 
 
-\cgal_figure_begin{Surface_mesh_parameterizationfigcircular_border,border.png}
+\cgalFigureBegin{Surface_mesh_parameterizationfigcircular_border,border.png}
 Left: Julius Cesar mask parameterization with Authalic/circular border. Right: Julius Cesar mask's image with Floater/square border.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Surface_mesh_parameterizationFreeBorderSurface Free Border Surface Parameterizations
 
@@ -334,9 +334,9 @@ is not guaranteed by this method. It solves a (2 \f$ \times\f$
 \#triangles) \f$ \times\f$ \#vertices sparse linear system in the least squares sense,
 which implies solving a symmetric matrix.
 
-\cgal_figure_begin{Surface_mesh_parameterizationfigLSCM,LSCM.png}
+\cgalFigureBegin{Surface_mesh_parameterizationfigLSCM,LSCM.png}
 Least squares conformal maps.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection secBorderParameterizationsforFreeMethods Border Parameterizations for Free Methods 
 
@@ -489,9 +489,9 @@ Nevertheless meshes with arbitrary topology and number of connected components c
 provided as input, the longest border already
 in the input mesh is taken as default border, all other borders being considered as holes. Note that only the inside part (i.e., one connected component) of the given border is parameterized.
 
-\cgal_figure_begin{Surface_mesh_parameterizationfigcut,cut.png}
+\cgalFigureBegin{Surface_mesh_parameterizationfigcut,cut.png}
 Cut Graph
-\cgal_figure_end
+\cgalFigureEnd
 
 This package does not provide any algorithm to transform an arbitrary mesh
 into a topological disk, the user being responsible
@@ -537,7 +537,7 @@ In the following example, we <I>virtually</I> cut a
 `Polyhedron_3<Traits>` mesh
 to make it a topological disk, then applies the default parameterization:
 
-\cgalexample{Surface_mesh_parameterization/Mesh_cutting_parameterization.cpp}
+\cgalExample{Surface_mesh_parameterization/Mesh_cutting_parameterization.cpp}
 
 \section Surface_mesh_parameterizationOutput Output
 
@@ -560,7 +560,7 @@ The follwing example is a complete parameterization
 example which outputs the resulting parameterization to a EPS file. It gets the \f$ (u,v)\f$ fields computed by a parameterization method over a `Polyhedron_3<Traits>` mesh with a
 `Parameterization_polyhedron_adaptor_3<Polyhedron_3_>` adaptor:
 
-\cgalexample{Surface_mesh_parameterization/Complete_parameterization_example.cpp}
+\cgalExample{Surface_mesh_parameterization/Complete_parameterization_example.cpp}
 
 \section Surface_mesh_parameterizationComplexity Complexity and Guarantees
 
@@ -754,13 +754,13 @@ with default values adapted to the method.
 <LI>Code factorization is achieved using a class hierarchy and (few) virtual methods.
 </UL>
 
-\cgal_figure_begin{Surface_mesh_parameterizationfigparameterizer_class_diagram,parameterizer_class_diagram.png}
+\cgalFigureBegin{Surface_mesh_parameterizationfigparameterizer_class_diagram,parameterizer_class_diagram.png}
 A parameterizer UML class diagram (main types and methods only)
-\cgal_figure_end
+\cgalFigureEnd
 
-\cgal_figure_begin{Surface_mesh_parameterizationfigparameterizers_class_hierarchy,parameterizers_class_hierarchy.png}
+\cgalFigureBegin{Surface_mesh_parameterizationfigparameterizers_class_hierarchy,parameterizers_class_hierarchy.png}
 Surface parameterizer classes hierarchy
-\cgal_figure_end
+\cgalFigureEnd
 
 \note `Parameterizer_traits_3<ParameterizationMesh_3>` is the (pure virtual)
 superclass of all surface parameterization classes.

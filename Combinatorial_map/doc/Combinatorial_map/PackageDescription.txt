@@ -13,18 +13,18 @@
 /*!
 \addtogroup PkgCombinatorialMaps
 \todo check generated documentation
-\PkgDescriptionBegin{Combinatorial Maps,PkgCombinatorialMapsSummary}
-\PkgPicture{logo-cmap-small-v2.png}
-\PkgSummaryBegin
-\PkgAuthor{Guillaume Damiand}
-\PkgDesc{This package implements Combinatorial Maps in <I>d</I>-dimension. A combinatorial map is a data structure allowing to represent an orientable subdivided object by describing all the cells of the subdivision (for example in 3D vertices, edges, faces, volumes) and all the incidence and adjacency relationships between these cells. Information can be associated to cells thanks to attributes. In 2D, a combinatorial map is equivalent to an halfedge data structure. The package provides basic creations, modification operations, and several iterators allowing to run through some specific part of the object.}
-\PkgManuals{Chapter_Combinatorial_Maps,PkgCombinatorialMaps}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.9}
-\PkgBib{cgal:d-cm}
-\PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{Combinatorial Maps,PkgCombinatorialMapsSummary}
+\cgalPkgPicture{logo-cmap-small-v2.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Guillaume Damiand}
+\cgalPkgDesc{This package implements Combinatorial Maps in <I>d</I>-dimension. A combinatorial map is a data structure allowing to represent an orientable subdivided object by describing all the cells of the subdivision (for example in 3D vertices, edges, faces, volumes) and all the incidence and adjacency relationships between these cells. Information can be associated to cells thanks to attributes. In 2D, a combinatorial map is equivalent to an halfedge data structure. The package provides basic creations, modification operations, and several iterators allowing to run through some specific part of the object.}
+\cgalPkgManuals{Chapter_Combinatorial_Maps,PkgCombinatorialMaps}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.9}
+\cgalPkgBib{cgal:d-cm}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

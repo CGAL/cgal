@@ -12,7 +12,7 @@ provides the number type for alpha values.
 The second parameter `Fb` is a base class instantiated by default 
 with `CGAL::Triangulation_cell_base_3<Traits>`. 
 
-\models ::FixedAlphaShapeCell_3 
+\cgalModels ::FixedAlphaShapeCell_3 
 
 */
 template< typename Traits, typename Fb >

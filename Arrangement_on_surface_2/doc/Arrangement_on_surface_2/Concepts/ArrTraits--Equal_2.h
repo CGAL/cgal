@@ -1,11 +1,11 @@
 namespace ArrTraits {
 /*!
 \ingroup PkgArrangement2ConceptsFunctionObjects
-\cgalconcept
+\cgalConcept
 
-\refines AdaptableBinaryFunction 
+\cgalRefines AdaptableBinaryFunction 
 
-\hasModel ArrangementBasicTraits_2::Equal_2 
+\cgalHasModel ArrangementBasicTraits_2::Equal_2 
 
 */
 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgSurfaceSubdivisionMethods3Concepts
-\cgalconcept
+\cgalConcept
 
 Required member functions for the `DQQMask_3` concept. This 
 policy concept of geometric computations is used in 
@@ -9,7 +9,7 @@ policy concept of geometric computations is used in
 
 \image html DSCornerMask.png
 
-\hasModel `CGAL::DooSabin_mask_3<Polyhedron_3>`
+\cgalHasModel `CGAL::DooSabin_mask_3<Polyhedron_3>`
 
 \sa `CGAL::Subdivision_method_3`
 

@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsUni
-\cgalconcept
+\cgalConcept
 
 Computes whether the given univariate polynomial is square free. 
 
-\refines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction` 
 
 \sa `AlgebraicKernel_d_1::MakeSquareFree_1`
 \sa `AlgebraicKernel_d_1::SquareFreeFactorize_1`

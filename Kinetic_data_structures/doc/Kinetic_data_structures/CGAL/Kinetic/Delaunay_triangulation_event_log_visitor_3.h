@@ -7,8 +7,8 @@ The concept `Kinetic::Delaunay_triangulation_event_log_visitor_3` provides a mod
 `Kinetic::DelaunayTriangulationVisitor_3` and 
 `Kinetic::EventLogVisitor` which logs edge and facet flip events. 
 
-\models ::Kinetic::DelaunayTriangulationVisitor_3
-\models ::Kinetic::EventLogVisitor 
+\cgalModels ::Kinetic::DelaunayTriangulationVisitor_3
+\cgalModels ::Kinetic::EventLogVisitor 
 
 \sa `Kinetic::Delaunay_triangulation_3<Traits, Triangulation, Visitor>`
 

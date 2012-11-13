@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgApolloniusGraph2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `ApolloniusGraphDataStructure_2` refines the concept 
 `TriangulationDataStructure_2`. In addition 
@@ -24,9 +24,9 @@ merged. </b></center>
 We only describe the additional requirements with respect to the 
 `TriangulationDataStructure_2` concept. 
 
-\refines `TriangulationDataStructure_2` 
+\cgalRefines `TriangulationDataStructure_2` 
 
-\hasModel `CGAL::Triangulation_data_structure_2<Vb,Fb>` 
+\cgalHasModel `CGAL::Triangulation_data_structure_2<Vb,Fb>` 
 
 \sa `TriangulationDataStructure_2` 
 \sa `ApolloniusGraphVertexBase_2` 

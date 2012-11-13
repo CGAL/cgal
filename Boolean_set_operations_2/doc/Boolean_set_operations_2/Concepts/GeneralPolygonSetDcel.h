@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
-\cgalconcept
+\cgalConcept
 
 A doubly-connected edge-list (<span class="textsc">Dcel</span> for short) data-structure. It consists 
 of three containers of records: vertices \f$ V\f$, halfedges \f$ E\f$, and faces \f$ F\f$. 
@@ -24,10 +24,10 @@ respectively.)
 Notice that this concept differs from the concept `ArrangemenDcel` 
 only in the type `Face`. 
 
-\hasModel `CGAL::Arr_dcel_base<V,H,F>` 
-\hasModel `CGAL::Arr_default_dcel<Traits>` 
-\hasModel `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>` 
-\hasModel `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>` 
+\cgalHasModel `CGAL::Arr_dcel_base<V,H,F>` 
+\cgalHasModel `CGAL::Arr_default_dcel<Traits>` 
+\cgalHasModel `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>` 
+\cgalHasModel `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>` 
 
 \sa `ArrangementDcelVertex` 
 \sa `ArrangementDcelHalfedge` 

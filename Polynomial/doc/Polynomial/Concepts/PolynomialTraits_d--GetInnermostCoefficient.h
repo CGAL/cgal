@@ -1,15 +1,15 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 For the given `PolynomialTraits_d::Polynomial_d` this 
 `AdaptableBinaryFunction` returns the coefficient of 
 the (multivariate) monomial specified by the given `CGAL::Exponent_vector`. 
 
-\refines `AdaptableBinaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

@@ -1,17 +1,17 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsUni
-\cgalconcept
+\cgalConcept
 
 A model of the `AlgebraicKernel_d_1` concept is meant to provide the 
 algebraic functionalities on univariate polynomials of general degree \f$ d\f$. 
 
-\refines `CopyConstructible` 
-\refines `Assignable` 
-A model of \refines `AlgebraicKernel_d_1` must provide: 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `Assignable` 
+A model of \cgalRefines `AlgebraicKernel_d_1` must provide: 
 
-\hasModel Algebraic_kernel_rs_gmpz_d_1 
-\hasModel Algebraic_kernel_rs_gmpq_d_1 
+\cgalHasModel Algebraic_kernel_rs_gmpz_d_1 
+\cgalHasModel Algebraic_kernel_rs_gmpq_d_1 
 
 \sa `AlgebraicKernel_d_2`
 

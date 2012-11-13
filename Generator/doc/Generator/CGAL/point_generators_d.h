@@ -41,8 +41,8 @@ Creator creator);
 The class `Random_points_in_ball_d` is an input iterator creating points uniformly 
 distributed in an open ball in any dimension. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 
@@ -110,8 +110,8 @@ namespace CGAL {
 The class `Random_points_in_cube_d` is an input iterator creating points uniformly 
 distributed in an half-open cube. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 
@@ -185,8 +185,8 @@ The generated points are computed using floating point arithmetic,
 whatever the Kernel is, thus they are on the sphere only up to 
 rounding errors. 
 
-\models ::InputIterator 
-\models ::PointGenerator 
+\cgalModels ::InputIterator 
+\cgalModels ::PointGenerator 
 
 \sa `CGAL::cpp0x::copy_n` 
 \sa `CGAL::Counting_iterator` 

@@ -5,12 +5,12 @@ namespace CGAL {
 \mainpage 3D Convex Hulls
 \anchor Chapter_3D_Convex_Hulls
 \anchor chapconvexhull3
-\autotoc
+\cgalAutoToc
 \authors Susan Hert and Stefan Schirra
 
-\cgal_figure_begin{figchbimba,chull_bimba.png}
+\cgalFigureBegin{figchbimba,chull_bimba.png}
 The convex hull of a model made of 192135 points.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Convex_hull_3Introduction Introduction
 
@@ -73,7 +73,7 @@ as output. Note the usage of the functor `Plane_from_facet` together with
 `std::transform()` to compute the equations of the plane of each facet
 of the convex hull.
 
-\cgalexample{Convex_hull_3/quickhull_3.cpp}
+\cgalExample{Convex_hull_3/quickhull_3.cpp}
 
 \section Convex_hull_3Incremental Incremental Convex Hull Construction
 
@@ -103,7 +103,7 @@ example.
 
 \subsection Convex_hull_3Example_1 Example
 
-\cgalexample{Convex_hull_3/incremental_hull_class_3.cpp}
+\cgalExample{Convex_hull_3/incremental_hull_class_3.cpp}
 
 \section Convex_hull_3Dynamic Dynamic Convex Hull Construction
 
@@ -122,7 +122,7 @@ not all of them are vertices of the hull.
 
 \subsection Convex_hull_3Example_2 Example
 
-\cgalexample{Convex_hull_3/dynamic_hull_3.cpp}
+\cgalExample{Convex_hull_3/dynamic_hull_3.cpp}
 
 \section Convex_hull_3Performance Performance
 
@@ -134,7 +134,7 @@ used was `Exact_predicates_inexact_constructions_kernel`. For the incremental ve
 
 To compute the convex hull of a million of random points in a unit ball the static approach needed 1.63s, while 
 the dynamic and incremental approaches needed 9.50s and 11.54s respectively.
-To compute the convex hull of the model of \cgal_figure_ref{figchbimba} featuring 192135 points, 
+To compute the convex hull of the model of \cgalFigureRef{figchbimba} featuring 192135 points, 
 the static approach needed 0.18s, while the dynamic and incremental approaches needed 1.90s and 6.80s respectively.
 
 The measurements have been performed using \cgal 3.9, using the <span class="textsc">Gnu</span> \cpp compiler version 4.3.5, under Linux (Debian distribution),

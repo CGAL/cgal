@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPolynomialConcepts
-\cgalconcept
+\cgalConcept
 
 This `AdaptableUnaryFunction` computes \f$ p(-x)\f$ for a given polynomial \f$ p\f$. 
 
@@ -11,9 +11,9 @@ the polynomial is considered as a univariate polynomial in one specific variable
 This functor is provided for efficiency reasons, since this operation just flips the sign 
 of all odd coefficients with respect to the specified variable. 
 
-\refines `AdaptableUnaryFunction` 
-\refines `CopyConstructible` 
-\refines `DefaultConstructible` 
+\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `CopyConstructible` 
+\cgalRefines `DefaultConstructible` 
 
 \sa  \ref ::Polynomial_d 
 \sa  \ref ::PolynomialTraits_d 

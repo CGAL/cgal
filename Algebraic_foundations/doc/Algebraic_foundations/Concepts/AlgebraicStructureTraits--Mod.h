@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 `AdaptableBinaryFunction` computes the remainder of division with remainder. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa ::AlgebraicStructureTraits 
 \sa ::AlgebraicStructureTraits::Div 

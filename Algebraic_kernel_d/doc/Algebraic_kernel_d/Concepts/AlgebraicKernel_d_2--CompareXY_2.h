@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlgebraicKerneldConceptsBi
-\cgalconcept
+\cgalConcept
 
 Compares `AlgebraicKernel_d_2::Algebraic_real_2`s lexicographically. 
 
-\refines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicKernel_d_2::CompareX_2`
 \sa `AlgebraicKernel_d_2::CompareY_2`

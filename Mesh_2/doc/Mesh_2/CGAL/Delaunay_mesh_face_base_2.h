@@ -22,7 +22,7 @@ be the same as the one used for the Delaunay mesh.
 derives. It must be a model of the `TriangulationFaceBase_2` concept. 
 
 
-\models ::DelaunayMeshFaceBase_2 
+\cgalModels ::DelaunayMeshFaceBase_2 
 
 */
 template< typename Traits, typename Fb >

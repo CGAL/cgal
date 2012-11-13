@@ -7,7 +7,7 @@ The concept `Kinetic::Sort_visitor_base` provides a model of
 `Kinetic::SortVisitor`. You can extend this class if you only 
 want to implement a few methods from `Kinetic::SortVisitor`. 
 
-\models `Kinetic::SortVisitor`
+\cgalModels `Kinetic::SortVisitor`
 
 \sa `Kinetic::Sort<Traits, Visitor>` 
 

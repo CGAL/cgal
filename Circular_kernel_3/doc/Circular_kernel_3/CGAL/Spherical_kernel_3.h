@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSphericalKernel3GeometricClasses
 
-\models ::SphericalKernel 
+\cgalModels ::SphericalKernel 
 
 ### Parameters ###
 

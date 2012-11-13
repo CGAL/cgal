@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
-\cgalconcept
+\cgalConcept
 
 A model of `AlgebraicStructureTraits` reflects the algebraic structure 
 of an associated type `Type`. 
@@ -28,7 +28,7 @@ algebraic operations within that structure.
 \sa ::CGAL::Field_with_kth_root_tag 
 \sa ::CGAL::Field_with_root_of_tag 
 
-\hasModel `CGAL::Algebraic_structure_traits<T>`
+\cgalHasModel `CGAL::Algebraic_structure_traits<T>`
 
 */
 

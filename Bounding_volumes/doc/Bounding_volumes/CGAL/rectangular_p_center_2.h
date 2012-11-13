@@ -10,7 +10,7 @@ using the function `rectangular_p_center_2`.
 
 \tparam K must be a model for `Kernel`. 
 
-\models ::RectangularPCenterTraits_2 
+\cgalModels ::RectangularPCenterTraits_2 
 
 \sa `CGAL::rectangular_p_center_2` 
 
@@ -227,7 +227,7 @@ can be omitted if `ForwardIterator` refers to a point type from
 the 2D-Kernel. In this case, a default traits class 
 (`Rectangular_p_center_default_traits_2<K>`) is used. 
 
-\requires <OL> 
+\cgalRequires <OL> 
 <LI><I>Either: (if no traits parameter is given)</I> Value type 
 of `ForwardIterator` is `CGAL::Point_2<K>` for some 
 representation class `K` and `FT` is equivalent to 
@@ -257,7 +257,7 @@ piercing rectangles \cite sw-rpppp-96.
 The following code generates a random set of ten points 
 and computes its two-centers. 
 
-\cgalexample{Rectangular_p_center_2/rectangular_p_center_2.cpp} 
+\cgalExample{Rectangular_p_center_2/rectangular_p_center_2.cpp} 
 
 */
 template < class ForwardIterator, class

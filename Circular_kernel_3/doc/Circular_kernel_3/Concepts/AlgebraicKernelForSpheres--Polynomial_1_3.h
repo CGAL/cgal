@@ -1,17 +1,17 @@
 
 /*!
 \ingroup PkgSphericalKernel3AlgebraicConcepts
-\cgalconcept
+\cgalConcept
 
 Concept to represent trivariate polynomials of degree 1 whose 
 coefficients are of a type that is a model of the concept 
 `RingNumberType`. 
 
-\refines `CopyConstructible`
-\refines `Assignable`
-\refines `DefaultConstructible`
+\cgalRefines `CopyConstructible`
+\cgalRefines `Assignable`
+\cgalRefines `DefaultConstructible`
 
-\hasModel CGAL::Polynomial_1_3 
+\cgalHasModel CGAL::Polynomial_1_3 
 
 \sa `AlgebraicKernelForSpheres`
 

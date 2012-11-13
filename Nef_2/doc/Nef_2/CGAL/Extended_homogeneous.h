@@ -8,7 +8,7 @@ The class `Extended_homogeneous` serves as a traits class for the class
 `Nef_polyhedron_2<T>`. It uses a polynomial component 
 representation based on a Euclidean ring number type `RT`. 
 
-\models ::ExtendedKernelTraits_2 
+\cgalModels ::ExtendedKernelTraits_2 
 
 ### Requirements ###
 

@@ -26,7 +26,7 @@ assertions can be used to protect a templatized algorithm against
 instantiations that do not fulfill the requirements. The following
 example program illustrates both.
 
-\cgalexample{Circulator/circulator_prog3.cpp}
+\cgalExample{Circulator/circulator_prog3.cpp}
 
 */
 

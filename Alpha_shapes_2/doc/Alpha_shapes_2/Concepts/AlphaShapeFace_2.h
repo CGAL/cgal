@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgAlphaShape2Concepts
-\cgalconcept
+\cgalConcept
 
-\refines `TriangulationFaceBase_2.` 
+\cgalRefines `TriangulationFaceBase_2.` 
 
-\hasModel `CGAL::Alpha_shape_face_base_2`
+\cgalHasModel `CGAL::Alpha_shape_face_base_2`
 
 */
 

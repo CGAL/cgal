@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgArrangement2ConceptsDCEL
-\cgalconcept
+\cgalConcept
 
 A halfedge record in a <span class="textsc">Dcel</span> data structure. Two halfedges with opposite 
 directions always form an edge (a halfedge pair). The halfedges form together 

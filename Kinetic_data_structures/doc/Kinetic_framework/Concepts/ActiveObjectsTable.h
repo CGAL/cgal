@@ -1,7 +1,7 @@
 namespace Kinetic {
 /*!
 \ingroup PkgKdsFrameworkConcepts
-\cgalconcept
+\cgalConcept
 
 This container holds a set of objects of a particular type. It creates 
 notifications using the standard `Multi_listener<Interface>` 
@@ -19,7 +19,7 @@ As an convenience, the change methods can be called without setting
 the editing state to true, this acts as if it were set to true for 
 that one function call. 
 
-\hasModel `CGAL::Kinetic::Active_objects_vector<MovingObject>`
+\cgalHasModel `CGAL::Kinetic::Active_objects_vector<MovingObject>`
 
 \sa `Multi_listener<Interface>`
 \sa `CGAL::Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>` 

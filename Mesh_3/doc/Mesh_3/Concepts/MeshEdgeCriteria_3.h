@@ -1,13 +1,13 @@
 /*!
 \ingroup PkgMesh_3Concepts
-\cgalconcept
+\cgalConcept
 
 The function object concept `MeshEdgeCriteria_3` is designed to drive the process which samples 
 the 1-dimensional features of the domain. 
 It provides an upper bound for the distance between two protecting ball centers 
 that are consecutive on a 1-feature. 
 
-\hasModel `CGAL::Mesh_edge_criteria_3<Tr>` 
+\cgalHasModel `CGAL::Mesh_edge_criteria_3<Tr>` 
 
 \sa `MeshCellCriteria_3` 
 \sa `MeshFacetCriteria_3` 

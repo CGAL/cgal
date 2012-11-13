@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPeriodic3Triangulation3Concepts
-\cgalconcept
+\cgalConcept
 
 A refinement of the concept `TriangulationDSVertexBase_3` 
 which adds an API for offset.
@@ -12,11 +12,11 @@ a vertex provides access to one of its incident cells through a handle.
 
 
 
-\refines `TriangulationDSVertexBase_3` 
+\cgalRefines `TriangulationDSVertexBase_3` 
 
  
 
-\hasModel CGAL::Periodic_3_triangulation_ds_vertex_base_3 
+\cgalHasModel CGAL::Periodic_3_triangulation_ds_vertex_base_3 
 
 \sa `TriangulationDataStructure_3` 
 \sa `TriangulationDSVertexBase_3` 

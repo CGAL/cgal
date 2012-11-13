@@ -22,7 +22,7 @@ of the concept `SurfaceMeshVertexBase_3` and
 `SurfaceMeshCellBase_3` 
 respectively.) 
 
-\models ::SurfaceMeshComplex_2InTriangulation_3 
+\cgalModels ::SurfaceMeshComplex_2InTriangulation_3 
 
 \sa `make_surface_mesh` 
 \sa `SurfaceMeshTriangulation_3` 

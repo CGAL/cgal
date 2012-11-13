@@ -11,7 +11,7 @@ both exact geometric predicates and exact geometric constructions.<BR>
 
 It defines the same types as `CGAL::Spherical_kernel_3`. 
 
-\models ::SphericalKernel 
+\cgalModels ::SphericalKernel 
 
 */
 

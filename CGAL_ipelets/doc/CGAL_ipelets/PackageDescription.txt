@@ -3,18 +3,18 @@
 /// \ingroup PkgCGALIpelets
 /*!
 \addtogroup PkgCGALIpelets
-\PkgDescriptionBegin{CGAL Ipelets,PkgCGALIpeletsSummary}
-\PkgPicture{ipeico.jpg}
-\PkgSummaryBegin
-\PkgAuthors{S&eacute;bastien Loriot and Sylvain Pion}
-\PkgDesc{This package provides  a generic framework to easily write ipelets (plug-in's) using \cgal for the the Ipe extensible drawing editor.}
-\PkgManuals{Chapter_CGAL_Ipelets,PkgCGALIpelets}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.5}
-\PkgBib{cgal:lp-gi}
-\PkgLicense{\ref licensesLGPL  "LGPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{CGAL Ipelets,PkgCGALIpeletsSummary}
+\cgalPkgPicture{ipeico.jpg}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{S&eacute;bastien Loriot and Sylvain Pion}
+\cgalPkgDesc{This package provides  a generic framework to easily write ipelets (plug-in's) using \cgal for the the Ipe extensible drawing editor.}
+\cgalPkgManuals{Chapter_CGAL_Ipelets,PkgCGALIpelets}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.5}
+\cgalPkgBib{cgal:lp-gi}
+\cgalPkgLicense{\ref licensesLGPL  "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

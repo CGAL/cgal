@@ -1,11 +1,11 @@
 
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
-\cgalconcept
+\cgalConcept
 
-\refines `AdaptableUnaryFunction`
+\cgalRefines `AdaptableUnaryFunction`
 
-\hasModel `ArrangementDirectionalXMonotoneTraits_2::CompareEndpointsXy_2` 
+\cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::CompareEndpointsXy_2` 
 
 */
 

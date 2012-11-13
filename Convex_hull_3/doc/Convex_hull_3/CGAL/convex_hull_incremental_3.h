@@ -15,13 +15,13 @@ purposes. When an efficient incremental implementation is needed,
 using `CGAL::Delaunay_triangulation_3` together with 
 `CGAL::convex_hull_3_to_polyhedron_3` is highly recommended. 
 
-\requires `Polyhedron` must provide a type `Polyhedron::Traits` 
+\cgalRequires `Polyhedron` must provide a type `Polyhedron::Traits` 
 that defines the following types 
 - `Polyhedron::Traits::R`, which is a model of 
 the representation class `R` required by 
 `CGAL::Convex_hull_d_traits_3<R>` 
 - `Polyhedron::Traits::Point`  
-\requires `InputIterator::value_type` must be the same as 
+\cgalRequires `InputIterator::value_type` must be the same as 
 `Polyhedron::Traits::Point`.
 
 
@@ -41,7 +41,7 @@ worst case and \f$ O(n \log n)\f$ expected time.
 The following example computes the convex hull of a set of 250 random 
 points chosen uniformly in a sphere of radius 100. 
 
-\cgalexample{Convex_hull_3/incremental_hull_3.cpp} 
+\cgalExample{Convex_hull_3/incremental_hull_3.cpp} 
 
 
 

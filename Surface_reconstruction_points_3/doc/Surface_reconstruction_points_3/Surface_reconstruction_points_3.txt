@@ -3,7 +3,7 @@ namespace CGAL {
 
 \mainpage Surface Reconstruction from Point Sets
 \anchor Chapter_Surface_Reconstruction_from_Point_Sets
-\autotoc
+\cgalAutoToc
 
 \authors Pierre Alliez, Laurent Saboret, Ga&euml;l Guennebaud
 
@@ -43,9 +43,9 @@ describes algorithms to pre-process the point set before
 reconstruction with functions devoted to the simplification, outlier
 removal, smoothing, normal estimation and normal orientation.
 
-\cgal_figure_begin{Surface_reconstruction_points_3figpipeline,pipeline.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3figpipeline,pipeline.jpg}
 Common surface reconstruction pipeline.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Surface_reconstruction_points_3Poisson Poisson
 
@@ -102,7 +102,7 @@ For details see: `Poisson_reconstruction_function<GeomTraits>`
 
 The following example reads a point set, creates a Poisson implicit function and reconstructs a surface.
 
-\cgalexample{Surface_reconstruction_points_3/poisson_reconstruction_example.cpp}
+\cgalExample{Surface_reconstruction_points_3/poisson_reconstruction_example.cpp}
 
 \section Surface_reconstruction_points_3Contouring Contouring
 
@@ -159,34 +159,34 @@ reconstruction method expects a dense 3D oriented point set (typically
 matching the epsilon-sampling condition \cite cgal:bo-pgsms-05) and
 sampled over a closed, smooth surface. Oriented herein means that all
 3D points must come with consistently oriented normals to the inferred
-surface. Figure \cgal_figure_ref{Surface_reconstruction_points_3figbimba} and \cgal_figure_ref{Surface_reconstruction_points_3figeros} 
+surface. Figure \cgalFigureRef{Surface_reconstruction_points_3figbimba} and \cgalFigureRef{Surface_reconstruction_points_3figeros} 
 illustrate cases where these ideal conditions are met.
 
-\cgal_figure_begin{Surface_reconstruction_points_3figbimba,bimba.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3figbimba,bimba.jpg}
 Poisson reconstruction. Left: 120K points sampled on a statue (Minolta laser scanner). Right: reconstructed surface mesh.
-\cgal_figure_end
+\cgalFigureEnd
 
-\cgal_figure_begin{Surface_reconstruction_points_3figeros,eros.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3figeros,eros.jpg}
 Left: 120K points sampled on a statue (Minolta laser scanner). Right: reconstructed surface mesh.
-\cgal_figure_end
+\cgalFigureEnd
 
 The algorithm is fairly robust to anisotropic sampling and to
 noise. It is also robust to missing data through filling the
 corresponding holes as the algorithm is designed to reconstruct the
 indicator function of an inferred solid (see
-\cgal_figure_ref{Surface_reconstruction_points_3figholes_good}).
+\cgalFigureRef{Surface_reconstruction_points_3figholes_good}).
 
-\cgal_figure_begin{Surface_reconstruction_points_3figholes_good,holes_good.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3figholes_good,holes_good.jpg}
 Top left: 65K points sampled on a hand (Kreon laser scanner). Bottom left: the point set is highly anisotropic due to the scanning technology. Right: reconstructed surface mesh and closeup. The holes are properly closed.
-\cgal_figure_end
+\cgalFigureEnd
 
 The algorithm is in general not robust to outliers, although a few
 outliers do not always create a failure, see
-\cgal_figure_ref{Surface_reconstruction_points_3figoutliers}.
+\cgalFigureRef{Surface_reconstruction_points_3figoutliers}.
 
-\cgal_figure_begin{Surface_reconstruction_points_3figoutliers,outliers.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3figoutliers,outliers.jpg}
 Left: 70K points sampled on an elephant with few outliers emphasized with disks. Right: reconstructed surface mesh.
-\cgal_figure_end
+\cgalFigureEnd
 
 The algorithm works well even when the inferred surface is composed of
 several connected components, provided that both all normals are
@@ -210,7 +210,7 @@ and hence may contain sharp creases. As the contouring algorithm
 sharp creases may create spurious clusters of vertices in the final
 reconstructed surface mesh when setting a small mesh sizing or surface
 approximation error parameter (see
-\cgal_figure_ref{Surface_reconstruction_points_3figcontouring_bad}).
+\cgalFigureRef{Surface_reconstruction_points_3figcontouring_bad}).
 
 One way to avoid these spurious clusters consists of adjusting the
 mesh sizing and surface approximation parameters large enough compared
@@ -222,9 +222,9 @@ contouring parameters:
 - Max triangle radius: at least 100 times the average spacing.
 - Approximation distance: at least 0.25 times the average spacing.
 
-\cgal_figure_begin{Surface_reconstruction_points_3figcontouring_bad,contouring_bad.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3figcontouring_bad,contouring_bad.jpg}
 Left: surface reconstructed with approximation distance = 0.25 * average spacing. Right: surface reconstructed with approximation distance = 0.15 * average spacing. Notice the spurious cluster on the chick.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Surface_reconstruction_points_3DegradedConditions Degraded Conditions
 
@@ -244,11 +244,11 @@ feature size (the distance to the medial axis, which captures
 altogether curvature, thickness and separation). When this condition
 is not met the reconstruction does not reconstruct the thin
 undersampled features (see
-\cgal_figure_ref{Surface_reconstruction_points_3figsampling}).
+\cgalFigureRef{Surface_reconstruction_points_3figsampling}).
 
-\cgal_figure_begin{Surface_reconstruction_points_3figsampling,sampling.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3figsampling,sampling.jpg}
 Left: 50K points sampled on the Neptune trident. The reconstruction (not shown) is successful in this case. Right: point set simplified to 1K points then reconstructed (all input points are depicted with normals). The thin feature is not reconstructed.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Surface_reconstruction_points_3LargeHoles Large Holes
 
@@ -262,11 +262,11 @@ manner. In addition the resulting piecewise linear implicit function
 may exhibit large triangle patches and sharp creases as the 3D
 Delaunay triangulation used for solving is very coarse where the holes
 are filled (see
-\cgal_figure_ref{Surface_reconstruction_points_3figholes_bad}).
+\cgalFigureRef{Surface_reconstruction_points_3figholes_bad}).
 
-\cgal_figure_begin{Surface_reconstruction_points_3figholes_bad,holes_bad.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3figholes_bad,holes_bad.jpg}
 Left: 65K points sampled on a hand with no data captured at the wrist base. Right: reconstructed surface mesh. The surface is properly closed on the fingers and also closed at the wrist but in a less plausible manner.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Surface_reconstruction_points_3WronglyOriented Wrongly Oriented Normals
 
@@ -276,16 +276,16 @@ it solves this problem in the least squares sense, it is robust to few
 isolated wrongly oriented (flipped) normals. Nevertheless a cluster of
 wrongly oriented normals leads to an incorrect implicit function and
 hence to spurious geometric or even topological distortion (see
-\cgal_figure_ref{Surface_reconstruction_points_3figflipped_normals}).
+\cgalFigureRef{Surface_reconstruction_points_3figflipped_normals}).
 
-\cgal_figure_begin{Surface_reconstruction_points_3figflipped_normals,flipped_normals.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3figflipped_normals,flipped_normals.jpg}
 Left: points sampled on a sphere with a cluster of wrongly oriented normals. Right: reconstructed surface mesh with a spurious bump.
-\cgal_figure_end
+\cgalFigureEnd
 
 \subsection Surface_reconstruction_points_3NoiseandOutliers Noise and Outliers
 
 A large amount of noise inevitably impacts on the reconstruction (see
-\cgal_figure_ref{Surface_reconstruction_points_3fignoise}, top) and the
+\cgalFigureRef{Surface_reconstruction_points_3fignoise}, top) and the
 current implementation does not provide any mean to trade data fitting
 for smoothness. Nevertheless if the signal-to-noise ratio is
 sufficiently high and/or the surface approximation and sizing
@@ -296,9 +296,9 @@ surface mesh, we recommend to apply smoothing through
 `jet_smooth_point_set()` ((see
 \cgal_figure_{Surface_reconstruction_points_3fignoise}, bottom).
 
-\cgal_figure_begin{Surface_reconstruction_points_3fignoise,noise.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3fignoise,noise.jpg}
 Top-left: points sampled on a sphere and corrupted with a lot of noise. Top-right: reconstructed surface mesh. Bottom-left: smoothed point set. Bottom-right: reconstructed surface mesh.
-\cgal_figure_end
+\cgalFigureEnd
 
 For a large number of outliers the failure cases (not shown) translate
 into spurious small connected components and massive distortion near
@@ -311,9 +311,9 @@ The current reconstruction algorithm is not able to recover the sharp
 creases and corners present in the inferred surface. This translates
 into smoothed sharp creases.
 
-\cgal_figure_begin{Surface_reconstruction_points_3figsharp_features,sharp_features.jpg}
+\cgalFigureBegin{Surface_reconstruction_points_3figsharp_features,sharp_features.jpg}
 Left: 5K points sampled on a mechanical piece with sharp features (creases, darts and corners). Right: reconstructed surface mesh with smoothed creases.
-\cgal_figure_end
+\cgalFigureEnd
 
 */ 
 } /* namespace CGAL */

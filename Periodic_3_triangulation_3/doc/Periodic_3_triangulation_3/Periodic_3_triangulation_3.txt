@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_3D_Periodic_Triangulations
 \anchor chapterP3Triangulation3
 
-\autotoc
+\cgalAutoToc
 
 \authors Manuel Caroli and Monique Teillaud
 
@@ -56,11 +56,11 @@ represents the number of periods a representative in the original
 domain must be translated in \f$ x\f$-, \f$ y\f$-, and \f$ z\f$-direction.
 The vector \f$ (0,0,0)\f$ corresponds to the representative in the original
 domain. To specify a \f$ k\f$-simplex we need \f$ k+1\f$ point-offset pairs
-(cf. \cgal_figure_ref{P3Triangulation3figoffsets}).
+(cf. \cgalFigureRef{P3Triangulation3figoffsets}).
 
-\cgal_figure_begin{P3Triangulation3figoffsets,offsets.gif}
+\cgalFigureBegin{P3Triangulation3figoffsets,offsets.gif}
 Offsets in a cell.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section P3Triangulation3secintro Representation 
 
@@ -74,11 +74,11 @@ The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
 orientation. The orientation of a simplex in \f$ \mathbb T_c^3\f$ is
 defined as the orientation of the corresponding simplex in \f$ \mathbb
 R^3\f$ given by representatives determined by the respective offsets
-(see \cgal_figure_ref{P3Triangulation3figorient}).
+(see \cgalFigureRef{P3Triangulation3figorient}).
 
-\cgal_figure_begin{P3Triangulation3figorient,orient.gif}
+\cgalFigureBegin{P3Triangulation3figorient,orient.gif}
 Orientation of a cell.
-\cgal_figure_end
+\cgalFigureEnd
 
 As in the underlying combinatorial triangulation (see
 Chapter \ref chapterTDS3), the neighbors of a cell are indexed with
@@ -97,11 +97,11 @@ cube of edge length \f$ 3c\f$. Any point set constructed in this way has a
 triangulation in \f$ \mathbb R^3/G'\f$ with \f$ G'=((3c\cdot\mathbb Z)^3,+)\f$
 \cite cgal:ct-c3pt-09. So we compute the triangulation in this
 space, which is a <I>27-sheeted covering space</I> of \f$ \mathbb T_c^3\f$
-(see \cgal_figure_ref{P3Triangulation3figcovering}).
+(see \cgalFigureRef{P3Triangulation3figcovering}).
 
-\cgal_figure_begin{P3Triangulation3figcovering,it_UNIQUE_small.jpg}
+\cgalFigureBegin{P3Triangulation3figcovering,it_UNIQUE_small.jpg}
 The same periodic triangulation in the 1-sheeted covering space and the 27-sheeted covering space.
-\cgal_figure_end
+\cgalFigureEnd
 
 The machinery that manages the copies is largely hidden from the
 user. However there are some effects that cannot be ignored. For
@@ -134,7 +134,7 @@ data structure, is `locally valid`
 (see Section \ref TDS3secintro of Chapter \ref chapterTDS3)
 
 <B>(c)</B> Any cell has its vertices ordered according to positive
-orientation. See \cgal_figure_ref{P3Triangulation3figorient}.
+orientation. See \cgalFigureRef{P3Triangulation3figorient}.
 
 \section Periodic_3_triangulation_3Delaunay Delaunay Triangulation
 
@@ -275,7 +275,7 @@ operations on indices in a cell. It uses the default parameter of the
 `Periodic_3_Delaunay_triangulation_3` class for the triangulation
 data structure.
 
-\cgalexample{Periodic_3_triangulation_3/simple_example.cpp}
+\cgalExample{Periodic_3_triangulation_3/simple_example.cpp}
 
 \subsection Periodic_3_triangulation_3ChangingtheVertex Changing the Vertex Base
 
@@ -291,7 +291,7 @@ If the user does not need to add a type in a vertex that depends on the
 easily in the vertices. The example below shows how to add a `Color`
 this way.
 
-\cgalexample{Periodic_3_triangulation_3/colored_vertices.cpp}
+\cgalExample{Periodic_3_triangulation_3/colored_vertices.cpp}
 
 \subsection Periodic_3_triangulation_3AddingHandles Adding Handles
 
@@ -300,7 +300,7 @@ If the user needs to add a type in a vertex that depends on the
 `Cell_handle`), then he has to derive his own vertex base class,
 as the following example shows.
 
-\cgalexample{Periodic_3_triangulation_3/periodic_adding_handles.cpp}
+\cgalExample{Periodic_3_triangulation_3/periodic_adding_handles.cpp}
 
 \subsection Periodic_3_triangulation_3The27sheetedCovering The 27-sheeted Covering Space
 
@@ -315,7 +315,7 @@ the 1-sheeted covering space. However, we can insert new points such that the
 point set does not have a Delaunay triangulation in the 1-sheeted
 covering space anymore, so the triangulation is not <I>extensible</I>.
 
-\cgalexample{Periodic_3_triangulation_3/covering.cpp}
+\cgalExample{Periodic_3_triangulation_3/covering.cpp}
 
 \subsection Periodic_3_triangulation_3LargePointSet Large Point Set
 
@@ -335,7 +335,7 @@ triangulation in the 1-sheeted covering space.
 It is recommended to run this example only when compiled in release
 mode because of the relatively large number of points.
 
-\cgalexample{Periodic_3_triangulation_3/large_point_set.cpp}
+\cgalExample{Periodic_3_triangulation_3/large_point_set.cpp}
 
 \subsection Periodic_3_triangulation_3GeometricAccess Geometric Access
 
@@ -355,7 +355,7 @@ method `is_null`. If so, we convert the periodic triangle to a
 `PK::Triangle_3`, which requires <I>exact constructions</I> to be
 exact.
 
-\cgalexample{Periodic_3_triangulation_3/geometric_access.cpp}
+\cgalExample{Periodic_3_triangulation_3/geometric_access.cpp}
 
 \subsection Periodic_3_triangulation_3PeriodicAlphaShapes Periodic Alpha Shapes
 

@@ -47,8 +47,8 @@ when the application frequently issues point-location queries on a
 rather static arrangement that the changes applied to it are mainly 
 insertions of curves and not deletions of them. 
 
-\models ::ArrangementPointLocation_2 
-\models ::ArrangementVerticalRayShoot_2 
+\cgalModels ::ArrangementPointLocation_2 
+\cgalModels ::ArrangementVerticalRayShoot_2 
 
 */
 template< typename Arrangement, typename Generator >

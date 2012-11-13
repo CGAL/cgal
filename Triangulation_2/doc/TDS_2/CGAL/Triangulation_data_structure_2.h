@@ -14,7 +14,7 @@ implemented using `Compact_container`. The class may offer some
 flexibility for the choice of container in the future, in the form of 
 additional template parameters. 
 
-\models ::TriangulationDataStructure_2 
+\cgalModels ::TriangulationDataStructure_2 
 
 ### Modifiers ###
 
@@ -51,7 +51,7 @@ public:
 /// @}
 
 /// \name  
-/// \advanced In addition to the interface documented in the concept,
+/// \cgalAdvanced In addition to the interface documented in the concept,
 /// the class offers the following types.
 /// @{
 
@@ -68,7 +68,7 @@ typedef Compact_container<Face> Face_range;
 /// @} 
 
 /// \name Operations 
-/// \advanced In addition to the interface documented in the concept,
+/// \cgalAdvanced In addition to the interface documented in the concept,
 /// the class offers the following functions.
 /// @{
 

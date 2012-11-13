@@ -2,20 +2,20 @@
 /*!
 \addtogroup PkgIntersectionOfCurves2
 \todo check generated documentation
-\PkgDescriptionBegin{2D Intersection of Curves,PkgIntersectionOfCurves2Summary}
-\PkgPicture{Curve_intersections_2.png}
-\PkgSummaryBegin
-\PkgAuthors{Baruch Zukerman, Ron Wein, and Efi Fogel}
-\PkgDesc{This package provides three free functions implemented based on the sweep-line paradigm: given a collection of input curves, compute all intersection points, compute the set of subcurves that are pairwise interior-disjoint induced by them, and check whether there is at least one pair of curves among them that intersect in their interior.}
-\PkgManuals{Chapter_2D_Intersection_of_Curves,PkgIntersectionOfCurves2}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{2.4}
-\PkgDependsOn{\ref PkgArrangement2Summary}
-\PkgBib{cgal:wfz-ic2}
-\PkgLicense{\ref licensesGPL "GPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{2D Intersection of Curves,PkgIntersectionOfCurves2Summary}
+\cgalPkgPicture{Curve_intersections_2.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Baruch Zukerman, Ron Wein, and Efi Fogel}
+\cgalPkgDesc{This package provides three free functions implemented based on the sweep-line paradigm: given a collection of input curves, compute all intersection points, compute the set of subcurves that are pairwise interior-disjoint induced by them, and check whether there is at least one pair of curves among them that intersect in their interior.}
+\cgalPkgManuals{Chapter_2D_Intersection_of_Curves,PkgIntersectionOfCurves2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.4}
+\cgalPkgDependsOn{\ref PkgArrangement2Summary}
+\cgalPkgBib{cgal:wfz-ic2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 This chapter describes three functions implemented using the
 sweep-line algorithm: given a collection \f$ {\mathcal C}\f$ of 

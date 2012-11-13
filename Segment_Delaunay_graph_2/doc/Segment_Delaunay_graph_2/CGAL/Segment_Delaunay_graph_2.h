@@ -22,7 +22,7 @@ and circulators that allow to traverse it (completely or partially).
 
 
 
-\models ::DelaunayGraph_2 
+\cgalModels ::DelaunayGraph_2 
 
 \sa `DelaunayGraph_2` 
 \sa `SegmentDelaunayGraphTraits_2` 

@@ -101,7 +101,7 @@ Returns the appropriate past-the-end const iterator.
 iterator end() const; 
 
 /*! 
-\advanced Inserts statistics of the search process into the output stream `s`. 
+\cgalAdvanced Inserts statistics of the search process into the output stream `s`. 
 */ 
 std::ostream& statistics(std::ostream& s); 
 

@@ -13,10 +13,10 @@ straight skeleton. If an advanced user needs to get access to the
 modifying operations, it must call the required methods through the
 `Base` class.
 
-\models ::StraightSkeleton_2 
-\models ::DefaultConstructible 
-\models ::CopyConstructible 
-\models ::Assignable 
+\cgalModels ::StraightSkeleton_2 
+\cgalModels ::DefaultConstructible 
+\cgalModels ::CopyConstructible 
+\cgalModels ::Assignable 
 
 \sa `StraightSkeletonVertex_2` 
 \sa `StraightSkeletonHalfedge_2` 

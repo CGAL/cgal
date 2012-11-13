@@ -1078,14 +1078,14 @@ Point circumcenter(Face_handle f) const;
 /// @{
 
 /*! 
-  \advanced
+  \cgalAdvanced
 */ 
 void set_infinite_vertex(const Vertex_handle& v); 
 
 /// @} 
 
 /// \name Checking 
-/// \advanced The responsibility of keeping a valid triangulation
+/// \cgalAdvanced The responsibility of keeping a valid triangulation
 /// belongs to the users if advanced operations are used. Obviously
 /// the advanced user, who implements higher levels operations may
 /// have to make a triangulation invalid at some times. The following

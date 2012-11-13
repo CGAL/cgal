@@ -1,14 +1,14 @@
 
 /*!
 \ingroup PkgSphericalKernel3AlgebraicConcepts
-\cgalconcept
+\cgalConcept
 
 Concept to represent a system of polynomials on `FieldNumberType` 
 capable of storing equations of circles. 
 
-\refines `CopyConstructible`
-\refines `Assignable`
-\refines `DefaultConstructible`
+\cgalRefines `CopyConstructible`
+\cgalRefines `Assignable`
+\cgalRefines `DefaultConstructible`
 
 \sa `AlgebraicKernelForSpheres`
 

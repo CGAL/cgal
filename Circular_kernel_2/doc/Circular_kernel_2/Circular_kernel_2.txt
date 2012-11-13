@@ -3,7 +3,7 @@ namespace CGAL {
 
 \mainpage 2D Circular Geometry %Kernel
 \anchor Chapter_2D_Circular_Geometry_Kernel
-\autotoc
+\cgalAutoToc
 
 \authors Pedro Machado Manh&atilde;es de Castro, Sylvain Pion, and Monique Teillaud
 
@@ -63,11 +63,11 @@ The first example shows how to construct circles or circular arcs from
 points, and how to compute intersections between them using the global
 function.
 
-\cgalexample{Circular_kernel_2/intersecting_arcs.cpp}
+\cgalExample{Circular_kernel_2/intersecting_arcs.cpp}
 
 The following example shows how to use a functor of the kernel.
 
-\cgalexample{Circular_kernel_2/functor_has_on_2.cpp}
+\cgalExample{Circular_kernel_2/functor_has_on_2.cpp}
 
 \section Circular_kernel_2Design Design and Implementation History
 
@@ -76,7 +76,7 @@ numbers of degree 2, written by Olivier Devillers
 \cite cgal:dfmt-amafe-00,cgal:dfmt-amafe-02.
 
 Some work was then done in the direction of a "kernel" for
-\cgal.\footnote{Monique Teillaud, First Prototype of a \cgal Geometric Kernel with Circular Arcs, Technical Report ECG-TR-182203-01, 2002
+\cgal.\cgalFootnote{Monique Teillaud, First Prototype of a \cgal Geometric Kernel with Circular Arcs, Technical Report ECG-TR-182203-01, 2002
 Sylvain Pion and Monique Teillaud, Towards a \cgal-like kernel for curves, Technical Report ECG-TR-302206-01, 2003} and the first design emerged in
 \cite cgal:ekptt-tock-04.
 

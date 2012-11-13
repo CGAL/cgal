@@ -17,7 +17,7 @@ constructions.
 
 Note that it requires CORE or LEDA installed. 
 
-\models ::Kernel 
+\cgalModels ::Kernel 
 
 \sa `CGAL::Exact_predicates_exact_constructions_kernel` 
 \sa `CGAL::Exact_predicates_inexact_constructions_kernel` 

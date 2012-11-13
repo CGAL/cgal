@@ -59,7 +59,7 @@ typedef CGAL::Boolean_tag<true> Tag_true;
 \ingroup PkgStlExtensionUtilities
 
 Class indicating the absence of a functor.
-\models ::DefaultConstructible 
+\cgalModels ::DefaultConstructible 
 
 \sa `AlgebraicStructureTraits` 
 \sa `RealEmbeddableTraits` 
@@ -73,7 +73,7 @@ struct Null_functor {
 
 General tag indicating that non of any other possible tags is valid. 
 
-\models ::DefaultConstructible 
+\cgalModels ::DefaultConstructible 
 
 \sa `AlgebraicStructureTraits` 
 

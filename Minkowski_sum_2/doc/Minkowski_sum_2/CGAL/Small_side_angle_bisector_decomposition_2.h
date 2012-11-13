@@ -21,7 +21,7 @@ The `Polygon_2` type defined by the class is simply
 `Polygon_2<Kernel,Container>`. The `Container` parameter 
 is by default `std::vector<typename Kernel::Point_2>`. 
 
-\models ::PolygonConvexDecomposition_2 
+\cgalModels ::PolygonConvexDecomposition_2 
 
 */
 template< typename Kernel, typename Container >

@@ -9,7 +9,7 @@ The class `Kinetic::Default_simulator` controls kinetic data structures by maint
 a concept of time and ensuring that events are processed when 
 necessary. 
 
-\models `Kinetic::Simulator`
+\cgalModels `Kinetic::Simulator`
 
 */
 template< typename FunctionKernel, typename EventQueue >

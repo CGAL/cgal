@@ -5,7 +5,7 @@ namespace CGAL {
 \mainpage Intersecting Sequences of dD Iso-oriented Boxes
 \anchor Chapter_Intersecting_Sequences_of_dD_Iso-oriented_Boxes
 \anchor chapterBoxIntersection
-\autotoc
+\cgalAutoToc
 \authors Lutz Kettner, Andreas Meyer, and Afra Zomorodian
 
 \section Box_intersection_dIntroduction Introduction
@@ -18,7 +18,7 @@ on these primitives tend to be slow in practice. A common (heuristic)
 optimization approximates the geometric primitives with their
 axis-aligned bounding boxes, runs a suitable modification of the
 algorithm on the boxes, and whenever a pair of boxes has an
-interesting interaction \footnote{Boxes represent volumes or
+interesting interaction \cgalFootnote{Boxes represent volumes or
 point-sets. So, <I>intersection</I> means intersection of the
 point-set enclosed by the box and not only intersection of the
 boundary, of course.}, only then the exact answer is computed on the
@@ -187,7 +187,7 @@ The result will be that the first `query` box intersects all nine
 in the upper-right quadrant. See Section \ref secboxintersparams 
 for the change of the `topology` parameter and its effect.
 
-\cgalexample{Box_intersection_d/minimal.cpp}
+\cgalExample{Box_intersection_d/minimal.cpp}
 
 \section Box_intersection_dExample_1 Example for Finding Intersecting 3D Triangles
 
@@ -232,7 +232,7 @@ the polyhedral surface that should not be reported as intersections,
 see the <TT>examples/Polyhedron/polyhedron_self_intersection.cpp</TT>
 example program in the \cgal distribution.
 
-\cgalexample{Box_intersection_d/triangle_self_intersect.cpp}
+\cgalExample{Box_intersection_d/triangle_self_intersect.cpp}
 
 \section Box_intersection_dExample_2 Example for Using Pointers to Boxes
 
@@ -262,7 +262,7 @@ In addition, the callback function `report_inters` needs to be
 changed to work with pointers to boxes. The full example program looks
 as follows:
 
-\cgalexample{Box_intersection_d/triangle_self_intersect_pointers.cpp}
+\cgalExample{Box_intersection_d/triangle_self_intersect_pointers.cpp}
 
 A note on performance: The algorithm sorts and partitions the input
 sequences. It is clearly costly to copy a large box compared to a
@@ -338,7 +338,7 @@ For the second box intersection function call we have to specify the
 Section \ref secboxintersperformance below for a detailed
 discussion.
 
-\cgalexample{Box_intersection_d/box_grid.cpp}
+\cgalExample{Box_intersection_d/box_grid.cpp}
 
 \section secboxintersperformance Runtime Performance 
 
@@ -381,15 +381,15 @@ box intersection is reported to an empty dummy callback.
 For each box set, a near-optimal cutoff parameter is determined using
 an adaptive approximation. The runtime required for streaming is
 compared against usual scanning. Results on a Xeon 2.4GHz with 4GB
-main memory can be seen in \cgal_figure_ref{fig_benchmark}. For a small
+main memory can be seen in \cgalFigureRef{fig_benchmark}. For a small
 number of boxes, pure scanning is still faster than streaming with
 optimal cutoff, which would just delegate the box sets to the scanning
 algorithm. As there are more and more boxes, the overhead becomes less
 important.
 
-\cgal_figure_begin{fig_benchmark,benchmark.gif}
+\cgalFigureBegin{fig_benchmark,benchmark.gif}
 Runtime comparison between the scanning and the streaming algorithm.
-\cgal_figure_end
+\cgalFigureEnd
 
 \section Box_intersection_dExample_3 Example Using a Custom Box Implementation
 
@@ -418,7 +418,7 @@ and the type `ID` for the `id`-number. Member functions
 give access to the coordinates and the `id`-number. A static
 member function returns the dimension.
 
-\cgalexample{Box_intersection_d/custom_box_grid.cpp}
+\cgalExample{Box_intersection_d/custom_box_grid.cpp}
 
 \section secbox_inters_example_proximity Example for Point Proximity Search with a Custom Traits Class 
 
@@ -456,7 +456,7 @@ and the `boxes` vector in parallel, since otherwise the
 `points` vector might reallocate and invalidate all pointers
 stored in the `boxes` so far.
 
-\cgalexample{Box_intersection_d/proximity_custom_box_traits.cpp}
+\cgalExample{Box_intersection_d/proximity_custom_box_traits.cpp}
 
 \section Box_intersection_dDesign Design and Implementation History
 

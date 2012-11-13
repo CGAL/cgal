@@ -8,7 +8,7 @@ The class
 model for concept `MinSphereOfSpheresTraits`. It uses the \cgal 
 type `Point_3` to represent circles. 
 
-\models ::MinSphereOfSpheresTraits 
+\cgalModels ::MinSphereOfSpheresTraits 
 
 
 \tparam K must be a model for `Kernel`. 

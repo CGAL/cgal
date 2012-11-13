@@ -1,10 +1,10 @@
 
 /*!
 \ingroup PkgNef2Concepts
-\cgalconcept
+\cgalConcept
 
 `ExtendedKernelTraits_2` is a kernel concept providing extended
-geometry\footnote{It is called extended geometry for simplicity,
+geometry\cgalFootnote{It is called extended geometry for simplicity,
 though it is not a real geometry in the classical sense}. Let `K` be
 an instance of the data type `ExtendedKernelTraits_2`. The central
 notion of extended geometry are extended points. An extended point
@@ -12,7 +12,7 @@ represents either a standard affine point of the Cartesian plane or a
 non-standard point representing the equivalence class of rays where
 two rays are equivalent if one is contained in the other.
 
-Let \f$ R\f$ be an infinimaximal number\footnote{A finite but very large number.}, \f$ F\f$ be the square box with corners \f$ NW(-R,R)\f$, \f$ NE(R,R)\f$, 
+Let \f$ R\f$ be an infinimaximal number\cgalFootnote{A finite but very large number.}, \f$ F\f$ be the square box with corners \f$ NW(-R,R)\f$, \f$ NE(R,R)\f$, 
 \f$ SE(R,-R)\f$, and \f$ SW(-R,-R)\f$. Let \f$ p\f$ be a non-standard point and let 
 \f$ r\f$ be a ray defining it. If the frame \f$ F\f$ contains the source point 
 of \f$ r\f$ then let \f$ p(R)\f$ be the intersection of \f$ r\f$ with the frame \f$ F\f$, 
@@ -38,9 +38,9 @@ functionality for changing between standard affine and extended
 geometry. At the same time it provides extensible geometric primitives 
 on the extended geometric objects. 
 
-\hasModel `CGAL::Extended_cartesian<FT>`
-\hasModel `CGAL::Extended_homogeneous<RT>`
-\hasModel `CGAL::Filtered_extended_homogeneous<RT>`
+\cgalHasModel `CGAL::Extended_cartesian<FT>`
+\cgalHasModel `CGAL::Extended_homogeneous<RT>`
+\cgalHasModel `CGAL::Filtered_extended_homogeneous<RT>`
 
 */
 

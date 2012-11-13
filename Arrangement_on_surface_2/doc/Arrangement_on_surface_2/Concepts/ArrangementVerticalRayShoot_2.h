@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgArrangement2Concepts
-\cgalconcept
+\cgalConcept
 
 A model of the `ArrangementVerticalRayShoot_2` concept can be attached to an `Arrangement_2` 
 instance and answer vertical ray-shooting queries on this arrangement. 
@@ -17,10 +17,10 @@ envelope) of the arrangement, so that the vertical ray emanating from it
 may go to infinity without hitting any arrangement feature on its way. In this 
 case the unbounded face is returned. 
 
-\hasModel `CGAL::Arr_naive_point_location<Arrangement>` 
-\hasModel `CGAL::Arr_walk_along_a_line_point_location<Arrangement>` 
-\hasModel `CGAL::Arr_trapezoid_ric_point_location<Arrangement>` 
-\hasModel `CGAL::Arr_landmarks_point_location<Arrangement,Generator>` 
+\cgalHasModel `CGAL::Arr_naive_point_location<Arrangement>` 
+\cgalHasModel `CGAL::Arr_walk_along_a_line_point_location<Arrangement>` 
+\cgalHasModel `CGAL::Arr_trapezoid_ric_point_location<Arrangement>` 
+\cgalHasModel `CGAL::Arr_landmarks_point_location<Arrangement,Generator>` 
 
 */
 

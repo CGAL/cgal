@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgVoronoiDiagramAdaptor2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `AdaptationPolicy_2` defines the requirements on 
 the predicate functors that determine whether a feature of the 
@@ -11,17 +11,17 @@ functor is optional and a tag determines whether it is provided or
 not. Note that while the first two functors do not modify the Delaunay 
 graph they take as an argument, the last ones does. 
 
-\refines `DefaultConstructible,` \refines `CopyConstructible,` \refines `Assignable` 
+\cgalRefines `DefaultConstructible,` \cgalRefines `CopyConstructible,` \cgalRefines `Assignable` 
 
-\hasModel `CGAL::Identity_policy_2<DG,AT>`
-\hasModel `CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>`
-\hasModel `CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>`
-\hasModel `CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>`
-\hasModel `CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>`
-\hasModel `CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>`
-\hasModel `CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>`
-\hasModel `CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>`
-\hasModel `CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>`
+\cgalHasModel `CGAL::Identity_policy_2<DG,AT>`
+\cgalHasModel `CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>`
+\cgalHasModel `CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>`
+\cgalHasModel `CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>`
+\cgalHasModel `CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>`
+\cgalHasModel `CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>`
+\cgalHasModel `CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>`
+\cgalHasModel `CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>`
+\cgalHasModel `CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>`
 
 \sa `DelaunayGraph_2` 
 \sa `AdaptationTraits_2` 

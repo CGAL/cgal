@@ -10,19 +10,19 @@
 /*!
 \addtogroup PkgPolynomial
 \todo check generated documentation
-\PkgDescriptionBegin{Polynomial,PkgPolynomialSummary}
-\PkgPicture{Polynomial.png}
-\PkgSummaryBegin
-\PkgAuthor{Michael Hemmer}
-\PkgDesc{This package introduces a concept for univariate and multivariate  polynomials in \f$ d\f$ variables. Though the concept is written for an arbitrary  number of variables, the number of variables is considered as fixed for a  particular model of this concept.}
-\PkgManuals{Chapter_Polynomial,PkgPolynomial}
-\PkgSummaryEnd
-\PkgShortInfoBegin
-\PkgSince{3.3}
-\PkgBib{cgal:h-p}
-\PkgLicense{\ref licensesLGPL "LGPL"}
-\PkgShortInfoEnd
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{Polynomial,PkgPolynomialSummary}
+\cgalPkgPicture{Polynomial.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Michael Hemmer}
+\cgalPkgDesc{This package introduces a concept for univariate and multivariate  polynomials in \f$ d\f$ variables. Though the concept is written for an arbitrary  number of variables, the number of variables is considered as fixed for a  particular model of this concept.}
+\cgalPkgManuals{Chapter_Polynomial,PkgPolynomial}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.3}
+\cgalPkgBib{cgal:h-p}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 
 \ref PolynomialClassified  "Classified Reference Pages"
 */
