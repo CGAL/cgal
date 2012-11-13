@@ -19,5 +19,4 @@ done > /tmp/rename_macros.sed
 
 sed -i -f /tmp/rename_macros.sed ../Doxyfile
 
-#~ find ../.. -name '*.txt' -o -name '*.h'
-
+echo "Do not forget to manually update ../pkglist_filter.py"
