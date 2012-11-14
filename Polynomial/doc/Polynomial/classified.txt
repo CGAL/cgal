@@ -1,7 +1,7 @@
 /*! \page  PolynomialClassified  Classified Reference Pages
 
 
-\section PolynomialPolynomiald %Polynomial_d
+\section PolynomialPolynomiald Polynomial_d
 
 \subsection PolynomialConcepts Concepts
 

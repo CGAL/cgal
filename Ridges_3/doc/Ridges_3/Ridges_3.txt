@@ -389,7 +389,7 @@ If one chooses to use only third order quantities, the quantities
 \f$ P_i\f$ do not have to be defined. Then the sharpness will not be
 defined.
 
-\subsection Ridges_3UmbilicApproximation %Umbilic Approximation
+\subsection Ridges_3UmbilicApproximation Umbilic Approximation
 
 The main class is
 `Umbilic_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`.

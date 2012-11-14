@@ -58,7 +58,7 @@ point set of a given size where the points are drawn from a specific
 domain and `random_polygon_2()` generates a random simple polygon from
 points drawn from a specific domain.
 
-\subsection GeneratorRandomPerturbations %Random Perturbations
+\subsection GeneratorRandomPerturbations Random Perturbations
 
 Degenerate input sets like grid points can be randomly perturbed by a
 small amount to produce <I>quasi</I>-degenerate test sets. This

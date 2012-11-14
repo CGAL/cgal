@@ -41,7 +41,7 @@ This component provides property maps to support these cases:
 
 `Nth_of_tuple_property_map<N, Tuple>` 
 
-\subsection Property_mapExamplewithDereferencepropertymap Example with %Dereference_property_map
+\subsection Property_mapExamplewithDereferencepropertymap Example with Dereference_property_map
 
 The following example reads a point set and removes 5% of the points. It uses `Dereference_property_map<Point_3>` as position property map.
 \cgalExample{Point_set_processing_3/remove_outliers_example.cpp}

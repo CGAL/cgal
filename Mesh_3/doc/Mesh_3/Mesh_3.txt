@@ -286,7 +286,7 @@ Compared effect of a global optimizer and the perturber. The left part shows the
 
 \section Mesh_3_section_interface Interface
 
-\subsection Mesh_3TheGlobalFunctions The Global %Functions
+\subsection Mesh_3TheGlobalFunctions The Global Functions
 
 A 3D mesh generation process is launched through a call
 to one of the two following functions:
@@ -593,9 +593,9 @@ The resulting mesh is shown in \cgalFigureRef{figureliver_3d_image_mesh}.
 Cut view of a 3D mesh produced from a segmented liver image. Code from subsection \ref Mesh_3_subsection_examples_3d_image generates this file.
 \cgalFigureEnd
 
-\subsection Mesh_3UsingVariableSizingField Using Variable Sizing %Field
+\subsection Mesh_3UsingVariableSizingField Using Variable Sizing Field
 
-\subsubsection Mesh_3SizingFieldasanAnalyticalFunction Sizing %Field as an Analytical %Function
+\subsubsection Mesh_3SizingFieldasanAnalyticalFunction Sizing Field as an Analytical Function
 
 \anchor Mesh_3_subsubsection_examples_sphere_variable
 
@@ -608,7 +608,7 @@ The following example shows how to use an analytical function as sizing field.
 Cut view of a 3D mesh produced from an implicit sphere with non-constant sizing field. Code from subsection \ref Mesh_3_subsubsection_examples_sphere_variable generates this file.
 \cgalFigureEnd
 
-\subsubsection Mesh_3DifferentSizingFieldforDifferentSubdomains Different Sizing %Field for Different Subdomains
+\subsubsection Mesh_3DifferentSizingFieldforDifferentSubdomains Different Sizing Field for Different Subdomains
 
 \anchor Mesh_3_subsubsection_examples_3d_image_variable
 
@@ -699,7 +699,7 @@ shaped elements: we set the facet angle bound and the radius edge bound to their
 theoretical limit (resp. 30 degrees and 2). We also use the same uniform sizing field for facets
 and cells.
 
-\subsubsection Mesh_3ImplicitFunction Implicit %Function
+\subsubsection Mesh_3ImplicitFunction Implicit Function
 
 We mesh an analytical sphere of radius 1.
 

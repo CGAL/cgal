@@ -877,7 +877,7 @@ which refines the concept `TriangulationTraits_2`
 providing additional function object types
 to compute the intersection of two segments.
 
-\subsection Triangulation_2TheFaceBaseClassofaConstrained The Face %Base Class of a Constrained Triangulation
+\subsection Triangulation_2TheFaceBaseClassofaConstrained The Face Base Class of a Constrained Triangulation
 
 The information about constrained edges is stored in the 
 faces of the triangulation. The base face of a Constrained Triangulation
@@ -969,7 +969,7 @@ to provide function objects to compute constraints intersections.
 Then the geometric traits has to be at the same time a model
 of the concept `ConstrainedTriangulationTraits_2`.
 
-\subsection Triangulation_2TheFaceBaseClass The Face %Base Class
+\subsection Triangulation_2TheFaceBaseClass The Face Base Class
 
 Information about the status (constrained or not)
 of the edges of the triangulation has to be stored
@@ -1202,7 +1202,7 @@ data structure.
 
 \cgalExample{Triangulation_2/adding_handles.cpp}
 
-\subsection Triangulation_2SettingInformationWhileInserting Setting Information While Inserting a %Range of Points
+\subsection Triangulation_2SettingInformationWhileInserting Setting Information While Inserting a Range of Points
 
 The most efficient method to insert (weighted) points in a
 Delaunay (or regular) triangulation is to provide an iterator

@@ -131,7 +131,7 @@ design.
 
 \anchor sectionHdsExamples
 
-\subsection HalfedgeDSTheDefaultHalfedgeDataStructure The %Default Halfedge Data Structure
+\subsection HalfedgeDSTheDefaultHalfedgeDataStructure The Default Halfedge Data Structure
 
 The following example program uses the default halfedge data structure
 and the decorator class. The default halfedge data structure uses a
@@ -154,7 +154,7 @@ vertices or faces are stored. The data structure represents an <I>undirected gra
 
 \cgalExample{HalfedgeDS/hds_prog_graph.cpp}
 
-\subsection HalfedgeDSTheDefaultwithaVectorInsteadof The %Default with a Vector Instead of a List
+\subsection HalfedgeDSTheDefaultwithaVectorInsteadof The Default with a Vector Instead of a List
 
 The default halfedge data structure uses a list internally and the
 maximal base classes. We change the list to a vector representation
@@ -168,14 +168,14 @@ in a consistent, i.e., <I>valid</I>, state.
 
 \cgalExample{HalfedgeDS/hds_prog_vector.cpp}
 
-\subsection HalfedgeDSExampleAddingColortoFaces Example Adding %Color to Faces
+\subsection HalfedgeDSExampleAddingColortoFaces Example Adding Color to Faces
 
 This example re-uses the base class available for faces and adds a
 member variable `color`.
 
 \cgalExample{HalfedgeDS/hds_prog_color.cpp}
 
-\subsection HalfedgeDSExampleDefiningaMoreCompactHalfedge Example Defining a More %Compact Halfedge
+\subsection HalfedgeDSExampleDefiningaMoreCompactHalfedge Example Defining a More Compact Halfedge
 
 \cgalAdvanced The halfedge data structure as presented here is slightly less space
 efficient as, for example, the winged-edge data
@@ -205,14 +205,14 @@ example for the vector-based data structure.
 
 \cgalExample{HalfedgeDS/hds_prog_compact.cpp}
 
-\subsection HalfedgeDSExampleUsingtheHalfedgeIterator Example Using the Halfedge %Iterator
+\subsection HalfedgeDSExampleUsingtheHalfedgeIterator Example Using the Halfedge Iterator
 
 Two edges are created in the default halfedge data structure.
 The halfedge iterator is used to count the halfedges.
 
 \cgalExample{HalfedgeDS/hds_prog_halfedge_iterator.cpp}
 
-\subsection HalfedgeDSExampleforanAdaptertoBuildanEdge Example for an Adapter to Build an Edge %Iterator
+\subsection HalfedgeDSExampleforanAdaptertoBuildanEdge Example for an Adapter to Build an Edge Iterator
 
 Three edges are created in the default halfedge data structure.
 The adapter `N_step_adaptor` is used to declare the edge

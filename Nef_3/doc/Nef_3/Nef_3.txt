@@ -364,7 +364,7 @@ rotated and scaled. The usage is shown in the following example:
 
 \cgalExample{Nef_3/transformation.cpp}
 
-\subsection Nef_3TheInterfacebetweenPolyhedron3andNefpolyhedron3 The Interface between %Polyhedron_3 and %Nef_polyhedron_3
+\subsection Nef_3TheInterfacebetweenPolyhedron3andNefpolyhedron3 The Interface between Polyhedron_3 and Nef_polyhedron_3
 
 \anchor subsectionNef_3Polyhedron
 
