@@ -163,7 +163,7 @@ The reconstruction is devised to solve for an implicit function which is an appr
     \end{figure}
 \end{center}
 
- In case of large holes the algorithm still closes them all but the resulting piecewise linear implicit function may exhibit large triangle patches and sharp creases as the 3D Delaunay triangulation used for solving is very coarse where the holes are filled. This can be avoided by a two pass approach. The first pass for a subset of the points serves to get an approximation of the surface at the holes. This surface then serves to compute a finer 3D Delaunay triangulation for the second pass with the full set of points.
+ In case of large holes the algorithm still closes them all but the resulting piecewise linear implicit function may exhibit large triangle patches and sharp creases as the 3D Delaunay triangulation used for solving is very coarse where the holes are filled. This can be avoided by a two pass approach. The first pass for a subset of the points serves to get an approximation of the surface at the holes. This surface then serves to compute a smoother 3D Delaunay triangulation for the second pass with the full set of points.
 
 \begin{center}
     \begin{ccTexOnly}

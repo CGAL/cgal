@@ -448,9 +448,9 @@ public:
   }
 
   template <class SparseLinearAlgebraTraits_d>
-  bool compute_implicit_function(SparseLinearAlgebraTraits_d solver, bool two_passes = false)
+  bool compute_implicit_function(SparseLinearAlgebraTraits_d solver, bool smoother_hole_filling = false)
   {
-    if (two_passes)
+    if (smoother_hole_filling)
       return compute_implicit_function<SparseLinearAlgebraTraits_d,Poisson_visitor>(solver,Poisson_visitor(),0.02,5);
     else
       return compute_implicit_function<SparseLinearAlgebraTraits_d,Poisson_visitor>(solver,Poisson_visitor());
@@ -459,19 +459,19 @@ public:
  #ifdef CGAL_EIGEN3_ENABLED
   /// @cond SKIP_IN_MANUAL
   // This variant provides the default sparse linear traits class = Eigen_solver_traits.
-  bool compute_implicit_function(bool two_passes = false)
+  bool compute_implicit_function(bool smoother_hole_filling = false)
   {
     typedef Eigen_solver_traits<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> > Solver;
-    return compute_implicit_function<Solver>(Solver(), two_passes);
+    return compute_implicit_function<Solver>(Solver(), smoother_hole_filling);
   }
   /// @endcond
  #else
   /// @cond SKIP_IN_MANUAL
   // This variant provides the default sparse linear traits class = Taucs_symmetric_solver_traits.
-  bool compute_implicit_function(bool two_passes = false)
+  bool compute_implicit_function(bool smoother_hole_filling = false)
   {
     typedef  Taucs_symmetric_solver_traits<double> Solver;
-    return compute_implicit_function<Solver>(Solver(), two_passes);
+    return compute_implicit_function<Solver>(Solver(), smoother_hole_filling);
   }
 #endif
  
