@@ -595,7 +595,7 @@ Cut view of a 3D mesh produced from a segmented liver image. Code from subsectio
 
 \subsection Mesh_3UsingVariableSizingField Using Variable Sizing %Field
 
-\subsection Mesh_3SizingFieldasanAnalyticalFunction Sizing %Field as an Analytical %Function
+\subsubsection Mesh_3SizingFieldasanAnalyticalFunction Sizing %Field as an Analytical %Function
 
 \anchor Mesh_3_subsubsection_examples_sphere_variable
 
@@ -608,7 +608,7 @@ The following example shows how to use an analytical function as sizing field.
 Cut view of a 3D mesh produced from an implicit sphere with non-constant sizing field. Code from subsection \ref Mesh_3_subsubsection_examples_sphere_variable generates this file.
 \cgalFigureEnd
 
-\subsection Mesh_3DifferentSizingFieldforDifferentSubdomains Different Sizing %Field for Different Subdomains
+\subsubsection Mesh_3DifferentSizingFieldforDifferentSubdomains Different Sizing %Field for Different Subdomains
 
 \anchor Mesh_3_subsubsection_examples_3d_image_variable
 
@@ -625,7 +625,7 @@ View of a 3D mesh produced from a 3D image with different size for different org
 
 \anchor Mesh_3_subsection_example_polyhedral_with_edges
 
-\subsection Mesh_33DPolyhedralDomainwithEdges 3D Polyhedral Domain with Edges
+\subsubsection Mesh_33DPolyhedralDomainwithEdges 3D Polyhedral Domain with Edges
 
 The following example shows how to generate a mesh from a polyhedral
 surface. The output mesh conforms to the sharp features of the input surface.
@@ -636,7 +636,7 @@ surface. The output mesh conforms to the sharp features of the input surface.
 View of a 3D mesh with sharp features. Code from subsection \ref Mesh_3_subsection_example_polyhedral_with_edges generates this mesh.
 \cgalFigureEnd
 
-\subsection Mesh_3ImplicitDomainWith1DFeatures Implicit Domain With 1D Features
+\subsubsection Mesh_3ImplicitDomainWith1DFeatures Implicit Domain With 1D Features
 
 The following example shows how to generate a mesh from an implicit
 domain. We add by hand the intersection of the spheres as a sharp feature.
@@ -658,7 +658,7 @@ two optimization steps are performed, a perturbation and a sliver exudation.
 The following examples show how to disable default optimization steps 
 and how to tune the parameters of optimization steps.
 
-\subsection Mesh_3DisablingExudationandTuningPerturbation Disabling Exudation and Tuning Perturbation
+\subsubsection Mesh_3DisablingExudationandTuningPerturbation Disabling Exudation and Tuning Perturbation
 
 In this first example, we show how to disable the exudation step.
 The optimization phase after the refinement includes only
@@ -673,7 +673,7 @@ through a call to `perturb_mesh_3()` with tuned parameters.
 
 \cgalExample{Mesh_3/mesh_optimization_example.cpp}
 
-\subsection Mesh_3UsingLloydGlobalOptimization Using Lloyd Global Optimization
+\subsubsection Mesh_3UsingLloydGlobalOptimization Using Lloyd Global Optimization
 
 In this second example, we show how to call the Lloyd optimization on the
 mesh, followed by a call to exudation. We set a time bound of 30s for the Lloyd optimization. 
@@ -699,7 +699,7 @@ shaped elements: we set the facet angle bound and the radius edge bound to their
 theoretical limit (resp. 30 degrees and 2). We also use the same uniform sizing field for facets
 and cells.
 
-\subsection Mesh_3ImplicitFunction Implicit %Function
+\subsubsection Mesh_3ImplicitFunction Implicit %Function
 
 We mesh an analytical sphere of radius 1.
 
@@ -790,7 +790,7 @@ vertices/second
 
 </CENTER>
 
-\subsection Mesh_3PolyhedralDomain Polyhedral Domain
+\subsubsection Mesh_3PolyhedralDomain Polyhedral Domain
 
 \cgalFigureBegin{figuremesh_3_benchmark_polyhedral,bench_polyhedral.jpg}
 View of polyhedral mesh generation result (size = 0.005).
@@ -887,7 +887,7 @@ vertices/second
 
 </CENTER>
 
-\subsection Mesh_33DImage 3D Image
+\subsubsection Mesh_33DImage 3D Image
 
 \cgalFigureBegin{figuremesh_3_benchmark_3d_image,bench_3d.jpg}
 View of 3d image mesh generation result (size = 4).
@@ -974,7 +974,7 @@ vertices/second
 
 \section Mesh_3DesignAndImpl Design and Implementation History
 
-\subsection Mesh_3TheoreticalFoundations Theoretical Foundations
+\subsubsection Mesh_3TheoreticalFoundations Theoretical Foundations
 
 The \cgal mesh generation package implements a meshing engine based 
 on the method of Delaunay refinement introduced by Chew \cite c-gqmgc-93 and Ruppert \cite r-draq2d-95
@@ -999,7 +999,7 @@ and Tournois et al. \cite cgal:twad-iropitmg-09,
 while the exudation process is, the now famous, optimization by weighting described
 in Edelsbrunner et al. \cite cgal:cdeft-slive-00.
 
-\subsection Mesh_3ImplementationHistory Implementation History
+\subsubsection Mesh_3ImplementationHistory Implementation History
 
 Work on the package `Mesh_3` started during the PhD thesis of Laurent Rineau
 advised by Mariette Yvinec. A code prototype, together
