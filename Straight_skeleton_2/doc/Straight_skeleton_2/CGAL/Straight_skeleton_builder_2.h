@@ -31,7 +31,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Classes
 
-The class `Straight_skeleton_builder_2` encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter, `Gt`, must be a model of the `StraightSkeletonBuilderTraits_2` concept, its second template parameter, `Ss`, must be a model of the `StraightSkeleton_2` concept, and its third template paramter, `Visitor`, must be a model of the `StraightSkeletonBuilder_2_Visitor` concept. If this last parameter is ommitted, the class `CGAL::Dummy_straight_skeleton_builder_2_visitor<Skel>` is used. 
+The class `Straight_skeleton_builder_2` encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter must be a model of the `StraightSkeletonBuilderTraits_2` concept, its second template parameter, must be a model of the `StraightSkeleton_2` concept, and its third template paramter must be a model of the `StraightSkeletonBuilder_2_Visitor` concept. If this last parameter is ommitted, the class `CGAL::Dummy_straight_skeleton_builder_2_visitor<Skel>` is used. 
 
 ### Algorithm ###
 
@@ -48,11 +48,12 @@ Every position along a bisector corresponds to the vertex between two offset (mo
 From the perspective of a dynamic system of moving edges, such a distance can be regarded as an 
 <I>instant</I> (in time). Therefore, every distinct position along a bisector corresponds to a distinct instant in the offsetting process. 
 
-As they move inward, edges can expand or contract w.r.t to the endpoints sharing a vertex. If a vertex has an internal angle \f$ <pi\f$, its incident edges will contract but if its internal angle \f$ >pi\f$, they will expand. The movement of the edges, along with their extent change, result in collisions between non-adjacent edges. These collisions are called <I>events</I>, and they occur when the colliding edges have moved a certain distance, that is, at certain <I>instants</I>. 
+
+As they move inward, edges can expand or contract w.r.t to the endpoints sharing a vertex. If a vertex has an internal angle \f$ <\pi\f$, its incident edges will contract but if its internal angle \f$ >\pi\f$, they will expand. The movement of the edges, along with their extent change, result in collisions between non-adjacent edges. These collisions are called <I>events</I>, and they occur when the colliding edges have moved a certain distance, that is, at certain <I>instants</I>. 
 
 If non-consecutive edges `E(j),E(k)` move while edge `E(i)` contracts, they can collide at the point when `E(i)` shrinks to nothing (that is, the three edges might meet at a certain offset). This introduces a <I>topological change</I> in the polygon: Edges `E(j),E(k)` are now adjacent, edge `E(i)` disappears, and a new vertex appears. This topological change is called an <I>edge event</I>. 
 
-Similarly, consecutive expanding edges `E(i),E(i+1)` sharing a reflex vertex (internal angle \f$ >=pi\f$) might collide with any edge `E(j)` on the rest of the same connected component of the polygon boundary (even far away from the initial edge's position). This also introduces a topological change: `E(j)` gets split in two edges and the connected component having `E(i),E(i+1) and E(j)` is split in two unconnected parts: one having `E(i)` and the corresponding subsegment of `E(j)` and the other with `E(i+1)` and the rest of `E(j)`. This is called a <I>split event</I>. 
+Similarly, consecutive expanding edges `E(i),E(i+1)` sharing a reflex vertex (internal angle \f$ >=\pi\f$) might collide with any edge `E(j)` on the rest of the same connected component of the polygon boundary (even far away from the initial edge's position). This also introduces a topological change: `E(j)` gets split in two edges and the connected component having `E(i),E(i+1) and E(j)` is split in two unconnected parts: one having `E(i)` and the corresponding subsegment of `E(j)` and the other with `E(i+1)` and the rest of `E(j)`. This is called a <I>split event</I>. 
 If a reflex vertex hits not an edge `E(j)` but another reflex vertex `E(j),E(j+1)`, and vice-versa (the reflex vertex V(j) hits V(i)), there is no actual split and the two unconnected parts have `E(i),E(j)` and `E(i+1),E(j+1)` (or `E(i),E(j+1)` and `E(i+1),E(j)`). This topological change is called a <I>vertex event</I>. Although similar to a split event in the sense that two new unconnected contours emerge introducing two new contour vertices, in the case of a vertex event one of the new contour vertices might be reflex; that is, a vertex event <I>may</I> result in one of the offset polygons having a <I>reflex</I> contour vertex which was not in the original polygon. 
 
 Edges movement is described by vertices movement, and these by bisectors. Therefore, the collision between edges `E(j),E(i),E(k)` (all in the same connected component) occurs when the moving vertices `E(j)->E(i)` and `E(i)->E(k)` meet ; that is, when the two bisectors describing the moving vertices 
@@ -79,7 +80,7 @@ A grassfire propagation picks the next unprocessed event (starting from the firs
 \sa `CGAL::Straight_skeleton_2<Traits,Items,Alloc>` 
 
 */
-template< typename Gt, typename Ss, typename Visitor >
+template< typename StraightSkeletonBuilderTraits_2 , typename StraightSkeleton_2, typename StraightSkeletonBuilder_2_Visitor >
 class Straight_skeleton_builder_2 {
 public:
 
@@ -89,12 +90,12 @@ public:
 /*! 
 The geometric traits (first template parameter) 
 */ 
-typedef Hidden_type Gt; 
+typedef StraightSkeletonBuilderTraits_2 Gt; 
 
 /*! 
 The straight skeleton (second template parameter) 
 */ 
-typedef Hidden_type Ss; 
+typedef StraightSkeleton_2 Ss; 
 
 /*! 
 The 2D point type as defined by the geometric traits 

@@ -58,17 +58,17 @@ typedef Hidden_type Target_face;
 /// @{
 
 /*! 
-returns a new vertex with the same data as \f$ v\f$ converted to the corresponding target types. 
+returns a new vertex with the same data as `v` converted to the corresponding target types. 
 */ 
 Target_vertex operator()( Source_vertex_const_handle v) const; 
 
 /*! 
-returns a new halfedge with the same data as \f$ h\f$ converted to the corresponding target types. 
+returns a new halfedge with the same data as `h` converted to the corresponding target types. 
 */ 
 Target_halfedge operator()( Source_halfedge_const_handle h) const; 
 
 /*! 
-returns a new face with the same data as \f$ f\f$ converted to the corresponding target types. 
+returns a new face with the same data as `f` converted to the corresponding target types. 
 */ 
 Target_face operator()( Source_face_const_handle f) const; 
 

@@ -42,9 +42,9 @@ Called before the initialization stage (when initial events are discovered) is s
 void on_initialization_started( std::size_t number_of_vertices ) const; 
 
 /*! 
-Called after the events for contour vertex \f$ v\f$ have been discovered. `is_reflex` is true 
-if this vertex has an internal angle \f$ >PI\f$, or `is_degenerate` is true 
-if the internal angle is \f$ =PI\f$. 
+Called after the events for contour vertex `v` have been discovered. `is_reflex` is true 
+if this vertex has an internal angle \f$ > \pi\f$, or `is_degenerate` is true 
+if the internal angle is \f$ = \pi\f$. 
 */ 
 void on_contour_vertex_processed( Vertex_const_handle const& v 
 , bool is_reflex 
@@ -52,20 +52,20 @@ void on_contour_vertex_processed( Vertex_const_handle const& v
 ) const; 
 
 /*! 
-Called after an edge event for nodes \f$ node0\f$ and \f$ node1\f$ has been discovered 
+Called after an edge event for nodes `node0` and `node1` has been discovered 
 and put on the queue for later processing. 
 */ 
 void on_edge_event_created( Vertex_const_handle const& node0 
 , Vertex_const_handle const& node1 ) const ; 
 
 /*! 
-Called after a slipt event for node \f$ node\f$ has been discovered 
+Called after a slipt event for node `node` has been discovered 
 and put on the queue for later processing. 
 */ 
 void on_split_event_created( Vertex_const_handle const& node ) const ; 
 
 /*! 
-Called after a pseudo slipt event for nodes \f$ node0\f$ and \f$ node1\f$ has been discovered 
+Called after a pseudo slipt event for nodes `node0` and `node1` has been discovered 
 and put on the queue for later processing. 
 */ 
 void on_pseudo_split_event_created( Vertex_const_handle const& node0 
@@ -83,7 +83,7 @@ is started.
 void on_propagation_started() const; 
 
 /*! 
-Called after an anhiliation event for nodes \f$ node0\f$ and \f$ node1\f$ has been processed. 
+Called after an anhiliation event for nodes `node0` and `node1` has been processed. 
 A new skeleton edge between these nodes has been added. 
 */ 
 void on_anihiliation_event_processed ( Vertex_const_handle const& node0 
@@ -91,8 +91,8 @@ void on_anihiliation_event_processed ( Vertex_const_handle const& node0
 ) const; 
 
 /*! 
-Called after an edge for nodes \f$ seed0\f$ and \f$ seed1\f$ has been processed. 
-Skeleton vertex \f$ newnode\f$ and edges from \f$ node0\f$ to \f$ newnode\f$ and \f$ node1\f$ to \f$ newnode\f$ 
+Called after an edge for nodes `seed0` and `seed1` has been processed. 
+Skeleton vertex `newnode` and edges from `node0` to `newnode` and `node1` to `newnode` 
 has been added. 
 */ 
 void on_edge_event_processed( Vertex_const_handle const& seed0 
@@ -101,10 +101,10 @@ void on_edge_event_processed( Vertex_const_handle const& seed0
 ) const; 
 
 /*! 
-Called after a split event for node \f$ seed\f$ has been processed. 
-Skeleton vertices \f$ newnode0\f$ and \f$ newnode1\f$ have been added. 
-An skeleton edge from \f$ seed\f$ to \f$ newnode0\f$ has been added. 
-In the final skeleton, \f$ newnode1\f$ is removed and only \f$ newnode0\f$ remains. 
+Called after a split event for node `seed` has been processed. 
+Skeleton vertices `newnode0` and `newnode1` have been added. 
+An skeleton edge from `seed` to `newnode0` has been added. 
+In the final skeleton, `newnode1` is removed and only `newnode0` remains. 
 */ 
 void on_split_event_processed( Vertex_const_handle const& seed 
 , Vertex_const_handle const& newnode0 
@@ -112,9 +112,9 @@ void on_split_event_processed( Vertex_const_handle const& seed
 ) const; 
 
 /*! 
-Called after a pseudo split event for nodes \f$ seed0\f$ and \f$ seed1\f$ has been processed. 
-Skeleton vertices \f$ newnode0\f$ and \f$ newnode1\f$ have been added. 
-Skeleton edges from \f$ seed0\f$ to \f$ newnode0\f$ and \f$ seed1\f$ to \f$ newnode1\f$ has been added. 
+Called after a pseudo split event for nodes `seed0` and `seed1` has been processed. 
+Skeleton vertices `newnode0` and `newnode1` have been added. 
+Skeleton edges from `seed0` to `newnode0` and `seed1` to `newnode1` has been added. 
 */ 
 void on_pseudo_split_event_processed( Vertex_const_handle const& seed0 
 , Vertex_const_handle const& seed1 
@@ -123,7 +123,7 @@ void on_pseudo_split_event_processed( Vertex_const_handle const& seed0
 ) const; 
 
 /*! 
-Called after vertex \f$ v\f$ has been marked as already processed. 
+Called after vertex `v` has been marked as already processed. 
 */ 
 void on_vertex_processed( Vertex_const_handle const& v ) const; 
 
@@ -151,7 +151,7 @@ void on_algorithm_finished ( bool finished_ok ) const;
 
 /*! 
 Called whenever an error was detected. 
-\f$ msg\f$ is whatever error message accompanies the error. This pointer can be \f$ null\f$. 
+`msg` is whatever error message accompanies the error. This pointer can be `null`. 
 */ 
 void on_error( char const* msg ) const; 
 

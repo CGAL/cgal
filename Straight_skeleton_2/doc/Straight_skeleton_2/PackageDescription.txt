@@ -5,6 +5,9 @@
 /// \defgroup PkgStraightSkeleton2Classes Classes
 /// \ingroup PkgStraightSkeleton2
 
+/// \defgroup PkgStraightSkeleton2Auxiliary Auxiliary Classes
+/// \ingroup PkgStraightSkeleton2
+
 /// \defgroup PkgStraightSkeleton2Functions Functions
 /// \ingroup PkgStraightSkeleton2
 

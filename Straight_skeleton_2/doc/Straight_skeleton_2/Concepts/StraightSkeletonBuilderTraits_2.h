@@ -61,7 +61,7 @@ typedef Hidden_type Collinear_2;
 /*! 
 A predicate object type. 
 
-Must provide `bool operator()( EdgeTriple const& et) const`, which determines if, given the 3 <I>oriented</I> lines defined by the 3 input edges (3 pair of points), there exist an Euclidean distance `t` \f$ \geq0\f$ for which the corresponding 3 <I>offset lines at `t`</I> (parallel lines at an Euclidean distance of `t`) intersect in a single point. 
+Must provide `bool operator()( EdgeTriple const& et) const`, which determines if, given the 3 <I>oriented</I> lines defined by the 3 input edges (3 pair of points), there exist an Euclidean distance `t >= 0` for which the corresponding 3 <I>offset lines at `t`</I> (parallel lines at an Euclidean distance of `t`) intersect in a single point. 
 
 \pre each edge in the triple must properly define an oriented line, that is, such points cannot be coincident. 
 */ 
@@ -114,7 +114,7 @@ typedef Hidden_type Are_ss_events_simultaneous_2;
 /*! 
 A construction object type. 
 
-Must provide `boost::tuple< boost::optional<FT>, boost::optional<Point_2> > operator()( EdgeTriple const& e)`, which given the 3 <I>oriented</I> lines defined by the 3 input edges (3 pair of points), returns the Euclidean distance `t` \f$ \geq0\f$ and intersection point at which the corresponding 3 <I>offset lines at `t`</I> intersect. 
+Must provide `boost::tuple< boost::optional<FT>, boost::optional<Point_2> > operator()( EdgeTriple const& e)`, which given the 3 <I>oriented</I> lines defined by the 3 input edges (3 pair of points), returns the Euclidean distance `t >= 0` and intersection point at which the corresponding 3 <I>offset lines at `t`</I> intersect. 
 
 If the values cannot be computed, not even approximately (because of overflow for instance), an empty optional must be returned. 
 

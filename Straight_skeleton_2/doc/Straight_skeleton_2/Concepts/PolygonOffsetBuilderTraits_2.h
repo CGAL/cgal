@@ -52,7 +52,7 @@ boost::tuple<Edge,Edge,Edge> EdgeTriple;
 A predicate object type. 
 
 Must provide `Comparison_result operator()( FT d, EdgeTriple const& et) const`, which compares the Euclidean distance `d` with the event time for `et`. Such event time is the Euclidean distance at which the <I>offset lines</I> intersect in a single point. The source of such offset lines is given by the 3 <I>oriented</I> lines defined by the edge-triple `et` 
-\pre `et` must be an edge-triple corresponding to an event that actually exist (that is, there must exist an offset distance `t` \f$ >0\f$ at which the offset lines do intersect at a single point. 
+\pre `et` must be an edge-triple corresponding to an event that actually exist (that is, there must exist an offset distance `t > 0` at which the offset lines do intersect at a single point. 
 */ 
 typedef Hidden_type Compare_offset_against_event_time_2; 
 

@@ -21,7 +21,7 @@ create_exterior_skeleton_and_offset_polygons_with_holes_2
 \ingroup PkgStraightSkeleton2Functions
 
 returns a container with all the inner offset polygons at distance `offset` of the 2D polygon with holes `poly_with_holes`.
-A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions `create_interior_straight_skeleton_2` and `create_offset_polygons_2` instead.
+A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions `create_interior_straight_skeleton_2()` and `create_offset_polygons_2()` instead.
 
 1. `OffsettingK` is the \cgal kernel used to instantiate
    `Polygon_offset_builder_traits_2<K>` for constructing 
@@ -34,7 +34,7 @@ A temporary straight skeleton is constructed in the interior of the input polygo
 3. `FT` is any number type implicitly convertible to `OffsettingK::FT`.
 3. `Straight_skeleton` is `Straight_skeleton_2<K2>`. 
    If `K != K2` the straight skeleton is converted to `Straight_skeleton_2<K>`.
-4. `HoleIterator::value_type` and `Polygon` are `CGAL::Polygon_2<OffsettingK>`
+4. `HoleIterator::value_type` and `Polygon` are `Polygon_2<OffsettingK>`
    or a standard container of `OffsettingK::Point_2` elements.
 
 \sa `create_exterior_straight_skeleton_2`

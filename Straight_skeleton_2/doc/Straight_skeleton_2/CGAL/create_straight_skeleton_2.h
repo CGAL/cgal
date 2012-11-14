@@ -5,10 +5,10 @@ namespace CGAL {
 
 The function `create_exterior_straight_skeleton_2()` creates a straight skeleton in the exterior of a 2D polygon with holes. 
 
-The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</I> of the 2D polygon \f$ P\f$ given by the point sequence `[vertices_begin,vertices_end]`.
-The skeleton in the <I>limited exterior</I> of \f$ P\f$ is the skeleton in the interior of a polygon \f$ Q\f$ with \f$ P\f$ as its hole and a rectangular frame \f$ F\f$ as outer boundary.
-The outer boundary \f$ F\f$ is constructed by enlarging the bounding box of \f$ P\f$ a distance \f$ d\f$. 
-\f$ d\f$ is a margin sufficiently large to allow an outer offset at dinstance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
+The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</I> of the 2D polygon `P` given by the point sequence `[vertices_begin,vertices_end]`.
+The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q` with `P` as its hole and a rectangular frame `F` as outer boundary.
+The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`. 
+`d` is a margin sufficiently large to allow an outer offset at dinstance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
 
 
 ### Requirements ###
@@ -38,10 +38,10 @@ create_exterior_straight_skeleton_2
 \ingroup PkgStraightSkeleton2Functions
 
 The function `create_exterior_straight_skeleton_2()` creates a straight skeleton in the exterior of a 2D polygon with holes. 
-The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</I> of the 2D polygon \f$ P\f$ .
-The skeleton in the <I>limited exterior</I> of \f$ P\f$ is the skeleton in the interior of a polygon \f$ Q\f$ with \f$ P\f$ as its hole and a rectangular frame \f$ F\f$ as outer boundary.
-The outer boundary \f$ F\f$ is constructed by enlarging the bounding box of \f$ P\f$ a distance \f$ d\f$. 
-\f$ d\f$ is a margin sufficiently large to allow an outer offset at dinstance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
+The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</I> of the 2D polygon `P`.
+The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q` with `P` as its hole and a rectangular frame `F` as outer boundary.
+The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`. 
+`d` is a margin sufficiently large to allow an outer offset at dinstance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
 
 ### Requirements ###
 
@@ -74,7 +74,7 @@ namespace CGAL {
 
 The function `create_offset_polygons_2()` creates a straight skeleton in the interior of a 2D polygon with holes. 
 The function returns a container with all the offset polygons at distance `offset` obtained from 
-the straight skeleton \f$ s\f$. 
+the straight skeleton `s`. 
 
 
 <OL> 
