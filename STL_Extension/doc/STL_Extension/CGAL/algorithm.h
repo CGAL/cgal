@@ -7,19 +7,19 @@ namespace CGAL {
 /*!
 \ingroup STLAlgos
 
-\deprecated This function is deprecated, CGAL::cpp0x::copy_n should be
+\deprecated This function is deprecated, CGAL::cpp11::copy_n should be
 used instead.
 
-The function `copy_n` copies the first `n` items from `first` to `result`. 
+The function `copy_n` copies the first `n` items from `first` to `result`.
 
 \returns the value of `result` after inserting the `n` items.
 
 \note The \stl release June 13, 1997, from SGI contains an equivalent
 function, but it is not part of the ISO standard.
 
-\sa `CGAL::Counting_iterator<Iterator, Value>` 
+\sa `CGAL::Counting_iterator<Iterator, Value>`
 
-copies 
+copies
 
 */
 template <class InputIterator, class Size, class
@@ -34,20 +34,20 @@ namespace CGAL {
 \ingroup STLAlgos
 
 
-The function `min_max_element` computes the minimal and the 
-maximal element of a range. It is modeled after the STL functions 
-`std::min_element` and `std::max_element`. The advantage of 
-`min_max_element` compared to calling both STL functions is that 
-one only iterates once over the sequence. This is more efficient 
-especially for large and/or complex sequences. 
+The function `min_max_element` computes the minimal and the
+maximal element of a range. It is modeled after the STL functions
+`std::min_element` and `std::max_element`. The advantage of
+`min_max_element` compared to calling both STL functions is that
+one only iterates once over the sequence. This is more efficient
+especially for large and/or complex sequences.
 
 ### Example ###
 
-The following example program computes the minimal and 
-maximal element of the sequence ` (3,\,6,\,5)`. Hence the output is 
-`min = 3, max = 6`. 
+The following example program computes the minimal and
+maximal element of the sequence ` (3,\,6,\,5)`. Hence the output is
+`min = 3, max = 6`.
 
-\cgalExample{STL_Extension/min_max_element_example.cpp} 
+\cgalExample{STL_Extension/min_max_element_example.cpp}
 
 \returns a pair of iterators where
 the first component refers to the minimal and the second component
@@ -63,17 +63,17 @@ first, ForwardIterator last);
 /*!
 \ingroup STLAlgos
 
-The function `min_max_element` computes the minimal and the 
-maximal element of a range. It is modeled after the STL functions 
-`std::min_element` and `std::max_element`. The advantage of 
-`min_max_element` compared to calling both STL functions is that 
-one only iterates once over the sequence. This is more efficient 
-especially for large and/or complex sequences. 
+The function `min_max_element` computes the minimal and the
+maximal element of a range. It is modeled after the STL functions
+`std::min_element` and `std::max_element`. The advantage of
+`min_max_element` compared to calling both STL functions is that
+one only iterates once over the sequence. This is more efficient
+especially for large and/or complex sequences.
 
 
 \returns a pair of iterators where the first component refers to the minimal and the
 second component refers to the maximal element in the range
-[`first`, `last`). 
+[`first`, `last`).
 
 \cgalRequires `CompareMin` and `CompareMax` are adaptable binary
 function objects: `VT` \f$ \times\f$ `VT` \f$ \rightarrow\f$ `bool` where `VT`
@@ -91,13 +91,13 @@ namespace CGAL {
 /*!
 \ingroup STLAlgos
 
-\deprecated This function is deprecated. `CGAL::cpp0x::prev` should be used 
-instead. 
+\deprecated This function is deprecated. `CGAL::cpp11::prev` should be used
+instead.
 
-The function `predecessor` returns the previous iterator, 
-i.e. the result of `operator--` on a bidirectional iterator. 
+The function `predecessor` returns the previous iterator,
+i.e. the result of `operator--` on a bidirectional iterator.
 
-\sa `CGAL::successor` 
+\sa `CGAL::successor`
 
 \returns `--it`.
 */
@@ -111,32 +111,32 @@ namespace CGAL {
 /*!
 \ingroup STLAlgos
 
-\deprecated This function is deprecated. `CGAL::cpp0x::next` should be used 
-instead. 
+\deprecated This function is deprecated. `CGAL::cpp11::next` should be used
+instead.
 
 
-The function `successor` returns the next iterator, i.e. 
-the result of `operator++` on a forward iterator. 
+The function `successor` returns the next iterator, i.e.
+the result of `operator++` on a forward iterator.
 
 
-\sa `CGAL::predecessor` 
+\sa `CGAL::predecessor`
 
 \returns `++it`.
 */
 template <class ForwardIterator>
 ForwardIterator successor(ForwardIterator it);
 
-namespace cpp0x {
+namespace cpp11 {
 
 /*!
 \ingroup STLAlgos
 
 The function returns the result of `operator++` on a
-`ForwardIterator`. The exact behaviour is described in Paragraph 24.4.4 
-of the C++ standard draft 
+`ForwardIterator`. The exact behaviour is described in Paragraph 24.4.4
+of the C++ standard draft
 <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">N3242</a>.
 
-\note There is actually no function in namespace `CGAL::cpp0x` with this
+\note There is actually no function in namespace `CGAL::cpp11` with this
 name, but a using declaration which imports a function from another
 namespace. By order of priority: the one in namespace `std` is used
 (provided by C++0x), if not found, then the one in namespace `boost`
@@ -145,7 +145,7 @@ is used.
 
 
 \sa <a href="http://www.boost.org/doc/libs/1_46_1/libs/utility/utility.htm#functions_next_prior">boost::next</a>
-\sa CGAL::cpp0x::prev
+\sa CGAL::cpp11::prev
 
 */
 template <typename ForwardIterator>
@@ -160,7 +160,7 @@ Paragraph 24.4.4 of the C++ standard draft
 <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">N3242</a>.
 
 \note If C++0x is available the function `std::prev` is imported into
-the namespace `CGAL::cpp0x`, otherwise `CGAL::cpp0x::prev` is declared with the
+the namespace `CGAL::cpp11`, otherwise `CGAL::cpp11::prev` is declared with the
 signature as given in Paragraph 24.4.4 of the ISO C++ Standard
 and forwarded to `boost::prior`.
 */

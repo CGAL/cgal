@@ -4,36 +4,36 @@ namespace CGAL {
 /*!
 \ingroup PkgLinearCellComplexClasses
 
-The class `Linear_cell_complex_min_items` defines the type of darts, which is a 
-`Dart_wrapper::Dart<d,LCC>`, and the traits class used. In 
-this class, 0-attributes are enabled and associated with 
-`Cell_attribute_with_point`. 
+The class `Linear_cell_complex_min_items` defines the type of darts, which is a
+`Dart_wrapper::Dart<d,LCC>`, and the traits class used. In
+this class, 0-attributes are enabled and associated with
+`Cell_attribute_with_point`.
 
-\cgalModels ::LinearCellComplexItems 
+\cgalModels ::LinearCellComplexItems
 
-\tparam d the dimension of the combinatorial map. 
+\tparam d the dimension of the combinatorial map.
 
 ### Example ###
 
-The following example shows one implementation of the 
-`Linear_cell_complex_min_items` class. 
+The following example shows one implementation of the
+`Linear_cell_complex_min_items` class.
 
-\code{.cpp} 
+\code{.cpp}
 
-template <unsigned int d> 
-struct Linear_cell_complex_min_items 
-{ 
-template <class LCC> 
-struct Dart_wrapper 
-{ 
-typedef CGAL::Dart<d, LCC> Dart; 
+template <unsigned int d>
+struct Linear_cell_complex_min_items
+{
+template <class LCC>
+struct Dart_wrapper
+{
+typedef CGAL::Dart<d, LCC> Dart;
 
-typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib; 
-typedef CGAL::cpp0x::tuple<Vertex_attrib> Attributes; 
-}; 
-}; 
+typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
+typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+};
+};
 
-\endcode 
+\endcode
 
 \sa `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
 \sa `CGAL::Dart<d,CMap>`

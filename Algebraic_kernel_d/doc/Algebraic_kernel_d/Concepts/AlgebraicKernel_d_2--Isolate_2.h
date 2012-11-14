@@ -3,9 +3,9 @@
 \ingroup PkgAlgebraicKerneldConceptsBi
 \cgalConcept
 
-Computes an isolating box for a given `AlgebraicKernel_d_2::Algebraic_real_2`. 
+Computes an isolating box for a given `AlgebraicKernel_d_2::Algebraic_real_2`.
 
-\cgalRefines `AdaptableFunctor` 
+\cgalRefines `AdaptableFunctor`
 
 \sa `AlgebraicKernel_d_2::IsolateX_2`
 \sa `AlgebraicKernel_d_2::IsolateY_2`
@@ -17,43 +17,43 @@ Computes an isolating box for a given `AlgebraicKernel_d_2::Algebraic_real_2`.
 class AlgebraicKernel_d_2::Isolate_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
-/*! 
+/*!
 
-*/ 
-typedef CGAL::cpp0x::array<AlgebraicKernel_d_1::Bound, 4> result_type; 
+*/
+typedef CGAL::cpp11::array<AlgebraicKernel_d_1::Bound, 4> result_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
-/*! 
-The returned `CGAL::cpp0x::array` \f$ [xl,xu,yl,yu]\f$ represents an open isolating box \f$ B=(xl,xu)\times(yl,yu)\f$ 
-for \f$ a\f$ with respect to \f$ f\f$. 
-\pre \f$ f(a)\neq0\f$ 
-\post \f$ a \in B\f$. 
-\post \f$ \{ r | f(r)=0 \} \cap\overline{B} = \emptyset\f$. 
+/*!
+The returned `CGAL::cpp11::array` \f$ [xl,xu,yl,yu]\f$ represents an open isolating box \f$ B=(xl,xu)\times(yl,yu)\f$
+for \f$ a\f$ with respect to \f$ f\f$.
+\pre \f$ f(a)\neq0\f$
+\post \f$ a \in B\f$.
+\post \f$ \{ r | f(r)=0 \} \cap\overline{B} = \emptyset\f$.
 
-*/ 
-result_type 
-operator()( AlgebraicKernel_d_2::Algebraic_real_2 a, AlgebraicKernel_d_2::Polynomial_2 f); 
+*/
+result_type
+operator()( AlgebraicKernel_d_2::Algebraic_real_2 a, AlgebraicKernel_d_2::Polynomial_2 f);
 
-/*! 
-The returned `CGAL::cpp0x::array` \f$ [xl,xu,yl,yu]\f$ represents an open isolating box \f$ B=(xl,xu)\times(yl,yu)\f$ 
-for \f$ a\f$ with respect to the common solutions of \f$ f\f$ and \f$ g\f$. 
-It is not necessary that \f$ a\f$ is a common solution of \f$ f\f$ and \f$ g\f$. 
-\post \f$ a \in B\f$. 
-\post \f$ \{ r | f(r)=g(r)=0 \} \cap\overline{B} \in\{\{a\},\emptyset\}\f$. 
+/*!
+The returned `CGAL::cpp11::array` \f$ [xl,xu,yl,yu]\f$ represents an open isolating box \f$ B=(xl,xu)\times(yl,yu)\f$
+for \f$ a\f$ with respect to the common solutions of \f$ f\f$ and \f$ g\f$.
+It is not necessary that \f$ a\f$ is a common solution of \f$ f\f$ and \f$ g\f$.
+\post \f$ a \in B\f$.
+\post \f$ \{ r | f(r)=g(r)=0 \} \cap\overline{B} \in\{\{a\},\emptyset\}\f$.
 
-*/ 
-result_type 
-operator()( 
-AlgebraicKernel_d_2::Algebraic_real_2 a, 
-AlgebraicKernel_d_2::Polynomial_2 f, 
-AlgebraicKernel_d_2::Polynomial_2 g); 
+*/
+result_type
+operator()(
+AlgebraicKernel_d_2::Algebraic_real_2 a,
+AlgebraicKernel_d_2::Polynomial_2 f,
+AlgebraicKernel_d_2::Polynomial_2 g);
 
 /// @}
 
