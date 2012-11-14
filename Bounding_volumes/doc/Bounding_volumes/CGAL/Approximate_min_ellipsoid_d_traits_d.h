@@ -13,11 +13,10 @@ exact computations.
 
 \tparam K must be a model for concept `Kernel`. 
 \tparam `ET` must be a model for concept 
-`RingNumberType` with exact arithmetic operations, i.e., the type 
-`CGAL::Number_type_traits<ET>::Has_exact_ring_operations` must be 
-`CGAL::Tag_true`. In addition, `ET` must be able to exactly 
-represent any finite `double` value. (Examples of such a 
-number-type are `CGAL::MP_Float`, `CORE::Expr`, and `CGAL::Gmpq`.) 
+`EuclideanRing` with exact arithmetic operations, i.e., the type 
+`Algebraic_structure_traits<ET>::Is_exact` must be 
+`CGAL::Tag_true` (Examples of such a 
+number-type are `MP_Float`, `CORE::Expr`, and `Gmpq`.) 
 
 \cgalModels ::ApproximateMinEllipsoid_d_Traits_d 
 
