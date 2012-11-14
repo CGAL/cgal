@@ -403,18 +403,22 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     // Note that in this case we may create a new face.
     bool new_face_created = false;
     bool check_swapped_predecessors = false;
-    new_he = _insert_at_vertices(fict_prev1, cv, ARR_LEFT_TO_RIGHT, fict_prev2->next(),
+    new_he = _insert_at_vertices(fict_prev1, cv, ARR_LEFT_TO_RIGHT,
+                                 fict_prev2->next(),
                                  new_face_created, check_swapped_predecessors);
-    // Comment EBEB 2012-10-21: Swapping does not take place as there is no local minumum so far
+    // Comment EBEB 2012-10-21: Swapping does not take place as there is no
+    // local minumum so far
     CGAL_assertion(!check_swapped_predecessors);
-    // usually one would expect to have an new_he (and its twin) lying on the same
-    // _inner_ CCB ...
+    // usually one would expect to have an new_he (and its twin) lying on the
+    // same _inner_ CCB ...
     
     if (new_face_created) {
-      // ... but in case that a new face got created new_he should lie on an outer CCB
+      // ... but in case that a new face got created new_he should lie on an
+      // outer CCB
       CGAL_assertion(new_he->is_on_outer_ccb());
       // Note! new_he is not needed to define the new outer CCB of the new face
-      // Here, it can be the outer ccb of the old face, as there is also not swapping taking place!
+      // Here, it can be the outer ccb of the old face, as there is also not
+      // swapping taking place!
 
       // In case a new face has been created (pointed by the new halfedge we
       // obtained), we have to examine the holes and isolated vertices in the
@@ -545,7 +549,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     // Note that in this case we may create a new face.
     bool new_face_created = false;
     bool check_swapped_predecessors = false;
-    new_he = _insert_at_vertices(prev1, cv, ARR_LEFT_TO_RIGHT, fict_prev2->next(),
+    new_he = _insert_at_vertices(prev1, cv, ARR_LEFT_TO_RIGHT,
+                                 fict_prev2->next(),
                                  new_face_created, check_swapped_predecessors);
     // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
     // merges the CCB as an "interior" extension into an outer CCB of a face
@@ -555,7 +560,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     if (new_face_created) {
       CGAL_assertion(new_he->is_on_outer_ccb());
       // Note! new_he is not needed to define the new outer CCB of the new face
-      // Here, it can be the outer ccb of the old face, as there is also not swapping taking place!
+      // Here, it can be the outer ccb of the old face, as there is also not
+      // swapping taking place!
 
       // In case a new face has been created (pointed by the new halfedge we
       // obtained), we have to examine the holes and isolated vertices in the
@@ -1060,7 +1066,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
         CGAL_precondition(f != Face_handle());
 
       // Perform the insertion.
-      Arr_halfedge_direction cv_dir = (ind1 == ARR_MIN_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+      Arr_halfedge_direction cv_dir =
+        (ind1 == ARR_MIN_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
       DHalfedge* new_he = _insert_in_face_interior(f1, cv, cv_dir, p_v1, p_v2);
 
       return (Halfedge_handle(new_he));
@@ -1083,7 +1090,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 
     // Perform the insertion. Note that the returned halfedge is directed
     // toward v1 (and not toward v2), so we return its twin.
-    Arr_halfedge_direction cv_dir = (ind2 == ARR_MIN_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+    Arr_halfedge_direction cv_dir =
+      (ind2 == ARR_MIN_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
     DHalfedge* new_he = _insert_from_vertex(prev2, cv, cv_dir, p_v1);
 
     return (Halfedge_handle(new_he->opposite()));
@@ -1120,7 +1128,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
        "The inserted curve should not intersect the existing arrangement.");
 
     // Perform the insertion.
-    Arr_halfedge_direction cv_dir = (ind1 == ARR_MIN_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+    Arr_halfedge_direction cv_dir =
+      (ind1 == ARR_MIN_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
     DHalfedge* new_he = _insert_from_vertex(prev1, cv, cv_dir, p_v2);
 
     return (Halfedge_handle(new_he));
@@ -1271,7 +1280,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     }
 
     // Perform the insertion.
-    Arr_halfedge_direction cv_dir = (ind2 == ARR_MAX_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+    Arr_halfedge_direction cv_dir =
+      (ind2 == ARR_MAX_END) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
     DHalfedge* new_he = _insert_from_vertex(_halfedge(prev1), cv, cv_dir, p_v2);
 
     return (Halfedge_handle(new_he));
@@ -1426,7 +1436,9 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   bool new_face_created = false;
   bool swapped_predecessors = false;
   DHalfedge* new_he =
-    _insert_at_vertices(p_prev1, cv, (res == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT), p_prev2->next(), 
+    _insert_at_vertices(p_prev1, cv,
+                        (res == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                        p_prev2->next(),
                         new_face_created,
                         swapped_predecessors);
 
@@ -3680,101 +3692,82 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
 
-
-//-----------------------------------------------------------------------------
-// The combination of LEFT and LEFT can occur only when the right
-// and left boundary sides are identified.
+/* This is the implementation for the case where all 4 boundary sides are
+ * oblivious.
+ */
 template <typename GeomTraits, typename TopTraits>
-bool
-Arrangement_on_surface_2<GeomTraits, TopTraits>::
+bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_is_smaller(const DHalfedge* he1,
+            Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
+            const DHalfedge* he2,
+            Arr_parameter_space ps_x2, Arr_parameter_space ps_y2,
+            Arr_all_sides_oblivious_tag) const
+{
+  CGAL_precondition(he1->direction() == ARR_RIGHT_TO_LEFT);
+  CGAL_precondition(he2->direction() == ARR_RIGHT_TO_LEFT);
+  CGAL_precondition(he1->vertex() != he2->vertex());
+  return
+    (m_geom_traits->compare_xy_2_object()(he1->vertex()->point(),
+                                          he2->vertex()->point()) == SMALLER);
+}
+
+/* This is a wrapper for the case where any boundary side is not
+ * necessarily oblivious.
+ */
+template <typename GeomTraits, typename TopTraits>
+bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _is_smaller(const DHalfedge* he1, 
             Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
             const DHalfedge* he2, 
-            Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const
+            Arr_parameter_space ps_x2, Arr_parameter_space ps_y2,
+            Arr_not_all_sides_oblivious_tag tag) const
 {
-  // std::cout << "he1: " << he1->opposite()->vertex()->point() << " => "
-  //           << he1->vertex()->point() << std::endl;
-  // std::cout << "ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
-  // std::cout << "he2: " << he2->opposite()->vertex()->point() << " => "
-  //           << he2->vertex()->point() << std::endl;
-  // std::cout << "ps_x2: " << ps_x2 << ", ps_y2: " << ps_y2 << std::endl;
-  
-  if (ps_x2 == ARR_INTERIOR) {
-    if (ps_x1 == ARR_INTERIOR) {
-      if (ps_y2 == ARR_INTERIOR) {
-        if (ps_y1 == ARR_INTERIOR) {
-          // ps1 == {INTERIOR,INTERIOR} , ps2 == {INTERIOR,INTERIOR}
-          return
-            (m_geom_traits->compare_xy_2_object()
-             (he1->vertex()->point(), he2->vertex()->point()) == SMALLER);
-        }
-
-        // ps1 == {INTERIOR,!INTERIOR}, ps2 == {INTERIOR,INTERIOR}
-        Comparison_result res = m_geom_traits->compare_x_on_boundary_2_object()
-          (he2->vertex()->point(), he1->curve(), ARR_MIN_END);
-        return
-          (res == EQUAL) ? (ps_y1 == ARR_BOTTOM_BOUNDARY) : (res == LARGER); 
-      }
-
-      if (ps_y1 == ARR_INTERIOR) {
-        // ps1 == {INTERIOR,INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
-        Comparison_result res = m_geom_traits->compare_x_on_boundary_2_object()
-          (he1->vertex()->point(), he2->curve(), ARR_MIN_END);
-        return (res == EQUAL) ? (ps_y2 == ARR_TOP_BOUNDARY) : (res == SMALLER);
-      }
-
-      // ps1 == {INTERIOR,!INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
-      Comparison_result res = m_geom_traits->compare_x_on_boundary_2_object()
-        (he1->curve(), ARR_MIN_END, he2->curve(), ARR_MIN_END);
-      return (res == EQUAL) ?
-        ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY)) :
-        (res == SMALLER);
-    }
-
-    // ps_x2 == ARR_INTERIOR, ps_x == ARR_LEFT_BOUNDARY
-    CGAL_assertion(ps_x1 == ARR_LEFT_BOUNDARY);
-    return true;
-  }
-  if (ps_x1 == ARR_INTERIOR)
-    // ps_x2 == ARR_LEFT_BOUNDARY, ps_x == ARR_INTERIOR
-    return false;
-
-  // ps_x2 == ARR_LEFT_BOUNDARY, ps_x == ARR_LEFT_BOUNDARY
-  return
-    (m_geom_traits->compare_y_on_boundary_2_object()
-     (he1->vertex()->point(), he2->vertex()->point()) == SMALLER);
+  CGAL_precondition(he1->direction() == ARR_RIGHT_TO_LEFT);
+  CGAL_precondition(he2->direction() == ARR_RIGHT_TO_LEFT);
+  CGAL_precondition(he1->vertex() != he2->vertex());
+  return _is_smaller(he1->curve(), he1->vertex()->point(), ps_x1, ps_y1,
+                     he2->curve(), he2->vertex()->point(), ps_x2, ps_y2, tag);
 }
 
-//-----------------------------------------------------------------------------
-// The combination of LEFT and LEFT can occur only when the right
-// and left boundary sides are identified.
+/* This is the implementation for the case where all 4 boundary sides are
+ * oblivious.
+ */
 template <typename GeomTraits, typename TopTraits>
-bool
-Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_is_smaller(const X_monotone_curve_2& cv1, 
+bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_is_smaller(const X_monotone_curve_2& cv1, const Point_2& p1,
             Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
-            const X_monotone_curve_2& cv2, 
-            Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const
+            const X_monotone_curve_2& cv2, const Point_2& p2,
+            Arr_parameter_space ps_x2, Arr_parameter_space ps_y2,
+            Arr_all_sides_oblivious_tag) const
 {
-  // std::cout << "cv1: " << cv1 << std::endl;
-  // std::cout << ", ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
-  // std::cout << "cv2: " << cv2 << std::endl;
-  // std::cout << ", ps_x2: " << ps_x2 << ", ps_y2: " << ps_y2 << std::endl;
+  CGAL_precondition(! m_geom_traits->equal_2_object()(p1, p2));
+  return (m_geom_traits->compare_xy_2_object()(p1, p2) == SMALLER);
+}
 
-  typename Geometry_traits_2::Construct_min_vertex_2 min_vertex =
-    m_geom_traits->construct_min_vertex_2_object();
+/*! This is the implementation for the case where any boundary side is not
+ * necessarily oblivious.
+ * This can be further refined as the combination of LEFT and LEFT can occur
+ * only when the right and left boundary sides are identified.
+ */
+template <typename GeomTraits, typename TopTraits>
+bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_is_smaller(const X_monotone_curve_2& cv1, const Point_2& p1,
+            Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
+            const X_monotone_curve_2& cv2, const Point_2& p2,
+            Arr_parameter_space ps_x2, Arr_parameter_space ps_y2,
+            Arr_not_all_sides_oblivious_tag) const
+{
+  CGAL_precondition(! m_geom_traits->equal_2_object()(p1, p2));
+
   if (ps_x2 == ARR_INTERIOR) {
     if (ps_x1 == ARR_INTERIOR) {
       if (ps_y2 == ARR_INTERIOR) {
         if (ps_y1 == ARR_INTERIOR)
-          return
-            (m_geom_traits->compare_xy_2_object()(min_vertex(cv1),
-                                                  min_vertex(cv2)) == SMALLER);
+          return (m_geom_traits->compare_xy_2_object()(p1,p2) == SMALLER);
 
         // ps1 == {INTERIOR, !INTERIOR}, ps2 == {INTERIOR,INTERIOR}, 
         Comparison_result res =
-          m_geom_traits->compare_x_on_boundary_2_object()(min_vertex(cv2),
-                                                          cv1, ARR_MIN_END);
+          m_geom_traits->compare_x_on_boundary_2_object()(p2, cv1, ARR_MIN_END);
         return
           (res == EQUAL) ? (ps_y1 == ARR_BOTTOM_BOUNDARY) : (res == LARGER);
       }
@@ -3782,8 +3775,7 @@ _is_smaller(const X_monotone_curve_2& cv1,
       if (ps_y1 == ARR_INTERIOR) {
         // ps1 == {INTERIOR,INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
         Comparison_result res =
-          m_geom_traits->compare_x_on_boundary_2_object()(min_vertex(cv1),
-                                                          cv2, ARR_MIN_END);
+          m_geom_traits->compare_x_on_boundary_2_object()(p1, cv2, ARR_MIN_END);
         return (res == EQUAL) ? (ps_y2 == ARR_TOP_BOUNDARY) : (res == SMALLER);
       }
 
@@ -3806,9 +3798,45 @@ _is_smaller(const X_monotone_curve_2& cv1,
 
   // ps_x2 == ARR_LEFT_BOUNDARY, ps_x == ARR_LEFT_BOUNDARY
   Comparison_result res =
-    m_geom_traits->compare_y_on_boundary_2_object()(min_vertex(cv1),
-                                                    min_vertex(cv2));
+    m_geom_traits->compare_y_on_boundary_2_object()(p1, p2);
   return (res == SMALLER);
+}
+
+/* This is the implementation for the case where all 4 boundary sides are
+ * oblivious.
+ */
+template <typename GeomTraits, typename TopTraits>
+bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_is_smaller_near_right(const X_monotone_curve_2& cv1,
+                       const X_monotone_curve_2& cv2,
+                       const Point_2& p,
+                       Arr_parameter_space ps_x, Arr_parameter_space ps_y,
+                       Arr_all_sides_oblivious_tag) const
+{
+  return
+    (m_geom_traits->compare_y_at_x_right_2_object()(cv1, cv2, p) == SMALLER);
+}
+
+/*! This is the implementation for the case where any one of the 4 boundary
+ * sides can be of any type.
+ */
+template <typename GeomTraits, typename TopTraits>
+bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_is_smaller_near_right(const X_monotone_curve_2& cv1,
+                       const X_monotone_curve_2& cv2,
+                       const Point_2& p,
+                       Arr_parameter_space ps_x, Arr_parameter_space ps_y,
+                       Arr_not_all_sides_oblivious_tag) const
+{
+  CGAL_precondition((ps_x == ARR_INTERIOR) || (ps_x == ARR_LEFT_BOUNDARY));
+  CGAL_precondition((ps_y == ARR_INTERIOR) || (ps_x == ARR_BOTTOM_BOUNDARY));
+
+  if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR))
+    return
+      (m_geom_traits->compare_y_at_x_right_2_object()(cv1, cv2, p) == SMALLER);
+  return
+    (m_geom_traits->compare_y_near_boundary_2_object()(cv1, cv2, ARR_MIN_END) ==
+     SMALLER);
 }
 
 //-----------------------------------------------------------------------------
@@ -3841,8 +3869,6 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     m_geom_traits->parameter_space_in_x_2_object(); 
   typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
     m_geom_traits->parameter_space_in_y_2_object(); 
-  typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
-    m_geom_traits->compare_y_at_x_right_2_object();  
 
   // check all reported local minima
   InputIterator lm_it = lm_begin;
@@ -3869,10 +3895,6 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     Arr_parameter_space ps_y_he_min =
       parameter_space_in_y(he->curve(), ARR_MIN_END);
 
-    // EFEF:
-    // compare_y_at_x_right_2() could happen at the boundary. In this case
-    // we need to compare_y_near_boundary()
-  
     // If the following condition is met, the vertex is indeed the smallest:
     // The current x_index is smaller than the x_index of the smallest
     // recorded, or
@@ -3887,11 +3909,14 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
 
     if ((index < index_min) ||
         ((index == index_min) &&
-         ((v_min == he->vertex()) &&
-          (compare_y_at_x_right_2(he->curve(), *cv_min, v_min->point()) ==
-           SMALLER))) ||
-         _is_smaller(he->curve(), ps_x_he_min, ps_y_he_min,
-                     *cv_min, ps_x_min, ps_y_min))
+         ((v_min == he->vertex()) ?
+          _is_smaller_near_right(he->curve(), *cv_min,
+                                 v_min->point(), ps_x_min, ps_y_min,
+                                 Are_all_sides_oblivious_category()) :
+          _is_smaller(he->curve(), he->vertex()->point(),
+                      ps_x_he_min, ps_y_he_min,
+                      *cv_min, v_min->point(), ps_x_min, ps_y_min,
+                      Are_all_sides_oblivious_category()))))
     {
       index_min = index;
       cv_min = &(he->curve());
@@ -4026,9 +4051,7 @@ typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DFace*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 {
-  // std::cout << *this << std::endl;
-  
-  // Get the pair of twin edges to be removed, the connected components they
+  // Obtain the pair of twin edges to be removed, the connected components they
   // belong to and their incident faces.
   DHalfedge* he1 = e;
   DHalfedge* he2 = e->opposite();
@@ -4044,7 +4067,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   std::cout << "before swap" << std::endl;
   std::cout << "he1c: " << he1->curve() <<  ", " << he1->direction()
             << std::endl;
-  std::cout << "he1c: " << he2->curve() <<  ", " << he2->direction()
+  std::cout << "he2c: " << he2->curve() <<  ", " << he2->direction()
             << std::endl;
   std::cout << "he1: " << he1 << std::endl;
   std::cout << "he2: " << he2 << std::endl;
@@ -4057,56 +4080,46 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 #endif
 #endif
 
-  bool swap_he1_he2 = false;
-
-  // first compute signs of ccbs for he1 and he (and local_mins as side-effect)
-
-  std::list< std::pair< const DHalfedge*, int > > local_mins1;
-  std::pair< CGAL::Sign, CGAL::Sign > signs1(CGAL::ZERO, CGAL::ZERO);
-
-  std::list< std::pair< const DHalfedge*, int > > local_mins2;
-  std::pair< CGAL::Sign, CGAL::Sign > signs2(CGAL::ZERO, CGAL::ZERO);
-  
-  if ((he1->next() == he2) || (he2->next() == he1)) {
-    // The removal of he1 (and its twin halfedge) form an "antenna", and we do
-    // not need signs later -> No swapping
-  }
-  else {
-    // if f1 == f2 (same_face-case), then we consider two loops that occur
+  // If the removal of he1 (and its twin halfedge) form an "antenna", there
+  // is neither a need to compute signs and nor swapping of the halfedges
+  if ((he1->next() != he2) && (he2->next() != he1)) {
+    // If f1 == f2 (same_face-case), then we consider two loops that occur
     // when he1 and he2 get removedl;
     // if f1 != f2, then he1 and he2 seperated the two faces that will be merged
     // upon their removal - here each he1 and he2 belongs to a full cycle
     // THAT IS WHY we give the f1 == f2 test to determine whether end of loop 
     // should be he1->opposite() and he2->opposite(), respectively.
 
+    bool swap_he1_he2 = false;
+
+    // Compute signs of ccbs for he1 and he (and local_mins as side-effect)
     bool end_is_anchor_opposite = (f1 == f2);
 
-    signs1 = _compute_signs_and_local_minima(he1,
-                                             std::front_inserter(local_mins1),
-                                             end_is_anchor_opposite);
+    std::list< std::pair< const DHalfedge*, int > > local_mins1;
+    std::pair< CGAL::Sign, CGAL::Sign > signs1 =
+      _compute_signs_and_local_minima(he1, std::front_inserter(local_mins1),
+                                      end_is_anchor_opposite);
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
     std::cout << "signs1.x: " << signs1.first << std::endl;
     std::cout << "signs1.y: " << signs1.second << std::endl;
-    std::cout << "#local_mins1: " << local_mins1.size() << std::endl;
+    std::cout << "# local_mins1: " << local_mins1.size() << std::endl;
 #endif
-    signs2 = _compute_signs_and_local_minima(he2,
-                                             std::front_inserter(local_mins2),
-                                             end_is_anchor_opposite);
+
+    std::list< std::pair< const DHalfedge*, int > > local_mins2;
+    std::pair< CGAL::Sign, CGAL::Sign > signs2 =
+      _compute_signs_and_local_minima(he2, std::front_inserter(local_mins2),
+                                      end_is_anchor_opposite);
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
     std::cout << "signs2.x: " << signs2.first << std::endl;
     std::cout << "signs2.y: " << signs2.second << std::endl;
-    std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
+    std::cout << "# local_mins2: " << local_mins2.size() << std::endl;
 #endif
     // Comments: signs1/2 are used later again, probably for
     // hole_creation_after_edge_removed
 
-    
-    if (f1 != f2) {
-      // The removal of he1 (and its twin halfedge) will cause the two
-      // incident faces to merge/
-      // -> No swapping
-    }
-    else {
+    // If f1 != f2, the removal of he1 (and its twin halfedge) will cause
+    // the two incident faces to merge. Thus, swapping is not needed.
+    if (f1 == f2) {
       // In this case one of the following can happen: (a) a new hole will be
       // created by the removal of the edge (case 3.2.1 of the removal
       // procedure), or (b) an outer CCB will be split into two (case 3.2.2).
@@ -4117,7 +4130,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       // EBEB 2012-07-26 the following code enables optimizations:
       // - compute perimetricy without geometric predicates
       // - compute global min from local mimima
-      
+      // EFEF 2012-11-08 - I think the above is addressed
       typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
         m_geom_traits->parameter_space_in_x_2_object(); 
       typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
@@ -4132,7 +4145,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       Arr_parameter_space ps_y_min1 = CGAL::ARR_INTERIOR;
       int index_min1 = 0;
       
-      // check all reported local minima
+      // Check all reported local minima
       // IDEA EBEB 2012-07-29 maintain a tree to determine min in log(n) time
       typename std::list<std::pair<const DHalfedge*, int> >::iterator lm_it;
       for (lm_it = local_mins1.begin(); lm_it != local_mins1.end(); ++lm_it) {
@@ -4143,11 +4156,18 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
           parameter_space_in_x(he->curve(), ARR_MIN_END);
         const Arr_parameter_space ps_y_he_min =
           parameter_space_in_y(he->curve(), ARR_MIN_END);
-        
-        if ((he_min1 == NULL) || (index < index_min1) ||
+
+        if ((he_min1 == NULL) ||
+            (index < index_min1) ||
             ((index == index_min1) &&
-             _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min1,
-                         ps_x_min1, ps_y_min1)))
+             ((he->vertex() == he_min1->vertex()) ?
+              _is_smaller_near_right(he->curve(), he_min1->curve(),
+                                     he->vertex()->point(),
+                                     ps_x_min1, ps_y_min1,
+                                     Are_all_sides_oblivious_category()) :
+              _is_smaller(he, ps_x_he_min, ps_y_he_min,
+                          he_min1, ps_x_min1, ps_y_min1,
+                          Are_all_sides_oblivious_category()))))
         {
           index_min1 = index;
           ps_x_min1 = ps_x_he_min;
@@ -4180,8 +4200,15 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         
         if ((he_min2 == NULL) || (index < index_min2) ||
             ((index == index_min2) &&
-             _is_smaller(he, ps_x_he_min, ps_y_he_min, he_min2,
-                         ps_x_min2, ps_y_min2))) {
+             ((he->vertex() == he_min2->vertex()) ?
+              _is_smaller_near_right(he->curve(), he_min2->curve(),
+                                     he->vertex()->point(),
+                                     ps_x_min2, ps_y_min2,
+                                     Are_all_sides_oblivious_category()) :
+              _is_smaller(he, ps_x_he_min, ps_y_he_min,
+                          he_min2, ps_x_min2, ps_y_min2,
+                          Are_all_sides_oblivious_category()))))
+        {
           index_min2 = index;
           ps_x_min2 = ps_x_he_min;
           ps_y_min2 = ps_y_he_min;
@@ -4192,7 +4219,6 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         }
       }
       
-
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 #if 0
       std::cout << std::endl
@@ -4226,22 +4252,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       }
       else {  
         CGAL_assertion(he_min1 != NULL);
-        
-        const DVertex* v_min1 = he_min1->vertex();
-        // std::cout << "v_min1: " << v_min1->point() << std::endl;
-        // std::cout << "index_min1: " << index_min1 << std::endl;
-        
         CGAL_assertion(he_min2 != NULL);
-        
-        const DVertex* v_min2 = he_min2->vertex();
-        // std::cout << "v_min2: " << v_min2->point() << std::endl;
-        // std::cout << "index_min2: " << index_min2 << std::endl;
-        
-        bool interior1 =
-          ((ps_x_min1 == ARR_INTERIOR) && (ps_y_min1 == ARR_INTERIOR));
-        bool interior2 =
-          ((ps_x_min2 == ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR));
-        
+
+        // const DVertex* v_min1 = he_min1->vertex();
+        // const DVertex* v_min2 = he_min2->vertex();
         // Both paths from he1 to he2 and back from he2 to he1 are not
         // perimetric, so we are in case (a). As we want to determine which
         // halfedge points to the new hole to be created (he1 or he2),
@@ -4268,51 +4282,30 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         // on different sides of the identification, which is only
         // problematic when either he1 or he2 points to the 
         // identification. In these cases, we have to adapt the indices:
-        Arr_curve_end he1_tgt_end = (he1->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
-        Arr_parameter_space ps_x_he1_tgt = parameter_space_in_x(he1->curve(), he1_tgt_end);
+        Arr_curve_end he1_tgt_end =
+          (he1->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
+        Arr_parameter_space ps_x_he1_tgt =
+          parameter_space_in_x(he1->curve(), he1_tgt_end);
         
         if (ps_x_he1_tgt == ARR_RIGHT_BOUNDARY) {
           index_min2 =- 1;
         }
         
-        Arr_curve_end he2_tgt_end = (he2->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
-        Arr_parameter_space ps_x_he2_tgt = parameter_space_in_x(he2->curve(), he2_tgt_end);
+        Arr_curve_end he2_tgt_end =
+          (he2->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
+        Arr_parameter_space ps_x_he2_tgt =
+          parameter_space_in_x(he2->curve(), he2_tgt_end);
 
         if (ps_x_he2_tgt == ARR_RIGHT_BOUNDARY) {
           index_min1 =- 1;
         }
 
-        // TODO EBEB 2012-07-25
-        // the following "line" is very hard to pare by a human-being;
-
-        // replace by a simple if that only checks the 'true' cases
-        swap_he1_he2 = (index_min1 > index_min2) ? false :
+        swap_he1_he2 =
+          (index_min1 > index_min2) ? false :
           ((index_min1 < index_min2) ? true :
-           ((interior1 && interior2) ?
-            ((m_geom_traits->compare_xy_2_object()
-              (v_min1->point(), v_min2->point()) == LARGER) ? false : true) :
-            (((ps_x_min1 == ARR_INTERIOR) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
-             false :
-             (((ps_x_min1 == ARR_LEFT_BOUNDARY) &&
-               (ps_x_min2 == ARR_INTERIOR)) ?
-              true :
-              (((ps_x_min1 == ARR_LEFT_BOUNDARY) &&
-                (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
-               ((m_geom_traits->compare_y_on_boundary_2_object()
-                 (v_min1->point(), v_min2->point()) == LARGER) ?
-                false : true) :
-               (((ps_y_min1 != ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR)) ?
-                ((m_geom_traits->compare_x_on_boundary_2_object()
-                  (v_min2->point(), he_min1->curve(), ARR_MIN_END) == SMALLER) ?
-                 false : true) :
-                (((ps_y_min1 == ARR_INTERIOR) && (ps_y_min2 != ARR_INTERIOR)) ?
-                 ((m_geom_traits->compare_x_on_boundary_2_object()
-                   (v_min1->point(), he_min2->curve(), ARR_MIN_END) == LARGER) ?
-                  false : true) :
-                 ((m_geom_traits->compare_x_on_boundary_2_object()
-                   (he_min1->curve(), ARR_MIN_END,
-                    he_min2->curve(), ARR_MIN_END) == LARGER) ?
-                  false : true))))))));
+           _is_smaller(he_min1, ps_x_min1, ps_y_min1,
+                       he_min2, ps_x_min2, ps_y_min2,
+                       Are_all_sides_oblivious_category()));
       }
     }
     
@@ -4326,7 +4319,6 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       // not needed below here std::swap(local_mins1, local_mins2);
       std::swap(signs1, signs2);
     }
-    
   }
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
@@ -4347,16 +4339,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 #endif
 #endif
 
-  // now the real removal starts
-    
+  // Now the real removal starts.
   DHalfedge* prev1 = NULL;
   DHalfedge* prev2 = NULL;
 
-  // std::cout << "_remove_edge: he1: "
-  //           << he1->opposite()->vertex()->point() << " => "
-  //           << he1->vertex()->point()
-  //           << std::endl;
-  
   // Notify the observers that we are about to remove an edge.
   Halfedge_handle  hh(e);
 

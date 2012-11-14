@@ -1578,31 +1578,108 @@ protected:
   /// \name Auxiliary (protected) functions.
   //@{
 
-  /*!
-   * Is a given halfedge lexicographically smaller than another given
-   * halfedge (currently known as the smallest one).
-   * \param he1 the given halfedge
-   * \param index1 the index of the given halfedge
-   * \param ce1 the curve end of the given halfedge curve
-   * \param ps_x1 the parameter space in x of the given halfedge
-   * \param ps_y1 the parameter space in y of the given halfedge
-   * \param he2 the currently known smallest halfedge
-   * \param index2 the index of the currently known smallest halfedge
-   * \param ce2 the curve end of the currently known smallest halfedge
-   * \param ps_x2 the parameter space in x of the currently known smallest
-   *        halfedge
-   * \param ps_y2 the parameter space in y of the currently known smallest
-   *        halfedge
+  /*! Is the vertex incident to a given halfedge lexicographically smaller than
+   * the vertex incident to another given halfedge. Recall that the incident
+   * vertex is the target vertex. This function is used, for example, in the
+   * search for lexicographically smallest vertex in a CCB, when an edge is
+   * about to be removed from the DCEL.
+   *
+   * This is the implementation for the case where all 4 boundary sides are
+   * oblivious.
+   *
+   * \param he1 the given first halfedge
+   * \param ps_x1 the parameter space in x of the vertex incident to he1
+   * \param ps_y1 the parameter space in y of the vertex incident to he1
+   * \param he2 the given second halfedge
+   * \param ps_x2 the parameter space in x of the vertex incident to he2
+   * \param ps_y2 the parameter space in y of the vertex incident to he2
+   * \precondition he1 is directed from right to left
+   * \precondition he2 is directed from right to left
+   * \precondition the vertex incident to he1 (he1->vertex()) is different
+   *        than the vertex incident to he1 (he2->vertex()), and thus their
+   *        geometric mappings (he1->vertex()->point() and
+   *        he2->vertex()->point()) are not equal.
    */
   bool _is_smaller(const DHalfedge* he1, 
                    Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
                    const DHalfedge* he2, 
-                   Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const;
+                   Arr_parameter_space ps_x2, Arr_parameter_space ps_y2,
+                   Arr_all_sides_oblivious_tag) const;
   
-  bool _is_smaller(const X_monotone_curve_2& cv1, 
+  /*! This is a wrapper for the case where any boundary side is not
+   * necessarily oblivious.
+   */
+  bool _is_smaller(const DHalfedge* he1,
                    Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
-                   const X_monotone_curve_2& cv2, 
-                   Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const;
+                   const DHalfedge* he2,
+                   Arr_parameter_space ps_x2, Arr_parameter_space ps_y2,
+                   Arr_not_all_sides_oblivious_tag) const;
+
+  /*! Is the lexicographically minimal vertex of a given x-monotone curve
+   * lexicographically smaller than the lexicographically minimal vertex of
+   * another given x-monotone curve. This function is used, for example, when
+   * a new curve is to be inserted into the arrangement. In this case the
+   * search is conducted over the curves that will comprise a new CCB.
+   *
+   * This is the implementation for the case where all 4 boundary sides are
+   * oblivious.
+   *
+   * \param cv1 the given first x-monotone curve
+   * \param ps_x1 the parameter space in x of the minimal point of cv1
+   * \param ps_y1 the parameter space in y of the minimal point of cv1
+   * \param cv2 the given second x-monotone curve
+   * \param ps_x2 the parameter space in x of the minimal point of cv2
+   * \param ps_y2 the parameter space in y of the minimal point of cv2
+   * \precondition the minimal points of cv1 and cv2 are not equal.
+   */
+  bool _is_smaller(const X_monotone_curve_2& cv1, const Point_2& p1,
+                   Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
+                   const X_monotone_curve_2& cv2, const Point_2& p2,
+                   Arr_parameter_space ps_x2, Arr_parameter_space ps_y2,
+                   Arr_all_sides_oblivious_tag) const;
+
+  /*! This is the implementation for the case where any one of the 4 boundary
+   * sides can be of any type.
+   */
+  bool _is_smaller(const X_monotone_curve_2& cv1, const Point_2& p1,
+                   Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
+                   const X_monotone_curve_2& cv2, const Point_2& p2,
+                   Arr_parameter_space ps_x2, Arr_parameter_space ps_y2,
+                   Arr_not_all_sides_oblivious_tag) const;
+
+  /*! Given two x-monotone curves that share their minimal end point.
+   * The function return true if the y-coordinate of the first curve curve
+   * near its minimal end smaller than the y-coordinate of the second curve
+   * (near its minimal end). This function is used, for example, when
+   * a new curve is to be inserted into the arrangement. In this case the
+   * search is conducted over the curves that will comprise a new CCB.
+   *
+   * This is the implementation for the case where all 4 boundary sides are
+   * oblivious.
+   *
+   * \param cv1 the given first x-monotone curve
+   * \param cv2 the given second x-monotone curve
+   * \param p the shared minimal point of cv1 and cv2
+   * \param ps_x the parameter space in x of the minimal point of cv1
+   * \param ps_y the parameter space in y of the minimal point of cv1
+   * \precondition the minimal points of cv1 and cv2 are equal.
+   */
+  bool _is_smaller_near_right(const X_monotone_curve_2& cv1,
+                              const X_monotone_curve_2& cv2,
+                              const Point_2& p,
+                              Arr_parameter_space ps_x,
+                              Arr_parameter_space ps_y,
+                              Arr_all_sides_oblivious_tag) const;
+
+  /*! This is the implementation for the case where any one of the 4 boundary
+   * sides can be of any type.
+   */
+  bool _is_smaller_near_right(const X_monotone_curve_2& cv1,
+                              const X_monotone_curve_2& cv2,
+                              const Point_2& p,
+                              Arr_parameter_space ps_x,
+                              Arr_parameter_space ps_y,
+                              Arr_not_all_sides_oblivious_tag) const;
 
   /*!
    * Locate the place for the given curve around the given vertex.

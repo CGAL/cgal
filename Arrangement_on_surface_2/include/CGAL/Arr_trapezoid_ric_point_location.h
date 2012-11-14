@@ -116,9 +116,7 @@ protected:
   typedef typename Arr_are_all_sides_oblivious_tag< 
                      Left_side_category, Bottom_side_category, 
                      Top_side_category, Right_side_category >::result
-  Are_all_sides_oblivious_tag;
-
-
+    Are_all_sides_oblivious_category;
 
   // Data members:
   const Traits_adaptor_2 *m_traits;  // Its associated traits object.
@@ -367,18 +365,20 @@ protected:
     td.insert(he_container.begin(), he_container.end()); 
   }
 
-  /*! gets the unbounded face that contains the point when the trapezoid is unbounded
+  /*! gets the unbounded face that contains the point when the trapezoid is
+   * unbounded
    * \param tr The unbounded trapezoid whose face we should get
    * \param p  The query point.
    * \param Arr_all_sides_oblivious_tag
-   * \return A Face_const_handle representing the arrangement unbounded face in which 
-   *         the point p lies
+   * \return A Face_const_handle representing the arrangement unbounded face in
+   *         which the point p lies
    */ 
   Face_const_handle _get_unbounded_face (const Td_map_item& tr,
                                          const Point_2& p, 
                                          Arr_all_sides_oblivious_tag) const;
 
-  /*! gets the unbounded face that contains the point when the trapezoid is unbounded
+  /*! gets the unbounded face that contains the point when the trapezoid is
+   * unbounded
    * \param tr The unbounded trapezoid whose face we should get
    * \param p  The query point.
    * \param Arr_not_all_sides_oblivious_tag

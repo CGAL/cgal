@@ -117,7 +117,7 @@ protected:
   typedef typename Arr_are_all_sides_oblivious_tag< 
                      Left_side_category, Bottom_side_category, 
                      Top_side_category, Right_side_category >::result
-  Are_all_sides_oblivious_tag;
+    Are_all_sides_oblivious_category;
   
 public:
 
@@ -558,7 +558,7 @@ protected:
                                       bool is_new)
   {
     _update_event_at_open_boundary(e, cv, ind, is_new, 
-                                   Are_all_sides_oblivious_tag());
+                                   Are_all_sides_oblivious_category());
   }
 
   void _update_event_at_open_boundary(Event* e,
