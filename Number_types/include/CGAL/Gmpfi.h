@@ -332,7 +332,6 @@ public:
 
 } // namespace CGAL
 
-#ifdef CGAL_EIGEN3_ENABLED
 namespace Eigen {
   template<class> struct NumTraits;
   template<> struct NumTraits<CGAL::Gmpfi>
@@ -354,7 +353,6 @@ namespace Eigen {
     };
   };
 }
-#endif
 
 #include <CGAL/GMP/Gmpfi_type.h>
 #include <CGAL/GMP_arithmetic_kernel.h>

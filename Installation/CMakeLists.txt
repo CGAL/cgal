@@ -153,21 +153,15 @@ if ( CGAL_BRANCH_BUILD )
   set(CGAL_CREATED_VERSION_NR "1${CGAL_TMP_MAJOR}${CGAL_TMP_MINOR}${CGAL_BUGFIX_VERSION}${CGAL_TMP_BUILD}")
   message(STATUS "CGAL_VERSION_NR is ${CGAL_CREATED_VERSION_NR}")
 
-  if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
-
-    # The function Subversion_GET_REVISION is defined in ../CMakeLists.txt
-    Subversion_GET_REVISION("${CMAKE_SOURCE_DIR}" CGAL_TMP_REVISION)
-    set(CGAL_CREATED_SVN_REVISION "${CGAL_TMP_REVISION}")
-    message(STATUS "CGAL_SVN_REVISION is ${CGAL_TMP_REVISION}")
-  
-  endif()
-
   if ( ${CGAL_SCM_NAME} STREQUAL "git" )
 
     ### TODO EBEB GIT_NR?
     set(CGAL_GIT_HASH "n/a")
+    set(CGAL_CREATED_SVN_REVISION "99999")
 
     message(STATUS "CGAL_GIT_HASH is ${CGAL_GIT_HASH}")
+    message(STATUS "CGAL_CREATED_SVN_REVISION is ${CGAL_CREATED_SVN_REVISION} (dummy)")
+
   endif()
 
   file(REMOVE ${CMAKE_BINARY_DIR}/include/CGAL/version.h)
@@ -988,9 +982,9 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
         set(depends "")
-        file(GLOB_RECURSE ${package}_HEADERS 
+        file(GLOB ${package}_HEADERS 
           RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include" 
-          "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/*.h")
+          "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h")
         foreach(header ${${package}_HEADERS})
           string(REPLACE "/" "__" header2 "${header}")
           string(REPLACE "." "_" header2 "${header2}")

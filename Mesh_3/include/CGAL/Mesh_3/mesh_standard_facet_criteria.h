@@ -29,7 +29,9 @@
 
 #include <CGAL/Mesh_3/config.h>
 
+#include <CGAL/number_utils.h> // for to_double
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
+#include <cmath>
 
 
 namespace CGAL {

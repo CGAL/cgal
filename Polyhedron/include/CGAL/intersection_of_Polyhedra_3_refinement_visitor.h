@@ -150,9 +150,9 @@ namespace CGAL
     
   public:
     
-    template <class Node_vector,class Triangulation>
+    template <class Nodes_vector,class Triangulation>
     Triangulate_a_face( Face_handle face,
-                        const Node_vector& nodes,
+                        const Nodes_vector& nodes,
                         const std::vector<int>& node_ids,
                         std::map<int,Vertex_handle>& node_to_polyhedron_vertex,
                         std::map<std::pair<int,int>,Halfedge_handle>& edge_to_hedge,
@@ -483,12 +483,12 @@ get_next_marked_dart_around_source_vertex(
 //but in addition it follows the marked darts connected to the same vertex
 //(there should be only one) to connect them all together
 //( this function is a kind of zipper ;) )
-template <class Combinatorial_map_3,class Node_vector>
+template <class Combinatorial_map_3,class Nodes_vector>
 void sew_2_marked_darts( Combinatorial_map_3& final_map,
                          typename Combinatorial_map_3::Dart_handle dart_1 , 
                          typename Combinatorial_map_3::Dart_handle dart_2 ,
                          int mark_index,
-                         const Node_vector& nodes,
+                         const Nodes_vector& nodes,
                          const std::pair<int,int>& indices,
                          const std::pair<bool,int>& polyline_info)
 {
@@ -670,12 +670,12 @@ class Node_visitor_refine_polyhedra{
 
   //sort node ids so that we can split the hedge
   //consecutively
-  template <class Node_vector>
-  void sort_vertices_along_hedge(std::vector<int>& node_ids,Halfedge_handle hedge,const Node_vector& nodes)
+  template <class Nodes_vector>
+  void sort_vertices_along_hedge(std::vector<int>& node_ids,Halfedge_handle hedge,const Nodes_vector& nodes)
   {
     std::sort(node_ids.begin(),
               node_ids.end(),
-              internal_IOP::Order_along_a_halfedge<Polyhedron,Node_vector,Is_polyhedron_const>(hedge,nodes)
+              internal_IOP::Order_along_a_halfedge<Polyhedron,Nodes_vector,Is_polyhedron_const>(hedge,nodes)
     );
   }
   
@@ -766,7 +766,7 @@ class Node_visitor_refine_polyhedra{
     return -1;
   }
   
-  template <class Node_vector>
+  template <class Nodes_vector>
   bool filtered_order_around_edge(int O_prime_index,
                                   int O_index,
                                   int P1_index,
@@ -775,10 +775,10 @@ class Node_visitor_refine_polyhedra{
                                   Vertex_handle P1,
                                   Vertex_handle P2,
                                   Vertex_handle Q,
-                                  const Node_vector& nodes)
+                                  const Nodes_vector& nodes)
   {
     try{
-      return is_in_interior_of_object<typename Node_vector::Ikernel>(
+      return is_in_interior_of_object<typename Nodes_vector::Ikernel>(
         nodes.interval_node(O_prime_index),
         nodes.interval_node(O_index),
         P1_index == -1 ? nodes.to_interval(P1->point()): nodes.interval_node(P1_index),
@@ -787,7 +787,7 @@ class Node_visitor_refine_polyhedra{
       );
     }
     catch(Uncertain_conversion_exception&){
-      return is_in_interior_of_object<typename Node_vector::Exact_kernel>(
+      return is_in_interior_of_object<typename Nodes_vector::Exact_kernel>(
         nodes.exact_node(O_prime_index),
         nodes.exact_node(O_index),
         P1_index == -1 ? nodes.to_exact(P1->point()): nodes.exact_node(P1_index),
@@ -835,10 +835,10 @@ inline Dart_handle get_associated_dart(Halfedge_handle hedge,Halfedge_to_dart_ma
 //first_hedge defines four volumes, second_hedge only two
 //first_poly is not needed as inside/outside volume is update during the merge
 //of the sew. Only second_poly is needed
-template <class Node_vector,class Border_halfedges_map,class Halfedge_to_dart_map>
+template <class Nodes_vector,class Border_halfedges_map,class Halfedge_to_dart_map>
 void sew_2_three_volumes_case(  Halfedge_handle first_hedge, Halfedge_handle second_hedge,
                                 const std::pair<int,int>& indices,
-                                const Node_vector& nodes,
+                                const Nodes_vector& nodes,
                                 Border_halfedges_map& border_halfedges,
                                 Halfedge_to_dart_map& selected_hedge_to_dart, 
                                 Polyhedron* /*first_poly*/, Polyhedron* second_poly,
@@ -932,13 +932,13 @@ void sew_2_three_volumes_case(  Halfedge_handle first_hedge, Halfedge_handle sec
 }
 
 //first_hedge defines two volumes, second_hedge only two
-template <class Halfedge_to_dart_map,class Border_halfedges_map,class Node_vector>
+template <class Halfedge_to_dart_map,class Border_halfedges_map,class Nodes_vector>
 void sew_2_two_volumes_case(  Halfedge_handle first_hedge, Halfedge_handle second_hedge,
                               Border_halfedges_map& border_halfedges,
                               Halfedge_to_dart_map& selected_hedge_to_dart,
                               int mark_index,
                               std::set<Dart_handle>& darts_to_remove,
-                              const Node_vector& nodes,
+                              const Nodes_vector& nodes,
                               const std::pair<int,int>& indices,
                               const std::pair<bool,int>& polyline_info)
 {
@@ -997,10 +997,10 @@ void sew_2_two_volumes_case(  Halfedge_handle first_hedge, Halfedge_handle secon
 
 //4 volume case with 2 identical volume
 //Q2 is supposed to be identical to P2
-template <class Node_vector,class Halfedge_to_dart_map>
+template <class Nodes_vector,class Halfedge_to_dart_map>
 void sew_2_four_volumes_case_1(  Halfedge_handle first_hedge, Halfedge_handle second_hedge,
                                  const std::pair<int,int>& indices,
-                                 const Node_vector& nodes,
+                                 const Nodes_vector& nodes,
                                  int index_p1, int index_p2, int index_q1,
                                  Halfedge_to_dart_map& selected_hedge_to_dart,
                                  int mark_index,
@@ -1069,10 +1069,10 @@ void sew_2_four_volumes_case_1(  Halfedge_handle first_hedge, Halfedge_handle se
   }  
 }
 
-template <class Node_vector,class Halfedge_to_dart_map>
+template <class Nodes_vector,class Halfedge_to_dart_map>
 bool coplanar_triangles_case_handled(Halfedge_handle first_hedge,Halfedge_handle second_hedge,
                                      const std::pair<int,int>& indices,
-                                     const Node_vector& nodes,
+                                     const Nodes_vector& nodes,
                                      int index_p1, int index_p2, int index_q1,int index_q2,
                                      Halfedge_to_dart_map& selected_hedge_to_dart,
                                      int mark_index,
@@ -1408,8 +1408,8 @@ public:
   //4) create one output polyhedron per connected component of polyhedron, connected by an edge which is not an intersection edge   
   //5) import each piece into a common combinatorial map
   //6) glue all the pieces together
-  template <class Node_vector>
-  void finalize(const Node_vector& nodes){
+  template <class Nodes_vector>
+  void finalize(const Nodes_vector& nodes){
     //mark halfedge that are on the intersection
     //SL: I needed to use a map because to get the orientation around the edge,
     //    I need to know in the case the third vertex is a node its index (for exact construction)

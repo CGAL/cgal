@@ -37,6 +37,7 @@
 #include <boost/random/variate_generator.hpp>
 
 #include <string>
+#include <ctime>
 
 
 namespace CGAL {

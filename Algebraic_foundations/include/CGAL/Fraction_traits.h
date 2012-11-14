@@ -35,7 +35,7 @@
 #ifndef CGAL_FRACTION_TRAITS_H
 #define CGAL_FRACTION_TRAITS_H 
 
-#include <CGAL/number_type_basic.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 

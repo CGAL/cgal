@@ -26,6 +26,7 @@
 #define CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
 
 #include <CGAL/determinant.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

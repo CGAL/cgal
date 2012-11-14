@@ -50,7 +50,16 @@
 #include <CGAL/basic.h>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/version.hpp>
 
+// An explanation about the version hackery below: There is no real
+// API to introduce custom properties to the Graph API and the
+// internals have changed with Boost Version 1.51 and changes aren't
+// backward compatible. To work around that we carry around two
+// versions of cgal_bgl_named_params. One imitates the pre 1.51
+// bgl_named_params, the newer one hooks into the API through
+// inheritance and addition of the some partial specializations.
 namespace CGAL {
 
   enum vertex_is_fixed_t             { vertex_is_fixed             } ;  
@@ -60,6 +69,105 @@ namespace CGAL {
   enum get_placement_policy_t        { get_placement_policy        } ;
   enum get_placement_policy_params_t { get_placement_policy_params } ;
   
+#if BOOST_VERSION >= 105100
+  template <typename T, typename Tag, typename Base = boost::no_property>
+  struct cgal_bgl_named_params : boost::bgl_named_params<T, Tag, Base>
+  {
+    typedef boost::bgl_named_params<T, Tag, Base> base;
+    typedef cgal_bgl_named_params self;
+
+    cgal_bgl_named_params(T v = T()) : base(v) {}
+    cgal_bgl_named_params(T v, const Base& b) : base(v, b) {}
+
+    template <typename IndexMap>
+    cgal_bgl_named_params<IndexMap, boost::vertex_index_t, self>
+    vertex_index_map(const IndexMap& p) const 
+    {
+      typedef cgal_bgl_named_params<IndexMap, boost::vertex_index_t, self> Params;
+      return Params(p, *this);
+    }
+    
+    template <typename PointMap>
+    cgal_bgl_named_params<PointMap, vertex_point_t, self>
+    vertex_point_map(const PointMap& p) const 
+    {
+      typedef cgal_bgl_named_params<PointMap, vertex_point_t, self> Params;
+      return Params(p, *this);
+    }
+    
+    template <typename IsFixedMap>
+    cgal_bgl_named_params<IsFixedMap, vertex_is_fixed_t, self>
+    vertex_is_fixed_map(const IsFixedMap& p) const 
+    {
+      typedef cgal_bgl_named_params<IsFixedMap, vertex_is_fixed_t, self> Params;
+      return Params(p, *this);
+    }
+    
+    template <typename IndexMap>
+    cgal_bgl_named_params<IndexMap, boost::edge_index_t, self>
+    edge_index_map(const IndexMap& p) const 
+    {
+      typedef cgal_bgl_named_params<IndexMap, boost::edge_index_t, self> Params;
+      return Params(p, *this);
+    }
+    
+    template <typename IsBorderMap>
+    cgal_bgl_named_params<IsBorderMap, edge_is_border_t, self>
+    edge_is_border_map(const IsBorderMap& p) const 
+    {
+      typedef cgal_bgl_named_params<IsBorderMap, edge_is_border_t, self> Params;
+      return Params(p, *this);
+    }
+
+    template <typename Visitor>
+    cgal_bgl_named_params<Visitor, boost::graph_visitor_t, self>
+    visitor(const Visitor& p) const 
+    {
+      typedef cgal_bgl_named_params<Visitor, boost::graph_visitor_t, self> Params;
+      return Params(p, *this);
+    }
+    
+    template <typename SetCache>
+    cgal_bgl_named_params<SetCache, set_cache_policy_t, self>
+    set_cache(const SetCache& p) const 
+    {
+      typedef cgal_bgl_named_params<SetCache, set_cache_policy_t, self> Params;
+      return Params(p, *this);
+    }
+    
+    template <typename GetCost>
+    cgal_bgl_named_params<GetCost, get_cost_policy_t, self>
+    get_cost(const GetCost& p) const 
+    {
+      typedef cgal_bgl_named_params<GetCost, get_cost_policy_t, self> Params;
+      return Params(p, *this);
+    }
+    
+    template <typename GetCostParams>
+    cgal_bgl_named_params<GetCostParams, get_cost_policy_params_t, self>
+    get_cost_params(const GetCostParams& p) const 
+    {
+      typedef cgal_bgl_named_params<GetCostParams, get_cost_policy_params_t, self> Params;
+      return Params(p, *this);
+    }
+    
+    template <typename GetPlacement>
+    cgal_bgl_named_params<GetPlacement, get_placement_policy_t, self>
+    get_placement(const GetPlacement& p) const 
+    {
+      typedef cgal_bgl_named_params<GetPlacement, get_placement_policy_t, self> Params;
+      return Params(p, *this);
+    }
+    
+    template <typename GetPlacementParams>
+    cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t, self>
+    get_placement_params(const GetPlacementParams& p) const 
+    {
+      typedef cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t, self> Params;
+      return Params(p, *this);
+    }
+  };
+#else
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct cgal_bgl_named_params : public Base
   {
@@ -164,6 +272,20 @@ namespace CGAL {
     }
   };
 
+  template <class Tag1, class Tag2, class T1, class Base>
+  inline
+  typename boost::property_value< cgal_bgl_named_params<T1,Tag1,Base>, Tag2>::type
+  get_param(const cgal_bgl_named_params<T1,Tag1,Base>& p, Tag2 tag2)
+  {
+    enum { match = boost::detail::same_property<Tag1,Tag2>::value };
+    typedef typename
+      boost::property_value< cgal_bgl_named_params<T1,Tag1,Base>, Tag2>::type T2;
+    T2* t2 = 0;
+    typedef boost::detail::property_value_dispatch<match> Dispatcher;
+    return Dispatcher::const_get_value(p, t2, tag2);
+  }
+#endif
+
   template <typename IndexMap>
   cgal_bgl_named_params<IndexMap, boost::vertex_index_t>
   vertex_index_map(IndexMap const& p) 
@@ -251,21 +373,28 @@ namespace CGAL {
     typedef cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t> Params;
     return Params(p);
   }
-  
-
-  template <class Tag1, class Tag2, class T1, class Base>
-  inline
-  typename boost::property_value< cgal_bgl_named_params<T1,Tag1,Base>, Tag2>::type
-  get_param(const cgal_bgl_named_params<T1,Tag1,Base>& p, Tag2 tag2)
-  {
-    enum { match = boost::detail::same_property<Tag1,Tag2>::value };
-    typedef typename
-      boost::property_value< cgal_bgl_named_params<T1,Tag1,Base>, Tag2>::type T2;
-    T2* t2 = 0;
-    typedef boost::detail::property_value_dispatch<match> Dispatcher;
-    return Dispatcher::const_get_value(p, t2, tag2);
-  }
-
 } //namespace CGAL
+
+#if BOOST_VERSION >= 105100
+// partial specializations hate inheritance and we need to repeat
+// those here. this is rather fragile.
+namespace boost {
+template <typename T, typename Tag, typename Base, typename Def>
+struct lookup_named_param_def<Tag, CGAL::cgal_bgl_named_params<T, Tag, Base>, Def> {
+  typedef T type;
+  static const type& get(const bgl_named_params<T, Tag, Base>& p, const Def&) {
+    return p.m_value;
+  }
+};
+
+template <typename Tag1, typename T, typename Tag, typename Base, typename Def>
+struct lookup_named_param_def<Tag1, CGAL::cgal_bgl_named_params<T, Tag, Base>, Def> {
+  typedef typename lookup_named_param_def<Tag1, Base, Def>::type type;
+  static const type& get(const bgl_named_params<T, Tag, Base>& p, const Def& def) {
+    return lookup_named_param_def<Tag1, Base, Def>::get(p.m_base, def);
+  }
+};
+} // boost
+#endif
 
 #endif // CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP

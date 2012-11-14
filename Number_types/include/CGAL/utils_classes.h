@@ -17,7 +17,9 @@
 
 #ifndef CGAL_UTILS_CLASSES_H
 #define CGAL_UTILS_CLASSES_H
-#include <CGAL/basic.h>
+
+#include <CGAL/config.h>
+#include <functional> // for std::binary_function
 
 #ifdef CGAL_USE_SSE2_MAX
 #include <CGAL/sse2.h>

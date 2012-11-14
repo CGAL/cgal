@@ -19,7 +19,7 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
   QList<QAction*> actions() const;
 
-  QString name() const { return "Polyhedron_demo_camera_positions_plugin"; }
+  QString name() const { return "camera_positions_plugin"; }
   QString nameFilters() const { return "Camera positions (*.camera.txt)"; }
   bool canLoad() const { return true; }
   Scene_item* load(QFileInfo fileinfo) { cpl->load(fileinfo.filePath()); return 0; }

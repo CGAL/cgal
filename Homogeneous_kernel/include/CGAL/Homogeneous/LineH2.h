@@ -25,6 +25,7 @@
 #ifndef CGAL_LINEH2_H
 #define CGAL_LINEH2_H
 
+#include <CGAL/kernel_config.h>
 #include <CGAL/array.h>
 
 namespace CGAL {

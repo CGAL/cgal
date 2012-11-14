@@ -1,6 +1,16 @@
 #!/bin/zsh
 
-cd $HOME/CGAL/next/Maintenance/infrastructure/cgal.geometryfactory.com/
+cd $HOME/infrastructure
 crontab -l >| crontab
-svn add -q crontab 
-[ -n "`svn st crontab`" ] && svn ci -m 'updated crontab (automated commit)' crontab
+if [ -d ../../../.git ]; then
+    git pull --quiet
+    git add crontab
+    if git commit -m 'updated crontab (automated commit)' > /dev/null; then
+        git push origin master
+    else
+        true
+    fi
+else
+    svn add -q crontab
+    [ -n "`svn st crontab`" ] && svn ci -m 'updated crontab (automated commit)' crontab
+fi

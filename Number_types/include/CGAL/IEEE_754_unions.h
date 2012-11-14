@@ -26,6 +26,7 @@
 #define CGAL_IEEE_754_UNIONS_H
 
 #include <iomanip>
+#include <iostream>
 
 union IEEE_754_double
 {

@@ -155,7 +155,6 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
 
 }
 
-#ifdef CGAL_EIGEN3_ENABLED
 namespace Eigen {
   template<class> struct NumTraits;
   template<> struct NumTraits<CGAL::Gmpfr>
@@ -177,7 +176,6 @@ namespace Eigen {
     };
   };
 }
-#endif
 
 #include <CGAL/GMP/Gmpfr_type.h>
 #include <CGAL/GMP_arithmetic_kernel.h>

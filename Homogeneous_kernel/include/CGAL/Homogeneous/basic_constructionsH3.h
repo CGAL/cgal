@@ -26,6 +26,10 @@
 #ifndef CGAL_BASIC_CONSTRUCTIONSH3_H
 #define CGAL_BASIC_CONSTRUCTIONSH3_H
 
+#include <CGAL/Cartesian/Point_3.h>
+#include <CGAL/Cartesian/Plane_3.h>
+
+
 namespace CGAL {
 
 template <class R>

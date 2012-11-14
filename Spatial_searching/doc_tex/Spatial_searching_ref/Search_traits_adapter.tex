@@ -4,7 +4,7 @@
   
 The class \ccRefName\ can be used as a template parameter of the kd tree
 and the search classes. When using this traits class in a nearest neighbor search algorithm, the class 
-\ccc{Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>}
+\ccc{Distance_adapter<Key,PointPropertyMap,Base_distance>}
 must be used as distance.
 
 
@@ -46,7 +46,7 @@ with \ccc{Key} as \ccc{key_type} and \ccc{Base_distance::Point_d} as \ccc{value_
 
 \ccSeeAlso
 
-\ccc{Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>}\\
+\ccc{Distance_adapter<Key,PointPropertyMap,Base_distance>}\\
 \ccc{Search_traits_2<Kernel>}\\
 \ccc{Search_traits_3<Kernel>}\\
 \ccc{Search_traits_d<Kernel>}\\

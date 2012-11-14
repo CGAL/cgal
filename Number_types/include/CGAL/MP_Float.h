@@ -878,7 +878,6 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, MP_Float)
 
 } //namespace CGAL
 
-#ifdef CGAL_EIGEN3_ENABLED
 namespace Eigen {
   template<class> struct NumTraits;
   template<> struct NumTraits<CGAL::MP_Float>
@@ -900,7 +899,6 @@ namespace Eigen {
     };
   };
 }
-#endif
 
 #include <CGAL/MP_Float_impl.h>
 

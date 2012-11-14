@@ -1010,7 +1010,7 @@ std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
 
         CGAL_postcondition_code(if(e>=0))
         CGAL_postcondition(
-                (*this)==(Gmpfr(z,z.bit_size())*CGAL::ipower(Gmpfr(2),e)));
+              (*this)==(Gmpfr(z,(mpfr_prec_t)z.bit_size())*CGAL::ipower(Gmpfr(2),e)));
         CGAL_postcondition_code(else)
         CGAL_postcondition(((*this)*(Gmpz(1)<<(-e)))==z);
 

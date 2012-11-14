@@ -30,12 +30,12 @@
 #ifndef CGAL_COERCION_TRAITS_H
 #define CGAL_COERCION_TRAITS_H 1
 
-#include <CGAL/number_type_basic.h>
-
 #include <iterator>
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
+
+#include <CGAL/tags.h>
 
 // Makro to define an additional operator for binary functors which takes
 // two number types as parameters that are interoperable with the

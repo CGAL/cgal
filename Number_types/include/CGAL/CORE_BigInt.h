@@ -200,7 +200,6 @@ public:
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
 
-#ifdef CGAL_EIGEN3_ENABLED
 namespace Eigen {
   template<class> struct NumTraits;
   template<> struct NumTraits<CORE::BigInt>
@@ -222,6 +221,5 @@ namespace Eigen {
     };
   };
 }
-#endif
 
 #endif // CGAL_CORE_BIGINT_H

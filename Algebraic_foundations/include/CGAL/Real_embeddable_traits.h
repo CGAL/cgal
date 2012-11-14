@@ -24,7 +24,7 @@
 #ifndef CGAL_REAL_EMBEDDABLE_TRAITS_H
 #define CGAL_REAL_EMBEDDABLE_TRAITS_H
 
-#include <CGAL/number_type_basic.h>
+#include <CGAL/Algebraic_structure_traits.h>
 
 namespace CGAL {
 

@@ -3,9 +3,6 @@
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 //----------------------------------------------------------
 
-#ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_solver_traits.h>
-#endif
 
 // CGAL
 #include <CGAL/AABB_tree.h> // must be included before kernel
@@ -21,6 +18,9 @@
 
 #ifdef CGAL_TAUCS_ENABLED
 #include <CGAL/Taucs_solver_traits.h>
+#endif
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_solver_traits.h>
 #endif
 
 #include <math.h>

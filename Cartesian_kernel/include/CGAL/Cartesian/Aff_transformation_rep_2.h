@@ -26,6 +26,8 @@
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_2_H
 
 #include <CGAL/determinant.h>
+#include <CGAL/Handle_for_virtual.h>
+#include <CGAL/Cartesian/Aff_transformation_2.h>
 
 namespace CGAL {
 

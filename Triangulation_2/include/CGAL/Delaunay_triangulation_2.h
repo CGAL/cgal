@@ -175,7 +175,13 @@ public:
 #endif
 
 private:
-  void propagating_flip(Face_handle& f,int i);
+#ifndef CGAL_DT2_USE_RECURSIVE_PROPAGATING_FLIP
+  void non_recursive_propagating_flip(Face_handle f,int i);
+  void propagating_flip(const Face_handle& f,int i, int depth=0);
+#else
+  void propagating_flip(const Face_handle& f,int i);
+#endif
+
   void remove_2D(Vertex_handle v );
 
 // auxilliary functions for remove
@@ -435,11 +441,16 @@ public:
   }
 
 private:
+  
+
+
+
+#ifdef CGAL_DT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
   template <class OutputItFaces, class OutputItBoundaryEdges> 
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   propagate_conflicts (const Point  &p,
-		       Face_handle fh, 
-		       int i,
+		       const Face_handle fh, 
+		       const int i,
 		       std::pair<OutputItFaces,OutputItBoundaryEdges>
 		       pit)  const {
     Face_handle fn = fh->neighbor(i);
@@ -453,6 +464,58 @@ private:
     }
     return pit;
   }
+#else // NO CGAL_DT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  non_recursive_propagate_conflicts ( const Point  &p,
+                                      const Face_handle fh, 
+                                      const int i,
+		                      std::pair<OutputItFaces,OutputItBoundaryEdges> pit)  const 
+  {
+    std::stack<std::pair<Face_handle, int> > stack;
+    stack.push( std::make_pair(fh,i) );
+    while ( !stack.empty() )
+    {
+      const Face_handle fh=stack.top().first;
+      const int i=stack.top().second;
+      stack.pop();
+      Face_handle fn = fh->neighbor(i);
+      if (! test_conflict(p,fn)) {
+        *(pit.second)++ = Edge(fn, fn->index(fh));
+      } else {
+        *(pit.first)++ = fn;
+        int j = fn->index(fh);
+        stack.push( std::make_pair(fn,ccw(j)) );
+        stack.push( std::make_pair(fn,cw(j)) );
+      }
+    }
+    return pit;
+  }
+
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  propagate_conflicts (const Point  &p,
+		       const Face_handle fh, 
+		       const int i,
+		       std::pair<OutputItFaces,OutputItBoundaryEdges>
+		       pit,
+                       int depth=0)  const 
+  {
+    if (depth == 100)
+      return non_recursive_propagate_conflicts(p, fh, i, pit);
+
+    Face_handle fn = fh->neighbor(i);
+    if (! test_conflict(p,fn)) {
+      *(pit.second)++ = Edge(fn, fn->index(fh));
+    } else {
+      *(pit.first)++ = fn;
+      int j = fn->index(fh);
+      pit = propagate_conflicts(p,fn,ccw(j),pit,depth+1);
+      pit = propagate_conflicts(p,fn,cw(j), pit,depth+1);
+    }
+    return pit;
+  }
+#endif // NO CGAL_DT2_USE_RECURSIVE_PROPAGATE_CONFLICTS
 
 protected:
 
@@ -873,15 +936,70 @@ restore_Delaunay(Vertex_handle v)
   return;
 }
 
+#ifndef CGAL_DT2_USE_RECURSIVE_PROPAGATING_FLIP
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-propagating_flip(Face_handle& f,int i)
+non_recursive_propagating_flip(Face_handle f , int i)
 {
+  std::stack<Edge> edges;
+  const Vertex_handle& vp = f->vertex(i);
+  const Point& p = vp->point();
+  edges.push(Edge(f,i));
+
+  while(! edges.empty()){
+    const Edge& e = edges.top();
+    f = e.first; 
+    i = e.second;
+    const Face_handle& n = f->neighbor(i);
+    
+    if ( ON_POSITIVE_SIDE != 
+         side_of_oriented_circle(n,  p, true) ) {
+      edges.pop();
+      continue;
+    }
+    this->flip(f, i);
+    // As we haven't popped it, we don't have to push it
+    edges.push(Edge(n,n->index(vp)));
+  }
+}
+
+template < class Gt, class Tds >
+void
+Delaunay_triangulation_2<Gt,Tds>::
+propagating_flip(const Face_handle& f,int i, int depth)
+{
+#ifdef CGAL_DT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
+  non_recursive_propagating_flip(f,i);
+#else
+  int max_depth = 100;
+  if(depth==max_depth){
+    non_recursive_propagating_flip(f,i);
+    return;
+  }
   Face_handle n = f->neighbor(i);
       
   if ( ON_POSITIVE_SIDE != 
-       side_of_oriented_circle(n,  f->vertex(i)->point(), true) ) {          
+       side_of_oriented_circle(n,  f->vertex(i)->point(), true) ) {
+    return;
+  }
+  this->flip(f, i);
+  propagating_flip(f,i,depth+1);
+  i = n->index(f->vertex(i));
+  propagating_flip(n,i,depth+1);
+#endif
+}
+#else 
+template < class Gt, class Tds >
+void
+Delaunay_triangulation_2<Gt,Tds>::
+propagating_flip(const Face_handle& f,int i)
+{
+ 
+  Face_handle n = f->neighbor(i);
+      
+  if ( ON_POSITIVE_SIDE != 
+       side_of_oriented_circle(n,  f->vertex(i)->point(), true) ) {
     return;
   }
   this->flip(f, i);
@@ -889,7 +1007,7 @@ propagating_flip(Face_handle& f,int i)
   i = n->index(f->vertex(i));
   propagating_flip(n,i);
 }
-
+#endif
 
 ///////////////////////////////////////////////////////////////
 //  REMOVE    see INRIA RResearch Report 7104

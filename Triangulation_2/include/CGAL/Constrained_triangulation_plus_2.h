@@ -27,6 +27,25 @@
 
 namespace CGAL {
 
+// Comparison functor that compares two Vertex_handle.
+// Used as 'Compare' functor for the constraint hierarchy.
+template < class Tr >
+class Ctp2_vertex_handle_less_xy {
+  const Tr* tr_p;
+
+public:
+  Ctp2_vertex_handle_less_xy(const Tr* tr_p) : tr_p(tr_p) {}
+
+  typedef typename Tr::Vertex_handle Vertex_handle;
+
+  bool operator()(const Vertex_handle& va,
+                  const Vertex_handle& vb) const
+  {
+    return tr_p->compare_xy(va->point(), vb->point()) == SMALLER;
+  }
+}; // end class template Ctp2_vertex_handle_less_xy
+
+
 // Tr the base triangulation class 
 // Tr has to be Constrained or Constrained_Delaunay
 
@@ -58,8 +77,11 @@ public:
   typedef typename Triangulation::List_vertices    List_vertices;
   typedef typename Triangulation::List_constraints List_constraints;
 
-  typedef Constraint_hierarchy_2<Vertex_handle, bool> Constraint_hierarchy;
-  typedef Tag_true                                Constraint_hierarchy_tag;
+  typedef Ctp2_vertex_handle_less_xy<Self>         Vh_less_xy;
+  typedef Constraint_hierarchy_2<Vertex_handle, 
+                                 Vh_less_xy,
+                                 bool>             Constraint_hierarchy;
+  typedef Tag_true                                 Constraint_hierarchy_tag;
 
   // for user interface with the constraint hierarchy
   typedef typename Constraint_hierarchy::H_vertex_it    
@@ -88,10 +110,14 @@ protected:
  
 public:
   Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits()) 
-    : Triangulation(gt) { }
+    : Triangulation(gt)
+    , hierarchy(Vh_less_xy(this)) 
+  { }
 
   Constrained_triangulation_plus_2(const Self& ctp)
-    : Triangulation()    { copy_triangulation(ctp);}
+    : Triangulation()
+    , hierarchy(Vh_less_xy(this))
+  { copy_triangulation(ctp);}
 
   virtual ~Constrained_triangulation_plus_2() {}
 
@@ -100,6 +126,7 @@ public:
   Constrained_triangulation_plus_2(List_constraints& lc, 
 				   const Geom_traits& gt=Geom_traits())
       : Triangulation(gt)
+      , hierarchy(Vh_less_xy(this))
   {
     typename List_constraints::iterator lcit=lc.begin();
     for( ;lcit != lc.end(); lcit++) {
@@ -113,6 +140,7 @@ public:
 				   InputIterator last,
 				   const Geom_traits& gt=Geom_traits() )
      : Triangulation(gt)
+    , hierarchy(Vh_less_xy(this))
   {
     while( first != last){
       insert_constraint((*first).first, (*first).second);

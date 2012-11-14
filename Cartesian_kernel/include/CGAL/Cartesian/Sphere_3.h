@@ -28,6 +28,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Interval_nt.h>
 #include <boost/tuple/tuple.hpp>
+#include <CGAL/Kernel/global_functions_3.h>
 
 namespace CGAL {
 

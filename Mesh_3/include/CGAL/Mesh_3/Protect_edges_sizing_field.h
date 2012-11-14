@@ -438,7 +438,9 @@ insert_corners()
           nearest =  (*it)->point();
         }
       }
-      const FT nearest_sq_dist = CGAL::squared_distance( nearest, p);
+      typename Gt::Compute_squared_distance_3 squared_distance = 
+        c3t3_.triangulation().geom_traits().compute_squared_distance_3_object();
+      const FT nearest_sq_dist = squared_distance( nearest, p);
       
       w = (std::min)(w, nearest_sq_dist / FT(9));
     }

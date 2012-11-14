@@ -44,7 +44,7 @@ Exactly one of the options -h or -r must be present.
    The version number is stored in VERSION and include/CGAL/version.h.
    The RELEASEDIR is the place where the new release will be created.
    The ALLPACKAGESDIR is the directory that contains the checked out packages
-       from the SVN. Could be trunk or some branch.
+       from the SCM. Could be trunk or some branch.
    The LOCKFILE is some file used by lockfile command as a mutex.
 
 Example of how to use the script:
@@ -188,7 +188,7 @@ sub install_packages() {
         next if ($filename !~ /^\.\/?$/) and ($filename =~ /^\.\.?\/?$/);
         my $package_from_from = $LISTOFALLPACKAGES{$package_name};
         mkpath($filename);
-        system("svn info $package_comes_from/$package_name/$filename | grep URL >> $filename/.scm-urls\n");
+#        system("svn info $package_comes_from/$package_name/$filename | grep URL >> $filename/.scm-urls\n");
       }
     }
     system('tar', '-xf', "temppack.tar");
@@ -207,6 +207,7 @@ sub install_packages() {
   }
   close(LOG_CONFLICTS);
   unlink 'temppack.tar';
+  ( -d "$ALLPACKAGESDIR/.git" ) && system("echo 'SCM branch:' > .scm-branch; git --git-dir=$ALLPACKAGESDIR/.git --work-tree=$ALLPACKAGESDIR status --short -b | head -1 >> .scm-branch");
   # foreach my $file (sort keys(%files)) {
   #   print "$files{$file}: $file\n";
   # }
@@ -273,6 +274,7 @@ EOF
     print TEMPFILE "#define CGAL_VERSION $newver\n";
     print TEMPFILE "#define CGAL_VERSION_NR $VERSION_NR\n";
     print TEMPFILE "#define CGAL_SVN_REVISION 0\n";
+    print TEMPFILE "#define CGAL_GIT_HASH 0\n";
 
 print TEMPFILE << 'EOF';
 #define CGAL_VERSION_STR CGAL_str(CGAL_VERSION)
@@ -661,10 +663,6 @@ sub main(){
 }
 
 main();
-
-# TODO:
-#  - avoid all those calls to svn info
-#  - "perlify" the system(svn info...) (see also <h7oscs$jk4$1@clipper.ens.fr>)
 
 # Set the indent level of perl-mode, in Emacs.
 # For that file it is mostly 2, so let's choose 2.

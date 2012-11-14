@@ -26,6 +26,7 @@
 #define CGAL_CARTESIAN_PREDICATES_ON_POINTS_3_H
 
 #include <CGAL/predicates/kernel_ftC3.h>
+#include <CGAL/Cartesian/Point_3.h>
 
 namespace CGAL {
 
