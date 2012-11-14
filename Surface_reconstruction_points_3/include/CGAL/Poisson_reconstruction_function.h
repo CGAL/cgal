@@ -447,7 +447,11 @@ public:
     return true;
   }
 
-
+  template <class SparseLinearAlgebraTraits_d>
+  bool compute_implicit_function(SparseLinearAlgebraTraits_d solver)
+  {
+    return compute_implicit_function<SparseLinearAlgebraTraits_d,Poisson_visitor>(solver,Poisson_visitor());
+  }
   
  #ifdef CGAL_EIGEN3_ENABLED
   /// @cond SKIP_IN_MANUAL
