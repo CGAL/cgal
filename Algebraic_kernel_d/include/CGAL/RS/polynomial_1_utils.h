@@ -19,13 +19,18 @@
 #ifndef CGAL_RS_POLYNOMIAL_1_UTILS_H
 #define CGAL_RS_POLYNOMIAL_1_UTILS_H
 
+#include <CGAL/basic.h>
 #include <gmp.h>
-#include <rs3_fncts.h>
 #include <CGAL/RS/polynomial_1.h>
 #include <CGAL/RS/polynomial_converter.h>
 #include <CGAL/RS/solve_1.h>
-#include <CGAL/RS/ugcd.h>
+#ifdef CGAL_RS_USE_UGCD
+#include <CGAL/RS/ugcd/ugcd.h>
+#endif
 #include <rs_exports.h>
+#ifdef CGAL_USE_RS3
+#include <rs3_fncts.h>
+#endif
 
 namespace CGAL{
 
@@ -64,6 +69,7 @@ public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
     }
 };
 
+#ifdef CGAL_RS_USE_UGCD
 // my modular gcd algorithm
 struct Modgcd_1:
 public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
@@ -85,6 +91,7 @@ public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
         return *result;
     }
 };
+#endif // CGAL_RS_USE_UGCD
 
 // Cont()(c,u) stores in c the gcd of the coefficients of u
 struct Cont:

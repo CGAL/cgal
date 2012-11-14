@@ -4,13 +4,27 @@
 
 \ccInclude{CGAL/Sweep_line_2_algorithms.h}
 
-\ccFunction{template <class InputIterator, class OutputIterator, class Traits>
+\ccGlobalFunction{template <class InputIterator, class OutputIterator>
 OutputIterator compute_intersection_points (InputIterator curves_begin,
-                                        InputIterator curves_end,
-                                        OutputIterator points,
-                                        bool report_endpoints = false,
-                                        Traits traits = Default_traits());}
-{given a range of curves, compute all intersection points between two (or more)
+                                            InputIterator curves_end,
+                                            OutputIterator points,
+                                            bool report_endpoints = false);}
+{Given a range of curves, compute all intersection points between two (or more)
+ input curves. When the flag \ccc{report_endpoints} is \ccc{true}, 
+  this function reports all the curve endpoints as well. If a curve
+  endpoint is also an intersection point, it is reported once (regardless
+  of the value of the \ccc{report_endpoints} flag). The value-type of
+  \ccc{InputIterator} is a curve type and the value-type of \ccc{OutputIterator}
+  is a point type. The output points are reported in an increasing
+  $xy$-lexicographical order.}
+\ccGlue
+\ccGlobalFunction{template <class InputIterator, class OutputIterator, class Traits>
+OutputIterator compute_intersection_points (InputIterator curves_begin,
+                                            InputIterator curves_end,
+                                            OutputIterator points,
+                                            bool report_endpoints = false,
+                                            Traits traits);}
+{Given a range of curves, compute all intersection points between two (or more)
  input curves. When the flag \ccc{report_endpoints} is \ccc{true}, 
   this function reports all the curve endpoints as well. If a curve
   endpoint is also an intersection point, it is reported once (regardless
@@ -19,7 +33,6 @@ OutputIterator compute_intersection_points (InputIterator curves_begin,
   value-type of \ccc{InputIterator} is \ccc{Traits::Curve_2}, and the
   value-type of \ccc{OutputIterator} is \ccc{Traits::Point_2}.
  The output points are reported in an increasing $xy$-lexicographical order.}
-
 \end{ccRefFunction}
 
 \ccRefPageEnd

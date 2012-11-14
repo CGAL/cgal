@@ -322,7 +322,7 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
         break;
     case Line_2_Line_2_pair<K>::LINE:
         {
-        typedef typename K::RT RT;
+        //typedef typename K::RT RT;
         typename K::Point_2 const &start1 = _seg1->source();
         typename K::Point_2 const &end1   = _seg1->target();
         typename K::Point_2 const &start2 = _seg2->source();

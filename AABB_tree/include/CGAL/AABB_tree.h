@@ -46,7 +46,7 @@ namespace CGAL {
 		/// types
     typedef AABBTraits AABB_traits;
 		typedef typename AABBTraits::FT FT;
-		typedef typename AABBTraits::Point Point;
+		typedef typename AABBTraits::Point_3 Point;
 		typedef typename AABBTraits::Primitive Primitive;
 		typedef typename AABBTraits::Bounding_box Bounding_box;
 		typedef typename AABBTraits::Primitive::Id Primitive_id;
@@ -518,7 +518,7 @@ public:
 		const Point& hint) const
 	{
 		const Point closest = this->closest_point(query, hint);
-		return typename Tr::Compute_squared_distance_3()(query, closest);
+		return Tr().squared_distance_object()(query, closest);
 	}
 
 	// squared distance without user-specified hint
@@ -527,7 +527,7 @@ public:
 		AABB_tree<Tr>::squared_distance(const Point& query) const
 	{
 		const Point closest = this->closest_point(query);
-		return typename Tr::Compute_squared_distance_3()(query, closest);
+		return Tr().squared_distance_object()(query, closest);
 	}
 
 	// closest point with user-specified hint

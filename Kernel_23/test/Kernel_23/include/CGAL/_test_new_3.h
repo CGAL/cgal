@@ -28,9 +28,9 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/_test_compare_dihedral_angle_3.h>
 
-#include <CGAL/use.h>
+#include <CGAL/Testsuite/use.h>
 
-using CGAL::use;
+using CGAL::internal::use;
 
 // Accessory function testing functions that require sqrt().
 // Doesn't instantiate anything if RT doesn't support sqrt().

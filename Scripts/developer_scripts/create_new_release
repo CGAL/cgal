@@ -152,7 +152,13 @@ set -x
 cd ${TMPDIR} || return
 
 # Update the working copy
-svn update ${SOURCES_DIR}
+if [ -d "${SOURCES_DIR}/.git" ]; then
+    pushd "${SOURCES_DIR}"
+    git pull
+    popd
+else
+    svn update ${SOURCES_DIR}
+fi
 if [ -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
     svn update ${CANDIDATES_DIR}
 fi

@@ -30,6 +30,10 @@ public:
     return QStringList() << "actionSelfIntersection";
   }
 
+  bool applicable() const { 
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+  }
+
 public slots:
   void on_actionSelfIntersection_triggered();
 

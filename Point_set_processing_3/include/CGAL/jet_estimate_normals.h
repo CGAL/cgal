@@ -61,7 +61,6 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 {
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
-  typedef typename Kernel::Vector_3 Vector;
 
   // types for K nearest neighbors search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -135,7 +134,7 @@ jet_estimate_normals(
   PointPMap point_pmap, ///< property map InputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
   unsigned int k, ///< number of neighbors.
-  const Kernel& kernel, ///< geometric traits.
+  const Kernel& /*kernel*/, ///< geometric traits.
   unsigned int degree_fitting = 2)
 {
   CGAL_TRACE("Calls jet_estimate_normals()\n");

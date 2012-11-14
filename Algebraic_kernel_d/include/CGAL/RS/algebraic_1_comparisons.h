@@ -25,11 +25,19 @@
 
 namespace CGAL{
 
+#if CGAL_USE_RS3
 inline
 bool operator<(const Algebraic_1 &n1,const Algebraic_1 &n2){
         typedef CGAL::Rsgcd_1  Gcd;
         return(CGAL::RS_COMPARE::compare_1<Gcd>(n1,n2)==SMALLER);
 }
+#else
+inline
+bool operator<(const Algebraic_1 &n1,const Algebraic_1 &n2){
+        typedef CGAL::Cgalgcd_1  Gcd;
+        return(CGAL::RS_COMPARE::compare_1<Gcd>(n1,n2)==SMALLER);
+}
+#endif
 
 inline
 bool operator==(const Algebraic_1 &n1,const Algebraic_1 &n2){

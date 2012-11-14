@@ -37,7 +37,7 @@ public:
   QMenu* contextMenu();
   
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode) const { return true; }
+  virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   virtual void direct_draw() const;
   virtual void direct_draw_edges() const;
@@ -50,7 +50,9 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const;
   Bbox bbox() const;
-
+  std::vector<QColor>& color_vector() {return colors_;}
+  void set_color_vector_read_only(bool on_off) {plugin_has_set_color_vector_m=on_off;}
+  
 public slots:
   virtual void changed();
   void show_only_feature_edges(bool);
@@ -63,6 +65,10 @@ public slots:
               double dir_x,
               double dir_y,
               double dir_z);
+
+  void update_vertex_indices();
+  void update_facet_indices();
+  void update_halfedge_indices();
 
 signals:
   void selected_vertex(void*);
@@ -84,6 +90,8 @@ private:
   bool show_only_feature_edges_m;
   bool facet_picking_m;
   bool erase_next_picked_facet_m;
+  //the following variable is used to indicate if the color vector must not be automatically updated.
+  bool plugin_has_set_color_vector_m;
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

@@ -25,9 +25,10 @@
 #ifndef CGAL_HOMOGENEOUS_DIRECTION_3_H
 #define CGAL_HOMOGENEOUS_DIRECTION_3_H
 
+#include <CGAL/kernel_config.h>
 #include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
-
+#include <CGAL/number_utils.h>
 namespace CGAL {
 
 template < class R_ >

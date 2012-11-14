@@ -22,7 +22,9 @@
 #ifndef CGAL_CORE_BIGRAT_H
 #define CGAL_CORE_BIGRAT_H
 
+#include <CGAL/config.h>
 #include <CGAL/number_type_basic.h>
+#include <CGAL/CORE/BigRat.h>
 #include <CGAL/CORE_coercion_traits.h>
 #include <CGAL/CORE_Expr.h> // used for To_interval-functor
 
@@ -231,5 +233,29 @@ public:
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
+
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<CORE::BigRat>
+  {
+    typedef CORE::BigRat Real;
+    typedef CORE::BigRat NonInteger;
+    typedef CORE::BigRat Nested;
+
+    static inline Real epsilon() { return 0; }
+
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 150,
+      MulCost = 100
+    };
+  };
+}
+#endif
 
 #endif // CGAL_CORE_BIGRAT_H

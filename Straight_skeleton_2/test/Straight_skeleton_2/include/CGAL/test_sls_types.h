@@ -104,7 +104,7 @@ public:
   
   void on_contour_edge_entered ( Halfedge_const_handle const& ) const {}
 
-  void on_initialization_started( int size_of_vertices ) const {}
+  void on_initialization_started( int /*size_of_vertices*/ ) const {}
 
   void on_initial_events_collected( Vertex_const_handle const& , bool , bool ) const { check_timeout(); }
 

@@ -1,9 +1,10 @@
 // Copyright (c) 2006 Foundation for Research and Technology-Hellas (Greece).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -322,15 +323,15 @@ public:
   //------------------
 
   // VORONOI FEATURES FROM DELAUNAY FEATURES
-  Halfedge_handle dual(Delaunay_edge& e) const {
+  Halfedge_handle dual(const Delaunay_edge& e) const {
     return Halfedge_handle( Halfedge(this, e.first, e.second) );
   }
 
-  Face_handle dual(Delaunay_vertex_handle& v) const {
+  Face_handle dual(Delaunay_vertex_handle v) const {
     return Face_handle( Face(this, v) );
   }
 
-  Vertex_handle dual(Delaunay_face_handle& f) const {
+  Vertex_handle dual(Delaunay_face_handle f) const {
     return Vertex_handle( Vertex(this, f) );
   }
 
@@ -613,6 +614,7 @@ public:
 
   Halfedge_around_vertex_circulator
   incident_halfedges(const Vertex_handle& v, const Halfedge_handle& he) const {
+    internal::use(v);
     CGAL_precondition( he->target() == v );
     return Halfedge_around_vertex_circulator(*he);
   }

@@ -44,6 +44,8 @@
 # Configure specific gcc version, giving alternative name to use.
 # using gcc : 3.2 : g++-3.2 ;
 
+# G++ 4.5
+using gcc : : /usr/local/packages/gcc-4.5/bin/g++ ;
 
 # -------------------
 # MSVC configuration.
@@ -93,6 +95,12 @@
 
 using gcc
    : cxxdebug
-   : "/usr/lib64/ccache/g++" # your path to the C++0x compiler
+   : "/usr/lib64/ccache/g++" # your path to the C++ compiler
    : <cxxflags>-D_GLIBCXX_DEBUG 
+   ;
+
+using gcc
+   : 4.1
+   : "/usr/local/bin/g++41"
+   : <cxxflags>
    ;

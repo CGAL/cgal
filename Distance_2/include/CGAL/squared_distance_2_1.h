@@ -32,13 +32,10 @@
 
 
 #include <CGAL/kernel_assertions.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Line_2.h>
-#include <CGAL/Ray_2.h>
 #include <CGAL/enum.h>
 #include <CGAL/wmult.h>
 #include <CGAL/squared_distance_utils.h>
+#include <CGAL/Kernel/global_functions_2.h>
 
 namespace CGAL {
 

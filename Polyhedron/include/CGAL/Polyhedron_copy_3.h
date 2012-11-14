@@ -49,7 +49,7 @@ Polyhedron_copy_3<Poly,HDS>:: operator()( HDS& target) {
     typedef typename Poly::Vertex_const_iterator  Vertex_const_iterator;
     typedef typename Poly::Facet_const_iterator   Facet_const_iterator;
     typedef Inverse_index< Vertex_const_iterator> Index;
-    typedef typename HDS::Point                   Point;
+    typedef typename HDS::Vertex::Point                   Point;
 
     target.clear();
     Polyhedron_incremental_builder_3<HDS> B( target);

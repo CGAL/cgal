@@ -21,6 +21,9 @@
 #ifndef CGAL_FILTRED_CIRCULATOR_H
 #define CGAL_FILTRED_CIRCULATOR_H
 
+#include <CGAL/config.h>
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 
 template <class Circ, class Pred>

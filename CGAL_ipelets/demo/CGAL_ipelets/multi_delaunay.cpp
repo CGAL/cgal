@@ -119,7 +119,6 @@ void MdelaunayIpelet::protected_run(int fn)
         //WE MAY COUNT SEVERAL TIME SAME TRIANGLE WITH THE FOLLOWING METHOD
         //iterate over adjacent point in the regular triangulation and compute a new wpoint for those having one commun parent from delaunay
         for (RegularI::Finite_edges_iterator it=rti.finite_edges_begin();it!=rti.finite_edges_end();++it){
-          VertexI ff=it->first->vertex(Delaunay::cw(it->second));
           Point_2 pt0_ori0=it->first->vertex(Delaunay::cw(it->second))->info().front();
           Point_2 pt0_ori1=it->first->vertex(Delaunay::cw(it->second))->info().back();
           Point_2 pt1_ori0=it->first->vertex(Delaunay::ccw(it->second))->info().front();

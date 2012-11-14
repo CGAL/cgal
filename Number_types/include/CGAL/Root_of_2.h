@@ -21,6 +21,11 @@
 #ifndef CGAL_ROOT_OF_2_H
 #define CGAL_ROOT_OF_2_H
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/Root_of_2.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Sqrt_extension.h>"
+#include <CGAL/internal/deprecation_warning.h>
 #include <iostream>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Root_of_traits.h>
@@ -1377,5 +1382,7 @@ inline const Root_of_2<NT>& max BOOST_PREVENT_MACRO_SUBSTITUTION
 
 #undef CGAL_int
 #undef CGAL_double
+
+#endif //CGAL_NO_DEPRECATED_CODE
 
 #endif // CGAL_ROOT_OF_2_H

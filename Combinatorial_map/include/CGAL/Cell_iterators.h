@@ -149,8 +149,8 @@ namespace CGAL {
     }
 
     /// Postfix ++ operator.
-    void operator++(int)
-    { operator++(); }
+    Self operator++(int)
+    { Self res=*this; operator ++(); return res; }
 
   private:
     /// A mark used to mark treated cells.
@@ -237,8 +237,8 @@ namespace CGAL {
     }
 
     /// Postfix ++ operator.
-    void operator++(int)
-    { operator++(); }
+    Self operator++(int)
+    { Self res=*this; operator ++(); return res; }
 
     /// Prefix ++ operator.
     Self& operator++()
@@ -339,8 +339,8 @@ namespace CGAL {
     }
 
     /// Postfix ++ operator.
-    void operator++(int)
-    { operator++(); }
+    Self operator++(int)
+    { Self res=*this; operator ++(); return res; }
 
     /// Prefix ++ operator.
     Self& operator++()

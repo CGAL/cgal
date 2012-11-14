@@ -38,9 +38,7 @@ class Triangle_accessor_3 {
 
 
 template < class K,class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class T_HDS,
            class Alloc>
 class Triangle_accessor_3<Polyhedron_3<K,Items,T_HDS,Alloc>, K >

@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -50,6 +50,8 @@
     <addaction name="actionDuplicate"/>
     <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
+    <addaction name="actionLoad_Script"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -60,6 +62,7 @@
     <addaction name="actionSetPolyhedronA"/>
     <addaction name="actionSetPolyhedronB"/>
     <addaction name="actionSelect_all_items"/>
+    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuOperations">
     <property name="title">
@@ -209,7 +212,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTreeView" name="treeView">
+        <widget class="QTreeView" name="sceneView">
          <property name="editTriggers">
           <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
          </property>
@@ -284,8 +287,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>748</width>
-            <height>63</height>
+            <width>545</width>
+            <height>178</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -298,13 +301,16 @@
               </sizepolicy>
              </property>
              <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
+              <enum>Qt::DefaultContextMenu</enum>
              </property>
              <property name="lineWidth">
               <number>0</number>
              </property>
              <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -621,6 +627,16 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionLoad_Script">
+   <property name="text">
+    <string>Load &amp;Script</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>&amp;Preferences</string>
    </property>
   </action>
  </widget>

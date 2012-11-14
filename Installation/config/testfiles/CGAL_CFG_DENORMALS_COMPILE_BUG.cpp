@@ -24,6 +24,8 @@
 
 //| This flag is set if the compiler bugs when handling denormal values at
 //| compile time.  At least PGCC 7.1-2 has the bug.
+//|
+//| Laurent Rineau, 2012/06/14: no supported platform has the bug now.
 
 #undef NDEBUG
 #include <cassert>

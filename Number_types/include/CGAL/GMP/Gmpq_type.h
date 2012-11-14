@@ -133,18 +133,17 @@ public:
     mpq_set_d(mpq(), d);
   }
 
-  Gmpq(Gmpfr f)
+  Gmpq(const Gmpfr &f)
   {
     std::pair<Gmpz,long> intexp=f.to_integer_exp();
-    mpq_set_z(mpq(),intexp.first.mpz());
-    if(intexp.second>0){
-            mpz_mul_2exp(mpq_numref(mpq()),
-                         mpq_numref(mpq()),
-                         (unsigned long)intexp.second);
+    if(intexp.second<0){
+            mpz_set(mpq_numref(mpq()),intexp.first.mpz());
+            mpz_ui_pow_ui(mpq_denref(mpq()),2,-intexp.second);
     }else{
-            mpz_mul_2exp(mpq_denref(mpq()),
-                         mpq_denref(mpq()),
-                         (unsigned long)(-intexp.second));
+            mpz_mul_2exp(mpq_numref(mpq()),
+                         intexp.first.mpz(),
+                         (unsigned long)intexp.second);
+            mpz_set_ui(mpq_denref(mpq()),1);
     }
     // mpq_canonicalize is needed only when the numerator is odd and not zero
     if(mpz_tstbit(intexp.first.mpz(),0)==0 && mpz_sgn(intexp.first.mpz())!=0)

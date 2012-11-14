@@ -889,7 +889,6 @@ public:
       typedef typename std::iterator_traits<InputPointIterator>::value_type Input_point;
       
       typedef std::vector<Input_point> Input_point_vector ;
-      typedef typename Input_point_vector::iterator Input_point_iterator ;
      
       // Remove coincident consecutive vertices
       Input_point_vector lList;

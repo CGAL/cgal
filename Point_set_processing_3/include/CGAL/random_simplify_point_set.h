@@ -65,8 +65,8 @@ random_simplify_point_set(
   std::random_shuffle (first, beyond);
 
   // Computes first iterator to remove
-  int nb_points = std::distance(first, beyond);
-  int first_index_to_remove = int(double(nb_points) * ((100.0-removed_percentage)/100.0));
+  std::size_t nb_points = std::distance(first, beyond);
+  std::size_t first_index_to_remove = (std::size_t)(double(nb_points) * ((100.0-removed_percentage)/100.0));
   ForwardIterator first_point_to_remove = first;
   std::advance(first_point_to_remove, first_index_to_remove);
 

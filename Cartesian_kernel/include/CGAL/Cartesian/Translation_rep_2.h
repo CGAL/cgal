@@ -25,6 +25,8 @@
 #ifndef CGAL_CARTESIAN_TRANSLATION_REP_2_H
 #define CGAL_CARTESIAN_TRANSLATION_REP_2_H
 
+#include <CGAL/Cartesian/Aff_transformation_rep_2.h>
+
 namespace CGAL {
 
 template < class R >

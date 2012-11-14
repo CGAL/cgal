@@ -227,11 +227,11 @@ namespace CircularFunctors {
     //CGAL_kernel_precondition (A1.is_x_monotone());
     //CGAL_kernel_precondition (A2.is_x_monotone());
 
+#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+    // intersection found on the map
     typedef std::vector<CGAL::Object> solutions_container; 
     typedef typename CK::Circular_arc_2 Circular_arc_2; 
 
-#ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
-    // intersection found on the map
     solutions_container early_sols;
     if(Circular_arc_2::template find_intersection< solutions_container >
       (A1,A2,early_sols)) {
@@ -1057,9 +1057,6 @@ template < class CK, class OutputIterator >
 		   OutputIterator res )
   {
     typedef typename CK::Circular_arc_2           Circular_arc_2;
-    typedef typename CK::Circle_2                 Circle_2;
-    typedef typename CK::FT                       FT;
-    typedef typename CK::Point_2                  Point_2;
     typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
     typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
 
@@ -1320,9 +1317,6 @@ template < class CK, class OutputIterator >
 		            OutputIterator res )
   {
     typedef typename CK::Circular_arc_2           Circular_arc_2;
-    typedef typename CK::Circle_2                 Circle_2;
-    typedef typename CK::FT                       FT;
-    typedef typename CK::Point_2                  Point_2;
     typedef std::pair<CGAL::Object,bool >         S_pair;
 
 
@@ -1541,8 +1535,6 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
   CGAL::Bbox_2 circular_arc_bbox
   ( const typename CK::Kernel_base::Circular_arc_2 & a)
   {	
-    typedef typename CK::Root_of_2 	   Root_of_2;
-    typedef typename CK::FT 		   FT;
     typedef CGAL::Interval_nt<false>::Protector IntervalProtector;
     typedef CGAL::Interval_nt<false> Interval; 
 
