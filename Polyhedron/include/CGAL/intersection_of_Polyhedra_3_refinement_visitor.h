@@ -669,7 +669,9 @@ class Node_visitor_refine_polyhedra{
     {
       CGAL_assertion( get(m_edge_mark_pmap,std::make_pair(hedge->opposite(),&P)) );
       put(m_edge_mark_pmap,std::make_pair(hedge->prev(),&P),true);
+      put(m_edge_mark_pmap,std::make_pair(hedge->prev()->opposite(),&P),true);
       put(m_edge_mark_pmap,std::make_pair(hedge->opposite()->next(),&P),true);
+      put(m_edge_mark_pmap,std::make_pair(hedge->opposite()->next()->opposite(),&P),true);
     }
     
     Vertex_handle v=boost::prior(P.vertices_end());
@@ -1473,6 +1475,7 @@ public:
               std::pair<int,int> edge_pair(*it_id,node_id_of_first);
               border_halfedges.insert( std::make_pair(hedge,edge_pair) );
               put(m_edge_mark_pmap,std::make_pair(hedge,poly),true);
+              put(m_edge_mark_pmap,std::make_pair(hedge->opposite(),poly),true);
               update_edge_per_polyline(poly,edge_pair,hedge); 
               //save the fact that we already handle this edge
               already_done.insert(std::make_pair(node_id_of_first,*it_id));
@@ -1780,6 +1783,7 @@ public:
         if( it_poly_hedge!=edge_to_hedge.end() ){
           border_halfedges.insert( std::make_pair(Halfedge_const_handle(it_poly_hedge->second),*it_cst) );
           put(m_edge_mark_pmap,std::make_pair(it_poly_hedge->second,P),true);
+          put(m_edge_mark_pmap,std::make_pair(it_poly_hedge->second->opposite(),P),true); //setting the opposite is only needed for border edges (done in adjacent triangle otherwise)
           update_edge_per_polyline(P,it_poly_hedge->first,it_poly_hedge->second);
         }
         else{
@@ -1791,6 +1795,7 @@ public:
 
           border_halfedges.insert( std::make_pair(Halfedge_const_handle(it_poly_hedge->second),opposite_pair) );
           put(m_edge_mark_pmap,std::make_pair(it_poly_hedge->second,P),true);
+          put(m_edge_mark_pmap,std::make_pair(it_poly_hedge->second->opposite(),P),true); //setting the opposite is only needed for border edges (done in adjacent triangle otherwise)
           update_edge_per_polyline(P,it_poly_hedge->first,it_poly_hedge->second);          
         }
       }
