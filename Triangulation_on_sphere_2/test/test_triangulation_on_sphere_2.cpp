@@ -160,8 +160,7 @@ int main(){
 	Vertex_handle vv33;
 	Vertex_handle vv34;
 	Vertex_handle vv31;
-	
-	
+
 	
 	/*--------------------------*/
 	//       TEST INPUTS        //
@@ -170,6 +169,7 @@ int main(){
 	//             SPHERES
 	
     //dim-1
+	/*
 	std::cout<<"test insertion dim-1"<<std::endl;
 	assert(tr.dimension()==-2);
 	v01=tr.insert(P1);
@@ -275,7 +275,7 @@ int main(){
 	v26 = tr_2_s.insert(P26); //on face
 	assert(tr_2_s.number_of_vertices()==7);
 	assert(tr_2_s.is_valid());
-	
+	*/
 	/*--------------------------*/
 	//          LOCATION        //
 	/*--------------------------*/

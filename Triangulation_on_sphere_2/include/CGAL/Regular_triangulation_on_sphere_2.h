@@ -19,7 +19,7 @@ namespace CGAL {
 //insertion, location, removal, flips and  dim 0 and 1
 //Optimize Hole Approach and write it clearfully
 //And more...
-//test orientation in secure conflict for negative faces
+//test orientation in secure conflict for ghost faces
 
 
 template < class Gt,
@@ -162,7 +162,7 @@ public:
   Vertex_handle insert_in_plane_triangulation(const Point &p);
 	
   bool test_conflict(const Point  &p, Face_handle fh) const;
-  bool update_negative_faces(Vertex_handle v=Vertex_handle());
+  bool update_ghost_faces(Vertex_handle v=Vertex_handle());
 	
   //REMOVAL
   void remove_degree_3(Vertex_handle v, Face_handle f = Face_handle());
@@ -207,7 +207,7 @@ template <class Stream>
 
     // Points of triangulation
  for (Faces_iterator it = this->_tds.face_iterator_base_begin(); it != faces_end(); it++) {  
-    if(!it->is_negative()
+    if(!it->is_ghost()
        /*(t.orientation(it->vertex(0)->point(),it->vertex(1)->point(),it->vertex(2)->point())==1)*/
        ){//assert(orientation(it)==POSITIVE);
 	for (int i=0 ; i<3 ; i++) {
@@ -544,7 +544,7 @@ is_valid(bool verbose, int level ) const //int level
    case 2 :
     for(Faces_iterator it=faces_begin(); it!=faces_end(); it++) {
       Orientation s = orientation(it->vertex(0)->point(),  it->vertex(1)->point(), it->vertex(2)->point());
-	  result = result && ( s == LEFT_TURN || it->is_negative());	
+	  result = result && ( s == LEFT_TURN || it->is_ghost());	
 	CGAL_triangulation_assertion(result);
 	}
    
@@ -772,7 +772,7 @@ insert(const Point &p, Locate_type lt, Face_handle loc, int li) {
 			
 					
 			//if( lt != FACE )
-				update_negative_faces(v);
+				update_ghost_faces(v);
 												
 			return v;		
 	      }
@@ -802,7 +802,7 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 													  edges_begin()->first->neighbor(0)->vertex(1)->point())
 										 != RIGHT_TURN ); 
 			
-			//seting negative edge if needed
+			//seting ghost edge if needed
 			bool done=false;
 			Edges_iterator eit=edges_begin();
 			do{
@@ -810,10 +810,10 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 				Face_handle fn=f->neighbor(0);
 				Point q=fn->vertex(1)->point();
 				if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q)){
-					f->negative()=true;
+					f->ghost()=true;
 				}
 				else{
-					f->negative()=false;
+					f->ghost()=false;
 				}
 				++eit;
 			}while( eit!=edges_end() && !done );
@@ -859,15 +859,15 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 			Vertex_handle v = this->_tds.insert_dim_up( w, conform);
 			v->set_point(p);
 	  		
-			this->_negative=faces_begin();
+			this->_ghost=faces_begin();
 			
 			
-			//seting negative faces if needed
+			//seting ghost faces if needed
 			Faces_iterator fit;
 			for(fit = faces_begin(); fit != faces_end(); fit++) {
 				if(orientation(fit)==NEGATIVE){
-					fit->negative()=true;
-					this->_negative=fit;
+					fit->ghost()=true;
+					this->_ghost=fit;
 				}
 			}
 			
@@ -880,7 +880,7 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 template < class Gt, class Tds >
 bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
-update_negative_faces(Vertex_handle v)
+update_ghost_faces(Vertex_handle v)
 {
 	bool neg_found=false;
   if(dimension()==1){
@@ -890,11 +890,11 @@ update_negative_faces(Vertex_handle v)
       Face_handle fn=f->neighbor(0);
       Point q=fn->vertex(1)->point();
 		if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q)){
-	 f->negative()=true;
+	 f->ghost()=true;
 			neg_found = true;
 		}
       else 
-	f->negative()=false;
+	f->ghost()=false;
       ++eit;
     }while( eit!=edges_end());
   }
@@ -905,12 +905,12 @@ update_negative_faces(Vertex_handle v)
     	
     do{
       if(orientation(fc)==NEGATIVE){
-	     fc->negative()=true;
+	     fc->ghost()=true;
 	     neg_found=true;
-	     this->_negative=fc;
+	     this->_ghost=fc;
       }
       else{
-	     fc->negative()=false;
+	     fc->ghost()=false;
       }
     }while(++fc!=done);
 	
@@ -960,7 +960,7 @@ Regular_triangulation_on_sphere_2<Gt, Tds>::
 remove_1D(Vertex_handle v)
 {
 	this->_tds.remove_1D(v);
-	update_negative_faces();
+	update_ghost_faces();
 }
 	
 	
@@ -975,7 +975,7 @@ remove_2D(Vertex_handle v)
 	
   if (test_dim_down(v)) { 
     this->_tds.remove_dim_down(v);
-	update_negative_faces();
+	update_ghost_faces();
   }
   else {
     std::list<Edge> hole;
@@ -1066,8 +1066,8 @@ fill_hole_regular(std::list<Edge> & first_hole)
 	      newf->set_vertex(newf->ccw(j),ff->vertex(ff->cw(ii)));
 	    }
 	  if(orientation(newf) != POSITIVE){
-	    this->_negative=newf;
-	    newf->negative()=true;
+	    this->_ghost=newf;
+	    newf->ghost()=true;
 	  }
 	  continue;
 	}
@@ -1130,8 +1130,8 @@ fill_hole_regular(std::list<Edge> & first_hole)
       newf->set_neighbor(2,ff);
       ff->set_neighbor(ii, newf);
       if(orientation(newf) != POSITIVE){
-	this->_negative=newf;
-	newf->negative()=true;
+	this->_ghost=newf;
+	newf->ghost()=true;
       }
       //update the hole and push back in the Hole_List stack
       // if v2 belongs to the neighbor following or preceding *f

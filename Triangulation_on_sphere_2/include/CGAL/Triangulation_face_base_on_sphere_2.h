@@ -31,7 +31,7 @@ class Triangulation_face_base_on_sphere_2
   : public Fb
 {
 protected:
-bool _negative;
+bool _ghost;
 
 public:
   typedef Gt                                           Geom_traits;
@@ -46,12 +46,12 @@ public:
 
 public:
   Triangulation_face_base_on_sphere_2()
-: Fb(),_negative(false) {}
+: Fb(),_ghost(false) {}
 
   Triangulation_face_base_on_sphere_2(Vertex_handle v0, 
 			    Vertex_handle v1, 
 			    Vertex_handle v2)
-: Fb(v0,v1,v2),_negative(false) {}
+: Fb(v0,v1,v2),_ghost(false) {}
 
   Triangulation_face_base_on_sphere_2(Vertex_handle v0, 
 			    Vertex_handle v1, 
@@ -59,12 +59,12 @@ public:
 			    Face_handle n0, 
 			    Face_handle n1, 
 			    Face_handle n2)
-    : Fb(v0,v1,v2,n0,n1,n2),_negative(false) {}
+    : Fb(v0,v1,v2,n0,n1,n2),_ghost(false) {}
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
   static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
-  const bool& is_negative() const { return _negative; }
-  bool&       negative()       { return _negative; }
+  const bool& is_ghost() const { return _ghost; }
+  bool&       ghost()       { return _ghost; }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   Vertex_handle mirror_vertex(int i) const;

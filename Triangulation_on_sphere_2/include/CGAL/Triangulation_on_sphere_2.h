@@ -102,7 +102,7 @@ protected:
   Tds _tds;
   Vertex_handle _pivot;
   bool _full_sphere;
-  Face_handle _negative;
+  Face_handle _ghost;
 
   mutable Random rng;  
 
@@ -141,7 +141,7 @@ public:
   size_type number_of_vertices() const {return _tds.number_of_vertices();}
 size_type number_of_faces() const{return _tds.number_of_faces();}
 		
-  int number_of_negative_faces();
+  int number_of_ghost_faces();
  
 
   
@@ -352,8 +352,8 @@ is_valid(bool verbose, int level) const
       Orientation s = orientation(it->vertex(0)->point(),
 				  it->vertex(1)->point(),
 				  it->vertex(2)->point());
-      CGAL_triangulation_assertion( s == LEFT_TURN || it->is_negative() );
-      result = result && ( s == LEFT_TURN || it->is_negative() );
+      CGAL_triangulation_assertion( s == LEFT_TURN || it->is_ghost() );
+      result = result && ( s == LEFT_TURN || it->is_ghost() );
     }
 
     // check number of faces. This cannot be done by the Tds
@@ -447,14 +447,14 @@ march_locate_1D(const Point& t, Locate_type& lt, int& li) const
 
   Edges_iterator eit=edges_begin();
   
-  //find negative face if exists
+  //find ghost face if exists
   for(; eit!=edges_end(); ++eit){
-    if(eit->first->is_negative())
+    if(eit->first->is_ghost())
     {f=eit->first; break;}
   }
 
   //if so check wether t is on the convex_hull or not
-  if(f->is_negative()){
+  if(f->is_ghost()){
     //show_face(f);
     if(xy_equal(t,f->vertex(0)->point())){
       lt = VERTEX;
@@ -477,7 +477,7 @@ march_locate_1D(const Point& t, Locate_type& lt, int& li) const
   eit=edges_begin();
   Vertex_handle u,v;
   for( ; eit!=edges_end() ; ++eit) {
-    if(!eit->first->is_negative()){
+    if(!eit->first->is_ghost()){
       u = (*eit).first->vertex(0);
       v = (*eit).first->vertex(1);
       if(xy_equal(t,v->point())){
@@ -509,13 +509,13 @@ march_locate_2D(Face_handle c,
 	        int& li) const
 {
 	
-	CGAL_triangulation_assertion(!c->is_negative());
+	CGAL_triangulation_assertion(!c->is_ghost());
 	
 	Face_handle prev = Face_handle();
 	bool first=true;
 	
 	while (1) {
-		if ( c->is_negative() ) {
+		if ( c->is_ghost() ) {
 			if(orientation(c, t)==ON_POSITIVE_SIDE){ //conflict with the corresponding face
 			   lt = OUTSIDE_CONVEX_HULL;
 			   li = 4;
@@ -546,7 +546,7 @@ march_locate_2D(Face_handle c,
 	
 	
 	
-  /*CGAL_triangulation_assertion(!c->is_negative());
+  /*CGAL_triangulation_assertion(!c->is_ghost());
 
 	
 		
@@ -561,7 +561,7 @@ march_locate_2D(Face_handle c,
 	  
 	
 	  if(orientation(p0,p1,p2,t)!=ON_NEGATIVE_SIDE){
-		  if (c ->is_negative()){
+		  if (c ->is_ghost()){
 			  lt = OUTSIDE_CONVEX_HULL;
 			  li = 4;
 		      return c;
@@ -791,11 +791,11 @@ locate(const Point& p,
       start=faces_begin();
   }
  
-  if(start->is_negative()){
+  if(start->is_ghost()){
 	
 	  for (Faces_iterator it = this->_tds.face_iterator_base_begin(); it != faces_end(); it++) {  
 	  
-		  if(!it->is_negative()){
+		  if(!it->is_ghost()){
 		  start = it;
 			  break;
 		  }
@@ -1007,11 +1007,11 @@ show_all() const
 template <class Gt, class Tds >
 int
 Triangulation_on_sphere_2<Gt, Tds>::
-number_of_negative_faces() 
+number_of_ghost_faces() 
 {
   int nb=0;
   for(Faces_iterator it=faces_begin();it!=faces_end();++it)
-    if(it->is_negative())
+    if(it->is_ghost())
 		nb++;
   return nb;
 }
@@ -1032,7 +1032,7 @@ Triangulation_on_sphere_2<Gt, Tds>::
 show_face(Face_handle fh) const
 {
   std::cerr << "face : "<<(void*)&(*fh)<<" => "<<std::endl;
-  if(fh->is_negative()) std::cerr << "negative "<<std::endl;
+  if(fh->is_ghost()) std::cerr << "ghost "<<std::endl;
  
   int i = fh->dimension(); 
   switch(i){
