@@ -62,16 +62,34 @@ public:
   {}
 
   /*!
-   * Constructor from a range of points, defining the endpoints of the
-   * polyline segments.
+   * Constructor from a range. The range can be either:
+   * - Range of points, and the polyline is defined by the order of the points
+   * - Range of linear object. The polyline is the sequence of linear objects.
+   *   Note, that the end of object n should be the beginning of object n+1.
+   *   See furtehr details in the corresponding implementation.
+   * \param begin An iterator pointing to the first point in the range.
+   * \param end An iterator pointing after the last point in the range.
+   * \pre Depends on the range's content. See the implementations
+   *      for furtehr details.
+   */
+  template <class InputIterator>
+  _Polyline_2 (InputIterator begin, InputIterator end) :
+    segments()
+  {
+    polyline_constructor_imp( begin, end, *begin);
+  }
+
+  /*!
+   * Construct a polyline from a range of points.
    * \param begin An iterator pointing to the first point in the range.
    * \param end An iterator pointing after the last point in the range.
    * \pre The are at least 2 points in the range.
    *      In other cases, an empty polyline will be created.
    */
   template <class InputIterator>
-  _Polyline_2 (InputIterator begin, InputIterator end) :
-    segments()
+  void polyline_constructor_imp (
+				 InputIterator begin, InputIterator end, 
+				 Point_2)
   {
     // Check if there are no points in the range:
     InputIterator  ps = begin;
