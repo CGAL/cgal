@@ -16,10 +16,10 @@
 - `FieldWithKthRoot`
 - `FieldWithRootOf`
 
+- `AlgebraicStructureTraits`
 - `AlgebraicStructureTraits::IsZero`
 - `AlgebraicStructureTraits::IsOne`
 - `AlgebraicStructureTraits::Square`
-
 - `AlgebraicStructureTraits::Simplify`
 - `AlgebraicStructureTraits::UnitPart`
 - `AlgebraicStructureTraits::IntegralDivision`
