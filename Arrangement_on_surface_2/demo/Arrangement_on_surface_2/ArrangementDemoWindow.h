@@ -61,7 +61,7 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
     POLYLINE_TRAITS,
     CONIC_TRAITS,
     LINEAR_TRAITS,
-    CIRCULAR_ARC_TRAITS,
+    CIRCULAR_ARC_TRAITS
     // ALGEBRAIC_TRAITS
   } TraitsType;
     

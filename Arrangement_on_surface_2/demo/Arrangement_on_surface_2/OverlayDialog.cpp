@@ -34,9 +34,9 @@ OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent,
   QDialog( parent, f ),
   ui( new Ui::OverlayDialog )
 {
-  QBrush segColor( QColor( Qt::red ) );
-  QBrush polyColor( QColor( Qt::darkGreen ) );
-  QBrush conicColor( QColor( Qt::blue ) );
+  QBrush segColor( QColor( ::Qt::red ) );
+  QBrush polyColor( QColor( ::Qt::darkGreen ) );
+  QBrush conicColor( QColor( ::Qt::blue ) );
   this->ui->setupUi( this );
 
   std::vector< QString > labels = parent->getTabLabels( );

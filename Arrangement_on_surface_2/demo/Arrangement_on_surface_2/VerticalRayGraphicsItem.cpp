@@ -29,7 +29,7 @@ VerticalRayGraphicsItem::VerticalRayGraphicsItem( ) :
   m_targetY( 0.0 ),
   m_isInfinite( false ),
   m_color( ::Qt::green ),
-  m_width( 1.0 )
+  m_width( 1 )
 {}
 
 void VerticalRayGraphicsItem::paint( QPainter* painter,

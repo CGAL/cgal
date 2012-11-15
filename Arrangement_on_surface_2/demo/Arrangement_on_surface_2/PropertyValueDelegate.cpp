@@ -71,45 +71,41 @@ void PropertyValueDelegate::setModelData( QWidget* editor,
                                           QAbstractItemModel* model,
                                           const QModelIndex& index ) const
 {
-  ColorItemEditor* colorEditor = 0;
-  DeleteCurveModeItemEditor* modeEditor = 0;
-  if (colorEditor = (qobject_cast<ColorItemEditor*>(editor)))
+  ColorItemEditor* colorEditor = qobject_cast<ColorItemEditor*>(editor);
+  if (colorEditor)
   {
     // std::cout << "set color model data" << std::endl;
-    model->setData( index, colorEditor->color( ), Qt::DisplayRole );
-    model->setData( index, colorEditor->color( ), Qt::DecorationRole );
-    model->setData( index, QVariant::fromValue( colorEditor->color( ) ),
-                    Qt::UserRole );
+    model->setData(index, colorEditor->color(), Qt::DisplayRole);
+    model->setData(index, colorEditor->color(), Qt::DecorationRole);
+    model->setData(index, QVariant::fromValue(colorEditor->color()),
+                    Qt::UserRole);
+    return;
   }
-  else if (modeEditor = (qobject_cast<DeleteCurveModeItemEditor*>(editor)))
-  {
-    model->setData( index, DeleteCurveMode::ToString( modeEditor->mode( ) ),
-                    Qt::DisplayRole );
-    model->setData( index, QVariant::fromValue( modeEditor->mode( ) ),
-                    Qt::UserRole );
+  DeleteCurveModeItemEditor* modeEditor =
+    qobject_cast<DeleteCurveModeItemEditor*>(editor);
+  if (modeEditor) {
+    model->setData(index, DeleteCurveMode::ToString(modeEditor->mode()),
+                   Qt::DisplayRole);
+    model->setData(index, QVariant::fromValue(modeEditor->mode()),
+                   Qt::UserRole);
+    return;
   }
-  else
-  {
-    QItemDelegate::setModelData( editor, model, index );
-  }
+  QItemDelegate::setModelData(editor, model, index);
 }
 
 bool PropertyValueDelegate::eventFilter( QObject* object, QEvent* event )
 {
-  QWidget *editor = qobject_cast<QWidget*>(object);
-  ColorItemEditor* colorEditor;
-  DeleteCurveModeItemEditor* modeEditor;
-  if (event->type() == QEvent::FocusOut ||
+  QWidget* editor = qobject_cast<QWidget*>(object);
+  if ((event->type() == QEvent::FocusOut) ||
       (event->type() == QEvent::Hide && editor->isWindow()))
   {
-    if (colorEditor = (qobject_cast<ColorItemEditor*>(editor)))
-    {
+    ColorItemEditor* colorEditor = qobject_cast<ColorItemEditor*>(editor);
+    if (colorEditor)
       return false;
-    }
-    if (modeEditor = (qobject_cast<DeleteCurveModeItemEditor*>(editor)))
-    {
+    DeleteCurveModeItemEditor* modeEditor =
+      qobject_cast<DeleteCurveModeItemEditor*>(editor);
+    if (modeEditor)
       return false;
-    }
   }
   return QItemDelegate::eventFilter( object, event );
 }

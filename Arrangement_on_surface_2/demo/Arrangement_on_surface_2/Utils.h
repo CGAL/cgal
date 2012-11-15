@@ -1086,8 +1086,8 @@ public:
       (int( viewportRect.left( ) ) % this->gridSize);
     int right = int( viewportRect.right( ) ) +
       (this->gridSize - int( viewportRect.right( ) ) % this->gridSize);
-    int x = clickedPoint.x( );
-    int y = clickedPoint.y( );
+    int x = int(clickedPoint.x( ));
+    int y = int(clickedPoint.y( ));
     for ( int i = left - this->gridSize; i <= right; i += this->gridSize )
     {
       if ( i - d <= clickedPoint.x( ) && clickedPoint.x( ) <= i + d )
@@ -1115,7 +1115,8 @@ public:
 
   template < class CircularKernel >
   Point_2 snapPoint(QGraphicsSceneMouseEvent* event,
-                    CGAL::Arr_circular_arc_traits_2<CircularKernel> /* traits */)
+                    CGAL::Arr_circular_arc_traits_2<CircularKernel>
+                    /* traits */)
   {
     QPointF clickedPoint = event->scenePos( );
     QRectF viewportRect = this->viewportRect( );
@@ -1130,8 +1131,8 @@ public:
       (int( viewportRect.left( ) ) % this->gridSize);
     int right = int( viewportRect.right( ) ) +
       (this->gridSize - int( viewportRect.right( ) ) % this->gridSize);
-    int x = clickedPoint.x( );
-    int y = clickedPoint.y( );
+    int x = int(clickedPoint.x( ));
+    int y = int(clickedPoint.y( ));
     for ( int i = left - this->gridSize; i <= right; i += this->gridSize )
     {
       if ( i - d <= clickedPoint.x( ) && clickedPoint.x( ) <= i + d )
@@ -1241,7 +1242,8 @@ public:
 
   template < class CircularKernel >
   Point_2 snapPoint(const Kernel_point_2& clickedPoint,
-                    CGAL::Arr_circular_arc_traits_2<CircularKernel> /* traits */)
+                    CGAL::Arr_circular_arc_traits_2<CircularKernel>
+                    /* traits */)
   {
     typedef Kernel_point_2 Non_arc_point_2;
     typedef typename CircularKernel::Circular_arc_point_2 Arc_point_2;
