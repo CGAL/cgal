@@ -1857,7 +1857,7 @@ public:
       output_debug << *current_poly;
       #endif
       
-      extract_connected_components(*(current_poly),criterium,uf,map_f2h,result);
+      extract_connected_components(*(static_cast<Polyhedron const *> (current_poly) ),criterium,uf,map_f2h,result);
 
       
       //add each connected component in the map with 2 volumes per component.
