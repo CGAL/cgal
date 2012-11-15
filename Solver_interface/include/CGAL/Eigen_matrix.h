@@ -53,7 +53,7 @@ public:
   /// Create a square matrix initialized with zeros.
   Eigen_sparse_matrix(int  dim,                   ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
-    : m_matrix(dim,dim), m_is_uptodate(false)
+    : m_is_uptodate(false), m_matrix(dim,dim)
   {
     CGAL_precondition(dim > 0);
 
@@ -68,7 +68,7 @@ public:
   Eigen_sparse_matrix(int  rows,                 ///< Number of rows.
                       int  columns,              ///< Number of columns.
                       bool is_symmetric = false) ///< Symmetric/hermitian?
-    : m_matrix(rows,columns), m_is_uptodate(false)
+    : m_is_uptodate(false), m_matrix(rows,columns)
   {
     CGAL_precondition(rows > 0);
     CGAL_precondition(columns > 0);
