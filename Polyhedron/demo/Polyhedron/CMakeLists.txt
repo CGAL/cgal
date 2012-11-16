@@ -28,7 +28,9 @@ foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_ker
 endforeach()
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../include )
+include_directories( BEFORE ./ ./include ../../include ./CGAL_demo)
+
+add_subdirectory( implicit_functions )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
@@ -102,6 +104,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
 
+  qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
+
   include(AddFileDependencies)
 
   qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
@@ -130,6 +134,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Camera_positions_list.cpp
               Scene_points_with_normal_item.cpp
               )
+  qt4_automoc( Scene_implicit_function_item.cpp )
 
 
   # AUXILIARY LIBRARIES
@@ -190,6 +195,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
+
+  add_item(scene_implicit_function_item Scene_implicit_function_item.cpp Scene_implicit_function_item.moc Color_ramp.cpp)
 
   add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp Scene_polygon_soup_item.moc)
   target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
@@ -317,6 +324,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(polylines_io_plugin Polyhedron_demo_polylines_io_plugin)
   target_link_libraries(polylines_io_plugin scene_polylines_item)
+
+  polyhedron_demo_plugin(io_implicit_function_plugin Io_implicit_function_plugin ${funcUI_FILES})
+  target_link_libraries(io_implicit_function_plugin scene_implicit_function_item)
 
   polyhedron_demo_plugin(gocad_plugin Polyhedron_demo_gocad_plugin)
   target_link_libraries(gocad_plugin scene_polyhedron_item)
