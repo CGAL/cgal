@@ -151,6 +151,7 @@ size_type number_of_faces() const{return _tds.number_of_faces();}
   Face_handle march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
   Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle start) const;
   Face_handle locate(const Point &p, Face_handle start) const;
+	Face_handle locate_edge(const Point& p, Locate_type& lt, int& li, bool plane)const;
 
   //------------------------------------------------------------------------PREDICATES----------------------------------------
   Orientation orientation(const Point& p, const Point& q, const Point& r) const;
@@ -400,107 +401,94 @@ is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,Face_handle &fr) co
 }
 
 //---------------------------------------------------------------------------/POINT LOCATION---------------------------------------//
-
+template <class Gt, class Tds>
+typename Triangulation_on_sphere_2<Gt, Tds> ::Face_handle
+Triangulation_on_sphere_2<Gt, Tds>::
+locate_edge(const Point& p, Locate_type& lt, int& li, bool plane)const{
+	Face_handle loc;
+	if(plane){
+		Edges_iterator eit;
+		for(eit = edges_begin(); eit != edges_end(); eit ++){
+			if(!eit->first->is_ghost())
+				if(collinear_between(eit->first->vertex(0)->point(), eit->first->vertex(1)->point(),p))
+					return (*eit).first;
+			if (eit->first->is_ghost())
+				loc = eit->first;
+		}
+		return loc;
+	}
+	else {
+		Edges_iterator eit;
+		Face_handle f;
+		for(eit = edges_begin(); eit!= edges_end(); eit ++){
+			 f=eit->first;
+			Vertex_handle v1 = f->vertex(0);
+			Vertex_handle v2 = f -> vertex(1);
+			if(!f->is_ghost())
+			if(orientation(v1->point(), v2->point(), p)==RIGHT_TURN){
+				lt=EDGE;
+				li=2;
+				return (*eit).first;
+				
+			}	
+			if(f->is_ghost())
+				loc = f;
+		}
+		return loc;
+		
+}
+}
+	
+	
+	
+	
+	
 template <class Gt, class Tds >    
 typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::
-march_locate_1D(const Point& t, Locate_type& lt, int& li) const
+march_locate_1D(const Point& p, Locate_type& lt, int& li) const
 {
-		
 	
-  Face_handle f = edges_begin()->first;
-
-  //first check if the circle is coplanar with o
-  Orientation pqr = orientation(f->vertex(0)->point(), 
-				                f->vertex(1)->point(),
-								f->neighbor(0)->vertex(1)->point());
-  if( pqr != ON_ORIENTED_BOUNDARY ){
-    if(xy_equal(t,f->vertex(0)->point())){
-      lt = VERTEX;
-      li = 0;
-      return f;
-    }
-    if(xy_equal(t,f->vertex(1)->point())){
-      lt = VERTEX;
-      li = 1;
-      return f;
-    }
-    if(xy_equal(t,f->neighbor(0)->vertex(1)->point())){
-      lt = VERTEX;
-      li = 1;
-      return f->neighbor(0);
-    }
-    lt = OUTSIDE_AFFINE_HULL;
-    li = 4 ;// should not be used
-    return f;
-  }
-
-  //if not ckeck wether t is in the plane of the circle or not
-  Orientation pqt = orientation(f->vertex(0)->point(), 
-				f->vertex(1)->point(),
-				t);
-  if(pqt != ON_ORIENTED_BOUNDARY) {
-    lt = OUTSIDE_AFFINE_HULL;
-    li = 4 ;// should not be used
-    return f;
-  }
-
-  Edges_iterator eit=edges_begin();
-  
-  //find ghost face if exists
-  for(; eit!=edges_end(); ++eit){
-    if(eit->first->is_ghost())
-    {f=eit->first; break;}
-  }
-
-  //if so check wether t is on the convex_hull or not
-  if(f->is_ghost()){
-    //show_face(f);
-    if(xy_equal(t,f->vertex(0)->point())){
-      lt = VERTEX;
-      li = 0;
-      return f;
-    }
-    if(xy_equal(t,f->vertex(1)->point())){
-      lt = VERTEX;
-      li = 1;
-      return f;
-    }
-    if (!collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),t)) {
-		lt = OUTSIDE_CONVEX_HULL;
-      li = 4;
-      return f;
-    }
-  }
-  
-  //then t is in the convex hull	
-  eit=edges_begin();
-  Vertex_handle u,v;
-  for( ; eit!=edges_end() ; ++eit) {
-    if(!eit->first->is_ghost()){
-      u = (*eit).first->vertex(0);
-      v = (*eit).first->vertex(1);
-      if(xy_equal(t,v->point())){
-	lt = VERTEX;
-	li = 1;
-	return (*eit).first;
-      }
-      if(collinear_between(u->point(), v->point(), t)){
-	lt = EDGE;
-	li =  2;
-	return (*eit).first;
-      }
-    }
-  }
-  //Provisoire pas satisfaisant du tout!
-  lt=OUTSIDE_CONVEX_HULL;
-  li=4;
-  return f;
-  CGAL_triangulation_assertion(false);
-  return Face_handle();
+ Face_handle f = edges_begin()->first;
+//check if p is coplanar with existing points
+	
+	//first three points of triangulation
+	Vertex_handle v1=f->vertex(0);
+	Vertex_handle v2=f->vertex(1);
+	Vertex_handle v3=f->neighbor(0)->vertex(1);
+	 
+	Orientation orient = orientation(v1->point(), v2->point(), v3->point(),p);
+	if(orient !=ON_ORIENTED_BOUNDARY){
+		lt = OUTSIDE_AFFINE_HULL;
+		li = 4;
+		return f;
+	}
+	
+	//check if p is coradial with one existing point
+	Vertices_iterator vi;
+    for( vi = vertices_begin(); vi != vertices_end(); vi++){
+		if (xy_equal(vi->point(), p)){
+			lt = VERTEX;
+			li = 1;
+			return f;
+		}
+	}
+	
+	//***find conflicting edge***
+	lt=EDGE;
+	li = 2;
+	
+	Orientation pqr = orientation(v1->point(),v2->point(),v3->point());
+	if(pqr == ON_ORIENTED_BOUNDARY)
+		return locate_edge(p, lt, li, true);
+	else {
+		return locate_edge(p, lt,li,false);
+	}
 
 }
-  
+	
+
+	  
 template <class Gt, class Tds >   typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::
 march_locate_2D(Face_handle c,
@@ -542,39 +530,7 @@ march_locate_2D(Face_handle c,
 		const Point & p1 = c->vertex( 1 )->point();
 		const Point & p2 = c->vertex( 2 )->point();
 		
-	
-	
-	
-	
-  /*CGAL_triangulation_assertion(!c->is_ghost());
-
-	
-		
-  Face_handle prev = Face_handle();
-  bool first=true;
-
-  while (1) {
-	  
-	  const Point & p0 = c->vertex( 0 )->point();
-	  const Point & p1 = c->vertex( 1 )->point();
-	  const Point & p2 = c->vertex( 2 )->point();
-	  
-	
-	  if(orientation(p0,p1,p2,t)!=ON_NEGATIVE_SIDE){
-		  if (c ->is_ghost()){
-			  lt = OUTSIDE_CONVEX_HULL;
-			  li = 4;
-		      return c;
-		  }
-		
-		  else {
-			  lt = FACE;
-			  li = 4;		  
-			  return c;
-		  }
-	  }*/
-
-    // Instead of testing c's edges in a random order we do the following
+	// Instead of testing c's edges in a random order we do the following
     // until we find a neighbor to go further:
     // As we come from prev we do not have to check the edge leading to prev
     // Now we flip a coin in order to decide if we start checking the
@@ -977,6 +933,7 @@ show_all() const
     Edges_iterator aeit;
       for(aeit = edges_begin(); aeit != edges_end(); aeit++){
        show_face(aeit->first);
+		std::cerr<<"   ------------   " <<std::endl;  
     }
     return;
   }

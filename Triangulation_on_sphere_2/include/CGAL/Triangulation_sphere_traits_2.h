@@ -25,8 +25,8 @@ public:
 	
  Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
  {
-	return coplanar_orientation(_sphere,p,q,r);
-	 //return coplanar_orientation(p,q,r,_sphere);
+	//return coplanar_orientation(_sphere,p,q,r);
+	 return coplanar_orientation(p,q,r,_sphere);
  }
 
 	Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r,const Point_2& s) const

@@ -159,7 +159,7 @@ public:
   Vertex_handle insert_second(const Point &p);
   Vertex_handle insert_outside_affine_hull_regular(const Point& p,bool plane=false);
   //Vertex_handle insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) ;
-  Vertex_handle insert_in_plane_triangulation(const Point &p);
+  Vertex_handle insert_in_plane_triangulation(const Point &p, Locate_type lt, Face_handle loc);
 	
   bool test_conflict(const Point  &p, Face_handle fh) const;
   bool update_ghost_faces(Vertex_handle v=Vertex_handle());
@@ -532,7 +532,7 @@ is_valid(bool verbose, int level ) const //int level
 		is_valid_face(fit, verbose, level);
 			  
    for(Vertices_iterator vit = vertices_begin(); vit != vertices_end(); ++vit) 
-        is_valid_vertex(vit);
+        is_valid_vertex(vit, verbose, level);
 
 
    switch(dimension()) {
@@ -632,10 +632,12 @@ insert(const Point &p, Face_handle start)
 template < class Gt, class Tds>
 typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_on_sphere_2<Gt, Tds>::
-insert_in_plane_triangulation(const Point &p){
+insert_in_plane_triangulation(const Point &p, Locate_type lt, Face_handle loc){
 	
 	CGAL_triangulation_precondition(!test_dim_up(p));
 	CGAL_triangulation_precondition(dimension()==1);
+	
+	/*
 	Face_handle f = edges_begin()->first;
 	Face_handle loc;
 	//existing points coplanar with sphere?
@@ -675,7 +677,7 @@ insert_in_plane_triangulation(const Point &p){
 				
 			} eit++;
 		}while( eit!=edges_end());
-	}
+	}*/
 		
 		Vertex_handle v0 = loc->vertex(0);
 		Vertex_handle v1 = loc->vertex(1);
@@ -755,7 +757,7 @@ insert(const Point &p, Locate_type lt, Face_handle loc, int li) {
 			return v;
 			} 
 			else {
-			 v= insert_in_plane_triangulation(p);	
+			 v= insert_in_plane_triangulation(p,lt,loc);	
 			return v;
 		    }
 			
@@ -826,8 +828,11 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 			Face_handle f = (edges_begin())->first;
 			
 			if(plane){//points coplanar with geom_traits->sphere
+				Vertex_handle v1 = f->vertex(0);
+				Vertex_handle v2 = f->vertex(1);
 				Orientation orient = orientation( f->vertex(0)->point(),f->vertex(1)->point(),p);
-				conform = ( orient == COUNTERCLOCKWISE);
+				//conform = ( orient == COUNTERCLOCKWISE);
+				conform = (orient != CLOCKWISE);
 			}
 			
 			else{//three vertices non-coplanar with geom_traits->sphere
@@ -845,7 +850,7 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 				
 			}
 			
-			//find smalest certex
+			//find smalest vertex
 			Vertex_handle w=vertices_begin();
 			Vertices_iterator vi;
 			for( vi = vertices_begin(); vi != vertices_end(); vi++){
@@ -865,7 +870,8 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 			//seting ghost faces if needed
 			Faces_iterator fit;
 			for(fit = faces_begin(); fit != faces_end(); fit++) {
-				if(orientation(fit)==NEGATIVE){
+				//if(orientation(fit)==NEGATIVE){
+				if(orientation(fit)!=POSITIVE){
 					fit->ghost()=true;
 					this->_ghost=fit;
 				}
@@ -904,7 +910,8 @@ update_ghost_faces(Vertex_handle v)
     Face_circulator done(fc);
     	
     do{
-      if(orientation(fc)==NEGATIVE){
+      //if(orientation(fc)==NEGATIVE){
+		if(orientation(fc)!=POSITIVE){
 	     fc->ghost()=true;
 	     neg_found=true;
 	     this->_ghost=fc;
