@@ -103,7 +103,7 @@ bool are_equal(RTOS triA, RTOS triB){
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =10;
+	nu_of_pts =10000;
 	radius=6000000;
 	//radius = 1;
 	//double minDist = radius*2e-25;

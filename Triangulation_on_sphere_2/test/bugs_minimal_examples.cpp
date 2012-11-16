@@ -113,7 +113,8 @@ int main(int argc, char* argv[])
 	
 	std::vector<K::Point_3> points;
 	std::vector<K::Point_3> points2;
-/*
+	std::vector<K::Point_3> points4;
+
 	// insert and remove 5 coplanar points. Points are also coplanar with the center of the sphere
 		Point_3 p1=Point_3(radius/sqrt(2), radius/sqrt(2), 0);
 	Point_3 p2 = Point_3(-1*radius/sqrt(2), radius/sqrt(2), 0);
@@ -130,11 +131,19 @@ int main(int argc, char* argv[])
 	points.resize(5);
 
  Vertex_handle v1 = rtos.insert(p1);
+	rtos.is_valid();
 	Vertex_handle v4 = rtos.insert(p4);
+	rtos.is_valid();
 Vertex_handle v2 = rtos.insert(p2);
 	Vertex_handle v5 = rtos.insert(p5);
+	rtos.show_all();
 Vertex_handle v3 = rtos.insert(p3);
+	rtos.is_valid();
+	
+	
+
 	Vertex_handle v6 = rtos.insert(p6);
+	
 
  
 	rtos.is_valid();
@@ -153,11 +162,8 @@ std::random_shuffle(points.begin(), points.end());
 	//rtos.remove(v4);
 	//rtos.is_valid();
 	//rtos.remove(v5);
-	*/
 	//insert   coplanar Points. Points are coplanar but not coplanar with the center of the sphere
 	rtos.clear();
-	Point_3 p27 = Point_3(0,0,radius);
-	points2.push_back(p27);
 	Point_3 p0 = Point_3(0,0,radius);
 	points2.push_back(p0);
 	Point_3 p21 = Point_3(1/sqrt(2),1/sqrt(2),sqrt(radius2-1));
@@ -177,7 +183,11 @@ std::random_shuffle(points.begin(), points.end());
 	
 	Point_3 p26 = Point_3(1/sqrt(2), -1/sqrt(2), sqrt(radius2-1));
 	points2.push_back(p26);
-		//Vertex_handle v0 = rtos.insert(p0);
+	
+	Point_3 p27 = Point_3(radius, 0 ,0);
+	points2.push_back(p27);
+	Vertex_handle v0 = rtos.insert(p0);
+	
 	
 	Vertex_handle v21 = rtos.insert(p21);
 	Vertex_handle v22 = rtos.insert(p22);
@@ -189,26 +199,41 @@ std::random_shuffle(points.begin(), points.end());
 	Vertex_handle v24 = rtos.insert(p24); 
 	Vertex_handle v25 = rtos.insert(p25);
 	Vertex_handle v26 = rtos.insert(p26); 			
-	Vertex_handle v27 = rtos.insert(p27);
+	//Vertex_handle v27 = rtos.insert(p27);
 	rtos.is_valid();
 
 	
+	std::cout<<"*************"<<std::endl;
+	std::cout<<"*************"<<std::endl;
+	std::cout<< "points"<<std::endl;
+	points2.resize(7);
 	
-	
-	points2.resize(8);
+	std::cout<<"number of points"<<std::endl;
+	std::cout<<points2.size()<<std::endl;
 	std::random_shuffle(points2.begin(), points2.end());
-	for(int i=0; i<8; i++){
+	for(int i=0; i<points2.size(); i++)
+		std::cout<<points2.at(i)<<std::endl;
+	std::cout<< "end points"<<std::endl;
+	
+	
+	rtos2.clear();
+	for(int i=0; i<points2.size() ;i++){
 		std::cout<<points2.at(i)<<std::endl;
 		rtos2.insert(points2.at(i));
+		
 	}
+	rtos2.is_valid(true);
 	
-	points2.resize(8);
+	points2.resize(7);
 	std::random_shuffle(points2.begin(), points2.end());
-	for(int i=0; i<8; i++){
+	rtos3.clear();
+	for(int i=0; i<points2.size(); i++){
 		std::cout<<points2.at(i)<<std::endl;
 		rtos3.insert(points2.at(i));
 	}
-	
+		are_equal(rtos3,rtos2);
+	rtos2.is_valid(true);
+	rtos3.is_valid(true);
 	
 	
 	are_equal(rtos3,rtos2);
@@ -254,10 +279,45 @@ std::random_shuffle(points.begin(), points.end());
 	
 	*/
 	
+	RTOS rtos4a;
+	RTOS rtos4b;
+	RTOS rtos4c;
+	Point_3 p41 = Point_3(radius,0,0);
+	points4.push_back(p41);
+	Point_3 p42 = Point_3(-1*radius,0,0);
+	points4.push_back(p42);
+	Point_3 p43 = Point_3(0,radius,0);
+	points4.push_back(p43);
+	Point_3 p44 = Point_3(0,0,radius);
+	points4.push_back(p44);
+	Point_3 p45 = Point_3(0, -1*radius,0);
+	points4.push_back(p45);
+	points4.resize(5);
+	
+	std::random_shuffle(points4.begin(), points4.end());
+	
+	for(int i=0; i<points4.size(); i++){
+		std::cout<<points4.at(i)<<std::endl;
+		rtos4a.insert(points4.at(i));
+	}
+	rtos4a.is_valid();
+	
+	for(int i=0; i<points4.size(); i++){
+		std::cout<<points4.at(i)<<std::endl;
+		rtos4b.insert(points4.at(i));
+	}
+	rtos4b.is_valid();
+	
+	for(int i=0; i<points4.size(); i++){
+		std::cout<<points4.at(i)<<std::endl;
+		rtos4c.insert(points4.at(i));
+	}
+	rtos4c.is_valid();
 	
 	
 	
-	
+	are_equal(rtos4a, rtos4b);
+	are_equal(rtos4b, rtos4c);
 		 
 	}
 
