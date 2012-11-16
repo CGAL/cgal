@@ -157,11 +157,13 @@ if [ -d "${SOURCES_DIR}/.git" ]; then
     pushd "${SOURCES_DIR}"
     git pull
     CGAL_GIT_HASH=`git rev-parse HEAD`
+    CGAL_SVN_REVISION=99999
     popd
     SCM=git
 else
     svn update ${SOURCES_DIR}
     CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`
+    CGAL_GIT_HASH=n/a
 fi
 if [ "$SCM" = "svn" -a -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
     svn update ${CANDIDATES_DIR}
