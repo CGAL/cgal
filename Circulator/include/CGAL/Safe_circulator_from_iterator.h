@@ -28,9 +28,9 @@
 #ifndef CGAL_SAFE_CIRCULATOR_FROM_ITERATOR_H
 #define CGAL_SAFE_CIRCULATOR_FROM_ITERATOR_H
 
-#include "CGAL/circulator.h"
+#include <CGAL/circulator.h>
 
-#include "boost/optional.hpp"
+#include <boost/optional.hpp>
 
 namespace CGAL {
 
