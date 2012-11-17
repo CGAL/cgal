@@ -26,11 +26,15 @@
 #define CGAL_CIRCULATOR_H
 
 #include <CGAL/basic.h>
+#include <CGAL/circulator_bases.h>
+#include <CGAL/use.h>
+
 #include <cstddef>
 #include <functional>
 #include <iterator>
-#include <CGAL/circulator_bases.h>
-#include <CGAL/use.h>
+
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/static_assert.hpp>
 
 // These are name redefinitions for backwards compatibility
 // with the pre iterator-traits style adaptors.
@@ -73,25 +77,27 @@
 
 namespace CGAL {
 
-template <class C>
-struct I_Circulator_traits {
-    typedef  Iterator_tag  category;
-};
+namespace internal {
 
-template <>
-struct I_Circulator_traits<Forward_circulator_tag> {
-    typedef  Circulator_tag  category;
-};
+// default to Iterator_tag, special case Circulator tags
+template<typename Tag>
+struct Get_category 
+{ typedef Iterator_tag type; };
 
-template <>
-struct I_Circulator_traits<Bidirectional_circulator_tag> {
-    typedef  Circulator_tag  category;
-};
+template<>
+struct Get_category<CGAL::Forward_circulator_tag> 
+{ typedef Circulator_tag type; };
 
-template <>
-struct I_Circulator_traits<Random_access_circulator_tag> {
-    typedef  Circulator_tag  category;
-};
+template<>
+struct Get_category<CGAL::Bidirectional_circulator_tag> 
+{ typedef Circulator_tag type; };
+
+template<>
+struct Get_category<CGAL::Random_access_circulator_tag> 
+{ typedef Circulator_tag type; };
+
+} // internal
+
 
 // Circulator_size_traits are used by general adaptors for
 // iterators and circulators. For example the N_step_adaptor
@@ -163,16 +169,24 @@ struct I_Circulator_from_iterator_traits<std::random_access_iterator_tag> {
 
 template <class C>
 struct Circulator_traits {
-    typedef std::iterator_traits<C>                 traits;
-    typedef typename traits::iterator_category      ICAT;
-    typedef I_Circulator_traits<ICAT>               C_traits;
-    typedef typename C_traits::category             category;
+private:
+    typedef std::iterator_traits<C> iterator_traits;
+public:
+    // the ardent reader might wonder: why redirect through
+    // iterator_traits? That way we don't miss specializations and
+    // can save us our own specializations.
+    typedef typename internal::Get_category<
+        typename iterator_traits::iterator_category
+    >::type category;
 
-    typedef I_Iterator_from_circulator_traits<ICAT> Ic_traits;
-    typedef typename Ic_traits::iterator_category   iterator_category;
+    typedef typename iterator_traits::value_type        value_type;
+    typedef typename iterator_traits::reference         reference;
+    typedef typename iterator_traits::pointer           pointer;
+    typedef typename iterator_traits::difference_type   difference_type;
+    typedef typename iterator_traits::iterator_category iterator_category;
 
-    typedef I_Circulator_from_iterator_traits<ICAT> Ci_traits;
-    typedef typename Ci_traits::iterator_category   circulator_category;
+    typedef typename I_Circulator_size_traits<
+        category, C>::size_type                         size_type;
 };
 
 template <class C>
@@ -181,64 +195,44 @@ query_circulator_or_iterator( const C&) {
     typedef typename Circulator_traits<C>::category category;
     return category();
 }
-/* A function that asserts a specific compile time tag */
-/* forcing its two arguments to have equal type.       */
-/* It is encapsulated with #ifdef since it will be defined also elsewhere. */
-#ifndef CGAL_ASSERT_COMPILE_TIME_TAG
-#define CGAL_ASSERT_COMPILE_TIME_TAG 1
-template <class Base>
-struct I_Assert_tag_class {
-    void match_compile_time_tag( const Base&) const {}
-};
-template< class Tag, class Derived>
-inline void Assert_compile_time_tag( const Tag&, const Derived& b) {
-    I_Assert_tag_class<Tag> x;
-    x.match_compile_time_tag(b);
-}
-#endif
 
 template <class C> inline
 void Assert_circulator( const C &) {
     typedef typename Circulator_traits<C>::category category;
-    Assert_compile_time_tag( Circulator_tag(), category());
+    BOOST_STATIC_ASSERT((boost::is_convertible<category, Circulator_tag>::value));
 }
+
 template <class I> inline
 void Assert_iterator( const I &) {
     typedef typename Circulator_traits<I>::category category;
-    Assert_compile_time_tag( Iterator_tag(), category());
+    BOOST_STATIC_ASSERT((boost::is_convertible<category, Iterator_tag>::value));
 }
 template <class I> inline
 void Assert_input_category( const I &/*i*/) {
     typedef typename std::iterator_traits<I>::iterator_category category;
-    Assert_compile_time_tag( std::input_iterator_tag(),
-			     category());
+    BOOST_STATIC_ASSERT((boost::is_convertible<category, std::input_iterator_tag>::value));
 }
 
 template <class I> inline
 void Assert_output_category( const I &/*i*/) {
   typedef typename std::iterator_traits<I>::iterator_category category;
-    Assert_compile_time_tag( std::output_iterator_tag(),
-			     category());
+  BOOST_STATIC_ASSERT((boost::is_convertible<category, std::output_iterator_tag>::value));
 }
 template <class IC> inline
 void Assert_forward_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
-  Assert_compile_time_tag( std::forward_iterator_tag(),
-	                   category());
+  BOOST_STATIC_ASSERT((boost::is_convertible<category, std::forward_iterator_tag>::value));
 }
 template <class IC> inline
 void Assert_bidirectional_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
-  Assert_compile_time_tag( std::bidirectional_iterator_tag(),
-                           category());
+  BOOST_STATIC_ASSERT((boost::is_convertible<category, std::bidirectional_iterator_tag>::value));
 }
 template <class IC> inline
 void Assert_random_access_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
-  Assert_compile_time_tag( std::random_access_iterator_tag(),
-                           category());  
+  BOOST_STATIC_ASSERT((boost::is_convertible<category, std::random_access_iterator_tag>::value));
 }
-
 // The assert at-least-category functions use the following
 // functions to resolve properly. Note the proper order of the
 // arguments: 1st is the to be type, 2nd is the actual type.
@@ -704,35 +698,32 @@ typedef Iterator_from_circulator< C, const_reference, const_pointer>
                                         :  const_iterator( &anchor, 1);
     }
 };
-template < class  Ctnr>
+template <class Container>
 class Circulator_from_container {
+    typedef Circulator_from_container<Container>      Self;
+    typedef typename Container::iterator              iterator;
+    typedef std::iterator_traits<iterator>            iterator_traits;
 public:
-// TYPES
+    typedef typename iterator_traits::value_type      value_type;
+    typedef typename iterator_traits::reference       reference;
+    typedef typename iterator_traits::pointer         pointer;
+    typedef typename iterator_traits::difference_type difference_type;
 
-    typedef Circulator_from_container<Ctnr>     Self;
-    typedef Ctnr                                Container;
-    typedef typename Ctnr::iterator             iterator;
-    typedef typename Ctnr::value_type           value_type;
-    typedef typename Ctnr::reference            reference;
-    typedef value_type*                         pointer;
-    typedef typename Ctnr::size_type            size_type;
-    typedef typename Ctnr::difference_type      difference_type;
-
-    typedef std::iterator_traits<iterator>      ITraits;
-    typedef typename ITraits::iterator_category Icategory;
-    typedef I_Circulator_from_iterator_traits<Icategory> CTraits;
-    typedef typename CTraits::iterator_category iterator_category;
-
+    typedef typename I_Circulator_from_iterator_traits<
+        typename iterator_traits::iterator_category
+        >::iterator_category                          iterator_category;
+    
+    typedef typename Container::size_type size_type;
 private:
-    Ctnr*     ctnr;
+    Container*     ctnr;
     iterator  i;
 
 public:
 // CREATION
 
     Circulator_from_container() : ctnr(NULL) {}
-    Circulator_from_container( Ctnr* c) : ctnr(c), i(c->begin()) {}
-    Circulator_from_container( Ctnr* c, iterator j)  : ctnr(c), i(j) {}
+    Circulator_from_container( Container* c) : ctnr(c), i(c->begin()) {}
+    Circulator_from_container( Container* c, iterator j)  : ctnr(c), i(j) {}
 
 // Gnu-bug workaround: define operator= explicitly.
     Self& operator=( const Self& c) {
@@ -790,8 +781,8 @@ public:
     Self& operator+=( difference_type n) {
         CGAL_assertion( ctnr != NULL);
         CGAL_assertion( i != ctnr->end());
-        typename Ctnr::difference_type j    = i - ctnr->begin();
-        typename Ctnr::difference_type size = ctnr->size();
+        typename Container::difference_type j    = i - ctnr->begin();
+        typename Container::difference_type size = ctnr->size();
         CGAL_assertion( j    >= 0);
         CGAL_assertion( size >= 0);
         j = non_negative_mod( j + n, size);
@@ -821,7 +812,7 @@ public:
     }
     iterator    current_iterator() const { return i;}
     Self        min_circulator()   const { return Self(ctnr); }
-    Ctnr*       container()        const { return ctnr; }
+    Container*  container()        const { return ctnr; }
 };
 
 template <class Ctnr>
