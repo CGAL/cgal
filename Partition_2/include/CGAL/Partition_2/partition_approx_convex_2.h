@@ -29,7 +29,7 @@
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_is_valid_2.h>
 #include <CGAL/Partition_2/partition_assertions.h>
-#include <CGAL/Safe_circulator_from_iterator.h>
+#include <CGAL/Circulator/Safe_circulator_from_iterator.h>
 #include <utility>
 #include <iterator>
 
