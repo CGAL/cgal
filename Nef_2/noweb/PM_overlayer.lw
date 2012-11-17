@@ -1794,7 +1794,7 @@ the input properties of the overlay calculation operation from Section
 <<helping operations>>=
 void assert_type_precondition() const
 { typename PM_decorator_::Point p1; Point p2;
-  assert_equal_types(p1,p2); }
+  BOOST_STATIC_ASSERT((boost::is_same<typename PM_decorator_::Point, Point>::value)); }
 
 
 <<PM_overlayer.h>>=
