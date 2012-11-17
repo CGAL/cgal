@@ -55,6 +55,8 @@ class Polygon_2_const_edge_circulator {
 
   private:
     Vertex_const_circulator first_vertex;
+    // carry around the segment to be a proper iterator
+    Segment_2               segment;
 
   public:
     Polygon_2_const_edge_circulator() {}
@@ -86,13 +88,20 @@ class Polygon_2_const_edge_circulator {
       return !(first_vertex == x.first_vertex);
     }
 
-    Segment_2 operator*() const
+    const Segment_2& operator*() const
     {
       Vertex_const_circulator second_vertex = first_vertex;
       ++second_vertex;
       typename Traits::Construct_segment_2 construct_segment_2 = 
             Traits().construct_segment_2_object();
-      return construct_segment_2(*first_vertex, *second_vertex);
+      const_cast<Polygon_2_const_edge_circulator*>(this)->segment = 
+          construct_segment_2(*first_vertex, *second_vertex);
+      return segment;
+    }
+
+    const Segment_2* operator->() const 
+    {
+      return &(**this);
     }
 
     Polygon_2_const_edge_circulator<_Traits, _Container>& operator++()

@@ -11,6 +11,16 @@
 
 namespace CGAL { namespace Concepts {
 
+template <typename T>
+void deref(T& t) {
+  t.operator->();
+}
+
+template <typename T>
+void deref(T*) {
+  // valid anyway
+}
+
 // N.B.: there is no such concept as Circulator as it is immaterial
 template <typename C>
 struct ForwardCirculator 
@@ -40,6 +50,8 @@ struct ForwardCirculator
     a++;
     (void)*a; // suppress unused warning, don't check the return type
               // to allow for proxies
+
+    deref(a);
   }
 private:
   C a;
@@ -90,6 +102,3 @@ private:
 
 
 #endif /* CGAL_CIRCULATOR_CONCEPTS_H */
-
-
-
