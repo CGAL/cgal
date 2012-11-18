@@ -150,6 +150,10 @@ public:
   friend class const_iterator;
 
   /*! An iterator for the polyline points. */
+  /*
+   * TODO: How to iterate over points when the polyline
+   * has an open end(s)?
+   */
   class const_iterator
   {
   public:
