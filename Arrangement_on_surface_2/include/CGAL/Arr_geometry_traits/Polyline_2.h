@@ -50,16 +50,12 @@ public:
   typedef typename Segment_traits_2::Curve_2    Segment_2;
 
 protected:
-
   // The segments that comprise the poyline:
-  std::vector<Segment_2>                        segments;
+  std::vector<Segment_2>                        m_segments;
 
 public:
-
   /*! Default constructor. */
-  _Polyline_2() :
-    segments()
-  {}
+  _Polyline_2() : m_segments() {}
 
   /*!
    * Constructor from a range. The range can be either:
@@ -73,12 +69,24 @@ public:
    *      for furtehr details.
    */
   template <class InputIterator>
-  _Polyline_2 (InputIterator begin, InputIterator end) :
-    segments()
+  _Polyline_2(InputIterator begin, InputIterator end) :
+    m_segments()
   {
-    polyline_constructor_imp( begin, end, *begin);
+    construct_polyline(begin, end, *begin);
   }
 
+  /*!
+   * Construct a polyline from a range of segments.
+   * \param begin An iterator pointing to the first segment in the range.
+   * \param end An iterator pointing after the past-the-end segment in the range.
+   */
+  template <class InputIterator>
+  void construct_polyline(InputIterator begin, InputIterator end, 
+                          const Segment_2& /* */)
+  {
+    m_segments.assign(begin, end);
+  }
+  
   /*!
    * Construct a polyline from a range of points.
    * \param begin An iterator pointing to the first point in the range.
@@ -87,9 +95,8 @@ public:
    *      In other cases, an empty polyline will be created.
    */
   template <class InputIterator>
-  void polyline_constructor_imp (
-				 InputIterator begin, InputIterator end, 
-				 Point_2)
+  void construct_polyline(InputIterator begin, InputIterator end, 
+                          const Point_2& /* */)
   {
     // Check if there are no points in the range:
     InputIterator  ps = begin;
@@ -103,7 +110,7 @@ public:
 
     while (pt != end)
     {
-      segments.push_back (Segment_2 (*ps, *pt));
+      m_segments.push_back (Segment_2 (*ps, *pt));
       ++ps;
       ++pt;
     }
@@ -113,8 +120,8 @@ public:
   void push_back (const Point_2 & p)
   {
     Point_2 pt = p;
-    Point_2 ps = segments.back().target();
-    segments.push_back (Segment_2 (ps, pt));
+    Point_2 ps = m_segments.back().target();
+    m_segments.push_back (Segment_2 (ps, pt));
   }
 
   /*!
@@ -282,7 +289,7 @@ public:
       return (const_iterator (this, size() + 1));
   }
 
-  /*! Get an reverse iterator for the polyline points. */
+  /*! Get a reverse iterator for the polyline points. */
   const_reverse_iterator rbegin() const
   {
     return (const_reverse_iterator (end()));
@@ -309,24 +316,24 @@ public:
    */
   inline unsigned int size() const
   {
-    return static_cast<unsigned int>(segments.size());
+    return static_cast<unsigned int>(m_segments.size());
   }
 
   /*!
-   * Get the i'th segment of the polyline.
+   * Get the ith segment of the polyline.
    * \param i The segment index(from 0 to size()-1).
    * \return A const reference to the segment.
    */
   inline const Segment_2& operator[] (const unsigned int i) const
   {
     CGAL_assertion (i < size());
-    return (segments[i]);
+    return (m_segments[i]);
   }
 
   /*! Clear the polyline. */
   inline void clear ()
   {
-    segments.clear();
+    m_segments.clear();
   }
 };
 
@@ -345,17 +352,31 @@ public:
   typedef typename Segment_traits_2::Curve_2    Segment_2;
 
   /*! Default constructor. */
-  _X_monotone_polyline_2 () :
-    Base ()
-  {}
+  _X_monotone_polyline_2() : Base () {}
 
+  /*! Constructor */
+  template <class InputIterator>
+  _X_monotone_polyline_2(InputIterator begin, InputIterator end) :
+    Base(begin, end)
+  {
+    construct_x_monotone_polyline(begin, end, *begin);
+  }
+  
   /*!
-   * Constructor from a range of points, defining the endpoints of the
+   * Constructs from a range of segments.
+   */
+  template <class InputIterator>
+  void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
+                                     const Segment_2& /* */)
+  {}
+  
+  /*!
+   * Constructs from a range of points, defining the endpoints of the
    * polyline segments.
    */
   template <class InputIterator>
-  _X_monotone_polyline_2 (InputIterator begin, InputIterator end) :
-    Base (begin, end)
+  void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
+                                     const Point_2& /* */)
   {
     // Make sure the range of points contains at least two points.
     Segment_traits_2 seg_traits;
@@ -407,14 +428,13 @@ public:
     CGAL_precondition (seg_tr.compare_xy_2_object() (seg.source(),
 						     seg.target()) == SMALLER);
     CGAL_precondition (n == 0 ||
-		       seg_tr.equal_2_object() (this->segments[n - 1].target(),
+		       seg_tr.equal_2_object() (this->m_segments[n - 1].target(),
 						seg.source()));
 
-    this->segments.push_back (seg);
+    this->m_segments.push_back (seg);
   }
 
 private:
-
   /*! Reverse the polyline. */
   void _reverse()
   {
@@ -432,7 +452,7 @@ private:
       i++;
     }
 
-    this->segments = rev_segs;
+    this->m_segments = rev_segs;
     return;
   }
 
