@@ -22,6 +22,8 @@ typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
 
 int main ()
 {
+  Traits_2 traits;
+
   Arrangement_2         arr;
 
   Point_2               points1[5];

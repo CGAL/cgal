@@ -503,8 +503,12 @@ public:
 
         if (curr_x_res != x_res || curr_xy_res != xy_res) {
           // Create a new x-monotone polyline from the range of points
-          // [x_begin, pt):
-          *oi++ = make_object(X_monotone_curve_2(x_begin, pt));
+          // [x_begin, 
+	  Self polyline_traits;
+	  Construct_x_monotone_curve_2 construct_x_monotone_curve = 
+	    polyline_traits.construct_x_monotone_curve_2_object();
+	  //          *oi++ = make_object(X_monotone_curve_2(x_begin, pt));
+          *oi++ = make_object(construct_x_monotone_curve(x_begin, pt));
 
           x_begin = ps;
           x_res = curr_x_res;
@@ -1002,11 +1006,11 @@ public:
        
       CGAL_precondition_code
         (
-        typename Segment_traits_2::Equal_2 equal =
-         m_seg_traits->equal_2_object();
-         typename Segment_traits_2::Is_vertical_2 is_vertical =
+	 typename Segment_traits_2::Equal_2 equal =
+	 m_seg_traits->equal_2_object();
+	 typename Segment_traits_2::Is_vertical_2 is_vertical =
          m_seg_traits->is_vertical_2_object();
-
+	 
          InputIterator curr = begin;
          // Ensure that the first segment does not degenerate to a point.
          CGAL_precondition(!equal(ctr_min(*curr), ctr_max(*curr)));
