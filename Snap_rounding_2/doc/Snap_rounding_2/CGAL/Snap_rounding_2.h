@@ -102,8 +102,6 @@ behavior), and there are inputs which benefit from using several
 kd-trees. Thus, the user can control the number of kd-trees 
 with the parameter <I>number_of_kd_trees</I>. Typically, but not 
 always, one kd-tree (the default) is sufficient. 
-
-\endadvanced
 */
 
 template < class Traits, class InputIterator, class OutputContainer >

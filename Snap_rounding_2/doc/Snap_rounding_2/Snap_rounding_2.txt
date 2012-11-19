@@ -22,7 +22,7 @@ half-the-width-of-a-pixel away from any non-incident edge
 \cite cgal:hp-isr-02. This package supports both methods. Algorithmic
 details and experimental results are given in \cite cgal:hp-isr-02.
 
-\cgalFigureBegin[figsr1,sr1.gif}
+\cgalFigureBegin{figsr1,sr1.gif}
 An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)
 \cgalFigureEnd
 
