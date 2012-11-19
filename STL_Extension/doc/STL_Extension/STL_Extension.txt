@@ -19,7 +19,7 @@ uses three-valued comparisons and offers additional functionality,
 generic algorithms, iterators, functor adaptors for binding and swapping
 arguments and for composition, functors for projection and creation and
 adaptor classes around iterators and circulators. See also circulators in
-Chapter \ref Chapter_Handles_Ranges_and_Circulators "Handles and Circulators". 
+Chapter \ref Chapter_Handles_Ranges_and_Circulators "Handles and Circulators".
 A class storing polymorphic objects
 is also provided, as well as a class to manage the uncertainty of some values.
 Finally, tags and policy classes to specify complexity trade-offs of data-structures,
@@ -154,7 +154,7 @@ sequence.
 Wrappers for the classes `array` and `tuple` which, based on
 availability, either use the version of <I>Boost</I> or the one
 provided by the standard library are provided in the namespace
-`CGAL::cpp11`. The namespace alias `CGAL::cpp0x` is provided
+`CGAL::cpp11`. The namespace alias `CGAL::cpp11` is provided
 for backward compatibility. Those are documented for completeness and
 implementers. They are not intended to be used by users of the
 library.
@@ -359,6 +359,6 @@ void foo()
 \endcode
 
 
-*/ 
+*/
 } /* namespace CGAL */
 

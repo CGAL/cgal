@@ -435,7 +435,7 @@ as the following example shows.
 
 \cgalExample{Triangulation_3/adding_handles_3.cpp}
 
-\subsection Triangulation_3SettingInformationWhileInserting Setting Information While Inserting a %Range of Points
+\subsection Triangulation_3SettingInformationWhileInserting Setting Information While Inserting a Range of Points
 
 The most efficient method to insert (weighted) points in a
 Delaunay (or regular) triangulation is to provide an iterator
@@ -448,21 +448,21 @@ doing the same operation: set an unsigned integer as the information
 of each vertex. The value of this unsigned integer is the initial order
 of the corresponding point given in the range.
 
-\subsection Triangulation_3UsinganIteratorOverPairs Using an %Iterator Over Pairs
+\subsection Triangulation_3UsinganIteratorOverPairs Using an Iterator Over Pairs
 
 Each point and its information are gathered into a pair. We provide
 the constructor of the triangulation (which is calling the `insert` function)
 with a range of such pairs.
 \cgalExample{Triangulation_3/info_insert_with_pair_iterator.cpp}
 
-\subsection Triangulation_3UsingtheBoostZipIterator Using the Boost Zip %Iterator
+\subsection Triangulation_3UsingtheBoostZipIterator Using the Boost Zip Iterator
 
 Information and points are in separate containers. We use
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
 \cgalExample{Triangulation_3/info_insert_with_zip_iterator.cpp}
 
-\subsection Triangulation_3UsingtheBoostTransformIterator Using the Boost Transform %Iterator
+\subsection Triangulation_3UsingtheBoostTransformIterator Using the Boost Transform Iterator
 
 We define a functor `Auto_count` used together with
 <A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
@@ -808,7 +808,7 @@ points, as measured empirically using `Memory_sizer` for large triangulations
 CAPTION Memory usage in bytes per point for large data sets. 
 \anchor Triangulation3figmemory
 
-\subsection Triangulation_3VariabilityDependingonthe Variability Depending on the Data Sets and the %Kernel
+\subsection Triangulation_3VariabilityDependingonthe Variability Depending on the Data Sets and the Kernel
 
 Besides the complexity of the Delaunay triangulation that varies with the
 distribution of the points, another critical aspect affects the efficiency :

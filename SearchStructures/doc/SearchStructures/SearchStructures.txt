@@ -349,7 +349,7 @@ int main()
 }
 \endcode
 
-\subsection SearchStructuresExampleforRangeTreeonSetlike Example for %Range Tree on Set-like Data
+\subsection SearchStructuresExampleforRangeTreeonSetlike Example for Range Tree on Set-like Data
 
 This example illustrates the use of the range tree on
 2-dimensional point data (no value is associated to a data item).

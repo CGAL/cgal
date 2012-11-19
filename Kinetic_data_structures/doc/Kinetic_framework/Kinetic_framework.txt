@@ -25,7 +25,7 @@ our `Polynomial_kernel` package to provide models of the
 
 The framework was first presented at ALENEX \cite cgal:gkr-cfhm-04.
 
-\section seckds_architecture Architecture 
+\section seckds_architecture Architecture
 
 This package provides a framework to allow exact implementation of
 kinetic data structures and sweepline algorithms. Below we discuss in
@@ -38,15 +38,15 @@ concept is discussed separately in Section
 
 \cgalFigureRef{figkds_uml_usage_architecture,sort_usage_pct.gif}
 The figure, identical to the one in the overview of the previous
-chapter, shows the interaction between the `Kinetic::Sort<Traits, Visitor>` 
+chapter, shows the interaction between the `Kinetic::Sort<Traits, Visitor>`
 kinetic data structure and the various pieces of our
 framework. Other, more complicated, kinetic data structures will also
 use the `Kinetic::InstantaneousKernel` in order to insert/remove
-geometric primitives and audit themselves. `Kinetic::Sort<Traits, Visitor>` 
+geometric primitives and audit themselves. `Kinetic::Sort<Traits, Visitor>`
 uses the sorting functionality in STL instead.
 \cgalFigureEnd
 
-\subsection seckds_simulator The Kinetic::Simulator 
+\subsection seckds_simulator The Kinetic::Simulator
 
 The `Kinetic::Simulator` is the central repository of all active events.
 It maintains the event queue and can use its knowledge of the events
@@ -156,7 +156,7 @@ queue causes a 20% reduction in running time relative to a binary
 heap for Delaunay triangulations with degree 3 polynomial motions and
 20 points.
 
-\subsection Kinetic_frameworkTheKineticKernel The %Kinetic::Kernel
+\subsection Kinetic_frameworkTheKineticKernel The Kinetic::Kernel
 
 The `Kinetic::Kernel` is structured very much like static %CGAL
 kernels. It defines a number of primitives, which in the model
@@ -193,7 +193,7 @@ three dimensions) and regular triangulations (in 3D). New
 certificates can be fairly easily added. An example is included in the
 distributed code.
 
-\subsection seckds_active_objects_table The %Kinetic::ActiveObjectsTable 
+\subsection seckds_active_objects_table The Kinetic::ActiveObjectsTable
 
 The `Kinetic::ActiveObjectsTable` stores a set of kinetic primitives.
 Its purpose is to notify kinetic data structures when new primitives
@@ -212,7 +212,7 @@ notification. We provide a helper class,
 `erase(Key)` or `set(Key)` function calls on the kinetic data
 structure.
 
-\subsection seckds_instantaneous_kernel The %Kinetic::InstantaneousKernel 
+\subsection seckds_instantaneous_kernel The Kinetic::InstantaneousKernel
 
 The `Kinetic::InstantaneousKernel` allows existing \cgal data structures
 to be used on moving data as it appears at some instant of time.
@@ -244,7 +244,7 @@ easily handled in a similar manner (in the case of Delaunay
 triangulations by simply calling the `verify()` method after
 setting the time).
 
-\subsection seckds_misc Miscellaneous: notification and reference management 
+\subsection seckds_misc Miscellaneous: notification and reference management
 
 We describe some coding conventions used, graphical display,
 notification and reference management support in the framework in the
@@ -266,7 +266,7 @@ used for storing pointers to the objects in order to avoid dangling
 pointers. In addition, many of the objects expect such pointers as
 arguments.
 
-\subsection seckds_listener Runtime event passing 
+\subsection seckds_listener Runtime event passing
 
 Runtime events must be passed from <I>notifiers</I>, namely the
 `Kinetic::ActiveObjectsTable` and the `Kinetic::Simulator` to
@@ -296,7 +296,7 @@ the `Listener`. It can do this since the `Listener` is
 guaranteed to unregister itself when it is destroyed. This avoids
 circular reference counted pointers as well as dangling pointers.
 
-\section seckds_algebraic_kernel Algebraic Kernel 
+\section seckds_algebraic_kernel Algebraic Kernel
 
 The interface between the algebraic kernel and the kinetic data
 structures package was kept quite minimal in order to ease the
@@ -322,7 +322,7 @@ The exact models, which we implement the numerics for, handle
 non-square-free polynomials and polynomials with arbitrary field
 number type coefficients and are quite robust.
 
-\subsection Kinetic_frameworkKineticFunctionKernelCustomized %Kinetic::FunctionKernel Customized for %Kinetic Data Structures
+\subsection Kinetic_frameworkKineticFunctionKernelCustomized Kinetic::FunctionKernel Customized for Kinetic Data Structures
 
 There are several modifications we can make to how the roots are
 handled to optimize for the case of kinetic data structures. The
@@ -355,7 +355,7 @@ However, when we are using the `Kinetic::Simulator` to audit the
 kinetic data structures, they most be broken up in to two, equal,
 roots to avoid auditing at the degeneracy.
 
-\section seckds_examples Examples 
+\section seckds_examples Examples
 
 We provide a number of examples of different levels of usage of the
 kinetic data structures framework, both for kinetic data structures as
@@ -466,7 +466,7 @@ This general structure of the interaction between the kinetic data
 structure and the framework is shared by all of the provided kinetic
 data structures and has proved itself to go quite far.
 
-\subsection seckds_trivial_example The Trivial Kinetic Data Structure 
+\subsection seckds_trivial_example The Trivial Kinetic Data Structure
 
 To show how to implement such things, instead of presenting a full
 kinetic data structure, we present a trivial one which maintains one
@@ -625,7 +625,7 @@ protected:
 
 \endcode
 
-\subsection seckds_add_cert Adding a New Certificate Type 
+\subsection seckds_add_cert Adding a New Certificate Type
 
 The following example shows how to add a new type of certificate to a simulation.
 
@@ -653,7 +653,7 @@ function. The result is wrapped in a `Kinetic::Certificate`
 object.
 
 \code{.cpp}
-template <class FunctionKernel> 
+template <class FunctionKernel>
 class My_kinetic_kernel:
 public CGAL::Kinetic::Cartesian<FunctionKernel> {
 typedef CGAL::Kinetic::Cartesian<FunctionKernel> P;
@@ -735,6 +735,6 @@ Note that we define active point table for all dimensions. This is
 needed by the `Kinetic::InstantaneousKernel`, even if they are not
 used.
 
-*/ 
+*/
 } /* namespace CGAL */
 

@@ -147,7 +147,7 @@ weaker. This type must fulfill the requirements on what is called a
 defined with semantics (approximately) corresponding to those of a
 ring in a mathematical sense. 
 
-\subsection Kernel_23CartesianKernels %Cartesian Kernels
+\subsection Kernel_23CartesianKernels Cartesian Kernels
 
 With `Cartesian<FieldNumberType>` you can choose a
 %Cartesian representation of coordinates. When you
@@ -177,7 +177,7 @@ less efficient than `Cartesian<FieldNumberType>`. Again, in
 \link Simple_cartesian::RT Simple_cartesian<FieldNumberType>::RT \endlink are mapped to
 `FieldNumberType`.
 
-\subsection Kernel_23HomogeneousKernels %Homogeneous Kernels
+\subsection Kernel_23HomogeneousKernels Homogeneous Kernels
 
 %Homogeneous coordinates permit to avoid division operations in
 numerical computations, since the additional coordinate can serve as a
@@ -236,7 +236,7 @@ parameterized with a number type, such as
 `Homogeneous<leda_integer>`.
 </OL>
 
-\subsection Kernel_23KernelasaTraitsClass %Kernel as a Traits Class
+\subsection Kernel_23KernelasaTraitsClass Kernel as a Traits Class
 
 Algorithms and data structures in the basic library of \cgal are
 parameterized by a traits class that subsumes the objects on which the
@@ -249,7 +249,7 @@ algorithm. In some other cases, the algorithms or data structures
 needs more than is provided by the kernel concept. In these cases, a
 kernel can not be used as a traits class.
 
-\subsection Kernel_23ChoosingaKernelandPredefinedKernels Choosing a %Kernel and Predefined Kernels
+\subsection Kernel_23ChoosingaKernelandPredefinedKernels Choosing a Kernel and Predefined Kernels
 
 If you start with integral %Cartesian coordinates,
 many geometric computations will involve integral numerical values
@@ -357,7 +357,7 @@ q = p_1 + (p_2 - p_1) / 2.0;
 Note that these constructions do not involve any performance overhead for 
 the conversion with the currently available representation classes.
 
-\subsection Kernel_23KernelObjects %Kernel Objects
+\subsection Kernel_23KernelObjects Kernel Objects
 
 Besides points (`Point_2<Kernel>`, `Point_3<Kernel>`, `Point_d<Kernel>`), 
 vectors (`Vector_2<Kernel>`, `Vector_3<Kernel>`), and 

@@ -216,7 +216,7 @@ that only the polyhedron can guarantee.
 
 \cgalExample{Polyhedron/polyhedron_prog_vector.cpp}
 
-\subsection PolyhedronExamplewithCirculatorWritingObject Example with %Circulator Writing %Object File Format (OFF)
+\subsection PolyhedronExamplewithCirculatorWritingObject Example with Circulator Writing Object File Format (OFF)
 
 We create a tetrahedron and write it to `std::cout` using the
 %Object File Format (OFF) \cite cgal:p-gmgv16-96. This example makes use

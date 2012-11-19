@@ -120,7 +120,7 @@ iso-rectangles. It does not require the use of extended nodes in the
 spatial tree and supports incremental neighbor searching and distance
 browsing for queries defined by points or spatial objects.
 
-\subsection Spatial_searchingRangeSearching %Range Searching
+\subsection Spatial_searchingRangeSearching Range Searching
 
 <I>Exact range searching</I> and <I>approximate range searching</I> is
 supported using exact or fuzzy `d`-dimensional objects enclosing a
@@ -267,7 +267,7 @@ with the query, and obtain the result of the search as iterator range.
 
 \cgalExample{Spatial_searching/general_neighbor_searching.cpp}
 
-\subsection Spatial_searchingExampleforaRangeQuery Example for a %Range Query
+\subsection Spatial_searchingExampleforaRangeQuery Example for a Range Query
 
 This example program illustrates approximate range querying for
 4-dimensional fuzzy iso-rectangles and spheres using homogeneous

@@ -20,7 +20,7 @@ for bivariate polynomial systems, the latter being a refinement of the first.
 
 \section Algebraic_kernel_dAlgebraic Algebraic Kernel Concepts
 
-\subsection Algebraic_kernel_dUnivariateAlgebraicKernel Univariate Algebraic %Kernel
+\subsection Algebraic_kernel_dUnivariateAlgebraicKernel Univariate Algebraic Kernel
 
 \subsection Algebraic_kernel_dMajorTypes Major Types
 
@@ -154,7 +154,7 @@ there is no way to directly ask for the refinement of the current
 isolating interval since this would impose a state to every object of
 an `AlgebraicKernel_d_1::Algebraic_real_1`.
 
-\subsection Algebraic_kernel_dBivariateAlgebraicKernel Bivariate Algebraic %Kernel
+\subsection Algebraic_kernel_dBivariateAlgebraicKernel Bivariate Algebraic Kernel
 
 The concept `AlgebraicKernel_d_2` is a refinement of `AlgebraicKernel_d_1`, 
 that is, a model of `AlgebraicKernel_d_2` is also a model of `AlgebraicKernel_d_1`. 

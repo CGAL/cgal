@@ -63,7 +63,7 @@ slots</A>, and to connect them. Second, it allows to install <A HREF="http://doc
 UML Class Diagram with the Qt classes (blue), CGAL classes for using the framework (yellow), CGAL data structures (red), and application classes (green).
 \cgalFigureEnd
 
-\subsection GraphicsViewVisualizingCGALDatastructures Visualizing %CGAL Datastructures
+\subsection GraphicsViewVisualizingCGALDatastructures Visualizing CGAL Datastructures
 
 In order to visualize for example a `CGAL::Delaunay_triangulation_2`, we
 provide the graphics item class `CGAL::Qt::TriangulationGraphicsItem<T>`.

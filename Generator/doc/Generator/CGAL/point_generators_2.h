@@ -13,36 +13,36 @@ are needed from `rnd` for each point.
 
 ### Requires ###
 
-- `Creator` must be a function object accepting two 
-  `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
-  `(x,y)` of type `P`. 
- Predefined implementations for these creators like the default are  
- described in Section \ref STLCreators. 
-- The `value_type` of the `ForwardIterator` must be assignable 
-  to `P`. 
-- `P` is equal to the `value_type` of the 
-  `ForwardIterator` when using the default initializer. 
-- The expressions `to_double((*first).x())` and 
-  `to_double((*first).y())` must result in the respective 
-  coordinate values. 
+- `Creator` must be a function object accepting two
+  `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point
+  `(x,y)` of type `P`.
+ Predefined implementations for these creators like the default are
+ described in Section \ref STLCreators.
+- The `value_type` of the `ForwardIterator` must be assignable
+  to `P`.
+- `P` is equal to the `value_type` of the
+  `ForwardIterator` when using the default initializer.
+- The expressions `to_double((*first).x())` and
+  `to_double((*first).y())` must result in the respective
+  coordinate values.
 
 
-\sa `CGAL::points_on_segment_2` 
-\sa `CGAL::points_on_square_grid_2` 
-\sa `CGAL::random_selection` 
-\sa `CGAL::random_selection` 
-\sa `std::random_shuffle` 
+\sa `CGAL::points_on_segment_2`
+\sa `CGAL::points_on_square_grid_2`
+\sa `CGAL::random_selection`
+\sa `CGAL::random_selection`
+\sa `std::random_shuffle`
 
 */
 template <class ForwardIterator>
-void perturb_points_2( ForwardIterator first, ForwardIterator last, 
+void perturb_points_2( ForwardIterator first, ForwardIterator last,
 double xeps, double yeps = xeps, Random& rnd = default_random,
 Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
 
 
 /*!
 
-\brief generates a set of points equally spaced on 
+\brief generates a set of points equally spaced on
 a segment given the endpoints of the segment.
 
 The function creates \f$ n\f$ points equally spaced on the segment from \f$ p\f$ to \f$ q\f$,
@@ -50,11 +50,11 @@ i.e.\ \f$ \forall i: 0 \le i < n: o[i] := \frac{n-i-1}{n-1}\, p +
 \frac{i}{n-1}\, q\f$. Returns the value of \f$ o\f$ after inserting
 the \f$ n\f$ points.
 
- 
 
-\sa `CGAL::points_on_segment_2` 
-\sa `CGAL::points_on_square_grid_2` 
-\sa `CGAL::random_collinear_points_2` 
+
+\sa `CGAL::points_on_segment_2`
+\sa `CGAL::points_on_square_grid_2`
+\sa `CGAL::random_collinear_points_2`
 
 */
 template <class P, class OutputIterator>
@@ -64,33 +64,33 @@ OutputIterator o);
 
 /*!
 
-\brief generates a given number of points on a square 
-grid whose size is determined by the number of points to be generated. 
+\brief generates a given number of points on a square
+grid whose size is determined by the number of points to be generated.
 
 The function creates the first \f$ n\f$ points on the regular \f$ \lceil\sqrt{n}\,\rceil\times\lceil\sqrt{n}\,\rceil\f$ grid within the square
 \f$ [-a,a]\times[-a,a]\f$. Returns the value of \f$ o\f$ after inserting
-the \f$ n\f$ points. 
+the \f$ n\f$ points.
 
 
 ### Requires ###
 
-- `Creator` must be a function object accepting two 
-  `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
-  `(x,y)` of type `P`. Predefined implementations for these 
-  creators like the default can be found in 
-  Section \ref STLCreators. 
-- The `OutputIterator` must accept values of type `P`. If the 
-  `OutputIterator` has a `value_type` the default 
-  initializer of the `creator` can be used. `P` is set to 
-  the `value_type` in this case. 
+- `Creator` must be a function object accepting two
+  `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point
+  `(x,y)` of type `P`. Predefined implementations for these
+  creators like the default can be found in
+  Section \ref STLCreators.
+- The `OutputIterator` must accept values of type `P`. If the
+  `OutputIterator` has a `value_type` the default
+  initializer of the `creator` can be used. `P` is set to
+  the `value_type` in this case.
 
 
-\sa `CGAL::perturb_points_2` 
-\sa `CGAL::points_on_segment_2` 
-\sa `CGAL::points_on_cube_grid_3` 
-\sa `CGAL::random_collinear_points_2` 
-\sa `CGAL::random_selection` 
-\sa `std::random_shuffle` 
+\sa `CGAL::perturb_points_2`
+\sa `CGAL::points_on_segment_2`
+\sa `CGAL::points_on_cube_grid_3`
+\sa `CGAL::random_collinear_points_2`
+\sa `CGAL::random_selection`
+\sa `std::random_shuffle`
 
 */
 template <class OutputIterator, Creator creator>
@@ -110,28 +110,28 @@ Returns the value of `first2` after inserting the \f$ n\f$ points.
 
 ### Requires ###
 
-- `Creator` must be a function object accepting two 
-  `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point 
-  `(x,y)` of type `P`. Predefined implementations for these 
-  creators like the default can be found in 
-  Section \ref STLCreators. 
-- The `value_type` of the `RandomAccessIterator` must be 
-  assignable to `P`. `P` is equal to the `value_type` of the 
-  `RandomAccessIterator` when using the default initializer. 
-- The expressions `to_double((*first).x())` and 
-  `to_double((*first).y())` must result in the respective 
-  coordinate values. 
+- `Creator` must be a function object accepting two
+  `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point
+  `(x,y)` of type `P`. Predefined implementations for these
+  creators like the default can be found in
+  Section \ref STLCreators.
+- The `value_type` of the `RandomAccessIterator` must be
+  assignable to `P`. `P` is equal to the `value_type` of the
+  `RandomAccessIterator` when using the default initializer.
+- The expressions `to_double((*first).x())` and
+  `to_double((*first).y())` must result in the respective
+  coordinate values.
 
-\sa `CGAL::perturb_points_2` 
-\sa `CGAL::points_on_segment_2` 
-\sa `CGAL::points_on_square_grid_2` 
-\sa `CGAL::random_selection` 
-\sa `std::random_shuffle` 
+\sa `CGAL::perturb_points_2`
+\sa `CGAL::points_on_segment_2`
+\sa `CGAL::points_on_square_grid_2`
+\sa `CGAL::random_selection`
+\sa `std::random_shuffle`
 
 */
 template <class RandomAccessIterator, class OutputIterator>
 OutputIterator random_collinear_points_2( RandomAccessIterator first,
-RandomAccessIterator last, 
+RandomAccessIterator last,
 std::size_t n, OutputIterator first2, Random& rnd = default_random,
 Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
 
@@ -139,66 +139,66 @@ Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
 
 /*!
 
-The class `Random_points_in_disc_2` is an input iterator creating points uniformly 
-distributed in an open disc. The default `Creator` is 
-`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
+The class `Random_points_in_disc_2` is an input iterator creating points uniformly
+distributed in an open disc. The default `Creator` is
+`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels ::InputIterator 
-\cgalModels ::PointGenerator 
+\cgalModels ::InputIterator
+\cgalModels ::PointGenerator
 
-\sa `CGAL::cpp0x::copy_n` 
-\sa `CGAL::Counting_iterator` 
-\sa `CGAL::Points_on_segment_2<Point_2>` 
-\sa `CGAL::Random_points_in_square_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_circle_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_square_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_in_sphere_3<Point_3, Creator>` 
-\sa `std::random_shuffle` 
+\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::Counting_iterator`
+\sa `CGAL::Points_on_segment_2<Point_2>`
+\sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_circle_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_sphere_3<Point_3, Creator>`
+\sa `std::random_shuffle`
 
 */
 template< typename Point_2, typename Creator >
 class Random_points_in_disc_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
-/*! 
+/*!
 
-*/ 
-typedef std::input_iterator_tag iterator_category; 
+*/
+typedef std::input_iterator_tag iterator_category;
 
-/*! 
+/*!
 
-*/ 
-typedef Point_2 value_type; 
+*/
+typedef Point_2 value_type;
 
-/*! 
+/*!
 
-*/ 
-typedef std::ptrdiff_t difference_type; 
+*/
+typedef std::ptrdiff_t difference_type;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2* pointer; 
+*/
+typedef const Point_2* pointer;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2& reference; 
+*/
+typedef const Point_2& reference;
 
 
-/*! 
-Creates an input iterator `g` generating points of type `Point_2` uniformly 
-distributed in the open disc with radius \f$ r\f$, 
-i.e.\ \f$ |*g| < r\f$. Two random numbers are needed from 
-`rnd` for each point. 
+/*!
+Creates an input iterator `g` generating points of type `Point_2` uniformly
+distributed in the open disc with radius \f$ r\f$,
+i.e.\ \f$ |*g| < r\f$. Two random numbers are needed from
+`rnd` for each point.
 
-*/ 
-Random_points_in_disc_2( double r, Random& rnd = 
-default_random); 
+*/
+Random_points_in_disc_2( double r, Random& rnd =
+default_random);
 
 /// @}
 
@@ -206,67 +206,67 @@ default_random);
 
 /*!
 
-The class `Random_points_in_square_2` is an input iterator creating points uniformly 
-distributed in a half-open square. The default `Creator` is 
-`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
+The class `Random_points_in_square_2` is an input iterator creating points uniformly
+distributed in a half-open square. The default `Creator` is
+`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels ::InputIterator 
-\cgalModels ::PointGenerator 
+\cgalModels ::InputIterator
+\cgalModels ::PointGenerator
 
-\sa `CGAL::cpp0x::copy_n` 
-\sa `CGAL::Counting_iterator` 
-\sa `CGAL::Points_on_segment_2<Point_2>` 
-\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_square_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_in_cube_3<Point_3, Creator>` 
-\sa `std::random_shuffle` 
+\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::Counting_iterator`
+\sa `CGAL::Points_on_segment_2<Point_2>`
+\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+\sa `std::random_shuffle`
 
 */
 template< typename Point_2, typename Creator >
 class Random_points_in_square_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
-/*! 
+/*!
 
-*/ 
-typedef std::input_iterator_tag iterator_category; 
+*/
+typedef std::input_iterator_tag iterator_category;
 
-/*! 
+/*!
 
-*/ 
-typedef Point_2 value_type; 
+*/
+typedef Point_2 value_type;
 
-/*! 
+/*!
 
-*/ 
-typedef std::ptrdiff_t difference_type; 
+*/
+typedef std::ptrdiff_t difference_type;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2* pointer; 
+*/
+typedef const Point_2* pointer;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2& reference; 
+*/
+typedef const Point_2& reference;
 
 
 
-/*! 
-Creates  an input iterator `g` generating points of type `Point_2` uniformly 
-distributed in the half-open square with side length \f$ 2 a\f$, centered 
-at the origin, i.e.\ \f$ \forall p = *g: -a \le p.x() < a\f$ and 
-\f$ -a \le p.y() < a\f$. 
-Two random numbers are needed from `rnd` for each point. 
+/*!
+Creates  an input iterator `g` generating points of type `Point_2` uniformly
+distributed in the half-open square with side length \f$ 2 a\f$, centered
+at the origin, i.e.\ \f$ \forall p = *g: -a \le p.x() < a\f$ and
+\f$ -a \le p.y() < a\f$.
+Two random numbers are needed from `rnd` for each point.
 
-*/ 
-Random_points_in_square_2( double a, Random& rnd = 
-default_random); 
+*/
+Random_points_in_square_2( double a, Random& rnd =
+default_random);
 
 /// @}
 
@@ -274,69 +274,69 @@ default_random);
 
 /*!
 
-The class `Random_points_on_circle_2` is an input iterator creating points uniformly 
-distributed on a circle. The default `Creator` is 
-`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
-The generated points are computed using floating point arithmetic, 
-whatever the Kernel is, thus they are on the circle/sphere only up to 
-rounding errors. 
+The class `Random_points_on_circle_2` is an input iterator creating points uniformly
+distributed on a circle. The default `Creator` is
+`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
+The generated points are computed using floating point arithmetic,
+whatever the Kernel is, thus they are on the circle/sphere only up to
+rounding errors.
 
-\cgalModels ::InputIterator 
-\cgalModels ::PointGenerator 
+\cgalModels ::InputIterator
+\cgalModels ::PointGenerator
 
-\sa `CGAL::cpp0x::copy_n` 
-\sa `CGAL::Counting_iterator` 
-\sa `CGAL::Points_on_segment_2<Point_2>` 
-\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_in_square_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_square_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>` 
-\sa `std::random_shuffle` 
+\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::Counting_iterator`
+\sa `CGAL::Points_on_segment_2<Point_2>`
+\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
+\sa `std::random_shuffle`
 
 */
 template< typename Point_2, typename Creator >
 class Random_points_on_circle_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
-/*! 
+/*!
 
-*/ 
-typedef std::input_iterator_tag iterator_category; 
+*/
+typedef std::input_iterator_tag iterator_category;
 
-/*! 
+/*!
 
-*/ 
-typedef Point_2 value_type; 
+*/
+typedef Point_2 value_type;
 
-/*! 
+/*!
 
-*/ 
-typedef std::ptrdiff_t difference_type; 
+*/
+typedef std::ptrdiff_t difference_type;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2* pointer; 
+*/
+typedef const Point_2* pointer;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2& reference; 
+*/
+typedef const Point_2& reference;
 
 
-/*! 
-creates an input iterator `g` generating points of type `Point_2` uniformly 
-distributed on the circle with radius \f$ r\f$, 
-i.e.\ \f$ |*g| == r\f$. A single random number is needed from 
-`rnd` for each point. 
+/*!
+creates an input iterator `g` generating points of type `Point_2` uniformly
+distributed on the circle with radius \f$ r\f$,
+i.e.\ \f$ |*g| == r\f$. A single random number is needed from
+`rnd` for each point.
 
-*/ 
-Random_points_on_circle_2( double r, Random& rnd = 
-default_random); 
+*/
+Random_points_on_circle_2( double r, Random& rnd =
+default_random);
 
 /// @}
 
@@ -347,65 +347,65 @@ namespace CGAL {
 
 /*!
 
-The class `Random_points_on_segment_2` is an input iterator creating points uniformly 
-distributed on a segment. The default `Creator` is 
-`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
+The class `Random_points_on_segment_2` is an input iterator creating points uniformly
+distributed on a segment. The default `Creator` is
+`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels ::InputIterator 
-\cgalModels ::PointGenerator 
+\cgalModels ::InputIterator
+\cgalModels ::PointGenerator
 
-\sa `CGAL::cpp0x::copy_n` 
-\sa `CGAL::Counting_iterator` 
-\sa `CGAL::Points_on_segment_2<Point_2>` 
-\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_in_square_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_circle_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_square_2<Point_2, Creator>` 
-\sa `std::random_shuffle` 
+\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::Counting_iterator`
+\sa `CGAL::Points_on_segment_2<Point_2>`
+\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_circle_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
+\sa `std::random_shuffle`
 
 */
 template< typename Point_2, typename Creator >
 class Random_points_on_segment_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
-/*! 
+/*!
 
-*/ 
-typedef std::input_iterator_tag iterator_category; 
+*/
+typedef std::input_iterator_tag iterator_category;
 
-/*! 
+/*!
 
-*/ 
-typedef Point_2 value_type; 
+*/
+typedef Point_2 value_type;
 
-/*! 
+/*!
 
-*/ 
-typedef std::ptrdiff_t difference_type; 
+*/
+typedef std::ptrdiff_t difference_type;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2* pointer; 
+*/
+typedef const Point_2* pointer;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2& reference; 
+*/
+typedef const Point_2& reference;
 
 
-/*! 
-creates an input iterator `g` generating points of type `Point_2` uniformly 
-distributed on the segment from \f$ p\f$ to \f$ q\f$ (excluding \f$ q\f$), 
-i.e.\ \f$ *g == (1-\lambda)\, p + \lambda q\f$ where \f$ 0 \le\lambda< 1\f$. 
-A single random number is needed from `rnd` for each point. 
-\cgalRequires The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$. 
-*/ 
-Random_points_on_segment_2( const Point_2& p, const Point_2& q, 
-Random& rnd = default_random); 
+/*!
+creates an input iterator `g` generating points of type `Point_2` uniformly
+distributed on the segment from \f$ p\f$ to \f$ q\f$ (excluding \f$ q\f$),
+i.e.\ \f$ *g == (1-\lambda)\, p + \lambda q\f$ where \f$ 0 \le\lambda< 1\f$.
+A single random number is needed from `rnd` for each point.
+\cgalRequires The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$.
+*/
+Random_points_on_segment_2( const Point_2& p, const Point_2& q,
+Random& rnd = default_random);
 
 /// @}
 
@@ -416,67 +416,67 @@ namespace CGAL {
 
 /*!
 
-The class `Random_points_on_square_2` is an input iterator creating points uniformly 
-distributed on the boundary of a square. The default `Creator` is 
-`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`. 
+The class `Random_points_on_square_2` is an input iterator creating points uniformly
+distributed on the boundary of a square. The default `Creator` is
+`Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels ::InputIterator 
-\cgalModels ::PointGenerator 
+\cgalModels ::InputIterator
+\cgalModels ::PointGenerator
 
-\sa `CGAL::cpp0x::copy_n` 
-\sa `CGAL::Counting_iterator` 
-\sa `CGAL::Points_on_segment_2<Point_2>` 
-\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_in_square_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_circle_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>` 
-\sa `std::random_shuffle` 
+\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::Counting_iterator`
+\sa `CGAL::Points_on_segment_2<Point_2>`
+\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_circle_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
+\sa `std::random_shuffle`
 
 */
 template< typename Point_2, typename Creator >
 class Random_points_on_square_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
-/*! 
+/*!
 
-*/ 
-typedef std::input_iterator_tag iterator_category; 
+*/
+typedef std::input_iterator_tag iterator_category;
 
-/*! 
+/*!
 
-*/ 
-typedef Point_2 value_type; 
+*/
+typedef Point_2 value_type;
 
-/*! 
+/*!
 
-*/ 
-typedef std::ptrdiff_t difference_type; 
+*/
+typedef std::ptrdiff_t difference_type;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2* pointer; 
+*/
+typedef const Point_2* pointer;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2& reference; 
+*/
+typedef const Point_2& reference;
 
 
-/*! 
-creates an input iterator `g` generating points of type `Point_2` uniformly 
-distributed on the boundary of the square with side length \f$ 2 a\f$, 
-centered at the origin, i.e.\ \f$ \forall p = *g:\f$ one 
-coordinate is either \f$ a\f$ or \f$ -a\f$ and for the 
-other coordinate \f$ c\f$ holds \f$ -a \le c < a\f$. 
-A single random number is needed from `rnd` for each point. 
+/*!
+creates an input iterator `g` generating points of type `Point_2` uniformly
+distributed on the boundary of the square with side length \f$ 2 a\f$,
+centered at the origin, i.e.\ \f$ \forall p = *g:\f$ one
+coordinate is either \f$ a\f$ or \f$ -a\f$ and for the
+other coordinate \f$ c\f$ holds \f$ -a \le c < a\f$.
+A single random number is needed from `rnd` for each point.
 
-*/ 
-Random_points_on_square_2( double a, Random& rnd = 
-default_random); 
+*/
+Random_points_on_square_2( double a, Random& rnd =
+default_random);
 
 /// @}
 
@@ -487,90 +487,90 @@ namespace CGAL {
 
 /*!
 
-The class `Points_on_segment_2` is a generator for points on a segment whose 
-endpoints are specified upon construction. The points are equally spaced. 
+The class `Points_on_segment_2` is a generator for points on a segment whose
+endpoints are specified upon construction. The points are equally spaced.
 
-\cgalModels ::PointGenerator 
+\cgalModels ::PointGenerator
 
-\sa `CGAL::cpp0x::copy_n` 
-\sa `CGAL::Counting_iterator` 
-\sa `CGAL::points_on_segment<Point_2>` 
-\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_in_square_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_circle_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_on_square_2<Point_2, Creator>` 
-\sa `CGAL::random_selection` 
-\sa `std::random_shuffle` 
+\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::Counting_iterator`
+\sa `CGAL::points_on_segment<Point_2>`
+\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_circle_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
+\sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
+\sa `CGAL::random_selection`
+\sa `std::random_shuffle`
 
 */
 template< typename Point_2 >
 class Points_on_segment_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
-/*! 
+/*!
 
-*/ 
-typedef std::input_iterator_tag iterator_category; 
+*/
+typedef std::input_iterator_tag iterator_category;
 
-/*! 
+/*!
 
-*/ 
-typedef Point_2 value_type; 
+*/
+typedef Point_2 value_type;
 
-/*! 
+/*!
 
-*/ 
-typedef std::ptrdiff_t difference_type; 
+*/
+typedef std::ptrdiff_t difference_type;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2* pointer; 
+*/
+typedef const Point_2* pointer;
 
-/*! 
+/*!
 
-*/ 
-typedef const Point_2& reference; 
+*/
+typedef const Point_2& reference;
 
 
 
-/*! 
-creates an input iterator `g` generating points of type `P` equally 
-spaced on the segment from \f$ p\f$ to \f$ q\f$. \f$ n-i\f$ points are placed on the 
-segment defined by \f$ p\f$ and \f$ q\f$. Values of the index parameter \f$ i\f$ larger 
-than 0 indicate starting points for the sequence further from \f$ p\f$. 
-Point \f$ p\f$ has index value 0 and \f$ q\f$ has index value \f$ n-1\f$. 
+/*!
+creates an input iterator `g` generating points of type `P` equally
+spaced on the segment from \f$ p\f$ to \f$ q\f$. \f$ n-i\f$ points are placed on the
+segment defined by \f$ p\f$ and \f$ q\f$. Values of the index parameter \f$ i\f$ larger
+than 0 indicate starting points for the sequence further from \f$ p\f$.
+Point \f$ p\f$ has index value 0 and \f$ q\f$ has index value \f$ n-1\f$.
 
-\cgalRequires The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$. 
-*/ 
-Points_on_segment_2( const Point_2& p, const Point_2& q, 
-std::size_t n, std::size_t i = 0); 
+\cgalRequires The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$.
+*/
+Points_on_segment_2( const Point_2& p, const Point_2& q,
+std::size_t n, std::size_t i = 0);
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
-/*! 
-returns the range in which the point 
-coordinates lie, i.e.\ \f$ \forall x: |x| \leq\f$ `range()` and 
-\f$ \forall y: |y| \leq\f$`range()` 
-*/ 
-double range(); 
+/*!
+returns the range in which the point
+coordinates lie, i.e.\ \f$ \forall x: |x| \leq\f$ `range()` and
+\f$ \forall y: |y| \leq\f$`range()`
+*/
+double range();
 
-/*! 
-returns the source point of the segment. 
-*/ 
-const Point_2& source(); 
+/*!
+returns the source point of the segment.
+*/
+const Point_2& source();
 
-/*! 
-returns the target point of the segment. 
-*/ 
-const Point_2& target(); 
+/*!
+returns the target point of the segment.
+*/
+const Point_2& target();
 
 /// @}
 

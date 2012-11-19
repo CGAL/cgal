@@ -150,7 +150,7 @@ must be available as well. It must work for exact (i.e., no
 remainder) integer divisions only. Furthermore, both number types
 should fulfill \cgal's requirements on a number type.
 
-\subsection Kernel_dCartesianKernel %Cartesian %Kernel
+\subsection Kernel_dCartesianKernel Cartesian Kernel
 
 With `Cartesian_d<FieldNumberType,LinearAlgebra>` you can choose
 %Cartesian representation of coordinates. The type
@@ -170,7 +170,7 @@ and `Cartesian_d<FieldNumberType>::RT` are mapped to number type
 type `LinearAlgebra`. `Cartesian_d<FieldNumberType>` uses
 reference counting internally to save copying costs.
 
-\subsection Kernel_dHomogeneousKernel %Homogeneous %Kernel
+\subsection Kernel_dHomogeneousKernel Homogeneous Kernel
 
 As we mentioned before, homogeneous coordinates permit to avoid
 division operations in numerical computations, since the additional
@@ -222,7 +222,7 @@ parameterized with a number type, such as
 `Cartesian_d<double>` or `Homogeneous_d<leda_integer>`.
 </OL>
 
-\subsection Kernel_dKernelasaTraitsClass %Kernel as a Traits Class
+\subsection Kernel_dKernelasaTraitsClass Kernel as a Traits Class
 
 Algorithms and data structures in the basic library of \cgal are
 parameterized by a traits class that subsumes the objects on which the
@@ -235,7 +235,7 @@ algorithm. In some other cases, the algorithms or data structures
 needs more than is provided by a kernel. In these cases, a kernel can
 not be used as a traits class.
 
-\subsection Kernel_dChoosingaKernel Choosing a %Kernel
+\subsection Kernel_dChoosingaKernel Choosing a Kernel
 
 If you start with integral %Cartesian coordinates,
 many geometric computations will involve integral numerical values
@@ -317,7 +317,7 @@ Note that these constructions do not involve any performance overhead
 for the conversion with the currently available representation
 classes.
 
-\subsection Kernel_dKernelObjects %Kernel Objects
+\subsection Kernel_dKernelObjects Kernel Objects
 
 Besides points (`Point_d<R>`), vectors (`Vector_d<R>`), and
 directions (`Direction_d<R>`), \cgal provides lines, rays,
