@@ -6,7 +6,7 @@ namespace ArrDirectionalTraits {
 
 \cgalRefines `AdaptableUnaryFunction`
 
-\cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::CompareEndpointsXy_2` 
+\cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::Compare_endpoints_xy_2`
 
 */
 
