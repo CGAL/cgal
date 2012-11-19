@@ -15,7 +15,7 @@
 \cgalPkgPicture{segment_tree.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Gabriele Neyer}
-\cgalPkgDesc{Range and segment trees allow to perform window queries on point sets, and to enumerate all ranges enclosing a query point. The provided data structures  are static and they are optimized for fast queries.}
+\cgalPkgDesc{%Range and segment trees allow to perform window queries on point sets, and to enumerate all ranges enclosing a query point. The provided data structures  are static and they are optimized for fast queries.}
 \cgalPkgManuals{Chapter_dD_Range_and_Segment_Trees,PkgRangeSegmentTreesD}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
