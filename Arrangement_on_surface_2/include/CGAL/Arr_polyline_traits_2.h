@@ -453,14 +453,17 @@ public:
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     { 
-      typename Curve_2::const_segments_iterator seg = cv.begin_segments();
-      typename Curve_2::const_segments_iterator last_seg=cv.end_segments();
+      typedef typename Curve_2::const_segments_iterator const_seg_iterator;
+      const_seg_iterator first_seg = cv.begin_segments();
+      const_seg_iterator last_seg=cv.end_segments();
+
+      std::cout << "The first seg is: " << *first_seg << "\n";
 
       // Empty polyline:
-      if (seg == last_seg)
+      if (first_seg == last_seg)
         return oi;
 
-      typename Curve_2::const_segments_iterator seg_it = seg;
+      const_seg_iterator seg_it = first_seg;
       ++seg_it;
 
       const Segment_traits_2* seg_traits = m_traits->segment_traits_2();
@@ -474,39 +477,43 @@ public:
       if (seg_it == last_seg) {
         // The polyline contains a single segment:
         // Check if it is degenerated
-	if ( compare_xy(min_v(*seg),max_v(*seg)) == EQUAL)
+	if ( compare_xy(min_v(*seg_it),max_v(*seg_it)) == EQUAL)
 	  // One segment is degenerated, returns the point.
-	  *oi++ = make_object(min_v(*seg));
+	  *oi++ = make_object(min_v(*seg_it));
 	else
 	  // Polyline consists of only one segments, and it is returned.
-	  *oi++ = make_object(*seg);
+	  *oi++ = make_object(*seg_it);
         return oi;
       }
 
-      // Locate points where the x-order changes:
       typename Segment_traits_2::Compare_x_2 compare_x =
         seg_traits->compare_x_2_object();
       Construct_x_monotone_curve_2 construct_x_monotone_curve = 
 	m_traits->construct_x_monotone_curve_2_object();
 
-      typename Curve_2::const_segments_iterator x_mono_sub_curve_begin = seg;
+      const_seg_iterator x_mono_sub_curve_begin = first_seg;
 
-      Comparison_result initial_direction = compare_x(min_v(*seg),max_v(*seg));
+      Comparison_result initial_direction = 
+	compare_x(min_v(*first_seg),max_v(*first_seg));
 
-      for (typename Curve_2::const_segments_iterator seg_it = seg;
-	   seg != last_seg ; ++seg){
-	Comparison_result curr_direction = compare_x(min_v(*seg),max_v(*seg));
-        if ( curr_direction != initial_direction ) {
-          // Create a new x-monotone polyline from the range of points
-          // [x_mono_sub_curve_begin, pt)
-          *oi++ = 
-	    make_object(
-			construct_x_monotone_curve(x_mono_sub_curve_begin, seg));
+      seg_it = first_seg; 
+      ++seg_it;
 
-          x_mono_sub_curve_begin = seg;
-	  initial_direction = curr_direction;
-        }
-      }
+      while (seg_it != last_seg)
+	{
+	  std::cout << *seg_it << "\n";
+	  Comparison_result curr_direction = 
+	    compare_x(min_v(*(seg_it)),max_v(*(seg_it)));
+	  if ( curr_direction != initial_direction ) {
+	    // Create a new x-monotone polyline from the
+	    // sub range of segmetns [x_mono_sub_curve_begin, pt)
+	    *oi++ = make_object(
+		  construct_x_monotone_curve(x_mono_sub_curve_begin, seg_it));
+	    x_mono_sub_curve_begin = seg_it;
+	    initial_direction = curr_direction;
+	  }
+	  ++seg_it;
+	}
 
       // Create an x-monotone polyline from the remaining points.
       CGAL_assertion(x_mono_sub_curve_begin != last_seg);

@@ -325,8 +325,8 @@ public:
 
   private:
     
-    const _Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
-    int   m_num_pts;                            // Its number of points.
+    const _Polyline_2<SegmentTraits_>* m_cvP;  // The polyline curve.
+    // TODO: Use size() directly.
     int   m_num_segs;                           // Its number of segments
     int   m_index;                              // The current segment.
 
@@ -335,19 +335,17 @@ public:
      * \param cv The scanned curve.
      * \param index The index of the segment.
      */
-    const_segments_iterator (const _Polyline_2<SegmentTraits_>* cvP, int index) :
+    const_segments_iterator (const _Polyline_2<SegmentTraits_>* cvP, 
+			     int index) :
       m_cvP(cvP),
       m_index(index)
     {
       if (m_cvP == NULL)
 	{
-	  m_num_pts = 0;
 	  m_num_segs = 0;
 	}
       else
 	{
-	  m_num_pts =
-	    (m_cvP->size() == 0) ? 0 : static_cast<int>(m_cvP->size() + 1);
 	  m_num_segs = m_cvP->size();
 	}
     }
@@ -357,10 +355,9 @@ public:
     /*! Default constructor. */
     const_segments_iterator() :
       m_cvP(NULL),
-      m_num_pts(0),
       m_num_segs(0),
       m_index(-1)
-    {}
+    { }
 
     /*! 
      * Dereference operator.
@@ -370,7 +367,6 @@ public:
     {
       CGAL_assertion(m_cvP != NULL);
       CGAL_assertion(m_index >= 0 && m_index < m_num_segs);
-
       return (*m_cvP)[m_index];
     }
 
@@ -386,6 +382,7 @@ public:
     /*! Increment operators. */
     const_segments_iterator& operator++() 
     {
+      CGAL_assertion(m_index >= 0 && m_index < m_num_segs);
       if (m_cvP != NULL && m_index < m_num_segs)
 	++m_index;
       return (*this);
@@ -402,6 +399,7 @@ public:
     /*! Decrement operators. */
     const_segments_iterator& operator-- ()
     {
+      // TODO: Shouldn't m_index > 0??
       if (m_cvP != NULL && m_index >= 0)
 	--m_index;
       return (*this);
@@ -410,6 +408,7 @@ public:
     const_segments_iterator operator--(int)
     {
       const_iterator  temp = *this;
+      // TODO: Shouldn't m_index > 0??
       if (m_cvP != NULL && m_index >= 0)
 	--m_index;
       return (temp);
