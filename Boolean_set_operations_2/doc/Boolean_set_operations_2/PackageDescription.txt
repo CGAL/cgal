@@ -2,6 +2,10 @@
 /// \defgroup PkgBooleanSetOperations2Concepts Concepts
 /// \ingroup PkgBooleanSetOperations2
 
+/// \cgalConceptNamespace
+/// The namespace containing concepts specific to 2D Boolean Set Operations.
+namespace ArrDirectionalTraits {}
+
 /*!
 \addtogroup PkgBooleanSetOperations2
 \todo check generated documentation

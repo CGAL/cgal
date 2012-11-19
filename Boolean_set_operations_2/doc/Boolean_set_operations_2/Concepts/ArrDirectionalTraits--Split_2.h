@@ -1,4 +1,4 @@
-
+namespace ArrDirectionalTraits {
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrDirectionalTraits::Split_2 {
+class Split_2 {
 public:
 
 /// \name Has Models 
@@ -33,3 +33,4 @@ ArrDirectionalTraits::X_monotone_curve_2& xc2);
 
 }; /* end ArrDirectionalTraits::Split_2 */
 
+}

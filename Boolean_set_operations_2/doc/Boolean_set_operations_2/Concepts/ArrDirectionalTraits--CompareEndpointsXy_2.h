@@ -1,3 +1,4 @@
+namespace ArrDirectionalTraits {
 
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
@@ -9,7 +10,7 @@
 
 */
 
-class ArrDirectionalTraits::CompareEndpointsXy_2 {
+class CompareEndpointsXy_2 {
 public:
 
 /// \name Has Models 
@@ -27,3 +28,4 @@ Comparison_result operator()(ArrDirectionalTraits::X_monotone_curve_2 xc);
 
 }; /* end ArrDirectionalTraits::CompareEndpointsXy_2 */
 
+}
