@@ -92,7 +92,7 @@ Runge-Kutta second order integrator (The empty circle represents the intermediat
 \cgalFigureEnd
 
 This method introduces an intermediate point \f$ p'_k\f$ between \f$ p_k\f$ and \f$ p_{k+1}\f$ to increase the
-precision of the computation (see \cgal_figure_{runge_kutta_fig}), where:
+precision of the computation (see \cgalFigureRef{runge_kutta_fig}), where:
 
 \f[ 
 \begin{array}{ccccc}

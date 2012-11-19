@@ -175,7 +175,7 @@ by the triangulation data structure. Because the triangulation
 data structure 
 is itself templated by the vertex and face classes this induces
 a cyclic dependency.
-See \cgal_figure_{TDS_2D_Fig_three_levels_2}.
+See \cgalFigureRef{TDS_2D_Fig_three_levels_2}.
 
 \cgalFigureBegin{TDS_2D_Fig_three_levels_2,threelevels2.gif}
 The cyclic dependency in triangulations software design.

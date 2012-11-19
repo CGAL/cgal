@@ -293,8 +293,8 @@ parameters set for contouring the iso-surface is large with respect to
 the noise level the output surface mesh will appear smooth (not
 shown). If the user wants to produce a smooth and detailed output
 surface mesh, we recommend to apply smoothing through
-`jet_smooth_point_set()` ((see
-\cgal_figure_{Surface_reconstruction_points_3fignoise}, bottom).
+`jet_smooth_point_set()` (see
+\cgalFigureRef{Surface_reconstruction_points_3fignoise}, bottom).
 
 \cgalFigureBegin{Surface_reconstruction_points_3fignoise,noise.jpg}
 Top-left: points sampled on a sphere and corrupted with a lot of noise. Top-right: reconstructed surface mesh. Bottom-left: smoothed point set. Bottom-right: reconstructed surface mesh.
