@@ -516,7 +516,7 @@ S.join (begin, end);
 
 \section bso_secbso_gen Boolean Set-Operations on General Polygons 
 
-\image general_polygon.gif
+\image html general_polygon.gif
 
 In previous sections only ordinary (linear) polygons were dealt with. Namely, closed
 point sets bounded by piecewise linear curves. The Boolean
