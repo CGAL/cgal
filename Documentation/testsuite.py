@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # Copyright (c) 2012 GeometryFactory (France). All rights reserved.
 # All rights reserved.
 # 
@@ -34,7 +34,7 @@ def write_out_html(d, fn):
     with open(fn, 'w') as f:
         # this is the normal doxygen doctype, which is thrown away by pyquery
         f.write('<!DOCTYPE html>\n')
-        print(d, file=f)
+        f.write(d.html())
 
 def count_errors_and_warnings(fn):
     with open(fn) as f:
@@ -48,7 +48,7 @@ def count_errors_and_warnings(fn):
     return (warn_count, error_count)
 
 def update():
-    subprocess.call(['svn', 'update', '..'])
+    subprocess.call(['git', 'pull'])
 
 def purge_doc():
     for log in glob.glob('./log/*'):
@@ -64,15 +64,9 @@ def run_doxyassist(doxyassist, doxygen):
     subprocess.call([doxyassist, '--debug', '--doxygen', doxygen, 'doxyassist.xml'])
     
 def get_version():
-    output=subprocess.check_output(['svn', 'info', '--xml', '..'], universal_newlines=True)
-    info_xml=parseString(output)
-    commit=info_xml.getElementsByTagName('commit')[0]
-    rev=commit.getAttribute('revision')
-    date=""
-    for node in commit.getElementsByTagName('date')[0].childNodes:
-        date += node.data
-    # do ourselves a favour and beautify the date once and forall
-    date=date[:date.find('T')]
+    rev=subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True)
+    date=subprocess.check_output(['git', 'log', '-n', '1', '--format=\"%ai\"', '--date=short'], universal_newlines=True)
+    date=date[1:11]
     return (rev, date)
 
 def write_report():
@@ -122,7 +116,7 @@ def main():
     description='This script updates a checkout of cgal, purges the documentation, rebuilds it, creates an HTML summary of the resulting log files, and publishes the created files and logs.')
     parser.add_argument('--doxyassist', default='/usr/bin/doxyassist.py', metavar='/path/to/doxyassist.py')
     parser.add_argument('--doxygen', default='/usr/bin/doxygen', metavar='/path/to/doxygenbinary', help='the doxygen binary', )
-    parser.add_argument('--documentation', default='.', metavar='/path/to/cgal/Documentation', help='The path to the Documentation dir of the svn checkout you would like to test.')
+    parser.add_argument('--documentation', default='.', metavar='/path/to/cgal/Documentation', help='The path to the Documentation dir of the git checkout you would like to test.')
     parser.add_argument('--publish', metavar='/path/to/publish', help='Specify this argument if the results should be published.')
     parser.add_argument('--do-update', action="store_true", help='Specify this argument if you want to do a version control update.')
     parser.add_argument('--do-purge-rebuild', action="store_true", help='Specify this argument if you want to actually rebuild the documentation. Just write the report if not specified.')
