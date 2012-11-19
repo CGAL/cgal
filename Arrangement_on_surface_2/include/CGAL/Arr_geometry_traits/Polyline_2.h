@@ -40,7 +40,7 @@ namespace CGAL {
 /*! \class
  * Representation of a polyline.
  */
-template <class SegmentTraits_>
+template <typename SegmentTraits_>
 class _Polyline_2
 {
 public:
@@ -68,7 +68,7 @@ public:
    * \pre Depends on the range's content. See the implementations
    *      for furtehr details.
    */
-  template <class InputIterator>
+  template <typename InputIterator>
   _Polyline_2(InputIterator begin, InputIterator end) :
     m_segments()
   {
@@ -80,7 +80,7 @@ public:
    * \param begin An iterator pointing to the first segment in the range.
    * \param end An iterator pointing after the past-the-end segment in the range.
    */
-  template <class InputIterator>
+  template <typename InputIterator>
   void construct_polyline(InputIterator begin, InputIterator end, 
                           const Segment_2& /* */)
   {
@@ -91,10 +91,10 @@ public:
    * Construct a polyline from a range of points.
    * \param begin An iterator pointing to the first point in the range.
    * \param end An iterator pointing after the last point in the range.
-   * \pre The are at least 2 points in the range.
+   * \pre There are at least 2 points in the range.
    *      In other cases, an empty polyline will be created.
    */
-  template <class InputIterator>
+  template <typename InputIterator>
   void construct_polyline(InputIterator begin, InputIterator end, 
                           const Point_2& /* */)
   {
@@ -108,9 +108,8 @@ public:
     InputIterator pt = ps;
     ++pt;
 
-    while (pt != end)
-    {
-      m_segments.push_back (Segment_2 (*ps, *pt));
+    while (pt != end) {
+      m_segments.push_back(Segment_2(*ps, *pt));
       ++ps;
       ++pt;
     }
@@ -345,11 +344,10 @@ public:
  * Representation of an x-monotone polyline.
  * An x-monotone polyline is always directed from left to right.
  */
-template <class SegmentTraits_>
+template <typename SegmentTraits_>
 class _X_monotone_polyline_2 : public _Polyline_2<SegmentTraits_>
 {
 public:
-
   typedef SegmentTraits_                        Segment_traits_2;
   typedef _Polyline_2<SegmentTraits_>           Base;
   typedef typename Segment_traits_2::Point_2    Point_2;
@@ -359,7 +357,7 @@ public:
   _X_monotone_polyline_2() : Base () {}
 
   /*! Constructor */
-  template <class InputIterator>
+  template <typename InputIterator>
   _X_monotone_polyline_2(InputIterator begin, InputIterator end) :
     Base(begin, end)
   {
@@ -369,7 +367,7 @@ public:
   /*!
    * Constructs from a range of segments.
    */
-  template <class InputIterator>
+  template <typename InputIterator>
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
                                      const Segment_2& /* */)
   {}
@@ -378,7 +376,7 @@ public:
    * Constructs from a range of points, defining the endpoints of the
    * polyline segments.
    */
-  template <class InputIterator>
+  template <typename InputIterator>
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
                                      const Point_2& /* */)
   {
@@ -463,7 +461,7 @@ private:
 };
 
 /*! Output operator for a polyline. */
-template <class SegmentTraits>
+template <typename SegmentTraits>
 std::ostream& operator<< (std::ostream & os,
 			  const _Polyline_2<SegmentTraits>& cv)
 {
@@ -481,7 +479,7 @@ std::ostream& operator<< (std::ostream & os,
 }
 
 /*! Input operator for a polyline. */
-template <class SegmentTraits>
+template <typename SegmentTraits>
 std::istream& operator>> (std::istream& is,
 			 _Polyline_2<SegmentTraits>& pl)
 {
