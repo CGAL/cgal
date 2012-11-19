@@ -181,7 +181,7 @@ diagrams.
 \cgalExample{Envelope_2/convex_hull.cpp}
 
 \cgalFigureBegin{env2_figex_circ,ex_circle.gif}
-A set of four circles, as constructed in \ref Envelope_2/ex_envelope_circles.cpp. The lower envelope and the upper envelope are shown using thick dashed lines of different colors respectively.
+A set of four circles, as constructed in \ref Envelope_2/envelope_circles.cpp. The lower envelope and the upper envelope are shown using thick dashed lines of different colors respectively.
 \cgalFigureEnd
 
 \subsection Envelope_2ExampleforEnvelopeofNonLinearCurves Example for Envelope of Non-Linear Curves
