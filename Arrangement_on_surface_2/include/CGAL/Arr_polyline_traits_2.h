@@ -486,40 +486,27 @@ public:
         return oi;
       }
 
-      typename Segment_traits_2::Compare_x_2 compare_x =
-        seg_traits->compare_x_2_object();
+      typename Segment_traits_2::Compare_xy_2 comp_xy =
+        seg_traits->compare_xy_2_object();
       Construct_x_monotone_curve_2 construct_x_monotone_curve = 
 	m_traits->construct_x_monotone_curve_2_object();
 
-      const_seg_iterator x_mono_sub_curve_begin = first_seg;
+      const_seg_iterator it_start = first_seg;
+      const_seg_iterator it_next = first_seg;
+      const_seg_iterator it_cv = first_seg;
 
-      Comparison_result initial_direction = 
-	compare_x(min_v(*first_seg),max_v(*first_seg));
+      for ( ; it_next != last_seg ; it_next++)
+      	{
+	  if (
+	      comp_xy(max_v(*it_cv),min_v(*it_next))!=EQUAL &&
+	      comp_xy(min_v(*it_cv),max_v(*it_next))!=EQUAL)
+	    {
+	      *oi++ = make_object(construct_x_monotone_curve(it_start, it_cv));
+	      it_start = it_cv;
+	    }
+	  ++it_cv;
+      	}
 
-      seg_it = first_seg; 
-      ++seg_it;
-
-      while (seg_it != last_seg)
-	{
-	  std::cout << *seg_it << "\n";
-	  Comparison_result curr_direction = 
-	    compare_x(min_v(*(seg_it)),max_v(*(seg_it)));
-	  if ( curr_direction != initial_direction ) {
-	    // Create a new x-monotone polyline from the
-	    // sub range of segmetns [x_mono_sub_curve_begin, pt)
-	    *oi++ = make_object(
-		  construct_x_monotone_curve(x_mono_sub_curve_begin, seg_it));
-	    x_mono_sub_curve_begin = seg_it;
-	    initial_direction = curr_direction;
-	  }
-	  ++seg_it;
-	}
-
-      // Create an x-monotone polyline from the remaining points.
-      CGAL_assertion(x_mono_sub_curve_begin != last_seg);
-      *oi++ = 
-	make_object(
-        construct_x_monotone_curve(x_mono_sub_curve_begin, last_seg));
       return oi;
     }
   };
