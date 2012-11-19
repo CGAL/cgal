@@ -51,7 +51,9 @@ public:
 
 protected:
   // The segments that comprise the poyline:
-  std::vector<Segment_2>                        m_segments;
+  typedef typename std::vector<Segment_2>        Segments_container;
+  typedef typename Segments_container::size_type Seg_container_size;
+  Segments_container                             m_segments;
 
 public:
   /*! Default constructor. */
@@ -304,8 +306,166 @@ public:
     return (const_reverse_iterator (begin()));
   }
 
+  class const_segments_iterator;
+  friend class const_segments_iterator;
+
+  /*! An iterator for the polyline points. */
+  class const_segments_iterator
+  {
+  public:
+
+    // Type definitions:
+    typedef std::bidirectional_iterator_tag     iterator_category;
+    typedef Segment_2                           value_type;
+    typedef std::ptrdiff_t                      difference_type;
+    // TODO: Shouldn't size_t be replaced by Seg_container_size?
+    typedef size_t                              size_type;
+    typedef const value_type&                   reference;
+    typedef const value_type*                   pointer;
+
+  private:
+    
+    const _Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
+    int   m_num_pts;                            // Its number of points.
+    int   m_num_segs;                           // Its number of segments
+    int   m_index;                              // The current segment.
+
+    /*!
+     * Private constructor.
+     * \param cv The scanned curve.
+     * \param index The index of the segment.
+     */
+    const_segments_iterator (const _Polyline_2<SegmentTraits_>* cvP, int index) :
+      m_cvP(cvP),
+      m_index(index)
+    {
+      if (m_cvP == NULL)
+	{
+	  m_num_pts = 0;
+	  m_num_segs = 0;
+	}
+      else
+	{
+	  m_num_pts =
+	    (m_cvP->size() == 0) ? 0 : static_cast<int>(m_cvP->size() + 1);
+	  m_num_segs = m_cvP->size();
+	}
+    }
+
+  public:
+
+    /*! Default constructor. */
+    const_segments_iterator() :
+      m_cvP(NULL),
+      m_num_pts(0),
+      m_num_segs(0),
+      m_index(-1)
+    {}
+
+    /*! 
+     * Dereference operator.
+     * \return The current point.
+     */
+    const Segment_2& operator*() const
+    {
+      CGAL_assertion(m_cvP != NULL);
+      CGAL_assertion(m_index >= 0 && m_index < m_num_segs);
+
+      return (*m_cvP)[m_index];
+    }
+
+    /*! 
+     * Arrow operator.
+     * \return A pointer to the current sgement.
+     */
+    const Segment_2* operator-> () const
+    {
+      return (&(this->operator* ()));
+    }
+
+    /*! Increment operators. */
+    const_segments_iterator& operator++() 
+    {
+      if (m_cvP != NULL && m_index < m_num_segs)
+	++m_index;
+      return (*this);
+    }
+
+    const_segments_iterator operator++ (int)
+    {
+      const_segments_iterator  temp = *this;
+      if (m_cvP != NULL && m_index < m_num_segs)
+	++m_index;
+      return (temp);
+    }
+
+    /*! Decrement operators. */
+    const_segments_iterator& operator-- ()
+    {
+      if (m_cvP != NULL && m_index >= 0)
+	--m_index;
+      return (*this);
+    }
+
+    const_segments_iterator operator--(int)
+    {
+      const_iterator  temp = *this;
+      if (m_cvP != NULL && m_index >= 0)
+	--m_index;
+      return (temp);
+    }
+
+    /*! Equality operators. */
+    bool operator==(const const_segments_iterator& it) const
+    {
+      return (m_cvP == it.m_cvP && m_index == it.m_index);
+    }
+
+    bool operator!=(const const_segments_iterator& it) const
+    {
+      return (m_cvP != it.m_cvP || m_index != it.m_index);
+    }
+
+    friend class _Polyline_2<SegmentTraits_>;
+  };
+
+  typedef std::reverse_iterator<const_segments_iterator>
+    const_reverse_segments_iterator;
+
+/*! Get an iterator for the polyline's segments. */
+const_segments_iterator begin_segments() const
+  {
+    if (size() == 0)
+      return (const_segments_iterator (NULL, -1));
+    else
+      return (const_segments_iterator (this, 0));
+  }
+
+  /*! Get a past-the-end iterator for the polyline's segments. */
+  const_segments_iterator end_segments() const
+  {
+    if (size() == 0)
+      return (const_segments_iterator (NULL, -1));
+    else
+      return (const_segments_iterator (this, size() + 1));
+  }
+
+  /*! Get a reverse iterator for the polyline's segments. */
+  const_reverse_segments_iterator rbegin_segments() const
+  {
+    return (const_reverse_segments_iterator (end_segments()));
+  }
+
+  /*! Get a reverse past-the-end iterator for the polyline points. */
+  const_reverse_segments_iterator rend_segments() const
+  {
+    return (const_reverse_segments_iterator (begin_segments()));
+  }
+
   /*!
    * Get the number of points contained in the polyline.
+   * TODO: Has to be updated once the polyline will be
+   * unbounded.
    * \return The number of points.
    */
   unsigned int points() const
@@ -317,9 +477,9 @@ public:
    * Get the number of segments that comprise the poyline.
    * \return The number of segments.
    */
-  inline unsigned int size() const
+  Seg_container_size size() const
   {
-    return static_cast<unsigned int>(m_segments.size());
+    return Seg_container_size(m_segments.size());
   }
 
   /*!

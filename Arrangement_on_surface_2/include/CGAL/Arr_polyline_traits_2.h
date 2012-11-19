@@ -453,58 +453,66 @@ public:
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     { 
-      // Go over all points in the input curve.
-      typename Curve_2::const_iterator ps = cv.begin();
-      typename Curve_2::const_iterator end = cv.end();
+      typename Curve_2::const_segments_iterator seg = cv.begin_segments();
+      typename Curve_2::const_segments_iterator last_seg=cv.end_segments();
 
       // Empty polyline:
-      if (ps == end)
+      if (seg == last_seg)
         return oi;
 
-      typename Curve_2::const_iterator pt = ps;
-      ++pt;
+      typename Curve_2::const_segments_iterator seg_it = seg;
+      ++seg_it;
 
-      if (pt == end) {
-        // The polyline contains a single isolated point:
-        *oi++ = make_object(*ps);
+      const Segment_traits_2* seg_traits = m_traits->segment_traits_2();
+      typename Segment_traits_2::Construct_max_vertex_2 max_v =
+	seg_traits->construct_max_vertex_2_object();
+      typename Segment_traits_2::Construct_min_vertex_2 min_v =
+	seg_traits->construct_min_vertex_2_object();
+      typename Segment_traits_2::Compare_xy_2 compare_xy =
+        seg_traits->compare_xy_2_object();
+
+      if (seg_it == last_seg) {
+        // The polyline contains a single segment:
+        // Check if it is degenerated
+	if ( compare_xy(min_v(*seg),max_v(*seg)) == EQUAL)
+	  // One segment is degenerated, returns the point.
+	  *oi++ = make_object(min_v(*seg));
+	else
+	  // Polyline consists of only one segments, and it is returned.
+	  *oi++ = make_object(*seg);
         return oi;
       }
 
       // Locate points where the x-order changes:
-      const Segment_traits_2* seg_traits = m_traits->segment_traits_2();
       typename Segment_traits_2::Compare_x_2 compare_x =
         seg_traits->compare_x_2_object();
-      typename Segment_traits_2::Compare_xy_2 compare_xy =
-        seg_traits->compare_xy_2_object();
-      typename Curve_2::const_iterator x_begin = ps;
-     
-      Comparison_result x_res = compare_x(*ps, *pt);
-      Comparison_result xy_res = (x_res != EQUAL) ? x_res : compare_xy(*ps, *pt);
+      Construct_x_monotone_curve_2 construct_x_monotone_curve = 
+	m_traits->construct_x_monotone_curve_2_object();
 
-      ++ps; ++pt;
-      while (pt != end) {
-        Comparison_result curr_x_res = compare_x(*ps, *pt);
-        Comparison_result curr_xy_res =
-          (curr_x_res != EQUAL) ? curr_x_res : compare_xy(*ps, *pt);
+      typename Curve_2::const_segments_iterator x_mono_sub_curve_begin = seg;
 
-        if (curr_x_res != x_res || curr_xy_res != xy_res) {
+      Comparison_result initial_direction = compare_x(min_v(*seg),max_v(*seg));
+
+      for (typename Curve_2::const_segments_iterator seg_it = seg;
+	   seg != last_seg ; ++seg){
+	Comparison_result curr_direction = compare_x(min_v(*seg),max_v(*seg));
+        if ( curr_direction != initial_direction ) {
           // Create a new x-monotone polyline from the range of points
-          // [x_begin, pt)
-	  Construct_x_monotone_curve_2 construct_x_monotone_curve = 
-	    m_traits->construct_x_monotone_curve_2_object();
-          *oi++ = make_object(construct_x_monotone_curve(x_begin, pt));
+          // [x_mono_sub_curve_begin, pt)
+          *oi++ = 
+	    make_object(
+			construct_x_monotone_curve(x_mono_sub_curve_begin, seg));
 
-          x_begin = ps;
-          x_res = curr_x_res;
-          xy_res = curr_xy_res;
+          x_mono_sub_curve_begin = seg;
+	  initial_direction = curr_direction;
         }
-
-        ++ps; ++pt;
       }
 
       // Create an x-monotone polyline from the remaining points.
-      CGAL_assertion(x_begin != end);
-      *oi++ = make_object(X_monotone_curve_2(x_begin, end));
+      CGAL_assertion(x_mono_sub_curve_begin != last_seg);
+      *oi++ = 
+	make_object(
+        construct_x_monotone_curve(x_mono_sub_curve_begin, last_seg));
       return oi;
     }
   };
