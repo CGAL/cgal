@@ -83,7 +83,7 @@ infinite, thus four of the five 3-cells become infinite: the geometric
 triangulation has one finite tetrahedron remaining, each of its facets
 being incident to an infinite cell. See \cgalFigureRef{TDS3figtoposimplex4}.
 
-\cgalFigureBegin{TDS3figtoposimplex4,topo-simplex4.gif]
+\cgalFigureBegin{TDS3figtoposimplex4,topo-simplex4.gif}
 4D simplex and a 3D geometric embedding.
 \cgalFigureEnd
 
