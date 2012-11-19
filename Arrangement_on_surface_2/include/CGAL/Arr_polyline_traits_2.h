@@ -982,6 +982,20 @@ public:
       return (X_monotone_curve_2 (pts + 0, pts + 2));
     }
 
+    template <typename InputIterator>
+    X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const
+    {
+      contructor_impl( begin, end, *begin);
+    }
+
+    template <typename InputIterator>
+    X_monotone_curve_2 contructor_impl(
+				       InputIterator begin, InputIterator end,
+				       const Point_2&) const
+    {
+      return X_monotone_curve_2(begin, end);      
+    }
+
     /*! Returns an x-monotone polyline from a range of segments.
      * \param begin An iterator pointing to the first segment in the range.
      * \param end An iterator pointing to the past-the-end segment in the range.
@@ -990,12 +1004,15 @@ public:
      *      (i+1)th segment.
      * \precondition The sequence of segments in the range forms a weak
      *      x-monotone polyline.
+     *      TODO: Shouldn't the range support bidirectional iteration?
      * \postcondition The resulting x-monotone polyline directed from left to
      *      right.
      * \return An x-monotone polyline directed from left to right.
      */
     template <typename InputIterator>
-    X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const
+    X_monotone_curve_2 contructor_impl(
+				       InputIterator begin, InputIterator end,
+				       const Segment_2&) const
     {
       CGAL_precondition(begin != end);
 
