@@ -1,6 +1,7 @@
 /*!
 
 \page preliminaries Preliminaries
+\cgalAutoToc
 \author %CGAL Editorial Board
 
 This chapter lists the licenses

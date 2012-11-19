@@ -1,6 +1,6 @@
 /*!
 \page installation Installation
-
+\cgalAutoToc
 \authors Eric Berberich, Joachim Reichel, and Fernando Cacciola
 
 \section installation_introduction Introduction
