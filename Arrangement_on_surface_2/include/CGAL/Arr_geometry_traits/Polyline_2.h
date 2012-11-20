@@ -363,6 +363,7 @@ public:
      * Dereference operator.
      * \return The current point.
      */
+
     const Segment_2& operator*() const
     {
       CGAL_assertion(m_cvP != NULL);

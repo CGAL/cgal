@@ -469,6 +469,8 @@ public:
 	seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Construct_min_vertex_2 min_v =
 	seg_traits->construct_min_vertex_2_object();
+      Construct_x_monotone_curve_2 construct_x_monotone_curve = 
+	m_traits->construct_x_monotone_curve_2_object();
 
       if (it_next == end_seg) {
         // The polyline contains a single segment:
@@ -477,7 +479,8 @@ public:
 	  // One segment is degenerated, returns the point.
 	  make_object(min_v(*start_seg)) :
 	  // Polyline consists of only one segments, and it is returned.
-	  make_object(*start_seg);
+	  //	  make_object(X_monotone_curve_2(min_v(*start_seg), max_v(*start_seg)));
+	    make_object(construct_x_monotone_curve(start_seg, end_seg));
         return oi;
       }
 
@@ -487,23 +490,44 @@ public:
         seg_traits->compare_xy_2_object();
       typename Segment_traits_2::Is_vertical_2 is_vertical =
 	seg_traits->is_vertical_2_object();
-      Construct_x_monotone_curve_2 construct_x_monotone_curve = 
-	m_traits->construct_x_monotone_curve_2_object();
 
       const_seg_iterator it_start = start_seg;
       const_seg_iterator it_curr = start_seg;
 
+      bool is_start_vertical = is_vertical(*it_start);
+
       for (/*it_next was advanced earlier*/; it_next != end_seg; ++it_next)
       {
-	// TODO: Improve this test. Avoid double tests of geometrical elements.
-        if ((comp_xy(max_v(*it_curr), min_v(*it_next)) != EQUAL) &&
-            (comp_xy(min_v(*it_curr), max_v(*it_next)) != EQUAL) )
-        {
-	  // Construct an x-monotone curve from the sub-range which was found
-          *oi++ = make_object(construct_x_monotone_curve(it_start, it_next));
-          it_start = it_next;
-        }
-        it_curr = it_next;
+	if ( is_start_vertical )
+	  {
+	    if ( !is_vertical(*it_next) )
+	      {
+		*oi++ = 
+		  make_object(construct_x_monotone_curve(it_start, it_next));
+		it_start = it_next;
+		is_start_vertical = is_vertical(*it_start);
+	      }
+	    it_curr = it_next;
+	  }
+	else
+	  {
+	    // TODO: Improve this test. Avoid double tests
+	    // of geometrical elements.
+	    if (((comp_xy(max_v(*it_curr), min_v(*it_next)) != EQUAL) &&
+		 (comp_xy(min_v(*it_curr), max_v(*it_next)) != EQUAL) ) ||
+		// Polyline has to be cut when starting vertical part
+
+		is_vertical(*it_next) )
+	      {
+		// Construct an x-monotone curve from the sub-range which
+		// was found
+		*oi++ = 
+		  make_object(construct_x_monotone_curve(it_start, it_next));
+		it_start = it_next;
+		is_start_vertical = is_vertical(*it_start);
+	      }
+	    it_curr = it_next;
+	  }
       }
       *oi++ = make_object(construct_x_monotone_curve(it_start, it_next));
       return oi;
@@ -976,7 +1000,6 @@ public:
       return res;
     }
 
-
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const
     {
@@ -1013,7 +1036,7 @@ public:
         m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_v =
         m_seg_traits->construct_max_vertex_2_object();
-       
+
       CGAL_precondition_code
         (
 	 typename Segment_traits_2::Equal_2 equal =
@@ -1026,11 +1049,13 @@ public:
          CGAL_precondition(!equal(min_v(*curr), max_v(*curr)));
 
          InputIterator next = curr;
+
          if (++next != end) {
            // Ensure that the second segment does not degenerate to a point.
            CGAL_precondition(!equal(min_v(*next), max_v(*next)));
 
            // Ensure that either both are vertical or both are not vertical.
+
            CGAL_precondition((is_vertical(*curr) && is_vertical(*next)) ||
                              (!is_vertical(*curr) && !is_vertical(*next)));
 
