@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /// \addtogroup kernel_dimension
-/// Tools to handle the dimension of a kernel.
+
 /// @{
 
 /*!

@@ -11,7 +11,6 @@
 
 /// \defgroup kernel_predef Predefined Kernels
 /// \ingroup PkgKernel23
-/// Kernels that come with \cgal
 
 /// \defgroup kernel_classes2 2D Kernel Objects 
 /// \ingroup PkgKernel23
@@ -28,10 +27,10 @@
 /// \defgroup kernel_enums Enumerations and Related Functions
 /// \ingroup PkgKernel23
 
-/// \ingroup kernel_conversion Cartesian/Homogenous Conversion
+/// \defgroup kernel_conversion Cartesian/Homogenous Conversion
 /// \ingroup PkgKernel23
 
-/// \defgroup kernel_dimension Dimension Handling
+/// \defgroup kernel_dimension Dimension Handling Tools
 /// \ingroup PkgKernel23
 
 /*!
