@@ -3,9 +3,9 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexityChecking
 
-The function `is_strongly_convex_3` determines if the vertices of a given polyhedron 
+determines if the vertices of a given polyhedron 
 represents a strongly convex set of points or not. A set of points is said 
-to be strongly convex if it consists of only extreme points (<I>i.e.</I>, 
+to be strongly convex if it consists of only extreme points (i.e., 
 vertices of the convex hull). 
 
 The default traits class is the kernel in which the type 

@@ -12,20 +12,22 @@ used to determine the correctness of the resulting polyhedron.
 
 \attention This function is provided for completeness and educational 
 purposes. When an efficient incremental implementation is needed, 
-using `CGAL::Delaunay_triangulation_3` together with 
-`CGAL::convex_hull_3_to_polyhedron_3` is highly recommended. 
+using `Delaunay_triangulation_3` together with 
+`convex_hull_3_to_polyhedron_3()` is highly recommended. 
 
-\cgalRequires `Polyhedron` must provide a type `Polyhedron::Traits` 
+\tparam InputIterator  must be an input iterator where the value type must be  
+`Polyhedron::Traits::Point`.
+
+\tparam Polyhedron must provide a type `Polyhedron::Traits` 
 that defines the following types 
 - `Polyhedron::Traits::R`, which is a model of 
 the representation class `R` required by 
-`CGAL::Convex_hull_d_traits_3<R>` 
+`Convex_hull_d_traits_3<R>` 
 - `Polyhedron::Traits::Point`  
-\cgalRequires `InputIterator::value_type` must be the same as 
-`Polyhedron::Traits::Point`.
 
 
-\sa `CGAL::convex_hull_3()` 
+\sa `convex_hull_3()` 
+\sa `Convex_hull_d` 
 
 ### Implementation ###
 
@@ -33,17 +35,6 @@ This function uses the `d`-dimensional convex hull incremental construction
 algorithm \cite cms-frric-93 
 with `d` fixed to 3. The algorithm requires \f$ O(n^2)\f$ time in the 
 worst case and \f$ O(n \log n)\f$ expected time. 
-
-\sa `CGAL::Convex_hull_d<R>` 
-
-### Example ###
-
-The following example computes the convex hull of a set of 250 random 
-points chosen uniformly in a sphere of radius 100. 
-
-\cgalExample{Convex_hull_3/incremental_hull_3.cpp} 
-
-
 
 */
 template <class InputIterator, class Polyhedron>

@@ -6,8 +6,15 @@
 /// \defgroup PkgConvexHull3Traits Traits Classes
 /// \ingroup PkgConvexHull3
 
-/// \defgroup PkgConvexHull3Functions Convex Hull Functions 
-/// \ingroup PkgConvexHull3
+/*! \defgroup PkgConvexHull3Functions Convex Hull Functions 
+   \ingroup PkgConvexHull3
+The function `convex_hull_3()` computes the convex hull of a given set of 
+three-dimensional points.
+ 
+Two versions of this function are available. The first can be used when it 
+is known that the result will be a polyhedron and the second when a 
+degenerate hull may also be possible. 
+*/
 
 /// \defgroup PkgConvexityChecking Convexity Checking
 /// \ingroup PkgConvexHull3
