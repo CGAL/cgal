@@ -40,6 +40,7 @@ namespace CGAL {
 template <typename Concurrency_tag>
 class Compact_mesh_cell_base_3_base
 {
+protected:
   Compact_mesh_cell_base_3_base()
     : bits_(0) {}
 
@@ -71,7 +72,6 @@ public:
   {
     CGAL_precondition(facet>=0 && facet <4);
     bits_ |= (1 << facet);
-    std::cerr << "OUCH" << std::endl;
   }
 
   /// Marks \c facet as not visited
@@ -97,8 +97,7 @@ private:
 template <>
 class Compact_mesh_cell_base_3_base<Parallel_tag>
 {
-
-public: 
+protected:
   Compact_mesh_cell_base_3_base()
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
     : m_localization_id(0)
@@ -110,6 +109,7 @@ public:
       visited_facets[3] = false;
   }
 
+public: 
   // Erase counter (cf. Compact_container)
   unsigned int get_erase_counter() const
   {
