@@ -446,7 +446,8 @@ const_segments_iterator begin_segments() const
     if (size() == 0)
       return (const_segments_iterator (NULL, -1));
     else
-      return (const_segments_iterator (this, size() + 1));
+      //      return (const_segments_iterator (this, size() + 1));
+      return (const_segments_iterator (this, size()));
   }
 
   /*! Get a reverse iterator for the polyline's segments. */

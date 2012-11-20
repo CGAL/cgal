@@ -457,8 +457,6 @@ public:
       const_seg_iterator first_seg = cv.begin_segments();
       const_seg_iterator last_seg=cv.end_segments();
 
-      std::cout << "The first seg is: " << *first_seg << "\n";
-
       // Empty polyline:
       if (first_seg == last_seg)
         return oi;
@@ -471,8 +469,6 @@ public:
 	seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Construct_min_vertex_2 min_v =
 	seg_traits->construct_min_vertex_2_object();
-      typename Segment_traits_2::Compare_xy_2 compare_xy =
-        seg_traits->compare_xy_2_object();
 
       if (seg_it == last_seg) {
         // The polyline contains a single segment:
@@ -493,20 +489,20 @@ public:
 
       const_seg_iterator it_start = first_seg;
       const_seg_iterator it_next = first_seg;
-      const_seg_iterator it_cv = first_seg;
+      const_seg_iterator it_curr = first_seg;
+      ++it_next;
 
       for ( ; it_next != last_seg ; it_next++)
       	{
 	  if (
-	      comp_xy(max_v(*it_cv),min_v(*it_next))!=EQUAL &&
-	      comp_xy(min_v(*it_cv),max_v(*it_next))!=EQUAL)
+	      (comp_xy(max_v(*it_curr),min_v(*it_next))!=EQUAL) &&
+	      (comp_xy(min_v(*it_curr),max_v(*it_next))!=EQUAL) )
 	    {
-	      *oi++ = make_object(construct_x_monotone_curve(it_start, it_cv));
-	      it_start = it_cv;
+	      *oi++ = make_object(construct_x_monotone_curve(it_start, it_next));
+	      it_start = it_next;
 	    }
-	  ++it_cv;
+	  ++it_curr;
       	}
-
       return oi;
     }
   };
@@ -993,9 +989,9 @@ public:
     {
       CGAL_precondition(begin != end);
 
-      typename Segment_traits_2::Construct_min_vertex_2 ctr_min =
+      typename Segment_traits_2::Construct_min_vertex_2 min_v =
         m_seg_traits->construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 ctr_max =
+      typename Segment_traits_2::Construct_max_vertex_2 max_v =
         m_seg_traits->construct_max_vertex_2_object();
        
       CGAL_precondition_code
@@ -1007,27 +1003,27 @@ public:
 	 
          InputIterator curr = begin;
          // Ensure that the first segment does not degenerate to a point.
-         CGAL_precondition(!equal(ctr_min(*curr), ctr_max(*curr)));
+         CGAL_precondition(!equal(min_v(*curr), max_v(*curr)));
 
          InputIterator next = curr;
          if (++next != end) {
            // Ensure that the second segment does not degenerate to a point.
-           CGAL_precondition(!equal(ctr_min(*next), ctr_max(*next)));
+           CGAL_precondition(!equal(min_v(*next), max_v(*next)));
 
            // Ensure that either both are vertical or both are not vertical.
            CGAL_precondition((is_vertical(*curr) && is_vertical(*next)) ||
                              (!is_vertical(*curr) && !is_vertical(*next)));
 
            // Ensure that the segment connect.
-           CGAL_precondition(equal(ctr_max(*curr), ctr_min(*next)) ||
-                             equal(ctr_min(*curr), ctr_max(*next)));
+           CGAL_precondition(equal(max_v(*curr), min_v(*next)) ||
+                             equal(min_v(*curr), max_v(*next)));
 
            // Record the initial direction.
-           bool left_to_right = equal(ctr_max(*curr), ctr_min(*next));
+           bool left_to_right = equal(max_v(*curr), min_v(*next));
 
            for (curr = next++; next != end; ++next) {
              // Ensure that the next segment does not degenerate to a point
-             CGAL_precondition(!equal(ctr_min(*next), ctr_max(*next)));
+             CGAL_precondition(!equal(min_v(*next), max_v(*next)));
 
              // Ensure that either both are vertical or both are not vertical.
              CGAL_precondition((is_vertical(*curr) && is_vertical(*next)) ||
@@ -1035,9 +1031,10 @@ public:
 
              // Ensure the direction and connectivity.
              CGAL_precondition((left_to_right &&
-                                equal(ctr_max(*curr), ctr_min(*next))) ||
+                                equal(max_v(*curr), min_v(*next))) ||
                                (!left_to_right &&
-                                equal(ctr_max(*next), ctr_min(*curr))));
+                                equal(max_v(*next), min_v(*curr))));
+	     ++curr;
            }
          }
          );
@@ -1046,7 +1043,7 @@ public:
       if (std::distance(begin, end) >= 2) {
         InputIterator second = begin;
         ++second;
-        rev = equal(ctr_min(*begin), ctr_max(*second));
+        rev = equal(min_v(*begin), max_v(*second));
       }
       // The following statement assumes that the begin (and end) iterators
       // are biderctional.

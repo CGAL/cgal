@@ -26,6 +26,14 @@ int main ()
 
   Arrangement_2         arr;
 
+  /* Poyline's outline:
+   *     
+   *     *       *
+   *     / \     / \
+   *    /   \   /   \
+   *   /     \ /     \
+   *  *       *       *
+   */
   Point_2               points1[5];
   points1[0] = Point_2 (0, 0);
   points1[1] = Point_2 (2, 4);
@@ -33,6 +41,19 @@ int main ()
   points1[3] = Point_2 (4, 4);
   points1[4] = Point_2 (6, 0);
   Polyline_2            pi1 (&points1[0], &points1[5]);
+
+  /* Polyline's outline:
+   *
+   *      *             * 
+   *     /             / \
+   *    /             /   \
+   *   *             *     *
+   *   \                  /
+   *    \    *     *     /
+   *      \ /   \ /   \ /
+   *       *     *     *
+   *
+   */
 
   std::list<Point_2>    points2;
   points2.push_back (Point_2 (1, 3));
@@ -47,16 +68,44 @@ int main ()
   points2.push_back (Point_2 (4, 2));
   Polyline_2            pi2 (points2.begin(), points2.end());
 
+  /* Polyline's outline:
+   *         
+   *         *
+   *        / \      
+   *       /   \
+   *      /     \
+   * *---*       *
+   * 
+   */
   std::vector<Point_2>  points3 (4);
   points3[0] = Point_2 (0, 2);
   points3[1] = Point_2 (1, 2);
   points3[2] = Point_2 (3, 6);
   points3[3] = Point_2 (5, 2);
   Polyline_2            pi3 (points3.begin(), points3.end());
+
+  /*Polyline's outline:
+   *
+   *     *
+   *    / \
+   *   /   \
+   *  *     *
+   *   \   /
+   *    \ /
+   *     *
+   */
+  std::list<Point_2> points4;
+  points4.push_back (Point_2(-1,0));
+  points4.push_back (Point_2(0,-1));
+  points4.push_back (Point_2(1,0));
+  points4.push_back (Point_2(0,1));
+  points4.push_back (Point_2(-1,0));
+  Polyline_2 pi4 (points4.begin(),points4.end());
   
-  insert (arr, pi1);
-  insert (arr, pi2);
-  insert (arr, pi3);
+  //  insert (arr, pi1);
+  //  insert (arr, pi2);
+  //  insert (arr, pi3);
+  insert (arr, pi4);
   
   print_arrangement (arr);
   return 0;
