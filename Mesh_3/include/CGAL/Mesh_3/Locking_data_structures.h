@@ -84,6 +84,17 @@ public:
 #endif
   }
 
+  bool is_locked_by_this_thread(int cell_index)
+  {
+    return m_tls_grids.local()[cell_index];
+  }
+  
+  template <typename P3>
+  bool is_locked_by_this_thread(const P3 &point)
+  {
+    return m_tls_grids.local()[get_grid_index(point)];
+  }
+
   bool try_lock(int cell_index)
   {
     bool ret = false;
@@ -185,11 +196,11 @@ public:
   std::pair<bool, int> try_lock(const P3 &point, int lock_radius = 0)
   {
     // Compute indices on grid
-    int index_x = static_cast<int>( (to_double(point.x()) - m_xmin) * m_resolution_x);
+    int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
     index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
-    int index_y = static_cast<int>( (to_double(point.y()) - m_ymin) * m_resolution_y);
+    int index_y = static_cast<int>( (point.y() - m_ymin) * m_resolution_y);
     index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
-    int index_z = static_cast<int>( (to_double(point.z()) - m_zmin) * m_resolution_z);
+    int index_z = static_cast<int>( (point.z() - m_zmin) * m_resolution_z);
     index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
 
     int index =
@@ -212,20 +223,7 @@ public:
   template <typename P3>
   void unlock(const P3 &point)
   {
-    // Compute indices on grid
-    int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
-    index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
-    int index_y = static_cast<int>( (point.y() - m_ymin) * m_resolution_y);
-    index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
-    int index_z = static_cast<int>( (point.z() - m_zmin) * m_resolution_z);
-    index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
-
-    int index =
-      index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-      + index_y*m_num_grid_cells_per_axis
-      + index_x;
-
-    unlock(index);
+    unlock(get_grid_index(point));
   }
 
   void unlock(int cell_index)
@@ -290,6 +288,23 @@ protected:
     {
       delete [] *it_grid;
     }
+  }
+  
+  template <typename P3>
+  int get_grid_index(const P3& point)
+  {
+    // Compute indices on grid
+    int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
+    index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
+    int index_y = static_cast<int>( (point.y() - m_ymin) * m_resolution_y);
+    index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
+    int index_z = static_cast<int>( (point.z() - m_zmin) * m_resolution_z);
+    index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
+
+    return
+      index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
+      + index_y*m_num_grid_cells_per_axis
+      + index_x;
   }
 
   bool is_cell_locked(int cell_index)
