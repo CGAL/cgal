@@ -41,6 +41,7 @@
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
 #endif
 
+#include <CGAL/Mesh_3/Locking_data_structures.h>
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Timer.h>
 
@@ -493,7 +494,6 @@ initialize()
 
     // Set new bounding boxes
     const Bbox_3 &bbox = r_c3t3_.bbox();
-    //const Bbox_3 bbox(-3., -3., -0.05, 3., 3., 0.05); // CJTODO TEMP for pancake
     set_bbox(bbox);
 
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
