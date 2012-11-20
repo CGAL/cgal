@@ -201,7 +201,8 @@ int main(int argc, char * argv[])
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
-                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
+                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
+                              CGAL::Poisson_visitor());
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.

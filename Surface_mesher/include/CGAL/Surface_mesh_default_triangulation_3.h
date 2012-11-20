@@ -36,10 +36,10 @@
 namespace CGAL {
   namespace Surface_mesher {
 
+    template <typename K2 = Exact_predicates_inexact_constructions_kernel>
     class Surface_mesh_default_triangulation_3_generator {
 
       // traits class
-      typedef Exact_predicates_inexact_constructions_kernel K2;
       typedef Robust_circumcenter_traits_3<K2>  K;
 
       // vertex and cell types
@@ -60,7 +60,7 @@ namespace CGAL {
 
   } // end Surface_mesher
 
-  typedef Surface_mesher::Surface_mesh_default_triangulation_3_generator::Type 
+  typedef Surface_mesher::Surface_mesh_default_triangulation_3_generator<>::Type 
      Surface_mesh_default_triangulation_3;
 
 } // end namespace CGAL  
