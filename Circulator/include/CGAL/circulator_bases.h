@@ -44,14 +44,14 @@ struct Forward_circulator_tag
 struct Bidirectional_circulator_tag
   : public std::bidirectional_iterator_tag 
 { 
-  operator Forward_circulator_tag() const {}
+  operator Forward_circulator_tag() const { return Forward_circulator_tag(); }
 };
 
 struct Random_access_circulator_tag
   : public std::random_access_iterator_tag
 { 
-  operator Bidirectional_circulator_tag() const {}
-  operator Forward_circulator_tag() const {}
+  operator Bidirectional_circulator_tag() const { return Bidirectional_circulator_tag(); }
+  operator Forward_circulator_tag() const { return Forward_circulator_tag(); }
 };
 
 template <typename Tag, typename T, typename Distance = std::ptrdiff_t,
