@@ -29,7 +29,7 @@
 
 //# include <CGAL/hilbert_sort.h> //CJTODO: remove?
 //# include <CGAL/spatial_sort.h> //CJTODO: remove?
-#include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
+#include <CGAL/Mesh_3/Locking_data_structures.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
 #include <CGAL/Bbox_3.h>
 
