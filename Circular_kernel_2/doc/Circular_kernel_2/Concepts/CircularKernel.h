@@ -68,6 +68,11 @@ Model of `Kernel::Point_2`.
 typedef Hidden_type Point_2; 
 
 /*! 
+Model of `Kernel::Line_2`. 
+*/ 
+typedef Hidden_type Line_2; 
+
+/*! 
 Model of `Kernel::Circle_2`. 
 */ 
 typedef Hidden_type Circle_2; 
