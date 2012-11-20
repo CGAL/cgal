@@ -19,8 +19,7 @@ and functionality in a `FieldNumberType`.
 
 All the choices (interface, robustness, representation, and so on)
 made here are consistent with the choices made in the \cgal kernel,
-for which we refer the user to the kernel manual
-(Chapter \ref chapterkernel23).
+for which we refer the user to the \ref chapterkernel23 "2D and 3D Linear Kernel").
 
 \section sectionSKobjects Spherical Kernel Objects 
 
@@ -60,7 +59,7 @@ of these operations requires the following definitions:
 
 <I>Coordinate system.</I>
 Let consider a sphere with center `c` and radius `r`. Using
-the Cartesian frame centered at `c`, we define a cylindrical
+the %Cartesian frame centered at `c`, we define a cylindrical
 coordinate system \f$ (\theta,z)\f$ on that sphere, with \f$ \theta \in \left[
 0,2\pi \right)\f$ and \f$ z \in \left[ -r,r \right]\f$. \f$ \theta\f$ is given
 in radian and measured in the \f$ xy\f$-plane around the \f$ z\f$-axis, starting
@@ -134,7 +133,9 @@ arc is defined on a bipolar circle.
 \section Circular_kernel_3Software Software Design
 
 The design of `Spherical_kernel_3` is similar to the design of
-`Circular_kernel_2` (see Chapter \ref Chapter_2D_Circular_Geometry_Kernel).
+`Circular_kernel_2` (see Chapter \ref Chapter_2D_Circular_Geometry_Kernel
+"2D Circular Geometry Kernel").
+
 It has two template parameters:
 <UL>
 <LI> the first parameter must model the \cgal 
@@ -149,8 +150,8 @@ provides exact computations on algebraic objects.
 </UL>
 
 The 3D spherical kernel uses the extensibility scheme presented in the
-kernel manual (see Section \ref sectionextensiblekernel). The types
-of `Kernel` are inherited by the 3D spherical kernel and some
+kernel manual (see Section \ref sectionextensiblekernel "Extensible Kernel"). 
+The types of `Kernel` are inherited by the 3D spherical kernel and some
 types are taken from the `AlgebraicKernelForSpheres`
 parameter. `Spherical_kernel_3` introduces new geometric objects
 as mentioned in Section \ref sectionSKobjects.
@@ -182,9 +183,8 @@ then compared.
 
 \section Circular_kernel_3Design Design and Implementation History
 
-This package follows the 2D circular kernel package (see
-Chapter \ref Chapter_2D_Circular_Geometry_Kernel), which induced the basic
-choices of design.
+This package follows the design of the package 
+\ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel").
 
 Julien Hazebrouck and Damien Leroy participated in a first
 prototype.

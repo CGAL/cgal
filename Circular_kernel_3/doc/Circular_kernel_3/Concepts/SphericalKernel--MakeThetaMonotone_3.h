@@ -19,7 +19,7 @@ public:
 
 Copies in the output iterator the results of the split of arc `a` at the \f$ \theta\f$-extremal 
 point(s) of its supporting circle relatively to the context sphere used by the function `SphericalKernel::make_theta_monotone_3_object` 
-(Refer to section \ref sectionSKobjects for the definition of these points.) 
+(Refer to Section \ref sectionSKobjects for the definition of these points.) 
 The output iterator may contain no arc (if the supporting circle is a bipolar circle), 
 one arc (if `a` is already \f$ \theta\f$-monotone), two arcs (if only one \f$ \theta\f$-extremal point is on `a`), or 
 three arcs (if two \f$ \theta\f$-extremal points are on `a`). 
@@ -33,7 +33,7 @@ OutputIterator operator()
 /*! 
 Copies in the output iterator the results of the split of circle `c` at its \f$ \theta\f$-extremal 
 point(s) relatively to the context sphere used by the function `SphericalKernel::make_theta_monotone_3_object`. 
-(Refer to section \ref sectionSKobjects for the definition of these points.) 
+(Refer to Section \ref sectionSKobjects for the definition of these points.) 
 The output iterator may contain no arc (if the circle is bipolar), 
 one arc (if the circle is polar or threaded), or two arcs (if the circle is normal). 
 

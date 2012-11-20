@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSphericalKernel3GeometricFunctions
 
-Classify a circle according to `sphere`, as defined in section \ref sectionSKobjects.
+Classify a circle according to `sphere`, as defined in Section \ref sectionSKobjects.
 \pre `c` lies on `sphere`.
 
 \sa `CGAL::Circle_type`
@@ -42,7 +42,7 @@ const CGAL::Circular_arc_point_3<SphericalKernel> & q,const CGAL::Sphere_3<Spher
 \ingroup PkgSphericalKernel3GeometricFunctions
 
 
-Compares the \f$ \theta\f$-coordinates of `p` and of the meridian defined by `m` (see section \ref sectionSKobjects)
+Compares the \f$ \theta\f$-coordinates of `p` and of the meridian defined by `m` (see Section \ref sectionSKobjects)
 in the cylindrical coordinate system relative to `sphere`.
 \pre `p` lies on `sphere`, but does not coincide with its poles. `m` \f$ \neq(0,0,0)\f$ and the \f$ z\f$-coordinate of `m` is \f$ 0\f$.
 
@@ -63,7 +63,7 @@ compare_theta(const CGAL::Circular_arc_point_3<SphericalKernel> &p, const CGAL::
 /*!
 \ingroup PkgSphericalKernel3GeometricFunctions
 
-Compares the \f$ \theta\f$-coordinates of the meridian defined by `m` and  of `p` (see section \ref sectionSKobjects)
+Compares the \f$ \theta\f$-coordinates of the meridian defined by `m` and  of `p` (see Section \ref sectionSKobjects)
 in the cylindrical coordinate system relative to `sphere`.
 \pre `p` lies on `sphere`, but does not coincide with its poles. `m` \f$ \neq(0,0,0)\f$ and the \f$ z\f$-coordinate of `m` is \f$ 0\f$.
 
@@ -135,7 +135,7 @@ namespace CGAL {
 Returns the point on the circle that is extremal in \f$ \theta\f$ using the cylindrical coordinate system
 relative to `sphere`, and that has the smallest (resp.\ largest)
 \f$ \theta\f$-coordinate of the two points if `b` is `true` (resp.\ `false`).
-See section \ref sectionSKobjects for definitions.
+See Section \ref sectionSKobjects for definitions.
 \pre `c` lies on `sphere` and is a normal circle.
 
 */
@@ -154,7 +154,7 @@ Copies in the output iterator the \f$ \theta\f$-extremal points of the
 circle relatively to `sphere`. `res` iterates on elements of type
 `Circular_arc_point_3<SphericalKernel>`, lexicographically
 sorted in the cylindrical coordinate system relative to `sphere`.
-See section \ref sectionSKobjects for definitions.
+See Section \ref sectionSKobjects for definitions.
 \pre `c` lies on `sphere` and is a normal circle.
 
 */

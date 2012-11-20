@@ -15,8 +15,8 @@ public:
 
 /*! 
 
-compares the \f$ z\f$-coordinates of the two intersections points of `a0` and `a1` with the meridian defined by `m` (see section \ref sectionSKobjects). 
-\pre `a0` and `a1` lie on the context sphere used by the function `SphericalKernel::compare_z_at_theta_3_object`. `m` \f$ \neq(0,0,0)\f$ and the \f$ z\f$-coordinate of `m` is \f$ 0\f$. Arcs `a0` and `a1` are \f$ \theta\f$-monotone and both intersected by the meridian defined by `m`(see section \ref sectionSKobjects). 
+compares the \f$ z\f$-coordinates of the two intersections points of `a0` and `a1` with the meridian defined by `m` (see Section \ref sectionSKobjects). 
+\pre `a0` and `a1` lie on the context sphere used by the function `SphericalKernel::compare_z_at_theta_3_object`. `m` \f$ \neq(0,0,0)\f$ and the \f$ z\f$-coordinate of `m` is \f$ 0\f$. Arcs `a0` and `a1` are \f$ \theta\f$-monotone and both intersected by the meridian defined by `m`(see Section \ref sectionSKobjects). 
 */ 
 Comparison_result operator() 
 ( const SphericalKernel::Circular_arc_3& a0, 

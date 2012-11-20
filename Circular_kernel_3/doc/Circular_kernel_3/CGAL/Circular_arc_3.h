@@ -43,7 +43,7 @@ Circular_arc_3(const Circle_3<SphericalKernel> &c, const Circular_arc_point_3& p
 ///
 /// In this
 /// definition, we say that a normal vector \f$ (a,b,c)\f$ is <I>positive</I>
-/// if \f$ (a,b,c)>(0,0,0)\f$ (i.e. \f$ (a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)\f$).
+/// if \f$ (a,b,c)>(0,0,0)\f$ (i.e.\ \f$ (a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)\f$).
 /// @{
 
 /*! 
