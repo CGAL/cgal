@@ -38,14 +38,15 @@ Another name for the point type.
 typedef Hidden_type Bare_point; 
 
 /*! 
-The weighted point type, it has to be 
+The weighted point type. It has to be 
 a model of the concept `WeightedPoint`. 
 */ 
 typedef Hidden_type Weighted_point_2; 
 
 /*! 
-A predicate object type. Must provide 
-the operators: 
+A function object which must provide operators for the power test applied to two, three, and four points. 
+
+Must provide the operators: 
 
 - `Oriented_side operator() ( Weighted_point_2 p, Weighted_point_2 q, Weighted_point_2 r, Weighted_point_2 s) ` 
 which is the power test for points `p`, `q`, `r` and 
@@ -67,12 +68,12 @@ typedef Hidden_type Power_test_2;
 /// @}
 
 /// \name Optional Types
-/// The following type/predicate is required if a call to `nearest_power_vertex` is issued:
+/// The following type/predicate is required for a call to `nearest_power_vertex`:
 /// @{
 
 /*! 
-A predicate object type. Must 
-provide the operator: 
+A function object for computing two power distances. 
+Must provide the operator: 
 
 `Comparison_result operator()(Bare_point p, Weighted_point_2 q, Weighted_point_2 r)`, 
 which compares the power distance between `p` and `q` to the 
@@ -81,18 +82,21 @@ power distance between `p` and `r`.
 typedef Hidden_type Compare_power_distance_2; 
 
 /*! 
-A constructor 
+A function
 object which constructs the weighted circumcenter of three 
-weighted points. Provides the operator 
+weighted points. 
+
+Must provide the operator:
 
 `Bare_point operator() ( Weighted_point_2 p, Weighted_point_2 q, Weighted_point_2 r);` 
 */ 
 typedef Hidden_type Construct_weighted_circumcenter_2; 
 
 /*! 
-A constructor type which 
-constructs 
-the radical axis of two weighted points. Provides the operator : 
+A function object constructs 
+the radical axis of two weighted points. 
+
+Must provide the operator: 
 
 `Line_2 operator() ( Weighted_point_2 p, Weighted_point_2 q);` 
 */ 
@@ -104,25 +108,25 @@ typedef Hidden_type Construct_radical_axis_2;
 /// @{
 
 /*! 
-default constructor. 
+%Default constructor. 
 */ 
 RegularTriangulationTraits_2(); 
 
 /*! 
-copy constructor. 
+Copy constructor. 
 */ 
 RegularTriangulationTraits_2 ( 
 const RegularTriangulatioTraits_2& ); 
 
 /*! 
-assignment operator 
+Assignment operator.
 */ 
 RegularTriangulationTraits_2& operator= 
 (const RegularTriangulationTraits_2& ); 
 
 /// @} 
 
-/// \name Access to predicate and constructors objects 
+/// \name Access to Predicate and Constructors Objects 
 /// @{
 
 /*! 

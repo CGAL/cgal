@@ -113,7 +113,7 @@ Introduces an empty constrained Delaunay triangulation `cdt`.
 Constrained_Delaunay_triangulation_2(const Traits &t = Traits()); 
 
 /*! 
-Copy constructor, all faces and vertices 
+Copy constructor: All faces and vertices 
 are duplicated and the constrained status of edges 
 is copied. 
 */ 
@@ -123,10 +123,10 @@ Constrained_Delaunay_triangulation_2& cdt1);
 /*! 
 A templated constructor which introduces and builds 
 a constrained triangulation with constrained edges in the range 
-\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
-\pre The `value_type` of `first` and `last` is `Constraint`. 
+`[first,last)`. 
+\tparam InputIterator must be an input iterator with the value type `Constraint`. 
 */ 
-template<class InputIterator> Constrained_triangulation_2( 
+template<class InputIterator> Constrained_Delaunay_triangulation_2( 
 InputIterator first, 
 InputIterator last, 
 const Traits& t=Traits()); 
@@ -140,20 +140,18 @@ const Traits& t=Traits());
 /// @{
 
 /*! 
-Inserts point `p` in the triangulation. 
-If present `f` is used as an hint 
-for the location of `p`. 
+Inserts point `p` in the triangulation, with face
+`f` as a hint for the location of `p`. 
 */ 
 Vertex_handle insert(Point p, Face_handle f = Face_handle()); 
 
 /*! 
-Same as above except that the location of the point 
-`p` to be inserted is assumed to be given by 
-`(lt,loc,i)`. 
+Inserts point `p` in the triangulation at the location given by `(lt,loc,i)`. 
+\sa `Triangulation_2::locate()`
 */ 
 Vertex_handle 
 insert(const Point& p, 
-Locate_type& lt, 
+Locate_type lt, 
 Face_handle loc, int li ); 
 
 /*! 
@@ -162,10 +160,9 @@ Equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p); 
 
 /*! 
-Inserts the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
+Inserts the points in the range `[first,last)`. 
 Returns the number of inserted points. 
-\pre The `value_type` of `first` and `last` is `Point`. 
+\tparam InputIterator must be an input iterator with the value type `Point`. 
 */ 
 template < class InputIterator > 
 std::ptrdiff_t 
@@ -177,7 +174,7 @@ Inserts segment `ab` as a constrained edge in the triangulation.
 void insert_constraint(Point a, Point b); 
 
 /*! 
-Inserts constraints `c` as above. 
+Inserts the line segment between the points `c.first` and `c.second` as  a constrained edge in the triangulation.
 */ 
 void push_back(const Constraint& c); 
 
@@ -199,7 +196,7 @@ Make the edges incident to vertex `v` unconstrained edges.
 void remove_incident_constraints(Vertex_handle v); 
 
 /*! 
-Edge `(f,i)` is no longer constrained. 
+Make the edge `(f,i)` unconstrained. 
 */ 
 void remove_constraint(const Face_handle & f, int i); 
 
@@ -216,9 +213,10 @@ void remove_constraint(const Face_handle & f, int i);
 /// @{
 
 /*! 
-`OutItFaces` is an output iterator with `Face_handle` as value type. 
-`OutItBoundaryEdges` stands for an output iterator with `Edge` as value type. 
-This members function outputs in the container pointed to by `fit` 
+outputs the faces and boundary edges of the conflict zone of point `p` into
+output iterators.
+
+This function outputs in the container pointed to by `fit` 
 the faces which are in conflict with point `p`. 
 It outputs in the container pointed to by `eit` 
 the boundary of the zone in conflict with `p`. 
@@ -226,7 +224,11 @@ The boundary edges
 of the conflict zone are output in counterclockwise order 
 and each edge is described through its incident face 
 which is not in conflict with `p`. 
-The function returns in a std::pair the resulting output iterators. 
+The function returns in a `std::pair` the resulting output iterators. 
+
+\tparam OutItFaces is an output iterator with `Face_handle` as value type. 
+\tparam OutItBoundaryEdges is an output iterator with `Edge` as value type. 
+
 \pre `dimension()==2`. 
 */ 
 template <class OutputItFaces, class OutputItBoundaryEdges> 
@@ -237,7 +239,9 @@ OutputItBoundaryEdges eit,
 Face_handle start) const; 
 
 /*! 
-Same as above except that only the faces in conflict with `p` 
+outputs the faces of the conflict zone of point `p` into an output iterator.
+
+Same as `get_conflicts_and_boundary` except that only the faces in conflict with `p` 
 are output. The function returns the resulting output iterator. 
 \pre `dimension()==2`. 
 */ 
@@ -248,15 +252,16 @@ OutputItFaces fit,
 Face_handle start) const; 
 
 /*! 
-`OutputItBoundaryEdges` stands for an output iterator with 
-`Edge` as value 
-type. 
+outputs the boundary edges of the conflict zone of point `p` into an output iterator.
+
 This functions outputs in the container pointed to by `eit`, 
 the boundary of the zone in conflict with `p`. The boundary edges 
 of the conflict zone are output in counter-clockwise order 
 and each edge is described through the incident face 
 which is not in conflict with `p`. 
 The function returns the resulting output iterator. 
+\tparam OutputItBoundaryEdges is an output iterator with 
+`Edge` as value type. 
 */ 
 template <class OutputItBoundaryEdges> 
 OutputItBoundaryEdges 
@@ -270,10 +275,10 @@ Face_handle start) const;
 /// @{
 
 /*! 
-Checks if the triangulation is valid and if each constrained edge is 
+checks if the triangulation is valid and if each constrained edge is 
 consistently marked constrained in its two incident faces. 
 */ 
-bool is_valid(); 
+bool is_valid() const; 
 
 /// @} 
 
@@ -281,12 +286,13 @@ bool is_valid();
 /// @{
 
 /*! 
-\cgalAdvanced Determines if edge `(f,i)` can be flipped. Returns true if 
-edge `(f,i)` is not constrained and the circle circumscribing f 
+determines if edge `(f,i)` can be flipped.
+\cgalAdvanced  Returns true if 
+edge `(f,i)` is not constrained and the circle circumscribing `f` 
 contains the vertex of `f->neighbor(i)` 
 opposite to edge `(f,i)`. 
 */ 
-bool is_flipable(Face_handle f, int i); 
+bool is_flipable(Face_handle f, int i) const; 
 
 /*! 
 \cgalAdvanced Flip `f` and `f->neighbor(i)`. 
@@ -294,8 +300,9 @@ bool is_flipable(Face_handle f, int i);
 void flip(Face_handle& f, int i); 
 
 /*! 
-\cgalAdvanced Makes the triangulation constrained Delaunay by flipping
-edges.  List edges contains an initial list of edges to be
+makes the triangulation constrained Delaunay by flipping
+edges.
+\cgalAdvanced   The list `edges` contains an initial list of edges to be
 flipped. The returned triangulation is constrained Delaunay if the
 initial list contains at least all the edges of the input
 triangulation that failed to be constrained Delaunay. (An edge is said

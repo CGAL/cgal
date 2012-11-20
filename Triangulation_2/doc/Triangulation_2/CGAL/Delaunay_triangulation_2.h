@@ -113,9 +113,12 @@ const Delaunay_triangulation_2<Traits,Tds> &tr);
 /// particular Delaunay triangulation using a symbolic perturbation
 /// scheme \cite cgal:dt-pvr3d-03. Note that the other modifier
 /// functions of `Triangulation_2<Traits,Tds>` are not
-/// overwritten. Thus a call to `insert_in_face` `insert_in_edge`,
-/// `insert_outside_convex_hull`, `insert_outside_affine_hull` or
-/// `flip` on a valid Delaunay triangulation might lead to a
+/// overwritten. Thus a call to \link Triangulation_2::insert_in_face()\endlink  
+/// \link Triangulation_2::insert_in_face() `insert_in_face()`\endlink 
+/// \link Triangulation_2::insert_in_edge() `insert_in_edge()`\endlink,
+/// \link Triangulation_2::insert_outside_convex_hull() `insert_outside_convex_hull()`\endlink, 
+/// \link Triangulation_2::insert_outside_affine_hull() `insert_outside_affine_hull()`\endlink or
+///  \link Triangulation_2::flip() `flip()`\endlink on a valid Delaunay triangulation might lead to a
 /// triangulation which is no longer a Delaunay triangulation.  
 /// @{
 
@@ -129,9 +132,8 @@ Optional parameter `f` is used to initialize the location of `p`.
 Vertex_handle insert(const Point& p, Face_handle f=Face_handle()); 
 
 /*! 
-inserts a point `p`, the location of which is supposed to be 
-given by `(lt,loc,li)`. See the description of member function 
-`Triangulation_2::locate`. 
+inserts a point `p` at the location given by `(lt,loc,li)`. 
+\sa `Triangulation_2::locate()`
 */ 
 Vertex_handle insert(const Point& p, Locate_type& lt, 
 Face_handle loc, int li ); 
@@ -142,13 +144,12 @@ equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p); 
 
 /*! 
-inserts the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
+inserts the points in the range `[first,last)`.
 Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
-following the order of `PointInputIterator`, as `spatial_sort` 
+following the order of `PointInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
-\pre The `value_type` of `first` and `last` is `Point`. 
+\tparam PointInputIterator must be an input iterator with the value type `Point`. 
 */ 
 template < class PointInputIterator > 
 std::ptrdiff_t 
@@ -156,15 +157,16 @@ insert(PointInputIterator first, PointInputIterator last);
 
 /*! 
 
-inserts the points in the iterator range \f$ \left[\right.\f$`first`, 
-`last`\f$\left.\right)\f$. Returns the number of inserted points. 
+inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
-following the order of `PointWithInfoInputIterator`, as `spatial_sort` 
+following the order of `PointWithInfoInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 
 only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex. 
-\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`. The `value_type` of `first` and `last` is `std::pair<Point,Vertex::Info>`. 
+\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`. 
+
+\tparam PointWithInfoInputIterator must be an input iterator with the value type `std::pair<Point,Vertex::Info>`. 
 
 */ 
 template < class PointWithInfoInputIterator > 
@@ -191,7 +193,7 @@ modified and the vertex at point `p` is returned.
 Vertex_handle move_if_no_collision(Vertex_handle v, const Point & p); 
 
 /*! 
-same as above if there is no collision. Otherwise, `v` 
+same as `move_if_no_collision()`, if there is no collision. Otherwise, `v` 
 is deleted and the vertex placed on `p` is returned. 
 \pre Vertex `v` must be finite. 
 */ 
@@ -208,21 +210,26 @@ begins with a location step and
 `f` may be used to initialize the location. 
 */ 
 Vertex_handle 
-nearest_vertex(const Point& p, Face_handle f=Face_handle()); 
+nearest_vertex(const Point& p, Face_handle f=Face_handle()) const; 
 
 /*! 
-`OutputItFaces` is an output iterator with `Face_handle` as value type. 
-`OutputItBoundaryEdges` stands for an output iterator with `Edge` as value type. 
-This members function outputs in the container pointed to by `fit` 
-the faces which are in conflict with point `p` 
-i. e. the faces whose circumcircle contains `p`. 
+outputs the faces and boundary edges of the conflict zone of point `p` into
+output iterators.
+
+This function outputs in the container pointed to by `fit` 
+the faces which are in conflict with point `p`, 
+i. e., the faces whose circumcircle contains `p`. 
 It outputs in the container pointed to by `eit` the 
 the boundary of the zone in conflict with `p`. 
 The boundary edges 
 of the conflict zone are output in counter-clockwise order 
 and each edge is described through its incident face 
 which is not in conflict with `p`. 
-The function returns in a std::pair the resulting output iterators. 
+The function returns in a `std::pair` the resulting output iterators. 
+
+
+\tparam OutItFaces is an output iterator with `Face_handle` as value type. 
+\tparam OutItBoundaryEdges is an output iterator with `Edge` as value type. 
 \pre `dimension()==2`. 
 */ 
 template <class OutputItFaces, class OutputItBoundaryEdges> 
@@ -233,7 +240,8 @@ OutputItBoundaryEdges eit,
 Face_handle start) const; 
 
 /*! 
-same as above except that only the faces in conflict with `p` 
+outputs the faces of the conflict zone of point `p` into an output iterator.
+same as `get_conflicts_and_boundary()` except that only the faces in conflict with `p` 
 are output. The function returns the resulting output iterator. 
 \pre `dimension()==2`. 
 */ 
@@ -244,15 +252,16 @@ OutputItFaces fit,
 Face_handle start) const; 
 
 /*! 
-`OutputItBoundaryEdges` stands for an output iterator with 
-`Edge` as value 
-type. 
+outputs the boundary edges of the conflict zone of point `p` into an output iterator.
+
 This function outputs in the container pointed to by `eit`, 
 the boundary of the zone in conflict with `p`. The boundary edges 
 of the conflict zone are output in counterclockwise order 
 and each edge is described through the incident face 
 which is not in conflict with `p`. 
 The function returns the resulting output iterator. 
+\tparam OutputItBoundaryEdges is an output iterator with 
+`Edge` as value type. 
 */ 
 template <class OutputItBoundaryEdges> 
 OutputItBoundaryEdges 
@@ -308,7 +317,7 @@ Stream& draw_dual(Stream & ps);
 
 /*! 
 Returns the side of `p` with respect to the circle circumscribing 
-the triangle associated with `f` 
+the triangle associated with `f`. 
 */ 
 Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const; 
 
@@ -320,7 +329,7 @@ Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const;
 /// @{
 
 /*! 
-\cgalAdvanced tests the validity of the triangulation as a
+tests the validity of the triangulation as a
 `Triangulation_2` and additionally tests the Delaunay property. This
 method is mainly useful for debugging Delaunay triangulation
 algorithms designed by the user.

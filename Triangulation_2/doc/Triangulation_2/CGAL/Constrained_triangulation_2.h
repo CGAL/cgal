@@ -71,7 +71,7 @@ This last version finds its full efficiency when used in conjunction
 with a constraint hierarchy data structure 
 as provided in the class 
 `Constrained_triangulation_plus_2`. See 
-section \ref Section_2D_Triangulations_Constrained_Plus. 
+Section \ref Section_2D_Triangulations_Constrained_Plus. 
 </UL> 
 </UL> 
 
@@ -167,12 +167,12 @@ typedef Itag Intersection_tag;
 /// @{
 
 /*! 
-default constructor. 
+%Default constructor. 
 */ 
 Constrained_triangulation_2(); 
 
 /*! 
-Copy constructor, all faces and vertices 
+Copy constructor: All faces and vertices 
 are duplicated and the constrained status of edges 
 is copied. 
 */ 
@@ -182,8 +182,8 @@ Constrained_triangulation_2& ct1);
 /*! 
 A templated constructor which introduces and builds 
 a constrained triangulation with constrained edges in the range 
-\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
-\pre The `value_type` of `first` and `last` is `Constraint`. 
+`[first,last)`.
+\tparam InputIterator must be an input iterator with the value type `Constraint`. 
 */ 
 template<class InputIterator> Constrained_triangulation_2( 
 InputIterator first, 
@@ -196,22 +196,22 @@ const Traits& t=Traits());
 /// @{
 
 /*! 
-Returns true if edge `e` is a constrained edge. 
+Returns `true` if edge `e` is a constrained edge. 
 */ 
-bool is_constrained(Edge e); 
+bool is_constrained(Edge e) const; 
 
 /*! 
-Returns true if at least one of the edges incident to vertex `v` 
+Returns `true` if at least one of the edges incident to vertex `v` 
 is constrained. 
 */ 
-bool are_there_incident_constraints(Vertex_handle v); 
+bool are_there_incident_constraints(Vertex_handle v) const; 
 
 /*! 
-`OutputItEdges` is an output iterator with `Edge` as value 
-type. 
 Outputs the constrained edges incident to `v` 
-in the sequence pointed to by `out` and returns the resulting 
+into the output iterator `out` and returns the resulting 
 output iterator. 
+\tparam OutputItEdges is an output iterator with `Edge` as value 
+type. 
 */ 
 template<class OutputItEdges> 
 OutputItEdges incident_constraints(Vertex_handle v, 
@@ -230,9 +230,8 @@ for the location of `p`.
 Vertex_handle insert(Point p, Face_handle f = Face_handle() ); 
 
 /*! 
-Same as above except that the location of the point 
-`p` to be inserted is assumed to be given by 
-`(lt,loc,i)`. 
+Inserts point `p` in the triangulation at the location given by `(lt,loc,i)`. 
+\sa `Triangulation_2::locate()`
 */ 
 Vertex_handle 
 insert(const Point& p, 
@@ -245,8 +244,7 @@ Equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p); 
 
 /*! 
-Inserts the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
+Inserts the points in the range `[first,last)`.
 Returns the number of inserted points. 
 \pre The `value_type` of `first` and `last` is `Point`. 
 */ 
@@ -266,14 +264,14 @@ removed triangles.
 void insert_constraint(Point a, Point b); 
 
 /*! 
-Inserts constraints `c` as above. 
+Equivalent to `insert(c.first, c.second)`. 
 */ 
 void push_back(const Constraint& c); 
 
 /*! 
 Inserts the line segment `s` whose endpoints are the vertices 
 `va` and 
-`vb` as a constrained edge `e`. The triangles intersected by `s` 
+`vb` as a constrained edge. The triangles intersected by `s` 
 are removed and new ones are created. 
 */ 
 void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb); 
@@ -290,12 +288,12 @@ Make the edges incident to vertex `v` unconstrained edges.
 void remove_incident_constraints(Vertex_handle v); 
 
 /*! 
-Make edge `(f,i)` no longer constrained. 
+Make edge `(f,i)` unconstrained. 
 */ 
 void remove_constrained_edge(Face_handle f, int i); 
 
 /*! 
-\cgalAdvanced Checks the validity of the triangulation and the consistency
+Checks the validity of the triangulation and the consistency
 of the constrained marks in edges.
 */ 
 bool 
@@ -306,8 +304,8 @@ is_valid(bool verbose = false, int level = 0) const;
 }; /* end Constrained_triangulation_2 */
 
 /*! 
-Writes the triangulation as for `Triangulation_2<Traits,Tds>` and, for each face f, and integers i=0,1,2, 
-write "C" or "N" depending whether edge 
+Writes the triangulation as for `Triangulation_2<Traits,Tds>` and, for each face `f`, and integers `i=0,1,2`, 
+writes "C" or "N" depending whether edge 
 `(f,i)` is constrained or not. 
 \relates Constrained_triangulation_2 
 */ 

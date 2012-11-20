@@ -42,8 +42,9 @@ The triangle type.
 typedef Hidden_type Triangle_2; 
 
 /*! 
-A constructor object for 
-`Segment_2`. Provides : 
+A function object to construct a `Segment_2`. 
+
+Provides: 
 
 `Segment_2 operator()(Point_2 p,Point_2 q)`, 
 
@@ -52,9 +53,10 @@ which constructs a segment from two points.
 typedef Hidden_type Construct_segment_2; 
 
 /*! 
-A constructor object for 
-`Triangle_2`. Provides : 
+A function object to construct a `Triangle_2`. 
 
+Provides:
+ 
 `Triangle_2 operator()(Point_2 p,Point_2 q,Point_2 r )`, 
 
 which constructs a triangle from three points. 
@@ -62,8 +64,9 @@ which constructs a triangle from three points.
 typedef Hidden_type Construct_triangle_2; 
 
 /*! 
-Predicate object. Provides 
-the operator : 
+A function object to compare the x-coordinate of two points.
+
+Provides the operator: 
 
 `bool operator()(Point p, Point q)` 
 
@@ -73,8 +76,9 @@ according to the \f$ x\f$-ordering of points.
 typedef Hidden_type Less_x_2; 
 
 /*! 
-Predicate object. Provides 
-the operator : 
+A function object to compare the y-coordinate of two points.
+
+Provides the operator: 
 
 `bool operator()(Point p, Point q)` 
 
@@ -84,8 +88,9 @@ according to the \f$ y\f$-ordering of points.
 typedef Hidden_type Less_y_2; 
 
 /*! 
-Predicate object. Provides 
-the operator : 
+A function object to compare the x-coordinate of two points.
+
+Provides the operator: 
 
 `Comparison_result operator()(Point p, Point q)` 
 
@@ -97,8 +102,8 @@ according to the
 typedef Hidden_type Compare_x_2; 
 
 /*! 
-Predicate object. Provides 
-the operator : 
+A function object to compare the y-coordinate of two points.
+Provides the operator: 
 
 `Comparison_result operator()(Point p, Point q)` 
 
@@ -110,8 +115,9 @@ according to the
 typedef Hidden_type Compare_y_2; 
 
 /*! 
-Predicate object. Provides 
-the operator : 
+A function object to compute the orientation of three points.
+
+Provides the operator: 
 
 `Orientation operator()(Point p, Point q, Point r)` 
 
@@ -123,8 +129,10 @@ on the left side , on the right side or on the line.
 typedef Hidden_type Orientation_2; 
 
 /*! 
-Predicate object. Must 
-provide the operator 
+A function object to perform the incircle test for four points.
+
+Provides the operator:
+
 `Oriented_side operator()(Point p, Point q, Point r, Point s)` 
 which takes four points \f$ p, q, r, s\f$ as arguments and returns 
 `ON_POSITIVE_SIDE`, `ON_NEGATIVE_SIDE` or, 
@@ -138,8 +146,8 @@ called.
 typedef Hidden_type Side_of_oriented_circle_2; 
 
 /*! 
-Constructor object. Provides 
-the operator : 
+A function object to compute the circumcentr of three points.
+Provides the operator: 
 
 `Point operator()(Point p, Point q, Point r)` 
 
@@ -175,7 +183,7 @@ TriangulationTraits_2 operator=(TriangulationTraits_2 gtr);
 
 /// @} 
 
-/// \name Predicate functions 
+/// \name Predicate Functions 
 /// The following functions give access to the predicate and
 /// constructor objects.
 /// @{

@@ -277,7 +277,7 @@ according to the different kind of triangulations:
 basic, Delaunay, regular, constrained or constrained Delaunay.
 Each kind of triangulations correspond to a different
 class. 
-\cgalFigureRef{Triangulation_2D_Fig_derivation_tree summarizes} the derivation dependencies
+\cgalFigureRef{Triangulation_2D_Fig_derivation_tree} summarizes the derivation dependencies
 of \cgal 2D triangulations classes.
 Any 2D triangulation class is parametrized by
 a geometric traits and a triangulation data structure.

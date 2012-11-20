@@ -336,10 +336,6 @@ enum Locate_type { VERTEX=0, //! when the located point coincides with a vertex 
 /// \name Creation 
 /// @{
 
-/*! 
-default constructor. 
-*/ 
-Triangulation_2(); 
 
 /*! 
 Introduces an empty triangulation. 
@@ -422,18 +418,18 @@ Returns the number of finite faces.
 size_type number_of_faces() const; 
 
 /*! 
-a face incident to the `infinite_vertex`. 
+a face incident to the infinite vertex. 
 */ 
 Face_handle infinite_face() const; 
 
 /*! 
-the `infinite_vertex`. 
+the infinite vertex. 
 */ 
 Vertex_handle 
 infinite_vertex(); 
 
 /*! 
-a vertex distinct from the `infinite_vertex`. 
+a vertex distinct from the infinite vertex. 
 */ 
 Vertex_handle finite_vertex() const; 
 
@@ -447,7 +443,7 @@ Vertex_handle finite_vertex() const;
 /// @{
 
 /*! 
-`true` iff `v` is the `infinite_vertex`. 
+`true` iff `v` is the infinite vertex. 
 */ 
 bool 
 is_infinite(Vertex_handle v) const; 
@@ -479,7 +475,7 @@ is_infinite(Edge_circulator ec) const;
 `true` iff edge `*ei` is infinite. 
 */ 
 bool 
-is_infinite(Edge_iterator ei) const; 
+is_infinite(All_edges_iterator ei) const; 
 
 /*! 
 `true` if there is an edge having `va` and `vb` as 
@@ -537,7 +533,7 @@ boundary is returned.
 If the point `query` lies outside the convex hull of the 
 triangulation but in the affine hull, 
 the returned face is an infinite face which is a proof of the point's 
-location : 
+location: 
 
 - for a two dimensional triangulation, it is a face \f$ (\infty, p, q)\f$ 
 such that 
@@ -672,8 +668,7 @@ Equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p); 
 
 /*! 
-Inserts the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
+Inserts the points in the range `[first,last)`.
 Returns the number of inserted points. 
 \pre The `value_type` of `InputIterator` is `Point`. 
 */ 
@@ -767,7 +762,7 @@ void remove_first(Vertex_handle v);
 
 /*! 
 creates a new vertex `v` and use it to star the hole 
-whose boundary is described by the sequence of edges `[edge_begin, edge_end[`. Returns a handle to the new vertex. 
+whose boundary is described by the sequence of edges `[edge_begin, edge_end)`. Returns a handle to the new vertex. 
 
 This function is intended to be used in conjunction with the
 `find_conflicts()` member functions of Delaunay and constrained
@@ -780,7 +775,7 @@ EdgeIt edge_end);
 
 /*! 
 same as above, except that the algorithm 
-first recycles faces in the sequence `[face_begin, face_end[` 
+first recycles faces in the sequence `[face_begin, face_end)` 
 and create new ones only when the sequence is exhausted. 
 
 This function is intended to be used in conjunction with the
@@ -926,7 +921,7 @@ The starting point of the circulator is the face `f`, or
 the first finite face traversed by `l` , if 
 `f` is omitted. 
 
-The circulator wraps around the `infinite_vertex` : 
+The circulator wraps around the  infinite vertex: 
 after the last traversed finite face, it steps through the infinite face adjacent 
 to this face then through the infinite face adjacent to the first 
 traversed finite face then through the first finite traversed face 

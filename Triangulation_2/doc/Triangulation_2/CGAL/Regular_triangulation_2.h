@@ -219,6 +219,9 @@ Vertex_handle insert(const Weighted_point& p, Face_handle f=Face_handle());
 /*! 
 insert a weighted point `p` whose bare-point is assumed to be 
 located in `lt,loc,li`. 
+See the description of member function 
+`Triangulation_2::locate()`. 
+
 */ 
 Vertex_handle insert(const Weighted_point &p, 
 Locate_type lt, 
@@ -230,23 +233,20 @@ Equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p); 
 
 /*! 
-inserts the weighted points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
+inserts the weighted points in the range `[first,last)`.
 It returns the difference of the number of vertices between after and 
 before the insertions (it may be negative due to hidden points). 
 Note that this function is not guaranteed to insert the weighted points 
-following the order of `InputIterator`, as `spatial_sort` 
+following the order of `InputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
-\pre The `value_type` of `first` and `last` is `Weighted_point`. 
+\tparam InputIterator must be an input iterator with the value type `Weighted_point`. 
 */ 
 template < class InputIterator > 
 std::ptrdiff_t 
 insert(InputIterator first, InputIterator last); 
 
 /*! 
-
-inserts the weighted points in the iterator range \f$ \left[\right.\f$`first`, 
-`last`\f$\left.\right)\f$. 
+inserts the weighted points in the  range `[first,last)`.
 It returns the difference of the number of vertices between after and 
 before the insertions (it may be negative due to hidden points). 
 Note that this function is not guaranteed to insert the weighted points 
@@ -255,7 +255,9 @@ is used to improve efficiency.
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 
 only one vertex is created, one of the objects of type `Vertex::Info` will be stored in the vertex. 
-\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`. The `value_type` of `first` and `last` is `std::pair<Weighted_point,Vertex::Info>`. 
+\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`. 
+
+\tparam WeightedPointWithInfoInputIterator must be an input iterator with value type `std::pair<Weighted_point,Vertex::Info>`. 
 
 */ 
 template < class WeightedPointWithInfoInputIterator > 
@@ -273,14 +275,19 @@ void remove(Vertex_handle v);
 /// @{
 
 /*! 
+outputs  the faces, boundary edges, and hidden vertices of the
+conflict zone of point `p` to output iterators.
 
-`OutputItFaces` is an output iterator with `Face_handle` as 
-value type. `OutputItBoundaryEdges` stands for an output 
+\tparam OutputItFaces is an output iterator with `Face_handle` as 
+value type. 
+\tparam OutputItBoundaryEdges is an output 
 iterator with `Edge` as value type. 
-`OutputItHiddenVertices` is an output iterator with 
-`Vertex_handle` as value type. This member function outputs in 
+\tparam OutputItHiddenVertices is an output iterator with 
+`Vertex_handle` as value type. 
+
+This member function outputs in 
 the container pointed to by `fit` the faces which are in 
-conflict with point `p` i. e. the faces whose power circles 
+conflict with point `p`, i.e., the faces whose power circles 
 have negative power wrt. `p`. It outputs in the container 
 pointed to by `eit` the boundary of the zone in conflict 
 with `p`. It inserts the vertices that would be hidden by `p` 
@@ -299,11 +306,12 @@ get_conflicts_and_boundary_and_hidden_vertices(const Weighted_point
 OutputItHiddenVertices vit, Face_handle start) const; 
 
 /*! 
+outputs the faces and boundary edges  of the
+conflict zone of point `p` to output iterators.
 
-same as above except that only the faces in conflict with `p` and 
-the boundary edges of the conflict zone 
-are output via the corresponding output iterators. The function returns 
-in a std::pair the resulting output iterators. 
+See `get_conflicts_and_boundary_and_hidden_vertices()` for details.
+
+The function returns in a `std::pair` the resulting output iterators. 
 \pre `dimension()==2`. 
 */ 
 template <class OutputItFaces, class OutputItBoundaryEdges> 
@@ -312,11 +320,12 @@ get_conflicts_and_boundary(const Weighted_point
 &p, OutputItFaces fit, OutputItBoundaryEdges eit, Face_handle start) const; 
 
 /*! 
+outputs the faces and hidden vertices  of the
+conflict zone of point `p` to output iterators.
 
-same as above except that only the faces in conflict with `p` and 
-the vertices that would be hidden by `p` 
-are output via the corresponding output iterators. The function returns 
-in a std::pair the resulting output iterators. 
+See `get_conflicts_and_boundary_and_hidden_vertices()` for details.
+The function returns 
+in a `std::pair` the resulting output iterators. 
 \pre `dimension()==2`. 
 */ 
 template <class OutputItFaces, 
@@ -326,12 +335,11 @@ get_conflicts_and_hidden_vertices(const Weighted_point
 &p, OutputItFaces fit, OutputItHiddenVertices vit, Face_handle start) const; 
 
 /*! 
-same as above except that only the vertices that would be hidden 
-by `p` and the boundary of the zone in conflict with `p` are 
-output via the corresponding output iterators. The boundary edges of 
-the conflict zone are output in counterclockwise order and each edge 
-is described through the incident face which is not in conflict with 
-`p`. The function returns in a std::pair the resulting output 
+outputs the boundary edges and hidden vertices  of the
+conflict zone of point `p` to output iterators.
+
+See `get_conflicts_and_boundary_and_hidden_vertices()` for details.
+The function returns in a `std::pair` the resulting output 
 iterators. 
 */ 
 template <class OutputItBoundaryEdges, class OutputItHiddenVertices> 
@@ -341,8 +349,9 @@ get_boundary_of_conflicts_and_hidden_vertices(const Weighted_point
 OutputItHiddenVertices vit, Face_handle start) const; 
 
 /*! 
-same as above except that only the faces in conflict with `p` 
-are output. The function returns the resulting output iterator. 
+outputs the faces of the
+conflict zone of point `p` to output iterators.
+ The function returns the resulting output iterator. 
 \pre `dimension()==2`. 
 */ 
 template <class OutputItFaces> 
@@ -352,8 +361,8 @@ OutputItFaces fit,
 Face_handle start) const; 
 
 /*! 
-same as above except that only the boundary edges 
-of the conflict zone are output in counterclockwise order 
+outputs the boundary edges 
+of the conflict zone of `p` in counterclockwise order 
 where each edge is described through the incident face 
 which is not in conflict with `p`. 
 The function returns the resulting output iterator. 
@@ -365,8 +374,9 @@ OutputItBoundaryEdges eit,
 Face_handle start) const; 
 
 /*! 
-same as above except that only the vertices that would be hidden by `p` 
-are output. The function returns the resulting output iterator. 
+outputs the hidden vertices of the conflict zone of `p`
+into an output iterator.
+ The function returns the resulting output iterator. 
 */ 
 template <class OutputItHiddenVertices> 
 OutputItHiddenVertices 
@@ -382,11 +392,11 @@ vertex is smaller than the power of `p` with respect to the
 weighted point in any other vertex. Ties are broken arbitrarily. The 
 default constructed handle is returned if the triangulation is empty. 
 */ 
-Vertex_handle nearest_power_vertex(Bare_point p); 
+Vertex_handle nearest_power_vertex(Bare_point p) const; 
 
 /// @} 
 
-/// \name Access functions 
+/// \name Access Functions 
 /// @{
 
 /*! 
@@ -432,7 +442,7 @@ All_vertices_iterator all_vertices_begin() const;
 
 /// @} 
 
-/// \name Dual power diagram 
+/// \name Dual Power Diagram 
 /// The following member functions provide the elements of the dual
 /// power diagram.
 /// @{
@@ -494,7 +504,7 @@ const Weighted_point& p) const;
 /// @{
 
 /*! 
-\cgalAdvanced Tests the validity of the triangulation as a
+Tests the validity of the triangulation as a
 `Triangulation_2` and additionally test the regularity of the
 triangulation. This method is useful to debug regular triangulation
 algorithms implemented by the user.

@@ -39,21 +39,19 @@ public:
 
 /*! 
 The line type. This type is required only if 
-some dual 
-functions are called. 
+some dual functions are called. 
 */ 
 typedef Hidden_type Line_2; 
 
 /*! 
 The type for ray. This type is required only if 
-some dual 
-functions are called. 
+some dual functions are called. 
 */ 
 typedef Hidden_type Ray_2; 
 
 /*! 
-Predicate type. 
-Provides the operator : 
+A function object to perform an incircle test for a point and three other points.
+Provides the operator: 
 
 `Oriented_side operator()(Point p, Point q, Point r, Point s)` 
 which takes four points `p, q, r, s` as arguments and returns 
@@ -64,8 +62,8 @@ with respect to the oriented circle through `p, q` and `r`.
 typedef Hidden_type Side_of_oriented_circle_2; 
 
 /*! 
-Predicate type. Provides 
-the operator : 
+A function object to compare two distances for three points. 
+Provides the operator: 
 
 `Comparison_result operator()(Point_2 p, Point_2 q, Point_2 r)` 
 which returns `SMALLER`, `EQUAL` or `LARGER` 
@@ -76,8 +74,8 @@ than the distance between p and r. This type is only require if
 typedef Hidden_type Compare_distance_2; 
 
 /*! 
-Constructor object. Provides 
-the operator : 
+A function object to construct the circumcenter of three points. 
+Provides the operator: 
 
 `Point_2 operator()(Point_2 p, Point_2 q, Point_2 r)` which returns 
 the circumcenter of the three points `p, q` and `r`. 
@@ -87,8 +85,9 @@ relative to the dual Voronoi diagram are called.
 typedef Hidden_type Construct_circumcenter_2; 
 
 /*! 
-Constructor object. Provides 
-the operator : 
+A function object to construct the bisector of two points. 
+
+Provides the operator: 
 
 `Line_2 operator()(Point_2 p, Point_2 q)` which constructs the 
 bisector line of points `p` and `q`. 
@@ -98,8 +97,8 @@ relative to the dual Voronoi diagram are called.
 typedef Hidden_type Construct_bisector_2; 
 
 /*! 
-A constructor object to build 
-a ray from a point and a line. Provides : 
+A function object to build a ray from a point and a line. 
+Provides the operator: 
 
 `Ray_2 operator() ( Point_2 p, Line_2 l);` 
 */ 
@@ -129,7 +128,7 @@ operator=(traits2);
 
 /// @} 
 
-/// \name Access to predicate and constructor objects 
+/// \name Access to Predicate and Constructor Objects
 /// @{
 
 /*! 

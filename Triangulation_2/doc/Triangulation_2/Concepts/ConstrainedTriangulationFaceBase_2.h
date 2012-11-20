@@ -34,8 +34,8 @@ public:
 /// @{
 
 /*! 
-returns true if the edge between `f` and its neighbor 
-`f`.`neighbor(i)` is constrained. 
+returns true if the edge between the face and its neighbor 
+`neighbor(i)` is constrained. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 bool is_constrained(int i); 
@@ -46,18 +46,18 @@ bool is_constrained(int i);
 /// @{
 
 /*! 
-\cgalAdvanced sets the edge between `f` and its neighbor `f`.`neighbor(i)` 
+\cgalAdvanced sets the edge between the face and its neighbor `neighbor(i)` 
 as a constrained or unconstrained edge according to `b`. 
 */ 
 void set_constraint(int i, bool b); 
 
 /*! 
-\cgalAdvanced sets the status (constrained or unconstrained) of the three edges of `f`. 
+\cgalAdvanced sets the status (constrained or unconstrained) of the three edges of the face. 
 */ 
 void set_constraints(bool c0, bool c1, bool c2); 
 
 /*! 
-\cgalAdvanced changes the orientation of `f` by exchanging `vertex(0)` 
+\cgalAdvanced changes the orientation of the face by exchanging `vertex(0)` 
 with `vertex(1)` and `neighbor(0)` with `neighbor(1)` 
 and the corresponding constrained status. 
 */ 
@@ -65,13 +65,13 @@ void reorient();
 
 /*! 
 \cgalAdvanced performs a counterclockwise permutation of the 
-vertices, neighbors and constrained status of `f`. 
+vertices, neighbors and constrained status of the face. 
 */ 
 void ccw_permute(); 
 
 /*! 
 \cgalAdvanced performs a clockwise permutation of the 
-vertices and neighbors and constrained status of `f`. 
+vertices and neighbors and constrained status of the face. 
 */ 
 void cw_permute(); 
 
@@ -82,10 +82,10 @@ void cw_permute();
 
 /*! 
 
-\cgalAdvanced tests the validity of face `f` as a face of a plain
-triangulation and additionally checks if the edges of `f` are
-consistently marked as constrained or unconstrained edges in face
-`f`and its neighbors.
+\cgalAdvanced tests the validity of the face as a face of a plain
+triangulation and additionally checks if the edges of the face are
+consistently marked as constrained or unconstrained edges in the face
+and its neighbors.
 */ 
 bool is_valid(); 
 

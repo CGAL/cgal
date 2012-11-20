@@ -49,12 +49,12 @@ public:
 /// @{
 
 /*! 
-the triangulation base class. 
+The triangulation base class. 
 */ 
 typedef Tr Triangulation; 
 
 /*! 
-the intersection tag.
+The intersection tag.
 */ 
 typedef Itag Intersection_tag; 
 
@@ -125,17 +125,16 @@ Constrained_triangulation_plus_2(const
 Constrained_triangulation_plus_2& ct); 
 
 /*! 
-Introduces and builds a constrained triangulation 
+Introduces  a constrained triangulation 
 from the list of constraints `lc`. 
 */ 
 Constrained_triangulation_plus_2(std::list<Constraint>& lc, 
 const Geom_traits& t = Geom_traits()); 
 
 /*! 
-Introduces and builds a constrained triangulation 
-from the constraints in the range 
-\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
-\pre The `value_type` of `first` and `last` is `Constraint`. 
+Introduces a constrained triangulation 
+from the constraints in the range `[first,last)`.
+\tparam InputIterator must be an input iterator with the value type `Constraint`. 
 
 */ 
 template<class InputIterator> 
@@ -178,8 +177,8 @@ Vertex_handle insert(const Point& p,
 Face_handle start = Face_handle() ); 
 
 /*! 
-inserts a point `p` whose location is assumed 
-to be given by `(lt,loc,li)`. 
+Inserts point `p` in the triangulation at the location given by `(lt,loc,i)`. 
+\sa `Triangulation_2::locate()`
 */ 
 Vertex_handle insert(const Point& p, 
 Locate_type lt, 
@@ -191,17 +190,16 @@ Equivalent to `insert(p)`.
 Vertex_handle push_back(const Point& p); 
 
 /*! 
-Inserts the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$\left.\right)\f$. 
+Inserts the points in the range `[first,last)`.
 Returns the number of inserted points. 
-\pre The `value_type` of `first` and `last` is `Point`. 
+\tparam InputIterator must be an input iterator with the value type `Point`. 
 */ 
 template < class InputIterator > 
 size_type 
 insert(InputIterator first, InputIterator last); 
 
 /*! 
-Inserts the constraint segment ab in the triangulation. 
+Inserts the constraint segment `ab` in the triangulation. 
 */ 
 void insert_constraint(Point a, Point b); 
 
@@ -260,7 +258,7 @@ int number_of_enclosing_constraints(Vertex_handle va,
 Vertex_handle vb); 
 
 /*! 
-Returns the `Context` relative to one of the constraint 
+Returns the `Context` relative to one of the constraints 
 enclosing the sub-constraint `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 

@@ -37,7 +37,7 @@ public:
 /// @{
 
 /*! 
-A function object whose operator() computes the intersection of two segments: 
+A function object whose `operator()` computes the intersection of two segments. 
 
 `Object_2 operator()(Segment_2 s1, Segment_2 s2);` 
 Returns the intersection of `s1` and `s2`. 
@@ -49,8 +49,7 @@ typedef Hidden_type Intersect_2;
 /// @{
 
 /*! 
-A number type supporting the comparison operator 
-`<`. 
+A number type supporting the comparison operator `<`. 
 */ 
 typedef Hidden_type RT; 
 
@@ -60,26 +59,26 @@ The line type.
 typedef Hidden_type Line_2; 
 
 /*! 
-A function object whose operator() 
-constructs a line from two points : 
+A function object whose `operator()` 
+constructs a line from two points. 
 
 `Line_2 operator()(Point_2 p1, Point_2 p2)`. 
 */ 
 typedef Hidden_type Construct_line_2; 
 
 /*! 
-A function object with an 
-operator() designed to compute the squared distance between 
-a line and a point : 
+A function object whose
+`operator()` computes the squared distance between 
+a line and a point.
 
-`RT operator()(Line_2 l, Point_2 p);` Return the squared distance 
+`RT operator()(Line_2 l, Point_2 p);` Returns the squared distance 
 between `p` and `l`. 
 */ 
 typedef Hidden_type Compute_squared_distance_2; 
 
 /// @} 
 
-/// \name Access to constructor object 
+/// \name Access to Constructor Objects 
 /// @{
 
 /*! 
