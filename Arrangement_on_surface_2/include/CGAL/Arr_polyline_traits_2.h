@@ -481,19 +481,25 @@ public:
         return oi;
       }
 
+      // Polyline contains at least 2 segments!
+
       typename Segment_traits_2::Compare_xy_2 comp_xy =
         seg_traits->compare_xy_2_object();
+      typename Segment_traits_2::Is_vertical_2 is_vertical =
+	seg_traits->is_vertical_2_object();
       Construct_x_monotone_curve_2 construct_x_monotone_curve = 
 	m_traits->construct_x_monotone_curve_2_object();
 
       const_seg_iterator it_start = start_seg;
       const_seg_iterator it_curr = start_seg;
 
-      for (; it_next != end_seg; ++it_next)
+      for (/*it_next was advanced earlier*/; it_next != end_seg; ++it_next)
       {
+	// TODO: Improve this test. Avoid double tests of geometrical elements.
         if ((comp_xy(max_v(*it_curr), min_v(*it_next)) != EQUAL) &&
             (comp_xy(min_v(*it_curr), max_v(*it_next)) != EQUAL) )
         {
+	  // Construct an x-monotone curve from the sub-range which was found
           *oi++ = make_object(construct_x_monotone_curve(it_start, it_next));
           it_start = it_next;
         }
@@ -531,6 +537,9 @@ public:
     void operator()(const X_monotone_curve_2& cv, const Point_2& p,
                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
+
+      // TODO: Should this be rewritten using iterators over the segments?
+
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
         m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
@@ -953,6 +962,20 @@ public:
       pts[0] = p; pts[1] = q;
       return (X_monotone_curve_2(pts + 0, pts + 2));
     }
+
+    /*! Returns an x-monotone curve consists of one given segment.
+     * \param seg input segment
+     * \return A polyline with one segment, namely seg.
+     * TODO: Implement this overload
+     * TODO: Use this implementations in the Make_x_monotone_2, when there's
+     *       only one segment.
+     */
+    X_monotone_curve_2 operator()(const Segment_2 seg) const
+    {      
+      X_monotone_curve_2 res;
+      return res;
+    }
+
 
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const
