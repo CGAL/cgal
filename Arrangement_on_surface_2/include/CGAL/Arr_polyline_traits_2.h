@@ -454,15 +454,15 @@ public:
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     { 
       typedef typename Curve_2::const_segments_iterator const_seg_iterator;
-      const_seg_iterator first_seg = cv.begin_segments();
-      const_seg_iterator last_seg=cv.end_segments();
+      const_seg_iterator start_seg = cv.begin_segments();
+      const_seg_iterator end_seg = cv.end_segments();
 
       // Empty polyline:
-      if (first_seg == last_seg)
+      if (start_seg == end_seg)
         return oi;
 
-      const_seg_iterator seg_it = first_seg;
-      ++seg_it;
+      const_seg_iterator it_next = start_seg;
+      ++it_next;
 
       const Segment_traits_2* seg_traits = m_traits->segment_traits_2();
       typename Segment_traits_2::Construct_max_vertex_2 max_v =
@@ -470,15 +470,14 @@ public:
       typename Segment_traits_2::Construct_min_vertex_2 min_v =
 	seg_traits->construct_min_vertex_2_object();
 
-      if (seg_it == last_seg) {
+      if (it_next == end_seg) {
         // The polyline contains a single segment:
         // Check if it is degenerated
-	if ( compare_xy(min_v(*seg_it),max_v(*seg_it)) == EQUAL)
+        *oi++ = (compare_xy(min_v(*start_seg), max_v(*start_seg)) == EQUAL) ?
 	  // One segment is degenerated, returns the point.
-	  *oi++ = make_object(min_v(*seg_it));
-	else
+	  make_object(min_v(*start_seg)) :
 	  // Polyline consists of only one segments, and it is returned.
-	  *oi++ = make_object(*seg_it);
+	  make_object(*start_seg);
         return oi;
       }
 
@@ -487,22 +486,20 @@ public:
       Construct_x_monotone_curve_2 construct_x_monotone_curve = 
 	m_traits->construct_x_monotone_curve_2_object();
 
-      const_seg_iterator it_start = first_seg;
-      const_seg_iterator it_next = first_seg;
-      const_seg_iterator it_curr = first_seg;
-      ++it_next;
+      const_seg_iterator it_start = start_seg;
+      const_seg_iterator it_curr = start_seg;
 
-      for ( ; it_next != last_seg ; it_next++)
-      	{
-	  if (
-	      (comp_xy(max_v(*it_curr),min_v(*it_next))!=EQUAL) &&
-	      (comp_xy(min_v(*it_curr),max_v(*it_next))!=EQUAL) )
-	    {
-	      *oi++ = make_object(construct_x_monotone_curve(it_start, it_next));
-	      it_start = it_next;
-	    }
-	  ++it_curr;
-      	}
+      for (; it_next != end_seg; ++it_next)
+      {
+        if ((comp_xy(max_v(*it_curr), min_v(*it_next)) != EQUAL) &&
+            (comp_xy(min_v(*it_curr), max_v(*it_next)) != EQUAL) )
+        {
+          *oi++ = make_object(construct_x_monotone_curve(it_start, it_next));
+          it_start = it_next;
+        }
+        it_curr = it_next;
+      }
+      *oi++ = make_object(construct_x_monotone_curve(it_start, it_next));
       return oi;
     }
   };
