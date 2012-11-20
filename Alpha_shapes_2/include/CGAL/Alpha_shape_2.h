@@ -591,7 +591,7 @@ public:
       // Classifies a point `p' with respect to `A'.
       Locate_type type;
       int i;
-      Face_handle pFace = locate(p, type, i);
+      Face_handle pFace = this->locate(p, type, i);
       switch (type) 
 	{
 	case VERTEX            : return classify(pFace->vertex(i), alpha);

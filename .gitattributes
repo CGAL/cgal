@@ -809,8 +809,10 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.fig -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.pdf -text svneol=unset#application/pdf
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_algebraic_segment_traits.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_face_index_map.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_halfedge_direction.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_rational_function_traits.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_vertex_index_map.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_do_intersect.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_zone.tex -text
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/fig/Curve_intersections_2.png -text
@@ -2532,6 +2534,12 @@ Generator/doc_tex/Generator/generators_prog1.png -text svneol=unset#image/png
 Generator/doc_tex/Generator/generators_prog2.png -text svneol=unset#image/png
 Generator/doc_tex/Generator/hypergrid.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/hypergrid.pdf -text svneol=unset#application/pdf
+Generator/doc_tex/Generator_ref/CombinationElement.tex -text
+Generator/doc_tex/Generator_ref/Combination_enumerator.tex -text
+Generator/examples/Generator/combination_enumerator.cpp -text
+Generator/examples/Generator/name_pairs.cpp -text
+Generator/include/CGAL/Combination_enumerator.h -text
+Generator/test/Generator/test_combination_enumerator.cpp -text
 Geomview/demo/Geomview/CMakeLists.txt -text
 Geomview/doc/Geomview/CGAL/IO/Geomview_stream.h -text
 Geomview/doc/Geomview/Geomview.txt -text
@@ -2777,6 +2785,7 @@ Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgramQt4.cmake -text
 Installation/cmake/modules/CGAL_GeneratorSpecificSettings.cmake -text
 Installation/cmake/modules/CGAL_Locate_CGAL_TAUCS.cmake -text
 Installation/cmake/modules/CGAL_Macros.cmake -text
+Installation/cmake/modules/CGAL_SCM.cmake -text
 Installation/cmake/modules/CGAL_SetupBoost.cmake -text
 Installation/cmake/modules/CGAL_SetupDependencies.cmake -text
 Installation/cmake/modules/CGAL_SetupFlags.cmake -text
@@ -3565,6 +3574,7 @@ Maintenance/public_release/announcement/CGAL-4.0 -text
 Maintenance/public_release/announcement/CGAL-4.0-beta1 -text
 Maintenance/public_release/announcement/CGAL-4.0.1 -text
 Maintenance/public_release/announcement/CGAL-4.0.2 -text
+Maintenance/public_release/announcement/CGAL-4.1 -text
 Maintenance/public_release/announcement/CGAL-4.1-beta1 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
@@ -4842,6 +4852,7 @@ Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_simplification_plugin.ui -t
 Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_smoothing_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_poisson_plugin.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_transform_polyhedron_plugin.cpp -text
+Polyhedron/demo/Polyhedron/Preferences.ui -text
 Polyhedron/demo/Polyhedron/Remeshing_dialog.ui -text
 Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item.cpp -text
 Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item.h -text
@@ -5114,11 +5125,12 @@ Polynomial/include/CGAL/Polynomial/sturm_habicht_sequence.h -text
 Polynomial/include/CGAL/Polynomial/subresultants.h -text
 Polynomial/include/CGAL/Polynomial_type_generator.h -text
 Polynomial/include/CGAL/Test/_test_polynomial_traits_d.h -text
-Polynomial/test/Polynomial/Coercion_traits.cpp -text
-Polynomial/test/Polynomial/Get_arithmetic_kernel.cpp -text
 Polynomial/test/Polynomial/Polynomial_type_generator.cpp -text
 Polynomial/test/Polynomial/polynomial_utils.cpp -text
 Polynomial/test/Polynomial/sturm_habicht_sequence.cpp -text
+Polynomial/test/Polynomial/test_polynomial_Coercion_traits.cpp -text
+Polynomial/test/Polynomial/test_polynomial_Get_arithmetic_kernel.cpp -text
+Polynomial/test/Polynomial/test_subresultants.cpp -text
 Polynomial/test/Polynomial/subresultants.cpp -text
 Polytope_distance_d/doc/Polytope_distance_d/CGAL/Polytope_distance_d.h -text
 Polytope_distance_d/doc/Polytope_distance_d/CGAL/Polytope_distance_d_traits_2.h -text
@@ -5192,6 +5204,15 @@ Principal_component_analysis/include/CGAL/linear_least_squares_fitting_tetrahedr
 Principal_component_analysis/include/CGAL/linear_least_squares_fitting_triangles_2.h -text
 Principal_component_analysis/include/CGAL/linear_least_squares_fitting_triangles_3.h -text
 Principal_component_analysis/test/Principal_component_analysis/Principal_component_analysis.sln eol=crlf
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_circles_2.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_cuboids_3.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_rectangles_2.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_segments_2.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_segments_3.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_spheres_3.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_tetrahedra_3.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_triangles_2.cpp -text
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_triangles_3.cpp -text
 Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_circles_2.cpp -text
 Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_cuboids_3.cpp -text
 Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_rectangles_2.cpp -text
@@ -5222,6 +5243,7 @@ QP_solver/doc/QP_solver/fig/first_nonnegative_qp.png -text svneol=unset#image/pn
 QP_solver/doc/QP_solver/fig/first_qp.pdf -text svneol=unset#application/pdf
 QP_solver/doc/QP_solver/fig/first_qp.png -text svneol=unset#image/png
 QP_solver/doc/QP_solver/fig/qp.png -text svneol=unset#image/png
+
 QP_solver/doc_tex/QP_solver/PkgDescription.tex -text
 QP_solver/doc_tex/QP_solver/closest_point.fig -text svneol=unset#application/octet-stream
 QP_solver/doc_tex/QP_solver/closest_point.gif -text svneol=unset#image/gif
@@ -5405,7 +5427,7 @@ Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
 Scripts/developer_scripts/cgal_generate_cmake_script -text
 Scripts/developer_scripts/cgal_generate_cmake_script.cmake -text
-Scripts/developer_scripts/cgal_git_svn_clone -text
+Scripts/developer_scripts/cgal_git_update_hooks_for_client -text
 Scripts/developer_scripts/cgal_header_clean_up.py -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
 Scripts/developer_scripts/check_library_uses_no_gpl_files -text
@@ -6009,6 +6031,7 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/wheel_16_spokes.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/wheel_16_spokes_b.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/wiggly_03_cgal.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_types.h -text
+Straight_skeleton_2/test/Straight_skeleton_2/offset_bug.cpp -text
 Straight_skeleton_2/test/Straight_skeleton_2/selected.rsp -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cmd -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cpp -text

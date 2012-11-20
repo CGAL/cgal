@@ -91,8 +91,10 @@ DemosMainWindow::dragEnterEvent(QDragEnterEvent *event)
 void 
 DemosMainWindow::dropEvent(QDropEvent *event)
 {
-  QString filename = event->mimeData()->urls().at(0).toLocalFile();
-  this->open(filename);
+  Q_FOREACH(QUrl url, event->mimeData()->urls()) {
+    QString filename = url.toLocalFile();
+    this->open(filename);
+  }
   event->acceptProposedAction();
 }
 

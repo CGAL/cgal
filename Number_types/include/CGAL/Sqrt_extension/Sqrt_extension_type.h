@@ -40,6 +40,7 @@
 #include <CGAL/Sqrt_extension_fwd.h>
 #include <boost/optional.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <CGAL/NT_converter.h>
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
@@ -671,6 +672,48 @@ Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> square (const Sqrt_extension<NT,ROOT,ACD
                                 2 * x.alpha() * x.beta(),
                                 x.gamma()));
 }
+
+//NT_converter specializations
+template <class NT1,class ROOT1,class NT2,class ROOT2,class ACDE_TAG,class FP_TAG>
+struct NT_converter < Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> , Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG> >
+  : public std::unary_function< NT1, NT2 >
+{
+    Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG>
+    operator()(const Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> &a) const
+    {
+      if(!a.is_extended()) {
+        return Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG>(NT_converter<NT1,NT2>()(a.a0()));
+      } else {
+        return Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG>
+            (NT_converter<NT1,NT2>()(a.a0()),
+             NT_converter<NT1,NT2>()(a.a1()),
+             NT_converter<ROOT1,ROOT2>()(a.root()));
+      }
+    }
+};
+
+template <class NT1,class NT2,class ROOT2,class ACDE_TAG,class FP_TAG>
+struct NT_converter < NT1 , Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG> >
+  : public std::unary_function< NT1, NT2 >
+{
+    Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG>
+    operator()(const NT1 &a) const
+    {
+        return Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG>(NT_converter<NT1,NT2>()(a));
+    }
+};
+
+//needed because it's a better match than the specialization <NT1,NT1>
+template <class NT1,class ROOT1,class ACDE_TAG,class FP_TAG>
+struct NT_converter < Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG>, Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> >
+  : public std::unary_function< NT1, NT1 >
+{
+    const Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG>&
+    operator()(const Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> &a) const
+    {
+        return a;
+    }
+};
 
 // UNARY 
 template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>

@@ -33,6 +33,7 @@
 #include <CGAL/intersection_2.h>
 #include <CGAL/intersection_3.h>
 #include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/Kernel/global_functions_3.h>
 
 namespace CGAL {
 

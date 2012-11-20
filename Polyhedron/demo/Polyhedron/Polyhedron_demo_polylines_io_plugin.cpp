@@ -13,7 +13,7 @@ class Polyhedron_demo_polylines_io_plugin :
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
 public:
-  QString name() const { return "Polyhedron_demo_polylines_io_plugin"; }
+  QString name() const { return "polylines_io_plugin"; }
   QString nameFilters() const { return "Polylines files (*.polylines.txt *.cgal)"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);

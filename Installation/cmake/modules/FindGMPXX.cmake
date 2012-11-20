@@ -17,18 +17,24 @@ if(WITH_GMP AND GMP_FOUND)
     set(GMPXX_FIND_QUIETLY TRUE)
   endif()
 
-  find_path(GMPXX_INCLUDE_DIR NAMES gmpxx.h 
-            PATHS ${GMP_INCLUDE_DIR_SEARCH}
+  find_path(GMPXX_INCLUDE_DIR NAMES gmpxx.h
+            HINTS ENV GMPXX_INC_DIR
+                  ENV GMPXX_DIR
+                  ${GMP_INCLUDE_DIR_SEARCH}
+            PATH_SUFFIXES include
             DOC "The directory containing the GMPXX include files"
            )
 
   find_library(GMPXX_LIBRARIES NAMES gmpxx
-               PATHS ${GMP_LIBRARIES_DIR_SEARCH}
+               HINTS ENV GMPXX_LIB_DIR
+                     ENV GMPXX_DIR
+                     ${GMP_LIBRARIES_DIR_SEARCH}
+               PATH_SUFFIXES lib
                DOC "Path to the GMPXX library"
                )
-               
+
   include(FindPackageHandleStandardArgs)
-  
+
   find_package_handle_standard_args(GMPXX "DEFAULT_MSG" GMPXX_LIBRARIES GMPXX_INCLUDE_DIR )
 
 else()

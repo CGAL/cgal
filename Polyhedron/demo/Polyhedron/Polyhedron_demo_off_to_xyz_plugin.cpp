@@ -11,7 +11,7 @@ class Polyhedron_demo_off_to_xyz_plugin :
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
 public:
-  QString name() const { return "Polyhedron_demo_off_to_xyz_plugin"; }
+  QString name() const { return "off_to_xyz_plugin"; }
   QString nameFilters() const { return "OFF files as Point set (*.off)"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);

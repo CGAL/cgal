@@ -26,6 +26,9 @@
 #define CGAL_RAYH3_H
 
 #include <utility>
+#include <CGAL/kernel_config.h>
+#include <CGAL/assertions.h>
+#include <CGAL/Origin.h>
 
 namespace CGAL {
 

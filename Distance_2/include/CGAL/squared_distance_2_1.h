@@ -35,6 +35,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/wmult.h>
 #include <CGAL/squared_distance_utils.h>
+#include <CGAL/Kernel/global_functions_2.h>
 
 namespace CGAL {
 

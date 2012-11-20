@@ -25,6 +25,7 @@
 #define CGAL_ROOT_OF_TRAITS_SPECIALIZATIONS_H
 
 #include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Root_of_traits.h>
 
 namespace CGAL {
 

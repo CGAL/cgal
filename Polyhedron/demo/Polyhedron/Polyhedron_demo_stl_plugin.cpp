@@ -134,7 +134,7 @@ class Polyhedron_demo_stl_plugin :
 
 public:
   QString nameFilters() const;
-  QString name() const { return "Polyhedron_demo_stl_plugin"; }
+  QString name() const { return "stl_plugin"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);
 

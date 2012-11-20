@@ -236,7 +236,7 @@ can be found in \ccc{point_location_utils.h}).
 It then employs the naive and the landmark strategies to issue
 several point-location queries on this arrangement:
 
-\ccIncludeExampleCode{Arrangement_on_surface_2/point_location.cpp}
+\ccIncludeExampleCode{Arrangement_on_surface_2/point_location_example.cpp}
 
 Note that the program uses the auxiliary
 \ccc{point_location_query()} function template to nicely print the
@@ -316,7 +316,7 @@ void vertical_ray_shooting_query
 The following program uses the auxiliary function listed above to
 perform vertical ray-shooting queries on an arrangement.
 The arrangement and the query points are exactly the same as in
-\ccc{point_location.cpp} (see Figure~\ref{arr_fig:ex_5}):
+\ccc{point_location_example.cpp} (see Figure~\ref{arr_fig:ex_5}):
 
 \ccIncludeExampleCode{Arrangement_on_surface_2/vertical_ray_shooting.cpp}
 
@@ -360,6 +360,6 @@ additional data structures.
 
 The following program issues a batched point-location query, which
 is essentially equivalent to the six separate queries performed in
-\ccc{point_location.cpp} (see Section~\ref{arr_ssec:pl}):
+\ccc{point_location_example.cpp} (see Section~\ref{arr_ssec:pl}):
 
 \ccIncludeExampleCode{Arrangement_on_surface_2/batched_point_location.cpp}

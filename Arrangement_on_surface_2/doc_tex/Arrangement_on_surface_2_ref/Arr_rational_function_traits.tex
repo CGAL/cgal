@@ -14,10 +14,12 @@
 %============
 
 The traits class \ccRefName{} is a model of the \ccc{ArrangementTraits_2}
-concept. It handles bounded and unbounded arcs of rational functions,
-referred to as {\sl rational arcs} (in particular, such an arc may
-correspond to the entire graph of a rational function), and enables the
-construction and maintenance of arrangements of such arcs. 
+concept. It handles arcs of rational functions, referred to as
+{\sl rational arcs} (in particular, such an arc may correspond to the
+entire graph of a rational function). It supports bounded and
+unbounded arcs. Thus, it is also a model of the concept
+\ccc{ArrangementOpenBoundaryTraits_2}. The traits class enables
+the construction and maintenance of arrangements of such arcs. 
 %Rational functions, and polynomial functions in particular, are not only 
 %interesting in their own right, they are also very useful for approximating or
 %interpolating more complex curves.
