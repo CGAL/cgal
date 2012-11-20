@@ -53,6 +53,7 @@ namespace po = boost::program_options;
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #define CGAL_MESH_3_OPTIMIZER_VERBOSE
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+#define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
 #define MESH_3_PROFILING
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
@@ -95,7 +96,6 @@ const int     TET_SHAPE                = 3;
     "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
 #endif
 
-# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 //# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
 
   // =================
@@ -152,9 +152,6 @@ const int     TET_SHAPE                = 3;
 # define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
 //# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
-
-  // For better performance on meshes like fandisk
-# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
 #endif // CONCURRENT_MESH_3
 
@@ -616,7 +613,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   );
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(), no_perturb(), no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(/*time_limit=10*/), no_perturb(), no_exude()); // CJTODO TEMP time_limit=10 => a enlever
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -814,6 +811,10 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
 
 int main()
 {
+#if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
+  _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+#endif
+
   // Program options
   po::variables_map vm;
   try
@@ -1001,10 +1002,6 @@ int main()
       std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
     }
   }
-
-#if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
-  _CrtDumpMemoryLeaks();
-#endif
 
   return 0;
 }
