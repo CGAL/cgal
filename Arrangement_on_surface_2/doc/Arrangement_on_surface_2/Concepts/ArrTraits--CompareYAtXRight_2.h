@@ -12,7 +12,8 @@ namespace ArrTraits {
 class CompareYAtXRight_2 {
 public:
 
-/// \name Has Models 
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 
