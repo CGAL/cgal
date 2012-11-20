@@ -95,7 +95,7 @@ See \cgalFigureRef{Conformexampleconform}
 Initial triangulation and the corresponding Delaunay and Gabriel triangulation.
 \cgalFigureEnd
 
-\cgalFigureBeginConformexampleconformDelaunay,example-conform-Delaunay.png}
+\cgalFigureBegin{ConformexampleconformDelaunay,example-conform-Delaunay.png}
 The corresponding conforming Delaunay triangulation.
 \cgalFigureEnd
 
@@ -124,7 +124,7 @@ default, the domain is the union of the bounded connected components.
 See \cgalFigureRef{Domain} for an example of a domain
 defined without using seed points, and a possible mesh of it. 
 
-\cgalFigureBegin{Domain,latex domain-domain-mesh.png}
+\cgalFigureBegin{Domain,domain-domain-mesh.png}
 A domain defined without seed points and the generated mesh.
 \cgalFigureEnd
 

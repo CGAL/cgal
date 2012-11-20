@@ -193,31 +193,40 @@ TAB_SIZE               = 4
 # will result in a user-defined paragraph with heading "Side Effects:".
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES                =  "sc{1}=<span style=\"font-variant: small-caps;\">\1</span>" \
-                          "cgal=\sc{%CGAL}" \
-                          "protocgal=\sc{C++gal}" \
-                          "plageo=\sc{Plageo}" \
-                          "stl=*STL*" \
-                          "leda=*LEDA*" \
-                          "gcc=*GCC*" \
-                          "cpp=<I>C++</I>" \
-                          "cpp11=*C++11*" \
-                          "CC=*C++*" \
-                          "cgalExample{1}=<br><b>File</b> \ref \1 \include \1" \
-                          "cgalFigureAnchor{1}=\anchor fig__\1" \
-                          "cgalFigureRef{1}=\ref fig__\1" \
-                          "cgalFigureBegin{2}=\anchor fig__\1 \n \image html \2 \n \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1   " \
-                          "cgalFigureBegin{3}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgalFigureBegin{4}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgalFigureBegin{5}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgalFigureBegin{6}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgalFigureBegin{7}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgalFigureBegin{8}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgalFigureBegin{9}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> <TD> \image html \9 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                          "cgalFigureBegin{10}=\anchor fig__\1 \n <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> <TD> \image html \9 \n </TD> <TD> \image html \10 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                         "cgalFigureEnd=\htmlonly </div> \endhtmlonly" \
-                         "cgalFigureCaptionBegin{1}=\htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                         "cgalFigureCaptionEnd=\htmlonly </div> \endhtmlonly"
+ALIASES = "sc{1}=<span style=\"font-variant: small-caps;\">\1</span>"
+ALIASES += "cgal=\sc{%CGAL}"
+ALIASES += "protocgal=\sc{C++gal}"
+ALIASES += "plageo=\sc{Plageo}"
+ALIASES += "stl=*STL*"
+ALIASES += "leda=*LEDA*"
+ALIASES += "gcc=*GCC*"
+ALIASES += "cpp=<I>C++</I>"
+ALIASES += "cpp11=*C++11*"
+ALIASES += "CC=*C++*"
+ALIASES += "cgalExample{1}=<br><b>File</b> \ref \1 \include \1"
+ALIASES += "cgalFigureAnchor{1}=\anchor fig__\1"
+ALIASES += "cgalFigureRef{1}=\ref fig__\1"
+ALIASES += "cgalFigureBegin{2}=\anchor fig__\1 \n \image html \2 \n \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1   "
+
+ALIASES += "cgalFigureBegin{3}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
+
+ALIASES += "cgalFigureBegin{4}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
+
+ALIASES += "cgalFigureBegin{5}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
+
+ALIASES += "cgalFigureBegin{6}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
+
+ALIASES += "cgalFigureBegin{7}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
+
+ALIASES += "cgalFigureBegin{8}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
+
+ALIASES += "cgalFigureBegin{9}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> <TD> \image html \9 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
+
+ALIASES += "cgalFigureBegin{10}=\anchor fig__\1 \n <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> <TD> \image html \9 \n </TD> <TD> \image html \10 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
+
+ALIASES += "cgalFigureEnd=\htmlonly </div> \endhtmlonly"
+ALIASES += "cgalFigureCaptionBegin{1}=\htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
+ALIASES += "cgalFigureCaptionEnd=\htmlonly </div> \endhtmlonly"
                          
 # this sets the include file of a concept to a non-existing file and
 # thus removes its include statement

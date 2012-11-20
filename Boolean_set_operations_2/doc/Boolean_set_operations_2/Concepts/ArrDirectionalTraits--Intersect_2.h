@@ -1,4 +1,4 @@
-
+namespace ArrDirectionalTraits {
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrDirectionalTraits::Intersect_2 {
+class Intersect_2 {
 public:
 
 /// \name Has Models 
@@ -38,3 +38,4 @@ Output_iterator& oi);
 
 }; /* end ArrDirectionalTraits::Intersect_2 */
 
+}

@@ -1,4 +1,4 @@
-
+namespace ArrDirectionalTraits {
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
@@ -9,7 +9,7 @@
 
 */
 
-class ArrDirectionalTraits::AreMergeable_2 {
+class AreMergeable_2 {
 public:
 
 /// \name Has Models 
@@ -30,3 +30,4 @@ ArrDirectionalTraits::X_monotone_curve_2 xc2);
 
 }; /* end ArrDirectionalTraits::AreMergeable_2 */
 
+}

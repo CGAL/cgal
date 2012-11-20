@@ -74,7 +74,7 @@ if the segment Delaunay graph is inserted in a stream.
 typedef Hidden_type Segment_2; 
 
 /*! 
-A type for the field number type of sites, points, etc.. 
+A type for the field number type of sites, points, etc...
 */ 
 typedef Hidden_type FT; 
 
@@ -97,7 +97,7 @@ type of the arrangement of two sites. The possible values are
 `TOUCHING_21_INTERIOR_2`, `TOUCHING_22_INTERIOR_1`, 
 `TOUCHING_22_INTERIOR_2`. A detailed description of the meaning 
 of these values is shown the end of the reference manual for this 
-concept. (<B>to be done) 
+concept.
 */ 
 typedef Hidden_type Arrangement_type; 
 

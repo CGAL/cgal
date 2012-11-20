@@ -1,3 +1,4 @@
+namespace ArrDirectionalTraits {
 
 /*!
 \ingroup PkgBooleanSetOperations2Concepts
@@ -5,11 +6,11 @@
 
 \cgalRefines `AdaptableUnaryFunction`
 
-\cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::ConstructOpposite_2` 
+\cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::Construct_opposite_2`
 
 */
 
-class ArrDirectionalTraits::ConstructOpposite_2 {
+class ConstructOpposite_2 {
 public:
 
 /// \name Has Models 
@@ -26,3 +27,4 @@ ArrDirectionalTraits::X_monotone_curve_2 operator()(ArrDirectionalTraits::X_mono
 
 }; /* end ArrDirectionalTraits::ConstructOpposite_2 */
 
+}
