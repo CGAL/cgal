@@ -506,10 +506,16 @@
    <property name="text">
     <string>ODT-smoothing</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionLloyd">
    <property name="text">
     <string>Lloyd-smoothing</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
   <action name="actionPerturb">
