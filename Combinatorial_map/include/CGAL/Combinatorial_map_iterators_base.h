@@ -227,23 +227,27 @@ namespace CGAL {
       {
         if ( !mto_treat.empty() )
         {
-          Dart_handle res=mto_treat.front();
+          Base::operator= ( Base(*this->mmap,mto_treat.front()) );
           mto_treat.pop();
-          CGAL_assertion( this->mmap->is_marked(res, mmark_number) );
-          Base::operator= ( Base(*this->mmap,res) );
           this->mprev_op = OP_POP;
+          CGAL_assertion( this->mmap->is_marked((*this), mmark_number) );
+
+          if (!(*this)->is_free(Bi) &&
+              !this->mmap->is_marked((*this)->beta(Bi), mmark_number))
+          {
+            mto_treat.push((*this)->beta(Bi));
+            this->mmap->mark((*this)->beta(Bi), mmark_number);
+          }
         }
       }
       else
-        this->mmap->mark((*this), mmark_number);        
-        
-      if ( this->cont() )
       {
+        this->mmap->mark((*this), mmark_number);
         if (!(*this)->is_free(Bi) &&
             !this->mmap->is_marked((*this)->beta(Bi), mmark_number))
         {
           mto_treat.push((*this)->beta(Bi));
-          this->mmap->mark((*this)->beta(Bi), mmark_number);                  
+          this->mmap->mark((*this)->beta(Bi), mmark_number);
         }
       }
 
