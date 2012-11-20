@@ -23,6 +23,7 @@
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <QGraphicsLineItem>
+#include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 //#include <iostream>
 //#include "Callback.h"
