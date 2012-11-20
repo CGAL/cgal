@@ -213,5 +213,21 @@
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.068	0.068	2
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.068 0.01	15
 
+#Klein_function 0.01	    0.03	  1
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.2	  0.002	  1000
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.007	  0.007	  150
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.02	  0.02	  15
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.2	  0.2	  2
+#Tanglecube_function 0.01	    0.03	  1000
 
-D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.007	  0.007	  15
+####### Parallel optimizers ########
+D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.005	  0.005	  1
+D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off  0.006	  0.006	  1
+D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                        0.003  0.003	  1
+D:/INRIA/Data/_Models/BigOFF/bimba_400kf.off                       0.005	  0.006	  1
+Klein_function                                                     0.02    0.06	    1
+Tanglecube_function                                                0.01	  0.05	  1
+Sphere_function                                                    0.006   0.02	    1
+Thin_cylinder_function                                             0.002	  0.004	  1
+Pancake_function                                                   0.02	  0.02	  1
+D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/cheese.off    0.002	  0.002	  1
