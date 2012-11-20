@@ -10,7 +10,8 @@ A model for this must provide:
 class Kernel_d::Affinely_independent_d {
 public:
 
-/// \name Has Models 
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 
