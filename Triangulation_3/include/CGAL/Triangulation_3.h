@@ -99,12 +99,13 @@ struct Structural_filtering_selector_3<true> {
 template <bool used_by_parallel_mesh_3>
 class Triangulation_3_base
 {
-public:
+protected:
   Triangulation_3_base()  {}
 
   Triangulation_3_base(Mesh_3::LockDataStructureType *) {}
   void swap(Triangulation_3_base<used_by_parallel_mesh_3> &tr) {}
 
+public:
   Mesh_3::LockDataStructureType *get_lock_data_structure() const
   {
     return 0;
@@ -113,6 +114,8 @@ public:
   void set_lock_data_structure(Mesh_3::LockDataStructureType *) const
   {
   }
+
+  void unlock_all_elements() {}
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -120,7 +123,7 @@ public:
 template <>
 class Triangulation_3_base<true>
 {
-public:
+protected:
   Triangulation_3_base()
     : m_lock_ds(0) {}
 
@@ -132,6 +135,7 @@ public:
     std::swap(tr.m_lock_ds, m_lock_ds);
   }
 
+public:
   Mesh_3::LockDataStructureType *get_lock_data_structure() const
   {
     return m_lock_ds;
@@ -140,6 +144,14 @@ public:
   void set_lock_data_structure(Mesh_3::LockDataStructureType *p_lock_ds)
   {
     m_lock_ds = p_lock_ds;
+  }
+
+  void unlock_all_elements()
+  {
+    if (m_lock_ds)
+    {
+      m_lock_ds->unlock_all_tls_locked_cells();
+    }
   }
 
 protected:
@@ -436,7 +448,7 @@ public:
   // copy constructor duplicates vertices and cells
   Triangulation_3(const Triangulation_3 & tr)
   : _gt(tr._gt),
-    Triangulation_3_base<used_by_parallel_mesh_3>(tr.get_lock_data_structure())
+    Base(tr.get_lock_data_structure())
     {
       infinite = _tds.copy_tds(tr._tds, tr.infinite);
       CGAL_triangulation_expensive_postcondition(*this == tr);
@@ -474,7 +486,7 @@ public:
       std::swap(tr._gt, _gt);
       std::swap(tr.infinite, infinite);
       _tds.swap(tr._tds);
-      Triangulation_3_base<used_by_parallel_mesh_3>::swap(tr);
+      Base::swap(tr);
     }
 
   //ACCESS FUNCTIONS
@@ -786,24 +798,30 @@ public:
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 
   Cell_handle
-  locate(const Point & p, Cell_handle start = Cell_handle()) const
+  locate(const Point & p, Cell_handle start = Cell_handle(), 
+         bool *p_could_lock_zone = 0) const
   {
       Locate_type lt;
       int li, lj;
-      return locate( p, lt, li, lj, start);
+      return locate( p, lt, li, lj, start, p_could_lock_zone);
   }
 
   Cell_handle
   locate(const Point & p,
-	 Locate_type & lt, int & li, int & lj, Vertex_handle hint) const
+	 Locate_type & lt, int & li, int & lj, Vertex_handle hint, 
+   bool *p_could_lock_zone = 0) const
   {
-      return locate(p, lt, li, lj, hint == Vertex_handle() ? infinite_cell() : hint->cell());
+      return locate(p, l     li, lj, 
+        hint == Vertex_handle() ? infinite_cell() : hint->cell(),
+        p_could_lock_zone);
   }
 
   Cell_handle
-  locate(const Point & p, Vertex_handle hint) const
-  {
-      return locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell());
+  locate(const Point & p, Vertex_handle hint, 
+         bool *p_could_lock_zone = 0) const
+    {
+      return locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell(), 
+        p_could_lock_zone);
   }
 
   // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
