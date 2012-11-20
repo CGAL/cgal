@@ -564,6 +564,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Circular_kernel_2/doc/Circular_kernel_2/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
           <list name="TAGFILES" append="false">
+            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
           </list>
