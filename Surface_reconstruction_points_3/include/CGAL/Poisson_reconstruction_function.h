@@ -498,8 +498,6 @@ public:
                              d * m_hint->vertex(3)->f(),
                              m_hint, false);
   }
- 
->>>>>>> Surface_reconstruction_points_3-make_it_faster-afabri
 
   /// 'ImplicitFunction' interface: evaluates the implicit function at a given 3D query point.
   FT operator()(const Point& p) const
