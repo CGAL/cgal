@@ -1996,10 +1996,6 @@ move_point_topo_change_conflict_zone_known(
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertex_index = c3t3_.index(old_vertex);
   FT meshing_info = old_vertex->meshing_info();
-#ifdef CGAL_INTRUSIVE_LIST
-  Vertex_handle next = old_vertex->next_intrusive();
-  Vertex_handle prev = old_vertex->previous_intrusive();
-#endif
 
   // insert new point
   Vertex_handle new_vertex = tr_.insert_in_hole(new_position, 
@@ -2020,10 +2016,6 @@ move_point_topo_change_conflict_zone_known(
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertex_index);
   new_vertex->set_meshing_info(meshing_info);
-#ifdef CGAL_INTRUSIVE_LIST
-  new_vertex->next_intrusive() = next;
-  new_vertex->previous_intrusive() = prev;
-#endif
   // End Move point
 
   //// Fill outdated_cells
@@ -2104,10 +2096,6 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertex_index = c3t3_.index(old_vertex);
   FT meshing_info = old_vertex->meshing_info();
-#ifdef CGAL_INTRUSIVE_LIST
-  Vertex_handle next = old_vertex->next_intrusive();
-  Vertex_handle prev = old_vertex->previous_intrusive();
-#endif
 
   // insert new point
   Vertex_handle new_vertex = tr_.insert(new_position,old_vertex->cell());
@@ -2119,10 +2107,6 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertex_index);
   new_vertex->set_meshing_info(meshing_info);
-#ifdef CGAL_INTRUSIVE_LIST
-  new_vertex->next_intrusive() = next;
-  new_vertex->previous_intrusive() = prev;
-#endif
 
   return new_vertex;
 }
