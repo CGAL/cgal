@@ -293,6 +293,7 @@ public: // methods
     {
       return res;
     }
+    return this->convert( this->boundingBox );
   }
 
   virtual void setScene( QGraphicsScene* scene_ )
