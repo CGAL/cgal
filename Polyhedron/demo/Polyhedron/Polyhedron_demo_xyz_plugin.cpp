@@ -15,7 +15,7 @@ class Polyhedron_demo_xyz_plugin :
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
 public:
-  QString name() const { return "Polyhedron_demo_xyz_plugin"; }
+  QString name() const { return "xyz_plugin"; }
 
   QString nameFilters() const { return "XYZ as Point Set (*.xyz);;Point Set with Normal (*.pwn)"; }
   bool canLoad() const;

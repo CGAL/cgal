@@ -1806,6 +1806,7 @@ Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgramQt4.cmake -text
 Installation/cmake/modules/CGAL_GeneratorSpecificSettings.cmake -text
 Installation/cmake/modules/CGAL_Locate_CGAL_TAUCS.cmake -text
 Installation/cmake/modules/CGAL_Macros.cmake -text
+Installation/cmake/modules/CGAL_SCM.cmake -text
 Installation/cmake/modules/CGAL_SetupBoost.cmake -text
 Installation/cmake/modules/CGAL_SetupDependencies.cmake -text
 Installation/cmake/modules/CGAL_SetupFlags.cmake -text
@@ -2272,6 +2273,7 @@ Maintenance/public_release/announcement/CGAL-4.0 -text
 Maintenance/public_release/announcement/CGAL-4.0-beta1 -text
 Maintenance/public_release/announcement/CGAL-4.0.1 -text
 Maintenance/public_release/announcement/CGAL-4.0.2 -text
+Maintenance/public_release/announcement/CGAL-4.1 -text
 Maintenance/public_release/announcement/CGAL-4.1-beta1 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
@@ -3237,6 +3239,7 @@ Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_simplification_plugin.ui -t
 Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_smoothing_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_poisson_plugin.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_transform_polyhedron_plugin.cpp -text
+Polyhedron/demo/Polyhedron/Preferences.ui -text
 Polyhedron/demo/Polyhedron/Remeshing_dialog.ui -text
 Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item.cpp -text
 Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item.h -text
@@ -3605,7 +3608,7 @@ Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
 Scripts/developer_scripts/cgal_generate_cmake_script -text
 Scripts/developer_scripts/cgal_generate_cmake_script.cmake -text
-Scripts/developer_scripts/cgal_git_svn_clone -text
+Scripts/developer_scripts/cgal_git_update_hooks_for_client -text
 Scripts/developer_scripts/cgal_header_clean_up.py -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
 Scripts/developer_scripts/check_library_uses_no_gpl_files -text

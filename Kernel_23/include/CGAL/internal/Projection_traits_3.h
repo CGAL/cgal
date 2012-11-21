@@ -200,6 +200,13 @@ public:
     return Point_2(x(p),y(p));
   }
 
+  RT operator()(const Point_3& p, const Point_3& q) const
+  {
+	  Point_2 p2(project(p));
+	  Point_2 q2(project(q));
+	  return squared_distance(p2, q2);
+  }
+
   RT operator()(const Line_3& l, const Point_3& p) const
   {
     Point_2 p2(project(p));
@@ -382,6 +389,7 @@ public:
   typedef typename R::FT                                      FT;
   typedef typename Rp::Point_3                                Point_2;
   typedef typename Rp::Segment_3                              Segment_2;
+  typedef typename Rp::Vector_3                               Vector_2;
   typedef typename Rp::Triangle_3                             Triangle_2;
   typedef typename Rp::Line_3                                 Line_2;
 
@@ -390,13 +398,18 @@ public:
   typedef typename Projector<R,dim>::Compare_x_2              Compare_x_2;
   typedef typename Projector<R,dim>::Compare_y_2              Compare_y_2;
   typedef Orientation_projected_3<Rp,dim>                     Orientation_2;
+  typedef typename Rp::Angle_3                                Angle_2;
   typedef Side_of_oriented_circle_projected_3<Rp,dim>         Side_of_oriented_circle_2;
-  typedef Side_of_bounded_circle_projected_3<Rp,dim>         Side_of_bounded_circle_2;
+  typedef Side_of_bounded_circle_projected_3<Rp,dim>          Side_of_bounded_circle_2;
   typedef Compare_distance_projected_3<Rp,dim>                Compare_distance_2;
   typedef Squared_distance_projected_3<Rp,dim>                Compute_squared_distance_2;
   typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
   typedef Compute_squared_radius_projected<Rp,dim>            Compute_squared_radius_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
+  typedef typename Rp::Construct_translated_point_3           Construct_translated_point_2;
+  typedef typename Rp::Construct_midpoint_3                   Construct_midpoint_2;
+  typedef typename Rp::Construct_vector_3                     Construct_vector_2;
+  typedef typename Rp::Construct_scaled_vector_3              Construct_scaled_vector_2;
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
 
@@ -498,6 +511,10 @@ public:
   Compare_x_2
   compare_x_2_object() const
     { return Compare_x_2();}
+  Angle_2
+  angle_2_object() const {
+	  return Angle_2();
+  }
 
   Compare_y_2
   compare_y_2_object() const
@@ -541,6 +558,18 @@ public:
 
   Construct_segment_2  construct_segment_2_object() const
     {return Construct_segment_2();}
+
+  Construct_translated_point_2  construct_translated_point_2_object() const
+    {return Construct_translated_point_2();}
+
+  Construct_midpoint_2  construct_midpoint_2_object() const
+    {return Construct_midpoint_2();}
+
+  Construct_vector_2  construct_vector_2_object() const
+    {return Construct_vector_2();}
+
+  Construct_scaled_vector_2  construct_scaled_vector_2_object() const
+    {return Construct_scaled_vector_2();}
 
   Construct_triangle_2  construct_triangle_2_object() const
     {return Construct_triangle_2();}

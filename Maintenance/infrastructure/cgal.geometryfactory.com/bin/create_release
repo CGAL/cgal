@@ -3,7 +3,14 @@
 LC_ALL=POSIX;
 export LC_ALL
 
-svn up "$1"
+if [ -d "$1/.git" ]; then
+    pushd $1
+    git pull
+    popd
+else
+    svn up "$1"
+fi
+
 # Update the candidates branch, if any.
 [ -d "$2" ] && svn up "$2"
 
