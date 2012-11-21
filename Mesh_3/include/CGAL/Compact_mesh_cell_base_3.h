@@ -461,13 +461,13 @@ private:
 
 
   /// Stores surface_index for each facet of the cell
-  Surface_patch_index surface_index_table_[4];
+  CGAL::cpp11::array<Surface_patch_index, 4> surface_index_table_;
   /// Stores surface center of each facet of the cell
-  Point surface_center_table_[4];
+  CGAL::cpp11::array<Point, 4> surface_center_table_;
   /// Stores surface center index of each facet of the cell
 
-  Cell_handle   N[4];
-  Vertex_handle V[4];
+  CGAL::cpp11::array<Cell_handle, 4> N;
+  CGAL::cpp11::array<Vertex_handle, 4> V;
 
   mutable Point * circumcenter_;
 
@@ -475,7 +475,7 @@ private:
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
 
-  Index surface_center_index_table_[4];
+  CGAL::cpp11::array<Index, 4> surface_center_index_table_;
   /// Stores visited facets (4 first bits)
 
   //  Point_container _hidden;
