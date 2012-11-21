@@ -480,10 +480,10 @@ vertices.
 bool is_edge(Vertex_handle va, Vertex_handle vb); 
 
 /*! 
-\brief as above.\ In addition, if `true` is returned, the edge with 
+as above. In addition, if `true` is returned, the edge with 
 vertices `va` and `vb` is the edge `e=(fr,i)` where 
 `fr` is a handle to the face incident to `e` and 
-on the right side of `e` oriented from `va` to `vb`.\ \pre toto
+on the right side of `e` oriented from `va` to `vb`.
 
 \details the details.
 */ 
