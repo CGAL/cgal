@@ -187,6 +187,7 @@ namespace CGAL {
     {
       if ( minitial_dart!=NULL )
       {
+        this->mmap->mark(this->mmap->null_dart_handle, mmark_number);
         this->mmap->mark(minitial_dart, mmark_number);
         if (!minitial_dart->is_free(Bi) && minitial_dart->beta(Bi)!=minitial_dart )
         {
@@ -203,6 +204,7 @@ namespace CGAL {
       Base::operator= ( Base(*this->mmap,minitial_dart) );
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark(minitial_dart, mmark_number);
+      this->mmap->mark(this->mmap->null_dart_handle, mmark_number);
       if (!minitial_dart->is_free(Bi) && minitial_dart->beta(Bi)!=minitial_dart )
       {
         mto_treat.push(minitial_dart->beta(Bi));
@@ -232,8 +234,7 @@ namespace CGAL {
           this->mprev_op = OP_POP;
           CGAL_assertion( this->mmap->is_marked((*this), mmark_number) );
 
-          if (!(*this)->is_free(Bi) &&
-              !this->mmap->is_marked((*this)->beta(Bi), mmark_number))
+          if (!this->mmap->is_marked((*this)->beta(Bi), mmark_number))
           {
             mto_treat.push((*this)->beta(Bi));
             this->mmap->mark((*this)->beta(Bi), mmark_number);
@@ -243,8 +244,7 @@ namespace CGAL {
       else
       {
         this->mmap->mark((*this), mmark_number);
-        if (!(*this)->is_free(Bi) &&
-            !this->mmap->is_marked((*this)->beta(Bi), mmark_number))
+        if (!this->mmap->is_marked((*this)->beta(Bi), mmark_number))
         {
           mto_treat.push((*this)->beta(Bi));
           this->mmap->mark((*this)->beta(Bi), mmark_number);

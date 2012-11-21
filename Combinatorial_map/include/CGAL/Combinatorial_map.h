@@ -463,7 +463,7 @@ namespace CGAL {
      */
     bool is_marked(Dart_const_handle adart, int amark) const
     {
-      CGAL_assertion( adart != null_dart_handle );
+      // CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
 
       return adart->get_mark(amark)!=mmask_marks[(size_type)amark];
@@ -477,7 +477,7 @@ namespace CGAL {
     void set_mark_to(Dart_const_handle adart, int amark, 
                      bool astate) const
     {
-      CGAL_assertion( adart != null_dart_handle );
+      // CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
 
       if (is_marked(adart, amark) != astate)
@@ -495,7 +495,7 @@ namespace CGAL {
      */
     void mark(Dart_const_handle adart, int amark) const
     {
-      CGAL_assertion( adart != null_dart_handle );
+      // CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
 
       if (is_marked(adart, amark)) return;
@@ -510,7 +510,7 @@ namespace CGAL {
      */
     void unmark(Dart_const_handle adart, int amark) const
     {
-      CGAL_assertion( adart != null_dart_handle );
+      // CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
 
       if (!is_marked(adart, amark)) return;
@@ -536,6 +536,7 @@ namespace CGAL {
       }
       else
       {
+        unmark(null_dart_handle, amark);
         for (typename Dart_range::const_iterator it(darts().begin()), 
                itend(darts().end()); it!=itend; ++it)
           unmark(it, amark);
