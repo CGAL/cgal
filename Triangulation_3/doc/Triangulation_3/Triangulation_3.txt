@@ -47,8 +47,9 @@ of the underlying Euclidean space \f$ \R^3\f$ (see
 indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index.
 
-\anchor Triangulation3figorient
-\image html orient.gif "Orientation of a cell (3-dimensional case)."
+\cgalFigureBegin{Triangulation3figorient,orient.gif}
+Orientation of a cell (3-dimensional case).
+\cgalFigureEnd
 
 As in the underlying combinatorial triangulation (see
 Chapter \ref chapterTDS3 "3D Triangulation Data Structure"), 
@@ -545,6 +546,7 @@ version 4.3.2, under Linux (Fedora 10 distribution), with the compilation option
 <TT>-O3 -DCGAL_NDEBUG</TT>. The computer used was equipped with a 64bit Intel
 Xeon 3GHz processor and 32GB of RAM (a recent desktop machine as of 2009).
 
+\cgalFigureAnchor{Triangulation3figbenchmarks}
 <CENTER>
 <TABLE CELLSPACING=5 >
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
@@ -718,10 +720,10 @@ Vertex removal
 1.38e-04 
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
 </TABLE>
-
 </CENTER>
-CAPTION Running times in seconds for algorithms on 3D triangulations. 
-\anchor Triangulation3figbenchmarks
+\cgalFigureCaptionBegin{Triangulation3figbenchmarks}
+Running times in seconds for algorithms on 3D triangulations.
+\cgalFigureCaptionEnd
 
 More benchmarks comparing \cgal to other software can be found
 in \cite msri52:liu-snoeyink-05.
@@ -752,6 +754,7 @@ internal bookkeeping is otherwise on the order of \f$ O(\sqrt{n})\f$.
 points, as measured empirically using `Memory_sizer` for large triangulations
 (\f$ 10^6\f$ random points).
 
+\cgalFigureAnchor{Triangulation3figmemory}
 <CENTER>
 <TABLE CELLSPACING=5 >
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
@@ -803,10 +806,10 @@ points, as measured empirically using `Memory_sizer` for large triangulations
 527 
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=5><HR>
 </TABLE>
-
 </CENTER>
-CAPTION Memory usage in bytes per point for large data sets. 
-\anchor Triangulation3figmemory
+\cgalFigureCaptionBegin{Triangulation3figmemory}
+Memory usage in bytes per point for large data sets.
+\cgalFigureCaptionEnd
 
 \subsection Triangulation_3VariabilityDependingonthe Variability Depending on the Data Sets and the Kernel
 
@@ -855,7 +858,7 @@ triangulation. General introductory information about these robustness issues
 can be found in \cite cgta-kmpsy-08. More benchmarks around this issue can
 also be found in \cite cgal:dp-eegpd-03.
 
-\anchor Triangulation3figkernelsanddatasets
+\cgalFigureAnchor{Triangulation3figkernelsanddatasets}
 <CENTER>
 <TABLE CELLSPACING=5 >
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
@@ -956,8 +959,10 @@ Number of points
 75.2 
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=6><HR>
 </TABLE>
-<b>Running times (seconds) for various kernels and data sets.</b>
 </CENTER>
+\cgalFigureCaptionBegin{Triangulation3figkernelsanddatasets}
+Running times (seconds) for various kernels and data sets.
+\cgalFigureCaptionEnd
 
  
 \cgalFigureBegin{Triangulation3figdatasets,api1_01.gif,b35-1.gif,HD.gif}
