@@ -107,10 +107,7 @@ the list of hidden vertices whose points are located in the facet.
 When a facet is removed, 
 points hidden by this facet are reinserted in the triangulation. 
 
-### Parameters ###
-
-The geometric traits parameter `Traits` has 
-to be instantiated with a model of the concept 
+\tparam Traits is the geometric traits parameter and must be a model of the concept 
 `RegularTriangulationTraits_2`. 
 The concept `RegularTriangulationTraits_2` refines the 
 concept `TriangulationTraits_2` by adding the type 
@@ -118,15 +115,14 @@ concept `TriangulationTraits_2` by adding the type
 and the type `Power_test_2` to perform 
 power tests on weighted points. 
 
-The `Tds` parameter has to be instantiated by a model of 
-`TriangulationDataStructure_2`. The face base of a regular 
-triangulation has to be a model of the concept 
+\tparam Tds  must be a model of `TriangulationDataStructure_2`. 
+The face base of a regular triangulation has to be a model of the concept 
 `RegularTriangulationFaceBase_2`. while 
 the vertex base class has to be a model 
 of `RegularTriangulationVertexBase_2`. 
 \cgal provides a default 
 instantiation for the `Tds` parameter by the class 
-`CGAL::Triangulation_data_structure_2 < CGAL::Regular_triangulation_vertex_base_2<Traits>, CGAL::Regular_triangulation_face_base_2<Traits> >`. 
+`Triangulation_data_structure_2 < Regular_triangulation_vertex_base_2<Traits>, Regular_triangulation_face_base_2<Traits> >`. 
 
 \sa `CGAL::Triangulation_2<Traits,Tds>`
 \sa `TriangulationDataStructure_2`
@@ -193,7 +189,7 @@ typedef Hidden_type Hidden_vertices_iterator;
 /// @{
 
 /*! 
-Introduces an empty regular triangulation `rt`. 
+Introduces an empty regular triangulation. 
 */ 
 Regular_triangulation_2(const Traits& gt = Traits()); 
 

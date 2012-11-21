@@ -17,22 +17,15 @@ of more than three points,
 the Delaunay triangulation is unique, it is the dual 
 of the Voronoi diagram of the points. 
 
-### Parameters ###
-
-The template parameter `Tds` 
-is to be instantiated with a model of 
-`TriangulationDataStructure_2`. 
+\tparam Tds must be a model of `TriangulationDataStructure_2`. 
 \cgal provides a default instantiation for this parameter, 
 which is the class 
 `CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Traits>, CGAL::Triangulation_face_base_2<Traits> >`. 
 
-The geometric traits `Traits` 
-is to be instantiated with a model of 
-`DelaunayTriangulationTraits_2`. 
+\tparam Traits must be a model of `DelaunayTriangulationTraits_2`. 
 The concept `DelaunayTriangulationTraits_2` refines the 
 concept `TriangulationTraits_2`, providing 
-a predicate type 
-to check the empty circle property. 
+a predicate type to check the empty circle property. 
 
 Changing this predicate type 
 allows to build Delaunay triangulations for different metrics 

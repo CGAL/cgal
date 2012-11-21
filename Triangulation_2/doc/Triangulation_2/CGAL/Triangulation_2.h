@@ -70,30 +70,26 @@ of `f` (see Figure \ref Triangulation_ref_Fig_neighbors).
 \anchor Triangulation_ref_Fig_neighbors 
 \image html neighbors.gif "Vertices and neighbors."
 
-### Parameters ###
-
-The class `Triangulation_2` has two template parameters. The first one 
-`Traits` is the geometric traits, it is to be instantiated by 
+\tparam Traits is the geometric traits which must be
 a model of the concept `TriangulationTraits_2`. 
 
-The second parameter is the triangulation data structure, 
-it has to be instantiated by a model of the concept 
-`TriangulationDataStructure_2`. 
+\tparam Tds is the triangulation data structure which
+must be a model of the concept `TriangulationDataStructure_2`. 
 By default, the triangulation data structure is instantiated by 
-`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Triangulation_face_base_2<Gt> >`. 
+`Triangulation_data_structure_2 < Triangulation_vertex_base_2<Gt>, Triangulation_face_base_2<Gt> >`. 
 
 ### Traversal of the Triangulation ###
 
 A triangulation can be seen as a container of faces and vertices. 
 Therefore the triangulation provides several iterators and circulators 
-that allow to traverse it (completely or partially). 
+that allow to traverse it completely or partially. 
 
 ### Traversal of the Convex Hull ###
 
-Applied on the `infinite_vertex` the above functions allow to visit
+Applied on the  infinite vertex the above functions allow to visit
 the vertices on the convex hull and the infinite edges and faces. Note
 that a counterclockwise traversal of the vertices adjacent to the
-`infinite_vertex` is a clockwise traversal of the convex hull.
+infinite vertex is a clockwise traversal of the convex hull.
 
 \code
 typedef CGAL::Triangulation_2<Traits, Tds> Triangulation_2;

@@ -4,34 +4,36 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
 
-A constrained Delaunay triangulation is a triangulation with 
-constrained edges which tries to be as much Delaunay as possible. 
-Constrained edges are not necessarily Delaunay edges, 
-therefore a constrained Delaunay triangulation is not a Delaunay 
-triangulation. A constrained Delaunay is a triangulation 
-whose faces do not 
-necessarily fulfill the empty circle property 
-but fulfill a weaker property called the 
-<I>constrained empty circle</I>. 
-To state this property, 
-it is convenient to think of constrained 
-edges as blocking the view. Then, a triangulation is 
-constrained Delaunay if 
-the circumscribing circle 
-of any of its triangular faces includes in its interior 
-no vertex that is visible 
-from the interior of the triangle. 
-The class `Constrained_Delaunay_triangulation_2` is designed to represent 
-constrained Delaunay triangulations. 
+A constrained Delaunay triangulation is a triangulation with
+constrained edges which tries to be as much Delaunay as possible.
+Constrained edges are not necessarily Delaunay edges, therefore a
+constrained Delaunay triangulation is not a Delaunay triangulation. A
+constrained Delaunay is a triangulation whose faces do not necessarily
+fulfill the empty circle property but fulfill a weaker property called
+the <I>constrained empty circle</I>.  To state this property, it is
+convenient to think of constrained edges as blocking the view. Then, a
+triangulation is constrained Delaunay if the circumscribing circle of
+any of its triangular faces includes in its interior no vertex that is
+visible from the interior of the triangle.
 
 As in the case of constrained triangulations, three different versions 
 of Delaunay constrained triangulations are offered 
 depending on whether the user wishes to handle 
 intersecting input constraints or not. 
-The desired version can be selected through the instantiation of the 
-third template parameter `Itag` which can be one of the 
-following : 
 
+\tparam Traits is the geometric traits of a constrained Delaunay triangulation.
+It must be a model of `DelaunayTriangulationTraits_2`, providing the `side_of_oriented_circle` test 
+of a Delaunay triangulation. 
+When intersection of input constraints are supported, 
+the geometric traits class 
+is required to provide additional function object types 
+to compute the intersection of two segments. 
+and has then to be also a model of the concept 
+`ConstrainedTriangulationTraits_2`. 
+
+\tparam Tds must be a model of `TriangulationDataStructure_2`. 
+
+\tparam Itag allows to select if intersecting constraints are supported and how they are handled.
 - `No_intersection_tag` if intersections of 
 input constraints are disallowed, 
 - `Exact_predicates_tag` allows intersections between input
@@ -41,21 +43,6 @@ predicates but approximate constructions of the intersection points,
 constraints and is to be used in conjunction with an exact arithmetic
 type.
 
-The template parameters `Tds` 
-has to be instantiate with a model of `TriangulationDataStructure_2`. 
-The geometric traits 
-of a constrained Delaunay triangulation is required 
-to provide the `side_of_oriented_circle` test as the geometric traits 
-of a Delaunay triangulation and the `Traits` 
-parameter has 
-to be instantiated with a model 
-`DelaunayTriangulationTraits_2`. 
-When intersection of input constraints are supported, 
-the geometric traits class 
-is required to provide additional function object types 
-to compute the intersection of two segments. 
-and has then to be also a model of the concept 
-`ConstrainedTriangulationTraits_2`. 
 
 A constrained Delaunay triangulation is not a Delaunay 
 triangulation but it is a constrained triangulation. 

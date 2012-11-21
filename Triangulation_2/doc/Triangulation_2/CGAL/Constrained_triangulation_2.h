@@ -77,10 +77,8 @@ Section \ref Section_2D_Triangulations_Constrained_Plus.
 
 \image html constraints.gif
 
-The class `Constrained_triangulation_2` of the \cgal library 
-implements constrained triangulations. 
-The template parameter `Traits` 
-stands for a geometric traits class. It has to be a model 
+
+\tparam Traits is a geometric traits class and must be a model 
 of the concept `TriangulationTraits_2`. 
 When intersection of input constraints are supported, 
 the geometric traits class 
@@ -88,15 +86,15 @@ is required to provide additional function object types
 to compute the intersection of two segments. 
 It has then to be a model of the concept 
 `ConstrainedTriangulationTraits_2`. 
-The template parameter `Tds` 
-stands for 
-a triangulation data structure class that has to be a model 
+
+
+\tparam Tds must be a model 
 of the concept `TriangulationDataStructure_2`. 
-The third parameter `Itag` is the intersection tag 
+
+\tparam Itag is the intersection tag 
 which serves to choose between the different 
 strategies to deal with constraints intersections. 
 \cgal provides three valid types for this parameter: 
-
 - `No_intersection_tag` disallows intersections of 
 input constraints, 
 - `Exact_predicates_tag` is to be used when the traits 

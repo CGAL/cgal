@@ -161,10 +161,6 @@ Construct_circumcenter_2 construct_circumcenter_2_object();
 */ 
 Construct_bisector_2 construct_bisector_2_object(); 
 
-/*! 
-
-*/ 
-Construct_direction_2 construct_direction_2_object(); 
 
 /*! 
 
