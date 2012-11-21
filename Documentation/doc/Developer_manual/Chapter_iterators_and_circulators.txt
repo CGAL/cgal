@@ -281,7 +281,7 @@ computes the convex hull of a set of points in two dimensions:
 // The resulting sequence is placed starting at position
 // result, and the past-the-end iterator for the resulting
 // sequence is returned. It is not specified at which point the
-// cyclic sequence of extreme points is cut into a linear sequence.}
+// cyclic sequence of extreme points is cut into a linear sequence.
 template <class InputIterator, class OutputIterator>
 OutputIterator
 convex_hull_points_2(InputIterator first, InputIterator beyond,
