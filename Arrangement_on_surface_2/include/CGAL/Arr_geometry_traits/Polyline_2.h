@@ -532,9 +532,11 @@ public:
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
                                      const Segment_2& /* */)
   {
+    std::cout << "\033[1;32mP0: Constructing x-monotone polyline from the" <<
+      " following segments:\033[0m\n";
     for (InputIterator it = begin ; it != end; ++it )
       {
-	std::cout << "\033[1;32mP1: Seg is: " << *it << "\033[0m\n";
+	std::cout << "\033[32mP1: Seg is: " << *it << "\033[0m\n";
       }
   }
   
@@ -583,7 +585,7 @@ public:
   }
 
   /*!
-   * Append a segment to the polyline.
+   * Append a segment to the (x-monotone) polyline.
    * \param seg The new segment to be appended to the polyline.
    * \pre If the polyline is not empty, the segment source must be the
    *      same as the target point of the last segment in the polyline
@@ -596,14 +598,16 @@ public:
        Segment_traits_2   seg_tr;
        const unsigned int n = this->size()
        );
-    // TODO: This precondition seems to cause problems. Probably it is due to
-    //       the usage of source/target.
-    // CGAL_precondition (seg_tr.compare_xy_2_object() (seg.source(),
-    // 						     seg.target()) == SMALLER);
-    CGAL_precondition (n == 0 ||
-		       seg_tr.equal_2_object() (this->m_segments[n - 1].target(),
-						seg.source()));
+    CGAL_precondition_code
+      (typename Segment_traits_2::Construct_min_vertex_2 min_v = 
+       seg_tr.construct_min_vertex_2_object();
+       typename Segment_traits_2::Construct_max_vertex_2 max_v = 
+       seg_tr.construct_max_vertex_2_object();
+       typename Segment_traits_2::Equal_2 equal = 
+       seg_tr.equal_2_object();
 
+       CGAL_precondition (n == 0 || equal(max_v(this->m_segments[n-1]),min_v(seg)));
+       );
     this->m_segments.push_back (seg);
   }
 
@@ -636,7 +640,6 @@ template <typename SegmentTraits>
 std::ostream& operator<< (std::ostream & os,
 			  const _Polyline_2<SegmentTraits>& cv)
 {
-  // std::cout << "\033[1;31m\nP2: << operator in Polyline_2.h\033[0m\n";
   typename _Polyline_2<SegmentTraits>::const_iterator  iter = cv.begin();
 
   // Print the number of points:

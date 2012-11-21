@@ -1029,7 +1029,7 @@ public:
     X_monotone_curve_2 contructor_impl(InputIterator begin, InputIterator end,
 				       const Segment_2&) const
     {
-      std::cout << "\033[1;31mAPT1: Entering xconstructor\033[0m\n";
+      //      std::cout << "\033[1;31mAPT1: Entering xconstructor\033[0m\n";
 
       CGAL_precondition(begin != end);
 
@@ -1095,8 +1095,6 @@ public:
       // are biderctional.
       if (rev)
 	{
-	  std::cout << "\033[1;31mAPT2: Reverse construction\033[0m\n";
-
 	  /*
 	   * This part reverse the order of the segments and orient each
 	   * segment from left to right.
@@ -1113,9 +1111,7 @@ public:
 	  // return X_monotone_curve_2(std::reverse_iterator<InputIterator>(end),
           //                         std::reverse_iterator<InputIterator>(begin));
 	}
-      std::cout << "\033[1;31mAPT3: Direct construction\033[0m\n";
       return X_monotone_curve_2(begin, end);
-      std::cout << "\033[1;31mAPT4: Direct construction\033[0m\n";
     }
   };
 
