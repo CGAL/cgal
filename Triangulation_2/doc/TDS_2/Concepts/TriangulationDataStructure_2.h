@@ -206,7 +206,7 @@ except the iterators and the circulators.
 The methods `create_face()` and 
 `delete_face()` 
 have to be used to 
-define new faces and to delete non longer used faces. 
+define new faces and to delete no longer used faces. 
 
 \cgalHasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
 
@@ -239,7 +239,7 @@ bool has_vertex(Vertex_handle v) const;
 
 /*! 
 returns `true` if `v` is a vertex of the face, and 
-computes the index `i` of `v` in it. 
+computes the index `i` of `v` in the face. 
 */ 
 bool has_vertex(Vertex_handle v, int& i) const; 
 
@@ -294,7 +294,7 @@ sets neighbor `i` to be `n`.
 void set_neighbor(int i, Face_handle n); 
 
 /*! 
-sets the vertex handles to `NULL`. 
+sets the vertex handles to `Vertex_handle()`. 
 */ 
 void set_vertices(); 
 
@@ -304,7 +304,7 @@ sets the vertex handles.
 void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2); 
 
 /*! 
-sets the neighbors handles to `NULL`. 
+sets the neighbors handles to `Face_handle()`. 
 */ 
 void set_neighbors();
 
@@ -419,20 +419,19 @@ typedef std::pair<Face_handle,int> Edge;
 /// \name Iterators and Circulators
 ///
 /// The iterators allow one to visit all the vertices, edges
-/// and faces of a triangulation data structure. They are all
-/// bidirectional, non-mutable iterators. 
+/// and faces of a triangulation data structure. 
 ///
 /// The circulators
 /// allow to visit all the edges or faces incident to a given vertex
 /// and all the vertices adjacent to a given vertex. 
 ///
-/// They are all bidirectional and non mutable. Iterators and circulators are
+/// The iterators and circulators  are bidirectional and non mutable,  and they are
 /// convertible to the corresponding handles, thus they can be passed
 /// directly as argument to the functions expecting a handle.
 ///
 /// A face circulator is invalidated by any modification of the face it 
 /// points to. An edge circulator is invalidated by any modification of 
-/// anyone of the two faces incident to the edge pointed to. A vertex 
+/// any of the two faces incident to the edge pointed to. A vertex 
 /// circulator that turns around vertex `v` and that has as value a handle 
 /// to vertex `w`, is invalidated by any modification of anyone of the two 
 /// faces incident to `v` and `w`.
@@ -476,26 +475,28 @@ typedef Hidden_type Vertex_circulator;
 /// @{
 
 /*! 
-Default constructor of `tds`. 
+Default constructor. 
 */ 
 TriangulationDataStructure_2(); 
 
 /*! 
-Copy constructor. All the vertices and faces are duplicated. 
+Copy constructor. All vertices and faces are duplicated. 
 */ 
 TriangulationDataStructure_2( const 
 TriangulationDataStructure_2& tds1); 
 
 /*! 
 Assignment. All the vertices and faces of `tds1` are duplicated 
-in `tds` . Former faces and vertices of `tds` , if any, are 
+in the triangulation data structure. Former faces and vertices of 
+the triangulation data structure , if any, are 
 deleted.
 */ 
 TriangulationDataStructure_2& operator=( const 
 TriangulationDataStructure_2& tds1); 
 
 /*! 
-`tds1` is copied into `tds`. If `v != NULL`, the vertex of `tds` 
+`tds1` is copied into the triangulation data structure. 
+If `v != Vertex_handle()`, the vertex of the triangulation data structure
 corresponding to `v` is returned, otherwise `Vertex_handle()` 
 is returned. 
 \pre The optional argument `v` is a vertex of `tds1`. 
@@ -505,7 +506,8 @@ copy_tds(const TriangulationDataStructure_2 & tds1,
 Vertex_handle v = Vertex_handle()); 
 
 /*! 
-Swaps `tds` and `tds1`. Should be preferred to `tds`=`tds1` or `tds`(`tds1`) 
+Swaps the triangulation data structure and `tds1`. 
+Should be preferred to an assignment or copy constructor
 when `tds1` is deleted after that. 
 */ 
 void swap( TriangulationDataStructure_2 & tds1); 
@@ -565,19 +567,19 @@ void set_dimension (int n);
 
 /*! 
 returns `true` if 
-`v` is a vertex of `tds`. 
+`v` is a vertex of the triangulation data structure. 
 */ 
 bool is_vertex(Vertex_handle v) const; 
 
 /*! 
-returns `true` if `(fh,i)` is an edge of `tds`. Returns `false` when 
-`dimension() < 1`. 
+returns `true` if `(fh,i)` is an edge of  the triangulation data structure. 
+Returns `false` when `dimension() < 1`. 
 */ 
 bool is_edge(Face_handle fh, int i) const; 
 
 /*! 
 returns `true` if 
-`(va, vb)` is an edge of `tds`. 
+`(va, vb)` is an edge of  the triangulation data structure. 
 */ 
 bool is_edge(Vertex_handle va, Vertex_handle vb) const; 
 
@@ -591,8 +593,8 @@ bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle &fr,
 int &i) const; 
 
 /*! 
-returns `true` if `fh` is a face of `tds`. Returns `false` when 
-`dimension() < 2`. 
+returns `true` if `fh` is a face of  the triangulation data structure. 
+Returns `false` when `dimension() < 2`. 
 */ 
 bool is_face(Face_handle fh) const; 
 
@@ -649,23 +651,23 @@ Edge_iterator edges_begin() const;
 Edge_iterator edges_end() const; 
 
 /*! 
-\pre If the face `f` is given, it has to be incident to be a face of `tds` incident to `v` and the circulator begins with the vertex `f->vertex(ccw(i))` if `i` is the index of `v` in `f`. 
+\pre If the face `f` is given, it has to be incident to be a face incident to `v` and the circulator begins with the vertex `f->vertex(ccw(i))` if `i` is the index of `v` in `f`. 
 */ 
 Vertex_circulator 
-incident_vertices(Vertex_handle v, Face_handle f=NULL) 
+incident_vertices(Vertex_handle v, Face_handle f=Face_handle()) 
 const; 
 
 /*! 
-\pre If the face `f` is given, it has to be a face of `tds` incident to `v` and the circulator begins with the edge `(f,cw(i))` of `f` if `i` is the index of `v` in `f`. 
+\pre If the face `f` is given, it has to be a face of incident to `v` and the circulator begins with the edge `(f,cw(i))` of `f` if `i` is the index of `v` in `f`. 
 */ 
 Edge_circulator 
-incident_edges(Vertex_handle v, Face_handle f=NULL) const; 
+incident_edges(Vertex_handle v, Face_handle f=Face_handle()) const; 
 
 /*! 
-\pre If the face `f` is given, it has to be a face of `tds` incident to `v` and the circulator begins with the face `f`. 
+\pre If the face `f` is given, it has to be a face of incident to `v` and the circulator begins with the face `f`. 
 */ 
 Face_circulator 
-incident_faces(Vertex_handle v, Face_handle f=NULL) const; 
+incident_faces(Vertex_handle v, Face_handle f=Face_handle()) const; 
 
 /*! 
 returns vertex of `f->neighbor(i)`. 
@@ -745,7 +747,7 @@ and will be the modified face.
 
 \image html Three.gif "Insertion"
 */ 
-void remove_degree_3(Vertex_handle v, Face *f=NULL); 
+void remove_degree_3(Vertex_handle v,  Face_handle f = Face_handle()); 
 
 /*! 
 removes the before last 
@@ -818,7 +820,7 @@ template< class EdgeIt>
 void star_hole(Vertex_handle v, EdgeIt edge_begin, EdgeIt edge_end); 
 
 /*! 
-same as above, recycling faces in the sequence `[face_begin, face_end[`. 
+same as above, recycling faces in the sequence `[face_begin, face_end)`. 
 */ 
 template< class EdgeIt, class FaceIt> 
 void star_hole(Vertex_handle v, 
@@ -870,7 +872,7 @@ Face_handle create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
 Face_handle f1, Face_handle f2, Face_handle f3); 
 
 /*! 
-adds a face whose vertices and neighbors are set to NULL. 
+adds a face whose vertices and neighbors are set to `Vertex_handle()` and `Face_handle()`. 
 */ 
 Face_handle create_face(); 
 
@@ -913,26 +915,26 @@ Returns the degree of `v` in the triangulation data structure.
 size_type degree(Vertex_handle v) const; 
 
 /*! 
-writes `tds` into the stream `os`. 
-If `v` is not a null handle, vertex `v` 
+writes the triangulation data structure into the stream `os`. 
+If `v` is not `Vertex_handle()`, vertex `v` 
 is output first or skipped if `skip_first` is true. 
 */ 
 void file_output( ostream& os, Vertex_handle v = Vertex_handle(), bool skip_first=false); 
 
 /*! 
-inputs `tds` from file and returns a handle to the first input vertex. 
+inputs the triangulation data structure from file and returns a handle to the first input vertex. 
 If `skip_first` is true, it is assumed that the first 
 vertex has been omitted when output. 
 */ 
 Vertex_handle file_input( istream& is, bool skip_first=false); 
 
 /*! 
-reads a combinatorial triangulation data structure from `is` and assigns it to `tds`.
+reads a combinatorial triangulation data structure from `is` and assigns it to tthe triangulation data structure.
 */ 
 istream& operator>> (istream& is, TriangulationDataStructure_3 & tds); 
 
 /*! 
-writes `tds` into the stream `os` 
+writes `tds` into the stream `os`.
 */ 
 ostream& operator<< (ostream& os, const TriangulationDataStructure_3 & tds); 
 

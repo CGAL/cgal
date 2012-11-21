@@ -315,7 +315,7 @@ basic and Delaunay triangulations are `TriangulationVertexBase_2`
 and `TriangulationFaceBase_2`.
 </UL>
 
-See section \ref Section_2D_Triangulations_Flexibility "Flexibility"
+See Section \ref Section_2D_Triangulations_Flexibility "Flexibility"
 of the chapter on 2D triangulations
 for examples which make use of the flexilibity of the triangulation data structure.
 

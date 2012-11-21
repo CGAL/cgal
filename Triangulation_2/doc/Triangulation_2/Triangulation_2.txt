@@ -262,7 +262,7 @@ of a triangulation. See Section \ref Section_2D_Triangulations_Flexibility
 for more details on the way to make use of this flexibility.
 </UL>
 
-The \cgalFigureRef{Triangulation_2D_Fig_three_levels} summarizes the design of the
+\cgalFigureRef{Triangulation_2D_Fig_three_levels} summarizes the design of the
 triangulation package, showing the three layers
 (base classes, triangulation data structure and triangulation)
 forming this design.
@@ -293,7 +293,7 @@ classes requires base classes implementing
 refinements 
 of the basic concepts.
 
-\cgalFigureBegin{\anchor Triangulation_2D_Fig_derivation_tree,derivation_tree.gif}
+\cgalFigureBegin{Triangulation_2D_Fig_derivation_tree,derivation_tree.gif}
 The derivation tree of 2D triangulations.
 \cgalFigureEnd
 
