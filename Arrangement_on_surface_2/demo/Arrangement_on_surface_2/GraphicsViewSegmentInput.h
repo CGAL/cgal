@@ -23,6 +23,7 @@
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <QGraphicsLineItem>
+#include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 //#include <iostream>
 //#include "Callback.h"
@@ -104,7 +105,7 @@ GraphicsViewSegmentInput< K_ >::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     Point_2 clickedPoint = this->snapPoint( event );
     Segment_2 segment( this->p1, clickedPoint );
     QLineF qSegment = this->convert( segment );
-    this->segmentGuide.setLine( qSegment );
+    segmentGuide.setLine( qSegment );
   }
 }
 
@@ -117,10 +118,10 @@ GraphicsViewSegmentInput<K_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
     this->second = true;
     this->p1 = this->snapPoint( event );
     QPointF pt = this->convert( this->p1 );
-    this->segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+    segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
     if ( this->scene != NULL )
     {
-      this->scene->addItem( &( this->segmentGuide ) );
+      this->scene->addItem( &(segmentGuide ) );
     }
   }
   else
@@ -129,7 +130,7 @@ GraphicsViewSegmentInput<K_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
     this->p2 = this->snapPoint( event );
     if ( this->scene != NULL )
     {
-      this->scene->removeItem( &( this->segmentGuide ) );
+      this->scene->removeItem( &(segmentGuide ) );
     }
     Segment_2 res( this->p1, this->p2 );
     emit generate( CGAL::make_object( res ) );
