@@ -26,7 +26,13 @@ vertices and neighbors in a given cell, it is also the index of the vertex
 opposite to this neighbor `n`. (see Figure \ref Triangulation3figutils). 
 \pre `( i < 4 ) && ( j < 4 ) && ( i != j )`. 
 */ 
-static unsigned int next_around_edge(unsigned int i, unsigned int j) const; 
+static unsigned int next_around_edge(unsigned int i, unsigned int j); 
+
+/*! 
+In dimension 3, index of the `j`'th vertex in counterclockwise order on the face opposite to vertex with `i` of the cell.  
+\pre `( i < 4 ) && ( j < 3 ) && ( i != j )`. 
+*/ 
+static int vertex_triple_index(const int i, const int j)
 
 /*! 
 Has a meaning only in dimension 2. 
@@ -36,12 +42,12 @@ Computes the index of the vertex that is next to the vertex numbered
 Figure \ref Triangulation3figutils). 
 \pre `i<3`. 
 */ 
-static unsigned int ccw(unsigned int i) const; 
+static unsigned int ccw(unsigned int i); 
 
 /*! 
 Same for clockwise. 
 */ 
-static unsigned int cw(unsigned int i) const; 
+static unsigned int cw(unsigned int i); 
 
 /// @}
 
