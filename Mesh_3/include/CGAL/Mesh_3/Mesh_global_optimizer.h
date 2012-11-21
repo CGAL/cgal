@@ -33,25 +33,189 @@
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_global_optimizer_visitor.h>
 #include <CGAL/Prevent_deref.h>
+#include <CGAL/tuple.h>
+
+#include <CGAL/Mesh_3/Concurrent_mesher_config.h>
+#include <CGAL/Mesh_3/Locking_data_structures.h>
+
+#ifdef MESH_3_PROFILING
+  #include <CGAL/Mesh_3/Profiling_tools.h>
+#endif
 
 #include <vector>
 #include <list>
+#include <limits>
 
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/atomic.h>
+# include <tbb/parallel_do.h>
+# include <tbb/concurrent_vector.h>
+#endif
 
 namespace CGAL {
 
 namespace Mesh_3 {
   
+
+/************************************************
+// Class Mesh_global_optimizer_base
+// Two versions: sequential / parallel
+************************************************/
+
+// Sequential
+template <typename Tr, typename Concurrency_tag>
+class Mesh_global_optimizer_base
+{
+protected:
+  typedef typename Tr::Geom_traits                          Gt;  
+  typedef typename Gt::FT                                   FT;
+
+  typedef std::vector<cpp11::tuple<
+    typename Tr::Vertex_handle, typename Tr::Point, FT> >   Moves_vector;
+  typedef unsigned int                                      Nb_frozen_points_type ;
+
+  Mesh_global_optimizer_base(const Bbox_3 &, int)
+    : big_moves_size_(0) {}
+
+  void update_big_moves(const FT& new_sq_move)
+  {
+    if (big_moves_.size() < big_moves_size_ )
+      big_moves_.insert(new_sq_move);
+    else 
+    {
+      FT smallest = *(big_moves_.begin());
+      if( new_sq_move > smallest )
+      {
+        big_moves_.erase(big_moves_.begin());
+        big_moves_.insert(new_sq_move);
+      }
+    }
+  }
+
+  void clear_big_moves() 
+  {
+    big_moves_.clear();
+  }
+  
+  LockDataStructureType *get_lock_data_structure() { return 0; }
+  void unlock_all_elements() {}
+
+protected:
+  std::size_t big_moves_size_;
+  std::multiset<FT> big_moves_;
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Parallel
+template <typename Tr>
+class Mesh_global_optimizer_base<Tr, Parallel_tag>
+{
+protected:
+  typedef typename Tr::Geom_traits                          Gt;  
+  typedef typename Gt::FT                                   FT;
+  typedef tbb::concurrent_vector<cpp11::tuple<
+    typename Tr::Vertex_handle, typename Tr::Point, FT> >   Moves_vector;
+  typedef tbb::atomic<unsigned int>                         Nb_frozen_points_type ;
+  
+  Mesh_global_optimizer_base(const Bbox_3 &bbox, int num_grid_cells_per_axis) 
+    : big_moves_size_(0)
+    , m_lock_ds(bbox, num_grid_cells_per_axis)
+  {
+    big_moves_current_size_ = 0;
+    big_moves_smallest_ = std::numeric_limits<FT>::max();
+  }
+
+  void update_big_moves(const FT& new_sq_move)
+  {
+    static tbb::mutex mut;
+  
+    if (++big_moves_current_size_ <= big_moves_size_ )
+    {
+      tbb::mutex::scoped_lock lock(mut);
+      std::multiset<FT>::const_iterator it = big_moves_.insert(new_sq_move);
+
+      // New smallest move of all big moves?
+      if (it == big_moves_.begin())
+        big_moves_smallest_ = new_sq_move;
+    }
+    else 
+    {
+      --big_moves_current_size_;
+
+      if( new_sq_move > big_moves_smallest_ )
+      {
+        tbb::mutex::scoped_lock lock(mut);
+        // Test it again since it may have been modified by another
+        // thread in the meantime
+        if( new_sq_move > big_moves_smallest_ )
+        {
+          big_moves_.erase(big_moves_.begin());
+          std::multiset<FT>::const_iterator it = big_moves_.insert(new_sq_move);
+        
+          // New smallest move of all big moves?
+          if (it == big_moves_.begin())
+            big_moves_smallest_ = new_sq_move;
+        }
+      }
+    }
+  }
+
+  void clear_big_moves()
+  {
+    big_moves_current_size_ = 0;
+    big_moves_smallest_ = std::numeric_limits<FT>::max();
+    big_moves_.clear();
+  }
+  
+  LockDataStructureType *get_lock_data_structure()
+  {
+    return &m_lock_ds;
+  }
+  
+  void unlock_all_elements()
+  {
+    m_lock_ds.unlock_all_tls_locked_cells();
+  }
+
+public:
+  
+protected:
+  tbb::atomic<std::size_t>  big_moves_current_size_;
+  tbb::atomic<FT>           big_moves_smallest_;
+  std::size_t               big_moves_size_;
+  std::multiset<FT>         big_moves_;
+  
+  /// Lock data structure
+  LockDataStructureType m_lock_ds;
+};
+#endif // CGAL_LINKED_WITH_TBB
+
+
+
+
+/************************************************
+// Class Mesh_global_optimizer
+************************************************/
   
 template <typename C3T3,
           typename MeshDomain,
           typename MoveFunction,
           typename Visitor_ = Null_global_optimizer_visitor<C3T3> >
 class Mesh_global_optimizer
-{  
+: public Mesh_global_optimizer_base<typename C3T3::Triangulation, typename C3T3::Concurrency_tag>
+{
   // Types
+  typedef typename C3T3::Concurrency_tag Concurrency_tag;
+
+  typedef Mesh_global_optimizer<C3T3, MeshDomain, MoveFunction, Visitor_> Self;
+  typedef Mesh_global_optimizer_base<
+    typename C3T3::Triangulation, typename C3T3::Concurrency_tag>         Base;
+  
+  using Base::get_lock_data_structure;
+
   typedef typename C3T3::Triangulation  Tr;
   typedef typename Tr::Geom_traits      Gt;
   
@@ -67,7 +231,6 @@ class Mesh_global_optimizer
   typedef typename std::vector<Cell_handle>                 Cell_vector;
   typedef typename std::vector<Vertex_handle>               Vertex_vector;
   typedef typename std::set<Vertex_handle>                  Vertex_set;
-  typedef std::vector<std::pair<Vertex_handle, Point_3> >   Moves_vector;
   
 #ifdef CGAL_INTRUSIVE_LIST
   typedef Intrusive_list<Cell_handle>   Outdated_cell_set;
@@ -136,11 +299,6 @@ private:
   Vector_3 compute_move(const Vertex_handle& v);
   
   /**
-   * update big_moves_ vector with new_sq_move value
-   */
-  void update_big_moves(const FT& new_sq_move);
-  
-  /**
    * Updates mesh using moves of \c moves vector. Updates moving_vertices with
    * the new set of moving vertices after the move.
    */
@@ -197,11 +355,8 @@ private:
   double time_limit_;
   CGAL::Timer running_time_;
   
-  std::size_t big_moves_size_;
-  std::set<FT> big_moves_;
-
   bool do_freeze_;
-  mutable unsigned int nb_frozen_points_;
+  mutable Nb_frozen_points_type nb_frozen_points_;
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   mutable FT sum_moves_;
@@ -217,27 +372,30 @@ Mesh_global_optimizer(C3T3& c3t3,
                       const bool do_freeze,
                       const FT& convergence_ratio,
                       const Mf move_function)
-: c3t3_(c3t3)
+: Base(c3t3.bbox(),
+       Concurrent_mesher_config::get().locking_grid_num_cells_per_axis)
+, c3t3_(c3t3)
 , tr_(c3t3_.triangulation())
 , domain_(domain)
 , sq_freeze_ratio_(freeze_ratio*freeze_ratio)
 , convergence_ratio_(convergence_ratio)
-, helper_(c3t3_,domain_)
+, helper_(c3t3_,domain_, get_lock_data_structure())
 , move_function_(move_function)
 , sizing_field_(c3t3.triangulation())
 , time_limit_(-1)
 , running_time_()
 
-, big_moves_size_(0)
-, big_moves_()
-
 , do_freeze_(do_freeze)
-, nb_frozen_points_(0)
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
 , sum_moves_(0)
 #endif // CGAL_MESH_3_OPTIMIZER_VERBOSE
 {
+  nb_frozen_points_ = 0; // We put it here in case it's an "atomic"
+  
+  // If we're multi-thread
+  tr_.set_lock_data_structure(get_lock_data_structure());
+
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   std::cerr << "Fill sizing field...";
   CGAL::Timer timer;
@@ -280,7 +438,7 @@ operator()(int nb_iterations, Visitor visitor)
 #endif //CGAL_MESH_3_OPTIMIZER_VERBOSE
 
   // Initialize big moves (stores the largest moves)
-  big_moves_.clear();
+  clear_big_moves();
   big_moves_size_ = 
     (std::max)(std::size_t(1), std::size_t(moving_vertices.size()/500));
   
@@ -321,7 +479,7 @@ operator()(int nb_iterations, Visitor visitor)
     visitor.end_of_iteration(i);
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-    unsigned int moving_vertices_size = moving_vertices.size();   
+    size_t moving_vertices_size = moving_vertices.size();   
     std::cerr << boost::format("\r             \r"
       "end iter.%1%, %2% / %3%, last step:%4$.2fs, step avg:%5$.2fs, avg big moves:%6$.3f ")
     % (i+1)
@@ -356,6 +514,10 @@ operator()(int nb_iterations, Visitor visitor)
      
   std::cerr << "Total optimization time: " << running_time_.time()
             << "s" << std::endl << std::endl;
+#endif
+
+#ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+  CGAL_MESH_3_SET_PERFORMANCE_DATA(std::string(Mf::name()) + "_optim_time", running_time_.time());
 #endif
 
   if ( do_freeze_ && nb_frozen_points_ == initial_vertices_nb )
@@ -396,37 +558,98 @@ compute_moves(Moving_vertices_set& moving_vertices)
   moves.reserve(moving_vertices.size());
   
   // reset worst_move list
-  big_moves_.clear();    
+  clear_big_moves();    
   
-  // Get move for each moving vertex
-  typename Moving_vertices_set::iterator vit = moving_vertices.begin();
-  for ( ; vit != moving_vertices.end() ; )
-  {
-    Vertex_handle oldv = *vit;
-    Vector_3 move = compute_move(oldv);
-    ++vit;
-    
-	  if ( CGAL::NULL_VECTOR != move )
-    {
-      Point_3 new_position = translate(oldv->point(),move);
-      moves.push_back(std::make_pair(oldv,new_position));
-    }
-  	else // CGAL::NULL_VECTOR == move
-    {
-      if(do_freeze_)
-        moving_vertices.erase(oldv);
-    }
+#ifdef MESH_3_PROFILING
+  std::cerr << "Computing moves...";
+  WallClockTimer t;
+#endif
 
-    // Stop if time_limit_ is reached
-    if ( is_time_limit_reached() )
-      break;
-  }   
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  {
+    tbb::concurrent_vector<Vertex_handle> vertices_not_moving_any_more;
+
+    // Get move for each moving vertex
+    tbb::parallel_do(moving_vertices.begin(), moving_vertices.end(),
+      [&]( const Vertex_handle& oldv ) // CJTODO: lambdas ok?
+    {
+      Vector_3 move = compute_move(oldv);
+    
+	    if ( CGAL::NULL_VECTOR != move )
+      {
+        Point_3 new_position = translate(oldv->point(),move);
+        FT size = (Mesh_global_optimizer<C3T3,Md,Mf,V_>::Sizing_field::is_vertex_update_needed ?
+          sizing_field_(new_position, oldv) : 0);
+        moves.push_back(std::make_tuple(oldv,new_position,size));
+      }
+  	  else // CGAL::NULL_VECTOR == move
+      {
+        if(this->do_freeze_)
+        {
+          vertices_not_moving_any_more.push_back(oldv);
+        }
+      }
+
+      // CJTODO TEMP : à remettre (comment ?)
+      // Stop if time_limit_ is reached
+      //if ( is_time_limit_reached() )
+      //  break;
+    });
+
+    tbb::concurrent_vector<Vertex_handle>::const_iterator it 
+      = vertices_not_moving_any_more.begin();
+    tbb::concurrent_vector<Vertex_handle>::const_iterator it_end 
+      = vertices_not_moving_any_more.end();
+    for ( ; it != it_end ; ++it)
+    {
+      moving_vertices.erase(*it);
+    }
+  }
+  // Sequential
+  else
+#endif // CGAL_LINKED_WITH_TBB
+  {
+    // Get move for each moving vertex
+    typename Moving_vertices_set::iterator vit = moving_vertices.begin();
+    for ( ; vit != moving_vertices.end() ; )
+    {
+      Vertex_handle oldv = *vit;
+      ++vit;
+      Vector_3 move = compute_move(oldv);
+    
+	    if ( CGAL::NULL_VECTOR != move )
+      {
+        Point_3 new_position = translate(oldv->point(),move);
+        FT size = (Sizing_field::is_vertex_update_needed ?
+          sizing_field_(new_position, oldv) : 0);
+        moves.push_back(std::make_tuple(oldv,new_position,size));
+      }
+  	  else // CGAL::NULL_VECTOR == move
+      {
+        if(do_freeze_)
+          moving_vertices.erase(oldv); // CJTODO: si non-intrusive, 
+                                       //on peut optimiser en passant l'itérateur,
+                                       // et il faut faire "vit = mv.erase(vit)" au lieu de ++vit
+      }
+
+      // Stop if time_limit_ is reached
+      if ( is_time_limit_reached() )
+        break;
+    }   
+  }
+
+#ifdef MESH_3_PROFILING
+  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+#endif
 
   return moves;
 }
-  
-  
-  
+
+
+
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Vector_3
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
@@ -467,33 +690,14 @@ compute_move(const Vertex_handle& v)
     nb_frozen_points_++;
     return CGAL::NULL_VECTOR;
   }
-  
+
   // Update big moves
   update_big_moves(local_move_sq_ratio);
   
   return move;
 }
   
-  
-template <typename C3T3, typename Md, typename Mf, typename V_>
-void
-Mesh_global_optimizer<C3T3,Md,Mf,V_>::
-update_big_moves(const FT& new_sq_move)
-{  
-  if (big_moves_.size() < big_moves_size_ )
-    big_moves_.insert(new_sq_move);
-  else 
-  {
-    FT smallest = *(big_moves_.begin());
-    if( new_sq_move > smallest )
-    {
-      big_moves_.erase(big_moves_.begin());
-      big_moves_.insert(new_sq_move);
-    }
-  }
-}
-  
-  
+
 template <typename C3T3, typename Md, typename Mf, typename V_>
 void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
@@ -504,36 +708,109 @@ update_mesh(const Moves_vector& moves,
   // Cells which have to be updated
   Outdated_cell_set outdated_cells;
   
-  // Apply moves in triangulation
-  for ( typename Moves_vector::const_iterator it = moves.begin() ;
-       it != moves.end() ;
-       ++it )
+#ifdef MESH_3_PROFILING
+  std::cerr << "Moving vertices...";
+  WallClockTimer t;
+#endif
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
-    const Vertex_handle& v = it->first;
-    const Point_3& new_position = it->second;
-    // Get size at new position
-    if ( Sizing_field::is_vertex_update_needed )
+    // Apply moves in triangulation
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, moves.size()),
+      [&]( const tbb::blocked_range<size_t>& r ) // CJTODO: lambdas ok?
     {
-      FT size = sizing_field_(new_position,v);   
-      
-      // Move point
-      Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
+      for( size_t i = r.begin() ; i != r.end() ; ++i)
+      {
+        const Vertex_handle& v = cpp11::get<0>(moves[i]);
+        const Point_3& new_position = cpp11::get<1>(moves[i]);
+        // Get size at new position
+        if ( Self::Sizing_field::is_vertex_update_needed )
+        {
+          //FT size = sizing_field_(new_position,v);   
+          FT size = cpp11::get<2>(moves[i]);
 
-      // Restore size in meshing_info data
-      new_v->set_meshing_info(size);
-    }
-    else // Move point
-    {
-      helper_.move_point(v, new_position, outdated_cells, moving_vertices);
-    }
+          // Move point
+          bool could_lock_zone;
+          Vertex_handle new_v = helper_.move_point(
+            v, new_position, outdated_cells, moving_vertices, &could_lock_zone);
+          while (could_lock_zone == false)
+          {
+            new_v = helper_.move_point(
+              v, new_position, outdated_cells, moving_vertices, &could_lock_zone);
+          }
+          
+          // Restore size in meshing_info data
+          new_v->set_meshing_info(size);
+        }
+        else // Move point
+        {
+          bool could_lock_zone;
+          do {
+            helper_.move_point(
+              v, new_position, outdated_cells, moving_vertices, &could_lock_zone);
+          } while (!could_lock_zone);
+        }
+
+        unlock_all_elements();
     
-    // Stop if time_limit_ is reached, here we can't return without rebuilding
-    // restricted delaunay
-    if ( is_time_limit_reached() )
-      break;
+        // CJTODO : à remettre (comment ?)
+        // Stop if time_limit_ is reached, here we can't return without rebuilding
+        // restricted delaunay
+        /*if ( is_time_limit_reached() )
+          break;*/
+      }
+    });
   }
+  // Sequential
+  else
+#endif // CGAL_LINKED_WITH_TBB
+  {
+    // Apply moves in triangulation
+    for ( typename Moves_vector::const_iterator it = moves.begin() ;
+         it != moves.end() ;
+         ++it )
+    {
+      const Vertex_handle& v = cpp11::get<0>(*it);
+      const Point_3& new_position = cpp11::get<1>(*it);
+      // Get size at new position
+      if ( Sizing_field::is_vertex_update_needed )
+      {
+        //FT size = sizing_field_(new_position,v);  
+        FT size = cpp11::get<2>(*it);
+      
+        // Move point
+        Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
+
+        // Restore size in meshing_info data
+        new_v->set_meshing_info(size);
+      }
+      else // Move point
+      {
+        helper_.move_point(v, new_position, outdated_cells, moving_vertices);
+      }
+    
+      // Stop if time_limit_ is reached, here we can't return without rebuilding
+      // restricted delaunay
+      if ( is_time_limit_reached() )
+        break;
+    }
+  }
+
+
   visitor.after_move_points();
   
+#ifdef MESH_3_PROFILING
+  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+#endif
+
+  
+#ifdef MESH_3_PROFILING
+  std::cerr << "Updating C3T3 (rebuilding restricted Delaunay)...";
+  t.reset();
+#endif
+
   // Update c3t3
 #ifdef CGAL_INTRUSIVE_LIST
   // AF:  rebuild_restricted_delaunay does more cell insertion/removal
@@ -548,6 +825,11 @@ update_mesh(const Moves_vector& moves,
 #endif 
   
   visitor.after_rebuild_restricted_delaunay();
+
+#ifdef MESH_3_PROFILING
+  std::cerr << "Updating C3T3 done in " << t.elapsed() << " seconds." << std::endl;
+#endif
+
 }
 
 
@@ -580,7 +862,7 @@ check_convergence() const
   namespace bl = boost::lambda;
   
   FT sum(0);
-  for( typename std::set<FT>::const_iterator
+  for( typename std::multiset<FT>::const_iterator
        it = big_moves_.begin(), end = big_moves_.end() ; it != end ; ++it )
   {
     sum += CGAL::sqrt(*it);

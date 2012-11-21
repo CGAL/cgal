@@ -26,16 +26,68 @@
 #ifndef CGAL_MESH_3_MESH_SIZING_FIELD_H
 #define CGAL_MESH_3_MESH_SIZING_FIELD_H
 
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/enumerable_thread_specific.h>
+#endif
+
 namespace CGAL {
 
 namespace Mesh_3
 {
   
 /**
+ * @class Mesh_sizing_field_base
+ */
+// Sequential
+template <typename Cell_handle, bool used_by_parallel_mesh_3>
+class Mesh_sizing_field_base
+{
+protected:
+  Cell_handle get_last_cell() const
+  {
+    return last_cell_;
+  }
+
+  void set_last_cell(Cell_handle c) const
+  {
+    last_cell_ = c;
+  }
+
+  /// A cell that is used to accelerate location queries
+  mutable Cell_handle last_cell_;
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+/**
+ * @class Mesh_sizing_field_base specialization
+ */
+// Parallel
+template <typename Cell_handle>
+class Mesh_sizing_field_base<Cell_handle, true>
+{
+protected:
+  Cell_handle get_last_cell() const
+  {
+    return last_cell_.local();
+  }
+
+  void set_last_cell(Cell_handle c) const
+  {
+    last_cell_.local() = c;
+  }
+
+  /// A cell that is used to accelerate location queries
+  mutable tbb::enumerable_thread_specific<Cell_handle> last_cell_;
+};
+#endif // CGAL_LINKED_WITH_TBB
+
+/**
  * @class Mesh_sizing_field
  */
 template <typename Tr, bool Need_vertex_update = true>
 class Mesh_sizing_field
+  : public Mesh_sizing_field_base<typename Tr::Cell_handle,
+                                  Tr::Is_for_parallel_mesh_3>
 {
   // Types
   typedef typename Tr::Geom_traits   Gt;
@@ -64,7 +116,7 @@ public:
    * Returns size at point \c p.
    */
   FT operator()(const Point_3& p) const
-  { return this->operator()(p,last_cell_); }
+  { return this->operator()(p, get_last_cell()); }
   
   /**
    * Returns size at point \c p, using \c v to accelerate \c p location
@@ -96,12 +148,10 @@ private:
    */
   FT interpolate_on_facet_vertices(const Point_3& p,
                                    const Cell_handle& cell) const;
-  
+
 private:
   /// The triangulation
   Tr& tr_;
-  /// A cell that is used to accelerate location queries
-  mutable Cell_handle last_cell_;
 };
   
   
@@ -110,7 +160,6 @@ template <typename Tr, bool B>
 Mesh_sizing_field<Tr,B>::
 Mesh_sizing_field(Tr& tr)
   : tr_(tr)
-  , last_cell_()
 {
 }  
   
@@ -164,7 +213,7 @@ operator()(const Point_3& p, const Cell_handle& c) const
 #else
   const Cell_handle cell = tr_.locate(p,c);
 #endif
-  last_cell_ = cell;
+  set_last_cell(cell);
   
   if ( !tr_.is_infinite(cell) )
     return interpolate_on_cell_vertices(p,cell);

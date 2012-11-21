@@ -33,6 +33,10 @@
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
 
+#ifdef MESH_3_PROFILING
+  #include <CGAL/Mesh_3/Profiling_tools.h>
+#endif
+
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -41,13 +45,18 @@
 #include <boost/lambda/bind.hpp>
 #include <boost/type_traits/is_same.hpp>
 
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/parallel_do.h>
+#endif
+
 #include <functional>
 #include <vector>
 #include <set>
 
 namespace CGAL {
 namespace Mesh_3 {
-
+  
+static tbb::mutex mut_outdated_cells, mut_moving_vertices, mut_vertex_to_proj; // CJTODO LOCK
   
 #ifdef CGAL_INTRUSIVE_LIST
 template <typename Type>
@@ -356,12 +365,169 @@ private:
 };
 #endif // #ifdef CGAL_INTRUSIVE_LIST
 
-template <typename C3T3, typename MeshDomain>
+
+/************************************************
+// Class C3T3_helpers_base
+// Two versions: sequential / parallel
+************************************************/
+
+// Sequential
+template <typename Tr, typename Concurrency_tag>
+class C3T3_helpers_base
+{
+protected:
+  typedef typename Tr::Geom_traits      Gt;
+  typedef typename Gt::Point_3          Point_3;
+  typedef typename Tr::Vertex_handle    Vertex_handle;
+  typedef typename Tr::Cell_handle      Cell_handle;
+  typedef typename Tr::Facet            Facet;
+
+  C3T3_helpers_base(LockDataStructureType *) {}
+
+  LockDataStructureType *get_lock_data_structure() const
+  {
+    return 0;
+  }
+  
+  bool try_lock_point(const Point_3 &p, int lock_radius = 0) const
+  {
+    return true;
+  }
+
+  bool try_lock_vertex(Vertex_handle vh, int lock_radius = 0) const
+  {
+    return true;
+  }
+
+  bool try_lock_element(Cell_handle cell_handle, int lock_radius = 0) const
+  {
+    return true;
+  }
+
+  bool try_lock_element(const Facet &facet, int lock_radius = 0) const
+  {
+    return true;
+  }
+
+  void unlock_all_elements() {}
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Parallel
+template <typename Tr>
+class C3T3_helpers_base<Tr, Parallel_tag>
+{
+protected:
+  typedef typename Tr::Geom_traits      Gt;
+  typedef typename Gt::Point_3          Point_3;
+  typedef typename Tr::Vertex_handle    Vertex_handle;
+  typedef typename Tr::Cell_handle      Cell_handle;
+  typedef typename Tr::Facet            Facet;
+
+  C3T3_helpers_base(LockDataStructureType *p_lock_ds)
+    : m_lock_ds(p_lock_ds) {}
+  
+  
+  // LOCKS (CONCURRENCY)
+
+  /*Mesh_3::LockDataStructureType *get_lock_data_structure() const
+  {
+    return m_lock_ds;
+  }*/
+  
+  bool try_lock_point(const Point_3 &p, int lock_radius = 0) const
+  {
+    if (m_lock_ds)
+    {
+      return m_lock_ds->try_lock(p, lock_radius).first;
+    }
+    return true;
+  }
+
+  bool try_lock_vertex(Vertex_handle vh, int lock_radius = 0) const
+  {
+    if (m_lock_ds)
+    {
+      return m_lock_ds->try_lock(vh->point(), lock_radius).first;
+    }
+    return true;
+  }
+
+  bool try_lock_element(Cell_handle cell_handle, int lock_radius = 0) const
+  {
+    bool success = true;
+
+    // Lock the element area on the grid
+    for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
+    {
+      Vertex_handle vh = cell_handle->vertex(iVertex);
+      success = try_lock_vertex(vh, lock_radius);
+    }
+
+    return success;
+  }
+
+  bool try_lock_element(const Facet &facet, int lock_radius = 0) const
+  {
+    bool success = true;
+
+    // Lock the element area on the grid
+    Cell_handle cell = facet.first;
+    for (int iVertex = (facet.second+1)&3 ;
+          success && iVertex != facet.second ; iVertex = (iVertex+1)&3)
+    {
+      Vertex_handle vh = cell->vertex(iVertex);
+      success = try_lock_vertex(vh, lock_radius);
+    }
+
+    return success;
+  }
+  
+  bool is_element_locked_by_this_thread(Cell_handle cell_handle) const
+  {
+    bool locked = true;
+    for (int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
+    {
+      Vertex_handle vh = cell_handle->vertex(iVertex);
+      locked = m_lock_ds->is_locked_by_this_thread(vh->point());
+    }
+    return locked;
+  }
+
+  void unlock_all_elements()
+  {
+    if (m_lock_ds)
+    {
+      m_lock_ds->unlock_all_tls_locked_cells();
+    }
+  }
+
+protected:
+  Mesh_3::LockDataStructureType *m_lock_ds;
+};
+#endif // CGAL_LINKED_WITH_TBB
+
+
+/************************************************
+ *
+ * C3T3_helpers class
+ *
+ ************************************************/
+
+template <typename C3T3, 
+          typename MeshDomain>
 class C3T3_helpers
+: public C3T3_helpers_base<typename C3T3::Triangulation, 
+                           typename C3T3::Concurrency_tag>
 {
   // -----------------------------------
   // Private types
   // -----------------------------------
+  typedef C3T3_helpers<C3T3, MeshDomain> Self;
+  typedef C3T3_helpers_base<typename C3T3::Triangulation, 
+                            typename C3T3::Concurrency_tag> Base;
+  typedef typename C3T3::Concurrency_tag Concurrency_tag;
+
   typedef typename C3T3::Triangulation  Tr;
   typedef Tr                            Triangulation;
   typedef typename Tr::Geom_traits      Gt;
@@ -417,8 +583,10 @@ public:
   /**
    * Constructor
    */
-  C3T3_helpers(C3T3& c3t3, const MeshDomain& domain)
-    : c3t3_(c3t3)
+  C3T3_helpers(C3T3& c3t3, const MeshDomain& domain, 
+               LockDataStructureType *p_lock_ds = 0)
+    : Base(p_lock_ds)
+    , c3t3_(c3t3)
     , tr_(c3t3.triangulation())
     , domain_(domain) { }
  
@@ -519,11 +687,17 @@ public:
    * Moves \c old_vertex to \c new_position
    * Stores the cells which have to be updated in \c outdated_cells
    * Updates the Vertex_handle old_vertex to its new value in \c moving_vertices
+   * The second one (with the p_could_lock_zone param) is for the parallel version
    */
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells_set,
                            Moving_vertices_set& moving_vertices);
+  Vertex_handle move_point(const Vertex_handle& old_vertex,
+                           const Point_3& new_position,
+                           Outdated_cell_set& outdated_cells_set,
+                           Moving_vertices_set& moving_vertices,
+                           bool *p_could_lock_zone);
 
   /**
    * Outputs to out the sliver (wrt \c criterion and \c sliver_bound) incident
@@ -896,7 +1070,8 @@ private:
         {
           const Vertex_handle& v = f.first->vertex((k+i)&3);
           if ( c3t3_.in_dimension(v) > 2 )
-          { 
+          {
+            tbb::mutex::scoped_lock lock(mut_vertex_to_proj);
             vertex_to_proj.insert(v);
           }
         }
@@ -1018,7 +1193,8 @@ private:
   Vertex_handle 
   move_point_topo_change(const Vertex_handle& old_vertex,
                          const Point_3& new_position,
-                         Outdated_cell_set& outdated_cells_set);
+                         Outdated_cell_set& outdated_cells_set,
+                         bool *p_could_lock_zone = 0);
 
   template < typename OutdatedCellsOutputIterator,
              typename DeletedCellsOutputIterator >
@@ -1132,7 +1308,8 @@ private:
                                 const Point_3& conflict_point,
                                 CellsOutputIterator insertion_conflict_cells,
                                 FacetsOutputIterator insertion_conflict_boundary,
-                                CellsOutputIterator removal_conflict_cells) const;
+                                CellsOutputIterator removal_conflict_cells,
+                                bool *p_could_lock_zone = 0) const;
 
   
   template < typename ConflictCellsInputIterator,
@@ -1280,44 +1457,99 @@ private:
   template <typename FacetUpdater>
   void update_facets(Intrusive_list<Cell_handle>& outdated_cells, FacetUpdater updater)
   {
-    typename Intrusive_list<Cell_handle>::iterator it;
-    for(it = outdated_cells.begin();
-        it != outdated_cells.end();
-        ++it)
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
     {
-      Cell_handle cell = *it;
-
-      int i=0;
-      bool inf = false;
-      for ( ; i<4 && (!inf) ; ++i ){
-        if ( tr_.is_infinite(cell->vertex(i)) ){
-          inf = true;
-          Cell_handle n = cell->neighbor(i);
-          if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
-            if(cell < n){ // otherwise n will report it later
-              updater(Facet(cell,i));
-            }
-          } else { // report it now or never
-            if(cell < n){ 
-              updater(Facet(cell,i));
-            }else {
-              updater(Facet(n,n->index(cell)));
+      tbb::parallel_do(outdated_cells.begin(), outdated_cells.end(),
+        [&]( const Cell_handle& cell ) // CJTODO: lambdas ok?
+      {
+        Cell_handle null_cell;
+        bool inf = false;
+        for (int i=0 ; i<4 && (!inf) ; ++i ){
+          if ( tr_.is_infinite(cell->vertex(i)) ){
+            inf = true;
+            Cell_handle n = cell->neighbor(i);
+            if(n->next_intrusive() != null_cell){// the neighbor is also outdated
+              if(cell < n){ // otherwise n will report it later
+                Facet f(cell,i);
+                updater(f);
+              }
+            } else { // report it now or never
+              if(cell < n){ 
+                Facet f(cell,i);
+                updater(f);
+              }else {
+                Facet f(n,n->index(cell));
+                updater(f);
+              }
             }
           }
         }
-      }
-      if(! inf){
-        for ( i=0 ; i<4 ; ++i ){
-          Cell_handle n = cell->neighbor(i);
-          if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
-            if(cell < n){ // otherwise n will report it later
-              updater(Facet(cell,i));
+        if(! inf){
+          for ( int i=0 ; i<4 ; ++i ){
+            Cell_handle n = cell->neighbor(i);
+            if(n->next_intrusive() != null_cell){// the neighbor is also outdated
+              if(cell < n){ // otherwise n will report it later
+                Facet f(cell,i);
+                updater(f);
+              }
+            } else { // report it now or never
+              if(cell < n){ 
+                Facet f(cell,i);
+                updater(f);
+              }else {
+                Facet f(n,n->index(cell));
+                updater(f);
+              }
             }
-          } else { // report it now or never
-            if(cell < n){ 
-              updater(Facet(cell,i));
-            }else {
-              updater(Facet(n,n->index(cell)));
+          }
+        }
+      });
+    }
+    // Sequential
+    else
+#endif // CGAL_LINKED_WITH_TBB
+    {
+      typename Intrusive_list<Cell_handle>::iterator it;
+      for(it = outdated_cells.begin();
+          it != outdated_cells.end();
+          ++it)
+      {
+        Cell_handle cell = *it;
+
+        int i=0;
+        bool inf = false;
+        for ( ; i<4 && (!inf) ; ++i ){
+          if ( tr_.is_infinite(cell->vertex(i)) ){
+            inf = true;
+            Cell_handle n = cell->neighbor(i);
+            if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
+              if(cell < n){ // otherwise n will report it later
+                updater(Facet(cell,i));
+              }
+            } else { // report it now or never
+              if(cell < n){ 
+                updater(Facet(cell,i));
+              }else {
+                updater(Facet(n,n->index(cell)));
+              }
+            }
+          }
+        }
+        if(! inf){
+          for ( i=0 ; i<4 ; ++i ){
+            Cell_handle n = cell->neighbor(i);
+            if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
+              if(cell < n){ // otherwise n will report it later
+                updater(Facet(cell,i));
+              }
+            } else { // report it now or never
+              if(cell < n){ 
+                updater(Facet(cell,i));
+              }else {
+                updater(Facet(n,n->index(cell)));
+              }
             }
           }
         }
@@ -1492,7 +1724,7 @@ private:
   C3T3& c3t3_;
   Tr& tr_;
   const MeshDomain& domain_;
-};
+}; // class C3T3_helpers
   
   
 template <typename C3T3, typename MD>
@@ -1706,16 +1938,48 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   typename OutdatedCells::iterator first_cell = outdated_cells.begin();
   typename OutdatedCells::iterator last_cell = outdated_cells.end();
   Update_c3t3 updater(domain_,c3t3_);
-  
+    
+#ifdef MESH_3_PROFILING
+  std::cerr << std::endl << "  Updating cells...";
+  WallClockTimer t;
+  size_t num_cells = c3t3_.number_of_cells_in_complex();
+#endif
+
   // Updates cells
-  while ( first_cell != last_cell )
+  // Note: ~58% of rebuild_restricted_delaunay time
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
-    const Cell_handle& cell = *first_cell++;
-    c3t3_.remove_from_complex(cell);
-    updater(cell);
+    tbb::parallel_do(first_cell, last_cell,
+      [&]( OutdatedCells::const_reference cell ) // CJTODO: lambdas ok?
+      {
+        c3t3_.remove_from_complex(cell);
+        updater(cell);
+      });
   }
+  // Sequential
+  else
+#endif // CGAL_LINKED_WITH_TBB
+  {
+    while ( first_cell != last_cell )
+    {
+      const Cell_handle& cell = *first_cell++;
+      c3t3_.remove_from_complex(cell);
+      updater(cell);
+    }
+  }
+  
+#ifdef MESH_3_PROFILING
+  std::cerr << " done in " << t.elapsed() << " seconds (#cells from " 
+    << num_cells << " to " << c3t3_.number_of_cells_in_complex() << ")." 
+    << std::endl;
+  std::cerr << "  Updating facets...";
+  t.reset();
+#endif
 
   // Get facets (returns each canonical facet only once)
+  // Note: ~42% of rebuild_restricted_delaunay time
   //  Facet_vector facets;
   std::set<Vertex_handle> vertex_to_proj;
   Facet_updater facet_updater(c3t3_,vertex_to_proj, updater);
@@ -1723,9 +1987,17 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   
   // now we can clear
   outdated_cells.clear();
+  
+#ifdef MESH_3_PROFILING
+  std::cerr << " done in " << t.elapsed() << " seconds (" 
+            << vertex_to_proj.size() << " vertices to project)." << std::endl;
+  std::cerr << "  Projecting interior vertices...";
+  t.reset();
+#endif
 
     CGAL_HISTOGRAM_PROFILER("|vertex_to_proj|=", vertex_to_proj.size());
   // Project interior vertices
+  // Note: ~0% of rebuild_restricted_delaunay time
   // TODO : iterate to be sure no interior vertice become on the surface
   // because of move ?
   for ( typename std::set<Vertex_handle>::iterator it = vertex_to_proj.begin() ;
@@ -1746,6 +2018,10 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
       moving_vertices.insert(new_vertex);
     }
   }
+
+#ifdef MESH_3_PROFILING
+  std::cerr << " done in " << t.elapsed() << " seconds." << std::endl;
+#endif
 }
 #endif //CGAL_INTRUSIVE_LIST
 
@@ -1763,35 +2039,87 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   Facet_vector facets = get_facets(first_cell, last_cell);
   
   // Updates cells
-  while ( first_cell != last_cell )
+  // Note: ~58% of rebuild_restricted_delaunay time
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
-    const Cell_handle& cell = *first_cell++;
-    c3t3_.remove_from_complex(cell);
-    updater(cell);
+    tbb::parallel_do(first_cell, last_cell,
+      [&]( ForwardIterator::reference cell ) // CJTODO: lambdas ok?
+      {
+        c3t3_.remove_from_complex(cell);
+        updater(cell);
+      });
+  }
+  // Sequential
+  else
+#endif // CGAL_LINKED_WITH_TBB
+  {
+    while ( first_cell != last_cell )
+    {
+      const Cell_handle& cell = *first_cell++;
+      c3t3_.remove_from_complex(cell);
+      updater(cell);
+    }
   }
   
   // Updates facets
   std::set<std::pair<Vertex_handle, Surface_patch_index> > vertex_to_proj;
-  for ( typename Facet_vector::iterator fit = facets.begin() ;
-       fit != facets.end() ;
-       ++fit )
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
-    // Update facet
-    c3t3_.remove_from_complex(*fit);
-    updater(*fit);
-
-    // Update vertex_to_proj
-    if ( c3t3_.is_in_complex(*fit) )
+    tbb::parallel_do(facets.begin(), facets.end(),
+      [&]( const Facet& facet ) // CJTODO: lambdas ok?
     {
-      // Iterate on vertices
-      int k = fit->second;
-      for ( int i=1 ; i<4 ; ++i )
+      // Update facet
+      c3t3_.remove_from_complex(facet);
+      updater(facet);
+
+      // Update vertex_to_proj
+      if ( c3t3_.is_in_complex(facet) )
       {
-        const Vertex_handle& v = fit->first->vertex((k+i)&3);
-        if ( c3t3_.in_dimension(v) > 2 )
-        { 
-          vertex_to_proj.insert
-            (std::make_pair(v, c3t3_.surface_patch_index(*fit)));
+        // Iterate on vertices
+        int k = facet.second;
+        for ( int i=1 ; i<4 ; ++i )
+        {
+          const Vertex_handle& v = facet.first->vertex((k+i)&3);
+          if ( c3t3_.in_dimension(v) > 2 )
+          { 
+            std::pair<Vertex_handle, Surface_patch_index> p
+              = std::make_pair(v, c3t3_.surface_patch_index(facet));
+            tbb::mutex::scoped_lock lock(mut_vertex_to_proj);
+            vertex_to_proj.insert(p);
+          }
+        }
+      }
+    });
+  }
+  // Sequential
+  else
+#endif // CGAL_LINKED_WITH_TBB
+  {
+    for ( typename Facet_vector::iterator fit = facets.begin() ;
+         fit != facets.end() ;
+         ++fit )
+    {
+      // Update facet
+      c3t3_.remove_from_complex(*fit);
+      updater(*fit);
+
+      // Update vertex_to_proj
+      if ( c3t3_.is_in_complex(*fit) )
+      {
+        // Iterate on vertices
+        int k = fit->second;
+        for ( int i=1 ; i<4 ; ++i )
+        {
+          const Vertex_handle& v = fit->first->vertex((k+i)&3);
+          if ( c3t3_.in_dimension(v) > 2 )
+          { 
+            vertex_to_proj.insert
+              (std::make_pair(v, c3t3_.surface_patch_index(*fit)));
+          }
         }
       }
     }
@@ -1858,6 +2186,7 @@ move_point(const Vertex_handle& old_vertex,
   }
 }
 
+// Sequential
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
@@ -1891,12 +2220,138 @@ move_point(const Vertex_handle& old_vertex,
   }  
 }  
 
+// Parallel
+// In case of success (could_lock_zone = true), the zone is locked after the call
+// ==> the caller needs to call "unlock_all_elements" by itself
+// In case of failure (could_lock_zone = false), the zone is unlocked by this function
+template <typename C3T3, typename MD>
+typename C3T3_helpers<C3T3,MD>::Vertex_handle 
+C3T3_helpers<C3T3,MD>:: 
+move_point(const Vertex_handle& old_vertex,
+           const Point_3& new_position,
+           Outdated_cell_set& outdated_cells_set, 
+           Moving_vertices_set& moving_vertices,
+           bool *p_could_lock_zone)
+{
+  CGAL_assertion(p_could_lock_zone != 0);
+  *p_could_lock_zone = true;
+  
+  Cell_vector incident_cells;
+  incident_cells.reserve(64);
+  if (!try_lock_vertex(old_vertex)) // LOCK
+  {
+    *p_could_lock_zone = false;
+    unlock_all_elements();
+    return Vertex_handle();
+  }
+
+  //======= Get incident cells ==========
+  //tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
+  Cell_handle d = old_vertex->cell();
+  if (!try_lock_element(d)) // LOCK
+  {
+    BOOST_FOREACH(Cell_handle& ch, 
+      std::make_pair(incident_cells.begin(), incident_cells.end()))
+    {
+      ch->tds_data().clear();
+    }
+    *p_could_lock_zone = false;
+    unlock_all_elements();
+    return Vertex_handle();
+  }
+  incident_cells.push_back(d);
+  d->tds_data().mark_in_conflict();
+  int head=0;
+  int tail=1;
+  do {
+    Cell_handle c = incident_cells[head];
+
+    for (int i=0; i<4; ++i) {
+      if (c->vertex(i) == old_vertex)
+        continue;
+      Cell_handle next = c->neighbor(i);
+      if (!try_lock_element(next)) // LOCK
+      {
+        BOOST_FOREACH(Cell_handle& ch, 
+          std::make_pair(incident_cells.begin(), incident_cells.end()))
+        {
+          ch->tds_data().clear();
+        }
+        *p_could_lock_zone = false;
+        unlock_all_elements();
+        return Vertex_handle();
+      }
+      if (! next->tds_data().is_clear())
+        continue;			
+      incident_cells.push_back(next);
+      ++tail;
+      next->tds_data().mark_in_conflict();
+    }
+    ++head;
+  } while(head != tail);
+  BOOST_FOREACH(Cell_handle& ch, 
+    std::make_pair(incident_cells.begin(), incident_cells.end()))
+  {
+    ch->tds_data().clear();
+  }
+  //======= /Get incident cells ==========
+
+  if (!try_lock_point(new_position)) // LOCK
+  {
+    *p_could_lock_zone = false;
+    unlock_all_elements();
+    return Vertex_handle();
+  }
+  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
+  {
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
+                                                  incident_cells.end()))
+    {
+      ch->invalidate_circumcenter();
+    }
+
+    tbb::mutex::scoped_lock lock(mut_outdated_cells); // CJTODO LOCK
+    std::copy(incident_cells.begin(),incident_cells.end(), 
+      std::inserter(outdated_cells_set, outdated_cells_set.end()));
+    lock.release(); // CJTODO LOCK
+    
+    Vertex_handle new_vertex =  move_point_no_topo_change(old_vertex, new_position);
+    
+    // Don't "unlock_all_elements" here, the caller may need it to do it himself
+    return new_vertex;
+  }
+  else
+  {
+    //moving_vertices.erase(old_vertex); MOVED BELOW
+
+    Vertex_handle new_vertex = 
+      move_point_topo_change(old_vertex, new_position, outdated_cells_set, 
+                             p_could_lock_zone);
+    
+    if (*p_could_lock_zone == false)
+    {
+      unlock_all_elements();
+      return Vertex_handle();
+    }
+  
+   
+    tbb::mutex::scoped_lock lock(mut_moving_vertices); // CJTODO LOCK
+    moving_vertices.erase(old_vertex); 
+    moving_vertices.insert(new_vertex);
+    lock.release();
+    
+    // Don't "unlock_all_elements" here, the caller may need it to do it itself
+    return new_vertex;
+  }
+}  
+
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
 move_point_topo_change(const Vertex_handle& old_vertex,
                        const Point_3& new_position,
-                       Outdated_cell_set& outdated_cells_set)
+                       Outdated_cell_set& outdated_cells_set,
+                       bool *p_could_lock_zone)
 {
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
@@ -1906,14 +2361,20 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   get_conflict_zone_topo_change(old_vertex, new_position,
                                 std::inserter(insertion_conflict_cells,insertion_conflict_cells.end()),
                                 std::back_inserter(insertion_conflict_boundary),
-                                std::inserter(removal_conflict_cells, removal_conflict_cells.end()));
-
+                                std::inserter(removal_conflict_cells, removal_conflict_cells.end()),
+                                p_could_lock_zone);
+  
+  if (p_could_lock_zone && *p_could_lock_zone == false)
+    return Vertex_handle();
+  
+  tbb::mutex::scoped_lock lock(mut_outdated_cells); // CJTODO LOCK
   for(typename Cell_set::iterator it = insertion_conflict_cells.begin();
       it != insertion_conflict_cells.end(); ++it)
       outdated_cells_set.erase(*it);
   for(typename Cell_set::iterator it = removal_conflict_cells.begin();
       it != removal_conflict_cells.end(); ++it)
       outdated_cells_set.erase(*it);
+  lock.release();
 
   Cell_vector outdated_cells;
   Vertex_handle nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
@@ -1924,10 +2385,12 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                                 removal_conflict_cells.end(),
                                 std::back_inserter(outdated_cells),
                                 CGAL::Emptyset_iterator()); // deleted_cells
-
+  
+  lock.acquire(mut_outdated_cells);
   for(typename Cell_vector::iterator it = outdated_cells.begin();
       it != outdated_cells.end(); ++it)
       outdated_cells_set.insert(*it);
+  lock.release();
   
   return nv;
 }
@@ -1960,6 +2423,7 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                                 removal_conflict_cells.end(),
                                 outdated_cells,
                                 deleted_cells);
+  
   return nv;
 }
 
@@ -1996,10 +2460,6 @@ move_point_topo_change_conflict_zone_known(
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertex_index = c3t3_.index(old_vertex);
   FT meshing_info = old_vertex->meshing_info();
-#ifdef CGAL_INTRUSIVE_LIST
-  Vertex_handle next = old_vertex->next_intrusive();
-  Vertex_handle prev = old_vertex->previous_intrusive();
-#endif
 
   // insert new point
   Vertex_handle new_vertex = tr_.insert_in_hole(new_position, 
@@ -2020,10 +2480,6 @@ move_point_topo_change_conflict_zone_known(
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertex_index);
   new_vertex->set_meshing_info(meshing_info);
-#ifdef CGAL_INTRUSIVE_LIST
-  new_vertex->next_intrusive() = next;
-  new_vertex->previous_intrusive() = prev;
-#endif
   // End Move point
 
   //// Fill outdated_cells
@@ -2119,10 +2575,6 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertex_index);
   new_vertex->set_meshing_info(meshing_info);
-#ifdef CGAL_INTRUSIVE_LIST
-  new_vertex->next_intrusive() = next;
-  new_vertex->previous_intrusive() = prev;
-#endif
 
   return new_vertex;
 }
@@ -2136,7 +2588,11 @@ move_point_no_topo_change(const Vertex_handle& old_vertex,
                           const Point_3& new_position,
                           OutdatedCellsOutputIterator outdated_cells)
 {
+  
+  tbb::mutex::scoped_lock lock(mut_outdated_cells); // CJTODO LOCK
   get_conflict_zone_no_topo_change(old_vertex, outdated_cells);
+  lock.release(); // CJTODO LOCK
+
   return move_point_no_topo_change(old_vertex, new_position);
 }
 
@@ -2496,16 +2952,22 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
                               const Point_3& conflict_point,
                               CellsOutputIterator insertion_conflict_cells,
                               FacetsOutputIterator insertion_conflict_boundary,
-                              CellsOutputIterator removal_conflict_cells) const
+                              CellsOutputIterator removal_conflict_cells,
+                              bool *p_could_lock_zone) const
 {
   // Get triangulation_vertex incident cells : removal conflict zone
+  // CJTODO: hasn't it already been computed in "move_point"?
   tr_.incident_cells(v, removal_conflict_cells);
 
   // Get conflict_point conflict zone 
   int li=0;
   int lj=0;
   typename Tr::Locate_type lt;
-  Cell_handle cell = tr_.locate(conflict_point, lt, li, lj, v->cell());
+  Cell_handle cell = tr_.locate(
+    conflict_point, lt, li, lj, v->cell(), p_could_lock_zone);
+
+  if (p_could_lock_zone && *p_could_lock_zone == false)
+    return;
   
   if ( lt == Tr::VERTEX ) // Vertex removal is forbidden 
     return;
@@ -2514,7 +2976,8 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
   tr_.find_conflicts(conflict_point,
                      cell,
                      insertion_conflict_boundary,
-                     insertion_conflict_cells);
+                     insertion_conflict_cells,
+                     p_could_lock_zone);
 }
   
 template <typename C3T3, typename MD>

@@ -433,6 +433,10 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
   std::cerr << std::endl << "Perturbation statistics:" << std::endl;
   print_final_perturbations_statistics();
 #endif
+
+#ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time", running_time_.time());
+#endif
  
   if ( is_time_limit_reached() ) {
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE

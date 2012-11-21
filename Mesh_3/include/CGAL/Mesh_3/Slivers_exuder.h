@@ -627,6 +627,10 @@ pump_vertices(double sliver_criterion_limit,
   std::cerr << std::endl;
 #endif // CGAL_MESH_3_EXUDER_VERBOSE  
   
+#ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time", running_time_.time());
+#endif
+
   if ( is_time_limit_reached() ) {
 #ifdef CGAL_MESH_3_EXUDER_VERBOSE
     std::cerr << "Exuding return code: TIME_LIMIT_REACHED\n\n";

@@ -79,6 +79,8 @@ class Triangulation_data_structure_3
   typedef Triangulation_data_structure_3<Vb,Cb,used_by_parallel_mesh_3> Tds;
 
 public:
+  
+  static const bool Is_for_parallel_mesh_3 = used_by_parallel_mesh_3;
 
   // Tools to change the Vertex and Cell types of the TDS.
   template < typename Vb2 >
