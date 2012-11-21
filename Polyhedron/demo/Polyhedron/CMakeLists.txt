@@ -106,8 +106,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
-  include(AddFileDependencies)
-
   qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
   add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
 
@@ -115,6 +113,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
   qt4_generate_moc( "Polyhedron_demo_remeshing_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Polyhedron_demo_remeshing_plugin_cgal_code.moc" )
+
+  include( ${CMAKE_CURRENT_SOURCE_DIR}/polyhedron_demo_macros.cmake )
 
   qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 
@@ -141,7 +141,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   # put plugins (which are shared libraries) at the same location as
   # executable files
-  set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})
+  set(CGAL_POLYHEDRON_DEMO_PLUGINS_DIR "${RUNTIME_OUTPUT_PATH}")
+  set(LIBRARY_OUTPUT_PATH "${CGAL_POLYHEDRON_DEMO_PLUGINS_DIR}")
 
   add_library(demo_framework SHARED
     Scene.cpp
@@ -259,38 +260,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # PLUGINS #
   ###########
   remove_definitions(-DQT_STATICPLUGIN)
-
-  macro(polyhedron_demo_plugin plugin_name plugin_implementation_base_name)
-    list_split(option ARGN_TAIL ${ARGN} )
-    if(NOT ${option} STREQUAL "EXCLUDE_FROM_ALL")
-      if(NOT ${option} STREQUAL "NO_MOC")
-        set(other_sources ${ARGN})
-        set(option "")
-      else()
-        set(other_sources ${ARGN_TAIL})
-      endif()
-    else()
-      set(other_sources ${ARGN_TAIL})
-    endif()
-    if("${option}" STREQUAL "NO_MOC") 
-      set(option "")
-      set(moc_file_name "")
-    else()
-      set(moc_file_name ${plugin_implementation_base_name}.moc )
-      qt4_generate_moc( ${plugin_implementation_base_name}.cpp "${CMAKE_CURRENT_BINARY_DIR}/${moc_file_name}" )
-      add_file_dependencies( ${moc_file_name} "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
-    endif()
-
-    add_library(${plugin_name} MODULE ${option} ${moc_file_name} ${plugin_implementation_base_name}.cpp ${other_sources})
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
-    # Link with Qt
-    target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
-    # Link with the demo_framework
-    target_link_libraries( ${plugin_name} demo_framework)
-    # Link with CGAL
-    target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-    add_dependencies( ${plugin_name} Polyhedron_3 )
-  endmacro(polyhedron_demo_plugin)
 
   polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp Polyhedron_demo_remeshing_plugin_cgal_code.moc ${remeshingUI_FILES})
   target_link_libraries(remeshing_plugin scene_polyhedron_item scene_polygon_soup_item scene_c2t3_item)
@@ -430,6 +399,21 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
   polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
   target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
+
+#
+# Exporting
+#
+  export(
+    TARGETS
+    demo_framework
+    scene_polyhedron_item
+    scene_points_with_normal_item
+    scene_implicit_function_item
+    CGAL_Qt4
+    FILE polyhedron_demo_targets.cmake
+    NAMESPACE Polyhedron_)
+
+  configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
