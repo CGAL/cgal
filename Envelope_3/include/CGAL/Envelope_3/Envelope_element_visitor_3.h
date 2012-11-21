@@ -60,8 +60,8 @@ public:
   typedef MinimizationDiagram_2                        Minimization_diagram_2;
   typedef typename Traits::Point_2                     Point_2;
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
-  typedef typename Minimization_diagram_2::Are_all_sides_oblivious_tag
-    Are_all_sides_oblivious_tag;
+  typedef typename Minimization_diagram_2::Are_all_sides_oblivious_category
+    Are_all_sides_oblivious_category;
 
 protected:
   class Copied_face_zone_visitor;
@@ -894,7 +894,7 @@ protected:
           //two infinite surfaces, no outer boundary or holes. 
           res =
             compare_distance_to_envelope(surf1, surf2, 
-                                         Are_all_sides_oblivious_tag());
+                                         Are_all_sides_oblivious_category());
         }
       }
       
@@ -1555,11 +1555,11 @@ protected:
           // copied_target
           Vertex_handle copied_source = 
             create_copied_vertex(hh, to_accessor, true, 
-                                 Are_all_sides_oblivious_tag());
+                                 Are_all_sides_oblivious_category());
           //to_accessor.create_vertex(hh->source()->point());
           Vertex_handle copied_target = 
             create_copied_vertex(hh, to_accessor, false, 
-                                 Are_all_sides_oblivious_tag());
+                                 Are_all_sides_oblivious_category());
           //to_accessor.create_vertex(hh->target()->point());
           copied_prev_he =
             to_accessor.insert_in_face_interior_ex(inside_face,
@@ -1599,11 +1599,14 @@ protected:
             // create vertex for the new target, and insert the new edge
             Vertex_handle copied_target = 
               create_copied_vertex(hh, to_accessor, false, 
-                                   Are_all_sides_oblivious_tag());
+                                   Are_all_sides_oblivious_category());
             //to_accessor.create_vertex(hh->target()->point());
-            copied_new_he = to_accessor.insert_from_vertex_ex(copied_prev_he,
-                                                              current_cv, (HE_COMP_RES(hh) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
-                                                              copied_target);
+            copied_new_he = to_accessor.insert_from_vertex_ex
+              (copied_prev_he,
+               current_cv,
+               (HE_COMP_RES(hh) == CGAL::SMALLER ?
+                ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+               copied_target);
 
             
             // the target of copied_new_he is the new vertex, so it is directed
