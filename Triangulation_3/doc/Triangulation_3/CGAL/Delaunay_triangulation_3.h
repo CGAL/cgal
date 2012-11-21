@@ -12,7 +12,7 @@ Delaunay triangulation.
 \tparam TriangulationDataStructure_3 is the triangulation data structure. 
 It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<DelaunayTriangulationTraits_3>, Triangulation_cell_base_3<DelaunayTriangulationTraits_3> >`. 
 
-The third template argument is a tag which must be a `Location_policy<Tag>` : 
+\tparam LocationPolicy is a tag which must be a `Location_policy<Tag>`: 
 either `Fast_location` or `Compact_location`. 
 `Fast_location` offers faster (\f$ O(\log n)\f$ time) point 
 location, which can be beneficial when performing point locations or random 
