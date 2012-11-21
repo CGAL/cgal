@@ -982,7 +982,6 @@ public:
     {
       // Construct a polyline containing just two points:
       Point_2   pts[2];
-
       pts[0] = p; pts[1] = q;
       return (X_monotone_curve_2(pts + 0, pts + 2));
     }
@@ -994,11 +993,11 @@ public:
      * TODO: Use this implementations in the Make_x_monotone_2, when there's
      *       only one segment.
      */
-    X_monotone_curve_2 operator()(const Segment_2 seg) const
-    {      
-      X_monotone_curve_2 res;
-      return res;
-    }
+    // X_monotone_curve_2 operator()(const Segment_2 seg) const
+    // {      
+    //   X_monotone_curve_2 res;
+    //   return res;
+    // }
 
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const
@@ -1030,6 +1029,8 @@ public:
     X_monotone_curve_2 contructor_impl(InputIterator begin, InputIterator end,
 				       const Segment_2&) const
     {
+      std::cout << "\033[1;31mAPT1: Entering xconstructor\033[0m\n";
+
       CGAL_precondition(begin != end);
 
       typename Segment_traits_2::Construct_min_vertex_2 min_v =
@@ -1093,9 +1094,28 @@ public:
       // The following statement assumes that the begin (and end) iterators
       // are biderctional.
       if (rev)
-        return X_monotone_curve_2(std::reverse_iterator<InputIterator>(end),
-                                  std::reverse_iterator<InputIterator>(begin));
+	{
+	  std::cout << "\033[1;31mAPT2: Reverse construction\033[0m\n";
+
+	  /*
+	   * This part reverse the order of the segments and orient each
+	   * segment from left to right.
+	   * TODO: In theory, this should not be taken into account
+	   *       as the segments' source/target have no meaning.
+	   */
+	  std::vector<Segment_2> reversed_cont;
+	  for (InputIterator it = begin ; it != end ; ++it)
+	    reversed_cont.push_back(Segment_2(min_v(*it),max_v(*it)));
+	  std::reverse(reversed_cont.begin(),reversed_cont.end());
+	  return X_monotone_curve_2(reversed_cont.begin(),
+	  			    reversed_cont.end());
+
+	  // return X_monotone_curve_2(std::reverse_iterator<InputIterator>(end),
+          //                         std::reverse_iterator<InputIterator>(begin));
+	}
+      std::cout << "\033[1;31mAPT3: Direct construction\033[0m\n";
       return X_monotone_curve_2(begin, end);
+      std::cout << "\033[1;31mAPT4: Direct construction\033[0m\n";
     }
   };
 

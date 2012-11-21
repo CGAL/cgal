@@ -105,7 +105,7 @@ int main ()
   points4.push_back (Point_2(0,1));
   points4.push_back (Point_2(-1,0));
   Polyline_2 pi4 (points4.begin(),points4.end());
-  insert (arr, pi4); 
+  insert (arr, pi4);
 
   /* Polyline's outline:
    * Axis aligned square
@@ -117,16 +117,17 @@ int main ()
   points5.push_back (Point_2(-2,2));
   points5.push_back (Point_2(-2,-2));
   Polyline_2 pi5 (points5.begin(),points5.end());
-  //  insert (arr, pi5); 
+  insert (arr, pi5); 
 
   /* Polyline's outline:
    * Single vertical segment
    */
   std::list<Point_2> points6;
+  points6.push_back (Point_2 (0,-7));
+  // points6.push_back (Point_2( 0,-4));
   points6.push_back (Point_2( 0,4));
-  points6.push_back (Point_2( 0,-4));
   Polyline_2 pi6 (points6.begin(), points6.end());
-  //  insert (arr, pi6);
+  insert (arr, pi6);
 
   // Print the arrangement  
   print_arrangement (arr);

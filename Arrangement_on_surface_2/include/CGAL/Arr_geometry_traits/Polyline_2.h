@@ -531,7 +531,12 @@ public:
   template <typename InputIterator>
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
                                      const Segment_2& /* */)
-  {}
+  {
+    for (InputIterator it = begin ; it != end; ++it )
+      {
+	std::cout << "\033[1;32mP1: Seg is: " << *it << "\033[0m\n";
+      }
+  }
   
   /*!
    * Constructs from a range of points, defining the endpoints of the
@@ -586,10 +591,15 @@ public:
    */
   inline void push_back (const Segment_2& seg)
   {
-    CGAL_precondition_code (Segment_traits_2   seg_tr);
-    CGAL_precondition_code (const unsigned int n = this->size());
-    CGAL_precondition (seg_tr.compare_xy_2_object() (seg.source(),
-						     seg.target()) == SMALLER);
+    CGAL_precondition_code 
+      (
+       Segment_traits_2   seg_tr;
+       const unsigned int n = this->size()
+       );
+    // TODO: This precondition seems to cause problems. Probably it is due to
+    //       the usage of source/target.
+    // CGAL_precondition (seg_tr.compare_xy_2_object() (seg.source(),
+    // 						     seg.target()) == SMALLER);
     CGAL_precondition (n == 0 ||
 		       seg_tr.equal_2_object() (this->m_segments[n - 1].target(),
 						seg.source()));
@@ -626,6 +636,7 @@ template <typename SegmentTraits>
 std::ostream& operator<< (std::ostream & os,
 			  const _Polyline_2<SegmentTraits>& cv)
 {
+  // std::cout << "\033[1;31m\nP2: << operator in Polyline_2.h\033[0m\n";
   typename _Polyline_2<SegmentTraits>::const_iterator  iter = cv.begin();
 
   // Print the number of points:
