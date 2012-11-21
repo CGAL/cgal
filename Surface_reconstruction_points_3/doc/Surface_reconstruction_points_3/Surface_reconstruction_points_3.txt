@@ -17,8 +17,10 @@ an isosurface of this function with the \cgal Surface Mesh Generator
 \cite cgal:ry-gsddrm-06 or potentially with any other surface
 contouring algorithm.
 
-\anchor Surface_reconstruction_points_3figintroduction
-\image html introduction.jpg "Poisson surface reconstruction. Left: 17K points sampled on the statue of an elephant with a Minolta laser scanner. Right: reconstructed surface mesh."
+\cgalFigureBegin{Surface_reconstruction_points_3figintroduction,introduction.jpg}
+Poisson surface reconstruction.\n
+Left: 17K points sampled on the statue of an elephant with a Minolta laser scanner. Right: reconstructed surface mesh.
+\cgalFigureEnd
 
 More specifically, the core surface reconstruction algorithm consists
 of computing an implicit function which is an approximate indicator
