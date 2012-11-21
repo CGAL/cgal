@@ -45,7 +45,7 @@ CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
 CGAL_CORE_PACKAGE_DIR:PATH=/home/lrineau/CGAL/CGAL-I
 
 //User-defined flags
-CGAL_CXX_FLAGS:STRING=--std=c++11 -fno-strict-aliasing -Wall
+CGAL_CXX_FLAGS:STRING= -fno-strict-aliasing -Wall
 
 //Value Computed by CMake
 CGAL_Core_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_llvm-clang-with-g++-4.6.2_F16/src/Core
@@ -176,7 +176,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/usr/local/packages/llvm-trunk/bin/clang++
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING=--std=c++11 -fno-strict-aliasing -Wall
+CMAKE_CXX_FLAGS:STRING= -fno-strict-aliasing -Wall
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=
@@ -1603,7 +1603,7 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL=--std=c++11 -fno-strict-aliasing -Wall
+CONFIG_CXX_FLAGS:INTERNAL= -fno-strict-aliasing -Wall
 //Variable hidden from user
 EXECUTABLE_OUTPUT_PATH:INTERNAL=
 //Details about finding OpenGL

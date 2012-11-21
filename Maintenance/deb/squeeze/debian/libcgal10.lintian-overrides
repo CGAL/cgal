@@ -1,0 +1,1 @@
+libcgal10: hardening-no-fortify-functions usr/lib/libCGAL.so.*

@@ -112,6 +112,11 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 <li> Update requirements of the concepts <code>AABBTraits</code> and <code>AABBGeomTraits</code> to match the implementation of the package.
 </ul>
 
+<h3>2D Triangulations</h3>
+<ul>
+<li> Add mechanism to avoid call stack overflow in <code>Delaunay_triangulation_2</code> and <code>Constrained_Delaunay_triangulation_2</code>.
+</ul>
+
 <h3>Generator</h3>
 <ul>
 <li> Addition of the <code>Combination_enumerator</code>
@@ -204,6 +209,7 @@ the following has been changed since CGAL-4.0:</p>
 <h3>2D and 3D Geometry Kernel </h3>
 <ul>
   <li>Fix a bug in the <code>Segment_3-Triangle_3</code> intersection function in the case the segment is collinear with a triangle edge.</li>
+  <li>Fix a bug in the <code>Projection_traits_.._3</code>class in the case a segment was parallel to the x-axis.</li>
 </ul>
 
 <h3>Algebraic Kernel</h3>

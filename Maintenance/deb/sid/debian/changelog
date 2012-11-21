@@ -1,3 +1,50 @@
+cgal (4.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Rename binary package libcgal9 to libcgal10 to reflect SONAME change.
+  * Configure CGAL using -DCGAL_ENABLE_PRECONFIG=OFF since we do not want
+    that the accidential presence of optional libraries (for demos and
+    examples) influences the build of the library.
+  * Move the Qt4 support library and the corresponding headers into new
+    binary packages libcgal-qt4-10 and libcgal-qt4-dev (Closes: #683214).
+  * Add libboost-system-dev to Builds-Depends: of cgal.
+  * Move libmpfi-dev from Suggests: of cgal-demo to Build-Depends: of cgal.
+
+ -- Joachim Reichel <reichel@debian.org>  Wed, 24 Oct 2012 19:08:35 +0200
+
+cgal (4.0.2-1) unstable; urgency=low
+
+  * New upstream release.
+  * Remove gcc-4.7 patch (fixed upstream).
+
+ -- Joachim Reichel <reichel@debian.org>  Wed, 04 Jul 2012 19:45:28 +0200
+
+cgal (4.0-4) unstable; urgency=low
+
+  * Add Suggests: libeigen3-dev (>= 3.1.0~beta1-1), libmpfi-dev to
+    libcgal-demo.
+
+ -- Joachim Reichel <reichel@debian.org>  Tue, 12 Jun 2012 23:53:14 +0200
+
+cgal (4.0-3) unstable; urgency=low
+
+  * Change Build-Depends: debhelper (>= 8) to debhelper (>= 9), update
+    debian/compat to get the default build flags for hardening. Inject
+    CPPFLAGS into CFLAGS and CXXFLAGS, since CPPFLAGS is ignored by cmake.
+  * Add lintian override to silence incorrect warnings about
+    hardening-no-fortify-functions for some libraries (all libraries are
+    built with the same flags).
+
+ -- Joachim Reichel <reichel@debian.org>  Sun, 10 Jun 2012 15:36:27 +0200
+
+cgal (4.0-2) unstable; urgency=low
+
+  * Add patch gcc-4.7 to fix a syntax error in template code which is
+    not instantiated during the package build itself (Closes: #673554).
+  * Fix debian/watch.
+
+ -- Joachim Reichel <reichel@debian.org>  Sun, 20 May 2012 22:47:56 +0200
+
 cgal (4.0-1) unstable; urgency=low
 
   * New upstream release.
@@ -298,3 +345,4 @@ cgal (3.2-1) unstable; urgency=low
   * First upload to Debian archive. (Closes: #251885)
 
  -- Joachim Reichel <joachim.reichel@gmx.de>  Mon, 29 May 2006 20:24:27 +0200
+5~

@@ -1,0 +1,6 @@
+#!/bin/zsh
+for n in 1 2 3 4 5 6; do
+  for f in build*/*(.x); do
+     $f < 10000000.pts 
+  done
+done          

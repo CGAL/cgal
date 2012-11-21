@@ -522,7 +522,6 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
 
-#ifdef CGAL_EIGEN3_ENABLED
 namespace Eigen {
   template<class> struct NumTraits;
   template<> struct NumTraits<CORE::BigFloat>
@@ -544,6 +543,5 @@ namespace Eigen {
     };
   };
 }
-#endif
 
 #endif // CGAL_CORE_BIGFLOAT_H

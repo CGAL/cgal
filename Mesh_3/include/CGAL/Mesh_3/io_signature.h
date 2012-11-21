@@ -26,7 +26,9 @@
 #include <CGAL/Weighted_point.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <boost/variant.hpp>
@@ -222,6 +224,17 @@ struct Get_io_signature<Triangulation_vertex_base_3<Gt, Vb> >
 };
 #endif
 
+#ifdef CGAL_TRIANGULATION_VERTEX_BASE_WITH_INFO_3_H
+template <class Info, class Gt, class Vb>
+struct
+Get_io_signature<Triangulation_vertex_base_with_info_3<Info, Gt, Vb> >
+{
+  std::string operator()() {
+    return Get_io_signature<Vb>()();
+  }
+};
+#endif
+
 #ifdef CGAL_TRIANGULATION_CELL_BASE_3_H
 template <class Gt, class Cb>
 struct
@@ -229,6 +242,17 @@ Get_io_signature<Triangulation_cell_base_3<Gt, Cb> >
 {
   std::string operator()() {
     return "Tcb_3";
+  }
+};
+#endif
+
+#ifdef CGAL_TRIANGULATION_CELL_BASE_WITH_INFO_3_H
+template <class Info, class Gt, class Cb>
+struct
+Get_io_signature<Triangulation_cell_base_with_info_3<Info, Gt, Cb> >
+{
+  std::string operator()() {
+    return Get_io_signature<Cb>()();
   }
 };
 #endif

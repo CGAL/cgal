@@ -2160,6 +2160,7 @@ Maintenance/Third_party/GMP/gmp-4.2.4.patch.gz -text svneol=unset#application/gz
 Maintenance/Third_party/GMP/mpfr-2.3.2.patch.gz -text svneol=unset#application/gzip
 Maintenance/deb/ANNOUNCEMENT.beta -text
 Maintenance/deb/ANNOUNCEMENT.final -text
+Maintenance/deb/sid/debian/NEWS.Debian -text
 Maintenance/deb/sid/debian/README.Debian -text
 Maintenance/deb/sid/debian/README.source -text
 Maintenance/deb/sid/debian/changelog -text
@@ -2168,12 +2169,20 @@ Maintenance/deb/sid/debian/control -text
 Maintenance/deb/sid/debian/libcgal-demo.install -text
 Maintenance/deb/sid/debian/libcgal-dev.install -text
 Maintenance/deb/sid/debian/libcgal-ipelets.install -text
-Maintenance/deb/sid/debian/libcgal9.install -text
-Maintenance/deb/sid/debian/libcgal9.shlibs -text
+Maintenance/deb/sid/debian/libcgal-ipelets.lintian-overrides -text
+Maintenance/deb/sid/debian/libcgal-qt4-10.install -text
+Maintenance/deb/sid/debian/libcgal-qt4-10.lintian-overrides -text
+Maintenance/deb/sid/debian/libcgal-qt4-10.shlibs -text
+Maintenance/deb/sid/debian/libcgal-qt4-dev.install -text
+Maintenance/deb/sid/debian/libcgal10.install -text
+Maintenance/deb/sid/debian/libcgal10.lintian-overrides -text
+Maintenance/deb/sid/debian/libcgal10.shlibs -text
+Maintenance/deb/sid/debian/patches/do-not-link-example-with-qt4-support-library.patch -text
 Maintenance/deb/sid/debian/patches/series -text
 Maintenance/deb/sid/debian/rules -text
 Maintenance/deb/sid/debian/source/format -text
 Maintenance/deb/sid/debian/watch -text
+Maintenance/deb/squeeze/debian/NEWS.Debian -text
 Maintenance/deb/squeeze/debian/README.Debian -text
 Maintenance/deb/squeeze/debian/README.source -text
 Maintenance/deb/squeeze/debian/changelog -text
@@ -2182,12 +2191,20 @@ Maintenance/deb/squeeze/debian/control -text
 Maintenance/deb/squeeze/debian/libcgal-demo.install -text
 Maintenance/deb/squeeze/debian/libcgal-dev.install -text
 Maintenance/deb/squeeze/debian/libcgal-ipelets.install -text
-Maintenance/deb/squeeze/debian/libcgal9.install -text
-Maintenance/deb/squeeze/debian/libcgal9.shlibs -text
+Maintenance/deb/squeeze/debian/libcgal-ipelets.lintian-overrides -text
+Maintenance/deb/squeeze/debian/libcgal-qt4-10.install -text
+Maintenance/deb/squeeze/debian/libcgal-qt4-10.lintian-overrides -text
+Maintenance/deb/squeeze/debian/libcgal-qt4-10.shlibs -text
+Maintenance/deb/squeeze/debian/libcgal-qt4-dev.install -text
+Maintenance/deb/squeeze/debian/libcgal10.install -text
+Maintenance/deb/squeeze/debian/libcgal10.lintian-overrides -text
+Maintenance/deb/squeeze/debian/libcgal10.shlibs -text
+Maintenance/deb/squeeze/debian/patches/do-not-link-example-with-qt4-support-library.patch -text
 Maintenance/deb/squeeze/debian/patches/series -text
 Maintenance/deb/squeeze/debian/rules -text
 Maintenance/deb/squeeze/debian/source/format -text
 Maintenance/deb/squeeze/debian/watch -text
+Maintenance/deb/wheezy/debian/NEWS.Debian -text
 Maintenance/deb/wheezy/debian/README.Debian -text
 Maintenance/deb/wheezy/debian/README.source -text
 Maintenance/deb/wheezy/debian/changelog -text
@@ -2196,8 +2213,15 @@ Maintenance/deb/wheezy/debian/control -text
 Maintenance/deb/wheezy/debian/libcgal-demo.install -text
 Maintenance/deb/wheezy/debian/libcgal-dev.install -text
 Maintenance/deb/wheezy/debian/libcgal-ipelets.install -text
-Maintenance/deb/wheezy/debian/libcgal9.install -text
-Maintenance/deb/wheezy/debian/libcgal9.shlibs -text
+Maintenance/deb/wheezy/debian/libcgal-ipelets.lintian-overrides -text
+Maintenance/deb/wheezy/debian/libcgal-qt4-10.install -text
+Maintenance/deb/wheezy/debian/libcgal-qt4-10.lintian-overrides -text
+Maintenance/deb/wheezy/debian/libcgal-qt4-10.shlibs -text
+Maintenance/deb/wheezy/debian/libcgal-qt4-dev.install -text
+Maintenance/deb/wheezy/debian/libcgal10.install -text
+Maintenance/deb/wheezy/debian/libcgal10.lintian-overrides -text
+Maintenance/deb/wheezy/debian/libcgal10.shlibs -text
+Maintenance/deb/wheezy/debian/patches/do-not-link-example-with-qt4-support-library.patch -text
 Maintenance/deb/wheezy/debian/patches/series -text
 Maintenance/deb/wheezy/debian/rules -text
 Maintenance/deb/wheezy/debian/source/format -text
@@ -4330,6 +4354,8 @@ Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite_with_cmake -text
 Triangulation_2/benchmark/Triangulation_2/CDT_with_intersection_2.cpp -text
 Triangulation_2/benchmark/Triangulation_2/Delaunay_remove.cpp -text
+Triangulation_2/benchmark/Triangulation_2/launch_tests -text
+Triangulation_2/benchmark/Triangulation_2/sum -text
 Triangulation_2/demo/Triangulation_2/qt3/help/cindex.html svneol=native#text/html
 Triangulation_2/demo/Triangulation_2/qt3/help/cinput_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/qt3/help/conflict_zone.gif -text svneol=unset#image/gif
@@ -4457,6 +4483,7 @@ Triangulation_2/examples/Triangulation_2/info_insert_with_zip_iterator_2.cpp -te
 Triangulation_2/examples/Triangulation_2/polygon_triangulation.cpp -text
 Triangulation_2/examples/Triangulation_2/print_cropped_voronoi.cpp -text
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
+Triangulation_3/benchmark/Triangulation_3/simple_2.cpp -text
 Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
 Triangulation_3/demo/Triangulation_3/MainWindow.cpp -text
 Triangulation_3/demo/Triangulation_3/MainWindow.h -text

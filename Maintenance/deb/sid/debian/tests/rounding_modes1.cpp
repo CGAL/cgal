@@ -16,17 +16,14 @@ std::string str (int mode)
 		}
 }
 
-// global variable to stop constant propagation
-double eps;
-
 int fetestround ()
 {
-	eps = std::numeric_limits<double>::denorm_min();
+	volatile double eps = std::numeric_limits<double>::denorm_min();
 
 	double x = -1.0;
 	double y =  1.0;
-	double x_plus_eps  = x + eps;
-	double y_minus_eps = y - eps;
+	volatile double x_plus_eps  = x + eps;
+	volatile double y_minus_eps = y - eps;
 
 	if ((x == x_plus_eps) && (y == y_minus_eps))
 		return FE_TONEAREST;

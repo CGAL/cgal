@@ -21,13 +21,10 @@
 #ifndef CGAL_AABB_TRAVERSAL_TRAITS_H
 #define CGAL_AABB_TRAVERSAL_TRAITS_H
 
-#include <CGAL/AABB_tree.h>
 #include <CGAL/internal/AABB_tree/AABB_node.h>
 #include <boost/optional.hpp>
 
 namespace CGAL { 
-
-template <typename AABBTraits> class AABB_tree;
 
 namespace internal { namespace AABB_tree {
 
@@ -74,7 +71,6 @@ class First_intersection_traits
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   typedef typename boost::optional<Object_and_primitive_id> Result;
@@ -117,7 +113,6 @@ class Listing_intersection_traits
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   Listing_intersection_traits(Output_iterator out_it)
@@ -159,7 +154,6 @@ class Listing_primitive_traits
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   Listing_primitive_traits(Output_iterator out_it)
@@ -199,7 +193,6 @@ class First_primitive_traits
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   First_primitive_traits()
@@ -244,7 +237,6 @@ class Do_intersect_traits
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   Do_intersect_traits()
@@ -285,7 +277,6 @@ class Projection_traits
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
-  typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
   Projection_traits(const Point& hint,
