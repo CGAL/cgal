@@ -59,8 +59,6 @@ namespace po = boost::program_options;
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
 
 const int     FACET_ANGLE              = 25;
-const double  FACET_APPROX             = 0.0068;
-const double  FACET_APPROX_3D_IMAGES   = 0.5;
 const int     TET_SHAPE                = 3;
 
 // ==========================================================================
@@ -232,6 +230,10 @@ protected:
     subelements.push_back("Facets_time");
     subelements.push_back("Cells_scan_time");
     subelements.push_back("Cells_refin_time");
+    subelements.push_back("Lloyd_optim_time");
+    subelements.push_back("Odt_optim_time");
+    subelements.push_back("Perturber_optim_time");
+    subelements.push_back("Exuder_optim_time");
 
     return subelements;
   }
@@ -297,9 +299,9 @@ using namespace CGAL::parameters;
 
 struct Mesh_parameters
 {
-  double facet_angle;
-  double facet_sizing;
   double facet_approx;
+  double facet_sizing;
+  double facet_angle;
 
   double tet_shape;
   double tet_sizing;
@@ -308,9 +310,9 @@ struct Mesh_parameters
   {
     std::stringstream sstr;
     sstr
-      << " * facet min angle: " << facet_angle << std::endl
-      << " * facet max size: " << facet_sizing << std::endl
       << " * facet approx error: " << facet_approx << std::endl
+      << " * facet max size: " << facet_sizing << std::endl
+      << " * facet min angle: " << facet_angle << std::endl
       << " * tet shape (radius-edge): " << tet_shape << std::endl
       << " * tet max size: " << tet_sizing << std::endl;
 
@@ -544,6 +546,7 @@ void add_crease(const Point& a,
 }
 
 bool make_mesh_polyhedron(const std::string &input_filename,
+                 double facet_approx,
                  double facet_sizing,
                  double cell_sizing)
 {
@@ -591,9 +594,9 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 #endif
 
   Mesh_parameters params;
-  params.facet_angle = FACET_ANGLE;
+  params.facet_approx = facet_approx;
   params.facet_sizing = facet_sizing;
-  params.facet_approx = FACET_APPROX;
+  params.facet_angle = FACET_ANGLE;
   params.tet_sizing = cell_sizing;
   params.tet_shape = TET_SHAPE;
 
@@ -613,7 +616,16 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   );
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(/*time_limit=10*/), no_perturb(), no_exude()); // CJTODO TEMP time_limit=10 => a enlever
+#ifdef _DEBUG
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(time_limit=10), no_perturb(), no_exude());
+#else
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, 
+                                      criteria, 
+                                      lloyd(),
+                                      no_odt(),
+                                      no_perturb(), 
+                                      no_exude());
+#endif
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -636,6 +648,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 
 
 bool make_mesh_3D_images(const std::string &input_filename,
+                 double facet_approx,
                  double facet_sizing,
                  double cell_sizing)
 {
@@ -664,9 +677,9 @@ bool make_mesh_3D_images(const std::string &input_filename,
   std::cerr << "done." << std::endl;
   
   Mesh_parameters params;
-  params.facet_angle = FACET_ANGLE;
+  params.facet_approx = facet_approx;
   params.facet_sizing = facet_sizing;
-  params.facet_approx = FACET_APPROX_3D_IMAGES;
+  params.facet_angle = FACET_ANGLE;
   params.tet_sizing = cell_sizing;
   params.tet_shape = TET_SHAPE;
 
@@ -686,7 +699,16 @@ bool make_mesh_3D_images(const std::string &input_filename,
   );
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(), no_perturb(), no_exude());
+#ifdef _DEBUG
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(time_limit=10), no_perturb(), no_exude());
+#else
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, 
+                                      criteria, 
+                                      lloyd(),
+                                      no_odt(),
+                                      no_perturb(), 
+                                      no_exude());
+#endif
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -709,7 +731,10 @@ bool make_mesh_3D_images(const std::string &input_filename,
 
 
 template <class ImplicitFunction>
-bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunction func, 
+bool make_mesh_implicit(double facet_approx,
+                        double facet_sizing,
+                        double cell_sizing, 
+                        ImplicitFunction func, 
                         const std::string &function_name)
 {
   // Domain
@@ -768,7 +793,7 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
   Mesh_parameters params;
   params.facet_angle = FACET_ANGLE;
   params.facet_sizing = facet_sizing;
-  params.facet_approx = FACET_APPROX;
+  params.facet_approx = facet_approx;
   params.tet_sizing = cell_sizing;
   params.tet_shape = TET_SHAPE;
 
@@ -788,7 +813,16 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
   );
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(), no_perturb(), no_exude());
+#ifdef _DEBUG
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(time_limit=10), no_perturb(), no_exude());
+#else
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, 
+                                      criteria, 
+                                      lloyd(),
+                                      no_odt(),
+                                      no_perturb(), 
+                                      no_exude());
+#endif
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -823,6 +857,7 @@ int main()
     po::options_description desc("Allowed options");
     desc.add_options()
       ("filename", po::value<std::string>()->default_value(DEFAULT_INPUT_FILE_NAME), "")
+      ("facet_approx", po::value<double>()->default_value(0.0068), "")
       ("facet_sizing", po::value<double>()->default_value(0.005), "")
       ("cell_sizing", po::value<double>()->default_value(0.005), "")
       ("numthreads", po::value<int>()->default_value(-1), "");
@@ -837,6 +872,7 @@ int main()
     return false;
   }
   int num_threads = vm["numthreads"].as<int>();
+  double facet_approx = vm["facet_approx"].as<double>();
   double facet_sizing = vm["facet_sizing"].as<double>();
   double cell_sizing = vm["cell_sizing"].as<double>();
   std::string filename = vm["filename"].as<std::string>();
@@ -893,10 +929,12 @@ int main()
           std::stringstream sstr(line);
 
           std::string input;
+          double facet_approx;
           double facet_sizing;
           double cell_sizing;
           int num_iteration;
           sstr >> input;
+          sstr >> facet_approx;
           sstr >> facet_sizing;
           sstr >> cell_sizing;
           sstr >> num_iteration;
@@ -915,9 +953,9 @@ int main()
               slash_index, domain.find_last_of('.') - slash_index);
 
             CGAL_MESH_3_SET_PERFORMANCE_DATA("Domain", domain);
-            CGAL_MESH_3_SET_PERFORMANCE_DATA("Facet_angle", FACET_ANGLE);
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Facet_approx", facet_approx);
             CGAL_MESH_3_SET_PERFORMANCE_DATA("Facet_size", facet_sizing);
-            CGAL_MESH_3_SET_PERFORMANCE_DATA("Facet_approx", FACET_APPROX);
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Facet_angle", FACET_ANGLE);
             CGAL_MESH_3_SET_PERFORMANCE_DATA("Cell_size", cell_sizing);
             CGAL_MESH_3_SET_PERFORMANCE_DATA("Cell_shape", TET_SHAPE);
             xml_perf_set_technique();
@@ -950,29 +988,29 @@ int main()
             display_info(num_threads);
 
             if (input == "Klein_function")
-              make_mesh_implicit(facet_sizing, cell_sizing, Klein_function(), input);
+              make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Klein_function(), input);
             else if (input == "Tanglecube_function")
-              make_mesh_implicit(facet_sizing, cell_sizing, Tanglecube_function(), input);
+              make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Tanglecube_function(), input);
             /*else if (input == "Sphere_function")
-              make_mesh_implicit(facet_sizing, cell_sizing, Sphere_function(1.), input);
+              make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Sphere_function(1.), input);
             else if (input == "Thin_cylinder_function")
             {
               Cylinder_function f(0.05, 3.);
-              make_mesh_implicit(facet_sizing, cell_sizing, f, input);
+              make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, f, input);
             }
             else if (input == "Pancake_function")
             {
               Cylinder_function f(3., 0.1);
-              make_mesh_implicit(facet_sizing, cell_sizing, f, input);
+              make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, f, input);
             }*/
             else 
             {
               size_t dot_position = input.find_last_of('.');
               std::string extension = input.substr(dot_position + 1);
               if (extension == "off")
-                make_mesh_polyhedron(input, facet_sizing, cell_sizing);
+                make_mesh_polyhedron(input, facet_approx, facet_sizing, cell_sizing);
               else if (extension == "inr")
-                make_mesh_3D_images(input, facet_sizing, cell_sizing);
+                make_mesh_3D_images(input, facet_approx, facet_sizing, cell_sizing);
             }
 
             std::cerr << "Refinement #" << i++ << " done." << std::endl;
@@ -996,8 +1034,8 @@ int main()
     {
       std::cerr << "Refinement #" << i << "..." << std::endl;
       display_info(num_threads);
-      //make_mesh_polyhedron(filename, facet_sizing, cell_sizing);
-      make_mesh_implicit(facet_sizing, cell_sizing, Klein_function(), "Klein_function");
+      //make_mesh_polyhedron(filename, facet_approx, facet_sizing, cell_sizing);
+      make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Klein_function(), "Klein_function");
       std::cerr << "Refinement #" << i << " done." << std::endl;
       std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
     }
