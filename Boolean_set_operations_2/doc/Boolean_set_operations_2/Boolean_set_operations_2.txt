@@ -158,7 +158,7 @@ void print_polygon (const CGAL::Polygon_2<Kernel, Container>& P)
   for (vit = P.vertices_begin(); vit != P.vertices_end(); ++vit)
     std::cout << " (" << *vit << ')';
   std::cout << " ]" << std::endl;
-  }
+}
 \endcode
 
 In this section we use the term <I>polygon</I> to indicate a

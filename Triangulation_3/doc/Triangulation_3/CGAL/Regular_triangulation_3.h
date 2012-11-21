@@ -17,7 +17,7 @@ defined as
 where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$. 
 \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$ 
 are said to be <I>orthogonal</I> if \f$ \Pi{({p}^{(w)}-{z}^{(w)})} 
-= 0\f$ (see Figure \ref Triangulation3figortho). 
+= 0\f$ (see Figure \cgalFigureRef{Triangulation3figortho}).
 
 Four weighted points have a unique common orthogonal weighted point called 
 the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be 
