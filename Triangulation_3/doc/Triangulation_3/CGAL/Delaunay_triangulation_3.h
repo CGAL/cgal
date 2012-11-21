@@ -7,13 +7,9 @@ namespace CGAL {
 The class `Delaunay_triangulation_3` represents a three-dimensional 
 Delaunay triangulation. 
 
-### Parameters ###
+\tparam DelaunayTriangulationTraits_3 is the geometric traits class. 
 
-The first template argument must be a model of the 
-`DelaunayTriangulationTraits_3` concept. 
-
-The second template argument must be a model of the 
-`TriangulationDataStructure_3` concept. 
+\tparam TriangulationDataStructure_3 is the triangulation data structure. 
 It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<DelaunayTriangulationTraits_3>, Triangulation_cell_base_3<DelaunayTriangulationTraits_3> >`. 
 
 The third template argument is a tag which must be a `Location_policy<Tag>` : 
@@ -138,12 +134,11 @@ Vertex_handle insert(const Point & p, Locate_type lt,
 Cell_handle loc, int li, int lj); 
 
 /*! 
-Inserts the points in the iterator range \f$ \left[\right.\f$`first`, 
-`last`\f$ \left.\right)\f$. Returns the number of inserted points. 
+Inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
-following the order of `PointInputIterator`, as `spatial_sort` 
+following the order of `PointInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
-\pre The `value_type` of `first` and `last` is `Point`. 
+\tparam PointInputIterator must be an input iterator with the value type `Point`. 
 
 */ 
 template < class PointInputIterator > 
@@ -152,15 +147,17 @@ insert(PointInputIterator first, PointInputIterator last);
 
 /*! 
 
-Inserts the points in the iterator range \f$ \left[\right.\f$`first`, 
-`last`\f$ \left.\right)\f$. Returns the number of inserted points. 
+Inserts the points in the iterator range  `[first,last)`. 
+Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
-following the order of `PointWithInfoInputIterator`, as `spatial_sort` 
+following the order of `PointWithInfoInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 
 only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex. 
-\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_3`. The `value_type` of `first` and `last` is `std::pair<Point,Vertex::Info>`. 
+\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_3`. 
+
+\tparam PointWithInfoInputIterator must be an input iterator with the value type `std::pair<Point,Vertex::Info>`. 
 
 */ 
 template < class PointWithInfoInputIterator > 
@@ -216,11 +213,12 @@ Removes the vertex `v` from the triangulation.
 void remove(Vertex_handle v); 
 
 /*! 
-Removes the vertices specified by the iterator range [`first, beyond`) 
-of value type `Vertex_handle`. 
-`remove()` is called over each element of the range. 
+Removes the vertices specified by the iterator range `[first, beyond)`. 
+The function `remove(Vertex_handle)` is called over each element of the range. 
 The number of vertices removed is returned. 
 \pre (i) all vertices of the range are finite vertices of the triangulation; and (ii) no vertices are repeated in the range. 
+
+\tparam InputIterator must be an input iterator with value type `Vertex_handle`.
 */ 
 template < typename InputIterator > 
 int remove(InputIterator first, InputIterator beyond); 
@@ -230,6 +228,8 @@ This function has exactly the same result and the same preconditions as `remove(
 The difference is in the implementation and efficiency. This version does not re-triangulate the hole after each 
 point removal but only after removing all vertices. This is more efficient if (and only if) the removed points 
 are organized in a small number of connected components of the Delaunay triangulation. 
+
+\tparam InputIterator must be an input iterator with value type `Vertex_handle`.
 */ 
 template < typename InputIterator > 
 int remove_cluster(InputIterator first, InputIterator beyond); 

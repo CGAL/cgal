@@ -14,16 +14,11 @@ with a data structure which allows fast point location queries. As proved
 in \cite cgal:d-dh-02, this structure has an optimal behavior when it is built 
 for Delaunay triangulations. It can however be used for other triangulations. 
 
-### Parameters ###
 
-It is templated by a parameter which must be instantiated by one of the \cgal triangulation classes. <I>In the current implementation, only 
+\tparam Tr must be instantiated by one of the \cgal triangulation classes. <I>In the current implementation, only 
 `Delaunay_triangulation_3` is supported for `Tr`.</I> 
-
-`Tr::Vertex` has to be a model of the concept 
-`TriangulationHierarchyVertexBase_3`. 
-
-`Tr::Geom_traits` has to be a model of the concept
-`DelaunayTriangulationTraits_3`. 
+- `Tr::Vertex` has to be a model of the concept `TriangulationHierarchyVertexBase_3`. 
+- `Tr::Geom_traits` has to be a model of the concept `DelaunayTriangulationTraits_3`. 
 
 `Triangulation_hierarchy_3` offers exactly the same functionalities as `Tr`. 
 Most of them (point location, insertion, removal \f$ \ldots\f$ ) are overloaded to 

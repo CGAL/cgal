@@ -27,13 +27,10 @@ the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres 
 of all simplices are regular. 
 
-### Parameters ###
 
-The first template argument must be a model of the 
-`RegularTriangulationTraits_3` concept. 
+\tparam  RegularTriangulationTraits_3 is the geometric traits class.
 
-The second template argument must be a model of the 
-`TriangulationDataStructure_3` concept. 
+\tparam TriangulationDataStructure_3 is the triangulation data structure. 
 It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<RegularTriangulationTraits_3>, Regular_triangulation_cell_base_3<RegularTriangulationTraits_3> >`. 
 
 */
@@ -76,6 +73,7 @@ Regular_triangulation_3
 /*! 
 Equivalent to constructing an empty triangulation with the optional 
 traits class argument and calling `insert(first,last)`. 
+\tparam InputIterator must be an input iterator with value type `Weighted_point`. 
 */ 
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last, 
@@ -125,14 +123,14 @@ Vertex_handle insert(const Weighted_point & p, Locate_type lt,
 Cell_handle loc, int li, int lj); 
 
 /*! 
-Inserts the weighted points in the range \f$ \left[\right.\f$`first`, 
-`last`\f$ \left.\right)\f$. 
+Inserts the weighted points in the range `[first,last)`. 
 It returns the difference of the number of vertices between after and 
 before the insertions (it may be negative due to hidden points). 
 Note that this function is not guaranteed to insert the points 
-following the order of `InputIterator`, as `spatial_sort` 
+following the order of `InputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
-\pre The `value_type` of `first` and `last` is `Weighted_point`. 
+
+\tparam InputIterator must be an input iterator with value type `Weighted_point`. 
 */ 
 template < class InputIterator > 
 std::ptrdiff_t 
@@ -140,18 +138,17 @@ insert(InputIterator first, InputIterator last);
 
 /*! 
 
-Inserts the weighted points in the iterator range \f$ \left[\right.\f$`first`, 
-`last`\f$ \left.\right)\f$. 
+Inserts the weighted points in the iterator range  `[first,last)`.
 It returns the difference of the number of vertices between after and 
 before the insertions (it may be negative due to hidden points). 
 Note that this function is not guaranteed to insert the weighted points 
-following the order of `WeightedPointWithInfoInputIterator`, as `spatial_sort` 
+following the order of `WeightedPointWithInfoInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 
 only one vertex is created, one of the objects of type `Vertex::Info` will be stored in the vertex. 
-\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_3`. The `value_type` of `first` and `last` is `std::pair<Weighted_point,Vertex::Info>`. 
-
+\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_3`.
+\tparam (WeightedPointWithInfoInputIterator must be an input iterator with value type  `std::pair<Weighted_point,Vertex::Info>`. 
 */ 
 template < class WeightedPointWithInfoInputIterator > 
 std::ptrdiff_t 
@@ -168,7 +165,7 @@ The following methods, which already exist in `Triangulation_3`, are overloaded 
 
 /*! 
 Creates a new vertex by starring a hole. It takes an iterator range 
-[`cell_begin`; `cell_end`[ of `Cell_handle`s which specifies 
+`[cell_begin,cell_end)` of `Cell_handle`s which specifies 
 a hole: a set of connected cells (resp. facets in dimension 2) which is 
 star-shaped wrt `p`. 
 (`begin`, `i`) is a facet (resp. an edge) on the boundary of the hole, 

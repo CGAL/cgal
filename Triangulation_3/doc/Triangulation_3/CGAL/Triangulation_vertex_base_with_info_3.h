@@ -9,15 +9,13 @@ The class `Triangulation_vertex_base_with_info_3` is a model of the concept
 It provides an easy way to add some user defined information in vertices. 
 Note that input/output operators discard this additional information. 
 
-### Parameters ###
-
-The first template argument is the information the user would like to add 
+\tparam Info is the information the user would like to add 
 to a vertex. It has to be `DefaultConstructible` and `Assignable`. 
 
-The second template argument is the geometric traits class 
-`TriangulationTraits_3` which provides the `Point_3`. 
+\tparam TriangulationTraits_3  is the geometric traits class 
+ which provides the `Point_3`. 
 
-The third template argument is a vertex base class from which 
+\tparam TriangulationVertexBase_3 is a vertex base class from which 
 `Triangulation_vertex_base_with_info_3` derives. It has the default 
 value `Triangulation_vertex_base_3<TriangulationTraits_3>`. 
 

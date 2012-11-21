@@ -96,11 +96,11 @@ dimension 2, each cell has only one facet of index 3, and 3 edges
 
 <b>Validity</b>
 
-A triangulation of \f$ \R^3\f$ is said to be `locally valid` iff
+A triangulation of \f$ \R^3\f$ is said to be *locally valid* iff
 
 <B>(a)-(b)</B> Its underlying combinatorial graph, the triangulation
-data structure, is `locally valid` 
-(see Section \ref TDS3secintro of Chapter \ref chapterTDS3)
+data structure, is *locally valid* 
+(see Section \ref TDS3secintro "Introduction" of Chapter \ref chapterTDS3 "3D Triangulation Data Structure")
 
 <B>(c)</B> Any cell has its vertices ordered according to positive
 orientation. See \cgalFigureRef{Triangulation3figorient}.
@@ -117,7 +117,7 @@ When all the points are collinear, this condition becomes:
 <B>(c-1D)</B> For any two adjacent edges \f$ (u,v)\f$ and \f$ (v,w)\f$, \f$ u\f$ and
 \f$ w\f$ lie on opposite sides of the common vertex \f$ v\f$ on the line.
 
-The `is_valid()` method provided in `Triangulation_3` checks
+The method  `Triangulation_3::is_valid()` checks
 the local validity of a given triangulation. This does not always
 ensure global validity \cite mnssssu-cgpvg-96, \cite dlpt-ccpps-98 but it is 
 sufficient for practical cases.
@@ -211,14 +211,14 @@ the geometry and the combinatorics is reflected in the software design by the
 fact that these three triangulation classes take the following template parameters :
 
 <UL>
-<LI> the <B>geometric traits</B> class, which provides the type of points
+<LI> the *geometric traits* class, which provides the type of points
 to use as well as the elementary operations on them (predicates and
 constructions). The concepts for these parameters are described in more
 details in Section \ref Triangulation3secTraits.
-<LI> the <B>triangulation data structure</B> class, which stores their
-combinatorial structure, described in Section \ref TDS3secdesign of
-Chapter \ref chapterTDS3.
-<LI> the <B>location policy</B> tag, which is supported only by the Delaunay
+<LI> the *triangulation data structure* class, which stores their
+combinatorial structure, described in Section \ref TDS3secdesign "Software Design" of
+Chapter \ref chapterTDS3 "3D Triangulation Data Structure".
+<LI> the *location policy* tag, which is supported only by the Delaunay
 triangulation class, described in Section \ref Triangulation3seclocpol.
 </UL>
 
@@ -399,7 +399,7 @@ My_vertex(const Point&p, Cell_handle c) : Vb(p, c) {}
 \endcode
 
 The situation is exactly similar for cell base classes.
-Section \ref TDS3secdesign provides more detailed information.
+Section \ref TDS3secdesign "Software Design" provides more detailed information.
 
 \section Triangulation3secexamples Examples 
 

@@ -13,12 +13,9 @@ Note that input/output operators discard this additional information.
 All functions modifying the vertices of the cell, invalidate the cached 
 circumcenter. 
 
-### Parameters ###
+\tparam DelaunayTriangulationTraits_3 is the geometric traits class. 
 
-The first template argument is the geometric traits class 
-`DelaunayTriangulationTraits_3`. 
-
-The second template argument is a cell base class from which 
+\tparam TriangulationCellBase_3 is a cell base class from which 
 `Triangulation_cell_base_with_circumcenter_3` derives. 
 It has the default value `Triangulation_cell_base_3<DelaunayTriangulationTraits_3>`. 
 

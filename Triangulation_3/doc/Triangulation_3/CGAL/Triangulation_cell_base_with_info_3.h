@@ -9,15 +9,14 @@ The class `Triangulation_cell_base_with_info_3` is a model of the concept
 It provides an easy way to add some user defined information in cells. 
 Note that input/output operators discard this additional information. 
 
-### Parameters ###
 
-The first template argument is the information the user would like to add 
+\tparam Info  is the information the user would like to add 
 to a cell. It has to be `DefaultConstructible` and `Assignable`. 
 
-The second template argument is the geometric traits class 
-`TriangulationTraits_3`. It is actually not used by this class. 
+\tparam TriangulationTraits_3  is the geometric traits class. 
+It is actually not used by this class. 
 
-The third template argument is a cell base class from which 
+\tparam TriangulationCellBase_3 is a cell base class from which 
 `Triangulation_cell_base_with_info_3` derives. It has the default value 
 `Triangulation_cell_base_3<TriangulationTraits_3>`. 
 

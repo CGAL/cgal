@@ -19,9 +19,8 @@ requirements in order to match the concept
 provided by \cgal, or a user customized vertex base with additional 
 functionalities. 
 
-### Parameters ###
-
-It is parameterized by a model of the concept `TriangulationVertexBase_3`. 
+\tparam TriangulationVertexBase_3 is is a combinatorial vertex base class from which 
+`Triangulation_hierarchy_vertex_base_3` derives. 
 
 \cgalModels ::TriangulationHierarchyVertexBase_3 
 

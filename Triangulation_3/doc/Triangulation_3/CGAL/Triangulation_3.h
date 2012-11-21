@@ -7,13 +7,9 @@ namespace CGAL {
 The class `Triangulation_3` represents a 3-dimensional tetrahedralization 
 of points. 
 
-### Parameters ###
+\tparam TriangulationTraits_3 is the geometric traits class.
 
-The first template argument must be a model of the 
-`TriangulationTraits_3` concept. 
-
-The second template argument must be a model of the 
-`TriangulationDataStructure_3` concept. 
+\tparam TriangulationDataStructure_3 is the triangulation data structure.
 It has the default value `Triangulation_data_structure_3< Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> >`. 
 
 ### Traversal of the Triangulation ###
@@ -832,11 +828,10 @@ Vertex_handle insert(const Point & p, Locate_type lt,
 Cell_handle loc, int li, int lj); 
 
 /*! 
-Inserts the points in the range \f$ \left[\right.\f$`first`, 
-`last`\f$ \left.\right)\f$. Returns the number of inserted points. 
+Inserts the points in the range `[first,last)`. Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
 following the order of `InputIterator`. 
-\pre The `value_type` of `first` and `last` is `Point`. 
+\tparam InputIterator must be an input iterator with value type `Point`. 
 */ 
 template < class InputIterator > 
 std::ptrdiff_t 
@@ -921,7 +916,7 @@ Vertex_handle insert_outside_affine_hull(const Point & p);
 
 /*! 
 Creates a new vertex by starring a hole. It takes an iterator range 
-[`cell_begin`; `cell_end`[ of `Cell_handle`s which specifies 
+`[cell_begin,cell_end)` of `Cell_handle`s which specifies 
 a hole: a set of connected cells (resp. facets in dimension 2) which is 
 star-shaped wrt `p`. 
 (`begin`, `i`) is a facet (resp. an edge) on the boundary of the hole, 

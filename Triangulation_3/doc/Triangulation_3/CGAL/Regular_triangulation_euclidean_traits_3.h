@@ -9,11 +9,9 @@ class `Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStr
 It provides `Weighted_point_3`, a class for weighted points, which derives 
 from the three dimensional point class `K::Point_3`. 
 
-The first argument `K` must be a model of the `Kernel` concept. 
+\tparam K must be a model of the `Kernel` concept. 
 
-The second argument `Weight` of the class 
-`Regular_triangulation_euclidean_traits_3<K,Weight>` is in fact 
-optional: if is it not provided, `K::RT` will be used. 
+\tparam Weight is optional. If is it not provided, `K::RT` will be used. 
 
 The class is a model of the concept `RegularTriangulationTraits_3` 
 but it also contains predicates and constructors on weighted points 
@@ -21,7 +19,7 @@ that are not required in the
 concept `RegularTriangulationTraits_3`. 
 
 Note that filtered predicates are automatically used if the 
-boolean `Has_filtered_predicates` in the kernel provided as template parameter 
+Boolean `Has_filtered_predicates` in the kernel provided as template parameter 
 of that class is set to `true`. 
 
 \cgalModels ::RegularTriangulationTraits_3 
@@ -52,7 +50,7 @@ Weighted_point_3;
 
 /// @} 
 
-/// \name Types for predicate functors 
+/// \name Types for Predicate Functors 
 /// @{
 
 /*! 
@@ -142,7 +140,7 @@ typedef Hidden_type Does_simplex_intersect_dual_support_3;
 
 /// @} 
 
-/// \name Types for constructor functors 
+/// \name Types for Constructor Functors 
 /// @{
 
 /*! 

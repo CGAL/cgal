@@ -11,18 +11,16 @@ This class can be used directly or can serve as a base to derive other classes
 with some additional attributes (a color for example) tuned for a specific 
 application. 
 
-### Parameters ###
 
-The first template argument is the geometric traits class 
-`TriangulationTraits_3`. It is actually not used by this class. 
+\tparam TriangulationTraits_3 is the geometric traits class. It is actually not used by this class. 
 
-The second template argument is a combinatorial cell base class from which 
+\tparam TriangulationDSCellBase_3 is a combinatorial cell base class from which 
 `Triangulation_cell_base_3` derives. 
 It has the default value `Triangulation_ds_cell_base_3<>`. 
 
 Note that this model does not store the circumcenter, but computes it 
 every time the circumcenter function is called. See 
-`CGAL::Triangulation_cell_base_with_circumcenter_3` for a way to cache the 
+`Triangulation_cell_base_with_circumcenter_3` for a way to cache the 
 circumcenter computation. 
 
 \cgalModels ::TriangulationCellBase_3 

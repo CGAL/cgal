@@ -8,15 +8,11 @@ The class `Regular_triangulation_cell_base_3` is a model of the concept
 `RegularTriangulationCellBase_3`. It is the default face base class 
 of regular triangulations. 
 
-### Parameters ###
 
-The template parameters `Traits` has to be a model 
-of `RegularTriangulationTraits_3`. 
+\tparam Traits must be a model of `RegularTriangulationTraits_3`. 
 
-The template parameter `Cb` has to be a model 
-of `TriangulationCellBase_3`. By default, this parameter is 
-instantiated by 
-`CGAL::Triangulation_cell_base_3<Traits>`. 
+\tparam Cb must be a model of `TriangulationCellBase_3`. 
+By default, this parameter is instantiated by `Triangulation_cell_base_3<Traits>`. 
 
 \cgalModels ::RegularTriangulationCellBase_3 
 
