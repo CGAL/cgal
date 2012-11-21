@@ -32,11 +32,11 @@ class Regular_triangulation_on_sphere_2
 
    typedef Regular_triangulation_on_sphere_2<Gt, Tds>                         Self;
    typedef Triangulation_on_sphere_2<Gt,Tds>                                  Base;
-
 	
-   
+    private: double _radius;
+	double _minDist;
+	double _minDistSquared;
 	
-
 public:
   typedef Tds                                  Triangulation_data_structure;
   typedef Gt                                   Geom_traits;
@@ -55,7 +55,9 @@ public:
   typedef typename Base::Faces_iterator        Faces_iterator;
   typedef typename Base::Face::Vertex_list     Vertex_list;
   typedef typename Vertex_list::iterator       Vertex_list_iterator;
- //typedef typename Regular_Triangulation_on_Sphere_2<GT, Tds>::Geom_traits::Compare_xyz_3  Compare_xyz_3;
+
+
+	
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::cw;
@@ -109,9 +111,17 @@ public:
  public: 
   //CONSTRUCTORS
   Regular_triangulation_on_sphere_2(const Gt& gt=Gt()) 
-    : Base(Gt(gt))
+    :_radius(1) ,_minDist(pow (2, -25)), _minDistSquared( pow(_minDist, 2)), Base(Gt(gt))
   {}
 
+void set_radius(double radius){
+		clear();
+		_radius = radius;
+	_minDist = radius * pow(2,-25);
+	_minDistSquared=pow(_minDist,2);
+		
+	}
+	
  
   //CHECK
   bool is_valid(bool verbose = false, int level = 0) const;

@@ -1313,10 +1313,15 @@ Triangulation_on_sphere_2/test/build/
 Triangulation_on_sphere_2/test/cmake_install.cmake
 Triangulation_on_sphere_2/test/test_.build/
 Triangulation_on_sphere_2/test/test_.xcodeproj/
+Installation/CGAL.build/
+Installation/src/CGAL/CGAL.build/
+Triangulation_on_sphere_2/test/Release/
+
 VERSION
 cmake_install.cmake
 config/
-
+include/CGAL/compiler_config.h
+include/CGAL/version.h
 lib/
 
 

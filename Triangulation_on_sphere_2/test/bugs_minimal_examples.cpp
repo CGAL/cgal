@@ -135,6 +135,8 @@ int main(int argc, char* argv[])
 	Vertex_handle v4 = rtos.insert(p4);
 	rtos.is_valid();
 Vertex_handle v2 = rtos.insert(p2);
+	rtos.show_all();
+	
 	Vertex_handle v5 = rtos.insert(p5);
 	rtos.show_all();
 Vertex_handle v3 = rtos.insert(p3);
@@ -237,7 +239,7 @@ std::random_shuffle(points.begin(), points.end());
 	
 	
 	are_equal(rtos3,rtos2);
-	/*	
+	
 	
 	
 	//insert 5th point not coplanar
@@ -275,9 +277,9 @@ std::random_shuffle(points.begin(), points.end());
 	rtos.show_all();
 	
 	
-	rtos.remove(v27);
+	//rtos.remove(v27);
 	
-	*/
+	
 	
 	RTOS rtos4a;
 	RTOS rtos4b;
@@ -321,3 +323,11 @@ std::random_shuffle(points.begin(), points.end());
 		 
 	}
 
+	
+	
+
+
+	
+	
+	
+	

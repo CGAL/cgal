@@ -280,7 +280,7 @@ int main(){
 	//          LOCATION        //
 	/*--------------------------*/
 	
-	std::cout<<"\tLOCATION TEST :\n"<<std::endl;
+	//std::cout<<"\tLOCATION TEST :\n"<<std::endl;
 	/*
 	 // DIM 0
 	 // DIM 1
@@ -426,7 +426,7 @@ int main(){
 	// DIM 0
 	// DIM 1
 	
-}
+//}
 
 
 template <class Stream, class Triangulation>

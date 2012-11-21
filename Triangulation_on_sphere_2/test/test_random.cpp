@@ -103,7 +103,7 @@ bool are_equal(RTOS triA, RTOS triB){
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =10000;
+	nu_of_pts =100000;
 	radius=6000000;
 	//radius = 1;
 	//double minDist = radius*2e-25;
@@ -124,7 +124,9 @@ int main(){
     CGAL::Random_points_on_sphere_3<K::Point_3, Creator> on_sphere(radius);
 	RTOS rtos;
 	RTOS rtos2;
-		
+	rtos.set_radius(radius);
+	rtos2.set_radius(radius);
+	
 	std::vector<K::Point_3> points;
 	std::vector<Vertex_handle> vertices;
 		vertices.reserve(nu_of_pts*2);
@@ -171,9 +173,9 @@ int main(){
 		vertices.push_back(v);			
 			
 	}
-	rtos.is_valid();
+	//rtos.is_valid();
 	
-	
+	/*
 	
 	//*****second triangulation*******
 	std::random_shuffle(points.begin(), points.end());
@@ -187,7 +189,7 @@ int main(){
 		vertices2.push_back(v);			
 		
 	}
-	rtos2.is_valid();
+	rtos2.is_valid();*/
 	
 	
 			//rtos.show_all();
