@@ -23,8 +23,9 @@ typedef CGAL::Regular_triangulation_on_sphere_2<Gt>              RTOS;
 typedef RTOS::Vertex_handle                             Vertex_handle;
 typedef RTOS::Face_handle                                 Face_handle;
 typedef RTOS::Point                                             Point;
-typedef RTOS::Faces_iterator                            Face_iterator;
-typedef RTOS::Vertices_iterator                           Vertex_iterator;
+typedef RTOS::All_faces_iterator                            Face_iterator;
+typedef RTOS::All_vertices_iterator                           Vertex_iterator;
+typedef RTOS::Solid_faces_iterator						Solid_faces_iterator;
 typedef RTOS::Locate_type                                 Locate_type;
 typedef RTOS::Edge                                               Edge;
                               
@@ -81,11 +82,11 @@ bool are_equal(RTOS triA, RTOS triB){
 	bool test = false;
 	Face_iterator fiA;
 	Face_iterator fiB;
-	fiA = triA.faces_begin();
-	fiB = triB.faces_begin();
-    for( ; fiA != triA.faces_end(); ++fiA ){
+	fiA = triA.all_faces_begin();
+	fiB = triB.all_faces_begin();
+    for( ; fiA != triA.all_faces_end(); ++fiA ){
 		//**face of fiA in fiB?
-		for( ; fiB != triB.faces_end(); ++fiB ){
+		for( ; fiB != triB.all_faces_end(); ++fiB ){
 			test = has_face(fiB, fiA->vertex(0), fiA->vertex(1), fiA->vertex(2));
 			if(has_face) break;
 			}
@@ -166,7 +167,7 @@ int main(){
 	//====insert new points============
 		
 		
-	for (int count=0; count<nu_of_pts*2; count++) {
+	for (int count=0; count<nu_of_pts; count++) {
 		//std::cout<< "================= point number   "<< count+1 <<" =================="<<std::endl;
 		K::Point_3 p = points.at(count);
 		Vertex_handle v = rtos.insert(p);
@@ -175,7 +176,7 @@ int main(){
 	}
 	//rtos.is_valid();
 	
-	/*
+	
 	
 	//*****second triangulation*******
 	std::random_shuffle(points.begin(), points.end());
@@ -189,7 +190,7 @@ int main(){
 		vertices2.push_back(v);			
 		
 	}
-	rtos2.is_valid();*/
+	rtos2.is_valid();
 	
 	
 			//rtos.show_all();
@@ -199,7 +200,20 @@ int main(){
 	//}
 	std::cout<<"comparing"<<std::endl;
 	are_equal(rtos, rtos2);
-
+	
+	std::cout<<"number of ghost faces  "<<rtos.number_of_ghost_faces()<<std::endl;
+	std::cout<<"total faces  "<<rtos.number_of_faces()<<std::endl;
+	int count =0;
+	
+	Solid_faces_iterator sfi= rtos.solid_faces_begin();
+	for( ; sfi!= rtos.solid_faces_end(); ++sfi ){
+		CGAL_assertion(!sfi->is_ghost());
+		count ++;
+	}
+	std::cout<<"number of solid faces  "<<count<<std::endl;
+		
+	
+	
 	
 	/*
 	 //==remove points=============================

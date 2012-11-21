@@ -55,7 +55,7 @@ class Triangulation_on_sphere_2
 public:
   typedef Tds                                     Triangulation_data_structure;
   typedef Gt                                      Geom_traits;
-//typedef Triangulation_2<Gt, Tds>						Triangulation_2;	
+//typedef TriangAll_vertices_iteratorulation_2<Gt, Tds>						Triangulation_2;	
 	
 	
   typedef typename Geom_traits::Point_2           Point;
@@ -77,10 +77,68 @@ public:
   typedef typename Tds::Vertex_circulator      Vertex_circulator;
   typedef typename Tds::Edge_circulator        Edge_circulator;
 
-  typedef typename Tds::Face_iterator          Faces_iterator;
-  typedef typename Tds::Edge_iterator          Edges_iterator;
-  typedef typename Tds::Vertex_iterator        Vertices_iterator;
+  typedef typename Tds::Face_iterator          All_faces_iterator;
+  typedef typename Tds::Edge_iterator          All_edges_iterator;
+  typedef typename Tds::Vertex_iterator        All_vertices_iterator;
 
+	
+	// This class is used to generate the Finite_*_iterators.
+	class Ghost_tester
+	{
+		const Triangulation_on_sphere_2 *t;
+	public:
+		Ghost_tester() {}
+		Ghost_tester(const Triangulation_on_sphere_2 *tr)	  : t(tr) {}
+		
+		bool operator()(const All_faces_iterator & fit ) const {
+			return fit->is_ghost();
+		}
+		bool operator()(const All_edges_iterator & eit) const {
+			Face_handle f = eit->first();
+			bool edge1 = f->is_ghost();
+			bool edge2 = f->neighbor(eit->second)->is_ghost();
+			bool result = edge1&&edge2;
+			return !result;
+		}
+	};
+	
+	class Contour_tester
+	{
+		const Triangulation_on_sphere_2 *t;
+	public:
+		Contour_tester() {}
+		Contour_tester(const Triangulation_on_sphere_2 *tr)	  : t(tr) {}
+		
+		bool operator() (const All_edges_iterator & eit) const {
+			Face_handle f = eit->first();
+			bool edge1 = f->is_ghost();
+			bool edge2 = f->neighbor(eit->second)->is_ghost();
+			return edge1 !=edge2;
+		}
+	};
+			
+		
+	
+	
+	//We derive in order to add a conversion to handle.
+	class Solid_faces_iterator
+    : public Filter_iterator<All_faces_iterator, Ghost_tester> 
+	{
+		typedef Filter_iterator<All_faces_iterator, Ghost_tester> Base;
+		typedef Solid_faces_iterator                           Self;
+	public:
+		Solid_faces_iterator() : Base() {}
+		Solid_faces_iterator(const Base &b) : Base(b) {}
+		Self & operator++() { Base::operator++(); return *this; }
+		Self & operator--() { Base::operator--(); return *this; }
+		Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+		Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+		operator const Face_handle() const { return Base::base(); }
+	};
+	
+	typedef Filter_iterator<All_edges_iterator, Ghost_tester> 	Solid_edges_iterator;
+	typedef Filter_iterator<All_edges_iterator, Contour_tester> Contour_edges_iterator;
+	
   enum Locate_type {VERTEX=0, 
 		    EDGE, //1
 		    FACE, //2
@@ -205,27 +263,69 @@ Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r, 
 
 	
 	//--------------------------------------------------------------TRAVERSING : ITERATORS AND CIRCULATORS------------------------------------------- 
-	Faces_iterator faces_begin() const {
+	All_faces_iterator all_faces_begin() const {
 		return _tds.faces_begin();
 	}
 	
-	Faces_iterator faces_end() const {
+	All_faces_iterator all_faces_end() const {
 		return _tds.faces_end();
 	}
 	
-	Vertices_iterator vertices_begin() const{
+	Solid_faces_iterator solid_faces_begin() const {
+		if (dimension() < 2)
+			return solid_faces_end();
+		return CGAL::filter_iterator( all_faces_end(),
+									 Ghost_tester(this),
+									 all_faces_begin() );
+	} 
+		
+	
+	
+	Solid_faces_iterator solid_faces_end() const {
+		return CGAL::filter_iterator(  all_faces_end(),
+									 Ghost_tester(this)   );;
+		
+		 
+	}
+	
+	Solid_edges_iterator solid_edges_begin() const {
+		if ( dimension() < 1 )
+			return solid_edges_end();
+		return CGAL::filter_iterator (all_edges_begin(), Ghost_tester(this),
+									  all_edges_end());
+	}
+	
+	Solid_edges_iterator solid_edges_end() const {
+		return CGAL::filter_iterator (all_edges_end(), Ghost_tester(this));
+	}
+	
+	Contour_edges_iterator contour_edges_begin() const{
+		if(dimension()<1)
+			return contour_edges_begin();
+		return CGAL::filter_iterator (all_edges_begin(), Ghost_tester(this),
+									  all_edges_end());
+	}
+	
+	Contour_edges_iterator contour_edges_end() const{
+		return CGAL::filter_iterator (all_edges_end(), Contour_tester(this));
+	}
+
+	
+	
+	
+	All_vertices_iterator vertices_begin() const{
 		return _tds.vertices_begin();
 	}
 	
-	Vertices_iterator vertices_end() const {
+	All_vertices_iterator vertices_end() const {
 		return _tds.vertices_end();
 	}
 	
-	Edges_iterator edges_begin() const{
+	All_edges_iterator all_edges_begin() const{
 		return _tds.edges_begin();
 	}
 	
-	Edges_iterator edges_end() const{
+	All_edges_iterator all_edges_end() const{
 		return _tds.edges_end();
 	}
 	
@@ -346,13 +446,13 @@ is_valid(bool verbose, int level) const
      (dimension()==1 && number_of_vertices() == 3 ) ) return result;
  
   if (dimension() == 1) {
-    Vertices_iterator vit=vertices_begin();
+    All_vertices_iterator vit=vertices_begin();
     }    
 
   else { //dimension() == 2
 
-    for(Faces_iterator it=faces_begin(); 
-	it!=faces_end(); it++) {
+    for(All_faces_iterator it=all_faces_begin(); 
+	it!=all_faces_end(); it++) {
       Orientation s = orientation(it->vertex(0)->point(),
 				  it->vertex(1)->point(),
 				  it->vertex(2)->point());
@@ -438,8 +538,8 @@ locate_edge(const Point& p, Locate_type& lt, int& li, bool plane)const
 {
   Face_handle loc;
   if(plane){
-	Edges_iterator eit;
-	for(eit = edges_begin(); eit != edges_end(); eit ++){
+	All_edges_iterator eit;
+	for(eit = all_edges_begin(); eit !=all_edges_end(); eit ++){
 		if(!eit->first->is_ghost())
 		  if(collinear_between(eit->first->vertex(0)->point(), eit->first->vertex(1)->point(),p)){
 			test_distance( p, (*eit).first, lt, li);
@@ -455,9 +555,9 @@ locate_edge(const Point& p, Locate_type& lt, int& li, bool plane)const
 	}
 	
   else {//not plane
-   Edges_iterator eit;
+   All_edges_iterator eit;
    Face_handle f;
-   for(eit = edges_begin(); eit!= edges_end(); eit ++){
+   for(eit = all_edges_begin(); eit!=all_edges_end(); eit ++){
 	 f=eit->first;
 	 Vertex_handle v1 = f->vertex(0);
 	 Vertex_handle v2 = f -> vertex(1);
@@ -518,7 +618,7 @@ typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::
 march_locate_1D(const Point& p, Locate_type& lt, int& li) const
 {	
-  Face_handle f = edges_begin()->first;
+  Face_handle f =all_edges_begin()->first;
  //check if p is coplanar with existing points
 	
  //first three points of triangulation
@@ -535,7 +635,7 @@ march_locate_1D(const Point& p, Locate_type& lt, int& li) const
  }
 	
  //check if p is coradial with one existing point
- Vertices_iterator vi;
+ All_vertices_iterator vi;
  for( vi = vertices_begin(); vi != vertices_end(); vi++){
 	if (xy_equal(vi->point(), p)){
 	  lt = VERTEX;
@@ -783,7 +883,7 @@ locate(const Point& p,Locate_type& lt,int& li, Face_handle start) const
       lt=OUTSIDE_AFFINE_HULL;
     }
     li=4;
-	test_distance(p, faces_begin(), lt, li);
+	test_distance(p, all_faces_begin(), lt, li);
     return Face_handle();
    }
  
@@ -812,11 +912,11 @@ locate(const Point& p,Locate_type& lt,int& li, Face_handle start) const
   }
    
   if(start==Face_handle()){
-      start=faces_begin();
+      start=all_faces_begin();
   }
  
   if(start->is_ghost()){
-	for (Faces_iterator it = this->_tds.face_iterator_base_begin(); it != faces_end(); it++) {  
+	for (All_faces_iterator it = this->_tds.face_iterator_base_begin(); it !=all_faces_end(); it++) {  
 	   if(!it->is_ghost()){
 		  start = it;
 		  break;
@@ -992,8 +1092,8 @@ show_all() const
   if (dimension() < 1) return;
   if(dimension() == 1) {
     std::cerr<<" all edges dim 1 "<<std::endl; 
-    Edges_iterator aeit;
-      for(aeit = edges_begin(); aeit != edges_end(); aeit++){
+    All_edges_iterator aeit;
+      for(aeit =all_edges_begin(); aeit !=all_edges_end(); aeit++){
        show_face(aeit->first);
 		std::cerr<<"   ------------   " <<std::endl;  
     }
@@ -1001,8 +1101,8 @@ show_all() const
   }
   
   std::cerr<<" faces "<<std::endl;
-  Faces_iterator fi;
-  for(fi = faces_begin(); fi != faces_end(); fi++) {
+  All_faces_iterator fi;
+  for(fi = all_faces_begin(); fi !=all_faces_end(); fi++) {
     show_face(fi);
 	  std::cerr<<"   ------------   " <<std::endl;
   }
@@ -1011,7 +1111,7 @@ show_all() const
   if (number_of_vertices()>1) {
     std::cerr << "affichage des sommets de la triangulation"
 	      <<std::endl;
-    Vertices_iterator vi;
+    All_vertices_iterator vi;
     for( vi = vertices_begin(); vi != vertices_end(); vi++){
       show_vertex(vi);
       std::cerr << "  / face associee : "
@@ -1029,7 +1129,7 @@ Triangulation_on_sphere_2<Gt, Tds>::
 number_of_ghost_faces() 
 {
   int nb=0;
-  for(Faces_iterator it=faces_begin();it!=faces_end();++it)
+  for(All_faces_iterator it=all_faces_begin();it!=all_faces_end();++it)
     if(it->is_ghost())
 		nb++;
   return nb;

@@ -38,23 +38,29 @@ class Regular_triangulation_on_sphere_2
 	double _minDistSquared;
 	
 public:
-  typedef Tds                                  Triangulation_data_structure;
-  typedef Gt                                   Geom_traits;
-  typedef typename Gt::Point_2                 Point;
-  typedef typename Base::size_type             size_type;
-  typedef typename Base::Face_handle           Face_handle;
-  typedef typename Base::Vertex_handle         Vertex_handle;
-  typedef typename Base::Vertex                Vertex;
-  typedef typename Base::Edge                  Edge;
-  typedef typename Base::Locate_type           Locate_type;
-  typedef typename Base::Face_circulator       Face_circulator;
-  typedef typename Base::Edge_circulator       Edge_circulator;
-  typedef typename Base::Vertex_circulator     Vertex_circulator;
-  typedef typename Base::Vertices_iterator     Vertices_iterator;		
-  typedef typename Base::Edges_iterator        Edges_iterator;
-  typedef typename Base::Faces_iterator        Faces_iterator;
-  typedef typename Base::Face::Vertex_list     Vertex_list;
-  typedef typename Vertex_list::iterator       Vertex_list_iterator;
+  typedef Tds									  Triangulation_data_structure;
+  typedef Gt                                      Geom_traits;
+  typedef typename Gt::Point_2                    Point;
+  typedef typename Base::size_type                size_type;
+  typedef typename Base::Face_handle              Face_handle;
+  typedef typename Base::Vertex_handle            Vertex_handle;
+  typedef typename Base::Vertex                   Vertex;
+  typedef typename Base::Edge                     Edge;
+  typedef typename Base::Locate_type              Locate_type;
+  typedef typename Base::Face_circulator          Face_circulator;
+  typedef typename Base::Edge_circulator		  Edge_circulator;
+  typedef typename Base::Vertex_circulator        Vertex_circulator;
+  typedef typename Base::All_vertices_iterator    All_vertices_iterator;		
+  typedef typename Base::All_edges_iterator       All_edges_iterator;
+  typedef typename Base::All_faces_iterator       All_faces_iterator;
+  typedef typename Base::Solid_faces_iterator     Solid_faces_iterator;
+  typedef typename Base::Solid_edges_iterator     Solid_edges_iterator;
+  typedef typename Base::Contour_edges_iterator Contour_edges_iterator;
+	
+	
+	
+  typedef typename Base::Face::Vertex_list        Vertex_list;
+  typedef typename Vertex_list::iterator          Vertex_list_iterator;
 
 
 	
@@ -68,10 +74,18 @@ public:
   using Base::create_face;
   using Base::number_of_faces;
   using Base::number_of_vertices;
-  using Base::faces_begin;
-  using Base::faces_end;
-  using Base::edges_begin;
-  using Base::edges_end;
+  using Base::all_faces_begin;
+  using Base::all_faces_end;
+  using Base::all_edges_begin;
+  using Base::all_edges_end;
+  using Base::solid_faces_begin;
+ using Base::solid_faces_end;
+  using Base::solid_edges_begin;
+  using Base::solid_edges_end;
+  using Base::contour_edges_begin;
+  using Base::contour_edges_end;
+ 	
+	
   using Base::vertices_begin;	
   using Base::vertices_end;		
   using Base::OUTSIDE_AFFINE_HULL;
@@ -134,9 +148,9 @@ void set_radius(double radius){
 
   bool check_neighboring()
   {
-    Faces_iterator eit;
+    All_faces_iterator eit;
     if(dimension()==1){
-      for(eit=faces_begin();eit!=faces_end();++eit)
+      for(eit=all_faces_begin();eit!=all_faces_end();++eit)
       {
 	  Face_handle f1 = eit->neighbor(0);
 	  Face_handle f2 = eit->neighbor(1);
@@ -146,7 +160,7 @@ void set_radius(double radius){
       
     }
 
-    for(eit=faces_begin();eit!=faces_end();++eit)
+    for(eit=all_faces_begin();eit!=all_faces_end();++eit)
       {
 	  Face_handle f1 = eit->neighbor(0);
 	  Face_handle f2 = eit->neighbor(1);
@@ -216,7 +230,7 @@ template <class Stream>
  Stream &write_triangulation_to_off_2(Stream &out,Stream &out2){
 
     // Points of triangulation
- for (Faces_iterator it = this->_tds.face_iterator_base_begin(); it != faces_end(); it++) {  
+ for (All_faces_iterator it = this->_tds.face_iterator_base_begin(); it !=all_faces_end(); it++) {  
     if(!it->is_ghost()
        /*(t.orientation(it->vertex(0)->point(),it->vertex(1)->point(),it->vertex(2)->point())==1)*/
        ){//assert(orientation(it)==POSITIVE);
@@ -252,7 +266,7 @@ Stream &write_triangulation_to_off(Stream &out) {
   std::vector<Face_handle> faces;
 
   // Points of triangulation
-  for (Faces_iterator it = faces_begin(); it != faces_end(); it++) {
+  for (All_faces_iterator it =all_faces_begin(); it !=all_faces_end(); it++) {
     for (int i=0 ; i<3 ; i++) {
       Point p = it->vertex(i)->point();
       out << p.x() << " " 
@@ -494,7 +508,7 @@ is_plane()const{
 		return false;
 	
 	if(number_of_vertices() > 3){
-	Vertices_iterator it1 = vertices_begin(),
+	All_vertices_iterator it1 = vertices_begin(),
 	it2(it1), it3(it1), it4(it1);
 	++it2;
 	++it3; ++it3;
@@ -538,10 +552,10 @@ is_valid(bool verbose, int level ) const //int level
 	 return false;
 	}
 			
-	for(Faces_iterator fit = faces_begin(); fit != faces_end(); ++fit) 
+	for(All_faces_iterator fit =all_faces_begin(); fit !=all_faces_end(); ++fit) 
 		is_valid_face(fit, verbose, level);
 			  
-   for(Vertices_iterator vit = vertices_begin(); vit != vertices_end(); ++vit) 
+   for(All_vertices_iterator vit = vertices_begin(); vit != vertices_end(); ++vit) 
         is_valid_vertex(vit, verbose, level);
 
 
@@ -552,7 +566,7 @@ is_valid(bool verbose, int level ) const //int level
 	CGAL_triangulation_assertion(this->is_plane()); 
 		   break;
    case 2 :
-    for(Faces_iterator it=faces_begin(); it!=faces_end(); it++) {
+    for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); it++) {
       Orientation s = orientation(it->vertex(0)->point(),  it->vertex(1)->point(), it->vertex(2)->point());
 	  result = result && ( s == LEFT_TURN || it->is_ghost());	
 	CGAL_triangulation_assertion(result);
@@ -758,7 +772,7 @@ insert(const Point &p, Locate_type lt, Face_handle loc, int li) {
 		
 		case 1:
 			if(test_dim_up(p)){
-			Face_handle f=edges_begin()->first;
+			Face_handle f=all_edges_begin()->first;
 			Vertex_handle v1=f->vertex(0);
 			Vertex_handle v2=f->vertex(1);
 			Vertex_handle v3=f->neighbor(0)->vertex(1);
@@ -809,14 +823,14 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 			nv->set_point(p);
 			
 			
-			CGAL_triangulation_assertion( orientation(edges_begin()->first->vertex(0)->point(),
-													  edges_begin()->first->vertex(1)->point(),
-													  edges_begin()->first->neighbor(0)->vertex(1)->point())
+			CGAL_triangulation_assertion( orientation(all_edges_begin()->first->vertex(0)->point(),
+													  all_edges_begin()->first->vertex(1)->point(),
+													  all_edges_begin()->first->neighbor(0)->vertex(1)->point())
 										 != RIGHT_TURN ); 
 			
 			//seting ghost edge if needed
 			bool done=false;
-			Edges_iterator eit=edges_begin();
+			All_edges_iterator eit=all_edges_begin();
 			do{
 				Face_handle f=eit->first;
 				Face_handle fn=f->neighbor(0);
@@ -828,14 +842,14 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 					f->ghost()=false;
 				}
 				++eit;
-			}while( eit!=edges_end() && !done );
+			}while( eit!=all_edges_end() && !done );
 			
 			return nv;
 		}
 		
 		else{ //dimension=1
 			bool conform = false;
-			Face_handle f = (edges_begin())->first;
+			Face_handle f = (all_edges_begin())->first;
 			
 			if(plane){//points coplanar with geom_traits->sphere
 				Vertex_handle v1 = f->vertex(0);
@@ -862,7 +876,7 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 			
 			//find smalest vertex
 			Vertex_handle w=vertices_begin();
-			Vertices_iterator vi;
+			All_vertices_iterator vi;
 			for( vi = vertices_begin(); vi != vertices_end(); vi++){
 				if(compare_xyz(w->point(), vi->point())<0)
 					w=vi;
@@ -874,12 +888,12 @@ insert_outside_affine_hull_regular(const Point& p,bool plane)
 			Vertex_handle v = this->_tds.insert_dim_up( w, conform);
 			v->set_point(p);
 	  		
-			this->_ghost=faces_begin();
+			this->_ghost=all_faces_begin();
 			
 			
 			//seting ghost faces if needed
-			Faces_iterator fit;
-			for(fit = faces_begin(); fit != faces_end(); fit++) {
+			All_faces_iterator fit;
+			for(fit =all_faces_begin(); fit !=all_faces_end(); fit++) {
 				//if(orientation(fit)==NEGATIVE){
 				if(orientation(fit)!=POSITIVE){
 					fit->ghost()=true;
@@ -900,7 +914,7 @@ update_ghost_faces(Vertex_handle v)
 {
 	bool neg_found=false;
   if(dimension()==1){
-    Edges_iterator eit=edges_begin();
+    All_edges_iterator eit=all_edges_begin();
     do{
       Face_handle f=eit->first;
       Face_handle fn=f->neighbor(0);
@@ -912,7 +926,7 @@ update_ghost_faces(Vertex_handle v)
       else 
 	f->ghost()=false;
       ++eit;
-    }while( eit!=edges_end());
+    }while( eit!=all_edges_end());
   }
   else{//dimension==2
 
@@ -1037,7 +1051,7 @@ test_dim_up(const Point &p) const{
 	// dimension of triangulation increase from 1 to 2 iff the new vertex in not coplanar with the old vertices
 	std::cout<<p<<std::endl;
 	//first three points of triangulation
-	Face_handle f=edges_begin()->first;
+	Face_handle f=all_edges_begin()->first;
 	Vertex_handle v1=f->vertex(0);
 	Vertex_handle v2=f->vertex(1);
 	Vertex_handle v3=f->neighbor(0)->vertex(1);

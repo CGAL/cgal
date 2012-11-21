@@ -31,8 +31,8 @@ typedef CGAL::Regular_triangulation_on_sphere_2<Gt>              RTOS;
 typedef RTOS::Vertex_handle                             Vertex_handle;
 typedef RTOS::Face_handle                                 Face_handle;
 typedef RTOS::Point                                             Point;
-typedef RTOS::Faces_iterator                            Face_iterator;
-typedef RTOS::Vertices_iterator                           Vertex_iterator;
+typedef RTOS::All_faces_iterator                            Face_iterator;
+typedef RTOS::All_vertices_iterator                           Vertex_iterator;
 typedef RTOS::Locate_type                                 Locate_type;
 typedef RTOS::Edge                                               Edge;
 
@@ -72,11 +72,11 @@ bool are_equal(RTOS triA, RTOS triB){
 	bool test = false;
 	Face_iterator fiA;
 	Face_iterator fiB;
-	fiA = triA.faces_begin();
-	fiB = triB.faces_begin();
-    for( ; fiA != triA.faces_end(); ++fiA ){
+	fiA = triA.all_faces_begin();
+	fiB = triB.all_faces_begin();
+    for( ; fiA != triA.all_faces_end(); ++fiA ){
 		//**face of fiA in fiB?
-		for( ; fiB != triB.faces_end(); ++fiB ){
+		for( ; fiB != triB.all_faces_end(); ++fiB ){
 			test = has_face(fiB, fiA->vertex(0), fiA->vertex(1), fiA->vertex(2));
 			if(has_face) break;
 		}
