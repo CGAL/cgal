@@ -93,7 +93,7 @@ In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as 
 \cgalModels `EqualityComparable` 
 \cgalModels `ImplicitInteroperable` with int
 \cgalModels `ImplicitInteroperable` with NT
-\cgalModels `Fraction` if NT is a ::Fraction 
+\cgalModels `Fraction` if NT is a `Fraction` 
 \cgalModels `RootOf_2` 
 
 \sa `IntegralDomainWithoutDivision` 

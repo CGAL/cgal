@@ -18,19 +18,19 @@ This type is `ImplicitInteroperable` with `Gmpfr`, `Gmpz`,
 `Gmpq`, <TT>long</TT>, <TT>unsigned long</TT>, <TT>int</TT>, <TT>double</TT> 
 and <TT>long double</TT>. 
 
-\cgalModels ::FieldWithKthRoot 
-\cgalModels ::RealEmbeddable 
+\cgalModels `FieldWithKthRoot` 
+\cgalModels `RealEmbeddable` 
 
 ### Implementation ###
 
 All interval operations are performed by the <span class="textsc">Mpfi</span> library. The class 
 `Gmpfi` is not reference counted, but its members are. 
 
-\sa CGAL::Gmpfr 
-\sa CGAL::Interval_nt 
-\sa CGAL::Uncertain 
-\sa ::RealEmbeddable 
-\sa ::FieldWithKthRoot 
+\sa `CGAL::Gmpfr` 
+\sa `CGAL::Interval_nt` 
+\sa `CGAL::Uncertain` 
+\sa `RealEmbeddable` 
+\sa `FieldWithKthRoot` 
 
 */
 class Gmpfi {

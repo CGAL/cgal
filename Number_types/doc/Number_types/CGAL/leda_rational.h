@@ -7,10 +7,10 @@ The class `leda_rational` is a wrapper class that provides the functions
 needed to use the number type `rational`, representing exact 
 multiprecision rational numbers provided by <span class="textsc">LEDA</span>. 
 
-\cgalModels ::Field 
-\cgalModels ::RealEmbeddable 
-\cgalModels ::Fraction 
-\cgalModels ::FromDoubleConstructible 
+\cgalModels `Field` 
+\cgalModels `RealEmbeddable` 
+\cgalModels `Fraction` 
+\cgalModels `FromDoubleConstructible` 
 
 For more details on the number types of \leda we refer to the \leda manual \cite cgal:mnsu-lum. 
 */

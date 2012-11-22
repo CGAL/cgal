@@ -166,7 +166,7 @@ which is in its functionality equivalent to `leda_real`.
 
 
 
-\section Number_typesInterval Interval arithmetic
+\section Number_typesInterval Interval Arithmetic
 
 Interval arithmetic is very important for geometric programming. It
 is a fundamental tool for filtering predicates. For many problems,

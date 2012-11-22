@@ -59,7 +59,7 @@ mode change has been taken care of at a higher level in the call stack.
 What follows describes the behavior when the parameter has its default value, 
 `true`. 
 
-\sa ::CGAL::Set_ieee_double_precision 
+\sa `CGAL::Set_ieee_double_precision` 
 
 */
 template< typename Protected >

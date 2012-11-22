@@ -23,8 +23,8 @@ used is `std::float_round_style`.
 This type is `ImplicitInteroperable` with `Gmpz`, <TT>long</TT>, 
 <TT>unsigned long</TT>, <TT>int</TT>, <TT>double</TT> and <TT>long double</TT>. 
 
-\cgalModels ::FieldWithKthRoot 
-\cgalModels ::RealEmbeddable 
+\cgalModels `FieldWithKthRoot` 
+\cgalModels `RealEmbeddable` 
 
 ### Comparisons ###
 
@@ -47,8 +47,8 @@ class is slightly more efficient in case the implementation does not need
 to copy numbers (this is not usually the case). Nevertheless, setting this 
 flag may be useful for debugging purposes. 
 
-\sa ::RealEmbeddable 
-\sa ::FieldWithKthRoot 
+\sa `RealEmbeddable` 
+\sa `FieldWithKthRoot` 
 
 */
 class Gmpfr {

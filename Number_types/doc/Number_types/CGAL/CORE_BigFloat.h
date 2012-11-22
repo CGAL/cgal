@@ -16,9 +16,9 @@ This number type is provided by the <span class="textsc">Core</span> library \ci
 \cgal defines the necessary functions so that this class complies to the 
 requirements on number types. 
 
-\cgalModels ::FieldWithKthRoot 
-\cgalModels ::RealEmbeddable 
-\cgalModels ::FromDoubleConstructible 
+\cgalModels `FieldWithKthRoot` 
+\cgalModels `RealEmbeddable` 
+\cgalModels `FromDoubleConstructible` 
 
 */
 

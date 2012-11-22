@@ -14,7 +14,7 @@ interval of two `double` values.
 See Knuth, "Seminumerical algorithms", page 654, answer to exercise 
 4.53-39. 
 
-\sa Rational CGAL::to_rational<Rational>(double d)
+\sa `CGAL::to_rational`
 
 */
 template <typename Rational>
