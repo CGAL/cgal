@@ -35,7 +35,7 @@
 
 #include <CGAL/Mesh_3/utilities.h>
 #include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_base.h>
-
+#include <CGAL/Mesh_3/comparison_operators.h>
 
 namespace CGAL {
 
@@ -61,20 +61,35 @@ public:
   typedef typename Base::Triangulation                    Triangulation;
   
 private:
+  typedef CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle> Compare_points;
+  
+  template< class Rel >
+  struct Bimap_vertex_relation_comparator {
+    bool operator()(Rel ra, Rel rb) const {
+      Compare_points comparator;
+      if(ra.left == rb.left)
+        return comparator(ra.right, rb.right);
+      else
+        return comparator(ra.left, rb.left);
+    }
+  };
+
+private:
   // Type to store the edges:
   //  - a set of std::pair<Vertex_handle,Vertex_handle> (ordered at insertion)
   //  - which allows fast lookup from one Vertex_handle
   //  - each element of the set has an associated info (Curve_segment_index) value
   typedef boost::bimaps::bimap< 
-    boost::bimaps::multiset_of<Vertex_handle>,
-    boost::bimaps::multiset_of<Vertex_handle>,
-    boost::bimaps::set_of_relation<>,
+    boost::bimaps::multiset_of<Vertex_handle, Compare_points>,
+    boost::bimaps::multiset_of<Vertex_handle, Compare_points>,
+    boost::bimaps::set_of_relation< 
+         Bimap_vertex_relation_comparator<boost::bimaps::_relation> >,
     boost::bimaps::with_info<Curve_segment_index> >   Edge_map;
 
   typedef typename Edge_map::value_type               Internal_edge;
   
   // Type to store the corners
-  typedef std::map<Vertex_handle,Corner_index>        Corner_map;
+  typedef std::map<Vertex_handle, Corner_index, Compare_points> Corner_map;
   
 public:
   /**
@@ -423,7 +438,8 @@ private:
   Internal_edge make_internal_edge(const Vertex_handle& v1,
                                    const Vertex_handle& v2) const
   {
-    if ( v1 < v2 ) { return Internal_edge(v1,v2); }
+    Compare_points comparator;
+    if ( comparator(v1,v2) ) { return Internal_edge(v1,v2); }
     else { return Internal_edge(v2,v1); }
   }
 
