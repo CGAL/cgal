@@ -99,13 +99,13 @@ containing `x` and returns a handle to it.
 handle make_set(const T& x); 
 
 /*! 
-same as `make_set(x)`. 
+same as `make_set()`. 
 */ 
 handle push_back(const T& x) ; 
 
 /*! 
 inserts the range of values referenced by `[first,beyond)`. 
-\cgalRequires value type of `Forward_iterator` is `T`. 
+\tparam Forward_iterator must be a forward iterator with value type `T`. 
 */ 
 template <class Forward_iterator> void 
 insert(Forward_iterator first, Forward_iterator beyond) ; 
