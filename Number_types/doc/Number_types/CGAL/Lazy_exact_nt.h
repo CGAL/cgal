@@ -12,16 +12,15 @@ approximation of the value, and only refers to `NT` when needed.
 The goal is to speed up exact computations done by any exact but slow 
 number type `NT`. 
 
-`NT` must be a model of concept `RealEmbeddable`. 
-
-`NT` must be at least model of concept `IntegralDomainWithoutDivision`. 
+\tparam NT must be a model of concept `RealEmbeddable`, and at 
+least model of concept `IntegralDomainWithoutDivision`. 
 
 Note that some filtering mechanism is available at the predicate level 
 using `Filtered_predicate` and `Filtered_kernel`. 
 
-\cgalModels ::IntegralDomainWithoutDivision same as `NT` 
-\cgalModels ::RealEmbeddable 
-\cgalModels ::Fraction, if NT is a ::Fraction
+\cgalModels `IntegralDomainWithoutDivision` same as `NT` 
+\cgalModels `RealEmbeddable` 
+\cgalModels `Fraction`, if `NT` is a `Fraction`
 
 ### Example ###
 
@@ -49,9 +48,9 @@ introduces an uninitialized variable `m`.
 Lazy_exact_nt(); 
 
 /*! 
-introduces the value \a x, of any builtin arithmetic type (`int`, `double`, etc) (works only if `NT` has a constructor from this type too).
+introduces the value \a x, of any built-in arithmetic type (`int`, `double`, etc) (works only if `NT` has a constructor from this type too).
 */ 
-Lazy_exact_nt(builtin i); 
+Lazy_exact_nt(BuiltIn i); 
 
 /*! 
 introduces the value `n`. 

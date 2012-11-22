@@ -27,8 +27,8 @@ All interval operations are performed by the <span class="textsc">Mpfi</span> li
 `Gmpfi` is not reference counted, but its members are. 
 
 \sa CGAL::Gmpfr 
-\sa CGAL::Interval_nt<Protected> 
-\sa CGAL::Uncertain<T> 
+\sa CGAL::Interval_nt 
+\sa CGAL::Uncertain 
 \sa ::RealEmbeddable 
 \sa ::FieldWithKthRoot 
 
@@ -48,8 +48,8 @@ typedef Hidden_type Precision_type;
 /// @} 
 
 /// \name Creation 
-/// All the constructors accept an optional last argument: a precision
-/// (a `Precision_type`, which can be used to specify the precision of
+/// All constructors accept as an optional last argument a precision,
+/// which can be used to specify the precision of
 /// the `Gmpfr` endpoints. If none is specified, the default precision
 /// will be used. As the endpoints are represented with a fixed number
 /// of bits, they may need to be rounded. In this case, the number
@@ -265,7 +265,7 @@ minus infinity.
 bool is_inf()const; 
 
 /*! 
-Returns `true` iff `i` is a bounded interval, i.e. its 
+Returns `true` iff `i` is a bounded interval, i.e., its 
 endpoints are neither invalid nor infinite. 
 */ 
 bool is_number()const; 

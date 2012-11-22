@@ -12,9 +12,9 @@ An instance of this class represents an extension of the type `NT` by *one* squa
 `Sqrt_extension` is `RealEmbeddable` if NT is `RealEmbeddable`. 
 
 For example, let `Integer` be some type representing \f$ \Z\f$, then 
-`Sqrt_extension<Integer,Integer>` is able to represent \f$ \Z[\sqrt{root}]\f$ 
-for some arbitrary Integer \f$ root\f$. \cgalFootnote{\f$ R[a]\f$ denotes the extension of a ring \f$ R\f$ by an element \f$ a\f$. See also: <A HREF="http://mathworld.wolfram.com/ExtensionRing.html"><TT>http://mathworld.wolfram.com/ExtensionRing.html</TT></A>}
-The value of \f$ root\f$ is set at 
+`Sqrt_extension<Integer,Integer>` is able to represent \f$ \Z[\sqrt{\mathrm{root}}]\f$ 
+for some arbitrary Integer \f$\mathrm{root}\f$. \cgalFootnote{\f$ R[a]\f$ denotes the extension of a ring \f$ R\f$ by an element \f$ a\f$. See also: <A HREF="http://mathworld.wolfram.com/ExtensionRing.html"><TT>http://mathworld.wolfram.com/ExtensionRing.html</TT></A>}
+The value of \f$\mathrm{root}\f$ is set at 
 construction time, or set to zero if it is not specified. 
 
 Arithmetic operations among different extensions, say \f$ \Z[\sqrt{a}]\f$ 
@@ -26,7 +26,7 @@ representable by `Sqrt_extension<Integer,Integer>`.
 
 This is not tested by `Sqrt_extension` for efficiency reasons. 
 A violation of the precondition leads to undefined behavior. 
-Be aware that for efficiency reasons the given \f$ root\f$ is stored as it is given to 
+Be aware that for efficiency reasons the given \f$\mathrm{root}\f$ is stored as it is given to 
 the constructor. In particular, an extension by a square root of a square is 
 considered as an extension. 
 
@@ -87,22 +87,19 @@ The fourth template argument, `FilterPredicates`, triggers an internal filter th
 
 In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as `FilterPredicates` have no effect. 
 
-\cgalModels ::Assignable 
-\cgalModels ::CopyConstructible 
-\cgalModels ::DefaultConstructible 
-\cgalModels ::EqualityComparable 
-\cgalModels ::ImplicitInteroperable with int
-\cgalModels ::ImplicitInteroperable with NT
-\cgalModels ::Fraction if NT is a ::Fraction 
-\cgalModels ::RootOf_2 
+\cgalModels `Assignable` 
+\cgalModels `CopyConstructible` 
+\cgalModels `DefaultConstructible` 
+\cgalModels `EqualityComparable` 
+\cgalModels `ImplicitInteroperable` with int
+\cgalModels `ImplicitInteroperable` with NT
+\cgalModels `Fraction` if NT is a ::Fraction 
+\cgalModels `RootOf_2` 
 
-\sa ::IntegralDomainWithoutDivision 
-\sa ::IntegralDomain 
-\sa ::Field 
-\sa ::RealEmbeddable 
-\sa ::ImplicitInteroperable 
-\sa ::Fraction 
-\sa ::RootOf_2 
+\sa `IntegralDomainWithoutDivision` 
+\sa `IntegralDomain` 
+\sa `Field` 
+\sa `RealEmbeddable` 
 \sa \cgalTagTrue
 \sa \cgalTagFalse
 
@@ -152,7 +149,7 @@ Sqrt_extension (NT a0, NT a1, ROOT r);
 
 /// \name Operations 
 /// An object of type `Sqrt_extension` represent an expression of the
-/// form: \f$ a0 + a1 sqrt(root) \f$.
+/// form: \f$ a0 + a1 \sqrt(\mathrm{root}) \f$.
 /// @{
 
 /*! 
@@ -173,12 +170,12 @@ const ROOT & 	root () const;
 /*! 
 Returns true in case root of `ext` is not zero. 
 
-Note that \f$ a1 == 0 \f$ does not imply \f$ root == 0\f$. 
+Note that \f$ a1 == 0 \f$ does not imply \f$ \mathrm{root} == 0\f$. 
 */ 
 bool is_extended () const; 
 
 /*! 
-Simplifies the representation, in particular \f$ root\f$ is set to 
+Simplifies the representation, in particular \f$\mathrm{root}\f$ is set to 
 zero if \f$ a1\f$ is zero, that is, `ext` becomes not extended. 
 
 Moreover, it propagates the simplify command to members 
@@ -318,7 +315,7 @@ bool operator>=(const Sqrt_extension&a,const Sqrt_extension& b);
 /*! 
 writes `ext` to ostream `os`. The format depends on the `CGAL::IO::MODE` of `os`. 
 
-In case the mode is `CGAL::IO::ASCII` the format is <TT>EXT[a0,a1,root]</TT>. 
+In case the mode is `CGAL::IO::ASCII` the format is `EXT[a0,a1,root]`. 
 
 In case the mode is `CGAL::IO::PRETTY` the format is human readable. 
 
@@ -329,7 +326,7 @@ In case the mode is `CGAL::IO::PRETTY` the format is human readable.
 std::ostream& operator<<(std::ostream& os, const Sqrt_extension<NT,ROOT> &ext); 
 
 /*! 
-reads `ext` from istream `is` in format <TT>EXT[a0,a1,root]</TT>, the output format in mode `CGAL::IO::ASCII` 
+reads `ext` from istream `is` in format `EXT[a0,a1,root]`, the output format in mode `CGAL::IO::ASCII` 
 
 \attention `operator<<` must be defined exist for `ROOT` and `NT`.
 

@@ -133,7 +133,7 @@ Gmpfr(const Gmpzf &zf);
 
 /*! 
 Creates a `Gmpfr`, initialized with the value of 
-\f$ ie.first \times2^{ie.second} \f$ . 
+`ie.first`\f$ \times2^{\mathrm{ie.second}} \f$ . 
 */ 
 Gmpfr(const std::pair<Gmpz,long> &ie); 
 

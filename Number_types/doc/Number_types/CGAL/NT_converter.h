@@ -3,9 +3,9 @@ namespace CGAL {
 /*!
 \ingroup nt_util
 
-A number type converter usable as default, for CGAL::Cartesian_converter and CGAL::Homogeneous_converter.
+A number type converter usable as default, for `Cartesian_converter` and `Homogeneous_converter`.
 
-\cgalModels ::AdaptableFunctor 
+\cgalModels `AdaptableFunctor` 
 
 */
 template < class NT1, class NT2 >

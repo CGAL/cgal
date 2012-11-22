@@ -13,13 +13,12 @@ has been the basis for `Quotient<NT>`.
 A `Quotient<NT>` `q` is represented as a pair of 
 `NT`s, representing numerator and denominator. 
 
-`NT` must be at least model of concept `IntegralDomainWithoutDivision`. 
+\tparam NT must be at least model of concept `IntegralDomainWithoutDivision` 
+and a model of concept `RealEmbeddable`. 
 
-`NT` must be a model of concept `RealEmbeddable`. 
-
-\cgalModels ::Field 
-\cgalModels ::RealEmbeddable 
-\cgalModels ::Fraction 
+\cgalModels `Field`
+\cgalModels `RealEmbeddable` 
+\cgalModels `Fraction` 
 
 ### Operations ###
 

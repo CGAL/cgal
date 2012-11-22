@@ -23,9 +23,9 @@ same discriminant, that is, if they are defined in the same algebraic extension 
 Besides construction from `int, RT` and `FT` the following functions provide 
 special construction for extensions of degree 2: 
 
-- `make_root_of_2` 
+- `CGAL::make_root_of_2()` 
 
-- `make_sqrt` 
+- `CGAL::make_sqrt()` 
 
 \cgalRefines `DefaultConstructible` 
 \cgalRefines `CopyConstructible` 
@@ -34,7 +34,7 @@ special construction for extensions of degree 2:
 \cgalRefines `ImplicitInteroperable` with FT 
 
 \cgalHasModel `double` (not exact) 
-\cgalHasModel CGAL::Sqrt_extension 
+\cgalHasModel `CGAL::Sqrt_extension` 
 
 \sa `CGAL::make_root_of_2<RT>` 
 \sa `CGAL::make_sqrt<RT>` 

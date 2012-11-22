@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup nt_ralgebraic
 
-The function `compute_roots_of_2` solves a univariate polynomial as it is defined by the 
+The function `compute_roots_of_2()` solves a univariate polynomial as it is defined by the 
 coefficients given to the function. The solutions are written into the given 
 `OutputIterator`. 
 Writes the real roots of the polynomial \f$ aX^2+bX+c\f$ into \f$ oit\f$ in ascending order. 

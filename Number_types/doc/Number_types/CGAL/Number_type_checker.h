@@ -11,18 +11,16 @@ the instances after each modification, as well as for each comparison.
 
 This is a debugging tool which is useful when dealing with number types. 
 
-### Parameters ###
 
-`NT1` must be a model of some algebraic structure concept. 
-`NT2` must be a model of the same algebraic structure concept. 
-`NT1` and `NT2` must be `FromDoubleConstructible`. 
-`Comparator` has to be a model of a binary predicate taking `NT1` 
+\tparam NT1, NT2 must be a model of the same algebraic structure concept
+and they must be `FromDoubleConstructible`. 
+\tparam Comparator must be a model of a binary predicate taking `NT1` 
 as first argument, and `NT2` as second. The `Comparator` parameter 
 has a default value which is a functor calling `operator==` between 
 the two arguments. 
 
 \cgalModels `IntegralDomainWithoutDivision` (same as `NT1`) 
-\cgalModels ::RealEmbeddable 
+\cgalModels `RealEmbeddable` 
 
 ### Operations ###
 

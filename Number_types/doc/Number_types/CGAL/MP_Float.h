@@ -19,7 +19,7 @@ limited by the available memory, the exponent is currently represented by a
 plan to also have a multiprecision exponent to fix this issue. 
 
 \cgalModels `EuclideanRing`
-\cgalModels ::RealEmbeddable 
+\cgalModels `RealEmbeddable` 
 
 ### Implementation ###
 
