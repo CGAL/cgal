@@ -844,6 +844,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../GraphicsView/doc/GraphicsView/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+          <item>./tags/Circular_kernel_2.tag=../../CGAL.CGAL.2D-Circular-Geometry-Kernel/html</item>
           </list>
         </doxygen>
       </project>
