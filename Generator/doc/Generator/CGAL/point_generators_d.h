@@ -3,8 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgGenerators
 
-The function `points_on_cube_grid_d` generates a given number of points on a cubic
-grid in any dimension
+generates a given number of points on a cubic grid in any dimension
 whose size is determined by the number of points to be generated.
 
 It creates the first \f$ n\f$ points on the regular \f$ \lceil
@@ -30,7 +29,7 @@ The dimension of `Creator` should be \f$ dim\f$.
 \sa `CGAL::points_on_cube_grid_3`
 
 */
-template <class OutputIterator, Creator creator>
+template <class OutputIterator, class Creator>
 OutputIterator
 points_on_cube_grid_d(int dim, double a, std::size_t n, OutputIterator o,
 Creator creator);

@@ -28,7 +28,7 @@ inserting the \f$ n\f$ points.
 \sa `CGAL::random_selection`
 
 */
-template <class OutputIterator, Creator creator>
+template <class OutputIterator, class Creator>
 OutputIterator
 points_on_cube_grid_3( double a, std::size_t n, OutputIterator o,
 Creator creator =

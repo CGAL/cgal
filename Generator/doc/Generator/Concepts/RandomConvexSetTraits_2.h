@@ -1,4 +1,5 @@
 /*!
+\ingroup PkgGeneratorsConcepts
 \cgalConcept
 
 The concept `RandomConvexSetTraits_2` describes the requirements of the traits 

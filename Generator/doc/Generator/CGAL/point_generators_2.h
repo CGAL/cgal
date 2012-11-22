@@ -34,7 +34,7 @@ are needed from `rnd` for each point.
 \sa `std::random_shuffle`
 
 */
-template <class ForwardIterator>
+  template <class ForwardIterator, class Creator>
 void perturb_points_2( ForwardIterator first, ForwardIterator last,
 double xeps, double yeps = xeps, Random& rnd = default_random,
 Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
@@ -93,7 +93,7 @@ the \f$ n\f$ points.
 \sa `std::random_shuffle`
 
 */
-template <class OutputIterator, Creator creator>
+template <class OutputIterator, class Creator>
 OutputIterator
 points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
                          Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
@@ -129,7 +129,7 @@ Returns the value of `first2` after inserting the \f$ n\f$ points.
 \sa `std::random_shuffle`
 
 */
-template <class RandomAccessIterator, class OutputIterator>
+  template <class RandomAccessIterator, class OutputIterator, class Creator>
 OutputIterator random_collinear_points_2( RandomAccessIterator first,
 RandomAccessIterator last,
 std::size_t n, OutputIterator first2, Random& rnd = default_random,
