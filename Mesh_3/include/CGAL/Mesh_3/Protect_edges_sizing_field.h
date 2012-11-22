@@ -30,6 +30,7 @@
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/Mesh_3/comparison_operators.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -110,6 +111,9 @@ private:
   typedef std::vector<std::pair<Curve_segment_index,Bare_point> >    Incident_edges;
   typedef std::vector<Vertex_handle>                                 Vertex_vector;
   typedef std::vector<std::pair<Vertex_handle,Curve_segment_index> > Incident_vertices;
+    
+  typedef CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle>      Compare_points;
+  typedef std::set<Vertex_handle, Compare_points>                    Vertex_set;
   
 private:
   /// Insert corners of the mesh
@@ -321,7 +325,7 @@ private:
   FT minimal_size_;
   Weight minimal_weight_;
   std::set<Curve_segment_index> treated_edges_;
-  std::set<Vertex_handle> unchecked_vertices_;
+  Vertex_set unchecked_vertices_;
 };
 
 
@@ -578,7 +582,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
 
     // Change w in order to be sure that no existing point will be included
     // in (p,w)
-    std::set<Vertex_handle> vertices_in_conflict_zone;
+    Vertex_set vertices_in_conflict_zone;
     { // fill vertices_in_conflict_zone
       std::vector<Cell_handle> cells_in_conflicts;
       tr.find_conflicts(Weighted_point(p, w), ch,
@@ -602,7 +606,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
     typename Tr::Point nearest_point;
 #endif
-    for(typename std::set<Vertex_handle>::const_iterator 
+    for(typename Vertex_set::const_iterator 
           it = vertices_in_conflict_zone.begin(),
           end = vertices_in_conflict_zone.end(); it != end ; ++it )
     {
@@ -1046,8 +1050,9 @@ refine_balls()
 #endif
     ++nb;
     restart = false;
-    std::map<Vertex_handle, FT> new_sizes;
-    
+    typedef std::map<Vertex_handle, FT, Compare_points> Vertex_map;
+    Vertex_map new_sizes;
+
     for(typename Tr::Finite_edges_iterator eit = tr.finite_edges_begin(), 
         end = tr.finite_edges_end(); eit != end; ++eit)
     {
@@ -1081,7 +1086,7 @@ refine_balls()
     }
     
     // Update size of balls
-    for ( typename std::map<Vertex_handle,FT>::iterator it = new_sizes.begin(),
+    for ( typename Vertex_map::iterator it = new_sizes.begin(),
          end = new_sizes.end() ; it != end ; ++it)
     {
       // Set size of the ball to new value
@@ -1242,7 +1247,7 @@ check_and_repopulate_edges()
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "check_and_repopulate_edges()\n";
 #endif
-  std::set<Vertex_handle> vertices;
+  Vertex_set vertices;
   std::copy( unchecked_vertices_.begin(), unchecked_vertices_.end(),
              std::inserter(vertices,vertices.begin()) );
   
