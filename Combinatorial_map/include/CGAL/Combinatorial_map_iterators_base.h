@@ -134,8 +134,7 @@ namespace CGAL {
   protected:
     /// test if adart->beta(ai) exists and is not marked for amark
     bool is_unmarked(Dart_handle adart, unsigned int ai, unsigned amark) const
-    { return !adart->is_free(ai) &&                                        
-        !mmap->is_marked(adart->beta(ai), amark); }
+    { return !mmap->is_marked(adart->beta(ai), amark); }
 
     /// test if adart->beta(ai)->beta(aj) exists
     bool exist_betaij(Dart_handle adart, unsigned int ai, unsigned int aj) const
@@ -144,8 +143,7 @@ namespace CGAL {
     /// test if adart->beta(ai)->beta(aj) exists and is not marked for amark
     bool is_unmarked2(Dart_handle adart, unsigned int ai, unsigned int aj,
                       unsigned amark) const
-    { return exist_betaij(adart,ai,aj) &&
-        !mmap->is_marked(adart->beta(ai)->beta(aj), amark); }
+    { return !mmap->is_marked(adart->beta(ai)->beta(aj), amark); }
 
   protected:
     /// The map containing the darts to iterate on.
@@ -320,8 +318,7 @@ namespace CGAL {
       {
         CGAL_assertion( this->mmap->is_marked(*this, this->mmark_number) );
 
-        if (!(*this)->is_free(Bi) &&
-            !this->mmap->is_marked((*this)->beta(Bi), this->mmark_number))
+        if (!this->mmap->is_marked((*this)->beta(Bi), this->mmark_number))
         {
           this->mto_treat.push((*this)->beta(Bi));
           this->mmap->mark((*this)->beta(Bi), this->mmark_number);                  
