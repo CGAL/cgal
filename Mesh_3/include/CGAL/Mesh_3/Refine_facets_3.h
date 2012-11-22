@@ -262,8 +262,7 @@ private:
       return mirror;
     else if(r_tr_.is_infinite(mirror.first->vertex(mirror.second)))
       return facet;
-    else 
-      return (facet.first->vertex(facet.second)->point()
+    else if(facet.first->vertex(facet.second)->point()
               < mirror.first->vertex(mirror.second)->point())
       return facet;
     else
