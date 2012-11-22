@@ -10,57 +10,23 @@ else()
 endif()
 
 find_package(CGAL COMPONENTS Core Qt4 )
-
 include( ${CGAL_USE_FILE} )
-
-#find_package(Qt3-patched)
-# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
-# that it can be used together with FindQt4: all its variables are prefixed
-# by "QT3_" instead of "QT_".
-
-#if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
-#
-#  # use the Qt MOC preprocessor on classes that derives from QObject
-#  include( Qt3Macros-patched )
-#  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/arrangement_2.h" arrangement_2.moc )
-#  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/forms.h" forms.moc )
-#
-#
-#  # The executable itself.
-#  add_executable  ( arrangement_2 
-#                    arrangement_2.cpp arrangement_2.moc
-#		    forms.cpp forms.moc
-#		    demo_tab.cpp
-#		    MyWindow_files.cpp
-#		    MyWindow_operations.cpp
-#		    MyWindow_overlay.cpp
-#		    qt_layer.cpp
-#		    )
-#
-#  add_to_cached_list( CGAL_EXECUTABLE_TARGETS arrangement_2 )
-#
-#  target_link_libraries( arrangement_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
-#
-#else()
-#
-#  message(STATUS "NOTICE: This demo requires CGAL and Qt3, and will not be compiled.")
-#
-#endif()
 
 find_package( Qt4 )
 
-include( ${QT_USE_FILE} )
-include_directories( ./ )
-# Arrangement package includes
-include_directories( BEFORE ../../include )
+if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND)
+  include( ${QT_USE_FILE} )
+  include_directories( ./ )
+  # Arrangement package includes
+  include_directories( BEFORE ../../include )
 
-qt4_wrap_ui( arrangement_2_uis
+  qt4_wrap_ui( arrangement_2_uis
     ArrangementDemoWindow.ui
     NewTabDialog.ui
     OverlayDialog.ui
     ArrangementDemoPropertiesDialog.ui
-)
-qt4_wrap_cpp( arrangement_2_mocs
+  )
+  qt4_wrap_cpp( arrangement_2_mocs
     ArrangementDemoWindow.h
     ArrangementDemoTab.h
     Callback.h
@@ -71,11 +37,11 @@ qt4_wrap_cpp( arrangement_2_mocs
     DeleteCurveModeItemEditor.h
     PropertyValueDelegate.h
     #PropertyValueDelegate.cpp
-)
-qt4_add_resources( arrangement_2_resources
+  )
+  qt4_add_resources( arrangement_2_resources
     ArrangementDemoWindow.qrc
-)
-add_executable( arrangement_2
+  )
+  add_executable( arrangement_2
     arrangement_2.cpp
     ArrangementGraphicsItem.cpp
     ArrangementDemoWindow.cpp
@@ -101,12 +67,18 @@ add_executable( arrangement_2
    ${arrangement_2_mocs}
    ${arrangement_2_uis}
    ${arrangement_2_resources}
-)
+  )
 
-target_link_libraries( arrangement_2
+  target_link_libraries( arrangement_2
     ${CGAL_LIBRARIES}
     ${CGAL_3RD_PARTY_LIBRARIES}
     ${QT_LIBRARIES}
-)
+  )
+
+else()
+
+  message(STATUS "NOTICE: This demo requires CGAL and Qt4, and will not be compiled.")
+
+endif()
 
 # add_subdirectory( tests )
