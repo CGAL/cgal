@@ -16,19 +16,10 @@ The only function that needs to be defined in a derived class is
 the name of the function suggests that the ipelet may throw exceptions that 
 will be caught by a function of the class `Ipelet_base` avoiding Ipe to crash. 
 
-### Parameters ###
-
-The `Kernel` template parameter determines the kernel that will be used 
+\tparam Kernel determines the kernel that will be used
 in the ipelet. This parameter must be set according to the algorithm to be used. 
 The integer `nbf` indicates the number of functions defined by the ipelet. 
 
-### Readable and Drawable Object ###
-
-The set of `read objects` is defined as the set of objects of type
-`Point_2`, `Segment_2`, `Polygon_2`, `Circular_arc_2` or
-`Circle_2`. The set of `drawable objects` is defined as the super set
-of the set of `read objects` also including objects of type `Line_2`,
-`Ray_2`, `Triangle_2` and `Iso_rectangle_2`.
 
 */
 template< typename Kernel, typename int nbf >
@@ -36,6 +27,11 @@ class Ipelet_base {
 public:
 
 /// \name Types 
+/// The set of `read objects` is defined as the set of objects of type
+/// `Ipelet_base::Point_2`, `Ipelet_base::Segment_2`, `Ipelet_base::Polygon_2`, `Ipelet_base::Circular_arc_2` or
+/// `Ipelet_base::Circle_2`. The set of `drawable objects` is defined as the super set
+/// of the set of `read objects` also including objects of type `Ipelet_base::Line_2`,
+/// `Ipelet_base::Ray_2`, `Ipelet_base::Triangle_2` and `Ipelet_base::Iso_rectangle_2`.
 /// @{
 
 /*! 
