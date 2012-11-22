@@ -1,11 +1,16 @@
 
+
+
+
+
+
 /*!
-\addtogroup PkgHandlesAndCirculatorsConcepts
+  \ingroup PkgHandlesAndCirculatorsConcepts
 
+A Circulator is similar to an Iterator, with the difference that it is designed for circular data structures.
+<h1></h1>
 
-# Introduction # {#circulatorConceptsIntro}
-
-
+# Circulators # {#circulatorConceptsIntro}
 Iterators in the \stl were tailored for linear sequences. The
 specialization for circular data structures leads to slightly
 different requirements which we will summarize in the
@@ -22,7 +27,6 @@ for a circulator `c` is true for an empty sequence. As for \cpp,
 we recommend the use of 0 instead of `NULL`.
 
 ## Circulators ## {#circulatorConceptsCirculators}
-
 Similar to \stl iterators, we distinguish between forward,
 bidirectional, and random access circulators\cgalFootnote{Input
 circulators are a contradiction, since any circulator is supposed to
@@ -290,14 +294,6 @@ bool contains( Circulator c, Circulator d, const T& value) {
 \endcode 
 
 */
-
-
-
-
-/*!
-  \ingroup PkgHandlesAndCirculatorsConcepts
-  See \ref circulatorConcepts.
-*/
 class Circulator {
 public:
 
@@ -305,7 +301,7 @@ public:
 
 /*!
   \ingroup PkgHandlesAndCirculatorsConcepts
-  See \ref circulatorConceptsForward
+  See Subsection \ref circulatorConceptsForward in the page on Circulators.
 */
 class ForwardCirculator {
   
@@ -313,7 +309,7 @@ class ForwardCirculator {
 
 /*!
   \ingroup PkgHandlesAndCirculatorsConcepts
-  See \ref circulatorConceptsBidirectional
+  See Subsection \ref circulatorConceptsBidirectional in the page on Circulators.
 */
 class BidirectionalCirculator {
   
@@ -322,7 +318,7 @@ class BidirectionalCirculator {
 
 /*! 
   \ingroup PkgHandlesAndCirculatorsConcepts
-  See \ref sectionRandomAccessCirculatorRequ 
+  See Subsection \ref sectionRandomAccessCirculatorRequ in the page on Circulators.
 */
 class RandomAccessCirculator {
   
