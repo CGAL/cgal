@@ -257,7 +257,7 @@ operator<<(Geomview_stream& gs, const Point_2<R>& p);
 
 /// \addtogroup GeomviewOutput Output Operators for CGAL Kernel Classes 
 /// \ingroup PkgGeomview
-/// At the moment not all classes of the \cgal kernel have output
+/// The following classes of the \cgal kernel have output
 /// operators. 2D objects are embedded in the `xy`-plane.
 /// @{
 
@@ -381,7 +381,7 @@ operator<<(Geomview_stream& gs, const Bbox_3& b);
 
 /// \addtogroup GeomviewInput Input Operators for CGAL Kernel Classes 
 /// \ingroup PkgGeomview
-/// At the moment input is only provided for points. The user has to select
+/// An input operator is provided for points. The user has to select
 /// a point on the <I>pick plane</I> with the right mouse button. The pick plane
 /// can be moved anywhere with the left mouse button, before a point is entered.
 /// @{
@@ -399,9 +399,9 @@ operator>>(Geomview_stream& gs, Point_3<R>& p);
 
 /// \addtogroup GeomviewOutputClasses Output Operators for CGAL Basic Library Classes
 /// \ingroup PkgGeomview
-/// At the moment input is only provided for points. The user has to select
-/// a point on the <I>pick plane</I> with the right mouse button. The pick plane
-/// can be moved anywhere with the left mouse button, before a point is entered.
+/// Output operators are provided for polyhedral surfaces, as well as for 3D 
+/// and 2D triangulations. The latter allow to visualize terrrains if the 
+/// point type isa  3D point.
 /// @{
 
 /*!
