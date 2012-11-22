@@ -477,7 +477,7 @@ namespace CGAL {
     void set_mark_to(Dart_const_handle adart, int amark, 
                      bool astate) const
     {
-      // CGAL_assertion( adart != null_dart_handle );
+      CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
 
       if (is_marked(adart, amark) != astate)
@@ -495,7 +495,7 @@ namespace CGAL {
      */
     void mark(Dart_const_handle adart, int amark) const
     {
-      // CGAL_assertion( adart != null_dart_handle );
+      CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
 
       if (is_marked(adart, amark)) return;
@@ -510,13 +510,35 @@ namespace CGAL {
      */
     void unmark(Dart_const_handle adart, int amark) const
     {
-      // CGAL_assertion( adart != null_dart_handle );
+      CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
 
       if (!is_marked(adart, amark)) return;
 
       --mnb_marked_darts[(size_type)amark];
       adart->set_mark(amark, mmask_marks[(size_type)amark]);      
+    }
+
+    /** Mark null_dart (used as a sentinel in iterators).
+     * As null dart does not belong to the set of darts, it is not counted
+     * as number of marked darts.
+     * @param amark the given mark.
+     */
+    void mark_null_dart(int amark) const
+    {
+      CGAL_assertion( is_reserved(amark) );
+
+      null_dart_handle->set_mark(amark, !mmask_marks[(size_type)amark]);
+    }
+
+    /** Unmark null_dart.
+     * @param amark the given mark.
+     */
+    void unmark_null_dart(int amark) const
+    {
+      CGAL_assertion( is_reserved(amark) );
+
+      null_dart_handle->set_mark(amark, mmask_marks[(size_type)amark]);
     }
 
     /** Unmark all the darts of the map for a given mark.
@@ -536,7 +558,7 @@ namespace CGAL {
       }
       else
       {
-        unmark(null_dart_handle, amark);
+        unmark_null_dart(amark);
         for (typename Dart_range::const_iterator it(darts().begin()), 
                itend(darts().end()); it!=itend; ++it)
           unmark(it, amark);
@@ -1906,6 +1928,7 @@ namespace CGAL {
         }
         for (unsigned int i=0; i<tounmark.size(); ++i) 
         {
+          unmark(null_dart_handle, tounmark[i]);
           CGAL_assertion(is_whole_map_unmarked(tounmark[i]));
           free_mark(tounmark[i]);
         }
