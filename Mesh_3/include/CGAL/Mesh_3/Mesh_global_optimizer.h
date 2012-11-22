@@ -321,7 +321,7 @@ operator()(int nb_iterations, Visitor visitor)
     visitor.end_of_iteration(i);
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-    unsigned int moving_vertices_size = moving_vertices.size();   
+    std::size_t moving_vertices_size = moving_vertices.size();   
     std::cerr << boost::format("\r             \r"
       "end iter.%1%, %2% / %3%, last step:%4$.2fs, step avg:%5$.2fs, avg big moves:%6$.3f ")
     % (i+1)
