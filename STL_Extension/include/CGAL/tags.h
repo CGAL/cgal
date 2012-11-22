@@ -57,10 +57,6 @@ struct Null_functor {
 
 // A function that asserts a specific compile time tag
 // forcing its two arguments to have equal type.
-// It is encapsulated with #ifdef since it will be defined also elsewhere.
-// ======================================================
-#ifndef CGAL_ASSERT_COMPILE_TIME_TAG
-#define CGAL_ASSERT_COMPILE_TIME_TAG 1
 template <class Base>
 struct Assert_tag_class
 {
@@ -75,12 +71,6 @@ Assert_compile_time_tag( const Tag&, const Derived& b)
   Assert_tag_class<Tag> x;
   x.match_compile_time_tag(b);
 }
-#endif // CGAL_ASSERT_COMPILE_TIME_TAG
-
-template < class T>
-inline
-void
-assert_equal_types( const T&, const T&) {}
 
 } //namespace CGAL
 

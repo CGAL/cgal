@@ -34,7 +34,7 @@
 #include <list>
 #include <vector>
 #include <CGAL/circulator.h>  // Needed for iterator category assertions.
-#include <CGAL/circulator_impl.h>  // Needed for test data structures.
+#include <CGAL/Circulator/Circulator_adapters.h>  // Needed for test data structures.
 #include <CGAL/In_place_list.h>
 
 // Global data structures.

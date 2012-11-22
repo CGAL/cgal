@@ -31,7 +31,7 @@
 #include <list>
 #include <vector>
 #include <cassert>
-#include <CGAL/circulator_impl.h>
+#include <CGAL/Circulator/Circulator_adapters.h>
 
 using namespace CGAL;
 

@@ -16,6 +16,11 @@ using std::endl;
 typedef CGAL::Polygon_2<K, list<Point> > ListPolygon;
 typedef CGAL::Polygon_2<K, vector<Point> > VectorPolygon;
 
+#include <CGAL/Circulator/Circulator_concepts.h>
+
+BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<ListPolygon::Edge_const_circulator>));
+BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<ListPolygon::Vertex_circulator>));
+
 #include <fstream>
 #include <algorithm>
 #include <cassert>

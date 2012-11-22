@@ -33,53 +33,52 @@ namespace CGAL {
 struct Circulator_tag {};                   // any circulator.
 struct Iterator_tag {};                     // any iterator.
 
+// conversion operators instead of inheritance to avoid ambiguous
+// bases. we have to repeat all possible conversion so we don't run
+// into a multiple user-defined conversions, problem.
+
 struct Forward_circulator_tag
-    : public std::forward_iterator_tag {};
+  : public std::forward_iterator_tag 
+{};
+
 struct Bidirectional_circulator_tag
-    : public std::bidirectional_iterator_tag {};
+  : public std::bidirectional_iterator_tag 
+{ 
+  operator Forward_circulator_tag() const { return Forward_circulator_tag(); }
+};
+
 struct Random_access_circulator_tag
-    : public std::random_access_iterator_tag {};
-template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
-struct Forward_circulator_base {
-    typedef T                            value_type;
-    typedef Dist                         difference_type;
-    typedef Size                         size_type;
-    typedef T*                           pointer;
-    typedef T&                           reference;
-    typedef Forward_circulator_tag       iterator_category;
+  : public std::random_access_iterator_tag
+{ 
+  operator Bidirectional_circulator_tag() const { return Bidirectional_circulator_tag(); }
+  operator Forward_circulator_tag() const { return Forward_circulator_tag(); }
 };
-template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
-struct Bidirectional_circulator_base {
-    typedef T                            value_type;
-    typedef Dist                         difference_type;
-    typedef Size                         size_type;
-    typedef T*                           pointer;
-    typedef T&                           reference;
-    typedef Bidirectional_circulator_tag iterator_category;
-};
-template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
-struct Random_access_circulator_base {
-    typedef T                            value_type;
-    typedef Dist                         difference_type;
-    typedef Size                         size_type;
-    typedef T*                           pointer;
-    typedef T&                           reference;
-    typedef Random_access_circulator_tag iterator_category;
-};
-template < class Category,
-           class T,
-           class Distance  = std::ptrdiff_t,
-           class Size      = std::size_t,
-           class Pointer   = T*,
-           class Reference = T&>
+
+template <typename Tag, typename T, typename Distance = std::ptrdiff_t,
+          /* size is so awkwardly placed to faciliate using the
+           * default arguments from the derived classes */
+          typename Size = std::size_t, typename Pointer = T*, 
+          typename Reference = T&>
 struct Circulator_base {
-    typedef Category  iterator_category;
-    typedef T         value_type;
-    typedef Distance  difference_type;
-    typedef Size      size_type;
-    typedef Pointer   pointer;
-    typedef Reference reference;
+  typedef Tag       iterator_category;
+  typedef T         value_type;
+  typedef Distance  difference_type;
+  typedef Pointer   pointer;
+  typedef Reference reference;
+  typedef Size      size_type;
 };
+
+template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
+struct Forward_circulator_base 
+  : Circulator_base<Forward_circulator_tag, T, Dist, Size> {};
+
+template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
+struct Bidirectional_circulator_base 
+  : Circulator_base<Bidirectional_circulator_tag, T, Dist, Size> {};
+
+template <class T, class Dist = std::ptrdiff_t, class Size = std::size_t>
+struct Random_access_circulator_base
+  : Circulator_base<Random_access_circulator_tag, T, Dist, Size> {};
 
 // variant base classes
 // ---------------------

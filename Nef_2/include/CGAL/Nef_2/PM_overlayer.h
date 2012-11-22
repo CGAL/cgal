@@ -34,6 +34,9 @@
 #define CGAL_NEF_DEBUG 13
 #include <CGAL/Nef_2/debug.h>
 
+#include <boost/static_assert.hpp>
+#include <boost/type_traits/is_same.hpp>
+
 #ifndef CGAL_USE_LEDA
 #define LEDA_MEMORY(t) 
 #endif
@@ -958,7 +961,8 @@ bool is_forward_edge(const Const_decorator& N,
 
 void assert_type_precondition() const
 { typename PM_decorator_::Point p1; Point p2;
-  assert_equal_types(p1,p2); }
+  BOOST_STATIC_ASSERT((boost::is_same<typename PM_decorator_::Point, Point>::value)); }
+
 
 
 
