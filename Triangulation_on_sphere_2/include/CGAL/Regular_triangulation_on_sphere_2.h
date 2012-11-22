@@ -181,12 +181,13 @@ void set_radius(double radius){
   Vertex_handle insert(const Point &p, Face_handle f = Face_handle() );
   Vertex_handle insert_first(const Point &p);
   Vertex_handle insert_second(const Point &p);
-  Vertex_handle insert_outside_affine_hull_regular(const Point& p,bool plane=false);
+  //Vertex_handle insert_outside_affine_hull_regular(const Point& p,bool plane=false);
+	Vertex_handle insert_outside_affine_hull_regular(const Point& p);
   //Vertex_handle insert_hole_approach_2(const Point &p, Locate_type lt, Face_handle loc, int li) ;
   Vertex_handle insert_in_plane_triangulation(const Point &p, Locate_type lt, Face_handle loc);
 	
   bool test_conflict(const Point  &p, Face_handle fh) const;
-  bool update_ghost_faces(Vertex_handle v=Vertex_handle());
+  bool update_ghost_faces(Vertex_handle v=Vertex_handle(), bool first = false);
 	
   //REMOVAL
   void remove_degree_3(Vertex_handle v, Face_handle f = Face_handle());
@@ -568,7 +569,8 @@ is_valid(bool verbose, int level ) const //int level
    case 2 :
     for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); it++) {
       Orientation s = orientation(it->vertex(0)->point(),  it->vertex(1)->point(), it->vertex(2)->point());
-	  result = result && ( s == LEFT_TURN || it->is_ghost());	
+	  //result = result && ( s == LEFT_TURN || it->is_ghost());	
+		result = result && (s != NEGATIVE || it->is_ghost());
 	CGAL_triangulation_assertion(result);
 	}
    
@@ -661,48 +663,7 @@ insert_in_plane_triangulation(const Point &p, Locate_type lt, Face_handle loc){
 	CGAL_triangulation_precondition(!test_dim_up(p));
 	CGAL_triangulation_precondition(dimension()==1);
 	
-	/*
-	Face_handle f = edges_begin()->first;
-	Face_handle loc;
-	//existing points coplanar with sphere?
-	Orientation pqr = orientation(f->vertex(0)->point(), 
-								  f->vertex(1)->point(),
-								  f->neighbor(0)->vertex(1)->point());
-	if( pqr != ON_ORIENTED_BOUNDARY ){
-		Edges_iterator eit=edges_begin();
-		do{
-			Face_handle f=eit->first;
-			Vertex_handle v1 = f->vertex(0);
-			Vertex_handle v2 = f -> vertex(1);
-			if(orientation(v1->point(), v2->point(), p)==RIGHT_TURN){
-				loc = f;
-			break;
-				
-			} eit++;
-		}while( eit!=edges_end());
-	}
-	else {
-		
-		Edges_iterator eit=edges_begin();
-		Point po = Point(0,0,0);
-		
-		do{
-			Face_handle f=eit->first;
-			Vertex_handle v1 = f->vertex(0);
-			Vertex_handle v2 = f -> vertex(1);
 			
-			//ERROR
-			bool conflict = Base::collinear_between(v1->point(), v2->point(), p);
-			//Orientation o=coplanar_orientation(v1->point(), v2->point(), p);
-			//if(o ==RIGHT_TURN){
-			if(conflict){
-				loc = f;
-				break;
-				
-			} eit++;
-		}while( eit!=edges_end());
-	}*/
-		
 		Vertex_handle v0 = loc->vertex(0);
 		Vertex_handle v1 = loc->vertex(1);
 		Vertex_handle v=this->_tds.create_vertex();
@@ -722,7 +683,7 @@ insert_in_plane_triangulation(const Point &p, Locate_type lt, Face_handle loc){
 		
 		delete_face(loc);
 		
-		
+	   update_ghost_faces(v);
 		return v;
 }
 	
@@ -756,9 +717,8 @@ typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 insert(const Point &p, Locate_type lt, Face_handle loc, int li) {
 		
-	//!!!!!!!!!!!!TODO point is valide!!!!!!!!!!!!!!!!!!!!!!!!
-	
 	Vertex_handle v;
+	
 	switch (dimension()){
 		case -2 :
 			return insert_first(p);
@@ -770,22 +730,19 @@ insert(const Point &p, Locate_type lt, Face_handle loc, int li) {
 			return insert_outside_affine_hull_regular(p);
 				
 		
-		case 1:
-			if(test_dim_up(p)){
+		case 1:{
+		  if(test_dim_up(p)){
 			Face_handle f=all_edges_begin()->first;
 			Vertex_handle v1=f->vertex(0);
 			Vertex_handle v2=f->vertex(1);
 			Vertex_handle v3=f->neighbor(0)->vertex(1);
-			Orientation orient=orientation(v1->point(),v2->point(),v3->point()) ;
-			v = insert_outside_affine_hull_regular(p,orient==COLLINEAR);
-			return v;
+			return insert_outside_affine_hull_regular(p);
 			} 
-			else {
-			 v= insert_in_plane_triangulation(p,lt,loc);	
-			return v;
-		    }
+		   else 
+			return insert_in_plane_triangulation(p,lt,loc);	
+		}
 			
-		case 2:
+		case 2:{
 			std::vector<Face_handle> faces;
 			std::vector<Edge> edges;
 			faces.reserve(32);
@@ -795,163 +752,128 @@ insert(const Point &p, Locate_type lt, Face_handle loc, int li) {
 			v =this->_tds.star_hole(edges.begin(), edges.end());
 			v->set_point(p);
 			delete_faces(faces.begin(), faces.end());
-			
-					
-			//if( lt != FACE )
+							
+			if( lt != FACE )
 				update_ghost_faces(v);
 												
 			return v;		
 	      }
+	}
+	CGAL_assertion(false);
+	return v;
 }	
 	
 template <class Gt, class Tds >
 typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_on_sphere_2<Gt,Tds>::
-insert_outside_affine_hull_regular(const Point& p,bool plane)
+insert_outside_affine_hull_regular(const Point& p)
 {
+ if(dimension()==0){
+	Vertex_handle v = vertices_begin();			
+	Vertex_handle u=v->face()->neighbor(0)->vertex(0);
+	Vertex_handle nv;
+			
+	//orientation is given by the 2 first points
+	if( collinear_between(v->point(),u->point(),p) || orientation(u->point(),v->point(),p) == LEFT_TURN ) 
+		nv=Base::tds().insert_dim_up(v,false);
+	else 
+		nv=Base::tds().insert_dim_up(v,true); 
+	
+	nv->set_point(p);
 		
-		if(dimension()==0){
-			Vertex_handle v = vertices_begin();			
-			Vertex_handle u=v->face()->neighbor(0)->vertex(0);
-			Vertex_handle nv;
+	Face_handle f=all_edges_begin()->first; 
+	CGAL_triangulation_assertion( orientation(f->vertex(0)->point(), f->vertex(1)->point(),
+											   f->neighbor(0)->vertex(1)->point()) != RIGHT_TURN );
 			
-			//orientation is given by the 2 first points
-			if( collinear_between(v->point(),u->point(),p) || orientation(u->point(),v->point(),p) == LEFT_TURN ) 
-				nv=Base::tds().insert_dim_up(v,false);
-			else 
-				nv=Base::tds().insert_dim_up(v,true);           
-			nv->set_point(p);
-			
-			
-			CGAL_triangulation_assertion( orientation(all_edges_begin()->first->vertex(0)->point(),
-													  all_edges_begin()->first->vertex(1)->point(),
-													  all_edges_begin()->first->neighbor(0)->vertex(1)->point())
-										 != RIGHT_TURN ); 
-			
-			//seting ghost edge if needed
-			bool done=false;
-			All_edges_iterator eit=all_edges_begin();
-			do{
-				Face_handle f=eit->first;
-				Face_handle fn=f->neighbor(0);
-				Point q=fn->vertex(1)->point();
-				if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q)){
-					f->ghost()=true;
-				}
-				else{
-					f->ghost()=false;
-				}
-				++eit;
-			}while( eit!=all_edges_end() && !done );
-			
-			return nv;
-		}
+	 update_ghost_faces(nv);
+	 return nv;
+   }
 		
-		else{ //dimension=1
-			bool conform = false;
-			Face_handle f = (all_edges_begin())->first;
-			
-			if(plane){//points coplanar with geom_traits->sphere
-				Vertex_handle v1 = f->vertex(0);
-				Vertex_handle v2 = f->vertex(1);
-				Orientation orient = orientation( f->vertex(0)->point(),f->vertex(1)->point(),p);
-				//conform = ( orient == COUNTERCLOCKWISE);
-				conform = (orient != CLOCKWISE);
-			}
-			
-			else{//three vertices non-coplanar with geom_traits->sphere
-				Face_handle fn=f->neighbor(0);
+ else{ 	//dimension 1	
+	bool conform = false;
+	Face_handle f = (all_edges_begin())->first;
+	Face_handle fn=f->neighbor(0);
+	const Point p0=f->vertex(0)->point();
+	const Point p1=f->vertex(1)->point();
+	const Point p2=fn->vertex(1)->point();
+	Orientation orient = orientation(p0, p1, p2);
+	Orientation orient2 = power_test(p0, p1, p2, p);
+	CGAL_triangulation_assertion(orient!=NEGATIVE);
+	 
+	if(orient2==POSITIVE)
+	  conform =true;
 				
-				const Point p0=f->vertex(0)->point();
-				const Point p1=f->vertex(1)->point();
-				const Point p2=fn->vertex(1)->point();
-				
-				Orientation orient = orientation(p0, p1, p2);
-				Orientation orient2 = power_test(p0, p1, p2, p);
-				CGAL_triangulation_assertion(orient);
-				if(orient2==POSITIVE)
-					conform =true;
-				
-			}
-			
-			//find smalest vertex
-			Vertex_handle w=vertices_begin();
-			All_vertices_iterator vi;
-			for( vi = vertices_begin(); vi != vertices_end(); vi++){
-				if(compare_xyz(w->point(), vi->point())<0)
-					w=vi;
-			}
-			
-			
-			
-			//Vertex_handle v = this->_tds.insert_dim_up( f->vertex(0), conform);
-			Vertex_handle v = this->_tds.insert_dim_up( w, conform);
-			v->set_point(p);
-	  		
-			this->_ghost=all_faces_begin();
-			
-			
-			//seting ghost faces if needed
-			All_faces_iterator fit;
-			for(fit =all_faces_begin(); fit !=all_faces_end(); fit++) {
-				//if(orientation(fit)==NEGATIVE){
-				if(orientation(fit)!=POSITIVE){
-					fit->ghost()=true;
-					this->_ghost=fit;
-				}
-			}
-			
-			return v; 
-		}
-		
+	//find smalest vertex
+	Vertex_handle w=vertices_begin();
+	All_vertices_iterator vi;
+	for( vi = vertices_begin(); vi != vertices_end(); vi++){
+	 if(compare_xyz(w->point(), vi->point())<0)
+		w=vi;
 	}
+			
+			
+	Vertex_handle v = this->_tds.insert_dim_up( w, conform);
+	v->set_point(p);
+	this->_ghost=all_faces_begin();
+	update_ghost_faces(v, true);
+			
+	return v; 
+  }
+}
 	
 	
 template < class Gt, class Tds >
 bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
-update_ghost_faces(Vertex_handle v)
+update_ghost_faces(Vertex_handle v, bool first)
 {
 	bool neg_found=false;
   if(dimension()==1){
-    All_edges_iterator eit=all_edges_begin();
-    do{
-      Face_handle f=eit->first;
-      Face_handle fn=f->neighbor(0);
-      Point q=fn->vertex(1)->point();
-		if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q)){
-	 f->ghost()=true;
-			neg_found = true;
-		}
-      else 
-	f->ghost()=false;
-      ++eit;
-    }while( eit!=all_edges_end());
-  }
+	 All_edges_iterator eit=all_edges_begin();
+	  for (; eit!=all_edges_end(); eit++){
+       Face_handle f=eit->first;
+       Face_handle fn=f->neighbor(0);
+       Point q=fn->vertex(1)->point();
+		 if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q)){
+	        f->ghost()=true;
+		    neg_found = true;
+		 } 
+          else 
+	        f->ghost()=false;
+        }
+	}
   else{//dimension==2
-
-    Face_circulator fc=incident_faces(v,v->face());
-    Face_circulator done(fc);
-    	
-    do{
-      //if(orientation(fc)==NEGATIVE){
+	if (first){ //first time dimension 2
+		 All_faces_iterator fi = all_faces_begin();
+		for(;fi!=all_faces_end();fi++){
+			if(orientation(fi)!=POSITIVE){
+				fi->ghost()=true;
+				neg_found=true;
+				this->_ghost=fi;
+			  }
+			  else
+				  fi->ghost()=false;
+		 }
+	}
+			  
+	else { //not first
+	  Face_circulator fc=incident_faces(v,v->face());
+	  Face_circulator done(fc);
+       do{
 		if(orientation(fc)!=POSITIVE){
-	     fc->ghost()=true;
-	     neg_found=true;
+	      fc->ghost()=true;
+	      neg_found=true;
 	     this->_ghost=fc;
-      }
-      else{
-	     fc->ghost()=false;
-      }
-    }while(++fc!=done);
-	
-  }
-    return neg_found;
-	  
- 
+        }
+        else
+	      fc->ghost()=false;
+	   }while(++fc!=done);
+	 }
+    
+   }
+	return neg_found;
+
 }
-
-
 
 //-------------------------------------------------------------------------------REMOVAL----------------------------------------------------//
 template < class Gt, class Tds >

@@ -88,17 +88,6 @@ bool are_equal(RTOS triA, RTOS triB){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 int main(int argc, char* argv[]) 
 {
 	
@@ -131,14 +120,9 @@ int main(int argc, char* argv[])
 	points.resize(5);
 
  Vertex_handle v1 = rtos.insert(p1);
-	rtos.is_valid();
-	Vertex_handle v4 = rtos.insert(p4);
-	rtos.is_valid();
+Vertex_handle v4 = rtos.insert(p4);
 Vertex_handle v2 = rtos.insert(p2);
-	rtos.show_all();
-	
-	Vertex_handle v5 = rtos.insert(p5);
-	rtos.show_all();
+Vertex_handle v5 = rtos.insert(p5);
 Vertex_handle v3 = rtos.insert(p3);
 	rtos.is_valid();
 	
@@ -156,7 +140,7 @@ std::random_shuffle(points.begin(), points.end());
 		std::cout<<points.at(i)<<std::endl;
 		rtos2.insert(points.at(i));
 	}
-	
+	rtos2.is_valid();
 	are_equal(rtos, rtos2);
 	//rtos.remove(v1);
 	//rtos.remove(v2);
@@ -188,19 +172,23 @@ std::random_shuffle(points.begin(), points.end());
 	
 	Point_3 p27 = Point_3(radius, 0 ,0);
 	points2.push_back(p27);
-	Vertex_handle v0 = rtos.insert(p0);
+	
+	//	Vertex_handle v0 = rtos.insert(p0);
 	
 	
 	Vertex_handle v21 = rtos.insert(p21);
 	Vertex_handle v22 = rtos.insert(p22);
 	Vertex_handle v23 = rtos.insert(p23);
-	rtos.show_vertex(v23);
+	rtos.show_all();
+	Vertex_handle v26 = rtos.insert(p26); 
 	
 	
 	
 	Vertex_handle v24 = rtos.insert(p24); 
 	Vertex_handle v25 = rtos.insert(p25);
-	Vertex_handle v26 = rtos.insert(p26); 			
+	rtos.is_valid();
+	//Vertex_handle v = rtos.insert(p26); 	
+	Vertex_handle v0 = rtos.insert(p0);
 	//Vertex_handle v27 = rtos.insert(p27);
 	rtos.is_valid();
 

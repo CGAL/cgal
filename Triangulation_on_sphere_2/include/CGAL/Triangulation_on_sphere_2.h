@@ -356,6 +356,11 @@ Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r, 
 		return _tds.mirror_index(v,i);
 	}
 	
+	Edge mirror_edge(const Edge e) const
+	{
+		return _tds.mirror_edge(e);
+	}
+	
 	
 	
    /*---------------------------------------------------------------------TEMPLATE MEMBERS--------------------------------------*/
@@ -561,15 +566,15 @@ locate_edge(const Point& p, Locate_type& lt, int& li, bool plane)const
 	 f=eit->first;
 	 Vertex_handle v1 = f->vertex(0);
 	 Vertex_handle v2 = f -> vertex(1);
-	 if(!f->is_ghost())
+	 //if(!f->is_ghost())
 	  if(orientation(v1->point(), v2->point(), p)==RIGHT_TURN){
 		lt=EDGE;
 		li=2;
 		test_distance( p, (*eit).first, lt, li);
 		return (*eit).first;
 	   }	
-	if(f->is_ghost())
-		loc = f;
+	//if(f->is_ghost())
+		//loc = f;
 	}//end for
 		
 	test_distance(p, loc, lt, li);
@@ -591,8 +596,7 @@ switch (dimension()){
 		
 	case 0:
 	case 1:{
-		show_face(f);
-	 Vertex_handle v0 = f->vertex(0);
+		Vertex_handle v0 = f->vertex(0);
 	 Vertex_handle v1= f->neighbor(0)->vertex(0);
 	 if (is_too_close(v0->point(),p)||is_too_close(v1->point(),p) )
 		lt = TOO_CLOSE;

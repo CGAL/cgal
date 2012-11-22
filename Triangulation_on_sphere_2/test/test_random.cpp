@@ -33,18 +33,6 @@ typedef RTOS::Edge                                               Edge;
 
 
 
-bool is_ok(K::Point_3 p, std::vector<K::Point_3> po, double minDist2, int ind)
-{
-	bool ok= true;
-	for(int j= 0; j<ind; j++){
-		
-		if( squared_distance(p, po.at(j))<=minDist2 ){
-		ok = false;
-		}
-		
-	}
-	return ok;
-}
 
 
 bool has_face(Face_handle fh, Vertex_handle v0, Vertex_handle v1, Vertex_handle v2){
@@ -52,8 +40,6 @@ bool has_face(Face_handle fh, Vertex_handle v0, Vertex_handle v1, Vertex_handle 
 	
 	
 	for(int i=0;i<=2; i++){
-		std::cout<<v0->point()<<std::endl;
-		std::cout<<fh->vertex(i)->point()<<std::endl;
 		test1 = (v0->point()==fh->vertex(i)->point());
 		if(test1) 
 			break;
@@ -104,7 +90,7 @@ bool are_equal(RTOS triA, RTOS triB){
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =100000;
+	nu_of_pts =10000;
 	radius=6000000;
 	//radius = 1;
 	//double minDist = radius*2e-25;
@@ -165,18 +151,15 @@ int main(){
 	
 	t.start();
 	//====insert new points============
-		
-		
-	for (int count=0; count<nu_of_pts; count++) {
-		//std::cout<< "================= point number   "<< count+1 <<" =================="<<std::endl;
-		K::Point_3 p = points.at(count);
-		Vertex_handle v = rtos.insert(p);
-		vertices.push_back(v);			
-			
-	}
-	//rtos.is_valid();
+		rtos.insert(points.begin(),points.end());
 	
 	
+	t.stop();
+	std::cout<<"running time"<< t.time()<<std::endl;
+
+	rtos.is_valid();
+
+	/*
 	
 	//*****second triangulation*******
 	std::random_shuffle(points.begin(), points.end());
