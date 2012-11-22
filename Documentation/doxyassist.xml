@@ -438,6 +438,7 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="false">
             <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
             <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
+            <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
           </list>
         </doxygen>
       </project>

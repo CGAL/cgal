@@ -221,7 +221,7 @@ template <class T> Output_rep<T> oformat( const T& t);
 /*!
 \ingroup PkgIOstreams
 
-The definition of the function `iformat` is completely symmetric to `oformat`.
+The definition of the function `iformat` is completely symmetric to `oformat()`.
 */
 template <class T> Input_rep<T> iformat( const T& t);
 

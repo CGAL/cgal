@@ -7,9 +7,8 @@ namespace CGAL {
 The class `Ostream_iterator` is an output iterator adaptor for the 
 output stream class `Stream` and value type `T`. 
 
-### Operations ###
 
-`o` fulfills the requirements for an output iterator. 
+\cgalModels ::OutputIterator
 
 ### Implementation ###
 
@@ -24,8 +23,7 @@ public:
 /// @{
 
 /*! 
-creates an output 
-iterator `o` writing to `s`. 
+creates an output iterator writing to `s`. 
 */ 
 Ostream_iterator( Stream& s); 
 
