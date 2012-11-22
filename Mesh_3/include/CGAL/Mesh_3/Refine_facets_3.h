@@ -258,7 +258,16 @@ private:
   Facet canonical_facet(const Facet& facet) const
   {
     const Facet mirror = mirror_facet(facet);
-    return ( (facet < mirror)?facet:mirror );
+    if(r_tr_.is_infinite(facet.first->vertex(facet.second)))
+      return mirror;
+    else if(r_tr_.is_infinite(mirror.first->vertex(mirror.second)))
+      return facet;
+    else 
+      return (facet.first->vertex(facet.second)->point()
+              < mirror.first->vertex(mirror.second)->point())
+      return facet;
+    else
+      return mirror;
   }
 
   /// Returns true if f has already been visited
@@ -465,7 +474,7 @@ scan_triangulation_impl()
       ++facet_it)
   {
     // Cannot be const, see treat_new_facet signature
-    Facet facet = *facet_it;
+    Facet facet = canonical_facet(*facet_it);
     treat_new_facet(facet);
   }
 }
@@ -740,7 +749,7 @@ compute_facet_properties(const Facet& facet) const
   if ( const Segment_3* p_segment = object_cast<Segment_3>(&dual) )
   {
     if (is_degenerate(*p_segment)) { return Facet_properties(); }
-
+    
     // If facet is on surface, compute intersection point and return true
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     Surface_patch surface = do_intersect_surface(*p_segment);
