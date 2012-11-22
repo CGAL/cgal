@@ -23,17 +23,11 @@
 #define CGAL_MESH_3_DETECT_POLYLINES_IN_POLYHEDRA_H
 
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra_fwd.h>
+#include <CGAL/Mesh_3/comparison_operators.h>
 #include <algorithm>
 #include <boost/foreach.hpp>
 
 namespace CGAL { namespace Mesh_3 {
-
-struct Detect_polyline_less {
-  template <typename Handle>
-  bool operator()(const Handle& va, const Handle& vb) const {
-    return &*va < &*vb;
-  }
-};
 
 template <typename Polyhedron>
 struct Detect_polylines {
@@ -41,16 +35,20 @@ struct Detect_polylines {
   typedef typename Geom_traits::Point_3 Point_3;
   typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+  typedef typename Polyhedron::Halfedge Halfedge;
   typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
   typedef typename Polyhedron::Vertex_handle Vertex_handle;
   typedef typename Polyhedron::size_type size_type;
 
-  typedef std::set<Vertex_handle, Detect_polyline_less> Vertices_set;
+  typedef CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle> Compare_points;
+  typedef CGAL::Mesh_3::Halfedge_handle_comparator<Halfedge> Compare_halfedge_handles;
+
+  typedef std::set<Vertex_handle, Compare_points> Vertices_set;
   typedef std::map<Vertex_handle, 
                    size_type,                    
-                   Detect_polyline_less> Vertices_counter;
+                   Compare_points> Vertices_counter;
 
-  typedef std::set<Halfedge_handle, Detect_polyline_less> Feature_edges_set;
+  typedef std::set<Halfedge_handle, Compare_halfedge_handles> Feature_edges_set;
 
   Feature_edges_set edges_to_consider;
   Vertices_set corner_vertices;
@@ -112,7 +110,8 @@ struct Detect_polylines {
   static Halfedge_handle canonical(Halfedge_handle he)
   {
     const Halfedge_handle& op = he->opposite();
-    if(Detect_polyline_less()(he, op))
+    Compare_halfedge_handles comparator;
+    if(comparator(he,op))
       return he;
     else 
       return op;
