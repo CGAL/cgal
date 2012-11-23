@@ -154,9 +154,9 @@ Mode m = REGULARIZED);
 /*! 
 Build an alpha shape data structure `A` in mode `m` 
 for the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$ and 
+`[first,last)` and 
 set the current alpha value to `alpha`. 
-\pre The `value_type` of `first` and `last` is `Point` (the type point of the underlying triangulation.) 
+\tparam InputIterator must be an input iterator with value type `Point` (the type point of the underlying triangulation.) 
 */ 
 template < class InputIterator > 
 Alpha_shape_3( 
@@ -172,14 +172,13 @@ Mode m = REGULARIZED);
 
 /*! 
 Initialize the alpha shape data structure `A`
-for points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. 
+for points in the range `[first,last)`. 
 Returns the number of data points inserted in the underlying 
 triangulation. 
 
 If the function is applied to an non-empty alpha shape data structure, it is cleared 
 before initialization. 
-\pre The `value_type` of `first` and `last` is `Point`. 
+\tparam InputIterator must be an input iterator with value type `Point`. 
 */ 
 template < class InputIterator > 
 std::ptrdiff_t make_alpha_shape( 
@@ -329,7 +328,8 @@ Output all the faces of the triangulation
 in increasing order of the alpha value for which they appear 
 in the alpha complex. In case of equal alpha value 
 lower dimensional faces are output first. 
-The value type of the OutputIterator has to be an `Object` 
+
+\tparam OutputIterator must be on output iterator with value type `Object`.
 */ 
 template<class OutputIterator> 
 OutputIterator filtration(OutputIterator it); 
