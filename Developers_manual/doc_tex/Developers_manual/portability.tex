@@ -35,9 +35,9 @@ assume. Especially you may assume that the compiler
 \item supports member templates
 \item support for \texttt{std::iterator\_traits}.
 \end{itemize}
-Still, there are many bugs (sometimes known as "features") left in the 
+Still, there are many bugs (sometimes known as ``features'') left in the 
 compilers.  Have a look at the list of (non-obsolete) workarounds in 
-Section~\ref{sec:workaround_flags} to get an idea of which "features" are
+Section~\ref{sec:workaround_flags} to get an idea of which ``features'' are
 still present.  
 
 \ccIndexMainItemBegin{configuration}
@@ -167,11 +167,11 @@ operating system and compiler that is defined as follows.
 
 \begin{description}
 \item[$<$arch$>$] is the system architecture as defined by ``{\tt
-    uname -p}" or "\texttt{uname -m}",
+    uname -p}'' or ``\texttt{uname -m}'',
 \item[$<$os$>$] is the operating system as defined by ``\texttt{uname
     -s}'',
 \item[$<$os-version$>$] is the operating system version as defined by
-  "\texttt{uname -r}",
+  ``\texttt{uname -r}'',
 \item[$<$comp$>$] is the basename of the compiler executable (if it
   contains spaces, these are replaced by "-"), and
 \item[$<$comp-version$>$] is the compiler's version number (which
@@ -196,12 +196,12 @@ These test programs reside in the directory
 where \verb|$(CGAL_ROOT)| represents the installation directory for the library.
 The names of all testfiles, which correspond to the names of the flags, 
 \ccIndexSubitem{workaround flags}{names}
-start with "\texttt{CGAL\_CFG\_}" followed by
+start with ``\texttt{CGAL\_CFG\_}'' followed by
 \begin{itemize}
 \item \textit{either} a description of a bug ending with
-  "\texttt{\_BUG}"
+  ``\texttt{\_BUG}''
 \item \textit{or} a description of a feature starting with
-  "\texttt{NO\_}".
+  ``\texttt{NO\_}''.
 \end{itemize}
 For any of these files a corresponding flag is set in the 
 platform-specific configuration file, iff either compilation or execution

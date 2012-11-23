@@ -87,7 +87,7 @@ The algorithm works well even when the inferred surface is composed of several c
 \subsubsection{Contouring Parameters}
 
 Our implementation of the Poisson surface reconstruction algorithm computes an implicit function represented as a piecewise linear function over the tetrahedra of a 3D Delaunay triangulation constructed from the input points then refined through Delaunay refinement. For this reason, any iso-surface is also piecewise linear and hence may contain sharp creases. As the contouring algorithm \ccc{CGAL::make_surface_mesh()} expects a smooth implicit function these sharp creases may create spurious clusters of vertices in the final reconstructed surface mesh when setting a small mesh sizing or surface approximation error parameter (see Figure~\ref{Surface_reconstruction_points_3-fig-contouring_bad}).\\
-One way to avoid these spurious clusters consists of adjusting the mesh sizing and surface approximation parameters large enough compared to the average sampling density (obtained through \ccc{CGAL::compute_average_spacing()}) so that the contouring algorithm "perceives" a smooth iso-surface. We recommend to use the following contouring parameters:
+One way to avoid these spurious clusters consists of adjusting the mesh sizing and surface approximation parameters large enough compared to the average sampling density (obtained through \ccc{CGAL::compute_average_spacing()}) so that the contouring algorithm ``perceives'' a smooth iso-surface. We recommend to use the following contouring parameters:
 \begin{itemize}
 \item Max triangle radius: at least 100 times the average spacing.
 \item Approximation distance: at least 0.25 times the average spacing.
