@@ -15,7 +15,7 @@ Moreover, `CGAL::Algebraic_structure_traits< Field >` is a model of
 
 - `CGAL::Algebraic_structure_traits< Field >::Algebraic_type` derived from `Field_tag` 
 
-- `CGAL::Algebraic_structure_traits< FieldWithSqrt >::Inverse` 
+- `CGAL::Algebraic_structure_traits< FieldWithSqrt >::Inverse`  which is a model of `AlgebraicStructureTraits::Inverse`
 
 \cgalRefines `IntegralDomain` 
 

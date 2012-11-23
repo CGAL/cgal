@@ -16,21 +16,21 @@ with:
 
 and functors : 
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_zero` 
+- `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_zero` which is a model of `AlgebraicStructureTraits::IsZero`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Abs` 
+- `CGAL::Real_embeddable_traits< RealEmbeddable >::Abs` which is a model of `AlgebraicStructureTraits::Abs`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Sgn` 
+- `CGAL::Real_embeddable_traits< RealEmbeddable >::Sgn` which is a model of `AlgebraicStructureTraits::Sgn`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_positive` 
+- `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_positive` which is a model of `AlgebraicStructureTraits::IsPositive`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_negative` 
+- `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_negative` which is a model of `AlgebraicStructureTraits::IsNegative`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Compare` 
+- `CGAL::Real_embeddable_traits< RealEmbeddable >::Compare` which is a model of `AlgebraicStructureTraits::Compare`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::To_double` 
+- `CGAL::Real_embeddable_traits< RealEmbeddable >::To_double` which is a model of `AlgebraicStructureTraits::ToDouble`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::To_interval` 
+- `CGAL::Real_embeddable_traits< RealEmbeddable >::To_interval` which is a model of `AlgebraicStructureTraits::ToInterval`
 
 Remark: 
 
