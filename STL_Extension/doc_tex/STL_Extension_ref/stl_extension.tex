@@ -1729,9 +1729,9 @@
   \ccConstructor{template <class U, class V, class W> Triple(U u, V v,
     W w);} {constructs a triple such that \ccc{first} is constructed
     from \ccc{u}, \ccc{second} is constructed from \ccc{v}, and
-    \ccc{third} is constructed from \ccc{w}. \ccRequire{ Proper
+    \ccc{third} is constructed from \ccc{w}. \ccRequire Proper
     conversion operators exist from \ccc{U} to \ccc{T1}, \ccc{V} to
-    \ccc{T2}, and \ccc{W} to \ccc{T3}.}}
+    \ccc{T2}, and \ccc{W} to \ccc{T3}.}
 
   \ccMemberFunction{template <int i> T get();}
     {Gives access to \ccc{first}, \ccc{second} or \ccc{third} whenever
@@ -1779,7 +1779,7 @@
   \ccc{std::pair}.  \ccRefName\ is a heterogeneous quadruple: it holds
   one object of type \ccc{T1}, one of type \ccc{T2}, one of type
   \ccc{T3}, and one of type \ccc{T4}.  A \ccRefName\ is much like a
-  container, in that it "owns" its elements. It is not actually a
+  container, in that it ``owns'' its elements. It is not actually a
   model of container, though, because it does not support the standard
   methods (such as iterators) for accessing the elements of a
   container.
@@ -1829,9 +1829,9 @@
     Quadruple(U u, V v, W w, X x);} {constructs a quadruple such that
     \ccc{first} is constructed from \ccc{u}, \ccc{second} is
     constructed from \ccc{v}, \ccc{third} is constructed from \ccc{w},
-    and \ccc{fourth} is constructed from \ccc{x}. \ccRequire{ Proper
+    and \ccc{fourth} is constructed from \ccc{x}. \ccRequire Proper
     conversion operators exist from \ccc{U} to \ccc{T1}, \ccc{V} to
-    \ccc{T2}, \ccc{W} to \ccc{T3}, and \ccc{X} to \ccc{T4}.  }}
+    \ccc{T2}, \ccc{W} to \ccc{T3}, and \ccc{X} to \ccc{T4}.  }
 
   \ccMemberFunction{template <int i> T get();}
     {Gives access to \ccc{first}, \ccc{second}, \ccc{third} or \ccc{fourth}

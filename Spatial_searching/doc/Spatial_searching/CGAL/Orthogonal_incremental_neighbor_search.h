@@ -13,7 +13,7 @@ for example `Search_traits_2<Simple_cartesian<double> >`.
 Expects for the second template argument a model of the 
 concept `GeneralDistance`. If `Traits` is 
 `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
-the default type is `Distance_for_point_adapter<Key,PointPropertyMap,Euclidean_distance<Traits> >`, 
+the default type is `Distance_adapter<Key,PointPropertyMap,Euclidean_distance<Traits> >`, 
 and `Euclidean_distance<Traits>` otherwise. 
 
 Expects for third template argument a model of the concept `Splitter`. 

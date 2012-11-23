@@ -299,7 +299,7 @@ wrapper for all these types. The searching itself works exactly as for \cgal ker
 \subsection Spatial_searchingExamplesforUsinganArbitrary Examples for Using an Arbitrary Point Type with Point Property Maps
 
 The following three example programs illustrate how to use the classes `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` and
-`Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>` to store in the kd-tree objects of an arbitrary key type. Points are
+`Distance_adapter<Key,PointPropertyMap,Base_distance>` to store in the kd-tree objects of an arbitrary key type. Points are
 accessed through a point <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
 This is really convenient to associate information to a point or to reduce the size of the search structure.
 

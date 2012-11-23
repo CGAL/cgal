@@ -8,17 +8,17 @@ namespace CGAL {
 \cgalAutoToc
 \authors Andreas Fabri and Laurent Rineau
 
-<A HREF="http://qt.nokia.com/">Qt</A> is a <span class="textsc">Gui</span> toolkit for
+<A HREF="http://qt.digia.com/">Qt</A> is a <span class="textsc">Gui</span> toolkit for
 cross-platform application development.
 
 \section GraphicsViewIntroduction Introduction
 
 This chapter describes classes that help to visualize two dimensional \cgal objects
-with the <A HREF="http://doc.qt.nokia.com/latest/graphicsview.html">Qt Graphics View Framework</A>.
+with the <A HREF="http://doc.qt.digia.com/latest/graphicsview.html">Qt Graphics View Framework</A>.
 
-This framework uses the model view paradigm. <A HREF="http://doc.qt.nokia.com/latest/qgraphicsitem.html">`QGraphicsItem`</A>s are stored in a 
-<A HREF="http://doc.qt.nokia.com/latest/qgraphicsscene.html">`QGraphicsScene`</A> 
-and are displayed in a <A HREF="http://doc.qt.nokia.com/latest/qgraphicsview.html">`QGraphicsView`</A>. The items 
+This framework uses the model view paradigm. <A HREF="http://doc.qt.digia.com/latest/qgraphicsitem.html">`QGraphicsItem`</A>s are stored in a 
+<A HREF="http://doc.qt.digia.com/latest/qgraphicsscene.html">`QGraphicsScene`</A> 
+and are displayed in a <A HREF="http://doc.qt.digia.com/latest/qgraphicsview.html">`QGraphicsView`</A>. The items 
 have a paint method which is called when an item is in the visible area of a view.
 The framework is also responsible for dispatching events from the view
 via the scene to the items. The framework is extensible in the sense
@@ -50,14 +50,14 @@ classes that have to override member functions adhering to this naming scheme.
 \section GraphicsViewOverall Overall Design
 
 In \cgalFigureRef{graphicsviewuml} you see four classes depicted in grey,
-that come from the Qt Graphics View Framework. The <A HREF="http://doc.qt.nokia.com/latest/qgraphicsscene.html">`QGraphicsScene`</A>
-contains <A HREF="http://doc.qt.nokia.com/latest/qgraphicsitem.html">`QGraphicsItem`</A>s, which get displayed in any number
-of <A HREF="http://doc.qt.nokia.com/latest/qgraphicsview.html">`QGraphicsView`</A>s. The views are widgets, that is they take screen space
+that come from the Qt Graphics View Framework. The <A HREF="http://doc.qt.digia.com/latest/qgraphicsscene.html">`QGraphicsScene`</A>
+contains <A HREF="http://doc.qt.digia.com/latest/qgraphicsitem.html">`QGraphicsItem`</A>s, which get displayed in any number
+of <A HREF="http://doc.qt.digia.com/latest/qgraphicsview.html">`QGraphicsView`</A>s. The views are widgets, that is they take screen space
 in an application.
 
-The fourth class is the <A HREF="http://doc.qt.nokia.com/latest/qobject.html">`QObject`</A>. It plays an important role in Qt for
-event handling and memory management. First, it allows to add <A HREF="http://doc.qt.nokia.com/latest/signalsandslots.html">signals and
-slots</A>, and to connect them. Second, it allows to install <A HREF="http://doc.qt.nokia.com/latest/eventsandfilters.html">event filters</A>.
+The fourth class is the <A HREF="http://doc.qt.digia.com/latest/qobject.html">`QObject`</A>. It plays an important role in Qt for
+event handling and memory management. First, it allows to add <A HREF="http://doc.qt.digia.com/latest/signalsandslots.html">signals and
+slots</A>, and to connect them. Second, it allows to install <A HREF="http://doc.qt.digia.com/latest/eventsandfilters.html">event filters</A>.
 
 \cgalFigureBegin{graphicsviewuml,uml-design.png}
 UML Class Diagram with the Qt classes (blue), CGAL classes for using the framework (yellow), CGAL data structures (red), and application classes (green).

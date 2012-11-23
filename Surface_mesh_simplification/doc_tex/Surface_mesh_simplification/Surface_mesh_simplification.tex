@@ -109,7 +109,7 @@ Global error tracking methods produce highly accurate simplifications but take u
 of additional space. Cost-driven methods, like the one in this package, produce slightly 
 less accurate simplifications but take up much less additional space, even none in some cases.
 
-The cost-driven method implemented in this package is mainly based on \cite{cgal:lt-fmeps-98}, \cite{cgal:lt-ems-99}, with contributions from \cite{hddms-mo-93}, \cite{gh-ssqem-97}
+The cost-driven method implemented in this package is mainly based on \cite{cgal:lt-fmeps-98,cgal:lt-ems-99}, with contributions from \cite{hddms-mo-93}, \cite{gh-ssqem-97}
 and \cite{degn-tpec-98}.
 
 The algorithm proceeds in two stages. In the first stage, called {\em collection stage}, 
@@ -126,7 +126,7 @@ and geometric conditions.
 
 The algorithm presented in \cite{gh-ssqem-97} contracts (collapses) arbitrary vertex pairs and not 
 only edges by considering certain vertex pairs as forming a pseudo-edge and proceeding to collapse
-both edges and pseudo-edges in the same way as in \cite{cgal:lt-fmeps-98}, \cite{cgal:lt-ems-99} ( 
+both edges and pseudo-edges in the same way as in \cite{cgal:lt-fmeps-98,cgal:lt-ems-99} ( 
 which is the algorithm implemented here). However, contracting an arbitrary vertex-pair may result in a non-manifold surface, but the current state of this package can only deal with manifold surfaces, thus, it can only collapse edges. That is, this package cannot be used as a framework for vertex contraction.
 
 \section{Cost Strategy}
@@ -145,7 +145,7 @@ midpoint placement (much faster but less accurate).
 \subsection{Lindstrom-Turk Cost and Placement Strategy\label{SurfaceMeshSimplification:LindstromTurkStrategy}}
 
 The main characteristic of the strategy presented in
-\cite{cgal:lt-fmeps-98}, \cite{cgal:lt-ems-99} is that the simplified surface
+\cite{cgal:lt-fmeps-98,cgal:lt-ems-99} is that the simplified surface
 is not compared at each step with the original surface (or the surface
 at a previous step) so there is no need to keep extra information,
 such as the original surface or a history of the local changes. Hence

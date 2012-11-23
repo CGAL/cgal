@@ -172,7 +172,7 @@ public:
     An object \f$ e\f$ of the class `Halfedge` represents a halfedge in the 
     arrangement. A halfedge is directed from its <I>source</I> vertex 
     to its <I>target</I> vertex, and has an <I>incident face</I> lying to 
-    its right. Each halfedge has a <I>twin</I> halfedge directed in the 
+    its left. Each halfedge has a <I>twin</I> halfedge directed in the 
     opposite direction, where the pair of twin halfedges form together 
     an arrangement edge, that is - a \f$ 1\f$-dimensional cell, associated 
     with planar \f$ x\f$-monotone curve. 

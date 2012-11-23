@@ -252,7 +252,7 @@ CGAL::Qt_widget_standard_toolbar *stoolbar;
 \end{ccExampleCode}
 To use it, in the constructor of \ccc{My\_window}, it is added:
 \begin{ccExampleCode}
-stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this, "Standard toolbar'');
+stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this, ``Standard toolbar'');
 \end{ccExampleCode}
 In this tutorial you can play a little bit with the standard toolbar
 but you will see probably something that is not quite pleasant. If you
@@ -402,7 +402,7 @@ QToolButton *get_point_button;     //the toolbar button
 \end{ccExampleCode}
 add the button in the toolbar:
 \begin{ccExampleCode}
-get_point_button = new QToolButton(tools_toolbar, "Get Point");
+get_point_button = new QToolButton(tools_toolbar, ``Get Point'');
 get_point_button->setPixmap(QPixmap( (const char**)point_xpm ));
 \end{ccExampleCode}
 To make the button a toggle button:

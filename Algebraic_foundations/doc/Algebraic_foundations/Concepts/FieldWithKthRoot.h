@@ -9,7 +9,7 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithKthRoot >` is a model of `
 
 - `CGAL::Algebraic_structure_traits< FieldWithKthRoot >::Algebraic_type` derived from `Field_with_kth_root_tag` 
 
-- `CGAL::Algebraic_structure_traits< FieldWithKthRoot >::Kth_root` 
+- `CGAL::Algebraic_structure_traits< FieldWithKthRoot >::Kth_root` which is a model of `AlgebraicStructureTraits::KthRoot`
 
 \cgalRefines `FieldWithSqrt` 
 

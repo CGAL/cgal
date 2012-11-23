@@ -259,7 +259,7 @@ a mutable handle. For example, the result of a point-location query is
 a non-mutable handle for the arrangement cell containing the query point.
 Assume that the query point lies on a edge, so we obtain a
 \ccc{Halfedge_const_handle}; if we wish to use this handle and remove the
-edge, we first need to cast away its "constness".
+edge, we first need to cast away its ``constness''.
  
 \ccMethod{Vertex_handle non_const_handle (Vertex_const_handle v);}
     {casts the given constant vertex handle to an equivalent mutable handle.}

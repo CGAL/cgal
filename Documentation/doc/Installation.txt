@@ -117,7 +117,7 @@ contains the following subdirectories:
 <TD ALIGN=LEFT NOWRAP>
 `auxiliary` 
 <TD ALIGN=LEFT NOWRAP>
-precompiled \sc{Gmp}, \sc{Mpfr} and \sc{Taucs} for Windows
+precompiled \sc{Gmp} and \sc{Mpfr} for Windows
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 `cmake/modules` 
@@ -553,9 +553,11 @@ your own demos you might need these \cgal-libraries.
 
 \section secoptional3rdpartysoftware Optional Third Party Libraries 
 
-Optional 3rd party software is only required to build examples and
-demos shipped with \cgal or to build your own project using \cgal. In order
-to simplify these builds, various libraries can be <I>prepared to be
+Optional 3rd party software can be used by \cgal for various reasons:
+Usually certain optional libraries are required to build examples and
+demos shipped with \cgal\ or to build your own project using \cgal. 
+Another reason is to speed up basic tasks. 
+In order to support these goals, all optional libraries can be <i>prepared to be
 used with \cgal</I> while configuring \cgal, just in the same way as
 essential libraries are configured. Whenever building an example or a
 demo (or your own executable), these <I>preconfigured</I> libraries
@@ -602,8 +604,8 @@ Mainly parts in \cgal's algebraic kernel require Rs3.
 
 \sc{Ntl} provides data structures and algorithms for signed, arbitrary
 length integers, and for vectors, matrices, and polynomials over the 
-integers and over finite fields. In \cgal \sc{Ntl} is used to speed up
-polynomial operations such as GCDs. It is recommended to install \sc{Ntl} with support from \sc{Gmp}.
+integers and over finite fields. The optional library \sc{Ntl} is used by \cgal 
+to speed up operations of the Polynomial package, such as GCDs. It is recommended to install \sc{Ntl} with support from \sc{Gmp}.
 
 \sc{Ntl} can be downloaded from <A HREF="http://www.shoup.net/ntl/">`http://www.shoup.net/ntl/`</A>. Version 5.1 or higher is recommended.
 
@@ -614,13 +616,9 @@ matrix sizes, various matrix decomposition methods and sparse linear solvers.
 
 In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgSurfaceReconstructionFromPointSets
 and the \ref PkgSurfaceParameterization packages. 
-Since \cgal version 4.0, \sc{Eigen} is recommended over \sc{Taucs} that is not longer maintained.
 
 In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJet_fitting_3
 and the \ref PkgRidges_3 packages.
-
-The usage of \sc{Eigen} allows to remove \sc{lapack}, \sc{blas} and \sc{Taucs} from the list of third party libraries
-required by some \cgal packages. Note that the version 3.1 (or greater) of \sc{Eigen} is required.
 
 The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org">`http://eigen.tuxfamily.org`</A>.
 
@@ -1068,8 +1066,7 @@ source file</B>.
 "com2") of \cgal to which the executable(s) should be linked. Valid components are \cgal's
 libraries (i.e. "Core", "ImageIO", "Qt3" and "Qt4"; note
 that it only make sense to either pick "Qt3" or "Qt4") and all
-preconfigured 3rd party software, such as "MPFI", "RS3",
-or "LAPACK"). An example is `-c Core:GMP:RS3:MPFI`
+preconfigured 3rd party software, such as "MPFI", "RS3"). An example is `-c Core:GMP:RS3:MPFI`
 
 <DT><B>`-b boost1:boost2:...`</B><DD> Lists components ("boost1",
 "boost2") of \sc{Boost} to which the executable(s) should be
@@ -1103,8 +1100,8 @@ link with \cgal and essential third party libraries. Beyond,
 `find_package` can demand for `COMPONENTS` of \cgal,
 that is, all \cgal libraries libCGAL_Core (``Core''),
 libCGAL_ImageIO (``ImageIO'') , libCGAL_Qt3 (``Qt3'') and libCGAL_Qt4
-(``Qt4'') or optional 3rd party software such as ``MPFI'', ``RS3'' or
-``LAPACK''. A user is free to create the `CMakeLists.txt`
+(``Qt4'') or optional 3rd party software such as ``MPFI'', ``RS3''.
+A user is free to create the `CMakeLists.txt`
 without calling the script (manual creation).
 
 \subsection installation_custom Custom flags in the programs using CGAL
@@ -1503,6 +1500,13 @@ Indicates whether to search and use \sc{Gmp}/\sc{Mpfr} or not
 CMake
 <TR>
 <TD ALIGN=LEFT NOWRAP>
+`GMP_DIR` 
+<TD ALIGN=LEFT NOWRAP>
+Directory of \sc{Gmp} default installation 
+<TD ALIGN=LEFT NOWRAP>
+Environment
+<TR>
+<TD ALIGN=LEFT NOWRAP>
 `GMP_INCLUDE_DIR` 
 <TD ALIGN=LEFT NOWRAP>
 Directory containing the `gmp.h` file 
@@ -1586,6 +1590,13 @@ Under Linux, the \sc{Gmpxx} is also searched for, and you may specify the follow
 <B>Description</B> 
 <TD ALIGN=LEFT NOWRAP>
 <B>Type</B>
+<TR>
+<TD ALIGN=LEFT NOWRAP>
+`GMPXX_DIR` 
+<TD ALIGN=LEFT NOWRAP>
+Directory of \sc{gmpxx} default installation
+<TD ALIGN=LEFT NOWRAP>
+Environment
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 `GMPXX_INCLUDE_DIR` 
@@ -1764,6 +1775,13 @@ Indicates whether to search and use \leda or not
 CMake
 <TR>
 <TD ALIGN=LEFT NOWRAP>
+`LEDA_DIR` 
+<TD ALIGN=LEFT NOWRAP>
+Directory of \sc{LEDA} default installation
+<TD ALIGN=LEFT NOWRAP>
+Environment
+<TR>
+<TD ALIGN=LEFT NOWRAP>
 `LEDA_INCLUDE_DIR` 
 <TD ALIGN=LEFT NOWRAP>
 Directory containing the file `LEDA/system/basic.h` 
@@ -1849,6 +1867,13 @@ and library files must be specified by using environment variables.
 <B>Type</B>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
+`MPFI_DIR` 
+<TD ALIGN=LEFT NOWRAP>
+Directory of \sc{MPFI} default installation
+<TD ALIGN=LEFT NOWRAP>
+Environment
+<TR>
+<TD ALIGN=LEFT NOWRAP>
 `MPFI_INCLUDE_DIR` 
 <TD ALIGN=LEFT NOWRAP>
 Directory containing the `mpfi.h` file 
@@ -1910,6 +1935,13 @@ related to the latter library may also need to be defined.
 <B>Type</B>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
+`RS_DIR` 
+<TD ALIGN=LEFT NOWRAP>
+Directory of \sc{RS} default installation
+<TD ALIGN=LEFT NOWRAP>
+Environment
+<TR>
+<TD ALIGN=LEFT NOWRAP>
 `RS_INCLUDE_DIR` 
 <TD ALIGN=LEFT NOWRAP>
 Directory containing the `rs_exports.h` file 
@@ -1958,6 +1990,13 @@ Similar variables exist for Rs3.
 <B>Description</B> 
 <TD ALIGN=LEFT NOWRAP>
 <B>Type</B>
+<TR>
+<TD ALIGN=LEFT NOWRAP>
+`RS3_DIR` 
+<TD ALIGN=LEFT NOWRAP>
+Directory of \sc{RS3} default installation
+<TD ALIGN=LEFT NOWRAP>
+Environment
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 `RS3_INCLUDE_DIR` 
@@ -2019,6 +2058,13 @@ headers and library files must be specified using environment variables.
 <B>Type</B>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
+`NTL_DIR` 
+<TD ALIGN=LEFT NOWRAP>
+Directory of \sc{NTL} default installation
+<TD ALIGN=LEFT NOWRAP>
+Environment
+<TR>
+<TD ALIGN=LEFT NOWRAP>
 `NTL_INCLUDE_DIR` 
 <TD ALIGN=LEFT NOWRAP>
 Directory containing the `NTL/ZZX.h` file 
@@ -2070,6 +2116,13 @@ Only the <I>directory</I> containing the header files of \sc{Eigen} 3.1 (or grea
 <B>Description</B> 
 <TD ALIGN=LEFT NOWRAP>
 <B>Type</B>
+<TR>
+<TD ALIGN=LEFT NOWRAP>
+`EIGEN3_DIR` 
+<TD ALIGN=LEFT NOWRAP>
+Directory of \sc{EIGEN} default installation
+<TD ALIGN=LEFT NOWRAP>
+Environment
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 `EIGEN3_INCLUDE_DIR` 
@@ -2153,6 +2206,13 @@ environment variable is sufficient.
 <B>Description</B> 
 <TD ALIGN=LEFT NOWRAP>
 <B>Type</B>
+<TR>
+<TD ALIGN=LEFT NOWRAP>
+`ESBTL_DIR` 
+<TD ALIGN=LEFT NOWRAP>
+Directory of \sc{ESBTL} default installation
+<TD ALIGN=LEFT NOWRAP>
+Environment
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 `ESBTL_INC_DIR` 

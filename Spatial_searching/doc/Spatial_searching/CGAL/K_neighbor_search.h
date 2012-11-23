@@ -13,10 +13,10 @@ Expects for the first template argument an implementation of the concept `Search
 for example `Simple_cartesian<double>`. 
 
 Expects for the second template argument a model of the 
-concept `GeneralDistance`. If `Traits` is 
+concept `GeneralDistance`. If `Traits` is
 `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
-the default type is `Distance_for_point_adapter<Key,PointPropertyMap,Euclidean_distance<Traits> >`, 
-and `Euclidean_distance<Traits>` otherwise. 
+the default type is `Distance_adapter<Key,PointPropertyMap,Euclidean_distance<Traits> >`, 
+and `Euclidean_distance<Traits>` otherwise.
 
 Expects for fourth template argument an implementation of the concept `SpatialTree`. 
 The default type is `Kd_tree<Traits, Splitter, Tag_false>`. The 

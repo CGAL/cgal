@@ -74,7 +74,7 @@ Gmpfi(const T& t,Precision_type p=get_default_precision());
 /*! 
 creates a `Gmpfi` initialized with endpoints `left` 
 and `right`. The rounding of the endpoints will guarantee 
-that [`left`,`right`] is included in `i`. 
+that ([`left`,`right`]) is included in `i`. 
 */ 
 Gmpfi(const Gmpfr &left, 
 const Gmpfr &right, 
@@ -85,7 +85,7 @@ creates a `Gmpfi` initialized with endpoints
 `endpoints.first` and `endpoints.second`. `L` and 
 `R` are types from which `Gmpfr` can be constructed 
 from. The rounding of the endpoints will guarantee that 
-[`endpoints.first`,`endpoints.second`] is included in 
+([`endpoints.first`,`endpoints.second`]) is included in 
 `i`. 
 */ 
 template<class L, class R> 
