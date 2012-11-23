@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
   \ingroup PkgPolyhedron
 
-  A polyhedral surface `Polyhedron_3` consists of vertices \f$ V\f$, 
-  edges \f$ E\f$, facets \f$ F\f$ and an incidence relation on them. Each edge is 
+  A polyhedral surface `Polyhedron_3` consists of vertices `V`, 
+  edges `E`, facets `F` and an incidence relation on them. Each edge is 
   represented by two halfedges with opposite orientations. 
 
   \image html halfedge.gif

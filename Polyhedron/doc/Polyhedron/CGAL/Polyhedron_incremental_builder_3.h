@@ -12,7 +12,7 @@ OpenInventor \cite cgal:w-impoo-94 or
 VRML \cite cgal:bpp-vrml-95, \cite cgal:vrmls-96. 
 `Polyhedron_incremental_builder_3` needs access to the internal halfedge data 
 structure of type `HDS` of the polyhedral surface. It is intended 
-to be used within a modifier, see `CGAL::Modifier_base`. 
+to be used within a modifier, see `Modifier_base`. 
 
 The incremental builder might be of broader interest for other uses of 
 the halfedge data structures, but it is specifically bound to the 
@@ -28,7 +28,7 @@ not explicitly specified. They are derived from the vertex incidence
 information provided from the facet polygons. The polygons are given as a 
 sequence of vertex indices. The halfedge data structure `HDS` must 
 support vertices (i.e., `Supports_halfedge_vertex` \f$ \equiv\f$ 
-`CGAL::Tag_true`). Vertices and facets can be added in arbitrary order 
+`Tag_true`). Vertices and facets can be added in arbitrary order 
 as long as a call to `add_vertex_to_facet()` refers only to a 
 vertex index that is already known. Some methods return already 
 handles to vertices, facets, and halfedges newly constructed. They can 

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHDS
+\ingroup PkgHDS_HDS
 
 The class `HalfedgeDS_list` is a model for the `HalfedgeDS` concept. 
 `HalfedgeDS_list` is a list-based representation with bidirectional 
@@ -21,9 +21,7 @@ iterators that supports removal.
 
 `HalfedgeDS_list` uses internally the `CGAL::In_place_list` container class. 
 The copy constructor and the assignment operator need \f$ O(n)\f$ time with 
-\f$ n\f$ the total number of vertices, halfedges, and faces. The former 
-suboptimal implementation with an \f$ O(n \log n)\f$ runtime has been replaced 
-with a faster implementation based on hashing for the pointer lookup. 
+\f$ n\f$ the total number of vertices, halfedges, and faces. 
 
 `CGAL_ALLOCATOR(int)` is used as default argument for the 
 `Alloc` template parameter. 

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHDS
+\ingroup PkgHDS_Items
 
 The class `HalfedgeDS_items_2` is a model of the `HalfedgeDSItems` concept. 
 It uses the default types for vertices, halfedges, and faces that 

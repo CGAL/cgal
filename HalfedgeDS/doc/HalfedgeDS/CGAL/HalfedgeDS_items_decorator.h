@@ -1,12 +1,9 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHDS
+\ingroup PkgHDS_Decorators
 
-The classes `CGAL::HalfedgeDS_items_decorator<HDS>`, 
-`CGAL::HalfedgeDS_decorator<HDS>`, and 
-`CGAL::HalfedgeDS_const_decorator<HDS>` provide additional functions 
-to examine and to modify a halfedge data structure `HDS`. The class 
+The class 
 `CGAL::HalfedgeDS_items_decorator<HDS>` provides additional functions 
 for vertices, halfedges, and faces of a halfedge data structure 
 without knowing the containing halfedge data structure. The class 

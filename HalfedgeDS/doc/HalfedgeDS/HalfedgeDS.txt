@@ -177,14 +177,14 @@ member variable `color`.
 
 \subsection HalfedgeDSExampleDefiningaMoreCompactHalfedge Example Defining a More Compact Halfedge
 
-\cgalAdvanced The halfedge data structure as presented here is slightly less space
+The halfedge data structure as presented here is slightly less space
 efficient as, for example, the winged-edge data
 structure \cite b-prcv-75, the DCEL \cite mp-fitcp-78 or variants of
 the quad-edge data structure \cite gs-pmgsc-85. On the other hand,
 it does not require any search operations during traversals. A
 comparison can be found in \cite k-ugpdd-99.
 
-\cgalAdvanced The following example trades traversal time for a compact storage
+The following example trades traversal time for a compact storage
 representation using traditional C techniques (i.e., type casting and
 the assumption that pointers, especially those from <TT>malloc</TT> or
 <TT>new</TT>, point to even addresses). The idea goes as follows: The
@@ -197,7 +197,7 @@ store this bit as the least significant bit in the next halfedge
 handle. Furthermore, we do not implement a pointer to the previous
 halfedge. What remains are three pointers per halfedge.
 
-\cgalAdvanced We use the static member function `HalfedgeDS::halfedge_handle()` to convert
+We use the static member function `HalfedgeDS::halfedge_handle()` to convert
 from pointers to halfedge handles. The same solution can be applied to
 the list-based halfedge data structure `HalfedgeDS_list`,
 see <TT>examples/HalfedgeDS/hds_prog_compact2.cpp</TT>. Here is the

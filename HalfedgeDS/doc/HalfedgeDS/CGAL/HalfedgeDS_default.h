@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHDS
+\ingroup PkgHDS_HDS
 
 The class `HalfedgeDS_default` is a model for the `HalfedgeDS` concept. The 
 second template parameter `HalfedgeDSItems` has a default argument 
@@ -25,9 +25,7 @@ removal.
 
 Currently, `HalfedgeDS_default` is derived from `CGAL::HalfedgeDS_list<Traits>`. 
 The copy constructor and the assignment operator need \f$ O(n)\f$ time with 
-\f$ n\f$ the total number of vertices, halfedges, and faces. The former 
-suboptimal implementation with an \f$ O(n \log n)\f$ runtime has been replaced 
-with a faster implementation based on hashing for the pointer lookup. 
+\f$ n\f$ the total number of vertices, halfedges, and faces. 
 
 */
 template< typename Traits, 

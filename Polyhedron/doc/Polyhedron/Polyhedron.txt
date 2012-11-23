@@ -31,7 +31,7 @@ gradually into first applications of this flexibility.
 \section PolyhedronDefinition Definition
 
 A polyhedral surface `Polyhedron_3<PolyhedronTraits_3>` in
-three dimensions consists of vertices \f$ V\f$, edges \f$ E\f$, facets \f$ F\f$ and
+three dimensions consists of vertices `V`, edges `E`, facets `F` and
 an incidence relation on them. Each edge is represented by two
 halfedges with opposite orientations. The incidences stored with a
 halfedge are illustrated in the following figure:
@@ -85,7 +85,7 @@ that it is easy to ignore border edges and work only with polyhedra.
 
 The polyhedral surface is based on the highly flexible design of the
 halfedge data structure. Examples for this flexibility can be found in
-Section \ref sectionPolyExtend and in Section \ref sectionHdsExamples. 
+Section \ref PolyhedronExtending and in Section \ref sectionHdsExamples. 
 This design is not a prerequisite to understand the following examples.
 See also the Section \ref sectionPolyAdvanced below for some advanced 
 examples.
@@ -462,7 +462,7 @@ allow us to make further references between vertices, halfedges, and
 facets, which have not already been prepared for in the current
 design. These local types are  `Polyhedron_3::Vertex_handle`,
 `Polyhedron_3::Halfedge_handle`, `Polyhedron_3::Facet_handle`, and there respective
-\f$ \ldots\f$ `_const_handle`. We add now a new vertex reference to a
+ `.._const_handle`. We add now a new vertex reference to a
 face class as follows. Encapsulation and access functions could be
 added for a more thorough design, but we omit that here for the sake
 of brevity. The integration of the face class with the items class

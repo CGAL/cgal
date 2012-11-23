@@ -1,6 +1,22 @@
 /// \defgroup PkgHDS Halfedge Data Structures Reference
 /// \defgroup PkgHDSConcepts Concepts
 /// \ingroup PkgHDS
+
+/// \defgroup  PkgHDS_HDS Halfedge Data Structures
+/// \ingroup PkgHDS
+
+/// \defgroup  PkgHDS_Items Item Classes
+/// \ingroup PkgHDS
+
+/// \defgroup  PkgHDS_VHF Vertices, Halfedges, Faces
+/// \ingroup PkgHDS
+
+/// \defgroup  PkgHDS_Decorators Decorators
+/// \ingroup PkgHDS
+/// Classes that provide additional functions 
+/// to examine and to modify a halfedge data structure.
+
+
 /*!
 \addtogroup PkgHDS
 \todo check generated documentation
@@ -26,8 +42,8 @@ combinatorial data structure, geometric interpretation is added by
 classes built on top of the halfedge data structure.These classes
 might be more convenient to use than the halfedge data structure
 directly, since the halfedge data structure is meant as an
-implementation layer.See for example the `CGAL::Polyhedron_3`
-class in the package \ref Chapter_3D_Polyhedral_Surfaces "Polyhedron".
+implementation layer.See for example the `Polyhedron_3`
+class in the package \ref Chapter_3D_Polyhedral_Surfaces "3D Polyhedral Surface".
 
 The data structure provided here is known as the
 FE-structure \cite w-ebdss-85, as
