@@ -23,6 +23,7 @@
 #define CGAL_IO_FILE_MEDIT_H
 
 #include <CGAL/Mesh_3/config.h>
+#include <CGAL/Mesh_3/comparison_operators.h>
 
 #include <iostream>
 #include <map>
@@ -767,6 +768,8 @@ output_to_medit(std::ostream& os,
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Point Point_3;
 
+  typedef CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle> Compare_points;
+
   const Tr& tr = c3t3.triangulation();
 
   //-------------------------------------------------------
@@ -788,7 +791,7 @@ output_to_medit(std::ostream& os,
   os << "Vertices" << std::endl
      << tr.number_of_vertices() << std::endl;
 
-  std::map<Vertex_handle, int> V;
+  std::map<Vertex_handle, int, Compare_points> V;
   int inum = 1;
   for( Finite_vertices_iterator vit = tr.finite_vertices_begin();
        vit != tr.finite_vertices_end();
