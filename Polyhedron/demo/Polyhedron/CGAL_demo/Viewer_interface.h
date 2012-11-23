@@ -26,6 +26,8 @@ public:
   static bool readFrame(QString, qglviewer::Frame&);
   static QString dumpFrame(const qglviewer::Frame&);
 
+  virtual bool inFastDrawing() const = 0;
+
 signals:
   void selected(int);
   void requestContextMenu(QPoint global_pos);

@@ -11,6 +11,7 @@ public:
   bool antialiasing;
   bool twosides;
   bool macro_mode;
+  bool inFastDrawing;
 
   void draw_aux(bool with_names, Viewer*);
 };
@@ -62,11 +63,26 @@ void Viewer::setTwoSides(bool b)
   updateGL();
 }
 
+bool Viewer::inFastDrawing() const {
+  return d->inFastDrawing;
+}
+
 void Viewer::draw()
 {
+  d->inFastDrawing = false;
   // ::glFogf(GL_FOG_END, 2*sceneRadius());
   // ::glEnable(GL_FOG);
   QGLViewer::draw();
+  d->draw_aux(false, this);
+  // drawLight(GL_LIGHT0);
+}
+
+void Viewer::fastDraw()
+{
+  d->inFastDrawing = true;
+  // ::glFogf(GL_FOG_END, 2*sceneRadius());
+  // ::glEnable(GL_FOG);
+  QGLViewer::fastDraw();
   d->draw_aux(false, this);
   // drawLight(GL_LIGHT0);
 }
