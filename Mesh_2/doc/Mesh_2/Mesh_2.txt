@@ -49,16 +49,15 @@ to be Delaunay or Gabriel edges.
 \subsection secMesh_2_building_conforming Building Conforming Triangulations 
 
 Constrained Delaunay triangulations can be refined into
-conforming triangulations 
-by the two following global functions: 
+conforming triangulations by the two following global functions: 
 
-`template<class CDT> void make_conforming_Delaunay_2 (CDT& t)` and
+\link make_conforming_Delaunay_2() `template<class CDT> void make_conforming_Delaunay_2 (CDT& t)`\endlink and
 
-`template<class CDT> void make_conforming_Gabriel_2 (CDT& t)`.
+\link make_conforming_Gabriel_2() `template<class CDT> void make_conforming_Gabriel_2 (CDT& t)`\endlink.
 
-In both cases, the template parameter `CDT` must be instantiated
-by a constrained Delaunay triangulation class. Such a class must be a
-model of the concept `ConstrainedDelaunayTriangulation_2`.
+In both cases, the template parameter `CDT` must be instantiated by a
+constrained Delaunay triangulation class (see Chapter \ref
+Chapter_2D_Triangulations "2D Triangulations").
 
 The geometric traits of the constrained
 Delaunay triangulation used to instantiate the parameter `CDT` has to
@@ -196,12 +195,10 @@ angle bound greater than \f$ 20.7\f$ degrees, but there is no such guarantee.
 Meshes are obtained from
 constrained Delaunay triangulations by calling the global function 
 
-`template<class CDT, class Criteria> void refine_Delaunay_mesh_2 (CDT
-&t, const Criteria& criteria)`. 
+\link refine_Delaunay_mesh_2() `template<class CDT, class Criteria> void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria)`\endlink. 
 
 The template parameter `CDT` must be instantiated by a constrained
-Delaunay triangulation class, which is a model of the concept
-`ConstrainedDelaunayTriangulation_2`. In order to override the domain,
+Delaunay triangulation class. In order to override the domain,
 a version of this function has two more arguments that define a sequence of
 seed points.
 
@@ -219,7 +216,7 @@ that bounds the minimum angle of triangles,
 criterion a bound on the maximum edge length.
 </UL>
 
-If the function `refine_Delaunay_mesh_2` is called several times on the
+If the function `refine_Delaunay_mesh_2()` is called several times on the
 same triangulation with different criteria, the algorithm rebuilds the 
 internal data structure used for meshing at every call. In order to avoid 
 rebuild the data structure at every call, the advanced user can
@@ -241,7 +238,7 @@ function of the face type (see the concept `DelaunayMeshFaceBase_2`).
 
 The following example inserts several segments into a constrained
 triangulation and then meshes it using the global function
-`refine_Delaunay_mesh_2`. The size and shape criteria are the default ones
+`refine_Delaunay_mesh_2()`. The size and shape criteria are the default ones
 provided by the criteria class `Delaunay_mesh_criteria_2<K>`. No seeds are
 given, meaning that the mesh domain covers the whole plane except the
 unbounded component.
@@ -253,7 +250,7 @@ unbounded component.
 This example uses the class `Delaunay_mesher_2<CDT>` and calls
 the `refine_mesh()` member function twice, changing the size and
 shape criteria in between. In such a case, using twice the global
-function `refine_Delaunay_mesh_2` would be less efficient,
+function `refine_Delaunay_mesh_2()` would be less efficient,
 because some internal structures needed by the algorithm would be
 built twice.
 
@@ -261,7 +258,7 @@ built twice.
 
 \subsection Mesh_2ExampleUsingSeeds Example Using Seeds
 
-This example uses the global function `refine_Delaunay_mesh_2` but
+This example uses the global function `refine_Delaunay_mesh_2()` but
 defines a domain by using one seed. The size and shape criteria are the
 default ones provided by the criteria class
 `Delaunay_mesh_criteria_2<K>`.

@@ -9,8 +9,8 @@ Refines the constrained Delaunay triangulation `t` into a
 conforming Delaunay triangulation. After a call to this function,
 all edges of `t` are Delaunay edges. 
 
-\tparam CDT must be a model of the concept `ConstrainedDelaunayTriangulation_2`.
-The geometric traits class of into the constrained Delaunay triangulation must be a model of `ConformingDelaunayTriangulationTraits_2`.
+\tparam CDT must be a 2D constrained Delaunay triangulation
+and its geometric traits class must be a model of `ConformingDelaunayTriangulationTraits_2`.
 */
 template<class CDT> void make_conforming_Delaunay_2 (CDT &t); 
 
@@ -29,7 +29,8 @@ constrained edges of `t` have the <I>Gabriel property</I>: the
 circle that has \f$ e\f$ as diameter does not contain any vertex from
 the triangulation. 
 
-\tparam CDT must be a model of the concept `ConstrainedDelaunayTriangulation_2`. The geometric traits class of the constrained Delaunay triangulation must be a model of `ConformingDelaunayTriangulationTraits_2`.
+\tparam CDT must be a 2D constrained Delaunay triangulation
+and its geometric traits class must be a model of `ConformingDelaunayTriangulationTraits_2`.
 */
 template<class CDT> void make_conforming_Gabriel_2 (CDT &t); 
 
@@ -50,8 +51,8 @@ functions `make_conforming_Gabriel_2` and
 `make_conforming_Delaunay_2`. 
 
 
-\tparam CDT must be a model of the concept 
-`ConstrainedDelaunayTriangulation_2`.  The geometric traits class of the instance of `CDT` has to be 
+\tparam CDT must be a 2D constrained Delaunay triangulation
+and its geometric traits class must be 
 a model of the concept `ConformingDelaunayTriangulationTraits_2`. 
 
 ### Using This Class ###
@@ -151,7 +152,7 @@ bool is_conforming_Gabriel();
 
 
 /*!
-\name Step by step operations 
+\name Step by Step Operations 
 The `Triangulation_conformer_2` class allows, for debugging or demos, to play the 
 conforming algorithm step by step, using the following methods. They exist 
 in two versions, depending on whether you want the triangulation to be 

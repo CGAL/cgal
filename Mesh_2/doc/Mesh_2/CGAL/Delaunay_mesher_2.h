@@ -8,8 +8,7 @@ namespace CGAL {
 This class implements a 2D mesh generator. 
 
 
-\tparam CDT must be a model of the 
-concept `ConstrainedDelaunayTriangulation_2`, and type `CDT::Face` 
+\tparam CDT must be a 2D constrained Delaunay triangulation, and type `CDT::Face` 
 should be a model of the concept `MeshFaceBase_2`. 
 The geometric traits class of the instance of `CDT` has to be 
 a model of the concept `DelaunayMeshTraits_2`. 
@@ -98,15 +97,15 @@ void clear_seeds ();
 
 
 /*! 
-Sets seeds to the sequence [`begin`, 
-`end`]. If `mark=true`, the mesh domain 
+Sets seeds to the sequence `[begin, end)`. If `mark==true`, the mesh domain 
 is the union of the bounded connected 
 components including at least one seed. If 
-`mark=false`, the domain is the union of 
+`mark==false`, the domain is the union of 
 the bounded components including no seed. Note 
 that the unbounded component of the plane is 
 never meshed. 
-\cgalRequires The `value_type` of `begin` and `end` is `Geom_traits::Point_2`. 
+
+\tparam InputIterator must be an input iterator with  value type `Geom_traits::Point_2`. 
 */ 
 template<class InputIterator> 
 void set_seeds(InputIterator begin, InputIterator end, 
@@ -190,11 +189,12 @@ recalculate_bad_faces);
 
 /*! 
 This method permits to set the list of bad triangles 
-directly, from the sequence [begin, end], so that the 
+directly, from the sequence `[begin, end)`, so that the 
 algorithm will not scan the whole set of triangles to 
 find bad ones. To use if there is a non-naive way to 
 find bad triangles. 
-\cgalRequires The `value_type` of `begin` and `end` is `Face_handle`. 
+
+\tparam InputIterator must be an input iterator with value type `Face_handle`. 
 */ 
 template <class InputIterator> 
 void set_bad_faces(InputIterator begin, 
@@ -207,7 +207,7 @@ InputIterator end);
 /// @} 
 
 
-/// \name Step by step operations 
+/// \name Step by Step Operations 
 /// The `Delaunay_mesher_2` class allows, for debugging or demos, to play the 
 /// meshing algorithm step by step, using the following methods. 
 /// @{
@@ -262,9 +262,13 @@ triangulation without seeds into a mesh satisfying the criteria
 defined by the traits `criteria`. The domain of the mesh
 covers all the connected components of the plane defined by the
 constrained edges of `t`, except for the unbounded component.
-\pre The template parameter `CDT` must be a model of the concept `ConstrainedDelaunayTriangulation_2`. The geometric traits class of the constrained Delaunay triangulation must be a model of `DelaunayMeshTraits_2`.
+
+\tparam CDT  must be 2D constrained Delaunay triangulation
+and its geometric traits class must be a model of `DelaunayMeshTraits_2`.
+
+\tparam Criteria must be a model of the concept `MeshingCriteria_2`. 
+
 \cgalRequires The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
-\cgalRequires `Criteria` must be a model of the concept `MeshingCriteria_2`. 
 \cgalRequires `CDT::Face_handle` must be the same as `Criteria::Face_handle`. 
 */
 template<class CDT, class Criteria> 
@@ -278,17 +282,26 @@ void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria());
 Refines the default domain defined by a constrained
 Delaunay triangulation into a mesh
 satisfying the criteria defined by the traits
-`criteria`.The sequence [`begin`, `end`]
+`criteria`.The sequence `[begin, end)`
 gives a set of seeds points, that defines the domain
 to be meshed as follows. The constrained edges of
 `t` partition the plane into connected components.
-If `mark=true`, the mesh domain is the union of
+If `mark==true`, the mesh domain is the union of
 the bounded connected components including at least
-one seed. If `mark=false`, the domain is the
+one seed. If `mark==false`, the domain is the
 union of the bounded components including no seed.
 Note that the unbounded component of the plane is
 never meshed.
-\cgalRequires The `value_type` of `begin` and `end` is `CDT::Geom_traits::Point_2`.
+
+\tparam CDT  must be 2D constrained Delaunay triangulation
+and its geometric traits class must be a model of `DelaunayMeshTraits_2`.
+
+\tparam Criteria must be a model of the concept `MeshingCriteria_2`. 
+\tparam InputIterator must be an input iterator with valur type `CDT::Geom_traits::Point_2`.
+
+\cgalRequires The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
+\cgalRequires `CDT::Face_handle` must be the same as `Criteria::Face_handle`. 
+
 */
 template <class CDT, class Criteria, class InputIterator>
 void refine_Delaunay_mesh_2(CDT& t,
