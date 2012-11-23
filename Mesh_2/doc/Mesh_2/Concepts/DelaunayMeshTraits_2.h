@@ -12,8 +12,8 @@ object `Construct_circumcenter_2`.
 
 \cgalRefines `ConformingDelaunayTriangulationTraits_2` 
 
-\cgalHasModel Any model of the `Kernel` concept. In particular, all \cgal kernels. 
-
+\cgalHasModel Any model of the `Kernel` concept. In particular, all \cgal kernels
+\cgalHasModel `Projection_traits_xy_3<K>`
 
 */
 
