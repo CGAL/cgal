@@ -39,6 +39,8 @@
 #include <CGAL/tuple.h>
 #include <sstream>
 
+#include <CGAL/Mesh_3/comparison_operators.h>
+
 namespace CGAL {
 
 namespace Mesh_3 {
@@ -262,8 +264,10 @@ private:
       return mirror;
     else if(r_tr_.is_infinite(mirror.first->vertex(mirror.second)))
       return facet;
-    else if(facet.first->vertex(facet.second)->point()
-              < mirror.first->vertex(mirror.second)->point())
+
+    typename CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle> comparator;
+    if(comparator(facet.first->vertex(facet.second),
+                  mirror.first->vertex(mirror.second)))
       return facet;
     else
       return mirror;
