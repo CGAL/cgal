@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \addtogroup PkgSurfaceMesher3FunctionsMakeMesh
 
-The function `make_surface_mesh` is a surface mesh generator, 
+The function `make_surface_mesh()` is a surface mesh generator, 
 that is a function to build a two dimensional mesh 
 approximating a surface. 
 
@@ -43,7 +43,7 @@ on the output surface mesh.
 
 \tparam Tag 
 is a tag whose type affects the behavior of the 
-meshing algorithm. The function `make_surface_mesh` has specialized versions 
+meshing algorithm. The function `make_surface_mesh()` has specialized versions 
 for the following tag types: 
 <br>
 - `Manifold_tag`: the output mesh is guaranteed to be a manifold 
@@ -82,7 +82,7 @@ on each connected components of the surface to be meshed.
 
 /*!
 In the first overloaded version of 
-of `make_surface_mesh`, the surface type is given 
+of `make_surface_mesh()`, the surface type is given 
 as template parameter (`Surface`) and the `surface` 
 to be meshed is passed as parameter to the mesh generator. 
 In that case the surface mesh generator traits type 
@@ -114,7 +114,7 @@ Tag tag,
 int initial_number_of_points = 20) ;
 
 /*!
-In the second overloaded version of `make_surface_mesh`, 
+In the second overloaded version of `make_surface_mesh()`, 
 the surface mesh generator traits type is provided 
 by the template parameter `SurfaceMeshTraits_3` 
 and the surface type is obtained from this traits type. 
@@ -148,7 +148,7 @@ surface meshing algorithm. When instantiated with the tag
 ensures that the output mesh is a manifold surface 
 without boundary. 
 
-\sa `make_surface_mesh` 
+\sa `make_surface_mesh()` 
 \sa `Manifold_with_boundary_tag` 
 \sa `Non_manifold_tag` 
 
@@ -174,7 +174,7 @@ surface meshing algorithm. When instantiated with the tag
 ensures that the output mesh is a manifold surface 
 but it may have boundaries. 
 
-\sa `make_surface_mesh` 
+\sa `make_surface_mesh()` 
 \sa `Manifold_tag` 
 \sa `Non_manifold_tag` 
 
@@ -202,7 +202,7 @@ The manifold property of output mesh
 may nevertheless result from the choice of 
 appropriate meshing criteria. 
 
-\sa `make_surface_mesh` 
+\sa `make_surface_mesh()` 
 \sa `Manifold_tag` 
 \sa `Manifold_with_boundary_tag` 
 

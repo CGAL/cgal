@@ -342,7 +342,7 @@ int & li, int & lj, Cell_handle start = Cell_handle() ) const;
 
 /*! 
 Creates a new vertex by starring a hole. It takes an iterator range 
-[`cell_begin`; `cell_end`[ of `Cell_handle`s which specifies 
+`[cell_begin, cell_end)` of `Cell_handle`s which specifies 
 a hole: a set of connected cells (resp. facets in dimension 2) which is 
 star-shaped wrt `p`. 
 (`begin`, `i`) is a facet (resp. an edge) on the boundary of the hole, 

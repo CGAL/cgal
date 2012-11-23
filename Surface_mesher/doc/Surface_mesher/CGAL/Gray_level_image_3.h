@@ -21,9 +21,7 @@ in the input 3D gray image.
 
 `Gray_level_image_3` provides an interface with an auxiliary library called 
 <I>CGAL_ImageIO</I>. An executable that uses `Gray_level_image_3` must be linked with 
-the <I>CGAL_ImageIO</I> library. This library is shipped with \cgal and 
-will be linked automatically by any makefile created by the script 
-`cgal_create_makefile`. 
+the <I>CGAL_ImageIO</I> library.
 
 The library <I>CGAL_ImageIO</I> and therefore `Gray_level_image_3` support 
 several types of 3D images: INRIMAGE (extension .inr[.gz]), GIS (extension 
