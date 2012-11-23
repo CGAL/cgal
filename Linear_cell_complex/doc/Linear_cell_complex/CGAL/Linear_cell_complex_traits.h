@@ -9,7 +9,7 @@ This geometric traits concept is used in the
 concept `Kernel` (for example any \cgal kernel), and defines inner 
 types and functors corresponding to the given dimension. 
 
-\cgalModels ::LinearCellComplexTraits 
+\cgalModels `LinearCellComplexTraits`
 
 \tparam d the dimension of the kernel, 
 \tparam K a model of the concept `Kernel` if `d==2` or 

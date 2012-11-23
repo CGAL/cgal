@@ -18,7 +18,7 @@ The fourth parameter `WeightedTag` is used only if `ExactAlphaComparisonTag` is 
 must be `CGAL::Tag_true` if the underlying triangulation of the alpha shape to be used is a regular triangulation 
 and `CGAL::Tag_false` otherwise. The default is `CGAL::Tag_false`. 
 
-\cgalModels ::AlphaShapeVertex_3 
+\cgalModels `AlphaShapeVertex_3`
 
 */
 template< typename Traits, typename Vb, typename ExactAlphaComparisonTag, typename WeightedTag >

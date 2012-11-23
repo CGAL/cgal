@@ -16,7 +16,7 @@ the underlying triangulation of a weighted alpha shapes.
 
 \cgalRefines CGAL::Regular_triangulation_euclidean_traits_3<K, typename K::FT>  
 
-\cgalModels ::WeightedAlphaShapeTraits_3 
+\cgalModels `WeightedAlphaShapeTraits_3`
 
 */
 template< typename K >

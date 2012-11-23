@@ -19,8 +19,8 @@ to a vertex. It has to be `DefaultConstructible` and `Assignable`.
 `Triangulation_vertex_base_with_info_3` derives. It has the default 
 value `Triangulation_vertex_base_3<TriangulationTraits_3>`. 
 
-\cgalModels ::TriangulationVertexBase_3 
-\cgalModels ::TriangulationVertexBaseWithInfo_3 
+\cgalModels `TriangulationVertexBase_3`
+\cgalModels `TriangulationVertexBaseWithInfo_3`
 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
 \sa `CGAL::Triangulation_vertex_base_3` 

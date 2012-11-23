@@ -10,7 +10,7 @@ which  computes the placement as the midpoint position along the edge.
 
 \tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
-\cgalModels ::GetPlacement 
+\cgalModels `GetPlacement`
 
 */
 template< typename ECM >

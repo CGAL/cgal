@@ -12,7 +12,7 @@ To optimize distance computations squared distances are used.
 Expects for the first template argument a model of the concept 
 `SearchTraits`, for example `CGAL::Search_traits_2<CGAL::Cartesian<double> >`. 
 
-\cgalModels ::OrthogonalDistance 
+\cgalModels `OrthogonalDistance`
 
 \sa `OrthogonalDistance` 
 \sa `CGAL::Weighted_Minkowski_distance<Traits>` 

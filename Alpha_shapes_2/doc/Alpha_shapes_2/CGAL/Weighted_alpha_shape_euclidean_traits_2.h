@@ -8,7 +8,7 @@ The class `Weighted_alpha_shape_euclidean_traits_2` is the default model for the
 `AlphaShapeTraits_2` for the regular version of Alpha Shapes. 
 `K` must be a kernel. 
 
-\cgalModels ::AlphaShapeTraits_2 
+\cgalModels `AlphaShapeTraits_2`
 
 */
 template< typename K >

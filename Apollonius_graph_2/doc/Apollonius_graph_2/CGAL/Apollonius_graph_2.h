@@ -11,7 +11,7 @@ must be a model of `ApolloniusGraphTraits_2`, and `Agds`,
 which must be a model of `ApolloniusGraphDataStructure_2`. 
 The second template argument defaults to 
 `CGAL::Triangulation_data_structure_2< CGAL::Apollonius_graph_vertex_base_2<Gt,true>, CGAL::Triangulation_face_base_2<Gt> >`.
-\cgalModels ::DelaunayGraph_2 
+\cgalModels `DelaunayGraph_2`
 
 ### Traversal of the Apollonius Graph ###
 

@@ -21,13 +21,13 @@ the lexicographic order starts the comparison at the last entry.
 This reflects the fact that the last entry corresponds to the 
 outermost variable of a multivariate polynomial. 
 
-\cgalModels ::RandomAccessContainer 
-\cgalModels ::BackInsertionSequence 
-\cgalModels ::DefaultConstructible 
-\cgalModels ::Assignable 
-\cgalModels ::CopyConstructible 
-\cgalModels ::EqualityComparable 
-\cgalModels ::LessThanComparable 
+\cgalModels `RandomAccessContainer`
+\cgalModels `BackInsertionSequence`
+\cgalModels `DefaultConstructible`
+\cgalModels `Assignable`
+\cgalModels `CopyConstructible`
+\cgalModels `EqualityComparable`
+\cgalModels `LessThanComparable`
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

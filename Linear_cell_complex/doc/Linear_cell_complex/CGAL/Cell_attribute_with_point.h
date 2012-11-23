@@ -9,7 +9,7 @@ containing an information when `Info_` is different from void.
 This class can typically be used to associate a point to each 0-cell 
 of a combinatorial map. 
 
-\cgalModels ::CellAttributeWithPoint 
+\cgalModels `CellAttributeWithPoint`
 
 \tparam LCC must be an instantiation of `Linear_cell_complex` class, 
 \tparam Info_ is the type of the information contained in the attribute, `void` for no information, 

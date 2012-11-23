@@ -8,7 +8,7 @@ namespace Kinetic {
 This event erases a point from the `ActiveObjectsTable` when it 
 is processed. 
 
-\cgalModels ::Kinetic::Simulator::Event 
+\cgalModels `Kinetic::Simulator::Event`
 
 \sa `Kinetic::ActiveObjectsTable`
 \sa `Kinetic::Active_objects_vector<MovingObject>`

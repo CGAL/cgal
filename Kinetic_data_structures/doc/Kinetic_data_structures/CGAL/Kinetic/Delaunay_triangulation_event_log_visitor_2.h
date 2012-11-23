@@ -6,8 +6,8 @@ namespace CGAL { namespace Kinetic {
 The concept `Kinetic::Delaunay_triangulation_event_log_visitor_2` provides a model of 
 `Kinetic::DelaunayTriangulationVisitor_2` and `Kinetic::EventLogVisitor` which logs edge flip events. 
 
-\cgalModels ::Kinetic::DelaunayTriangulationVisitor_2
-\cgalModels ::Kinetic::EventLogVisitor 
+\cgalModels `Kinetic::DelaunayTriangulationVisitor_2`
+\cgalModels `Kinetic::EventLogVisitor`
 
 \sa `Kinetic::Delaunay_triangulation_2<Traits, Triangulation, Visitor>` 
 

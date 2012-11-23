@@ -9,7 +9,7 @@ The class `Combinatorial_map` represents a <I>d</I>D combinatorial map.
 Darts and non void attributes are stored in memory using 
 `Compact_container`, using `Alloc` as allocator. 
 
-\cgalModels ::CombinatorialMap 
+\cgalModels `CombinatorialMap`
 
 
 \tparam d is an integer for the dimension of the map. 

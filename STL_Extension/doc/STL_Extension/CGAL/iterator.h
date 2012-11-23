@@ -12,7 +12,7 @@ specific object of type `T`.
 
 
 
-\cgalModels ::RandomAccessIterator
+\cgalModels `RandomAccessIterator`
 
 \sa `CGAL::Emptyset_iterator`
 \sa `CGAL::Oneset_iterator`
@@ -56,7 +56,7 @@ from input iterators.
 
 
 
-\cgalModels ::InputIterator
+\cgalModels `InputIterator`
 
 ### Requirements ###
 
@@ -119,7 +119,7 @@ It also inherits from `O`, which makes it easy to treat like a tuple.
 `V` must be a `CGAL::cpp11::tuple<...>` of the types of values to be accepted and dispatched.
 `O` must be a `CGAL::cpp11::tuple<...>` of the types of corresponding output iterators.
 
-\cgalModels ::OutputIterator
+\cgalModels `OutputIterator`
 
 \sa `CGAL::Dispatch_output_iterator<V,O>`
 */
@@ -201,7 +201,7 @@ It also inherits from `O`, which makes it easy to treat like a tuple.
 `V` must be a `CGAL::cpp11::tuple<...>` of the types of values to be accepted and dispatched.
 `O` must be a `CGAL::cpp11::tuple<...>` of the types of corresponding output iterators.
 
-\cgalModels ::OutputIterator
+\cgalModels `OutputIterator`
 
 \sa `CGAL::Dispatch_or_drop_output_iterator<V,O>`
 */
@@ -282,7 +282,7 @@ think of it as being connected to <TT>/dev/null</TT>.
 
 
 
-\cgalModels ::OutputIterator
+\cgalModels `OutputIterator`
 
 \sa `CGAL::Oneset_iterator`
 \sa `CGAL::Const_oneset_iterator`
@@ -398,7 +398,7 @@ to `std::insert_iterator`, but differs in that it calls the
 `insert()` function of the container without the iterator
 additional argument.
 
-\cgalModels ::OutputIterator
+\cgalModels `OutputIterator`
 
 \cgalRequires `Container` provides a member function `insert(const Container::const_reference&)`.
 
@@ -543,7 +543,7 @@ object.
 
 
 
-\cgalModels ::InputIterator
+\cgalModels `InputIterator`
 
 \sa `CGAL::Creator_1<Arg, Result>`
 
@@ -602,7 +602,7 @@ The class `Join_input_iterator_2` joins two iterators. The result is again an it
 iterator category type as the original iterator) that reads an object
 from the stream and applies a function object to that object.
 
-\cgalModels ::InputIterator
+\cgalModels `InputIterator`
 
 
 */
@@ -654,7 +654,7 @@ The class `Join_input_iterator_3` joins two iterators. The result is again an it
 iterator category type as the original iterator) that reads an object
 from the stream and applies a function object to that object.
 
-\cgalModels ::InputIterator
+\cgalModels `InputIterator`
 
 
 */
@@ -752,7 +752,7 @@ pointer to the referred object.
 
 
 
-\cgalModels ::BidirectionalIterator
+\cgalModels `BidirectionalIterator`
 
 \sa `CGAL::Emptyset_iterator`
 \sa `CGAL::Const_oneset_iterator`

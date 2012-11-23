@@ -42,7 +42,7 @@ creates copies of the boxes that would not have identical
 </UL> 
 </UL> 
 
-\cgalModels ::BoxIntersectionBox_d 
+\cgalModels `BoxIntersectionBox_d`
 
 \sa `CGAL::box_intersection_d` 
 \sa `CGAL::box_self_intersection_d` 

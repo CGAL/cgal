@@ -23,7 +23,7 @@ triangles must be shorter than a bound \f$ S\f$.
 
 
 
-\cgalModels ::MeshingCriteria_2 
+\cgalModels `MeshingCriteria_2`
 
 
 */

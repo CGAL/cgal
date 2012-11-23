@@ -53,7 +53,7 @@ the coefficient sequence does not contain leading zero coefficients
 (where leading means at the high-degree end), with the exception that 
 the zero polynomial is represented by a single zero coefficient. 
 
-\cgalModels ::Polynomial_d 
+\cgalModels `Polynomial_d`
 \cgalModels `Assignable`
 \cgalModels `CopyConstructible`
 \cgalModels `DefaultConstructible`

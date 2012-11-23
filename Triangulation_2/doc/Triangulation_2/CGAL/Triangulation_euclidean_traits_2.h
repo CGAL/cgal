@@ -11,8 +11,8 @@ be instantiated by a model of the `Kernel` concept.
 The class `Triangulation_euclidean_traits_2` uses types 
 and predicates defined in `K`. 
 
-\cgalModels ::TriangulationTraits_2 
-\cgalModels ::DelaunayTriangulationTraits_2 
+\cgalModels `TriangulationTraits_2`
+\cgalModels `DelaunayTriangulationTraits_2`
 
 \sa `TriangulationTraits_2` 
 \sa `DelaunayTriangulationTraits_2` 

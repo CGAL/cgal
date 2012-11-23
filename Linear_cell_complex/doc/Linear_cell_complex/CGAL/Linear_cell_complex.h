@@ -10,7 +10,7 @@ in an ambient space of dimension `d2`. This is a model of the concept of
 each vertex of the map is associated with a 
 model of `CellAttributeWithPoint`. 
 
-\cgalModels ::CombinatorialMap 
+\cgalModels `CombinatorialMap`
 
 \tparam d an integer for the dimension of the combinatorial map, 
 \tparam d2 an integer for the dimension of the ambient space, 

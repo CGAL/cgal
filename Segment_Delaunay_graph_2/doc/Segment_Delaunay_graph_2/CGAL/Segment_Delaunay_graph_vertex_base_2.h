@@ -18,7 +18,7 @@ and `Tag_false`. `Tag_true` indicates that the
 full storage site is to be used, whereas `Tag_false` 
 indicates that the simple storage site is to be used. 
 
-\cgalModels ::SegmentDelaunayGraphVertexBase_2 
+\cgalModels `SegmentDelaunayGraphVertexBase_2`
 
 \sa `SegmentDelaunayGraphVertexBase_2` 
 \sa `SegmentDelaunayGraphDataStructure_2` 

@@ -14,7 +14,7 @@ of regular triangulations.
 \tparam Cb must be a model of `TriangulationCellBase_3`. 
 By default, this parameter is instantiated by `Triangulation_cell_base_3<Traits>`. 
 
-\cgalModels ::RegularTriangulationCellBase_3 
+\cgalModels `RegularTriangulationCellBase_3`
 
 \sa `RegularTriangulationCellBase_3` 
 \sa `RegularTriangulationTraits_3` 

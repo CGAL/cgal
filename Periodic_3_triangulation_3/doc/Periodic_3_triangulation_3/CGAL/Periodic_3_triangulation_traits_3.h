@@ -16,7 +16,7 @@ filtered predicates. This holds implicitly for
 `CGAL::Exact_predicates_inexact_constructions_kernel`, as it is an 
 instantiation of `CGAL::Filtered_kernel`. 
 
-\cgalModels ::Periodic_3DelaunayTriangulationTraits_3 
+\cgalModels `Periodic_3DelaunayTriangulationTraits_3`
 */
 template< typename Traits, typename Periodic_3Offset_3 >
 class Periodic_3_triangulation_traits_3 : public Traits {

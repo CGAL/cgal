@@ -13,8 +13,8 @@ and the search classes. `Kernel` must be a \cgal kernel.
 Expects for the template argument a model of the concept `Kernel_d`, 
 for example `CGAL::Cartesian_d<double>` or `CGAL::Homogeneous_d<CGAL::Gmpz>`. 
 
-\cgalModels ::SearchTraits
-\cgalModels ::RangeSearchTraits
+\cgalModels `SearchTraits`
+\cgalModels `RangeSearchTraits`
 
 \sa `Search_traits_2<Kernel>` 
 \sa `Search_traits_3<Kernel>` 

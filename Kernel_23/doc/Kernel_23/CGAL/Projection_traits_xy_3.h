@@ -23,12 +23,12 @@ and predicates defined in `K`.
 \cgalModels The class is a model of several 2D triangulation traits class concepts, 
   except that it does not provide the type and constructors 
   required to build the dual Voronoi diagram.
-\cgalModels ::PolygonTraits_2
-\cgalModels ::ConvexHullTraits_2
-\cgalModels ::TriangulationTraits_2 
-\cgalModels ::DelaunayTriangulationTraits_2 
-\cgalModels ::ConstrainedTriangulationTraits_2 
-\cgalModels ::ConvexHullTraits_2 
+\cgalModels `PolygonTraits_2`
+\cgalModels `ConvexHullTraits_2`
+\cgalModels `TriangulationTraits_2`
+\cgalModels `DelaunayTriangulationTraits_2`
+\cgalModels `ConstrainedTriangulationTraits_2`
+\cgalModels `ConvexHullTraits_2`
 
 */
 template< typename K >

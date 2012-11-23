@@ -143,8 +143,8 @@ The class `Random_points_in_disc_2` is an input iterator creating points uniform
 distributed in an open disc. The default `Creator` is
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels ::InputIterator
-\cgalModels ::PointGenerator
+\cgalModels `InputIterator`
+\cgalModels `PointGenerator`
 
 \sa `CGAL::cpp11::copy_n`
 \sa `CGAL::Counting_iterator`
@@ -210,8 +210,8 @@ The class `Random_points_in_square_2` is an input iterator creating points unifo
 distributed in a half-open square. The default `Creator` is
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels ::InputIterator
-\cgalModels ::PointGenerator
+\cgalModels `InputIterator`
+\cgalModels `PointGenerator`
 
 \sa `CGAL::cpp11::copy_n`
 \sa `CGAL::Counting_iterator`
@@ -281,8 +281,8 @@ The generated points are computed using floating point arithmetic,
 whatever the Kernel is, thus they are on the circle/sphere only up to
 rounding errors.
 
-\cgalModels ::InputIterator
-\cgalModels ::PointGenerator
+\cgalModels `InputIterator`
+\cgalModels `PointGenerator`
 
 \sa `CGAL::cpp11::copy_n`
 \sa `CGAL::Counting_iterator`
@@ -351,8 +351,8 @@ The class `Random_points_on_segment_2` is an input iterator creating points unif
 distributed on a segment. The default `Creator` is
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels ::InputIterator
-\cgalModels ::PointGenerator
+\cgalModels `InputIterator`
+\cgalModels `PointGenerator`
 
 \sa `CGAL::cpp11::copy_n`
 \sa `CGAL::Counting_iterator`
@@ -420,8 +420,8 @@ The class `Random_points_on_square_2` is an input iterator creating points unifo
 distributed on the boundary of a square. The default `Creator` is
 `Creator_uniform_2<Kernel_traits<Point_2>::Kernel::RT,Point_2>`.
 
-\cgalModels ::InputIterator
-\cgalModels ::PointGenerator
+\cgalModels `InputIterator`
+\cgalModels `PointGenerator`
 
 \sa `CGAL::cpp11::copy_n`
 \sa `CGAL::Counting_iterator`
@@ -490,7 +490,7 @@ namespace CGAL {
 The class `Points_on_segment_2` is a generator for points on a segment whose
 endpoints are specified upon construction. The points are equally spaced.
 
-\cgalModels ::PointGenerator
+\cgalModels `PointGenerator`
 
 \sa `CGAL::cpp11::copy_n`
 \sa `CGAL::Counting_iterator`

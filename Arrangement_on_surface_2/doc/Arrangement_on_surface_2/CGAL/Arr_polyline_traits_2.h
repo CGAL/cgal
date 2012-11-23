@@ -24,8 +24,8 @@ carried out without loss of precision), in order to avoid robustness
 problems, although other inexact number types could be used at the user's 
 own risk. 
 
-\cgalModels ::ArrangementTraits_2 
-\cgalModels ::ArrangementLandmarkTraits_2 
+\cgalModels `ArrangementTraits_2`
+\cgalModels `ArrangementLandmarkTraits_2`
 
 \sa `Arr_segment_traits_2<Kernel>` 
 \sa `Arr_non_caching_segment_traits_2<Kernel>` 

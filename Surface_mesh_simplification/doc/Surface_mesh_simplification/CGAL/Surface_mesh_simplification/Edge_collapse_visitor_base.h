@@ -15,7 +15,7 @@ and hide a non-virtual method in the context of the static polymorphism used in 
 
 \tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
-\cgalModels ::EdgeCollapseSimplificationVisitor 
+\cgalModels `EdgeCollapseSimplificationVisitor`
 
 */
 template< typename ECM >

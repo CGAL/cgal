@@ -20,7 +20,7 @@ so \f$ B=\sqrt{2}\f$ corresponds to \f$ \alpha_{min} \ge 20.7\f$ degrees.
 
 
 
-\cgalModels ::MeshingCriteria_2 
+\cgalModels `MeshingCriteria_2`
 
 
 */

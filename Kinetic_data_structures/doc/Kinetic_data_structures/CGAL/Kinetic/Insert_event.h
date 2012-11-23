@@ -8,7 +8,7 @@ namespace Kinetic {
 This event inserts a point into the `ActiveObjectsTable` when it 
 is processed. 
 
-\cgalModels ::Kinetic::Simulator::Event 
+\cgalModels `Kinetic::Simulator::Event`
 
 \sa `Kinetic::ActiveObjectsTable`
 \sa `Kinetic::Active_objects_vector<MovingObject>`

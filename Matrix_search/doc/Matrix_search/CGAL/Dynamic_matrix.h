@@ -10,8 +10,8 @@ matrix search.
 
 \cgalRequires `M` is a model for `BasicMatrix`. 
 
-\cgalModels ::MonotoneMatrixSearchTraits 
-\cgalModels ::BasicMatrix 
+\cgalModels `MonotoneMatrixSearchTraits`
+\cgalModels `BasicMatrix`
 
 \sa `CGAL::monotone_matrix_search`
 \sa `MonotoneMatrixSearchTraits` 

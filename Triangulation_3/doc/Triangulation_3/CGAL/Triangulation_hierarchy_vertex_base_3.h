@@ -22,7 +22,7 @@ functionalities.
 \tparam TriangulationVertexBase_3 is is a combinatorial vertex base class from which 
 `Triangulation_hierarchy_vertex_base_3` derives. 
 
-\cgalModels ::TriangulationHierarchyVertexBase_3 
+\cgalModels `TriangulationHierarchyVertexBase_3`
 
 \sa `CGAL::Triangulation_hierarchy_3` 
 \sa `CGAL::Triangulation_vertex_base_3` 

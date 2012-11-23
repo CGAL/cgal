@@ -14,7 +14,7 @@ convex hull and extreme point calculation function. This class can be
 used to compute the convex hull of a set of 3D points projected onto the 
 \f$ xy\f$ plane (<I>i.e.</I>, by ignoring the \f$ z\f$ coordinate). 
 
-\cgalModels ::ConvexHullTraits_2 
+\cgalModels `ConvexHullTraits_2`
 
 \sa `CGAL::Convex_hull_constructive_traits_2<R>` 
 \sa `CGAL::Convex_hull_projective_xz_traits_2<Point_3>` 

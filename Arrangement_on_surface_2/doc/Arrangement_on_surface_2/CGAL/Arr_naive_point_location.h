@@ -13,8 +13,8 @@ The query time is therefore linear in the complexity of the arrangement.
 Naturally, this point-location strategy could turn into a heavy 
 time-consuming process when applied to dense arrangements. 
 
-\cgalModels ::ArrangementPointLocation_2 
-\cgalModels ::ArrangementVerticalRayShoot_2 
+\cgalModels `ArrangementPointLocation_2`
+\cgalModels `ArrangementVerticalRayShoot_2`
 
 */
 template< typename Arrangement >

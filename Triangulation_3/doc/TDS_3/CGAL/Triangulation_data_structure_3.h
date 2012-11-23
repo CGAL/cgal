@@ -23,7 +23,7 @@ the requirements for the concepts `TriangulationDSCellBase_3` and
 They have the default values `Triangulation_ds_vertex_base_3<>` and 
 `Triangulation_ds_cell_base_3<>` respectively. 
 
-\cgalModels ::TriangulationDataStructure_3 
+\cgalModels `TriangulationDataStructure_3`
 
 The base class `Triangulation_utils_3` defines basic computations on
 indices of vertices and neighbors of cells.

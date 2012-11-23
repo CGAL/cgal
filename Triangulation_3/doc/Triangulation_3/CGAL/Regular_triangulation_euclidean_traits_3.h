@@ -22,7 +22,7 @@ Note that filtered predicates are automatically used if the
 Boolean `Has_filtered_predicates` in the kernel provided as template parameter 
 of that class is set to `true`. 
 
-\cgalModels ::RegularTriangulationTraits_3 
+\cgalModels `RegularTriangulationTraits_3`
 
 ### Operations ###
 

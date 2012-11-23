@@ -374,13 +374,13 @@ typedef Hidden_type difference_type;
 
 /*! 
 Handle to a vertex.
-\cgalModels ::Handle
+\cgalModels `Handle`
 */ 
 typedef Hidden_type Vertex_handle; 
 
 /*! 
 Handle to a face. 
-\cgalModels ::Handle
+\cgalModels `Handle`
 */ 
 typedef Hidden_type Face_handle; 
 

@@ -10,9 +10,9 @@ required by the `Polygon_offset_builder_2` algorithm class. The class
 
 It is unspecified which subset of the kernel is used in this traits class (and by extension in the builder class). This is to avoid restricting the choices in the implementation. 
 
-\cgalModels ::PolygonOffsetBuilderTraits_2 
-\cgalModels ::DefaultConstructible 
-\cgalModels ::CopyConstructible 
+\cgalModels `PolygonOffsetBuilderTraits_2`
+\cgalModels `DefaultConstructible`
+\cgalModels `CopyConstructible`
 
 \sa `CGAL::Polygon_offset_builder_2<Ss,Gt,Polygon_2>` 
 

@@ -19,7 +19,7 @@ circumcenter.
 `Triangulation_cell_base_with_circumcenter_3` derives. 
 It has the default value `Triangulation_cell_base_3<DelaunayTriangulationTraits_3>`. 
 
-\cgalModels ::TriangulationCellBase_3 
+\cgalModels `TriangulationCellBase_3`
 
 \sa `CGAL::Triangulation_cell_base_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 

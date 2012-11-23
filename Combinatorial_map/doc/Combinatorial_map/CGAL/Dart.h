@@ -11,7 +11,7 @@ The class `Dart` represents a <I>d</I>D dart.
 associated to each dart by `Attribute_handle<i>`, one for each 
 non void <I>i</I>-attribute. 
 
-\cgalModels ::Dart 
+\cgalModels `Dart`
 
 \tparam d an integer for the dimension of the dart. 
 

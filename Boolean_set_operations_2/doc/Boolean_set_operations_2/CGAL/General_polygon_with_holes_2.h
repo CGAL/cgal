@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgBooleanSetOperations2
 
-\cgalModels ::GeneralPolygonWithHoles_2 
+\cgalModels `GeneralPolygonWithHoles_2`
 
 */
 template< typename Polygon >

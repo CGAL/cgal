@@ -13,7 +13,7 @@ while the actual point type is `Base_traits::Point_d`.
 \tparam PointPropertyMap must be a model of <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</A> 
 with `Base_traits::Point_d` as `value_type`. 
 
-\cgalModels ::SpatialSortingTraits_d 
+\cgalModels `SpatialSortingTraits_d`
 
 */
 template< typename Base_traits, typename PointPropertyMap >

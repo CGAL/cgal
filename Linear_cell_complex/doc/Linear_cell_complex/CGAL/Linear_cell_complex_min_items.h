@@ -9,7 +9,7 @@ The class `Linear_cell_complex_min_items` defines the type of darts, which is a
 this class, 0-attributes are enabled and associated with
 `Cell_attribute_with_point`.
 
-\cgalModels ::LinearCellComplexItems
+\cgalModels `LinearCellComplexItems`
 
 \tparam d the dimension of the combinatorial map.
 

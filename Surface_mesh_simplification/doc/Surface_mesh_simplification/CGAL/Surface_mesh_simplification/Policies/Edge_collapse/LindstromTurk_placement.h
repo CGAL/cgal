@@ -12,7 +12,7 @@ a halfedge-collapse, following the Lindstrom-Turk strategy
 
 \tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
 
-\cgalModels ::GetPlacement 
+\cgalModels `GetPlacement`
 
 \sa `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>` 
 

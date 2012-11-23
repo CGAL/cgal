@@ -56,9 +56,9 @@ The `Segment_Delaunay_graph_hierarchy_2` class derives publicly from the
 the same with its base class. In the sequel only additional types 
 and methods defined are documented. 
 
-\cgalModels ::DefaultConstructible 
-\cgalModels ::CopyConstructible 
-\cgalModels ::Assignable 
+\cgalModels `DefaultConstructible`
+\cgalModels `CopyConstructible`
+\cgalModels `Assignable`
 
 \sa `SegmentDelaunayGraphDataStructure_2` 
 \sa `SegmentDelaunayGraphTraits_2` 

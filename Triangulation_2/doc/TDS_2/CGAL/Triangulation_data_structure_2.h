@@ -14,7 +14,7 @@ implemented using `Compact_container`. The class may offer some
 flexibility for the choice of container in the future, in the form of 
 additional template parameters. 
 
-\cgalModels ::TriangulationDataStructure_2 
+\cgalModels `TriangulationDataStructure_2`
 
 ### Modifiers ###
 

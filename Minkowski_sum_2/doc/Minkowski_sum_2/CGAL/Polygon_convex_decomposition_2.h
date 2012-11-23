@@ -16,7 +16,7 @@ The `Polygon_2` type defined by the class is simply
 `Polygon_2<Kernel,Container>`. The `Container` parameter 
 is by default `std::vector<typename Kernel::Point_2>`. 
 
-\cgalModels ::PolygonConvexDecomposition_2 
+\cgalModels `PolygonConvexDecomposition_2`
 
 \sa `CGAL::greene_approx_convex_partition_2` 
 
@@ -51,7 +51,7 @@ The `Polygon_2` type defined by the class is simply
 `Polygon_2<Kernel,Container>`. The `Container` parameter 
 is by default `std::vector<typename Kernel::Point_2>`. 
 
-\cgalModels ::PolygonConvexDecomposition_2 
+\cgalModels `PolygonConvexDecomposition_2`
 
 \sa `CGAL::approx_convex_partition_2` 
 
@@ -82,7 +82,7 @@ The `Polygon_2` type defined by the class is simply
 `Polygon_2<Kernel,Container>`. The `Container` parameter 
 is by default `std::vector<typename Kernel::Point_2>`. 
 
-\cgalModels ::PolygonConvexDecomposition_2 
+\cgalModels `PolygonConvexDecomposition_2`
 
 \sa `CGAL::optimal_convex_partition_2` 
 

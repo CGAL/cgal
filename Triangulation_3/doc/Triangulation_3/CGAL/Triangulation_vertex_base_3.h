@@ -24,7 +24,7 @@ the same as the point type defined by the geometric traits class.
 `Triangulation_vertex_base_3` derives. 
 It has the default value `Triangulation_ds_vertex_base_3<>`. 
 
-\cgalModels ::TriangulationVertexBase_3 
+\cgalModels `TriangulationVertexBase_3`
 
 \sa `CGAL::Triangulation_cell_base_3` 
 \sa `CGAL::Triangulation_ds_vertex_base_3` 

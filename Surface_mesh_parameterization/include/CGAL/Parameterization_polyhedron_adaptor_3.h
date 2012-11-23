@@ -60,7 +60,7 @@ namespace CGAL {
 /// <i>Patches</i> are a subset of a 3D mesh. "Virtual seams" are the ability
 /// to behave exactly as if the surface was cut following a certain path.
 ///
-/// \cgalModels ::ParameterizationPatchableMesh_3
+/// \cgalModels `ParameterizationPatchableMesh_3`
 ///
 
 template<class Polyhedron_3_>
