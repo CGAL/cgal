@@ -223,9 +223,9 @@ void
 Scene_implicit_function_item::
 compute_min_max()
 {
-  max_value_ = 0;
-  min_value_ = 0;
-  
+  if(function_->get_min_max(min_value_, max_value_))
+    return;
+
   double probes_nb = double(grid_size_) / 2;
   
   // Probe bounding box
