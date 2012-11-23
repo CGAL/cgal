@@ -56,13 +56,13 @@ vertex_descriptor v1() const;
 One of the directed edges corresponding to the undirected 
 edge being collapsed. 
 */ 
-edge_descriptor v0v1() const; 
+edge_descriptor v0_v1() const; 
 
 /*! 
 The other directed edge corresponding to the undirected 
 edge being collapsed. 
 */ 
-edge_descriptor v1v0() const; 
+edge_descriptor v1_v0() const; 
 
 /*! 
 The point of vertex ` v0`. 
@@ -84,13 +84,13 @@ vertex_descriptor vL() const;
 If ` v0v1` belongs to a finite face (is not a border edge) 
 the directed edge from ` v1` to ` vL`, a <I>null descriptor</I> otherwise. 
 */ 
-edge_descriptor v1vL() const; 
+edge_descriptor v1_vL() const; 
 
 /*! 
 If ` v0v1` belongs to a finite face (is not a border edge) 
 the directed edge from ` vL` to ` v0`, a <I>null descriptor</I> otherwise. 
 */ 
-edge_descriptor vLv0() const; 
+edge_descriptor vL_v0() const; 
 
 /*! 
 If ` v1v0` belongs to a finite face (is not a border edge) 
@@ -102,13 +102,13 @@ vertex_descriptor vR() const;
 If ` v1v0` belongs to a finite face (is not a border edge) 
 the directed edge from ` v0` to ` vR`, a <I>null descriptor</I> otherwise. 
 */ 
-edge_descriptor v0vR() const; 
+edge_descriptor v0_vR() const; 
 
 /*! 
 If ` v1v0` belongs to a finite face (is not a border edge) 
 the directed edge from ` vR` to ` v1`, a <I>null descriptor</I> otherwise. 
 */ 
-edge_descriptor vRv1() const; 
+edge_descriptor vR_v1() const; 
 
 /*! 
 The unique sequence of the vertices 
