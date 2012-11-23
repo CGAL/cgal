@@ -7,7 +7,7 @@ This `AdaptableUnaryFunction` computes the sign of a real embeddable number.
 
 \cgalRefines `AdaptableUnaryFunction` 
 
-\sa ::RealEmbeddableTraits 
+\sa `RealEmbeddableTraits`
 
 */
 

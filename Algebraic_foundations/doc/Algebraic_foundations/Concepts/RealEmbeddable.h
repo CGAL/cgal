@@ -41,7 +41,7 @@ is a sub-ring of the real numbers and hence has characteristic zero.
 \cgalRefines `Equality` Comparable 
 \cgalRefines `LessThanComparable` 
 
-\sa ::RealEmbeddableTraits 
+\sa `RealEmbeddableTraits`
 
 */
 

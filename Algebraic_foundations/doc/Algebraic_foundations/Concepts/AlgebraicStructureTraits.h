@@ -11,22 +11,22 @@ it contains various functors and descriptive tags.
 Moreover it gives access to the several possible 
 algebraic operations within that structure. 
 
-\sa ::IntegralDomainWithoutDivision 
-\sa ::IntegralDomain 
-\sa ::UniqueFactorizationDomain 
-\sa ::EuclideanRing 
-\sa ::Field 
-\sa ::FieldWithSqrt 
-\sa ::FieldWithKthRoot 
-\sa ::FieldWithRootOf 
-\sa ::CGAL::Integral_domain_without_division_tag 
-\sa ::CGAL::Integral_domain_tag 
-\sa ::CGAL::Unique_factorization_domain_tag 
-\sa ::CGAL::Euclidean_ring_tag 
-\sa ::CGAL::Field_tag 
-\sa ::CGAL::Field_with_sqrt_tag 
-\sa ::CGAL::Field_with_kth_root_tag 
-\sa ::CGAL::Field_with_root_of_tag 
+\sa `IntegralDomainWithoutDivision`
+\sa `IntegralDomain`
+\sa `UniqueFactorizationDomain`
+\sa `EuclideanRing`
+\sa `Field`
+\sa `FieldWithSqrt`
+\sa `FieldWithKthRoot`
+\sa `FieldWithRootOf`
+\sa `CGAL::Integral_domain_without_division_tag`
+\sa `CGAL::Integral_domain_tag`
+\sa `CGAL::Unique_factorization_domain_tag`
+\sa `CGAL::Euclidean_ring_tag`
+\sa `CGAL::Field_tag`
+\sa `CGAL::Field_with_sqrt_tag`
+\sa `CGAL::Field_with_kth_root_tag`
+\sa `CGAL::Field_with_root_of_tag`
 
 \cgalHasModel `CGAL::Algebraic_structure_traits<T>`
 

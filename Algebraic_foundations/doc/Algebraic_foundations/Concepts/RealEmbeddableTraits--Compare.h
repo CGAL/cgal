@@ -7,7 +7,7 @@
 
 \cgalRefines `AdaptableBinaryFunction` 
 
-\sa ::RealEmbeddableTraits 
+\sa `RealEmbeddableTraits`
 
 */
 

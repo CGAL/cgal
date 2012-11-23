@@ -16,7 +16,7 @@ methods to coordinates `x()`, `y()`, `z()` are needed.
 \cgalHasModel `CGAL::Cartesian<FieldNumberType>` 
 \cgalHasModel `CGAL::Simple_cartesian<FieldNumberType>` 
 
-\sa ::LocalKernel
+\sa `LocalKernel`
 
 */
 

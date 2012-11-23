@@ -7,7 +7,7 @@
 
 \cgalRefines `AdaptableUnaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
+\sa `AlgebraicStructureTraits`
 
 */
 

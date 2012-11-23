@@ -13,8 +13,8 @@ this operation is undefined. Since the ring represented is an integral domain,
 
 \cgalRefines `AdaptableBinaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
-\sa ::AlgebraicStructureTraits::Divides 
+\sa `AlgebraicStructureTraits`
+\sa `AlgebraicStructureTraits::Divides`
 
 */
 

@@ -189,9 +189,9 @@ r
 
 \cgalRefines `AdaptableFunctor` 
 
-\sa ::AlgebraicStructureTraits 
-\sa ::AlgebraicStructureTraits::Mod 
-\sa ::AlgebraicStructureTraits::Div 
+\sa `AlgebraicStructureTraits`
+\sa `AlgebraicStructureTraits::Mod`
+\sa `AlgebraicStructureTraits::Div`
 
 */
 

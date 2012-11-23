@@ -13,7 +13,7 @@ that \f$ x= y*y\f$. In case the ring is a `UniqueFactorizationDomain`,
 
 \cgalRefines `AdaptableBinaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
+\sa `AlgebraicStructureTraits`
 
 */
 

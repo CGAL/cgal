@@ -17,7 +17,7 @@ Thus, \f$ 0\f$ is divided by every element of the Ring, in particular by itself.
 
 \cgalRefines `AdaptableBinaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
+\sa `AlgebraicStructureTraits`
 
 */
 

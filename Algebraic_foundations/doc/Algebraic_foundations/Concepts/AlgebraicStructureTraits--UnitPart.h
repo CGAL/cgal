@@ -21,7 +21,7 @@ associate being one. The unit part of zero is, by convention, one.
 
 \cgalRefines `AdaptableUnaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
+\sa `AlgebraicStructureTraits`
 
 */
 

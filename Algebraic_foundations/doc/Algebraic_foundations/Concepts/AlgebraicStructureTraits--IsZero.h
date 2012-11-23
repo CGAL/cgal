@@ -7,8 +7,8 @@
 
 \cgalRefines `AdaptableUnaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
-\sa ::RealEmbeddableTraits::IsZero 
+\sa `AlgebraicStructureTraits`
+\sa `RealEmbeddableTraits::IsZero`
 
 */
 

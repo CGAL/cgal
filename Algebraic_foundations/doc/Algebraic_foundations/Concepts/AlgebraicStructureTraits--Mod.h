@@ -7,9 +7,9 @@
 
 \cgalRefines `AdaptableBinaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
-\sa ::AlgebraicStructureTraits::Div 
-\sa ::AlgebraicStructureTraits::DivMod 
+\sa `AlgebraicStructureTraits`
+\sa `AlgebraicStructureTraits::Div`
+\sa `AlgebraicStructureTraits::DivMod`
 
 */
 

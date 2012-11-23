@@ -7,8 +7,8 @@
 
 \cgalRefines `AdaptableBinaryFunction` 
 
-\sa ::FieldWithRootOf 
-\sa ::AlgebraicStructureTraits 
+\sa `FieldWithRootOf`
+\sa `AlgebraicStructureTraits`
 
 */
 

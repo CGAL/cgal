@@ -8,7 +8,7 @@ returns true in case the argument is the one of the ring.
 
 \cgalRefines `AdaptableUnaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
+\sa `AlgebraicStructureTraits`
 
 */
 

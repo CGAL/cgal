@@ -32,8 +32,8 @@ vector types.
 \cgalHasModel `CGAL::Cartesian<FieldNumberType>` 
 \cgalHasModel `CGAL::Simple_cartesian<FieldNumberType>` 
 
-\sa ::DataKernel
-\sa ::SvdTraits
+\sa `DataKernel`
+\sa `SvdTraits`
 
 */
 

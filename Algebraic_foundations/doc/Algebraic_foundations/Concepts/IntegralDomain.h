@@ -18,15 +18,15 @@ Moreover, `CGAL::Algebraic_structure_traits< IntegralDomain >` is a model of
 
 \cgalRefines `IntegralDomainWithoutDivision` 
 
-\sa ::IntegralDomainWithoutDivision 
-\sa ::IntegralDomain 
-\sa ::UniqueFactorizationDomain 
-\sa ::EuclideanRing 
-\sa ::Field 
-\sa ::FieldWithSqrt 
-\sa ::FieldWithKthRoot 
-\sa ::FieldWithRootOf 
-\sa ::AlgebraicStructureTraits 
+\sa `IntegralDomainWithoutDivision`
+\sa `IntegralDomain`
+\sa `UniqueFactorizationDomain`
+\sa `EuclideanRing`
+\sa `Field`
+\sa `FieldWithSqrt`
+\sa `FieldWithKthRoot`
+\sa `FieldWithRootOf`
+\sa `AlgebraicStructureTraits`
 
 */
 

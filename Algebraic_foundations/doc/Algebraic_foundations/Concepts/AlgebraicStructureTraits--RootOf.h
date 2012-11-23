@@ -8,8 +8,8 @@ polynomial.
 
 \cgalRefines `AdaptableFunctor` 
 
-\sa ::FieldWithRootOf 
-\sa ::AlgebraicStructureTraits 
+\sa `FieldWithRootOf`
+\sa `AlgebraicStructureTraits`
 
 */
 

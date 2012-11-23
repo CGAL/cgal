@@ -14,8 +14,8 @@ the polynomial is considered as a univariate polynomial in one specific variable
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa ::Polynomial_d 
-\sa ::PolynomialTraits_d 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
 
 */
 

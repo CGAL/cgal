@@ -8,7 +8,7 @@ respect to multiplication of a `Field`.
 
 \cgalRefines `AdaptableUnaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
+\sa `AlgebraicStructureTraits`
 
 */
 

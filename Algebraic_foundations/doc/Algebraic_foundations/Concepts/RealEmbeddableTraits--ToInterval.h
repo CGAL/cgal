@@ -9,7 +9,7 @@ This interval is represented by `std::pair<double,double>`.
 
 \cgalRefines `AdaptableUnaryFunction` 
 
-\sa ::RealEmbeddableTraits 
+\sa `RealEmbeddableTraits`
 
 */
 

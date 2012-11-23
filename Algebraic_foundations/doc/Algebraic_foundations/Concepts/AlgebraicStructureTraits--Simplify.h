@@ -7,7 +7,7 @@ This `AdaptableUnaryFunction` may simplify a given object.
 
 \cgalRefines `AdaptableUnaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
+\sa `AlgebraicStructureTraits`
 
 */
 

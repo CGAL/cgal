@@ -16,8 +16,8 @@ The second operator returns \f$ c\f$ via the additional third argument.
 
 \cgalRefines `AdaptableBinaryFunction` 
 
-\sa ::AlgebraicStructureTraits 
-\sa ::AlgebraicStructureTraits::IntegralDivision 
+\sa `AlgebraicStructureTraits`
+\sa `AlgebraicStructureTraits::IntegralDivision`
 
 */
 

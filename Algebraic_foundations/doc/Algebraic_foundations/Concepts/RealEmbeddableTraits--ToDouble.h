@@ -11,7 +11,7 @@ to methods that are specific to NT. There are no general guarantees whatsoever.
 
 \cgalRefines `AdaptableUnaryFunction` 
 
-\sa ::RealEmbeddableTraits 
+\sa `RealEmbeddableTraits`
 
 */
 

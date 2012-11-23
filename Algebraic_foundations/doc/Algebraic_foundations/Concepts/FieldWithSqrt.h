@@ -12,15 +12,15 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithSqrt >` is a model of `Alg
 
 \cgalRefines `Field` 
 
-\sa ::IntegralDomainWithoutDivision 
-\sa ::IntegralDomain 
-\sa ::UniqueFactorizationDomain 
-\sa ::EuclideanRing 
-\sa ::Field 
-\sa ::FieldWithSqrt 
-\sa ::FieldWithKthRoot 
-\sa ::FieldWithRootOf 
-\sa ::AlgebraicStructureTraits 
+\sa `IntegralDomainWithoutDivision`
+\sa `IntegralDomain`
+\sa `UniqueFactorizationDomain`
+\sa `EuclideanRing`
+\sa `Field`
+\sa `FieldWithSqrt`
+\sa `FieldWithKthRoot`
+\sa `FieldWithRootOf`
+\sa `AlgebraicStructureTraits`
 
 */
 
