@@ -58,7 +58,7 @@ public:
 
 private:
   typedef CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle> Compare_points;
-  typedef CGAL::Mesh_3::Facet_handle_comparator<Facet> Compare_facet_handles;
+  typedef CGAL::Mesh_3::Polyhedron_Facet_handle_comparator<Facet> Compare_facet_handles;
   typedef CGAL::Mesh_3::Halfedge_handle_comparator<Halfedge> Compare_halfedge_handles;
   
 public:
