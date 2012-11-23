@@ -29,6 +29,8 @@ public:
 Denotes type of node. 
 */ 
 
+enum Node_type {LEAF, INTERNAL, EXTENDED_INTERNAL};
+
 /*! 
 Number type. 
 */ 
