@@ -7,7 +7,7 @@
 #include <QFile>
 #include <QTextStream>
 
-#include "Viewer.h"
+#include "Viewer_interface.h"
 
 #include <cassert>
 
@@ -24,7 +24,7 @@ Camera_positions_list::Camera_positions_list(QWidget* parent)
           this, SLOT(activatedRow(QModelIndex)));
 }
 
-void Camera_positions_list::setViewer(Viewer* viewer)
+void Camera_positions_list::setViewer(Viewer_interface* viewer)
 {
   m_viewer = viewer;
 }

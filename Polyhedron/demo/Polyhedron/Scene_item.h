@@ -13,6 +13,7 @@ namespace qglviewer {
 
 class QMenu;
 class QKeyEvent;
+class Viewer_interface;
 
 // This class represents an object in the OpenGL scene
 class SCENE_ITEM_EXPORT Scene_item : public QObject {
@@ -42,10 +43,13 @@ public:
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
   // Flat/Gouraud OpenGL drawing
   virtual void draw() const = 0;
+  virtual void draw(Viewer_interface*) const { draw(); };
   // Wireframe OpenGL drawing
   virtual void draw_edges() const { draw(); }
+  virtual void draw_edges(Viewer_interface*) const { draw_edges(); }
   // Points OpenGL drawing
   virtual void draw_points() const { draw(); }
+  virtual void draw_points(Viewer_interface*) const { draw_points(); }
 
   // Functions for displaying meta-data of the item
   virtual QString toolTip() const = 0;

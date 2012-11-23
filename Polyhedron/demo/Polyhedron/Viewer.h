@@ -2,6 +2,7 @@
 #define VIEWER_H
 
 #include "Viewer_config.h"
+#include <CGAL_demo/Viewer_interface.h>
 
 #include <QGLViewer/qglviewer.h>
 #include <QPoint>
@@ -14,7 +15,7 @@ class QKeyEvent;
 
 class Viewer_impl;
 
-class VIEWER_EXPORT Viewer : public QGLViewer {
+class VIEWER_EXPORT Viewer : public Viewer_interface {
 
   Q_OBJECT
 
@@ -30,15 +31,6 @@ public:
 
   void setScene(Scene_draw_interface* scene);
   bool antiAliasing() const;
-
-  static bool readFrame(QString, qglviewer::Frame&);
-  static QString dumpFrame(const qglviewer::Frame&);
-
-signals:
-  void selected(int);
-  void requestContextMenu(QPoint global_pos);
-  void selectedPoint(double, double, double);
-  void selectionRay(double, double, double, double, double, double);
 
 public slots:
   void setAntiAliasing(bool b);

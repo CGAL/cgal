@@ -118,11 +118,13 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 
+  qt4_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
+
   qt4_automoc(Scene.cpp
               Scene_item.cpp
               Scene_plane_item.cpp
-              Scene_combinatorial_map_item.cpp 
-              Scene_polygon_soup_item.cpp 
+              Scene_combinatorial_map_item.cpp
+              Scene_polygon_soup_item.cpp
               Scene_polyhedron_item.cpp
               Scene_polyhedron_transform_item.cpp
               Scene_polylines_item.cpp
@@ -146,7 +148,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(demo_framework SHARED
     Scene.cpp
-    Viewer.cpp Viewer_moc.cpp
+    Viewer.cpp Viewer_moc.cpp Viewer_interface_moc.cpp
     Scene_item.cpp Scene_item.moc
     Scene_item_with_display_list.cpp
     Polyhedron_demo_plugin_helper.cpp)

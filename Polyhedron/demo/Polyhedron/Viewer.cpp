@@ -12,11 +12,11 @@ public:
   bool twosides;
   bool macro_mode;
 
-  void draw_aux(bool with_names);
+  void draw_aux(bool with_names, Viewer*);
 };
 
 Viewer::Viewer(QWidget* parent, bool antialiasing)
-  : QGLViewer(parent)
+  : Viewer_interface(parent)
 {
   d = new Viewer_impl;
   d->scene = 0;
@@ -67,7 +67,7 @@ void Viewer::draw()
   // ::glFogf(GL_FOG_END, 2*sceneRadius());
   // ::glEnable(GL_FOG);
   QGLViewer::draw();
-  d->draw_aux(false);
+  d->draw_aux(false, this);
   // drawLight(GL_LIGHT0);
 }
 
@@ -141,7 +141,7 @@ void Viewer::turnCameraBy180Degres() {
   camera->interpolateTo(frame_to, 0.5f);
 }
 
-void Viewer_impl::draw_aux(bool with_names)
+void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
   if(scene == 0)
     return;
@@ -174,16 +174,16 @@ void Viewer_impl::draw_aux(bool with_names)
     ::glBlendFunc(GL_ONE, GL_ZERO);
   }
   if(with_names)
-    scene->drawWithNames();
+    scene->drawWithNames(viewer);
   else
-    scene->draw();
+    scene->draw(viewer);
   CGAL::check_gl_error(__FILE__, __LINE__);
 }
 
 void Viewer::drawWithNames()
 {
   QGLViewer::draw();
-  d->draw_aux(true);
+  d->draw_aux(true, this);
 }
 
 void Viewer::postSelection(const QPoint& pixel)
@@ -202,7 +202,7 @@ void Viewer::postSelection(const QPoint& pixel)
   }
 }
 
-bool Viewer::readFrame(QString s, qglviewer::Frame& frame)
+bool Viewer_interface::readFrame(QString s, qglviewer::Frame& frame)
 {
   QStringList list = s.split(" ", QString::SkipEmptyParts);
   if(list.size() != 7)
@@ -231,7 +231,7 @@ bool Viewer::readFrame(QString s, qglviewer::Frame& frame)
   return true;
 }
 
-QString Viewer::dumpFrame(const qglviewer::Frame& frame) {
+QString Viewer_interface::dumpFrame(const qglviewer::Frame& frame) {
   const qglviewer::Vec pos = frame.position();
   const qglviewer::Quaternion q = frame.orientation();
 

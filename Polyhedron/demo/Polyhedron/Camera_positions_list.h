@@ -4,7 +4,7 @@
 #include <QDockWidget>
 #include <QModelIndex>
 
-class Viewer;
+class Viewer_interface;
 class QListView;
 class QStandardItemModel;
 
@@ -13,7 +13,7 @@ class Camera_positions_list : public QDockWidget {
 public:  
   Camera_positions_list(QWidget* parent);
 
-  void setViewer(Viewer*);
+  void setViewer(Viewer_interface*);
 
 public slots:
   void load(QString filename);
@@ -32,7 +32,7 @@ protected:
   void addItem(QString, QString);
 
 private:
-  Viewer* m_viewer;
+  Viewer_interface* m_viewer;
   int counter;
   QListView* m_listView;
   QStandardItemModel* m_model;
