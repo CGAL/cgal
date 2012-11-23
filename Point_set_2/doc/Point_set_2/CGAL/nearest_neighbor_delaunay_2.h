@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPointSet2
+\ingroup PkgPointSet2NeighborSearch
 
 computes a handle to a vertex `w` of `delau` that is closest to `v`.
 If `v` is the only vertex in `delau`, `NULL` is returned. 
@@ -27,7 +27,7 @@ Dt::Vertex_handle nearest_neighbor(const Dt& delau, Dt::Vertex_handle v);
 namespace CGAL {
 
 /*!
-\ingroup PkgPointSet2
+\ingroup PkgPointSet2NeighborSearch
 
 computes the `k` nearest neighbors of `p` in `delau`, and places the
 handles to the corresponding vertices as a sequence of objects of type
@@ -36,7 +36,7 @@ which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence. 
 
-The function `nearest_neighbors` is the function template version of the k nearest 
+The function `nearest_neighbors()` is the function template version of the k nearest 
 neighbors search on Delaunay triangulations. There are two versions of 
 this function, one taking a point of the Delaunay triangulation and the 
 other taking a vertex handle. 
@@ -64,7 +64,7 @@ template<class Dt, class OutputIterator>
 OutputIterator nearest_neighbors(Dt& delau, const Dt::Point& p, Dt::size_type k, OutputIterator res);
 
 /*!
-\ingroup PkgPointSet2
+\ingroup PkgPointSet2NeighborSearch
 
 computes the `k` nearest neighbors of `v` (including `v`) in `delau`, and places them as a sequence of objects of type
 Vertex_handle in a container of value type of `res`
@@ -72,7 +72,7 @@ which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence. 
 
-The function `nearest_neighbors` is the function template version of the k nearest 
+The function `nearest_neighbors()` is the function template version of the k nearest 
 neighbors search on Delaunay triangulations. There are two versions of 
 this function, one taking a point of the Delaunay triangulation and the 
 other taking a vertex handle. 

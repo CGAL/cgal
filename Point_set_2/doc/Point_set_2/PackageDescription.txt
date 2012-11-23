@@ -5,6 +5,9 @@
 /// \defgroup PkgPointSet2RangeSearch Range Search
 /// \ingroup PkgPointSet2
 
+/// \defgroup PkgPointSet2NeighborSearch Nearest Neighbor Search
+/// \ingroup PkgPointSet2
+
 /*!
 \addtogroup PkgPointSet2
 \todo check generated documentation

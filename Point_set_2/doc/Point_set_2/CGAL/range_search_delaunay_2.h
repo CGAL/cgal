@@ -1,12 +1,9 @@
 namespace CGAL {
 
-/// \defgroup PkgPointSet2RangeSearch Range Search
-/// \ingroup PkgPointSet2
-
 /*!
  * \addtogroup PkgPointSet2RangeSearch
  *
- * There are six versions of the function template `range_search` that 
+ * There are six versions of the function template `range_search()` that 
  * perform range searches on Delaunay triangulations. The first performs 
  * circular range searches, the second triangular range searches and the 
  * third performs iso-rectangular range searches. The other three range search 
