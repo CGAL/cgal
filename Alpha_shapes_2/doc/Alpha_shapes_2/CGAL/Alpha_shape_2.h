@@ -107,20 +107,15 @@ typedef Hidden_type Alpha_shape_edges_iterator;
 /*! 
 Distinguishes the different cases for classifying a \f$ k\f$-dimensional face 
 of the underlying triangulation of the \f$ \alpha\f$-shape. 
-
-`EXTERIOR` if the face does not belong to the \f$ \alpha\f$-complex. 
-
-`SINGULAR` if the face belongs to the boundary of the \f$ \alpha\f$-shape, 
-but is not incident to any 2-dimensional face of the \f$ \alpha\f$-complex 
-
-`REGULAR` if the face belongs to the boundary of the \f$ \alpha\f$-shape 
-and is incident to a 2-dimensional face of the \f$ \alpha\f$-complex 
-
-`INTERIOR` if the face belongs to the \f$ \alpha\f$-complex, but does 
-not belong to the boundary of the \f$ \alpha\f$-shape. 
-
 */ 
-enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR}; 
+  enum Classification_type {EXTERIOR, /**< if the face does not belong to the \f$ \alpha\f$-complex.  */
+                          SINGULAR,  /**< if the face belongs to the boundary of the \f$ \alpha\f$-shape, 
+but is not incident to any 2-dimensional face of the \f$ \alpha\f$-complex  */
+                          REGULAR,  /**<  if the face belongs to the boundary of the \f$ \alpha\f$-shape 
+and is incident to a 2-dimensional face of the \f$ \alpha\f$-complex  */
+                          INTERIOR /**< if the face belongs to the \f$ \alpha\f$-complex, but does 
+not belong to the boundary of the \f$ \alpha\f$-shape.  */
+}; 
 
 /*! 
 In general, an alpha shape can be disconnected and contain many singular edges 
@@ -155,11 +150,11 @@ Mode m = GENERAL);
 
 /*! 
 Initializes the family of alpha-shapes with the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$ and 
+`[first,last)` and 
 introduces an \f$ \alpha\f$-shape for a positive \f$ \alpha\f$-value 
 `alpha`. 
-\pre The `value_type` of `first` and `last` is `Point`. 
-`alpha` \f$ \geq0\f$. 
+\tparam InputIterator must be an input iterator with the value type `Point`. 
+\pre `alpha` \f$ \geq0\f$. 
 */ 
 template < class InputIterator > 
 Alpha_shape_2( 
@@ -175,12 +170,11 @@ Mode m = GENERAL);
 
 /*! 
 Initialize the family of alpha-shapes with the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. Returns the number of 
-inserted points. 
+`[first,last)`. Returns the number inserted points. 
 
 If the function is applied to an non-empty family of alpha-shape, it is cleared 
 before initialization. 
-\pre The `value_type` of `first` and `last` is `Point`. 
+\tparam InputIterator must be an input iterator with the value type `Point`. 
 */ 
 template < class InputIterator > 
 std::ptrdiff_t make_alpha_shape( 

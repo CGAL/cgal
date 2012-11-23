@@ -6,7 +6,8 @@ namespace CGAL {
 
 The class `Weighted_alpha_shape_euclidean_traits_2` is the default model for the concept 
 `AlphaShapeTraits_2` for the regular version of Alpha Shapes. 
-`K` must be a kernel. 
+
+\tparam K must be a `Kernel`. 
 
 \cgalModels `AlphaShapeTraits_2`
 

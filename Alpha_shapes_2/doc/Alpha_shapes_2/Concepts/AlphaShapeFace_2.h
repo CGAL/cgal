@@ -3,7 +3,7 @@
 \ingroup PkgAlphaShape2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationFaceBase_2.` 
+\cgalRefines `TriangulationFaceBase_2` 
 
 \cgalHasModel `CGAL::Alpha_shape_face_base_2`
 
