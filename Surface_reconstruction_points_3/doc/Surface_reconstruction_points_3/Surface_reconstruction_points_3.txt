@@ -74,27 +74,8 @@ by default to be the median value of \f$ f\f$ at all input points.
 
 \subsection Surface_reconstruction_points_3Interface Interface
 
-The class template declaration is:
-
-\code{.cpp}
-
-template < 
-    class Gt // geometric traits class
-    >
-class Poisson_reconstruction_function {
-  // Creation
-  template<typename InputIterator, typename PointPMap, typename NormalPMap> 
-  Poisson_reconstruction_function::Poisson_reconstruction_function(InputIterator first, InputIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap);
-
-  // Main Operations
-  Sphere bounding_sphere() const;
-
-  bool compute_implicit_function();
-
-  FT value(const Point& p) const;
-  Point get_inner_point() const;
-};
-\endcode
+The class template declaration is `template<class Gt> class Poisson_reconstruction_function` wher
+`Gt` is a geometric traits class.
 
 For details see: `Poisson_reconstruction_function<GeomTraits>`
 
@@ -256,16 +237,24 @@ The reconstruction is devised to solve for an implicit function which
 is an approximate indicator function of an inferred solid. For this
 reason the contouring algorithm always extracts a closed surface mesh
 and hence is able to fill the small holes where data are missing due,
-e.g., to occlusions during acquisition. In case of large holes the
-algorithm still closes them all but sometimes in an unexpected
-manner. In addition the resulting piecewise linear implicit function
-may exhibit large triangle patches and sharp creases as the 3D
-Delaunay triangulation used for solving is very coarse where the holes
-are filled (see
+e.g., to occlusions during acquisition (see
 \cgalFigureRef{Surface_reconstruction_points_3figholes_bad}).
 
 \cgalFigureBegin{Surface_reconstruction_points_3figholes_bad,holes_bad.jpg}
 Left: 65K points sampled on a hand with no data captured at the wrist base. Right: reconstructed surface mesh. The surface is properly closed on the fingers and also closed at the wrist but in a less plausible manner.
+\cgalFigureEnd
+
+
+
+In case of large holes the algorithm still closes them all but the resulting piecewise
+linear implicit function may exhibit large triangle patches and sharp creases as the 3D
+Delaunay triangulation used for solving is very coarse where the holes are filled.
+This can be avoided by a two pass approach. The first pass for a subset of the points
+serves to get an approximation of the surface at the holes. This surface then serves to
+compute a smoother 3D Delaunay triangulation for the second pass with the full set of points.
+
+\cgalFigureBegin{Surface_reconstruction_points_3-fig-two_passes,two-passes.png}
+Left: The wrist. Middle: one pass. Right: two passes.
 \cgalFigureEnd
 
 \subsection Surface_reconstruction_points_3WronglyOriented Wrongly Oriented Normals
@@ -314,6 +303,251 @@ into smoothed sharp creases.
 \cgalFigureBegin{Surface_reconstruction_points_3figsharp_features,sharp_features.jpg}
 Left: 5K points sampled on a mechanical piece with sharp features (creases, darts and corners). Right: reconstructed surface mesh with smoothed creases.
 \cgalFigureEnd
+
+\section SurfReconstPerformances Performances
+
+We provide some performance numbers for scanning data. We measure the Poisson implicit function computation time,
+the contouring time for a range of approximation distances, the memory occupancy as well as the influence of
+the point set simplification. The machine used is a PC running Windows 7 64 bits with an Intel CPU Core 2 Duo
+processor clocked at 2.81 GHz and with 8 GB of RAM. The software is compiled with Visual \CC 2010 (VC9) compiler
+with the 03 option which maximizes speed.  All measurements were done using the \ref thirdpartyEigen "Eigen" library.
+
+
+\subsection SurfReconstPerfPIF Poisson implicit function
+
+The point set chosen for benchmarking the Poisson implicit function is the Bimba con Nastrino point set
+(1.6 million points) depicted by \cgalFigureRef{Surface_reconstruction_points_3-fig-contouring_bench}.
+We measure the Poisson implicit function computation (i.e., the call to 
+`Poisson_reconstruction_function::compute_implicit_function()` denoted by Poisson solve hereafter)
+for this point set as well as for simplified versions obtained through random simplification.
+The following table provides Poisson solve computation times in seconds for an increasing number of points.
+
+<TABLE CELLSPACING=5 >
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+
+Number of points (x1000) 
+<TD class="math" ALIGN=CENTER NOWRAP>
+Poisson solve duration (in s) 
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+60
+<TD class="math" ALIGN=CENTER NOWRAP>
+15
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+100
+<TD class="math" ALIGN=CENTER NOWRAP>
+25
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+250
+<TD class="math" ALIGN=CENTER NOWRAP>
+96
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+500
+<TD class="math" ALIGN=CENTER NOWRAP>
+150
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+1,000
+<TD class="math" ALIGN=CENTER NOWRAP>
+249
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+1,800
+<TD class="math" ALIGN=CENTER NOWRAP>
+478
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
+</TABLE>
+
+
+\subsection SurfReconstPerfCont Contouring
+
+The point set chosen for benchmarking the contouring stage is the Bimba con Nastrino point
+set simplified to 100k points. We measure the contouring (i.e. the call to `CGAL::make_surface_mesh()`)
+duration and the reconstruction error for a range of approximation distances.
+The reconstruction error is expressed as the average distance from input points to the reconstructed surface
+in mm (the Bimba con Nastrino statue is 324 mm tall).
+
+<TABLE CELLSPACING=5 >
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=3><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+Approx. distance (*average spacing)    
+<TD class="math" ALIGN=CENTER NOWRAP>
+Contouring duration (in s) 
+<TD class="math" ALIGN=CENTER NOWRAP>
+Reconstruction error (mm) 
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=3><HR>
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.1                                   
+<TD class="math" ALIGN=CENTER NOWRAP>
+19.2
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.055
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.25
+<TD class="math" ALIGN=CENTER NOWRAP>
+6.9
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.106
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.5
+<TD class="math" ALIGN=CENTER NOWRAP>
+3.2
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.18
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+1
+<TD class="math" ALIGN=CENTER NOWRAP>
+1.65
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.36
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+2                                     
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.8
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.76
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=3><HR>
+</TABLE>
+
+
+\cgalFigureBegin{Surface_reconstruction_points_3-fig-contouring_bench,contouring_bench.jpg}
+Contouring duration (in s) and reconstruction error (mm)
+against several approximation distance parameters
+for the Bimba con Nastrino point set simplified to 100k points.
+\cgalFigureEnd
+
+\subsection SurfReconstPerfMem Memory
+
+We measure the memory occupancy for the reconstruction of the full Bimba con Nastrino point
+set (1.8 millions points) as well as for simplified versions.\n
+The Poisson implicit function computation has a memory peak when solving the Poisson linear 
+system using the sparse linear solver.
+
+<TABLE CELLSPACING=5 >
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+Number of points (x1000) 
+<TD class="math" ALIGN=CENTER NOWRAP>
+Memory occupancy (MBytes) 
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+60
+<TD class="math" ALIGN=CENTER NOWRAP>
+180
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+100
+<TD class="math" ALIGN=CENTER NOWRAP>
+270
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+250
+<TD class="math" ALIGN=CENTER NOWRAP>
+790
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+500
+<TD class="math" ALIGN=CENTER NOWRAP>
+1300
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+1,000
+<TD class="math" ALIGN=CENTER NOWRAP>
+2200
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+1,800
+<TD class="math" ALIGN=CENTER NOWRAP>
+3800
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
+</TABLE>
+
+
+\subsection SurfReconstPerfPSS Point Set Simplification
+
+Due to the memory limitations described above, we recommend to simplify the point sets captured by laser scanners.\n
+We measure the reconstruction error for the Bimba con Nastrino point set (1.6M points) as well as for 
+simplified versions. All reconstructions use the recommended contouring parameter 
+`approximation distance = 0.25 * the input point` set's average spacing.
+The reconstruction error is expressed as the average distance from input points to the reconstructed surface in mm 
+(the Bimba con Nastrino statue is 324 mm tall).
+
+<TABLE CELLSPACING=5 >
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+Number of points (x1000) 
+<TD class="math" ALIGN=CENTER NOWRAP>
+Reconstruction error (mm) 
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+60
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.27
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+120                       
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.15
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+250
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.11
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+500
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.079
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+1,000
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.066
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+1,500
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.061
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+1,600
+<TD class="math" ALIGN=CENTER NOWRAP>
+0.06
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
+</TABLE>
+
+
+\cgalFigureBegin{Surface_reconstruction_points_3-fig-simplification_bench,simplification_bench.jpg}
+Reconstruction error (mm) against number of points
+for the Bimba con Nastrino point set with 1.6M points
+as well as for simplified versions.
+\cgalFigureEnd
+
+\section SurfReconstDesignHistory Design and Implementation History
+
+The initial implementation was essentially done by Laurent Saboret, guided by Pierre Alliez and Ga\"el Guennebaud. 
+For later releases of the package Andreas Fabri worked on performance improvements, and Laurent Rineau added the
+two passes for dealing with holes.
+
 
 */ 
 } /* namespace CGAL */

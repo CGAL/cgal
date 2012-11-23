@@ -219,7 +219,7 @@ public:
     return m_tr->input_points_bounding_sphere();
   }
 
-  /*! 
+  /*!
     This function must be called after the
     insertion of oriented points. It computes the piecewise linear scalar
     function operator() by: applying Delaunay refinement, solving for
@@ -230,13 +230,17 @@ public:
     \tparam SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver. 
 
     If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED`
-    is defined, the default solver is `CGAL::Eigen_solver_traits`<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> >`.
+    is defined, an overload with \link Eigen_solver_traits <tt>Eigen_solver_traits<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> ></tt> \endlink
+    as default solver is provided.
+  
+    \param solver sparse linear solver.
+    \param smoother_hole_filling controls if the Delaunay refinement is done for the input points, or for an approximation of the surface obtained from a first pass of the algorithm on a sample of the points.
 
-    \return false if the linear solver fails. 
+    \return `false` if the linear solver fails. 
   */ 
   template <class SparseLinearAlgebraTraits_d>
   bool compute_implicit_function(
-    SparseLinearAlgebraTraits_d solver = SparseLinearAlgebraTraits_d()) ///< sparse linear solver
+    SparseLinearAlgebraTraits_d solver = SparseLinearAlgebraTraits_d(), bool smoother_hole_filling = false) ///< sparse linear solver
   {
     CGAL::Timer task_timer; task_timer.start();
     CGAL_TRACE_STREAM << "Delaunay refinement...\n";
