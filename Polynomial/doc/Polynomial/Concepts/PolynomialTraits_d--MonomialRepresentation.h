@@ -12,9 +12,9 @@ into the given output iterator.
 \cgalRefines \ref CopyConstructible
 \cgalRefines \ref DefaultConstructible
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::ConstructPolynomial 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::ConstructPolynomial`
 
 */
 

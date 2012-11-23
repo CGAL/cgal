@@ -11,8 +11,8 @@ the (multivariate) monomial specified by the given `CGAL::Exponent_vector`.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
 
 */
 

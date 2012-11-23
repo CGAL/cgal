@@ -29,8 +29,8 @@ Innermost_coefficient_type       | %Polynomial_d
 \note In case the polynomial is univariate and the innermost
 coefficient is a `Field` the polynomial is model of `EuclideanRing`.
 
-\sa \ref ::AlgebraicStructureTraits 
-\sa \ref ::PolynomialTraits_d 
+\sa `AlgebraicStructureTraits`
+\sa `PolynomialTraits_d`
 
 \cgalHasModel `CGAL::Polynomial<Coeff>`
 

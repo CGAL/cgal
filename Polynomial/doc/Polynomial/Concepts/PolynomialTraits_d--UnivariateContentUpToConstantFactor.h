@@ -19,9 +19,9 @@ does not exist since the result is trivial.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::GcdUpToConstantFactor 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::GcdUpToConstantFactor`
 
 */
 

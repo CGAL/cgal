@@ -19,8 +19,8 @@ In this case the iterator range should contain the sequence \f$ [2,0,1,3]\f$.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
 
 */
 

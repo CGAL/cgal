@@ -19,11 +19,11 @@ This functor is well defined if `PolynomialTraits_d::Polynomial_d` is a
 \cgalRefines CopyConstructible
 \cgalRefines DefaultConstructible
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor 
-\sa  \ref ::PolynomialTraits_d::MakeSquareFree 
-\sa  \ref ::PolynomialTraits_d::IsSquareFree 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor`
+\sa `PolynomialTraits_d::MakeSquareFree`
+\sa `PolynomialTraits_d::IsSquareFree`
 
 */
 

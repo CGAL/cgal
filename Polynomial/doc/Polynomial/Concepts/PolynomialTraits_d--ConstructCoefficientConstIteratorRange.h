@@ -11,8 +11,8 @@ The range starts with the coefficient for \f$ x_{d-1}^0\f$.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa \ref ::Polynomial_d 
-\sa \ref ::PolynomialTraits_d 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
 
 */
 

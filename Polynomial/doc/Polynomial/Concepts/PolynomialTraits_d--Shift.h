@@ -13,8 +13,8 @@ will in general correspond to a shift of coefficients in the internal representa
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
 
 */
 

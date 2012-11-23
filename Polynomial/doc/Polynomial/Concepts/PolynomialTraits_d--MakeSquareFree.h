@@ -18,11 +18,11 @@ which is computed by this functor.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::Canonicalize 
-\sa  \ref ::PolynomialTraits_d::SquareFreeFactorize 
-\sa  \ref ::PolynomialTraits_d::IsSquareFree 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::Canonicalize`
+\sa `PolynomialTraits_d::SquareFreeFactorize`
+\sa `PolynomialTraits_d::IsSquareFree`
 
 */
 

@@ -14,11 +14,11 @@ i.e., whether the multivariate content contains a square.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::SquareFreeFactorize 
-\sa  \ref ::PolynomialTraits_d::MakeSquareFree 
-\sa  \ref ::PolynomialTraits_d::MultivariateContent 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::SquareFreeFactorize`
+\sa `PolynomialTraits_d::MakeSquareFree`
+\sa `PolynomialTraits_d::MultivariateContent`
 
 */
 

@@ -20,10 +20,10 @@ be \f$ -infinity\f$, but this would imply an inconvenient return type.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::TotalDegree 
-\sa  \ref ::PolynomialTraits_d::DegreeVector 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::TotalDegree`
+\sa `PolynomialTraits_d::DegreeVector`
 
 */
 

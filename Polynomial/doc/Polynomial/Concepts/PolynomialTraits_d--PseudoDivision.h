@@ -20,11 +20,11 @@ computation.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::PseudoDivision 
-\sa  \ref ::PolynomialTraits_d::PseudoDivisionRemainder 
-\sa  \ref ::PolynomialTraits_d::PseudoDivisionQuotient 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::PseudoDivision`
+\sa `PolynomialTraits_d::PseudoDivisionRemainder`
+\sa `PolynomialTraits_d::PseudoDivisionQuotient`
 
 */
 

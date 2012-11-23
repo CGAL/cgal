@@ -10,8 +10,8 @@ of a `PolynomialTraits_d::Polynomial_d` \f$ p\f$. The innermost leading coeffici
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
 
 */
 

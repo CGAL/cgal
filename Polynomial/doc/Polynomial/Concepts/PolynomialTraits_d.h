@@ -29,7 +29,7 @@ is possible to select a certain variable.
 
 \cgalRefines `AlgebraicStructureTraits` 
 
-\sa  \ref ::Polynomial_d 
+\sa `Polynomial_d`
 
 \cgalHasModel `CGAL::Polynomial_traits_d<Polynomial_d>`
 

@@ -22,11 +22,11 @@ Hence, \f$ gcd\_utcf(f,g)\f$ may not be a divisor of \f$ f\f$ and \f$ g\f$ in \f
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::IntegralDivisionUpToConstantFactor 
-\sa  \ref ::PolynomialTraits_d::UnivariateContentUpToConstantFactor 
-\sa  \ref ::PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::IntegralDivisionUpToConstantFactor`
+\sa `PolynomialTraits_d::UnivariateContentUpToConstantFactor`
+\sa `PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor`
 
 */
 

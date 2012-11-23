@@ -45,11 +45,11 @@ For more information we refer to, e.g., \cite gg-mca-99.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::UnivariateContent 
-\sa  \ref ::PolynomialTraits_d::PolynomialSubresultants 
-\sa  \ref ::PolynomialTraits_d::PrincipalSubresultants 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::UnivariateContent`
+\sa `PolynomialTraits_d::PolynomialSubresultants`
+\sa `PolynomialTraits_d::PrincipalSubresultants`
 
 */
 

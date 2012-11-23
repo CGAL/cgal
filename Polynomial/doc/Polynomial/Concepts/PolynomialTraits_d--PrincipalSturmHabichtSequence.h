@@ -23,12 +23,12 @@ the polynomial \f$ f\f$.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::CGAL::number_of_real_roots 
-\sa  \ref ::PolynomialTraits_d::Resultant 
-\sa  \ref ::PolynomialTraits_d::SturmHabichtSequence 
-\sa  \ref ::PolynomialTraits_d::PrincipalSubresultants 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `CGAL::number_of_real_roots`
+\sa `PolynomialTraits_d::Resultant`
+\sa `PolynomialTraits_d::SturmHabichtSequence`
+\sa `PolynomialTraits_d::PrincipalSubresultants`
 
 */
 

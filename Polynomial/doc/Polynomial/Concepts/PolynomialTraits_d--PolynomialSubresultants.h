@@ -26,12 +26,12 @@ The result is written in an output range, starting with the \f$ 0\f$-th subresul
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::Resultant 
-\sa  \ref ::PolynomialTraits_d::PrincipalSubresultants 
-\sa  \ref ::PolynomialTraits_d::PolynomialSubresultantsWithCofactors 
-\sa  \ref ::PolynomialTraits_d::SturmHabichtSequence 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::Resultant`
+\sa `PolynomialTraits_d::PrincipalSubresultants`
+\sa `PolynomialTraits_d::PolynomialSubresultantsWithCofactors`
+\sa `PolynomialTraits_d::SturmHabichtSequence`
 
 */
 

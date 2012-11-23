@@ -14,11 +14,11 @@ that belongs to the innermost leading coefficient of \f$ p\f$.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::Degree 
-\sa  \ref ::PolynomialTraits_d::TotalDegree 
-\sa  \ref ::PolynomialTraits_d::InnermostLeadingCoefficient 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::Degree`
+\sa `PolynomialTraits_d::TotalDegree`
+\sa `PolynomialTraits_d::InnermostLeadingCoefficient`
 
 */
 

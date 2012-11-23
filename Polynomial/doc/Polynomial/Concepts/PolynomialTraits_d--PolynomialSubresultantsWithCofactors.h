@@ -20,12 +20,12 @@ starting with the \f$ 0\f$-th subresultant and the corresponding cofactors.
 \cgalRefines `CopyConstructible` 
 \cgalRefines `DefaultConstructible` 
 
-\sa  \ref ::Polynomial_d 
-\sa  \ref ::PolynomialTraits_d 
-\sa  \ref ::PolynomialTraits_d::Resultant 
-\sa  \ref ::PolynomialTraits_d::PolynomialSubresultants 
-\sa  \ref ::PolynomialTraits_d::PrincipalSubresultants 
-\sa  \ref ::PolynomialTraits_d::SturmHabichtSequenceWithCofactors 
+\sa `Polynomial_d`
+\sa `PolynomialTraits_d`
+\sa `PolynomialTraits_d::Resultant`
+\sa `PolynomialTraits_d::PolynomialSubresultants`
+\sa `PolynomialTraits_d::PrincipalSubresultants`
+\sa `PolynomialTraits_d::SturmHabichtSequenceWithCofactors`
 
 */
 
