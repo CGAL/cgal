@@ -28,7 +28,7 @@ The optional `Visitor` parameter takes a model of
 `Kinetic::DelaunayTriangulationVisitor_2`. Methods on this object will be called 
 whenever the triangulation changes. 
 
-\cgalModels ::Ref_counted<T> 
+\cgalModels `Ref_counted<T>`
 
 \sa `Kinetic::DelaunayTriangulationVisitor_2`
 \sa `Kinetic::Delaunay_triangulation_default_visitor_2`

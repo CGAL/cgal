@@ -13,7 +13,8 @@ can be passed  as parameter to
 
 \tparam Tag must be either `Median` or `Middle`.
 
-\cgalModels ::DefaultConstructible, CopyConstructible 
+\cgalModels `DefaultConstructible`
+\cgalModels `CopyConstructible`
 
 \sa `Median` 
 \sa `Middle` 
@@ -65,7 +66,8 @@ in order to specify the strategy for spatial sorting.
 as parameter to 
 `hilbert_sort` to choose the sorting policy. 
 
-\cgalModels ::DefaultConstructible, CopyConstructible 
+\cgalModels `DefaultConstructible`
+\cgalModels `CopyConstructible`
 
 \sa `Middle` 
 \sa `Hilbert_policy` 
@@ -92,7 +94,8 @@ in order to specify the strategy for spatial sorting.
 as parameter to 
 `hilbert_sort` to choose the sorting policy. 
 
-\cgalModels ::DefaultConstructible, CopyConstructible 
+\cgalModels `DefaultConstructible`
+\cgalModels `CopyConstructible`
 
 \sa `Median` 
 \sa `Hilbert_policy` 
