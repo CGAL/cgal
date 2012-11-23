@@ -17,7 +17,7 @@ the computation of all furthest neighbors for the vertices of a convex
 polygon, maximal \f$ k\f$-gons inscribed into a planar point set, and
 computing rectangular \f$ p\f$-centers.
 
-\subsection Matrix_searchExample Example
+\section Matrix_searchExample Example
 
 In the following program we build a random vector \f$ a = 
 (a_i)_{i = 1,\,\ldots,\,5}\f$ (elements drawn uniformly from \f$ \{ 
