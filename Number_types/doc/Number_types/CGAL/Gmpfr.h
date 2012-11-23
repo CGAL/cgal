@@ -12,8 +12,8 @@ than the precision of the result number, the results are rounded following
 different possible criteria (called <I>rounding modes</I>). 
 
 Currently, <span class="textsc">Mpfr</span> supports four rounding modes: round to nearest, 
-round toward zero, round down (or toward \f$ -\infty\f$) and round up 
-(or toward \f$ +\infty\f$). When not specified explicitly, the 
+round toward zero, round down (or toward \f$ (-\infty)\f$) and round up 
+(or toward \f$ (+\infty)\f$). When not specified explicitly, the 
 operations use the default rounding mode, which is in practice a 
 variable local to each execution thread. The default rounding mode 
 can be set to any of the four rounding modes (initially, it is set 
