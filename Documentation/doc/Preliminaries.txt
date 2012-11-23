@@ -139,13 +139,14 @@ to force its definition on the command line, and it is possible to prevent its d
 definition by setting `CGAL_HAS_NO_THREADS` from the command line.
 
 
-\section Preliminaries_cc0x C++0x Support 
+\section Preliminaries_cc0x \cpp11 Support 
 
 \cgal is based on the \CC standard released in 1998 (and later refined in 2003).
-A new major version of this standard is being prepared, and is refered to as C++0x.
+A new major version of this standard has been released, and is refered to as \cpp11.
 Some compilers and standard library implementations already provide some of the
 functionality of this new standard, as a preview.  For example, \gcc provides
-a command-line switch `-std=c++0x` which enables some of those features.
+a command-line switch (`-std=c++0x` or or `-std=c++11` depending on the compiler version)
+which enables some of those features.
 
 \cgal attempts to support this mode progressively, and already makes use of
 some of these features if they are available, although no extensive support has
