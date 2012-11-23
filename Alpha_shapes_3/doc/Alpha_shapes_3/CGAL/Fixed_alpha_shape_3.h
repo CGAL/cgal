@@ -69,27 +69,24 @@ enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};
 /// @{
 
 /*! 
-Introduces an empty alpha shape data structure 
-`A` and set the alpha value to `alpha`. 
+Introduces an empty fixed alpha shape and sets the alpha value to `alpha`. 
 */ 
-Alpha_shape_3(FT alpha = 0); 
+Fixed_alpha_shape_3(FT alpha = 0); 
 
 /*! 
-Builds an alpha shape from the triangulation `dt`, 
-and set the alpha value to `alpha`. 
-Be careful that this operation destroys the triangulation. 
+Builds a fixed alpha shape from the triangulation `dt`, 
+and sets the alpha value to `alpha`. 
+\attention This operation destroys the triangulation. 
 */ 
-Alpha_shape_3(Dt& dt,FT alpha = 0); 
+Fixed_alpha_shape_3(Dt& dt,FT alpha = 0); 
 
 /*! 
-Builds an alpha shape data structure 
-for the points in the range 
-\f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$ and 
-set the alpha value to `alpha`. 
-\cgalRequires The `value_type` of `first` and `last` is `Point` (the type point of the underlying triangulation.) 
+Builds a fixed alpha shape for the points in the range 
+`[first,last)` and sets the alpha value to `alpha`. 
+\tparam InputIterator must be an input iterator with value type `Point` (the type point of the underlying triangulation.) 
 */ 
 template < class InputIterator > 
-Alpha_shape_3( 
+Fixed_alpha_shape_3( 
 InputIterator first, 
 InputIterator last, 
 const FT& alpha = 0); 
@@ -112,7 +109,7 @@ Vertex_handle insert (Point p,Cell_handle start = Cell_handle());
 /*! 
 
 Removes the vertex v from the underlying triangulation. 
-The classification types of new simplices and their incident faces are set or reset 
+The classification types of new simplices and their incident faces are set or reset.
 
 */ 
 void remove (Vertex_handle v); 
@@ -200,7 +197,7 @@ OutputIterator get_alpha_shape_vertices(OutputIterator it, Classification_type t
 }; /* end Fixed_alpha_shape_3 */
 
 /*! 
-Inserts the alpha shape `A` into the stream `os`. 
+Inserts the fixed alpha shape `A` into the stream `os`. 
 
 Defined in \ref CGAL/IO/io.h
 

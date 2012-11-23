@@ -135,15 +135,13 @@ enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};
 /// @{
 
 /*! 
-Introduces an empty alpha shape data structure 
-`A` for and set the 
-current alpha value to `alpha` and the mode to `m`. 
+Introduces an empty alpha shape, sets the current alpha value to `alpha` and the mode to `m`. 
 */ 
 Alpha_shape_3(FT alpha = 0, 
 Mode m = REGULARIZED); 
 
 /*! 
-Build an alpha shape `A` of mode `m` 
+Builds an alpha shape of mode `m` 
 from the triangulation `dt`. 
 \attention This operation destroys the triangulation `dt`. 
 */ 
@@ -152,10 +150,8 @@ FT alpha = 0,
 Mode m = REGULARIZED); 
 
 /*! 
-Build an alpha shape data structure `A` in mode `m` 
-for the points in the range 
-`[first,last)` and 
-set the current alpha value to `alpha`. 
+Builds an alpha shape of mode `m` for the points in the range 
+`[first,last)` and  set the current alpha value to `alpha`. 
 \tparam InputIterator must be an input iterator with value type `Point` (the type point of the underlying triangulation.) 
 */ 
 template < class InputIterator > 
@@ -171,7 +167,7 @@ Mode m = REGULARIZED);
 /// @{
 
 /*! 
-Initialize the alpha shape data structure `A`
+Initialize the alpha shape data structure
 for points in the range `[first,last)`. 
 Returns the number of data points inserted in the underlying 
 triangulation. 
@@ -200,9 +196,9 @@ FT
 set_alpha(const FT& alpha); 
 
 /*! 
-Sets `A` in GENERAL or REGULARIZED. 
+Sets the mode of the alpha shape to `GENERAL` or `REGULARIZED`. 
 Returns the previous mode. 
-Changing the mode of an alpha shape data structure 
+Changing the mode of an alpha shape 
 entails a partial re-computation of the data structure. 
 */ 
 Mode 
@@ -214,7 +210,7 @@ set_mode(Mode m = REGULARIZED );
 /// @{
 
 /*! 
-Returns whether `A` is general or regularized. 
+Returns whether the alpha shape is general or regularized. 
 */ 
 Mode 
 get_mode(void) const; 
@@ -375,20 +371,19 @@ Alpha_iterator alpha_upper_bound(const FT& alpha) const;
 /// @{
 
 /*! 
-Returns the number of solid components of `A`, that is, the number of 
-components of its 
-regularized version. 
+Returns the number of solid components of the alpha shape, that is, the number of 
+components of its regularized version. 
 */ 
 size_type number_of_solid_components(const FT& alpha = get_alpha()) const; 
 
 /*! 
 Returns an iterator pointing to smallest \f$ \alpha\f$ value 
-such that `A` satisfies the following two properties: 
+such that the alpha shape satisfies the following two properties: 
 
 all data points are either on the boundary or in the interior 
-of the regularized version of `A`. 
+of the regularized version of the alpha shape. 
 
-The number of solid component of `A` is equal to or 
+The number of solid component of the alpha shape is equal to or 
 smaller than `nb_components`. 
 */ 
 Alpha_iterator find_optimal_alpha(size_type nb_components) const; 
