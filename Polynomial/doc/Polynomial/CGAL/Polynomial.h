@@ -60,7 +60,7 @@ the zero polynomial is represented by a single zero coefficient.
 \cgalModels `EqualityComparable`
 \cgalModels `ImplicitInteroperable` with int 
 \cgalModels `ImplicitInteroperable` with Coeff 
-\cgalModels `Fraction` if Coeff is model of ::Fraction 
+\cgalModels `Fraction` if Coeff is model of `Fraction`
 \cgalModels `LessThanComparable` if Coeff is model of `LessThanComparable` 
 \cgalModels `Modularizable` if `Coeff` is model of `Modularizable`
 */
