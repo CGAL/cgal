@@ -12,6 +12,8 @@
 
 #define SCENE_IMPLICIT_GRID_SIZE 120
 
+class Viewer_interface;
+
 
 class SCENE_IMPLICIT_FUNCTION_ITEM_EXPORT Scene_implicit_function_item 
   : public Scene_item_with_display_list
@@ -39,16 +41,23 @@ public:
   
   // draw (overload only direct_draw() to use display list of base class)
   virtual void direct_draw() const;
-  
+  // actually draw() is also overloaded to detect when the cut plane is moved
+  virtual void draw(Viewer_interface*) const;
+  virtual void draw_edges(Viewer_interface*) const;
+
   virtual QString toolTip() const;
 
 public slots:
-  void compute_function_grid();
+  void plane_was_moved() { need_update_ = true; }
+  void compute_function_grid() const;
 
 private:
   typedef qglviewer::Vec                  Point;
   typedef std::pair <Point,double>        Point_value;
-  
+
+  // common implementation of draw() and draw_edges()
+  void draw_aux(Viewer_interface*,bool) const;
+
   void draw_bbox() const;
   void draw_function_grid(const Color_ramp&, const Color_ramp&) const;
   void draw_grid_vertex(const Point_value&,
@@ -60,11 +69,11 @@ private:
   Implicit_function_interface* function_;
   ManipulatedFrame* frame_;
   
-  bool initialized_;
+  mutable bool need_update_;
   int grid_size_;
   double max_value_;
   double min_value_;
-  Point_value implicit_grid_[SCENE_IMPLICIT_GRID_SIZE][SCENE_IMPLICIT_GRID_SIZE];
+  mutable Point_value implicit_grid_[SCENE_IMPLICIT_GRID_SIZE][SCENE_IMPLICIT_GRID_SIZE];
   
   Color_ramp blue_color_ramp_;
   Color_ramp red_color_ramp_;

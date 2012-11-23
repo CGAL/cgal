@@ -8,13 +8,14 @@
 #include <QGLViewer/qglviewer.h>
 
 #include "Color_ramp.h"
+#include <Viewer_interface.h>
 
 
 Scene_implicit_function_item::
 Scene_implicit_function_item(Implicit_function_interface* f)
   : function_(f)
   , frame_(new ManipulatedFrame())
-  , initialized_(false)
+  , need_update_(true)
   , grid_size_(SCENE_IMPLICIT_GRID_SIZE)
   , max_value_(0.)
   , min_value_(0.)
@@ -25,8 +26,12 @@ Scene_implicit_function_item(Implicit_function_interface* f)
   red_color_ramp_.build_red();
   compute_min_max();
   compute_function_grid();
-  
-  connect(frame_, SIGNAL(modified()), this, SLOT(compute_function_grid()));
+  double offset_x = (bbox().xmin + bbox().xmax) / 2;
+  double offset_y = (bbox().ymin + bbox().ymax) / 2;
+  double offset_z = (bbox().zmin + bbox().zmax) / 2;
+  frame_->setPosition(offset_x, offset_y, offset_z);
+  frame_->setOrientation(1., 0, 0, 0);
+  connect(frame_, SIGNAL(modified()), this, SLOT(plane_was_moved()));
 }
 
 
@@ -43,11 +48,46 @@ Scene_implicit_function_item::bbox() const
 }
 
 void
+Scene_implicit_function_item::draw(Viewer_interface* viewer) const
+{
+  draw_aux(viewer, false);
+}
+
+void
+Scene_implicit_function_item::draw_edges(Viewer_interface* viewer) const
+{
+  draw_aux(viewer, true);
+}
+
+void
+Scene_implicit_function_item::draw_aux(Viewer_interface* viewer, bool edges) const
+{
+  if(edges) {
+    draw_bbox();
+    ::glPushMatrix();
+    ::glMultMatrixd(frame_->matrix());
+    QGLViewer::drawGrid((float)bbox().diagonal_length() * 0.3);
+    ::glPopMatrix();
+  }
+
+  if(!frame_->isManipulated()) {
+    if(need_update_) {
+      compute_function_grid();
+      need_update_ = false;
+    }
+    if(!viewer->inFastDrawing()) {
+      if(edges)
+        Scene_item_with_display_list::draw_edges(viewer);
+      else
+        Scene_item_with_display_list::draw(viewer);
+    }
+  }
+}
+
+void
 Scene_implicit_function_item::direct_draw() const
 {
-  
   draw_function_grid(red_color_ramp_, blue_color_ramp_);
-  draw_bbox();
 }
 
 
@@ -161,7 +201,10 @@ draw_grid_vertex(const Point_value& pv,
 {
   const Point& p = pv.first;
   double v = pv.second;
-  
+
+  if(std::isnan(v)) {
+    ::glColor3f(0.2f, 0.2f, 0.2f);
+  } else 
   // determines grey level
   if ( v > 0 )
   {
@@ -180,7 +223,7 @@ draw_grid_vertex(const Point_value& pv,
 
 void
 Scene_implicit_function_item::
-compute_function_grid()
+compute_function_grid() const
 {
   typedef CGAL::Simple_cartesian<double>  K;
   typedef K::Aff_transformation_3         Aff_transformation;
@@ -199,16 +242,18 @@ compute_function_grid()
   const double dx = diag;
   const double dy = diag;
   const double z (0);
+
+  int nb_quad = grid_size_ - 1;
   
   for(int i=0 ; i<grid_size_ ; ++i)
   {
-    double x = -diag/2. + double(i)/double(grid_size_) * dx;
+    double x = -diag/2. + double(i)/double(nb_quad) * dx;
     
     for(int j=0 ; j<grid_size_ ; ++j)
     {
-      double y = -diag/2. + double(j)/double(grid_size_) * dy;
+      double y = -diag/2. + double(j)/double(nb_quad) * dy;
       
-      Point_3 query = t( Point_3(x,y,z) );
+      Point_3 query = t( Point_3(x, y, z) );
       double v = function_->operator()(query.x(), query.y(), query.z());
       
       implicit_grid_[i][j] = Point_value(Point(query.x(),query.y(),query.z()),v);
@@ -216,7 +261,7 @@ compute_function_grid()
   }
   
   // Update display list
-  this->changed();
+  const_cast<Scene_implicit_function_item*>(this)->changed();
 }
 
 void
@@ -244,6 +289,7 @@ compute_min_max()
         double z = b.zmin + double(k) * (b.zmax - b.zmin) / probes_nb;
         
         double v = (*function_)(x,y,z);
+        if(std::isnan(v)) continue;
         max_value_ = (std::max)(v,max_value_);
         min_value_ = (std::min)(v,min_value_);
       }
