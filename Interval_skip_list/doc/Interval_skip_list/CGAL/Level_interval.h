@@ -6,13 +6,12 @@ namespace CGAL {
 The class `Level_interval` represents intervals for the minimum and 
 maximum value of the `z`-coordinate of a face of a triangulation. 
 
-### Requirements ###
-
-The `value_type` of `FaceHandle` must be `Face`, which must have a 
+\tparam FaceHandle must be a handle with
+the value type  `Face`, which must have a 
 nested type `Vertex`, which must have a nested type `Point`, 
 whose `Kernel_traits<Point>::Kernel` must have a nested type `FT`. 
-These requirements are fulfilled, if one uses a <span class="textsc">Cgal</span> triangulation 
-and a <span class="textsc">Cgal</span> kernel. 
+These requirements are fulfilled, if one uses a %CGAL triangulation 
+and a %CGAL `Kernel`. 
 
 \cgalModels `Interval`
 

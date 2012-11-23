@@ -15,9 +15,7 @@ time \f$ O(\log n)\f$, and finding all intervals that contain a point
 takes expected time \f$ O(\log n + k)\f$, where \f$ k\f$ is the number of 
 intervals. 
 
-The implementation is based on the code developed by Eric N. Hansen, 
-which can be found at <TT>http://www-pub.cise.ufl.edu/~hanson/IS-lists/</TT>. 
-Attention, this code has memory leaks. 
+The implementation is based on the code developed by Eric N. Hansen.
 
 */
 template< typename Interval >
@@ -49,7 +47,7 @@ Interval_skip_list();
 
 /*! 
 Constructor that inserts the iterator range `[first, last)` in the interval skip list. 
-\pre The `value_type` of `first` and `last` is `Interval`. 
+\tparam InputIterator must be an input iterator with value type `Interval`. 
 */ 
 template < class InputIterator > 
 Interval_skip_list( 
@@ -64,7 +62,7 @@ InputIterator last);
 /*! 
 Inserts the iterator range `[first, last)` in the interval skip list, and returns 
 the number of inserted intervals. 
-\pre The `value_type` of `first` and `last` is `Interval`. 
+\tparam InputIterator must be an input iterator with value type `Interval`. 
 */ 
 template < class InputIterator > 
 int insert( 
@@ -89,7 +87,7 @@ bool is_contained(const Value& v);
 /*! 
 Writes the intervals `i` with `i.inf()` \f$ \leq\f$ `v` \f$ \leq\f$ `i.sup` to the 
 output iterator `out`. 
-\pre The `value_type` of `out` is `Interval`. 
+\tparam OutputIterator must be an output iterator with value type `Interval`. 
 */ 
 template < class OutputIterator > 
 OutputIterator find_intervals( 
