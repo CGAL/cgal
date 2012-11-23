@@ -15,7 +15,7 @@ for example `CGAL::Cartesian_d<double>`.
 Expects for the second template argument a model of the 
 concept `GeneralDistance`. If `Traits` is 
 `CGAL::Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
-the default type is `CGAL::Distance_for_point_adapter<Key,PointPropertyMap,CGAL::Euclidean_distance<Traits> >`, 
+the default type is `CGAL::Distance_adapter<Key,PointPropertyMap,CGAL::Euclidean_distance<Traits> >`, 
 and `CGAL::Euclidean_distance<Traits>` otherwise. 
 
 Expects for fourth template argument an implementation of the concept `SpatialTree`. 

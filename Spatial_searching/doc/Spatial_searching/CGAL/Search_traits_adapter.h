@@ -24,7 +24,7 @@ with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`.
 
 */
 template< typename Key, typename PointPropertyMap, typename Base_distance >
-class Distance_for_point_adapter : Base_distance {
+class Distance_adapter : Base_distance {
 public:
 
 /// \name Types 
@@ -53,7 +53,7 @@ typedef Base_distance::Query_item Query_item;
 /*! 
 Constructor initializing the class to `base` and setting the point property map of the class to `ppmap`. 
 */ 
-Distance_for_point_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const Base_distance& base=Base_distance()); 
+Distance_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const Base_distance& base=Base_distance()); 
 
 /// @} 
 
@@ -67,7 +67,7 @@ const PointPropertyMap& point_property_map() const;
 
 /// @}
 
-}; /* end Distance_for_point_adapter */
+}; /* end Distance_adapter */
 } /* end namespace CGAL */
 
 namespace CGAL {
@@ -77,7 +77,7 @@ namespace CGAL {
 
 The class `Search_traits_adapter` can be used as a template parameter of the kd tree 
 and the search classes. When using this traits class in a nearest neighbor search algorithm, the class 
-`Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>` 
+`Distance_adapter<Key,PointPropertyMap,Base_distance>` 
 must be used as distance. 
 
 ### Parameters ###
@@ -92,7 +92,7 @@ with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`.
 \cgalModels ::SearchTraits if `BaseTraits` is a model of ::SearchTraits.
 \cgalModels ::RangeSearchTraits if `BaseTraits` is a model of ::RangeSearchTraits.
 
-\sa `Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>` 
+\sa `Distance_adapter<Key,PointPropertyMap,Base_distance>` 
 \sa `Search_traits_2<Kernel>` 
 \sa `Search_traits_3<Kernel>` 
 \sa `Search_traits_d<Kernel>` 
