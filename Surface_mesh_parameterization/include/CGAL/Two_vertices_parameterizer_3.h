@@ -47,7 +47,7 @@ namespace CGAL {
 /// `ParameterizationMesh_3` class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// \cgalModels BorderParameterizer_3
+/// \cgalModels `BorderParameterizer_3`
 ///
 
 template<class ParameterizationMesh_3>      //< 3D surface

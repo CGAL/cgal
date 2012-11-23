@@ -46,7 +46,7 @@ namespace CGAL {
 ///   for j neighbor vertex of i based on Floater Mean Value Coordinates parameterization.
 /// - It implements an optimized version of `is_one_to_one_mapping()`.
 ///
-/// \cgalModels ParameterizerTraits_3
+/// \cgalModels `ParameterizerTraits_3`
 ///
 ///
 /// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`

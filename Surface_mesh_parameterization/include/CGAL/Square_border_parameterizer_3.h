@@ -51,7 +51,7 @@ namespace CGAL {
 /// `ParameterizationMesh_3` class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// \cgalModels BorderParameterizer_3
+/// \cgalModels `BorderParameterizer_3`
 ///
 
 template<class ParameterizationMesh_3>      //< 3D surface
@@ -290,7 +290,7 @@ Square_border_parameterizer_3<Adaptor>::closest_iterator(Adaptor& mesh,
 /// algorithm. This class implements only compute_edge_length() to compute a
 /// segment's length.
 ///
-/// \cgalModels BorderParameterizer_3
+/// \cgalModels `BorderParameterizer_3`
 ///
 
 template<class ParameterizationMesh_3>      //< 3D surface
@@ -370,7 +370,7 @@ protected:
 /// algorithm. This class implements only compute_edge_length() to compute a
 /// segment's length.
 ///
-/// \cgalModels BorderParameterizer_3
+/// \cgalModels `BorderParameterizer_3`
 ///
 
 template<class ParameterizationMesh_3>      //< 3D surface

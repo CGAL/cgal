@@ -47,7 +47,7 @@ namespace CGAL {
 /// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.
 ///
-/// \cgalModels ParameterizerTraits_3
+/// \cgalModels `ParameterizerTraits_3`
 ///
 /// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
 /// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`

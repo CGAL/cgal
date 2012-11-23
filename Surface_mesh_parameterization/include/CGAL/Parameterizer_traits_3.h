@@ -39,7 +39,7 @@ namespace CGAL {
 /// - `Parameterizer_traits_3` defines the Error_code list of errors detected by this package
 /// - `Parameterizer_traits_3` declares a pure virtual method parameterize()
 ///
-/// \cgalModels ParameterizerTraits_3
+/// \cgalModels `ParameterizerTraits_3`
 ///
 /// ## Design Pattern ##
 /// `ParameterizerTraits_3` models are *Strategies*: they implement
