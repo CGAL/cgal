@@ -265,12 +265,8 @@ private:
     else if(r_tr_.is_infinite(mirror.first->vertex(mirror.second)))
       return facet;
 
-    typename CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle> comparator;
-    if(comparator(facet.first->vertex(facet.second),
-                  mirror.first->vertex(mirror.second)))
-      return facet;
-    else
-      return mirror;
+    typename CGAL::Mesh_3::Triangulation_Finite_facets_comparator<Tr> fcomp;
+    return (fcomp(facet, mirror)) ? facet : mirror;
   }
 
   /// Returns true if f has already been visited
