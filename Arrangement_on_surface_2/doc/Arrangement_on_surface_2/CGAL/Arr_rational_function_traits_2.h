@@ -6,9 +6,11 @@ namespace CGAL {
 
   The traits class `Arr_rational_function_traits_2` is a model of the `ArrangementTraits_2` 
   concept. It handles bounded and unbounded arcs of rational functions, 
-  referred to as <I>rational arcs</I> (in particular, such an arc may 
-  correspond to the entire graph of a rational function), and enables the 
-  construction and maintenance of arrangements of such arcs. 
+  referred to as <i>rational arcs</i> (in particular, such an arc may correspond to the
+  entire graph of a rational function). It supports bounded and
+  unbounded arcs. Thus, it is also a model of the concept
+  `ArrangementOpenBoundaryTraits_2`. The traits class enables
+  the construction and maintenance of arrangements of such arcs. 
 
   A rational function \f$ y = \frac{P(x)}{Q(x)}\f$ is defined by two polynomials 
   \f$ P\f$ and \f$ Q\f$ of arbitrary degrees. 

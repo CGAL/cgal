@@ -951,7 +951,7 @@ selected point-location strategy.
 \subsection arr_sssecpl_ex An Example 
 
 \cgalFigureBegin{arr_figex_8,ex_5.gif}
-The arrangement of line segments, as constructed in `point_location.cpp`, `vertical_ray_shooting.cpp`, and `batched_point_location.cpp`. The arrangement vertices are drawn as small discs, while the query points \f$ q_1, \ldots, q_6\f$ are marked with crosses.
+The arrangement of line segments, as constructed in `point_location_example.cpp`, `vertical_ray_shooting.cpp`, and `batched_point_location.cpp`. The arrangement vertices are drawn as small discs, while the query points \f$ q_1, \ldots, q_6\f$ are marked with crosses.
 \cgalFigureEnd
 
 The following program constructs a simple arrangement of five line
@@ -963,7 +963,7 @@ can be found in `point_location_utils.h`).
 It then employs the naive and the landmark strategies to issue
 several point-location queries on this arrangement:
 
-\cgalExample{Arrangement_on_surface_2/point_location.cpp}
+\cgalExample{Arrangement_on_surface_2/point_location_example.cpp}
 
 Note that the program uses the auxiliary
 `point_location_query()` function template to nicely print the
@@ -1039,7 +1039,7 @@ void vertical_ray_shooting_query
 The following program uses the auxiliary function listed above to
 perform vertical ray-shooting queries on an arrangement.
 The arrangement and the query points are exactly the same as in
-`point_location.cpp` (see \cgalFigureRef{arr_figex_5}):
+`point_location_example.cpp` (see \cgalFigureRef{arr_figex_5}):
 
 \cgalExample{Arrangement_on_surface_2/vertical_ray_shooting.cpp}
 
@@ -1082,7 +1082,7 @@ additional data structures.
 
 The following program issues a batched point-location query, which
 is essentially equivalent to the six separate queries performed in
-`point_location.cpp` (see Section \ref arr_ssecpl):
+`point_location_example.cpp` (see Section \ref arr_ssecpl):
 
 \cgalExample{Arrangement_on_surface_2/batched_point_location.cpp}
 
@@ -3500,10 +3500,12 @@ For example, when we compute the shortest paths from a given source vertex
 \f$ s\f$ to all other vertices we can obtain a map of distances and a map of
 predecessors - namely for each \f$ v\f$ vertex we have its distance from \f$ s\f$
 and a descriptor of the vertex that precedes \f$ v\f$ in the shortest path from \f$ s\f$.
-If the vertex descriptors are simply indices, one can use vectors to
-efficiently represent the property maps. As this is not the case with the
-arrangement graph, we offer the `Arr_vertex_property_map<Arrangement,Type>`
-template allows for an efficient mapping of `Vertex_handle` objects to
+
+If the vertex descriptors are simply indices, boost supplies tools to
+easily represent property maps using vectors.
+\ccc{Arr_vertex_index_map<Arrangement>} class allows create such
+indices, and together with `boost::vector_property_map<Type, IndexMap>`
+allows for an efficient mapping of `Vertex_handle` objects to
 properties of type `Type`. Note however that unlike the
 `Arr_vertex_index_map` class, the vertex property-map class is not
 kept synchronized with the number of vertices in the arrangement, so it
@@ -3518,7 +3520,7 @@ In the following example we construct an arrangement of 7 line segments,
 as shown in \cgalFigureRef{arr_figex_bgl},
 then use Dijkstra's shortest-paths algorithm from the <span class="textsc">bgl</span> to compute
 the graph distance of all vertices from the leftmost vertex in the
-arrangement \f$ v_0\f$. Note the usage of the `Arr_vertex_index_map` and
+arrangement \f$ v_0\f$. Note the usage of the `boost::vector_property_map<Type, IndexMap>` and
 the `Arr_vertex_property_map` classes. The latter one, instantiated by
 the type `double` is used to map vertices to their distances from \f$ v_0\f$.
 
@@ -3547,17 +3549,17 @@ arrangement graph is also a model of the concepts `VertexListGraph`,
 
 Since we use `Face_handle` objects as the vertex descriptors, we define
 the `Arr_face_index_map<Arrangement>` class-template, which maintains an
-efficient mapping of face handles to indices. We also provide the template
-`Arr_face_property_map<Arrangement,Type>` for associating arbitrary
-data with the arrangement faces.
+efficient mapping of face handles to indices.
+Like vertices, `boost::vector_property_map<Type, IndexMap>` can be
+used for associating arbitrary data with the arrangement faces.
 
 In the following example we construct the same arrangement as in
 example `bgl_primal_adapter.cpp` (see \cgalFigureRef{arr_figex_bgl}),
 and perform breadth-first search on the graph faces, starting from the
 unbounded face. We extend the \sc{Dcel} faces
-with an unsigned integer, marking the discover time of the face and use a
-breadth-first-search visitor to obtain these times and update the faces
-accordingly:
+with an unsigned integer, marking the discover time of the face
+using `boost` visitors and a property-map class that directly accesses
+the extended data of the faces:
 
 \cgalExample{Arrangement_on_surface_2/bgl_dual_adapter.cpp}
 
