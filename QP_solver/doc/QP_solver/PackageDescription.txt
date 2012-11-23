@@ -15,6 +15,8 @@
 /*! \defgroup PkgQPSolverClasses Classes
  \ingroup PkgQPSolver
 
+This module provides high and low level classes that allow to construct and represent linear and quadratic programs and their solution.
+
 There is a class that represents the solution of a linear or quadratic program. An instance of this class is returned by any of the solution functions below.
 
 - `CGAL::Quadratic_program_solution`
@@ -29,7 +31,7 @@ Then there are specific models for any of the four program concepts above; these
 - `CGAL::Quadratic_program_from_iterators`  (for quadratic programs that wrap given iterators, without copying data)
 - `CGAL::Linear_program_from_iterators`   (for linear programs wrapping given iterators)
 - `CGAL::Nonnegative_quadratic_program_from_iterators`  (for nonnegative quadratic programs, wrapping given iterators)
--`CGAL::Nonnegative_linear_program_from_iterators`   (for nonnegative linear programs, wrapping given iterators) 
+- `CGAL::Nonnegative_linear_program_from_iterators`   (for nonnegative linear programs, wrapping given iterators) 
 
 */
 
@@ -38,6 +40,8 @@ Then there are specific models for any of the four program concepts above; these
 
 /*! \defgroup PkgQPSolverFunctions Functions
  \ingroup PkgQPSolver
+
+This module provides makers to construct a program, as well as functions to solve and print programs.
 
  In case you want to construct a program from complicated iterators (whose types you don't know, or simply don't want to bother with), we provide four makers.
 

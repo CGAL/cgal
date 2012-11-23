@@ -58,14 +58,14 @@ x1 x1 8
 
 Here comes a semiformal description of the format in general. 
 
-# NAME section # 
+<h3> NAME Section </h3>
 
 This (mandatory) section consists of a single line 
 starting with <TT>NAME</TT>. Everything starting from the 
 first non-whitespace after that until the end of the line 
 constitutes the name of the problem. 
 
-# ROWS section # 
+<h3>ROWS Section </h3>
 
 In the (mandatory) <TT>ROW</TT> section, you find one line for every 
 constraint, where the letter <TT>L</TT> indicates relation \f$ \leq\f$, 
@@ -77,7 +77,7 @@ constraints (here: <TT>c0, c1</TT>) and the objective function (here:
 functions by using several rows starting with <TT>N</TT>, but we ignore 
 all but the first. 
 
-# COLUMNS section # 
+<h3>COLUMNS Section</h3>
 
 The (mandatory) <TT>COLUMNS</TT> section encodes the constraint matrix 
 \f$ A\f$ and the linear objective function vector \f$ c\f$. Every line consists 
@@ -89,7 +89,7 @@ linear objective function). Values for pairs \f$ (i,j)\f$ that are not
 specified in this section default to \f$ 0\f$. Otherwise, for every pair 
 \f$ (i,j)\f$, the <I>last</I> specified value determines \f$ A_{ij}\f$ or \f$ c_j\f$. 
 
-# RHS section # 
+<h3> RHS Section </h3> 
 
 This (mandatory) section encodes the right-hand side vector \f$ b\f$ and 
 the constant term \f$ c_0\f$ in the objective function. The first token in 
@@ -106,7 +106,7 @@ function). Values that are not specified in this section default to \f$ 0\f$.
 Otherwise, for every \f$ i\f$, the <I>last</I> specified value determines 
 \f$ b_{i}\f$ or \f$ -c_0\f$. 
 
-# BOUNDS section # 
+<h3>BOUNDS Section</h3>
 
 This (optional) section encodes the lower and upper bound vectors \f$ l\f$ 
 and \f$ u\f$ for the variables. The default bounds for any variable \f$ x_j\f$ are 
@@ -137,7 +137,7 @@ FR         | \f$-\infty \leq x_j\leq\infty\f$ (previous bounds are discarded)
 MI         | \f$x_j\geq -\infty\f$ (upper bound remains unchanged)
 PL         | \f$x_j\leq \infty\f$ (lower bound remains unchanged)    
 
-# QMATRIX / QUADOBJ / DMATRIX section # 
+<h3> QMATRIX / QUADOBJ / DMATRIX Section</h3>
 
 This (optional) section encodes the quadratic objective 
 function matrix \f$ D\f$. Every line is a sequence \f$ i j val\f$ of 
@@ -156,7 +156,7 @@ nonzero values for an unordered pair \f$ \{i,j\}\f$.
 If this section is missing or does not contain nonzero values, the 
 program is a model of the concept `LinearProgram`. 
 
-# Miscellaneous # 
+<h3>Miscellaneous </h3>
 
 Our MPS format also supports an (optional) <TT>RANGES</TT> section, 
 but we don't explain this here. 

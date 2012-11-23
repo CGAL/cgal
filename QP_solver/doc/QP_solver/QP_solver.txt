@@ -695,7 +695,7 @@ may lead to <I>infinite</I> `double` values and incorrect results.
 In debug mode, the solver will notice this through a certificate 
 cross-check in the end (or even earlier). In this case, it is advisable
 to explicitly switch to a non-filtered <I>pricing strategy</I>, see
-`Quadratic_program_pricing_strategy`.
+\link CGAL::Quadratic_program_pricing_strategy `Quadratic_program_pricing_strategy`\endlink.
 
 <B>Hint:</B> 
 If you have a program where the number of variables \f$ n\f$ and the number of
@@ -712,8 +712,7 @@ for an example that shows how to change the pricing strategy).
 Consider the following program. It reads a nonnegative linear program from 
 the file <TT>cycling.mps</TT> (which is in the example directory as well),
 and then solves it in verbose mode, using <I>Bland's rule</I>, see
-`Quadratic_program_pricing_strategy`.
-
+\link CGAL::Quadratic_program_pricing_strategy `Quadratic_program_pricing_strategy`\endlink.
 \cgalExample{QP_solver/cycling.cpp}
 
 If you comment the line 

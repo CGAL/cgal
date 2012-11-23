@@ -28,6 +28,6 @@ monotone and sorted matrix search.
 The optimization code uses infix `OPTIMISATION` in the assertions,
 e.g. defining the compiler flag
 `CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
-checking off, cf. Section  \ref secchecks.
+checking off, cf. Section \ref secchecks "Checks" in the chapter on STL extensions.
 */
 
