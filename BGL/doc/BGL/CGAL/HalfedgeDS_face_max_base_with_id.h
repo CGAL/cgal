@@ -7,7 +7,7 @@ namespace CGAL {
 The class `HalfedgeDS_face_max_base_with_id` is a model of the `HalfedgeDSFace` 
 concept. 
 
-It is equivalent to `CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true>` 
+It is equivalent to `HalfedgeDS_face_base< Refs, Tag_true>` 
 with an added integer field which can be used to index faces 
 in \sc{Bgl} algorithms. 
 The class contains support for the incident halfedge pointer 

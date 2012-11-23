@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup  PkgBGLTraits
 
-The class `halfedge_graph_traits` is a traits class for `::HalfedgeGraph`.
+The class `halfedge_graph_traits` is a traits class for `HalfedgeGraph`.
 
 */
 template< typename G >

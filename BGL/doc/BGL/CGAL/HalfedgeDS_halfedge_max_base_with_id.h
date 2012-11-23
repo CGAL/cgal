@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `HalfedgeDS_halfedge_max_base_with_id` is a model of the `HalfedgeDSHalfedge` 
 concept. 
-It is equivalent to `CGAL::HalfedgeDS_halfedge_base< Refs, CGAL::Tag_true, CGAL::Tag_true, CGAL::Tag_true>` with an added integer 
+It is equivalent to `HalfedgeDS_halfedge_base< Refs, Tag_true, Tag_true, Tag_true>` with an added integer 
 field which can be used to index halfedges in \sc{Bgl} algorithms. 
 The class contains support for the previous, next, opposite, vertex and 
 face pointers and the required type definitions. 

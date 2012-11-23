@@ -251,7 +251,8 @@ vertices and halfedges. Thus, the arrangement graph is a model of the concepts
 `VertexListGraph` and `EdgeListGraph` introduced by the \sc{bgl}.
 At the same time, we use an iterator adapter of the circulator over the
 halfedges incident to a vertex (`Halfedge_around_vertex_circulator` - see
-Section \ref arr_sssectr_vertex), so it is possible to go over the ingoing
+Section \ref arr_sssectr_vertex "Traversal Methods for an Arrangement Vertex" 
+of the chaper on arrangements), so it is possible to go over the ingoing
 and outgoing edges of a vertex in linear time. Thus, our arrangement graph
 is a model of the concept `BidirectionalGraph` (this concept refines
 `IncidenceGraph`, which requires only the traversal of outgoing edges).
@@ -260,7 +261,7 @@ It is important to notice that the vertex descriptors we use are
 `Vertex_handle` objects and <I>not</I> vertex indices. However, in order
 to gain more efficiency in most \sc{Bgl} algorithm, it is better to have them
 indexed \f$ 0, 1, \ldots, (n-1)\f$, where \f$ n\f$ is the number of vertices. We
-therefore introduce the `Arr_vertex_index_map<Arrangement>` class-template,
+therefore introduce the `Arr_vertex_index_map` class-template,
 which maintains a mapping of vertex handles to indices, as required by the
 sc{bgl}. An instance of this class must be attached to a valid arrangement
 vertex when it is created. It uses the notification mechanism (see
