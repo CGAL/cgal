@@ -14,7 +14,7 @@ hacks that create what you see.
 ### Package Overview ###
 
 The package overview is build by having a special command that is
-filtered by the shell script pkglist_filter.sh.
+filtered by the python script pkglist_filter.py.
 
 A command has to be of the form \package_listing{PKG_NAME}, where
 PKG_NAME cannot contain a closing }. 
@@ -24,7 +24,7 @@ PkgDescBegin and PkgDescEnd in the file ../PKG_NAME/doc/PKG_NAME/PackageDescript
 
 If PKG_NAME is of the form A/B the selected file is
 ../A/doc/B/PackageDescription.txt. This is to support packages like
-Sweep_line_2 and TDS_2 which don't reside in their own SVN packages.
+Sweep_line_2 and TDS_2 which don't reside in their own packages in the SCM.
 
 ### Footnotes ###
 
