@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSpatialSearchingD
+\ingroup SearchTraitsClasses
 
 The class `Search_traits` can be used as a template parameter of the kd tree 
 and the search classes. It is a mere wrapper for the geometric types needed 

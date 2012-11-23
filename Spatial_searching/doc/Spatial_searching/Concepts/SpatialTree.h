@@ -106,7 +106,7 @@ Returns a const handle to the root node of the tree.
 Node_const_handle root() const; 
 
 /*! 
-returns a const 
+Returns a const 
 reference to the bounding box of the root node of the tree. 
 */ 
 const Kd_tree_rectangle<SearchTraits::FT>& bounding_box() const; 

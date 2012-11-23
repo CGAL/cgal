@@ -9,7 +9,7 @@ and the search classes.
 ### Parameters ###
 
 Expects for the template argument a model of the concept `Kernel`, 
-for example `CGAL::Cartesian<double>` or `CGAL::Simple_cartesian<CGAL::Gmpq>`. 
+for example `Simple_cartesian<double>` or `Simple_cartesian<Gmpq>`. 
 
 \cgalModels `SearchTraits`
 \cgalModels `RangeSearchTraits`
@@ -46,13 +46,13 @@ Sphere type.
 typedef Kernel::Circle_2 Sphere_d; 
 
 /*! 
-An iterator over the Cartesian coordinates. 
+An iterator over the %Cartesian coordinates. 
 */ 
 typedef Kernel::Cartesian_const_iterator_2 Cartesian_const_iterator_d; 
 
 /*! 
 A functor with 
-two function operators, which return the begin and past the end iterator for the Cartesian coordinates. 
+two function operators, which return the begin and past the end iterator for the %Cartesian coordinates. 
 The functor for begin has as argument a `Point_d`. The functor for the past the end iterator, 
 has as argument a `Point_d` and an `int`. 
 */ 

@@ -31,7 +31,7 @@ in each dimension.
 Kd_tree_rectangle(int d); 
 
 /*! 
-Constructs the bounding box of the points in the range [`begin,end`), where the value 
+Constructs the bounding box of the points in the range `[begin,end)`, where the value 
 type of `PointIter` can be used by operators of functors `Construct_cartesian_const_iterator_d` 
 to define iterators with value type `FT`. 
 */ 

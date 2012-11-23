@@ -10,17 +10,17 @@ extended or unextended nodes.
 ### Parameters ###
 
 Expects for the first template argument an implementation of the concept `SearchTraits`, 
-for example `CGAL::Cartesian_d<double>`. 
+for example `Simple_cartesian<double>`. 
 
 Expects for the second template argument a model of the 
 concept `GeneralDistance`. If `Traits` is 
-`CGAL::Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
-the default type is `CGAL::Distance_for_point_adapter<Key,PointPropertyMap,CGAL::Euclidean_distance<Traits> >`, 
-and `CGAL::Euclidean_distance<Traits>` otherwise. 
+`Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
+the default type is `Distance_for_point_adapter<Key,PointPropertyMap,Euclidean_distance<Traits> >`, 
+and `Euclidean_distance<Traits>` otherwise. 
 
 Expects for fourth template argument an implementation of the concept `SpatialTree`. 
-The default type is `CGAL::Kd_tree<Traits, Splitter, CGAL::Tag_false>`. The 
-template argument `CGAL::Tag_false` makes that the tree is built with unextended nodes. 
+The default type is `Kd_tree<Traits, Splitter, Tag_false>`. The 
+template argument `Tag_false` makes that the tree is built with unextended nodes. 
 
 \sa `CGAL::Orthogonal_k_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>` 
 

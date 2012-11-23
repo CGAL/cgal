@@ -12,7 +12,7 @@ Euclidean distance between a \f$ d\f$-dimensional sphere and a
 ### Parameters ###
 
 Expects for the template argument a model of the concept `SearchTraits`, 
-for example `CGAL::Cartesian_d<double>`. 
+for example `Simple_cartesian_d<double>`. 
 
 \cgalModels `GeneralDistance`
 

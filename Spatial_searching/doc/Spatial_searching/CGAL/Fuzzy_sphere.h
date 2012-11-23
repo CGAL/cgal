@@ -59,7 +59,7 @@ Fuzzy_sphere(Traits::Base::Point_d center, FT radius, FT epsilon=FT(0), Traits t
 /// @{
 
 /*! 
-test whether \f$ s\f$ contains \f$ p\f$. 
+test whether the fuzzy sphere contains `p`. 
 */ 
 bool contains(const Point_d& p) const; 
 

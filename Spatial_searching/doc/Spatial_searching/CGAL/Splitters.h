@@ -17,11 +17,11 @@ the ratio of the resulting rectangles.
 ### Parameters ###
 
 Expects for the first template argument a model of 
-the concept `::SearchTraits`, 
-for example `Cartesian_d<double>`. 
+the concept `SearchTraits`, 
+for example `Simple_cartesian<double>`. 
 
 Expects for the second template argument a model of the concept `SpatialSeparator`. 
-It has as default value the type, `CGAL::Plane_separator<Traits::FT>`. 
+It has as default value the type, `Plane_separator<Traits::FT>`. 
 
 \cgalModels `Splitter`
 

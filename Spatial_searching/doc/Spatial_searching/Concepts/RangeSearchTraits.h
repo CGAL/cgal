@@ -25,12 +25,12 @@ public:
 /// @{
 
 /*! 
-Iso box type. It is only needed for range search queries. 
+Iso box type, which is only needed for range search queries. 
 */ 
 typedef Hidden_type Iso_box_d; 
 
 /*! 
-Sphere type. It is only needed for range search queries. 
+Sphere type, which is only needed for range search queries. 
 */ 
 typedef Hidden_type Sphere_d; 
 

@@ -42,7 +42,7 @@ typedef Hidden_type Cartesian_const_iterator_d;
 /*! 
 Functor with operators to construct iterators on the 
 first and the past-the-end iterator for the %Cartesian coordinates of a point. This functor must 
-provides the type `result_type` that must be the same a `Cartesian_const_iterator_d`. 
+provide the type `result_type` that must be the same a `Cartesian_const_iterator_d`. 
 */ 
 typedef Hidden_type Construct_cartesian_const_iterator_d; 
 

@@ -10,23 +10,22 @@ using an orthogonal distance class.
 ### Parameters ###
 
 Expects for the first template argument an implementation of the concept `SearchTraits`, 
-for example `CGAL::Search_traits_2<CGAL::Cartesian<double> >`. 
+for example `Search_traits_2<Simple_cartesian<double> >`. 
 
 Expects for the second template argument a model of the 
 concept `GeneralDistance`. If `Traits` is 
-`CGAL::Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
-the default type is `CGAL::Distance_adapter<Key,PointPropertyMap,CGAL::Euclidean_distance<Traits> >`, 
-and `CGAL::Euclidean_distance<Traits>` otherwise. 
+`Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
+the default type is `Distance_adapter<Key,PointPropertyMap,Euclidean_distance<Traits> >`, 
+and `Euclidean_distance<Traits>` otherwise. 
 
-The default type is 
-`CGAL::Euclidean_distance<Traits>`. 
+The default type is `Euclidean_distance<Traits>`. 
 
 Expects for third template argument a model of the concept `Splitter`. 
-The default type is `CGAL::Sliding_midpoint<Traits>`. 
+The default type is `Sliding_midpoint<Traits>`. 
 
 Expects for fourth template argument an implementation of the concept `SpatialTree`. 
-The default type is `CGAL::Kd_tree<Traits, Splitter, CGAL::Tag_true>`. The 
-template argument must be `CGAL::Tag_true` because orthogonal search needs extended 
+The default type is `Kd_tree<Traits, Splitter, Tag_true>`. The 
+template argument must be `Tag_true` because orthogonal search needs extended 
 kd tree nodes. 
 
 \sa `CGAL::K_neighbor_search<Traits, GeneralDistance, Splitter, SpatialTree>` 

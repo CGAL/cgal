@@ -10,11 +10,8 @@ rectangle is called the associated rectangle.  Provides a method to
 split a container and a number of methods to support the
 implementation of splitting rules.
 
-### Parameters ###
-
-Expects for the template argument an implementation for 
-`d`-dimensional points of the concept `SearchTraits`, for example 
-`CGAL::Cartesian_d<double>`. 
+\tparam Traits must be model of the concept `SearchTraits`, for example 
+`Simple_cartesian<double>`. 
 
 \sa `SearchTraits` 
 \sa `SpatialSeparator` 

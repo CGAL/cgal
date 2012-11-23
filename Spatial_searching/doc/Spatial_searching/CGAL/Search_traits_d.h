@@ -11,7 +11,7 @@ and the search classes. `Kernel` must be a \cgal kernel.
 ### Parameters ###
 
 Expects for the template argument a model of the concept `Kernel_d`, 
-for example `CGAL::Cartesian_d<double>` or `CGAL::Homogeneous_d<CGAL::Gmpz>`. 
+for example `Cartesian_d<double>`. 
 
 \cgalModels `SearchTraits`
 \cgalModels `RangeSearchTraits`
@@ -49,14 +49,13 @@ Sphere type.
 typedef Kernel::Sphere_d Sphere_d; 
 
 /*! 
-An iterator over the Cartesian 
-coordinates. 
+An iterator over the %Cartesian coordinates. 
 */ 
 typedef Kernel::Cartesian_const_iterator_d Cartesian_const_iterator; 
 
 /*! 
 A functor with 
-two function operators, which return the begin and past the end iterator for the Cartesian coordinates. 
+two function operators, which return the begin and past the end iterator for the %Cartesian coordinates. 
 The functor for begin has as argument a `Point_d`. The functor for the past the end iterator, 
 has as argument a `Point_d` and an `int`. 
 */ 

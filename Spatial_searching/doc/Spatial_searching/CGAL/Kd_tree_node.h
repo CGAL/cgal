@@ -5,7 +5,7 @@ namespace CGAL {
 
 The class `Kd_tree_node` implements a node class for a `k-d` tree. 
 
-\cgalAdvanced A node is either a leaf node, an internal node or an
+A node is either a leaf node, an internal node or an
 extended internal node.  A leaf node contains one or more points. An
 internal node contains a pointer to its lower child, a pointer to its
 upper child, and a pointer to its separator.  An extended internal
@@ -15,7 +15,7 @@ extended node's rectangle along the node's cutting dimension.
 ### Parameters ###
 
 Expects for the template argument a model of the concept `SearchTraits`, 
-for example `CGAL::Search_traits_2<CGAL::Cartesian<double> >`, or `CGAL::Cartesian_d<double>`. 
+for example `Search_traits_2<Simple_cartesian<double> >`, or `Cartesian_d<double>`. 
 
 */
 template< typename Traits, typename Splitter, typename UseExtendedNode >

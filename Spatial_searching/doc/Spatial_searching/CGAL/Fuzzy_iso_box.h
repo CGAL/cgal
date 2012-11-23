@@ -63,7 +63,7 @@ Fuzzy_iso_box(Traits::Base::Point_d p, Traits::Base::Point_d q, FT epsilon=FT(0)
 /// @{
 
 /*! 
-test whether `b` contains `p`. 
+test whether the fuzzy iso box contains `p`. 
 */ 
 bool contains(Point_d p) const; 
 
