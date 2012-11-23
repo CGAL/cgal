@@ -157,7 +157,7 @@ namespace parameters {
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::exude` allows the user to trigger a call to `exude_mesh_3()` in the 
+The function `parameters::exude()` allows the user to trigger a call to `exude_mesh_3()` in the 
 `make_mesh_3()` and `refine_mesh_3()` mesh generation functions. 
 It also allows the user to pass parameters 
 to the optimization function `exude_mesh_3()` through these mesh generation functions. 
@@ -195,7 +195,7 @@ parameters::internal::Exude_options exude(
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::features` provides a value of internal type `Features` 
+The function `parameters::features()` provides a value of internal type `Features` 
 to specify if 0 and 1-dimensional features have to be taken into account. 
 The provided value is a default value that triggers the representation 
 of corners and curve segments in the mesh when the domain is a model 
@@ -215,7 +215,7 @@ parameters::internal::Features_options features();
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::lloyd` allows the user to trigger a call of 
+The function `parameters::lloyd()` allows the user to trigger a call of 
 `lloyd_optimize_mesh_3()` in the mesh generation functions 
 `make_mesh_3()` and `refine_mesh_3()`. It also allows the user to pass 
 parameters to the optimization function 
@@ -257,7 +257,7 @@ double parameters::freeze_bound = 0.01);
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::no_exude` allows the user to tell the mesh generation functions 
+The function `parameters::no_exude()` allows the user to tell the mesh generation functions 
 `make_mesh_3()` and `refine_mesh_3()` that no exudation must be done. 
 
 ### Example ##
@@ -280,7 +280,7 @@ parameters::internal::Exude_options no_exude();
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::no_features` allows the user to prevent the handling 
+The function `parameters::no_features()` allows the user to prevent the handling 
 of 0 and 1-dimensional features. This is useful when the 
 domain is a model of `MeshDomainWithFeatures_3` 
 and the user does not want corners and curve segments 
@@ -300,7 +300,7 @@ parameters::internal::Features_options no_features();
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::no_lloyd` allows the user to tell the mesh generation functions 
+The function `parameters::no_lloyd()` allows the user to tell the mesh generation functions 
 `make_mesh_3()` and `refine_mesh_3()` that no lloyd optimization must be done. 
 
 ### Example ##
@@ -323,7 +323,7 @@ parameters::internal::Lloyd_options no_lloyd();
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::no_odt` allows the user to tell the mesh generation functions 
+The function `parameters::no_odt()` allows the user to tell the mesh generation functions 
 `make_mesh_3()` and `refine_mesh_3()` that no odt optimization must be done. 
 
 ### Example ##
@@ -346,7 +346,7 @@ parameters::internal::Odt_options no_odt();
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::no_perturb` allows the user to tell mesh generation global functions 
+The function `parameters::no_perturb()` allows the user to tell mesh generation global functions 
 `make_mesh_3()` and `refine_mesh_3()` that no perturbation must be done. 
 
 ### Example ##
@@ -369,7 +369,7 @@ parameters::internal::Perturb_options no_perturb();
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::odt` allows the user to trigger a call to 
+The function `parameters::odt()` allows the user to trigger a call to 
 `CGAL::odt_optimize_mesh_3()` in 
 `CGAL::make_mesh_3()` and `CGAL::refine_mesh_3()` mesh optimization functions. It also 
 allows the user to pass parameters to the optimization function 
@@ -410,7 +410,7 @@ double parameters::freeze_bound = 0.01);
 /*!
 \ingroup PkgMesh_3Parameters
 
-The function `parameters::perturb` allows the user to trigger a call to 
+The function `parameters::perturb()` allows the user to trigger a call to 
 `perturb_mesh_3()` in 
 `make_mesh_3()` and `refine_mesh_3()` mesh generation functions. It also 
 allows the user to pass parameters 

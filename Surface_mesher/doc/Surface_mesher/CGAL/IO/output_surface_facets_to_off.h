@@ -22,7 +22,7 @@ In case the surface is manifold the triangles can be oriented.
 
 \relates Surface_mesh_complex_2_in_triangulation_3
 
-\sa `CGAL::output_surface_facets_to_polyhedron`
+\sa `output_surface_facets_to_polyhedron()`
 */
 
 template <class SurfaceMeshComplex_2InTriangulation_3>

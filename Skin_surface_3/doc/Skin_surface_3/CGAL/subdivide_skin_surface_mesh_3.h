@@ -5,7 +5,7 @@ namespace CGAL {
 
 
 subdivides a skin surface mesh constructed 
-by the function `mesh_skin_surface_3<SkinSurface_3, Polyhedron>`
+by the function `mesh_skin_surface_3()`
 using `nSubdiv` 1-4 split
 operations (each triangle is split into four sub-triangles) and
 the new vertices are moved towards the skin surface.

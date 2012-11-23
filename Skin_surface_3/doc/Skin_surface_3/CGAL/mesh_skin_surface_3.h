@@ -1,11 +1,12 @@
+
 namespace CGAL {
 
 /*!
 \ingroup PkgSkinSurface3
 
-Constructs a mesh of the `skin_surface` in `p`.
+constructs a mesh of the `skin_surface` in `p`.
 
-The function `mesh_skin_surface_3` constructs a mesh isotopic to the skin 
+The function `mesh_skin_surface_3()` constructs a mesh isotopic to the skin 
 surface based on the algorithm in \cite cgal:kv-mssct-05. It takes 
 as input a `SkinSurface_3` object, which is a model of the 
 `SkinSurface_3` concept and outputs the mesh in a 

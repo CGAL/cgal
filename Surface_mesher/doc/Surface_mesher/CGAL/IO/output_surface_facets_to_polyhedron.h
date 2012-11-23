@@ -20,7 +20,7 @@ converts a manifold surface reconstructed by `make_surface_mesh()` to a `Polyhed
 
 \relates Surface_mesh_complex_2_in_triangulation_3
 
-\sa `CGAL::output_surface_facets_to_off`
+\sa `output_surface_facets_to_off()`
 */
 template<class SurfaceMeshComplex_2InTriangulation_3, class Polyhedron> bool output_surface_facets_to_polyhedron(const SurfaceMeshComplex_2InTriangulation_3& c2t3, Polyhedron& output_polyhedron);
 
