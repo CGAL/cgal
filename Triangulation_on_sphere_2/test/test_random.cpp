@@ -9,14 +9,6 @@
 #include <CGAL/squared_distance_3.h>
 #include <cmath>
 
-
-	
-
-
-
-
-
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Regular_triangulation_sphere_traits_2<K>             Gt;
 typedef CGAL::Regular_triangulation_on_sphere_2<Gt>              RTOS;
@@ -90,22 +82,15 @@ bool are_equal(RTOS triA, RTOS triB){
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =10000;
-	radius=6000000;
-	//radius = 1;
-	//double minDist = radius*2e-25;
+	nu_of_pts =1000000;
+	radius=10;
 	double minDist = radius * pow (2, -25);
 	double minDist2 = pow(minDist, 2);
 	int invalid = 0;
-	//int random = 0;
 	CGAL::Timer t;
 
 	
-	//for(int i=1; i<= 1; i++){
-		
-		//random++;
-		//std::cout<<" *************************  run  "<< random << "**********************"<<std::endl;
-		
+			
 	CGAL::Random random(nu_of_pts);
 	typedef CGAL::Creator_uniform_3<double, K::Point_3> Creator;
     CGAL::Random_points_on_sphere_3<K::Point_3, Creator> on_sphere(radius);
@@ -119,7 +104,7 @@ int main(){
 		vertices.reserve(nu_of_pts*2);
 	
 	
-	
+	/*
 	for (int count=0; count<nu_of_pts; count++) {
 		K::Point_3 p = *on_sphere;
 		double tmp = p.x();
@@ -133,7 +118,7 @@ int main(){
 		on_sphere++;
 	}
 	
-	
+	/*
 	for (int count=0; count<nu_of_pts; count++) {
 		K::Point_3 p = *on_sphere;
 		double tmp = p.x();
@@ -144,6 +129,11 @@ int main(){
 		p=K::Point_3(-1*fabs(tmp), -1*fabs(tmp1),  -1*fabs(tmp2));
 		
 			
+		points.push_back(p);
+		on_sphere++;
+	}*/
+	for (int count=0; count<nu_of_pts; count++) {
+		K::Point_3 p = *on_sphere;
 		points.push_back(p);
 		on_sphere++;
 	}
@@ -157,8 +147,12 @@ int main(){
 	t.stop();
 	std::cout<<"running time"<< t.time()<<std::endl;
 
-	rtos.is_valid();
+	std::cout<<"number of vertices"<<rtos.number_of_vertices()<<std::endl;
 
+	K::Point_3 q = K::Point_3(500,0,0);
+	rtos.insert(q);
+	rtos.is_valid();
+	//rtos.show_all();
 	/*
 	
 	//*****second triangulation*******

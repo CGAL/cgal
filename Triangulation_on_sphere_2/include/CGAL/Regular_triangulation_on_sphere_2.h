@@ -21,6 +21,9 @@ namespace CGAL {
 //And more...
 //test orientation in secure conflict for ghost faces
 
+		
+	
+	
 
 template < class Gt,
            class Tds  = Triangulation_data_structure_2 <
@@ -33,9 +36,9 @@ class Regular_triangulation_on_sphere_2
    typedef Regular_triangulation_on_sphere_2<Gt, Tds>                         Self;
    typedef Triangulation_on_sphere_2<Gt,Tds>                                  Base;
 	
-    private: double _radius;
-	double _minDist;
-	double _minDistSquared;
+    //private: double _radius;
+	//double _minDist;
+	//double _minDistSquared;
 	
 public:
   typedef Tds									  Triangulation_data_structure;
@@ -91,6 +94,8 @@ public:
   using Base::OUTSIDE_AFFINE_HULL;
   using Base::FACE;
   using Base::OUTSIDE_CONVEX_HULL;
+	using Base ::NOT_ON_SPHERE;
+	using Base :: TOO_CLOSE;
   using Base::orientation;
   using Base ::show_all;
   using Base ::show_face;
@@ -99,6 +104,8 @@ public:
   using Base::delete_faces;
   using Base::compare_xyz;
 	using Base::coplanar_orientation;
+	using Base::set_radius;
+	
 
  #endif
 
@@ -116,25 +123,16 @@ public:
 	};
 	
 	
-	
-	
-	
-	
-	
+		
 	
  public: 
   //CONSTRUCTORS
   Regular_triangulation_on_sphere_2(const Gt& gt=Gt()) 
-    :_radius(1) ,_minDist(pow (2, -25)), _minDistSquared( pow(_minDist, 2)), Base(Gt(gt))
+	//:Base(_radius(1)) ,_minDist(pow (2, -25)), _minDistSquared( pow(_minDist, 2)), Base(Gt(gt))
+	:Base(Gt(gt))
   {}
 
-void set_radius(double radius){
-		clear();
-		_radius = radius;
-	_minDist = radius * pow(2,-25);
-	_minDistSquared=pow(_minDist,2);
-		
-	}
+
 	
  
   //CHECK
@@ -347,8 +345,8 @@ int insert(InputIterator first, InputIterator last)
 		
 	Face_handle hint;
 	for (typename std::vector<Point>::const_iterator p = points.begin(),end = points.end(); p != end; ++p)
-		hint = insert (*p, hint)->face();
-		
+		//hint = insert (*p, hint)->face();
+		insert(*p, hint);
 	return number_of_vertices() - n;
 }
 
@@ -650,7 +648,10 @@ insert(const Point &p, Face_handle start)
   Locate_type lt;
   int li;
   Face_handle loc = Base::locate(p, lt, li, start);
-	
+	//if (loc == Face_handle())
+	if(lt ==NOT_ON_SPHERE || lt == TOO_CLOSE)
+		return Vertex_handle();
+	else
   return insert(p, lt, loc, li);
 }
 

@@ -24,8 +24,8 @@
 #include <CGAL/spatial_sort.h>
 #include <CGaL/Triangulation_2.h>
 #include <CGAL/squared_distance_3.h>
-
-
+#include <boost/type_traits.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 
 //TO DO
 // too_close find correspondign vertex, were the distance is to smal
@@ -44,6 +44,10 @@ template < class Gt,
            class Tds = Triangulation_data_structure_2 <
                              Triangulation_vertex_base_2<Gt>,
                              Triangulation_face_base_on_sphere_2<Gt> > >
+	
+
+	
+	
 class Triangulation_on_sphere_2
   : public Triangulation_cw_ccw_2
 {
@@ -136,6 +140,7 @@ public:
 		operator const Face_handle() const { return Base::base(); }
 	};
 	
+	
 	typedef Filter_iterator<All_edges_iterator, Ghost_tester> 	Solid_edges_iterator;
 	typedef Filter_iterator<All_edges_iterator, Contour_tester> Contour_edges_iterator;
 	
@@ -211,7 +216,10 @@ size_type number_of_faces() const{return _tds.number_of_faces();}
   Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle start) const;
   Face_handle locate(const Point &p, Face_handle start) const;
 	Face_handle locate_edge(const Point& p, Locate_type& lt, int& li, bool plane)const;
-	bool is_on_sphere(const Point &p) const;
+	//void is_on_sphere(boost::true_type , const Point &p, Locate_type & lt) const;
+	//void is_on_sphere(boost::false_type , const Point &p, Locate_type & lt) const;
+//void is_on_sphere(boost::false_type , const Point &p, Locate_type & lt) const;
+	//void is_on_sphere(const Point &p, Locate_type &lt)const;
 	void test_distance( const Point& p, Face_handle f, Locate_type &lt, int &li)const;
 	bool is_too_close(const Point& p, const Point& q)const;
   //------------------------------------------------------------------------PREDICATES----------------------------------------
@@ -373,8 +381,39 @@ Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r, 
     for(;fit!=face_end;++fit)
         delete_face(*fit);    
   }
-};
+	
+	
+	
+private:
+	void
+	is_on_sphere(boost::true_type, const Point &p, Locate_type &lt) const {
+		double distance2 = pow(p.x(),2)+pow(p.y(),2)+pow(p.z(),2);
+		double minDistance = (_radius *(1-pow(2, -52)))*(_radius *(1-pow(2, -52)));
+		double maxDistance = (_radius *(1+pow(2, -52)))*(_radius *(1+pow(2, -52)));							   
+		bool test = minDistance<distance2&& distance2<maxDistance;
+		if (!test){
+			lt = NOT_ON_SPHERE;		
+		}
+	}
+			
 
+	void
+	is_on_sphere(boost::false_type, const Point &p, Locate_type &lt) const{
+	}
+			
+	
+	public:
+	void set_radius(double radius){
+		clear();
+		_radius = radius;
+		_minDist = radius * pow(2,-25);
+		_minDistSquared=pow(_minDist,2);
+	}
+	
+};
+	
+		
+	
 
 
 // CONSTRUCTORS
@@ -524,18 +563,11 @@ Triangulation_on_sphere_2<Gt, Tds> ::
 is_too_close(const Point& p, const Point& q)const{
   return squared_distance(p,q)<=_minDistSquared;
 }
-	
-template <class Gt, class Tds >
-bool
-Triangulation_on_sphere_2<Gt, Tds>::
-is_on_sphere(const Point &p) const{
-  return true;
-}
+
 	
 	
 	
-	
-	
+
 template <class Gt, class Tds>
 typename Triangulation_on_sphere_2<Gt, Tds> ::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::
@@ -858,6 +890,11 @@ CGAL_triangulation_precondition(false);
     
   }
 } 
+	
+	
+	
+	
+	
 
 template <class Gt, class Tds >
 typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
@@ -865,12 +902,12 @@ Triangulation_on_sphere_2<Gt,Tds>::
 locate(const Point& p,Locate_type& lt,int& li, Face_handle start) const
 {
 	
- if(!is_on_sphere(p)){
-	lt = NOT_ON_SPHERE;
-	li = 6;
-	return start;
- }
+	is_on_sphere( typename Gt::requires_test(), p, lt);
 	
+	//is_on_sphere(p, lt);
+	
+	if(lt == NOT_ON_SPHERE)
+		return Face_handle();
 	
   switch (dimension()){
 	case-2 : {         //empty triangulation

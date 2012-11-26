@@ -7,7 +7,7 @@ namespace CGAL {
 // REQUIRED PREDICATES
 // colinear between 3D
 //deux points p,q  dans un plan avec o, on veut savoir si q et a gauche ou a droite de op
-
+		
 
 template < typename K >
 class Orientation_sphere_1

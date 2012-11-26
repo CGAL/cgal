@@ -100,6 +100,9 @@ int main(int argc, char* argv[])
 	RTOS rtos2;
 	RTOS rtos3;
 	
+	rtos.set_radius(radius);
+	rtos2.set_radius(radius);
+	rtos3.set_radius(radius);
 	std::vector<K::Point_3> points;
 	std::vector<K::Point_3> points2;
 	std::vector<K::Point_3> points4;

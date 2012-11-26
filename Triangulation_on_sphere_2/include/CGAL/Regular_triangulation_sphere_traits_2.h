@@ -7,9 +7,13 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Triangulation_sphere_traits_2.h>
+//#include <boost/type_traits/integral_constant.hpp>
 
 namespace CGAL { 
 
+	
+	
+	
 template <typename K >
 class Power_test_2
 {
@@ -61,7 +65,11 @@ Power_test_2(const Point_2& sphere)
 : _sphere(sphere)
 {}
 
-
+	
+	
+	
+	
+	
 template < class R >
 class Regular_triangulation_sphere_traits_2
   : public R
@@ -78,6 +86,11 @@ public:
   typedef CGAL::Coradial_sphere_2<Self>       Coradial_sphere_2;
   typedef CGAL::Inside_cone_2<Self>           Inside_cone_2;
   typedef CGAL::Orientation_sphere_1<Self>    Orientation_1;
+	
+	
+  typedef boost::true_type  requires_test;
+	
+	
 
   Regular_triangulation_sphere_traits_2(const Point_2& sphere=Point_2(0,0,0));
 
@@ -112,8 +125,11 @@ template < class R >
 Regular_triangulation_sphere_traits_2<R> ::
 Regular_triangulation_sphere_traits_2(const Point_2& sphere)
 : _sphere(sphere)
-{}
- 
+	{}
+
+
+			
+		
 
 
 } //namespace CGAL
