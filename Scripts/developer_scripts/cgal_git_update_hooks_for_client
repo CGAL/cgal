@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ ! -e .git -o ! -e CMakeLists.txt ];
 then
   echo "Call $0 from root directory of the CGAL repository"
