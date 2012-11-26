@@ -310,6 +310,10 @@ public:
   friend class const_segments_iterator;
 
   /*! An iterator for the polyline points. */
+  // TODO: this is an overkill. The const iterrator can be obtained directly
+  //       from the sgements container.
+  // TODO: Naming convencion: Segment_const_iterator (no need to add the
+  //       non-const version)
   class const_segments_iterator
   {
   public:
@@ -634,6 +638,12 @@ private:
   }
 
 };
+
+  /*
+   * TODO: move this somewhere else. This is not the right place.
+   * Discuss this furtehr with Efi if needed.
+   * TODO: The importer will be deprecated! Won't be implemented.
+   */
 
 /*! Output operator for a polyline. */
 template <typename SegmentTraits>
