@@ -82,7 +82,7 @@ bool are_equal(RTOS triA, RTOS triB){
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =1000000;
+	nu_of_pts =100;
 	radius=100;
 	double minDist = radius * pow (2, -25);
 	double minDist2 = pow(minDist, 2);
@@ -151,7 +151,7 @@ int main(){
 
 	K::Point_3 q = K::Point_3(500,0,0);
 	rtos.insert(q);
-	//rtos.is_valid();
+	rtos.is_valid();
 	//rtos.show_all();
 	/*
 	

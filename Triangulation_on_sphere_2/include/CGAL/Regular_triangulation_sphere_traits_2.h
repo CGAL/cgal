@@ -2,17 +2,11 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_SPHERE_TRAITS_2_H
 #define CGAL_REGULAR_TRIANGULATION_SPHERE_TRAITS_2_H
 
-//#include <CGAL/Weighted_point.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/Triangulation_sphere_traits_2.h>
-//#include <boost/type_traits/integral_constant.hpp>
 
 namespace CGAL { 
-
-	
-	
 	
 template <typename K >
 class Power_test_2
@@ -21,7 +15,7 @@ class Power_test_2
   typedef typename K::Point_2   Point_2;
   typedef typename K::Oriented_side     Oriented_side;
   typedef typename K::Comparison_result Comparison_result;
-//typedef   typename K::
+
 
   Power_test_2(const Point_2& sphere);
 
@@ -30,8 +24,9 @@ class Power_test_2
 			    const Point_2& r,
 			    const Point_2& s) const
   {
-    return orientation(p,q,r,s);
+	  return orientation(p,q,r,s);
   }
+	
 
   Oriented_side operator() (const Point_2& p,
 			    const Point_2& q,
@@ -39,6 +34,7 @@ class Power_test_2
   {
     return -coplanar_orientation(p,q,_sphere,r);
   }
+	
 
    Oriented_side operator() (const Point_2& p,
 			     const Point_2& q) const
@@ -58,6 +54,134 @@ class Power_test_2
  protected:
    Point_2 _sphere;
 };
+	
+	
+template < typename K >
+class Orientation_sphere_1
+{
+public:
+ typedef typename K::Point_2                  Point_2;
+ typedef typename K::Comparison_result        Comparison_result;
+
+ Orientation_sphere_1(const Point_2& sphere);
+		
+ Comparison_result operator()(const Point_2& p, const Point_2& q) const
+ {
+  return coplanar_orientation(_sphere,p,q);
+ }
+		
+ Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+ {
+			//return coplanar_orientation(_sphere,p,q,r);
+	return coplanar_orientation(p,q,r,_sphere);
+ }
+		
+ Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r,const Point_2& s) const
+ {
+	    	return coplanar_orientation(p,q,r,s);
+			//return coplanar_orientation(p,q,r,_sphere);
+ }
+		
+protected :
+Point_2  _sphere;
+};
+
+template < typename K >
+Orientation_sphere_1<K>::
+Orientation_sphere_1(const Point_2& sphere)
+: _sphere(sphere)
+{}
+	
+	
+	
+template < typename K >
+class Orientation_sphere_2
+{
+public:
+ typedef typename K::Point_2                  Point_2;
+ typedef typename K::Comparison_result        Comparison_result;
+	
+ typedef Comparison_result   result_type;
+	
+ Orientation_sphere_2(const Point_2& sphere);
+		
+  Comparison_result operator()(const Point_2& p,
+							 const Point_2& q,
+							 const Point_2& test) const
+  {
+		return orientation(_sphere,p,q,test);
+	}
+		
+	Comparison_result operator()(const Point_2& p, const Point_2& q,
+									 const Point_2& r, const Point_2 & s) const
+	{
+			return orientation(p,q,r,s);
+	}
+
+		
+		
+protected :
+Point_2  _sphere;
+	};
+template < typename K >
+Orientation_sphere_2<K>::
+ Orientation_sphere_2(const Point_2& sphere)
+	: _sphere(sphere)
+	{}
+	
+	
+template < typename K >
+class Coradial_sphere_2
+{
+public:
+	typedef typename K::Point_2                  Point_2;
+		
+	Coradial_sphere_2(const Point_2& sphere);
+		
+	bool operator()(const Point_2& p, const Point_2 q) const
+	{
+		return collinear(_sphere,p,q) &&
+		( are_ordered_along_line(_sphere,p,q) || are_ordered_along_line(_sphere,q,p) );
+	}
+		
+protected :
+Point_2  _sphere;
+};
+	
+template < typename K >
+Coradial_sphere_2<K>::
+Coradial_sphere_2(const Point_2& sphere)
+: _sphere(sphere)
+{}
+	
+	
+template < typename K >
+class Inside_cone_2
+{
+public:
+	typedef typename K::Point_2                  Point_2;
+		
+	Inside_cone_2(const Point_2& sphere);
+	
+	bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+	{
+		if( collinear(_sphere,p,r)||collinear(_sphere,q,r)||orientation(_sphere,p,q,r)!=COLLINEAR)
+			return false;
+		if( collinear(_sphere,p,q) )
+				return true;
+			return coplanar_orientation(_sphere,p,q,r) == ( POSITIVE==coplanar_orientation(_sphere,q,p,r) );
+		}
+		
+protected :
+	Point_2  _sphere;
+};
+
+template < typename K >
+Inside_cone_2<K>::
+Inside_cone_2(const Point_2& sphere)
+: _sphere(sphere)
+{}
+	
 
 template < typename K >
 Power_test_2<K>::
@@ -67,15 +191,12 @@ Power_test_2(const Point_2& sphere)
 
 	
 	
-	
-	
-	
 template < class R >
 class Regular_triangulation_sphere_traits_2
   : public R
 {
 public:
-  typedef Triangulation_sphere_traits_2<R>                     Base;
+  //typedef Triangulation_sphere_traits_2<R>                     Base;
   typedef typename R::Point_3                               Point_2; 
   typedef typename R::Point_3                      Weighted_point_2;
                       
@@ -127,11 +248,20 @@ Regular_triangulation_sphere_traits_2(const Point_2& sphere)
 : _sphere(sphere)
 	{}
 
-
-			
-		
-
-
+	
 } //namespace CGAL
 
 #endif // CGAL_Reg_TRIANGULATION_SPHERE_TRAITS_2_H
+
+
+
+
+
+
+
+
+
+
+
+
+
