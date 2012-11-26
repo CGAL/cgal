@@ -164,6 +164,10 @@ protected:
 	double _radius;
 	double _minDist;
 	double _minDistSquared;
+	double _minRadius;
+	double _minRadiusSquared;
+	double _maxRadius;
+	double _maxRadiusSquared;
 	
   mutable Random rng;  
   
@@ -388,11 +392,12 @@ private:
 	void
 	is_on_sphere(boost::true_type, const Point &p, Locate_type &lt) const {
 		double distance2 = pow(p.x(),2)+pow(p.y(),2)+pow(p.z(),2);
-		double minDistance = (_radius *(1-pow(2, -52)))*(_radius *(1-pow(2, -52)));
-		double maxDistance = (_radius *(1+pow(2, -52)))*(_radius *(1+pow(2, -52)));							   
-		bool test = minDistance<distance2&& distance2<maxDistance;
+							   
+		bool test = _minRadiusSquared<distance2&& distance2<_maxRadiusSquared;
+		
 		if (!test){
 			lt = NOT_ON_SPHERE;		
+			std::cout<<"error"<<std::endl;
 		}
 	}
 			
@@ -406,8 +411,12 @@ private:
 	void set_radius(double radius){
 		clear();
 		_radius = radius;
-		_minDist = radius * pow(2,-25);
+		_minDist = radius * pow(2,-23);
 		_minDistSquared=pow(_minDist,2);
+		_minRadius = radius *(1-pow(2, -50));
+		_minRadiusSquared = pow (_minRadius,2);
+		_maxRadius = radius *(1+pow(2, -50));
+		_maxRadiusSquared = pow (_maxRadius,2);
 	}
 	
 };
@@ -420,13 +429,17 @@ private:
 template <class Gt, class Tds >
 Triangulation_on_sphere_2<Gt, Tds>::
   Triangulation_on_sphere_2(const Geom_traits& geom_traits) 
-  : _gt(geom_traits), _tds(), _full_sphere(false) , _radius(1), _minDist(pow (2, -25)), _minDistSquared( pow(_minDist, 2))                         
+  : _gt(geom_traits), _tds(), _full_sphere(false) , _radius(1), _minDist(pow (2, -23)), _minDistSquared( pow(_minDist, 2)) ,
+	_minRadius(_radius*(1-pow(2, 50))), _minRadiusSquared(pow(_minRadius,2)), 
+	_maxRadius(_radius*(1+pow(2, 50))), _maxRadiusSquared(pow(_minRadius,2))																																	
 {}
 
 template <class Gt, class Tds >
 Triangulation_on_sphere_2<Gt, Tds>::
 Triangulation_on_sphere_2(const Point& sphere) 
-  : _gt(sphere), _tds(), _full_sphere(false), _minDist(pow (2, -25)), _minDistSquared( pow(_minDist, 2))                        
+  : _gt(sphere), _tds(), _full_sphere(false), _minDist(pow (2, -23)), _minDistSquared( pow(_minDist, 2)),  
+			   _minRadius(_radius*(1-pow(2, 50))), _minRadiusSquared(pow(_minRadius,2)), 
+			   _maxRadius(_radius*(1+pow(2, 50))), _maxRadiusSquared(pow(_minRadius,2))	
 {}
 
 // copy constructor duplicates vertices and faces
@@ -905,6 +918,7 @@ locate(const Point& p,Locate_type& lt,int& li, Face_handle start) const
 	is_on_sphere( typename Gt::requires_test(), p, lt);
 	
 	//is_on_sphere(p, lt);
+	
 	
 	if(lt == NOT_ON_SPHERE)
 		return Face_handle();

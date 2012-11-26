@@ -83,7 +83,7 @@ int main(){
 	int nu_of_pts;
 	double radius;
 	nu_of_pts =1000000;
-	radius=10;
+	radius=100;
 	double minDist = radius * pow (2, -25);
 	double minDist2 = pow(minDist, 2);
 	int invalid = 0;
@@ -104,7 +104,7 @@ int main(){
 		vertices.reserve(nu_of_pts*2);
 	
 	
-	/*
+/*
 	for (int count=0; count<nu_of_pts; count++) {
 		K::Point_3 p = *on_sphere;
 		double tmp = p.x();
@@ -142,16 +142,16 @@ int main(){
 	t.start();
 	//====insert new points============
 		rtos.insert(points.begin(),points.end());
-	
+	//spatial_sort (points.begin(), points.end());
 	
 	t.stop();
 	std::cout<<"running time"<< t.time()<<std::endl;
 
-	std::cout<<"number of vertices"<<rtos.number_of_vertices()<<std::endl;
+	std::cout<<"number of vertices    "<<rtos.number_of_vertices()<<std::endl;
 
 	K::Point_3 q = K::Point_3(500,0,0);
 	rtos.insert(q);
-	rtos.is_valid();
+	//rtos.is_valid();
 	//rtos.show_all();
 	/*
 	
