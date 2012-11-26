@@ -10,6 +10,7 @@
 *.bat eol=crlf
 *.poly -text
 *.fig -text
+*.nsh eol=crlf
 AABB_tree/demo/AABB_tree/AABB_demo.ppt -text svneol=unset#application/vnd.ms-powerpoint
 AABB_tree/demo/AABB_tree/AABB_demo.qrc -text
 AABB_tree/demo/AABB_tree/MainWindow.ui -text
