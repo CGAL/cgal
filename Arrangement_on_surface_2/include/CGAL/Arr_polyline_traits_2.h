@@ -453,7 +453,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     { 
-      typedef typename Curve_2::const_segments_iterator const_seg_iterator;
+      typedef typename Curve_2::Segment_const_iterator const_seg_iterator;
       const_seg_iterator start_seg = cv.begin_segments();
       const_seg_iterator end_seg = cv.end_segments();
 
@@ -479,7 +479,6 @@ public:
 	  // One segment is degenerated, returns the point.
 	  make_object(min_v(*start_seg)) :
 	  // Polyline consists of only one segments, and it is returned.
-	  //	  make_object(X_monotone_curve_2(min_v(*start_seg), max_v(*start_seg)));
 	    make_object(construct_x_monotone_curve(start_seg, end_seg));
         return oi;
       }
@@ -562,7 +561,7 @@ public:
                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
 
-      // TODO: Should this be rewritten using iterators over the segments?
+      // TODO: @Efi: Should this be rewritten using iterators over the segments?
 
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
         m_seg_traits->construct_min_vertex_2_object();
@@ -989,14 +988,11 @@ public:
     /*! Returns an x-monotone curve consists of one given segment.
      * \param seg input segment
      * \return A polyline with one segment, namely seg.
-     * TODO: Implement this overload
-     * TODO: Use this implementations in the Make_x_monotone_2, when there's
-     *       only one segment.
-     */
+     * TODO: @Efi: Should this be implemented?
+     * TODO: If yes:Use this implementations in the Make_x_monotone_2,
+     *       when there's only one segment.  */
     // X_monotone_curve_2 operator()(const Segment_2 seg) const
-    // {      
-    //   X_monotone_curve_2 res;
-    //   return res;
+    // {
     // }
 
     template <typename InputIterator>
@@ -1009,6 +1005,10 @@ public:
     X_monotone_curve_2 contructor_impl(InputIterator begin, InputIterator end,
 				       const Point_2&) const
     {
+      // TODO: @Efi A construction of x-monotone curve (at least ideally)
+      //            should never happen from points - right? Therefore,
+      //            this can be kept only for backwards compatibility and/or
+      //            until it is being deprecated. What do you think?
       return X_monotone_curve_2(begin, end);      
     }
 
@@ -1020,7 +1020,9 @@ public:
      *      (i+1)th segment.
      * \precondition The sequence of segments in the range forms a weak
      *      x-monotone polyline.
-     *      TODO: Shouldn't the range support bidirectional iteration?
+     *      TODO: @Efi: The range should support bidirectional iteration.
+     *                  Should this be added as a precondition? Or is it
+     *                  trivial?
      * \postcondition The resulting x-monotone polyline directed from left to
      *      right.
      * \return An x-monotone polyline directed from left to right.
@@ -1029,8 +1031,6 @@ public:
     X_monotone_curve_2 contructor_impl(InputIterator begin, InputIterator end,
 				       const Segment_2&) const
     {
-      //      std::cout << "\033[1;31mAPT1: Entering xconstructor\033[0m\n";
-
       CGAL_precondition(begin != end);
 
       typename Segment_traits_2::Construct_min_vertex_2 min_v =
@@ -1100,6 +1100,10 @@ public:
 	   * segment from left to right.
 	   * TODO: In theory, this should not be taken into account
 	   *       as the segments' source/target have no meaning.
+	   *       Instead, something like the following should be used:
+	   // return X_monotone_curve_2(std::reverse_iterator<InputIterator>(end),
+	   //                         std::reverse_iterator<InputIterator>(begin));
+	   *       
 	   */
 	  std::vector<Segment_2> reversed_cont;
 	  for (InputIterator it = begin ; it != end ; ++it)
@@ -1107,9 +1111,6 @@ public:
 	  std::reverse(reversed_cont.begin(),reversed_cont.end());
 	  return X_monotone_curve_2(reversed_cont.begin(),
 	  			    reversed_cont.end());
-
-	  // return X_monotone_curve_2(std::reverse_iterator<InputIterator>(end),
-          //                         std::reverse_iterator<InputIterator>(begin));
 	}
       return X_monotone_curve_2(begin, end);
     }

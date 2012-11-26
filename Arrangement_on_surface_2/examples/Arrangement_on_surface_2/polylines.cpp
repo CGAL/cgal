@@ -105,7 +105,7 @@ int main ()
   points4.push_back (Point_2(0,2));
   points4.push_back (Point_2(-2,0));
   Polyline_2 pi4 (points4.begin(),points4.end());
-  // insert (arr, pi4);
+  insert (arr, pi4);
 
   /* Polyline's outline:
    * Axis aligned square
