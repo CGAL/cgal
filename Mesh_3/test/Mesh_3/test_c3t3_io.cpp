@@ -227,8 +227,7 @@ struct Test_c3t3_io {
     for(typename Tr::Finite_vertices_iterator 
           vit1 = t1.finite_vertices_begin(),
           vit2 = t2.finite_vertices_begin(),
-          end1 = t1.finite_vertices_end(),
-          end2 = t2.finite_vertices_end();
+          end1 = t1.finite_vertices_end();
         vit1 != end1; ++vit1, ++vit2)
     {
       if(!( vit1->in_dimension() == vit2->in_dimension() &&
@@ -244,8 +243,7 @@ struct Test_c3t3_io {
     for(typename Tr::Finite_facets_iterator 
           fit1 = t1.finite_facets_begin(),
           fit2 = t2.finite_facets_begin(),
-          end1 = t1.finite_facets_end(),
-          end2 = t2.finite_facets_end();
+          end1 = t1.finite_facets_end();
         fit1 != end1; ++fit1, ++fit2)
     {
       typename Tr::Cell_handle c1 = fit1->first;
@@ -267,8 +265,7 @@ struct Test_c3t3_io {
     for(typename Tr::Finite_cells_iterator 
           cit1 = t1.finite_cells_begin(),
           cit2 = t2.finite_cells_begin(),
-          end1 = t1.finite_cells_end(),
-          end2 = t2.finite_cells_end();
+          end1 = t1.finite_cells_end();
         cit1 != end1; ++cit1, ++cit2)
     {
       if(cit1->subdomain_index() != cit2->subdomain_index() )
