@@ -304,21 +304,22 @@ int which_side_in_slab(Point const &point, Point const &low, Point const &high,
 
 }  // end namespace i_polygon
 
-template <class ForwardIterator, class Point, class Traits>
+template <class ForwardIterator, class Point, class PolygonTraits>
 Bounded_side bounded_side_2(ForwardIterator first,
                                       ForwardIterator last,
                                       const Point& point,
-                                      const Traits& traits)
+                                      const PolygonTraits& traits)
 {
+  
   ForwardIterator current = first;
   if (current == last) return ON_UNBOUNDED_SIDE;
 
   ForwardIterator next = current; ++next;
   if (next == last) return ON_UNBOUNDED_SIDE;
 
-  typename Traits::Compare_x_2 compare_x_2 = traits.compare_x_2_object();
-  typename Traits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
-  typename Traits::Orientation_2 orientation_2 = traits.orientation_2_object();
+  typename PolygonTraits::Compare_x_2 compare_x_2 = traits.compare_x_2_object();
+  typename PolygonTraits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
+  typename PolygonTraits::Orientation_2 orientation_2 = traits.orientation_2_object();
   bool IsInside = false;
   Comparison_result cur_y_comp_res = compare_y_2(*current, point);
 

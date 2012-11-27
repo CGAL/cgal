@@ -1,0 +1,8 @@
+/*!
+\example Periodic_3_triangulation_3/simple_example.cpp
+\example Periodic_3_triangulation_3/colored_vertices.cpp
+\example Periodic_3_triangulation_3/periodic_adding_handles.cpp
+\example Periodic_3_triangulation_3/covering.cpp
+\example Periodic_3_triangulation_3/large_point_set.cpp
+\example Periodic_3_triangulation_3/geometric_access.cpp
+/h*/

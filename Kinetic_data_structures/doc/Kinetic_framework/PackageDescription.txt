@@ -1,0 +1,48 @@
+/// \defgroup PkgKdsFramework Kinetic Framework Reference
+
+/// \defgroup PkgKdsFrameworkConcepts Main Concepts
+/// \ingroup PkgKdsFramework
+/// Here we list the main concepts provided by the
+/// framework to support implementing kinetic data structures
+
+
+/// \defgroup PkgKdsFrameworkClasses Main Classes
+/// \ingroup PkgKdsFramework
+/// Here we list the main classes provided by the
+/// framework to support implementing kinetic data structures
+
+/// \defgroup PkgKdsFrameworkOtherClasses Other Classes
+/// \ingroup PkgKdsFramework
+
+/// \defgroup PkgKdsFrameworkOtherConcepts Other Concepts
+/// \ingroup PkgKdsFramework
+
+
+/*!
+\addtogroup PkgKdsFramework
+\todo check generated documentation
+\cgalPkgDescriptionBegin{Kinetic Framework,PkgKdsFrameworeSummary}
+\cgalPkgPicture{kdsFramework.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Daniel Russel}
+\cgalPkgDesc{Kinetic data structures allow combinatorial geometric structures to be maintained as the primitives move. The package provides a framework to ease implementing and debugging kinetic data structures. The package supports exact or inexact operations on primitives which move along polynomial trajectories.  }
+\cgalPkgManuals{Chapter_Kinetic_Framework,PkgKdsFramework}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.2}
+\cgalPkgDependsOn{Two dimensional visualization depends on \ref thirdpartyQt\, three dimensional visualization depends on \ref thirdpartyCoin.}
+\cgalPkgBib{cgal:r-kdsf}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+Kinetic data structures are a way of adding motion to classical
+geometric data structures. \cgal provides a number of classes to aid
+implementation of kinetic data structures.
+
+There are three levels at which the user can interact with the
+package. The user can use an existing kinetic data structure, write a
+new kinetic data structure, or replace parts of the framework.The
+first level is covered in the Chapter  \ref Chapter_Kinetic_Framework.
+*/
+

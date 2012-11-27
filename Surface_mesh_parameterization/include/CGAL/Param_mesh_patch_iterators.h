@@ -29,6 +29,7 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 /// The class Param_mesh_patch_vertex_list is the type of
 /// the list of all vertices of a
@@ -159,6 +160,7 @@ public:
     }
 };
 
+/// \endcond
 
 } //namespace CGAL
 

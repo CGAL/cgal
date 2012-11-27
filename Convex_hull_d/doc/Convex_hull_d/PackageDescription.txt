@@ -1,0 +1,36 @@
+/// \defgroup PkgConvexHullD dD Convex Hulls and Delaunay Triangulations Reference
+/// \defgroup PkgConvexHullDConcepts Concepts
+/// \ingroup PkgConvexHullD
+/*!
+\addtogroup PkgConvexHullD
+\todo check generated documentation
+\cgalPkgDescriptionBegin{dD Convex Hulls and Delaunay Triangulations,PkgConvexHullDSummary}
+\cgalPkgPicture{convex_hull_d-teaser.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Susan Hert and Michael Seel}
+\cgalPkgDesc{This package provides functions for computing convex hulls and Delaunay triangulations in \f$ d\f$-dimensional Euclidean space.}
+\cgalPkgManuals{Chapter_dD_Convex_Hulls_and_Delaunay_Triangulations,PkgConvexHullD}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.3}
+\cgalPkgBib{cgal:hs-chdt3}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+A subset \f$ S \subseteq \R^d\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
+in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained
+in \f$ S\f$. The convex hull of a set \f$ S\f$ is 
+the smallest convex set containing
+\f$ S\f$. The convex hull of a set of points \f$ P\f$ is a convex 
+polytope with vertices in \f$ P\f$.A point in \f$ P\f$ is an extreme point 
+(with respect to \f$ P\f$) if it is a vertex 
+of the convex hull of \f$ P\f$.
+
+\cgal provides functions for computing convex hulls in two, three 
+and arbitrary dimensions as well as functions for testing if a given set of 
+points in is strongly convex or not. This chapter describes the class
+available for arbitrary dimensions and its companion class for 
+computing the nearest and furthest site Delaunay triangulation.
+*/
+

@@ -27,33 +27,38 @@
 
 namespace CGAL {
 
-
-/// The class Barycentric_mapping_parameterizer_3 implements Tutte Barycentric Mapping algorithm [Tut63].
-/// This algorithm is also called "Tutte Uniform Weights" by other authors.
+/// \ingroup  PkgSurfaceParameterizationMethods
+///
+/// The class Barycentric_mapping_parameterizer_3 implements <i>Tutte Barycentric Mapping algorithm</i> \cite t-hdg-63.
+/// This algorithm is also called <i>Tutte Uniform Weights</i> by other authors.
 ///
 /// One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 ///
-/// This class is a Strategy [GHJV95] called by the main
+/// This class is used by the main
 /// parameterization algorithm Fixed_border_parameterizer_3::parameterize().
 /// - It provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
 ///   parameters that make sense.
-/// - It implements compute_w_ij() to compute w_ij = (i,j) coefficient of matrix A
-///   for j neighbor vertex of i based on Tutte Barycentric Mapping method.
+/// - It implements compute_w_ij() to compute `w_ij = (i,j)` coefficient of matrix A
+///   for `j` neighbor vertex of `i` based on Tutte Barycentric Mapping method.
 /// - It implements an optimized version of is_one_to_one_mapping().
 ///
-/// @heading Is Model for the Concepts: Model of the ParameterizerTraits_3 concept.
+/// \cgalModels `ParameterizerTraits_3`
 ///
-/// @heading Design Pattern:
-/// Barycentric_mapping_parameterizer_3 class is a
-/// Strategy [GHJV95]: it implements a strategy of surface parameterization
-/// for models of ParameterizationMesh_3.
 ///
-/// @heading Parameters:
-/// @param ParameterizationMesh_3       3D surface mesh.
-/// @param BorderParameterizer_3        Strategy to parameterize the surface border.
-/// @param SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
-///        Note: the system is *not* symmetric because Fixed_border_parameterizer_3
+/// \tparam ParameterizationMesh_3       3D surface mesh.
+/// \tparam BorderParameterizer_3        Strategy to parameterize the surface border.
+/// \tparam SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
+///        Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
 ///        does not remove (yet) border vertices from the system.
+
+/*!
+\sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
+\sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\sa `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\sa `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+ */
 
 template
 <
@@ -129,7 +134,7 @@ private:
 public:
     /// Constructor
     Barycentric_mapping_parameterizer_3(Border_param border_param = Border_param(),
-                                        ///< Object that maps the surface's border to 2D space.
+                                        ///< object that maps the surface's border to 2D space.
                                         Sparse_LA sparse_la = Sparse_LA())
                                         ///< Traits object to access a sparse linear system.
     :   Fixed_border_parameterizer_3<Adaptor,

@@ -47,7 +47,7 @@ two |Sphere_segment|s, and two arbitrary |Sphere_segment|s can
 intersect in two points. 
 
 If we restrict our geometric objects to a so-called perfect hemisphere
-of $S_2$\footnote{A perfect hemisphere of $S_2$ is an open half-sphere
+of $S_2$\cgalFootnote{A perfect hemisphere of $S_2$ is an open half-sphere
 plus an open half-circle in the boundary of the open half-sphere plus one
 endpoint of the half-circle.} then the restricted objects behave like
 in classical geometry, e.g., two points define exactly one segment,

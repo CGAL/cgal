@@ -1,0 +1,30 @@
+/// \defgroup PkgSpatialSorting Spatial Sorting Reference
+
+/// \defgroup PkgSpatialSortingConcepts Concepts
+/// \ingroup PkgSpatialSorting
+
+/// \defgroup PkgSpatialSortingTraits Traits Classes
+/// \ingroup PkgSpatialSorting
+
+/// \defgroup PkgSpatialSortingUtils Utilities
+/// \ingroup PkgSpatialSorting
+
+
+/*!
+\addtogroup PkgSpatialSorting
+\todo check generated documentation
+\cgalPkgDescriptionBegin{Spatial Sorting,PkgSpatialSortingSummary}
+\cgalPkgPicture{hilbert.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Christophe Delage and Olivier Devillers}
+\cgalPkgDesc{This package provides functions for sorting geometric objects in two, three and higher dimensions, in order to improve efficiency of incremental geometric algorithms.}
+\cgalPkgManuals{Chapter_Spatial_Sorting,PkgSpatialSorting}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.3}
+\cgalPkgBib{cgal:dd-ss}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+*/
+

@@ -36,14 +36,14 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 namespace internal {
 
+/// \cond SKIP_IN_MANUAL
 
 /// Computes average spacing of one query point from K nearest neighbors.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2`.
 ///
-/// @commentheading Template Parameters:
-/// @param Kernel Geometric traits class.
-/// @param Tree KD-tree.
+/// @tparam Kernel Geometric traits class.
+/// @tparam Tree KD-tree.
 ///
 /// @return average spacing (scalar).
 template < typename Kernel,
@@ -83,6 +83,7 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
   return sum_distances / (FT)i;
 }
 
+/// \endcond
 
 } /* namespace internal */
 
@@ -91,16 +92,15 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 // Public section
 // ----------------------------------------------------------------------------
 
-
+/// \ingroup PkgPointSetProcessing
 /// Computes average spacing from k nearest neighbors.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2.`
 ///
-/// @commentheading Template Parameters:
-/// @param InputIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam InputIterator iterator over input points.
+/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with a value_type = Point_3<Kernel>.
 ///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return average spacing (scalar).

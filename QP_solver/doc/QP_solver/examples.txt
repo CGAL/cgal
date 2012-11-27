@@ -1,0 +1,31 @@
+/*!
+\example QP_solver/convex_hull_containment2.cpp
+\example QP_solver/convex_hull_containment_benchmarks.cpp
+\example QP_solver/convex_hull_containment.cpp
+\example QP_solver/cycling.cpp
+\example QP_solver/first_lp.cpp
+\example QP_solver/first_lp_from_iterators.cpp
+\example QP_solver/first_lp_from_mps.cpp
+\example QP_solver/first_nonnegative_lp.cpp
+\example QP_solver/first_nonnegative_lp_from_iterators.cpp
+\example QP_solver/first_nonnegative_lp_from_mps.cpp
+\example QP_solver/first_nonnegative_qp.cpp
+\example QP_solver/first_nonnegative_qp_from_iterators.cpp
+\example QP_solver/first_nonnegative_qp_from_mps.cpp
+\example QP_solver/first_qp_basic_constraints.cpp
+\example QP_solver/first_qp.cpp
+\example QP_solver/first_qp_from_iterators.cpp
+\example QP_solver/first_qp_from_mps.cpp
+\example QP_solver/important_variables.cpp
+\example QP_solver/infeasibility_certificate.cpp
+\example QP_solver/invert_matrix.cpp
+\example QP_solver/optimality_certificate.cpp
+\example QP_solver/print_first_lp.cpp
+\example QP_solver/print_first_nonnegative_lp.cpp
+\example QP_solver/print_first_nonnegative_qp.cpp
+\example QP_solver/print_first_qp.cpp
+\example QP_solver/solve_convex_hull_containment_lp2.h
+\example QP_solver/solve_convex_hull_containment_lp3.h
+\example QP_solver/solve_convex_hull_containment_lp.h
+\example QP_solver/unboundedness_certificate.cpp
+*/

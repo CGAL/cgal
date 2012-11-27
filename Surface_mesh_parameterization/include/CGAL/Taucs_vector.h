@@ -24,12 +24,12 @@
 
 namespace CGAL {
 
+/// @cond SKIP_IN_MANUAL
 
 /// The class Taucs_vector
 /// is a C++ wrapper around TAUCS' vector type, which is a simple array.
 ///
-/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d::Vector concept.
-
+/// \cgalModels `SparseLinearAlgebraTraits_d::Vector`
 template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_vector
@@ -88,8 +88,7 @@ public:
 
     /// Read/write access to a vector coefficient.
     ///
-    /// @commentheading Preconditions:
-    /// 0 <= i < dimension().
+    /// \pre 0 <= i < dimension().
     T operator[](int i) const {
         CGAL_precondition(i < m_dimension);
         return m_element[i];
@@ -113,7 +112,7 @@ private:
     int m_dimension;    ///< Vector size.
     T* m_element;       ///< Array of m_dimension T elements.
 };
-
+/// @endcond
 
 } //namespace CGAL
 

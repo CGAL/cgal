@@ -51,6 +51,10 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/array.hpp>
 
+/*! 
+  \file Poisson_reconstruction_function.h
+*/
+
 namespace CGAL {
 
   namespace internal {
@@ -96,22 +100,8 @@ invert(
 
   }
 
-/// Given a set of 3D points with oriented normals sampled on the boundary of a 3D solid,
-/// the Poisson Surface Reconstruction method [Kazhdan06] solves for an approximate indicator function
-/// of the inferred solid, whose gradient best matches the input normals.
-/// The output scalar function, represented in an adaptive octree, is then iso-contoured
-/// using an adaptive marching cubes.
-///
-/// Poisson_reconstruction_function implements a variant of this algorithm which solves
-/// for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree.
-///
-/// @heading Is Model for the Concepts:
-/// Model of the 'ImplicitFunction' concept.
-///
-/// @heading Parameters:
-/// @param Gt Geometric traits class.
 
-
+/// \cond SKIP_IN_MANUAL
 struct Poisson_visitor {
   void before_insertion() const
   {}
@@ -149,12 +139,38 @@ struct Special_wrapper_of_two_functions_keep_pointers {
     return (std::max)((*f1)(x), CGAL::square((*f2)(x)));
   }
 }; // end struct Special_wrapper_of_two_functions_keep_pointers<F1, F2>
+/// \endcond 
 
+
+/*!
+\ingroup PkgSurfaceReconstructionFromPointSets
+
+\brief Implementation of the Poisson Surface Reconstruction method.
+  
+Given a set of 3D points with oriented normals sampled on the boundary
+of a 3D solid, the Poisson Surface Reconstruction method \cite Kazhdan06 
+solves for an approximate indicator function of the inferred
+solid, whose gradient best matches the input normals. The output
+scalar function, represented in an adaptive octree, is then
+iso-contoured using an adaptive marching cubes.
+
+`Poisson_reconstruction_function` implements a variant of this
+algorithm which solves for a piecewise linear function on a 3D
+Delaunay triangulation instead of an adaptive octree.
+
+\tparam Gt Geometric traits class. 
+
+\cgalModels `ImplicitFunction`
+
+*/
 template <class Gt>
 class Poisson_reconstruction_function
 {
 // Public types
 public:
+
+  /// \name Types 
+  /// @{
 
   typedef Gt Geom_traits; ///< Geometric traits class
   typedef Reconstruction_triangulation_3<Robust_circumcenter_filtered_traits_3<Gt> >
@@ -167,10 +183,12 @@ public:
   typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
   typedef typename Geom_traits::Sphere_3 Sphere; ///< typedef to Geom_traits::Sphere_3
 
+  /// @}
+
 // Private types
 private:
 
-  /// Internal 3D triangulation, of type Reconstruction_triangulation_3.
+  // Internal 3D triangulation, of type Reconstruction_triangulation_3.
   // Note: poisson_refine_triangulation() requires a robust circumcenter computation.
 
   // Repeat Triangulation types
@@ -222,15 +240,22 @@ private:
 // Public methods
 public:
 
-  /// Creates a Poisson implicit function from the [first, beyond) range of points.
-  ///
-  /// @commentheading Template Parameters:
-  /// @param InputIterator iterator over input points.
-  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3.
-  ///        It can be omitted if InputIterator value_type is convertible to Point_3.
-  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3.
+  /// \name Creation 
+  /// @{
 
-  // This variant requires all parameters.
+
+  /*! 
+    Creates a Poisson implicit function from the [first, beyond) range of points. 
+
+    \tparam InputIterator iterator over input points. 
+
+    \tparam PointPMap is a model of `boost::ReadablePropertyMap` with
+      a `value_type = Point`.  It can be omitted if `InputIterator`
+      `value_type` is convertible to `Point`. 
+    
+    \tparam NormalPMap is a model of `boost::ReadablePropertyMap`
+      with a `value_type = Vector`.
+  */ 
   template <typename InputIterator,
             typename PointPMap,
             typename NormalPMap,
@@ -260,7 +285,7 @@ public:
                                                            << std::endl;
   }
 
-  /// @cond SKIP_IN_MANUAL
+  /// \cond SKIP_IN_MANUAL
   // This variant creates a default point property map = Dereference_property_map.
   template <typename InputIterator,
             typename NormalPMap,
@@ -287,7 +312,12 @@ public:
     CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
                                                            << std::endl;
   }
-  /// @endcond
+  /// \endcond
+
+  /// @}
+
+  /// \name Operations
+  /// @{
 
   /// Returns a sphere bounding the inferred surface.
   Sphere bounding_sphere() const
@@ -299,19 +329,7 @@ public:
     return *m_tr;
   }
 
-  /// The function compute_implicit_function() must be called
-  /// after the insertion of oriented points.
-  /// It computes the piecewise linear scalar function operator() by:
-  /// - applying Delaunay refinement,
-  /// - solving for operator() at each vertex of the triangulation with a sparse linear solver,
-  /// - and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.
-  ///
-  /// @commentheading Template parameters:
-  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
-  /// The default solver is TAUCS Multifrontal Supernodal Cholesky Factorization.
-  ///
-  /// @return false if the linear solver fails.
-
+  /// \cond SKIP_IN_MANUAL
   // This variant requires all parameters.
   template <class SparseLinearAlgebraTraits_d,
             class Visitor>
@@ -448,7 +466,26 @@ public:
 
     return true;
   }
+  /// \endcond
 
+  /*!
+    This function must be called after the
+    insertion of oriented points. It computes the piecewise linear scalar
+    function operator() by: applying Delaunay refinement, solving for
+    operator() at each vertex of the triangulation with a sparse linear
+    solver, and shifting and orienting operator() such that it is 0 at all
+    input points and negative inside the inferred surface.
+
+    \tparam SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+    If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED`
+    is defined, an overload with \link Eigen_solver_traits <tt>Eigen_solver_traits<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> ></tt> \endlink
+    as default solver is provided.
+  
+    \param solver sparse linear solver.
+    \param smoother_hole_filling controls if the Delaunay refinement is done for the input points, or for an approximation of the surface obtained from a first pass of the algorithm on a sample of the points.
+
+    \return `false` if the linear solver fails. 
+  */ 
   template <class SparseLinearAlgebraTraits_d>
   bool compute_implicit_function(SparseLinearAlgebraTraits_d solver, bool smoother_hole_filling = false)
   {
@@ -458,25 +495,22 @@ public:
       return compute_implicit_function<SparseLinearAlgebraTraits_d,Poisson_visitor>(solver,Poisson_visitor());
   }
   
+  /// \cond SKIP_IN_MANUAL
 #ifdef CGAL_EIGEN3_ENABLED
-  /// @cond SKIP_IN_MANUAL
   // This variant provides the default sparse linear traits class = Eigen_solver_traits.
   bool compute_implicit_function(bool smoother_hole_filling = false)
   {
     typedef Eigen_solver_traits<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> > Solver;
     return compute_implicit_function<Solver>(Solver(), smoother_hole_filling);
   }
-  /// @endcond
 #else
   #ifdef CGAL_TAUCS_ENABLED
-  /// @cond SKIP_IN_MANUAL
   // This variant provides the default sparse linear traits class = Taucs_symmetric_solver_traits.
   bool compute_implicit_function(bool smoother_hole_filling = false)
   {
     typedef  Taucs_symmetric_solver_traits<double> Solver;
     return compute_implicit_function<Solver>(Solver(), smoother_hole_filling);
   }
-  /// @endcond
   #endif
 #endif
  
@@ -498,8 +532,13 @@ public:
                              d * m_hint->vertex(3)->f(),
                              m_hint, false);
   }
+  /// \endcond
 
-  /// 'ImplicitFunction' interface: evaluates the implicit function at a given 3D query point.
+  /*! 
+    `ImplicitFunction` interface: evaluates the implicit function at a 
+    given 3D query point. The function `compute_implicit_function` must be 
+    called before the first call to `operator()`. 
+  */ 
   FT operator()(const Point& p) const
   {
     m_hint = m_tr->locate(p ,m_hint); 
@@ -601,6 +640,8 @@ public:
     // Gets point / the implicit function is minimum
     return m_sink;
   }
+
+  /// @}
 
 // Private methods:
 private:

@@ -28,29 +28,33 @@
 namespace CGAL {
 
 
-/// The class Discrete_authalic_parameterizer_3
-/// implements the Discrete Authalic Parameterization algorithm [DMA02].
-/// This method is sometimes called "DAP" or just "Authalic parameterization".
+/// \ingroup  PkgSurfaceParameterizationMethods
+///
+/// The class `Discrete_authalic_parameterizer_3`
+/// implements the *Discrete Authalic Parameterization* algorithm \cite cgal:dma-ipsm-02.
+/// This method is sometimes called <i>DAP</i> or just <i>Authalic parameterization</i>.
 ///
 /// DAP is a weak area-preserving parameterization. It is a compromise between
 /// area-preserving and angle-preserving.
 ///
 /// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 ///
-/// This class is a Strategy [GHJV95] called by the main
-/// parameterization algorithm Fixed_border_parameterizer_3::parameterize().
-/// Discrete_authalic_parameterizer_3:
-/// - It provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
+/// This class is a Strategy \cite cgal:ghjv-dpero-95 called by the main
+/// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()`.
+/// `Discrete_authalic_parameterizer_3`:
+/// - It provides default `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
 ///   parameters that make sense.
-/// - It implements compute_w_ij() to compute w_ij = (i, j) coefficient of matrix A
+/// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.
 ///
-/// @heading Is Model for the Concepts: Model of the ParameterizerTraits_3 concept.
+/// \cgalModels `ParameterizerTraits_3`
 ///
-/// @heading Design Pattern:
-/// Discrete_authalic_parameterizer_3 class is a
-/// Strategy [GHJV95]: it implements a strategy of surface parameterization
-/// for models of ParameterizationMesh_3.
+/// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template
 <

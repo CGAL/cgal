@@ -1,0 +1,4 @@
+/*!
+\example Inscribed_areas/extremal_polygon_2_area.cpp
+\example Inscribed_areas/extremal_polygon_2_perimeter.cpp
+*/

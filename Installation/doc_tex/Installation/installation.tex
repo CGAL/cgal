@@ -175,7 +175,7 @@ contains the following subdirectories:\index{directories!structure}
   \end{tabular}
 \end{center}
 
-The directories \texttt{include/CGAL/CORE} and \texttt{src/CGALCore} contain a
+The directories \texttt{include/CGAL/CORE} and \texttt{src/CGAL\_Core} contain a
 distribution of the \core\ library\footnote{\corepage} version~1.7 for
 dealing with algebraic numbers. \core\ is not part of \cgal\ and has its
 own license.
@@ -554,30 +554,28 @@ Free and commercial editions of \leda\ are available from \ledapage.
 
 \subsection{\mpfi\ \label{thirdparty:MPFI}}
 
-\mpfi\ provide arbitrary precision interval arithmetic with intervals 
-represented using \mpfr\ reliable floating-point numbers. 
-It is based on the \gmp\ library and on the \mpfr\ library.
-In the setting of \cgal\ it is mainly used in sync with \rs. 
-The library is optional and needed in certain algebraic
-kernels.
+\mpfi\ provides arbitrary precision interval arithmetic with intervals
+represented using \mpfr\ reliable floating-point numbers. It is based on
+the libraries \gmp\ and \mpfr. In the setting of \cgal, this library is
+optional: it is used by some models of the
+\ccRef[Algebraic Kernel]{Pkg:AlgebraicKerneld}.
 
-\mpfi\ can be downloaded from \mpfipage. Version 1.4 or higher is recommended.
+\mpfi\ can be downloaded from \mpfipage. Version 1.4 or higher is
+recommended.
 
 \subsection{\rs\ and \rs3\label{thirdparty:RS}\label{thirdparty:RS3}}
 
-\rs{} (Real Solutions) is devoted to the study of the real
-roots of polynomial systems with a finite number of complex roots
-(including univariate polynomials). 
-
-In \cgal, \rs{} is used by one model of the \ccRef[Algebraic Kernel]{Pkg:AlgebraicKerneld}.
+\rs{} (Real Solutions) is devoted to the study of the real roots of
+polynomial systems with a finite number of complex roots (including
+univariate polynomials). In \cgal, \rs{} is used by one model of the
+\ccRef[Algebraic Kernel]{Pkg:AlgebraicKerneld}.
 
 \rs{} is freely distributable for non-commercial use. You can download it
-from \rspage{}. The library \rs\ needs \mpfi, which can be downloaded from \mpfipage. 
-Version 1.4 or higher is recommended.
+from \rspage{}. Actually, the \rs\ package also includes \rs3, the
+successor of \rs, which is used in conjunction with it.
 
-The successor of \rs\ is called \rs3. It less restrictive when it comes
-to licencing and also contains improved and more efficient interfaces.
-Mainly parts in \cgal's algebraic kernel require \rs3.
+The libraries \rs\ and \rs3\ need \mpfi, which can be downloaded from
+\mpfipage.
 
 \subsection{\ntl \label{thirdparty:NTL}}
 
@@ -1214,13 +1212,13 @@ Similar variables exist for \rs3.
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
-  \textbf{Variable}             & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
-  \texttt{RS3\_DIR}              & Directory of \rs3 default installation          & Environment\\\hline
-  \texttt{RS3\_INCLUDE\_DIR}     & Directory containing the \texttt{rs\_exports.h} file  & CMake\\\hline
+  \textbf{Variable}              & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
+  \texttt{RS3\_DIR}              & Directory of \rs3 default installation                & Environment\\\hline
+  \texttt{RS3\_INCLUDE\_DIR}     & Directory containing the \texttt{rs3\_fncts.h} file   & CMake\\\hline
   \texttt{RS3\_INC\_DIR}         & Idem                                                  & Environment\\\hline
-  \texttt{RS3\_LIBRARIES\_DIR}   & Directory containing the compiled \rs\ library          & CMake\\\hline
+  \texttt{RS3\_LIBRARIES\_DIR}   & Directory containing the compiled \rs3\ library       & CMake\\\hline
   \texttt{RS3\_LIB\_DIR}         & Idem                                                  & Environment\\\hline
-  \texttt{RS3\_LIBRARIES}        & Full pathname of the compiled \rs\ library              & CMake\\\hline
+  \texttt{RS3\_LIBRARIES}        & Full pathname of the compiled \rs3\ library           & CMake\\\hline
 \end{tabular}
 }
 

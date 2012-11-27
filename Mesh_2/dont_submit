@@ -10,3 +10,4 @@ depends
 makefile.dependencies
 my_makefile
 bench_double_map.cpp
+doc

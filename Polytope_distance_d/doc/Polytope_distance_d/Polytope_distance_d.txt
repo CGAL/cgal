@@ -1,0 +1,33 @@
+
+namespace CGAL {
+/*!
+
+\mainpage Optimal Distances
+\anchor Chapter_Optimal_Distances
+\anchor chapOptimalDistances
+\cgalAutoToc
+\authors Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr
+
+This chapter describes how to compute the distance between the convex
+hulls of two given point sets in \f$ d\f$-dimensional Euclidean space
+(`Polytope_distance_d<Traits>`). Moreover, it is possible to
+compute the width of a point set in three dimensions (`Width_3<Traits>`).
+
+\image html polydist.gif
+
+The obvious application is collision detection between convex bodies
+in space. In the spirit of the bounding volume application above, it
+also makes sense for nonconvex objects: a full intersection test
+between complicated objects could in a first stage be approximated
+with the test between the convex hulls of the objects. Only if the
+hulls intersect, a full intersection test is necessary.
+
+To dampen fears concerning the performance of the distance
+computation, we want to mention that the convex hulls of the input
+point sets are not explicitly computed. This avoids a runtime which
+grows exponentially in \f$ d\f$. In fact, the runtime is almost always
+linear in the size of the two point sets.
+
+*/ 
+} /* namespace CGAL */
+

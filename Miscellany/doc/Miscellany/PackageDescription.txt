@@ -1,0 +1,22 @@
+/// \defgroup PkgProfilingTools Profiling Tools, Hash Map, Union-find, Modifiers Reference
+/// \defgroup PkgProfilingToolsConcepts Concepts
+/// \ingroup PkgProfilingTools
+/*!
+\addtogroup PkgProfilingTools
+\cgalPkgDescriptionBegin{Profiling tools\, Hash Map\, Union-find\, Modifiers,PkgProfilingToolsSummary}
+\cgalPkgPicture{stopwatch.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Lutz Kettner, Sylvain Pion, and Michael Seel}
+\cgalPkgDesc{This package provides classes for profiling time and memory consumption, profiling macros,  a hash map, a union find data structure and a modifier.}
+\cgalPkgManuals{Chapter_Profiling_Tools_Hash_Map_Union-find_Modifiers,PkgProfilingTools}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.2}
+\cgalPkgBib{cgal:kps-pthum}
+\cgalPkgLicense{\ref licensesLGPL  "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+
+*/
+

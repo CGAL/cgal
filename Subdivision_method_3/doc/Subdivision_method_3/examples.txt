@@ -1,0 +1,5 @@
+/*!
+\example Subdivision_method_3/CatmullClark_subdivision.cpp
+\example Subdivision_method_3/DooSabin_subdivision.cpp
+\example Subdivision_method_3/Customized_subdivision.cpp
+*/

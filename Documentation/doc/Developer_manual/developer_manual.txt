@@ -1,0 +1,21 @@
+/*!
+
+\page dev_manual Developer Manual
+
+- \subpage chapintro
+- \subpage chapcode_format
+- \subpage chapkernels
+- \subpage chaptraits_classes
+- \subpage chapchecks
+- \subpage chapreference_counting
+- \subpage chapmemory_management
+- \subpage chapnamespaces
+- \subpage chappolyret
+- \subpage chapiterators_and_circulators
+- \subpage chaprobustness
+- \subpage chapportability
+- \subpage chapdebugging
+- \subpage chapsubmission
+- \subpage chapinfo
+
+*/

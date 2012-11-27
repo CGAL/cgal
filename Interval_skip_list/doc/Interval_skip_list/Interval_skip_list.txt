@@ -1,0 +1,60 @@
+
+namespace CGAL {
+/*!
+
+\mainpage Interval Skip List
+\anchor Chapter_Interval_Skip_List
+\anchor ChapterIntervalskiplist
+\cgalAutoToc
+\author Andreas Fabri
+
+\section Interval_skip_listDefinition Definition
+
+An interval skip list is a data structure for finding all intervals 
+that contain a point, and for stabbing queries, that is for answering 
+the question whether a given point is contained in an interval or not. 
+The implementation we provide is dynamic, that is the user can freely
+mix calls to the methods `insert(..)`, `remove(..)`, 
+`find_intervals(..)`, and `is_contained(..)`
+
+The interval skip list class is parameterized with an interval class.
+
+The data structure was introduced by Hanson \cite h-islds-91, and it is called
+interval skip list, because it is an extension of the randomized list
+structure known as skip list \cite p-slpab-90.
+
+\section Interval_skip_listExample Example Programs
+
+\anchor sectionIntervalskiplistExamples
+
+We give two examples. The first one uses a basic interval class. In
+the second example we create an interval skip list for the \f$ z\f$-ranges
+of the faces of a terrain, allowing to answer level queries.
+
+\subsection Interval_skip_listFirstExamplewithSimple First Example with Simple Interval
+
+The first example reads two numbers `n` and `d` from `std::cin`.
+It creates `n` intervals of length `d` with the left endpoint at `n`.
+It then reads out the intervals for the 1-dimensional points with
+coordinates \f$ 0 ... n+d\f$.
+
+The interval skip list class has as template argument an interval
+class. In this example we use the class `Interval_skip_list_interval`.
+
+\cgalExample{Interval_skip_list/intervals.cpp}
+
+\subsection Interval_skip_listExamplewithFacesofaTriangulated Example with Faces of a Triangulated Terrain
+
+The second example creates an interval skip list that allows to find all the faces
+of a terrain intersected by an horizontal plane at a given height.
+The data points for the terrain are read from a file.
+
+As model for the interval concept, we use a class that is a wrapper
+around a face handle of a triangulated terrain. Lower and upper bound
+of the interval are smallest and largest \f$ z\f$-coordinate of the face.
+
+\cgalExample{Interval_skip_list/isl_terrain.cpp}
+
+*/ 
+} /* namespace CGAL */
+

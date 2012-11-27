@@ -32,26 +32,52 @@
 #include <boost/thread/mutex.hpp>
 #endif
 
+/// \file AABB_tree.h
+
 namespace CGAL {
 
+/// \addtogroup PkgAABB_tree
+/// @{
+
 	/**
-	* @class AABB_tree
-	*
-	*
-	*/
+   * Class AABB_tree is a static data structure for efficient
+   * intersection and distance computations in 3D. It builds a
+   * hierarchy of axis-aligned bounding boxes (an AABB tree) from a set
+   * of 3D geometric objects, and can receive intersection and distance
+   * queries, provided that the corresponding predicates are
+   * implemented in the traits class AABBTraits.
+   *
+   * \sa \ref AABBTraits
+   * \sa \ref AABBPrimitive
+   *
+   */
 	template <typename AABBTraits>
 	class AABB_tree
 	{
 	public:
-		/// types
     typedef AABBTraits AABB_traits;
-		typedef typename AABBTraits::FT FT;
-		typedef typename AABBTraits::Point_3 Point;
-		typedef typename AABBTraits::Primitive Primitive;
-		typedef typename AABBTraits::Bounding_box Bounding_box;
+    
 		typedef typename AABBTraits::Primitive::Id Primitive_id;
+
+    ///@{
+
+    /// Number type returned by the distance queries.
+		typedef typename AABBTraits::FT FT;
+
+
+    /// Type of 3D point.
+		typedef typename AABBTraits::Point_3 Point;
+
+    /// Type of input primitive.
+		typedef typename AABBTraits::Primitive Primitive;
+    /// Type of bounding box.
+		typedef typename AABBTraits::Bounding_box Bounding_box;
+    /// 
 		typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
+    /// 
 		typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
+    
+    ///@}
 
 	private:
 		// internal KD-tree used to accelerate the distance queries
@@ -61,54 +87,79 @@ namespace CGAL {
 		typedef std::vector<Primitive> Primitives;
 
 	public:
-		// size type is the size_type of the primitive container
+    /// \name Types
+    ///@{
+    
+		/// Unsigned integral size type.
 		typedef typename Primitives::size_type size_type; 
 
+    ///@}
+
 	public:
+    /// \name Creation
+    ///@{
+
     /**
-     * @brief Default Constructor
+     * @brief Default Constructor.
      *
-     * Builds an empty tree datastructure. 
+     * Constructs an empty tree.
      */
     AABB_tree();
 
 		/**
-		* @brief Constructor
-		* @param first iterator over first primitive to insert
-		* @param beyond past-the-end iterator
-		*
-		* Builds the datastructure. Type ConstPrimitiveIterator can be any const
-		* iterator on a container of Primitive::id_type such that Primitive has
-		* a constructor taking a ConstPrimitiveIterator as argument.
-		*/
+     * @brief Constructor
+     * @param first iterator over first primitive to insert
+     * @param beyond past-the-end iterator
+     *
+     * Builds the datastructure. Type ConstPrimitiveIterator can be
+     * any const iterator on a container of
+     * AABB_tree::Primitive::id_type such that AABB_tree::Primitive
+     * has a constructor taking a ConstPrimitiveIterator as
+     * argument. The tree stays empty if the memory allocation is not
+     * successful.
+     */
 		template<typename ConstPrimitiveIterator>
 		AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
-		/// Clears the current tree and rebuilds the datastructure.
-		/// Type ConstPrimitiveIterator can be any const iterator on
-		/// a container of Primitive::id_type such that Primitive has
-		/// a constructor taking a ConstPrimitiveIterator as argument.
-		/// Returns true if the memory allocation was successful.
+    ///@}
+
+    /// Clears the current tree and rebuilds it from scratch. See
+    /// constructor above for the parameters.
 		template<typename ConstPrimitiveIterator>
 		void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
-    /// Add primitives in the structure. build() must be called before any
-    /// request.
+    /// Add a sequence of primitives to the set of primitive of the
+    /// AABB_tree. Type InputIterator can be any const iterator
+    /// such that AABB_tree::Primitive has a constructor taking an
+    /// InputIterator as argument.
 		template<typename ConstPrimitiveIterator>
 		void insert(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
+    /// Add a primitive to the set of primitives of the AABB_tree.
     inline void insert(const Primitive& p);
 
-    /// Build the data structure, after calls to insert()
+    /// \name Advanced
+    ///@{
+
+    /// After one or more calls to AABB_tree::insert the internal data
+    /// structure of AABB_tree must be reconstructed. This procedure
+    /// has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
+    /// primitives of the tree.  This procedure is called implicitly
+    /// at the first call to a query member function. You can call
+    /// AABB_tree::build() explicitly to ensure that the next call to
+    /// query functions will not trigger the reconstruction of the
+    /// data structure.
     void build();
 
-		/// Non virtual destructor
+    ///@}
+
+		// Non virtual destructor
 		~AABB_tree()
 		{
 			clear();
 		}
 
-		/// Clears the tree
+		/// Clears the tree AABB_tree.
 		void clear()
 		{
 			// clear AABB tree
@@ -117,9 +168,13 @@ namespace CGAL {
 			clear_search_tree();
 		}
 
-		// bbox and size
+		/// Returns the axis-aligned bounding box of the whole tree.
 		const Bounding_box& bbox() const { return root_node()->bbox(); }
+    
+    /// Returns the number of primitives in the tree.
 		size_type size() const { return m_primitives.size(); }
+    
+    /// Returns \c true, iff tree contains no primitive.
 		bool empty() const { return m_primitives.empty(); }
 
 private:    
@@ -127,13 +182,166 @@ private:
 		bool accelerate_distance_queries_impl(ConstPointIterator first,
                                           ConstPointIterator beyond) const;
 public:
-		/// Constructs internal search tree with a given point set
-		//  returns true iff successful memory allocation
-    //  Note: this function simply forward the call to the _impl.
-    //  The need of the _impl version comes from the fact that 
-    //  we guarantee this class to be read-only thread-safe and
-    //  that accelerate_distance_queries() also calls the _impl
-    //  version that has no mutex locking strategy.
+
+    /// \name Intersection Tests
+    ///@{
+
+		/// Returns `true`, iff the query intersects at least one of
+		/// the input primitives. Type `Query` must be a type for
+		/// which `do_intersect` predicates are
+		/// defined in the traits class AABBTraits.
+		template<typename Query>
+		bool do_intersect(const Query& query) const;
+
+    /// Returns the number of primitives intersected by the
+    /// query. Type `Query` must be a type for which
+    /// `do_intersect` predicates are defined
+    /// in the traits class AABBTraits.
+		template<typename Query>
+		size_type number_of_intersected_primitives(const Query& query) const;
+
+    /// Outputs to the iterator the list of all intersected primitives
+    /// ids. This function does not compute the intersection points
+    /// and is hence faster than the function `all_intersections`
+    /// function below. Type `Query` must be a type for which
+    /// `do_intersect` predicates are defined
+    /// in the traits class AABBTraits.
+		template<typename Query, typename OutputIterator>
+		OutputIterator all_intersected_primitives(const Query& query, OutputIterator out) const;
+
+
+    /// Returns the first encountered intersected primitive id, iff
+    /// the query intersects at least one of the input primitives. No
+    /// particular order is guaranteed over the tree traversal, such
+    /// that, e.g, the primitive returned is not necessarily the
+    /// closest from the source point of a ray query. Type `Query`
+    /// must be a type for which
+    /// `do_intersect` predicates are defined
+    /// in the traits class AABBTraits.
+		template <typename Query>
+		boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
+    
+    ///@}
+
+    /// \name Intersections
+    ///@{
+
+    /// Outputs to the iterator the list of all intersections between
+    /// the query and input data, as objects of type
+    /// `Object_and_primitive_id`. Type `Query` must be a type
+    /// for which `do_intersect` predicates
+    /// and intersections are defined in the traits class AABBTraits.
+		template<typename Query, typename OutputIterator>
+		OutputIterator all_intersections(const Query& query, OutputIterator out) const;
+
+
+    /// Returns the first encountered intersection, iff the query
+    /// intersects at least one of the input primitives. No particular
+    /// order is guaranteed over the tree traversal, such that, e.g,
+    /// the primitive returned is not necessarily the closest from the
+    /// source point of a ray query. Type `Query` must be a type
+    /// for which `do_intersect` predicates
+    /// and intersections are defined in the traits class AABBTraits.
+		template <typename Query>
+		boost::optional<Object_and_primitive_id> any_intersection(const Query& query) const;
+
+    ///@}
+
+    /// \name Distance Queries
+    ///@{
+
+    /// Returns the minimum squared distance between the query point
+    /// and all input primitives. Method
+    /// `accelerate_distance_queries` should be called before the
+    /// first distance query, so that an internal secondary search
+    /// structure is build, for improving performance.
+		FT squared_distance(const Point& query) const;
+
+    /// Returns the point in the union of all input primitives which
+    /// is closest to the query. In case there are several closest
+    /// points, one arbitrarily chosen closest point is
+    /// returned. Method `accelerate_distance_queries` should be
+    /// called before the first distance query, so that an internal
+    /// secondary search structure is build, for improving
+    /// performance.
+		Point closest_point(const Point& query) const;
+
+    
+    /// Returns a `Point_and_primitive_id` which realizes the
+    /// smallest distance between the query point and all input
+    /// primitives. Method `accelerate_distance_queries` should be
+    /// called before the first distance query, so that an internal
+    /// secondary search structure is build, for improving
+    /// performance.
+		Point_and_primitive_id closest_point_and_primitive(const Point& query) const;
+
+
+    ///@}
+
+    /// \name Accelerating the Distance Queries
+    /// 
+    /// In the following paragraphs, we discuss details of the
+    /// implementation of the distance queries. We explain the
+    /// internal use of hints, how the user can pass his own hints to
+    /// the tree, and how the user can influence the construction of
+    /// the secondary data structure used for accelerating distance
+    /// queries.
+    /// Internally, the distance queries algorithms are initialized
+    /// with some hint, which has the same type as the return type of
+    /// the query, and this value is refined along a traversal of the
+    /// tree, until it is optimal, that is to say until it realizes
+    /// the shortest distance to the primitives. In particular, the
+    /// exact specification of these internal algorithms is that they
+    /// minimize the distance to the object composed of the union of
+    /// the primitives and the hint.
+    /// It follows that 
+    /// - in order to return the exact distance to the set of
+    /// primitives, the algorithms need the hint to be exactly on the
+    /// primitives;
+    /// - if this is not the case, and if the hint happens to be closer
+    /// to the query point than any of the primitives, then the hint
+    /// is returned.
+    ///
+    /// This second observation is reasonable, in the sense that
+    /// providing a hint to the algorithm means claiming that this
+    /// hint belongs to the union of the primitives. These
+    /// considerations about the hints being exactly on the primitives
+    /// or not are important: in the case where the set of primitives
+    /// is a triangle soup, and if some of the primitives are large,
+    /// one may want to provide a much better hint than a vertex of
+    /// the triangle soup could be. It could be, for example, the
+    /// barycenter of one of the triangles. But, except with the use
+    /// of an exact constructions kernel, one cannot easily construct
+    /// points other than the vertices, that lie exactly on a triangle
+    /// soup. Hence, providing a good hint sometimes means not being
+    /// able to provide it exactly on the primitives. In rare
+    /// occasions, this hint can be returned as the closest point.
+    /// In order to accelerate distance queries significantly, the
+    /// AABB tree builds an internal KD-tree containing a set of
+    /// potential hints, when the method
+    /// `accelerate_distance_queries` is called. This KD-tree
+    /// provides very good hints that allow the algorithms to run much
+    /// faster than with a default hint (such as the
+    /// `reference_point` of the first primitive). The set of
+    /// potential hints is a sampling of the union of the primitives,
+    /// which is obtained, by default, by calling the method
+    /// `reference_point` of each of the primitives. However, such
+    /// a sampling with one point per primitive may not be the most
+    /// relevant one: if some primitives are very large, it helps
+    /// inserting more than one sample on them. Conversely, a sparser
+    /// sampling with less than one point per input primitive is
+    /// relevant in some cases.
+    ///@{
+
+    /// Constructs internal search tree from
+		/// a point set taken on the internal primitives
+		/// returns true iff successful memory allocation
+		bool accelerate_distance_queries() const;
+
+    /// Constructs an internal KD-tree containing the specified point
+    /// set, to be used as the set of potential hints for accelerating
+    /// the distance queries. `InputIterator` is an iterator with
+    /// value type `Point_and_primitive_id`.
 		template<typename ConstPointIterator>
 		bool accelerate_distance_queries(ConstPointIterator first,
                                      ConstPointIterator beyond) const
@@ -147,38 +355,22 @@ public:
       
     }
     
-		/// Constructs internal search tree from
-		/// a point set taken on the internal primitives
-		// returns true iff successful memory allocation
-		bool accelerate_distance_queries() const;
-
-		// intersection tests
-		template<typename Query>
-		bool do_intersect(const Query& query) const;
-
-		// #intersections
-		template<typename Query>
-		size_type number_of_intersected_primitives(const Query& query) const;
-
-		// all intersections
-		template<typename Query, typename OutputIterator>
-		OutputIterator all_intersected_primitives(const Query& query, OutputIterator out) const;
-		template<typename Query, typename OutputIterator>
-		OutputIterator all_intersections(const Query& query, OutputIterator out) const;
-
-		// any intersection
-		template <typename Query>
-		boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
-		template <typename Query>
-		boost::optional<Object_and_primitive_id> any_intersection(const Query& query) const;
-
-		// distance queries
-		FT squared_distance(const Point& query) const;
+    /// Returns the minimum squared distance between the query point
+    /// and all input primitives. The internal KD-tree is not used.
 		FT squared_distance(const Point& query, const Point& hint) const;
-		Point closest_point(const Point& query) const;
+
+    /// Returns the point in the union of all input primitives which
+    /// is closest to the query. In case there are several closest
+    /// points, one arbitrarily chosen closest point is returned. The
+    /// internal KD-tree is not used.
 		Point closest_point(const Point& query, const Point& hint) const;
-		Point_and_primitive_id closest_point_and_primitive(const Point& query) const;
+    
+    /// Returns a `Point_and_primitive_id` which realizes the
+    /// smallest distance between the query point and all input
+    /// primitives. The internal KD-tree is not used.
 		Point_and_primitive_id closest_point_and_primitive(const Point& query, const Point_and_primitive_id& hint) const;
+
+    ///@}
 
 	private:
     // clear nodes
@@ -198,9 +390,8 @@ public:
 		}
 
 	public:
-		// made public for advanced use by the polyhedron demo
 
-		/// generic traversal of the tree
+    /// \internal
 		template <class Query, class Traversal_traits>
 		void traversal(const Query& query, Traversal_traits& traits) const
 		{
@@ -266,6 +457,8 @@ public:
 		Self& operator=(const Self& src);
 
 	};  // end class AABB_tree
+
+/// @}
 
   template<typename Tr>
   AABB_tree<Tr>::AABB_tree()

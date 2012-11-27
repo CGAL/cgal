@@ -1,0 +1,41 @@
+/// \defgroup PkgIntervalSkipList Interval Skip List Reference
+/// \defgroup PkgIntervalSkipListConcepts Concepts
+/// \ingroup PkgIntervalSkipList
+/*!
+\addtogroup PkgIntervalSkipList
+
+\cgalPkgDescriptionBegin{Interval Skip List,PkgIntervalSkipListSummary}
+\cgalPkgPicture{Interval_skip_list/fig/query.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Andreas Fabri}
+\cgalPkgDesc{An interval skip list is a data structure for finding all intervals that contain a point, and for stabbing queries, that is for answering the question whether a given point is contained in an interval or not. For a triangulated terrain, this allows to quickly identify the triangles which intersect an iso line. }
+\cgalPkgManuals{Chapter_Interval_Skip_List,PkgIntervalSkipList}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.0}
+\cgalPkgBib{cgal:f-isl}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+This chapter presents the interval skip list introduced by Hanson \cite h-islds-91,
+and derived from the skip list data structure \cite p-slpab-90.
+
+The data structure stores intervals and allows to perform stabbing queries,
+that is to test whether a point is covered by any of the intervals.
+It further allows to find all intervals that contain a point.
+
+The interval skip list is, as far as its functionality is concerned,
+related to the `Segment_tree_d`. Both allow to do stabbing queries
+and both allow to find all intervals that contain a given point.  The
+implementation of segment trees in \cgal works in higher
+dimensions, whereas the interval skip list is limited to the 1D
+case. However, this interval skip list implementation is fully
+dynamic, whereas the segment tree implementation in \cgal is
+static, that is all intervals must be known in advance.
+
+This package has one concept, namely for the interval with which 
+the interval skip list class is parameterized.
+
+*/
+

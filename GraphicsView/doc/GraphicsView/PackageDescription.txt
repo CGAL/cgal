@@ -1,0 +1,28 @@
+/// \defgroup PkgGraphicsView CGAL and the Qt Graphics View Framework Reference
+/// \defgroup PkgGraphicsViewConcepts Concepts
+/// \ingroup PkgGraphicsView
+/*!
+\addtogroup PkgGraphicsView
+
+\cgalPkgDescriptionBegin{CGAL and the Qt Graphics View Framework,PkgGraphicsViewSummary}
+\cgalPkgPicture{detail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Andreas Fabri and Laurent Rineau}
+\cgalPkgDesc{This package provides classes for displaying \cgal objects  and data structures in the <A HREF="http://doc.qt.digia.com/latest/graphicsview.html">Qt 4 Graphics View Framework</A>.}
+\cgalPkgManuals{Chapter_CGAL_and_the_Qt_Graphics_View_Framework,PkgGraphicsView}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.4}
+\cgalPkgDependsOn{\ref thirdpartyQt}
+\cgalPkgBib{cgal:fr-cqgvf}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+This package provides some classes which allow to use \cgal classes in
+<I>Qt</I> applications which make use of the <A
+HREF="http://doc.qt.digia.com/latest/graphicsview.html">Qt Graphics
+View Framework</A>.
+
+*/
+

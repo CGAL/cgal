@@ -27,10 +27,11 @@
 namespace CGAL {
 
 
+/// \ingroup  PkgSurfaceParameterizationHelper
+///
 /// The class Parameterization_mesh_feature_extractor
 /// computes features (genus, borders, ...) of a 3D surface,
 /// model of the ParameterizationMesh_3 concept.
-
 template<class ParameterizationMesh_3>      //< 3D surface
 class Parameterization_mesh_feature_extractor
 {
@@ -86,8 +87,8 @@ public:
 
     /// Constructor.
     ///
-    /// CAUTION: This class caches the result of feature extractions
-    /// => The caller must *not* modify 'mesh' during the
+    /// \attention This class caches the result of feature extractions
+    /// => The caller must *not* modify `mesh` during the
     /// Parameterization_mesh_feature_extractor life cycle.
     Parameterization_mesh_feature_extractor(Adaptor& mesh)
         // Store reference to adapted mesh
@@ -206,7 +207,7 @@ private:
         return true;
     }
 
-    /// Find a border tagged as "free" and tag it as "processed".
+    /// Find a border tagged as <i>free</i> and tag it as <i>processed</i>.
     /// Return an empty list if not found.
     std::list<Vertex_handle> find_free_border(int tag_free, int tag_done)
     {

@@ -30,6 +30,7 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 /// Utility class for poisson_refine_triangulation():
 /// implements Delaunay refinement in a loose bounding
@@ -245,6 +246,8 @@ unsigned int poisson_refine_triangulation(
 
   return (unsigned int) nb_vertices_added;
 }
+
+/// \endcond
 
 
 } //namespace CGAL

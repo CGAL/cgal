@@ -557,11 +557,11 @@ protected:
   obstacles and the additional triangulation edges as non-obstacle
   edges. Let's call the sum of the lengths of all edges of the
   triangulation its weight. If the calculated triangulation
-  approximates\footnote{The calculation of general
+  approximates\cgalFootnote{The calculation of general
   minimum-weight-triangulations is conjectured to be NP-complete and
   locally-minimum-weight-triangulations that we use are considered good
   approximations.} the minimum weight triangulation of the obstacle set
-  then the stepping quotient\footnote {The number of non-obstacle edges
+  then the stepping quotient\cgalFootnote {The number of non-obstacle edges
   crossed until an obstacle edge is hit.} for a random direction of the
   ray shot is expected to be $O( \sqrt{n} )$.}*/
 

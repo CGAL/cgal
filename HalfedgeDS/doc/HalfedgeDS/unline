@@ -1,0 +1,15 @@
+#!/usr/bin/sed -f
+
+# delete all leading empty lines
+1,/^./{
+/./!d
+}
+
+# on an empty line we remove it and all the following
+# empty lines, but one
+:x
+/./!{
+N
+s/^\n$//
+tx
+}

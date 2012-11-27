@@ -1,0 +1,28 @@
+/// \defgroup PkgOptimalDistances Optimal Distances Reference
+/// \defgroup PkgOptimalDistancesConcepts Concepts
+/// \ingroup PkgOptimalDistances
+
+/*!
+\addtogroup PkgOptimalDistances
+\todo check generated documentation
+\cgalPkgDescriptionBegin{Optimal Distances,PkgOptimalDistancesSummary}
+\cgalPkgPicture{dist.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr}
+\cgalPkgDesc{This package provides algorithms for computing the distance between the convex hulls of two point sets in d-dimensional space, without explicitely constructing the convex hulls.   It further provides an algorithm to compute the width of a point set, and the furthest point for each vertex of a convex polygon. }
+\cgalPkgManuals{Chapter_Optimal_Distances,PkgOptimalDistances}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{1.1}
+\cgalPkgBib{cgal:fghhs-od}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+The optimization code uses infix `OPTIMISATION` in the assertions,
+e.g. defining the compiler flag
+`CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
+checking off, cf. Section  \ref secchecks.
+
+*/
+

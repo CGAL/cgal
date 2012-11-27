@@ -35,8 +35,10 @@
 namespace CGAL {
 
 
-/// Parameterization_polyhedron_adaptor_3 is an adaptor class to access to a Polyhedron
-/// 3D mesh using the ParameterizationPatchableMesh_3 interface.
+/// \ingroup  PkgSurfaceParameterizationMesh
+///
+/// `Parameterization_polyhedron_adaptor_3` is an adaptor class to access to a Polyhedron
+/// 3D mesh using the `ParameterizationPatchableMesh_3` interface.
 /// Among other things, this concept defines the accessor to the (u,v) values
 /// computed by parameterizations methods.
 ///
@@ -45,26 +47,21 @@ namespace CGAL {
 /// For performance reasons, it is recommended to use CGAL data structures
 /// enriched with the proper fields.
 ///
-/// A ParameterizationMesh_3 surface consists of vertices,
+/// A `ParameterizationMesh_3` surface consists of vertices,
 /// facets and an incidence relation on them.
 /// No notion of edge is requested.
 ///
-/// ParameterizationMesh_3 meshes can have any genus, arity or number of components.
+/// `ParameterizationMesh_3` meshes can have any genus, arity or number of components.
 ///
 /// It can have have any number of borders. Its "main border"
 /// will be the mesh's longest border (if there is at least one border).
 ///
 /// It has also the ability to support patches and virtual seams.
-/// "Patches" are a subset of a 3D mesh. "Virtual seams" are the ability
+/// <i>Patches</i> are a subset of a 3D mesh. "Virtual seams" are the ability
 /// to behave exactly as if the surface was cut following a certain path.
 ///
-/// @heading Is Model for the Concepts:
-/// Model of ParameterizationPatchableMesh_3 concept, whose purpose is to allow
-/// the Surface_mesh_parameterization package to access meshes in a uniform manner.
+/// \cgalModels `ParameterizationPatchableMesh_3`
 ///
-/// @heading Design Pattern:
-/// Parameterization_polyhedron_adaptor_3 is an Adaptor [GHJV95]: it changes the
-/// Polyhedron interface to match the ParameterizationPatchableMesh_3 concept.
 
 template<class Polyhedron_3_>
 class Parameterization_polyhedron_adaptor_3
@@ -116,12 +113,14 @@ private:
 public:
 
     //*******************************************************************
-    /// @name INTERFACE SPECIFIC TO Parameterization_polyhedron_adaptor_3
+    // @name Interface specific to Parameterization_polyhedron_adaptor_3
     //*******************************************************************
     //@{
 
     /// Export template parameter.
     typedef Polyhedron_3_                  Polyhedron;
+
+    /// \cond SKIP_IN_MANUAL
 
     /// Additional info attached to halfedges.
     class Halfedge_info
@@ -203,8 +202,11 @@ public:
         void seaming(int seaming) { m_seaming = seaming; }
     };
 
-    //@} // end of INTERFACE SPECIFIC TO Parameterization_polyhedron_adaptor_3
+    /// \endcond
+    
+    //@} // end of Interface specific to Parameterization_polyhedron_adaptor_3
 
+    #ifndef DOXYGEN_RUNNING
     //*******************************************************************
     /// @name ParameterizationMesh_3 INTERFACE
     //*******************************************************************
@@ -294,13 +296,13 @@ public:
                                             Vertex_around_vertex_const_circulator;
 
     //@} // end of ParameterizationMesh_3 INTERFACE
-
+  #endif //DOXYGEN_RUNNING
 
 // Public operations
 public:
 
     //*******************************************************************
-    /// @name INTERFACE SPECIFIC TO Parameterization_polyhedron_adaptor_3
+    // @name Interface specific to Parameterization_polyhedron_adaptor_3
     //*******************************************************************
     //@{
 
@@ -394,8 +396,9 @@ public:
         return &it->second;
     }
 
-    //@} // end of INTERFACE SPECIFIC TO Parameterization_polyhedron_adaptor_3
+    //@} // end of Interface specific to Parameterization_polyhedron_adaptor_3
 
+    #ifndef DOXYGEN_RUNNING
     //*******************************************************************
     /// @name ParameterizationMesh_3 INTERFACE
     //*******************************************************************
@@ -709,7 +712,7 @@ public:
 
     // CORNER INTERFACE
 
-    /// Get/set the 2D position (= (u,v) pair) of corners at the "right"
+    /// Get/set the 2D position (= (u,v) pair) of corners at the <i>right</i>
     /// of the prev_vertex -> vertex -> next_vertex line.
     /// Default value is undefined.
     /// (stored in incident halfedges).
@@ -768,7 +771,7 @@ public:
         }
     }
 
-    /// Get/set "is parameterized" field of corners at the "right"
+    /// Get/set "is parameterized" field of corners at the <i>right</i>
     /// of the prev_vertex -> vertex -> next_vertex line.
     /// Default value is undefined.
     /// (stored in incident halfedges).
@@ -827,7 +830,7 @@ public:
         }
     }
 
-    /// Get/set index of corners at the "right"
+    /// Get/set index of corners at the <i>right</i>
     /// of the prev_vertex -> vertex -> next_vertex line.
     /// Default value is undefined.
     /// (stored in incident halfedges).
@@ -886,7 +889,7 @@ public:
         }
     }
 
-    /// Get/set all purpose tag of corners at the "right"
+    /// Get/set all purpose tag of corners at the <i>right</i>
     /// of the prev_vertex -> vertex -> next_vertex line.
     /// Default value is undefined.
     /// (stored in incident halfedges).
@@ -946,7 +949,7 @@ public:
     }
 
     //@} // end of ParameterizationPatchableMesh_3 INTERFACE
-
+  #endif //DOXYGEN_RUNNING
 
 // Private operations
 private:
@@ -1000,7 +1003,7 @@ private:
         return longest_border;
     }
 
-    /// Find a border tagged as "free" and tag it as "processed".
+    /// Find a border tagged as <i>free</i> and tag it as <i>processed</i>.
     /// Return an empty list if not found.
     std::list<Vertex_handle> find_free_border(int tag_free, int tag_done)
     {

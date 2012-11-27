@@ -1,0 +1,11 @@
+/*!
+\page general_intro Getting Started
+
+
+- \subpage preliminaries lists the licenses under which the %CGAL datastructures and algorithms are distributed, how to control inlining, thread safety, code deprecation, checking of pre- and postconditions, and how to alter the failure behavior. 
+
+- \subpage installation describes how to install %CGAL, and lists the third party libraries on which %CGAL depends, or for which %CGAL provides interfaces. 
+
+- \subpage introduction presents you some short example programs to get a first idea of the look and feel of a program that uses %CGAL.
+
+*/

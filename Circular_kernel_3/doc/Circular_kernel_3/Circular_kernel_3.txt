@@ -1,0 +1,207 @@
+namespace CGAL {
+/*!
+
+\mainpage 3D Spherical Geometry %Kernel
+\anchor Chapter_3D_Spherical_Geometry_Kernel
+\anchor chaptersphericalkernel
+
+\authors Pedro Machado Manh&atilde;es de Castro, Fr&eacute;d&eacute;ric Cazals, S&eacute;bastien Loriot, and Monique Teillaud
+
+\section Circular_kernel_3Introduction Introduction
+
+The goal of the 3D spherical kernel is to offer to the user a large
+set of functionalities on spheres, circles and circular arcs, in the 3D
+space or restricted on a given sphere. These functionalities require 
+computing on algebraic numbers,
+which motivates the creation of a new kernel concept extending the
+\cgal `Kernel` concept, that is restricted to objects
+and functionality in a `FieldNumberType`.
+
+All the choices (interface, robustness, representation, and so on)
+made here are consistent with the choices made in the \cgal kernel,
+for which we refer the user to the \ref chapterkernel23 "2D and 3D Linear Kernel").
+
+\section sectionSKobjects Spherical Kernel Objects 
+
+New main geometric objects are introduced by `Spherical_kernel_3`:
+circular arcs ((model of `SphericalKernel::CircularArc_3`), points
+of circular arcs (model of `SphericalKernel::CircularArcPoint_3`),
+and line segments (model of `SphericalKernel::LineArc_3`) whose
+endpoints are points of this new type.
+
+`SphericalKernel::CircularArcPoint_3` is used in particular for
+endpoints of arcs and intersection points between spheres, circles or
+arcs. The coordinates of these points are algebraic numbers of degree
+two. Therefore, general predicates offered by the `Kernel` on
+`Point_3`, which have coordinates in a `FieldNumberType`,
+would require heavy algebraic computations in algebraic extensions
+of higher degrees and thus are not provided on
+them, which explains the need for a new point type.
+
+A consistent set of predicates and constructions is offered on these
+new types.
+
+<b>General Functionalities</b>
+
+The spherical kernel currently implements a set of
+fundamental functionalities like intersection, comparisons, inclusion,
+etc. More might be provided in the future, as long as only algebraic
+numbers of degree two are used.
+
+<b>Functionalities Relative to a Sphere</b>
+
+The interface of the underlying objects is extended by providing
+additional operations that make sense only if the objects are
+considered on the same sphere. For example, the result of the comparison of the
+cylindrical or spherical coordinates of two points is well-defined
+only when looking at them on a given common sphere. The presentation
+of these operations requires the following definitions:
+
+<I>Coordinate system.</I>
+Let consider a sphere with center `c` and radius `r`. Using
+the %Cartesian frame centered at `c`, we define a cylindrical
+coordinate system \f$ (\theta,z)\f$ on that sphere, with \f$ \theta \in \left[
+0,2\pi \right)\f$ and \f$ z \in \left[ -r,r \right]\f$. \f$ \theta\f$ is given
+in radian and measured in the \f$ xy\f$-plane around the \f$ z\f$-axis, starting
+from \f$ x>0\f$, \f$ y=0\f$. The \f$ z\f$-extremal points of a sphere are its North
+and South poles defined as \f$ (\theta,r)\f$ and \f$ (\theta,-r)\f$
+respectively, for any value of \f$ \theta\f$. Observe that each point on
+the sphere different from a pole corresponds to a unique pair
+\f$ (\theta,z)\f$.
+
+<I>Definition of a meridian.</I>
+Given a sphere and its associated cylindrical coordinate system, a meridian of that
+sphere is a circular arc consisting of the points having the same theta-coordinate
+(the poles are the end points).
+A plane containing the two poles of that sphere defines two meridians, one on each side
+of the line passing through the poles. A vector \f$ M\f$ whose direction is different from that of the latter
+line defines a unique meridian on that sphere. The plane of that meridian is defined by the
+direction of \f$ M\f$ and the two poles. The sense of \f$ M\f$ disambiguates the choice among the
+pair of meridians thus defined.
+On \cgalFigureRef{figdefmeridian}, the normal vectors \f$ n_0\f$ and \f$ n_1\f$ define 
+two meridians of \f$ S\f$: the circular arcs \f$ A_0\f$ and \f$ A_1\f$ respectively.
+
+\cgalFigureBegin{figdefmeridian,def_meridian.png}
+Definition of two meridians on \f$ S\f$, a sphere of center \f$
+c\f$. The intersection of the plane \f$ P\f$ (passing through the two
+poles of \f$ S\f$) and the sphere \f$ S\f$ is a circle. The two poles
+of \f$ S\f$ split that circle into two circular arcs \f$ A_0\f$ and
+\f$ A_1\f$, each being a meridian of \f$ S\f$. The \f$
+\theta\f$-coordinates of meridians \f$ A_0\f$ and \f$ A_1\f$ are \f$
+\theta_0\f$ and \f$ \theta_1= \theta_0 + \pi\f$ respectively.
+\cgalFigureEnd
+
+<I>Types of circles on a sphere.</I>
+Given a sphere, a circle on that sphere is termed
+<I>polar</I> if it goes through only one pole, <I>bipolar</I> if
+it goes through the two poles of that sphere and <I>threaded</I> if
+it separates the sphere into two connected components, each
+containing one pole. Any other circle is termed <I>normal</I>. These
+definitions are illustrated on \cgalFigureRef{figdefcircles}.
+
+\cgalFigureBegin{figdefcircles,def_circles_extreme_pt.png}
+The four types of circles on a sphere. Black dots are the \f$ \theta\f$-extremal points.
+\cgalFigureEnd
+
+<I>\f$ \theta\f$-extremal points.</I>
+Given a sphere one has:
+a <I>\f$ \theta\f$-extremal point</I> of a normal circle is a point of
+tangency between the circle and a meridian anchored at the poles of
+that sphere. Each normal circle defines two such points;
+the \f$ \theta\f$-extremal point of a polar circle is the pole the circle
+goes through. No such point is defined on a bipolar or a threaded
+circle. 
+These definitions are illustrated on Fig. \ref figdefcircles.
+Notice that the \f$ \theta\f$-extremal points should not be confused with
+the endpoints of an arbitrary arc on a sphere.
+
+The \f$ \theta\f$-coordinate of a \f$ \theta\f$-extremal point of a normal
+circle on a sphere is well defined.
+For a polar circle on a sphere, the plane containing the two poles and which is
+tangent to that circle contains two different meridians. The
+\f$ \theta\f$-values of these meridians are the two \f$ \theta\f$-coordinates
+associated to the same \f$ \theta\f$-extremal point of a polar circle.
+
+<I>\f$ \theta\f$-monotone circular arcs.</I>
+An arc on a sphere is said to be <I>\f$ \theta\f$-monotone</I> if any meridian
+on that sphere intersects that arc in at most one point. With this definition, a
+circular arc on a threaded circle is always \f$ \theta\f$-monotone, and an
+arc on a polar or normal circle is \f$ \theta\f$-monotone if it does not
+contain a \f$ \theta\f$-extremal point, unless it is an endpoint. No such
+arc is defined on a bipolar circle.
+
+\section Circular_kernel_3Software Software Design
+
+The design of `Spherical_kernel_3` is similar to the design of
+`Circular_kernel_2` (see Chapter \ref Chapter_2D_Circular_Geometry_Kernel
+"2D Circular Geometry Kernel").
+
+It has two template parameters:
+<UL>
+<LI> the first parameter must model the \cgal 
+three dimensional `Kernel` concept. The spherical kernel derives
+from it, and it provides all elementary geometric objects like points,
+lines, spheres, circles and elementary functionality on them.
+<LI> the second parameter is the algebraic kernel, which is 
+responsible for computations on polynomials and algebraic numbers. It 
+must model the concept `AlgebraicKernelForSpheres`. The
+robustness of the package relies on the fact that the algebraic kernel
+provides exact computations on algebraic objects.
+</UL>
+
+The 3D spherical kernel uses the extensibility scheme presented in the
+kernel manual (see Section \ref sectionextensiblekernel "Extensible Kernel"). 
+The types of `Kernel` are inherited by the 3D spherical kernel and some
+types are taken from the `AlgebraicKernelForSpheres`
+parameter. `Spherical_kernel_3` introduces new geometric objects
+as mentioned in Section \ref sectionSKobjects.
+
+In fact, the spherical kernel is documented as a concept,
+`SphericalKernel` and two models are provided: 
+<UL>
+<LI> `Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>`, the basic kernel,
+<LI> and a predefined kernel `Exact_spherical_kernel_3`.
+</UL>
+
+\section Circular_kernel_3Examples Examples
+
+The first example shows how to construct spheres and compute
+intersections on them using the global function.
+
+\cgalExample{Circular_kernel_3/intersecting_spheres.cpp}
+
+The second example illustrates the use of a functor.
+
+\cgalExample{Circular_kernel_3/functor_has_on_3.cpp}
+
+The third example illustrates the use of a functor on objects on the
+same sphere. The intersection points of two circles on
+the same sphere are computed and their cylindrical coordinates are
+then compared.
+
+\cgalExample{Circular_kernel_3/functor_compare_theta_3.cpp}
+
+\section Circular_kernel_3Design Design and Implementation History
+
+This package follows the design of the package 
+\ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel").
+
+Julien Hazebrouck and Damien Leroy participated in a first
+prototype.
+
+The first version of the package was co-authored by Pedro Machado
+Manh&atilde;es de Castro and Monique Teillaud, and integrated in CGAL
+3.4. Fr&eacute;d&eacute;ric Cazals and S&eacute;bastien Loriot extended the
+package by providing functionalities restricted on a given sphere
+\cite cclt-dc3sk-08.
+
+Sylvain Pion is acknowledged for helpful discussions.
+
+This work was partially supported by the IST Programme of the 6th
+Framework Programme of the EU as a STREP (FET Open Scheme) Project
+under Contract No IST-006413 (ACS -
+Algorithms for Complex Shapes).
+
+*/ 
+} /* namespace CGAL */
+

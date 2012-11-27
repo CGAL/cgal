@@ -1,0 +1,4 @@
+/*!
+\example Minkowski_sum_3/cube_offset.cpp
+\example Minkowski_sum_3/glide.cpp
+*/

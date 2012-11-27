@@ -27,8 +27,9 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
-/// Radial orientation of the [first, beyond) range of points.
+/// Radial orientation of the `[first, beyond)` range of points.
 /// Normals are oriented towards exterior of the point set.
 /// This very fast method is intended to convex objects.
 ///
@@ -36,14 +37,13 @@ namespace CGAL {
 /// and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
 /// For this reason it should not be called on sorted containers.
 ///
-/// @commentheading Precondition: normals must be unit vectors.
+/// \pre normals must be unit vectors
 ///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @param NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam NormalPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">boost::ReadWritePropertyMap</a> with a value_type = Vector_3<Kernel>.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return iterator over the first point with an unoriented normal.
@@ -164,6 +164,8 @@ radial_orient_normals(
       make_dereference_property_map(first), 
       normal_pmap);
 }
+/// @endcond
+
 /// @endcond
 
 

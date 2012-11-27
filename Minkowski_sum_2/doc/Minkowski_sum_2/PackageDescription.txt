@@ -1,0 +1,38 @@
+/// \defgroup PkgMinkowskiSum2 2D Minkowski Sums Reference
+/// \defgroup PkgMinkowskiSum2Concepts Concepts
+/// \ingroup PkgMinkowskiSum2
+/// \defgroup PkgMinkowskiSum2Classes Classes
+/// \ingroup PkgMinkowskiSum2
+/// \defgroup PkgMinkowskiSum2Functions Functions
+/// \ingroup PkgMinkowskiSum2
+
+/*!
+\addtogroup PkgMinkowskiSum2
+\todo check generated documentation
+\cgalPkgDescriptionBegin{2D Minkowski Sums,PkgMinkowskiSum2Summary}
+\cgalPkgPicture{Minkowski_sum_2/fig/Minkowski_sum_2.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Ron Wein}
+\cgalPkgDesc{This package consists of functions that compute the Minkowski sum of two simple straight-edge polygons in the plane. It also contains functions for computing the Minkowski sum of a polygon and a disc, an operation known as <I>offsetting</I> or <I>dilating</I> a polygon. The package can compute the exact representation of the offset polygon, or provide a guaranteed approximation of the offset.}
+\cgalPkgManuals{Chapter_2D_Minkowski_Sums,PkgMinkowskiSum2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.3}
+\cgalPkgDependsOn{\ref PkgArrangement2Summary}
+\cgalPkgBib{cgal:w-rms2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+This package consist of functions for computing the Minkowksi sum
+of two polygons in the plane. Namely, given two polygons \f$ P,Q \in
+\mathbb{R}^2\f$ it computes \f$ P \oplus Q = \left\{ p + q ~|~ p \in P,
+q \in Q \right\}\f$.
+
+In addition, the package also includes functions for offsetting a
+polygon, namely computing its Minkowski sum with a disc of a given
+radius, and for insetting a polygon (namely computing its inner
+offset). It is possible to compute the exact representation of the
+offset (or the inset), or to approximate it with guaranteed error
+bounds, in order to speed up the computation time.
+*/

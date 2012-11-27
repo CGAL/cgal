@@ -1,0 +1,24 @@
+/// \defgroup PkgSurfaceMeshSimplification Triangulated Surface Mesh Simplification Reference
+/// \defgroup PkgSurfaceMeshSimplificationConcepts Concepts
+/// \ingroup PkgSurfaceMeshSimplification
+/*!
+\addtogroup PkgSurfaceMeshSimplification
+\todo check generated documentation
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Simplification,PkgSurfaceMeshSimplificationSummary}
+\cgalPkgPicture{detail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Fernando Cacciola}
+\cgalPkgDesc{This package provides an algorithm to simplify a triangulated surface mesh  by edge collapsing.  It is an implementation of the Turk/Lindstrom <I>memoryless</I>  mesh simplification algorithm.}
+\cgalPkgManuals{Chapter_Triangulated_Surface_Mesh_Simplification,PkgSurfaceMeshSimplification}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.3}
+\cgalPkgDependsOn{\ref PkgBGLSummary}
+\cgalPkgDependsOn{\ref PkgPolyhedronSummary}
+\cgalPkgBib{cgal:c-tsms-12}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+*/
+

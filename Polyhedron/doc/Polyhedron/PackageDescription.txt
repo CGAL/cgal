@@ -1,0 +1,41 @@
+/// \defgroup PkgPolyhedron 3D Polyhedral Surface  Reference
+/// \defgroup PkgPolyhedronConcepts Concepts
+/// \ingroup PkgPolyhedron
+/*!
+\addtogroup PkgPolyhedron
+\todo check generated documentation
+\cgalPkgDescriptionBegin{3D Polyhedral Surface,PkgPolyhedronSummary}
+\cgalPkgPicture{Polyhedron-teaser-small.gif}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Lutz Kettner}
+\cgalPkgDesc{Polyhedral surfaces in three dimensions are composed of vertices, edges, facets and an incidence relationship on them. The organization beneath is a halfedge data structure, which restricts the class of representable surfaces to orientable 2-manifolds - with and without boundary. If the surface is closed we call it a polyhedron.}
+\cgalPkgManuals{Chapter_3D_Polyhedral_Surfaces,PkgPolyhedron}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{1.0}
+\cgalPkgDependsOn{\ref PkgHDSSummary}
+\cgalPkgBib{cgal:k-ps}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+Polyhedral surfaces in three dimensions are composed of vertices,
+edges, facets and an incidence relationship on them. The organization
+beneath is a halfedge data structure, which restricts the class of
+representable surfaces to orientable 2-manifolds - with and without
+boundary. If the surface is closed we call it a <I>polyhedron</I>.
+
+The polyhedral surface is realized as a container class managing
+vertices, halfedges, facets with their incidences, and maintaining the
+combinatorial integrity of them. Its local types for the vertices,
+halfedges and facets are documented separately.  A default traits
+class, a default items class and an incremental builder conclude the
+references. The polyhedral surface is based on the highly flexible
+design of the halfedge data structure, see the reference for
+`HalfedgeDS` in Chapter  \ref PkgHDS
+or \cite k-ugpdd-99, but the default instantiation of the polyhedral
+surface can be used without knowing the halfedge data structure.
+
+*/
+

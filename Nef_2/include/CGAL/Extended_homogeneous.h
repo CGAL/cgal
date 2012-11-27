@@ -53,7 +53,7 @@ class Extended_homogeneous : public
   CGAL::Homogeneous< CGAL::Nef_polynomial<RT_> > { public:
 
 /*{\Mdefinition |\Mname| is a kernel concept providing extended
-geometry\footnote{It is called extended geometry for simplicity,
+geometry\cgalFootnote{It is called extended geometry for simplicity,
 though it is not a real geometry in the classical sense.}. Let |\Mvar|
 be an instance of the data type |\Mname|.  The central notion of
 extended geometry are extended points. An extended point represents
@@ -61,7 +61,7 @@ either a standard affine point of the Cartesian plane or a
 non-standard point representing the equivalence class of rays where
 two rays are equivalent if one is contained in the other.
 
-Let $R$ be an infinimaximal number\footnote{A finite but very large
+Let $R$ be an infinimaximal number\cgalFootnote{A finite but very large
 number.}, $F$ be the square box with corners $NW(-R,R)$, $NE(R,R)$,
 $SE(R,-R)$, and $SW(-R,-R)$. Let $p$ be a non-standard point and let
 $r$ be a ray defining it. If the frame $F$ contains the source point

@@ -1,0 +1,9 @@
+/*!
+\example Polynomial/construction.cpp
+\example Polynomial/coefficient_access.cpp
+\example Polynomial/degree.cpp
+\example Polynomial/swap_move.cpp
+\example Polynomial/gcd_up_to_constant_factor.cpp
+\example Polynomial/substitute.cpp
+\example Polynomial/subresultants.cpp
+*/

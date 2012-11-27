@@ -1,0 +1,17 @@
+/*!
+\example Approximate_min_ellipsoid_d/ellipsoid.cpp
+\example Approximate_min_ellipsoid_d/ellipsoid_for_maple.cpp
+\example Min_annulus_d/min_annulus_d.cpp
+\example Min_annulus_d/min_annulus_d_fast_exact.cpp
+\example Min_circle_2/min_circle_2.cpp
+\example Min_ellipse_2/min_ellipse_2.cpp
+\example Min_quadrilateral_2/minimum_enclosing_parallelogram_2.cpp
+\example Min_quadrilateral_2/minimum_enclosing_rectangle_2.cpp
+\example Min_quadrilateral_2/minimum_enclosing_strip_2.cpp
+\example Min_sphere_d/min_sphere_d.cpp
+\example Min_sphere_of_spheres_d/benchmark.cpp
+\example Min_sphere_of_spheres_d/min_sphere_of_spheres_d_2.cpp
+\example Min_sphere_of_spheres_d/min_sphere_of_spheres_d_3.cpp
+\example Min_sphere_of_spheres_d/min_sphere_of_spheres_d_d.cpp
+\example Rectangular_p_center_2/rectangular_p_center_2.cpp
+*/

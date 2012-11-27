@@ -1,0 +1,8 @@
+/*!
+\example Convex_hull_2/array_convex_hull_2.cpp
+\example Convex_hull_2/ch_from_cin_to_cout.cpp
+\example Convex_hull_2/ch_graham_anderson.cpp
+\example Convex_hull_2/ch_timing.cpp
+\example Convex_hull_2/iostream_convex_hull_2.cpp
+\example Convex_hull_2/vector_convex_hull_2.cpp
+*/
