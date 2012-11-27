@@ -51,7 +51,7 @@ public:
 protected:
   // The segments that comprise the poyline:
   typedef typename std::vector<Segment_2>        Segments_container;
-  typedef typename Segments_container::size_type Seg_container_size;
+  typedef typename Segments_container::size_type Segments_container_size;
   Segments_container                             m_segments;
 
 public:
@@ -126,7 +126,8 @@ public:
   }
 
   /*!
-   * TODO: Mark as deprectaed. Check with Efi how to do it?
+   * TODO: Mark as deprectaed.
+   * TODO: @Efi: How should this be done?
    * Append a point to the polyline.
    */
   void push_back (const Point_2 & p)
@@ -166,154 +167,155 @@ public:
 
   /*! An iterator for the polyline points. */
   // TODO: Deprecate the point const iterator. Keep the same implementation.
-  class Point_const_iterator
-  {
-  public:
+  // class Point_const_iterator
+  // {
+  // public:
 
-    // Type definitions:
-    typedef std::bidirectional_iterator_tag     iterator_category;
-    typedef Point_2                             value_type;
-    typedef std::ptrdiff_t                      difference_type;
-    typedef size_t                              size_type;
-    typedef const value_type&                   reference;
-    typedef const value_type*                   pointer;
+  //   // Type definitions:
+  //   typedef std::bidirectional_iterator_tag     iterator_category;
+  //   typedef Point_2                             value_type;
+  //   typedef std::ptrdiff_t                      difference_type;
+  //   typedef size_t                              size_type;
+  //   typedef const value_type&                   reference;
+  //   typedef const value_type*                   pointer;
 
-  private:
+  // private:
     
-    const _Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
-    int   m_num_pts;                            // Its number of points.
-    int   m_index;                              // The current point.
+  //   const _Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
+  //   int   m_num_pts;                            // Its number of points.
+  //   int   m_index;                              // The current point.
 
-    /*!
-     * Private constructor.
-     * \param cv The scanned curve.
-     * \param index The index of the segment.
-     */
-    Point_const_iterator (const _Polyline_2<SegmentTraits_>* cvP, int index) :
-      m_cvP(cvP),
-      m_index(index)
-    {
-      if (m_cvP == NULL)
-	m_num_pts = 0;
-      else
-	m_num_pts =
-	  (m_cvP->size() == 0) ? 0 : static_cast<int>(m_cvP->size() + 1);
-    }
+  //   /*!
+  //    * Private constructor.
+  //    * \param cv The scanned curve.
+  //    * \param index The index of the segment.
+  //    */
+  //   Point_const_iterator (const _Polyline_2<SegmentTraits_>* cvP, int index) :
+  //     m_cvP(cvP),
+  //     m_index(index)
+  //   {
+  //     if (m_cvP == NULL)
+  // 	m_num_pts = 0;
+  //     else
+  // 	m_num_pts =
+  // 	  (m_cvP->size() == 0) ? 0 : static_cast<int>(m_cvP->size() + 1);
+  //   }
 
-  public:
+  // public:
 
-    /*! Default constructor. */
-    Point_const_iterator() :
-      m_cvP(NULL),
-      m_num_pts(0),
-      m_index(-1)
-    {}
+  //   /*! Default constructor. */
+  //   Point_const_iterator() :
+  //     m_cvP(NULL),
+  //     m_num_pts(0),
+  //     m_index(-1)
+  //   {}
 
-    /*! 
-     * Dereference operator.
-     * \return The current point.
-     */
-    const Point_2& operator*() const
-    {
-      CGAL_assertion(m_cvP != NULL);
-      CGAL_assertion(m_index >= 0 && m_index < m_num_pts);
+  //   /*! 
+  //    * Dereference operator.
+  //    * \return The current point.
+  //    */
+  //   const Point_2& operator*() const
+  //   {
+  //     CGAL_assertion(m_cvP != NULL);
+  //     CGAL_assertion(m_index >= 0 && m_index < m_num_pts);
       
-      if (m_index == 0)
-      {
-        // First point is the source of the first segment.
-        return ((*m_cvP)[0]).source();
-      }
-      else
-      {
-        // Return the target of the(i-1)'st segment.
-	return ((*m_cvP)[m_index - 1]).target();
-      }
-    }
+  //     if (m_index == 0)
+  //     {
+  //       // First point is the source of the first segment.
+  //       return ((*m_cvP)[0]).source();
+  //     }
+  //     else
+  //     {
+  //       // Return the target of the(i-1)'st segment.
+  // 	return ((*m_cvP)[m_index - 1]).target();
+  //     }
+  //   }
 
-    /*! 
-     * Arrow operator.
-     * \return A pointer to the current point.
-     */
-    const Point_2* operator-> () const
-    {
-      return (&(this->operator* ()));
-    }
+  //   /*! 
+  //    * Arrow operator.
+  //    * \return A pointer to the current point.
+  //    */
+  //   const Point_2* operator-> () const
+  //   {
+  //     return (&(this->operator* ()));
+  //   }
 
-    /*! Increment operators. */
-    Point_const_iterator& operator++() 
-    {
-      if (m_cvP != NULL && m_index < m_num_pts)
-	++m_index;
-      return (*this);
-    }
+  //   /*! Increment operators. */
+  //   Point_const_iterator& operator++() 
+  //   {
+  //     if (m_cvP != NULL && m_index < m_num_pts)
+  // 	++m_index;
+  //     return (*this);
+  //   }
 
-    Point_const_iterator operator++ (int)
-    {
-      Point_const_iterator  temp = *this;
-      if (m_cvP != NULL && m_index < m_num_pts)
-	++m_index;
-      return (temp);
-    }
+  //   Point_const_iterator operator++ (int)
+  //   {
+  //     Point_const_iterator  temp = *this;
+  //     if (m_cvP != NULL && m_index < m_num_pts)
+  // 	++m_index;
+  //     return (temp);
+  //   }
 
-    /*! Decrement operators. */
-    Point_const_iterator& operator-- ()
-    {
-      if (m_cvP != NULL && m_index >= 0)
-	--m_index;
-      return (*this);
-    }
+  //   /*! Decrement operators. */
+  //   Point_const_iterator& operator-- ()
+  //   {
+  //     if (m_cvP != NULL && m_index >= 0)
+  // 	--m_index;
+  //     return (*this);
+  //   }
 
-    Point_const_iterator operator--(int)
-    {
-      Point_const_iterator  temp = *this;
-      if (m_cvP != NULL && m_index >= 0)
-	--m_index;
-      return (temp);
-    }
+  //   Point_const_iterator operator--(int)
+  //   {
+  //     Point_const_iterator  temp = *this;
+  //     if (m_cvP != NULL && m_index >= 0)
+  // 	--m_index;
+  //     return (temp);
+  //   }
 
-    /*! Equality operators. */
-    bool operator==(const Point_const_iterator& it) const
-    {
-      return (m_cvP == it.m_cvP && m_index == it.m_index);
-    }
+  //   /*! Equality operators. */
+  //   bool operator==(const Point_const_iterator& it) const
+  //   {
+  //     return (m_cvP == it.m_cvP && m_index == it.m_index);
+  //   }
 
-    bool operator!=(const Point_const_iterator& it) const
-    {
-      return (m_cvP != it.m_cvP || m_index != it.m_index);
-    }
+  //   bool operator!=(const Point_const_iterator& it) const
+  //   {
+  //     return (m_cvP != it.m_cvP || m_index != it.m_index);
+  //   }
 
-    friend class _Polyline_2<SegmentTraits_>;
-  };
+  //   friend class _Polyline_2<SegmentTraits_>;
+  // };
 
+  // TODO: Porperly deprecate the code.
   /*! Get an iterator for the polyline points. */
-  Point_const_iterator begin() const
-  {
-    if (size() == 0)
-      return (Point_const_iterator (NULL, -1));
-    else
-      return (Point_const_iterator (this, 0));
-  }
+  // Point_const_iterator begin() const
+  // {
+  //   if (size() == 0)
+  //     return (Point_const_iterator (NULL, -1));
+  //   else
+  //     return (Point_const_iterator (this, 0));
+  // }
 
   /*! Get a past-the-end iterator for the polyline points. */
-  Point_const_iterator end() const
-  {
-    if (size() == 0)
-      return (Point_const_iterator (NULL, -1));
-    else
-      return (Point_const_iterator (this, size() + 1));
-  }
+  // Point_const_iterator end() const
+  // {
+  //   if (size() == 0)
+  //     return (Point_const_iterator (NULL, -1));
+  //   else
+  //     return (Point_const_iterator (this, size() + 1));
+  // }
 
   /*! Get a reverse iterator for the polyline points. */
-  Point_const_reverse_iterator rbegin() const
-  {
-    return (Point_const_reverse_iterator (end()));
-  }
+  // Point_const_reverse_iterator rbegin() const
+  // {
+  //   return (Point_const_reverse_iterator (end()));
+  // }
 
   /*! Get a reverse past-the-end iterator for the polyline points. */
-  Point_const_reverse_iterator rend() const
-  {
-    return (Point_const_reverse_iterator (begin()));
-  }
+  // Point_const_reverse_iterator rend() const
+  // {
+  //   return (Point_const_reverse_iterator (begin()));
+  // }
 
   typedef typename Segments_container::const_iterator Segment_const_iterator;
   typedef typename std::reverse_iterator<Segment_const_iterator>
@@ -338,20 +340,22 @@ public:
   /*!
    * Get the number of points contained in the polyline.
    * TODO: Deprecate the function
+   * TODO: @Efi: It should be, in the future, added to the traits class, right?
+   *             See the comment on the wiki page.
    * \return The number of points.
    */
-  unsigned int points() const
-  {
-    return (size() == 0) ? 0 : size() + 1;
-  }
+  // unsigned int points() const
+  // {
+  //   return (size() == 0) ? 0 : size() + 1;
+  // }
 
   /*!
    * Get the number of segments that comprise the poyline.
    * \return The number of segments.
    */
-  Seg_container_size size() const
+  Segments_container_size size() const
   {
-    return Seg_container_size(m_segments.size());
+    return Segments_container_size(m_segments.size());
   }
 
   /*!
@@ -415,6 +419,10 @@ public:
    *             It should not be deprectaed, right?
    * EFEF: I thing that all these overloaded memeber functions should be
    *       deprecated.
+   * Dror: What do you mean? Should they be empty and the tests implemented
+   *       in the traits class? Or shouldn't this x-monotone polylines
+   *       construction be removed all together and only a trivial constructor
+   *       from a range of segments be left?
    */
   template <typename InputIterator>
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
@@ -522,7 +530,6 @@ private:
 			    const _Polyline_2<SegmentTraits>& cv)
   {
     // TODO: @Efi: Is this what you meant with respect to the exporter?
-    // TODO: Document the change in the wiki page
     typename _Polyline_2<SegmentTraits>::Segment_const_iterator  iter = 
       cv.begin_segments();
         

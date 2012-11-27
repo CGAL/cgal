@@ -18,6 +18,7 @@
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 //                 Ron Wein  <wein@post.tau.ac.il>
+//                 Dror Atariah <dror.atariah@fu-berlin.de>
 
 #ifndef CGAL_ARR_POLYLINE_TRAITS_2_H
 #define CGAL_ARR_POLYLINE_TRAITS_2_H
