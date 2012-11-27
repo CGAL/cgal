@@ -27,10 +27,6 @@
  * Header file for the polyline classes used by the Arr_polyline_traits_2
  * class.
  */
-
-// TODO: @Efi: Are all the following are needed?
-// EFEF: Looks like it.
-
 #include <list>
 #include <iostream>
 #include <vector>
@@ -81,14 +77,9 @@ public:
   /*!
    * Construct a polyline from a range of segments.
    * \param begin An iterator pointing to the first segment in the range.
-   * \param end An iterator pointing after the past-the-end segment in the range.
+   * \param end An iterator pointing after the past-the-end segment
+   *        in the range.
    * \pre The end of segment n should be the beginning of segment n+1.
-   * TODO: @Efi: The preconditions is not tested here (as we don't want to use
-   *             the traits class here). But we didn't implement a corresponding
-   *             "constructor" in the polylines traits class. Should this be doen?
-   *             If so, this means that another "constructor-functor"
-   *             Construct_curve_2 should be implemented there, right?
-   * EFEF: Right
    */
   template <typename InputIterator>
   void construct_polyline(InputIterator begin, InputIterator end, 
@@ -114,15 +105,19 @@ public:
     if (ps == end)
       return;
 
-    // TODO: @Efi: Should I treat the case where there's only one(!) point in the
-    //             container? Should a degenerated sgement (source=target) be
-    //             returned in this case?
-    // EFEF: I think so
-    // Construct a segment from each to adjacent points.
-    // The container has to contain at least two points.
     InputIterator pt = ps;
     ++pt;
 
+    // The range contains only one point. A degenerated polyline is constructed.
+    // With one degenerated segment, where source=target.
+    if (pt == end)
+      {
+	m_segments.push_back(Segment_2(*ps,*ps));
+	return;
+      }
+
+    // Construct a segment from each to adjacent points.
+    // The container has to contain at least two points.
     while (pt != end) {
       m_segments.push_back(Segment_2(*ps, *pt));
       ++ps;
@@ -131,7 +126,7 @@ public:
   }
 
   /*!
-   * TODO: Mark as deprectaed
+   * TODO: Mark as deprectaed. Check with Efi how to do it?
    * Append a point to the polyline.
    */
   void push_back (const Point_2 & p)
@@ -170,11 +165,7 @@ public:
      Point_const_reverse_iterator;
 
   /*! An iterator for the polyline points. */
-  /*
-   * TODO: What to do with this code? Deprecated? Keep for one version?
-   *       Reimplement using local kernel?
-   * EFEF: Deprecate (and don't touch).
-   */
+  // TODO: Deprecate the point const iterator. Keep the same implementation.
   class Point_const_iterator
   {
   public:
@@ -346,9 +337,7 @@ public:
 
   /*!
    * Get the number of points contained in the polyline.
-   * TODO: Has to be updated once the polyline will be unbounded.
-   * TODO: @Efi: should this be moved to the traits class?
-   * EFEF: Deprecate
+   * TODO: Deprecate the function
    * \return The number of points.
    */
   unsigned int points() const
@@ -480,6 +469,7 @@ public:
    * EFEF: Only the last statement should retain. (Consider making this member
    *       should be made private.) You can introduce a functor in the traits
    *       class that can replace this one and contain the verification code.
+   * Dror: I don't understand. 
    */
   inline void push_back (const Segment_2& seg)
   {
@@ -526,23 +516,17 @@ private:
 
 };
 
-  /*
-   * TODO: Discuss this furtehr with @Efi if needed.
-   * EFEF: Change the semantics to iterate over (and export) the segments
-   *       (and not the points)
-   */
-  
   /*! Output operator for a polyline. */
   template <typename SegmentTraits>
   std::ostream& operator<< (std::ostream & os,
 			    const _Polyline_2<SegmentTraits>& cv)
   {
-    typename _Polyline_2<SegmentTraits>::Point_const_iterator  iter = cv.begin();
-    
-    // Print the number of points:
-    os << cv.points();
-    
-    while (iter != cv.end())
+    // TODO: @Efi: Is this what you meant with respect to the exporter?
+    // TODO: Document the change in the wiki page
+    typename _Polyline_2<SegmentTraits>::Segment_const_iterator  iter = 
+      cv.begin_segments();
+        
+    while (iter != cv.end_segments())
       {
 	os << "  " << *iter;
 	++iter;
@@ -555,6 +539,8 @@ private:
    * EFEF: Change the semantics to export the segments
    *       Perhaps add an additional exporter (or just a member function)
    *       that reads points
+   * Dror: Here you meant the "importer", right? So do you want to have two
+   *       importers: one from segments and one from points?
    */
   template <typename SegmentTraits>
   std::istream& operator>> (std::istream& is,

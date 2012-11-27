@@ -107,7 +107,8 @@ public:
 
   public:
     /*! Constructor. */
-    Construct_min_vertex_2(const Segment_traits_2* traits) : m_seg_traits(traits)
+    Construct_min_vertex_2(const Segment_traits_2* traits) : 
+      m_seg_traits(traits)
     {}
 
     /*!
@@ -560,9 +561,6 @@ public:
     void operator()(const X_monotone_curve_2& cv, const Point_2& p,
                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
-
-      // TODO: @Efi: Should this be rewritten using iterators over the segments?
-      // EFEF: I don't see where.
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
         m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
@@ -962,6 +960,108 @@ public:
   Approximate_2 approximate_2_object() const
   { return m_seg_traits.approximate_2_object(); }
 
+  class Construct_curve_2 {
+    // TODO: Document this class in the wiki page.
+  protected:
+    /*! The segment traits (in case it has state) */
+    const Segment_traits_2* m_seg_traits;
+
+  public:
+    /*! Constructor. */
+    Construct_curve_2 (const Segment_traits_2* seg_traits) :
+      m_seg_traits(seg_traits)
+    {}
+    
+    /*! Returns an polyline connecting the two given endpoints.
+     * \param p The first point.
+     * \param q The second point.
+     * \pre p and q must not be the same.
+     * \return A segment connecting p and q.
+     */
+    Curve_2 operator()(const Point_2& p, const Point_2& q) const
+    {
+      CGAL_precondition_code
+	(
+	 typename Segment_traits_2::Compare_xy_2 comp_xy = 
+	    m_seg_traits->construct_compare_xy_2_object();
+	 CGAL_precondition (compy_xy(p,q) != EQUAL);
+	 );
+      Point_2   pts[2];
+      pts[0] = p; pts[1] = q;
+      return (Curve_2(pts + 0, pts + 2));
+    }
+
+    /*! Construct a polyline from a range of objects.
+     *  \param begin An iterator pointing to the first segment in the range.
+     *  \param end An iterator pointing to the past-the-end segment in the range
+     *  \return A polyline using the corresponding construction implementation.
+     */
+    template <typename InputIterator>
+    Curve_2 operator()(InputIterator begin, InputIterator end)
+    {
+      return contructor_impl(begin, end, *begin);
+    }
+
+    /*! Construction implementation from a range of points.
+     * When constructing from a range of points there are no tests to
+     * run and the construction is straight forward in the polyline's class.
+     */
+    template <typename InputIterator>
+    Curve_2 contructor_impl (InputIterator begin, InputIterator end,
+			     const Point_2&) const
+    {
+      return Curve_2(begin,end);
+    }
+
+    /*! Construction implementation from a range of segments.
+     *  \pre The segments form a polyline, that is the end of the i-th segment
+     *       is the start of the (i+1)-th segment.
+     */
+    template <typename InputIterator>
+    Curve_2 contructor_impl (InputIterator begin, InputIterator end,
+			     const Segment_2&) const
+    {
+      CGAL_precondition(begin != end);
+
+      InputIterator curr = begin;
+      InputIterator next = curr;
+
+      if (++next == end)
+	// Construct a polyline with one segment.
+	return Curve_2 (begin,end);
+
+      CGAL_precondition_code
+        (
+	 typename Segment_traits_2::Construct_min_vertex_2 min_v =
+	    m_seg_traits->construct_min_vertex_2_object();
+	 typename Segment_traits_2::Construct_max_vertex_2 max_v =
+	    m_seg_traits->construct_max_vertex_2_object();
+	 typename Segment_traits_2::Compare_xy_2 comp_xy = 
+  	    m_seg_traits->construct_compare_xy_2_object();
+
+	 while (next != end) 
+	   {
+	     // TODO: @Efi: Is this the right test? Many geometric tests, but
+	     //             but I don't see a way to make it nicer. Plus,
+	     //             in any case, this is only a precondition test, so
+	     //             maybe it is not that bad.
+
+	     CGAL_precondition( comp_xy (min_v(*curr),min_v(*next)) == EQUAL ||
+				comp_xy (min_v(*curr),max_v(*next)) == EQUAL ||
+				comp_xy (max_v(*curr),min_v(*next)) == EQUAL ||
+				comp_xy (max_v(*curr),max_v(*next)) == EQUAL );
+	     ++next;
+	     ++curr;
+	   }
+	 );
+      return Curve_2 (begin, end);
+    }
+  };
+
+  /*! Get a Construct_curve_2 functor object. */
+  Construct_curve_2 construct_curve_2_object() const
+  { return Construct_curve_2(&m_seg_traits); }
+
   class Construct_x_monotone_curve_2 {
   protected:
     /*! The segment traits (in case it has state) */
@@ -1021,16 +1121,13 @@ public:
     /*! Returns an x-monotone polyline from a range of segments.
      * \param begin An iterator pointing to the first segment in the range.
      * \param end An iterator pointing to the past-the-end segment in the range.
-     * \precondition The range is not emnpty.
-     * \precondition One endpoint of the ith segment is an endpoint of the
+     * \pre The range is not emnpty.
+     * \pre One endpoint of the ith segment is an endpoint of the
      *      (i+1)th segment.
-     * \precondition The sequence of segments in the range forms a weak
+     * \pre The sequence of segments in the range forms a weak
      *      x-monotone polyline.
-     *      TODO: @Efi: The range should support bidirectional iteration.
-     *                  Should this be added as a precondition? Or is it
-     *                  trivial?
-     * EFEF: just mention as a comment in this heading.
-     * \postcondition The resulting x-monotone polyline directed from left to
+     * \pre The container should support bidirectional iteration.
+     * \post The resulting x-monotone polyline directed from left to
      *      right.
      * \return An x-monotone polyline directed from left to right.
      */

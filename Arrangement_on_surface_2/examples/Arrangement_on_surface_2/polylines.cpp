@@ -26,6 +26,8 @@ int main ()
 
   Arrangement_2         arr;
 
+  // TODO: Add test with isolated points.
+
   /* Poyline's outline:
    *     
    *     *       *
