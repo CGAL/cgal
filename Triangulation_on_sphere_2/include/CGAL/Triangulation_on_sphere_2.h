@@ -161,15 +161,11 @@ protected:
   Vertex_handle _pivot;
   bool _full_sphere;
   Face_handle _ghost;
-	double _radius;
-	double _minDist;
-	double _minDistSquared;
-	double _minRadius;
-	double _minRadiusSquared;
-	double _maxRadius;
-	double _maxRadiusSquared;
-	
-  mutable Random rng;  
+ double _radius;
+ double _minDistSquared;
+  double _minRadiusSquared;
+ double _maxRadiusSquared;
+ mutable Random rng;  
   
 
 
@@ -178,8 +174,13 @@ public:
   // CONSTRUCTORS
   Triangulation_on_sphere_2(const Geom_traits& geom_traits=Geom_traits());
   Triangulation_on_sphere_2(const Point& sphere); 
-  Triangulation_on_sphere_2(const Triangulation_on_sphere_2<Gt,Tds> &tr);        
-  void clear();
+  Triangulation_on_sphere_2(const Triangulation_on_sphere_2<Gt,Tds> &tr);  
+   void clear();
+	
+private:
+	void init(double radius);
+	
+public:
 
   //Assignement
   Triangulation_on_sphere_2 &operator=(const Triangulation_on_sphere_2 &tr);
@@ -410,44 +411,48 @@ private:
 	public:
 	void set_radius(double radius){
 		clear();
-		_radius = radius;
-		_minDist = radius * pow(2,-23);
-		_minDistSquared=pow(_minDist,2);
-		_minRadius = radius *(1-pow(2, -50));
-		_minRadiusSquared = pow (_minRadius,2);
-		_maxRadius = radius *(1+pow(2, -50));
-		_maxRadiusSquared = pow (_maxRadius,2);
+		init(radius);
 	}
 	
 };
 	
-		
-	
-
-
 // CONSTRUCTORS
+	
 template <class Gt, class Tds >
 Triangulation_on_sphere_2<Gt, Tds>::
-  Triangulation_on_sphere_2(const Geom_traits& geom_traits) 
-  : _gt(geom_traits), _tds(), _full_sphere(false) , _radius(1), _minDist(pow (2, -23)), _minDistSquared( pow(_minDist, 2)) ,
-	_minRadius(_radius*(1-pow(2, 50))), _minRadiusSquared(pow(_minRadius,2)), 
-	_maxRadius(_radius*(1+pow(2, 50))), _maxRadiusSquared(pow(_minRadius,2))																																	
-{}
-
+Triangulation_on_sphere_2(const Geom_traits& geom_traits) 
+: _gt(geom_traits), _tds()
+ {init(1);}
+	
 template <class Gt, class Tds >
 Triangulation_on_sphere_2<Gt, Tds>::
 Triangulation_on_sphere_2(const Point& sphere) 
-  : _gt(sphere), _tds(), _full_sphere(false), _minDist(pow (2, -23)), _minDistSquared( pow(_minDist, 2)),  
-			   _minRadius(_radius*(1-pow(2, 50))), _minRadiusSquared(pow(_minRadius,2)), 
-			   _maxRadius(_radius*(1+pow(2, 50))), _maxRadiusSquared(pow(_minRadius,2))	
-{}
+: _gt(sphere), _tds(), _full_sphere(false)	
+ { init(1);}	
+	
+	
+
+template <class Gt, class Tds >
+void
+Triangulation_on_sphere_2<Gt, Tds>::
+init(double radius){
+	_radius = radius;
+	double minRadius = radius*(1-pow(2, -50));
+	_minRadiusSquared = minRadius * minRadius;
+	double maxRadius = radius*(1+pow(2, -50));
+	_maxRadiusSquared = maxRadius * maxRadius;
+	double minDist = radius*pow (2, -23);
+	_minDistSquared = minDist *minDist;
+	
+}
+	
 
 // copy constructor duplicates vertices and faces
 template <class Gt, class Tds >
 Triangulation_on_sphere_2<Gt, Tds>::
 Triangulation_on_sphere_2(const Triangulation_on_sphere_2 &tr) 
   : _gt(tr._gt), _tds(tr._tds)
-{}
+	{init(tr._radius);}
 
 template <class Gt, class Tds >
 void
@@ -467,6 +472,7 @@ copy_triangulation(const Triangulation_on_sphere_2 &tr)
   _tds.clear();
   _gt = tr._gt;
   _tds = tr._tds;
+   init(tr._radius);
 }
 
   //Assignement
