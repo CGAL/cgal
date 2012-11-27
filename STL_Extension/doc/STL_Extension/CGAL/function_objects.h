@@ -1,4 +1,4 @@
-/// \defgroup projectionobjects Projection Function Object
+/// \defgroup projectionobjects Projection Function Objects
 /// \ingroup PkgStlExtension
 
 namespace CGAL {
@@ -138,9 +138,8 @@ compare_to_less(const F& f);
 } /* namespace CGAL */
 
 
-/// \defgroup STLCreators Creator Function Object
+/// \defgroup STLCreators Creator Function Objects
 /// \ingroup PkgStlExtension
-
 
 namespace CGAL {
 
