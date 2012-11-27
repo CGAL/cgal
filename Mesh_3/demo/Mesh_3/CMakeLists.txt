@@ -43,11 +43,14 @@ include_directories( BEFORE ./ ./include ../../include )
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
-# Disable warning 4503 in MSVC ("The decorated name was longer than the 
-# compiler limit and was truncated")
 if(MSVC)
+  # Disable warning 4503 in MSVC ("The decorated name was longer than the 
+  # compiler limit and was truncated")
   add_definitions( "/wd4503" )
- endif()
+  # Add /bigobj to the compiler options
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
+endif()
 
 # Add specific Find.cmake modules
 set(CMAKE_MODULE_PATH 
