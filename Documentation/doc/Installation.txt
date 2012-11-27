@@ -575,25 +575,35 @@ Free and commercial editions of \leda are available from <A HREF="http://www.alg
 
 \subsection thirdpartyMPFI Mpfi 
 
-\sc{Mpfi} provide arbitrary precision interval arithmetic with intervals 
+\sc{Mpfi} provides arbitrary precision interval arithmetic with intervals
 represented using \sc{Mpfr} reliable floating-point numbers. 
-It is based on the \sc{Gmp} library and on the \sc{Mpfr} library.
-In the setting of \cgal it is mainly used in sync with Rs. 
-The library is optional and needed in certain algebraic
-kernels.
+It is based on the libraries \sc{Gmp} and \sc{Mpfr}.
+In the setting of \cgal, this library is
+optional: it is used by some models of the
+\ref PkgAlgebraicKerneld "Algebraic Kernel".
 
 \sc{Mpfi} can be downloaded from <A HREF="http://mpfi.gforge.inria.fr/">`http://mpfi.gforge.inria.fr/`</A>. Version 1.4 or higher is recommended.
 
 \subsection thirdpartyRS3 Rs and Rs3
 
-Rs (Real Solutions) is devoted to the study of the real
-roots of polynomial systems with a finite number of complex roots
-(including univariate polynomials).
 
-In \cgal, Rs is used by one model of the \ref PkgAlgebraicKerneld.
+\sc{Rs} (Real Solutions) is devoted to the study of the real roots of
+polynomial systems with a finite number of complex roots (including
+univariate polynomials). In \cgal, \sc{Rs} is used by one model of the
+\ref PkgAlgebraicKerneld "Algebraic Kernel".
+
+\sc{Rs} is freely distributable for non-commercial use. You can download it
+from <a href="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</a>. Actually, the \sc{Rs} package also includes \sc{Rs3}, the
+successor of \sc{Rs}, which is used in conjunction with it.
+
+The libraries \sc{Rs} and \sc{Rs3} need \sc{Mpfi}, which can be downloaded from
+<A HREF="http://mpfi.gforge.inria.fr/">`http://mpfi.gforge.inria.fr/`</A>.
+
+
 
 Rs is freely distributable for non-commercial use. You can download it
-from <A HREF="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</A>. The library Rs needs \sc{Mpfi}, which can be downloaded from <A HREF="http://mpfi.gforge.inria.fr/">`http://mpfi.gforge.inria.fr/`</A>. 
+from <A HREF="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</A>.
+The library Rs needs \sc{Mpfi}, which can be downloaded from <A HREF="http://mpfi.gforge.inria.fr/">`http://mpfi.gforge.inria.fr/`</A>.
 Version 1.4 or higher is recommended.
 
 The successor of Rs is called Rs3. It less restrictive when it comes
@@ -2001,7 +2011,7 @@ Environment
 <TD ALIGN=LEFT NOWRAP>
 `RS3_INCLUDE_DIR` 
 <TD ALIGN=LEFT NOWRAP>
-Directory containing the `rs_exports.h` file 
+Directory containing the file `rs3_fncts.h` file
 <TD ALIGN=LEFT NOWRAP>
 CMake
 <TR>
@@ -2015,7 +2025,7 @@ Environment
 <TD ALIGN=LEFT NOWRAP>
 `RS3_LIBRARIES_DIR` 
 <TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled Rs library 
+Directory containing the compiled Rs3 library
 <TD ALIGN=LEFT NOWRAP>
 CMake
 <TR>
@@ -2029,7 +2039,7 @@ Environment
 <TD ALIGN=LEFT NOWRAP>
 `RS3_LIBRARIES` 
 <TD ALIGN=LEFT NOWRAP>
-Full pathname of the compiled Rs library 
+Full pathname of the compiled Rs3 library
 <TD ALIGN=LEFT NOWRAP>
 CMake
 </TABLE>
