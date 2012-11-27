@@ -27,3 +27,4 @@ makefile.*
 parameters.cpp
 parameters.h
 replay*
+doc

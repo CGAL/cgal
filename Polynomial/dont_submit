@@ -6,3 +6,4 @@ include/CGAL/Polynomial/modular_gcd_utcf_pure_wang.h
 test/Polynomial/modular_gcd_utcf_pure_wang.cpp
 include/CGAL/Polynomial/modular_gcd_utcf_with_wang.h
 test/Polynomial/modular_gcd_utcf_with_wang.cpp
+doc
