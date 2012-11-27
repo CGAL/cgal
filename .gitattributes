@@ -25,6 +25,11 @@ Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/PS_demo_loc
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/PS_demo_normal_estimation_plugin.cpp eol=crlf
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/PS_demo_smoothing_plugin.cpp eol=crlf
 
+# other exceptions:
+Envelope_3/test/Envelope_3/data/*/*.cin  eol=crlf
+Segment_Delaunay_graph_2/benchmark/Segment_Delaunay_graph_2/data/norway.cin  eol=crlf
+Skin_surface_3/test/Skin_surface_3/data/test11.cin  eol=crlf
+
 AABB_tree/demo/AABB_tree/AABB_demo.ppt -text svneol=unset#application/vnd.ms-powerpoint
 AABB_tree/demo/AABB_tree/AABB_demo.qrc -text
 AABB_tree/demo/AABB_tree/MainWindow.ui -text
