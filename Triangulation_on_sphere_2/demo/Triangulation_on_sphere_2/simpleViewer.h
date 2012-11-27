@@ -121,11 +121,11 @@ void Viewer::draw()
 template <class Triangulation_on_sphere>
 void Viewer::build_the_boundary(const Triangulation_on_sphere& T)
 {
-  for (typename Triangulation_on_sphere::Edges_iterator 
-    it=T.edges_begin();it!=T.edges_end();++it)
+  for (typename Triangulation_on_sphere::All_edges_iterator 
+    it=T.all_edges_begin();it!=T.all_edges_end();++it)
   {
-    if ( it->first->is_negative() && 
-         it->first->neighbor(it->second)->is_negative() )
+    if ( it->first->is_ghost() && 
+         it->first->neighbor(it->second)->is_ghost() )
       continue;
     
     Point_3 source=it->first->vertex( (it->second+1)%3 )->point();
