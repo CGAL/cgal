@@ -118,9 +118,6 @@ public:
                             Vertex_handle v3)
     : surface_index_table_()
     , surface_center_table_()
-#ifndef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
-    , V((Vertex_handle[4]) {v0, v1, v2, v3} )
-#endif
     , circumcenter_(NULL)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
@@ -132,12 +129,10 @@ public:
     , bits_(0) 
     , sliver_cache_validity_(false)
   {
-#ifdef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
     set_vertices(v0, v1, v2, v3);
-#endif
   }
 
-  
+
   Compact_mesh_cell_base_3 (Vertex_handle v0,
                             Vertex_handle v1,
                             Vertex_handle v2,
@@ -148,10 +143,6 @@ public:
                             Cell_handle n3)
     : surface_index_table_()
     , surface_center_table_()
-#ifndef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
-    , N((Cell_handle[4]) {n0, n1, n2, n3})
-    , V((Vertex_handle[4]) {v0, v1, v2, v3} )
-#endif
     , circumcenter_(NULL)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
@@ -160,13 +151,11 @@ public:
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
-    , bits_(0) 
+    , bits_(0)
     , sliver_cache_validity_(false)
   {
-#ifdef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
     set_neighbors(n0, n1, n2, n3);
     set_vertices(v0, v1, v2, v3);
-#endif
   }
 
   ~Compact_mesh_cell_base_3()
