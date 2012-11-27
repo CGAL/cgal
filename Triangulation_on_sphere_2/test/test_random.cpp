@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_sphere_traits_2.h>
+#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 //#include <CGAL/Projection_sphere_traits_3.h>
-#include <CGAL/Regular_triangulation_on_sphere_2.h>
+#include <CGAL/Delaunay_triangulation_sphere_2.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_2.h>
 #include <fstream>
@@ -11,9 +11,9 @@
 #include <cmath>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-typedef CGAL::Regular_triangulation_sphere_traits_2<K>             Gt;
+typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
 //typedef CGAL::Projection_sphere_traits_3<K>							Gt;
-typedef CGAL::Regular_triangulation_on_sphere_2<Gt>              RTOS;
+typedef CGAL::Delaunay_triangulation_sphere_2<Gt>              RTOS;
 typedef RTOS::Vertex_handle                             Vertex_handle;
 typedef RTOS::Face_handle                                 Face_handle;
 typedef RTOS::Point                                             Point;

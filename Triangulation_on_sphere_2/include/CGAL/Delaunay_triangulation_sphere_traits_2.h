@@ -1,6 +1,6 @@
 
-#ifndef CGAL_REGULAR_TRIANGULATION_SPHERE_TRAITS_2_H
-#define CGAL_REGULAR_TRIANGULATION_SPHERE_TRAITS_2_H
+#ifndef CGAL_DELAUNAY_TRIANGULATION_SPHERE_TRAITS_2_H
+#define CGAL_DELAUNAY_TRIANGULATION_SPHERE_TRAITS_2_H
 
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/triangulation_assertions.h>
@@ -192,7 +192,7 @@ Power_test_2(const Point_2& sphere)
 	
 	
 template < class R >
-class Regular_triangulation_sphere_traits_2
+class Delaunay_triangulation_sphere_traits_2
   : public R
 {
 public:
@@ -201,7 +201,7 @@ public:
   typedef typename R::Point_3                      Weighted_point_2;
                       
 
-  typedef Regular_triangulation_sphere_traits_2<R>   Self;
+  typedef Delaunay_triangulation_sphere_traits_2<R>   Self;
   typedef CGAL::Power_test_2<Self>            Power_test_2;
   typedef CGAL::Orientation_sphere_2<Self>    Orientation_2;
   typedef CGAL::Coradial_sphere_2<Self>       Coradial_sphere_2;
@@ -213,7 +213,7 @@ public:
 	
 	
 
-  Regular_triangulation_sphere_traits_2(const Point_2& sphere=Point_2(0,0,0));
+  Delaunay_triangulation_sphere_traits_2(const Point_2& sphere=Point_2(0,0,0));
 
   Orientation_2
   orientation_2_object()const
@@ -243,8 +243,8 @@ protected :
 };
 
 template < class R >
-Regular_triangulation_sphere_traits_2<R> ::
-Regular_triangulation_sphere_traits_2(const Point_2& sphere)
+Delaunay_triangulation_sphere_traits_2<R> ::
+Delaunay_triangulation_sphere_traits_2(const Point_2& sphere)
 : _sphere(sphere)
 	{}
 

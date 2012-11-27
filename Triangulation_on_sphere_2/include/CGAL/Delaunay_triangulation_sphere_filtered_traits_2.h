@@ -6,7 +6,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include <CGAL/Filtered_predicate.h>
-#include <CGAL/static_in_cone_ntC3.h>
+//#include <CGAL/static_in_cone_ntC3.h>
 
 namespace CGAL { 
 
@@ -41,6 +41,8 @@ struct Delaunay_weighted_converter_2
 	}
 };
 
+	/*
+	
 // The argument is supposed to be a Filtered_kernel like kernel.
 template < typename K >
 class Delaunay_triangulation_sphere_filtered_traits_2
@@ -123,7 +125,7 @@ public:
   // The following are inherited since they are constructions :
   // Construct_weighted_circumcenter_2
   // Construct_radical_axis_2
-};
+};*/
 
 } //namespace CGAL
 

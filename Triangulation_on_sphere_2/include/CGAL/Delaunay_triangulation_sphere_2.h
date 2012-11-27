@@ -1,10 +1,10 @@
-#ifndef CGAL_Regular_triangulation_on_sphere_2_H
-#define CGAL_Regular_triangulation_on_sphere_2_H
+#ifndef CGAL_Delaunay_triangulation_sphere_2_H
+#define CGAL_Delaunay_triangulation_sphere_2_H
 
 #define HOLE_APPROACH
 
 #include <CGAL/Triangulation_on_sphere_2.h>
-#include <CGAL/Regular_triangulation_face_base_on_sphere_2.h>
+#include <CGAL/Delaunay_triangulation_face_base_sphere_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
 #include <fstream>
@@ -28,12 +28,12 @@ namespace CGAL {
 template < class Gt,
            class Tds  = Triangulation_data_structure_2 <
                         Regular_triangulation_vertex_base_2<Gt>,
-		        Regular_triangulation_face_base_on_sphere_2<Gt> > >
-class Regular_triangulation_on_sphere_2
+		        Delaunay_triangulation_face_base_sphere_2<Gt> > >
+class Delaunay_triangulation_sphere_2
   : public Triangulation_on_sphere_2<Gt,Tds>
 {
 
-   typedef Regular_triangulation_on_sphere_2<Gt, Tds>                         Self;
+   typedef Delaunay_triangulation_sphere_2<Gt, Tds>                         Self;
    typedef Triangulation_on_sphere_2<Gt,Tds>                                  Base;
 	
     //private: double _radius;
@@ -127,7 +127,7 @@ public:
 	
  public: 
   //CONSTRUCTORS
-  Regular_triangulation_on_sphere_2(const Gt& gt=Gt()) 
+  Delaunay_triangulation_sphere_2(const Gt& gt=Gt()) 
 	//:Base(_radius(1)) ,_minDist(pow (2, -25)), _minDistSquared( pow(_minDist, 2)), Base(Gt(gt))
 	:Base(Gt(gt))
   {}
@@ -399,7 +399,7 @@ propagate_conflicts (const Point  &p, Face_handle fh, int i,
 
 	template < class Gt, class Tds >
 	Oriented_side
-	Regular_triangulation_on_sphere_2<Gt,Tds>::
+	Delaunay_triangulation_sphere_2<Gt,Tds>::
 	power_test(const Face_handle &f, const Point &p, bool perturb) const
 	{
 		return power_test(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(),p, perturb);
@@ -407,7 +407,7 @@ propagate_conflicts (const Point  &p, Face_handle fh, int i,
 	
 	template < class Gt, class Tds >
 	Oriented_side
-	Regular_triangulation_on_sphere_2<Gt,Tds>::
+	Delaunay_triangulation_sphere_2<Gt,Tds>::
 	power_test(const Face_handle& f, int i, const Point &p) const
 	{
 		CGAL_triangulation_precondition ( orientation(f->vertex(ccw(i))->point(),
@@ -420,7 +420,7 @@ propagate_conflicts (const Point  &p, Face_handle fh, int i,
 	template < class Gt, class Tds >
 	inline
 	Oriented_side
-	Regular_triangulation_on_sphere_2<Gt,Tds>::
+	Delaunay_triangulation_sphere_2<Gt,Tds>::
 	power_test(const Point &p0, const Point &p1, const Point &p2, const Point &p, bool perturb) const
 	{
 		Oriented_side os = geom_traits().power_test_2_object()(p0,p1,p2,p);
@@ -477,7 +477,7 @@ propagate_conflicts (const Point  &p, Face_handle fh, int i,
 	template < class Gt, class Tds >
 	inline
 	Oriented_side
-	Regular_triangulation_on_sphere_2<Gt,Tds>::
+	Delaunay_triangulation_sphere_2<Gt,Tds>::
 	power_test(const Point &p, const Point &q, const Point &r) const
 	{
 		if(number_of_vertices()==2)
@@ -499,7 +499,7 @@ propagate_conflicts (const Point  &p, Face_handle fh, int i,
 //----------------------------------------------------------------------CHECK---------------------------------------------------------------//
 template <class Gt, class Tds>
 bool
-Regular_triangulation_on_sphere_2<Gt, Tds>::
+Delaunay_triangulation_sphere_2<Gt, Tds>::
 is_plane()const{
 	bool plane = true;
 	
@@ -539,7 +539,7 @@ is_plane()const{
 	
 template < class Gt, class Tds >
 bool
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 is_valid(bool verbose, int level ) const //int level
 {
 	bool result = true;
@@ -588,7 +588,7 @@ is_valid(bool verbose, int level ) const //int level
 	
 template < class Gt, class Tds >
 bool
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 is_valid_vertex(Vertex_handle vh, bool verbose, int level) const
 {
 	bool result = vh->face()->has_vertex(vh);
@@ -608,7 +608,7 @@ return true;
 
 template < class Gt, class Tds >
 bool
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 is_valid_face(Face_handle fh, bool verbose, int level) const
 {
    bool result = fh->get_in_conflict_flag()==0;
@@ -629,7 +629,7 @@ is_valid_face(Face_handle fh, bool verbose, int level) const
 
 template < class Gt, class Tds >
 inline bool
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 test_conflict(const Point  &p, Face_handle fh) const
 {
 	return(power_test(fh,p, true) != ON_NEGATIVE_SIDE);
@@ -641,8 +641,8 @@ test_conflict(const Point  &p, Face_handle fh) const
 	
 	
 template < class Gt, class Tds >
-typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+typename Delaunay_triangulation_sphere_2<Gt,Tds>::Vertex_handle
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 insert(const Point &p, Face_handle start)
 {
   Locate_type lt;
@@ -657,8 +657,8 @@ insert(const Point &p, Face_handle start)
 
 	
 template < class Gt, class Tds>
-typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Regular_triangulation_on_sphere_2<Gt, Tds>::
+typename Delaunay_triangulation_sphere_2<Gt,Tds>::Vertex_handle
+Delaunay_triangulation_sphere_2<Gt, Tds>::
 insert_in_plane_triangulation(const Point &p, Locate_type lt, Face_handle loc){
 	
 	CGAL_triangulation_precondition(!test_dim_up(p));
@@ -691,7 +691,7 @@ insert_in_plane_triangulation(const Point &p, Locate_type lt, Face_handle loc){
 
 template <class Gt, class Tds >
 typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 insert_first(const Point& p)
 {
 	CGAL_triangulation_precondition(number_of_vertices() == 0);
@@ -702,7 +702,7 @@ insert_first(const Point& p)
 	
 template <class Gt, class Tds >
 typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 insert_second(const Point& p)
 {
 	CGAL_triangulation_precondition(number_of_vertices() == 1);
@@ -714,8 +714,8 @@ insert_second(const Point& p)
 
 
 template < class Gt, class Tds >
-typename Regular_triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+typename Delaunay_triangulation_sphere_2<Gt,Tds>::Vertex_handle
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 insert(const Point &p, Locate_type lt, Face_handle loc, int li) {
 		
 	Vertex_handle v;
@@ -766,7 +766,7 @@ insert(const Point &p, Locate_type lt, Face_handle loc, int li) {
 	
 template <class Gt, class Tds >
 typename Triangulation_on_sphere_2<Gt,Tds>::Vertex_handle
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 insert_outside_affine_hull_regular(const Point& p)
 {
  if(dimension()==0){
@@ -825,7 +825,7 @@ insert_outside_affine_hull_regular(const Point& p)
 	
 template < class Gt, class Tds >
 bool
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 update_ghost_faces(Vertex_handle v, bool first)
 {
 	bool neg_found=false;
@@ -879,7 +879,7 @@ update_ghost_faces(Vertex_handle v, bool first)
 //-------------------------------------------------------------------------------REMOVAL----------------------------------------------------//
 template < class Gt, class Tds >
 void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 remove_degree_3(Vertex_handle v, Face_handle f) 
 {
   if (f == Face_handle())    f=v->face();
@@ -891,7 +891,7 @@ remove_degree_3(Vertex_handle v, Face_handle f)
 	
 template < class Gt, class Tds >
 void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 remove(Vertex_handle v )
 {
 CGAL_triangulation_precondition( v != Vertex_handle() );
@@ -910,7 +910,7 @@ CGAL_triangulation_precondition( v != Vertex_handle() );
 	
 template <class Gt, class Tds >
 void
-Regular_triangulation_on_sphere_2<Gt, Tds>::
+Delaunay_triangulation_sphere_2<Gt, Tds>::
 remove_1D(Vertex_handle v)
 {
 	this->_tds.remove_1D(v);
@@ -922,7 +922,7 @@ remove_1D(Vertex_handle v)
 	
 template < class Gt, class Tds >
 void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 remove_2D(Vertex_handle v)
 {
 	CGAL_triangulation_precondition(dimension()==2);
@@ -942,7 +942,7 @@ remove_2D(Vertex_handle v)
 
 template <class Gt, class Tds >
 bool
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 test_dim_down(Vertex_handle v)
 {
 	CGAL_triangulation_precondition(dimension()==2);
@@ -969,7 +969,7 @@ test_dim_down(Vertex_handle v)
 	
 template <class Gt, class Tds >
 bool
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 test_dim_up(const Point &p) const{
 	// dimension of triangulation increase from 1 to 2 iff the new vertex in not coplanar with the old vertices
 	//std::cout<<p<<std::endl;
@@ -987,7 +987,7 @@ test_dim_up(const Point &p) const{
 	
 template < class Gt, class Tds >
 void
-Regular_triangulation_on_sphere_2<Gt,Tds>::
+Delaunay_triangulation_sphere_2<Gt,Tds>::
 fill_hole_regular(std::list<Edge> & first_hole)
 {
   typedef std::list<Edge> Hole;
@@ -1140,4 +1140,4 @@ fill_hole_regular(std::list<Edge> & first_hole)
 
 } //namespace CGAL 
 
-#endif // CGAL_Regular_triangulation_on_sphere_2_H
+#endif // CGAL_Delaunay_triangulation_sphere_2_H

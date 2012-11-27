@@ -10,8 +10,8 @@
 #include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include <CGAL/Delaunay_triangulation_sphere_filtered_traits_2.h>
 
-#include <CGAL/Regular_triangulation_sphere_traits_2.h>
-#include <CGAL/Regular_triangulation_on_sphere_2.h>
+#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
+#include <CGAL/Delaunay_triangulation_sphere_2.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
@@ -25,8 +25,8 @@
 #include <CGAL/Triangulation_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-typedef CGAL::Regular_triangulation_sphere_traits_2<K>             Gt;
-typedef CGAL::Regular_triangulation_on_sphere_2<Gt>              RTOS;
+typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
+typedef CGAL::Delaunay_triangulation_sphere_2<Gt>              RTOS;
 //typedef CGAL::Triangulation_2<Gt> RTOS;
 typedef RTOS::Vertex_handle                             Vertex_handle;
 typedef RTOS::Face_handle                                 Face_handle;

@@ -1,10 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_sphere_traits_2.h>
+#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include <CGAL/enum.h>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-typedef CGAL::Regular_triangulation_sphere_traits_2<K>          Gt;
+typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>          Gt;
 typedef Gt::Point_2                                             Point;
 typedef Gt::Orientation_2                                      Orientation_2;
 typedef Gt::Power_test_2                                     Power_test_2;

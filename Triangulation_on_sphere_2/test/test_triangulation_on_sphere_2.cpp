@@ -1,15 +1,16 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_on_sphere_2.h>
-#include <CGAL/Triangulation_sphere_traits_2.h>
+#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include <CGAL/enum.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/number_utils.h>
 
 #include <fstream>
-
+int main(){}
+/*
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-typedef CGAL::Triangulation_sphere_traits_2<K>          Gt;
+typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>          Gt;
 typedef CGAL::Triangulation_on_sphere_2<Gt>               TOS;
 
 
@@ -60,9 +61,9 @@ int main(){
 	//std::ofstream hpts2("hpts2.off");
 	
 	
-	/*--------------------------*/
+	//--------------------------//
 	//       TEST INPUTS        //
-	/*--------------------------*/
+	//--------------------------//
 	//             SPHERES
 	Point S1=Point(0,0,0);
 	
@@ -419,9 +420,9 @@ int main(){
 	 assert(tr_2_s.xy_equal(Loc_result->vertex(li)->point(),P13));
 	 
 	 
-	 /*--------------------------*/
+	 //--------------------------//
 	//           REMOVAL        //
-	/*--------------------------*/
+	//--------------------------//
 	// DIM 2 
 	// DIM 0
 	// DIM 1
@@ -435,7 +436,7 @@ Stream &write_triangulation_to_off_2(Stream &out,Stream &out2, Triangulation &t)
 	// Points of triangulation
 	for (Face_iterator it = t.faces_begin(); it != t.faces_end(); it++) {  
 		if(!it->is_negative()
-		   /*(t.orientation(it->vertex(0)->point(),it->vertex(1)->point(),it->vertex(2)->point())==1)*/
+		   //(t.orientation(it->vertex(0)->point(),it->vertex(1)->point(),it->vertex(2)->point())==1)//
 		   ){
 			for (int i=0 ; i<3 ; i++) {
 				if(it->vertex(i)!=Vertex_handle())
@@ -527,5 +528,5 @@ Stream &write_vertices(Stream &out, Triangulation &t)
 		<< p.y() << " " 
 		<< p.z() << std::endl;
 		
-	}
-}
+	}*/
+//}

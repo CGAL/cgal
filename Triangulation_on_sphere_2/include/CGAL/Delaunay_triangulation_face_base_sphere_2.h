@@ -28,7 +28,7 @@ namespace CGAL {
 
 
 template <class Gt, class Fb = Triangulation_face_base_on_sphere_2<Gt> >
-class Regular_triangulation_face_base_on_sphere_2
+class Delaunay_triangulation_face_base_sphere_2
   :  public Fb
 {
   typedef Fb                                            Fbase;
@@ -42,7 +42,7 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Fb::template Rebind_TDS<TDS2>::Other   Fb2;
-    typedef Regular_triangulation_face_base_on_sphere_2<Gt,Fb2>             Other;
+    typedef Delaunay_triangulation_face_base_sphere_2<Gt,Fb2>             Other;
   };
 
   typedef std::list<Vertex_handle>             Vertex_list;
@@ -55,13 +55,13 @@ public:
   void set_in_conflict_flag(unsigned char f) { _in_conflict_flag = f; }
   unsigned char get_in_conflict_flag() const { return _in_conflict_flag; }
 
-  Regular_triangulation_face_base_on_sphere_2()
+  Delaunay_triangulation_face_base_sphere_2()
   : Fbase(),  vlist()
   {
     set_in_conflict_flag(0);
   }
 
-  Regular_triangulation_face_base_on_sphere_2(Vertex_handle v0, 
+ Delaunay_triangulation_face_base_sphere_2(Vertex_handle v0, 
 				    Vertex_handle v1, 
 				    Vertex_handle v2)
   : Fbase(v0,v1,v2), vlist()
@@ -69,7 +69,7 @@ public:
     set_in_conflict_flag(0);
   }
 
-  Regular_triangulation_face_base_on_sphere_2(Vertex_handle v0, 
+  Delaunay_triangulation_face_base_sphere_2(Vertex_handle v0, 
 				    Vertex_handle v1, 
 				    Vertex_handle v2,
 				    Face_handle n0, 
@@ -80,7 +80,7 @@ public:
        set_in_conflict_flag(0);
   }
 
-  ~Regular_triangulation_face_base_on_sphere_2()
+  ~Delaunay_triangulation_face_base_sphere_2()
   { 
     vlist.clear();
   }
