@@ -259,14 +259,17 @@ private:
   /// Returns canonical facet of facet
   Facet canonical_facet(const Facet& facet) const
   {
+    //note : we assume facet is not infinite
     const Facet mirror = mirror_facet(facet);
-    if(r_tr_.is_infinite(facet.first->vertex(facet.second)))
+    Vertex_handle vf = facet.first->vertex(facet.second);
+    Vertex_handle vm = mirror.first->vertex(mirror.second);
+    if(r_tr_.is_infinite(vf))
       return mirror;
-    else if(r_tr_.is_infinite(mirror.first->vertex(mirror.second)))
+    else if(r_tr_.is_infinite(vm))
       return facet;
 
-    typename CGAL::Mesh_3::Triangulation_Finite_facets_comparator<Tr> fcomp;
-    return (fcomp(facet, mirror)) ? facet : mirror;
+    typename CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle> vcomp;
+    return (vcomp(vf, vm)) ? facet : mirror;
   }
 
   /// Returns true if f has already been visited
