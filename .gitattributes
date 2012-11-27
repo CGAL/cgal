@@ -11,6 +11,14 @@
 *.poly -text
 *.fig -text
 *.nsh eol=crlf
+
+# exceptions:
+AABB_tree/test/AABB_tree/AABB_test_util.h eol=crlf
+Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgram.cmake eol=crlf
+Kernel_23/include/CGAL/internal/Projection_traits_3.h eol=crlf
+Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_triangulation.cpp eol=crlf
+Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_segments_3.cpp eol=crlf
+
 AABB_tree/demo/AABB_tree/AABB_demo.ppt -text svneol=unset#application/vnd.ms-powerpoint
 AABB_tree/demo/AABB_tree/AABB_demo.qrc -text
 AABB_tree/demo/AABB_tree/MainWindow.ui -text
