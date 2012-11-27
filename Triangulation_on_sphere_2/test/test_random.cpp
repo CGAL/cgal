@@ -1,16 +1,18 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_sphere_traits_2.h>
+//#include <CGAL/Regular_triangulation_sphere_traits_2.h>
+#include <CGAL/Projection_sphere_traits_3.h>
 #include <CGAL/Regular_triangulation_on_sphere_2.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_2.h>
 #include <fstream>
 #include <CGAL/Timer.h>
-#include <CGAL/number_utils.h>
+//#include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_3.h>
 #include <cmath>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-typedef CGAL::Regular_triangulation_sphere_traits_2<K>             Gt;
+//typedef CGAL::Regular_triangulation_sphere_traits_2<K>             Gt;
+typedef CGAL::Projection_sphere_traits_3<K>							Gt;
 typedef CGAL::Regular_triangulation_on_sphere_2<Gt>              RTOS;
 typedef RTOS::Vertex_handle                             Vertex_handle;
 typedef RTOS::Face_handle                                 Face_handle;
@@ -82,8 +84,8 @@ bool are_equal(RTOS triA, RTOS triB){
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =100;
-	radius=100;
+	nu_of_pts =1000000;
+	radius=6000000;
 	double minDist = radius * pow (2, -25);
 	double minDist2 = pow(minDist, 2);
 	int invalid = 0;

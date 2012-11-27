@@ -972,8 +972,9 @@ bool
 Regular_triangulation_on_sphere_2<Gt,Tds>::
 test_dim_up(const Point &p) const{
 	// dimension of triangulation increase from 1 to 2 iff the new vertex in not coplanar with the old vertices
-	std::cout<<p<<std::endl;
+	//std::cout<<p<<std::endl;
 	//first three points of triangulation
+	
 	Face_handle f=all_edges_begin()->first;
 	Vertex_handle v1=f->vertex(0);
 	Vertex_handle v2=f->vertex(1);
