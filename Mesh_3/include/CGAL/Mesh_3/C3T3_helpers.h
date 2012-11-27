@@ -409,7 +409,7 @@ protected:
     return true;
   }
 
-  void unlock_all_elements() {}
+  void unlock_all_elements() const {}
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -494,7 +494,7 @@ protected:
     return locked;
   }
 
-  void unlock_all_elements()
+  void unlock_all_elements() const
   {
     if (m_lock_ds)
     {
@@ -615,7 +615,7 @@ public:
    *
    * Same as update_mesh, but with the precondition that 
    * Th().no_topological_change(tr_, old_vertex, new_position,
-   * incident_cells) return false.
+   * incident_cells_) return false.
    */
   template <typename SliverCriterion, typename OutputIterator>
   std::pair<bool,Vertex_handle>
@@ -698,6 +698,23 @@ public:
                            Outdated_cell_set& outdated_cells_set,
                            Moving_vertices_set& moving_vertices,
                            bool *p_could_lock_zone);
+  
+  /**
+   * Try to lock the incident cells and return them in \c cells
+   * Return value:
+   * - false: everything is unlocked and \c cells is empty
+   * - true: incident cells are locked and \c cells contains all of them
+   */
+  bool
+  try_lock_and_get_incident_cells(const Vertex_handle& v,
+                                  Cell_vector &cells) const;
+  
+  /**
+   * Get the incident cells and return them in \c cells
+   */
+  void
+  get_incident_cells_without_using_tds_data(const Vertex_handle& v,
+                                            Cell_vector &cells) const;
 
   /**
    * Outputs to out the sliver (wrt \c criterion and \c sliver_bound) incident
@@ -1556,6 +1573,114 @@ private:
       }
     }
   }
+
+  // Used by the parallel version
+  template <typename FacetUpdater>
+  void update_facets(std::vector<Cell_handle>& outdated_cells_vector, FacetUpdater updater)
+  {
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+    {
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, outdated_cells_vector.size()),
+        [&]( const tbb::blocked_range<size_t>& r ) // CJTODO: lambdas ok?
+      {
+        for( size_t i = r.begin() ; i != r.end() ; ++i)
+        {
+          const Cell_handle cell = outdated_cells_vector[i];
+          Cell_handle null_cell;
+          bool inf = false;
+          for (int i=0 ; i<4 && (!inf) ; ++i ){
+            if ( tr_.is_infinite(cell->vertex(i)) ){
+              inf = true;
+              Cell_handle n = cell->neighbor(i);
+              if(n->next_intrusive() != null_cell){// the neighbor is also outdated
+                if(cell < n){ // otherwise n will report it later
+                  Facet f(cell,i);
+                  updater(f);
+                }
+              } else { // report it now or never
+                if(cell < n){ 
+                  Facet f(cell,i);
+                  updater(f);
+                }else {
+                  Facet f(n,n->index(cell));
+                  updater(f);
+                }
+              }
+            }
+          }
+          if(! inf){
+            for ( int i=0 ; i<4 ; ++i ){
+              Cell_handle n = cell->neighbor(i);
+              if(n->next_intrusive() != null_cell){// the neighbor is also outdated
+                if(cell < n){ // otherwise n will report it later
+                  Facet f(cell,i);
+                  updater(f);
+                }
+              } else { // report it now or never
+                if(cell < n){ 
+                  Facet f(cell,i);
+                  updater(f);
+                }else {
+                  Facet f(n,n->index(cell));
+                  updater(f);
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    // Sequential
+    else
+#endif // CGAL_LINKED_WITH_TBB
+    {
+      std::vector<Cell_handle>::iterator it;
+      for(it = outdated_cells_vector.begin();
+          it != outdated_cells_vector.end();
+          ++it)
+      {
+        Cell_handle cell = *it;
+
+        int i=0;
+        bool inf = false;
+        for ( ; i<4 && (!inf) ; ++i ){
+          if ( tr_.is_infinite(cell->vertex(i)) ){
+            inf = true;
+            Cell_handle n = cell->neighbor(i);
+            if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
+              if(cell < n){ // otherwise n will report it later
+                updater(Facet(cell,i));
+              }
+            } else { // report it now or never
+              if(cell < n){ 
+                updater(Facet(cell,i));
+              }else {
+                updater(Facet(n,n->index(cell)));
+              }
+            }
+          }
+        }
+        if(! inf){
+          for ( i=0 ; i<4 ; ++i ){
+            Cell_handle n = cell->neighbor(i);
+            if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
+              if(cell < n){ // otherwise n will report it later
+                updater(Facet(cell,i));
+              }
+            } else { // report it now or never
+              if(cell < n){ 
+                updater(Facet(cell,i));
+              }else {
+                updater(Facet(n,n->index(cell)));
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 #endif //CGAL_INTRUSIVE_LIST
 
 
@@ -1740,13 +1865,13 @@ update_mesh(const Point_3& new_position,
   //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
 
-  Cell_vector incident_cells;
-  incident_cells.reserve(64);
-  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
-  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
+  Cell_vector incident_cells_;
+  incident_cells_.reserve(64);
+  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
+  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells_) )
   {
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
-                                                  incident_cells.end()))
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells_.begin(), 
+                                                  incident_cells_.end()))
     {
       ch->invalidate_circumcenter();
     }
@@ -1754,7 +1879,7 @@ update_mesh(const Point_3& new_position,
                                       old_vertex,
                                       criterion,
                                       modified_vertices,
-                                      incident_cells);
+                                      incident_cells_);
   }
   else
   {
@@ -1947,16 +2072,53 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
 
   // Updates cells
   // Note: ~58% of rebuild_restricted_delaunay time
+  
+  std::set<Vertex_handle> vertex_to_proj;
+
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
-    tbb::parallel_do(first_cell, last_cell,
+    std::vector<Cell_handle> outdated_cells_vector;
+    outdated_cells_vector.reserve(outdated_cells.size());
+    for ( ; first_cell != last_cell ; ++first_cell)
+    {
+      outdated_cells_vector.push_back(*first_cell);
+    }
+
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, outdated_cells_vector.size()),
+      [&]( const tbb::blocked_range<size_t>& r ) // CJTODO: lambdas ok?
+      {
+        for( size_t i = r.begin() ; i != r.end() ; ++i)
+        {
+          c3t3_.remove_from_complex(outdated_cells_vector[i]);
+          updater(outdated_cells_vector[i]);
+        }
+      });
+    /*tbb::parallel_do(first_cell, last_cell,
       [&]( OutdatedCells::const_reference cell ) // CJTODO: lambdas ok?
       {
         c3t3_.remove_from_complex(cell);
         updater(cell);
-      });
+      });*/
+    
+
+#ifdef MESH_3_PROFILING
+    std::cerr << " done in " << t.elapsed() << " seconds (#cells from " 
+      << num_cells << " to " << c3t3_.number_of_cells_in_complex() << ")." 
+      << std::endl;
+    std::cerr << "  Updating facets...";
+    t.reset();
+#endif
+
+    // Get facets (returns each canonical facet only once)
+    // Note: ~42% of rebuild_restricted_delaunay time
+    //  Facet_vector facets;
+    Facet_updater facet_updater(c3t3_,vertex_to_proj, updater);
+    update_facets(outdated_cells_vector, facet_updater);
+  
+    // now we can clear
+    outdated_cells.clear();
   }
   // Sequential
   else
@@ -1968,25 +2130,25 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
       c3t3_.remove_from_complex(cell);
       updater(cell);
     }
-  }
-  
+
 #ifdef MESH_3_PROFILING
-  std::cerr << " done in " << t.elapsed() << " seconds (#cells from " 
-    << num_cells << " to " << c3t3_.number_of_cells_in_complex() << ")." 
-    << std::endl;
-  std::cerr << "  Updating facets...";
-  t.reset();
+    std::cerr << " done in " << t.elapsed() << " seconds (#cells from " 
+      << num_cells << " to " << c3t3_.number_of_cells_in_complex() << ")." 
+      << std::endl;
+    std::cerr << "  Updating facets...";
+    t.reset();
 #endif
 
-  // Get facets (returns each canonical facet only once)
-  // Note: ~42% of rebuild_restricted_delaunay time
-  //  Facet_vector facets;
-  std::set<Vertex_handle> vertex_to_proj;
-  Facet_updater facet_updater(c3t3_,vertex_to_proj, updater);
-  update_facets(outdated_cells, facet_updater);
+    // Get facets (returns each canonical facet only once)
+    // Note: ~42% of rebuild_restricted_delaunay time
+    //  Facet_vector facets;
+    Facet_updater facet_updater(c3t3_,vertex_to_proj, updater);
+    update_facets(outdated_cells, facet_updater);
   
-  // now we can clear
-  outdated_cells.clear();
+    // now we can clear
+    outdated_cells.clear();
+  }
+  
   
 #ifdef MESH_3_PROFILING
   std::cerr << " done in " << t.elapsed() << " seconds (" 
@@ -2163,17 +2325,17 @@ move_point(const Vertex_handle& old_vertex,
   // std::cerr << "C3T3_helpers::move_point[v2](" 
   //           << (void*)(&*old_vertex) << " = " << old_vertex->point()
   //           << " , " << new_position << ")\n";
-  Cell_vector incident_cells;
-  incident_cells.reserve(64);
-  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
-  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
+  Cell_vector incident_cells_;
+  incident_cells_.reserve(64);
+  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
+  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells_) )
   {
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
-                                                  incident_cells.end()))
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells_.begin(), 
+                                                  incident_cells_.end()))
     {
       ch->invalidate_circumcenter();
     }
-    std::copy(incident_cells.begin(),incident_cells.end(), outdated_cells);
+    std::copy(incident_cells_.begin(),incident_cells_.end(), outdated_cells);
     return move_point_no_topo_change(old_vertex,
                                      new_position);
   }
@@ -2195,17 +2357,17 @@ move_point(const Vertex_handle& old_vertex,
            Outdated_cell_set& outdated_cells_set, 
            Moving_vertices_set& moving_vertices)
 {
-  Cell_vector incident_cells;
-  incident_cells.reserve(64);
-  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
-  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
+  Cell_vector incident_cells_;
+  incident_cells_.reserve(64);
+  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
+  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells_) )
   {
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
-                                                  incident_cells.end()))
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells_.begin(), 
+                                                  incident_cells_.end()))
     {
       ch->invalidate_circumcenter();
     }
-    std::copy(incident_cells.begin(),incident_cells.end(), 
+    std::copy(incident_cells_.begin(),incident_cells_.end(), 
       std::inserter(outdated_cells_set, outdated_cells_set.end()));
     return move_point_no_topo_change(old_vertex, new_position);
   }
@@ -2236,8 +2398,8 @@ move_point(const Vertex_handle& old_vertex,
   CGAL_assertion(p_could_lock_zone != 0);
   *p_could_lock_zone = true;
   
-  Cell_vector incident_cells;
-  incident_cells.reserve(64);
+  Cell_vector incident_cells_;
+  incident_cells_.reserve(64);
   if (!try_lock_vertex(old_vertex)) // LOCK
   {
     *p_could_lock_zone = false;
@@ -2246,53 +2408,10 @@ move_point(const Vertex_handle& old_vertex,
   }
 
   //======= Get incident cells ==========
-  //tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
-  Cell_handle d = old_vertex->cell();
-  if (!try_lock_element(d)) // LOCK
+  if (try_lock_and_get_incident_cells(old_vertex, incident_cells_) == false)
   {
-    BOOST_FOREACH(Cell_handle& ch, 
-      std::make_pair(incident_cells.begin(), incident_cells.end()))
-    {
-      ch->tds_data().clear();
-    }
     *p_could_lock_zone = false;
-    unlock_all_elements();
     return Vertex_handle();
-  }
-  incident_cells.push_back(d);
-  d->tds_data().mark_in_conflict();
-  int head=0;
-  int tail=1;
-  do {
-    Cell_handle c = incident_cells[head];
-
-    for (int i=0; i<4; ++i) {
-      if (c->vertex(i) == old_vertex)
-        continue;
-      Cell_handle next = c->neighbor(i);
-      if (!try_lock_element(next)) // LOCK
-      {
-        BOOST_FOREACH(Cell_handle& ch, 
-          std::make_pair(incident_cells.begin(), incident_cells.end()))
-        {
-          ch->tds_data().clear();
-        }
-        *p_could_lock_zone = false;
-        unlock_all_elements();
-        return Vertex_handle();
-      }
-      if (! next->tds_data().is_clear())
-        continue;			
-      incident_cells.push_back(next);
-      ++tail;
-      next->tds_data().mark_in_conflict();
-    }
-    ++head;
-  } while(head != tail);
-  BOOST_FOREACH(Cell_handle& ch, 
-    std::make_pair(incident_cells.begin(), incident_cells.end()))
-  {
-    ch->tds_data().clear();
   }
   //======= /Get incident cells ==========
 
@@ -2302,16 +2421,16 @@ move_point(const Vertex_handle& old_vertex,
     unlock_all_elements();
     return Vertex_handle();
   }
-  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
+  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells_) )
   {
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
-                                                  incident_cells.end()))
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells_.begin(), 
+                                                  incident_cells_.end()))
     {
       ch->invalidate_circumcenter();
     }
 
     tbb::mutex::scoped_lock lock(mut_outdated_cells); // CJTODO LOCK
-    std::copy(incident_cells.begin(),incident_cells.end(), 
+    std::copy(incident_cells_.begin(),incident_cells_.end(), 
       std::inserter(outdated_cells_set, outdated_cells_set.end()));
     lock.release(); // CJTODO LOCK
     
@@ -2759,10 +2878,10 @@ C3T3_helpers<C3T3,MD>::
 min_incident_value(const Vertex_handle& vh,
                    const SliverCriterion& criterion) const
 {
-  Cell_vector incident_cells;
-  tr_.finite_incident_cells(vh,std::back_inserter(incident_cells));
+  Cell_vector incident_cells_;
+  tr_.finite_incident_cells(vh,std::back_inserter(incident_cells_));
   
-  return min_sliver_in_c3t3_value(incident_cells, criterion);
+  return min_sliver_in_c3t3_value(incident_cells_, criterion);
 }
 
 template <typename OutputIterator, typename CH, typename Fct>
@@ -2805,6 +2924,86 @@ struct Counter {
 
 
 template <typename C3T3, typename MD>
+void
+C3T3_helpers<C3T3,MD>::
+get_incident_cells_without_using_tds_data(const Vertex_handle& v,
+                                          Cell_vector &cells) const
+{
+  std::set<Cell_handle> found_cells;
+  Cell_handle d = v->cell();
+
+  cells.push_back(d);
+  found_cells.insert(d);
+  int head=0;
+  int tail=1;
+  do {
+    Cell_handle c = cells[head];
+
+    for (int i=0; i<4; ++i) {
+      if (c->vertex(i) == v)
+        continue;
+      Cell_handle next = c->neighbor(i);
+      if (! found_cells.insert(next).second )
+        continue;			
+      cells.push_back(next);
+      ++tail;
+    }
+    ++head;
+  } while(head != tail);
+}
+
+
+template <typename C3T3, typename MD>
+bool
+C3T3_helpers<C3T3,MD>::
+try_lock_and_get_incident_cells(const Vertex_handle& v,
+                                Cell_vector &cells) const
+{
+  Cell_handle d = v->cell();
+  if (!try_lock_element(d)) // LOCK
+  {
+    unlock_all_elements();
+    return false;
+  }
+  cells.push_back(d);
+  d->tds_data().mark_in_conflict();
+  int head=0;
+  int tail=1;
+  do {
+    Cell_handle c = cells[head];
+
+    for (int i=0; i<4; ++i) {
+      if (c->vertex(i) == v)
+        continue;
+      Cell_handle next = c->neighbor(i);
+      if (!try_lock_element(next)) // LOCK
+      {
+        BOOST_FOREACH(Cell_handle& ch, 
+          std::make_pair(cells.begin(), cells.end()))
+        {
+          ch->tds_data().clear();
+        }
+        cells.clear();
+        unlock_all_elements();
+        return false;
+      }
+      if (! next->tds_data().is_clear())
+        continue;			
+      cells.push_back(next);
+      ++tail;
+      next->tds_data().mark_in_conflict();
+    }
+    ++head;
+  } while(head != tail);
+  BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+  {
+    ch->tds_data().clear();
+  }
+  return true;
+}
+
+
+template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
 OutputIterator
 C3T3_helpers<C3T3,MD>::
@@ -2815,11 +3014,11 @@ incident_slivers(const Vertex_handle& v,
 {
   typedef SliverCriterion Sc;
   
-  std::vector<Cell_handle> incident_cells;
-  tr_.incident_cells(v, std::back_inserter(incident_cells));
+  std::vector<Cell_handle> incident_cells_;
+  tr_.incident_cells(v, std::back_inserter(incident_cells_));
   
-  std::remove_copy_if(incident_cells.begin(),
-                      incident_cells.end(),
+  std::remove_copy_if(incident_cells_.begin(),
+                      incident_cells_.end(),
                       out,
                       std::not1(Is_sliver<Sc>(c3t3_,criterion,sliver_bound)));
   
@@ -2989,9 +3188,9 @@ get_conflict_zone_topo_change(const Vertex_handle& vertex,
                               OutputIterator conflict_cells) const
 {
   // Get triangulation_vertex incident cells
-  Cell_vector incident_cells;
-  incident_cells.reserve(64);
-  tr_.incident_cells(vertex, std::back_inserter(incident_cells));
+  Cell_vector incident_cells_;
+  incident_cells_.reserve(64);
+  tr_.incident_cells(vertex, std::back_inserter(incident_cells_));
   
   // Get conflict_point conflict zone
   Cell_vector deleted_cells;
@@ -3020,10 +3219,10 @@ get_conflict_zone_topo_change(const Vertex_handle& vertex,
   // Compute union of conflict_point conflict zone and triangulation_vertex
   // incident cells
   std::sort(deleted_cells.begin(),deleted_cells.end());
-  std::sort(incident_cells.begin(),incident_cells.end());
+  std::sort(incident_cells_.begin(),incident_cells_.end());
   
   std::set_union(deleted_cells.begin(), deleted_cells.end(),
-                 incident_cells.begin(), incident_cells.end(),
+                 incident_cells_.begin(), incident_cells_.end(),
                  conflict_cells);
   
   return conflict_cells;

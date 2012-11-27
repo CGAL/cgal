@@ -27,50 +27,10 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Dummy_tds_3.h>
 
-#ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/enumerable_thread_specific.h>
-#endif
-
 namespace CGAL {
- 
-/************************************************
-// Class Triangulation_ds_cell_base_3_base
-// Two versions: sequential / parallel
-************************************************/
-
-// Sequential
-template <typename TDS_data, bool used_by_parallel_mesh_3>
-class Triangulation_ds_cell_base_3_base
-{
-public:
-  // TDS internal data access functions.
-        TDS_data& tds_data()       { return _tds_data; }
-  const TDS_data& tds_data() const { return _tds_data; }
-  
-protected:
-  TDS_data _tds_data;
-};
-
-#ifdef CGAL_LINKED_WITH_TBB
-// Parallel
-template <typename TDS_data>
-class Triangulation_ds_cell_base_3_base<TDS_data, true>
-{
-public:
-  // TDS internal data access functions.
-        TDS_data& tds_data()       { return _tds_data.local(); }
-  const TDS_data& tds_data() const { return _tds_data.local(); }
-  
-protected:
-  tbb::enumerable_thread_specific<TDS_data> _tds_data;
-};
-#endif // CGAL_LINKED_WITH_TBB
-
 
 template < typename TDS = void >
 class Triangulation_ds_cell_base_3
-  : public Triangulation_ds_cell_base_3_base<typename TDS::Cell_data,
-                                             TDS::Is_for_parallel_mesh_3>
 {
 public:
   typedef TDS                          Triangulation_data_structure;
@@ -238,10 +198,15 @@ public:
   void * for_compact_container() const { return N[0].for_compact_container(); }
   void * & for_compact_container()     { return N[0].for_compact_container(); }
 
+  // TDS internal data access functions.
+        TDS_data& tds_data()       { return _tds_data; }
+  const TDS_data& tds_data() const { return _tds_data; }
+
 private:
 
   Cell_handle   N[4];
   Vertex_handle V[4];
+  TDS_data      _tds_data;
 };
 
 template < class TDS >

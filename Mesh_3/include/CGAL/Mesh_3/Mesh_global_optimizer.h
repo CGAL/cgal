@@ -665,8 +665,18 @@ compute_move(const Vertex_handle& v)
     Gt().construct_translated_point_3_object();
 
   Cell_vector incident_cells;
-  incident_cells.reserve(64);
-  tr_.incident_cells(v, std::back_inserter(incident_cells));
+  incident_cells.reserve(64);  
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  {
+    helper_.get_incident_cells_without_using_tds_data(v, incident_cells);
+  }
+  else
+#endif //CGAL_LINKED_WITH_TBB
+  {
+    tr_.incident_cells(v, std::back_inserter(incident_cells));
+  }
 
   // Get move from move function
   Vector_3 move = move_function_(v, incident_cells, c3t3_, sizing_field_);
@@ -839,14 +849,43 @@ Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 fill_sizing_field()
 {
   std::map<Point_3,FT> value_map;
-  
-  // Fill map with local size
-  for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin(); 
-      vit != tr_.finite_vertices_end();
-      ++vit)
+
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
-    value_map.insert(std::make_pair(vit->point(),
-                                    average_circumradius_length(vit)));
+    typedef tbb::enumerable_thread_specific<
+      std::vector< std::pair<Point_3, FT> > > Local_list;
+    Local_list local_lists;
+
+    tbb::parallel_do(tr_.finite_vertices_begin(), tr_.finite_vertices_end(),
+      [&]( Vertex& v ) // CJTODO: lambdas ok?
+    {
+      // CJTODO: should use Compact_container::s_iterator_to,
+      // but we don't know the exact Compact_container type here
+      Vertex_handle vh(&v);
+      local_lists.local().push_back(
+        std::make_pair(v.point(), average_circumradius_length(vh)));
+    });
+
+    for(typename Local_list::iterator it_list = local_lists.begin() ;
+          it_list != local_lists.end() ;
+          ++it_list )
+    {
+      value_map.insert(it_list->begin(), it_list->end());
+    }
+  }
+  else
+#endif //CGAL_LINKED_WITH_TBB
+  {
+    // Fill map with local size
+    for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin(); 
+        vit != tr_.finite_vertices_end();
+        ++vit)
+    {
+      value_map.insert(std::make_pair(vit->point(),
+                                      average_circumradius_length(vit)));
+    }
   }
   
   // fill sizing field
@@ -885,7 +924,17 @@ average_circumradius_length(const Vertex_handle& v) const
 {
   Cell_vector incident_cells;
   incident_cells.reserve(64);
-  tr_.incident_cells(v, std::back_inserter(incident_cells));
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  {
+    helper_.get_incident_cells_without_using_tds_data(v, incident_cells);
+  }
+  else
+#endif //CGAL_LINKED_WITH_TBB
+  {
+    tr_.incident_cells(v, std::back_inserter(incident_cells));
+  }
   
   FT sum_len (0);
   unsigned int nb = 0;
