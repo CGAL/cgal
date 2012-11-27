@@ -11,14 +11,13 @@
 \usepackage{cc_manual}
 \usepackage{makeidx}
 
-\RCSdef{\ccRevision}{$Id$}
-\RCSdefDate{\ccDate}{$Date$}
+%\RCSdef{\ccRevision}{$Id$}
+%\RCSdefDate{\ccDate}{$Date$}
 
 % Print a release note.
 \catcode`\@=11\relax
 \newwrite\@unused
 \def\typeout#1{{\let\protect\string\immediate\write\@unused{#1}}}
-\typeout{cc_manual_index.sty: \ccRevision. \ccDate.}
 \catcode`\@=12\relax
 
 % ========================================================================

@@ -598,6 +598,7 @@ Installation/LICENSE.GPL -text
 Installation/VERSION -text
 Installation/auxiliary/cgal_create_cmake_script.1 -text
 Installation/cgal.css svneol=native#text/css
+Installation/cmake/modules/CGAL_SCM.cmake -text
 Installation/cmake/modules/CGALConfig_binary.cmake.in -text
 Installation/cmake/modules/CGALConfig_install.cmake.in -text
 Installation/config/version.h.in -text
