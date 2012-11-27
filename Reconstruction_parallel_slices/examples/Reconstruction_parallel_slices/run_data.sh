@@ -1,5 +1,7 @@
 #!/bin/sh
 
+mkdir -p res
+
 for i in `cat $1.txt`; do
   prefix=`echo $i | sed 's/\.cgal//'`
   echo ./conforming-Delaunay_3 $1/$i
