@@ -1,0 +1,575 @@
+namespace CGAL {
+/*!
+
+\mainpage Approximation of Ridges and Umbilics on Triangulated Surface Meshes
+\anchor Chapter_Approximation_of_Ridges_and_Umbilics_on_Triangulated_Surface_Meshes
+\anchor chapRidges3
+
+\authors Marc Pouget and Fr&eacute;d&eacute;ric Cazals
+\cgalAutoToc
+
+\cgalFigureBegin{davidcrest,david_crest.jpg}
+Crest ridges on the David, model provided by the Digital Michelangelo Project.
+\cgalFigureEnd
+
+This chapter describes the \cgal package for the approximating the
+ridges and umbilics of a smooth surface discretized by a triangle
+mesh. Given a smooth surface, a ridge is a curve along which one of
+the principal curvatures has an extremum along its curvature line. An
+umbilic is a point at which both principal curvatures are
+equal. Ridges define a singular curve, i.e., a self-intersecting
+curve, and umbilics are special points on this curve. Ridges are
+curves of <I>extremal</I> curvature and therefore encode important
+informations used in segmentation, registration, matching and surface
+analysis. Based on the results of the article
+\cite cgal:cp-tdare-05, we propose algorithms to identify and extract
+different parts of this singular ridge curve as well as umbilics on a
+surface given as a triangulated surface mesh. Differential quantities
+associated to the mesh vertices are assumed to be given for these
+algorithms; such quantities may be computed by the package <I>Estimation of Local Differential Properties of Sampled Surfaces via
+Polynomial Fitting</I>.
+
+Note that this package needs the third party library \ref thirdpartyEigen for linear algebra operations.
+
+\section Ridges_3Overview Overview
+
+Section \ref smooth presents the basics of the theory of ridges and
+umbilics on smooth surfaces. Sections \ref ridgemesh and
+\ref umbilicmesh present algorithms for approximating the ridges and
+umbilics (of a smooth surface) from a triangle mesh. Section
+\ref soft gives the package specifications, while example calls to
+functions of the package are provided in Section \ref examples.
+
+\section smooth Ridges and Umbilics of a Smooth Surface 
+
+For a detailed introduction to ridges and related topics, the reader
+may consult 
+\cite cgal:hgygm-ttdpf-99,cgal:p-gd-01, as well as
+the following survey article \cite cgal:cp-ssulc-05.
+In the sequel, we just introduce the basic notions so as to explain
+our algorithms. Consider a smooth embedded surface, and denote \f$ k_1\f$
+and \f$ k_2\f$ the principal curvatures, with \f$ k_1\geq k_2\f$. Umbilics are
+the points where \f$ k_1=k_2\f$. For any non umbilical point, the
+corresponding principal directions of curvature are well defined, and
+we denote them \f$ d_1\f$ and \f$ d_2\f$.
+In local coordinates, we denote \f$ \langle , \rangle\f$ the inner product
+induced by the ambient Euclidean space, and \f$ dk_1\f$, \f$ dk_2\f$ the
+gradients of the principal curvatures. Ridges, illustrated in
+\cgalFigureRef{ellipsoidridges} for the standard ellipsoid, are defined by:
+
+<B>Definition.</B> <EM>\anchor defridgeextrema
+A non umbilical point is called
+<UL>
+<LI>a max ridge point, if the <I>extremality coefficient</I> \f$ b_0=\langle
+dk_1,d_1 \rangle\f$ vanishes, i.e. \f$ b_0=0\f$.
+
+<LI>a min ridge point, if the <I>extremality coefficient</I>
+\f$ b_3=\langle dk_2,d_2 \rangle\f$ vanishes, i.e. \f$ b_3=0\f$
+\cgalFootnote{Notations \f$ b_0, b_3\f$ comes from Equation \ref eqmonge }.
+</UL>
+</EM>
+
+The previous characterization of ridges involves third-order
+differential properties. Using fourth-order differential quantities, a
+ridge point can further be qualified as <I>elliptic</I> if it
+corresponds to a maximum of \f$ k_1\f$ or a minimum of \f$ k_2\f$, or <I>hyperbolic</I> otherwise. Hence we end up with four types of ridges, namely:
+\ref MAX_ELLIPTIC_RIDGE, \ref MAX_HYPERBOLIC_RIDGE, \ref MIN_ELLIPTIC_RIDGE,
+\ref MIN_HYPERBOLIC_RIDGE, which are illustrated in \cgalFigureRef{ellipsoidridges}.
+Also of interest are the <I>crest lines</I>, a crest line being an
+elliptic ridge which is a maximum of \f$ \max(|k_1|,|k_2|)\f$. Crest lines
+form a subset of elliptic ridges, and can be seen as the visually most
+salient curves on a surface.
+Hence we provide the two additional ridge types
+\ref MAX_CREST_RIDGE and \ref MIN_CREST_RIDGE, which are illustrated in
+\cgalFigureRef{davidcrest}.
+
+\cgalFigureBegin{ellipsoidridges,ellipsoid_ridges.png}
+Ridges on the ellipsoid, normals pointing outward. Color coding:
+\ref MAX_ELLIPTIC_RIDGE are blue, \ref MAX_HYPERBOLIC_RIDGE are green,
+\ref MIN_ELLIPTIC_RIDGE are red and \ref MIN_HYPERBOLIC_RIDGE are
+yellow. The red line is also the \ref MIN_CREST_RIDGE and this is the
+only crest ridge of the ellipsoid.
+\cgalFigureEnd
+
+At any point of the surface which is not an umbilic, principal
+directions \f$ d_1, d_2\f$ are well defined, and these (non oriented)
+directions together with the normal vector \f$ n\f$ define two direct
+orthonormal frames. If \f$ v_1\f$ is a unit vector of direction \f$ d_1\f$ then
+there exists a unique unit vector \f$ v_2\f$ so that \f$ (v_1,v_2,n)\f$ is
+direct, that is has the same orientation as the canonical basis of the
+ambient \f$ 3d\f$ space (and the other possible frame is \f$ (-v_1,-v_2,n)\f$). In the
+coordinate systems \f$ (v_1,v_2,n)\f$, the surface has the following
+canonical form, known as the Monge form :
+
+\anchor eqmonge
+\f{eqnarray}{
+z(x,y) = & \frac{1}{2}(k_1x^2 + k_2y^2)+
+\frac{1}{6}(b_0x^3+3b_1x^2y+3b_2xy^2+b_3y^3) \\
+& +\frac{1}{24}(c_0x^4+4c_1x^3y+6c_2x^2y^2+4c_3xy^3+c_4y^4) + h.o.t
+\f}
+
+The Taylor expansion of \f$ k_1\f$ (resp. \f$ k_2\f$) along the max
+(resp. min) curvature line going through the origin and parameterized
+by \f$ x\f$ (resp. \f$ y\f$) are:
+
+\anchor eqtaylor_along_line
+\f[
+\begin{equation}
+k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)}x^2 +\hot , \quad \quad \quad
+P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
+\end{equation}
+\f]
+
+\anchor eqtaylor_along_red_line
+\f[
+\begin{equation}
+k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)}y^2 +\hot , \quad \quad \quad
+P_2= 3b_2^2+(k_2-k_1)(c_4-3k_2^3).
+\end{equation}
+\f]
+
+Notice also that switching from one to the other of the two
+afore-mentioned coordinate systems reverts the sign of all the odd
+coefficients on the Monge form of the surface.<BR>
+
+<BR>
+
+Hence ridge types are characterized by 
+<UL>
+<LI>max ridge if \f$ b_0=0\f$
+<LI>\ref MAX_ELLIPTIC_RIDGE if \f$ b_0=0\f$ and \f$ P_1<0\f$
+<LI>\ref MAX_HYPERBOLIC_RIDGE if \f$ b_0=0\f$ and \f$ P_1>0\f$
+<LI>min ridge if \f$ b_3=0\f$
+<LI>\ref MIN_ELLIPTIC_RIDGE if \f$ b_3=0\f$ and \f$ P_2<0\f$
+<LI>\ref MIN_HYPERBOLIC_RIDGE if \f$ b_3=0\f$ and \f$ P_2>0\f$
+<LI>\ref MAX_CREST_RIDGE if \f$ b_0=0\f$ and \f$ P_1<0\f$ and \f$ |k_1|>|k_2|\f$
+<LI>\ref MIN_CREST_RIDGE if \f$ b_3=0\f$ and \f$ P_2<0\f$ and \f$ |k_2|>|k_1|\f$
+</UL>
+
+As illustrated in \cgalFigureRef{index_umbilic} and \cgalFigureRef{umbilics}, the
+patterns made by curvature lines around an umbilic can be
+characterized using the notion of an <I>index</I> associated to the
+principal directions - see also \cite cgal:cp-ssulc-05.
+As depicted in \cgalFigureRef{index_umbilic}, consider a small circuit \f$ C\f$ around the
+umbilic, and a point \f$ p \in C\f$. Starting from an initial orientation
+\f$ u\f$ of a tangent vector to the curvature line through point \f$ p\f$,
+propagate <I>by continuity</I> this orientation around the circuit. The
+index is defined by the angle swept by \f$ u\f$ around this revolution,
+normalized by \f$ 2\pi\f$. In our example, the index is thus 1/2.
+
+If the index of the principal direction field is \f$ 1/2\f$
+then it is called a
+\ref ELLIPTIC_UMBILIC, if it is \f$ -1/2\f$ it is called a \ref HYPERBOLIC_UMBILIC.
+Otherwise the umbilic is qualified
+\ref NON_GENERIC_UMBILIC.
+
+\cgalFigureBegin{index_umbilic,index_umbilic.png }
+Index \f$1/2\f$ umbilic or elliptic umbilic.
+\cgalFigureEnd
+
+\cgalFigureBegin{umbilics,lemon.png}
+Elliptic and hyperbolic umbilics.
+\cgalFigureEnd
+
+\section Ridges_3Approximating Approximating Ridges on Triangulated Surface Meshes
+
+\anchor ridgemesh
+
+Our method aims at reporting ridges as polygonal lines living on the
+mesh. It assumes differential quantities are available for each vertex
+of the mesh (principal curvatures and directions together with third
+order quantities \f$ b_0, b_3\f$ and optionally fourth order quantities
+\f$ P_1, P_2\f$). These differential quantities may be computed for the
+smooth surface the mesh is inscribed in (analytically or using
+approximation methods), or may be estimated for a mesh given without
+reference to an underlying smooth surface. Although the ridge
+approximation algorithm is the same in both cases, one cannot ambition
+to ask for the same certificates. This distinction calls for the
+notion of <I>compliant</I> mesh.
+
+<b>Compliant meshes.</b>
+
+Ridges of a smooth surface are points with prescribed differential
+properties, and reporting them from a mesh inscribed in the surface
+requires delicate hypothesis on the geometry of that mesh so as to get
+a certified result. In this paragraph, we assume the mesh provided
+complies with a number of hypothesis, which guarantee the topology of
+the ridges reported matches that of the ridges on the smooth
+surface. To summarize things, a compliant mesh is a mesh dense enough
+so that (i) umbilics are properly isolated (ii) ridges running next
+to one another are also properly separated.
+See \cite cgal:cp-tdare-05 for a detailed discussion of <I>compliant</I> meshes.<BR>
+
+As 0-level set of the extremality coefficients \f$ b_0\f$ and \f$ b_3\f$, ridges
+are extracted by a marching triangles algorithm.\cgalFootnote{A marching triangles algorithm is similar to a 2d marching cubes algorithm (or marching rectangles algorithm), except that a one-manifold is reported on a two-manifold tessellated by triangles.}
+
+As the signs of these extremality coefficients depend on the
+orientation of the principal directions, we expect both extremalities
+and vectors orienting the principal direction to be given at each
+point vertex of the mesh. Except in the neighborhood of umbilics, if
+the mesh is dense enough, a coherent orientation of principal
+directions at both endpoints of an edge is chosen such that the angle
+between the two vectors is acute. This rule, the <I>acute rule</I>, is
+precisely analyzed in \cite cgal:cp-tdare-05.
+Moreover, we only seek ridges in triangles for which one can find an
+orientation of its three vertices such that the three edges are
+coherently oriented by the acute rule. Such triangles are called
+<I>regular</I>. This said, two remarks are in order.
+
+<I> - Regular triangles and ridge segments.</I>
+A regular triangle has 0 or 2 edges crossed by a max (resp. min)
+ridge, which is tantamount to a sign change of \f$ b_0\f$ (resp. \f$ b_3\f$)
+along the corresponding edges. In the latter case, we say that the
+triangle contains a ridge segment.
+Two methods are provided to compute its type, be it elliptic or
+hyperbolic. First, if fourth order differential quantities are
+provided, one can use the \f$ P_1\f$ (\f$ P_2\f$) values of Equations
+\ref eqtaylor_along_line ( \ref eqtaylor_along_red_line) for a
+max (min) ridge. The value of \f$ P_i\f$ for a ridge segment is defined as
+the mean value of the \f$ P_i\f$ values of the two crossing points on edges
+(while the value at a crossing point on an edge is the \f$ b_i\f$-weighted
+mean value of the values at endpoints).
+Alternatively, if third order differential quantities only are
+available, one may use the geometric method developed in
+\cite cgal:cp-tdare-05.
+
+Using the notion of ridge segment, a `Ridge_line` is defined as a
+maximal connected sequence of ridge segments of the same type and connected
+together. Notice that the topology of a `Ridge_line` is either
+that of an interval or a circle.
+
+<I> - Non-regular triangles.</I> In the neighborhood of umbilics,
+triangle are less likely to be regular and the detection of ridges
+cannot be relevant by this method. This is why we propose another
+method to detect umbilics independently.
+
+<b>Non compliant meshes: filtering ridges on <I>strength</I> and <I>sharpness</I>.</b>
+
+For real world applications dealing with coarse meshes, or meshes
+featuring degenerate regions or sharp features, or meshes conveying
+some amount of noise, the <I>compliance</I> hypothesis
+\cite cgal:cp-tdare-05 cannot be met. In that case, it still makes
+sense to seek loci of points featuring extremality of estimated
+principal curvatures, but the ridges reported may require
+filtering. For example, if the principal curvatures are constant
+- which is the case on a plane or a cylinder, then all points are
+ridge points. In this context, an appealing notion is that of <I>sharp</I> ridge or <I>prominent</I> ridge. Since ridges are witnessed by
+zero crossings of \f$ b_0\f$ and \f$ b_3\f$, one can expect erroneous detections
+as long as these coefficients remain small. In order to select the
+most prominent ridge points, we focus on points where the variation of
+the curvature is fast along the curvature line. One can observe that,
+at a ridge point, according to Equation
+\ref eqtaylor_along_line, the second derivative of \f$ k_1\f$ along its
+curvature line satisfies \f$ k_1^{''}(0) = P_1/(k_1-k_2)\f$. Using this
+observation, one can define the <I>sharpness of a ridge</I> as the
+integral of the absolute value of \f$ P_1/(k_1-k_2)\f$ along the ridge. As
+the second derivative of the curvature is homogeneous to the inverse
+of the cube of a length, the sharpness is homogeneous to the inverse
+of the square of a length. Multiplying the sharpness by the square of
+the model size gives a threshold and an associated sharpness-filter
+which are scale independent. Another filtering is also available with
+the <I>strength </I> which is the integral of the curvature along the
+ridge line
+\cite cgal:ybs-rvlmi-04.
+
+\section Ridges_3Approximating_1 Approximating Umbilics on Triangulated Surface Meshes
+
+\anchor umbilicmesh
+
+The method aims at identifying some vertices of a mesh as umbilics. It
+assumes principal curvatures and directions are given at each vertex
+on the mesh.
+
+<b>Algorithm.</b>
+
+Assume each vertex \f$ v\f$ of the mesh comes with a patch (a topological
+disk) around it. Checking whether vertex \f$ v\f$ is an umbilic is a two
+stages process, which are respectively concerned with the variation
+of the function \f$ k_1-k_2\f$ over the patch, and the index of the vertex
+computed from the boundary of the patch. More precisely, vertex \f$ v\f$ is
+declared to be an umbilic if the following two conditions are met:
+<UL>
+<LI>the function \f$ k_1-k_2\f$ has its minimum at \f$ v\f$ amongst all the
+vertices of the patch;
+<LI>the deviation \f$ \delta\f$ of any principal direction along the patch
+boundary, traversed counter-clock-wise (CCW), has prescribed
+properties:
+<UL>
+<LI>\f$ \delta \in ]\pi/2,3\pi/2[\f$, then the umbilic is called elliptic,
+<LI>\f$ \delta \in ]-3\pi/2,-\pi/2[\f$, then the umbilic is called a hyperbolic,
+<LI>otherwise the umbilic is called non-generic.
+</UL>
+</UL>
+
+<b>Finding patches around vertices.</b>
+
+Given a vertex \f$ v\f$ and a parameter \f$ t\f$, we aim at defining a
+collection of triangles around \f$ v\f$ so that (i) this collection defines
+a topological disk on the triangulation \f$ T\f$ and (ii) its size depends
+on \f$ t\f$. First we collect the 1-ring triangles. We define the size \f$ s\f$
+of this 1-ring patch as the (Euclidean) distance from \f$ v\f$ to its
+farthest 1-ring vertex neighbor. We then collect recursively adjacent
+triangles so that the patch remains a topological disk and such that
+these triangles are at distance less than \f$ s\times t\f$. Parameter \f$ t\f$
+is the only parameter of the algorithm.
+
+<b>Umbilical patches versus ridges.</b>
+On a generic surface,
+generic umbilics are traversed by one or three ridges. For compliant
+meshes, an umbilic can thus be connected to the ridge points located
+on the boundary of its patch. This functionality is not provided, and
+the interested reader is referred to \cite cgal:cp-tdare-05 for more
+details.
+
+\section Ridges_3Software Software Design
+
+\anchor soft
+
+All classes of this package are templated by the parameter
+`TriangulatedSurfaceMesh`, which defines the type of the mesh to which the
+approximation algorithms operate.
+
+The differential quantities are provided at vertices of this mesh via
+property maps, a concept commonly used in the Boost library. Scalar
+data (curvatures and their derivatives) are provided via
+`Vertex2FTPropertyMap` concepts, while \f$ 3d\f$ vector data (principal
+directions of curvatures) are provided via
+`Vertex2VectorPropertyMap` concepts. 
+The rationale for introducing these concepts is that properties are
+used independently from the way they are stored. This enables the user
+to store them <I>internally</I> in extended vertices or <I>externally</I>
+with maps. We provide a class
+`Vertex2Data_Property_Map_with_std_map` to adapt `std::map` with 
+a `boost::associative_property_map` to model these concepts.
+
+Output of ridges or umbilics are provided via output iterator.
+
+Approximation of ridges and umbilics are performed by two independent
+classes, which we now further describe.
+
+\subsection Ridges_3RidgeApproximation Ridge Approximation
+
+The main class is
+`Ridge_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`.
+Its construction requires the mesh and the property maps defining the
+differential quantities for principal curvatures \f$ k_1\f$ and \f$ k_2\f$, the
+third order extremalities \f$ b_0\f$ and \f$ b_3\f$, the principal directions of
+curvature \f$ d_1\f$ and \f$ d_2\f$, and the fourth order quantities \f$ P_1\f$ and
+\f$ P_2\f$ if the tagging of ridges as elliptic or hyperbolic is to be done using
+the polynomials \f$ P_1\f$ and \f$ P_2\f$.
+
+Three functions (provided as members and also as global functions)
+enable the computation of different types of ridges :
+<UL>
+<LI>`compute_max_ridges()` (resp. `compute_min_ridges()`)
+outputs ridges of types \ref MAX_ELLIPTIC_RIDGE and
+\ref MAX_HYPERBOLIC_RIDGE (resp. `MIN_ELLIPTIC_RIDGE` and
+\ref MIN_HYPERBOLIC_RIDGE).
+<LI>`compute_crest_ridges()` outputs ridges of types
+\ref MAX_CREST_RIDGE and \ref MIN_CREST_RIDGE.
+</UL>
+
+These functions allows the user to specify how the elliptic/hyperbolic
+tagging is carried out.
+Notice the rationale for the choice of these three functions is
+simple: each computation needs a single pass over the triangles of the
+mesh. This should be clear for the min and max ridges. For crests,
+just notice max and min crests cannot intersect over a triangle.<BR>
+
+<BR>
+
+The ridge lines are stored in
+`Ridge_line` objects and output through an iterator. 
+Each ridge line is represented as a list of halfedges of the mesh it
+crosses with a scalar defining the barycentric coordinate of the
+crossing point with respect to the half-egde endpoints. Each ridge
+line comes with its type `Ridge_type`, its strength and sharpness.
+
+If one chooses to use only third order quantities, the quantities
+\f$ P_i\f$ do not have to be defined. Then the sharpness will not be
+defined.
+
+\subsection Ridges_3UmbilicApproximation Umbilic Approximation
+
+The main class is
+`Umbilic_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`.
+Its construction requires the mesh and the property maps defining the
+differential quantities for principal curvatures \f$ k_1\f$ and \f$ k_2\f$, and
+the principal directions of curvature \f$ d_1\f$ and \f$ d_2\f$. The member
+function `compute` (or the global function `compute_umbilics`)
+has a parameter to define the size of the neighborhood of the umbilic.
+
+Umbilics are stored in `Umbilic` objects, they come with their
+type : \ref ELLIPTIC_UMBILIC, \ref HYPERBOLIC_UMBILIC or
+\ref NON_GENERIC_UMBILIC; the vertex of the mesh they are associated
+to and the list of half-edges representing the contour of the
+neighborhood.
+
+\subsection Ridges_3ModelsforthePropertyMapConcepts Models for the Property Map Concepts
+
+The class
+`Vertex2Data_Property_Map_with_std_map<TriangulatedSurfaceMesh>`
+enables the definition of models for the concepts
+`Vertex2FTPropertyMap` and
+`Vertex2VectorPropertyMap` 
+using `std::maps` and `boost::associative_property_map`.
+
+\section Ridges_3Examples Examples
+
+\anchor examples
+
+\subsection Ridges_3Exampleprogram Example program
+
+The following program computes ridges and umbilics from an off
+file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the Jet fitting package to estimate the differential
+quantities. 
+The default output file gives rough data for visualization purpose, a
+verbose output file may also be asked for. Parameters are
+<UL>
+<LI>\f$ d\f$, the degree of the jet for the `Monge_via_jet_fitting` class, \f$ d\f$
+must be greater or equal to 3 which is the default value;
+<LI>\f$ m\f$, the degree of the Monge representation for the
+`Monge_via_jet_fitting` class, \f$ m\f$ must be 3 (the default value) or
+4 and smaller than \f$ d\f$;
+<LI>\f$ a\f$, the number of rings of neighbors collected for the
+`Monge_via_jet_fitting` class, in addition the number of vertices
+collected must be greater than \f$ Nd:=(d+1)(d+2)/2\f$ to make the
+approximation possible. \f$ a\f$ may be an integer greater than 1, the value
+0 (which is the default) means that the minimum number of rings is
+collected to make the approximation possible. (Alternatively option \f$ p\f$
+allows the specification of a constant number of neighbors);
+<LI>\f$ t\f$, the `Ridge_order` for the distinction between elliptic and
+hyperbolic ridges, \f$ t\f$ is 3 (default) or 4;
+<LI>\f$ u\f$, the parameter for umbilic patch size, \f$ u \geq 1\f$ (default is 1).
+</UL>
+
+\code{.cpp}
+
+#include <CGAL/Ridges.h> 
+#include <CGAL/Umbilics.h>
+
+//this is an enriched Polyhedron with facets' normal
+#include "PolyhedralSurf.h"
+
+typedef PolyhedralSurf::Traits Kernel;
+typedef Kernel::FT FT;
+typedef Kernel::Point_3 Point_3;
+typedef Kernel::Vector_3 Vector_3;
+
+typedef PolyhedralSurf::Vertex_const_handle Vertex_const_handle;
+typedef PolyhedralSurf::Vertex_const_iterator Vertex_const_iterator;
+
+typedef CGAL::Vertex2Data_Property_Map_with_std_map<PolyhedralSurf> Vertex2Data_Property_Map_with_std_map;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_map Vertex2FT_map;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_map Vertex2Vector_map;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_property_map Vertex2FT_property_map;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_property_map Vertex2Vector_property_map;
+
+//RIDGES
+typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
+typedef CGAL::Ridge_approximation < PolyhedralSurf,
+back_insert_iterator< std::vector<Ridge_line*> >,
+Vertex2FT_property_map,
+Vertex2Vector_property_map > Ridge_approximation;
+//UMBILICS
+typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
+typedef CGAL::Umbilic_approximation < PolyhedralSurf,
+back_insert_iterator< std::vector<Umbilic*> >, 
+Vertex2FT_property_map, 
+Vertex2Vector_property_map > Umbilic_approximation;
+
+//create property maps
+Vertex2FT_map vertex2k1_map, vertex2k2_map, 
+vertex2b0_map, vertex2b3_map, 
+vertex2P1_map, vertex2P2_map;
+Vertex2Vector_map vertex2d1_map, vertex2d2_map;
+
+Vertex2FT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map), 
+vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map), 
+vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
+Vertex2Vector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
+
+int main(int argc, char *argv[])
+{ 
+  //compute differential quantities with the jet fitting package
+  ...
+  //initialize the property maps
+  ...
+  //---------------------------------------------------------------------------
+  //Ridges
+  //--------------------------------------------------------------------------
+  Ridge_approximation ridge_approximation(P, 
+                                          vertex2k1_pm, vertex2k2_pm,
+                                          vertex2b0_pm, vertex2b3_pm,
+                                          vertex2P1_pm, vertex2P2_pm,
+                                          vertex2d1_pm, vertex2d2_pm);
+  std::vector<Ridge_line*> ridge_lines;
+  back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
+
+  //Find MAX_RIDGE, MIN_RIDGE, CREST or all ridges
+  ridge_approximation.compute_max_ridges(ii, tag_order); 
+  ridge_approximation.compute_min_ridges(ii, tag_order); 
+  ridge_approximation.compute_crest_ridges(ii, tag_order); 
+
+  //---------------------------------------------------------------------------
+  // UMBILICS
+  //--------------------------------------------------------------------------
+  Umbilic_approximation umbilic_approximation(P, 
+                                              vertex2k1_pm, vertex2k2_pm,
+                                              vertex2d1_pm, vertex2d2_pm);
+  std::vector<Umbilic*> umbilics;
+  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+  umbilic_approximation.compute(umb_it, umb_size);
+}
+
+\endcode
+
+\subsection Ridges_3ExampleRidgesandUmbilicsonanEllipsoid Example: Ridges and Umbilics on an Ellipsoid
+
+For \cgalFigureRef{ellipsoidridgesexample}, the data have been computed as follows:
+
+\code{.cpp}
+
+./Compute_Ridges_Umbilics -f data/ellipsoid_u_0.02.off -d 4 -m 4 -a 3 -t 3
+
+\endcode
+
+In addition, the four elliptic umbilics are detected, the standard output being
+
+\code{.cpp}
+
+nb of umbilics 4
+Umbilic at location (-0.80899 0.00426003 0.293896) of type elliptic
+Umbilic at location (-0.811197 0.0122098 -0.292259) of type elliptic
+Umbilic at location (0.808372 -0.00551307 -0.29431) of type elliptic
+Umbilic at location (0.81413 0.0018689 0.290339) of type elliptic
+
+\endcode
+
+\cgalFigureBegin{ellipsoidridgesexample,ellipsoid_ridges.png}
+Ridges on the ellipsoid, normals pointing outward. Color coding :
+\ref MAX_ELLIPTIC_RIDGE are blue, \ref MAX_HYPERBOLIC_RIDGE are green,
+\ref MIN_ELLIPTIC_RIDGE are red and \ref MIN_HYPERBOLIC_RIDGE are yellow.
+\cgalFigureEnd
+
+\subsection Ridges_3ExampleFilteringofCrestRidgesona Example: Filtering of Crest Ridges on a Mechanical Part
+
+\cgalFigureRef{figmechanical_crest_filteredintro} illustrates the filtering 
+of crest ridges on a mechanical model, and has been computed as follows:
+
+\code{.cpp}
+./Compute_Ridges_Umbilics -f data/mecanic.off -d 4 -m 4 -a 4 -t 4
+\endcode
+
+\cgalFigureBegin{figmechanical_crest_filteredintro,mecanic-sub1_crest-jpg.png}
+Mechanical part (37k pts). Left: All crest lines. Middle:  crests filtered
+with the strength threshold 1. Right: crests filtered with the
+sharpness threshold 100 000. Notice that any point on a flat or
+cylindrical part lies on two ridges, so that the noise observed on the
+first two figures is unavoidable. It is however easily filtered out with
+the sharpness as can be seen on the right figure.
+\cgalFigureEnd
+
+*/ 
+} /* namespace CGAL */
+

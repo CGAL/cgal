@@ -229,7 +229,7 @@ if there is no vertex in the relative interior of the embedding of $e$.
 
 The faces refer to the maximal connected open point sets of the
 planar subdivision implied by the embedding of the vertices and edges.
-Faces are bounded by possibly several face cycles\footnote{For the
+Faces are bounded by possibly several face cycles\cgalFootnote{For the
 definition of plane maps and their concepts see the manual page of
 |PMConstDecorator|.} including isolated vertices. The overlay process
 in the method |create| creates the objects, the topology of the result

@@ -38,15 +38,15 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 namespace internal {
 
+/// \cond SKIP_IN_MANUAL
 
 /// Smoothes one point position using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param Kernel Geometric traits class.
-/// @param Tree KD-tree.
+/// @tparam Kernel Geometric traits class.
+/// @tparam Tree KD-tree.
 ///
 /// @return computed point
 template <typename Kernel,
@@ -97,6 +97,7 @@ jet_smooth_point(
   return monge_form.origin();
 }
 
+/// \endcond
 
 } /* namespace internal */
 
@@ -105,19 +106,18 @@ jet_smooth_point(
 // Public section
 // ----------------------------------------------------------------------------
 
-
-/// Smoothes the [first, beyond) range of points using jet fitting on the k
+/// \ingroup PkgPointSetProcessing
+/// Smoothes the `[first, beyond)` range of points using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
 /// As this method relocates the points, it
 /// should not be called on containers sorted w.r.t. point locations.
 ///
-/// @commentheading Precondition: k >= 2.
+/// \pre `k >= 2`
 ///
-/// @commentheading Template Parameters:
-/// @param InputIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam InputIterator iterator over input points.
+/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with a value_type = Point_3<Kernel>.
 ///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 
 // This variant requires all parameters.
@@ -132,8 +132,8 @@ jet_smooth_point_set(
   PointPMap point_pmap, ///< property map InputIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
   const Kernel& /*kernel*/, ///< geometric traits.
-  unsigned int degree_fitting = 2,
-  unsigned int degree_monge = 2)
+  unsigned int degree_fitting = 2, ///< fitting degree
+  unsigned int degree_monge = 2)  ///< Monge degree
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;

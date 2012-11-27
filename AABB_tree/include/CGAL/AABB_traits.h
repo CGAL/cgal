@@ -31,30 +31,58 @@
 
 #include <boost/optional.hpp>
 
+/// \file AABB_traits.h
+
 namespace CGAL {
 
-/**
- * @class AABB_traits
- *
- *
- */
+/// \addtogroup PkgAABB_tree
+/// @{
+
+/// The class AABB_traits is a model of the concept \ref
+/// AABBTraits. This traits class handles any type of 3D geometric
+/// primitives provided that the proper intersection tests and
+/// constructions are implemented. It handles points, rays, lines and
+/// segments as query types for intersection detection and
+/// computations, and it handles points as query type for distance
+/// queries. The template parameter \c GeomTraits provides the
+/// geometric types as well as the intersection tests and computations
+/// required. This type must be a model of the concept \ref AABBGeomTraits. 
+/// The template parameter \c Primitive provides the
+/// type of primitives stored in the AABB_tree. This parameter must be
+/// a model of the concept \ref AABBPrimitive.
+///
+/// \sa \ref AABBTraits
+/// \sa AABB_tree
+/// \sa \ref AABBPrimitive
 template<typename GeomTraits, typename AABB_primitive>
 class AABB_traits
 {
   typedef typename CGAL::Object Object;
 public:
   typedef AABB_traits<GeomTraits, AABB_primitive> AT;
-  /// AABBTraits concept types
+  // AABBTraits concept types
   typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point_3;
   typedef AABB_primitive Primitive;
-  typedef typename CGAL::Bbox_3 Bounding_box;
+
   typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
   typedef typename std::pair<Point_3,typename Primitive::Id> Point_and_primitive_id;
 
+  // types for search tree
+  /// \name Types
+  /// @{
+
+  /// Point query type.
+  typedef typename GeomTraits::Point_3 Point_3;
+
   /// additionnal types for the search tree, required by the RangeSearchTraits concept
-  /// (This is not documented for now in the AABBTraits concept, which is a bug)
+  /// \bug This is not documented for now in the AABBTraits concept.
   typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
+
+  /// 
+  typedef typename CGAL::Bbox_3 Bounding_box;
+
+  /// @}
+
   typedef typename GeomTraits::Sphere_3 Sphere_3;
   typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3; 
   typedef typename GeomTraits::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_3;
@@ -65,23 +93,23 @@ public:
   typedef typename GeomTraits::Construct_iso_cuboid_3 Construct_iso_cuboid_3;
   
 
-  /// Constructor
+  /// Default constructor.
   AABB_traits() { };
+
 
   typedef typename GeomTraits::Compute_squared_distance_3 Squared_distance;
   Squared_distance squared_distance_object() const { return GeomTraits().compute_squared_distance_3_object(); }
-  
-  /// 
+
   /**
+   * @internal
    * @brief Sorts [first,beyond[
    * @param first iterator on first element
    * @param beyond iterator on beyond element
    * @param bbox the bounding box of [first,beyond[
    *
    * Sorts the range defined by [first,beyond[. Sort is achieved on bbox longuest
-   * axis, using the comparison function <dim>_less_than (dim in {x,y,z})
+   * axis, using the comparison function `<dim>_less_than` (dim in {x,y,z})
    */
-
 class Sort_primitives
 {
 public:
@@ -111,13 +139,12 @@ void operator()(PrimitiveIterator first,
 Sort_primitives sort_primitives_object() {return Sort_primitives();}
 
 
-  /**
+  /*
    * Computes the bounding box of a set of primitives
    * @param first an iterator on the first primitive
    * @param beyond an iterator on the past-the-end primitive
    * @return the bounding box of the primitives of the iterator range
    */
-
    class Compute_bbox {
 public:
 template<typename ConstPrimitiveIterator>
@@ -232,6 +259,7 @@ private:
                  CGAL_AXIS_Z = 2} Axis;
 
   static Axis longest_axis(const Bounding_box& bbox);
+
   /// Comparison functions
   static bool less_x(const Primitive& pr1, const Primitive& pr2)
   { return pr1.reference_point().x() < pr2.reference_point().x(); }
@@ -278,6 +306,7 @@ AABB_traits<GT,P>::longest_axis(const Bounding_box& bbox)
   }
 }
 
+/// @}
 
 }  // end namespace CGAL
 

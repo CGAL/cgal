@@ -1,0 +1,57 @@
+/// \defgroup PkgSpatialSearchingD dD Spatial Searching Reference
+
+/// \defgroup PkgSpatialSearchingDConcepts Concepts
+/// \ingroup PkgSpatialSearchingD
+
+/// \defgroup SearchClasses Search Classes
+/// \ingroup PkgSpatialSearchingD
+
+/// \defgroup RangeQueryItemClasses Range Query Item Classes
+/// \ingroup PkgSpatialSearchingD
+
+/// \defgroup SearchTraitsClasses Search Traits Classes
+/// \ingroup PkgSpatialSearchingD
+
+/// \defgroup DistanceClasses Distance Classes
+/// \ingroup PkgSpatialSearchingD
+
+/// \defgroup SplitterClasses Splitter Classes
+/// \ingroup PkgSpatialSearchingD
+
+/// \defgroup AdvancedClasses Advanced Classes
+/// \ingroup PkgSpatialSearchingD
+
+
+
+/*!
+\addtogroup PkgSpatialSearchingD
+
+\cgalPkgDescriptionBegin{dD Spatial Searching,PkgSpatialSearchingDSummary}
+\cgalPkgPicture{windowQuery.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Hans Tangelder and Andreas Fabri}
+\cgalPkgDesc{This package implements exact and approximate distance browsing by providing exact and approximate algorithms for range searching, k-nearest and k-furthest neighbor searching, as well as incremental nearest and incremental furthest neighbor searching, where the query items are points in dD Euclidean space.}
+\cgalPkgManuals{Chapter_dD_Spatial_Searching,PkgSpatialSearchingD}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.0}
+\cgalPkgBib{cgal:tf-ssd}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{2D Spatial Searching,spatial_searching.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+This package provides data structures and algorithms for exact and approximate distance browsing,
+supporting
+
+- both nearest and furthest neighbor searching,
+- both exact and approximate searching,
+- (approximate) range searching,
+- (approximate) `k`-nearest and `k`-furthest neighbor searching,
+- (approximate) incremental nearest and incremental furthest neighbor searching,
+- query items representing points and spatial objects.
+
+The spatial searching package consists of the following concepts and
+classes that are described in the reference pages.
+*/
+

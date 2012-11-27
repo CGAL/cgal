@@ -37,25 +37,20 @@
 namespace CGAL {
 
 
-/// Parameterization_mesh_patch_3 is a Decorator class to "virtually" cut a patch
+/// \ingroup  PkgSurfaceParameterizationMesh
+///
+/// Parameterization_mesh_patch_3 is a Decorator class to <i>virtually</i> cut a patch
 /// in a ParameterizationPatchableMesh_3 3D surface. Only the patch is exported,
 /// making the 3D surface look like a topological disk.
 ///
-/// The input mesh can be of any genus, but it has to come with a "seam" that
+/// The input mesh can be of any genus, but it has to come with a <i>seam</i> that
 /// describes the border of a topological disc. This border may be an actual
 /// border of the mesh or a virtual border.
 ///
-/// @heading Is Model for the Concepts:
-/// Model of ParameterizationMesh_3 concept, whose purpose is to allow
-/// the Surface_mesh_parameterization package to access meshes in a uniform manner.
+/// \cgalModels `ParameterizationMesh_3`
 ///
-/// @heading Design Pattern:
-/// Parameterization_mesh_patch_3 is a Decorator [GHJV95]: it changes the behavior
-/// of a ParameterizationPatchableMesh_3 3D surface while keeping its
-/// ParameterizationMesh_3 interface.
 ///
-/// @heading Parameters:
-/// @param ParameterizationPatchableMesh_3       3D surface mesh.
+/// \tparam ParameterizationPatchableMesh_3 3D surface mesh.
 
 template<class ParameterizationPatchableMesh_3>
 class Parameterization_mesh_patch_3
@@ -74,23 +69,21 @@ public:
     /// Export template parameter.
     typedef ParameterizationPatchableMesh_3 Adaptor;
 
-
-    ////////////////////////////////////////////////////////////////////
-    /// @subheading Types implementing the ParameterizationMesh_3 interface
-    ////////////////////////////////////////////////////////////////////
+    #ifndef DOXYGEN_RUNNING
+    /// \name Types implementing the ParameterizationMesh_3 interface
     /// @{
 
     /// Number type to represent coordinates.
     typedef typename Adaptor::NT            NT;
 
-    /// 2D point that represents (u,v) coordinates computed
-    /// by parameterization methods. Must provide X() and Y() methods.
+    /// 2D point that represents `(u,v)` coordinates computed
+    /// by parameterization methods. Must provide `x()` and `y()` methods.
     typedef typename Adaptor::Point_2       Point_2;
-    /// 3D point that represents vertices coordinates. Must provide X() and Y() methods.
+    /// 3D point that represents vertices coordinates. Must provide `x()` and `y()` methods.
     typedef typename Adaptor::Point_3       Point_3;
-    /// 2D vector. Must provide X() and Y() methods.
+    /// 2D vector. Must provide `x()` and `y()` methods.
     typedef typename Adaptor::Vector_2      Vector_2;
-    /// 3D vector. Must provide X() and Y() methods.
+    /// 3D vector. Must provide `x()` and `y()` methods.
     typedef typename Adaptor::Vector_3      Vector_3;
 
     /// Opaque type representing a facet of the 3D mesh. No methods are expected.
@@ -99,7 +92,7 @@ public:
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
                                             Facet_const_handle;
-    /// Iterator over all mesh facets. Model of the ForwardIterator concept.
+    /// Iterator over all mesh facets. Model of the `ForwardIterator` concept.
     typedef Convertible_filter_iterator<typename Adaptor::Facet_iterator,
                                         Inner_facets_filter,
                                         Facet_const_handle,
@@ -112,22 +105,22 @@ public:
 
     /// Opaque type representing a vertex of the 3D mesh. No methods are expected.
     typedef Param_mesh_patch_vertex<Adaptor> Vertex;
-    /// Handle to a vertex. Model of the Handle concept.
+    /// Handle to a vertex. Model of the `Handle` concept.
     typedef Param_mesh_patch_vertex_handle<Adaptor>
                                             Vertex_handle;
     typedef Param_mesh_patch_vertex_const_handle<Adaptor>
                                             Vertex_const_handle;
-    /// Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
+    /// Iterator over all vertices of a mesh. Model of the `ForwardIterator` concept.
     typedef Param_mesh_patch_vertex_list_iterator<Adaptor>
                                             Vertex_iterator;
     typedef Param_mesh_patch_vertex_list_const_iterator<Adaptor>
                                             Vertex_const_iterator;
     /// Iterator over vertices of the mesh "main border".
-    /// Model of the ForwardIterator concept.
+    /// Model of the `ForwardIterator` concept.
     typedef Vertex_iterator                 Border_vertex_iterator;
     typedef Vertex_const_iterator           Border_vertex_const_iterator;
     /// Counter-clockwise circulator over a facet's vertices.
-    /// Model of the BidirectionalCirculator concept.
+    /// Model of the `BidirectionalCirculator` concept.
     typedef Mesh_patch_vertex_around_facet_cir<Parameterization_mesh_patch_3,
                                                Vertex_handle,
                                                typename Adaptor::Vertex_around_facet_circulator>
@@ -137,7 +130,7 @@ public:
                                                typename Adaptor::Vertex_around_facet_const_circulator>
                                             Vertex_around_facet_const_circulator;
     /// Clockwise circulator over the vertices incident to a vertex.
-    /// Model of the BidirectionalCirculator concept.
+    /// Model of the `BidirectionalCirculator` concept.
     typedef Mesh_patch_vertex_around_vertex_cir<Parameterization_mesh_patch_3,
                                                 Vertex_handle,
                                                 typename Adaptor::Vertex_around_vertex_circulator,
@@ -150,20 +143,19 @@ public:
                                             Vertex_around_vertex_const_circulator;
 
     /// @} // end of Types implementing the ParameterizationMesh_3 interface
-
+    #endif //DOXYGEN_RUNNING
 // Public operations
 public:
 
     /// Create a Decorator for an existing ParameterizationPatchableMesh_3 mesh.
-    /// The input mesh can be of any genus, but it has to come with a "seam" that
+    /// The input mesh can be of any genus, but it has to come with a <i>seam</i> that
     /// describes the border of a topological disc. This border may be an actual
     /// border of the mesh or a virtual border.
     ///
-    /// @commentheading Preconditions:
-    /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
-    ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
-    /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// - The "seam" is implicitely a loop. The first vertex should *not* be
+    /// \pre `first_seam_vertex -> end_seam_vertex` defines the outer seam,
+    ///   i.e. Parameterization_mesh_patch_3 will export the <i>right</i> of the seam.
+    /// \pre The <i>seam</i> is given as a container of `Adaptor::Vertex_handle` elements.
+    /// \pre The <i>seam</i> is implicitely a loop. The first vertex must *not* be
     ///   duplicated at the end.
     template<class InputIterator>
     Parameterization_mesh_patch_3(Adaptor& mesh,
@@ -258,9 +250,7 @@ public:
     Adaptor&       get_decorated_mesh()       { return m_mesh_adaptor; }
     const Adaptor& get_decorated_mesh() const { return m_mesh_adaptor; }
 
-    ////////////////////////////////////////////////////////////////////
-    /// @subheading Methods implementing the ParameterizationMesh_3 interface
-    ////////////////////////////////////////////////////////////////////
+    /// \name Methods implementing the ParameterizationMesh_3 interface
     /// @{
 
     // MESH INTERFACE
@@ -317,7 +307,7 @@ public:
 #endif
     }
 
-    /// Get iterator over first vertex of mesh's main border (aka "seam").
+    /// Get iterator over first vertex of mesh's main border (aka <i>seam</i>).
     Border_vertex_iterator  mesh_main_border_vertices_begin() {
         return m_seam_begin;
     }
@@ -325,7 +315,7 @@ public:
         return (Border_vertex_const_iterator) m_seam_begin;
     }
 
-    /// Get iterator over past-the-end vertex of mesh's main border (aka "seam").
+    /// Get iterator over past-the-end vertex of mesh's main border (aka <i>seam</i>).
     Border_vertex_iterator  mesh_main_border_vertices_end() {
         return mesh_vertices_end();
     }
@@ -513,22 +503,22 @@ public:
                                               tag);
     }
 
-    /// Return true if a vertex belongs to ANY mesh's border.
+    /// Return `true` if `vertex` belongs to the border of any mesh.
     bool  is_vertex_on_border(Vertex_const_handle vertex) const {
         CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return is_vertex_on_main_border(vertex) ||
                m_mesh_adaptor.is_vertex_on_border(vertex->vertex());
     }
 
-    /// Return true if a vertex belongs to the UNIQUE mesh's main border
+    /// Return `true` if `vertex` belongs to the UNIQUE mesh's main border
     /// set by the constructor.
     bool  is_vertex_on_main_border(Vertex_const_handle vertex) const {
         CGAL_surface_mesh_parameterization_assertion(is_valid(vertex));
         return get_vertex_seaming(vertex) == BORDER;
     }
 
-    /// Get circulator over the vertices incident to 'vertex'.
-    /// 'start_position' defines the optional initial position of the circulator.
+    /// Get circulator over the vertices incident to `vertex`.
+    /// `start_position` defines the optional initial position of the circulator.
     Vertex_around_vertex_circulator vertices_around_vertex_begin(
                             Vertex_handle vertex,
                             Vertex_handle start_position = Vertex_handle())
@@ -602,11 +592,10 @@ private:
     /// w.r.t. the first_seam_vertex -> end_seam_vertex border
     /// (outer seam edges are marked BORDER).
     ///
-    /// @commentheading Preconditions:
-    /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
-    ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
-    /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// - The "seam" is implicitely a loop. The first vertex should *not* be
+    /// \pre first_seam_vertex -> end_seam_vertex defines the outer seam,
+    ///   i.e. Parameterization_mesh_patch_3 will export the <i>right</i> of the seam.
+    /// \pre The <i>seam</i> is given as a container of Adaptor::Vertex_handle elements.
+    /// \pre The <i>seam</i> is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
     template<class InputIterator>
     void set_mesh_seaming(InputIterator first_seam_vertex,
@@ -696,12 +685,11 @@ private:
     /// Set the seaming flag of inner vertices and edges to INNER
     /// by filling the topological disk.
     ///
-    /// @commentheading Preconditions:
-    /// - Inner vertices are marked as OUTER, seam vertices as BORDER.
-    /// - Inner edges are marked as OUTER,
+    /// \pre Inner vertices are marked as OUTER, seam vertices as BORDER.
+    /// \pre Inner edges are marked as OUTER,
     ///   outer seam edges as BORDER, inner seam edges as INNER.
-    /// - pSeedVertex is in the inner region.
-    /// - pSeedVertex != NULL.
+    /// \pre pSeedVertex is in the inner region.
+    /// \pre pSeedVertex != NULL.
     ///
     /// Implementation note:
     /// The seaming status of inner edges is unused, thus this part is not tested.
@@ -748,13 +736,12 @@ private:
 
     // Check that the seam is valid, i.e. that the cut mesh is 2-manifold.
     ///
-    /// @commentheading Preconditions:
-    /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
-    ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
-    /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// - The "seam" is implicitely a loop. The first vertex should *not* be
+    /// \pre first_seam_vertex -> end_seam_vertex defines the outer seam,
+    ///   i.e. Parameterization_mesh_patch_3 will export the <i>right</i> of the seam.
+    /// \pre The <i>seam</i> is given as a container of Adaptor::Vertex_handle elements.
+    /// \pre The <i>seam</i> is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
-    /// - The seaming flag of all vertices and edges to INNER, BORDER or OUTER
+    /// \pre The seaming flag of all vertices and edges to INNER, BORDER or OUTER
     ///   w.r.t. the first_seam_vertex -> end_seam_vertex border is set
     ///   (outer seam edges are marked BORDER).
     template<class InputIterator>
@@ -853,9 +840,8 @@ private:
 
     /// Create a patch vertex from an adaptor vertex + one of its neighbors.
     ///
-    /// @commentheading Preconditions:
-    /// - adaptor_neighbor is a neighbor of adaptor_vertex.
-    /// - (adaptor_vertex, adaptor_neighbor) must *not* be a seam (non-oriented) edge.
+    /// \pre adaptor_neighbor is a neighbor of adaptor_vertex.
+    /// \pre (adaptor_vertex, adaptor_neighbor) must *not* be a seam (non-oriented) edge.
     Vertex_const_handle get_decorated_vertex_from_inner_edge(
                 typename Adaptor::Vertex_const_handle adaptor_vertex,
                 typename Adaptor::Vertex_const_handle adaptor_neighbor) const
@@ -915,11 +901,10 @@ private:
     /// Create a patch vertex from a border/seam adaptor vertex
     /// + one of its neighbors on the seam.
     ///
-    /// @commentheading Preconditions:
-    /// - adaptor_vertex is a border/seam vertex.
-    /// - [first_cw_neighbor, last_cw_neighbor] defines the range
+    /// \pre adaptor_vertex is a border/seam vertex.
+    /// \pre [first_cw_neighbor, last_cw_neighbor] defines the range
     ///   of the valid neighbors of adaptor_vertex (included) or are NULL.
-    /// - Either first_cw_neighbor or last_cw_neighbor are not NULL.
+    /// \pre Either first_cw_neighbor or last_cw_neighbor are not NULL.
     Vertex_const_handle get_decorated_vertex_from_border_edge(
                 typename Adaptor::Vertex_const_handle adaptor_vertex,
                 typename Adaptor::Vertex_const_handle last_cw_neighbor,
@@ -1067,6 +1052,8 @@ private:
     };
 
 // Friends
+    
+    #ifndef DOXYGEN_RUNNING
     friend class Param_mesh_patch_vertex<Adaptor>;
     friend class Param_mesh_patch_vertex_handle<Adaptor>;
     friend class Param_mesh_patch_vertex_const_handle<Adaptor>;
@@ -1086,7 +1073,7 @@ private:
                                                      Vertex_const_handle,
                                                      typename Adaptor::Vertex_around_vertex_const_circulator,
                                                      typename Adaptor::Vertex_const_handle>;
-
+    #endif
 }; // Parameterization_mesh_patch_3
 
 

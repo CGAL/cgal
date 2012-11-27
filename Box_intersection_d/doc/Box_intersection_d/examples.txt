@@ -1,0 +1,9 @@
+/*!
+\example Box_intersection_d/box_grid.cpp
+\example Box_intersection_d/custom_box_grid.cpp
+\example Box_intersection_d/minimal.cpp
+\example Box_intersection_d/minimal_self.cpp
+\example Box_intersection_d/proximity_custom_box_traits.cpp
+\example Box_intersection_d/triangle_self_intersect.cpp
+\example Box_intersection_d/triangle_self_intersect_pointers.cpp
+*/

@@ -1,0 +1,5 @@
+/*!
+\example Circular_kernel_3/intersecting_spheres.cpp
+\example Circular_kernel_3/functor_has_on_3.cpp
+\example Circular_kernel_3/functor_compare_theta_3.cpp
+*/

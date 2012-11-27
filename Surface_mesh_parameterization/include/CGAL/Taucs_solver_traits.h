@@ -49,13 +49,16 @@
 
 namespace CGAL {
 
+/// @cond SKIP_IN_MANUAL
 
+/// \ingroup  PkgSurfaceParameterizationAlgebra
+///
 /// The class Taucs_symmetric_solver_traits
 /// is a traits class for solving symmetric positive definite sparse linear systems
 /// using TAUCS solvers family.
 /// The default solver is the Multifrontal Supernodal Cholesky Factorization.
 ///
-/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d concept.
+/// \cgalModels `SparseLinearAlgebraTraits_d`
 
 template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
@@ -90,9 +93,8 @@ public:
     /// Solve the sparse linear system "A*X = B".
     /// Return true on success. The solution is then (1/D) * X.
     ///
-    /// @commentheading Preconditions:
-    /// - A.row_dimension()    == B.dimension().
-    /// - A.column_dimension() == X.dimension().
+    /// \pre A.row_dimension()    == B.dimension().
+    /// \pre A.column_dimension() == X.dimension().
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
@@ -187,11 +189,13 @@ private:
 };
 
 
+/// \ingroup  PkgSurfaceParameterizationAlgebra
+///
 /// The class Taucs_solver_traits
-/// is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems
+/// is a traits class for solving general, that is symmetric and unsymmetric, sparse linear systems
 /// using TAUCS out-of-core LU factorization.
 ///
-/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d concept.
+/// \cgalModels `SparseLinearAlgebraTraits_d`
 
 template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
@@ -215,9 +219,8 @@ public:
     /// Solve the sparse linear system "A*X = B".
     /// Return true on success. The solution is then (1/D) * X.
     ///
-    /// @commentheading Preconditions:
-    /// - A.row_dimension()    == B.dimension().
-    /// - A.column_dimension() == X.dimension().
+    /// \pre A.row_dimension()    == B.dimension().
+    /// \pre A.column_dimension() == X.dimension().
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
@@ -341,7 +344,7 @@ private:
         return ( ::CGAL::abs(a) < 10.0 * (std::numeric_limits<NT>::min)());
     }
 };
-
+/// @endcond
 
 } //namespace CGAL
 

@@ -1,0 +1,251 @@
+/*! \page  PolynomialClassified  Classified Reference Pages
+
+
+\section PolynomialPolynomiald Polynomial_d
+
+\subsection PolynomialConcepts Concepts
+
+- `Polynomial_d`
+- `PolynomialTraits_d`
+
+- `PolynomialTraits_d::ConstructPolynomial`
+- `PolynomialTraits_d::GetCoefficient`
+- `PolynomialTraits_d::GetInnermostCoefficient`
+- `PolynomialTraits_d::MonomialRepresentation`
+
+- `PolynomialTraits_d::ConstructCoefficientConstIteratorRange`
+- `PolynomialTraits_d::ConstructInnermostCoefficientConstIteratorRange`
+
+- `PolynomialTraits_d::Permute`
+- `PolynomialTraits_d::Swap`
+- `PolynomialTraits_d::Move`
+
+- `PolynomialTraits_d::Degree`
+- `PolynomialTraits_d::TotalDegree`
+- `PolynomialTraits_d::DegreeVector`
+- `PolynomialTraits_d::LeadingCoefficient`
+- `PolynomialTraits_d::InnermostLeadingCoefficient`
+
+- `PolynomialTraits_d::Canonicalize`
+- `PolynomialTraits_d::Differentiate`
+
+- `PolynomialTraits_d::Evaluate`
+- `PolynomialTraits_d::EvaluateHomogeneous`
+- `PolynomialTraits_d::Substitute`
+- `PolynomialTraits_d::SubstituteHomogeneous`
+- `PolynomialTraits_d::IsZeroAt`
+- `PolynomialTraits_d::IsZeroAtHomogeneous`
+- `PolynomialTraits_d::SignAt`
+- `PolynomialTraits_d::SignAtHomogeneous`
+
+- `PolynomialTraits_d::Compare`
+
+- `PolynomialTraits_d::UnivariateContent`
+- `PolynomialTraits_d::MultivariateContent`
+
+- `PolynomialTraits_d::SquareFreeFactorize`
+- `PolynomialTraits_d::MakeSquareFree`
+- `PolynomialTraits_d::IsSquareFree`
+
+- `PolynomialTraits_d::PseudoDivision`
+- `PolynomialTraits_d::PseudoDivisionQuotient`
+- `PolynomialTraits_d::PseudoDivisionRemainder`
+
+- `PolynomialTraits_d::GcdUpToConstantFactor`
+- `PolynomialTraits_d::IntegralDivisionUpToConstantFactor`
+- `PolynomialTraits_d::UnivariateContentUpToConstantFactor`
+- `PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor`
+
+- `PolynomialTraits_d::Shift`
+- `PolynomialTraits_d::Negate`
+- `PolynomialTraits_d::Invert`
+- `PolynomialTraits_d::Translate`
+- `PolynomialTraits_d::TranslateHomogeneous`
+- `PolynomialTraits_d::Scale`
+- `PolynomialTraits_d::ScaleHomogeneous`
+
+- `PolynomialTraits_d::Resultant`
+- `PolynomialTraits_d::PolynomialSubresultants`
+- `PolynomialTraits_d::PolynomialSubresultantsWithCofactors`
+- `PolynomialTraits_d::PrincipalSubresultants`
+- `PolynomialTraits_d::SturmHabichtSequence`
+- `PolynomialTraits_d::SturmHabichtSequenceWithCofactors`
+- `PolynomialTraits_d::PrincipalSturmHabichtSequence`
+
+\subsection PolynomialClasses Classes
+
+- `CGAL::Polynomial<Coeff>`
+- `CGAL::Polynomial_traits_d<Polynomial_d>`
+- `CGAL::Exponent_vector`
+- `CGAL::Polynomial_type_generator<T,d>`
+
+\subsection PolynomialFunctions Functions
+
+- `CGAL::get_coefficient`
+- `CGAL::get_innermost_coefficient`
+
+- `CGAL::permute`
+- `CGAL::swap`
+- `CGAL::move`
+
+- `CGAL::degree`
+- `CGAL::total_degree`
+- `CGAL::degree_vector`
+- `CGAL::leading_coefficient`
+- `CGAL::innermost_leading_coefficient`
+
+- `CGAL::canonicalize`
+- `CGAL::differentiate`
+
+- `CGAL::evaluate`
+- `CGAL::evaluate_homogeneous`
+- `CGAL::substitute`
+- `CGAL::substitute_homogeneous`
+- `CGAL::is_zero_at`
+- `CGAL::is_zero_at_homogeneous`
+- `CGAL::sign_at`
+- `CGAL::sign_at_homogeneous`
+
+- `CGAL::compare`
+
+- `CGAL::univariate_content`
+- `CGAL::multivariate_content`
+
+- `CGAL::square_free_factorize`
+- `CGAL::make_square_free`
+
+- `CGAL::pseudo_division`
+- `CGAL::pseudo_division_quotient`
+- `CGAL::pseudo_division_remainder`
+
+- `CGAL::gcd_up_to_constant_factor`
+- `CGAL::integral_division_up_to_constant_factor`
+- `CGAL::univariate_content_up_to_constant_factor`
+- `CGAL::square_free_factorize_up_to_constant_factor`
+
+- `CGAL::shift`
+- `CGAL::negate`
+- `CGAL::invert`
+- `CGAL::translate`
+- `CGAL::translate_homogeneous`
+- `CGAL::scale`
+- `CGAL::scale_homogeneous`
+
+- `CGAL::resultant`
+- `CGAL::polynomial_subresultants`
+- `CGAL::polynomial_subresultants_with_cofactors`
+- `CGAL::principal_subresultants`
+- `CGAL::sturm_habicht_sequence`
+- `CGAL::sturm_habicht_sequence_with_cofactors`
+- `CGAL::principal_sturm_habicht_sequence`
+- `CGAL::number_of_real_roots`
+
+\section PolynomialAlphabeticalListofReferencePages Alphabetical List of Reference Pages
+
+- \ref CGAL::canonicalize "canonicalize"
+- \ref CGAL::compare "compare"
+- \ref CGAL::degree_vector "degree_vector"
+- \ref CGAL::degree "degree"
+- \ref CGAL::differentiate "differentiate"
+- \ref CGAL::evaluate_homogeneous "evaluate_homogeneous"
+- \ref CGAL::evaluate "evaluate"
+- \ref CGAL::Exponent_vector "Exponent_vector"
+- \ref CGAL::gcd_up_to_constant_factor "gcd_up_to_constant_factor"
+- \ref CGAL::get_coefficient "get_coefficient"
+- \ref CGAL::get_innermost_coefficient "get_innermost_coefficient"
+- \ref CGAL::innermost_leading_coefficient "innermost_leading_coefficient"
+- \ref CGAL::integral_division_up_to_constant_factor "integral_division_up_to_constant_factor"
+- \ref CGAL::invert "invert"
+- \ref CGAL::is_square_free "is_square_free"
+- \ref CGAL::is_zero_at_homogeneous "is_zero_at_homogeneous"
+- \ref CGAL::is_zero_at "is_zero_at"
+- \ref CGAL::leading_coefficient "leading_coefficient"
+- \ref CGAL::make_square_free "make_square_free"
+- \ref CGAL::move "move"
+- \ref CGAL::multivariate_content "multivariate_content"
+- \ref CGAL::negate "negate"
+- \ref CGAL::number_of_real_roots "number_of_real_roots"
+- \ref CGAL::permute "permute"
+- \ref CGAL::Polynomial "Polynomial<Coeff>"
+- `PolynomialTraits_d::Canonicalize`
+- `PolynomialTraits_d::Compare`
+- `PolynomialTraits_d::ConstructCoefficientConstIteratorRange`
+- `PolynomialTraits_d::ConstructInnermostCoefficientConstIteratorRange`
+- `PolynomialTraits_d::ConstructPolynomial`
+- `PolynomialTraits_d::DegreeVector`
+- `PolynomialTraits_d::Degree`
+- `PolynomialTraits_d::Differentiate`
+- `PolynomialTraits_d::EvaluateHomogeneous`
+- `PolynomialTraits_d::Evaluate`
+- `PolynomialTraits_d::GcdUpToConstantFactor`
+- `PolynomialTraits_d::GetCoefficient`
+- `PolynomialTraits_d::GetInnermostCoefficient`
+- `PolynomialTraits_d::InnermostLeadingCoefficient`
+- `PolynomialTraits_d::IntegralDivisionUpToConstantFactor`
+- `PolynomialTraits_d::Invert`
+- `PolynomialTraits_d::IsSquareFree`
+- `PolynomialTraits_d::IsZeroAtHomogeneous`
+- `PolynomialTraits_d::IsZeroAt`
+- `PolynomialTraits_d::LeadingCoefficient`
+- `PolynomialTraits_d::MakeSquareFree`
+- `PolynomialTraits_d::MonomialRepresentation`
+- `PolynomialTraits_d::Move`
+- `PolynomialTraits_d::MultivariateContent`
+- `PolynomialTraits_d::Negate`
+- `PolynomialTraits_d::Permute`
+- `PolynomialTraits_d::PolynomialSubresultantsWithCofactors`
+- `PolynomialTraits_d::PolynomialSubresultants`
+- `PolynomialTraits_d::PrincipalSturmHabichtSequence`
+- `PolynomialTraits_d::PrincipalSubresultants`
+- `PolynomialTraits_d::PseudoDivisionQuotient`
+- `PolynomialTraits_d::PseudoDivisionRemainder`
+- `PolynomialTraits_d::PseudoDivision`
+- `PolynomialTraits_d::Resultant`
+- `PolynomialTraits_d::ScaleHomogeneous`
+- `PolynomialTraits_d::Scale`
+- `PolynomialTraits_d::Shift`
+- `PolynomialTraits_d::SignAtHomogeneous`
+- `PolynomialTraits_d::SignAt`
+- `PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor`
+- `PolynomialTraits_d::SquareFreeFactorize`
+- `PolynomialTraits_d::SturmHabichtSequenceWithCofactors`
+- `PolynomialTraits_d::SturmHabichtSequence`
+- `PolynomialTraits_d::SubstituteHomogeneous`
+- `PolynomialTraits_d::Substitute`
+- `PolynomialTraits_d::Swap`
+- `PolynomialTraits_d::TotalDegree`
+- `PolynomialTraits_d::TranslateHomogeneous`
+- `PolynomialTraits_d::Translate`
+- `PolynomialTraits_d::UnivariateContentUpToConstantFactor`
+- `PolynomialTraits_d::UnivariateContent`
+- `PolynomialTraits_d`
+- `Polynomial_d`
+- \ref CGAL::polynomial_subresultants_with_cofactors "polynomial_subresultants_with_cofactors"
+- \ref CGAL::polynomial_subresultants "polynomial_subresultants"
+- \ref CGAL::Polynomial_traits_d "Polynomial_traits_d<Polynomial_d>"
+- \ref CGAL::Polynomial_type_generator "Polynomial_type_generator<T,d>"
+- \ref CGAL::principal_sturm_habicht_sequence "principal_sturm_habicht_sequence"
+- \ref CGAL::principal_subresultants "principal_subresultants"
+- \ref CGAL::pseudo_division_quotient "pseudo_division_quotient"
+- \ref CGAL::pseudo_division_remainder "pseudo_division_remainder"
+- \ref CGAL::pseudo_division "pseudo_division"
+- \ref CGAL::resultant "resultant"
+- \ref CGAL::scale_homogeneous "scale_homogeneous"
+- \ref CGAL::scale "scale"
+- \ref CGAL::shift "shift"
+- \ref CGAL::sign_at_homogeneous "sign_at_homogeneous"
+- \ref CGAL::sign_at "sign_at"
+- \ref CGAL::square_free_factorize_up_to_constant_factor "square_free_factorize_up_to_constant_factor"
+- \ref CGAL::square_free_factorize "square_free_factorize"
+- \ref CGAL::sturm_habicht_sequence_with_cofactors "sturm_habicht_sequence_with_cofactors"
+- \ref CGAL::sturm_habicht_sequence "sturm_habicht_sequence"
+- \ref CGAL::substitute_homogeneous "substitute_homogeneous"
+- \ref CGAL::substitute "substitute"
+- \ref CGAL::swap "swap"
+- \ref CGAL::total_degree "total_degree"
+- \ref CGAL::translate_homogeneous "translate_homogeneous"
+- \ref CGAL::translate "translate"
+- \ref CGAL::univariate_content_up_to_constant_factor "univariate_content_up_to_constant_factor"
+- \ref CGAL::univariate_content "univariate_content"
+
+*/

@@ -1,0 +1,202 @@
+
+namespace CGAL {
+/*!
+
+\mainpage Envelopes of Curves in 2D
+\anchor Chapter_Envelopes_of_Curves_in_2D
+
+\anchor chapterEnvelope2
+
+\cgalAutoToc
+\author Ron Wein
+
+\cgalFigureBegin{LowEnv2Fig,lwrenv.gif}
+The lower envelope of a set of line segments and hyperbolic arc.
+\cgalFigureEnd
+
+\section Envelope_2Introduction Introduction
+
+A continuous curve \f$ C\f$ in \f$ {\mathbb R}^2\f$ is called <I>\f$ x\f$-monotone</I>, if
+every vertical line intersects it at a single point at most. For
+example, the circle \f$ x^2 + y^2 = 1\f$ is <I>not</I> \f$ xy\f$-monotone as the
+vertical line \f$ x = 0\f$ intersects it at \f$ (0, -1)\f$ and at \f$ (0, 1)\f$;
+however, it is possible to split the circle into an upper part and a
+lower part, such that both of these parts are \f$ x\f$-monotone.
+We consider vertical segments as <I>weakly</I> \f$ x\f$-monotone, to properly
+handle inputs that contain such vertical curves.
+
+An \f$ x\f$-monotone curve can be represented as a univariate function
+\f$ y = C(x)\f$, defined over some continuous range \f$ R_C \subseteq {\mathbb R}\f$.
+Given a set \f$ {\cal C} = \{ C_1, C_2, \ldots, C_n \}\f$ of \f$ x\f$-monotone
+curves, their <I>lower envelope</I> is defined as the point-wise minimum of
+all curves. Namely, the lower envelope of the set \f$ {\cal C}\f$ can be
+defined as the following function:
+
+\f{eqnarray*}{
+{\cal L}_{{\cal C}} (x) = \min_{1 \leq k \leq n}{\overline{C}_k (x)} \ ,
+\f}
+
+where we define \f$\overline{C}_k(x) = C_k(x)\f$ for \f$x \in R_{C_k}\f$,
+and \f$\overline{C}_k(x) = \infty\f$ otherwise.
+
+Similarly, the <I>upper envelope</I> of \f${\cal C}\f$ is the point-wise maximum of
+the \f$x\f$-monotone curves in the set:
+\f{eqnarray*}{
+{\cal U}_{{\cal C}} (x) = \max_{1 \leq k \leq n}{\underline{C}_k (x)} \ ,
+\f}
+where in this case \f$ \underline{C}_k(x) = -\infty\f$ for \f$ x 
+\not\in R_{C_k}\f$.
+
+Given a set of \f$ x\f$-monotone curves \f$ {\cal C}\f$, the <I>minimization
+diagram</I> of \f$ {\cal C}\f$ is a subdivision of the \f$ x\f$-axis into cells,
+such that the identity of the curves that induce the lower envelope
+over a specific cell of the subdivision (an edge or a vertex) is the
+same. In non-degenerate situations, an edge - which represents a
+continuous interval on the \f$ x\f$-axis - is induced by a single
+curve (or by no curves at all, if there are no \f$ x\f$-monotone curves
+defined over the interval), and a vertex is induced by a single curve
+and corresponds to one of its endpoints, or by two curves and
+corresponds to their intersection point.
+The <I>maximization diagram</I> is symmetrically defined for upper envelopes.
+In the rest of this chapter, we refer to both these diagrams as
+<I>envelope diagrams</I>.
+
+Lower and upper envelopes can be efficiently computed using a
+divide-and-conquer approach. First, note that the envelope diagram for
+a single \f$ x\f$-monotone curve \f$ C_k\f$ is trivial to compute: we project
+the boundary of its range of definition \f$ R_{C_k}\f$ onto the \f$ x\f$-axis
+and label the features it induces accordingly. Given a set
+\f$ {\cal D}\f$ of (non necessarily \f$ x\f$-monotone) curves in \f$ {\mathbb R}^2\f$,
+we subdivide each curve into a finite number of weakly \f$ x\f$-monotone 
+curves, and obtain the set \f$ {\cal C}\f$. Then, we split the set into two
+disjoint subsets \f$ {\cal C}_1\f$ and \f$ {\cal C}_2\f$, and we compute their envelope
+diagrams recursively. Finally, we merge the diagrams in linear time by
+traversing both diagrams in parallel.
+
+\section env2_secenv_diag The Envelope Diagram 
+
+The package basically contains two sets of free functions:
+`lower_envelope_x_monotone_2 (begin, end, diag)` (similarly
+`upper_envelope_x_monotone_2()`) construct the envelope diagram
+for a given range of \f$ x\f$-monotone curves, while 
+`lower_envelope_2 (begin, end, diag)` (similarly
+`upper_envelope_2()`) construct the envelope diagram for a
+range of <I>arbitrary</I> (not necessarily \f$ x\f$-monotone) curves.
+In this section we explain more on the structure of the envelope
+diagram these functions output.
+
+\cgalFigureBegin{env2_figmin_diag,min_diag.gif}
+The lower envelope of eight line segments, labeled \f$ A, \ldots, H\f$, 
+as constructed in `envelope_segments.cpp`. The minimization
+diagram is shown at the bottom, where each diagram vertex points to
+the point associated with it, and the labels of the segment that
+induce a diagram edge are displayed below this edge. Note that there
+exists one edge that represents an overlap (i.e., there are two
+segments that induce it), and there are also a few edges that
+represent empty intervals.
+\cgalFigureEnd
+
+A minimization diagram or a maximization diagram is represented by
+a model of the concept `EnvelopeDiagram_1`. This concept defines
+the structure of the subdivision of the \f$ x\f$-axis into \f$ 0\f$-dimensional
+cells called <I>vertices</I>, and \f$ 1\f$-dimensional cells called <I>edges</I>.
+The important property of this subdivision is that the identity of
+the curves that induce the lower envelope (or the upper envelope)
+over each cell is fixed.
+
+\cgalFigureRef{env2_figmin_diag} shows the lower envelope of a set of
+eight line segments, and sketches the structure of their minimization
+diagram. Each diagram vertex \f$ v\f$ is associated with a point \f$
+p_v\f$ on the envelope, which corresponds to either a curve endpoint
+or to an intersection point of two (or more) curves. The vertex is
+therefore associated with a set of \f$ x\f$-monotone curves that
+induce the envelope over \f$ p_v\f$. Each vertex is incident to two
+edges, one lying to its left and the other to its right.
+
+An edge in the envelope diagram represents a continuous portion of the
+\f$ x\f$-axis, and is associated with a set of \f$ x\f$-monotone curves that
+induce the envelope over this interval. Note that this set may be
+empty if no \f$ x\f$-monotone curves are defined over this interval. In
+degenerate situations where curves overlap, there may be more than
+a single curve that induces the envelope over the interval the edge
+represents. An envelop diagram of a set of curves either consists of
+a single unbounded edge (in case the curve set is empty or if the
+envelope contains a single unbounded curve that is below or above
+all other curves), or at least one vertex and two unbounded edges,
+while each additional vertex comes along with an additional edge. It
+is possible to directly access the <I>leftmost</I> edge, representing
+the unbounded interval that starts at \f$ -\infty\f$, and the <I>rightmost</I>
+edge, representing the unbounded interval that ends at \f$ \infty\f$.
+(In the example depicted in \cgalFigureRef{env2_figmin_diag} we have
+only bounded curves, so the leftmost and rightmost edges represent
+empty intervals. This is not the case when we deal, for example, with
+envelopes of sets of lines.)
+
+Any model of the `EnvelopeDiagram_1` concept must define a geometric
+traits class, which in turn defines the `Point_2` and 
+`X_monotone_curve_2` types defined with the diagram features.
+The geometric traits class must be a model of the 
+`ArrangementXMonotoneTraits_2` concept in case we construct
+envelopes of \f$ x\f$-monotone curves. If we are interested in handling
+arbitrary (not necessarily \f$ x\f$-monotone) curves, the traits class
+must be a model of the `ArrangementTraits_2` concept. This
+concepts refined the `ArrangementXMonotoneTraits_2` concept;
+a traits class that models this concepts must also defines a
+`Curve_2` type, representing an arbitrary planar curve, and
+provide a functor for subdividing such curves into \f$ x\f$-monotone
+subcurves.
+
+\section Envelope_2Examples Examples
+
+\subsection Envelope_2ExampleforEnvelopeofLineSegments Example for Envelope of Line Segments
+
+The following example demonstrates how to compute and traverse the
+minimization diagram of line segments, as illustrated in
+\cgalFigureRef{env2_figmin_diag}. We use the curve-data traits
+instantiated by the `Arr_segment_traits_2` class, in order to
+attach a label (a `char` in this case) to each input segment.
+We use these labels when we print the minimization diagram.
+
+\cgalExample{Envelope_2/envelope_segments.cpp}
+
+\subsection Envelope_2ExampleforComputingtheConvexHull Example for Computing the Convex Hull with Envelopes
+
+The next example computes the convex hull of a set of input points
+by constructing envelopes of unbounded curves, in our case lines
+that are dual to the input points. Here use the
+`Arr_linear_traits_2` class to compute the lower envelope of the
+set of dual lines. We read a set of points \f$ {\cal P} = p_1, \ldots, p_n\f$
+from an input file, and construct the corresponding dual lines
+\f$ {\cal P}^{*} = p^{*}_1, \ldots, p^{*}_n\f$, where the line \f$ p^{*}\f$ dual
+to a point \f$ p = (p_x, p_y)\f$ is given by \f$ y = p_x x - p_y\f$. We then
+compute the convex hull of the point-set \f$ {\cal P}\f$, using the fact that
+the lines that form the lower envelope of \f$ {\cal P}^{*}\f$ are dual to the
+points along the <I>upper</I> part of \f$ {\cal P}\f$'s convex hull, and the
+lines that form the upper envelope of \f$ {\cal P}^{*}\f$ are dual to the
+points along the <I>lower</I> part of the convex hull; see,
+e.g., [\cite Section 11.4 for more details.
+Note that the leftmost edge of the minimization diagram is associated
+with the same line as the rightmost edge of the maximization diagram,
+and vice-verse. We can therefore skip the rightmost edges of both
+diagrams.
+
+\cgalExample{Envelope_2/convex_hull.cpp}
+
+\cgalFigureBegin{env2_figex_circ,ex_circle.gif}
+A set of four circles, as constructed in \ref Envelope_2/envelope_circles.cpp. The lower envelope and the upper envelope are shown using thick dashed lines of different colors respectively.
+\cgalFigureEnd
+
+\subsection Envelope_2ExampleforEnvelopeofNonLinearCurves Example for Envelope of Non-Linear Curves
+
+We conclude by an example of envelopes of non-linear curves. 
+We use the `Arr_circle_segment_traits_2` class to construct the
+lower and the upper envelopes of a set of four circles, as depicted
+in \cgalFigureRef{env2_figex_circ}. Note that unlike the two previous
+examples, here our curves are not \f$ x\f$-monotone, so we use the functions
+that compute envelopes of arbitrary curves.
+
+\cgalExample{Envelope_2/envelope_circles.cpp}
+
+*/ 
+} /* namespace CGAL */
+

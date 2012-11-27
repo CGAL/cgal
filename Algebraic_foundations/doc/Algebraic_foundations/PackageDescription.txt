@@ -1,0 +1,68 @@
+/// \defgroup PkgAlgebraicFoundations Algebraic Foundations Reference
+
+
+/// \defgroup PkgAlgebraicFoundationsFunctions Global Functions
+/// \ingroup PkgAlgebraicFoundations
+
+/// \defgroup PkgAlgebraicFoundationsAlgebraicStructures Algebraic Structures
+/// \ingroup PkgAlgebraicFoundations
+
+/// \defgroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts Concepts
+/// \ingroup PkgAlgebraicFoundationsAlgebraicStructures
+
+
+/// \defgroup PkgAlgebraicFoundationsRealEmbeddable Real Embeddable
+/// \ingroup PkgAlgebraicFoundations
+
+/// \defgroup PkgAlgebraicFoundationsRealEmbeddableConcepts Concepts
+/// \ingroup PkgAlgebraicFoundationsRealEmbeddable
+
+/// \defgroup PkgAlgebraicFoundationsRealNumberTypes Real Number Types
+/// \ingroup PkgAlgebraicFoundations
+
+/// \defgroup PkgAlgebraicFoundationsRealNumberTypesConcepts Concepts
+/// \ingroup PkgAlgebraicFoundationsRealNumberTypes
+
+
+/// \defgroup PkgAlgebraicFoundationsInteroperability Interoperability
+/// \ingroup PkgAlgebraicFoundations
+
+/// \defgroup PkgAlgebraicFoundationsInteroperabilityConcepts Concepts
+/// \ingroup PkgAlgebraicFoundationsInteroperability
+
+
+/// \defgroup PkgAlgebraicFoundationsFractions Fractions
+/// \ingroup PkgAlgebraicFoundations
+
+/// \defgroup PkgAlgebraicFoundationsFractionsConcepts Concepts
+/// \ingroup PkgAlgebraicFoundationsFractions
+
+
+/// \defgroup PkgAlgebraicFoundationsMiscellaneous Miscellaneous
+/// \ingroup PkgAlgebraicFoundations
+
+/// \defgroup PkgAlgebraicFoundationsMiscellaneousConcepts Concepts
+/// \ingroup PkgAlgebraicFoundationsMiscellaneous
+
+/*!
+\addtogroup PkgAlgebraicFoundations
+\todo check generated documentation
+
+\cgalPkgDescriptionBegin{Algebraic Foundations,PkgAlgebraicFoundationsSummary}
+\cgalPkgPicture{Algebraic_foundations2.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Michael Hemmer}
+\cgalPkgDesc{This package defines what algebra means for \cgal, in terms of concepts, classes and functions. The main features are: (i) explicit concepts for interoperability of types  (ii) separation between algebraic types (not necessarily embeddable into the reals), and number types (embeddable into the reals).}
+\cgalPkgManuals{Chapter_Algebraic_Foundations,PkgAlgebraicFoundations}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.3}
+\cgalPkgBib{cgal:h-af}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\ref AlgebraicFoundationsClassified  "Classified Reference Pages"
+
+*/
+

@@ -28,28 +28,33 @@
 namespace CGAL {
 
 
+/// \ingroup  PkgSurfaceParameterizationMethods
+///
 /// The class Mean_value_coordinates_parameterizer_3
-/// implements Floater Mean Value Coordinates parameterization [Flo03].
-/// This method is sometimes called simply "Floater parameterization".
+/// implements *Floater Mean Value Coordinates* parameterization  \cite cgal:f-mvc-03.
+/// This method is sometimes called simply *Floater parameterization*.
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
 /// One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 ///
-/// This class is a Strategy [GHJV95] called by the main
-/// parameterization algorithm Fixed_border_parameterizer_3::parameterize().
-/// - It provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
+/// This class is used by the main
+/// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()`.
+/// - It provides default` BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
 ///   parameters that make sense.
-/// - It implements compute_w_ij() to compute w_ij = (i, j) coefficient of matrix A
+/// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Floater Mean Value Coordinates parameterization.
-/// - It implements an optimized version of is_one_to_one_mapping().
+/// - It implements an optimized version of `is_one_to_one_mapping()`.
 ///
-/// @heading Is Model for the Concepts: Model of the ParameterizerTraits_3 concept.
+/// \cgalModels `ParameterizerTraits_3`
 ///
-/// @heading Design Pattern:
-/// Mean_value_coordinates_parameterizer_3 class is a
-/// Strategy [GHJV95]: it implements a strategy of surface parameterization
-/// for models of ParameterizationMesh_3.
+///
+/// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template
 <

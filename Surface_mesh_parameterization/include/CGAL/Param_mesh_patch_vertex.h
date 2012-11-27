@@ -28,6 +28,7 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 // Forward reference
 template<class ParameterizationPatchableMesh_3> class Param_mesh_patch_vertex_const_handle;
@@ -151,7 +152,7 @@ private:
 /// Param_mesh_patch_vertex object, thus has the same behavior
 /// as Param_mesh_patch_vertex* pointer type.
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// Param_mesh_patch_vertex_handle is a Bridge [GHJV95].
 ///
 /// Implementation note:
@@ -295,7 +296,7 @@ private:
 /// Param_mesh_patch_vertex object, thus has the same behavior
 /// as const Param_mesh_patch_vertex* pointer type.
 ///
-/// @heading Design Pattern:
+/// ## Design Pattern ##
 /// Param_mesh_patch_vertex_const_handle is a Bridge [GHJV95].
 ///
 /// Implementation note:
@@ -433,6 +434,7 @@ private:
 
 }; // Param_mesh_patch_vertex_const_handle
 
+/// \endcond
 
 } //namespace CGAL
 

@@ -1,0 +1,7 @@
+/*!
+\example Algebraic_foundations/algebraic_structure_dispatch.cpp
+\example Algebraic_foundations/fraction_traits.cpp
+\example Algebraic_foundations/implicit_interoperable_dispatch.cpp
+\example Algebraic_foundations/integralize.cpp
+\example Algebraic_foundations/interoperable.cpp
+*/

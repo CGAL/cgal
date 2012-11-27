@@ -1,0 +1,31 @@
+class Assignable {};
+class DefaultConstructible {};
+class CopyConstructible {};
+class EqualityComparable {};
+class LessThanComparable {};
+class AdaptableFunctor {};
+class AdaptableUnaryFunction {};
+class AdaptableBinaryFunction {};
+
+class Iterator {};
+class OutputIterator {};
+class InputIterator {};
+class ForwardIterator {};
+class RandomAccessIterator {};
+class BidirectionalIterator {};
+
+
+class RandomAccessContainer {};
+class BackInsertionSequence {};
+
+/*!
+See http://www.boost.org/libs/property_map/doc/LvaluePropertyMap.html
+*/
+class LvaluePropertyMap {};
+
+/*!
+This specifies that the actual type exposed through a `typedef` is
+implementation specific. It can only be treated through the concepts
+it is said to model.
+*/
+class Hidden_type {};

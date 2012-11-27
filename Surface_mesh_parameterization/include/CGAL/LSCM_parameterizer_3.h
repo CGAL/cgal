@@ -39,8 +39,10 @@ namespace CGAL {
 // Declaration
 // ------------------------------------------------------------------------------------
 
+/// \ingroup  PkgSurfaceParameterizationMethods
+///
 /// The class LSCM_parameterizer_3 implements the
-/// Least Squares Conformal Maps (LSCM) parameterization [LPRM02].
+/// *Least Squares Conformal Maps (LSCM)* parameterization  \cite cgal:lprm-lscm-02.
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
@@ -48,12 +50,15 @@ namespace CGAL {
 /// onto a convex polygon (only two pinned vertices are needed to ensure a
 /// unique solution), but one-to-one mapping is *not* guaranteed.
 ///
-/// @heading Is Model for the Concepts: Model of the ParameterizerTraits_3 concept.
+/// \cgalModels `ParameterizerTraits_3`
 ///
-/// @heading Design Pattern:
-/// LSCM_parameterizer_3 class is a
-/// Strategy [GHJV95]: it implements a strategy of surface parameterization
-/// for models of ParameterizationMesh_3.
+///
+/// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template
 <
@@ -144,30 +149,28 @@ public:
 
     // Default copy constructor and operator =() are fine
 
-    /// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
+    /// Compute a one-to-one mapping from a triangular 3D surface mesh
     /// to a piece of the 2D space.
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
-    /// @commentheading Preconditions:
-    /// - 'mesh' must be a surface with one connected component.
-    /// - 'mesh' must be a triangular mesh.
+    /// \pre `mesh` must be a surface with one connected component.
+    /// \pre `mesh` must be a triangular mesh.
     virtual Error_code  parameterize(Adaptor& mesh);
 
 // Private operations
 private:
     /// Check parameterize() preconditions:
-    /// - 'mesh' must be a surface with one connected component.
-    /// - 'mesh' must be a triangular mesh.
+    /// - `mesh` must be a surface with one connected component.
+    /// - `mesh` must be a triangular mesh.
     virtual Error_code  check_parameterize_preconditions(Adaptor& mesh);
 
     /// Initialize "A*X = B" linear system after
     /// (at least two) border vertices are parameterized.
     ///
-    /// @commentheading Preconditions:
-    /// - Vertices must be indexed.
-    /// - X and B must be allocated and empty.
-    /// - At least 2 border vertices must be parameterized.
+    /// \pre Vertices must be indexed.
+    /// \pre X and B must be allocated and empty.
+    /// \pre At least 2 border vertices must be parameterized.
     void initialize_system_from_mesh_border(LeastSquaresSolver& solver,
                                             const Adaptor& mesh) ;
 
@@ -179,7 +182,7 @@ private:
 
     /// Create two lines in the linear system per triangle (one for u, one for v).
     ///
-    /// @commentheading Precondition: vertices must be indexed.
+    /// \pre vertices must be indexed.
     Error_code setup_triangle_relations(LeastSquaresSolver& solver,
                                         const Adaptor& mesh,
                                         Facet_const_handle facet) ;
@@ -219,14 +222,14 @@ private:
 // Implementation
 // ------------------------------------------------------------------------------------
 
-// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
+// Compute a one-to-one mapping from a triangular 3D surface mesh
 // to a piece of the 2D space.
 // The mapping is linear by pieces (linear in each triangle).
 // The result is the (u,v) pair image of each vertex of the 3D surface.
 //
 // Preconditions:
-// - 'mesh' must be a surface with one connected component.
-// - 'mesh' must be a triangular mesh.
+// - `mesh` must be a surface with one connected component.
+// - `mesh` must be a triangular mesh.
 //
 // Implementation note: Outline of the algorithm:
 // 1) Find an initial solution by projecting on a plane.
@@ -340,8 +343,8 @@ parameterize(Adaptor& mesh)
 
 
 // Check parameterize() preconditions:
-// - 'mesh' must be a surface with one connected component
-// - 'mesh' must be a triangular mesh
+// - `mesh` must be a surface with one connected component
+// - `mesh` must be a triangular mesh
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code

@@ -19,7 +19,6 @@ surfaces_union.cpp
 windows
 VTK
 debug_macros.h
-
 implicit_functions.cpp
 implicit_functions.h
 implicit_surface_mesher.cpp
@@ -28,3 +27,4 @@ makefile.*
 parameters.cpp
 parameters.h
 replay*
+doc

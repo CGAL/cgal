@@ -32,24 +32,24 @@ namespace CGAL {
 // Class Circular_border_parameterizer_3
 //
 
+/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+///
 /// This is the base class of strategies that parameterize the border
 /// of a 3D surface onto a circle.
-/// Circular_border_parameterizer_3 is a pure virtual class, thus
+/// `Circular_border_parameterizer_3` is a pure virtual class, thus
 /// cannot be instantiated.
 /// It implements most of the algorithm. Subclasses just
-/// have to implement compute_edge_length() to compute a segment's length.
+/// have to implement `compute_edge_length()` to compute a segment's length.
 ///
 /// Implementation note:
-/// To simplify the implementation, BorderParameterizer_3 models know only the
-/// ParameterizationMesh_3 class. They do not know the parameterization algorithm
+/// To simplify the implementation, `BorderParameterizer_3` models know only the
+/// `ParameterizationMesh_3` class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// @heading Is Model for the Concepts:
-/// Model of the BorderParameterizer_3 concept (although you cannot instantiate this class).
+/// \cgalModels `BorderParameterizer_3`
 ///
-/// @heading Design Pattern:
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3.
+/// \sa `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
 
 template<class ParameterizationMesh_3>           //< 3D surface
 class Circular_border_parameterizer_3
@@ -101,8 +101,8 @@ public:
 
     // Default constructor, copy constructor and operator =() are fine
 
-    /// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
-    /// on border's shape. Mark them as "parameterized".
+    /// Assign to mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
+    /// on border's shape. Mark them as <i>parameterized</i>.
     typename Parameterizer_traits_3<Adaptor>::Error_code
                                         parameterize_border(Adaptor& mesh);
 
@@ -148,7 +148,7 @@ double Circular_border_parameterizer_3<Adaptor>::compute_border_length(
     return len;
 }
 
-// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
+// Assign to mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
 // on border's shape. Mark them as "parameterized".
 template<class Adaptor>
 inline
@@ -205,17 +205,18 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 // Class Circular_border_uniform_parameterizer_3
 //
 
+/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+///
 /// This class parameterizes the border of a 3D surface onto a circle
 /// in a uniform manner: points are equally spaced.
 /// Circular_border_parameterizer_3 implements most of the border parameterization
-/// algorithm. This class implements only compute_edge_length() to compute a
+/// algorithm. This class implements only `compute_edge_length()` to compute a
 /// segment's length.
 ///
-/// @heading Is Model for the Concepts: Model of the BorderParameterizer_3 concept.
+/// \cgalModels `BorderParameterizer_3`
 ///
-/// @heading Design Pattern:
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3
+/// \sa `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Circular_border_parameterizer_3<ParameterizationMesh_3>`
 
 template<class ParameterizationMesh_3>      //< 3D surface
 class Circular_border_uniform_parameterizer_3
@@ -284,18 +285,19 @@ protected:
 // Class Circular_border_arc_length_parameterizer_3
 //
 
+/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+///
 /// This class parameterizes the border of a 3D surface onto a circle,
 /// with an arc-length parameterization: (u,v) values are
 /// proportional to the length of border edges.
-/// Circular_border_parameterizer_3 implements most of the border parameterization
-/// algorithm. This class implements only compute_edge_length() to compute a
+/// `Circular_border_parameterizer_3` implements most of the border parameterization
+/// algorithm. This class implements only `compute_edge_length()` to compute a
 /// segment's length.
 ///
-/// @heading Is Model for the Concepts: Model of the BorderParameterizer_3 concept.
+/// \cgalModels `BorderParameterizer_3`
 ///
-/// @heading Design Pattern:
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3
+/// \sa `CGAL::Circular_border_parameterizer_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
 
 template<class ParameterizationMesh_3>           //< 3D surface
 class Circular_border_arc_length_parameterizer_3

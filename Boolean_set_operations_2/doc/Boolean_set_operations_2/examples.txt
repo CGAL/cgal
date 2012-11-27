@@ -1,0 +1,13 @@
+/*!
+\example Boolean_set_operations_2/bezier_traits_adapter2.cpp
+\example Boolean_set_operations_2/bezier_traits_adapter.cpp
+\example Boolean_set_operations_2/circle_segment.cpp
+\example Boolean_set_operations_2/conic_traits_adapter.cpp
+\example Boolean_set_operations_2/connect_polygon.cpp
+\example Boolean_set_operations_2/do_intersect.cpp
+\example Boolean_set_operations_2/dxf_union.cpp
+\example Boolean_set_operations_2/sequence.cpp
+\example Boolean_set_operations_2/set_union.cpp
+\example Boolean_set_operations_2/simple_join_intersect.cpp
+\example Boolean_set_operations_2/symmetric_difference.cpp
+*/

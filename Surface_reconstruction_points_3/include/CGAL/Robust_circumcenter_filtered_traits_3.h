@@ -362,6 +362,7 @@ private:
 
 
 /**
+ * \internal
  * Robust_circumcenter_filtered_traits_3
  * overrides construct_circumcenter_3_object() and compute_squared_radius_3_object()
  * to get robust ones when called on slivers.

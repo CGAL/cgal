@@ -1,0 +1,40 @@
+/// \defgroup PkgBoxIntersectionD Intersecting Sequences of dD Iso-oriented Boxes Reference
+/// \defgroup PkgBoxIntersectionDConcepts Concepts
+/// \ingroup PkgBoxIntersectionD
+
+/// \defgroup PkgBoxIntersectionDClasses Classes
+/// \ingroup PkgBoxIntersectionD
+
+/// \defgroup PkgBoxIntersectionD_box_intersection_d box_intersection_d
+/// \ingroup PkgBoxIntersectionD
+
+
+/// \defgroup PkgBoxIntersectionD_box_intersection_all_pairs_d box_intersection_all_pairs_d
+/// \ingroup PkgBoxIntersectionD
+
+/// \defgroup PkgBoxIntersectionD_box_self_intersection_d box_self_intersection_d
+/// \ingroup PkgBoxIntersectionD
+
+/// \defgroup PkgBoxIntersectionD_box_self_intersection_all_pairs_d box_self_intersection_all_pairs_d
+/// \ingroup PkgBoxIntersectionD
+/*!
+\addtogroup PkgBoxIntersectionD
+
+\todo de-math and change D to d for the dimension
+
+\cgalPkgDescriptionBegin{Intersecting Sequences of dD Iso-oriented Boxes,PkgBoxIntersectionDSummary}
+\cgalPkgPicture{box_inters-small.gif}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Lutz Kettner, Andreas Meyer, and Afra Zomorodian}
+\cgalPkgDesc{An efficient algorithm for finding all intersecting pairs for large numbers of iso-oriented boxes, in order to apply a user defined callback on them.  Typically these boxes will be bounding boxes of more complicated geometries. The algorithm is useful for (self-) intersection tests of surfaces etc. }
+\cgalPkgManuals{Chapter_Intersecting_Sequences_of_dD_Iso-oriented_Boxes,PkgBoxIntersectionD}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.1}
+\cgalPkgBib{cgal:kmz-isiobd}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+*/
+
