@@ -29,6 +29,8 @@
  */
 
 // TODO: @Efi: Are all the following are needed?
+// EFEF: Looks like it.
+
 #include <list>
 #include <iostream>
 #include <vector>
@@ -86,6 +88,7 @@ public:
    *             "constructor" in the polylines traits class. Should this be doen?
    *             If so, this means that another "constructor-functor"
    *             Construct_curve_2 should be implemented there, right?
+   * EFEF: Right
    */
   template <typename InputIterator>
   void construct_polyline(InputIterator begin, InputIterator end, 
@@ -114,7 +117,7 @@ public:
     // TODO: @Efi: Should I treat the case where there's only one(!) point in the
     //             container? Should a degenerated sgement (source=target) be
     //             returned in this case?
-
+    // EFEF: I think so
     // Construct a segment from each to adjacent points.
     // The container has to contain at least two points.
     InputIterator pt = ps;
@@ -129,7 +132,8 @@ public:
 
   /*!
    * TODO: Mark as deprectaed
-   * Append a point to the polyline. */
+   * Append a point to the polyline.
+   */
   void push_back (const Point_2 & p)
   {
     Point_2 pt = p;
@@ -169,6 +173,7 @@ public:
   /*
    * TODO: What to do with this code? Deprecated? Keep for one version?
    *       Reimplement using local kernel?
+   * EFEF: Deprecate (and don't touch).
    */
   class Point_const_iterator
   {
@@ -343,6 +348,7 @@ public:
    * Get the number of points contained in the polyline.
    * TODO: Has to be updated once the polyline will be unbounded.
    * TODO: @Efi: should this be moved to the traits class?
+   * EFEF: Deprecate
    * \return The number of points.
    */
   unsigned int points() const
@@ -403,9 +409,10 @@ public:
   
   /*!
    * Constructs from a range of segments.
-   * This constructor's implementation is expected to be called only from the
+   * This constructor is expected to be called only from the
    * traits class, after the input was verified there.
    * TODO: @Efi is this the right statement?
+   * EFEF: looks good to me, but see next comment
    */
   template <typename InputIterator>
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
@@ -417,6 +424,8 @@ public:
    * polyline segments.
    * TODO: @Efi: does this have to be implemented in the traits class as well?
    *             It should not be deprectaed, right?
+   * EFEF: I thing that all these overloaded memeber functions should be
+   *       deprecated.
    */
   template <typename InputIterator>
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
@@ -468,6 +477,9 @@ public:
    *             Should it be moved to the traits class?
    *             If so, a better name of the corresponding functor would be
    *             "Append_segment_2" woulnd't it?
+   * EFEF: Only the last statement should retain. (Consider making this member
+   *       should be made private.) You can introduce a functor in the traits
+   *       class that can replace this one and contain the verification code.
    */
   inline void push_back (const Segment_2& seg)
   {
@@ -516,6 +528,8 @@ private:
 
   /*
    * TODO: Discuss this furtehr with @Efi if needed.
+   * EFEF: Change the semantics to iterate over (and export) the segments
+   *       (and not the points)
    */
   
   /*! Output operator for a polyline. */
@@ -537,8 +551,11 @@ private:
   }
   
   /*! Input operator for a polyline.
-  * TODO: @Efi: Should be deprecated?
-  * */
+   * TODO: @Efi: Should be deprecated?
+   * EFEF: Change the semantics to export the segments
+   *       Perhaps add an additional exporter (or just a member function)
+   *       that reads points
+   */
   template <typename SegmentTraits>
   std::istream& operator>> (std::istream& is,
 			    _Polyline_2<SegmentTraits>& pl)

@@ -562,7 +562,7 @@ public:
     {
 
       // TODO: @Efi: Should this be rewritten using iterators over the segments?
-
+      // EFEF: I don't see where.
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
         m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
@@ -582,6 +582,7 @@ public:
       c2.clear();
 
       // Push all segments labeled(0, 1, ... , i-1) into c1.
+      // EFEF: Use std::copy ? instead of the loop.
       unsigned int j;
       for (j = 0; j < i; ++j)
         c1.push_back(cv[j]);
@@ -606,6 +607,7 @@ public:
       // Push all segments labeled(i+1, i+2, ... , n-1) into cv1.
       unsigned int n = cv.size();
 
+      // EFEF: Use std::copy ? instead of the loop.
       for (j = i+1; j < n; ++j)
         c2.push_back(cv[j]);
     }
@@ -989,6 +991,8 @@ public:
      * \param seg input segment
      * \return A polyline with one segment, namely seg.
      * TODO: @Efi: Should this be implemented?
+     * EFEF: Mo. The following could be implemented:
+     * X_monotone_curve_2 operator()(const Segment_2& seg) { ... }
      * TODO: If yes:Use this implementations in the Make_x_monotone_2,
      *       when there's only one segment.  */
     // X_monotone_curve_2 operator()(const Segment_2 seg) const
@@ -1009,6 +1013,8 @@ public:
       //            should never happen from points - right? Therefore,
       //            this can be kept only for backwards compatibility and/or
       //            until it is being deprecated. What do you think?
+      // EFEF: Why? Only the direct constructor in _X_monotone_polyline_2
+      //       should be deprecated.
       return X_monotone_curve_2(begin, end);      
     }
 
@@ -1023,6 +1029,7 @@ public:
      *      TODO: @Efi: The range should support bidirectional iteration.
      *                  Should this be added as a precondition? Or is it
      *                  trivial?
+     * EFEF: just mention as a comment in this heading.
      * \postcondition The resulting x-monotone polyline directed from left to
      *      right.
      * \return An x-monotone polyline directed from left to right.
