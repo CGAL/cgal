@@ -34,63 +34,20 @@ AABB_tree/demo/AABB_tree/AABB_demo.ppt -text svneol=unset#application/vnd.ms-pow
 AABB_tree/demo/AABB_tree/AABB_demo.qrc -text
 AABB_tree/demo/AABB_tree/MainWindow.ui -text
 AABB_tree/demo/AABB_tree/resources/cgal_logo.xpm -text
-AABB_tree/doc/AABB_tree/fig/aabb-teaser-thumb.png -text svneol=unset#image/png
-AABB_tree/doc/AABB_tree/fig/aabb_teaser.png -text svneol=unset#image/png
-AABB_tree/doc/AABB_tree/fig/anchor.png -text svneol=unset#image/png
-AABB_tree/doc/AABB_tree/fig/bench.png -text svneol=unset#image/png
 AABB_tree/doc/AABB_tree/fig/bench.xls -text svneol=unset#application/msword
 AABB_tree/doc/AABB_tree/fig/teaser.ppt -text svneol=unset#application/msword
 AABB_tree/doc_tex/AABB_tree/figs/bench.xls -text
 AABB_tree/doc_tex/AABB_tree/figs/teaser.ppt -text svneol=unset#application/vnd.ms-powerpoint
 AABB_tree/dont_submit -text
 Algebraic_foundations/package_info/Algebraic_foundations/maintainer -text
-Algebraic_foundations/doc/Algebraic_foundations/fig/AlgebraicConceptHierarchy.gif -text svneol=unset#image/gif
-Algebraic_foundations/doc/Algebraic_foundations/fig/AlgebraicConceptHierarchy.pdf -text svneol=unset#application/pdf
-Algebraic_foundations/doc/Algebraic_foundations/fig/Algebraic_foundations.png -text svneol=unset#image/png
-Algebraic_foundations/doc/Algebraic_foundations/fig/Algebraic_foundations2.png -text svneol=unset#image/png
-Algebraic_kernel_d/doc/Algebraic_kernel_d/fig/Algebraic_kernel_d.png -text svneol=unset#image/png
 Algebraic_kernel_d/dont_submit -text
 Algebraic_kernel_d/package_info/Algebraic_kernel_d/maintainer -text
-Alpha_shapes_2/doc/Alpha_shapes_2/fig/alpha-detail.png -text svneol=unset#image/png
-Alpha_shapes_2/doc/Alpha_shapes_2/fig/alphashape.pdf -text svneol=unset#application/pdf
-Alpha_shapes_2/doc/Alpha_shapes_2/fig/alphashape.png -text svneol=unset#image/png
 Alpha_shapes_2/test/Alpha_shapes_2/data/fin3 -text
 Alpha_shapes_3/demo/Alpha_shapes_3/Alpha_shape_3.qrc -text
 Alpha_shapes_3/demo/Alpha_shapes_3/MainWindow.ui -text
 Alpha_shapes_3/test/Alpha_shapes_3/data/small-exp.in -text
 Alpha_shapes_3/test/Alpha_shapes_3/data/small.in -text
 Alpha_shapes_3/test/Alpha_shapes_3/test_fixed_alpha_shape_3.cmd -text
-Alpha_shapes_3/doc/Alpha_shapes_3/fig/alpha_shapes_3_large.png -text svneol=unset#image/png
-Alpha_shapes_3/doc/Alpha_shapes_3/fig/alpha_shapes_3_small.png -text svneol=unset#image/png
-Alpha_shapes_3/doc/Alpha_shapes_3/fig/alphashape.gif -text svneol=unset#image/gif
-Alpha_shapes_3/doc/Alpha_shapes_3/fig/alphashape.pdf -text svneol=unset#application/pdf
-Alpha_shapes_3/doc/Alpha_shapes_3/fig/classif.pdf -text svneol=unset#application/pdf
-Alpha_shapes_3/doc/Alpha_shapes_3/fig/classif.png -text svneol=unset#image/png
-Alpha_shapes_3/doc/Alpha_shapes_3/fig/gen-reg-ex.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/CircleVoronoi.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/CircleVoronoiLarge.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-both_vertices.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-both_vertices_bw.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-entire_edge.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-entire_edge_bw.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-interior.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-interior_bw.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-left_vertex.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-left_vertex_bw.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-no_conflict.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-no_conflict_bw.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-right_vertex.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-right_vertex_bw.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-false.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-false_bw.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-true.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius-vertex_conflict-true_bw.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_diagram.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_diagram_bw.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_graph.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/apollonius_graph_bw.png -text svneol=unset#image/png
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/insert_degree_2.gif -text svneol=unset#image/gif
-Apollonius_graph_2/doc/Apollonius_graph_2/fig/insert_degree_2.png -text svneol=unset#image/png
 Arithmetic_kernel/package_info/Arithmetic_kernel/maintainer -text
 Arrangement_on_surface_2/benchmark/data/benchArrAosConics.xml svneol=native#text/xml
 Arrangement_on_surface_2/benchmark/data/benchArrAosPolylines.xml svneol=native#text/xml
@@ -121,81 +78,6 @@ Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/data/three_co
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/data/three_cusps_three_flex_9 -text
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/data/two_lines -text
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/data/various_degree_arrangement -text
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/Arrangement_2.png -text svneol=unset#image/png
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/Bezier_arr.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/Bezier_arr.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/Europe.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/Europe.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/algebraic_curves.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/algebraic_curves.png -text svneol=unset#image/png
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/algebraic_segments.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/algebraic_segments.png -text svneol=unset#image/png
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/arr_segs.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/arr_segs.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/connect_comp.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/connect_comp.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/cylindrical_decomposition.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/cylindrical_decomposition.png -text svneol=unset#image/png
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_1.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_1.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_10.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_10.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_12.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_12.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_13.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_13.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_14.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_14.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_16.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_16.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_17.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_17.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_18.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_18.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_19.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_19.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_2.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_2.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_20.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_20.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_22.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_22.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_24.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_24.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_25.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_25.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_3.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_3a.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_3b.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_3c.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_4.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_4.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_5.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_5.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_8.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_8.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_bgl.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_bgl.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_unb1.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_unb1.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_unb_rat.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/ex_unb_rat.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/fan_grids.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/fan_grids.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/h_shape.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/h_shape.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/insert.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/insert_at_vertices.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/insert_from_vertex.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/insert_in_face.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/pred_around_vertex.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/pred_around_vertex.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/triangle.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/triangle.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/unb_dcel.gif -text svneol=unset#image/gif
-Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig/unb_dcel.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc/Sweep_line_2/fig/Curve_intersections_2.png -text svneol=unset#image/png
-Arrangement_on_surface_2/doc/Sweep_line_2/fig/sl_simple.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/BasicSweepLineVisitor_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/Basic_sweep_line_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/SweepLineVisitor_2.tex eol=lf
@@ -545,10 +427,6 @@ Arrangement_on_surface_2/test/Sweep_line_2/cgal_test_base -text
 Arrangement_on_surface_2/test/Sweep_line_2/test_sweep.cpp eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/test_sweep_conic.cpp eol=lf
 Arrangement_on_surface_2/todo -text
-BGL/doc/BGL/fig/emst-detail.png -text svneol=unset#image/png
-BGL/doc/BGL/fig/emst.jpg -text svneol=unset#image/jpeg
-BGL/doc/BGL/fig/ex_bgl.gif -text svneol=unset#image/gif
-BGL/doc/BGL/fig/ex_bgl.pdf -text svneol=unset#application/pdf
 BGL/test/BGL/halfedge_graph_traits_Polyhedron_3.cmd eol=lf
 BGL/test/BGL/properties_Polyhedron_3.cmd eol=lf
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_1.dxf -text svneol=unset#application/octet-stream
@@ -623,35 +501,6 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/mink_s
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/refresh.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/symm_diff.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/union.xpm -text
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/Boolean_set_operations_2.png -text svneol=unset#image/png
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/circles_rects.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/conic_arcs.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/conic_arcs.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/disks.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/disks.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/general_polygon.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/general_polygon.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/general_polygon_with_holes.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/general_polygon_with_holes.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/non_strictly_simple.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/non_strictly_simple.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/sequence.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/sequence.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/simple.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/simple.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/simpleDefsExamples.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/simpleDefsExamples.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/symm_diff.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/symm_diff.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/teaser.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/teaser.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/tnr_m_g.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/tnr_m_g.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/triangles.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/triangles.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/unique.gif -text svneol=unset#image/gif
-Boolean_set_operations_2/doc/Boolean_set_operations_2/fig/unique.pdf -text svneol=unset#application/pdf
 Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_a.bps -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_b.bps -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_c.bps -text
@@ -670,13 +519,6 @@ Boolean_set_operations_2/examples/Boolean_set_operations_2/input_1.bps -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/test.dxf -text svneol=unset#application/octet-stream
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_agg_op.cmd eol=lf
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_bop.cmd eol=lf
-Bounding_volumes/doc/Bounding_volumes/fig/annulus.gif -text svneol=unset#image/gif
-Bounding_volumes/doc/Bounding_volumes/fig/annulus.pdf -text svneol=unset#application/pdf
-Bounding_volumes/doc/Bounding_volumes/fig/ball.gif -text svneol=unset#image/gif
-Bounding_volumes/doc/Bounding_volumes/fig/ball.pdf -text svneol=unset#application/pdf
-Bounding_volumes/doc/Bounding_volumes/fig/minCircle.png -text svneol=unset#image/png
-Bounding_volumes/doc/Bounding_volumes/fig/pcenter.gif -text svneol=unset#image/gif
-Bounding_volumes/doc/Bounding_volumes/fig/pcenter.pdf -text svneol=unset#application/pdf
 Bounding_volumes/dont_submit -text
 Bounding_volumes/package_info/Bounding_volumes/copyright -text
 Bounding_volumes/package_info/Bounding_volumes/maintainer -text
@@ -687,11 +529,6 @@ Bounding_volumes/test/Bounding_volumes/test_Min_ellipse_2.cmd eol=lf
 Bounding_volumes/test_extensive/stability/maple/balls-on-boundary-2.mws -text svneol=unset#application/octet-stream
 Bounding_volumes/test_extensive/stability/maple/balls-on-boundary-3.mws -text svneol=unset#application/octet-stream
 Bounding_volumes/web/Approximate_min_ellipsoid_d/boundingbox.mw -text svneol=native#application/octet-stream
-Box_intersection_d/doc/Box_intersection_d/fig/benchmark.gif -text svneol=unset#image/gif
-Box_intersection_d/doc/Box_intersection_d/fig/benchmark.pdf -text svneol=unset#application/pdf
-Box_intersection_d/doc/Box_intersection_d/fig/box_inters-small.gif -text svneol=unset#image/gif
-Box_intersection_d/doc/Box_intersection_d/fig/box_inters.gif -text svneol=unset#image/gif
-Box_intersection_d/doc/Box_intersection_d/fig/box_inters.pdf -text svneol=unset#application/pdf
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
 CGAL_ipelets/TODO -text
 CGAL_ipelets/demo/CGAL_ipelets/lua/libCGAL_alpha_shapes.lua -text
@@ -710,101 +547,17 @@ CGAL_ipelets/demo/CGAL_ipelets/lua/libCGAL_pca.lua -text
 CGAL_ipelets/demo/CGAL_ipelets/lua/libCGAL_simple_triangulation.lua -text
 CGAL_ipelets/demo/CGAL_ipelets/lua/libCGAL_skeleton.lua -text
 CGAL_ipelets/demo/CGAL_ipelets/lua/libCGAL_triangulation.lua -text
-CGAL_ipelets/doc/CGAL_ipelets/fig/example.png -text svneol=unset#image/png
-CGAL_ipelets/doc/CGAL_ipelets/fig/ipeico.jpg -text svneol=unset#image/jpeg
-CGAL_ipelets/doc/CGAL_ipelets/fig/ipelarge.jpg -text svneol=unset#image/jpeg
 CGAL_ipelets/package_info/CGAL_ipelets/maintainer -text
 Circular_kernel_2/benchmark/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/benchmark/readme.sxw -text
 Circular_kernel_2/changes -text
 Circular_kernel_3/changes -text
-Circular_kernel_2/doc/Circular_kernel_2/fig/Boolean_operation.png -text svneol=unset#image/png
-Circular_kernel_2/doc/Circular_kernel_2/fig/Boolean_operation_detail.png -text svneol=unset#image/png
-Circular_kernel_3/doc/Circular_kernel_3/fig/def_circles_extreme_pt.pdf -text svneol=unset#application/pdf
-Circular_kernel_3/doc/Circular_kernel_3/fig/def_circles_extreme_pt.png -text svneol=unset#image/png
-Circular_kernel_3/doc/Circular_kernel_3/fig/def_meridian.pdf -text svneol=unset#application/pdf
-Circular_kernel_3/doc/Circular_kernel_3/fig/def_meridian.png -text svneol=unset#image/png
-Circular_kernel_3/doc/Circular_kernel_3/fig/segment_sphere_intersection.png -text svneol=unset#image/png
-Circular_kernel_3/doc/Circular_kernel_3/fig/segment_sphere_intersection_detail.png -text svneol=unset#image/png
-Circulator/doc/Circulator/fig/circulator.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/Diagramme_class.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/Diagramme_class.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/cmap2d-3d-attribs.png -text
-Combinatorial_map/doc/Combinatorial_map/fig/cmap3d-example2.png -text
-Combinatorial_map/doc/Combinatorial_map/fig/cmaps2d-3d-zoom.png -text
-Combinatorial_map/doc/Combinatorial_map/fig/cmaps2d-3d.png -text
-Combinatorial_map/doc/Combinatorial_map/fig/example-insertions.png -text
-Combinatorial_map/doc/Combinatorial_map/fig/exemple-3d-sew.png -text
-Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew2.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte-3d-sew2.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte2-3d.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/exemple-carte2-3d.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/insert-edge.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/insert-edge.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/insert-facet.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/insert-facet.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/insert-vertex.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/insert-vertex.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-map.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-map.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-map2d.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-map2d.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-zoom.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-zoom.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-zoom2.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example-zoom2.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/intuitif-example.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/logo-cmap-small-v2.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/logo-combinatorial-map-small.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/logo-combinatorial-map.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/map2d-with-attrib.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/map2d-with-attrib.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/nonmanifolds.png -text
-Combinatorial_map/doc/Combinatorial_map/fig/object2d-nonmanifold.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/object2d-nonmanifold.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/object2d.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/object2d.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/object3d-nonmanifold.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/object3d-nonmanifold.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/object3d-nonmanifold2.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/object3d-nonmanifold2.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/object3d.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/object3d.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/objects2d-3d.png -text
-Combinatorial_map/doc/Combinatorial_map/fig/ope1.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/ope1.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/ope2.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/ope2.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/ope3.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/ope3.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/pb-carte3D.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/pb-carte3D.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/pb2-carte3D.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/pb2-carte3D.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/problems-cmaps.png -text
-Combinatorial_map/doc/Combinatorial_map/fig/quasivariete.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/quasivariete.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/quasivarietea.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/quasivarietea.png -text svneol=unset#image/png
-Combinatorial_map/doc/Combinatorial_map/fig/quasivarietes.png -text
-Combinatorial_map/doc/Combinatorial_map/fig/triangulation.pdf -text svneol=unset#application/pdf
-Combinatorial_map/doc/Combinatorial_map/fig/triangulation.png -text svneol=unset#image/png
 Combinatorial_map/dont_submit -text
 Combinatorial_map/package_info/Combinatorial_map/maintainer -text
 Convex_decomposition_3/demo/Convex_decomposition_3/star.nef3 -text
 Convex_decomposition_3/test/Convex_decomposition_3/star.nef3 -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
 Envelope_2/test/Envelope_2/test_envelope_segments.cmd -text
-Convex_decomposition_3/doc/Convex_decomposition_3/fig/Convex_decomposition_3-teaser.png -text svneol=unset#image/png
-Convex_decomposition_3/doc/Convex_decomposition_3/fig/two_cubes_all_in_one.png -text
-Convex_hull_2/doc/Convex_hull_2/fig/convex_hull.png -text svneol=unset#image/png
-Convex_hull_2/doc/Convex_hull_2/fig/saarhull.png -text svneol=unset#image/png
-Convex_hull_3/doc/Convex_hull_3/fig/bunny.png -text svneol=unset#image/png
-Convex_hull_3/doc/Convex_hull_3/fig/chull_bimba.png -text svneol=unset#image/png
-Convex_hull_d/doc/Convex_hull_d/fig/convex_hull_d-teaser.png -text svneol=unset#image/png
 Documentation/Customizations.txt -text
 Documentation/Doxyfile -text
 Documentation/DoxygenLayout.xml -text
@@ -819,17 +572,6 @@ Documentation/cgal_stylesheet.css -text
 Documentation/conceptify.py -text
 Documentation/conversion_tools/check_duplicated_section_anchor.py -text
 Documentation/conversion_tools/markup_replacement.py -text
-Documentation/doc/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
-Documentation/doc/fig/Object.gif -text svneol=unset#image/gif
-Documentation/doc/fig/background.gif -text svneol=unset#image/gif
-Documentation/doc/fig/cgal_small.gif -text svneol=unset#image/gif
-Documentation/doc/fig/generic_cgal.gif -text svneol=unset#image/gif
-Documentation/doc/fig/handle_allocate.gif -text svneol=unset#image/gif
-Documentation/doc/fig/handle_rep.gif -text svneol=unset#image/gif
-Documentation/doc/fig/homogeneous_ipoint.gif -text svneol=unset#image/gif
-Documentation/doc/fig/homogeneous_orientation.gif -text svneol=unset#image/gif
-Documentation/doc/fig/reference_counting.gif -text svneol=unset#image/gif
-Documentation/doc/fig/use_real.gif -text svneol=unset#image/gif
 Documentation/doxyassist.xml -text
 Documentation/footer.html -text
 Documentation/hacks.js -text
@@ -840,29 +582,8 @@ Documentation/html_output_post_processing.py -text
 Documentation/pkglist_filter -text
 Documentation/pkglist_filter.bat eol=crlf
 Documentation/pkglist_filter.sh -text
-Documentation/resources/ftv2cl.png -text
-Documentation/resources/ftv2cpt.png -text
-Documentation/resources/ftv2ns.png -text
 Documentation/stylesheet.css -text
 Documentation/testsuite.py -text
-Envelope_2/doc/Envelope_2/fig/Envelope_2.png -text svneol=unset#image/png
-Envelope_2/doc/Envelope_2/fig/ex_circle.gif -text svneol=unset#image/gif
-Envelope_2/doc/Envelope_2/fig/ex_circle.pdf -text svneol=unset#application/pdf
-Envelope_2/doc/Envelope_2/fig/lwrenv.gif -text svneol=unset#image/gif
-Envelope_2/doc/Envelope_2/fig/lwrenv.pdf -text svneol=unset#application/pdf
-Envelope_2/doc/Envelope_2/fig/min_diag.gif -text svneol=unset#image/gif
-Envelope_2/doc/Envelope_2/fig/min_diag.pdf -text svneol=unset#application/pdf
-Envelope_3/doc/Envelope_3/fig/Envelope_3.png -text svneol=unset#image/png
-Envelope_3/doc/Envelope_3/fig/compare_over_curve.gif -text svneol=unset#image/gif
-Envelope_3/doc/Envelope_3/fig/compare_over_curve.pdf -text svneol=unset#application/pdf
-Envelope_3/doc/Envelope_3/fig/compare_over_point.gif -text svneol=unset#image/gif
-Envelope_3/doc/Envelope_3/fig/compare_over_point.pdf -text svneol=unset#application/pdf
-Envelope_3/doc/Envelope_3/fig/ex_tri_le.gif -text svneol=unset#image/gif
-Envelope_3/doc/Envelope_3/fig/ex_tri_le.pdf -text svneol=unset#application/pdf
-Envelope_3/doc/Envelope_3/fig/ex_tri_ue.gif -text svneol=unset#image/gif
-Envelope_3/doc/Envelope_3/fig/ex_tri_ue.pdf -text svneol=unset#application/pdf
-Envelope_3/doc/Envelope_3/fig/ex_triangles.gif -text svneol=unset#image/gif
-Envelope_3/doc/Envelope_3/fig/ex_triangles.pdf -text svneol=unset#application/pdf
 Envelope_3/test/Envelope_3/data/triangles/README -text
 Envelope_3/test/Envelope_3/data/triangles/random_10.in -text
 Envelope_3/test/Envelope_3/data/triangles/random_20.in -text
@@ -874,14 +595,6 @@ Envelope_3/test/Envelope_3/data/triangles/random_50_small_1.in -text
 Envelope_3/test/Envelope_3/spheres_test.cmd eol=lf
 Envelope_3/test/Envelope_3/triangles_test.cmd eol=lf
 Filtered_kernel/developer_scripts/profile_cleanup -text
-Generator/doc/Generator/fig/Segment_generator_prog1.png -text svneol=unset#image/png
-Generator/doc/Generator/fig/Segment_generator_prog2.png -text svneol=unset#image/png
-Generator/doc/Generator/fig/dice.png -text svneol=unset#image/png
-Generator/doc/Generator/fig/generators_prog1.png -text svneol=unset#image/png
-Generator/doc/Generator/fig/generators_prog2.png -text svneol=unset#image/png
-Generator/doc/Generator/fig/hypergrid.gif -text svneol=unset#image/gif
-Generator/doc/Generator/fig/hypergrid.pdf -text svneol=unset#application/pdf
-Geomview/doc/Geomview/fig/geomview.gif -text svneol=unset#image/gif
 GraphicsView/GraphicsView.odp -text
 GraphicsView/TODO -text
 GraphicsView/demo/Alpha_shapes_2/Alpha_shapes_2.qrc -text
@@ -923,36 +636,8 @@ GraphicsView/demo/icons/inputPoint.svg -text
 GraphicsView/demo/icons/zoom-best-fit.svg -text
 GraphicsView/demo/resources/CGAL.qrc -text
 GraphicsView/demo/resources/cgal_logo.xpm -text
-GraphicsView/doc/GraphicsView/fig/detail.png -text svneol=unset#image/png
-GraphicsView/doc/GraphicsView/fig/full.png -text svneol=unset#image/png
-GraphicsView/doc/GraphicsView/fig/uml-design.pdf -text svneol=unset#application/pdf
-GraphicsView/doc/GraphicsView/fig/uml-design.png -text svneol=unset#image/png
 GraphicsView/doc_tex/GraphicsView/uml-design.graphml -text
-HalfedgeDS/doc/HalfedgeDS/fig/HalfedgeDS-teaser-small.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/euler_center.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/euler_center.pdf -text svneol=unset#application/pdf
-HalfedgeDS/doc/HalfedgeDS/fig/euler_face.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/euler_hds.pdf -text svneol=unset#application/pdf
-HalfedgeDS/doc/HalfedgeDS/fig/euler_loop.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/euler_loop.pdf -text svneol=unset#application/pdf
-HalfedgeDS/doc/HalfedgeDS/fig/euler_vertex.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/halfedge.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/halfedge.pdf -text svneol=unset#application/pdf
-HalfedgeDS/doc/HalfedgeDS/fig/halfedge_small.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/hds_design.pdf -text svneol=unset#application/pdf
-HalfedgeDS/doc/HalfedgeDS/fig/hds_design_col.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/hds_optional.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/hds_optional.pdf -text svneol=unset#application/pdf
-HalfedgeDS/doc/HalfedgeDS/fig/hds_optional_small.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/loop.gif -text svneol=unset#image/gif
-HalfedgeDS/doc/HalfedgeDS/fig/loop.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc/HalfedgeDS/unline -text
-Inscribed_areas/doc/Inscribed_areas/fig/largestEmptyRect.gif -text svneol=unset#image/gif
-Inscribed_areas/doc/Inscribed_areas/fig/largestEmptyRect.pdf -text svneol=unset#application/pdf
-Inscribed_areas/doc/Inscribed_areas/fig/ler-detail.png -text svneol=unset#image/png
-Inscribed_areas/doc/Inscribed_areas/fig/ler.png -text svneol=unset#image/png
-Inscribed_areas/doc/Inscribed_areas/fig/max_triangle.gif -text svneol=unset#image/gif
-Inscribed_areas/doc/Inscribed_areas/fig/max_triangle.pdf -text svneol=unset#application/pdf
 Inscribed_areas/test/Inscribed_areas/largest_empty_iso_rectangle_2_test.cmd -text
 Installation/INSTALL -text
 Installation/LICENSE.BSL -text
@@ -968,49 +653,18 @@ Installation/config/version.h.in -text
 Installation/html2textrc -text
 Installation/src/CGAL_libs_verinfo.rc.in -text
 Installation/update_CHANGES -text
-Interpolation/doc/Interpolation/fig/interpolation.png -text svneol=unset#image/png
-Interpolation/doc/Interpolation/fig/nn_coords.gif -text svneol=unset#image/gif
-Interpolation/doc/Interpolation/fig/nn_coords.pdf -text svneol=unset#application/pdf
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.xml svneol=native#text/xml
-Interval_skip_list/doc/Interval_skip_list/fig/query.png -text svneol=unset#image/png
 Interval_skip_list/examples/Interval_skip_list/terrain.pts -text
 Interval_support/package_info/Interval_support/maintainer -text
 Jet_fitting_3/clean_tree.csh eol=lf
 Jet_fitting_3/demo/Jet_fitting_3/README_visu -text
-Jet_fitting_3/doc/Jet_fitting_3/fig/DavidDetail.png -text svneol=unset#image/png
-Jet_fitting_3/doc/Jet_fitting_3/fig/david-dirmaxkmin-jpg-white-back.png -text svneol=unset#image/png
-Jet_fitting_3/doc/Jet_fitting_3/fig/david-dirmaxkmin-small.png -text svneol=unset#image/png
-Jet_fitting_3/doc/Jet_fitting_3/fig/david-dirmaxkmin-white-back.jpg -text svneol=unset#image/jpeg
-Jet_fitting_3/doc/Jet_fitting_3/fig/jet_fitting_basis.gif -text svneol=unset#image/gif
-Jet_fitting_3/doc/Jet_fitting_3/fig/jet_fitting_basis.pdf -text svneol=unset#application/pdf
-Jet_fitting_3/doc/Jet_fitting_3/fig/ppal_curv_poly2x2+y2.jpg -text svneol=unset#image/jpeg
-Jet_fitting_3/doc/Jet_fitting_3/fig/template_dependence.jpg -text svneol=unset#image/jpeg
-Jet_fitting_3/doc/Jet_fitting_3/fig/template_dependence.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/doc_tex/AIDE -text
 Jet_fitting_3/doc_tex/Jet_fitting_3/Maple_formula.mw -text svneol=unset#application/octet-stream
-Kernel_23/doc/Kernel_23/fig/IsoCuboid.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/IsoCuboid.pdf -text svneol=unset#application/pdf
-Kernel_23/doc/Kernel_23/fig/arrlinthree.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/arrlintwo.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/arrthree.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/arrthree2.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/arrtwo.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/arrtwo2.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/compare1.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/compare1.pdf -text svneol=unset#application/pdf
-Kernel_23/doc/Kernel_23/fig/compare2.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/compare2.pdf -text svneol=unset#application/pdf
-Kernel_23/doc/Kernel_23/fig/compare_x_at_y.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/compare_x_at_y.pdf -text svneol=unset#application/pdf
-Kernel_23/doc/Kernel_23/fig/pointSegmentTriangle.png -text svneol=unset#image/png
-Kernel_23/doc/Kernel_23/fig/transvecthree.gif -text svneol=unset#image/gif
-Kernel_23/doc/Kernel_23/fig/transvectwo.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/fig/compare1.ipe -text svneol=unset#application/postscript
 Kernel_23/doc_tex/Kernel_23_ref/fig/compare1.xml svneol=native#text/xml
 Kernel_23/doc_tex/Kernel_23_ref/fig/compare2.ipe -text svneol=unset#application/postscript
 Kernel_23/doc_tex/Kernel_23_ref/fig/compare2.xml svneol=native#text/xml
-Kernel_d/doc/Kernel_d/fig/hypercube.png -text svneol=unset#image/png
 Kernel_d/test/Kernel_d/Linear_algebra-test.cmd eol=lf
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after002 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after010 -text
@@ -1023,42 +677,6 @@ Kinetic_data_structures/demo/Kinetic_data_structures/data/before088 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/before103 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/before106 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/before107 -text
-Kinetic_data_structures/doc/Kinetic_framework/fig/architecture_pct.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/architecture_pct.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_0.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_0.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_0.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_1.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_1.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_1.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_2.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_2.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_2.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_3.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_3.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_3.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_4.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_4.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_4.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_5.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_5.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_5.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_6.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_6.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_6.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_7.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_7.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_7.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_8.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_8.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/delaunay_8.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/kds.jpg -text svneol=unset#image/jpeg
-Kinetic_data_structures/doc/Kinetic_framework/fig/kdsDetail.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/kdsFramework.png -text svneol=unset#image/png
-Kinetic_data_structures/doc/Kinetic_framework/fig/qt_widget_marked_pct.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/qt_widget_marked_pct.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc/Kinetic_framework/fig/sort_usage_pct.gif -text svneol=unset#image/gif
-Kinetic_data_structures/doc/Kinetic_framework/fig/sort_usage_pct.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/examples/Kinetic_framework/data/points_2 -text
 Kinetic_data_structures/examples/Kinetic_framework/data/points_with_color_2 -text
 Kinetic_data_structures/src/CGAL_Qt3/Kinetic_print.xpm -text
@@ -1074,58 +692,6 @@ Linear_cell_complex/demo/Linear_cell_complex/CreateMenger.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/CreateMesh.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3.qrc -text
 Linear_cell_complex/demo/Linear_cell_complex/MainWindow.ui -text
-Linear_cell_complex/doc/Linear_cell_complex/fig/4Dobject.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/4Dobject.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/Diagramme_class.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/Diagramme_class.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/basic-example3D.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/basic-example3D.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/creations.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/creations.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew2.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-carte-with_point_3d-sew2.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/exemple-lcc3d-sew.png -text
-Linear_cell_complex/doc/Linear_cell_complex/fig/first-example-lcc.png -text
-Linear_cell_complex/doc/Linear_cell_complex/fig/import_graph.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/import_graph.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/insert-edge.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/insert-edge.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/insert-vertex.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/insert-vertex.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-object.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-object.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-zoom.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-zoom.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-zoom2.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc-zoom2.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/intuitif-example-lcc.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/lcc-examples-2d-3d.png -text
-Linear_cell_complex/doc/Linear_cell_complex/fig/logo-lcc-small.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/logo-lcc.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_cuboid.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_cuboid.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_hexahedron.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_hexahedron.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_quadrilateral.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_quadrilateral.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_rectangle.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_rectangle.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_segment.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_segment.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_tetrahedron.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_tetrahedron.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_triangle.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/make_triangle.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/object2d.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/object2d.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/objects2d-3d.png -text
-Linear_cell_complex/doc/Linear_cell_complex/fig/plane-graph.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/plane-graph.png -text svneol=unset#image/png
-Linear_cell_complex/doc/Linear_cell_complex/fig/triangulation.pdf -text svneol=unset#application/pdf
-Linear_cell_complex/doc/Linear_cell_complex/fig/triangulation.png -text svneol=unset#image/png
 Linear_cell_complex/dont_submit -text
 Linear_cell_complex/examples/Linear_cell_complex/CMakeLCCViewerQt.inc -text
 Linear_cell_complex/examples/Linear_cell_complex/CMakeLCCViewerVtk.inc -text
@@ -1325,20 +891,6 @@ Manual_tools/src/mstring.doc -text svneol=unset#application/msword
 Manual_tools/test/Manual_tools/cgal_test eol=lf
 Manual_tools/test/Manual_tools/html.orig.tgz -text svneol=unset#application/gzip
 Matrix_search/test/Matrix_search/sorted_matrix_search_test.cmd eol=lf
-Matrix_search/doc/Matrix_search/fig/matrix.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/delaunaymesh-small.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/delaunaymesh-teaser.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/domain-domain-mesh.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/domain-mesh.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/domain-seeds-domain-seeds-mesh.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/domain-seeds-mesh.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/domain-seeds.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/domain.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/example-conform-Delaunay-Gabriel.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/example-conform-Delaunay.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/example-conform-Gabriel.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/example-conform.png -text svneol=unset#image/png
-Mesh_2/doc/Mesh_2/fig/part_of_a_cluster.gif -text svneol=unset#image/gif
 Mesh_2/stylesheet.css svneol=native#text/css
 Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_3/applications/Release/DEFAULT.medit -text
@@ -1352,24 +904,6 @@ Mesh_3/demo/Mesh_3/ui_files/MainWindow.ui -text
 Mesh_3/demo/Mesh_3/ui_files/Meshing_dialog.ui -text
 Mesh_3/demo/Mesh_3/ui_files/Rib_dialog.ui -text
 Mesh_3/demo/Mesh_3/ui_files/Smoother_dialog.ui -text
-Mesh_3/doc/Mesh_3/fig/bench_3d.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/bench_polyhedral.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/dihedral_angle_distribution.png -text svneol=unset#image/png
-Mesh_3/doc/Mesh_3/fig/fandisk.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/implicit_domain.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/implicit_domain_3.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/implicit_domain_4.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/implicit_domain_5.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/liver.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/liver_variable.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/multilabel_mesher.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/multilabel_mesher_small.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/optimization.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/paraboloid.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/polyhedral_domain.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/polyhedral_domain_2.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/sphere_variable.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc/Mesh_3/fig/twospheres.jpg -text svneol=unset#image/jpeg
 Mesh_3/examples/Mesh_3/data/liver.inr.gz -text svneol=unset#application/gzip
 Mesh_3/examples/Mesh_3/old_stuff/inputs/cube.mesh -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/old_stuff/inputs/tangle.mesh -text svneol=unset#application/octet-stream
@@ -1379,43 +913,11 @@ Mesh_3/test/Mesh_3/data/liver.inr.gz -text
 Minkowski_sum_2/test/Minkowski_sum_2/test_Minkowski_sum.cmd -text
 Minkowski_sum_2/test/Minkowski_sum_2/test_approx_offset.cmd -text
 Minkowski_sum_2/test/Minkowski_sum_2/test_exact_offset.cmd -text
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/Minkowski_sum_2.png -text svneol=unset#image/png
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/approx_offset.gif -text svneol=unset#image/gif
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/approx_offset.pdf -text svneol=unset#application/pdf
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/convex_offset.gif -text svneol=unset#image/gif
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/convex_offset.pdf -text svneol=unset#application/pdf
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/ex_offset.gif -text svneol=unset#image/gif
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/ex_offset.pdf -text svneol=unset#application/pdf
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/offset_conv.gif -text svneol=unset#image/gif
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/offset_conv.pdf -text svneol=unset#application/pdf
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/offset_decomp.gif -text svneol=unset#image/gif
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/offset_decomp.pdf -text svneol=unset#application/pdf
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/onecyc_in.gif -text svneol=unset#image/gif
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/onecyc_in.pdf -text svneol=unset#application/pdf
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/onecyc_out.gif -text svneol=unset#image/gif
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/onecyc_out.pdf -text svneol=unset#application/pdf
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/sum_triangles.gif -text svneol=unset#image/gif
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/sum_triangles.pdf -text svneol=unset#application/pdf
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/tight.gif -text svneol=unset#image/gif
-Minkowski_sum_2/doc/Minkowski_sum_2/fig/tight.pdf -text svneol=unset#application/pdf
-Minkowski_sum_3/doc/Minkowski_sum_3/fig/Minkowski_sum_3_teaser.png -text svneol=unset#image/png
-Minkowski_sum_3/doc/Minkowski_sum_3/fig/decomposition_method.gif -text svneol=unset#image/gif
-Minkowski_sum_3/doc/Minkowski_sum_3/fig/decomposition_method.pdf -text svneol=unset#application/pdf
-Minkowski_sum_3/doc/Minkowski_sum_3/fig/glide.gif -text svneol=unset#image/gif
-Minkowski_sum_3/doc/Minkowski_sum_3/fig/glide.pdf -text svneol=unset#application/pdf
-Minkowski_sum_3/doc/Minkowski_sum_3/fig/motion_planning.gif -text svneol=unset#image/gif
-Minkowski_sum_3/doc/Minkowski_sum_3/fig/motion_planning.pdf -text svneol=unset#application/pdf
-Minkowski_sum_3/doc/Minkowski_sum_3/fig/spoon_star.gif -text svneol=unset#image/gif
-Minkowski_sum_3/doc/Minkowski_sum_3/fig/spoon_star.png -text svneol=unset#image/png
 Minkowski_sum_3/examples/Minkowski_sum_3/cube.nef3 -text
 Minkowski_sum_3/test/Minkowski_sum_3/single_edge.nef3 -text
 Minkowski_sum_3/test/Minkowski_sum_3/single_facet10.nef3 -text
 Minkowski_sum_3/test/Minkowski_sum_3/single_vertex.nef3 -text
 Minkowski_sum_3/test/Minkowski_sum_3/star.nef3 -text
-Miscellany/doc/Miscellany/fig/modifier.gif -text svneol=unset#image/gif
-Miscellany/doc/Miscellany/fig/modifier_small.gif -text svneol=unset#image/gif
-Miscellany/doc/Miscellany/fig/stopwatch.png -text svneol=unset#image/png
-Modular_arithmetic/doc/Modular_arithmetic/fig/Modular_arithmetic.png -text svneol=unset#image/png
 Nef_2/demo/Nef_2/filtered_homogeneous_data/complex.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/filtered_homogeneous_data/symmdif.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/homogeneous_data/box_and_line.nef -text svneol=native#application/octet-stream
@@ -1447,57 +949,10 @@ Nef_2/demo/Nef_2/xpms/newopen.pcx -text
 Nef_2/demo/Nef_2/xpms/newpoly.pcx -text
 Nef_2/demo/Nef_2/xpms/union.pcx -text
 Nef_2/demo/Nef_2/xpms/union.xpm svneol=native#unset
-Nef_2/doc/Nef_2/fig/complex-teaser.png -text svneol=unset#image/png
-Nef_2/doc/Nef_2/fig/complex.gif -text svneol=unset#image/gif
-Nef_2/doc/Nef_2/fig/complex.pdf -text svneol=unset#application/pdf
-Nef_2/doc/Nef_2/fig/extsegs.gif -text svneol=unset#image/gif
-Nef_2/doc/Nef_2/fig/extsegs.pdf -text svneol=unset#application/pdf
-Nef_2/doc/Nef_2/fig/halfplane.gif -text svneol=unset#image/gif
-Nef_2/doc/Nef_2/fig/halfplane.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/Nef_3-teaser.png -text svneol=unset#image/png
-Nef_3/doc/Nef_3/fig/closeup.gif -text svneol=unset#image/gif
-Nef_3/doc/Nef_3/fig/closeup.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/nef_example.gif -text svneol=unset#image/gif
-Nef_3/doc/Nef_3/fig/nef_example.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/nef_non_manifold3a.gif -text svneol=unset#image/gif
-Nef_3/doc/Nef_3/fig/nef_non_manifold3a.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/nef_pyramids.gif -text svneol=unset#image/gif
-Nef_3/doc/Nef_3/fig/nef_pyramids.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/shalfedge.gif -text svneol=unset#image/gif
-Nef_3/doc/Nef_3/fig/shalfedge.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/shalfloopB.gif -text svneol=unset#image/gif
-Nef_3/doc/Nef_3/fig/shalfloopB.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/shells.gif -text svneol=unset#image/gif
-Nef_3/doc/Nef_3/fig/shells.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/snc.gif -text svneol=unset#image/gif
-Nef_3/doc/Nef_3/fig/snc.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/sphere_map.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/sphere_map.png -text svneol=unset#image/png
-Nef_3/doc/Nef_3/fig/visualization_SNC.gif -text svneol=unset#image/gif
-Nef_3/doc/Nef_3/fig/visualization_SNC.pdf -text svneol=unset#application/pdf
-Nef_3/doc/Nef_3/fig/visualization_SNC.png -text svneol=unset#image/png
 Nef_3/performance/Nef_3/cube.nef3 -text svneol=native#application/octet-stream
 Nef_3/performance/Nef_3/nef3/grid_15_15_15_12345.nef3 -text svneol=native#application/octet-stream
 Nef_3/performance/Nef_3/nef3/tetrahedra_15_15_15_12345.nef3 -text svneol=native#application/octet-stream
 Nef_3/test/Nef_3/data/boundary.nef3 -text svneol=native#application/octet-stream
-Nef_S2/doc/Nef_S2/fig/Nef_S2-teaser-small.png -text svneol=unset#image/png
-Nef_S2/doc/Nef_S2/fig/complex.gif -text svneol=unset#image/gif
-Nef_S2/doc/Nef_S2/fig/complex.pdf -text svneol=unset#application/pdf
-Nef_S2/doc/Nef_S2/fig/halfspace.gif -text svneol=unset#image/gif
-Nef_S2/doc/Nef_S2/fig/halfspace.pdf -text svneol=unset#application/pdf
-Nef_S2/doc/Nef_S2/fig/shalfedge.gif -text svneol=unset#image/gif
-Nef_S2/doc/Nef_S2/fig/shalfedge.pdf -text svneol=unset#application/pdf
-Nef_S2/doc/Nef_S2/fig/shalfloopB.gif -text svneol=unset#image/gif
-Nef_S2/doc/Nef_S2/fig/shalfloopB.pdf -text svneol=unset#application/pdf
-Nef_S2/doc/Nef_S2/fig/teaser.png -text svneol=unset#image/png
-Number_types/doc/Number_types/fig/illustration.png -text svneol=unset#image/png
-Partition_2/doc/Partition_2/fig/Idar-Oberstein_appx_cvx.gif -text svneol=unset#image/gif
-Partition_2/doc/Partition_2/fig/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#application/pdf
-Partition_2/doc/Partition_2/fig/Partition_2-teaser-small.png -text svneol=unset#image/png
-Partition_2/doc/Partition_2/fig/Trier_opt_cvx.gif -text svneol=unset#image/gif
-Partition_2/doc/Partition_2/fig/Trier_opt_cvx.pdf -text svneol=unset#application/pdf
-Partition_2/doc/Partition_2/fig/approximate_optimal_vs_optimal.png -text svneol=unset#image/png
-Partition_2/doc/Partition_2/fig/teaser.png -text svneol=unset#image/png
 Periodic_3_triangulation_3/benchmark/Periodic_3_triangulation_3/.cdtproject -text
 Periodic_3_triangulation_3/benchmark/Periodic_3_triangulation_3/.project -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/MainWindow.ui -text
@@ -1510,34 +965,10 @@ Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/MainWindow.ui -text
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/Periodic_Lloyd_3.qhcp -text
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/Periodic_Lloyd_3.qhp -text
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/Periodic_Lloyd_3.qrc -text
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/flips.gif -text svneol=unset#image/gif
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/flips.pdf -text svneol=unset#application/pdf
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_STORED.jpg -text svneol=unset#image/jpeg
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_STORED_COVER_DOMAIN.jpg -text svneol=unset#image/jpeg
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_STORED_COVER_DOMAIN_small.jpg -text svneol=unset#image/jpeg
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_STORED_small.jpg -text svneol=unset#image/jpeg
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_UNIQUE.jpg -text svneol=unset#image/jpeg
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_UNIQUE_COVER_DOMAIN.jpg -text svneol=unset#image/jpeg
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_UNIQUE_COVER_DOMAIN_small.jpg -text svneol=unset#image/jpeg
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/it_UNIQUE_small.jpg -text svneol=unset#image/jpeg
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/offsets.gif -text svneol=unset#image/gif
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/offsets.pdf -text svneol=unset#application/pdf
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/orient.gif -text svneol=unset#image/gif
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/orient.pdf -text svneol=unset#application/pdf
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/p3Delaunay3.jpg -text svneol=unset#image/jpeg
-Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig/p3Delaunay3_small.jpg -text svneol=unset#image/jpeg
 Periodic_3_triangulation_3/dont_submit -text
 Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/data/P3DT3_alpha_shape_test.pts -text
 Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/data/P3DT3_covering_test.tri -text
 Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/data/P3DT3_covering_test_HOM.tri -text
-Point_set_2/doc/Point_set_2/fig/point_set.png -text svneol=unset#image/png
-Point_set_processing_3/doc/Point_set_processing_3/fig/grid_simplification.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc/Point_set_processing_3/fig/introduction.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc/Point_set_processing_3/fig/mst_orient_normals.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc/Point_set_processing_3/fig/pipeline.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc/Point_set_processing_3/fig/point_set_processing.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc/Point_set_processing_3/fig/point_set_processing_detail.png -text svneol=unset#image/png
-Point_set_processing_3/doc/Property_map/fig/property_map.png -text svneol=unset#image/png
 Point_set_processing_3/doc_tex/Point_set_processing_3/Point_set_processing_images.ppt -text svneol=unset#application/vnd.ms-powerpoint
 Point_set_processing_3/examples/Point_set_processing_3/data/oni.xyz -text
 Point_set_processing_3/examples/Point_set_processing_3/data/sphere_20k.xyz -text
@@ -1549,9 +980,6 @@ Point_set_processing_3/test/Point_set_processing_3/data/sphere_20k.xyz -text
 Point_set_processing_3/test/Point_set_processing_3/normal_estimation_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/remove_outliers_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/smoothing_test.cmd eol=lf
-Polygon/doc/Polygon/fig/pgn_algos.gif -text svneol=unset#image/gif
-Polygon/doc/Polygon/fig/pgn_algos.pdf -text svneol=unset#application/pdf
-Polygon/doc/Polygon/fig/polygon.png -text svneol=unset#image/png
 Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.xml svneol=native#text/xml
 Polyhedron/demo/Polyhedron/Camera_positions_list.ui -text
@@ -1566,33 +994,6 @@ Polyhedron/demo/Polyhedron/Remeshing_dialog.ui -text
 Polyhedron/demo/Polyhedron/Show_point_dialog.ui -text
 Polyhedron/demo/Polyhedron/resources/check-off.svg -text
 Polyhedron/demo/Polyhedron/resources/check.svg -text
-Polyhedron/doc/Polyhedron/fig/Polyhedron-teaser-small.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/add_facet.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/add_facet1.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/add_facet2.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/euler.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/euler_center.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/euler_center.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/euler_facet.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/euler_facet.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/euler_loop.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/euler_loop.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/euler_vertex.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/euler_vertex.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/halfedge.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/halfedge.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/halfedge_small.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/make_cube.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/make_cube.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/poly_optional.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/poly_optional.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/poly_optional_small.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/shark.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/shark.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/subdiv.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/subdiv.pdf -text svneol=unset#application/pdf
-Polyhedron/doc/Polyhedron/fig/subdiv_small.gif -text svneol=unset#image/gif
-Polyhedron/doc/Polyhedron/fig/teaser.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text svneol=unset#application/postscript
@@ -1608,14 +1009,6 @@ Polyhedron/doc_tex/Polyhedron/idraw/polyhedron.ips -text svneol=unset#applicatio
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.svg -text
-Polynomial/doc/Polynomial/fig/Polynomial.png -text svneol=unset#image/png
-Polynomial/doc/Polynomial/fig/sturm_habicht_def.gif -text svneol=unset#image/gif
-Polynomial/doc/Polynomial/fig/subresultant_def.gif -text svneol=unset#image/gif
-Polynomial/doc/Polynomial/fig/sylvester_matrix.gif -text svneol=unset#image/gif
-Polynomial/doc/Polynomial/fig/underbrace.gif -text svneol=unset#image/gif
-Polytope_distance_d/doc/Polytope_distance_d/fig/dist.png -text svneol=unset#image/png
-Polytope_distance_d/doc/Polytope_distance_d/fig/polydist.gif -text svneol=unset#image/gif
-Polytope_distance_d/doc/Polytope_distance_d/fig/polydist.pdf -text svneol=unset#application/pdf
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/intersecting_segments.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/overlapping_segments.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/point_and_degenerate_triangle.data -text
@@ -1628,21 +1021,8 @@ Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_numbers.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_squares.data -text
 Principal_component_analysis/demo/Principal_component_analysis/MainWindow.ui -text
 Principal_component_analysis/demo/Principal_component_analysis/PCA_demo.qrc -text
-Principal_component_analysis/doc/Principal_component_analysis/fig/fit.jpg -text svneol=unset#image/jpeg
-Principal_component_analysis/doc/Principal_component_analysis/fig/fit.png -text svneol=unset#image/png
-Principal_component_analysis/doc/Principal_component_analysis/fig/teaserLeastSquaresFitting-large.png -text svneol=unset#image/png
-Principal_component_analysis/doc/Principal_component_analysis/fig/teaserLeastSquaresFitting.png -text svneol=unset#image/png
 Principal_component_analysis/examples/Principal_component_analysis/Principal_component_analysis.sln eol=crlf
 Principal_component_analysis/test/Principal_component_analysis/Principal_component_analysis.sln eol=crlf
-QP_solver/doc/QP_solver/fig/closest_point.gif -text svneol=unset#image/gif
-QP_solver/doc/QP_solver/fig/closest_point.pdf -text svneol=unset#application/pdf
-QP_solver/doc/QP_solver/fig/first_lp.pdf -text svneol=unset#application/pdf
-QP_solver/doc/QP_solver/fig/first_lp.png -text svneol=unset#image/png
-QP_solver/doc/QP_solver/fig/first_nonnegative_qp.pdf -text svneol=unset#application/pdf
-QP_solver/doc/QP_solver/fig/first_nonnegative_qp.png -text svneol=unset#image/png
-QP_solver/doc/QP_solver/fig/first_qp.pdf -text svneol=unset#application/pdf
-QP_solver/doc/QP_solver/fig/first_qp.png -text svneol=unset#image/png
-QP_solver/doc/QP_solver/fig/qp.png -text svneol=unset#image/png
 QP_solver/examples/QP_solver/cycling.mps -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
 QP_solver/examples/QP_solver/first_lp.mps -text
@@ -1659,20 +1039,8 @@ QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_001.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_248.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_39.mps -text
 QP_solver/test/QP_solver/test_solver_data/masters/additional/QSCORPIO.QPS -text
-Ridges_3/doc/Ridges_3/fig/RidgesMechPartDetail.png -text svneol=unset#image/png
-Ridges_3/doc/Ridges_3/fig/david_crest.jpg -text svneol=unset#image/jpeg
-Ridges_3/doc/Ridges_3/fig/david_crest_small.png -text svneol=unset#image/png
-Ridges_3/doc/Ridges_3/fig/david_eye_crest.png -text svneol=unset#image/png
-Ridges_3/doc/Ridges_3/fig/ellipsoid_ridges.png -text svneol=unset#image/png
-Ridges_3/doc/Ridges_3/fig/index_umbilic.png -text svneol=unset#image/png
-Ridges_3/doc/Ridges_3/fig/lemon.png -text svneol=unset#image/png
-Ridges_3/doc/Ridges_3/fig/mecanic-sub1_crest-jpg.png -text svneol=unset#image/png
-Ridges_3/doc/Ridges_3/fig/mecanic-sub1_crestTweight1-jpg.png -text svneol=unset#image/png
-Ridges_3/doc/Ridges_3/fig/mecanic-sub1_crestTweight1Tsharp7-jpg.png -text svneol=unset#image/png
-Ridges_3/doc/Ridges_3/fig/star.png -text svneol=unset#image/png
 Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics.sln eol=crlf
 Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
-STL_Extension/doc/STL_Extension/fig/plusplus.png -text svneol=unset#image/png
 STL_Extension/include/CGAL/internal/boost/array_binary_tree.hpp -text
 STL_Extension/include/CGAL/internal/boost/mutable_heap.hpp -text
 STL_Extension/include/CGAL/internal/boost/mutable_queue.hpp -text
@@ -1710,131 +1078,14 @@ Scripts/scripts/cgal_create_cmake_script -text
 Skin_surface_3/examples/Skin_surface_3/data/1IYE.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/1mvm.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/1t7i.pdb -text
-SearchStructures/doc/SearchStructures/fig/d-range.gif -text svneol=unset#image/gif
-SearchStructures/doc/SearchStructures/fig/d-range.pdf -text svneol=unset#application/pdf
-SearchStructures/doc/SearchStructures/fig/d-segment.gif -text svneol=unset#image/gif
-SearchStructures/doc/SearchStructures/fig/d-segment.pdf -text svneol=unset#application/pdf
-SearchStructures/doc/SearchStructures/fig/range2.gif -text svneol=unset#image/gif
-SearchStructures/doc/SearchStructures/fig/range2.pdf -text svneol=unset#application/pdf
-SearchStructures/doc/SearchStructures/fig/rangesegmentdesign.pdf -text svneol=unset#application/pdf
-SearchStructures/doc/SearchStructures/fig/rsd.gif -text svneol=unset#image/gif
-SearchStructures/doc/SearchStructures/fig/rsd.pdf -text svneol=unset#application/pdf
-SearchStructures/doc/SearchStructures/fig/segment2.gif -text svneol=unset#image/gif
-SearchStructures/doc/SearchStructures/fig/segment2.pdf -text svneol=unset#application/pdf
-SearchStructures/doc/SearchStructures/fig/segment_ex2.gif -text svneol=unset#image/gif
-SearchStructures/doc/SearchStructures/fig/segment_ex2.pdf -text svneol=unset#application/pdf
-SearchStructures/doc/SearchStructures/fig/segment_ex4.gif -text svneol=unset#image/gif
-SearchStructures/doc/SearchStructures/fig/segment_ex4.pdf -text svneol=unset#application/pdf
-SearchStructures/doc/SearchStructures/fig/segment_tree.png -text svneol=unset#image/png
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/norway.png -text svneol=unset#image/png
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/sdg-join_split.gif -text svneol=unset#image/gif
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/sdg-join_split.pdf -text svneol=unset#application/pdf
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/sdg-rep.gif -text svneol=unset#image/gif
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/sdg-rep.pdf -text svneol=unset#application/pdf
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/svd-strongly-bw.gif -text svneol=unset#image/gif
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/svd-strongly-bw.pdf -text svneol=unset#application/pdf
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/svd-weakly-bw.jpg -text svneol=unset#image/jpeg
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/svd-weakly-bw.pdf -text svneol=unset#application/pdf
-Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig/svd.png -text svneol=unset#image/png
-Skin_surface_3/doc/Skin_surface_3/fig/convexTwoPoints.png -text svneol=unset#image/png
-Skin_surface_3/doc/Skin_surface_3/fig/large.png -text svneol=unset#image/png
-Skin_surface_3/doc/Skin_surface_3/fig/marching.png -text svneol=unset#image/png
-Skin_surface_3/doc/Skin_surface_3/fig/molecule.png -text svneol=unset#image/png
-Skin_surface_3/doc/Skin_surface_3/fig/skinTwoPoints.png -text svneol=unset#image/png
-Skin_surface_3/doc/Skin_surface_3/fig/small.png -text svneol=unset#image/png
-Snap_rounding_2/doc/Snap_rounding_2/fig/isr_vs_sr.gif -text svneol=unset#image/gif
-Snap_rounding_2/doc/Snap_rounding_2/fig/isr_vs_sr.pdf -text svneol=unset#application/pdf
-Snap_rounding_2/doc/Snap_rounding_2/fig/snap-detail.png -text svneol=unset#image/png
-Snap_rounding_2/doc/Snap_rounding_2/fig/snap.png -text svneol=unset#image/png
-Snap_rounding_2/doc/Snap_rounding_2/fig/sr1.gif -text svneol=unset#image/gif
-Snap_rounding_2/doc/Snap_rounding_2/fig/sr1.pdf -text svneol=unset#application/pdf
 Snap_rounding_2/test/Snap_rounding_2/cgal_test eol=lf
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_base -text
 Solver_interface/package_info/Solver_interface/copyright -text
 Solver_interface/package_info/Solver_interface/maintainer -text
-Spatial_searching/doc/Spatial_searching/fig/Fig1.gif -text svneol=unset#image/gif
-Spatial_searching/doc/Spatial_searching/fig/windowQuery.png -text svneol=unset#image/png
-Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-median.gif -text svneol=unset#image/gif
-Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-median.pdf -text svneol=unset#application/pdf
-Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-middle.gif -text svneol=unset#image/gif
-Spatial_sorting/doc/Spatial_sorting/fig/Hilbert-middle.pdf -text svneol=unset#application/pdf
-Spatial_sorting/doc/Spatial_sorting/fig/Hilbert8.gif -text svneol=unset#image/gif
-Spatial_sorting/doc/Spatial_sorting/fig/Hilbert8.pdf -text svneol=unset#application/pdf
-Spatial_sorting/doc/Spatial_sorting/fig/hilbert.png -text svneol=unset#image/png
-Spatial_sorting/doc/Spatial_sorting/fig/hilbertLarge.jpg -text svneol=unset#image/jpeg
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/StraightSkeleton.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/StraightSkeletonTeaser.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/complex_offset.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/complex_offset.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/complex_skeleton.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/complex_skeleton.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/exterior_offset.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/exterior_offset.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/exterior_skeleton.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/exterior_skeleton.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/fig6.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/fig6.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/invalid_polygons.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/invalid_polygons.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/poly_hole_skeleton.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/poly_hole_skeleton.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/simple_skeleton_0.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/simple_skeleton_0.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/simple_skeleton_1.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/simple_skeleton_1.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/valid_polygons.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/valid_polygons.png -text svneol=unset#image/png
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/validly_touching.pdf -text svneol=unset#application/pdf
-Straight_skeleton_2/doc/Straight_skeleton_2/fig/validly_touching.png -text svneol=unset#image/png
 Straight_skeleton_2/test/Straight_skeleton_2/all.rsp -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/make_list -text
 Straight_skeleton_2/test/Straight_skeleton_2/selected.rsp -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cmd -text
-Stream_lines_2/doc/Stream_lines_2/fig/1.gif -text svneol=unset#image/gif
-Stream_lines_2/doc/Stream_lines_2/fig/1.pdf -text svneol=unset#application/pdf
-Stream_lines_2/doc/Stream_lines_2/fig/2.gif -text svneol=unset#image/gif
-Stream_lines_2/doc/Stream_lines_2/fig/2.pdf -text svneol=unset#application/pdf
-Stream_lines_2/doc/Stream_lines_2/fig/3.gif -text svneol=unset#image/gif
-Stream_lines_2/doc/Stream_lines_2/fig/3.pdf -text svneol=unset#application/pdf
-Stream_lines_2/doc/Stream_lines_2/fig/euler_integrator.gif -text svneol=unset#image/gif
-Stream_lines_2/doc/Stream_lines_2/fig/euler_integrator.pdf -text svneol=unset#application/pdf
-Stream_lines_2/doc/Stream_lines_2/fig/runge_kutta_integrator.gif -text svneol=unset#image/gif
-Stream_lines_2/doc/Stream_lines_2/fig/runge_kutta_integrator.pdf -text svneol=unset#application/pdf
-Stream_lines_2/doc/Stream_lines_2/fig/streamlines-small.jpg -text svneol=unset#image/jpeg
-Stream_lines_2/doc/Stream_lines_2/fig/streamlines-teaser.jpg -text svneol=unset#image/jpeg
-Stream_support/doc/IOstream/fig/io.png -text svneol=unset#image/png
-Stream_support/doc_tex/IOstream/io.png -text
-Subdivision_method_3/doc/Subdivision_method_3/fig/CCBorderMask.pdf -text svneol=unset#application/pdf
-Subdivision_method_3/doc/Subdivision_method_3/fig/CCBorderMask.png -text svneol=unset#image/png
-Subdivision_method_3/doc/Subdivision_method_3/fig/CCSubdivision.png -text svneol=unset#image/png
-Subdivision_method_3/doc/Subdivision_method_3/fig/DSCornerMask.pdf -text svneol=unset#application/pdf
-Subdivision_method_3/doc/Subdivision_method_3/fig/DSCornerMask.png -text svneol=unset#image/png
-Subdivision_method_3/doc/Subdivision_method_3/fig/LoopBorderMask.pdf -text svneol=unset#application/pdf
-Subdivision_method_3/doc/Subdivision_method_3/fig/LoopBorderMask.png -text svneol=unset#image/png
-Subdivision_method_3/doc/Subdivision_method_3/fig/PQQStencil.gif -text svneol=unset#image/gif
-Subdivision_method_3/doc/Subdivision_method_3/fig/PQQStencil.pdf -text svneol=unset#application/pdf
-Subdivision_method_3/doc/Subdivision_method_3/fig/RefSchemes.gif -text svneol=unset#image/gif
-Subdivision_method_3/doc/Subdivision_method_3/fig/RefSchemes.pdf -text svneol=unset#application/pdf
-Subdivision_method_3/doc/Subdivision_method_3/fig/cc_mask.gif -text svneol=unset#image/gif
-Subdivision_method_3/doc/Subdivision_method_3/fig/cc_mask.pdf -text svneol=unset#application/pdf
-Subdivision_method_3/doc/Subdivision_method_3/fig/subdivision-teaser.jpg -text svneol=unset#image/jpeg
-Subdivision_method_3/doc/Subdivision_method_3/fig/subdivision-teaser.pdf -text svneol=unset#application/pdf
-Subdivision_method_3/doc/Subdivision_method_3/fig/twoheads-detail.png -text svneol=unset#image/png
-Subdivision_method_3/doc/Subdivision_method_3/fig/twoheads.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/LSCM.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/authalic.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/bimba.jpg -text svneol=unset#image/jpeg
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/bimbaDetail.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/border.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/conformal.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/cut.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/floater.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/introduction.jpg -text svneol=unset#image/jpeg
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/parameterizer_class_diagram.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/parameterizer_class_diagram_simplified.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/parameterizers_class_hierarchy.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig/uniform.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc/specification/param.pdf -text svneol=unset#application/pdf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Authalic_parameterization.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Complete_parameterization_example.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Eigen_parameterization.cmd -text
@@ -1849,23 +1100,6 @@ Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test.sh eol
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_model.sh eol=lf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test.cmd eol=lf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suite.sh eol=lf
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.jpg -text svneol=unset#image/jpeg
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#application/pdf
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse1.pdf -text svneol=unset#application/pdf
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse1.png -text svneol=unset#image/png
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse2.pdf -text svneol=unset#application/pdf
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse2.png -text svneol=unset#image/png
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse3.pdf -text svneol=unset#application/pdf
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse3.png -text svneol=unset#image/png
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse4.pdf -text svneol=unset#application/pdf
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/border_collapse4.png -text svneol=unset#image/png
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/collapse0.pdf -text svneol=unset#application/pdf
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/collapse0.png -text svneol=unset#image/png
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/collapse1.pdf -text svneol=unset#application/pdf
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/collapse1.png -text svneol=unset#image/png
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/detail.png -text svneol=unset#image/png
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/general_collapse.pdf -text svneol=unset#application/pdf
-Surface_mesh_simplification/doc/Surface_mesh_simplification/fig/general_collapse.png -text svneol=unset#image/png
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_constrained_polyhedron.cmd -text
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cmd eol=lf
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_polyhedron.cmd eol=lf
@@ -1889,11 +1123,6 @@ Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.vcproj eol=crlf
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#image/x-icon
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#image/x-icon
-Surface_mesher/doc/Surface_mesher/fig/segmented_head-small.png -text svneol=unset#image/png
-Surface_mesher/doc/Surface_mesher/fig/segmented_head.png -text svneol=unset#image/png
-Surface_mesher/doc/Surface_mesher/fig/skull-surface-small.png -text svneol=unset#image/png
-Surface_mesher/doc/Surface_mesher/fig/skull-surface.png -text svneol=unset#image/png
-Surface_mesher/doc/Surface_mesher/fig/sphere-surface.png -text svneol=unset#image/png
 Surface_mesher/examples/Surface_mesher/data/skull_2.9.inr -text
 Surface_mesher/examples/Surface_mesher/skip_vcproj_auto_generation -text
 Surface_mesher/find_debug_macros -text
@@ -1909,25 +1138,6 @@ Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/PS_demo_sim
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo.qrc -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/resources/check-off.svg -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/resources/check.svg -text
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/bimba.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/contouring_bad.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/contouring_bench.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/eros.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/flipped_normals.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/holes_bad.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/holes_good.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/introduction.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/memory_bench.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/noise.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/outliers.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/pipeline.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/poisson_bench.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/sampling.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/sharp_features.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/simplification_bench.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/surface_reconstruction_points.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig/surface_reconstruction_points_detail.png -text svneol=unset#image/png
-Surface_reconstruction_points_3/doc/reconstruction.pdf -text svneol=unset#application/pdf
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/Surface_reconstruction_images.ppt -text svneol=unset#application/vnd.ms-powerpoint
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/Surface_reconstruction_statistics.xls -text
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/data/kitten.xyz -text
@@ -1937,68 +1147,7 @@ Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/data/oni.pw
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/data/sphere_20k.xyz -text
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/poisson_reconstruction_test.cmd eol=lf
 Testsuite/test/makefile2 -text
-Triangulation_2/doc/TDS_2/fig/Three.gif -text svneol=unset#image/gif
-Triangulation_2/doc/TDS_2/fig/join_split.gif -text svneol=unset#image/gif
-Triangulation_2/doc/TDS_2/fig/rep_bis.gif -text svneol=unset#image/gif
-Triangulation_2/doc/TDS_2/fig/tds-insert_degree_2.gif -text svneol=unset#image/gif
-Triangulation_2/doc/TDS_2/fig/threelevels2.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/Flip.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/Three.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/cdt2d-big.png -text svneol=unset#image/png
-Triangulation_2/doc/Triangulation_2/fig/cdt2d-small.png -text svneol=unset#image/png
-Triangulation_2/doc/Triangulation_2/fig/constraints.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/constraints.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/cropped_voronoi.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/cropped_voronoi.png -text svneol=unset#image/png
-Triangulation_2/doc/Triangulation_2/fig/del_poisson.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/del_poisson.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/derivation_tree.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/derivation_tree.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/dt1.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/dt1.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/dt2.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/flip.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/incident_fc.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/infinite.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/infinite.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/infinite_vertex.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/infinite_vertex.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/insert1.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/insert1.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/insert2.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/insert2.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/insert3.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/insert3.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/join_split.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/join_split.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/neighbors.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/neighbors.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/poisson.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/poisson.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/poisson_del_poisson.png -text svneol=unset#image/png
-Triangulation_2/doc/Triangulation_2/fig/remove.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/remove.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/rep_bis.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/rep_bis.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc/Triangulation_2/fig/tds-dim_down.eps -text svneol=unset#application/postscript
-Triangulation_2/doc/Triangulation_2/fig/tds-dim_down.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/tds-dim_down.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/tds-dim_down.png -text svneol=unset#image/png
-Triangulation_2/doc/Triangulation_2/fig/tds-insert_degree_2.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/tds-insert_degree_2.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/tds_small.png -text svneol=unset#image/png
-Triangulation_2/doc/Triangulation_2/fig/threelevels.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/threelevels.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/threelevels2.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/threelevels2.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/tr1.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/tr1.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/tr1dt1.png -text svneol=unset#image/png
-Triangulation_2/doc/Triangulation_2/fig/tri_domain.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc/Triangulation_2/fig/tri_domain.png -text svneol=unset#image/png
-Triangulation_2/doc/Triangulation_2/fig/valid1.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/walk.gif -text svneol=unset#image/gif
-Triangulation_2/doc/Triangulation_2/fig/walk.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/TDS_2/flip.ltex -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/TDS_2/insert.ltex -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/TDS_2_ref/tds-dim_down.eps -text
@@ -2040,74 +1189,7 @@ Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.xml svneol=native#te
 Triangulation_3/demo/Triangulation_3/MainWindow.ui -text
 Triangulation_3/demo/Triangulation_3/T3_demo.qrc -text
 Triangulation_3/demo/Triangulation_3/icons/cgal_logo.xpm -text
-Triangulation_3/doc/TDS_3/fig/comborient.gif -text svneol=unset#image/gif
-Triangulation_3/doc/TDS_3/fig/comborient.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/TDS_3/fig/design_tds.gif -text svneol=unset#image/gif
-Triangulation_3/doc/TDS_3/fig/design_tds.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/TDS_3/fig/flips.gif -text svneol=unset#image/gif
-Triangulation_3/doc/TDS_3/fig/flips.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/TDS_3/fig/tds-dim_down.png -text svneol=unset#image/png
-Triangulation_3/doc/TDS_3/fig/topo-insert_outside_affine_hull.gif -text svneol=unset#image/gif
-Triangulation_3/doc/TDS_3/fig/topo-insert_outside_affine_hull.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/TDS_3/fig/topo-simplex2.gif -text svneol=unset#image/gif
-Triangulation_3/doc/TDS_3/fig/topo-simplex2.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/TDS_3/fig/topo-simplex3.gif -text svneol=unset#image/gif
-Triangulation_3/doc/TDS_3/fig/topo-simplex3.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/TDS_3/fig/topo-simplex4.gif -text svneol=unset#image/gif
-Triangulation_3/doc/TDS_3/fig/topo-simplex4.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/TDS_3/fig/utils.gif -text svneol=unset#image/gif
-Triangulation_3/doc/TDS_3/fig/utils.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/Delaunay_3.jpg -text svneol=unset#image/jpeg
-Triangulation_3/doc/Triangulation_3/fig/HD.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/HD.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/api1_01.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/api1_01.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/b35-1.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/b35-1.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/comborient.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/comborient.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/concept_hierarchy.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/concept_hierarchy.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/derivation.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/derivation.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/design.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/design.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/design_tds.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/design_tds.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/flips.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/flips.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/insert_outside_affine_hull.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/insert_outside_affine_hull.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/insert_outside_convex_hull.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/insert_outside_convex_hull.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/orient.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/orient.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/ortho.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/ortho.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/remimpos.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/remimpos.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/repres.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/repres.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/sidedim2.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/sidedim2.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc/Triangulation_3/fig/tds-dim_down.eps -text svneol=unset#application/postscript
-Triangulation_3/doc/Triangulation_3/fig/tds-dim_down.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/tds-dim_down.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/tds-dim_down.png -text svneol=unset#image/png
-Triangulation_3/doc/Triangulation_3/fig/tds3_small.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/tds3_small.png -text svneol=unset#image/png
-Triangulation_3/doc/Triangulation_3/fig/topo-insert_outside_affine_hull.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/topo-insert_outside_affine_hull.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/topo-simplex2.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/topo-simplex2.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/topo-simplex3.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/topo-simplex3.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/topo-simplex4.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/topo-simplex4.pdf -text svneol=unset#application/pdf
-Triangulation_3/doc/Triangulation_3/fig/triangulation3.png -text svneol=unset#image/png
-Triangulation_3/doc/Triangulation_3/fig/twotets.png -text svneol=unset#image/png
-Triangulation_3/doc/Triangulation_3/fig/utils.gif -text svneol=unset#image/gif
-Triangulation_3/doc/Triangulation_3/fig/utils.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.xml svneol=native#text/xml
 Triangulation_3/doc_tex/TriangulationDS_3/flips.xml svneol=native#text/xml
 Triangulation_3/doc_tex/TriangulationDS_3/repres.xml svneol=native#text/xml
@@ -2123,6 +1205,5 @@ Triangulation_3/doc_tex/Triangulation_3/ortho.xml svneol=native#text/xml
 Triangulation_3/doc_tex/Triangulation_3/remimpos.xml svneol=native#text/xml
 Triangulation_3/doc_tex/Triangulation_3/sidedim2.xml svneol=native#text/xml
 Triangulation_3/doc_tex/Triangulation_3/topo-insert_outside_affine_hull.xml svneol=native#text/xml
-Voronoi_diagram_2/doc/Voronoi_diagram_2/fig/voronoi.png -text svneol=unset#image/png
 wininst/developer_scripts/cgal.ico -text svneol=unset#image/x-icon
 wininst/developer_scripts/locate.zip -text svneol=unset#application/zip
