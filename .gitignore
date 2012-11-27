@@ -1316,6 +1316,21 @@ Triangulation_on_sphere_2/test/test_.xcodeproj/
 Installation/CGAL.build/
 Installation/src/CGAL/CGAL.build/
 Triangulation_on_sphere_2/test/Release/
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/Debug/
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/build/
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/simpleViewer.build/
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/ui_Mainwindow.h
+Triangulation_on_sphere_2/test/Makefile
+Triangulation_on_sphere_2/benches/Debug/
+Triangulation_on_sphere_2/benches/Implantation_example.build/
+Triangulation_on_sphere_2/benches/Implantation_example.xcodeproj/
+Triangulation_on_sphere_2/benches/Makefile
+Triangulation_on_sphere_2/benches/Release/
+Triangulation_on_sphere_2/benches/build/
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/Debug/
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/build/
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/simpleViewer.build/
+
 
 VERSION
 cmake_install.cmake

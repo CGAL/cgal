@@ -10,7 +10,7 @@
 //robust classes
 #include <CGAL/Regular_triangulation_sphere_traits_2.h>
 #include <CGAL/Regular_triangulation_on_sphere_2.h>
-#include <CGAL/Triangulation_sphere_traits_2.h>
+//#include <CGAL/Triangulation_sphere_traits_2.h>
 #include <CGAL/Triangulation_on_sphere_2.h>
 
 //manuel prototypes
@@ -56,7 +56,7 @@ void compute_times()
   std::cout << "REGULAR TRIANGULATION ON SPHERE" << std::endl; 
   {
  	  RTOS rtos;
-	  rtos.insert_four_init_vertices();
+	  //rtos.insert_four_init_vertices();
     {
       CGAL::Timer timer_reg; timer_reg.start();
       rtos.insert(pts3.begin(),pts3.end());

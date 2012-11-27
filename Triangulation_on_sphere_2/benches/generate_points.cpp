@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
    no_of_pts = pow(10,atoi(argv[1]));
    radius = atoi(argv[2]);
  } else {
-   no_of_pts = 100000;
+   no_of_pts = 1000000;
    radius=1;
  }
 
