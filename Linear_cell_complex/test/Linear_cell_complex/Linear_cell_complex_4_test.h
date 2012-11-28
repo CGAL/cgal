@@ -81,8 +81,6 @@ bool test_LCC_4()
   LCC lcc;
 
   typedef typename LCC::Dart_handle Dart_handle;
-  typedef typename LCC::Point Point;
-  typedef typename LCC::Vector Vector;
 
   // Construction operations
   Dart_handle dh1=lcc.make_segment(apoint<LCC>(0,0,0,0),apoint<LCC>(1,0,0,0));

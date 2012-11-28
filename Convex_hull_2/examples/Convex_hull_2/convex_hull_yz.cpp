@@ -13,6 +13,6 @@ int main()
   std::istream_iterator< Point_2 >  input_begin( std::cin );
   std::istream_iterator< Point_2 >  input_end;
   std::ostream_iterator< Point_2 >  output( std::cout, "\n" );
-  CGAL::convex_hull_2( input_begin, input_end, output );
+  CGAL::convex_hull_2( input_begin, input_end, output, K() );
   return 0;
 }

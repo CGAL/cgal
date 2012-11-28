@@ -74,7 +74,6 @@ bool test_LCC_3()
 
   typedef typename LCC::Dart_handle Dart_handle;
   typedef typename LCC::Point Point;
-  typedef typename LCC::Vector Vector;
   
   // Construction operations
   Dart_handle dh1=lcc.make_segment(Point(0,0,0),Point(1,0,0));
@@ -242,8 +241,8 @@ bool test_LCC_3()
       std::cout<<"Error: impossible to open 'data/points.txt'"<<std::endl;
       return false;
     }
-    std::istream_iterator < Point > begin (in), end;
-    T.insert (begin, end);
+    T.insert ( std::istream_iterator < Point >(in),
+               std::istream_iterator < Point >() );
     CGAL::import_from_triangulation_3<LCC>(lcc,T);
     // Pb: the triangulation_3 is not the same on different machines ?
     // if ( !check_number_of_cells_3(lcc, 795, 4156, 6722, 3361, 1) )

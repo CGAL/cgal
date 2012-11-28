@@ -65,7 +65,7 @@ public:
   typedef AABB_primitive Primitive;
 
   typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
-  typedef typename std::pair<Point_3,typename Primitive::Id> Point_and_primitive_id;
+  typedef typename std::pair<typename GeomTraits::Point_3, typename Primitive::Id> Point_and_primitive_id;
 
   // types for search tree
   /// \name Types

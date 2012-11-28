@@ -43,6 +43,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Circulator_project.h>
 #include <CGAL/Circulator_on_node.h>
+#include <CGAL/Circulator/Circulator_adapters.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/tuple.h>
 

@@ -91,7 +91,6 @@ namespace CGAL {
   typename LCC::Vector compute_normal_of_cell_0
   (const LCC& amap, typename LCC::Dart_const_handle adart)
   {
-    typedef typename LCC::Point Point;
     typedef typename LCC::Vector Vector;
     Vector normal(CGAL::NULL_VECTOR);
     unsigned int nb = 0;
