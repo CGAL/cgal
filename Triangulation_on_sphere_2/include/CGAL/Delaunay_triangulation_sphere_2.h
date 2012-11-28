@@ -434,40 +434,62 @@ propagate_conflicts (const Point  &p, Face_handle fh, int i,
 		
 		//p smalest point?
 		
-		if(&p < points[0] ){
-		         return ON_POSITIVE_SIDE;
-		}
+		//if(&p < points[0] ){
+		
+		//if((compare_xyz(points[0], p)==SMALLER){
+		        // return ON_POSITIVE_SIDE;
+		//}
+		
+		
+		
+		/*	
+		std::cout<<"perturb begin "<<std::endl;
+		std::cout<<p0<<std::endl;
+			std::cout<<p1<<std::endl;
+			std::cout<<p2<<std::endl;
+		std::cout<<p<<std::endl;
+		std::cout<<"end perturb"<<std::endl;
+		*/
+		
 		
 		if(points[0] == &p0){
+		   
+			
+			if(compare_xyz(p, p0)==SMALLER)
+			 return ON_POSITIVE_SIDE;
 				//if(coplanar_orientation(p0,p1,p)!=coplanar_orientation(p0,p1,p2))
 			if(coplanar_orientation(p0,p1,p,p2)==ON_NEGATIVE_SIDE)
 					return ON_NEGATIVE_SIDE;
 				//if(coplanar_orientation(p0, p2,p) ==coplanar_orientation(p0, p2, p1))
 			if(coplanar_orientation(p0,p2,p,p1)==ON_NEGATIVE_SIDE)
 				   return ON_NEGATIVE_SIDE;
-				   return ON_POSITIVE_SIDE;
+			return ON_POSITIVE_SIDE;
 		}
 				
 		if(points[0] == &p1){
+			if(compare_xyz(p, p1)==SMALLER)
+				return ON_POSITIVE_SIDE;
 			//if(coplanar_orientation(p1,p0,p)!=coplanar_orientation(p1,p0,p2))
-			if(coplanar_orientation(p1,p0,p,p2))
+			if(coplanar_orientation(p1,p0,p,p2)==ON_NEGATIVE_SIDE)
 				return ON_NEGATIVE_SIDE;
 			//if(coplanar_orientation(p1, p2,p) ==coplanar_orientation(p1, p2, p1))
-			   if(coplanar_orientation(p1,p2,p,p0))
+			   if(coplanar_orientation(p1,p2,p,p0)==ON_NEGATIVE_SIDE)
 				return ON_NEGATIVE_SIDE;
 			return ON_POSITIVE_SIDE;
 		}		
-		if(points[0] == &p){
+		if(points[0] == &p2){
+			if(compare_xyz(p, p2)==SMALLER)
+				return ON_POSITIVE_SIDE;
 			//if(coplanar_orientation(p2,p1,p)!=coplanar_orientation(p2,p1,p0))
-			if(coplanar_orientation(p2,p1,p,p2))
+			if(coplanar_orientation(p2,p1,p,p0)==ON_NEGATIVE_SIDE)
 				return ON_NEGATIVE_SIDE;
 			//if(coplanar_orientation(p2, p0,p) ==coplanar_orientation(p2, p0, p1))
-			   if(coplanar_orientation(p2,p0,p1,p))
+			   if(coplanar_orientation(p2,p0,p1,p)==ON_NEGATIVE_SIDE)
 				return ON_NEGATIVE_SIDE;
 			return ON_POSITIVE_SIDE;		
 		}
 				
-	
+		CGAL_assertion(false);
 		return ON_NEGATIVE_SIDE;
 								
 	}
@@ -806,12 +828,17 @@ insert_outside_affine_hull_regular(const Point& p)
 				
 	//find smalest vertex
 	Vertex_handle w=vertices_begin();
-	All_vertices_iterator vi;
+	 All_vertices_iterator vi;
 	for( vi = vertices_begin(); vi != vertices_end(); vi++){
-	 if(compare_xyz(w->point(), vi->point())<0)
-		w=vi;
+		if(compare_xyz(vi->point(), w->point())==SMALLER){
+				w=vi;
+			show_vertex(w);
+		}
+		
+		
 	}
-			
+	
+		 
 			
 	Vertex_handle v = this->_tds.insert_dim_up( w, conform);
 	v->set_point(p);

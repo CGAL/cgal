@@ -17,8 +17,6 @@ typedef DTOS::All_vertices_iterator                           Vertex_iterator;
 bool has_face(Face_handle fh, Vertex_handle v0, Vertex_handle v1, Vertex_handle v2){
 	bool test1, test2, test3;
 	for(int i=0;i<=2; i++){
-		std::cout<<v0->point()<<std::endl;
-		std::cout<<fh->vertex(i)->point()<<std::endl;
 		test1 = (v0->point()==fh->vertex(i)->point());
 		if(test1) 
 			break;
@@ -51,10 +49,12 @@ bool are_equal(DTOS triA, DTOS triB){
 	Face_iterator fiA;
 	Face_iterator fiB;
 	fiA = triA.all_faces_begin();
-	fiB = triB.all_faces_begin();
+	//fiB = triB.all_faces_begin();
     for( ; fiA != triA.all_faces_end(); ++fiA ){
+		found=false;
 		//**face of fiA in fiB?
-		for( ; fiB != triB.all_faces_end(); ++fiB ){
+		//for( ; fiB != triB.all_faces_end(); ++fiB ){
+		for(fiB=triB.all_faces_begin(); fiB!=triB.all_faces_end(); fiB++){
 			test = has_face(fiB, fiA->vertex(0), fiA->vertex(1), fiA->vertex(2));
 			//if(has_face) break;
 			if(test){
@@ -63,7 +63,7 @@ bool are_equal(DTOS triA, DTOS triB){
 			}
 				
 		}
-		//CGAL_assertion(has_face);
+		assert(found==true);
 		//**	
 	}
 	if(found)
@@ -105,22 +105,46 @@ void test(){
 	points.push_back(p6);
 	points.resize(6);
 	
-	dtos.insert(points.begin(), points.end());	
+	
+	dtos.insert(p1);
+	dtos.insert(p2);
+	dtos.insert(p3);
+	dtos.insert(p4);
+	dtos.insert(p5);
+	dtos.insert(p6);
+	dtos.show_all();
+	
+	/*dtos.insert(points.begin(), points.end());	
 	dtos.is_valid();
+	dtos.show_all();*/
+	
+	std::cout<<"TRIANGULATION 1"<<std::endl;
 	dtos.show_all();
 	
 	std::random_shuffle(points.begin(), points.end());
-	dtos2.insert(points.begin(), points.end());
+	for(int i=0; i<6; i++)
+		dtos2.insert(points.at(i));
+	
+	
 	dtos2.is_valid();
+	
+	std::cout<<"TRIANGULATION 2"<<std::endl;
 	dtos2.show_all();
 	
+	
+	
 	std::random_shuffle(points.begin(), points.end());
-	dtos3.insert(points.begin(), points.end());
+	 for(int i=0; i<6; i++)
+	  dtos3.insert(points.at(i));
+	
 	dtos3.is_valid();
 	
-	bool test =are_equal(dtos, dtos2);
+	std::cout<<"TRIANGULATION 3"<<std::endl;
+	dtos3.show_all();
+	
 	assert(are_equal(dtos, dtos2)==true);
 	assert(are_equal(dtos3, dtos2)==true);
+	assert(are_equal(dtos, dtos3)==true);
 	
 	
 		//insert   coplanar Points. Points are coplanar but not coplanar with the center of the sphere
@@ -151,16 +175,18 @@ void test(){
 	points2.push_back(p27);
 	
 	
-	
+	points2.resize(7);
 	dtos.insert(points2.begin(), points2.end());
 	dtos.is_valid();
+	dtos.show_all();
 	
 	
 	
-	points2.resize(7);
+	
 	std::random_shuffle(points2.begin(), points2.end());
 	dtos2.insert(points2.begin(), points2.end());
 	dtos2.is_valid();
+	dtos2.show_all();
 	
 	
 	std::random_shuffle(points2.begin(), points2.end());
@@ -168,8 +194,11 @@ void test(){
 	dtos3.is_valid();
 	
 			  
+	//assert(are_equal(dtos, dtos2)==true);
+	assert(are_equal(dtos3, dtos2)==true);		
+	assert(are_equal(dtos3, dtos)==true);
+	bool test2 = are_equal(dtos2, dtos);
 	assert(are_equal(dtos, dtos2)==true);
-	assert(are_equal(dtos3, dtos2)==true);		  
 	
 	
 	
