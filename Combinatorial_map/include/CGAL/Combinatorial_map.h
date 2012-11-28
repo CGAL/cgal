@@ -2498,7 +2498,7 @@ namespace CGAL {
        CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,
                                                B6,B7,B8,B9> > Base;
       
-      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, int amark=-1): 
+      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, int /*amark*/=-1):
         Base(amap, adart)
       {}
     };
