@@ -50,6 +50,8 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/array.hpp>
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/utility/enable_if.hpp>
 
 /*! 
   \file Poisson_reconstruction_function.h
@@ -327,7 +329,10 @@ public:
   Poisson_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
-    NormalPMap normal_pmap ///< property map to access the *oriented* normal of an input point.
+    NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
+    typename boost::enable_if<
+      boost::is_convertible<typename InputIterator::value_type, Point>
+    >::type* = 0
   )
   : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
   , average_spacing(CGAL::compute_average_spacing(first, beyond, 6))
