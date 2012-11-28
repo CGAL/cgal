@@ -237,6 +237,36 @@ private:
   FT average_spacing;
 
 
+  /// function to be used for the different constructors available that are
+  /// doing the same thing but with default template parameters
+  template <typename InputIterator,
+            typename PointPMap,
+            typename NormalPMap,
+            typename Visitor
+  >
+  void forward_constructor(
+    InputIterator first,
+    InputIterator beyond,
+    PointPMap point_pmap,
+    NormalPMap normal_pmap,
+    Visitor visitor)
+  {
+    CGAL::Timer task_timer; task_timer.start();
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
+
+    // Inserts points in triangulation
+    m_tr->insert(
+      first,beyond,
+      point_pmap,
+      normal_pmap,
+      visitor);
+
+    // Prints status
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
+                                                           << std::endl;
+  }
+
+
 // Public methods
 public:
 
@@ -258,6 +288,23 @@ public:
   */ 
   template <typename InputIterator,
             typename PointPMap,
+            typename NormalPMap
+  >
+  Poisson_reconstruction_function(
+    InputIterator first,  ///< iterator over the first input point.
+    InputIterator beyond, ///< past-the-end iterator over the input points.
+    PointPMap point_pmap, ///< property map to access the position of an input point.
+    NormalPMap normal_pmap ///< property map to access the *oriented* normal of an input point.
+  )
+    : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
+    , average_spacing(CGAL::compute_average_spacing(first, beyond, 6))
+  {
+    forward_constructor(first, beyond, point_pmap, normal_pmap, Poisson_visitor());
+  }
+
+  /// \cond SKIP_IN_MANUAL
+  template <typename InputIterator,
+            typename PointPMap,
             typename NormalPMap,
             typename Visitor
   >
@@ -270,47 +317,23 @@ public:
     : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
     , average_spacing(CGAL::compute_average_spacing(first, beyond, 6))
   {
-    CGAL::Timer task_timer; task_timer.start();
-    CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
-
-    // Inserts points in triangulation
-    m_tr->insert(
-      first,beyond,
-      point_pmap,
-      normal_pmap,
-      visitor);
-
-    // Prints status
-    CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
-                                                           << std::endl;
+    forward_constructor(first, beyond, point_pmap, normal_pmap, visitor);
   }
 
-  /// \cond SKIP_IN_MANUAL
-  // This variant creates a default point property map = Dereference_property_map.
+  // This variant creates a default point property map = Dereference_property_map and Visitor=Poisson_visitor
   template <typename InputIterator,
-            typename NormalPMap,
-            typename Visitor
+            typename NormalPMap
   >
   Poisson_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
-    NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
-    Visitor visitor)
+    NormalPMap normal_pmap ///< property map to access the *oriented* normal of an input point.
+  )
   : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
   , average_spacing(CGAL::compute_average_spacing(first, beyond, 6))
   {
+    forward_constructor(first, beyond, make_dereference_property_map(first), normal_pmap, Poisson_visitor());
     CGAL::Timer task_timer; task_timer.start();
-    CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
-
-    // Inserts points in triangulation
-    m_tr->insert(
-      first,beyond,
-      normal_pmap,
-      visitor);
-
-    // Prints status
-    CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
-                                                           << std::endl;
   }
   /// \endcond
 
@@ -401,8 +424,7 @@ public:
                                                      m_tr->input_points_begin()),
                                 Some_points_iterator(m_tr->input_points_end(),
                                                      skip),
-                                Normal_of_point_with_normal_pmap<Geom_traits>(),
-                                Poisson_visitor());
+                                Normal_of_point_with_normal_pmap<Geom_traits>() );
       coarse_poisson_function.compute_implicit_function(solver, Poisson_visitor(),
                                                         0.);
       internal::Poisson::Constant_sizing_field<Triangulation> 
