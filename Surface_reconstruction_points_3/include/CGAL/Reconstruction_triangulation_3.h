@@ -452,6 +452,7 @@ public:
       normal_pmap,
       visitor);
   }
+  /// \endcond
 
   /// Delaunay refinement callback:
   /// insert STEINER point in the triangulation.
