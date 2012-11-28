@@ -468,46 +468,6 @@ initialize()
   {
     // we're not multi-thread, yet
     r_c3t3_.triangulation().set_lock_data_structure(0);
-    /*
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << "A little bit of sequential refinement... ";
-# endif
-
-    // Start by a little bit of refinement to get a coarse mesh
-    // => Good approx of bounding box
-    // => The coarse mesh can be used for a data-dependent space partitionning
-    const int NUM_VERTICES_OF_COARSE_MESH =
-      (std::max)(
-      Concurrent_mesher_config::get().min_num_vertices_of_coarse_mesh,
-      static_cast<int>(
-        std::thread::hardware_concurrency() *
-        Concurrent_mesher_config::get().num_vertices_of_coarse_mesh_per_core)
-      );
-
-    facets_mesher_.scan_triangulation();
-# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-    int num_ids =
-# endif
-    facets_mesher_.refine_sequentially_up_to_N_vertices(
-      facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
-    facets_mesher_.clear_refinement_queue();
-
-    // Set new bounding boxes
-    const Bbox_3 &bbox = r_c3t3_.bbox();
-    set_bbox(bbox);
-
-# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-    m_worksharing_ds.set_num_ids(num_ids);
-# endif
-
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << "done." << std::endl;
-    std::cerr
-      << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
-      << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
-      << "Tets    : " << r_c3t3_.number_of_cells_in_complex() << std::endl;
-# endif
-    */
 
 # ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
