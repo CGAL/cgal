@@ -704,7 +704,86 @@ struct Medit_pmap_generator<C3T3, false, false>
   bool print_twice() { return false; }
 };
 
-  
+struct Index_triple
+{
+public:
+  Index_triple(const int& i0, const int& i1, const int& i2, 
+               const int& index1, const int& index2)
+  {
+    indices.push_back(i0);
+    indices.push_back(i1);
+    indices.push_back(i2);
+    std::sort(indices.begin(), indices.end(), std::less<int>());
+    indices.push_back(index1);
+    indices.push_back(index2);
+  }
+
+ 	int operator[](std::size_t i) const
+  {
+    if(i < 0 || i > 2)
+      return -1;
+    else
+      return indices[i];
+  }
+
+  bool operator<(const Index_triple& f) const
+  {
+    for(std::size_t i = 0; i < 3; ++i)
+    {
+      if(indices[i] == f[i])
+        continue;
+      else
+        return indices[i] < f[i];
+    }
+    return false; //same facet
+  }
+
+  int index1() const { return indices[3]; }
+  int index2() const { return indices[4]; }
+
+private:
+  std::vector<int> indices;
+};
+
+struct Index_quad
+{
+public:
+  Index_quad(const int& i0, const int& i1, const int& i2, const int& i3,
+             const int& index)
+  {
+    indices.push_back(i0);
+    indices.push_back(i1);
+    indices.push_back(i2);
+    indices.push_back(i3);
+    std::sort(indices.begin(), indices.end(), std::less<int>());
+    indices.push_back(index);
+  }
+
+ 	int operator[](std::size_t i) const
+  {
+    if(i < 0 || i > 3)
+      return -1;
+    else
+      return indices[i];
+  }
+
+  bool operator<(const Index_quad& t) const
+  {
+    for(std::size_t i = 0; i < 4; ++i)
+    {
+      if(indices[i] == t[i])
+        continue;
+      else
+        return indices[i] < t[i];
+    }
+    return false; //same facet
+  }
+
+  int index() const { return indices[4]; }
+
+private:
+  std::vector<int> indices;
+};
 //-------------------------------------------------------
 // IO functions
 //-------------------------------------------------------
@@ -817,32 +896,40 @@ output_to_medit(std::ostream& os,
   os << "Triangles" << std::endl
      << number_of_triangles << std::endl;
 
+  std::set<Index_triple> facets;
   for( Facet_iterator fit = c3t3.facets_in_complex_begin();
        fit != c3t3.facets_in_complex_end();
        ++fit)
   {
-    for (int i=0; i<4; i++)
+    std::vector<int> indices;
+    for(unsigned int i = 0; i < 4; ++i)
     {
       if (i != fit->second)
       {
         const Vertex_handle& vh = (*fit).first->vertex(i);
-        os << V[vh] << " ";
+        indices.push_back(V[vh]);
       }
     }
-    os << get(facet_pmap, *fit) << std::endl;
+    int index1 = get(facet_pmap, *fit);
+    int index2 = print_each_facet_twice ?  get(facet_twice_pmap, *fit) : -1;
+    facets.insert(Index_triple(indices[0], indices[1], indices[2], index1, index2));
+  }
+
+  for(std::set<Index_triple>::iterator it = facets.begin();
+      it != facets.end();
+      ++it)
+  {
+    Index_triple fi = *it;
+    for (int i = 0; i < 3; i++)
+      os << fi[i] << " ";
+    os << fi.index1() << std::endl;
     
     // Print triangle again if needed
     if ( print_each_facet_twice )
     {
-      for (int i=0; i<4; i++)
-      {
-        if (i != fit->second)
-        {
-          const Vertex_handle& vh = (*fit).first->vertex(i);
-          os << V[vh] << " ";
-        }
-      }
-      os << get(facet_twice_pmap, *fit) << std::endl;
+      for (int i=0; i<3; i++)
+        os << fi[i] << " ";
+      os << fi.index2() << std::endl;
     }
   }
 
@@ -852,16 +939,28 @@ output_to_medit(std::ostream& os,
   os << "Tetrahedra" << std::endl
      << c3t3.number_of_cells_in_complex() << std::endl;
 
+  std::set<Index_quad> tetrahedra;
   for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
        cit != c3t3.cells_in_complex_end() ;
        ++cit )
   {
+    std::vector<int> indices;
     for (int i=0; i<4; i++)
-      os << V[cit->vertex(i)] << " ";
+      indices.push_back(V[cit->vertex(i)]);
 
-    os << get(cell_pmap, cit) << std::endl;
+    int index = get(cell_pmap, cit);
+    tetrahedra.insert(Index_quad(indices[0],indices[1],indices[2],indices[3],index));   
   }
 
+  for(std::set<Index_quad>::iterator it = tetrahedra.begin();
+      it != tetrahedra.end();
+      ++it)
+  {
+    Index_quad ti = *it;
+    for(int i = 0; i < 4; ++i)
+      os << ti[i] << " ";
+    os << ti.index() << std::endl;
+  }
   //-------------------------------------------------------
   // End
   //-------------------------------------------------------
