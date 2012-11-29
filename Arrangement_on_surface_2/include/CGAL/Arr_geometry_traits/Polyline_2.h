@@ -128,6 +128,8 @@ public:
   /*!
    * TODO: Mark as deprectaed.
    * TODO: @Efi: How should this be done?
+   * EFEF: I think you add 'CGAL_DEPRECATED' in front of the decleration:
+   * CGAL_DEPRECATED void push_back (const Point_2 & p)
    * Append a point to the polyline.
    */
   void push_back (const Point_2 & p)
@@ -417,12 +419,15 @@ public:
    * polyline segments.
    * TODO: @Efi: does this have to be implemented in the traits class as well?
    *             It should not be deprectaed, right?
-   * EFEF: I thing that all these overloaded memeber functions should be
+   * EFEF: I think that all these overloaded memeber functions should be
    *       deprecated.
    * Dror: What do you mean? Should they be empty and the tests implemented
    *       in the traits class? Or shouldn't this x-monotone polylines
    *       construction be removed all together and only a trivial constructor
    *       from a range of segments be left?
+   * EFEF: I think that construction from points should be deprecated for
+   *       x-monotone polyline. For (non x-monotome) polyline it can stay,
+   *       as there are no tests to apply.
    */
   template <typename InputIterator>
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
@@ -474,10 +479,13 @@ public:
    *             Should it be moved to the traits class?
    *             If so, a better name of the corresponding functor would be
    *             "Append_segment_2" woulnd't it?
-   * EFEF: Only the last statement should retain. (Consider making this member
-   *       should be made private.) You can introduce a functor in the traits
-   *       class that can replace this one and contain the verification code.
-   * Dror: I don't understand. 
+   * EFEF: Only the last statement should stay. (Consider making this member
+   *       private.) You can introduce a functor in the traits class that
+   *       can replace this one and contain the verification code.
+   * Dror: I don't understand.
+   * EFEF: since we have begin_segments(), end_segments(), we might as well
+   *       have push_back_segment() and number_of_segments(). These functions
+   *       should not perform any tests.
    */
   inline void push_back (const Segment_2& seg)
   {
@@ -548,6 +556,9 @@ private:
    *       that reads points
    * Dror: Here you meant the "importer", right? So do you want to have two
    *       importers: one from segments and one from points?
+   * EFEF: Yes, I meant import. Well, you can have only one importer.
+   *       If we want to add something that reads points, we need it to be a
+   *       function (with a name different than '>>', e.g., read_points()).
    */
   template <typename SegmentTraits>
   std::istream& operator>> (std::istream& is,

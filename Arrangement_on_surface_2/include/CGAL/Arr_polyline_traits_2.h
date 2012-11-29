@@ -1046,6 +1046,7 @@ public:
 	     //             but I don't see a way to make it nicer. Plus,
 	     //             in any case, this is only a precondition test, so
 	     //             maybe it is not that bad.
+             // EFEF: Looks good to me.
 
 	     CGAL_precondition( comp_xy (min_v(*curr),min_v(*next)) == EQUAL ||
 				comp_xy (min_v(*curr),max_v(*next)) == EQUAL ||
