@@ -34,7 +34,7 @@ namespace CGAL {
 
   namespace Meshes {
 
-    template <typename Elt, class Quality>
+    template <typename Elt, class Quality, class LessElt = std::less<Elt> >
     class Double_map_container 
     {
     public:
@@ -42,7 +42,7 @@ namespace CGAL {
 
     protected:
       // --- protected datas ---
-      Double_map<Element, Quality> m;
+      Double_map<Element, Quality, LessElt> m;
 
     public:
       bool no_longer_element_to_refine_impl() const

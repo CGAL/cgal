@@ -38,8 +38,117 @@ namespace CGAL {
       }
     };
 
+    template<typename Tr>
+    struct Cell_handle_comparator
+      : public std::binary_function<typename Tr::Cell_handle,
+                                    typename Tr::Cell_handle,
+                                    bool>
+    {
+      typedef typename Tr::Cell_handle Cell_handle;
+      typedef typename Tr::Vertex_handle Vertex_handle;
+
+      bool operator()(const Cell_handle& c1, const Cell_handle& c2) const
+      {
+        std::vector<Vertex_handle> v1;
+        std::vector<Vertex_handle> v2;
+        for(int i = 0; i < 4; ++i)
+        {
+          v1.push_back(c1->vertex(i));
+          v2.push_back(c2->vertex(i));
+        }
+        Vertex_handle_comparator<Vertex_handle> vcomp;
+        std::sort(v1.begin(), v1.end(), vcomp);
+        std::sort(v2.begin(), v2.end(), vcomp);
+        for(std::size_t i = 0; i < 4; ++i)
+        {
+          if(v1[i] == v2[i])
+            continue;
+          else return vcomp(v1[i], v2[i]);
+        }
+        return false;
+      }
+    };
+
+    template<typename Tr>
+    struct Triangulation_canonical_facets_comparator
+      : public std::binary_function<typename Tr::Facet,
+                                    typename Tr::Facet,
+                                    bool>
+    {
+      typedef typename Tr::Facet Facet;
+      typedef typename Tr::Vertex_handle Vertex_handle;
+
+      bool operator()(const Facet& f1, const Facet& f2) const
+      {
+        Vertex_handle v1 = (f1.first)->vertex(f1.second);
+        Vertex_handle v2 = (f2.first)->vertex(f2.second);
+        Vertex_handle_comparator<Vertex_handle> vcomp;
+        if(vcomp(v1,v2))
+          return true;
+        else if(v1 == v2)
+        {
+          std::vector<Vertex_handle> vf1;
+          std::vector<Vertex_handle> vf2;
+          for(int i = 0; i < 4; ++i)
+          {
+            if(i != f1.second)
+              vf1.push_back(f1.first->vertex(i));
+            if(i != f2.second)
+              vf2.push_back(f2.first->vertex(i));
+          }
+          std::sort(vf1.begin(), vf1.end(), vcomp);
+          std::sort(vf2.begin(), vf2.end(), vcomp);
+          for(std::size_t i = 0; i < 3; ++i)
+          {
+            if(vf1[i] == vf2[i])
+              continue;
+            else return vcomp(vf1[i], vf2[i]);
+          }
+          return false;
+        }
+        else return false;        
+      }
+    };
+
+    template<typename Tr>
+    struct Triangulation_Finite_facets_comparator
+      : public std::binary_function<typename Tr::Facet,
+                                    typename Tr::Facet,
+                                    bool>
+    {
+      typedef typename Tr::Facet Facet;
+      typedef typename Tr::Vertex_handle Vertex_handle;
+
+      Triangulation_Finite_facets_comparator(const Tr& tr)
+        : tr_(tr) {}
+
+      bool operator()(const Facet& f1, const Facet& f2) const
+      {
+        return Triangulation_canonical_facets_comparator<Tr>(
+          canonical(f1),
+          canonical(f2));
+      }
+
+      Facet canonical(const Facet& f) const
+      {
+        const Facet mirror = tr_.mirror_facet(f);
+        Vertex_handle vf = f.first->vertex(f.second);
+        Vertex_handle vm = mirror.first->vertex(mirror.second);
+        if(tr_.is_infinite(vf))
+          return mirror;
+        else if(tr_.is_infinite(vm))
+          return f;
+
+        Vertex_handle_comparator<Vertex_handle> vcomp;
+        return vcomp(vf,vm) ? f : mirror;
+      }
+    
+    private:
+      const Tr& tr_;
+    };
+
     template<typename Facet>
-    struct Facet_handle_comparator  
+    struct Polyhedron_Facet_handle_comparator  
       : public std::binary_function<typename Facet::Facet_handle, 
                                     typename Facet::Facet_handle, 
                                     bool> 
@@ -125,4 +234,4 @@ namespace CGAL {
   } //  namespace Mesh_3 {
 } // namespace CGAL
 
-#endif // COMPARISON_OPERATORS_H
+#endif COMPARISON_OPERATORS_H
