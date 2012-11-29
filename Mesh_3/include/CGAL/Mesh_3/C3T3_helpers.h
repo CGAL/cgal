@@ -55,9 +55,7 @@
 
 namespace CGAL {
 namespace Mesh_3 {
-  
-static tbb::mutex mut_outdated_cells, mut_moving_vertices, mut_vertex_to_proj; // CJTODO LOCK
-  
+
 #ifdef CGAL_INTRUSIVE_LIST
 template <typename Type>
 class Intrusive_list {
@@ -410,6 +408,14 @@ protected:
   }
 
   void unlock_all_elements() const {}
+  
+  // Dummy locks/unlocks
+  void lock_outdated_cells() const {}
+  void unlock_outdated_cells() const {}
+  void lock_moving_vertices() const {}
+  void unlock_moving_vertices() const {}
+  void lock_vertex_to_proj() const {}
+  void unlock_vertex_to_proj() const {}
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -502,8 +508,40 @@ protected:
     }
   }
 
+  void lock_outdated_cells() const
+  {
+    m_mut_outdated_cells.lock();
+  }
+  void unlock_outdated_cells() const
+  {
+    m_mut_outdated_cells.unlock();
+  }
+  
+  void lock_moving_vertices() const
+  {
+    m_mut_moving_vertices.lock();
+  }
+  void unlock_moving_vertices() const
+  {
+    m_mut_moving_vertices.unlock();
+  }
+  
+  void lock_vertex_to_proj() const
+  {
+    m_mut_vertex_to_proj.lock();
+  }
+  void unlock_vertex_to_proj() const
+  {
+    m_mut_vertex_to_proj.unlock();
+  }
+
 protected:
   Mesh_3::LockDataStructureType *m_lock_ds;
+
+  typedef tbb::mutex  Mutex_type;
+  mutable Mutex_type  m_mut_outdated_cells;
+  mutable Mutex_type  m_mut_moving_vertices;
+  mutable Mutex_type  m_mut_vertex_to_proj;
 };
 #endif // CGAL_LINKED_WITH_TBB
 
@@ -1088,8 +1126,9 @@ private:
           const Vertex_handle& v = f.first->vertex((k+i)&3);
           if ( c3t3_.in_dimension(v) > 2 )
           {
-            tbb::mutex::scoped_lock lock(mut_vertex_to_proj);
+            //lock_vertex_to_proj();
             vertex_to_proj.insert(v);
+            //unlock_vertex_to_proj();
           }
         }
       }
@@ -2114,7 +2153,9 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     // Get facets (returns each canonical facet only once)
     // Note: ~42% of rebuild_restricted_delaunay time
     //  Facet_vector facets;
+    lock_vertex_to_proj();
     Facet_updater facet_updater(c3t3_,vertex_to_proj, updater);
+    unlock_vertex_to_proj();
     update_facets(outdated_cells_vector, facet_updater);
   
     // now we can clear
@@ -2250,8 +2291,9 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
           { 
             std::pair<Vertex_handle, Surface_patch_index> p
               = std::make_pair(v, c3t3_.surface_patch_index(facet));
-            tbb::mutex::scoped_lock lock(mut_vertex_to_proj);
+            lock_vertex_to_proj();
             vertex_to_proj.insert(p);
+            unlock_vertex_to_proj();
           }
         }
       }
@@ -2429,10 +2471,10 @@ move_point(const Vertex_handle& old_vertex,
       ch->invalidate_circumcenter();
     }
 
-    tbb::mutex::scoped_lock lock(mut_outdated_cells); // CJTODO LOCK
+    lock_outdated_cells();
     std::copy(incident_cells_.begin(),incident_cells_.end(), 
       std::inserter(outdated_cells_set, outdated_cells_set.end()));
-    lock.release(); // CJTODO LOCK
+    unlock_outdated_cells();
     
     Vertex_handle new_vertex =  move_point_no_topo_change(old_vertex, new_position);
     
@@ -2454,10 +2496,10 @@ move_point(const Vertex_handle& old_vertex,
     }
   
    
-    tbb::mutex::scoped_lock lock(mut_moving_vertices); // CJTODO LOCK
+    lock_moving_vertices();
     moving_vertices.erase(old_vertex); 
     moving_vertices.insert(new_vertex);
-    lock.release();
+    unlock_moving_vertices();
     
     // Don't "unlock_all_elements" here, the caller may need it to do it itself
     return new_vertex;
@@ -2486,14 +2528,14 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   if (p_could_lock_zone && *p_could_lock_zone == false)
     return Vertex_handle();
   
-  tbb::mutex::scoped_lock lock(mut_outdated_cells); // CJTODO LOCK
+  lock_outdated_cells();
   for(typename Cell_set::iterator it = insertion_conflict_cells.begin();
       it != insertion_conflict_cells.end(); ++it)
       outdated_cells_set.erase(*it);
   for(typename Cell_set::iterator it = removal_conflict_cells.begin();
       it != removal_conflict_cells.end(); ++it)
       outdated_cells_set.erase(*it);
-  lock.release();
+  unlock_outdated_cells();
 
   Cell_vector outdated_cells;
   Vertex_handle nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
@@ -2505,11 +2547,11 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                                 std::back_inserter(outdated_cells),
                                 CGAL::Emptyset_iterator()); // deleted_cells
   
-  lock.acquire(mut_outdated_cells);
+  lock_outdated_cells();
   for(typename Cell_vector::iterator it = outdated_cells.begin();
       it != outdated_cells.end(); ++it)
       outdated_cells_set.insert(*it);
-  lock.release();
+  unlock_outdated_cells();
   
   return nv;
 }
@@ -2708,9 +2750,9 @@ move_point_no_topo_change(const Vertex_handle& old_vertex,
                           OutdatedCellsOutputIterator outdated_cells)
 {
   
-  tbb::mutex::scoped_lock lock(mut_outdated_cells); // CJTODO LOCK
+  lock_outdated_cells();
   get_conflict_zone_no_topo_change(old_vertex, outdated_cells);
-  lock.release(); // CJTODO LOCK
+  unlock_outdated_cells();
 
   return move_point_no_topo_change(old_vertex, new_position);
 }
