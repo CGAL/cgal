@@ -183,6 +183,33 @@ public:
   }
 };
 
+template <class R, int dim>
+class Less_signed_distance_to_line_projected_3
+{
+public:
+  typedef typename R::Point_3   Point_3;
+  typedef typename R::Point_2   Point_2;
+  typedef typename R::FT        RT;
+  typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+  typedef bool result_type;
+
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p),y(p));
+  }
+
+  result_type operator()(const Point_3& p,
+                               const Point_3& q,
+                               const Point_3& r,
+                               const Point_3& s) const
+  {
+    return typename R::Less_signed_distance_to_line_2()
+      (  project(p), project(q), project(r), project(s) );
+  }
+};
+
+
 template <class R,int dim>
 class Squared_distance_projected_3
 {
@@ -400,6 +427,7 @@ public:
   typedef Orientation_projected_3<Rp,dim>                     Orientation_2;
   typedef typename Rp::Angle_3                                Angle_2;
   typedef Side_of_oriented_circle_projected_3<Rp,dim>         Side_of_oriented_circle_2;
+  typedef Less_signed_distance_to_line_projected_3<Rp,dim>    Less_signed_distance_to_line_2;
   typedef Side_of_bounded_circle_projected_3<Rp,dim>          Side_of_bounded_circle_2;
   typedef Compare_distance_projected_3<Rp,dim>                Compare_distance_2;
   typedef Squared_distance_projected_3<Rp,dim>                Compute_squared_distance_2;
@@ -504,6 +532,10 @@ public:
   Less_yx_2
   less_yx_2_object() const
     { return Less_yx_2();}
+
+  Less_signed_distance_to_line_2
+    less_signed_distance_to_line_2_object() const
+    {return Less_signed_distance_to_line_2();}
 
   Less_y_2
   less_y_2_object() const
