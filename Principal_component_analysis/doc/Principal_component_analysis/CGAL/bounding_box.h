@@ -22,9 +22,7 @@ computes the bounding box of a non-empty set of 2D or 3D points.
 `K::Iso_cuboid_3`, depending on the dimension of the input values,
 where `K` is
 \code
-CGAL::Kernel_traits<
-  std::iterator_traits<InputIterator>::value_type
->::Kernel
+CGAL::Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel
 \endcode
 
 \pre first != beyond. 

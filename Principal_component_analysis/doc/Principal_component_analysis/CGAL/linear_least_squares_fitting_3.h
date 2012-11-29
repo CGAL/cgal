@@ -60,14 +60,14 @@ range from 0 to 3 according to whether one wants to fit either the
 points, the segments, the surface triangles or the whole solid
 tetrahedra.
 
-The class `K` is the kernel in which the type
-`InputIterator::value_type` is defined. It can be omitted and deduced
+The class `K` is the kernel in which the
+value type of `InputIterator` is defined. It can be omitted and deduced
 automatically from the value type.
 
 ### Requirements ###
 
 <OL> 
-<LI>`InputIterator::value_type` can be either `K::Point_3`, 
+<LI>`InputIterator` must have a value type  equivalent to `K::Point_3`, 
 `K::Segment_3`, `K::Triangle_3`, `K::Iso_cuboid_3`, 
 `K::Sphere_3` or `K::Tetrahedron_3`. 
 <LI>`line` is the best fitting line computed. 
@@ -95,15 +95,15 @@ is the same along any plane going through the best fitting line, and
 fitting plane (hence the fit is perfect).
 
 
-The class `K` is the kernel in which the type
-`InputIterator::value_type` is defined. It can be omitted and deduced
+The class `K` is the kernel in which the value type
+of `InputIterator` is defined. It can be omitted and deduced
 automatically from the value type. The tag `tag` identifies the
 dimension to be considered from the objects (see above).
 
 ### Requirements ###
 
 <OL> 
-<LI>`InputIterator::value_type` can either be `K::Point_3`, 
+<LI>`InputIterator` has a value type equivalent to `K::Point_3`, 
 `K::Segment_3`, `K::Triangle_3`, `K::Iso_cuboid_3`, 
 `K::Sphere_3` or `K::Tetrahedron_3`. 
 <LI>`plane` is the best fitting plane computed. 
