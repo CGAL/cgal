@@ -597,8 +597,12 @@ insert(const Point &p, Face_handle start)
   int li;
   Face_handle loc = Base::locate(p, lt, li, start);
 	//if (loc == Face_handle())
-	if(lt ==NOT_ON_SPHERE || lt == TOO_CLOSE)
+	if(lt== NOT_ON_SPHERE)
 		return Vertex_handle();
+	else if (lt == TOO_CLOSE)
+		return Vertex_handle();
+		//return loc->vertex(li);
+	
 	else
   return insert(p, lt, loc, li);
 }
@@ -745,7 +749,7 @@ insert_outside_affine_hull_regular(const Point& p)
 	const Point p0=f->vertex(0)->point();
 	const Point p1=f->vertex(1)->point();
 	const Point p2=fn->vertex(1)->point();
-	//Orientation orient = orientation(p0, p1, p2);
+	Orientation orient = orientation(p0, p1, p2);
 	Orientation orient2 = power_test(p0, p1, p2, p);
 	CGAL_triangulation_assertion(orient!=NEGATIVE);
 	 

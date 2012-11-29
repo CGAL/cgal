@@ -588,32 +588,51 @@ inline
 void Triangulation_sphere_2<Gt, Tds>::
 test_distance( const Point& p, Face_handle f, Locate_type& lt, int& li)const{
 CGAL_precondition(dimension()>=-1);
-switch (dimension()){
-	case -1 : {	
+ switch (dimension()){
+ case -1 : {	
 	 if(is_too_close(p, vertices_begin()->point()))
 		lt = TOO_CLOSE;
-		break;
-	}
+		li=0;
+	   return;
+ } break;
 		
-	case 0:
-	case 1:{
-		Vertex_handle v0 = f->vertex(0);
-	 Vertex_handle v1= f->neighbor(0)->vertex(0);
-	 if (is_too_close(v0->point(),p)||is_too_close(v1->point(),p) )
-		lt = TOO_CLOSE;
-		 break;
-	}
+ case 0:
+ case 1:{
+  Vertex_handle v0 = f->vertex(0);
+  Vertex_handle v1= f->neighbor(0)->vertex(0);
+  if (is_too_close(v0->point(),p)){
+	lt = TOO_CLOSE;
+	li=0;
+	 return;
+   } 
+  if(is_too_close(v1->point(),p)){
+	lt = TOO_CLOSE;
+   li=1;
+   return;
+   }
 		
-	case 2:{
+ } break;
+		
+  case 2:{
 	Vertex_handle v0 = f->vertex(0);
 	Vertex_handle v1= f->vertex(1);
 	Vertex_handle v2 = f->vertex(2);
-	   if (is_too_close(v0->point(),p)||
-	    is_too_close(v1->point(),p) ||	
-		is_too_close(v2->point(),p))
-		lt = TOO_CLOSE;
-		 break;
+	if(is_too_close(v0->point(),p)){
+	  lt = TOO_CLOSE;
+	  li = 0;
+		return;
 	}
+	if(is_too_close(v1->point(),p)){
+		  lt = TOO_CLOSE;
+		  li = 1;
+		  return;
+	  }
+	if(is_too_close(v2->point(),p)){
+		  lt = TOO_CLOSE;
+		  li = 2;
+		  return;
+	  }
+  }break;
   }
 }	
 	
@@ -684,7 +703,7 @@ march_locate_2D(Face_handle c,const Point& t,Locate_type& lt,int& li) const
 			//Orientation orient =orientation(next, t);
 		   if(orientation(next, t)==ON_POSITIVE_SIDE){
 		    	lt = CONTOUR;
-				li = 5;
+				li = 4;
 				test_distance(t, next, lt, li);
 			    return next;
 			}
