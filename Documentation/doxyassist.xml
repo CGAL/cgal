@@ -1268,6 +1268,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Ridges_3/examples</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+            <item>./tags/Jet_fitting_3.tag=../../CGAL.CGAL.Estimation-of-Local-Differential-Properties-of-Point-Sampled-Surfaces/html</item>
           </list>
         </doxygen>
       </project>

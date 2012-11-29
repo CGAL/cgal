@@ -34,10 +34,10 @@ Note that this package needs the third party library \ref thirdpartyEigen for li
 \section Ridges_3Overview Overview
 
 Section \ref smooth presents the basics of the theory of ridges and
-umbilics on smooth surfaces. Sections \ref ridgemesh and
-\ref umbilicmesh present algorithms for approximating the ridges and
+umbilics on smooth surfaces. Sections \ref Ridges_3Approximating and
+\ref Ridges_3Approximating_1 present algorithms for approximating the ridges and
 umbilics (of a smooth surface) from a triangle mesh. Section
-\ref soft gives the package specifications, while example calls to
+\ref Ridges_3Software gives the package specifications, while example calls to
 functions of the package are provided in Section \ref examples.
 
 \section smooth Ridges and Umbilics of a Smooth Surface 
