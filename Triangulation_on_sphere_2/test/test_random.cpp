@@ -84,7 +84,7 @@ bool are_equal(RTOS triA, RTOS triB){
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =1000;
+	nu_of_pts =1000000;
 	radius=6000000;
 	double minDist = radius * pow (2, -25);
 	double minDist2 = pow(minDist, 2);
@@ -106,34 +106,6 @@ int main(){
 		vertices.reserve(nu_of_pts*2);
 	
 	
-/*
-	for (int count=0; count<nu_of_pts; count++) {
-		K::Point_3 p = *on_sphere;
-		double tmp = p.x();
-		double tmp1 = p.y();
-		double tmp2 = p.z();
-		
-		
-		p=K::Point_3(fabs(tmp), fabs(tmp1),  fabs(tmp2));
-		//points.push_back(*on_sphere);
-		points.push_back(p);
-		on_sphere++;
-	}
-	
-	/*
-	for (int count=0; count<nu_of_pts; count++) {
-		K::Point_3 p = *on_sphere;
-		double tmp = p.x();
-		double tmp1 = p.y();
-		double tmp2 = p.z();
-		
-		
-		p=K::Point_3(-1*fabs(tmp), -1*fabs(tmp1),  -1*fabs(tmp2));
-		
-			
-		points.push_back(p);
-		on_sphere++;
-	}*/
 	for (int count=0; count<nu_of_pts; count++) {
 		K::Point_3 p = *on_sphere;
 		points.push_back(p);
@@ -154,7 +126,7 @@ int main(){
 	K::Point_3 q = K::Point_3(500,0,0);
 	rtos.insert(q);
 	rtos.is_valid();
-	rtos.show_all();
+	
 	/*
 	
 	//*****second triangulation*******

@@ -1,5 +1,5 @@
-#ifndef CGAL_TRIANGULATION_ON_SPHERE_2_H
-#define CGAL_TRIANGULATION_ON_SPHERE_2_H
+#ifndef CGAL_TRIANGULATION_SPHERE_2_H
+#define CGAL_TRIANGULATION_SPHERE_2_H
 
 //#define HALF_SPHERE
 
@@ -18,7 +18,7 @@
 
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Triangulation_face_base_on_sphere_2.h>
+#include <CGAL/Triangulation_face_base_sphere_2.h>
 #include <CGAL/Random.h>
 
 #include <CGAL/spatial_sort.h>
@@ -31,29 +31,31 @@
 // too_close find correspondign vertex, were the distance is to smal
 
 
+
+
 namespace CGAL {
 
-template < class Gt, class Tds > class Triangulation_on_sphere_2;
+template < class Gt, class Tds > class Triangulation_sphere_2;
 template < class Gt, class Tds > std::istream& operator>>
-    (std::istream& is, Triangulation_on_sphere_2<Gt,Tds> &tr);
+    (std::istream& is, Triangulation_sphere_2<Gt,Tds> &tr);
 template < class Gt, class Tds >  std::ostream& operator<<
-  (std::ostream& os, const Triangulation_on_sphere_2<Gt,Tds> &tr);
+  (std::ostream& os, const Triangulation_sphere_2<Gt,Tds> &tr);
   
 
 template < class Gt, 
            class Tds = Triangulation_data_structure_2 <
                              Triangulation_vertex_base_2<Gt>,
-                             Triangulation_face_base_on_sphere_2<Gt> > >
+                             Triangulation_face_base_sphere_2<Gt> > >
 	
 
 	
 	
-class Triangulation_on_sphere_2
+class Triangulation_sphere_2
   : public Triangulation_cw_ccw_2
 {
   friend std::istream& operator>> <>
-               (std::istream& is, Triangulation_on_sphere_2 &tr);
-  typedef Triangulation_on_sphere_2<Gt,Tds>             Self;
+               (std::istream& is, Triangulation_sphere_2 &tr);
+  typedef Triangulation_sphere_2<Gt,Tds>             Self;
 	
 
 public:
@@ -89,10 +91,10 @@ public:
 	// This class is used to generate the Finite_*_iterators.
 	class Ghost_tester
 	{
-		const Triangulation_on_sphere_2 *t;
+		const Triangulation_sphere_2 *t;
 	public:
 		Ghost_tester() {}
-		Ghost_tester(const Triangulation_on_sphere_2 *tr)	  : t(tr) {}
+		Ghost_tester(const Triangulation_sphere_2 *tr)	  : t(tr) {}
 		
 		bool operator()(const All_faces_iterator & fit ) const {
 			return fit->is_ghost();
@@ -108,10 +110,10 @@ public:
 	
 	class Contour_tester
 	{
-		const Triangulation_on_sphere_2 *t;
+		const Triangulation_sphere_2 *t;
 	public:
 		Contour_tester() {}
-		Contour_tester(const Triangulation_on_sphere_2 *tr)	  : t(tr) {}
+		Contour_tester(const Triangulation_sphere_2 *tr)	  : t(tr) {}
 		
 		bool operator() (const All_edges_iterator & eit) const {
 			Face_handle f = eit->first();
@@ -172,9 +174,9 @@ protected:
 public:
 
   // CONSTRUCTORS
-  Triangulation_on_sphere_2(const Geom_traits& geom_traits=Geom_traits());
-  Triangulation_on_sphere_2(const Point& sphere); 
-  Triangulation_on_sphere_2(const Triangulation_on_sphere_2<Gt,Tds> &tr);  
+  Triangulation_sphere_2(const Geom_traits& geom_traits=Geom_traits());
+  Triangulation_sphere_2(const Point& sphere); 
+  Triangulation_sphere_2(const Triangulation_sphere_2<Gt,Tds> &tr);  
    void clear();
 	
 private:
@@ -183,11 +185,11 @@ private:
 public:
 
   //Assignement
-  Triangulation_on_sphere_2 &operator=(const Triangulation_on_sphere_2 &tr);
+  Triangulation_sphere_2 &operator=(const Triangulation_sphere_2 &tr);
 
   //Helping
-  void copy_triangulation(const Triangulation_on_sphere_2 &tr);
-  void swap(Triangulation_on_sphere_2 &tr);
+  void copy_triangulation(const Triangulation_sphere_2 &tr);
+  void swap(Triangulation_sphere_2 &tr);
  
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const; 
@@ -419,14 +421,14 @@ private:
 // CONSTRUCTORS
 	
 template <class Gt, class Tds >
-Triangulation_on_sphere_2<Gt, Tds>::
-Triangulation_on_sphere_2(const Geom_traits& geom_traits) 
+Triangulation_sphere_2<Gt, Tds>::
+Triangulation_sphere_2(const Geom_traits& geom_traits) 
 : _gt(geom_traits), _tds()
  {init(1);}
 	
 template <class Gt, class Tds >
-Triangulation_on_sphere_2<Gt, Tds>::
-Triangulation_on_sphere_2(const Point& sphere) 
+Triangulation_sphere_2<Gt, Tds>::
+Triangulation_sphere_2(const Point& sphere) 
 : _gt(sphere), _tds(), _full_sphere(false)	
  { init(1);}	
 	
@@ -434,7 +436,7 @@ Triangulation_on_sphere_2(const Point& sphere)
 
 template <class Gt, class Tds >
 void
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 init(double radius){
 	_radius = radius;
 	double minRadius = radius*(1-pow(2, -50));
@@ -449,14 +451,14 @@ init(double radius){
 
 // copy constructor duplicates vertices and faces
 template <class Gt, class Tds >
-Triangulation_on_sphere_2<Gt, Tds>::
-Triangulation_on_sphere_2(const Triangulation_on_sphere_2 &tr) 
+Triangulation_sphere_2<Gt, Tds>::
+Triangulation_sphere_2(const Triangulation_sphere_2 &tr) 
   : _gt(tr._gt), _tds(tr._tds)
 	{init(tr._radius);}
 
 template <class Gt, class Tds >
 void
-Triangulation_on_sphere_2<Gt, Tds>:: 
+Triangulation_sphere_2<Gt, Tds>:: 
 clear()
 {
   _tds.clear(); 
@@ -466,8 +468,8 @@ clear()
   
 template <class Gt, class Tds >
 void
-Triangulation_on_sphere_2<Gt, Tds>::   
-copy_triangulation(const Triangulation_on_sphere_2 &tr)
+Triangulation_sphere_2<Gt, Tds>::   
+copy_triangulation(const Triangulation_sphere_2 &tr)
 {
   _tds.clear();
   _gt = tr._gt;
@@ -477,9 +479,9 @@ copy_triangulation(const Triangulation_on_sphere_2 &tr)
 
   //Assignement
 template <class Gt, class Tds >
-Triangulation_on_sphere_2<Gt, Tds> &
-Triangulation_on_sphere_2<Gt, Tds>::
-operator=(const Triangulation_on_sphere_2 &tr)
+Triangulation_sphere_2<Gt, Tds> &
+Triangulation_sphere_2<Gt, Tds>::
+operator=(const Triangulation_sphere_2 &tr)
 {
   copy_triangulation(tr);
   return *this;
@@ -487,8 +489,8 @@ operator=(const Triangulation_on_sphere_2 &tr)
 
 template <class Gt, class Tds >
 void
-Triangulation_on_sphere_2<Gt, Tds>:: 
-swap(Triangulation_on_sphere_2 &tr)
+Triangulation_sphere_2<Gt, Tds>:: 
+swap(Triangulation_sphere_2 &tr)
 {
   _tds.swap(tr._tds);
 
@@ -501,7 +503,7 @@ swap(Triangulation_on_sphere_2 &tr)
 
 template <class Gt, class Tds >
 bool
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 is_valid(bool verbose, int level) const
 {
   bool result = _tds.is_valid(verbose, level);
@@ -534,7 +536,7 @@ is_valid(bool verbose, int level) const
 	
 template<class Gt, class Tds>
 double
-Triangulation_on_sphere_2<Gt, Tds> ::
+Triangulation_sphere_2<Gt, Tds> ::
 squared_distance(const Point& p, const Point& q)const{
 	return CGAL::squared_distance(p,q);
 }
@@ -544,7 +546,7 @@ squared_distance(const Point& p, const Point& q)const{
 
 template <class Gt, class Tds >
 inline bool
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 is_edge(Vertex_handle va, Vertex_handle vb) const
 {
   return _tds.is_edge( va, vb);
@@ -552,7 +554,7 @@ is_edge(Vertex_handle va, Vertex_handle vb) const
 
 template <class Gt, class Tds >
 inline bool
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i) const
 {
   return _tds.is_edge(va, vb, fr, i);
@@ -560,7 +562,7 @@ is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i) const
 
 template <class Gt, class Tds >
 inline bool 
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const
 {
   return _tds.is_face(v1, v2, v3);
@@ -568,7 +570,7 @@ is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const
 
 template <class Gt, class Tds >
 inline bool 
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,Face_handle &fr) const
 {
   return _tds.is_face(v1, v2, v3, fr);
@@ -577,8 +579,8 @@ is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,Face_handle &fr) co
 //---------------------------------------------------------------------------/POINT LOCATION---------------------------------------//
 	
 template<class Gt, class Tds>
-bool
-Triangulation_on_sphere_2<Gt, Tds> ::
+inline bool
+Triangulation_sphere_2<Gt, Tds> ::
 is_too_close(const Point& p, const Point& q)const{
   return squared_distance(p,q)<=_minDistSquared;
 }
@@ -588,8 +590,8 @@ is_too_close(const Point& p, const Point& q)const{
 	
 
 template <class Gt, class Tds>
-typename Triangulation_on_sphere_2<Gt, Tds> ::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds> ::Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 locate_edge(const Point& p, Locate_type& lt, int& li, bool plane)const
 {
   Face_handle loc;
@@ -634,8 +636,9 @@ locate_edge(const Point& p, Locate_type& lt, int& li, bool plane)const
 }
 	
 	
-template <class Gt, class Tds >    
-void Triangulation_on_sphere_2<Gt, Tds>::
+template <class Gt, class Tds > 
+inline
+void Triangulation_sphere_2<Gt, Tds>::
 test_distance( const Point& p, Face_handle f, Locate_type& lt, int& li)const{
 CGAL_precondition(dimension()>=-1);
 switch (dimension()){
@@ -669,8 +672,8 @@ switch (dimension()){
 	
 		
 template <class Gt, class Tds >    
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 march_locate_1D(const Point& p, Locate_type& lt, int& li) const
 {	
   Face_handle f =all_edges_begin()->first;
@@ -711,8 +714,8 @@ march_locate_1D(const Point& p, Locate_type& lt, int& li) const
 	
 
 	  
-template <class Gt, class Tds >   typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+template <class Gt, class Tds >   typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 march_locate_2D(Face_handle c,const Point& t,Locate_type& lt,int& li) const
 {
 	
@@ -731,7 +734,7 @@ march_locate_2D(Face_handle c,const Point& t,Locate_type& lt,int& li) const
 		Face_handle next = Face_handle();
 		for(int i=0; i<=2 ; i++){
 			next=c->neighbor(i);
-			Orientation orient =orientation(next, t);
+			//Orientation orient =orientation(next, t);
 		   if(orientation(next, t)==ON_POSITIVE_SIDE){
 		    	lt = CONTOUR;
 				li = 5;
@@ -916,8 +919,8 @@ CGAL_triangulation_precondition(false);
 	
 
 template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt,Tds>::
+typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+Triangulation_sphere_2<Gt,Tds>::
 locate(const Point& p,Locate_type& lt,int& li, Face_handle start) const
 {
 	
@@ -1023,8 +1026,8 @@ locate(const Point& p,Locate_type& lt,int& li, Face_handle start) const
 }
 
 template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt, Tds>:: Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds>:: Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 locate(const Point &p,
        Face_handle start) const
 {
@@ -1038,7 +1041,7 @@ locate(const Point &p,
 //------------------------------------------------------------------------------PREDICATES-----------------------------------------------------------------
 template <class Gt, class Tds >
 Comparison_result
-Triangulation_on_sphere_2< Gt,  Tds>::
+Triangulation_sphere_2< Gt,  Tds>::
 compare_xyz(const Point &p, const Point &q) const
 {
 		return geom_traits().compare_xyz_3_object()(p, q);
@@ -1047,7 +1050,7 @@ compare_xyz(const Point &p, const Point &q) const
 	
 template <class Gt, class Tds >	
 bool
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 equal(const Point &p, const Point &q) const
 {
 		return compare_xyz(p, q) == EQUAL;
@@ -1057,7 +1060,7 @@ equal(const Point &p, const Point &q) const
 template <class Gt, class Tds >
 inline
 Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 coplanar_orientation(const Point& p, const Point& q,const Point& r ) const
 {
 	return geom_traits().orientation_1_object()(p,q,r);
@@ -1066,7 +1069,7 @@ coplanar_orientation(const Point& p, const Point& q,const Point& r ) const
 	template <class Gt, class Tds >
 	inline
 	Orientation
-	Triangulation_on_sphere_2<Gt, Tds>::
+	Triangulation_sphere_2<Gt, Tds>::
 	coplanar_orientation(const Point& p, const Point& q,const Point& r, const  Point &s ) const
 	{
 		return geom_traits().orientation_1_object()(p,q,r,s);
@@ -1079,7 +1082,7 @@ coplanar_orientation(const Point& p, const Point& q,const Point& r ) const
 template <class Gt, class Tds >
 inline
 Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 orientation(const Point& p, const Point& q,const Point& r ) const
 {
   return geom_traits().orientation_2_object()(p,q,r);
@@ -1088,7 +1091,7 @@ orientation(const Point& p, const Point& q,const Point& r ) const
 template <class Gt, class Tds >
 inline
 Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 orientation(const Face_handle fh,const Point& r ) const
 {
 	return orientation(fh->vertex(0)->point(), fh->vertex(1)->point(), fh->vertex(2)->point(),r);
@@ -1098,7 +1101,7 @@ orientation(const Face_handle fh,const Point& r ) const
 template <class Gt, class Tds >
 inline
 Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 orientation_1(const Point& p, const Point& q ) const
 {
   return geom_traits().orientation_1_object()(p,q);
@@ -1106,7 +1109,7 @@ orientation_1(const Point& p, const Point& q ) const
 
 template <class Gt, class Tds >
 Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 orientation(const Face_handle f) const
 {
   return  orientation(f->vertex(0)->point(),f->vertex(1)->point(),f->vertex(2)->point());
@@ -1115,7 +1118,7 @@ orientation(const Face_handle f) const
 
 template <class Gt, class Tds>
 Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 orientation(const Point&p, const Point &q, const Point &r, const Point & s)const
 {
 	return geom_traits().orientation_2_object()(p,q,r,s);
@@ -1124,7 +1127,7 @@ orientation(const Point&p, const Point &q, const Point &r, const Point & s)const
 		
 template <class Gt, class Tds >
 bool
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 xy_equal(const Point& p, const Point& q) const
 {
   return geom_traits().coradial_sphere_2_object()(p,q);
@@ -1132,7 +1135,7 @@ xy_equal(const Point& p, const Point& q) const
 
 template <class Gt, class Tds >
 bool
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 collinear_between(const Point& p, const Point& q, const Point& r) const
 {  // return true if r lies inside the cone defined by trait.sphere, p and q
   return geom_traits().inside_cone_2_object()(p,q,r);
@@ -1141,7 +1144,7 @@ collinear_between(const Point& p, const Point& q, const Point& r) const
 
 template <class Gt, class Tds >
 void
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 show_all() const
 {
 	//Triangulation_2::show_all();
@@ -1186,7 +1189,7 @@ show_all() const
 
 template <class Gt, class Tds >
 int
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 number_of_ghost_faces() 
 {
   int nb=0;
@@ -1198,7 +1201,7 @@ number_of_ghost_faces()
 
 template <class Gt, class Tds >
 void
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 show_vertex(Vertex_handle vh) const
 {
  
@@ -1208,7 +1211,7 @@ show_vertex(Vertex_handle vh) const
 
 template <class Gt, class Tds >
 void
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 show_face(Face_handle fh) const
 {
   std::cerr << "face : "<<(void*)&(*fh)<<" => "<<std::endl;
@@ -1271,7 +1274,7 @@ show_face(Face_handle fh) const
 
 template <class Gt, class Tds >
 void
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 make_hole ( Vertex_handle v, std::list<Edge> & hole)
 {     
 	return this->_tds.make_hole(v, hole);
@@ -1280,7 +1283,7 @@ make_hole ( Vertex_handle v, std::list<Edge> & hole)
 template <class Gt, class Tds >    
 inline
 void
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 delete_face(Face_handle f)
 {
   _tds.delete_face(f);
@@ -1289,7 +1292,7 @@ delete_face(Face_handle f)
 template <class Gt, class Tds >    
 inline
 void
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 delete_vertex(Vertex_handle v)
 {
   _tds.delete_vertex(v);
@@ -1297,8 +1300,8 @@ delete_vertex(Vertex_handle v)
 
 template <class Gt, class Tds >    
 inline
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 create_face(Face_handle f1, int i1,
 	 Face_handle f2, int i2,
 	 Face_handle f3, int i3)
@@ -1309,8 +1312,8 @@ create_face(Face_handle f1, int i1,
 
 template <class Gt, class Tds >    
 inline
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 create_face(Face_handle f1, int i1,
 	 Face_handle f2, int i2)
 {
@@ -1319,8 +1322,8 @@ create_face(Face_handle f1, int i1,
 
 template <class Gt, class Tds >    
 inline
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 create_face()
 {
   return _tds.create_face();
@@ -1328,8 +1331,8 @@ create_face()
 
 template <class Gt, class Tds >    
 inline
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 create_face(Face_handle f, int i, Vertex_handle v)
 {
   return _tds.create_face(f, i, v);
@@ -1337,8 +1340,8 @@ create_face(Face_handle f, int i, Vertex_handle v)
 
 template <class Gt, class Tds >    
 inline
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
 {
   return _tds.create_face(v1, v2, v3);
@@ -1346,8 +1349,8 @@ create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
 
 template <class Gt, class Tds >    
 inline
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
 	    Face_handle f1, Face_handle f2,  Face_handle f3)
 {
@@ -1356,8 +1359,8 @@ create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
 
 template <class Gt, class Tds >    
 inline
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds>::Face_handle
+Triangulation_sphere_2<Gt, Tds>::
 create_face(Face_handle fh)
 {
   return _tds.create_face(fh);
@@ -1367,15 +1370,15 @@ create_face(Face_handle fh)
 
 template <class Gt, class Tds >
 void
-Triangulation_on_sphere_2<Gt, Tds>::
+Triangulation_sphere_2<Gt, Tds>::
 file_output(std::ostream& os) const
 {
   _tds.file_output(os, Vertex_handle(), true);
 }
 
 template <class Gt, class Tds >
-typename Triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
-Triangulation_on_sphere_2<Gt, Tds>::
+typename Triangulation_sphere_2<Gt, Tds>::Vertex_handle
+Triangulation_sphere_2<Gt, Tds>::
 file_input(std::istream& is)
 {
   clear();
@@ -1385,7 +1388,7 @@ file_input(std::istream& is)
 
 template <class Gt, class Tds >
 std::ostream&
-operator<<(std::ostream& os, const Triangulation_on_sphere_2<Gt, Tds> &tr)
+operator<<(std::ostream& os, const Triangulation_sphere_2<Gt, Tds> &tr)
 {
   tr.file_output(os);
   return os ;
@@ -1394,7 +1397,7 @@ operator<<(std::ostream& os, const Triangulation_on_sphere_2<Gt, Tds> &tr)
 
 template < class Gt, class Tds >
 std::istream&
-operator>>(std::istream& is, Triangulation_on_sphere_2<Gt, Tds> &tr)
+operator>>(std::istream& is, Triangulation_sphere_2<Gt, Tds> &tr)
 {
   tr.file_input(is);
   CGAL_triangulation_assertion(tr.is_valid());
@@ -1409,5 +1412,5 @@ operator>>(std::istream& is, Triangulation_on_sphere_2<Gt, Tds> &tr)
 } //namespace CGAL
     
 
-#endif //CGAL_TRIANGULATION_OM_SPHERE_2_H
+#endif //CGAL_TRIANGULATION_ON_SPHERE_2_H
 

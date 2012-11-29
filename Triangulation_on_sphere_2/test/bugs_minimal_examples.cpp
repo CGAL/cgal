@@ -78,9 +78,9 @@ bool are_equal(RTOS triA, RTOS triB){
 		//**face of fiA in fiB?
 		for( ; fiB != triB.all_faces_end(); ++fiB ){
 			test = has_face(fiB, fiA->vertex(0), fiA->vertex(1), fiA->vertex(2));
-			if(has_face) break;
+			if(test) break;
 		}
-		CGAL_assertion(has_face);
+		CGAL_assertion(test);
 		//**	
 	}
 	return true;
@@ -136,6 +136,7 @@ Vertex_handle v3 = rtos.insert(p3);
 
  
 	rtos.is_valid();
+	rtos.show_all();
 
 	
 std::random_shuffle(points.begin(), points.end());
@@ -144,6 +145,9 @@ std::random_shuffle(points.begin(), points.end());
 		rtos2.insert(points.at(i));
 	}
 	rtos2.is_valid();
+	rtos2.is_valid();
+	
+	
 	are_equal(rtos, rtos2);
 	//rtos.remove(v1);
 	//rtos.remove(v2);
@@ -275,6 +279,10 @@ std::random_shuffle(points.begin(), points.end());
 	RTOS rtos4a;
 	RTOS rtos4b;
 	RTOS rtos4c;
+	rtos4a.set_radius(radius);
+	rtos4b.set_radius(radius);
+	rtos4c.set_radius(radius);
+	
 	Point_3 p41 = Point_3(radius,0,0);
 	points4.push_back(p41);
 	Point_3 p42 = Point_3(-1*radius,0,0);

@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
-#include <CGAL/Triangulation_on_sphere_2.h>
+#include <CGAL/Triangulation_sphere_2.h>
 #include <CGAL/Delaunay_triangulation_sphere_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;

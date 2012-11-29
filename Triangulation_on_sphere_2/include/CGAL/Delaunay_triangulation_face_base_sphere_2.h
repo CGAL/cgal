@@ -11,23 +11,23 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/CGAL-3.4-branch/Triangulation_2/include/CGAL/Regular_Triangulation_face_base_on_sphere_2.h $
-// $Id: Regular_Triangulation_face_base_on_sphere_2.h 41117 2007-12-07 13:14:48Z yvinec $
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/CGAL-3.4-branch/Triangulation_2/include/CGAL/Regular_Triangulation_face_base_sphere_2.h $
+// $Id: Regular_Triangulation_face_base_sphere_2.h 41117 2007-12-07 13:14:48Z yvinec $
 // 
 //
 // Author(s)     : Frederic Fichel, Mariette Yvinec
 
-#ifndef CGAL_REGULAR_TRIANGULATION_FACE_BASE_ON_SPHERE_2_H
-#define CGAL_REGULAR_TRIANGULATION_FACE_BASE_ON_SPHERE_2_H
+#ifndef CGAL_DELAUNAY_TRIANGULATION_FACE_BASE_SPHERE_2_H
+#define CGAL_DELAUNAY_TRIANGULATION_FACE_BASE_SPHERE_2_H
 
 #include <list>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_face_base_on_sphere_2.h>
+#include <CGAL/Triangulation_face_base_sphere_2.h>
 
 namespace CGAL {
 
 
-template <class Gt, class Fb = Triangulation_face_base_on_sphere_2<Gt> >
+template <class Gt, class Fb = Triangulation_face_base_sphere_2<Gt> >
 class Delaunay_triangulation_face_base_sphere_2
   :  public Fb
 {
@@ -101,5 +101,5 @@ public:
 
 } //namespace CGAL 
 
-#endif // CGAL_REGULAR_Triangulation_face_base_on_sphere_2_H
+#endif // CGAL_REGULAR_Triangulation_face_base_sphere_2_H
 
