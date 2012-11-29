@@ -83,8 +83,9 @@ template<class Tr,
          class Complex3InTriangulation3,
          class Previous_,
          class Container_ = Meshes::Double_map_container<
-                                          typename Tr::Cell_handle,
-                                          typename Criteria::Cell_quality> >
+             typename Tr::Cell_handle,
+             typename Criteria::Cell_quality,
+             CGAL::Mesh_3::Cell_handle_comparator<Tr> > >
 class Refine_cells_3
   : public Mesher_level<Tr,
                         Refine_cells_3<Tr,

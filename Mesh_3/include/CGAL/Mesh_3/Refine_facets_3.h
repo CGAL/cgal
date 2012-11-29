@@ -91,8 +91,9 @@ template<class Tr,
          class Complex3InTriangulation3,
          class Previous_level_,
          class Container_ = Meshes::Double_map_container<
-                                            typename Tr::Facet,
-                                            typename Criteria::Facet_quality> >
+            typename Tr::Facet,
+            typename Criteria::Facet_quality,
+            CGAL::Mesh_3::Triangulation_canonical_facets_comparator<Tr> > >
 class Refine_facets_3
 : public Mesher_level<Tr,
                       Refine_facets_3<Tr,
