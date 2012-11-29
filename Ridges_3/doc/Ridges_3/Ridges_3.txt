@@ -34,10 +34,10 @@ Note that this package needs the third party library \ref thirdpartyEigen for li
 \section Ridges_3Overview Overview
 
 Section \ref smooth presents the basics of the theory of ridges and
-umbilics on smooth surfaces. Sections \ref ridgemesh and
-\ref umbilicmesh present algorithms for approximating the ridges and
+umbilics on smooth surfaces. Sections \ref Ridges_3Approximating and
+\ref Ridges_3Approximating_1 present algorithms for approximating the ridges and
 umbilics (of a smooth surface) from a triangle mesh. Section
-\ref soft gives the package specifications, while example calls to
+\ref Ridges_3Software gives the package specifications, while example calls to
 functions of the package are provided in Section \ref examples.
 
 \section smooth Ridges and Umbilics of a Smooth Surface 
@@ -115,7 +115,7 @@ by \f$ x\f$ (resp. \f$ y\f$) are:
 \anchor eqtaylor_along_line
 \f[
 \begin{equation}
-k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)}x^2 +\hot , \quad \quad \quad
+k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)}x^2 + ... , \quad \quad \quad
 P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
 \end{equation}
 \f]
@@ -123,7 +123,7 @@ P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
 \anchor eqtaylor_along_red_line
 \f[
 \begin{equation}
-k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)}y^2 +\hot , \quad \quad \quad
+k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)}y^2 + ... , \quad \quad \quad
 P_2= 3b_2^2+(k_2-k_1)(c_4-3k_2^3).
 \end{equation}
 \f]

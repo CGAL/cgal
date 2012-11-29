@@ -30,13 +30,29 @@
 #include <CGAL/intersection_2.h>
 #include <CGAL/auto_link/Qt4.h>
 
+#include <boost/mpl/has_xxx.hpp>
+
 namespace CGAL {
 
-template <typename K>
-class Circular_arc_point_2;
+namespace internal {
+
+BOOST_MPL_HAS_XXX_TRAIT_DEF( Circular_arc_point_2 )
+
+template < class K, bool b = has_Circular_arc_point_2< K >::value >
+struct get_Circular_arc_point_2
+{
+    struct type { };
+};
+
+template < class K >
+struct get_Circular_arc_point_2< K, true >
+{
+    typedef typename K::Circular_arc_point_2 type;
+};
+
+}
 
 namespace Qt {
-
 
 template <typename K>
 class Converter {
@@ -47,6 +63,8 @@ public:
   typedef typename K::Line_2               CGAL_Line_2;
   typedef typename K::Triangle_2           CGAL_Triangle_2;
   typedef typename K::Iso_rectangle_2      CGAL_Iso_rectangle_2;
+  typedef typename internal::get_Circular_arc_point_2< K >::type
+    CGAL_Circular_arc_point_2;
 
 private:
   bool clippingRectIsInitialized;
@@ -81,7 +99,7 @@ public:
     return QPointF(to_double(p.x()), to_double(p.y()));
   }
 
-  QPointF operator()(const Circular_arc_point_2<K>& p) const
+  QPointF operator()(const CGAL_Circular_arc_point_2& p) const
   {
     return QPointF(to_double(p.x()), to_double(p.y()));
   }
@@ -110,7 +128,7 @@ public:
   }
 
 
-  QRectF operator()(const CGAL::Bbox_2& bb)
+  QRectF operator()(const CGAL::Bbox_2& bb) const
   {
     return QRectF(bb.xmin(),
 		  bb.ymin(),

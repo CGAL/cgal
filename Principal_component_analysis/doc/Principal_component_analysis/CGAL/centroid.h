@@ -35,26 +35,24 @@ objects.
 \returns The return type is either `K::Point_2` or `K::Point_3`,
 depending on the dimension of the input objects, where `K` is
 \code
-CGAL::Kernel_traits<
-  std::iterator_traits<InputIterator>::value_type
->::Kernel
+CGAL::Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel
 \endcode
 
-### Two Dimensional Input ###
+#### Two Dimensional Input ####
 
 The value type must be either `K::Point_2`, `K::Segment_2`,
 `K::Triangle_2`, `K::Rectangle_2` or `K::Circle_2`. To fit a set of
 disks the user must call the function with value type `K::Circle_2`
 and with dimension tag of 2. The tag must range between
-`CGAL::Dimension_tag<0>` and `CGAL::Dimension_tag<2>`.
+`Dimension_tag<0>` and `Dimension_tag<2>`.
 
-### Three Dimensional Input ###
+#### Three Dimensional Input ####
 
 The value type must be either `K::Point_3`, `K::Segment_3`,
-`Triangle_3`, `Cuboid_3`, `Sphere_3` or `Tetrahedron_3`. To fit a set
+`K::Triangle_3`, `K::Cuboid_3`, `K::Sphere_3` or `K::Tetrahedron_3`. To fit a set
 of balls the user must call the function with value type `K::Sphere_3`
 and with dimension tag of 3. The tag must range between
-`CGAL::Dimension_tag<0>` and `CGAL::Dimension_tag<3>`.
+`Dimension_tag<0>` and `Dimension_tag<3>`.
 */
 template < typename InputIterator, typename Tag >
 Deduced
@@ -69,21 +67,21 @@ objects.
 \returns The return type is either `K::Point_2` or `K::Point_3`,
 depending on the dimension of the input objects.
 
-### Two Dimensional Input ###
+#### Two Dimensional Input ####
 
 The value type must be either `K::Point_2`, `K::Segment_2`,
 `K::Triangle_2`, `K::Rectangle_2` or `K::Circle_2`. To fit a set of
 disks the user must call the function with value type `K::Circle_2`
 and with dimension tag of 2. The tag must range between
-`CGAL::Dimension_tag<0>` and `CGAL::Dimension_tag<2>`.
+`Dimension_tag<0>` and `Dimension_tag<2>`.
 
-### Three Dimensional Input ###
+#### Three Dimensional Input ####
 
 The value type must be either `K::Point_3`, `K::Segment_3`,
-`Triangle_3`, `Cuboid_3`, `Sphere_3` or `Tetrahedron_3`. To fit a set
+`K::Triangle_3`, `K::Cuboid_3`, `K::Sphere_3` or `K::Tetrahedron_3`. To fit a set
 of balls the user must call the function with value type `K::Sphere_3`
 and with dimension tag of 3. The tag must range between
-`CGAL::Dimension_tag<0>` and `CGAL::Dimension_tag<3>`.
+`Dimension_tag<0>` and `Dimension_tag<3>`.
 */
 template < typename InputIterator, typename K, typename Tag >
 Deduced

@@ -486,77 +486,70 @@ _is_in_connected_component (const Point_2& p,
   unsigned int              n_ray_intersections = 0;
 
   typename Traits_adaptor_2::Equal_2              equal =
-                                 geom_traits->equal_2_object();
+    geom_traits->equal_2_object();
   typename Traits_adaptor_2::Compare_x_2          compare_x =
-                                 geom_traits->compare_x_2_object();
+    geom_traits->compare_x_2_object();
   typename Traits_adaptor_2::Is_vertical_2        is_vertical =
-                                 geom_traits->is_vertical_2_object();
+    geom_traits->is_vertical_2_object();
   typename Traits_adaptor_2::Compare_y_position_2 compare_y_position =
-                                 geom_traits->compare_y_position_2_object();
+    geom_traits->compare_y_position_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_right_2  compare_y_at_x_right =
-                                 geom_traits->compare_y_at_x_right_2_object();
+    geom_traits->compare_y_at_x_right_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_left_2   compare_y_at_x_left =
-                                 geom_traits->compare_y_at_x_left_2_object();
+    geom_traits->compare_y_at_x_left_2_object();
 
   // Start from the first non-vertical segment in the connected component.
   const Halfedge_const_handle        invalid_he;
   Ccb_halfedge_const_circulator      first = circ;
   bool                               found_non_vertical = false;
 
-  do
-  {
+  do {
     // In case of a fictitious edge, check whether it is horizontal; otherwise
     // skip it.
-    if (first->is_fictitious())
-    {
-      if (first->source()->parameter_space_in_y() != ARR_INTERIOR &&
-          first->target()->parameter_space_in_y() != ARR_INTERIOR)
+    if (first->is_fictitious()) {
+      if ((first->source()->parameter_space_in_y() != ARR_INTERIOR) &&
+          (first->target()->parameter_space_in_y() != ARR_INTERIOR))
       {
         found_non_vertical = true;
         break;
       }
-      else
-      {
+      else {
         ++first;
         continue;
       }
     }
 
     // Stop if we found a non-vertical curve.
-    if (! is_vertical (first->curve()))
-    {
+    if (! is_vertical(first->curve())) {
       found_non_vertical = true;
       break;
     }
 
-    if (inclusive)
-    {
+    if (inclusive) {
       // Check if the current vertical curve contains the query point.
       if (! first->source()->is_at_open_boundary() &&
-          compare_x (p, first->source()->point()) == EQUAL &&
-          top_traits->compare_y_at_x (p, &(*first)) == EQUAL)
+          compare_x(p, first->source()->point()) == EQUAL &&
+          top_traits->compare_y_at_x(p, &(*first)) == EQUAL)
       {
         closest_he = first;
         is_on_edge = true;
         return (true);
       }
     }
-    else
-    {
+    else {
       // Check if the current vertical curve contains the query point in its
       // x-range.
       if (! first->source()->is_at_open_boundary() &&
-          compare_x (p, first->source()->point()) == EQUAL)
+          (compare_x(p, first->source()->point()) == EQUAL))
       {
         // Check if the current vertical curve contains the query point in its
         // iterior.
         const Comparison_result  res1 = 
-          top_traits->compare_xy (p, &(*(first->source())));
+          top_traits->compare_xy(p, &(*(first->source())));
         const Comparison_result  res2 =
-          top_traits->compare_xy (p, &(*(first->target())));
+          top_traits->compare_xy(p, &(*(first->target())));
         
-        if (res1 != res2)
-        {
+        if (res1 != res2) {
           if (! ((res1 == EQUAL && res2 == curve_above_under) ||
                  (res1 == curve_above_under && res2 == EQUAL)))
           {
@@ -565,20 +558,19 @@ _is_in_connected_component (const Point_2& p,
             return (true);
           }
         }
-        else if (res1 == point_above_under)
-        {
+        else if (res1 == point_above_under) {
           // Check if the vertical segment is the closest to the query point so
           // far.
           if (closest_he == invalid_he ||
               (closest_he != first->twin() &&
                ((! first->source()->is_at_open_boundary() &&
-                 top_traits->compare_y_at_x
-                     (first->source()->point(),
-                      &(*closest_he)) == point_above_under) ||
+                 (top_traits->compare_y_at_x(first->source()->point(),
+                                            &(*closest_he)) ==
+                  point_above_under)) ||
                 (! first->target()->is_at_open_boundary() &&
-                 top_traits->compare_y_at_x
-                     (first->target()->point(),
-                      &(*closest_he)) == point_above_under))))
+                 (top_traits->compare_y_at_x(first->target()->point(),
+                                            &(*closest_he)) ==
+                  point_above_under)))))
           {
             closest_he = first;
             closest_to_target =
@@ -595,11 +587,9 @@ _is_in_connected_component (const Point_2& p,
   } while (first != circ);
 
   if (! found_non_vertical)
-  {
     // In this case the entire component is comprised of vertical segments,
     // so it has an empty interior and p cannot lie inside it.
     return (false);
-  }
 
   // Go over all curves of the boundary, starting from the non-vertical curve
   // we have located, and count those which are above p.
@@ -607,44 +597,39 @@ _is_in_connected_component (const Point_2& p,
   Comparison_result   source_res, target_res;
   Comparison_result   res;
   Comparison_result   y_res;
-  bool                closest_in_ccb = (closest_he != invalid_he &&
-                                        closest_he->face() == circ->face());
+  bool closest_in_ccb =
+    ((closest_he != invalid_he) && (closest_he->face() == circ->face()));
 
-  source_res = top_traits->compare_x (p, &(*(curr->source())));
-  do
-  {
+  source_res = top_traits->compare_x(p, &(*(curr->source())));
+  do {
     // Ignore the current edge if p is not in its x-range.
-    target_res = top_traits->compare_x (p, &(*(curr->target())));
+    target_res = top_traits->compare_x(p, &(*(curr->target())));
 
-    if (source_res == target_res && source_res != EQUAL)
-    {
+    if ((source_res == target_res) && (source_res != EQUAL)) {
       ++curr;
       source_res = target_res;
       continue;
     }
 
     // Check whether p lies above or below the current edge.
-    res = top_traits->compare_y_at_x (p, &(*curr));
+    res = top_traits->compare_y_at_x(p, &(*curr));
 
-    if (res == EQUAL)
-    {
+    if (res == EQUAL) {
       // The current edge contains the query point. If the seach is inclusive
       // we return the edge. Otherwise, we return it only if it is vertical,
       // and contains p in its interior.
-      if (inclusive)
-      {
+      if (inclusive) {
         closest_he = curr;
         is_on_edge = true;
         return (true);
       }
-      else
-      {
+      else {
         if (! curr->is_fictitious() &&
-            is_vertical (curr->curve()) &&
+            is_vertical(curr->curve()) &&
             (curr->source()->is_at_open_boundary() ||
-             ! equal (curr->source()->point(), p)) &&
+             ! equal(curr->source()->point(), p)) &&
             (curr->target()->is_at_open_boundary() ||
-             ! equal (curr->target()->point(), p)))
+             ! equal(curr->target()->point(), p)))
         {
           closest_he = curr;
           is_on_edge = true;
@@ -655,8 +640,7 @@ _is_in_connected_component (const Point_2& p,
 
     // If the point is above the current edge (or below it, if we shoot down),
     // move to the next edge.
-    if (res != point_above_under)
-    {
+    if (res != point_above_under) {
       ++curr;
       source_res = target_res;
       continue;
@@ -665,26 +649,20 @@ _is_in_connected_component (const Point_2& p,
     // Note that we do not have count intersections (actually these are
     // overlaps) of the vertical ray we shoot with vertical segments along
     // the boundary.
-    if (curr->is_fictitious() || 
-        ! is_vertical (curr->curve()))
-    {
+    if (curr->is_fictitious() || ! is_vertical(curr->curve())) {
       // The current curve is not vertical. Check the query point is in the
       // semi-open x-range (source, target] of this curve and lies below it.
-      if (source_res != EQUAL)
-      {
-        if (closest_he == invalid_he ||
-            (! closest_in_ccb && closest_he->twin() == curr))
-        {
-          // If we have no closests halfedge, we have just found one.
-          // Alternatively, if the closest halfedge is not in our CCB, but it
-          // the twin of our current halfedge, we can take our halfedge to be
-          // the closest one.
+      if (source_res != EQUAL) {
+        if (closest_he == invalid_he || (closest_he->twin() == curr)) {
+          // 1. If we have no closests halfedge, we have just found one.
+          // 2. If the closest halfedge is the twin of our current halfedge,
+          // we can take our halfedge to be the closest one. This covers the
+          // case where our closest halfedge is not in our CCB.
           closest_he = curr;
           closest_in_ccb = true;
           closest_to_target = (target_res == EQUAL);
         }
-        else
-        {
+        else {
           // Compare with the vertically closest curve so far and detemine the
           // curve closest to p. We first check the case that the two curves
           // have a common endpoint (note that the two curves do not intersect
@@ -697,19 +675,15 @@ _is_in_connected_component (const Point_2& p,
                (closest_he->source() == curr->target() &&
                 closest_he->direction() != curr->direction())))
           {
-            if (closest_he->direction() == ARR_LEFT_TO_RIGHT)
-            {
+            if (closest_he->direction() == ARR_LEFT_TO_RIGHT) {
               // Both curves extend to the right from a common point.
-              y_res = compare_y_at_x_right (closest_he->curve(),
-                                            curr->curve(), 
-                                            closest_he->source()->point());
-            }
-            else
-            {
-              // Both curves extend to the left from a common point.
-              y_res = compare_y_at_x_left (closest_he->curve(),
-                                           curr->curve(), 
+              y_res = compare_y_at_x_right(closest_he->curve(), curr->curve(), 
                                            closest_he->source()->point());
+            }
+            else {
+              // Both curves extend to the left from a common point.
+              y_res = compare_y_at_x_left(closest_he->curve(), curr->curve(), 
+                                          closest_he->source()->point());
             }
           }
           else if (! closest_he->is_fictitious() && ! curr->is_fictitious() &&
@@ -718,23 +692,18 @@ _is_in_connected_component (const Point_2& p,
                     (closest_he->target() == curr->target() &&
                      closest_he->direction() == curr->direction())))
           {
-            if (closest_he->direction() == ARR_LEFT_TO_RIGHT)
-            {
+            if (closest_he->direction() == ARR_LEFT_TO_RIGHT) {
               // Both curves extend to the left from a common point.
-              y_res = compare_y_at_x_left (closest_he->curve(),
-                                           curr->curve(), 
+              y_res = compare_y_at_x_left(closest_he->curve(), curr->curve(), 
+                                          closest_he->target()->point());
+            }
+            else {
+              // Both curves extend to the right from a common point.
+              y_res = compare_y_at_x_right(closest_he->curve(), curr->curve(), 
                                            closest_he->target()->point());
             }
-            else
-            {
-              // Both curves extend to the right from a common point.
-              y_res = compare_y_at_x_right (closest_he->curve(),
-                                            curr->curve(), 
-                                            closest_he->target()->point());
-            }
           }
-          else
-          {
+          else {
             // In case the two curves do not have a common endpoint, but
             // overlap in their x-range (both contain p), just compare their
             // positions. Note that in this case one of the edges may be
@@ -745,14 +714,12 @@ _is_in_connected_component (const Point_2& p,
             else if (curr->is_fictitious())
               y_res = point_above_under;
             else
-              y_res = compare_y_position (closest_he->curve(),
-                                          curr->curve());
+              y_res = compare_y_position(closest_he->curve(), curr->curve());
           }
 
           // If the current curve is closer to p than the closest curve found
           // so far, assign its halfedge as the closest one.
-          if (y_res == curve_above_under)
-          {
+          if (y_res == curve_above_under) {
             closest_he = curr;
             closest_in_ccb = true;
             closest_to_target = (target_res == EQUAL);
@@ -761,23 +728,21 @@ _is_in_connected_component (const Point_2& p,
 
         // In the degenerate case where p lies below the target vertex of
         // the current halfedge, we have to be a bit careful:
-        if (target_res == EQUAL)
-        {
+        if (target_res == EQUAL) {
           // Locate the next halfedge along the boundary that does not
           // contain a vertical segment.
           Halfedge_const_handle  next_non_vert = curr;
 
-          do
-          {
+          do {
             next_non_vert = next_non_vert->next();
 
             CGAL_assertion (next_non_vert != curr);
-
-          } while ((! next_non_vert->is_fictitious() &&
-                    is_vertical (next_non_vert->curve())) ||
-                   (next_non_vert->is_fictitious() &&
-                    next_non_vert->source()->parameter_space_in_x() != 
-                    next_non_vert->target()->parameter_space_in_x()));
+          }
+          while ((! next_non_vert->is_fictitious() &&
+                  is_vertical(next_non_vert->curve())) ||
+                 (next_non_vert->is_fictitious() &&
+                  next_non_vert->source()->parameter_space_in_x() != 
+                  next_non_vert->target()->parameter_space_in_x()));
 
           // In case the source of the current curve and the target of
           // the next non-vertical curve lie on opposite sides of the
@@ -796,16 +761,14 @@ _is_in_connected_component (const Point_2& p,
           //
           //          (a)                        (b)
           //
-          target_res = top_traits->compare_x (p,
-                                              &(*(next_non_vert->target())));
+          target_res = top_traits->compare_x(p, &(*(next_non_vert->target())));
 
           CGAL_assertion (source_res != EQUAL && target_res != EQUAL);
 
           if (source_res != target_res)
             n_ray_intersections++;
         }
-        else
-        {
+        else {
           // In this case p lies under the interior of the current x-montone
           // curve, so the vertical ray we shoot intersects it exactly once.
           n_ray_intersections++;

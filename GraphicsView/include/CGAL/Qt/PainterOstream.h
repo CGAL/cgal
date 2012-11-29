@@ -39,6 +39,29 @@ namespace CGAL {
   template <class CK>
   class  Line_arc_2;
 
+namespace internal {
+
+  template < class K >
+  struct Is_circular_kernel : public has_Circular_arc_point_2< K >
+  { };
+
+  template < class K, bool b = Is_circular_kernel< K >::value >
+  struct Circular_kernel_2_types
+  {
+      struct Circular_arc_point_2 { };
+      struct Circular_arc_2 { };
+      struct Line_arc_2 { };
+  };
+
+  template < class K >
+  struct Circular_kernel_2_types< K, true >
+  {
+      typedef typename K::Circular_arc_point_2 Circular_arc_point_2;
+      typedef typename K::Circular_arc_2 Circular_arc_2;
+      typedef typename K::Line_arc_2 Line_arc_2;
+  };
+}
+
 namespace Qt {
 
 template <typename K>
@@ -54,6 +77,12 @@ private:
   typedef typename K::Triangle_2 Triangle_2;
   typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
   typedef typename K::Circle_2 Circle_2;
+  typedef typename internal::Circular_kernel_2_types<K>::Circular_arc_point_2 
+    Circular_arc_point_2;
+  typedef typename internal::Circular_kernel_2_types<K>::Circular_arc_2 
+    Circular_arc_2;
+  typedef typename internal::Circular_kernel_2_types<K>::Line_arc_2 
+    Line_arc_2;
   
 public:
   PainterOstream(QPainter* p, QRectF rect = QRectF())
@@ -112,7 +141,7 @@ public:
   }
 
 
-  PainterOstream& operator<<(const Circular_arc_point_2<K>& p)
+  PainterOstream& operator<<(const Circular_arc_point_2& p)
   {
     typedef typename K::Point_2   Point_2;
     (*this) << Point_2(to_double(p.x()), to_double(p.y()));
@@ -120,7 +149,7 @@ public:
   }
 
 
-  PainterOstream& operator<<(const Circular_arc_2<K>& arc)
+  PainterOstream& operator<<(const Circular_arc_2& arc)
   {
     const typename K::Circle_2 & circ = arc.supporting_circle();
     const typename K::Point_2 & center = circ.center();
@@ -145,7 +174,7 @@ public:
     return *this;
   }
 
-  PainterOstream& operator<<(const Line_arc_2<K>& arc)
+  PainterOstream& operator<<(const Line_arc_2& arc)
   {
     (*this) << Segment_2(Point_2(to_double(arc.source().x()), to_double(arc.source().y())),
 			 Point_2(to_double(arc.target().x()), to_double(arc.target().y())));

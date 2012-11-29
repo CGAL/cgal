@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage 2D Arrangements
 \anchor Chapter_2D_Arrangements
 \anchor chapterArrangement_on_surface_2
-\tableofcontents
+\cgalAutoToc
 
 \authors Ron Wein, Eric Berberich, Efi Fogel, Dan Halperin, Michael Hemmer, Oren Salzman, and Baruch Zukerman
 

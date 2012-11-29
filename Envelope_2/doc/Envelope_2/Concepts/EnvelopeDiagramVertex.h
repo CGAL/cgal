@@ -75,12 +75,12 @@ returns the number of \f$ x\f$-monotone curves associated with `v`.
 Size number_of_curves () const; 
 
 /*! 
-return an iterator for the first \f$ x\f$-monotone curve associated with `v`. 
+returns an iterator for the first \f$ x\f$-monotone curve associated with `v`. 
 */ 
 Curve_const_iterator curves_begin () const; 
 
 /*! 
-return a past-the-end iterator for the \f$ x\f$-monotone curves associated with `v`. 
+returns a past-the-end iterator for the \f$ x\f$-monotone curves associated with `v`. 
 */ 
 Curve_const_iterator curves_end () const; 
 

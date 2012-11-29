@@ -29,16 +29,16 @@ points \f$ p\f$ and \f$ q\f$ which remain fixed until the next set, insert, or c
 operation. 
 
 
-\tparam Traits must be a model for `OptimisationDTraits`. 
+\tparam Traits must be a model for `PolytopeDistanceDTraits`. 
 
-We provide the models `Optimisation_d_traits_2`, 
-`Optimisation_d_traits_3`, and `Optimisation_d_traits_d` using the 
+We provide the models `Polytope_distance_d_traits_2`, 
+`Polytope_distance_d_traits_3`, and `Polytope_distance_d_traits_d` using the 
 two-, three-, and \f$ d\f$-dimensional \cgal kernel, respectively. 
 
-\sa `CGAL::Optimisation_d_traits_2<K,ET,NT>` 
-\sa `CGAL::Optimisation_d_traits_3<K,ET,NT>` 
-\sa `CGAL::Optimisation_d_traits_d<K,ET,NT>` 
-\sa `OptimisationDTraits` 
+\sa `CGAL::Polytope_distance_d_traits_2<K,ET,NT>` 
+\sa `CGAL::Polytope_distance_d_traits_3<K,ET,NT>` 
+\sa `CGAL::Polytope_distance_d_traits_d<K,ET,NT>` 
+\sa `PolytopeDistanceDTraits` 
 
 ### Implementation ###
 
@@ -161,7 +161,7 @@ int ambient_dimension( ) const;
 
 /*! 
 
-returns the number of all points of `poly_dist`, i.e. \f$ |P|+|Q|\f$. 
+returns the number of all points of `poly_dist`, i.e.\ \f$ |P|+|Q|\f$. 
 */ 
 int number_of_points( ) const; 
 
@@ -179,7 +179,7 @@ int number_of_points_q( ) const;
 
 /*! 
 
-returns the number of support points of `poly_dist`, i.e. \f$ |S_P|+|S_Q|\f$. 
+returns the number of support points of `poly_dist`, i.e.\ \f$ |S_P|+|S_Q|\f$. 
 */ 
 int number_of_support_points( ) const; 
 
@@ -285,7 +285,7 @@ Point realizing_point_q( ) const;
 
 /*! 
 
-returns the squared distance of `poly_dist`, i.e. \f$ (pd(P,Q))^2\f$. 
+returns the squared distance of `poly_dist`, i.e.\ \f$ (pd(P,Q))^2\f$. 
 \cgalRequires An implicit conversion from `ET` to `RT` is available. 
 \pre \f$ pd(P,Q)\f$ is finite. 
 */ 
@@ -299,7 +299,7 @@ realizing point of \f$ P\f$.
 ### Note ###
 
 The coordinates have a rational 
-representation, i.e. the first \f$ d\f$ elements of the iterator 
+representation, i.e.\ the first \f$ d\f$ elements of the iterator 
 range are the numerators and the \f$ (d\!+\!1)\f$-st element is the 
 common denominator. 
 */ 
@@ -321,7 +321,7 @@ realizing point of \f$ Q\f$.
 ### Note ###
 
 The coordinates have a rational 
-representation, i.e. the first \f$ d\f$ elements of the iterator 
+representation, i.e.\ the first \f$ d\f$ elements of the iterator 
 range are the numerators and the \f$ (d\!+\!1)\f$-st element is the 
 common denominator. 
 */ 
@@ -355,21 +355,21 @@ ET squared_distance_denominator( ) const;
 /*! 
 
 returns `true`, if \f$ pd(P,Q)\f$ is finite, 
-i.e. none of the two polytopes is empty. 
+i.e.\ none of the two polytopes is empty. 
 */ 
 bool is_finite( ) const; 
 
 /*! 
 
 returns `true`, if \f$ pd(P,Q)\f$ is zero, 
-i.e. the two polytopes intersect (this implies degeneracy). 
+i.e.\ the two polytopes intersect (this implies degeneracy). 
 */ 
 bool is_zero( ) const; 
 
 /*! 
 
 returns `true`, iff \f$ pd(P,Q)\f$ is degenerate, 
-i.e. \f$ pd(P,Q)\f$ is not finite. 
+i.e.\  \f$ pd(P,Q)\f$ is not finite. 
 */ 
 bool is_degenerate( ) const; 
 
@@ -486,7 +486,7 @@ with interfaces of other classes.
 An object `poly_dist` is valid, iff \f$ ldots\f$ 
 - `poly_dist` contains all points of its defining set \f$ P\f$, 
 - `poly_dist` is the smallest sphere containing its support set \f$ S\f$, 
-- and \f$ S\f$ is minimal, i.e. no support point is redundant.
+- and \f$ S\f$ is minimal, i.e.\ no support point is redundant.
 
 */ 
 bool is_valid( bool verbose = false, 

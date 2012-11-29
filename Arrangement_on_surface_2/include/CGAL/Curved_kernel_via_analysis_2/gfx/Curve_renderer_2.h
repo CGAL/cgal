@@ -1988,7 +1988,8 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
     get_polynomials(CGAL_Y_RANGE,box[0]); 
     get_polynomials(CGAL_X_RANGE,box[1]); 
     int f_der = -1, corner_dir = -1;
-    bool set_coincide = false, s_change = false;
+    bool set_coincide = false;
+    // bool s_change = false;
     new_dir = -1;
     for(i = 0; i < n_pts - 1; i++) {
         int f1 = pts[idx[i]].flag, f2 = pts[idx[i+1]].flag;
@@ -2095,7 +2096,7 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
                 lower = p1; 
                 s_shift = shift;
                 f_der = engine.first_der;
-                s_change = engine.sign_change;
+                // s_change = engine.sign_change;
             }
         }
         n_sign += local_sign;
@@ -2568,7 +2569,7 @@ bool get_isolating_box(const Rational& x_s, const Rational& y_s, Pixel_2& res)
 
 //! returns true if \c pix is encompassed into one of isolating rectangles
 //! (stopping criteria)
-inline bool is_isolated_pixel(const Pixel_2& pix) {
+inline bool is_isolated_pixel(const Pixel_2& /* pix */) {
     /*Integer sub_x;
     if(isolated_l.level != -1u&&isolated_l.y == pix.y&&isolated_l.x == pix.x&&
         pix.level >= isolated_l.level) {

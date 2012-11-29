@@ -70,12 +70,12 @@ returns a representative \f$ x\f$-monotone curve associated with `e`.
 const X_monotone_curve_2& curve () const; 
 
 /*! 
-return an iterator for the first \f$ x\f$-monotone curve associated with `e`. 
+returns an iterator for the first \f$ x\f$-monotone curve associated with `e`. 
 */ 
 Curve_const_iterator curves_begin () const; 
 
 /*! 
-return a past-the-end iterator for the \f$ x\f$-monotone curves associated with `e`. 
+returns a past-the-end iterator for the \f$ x\f$-monotone curves associated with `e`. 
 */ 
 Curve_const_iterator curves_end () const; 
 

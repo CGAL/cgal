@@ -11,12 +11,12 @@ The best fitting line minimizes the sum of squared distances from all points com
 
 The tag `tag` identifies the dimension to be considered from the objects. For point sets it should be 0. For segments it can be 1 or 0 according to whether one wants to fit the whole segment or just their end points. For triangles it can range from 0 to 2 according to whether one wants to fit either the triangle points, the segments or the whole triangles. For rectangles it can range from 0 to 2 according to whether one wants to fit either the corner points, the segments, or the whole rectangles. For circles it can be 1 or 2 according to whether one wants to fit either the circles or the whole discs. For triangles it ranges from 0 to 2 according to whether one wants to fit either the points, the segments or the whole triangles. 
 
-The class `K` is the kernel in which the type `InputIterator::value_type` is defined. It can be omitted and deduced automatically from the value type. 
+The class `K` is the kernel in which the value type of the  `InputIterator` is defined. It can be omitted and deduced automatically from the value type. 
 
 ### Requirements ###
 
 <OL> 
-<LI>`InputIterator::value_type` is equivalent to `K::Point_2` or 
+<LI>`InputIterator` must have a value type equivalent to `K::Point_2` or 
 `K::Segment_2` or `K::Triangle_2` or `K::Rectangle_2` or 
 `K::Circle_2`. 
 <LI>`line` is the best fitting line computed. 

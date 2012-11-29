@@ -76,11 +76,11 @@ traversing both diagrams in parallel.
 \section env2_secenv_diag The Envelope Diagram 
 
 The package basically contains two sets of free functions:
-`lower_envelope_x_monotone_2 (begin, end, diag)` (similarly
-`upper_envelope_x_monotone_2()`) construct the envelope diagram
+\link lower_envelope_x_monotone_2() `lower_envelope_x_monotone_2(begin, end, diag)`\endlink 
+(similarly `upper_envelope_x_monotone_2()`) construct the envelope diagram
 for a given range of \f$ x\f$-monotone curves, while 
-`lower_envelope_2 (begin, end, diag)` (similarly
-`upper_envelope_2()`) construct the envelope diagram for a
+\link lower_envelope_x_monotone_2() `lower_envelope_2(begin, end, diag)`\endlink 
+(similarly `upper_envelope_2()`) construct the envelope diagram for a
 range of <I>arbitrary</I> (not necessarily \f$ x\f$-monotone) curves.
 In this section we explain more on the structure of the envelope
 diagram these functions output.

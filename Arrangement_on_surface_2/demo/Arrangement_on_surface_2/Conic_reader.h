@@ -1,3 +1,22 @@
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: $
+// $Id: $
+//
+// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+
 #ifndef CGAL_CONIC_READER_H
 #define CGAL_CONIC_READER_H
 
@@ -7,7 +26,7 @@
 #include <list>
 #include <string>
 
-template <class Traits>
+template <typename Traits>
 class Conic_reader
 {
 public:
@@ -68,9 +87,18 @@ public:
       // Construct a line segment. The line should have the format:
       //   s <x1> <y1> <x2> <y2>
       // where (x1, y1), (x2, y2) are the endpoints of a segment.
-      Rational    x1, y1, x2, y2;
+      Rational x1, y1, x2, y2;
+      std::string buf;
 
-      str_line >> x1 >> y1 >> x2 >> y2;
+      //str_line >> x1 >> y1 >> x2 >> y2;
+      str_line >> buf;
+      x1 = Algebraic( buf ).BigRatValue( );
+      str_line >> buf;
+      y1 = Algebraic( buf ).BigRatValue( );
+      str_line >> buf;
+      x2 = Algebraic( buf ).BigRatValue( );
+      str_line >> buf;
+      y2 = Algebraic( buf ).BigRatValue( );
 
       Rat_point_2   p1(x1, y1), p2(x2, y2);
       Rat_segment_2 seg (p1, p2);
@@ -140,7 +168,8 @@ public:
 
       // Read the end points of the arc and create it.
       // Notice we read the coordinates as strings, then we convert them to
-      // the Algebraic type, as we do not want to initialize Algebraic from a double.
+      // the Algebraic type, as we do not want to initialize Algebraic from
+      // a double.
       char    num[50];
       Algebraic    x1, y1, x2, y2;
 
