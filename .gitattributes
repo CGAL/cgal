@@ -16,7 +16,6 @@
 # exceptions:
 AABB_tree/test/AABB_tree/AABB_test_util.h eol=crlf
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgram.cmake eol=crlf
-Kernel_23/include/CGAL/internal/Projection_traits_3.h eol=crlf
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_triangulation.cpp eol=crlf
 Principal_component_analysis/test/Principal_component_analysis/test_linear_least_squares_fitting_segments_3.cpp eol=crlf
 Skin_surface_3/test/Skin_surface_3/data/test11.cin eol=crlf
@@ -363,7 +362,6 @@ Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_edge.h -tex
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_fictitious_vertex.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_trapezoid.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_vertex.h -text
-Arrangement_on_surface_2/include/CGAL/Arr_point_location/Trapezoidal_decomposition_2_impl.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_on_sphere_transformation.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_transformation.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_transform_on_sphere.h -text
