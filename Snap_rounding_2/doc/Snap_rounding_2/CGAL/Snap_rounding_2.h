@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSnapRounding2
 
-The first two parameters denote the first and after-the-last iterators 
+The first two parameters denote the first and past-the-end iterators 
 of the input segments. The third parameter is a reference to a 
 container of the output polylines. Since a polyline is composed of a 
 sequence of points, a polyline is a container itself. The fifth 

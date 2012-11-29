@@ -57,6 +57,7 @@ from the \cgal 3D point, or as a `std::pair<Point_3<K>, Vector_3<K>>`,
 or as a `boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
 
 The following classes described in Chapter \ref chapterProperty_map
+"CGAL and Boost Property Maps"
 provide property maps for the implementations of points with normals
 listed above:
 
@@ -160,7 +161,7 @@ Point set simplification through grid-based clustering. Removed points are depic
 \section Point_set_processing_3Smoothing Smoothing
 
 
-Function `jet_smooth_point_set` smooths the input point set by
+Function `jet_smooth_point_set()` smooths the input point set by
 projecting each point onto a smooth parametric surface patch
 (so-called jet surface) fitted over its `k` nearest neighbors.
 
