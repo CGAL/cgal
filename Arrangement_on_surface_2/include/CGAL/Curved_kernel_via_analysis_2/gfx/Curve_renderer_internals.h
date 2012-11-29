@@ -328,8 +328,9 @@ public:
         if(n == 1)
             return extract(poly.lcoeff(), error_bounds_);
         Coeff cc = static_cast<Coeff>(x);
-        const_iterator_1 it1 = poly.end()-1, it2 = it1 - (n>>1), 
-                beg = poly.begin()+odd;
+        const_iterator_1 it1 = poly.end()-1;
+        const_iterator_1 it2 = it1 - (n>>1);
+        // const_iterator_1 beg = poly.begin()+odd;
         Coeff y1 = *it1, y2 = *it2, mul = cc, y;
         // unrolled loop for better instruction pairing
         while(m-- > odd) { 
@@ -888,7 +889,7 @@ bool get_range_MAA_1(int var, const NT& l_, const NT& r_, const NT& key,
 
 //! \brief fixes one coordinate of a bivariate polynomial, uses caching
 //! if appropriate 
-void get_precached_poly(int var, const NT& key, int level, Poly_1& poly)
+void get_precached_poly(int var, const NT& key, int /* level */, Poly_1& poly)
 {
     NT key1;
     //Poly_cache *cached = cached_x;

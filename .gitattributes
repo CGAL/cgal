@@ -78,10 +78,323 @@ Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/data/three_co
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/data/three_cusps_three_flex_9 -text
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/data/two_lines -text
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/data/various_degree_arrangement -text
+Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/include/misc.h -text
+Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/include/xalci.h -text
+Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/misc.cpp -text
+Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/poly2ntl.cpp -text
+Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/xalci.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementCurveInputCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoGraphicsView.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoGraphicsView.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoPropertiesDialog.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoPropertiesDialog.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoPropertiesDialog.ui -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoTab.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoTab.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.qrc -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.ui -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementGraphicsItem.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementGraphicsItem.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementPainterOstream.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementSegmentInputCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementTypes.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ColorItemEditor.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ColorItemEditor.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Conic_reader.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/CurveGraphicsItem.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveMode.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveMode.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveModeItemEditor.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveModeItemEditor.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/FillFaceCallback.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/FillFaceCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewCurveInput.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewCurveInput.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewSegmentInput.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewSegmentInput.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ISnappable.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/MergeEdgeCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/NewTabDialog.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/NewTabDialog.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/NewTabDialog.ui -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.ui -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PointLocationCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PointsGraphicsItem.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PointsGraphicsItem.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PropertyValueDelegate.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PropertyValueDelegate.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/SplitEdgeCallback.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/SplitEdgeCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Utils.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Utils.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayGraphicsItem.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayGraphicsItem.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayShootCallback.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayShootCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/arrangement_2.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/algebraic/alg_circle.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/algebraic/cubic.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/algebraic/erdos_lemiscate.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/algebraic/infinitesimal.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/algebraic/trifolium.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/big_circ_arcs.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/big_circ_arcs.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/circles_21.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/polyline/ps_circs.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/polyline/ps_circs.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/polyline/random_polylines_10_20.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/polyline/random_polylines_10_20.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/polyline/sines.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/polyline/sines.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/fork0505_mc.seg.rand.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/fork0505_mc.seg.rand.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/non_degenerate_100_x.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/non_degenerate_100_x.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/onebig_100.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/onebig_100.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/onebig_100_x.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/onebig_100_x.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/onebig_250_x.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/onebig_250_x.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/polygon_100.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/polygon_100.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/random_segments_100.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/random_segments_100.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/random_segments_100_x.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/random_segments_100_x.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/random_segments_500_x.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/random_segments_500_x.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/tilt_grid_200.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/tilt_grid_200.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/world.seg.cut.rand.arr -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/world.seg.cut.rand.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/help/about.html -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/help/index.html svneol=native#text/html
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/blue_icon.xpm -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_conic_line.xpm -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_conic_ray.xpm -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_delete.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_insert.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_merge.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_pointlocation.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_rayshoot.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_snapgrid.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_snapvertex.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_split.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_zoomin.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_zoomout.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/green_icon.xpm -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/lower_env_xpm.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/red_icon.xpm -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/upper_env_xpm.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/yellow_icon.xpm -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/CMakeLists.txt -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/Conic_reader.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/MyWindow_files.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/MyWindow_operations.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/MyWindow_overlay.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/arrangement_2.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/arrangement_2.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/cgal_types.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/demo_tab.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/demo_tab.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/forms.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/forms.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/overlay_functor.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/qt_layer.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/qt_layer.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/tests/CMakeLists.txt -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/tests/Test.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/tests/TestAlgebraic.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/tests/TestRayPL.cpp -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Arrangement_2.png -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Europe.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Europe.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Europe.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_curves.fig -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_curves.gif -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_curves.png -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_segments.fig -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_segments.gif -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_segments.png -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/connect_comp.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/connect_comp.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/connect_comp.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/cylindrical_decomposition.fig -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/cylindrical_decomposition.gif -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/cylindrical_decomposition.png -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_1.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_1.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_1.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_10.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_10.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_10.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_12.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_12.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_12.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_13.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_13.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_13.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_14.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_14.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_14.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_16.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_16.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_16.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_17.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_17.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_17.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_18.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_18.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_18.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_19.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_19.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_19.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_2.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_2.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_2.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_20.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_20.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_20.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_22.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_22.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_22.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_24.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_24.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_24.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_25.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_25.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_25.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_3.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_3a.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_3a.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_3b.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_3b.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_3c.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_3c.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_4.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_4.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_4.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_5.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_5.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_5.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_8.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_8.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_8.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_bgl.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_bgl.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_bgl.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb1.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb1.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb1.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb_rat.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb_rat.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb_rat.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/fan_grids.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/fan_grids.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/fan_grids.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/h_shape.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/h_shape.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/h_shape.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_at_vertices.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_at_vertices.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_from_vertex.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_from_vertex.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_in_face.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_in_face.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/pred_around_vertex.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/pred_around_vertex.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/pred_around_vertex.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/triangle.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/triangle.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/triangle.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.fig -text svneol=unset#application/octet-stream
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_algebraic_segment_traits.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_face_index_map.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_halfedge_direction.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_rational_function_traits.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_vertex_index_map.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_do_intersect.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_zone.tex -text
+Arrangement_on_surface_2/doc_tex/Sweep_line_2/fig/Curve_intersections_2.png -text
+Arrangement_on_surface_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#image/gif
+Arrangement_on_surface_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#application/pdf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/BasicSweepLineVisitor_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/Basic_sweep_line_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/SweepLineVisitor_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/Sweep_line_2.tex eol=lf
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Bezier.dat -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Europe.dat -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/algebraic_curves.cpp -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/algebraic_segments.cpp -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/arr_inexact_construction_segments.h -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/bounded_planar_vertical_decomposition.cpp -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/coll_points.dat -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/fan_grids.dat -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/io_unbounded.cpp -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/points.dat -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/unb_planar_vertical_decomposition.cpp -text
+Arrangement_on_surface_2/include/CGAL/Arr_algebraic_segment_traits_2.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_geodesic_arc_on_sphere_partition_traits_2.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Arr_lm_specified_points_generator.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_active_edge.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_active_fictitious_vertex.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_active_trapezoid.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_active_vertex.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_dag_node.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_edge.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_fictitious_vertex.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_trapezoid.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_vertex.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Trapezoidal_decomposition_2_impl.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_on_sphere_transformation.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_transformation.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_transform_on_sphere.h -text
+Arrangement_on_surface_2/include/CGAL/Arrangement_2/Arr_compute_zone_visitor.h -text
+Arrangement_on_surface_2/include/CGAL/Arrangement_2/Arr_do_intersect_zone_visitor.h -text
+Arrangement_on_surface_2/include/CGAL/Arrangement_2/arrangement_type_traits.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Arc_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Curve_interval_arcno_cache.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_impl.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Fig_stream_Curve_renderer_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Generic_arc_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Generic_point_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Make_x_monotone_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Non_x_monotone_arc_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Point_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Qt_widget_Curve_renderer_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/Sweep_curves_adapter_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_internals.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_traits.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Subdivision_1.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Subdivision_2.h -text
+Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/test/simple_models.h -text
+Arrangement_on_surface_2/include/CGAL/Qt/GraphicsViewPointInput.h -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/IO_base_test.h -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/IO_test.h -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/Point_location_dynamic_test.h -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/Point_location_test.h -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/Traits_adaptor_test.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/cgal_test_base -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/algebraic/compare -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/algebraic/compare_y_at_x -text

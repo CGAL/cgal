@@ -645,12 +645,14 @@ Trapezoidal_decomposition_2<Td_traits>
         {
           bool is_equal_to_he_min = traits->equal_curve_end_2_object()
                                (Curve_end(he,ARR_MIN_END), p);
-          bool is_equal_to_he_max = traits->equal_curve_end_2_object()
-                               (Curve_end(he,ARR_MAX_END), p);
+          CGAL_assertion_code(bool is_equal_to_he_max =
+                              traits->equal_curve_end_2_object()
+                              (Curve_end(he,ARR_MAX_END), p));
           
           CGAL_assertion( is_equal_to_he_min || is_equal_to_he_max );
 
-          curr_node = is_equal_to_he_min ? curr_node.right_child() : curr_node.left_child();
+          curr_node = is_equal_to_he_min ?
+            curr_node.right_child() : curr_node.left_child();
           continue;
         }
       }
@@ -726,9 +728,10 @@ Trapezoidal_decomposition_2<Td_traits>
                                       (Curve_end(he,ARR_MIN_END), 
                                        Curve_end(he_cv,ARR_MIN_END));
 
-          bool is_max_equal = traits->equal_curve_end_2_object()
-                                      (Curve_end(he,ARR_MAX_END), 
-                                       Curve_end(he_cv,ARR_MAX_END));
+          CGAL_warning_code(bool is_max_equal =
+                            traits->equal_curve_end_2_object()
+                            (Curve_end(he,ARR_MAX_END), 
+                             Curve_end(he_cv,ARR_MAX_END)));
 
           CGAL_warning (is_min_equal || is_max_equal);
           
@@ -1087,12 +1090,14 @@ Trapezoidal_decomposition_2<Td_traits>
         {
           bool is_equal_to_he_min = traits->equal_curve_end_2_object()
                                (Curve_end(*p_cv,ARR_MIN_END), ce);
-          bool is_equal_to_he_max = traits->equal_curve_end_2_object()
-                               (Curve_end(*p_cv,ARR_MAX_END), ce);
+          CGAL_assertion_code(bool is_equal_to_he_max =
+                              traits->equal_curve_end_2_object()
+                              (Curve_end(*p_cv,ARR_MAX_END), ce));
           
           CGAL_assertion( is_equal_to_he_min || is_equal_to_he_max );
 
-          curr_node = is_equal_to_he_min ? curr_node.right_child() : curr_node.left_child();
+          curr_node = is_equal_to_he_min ?
+            curr_node.right_child() : curr_node.left_child();
           
           continue;
         }
@@ -1175,9 +1180,10 @@ Trapezoidal_decomposition_2<Td_traits>
                                       (Curve_end(*p_cv,ARR_MIN_END), 
                                        Curve_end(he_cv,ARR_MIN_END));
 
-            bool is_max_equal = traits->equal_curve_end_2_object()
-                                      (Curve_end(*p_cv,ARR_MAX_END), 
-                                       Curve_end(he_cv,ARR_MAX_END));
+            CGAL_warning_code(bool is_max_equal =
+                              traits->equal_curve_end_2_object()
+                              (Curve_end(*p_cv,ARR_MAX_END), 
+                               Curve_end(he_cv,ARR_MAX_END)));
 
             CGAL_warning (is_min_equal || is_max_equal);
 
@@ -1313,12 +1319,14 @@ Trapezoidal_decomposition_2<Td_traits>
         {
           bool is_equal_to_he_min = traits->equal_curve_end_2_object()
                                (Curve_end(*p_cv,ARR_MIN_END), p);
-          bool is_equal_to_he_max = traits->equal_curve_end_2_object()
-                               (Curve_end(*p_cv,ARR_MAX_END), p);
+          CGAL_assertion_code(bool is_equal_to_he_max =
+                              traits->equal_curve_end_2_object()
+                              (Curve_end(*p_cv,ARR_MAX_END), p));
           
           CGAL_assertion( is_equal_to_he_min || is_equal_to_he_max );
 
-          curr_node = is_equal_to_he_min ? curr_node.right_child() : curr_node.left_child();
+          curr_node = is_equal_to_he_min ?
+            curr_node.right_child() : curr_node.left_child();
           
           continue;
         }
@@ -1395,9 +1403,10 @@ Trapezoidal_decomposition_2<Td_traits>
                                     (Curve_end(*p_cv,ARR_MIN_END), 
                                      Curve_end(he_cv,ARR_MIN_END));
 
-          bool is_max_equal = traits->equal_curve_end_2_object()
-                                    (Curve_end(*p_cv,ARR_MAX_END), 
-                                     Curve_end(he_cv,ARR_MAX_END));
+          CGAL_warning_code(bool is_max_equal =
+                            traits->equal_curve_end_2_object()
+                            (Curve_end(*p_cv,ARR_MAX_END), 
+                             Curve_end(he_cv,ARR_MAX_END)));
 
           CGAL_warning (is_min_equal || is_max_equal);
 
