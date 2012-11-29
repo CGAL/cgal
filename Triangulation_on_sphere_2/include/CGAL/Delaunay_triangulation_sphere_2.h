@@ -81,6 +81,7 @@ public:
   using Base::FACE;
   using Base::OUTSIDE_CONVEX_HULL;
   using Base ::NOT_ON_SPHERE;
+  using Base :: VERTEX;
   using Base :: TOO_CLOSE;
   using Base::orientation;
   using Base ::show_all;
@@ -478,13 +479,6 @@ is_plane()const{
 	return plane;
 }
 	
-		
-		
-	
-	
-	
-	
-	
 template < class Gt, class Tds >
 bool
 Delaunay_triangulation_sphere_2<Gt,Tds>::
@@ -596,15 +590,19 @@ insert(const Point &p, Face_handle start)
   Locate_type lt;
   int li;
   Face_handle loc = Base::locate(p, lt, li, start);
-	//if (loc == Face_handle())
-	if(lt== NOT_ON_SPHERE)
-		return Vertex_handle();
-	else if (lt == TOO_CLOSE)
-		return Vertex_handle();
-		//return loc->vertex(li);
-	
-	else
-  return insert(p, lt, loc, li);
+  switch (lt){
+	case NOT_ON_SPHERE: 		
+      return Vertex_handle();
+	case TOO_CLOSE:
+	  return loc->vertex(li);
+	case VERTEX:{
+	 if(number_of_vertices()==1)
+		 return vertices_begin();
+	 return (loc->vertex(li));
+   }
+	default:
+     return insert(p, lt, loc, li);
+ }
 }
 
 	

@@ -1,10 +1,12 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
+//#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
+#include <CGAL/Projection_sphere_traits_3.h>
 #include <CGAL/Triangulation_sphere_2.h>
 #include <CGAL/Delaunay_triangulation_sphere_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
+//typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
+typedef CGAL::Projection_sphere_traits_3<K>						Gt;
 typedef CGAL::Delaunay_triangulation_sphere_2<Gt>                 DTOS;
 typedef DTOS::Point												Point;
 typedef DTOS::Face_handle                                 Face_handle;
@@ -49,14 +51,10 @@ bool are_equal(DTOS triA, DTOS triB){
 	Face_iterator fiA;
 	Face_iterator fiB;
 	fiA = triA.all_faces_begin();
-	//fiB = triB.all_faces_begin();
-    for( ; fiA != triA.all_faces_end(); ++fiA ){
+	 for( ; fiA != triA.all_faces_end(); ++fiA ){
 		found=false;
-		//**face of fiA in fiB?
-		//for( ; fiB != triB.all_faces_end(); ++fiB ){
 		for(fiB=triB.all_faces_begin(); fiB!=triB.all_faces_end(); fiB++){
 			test = has_face(fiB, fiA->vertex(0), fiA->vertex(1), fiA->vertex(2));
-			//if(has_face) break;
 			if(test){
 				found=true;
 				break;
@@ -64,7 +62,7 @@ bool are_equal(DTOS triA, DTOS triB){
 				
 		}
 		assert(found==true);
-		//**	
+		
 	}
 	if(found)
 	  return true;
@@ -75,6 +73,8 @@ bool are_equal(DTOS triA, DTOS triB){
 
 template<class DTOS>
 void test(){
+	
+//tests whether it is possible to insert points in degenerated positions and whether the result is uniquely defined after this.	
 	double radius = 100;
 	double radius2 = radius*radius;
 	typedef K::Point_3 Point_3;
@@ -89,6 +89,7 @@ void test(){
 	std::vector<K::Point_3> points2;
 	std::vector<K::Point_3> points3;
 	std::vector<K::Point_3> points4;
+	
 	
 	// insert 5 coplanar points. Points are also coplanar with the center of the sphere
 	Point_3 p1=Point_3(radius/sqrt(2), radius/sqrt(2), 0);
@@ -112,36 +113,19 @@ void test(){
 	dtos.insert(p4);
 	dtos.insert(p5);
 	dtos.insert(p6);
-	dtos.show_all();
-	
-	/*dtos.insert(points.begin(), points.end());	
 	dtos.is_valid();
-	dtos.show_all();*/
 	
-	std::cout<<"TRIANGULATION 1"<<std::endl;
-	dtos.show_all();
-	
+		
 	std::random_shuffle(points.begin(), points.end());
 	for(int i=0; i<6; i++)
 		dtos2.insert(points.at(i));
-	
-	
 	dtos2.is_valid();
-	
-	std::cout<<"TRIANGULATION 2"<<std::endl;
-	dtos2.show_all();
-	
-	
 	
 	std::random_shuffle(points.begin(), points.end());
 	 for(int i=0; i<6; i++)
 	  dtos3.insert(points.at(i));
-	
 	dtos3.is_valid();
-	
-	std::cout<<"TRIANGULATION 3"<<std::endl;
-	dtos3.show_all();
-	
+		
 	assert(are_equal(dtos, dtos2)==true);
 	assert(are_equal(dtos3, dtos2)==true);
 	assert(are_equal(dtos, dtos3)==true);
@@ -176,28 +160,26 @@ void test(){
 	
 	
 	points2.resize(7);
-	dtos.insert(points2.begin(), points2.end());
+	for(int i=0; i<6; i++)
+		dtos.insert(points.at(i));
 	dtos.is_valid();
-	dtos.show_all();
-	
-	
 	
 	
 	std::random_shuffle(points2.begin(), points2.end());
-	dtos2.insert(points2.begin(), points2.end());
+	for(int i=0; i<6; i++)
+		dtos2.insert(points.at(i));
 	dtos2.is_valid();
-	dtos2.show_all();
+	
 	
 	
 	std::random_shuffle(points2.begin(), points2.end());
-	dtos3.insert(points2.begin(), points2.end());
+	for(int i=0; i<6; i++)
+		dtos3.insert(points.at(i));
 	dtos3.is_valid();
 	
 			  
-	//assert(are_equal(dtos, dtos2)==true);
 	assert(are_equal(dtos3, dtos2)==true);		
 	assert(are_equal(dtos3, dtos)==true);
-	bool test2 = are_equal(dtos2, dtos);
 	assert(are_equal(dtos, dtos2)==true);
 	
 	

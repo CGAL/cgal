@@ -900,12 +900,15 @@ locate(const Point& p,Locate_type& lt,int& li, Face_handle start) const
      Point q=vertices_begin()->point();
      if(xy_equal(q,p)){
       lt=VERTEX;
+	  li=0;
      } else{
       lt=OUTSIDE_AFFINE_HULL;
+	  li=4;
+	  test_distance(p, all_faces_begin(), lt, li);
     }
-    li=4;
-	test_distance(p, all_faces_begin(), lt, li);
+  	//test_distance(p, all_faces_begin(), lt, li);
     return Face_handle();
+		//return start;
    }
  
 	case 0: {
