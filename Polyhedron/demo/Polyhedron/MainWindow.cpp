@@ -759,6 +759,10 @@ void MainWindow::open(QString filename)
   
   if(!ok || loader_name.isEmpty()) { return; }
   
+  QSettings settings;
+  settings.setValue("OFF open directory",
+                    fileinfo.absoluteDir().absolutePath());
+
   Scene_item* scene_item = load_item(fileinfo, find_loader(loader_name));
   selectSceneItem(scene->addItem(scene_item));
 }
@@ -1075,9 +1079,15 @@ void MainWindow::on_actionLoad_triggered()
     }
   }
 
+  QSettings settings;
+  QString directory = settings.value("OFF open directory",
+                                     QDir::current().dirName()).toString();
 
   QFileDialog dialog(this);
+  dialog.setDirectory(directory);
   dialog.setNameFilters(filters);
+  dialog.setFileMode(QFileDialog::ExistingFiles);
+
   if(dialog.exec() != QDialog::Accepted) { return; }
   
   FilterPluginMap::iterator it = 
