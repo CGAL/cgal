@@ -42,4 +42,5 @@ fi
 "$HOME/bin/update_manual_tools"
 
 # Launch create_new_release
-exec "$HOME/CGAL/Scripts/developer_scripts/create_new_release" "$@"
+exec "$HOME/CGAL/Scripts/developer_scripts/create_new_release" --no-scm-update "$@"
+#                       --no-scm-update because branches have already been updated
