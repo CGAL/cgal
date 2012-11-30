@@ -9,3 +9,4 @@ include( polyhedron_demo_targets )
 
 
 include_directories( ${CGAL_POLYHEDRON_DEMO_HEADERS_DIRS} )
+add_definitions(${CGAL_POLYHEDRON_DEMO_DEFINITIONS})

@@ -219,7 +219,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_definitions(-DQT_STATICPLUGIN)
 #  if(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
-    add_definitions(-DUSE_FORWARD_DECL)
+    set(CGAL_POLYHEDRON_DEMO_DEFINITIONS "-DUSE_FORWARD_DECL")
+    add_definitions(${CGAL_POLYHEDRON_DEMO_DEFINITIONS})
     add_executable  ( Polyhedron_3 MainWindow.cpp
       Polyhedron_3.cpp
 #      Viewer.cpp
