@@ -405,6 +405,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #
 # Exporting
 #
+  if(TARGET CGAL_Qt4)
+    export(TARGETS CGAL_Qt4 FILE polyhedron_demo_targets.cmake)
+  else()
+    export(TARGETS FILE polyhedron_demo_targets.cmake)
+  endif()
   export(
     TARGETS
     demo_framework
@@ -412,9 +417,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_points_with_normal_item
     scene_implicit_function_item
     scene_polylines_item
-    CGAL_Qt4
-    FILE polyhedron_demo_targets.cmake
-    NAMESPACE Polyhedron_)
+    NAMESPACE Polyhedron_
+    APPEND FILE polyhedron_demo_targets.cmake)
 
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 
