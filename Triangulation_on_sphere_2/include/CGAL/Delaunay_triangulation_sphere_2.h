@@ -33,6 +33,7 @@ public:
   typedef Tds									  Triangulation_data_structure;
   typedef Gt                                      Geom_traits;
   typedef typename Gt::Point_2                    Point;
+  typedef typename Gt::Segment_3				  Segment;
   typedef typename Base::size_type                size_type;
   typedef typename Base::Face_handle              Face_handle;
   typedef typename Base::Vertex_handle            Vertex_handle;
@@ -53,6 +54,7 @@ public:
 	
   typedef typename Base::Face::Vertex_list        Vertex_list;
   typedef typename Vertex_list::iterator          Vertex_list_iterator;
+
 
 
 	
@@ -92,6 +94,7 @@ public:
   using Base::compare_xyz;
   using Base::coplanar_orientation;
   using Base::set_radius;
+  using Base::circumcenter;
 	
  #endif
 class Perturbation_order {
@@ -170,6 +173,13 @@ public:
   Oriented_side power_test(const Point &p, const Point &r) const;
   Oriented_side power_test(const Face_handle &f,const Point &p, bool perturb = false) const;
   Oriented_side power_test(const Face_handle& f, int i, const Point &p) const;	
+	
+//dual
+	Point dual (Face_handle f) const;
+	Object dual(const Edge &e) const ;
+	Object dual(const Edge_circulator& ec) const;
+	Object dual(const All_edges_iterator& ei) const;	
+
 	
   //TEMPLATE MEMBERS
   //----------------------------------------------------------------------HOLE APPROACH
@@ -1083,6 +1093,46 @@ fill_hole_regular(std::list<Edge> & first_hole)
 	}
     }
 }
+
+//-----------------dual------------------------	
+template<class Gt, class Tds>
+inline
+typename Delaunay_triangulation_sphere_2<Gt, Tds>::	Point
+Delaunay_triangulation_sphere_2<Gt, Tds>::
+dual (Face_handle f)const {
+	CGAL_triangulation_precondition(this->_tds.is_face(f));
+	CGAL_triangulation_precondition (this->dimension()==2);
+	return circumcenter(f);
+}
+	
+template < class Gt, class Tds >
+Object
+Delaunay_triangulation_sphere_2<Gt,Tds>::
+dual(const Edge &e) const
+{
+	CGAL_triangulation_precondition(this->_tds.is_edge(e.first,e.second));
+	CGAL_triangulation_precondition(dimension()==2);
+ 	 Segment s = this->geom_traits().construct_segment_2_object()
+	 (dual(e.first),dual(e.first->neighbor(e.second)));
+	 return make_object(s);
+}
+	
+template < class Gt, class Tds >
+inline Object
+Delaunay_triangulation_sphere_2<Gt,Tds>::  
+dual(const Edge_circulator& ec) const
+{
+	return dual(*ec);
+}
+	
+template < class Gt, class Tds >
+inline Object
+Delaunay_triangulation_sphere_2<Gt,Tds>::
+dual(const All_edges_iterator& ei) const
+{
+	return dual(*ei);
+}
+	
 
 
 

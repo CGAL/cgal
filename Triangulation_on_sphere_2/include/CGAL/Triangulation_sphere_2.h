@@ -227,7 +227,7 @@ Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r, 
   void show_vertex(Vertex_handle vh) const;
   void show_face(Face_handle fh) const;
 
-  //----------------------------------------------------------PUBLIC REMOVE---------------------------------------------------
+  //----------------------------------------------------------Creation---------------------------------------------------
  void make_hole(Vertex_handle v, std::list<Edge> & hole);
  Face_handle create_face(Face_handle f1, int i1,Face_handle f2, int i2,
 			            Face_handle f3, int i3);
@@ -240,7 +240,15 @@ Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r, 
  Face_handle create_face(Face_handle);
  void delete_face(Face_handle f);
  void delete_vertex(Vertex_handle v);
-
+	
+//-----------------------GEOMETRIC FEATURES AND CONSTRUCTION---------------------------
+Point circumcenter(Face_handle  f) const; 
+Point circumcenter(const Point& p0, 
+					   const Point& p1, 
+					   const Point& p2) const;
+	
+	
+	
   //           IN/OUT
   Vertex_handle file_input(std::istream& is);
   void file_output(std::ostream& os) const;
@@ -1325,6 +1333,30 @@ create_face(Face_handle fh)
 {
   return _tds.create_face(fh);
 }
+	
+//----------------CONSTRUCTION-----------------------------------
+template<class Gt, class Tds>
+inline
+typename Triangulation_sphere_2<Gt,Tds>::Point
+Triangulation_sphere_2<Gt,Tds>::
+circumcenter (const Point& p0, const Point& p1, const Point&  p2) const
+{
+	return 
+	geom_traits().construct_circumcenter_2_object()(p0,p1,p2);
+}
+	
+	
+template <class Gt, class Tds >
+typename Triangulation_sphere_2<Gt, Tds>::Point
+Triangulation_sphere_2<Gt, Tds>::
+circumcenter(Face_handle  f) const
+{
+	return circumcenter((f->vertex(0))->point(), 
+							(f->vertex(1))->point(), 
+							(f->vertex(2))->point());
+}
+	
+	
 
 //----------------------------------------------------------------I/O----------------------------------------------------------------//
 

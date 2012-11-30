@@ -5,6 +5,20 @@
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Line_2.h>
+#include <CGAL/Ray_2.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Line_2.h>
+#include <CGAL/Ray_2.h>
+#include <CGAL/predicates_on_points_2.h>
+#include <CGAL/basic_constructions_2.h>
+#include <CGAL/distance_predicates_2.h>
+
+#include <CGAL/triangulation_assertions.h>
+#include <CGAL/Segment_2_Segment_2_intersection.h>
+
 
 namespace CGAL { 
 	
@@ -189,6 +203,7 @@ Power_test_2(const Point_2& sphere)
 : _sphere(sphere)
 {}
 
+
 	
 	
 template < class R >
@@ -199,7 +214,12 @@ public:
   //typedef Triangulation_sphere_traits_2<R>                     Base;
   typedef typename R::Point_3                               Point_2; 
   typedef typename R::Point_3                      Weighted_point_2;
-                      
+  typedef typename R::Ray_3       Ray_2;  
+  typedef typename R::Line_3      Line_2;
+  typedef typename R::Construct_ray_3            Construct_ray_3;
+  typedef typename R::Construct_circumcenter_3   Construct_circumcenter_3;
+  typedef typename R::Construct_bisector_3  Construct_bisector_3;
+  typedef typename R::Construct_segment_3    Construct_segment_3;
 
   typedef Delaunay_triangulation_sphere_traits_2<R>   Self;
   typedef CGAL::Power_test_2<Self>            Power_test_2;
@@ -207,6 +227,7 @@ public:
   typedef CGAL::Coradial_sphere_2<Self>       Coradial_sphere_2;
   typedef CGAL::Inside_cone_2<Self>           Inside_cone_2;
   typedef CGAL::Orientation_sphere_1<Self>    Orientation_1;
+ 	
 	
 	
   typedef boost::true_type  requires_test;
@@ -236,6 +257,18 @@ public:
   inside_cone_2_object() const {
     return Inside_cone_2(_sphere);
   }
+	
+ Construct_ray_3 construct_ray_2_object() const
+   {return Construct_ray_3();}
+
+ Construct_circumcenter_3
+ construct_circumcenter_2_object() const
+  { return Construct_circumcenter_3();}	
+
+	
+ Construct_segment_3
+ construct_segment_2_object()const
+ {return Construct_segment_3();}
 
 protected :
   Point_2 _sphere;

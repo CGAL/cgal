@@ -20,6 +20,7 @@ typedef RTOS::Point                                             Point;
 typedef RTOS::All_faces_iterator                            Face_iterator;
 typedef RTOS::All_vertices_iterator                           Vertex_iterator;
 typedef RTOS::Solid_faces_iterator						Solid_faces_iterator;
+typedef RTOS::All_edges_iterator						All_edges_iterator;
 typedef RTOS::Locate_type                                 Locate_type;
 typedef RTOS::Edge                                               Edge;
                               
@@ -84,7 +85,7 @@ bool are_equal(RTOS triA, RTOS triB){
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =1000;
+	nu_of_pts =10;
 	radius=6000000;
 	double minDist = radius * pow (2, -25);
 	double minDist2 = pow(minDist, 2);
@@ -126,6 +127,11 @@ int main(){
 	K::Point_3 q = K::Point_3(500,0,0);
 	rtos.insert(q);
 	rtos.is_valid();
+	
+	All_edges_iterator eit=rtos.all_edges_begin();
+	
+	for ( ; eit !=rtos.all_edges_end(); ++eit) 
+		CGAL::Object o = rtos.dual(eit);
 	
 	/*
 	

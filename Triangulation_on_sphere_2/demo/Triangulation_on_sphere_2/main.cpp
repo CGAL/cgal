@@ -69,6 +69,8 @@ public slots:
   
     RTOS tr;
     tr.insert(lst_pt.begin(),lst_pt.end());
+	  
+	  
 
     Point_3 center(0,0,0);
     double scale=1;
