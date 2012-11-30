@@ -234,4 +234,4 @@ namespace CGAL {
   } //  namespace Mesh_3 {
 } // namespace CGAL
 
-#endif COMPARISON_OPERATORS_H
+#endif // COMPARISON_OPERATORS_H
