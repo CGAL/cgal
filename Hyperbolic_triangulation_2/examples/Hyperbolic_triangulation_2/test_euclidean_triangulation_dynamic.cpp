@@ -4,20 +4,23 @@
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_hyperbolic_triangulation_2.h>
-#include <CGAL/Triangulation_hyperbolic_traits_2.h>
+#include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Timer.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Triangulation_hyperbolic_traits_2<K> Gt;
+// to compare with hyperbolic traits
+#include <CGAL/Triangulation_hyperbolic_traits_2.h>
 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 typedef K::FT FT;
 
-typedef CGAL::Delaunay_hyperbolic_triangulation_2<Gt> HDt;
+typedef CGAL::Delaunay_triangulation_2<K> Dt;
+
+//typedef CGAL::Triangulation_hyperbolic_traits_2<K> Gt;
+//typedef CGAL::Delaunay_triangulation_2<Gt> Dt2;
 
 int main(int argc, char *argv[])
-{  
+{
   FT r = 1;
   FT eps = 0;
   for(int k = 0; k < 2; k++) {
@@ -37,49 +40,49 @@ int main(int argc, char *argv[])
       
       std::vector< std::vector<Point_2> > pts(trials_nb);
       for(int i = 0; i < trials_nb; i++) {
-        if(argc > 1 && argv[1][0] == 'e') {
+        if(argc > 1  && argv[1][0] == 'e') {
           Random_points_in_disc_2<K>(pts[i], nb, i, eps);
         } else {
           Hyperbolic_random_points_in_disc_2<K>(pts[i], nb, i, eps);
         }
       }
       
-      
       double average_time = 0;
       double average_nb = 0;
-      double average_nb_of_edges = 0;
       for(int trials = 0; trials < trials_nb; trials++) {
         
-        HDt hdt = HDt(Gt(r));
+        Dt dt = Dt();
+        //Dt2 dt = Dt2();
         
         CGAL::Timer timer;
         timer.start();
         
-        hdt.insert(pts[trials].begin(), pts[trials].end());
+        spatial_sort (pts[trials].begin(), pts[trials].end(), K());
+        Dt::Face_handle f;
+        //Dt2::Face_handle f;
+        
+        for(int i = 0; i < nb; i++) {
+          f = dt.insert(pts[trials][i], f)->face();
+        }
         
         timer.stop();
         
         average_time += timer.time();
         timer.reset();
         
-        average_nb += hdt.number_of_vertices();
-        
-        average_nb_of_edges = 0;
-        for(HDt::Finite_edges_iterator eit = hdt.finite_edges_begin(); eit != hdt.finite_edges_end(); ++eit) {
-          average_nb_of_edges++;
-        }
+        average_nb += dt.number_of_vertices();
       }
       average_time = average_time/trials_nb;
       average_nb = average_nb/trials_nb;
       
-      std::cout << "H^2" << std::endl;
+      
+      std::cout << "R^2" << std::endl;
       std::cout << "Radius: " << r << std::endl;
       std::cout << "Eps: " << eps << std::endl;
       std::cout << "Number of points: " << average_nb << std::endl;
       std::cout << "Time: " << average_time << std::endl;
-      std::cout << "number of edges " << average_nb_of_edges << std::endl;
-      std::cout << std::endl;
-    } 
+      std::cout << std::endl;  
+    }
   }
   
   return 0;
