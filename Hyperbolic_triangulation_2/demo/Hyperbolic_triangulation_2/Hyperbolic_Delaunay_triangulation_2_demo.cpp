@@ -101,21 +101,21 @@ signals:
 
 
 MainWindow::MainWindow()
-  : DemosMainWindow()
+  : DemosMainWindow(), dt(K(1))
 {
   setupUi(this);
 
   this->graphicsView->setAcceptDrops(false);
   
   // Add Poincaré disk
-  qreal origin_x = 0, origin_y = 0, radius = 100, diameter = 2*radius;
+  qreal origin_x = 0, origin_y = 0, radius = 1, diameter = 2*radius;
   qreal left_top_corner_x = origin_x - radius;
   qreal left_top_corner_y = origin_y - radius;
   qreal width = diameter, height = diameter;
   
   disk = new QGraphicsEllipseItem(left_top_corner_x, left_top_corner_y, width, height);
   scene.addItem(disk);
-  
+    
   // Add a GraphicItem for the Delaunay triangulation
   dgi = new CGAL::Qt::TriangulationGraphicsItem<Delaunay>(&dt);
 
