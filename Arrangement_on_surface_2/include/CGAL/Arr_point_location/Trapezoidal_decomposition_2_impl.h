@@ -26,6 +26,8 @@
 * class.
 */
 
+#include <algorithm>
+
 namespace CGAL {
 
 //-----------------------------------------------------------------------------
@@ -40,8 +42,8 @@ template <class Td_traits>
 typename Trapezoidal_decomposition_2<Td_traits>::Dag_node & 
 Trapezoidal_decomposition_2<Td_traits>
 ::split_trapezoid_by_vertex(Dag_node& split_node,
-                           Vertex_const_handle v,
-                           Halfedge_const_handle he)
+                            Vertex_const_handle v,
+                            Halfedge_const_handle he)
 { 
   CGAL_precondition(!split_node.is_null());
   if (split_node.is_null())  return split_node;
