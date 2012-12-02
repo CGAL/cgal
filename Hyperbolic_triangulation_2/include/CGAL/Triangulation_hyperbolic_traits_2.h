@@ -34,7 +34,9 @@
 #include "boost/variant.hpp"
 
 namespace CGAL {
-  
+
+
+
   template < class R >
   class Triangulation_hyperbolic_traits_2 {
   public:
@@ -122,7 +124,8 @@ namespace CGAL {
         FT radius = Compute_squared_distance_2()(p, center);
         
         Circle_2 circle( center, radius);
-        assert(circle.has_on_boundary(p) && circle.has_on_boundary(q));
+        // uncomment!!!
+        //assert(circle.has_on_boundary(p) && circle.has_on_boundary(q));
                 
         if(Orientation_2()(p, q, center) == LEFT_TURN) {
           return Arc_2(circle, p, q);
@@ -207,7 +210,7 @@ namespace CGAL {
     //typedef Line_2       Line;
     
     Triangulation_hyperbolic_traits_2() : 
-      _unit_circle(Point_2(0, 0), 100*100)
+      _unit_circle(Point_2(0, 0), 1*1)
     {}
     
     Triangulation_hyperbolic_traits_2(FT r) : 
@@ -220,7 +223,9 @@ namespace CGAL {
     
     Triangulation_hyperbolic_traits_2 &operator=
     (const Triangulation_hyperbolic_traits_2 &)
-    { return *this;}
+    {
+      return *this;
+    }
     
     Less_x_2
     less_x_2_object() const
@@ -248,7 +253,9 @@ namespace CGAL {
     
     Construct_circumcenter_2
     construct_circumcenter_2_object() const
-    {return Construct_circumcenter_2(_unit_circle);}
+    {
+      return Construct_circumcenter_2(_unit_circle);
+    }
     
     class Construct_hyperbolic_bisector_2
     {    
@@ -421,6 +428,23 @@ namespace CGAL {
     Construct_ray_2  construct_ray_2_object() const
     {return Construct_ray_2(_unit_circle);}
   };
+
+  
+// Take out the code below to some separate file
+  
+#ifdef CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H
+template  <>
+struct Triangulation_structural_filtering_traits< Triangulation_hyperbolic_traits_2<Epeck> > {
+   typedef Tag_true Use_structural_filtering_tag;
+};
+#endif // CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H
+
+#ifdef CGAL_EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL_H
+template <>
+struct Triangulation_structural_filtering_traits< Triangulation_hyperbolic_traits_2<Epick> > {
+  typedef Tag_true Use_structural_filtering_tag;
+};
+#endif // CGAL_EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL_H
   
 } //namespace CGAL 
 
