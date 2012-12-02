@@ -441,8 +441,8 @@ private:
       Point p2 = f->vertex(2)->point();
       
       Vector_3 v0 = Vector_3(p0.x()*p0.x() + p0.y()*p0.y(), 
-                                                 p1.x()*p1.x() + p1.y()*p1.y(), 
-                                                 p2.x()*p2.x() + p2.y()*p2.y());
+                             p1.x()*p1.x() + p1.y()*p1.y(), 
+                             p2.x()*p2.x() + p2.y()*p2.y());
       
       Vector_3 v1 = Vector_3(p0.x(), p1.x(), p2.x());
       Vector_3 v2 = Vector_3(p0.y(), p1.y(), p2.y());
@@ -455,69 +455,6 @@ private:
       return dt0*dt0 + dt1*dt1 - dt2*dt2 < 0;
     }
     
-    // assume f is "non-hyperbolic"
-    bool operator() (const Face_handle& f, int i) const
-    {
-      typedef typename Gt::Vector_2 Vector_2;
-      typedef typename Gt::Vector_3 Vector_3;
-      typedef typename Gt::Point_3 Point_3;
-      
-      Point p0 = f->vertex(cw(i))->point();
-      Point p1 = f->vertex(ccw(i))->point();
-      Point q0 = f->vertex(i)->point();
-      
-      FT p0p0 = p0.x()*p0.x() + p0.y()*p0.y();
-      FT p1p1 = p1.x()*p1.x() + p1.y()*p1.y();
-      FT q0q0 = q0.x()*q0.x() + q0.y()*q0.y();
-      
-      Vector_3 v0 = Vector_3(2*p0.x(), 2*p1.x(), 2*q0.x());
-      Vector_3 v1 = Vector_3(2*p0.y(), 2*p1.y(), 2*q0.y());
-      Vector_3 v2 = Vector_3(FT(-1), FT(-1), FT(-1));
-      Vector_3 v = Vector_3(p0p0, p1p1, q0q0);
-      
-      FT x = CGAL::determinant(v, v1, v2);
-      FT y = CGAL::determinant(v0, v, v2);
-      FT z = CGAL::determinant(v0, v1, v);
-      
-      FT t = CGAL::determinant(v0, v1, v2);
-      
-      Point_3 A = Point_3(x/t, y/t, z/t);
-      
-      Vector_3 norm_p0(2*p0.x(), 2*p0.y(), FT(-1));
-      Vector_3 norm_p1(2*p1.x(), 2*p1.y(), FT(-1));
-      Vector_3 norm_q0(2*q0.x(), 2*q0.y(), FT(-1));
-      
-      Vector_3 main_direction = CGAL::cross_product(norm_p0, norm_p1);
-      
-      if(main_direction * norm_q0 > 0) {
-        main_direction = -main_direction;
-      }
-      //std::cout << "direction " << main_direction << std::endl;
-      
-      Vector_3 temp = Vector_3(-q0.x(), -q0.y(), 1 - q0q0);
-      assert(temp * norm_q0 < 0);
-      
-      FT k = (1 + A.z())/(2*main_direction.z());
-      if (k < 0) {
-        k = -k;
-      }
-      
-      Point_3 B = Point_3();
-      if(A.z() + main_direction.z() < -1) {
-        B = A + k*main_direction;
-      } else {
-        B = A + main_direction;
-      }
-      
-      Point phiA = Point((2.0*A.x())/(1.0 + A.z()), (2.0*A.y())/(1.0 + A.z()));
-      Point phiB = Point((2.0*B.x())/(1.0 + B.z()), (2.0*B.y())/(1.0 + B.z()));
-      
-      Vector_2 phiAB = Vector_2(phiA, phiB);
-      Vector_2 phiOA = Vector_2(Point(0, 0), phiA);
-      
-      return phiAB*phiOA < 0;
-    }
-    
     // assume the incident faces are "non-hyperbolic"
     bool operator() (const Edge& e) const
     {
@@ -528,8 +465,9 @@ private:
       Point p0 = e.first->vertex(cw(e.second))->point();
       Point p1 = e.first->vertex(ccw(e.second))->point();
       
+      // vertices opposite to p0 and p1
       Point q0 = e.first->vertex(e.second)->point();
-      // neighbor of e.first
+      
       Face_handle f = e.first->neighbor(e.second);
       int ind = f->index(e.first);
       Point q1 = f->vertex(ind);
@@ -590,7 +528,7 @@ private:
       if(Is_hyperbolic()(f) == false) {
         
         info.set_finite_invisible(true);
-        info.set_invisible_edge(find_invisible_edge_2(f));
+        info.set_invisible_edge(find_invisible_edge(f));
         
         return info;
       }
@@ -632,18 +570,6 @@ private:
       }
       
       return 1;
-    }
-    
-    unsigned char find_invisible_edge_2(const Face_handle& f) const
-    {
-      
-      if( Is_hyperbolic()(f, 0) == false ) {
-        return 0;
-      }
-      if( Is_hyperbolic()(f, 1) == false ) {
-        return 1;
-      };
-      return 2;
     }
     
     Mark_face(const Mark_face&);
