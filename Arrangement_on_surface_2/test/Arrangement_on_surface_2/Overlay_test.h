@@ -139,34 +139,62 @@ protected:
      */
     virtual void create_vertex(Vertex_const_handle v1, Vertex_const_handle v2,
                                Vertex_handle v) const
-    { v->set_data(v1->data() + v2->data()); }
+    {
+      std::cout << "v1: " << v1->point() << ", " << v1->data() << std::endl;
+      std::cout << "v2: " << v2->point() << ", " << v2->data() << std::endl;
+      v->set_data(v1->data() + v2->data());
+    }
 
     /*! Create a vertex v that mathces v1, which lies of the edge e2. */
     virtual void create_vertex(Vertex_const_handle  v1, Halfedge_const_handle e2,
                                Vertex_handle v) const
-    { v->set_data(v1->data() + e2->data()); }
+    {
+      std::cout << "v1: " << v1->point() << ", " << v1->data() << std::endl;
+      std::cout << "e2: " << e2->source()->point() << ", " << e2->data()
+                << std::endl;
+      v->set_data(v1->data() + e2->data());
+    }
     
     /*! Create a vertex v that mathces v1, contained in the face f2. */
     virtual void create_vertex(Vertex_const_handle v1, Face_const_handle f2,
                                Vertex_handle v) const
-    { v->set_data(v1->data() + f2->data());}
+    {
+      std::cout << "v1: " << v1->point() << ", " << v1->data() << std::endl;
+      std::cout << "f2: " << f2->data() << std::endl;
+      v->set_data(v1->data() + f2->data());
+    }
 
     /*! Create a vertex v that mathces v2, which lies of the edge e1. */
     virtual void create_vertex(Halfedge_const_handle e1, Vertex_const_handle v2,
                                Vertex_handle v) const
-    { v->set_data(e1->data() + v2->data()); }
+    {
+      std::cout << "e1: " << e1->source()->point() << ", " << e1->data()
+                << std::endl;
+      std::cout << "v2: " << v2->point() << ", " << v2->data() << std::endl;
+      v->set_data(e1->data() + v2->data());
+    }
 
     /*! Create a vertex v that mathces v2, contained in the face f1. */
     virtual void create_vertex(Face_const_handle f1, Vertex_const_handle v2,
                                Vertex_handle v) const
-    { v->set_data(f1->data() + v2->data()); }
+    {
+      std::cout << "f1: " << f1->data() << std::endl;
+      std::cout << "v2: " << v2->point() << ", " << v2->data() << std::endl;
+      v->set_data(f1->data() + v2->data());
+    }
 
     /*! Create a vertex v that mathces the intersection of the edges e1 and e2.
      */
     virtual void create_vertex(Halfedge_const_handle e1,
                                Halfedge_const_handle e2,
                                Vertex_handle v) const
-    { v->set_data(e1->data() + e2->data()); }
+    {
+      std::cout << "e1: " << e1->source()->point() << ", " << e1->data()
+                << std::endl;
+      std::cout << "e2: " << e2->source()->point() << ", " << e2->data()
+                << std::endl;
+      v->set_data(e1->data() + e2->data());
+    }
 
     /*! Create an edge e that matches the overlap between e1 and e2. */
     virtual void create_edge(Halfedge_const_handle e1, Halfedge_const_handle e2,
@@ -405,14 +433,16 @@ construct_arr(Arrangement& arr,
   }
 #else
   // Insert the curves aggregately.
-  if (m_verbose_level > 2) std::cout << "inserting x-monotone curves" << " ... ";
+  if (m_verbose_level > 2) std::cout << "inserting x-monotone curves"
+                                     << " ... ";
   std::cout.flush();
   CGAL::insert(arr, xcurves_begin, xcurves_end);
   if (m_verbose_level > 2) std::cout << "inserted" << std::endl;
 #endif
   
   // Insert the isolated points.
-  if (m_verbose_level > 2) std::cout << "inserting isolated vertices" << " ... ";
+  if (m_verbose_level > 2) std::cout << "inserting isolated vertices"
+                                     << " ... ";
   Point_iterator pit;
   for (pit = points_begin; pit != points_end; ++pit) {
     Point_2 point(*pit);
@@ -438,7 +468,8 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init_arr(Arrangement& arr)
 
     // Outer ccb
     Outer_ccb_iterator ocit;
-    for (ocit = fit->outer_ccbs_begin(); ocit != fit->outer_ccbs_end(); ++ocit) {
+    for (ocit = fit->outer_ccbs_begin(); ocit != fit->outer_ccbs_end(); ++ocit)
+    {
       Ccb_halfedge_circulator curr = *ocit;
       do count += curr->data() * 2;
       while (++curr != *ocit);
@@ -446,7 +477,8 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init_arr(Arrangement& arr)
     
     // Inner ccbs
     Inner_ccb_iterator icit;
-    for (icit = fit->inner_ccbs_begin(); icit != fit->inner_ccbs_end(); ++icit) {
+    for (icit = fit->inner_ccbs_begin(); icit != fit->inner_ccbs_end(); ++icit)
+    {
       Ccb_halfedge_circulator curr = *icit;
       do count += curr->data();
       while (++curr != *icit);
@@ -470,6 +502,13 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init_arr(Arrangement& arr)
 
   if (m_verbose_level > 0) std::cout << "Arrangement Input: " << std::endl;
   
+  if (m_verbose_level > 2) {
+    std::cout << "Vertex Data: " << std::endl;
+    Vertex_iterator vit;
+    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+      std::cout << vit->point() << " " << vit->data() << std::endl;
+  }
+
   if (m_verbose_level > 1) {
     std::cout << "Halfedge Data: " << std::endl;
     Halfedge_iterator heit;
