@@ -35,7 +35,9 @@ int main()
   vector<Point_2> pts(nb);
   
   // file name
-  string file_name("points.cin");
+  string file_name;
+  cout << "Please, enter a file name:" << std::endl;
+  cin >> file_name;
   
   // output file
   ofstream output;
