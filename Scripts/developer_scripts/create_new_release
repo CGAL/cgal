@@ -19,6 +19,7 @@ DO_IT=""                 # Real mode (svn tag, copy to HTTP server), versus loca
 DO_NOT_TAG=""            # If set, do not call svn tag
 DO_TAG=""                # If set, svn tag is called anyway
 NO_TESTUITE=""           # If set, the LATEST file is not updated
+NO_SCM=""                # If set, git pull is not called.
 SOURCES_DIR="$PWD/trunk" # SVN working copy directory, default is "$PWD/trunk"
 VERBOSE=""               # Verbose mode (displays log to standard err)
 SCM=svn
@@ -38,6 +39,7 @@ usage() {
     echo '  --do-not-tag     : when used with --do-it, the tag is not created.'
     echo '  --tag            : when used without --do-it, the tag is created, but files'
     echo '                     are not published'
+    echo '  --no-scm-update  : do not "svn update" or "git pull"'
     echo '  --no-testsuite   : when used with --do-it, the tag is made, files are published,'
     echo '                     but the LATEST file is not updated.'
     echo '  --verbose        : print log to standard output, instead of the log file'
@@ -63,6 +65,10 @@ while [ $1 ]; do
         ;;
         --do-it)
             DO_IT="y"
+            shift; continue
+        ;;
+        --no-scm-update)
+            NO_SCM="y";
             shift; continue
         ;;
         --tag)
@@ -155,18 +161,18 @@ cd ${TMPDIR} || return
 # Update the working copy
 if [ -d "${SOURCES_DIR}/.git" ]; then
     pushd "${SOURCES_DIR}"
-    git pull
+    [ -z "$NO_SCM" ] && git pull
     CGAL_GIT_HASH=`git rev-parse HEAD`
     CGAL_SVN_REVISION=99999
     popd
     SCM=git
 else
-    svn update ${SOURCES_DIR}
+    [ -z "$NO_SCM" ] && svn update ${SOURCES_DIR}
     CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`
     CGAL_GIT_HASH=n/a
 fi
 if [ "$SCM" = "svn" -a -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
-    svn update ${CANDIDATES_DIR}
+    [ -z "$NO_SCM" ] && svn update ${CANDIDATES_DIR}
 fi
 
 # Set the major/minor/bugfix release numbers
