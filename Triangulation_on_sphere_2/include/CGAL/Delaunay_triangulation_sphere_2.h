@@ -314,8 +314,15 @@ int insert(InputIterator first, InputIterator last)
 	spatial_sort (points.begin(), points.end());
 		
 	Face_handle hint;
-	for (typename std::vector<Point>::const_iterator p = points.begin(),end = points.end(); p != end; ++p)
-		insert(*p, hint);
+	Vertex_handle v;
+	for (typename std::vector<Point>::const_iterator p = points.begin(),end = points.end(); p != end; ++p){
+		//insert(*p, hint);
+		//insert (*p, hint)->face();
+		v = insert (*p, hint);
+		if( v != Vertex_handle())
+			hint = v->face();
+	}
+		
 	return number_of_vertices() - n;
 }
 
@@ -753,8 +760,7 @@ insert_outside_affine_hull_regular(const Point& p)
 	for( vi = vertices_begin(); vi != vertices_end(); vi++){
 		if(compare_xyz(vi->point(), w->point())==SMALLER){
 				w=vi;
-			show_vertex(w);
-		}
+			}
 	}
 				
 	Vertex_handle v = this->_tds.insert_dim_up( w, conform);

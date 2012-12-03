@@ -10,6 +10,18 @@
 #include <CGAL/squared_distance_3.h>
 #include <cmath>
 
+
+//convex Hull
+#include <CGAL/algorithm.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/convex_hull_3.h>
+#include <vector>
+
+
+
+
+
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
 //typedef CGAL::Projection_sphere_traits_3<K>							Gt;
@@ -23,8 +35,19 @@ typedef RTOS::Solid_faces_iterator						Solid_faces_iterator;
 typedef RTOS::All_edges_iterator						All_edges_iterator;
 typedef RTOS::Locate_type                                 Locate_type;
 typedef RTOS::Edge                                               Edge;
-                              
 
+
+typedef CGAL::Polyhedron_3<K>                     Polyhedron_3;
+typedef K::Segment_3							Segment_3;
+
+struct Plane_from_facet {
+	Polyhedron_3::Plane_3 operator()(Polyhedron_3::Facet& f) {
+		Polyhedron_3::Halfedge_handle h = f.halfedge();
+		return Polyhedron_3::Plane_3( h->vertex()->point(),
+									 h->next()->vertex()->point(),
+									 h->opposite()->vertex()->point());
+	}
+};
 
 
 
@@ -85,12 +108,12 @@ bool are_equal(RTOS triA, RTOS triB){
 int main(){
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =10;
+	nu_of_pts =1000000;
 	radius=6000000;
 	double minDist = radius * pow (2, -25);
 	double minDist2 = pow(minDist, 2);
 	int invalid = 0;
-	CGAL::Timer t;
+	CGAL::Timer t1, t2;
 
 	
 			
@@ -114,24 +137,43 @@ int main(){
 	}
 	
 	
-	t.start();
+	t1.start();
 	//====insert new points============
 		rtos.insert(points.begin(),points.end());
 	//spatial_sort (points.begin(), points.end());
 	
-	t.stop();
-	std::cout<<"running time"<< t.time()<<std::endl;
+	t1.stop();
+	std::cout<<"running time triangulation sphere"<< t1.time()<<std::endl;
 
 	std::cout<<"number of vertices    "<<rtos.number_of_vertices()<<std::endl;
 
 	K::Point_3 q = K::Point_3(500,0,0);
 	rtos.insert(q);
-	rtos.is_valid();
+	//rtos.is_valid();
 	
+	
+	/*
+		
+	// define polyhedron to hold convex hull
+	Polyhedron_3 poly;
+	
+	// compute convex hull of non-collinear points
+	t2.start();
+	CGAL::convex_hull_3(points.begin(), points.end(), poly);
+	t2.stop();
+	std::cout<<"running time convex hull t2  "<< t2.time()<<std::endl;
+	
+	std::cout << "The convex hull contains " << poly.size_of_vertices() << " vertices" << std::endl;
+	
+	// assign a plane equation to each polyhedron facet using functor Plane_from_facet
+	std::transform( poly.facets_begin(), poly.facets_end(), poly.planes_begin(),Plane_from_facet());
+	*/
+	
+	/*
 	All_edges_iterator eit=rtos.all_edges_begin();
 	
 	for ( ; eit !=rtos.all_edges_end(); ++eit) 
-		CGAL::Object o = rtos.dual(eit);
+		CGAL::Object o = rtos.dual(eit);*/
 	
 	/*
 	
