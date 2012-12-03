@@ -69,8 +69,9 @@ public slots:
   
     RTOS tr;
     tr.insert(lst_pt.begin(),lst_pt.end());
+	 
 	  
-	  
+	 	  
 
     Point_3 center(0,0,0);
     double scale=1;
@@ -80,7 +81,7 @@ public slots:
   
     // Instantiate the viewer.
     viewer->open(lst_pt.begin(),lst_pt.end(),tr,center,scale);
-  }
+	    }
 
   void on_action_Quit_triggered() {
     close();

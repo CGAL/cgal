@@ -49,15 +49,8 @@ public:
   typedef typename Base::Solid_faces_iterator     Solid_faces_iterator;
   typedef typename Base::Solid_edges_iterator     Solid_edges_iterator;
   typedef typename Base::Contour_edges_iterator Contour_edges_iterator;
-	
-	
-	
   typedef typename Base::Face::Vertex_list        Vertex_list;
   typedef typename Vertex_list::iterator          Vertex_list_iterator;
-
-
-
-	
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::cw;
@@ -97,9 +90,11 @@ public:
   using Base::circumcenter;
 	
  #endif
+	
+	
 class Perturbation_order {
- const Self *t;
-public:
+  const Self *t;
+  public:
 	Perturbation_order(const Self *tr)
 	: t(tr) {}
 		
@@ -108,14 +103,14 @@ public:
      }
 };
 
- public: 
+public: 
   //CONSTRUCTORS
   Delaunay_triangulation_sphere_2(const Gt& gt=Gt()) 
 	:Base(Gt(gt))
   {}
 
 
-  //CHECK
+//CHECK
   bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid_face(Face_handle fh,bool verbose = false, int level = 0 ) const;
   bool is_valid_vertex(Vertex_handle fh, bool verbose = false, int level = 0) const;
@@ -153,7 +148,7 @@ public:
   Vertex_handle insert_first(const Point &p);
   Vertex_handle insert_second(const Point &p);
   Vertex_handle insert_outside_affine_hull_regular(const Point& p);
-  Vertex_handle insert_in_plane_triangulation(const Point &p, Locate_type lt, Face_handle loc);
+  Vertex_handle insert_cocircular(const Point &p, Locate_type lt, Face_handle loc);
 	
   bool test_conflict(const Point  &p, Face_handle fh) const;
   bool update_ghost_faces(Vertex_handle v=Vertex_handle(), bool first = false);
@@ -174,7 +169,7 @@ public:
   Oriented_side power_test(const Face_handle &f,const Point &p, bool perturb = false) const;
   Oriented_side power_test(const Face_handle& f, int i, const Point &p) const;	
 	
-//dual
+  //dual
 	Point dual (Face_handle f) const;
 	Object dual(const Edge &e) const ;
 	Object dual(const Edge_circulator& ec) const;
@@ -199,7 +194,8 @@ Stream &write_vertices(Stream &out,std::vector<Vertex_handle> &t)
   }
 	
 template <class Stream>
- Stream &write_triangulation_to_off_2(Stream &out,Stream &out2){
+ Stream &write_triangulation_to_off_2(Stream &out,Stream &out2)
+{
 
     // Points of triangulation
  for (All_faces_iterator it = this->_tds.face_iterator_base_begin(); it !=all_faces_end(); it++) {  
@@ -232,7 +228,8 @@ template <class Stream>
 }
 
 template <class Stream>
-Stream &write_triangulation_to_off(Stream &out) {
+Stream &write_triangulation_to_off(Stream &out) 
+{
   std::vector<Face_handle> faces;
 
   // Points of triangulation
@@ -249,7 +246,8 @@ Stream &write_triangulation_to_off(Stream &out) {
 }
  
 template <class Stream >
-Stream &write_face_to_off(Stream &out,Face_handle f){
+Stream &write_face_to_off(Stream &out,Face_handle f)
+{
 
       for (int i=0 ; i<3 ; i++) {
 	Point p = f->vertex(i)->point();
@@ -264,7 +262,8 @@ Stream &write_face_to_off(Stream &out,Face_handle f){
 
 
 template <class Stream,class FaceIt>
-Stream &write_faces_to_off(Stream &out,FaceIt face_begin, FaceIt face_end){
+Stream &write_faces_to_off(Stream &out,FaceIt face_begin, FaceIt face_end)
+{
 
     FaceIt fit=face_begin;
     for(;fit!=face_end;++fit)
@@ -281,7 +280,8 @@ Stream &write_faces_to_off(Stream &out,FaceIt face_begin, FaceIt face_end){
 }
 
 template <class Stream,class FaceIt>
-Stream &write_edges_to_off(Stream &out,FaceIt face_begin, FaceIt face_end){
+Stream &write_edges_to_off(Stream &out,FaceIt face_begin, FaceIt face_end)
+{
 
     FaceIt fit=face_begin;
     for(;fit!=face_end;++fit)
@@ -311,7 +311,6 @@ int insert(InputIterator first, InputIterator last)
 		
 	std::vector<Point> points (first, last);
 	std::random_shuffle (points.begin(), points.end());
-		//~ spatial_sort (points.begin(), points.end(), geom_traits());
 	spatial_sort (points.begin(), points.end());
 		
 	Face_handle hint;
@@ -323,36 +322,35 @@ int insert(InputIterator first, InputIterator last)
 template <class OutputItFaces, class OutputItBoundaryEdges> 
 std::pair<OutputItFaces,OutputItBoundaryEdges>
 get_conflicts_and_boundary(const Point  &p, OutputItFaces fit, OutputItBoundaryEdges eit, 
-						   Face_handle fh ) const {
-		CGAL_triangulation_precondition( dimension() == 2);
-	    CGAL_triangulation_precondition(test_conflict(p,fh));  
+						   Face_handle fh ) const
+{
+	CGAL_triangulation_precondition( dimension() == 2);
+	CGAL_triangulation_precondition(test_conflict(p,fh));  
 		
-		*fit++ = fh; //put fh in OutputItFaces
-		fh->set_in_conflict_flag(1);
-				std::pair<OutputItFaces,OutputItBoundaryEdges>
-				pit = std::make_pair(fit,eit);
-				pit = propagate_conflicts(p,fh,0,pit);
-				pit = propagate_conflicts(p,fh,1,pit);
-				pit = propagate_conflicts(p,fh,2,pit);
+	*fit++ = fh; //put fh in OutputItFaces
+	fh->set_in_conflict_flag(1);
+	std::pair<OutputItFaces,OutputItBoundaryEdges>
+	pit = std::make_pair(fit,eit);
+	pit = propagate_conflicts(p,fh,0,pit);
+	pit = propagate_conflicts(p,fh,1,pit);
+	pit = propagate_conflicts(p,fh,2,pit);
 					
-		return std::make_pair(fit,eit);
-	} 
-	
-	
+	return std::make_pair(fit,eit);
+} 
+
 	
 private:
 template <class OutputItFaces, class OutputItBoundaryEdges> 
 std::pair<OutputItFaces,OutputItBoundaryEdges>
 propagate_conflicts (const Point  &p, Face_handle fh, int i,
-						 std::pair<OutputItFaces,OutputItBoundaryEdges> pit)  const {
-		Face_handle fn = fh->neighbor(i);
-		if (fn->get_in_conflict_flag() ==1){
-			return pit;
-		}
-		
-		if (! test_conflict(p,fn)) {
+						 std::pair<OutputItFaces,OutputItBoundaryEdges> pit)  const 
+{
+	Face_handle fn = fh->neighbor(i);
+	if (fn->get_in_conflict_flag() ==1)
+		return pit;
+	if (! test_conflict(p,fn)) 
 			*(pit.second)++ = Edge(fn, fn->index(fh));
-		} else {
+	else {
 			*(pit.first)++ = fn;
 			fn->set_in_conflict_flag(1);
 			int j = fn->index(fh);
@@ -360,7 +358,7 @@ propagate_conflicts (const Point  &p, Face_handle fh, int i,
 			pit = propagate_conflicts(p,fn,cw(j), pit);
 		}
 		return pit;
-	}
+  }
 
 	
 };
@@ -384,7 +382,7 @@ power_test(const Face_handle& f, int i, const Point &p) const
 												  f->vertex( cw(i))->point(),  p)
             									 == COLLINEAR);
 		
-		return  power_test(f->vertex(ccw(i))->point(), f->vertex( cw(i))->point(), p);
+	return  power_test(f->vertex(ccw(i))->point(), f->vertex( cw(i))->point(), p);
 }
 	
 template < class Gt, class Tds >
@@ -411,63 +409,58 @@ power_test(const Point &p0, const Point &p1, const Point &p2, const Point &p, bo
 		if(coplanar_orientation(p0,p2,p,p1)==ON_NEGATIVE_SIDE)
 			   return ON_NEGATIVE_SIDE;
 			
-			return ON_POSITIVE_SIDE;
-		}
+	  return ON_POSITIVE_SIDE;
+	 }
 				
-		if(points[0] == &p1){
-			if(compare_xyz(p, p1)==SMALLER)
-				return ON_POSITIVE_SIDE;
-			if(coplanar_orientation(p1,p0,p,p2)==ON_NEGATIVE_SIDE)
-				return ON_NEGATIVE_SIDE;
-			if(coplanar_orientation(p1,p2,p,p0)==ON_NEGATIVE_SIDE)
-				return ON_NEGATIVE_SIDE;
-			
+	 if(points[0] == &p1){
+		if(compare_xyz(p, p1)==SMALLER)
 			return ON_POSITIVE_SIDE;
-		}
+		if(coplanar_orientation(p1,p0,p,p2)==ON_NEGATIVE_SIDE)
+			return ON_NEGATIVE_SIDE;
+		if(coplanar_orientation(p1,p2,p,p0)==ON_NEGATIVE_SIDE)
+			return ON_NEGATIVE_SIDE;
+			
+	  return ON_POSITIVE_SIDE;
+	 }
 		
-		if(points[0] == &p2){
-			if(compare_xyz(p, p2)==SMALLER)
-				return ON_POSITIVE_SIDE;
-			if(coplanar_orientation(p2,p1,p,p0)==ON_NEGATIVE_SIDE)
-				return ON_NEGATIVE_SIDE;
-			if(coplanar_orientation(p2,p0,p1,p)==ON_NEGATIVE_SIDE)
-				return ON_NEGATIVE_SIDE;
+	 if(points[0] == &p2){
+		if(compare_xyz(p, p2)==SMALLER)
+	       return ON_POSITIVE_SIDE;
+		if(coplanar_orientation(p2,p1,p,p0)==ON_NEGATIVE_SIDE)
+			return ON_NEGATIVE_SIDE;
+		if(coplanar_orientation(p2,p0,p1,p)==ON_NEGATIVE_SIDE)
+			return ON_NEGATIVE_SIDE;
 			
-			return ON_POSITIVE_SIDE;		
-		}
+	 return ON_POSITIVE_SIDE;		
+	}
 				
-		CGAL_assertion(false);
-		return ON_NEGATIVE_SIDE;
+ CGAL_assertion(false);
+ return ON_NEGATIVE_SIDE;
 								
-	}
+}
+			
 	
-						
-	
-	template < class Gt, class Tds >
-	inline
-	Oriented_side
-	Delaunay_triangulation_sphere_2<Gt,Tds>::
-	power_test(const Point &p, const Point &q, const Point &r) const
-	{
-		if(number_of_vertices()==2)
-			if(orientation_1(p,q)==COLLINEAR)
-				return ON_POSITIVE_SIDE;
-		return geom_traits().power_test_2_object()(p,q,r);
-	}
-	
-	
-
+template < class Gt, class Tds >
+inline
+Oriented_side
+Delaunay_triangulation_sphere_2<Gt,Tds>::
+power_test(const Point &p, const Point &q, const Point &r) const
+{
+	if(number_of_vertices()==2)
+		if(orientation_1(p,q)==COLLINEAR)
+			return ON_POSITIVE_SIDE;
+	return geom_traits().power_test_2_object()(p,q,r);
+}
 //----------------------------------------------------------------------CHECK---------------------------------------------------------------//
 template <class Gt, class Tds>
 bool
 Delaunay_triangulation_sphere_2<Gt, Tds>::
 is_plane()const{
-	bool plane = true;
+  bool plane = true;
+ if(dimension()==2)
+	return false;
 	
-	if(dimension()==2)
-		return false;
-	
-	if(number_of_vertices() > 3){
+ if(number_of_vertices() > 3){
 	All_vertices_iterator it1 = vertices_begin(),
 	it2(it1), it3(it1), it4(it1);
 	++it2;
@@ -480,13 +473,12 @@ is_plane()const{
 		 if (!plane)
 			 return plane;
 	 }return true;
-	}
+    }
 	
-	
-	if(number_of_vertices()==3)
+  if(number_of_vertices()==3)
 		return true;
 		
-	return plane;
+  return plane;
 }
 	
 template < class Gt, class Tds >
@@ -519,10 +511,9 @@ is_valid(bool verbose, int level ) const //int level
    case 2 :
     for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); it++) {
       Orientation s = orientation(it->vertex(0)->point(),  it->vertex(1)->point(), it->vertex(2)->point());
-	  //result = result && ( s == LEFT_TURN || it->is_ghost());	
-		result = result && (s != NEGATIVE || it->is_ghost());
-	CGAL_triangulation_assertion(result);
-	}
+	  result = result && (s != NEGATIVE || it->is_ghost());
+	  CGAL_triangulation_assertion(result);
+	 }
    
      result = result && (number_of_faces() == 2*(number_of_vertices()) - 4 );
      CGAL_triangulation_assertion( result);
@@ -589,9 +580,6 @@ test_conflict(const Point  &p, Face_handle fh) const
 
 
 //----------------------------------------------------------------------INSERTION-------------------------------------------------------------//
-
-	
-	
 template < class Gt, class Tds >
 typename Delaunay_triangulation_sphere_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_sphere_2<Gt,Tds>::
@@ -612,14 +600,15 @@ insert(const Point &p, Face_handle start)
    }
 	default:
      return insert(p, lt, loc, li);
- }
+  }
 }
 
 	
 template < class Gt, class Tds>
 typename Delaunay_triangulation_sphere_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_sphere_2<Gt, Tds>::
-insert_in_plane_triangulation(const Point &p, Locate_type lt, Face_handle loc){
+insert_cocircular(const Point &p, Locate_type lt, Face_handle loc)
+{
 	
 	CGAL_triangulation_precondition(!test_dim_up(p));
 	CGAL_triangulation_precondition(dimension()==1);
@@ -676,48 +665,42 @@ insert_second(const Point& p)
 template < class Gt, class Tds >
 typename Delaunay_triangulation_sphere_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_sphere_2<Gt,Tds>::
-insert(const Point &p, Locate_type lt, Face_handle loc, int li) {
-		
-	Vertex_handle v;
-	
-	switch (dimension()){
-		case -2 :
-			return insert_first(p);
-		
-		case -1:
-			return insert_second(p);
-				
-		case 0:
-			return insert_outside_affine_hull_regular(p);
-				
-		
-		case 1:{
-		  if(test_dim_up(p)){
-			Face_handle f=all_edges_begin()->first;
-			Vertex_handle v1=f->vertex(0);
-			Vertex_handle v2=f->vertex(1);
-			Vertex_handle v3=f->neighbor(0)->vertex(1);
-			return insert_outside_affine_hull_regular(p);
-			} 
-		   else 
-			return insert_in_plane_triangulation(p,lt,loc);	
-		}
-			
-		case 2:{
-			std::vector<Face_handle> faces;
-			std::vector<Edge> edges;
-			faces.reserve(32);
-			edges.reserve(32);
-									
-			get_conflicts_and_boundary(p, std::back_inserter(faces), std::back_inserter(edges), loc);
-			v =this->_tds.star_hole(edges.begin(), edges.end());
-			v->set_point(p);
-			delete_faces(faces.begin(), faces.end());
+insert(const Point &p, Locate_type lt, Face_handle loc, int li)
+{
+ Vertex_handle v;
+ switch (dimension()){
+	case -2 :
+		return insert_first(p);
+	case -1:
+		return insert_second(p);
+	case 0:
+		return insert_outside_affine_hull_regular(p);
+	case 1:{
+  	  if(test_dim_up(p)){
+		Face_handle f=all_edges_begin()->first;
+		Vertex_handle v1=f->vertex(0);
+		Vertex_handle v2=f->vertex(1);
+		Vertex_handle v3=f->neighbor(0)->vertex(1);
+		return insert_outside_affine_hull_regular(p);
+       } 
+	   else 
+		return insert_cocircular(p,lt,loc);	
+	}
+	case 2:{
+		std::vector<Face_handle> faces;
+		std::vector<Edge> edges;
+		faces.reserve(32);
+		edges.reserve(32);
+						
+		get_conflicts_and_boundary(p, std::back_inserter(faces), std::back_inserter(edges), loc);
+		v =this->_tds.star_hole(edges.begin(), edges.end());
+		v->set_point(p);
+		delete_faces(faces.begin(), faces.end());
 							
-			if( lt != FACE )
-				update_ghost_faces(v);
+		if( lt != FACE )
+			update_ghost_faces(v);
 												
-			return v;		
+		return v;		
 	      }
 	}
 	CGAL_assertion(false);
@@ -772,12 +755,8 @@ insert_outside_affine_hull_regular(const Point& p)
 				w=vi;
 			show_vertex(w);
 		}
-		
-		
 	}
-	
-		 
-			
+				
 	Vertex_handle v = this->_tds.insert_dim_up( w, conform);
 	v->set_point(p);
 	this->_ghost=all_faces_begin();
@@ -793,13 +772,13 @@ bool
 Delaunay_triangulation_sphere_2<Gt,Tds>::
 update_ghost_faces(Vertex_handle v, bool first)
 {
-	bool neg_found=false;
+  bool neg_found=false;
   if(dimension()==1){
 	 All_edges_iterator eit=all_edges_begin();
-	  for (; eit!=all_edges_end(); eit++){
-       Face_handle f=eit->first;
-       Face_handle fn=f->neighbor(0);
-       Point q=fn->vertex(1)->point();
+	 for (; eit!=all_edges_end(); eit++){
+        Face_handle f=eit->first;
+        Face_handle fn=f->neighbor(0);
+        Point q=fn->vertex(1)->point();
 		 if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q)){
 	        f->ghost()=true;
 		    neg_found = true;
@@ -810,7 +789,7 @@ update_ghost_faces(Vertex_handle v, bool first)
 	}
   else{//dimension==2
 	if (first){ //first time dimension 2
-		 All_faces_iterator fi = all_faces_begin();
+	   All_faces_iterator fi = all_faces_begin();
 		for(;fi!=all_faces_end();fi++){
 			if(orientation(fi)!=POSITIVE){
 				fi->ghost()=true;
@@ -934,7 +913,8 @@ test_dim_down(Vertex_handle v)
 template <class Gt, class Tds >
 bool
 Delaunay_triangulation_sphere_2<Gt,Tds>::
-test_dim_up(const Point &p) const{
+test_dim_up(const Point &p) const
+{
 	Face_handle f=all_edges_begin()->first;
 	Vertex_handle v1=f->vertex(0);
 	Vertex_handle v2=f->vertex(1);
@@ -1099,7 +1079,8 @@ template<class Gt, class Tds>
 inline
 typename Delaunay_triangulation_sphere_2<Gt, Tds>::	Point
 Delaunay_triangulation_sphere_2<Gt, Tds>::
-dual (Face_handle f)const {
+dual (Face_handle f)const 
+{
 	CGAL_triangulation_precondition(this->_tds.is_face(f));
 	CGAL_triangulation_precondition (this->dimension()==2);
 	return circumcenter(f);
@@ -1133,11 +1114,6 @@ dual(const All_edges_iterator& ei) const
 	return dual(*ei);
 }
 	
-
-
-
-
-
 } //namespace CGAL 
 
 #endif // CGAL_Delaunay_triangulation_sphere_2_H
