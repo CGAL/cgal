@@ -51,7 +51,7 @@ DEF SNAP Snapshot {
   quality 98
   sequence FALSE
   dirName "."
-  fileName "test02"
+  fileName "test05"
 }
 
 Transform {
