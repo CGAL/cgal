@@ -25,6 +25,8 @@
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterizer_traits_3.h>
 
+/// \file Circular_border_parameterizer_3.h
+
 namespace CGAL {
 
 

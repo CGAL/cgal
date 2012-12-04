@@ -28,6 +28,8 @@
 #include <cfloat>
 #include <climits>
 
+/// \file Two_vertices_parameterizer_3.h
+
 namespace CGAL {
 
 

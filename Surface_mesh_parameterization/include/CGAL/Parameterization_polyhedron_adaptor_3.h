@@ -32,6 +32,8 @@
 
 #include <list>
 
+/// \file Parameterization_polyhedron_adaptor_3.h
+
 namespace CGAL {
 
 

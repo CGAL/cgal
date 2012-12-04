@@ -24,6 +24,8 @@
 #include <list>
 #include <vector>
 
+/// \file Parameterization_mesh_feature_extractor.h
+
 namespace CGAL {
 
 

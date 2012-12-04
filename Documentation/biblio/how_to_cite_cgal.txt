@@ -3,13 +3,13 @@
 /*!
 \page how_to_cite_cgal Acknowledging CGAL
 
-%CGAL is implemented for the most part by researchers. The academic
-world evaluates and rewards researchers for a good part by the
-analysis of the number of published papers and the number of citations
-of their papers, which measures their impact. In order to make the
-%CGAL project attractive for researchers to contribute their work
-(which allows users to benefit from new contributions), we are pushing
-a model where the %CGAL manual chapters are considered like
+\details %CGAL is implemented for the most part by researchers. The
+academic world evaluates and rewards researchers for a good part by
+the analysis of the number of published papers and the number of
+citations of their papers, which measures their impact. In order to
+make the %CGAL project attractive for researchers to contribute their
+work (which allows users to benefit from new contributions), we are
+pushing a model where the %CGAL manual chapters are considered like
 publications, and can be cited in articles as such.
 
 We therefore kindly ask users to cite %CGAL as appropriately as
@@ -38,7 +38,7 @@ If you want to refer to %CGAL manual, please cite the appropriate
 <!-- This document was automatically generated with bibtex2html 1.97
      (see http://www.lri.fr/~filliatr/bibtex2html/),
      with the following command:
-     bibtex2html -nodoc manual-4.1.bib  -->
+     /usr/bin/bibtex2html -nodoc manual-4.2.bib  -->
 
 
 <table>
@@ -50,9 +50,9 @@ If you want to refer to %CGAL manual, please cite the appropriate
 <td class="bibtexitem">
 The CGAL Project.
  <em>CGAL User and Reference Manual</em>.
- CGAL Editorial Board, 4.1 edition, 2012.
+ CGAL Editorial Board, 4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:eb-12b">bib</a>&nbsp;| 
-<a href="packages.html">.html</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html">.html</a>&nbsp;]
 
 </td>
 </tr>
@@ -66,9 +66,9 @@ The CGAL Project.
 Michael Hemmer.
  Algebraic foundations.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:h-af-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgAlgebraicFoundationsSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:AlgebraicFoundations">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -79,13 +79,13 @@ Michael Hemmer.
 [<a name="cgal:bht-ak-12b">3</a>]
 </td>
 <td class="bibtexitem">
-Eric Berberich, Michael Hemmer, Sylvain Lazard, Luis&nbsp;Pe naranda, and Monique
-  Teillaud.
+Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis
+  Pe&ntilde;aranda, and Monique Teillaud.
  Algebraic kernel.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:bht-ak-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgAlgebraicKerneldSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:AlgebraicKerneld">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -99,9 +99,9 @@ Eric Berberich, Michael Hemmer, Sylvain Lazard, Luis&nbsp;Pe naranda, and Moniqu
 Michael Hemmer, Susan Hert, Lutz Kettner, Sylvain Pion, and Stefan Schirra.
  Number types.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:hhkps-nt-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgNumberTypesSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:NumberTypes">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -115,9 +115,9 @@ Michael Hemmer, Susan Hert, Lutz Kettner, Sylvain Pion, and Stefan Schirra.
 Michael Hemmer.
  Polynomial.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:h-p-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgPolynomialSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Polynomial">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -131,9 +131,9 @@ Michael Hemmer.
 Michael Hemmer.
  Modular arithmetic.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:h-ma-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgModularArithmeticSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:ModularArithmetic">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -148,9 +148,9 @@ Herv&eacute; Br&ouml;nnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert,
   Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra.
  2D and 3D geometry kernel.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:bfghhkps-lgk23-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgKernel23Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Kernel23">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -164,9 +164,9 @@ Herv&eacute; Br&ouml;nnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert,
 Michael Seel.
  dD geometry kernel.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:s-gkd-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgKernelDSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:KernelD">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -180,9 +180,9 @@ Michael Seel.
 Pedro Machado&nbsp;Manh aes&nbsp;de Castro, Sylvain Pion, and Monique Teillaud.
  2D circular geometry kernel.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:cpt-cgk2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgCircularKernel2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:CircularKernel2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -197,9 +197,9 @@ Pedro Machado&nbsp;Manh aes&nbsp;de Castro, Fr&eacute;d&eacute;ric Cazals, S&eac
   Loriot, and Monique Teillaud.
  3D spherical geometry kernel.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:cclt-sgk3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSphericalKernel3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SphericalKernel3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -213,9 +213,9 @@ Pedro Machado&nbsp;Manh aes&nbsp;de Castro, Fr&eacute;d&eacute;ric Cazals, S&eac
 Susan Hert and Stefan Schirra.
  2D convex hulls and extreme points.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:hs-chep2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgConvexHull2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:ConvexHull2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -229,9 +229,9 @@ Susan Hert and Stefan Schirra.
 Susan Hert and Stefan Schirra.
  3D convex hulls.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:hs-ch3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgConvexHull3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:ConvexHull3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -245,9 +245,9 @@ Susan Hert and Stefan Schirra.
 Geert-Jan Giezeman and Wieger Wesselink.
  2D polygons.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:gw-p2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgPolygon2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Polygon2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -261,9 +261,9 @@ Geert-Jan Giezeman and Wieger Wesselink.
 Susan Hert.
  2D polygon partitioning.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:h-pp2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgPolygonPartitioning2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:PolygonPartitioning2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -277,9 +277,9 @@ Susan Hert.
 Susan Hert and Michael Seel.
  dD convex hulls and Delaunay triangulations.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:hs-chdt3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgConvexHullDSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:ConvexHullD">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -293,9 +293,9 @@ Susan Hert and Michael Seel.
 Lutz Kettner.
  3D polyhedral surfaces.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:k-ps-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgPolyhedronSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Polyhedron">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -309,9 +309,9 @@ Lutz Kettner.
 Lutz Kettner.
  Halfedge data structures.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:k-hds-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgHDSSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:HDS">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -325,9 +325,9 @@ Lutz Kettner.
 Guillaume Damiand.
  Combinatorial maps.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:d-cm-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgCombinatorialMapsSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:CombinatorialMaps">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -341,9 +341,9 @@ Guillaume Damiand.
 Guillaume Damiand.
  Linear cell complex.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:d-lcc-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgLinearCellComplexSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:LinearCellComplex">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -357,9 +357,9 @@ Guillaume Damiand.
 Efi Fogel, Ron Wein, Baruch Zukerman, and Dan Halperin.
  2D regularized Boolean set-operations.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:fwzh-rbso2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgBooleanSetOperations2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:BooleanSetOperations2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -373,9 +373,9 @@ Efi Fogel, Ron Wein, Baruch Zukerman, and Dan Halperin.
 Ron Wein.
  2D Minkowski sums.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:w-rms2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgMinkowskiSum2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:MinkowskiSum2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -389,9 +389,9 @@ Ron Wein.
 Michael Seel.
  2D Boolean operations on Nef polygons.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:s-bonp2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgNef2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Nef2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -405,9 +405,9 @@ Michael Seel.
 Peter Hachenberger and Lutz Kettner.
  2D Boolean operations on Nef polygons embedded on the sphere.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:hk-bonpes2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgNefS2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:NefS2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -421,9 +421,9 @@ Peter Hachenberger and Lutz Kettner.
 Peter Hachenberger and Lutz Kettner.
  3D Boolean operations on Nef polyhedra.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:hk-bonp3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgNef3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Nef3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -437,9 +437,9 @@ Peter Hachenberger and Lutz Kettner.
 Peter Hachenberger.
  Convex decomposition of polyhedra.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:h-emspe-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgConvexDecomposition3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:ConvexDecomposition3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -453,9 +453,9 @@ Peter Hachenberger.
 Peter Hachenberger.
  3D Minkowski sum of polyhedra.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:h-msp3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgMinkowskiSum3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:MinkowskiSum3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -469,9 +469,9 @@ Peter Hachenberger.
 Fernando Cacciola.
  2D straight skeleton and polygon offsetting.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:c-sspo2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgStraightSkeleton2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:StraightSkeleton2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -486,9 +486,9 @@ Ron Wein, Eric Berberich, Efi Fogel, Dan Halperin, Michael Hemmer, Oren
   Salzman, and Baruch Zukerman.
  2D arrangements.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:wfzh-a2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgArrangement2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Arrangement2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -502,9 +502,9 @@ Ron Wein, Eric Berberich, Efi Fogel, Dan Halperin, Michael Hemmer, Oren
 Baruch Zukerman, Ron Wein, and Efi Fogel.
  2D intersection of curves.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:wfz-ic2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgIntersectionOfCurves2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:IntersectionOfCurves2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -518,9 +518,9 @@ Baruch Zukerman, Ron Wein, and Efi Fogel.
 Eli Packer.
  2D snap rounding.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:p-sr2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSnapRounding2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SnapRounding2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -534,9 +534,9 @@ Eli Packer.
 Ron Wein.
  2D envelopes.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:w-e2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgEnvelope2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Envelope2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -550,9 +550,9 @@ Ron Wein.
 Michal Meyerovitch, Ron Wein, and Baruch Zukerman.
  3D envelopes.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:mwz-e3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgEnvelope3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Envelope3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -566,9 +566,9 @@ Michal Meyerovitch, Ron Wein, and Baruch Zukerman.
 Mariette Yvinec.
  2D triangulations.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:y-t2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgTriangulation2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Triangulation2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -582,9 +582,9 @@ Mariette Yvinec.
 Sylvain Pion and Mariette Yvinec.
  2D triangulation data structure.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:py-tds2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgTDS2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:TDS2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -598,9 +598,9 @@ Sylvain Pion and Mariette Yvinec.
 Sylvain Pion and Monique Teillaud.
  3D triangulations.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:pt-t3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgTriangulation3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Triangulation3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -614,9 +614,9 @@ Sylvain Pion and Monique Teillaud.
 Sylvain Pion and Monique Teillaud.
  3D triangulation data structure.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:pt-tds3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgTDS3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:TDS3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -630,9 +630,9 @@ Sylvain Pion and Monique Teillaud.
 Manuel Caroli and Monique Teillaud.
  3D periodic triangulations.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:ct-pt3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgPeriodic3Triangulation3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Periodic3Triangulation3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -646,9 +646,9 @@ Manuel Caroli and Monique Teillaud.
 Tran Kai&nbsp;Frank Da.
  2D alpha shapes.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:d-as2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgAlphaShape2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:AlphaShape2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -662,9 +662,9 @@ Tran Kai&nbsp;Frank Da.
 Tran Kai&nbsp;Frank Da and Mariette Yvinec.
  3D alpha shapes.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:dy-as3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgAlphaShapes3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:AlphaShapes3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -678,9 +678,9 @@ Tran Kai&nbsp;Frank Da and Mariette Yvinec.
 Menelaos Karavelas.
  2D segment Delaunay graphs.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:k-sdg2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSegmentDelaunayGraph2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SegmentDelaunayGraph2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -694,9 +694,9 @@ Menelaos Karavelas.
 Menelaos Karavelas and Mariette Yvinec.
  2D Apollonius graphs (Delaunay graphs of disks).
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:ky-ag2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgApolloniusGraph2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:ApolloniusGraph2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -710,9 +710,9 @@ Menelaos Karavelas and Mariette Yvinec.
 Menelaos Karavelas.
  2D Voronoi diagram adaptor.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:k-vda2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgVoronoiDiagramAdaptor2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:VoronoiDiagramAdaptor2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -726,9 +726,9 @@ Menelaos Karavelas.
 Laurent Rineau.
  2D conforming triangulations and meshes.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:r-ctm2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgMesh2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Mesh2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -742,9 +742,9 @@ Laurent Rineau.
 Laurent Rineau and Mariette Yvinec.
  3D surface mesh generation.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:ry-smg-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSurfaceMesher3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SurfaceMesher3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -758,9 +758,9 @@ Laurent Rineau and Mariette Yvinec.
 Pierre Alliez, Laurent Saboret, and Gael Guennebaud.
  Surface reconstruction from point sets.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:asg-srps-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSurfaceReconstructionFromPointSetsSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SurfaceReconstructionFromPointSets">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -774,9 +774,9 @@ Pierre Alliez, Laurent Saboret, and Gael Guennebaud.
 Nico Kruithof.
  3D skin surface meshing.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:k-ssm3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSkinSurface3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SkinSurface3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -791,9 +791,9 @@ Pierre Alliez, Laurent Rineau, St&eacute;phane Tayeb, Jane Tournois, and Mariett
   Yvinec.
  3D mesh generation.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:rty-m3-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgMesh_3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Mesh_3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -807,9 +807,9 @@ Pierre Alliez, Laurent Rineau, St&eacute;phane Tayeb, Jane Tournois, and Mariett
 Le-Jeng&nbsp;Andy Shiue.
  3D surface subdivision methods.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:s-ssm2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSurfaceSubdivisionMethods3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SurfaceSubdivisionMethods3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -823,9 +823,9 @@ Le-Jeng&nbsp;Andy Shiue.
 Fernando Cacciola.
  Triangulated surface mesh simplification.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:c-tsms-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSurfaceMeshSimplificationSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SurfaceMeshSimplification">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -839,9 +839,9 @@ Fernando Cacciola.
 Laurent Saboret, Pierre Alliez, and Bruno L&eacute;vy.
  Planar parameterization of triangulated surface meshes.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:sal-pptsm2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSurfaceParameterizationSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SurfaceParameterization">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -852,12 +852,12 @@ Laurent Saboret, Pierre Alliez, and Bruno L&eacute;vy.
 [<a name="cgal:b-ss2-12b">51</a>]
 </td>
 <td class="bibtexitem">
-Matthias Bäsken.
+Matthias B&auml;sken.
  2D range and neighbor search.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:b-ss2-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgPointSet2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:PointSet2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -871,9 +871,9 @@ Matthias Bäsken.
 Gabriele Neyer.
  dD range and segment trees.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:n-rstd-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgRangeSegmentTreesDSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:RangeSegmentTreesD">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -887,9 +887,9 @@ Gabriele Neyer.
 Andreas Fabri.
  Interval skip list.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:f-isl-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgIntervalSkipListSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:IntervalSkipList">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -903,9 +903,9 @@ Andreas Fabri.
 Hans Tangelder and Andreas Fabri.
  dD spatial searching.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:tf-ssd-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSpatialSearchingDSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SpatialSearchingD">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -919,9 +919,9 @@ Hans Tangelder and Andreas Fabri.
 Lutz Kettner, Andreas Meyer, and Afra Zomorodian.
  Intersecting sequences of dD iso-oriented boxes.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:kmz-isiobd-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgBoxIntersectionDSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:BoxIntersectionD">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -933,12 +933,12 @@ Lutz Kettner, Andreas Meyer, and Afra Zomorodian.
 </td>
 <td class="bibtexitem">
 Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven
-  Schönherr.
+  Sch&ouml;nherr.
  Bounding volumes.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:fghhs-bv-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgBoundingVolumesSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:BoundingVolumes">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -952,9 +952,9 @@ Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven
 Kaspar Fischer, Bernd G&auml;rtner, Sven Sch&ouml;nherr, and Frans Wessendorp.
  Linear and quadratic programming solver.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:fgsw-lqps-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgQPSolverSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:QPSolver">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -968,9 +968,9 @@ Kaspar Fischer, Bernd G&auml;rtner, Sven Sch&ouml;nherr, and Frans Wessendorp.
 Michael Hoffmann and Eli Packer.
  Inscribed areas.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:hp-ia-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgInscribedAreasSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:InscribedAreas">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -985,9 +985,9 @@ Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven
   Sch&ouml;nherr.
  Optimal distances.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:fghhs-od-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgOptimalDistancesSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:OptimalDistances">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1001,9 +1001,9 @@ Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven
 Julia Fl&ouml;totto.
  2D and surface function interpolation.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:f-i-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgInterpolation2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Interpolation2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1017,9 +1017,9 @@ Julia Fl&ouml;totto.
 Pierre Alliez, Sylvain Pion, and Ankit Gupta.
  Principal component analysis.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:ap-pcad-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgPrincipalComponentAnalysisDSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:PrincipalComponentAnalysisD">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1033,9 +1033,9 @@ Pierre Alliez, Sylvain Pion, and Ankit Gupta.
 Abdelkrim Mebarki.
  2D placement of streamlines.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:m-ps-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgPlacementOfStreamlines2Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:PlacementOfStreamlines2">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1049,9 +1049,9 @@ Abdelkrim Mebarki.
 Marc Pouget and Fr&eacute;d&eacute;ric Cazals.
  Approximation of ridges and umbilics on triangulated surface meshes.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:cp-arutsm-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgRidges_3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Ridges_3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1066,9 +1066,9 @@ Marc Pouget and Fr&eacute;d&eacute;ric Cazals.
  Estimation of local differential properties of point-sampled
   surfaces.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:pc-eldp-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgJet_fitting_3Summary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Jet_fitting_3">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1082,9 +1082,9 @@ Marc Pouget and Fr&eacute;d&eacute;ric Cazals.
 Pierre Alliez, Laurent Saboret, and Nader Salman.
  Point set processing.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:ass-psp-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgPointSetProcessingSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:PointSetProcessing">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1098,9 +1098,9 @@ Pierre Alliez, Laurent Saboret, and Nader Salman.
 Daniel Russel.
  Kinetic data structures.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:r-kds-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgKdsSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Kds">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1114,9 +1114,9 @@ Daniel Russel.
 Daniel Russel.
  Kinetic framework.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:r-kdsf-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgKdsFrameworkSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:KdsFramework">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1130,9 +1130,9 @@ Daniel Russel.
 Andreas Fabri, Fernando Cacciola, and Ron Wein.
  CGAL and the Boost graph library.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:cfw-cbgl-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgBGLSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:BGL">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1146,9 +1146,9 @@ Andreas Fabri, Fernando Cacciola, and Ron Wein.
 Andreas Fabri and Laurent Saboret.
  CGAL and Boost property maps.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:fs-cbpm-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgProperty_mapSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Property_map">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1162,9 +1162,9 @@ Andreas Fabri and Laurent Saboret.
 Christophe Delage and Olivier Devillers.
  Spatial sorting.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:dd-ss-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgSpatialSortingSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:SpatialSorting">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1178,9 +1178,9 @@ Christophe Delage and Olivier Devillers.
 Pierre Alliez, St&eacute;phane Tayeb, and Camille Wormser.
  3d fast intersection and distance computation (aabb tree).
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:atw-aabb-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgAABB_treeSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:AABB_tree">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1194,9 +1194,9 @@ Pierre Alliez, St&eacute;phane Tayeb, and Camille Wormser.
 Michael Hoffmann.
  Monotone and sorted matrix search.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:h-msms-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgMatrixSearchSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:MatrixSearch">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1210,9 +1210,9 @@ Michael Hoffmann.
 Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein.
  Stl extensions for CGAL.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:hkpw-se-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgStlExtensionSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:StlExtension">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1226,9 +1226,9 @@ Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein.
 Olivier Devillers, Lutz Kettner, Michael Seel, and Mariette Yvinec.
  Handles and circulators.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:dksy-hc-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgHandlesAndCirculatorsSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:HandlesAndCirculators">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1240,12 +1240,12 @@ Olivier Devillers, Lutz Kettner, Michael Seel, and Mariette Yvinec.
 </td>
 <td class="bibtexitem">
 Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven
-  Schönherr.
+  Sch&ouml;nherr.
  Geometric object generators.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:dhhk-gog-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgGeneratorsSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Generators">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1259,9 +1259,9 @@ Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven
 Lutz Kettner, Sylvain Pion, and Michael Seel.
  Profiling tools timers, hash map, union-find, modifiers.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:kps-pthum-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgProfilingToolsSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:ProfilingTools">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1275,9 +1275,9 @@ Lutz Kettner, Sylvain Pion, and Michael Seel.
 Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner.
  Io streams.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:fgk-ios-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgIOstreamsSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:IOstreams">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1291,9 +1291,9 @@ Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner.
 Andreas Fabri and Sylvain Pion.
  Geomview.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:fp-gv-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgGeomviewSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:Geomview">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1307,9 +1307,9 @@ Andreas Fabri and Sylvain Pion.
 Andreas Fabri and Laurent Rineau.
  CGAL and the qt graphics view framework.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:fr-cqgvf-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgGraphicsViewSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:GraphicsView">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -1323,9 +1323,9 @@ Andreas Fabri and Laurent Rineau.
 S&eacute;bastien Loriot and Sylvain Pion.
  CGAL ipelets.
  In <em>CGAL User and Reference Manual</em>. CGAL Editorial Board,
-  4.1 edition, 2012.
+  4.2 edition, 2013.
 [&nbsp;<a href="how_to_cite.html#cgal:lp-gi-12b">bib</a>&nbsp;| 
-<a href="packages.html#PkgCGALIpeletsSummary">http</a>&nbsp;]
+<a href="http://www.cgal.org/Manual/4.2/doc_html/cgal_manual/packages.html#Pkg:CGALIpelets">http</a>&nbsp;]
 
 </td>
 </tr>

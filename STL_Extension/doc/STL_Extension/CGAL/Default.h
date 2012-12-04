@@ -49,8 +49,11 @@ public:
 A nested template providing a typedef `type` which equals `Type` if 
 `Parameter` is `Default`, and `Parameter` otherwise. 
 */ 
-typedef Hidden_type template <typename Parameter, typename Type> struct Get;; 
-/// @} 
+template <typename Parameter, typename Type>
+struct struct Get {
+  typedef Hidden_type type;
+};
+/// @}
 
 
 }; /* end Default */

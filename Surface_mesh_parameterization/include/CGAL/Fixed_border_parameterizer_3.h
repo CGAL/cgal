@@ -33,6 +33,8 @@
 
 #include <iostream>
 
+/// \file Fixed_border_parameterizer_3.h
+
 namespace CGAL {
 
 

@@ -3,6 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgSnapRounding2
 
+<span style="display:none">\f$ \def\A{{\cal A}} \f$ \f$ \def\S{{\cal S}} \f$</span>
+
 The first two parameters denote the first and past-the-end iterators 
 of the input segments. The third parameter is a reference to a 
 container of the output polylines. Since a polyline is composed of a 
