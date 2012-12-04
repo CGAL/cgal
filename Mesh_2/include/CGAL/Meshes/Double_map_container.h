@@ -39,10 +39,12 @@ namespace CGAL {
     {
     public:
       typedef Elt Element;
+      typedef Double_map<Element, Quality, LessElt> DoubleMap;
 
     protected:
       // --- protected datas ---
-      Double_map<Element, Quality, LessElt> m;
+//      typedef Double_map<Element, Quality, LessElt> DoubleMap;
+      DoubleMap m;
 
     public:
       bool no_longer_element_to_refine_impl() const
@@ -82,7 +84,7 @@ namespace CGAL {
         m.erase(e);
       }
 
-      typename Double_map<Element, Quality>::size_type
+      typename DoubleMap::size_type
       size() const
       {
 	return m.size();
