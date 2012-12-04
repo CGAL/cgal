@@ -13,6 +13,7 @@ class SCENE_ITEM_EXPORT Scene_item_with_display_list
 {
 public:
   Scene_item_with_display_list();
+  Scene_item_with_display_list(GLuint list_id, GLuint edges_list_id = 0);
 //   Scene_item_with_display_list(const Scene_item_with_display_list&);
   ~Scene_item_with_display_list();
 
