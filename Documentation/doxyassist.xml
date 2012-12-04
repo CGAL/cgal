@@ -13,7 +13,7 @@ namespace for the XML file to be processed properly.  -->
       <namespace>CGAL</namespace>
       <name>CGAL</name>
       <!-- The version number of the documentation -->
-      <version>4.1</version>
+      <version>4.2</version>
       <versionSpecific>false</versionSpecific>
       <input>./doc</input>
       <output>./output</output>
@@ -1393,7 +1393,7 @@ namespace for the XML file to be processed properly.  -->
     <project>
       <namespace>CGAL</namespace>
       <name>CGAL</name>
-      <version>4.1</version>
+      <version>4.2</version>
       <versionSpecific>false</versionSpecific>
       <input>./doc</input>
       <input>./biblio/how_to_cite_cgal.txt</input>
