@@ -27,6 +27,7 @@ int main ()
   Arrangement_2         arr;
 
   // TODO: Add test with isolated points.
+  // TODO: Test with long chains of sub-polylines
 
   /* Poyline's outline:
    *     

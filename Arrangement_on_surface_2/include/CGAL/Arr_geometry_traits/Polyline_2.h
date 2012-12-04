@@ -126,13 +126,14 @@ public:
   }
 
   /*!
-   * TODO: Mark as deprectaed.
-   * TODO: @Efi: How should this be done?
-   * EFEF: I think you add 'CGAL_DEPRECATED' in front of the decleration:
-   * CGAL_DEPRECATED void push_back (const Point_2 & p)
    * Append a point to the polyline.
+   * TODO: @Efi: According to your mail (c.f. also the comments on the wiki),
+   *             this should *NOT* be deprecated, but shifted to the traits
+   *             class as well. Right? Therefore, it should be kept unchanged
+   *             here, and should only be called through the traits
+   *             class - is this the right way?
    */
-  void push_back (const Point_2 & p)
+  CGAL_DEPRECATED void push_back (const Point_2 & p)
   {
     Point_2 pt = p;
     Point_2 ps = m_segments.back().target();
@@ -140,7 +141,7 @@ public:
   }
 
   /*!
-   * TODO: Code has to be changed for unbounded case
+   * TODO: (for UNBOUNDED case) Code has to be changed for unbounded case
    * Create a bounding-box for the polyline.
    * \return The bounding-box.
    */
@@ -168,159 +169,160 @@ public:
      Point_const_reverse_iterator;
 
   /*! An iterator for the polyline points. */
-  // TODO: Deprecate the point const iterator. Keep the same implementation.
-  // class Point_const_iterator
-  // {
-  // public:
+  CGAL_DEPRECATED class Point_const_iterator
+  {
+  public:
 
-  //   // Type definitions:
-  //   typedef std::bidirectional_iterator_tag     iterator_category;
-  //   typedef Point_2                             value_type;
-  //   typedef std::ptrdiff_t                      difference_type;
-  //   typedef size_t                              size_type;
-  //   typedef const value_type&                   reference;
-  //   typedef const value_type*                   pointer;
+    // Type definitions:
+    typedef std::bidirectional_iterator_tag     iterator_category;
+    typedef Point_2                             value_type;
+    typedef std::ptrdiff_t                      difference_type;
+    typedef size_t                              size_type;
+    typedef const value_type&                   reference;
+    typedef const value_type*                   pointer;
 
-  // private:
+  private:
     
-  //   const _Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
-  //   int   m_num_pts;                            // Its number of points.
-  //   int   m_index;                              // The current point.
+    const _Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
+    int   m_num_pts;                            // Its number of points.
+    int   m_index;                              // The current point.
 
-  //   /*!
-  //    * Private constructor.
-  //    * \param cv The scanned curve.
-  //    * \param index The index of the segment.
-  //    */
-  //   Point_const_iterator (const _Polyline_2<SegmentTraits_>* cvP, int index) :
-  //     m_cvP(cvP),
-  //     m_index(index)
-  //   {
-  //     if (m_cvP == NULL)
-  // 	m_num_pts = 0;
-  //     else
-  // 	m_num_pts =
-  // 	  (m_cvP->size() == 0) ? 0 : static_cast<int>(m_cvP->size() + 1);
-  //   }
+    /*!
+     * Private constructor.
+     * \param cv The scanned curve.
+     * \param index The index of the segment.
+     */
+    Point_const_iterator (const _Polyline_2<SegmentTraits_>* cvP, int index) :
+      m_cvP(cvP),
+      m_index(index)
+    {
+      if (m_cvP == NULL)
+  	m_num_pts = 0;
+      else
+  	m_num_pts =
+  	  (m_cvP->size() == 0) ? 0 : static_cast<int>(m_cvP->size() + 1);
+    }
 
-  // public:
+  public:
 
-  //   /*! Default constructor. */
-  //   Point_const_iterator() :
-  //     m_cvP(NULL),
-  //     m_num_pts(0),
-  //     m_index(-1)
-  //   {}
+    /*! Default constructor. */
+    Point_const_iterator() :
+      m_cvP(NULL),
+      m_num_pts(0),
+      m_index(-1)
+    {}
 
-  //   /*! 
-  //    * Dereference operator.
-  //    * \return The current point.
-  //    */
-  //   const Point_2& operator*() const
-  //   {
-  //     CGAL_assertion(m_cvP != NULL);
-  //     CGAL_assertion(m_index >= 0 && m_index < m_num_pts);
+    /*! 
+     * Dereference operator.
+     * \return The current point.
+     */
+    const Point_2& operator*() const
+    {
+      CGAL_assertion(m_cvP != NULL);
+      CGAL_assertion(m_index >= 0 && m_index < m_num_pts);
       
-  //     if (m_index == 0)
-  //     {
-  //       // First point is the source of the first segment.
-  //       return ((*m_cvP)[0]).source();
-  //     }
-  //     else
-  //     {
-  //       // Return the target of the(i-1)'st segment.
-  // 	return ((*m_cvP)[m_index - 1]).target();
-  //     }
-  //   }
+      if (m_index == 0)
+      {
+        // First point is the source of the first segment.
+        return ((*m_cvP)[0]).source();
+      }
+      else
+      {
+        // Return the target of the(i-1)'st segment.
+  	return ((*m_cvP)[m_index - 1]).target();
+      }
+    }
 
-  //   /*! 
-  //    * Arrow operator.
-  //    * \return A pointer to the current point.
-  //    */
-  //   const Point_2* operator-> () const
-  //   {
-  //     return (&(this->operator* ()));
-  //   }
+    /*! 
+     * Arrow operator.
+     * \return A pointer to the current point.
+     */
+    const Point_2* operator-> () const
+    {
+      return (&(this->operator* ()));
+    }
 
-  //   /*! Increment operators. */
-  //   Point_const_iterator& operator++() 
-  //   {
-  //     if (m_cvP != NULL && m_index < m_num_pts)
-  // 	++m_index;
-  //     return (*this);
-  //   }
+    /*! Increment operators. */
+    Point_const_iterator& operator++() 
+    {
+      if (m_cvP != NULL && m_index < m_num_pts)
+  	++m_index;
+      return (*this);
+    }
 
-  //   Point_const_iterator operator++ (int)
-  //   {
-  //     Point_const_iterator  temp = *this;
-  //     if (m_cvP != NULL && m_index < m_num_pts)
-  // 	++m_index;
-  //     return (temp);
-  //   }
+    Point_const_iterator operator++ (int)
+    {
+      Point_const_iterator  temp = *this;
+      if (m_cvP != NULL && m_index < m_num_pts)
+  	++m_index;
+      return (temp);
+    }
 
-  //   /*! Decrement operators. */
-  //   Point_const_iterator& operator-- ()
-  //   {
-  //     if (m_cvP != NULL && m_index >= 0)
-  // 	--m_index;
-  //     return (*this);
-  //   }
+    /*! Decrement operators. */
+    Point_const_iterator& operator-- ()
+    {
+      if (m_cvP != NULL && m_index >= 0)
+  	--m_index;
+      return (*this);
+    }
 
-  //   Point_const_iterator operator--(int)
-  //   {
-  //     Point_const_iterator  temp = *this;
-  //     if (m_cvP != NULL && m_index >= 0)
-  // 	--m_index;
-  //     return (temp);
-  //   }
+    Point_const_iterator operator--(int)
+    {
+      Point_const_iterator  temp = *this;
+      if (m_cvP != NULL && m_index >= 0)
+  	--m_index;
+      return (temp);
+    }
 
-  //   /*! Equality operators. */
-  //   bool operator==(const Point_const_iterator& it) const
-  //   {
-  //     return (m_cvP == it.m_cvP && m_index == it.m_index);
-  //   }
+    /*! Equality operators. */
+    bool operator==(const Point_const_iterator& it) const
+    {
+      return (m_cvP == it.m_cvP && m_index == it.m_index);
+    }
 
-  //   bool operator!=(const Point_const_iterator& it) const
-  //   {
-  //     return (m_cvP != it.m_cvP || m_index != it.m_index);
-  //   }
+    bool operator!=(const Point_const_iterator& it) const
+    {
+      return (m_cvP != it.m_cvP || m_index != it.m_index);
+    }
 
-  //   friend class _Polyline_2<SegmentTraits_>;
-  // };
+    friend class _Polyline_2<SegmentTraits_>;
+  };
 
-  // TODO: Porperly deprecate the code.
-  /*! Get an iterator for the polyline points. */
-  // Point_const_iterator begin() const
-  // {
-  //   if (size() == 0)
-  //     return (Point_const_iterator (NULL, -1));
-  //   else
-  //     return (Point_const_iterator (this, 0));
-  // }
+  /* ! Get an iterator for the polyline points.*/
+  CGAL_DEPRECATED Point_const_iterator begin() const
+  {
+    if (size() == 0)
+      return (Point_const_iterator (NULL, -1));
+    else
+      return (Point_const_iterator (this, 0));
+  }
 
-  /*! Get a past-the-end iterator for the polyline points. */
-  // Point_const_iterator end() const
-  // {
-  //   if (size() == 0)
-  //     return (Point_const_iterator (NULL, -1));
-  //   else
-  //     return (Point_const_iterator (this, size() + 1));
-  // }
+  /*! Get a past-the-end iterator for the polyline points.*/
+  CGAL_DEPRECATED Point_const_iterator end() const
+  {
+    if (size() == 0)
+      return (Point_const_iterator (NULL, -1));
+    else
+      return (Point_const_iterator (this, size() + 1));
+  }
 
   /*! Get a reverse iterator for the polyline points. */
-  // Point_const_reverse_iterator rbegin() const
-  // {
-  //   return (Point_const_reverse_iterator (end()));
-  // }
+  CGAL_DEPRECATED Point_const_reverse_iterator rbegin() const
+  {
+    return (Point_const_reverse_iterator (end()));
+  }
 
   /*! Get a reverse past-the-end iterator for the polyline points. */
-  // Point_const_reverse_iterator rend() const
-  // {
-  //   return (Point_const_reverse_iterator (begin()));
-  // }
+  CGAL_DEPRECATED Point_const_reverse_iterator rend() const
+  {
+    return (Point_const_reverse_iterator (begin()));
+  }
 
-  typedef typename Segments_container::const_iterator Segment_const_iterator;
-  typedef typename std::reverse_iterator<Segment_const_iterator>
+  
+  // TODO: @Efi - Is this the right way to deprecate these typedefs?
+  typedef CGAL_DEPRECATED typename Segments_container::const_iterator 
+    Segment_const_iterator;
+  typedef CGAL_DEPRECATED typename std::reverse_iterator<Segment_const_iterator>
     Segment_const_reverse_iterator;
 
   /*! Get an iterator for the polyline's segments. */
@@ -341,15 +343,19 @@ public:
 
   /*!
    * Get the number of points contained in the polyline.
-   * TODO: Deprecate the function
-   * TODO: @Efi: It should be, in the future, added to the traits class, right?
-   *             See the comment on the wiki page.
+   * TODO: @Efi:  If I get it right, this *SHOULD* be deprecated here, since
+   *              generically speaking, you cannot return the number of vertices
+   *              without using the (segment) traits class. However, it is of
+   *              interest to know how many vertices your polyline has, and thus
+   *              this function should become a functor in the traits class.
+   *              See the comment on the wiki page.
+   *              Summary: Should I add a functor in the traits class?
    * \return The number of points.
    */
-  // unsigned int points() const
-  // {
-  //   return (size() == 0) ? 0 : size() + 1;
-  // }
+  CGAL_DEPRECATED unsigned int points() const
+  {
+    return (size() == 0) ? 0 : size() + 1;
+  }
 
   /*!
    * Get the number of segments that comprise the poyline.
@@ -406,8 +412,6 @@ public:
    * Constructs from a range of segments.
    * This constructor is expected to be called only from the
    * traits class, after the input was verified there.
-   * TODO: @Efi is this the right statement?
-   * EFEF: looks good to me, but see next comment
    */
   template <typename InputIterator>
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
@@ -428,10 +432,14 @@ public:
    * EFEF: I think that construction from points should be deprecated for
    *       x-monotone polyline. For (non x-monotome) polyline it can stay,
    *       as there are no tests to apply.
+   * Dror: So this is how you want it to be, in particular, keep the other
+   *       implementation (for constuction from segments) as it is, and
+   *       mark this as deprecated?
    */
   template <typename InputIterator>
-  void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
-                                     const Point_2& /* */)
+  CGAL_DEPRECATED void construct_x_monotone_polyline
+  (InputIterator begin, InputIterator end,
+   const Point_2& /* */)
   {
     // Make sure the range of points contains at least two points.
     Segment_traits_2 seg_traits;
@@ -486,6 +494,14 @@ public:
    * EFEF: since we have begin_segments(), end_segments(), we might as well
    *       have push_back_segment() and number_of_segments(). These functions
    *       should not perform any tests.
+   * Dror: But there is a precondition to test, namely that one of the new
+   *       segments' end points equals to the last vertex of the existing
+   *       polyline. Isn't it bad practice, to have on the one hand
+   *       a function with explicit preconditions (and important ones) and
+   *       on the other not verify that they are met? Therefore, at least,
+   *       push_back_segment() should be implemented in the traits class. Is it
+   *       correct? For the sake of unity, number_of_segments() should be
+   *       implemented in the traits class as well.
    */
   inline void push_back (const Segment_2& seg)
   {
@@ -559,6 +575,10 @@ private:
    * EFEF: Yes, I meant import. Well, you can have only one importer.
    *       If we want to add something that reads points, we need it to be a
    *       function (with a name different than '>>', e.g., read_points()).
+   * Dror: Must we have an importer? As we cannot test the correctness of the
+   *       input, shouldn't this be implemented in the traits class as well?
+   *       Obviously, in this case, it won't be operator>> but a functor named
+   *       something like read_segments() and/or read_points().
    */
   template <typename SegmentTraits>
   std::istream& operator>> (std::istream& is,

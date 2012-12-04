@@ -962,7 +962,6 @@ public:
   { return m_seg_traits.approximate_2_object(); }
 
   class Construct_curve_2 {
-    // TODO: Document this class in the wiki page.
   protected:
     /*! The segment traits (in case it has state) */
     const Segment_traits_2* m_seg_traits;
@@ -1042,12 +1041,6 @@ public:
 
 	 while (next != end) 
 	   {
-	     // TODO: @Efi: Is this the right test? Many geometric tests, but
-	     //             but I don't see a way to make it nicer. Plus,
-	     //             in any case, this is only a precondition test, so
-	     //             maybe it is not that bad.
-             // EFEF: Looks good to me.
-
 	     CGAL_precondition( comp_xy (min_v(*curr),min_v(*next)) == EQUAL ||
 				comp_xy (min_v(*curr),max_v(*next)) == EQUAL ||
 				comp_xy (max_v(*curr),min_v(*next)) == EQUAL ||
@@ -1095,8 +1088,11 @@ public:
      * TODO: @Efi: Should this be implemented?
      * EFEF: Mo. The following could be implemented:
      * X_monotone_curve_2 operator()(const Segment_2& seg) { ... }
+     * Dror: Sorry, I don't understand what you suggest to do here...
+     *       Can you explain? Is the '&' the only difference?
      * TODO: If yes:Use this implementations in the Make_x_monotone_2,
-     *       when there's only one segment.  */
+     *       when there's only one segment.
+     */
     // X_monotone_curve_2 operator()(const Segment_2 seg) const
     // {
     // }
@@ -1117,6 +1113,8 @@ public:
       //            until it is being deprecated. What do you think?
       // EFEF: Why? Only the direct constructor in _X_monotone_polyline_2
       //       should be deprecated.
+      // Dror: In this case, given the deprecation in the Polyline_2
+      //       this discussion can be closed, isn't it?
       return X_monotone_curve_2(begin, end);      
     }
 
