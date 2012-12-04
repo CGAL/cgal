@@ -36,7 +36,7 @@ namespace CGAL{ namespace internal {
 
   template <class K>
   typename Intersection_traits<K, typename K::Triangle_2, typename K::Iso_rectangle_2>::result_type
-  intersection(const typename K::Triangle_2 &t, const typename K::Iso_rectangle_2 &r, const K&)
+  intersection(const typename K::Triangle_2 &t, const typename K::Iso_rectangle_2 &r, const K& kk)
   {
     typedef typename K::FT FT;
     typedef typename K::Segment_2 Segment;
@@ -149,8 +149,8 @@ namespace CGAL{ namespace internal {
               if(position[next][j]) // if it's a second point direction
               {
                 //test for intersection
-                typename Intersection_traits<R, Segment, Segment>::result_type
-                  v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
+                typename Intersection_traits<K, Segment, Segment>::result_type
+                  v = internal::intersection(Segment(p[index], p[next]), s[j], kk);
                 if(v) {
                   if(const Point *p_obj = intersect_get<Point>(v))
                 {
@@ -169,8 +169,8 @@ namespace CGAL{ namespace internal {
             if(position[index][j]) //watch only the first point directions
             {
               //test for intersection
-              typename Intersection_traits<R, Segment, Segment>::result_type
-                v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
+              typename Intersection_traits<K, Segment, Segment>::result_type
+                v = internal::intersection(Segment(p[index], p[next]), s[j], kk);
               if(v) {
                 if(const Point *p_obj = intersect_get<Point>(v))
               {
@@ -205,7 +205,7 @@ namespace CGAL{ namespace internal {
                     if(position[next][j])
                     {
                       //test for intersection
-                        typename Intersection_traits<R, Segment, Segment>
+                        typename Intersection_traits<K, Segment, Segment>
                           ::result_type
                           v = internal::intersection(Segment(p[index], p[next]), s[j]);
                         if(v) {
@@ -270,19 +270,19 @@ namespace CGAL{ namespace internal {
       
       switch(result.size()){
         case 0:
-          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>();
+          return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>();
         case 1:
-          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(result[0]);
+          return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>(result[0]);
         case 2:
-          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(Segment(result[0], result[1]));
+          return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>(Segment(result[0], result[1]));
         case 3:
-          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(K::Triangle_2(result[0], result[1], result[2]));
+          return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>(K::Triangle_2(result[0], result[1], result[2]));
         default:
-          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(result);
+          return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>(result);
       }
 
     }//end if(intersection)
-    return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>();
+    return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>();
   }//end intersection
   
   template <class K>
