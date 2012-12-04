@@ -639,7 +639,7 @@ namespace for the XML file to be processed properly.  -->
           <bool name="HIDE_UNDOC_CLASSES">true</bool>
           
           <list name="TAGFILES" append="true">
-            <item>./tags/Nef_3.tag=../../3D-Boolean-Operations-on-Nef-Polyhedra/html</item>
+            <item>./tags/Nef_3.tag=../../CGAL.CGAL.3D-Boolean-Operations-on-Nef-Polyhedra/html</item>
           </list>
         </doxygen>
       </project>
@@ -708,7 +708,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Envelope_3/examples</string>
           <string name="IMAGE_PATH">../Envelope_3/doc/Envelope_3/fig</string>
           <list name="TAGFILES" append="true">
-            <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.Arrangement_on_surface_2/html</item>
+            <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
           </list>
         </doxygen>
       </project>
