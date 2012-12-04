@@ -98,7 +98,7 @@ namespace for the XML file to be processed properly.  -->
         <input>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization</input>
         <input>../Surface_mesh_parameterization/include</input>
         <doxygen>
-          <!-- <string name="STRIP_FROM_PATH">../Surface_mesh_parameterization/doc/Surface_mesh_parameterization/</string> -->
+          <string name="STRIP_FROM_PATH">../Surface_mesh_parameterization/include</string>
           <string name="STRIP_FROM_INC_PATH">../Surface_mesh_parameterization/include</string>
           <string name="GENERATE_TAGFILE">./tags/Surface_mesh_parameterization.tag</string>
           <string name="IMAGE_PATH">../Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig</string>
@@ -121,7 +121,7 @@ namespace for the XML file to be processed properly.  -->
         <input>../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3</input>
         <input>../Surface_reconstruction_points_3/include</input>
         <doxygen>
-          <string name="STRIP_FROM_PATH">../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/</string>
+          <string name="STRIP_FROM_PATH">../Surface_reconstruction_points_3/include</string>
           <string name="STRIP_FROM_INC_PATH">../Surface_reconstruction_points_3/include/</string>
           <string name="GENERATE_TAGFILE">./tags/Surface_reconstruction_points_3.tag</string>
           <string name="IMAGE_PATH">../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig</string>
@@ -663,6 +663,7 @@ namespace for the XML file to be processed properly.  -->
         <name>dD Range and Segment Trees</name>
         <input>../SearchStructures/doc/SearchStructures</input>
         <doxygen>
+          <string name="STRIP_FROM_PATH">../SearchStructures/doc/SearchStructures/</string>
           <string name="STRIP_FROM_INC_PATH">../SearchStructures/doc/SearchStructures/</string>
           <string name="GENERATE_TAGFILE">./tags/SearchStructures.tag</string>
           <string name="EXAMPLE_PATH">../SearchStructures/examples</string>
@@ -674,6 +675,7 @@ namespace for the XML file to be processed properly.  -->
         <name>Interval Skip List</name>
         <input>../Interval_skip_list/doc/Interval_skip_list</input>
         <doxygen>
+          <string name="STRIP_FROM_PATH">../Interval_skip_list/doc/Interval_skip_list/</string>
           <string name="STRIP_FROM_INC_PATH">../Interval_skip_list/doc/Interval_skip_list/</string>
           <string name="GENERATE_TAGFILE">./tags/Interval_skip_list.tag</string>
           <string name="EXAMPLE_PATH">../Interval_skip_list/examples</string>
@@ -688,6 +690,7 @@ namespace for the XML file to be processed properly.  -->
         <name>2D Envelopes</name>
         <input>../Envelope_2/doc/Envelope_2</input>
         <doxygen>
+          <string name="STRIP_FROM_PATH">../Envelope_2/doc/Envelope_2/</string>
           <string name="STRIP_FROM_INC_PATH">../Envelope_2/doc/Envelope_2/</string>
           <string name="GENERATE_TAGFILE">./tags/Envelope_2.tag</string>
           <string name="EXAMPLE_PATH">../Envelope_2/examples</string>
@@ -717,6 +720,7 @@ namespace for the XML file to be processed properly.  -->
         <name>2D Minkowski Sums</name>
         <input>../Minkowski_sum_2/doc/Minkowski_sum_2</input>
         <doxygen>
+          <string name="STRIP_FROM_PATH">../Minkowski_sum_2/doc/Minkowski_sum_2/</string>
           <string name="STRIP_FROM_INC_PATH">../Minkowski_sum_2/doc/Minkowski_sum_2/</string>
           <string name="GENERATE_TAGFILE">./tags/Minkowski_sum_2.tag</string>
           <string name="EXAMPLE_PATH">../Minkowski_sum_2/examples</string>
@@ -796,6 +800,7 @@ namespace for the XML file to be processed properly.  -->
         <name>dD Spatial Searching</name>
         <input>../Spatial_searching/doc/Spatial_searching</input>
         <doxygen>
+          <string name="STRIP_FROM_PATH">../Spatial_searching/doc/Spatial_searching/</string>
           <string name="STRIP_FROM_INC_PATH">../Spatial_searching/doc/Spatial_searching/</string>
           <string name="GENERATE_TAGFILE">./tags/Spatial_searching.tag</string>
           <string name="EXAMPLE_PATH">../Spatial_searching/examples</string>
@@ -829,6 +834,7 @@ namespace for the XML file to be processed properly.  -->
         <name>Intersecting Sequences of dD Iso-oriented Boxes</name>
         <input>../Box_intersection_d/doc/Box_intersection_d</input>
         <doxygen>
+          <string name="STRIP_FROM_PATH">../Box_intersection_d/doc/Box_intersection_d/</string>
           <string name="STRIP_FROM_INC_PATH">../Box_intersection_d/doc/Box_intersection_d/</string>
           <string name="GENERATE_TAGFILE">./tags/Box_intersection_d.tag</string>
           <string name="EXAMPLE_PATH">../Box_intersection_d/examples</string>
@@ -1331,8 +1337,8 @@ namespace for the XML file to be processed properly.  -->
         <name>Kinetic Framework</name>
         <input>../Kinetic_data_structures/doc/Kinetic_framework</input>
         <doxygen>
-          <string name="STRIP_FROM_PATH">../Kinetic_data_structures/doc/Kinetic_framework/</string>
-          <string name="STRIP_FROM_INC_PATH">../Kinetic_data_structures/doc/Kinetic_framework/</string>
+          <string name="STRIP_FROM_PATH">../Kinetic_data_structures/doc/Kinetic_framework</string>
+          <string name="STRIP_FROM_INC_PATH">../Kinetic_data_structures/doc/Kinetic_framework</string>
           <string name="GENERATE_TAGFILE">./tags/Kinetic_framework.tag</string>
           <string name="IMAGE_PATH">../Kinetic_data_structures/doc/Kinetic_framework/fig</string>
           <string name="EXAMPLE_PATH">../Kinetic_data_structures/examples/Kinetic_framework</string>
