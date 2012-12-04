@@ -1009,7 +1009,7 @@ after_insertion_handle_incident_facet(Facet& facet)
   {
     return;
   }
-
+  facet = canonical_facet(facet);
   treat_new_facet(facet);
 }
 
