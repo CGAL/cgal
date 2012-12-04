@@ -29,6 +29,8 @@
 #include <climits>
 #include <vector>
 
+/// \file Square_border_parameterizer_3.h
+
 namespace CGAL {
 
 

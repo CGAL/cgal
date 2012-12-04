@@ -25,6 +25,8 @@
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 
+/// \file Parameterizer_traits_3.h
+
 namespace CGAL {
 
 

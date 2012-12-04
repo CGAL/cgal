@@ -32,6 +32,8 @@
 
 #include <iostream>
 
+/// \file LSCM_parameterizer_3.h
+
 namespace CGAL {
 
 

@@ -23,6 +23,8 @@
 
 #include <CGAL/Mean_value_coordinates_parameterizer_3.h>
 
+/// \file parameterize.h
+
 namespace CGAL {
 
 

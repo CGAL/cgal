@@ -25,6 +25,8 @@
 #include <CGAL/Fixed_border_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 
+/// \file Discrete_authalic_parameterizer_3.h
+
 namespace CGAL {
 
 

@@ -34,6 +34,8 @@
 
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 
+/// \file Parameterization_mesh_patch_3.h
+
 namespace CGAL {
 
 
