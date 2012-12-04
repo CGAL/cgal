@@ -288,12 +288,26 @@ public:
   virtual bool less_than(const WorkItem &) const = 0;
 };
 
+struct CompareTwoWorkItems
+{
+  bool operator()(const WorkItem *p1, const WorkItem *p2) const
+  {
+    return p1->less_than(*p2);
+  }
+};
+
+/*
+ * ==============
+ * class MeshRefinementWorkItem
+ * Concrete class for a piece of work in the refinement process.
+ * ==============
+ */
 template<typename Func, typename Quality>
-class ConcreteWorkItem
+class MeshRefinementWorkItem
   : public WorkItem
 {
 public:
-  ConcreteWorkItem(const Func& func, const Quality &quality)
+  MeshRefinementWorkItem(const Func& func, const Quality &quality)
     : m_func(func), m_index(-1), m_quality(quality)
   {}
 
@@ -317,14 +331,14 @@ public:
   {
     /*try
     {
-      const ConcreteWorkItem& other_cwi = dynamic_cast<const ConcreteWorkItem<Func,Quality>&>(other);
+      const MeshRefinementWorkItem& other_cwi = dynamic_cast<const MeshRefinementWorkItem<Func,Quality>&>(other);
       return m_quality < other_cwi.m_quality;
     }
     catch (const std::bad_cast&)
     {
       return false;
     }*/
-    const ConcreteWorkItem& other_cwi = static_cast<const ConcreteWorkItem<Func,Quality>&>(other);
+    const MeshRefinementWorkItem& other_cwi = static_cast<const MeshRefinementWorkItem<Func,Quality>&>(other);
     return m_quality < other_cwi.m_quality;
   }
 
@@ -334,14 +348,38 @@ private:
   Quality   m_quality;
 };
 
-struct CompareTwoWorkItems
-{
-  bool operator()(const WorkItem *p1, const WorkItem *p2) const
-  {
-    return p1->less_than(*p2);
-  }
-};
 
+
+
+/*
+ * ==============
+ * class SimpleFunctorWorkItem
+ * Concrete class for a work item embedding a simple functor
+ * ==============
+ */
+template<typename Func>
+class SimpleFunctorWorkItem
+  : public WorkItem
+{
+public:
+  SimpleFunctorWorkItem(const Func& func)
+    : m_func(func)
+  {}
+
+  void run() const
+  {
+    m_func();
+    delete this;
+  }
+  
+  // Irrelevant here
+  void set_index(int) {}
+  int get_index() const { return 0; }
+  bool less_than (const WorkItem &other) const { return true; }
+
+private:
+  Func      m_func;
+};
 
 
 /*
@@ -396,6 +434,67 @@ protected:
   Batch m_batch;
 };
 
+
+
+
+/*
+ * ===================
+ * class WorkItemTask
+ * ===================
+ */
+class WorkItemTask
+  : public tbb::task
+{
+public:
+  WorkItemTask(const WorkItem *pwi)
+    : m_pwi(pwi)
+  {
+  }
+
+private:
+  /*override*/inline tbb::task* execute();
+
+  const WorkItem *m_pwi;
+};
+
+
+/*
+ * =======================================
+ * class Simple_worksharing_ds
+ * =======================================
+ */
+class Simple_worksharing_ds
+{
+public:
+  // Constructors
+  Simple_worksharing_ds()
+  {
+  }
+
+  /// Destructor
+  ~Simple_worksharing_ds()
+  {
+  }
+
+  template <typename Func>
+  void enqueue_work(Func f, tbb::task &parent_task) const
+  {
+    WorkItem *p_item = new SimpleFunctorWorkItem<Func>(f);
+    enqueue_task(create_task(p_item, parent_task));
+  }
+  
+protected:
+  
+  WorkItemTask *create_task(const WorkItem *pwi, tbb::task &parent_task) const
+  {
+    return new(tbb::task::allocate_additional_child_of(parent_task)) WorkItemTask(pwi);
+  }
+
+  void enqueue_task(WorkItemTask *t) const
+  {
+    tbb::task::spawn(*t);
+  }
+};
 
 
 
@@ -460,7 +559,7 @@ public:
   template <typename P3, typename Func, typename Quality>
   void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task, const P3 &point)
   {
-    WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
+    WorkItem *p_item = new MeshRefinementWorkItem<Func, Quality>(f, quality);
     int index = m_stats.compute_index(point);
     p_item->set_index(index);
     WorkBatch &wb = m_tls_work_buffers[index].local();
@@ -670,7 +769,7 @@ public:
   template <typename Func, typename Quality>
   void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task)
   {
-    WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
+    WorkItem *p_item = new MeshRefinementWorkItem<Func, Quality>(f, quality);
     WorkBatch &workbuffer = m_tls_work_buffers.local();
     workbuffer.add_work_item(p_item);
     if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)
@@ -778,7 +877,7 @@ public:
     int localization_id,
     tbb::task &parent_task)
   {
-    WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
+    WorkItem *p_item = new MeshRefinementWorkItem<Func, Quality>(f, quality);
 
     // Get work buffer
     WorkBuffers &local_buffers = m_tls_work_buffers.local();
@@ -908,7 +1007,7 @@ public:
     int localization_id,
     tbb::task &parent_task)
   {
-    WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
+    WorkItem *p_item = new MeshRefinementWorkItem<Func, Quality>(f, quality);
 
     // Get work buffer
     WorkBuffer &workbuffer = m_work_buffers[localization_id];
@@ -992,6 +1091,11 @@ inline tbb::task* TokenTask::execute()
   return NULL;
 }
 
+inline tbb::task* WorkItemTask::execute()
+{
+  m_pwi->run();
+  return NULL;
+}
 
 inline tbb::task* WorkBatchTask::execute()
 {
