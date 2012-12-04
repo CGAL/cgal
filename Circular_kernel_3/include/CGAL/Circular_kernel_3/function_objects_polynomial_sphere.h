@@ -38,8 +38,6 @@
 #include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_to_right_spherical_kernel.h>
-#include <CGAL/Object.h>
-
 
 namespace CGAL {
 	
@@ -1098,6 +1096,7 @@ template < class SK > \
     typedef typename SK::Circular_arc_3           Circular_arc_3;
     typedef typename SK::Plane_3                  Plane_3;
     typedef typename SK::Circle_3                 Circle_3;
+    typedef typename SK::Circle_3                 Circular_arc_point_3;
   
   public:
 
@@ -1108,14 +1107,14 @@ template < class SK > \
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B) \
   result_type \
   operator()(const A & c1, const B & c2) const \
-  { std::vector< Object > res; \
+      { std::vector< typename Intersection_traits<SK, A, B>::result_type > res;          \
     typename SK::Intersect_3()(c1,c2,std::back_inserter(res)); \
 	  return res.size() != 0; }
 	
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C) \
   result_type \
   operator()(const A & c1, const B & c2, const C & c3) const \
-  { std::vector< Object > res; \
+      { std::vector< typename ITs<SK>::result_type > res;                         \
     typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res)); \
 	  return res.size() != 0; }
 
@@ -1170,9 +1169,9 @@ template < class SK > \
     
     public:
 
-		typedef typename SK::Linear_kernel::Intersect_3::result_type result_type;
-                                
-    typedef typename SK::Object_3 Object_3;
+    #if CGAL_INTERSECTION_VERSION < 2
+    typedef typename CK::Linear_kernel::Intersect_2::result_type result_type; 
+    #endif
     
     using SK::Linear_kernel::Intersect_3::operator();
 

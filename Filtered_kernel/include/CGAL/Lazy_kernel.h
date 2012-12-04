@@ -33,14 +33,15 @@
 #include <CGAL/Lazy.h>
 
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/identity.hpp>
+
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_cv.hpp>
-
 
 namespace CGAL {
 
 namespace internal {
-
 // SFINAE way to detect result_type typedefs.
 template<typename T>
 class Has_result_type_helper
@@ -93,6 +94,17 @@ struct Standard_pick {
                                                               Lazy_construction<Kernel, AKC, EKC> >::type
   >::type type;
 };
+
+// accessor for result_type, to get a nullary meta function for use in eval_if
+template<typename T>
+struct Get_rs {
+  typedef typename T::result_type type;
+};
+
+template<typename T>
+struct Get_lazy_rs : boost::mpl::eval_if< typename internal::Has_result_type< T >, 
+                                          typename internal::Get_rs< T >,  
+                                          typename boost::mpl::identity< T > > {};
 } // internal
 
 // Exact_kernel = exact kernel that will be made lazy
@@ -206,11 +218,25 @@ public:
   CGAL_Kernel_cons(Intersect_with_iterators_2,
 		   intersect_with_iterators_2_object)
 #else
+  // This does the following: If the Construction has a result_type
+  // member, do the eval_if dance, otherwise we have (hopefully) a
+  // variant result_type. The inner eval_if dance is necessary to
+  // prevent the compiler from trying to instantiate the result_type
+  // if it isn't actually there.  The true branch of the outer most if
+  // evaluates to either Lazy_construction_object,
+  // Lazy_construction_nt or Lazy_construction; depending on the
+  // result_type.
 #define CGAL_Kernel_cons(C, Cf) \
-  typedef typename internal::Standard_pick< internal::Maybe_result_type< internal::Has_result_type< typename Approximate_kernel::C >::value, \
-                                                                         typename Approximate_kernel::C >, \
-                                            Approximate_kernel, Exact_kernel, Kernel, typename Approximate_kernel::C, typename Exact_kernel::C \
-                                            >::type C;                  \
+  typedef typename boost::mpl::if_< internal::Has_result_type< typename Approximate_kernel::C >, \
+                                    typename boost::mpl::if_< boost::is_same< typename internal::Get_lazy_rs< typename Approximate_kernel::C >::type , \
+                                                                              typename Approximate_kernel::FT >, \
+                                                              Lazy_construction_nt< Kernel, typename Approximate_kernel::C, typename Exact_kernel::C >, \
+                                                              typename boost::mpl::if_< boost::is_same< typename internal::Get_lazy_rs< typename Approximate_kernel::C >::type, \
+                                                                                                        typename CGAL::Object >, \
+                                                                                        Lazy_construction_object< Kernel,typename Approximate_kernel::C, typename Exact_kernel::C >, \
+                                                                                        Lazy_construction< Kernel,typename Approximate_kernel::C, typename Exact_kernel::C > >::type \
+                                                              >::type,  \
+                                    Lazy_construction_variant< Kernel, typename Approximate_kernel::C, typename Exact_kernel::C > >::type C; \
   C Cf() const { return C(); }
 
 #endif //CGAL_INTERSECT_WITH_ITERATORS_2

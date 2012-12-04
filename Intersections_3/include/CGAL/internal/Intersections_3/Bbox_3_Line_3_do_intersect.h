@@ -146,21 +146,27 @@ namespace internal {
                          FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
   }
 
+  template <class K>
+  bool do_intersect(const CGAL::Bbox_3& bbox,
+                    const typename K::Line_3& line,
+                    const K&)
+  { return do_intersect(line, bbox, K()); }
+
+
 } // namespace internal
 
-template <class K>
-bool do_intersect(const CGAL::Line_3<K>& line,
-		  const CGAL::Bbox_3& bbox)
-{
-  return typename K::Do_intersect_3()(line, bbox);
+template<typename K>
+bool do_intersect(const CGAL::Bbox_3 a,
+                  const Line_3<K>& b) {
+  return K().do_intersect_3_object()(a, b);
 }
 
-template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-		  const CGAL::Line_3<K>& line)
-{
-  return typename K::Do_intersect_3()(line, bbox);
+template<typename K>
+bool do_intersect(const Line_3<K>& a,
+                  const CGAL::Bbox_3& b) {
+  return K().do_intersect_3_object()(a, b);
 }
+
 
 } //namespace CGAL
 

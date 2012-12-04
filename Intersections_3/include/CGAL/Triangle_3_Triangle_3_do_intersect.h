@@ -444,15 +444,8 @@ do_intersect(const typename K::Triangle_3 &t1,
 
 } // namespace internal
 
+CGAL_DO_INTERSECT_FUNCTION_SELF(Triangle_3, 3)
 
-template <class K>
-inline typename K::Boolean
-do_intersect(const Triangle_3<K> &t1, 
-	     const Triangle_3<K> &t2) 
-{
-  return typename K::Do_intersect_3()(t1,t2);
-}
-	
 } //namespace CGAL
 
 #endif // CGAL_TRIANGLE_3_TRIANGLE_3_DO_INTERSECT_H

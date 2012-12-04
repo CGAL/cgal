@@ -1,5 +1,6 @@
 // 2D intersection tests.
 
+#include <CGAL/Intersection_traits_2.h>
 #include <CGAL/Object.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Point_2.h>
@@ -108,7 +109,6 @@ struct Test {
   void check_no_intersection(const O1& o1, const O2& o2)
   {
 	assert(!CGAL::do_intersect(o1, o2));
-	assert(CGAL::intersection(o1, o2).empty());
 	assert(!CGAL::do_intersect(o2, o1));
 	assert(CGAL::intersection(o2, o1).empty());
     

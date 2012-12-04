@@ -25,6 +25,8 @@
 #ifndef CGAL_KERNEL_D_FUNCTION_OBJECTS_H
 #define CGAL_KERNEL_D_FUNCTION_OBJECTS_H
 
+#include <CGAL/intersections_d.h>
+
 // These functors come from the 2D-3D kernels.
 // Since they have changed there, they now need to be copied here.
 
@@ -137,15 +139,38 @@ class Call_oriented_side
     { return c.oriented_side(a); }
 };
 
+template<class R>
 class Intersect
 {
   public:
-    typedef CGAL::Object   result_type;
+    template<typename A, typename B>
+    struct Result {
+      typedef typename Intersection_traits<R, A, B>::result_type Type;
+      // Boost MPL compatibility 
+      typedef Type type;
+    };
+
+  // Solely to make the lazy kernel work
+  #if CGAL_INTERSECTION_VERSION < 2
+    typedef CGAL::Object result_type;
+  #endif
 
     template <class T1, class T2>
-    CGAL::Object
+    typename Intersection_traits<R, T1, T2>::result_type
     operator()(const T1& t1, const T2& t2) const
-    { return intersection( t1, t2); }
+    { return internal::intersection(t1, t2, R()); }
+};
+
+template<class R>
+class Do_intersect
+{
+  public:
+    typedef bool result_type;
+
+    template <class T1, class T2>
+    bool
+    operator()(const T1& t1, const T2& t2) const
+    { return CGAL::internal::do_intersect(t1, t2, R()); }
 };
 
 } // end namespace internal

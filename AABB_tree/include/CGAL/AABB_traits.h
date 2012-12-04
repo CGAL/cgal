@@ -28,6 +28,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/AABB_intersections.h>
+#include <CGAL/Kernel_traits.h>
 
 #include <boost/optional.hpp>
 
@@ -65,7 +66,15 @@ public:
   typedef AABB_primitive Primitive;
 
   typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
+
   typedef typename std::pair<typename GeomTraits::Point_3, typename Primitive::Id> Point_and_primitive_id;
+
+  template<typename Query>
+  struct Intersection_and_primitive_id {
+    typedef std::pair< typename GeomTraits::Intersect_3::template Result< Query, typename Primitive::Datum >::Type, 
+                       typename Primitive::Id > Type;
+    typedef Type type;
+  };
 
   // types for search tree
   /// \name Types
@@ -182,6 +191,7 @@ Do_intersect do_intersect_object() {return Do_intersect();}
 
 class Intersection {
 public:
+    #if CGAL_INTERSECTION_VERSION < 2
 template<typename Query>
 boost::optional<typename AT::Object_and_primitive_id>
 operator()(const Query& query, const typename AT::Primitive& primitive) const
@@ -194,10 +204,17 @@ operator()(const Query& query, const typename AT::Primitive& primitive) const
   else
     return Intersection(Object_and_primitive_id(object,primitive.id()));
 }
+    #else
+    template<typename Query>
+    typename Intersection_and_primitive_id<Query>::Type
+    operator()(const Query& query, const typename AT::Primitive& primitive) const {
+      return std::make_pair(GeomTraits().intersect_3_object()(primitive.datum(),query), 
+                            primitive.id());
+    }
+    #endif
 };
 
 Intersection intersection_object() {return Intersection();}
-
 
   // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {

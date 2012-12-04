@@ -94,7 +94,8 @@ struct Cartesian_base_ref_count_I
   		 intersect_with_iterators_2_object)
 #include <CGAL/Kernel/interface_macros.h>
 
-
+    template<typename A, typename B>
+    struct Intersection_result : CGAL::Intersection_traits<K, A, B> {};
 };
 
 template < typename FT_ >

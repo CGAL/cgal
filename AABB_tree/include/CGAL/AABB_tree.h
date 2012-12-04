@@ -76,6 +76,12 @@ namespace CGAL {
 		typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
     /// 
 		typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
+    template<typename Query>
+    struct Intersection_and_primitive_id {
+      typedef typename AABBTraits::template Intersection_and_primitive_id<Query>::Type Type;
+      typedef Type type;
+    };
+
     
     ///@}
 
@@ -243,7 +249,12 @@ public:
     /// for which `do_intersect` predicates
     /// and intersections are defined in the traits class AABBTraits.
 		template <typename Query>
-		boost::optional<Object_and_primitive_id> any_intersection(const Query& query) const;
+    #if CGAL_INTERSECTION_VERSION < 2
+		boost::optional<Object_and_primitive_id> 
+    #else
+    typename Intersection_and_primitive_id<Query>::Type
+    #endif
+    any_intersection(const Query& query) const;
 
     ///@}
 
@@ -656,9 +667,14 @@ public:
 		return out;
 	}
 
+
 	template <typename Tr>
 	template <typename Query>
+  #if CGAL_INTERSECTION_VERSION < 2
 	boost::optional<typename AABB_tree<Tr>::Object_and_primitive_id>
+  #else
+  typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type
+  #endif
 		AABB_tree<Tr>::any_intersection(const Query& query) const
 	{
     using namespace CGAL::internal::AABB_tree;

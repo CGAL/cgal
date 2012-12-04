@@ -21,19 +21,21 @@
 #ifndef CGAL_TRIANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
 #define CGAL_TRIANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
 
-#include "CGAL/Point_2.h"
-#include "CGAL/Segment_2.h"
-#include "CGAL/Triangle_2.h"
-#include "CGAL/Iso_rectangle_2.h"
-#include "CGAL/Segment_2_Segment_2_intersection.h"
+#include <CGAL/Point_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Segment_2_Segment_2_intersection.h>
+#include <CGAL/Intersection_traits_2.h>
 
 #include <vector>
 #include <list>
 
-namespace CGAL{ namespace internal{
+
+namespace CGAL{ namespace internal {
 
   template <class K>
-  Object
+  typename Intersection_traits<K, typename K::Triangle_2, typename K::Iso_rectangle_2>::result_type
   intersection(const typename K::Triangle_2 &t, const typename K::Iso_rectangle_2 &r, const K&)
   {
     typedef typename K::FT FT;
@@ -103,7 +105,6 @@ namespace CGAL{ namespace internal{
       int last_intersected_segment = 5; //could be 0=N, 1=W, 2=S, 3=E
       last_intersected.push_back(5);
       int status_intersected[4] = {0, 0, 0, 0}; //the number of intersections for each segment
-      CGAL::Object obj;
       std::vector<Point> result; //the vector containing the result vertices
       int next; //the index of the next vertex
 
@@ -148,8 +149,10 @@ namespace CGAL{ namespace internal{
               if(position[next][j]) // if it's a second point direction
               {
                 //test for intersection
-                obj = CGAL::intersection(Segment(p[index], p[next]), s[j]);
-                if(const Point *p_obj = object_cast<Point>(&obj))
+                typename Intersection_traits<R, Segment, Segment>::result_type
+                  v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
+                if(v) {
+                  if(const Point *p_obj = intersect_get<Point>(v))
                 {
                   //intersection found
                   outside = true;
@@ -160,13 +163,16 @@ namespace CGAL{ namespace internal{
                 }
               }
           }
+          }
         } else { //the first point is outside      
           for(int j=0; j<4; j++) // for all directions
             if(position[index][j]) //watch only the first point directions
             {
               //test for intersection
-              obj = CGAL::intersection(Segment(p[index], p[next]), s[j]);
-	      if(const Point *p_obj = object_cast<Point>(&obj))
+              typename Intersection_traits<R, Segment, Segment>::result_type
+                v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
+              if(v) {
+                if(const Point *p_obj = intersect_get<Point>(v))
               {
                 //intersection found
                 outside = false;
@@ -199,8 +205,11 @@ namespace CGAL{ namespace internal{
                     if(position[next][j])
                     {
                       //test for intersection
-                      obj = CGAL::intersection(Segment(p[index], p[next]), s[j]);
-		      if(const Point *p_obj = object_cast<Point>(&obj))
+                        typename Intersection_traits<R, Segment, Segment>
+                          ::result_type
+                          v = internal::intersection(Segment(p[index], p[next]), s[j]);
+                        if(v) {
+                          if(const Point *p_obj = intersect_get<Point>(v))
                            //found the second intersection
                       {
                         outside = true;
@@ -210,8 +219,10 @@ namespace CGAL{ namespace internal{
                         status_intersected[j]++;
                       }
                     }
+                      }
                 }//end if the second point is not inside
               } 
+              } // end v
             }
         }//end else (the first point is outside)
       }//endfor
@@ -259,23 +270,23 @@ namespace CGAL{ namespace internal{
       
       switch(result.size()){
         case 0:
-          return Object();
+          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>();
         case 1:
-          return make_object(result[0]);
+          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(result[0]);
         case 2:
-          return make_object(Segment(result[0], result[1]));
+          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(Segment(result[0], result[1]));
         case 3:
-          return make_object(typename K::Triangle_2(result[0], result[1], result[2]));
+          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(K::Triangle_2(result[0], result[1], result[2]));
         default:
-          return make_object(result);
+          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(result);
       }
 
     }//end if(intersection)
-    return Object();
+    return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>();
   }//end intersection
   
   template <class K>
-  Object
+  typename Intersection_traits<K, typename K::Triangle_2, typename K::Iso_rectangle_2>::result_type
   inline intersection(const typename K::Iso_rectangle_2 &r, const typename K::Triangle_2 &t, const K& k)
   {
     return intersection(t,r,k);
@@ -308,38 +319,10 @@ namespace CGAL{ namespace internal{
     return do_intersect(tr,ir,k);
   }
   
-  } //namespace internal
-  
-  template <class K>
-  Object
-  inline intersection(const Iso_rectangle_2<K> &r, const Triangle_2<K> &t)
-  {
-    return typename K::Intersect_2()(r,t);
-  }
+} //namespace internal
 
-  template <class K>
-  Object
-  inline intersection(const Triangle_2<K> &t, const Iso_rectangle_2<K> &r)
-  {
-    return typename K::Intersect_2()(t,r);
-  }
-  
-  template <class K>
-  inline bool
-  do_intersect(const Iso_rectangle_2<K> & iso,
-               const Triangle_2<K> &tr)
-  {
-    typedef typename K::Do_intersect_2 Do_intersect;
-    return Do_intersect()(iso, tr);
-  }
-
-  template <class K>
-  inline bool
-  do_intersect(const Triangle_2<K> &tr, const Iso_rectangle_2<K> &iso)
-  {
-    typedef typename K::Do_intersect_2 Do_intersect;
-    return Do_intersect()(tr, iso);
-  }
+CGAL_INTERSECTION_FUNCTION(Triangle_2, Iso_rectangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Triangle_2, Iso_rectangle_2, 2)
   
 }//end namespace
 
