@@ -85,7 +85,8 @@ that it is easy to ignore border edges and work only with polyhedra.
 
 The polyhedral surface is based on the highly flexible design of the
 halfedge data structure. Examples for this flexibility can be found in
-Section \ref PolyhedronExtending and in Section \ref sectionHdsExamples. 
+Section \ref PolyhedronExtending and in Section \ref  HalfedgeDSExample
+"Examples" of the chapter on the halfedge data structure. 
 This design is not a prerequisite to understand the following examples.
 See also the Section \ref sectionPolyAdvanced below for some advanced 
 examples.
@@ -116,12 +117,16 @@ level of a polyhedral surface. The next example adds the geometry.
 We add geometry to the our construction of a tetrahedron. Four points
 are passed as arguments to the construction. This example demonstrates
 in addition the use of the vertex iterator and the access to the point
-in the vertices. Note the natural access notation `v->point()`.
+in the vertices. Note the natural access notation 
+`v->`\link CGAL::Polyhedron_3::Vertex::point() `point()`\endlink.
 Similarly, all information stored in a vertex, halfedge, and facet can
 be accessed with a member function given a handle or iterator. For
-example, given a halfedge handle `h` we can write `h->next()`
-to get a halfedge handle to the next halfedge, `h->opposite()` for
-the opposite halfedge, `h->vertex()` for the incident vertex at
+example, given a halfedge handle `h` we can write 
+`h->`\link CGAL::Polyhedron_3::Halfedge::next() `next()`\endlink
+to get a halfedge handle to the next halfedge, 
+`h->`\link CGAL::Polyhedron_3::Halfedge::opposite() `opposite()`\endlink for
+the opposite halfedge, 
+`h->`\link CGAL::Polyhedron_3::Halfedge::vertex() `vertex()`\endlink for the incident vertex at
 the tip of `h`, and so on. The output of the program will be
 
 \verbatim
