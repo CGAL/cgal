@@ -174,6 +174,69 @@ bool do_intersect(Type1<SphericalKernel> obj1, Type2<SphericalKernel> obj2, Type
 \brief 
 \details Depending on which \cgal kernel is used, different overloads of this global
 function are available.
+
+### Notes on Backward Compatibility ###
+
+The `intersection()` function used to return an `Object`, but starting with 
+\cgal 4.2 the
+return type is determined by a metafunction defined by the kernel. To
+preserve backward compatibility `Object` can be
+constructed from the new return types implicitly, but switching to the
+new style is recommended. To enable the old style without any overhead,
+the macro `CGAL_INTERSECTION_VERSION` must be defined to
+`1` before any \cgal header is included.
+
+### Upgrading code from CGAL::Object to boost::variant###
+
+Code can be upgraded by using either `boost::get` or the
+`boost::static_visitor<T>`.
+
+\code
+#include <CGAL/intersections.h>
+
+template<typename R>
+struct Intersection_visitor : public boost::static_visitor<> {
+  void operator()(const Point_2& p) const 
+  { // Point_2  
+  }
+  void operator()(const Segment_2& s) const 
+  { // Segment_2 
+  }
+};
+
+template <class R>
+void foo(Segment_2<R> seg, Line_2<R> lin)
+{
+  CGAL::Object obj = intersection(seg1, seg2);
+  if(const Point_2* foo = object_cast<Point_2>(&obj)) {
+    // Point_2 
+  } else if(const Segment_2* foo = object_cast<Segment_2>(&obj)) {
+    // Segment_2 
+  } else {
+    // empty
+  }
+
+  // becomes
+  auto result = intersection(seg, lin);
+  if(result) {
+    if(const Point_2* foo = boost::get<Point_2>(&*obj)) {
+      // Point_2 
+    } else if(const Segment_2* foo = boost::get<Segment_2>(&*obj)) {
+      // Segment_2 
+    }
+  } else {
+    // empty
+  }
+
+  // or with boost::static_visitor<T>
+  if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
+  else { // empty  
+  }
+}
+\endcode
+
+
+
 */
 
 
@@ -188,9 +251,9 @@ function are available.
 \sa intersection_circular
 \sa intersection_spherical
 \sa `CGAL::do_intersect` 
-\sa `CGAL::Object` 
 
 \details See Chapter  \ref chapterkernel23 for details on a linear kernel instantiation.
+
 */
 /// @{
 
@@ -202,11 +265,18 @@ both `obj1` and `obj2`.  Note that for objects like triangles and
 polygons that enclose a bounded region, this region is considered part
 of the object.  If a segment lies completely inside a triangle, then
 those two objects intersect and the intersection region is the
-complete segment.
+complete segment. 
 
-The possible value for types `Type1` and `Type2` and the
-possible return values wrapped in `Object` are the
-following:
+Here, `Intersect_23` means either `Intersect_2` or `Intersect_3`,
+depending on the arguments.
+
+The possible values for types `Type1` and `Type2` and
+the value for `T...` in `boost::optional< boost::variant<
+  T... > >` are the following and can be obtained through
+`boost::result_of(Intersect_2(A, B)>::type` or
+`boost::result_of(Intersect_3(A, B)>::type`.
+ 
+
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
@@ -393,30 +463,63 @@ The following example demonstrates the most common use of
 \code
 #include <CGAL/intersections.h>
 
-void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
+template<typename R>
+struct Intersection_visitor {
+  typedef result_type void;
+  void operator()(const Point_2<R>& p) const 
+  { // handle point
+  }
+  void operator()(const Segment_2<R>& s) const 
+  { 
+    // handle segment 
+  }
+};
+
+template <class R>
+void foo(const Segment_2<R>& seg, const Line_2<R>& lin)
 {
-    CGAL::Object result = CGAL::intersection(seg, line);
-    if (const CGAL::Point_2<Kernel> *ipoint = CGAL::object_cast<CGAL::Point_2<Kernel> >(&result)) {
-        // handle the point intersection case with *ipoint.
-    } else
-        if (const CGAL::Segment_2<Kernel> *iseg = CGAL::object_cast<CGAL::Segment_2<Kernel> >(&result)) {
-            // handle the segment intersection case with *iseg.
-        } else {
-            // handle the no intersection case.
-        }
+  // with C++11 support
+  // auto result = intersection(seg, lin);
+
+  // without C++11
+  boost::result_of<R::Intersect_2(Segment_2<R>, Line_2<R>)>::type 
+    result = intersection(seg, lin);
+
+  if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
+  else { 
+    // no intersection 
+  }
+
+  // alternatively:
+  if(result) {
+    if(const Segment_2<R>* s = boost::get<Segment_2>(&*result)) {
+      // handle segment
+    } else {
+      const Point_2<R>* p = boost::get<Point_2>(&*result);
+      // handle point
+    }
 }
 \endcode
 
+
+Another example showing the use of the intersection function as a plain function call and with `Dispatch_output_iterator` combined with a standard library algorithm.
+
+\cgalExample{Kernel_23/intersections.cpp}
+
+
+
 */
-Object intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);
+boost::result_of<Intersect_23(Type1, Type2)>::type
+intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);
 
 /*!
 returns the intersection of 3 planes, which can be either a
 point, a line, a plane, or empty.
 */
-Object intersection(const Plane_3<Kernel>& pl1,
-                    const Plane_3<Kernel>& pl2,
-                    const Plane_3<Kernel>& pl3);
+boost::optional< boost::variant< Point_3, Line_3, Plane_3 > > 
+intersection(const Plane_3<Kernel>& pl1,
+             const Plane_3<Kernel>& pl2,
+             const Plane_3<Kernel>& pl3);
 
 /// @}
 
@@ -431,26 +534,29 @@ Object intersection(const Plane_3<Kernel>& pl1,
 \sa intersection_linear
 \sa intersection_spherical
 \sa `CGAL::do_intersect` 
-\sa `CGAL::Object`
 
 \details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel for details on a circular kernel instantiation.
 
 When using a circular kernel, in addition to the function overloads documented \ref intersection_linear "here",
 the following function overloads are also available.
 
-Since both the number of intersections, if any, and their type,
-depend on the arguments, the function returns an output
-iterator on `Object`'s, as presented below.
+The iterator versions of those functions can be used in conjunction
+with `Dispatch_output_iterator`.
+
+Since both the number of intersections, if any, and their type, depend
+on the arguments, the function expects an output iterator on
+`boost::result_of<K::Intersect_2(Type1, Type2)>::type`, as
+presented below.
+
 
 */
 /// @{
 
 /*!
-Copies in the output iterator the intersection elements between the
-two objects. `intersections` iterates on
-elements of type `CGAL::Object`, in lexicographic order,
+Constructs the intersection elements between the
+two objects and stores them in the OutputIterator in lexicographic order,
 
-where `Type1` and `Type2` can both be either
+where both, `Type1` and `Type2`, can be either
 
 - `Line_2<CircularKernel>` or
 - `Line_arc_2<CircularKernel>` or
@@ -490,16 +596,16 @@ intersection(const Type1 &obj1, const Type2 &obj2,
 \sa intersection_linear
 \sa intersection_circular
 \sa `CGAL::do_intersect` 
-\sa `CGAL::Object`
 
 \details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel for details on a spherical kernel instantiation.
 
 When using a spherical kernel, in addition to the function overloads documented \ref intersection_linear "here",
 the following function overloads are also available.
 
-Since both the number of intersections, if any, and their type,
-depend on the arguments, the functions return an output
-iterator on `Object`'s, as presented below.
+Since both the number of intersections, if any, and their type, depend
+on the arguments, the functions expects an output iterator on
+`boost::result_of<Kernel::Intersect_3(Type1, Type2)>::type`,
+as presented below.
 */
 /// @{
 

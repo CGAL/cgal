@@ -108,6 +108,19 @@ Copy constructor.
 */ 
 Object(const Object &o); 
 
+/*!
+Implicit converting constructor for compatibility with
+`boost::variant`.
+*/
+Object(boost::variant<T...>);
+
+
+/*!
+Implicit converting constructor for compatibility with
+`boost::optional` and `boost::variant`.
+ */
+Object(boost::optional< boost::variant<T...> >);
+
 /// @} 
 
 
