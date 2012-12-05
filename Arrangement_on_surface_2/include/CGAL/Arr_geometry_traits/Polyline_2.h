@@ -318,11 +318,9 @@ public:
     return (Point_const_reverse_iterator (begin()));
   }
 
-  
-  // TODO: @Efi - Is this the right way to deprecate these typedefs?
-  typedef CGAL_DEPRECATED typename Segments_container::const_iterator 
+    typedef typename Segments_container::const_iterator 
     Segment_const_iterator;
-  typedef CGAL_DEPRECATED typename std::reverse_iterator<Segment_const_iterator>
+  typedef typename std::reverse_iterator<Segment_const_iterator>
     Segment_const_reverse_iterator;
 
   /*! Get an iterator for the polyline's segments. */
