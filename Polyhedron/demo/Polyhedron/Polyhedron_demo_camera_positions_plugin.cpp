@@ -4,7 +4,7 @@
 #include "Polyhedron_demo_io_plugin_interface.h"
 
 #include "Camera_positions_list.h"
-#include "Viewer.h"
+#include "Viewer_interface.h"
 
 #include <QMainWindow>
 
@@ -34,7 +34,7 @@ private:
 void Polyhedron_demo_camera_positions_plugin::init(QMainWindow* mainWindow, Scene_interface*)
 {
   cpl = new Camera_positions_list(mainWindow);
-  cpl->setViewer(mainWindow->findChild<Viewer*>("viewer"));
+  cpl->setViewer(mainWindow->findChild<Viewer_interface*>("viewer"));
   mainWindow->addDockWidget(Qt::LeftDockWidgetArea, cpl);
 }
 

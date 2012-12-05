@@ -51,10 +51,10 @@ def update():
     subprocess.call(['git', 'pull'])
 
 def purge_doc():
-    for log in glob.glob('./log/*'):
+    for log in glob.glob('./log/*.*'):
         os.remove(log)
 
-    for tag in glob.glob('./tags/*'):
+    for tag in glob.glob('./tags/*.*'):
         os.remove(tag)
 
     for output in glob.glob('./output/CGAL.CGAL*'):
