@@ -44,37 +44,6 @@ typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
-struct Counter {
-  int i, N;
-
-  Counter(int N)
-    : i(0), N(N)
-  {}
-
-  void operator()()
-  {
-    i++;
-    if(i == N){
-      std::cerr << "Counter reached " << N << std::endl;
-    }
-  }
-  
-};
-
-struct InsertVisitor {
-
-  Counter& c;
-  InsertVisitor(Counter& c)
-    : c(c)
-  {}
-
-  void before_insertion()
-  {
-    c();
-  }
-
-};
-
 
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
@@ -105,9 +74,6 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     }
 
 
-    Counter counter(std::distance(points.begin(), points.end()));
-    InsertVisitor visitor(counter) ;
-
     CGAL::Timer reconstruction_timer; reconstruction_timer.start();
 
     //***************************************
@@ -124,8 +90,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
-                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
-                              visitor);
+                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()) );
 
     bool ok = false;
     #ifdef CGAL_TAUCS_ENABLED
