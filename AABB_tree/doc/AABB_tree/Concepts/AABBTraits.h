@@ -53,9 +53,20 @@ typedef Hidden_type Bounding_box;
 typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id; 
 
 /*! 
-
+\deprecated 
 */ 
-typedef std::pair<Object, Primitive::Id> Object_and_primitive_id; 
+typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;
+
+
+  /*!  A nested class template to aquire the pair of the return type of
+intersections with an object of type `Query` and a
+`Primitive::Id` through the member typedef `Type`.
+
+This class is convertible to `Point_and_primitive_id`.
+  */
+
+  template <typename Query>
+  struct Intersection_and_primitive_id{};
 
 /// @}
 
@@ -112,7 +123,7 @@ typedef Hidden_type Do_intersect;
 
 /*! 
 A functor object to compute the intersection of a query and a primitive. Provides the operator: 
-`boost::optional<Object_and_primitive_id> operator()(const Query & q, const Primitive& primitive);` which returns the intersection as a pair composed of an object and a primitive id, iff the query intersects the primitive. 
+`boost::optional<Intersection_and_primitive_id<Query>::type operator()(const Query & q, const Primitive& primitive);` which returns the intersection as a pair composed of an object and a primitive id, iff the query intersects the primitive. 
 */ 
 typedef Hidden_type Intersect; 
 
