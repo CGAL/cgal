@@ -38,8 +38,8 @@ struct Type_mapper_impl {
 };
 
 template < typename T, typename K1, typename K2 >
-struct Type_mapper<std::vector< T >, K1, K2 > {
-  typedef std::vector< typename Type_mapper< T, K1, K2>::type > type;
+struct Type_mapper_impl<std::vector< T >, K1, K2 > {
+  typedef std::vector< typename Type_mapper_impl< T, K1, K2>::type > type;
 };
 
 // Then we specialize for all kernel objects.

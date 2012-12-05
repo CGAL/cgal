@@ -110,15 +110,15 @@ struct Test {
   {
 	assert(!CGAL::do_intersect(o1, o2));
 	assert(!CGAL::do_intersect(o2, o1));
-	assert(CGAL::intersection(o2, o1).empty());
+        assert(!CGAL::intersection(o2, o1));
     
 	//check with the functors
 	typename CGAL::Kernel_traits<O1>::Kernel::Do_intersect_2 do_2;
 	typename CGAL::Kernel_traits<O1>::Kernel::Intersect_2 i_2;
 	assert(!do_2(o1, o2));
-	assert(i_2(o1, o2).empty());
+        assert(!i_2(o1, o2));
 	assert(!do_2(o2, o1));
-	assert(i_2(o2, o1).empty());
+        assert(!i_2(o2, o1));
   }
 
   template < typename Res, typename O1, typename O2 >
@@ -158,7 +158,8 @@ struct Test {
     check_intersection     (L(p(0, 0), p(10, 0)), L(p(1,7), p(1,-2)), P(1,0));
     check_intersection     (L(p(0,-1), p(10, 0)), L(p(2,1), p(8,-6)), P(3.42105,-0.657895));
     check_intersection<L>  (L(p(0, 0), p(10, 0)), L(p(1,0), p(8, 0)));
-    check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
+    
+check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
     check_intersection<L>  (L(p(0, 0), p(10, 0)), L(p(8,0), p(1, 0)));
   }
 

@@ -40,6 +40,7 @@ namespace CGAL{ namespace internal {
   {
     typedef typename K::FT FT;
     typedef typename K::Segment_2 Segment;
+    typedef typename K::Triangle_2 Triangle;
     typedef typename K::Point_2   Point;
 
     FT xr1, yr1, xr2, yr2;  
@@ -207,7 +208,7 @@ namespace CGAL{ namespace internal {
                       //test for intersection
                         typename Intersection_traits<K, Segment, Segment>
                           ::result_type
-                          v = internal::intersection(Segment(p[index], p[next]), s[j]);
+                          v = internal::intersection(Segment(p[index], p[next]), s[j], kk);
                         if(v) {
                           if(const Point *p_obj = intersect_get<Point>(v))
                            //found the second intersection
@@ -270,19 +271,19 @@ namespace CGAL{ namespace internal {
       
       switch(result.size()){
         case 0:
-          return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>();
+          return intersection_return<K, Triangle, typename K::Iso_rectangle_2>();
         case 1:
-          return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>(result[0]);
+          return intersection_return<K, Triangle, typename K::Iso_rectangle_2>(result[0]);
         case 2:
-          return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>(Segment(result[0], result[1]));
+          return intersection_return<K, Triangle, typename K::Iso_rectangle_2>(Segment(result[0], result[1]));
         case 3:
-          return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>(K::Triangle_2(result[0], result[1], result[2]));
+          return intersection_return<K, Triangle, typename K::Iso_rectangle_2>(Triangle(result[0], result[1], result[2]));
         default:
-          return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>(result);
+          return intersection_return<K, Triangle, typename K::Iso_rectangle_2>(result);
       }
 
     }//end if(intersection)
-    return intersection_return<K, typename K::Triangle_2, typename K::Iso_rectangle_2>();
+    return intersection_return<K, Triangle, typename K::Iso_rectangle_2>();
   }//end intersection
   
   template <class K>
