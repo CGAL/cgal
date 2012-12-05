@@ -5,6 +5,7 @@
 #include <QColor>
 #include <QList>
 #include <algorithm>
+#include <cmath>
 
 class Scene_item;
 
@@ -43,6 +44,15 @@ public:
                   (std::max)(xmax, b.xmax),
                   (std::max)(ymax, b.ymax),
                   (std::max)(zmax, b.zmax));
+    }
+    
+    double width() const { return xmax-xmin; }
+    double height() const { return ymax-ymin; }
+    double depth() const { return zmax-zmin; }
+    
+    double diagonal_length() const
+    {
+      return std::sqrt(width()*width() + height()*height() + depth()*depth());
     }
 
   }; // struct BBox (ad hoc class, does not depend on CGAL kernels

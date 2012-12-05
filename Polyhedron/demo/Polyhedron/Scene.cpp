@@ -188,16 +188,26 @@ Scene::keyPressEvent(QKeyEvent* e){
 void 
 Scene::draw()
 {
-  draw_aux(false);
+  draw_aux(false, 0);
+}
+void
+Scene::draw(Viewer_interface* viewer)
+{
+  draw_aux(false, viewer);
 }
 void 
 Scene::drawWithNames()
 {
-  draw_aux(true);
+  draw_aux(true, 0);
+}
+void
+Scene::drawWithNames(Viewer_interface* viewer)
+{
+  draw_aux(true, viewer);
 }
 
 void 
-Scene::draw_aux(bool with_names)
+Scene::draw_aux(bool with_names, Viewer_interface* viewer)
 {
   // Flat/Gouraud OpenGL drawing
   for(int index = 0; index < m_entries.size(); ++index)
@@ -223,7 +233,10 @@ Scene::draw_aux(bool with_names)
 	else
 	  ::glShadeModel(GL_FLAT);
 
-        item.draw();
+        if(viewer)
+          item.draw(viewer);
+        else
+          item.draw();
       }
     }
     if(with_names) {
@@ -250,8 +263,11 @@ Scene::draw_aux(bool with_names)
           CGALglcolor(Qt::black);
         else
           CGALglcolor(item.color().lighter(50));
-        
-        item.draw_edges();
+
+        if(viewer)
+          item.draw_edges(viewer);
+        else
+          item.draw_edges();
       }
       else{
         if( item.renderingMode() == PointsPlusNormals ){
@@ -263,7 +279,10 @@ Scene::draw_aux(bool with_names)
           CGALglcolor(item.color().lighter(120));
         else
           CGALglcolor(item.color());
-        item.draw_edges();
+        if(viewer)
+          item.draw_edges(viewer);
+        else
+          item.draw_edges();
         }
       }
       if(with_names) {
@@ -291,8 +310,11 @@ Scene::draw_aux(bool with_names)
           CGALglcolor(Qt::black);
         else
           CGALglcolor(item.color().lighter(50));
-        
-        item.draw_points();
+
+        if(viewer)
+          item.draw_points(viewer);
+        else
+          item.draw_points();
       }
       if(with_names) {
         ::glPopName();

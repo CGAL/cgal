@@ -9,6 +9,18 @@ Scene_item_with_display_list::Scene_item_with_display_list()
   }
 }
 
+Scene_item_with_display_list::Scene_item_with_display_list(GLuint id, GLuint edges_id)
+{
+  for(int i = 0; i < NB_OF_DISPLAY_LISTS; ++i) {
+    display_list[i] = 0;
+    display_list_built[i] = false;
+  }
+  display_list[DRAW] = id;
+  display_list_built[DRAW] = true;
+  display_list[DRAW_EDGES] = edges_id;
+  display_list_built[DRAW_EDGES] = (edges_id != 0);
+}
+
 // Scene_item_with_display_list::
 // Scene_item_with_display_list(const Scene_item_with_display_list& item)
 //   : Scene_item(item),
