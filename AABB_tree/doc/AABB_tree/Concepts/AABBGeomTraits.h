@@ -42,7 +42,12 @@ Provides the nested type `Result<A, B>` where `Result<A, B>::Type` is the return
 type of the `operator()(A, B)`.
 
 Provides the operators: 
-`Result<A, B> operator()(const A& a, const B& b);` where `A` and `B` are any relevant types among `Ray_3`, `Segment_3`, `Line_3`, `Triangle_3`, `Plane_3` and `Bbox_3`. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box). A model of `Kernel::Intersect_3` fulfills those requirements. 
+`Result<A, B>::type operator()(const A& a, const B& b);` 
+where `A` and `B` are any relevant types among `Ray_3`, `Segment_3`, `Line_3`, 
+`Triangle_3`, `Plane_3` and `Bbox_3`. 
+Relevant herein means that a line primitive (ray, segment, line) is tested 
+against a planar or solid primitive (plane, triangle, box). 
+A model of `Kernel::Intersect_3` fulfills those requirements. 
 */ 
 typedef Hidden_type Intersect_3; 
 
