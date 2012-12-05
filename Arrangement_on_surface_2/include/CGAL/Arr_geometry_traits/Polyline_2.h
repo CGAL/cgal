@@ -318,7 +318,7 @@ public:
     return (Point_const_reverse_iterator (begin()));
   }
 
-    typedef typename Segments_container::const_iterator 
+  typedef typename Segments_container::const_iterator 
     Segment_const_iterator;
   typedef typename std::reverse_iterator<Segment_const_iterator>
     Segment_const_reverse_iterator;
