@@ -21,7 +21,7 @@ of the `Assignable` and the `LessThanComparable` concept.
 <LI>`Handle` concept, e.g., a pointer, an iterator, or a circulator. 
 <LI>`IdPolicy`: specifies how the `id`-number will be 
 provided. Can be one of the following types, where 
-`ID_EXPLICIT` is the default for this parameter: 
+`ID_FROM_HANDLE` is the default for this parameter: 
 <UL> 
 <LI>`ID_NONE`: no `id`-number is provided. Can be useful 
 to have this class as a base class for different 
