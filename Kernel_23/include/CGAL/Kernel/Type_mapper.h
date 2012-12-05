@@ -26,12 +26,24 @@
 #define CGAL_KERNEL_TYPE_MAPPER_H
 
 #include <CGAL/basic.h>
+
+#include <vector>
+
 #include <boost/type_traits/remove_cv.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+
+#include <boost/mpl/transform.hpp>
+#include <boost/mpl/remove.hpp>
+
+#include <boost/optional.hpp>
+#include <boost/variant.hpp>
 
 namespace CGAL {
 
 namespace internal {
+
+// the default implementation is required to catch the odd one-out
+// object like Bbox
 template<typename T, typename K1, typename K2 >
 struct Type_mapper_impl {
   typedef T type;
@@ -39,7 +51,21 @@ struct Type_mapper_impl {
 
 template < typename T, typename K1, typename K2 >
 struct Type_mapper_impl<std::vector< T >, K1, K2 > {
-  typedef std::vector< typename Type_mapper_impl< T, K1, K2>::type > type;
+  typedef std::vector< typename Type_mapper_impl<T, K1, K2>::type > type;
+};
+
+template < typename T, typename K1, typename K2 >
+struct Type_mapper_impl<boost::optional<T>, K1, K2 > {
+  typedef boost::optional< typename Type_mapper_impl<T, K1, K2>::type > type;
+};
+
+template<typename K1, typename K2, BOOST_VARIANT_ENUM_PARAMS(typename U) >
+struct Type_mapper_impl<boost::variant<BOOST_VARIANT_ENUM_PARAMS(U)>, K1, K2 > {
+  typedef typename boost::make_variant_over<
+    typename boost::mpl::transform< 
+      typename boost::variant<BOOST_VARIANT_ENUM_PARAMS(U)>::types,
+      Type_mapper_impl<boost::mpl::_1, K1, K2> >::type
+    >::type type;
 };
 
 // Then we specialize for all kernel objects.
