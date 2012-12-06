@@ -25,6 +25,8 @@
 #ifndef CGAL_REFINE_MESH_3_H
 #define CGAL_REFINE_MESH_3_H
 
+#include <boost/format.hpp> 
+
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
@@ -292,13 +294,22 @@ namespace parameters {
   inline internal::Mesh_3_options mesh_3_dump()
   {
     internal::Mesh_3_options options;
-
-    options.dump_after_init_prefix="mesh_dump_after_init";
-    options.dump_after_refine_surface_prefix="mesh_dump_after_refine_surface";
-    options.dump_after_refine_prefix="mesh_dump_after_refine";
-    options.dump_after_glob_opt_prefix="mesh_dump_after_glob_opt";
-    options.dump_after_perturb_prefix="mesh_dump_after_perturb";
-    options.dump_after_exude_prefix="mesh_dump_after_exude";
+        
+    static int i = 1;
+    
+    options.dump_after_init_prefix
+      =str(boost::format("mesh_dump_after_init_%1%") % i);
+    options.dump_after_refine_surface_prefix
+      =str(boost::format("mesh_dump_after_refine_surface_%1%") % i);
+    options.dump_after_refine_prefix
+      =str(boost::format("mesh_dump_after_refine_%1%") % i);
+    options.dump_after_glob_opt_prefix
+      =str(boost::format("mesh_dump_after_glob_opt_%1%") % i);
+    options.dump_after_perturb_prefix
+      =str(boost::format("mesh_dump_after_perturb_%1%") % i);
+    options.dump_after_exude_prefix
+      =str(boost::format("mesh_dump_after_exude_%1%") % i);
+    i++;
     
     return options;
   }
