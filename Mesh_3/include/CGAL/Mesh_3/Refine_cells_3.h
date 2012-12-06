@@ -147,6 +147,14 @@ public:
   // Gets the point to insert from the element to refine
   Point refinement_point_impl(const Cell_handle& cell) const
   {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+    std::cerr << "Cell (" 
+              << cell->vertex(0)->point() << " , "
+              << cell->vertex(1)->point() << " , "
+              << cell->vertex(2)->point() << " , "
+              << cell->vertex(3)->point() << " ) : refinement point is "
+              << r_tr_.dual(cell) << std::endl;
+#endif
     last_vertex_index_ = r_oracle_.index_from_subdomain_index(
         cell->subdomain_index());
     //    last_vertex_index_ = Index(cell->subdomain_index());
