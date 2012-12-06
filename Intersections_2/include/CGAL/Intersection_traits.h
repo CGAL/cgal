@@ -69,21 +69,21 @@
 #define CGAL_INTERSECTION_FUNCTION(A, B, DIM)                           \
   template<typename K>                                                  \
   inline                                                                \
-  typename BOOST_PP_CAT(K::Intersect_, DIM)::template Result<typename K::A, typename K::B>::Type \
-  intersection(const A<K>& a, const B<K>& b) {        \
+  typename boost::result_of<BOOST_PP_CAT(typename K::Intersect_, DIM)(typename K::A, typename K::B)>::type \
+  intersection(const A<K>& a, const B<K>& b) {                          \
     return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
   }                                                                     \
   template<typename K>                                                  \
   inline                                                                \
-  typename BOOST_PP_CAT(K::Intersect_, DIM)::template Result<typename K::A, typename K::B>::Type     \
-  intersection(const B<K>& a, const A<K>& b) {        \
+  typename boost::result_of<BOOST_PP_CAT(typename K::Intersect_, DIM)(typename K::A, typename K::B)>::type \
+  intersection(const B<K>& a, const A<K>& b) {                          \
     return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
   }
 
 #define CGAL_INTERSECTION_FUNCTION_SELF(A, DIM)                         \
   template<typename K>                                                  \
   inline                                                                \
-  typename BOOST_PP_CAT(K::Intersect_, DIM)::template Result<typename K::A, typename K::A>::Type \
+  typename boost::result_of<BOOST_PP_CAT(typename K::Intersect_, DIM)(typename K::A, typename K::A)>::type \
   intersection(const A<K> & a, const A<K> & b) {                          \
     return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
   }
@@ -112,7 +112,7 @@ namespace CGAL {
 // only declarationn
 template<typename, typename, typename>
 struct Intersection_traits {
-  // This defaults to Object, if we use VERSION < 2 and to nothing
+  // This defaults to Object, if we use VERSION < 2 and do nothing
   // otherwise.
   #if CGAL_INTERSECTION_VERSION < 2
   typedef CGAL::Object result_type;

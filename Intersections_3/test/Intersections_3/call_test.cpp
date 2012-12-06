@@ -1,3 +1,5 @@
+#include <CGAL/basic.h>
+#include <CGAL/use.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
@@ -24,8 +26,12 @@ typedef CGAL::Bbox_3                Bbox_3;
 
 template<class A, class B>
 void call_intersection_global(const A& a, const B& b) {
-  typename CGAL::IT<A, B>::result_type x = CGAL::intersection(a, b);
-  typename CGAL::IT<A, B>::result_type y = CGAL::intersection(b, a);
+  typename boost::result_of<K::Intersect_3(A, B)>::type x =CGAL::intersection(a, b);
+  typename boost::result_of<K::Intersect_3(A, B)>::type y =CGAL::intersection(b, a);
+  typename boost::result_of<K::Intersect_3(B, A)>::type z =CGAL::intersection(b, a);
+  CGAL_USE(x);
+  CGAL_USE(y);
+  CGAL_USE(z);
 }
 
 template<class A, class B>

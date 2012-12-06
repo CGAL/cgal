@@ -2524,11 +2524,12 @@ namespace CommonKernelFunctors {
   class Intersect_2
   {
   public:
-    template<typename A, typename B>
-    struct Result {
-      typedef typename Intersection_traits<K, A, B>::result_type Type;
-      // Boost MPL compatibility 
-      typedef Type type;
+    template<typename>
+    struct result;
+
+    template<typename F, typename A, typename B>
+    struct result<F(A,B)> {
+      typedef typename Intersection_traits<K, A, B>::result_type type;
     };
 
     // Solely to make the lazy kernel work
@@ -2538,7 +2539,7 @@ namespace CommonKernelFunctors {
 
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
-    typename Result< T1, T2 >::Type
+    typename boost::result_of< Intersect_2(T1, T2) >::type
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K()); }
   };
@@ -2548,11 +2549,20 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Plane_3     Plane_3;
   public:
-    template<typename A, typename B>
-    struct Result {
-      typedef typename Intersection_traits<K, A, B>::result_type Type;
-      // Boost MPL compatibility 
-      typedef Type type;
+    template<typename>
+    struct result;
+
+    template<typename F, typename A, typename B>
+    struct result<F(A, B)> {
+      typedef typename Intersection_traits<K, A, B>::result_type type;
+    };
+
+    template<typename F>
+    struct result<F(Plane_3, Plane_3, Plane_3)> {
+      typedef boost::optional< 
+        boost::variant< typename K::Point_3, 
+                        typename K::Line_3, 
+                        typename K::Plane_3 > > type;
     };
 
     // Solely to make the lazy kernel work
@@ -2562,7 +2572,7 @@ namespace CommonKernelFunctors {
 
     // n possibilities, so I keep the template.
     template <class T1, class T2>
-    typename Result< T1, T2 >::Type
+    typename boost::result_of< Intersect_3(T1, T2) >::type
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K() ); }
 
