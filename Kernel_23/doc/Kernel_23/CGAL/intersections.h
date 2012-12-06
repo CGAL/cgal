@@ -168,6 +168,23 @@ bool do_intersect(Type1<SphericalKernel> obj1, Type2<SphericalKernel> obj2, Type
 /// @}
 
 
+
+
+/*!
+\addtogroup intersection
+
+The macro `CGAL_INTERSECTION_VERSION` can be used to configure
+which version of the `intersection()` function should be used and
+enables the corresponding APIs in other \cgal packages. It should be
+defined before any \cgal header is included.
+
+- `CGAL_INTERSECTION_VERSION == 1` `intersection()` uses `Object`
+- `CGAL_INTERSECTION_VERSION == 2` `intersection()` uses `boost::optional< boost::variant< T... > >`
+
+*/
+
+#define CGAL_INTERSECTION_VERSION
+
 /*!
 \addtogroup intersection
 

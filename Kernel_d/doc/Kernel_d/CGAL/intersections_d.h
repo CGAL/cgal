@@ -26,21 +26,19 @@ bool do_intersect(Type1<R> obj1, Type2<R> obj2);
 /*!
 \ingroup PkgKernelDFunctions
 
-returns the intersection result of \f$ f1\f$ and \f$ f2\f$ by means of
-the polymorphic wrapper type `Object`. The returned object can be
-tested for the intersection result and assigned by means of the
-`object_cast` function. 
-
+returns the intersection result of \f$ f1\f$ and \f$ f2\f$.
 \pre The objects are of the same dimension.
 
-The possible value for types `Type1` and `Type2` and 
-the possible return values wrapped in `Object` are the following: 
+The same functionality is also available through the functor `Kernel::Intersect_d`.
+ 
+The possible value for types `Type1` and `Type2` and
+the value for `T...` in `boost::optional< boost::variant< T... > >` are the following:
 
 <DIV ALIGN="CENTER"> 
 <TABLE CELLPADDING=3 BORDER="1"> 
 <TR> <TH> Type1 </TH> 
 <TH> Type2 </TH> 
-<TH> Return Type </TH> 
+<TH> `T...` </TH> 
 </TR> 
 <TR> 
 <TD VALIGN="CENTER" > Line_d </TD> 
@@ -126,21 +124,35 @@ The following example demonstrates the most common use of
 \code
 #include <CGAL/intersections_d.h> 
 
+ 
+template<typename R>
+struct Intersection_visitor {
+  typedef result_type void;
+  void operator()(const Point_d<R>& p) const { /* handle point */ }
+  void operator()(const Segment_d<R>& s) const { /* handle segment */ }
+};
+
 template <class R> 
 void foo(Segment_d<R> seg, Line_d<R> lin) 
 { 
-  Object result = intersection(seg, lin); 
-  if (const Point_d<R> *ipnt = object_cast<Point_d<R> >(&result) ) { 
-  // handle the point intersection case with *ipnt. 
-  } else if (const Segment_d<R> *iseg = object_cast<Segment_d<R> >(&result) ) { 
-  // handle the segment intersection case with *iseg. 
-  } else { 
-  // handle the no intersection case. 
-  } 
+  // with C++11 support
+  // auto result = intersection(seg, lin);
+
+  // without C++11 support
+  typename boost::result_of<R::Intersect_d(Segment_d<R>, Line_d<R>)>::type
+    result = intersection(seg, lin);
+
+  if(result) { boost::apply_visitor(Intersection_visitor<R>(), *result); } 
+  else { // no intersection  
+  }
 } 
 \endcode
 
-\sa `do_intersect`, \sa `Kernel_d::Intersect_d` 
+\sa `do_intersect`
+\sa `Kernel_d::Intersect_d` 
+\sa <a HREF="http://www.boost.org/doc/libs/release/libs/optional/index.html"> `boost::optional`</a>
+\sa <a HREF="http://www.boost.org/doc/html/variant.html">`boost::variant`</a>
+\sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`boost::result_of`</a>
 
 */
 Object intersection(Type1<R> f1, Type2<R> f2);
