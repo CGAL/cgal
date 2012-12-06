@@ -37,7 +37,7 @@ inline
 #if CGAL_INTERSECTION_VERSION < 2
 CGAL::Object
 #else
-typename boost::optional< boost::variant< Point_3<K>, Line_3<K>, Plane_3<K> > >
+typename boost::result_of<typename K::Intersect_3(typename K::Plane_3, typename K::Plane_3, typename K::Plane_3)>::type
 #endif
 intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
              const Plane_3<K> &plane3)
@@ -83,48 +83,48 @@ CGAL_DO_INTERSECT_FUNCTION(Plane_3, Segment_3, 3)
 CGAL_INTERSECTION_FUNCTION(Plane_3, Triangle_3, 3)
 
 template <class K>
-inline
-typename Intersection_traits<K, typename K::Line_3, Bbox_3>::result_type
+inline typename
+boost::result_of<typename K::Intersect_3(typename K::Line_3, Bbox_3)>::type
 intersection(const Line_3<K> &a,
 	     const Bbox_3 &b) {
   return K().intersect_3_object()(a, b);
 }
 
 template <class K>
-inline
-typename Intersection_traits<K, typename K::Line_3, Bbox_3>::result_type
+inline typename
+boost::result_of<typename K::Intersect_3(typename K::Line_3, Bbox_3)>::type
 intersection(const Bbox_3 &a,
              const Line_3<K> &b) {
   return K().intersect_3_object()(a, b);
 }
 
 template <class K>
-inline
-typename Intersection_traits<K, typename K::Ray_3, Bbox_3>::result_type
+inline typename
+boost::result_of<typename K::Intersect_3(typename K::Ray_3, Bbox_3)>::type
 intersection(const Ray_3<K> &a,
 	     const Bbox_3 &b) {
   return K().intersect_3_object()(a, b);
 }
 
 template <class K>
-inline
-typename Intersection_traits<K, typename K::Ray_3, Bbox_3>::result_type
+inline typename
+boost::result_of<typename K::Intersect_3(typename K::Ray_3, Bbox_3)>::type
 intersection(const Bbox_3 &a,
              const Ray_3<K> &b) {
   return K().intersect_3_object()(a, b);
 }
 
 template <class K>
-inline
-typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type
+inline typename
+boost::result_of<typename K::Intersect_3(typename K::Segment_3, Bbox_3)>::type
 intersection(const Segment_3<K> &a,
 	     const Bbox_3 &b) {
   return K().intersect_3_object()(a, b);
 }
 
 template <class K>
-inline
-typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type
+inline typename
+boost::result_of<typename K::Intersect_3(typename K::Segment_3, Bbox_3)>::type
 intersection(const Bbox_3 &a,
              const Segment_3<K> &b) {
   return K().intersect_3_object()(a, b);
