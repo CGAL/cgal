@@ -354,7 +354,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   int nbsteps = 0;
 
   std::cerr << "Refining Surface...\n";
-  std::cerr << "Legende of the following line: "
+  std::cerr << "Legend of the following line: "
             << "(#vertices,#steps," << cells_mesher_.debug_info_header()
             << ")\n";
 
@@ -390,7 +390,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   timer.stop(); timer.reset(); timer.start();
 
   std::cerr << "Refining...\n";
-  std::cerr << "Legende of the following line: "
+  std::cerr << "Legend of the following line: "
             << "(#vertices,#steps," << cells_mesher_.debug_info_header()
             << ")\n";
   std::cerr << "(" << r_tr.number_of_vertices() << ","
