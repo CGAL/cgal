@@ -2447,14 +2447,12 @@ fill_modified_vertices(InputIterator cells_begin,
   {
     for ( int i=0 ; i<4 ; ++i )
     {
-      // Insert vertices if not already inserted
+	  // Insert vertices if not already inserted
       const Vertex_handle& current_vertex = (*it)->vertex(i);
       if ( !tr_.is_infinite(current_vertex)
-          && already_inserted_vertices.find(current_vertex) ==
-             already_inserted_vertices.end() )
+          && already_inserted_vertices.insert(current_vertex).second )
       {
         *out++ = current_vertex;
-        already_inserted_vertices.insert(current_vertex);
       }
     }
   }
