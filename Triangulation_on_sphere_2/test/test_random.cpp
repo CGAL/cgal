@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
-//#include <CGAL/Projection_sphere_traits_3.h>
+//#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
+#include <CGAL/Projection_sphere_traits_3.h>
 #include <CGAL/Delaunay_triangulation_sphere_2.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_2.h>
@@ -23,8 +23,8 @@
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
-//typedef CGAL::Projection_sphere_traits_3<K>							Gt;
+//typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
+typedef CGAL::Projection_sphere_traits_3<K>							Gt;
 typedef CGAL::Delaunay_triangulation_sphere_2<Gt>              RTOS;
 typedef RTOS::Vertex_handle                             Vertex_handle;
 typedef RTOS::Face_handle                                 Face_handle;
@@ -35,6 +35,7 @@ typedef RTOS::Solid_faces_iterator						Solid_faces_iterator;
 typedef RTOS::All_edges_iterator						All_edges_iterator;
 typedef RTOS::Locate_type                                 Locate_type;
 typedef RTOS::Edge                                               Edge;
+typedef RTOS::Point											Point;
 
 
 typedef CGAL::Polyhedron_3<K>                     Polyhedron_3;
@@ -106,6 +107,9 @@ bool are_equal(RTOS triA, RTOS triB){
 
 
 int main(){
+	
+	
+	
 	int nu_of_pts;
 	double radius;
 	nu_of_pts =1000000;
@@ -115,23 +119,24 @@ int main(){
 	int invalid = 0;
 	CGAL::Timer t1, t2;
 
-	
-			
-	CGAL::Random random(nu_of_pts);
-	typedef CGAL::Creator_uniform_3<double, K::Point_3> Creator;
-    CGAL::Random_points_on_sphere_3<K::Point_3, Creator> on_sphere(radius);
 	RTOS rtos;
-	RTOS rtos2;
+	//RTOS rtos2;
 	rtos.set_radius(radius);
-	rtos2.set_radius(radius);
+	//rtos2.set_radius(radius);/*
 	
-	std::vector<K::Point_3> points;
+	CGAL::Random random(nu_of_pts);
+	//typedef CGAL::Creator_uniform_3<double, K::Point_3> Creator;
+	typedef CGAL::Creator_uniform_3<double, Point> Creator;
+    CGAL::Random_points_on_sphere_3<Point, Creator> on_sphere(radius);
+	
+	
+	std::vector<Point> points;
 	std::vector<Vertex_handle> vertices;
 		vertices.reserve(nu_of_pts*2);
 	
 	
 	for (int count=0; count<nu_of_pts; count++) {
-		K::Point_3 p = *on_sphere;
+		Point p = *on_sphere;
 		points.push_back(p);
 		on_sphere++;
 	}
@@ -147,8 +152,10 @@ int main(){
 
 	std::cout<<"number of vertices    "<<rtos.number_of_vertices()<<std::endl;
 
-	K::Point_3 q = K::Point_3(500,0,0);
-	rtos.insert(q);
+	//Point q = Point(0,0,0);
+	//rtos.insert(q);
+	//std::cout<<"number of vertices after zero   "<<rtos.number_of_vertices()<<std::endl;
+	
 	//rtos.is_valid();
 	
 	

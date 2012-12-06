@@ -407,6 +407,7 @@ init(double radius){
 	_maxRadiusSquared = maxRadius * maxRadius;
 	double minDist = radius*pow (2, -23);
 	_minDistSquared = minDist *minDist;
+	_gt.set_radius(radius);
 	
 }
 	

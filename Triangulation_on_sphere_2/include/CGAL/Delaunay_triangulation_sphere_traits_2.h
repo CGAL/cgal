@@ -64,6 +64,8 @@ class Power_test_2
     }
     return ON_NEGATIVE_SIDE;
   }
+public:
+	typedef Oriented_side result_type;
 
  protected:
    Point_2 _sphere;
@@ -98,6 +100,9 @@ public:
 		
 protected :
 Point_2  _sphere;
+	
+public:
+	typedef Comparison_result result_type;
 };
 
 template < typename K >
@@ -136,6 +141,8 @@ public:
 		
 protected :
 Point_2  _sphere;
+	
+
 	};
 template < typename K >
 Orientation_sphere_2<K>::
@@ -160,6 +167,10 @@ public:
 		
 protected :
 Point_2  _sphere;
+	
+	
+public:
+	typedef bool result_type;
 };
 	
 template < typename K >
@@ -188,6 +199,9 @@ public:
 		
 protected :
 	Point_2  _sphere;
+	
+public:
+	typedef bool result_type;
 };
 
 template < typename K >
@@ -231,7 +245,7 @@ public:
 	
 	
   typedef boost::true_type  requires_test;
-	
+	void set_radius(double a){}
 	
 
   Delaunay_triangulation_sphere_traits_2(const Point_2& sphere=Point_2(0,0,0));
