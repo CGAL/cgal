@@ -169,7 +169,6 @@ bool do_intersect(Type1<SphericalKernel> obj1, Type2<SphericalKernel> obj2, Type
 
 
 
-
 /*!
 \addtogroup intersection
 
@@ -184,6 +183,7 @@ defined before any \cgal header is included.
 */
 
 #define CGAL_INTERSECTION_VERSION
+
 
 /*!
 \addtogroup intersection
@@ -299,7 +299,7 @@ the value for `T...` in `boost::optional< boost::variant<
 <TABLE CELLPADDING=3 BORDER="1">
 <TR> <TH> Type1 </TH>
  <TH> Type2 </TH>
- <TH> Return Type:  Object<Type> </TH>
+ <TH> Return Type:  `T...` </TH>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
@@ -382,7 +382,7 @@ the value for `T...` in `boost::optional< boost::variant<
 <TABLE CELLPADDING=3 BORDER="1">
 <TR> <TH> Type1 </TH>
  <TH> Type2 </TH>
- <TH> Return Type: Object<Type> </TH>
+ <TH> Return Type: `T...` </TH>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_3 </TD>
@@ -565,8 +565,8 @@ on the arguments, the function expects an output iterator on
 `boost::result_of<K::Intersect_2(Type1, Type2)>::type`, as
 presented below.
 
-
 */
+
 /// @{
 
 /*!
@@ -619,6 +619,9 @@ intersection(const Type1 &obj1, const Type2 &obj2,
 When using a spherical kernel, in addition to the function overloads documented \ref intersection_linear "here",
 the following function overloads are also available.
 
+The iterator versions of those functions can be used in conjunction
+`Dispatch_output_iterator`.
+
 Since both the number of intersections, if any, and their type, depend
 on the arguments, the functions expects an output iterator on
 `boost::result_of<Kernel::Intersect_3(Type1, Type2)>::type`,
@@ -629,7 +632,7 @@ as presented below.
 /*!
 Copies in the output iterator the intersection elements between the
 two objects. `intersections` iterates on
-elements of type `CGAL::Object`, in lexicographic order,
+elements of type `result_of< Intersect_3(SphericalType1, SphericalType2) >`, in lexicographic order,
 when this ordering is defined on the computed objects,
 
 where `SphericalType1` and `SphericalType2` can both be either:
@@ -643,7 +646,7 @@ where `SphericalType1` and `SphericalType2` can both be either:
 
 
 and depending on the types `SphericalType1` and `SphericalType2`, the computed 
-`CGAL::Object`s can be assigned to 
+type can be
 
 - `std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>`,
   where the unsigned integer is the multiplicity of the corresponding
@@ -668,7 +671,7 @@ intersection(const SphericalType1 &obj1, const SphericalType2 &obj2,
 /*!
 Copies in the output iterator the intersection elements between the
 three objects. `intersections` iterates on
-elements of type `CGAL::Object`, in lexicographic order 
+elements of type `boost::variant< Circle_3, Plane_3, Sphere_3, std::pair< Circular_arc_point_3, unsigned > >`, in lexicographic order 
 when this ordering is defined on the computed objects
 
 where `Type1`, `Type2` and `Type3`
@@ -678,8 +681,7 @@ can be either
 - `Plane_3<SphericalKernel>`
 
 
-and depending of these types, the computed `CGAL::Object`s can be 
-assigned to 
+and depending of these types, the computed return value
 
 - `std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>`,
   where the unsigned integer is the multiplicity of the corresponding
@@ -689,7 +691,7 @@ assigned to
   `Type3` are equal, and if the three objets `obj1` and `obj2` 
   and `obj3` are equal.
 */
-template < typename Type1, typename Type2, typename OutputIterator >
+  template < typename Type1, typename Type2, typename Type3, typename OutputIterator >
 OutputIterator
 intersection(const Type1 &obj1, const Type2 &obj2, const Type3 &obj3,
              OutputIterator intersections);

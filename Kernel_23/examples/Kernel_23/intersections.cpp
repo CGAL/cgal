@@ -17,7 +17,6 @@ typedef Random_points_on_circle_2<Point,Pt_creator>  P2;
 typedef Creator_uniform_2< Point, Segment>           Seg_creator;
 typedef Join_input_iterator_2< P1, P2, Seg_creator>  Seg_iterator;
 
-using boost::result_of;
 
 int main()
 {
@@ -33,15 +32,6 @@ int main()
   Seg_iterator g( p1, p2);
   std::copy_n( g, 200, std::back_inserter(input));
   
-  // intersection of two objects
-#if !defined(CGAL_CFG_NO_CPP0X_AUTO)
-  // with C++11
-  auto v = intersection(input.back(), input.front());
-#else
-  // without C++11
-  result_of<K::Intersect_2(Segment, Segment)>::type v
-    = intersection(input.back(), input.front());
-#endif
 
   // splitting results with Dispatch_output_iterator
   std::vector<Point> points;
@@ -56,17 +46,13 @@ int main()
                                                     std::back_inserter(segments) );
   
   // intersections of many objects, directly dispatched
-#if !defined(CGAL_CFG_NO_CPP0X_LAMBDA)
-  // with C++11 lambdas
-  auto& s1 = input.front();
-  std::transform(input.begin(), input.end(), disp,
-                 [&s1] (const Segment& s) { return intersection(s1, s); });
-#else
-  // without
+  // intersects the first segment of input with all other segments
+  // The resulting points or segments are written in the vectors with the same names
+
   K::Intersect_2 intersector = K().intersect_2_object();
   std::transform(input.begin(), input.end(), disp,
                  boost::bind(intersector, input.front(), _1));
-#endif
+
 
   std::cout << "Point intersections: " << points.size() << std::endl;
   std::cout << "Segment intersections: " << segments.size() << std::endl;
