@@ -127,13 +127,10 @@ public:
 
   /*!
    * Append a point to the polyline.
-   * TODO: @Efi: According to your mail (c.f. also the comments on the wiki),
-   *             this should *NOT* be deprecated, but shifted to the traits
-   *             class as well. Right? Therefore, it should be kept unchanged
-   *             here, and should only be called through the traits
-   *             class - is this the right way?
+   * \pre The last segment of the polyline is bounded.
+   * TODO: @Efi: Verify this. Note, this is *NOT* deprecated.
    */
-  CGAL_DEPRECATED void push_back (const Point_2 & p)
+  void push_back (const Point_2 & p)
   {
     Point_2 pt = p;
     Point_2 ps = m_segments.back().target();
@@ -341,13 +338,8 @@ public:
 
   /*!
    * Get the number of points contained in the polyline.
-   * TODO: @Efi:  If I get it right, this *SHOULD* be deprecated here, since
-   *              generically speaking, you cannot return the number of vertices
-   *              without using the (segment) traits class. However, it is of
-   *              interest to know how many vertices your polyline has, and thus
-   *              this function should become a functor in the traits class.
-   *              See the comment on the wiki page.
-   *              Summary: Should I add a functor in the traits class?
+   * TODO: @Efi: verify - this is now deprected.
+   *             Should I add a functor number_of_points() in the traits class?
    * \return The number of points.
    */
   CGAL_DEPRECATED unsigned int points() const
@@ -355,14 +347,26 @@ public:
     return (size() == 0) ? 0 : size() + 1;
   }
 
-  /*!
+  /*! Deprecated! Replaced by number_of_segments()
    * Get the number of segments that comprise the poyline.
    * \return The number of segments.
    */
-  Segments_container_size size() const
+  CGAL_DEPRECATED Segments_container_size size() const
   {
     return Segments_container_size(m_segments.size());
   }
+
+  /*!
+   * Get the number of segments that comprise the poyline.
+   * TODO: @Efi: should the be migrated to the traits class as well?
+   *             After all, it is a traits of the polyline.
+   * \return The number of segments.
+   */
+  Segments_container_size number_of_segments() const
+  {
+    return Segments_container_size(m_segments.size());
+  }
+
 
   /*!
    * Get the ith segment of the polyline.
@@ -419,20 +423,6 @@ public:
   /*!
    * Constructs from a range of points, defining the endpoints of the
    * polyline segments.
-   * TODO: @Efi: does this have to be implemented in the traits class as well?
-   *             It should not be deprectaed, right?
-   * EFEF: I think that all these overloaded memeber functions should be
-   *       deprecated.
-   * Dror: What do you mean? Should they be empty and the tests implemented
-   *       in the traits class? Or shouldn't this x-monotone polylines
-   *       construction be removed all together and only a trivial constructor
-   *       from a range of segments be left?
-   * EFEF: I think that construction from points should be deprecated for
-   *       x-monotone polyline. For (non x-monotome) polyline it can stay,
-   *       as there are no tests to apply.
-   * Dror: So this is how you want it to be, in particular, keep the other
-   *       implementation (for constuction from segments) as it is, and
-   *       mark this as deprecated?
    */
   template <typename InputIterator>
   CGAL_DEPRECATED void construct_x_monotone_polyline
@@ -478,28 +468,10 @@ public:
   /*!
    * Append a segment to the (x-monotone) polyline.
    * \param seg The new segment to be appended to the polyline.
-   * \pre If the polyline is not empty, the segment source must be the
+   * \pre If the polyline is not empty, seg source must be the
    *      same as the target point of the last segment in the polyline
    *      (thus it must extend it to the right).
-   * TODO: @Efi: Isn't it badly implemented since it uses a traits class?
-   *             Should it be moved to the traits class?
-   *             If so, a better name of the corresponding functor would be
-   *             "Append_segment_2" woulnd't it?
-   * EFEF: Only the last statement should stay. (Consider making this member
-   *       private.) You can introduce a functor in the traits class that
-   *       can replace this one and contain the verification code.
-   * Dror: I don't understand.
-   * EFEF: since we have begin_segments(), end_segments(), we might as well
-   *       have push_back_segment() and number_of_segments(). These functions
-   *       should not perform any tests.
-   * Dror: But there is a precondition to test, namely that one of the new
-   *       segments' end points equals to the last vertex of the existing
-   *       polyline. Isn't it bad practice, to have on the one hand
-   *       a function with explicit preconditions (and important ones) and
-   *       on the other not verify that they are met? Therefore, at least,
-   *       push_back_segment() should be implemented in the traits class. Is it
-   *       correct? For the sake of unity, number_of_segments() should be
-   *       implemented in the traits class as well.
+   * TODO: @Efi: I still don't know what to do here.
    */
   inline void push_back (const Segment_2& seg)
   {
@@ -551,7 +523,7 @@ private:
   std::ostream& operator<< (std::ostream & os,
 			    const _Polyline_2<SegmentTraits>& cv)
   {
-    // TODO: @Efi: Is this what you meant with respect to the exporter?
+    // TODO: @Efi: Confirm the this is the exporter you want
     typename _Polyline_2<SegmentTraits>::Segment_const_iterator  iter = 
       cv.begin_segments();
         
@@ -563,21 +535,7 @@ private:
     return (os);
   }
   
-  /*! Input operator for a polyline.
-   * TODO: @Efi: Should be deprecated?
-   * EFEF: Change the semantics to export the segments
-   *       Perhaps add an additional exporter (or just a member function)
-   *       that reads points
-   * Dror: Here you meant the "importer", right? So do you want to have two
-   *       importers: one from segments and one from points?
-   * EFEF: Yes, I meant import. Well, you can have only one importer.
-   *       If we want to add something that reads points, we need it to be a
-   *       function (with a name different than '>>', e.g., read_points()).
-   * Dror: Must we have an importer? As we cannot test the correctness of the
-   *       input, shouldn't this be implemented in the traits class as well?
-   *       Obviously, in this case, it won't be operator>> but a functor named
-   *       something like read_segments() and/or read_points().
-   */
+  /*! Input operator for a polyline. */
   template <typename SegmentTraits>
   std::istream& operator>> (std::istream& is,
 			    _Polyline_2<SegmentTraits>& pl)
