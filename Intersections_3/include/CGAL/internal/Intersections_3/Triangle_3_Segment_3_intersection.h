@@ -422,9 +422,6 @@ intersection(const typename K::Triangle_3 &t,
   typename K::Orientation_3 orientation =
     k.orientation_3_object();
 
-  typename K::Intersect_3 intersection =
-    k.intersect_3_object();
-
   const Point_3 & a = vertex_on(t,0);
   const Point_3 & b = vertex_on(t,1);
   const Point_3 & c = vertex_on(t,2);
