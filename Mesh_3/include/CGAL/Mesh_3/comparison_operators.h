@@ -80,33 +80,25 @@ namespace CGAL {
 
       bool operator()(const Facet& f1, const Facet& f2) const
       {
-        Vertex_handle v1 = (f1.first)->vertex(f1.second);
-        Vertex_handle v2 = (f2.first)->vertex(f2.second);
         Vertex_handle_comparator<Vertex_handle> vcomp;
-        if(vcomp(v1,v2))
-          return true;
-        else if(v1 == v2)
+        std::vector<Vertex_handle> vf1;
+        std::vector<Vertex_handle> vf2;
+        for(int i = 0; i < 4; ++i)
         {
-          std::vector<Vertex_handle> vf1;
-          std::vector<Vertex_handle> vf2;
-          for(int i = 0; i < 4; ++i)
-          {
-            if(i != f1.second)
-              vf1.push_back(f1.first->vertex(i));
-            if(i != f2.second)
-              vf2.push_back(f2.first->vertex(i));
-          }
-          std::sort(vf1.begin(), vf1.end(), vcomp);
-          std::sort(vf2.begin(), vf2.end(), vcomp);
-          for(std::size_t i = 0; i < 3; ++i)
-          {
-            if(vf1[i] == vf2[i])
-              continue;
-            else return vcomp(vf1[i], vf2[i]);
-          }
-          return false;
+          if(i != f1.second)
+            vf1.push_back(f1.first->vertex(i));
+          if(i != f2.second)
+            vf2.push_back(f2.first->vertex(i));
         }
-        else return false;        
+        std::sort(vf1.begin(), vf1.end(), vcomp);
+        std::sort(vf2.begin(), vf2.end(), vcomp);
+        for(std::size_t i = 0; i < 3; ++i)
+        {
+          if(vf1[i] == vf2[i])
+            continue;
+          else return vcomp(vf1[i], vf2[i]);
+        }
+        return false;
       }
     };
 
