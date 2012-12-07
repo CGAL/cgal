@@ -45,17 +45,20 @@ public:
   typedef typename K_::Ray_3                       Ray_3;
   typedef typename K_::Segment_3                       Segment_3;
   
-  template<typename T1, typename T2>
-  struct Result {
-    typedef typename K_::Intersect_3::template Result<T1, T2>::Type Type;
-  };
+  template <typename>
+  struct result;
   
+  template <typename F, typename A, typename B>
+  struct result<F(A, B)> {
+    typedef typename boost::result_of<typename K_::Intersect_3(A, B)>::type type;
+  };
+
   typedef Exact_predicates_exact_constructions_kernel   EK;
   typedef Cartesian_converter<typename K_::Kernel, EK>    To_exact;
   typedef Cartesian_converter<EK, typename K_::Kernel>    Back_from_exact;
   
   template<class T1, class T2>
-  typename Result<T1, T2>::Type
+  typename boost::result_of<typename K_::Intersect_3(T1, T2)>::type
   operator() (const T1& t, const T2& s) const
   {
     // Switch to exact
@@ -64,7 +67,8 @@ public:
     EK::Intersect_3 exact_intersection = EK().intersect_3_object();
     
     // Cartesian converters have an undocumented, optional< variant > operator
-    return typename Result<T1, T2>::Type(back_from_exact(exact_intersection(to_exact(t), to_exact(s))));
+    return typename boost::result_of<typename K_::Intersect_3(T1, T2)>::type
+      (back_from_exact(exact_intersection(to_exact(t), to_exact(s))));
   }
 };
 
