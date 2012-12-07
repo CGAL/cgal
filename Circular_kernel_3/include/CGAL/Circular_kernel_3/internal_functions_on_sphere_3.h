@@ -497,10 +497,12 @@ namespace CGAL {
                 const typename SK::Circle_3 & c2,
                 OutputIterator res)
     { 
-      typedef typename SK::Root_for_spheres_2_3  Root_for_spheres_2_3;
-      typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
-      typedef typename SK::Polynomials_for_circle_3  Equation_circle;
-      typedef typename SK::Algebraic_kernel  Algebraic_kernel;
+      typedef typename SK::Root_for_spheres_2_3     Root_for_spheres_2_3;
+      typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
+      typedef typename SK::Polynomials_for_circle_3 Equation_circle;
+      typedef typename SK::Algebraic_kernel         Algebraic_kernel;
+      typedef typename SK::Circle_3                 Circle_3;
+
       typedef typename Intersection_traits<SK, Circle_3, Circle_3>
         ::result_type result_type;
 
@@ -523,12 +525,14 @@ namespace CGAL {
                 const typename SK::Line_3 & l,
                 OutputIterator res)
     { 
-      typedef typename SK::Root_for_spheres_2_3  Root_for_spheres_2_3;
-      typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
-      typedef typename SK::Polynomials_for_circle_3  Equation_circle;
-      typedef typename SK::Polynomials_for_line_3    Equation_line;
-      typedef typename SK::Circle_3  Circle_3;
-      typedef typename Intersection_traits<SK, Circle_3, typename SK::Line_3>::result_type result_type;
+      typedef typename SK::Root_for_spheres_2_3     Root_for_spheres_2_3;
+      typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
+      typedef typename SK::Polynomials_for_circle_3 Equation_circle;
+      typedef typename SK::Polynomials_for_line_3   Equation_line;
+      typedef typename SK::Circle_3                 Circle_3;
+
+      typedef typename Intersection_traits<SK, Circle_3, typename SK::Line_3>
+        ::result_type result_type;
 
       typedef typename SK::Algebraic_kernel  Algebraic_kernel;
       CGAL_kernel_precondition(!l.is_degenerate());
