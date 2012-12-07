@@ -57,32 +57,30 @@ struct Default_converter {
   typedef ::CGAL::NT_converter<FT1, FT2> Type;
 };
 
-template<typename Seq, typename K1, typename K2>
-struct Transform_type_mapper {
-  typedef typename boost::mpl::transform< Seq, typename boost::mpl::lambda< Type_mapper< boost::mpl::_1, K1, K2 > >::type >::type type;
-};
-
 // Out will be a variant, source kernel and target kernel
-template<typename Conv, typename Out>
+template<typename Converter, typename Output>
 struct Converting_visitor : boost::static_visitor<> {
-  Converting_visitor(const Conv& conv, Out& out) : conv(&conv), out(&out) {}
-  const Conv* conv;
-  Out* out;
+  Converting_visitor(const Converter& conv, Output& out) : conv(&conv), out(&out) {}
+  const Converter* conv;
+  Output* out;
 
   template<typename T>
-  void operator()(const T& t) {
-    *out = conv->operator()(t);
-  }
+  void operator()(const T& t) { *out = conv->operator()(t); }
 
   template<typename T>
   void operator()(const std::vector<T>& t) {
-    typedef typename Type_mapper< T, typename Conv::Source_kernel, typename Conv::Target_kernel >::type value_type;
-    std::vector< value_type > tmp(t.size());
+    typedef typename 
+      Type_mapper< T, typename Converter::Source_kernel, 
+                   typename Converter::Target_kernel >::type 
+    value_type;
     
-    for(std::size_t i = 0; i < t.size(); ++i) {
-      tmp[i] = conv->operator()(t[i]);
+    std::vector< value_type > tmp;
+    tmp.reserve(t.size());
+    for(typename std::vector< T >::iterator it = t.begin();
+        it !=  t.end(); ++it) {
+      tmp.push_back(conv->operator()(*it));
     }
-
+    
     *out = tmp;
   }
 };
@@ -138,49 +136,36 @@ public:
     // new list into a variant
     // visit to get the type, and copy construct inside the return type 
     template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
-    boost::optional< 
-      typename boost::make_variant_over< 
-        typename internal::Transform_type_mapper< 
-          typename boost::mpl::remove< boost::mpl::vector< BOOST_VARIANT_ENUM_PARAMS(U) >, 
-                                       boost::detail::variant::void_ >::type
-                                         , K1, K2 >::type
-        >::type > 
+    typename
+    Type_mapper< boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
+                 K1, K2 >::type
     operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
-      typedef boost::optional< 
-        typename boost::make_variant_over< 
-          typename internal::Transform_type_mapper< 
-            typename boost::mpl::remove< boost::mpl::vector< BOOST_VARIANT_ENUM_PARAMS(U) >, 
-                                         boost::detail::variant::void_ >::type
-                                           , K1, K2 >::type
-          >::type > result_type;
+      typedef typename 
+        Type_mapper< boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
+                     K1, K2 >::type result_type;
       result_type res;
       if(!o) {
         // empty converts to empty
         return res;
       }
 
-      internal::Converting_visitor<Self, result_type> conv_visitor = internal::Converting_visitor<Self, result_type>(*this, res);
+      internal::Converting_visitor<Self, result_type> 
+        conv_visitor = internal::Converting_visitor<Self, result_type>(*this, res);
       boost::apply_visitor(conv_visitor, *o);
       return res;
     }
 
     template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
-    typename boost::make_variant_over< 
-      typename internal::Transform_type_mapper< 
-        typename boost::mpl::remove< boost::mpl::vector< BOOST_VARIANT_ENUM_PARAMS(U) >, 
-                                     boost::detail::variant::void_ >::type
-                                       , K1, K2 >::type
-      >::type
+    typename
+    Type_mapper< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) >,
+                 K1, K2 >::type
     operator()(const boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > & o) const {
-      typedef 
-        typename boost::make_variant_over< 
-          typename internal::Transform_type_mapper< 
-            typename boost::mpl::remove< boost::mpl::vector< BOOST_VARIANT_ENUM_PARAMS(U) >, 
-                                         boost::detail::variant::void_ >::type
-            , K1, K2 >::type
-          >::type result_type;
+      typedef typename 
+        Type_mapper< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) >,
+                     K1, K2 >::type result_type;
       result_type res;
-      internal::Converting_visitor<Self, result_type> conv_visitor = internal::Converting_visitor<Self, result_type>(*this, res);
+      internal::Converting_visitor<Self, result_type> 
+        conv_visitor = internal::Converting_visitor<Self, result_type>(*this, res);
       boost::apply_visitor(conv_visitor, o);
       return res;
     }
