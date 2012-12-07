@@ -25,6 +25,7 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
 #include <CGAL/tags.h>
+#include <CGAL/Mesh_3/comparison_operators.h>
 
 namespace CGAL {
 
@@ -67,8 +68,11 @@ struct Triangulation_mesher_level_traits_3 :
   }
 
   class Zone {
-    typedef std::vector<Cell_handle> Cells;
-    typedef std::vector<Facet> Facets;
+    typedef CGAL::Mesh_3::Triangulation_canonical_facets_comparator<Tr> Facet_comp;
+    typedef CGAL::Mesh_3::Cell_handle_comparator<Tr> Cell_comp;
+
+    typedef std::set<Cell_handle, Cell_comp> Cells;
+    typedef std::set<Facet, Facet_comp> Facets;
   public:
     typedef typename Cells::iterator Cells_iterator;
     typedef typename Facets::iterator Facets_iterator;
@@ -78,9 +82,19 @@ struct Triangulation_mesher_level_traits_3 :
     typedef typename Tr::Locate_type Locate_type;
 
     Zone() {
-      cells.reserve(64);
-      boundary_facets.reserve(32);
-      internal_facets.reserve(64);
+    }
+
+    std::insert_iterator<Facets> boundary_facets_inserter()
+    {
+      return std::inserter(boundary_facets, boundary_facets.end());
+    }
+    std::insert_iterator<Facets> internal_facets_inserter()
+    {
+      return std::inserter(internal_facets, internal_facets.end());
+    }
+    std::insert_iterator<Cells> cells_inserter()
+    {
+      return std::inserter(cells, cells.end());
     }
 
     Locate_type locate_type;
