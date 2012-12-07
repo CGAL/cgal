@@ -25,7 +25,7 @@
 
 
 const std::size_t elements = 50000;
-const int runs = 50;
+const int runs = 10;
 
 template<typename Tree>
 struct FilterP {
