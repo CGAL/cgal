@@ -95,7 +95,7 @@ public:
     return m_tls_grids.local()[get_grid_index(point)];
   }
 
-  bool try_lock(int cell_index)
+  bool try_lock(int cell_index, bool no_spin = false)
   {
     bool ret = false;
     // Already locked by this thread?
@@ -106,7 +106,7 @@ public:
     // Otherwise, try to lock it
     else
     {
-      if (try_lock_cell(cell_index))
+      if (try_lock_cell(cell_index, no_spin))
       {
         ret = true;
         m_tls_grids.local()[cell_index] = true;
@@ -116,7 +116,8 @@ public:
     return ret;
   }
 
-  bool try_lock(int index_x, int index_y, int index_z, int lock_radius)
+  bool try_lock(int index_x, int index_y, int index_z, int lock_radius, 
+                bool no_spin = false)
   {
     if (lock_radius == 0)
     {
@@ -124,7 +125,7 @@ public:
         index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
         + index_y*m_num_grid_cells_per_axis
         + index_x;
-      return try_lock(index_to_lock);
+      return try_lock(index_to_lock, no_spin);
     }
     else
     {
@@ -149,7 +150,7 @@ public:
               + j*m_num_grid_cells_per_axis
               + i;
             // Try to lock it
-            if (try_lock(index_to_lock))
+            if (try_lock(index_to_lock, no_spin))
             {
               locked_cells_tmp.push_back(index_to_lock);
             }
@@ -172,11 +173,11 @@ public:
     }
   }
 
-  bool try_lock(int cell_index, int lock_radius)
+  bool try_lock(int cell_index, int lock_radius, bool no_spin = false)
   {
     if (lock_radius == 0)
     {
-      return try_lock(cell_index);
+      return try_lock(cell_index, no_spin);
     }
     else
     {
@@ -186,14 +187,14 @@ public:
       cell_index -= index_y*m_num_grid_cells_per_axis;
       int index_x = cell_index;
 
-      return try_lock(index_x, index_y, index_z, lock_radius);
+      return try_lock(index_x, index_y, index_z, lock_radius, no_spin);
     }
   }
 
   /// P3 must provide .x(), .y(), .z()
   /// Returns a pair "success or not + index of the grid cell"
   template <typename P3>
-  std::pair<bool, int> try_lock(const P3 &point, int lock_radius = 0)
+  std::pair<bool, int> try_lock(const P3 &point, int lock_radius = 0, bool no_spin = false)
   {
     // Compute indices on grid
     int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
@@ -210,12 +211,12 @@ public:
 
     if (lock_radius == 0)
     {
-      return std::make_pair(try_lock(index), index);
+      return std::make_pair(try_lock(index, no_spin), index);
     }
     else
     {
       return std::make_pair(
-        try_lock(index_x, index_y, index_z, lock_radius),
+        try_lock(index_x, index_y, index_z, lock_radius, no_spin),
         index);
     }
   }
@@ -311,9 +312,9 @@ protected:
   {
     return static_cast<Derived*>(this)->is_cell_locked_impl(cell_index);
   }
-  bool try_lock_cell(int cell_index)
+  bool try_lock_cell(int cell_index, bool no_spin = false)
   {
-    return static_cast<Derived*>(this)->try_lock_cell_impl(cell_index);
+    return static_cast<Derived*>(this)->try_lock_cell_impl(cell_index, no_spin);
   }
   void unlock_cell(int cell_index)
   {
@@ -372,7 +373,7 @@ public:
     return (m_grid[cell_index] == true);
   }
 
-  bool try_lock_cell_impl(int cell_index)
+  bool try_lock_cell_impl(int cell_index, bool no_spin = false)
   {
     bool old_value = m_grid[cell_index].compare_and_swap(true, false);
     return (old_value == false);
@@ -433,29 +434,47 @@ public:
     return (m_grid[cell_index] != 0);
   }
 
-  bool try_lock_cell_impl(int cell_index)
+  bool try_lock_cell_impl(int cell_index, bool no_spin = false)
   {
-    bool ret = false;
-
     unsigned int this_thread_id = m_tls_thread_ids.local();
     unsigned int old_value;
-    do
+
+    // NO SPIN
+    if (no_spin)
     {
-      old_value = m_grid[cell_index].compare_and_swap(
-        this_thread_id, 0);
+      old_value = m_grid[cell_index].compare_and_swap(this_thread_id, 0);
       if (old_value == 0)
       {
-        ret = true;
         m_tls_grids.local()[cell_index] = true;
         m_tls_locked_cells.local().push_back(cell_index);
+        return true;
       }
-      else
+    }
+    // SPIN
+    else
+    {
+      for(;;)
       {
-        std::this_thread::yield();
+        old_value = m_grid[cell_index].compare_and_swap(this_thread_id, 0);
+        if (old_value == 0)
+        {
+          m_tls_grids.local()[cell_index] = true;
+          m_tls_locked_cells.local().push_back(cell_index);
+          return true;
+        }
+        else if (old_value > this_thread_id)
+        {
+          // Another "more prioritary" thread owns the lock, we back off
+          return false;
+        }
+        else
+        {
+          std::this_thread::yield();
+        }
       }
-    } while (ret == false && old_value < this_thread_id);
+    }
 
-    return ret;
+    return false;
   }
 
   void unlock_cell_impl(int cell_index)
@@ -504,7 +523,7 @@ public:
     return !locked;
   }
 
-  bool try_lock_cell_impl(int cell_index)
+  bool try_lock_cell_impl(int cell_index, bool no_spin = false)
   {
     return m_grid[cell_index].try_lock();
   }

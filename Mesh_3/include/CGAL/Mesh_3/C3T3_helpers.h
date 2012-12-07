@@ -33,6 +33,8 @@
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
 
+#include <CGAL/Mesh_3/Locking_data_structures.h>
+
 #ifdef MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
@@ -387,12 +389,19 @@ protected:
     return 0;
   }
   
+public:
+  // Dummy locks/unlocks
   bool try_lock_point(const Point_3 &p, int lock_radius = 0) const
   {
     return true;
   }
 
   bool try_lock_vertex(Vertex_handle vh, int lock_radius = 0) const
+  {
+    return true;
+  }
+  
+  bool try_lock_vertex_no_spin(Vertex_handle vh, int lock_radius = 0) const
   {
     return true;
   }
@@ -434,6 +443,7 @@ protected:
     : m_lock_ds(p_lock_ds) {}
   
   
+public:
   // LOCKS (CONCURRENCY)
 
   /*Mesh_3::LockDataStructureType *get_lock_data_structure() const
@@ -455,6 +465,15 @@ protected:
     if (m_lock_ds)
     {
       return m_lock_ds->try_lock(vh->point(), lock_radius).first;
+    }
+    return true;
+  }
+
+  bool try_lock_vertex_no_spin(Vertex_handle vh, int lock_radius = 0) const
+  {
+    if (m_lock_ds)
+    {
+      return m_lock_ds->try_lock(vh->point(), lock_radius, true).first;
     }
     return true;
   }
@@ -647,7 +666,8 @@ public:
   update_mesh(const Point_3& new_position,
               const Vertex_handle& old_vertex,
               const SliverCriterion& criterion,
-              OutputIterator modified_vertices);
+              OutputIterator modified_vertices,
+              bool *p_could_lock_zone = 0);
 
   /** @brief tries to move \c old_vertex to \c new_position in the mesh
    *
@@ -660,7 +680,8 @@ public:
   update_mesh_topo_change(const Point_3& new_position,
                           const Vertex_handle& old_vertex,
                           const SliverCriterion& criterion,
-                          OutputIterator modified_vertices);
+                          OutputIterator modified_vertices,
+                          bool *p_could_lock_zone = 0);
   
   /**
    * Updates mesh moving vertex \c old_vertex to \c new_position. Returns the
@@ -746,6 +767,33 @@ public:
   bool
   try_lock_and_get_incident_cells(const Vertex_handle& v,
                                   Cell_vector &cells) const;
+
+  /**
+   * Try to lock ALL the incident cells and return in \c cells the ones
+   * whose \c filter says "true".
+   * Return value:
+   * - false: everything is unlocked and \c cells is empty
+   * - true: ALL incident cells are locked and \c cells is filled
+   */
+  template <typename Filter>
+  bool
+  try_lock_and_get_incident_cells(const Vertex_handle& v,
+                                  Cell_vector &cells,
+                                  const Filter &filter) const;
+  
+  /**
+   * Try to lock ALL the incident cells and return in \c cells the slivers
+   * Return value:
+   * - false: everything is unlocked and \c cells is empty
+   * - true: incident cells are locked and \c cells contains all slivers
+   */
+  template <typename SliverCriterion>
+  bool
+  try_lock_and_get_incident_slivers(const Vertex_handle& v,
+                                    const SliverCriterion& criterion,
+                                    const FT& sliver_bound,
+                                    Cell_vector &cells) const;
+  
   
   /**
    * Get the incident cells and return them in \c cells
@@ -1898,11 +1946,15 @@ C3T3_helpers<C3T3,MD>::
 update_mesh(const Point_3& new_position,
             const Vertex_handle& old_vertex,
             const SliverCriterion& criterion,
-            OutputIterator modified_vertices)
+            OutputIterator modified_vertices,
+            bool *p_could_lock_zone)
 {
   // std::cerr << "\nupdate_mesh[v1](" << new_position << ",\n"
   //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
+
+  if (p_could_lock_zone)
+    *p_could_lock_zone = true;
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
@@ -1925,7 +1977,8 @@ update_mesh(const Point_3& new_position,
     return update_mesh_topo_change(new_position,
                                    old_vertex,
                                    criterion,
-                                   modified_vertices);
+                                   modified_vertices,
+                                   p_could_lock_zone);
   }
 }
 
@@ -1981,7 +2034,8 @@ C3T3_helpers<C3T3,MD>::
 update_mesh_topo_change(const Point_3& new_position,
                         const Vertex_handle& old_vertex,
                         const SliverCriterion& criterion,
-                        OutputIterator modified_vertices)
+                        OutputIterator modified_vertices,
+                        bool *p_could_lock_zone)
 {
   // check_c3t3(c3t3_);
   // std::cerr << "\n"
@@ -1995,8 +2049,12 @@ update_mesh_topo_change(const Point_3& new_position,
   get_conflict_zone_topo_change(old_vertex, new_position,
                                 std::inserter(insertion_conflict_cells,insertion_conflict_cells.end()),
                                 std::back_inserter(insertion_conflict_boundary),
-                                std::inserter(removal_conflict_cells, removal_conflict_cells.end()));
+                                std::inserter(removal_conflict_cells, removal_conflict_cells.end()),
+                                p_could_lock_zone);
 
+  if (p_could_lock_zone && *p_could_lock_zone == false)
+    return make_pair(false, Vertex_handle());
+  
   if(insertion_conflict_boundary.empty())
     return std::make_pair(false,old_vertex); //new_location is a vertex already
 
@@ -3044,6 +3102,42 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
   return true;
 }
 
+template <typename C3T3, typename MD>
+template <typename Filter>
+bool
+C3T3_helpers<C3T3,MD>::
+try_lock_and_get_incident_cells(const Vertex_handle& v,
+                                Cell_vector &cells,
+                                const Filter &filter) const
+{
+  std::vector<Cell_handle> tmp_cells;
+  tmp_cells.reserve(64);
+  bool ret = try_lock_and_get_incident_cells(v, tmp_cells);
+  if (ret)
+  {
+    BOOST_FOREACH(Cell_handle& ch, 
+                  std::make_pair(tmp_cells.begin(), tmp_cells.end()))
+    {
+      if (filter(ch))
+        cells.push_back(ch);
+    }
+  }
+  return ret;
+}
+
+template <typename C3T3, typename MD>
+template <typename SliverCriterion>
+bool
+C3T3_helpers<C3T3,MD>::
+try_lock_and_get_incident_slivers(const Vertex_handle& v,
+                                  const SliverCriterion& criterion,
+                                  const FT& sliver_bound,
+                                  Cell_vector &cells) const
+{
+  Is_sliver<SliverCriterion> i_s(c3t3_, criterion, sliver_bound);
+  return try_lock_and_get_incident_cells(v, cells, i_s);
+}
+
 
 template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
@@ -3163,11 +3257,9 @@ fill_modified_vertices(InputIterator cells_begin,
       // Insert vertices if not already inserted
       const Vertex_handle& current_vertex = (*it)->vertex(i);
       if ( !tr_.is_infinite(current_vertex)
-          && already_inserted_vertices.find(current_vertex) ==
-             already_inserted_vertices.end() )
+          && already_inserted_vertices.insert(current_vertex).second )
       {
         *out++ = current_vertex;
-        already_inserted_vertices.insert(current_vertex);
       }
     }
   }

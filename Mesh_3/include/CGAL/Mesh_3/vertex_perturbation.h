@@ -228,18 +228,19 @@ public:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT& sliver_bound,
-             std::vector<Vertex_handle>& modified_vertices) const
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone) const
   {
 #ifndef CGAL_MESH_3_PERTURBER_VERBOSE
     return do_perturb(v, slivers, c3t3, domain, criterion,
-                      sliver_bound, modified_vertices);
+                      sliver_bound, modified_vertices, p_could_lock_zone);
 #else
     timer_.start();
     
     // Virtual call
     std::pair<bool,Vertex_handle> perturb =
       do_perturb(v, slivers, c3t3, domain, criterion,
-                 sliver_bound, modified_vertices);
+                 sliver_bound, modified_vertices, p_could_lock_zone);
     
     if ( perturb.first )
       ++counter_;
@@ -304,7 +305,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT& sliver_bound,
-             std::vector<Vertex_handle>& modified_vertices) const = 0;
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const = 0;
   
   
   /**
@@ -394,7 +396,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT& sliver_bound,
-             std::vector<Vertex_handle>& modified_vertices) const = 0;
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const = 0;
   
 protected:
   // -----------------------------------
@@ -411,7 +414,8 @@ protected:
                      C3T3& c3t3,
                      const MeshDomain& domain,
                      const SliverCriterion& criterion,
-                     std::vector<Vertex_handle>& modified_vertices) const
+                     std::vector<Vertex_handle>& modified_vertices,
+                     bool *p_could_lock_zone = 0) const
   {
     typedef typename C3T3::Triangulation::Geom_traits Gt;
     typedef typename Gt::FT       FT;
@@ -518,7 +522,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT&,
-             std::vector<Vertex_handle>& modified_vertices) const
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const
   {
     CGAL_precondition(!slivers.empty());
     
@@ -533,7 +538,8 @@ protected:
                                     c3t3,
                                     domain,
                                     criterion,
-                                    modified_vertices);
+                                    modified_vertices,
+                                    p_could_lock_zone);
   }
   
 private:
@@ -674,7 +680,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT&,
-             std::vector<Vertex_handle>& modified_vertices) const
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const
   {
     CGAL_precondition(!slivers.empty());
     
@@ -689,7 +696,8 @@ protected:
                                     c3t3,
                                     domain,
                                     criterion,
-                                    modified_vertices);
+                                    modified_vertices,
+                                    p_could_lock_zone);
   }
   
 private:
@@ -813,7 +821,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT&,
-             std::vector<Vertex_handle>& modified_vertices) const
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const
   {
     CGAL_precondition(!slivers.empty());
     
@@ -828,7 +837,8 @@ protected:
                                     c3t3,
                                     domain,
                                     criterion,
-                                    modified_vertices);
+                                    modified_vertices,
+                                    p_could_lock_zone);
   }
   
 private:
@@ -1012,7 +1022,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT& sliver_bound,
-             std::vector<Vertex_handle>& modified_vertices) const = 0;
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const = 0;
   
 protected:
   // -----------------------------------
@@ -1143,12 +1154,14 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT& sliver_bound,
-             std::vector<Vertex_handle>& modified_vertices) const
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const
   {
     CGAL_precondition(!slivers.empty());
     
     return apply_perturbation(v, slivers, c3t3, domain, criterion,
-                              sliver_bound, modified_vertices);
+                              sliver_bound, modified_vertices, 
+                              p_could_lock_zone);
   }
   
 private:
@@ -1166,7 +1179,8 @@ private:
                      const MeshDomain& domain,
                      const SliverCriterion& criterion,
                      const FT& sliver_bound,
-                     std::vector<Vertex_handle>& modified_vertices) const
+                     std::vector<Vertex_handle>& modified_vertices,
+                     bool *p_could_lock_zone = 0) const
   {
     modified_vertices.clear();
 
@@ -1202,8 +1216,12 @@ private:
         helper.update_mesh(new_location,
                            moving_vertex,
                            criterion,
-                           std::back_inserter(tmp_mod_vertices));
+                           std::back_inserter(tmp_mod_vertices),
+                           p_could_lock_zone);
 
+      if (p_could_lock_zone && *p_could_lock_zone == false)
+        return std::make_pair(false, Vertex_handle());
+      
       // get new vertex
       moving_vertex = update.second;
       
