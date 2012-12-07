@@ -71,8 +71,9 @@ public:
 
   template<typename Query>
   struct Intersection_and_primitive_id {
-    typedef std::pair< typename GeomTraits::Intersect_3::template Result< Query, typename Primitive::Datum >::Type, 
-                       typename Primitive::Id > Type;
+    typedef std::pair< 
+      typename boost::result_of<typename GeomTraits::Intersect_3(Query, typename Primitive::Datum) >::type, 
+      typename Primitive::Id > Type;
     typedef Type type;
   };
 
