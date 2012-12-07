@@ -364,17 +364,17 @@ private:
   bool is_facet_encroached(const Facet& facet, const Point& point) const;
 
   /// Returns whethere an encroached facet is refinable or not
-  bool is_encroached_facet_refinable(Facet& facet) const;
+  bool is_encroached_facet_refinable(const Facet& facet) const;
 
   /// Insert facet into refinement queue
-  void insert_bad_facet(Facet& facet, const Quality& quality)
+  void insert_bad_facet(const Facet& facet, const Quality& quality)
   {
     // Insert canonical facet
     this->add_bad_element(this->canonical_facet(facet), quality);
   }
   
   /// Insert encroached facet into refinement queue
-  void insert_encroached_facet_in_queue(Facet& facet)
+  void insert_encroached_facet_in_queue(const Facet& facet)
   {
     insert_bad_facet(facet,Quality());
   }
@@ -551,9 +551,9 @@ conflicts_zone_impl(const Point& point,
   {
     r_tr_.find_conflicts(point,
                          zone.cell,
-                         std::back_inserter(zone.boundary_facets),
-                         std::back_inserter(zone.cells),
-                         std::back_inserter(zone.internal_facets));
+                         zone.boundary_facets_inserter(),
+                         zone.cells_inserter(),
+                         zone.internal_facets_inserter());
   }
 
   return zone;
@@ -578,7 +578,8 @@ before_insertion_impl(const Facet& facet,
        facet_it != zone.internal_facets.end();
        ++facet_it)
   {
-    if (before_insertion_handle_facet_in_conflict_zone(*facet_it, facet) )
+    Facet f = *facet_it;
+    if (before_insertion_handle_facet_in_conflict_zone(f, facet) )
     {
       source_facet_is_in_conflict = true;
     }
@@ -588,7 +589,8 @@ before_insertion_impl(const Facet& facet,
        facet_it != zone.boundary_facets.end() ;
        ++facet_it)
   {
-    if (before_insertion_handle_facet_on_conflict_zone(*facet_it, facet))
+    Facet f = *facet_it;
+    if (before_insertion_handle_facet_in_conflict_zone(f, facet) )
     {
       source_facet_is_in_conflict = true;
     }
@@ -888,7 +890,7 @@ is_facet_encroached(const Facet& facet,
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 bool
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
-is_encroached_facet_refinable(Facet& facet) const
+is_encroached_facet_refinable(const Facet& facet) const
 {
   typedef typename Gt::Point_3 Point_3;
   typedef typename Gt::FT      FT;

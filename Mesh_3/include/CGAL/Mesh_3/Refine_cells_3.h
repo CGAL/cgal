@@ -323,9 +323,9 @@ conflicts_zone_impl(const Point& point,
   
   r_tr_.find_conflicts(point,
                        zone.cell,
-                       std::back_inserter(zone.boundary_facets),
-                       std::back_inserter(zone.cells),
-                       std::back_inserter(zone.internal_facets));
+                       zone.boundary_facets_inserter(),
+                       zone.cells_inserter(),
+                       zone.internal_facets_inserter());
   CGAL_HISTOGRAM_PROFILER("Mesh_3::Refine_cells::conflict zone", zone.cells.size()); 
   return zone;
 }
@@ -340,10 +340,11 @@ before_insertion_handle_cells_in_conflict_zone(Zone& zone)
   for ( ; cit != zone.cells.end() ; ++cit )
   {
     // Remove cell from refinement queue
-    this->remove_element(*cit);
+    Cell_handle c = *cit;
+    this->remove_element(c);
     
     // Remove cell from complex
-    remove_cell_from_domain(*cit);
+    remove_cell_from_domain(c);
   }
 }
 
