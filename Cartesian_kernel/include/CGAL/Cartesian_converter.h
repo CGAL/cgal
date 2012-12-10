@@ -76,7 +76,7 @@ struct Converting_visitor : boost::static_visitor<> {
     
     std::vector< value_type > tmp;
     tmp.reserve(t.size());
-    for(typename std::vector< T >::iterator it = t.begin();
+    for(typename std::vector< T >::const_iterator it = t.begin();
         it !=  t.end(); ++it) {
       tmp.push_back(conv->operator()(*it));
     }
