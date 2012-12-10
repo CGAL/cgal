@@ -55,9 +55,6 @@ void
 TriangulationPointInput<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   p = convert(event->scenePos());
-  p = Point(p.x() - std::floor(p.x()), p.y() - std::floor(p.y()));
-  CGAL_assertion(p.x() >= 0.0 && p.x() <= 1.0);
-  CGAL_assertion(p.y() >= 0.0 && p.y() <= 1.0);
 
   // Don't do anything
 }
@@ -67,15 +64,6 @@ template <typename T>
 void 
 TriangulationPointInput<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-//  faces.clear();
-//  for(std::list<QGraphicsPolygonItem*>::iterator it = qfaces.begin();
-//      it != qfaces.end();
-//      ++it){
-//    scene_->removeItem(*it);
-//    delete *it;
-//  }
-//  qfaces.clear();
-  
   emit (generate(CGAL::make_object(p)));
 }
 

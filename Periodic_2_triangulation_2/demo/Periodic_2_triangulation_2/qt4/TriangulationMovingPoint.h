@@ -49,6 +49,10 @@ void
 TriangulationMovingPoint<T>::localize_and_insert_point(QPointF qt_point)
 {
   Point p(qt_point.x(), qt_point.y());
+  double dx = dt->domain().xmax() - dt->domain().xmin();
+  double dy = dt->domain().ymax() - dt->domain().ymin();
+  p = Point(p.x()- std::floor(p.x()/dx), p.y()- std::floor(p.y()/dy));
+
   typename T::Locate_type lt;
   int li;
   Face_handle fh = (vh == Vertex_handle()) ? Face_handle() : vh->face();
@@ -83,16 +87,13 @@ void
 TriangulationMovingPoint<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
-  if(! movePointToInsert) return;
+  if (!movePointToInsert) return;
 
-  // fh will be destroyed by the removal of vh.
-  // Let us take a neighbor that is not in the star of vh.
-  const Face_handle fh = vh->face();
-  Vertex_handle next_hint = fh->vertex((fh->index(vh)+1)&3);
-  if(insertedPoint){
-    dt->remove(vh);
+  if (insertedPoint && (vh != Vertex_handle())) {
+    // TODO(NGHK): Re-add dt->remove(vh);
+    vh = Vertex_handle();
   }
-  vh = next_hint;
+
   localize_and_insert_point(event->scenePos());
 }
 
@@ -101,15 +102,14 @@ template <typename T>
 void 
 TriangulationMovingPoint<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-  if(! movePointToInsert ||
-     event->button() != ::Qt::LeftButton) {
+  if (! movePointToInsert || event->button() != ::Qt::LeftButton) {
     return;
   }
 
-  if(insertedPoint){
-    dt->remove(vh);
+  if (insertedPoint && (vh != Vertex_handle())) {
+    // TODO(NGHK): Re-add dt->remove(vh);
+    vh = Vertex_handle();
   }
-  vh = Vertex_handle();
   
   emit(modelChanged());
  

@@ -205,7 +205,6 @@ public:
 			     OutputItFaces fit, 
 			     OutputItBoundaryEdges eit,
 			     Face_handle start = Face_handle()) const {
-    CGAL_assertion(false && "NYI");
     CGAL_triangulation_precondition( this->dimension() == 2);
     int li;
     Locate_type lt;
@@ -218,8 +217,7 @@ public:
     case Triangulation::EDGE:
     case Triangulation::EMPTY:
       *fit++ = fh; //put fh in OutputItFaces
-      std::pair<OutputItFaces,OutputItBoundaryEdges>
-	pit = std::make_pair(fit,eit);
+      std::pair<OutputItFaces,OutputItBoundaryEdges> pit = std::make_pair(fit,eit);
       pit = propagate_conflicts(p,fh,0,pit);
       pit = propagate_conflicts(p,fh,1,pit);
       pit = propagate_conflicts(p,fh,2,pit);
@@ -235,7 +233,6 @@ public:
   get_conflicts (const Point  &p, 
 		 OutputItFaces fit, 
 		 Face_handle start= Face_handle()) const {
-    CGAL_assertion(false && "NYI");
     std::pair<OutputItFaces,Emptyset_iterator> pp = 
       get_conflicts_and_boundary(p,fit,Emptyset_iterator(),start);
     return pp.first;
@@ -272,7 +269,7 @@ public:
   /// NGHK: Not yet implemented
   template < class Stream>
   Stream& draw_dual(Stream & ps) {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
     Finite_edges_iterator eit= this->finite_edges_begin();
     for (; eit != this->finite_edges_end(); ++eit) {
       Object o = dual(eit);
@@ -315,7 +312,7 @@ private:
   /// NGHK: Not yet implemented
   std::vector<Vertex_handle> insert_dummy_points()
   {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   }
   
   /// NGHK: Not yet implemented
@@ -415,7 +412,7 @@ private:
   /// NGHK: Not yet implemented
   bool incircle(int x, int j, int, int l, std::vector<Face_handle> &f,
 		std::vector<Vertex_handle> &w, std::vector<int> &i){
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
     // k is supposed to be j+1 modulo degree, x is supposed to be finite
     //test if w[x] inside circle w[j]w[k]w[l] (f[j] has vertices w[j]w[k])
     // THE FOLLOWING LINE IS TO BE REMOVED. JUST THERE FOR STUPID PRECONDITION
@@ -467,7 +464,6 @@ private:
 		       int i,
 		       std::pair<OutputItFaces,OutputItBoundaryEdges>
 		       pit)  const {
-    CGAL_assertion(false && "NYI");
     Face_handle fn = fh->neighbor(i);
     if (! test_conflict(p,fn)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
@@ -483,7 +479,7 @@ private:
   /// NGHK: Not yet implemented
   void restore_edges(Vertex_handle v)
   {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
     std::list<Edge> edges;
     Face_circulator fc = this->incident_faces(v), done(fc);
     int degree = 0;
@@ -527,7 +523,7 @@ private:
   /// NGHK: Not yet implemented
   void restore_edges(Vertex_handle v, std::set<Face_handle> &faces)
   {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
     typedef std::list<Edge> Edges_list;	
     Edges_list edges;
     Face_circulator fc = this->incident_faces(v), done(fc);
@@ -577,7 +573,7 @@ inline bool
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 test_conflict(const Point  &p, Face_handle fh) const
 {
-  CGAL_assertion(false && "NYI");
+  NGHK_NYI;
   // return true  if P is inside the circumcircle of fh
   // if fh is infinite, return true when p is in the positive
   // halfspace or on the boundary and in the  finite edge of fh
@@ -633,7 +629,7 @@ typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>:: 
 nearest_vertex(const Point  &p, Face_handle f) const
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   switch (this->dimension()) {
   case 0:
     if (this->number_of_vertices() == 0) return Vertex_handle();
@@ -654,7 +650,7 @@ typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>:: 
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   CGAL_triangulation_precondition(this->dimension() == 2);
   f = this->locate(p,f);
 
@@ -681,7 +677,7 @@ typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>:: 
 nearest_vertex_1D(const Point& p) const
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   typename Geom_traits::Compare_distance_2 
     compare_distance =  this->geom_traits().compare_distance_2_object();
   Vertex_handle nn;
@@ -703,7 +699,7 @@ look_nearest_neighbor(const Point& p,
 		      int i,
 		      Vertex_handle& nn) const
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   Face_handle  ni=f->neighbor(i);
   if ( ON_POSITIVE_SIDE != side_of_oriented_circle(ni,p,true) ) return;
 
@@ -727,7 +723,7 @@ typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Point
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   CGAL_triangulation_precondition (this->dimension()==2);
   return circumcenter(f);
 }
@@ -738,7 +734,7 @@ inline typename Gt::Segment_2
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 dual(const Edge &e) const
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   typedef typename Geom_traits::Line_2        Line;
   typedef typename Geom_traits::Ray_2         Ray;
 
@@ -777,7 +773,7 @@ inline typename Gt::Segment_2
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::  
 dual(const Edge_circulator& ec) const
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   return dual(*ec);
 }
 
@@ -852,7 +848,7 @@ insert_and_give_new_faces(const Point  &p,
                           OutputItFaces oif,
                           Face_handle start)
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   Vertex_handle v = insert(p, start);
   int dimension = this->dimension();
   if(dimension == 2)
@@ -882,7 +878,7 @@ insert_and_give_new_faces(const Point  &p,
                           Face_handle loc, int li, 
                           OutputItFaces oif)
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   Vertex_handle v = insert(p, lt, loc, li);
   int dimension = this->dimension();
   if(dimension == 2)
@@ -960,7 +956,7 @@ void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
 {
-  CGAL_assertion(false && "NYI");
+  NGHK_NYI;
   CGAL_triangulation_precondition( v != Vertex_handle());
   CGAL_triangulation_precondition( !this->is_infinite(v));
     
@@ -999,7 +995,7 @@ void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v)
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   int d;
 
   CGAL_triangulation_precondition( v != Vertex_handle());
@@ -1024,7 +1020,7 @@ remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
 		   std::vector<Vertex_handle> &w, std::vector<int> &i,
 		   int &d, int &maxd)
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   f[0] = v->face();d=0;
   do{
     i[d] = f[d]->index(v);
@@ -1062,7 +1058,7 @@ remove_degree_triangulate(Vertex_handle v,
                           std::vector<Vertex_handle> &w, 
                           std::vector<int> &i,int d)
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   switch (d) {
   case 3:
     remove_degree3(v,f,w,i);    break;
@@ -1086,7 +1082,7 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
                 std::vector<Vertex_handle> &, 
                 std::vector<int> &,int)
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   // removing a degree d vertex, (dim is not going down)
   // this is the old removal procedure that is used now only if d > 7
 
@@ -1102,7 +1098,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
 	       std::vector<Vertex_handle> &, std::vector<int> &i)
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   // removing a degree 3 vertex
   // only w[0] can be infinite
 
@@ -1126,7 +1122,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
 	       std::vector<Vertex_handle> &w, std::vector<int> &i )
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   // removing a degree 4 vertex
   // only w[0] can be infinite
 
@@ -1166,7 +1162,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
 	       std::vector<Vertex_handle> &w, std::vector<int> &i )
 {  
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   // removing a degree 5 vertex
   // only w[0] can be infinite
 
@@ -1226,7 +1222,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree5_star
  Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4 )
 { // removing a degree 5 vertex, staring from v0
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   Face_handle nn;
   f1->set_vertex( i1, v0) ;  // f1 = v1v2v0
   f2->set_vertex( i2, v0) ;  // f2 = v2v3v0
@@ -1245,7 +1241,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree6(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i)
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   // removing a degree 6 vertex
   // only w[0] can be infinite
 
@@ -1381,7 +1377,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_star
  Vertex_handle &, Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, staring from v0
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   Face_handle nn;
   f1->set_vertex( i1, v0) ;  // f1 = v1v2v0
   f2->set_vertex( i2, v0) ;  // f2 = v2v3v0
@@ -1406,7 +1402,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_N
  Vertex_handle &v3, Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, N configuration with diagonal v0v3
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   Face_handle nn;
   f1->set_vertex( i1, v0) ;  // f1 = v1v2v0
   f2->set_vertex( i2, v0) ;  // f2 = v2v3v0
@@ -1432,7 +1428,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
  Vertex_handle &v3, Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, antiN configuration with diagonal v0v3
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   Face_handle nn;
   f0->set_vertex( i0, v3) ;  // f0 = v0v1v3
   f1->set_vertex( i1, v3) ;  // f1 = v1v2v3
@@ -1458,7 +1454,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond
  Vertex_handle &, Vertex_handle &v4, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, with chords v0v2 v2v4 v4v0
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   Face_handle nn;
   f0->set_vertex( i0, v2) ;  // f0 = v0v1v2
   f2->set_vertex( i2, v4) ;  // f2 = v2v3v4
@@ -1485,7 +1481,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i)
 { 
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   // removing a degree 7 vertex
   // only w[0] can be infinite
 
@@ -1888,7 +1884,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 rotate7(int j,  std::vector<Vertex_handle> &w, 
 	       std::vector<Face_handle> &f, std::vector<int> &i)
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   if (j==0) return;
   Face_handle ff=f[0];
   int ii=i[0],k=0,kk=(6*j)%7;
@@ -1906,7 +1902,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_star   (Vertex_handle &, int j,
 std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, staring from w[j]
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
 
   rotate7(j,w,f,i);
 
@@ -1930,7 +1926,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_zigzag (Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, zigzag, w[j] = middle point
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
 
  rotate7(j,w,f,i);
 
@@ -1963,7 +1959,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_leftdelta(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, left delta from w[j]
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
  rotate7(j,w,f,i);
 
   Face_handle nn;
@@ -1992,7 +1988,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_rightdelta(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, right delta from w[j]
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   rotate7(j,w,f,i);
 
   Face_handle nn;
@@ -2021,7 +2017,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_leftfan(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, left fan from w[j]
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   rotate7(j,w,f,i);
 
   Face_handle nn;
@@ -2047,7 +2043,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_rightfan(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, right fan from w[j]
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
 
   rotate7(j,w,f,i);
 
@@ -2079,7 +2075,7 @@ template <class Gt, class Tds >
 typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 move_if_no_collision(Vertex_handle v, const Point &p) {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   CGAL_triangulation_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   const int dim = this->dimension();
@@ -2207,7 +2203,7 @@ template <class Gt, class Tds >
 typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 move(Vertex_handle v, const Point &p) {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   CGAL_triangulation_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle w = move_if_no_collision(v,p);
@@ -2223,7 +2219,7 @@ bool
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   CGAL_triangulation_precondition(!this->is_infinite(v));		
   CGAL_triangulation_precondition(this->dimension() == 2);	
   CGAL_triangulation_precondition(!this->test_dim_down(v));	
@@ -2281,7 +2277,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
                                         const Point &p,
                                         OutputItFaces oif)
 {
-    CGAL_assertion(false && "NYI");
+    NGHK_NYI;
   CGAL_triangulation_precondition(!this->is_infinite(v));	
   if(v->point() == p) return v;
 

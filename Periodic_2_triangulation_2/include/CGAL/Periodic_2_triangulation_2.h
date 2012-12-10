@@ -18,6 +18,8 @@
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_2_H
 
+#define NGHK_NYI { std::cout << "NYI: " << __PRETTY_FUNCTION__ << std::endl; CGAL_assertion(false); }
+
 #ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
 #include <ctime>
 extern double total_time;
@@ -1252,7 +1254,7 @@ protected:
   /// NGHK: Not yet implemented
   template<class Stream>
   Stream& draw_triangulation(Stream& os) const {
-    CGAL_triangulation_precondition(false && "NYI");
+    NGHK_NYI;
     Edge_iterator it = edges_begin();
     for (; it != edges_end(); ++it) {
       os << segment(it);
@@ -1262,7 +1264,7 @@ protected:
 
   /// NGHK: Not yet implemented
   bool well_oriented(Vertex_handle v) {
-    CGAL_triangulation_precondition(false && "NYI");
+    NGHK_NYI;
     typedef typename Geom_traits::Orientation_2 Orientation_2;
     Orientation_2 orientation_2 = geom_traits().orientation_2_object();
     Face_circulator fc = incident_faces(v), done(fc);
@@ -1281,7 +1283,7 @@ protected:
 
   /// NGHK: Not yet implemented
   bool from_convex_hull(Vertex_handle v) {
-    CGAL_triangulation_precondition(false && "NYI");
+    NGHK_NYI;
     CGAL_triangulation_precondition(!is_infinite(v));
     Vertex_circulator vc = incident_vertices(v), done(vc);
     do {
@@ -1294,7 +1296,7 @@ protected:
   /// NGHK: Not yet implemented
   template<class EdgeIt>
   Vertex_handle star_hole(const Point& p, EdgeIt edge_begin, EdgeIt edge_end) {
-    CGAL_triangulation_precondition(false && "NYI");
+    NGHK_NYI;
     std::list<Face_handle> empty_list;
     return star_hole(p, edge_begin, edge_end, empty_list.begin(),
         empty_list.end());
@@ -1304,7 +1306,7 @@ protected:
   template<class EdgeIt, class FaceIt>
   Vertex_handle star_hole(const Point& p, EdgeIt edge_begin, EdgeIt edge_end,
       FaceIt face_begin, FaceIt face_end) {
-    CGAL_triangulation_precondition(false && "NYI");
+    NGHK_NYI;
     typedef typename Triangulation_data_structure::Edge Tds_Edge;
     typedef typename Triangulation_data_structure::Face Tds_Face;
     Vertex_handle v =
@@ -2401,6 +2403,7 @@ inline void Periodic_2_triangulation_2<Gt, Tds>::remove_degree_3(Vertex_handle v
   if (is_1_cover())
   {
     remove_degree_3_single_copy(v);
+    return;
   }
 
   {
@@ -2432,7 +2435,7 @@ inline void Periodic_2_triangulation_2<Gt, Tds>::remove_degree_3(Vertex_handle v
 template<class Gt, class Tds>
 inline void Periodic_2_triangulation_2<Gt, Tds>::remove_degree_3_single_copy(Vertex_handle vh)
 {
-  CGAL_assertion(false && "NYI");
+  NGHK_NYI;
   /// TODO(NGHK): Need to update the offsets
 
   _tds.remove_degree_3(vh);
@@ -3748,10 +3751,15 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::oriented_side(Face_handle f,
 template<class Gt, class Tds>
 Bounded_side Periodic_2_triangulation_2<Gt, Tds>::bounded_side(const Point &p0,
     const Point &p1, const Point &p2, const Point &p) const {
+  std::cout << __FUNCTION__ << ", l:" << __LINE__ << std::endl;
+
   // return position of point p with respect to triangle p0p1p2
   CGAL_triangulation_precondition( orientation(p0, p1, p2) != COLLINEAR);
-  Orientation o1 = orientation(p0, p1, p), o2 = orientation(p1, p2, p), o3 =
-      orientation(p2, p0, p);
+  std::cout << __FUNCTION__ << ", l:" << __LINE__ << std::endl;
+
+  Orientation o1 = orientation(p0, p1, p);
+  Orientation o2 = orientation(p1, p2, p);
+  Orientation o3 = orientation(p2, p0, p);
 
   if (o1 == COLLINEAR) {
     if (o2 == COLLINEAR || o3 == COLLINEAR)
@@ -3922,23 +3930,21 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
 template<class Gt, class Tds>
 bool Periodic_2_triangulation_2<Gt, Tds>::collinear_between(const Point& p,
     const Point& q, const Point& r) const {
-  CGAL_assertion(false && "NYI");
-  //  // return true if point q is strictly between p and r
-  //  // p,q and r are supposed to be collinear points
-  //  Comparison_result c_pr = compare_x(p, r);
-  //  Comparison_result c_pq;
-  //  Comparison_result c_qr;
-  //  if(c_pr == EQUAL) {
-  //    //c_pr = compare_y(p, r);
-  //    c_pq = compare_y(p, q);
-  //    c_qr = compare_y(q, r);
-  //  } else {
-  //    c_pq = compare_x(p, q);
-  //    c_qr = compare_x(q, r);
-  //  }
-  //  return ( (c_pq == SMALLER) && (c_qr == SMALLER) ) ||
-  //  ( (c_pq == LARGER)  && (c_qr == LARGER) );
-  //  
+  // return true if point q is strictly between p and r
+  // p,q and r are supposed to be collinear points
+  Comparison_result c_pr = compare_x(p, r);
+  Comparison_result c_pq;
+  Comparison_result c_qr;
+  if(c_pr == EQUAL) {
+    c_pq = compare_y(p, q);
+    c_qr = compare_y(q, r);
+  } else {
+    c_pq = compare_x(p, q);
+    c_qr = compare_x(q, r);
+  }
+  return ( (c_pq == SMALLER) && (c_qr == SMALLER) ) ||
+         ( (c_pq == LARGER)  && (c_qr == LARGER) );
+
 }
 
 template<class Gt, class Tds>
@@ -3957,8 +3963,8 @@ bool Periodic_2_triangulation_2<Gt, Tds>::collinear_between(const Point& p,
     c_pq = compare_x(p, q, o_p, o_q);
     c_qr = compare_x(q, r, o_q, o_r);
   }
-  return (((c_pq == SMALLER) && (c_qr == SMALLER)) || ((c_pq == LARGER)
-      && (c_qr == LARGER)));
+  return (((c_pq == SMALLER) && (c_qr == SMALLER)) ||
+          ((c_pq == LARGER)  && (c_qr == LARGER)));
 }
 
 template<class Gt, class Tds>
