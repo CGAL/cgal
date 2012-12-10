@@ -796,7 +796,7 @@ insert(const Point  &p,  Face_handle start)
                                (p.y() < this->domain().ymax()));
   
   if (this->number_of_stored_vertices() == 0) {
-    return insert_first(p);
+    return this->insert_first(p);
   }
   
   if (start == Face_handle()) {
@@ -937,7 +937,7 @@ propagating_flip(Face_handle& f,int i)
     off[index] = get_offset(nb,index);
   }
   p[3]   = &f->vertex(i)->point();
-  off[3] = combine_offsets(get_offset(f,i), get_neighbor_offset(f, i));
+  off[3] = this->combine_offsets(get_offset(f,i), get_neighbor_offset(f, i));
 
   if ( ON_POSITIVE_SIDE != 
        this->side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],

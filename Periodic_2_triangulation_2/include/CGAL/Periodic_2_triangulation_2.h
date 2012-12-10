@@ -277,8 +277,15 @@ public:
   /// \name Constructors
   //\{
   /// Constructor
-  Periodic_2_triangulation_2(const Iso_rectangle & domain = Iso_rectangle(0, 0,
-      1, 1), const Geom_traits& geom_traits = Geom_traits());
+  Periodic_2_triangulation_2(
+		  const Iso_rectangle &domain = Iso_rectangle(0,0,1,1),
+		  const Geom_traits &geom_traits = Geom_traits());
+
+  template < class InputIterator >
+  Periodic_2_triangulation_2(InputIterator first, InputIterator last,
+                             const Iso_rectangle & domain = Iso_rectangle(0,0,1,1),
+                             const Gt& gt = Gt());
+
   /// Copy constructor
   Periodic_2_triangulation_2(const Periodic_2_triangulation_2<Gt, Tds> &tr);
   /// Assignment
@@ -1492,6 +1499,21 @@ Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
   _edge_length_threshold = (FT(0.166) * (_domain.xmax() - _domain.xmin())
       * (_domain.xmax() - _domain.xmin()));
 
+}
+
+template<class Gt, class Tds>
+template < class InputIterator >
+Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
+		InputIterator first, InputIterator last,
+		const Iso_rectangle & domain, const Gt& geom_traits) :
+		_gt(geom_traits), _tds(), _domain(domain), _too_long_edge_counter(0), _cover(make_array(1, 1)) {
+	CGAL_triangulation_precondition(_domain.xmax()-_domain.xmin() == _domain.ymax()-_domain.ymin());
+
+	_gt.set_domain(_domain);
+	_edge_length_threshold = (FT(0.166) * (_domain.xmax() - _domain.xmin())
+			* (_domain.xmax() - _domain.xmin()));
+
+	insert(first, last);
 }
 
 // copy constructor duplicates vertices and faces
