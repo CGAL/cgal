@@ -259,14 +259,12 @@ namespace CGAL {
       double ymin = bb.ymin();
       double dx = bb.xmax() - xmin;
       double dy = bb.ymax() - ymin;
-      dx *= t->number_of_sheets()[0]+0.1;
-      dy *= t->number_of_sheets()[1]+0.1;
 
       double delta = 0.1;
       bounding_rect = QRectF(xmin - dx*delta,
                              ymin - dy*delta,
-                             (t->number_of_sheets()[0]+delta) * dx,
-                             (t->number_of_sheets()[1]+delta) * dy);
+                             dx * t->number_of_sheets()[0] + 2*dx*delta,
+                             dy * t->number_of_sheets()[0] + 2*dy*delta);
     }
     
     
