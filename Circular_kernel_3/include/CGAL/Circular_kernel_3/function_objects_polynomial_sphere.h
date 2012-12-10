@@ -1100,8 +1100,7 @@ template < class SK > \
     typedef typename SK::Circle_3                 Circular_arc_point_3;
   
   public:
-
-	  typedef typename SK::Linear_kernel::Do_intersect_3::result_type result_type;
+    typedef typename SK::Linear_kernel::Do_intersect_3::result_type result_type;
   
     using SK::Linear_kernel::Do_intersect_3::operator();
 
@@ -1165,6 +1164,7 @@ template < class SK > \
     typedef typename SK::Circular_arc_3           Circular_arc_3;
     typedef typename SK::Plane_3                  Plane_3;
     typedef typename SK::Circle_3                 Circle_3;
+    typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
 
   public:
 
@@ -1174,8 +1174,8 @@ template < class SK > \
 #else
   private:
     // helper to minimize result implementation
-    template <typename A, typename B, 
-              typename C, bool is_iterator = CGAL::is_iterator<typename boost::decay<C>::type>::value>
+    template <typename A, typename B, typename C, 
+              bool is_iterator = CGAL::is_iterator<typename boost::decay<C>::type>::value>
     struct result_impl 
     { typedef typename boost::result_of<typename SK::Linear_kernel::Intersect_3(A, B, C)>::type
       type; };
@@ -1190,7 +1190,7 @@ template < class SK > \
 
     // the binary overload always goes to Linear::Intersect_3
     template <typename F, typename A, typename B>
-    struct result<F(A, B)> 
+    struct result<F(A, B)>
     { typedef typename boost::result_of<typename SK::Linear_kernel::Intersect_3(A, B)>::type type; };
 
     // we match the ternary case if the last argument is an iterator,
@@ -1202,6 +1202,64 @@ template < class SK > \
     template <typename F, typename A, typename B, typename C, typename OutputIterator>
     struct result<F(A, B, C, OutputIterator)> 
     { typedef OutputIterator type; };
+
+    // The problem: the results specified here are not the true
+    // result. The true result is OutputIterator. This will break in
+    // awful ways with a decltype based result_of implementation. The
+    // fix is to add dummy function calls with the correct return
+    // type.
+    // TODO: turn this into macros and also generate the dummy
+    // function calls.
+    template <typename F>
+    struct result<F(Sphere_3, Line_3)>
+    { typedef boost::variant< std::pair< Circular_arc_point_3, unsigned int > > type; };
+
+    template <typename F>
+    struct result<F(Line_3, Sphere_3)> : result<F(Sphere_3, Line_3)> {};
+
+    template <typename F>
+    struct result<F(Circle_3, Plane_3)>
+    { typedef boost::variant< std::pair< Circular_arc_point_3, unsigned int >, Circle_3 > type; };
+
+    template <typename F>
+    struct result<F(Plane_3, Circle_3)> : result<F(Circle_3, Plane_3)> {};
+
+    template <typename F>
+    struct result<F(Circle_3, Sphere_3)>
+    { typedef boost::variant< std::pair< Circular_arc_point_3, unsigned int >, Circle_3 > type;};
+
+    template <typename F>
+    struct result<F(Sphere_3, Circle_3)> : result<F(Circle_3, Sphere_3)> {};
+
+    template <typename F>
+    struct result<F(Circle_3, Circle_3)>
+    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int > > type; };
+
+    template <typename F>
+    struct result<F(Circle_3, Line_3)>
+    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int > > type; };
+
+    template <typename F>
+    struct result<F(Line_3, Circle_3)> : result<F(Circle_3, Line_3)> {};
+
+    template <typename F>
+    struct result<F(Circular_arc_3, Circular_arc_3)>
+    { typedef boost::variant< Circle_3, std::pair <Circular_arc_point_3, unsigned int >,
+                                Circular_arc_3 > type;};
+
+    template <typename F>
+    struct result<F(Circular_arc_3, Plane_3)>
+    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int >,
+                              Circular_arc_3 > type;  };
+
+    template <typename F>
+    struct result<F(Plane_3, Circular_arc_3)> : result<F(Circular_arc_3, Plane_3)> {};
+
+    template <typename F>
+    struct result<F(Line_arc_3, Line_arc_3)>
+    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int >,
+                              Line_arc_3 > type; };
+
 #endif
     
     // forward the intersection functions from the linear kernel
@@ -1214,9 +1272,7 @@ template < class SK > \
     typename boost::result_of<typename SK::Intersect_3(A, B, C)>::type
     operator()(const A& a, const B& b, const C& c,
                typename boost::enable_if_c<!(CGAL::is_iterator<typename boost::decay<C>::type>::value)>::type* = 0)
-    {
-      return typename SK::Linear_kernel().intersect_3_object()(a, b, c);
-    }
+    { return typename SK::Linear_kernel().intersect_3_object()(a, b, c); }
     
     template < class OutputIterator >
     OutputIterator
