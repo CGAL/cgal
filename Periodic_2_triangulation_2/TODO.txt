@@ -1,7 +1,7 @@
 $Id$
 $Date$
 
-TODO - Manual
+=== TODO - Manual
 
 
 
@@ -14,7 +14,15 @@ TODO:
      - geometric_access.cpp: Added, TODO: check implementation
      - large_point_set.cpp: Added, TODO: implement
    * TODO Check whether we use a randomized walk
-
+   * Philipp: While going through the documentation a few things
+     randomly jumped at me: Especially in Period_2_triangulation_2.h
+     you spend lots of space explaining Handles, Circulators as well
+     as basic value semantics in your constructors and swap member
+     functions. I found that to really distract from the actual
+     content.
+   * Also, why do you document operator<< if the format is not
+     documented and when they impose an additional requirement on the
+     Point type.
 
 
 
@@ -42,9 +50,8 @@ TODO:
 * Then what? Submit?
   Note from Manuel: I would say so...
 
-DONE
+=== POSTPONE
 
-POSTPONE
 * Regular triangulation
   * Note from Manuel: You will need a different criterion here. See our ESA paper.
 * What about the mesher? Is there one for 2D? Do you know?
@@ -58,11 +65,12 @@ POSTPONE
     case.
 * Add the interface to the 2d alpha shape as an extension.
 
+=== DONE
 
 Documentation (query replace):
 - Finite -> nothing
-- Cell -> Face
-- 27 ->9
+- Cell   -> Face
+- 27     -> 9
 
 Questions
 K::Point_2 and Point_2<K> are not the same for Periodic_3_triangulation_euclidean_traits
