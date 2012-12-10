@@ -417,7 +417,7 @@ void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
 treat_new_cell(const Cell_handle& cell)
 {
-  typedef typename MD::Subdomain Subdomain;
+  typedef boost::optional<typename MD::Subdomain_index> Subdomain;
   
   // treat cell
   const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell));

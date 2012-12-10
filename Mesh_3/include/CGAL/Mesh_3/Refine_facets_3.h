@@ -689,7 +689,7 @@ compute_facet_properties(const Facet& facet) const
   CGAL_assertion( ! r_tr_.is_infinite(facet) );
 
   // types
-  typedef typename MD::Surface_patch Surface_patch;
+  typedef boost::optional<typename MD::Surface_patch_index> Surface_patch;
   typedef typename MD::Intersection Intersection;
 
   // Functor
