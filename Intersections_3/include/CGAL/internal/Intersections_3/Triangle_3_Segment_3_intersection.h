@@ -105,13 +105,13 @@ t3s3_intersection_coplanar_aux(const typename K::Point_3& a,
   const Orientation cap = coplanar_orientation(c,a,p);
 
   if ( NEGATIVE == bcq || NEGATIVE == cap )
-    return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>();
+    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>();
   else if ( COLLINEAR == bcq )
     // q is inside [c,b], p is outside t (because of pqc)
-    return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(q);
+    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(q);
   else if ( COLLINEAR == cap )
     // p is inside [c,a], q is outside t (because of pqc)
-    return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(p);
+    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(p);
   else // bcq == POSITIVE && cap == POSITIVE
   {
     // Here we know the intersection is not empty
@@ -129,9 +129,9 @@ t3s3_intersection_coplanar_aux(const typename K::Point_3& a,
     }
 
     if ( negative_side )
-      return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(p_side_end_point, q_side_end_point));
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(segment(p_side_end_point, q_side_end_point));
     else
-      return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(q_side_end_point, p_side_end_point));
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(segment(q_side_end_point, p_side_end_point));
   }
 }
 
@@ -160,13 +160,13 @@ t3s3_intersection_collinear_aux(const typename K::Point_3& a,
     // p is before a
     //possible orders: [p,a,b,q], [p,a,q,b], [p,q,a,b]
     if ( collinear_ordered(a,b,q) )
-      return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(a,b)); //[p,a,b,q]
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(segment(a,b)); //[p,a,b,q]
     else{
       if ( collinear_ordered(q,a,b) )
         return equals(a,q)? //[p,q,a,b]
-             intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(a):
-             intersection_return<K, typename K::Triangle_3, typename K::Segment_3>();
-      return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(a,q));
+             intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(a):
+             intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>();
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(segment(a,q));
     }
   }
   else
@@ -175,14 +175,14 @@ t3s3_intersection_collinear_aux(const typename K::Point_3& a,
     //possible orders: [a,p,b,q], [a,p,q,b], [a,b,p,q]
     if ( collinear_ordered(p,b,q) )
       return equals(p,b)? // [a,p,b,q]
-             intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(p):
-             intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(p,b));
+             intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(p):
+             intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(segment(p,b));
     else{
       if ( collinear_ordered(a,b,p) )
         return equals(p,b)? // [a,b,p,q]
-          intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(p) :
-          intersection_return<K, typename K::Triangle_3, typename K::Segment_3>();
-      return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(p,q)); // [a,p,q,b]
+          intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(p) :
+          intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>();
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Segment_3>(segment(p,q)); // [a,p,q,b]
     }
   }
 }
@@ -252,15 +252,15 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case POSITIVE:
               // the triangle lies in the positive halfspace
               // defined by the segment's supporting line.
-              return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+              return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
             case NEGATIVE:
               // c is isolated on the negative side
               return t3s3_intersection_coplanar_aux(a,b,c,p,q,true,k);
             case COLLINEAR:
               if ( collinear_ordered(p,c,q) ) // c is inside [p,q]
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(c);
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(c);
               else
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
           }
 
         case NEGATIVE:
@@ -275,9 +275,9 @@ intersection_coplanar(const typename K::Triangle_3 &t,
           switch ( pqc ) {
             case POSITIVE:
               if ( collinear_ordered(p,b,q) ) // b is inside [p,q]
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(b);
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(b);
               else
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
             case NEGATIVE:
               // a is isolated on the positive side
               return t3s3_intersection_coplanar_aux(b,c,a,q,p,false,k);
@@ -288,7 +288,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
 
         default: // should not happen.
           CGAL_error();
-          return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+          return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
       }
 
     // -----------------------------------
@@ -312,12 +312,12 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case NEGATIVE:
               // the triangle lies in the negative halfspace
               // defined by the segment's supporting line.
-              return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+              return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
             case COLLINEAR:
               if ( collinear_ordered(p,c,q) ) // c is inside [p,q]
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(c);
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(c);
               else
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
           }
 
         case COLLINEAR:
@@ -327,9 +327,9 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               return t3s3_intersection_coplanar_aux(b,c,a,p,q,true,k);
             case NEGATIVE:
               if ( collinear_ordered(p,b,q) ) // b is inside [p,q]
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(b);
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(b);
               else
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
             case COLLINEAR:
               // b,c,p,q are aligned, [p,q]&[c,b] have the same direction
               return t3s3_intersection_collinear_aux(c,b,p,q,k);
@@ -337,7 +337,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
 
         default: // should not happen.
           CGAL_error();
-          return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+          return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
       }
 
     // -----------------------------------
@@ -349,9 +349,9 @@ intersection_coplanar(const typename K::Triangle_3 &t,
           switch ( pqc ) {
             case POSITIVE:
               if ( collinear_ordered(p,a,q) ) // a is inside [p,q]
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(a);
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(a);
               else
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
             case NEGATIVE:
               // b is isolated on the positive side
               return t3s3_intersection_coplanar_aux(c,a,b,q,p,false,k);
@@ -367,9 +367,9 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               return t3s3_intersection_coplanar_aux(c,a,b,p,q,true,k);
             case NEGATIVE:
               if ( collinear_ordered(p,a,q) ) // a is inside [p,q]
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(a);
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(a);
               else
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
             case COLLINEAR:
               // a,c,p,q are aligned, [p,q]&[a,c] have the same direction
               return t3s3_intersection_collinear_aux(a,c,p,q,k);
@@ -387,17 +387,17 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               // case pqc == COLLINEAR is impossible since the triangle is
               // assumed to be non flat
               CGAL_error();
-              return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+              return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
           }
 
         default: // should not happen.
           CGAL_error();
-          return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+          return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
       }
 
     default:// should not happen.
       CGAL_error();
-      return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+      return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
   }
 }
 
@@ -437,7 +437,7 @@ intersection(const typename K::Triangle_3 &t,
         case POSITIVE:
           // the segment lies in the positive open halfspaces defined by the
           // triangle's supporting plane
-          return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+          return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
 
         case NEGATIVE:
           // p sees the triangle in counterclockwise order
@@ -452,15 +452,15 @@ intersection(const typename K::Triangle_3 &t,
               v = internal::intersection(s.supporting_line(),t.supporting_plane(), K());
             if(v) {
               if(const Point_3* res = intersect_get<Point_3>(v))
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(*res);
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(*res);
             else
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
             } else {
-              return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+              return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
             }
           }
           else
-            return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
 
         case COPLANAR:
           // q belongs to the triangle's supporting plane
@@ -468,13 +468,13 @@ intersection(const typename K::Triangle_3 &t,
           if ( orientation(p,q,a,b) != POSITIVE
               && orientation(p,q,b,c) != POSITIVE
               && orientation(p,q,c,a) != POSITIVE )
-            return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(q);
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(q);
           else
-            return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
 
         default: // should not happen.
           CGAL_error();
-          return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+          return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
       }
     case NEGATIVE:
       switch ( abcq ) {
@@ -488,18 +488,18 @@ intersection(const typename K::Triangle_3 &t,
               v = internal::intersection(s.supporting_line(),t.supporting_plane(), K());
             if(v) {
               if(const Point_3* res = intersect_get<Point_3>(v))
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(*res);
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(*res);
             else
-                return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
             } else {
-              return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+              return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
           }
           } else
-            return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
         case NEGATIVE:
           // the segment lies in the negative open halfspaces defined by the
           // triangle's supporting plane
-          return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+          return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
 
         case COPLANAR:
           // q belongs to the triangle's supporting plane
@@ -507,13 +507,13 @@ intersection(const typename K::Triangle_3 &t,
           if ( orientation(q,p,a,b) != POSITIVE
               && orientation(q,p,b,c) != POSITIVE
               && orientation(q,p,c,a) != POSITIVE )
-            return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(q);
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(q);
           else
-            return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
 
         default: // should not happen.
           CGAL_error();
-          return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+          return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
       }
     case COPLANAR: // p belongs to the triangle's supporting plane
       switch ( abcq ) {
@@ -522,18 +522,18 @@ intersection(const typename K::Triangle_3 &t,
           if ( orientation(q,p,a,b) != POSITIVE
               && orientation(q,p,b,c) != POSITIVE
               && orientation(q,p,c,a) != POSITIVE )
-            return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(p);
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(p);
           else
-            return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
 
         case NEGATIVE:
           // q sees the triangle in clockwise order
           if ( orientation(p,q,a,b) != POSITIVE
               && orientation(p,q,b,c) != POSITIVE
               && orientation(p,q,c,a) != POSITIVE )
-            return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>(p);
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(p);
           else
-            return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
 
         case COPLANAR:
           // the segment is coplanar with the triangle's supporting plane
@@ -543,11 +543,11 @@ intersection(const typename K::Triangle_3 &t,
 
         default: // should not happen.
           CGAL_error();
-          return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+          return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
       }
     default: // should not happen.
       CGAL_error();
-      return intersection_return<K, typename K::Segment_3, typename K::Triangle_3>();
+      return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
   }
 }
 

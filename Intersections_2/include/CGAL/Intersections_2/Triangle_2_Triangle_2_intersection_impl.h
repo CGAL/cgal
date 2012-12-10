@@ -330,20 +330,20 @@ intersection(const typename K::Triangle_2 &tr1,
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return intersection_return<K, typename K::Triangle_2, typename K::Triangle_2>();
+        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>();
     case is_t::POINT:
-        return intersection_return<K, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_point());
+        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_point());
     case is_t::SEGMENT:
-        return intersection_return<K, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_segment());
+        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_segment());
     case is_t::TRIANGLE:
-        return intersection_return<K, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_triangle());
+        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_triangle());
     case is_t::POLYGON: {
         typedef std::vector<typename K::Point_2> Container;
         Container points(ispair.vertex_count());
         for (int i =0; i < ispair.vertex_count(); i++) {
             points[i] = ispair.vertex(i);
         }
-        return intersection_return<K, typename K::Triangle_2, typename K::Triangle_2>(points);
+        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(points);
     }
     }
 }

@@ -141,22 +141,6 @@ template<typename B>
 class IT<Bbox_3, B> : public Intersection_traits< typename Kernel_traits<B>::Kernel, CGAL::Bbox_3, B >
 { };
 
-
-// The version to cover ternary intersections of the Spherical_kernel
-template<typename K>
-struct Intersection_traits_spherical {
-#if CGAL_INTERSECTION_VERSION < 2
-  typedef CGAL::Object result_type;
-#else
-  typedef boost::variant< 
-    typename K::Circle_3, typename K::Plane_3, typename K::Sphere_3, std::pair< typename K::Circular_arc_point_3, unsigned > >
-  result_type;
-#endif
-};
-
-template<typename K>
-struct ITs : public Intersection_traits_spherical<K> {};
-
 namespace internal {
 
 // this function is used to call either make_object or a
@@ -169,33 +153,30 @@ namespace internal {
 // Overloads for empty returns are also provided.
 #if CGAL_INTERSECTION_VERSION < 2
   #if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
-    template<typename K, typename A, typename B, typename T>
+    template<typename, typename, typename, typename T>
     inline
     CGAL::Object intersection_return(const T& t) { return CGAL::make_object(t); }
   #else
-    template<typename K, typename A, typename B, typename T>
+    template<typename, typename, typename, typename T>
     inline
     CGAL::Object intersection_return(T&& t) { return CGAL::make_object(std::forward<T>(t)); }
   #endif // CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-  template<typename K, typename A, typename B>
+  template<typename, typename, typename>
   inline
   CGAL::Object intersection_return() { return CGAL::Object(); }
 #else
   #if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
-    template<typename K, typename A, typename B, typename T>
-    inline
-    typename Intersection_traits<K, A, B>::result_type
-    intersection_return(const T& t) { return typename CGAL::Intersection_traits<K, A, B>::result_type(t); }
+    template<typename F, typename A, typename B, typename T>
+    inline typename boost::result_of<F(A, B)>::type
+    intersection_return(const T& t) { return typename boost::result_of<F(A, B)>::type(t); }
   #else
-    template<typename K, typename A, typename B, typename T>
-    inline
-    typename Intersection_traits<K, A, B>::result_type
-    intersection_return(T&& t) { return typename CGAL::Intersection_traits<K, A, B>::result_type(std::forward<T>(t)); }
+    template<typename F, typename A, typename B, typename T>
+    inline typename boost::result_of<F(A, B)>::type
+    intersection_return(T&& t) { return typename boost::result_of<F(A, B)>::type(std::forward<T>(t)); }
   #endif // CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-  template<typename K, typename A, typename B>
-  inline
-  typename Intersection_traits<K, A, B>::result_type
-  intersection_return() { return typename CGAL::Intersection_traits<K, A, B>::result_type(); }
+  template<typename F, typename A, typename B>
+  inline typename boost::result_of<F(A, B)>::type
+  intersection_return() { return typename boost::result_of<F(A, B)>::type(); }
 #endif // CGAL_INTERSECTION_VERSION < 2
 
 // Something similar to wrap around boost::get and object_cast to
@@ -222,14 +203,14 @@ const T* intersect_get(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(U)> & v) {
 }
 
 template<typename A, typename B>
-typename Intersection_traits< typename CGAL::Kernel_traits<A>::Kernel, A, B>::result_type
+typename boost::result_of<typename CGAL::Kernel_traits<A>::Kernel::Intersect_2(A, B)>::type
 intersection_impl(const A& a, const B& b, CGAL::Dimension_tag<2>) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().intersect_2_object()(a, b);
 }
 
 template<typename A, typename B>
-typename Intersection_traits< typename CGAL::Kernel_traits<A>::Kernel, A, B>::result_type
+typename boost::result_of<typename CGAL::Kernel_traits<A>::Kernel::Intersect_3(A, B)>::type
 intersection_impl(const A& a, const B& b, Dimension_tag<3>) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().intersect_3_object()(a, b);

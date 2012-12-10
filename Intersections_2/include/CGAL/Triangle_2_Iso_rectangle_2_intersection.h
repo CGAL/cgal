@@ -271,19 +271,19 @@ namespace CGAL{ namespace internal {
       
       switch(result.size()){
         case 0:
-          return intersection_return<K, Triangle, typename K::Iso_rectangle_2>();
+          return intersection_return<typename K::Intersect_2, Triangle, typename K::Iso_rectangle_2>();
         case 1:
-          return intersection_return<K, Triangle, typename K::Iso_rectangle_2>(result[0]);
+          return intersection_return<typename K::Intersect_2, Triangle, typename K::Iso_rectangle_2>(result[0]);
         case 2:
-          return intersection_return<K, Triangle, typename K::Iso_rectangle_2>(Segment(result[0], result[1]));
+          return intersection_return<typename K::Intersect_2, Triangle, typename K::Iso_rectangle_2>(Segment(result[0], result[1]));
         case 3:
-          return intersection_return<K, Triangle, typename K::Iso_rectangle_2>(Triangle(result[0], result[1], result[2]));
+          return intersection_return<typename K::Intersect_2, Triangle, typename K::Iso_rectangle_2>(Triangle(result[0], result[1], result[2]));
         default:
-          return intersection_return<K, Triangle, typename K::Iso_rectangle_2>(result);
+          return intersection_return<typename K::Intersect_2, Triangle, typename K::Iso_rectangle_2>(result);
       }
 
     }//end if(intersection)
-    return intersection_return<K, Triangle, typename K::Iso_rectangle_2>();
+    return intersection_return<typename K::Intersect_2, Triangle, typename K::Iso_rectangle_2>();
   }//end intersection
   
   template <class K>

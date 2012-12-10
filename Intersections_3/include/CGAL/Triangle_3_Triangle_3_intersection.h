@@ -108,18 +108,18 @@ intersection_coplanar_triangles(
   
   switch ( inter_pts.size() ) {
     case 0:
-      return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>();
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
     case 1:
-      return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>( * inter_pts.begin() );
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>( * inter_pts.begin() );
     case 2:
-      return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>( k.construct_segment_3_object()(*inter_pts.begin(),
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>( k.construct_segment_3_object()(*inter_pts.begin(),
                                                          *boost::next(inter_pts.begin())) );
     case 3:
-      return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>( k.construct_triangle_3_object()(*inter_pts.begin(),
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>( k.construct_triangle_3_object()(*inter_pts.begin(),
                                                           *boost::next(inter_pts.begin()),
                                                           *boost::prior(inter_pts.end())) );
     default:
-      return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>( std::vector<typename K::Point_3>(inter_pts.begin(),inter_pts.end()) );
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>( std::vector<typename K::Point_3>(inter_pts.begin(),inter_pts.end()) );
   }
 }
 
@@ -130,17 +130,17 @@ struct Triangle_Line_visitor {
 
   result_type
   operator()(const typename K::Point_3& p, const typename K::Segment_3&) const {
-    return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>(p);
+    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(p);
   }
 
   result_type
   operator()(const typename K::Segment_3&, const typename K::Point_3& p) const {
-    return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>(p);
+    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(p);
   }
 
   result_type
   operator()(const typename K::Point_3& p1, const typename K::Point_3&) const {
-    return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>(p1);
+    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(p1);
   }
 
   result_type
@@ -150,12 +150,12 @@ struct Triangle_Line_visitor {
 
     if(v) {
       if(const typename K::Segment_3* s = intersect_get<typename K::Segment_3>(v))
-        return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>(*s);
+        return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(*s);
       if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v))
-        return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>(*p);
+        return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(*p);
     }
 
-    return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>();
+    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
   }
 };
   
@@ -173,7 +173,7 @@ intersection(
 
   if(!v) {
     // empty plane plane intersection
-    return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>();
+    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
   }
 
   if(intersect_get<typename K::Plane_3>(v)) {
@@ -191,7 +191,7 @@ intersection(
     Triangle_Line_Inter inter2 = intersection_coplanar(t2,*line,k);
     if(!inter1 || !inter2) {
       // one of the intersection is empty
-      return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>();
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
     }
     #if CGAL_INTERSECTION_VERSION < 2
     // apply the binary visitor manually
@@ -213,7 +213,7 @@ intersection(
     return boost::apply_visitor(Triangle_Line_visitor<K>(), *inter1, *inter2);
     #endif
   }
-  return intersection_return<K, typename K::Triangle_3, typename K::Triangle_3>();
+  return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
 }
 
 }//namespace internal

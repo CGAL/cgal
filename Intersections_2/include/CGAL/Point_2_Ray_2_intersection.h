@@ -64,9 +64,9 @@ intersection(const typename K::Point_2 &pt,
 	     const K& k)
 {
   if (do_intersect(pt,ray, k)) {
-    return intersection_return<K, typename K::Point_2, typename K::Ray_2>(pt);
+    return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Ray_2>(pt);
   }
-  return intersection_return<K, typename K::Point_2, typename K::Ray_2>();
+  return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Ray_2>();
 }
 
 template <class K>

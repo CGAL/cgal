@@ -48,9 +48,9 @@ intersection(const typename K::Point_2 &pt1,
 	     const typename K::Point_2 &pt2)
 {
     if (pt1 == pt2) {
-      return intersection_return<K, typename K::Point_2, typename K::Point_2>(pt1);
+      return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Point_2>(pt1);
     }
-    return intersection_return<K, typename K::Point_2, typename K::Point_2>();
+    return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Point_2>();
 }
 
 }// namespace internal

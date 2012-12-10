@@ -280,7 +280,9 @@ namespace CGAL {
        typedef typename SK::Sphere_3  Sphere_3;
        typedef typename SK::Plane_3  Plane_3;
        typedef typename SK::Algebraic_kernel  Algebraic_kernel;
-       typedef typename ITs<SK>::result_type result_type;
+       typedef typename boost::result_of<
+         typename SK::Intersect_3(Sphere_3, Sphere_3, Sphere_3)
+         >::type result_type;
 
        CGAL_kernel_precondition(!s1.is_degenerate());
        CGAL_kernel_precondition(!s2.is_degenerate());
@@ -507,7 +509,7 @@ namespace CGAL {
         ::type result_type;
 
       if(non_oriented_equal<SK>(c1,c2)) {
-         *res++ = CGAL::internal::intersection_return<SK, Circle_3, Circle_3>(c1);
+         *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, Circle_3, Circle_3>(c1);
          return res;
       }
       Equation_circle e1 = get_equation<SK>(c1);

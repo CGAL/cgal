@@ -210,7 +210,7 @@ namespace CGAL {
 
       typedef std::pair<Circular_arc_point_3, unsigned> Solution;
       if(SK().has_on_3_object()(p,ca.supporting_circle())) {
-        *res++ = CGAL::internal::intersection_return<SK, typename SK::Plane_3, typename SK::Circular_arc_3>(ca);
+        *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Plane_3, typename SK::Circular_arc_3>(ca);
       }
       solutions_container solutions;
 
@@ -220,14 +220,14 @@ namespace CGAL {
       if(solutions.size() == 1) {
          const Solution& sol=*CGAL::internal::intersect_get<Solution>(solutions[0]);
          if(SK().has_on_3_object()(ca,sol.first,true))
-           *res++ = CGAL::internal::intersection_return<SK, typename SK::Plane_3, typename SK::Circular_arc_3>(sol);
+           *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Plane_3, typename SK::Circular_arc_3>(sol);
       } else {
          const Solution& sol1=*CGAL::internal::intersect_get<Solution>(solutions[0]);
          const Solution& sol2=*CGAL::internal::intersect_get<Solution>(solutions[1]);        
          if(SK().has_on_3_object()(ca,sol1.first,true))
-           *res++ = CGAL::internal::intersection_return<SK, typename SK::Plane_3, typename SK::Circular_arc_3>(sol1);
+           *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Plane_3, typename SK::Circular_arc_3>(sol1);
          if(SK().has_on_3_object()(ca,sol2.first,true))
-           *res++ = CGAL::internal::intersection_return<SK, typename SK::Plane_3, typename SK::Circular_arc_3>(sol2);
+           *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Plane_3, typename SK::Circular_arc_3>(sol2);
       }
       return res;
     }
@@ -286,12 +286,12 @@ namespace CGAL {
 
       if(non_oriented_equal<SK>(a1.supporting_circle(), a2.supporting_circle())) {
         if(a1.rep().is_full()) {
-          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+          *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(a2); 
           //return res;
         }
         else if(a2.rep().is_full()) {
-          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+          *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(a1); 
           //return res;
         } else {
@@ -305,72 +305,72 @@ namespace CGAL {
                 SK().compare_xyz_3_object()(a1.source(), a2.source());
               if(comp < 0) {
                 if(a1.source() == a2.target()) {
-                  *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                  *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(std::make_pair(a1.source(),1u));
                 } else {
                   const Circular_arc_3 & arc =
 	          Circular_arc_3(a1.supporting_circle(),a1.source(),a2.target());
-	          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+	          *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(arc);
                 }
                 if(a2.source() == a1.target()) {
-                  *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                  *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(std::make_pair(a2.source(),1u));
                 } else {
                   const Circular_arc_3 & arc =
 	          Circular_arc_3(a1.supporting_circle(),a2.source(),a1.target());
-	          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+	          *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(arc);
                 }
               } else if(comp > 0) {
                 if(a2.source() == a1.target()) {
-                  *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                  *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(std::make_pair(a2.source(),1u));
                 } else {
                   const Circular_arc_3 & arc =
 	          Circular_arc_3(a1.supporting_circle(),a2.source(),a1.target());
-	          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+	          *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(arc);
                 }
                 if(a1.source() == a2.target()) {
-                  *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                  *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(std::make_pair(a1.source(),1u));
                 } else {
                   const Circular_arc_3 & arc =
 	          Circular_arc_3(a1.supporting_circle(),a1.source(),a2.target());
-	          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+	          *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(arc);
                 } 
               } else { 
-                *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(a1);
               }
             } else {
-              *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+              *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(a2);
             }
           } else if(t2_in_a1) {
             if(a1.source() == a2.target()) 
-              *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+              *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(std::make_pair(a1.source(),1u));
             else {
               const Circular_arc_3 & arc =
 	        Circular_arc_3(a1.supporting_circle(),a1.source(),a2.target());
-	      *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+	      *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(arc);
             } //return res;
           } else if(s2_in_a1) {
             if(a2.source() == a1.target()) {
-              *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+              *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(std::make_pair(a2.source(),1u));
             } else {
               const Circular_arc_3 & arc =
 	        Circular_arc_3(a1.supporting_circle(),a2.source(),a1.target());
-	      *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+	      *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(arc);
             }
           } else if(SK().has_on_3_object()(a2,a1.source(),true)) {
-              *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+              *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, typename SK::Circular_arc_3, 
                                                        typename SK::Circular_arc_3>(a1);
           } 
         }

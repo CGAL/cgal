@@ -172,11 +172,11 @@ intersection(const typename K::Line_2 &line,
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return intersection_return<K, typename K::Line_2, typename K::Triangle_2>();
+        return intersection_return<typename K::Intersect_2, typename K::Line_2, typename K::Triangle_2>();
     case is_t::POINT:
-        return intersection_return<K, typename K::Line_2, typename K::Triangle_2>(ispair.intersection_point());
+        return intersection_return<typename K::Intersect_2, typename K::Line_2, typename K::Triangle_2>(ispair.intersection_point());
     case is_t::SEGMENT:
-        return intersection_return<K, typename K::Line_2, typename K::Triangle_2>(ispair.intersection_segment());
+        return intersection_return<typename K::Intersect_2, typename K::Line_2, typename K::Triangle_2>(ispair.intersection_segment());
     }
 }
 

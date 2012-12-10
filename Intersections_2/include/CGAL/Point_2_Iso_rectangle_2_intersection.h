@@ -65,9 +65,9 @@ intersection(const typename K::Point_2 &pt,
     <K, typename K::Point_2, typename K::Iso_rectangle_2>::result_type result_type;
 
   if (internal::do_intersect(pt,iso,k)) {
-    return intersection_return<K, typename K::Point_2, typename K::Iso_rectangle_2>(pt);
+    return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Iso_rectangle_2>(pt);
   }
-  return intersection_return<K, typename K::Point_2, typename K::Iso_rectangle_2>();
+  return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Iso_rectangle_2>();
 }
 
 template <class K>

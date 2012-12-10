@@ -403,7 +403,7 @@ namespace CircularFunctors {
     for ( typename solutions_container::iterator it = solutions.begin(); 
 	  it != solutions.end(); ++it )
       {
-	*res++ = CGAL::internal::intersection_return<CK, typename CK::Line_2, typename CK::Circle_2>
+	*res++ = CGAL::internal::intersection_return<typename CK::Intersect_2, typename CK::Line_2, typename CK::Circle_2>
 	  (std::make_pair(Circular_arc_point_2(it->first), it->second ));
       }
 
@@ -436,8 +436,8 @@ namespace CircularFunctors {
     }
     if(a1s_a2s || a1s_a2t || a1t_a2s || a1t_a2t) {
       if(! LinearFunctors::non_oriented_equal<CK>(a1.supporting_line(),a2.supporting_line())){
-	if(a1s_a2s || a1s_a2t) *res++ = CGAL::internal::intersection_return<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>(std::make_pair(a1.source(), 1u));
-	if(a1t_a2s || a1t_a2t) *res++ = CGAL::internal::intersection_return<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>(std::make_pair(a1.target(), 1u));
+	if(a1s_a2s || a1s_a2t) *res++ = CGAL::internal::intersection_return<typename CK::Intersect_2, typename CK::Line_arc_2, typename CK::Line_arc_2>(std::make_pair(a1.source(), 1u));
+	if(a1t_a2s || a1t_a2t) *res++ = CGAL::internal::intersection_return<typename CK::Intersect_2, typename CK::Line_arc_2, typename CK::Line_arc_2>(std::make_pair(a1.target(), 1u));
       return res;
       }
     }
@@ -449,15 +449,15 @@ namespace CircularFunctors {
 	int comparison = compare_xy(a2.left(),a1.right());
 	if(comparison < 0){
 	  if(compare_xy(a1.right(),a2.right()) <= 0){
-	    *res++ = CGAL::internal::intersection_return<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>
+	    *res++ = CGAL::internal::intersection_return<typename CK::Intersect_2, typename CK::Line_arc_2, typename CK::Line_arc_2>
 	      (Line_arc_2(a1.supporting_line(), a2.left(), a1.right() ));
 	  } else{
-	    *res++ = CGAL::internal::intersection_return<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>
+	    *res++ = CGAL::internal::intersection_return<typename CK::Intersect_2, typename CK::Line_arc_2, typename CK::Line_arc_2>
 	      (Line_arc_2(a1.supporting_line(), a2.left(), a2.right() ));
 	  }
 	}
 	else if (comparison == 0){
-	  *res++ =CGAL::internal::intersection_return<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>
+	  *res++ =CGAL::internal::intersection_return<typename CK::Intersect_2, typename CK::Line_arc_2, typename CK::Line_arc_2>
 	    ( std::make_pair(a2.left(),1u));
 	}
 	return res;
@@ -466,16 +466,16 @@ namespace CircularFunctors {
 	int comparison = compare_xy(a1.left(),a2.right());
 	if(comparison < 0){
 	  if(compare_xy(a1.right(),a2.right()) <= 0){
-	    *res++ = CGAL::internal::intersection_return<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>
+	    *res++ = CGAL::internal::intersection_return<typename CK::Intersect_2, typename CK::Line_arc_2, typename CK::Line_arc_2>
 	      (Line_arc_2(a1.supporting_line(), a1.left(), a1.right() ));
 	  }
 	  else{
-	    *res++ = CGAL::internal::intersection_return<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>
+	    *res++ = CGAL::internal::intersection_return<typename CK::Intersect_2, typename CK::Line_arc_2, typename CK::Line_arc_2>
 	      (Line_arc_2(a1.supporting_line(), a1.left(), a2.right() ));
 	  }
 	}
 	else if (comparison == 0){
-	  *res++ = CGAL::internal::intersection_return<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>
+	  *res++ = CGAL::internal::intersection_return<typename CK::Intersect_2, typename CK::Line_arc_2, typename CK::Line_arc_2>
 	    ( std::make_pair(a1.left(),1u));
 	}
 	return res;
@@ -495,7 +495,7 @@ namespace CircularFunctors {
 	 CircularFunctors::compare_xy<CK>(intersect_point, a1.target())) &&
 	(CircularFunctors::compare_xy<CK>(intersect_point, a2.source()) !=
 	 CircularFunctors::compare_xy<CK>(intersect_point, a2.target())))
-      *res++ = CGAL::internal::intersection_return<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>(std::make_pair(intersect_point, 1u));
+      *res++ = CGAL::internal::intersection_return<typename CK::Intersect_2, typename CK::Line_arc_2, typename CK::Line_arc_2>(std::make_pair(intersect_point, 1u));
 
     return res;
   }

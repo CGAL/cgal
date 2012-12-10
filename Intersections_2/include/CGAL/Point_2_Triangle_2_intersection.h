@@ -139,9 +139,9 @@ intersection(const typename K::Point_2 &pt,
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return intersection_return<K, typename K::Point_2, typename K::Triangle_2>();
+        return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Triangle_2>();
     case is_t::POINT:
-        return intersection_return<K, typename K::Point_2, typename K::Triangle_2>(pt);
+        return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Triangle_2>(pt);
     }
 }
 

@@ -74,7 +74,7 @@ public:
                        const Sphere_3 &s2,
                        const Sphere_3 &s3,
                        const bool less_xyz = true) {
-    std::vector<typename ITs<SK>::result_type> sols;
+    std::vector<typename boost::result_of<typename SK::Intersect_3(Sphere_3, Sphere_3, Sphere_3)>::type> sols;
     SK().intersect_3_object()(s1, s2, s3, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
@@ -97,7 +97,7 @@ public:
                        const Sphere_3 &s1,
                        const Sphere_3 &s2,
                        const bool less_xyz = true) {
-    std::vector<typename ITs<SK>::result_type> sols;
+    std::vector<typename boost::result_of<typename SK::Intersect_3(Plane_3, Sphere_3, Sphere_3)>::type> sols;
     SK().intersect_3_object()(p, s1, s2, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
@@ -120,7 +120,7 @@ public:
                        const Plane_3 &p2,
                        const Sphere_3 &s,
                        const bool less_xyz = true) {
-    std::vector<typename ITs<SK>::result_type> sols;
+    std::vector<typename boost::result_of<typename SK::Intersect_3(Plane_3, Plane_3, Sphere_3)>::type> sols;
     SK().intersect_3_object()(p1, p2, s, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
