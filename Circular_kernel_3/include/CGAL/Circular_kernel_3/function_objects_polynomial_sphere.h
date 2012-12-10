@@ -1114,7 +1114,7 @@ template < class SK > \
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C)          \
     result_type                                                         \
     operator()(const A & c1, const B & c2, const C & c3) const          \
-    { std::vector< typename ITs<SK>::result_type > res;                 \
+    { std::vector< typename boost::result_of<typename SK::Intersect_3(A, B, C)>::type > res; \
       typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res));     \
       return !res.empty(); }
 
@@ -1233,7 +1233,7 @@ template < class SK > \
 
     template <typename F>
     struct result<F(Circle_3, Circle_3)>
-    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int > > type; };
+    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int >, Circle_3 > type; };
 
     template <typename F>
     struct result<F(Circle_3, Line_3)>
@@ -1260,6 +1260,25 @@ template < class SK > \
     { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int >,
                               Line_arc_3 > type; };
 
+  private:
+    struct intersect_ternary { 
+      typedef boost::variant< Circle_3, Plane_3, Sphere_3, 
+                              std::pair< Circular_arc_point_3, unsigned > 
+                              > type; 
+    };
+  public:
+
+    // the ternary intersection
+    template <typename F>
+    struct result<F(Sphere_3, Sphere_3, Sphere_3)> : intersect_ternary {};
+    template <typename F>
+    struct result<F(Sphere_3, Sphere_3, Plane_3)>  : intersect_ternary {};
+    template <typename F>
+    struct result<F(Plane_3, Sphere_3, Sphere_3)>  : intersect_ternary {};
+    template <typename F>
+    struct result<F(Plane_3, Plane_3, Sphere_3)>   : intersect_ternary {};
+    template <typename F>
+    struct result<F(Sphere_3, Plane_3, Plane_3)>   : intersect_ternary {};
 #endif
     
     // forward the intersection functions from the linear kernel
