@@ -35,8 +35,8 @@ circle_intersect( const typename CK::Circle_2 & c1,
 		  const typename CK::Circle_2 & c2,
 		  bool b )
 {
-  typedef std::vector<typename Intersection_traits<CK, typename CK::Circle_2, 
-                                   typename CK::Circle_2>::result_type> solutions_container;
+  typedef std::vector<typename boost::result_of<typename CK::Intersect_2(typename CK::Circle_2, 
+                                                                         typename CK::Circle_2)>::type> solutions_container;
   solutions_container solutions;
   
   intersection( c1, c2, std::back_inserter(solutions) );
@@ -122,8 +122,8 @@ namespace CircularFunctors {
 	       const typename CK::Circle_2 & c2,
 	       OutputIterator res )
   {
-    typedef typename Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>
-      ::result_type result_type;
+    typedef typename boost::result_of<typename CK::Intersect_2(typename CK::Circle_2, typename CK::Circle_2)>
+      ::type result_type;
     typedef typename CK::Algebraic_kernel            AK;
     typedef typename CK::Polynomial_for_circles_2_2  Equation; 
     typedef typename CK::Root_for_circles_2_2        Root_for_circles_2_2;

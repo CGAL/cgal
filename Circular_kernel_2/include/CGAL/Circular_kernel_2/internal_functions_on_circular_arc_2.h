@@ -29,7 +29,6 @@
 #include <CGAL/Circular_kernel_2/internal_functions_on_circle_2.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Circular_kernel_2/Circular_arc_2.h>
-#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -543,8 +542,8 @@ namespace CircularFunctors {
 	       const typename CK::Circular_arc_2 &a2,
 	       OutputIterator res )
   {
-    typedef typename Intersection_traits<CK, typename CK::Circular_arc_2,
-                        typename CK::Circular_arc_2 >::result_type result_type;
+    typedef typename boost::result_of<typename CK::Intersect_2(typename CK::Circular_arc_2,
+                                                               typename CK::Circular_arc_2)>::type result_type;
 
     typedef std::vector<CGAL::Object> solutions_container; 
     typedef typename CK::Circular_arc_2 Circular_arc_2; 
