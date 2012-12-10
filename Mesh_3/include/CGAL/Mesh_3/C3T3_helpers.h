@@ -749,7 +749,8 @@ private:
       typedef typename Gt::Segment_3 Segment_3;
       typedef typename Gt::Ray_3 Ray_3;
       typedef typename Gt::Line_3 Line_3;
-      
+      typename Gt::Compare_xyz_3 compare_xyz = Gt().compare_xyz_3_object();
+        
       // Nothing to do for infinite facets
       if ( c3t3_.triangulation().is_infinite(facet) )
         return false;
@@ -766,8 +767,19 @@ private:
       {
         if (is_degenerate(*p_segment)) 
           return false;
-        
-        return dual_intersect(*p_segment,facet,update);
+       
+        // Trick to have canonical vector : compute always the same intersection
+        Segment_3 segment = *p_segment;
+        if( compare_xyz(p_segment->source(),p_segment->target())
+              == CGAL::LARGER )
+        {
+          typename Gt::Construct_opposite_segment_3 opposite =
+            Gt().construct_opposite_segment_3_object();
+          segment = opposite(*p_segment);
+        }
+
+        //return dual_intersect(*p_segment,facet,update);
+        return dual_intersect(segment,facet,update);
       }
       else if ( const Ray_3* p_ray = object_cast<Ray_3>(&dual) )
       {
