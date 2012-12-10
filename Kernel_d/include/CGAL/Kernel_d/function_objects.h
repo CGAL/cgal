@@ -142,23 +142,82 @@ class Call_oriented_side
 template<class R>
 class Intersect
 {
-  public:
-    template<typename A, typename B>
-    struct Result {
-      typedef typename Intersection_traits<R, A, B>::result_type Type;
-      // Boost MPL compatibility 
-      typedef Type type;
-    };
+private:
+  typedef typename R::Line_d       Line_d;
+  typedef typename R::Point_d      Point_d;
+  typedef typename R::Segment_d    Segment_d;
+  typedef typename R::Ray_d        Ray_d;
+  typedef typename R::Hyperplane_d Hyperplane_d;
 
+public:
   // Solely to make the lazy kernel work
-  #if CGAL_INTERSECTION_VERSION < 2
-    typedef CGAL::Object result_type;
-  #endif
+#if CGAL_INTERSECTION_VERSION < 2
+  typedef CGAL::Object result_type;
+#else
+  template <typename> 
+  struct result;
 
-    template <class T1, class T2>
-    typename Intersection_traits<R, T1, T2>::result_type
-    operator()(const T1& t1, const T2& t2) const
-    { return internal::intersection(t1, t2, R()); }
+  template <typename F>
+  struct result<F(Line_d, Line_d)> 
+  { typedef boost::optional< boost::variant< Point_d, Line_d > > type; };
+
+  template <typename F>
+  struct result<F(Segment_d, Line_d)>
+  { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
+  template <typename F> 
+  struct result<F(Line_d, Segment_d)> : result<F(Segment_d, Line_d)>
+  { };
+
+  template <typename F>
+  struct result<F(Segment_d, Segment_d)> 
+  { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
+
+  template <typename F>
+  struct result<F(Ray_d, Line_d)>
+  { typedef boost::optional< boost::variant< Point_d, Ray_d > > type; };
+
+  template <typename F> 
+  struct result<F(Line_d, Ray_d)> : result<F(Ray_d, Line_d)>
+  { };
+
+  template <typename F>
+  struct result<F(Ray_d, Segment_d)>
+  { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
+
+  template <typename F>
+  struct result<F(Segment_d, Ray_d)> : result<F(Ray_d, Segment_d)>
+  { };
+
+  template <typename F>
+  struct result<F(Ray_d, Ray_d)> 
+  { typedef boost::optional< boost::variant< Point_d, Segment_d, Ray_d > > type; };
+
+  template <typename F>
+  struct result<F(Hyperplane_d, Line_d)> 
+  { typedef boost::optional< boost::variant< Point_d, Line_d > > type; };
+  template <typename F>
+  struct result<F(Line_d, Hyperplane_d)> : result<F(Hyperplane_d, Line_d)>
+  { };
+
+  template <typename F>
+  struct result<F(Hyperplane_d, Ray_d)> 
+  { typedef boost::optional< boost::variant< Point_d, Ray_d > > type; };
+  template <typename F>
+  struct result<F(Ray_d, Hyperplane_d)> : result<F(Hyperplane_d, Ray_d)> 
+  { };
+
+  template <typename F>
+  struct result<F(Hyperplane_d, Segment_d)> 
+  { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
+  template <typename F>
+  struct result<F(Segment_d, Hyperplane_d)> : result<F(Hyperplane_d, Segment_d)>
+  { };
+#endif
+
+  template <class T1, class T2>
+  typename boost::result_of<Intersect(T1, T2)>::type
+  operator()(const T1& t1, const T2& t2) const
+  { return internal::intersection(t1, t2, R()); }
 };
 
 template<class R>
