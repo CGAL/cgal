@@ -860,17 +860,24 @@ perturb_next_vertex( const FT& sliver_bound
   *p_could_lock_zone = true;
 
   // Get pqueue head
+  int num_added_elements_in_pqueue = 0;
   MutexType::scoped_lock pqueue_lock(m_pqueue_mut);
   int pqueue_size = static_cast<int>(pqueue.size());
   if (pqueue_size == 0)
   {
-    static int count = 0;
-    ++count;
-    std::cerr << count << std::endl;
+    //static int count = 0; // CJTODO TEMP
+    //++count; // CJTODO TEMP
+    //std::cerr << count << std::endl; // CJTODO TEMP
     return;
   }
   PVertex pv = pqueue.top();
   
+  if (pv.is_zombie())
+  {
+    pqueue.pop();
+    return;
+  }
+      
   if (!helper_.try_lock_vertex_no_spin(pv.vertex()))
   {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
@@ -916,14 +923,6 @@ perturb_next_vertex( const FT& sliver_bound
   
   //======= /CJTODO TEMP TEST ============ 
   
-  --pqueue_size;
-
-  if (pv.is_zombie())
-    return;
-  
-  const int old_pqueue_size = pqueue_size;
-    
-    
   CGAL_assertion(pv.is_perturbable());
 
   // Get pvertex slivers list
@@ -990,9 +989,8 @@ perturb_next_vertex( const FT& sliver_bound
         pv.increment_try_nb();
       
         // update modified vertices
-        pqueue_size += update_priority_queue(modified_vertices,
-                                             sliver_bound,
-                                             pqueue);
+        num_added_elements_in_pqueue += 
+          update_priority_queue(modified_vertices, sliver_bound, pqueue);
       }
       else
       {
@@ -1018,12 +1016,13 @@ perturb_next_vertex( const FT& sliver_bound
   }
     
   // Update pqueue in every cases, because pv was poped
-  pqueue_size += update_priority_queue(pv, pqueue);
-  visitor.end_of_perturbation_iteration(pqueue_size);
+  num_added_elements_in_pqueue += update_priority_queue(pv, pqueue);
+  visitor.end_of_perturbation_iteration(
+    pqueue_size - 1 + num_added_elements_in_pqueue);
 
-  if (pqueue_size > old_pqueue_size)
+  if (num_added_elements_in_pqueue > 0)
   {
-    enqueue_N_tasks(pqueue_size - old_pqueue_size, sliver_bound, pqueue
+    enqueue_N_tasks(num_added_elements_in_pqueue, sliver_bound, pqueue
                     , visitor, bad_vertices
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
                     , iteration_nb, timer
@@ -1035,7 +1034,7 @@ perturb_next_vertex( const FT& sliver_bound
   ++iteration_nb;
   std::cerr << boost::format("\r             \r"
                               "(%1%,%2%,%4%) (%|3$.1f| iteration/s)")
-  % pqueue_size
+  % pqueue_size - 1 + num_added_elements_in_pqueue
   % iteration_nb
   % (iteration_nb / timer.time())
   % bad_vertices.size();
@@ -1045,7 +1044,7 @@ perturb_next_vertex( const FT& sliver_bound
   ++iteration_nb;
   std::cerr << boost::format("\r             \r"
                               "bound %5%: (%1%,%2%,%4%) (%|3$.1f| iteration/s)")
-  % pqueue_size
+  % pqueue_size - 1 + num_added_elements_in_pqueue
   % iteration_nb
   % (iteration_nb / running_time_.time())
   % bad_vertices.size()
