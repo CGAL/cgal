@@ -161,7 +161,7 @@ public:
          p != end; ++p)
     {
       // TODO(NGHK): Slight overhead because of the double locate, change insert()
-      f = locate(*p, lt, li, f);
+      f = this->locate(*p, lt, li, f);
       if (lt == Triangulation::VERTEX)
         double_vertices.insert(f->vertex(li));
       else 
@@ -934,10 +934,10 @@ propagating_flip(Face_handle& f,int i)
 
   for (int index=0; index<3; ++index) {
     p[index]   = &nb->vertex(index)->point();
-    off[index] = get_offset(nb,index);
+    off[index] = this->get_offset(nb,index);
   }
   p[3]   = &f->vertex(i)->point();
-  off[3] = this->combine_offsets(get_offset(f,i), get_neighbor_offset(f, i));
+  off[3] = this->combine_offsets(this->get_offset(f,i), this->get_neighbor_offset(f, i));
 
   if ( ON_POSITIVE_SIDE != 
        this->side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
