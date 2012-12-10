@@ -902,7 +902,7 @@ output_to_medit(std::ostream& os,
        ++fit)
   {
     std::vector<int> indices;
-    for(unsigned int i = 0; i < 4; ++i)
+    for(int i = 0; i < 4; ++i)
     {
       if (i != fit->second)
       {
