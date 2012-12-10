@@ -16,7 +16,7 @@ class Projected_point
 public:
 	typedef typename K::Point_3 Base_point;
 Projected_point()
-	:Base_point(),_computed(false){}
+	:Base_point(){}
 	
 Projected_point(const Base_point &p)
 	:Base_point(p){compute_scale(p);}
@@ -25,22 +25,25 @@ Projected_point(double x, double y, double z)
 	:Base_point(x,y,z){compute_scale(x,y,z);}
 	
 public:	
-	bool _computed;	
 	double _scale;
 	
+public: void scale(){
+	return _scale;
+}
+	
 private:
-	void compute_scale(double x, double y, double z){
-		double tmp = x*x+y*y+z*z;
-		if (tmp == 0 )
-			_scale = 0;
+ void compute_scale(double x, double y, double z){
+   double tmp = x*x+y*y+z*z;
+   if (tmp == 0 )
+	 _scale = 0;
 	
-		else
-			_scale = 1/sqrt(tmp);
+	else
+	 _scale = 1/sqrt(tmp);
 	}
 	
-	void compute_scale(const Base_point &p){
-		return compute_scale(p.x(), p.y(), p.z());
-	}
+  void compute_scale(const Base_point &p){
+	return compute_scale(p.x(), p.y(), p.z());
+  }
 		
 };
 
@@ -82,6 +85,55 @@ private:
 	return Base_point(scale*p.x(), scale*p.y(), scale*p.z());
  }
 };
+
+	
+template < class K, class P, class Predicate_ >
+class Traits_with_projection_adaptor2 {
+public:
+typedef Predicate_ Predicate;
+
+typedef typename P::Point_2     Point;
+typedef typename K::Point_3     Base_point;
+Traits_with_projection_adaptor2( double radius):_radius(radius){}
+double _radius;
+Base_point _sphere ;
+		
+typedef typename Predicate::result_type result_type;
+		
+		
+		
+result_type operator()(const Point& p0, const Point& p1)  {
+	Base_point b0 = project(p0);
+	Base_point b1 = project(p1);
+	return Predicate()(project(p0), project(p1));
+}
+		
+result_type operator()(const Point& p0, const Point& p1, const Point& p2)  {
+	return Predicate()(project(p0), project(p1), project(p2));
+}
+		
+result_type operator ()(const Point& p0, const Point& p1, const Point& p2, const Point& p3)  {
+	return Predicate()(project(p0), project(p1), project(p2), project(p3));
+}
+		
+result_type operator()(const Point& p0, const Point& p1, const Point& p2, const Point& p3, const Point& p4)  {
+	return Predicate()(project(p0), project(p1), project(p2), project(p3), project(p4));
+}
+		
+	private:
+Base_point project (const Point& p){
+	double px =p.x();
+	double py = p.y();
+	double pz = p.z();
+	
+	double scale = _radius*p._scale;
+	double x = scale*p.x();
+	double y= scale*p.y();
+	double z = scale*p.z();
+	
+	return Base_point(scale*p.x(), scale*p.y(), scale*p.z());
+}
+};
 	
 	
 template < class R >
@@ -97,7 +149,7 @@ public:
  typedef Projection_sphere_traits_3<R>                                 Self;
  typedef Point_2                                                       result_type;
 		
-typedef Traits_with_projection_adaptor<Self,Self,typename Base::Power_test_2>
+typedef Traits_with_projection_adaptor<Base,Self,typename Base::Power_test_2>
       Power_test_2;
  typedef Traits_with_projection_adaptor<Base, Self,typename Base::Orientation_2> 
 	  Orientation_2;
@@ -107,12 +159,15 @@ typedef Traits_with_projection_adaptor<Self,Self,typename Base::Power_test_2>
 	Inside_cone_2;
 typedef Traits_with_projection_adaptor<Base,Self,typename Base::Orientation_1 >
 	Orientation_1;
+ typedef Traits_with_projection_adaptor2<R, Self , typename Base ::Compute_squared_distance_2>
+	Compute_squared_distance_2;
+typedef Traits_with_projection_adaptor2<R , Self, typename Base::Compare_xyz_3>
+	Cpmpute_xyz_3;
 
 	
  typedef boost::false_type  requires_test;
- void set_radius(double radius){
-			_radius = radius;
-		}
+ 
+	void set_radius(double radius){	_radius = radius;}
 		
 		
 Projection_sphere_traits_3(const Base_point& sphere=Base_point(0,0,0));
@@ -136,6 +191,10 @@ coradial_sphere_2_object() const
 Inside_cone_2
 inside_cone_2_object() const 
 {return Inside_cone_2(_sphere, _radius);}
+	
+Compute_squared_distance_2
+compute_squared_distance_3_object() const
+	{ return Compute_squared_distance_2( _radius);}
 		
 		
 protected :

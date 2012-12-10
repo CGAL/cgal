@@ -501,9 +501,10 @@ template<class Gt, class Tds>
 double
 Triangulation_sphere_2<Gt, Tds> ::
 squared_distance(const Point& p, const Point& q)const{
-	return CGAL::squared_distance(p,q);
-}
+	//return CGAL::squared_distance(p,q);
 	
+	return geom_traits().compute_squared_distance_3_object()(p,q);}
+
 
 //TESTS
 
@@ -545,7 +546,7 @@ template<class Gt, class Tds>
 inline bool
 Triangulation_sphere_2<Gt, Tds> ::
 is_too_close(const Point& p, const Point& q)const{
-  return squared_distance(p,q)<=_minDistSquared;
+	 return squared_distance(p,q)<=_minDistSquared;
 }
 
 template <class Gt, class Tds>
@@ -599,15 +600,18 @@ test_distance( const Point& p, Face_handle f, Locate_type& lt, int& li)const{
 CGAL_precondition(dimension()>=-1);
  switch (dimension()){
  case -1 : {	
-	 if(is_too_close(p, vertices_begin()->point()))
+	 if(is_too_close(p, vertices_begin()->point())){
 		lt = TOO_CLOSE;
 		li=0;
 	   return;
+	 }
  } break;
 		
  case 0:
  case 1:{
-  Vertex_handle v0 = f->vertex(0);
+	 
+	 All_vertices_iterator vi=vertices_begin(); 
+  /*Vertex_handle v0 = f->vertex(0);
   Vertex_handle v1= f->neighbor(0)->vertex(0);
   if (is_too_close(v0->point(),p)){
 	lt = TOO_CLOSE;
@@ -618,7 +622,13 @@ CGAL_precondition(dimension()>=-1);
 	lt = TOO_CLOSE;
    li=1;
    return;
-   }
+   }*/
+	 for(;vi!=vertices_end();vi++)
+	 if(is_too_close(vi->point(),p)){
+		 lt = TOO_CLOSE;
+		 li=1;
+		 return;
+	 }
 		
  } break;
 		
@@ -626,6 +636,7 @@ CGAL_precondition(dimension()>=-1);
 	Vertex_handle v0 = f->vertex(0);
 	Vertex_handle v1= f->vertex(1);
 	Vertex_handle v2 = f->vertex(2);
+	 
 	if(is_too_close(v0->point(),p)){
 	  lt = TOO_CLOSE;
 	  li = 0;
@@ -882,7 +893,7 @@ CGAL_triangulation_precondition(false);
 	li=4;
       }
     }
-   test_distance(t,c,lt,li);
+	 test_distance(t,c,lt,li);
    return c;
     
   }
@@ -1035,14 +1046,14 @@ coplanar_orientation(const Point& p, const Point& q,const Point& r ) const
 	return geom_traits().orientation_1_object()(p,q,r);
 }
 	
-	template <class Gt, class Tds >
-	inline
-	Orientation
-	Triangulation_sphere_2<Gt, Tds>::
-	coplanar_orientation(const Point& p, const Point& q,const Point& r, const  Point &s ) const
-	{
-		return geom_traits().orientation_1_object()(p,q,r,s);
-	}
+template <class Gt, class Tds >
+inline
+Orientation
+Triangulation_sphere_2<Gt, Tds>::
+coplanar_orientation(const Point& p, const Point& q,const Point& r, const  Point &s ) const
+{
+	return geom_traits().orientation_1_object()(p,q,r,s);
+}
 	
 	
 	

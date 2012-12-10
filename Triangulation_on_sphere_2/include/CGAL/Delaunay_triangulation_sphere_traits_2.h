@@ -71,6 +71,12 @@ public:
    Point_2 _sphere;
 };
 	
+template < typename K >
+Power_test_2<K>::
+Power_test_2(const Point_2& sphere)
+: _sphere(sphere)
+{}
+	
 	
 template < typename K >
 class Orientation_sphere_1
@@ -143,7 +149,7 @@ protected :
 Point_2  _sphere;
 	
 
-	};
+};
 template < typename K >
 Orientation_sphere_2<K>::
  Orientation_sphere_2(const Point_2& sphere)
@@ -211,13 +217,17 @@ Inside_cone_2(const Point_2& sphere)
 {}
 	
 
-template < typename K >
-Power_test_2<K>::
-Power_test_2(const Point_2& sphere)
-: _sphere(sphere)
-{}
 
 
+/*template < typename K >
+class Distance_2{
+public:
+ typedef  double result_type;
+ typedef typename K::Point_2                  Point_2;
+	double operator ()(const Point_2 & p, const Point_2 & q)	{
+		return CGAL::squared_distance(p,q);
+	}
+};*/
 	
 	
 template < class R >
@@ -225,22 +235,25 @@ class Delaunay_triangulation_sphere_traits_2
   : public R
 {
 public:
-  //typedef Triangulation_sphere_traits_2<R>                     Base;
-  typedef typename R::Point_3                               Point_2; 
-  typedef typename R::Point_3                      Weighted_point_2;
-  typedef typename R::Ray_3       Ray_2;  
-  typedef typename R::Line_3      Line_2;
-  typedef typename R::Construct_ray_3            Construct_ray_3;
-  typedef typename R::Construct_circumcenter_3   Construct_circumcenter_3;
-  typedef typename R::Construct_bisector_3  Construct_bisector_3;
-  typedef typename R::Construct_segment_3    Construct_segment_3;
-
-  typedef Delaunay_triangulation_sphere_traits_2<R>   Self;
-  typedef CGAL::Power_test_2<Self>            Power_test_2;
-  typedef CGAL::Orientation_sphere_2<Self>    Orientation_2;
-  typedef CGAL::Coradial_sphere_2<Self>       Coradial_sphere_2;
-  typedef CGAL::Inside_cone_2<Self>           Inside_cone_2;
-  typedef CGAL::Orientation_sphere_1<Self>    Orientation_1;
+  
+  typedef typename R::Point_3                       Point_2; 
+  typedef typename R::Point_3                       Weighted_point_2;
+  typedef typename R::Ray_3                         Ray_2;  
+  typedef typename R::Line_3                        Line_2;
+  typedef typename R::Construct_ray_3               Construct_ray_3;
+  typedef typename R::Construct_circumcenter_3      Construct_circumcenter_3;
+  typedef typename R::Construct_bisector_3          Construct_bisector_3;
+  typedef typename R::Construct_segment_3           Construct_segment_3;
+	
+  typedef Delaunay_triangulation_sphere_traits_2<R>      Self;
+  typedef CGAL::Power_test_2<Self>                       Power_test_2;
+  typedef CGAL::Orientation_sphere_2<Self>               Orientation_2;
+  typedef CGAL::Coradial_sphere_2<Self>                  Coradial_sphere_2;
+  typedef CGAL::Inside_cone_2<Self>                      Inside_cone_2;
+  typedef CGAL::Orientation_sphere_1<Self>               Orientation_1;
+  typedef typename R::Compute_squared_distance_3         Compute_squared_distance_2;
+	typedef typename R::Compare_xyz_3					 Compare_xyz_3;
+	
  	
 	
 	
@@ -249,28 +262,34 @@ public:
 	
 
   Delaunay_triangulation_sphere_traits_2(const Point_2& sphere=Point_2(0,0,0));
+  Compare_xyz_3
+  compare_xyz_3_object() const
+  {return Compare_xyz_3();}
+	
+  Compute_squared_distance_2
+  compute_squared_distance_2_object() const
+  {return Compute_squared_distance_2();}
+	
 
   Orientation_2
   orientation_2_object()const
   {return Orientation_2(_sphere);}
 
   Orientation_1
-  orientation_1_object() const {
-    return Orientation_1(_sphere);
-  }
+  orientation_1_object() const
+  {return Orientation_1(_sphere);}
 
   Power_test_2 
   power_test_2_object() const
-    {  return Power_test_2(_sphere);}
+  {return Power_test_2(_sphere);}
 
   Coradial_sphere_2
   coradial_sphere_2_object() const
   {return Coradial_sphere_2(_sphere);}
 
   Inside_cone_2
-  inside_cone_2_object() const {
-    return Inside_cone_2(_sphere);
-  }
+  inside_cone_2_object() const
+ {return Inside_cone_2(_sphere);}
 	
  Construct_ray_3 construct_ray_2_object() const
    {return Construct_ray_3();}
@@ -284,6 +303,10 @@ public:
  construct_segment_2_object()const
  {return Construct_segment_3();}
 
+	
+ Compute_squared_distance_2 compute_squared_distance_3_object() const
+ { return Compute_squared_distance_2(); }	
+	
 protected :
   Point_2 _sphere;
 
